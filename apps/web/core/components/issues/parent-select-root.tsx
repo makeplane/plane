@@ -9,7 +9,7 @@ import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 // components
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 import { IssueParentSelect } from "@/components/issues/issue-detail/parent-select";
@@ -66,7 +66,7 @@ export const IssueParentSelectRoot = observer(function IssueParentSelectRoot(pro
       setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("common.error.label"),
         message: t("common.something_went_wrong"),
       });

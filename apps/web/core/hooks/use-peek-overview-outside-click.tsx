@@ -15,10 +15,12 @@ const usePeekOverviewOutsideClickDetector = (
 ) => {
   const handleClick = useCallback(
     (event: MouseEvent) => {
-      if (!(event.target instanceof HTMLElement)) return;
-      if (ref.current && !ref.current.contains(event.target)) {
+      // Frozen at dispatch — live-DOM contains()/closest() can miss a node that another
+      // mousedown listener for this same click (e.g. a dropdown closing itself) has detached.
+      const path = event.composedPath().filter((node): node is Element => node instanceof Element);
+      if (ref.current && !path.includes(ref.current)) {
         // check for the closest element with attribute name data-prevent-outside-click
-        const preventOutsideClickElement = event.target.closest("[data-prevent-outside-click]");
+        const preventOutsideClickElement = path.find((el) => el.hasAttribute("data-prevent-outside-click"));
         // if the closest element with attribute name data-prevent-outside-click is found
         if (preventOutsideClickElement) {
           // Check if this element's ID is in the exclusion list
@@ -32,18 +34,25 @@ const usePeekOverviewOutsideClickDetector = (
             return;
           }
         }
-        // check if the click target is the current issue element or its children
-        let targetElement: HTMLElement | null = event.target;
-        while (targetElement) {
-          if (targetElement.id === `issue-${issueId}`) {
-            // if the click target is the current issue element, return
-            return;
-          }
-          targetElement = targetElement.parentElement;
+        // A press inside a Base UI floating layer — a menu, select or popover opened from within
+        // the peek — is outside the peek by DOM position only: every popup is portaled to <body>.
+        // Marking the portal covers the whole layer (the popup and a modal menu's backdrop both
+        // live inside it) without each popup having to opt in through `data-prevent-outside-click`
+        // the way blocks' own panels do. Propel's Menu does not, which is what closed the peek as
+        // soon as a menu item was pressed.
+        //
+        // The portal is the marker to match on, NOT `data-base-ui-inert`: Base UI puts that on the
+        // app root while a modal popup is open, and the peek is inside it — matching on it would
+        // stop every press on the page from dismissing the peek.
+        if (path.some((el) => el.hasAttribute("data-base-ui-portal"))) {
+          return;
         }
-        const delayOutsideClickElement = event.target.closest("[data-delay-outside-click]");
-        if (delayOutsideClickElement) {
-          // if the click target is the closest element with attribute name data-delay-outside-click, delay the callback
+        // check if the click target is the current issue element or its children
+        if (path.some((el) => el.id === `issue-${issueId}`)) {
+          return;
+        }
+        const shouldDelayOutsideClick = path.some((el) => el.hasAttribute("data-delay-outside-click"));
+        if (shouldDelayOutsideClick) {
           setTimeout(() => {
             callback();
           }, 0);

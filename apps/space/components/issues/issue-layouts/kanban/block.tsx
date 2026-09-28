@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { Link } from "react-router";
 import { useParams, useSearchParams } from "next/navigation";
 // plane types
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IIssueDisplayProperties } from "@plane/types";
 // plane ui
 // plane utils
@@ -57,7 +57,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
       </WithDisplayPropertiesHOC>
 
       <div className="mb-1.5 line-clamp-1 w-full text-13 text-primary">
-        <Tooltip tooltipContent={issue.name}>
+        <Tooltip label={issue.name}>
           <span>{issue.name}</span>
         </Tooltip>
       </div>

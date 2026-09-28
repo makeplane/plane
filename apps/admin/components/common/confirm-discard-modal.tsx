@@ -4,12 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
-import Link from "next/link";
-// headless ui
-import { Dialog, Transition } from "@headlessui/react";
-// ui
-import { Button } from "@makeplane/propel/components/button";
+import { useRouter } from "next/navigation";
+// plane imports
+import { ConfirmDialog } from "@plane/blocks/dialog";
 
 type Props = {
   isOpen: boolean;
@@ -19,63 +16,31 @@ type Props = {
 
 export function ConfirmDiscardModal(props: Props) {
   const { isOpen, handleClose, onDiscardHref } = props;
+  // router
+  const router = useRouter();
+
+  // The confirm used to be a `<Link href={onDiscardHref}>`; ConfirmDialog's confirm is a button, so
+  // it navigates through the router instead.
+  const handleSubmit = () => {
+    try {
+      router.push(onDiscardHref);
+    } catch (error) {
+      console.error("Failed to discard changes and go back:", error);
+    }
+  };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={handleClose}>
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-backdrop transition-opacity" />
-        </Transition.Child>
-        <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-32">
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 text-left shadow-raised-200 transition-all sm:my-8 sm:w-[30rem]">
-                <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                  <div className="sm:flex sm:items-start">
-                    <div className="mt-3 text-center sm:mt-0 sm:text-left">
-                      <Dialog.Title as="h3" className="text-16 leading-6 font-medium text-tertiary">
-                        You have unsaved changes
-                      </Dialog.Title>
-                      <div className="mt-2">
-                        <p className="text-13 text-placeholder">
-                          Changes you made will be lost if you go back. Do you wish to go back?
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-end gap-2 p-4 sm:px-6">
-                  <Button variant="secondary" size="md" stretch="auto" onClick={handleClose} label="Keep editing" />
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    stretch="auto"
-                    nativeButton={false}
-                    render={<Link href={onDiscardHref} />}
-                    label="Go back"
-                  />
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition.Root>
+    <ConfirmDialog
+      isOpen={isOpen}
+      handleClose={handleClose}
+      handleSubmit={handleSubmit}
+      isSubmitting={false}
+      variant="primary"
+      hideIcon
+      title="You have unsaved changes"
+      content="Changes you made will be lost if you go back. Do you wish to go back?"
+      primaryButtonText={{ default: "Go back" }}
+      secondaryButtonText="Keep editing"
+    />
   );
 }

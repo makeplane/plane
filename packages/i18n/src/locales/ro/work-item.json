@@ -172,7 +172,9 @@
       },
       "failed": {
         "message": "Activitatea nu a putut fi arhivată. Te rugăm să încerci din nou."
-      }
+      },
+      "banner_message": "Această activitate a fost arhivată. Accesează secțiunea Arhive pentru a o restaura.",
+      "go_to_archives": "Accesează arhivele"
     },
     "restore": {
       "success": {
@@ -326,6 +328,10 @@
         "title": "Imposibil de actualizat elementele de lucru",
         "message": "Schimbarea stării nu este permisă pentru unele elemente de lucru. Asigură-te că schimbarea stării este permisă."
       }
+    },
+    "upgrade_banner": {
+      "message": "Schimbă starea, prioritatea și multe altele pentru mai multe activități simultan. Economisește în medie trei minute per operațiune.",
+      "cta": "Treci la One"
     }
   },
   "recurring_work_items": {

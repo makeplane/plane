@@ -5,11 +5,10 @@
  */
 
 import { useCallback } from "react";
-import { PanelLeft } from "lucide-react";
+import { LeftSidePaneOutline, LinkOutline, SearchOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, SearchIcon } from "@plane/propel/icons";
 // plane imports
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import { copyTextToClipboard } from "@plane/utils";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
@@ -20,22 +19,23 @@ import { usePowerK } from "@/hooks/store/use-power-k";
 export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
   // store hooks
   const { toggleSidebar } = useAppTheme();
-  const { topNavInputRef, topNavSearchInputRef } = usePowerK();
+  const { topNavInputRef } = usePowerK();
   // translation
   const { t } = useTranslation();
 
   const copyCurrentPageUrlToClipboard = useCallback(() => {
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
+      // oxlint-disable-next-line promise/always-return
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("power_k.miscellaneous_actions.copy_current_page_url_toast_success"),
         });
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("power_k.miscellaneous_actions.copy_current_page_url_toast_error"),
         });
       });
@@ -43,13 +43,11 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
   }, []);
 
   const focusTopNavSearch = useCallback(() => {
-    // Focus PowerK input if available, otherwise focus regular search input
-    if (topNavSearchInputRef?.current) {
-      topNavSearchInputRef.current.focus();
-    } else if (topNavInputRef?.current) {
-      topNavInputRef.current.focus();
-    }
-  }, [topNavInputRef, topNavSearchInputRef]);
+    topNavInputRef?.current?.focus();
+  }, [topNavInputRef]);
+  // Without a mounted top-nav input the command has nothing to focus, and Cmd+F must fall
+  // through to the browser's Find
+  const hasTopNavInput = useCallback(() => Boolean(topNavInputRef?.current), [topNavInputRef]);
 
   return [
     {
@@ -57,7 +55,7 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
       group: "miscellaneous",
       type: "action",
       i18n_title: "power_k.miscellaneous_actions.toggle_app_sidebar",
-      icon: PanelLeft,
+      icon: LeftSidePaneOutline,
       action: () => toggleSidebar(),
       modifierShortcut: "cmd+b",
       isEnabled: () => true,
@@ -69,7 +67,7 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
       group: "miscellaneous",
       type: "action",
       i18n_title: "power_k.miscellaneous_actions.copy_current_page_url",
-      icon: LinkIcon,
+      icon: LinkOutline,
       action: copyCurrentPageUrlToClipboard,
       modifierShortcut: "cmd+shift+c",
       isEnabled: () => true,
@@ -81,11 +79,11 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
       group: "miscellaneous",
       type: "action",
       i18n_title: "power_k.miscellaneous_actions.focus_top_nav_search",
-      icon: SearchIcon,
+      icon: SearchOutline,
       action: focusTopNavSearch,
       modifierShortcut: "cmd+f",
-      isEnabled: () => true,
-      isVisible: () => true,
+      isEnabled: hasTopNavInput,
+      isVisible: hasTopNavInput,
       closeOnSelect: true,
     },
   ];

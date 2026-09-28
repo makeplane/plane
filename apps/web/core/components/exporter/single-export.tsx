@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IExportData } from "@plane/types";
 // helpers
 import { getDate, renderFormattedDate } from "@plane/utils";
@@ -21,6 +21,7 @@ export function SingleExport({ service, refreshing }: Props) {
   const provider = service.provider;
 
   const [isLoading] = useState(false);
+  const downloadLabel = isLoading ? "Downloading..." : "Download";
 
   const checkExpiry = (inputDateString: string) => {
     const currentDate = new Date();
@@ -65,11 +66,18 @@ export function SingleExport({ service, refreshing }: Props) {
         <>
           {service.status == "completed" && (
             <div>
-              <a target="_blank" href={service?.url} rel="noopener noreferrer">
-                <Button variant="primary" className="w-full">
-                  {isLoading ? "Downloading..." : "Download"}
-                </Button>
-              </a>
+              <Button
+                variant="primary"
+                size="sm"
+                stretch="full"
+                label={downloadLabel}
+                nativeButton={false}
+                render={
+                  <a target="_blank" href={service?.url} rel="noopener noreferrer">
+                    {downloadLabel}
+                  </a>
+                }
+              />
             </div>
           )}
         </>

@@ -7,7 +7,7 @@
 import { Suspense } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { ScrollArea } from "@plane/propel/scrollarea";
+import { ScrollArea } from "@makeplane/propel/components/scroll-area";
 import type { TProfileSettingsTabs } from "@plane/types";
 import { cn } from "@plane/utils";
 // local imports
@@ -23,16 +23,14 @@ export const ProfileSettingsContent = observer(function ProfileSettingsContent(p
   const PageComponent = PROFILE_SETTINGS_PAGES_MAP[activeTab];
 
   return (
-    <ScrollArea
-      className={cn("shrink-0 overflow-y-scroll bg-surface-1", className)}
-      viewportClassName="px-8 py-9"
-      scrollType="hover"
-      orientation="vertical"
-      size="sm"
-    >
-      <Suspense>
-        <PageComponent />
-      </Suspense>
-    </ScrollArea>
+    <div className={cn("flex shrink-0 flex-col overflow-hidden bg-surface-1", className)}>
+      <ScrollArea orientation="vertical">
+        <div className="px-8 py-9">
+          <Suspense>
+            <PageComponent />
+          </Suspense>
+        </div>
+      </ScrollArea>
+    </div>
   );
 });

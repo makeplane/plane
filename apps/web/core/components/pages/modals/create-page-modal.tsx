@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import type { EPageAccess } from "@plane/constants";
 import type { TPage } from "@plane/types";
 // ui
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Dialog, DialogContent } from "@makeplane/propel/components/dialog";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
@@ -76,18 +76,20 @@ export function CreatePageModal(props: Props) {
   };
 
   return (
-    <ModalCore
-      isOpen={isModalOpen}
-      handleClose={handleModalClose}
-      position={EModalPosition.TOP}
-      width={EModalWidth.XXL}
+    <Dialog
+      open={isModalOpen}
+      onOpenChange={(open) => {
+        if (!open) handleModalClose();
+      }}
     >
-      <PageForm
-        formData={pageFormData}
-        handleFormData={handlePageFormData}
-        handleModalClose={handleStateClear}
-        handleFormSubmit={handleFormSubmit}
-      />
-    </ModalCore>
+      <DialogContent size="md">
+        <PageForm
+          formData={pageFormData}
+          handleFormData={handlePageFormData}
+          handleModalClose={handleStateClear}
+          handleFormSubmit={handleFormSubmit}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -5,8 +5,8 @@
  */
 
 import Link from "next/link";
-import { ChevronRightIcon } from "@plane/propel/icons";
-import { EPillVariant, Pill, EPillSize } from "@plane/propel/pill";
+import { ChevronRightOutline } from "@makeplane/propel/icons";
+import { Badge } from "@makeplane/propel/components/badge";
 import { Switch } from "@makeplane/propel/components/switch";
 import { joinUrlPath } from "@plane/utils";
 
@@ -24,14 +24,8 @@ export function ProjectFeatureToggle(props: Props) {
   return featureItem?.href ? (
     <Link href={joinUrlPath(workspaceSlug, "settings", "projects", projectId, "features", featureItem?.href)}>
       <div className="flex items-center gap-2">
-        <Pill
-          variant={value ? EPillVariant.PRIMARY : EPillVariant.DEFAULT}
-          size={EPillSize.SM}
-          className="rounded-lg border-none"
-        >
-          {value ? "Enabled" : "Disabled"}
-        </Pill>
-        <ChevronRightIcon className="h-4 w-4 text-tertiary" />
+        <Badge variant={value ? "brand" : "neutral"} size="xs" label={value ? "Enabled" : "Disabled"} />
+        <ChevronRightOutline className="h-4 w-4 text-tertiary" />
       </div>
     </Link>
   ) : (
