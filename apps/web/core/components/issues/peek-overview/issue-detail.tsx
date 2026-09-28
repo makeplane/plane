@@ -20,6 +20,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // plane web components
+import { IssueApprovalRoot } from "@/components/issue-approval";
 import { IssueTypeSwitcher } from "@/components/issues/issue-type-switcher";
 // plane web hooks
 // services
@@ -94,6 +95,16 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
       <div className="flex items-center justify-between gap-2">
         <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
       </div>
+
+      {/* §23.3 — approval badge + approve/reject, next to the item header.
+          Only a read-only surface locks the controls: who may decide is the
+          approval's snapshotted approver list (§11.2), which the server reports. */}
+      <IssueApprovalRoot
+        workspaceSlug={workspaceSlug}
+        projectId={issue.project_id}
+        issueId={issueId}
+        disabled={isArchived || disabled}
+      />
       <IssueTitleInput
         workspaceSlug={workspaceSlug}
         projectId={issue.project_id}

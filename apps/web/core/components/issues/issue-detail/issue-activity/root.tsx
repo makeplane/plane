@@ -17,6 +17,7 @@ import { useTranslation } from "@plane/i18n";
 import type { TFileSignedURLResponse, TIssueComment } from "@plane/types";
 // components
 import { CommentCreate } from "@/components/comments/comment-create";
+import { IssueApprovalActivity } from "@/components/issue-approval";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // local imports
@@ -107,6 +108,8 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
 
       {/* rendering activity */}
       <div className="space-y-3">
+        {/* §21 — approval decisions sit alongside the transition history. */}
+        <IssueApprovalActivity issueId={issueId} />
         <div className="min-h-[200px]">
           <div className="space-y-3">
             {!disabled && sortOrder === E_SORT_ORDER.DESC && renderCommentCreationBox}

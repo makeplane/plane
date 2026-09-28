@@ -35,6 +35,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useIssueWorkflowStateIds } from "@/hooks/use-issue-workflow-state-ids";
 // components
 import { IssueParentSelectRoot } from "@/components/issues/parent-select-root";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
@@ -63,6 +64,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const { getUserDetails } = useMember();
   const { getStateById } = useProjectState();
   const issue = getIssueById(issueId);
+  const workflowStateIds = useIssueWorkflowStateIds(issueId);
   if (!issue) return <></>;
 
   const createdByDetails = getUserDetails(issue.created_by);
@@ -88,6 +90,9 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 value={issue?.state_id}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
                 projectId={projectId?.toString() ?? ""}
+                // §23.3 / §23.4 — undefined while no workflow is bound, which
+                // keeps the picker on the full project state list.
+                stateIds={workflowStateIds}
                 disabled={!isEditable}
                 buttonVariant="transparent-with-text"
                 className="group w-full grow"
