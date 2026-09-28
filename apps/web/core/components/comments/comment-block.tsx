@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { CommentReplyIcon } from "@plane/propel/icons";
+import { ReplyOutline } from "@makeplane/propel/icons";
 import type { TIssueComment } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
@@ -39,7 +39,7 @@ export const CommentBlock = observer(function CommentBlock(props: TCommentBlock)
           "transition-border relative z-[3] flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg border border-subtle bg-layer-2 uppercase shadow-raised-100 duration-1000"
         )}
       >
-        <CommentReplyIcon width={14} height={14} className="text-secondary" aria-hidden="true" />
+        <ReplyOutline width={14} height={14} className="text-secondary" aria-hidden="true" />
       </div>
       <div className="flex flex-grow flex-col gap-3 truncate">
         <div className="mb-2 rounded-lg border border-subtle bg-layer-2 p-3 text-body-sm-regular shadow-raised-100">

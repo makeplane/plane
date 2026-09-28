@@ -6,12 +6,13 @@
 
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
-import { Star, StarOff, Users } from "lucide-react";
+import { StarOff } from "lucide-react";
+import { LinkOutline, MembersOutline, StarOutline } from "@makeplane/propel/icons";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, ModuleStatusIcon } from "@plane/propel/icons";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { ModuleStatusIcon } from "@plane/blocks/icons";
+import { setToast } from "@plane/blocks/toast";
 import type { IModule, TModuleStatus } from "@plane/types";
 import { EUserPermissions } from "@plane/types";
 import { copyTextToClipboard } from "@plane/utils";
@@ -45,7 +46,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
       await updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleDetails.id, formData).catch(
         () => {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: "Error!",
             message: "Module could not be updated. Please try again.",
           });
@@ -75,7 +76,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
       else addModuleToFavorites(workspaceSlug.toString(), moduleDetails.project_id, moduleDetails.id);
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Some error occurred",
       });
     }
@@ -86,13 +87,13 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
     copyTextToClipboard(url.href)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("power_k.contextual_actions.module.copy_url_toast_success"),
         });
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("power_k.contextual_actions.module.copy_url_toast_error"),
         });
       });
@@ -103,7 +104,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
     {
       id: "add_remove_module_members",
       i18n_title: "power_k.contextual_actions.module.add_remove_members",
-      icon: Users,
+      icon: MembersOutline,
       group: "contextual",
       contextType: "module",
       type: "change-page",
@@ -139,7 +140,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
       i18n_title: isFavorite
         ? "power_k.contextual_actions.module.remove_from_favorites"
         : "power_k.contextual_actions.module.add_to_favorites",
-      icon: isFavorite ? StarOff : Star,
+      icon: isFavorite ? StarOff : StarOutline,
       group: "contextual",
       contextType: "module",
       type: "action",
@@ -152,7 +153,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
     {
       id: "copy_module_url",
       i18n_title: "power_k.contextual_actions.module.copy_url",
-      icon: LinkIcon,
+      icon: LinkOutline,
       group: "contextual",
       contextType: "module",
       type: "action",

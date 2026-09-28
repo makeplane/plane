@@ -29,6 +29,19 @@
       "hide_password": "Masquer le mot de passe",
       "close_alert": "Fermer l’alerte",
       "close_popover": "Fermer la fenêtre contextuelle"
+    },
+    "breadcrumb": {
+      "trail": "Fil d’Ariane",
+      "show_more": "Afficher plus d’éléments du fil d’Ariane"
+    },
+    "common": {
+      "more_actions": "Plus d’actions",
+      "remove": "Supprimer"
+    },
+    "color_picker": {
+      "open": "Ouvrir le sélecteur de couleur",
+      "swatches": "Couleurs prédéfinies",
+      "hex_input": "Couleur hexadécimale"
     }
   }
 }

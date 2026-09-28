@@ -12,8 +12,21 @@ import { useParams } from "next/navigation";
 import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import { ContextMenu, CustomMenu } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import {
+  Menu,
+  MenuContent,
+  MenuItem,
+  MenuSubmenu,
+  MenuSubmenuContent,
+  MenuSubmenuTrigger,
+  MenuTrigger,
+} from "@makeplane/propel/components/menu";
+import { MoreHorizontalOutline } from "@makeplane/propel/icons";
+import { toSideAndAlign } from "@plane/blocks/common";
+import { ContextMenu, getRenderableItems, resolveItemVariant } from "@plane/blocks/context-menu";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
@@ -25,7 +38,12 @@ import { DeleteIssueModal } from "../../delete-issue-modal";
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";
 import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
-import { useProjectIssueMenuItems } from "./helper";
+import {
+  useProjectIssueMenuItems,
+  quickActionTriggerGuard,
+  isNativeQuickActionTrigger,
+  stopQuickActionPropagation,
+} from "./helper";
 
 export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActions(props: IQuickActionProps) {
   const {
@@ -34,13 +52,13 @@ export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActio
     handleUpdate,
     handleArchive,
     customActionButton,
-    portalElement,
     readOnly = false,
     placements = "bottom-end",
     parentRef,
   } = props;
   // router
   const { workspaceSlug } = useParams();
+  const { t } = useTranslation();
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
@@ -139,114 +157,69 @@ export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActio
       />
 
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
-      <CustomMenu
-        ellipsis
-        placement={placements}
-        customButton={customActionButton}
-        portalElement={portalElement}
-        menuItemsClassName="z-[14]"
-        maxHeight="lg"
-        closeOnSelect
-      >
-        {MENU_ITEMS.map((item) => {
-          if (item.shouldRender === false) return null;
-
-          // Render submenu if nestedMenuItems exist
-          if (item.nestedMenuItems && item.nestedMenuItems.length > 0) {
-            return (
-              <CustomMenu.SubMenu
-                key={item.key}
-                trigger={
-                  <div className="flex items-center gap-2">
-                    {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
-                    <h5>{item.title}</h5>
-                    {item.description && (
-                      <p
-                        className={cn("whitespace-pre-line text-tertiary", {
-                          "text-placeholder": item.disabled,
-                        })}
-                      >
-                        {item.description}
-                      </p>
-                    )}
-                  </div>
-                }
-                disabled={item.disabled}
-                className={cn(
-                  "flex items-center gap-2",
-                  {
-                    "text-placeholder": item.disabled,
-                  },
-                  item.className
-                )}
-              >
-                {item.nestedMenuItems.map((nestedItem) => (
-                  <CustomMenu.MenuItem
-                    key={nestedItem.key}
-                    onClick={() => {
-                      nestedItem.action();
-                    }}
-                    className={cn(
-                      "flex items-center gap-2",
-                      {
-                        "text-placeholder": nestedItem.disabled,
-                      },
-                      nestedItem.className
-                    )}
-                    disabled={nestedItem.disabled}
-                  >
-                    {nestedItem.icon && <nestedItem.icon className={cn("h-3 w-3", nestedItem.iconClassName)} />}
-                    <div>
-                      <h5>{nestedItem.title}</h5>
-                      {nestedItem.description && (
-                        <p
-                          className={cn("whitespace-pre-line text-tertiary", {
-                            "text-placeholder": nestedItem.disabled,
-                          })}
-                        >
-                          {nestedItem.description}
-                        </p>
-                      )}
-                    </div>
-                  </CustomMenu.MenuItem>
-                ))}
-              </CustomMenu.SubMenu>
-            );
+      <Menu>
+        <MenuTrigger
+          {...quickActionTriggerGuard}
+          nativeButton={isNativeQuickActionTrigger(customActionButton)}
+          aria-label={t("aria_labels.common.more_actions")}
+          render={
+            customActionButton ?? (
+              // Icon-only fallback trigger, so it needs an explicit accessible name.
+              <IconButton
+                variant="ghost"
+                size="sm"
+                aria-label={t("aria_labels.common.more_actions")}
+                icon={<Icon icon={MoreHorizontalOutline} />}
+              />
+            )
           }
-
-          // Render regular menu item
-          return (
-            <CustomMenu.MenuItem
-              key={item.key}
-              onClick={() => {
-                item.action();
-              }}
-              className={cn(
-                "flex items-center gap-2",
-                {
-                  "text-placeholder": item.disabled,
-                },
-                item.className
-              )}
-              disabled={item.disabled}
-            >
-              {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
-              <div>
-                <h5>{item.title}</h5>
-                {item.description && (
-                  <p
-                    className={cn("whitespace-pre-line text-tertiary", {
-                      "text-placeholder": item.disabled,
-                    })}
-                  >
-                    {item.description}
-                  </p>
-                )}
-              </div>
-            </CustomMenu.MenuItem>
-          );
-        })}
-      </CustomMenu>
+        />
+        <MenuContent {...toSideAndAlign(placements)} onClick={stopQuickActionPropagation}>
+          {getRenderableItems(MENU_ITEMS).map((item) => {
+            const nestedItems = getRenderableItems(item.nestedMenuItems);
+            if (nestedItems.length > 0) {
+              return (
+                <MenuSubmenu key={item.key}>
+                  <MenuSubmenuTrigger
+                    variant={resolveItemVariant(item)}
+                    icon={item.icon ? <Icon icon={item.icon} /> : undefined}
+                    label={item.title ?? ""}
+                    disabled={item.disabled}
+                  />
+                  <MenuSubmenuContent sizing="auto">
+                    {nestedItems.map((nestedItem) => (
+                      <MenuItem
+                        key={nestedItem.key}
+                        variant={resolveItemVariant(nestedItem)}
+                        icon={nestedItem.icon ? <Icon icon={nestedItem.icon} /> : undefined}
+                        label={nestedItem.title ?? ""}
+                        description={nestedItem.description}
+                        onClick={() => {
+                          nestedItem.action();
+                        }}
+                        disabled={nestedItem.disabled}
+                      />
+                    ))}
+                  </MenuSubmenuContent>
+                </MenuSubmenu>
+              );
+            }
+            return (
+              <MenuItem
+                key={item.key}
+                variant={resolveItemVariant(item)}
+                icon={item.icon ? <Icon icon={item.icon} /> : undefined}
+                label={item.title ?? ""}
+                description={item.description}
+                onClick={() => {
+                  item.action();
+                }}
+                disabled={item.disabled}
+              />
+            );
+          })}
+        </MenuContent>
+      </Menu>
     </>
   );
 });
