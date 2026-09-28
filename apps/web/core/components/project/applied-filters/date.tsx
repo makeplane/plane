@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import { PROJECT_CREATED_AT_FILTER_OPTIONS } from "@plane/constants";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 // helpers
 import { renderFormattedDate, capitalizeFirstLetter } from "@plane/utils";
 // constants
@@ -50,7 +50,7 @@ export const AppliedDateFilters = observer(function AppliedDateFilters(props: Pr
               className="grid place-items-center text-tertiary hover:text-secondary"
               onClick={() => handleRemove(date)}
             >
-              <CloseIcon height={10} width={10} strokeWidth={2} />
+              <CloseOutline height={10} width={10} />
             </button>
           )}
         </div>

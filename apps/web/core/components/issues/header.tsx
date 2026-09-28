@@ -9,19 +9,14 @@ import { useParams } from "next/navigation";
 // icons
 import { Circle } from "lucide-react";
 // plane imports
-import {
-  EUserPermissions,
-  EUserPermissionsLevel,
-  SPACE_BASE_PATH,
-  SPACE_BASE_URL,
-  WORK_ITEM_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { NewTabIcon, WorkItemsIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Button } from "@makeplane/propel/elements/button";
+import { NewTabOutline, WorkItemsOutline } from "@makeplane/propel/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EIssuesStoreType } from "@plane/types";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { CountChip } from "@/components/common/count-chip";
@@ -33,15 +28,15 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 
 export const IssuesHeader = observer(function IssuesHeader() {
   // router
-  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   // store hooks
   const {
     issues: { getGroupIssueCount },
@@ -55,7 +50,9 @@ export const IssuesHeader = observer(function IssuesHeader() {
   const { allowPermissions } = useUserPermissions();
   const { isMobile } = usePlatformOS();
 
-  const SPACE_APP_URL = (SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
+  const SPACE_APP_URL =
+    (SPACE_BASE_URL.trim() === "" && typeof window !== "undefined" ? window.location.origin : SPACE_BASE_URL) +
+    SPACE_BASE_PATH;
   const publishedURL = `${SPACE_APP_URL}/issues/${currentProjectDetails?.anchor}`;
 
   const issuesCount = getGroupIssueCount(undefined, undefined, false);
@@ -68,14 +65,18 @@ export const IssuesHeader = observer(function IssuesHeader() {
     <Header>
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
-          <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"} className="flex-grow-0">
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <Breadcrumbs isLoading={loader === "init-loader"} className="flex-grow-0">
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+              {...projectCrumb}
+            />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
                   label="Work Items"
                   href={`/${workspaceSlug}/projects/${projectId}/issues/`}
-                  icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
+                  icon={<WorkItemsOutline className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -84,9 +85,10 @@ export const IssuesHeader = observer(function IssuesHeader() {
           </Breadcrumbs>
           {issuesCount && issuesCount > 0 ? (
             <Tooltip
-              isMobile={isMobile}
-              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "work items" : "work item"} in this project`}
-              position="bottom"
+              label={`There are ${issuesCount} ${issuesCount > 1 ? "work items" : "work item"} in this project`}
+              layout="stacked"
+              side="bottom"
+              disabled={isMobile}
             >
               <CountChip count={issuesCount} />
             </Tooltip>
@@ -101,7 +103,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
           >
             <Circle className="h-1.5 w-1.5 fill-accent-primary" strokeWidth={2} />
             {t("workspace_projects.network.public.title")}
-            <NewTabIcon className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
+            <NewTabOutline className="hidden h-3 w-3 group-hover:block" />
           </a>
         ) : (
           <></>
@@ -119,11 +121,12 @@ export const IssuesHeader = observer(function IssuesHeader() {
         {canUserCreateIssue && (
           <Button
             variant="primary"
-            size="lg"
+            size="md"
+            stretch="auto"
+            type="button"
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}
-            data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
           >
             <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
             <div className="hidden sm:block">{t("issue.add.label")}</div>

@@ -8,9 +8,8 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 // plane imports
-import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
-import { Button, getButtonStyling } from "@plane/propel/button";
-import { cn } from "@plane/utils";
+import { Button } from "@makeplane/propel/components/button";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
 // assets
 import ProjectDarkEmptyState from "@/app/assets/empty-state/project-settings/no-projects-dark.png?url";
 import ProjectLightEmptyState from "@/app/assets/empty-state/project-settings/no-projects-light.png?url";
@@ -32,15 +31,21 @@ function ProjectSettingsPage() {
         need to get things done.
       </div>
       <div className="flex gap-2">
-        <Link href="https://plane.so/" target="_blank" className={cn(getButtonStyling("secondary", "base"))}>
-          Learn more about projects
-        </Link>
-        <Button
-          onClick={() => toggleCreateProjectModal(true)}
-          data-ph-element={PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON}
+        <ButtonElement
+          variant="secondary"
+          size="sm"
+          stretch="auto"
+          render={<Link href="https://plane.so/" target="_blank" />}
         >
-          Start your first project
-        </Button>
+          Learn more about projects
+        </ButtonElement>
+        <Button
+          variant="primary"
+          size="sm"
+          stretch="auto"
+          label="Start your first project"
+          onClick={() => toggleCreateProjectModal(true)}
+        />
       </div>
     </div>
   );

@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { History, MessageSquare } from "lucide-react";
+import { ChatOutline, HistoryOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { IUserActivityResponse } from "@plane/types";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
@@ -45,7 +45,9 @@ export const ActivityList = observer(function ActivityList(props: Props) {
                   <div className="relative flex items-start space-x-3">
                     <div className="relative px-1">
                       {activityItem.field ? (
-                        activityItem.new_value === "restore" && <History className="h-3.5 w-3.5 text-secondary" />
+                        activityItem.new_value === "restore" && (
+                          <HistoryOutline className="h-3.5 w-3.5 text-secondary" />
+                        )
                       ) : activityItem.actor_detail.avatar_url && activityItem.actor_detail.avatar_url !== "" ? (
                         <img
                           src={getFileURL(activityItem.actor_detail.avatar_url)}
@@ -61,7 +63,7 @@ export const ActivityList = observer(function ActivityList(props: Props) {
                       )}
 
                       <span className="flex h-6 w-6 items-center justify-center rounded-full bg-layer-1 text-secondary ring-6 ring-white">
-                        <MessageSquare className="h-6 w-6 !text-20 text-secondary" aria-hidden="true" />
+                        <ChatOutline className="h-6 w-6 !text-20 text-secondary" aria-hidden="true" />
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
@@ -120,7 +122,7 @@ export const ActivityList = observer(function ActivityList(props: Props) {
                               <div className="flex h-6 w-6 items-center justify-center">
                                 {activityItem.field ? (
                                   activityItem.new_value === "restore" ? (
-                                    <History className="h-5 w-5 text-secondary" />
+                                    <HistoryOutline className="h-5 w-5 text-secondary" />
                                   ) : (
                                     <ActivityIcon activity={activityItem} />
                                   )

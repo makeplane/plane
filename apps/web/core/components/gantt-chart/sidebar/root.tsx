@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // components
 import type { IBlockUpdateData } from "@plane/types";
-import { Row, ERowVariant } from "@plane/ui";
+import { Row, ERowVariant } from "@plane/blocks/layout";
 import { cn } from "@plane/utils";
 import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 // helpers
@@ -23,7 +23,7 @@ type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
-  ganttContainerRef: RefObject<HTMLDivElement>;
+  ganttContainerRef: RefObject<HTMLDivElement | null>;
   enableReorder: boolean | ((blockId: string) => boolean);
   enableSelection: boolean | ((blockId: string) => boolean);
   sidebarToRender: (props: any) => React.ReactNode;

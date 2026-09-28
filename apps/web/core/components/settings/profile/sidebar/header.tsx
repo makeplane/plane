@@ -6,10 +6,10 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@makeplane/propel/components/avatar";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useUser } from "@/hooks/store/user";
-import { getFileURL } from "@plane/utils";
 
 export const ProfileSettingsSidebarHeader = observer(function ProfileSettingsSidebarHeader() {
   // store hooks
@@ -19,11 +19,10 @@ export const ProfileSettingsSidebarHeader = observer(function ProfileSettingsSid
     <div className="flex shrink-0 items-center gap-2">
       <div className="shrink-0">
         <Avatar
+          alt={currentUser?.display_name}
+          fallback={currentUser?.display_name?.[0]?.toUpperCase()}
           src={getFileURL(currentUser?.avatar_url ?? "")}
-          name={currentUser?.display_name}
-          size={32}
-          shape="circle"
-          className="text-16"
+          size="lg"
         />
       </div>
       <div className="truncate">

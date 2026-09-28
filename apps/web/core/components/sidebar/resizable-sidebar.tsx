@@ -53,7 +53,7 @@ export function ResizableSidebar({
   const [isResizing, setIsResizing] = useState(false);
   const [isHoveringTrigger, setIsHoveringTrigger] = useState(false);
   // refs
-  const peekTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const peekTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const initialWidthRef = useRef<number>(0);
   const initialMouseXRef = useRef<number>(0);
   // hooks

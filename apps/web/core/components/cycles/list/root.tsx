@@ -4,12 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
+import React, { useState } from "react";
+import { Collapsible } from "@base-ui/react/collapsible";
 import { observer } from "mobx-react";
-import { Disclosure } from "@headlessui/react";
 // components
 import { useTranslation } from "@plane/i18n";
-import { ContentWrapper, ERowVariant } from "@plane/ui";
+import { ContentWrapper, ERowVariant } from "@plane/blocks/layout";
 import { ListLayout } from "@/components/core/list";
 // local imports
 import { CyclePeekOverview } from "../cycle-peek-overview";
@@ -29,6 +29,9 @@ export interface ICyclesList {
 export const CyclesList = observer(function CyclesList(props: ICyclesList) {
   const { completedCycleIds, upcomingCycleIds, cycleIds, workspaceSlug, projectId, isArchived = false } = props;
   const { t } = useTranslation();
+  // states
+  const [isUpcomingExpanded, setIsUpcomingExpanded] = useState(true);
+  const [isCompletedExpanded, setIsCompletedExpanded] = useState(false);
 
   return (
     <ContentWrapper variant={ERowVariant.HUGGING} className="flex-row">
@@ -42,43 +45,43 @@ export const CyclesList = observer(function CyclesList(props: ICyclesList) {
             <ActiveCycleRoot workspaceSlug={workspaceSlug} projectId={projectId} />
 
             {upcomingCycleIds && (
-              <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
-                {({ open }) => (
-                  <>
-                    <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 cursor-pointer border-b border-subtle bg-layer-1">
-                      <CycleListGroupHeader
-                        title={t("project_cycles.upcoming_cycle.label")}
-                        type="upcoming"
-                        count={upcomingCycleIds.length}
-                        showCount
-                        isExpanded={open}
-                      />
-                    </Disclosure.Button>
-                    <Disclosure.Panel>
-                      <CyclesListMap cycleIds={upcomingCycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
-                    </Disclosure.Panel>
-                  </>
-                )}
-              </Disclosure>
+              <Collapsible.Root
+                open={isUpcomingExpanded}
+                onOpenChange={setIsUpcomingExpanded}
+                className="flex flex-shrink-0 flex-col"
+              >
+                <Collapsible.Trigger className="sticky top-0 z-[2] w-full flex-shrink-0 cursor-pointer border-b border-subtle bg-layer-1">
+                  <CycleListGroupHeader
+                    title={t("project_cycles.upcoming_cycle.label")}
+                    type="upcoming"
+                    count={upcomingCycleIds.length}
+                    showCount
+                    isExpanded={isUpcomingExpanded}
+                  />
+                </Collapsible.Trigger>
+                <Collapsible.Panel>
+                  <CyclesListMap cycleIds={upcomingCycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
+                </Collapsible.Panel>
+              </Collapsible.Root>
             )}
-            <Disclosure as="div" className="flex flex-shrink-0 flex-col pb-7">
-              {({ open }) => (
-                <>
-                  <Disclosure.Button className="sticky top-0 z-2 w-full flex-shrink-0 cursor-pointer border-b border-subtle bg-layer-1">
-                    <CycleListGroupHeader
-                      title={t("project_cycles.completed_cycle.label")}
-                      type="completed"
-                      count={completedCycleIds.length}
-                      showCount
-                      isExpanded={open}
-                    />
-                  </Disclosure.Button>
-                  <Disclosure.Panel>
-                    <CyclesListMap cycleIds={completedCycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
-                  </Disclosure.Panel>
-                </>
-              )}
-            </Disclosure>
+            <Collapsible.Root
+              open={isCompletedExpanded}
+              onOpenChange={setIsCompletedExpanded}
+              className="flex flex-shrink-0 flex-col pb-7"
+            >
+              <Collapsible.Trigger className="sticky top-0 z-2 w-full flex-shrink-0 cursor-pointer border-b border-subtle bg-layer-1">
+                <CycleListGroupHeader
+                  title={t("project_cycles.completed_cycle.label")}
+                  type="completed"
+                  count={completedCycleIds.length}
+                  showCount
+                  isExpanded={isCompletedExpanded}
+                />
+              </Collapsible.Trigger>
+              <Collapsible.Panel>
+                <CyclesListMap cycleIds={completedCycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
+              </Collapsible.Panel>
+            </Collapsible.Root>
           </>
         )}
       </ListLayout>

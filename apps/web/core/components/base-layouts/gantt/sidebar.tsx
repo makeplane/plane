@@ -8,7 +8,8 @@ import type { RefObject } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import type { IBaseLayoutsBaseItem, IBlockUpdateData } from "@plane/types";
-import { Loader, Row } from "@plane/ui";
+import { Loader } from "@plane/blocks/skeleton";
+import { Row } from "@plane/blocks/layout";
 import { cn } from "@plane/utils";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
@@ -22,7 +23,7 @@ type Props<T extends IBaseLayoutsBaseItem> = {
   blockUpdateHandler: (block: T, payload: IBlockUpdateData) => void;
   canLoadMoreBlocks?: boolean;
   loadMoreItems?: (groupId: string) => void;
-  ganttContainerRef: RefObject<HTMLDivElement>;
+  ganttContainerRef: RefObject<HTMLDivElement | null>;
   blockIds: string[];
   enableReorder: boolean;
   showAllBlocks?: boolean;

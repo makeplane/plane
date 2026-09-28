@@ -7,7 +7,7 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ListFilter } from "lucide-react";
+import { FilterOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { TProjectFilters } from "@plane/types";
@@ -85,7 +85,7 @@ const HeaderFilters = observer(function HeaderFilters({
       />
       <div className={cn(filterClassname)}>
         <FiltersDropdown
-          icon={<ListFilter className="h-3 w-3" />}
+          icon={<FilterOutline className="h-3 w-3" />}
           title={t("common.filters")}
           placement="bottom-end"
           isFiltersApplied={isFiltersApplied}

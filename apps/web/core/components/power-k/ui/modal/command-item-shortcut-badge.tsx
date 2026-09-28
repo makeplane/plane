@@ -5,17 +5,17 @@
  */
 
 import React from "react";
+// hooks
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 /**
- * Formats a shortcut string for display
- * Converts "cmd+shift+," to proper keyboard symbols
+ * Formats a shortcut string for display, one label per key
+ * e.g. "cmd+shift+," -> ["⌘", "⇧", ","] on Mac, ["Ctrl", "Shift", ","] elsewhere
  */
-export const formatShortcutForDisplay = (shortcut: string | undefined): string | null => {
-  if (!shortcut) return null;
+export const formatShortcutForDisplay = (shortcut: string | undefined, isMac: boolean): string[] => {
+  if (!shortcut) return [];
 
-  const isMac = typeof window !== "undefined" && navigator.platform.toUpperCase().indexOf("MAC") >= 0;
-
-  const parts = shortcut.split("+").map((part) => {
+  return shortcut.split("+").map((part) => {
     const lower = part.toLowerCase().trim();
 
     // Map to proper symbols
@@ -63,39 +63,35 @@ export const formatShortcutForDisplay = (shortcut: string | undefined): string |
         return part.toUpperCase();
     }
   });
-
-  return parts.join("");
 };
 
 export function ShortcutBadge({ shortcut }: { shortcut: string | undefined }) {
-  if (!shortcut) return null;
-
-  const formatted = formatShortcutForDisplay(shortcut);
+  const { platform } = usePlatformOS();
+  const labels = formatShortcutForDisplay(shortcut, platform === "MacOS");
+  if (labels.length === 0) return null;
 
   return (
     <div className="pointer-events-none inline-flex shrink-0 items-center gap-1 font-medium select-none">
-      {formatted?.split("").map((char, index) => (
-        <React.Fragment key={index}>
-          <kbd className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-10 font-medium text-tertiary">
-            {char.toUpperCase()}
-          </kbd>
-        </React.Fragment>
+      {labels.map((label, index) => (
+        <kbd
+          // oxlint-disable-next-line react/no-array-index-key -- static list from a constant string, never reordered
+          key={index}
+          className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-10 font-medium text-tertiary"
+        >
+          {label}
+        </kbd>
       ))}
     </div>
   );
 }
 
-/**
- * Formats key sequence for display (e.g., "gm" -> "G then M")
- */
-export const formatKeySequenceForDisplay = (sequence: string | undefined): string => {
-  if (!sequence) return "";
-
-  const chars = sequence.split("");
-  return chars.map((c) => c.toUpperCase()).join(" then ");
+type TKeySequenceBadgeProps = {
+  sequence: string | undefined;
+  /** Translated connector rendered between keys, e.g. "then" in "G then M" */
+  separator: string;
 };
 
-export function KeySequenceBadge({ sequence }: { sequence: string | undefined }) {
+export function KeySequenceBadge({ sequence, separator }: TKeySequenceBadgeProps) {
   if (!sequence) return null;
 
   const chars = sequence.split("");
@@ -103,11 +99,12 @@ export function KeySequenceBadge({ sequence }: { sequence: string | undefined })
   return (
     <div className="pointer-events-none inline-flex shrink-0 items-center gap-1 font-medium select-none">
       {chars.map((char, index) => (
+        // oxlint-disable-next-line react/no-array-index-key -- static list from a constant string, never reordered
         <React.Fragment key={index}>
           <kbd className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-10 font-medium text-tertiary">
             {char.toUpperCase()}
           </kbd>
-          {index < chars.length - 1 && <span className="text-10 text-placeholder">then</span>}
+          {index < chars.length - 1 && <span className="text-10 text-placeholder">{separator}</span>}
         </React.Fragment>
       ))}
     </div>

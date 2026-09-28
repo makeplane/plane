@@ -7,10 +7,14 @@
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 
+import { Collapsible } from "@makeplane/propel/components/collapsible";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { AddOutline, ChevronDownOutline } from "@makeplane/propel/icons";
 // plane imports
-import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { StateGroupIcon } from "@plane/blocks/icons";
+import { EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PlusIcon, StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -23,7 +27,6 @@ type TGroupItem = {
   states: IState[];
   stateOperationsCallbacks: TStateOperationsCallbacks;
   isEditable: boolean;
-  shouldTrackEvents: boolean;
   groupItemClassName?: string;
   stateItemClassName?: string;
   handleGroupCollapse: (groupKey: TStateGroups) => void;
@@ -38,7 +41,6 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
     groupsExpanded,
     isEditable,
     stateOperationsCallbacks,
-    shouldTrackEvents,
     groupItemClassName,
     stateItemClassName,
     handleExpand,
@@ -54,59 +56,63 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
   const currentStateExpanded = groupsExpanded.includes(groupKey);
   const shouldShowEmptyState = states.length === 0 && currentStateExpanded && !createState;
 
+  const isCreateDisabled = !isEditable || createState;
+
   return (
     <div
-      className={cn("space-y-1 rounded-sm border border-subtle bg-surface-2 p-2 transition-all", groupItemClassName)}
+      className={cn("rounded-sm border border-subtle bg-surface-2 transition-all", groupItemClassName)}
       ref={dropElementRef}
     >
-      <div className="flex items-center justify-between gap-2">
-        <div
-          className="flex w-full cursor-pointer items-center py-1"
-          onClick={() => (!currentStateExpanded ? handleExpand(groupKey) : handleGroupCollapse(groupKey))}
-        >
-          <div
-            className={cn(
-              "flex h-5 w-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm transition-all",
-              {
-                "rotate-0": currentStateExpanded,
-                "-rotate-90": !currentStateExpanded,
-              }
-            )}
-          >
-            <ChevronDownIcon className="h-4 w-4" />
-          </div>
-          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
-            <StateGroupIcon stateGroup={groupKey} size={EIconSize.XL} />
-          </div>
-          <div className="px-1 text-14 font-medium text-secondary capitalize">{groupKey}</div>
-        </div>
-        <button
-          type="button"
-          data-ph-element={STATE_TRACKER_ELEMENTS.STATE_GROUP_ADD_BUTTON}
-          className={cn(
-            "flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm text-accent-primary/80 transition-colors hover:bg-layer-1 hover:text-accent-primary",
-            (!isEditable || createState) && "cursor-not-allowed text-placeholder hover:text-placeholder"
-          )}
-          onClick={() => {
-            if (!createState) {
-              handleExpand(groupKey);
-              setCreateState(true);
+      <Collapsible
+        open={currentStateExpanded}
+        onOpenChange={(open) => (open ? handleExpand(groupKey) : handleGroupCollapse(groupKey))}
+        indicator={false}
+        icon={
+          <Icon
+            icon={
+              <ChevronDownOutline
+                className={cn("transition-transform", {
+                  "rotate-0": currentStateExpanded,
+                  "-rotate-90": !currentStateExpanded,
+                })}
+              />
             }
-          }}
-          disabled={!isEditable || createState}
-        >
-          <PlusIcon className="h-4 w-4" />
-        </button>
-      </div>
+          />
+        }
+        trigger={
+          <span className="flex w-full items-center gap-1">
+            <StateGroupIcon stateGroup={groupKey} size={EIconSize.XL} className="shrink-0" />
+            <span className="px-1 text-14 font-medium text-secondary capitalize">{groupKey}</span>
+          </span>
+        }
+        trailing={
+          <IconButton
+            type="button"
+            variant="ghost"
+            size="sm"
+            aria-label={t("common.add")}
+            disabled={isCreateDisabled}
+            onClick={() => {
+              if (!createState) {
+                handleExpand(groupKey);
+                setCreateState(true);
+              }
+            }}
+            icon={
+              <Icon
+                icon={<AddOutline className={isCreateDisabled ? "text-placeholder" : "text-accent-primary/80"} />}
+              />
+            }
+          />
+        }
+      >
+        {shouldShowEmptyState && (
+          <div className="flex h-full flex-col items-center justify-center py-4 text-13 text-tertiary">
+            <div>{t("project_settings.states.empty_state.title", { groupKey })}</div>
+            {isEditable && <div>{t("project_settings.states.empty_state.description")}</div>}
+          </div>
+        )}
 
-      {shouldShowEmptyState && (
-        <div className="flex h-full flex-col items-center justify-center py-4 text-13 text-tertiary">
-          <div>{t("project_settings.states.empty_state.title", { groupKey })}</div>
-          {isEditable && <div>{t("project_settings.states.empty_state.description")}</div>}
-        </div>
-      )}
-
-      {currentStateExpanded && (
         <div id="group-droppable-container">
           <StateList
             groupKey={groupKey}
@@ -114,19 +120,19 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
             states={states}
             disabled={!isEditable}
             stateOperationsCallbacks={stateOperationsCallbacks}
-            shouldTrackEvents={shouldTrackEvents}
             stateItemClassName={stateItemClassName}
           />
         </div>
-      )}
+      </Collapsible>
 
+      {/* Rendered outside the collapsible panel (as in legacy) so the create form, and whatever the user typed
+          into it, survives collapsing the group — the panel unmounts its children when closed. */}
       {isEditable && createState && (
-        <div className="">
+        <div className="mt-1">
           <StateCreate
             groupKey={groupKey}
             handleClose={() => setCreateState(false)}
             createStateCallback={stateOperationsCallbacks.createState}
-            shouldTrackEvents={shouldTrackEvents}
           />
         </div>
       )}
