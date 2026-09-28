@@ -85,6 +85,10 @@ class WorkflowFlowReadSerializer(BaseSerializer):
     reject_state_id = serializers.UUIDField(
         source="reject_state.state_id", read_only=True, default=None
     )
+    # spec §17.2, §23.2 — every flow must expose its actor roster so the
+    # transition editor and the runtime can both see who is allowed to
+    # drive this flow without a second round-trip.
+    actors = serializers.SerializerMethodField()
 
     class Meta:
         model = WorkflowFlow
@@ -98,8 +102,18 @@ class WorkflowFlowReadSerializer(BaseSerializer):
             "reject_state_id",
             "sequence",
             "is_active",
+            "actors",
         ]
         read_only_fields = fields
+
+    def get_actors(self, obj):
+        # Prefetched on the view side where possible; fall back to a
+        # direct lookup so callers never see a 500 if they forget to
+        # prefetch.
+        actors_qs = getattr(obj, "_prefetched_actors", None)
+        if actors_qs is None:
+            actors_qs = obj.actors.all()
+        return WorkflowFlowActorReadSerializer(actors_qs, many=True).data
 
 
 class WorkflowFlowActorReadSerializer(BaseSerializer):
@@ -212,8 +226,18 @@ class WorkflowCreateSerializer(BaseSerializer):
 
 
 class WorkflowUpdateSerializer(WorkflowCreateSerializer):
+    """§17.1 — PATCH serializer for a workflow.
+
+    ``is_default`` is intentionally not writable here. The bootstrap
+    service is the sole owner of that flag (§7.1 partial-unique); the
+    view layer returns ``WorkflowDefaultImmutable`` (409) when a PATCH
+    attempts to flip it, but we also drop it from the writable fields
+    so the validator cannot silently coerce a stray ``"is_default": true``
+    through. See RD-487 / §34.
+    """
+
     class Meta(WorkflowCreateSerializer.Meta):
-        fields = WorkflowCreateSerializer.Meta.fields + ["is_default"]
+        fields = WorkflowCreateSerializer.Meta.fields
 
 
 class WorkflowDraftSerializer(BaseSerializer):

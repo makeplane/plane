@@ -104,3 +104,68 @@ class TestBootstrapDefaultWorkflow:
         )
         assert eligible.count() == 1
         assert eligible.first().state_id == workflow_states["todo"].id
+
+    def test_bootstrap_ships_default_actor_per_flow(
+        self,
+        workflow_project,
+        workflow_states,
+        create_user,
+    ):
+        """RD-487 / §25 Phase 2 — every bootstrap flow ships with an
+        ``ALL_PROJECT_MEMBERS`` actor so ``authorize_actor`` does not
+        403 every transition the moment ``workflow_enabled`` flips on.
+        Without this, the §29.3 transition tests would 403 the moment
+        the project enabled workflows, which is the regression RD-487
+        is supposed to prevent.
+        """
+        wf = ensure_default_workflow(
+            project=workflow_project,
+            actor_id=str(create_user.id),
+        )
+        assert wf is not None
+        revision = WorkflowRevision.objects.get(workflow=wf, version=1)
+        from plane.db.models import (
+            WorkflowFlow,
+            WorkflowFlowActor,
+            WorkflowFlowActorType,
+        )
+
+        flows = list(WorkflowFlow.objects.filter(revision=revision))
+        assert flows, "bootstrap should have produced at least one flow"
+
+        # Every flow must have at least one actor and it must be the
+        # all-project-members kind so transitions work out of the box.
+        actor_count = 0
+        for flow in flows:
+            actors = list(WorkflowFlowActor.objects.filter(flow=flow))
+            assert len(actors) == 1, (
+                f"expected one default actor on flow {flow.id}, got {len(actors)}"
+            )
+            assert actors[0].actor_type == WorkflowFlowActorType.ALL_PROJECT_MEMBERS
+            actor_count += 1
+        assert actor_count == len(flows)
+
+    def test_bootstrap_actor_ids_match_flow_count(
+        self,
+        workflow_project,
+        workflow_states,
+        create_user,
+    ):
+        """RD-487 / §34 — the actor roster must scale with the flow
+        graph so admins do not have to re-attach actors when they add
+        a new state to a populated project.
+        """
+        wf = ensure_default_workflow(
+            project=workflow_project,
+            actor_id=str(create_user.id),
+        )
+        revision = WorkflowRevision.objects.get(workflow=wf, version=1)
+        from plane.db.models import WorkflowFlow, WorkflowFlowActor
+
+        flow_count = WorkflowFlow.objects.filter(revision=revision).count()
+        actor_count = WorkflowFlowActor.objects.filter(
+            flow__revision=revision
+        ).count()
+        assert actor_count == flow_count, (
+            f"actor count {actor_count} != flow count {flow_count}"
+        )

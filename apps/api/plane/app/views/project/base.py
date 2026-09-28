@@ -574,3 +574,71 @@ class DeployBoardViewSet(BaseViewSet):
 
         serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ProjectWorkflowToggleEndpoint(BaseAPIView):
+    """Per-project workflow enable / disable toggle — spec §7.1, §23.1.
+
+    This is the dedicated surface that the Project Settings → Workflows
+    UI (RD-460 / §23.1) needs to read and flip ``Project.workflow_enabled``
+    without piggy-backing on the generic project PATCH. Keeping it as a
+    named endpoint also gives us an obvious place to attach the
+    ``workflow_enabled`` write-side audit / activity log without leaking
+    project-admin concerns into the generic project view.
+    """
+
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    def get(self, request, slug, project_id):
+        project = Project.objects.filter(pk=project_id, workspace__slug=slug).first()
+        if project is None:
+            return Response(
+                {"error": "Project does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        return Response(
+            {"workflow_enabled": bool(project.workflow_enabled)},
+            status=status.HTTP_200_OK,
+        )
+
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    def patch(self, request, slug, project_id):
+        project = Project.objects.filter(pk=project_id, workspace__slug=slug).first()
+        if project is None:
+            return Response(
+                {"error": "Project does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if "workflow_enabled" not in request.data:
+            return Response(
+                {"error": "workflow_enabled is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        new_value = request.data.get("workflow_enabled")
+        if not isinstance(new_value, bool):
+            return Response(
+                {"error": "workflow_enabled must be a boolean"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        previous = bool(project.workflow_enabled)
+        project.workflow_enabled = new_value
+        project.save(update_fields=["workflow_enabled", "updated_at", "updated_by"])
+
+        # Audit trail — feeds Project Settings → Activity timeline and
+        # gives admins a clear signal when enforcement flipped on/off.
+        model_activity.delay(
+            model_name="project",
+            model_id=str(project.id),
+            requested_data={"workflow_enabled": new_value},
+            current_instance=json.dumps({"workflow_enabled": previous}),
+            actor_id=request.user.id,
+            slug=slug,
+            origin=base_host(request=request, is_app=True),
+        )
+
+        return Response(
+            {"workflow_enabled": bool(project.workflow_enabled)},
+            status=status.HTTP_200_OK,
+        )

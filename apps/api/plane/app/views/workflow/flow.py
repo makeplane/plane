@@ -36,7 +36,29 @@ def _get_draft_revision(project_id, revision_id) -> WorkflowRevision | None:
 
 
 class WorkflowRevisionFlowListEndpoint(BaseAPIView):
-    """§17.2 — ``POST`` create a flow on a draft revision."""
+    """§17.2 — list / create flows on a draft revision."""
+
+    @allow_permission([ROLE.ADMIN])
+    def get(self, request, slug, project_id, revision_id):
+        # §17.2 — list flows. The revision may be in any status (draft,
+        # published, archived) since read access should not require the
+        # revision to be mutable.
+        flows = (
+            WorkflowFlow.objects.filter(
+                project_id=project_id, revision_id=revision_id
+            )
+            .select_related("source_state__state", "target_state__state", "reject_state__state")
+            .prefetch_related("actors")
+            .order_by("sequence", "created_at")
+        )
+        # Decorate each flow so the read serializer can find the
+        # prefetched actor roster without an N+1.
+        for flow in flows:
+            flow._prefetched_actors = flow.actors.all()
+        return Response(
+            WorkflowFlowReadSerializer(flows, many=True).data,
+            status=status.HTTP_200_OK,
+        )
 
     @allow_permission([ROLE.ADMIN])
     def post(self, request, slug, project_id, revision_id):
@@ -61,7 +83,27 @@ class WorkflowRevisionFlowListEndpoint(BaseAPIView):
 
 
 class WorkflowRevisionFlowDetailEndpoint(BaseAPIView):
-    """§17.2 — ``PATCH``/``DELETE`` a flow on a draft revision."""
+    """§17.2 — retrieve / patch / delete a flow on a revision."""
+
+    @allow_permission([ROLE.ADMIN])
+    def get(self, request, slug, project_id, revision_id, flow_id):
+        flow = (
+            WorkflowFlow.objects.filter(
+                project_id=project_id, revision_id=revision_id, pk=flow_id
+            )
+            .select_related("source_state__state", "target_state__state", "reject_state__state")
+            .prefetch_related("actors")
+            .first()
+        )
+        if flow is None:
+            return Response(
+                {"error": "Workflow flow not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        flow._prefetched_actors = flow.actors.all()
+        return Response(
+            WorkflowFlowReadSerializer(flow).data, status=status.HTTP_200_OK
+        )
 
     @allow_permission([ROLE.ADMIN])
     def patch(self, request, slug, project_id, revision_id, flow_id):
@@ -117,7 +159,26 @@ class WorkflowRevisionFlowDetailEndpoint(BaseAPIView):
 
 
 class WorkflowFlowActorListEndpoint(BaseAPIView):
-    """§17.2 — actor CRUD on a flow."""
+    """§17.2 — list / create actors on a flow."""
+
+    @allow_permission([ROLE.ADMIN])
+    def get(self, request, slug, project_id, revision_id, flow_id):
+        flow = (
+            WorkflowFlow.objects.filter(
+                project_id=project_id, revision_id=revision_id, pk=flow_id
+            )
+            .first()
+        )
+        if flow is None:
+            return Response(
+                {"error": "Workflow flow not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        actors = flow.actors.all().order_by("sequence", "created_at")
+        return Response(
+            WorkflowFlowActorReadSerializer(actors, many=True).data,
+            status=status.HTTP_200_OK,
+        )
 
     @allow_permission([ROLE.ADMIN])
     def post(self, request, slug, project_id, revision_id, flow_id):
@@ -154,6 +215,28 @@ class WorkflowFlowActorListEndpoint(BaseAPIView):
 
 
 class WorkflowFlowActorDetailEndpoint(BaseAPIView):
+    """§17.2 — retrieve / patch / delete an actor on a flow."""
+
+    @allow_permission([ROLE.ADMIN])
+    def get(self, request, slug, project_id, revision_id, flow_id, actor_id):
+        actor = (
+            WorkflowFlowActor.objects.filter(
+                project_id=project_id,
+                flow_id=flow_id,
+                flow__revision_id=revision_id,
+                pk=actor_id,
+            ).first()
+        )
+        if actor is None:
+            return Response(
+                {"error": "Workflow flow actor not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        return Response(
+            WorkflowFlowActorReadSerializer(actor).data,
+            status=status.HTTP_200_OK,
+        )
+
     @allow_permission([ROLE.ADMIN])
     def patch(self, request, slug, project_id, revision_id, flow_id, actor_id):
         revision = _get_draft_revision(project_id, revision_id)

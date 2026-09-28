@@ -208,7 +208,9 @@ class TransitionService:
                 source_state=current_wf_state,
                 is_active=True,
                 flow_type=WorkflowFlowType.TRANSITION,
-            ).select_related("target_state__state")
+            )
+            .select_related("target_state__state")
+            .prefetch_related("actors")
         )
 
         transitions: list[AllowedTransition] = []
@@ -216,13 +218,29 @@ class TransitionService:
             target = flow.target_state
             if target is None:
                 continue
+            # §18.2 — every allowed-actions entry must reflect the
+            # actor authorization. Without this check, the UI would
+            # happily render "Go to Done" for a user that
+            # ``authorize_actor`` would 403 two seconds later. We
+            # ``silence`` actor errors here because the whole point of
+            # the compute path is to surface what the actor *cannot*
+            # do, not to 500 on it.
+            try:
+                authorize_actor(
+                    flow=flow,
+                    issue=issue,
+                    actor_id=actor_id,
+                )
+                allowed = True
+            except Exception:
+                allowed = False
             transitions.append(
                 AllowedTransition(
                     flow_id=str(flow.id),
                     target_state_id=str(target.state_id),
                     target_state_name=target.state.name,
                     flow_type=flow.flow_type,
-                    allowed=True,
+                    allowed=allowed,
                 )
             )
 

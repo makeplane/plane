@@ -163,6 +163,52 @@ class IssueSerializer(BaseSerializer):
             issue_type = IssueType.objects.filter(project_issue_types__project_id=project_id, is_default=True).first()
             issue_type = issue_type
 
+        # spec §9.2, §34 — public API v1 must obey the workflow creation
+        # gate. If the project's workflow gates ``state`` (or the
+        # caller supplied one), route through ``validate_creation_state``
+        # so a forbidden / invalid state is rejected before we even hit
+        # the DB. The service falls through to the legacy behavior when
+        # the project has no enforcement enabled.
+        try:
+            from plane.services.workflow.errors import WorkflowError
+            from plane.services.workflow.transitions import TransitionService
+
+            project = validated_data.get("project") or Issue.objects.filter(
+                pk=validated_data.get("id")
+            ).values("project").first()
+            # Resolve the project row lazily — we need ``workflow_enabled``
+            # to decide whether to enforce.
+            from plane.db.models import Project as _Project
+
+            project_row = (
+                project
+                if project is not None and hasattr(project, "workflow_enabled")
+                else _Project.objects.filter(pk=project_id).first()
+            )
+            requested_state_id = (
+                str(validated_data["state"].id)
+                if validated_data.get("state") is not None
+                else None
+            )
+            resolved_state = TransitionService.validate_creation_state(
+                project=project_row,
+                issue_type_id=str(issue_type.id) if issue_type else None,
+                requested_state_id=requested_state_id,
+            )
+            if resolved_state is not None:
+                validated_data["state"] = resolved_state
+        except WorkflowError as exc:
+            # Mirror the app serializer pattern: surface the workflow
+            # payload + status code to the caller.
+            from rest_framework.exceptions import APIException
+
+            raise APIException(detail=exc.to_payload(), code=exc.code)
+        except Exception:
+            # Lazy import failed or workflow module not present — fall
+            # back to the legacy path so a missing workflow module does
+            # not break a project that has never opted in.
+            pass
+
         issue = Issue.objects.create(**validated_data, project_id=project_id, type=issue_type)
 
         # Issue Audit Users
@@ -240,6 +286,40 @@ class IssueSerializer(BaseSerializer):
         workspace_id = instance.workspace_id
         created_by_id = instance.created_by_id
         updated_by_id = instance.updated_by_id
+
+        # spec §10, §17.4, §34 — public API v1 PATCH must route every
+        # state mutation through ``TransitionService.transition`` so
+        # workflow enforcement cannot be bypassed by hitting
+        # ``/api/v1/...`` instead of ``/api/...``. The legacy direct
+        # ``Issue.state = ...`` assignment below still runs for the
+        # no-enforcement case (the service returns ``_bypass_update``
+        # with the same effect).
+        target_state = validated_data.get("state")
+        if target_state is not None and str(target_state.id) != str(instance.state_id):
+            try:
+                from plane.services.workflow.errors import WorkflowError
+                from plane.services.workflow.transitions import TransitionService
+
+                TransitionService.transition(
+                    issue_id=instance.id,
+                    target_state_id=str(target_state.id),
+                    actor=None,
+                    actor_id=str(updated_by_id),
+                    origin="api/v1",
+                )
+                # Pull the state out of validated_data so the legacy
+                # ``super().update`` path does not overwrite the state
+                # the service just persisted.
+                validated_data.pop("state", None)
+            except WorkflowError as exc:
+                from rest_framework.exceptions import APIException
+
+                raise APIException(detail=exc.to_payload(), code=exc.code)
+            except Exception:
+                # Lazy import / module missing — fall through to the
+                # legacy path. The migration guide for projects still on
+                # CE-only is to set ``ENABLE_WORKFLOWS=False``.
+                pass
 
         if assignees is not None:
             IssueAssignee.objects.filter(issue=instance).delete()

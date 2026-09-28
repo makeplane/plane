@@ -121,6 +121,9 @@ class ProjectListSerializer(DynamicBaseSerializer):
     cover_image_url = serializers.CharField(read_only=True)
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
     next_work_item_sequence = serializers.SerializerMethodField()
+    # spec §7.1, §23.1 — surfacing the per-project workflow toggle to the
+    # FE so it can render the "Workflows" section in Project Settings.
+    workflow_enabled = serializers.BooleanField(read_only=True)
 
     def get_members(self, obj):
         project_members = getattr(obj, "members_list", None)
