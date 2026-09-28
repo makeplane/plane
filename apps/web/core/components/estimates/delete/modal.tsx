@@ -7,9 +7,18 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { setToast } from "@plane/blocks/toast";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useEstimate } from "@/hooks/store/estimates/use-estimate";
@@ -43,7 +52,7 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
       }
       setButtonLoader(false);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Estimate deleted",
         message: "Estimate has been removed from your project.",
       });
@@ -51,7 +60,7 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
     } catch (_error) {
       setButtonLoader(false);
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Estimate creation failed",
         message: "We were unable to delete the estimate, please try again.",
       });
@@ -59,31 +68,54 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
   };
 
   return (
-    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
-      <div className="relative space-y-6 py-5">
-        {/* heading */}
-        <div className="relative flex items-center justify-between gap-2 px-5">
-          <div className="text-18 font-medium text-primary">Delete Estimate System</div>
-        </div>
+    <Dialog
+      open={isOpen}
+      disablePointerDismissal
+      onOpenChange={(open, eventDetails) => {
+        if (open) return;
+        // The legacy modal took no `handleClose`, so Escape was swallowed: only Cancel closed it.
+        if (eventDetails.reason === "escape-key") return;
+        handleClose();
+      }}
+    >
+      <DialogContent size="md">
+        <DialogMain>
+          {/* heading */}
+          <DialogHeader>
+            <DialogHeading>
+              <DialogTitle>Delete Estimate System</DialogTitle>
+            </DialogHeading>
+          </DialogHeader>
 
-        {/* estimate steps */}
-        <div className="px-5">
-          <div className="text-14 text-secondary">
-            Deleting the estimate <span className="font-bold text-primary">{estimate?.name}</span>
-            &nbsp;system will remove it from all work items permanently. This action cannot be undone. If you add
-            estimates again, you will need to update all the work items.
-          </div>
-        </div>
+          {/* estimate steps */}
+          <DialogBody tabIndex={0}>
+            <div className="text-14 text-secondary">
+              Deleting the estimate <span className="font-bold text-primary">{estimate?.name}</span>
+              &nbsp;system will remove it from all work items permanently. This action cannot be undone. If you add
+              estimates again, you will need to update all the work items.
+            </div>
+          </DialogBody>
+        </DialogMain>
 
-        <div className="relative flex items-center justify-end gap-3 border-t border-subtle px-5 pt-5">
-          <Button variant="secondary" size="lg" onClick={handleClose} disabled={buttonLoader}>
-            Cancel
-          </Button>
-          <Button variant="error-fill" size="lg" onClick={handleDeleteEstimate} disabled={buttonLoader}>
-            {buttonLoader ? "Deleting" : "Delete Estimate"}
-          </Button>
-        </div>
-      </div>
-    </ModalCore>
+        <DialogActions>
+          <Button
+            variant="secondary"
+            size="md"
+            onClick={handleClose}
+            disabled={buttonLoader}
+            stretch="auto"
+            label="Cancel"
+          />
+          <Button
+            variant="danger"
+            size="md"
+            onClick={handleDeleteEstimate}
+            disabled={buttonLoader}
+            stretch="auto"
+            label={buttonLoader ? "Deleting" : "Delete Estimate"}
+          />
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
   );
 });

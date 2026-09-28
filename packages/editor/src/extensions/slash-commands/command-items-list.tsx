@@ -4,26 +4,25 @@
  * See the LICENSE file for details.
  */
 
+import { Smile } from "lucide-react";
 import {
-  ALargeSmall,
-  CaseSensitive,
-  Code2,
-  Heading1,
-  Heading2,
-  Heading3,
-  Heading4,
-  Heading5,
-  Heading6,
-  ImageIcon,
-  List,
-  ListOrdered,
-  ListTodo,
-  MessageSquareText,
-  MinusSquare,
-  Smile,
-  Table,
-  TextQuote,
-} from "lucide-react";
+  ChatOutline,
+  CodeOutline,
+  H1Outline,
+  H2Outline,
+  H3Outline,
+  H4Outline,
+  H5Outline,
+  H6Outline,
+  ImageOutline,
+  ListOutline,
+  MinusSquareOutline,
+  NumberedListOutline,
+  QuoteOutline,
+  TableEditorOutline,
+  TextOutline,
+  ToDoOutline,
+} from "@makeplane/propel/icons";
 // constants
 import { COLORS_LIST } from "@/constants/common";
 // helpers
@@ -68,7 +67,7 @@ export const getSlashCommandFilteredSections =
             title: "Text",
             description: "Just start typing with plain text.",
             searchTerms: ["p", "paragraph"],
-            icon: <CaseSensitive className="size-3.5" />,
+            icon: <TextOutline className="size-3.5" />,
             command: ({ editor, range }) => setText(editor, range),
           },
           {
@@ -77,7 +76,7 @@ export const getSlashCommandFilteredSections =
             title: "Heading 1",
             description: "Big section heading.",
             searchTerms: ["title", "big", "large"],
-            icon: <Heading1 className="size-3.5" />,
+            icon: <H1Outline className="size-3.5" />,
             command: ({ editor, range }) => toggleHeading(editor, 1, range),
           },
           {
@@ -86,7 +85,7 @@ export const getSlashCommandFilteredSections =
             title: "Heading 2",
             description: "Medium section heading.",
             searchTerms: ["subtitle", "medium"],
-            icon: <Heading2 className="size-3.5" />,
+            icon: <H2Outline className="size-3.5" />,
             command: ({ editor, range }) => toggleHeading(editor, 2, range),
           },
           {
@@ -95,7 +94,7 @@ export const getSlashCommandFilteredSections =
             title: "Heading 3",
             description: "Small section heading.",
             searchTerms: ["subtitle", "small"],
-            icon: <Heading3 className="size-3.5" />,
+            icon: <H3Outline className="size-3.5" />,
             command: ({ editor, range }) => toggleHeading(editor, 3, range),
           },
           {
@@ -104,7 +103,7 @@ export const getSlashCommandFilteredSections =
             title: "Heading 4",
             description: "Small section heading.",
             searchTerms: ["subtitle", "small"],
-            icon: <Heading4 className="size-3.5" />,
+            icon: <H4Outline className="size-3.5" />,
             command: ({ editor, range }) => toggleHeading(editor, 4, range),
           },
           {
@@ -113,7 +112,7 @@ export const getSlashCommandFilteredSections =
             title: "Heading 5",
             description: "Small section heading.",
             searchTerms: ["subtitle", "small"],
-            icon: <Heading5 className="size-3.5" />,
+            icon: <H5Outline className="size-3.5" />,
             command: ({ editor, range }) => toggleHeading(editor, 5, range),
           },
           {
@@ -122,7 +121,7 @@ export const getSlashCommandFilteredSections =
             title: "Heading 6",
             description: "Small section heading.",
             searchTerms: ["subtitle", "small"],
-            icon: <Heading6 className="size-3.5" />,
+            icon: <H6Outline className="size-3.5" />,
             command: ({ editor, range }) => toggleHeading(editor, 6, range),
           },
 
@@ -132,7 +131,7 @@ export const getSlashCommandFilteredSections =
             title: "Numbered list",
             description: "Create a numbered list.",
             searchTerms: ["ordered"],
-            icon: <ListOrdered className="size-3.5" />,
+            icon: <NumberedListOutline className="size-3.5" />,
             command: ({ editor, range }) => toggleOrderedList(editor, range),
           },
           {
@@ -141,7 +140,7 @@ export const getSlashCommandFilteredSections =
             title: "Bulleted list",
             description: "Create a bulleted list.",
             searchTerms: ["unordered", "point"],
-            icon: <List className="size-3.5" />,
+            icon: <ListOutline className="size-3.5" />,
             command: ({ editor, range }) => toggleBulletList(editor, range),
           },
           {
@@ -150,7 +149,7 @@ export const getSlashCommandFilteredSections =
             title: "To-do list",
             description: "Create a to-do list.",
             searchTerms: ["todo", "task", "list", "check", "checkbox"],
-            icon: <ListTodo className="size-3.5" />,
+            icon: <ToDoOutline className="size-3.5" />,
             command: ({ editor, range }) => toggleTaskList(editor, range),
           },
           {
@@ -159,7 +158,7 @@ export const getSlashCommandFilteredSections =
             title: "Table",
             description: "Create a table",
             searchTerms: ["table", "cell", "db", "data", "tabular"],
-            icon: <Table className="size-3.5" />,
+            icon: <TableEditorOutline className="size-3.5" />,
             command: ({ editor, range }) => insertTableCommand(editor, range),
           },
           {
@@ -168,7 +167,7 @@ export const getSlashCommandFilteredSections =
             title: "Quote",
             description: "Capture a quote.",
             searchTerms: ["blockquote"],
-            icon: <TextQuote className="size-3.5" />,
+            icon: <QuoteOutline className="size-3.5" />,
             command: ({ editor, range }) => toggleBlockquote(editor, range),
           },
           {
@@ -177,14 +176,14 @@ export const getSlashCommandFilteredSections =
             title: "Code",
             description: "Capture a code snippet.",
             searchTerms: ["codeblock"],
-            icon: <Code2 className="size-3.5" />,
+            icon: <CodeOutline className="size-3.5" />,
             command: ({ editor, range }) => editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
           },
           {
             commandKey: "callout",
             key: "callout",
             title: "Callout",
-            icon: <MessageSquareText className="size-3.5" />,
+            icon: <ChatOutline className="size-3.5" />,
             description: "Insert callout",
             searchTerms: ["callout", "comment", "message", "info", "alert"],
             command: ({ editor, range }: CommandProps) => insertCallout(editor, range),
@@ -195,7 +194,7 @@ export const getSlashCommandFilteredSections =
             title: "Divider",
             description: "Visually divide blocks.",
             searchTerms: ["line", "divider", "horizontal", "rule", "separate"],
-            icon: <MinusSquare className="size-3.5" />,
+            icon: <MinusSquareOutline className="size-3.5" />,
             command: ({ editor, range }) => editor.chain().focus().deleteRange(range).setHorizontalRule().run(),
           },
           {
@@ -221,7 +220,7 @@ export const getSlashCommandFilteredSections =
             title: "Default",
             description: "Change text color",
             searchTerms: ["color", "text", "default"],
-            icon: <ALargeSmall className="size-3.5 text-primary" />,
+            icon: <TextOutline className="size-3.5 text-primary" />,
             command: ({ editor, range }) => toggleTextColor(undefined, editor, range),
           },
           ...COLORS_LIST.map(
@@ -234,7 +233,7 @@ export const getSlashCommandFilteredSections =
                 searchTerms: ["color", "text", color.label],
 
                 icon: (
-                  <ALargeSmall
+                  <TextOutline
                     className="size-3.5"
                     style={{
                       color: color.textColor,
@@ -257,7 +256,7 @@ export const getSlashCommandFilteredSections =
             title: "Default background",
             description: "Change background color",
             searchTerms: ["color", "bg", "background", "default"],
-            icon: <ALargeSmall className="size-3.5" />,
+            icon: <TextOutline className="size-3.5" />,
             iconContainerStyle: {
               borderRadius: "4px",
               backgroundColor: "var(--background-color-surface-1)",
@@ -273,7 +272,7 @@ export const getSlashCommandFilteredSections =
                 title: color.label,
                 description: "Change background color",
                 searchTerms: ["color", "bg", "background", color.label],
-                icon: <ALargeSmall className="size-3.5" />,
+                icon: <TextOutline className="size-3.5" />,
 
                 iconContainerStyle: {
                   borderRadius: "4px",
@@ -293,7 +292,7 @@ export const getSlashCommandFilteredSections =
         commandKey: "image",
         key: "image",
         title: "Image",
-        icon: <ImageIcon className="size-3.5" />,
+        icon: <ImageOutline className="size-3.5" />,
         description: "Insert an image",
         searchTerms: ["img", "photo", "picture", "media", "upload"],
         command: ({ editor, range }: CommandProps) => insertImage({ editor, event: "insert", range }),

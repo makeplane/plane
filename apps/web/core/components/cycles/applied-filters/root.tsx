@@ -8,8 +8,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PillButton } from "@makeplane/propel/components/pill";
-import { CloseIcon } from "@plane/propel/icons";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Pill } from "@makeplane/propel/components/pill";
+import { CloseOutline } from "@makeplane/propel/icons";
 import type { TCycleFilters } from "@plane/types";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 // hooks
@@ -25,7 +26,7 @@ type Props = {
   alwaysAllowEditing?: boolean;
 };
 
-const DATE_FILTERS = ["start_date", "end_date"];
+const DATE_FILTERS = new Set(["start_date", "end_date"]);
 
 export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList(props: Props) {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
@@ -63,7 +64,7 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
                   values={value}
                 />
               )}
-              {DATE_FILTERS.includes(filterKey) && (
+              {DATE_FILTERS.has(filterKey) && (
                 <AppliedDateFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter(filterKey, val)}
@@ -76,7 +77,7 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
                   className="grid place-items-center text-tertiary hover:text-secondary"
                   onClick={() => handleRemoveFilter(filterKey, null)}
                 >
-                  <CloseIcon height={12} width={12} strokeWidth={2} />
+                  <CloseOutline height={12} width={12} />
                 </button>
               )}
             </div>
@@ -84,12 +85,11 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
         );
       })}
       {isEditingAllowed && (
-        <PillButton
-          type="button"
+        <Pill
           size="md"
           variant="outline"
           label={t("common.clear_all")}
-          endIcon={<CloseIcon height={12} width={12} strokeWidth={2} />}
+          endIcon={<Icon icon={CloseOutline} />}
           onClick={handleClearAllFilters}
         />
       )}

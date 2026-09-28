@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 import type { TInboxIssueFilterDateKeys } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
@@ -53,7 +53,7 @@ export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedF
               className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
               onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(optionDetail?.value))}
             >
-              <CloseIcon className={`h-3 w-3`} />
+              <CloseOutline className={`h-3 w-3`} />
             </div>
           </div>
         );
@@ -63,7 +63,7 @@ export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedF
         className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
         onClick={clearFilter}
       >
-        <CloseIcon className={`h-3 w-3`} />
+        <CloseOutline className={`h-3 w-3`} />
       </div>
     </div>
   );

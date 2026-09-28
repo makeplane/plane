@@ -6,7 +6,7 @@
 
 import type { Editor } from "@tiptap/react";
 
-import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, TickOutline } from "@makeplane/propel/icons";
 // plane utils
 import { cn } from "@plane/utils";
 // components
@@ -73,7 +73,7 @@ export function BubbleMenuNodeSelector(props: Props) {
       menuButton={
         <>
           <span>{activeItem?.name}</span>
-          <ChevronDownIcon className="size-3 shrink-0" />
+          <ChevronDownOutline className="size-3 shrink-0" />
         </>
       }
       options={options}
@@ -101,7 +101,7 @@ export function BubbleMenuNodeSelector(props: Props) {
               <item.icon className="size-3 flex-shrink-0" />
               <span>{item.name}</span>
             </div>
-            {activeItem.name === item.name && <CheckIcon className="size-3 flex-shrink-0 text-tertiary" />}
+            {activeItem.name === item.name && <TickOutline className="size-3 flex-shrink-0 text-tertiary" />}
           </button>
         ))}
       </section>

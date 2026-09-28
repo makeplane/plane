@@ -7,15 +7,21 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { MoveDiagonal, MoveRight } from "lucide-react";
+import {
+  ArrowNarrowRightOutline,
+  DragDropOutline,
+  FullScreenPeekOutline,
+  LinkOutline,
+  ModalPeekOutline,
+  SidePeekOutline,
+} from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CenterPanelIcon, CopyLinkIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { setToast } from "@plane/blocks/toast";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import { CustomSelect } from "@plane/ui";
+import { Select } from "@plane/blocks/select";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -27,24 +33,27 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueSubscription } from "../issue-detail/subscription";
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
 import { NameDescriptionUpdateStatus } from "../issue-update-status";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
-const PEEK_OPTIONS: { key: TPeekModes; icon: any; i18n_title: string }[] = [
+type TPeekOption = { key: TPeekModes; icon: any; i18n_title: string };
+
+const PEEK_OPTIONS: TPeekOption[] = [
   {
     key: "side-peek",
-    icon: SidePanelIcon,
+    icon: SidePeekOutline,
     i18n_title: "common.side_peek",
   },
   {
     key: "modal",
-    icon: CenterPanelIcon,
+    icon: ModalPeekOutline,
     i18n_title: "common.modal",
   },
   {
     key: "full-screen",
-    icon: FullScreenPanelIcon,
+    icon: FullScreenPeekOutline,
     i18n_title: "common.full_screen",
   },
 ];
@@ -121,7 +130,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
     e.preventDefault();
     copyUrlToClipboard(workItemLink).then(() => {
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("common.link_copied"),
         message: t("common.link_copied_to_clipboard"),
       });
@@ -138,7 +147,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
     } catch (_error) {
       setToast({
         title: t("toast.error"),
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
       });
     }
@@ -159,43 +168,35 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
       }`}
     >
       <div className="flex items-center gap-4">
-        <Tooltip tooltipContent={t("common.close_peek_view")} isMobile={isMobile}>
+        <Tooltip label={t("common.close_peek_view")} disabled={isMobile}>
           <button onClick={removeRoutePeekId}>
-            <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary" />
+            <ArrowNarrowRightOutline className="h-4 w-4 text-tertiary hover:text-secondary" />
           </button>
         </Tooltip>
 
-        <Tooltip tooltipContent={t("issue.open_in_full_screen")} isMobile={isMobile}>
+        <Tooltip label={t("issue.open_in_full_screen")} disabled={isMobile}>
           <Link href={workItemLink} onClick={() => removeRoutePeekId()}>
-            <MoveDiagonal className="h-4 w-4 text-tertiary hover:text-secondary" />
+            <DragDropOutline className="h-4 w-4 text-tertiary hover:text-secondary" />
           </Link>
         </Tooltip>
         {currentMode && embedIssue === false && (
           <div className="flex flex-shrink-0 items-center gap-2">
-            <CustomSelect
+            <Select<TPeekOption>
+              getValues={() => PEEK_OPTIONS}
               value={currentMode}
-              onChange={(val: any) => setPeekMode(val)}
-              customButton={
-                <Tooltip tooltipContent={t("common.toggle_peek_view_layout")} isMobile={isMobile}>
-                  <button type="button" className="">
-                    <currentMode.icon className="h-4 w-4 text-tertiary hover:text-secondary" />
-                  </button>
-                </Tooltip>
-              }
+              onChange={(val) => setPeekMode(val as TPeekModes)}
+              getOptionValue={(mode) => mode.key}
+              getOptionLabel={(mode) => t(mode.i18n_title)}
+              getOptionIcon={(mode) => <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />}
+              showSearch={false}
+              pinSelected={false}
             >
-              {PEEK_OPTIONS.map((mode) => (
-                <CustomSelect.Option key={mode.key} value={mode.key}>
-                  <div
-                    className={`flex items-center gap-1.5 ${
-                      currentMode.key === mode.key ? "text-secondary" : "text-placeholder hover:text-secondary"
-                    }`}
-                  >
-                    <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />
-                    {t(mode.i18n_title)}
-                  </div>
-                </CustomSelect.Option>
-              ))}
-            </CustomSelect>
+              <Select.Trigger
+                variant="icon-md"
+                prependIcon={<currentMode.icon className="h-4 w-4 text-tertiary hover:text-secondary" />}
+                tooltip={isMobile ? false : { heading: t("common.toggle_peek_view_layout") }}
+              />
+            </Select>
           </div>
         )}
       </div>
@@ -205,8 +206,14 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
           {currentUser && !isArchived && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
-          <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
-            <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
+          <Tooltip label={t("common.actions.copy_link")} disabled={isMobile}>
+            <IconButton
+              variant="secondary"
+              size="md"
+              onClick={handleCopyText}
+              icon={<Icon icon={LinkOutline} />}
+              aria-label={t("common.actions.copy_link")}
+            />
           </Tooltip>
           {issueDetails && (
             <WorkItemDetailQuickActions

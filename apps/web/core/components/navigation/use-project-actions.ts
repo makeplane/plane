@@ -5,7 +5,7 @@
  */
 
 import { useCallback, useState } from "react";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import { copyUrlToClipboard } from "@plane/utils";
 import type { TNavigationItem } from "@/components/navigation/tab-navigation-root";
 
@@ -29,13 +29,13 @@ export const useProjectActions = ({ workspaceSlug, projectId, activeItem }: UseP
     try {
       await copyUrlToClipboard(pathToCopy);
       setToast({
-        type: TOAST_TYPE.INFO,
+        type: "info",
         title: "Link copied!",
         message: "Project link copied to clipboard.",
       });
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Copy failed",
         message: "We couldn't copy the link. Please try again.",
       });

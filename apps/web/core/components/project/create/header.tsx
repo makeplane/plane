@@ -9,8 +9,8 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { CloseIcon } from "@plane/propel/icons";
+import { EmojiPicker, Logo } from "@plane/blocks/emoji-icon-picker";
+import { CloseOutline } from "@makeplane/propel/icons";
 // plane types
 import type { IProject } from "@plane/types";
 // plane ui
@@ -47,8 +47,8 @@ function ProjectCreateHeader(props: Props) {
       />
       {isClosable && (
         <div className="absolute top-2 right-2 p-2">
-          <button type="button" onClick={handleClose} tabIndex={getIndex("close")}>
-            <CloseIcon className="h-5 w-5 text-on-color" />
+          <button type="button" aria-label={t("close")} onClick={handleClose} tabIndex={getIndex("close")}>
+            <CloseOutline className="h-5 w-5 text-on-color" />
           </button>
         </div>
       )}
@@ -107,9 +107,7 @@ function ProjectCreateHeader(props: Props) {
                 setIsOpen(false);
               }}
               defaultIconColor={value?.in_use && value.in_use === "icon" ? value.icon?.color : undefined}
-              defaultOpen={
-                value?.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
-              }
+              defaultOpen={value?.in_use && value.in_use === "emoji" ? "emoji" : "icon"}
             />
           )}
         />

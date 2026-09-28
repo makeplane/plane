@@ -75,15 +75,42 @@ RUN pnpm turbo run build --filter=web
 # *****************************************************************************
 # STAGE 3: Serve with Caddy
 # *****************************************************************************
-FROM caddy:2.11-builder-alpine AS caddy-builder
+FROM caddy:2.11.4-builder-alpine AS caddy-builder
 
-RUN xcaddy build \
+RUN XCADDY_SKIP_CLEANUP=1 xcaddy build \
     --with github.com/mholt/caddy-ratelimit
 
-FROM caddy:2.11-alpine AS production
+# Caddy's own go.mod pins x/crypto, x/net and x/text at versions with open CVEs
+# (CVE-2026-56854 CRITICAL in x/crypto, CVE-2026-46600 in x/net,
+# CVE-2026-56852 in x/text), so every xcaddy build re-ships them. xcaddy
+# preserved its build dir above, so upgrade them there and rebuild.
+# x/crypto v0.55.0 requires x/net v0.57.0 and x/text v0.41.0, hence those floors.
+# grpc and otel move together: grpc >= v1.83.0 requires otel v1.44.0, so bump
+# the otel pair in lockstep or go walks grpc backwards to satisfy the older one.
+RUN cd "$(find /tmp -maxdepth 1 -name 'buildenv_*' -type d | head -1)" && \
+    go get golang.org/x/crypto@v0.55.0 && \
+    go get golang.org/x/net@v0.57.0 && \
+    go get golang.org/x/text@v0.41.0 && \
+    go get google.golang.org/grpc@v1.83.1 && \
+    go get go.opentelemetry.io/otel@v1.44.0 && \
+    go get go.opentelemetry.io/otel/sdk@v1.44.0 && \
+    go mod tidy && \
+    go build -o /usr/bin/caddy -ldflags "-w -s" -trimpath .
 
-# curl is required by the HEALTHCHECK below and is not present in the base image
-RUN apk update && apk upgrade --no-cache && apk add --no-cache curl && rm -rf /var/cache/apk/*
+# `go get` resolves a module backwards rather than failing when pins conflict,
+# so assert the binary really carries the pinned grpc: a silent downgrade must
+# fail the build instead of shipping a caddy that only looks patched.
+RUN go version -m /usr/bin/caddy | grep -qE 'google\.golang\.org/grpc[[:space:]]v1\.83\.1[[:space:]]' \
+    || { echo "caddy was not built against the pinned grpc -- check the go get floors" >&2; exit 1; }
+
+FROM caddy:2.11.4-alpine AS production
+
+# curl is required by the HEALTHCHECK below and is not present in the base image.
+# OS security updates too: --available forces reinstall from the current repos;
+# bump APK_SECURITY_PATCH to bust buildx's cached layer (keyed on this command
+# string), otherwise a rebuild silently re-ships the old packages.
+ARG APK_SECURITY_PATCH=2026-09-07
+RUN echo "apk-security-patch ${APK_SECURITY_PATCH}" && apk update && apk upgrade --no-cache --available && apk add --no-cache curl && rm -rf /var/cache/apk/*
 
 COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
 

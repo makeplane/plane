@@ -7,8 +7,8 @@
 import { useEffect, useRef, useState } from "react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-import { ChevronDownIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { ChevronDownOutline } from "@makeplane/propel/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // local imports
 import type { TCustomImageAlignment } from "../../types";
 import { IMAGE_ALIGNMENT_OPTIONS } from "../../utils";
@@ -37,20 +37,20 @@ export function ImageAlignmentAction(props: Props) {
 
   return (
     <div ref={dropdownRef} className="relative h-full">
-      <Tooltip disabled={isTouchDevice} tooltipContent="Align">
+      <Tooltip disabled={isTouchDevice} label="Align">
         <button
           type="button"
           className="flex h-full items-center gap-1 text-white/60 transition-colors hover:text-white"
           onClick={() => setIsDropdownOpen((prev) => !prev)}
         >
           {activeAlignmentDetails && <activeAlignmentDetails.icon className="size-3 flex-shrink-0" />}
-          <ChevronDownIcon className="size-2 flex-shrink-0" />
+          <ChevronDownOutline className="size-2 flex-shrink-0" />
         </button>
       </Tooltip>
       {isDropdownOpen && (
         <div className="absolute top-full left-1/2 mt-0.5 flex h-7 -translate-x-1/2 items-center gap-2 rounded-sm bg-black/80 px-2">
           {IMAGE_ALIGNMENT_OPTIONS.map((option) => (
-            <Tooltip disabled={isTouchDevice} key={option.value} tooltipContent={option.label}>
+            <Tooltip disabled={isTouchDevice} key={option.value} label={option.label}>
               <button
                 type="button"
                 className="grid h-full flex-shrink-0 place-items-center text-white/60 transition-colors hover:text-white"

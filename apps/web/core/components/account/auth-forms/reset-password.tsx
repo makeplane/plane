@@ -8,13 +8,14 @@ import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // icons
-import { Eye, EyeOff } from "lucide-react";
+import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // ui
+import { Banner } from "@makeplane/propel/components/banner";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { PasswordStrengthIndicator } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { PasswordStrengthIndicator } from "@plane/blocks/auth";
 // components
 import { getPasswordStrength } from "@plane/utils";
 // helpers
@@ -23,7 +24,6 @@ import { EErrorAlertType, authErrorHandler } from "@/helpers/authentication.help
 // services
 import { AuthService } from "@/services/auth.service";
 // local imports
-import { AuthBanner } from "./auth-banner";
 import { FormContainer } from "./common/container";
 import { AuthFormHeader } from "./common/header";
 
@@ -103,7 +103,14 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
       <AuthFormHeader title="Reset password" description="Create a new password." />
 
       {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-        <AuthBanner message={errorInfo.message} handleBannerData={(value) => setErrorInfo(value)} />
+        <Banner
+          placement="inline"
+          variant="accent"
+          role="alert"
+          description={errorInfo.message}
+          dismissLabel={t("close")}
+          onDismiss={() => setErrorInfo(undefined)}
+        />
       )}
       <form
         className="space-y-4"
@@ -153,9 +160,9 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               className="grid size-5 place-items-center"
             >
               {showPassword.password ? (
-                <EyeOff className="size-5 stroke-placeholder" />
+                <HideOutline className="size-5 text-placeholder" />
               ) : (
-                <Eye className="size-5 stroke-placeholder" />
+                <ShowOutline className="size-5 text-placeholder" />
               )}
             </button>
           </InputGroup>
@@ -184,9 +191,9 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               className="grid size-5 place-items-center"
             >
               {showPassword.retypePassword ? (
-                <EyeOff className="size-5 stroke-placeholder" />
+                <HideOutline className="size-5 text-placeholder" />
               ) : (
-                <Eye className="size-5 stroke-placeholder" />
+                <ShowOutline className="size-5 text-placeholder" />
               )}
             </button>
           </InputGroup>
@@ -196,9 +203,14 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
             )}
         </div>
-        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-          {t("auth.common.password.submit")}
-        </Button>
+        <Button
+          type="submit"
+          variant="primary"
+          size="lg"
+          stretch="full"
+          label={t("auth.common.password.submit")}
+          disabled={isButtonDisabled}
+        />
       </form>
     </FormContainer>
   );

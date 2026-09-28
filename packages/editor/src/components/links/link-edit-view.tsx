@@ -5,7 +5,7 @@
  */
 
 import type { Node } from "@tiptap/pm/model";
-import { Link2Off } from "lucide-react";
+import { UnlinkOutline } from "@makeplane/propel/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 // components
 import type { LinkViewProps, LinkViews } from "@/components/links";
@@ -148,7 +148,7 @@ export function LinkEditView({ viewProps }: LinkEditViewProps) {
       <InputView label="Text" placeholder="Enter Text to display" value={localText} onChange={handleTextChange} />
       <div className="bg-strong mb-1 h-[1px] w-full gap-2" />
       <div className="flex items-center gap-2 text-13 text-secondary">
-        <Link2Off size={14} className="inline-block" />
+        <UnlinkOutline width={14} height={14} className="inline-block" />
         <button onClick={removeLink} className="cursor-pointer transition-colors hover:text-placeholder">
           Remove Link
         </button>

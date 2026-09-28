@@ -6,9 +6,9 @@
 
 import { Component, Fragment } from "react";
 import type { ErrorInfo, ReactNode } from "react";
-import { AlertTriangle } from "lucide-react";
+import { WarningTriangleOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 
 type Props = {
   children: ReactNode;
@@ -24,11 +24,9 @@ function LayoutErrorFallback({ onRetry }: { onRetry: () => void }) {
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-center">
-      <AlertTriangle className="size-8 text-tertiary" />
+      <WarningTriangleOutline className="size-8 text-tertiary" />
       <p className="text-14 text-secondary">{t("something_went_wrong")}</p>
-      <Button variant="secondary" size="sm" onClick={onRetry}>
-        {t("common.retry")}
-      </Button>
+      <Button variant="secondary" size="xs" stretch="auto" label={t("common.retry")} onClick={onRetry} />
     </div>
   );
 }

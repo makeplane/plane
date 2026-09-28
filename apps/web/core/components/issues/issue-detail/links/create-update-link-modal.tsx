@@ -7,14 +7,21 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Field } from "@makeplane/propel/components/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 // plane types
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { TIssueLinkEditableFields, TIssueServiceType } from "@plane/types";
-// plane ui
-import { ModalCore } from "@plane/ui";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
+import { InputField } from "@makeplane/propel/components/input-field";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
@@ -77,17 +84,21 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
   }, [preloadedData, reset, isModalOpen]);
 
   return (
-    <ModalCore isOpen={isModalOpen} handleClose={onClose}>
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
-        <div className="space-y-5 p-5">
-          <h3 className="text-h4-medium text-secondary">
-            {preloadedData?.id ? t("common.update_link") : t("common.add_link")}
-          </h3>
-          <div className="mt-2 space-y-3">
-            <div>
-              <label htmlFor="url" className="mb-2 text-secondary">
-                {t("common.url")}
-              </label>
+    <Dialog
+      open={isModalOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      <DialogContent size="md">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="flex min-h-0 flex-1 flex-col">
+          <DialogMain>
+            <DialogHeader>
+              <DialogHeading>
+                <DialogTitle>{preloadedData?.id ? t("common.update_link") : t("common.add_link")}</DialogTitle>
+              </DialogHeading>
+            </DialogHeader>
+            <DialogBody render={<div className="space-y-3" />}>
               <Controller
                 control={control}
                 name="url"
@@ -95,69 +106,62 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
                   required: "URL is required",
                 }}
                 render={({ field: { value, onChange, ref } }) => (
-                  <Field name="url" invalid={Boolean(errors.url)}>
-                    <InputGroup size="2xl">
-                      <Input
-                        size="2xl"
-                        id="url"
-                        type="text"
-                        value={value}
-                        onChange={onChange}
-                        ref={ref}
-                        placeholder={t("common.type_or_paste_a_url")}
-                      />
-                    </InputGroup>
-                  </Field>
+                  <InputField
+                    size="lg"
+                    orientation="vertical"
+                    id="url"
+                    type="text"
+                    label={t("common.url")}
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    error={errors.url ? t("common.url_is_invalid") : undefined}
+                    placeholder={t("common.type_or_paste_a_url")}
+                  />
                 )}
               />
-              {errors.url && (
-                <span className="text-caption-sm-regular text-danger-primary">{t("common.url_is_invalid")}</span>
-              )}
-            </div>
-            <div>
-              <label htmlFor="title" className="mb-2 text-secondary">
-                {t("common.display_title")}
-                <span className="block text-caption-xs-regular">{t("common.optional")}</span>
-              </label>
               <Controller
                 control={control}
                 name="title"
                 render={({ field: { value, onChange, ref } }) => (
-                  <Field name="title" invalid={Boolean(errors.title)}>
-                    <InputGroup size="2xl">
-                      <Input
-                        size="2xl"
-                        id="title"
-                        type="text"
-                        value={value}
-                        onChange={onChange}
-                        ref={ref}
-                        placeholder={t("common.link_title_placeholder")}
-                      />
-                    </InputGroup>
-                  </Field>
+                  <InputField
+                    size="lg"
+                    orientation="vertical"
+                    id="title"
+                    type="text"
+                    label={t("common.display_title")}
+                    hint={t("common.optional")}
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    error={errors.title?.message}
+                    placeholder={t("common.link_title_placeholder")}
+                  />
                 )}
               />
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-          <Button variant="secondary" size="lg" onClick={onClose}>
-            {t("common.cancel")}
-          </Button>
-          <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
-            {`${
-              preloadedData?.id
-                ? isSubmitting
-                  ? t("common.updating")
-                  : t("common.update")
-                : isSubmitting
-                  ? t("common.adding")
-                  : t("common.add")
-            } ${t("common.link")}`}
-          </Button>
-        </div>
-      </form>
-    </ModalCore>
+            </DialogBody>
+          </DialogMain>
+          <DialogActions>
+            <Button variant="secondary" size="md" stretch="auto" onClick={onClose} label={t("common.cancel")} />
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              type="submit"
+              loading={isSubmitting}
+              label={`${
+                preloadedData?.id
+                  ? isSubmitting
+                    ? t("common.updating")
+                    : t("common.update")
+                  : isSubmitting
+                    ? t("common.adding")
+                    : t("common.add")
+              } ${t("common.link")}`}
+            />
+          </DialogActions>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 });

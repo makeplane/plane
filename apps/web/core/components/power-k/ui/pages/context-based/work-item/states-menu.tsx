@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // plane types
 import { useParams } from "next/navigation";
 import type { TIssue } from "@plane/types";
-import { Spinner } from "@plane/ui";
+import { Spinner } from "@plane/blocks/spinner";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports

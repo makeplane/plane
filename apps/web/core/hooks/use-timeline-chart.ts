@@ -11,7 +11,7 @@ import { GANTT_TIMELINE_TYPE, type TTimelineTypeCore, type TTimelineType } from 
 import { StoreContext } from "@/lib/store-context";
 import type { IBaseTimelineStore } from "@/store/timeline/base-timeline.store";
 import type { ITimelineStore } from "@/store/timeline/timeline.store";
-import { useTimeLineType } from "../components/gantt-chart/contexts";
+import { useTimeLineType } from "@/components/gantt-chart/contexts";
 
 export const getTimelineStore = (
   timelineStore: ITimelineStore,

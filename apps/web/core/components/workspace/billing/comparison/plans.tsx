@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Mail, MessageCircle, MessageSquare } from "lucide-react";
+import { ChatOutline, MailOutline } from "@makeplane/propel/icons";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
 import { cn } from "@plane/utils";
@@ -51,7 +51,7 @@ type PlanePlans = {
 };
 
 function ForumIcon({ className }: { className?: string }) {
-  return <MessageSquare className={cn(className, "size-5 text-secondary")} />;
+  return <ChatOutline className={cn(className, "size-5 text-secondary")} />;
 }
 
 export function ComingSoonBadge({ className }: { className?: string }) {
@@ -1216,15 +1216,15 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
           ),
           one: (
             <div className="flex items-center gap-1">
-              <Mail className="size-4 flex-shrink-0" />
+              <MailOutline className="size-4 flex-shrink-0" />
               <ForumIcon className="size-4 flex-shrink-0" />
             </div>
           ),
           pro: (
             <div className="flex items-center gap-1">
-              <Mail className="size-4 flex-shrink-0" />
+              <MailOutline className="size-4 flex-shrink-0" />
               <ForumIcon className="size-4 flex-shrink-0" />
-              <MessageCircle className="size-4 flex-shrink-0" />
+              <ChatOutline className="size-4 flex-shrink-0" />
             </div>
           ),
           business: "Full-suite\nprofessional services",

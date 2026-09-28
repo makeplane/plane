@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { CircleCheck } from "lucide-react";
+import { TickCircleOutline } from "@makeplane/propel/icons";
 // plane internal packages
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { cn, getPasswordCriteria, getPasswordStrength } from "@plane/utils";
@@ -120,7 +120,7 @@ export function PasswordStrengthIndicator({
           {criteria.map((criterion) => (
             <div key={criterion.key} className="flex items-center gap-1.5">
               <div className="flex items-center justify-center p-0.5">
-                <CircleCheck
+                <TickCircleOutline
                   className={cn("h-3 w-3 flex-shrink-0", {
                     "text-success-primary": criterion.isValid,
                     "text-primary": !criterion.isValid,

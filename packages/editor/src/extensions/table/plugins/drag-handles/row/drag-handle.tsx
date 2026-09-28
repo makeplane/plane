@@ -17,7 +17,7 @@ import {
   useRole,
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/core";
-import { Ellipsis } from "lucide-react";
+import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
@@ -234,7 +234,7 @@ export function RowDragHandle(props: RowDragHandleProps) {
             "hover:bg-layer-1-hover": !isDropdownOpen,
           })}
         >
-          <Ellipsis className="size-4 rotate-90 text-primary" />
+          <MoreHorizontalOutline className="size-4 rotate-90 text-primary" />
         </button>
       </div>
       {isDropdownOpen && (

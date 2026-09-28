@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 // icons
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 // constants
 // helpers
 import type { EViewAccess } from "@plane/types";
@@ -44,7 +44,7 @@ export const AppliedAccessFilters = observer(function AppliedAccessFilters(props
                 className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(access)}
               >
-                <CloseIcon height={10} width={10} strokeWidth={2} />
+                <CloseOutline height={10} width={10} />
               </button>
             )}
           </div>

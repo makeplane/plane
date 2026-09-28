@@ -9,7 +9,7 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { CircularProgress } from "@makeplane/propel/components/circular-progress";
-import { CheckIcon } from "@plane/propel/icons";
+import { TickOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { TCycleGroups } from "@plane/types";
 // components
@@ -97,7 +97,7 @@ export const CyclesListItem = observer(function CyclesListItem(props: TCyclesLis
           </div>
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             {progress === 100 ? (
-              <CheckIcon className="h-3 w-3 stroke-2" />
+              <TickOutline className="h-3 w-3" />
             ) : (
               <span className="text-9 text-primary">{`${progress}%`}</span>
             )}

@@ -11,10 +11,19 @@ import { Controller, useForm } from "react-hook-form";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { Button } from "@makeplane/propel/components/button";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
+import { setToast } from "@plane/blocks/toast";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";
 import type { EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
@@ -62,7 +71,7 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
   const handleSignOut = async () => {
     await signOut().catch(() =>
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("auth.sign_out.toast.error.title"),
         message: t("auth.sign_out.toast.error.message"),
       })
@@ -76,7 +85,7 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
         await userService.verifyEmailCode({ email: formData.email, code: formData.code });
 
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: changeEmailT("toasts.success_title"),
           message: changeEmailT("toasts.success_message"),
         });
@@ -134,89 +143,118 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
   };
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
-      <div className="space-y-0 px-4 py-4">
-        <h3 className="text-16 leading-6 font-medium text-primary">{changeEmailT("title")}</h3>
-        <p className="my-4 text-13 text-secondary">{changeEmailT("description")}</p>
-      </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-4" noValidate>
-        <div className="flex flex-col gap-1">
-          {secondStep && <h4 className="text-13 font-medium text-secondary">{changeEmailT("form.email.label")}</h4>}
-          <Controller
-            control={control}
-            name="email"
-            rules={{
-              required: changeEmailT("form.email.errors.required"),
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: changeEmailT("form.email.errors.invalid"),
-              },
-            }}
-            render={({ field: { value, onChange, ref } }) => (
-              <Field name="email" invalid={Boolean(errors.email)}>
-                <InputGroup size="2xl">
-                  <Input
-                    size="2xl"
-                    id="email"
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="md">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col" noValidate>
+          <DialogMain>
+            <DialogHeader>
+              <DialogHeading>
+                <DialogTitle>{changeEmailT("title")}</DialogTitle>
+                <DialogDescription>{changeEmailT("description")}</DialogDescription>
+              </DialogHeading>
+            </DialogHeader>
+            <DialogBody tabIndex={0}>
+              <div className="space-y-4">
+                <div className="flex flex-col gap-1">
+                  {secondStep && (
+                    <h4 className="text-13 font-medium text-secondary">{changeEmailT("form.email.label")}</h4>
+                  )}
+                  <Controller
+                    control={control}
                     name="email"
-                    type="email"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    placeholder={changeEmailT("form.email.placeholder")}
-                    autoComplete="off"
-                    disabled={secondStep}
+                    rules={{
+                      required: changeEmailT("form.email.errors.required"),
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: changeEmailT("form.email.errors.invalid"),
+                      },
+                    }}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Field name="email" invalid={Boolean(errors.email)}>
+                        <InputGroup size="2xl">
+                          <Input
+                            size="2xl"
+                            id="email"
+                            name="email"
+                            type="email"
+                            value={value}
+                            onChange={onChange}
+                            ref={ref}
+                            placeholder={changeEmailT("form.email.placeholder")}
+                            autoComplete="off"
+                            disabled={secondStep}
+                          />
+                        </InputGroup>
+                      </Field>
+                    )}
                   />
-                </InputGroup>
-              </Field>
-            )}
-          />
-          {errors?.email && <span className="text-11 text-danger-primary">{errors?.email?.message}</span>}
-        </div>
+                  {errors?.email && <span className="text-11 text-danger-primary">{errors?.email?.message}</span>}
+                </div>
 
-        {secondStep && (
-          <div className="flex flex-col gap-1">
-            <h4 className="text-13 font-medium text-secondary">{changeEmailT("form.code.label")}</h4>
-            <Controller
-              control={control}
-              name="code"
-              rules={{ required: changeEmailT("form.code.errors.required") }}
-              render={({ field: { value, onChange, ref } }) => (
-                <InputGroup size="2xl">
-                  <Input
-                    size="2xl"
-                    id="code"
-                    name="code"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    placeholder={changeEmailT("form.code.placeholder")}
-                    autoComplete="off"
-                    autoFocus
-                  />
-                </InputGroup>
-              )}
+                {secondStep && (
+                  <div className="flex flex-col gap-1">
+                    <h4 className="text-13 font-medium text-secondary">{changeEmailT("form.code.label")}</h4>
+                    <Controller
+                      control={control}
+                      name="code"
+                      rules={{ required: changeEmailT("form.code.errors.required") }}
+                      render={({ field: { value, onChange, ref } }) => (
+                        <InputGroup size="2xl">
+                          <Input
+                            size="2xl"
+                            id="code"
+                            name="code"
+                            value={value}
+                            onChange={onChange}
+                            ref={ref}
+                            placeholder={changeEmailT("form.code.placeholder")}
+                            autoComplete="off"
+                            autoFocus
+                          />
+                        </InputGroup>
+                      )}
+                    />
+                    {errors?.code ? (
+                      <span className="text-11 text-danger-primary">{errors?.code?.message}</span>
+                    ) : (
+                      <span className="text-11 text-success-primary">{changeEmailT("form.code.helper_text")}</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </DialogBody>
+          </DialogMain>
+          <DialogActions>
+            <Button
+              type="button"
+              variant="secondary"
+              size="md"
+              stretch="auto"
+              label={changeEmailT("actions.cancel")}
+              onClick={handleClose}
             />
-            {errors?.code ? (
-              <span className="text-11 text-danger-primary">{errors?.code?.message}</span>
-            ) : (
-              <span className="text-11 text-success-primary">{changeEmailT("form.code.helper_text")}</span>
-            )}
-          </div>
-        )}
-        <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle py-4">
-          <Button type="button" variant="secondary" size="lg" onClick={handleClose}>
-            {changeEmailT("actions.cancel")}
-          </Button>
-          <Button type="submit" variant="primary" size="lg" disabled={isSubmitting}>
-            {isSubmitting
-              ? changeEmailT("states.sending")
-              : secondStep
-                ? changeEmailT("actions.confirm")
-                : changeEmailT("actions.continue")}
-          </Button>
-        </div>
-      </form>
-    </ModalCore>
+            <Button
+              type="submit"
+              variant="primary"
+              size="md"
+              stretch="auto"
+              label={
+                isSubmitting
+                  ? changeEmailT("states.sending")
+                  : secondStep
+                    ? changeEmailT("actions.confirm")
+                    : changeEmailT("actions.continue")
+              }
+              disabled={isSubmitting}
+            />
+          </DialogActions>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 });

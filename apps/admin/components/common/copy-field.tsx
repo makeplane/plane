@@ -9,7 +9,7 @@ import React from "react";
 import { Button } from "@makeplane/propel/components/button";
 import { CopyOutline } from "@makeplane/propel/icons";
 // components
-import { TOAST_TYPE, setToast } from "@/providers/toast";
+import { setToast } from "@plane/blocks/toast";
 
 type Props = {
   label: string;
@@ -40,7 +40,7 @@ export function CopyField(props: Props) {
         onClick={() => {
           navigator.clipboard.writeText(url);
           setToast({
-            type: TOAST_TYPE.INFO,
+            type: "info",
             title: "Copied to clipboard",
             message: `The ${label} has been successfully copied to your clipboard`,
           });

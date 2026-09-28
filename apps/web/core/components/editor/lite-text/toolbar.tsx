@@ -13,10 +13,10 @@ import type { EditorRefApi } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button } from "@plane/propel/button";
-import { GlobeIcon, LockIcon } from "@plane/propel/icons";
-import type { ISvgIcons } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Button } from "@makeplane/propel/components/button";
+import { GlobeOutline, LockOutline } from "@makeplane/propel/icons";
+import type { ISvgIcons } from "@plane/blocks/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // constants
 import { cn } from "@plane/utils";
 import type { ToolbarMenuItem } from "@plane/editor";
@@ -44,12 +44,12 @@ type TCommentAccessType = {
 
 const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
   {
-    icon: LockIcon,
+    icon: LockOutline,
     key: EIssueCommentAccessSpecifier.INTERNAL,
     label: "Private",
   },
   {
-    icon: GlobeIcon,
+    icon: GlobeOutline,
     key: EIssueCommentAccessSpecifier.EXTERNAL,
     label: "Public",
   },
@@ -110,7 +110,7 @@ export function IssueCommentToolbar(props: Props) {
             const isAccessActive = accessSpecifier === access.key;
 
             return (
-              <Tooltip key={access.key} tooltipContent={access.label}>
+              <Tooltip key={access.key} label={access.label} layout="stacked">
                 <button
                   type="button"
                   onClick={() => handleAccessChange?.(access.key)}
@@ -143,15 +143,7 @@ export function IssueCommentToolbar(props: Props) {
                 const isItemActive = activeStates[item.renderKey];
 
                 return (
-                  <Tooltip
-                    key={item.renderKey}
-                    tooltipContent={
-                      <p className="flex flex-col gap-1 text-center text-11">
-                        <span className="font-medium">{item.name}</span>
-                        {item.shortcut && <kbd className="text-placeholder">{item.shortcut.join(" + ")}</kbd>}
-                      </p>
-                    }
-                  >
+                  <Tooltip key={item.renderKey} label={item.name} shortcut={item.shortcut?.join(" + ")}>
                     <button
                       type="button"
                       onClick={() => executeCommand(item)}
@@ -180,13 +172,13 @@ export function IssueCommentToolbar(props: Props) {
             <Button
               type="submit"
               variant="primary"
-              className="px-2.5 py-1.5 text-11"
+              size="sm"
+              stretch="auto"
+              label={t(submitButtonText)}
               onClick={handleSubmit}
               disabled={isSubmitButtonDisabled}
               loading={isSubmitting}
-            >
-              {t(submitButtonText)}
-            </Button>
+            />
           </div>
         )}
       </div>

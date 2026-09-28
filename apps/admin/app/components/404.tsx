@@ -26,11 +26,16 @@ function PageNotFound() {
               temporarily unavailable.
             </p>
           </div>
-          <Link to="/general/">
-            <span className="flex justify-center py-4">
-              <Button variant="secondary" size="md" stretch="auto" label="Go to general settings" />
-            </span>
-          </Link>
+          <div className="flex justify-center py-4">
+            <Button
+              variant="secondary"
+              size="md"
+              stretch="auto"
+              nativeButton={false}
+              render={<Link to="/general/" />}
+              label="Go to general settings"
+            />
+          </div>
         </div>
       </div>
     </div>

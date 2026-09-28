@@ -5,19 +5,19 @@
  */
 
 import { observer } from "mobx-react";
-import { CheckCheck, RefreshCw } from "lucide-react";
+import { CheckDoneOutline, RefreshOutline } from "@makeplane/propel/icons";
 // plane imports
 import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/propel/tooltip";
-import { Spinner } from "@plane/ui";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { NotificationFilter } from "../../filters/menu";
 import { NotificationHeaderMenuOption } from "./menu-option";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 type TNotificationSidebarHeaderOptions = {
   workspaceSlug: string;
@@ -54,25 +54,30 @@ export const NotificationSidebarHeaderOptions = observer(function NotificationSi
   return (
     <div className="relative flex items-center justify-center gap-2 text-body-xs-medium">
       {/* mark all notifications as read*/}
-      <Tooltip tooltipContent={t("notification.options.mark_all_as_read")} isMobile={isMobile} position="bottom">
+      <Tooltip label={t("notification.options.mark_all_as_read")} side="bottom" disabled={isMobile}>
         <IconButton
-          size="base"
+          size="sm"
           variant="ghost"
-          icon={loader === ENotificationLoader.MARK_ALL_AS_READY ? Spinner : CheckCheck}
+          icon={<Icon icon={CheckDoneOutline} />}
+          loading={loader === ENotificationLoader.MARK_ALL_AS_READY}
+          aria-label={t("notification.options.mark_all_as_read")}
           onClick={() => {
-            handleMarkAllNotificationsAsRead();
+            void handleMarkAllNotificationsAsRead();
           }}
         />
       </Tooltip>
 
       {/* refetch current notifications */}
-      <Tooltip tooltipContent={t("notification.options.refresh")} isMobile={isMobile} position="bottom">
+      <Tooltip label={t("notification.options.refresh")} side="bottom" disabled={isMobile}>
         <IconButton
-          size="base"
+          size="sm"
           variant="ghost"
-          icon={RefreshCw}
-          className={loader === ENotificationLoader.MUTATION_LOADER ? "animate-spin" : ""}
-          onClick={refreshNotifications}
+          icon={<Icon icon={RefreshOutline} />}
+          aria-label={t("notification.options.refresh")}
+          loading={loader === ENotificationLoader.MUTATION_LOADER}
+          onClick={() => {
+            void refreshNotifications();
+          }}
         />
       </Tooltip>
 

@@ -58,12 +58,6 @@ export const PowerKModalSearchResults = observer(function PowerKModalSearchResul
                   onSelect={() => {
                     closePalette();
                     router.push(currentSection.path(item, projectId));
-                    // const itemProjectId =
-                    //   item?.project_id ||
-                    //   (Array.isArray(item?.project_ids) && item?.project_ids?.length > 0
-                    //     ? item?.project_ids[0]
-                    //     : undefined);
-                    // if (itemProjectId) openProjectAndScrollToSidebar(itemProjectId);
                   }}
                   value={value}
                 />

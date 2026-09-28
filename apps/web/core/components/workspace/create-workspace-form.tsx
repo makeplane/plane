@@ -12,11 +12,11 @@ import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspace } from "@plane/types";
 // ui
-import { CustomSelect } from "@plane/ui";
+import { Select } from "@plane/blocks/select";
 import { validateWorkspaceName, validateSlug } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -77,7 +77,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
         try {
           const workspaceResponse = await createWorkspace(formData);
           setToast({
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("workspace_creation.toast.success.title"),
             message: t("workspace_creation.toast.success.message"),
           });
@@ -85,7 +85,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
           if (onSubmit) await onSubmit(workspaceResponse);
         } catch {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("workspace_creation.toast.error.title"),
             message: t("workspace_creation.toast.error.message"),
           });
@@ -95,7 +95,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
       }
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("workspace_creation.toast.error.title"),
         message: t("workspace_creation.toast.error.message"),
       });
@@ -218,25 +218,24 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
               control={control}
               rules={{ required: t("common.errors.required") }}
               render={({ field: { value, onChange } }) => (
-                <CustomSelect
-                  value={value}
+                <Select<string>
+                  value={ORGANIZATION_SIZE.find((item) => item === value) ?? null}
                   onChange={onChange}
-                  label={
-                    ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-placeholder">
-                        {t("workspace_creation.form.organization_size.placeholder")}
-                      </span>
-                    )
-                  }
-                  buttonClassName="border border-subtle bg-layer-2 !shadow-none !rounded-md"
-                  input
+                  getValues={() => ORGANIZATION_SIZE}
+                  getOptionValue={(item) => item}
+                  getOptionLabel={(item) => item}
+                  showSearch={false}
+                  pinSelected={false}
+                  placeholder={t("workspace_creation.form.organization_size.placeholder")}
                 >
-                  {ORGANIZATION_SIZE.map((item) => (
-                    <CustomSelect.Option key={item} value={item}>
-                      {item}
-                    </CustomSelect.Option>
-                  ))}
-                </CustomSelect>
+                  <Select.Trigger<string> variant="select-2xl">
+                    {(selected) => (
+                      <span className="grow truncate text-left">
+                        {selected[0] ?? t("workspace_creation.form.organization_size.placeholder")}
+                      </span>
+                    )}
+                  </Select.Trigger>
+                </Select>
               )}
             />
             {errors.organization_size && (
@@ -247,13 +246,24 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
       </div>
       <div className="flex items-center gap-4">
         {secondaryButton}
-        <Button variant="primary" type="submit" size="xl" disabled={!isValid} loading={isSubmitting}>
-          {isSubmitting ? t(primaryButtonText.loading) : t(primaryButtonText.default)}
-        </Button>
+        <Button
+          variant="primary"
+          type="submit"
+          size="lg"
+          stretch="auto"
+          label={isSubmitting ? t(primaryButtonText.loading) : t(primaryButtonText.default)}
+          disabled={!isValid}
+          loading={isSubmitting}
+        />
         {!secondaryButton && (
-          <Button variant="secondary" type="button" size="xl" onClick={() => router.back()}>
-            {t("common.go_back")}
-          </Button>
+          <Button
+            variant="secondary"
+            type="button"
+            size="lg"
+            stretch="auto"
+            label={t("common.go_back")}
+            onClick={() => router.back()}
+          />
         )}
       </div>
     </form>

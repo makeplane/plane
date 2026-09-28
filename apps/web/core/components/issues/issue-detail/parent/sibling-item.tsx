@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // ui
-import { CustomMenu } from "@plane/ui";
+import { MenuLinkItem } from "@makeplane/propel/components/menu";
 // helpers
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
@@ -44,12 +44,12 @@ export const IssueParentSiblingItem = observer(function IssueParentSiblingItem(p
 
   return (
     <>
-      <CustomMenu.MenuItem
+      <MenuLinkItem
         key={issueDetail.id}
-        onClick={() => window.open(workItemLink, "_blank", "noopener,noreferrer")}
-      >
-        <div className="flex items-center gap-2 py-0.5">
-          {issueDetail.project_id && projectDetails?.identifier && (
+        href={workItemLink}
+        external
+        icon={
+          issueDetail.project_id && projectDetails?.identifier ? (
             <IssueIdentifier
               projectId={issueDetail.project_id}
               issueTypeId={issueDetail.type_id}
@@ -57,9 +57,10 @@ export const IssueParentSiblingItem = observer(function IssueParentSiblingItem(p
               issueSequenceId={issueDetail.sequence_id}
               size="xs"
             />
-          )}
-        </div>
-      </CustomMenu.MenuItem>
+          ) : undefined
+        }
+        label={issueDetail.name}
+      />
     </>
   );
 });

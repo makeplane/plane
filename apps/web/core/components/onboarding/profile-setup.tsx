@@ -7,17 +7,18 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Eye, EyeOff } from "lucide-react";
+import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/elements/button";
+import { setToast } from "@plane/blocks/toast";
 import type { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
-import { PasswordStrengthIndicator, Spinner } from "@plane/ui";
+import { PasswordStrengthIndicator } from "@plane/blocks/auth";
+import { Spinner } from "@plane/blocks/spinner";
 // components
 import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
@@ -138,7 +139,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success",
         message: "Profile setup completed!",
       });
@@ -148,7 +149,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       }
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error",
         message: "Profile setup failed. Please try again!",
       });
@@ -173,7 +174,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       });
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error",
         message: "User details update failed. Please try again!",
       });
@@ -191,7 +192,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success",
         message: "Profile setup completed!",
       });
@@ -201,7 +202,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       }
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error",
         message: "Profile setup failed. Please try again!",
       });
@@ -409,9 +410,9 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                               onClick={() => handleShowPassword("password")}
                             >
                               {showPassword.password ? (
-                                <EyeOff className="size-4 stroke-placeholder" />
+                                <HideOutline className="size-4 text-placeholder" />
                               ) : (
-                                <Eye className="size-4 stroke-placeholder" />
+                                <ShowOutline className="size-4 text-placeholder" />
                               )}
                             </button>
                           </InputGroup>
@@ -452,9 +453,9 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                               onClick={() => handleShowPassword("retypePassword")}
                             >
                               {showPassword.retypePassword ? (
-                                <EyeOff className="size-4 stroke-placeholder" />
+                                <HideOutline className="size-4 text-placeholder" />
                               ) : (
-                                <Eye className="size-4 stroke-placeholder" />
+                                <ShowOutline className="size-4 text-placeholder" />
                               )}
                             </button>
                           </InputGroup>
@@ -552,7 +553,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               </div>
             </>
           )}
-          <Button variant="primary" type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
+          <Button variant="primary" type="submit" size="lg" stretch="full" disabled={isButtonDisabled}>
             {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
           </Button>
         </form>

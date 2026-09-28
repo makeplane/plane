@@ -6,7 +6,8 @@
 
 import { observer } from "mobx-react";
 // ui
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Dialog, DialogBody, DialogContent, DialogMain } from "@makeplane/propel/components/dialog";
+import { useTranslation } from "@plane/i18n";
 // components
 import { ProductUpdatesFooter } from "@/components/global";
 // plane web components
@@ -20,12 +21,25 @@ export type ProductUpdatesModalProps = {
 
 export const ProductUpdatesModal = observer(function ProductUpdatesModal(props: ProductUpdatesModalProps) {
   const { isOpen, handleClose } = props;
+  // plane hooks
+  const { t } = useTranslation();
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXXXL}>
-      <ProductUpdatesHeader />
-      <ProductUpdatesChangelog />
-      <ProductUpdatesFooter />
-    </ModalCore>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="lg" aria-label={t("whats_new")}>
+        <ProductUpdatesHeader />
+        <DialogMain>
+          <DialogBody tabIndex={0}>
+            <ProductUpdatesChangelog />
+          </DialogBody>
+        </DialogMain>
+        <ProductUpdatesFooter />
+      </DialogContent>
+    </Dialog>
   );
 });

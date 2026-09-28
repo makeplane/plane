@@ -13,7 +13,7 @@ import type { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys }
 // components
 import type { TControllerInputFormField } from "@/components/common/controller-input";
 import { ControllerInput } from "@/components/common/controller-input";
-import { TOAST_TYPE, setToast } from "@/providers/toast";
+import { setToast } from "@plane/blocks/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 // local components
@@ -112,7 +112,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
     await updateInstanceConfigurations(payload)
       .then(() =>
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success",
           message: "Email Settings updated successfully",
         })
@@ -164,6 +164,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
           <div className="flex flex-col gap-1">
             <h4 className="text-13 text-tertiary">Email security</h4>
             <Select
+              items={EMAIL_SECURITY_OPTIONS}
               value={emailSecurityKey}
               onValueChange={(value) => handleEmailSecurityChange(value as TEmailSecurityKeys)}
             >

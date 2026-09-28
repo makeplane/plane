@@ -7,15 +7,15 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Eye, EyeOff } from "lucide-react";
+import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { PasswordStrengthIndicator } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { setToast } from "@plane/blocks/toast";
+import { PasswordStrengthIndicator } from "@plane/blocks/auth";
 import { getPasswordStrength } from "@plane/utils";
 // components
 import { ProfileSettingsHeading } from "@/components/settings/profile/heading";
@@ -90,7 +90,7 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
       reset(defaultValues);
       setShowPassword(defaultShowPassword);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("auth.common.password.toast.change_password.success.title"),
         message: t("auth.common.password.toast.change_password.success.message"),
       });
@@ -100,7 +100,7 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
       const errorInfo = code ? authErrorHandler(code as EAuthenticationErrorCodes) : undefined;
 
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: errorInfo?.title ?? t("auth.common.password.toast.change_password.error.title"),
         message:
           typeof errorInfo?.message === "string"
@@ -165,9 +165,9 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
                         aria-label={showPassword?.oldPassword ? "Hide password" : "Show password"}
                       >
                         {showPassword?.oldPassword ? (
-                          <EyeOff className="size-5 stroke-placeholder" />
+                          <HideOutline className="size-5 text-placeholder" />
                         ) : (
-                          <Eye className="size-5 stroke-placeholder" />
+                          <ShowOutline className="size-5 text-placeholder" />
                         )}
                       </button>
                     </InputGroup>
@@ -209,9 +209,9 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
                         aria-label={showPassword?.password ? "Hide password" : "Show password"}
                       >
                         {showPassword?.password ? (
-                          <EyeOff className="size-5 stroke-placeholder" />
+                          <HideOutline className="size-5 text-placeholder" />
                         ) : (
-                          <Eye className="size-5 stroke-placeholder" />
+                          <ShowOutline className="size-5 text-placeholder" />
                         )}
                       </button>
                     </InputGroup>
@@ -257,9 +257,9 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
                         aria-label={showPassword?.confirmPassword ? "Hide password" : "Show password"}
                       >
                         {showPassword?.confirmPassword ? (
-                          <EyeOff className="size-5 stroke-placeholder" />
+                          <HideOutline className="size-5 text-placeholder" />
                         ) : (
-                          <Eye className="size-5 stroke-placeholder" />
+                          <ShowOutline className="size-5 text-placeholder" />
                         )}
                       </button>
                     </InputGroup>
@@ -272,11 +272,19 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
             </div>
           </div>
           <div>
-            <Button variant="primary" size="xl" type="submit" loading={isSubmitting} disabled={isButtonDisabled}>
-              {isSubmitting
-                ? `${t("auth.common.password.change_password.label.submitting")}`
-                : t("auth.common.password.change_password.label.default")}
-            </Button>
+            <Button
+              variant="primary"
+              size="lg"
+              stretch="auto"
+              type="submit"
+              label={
+                isSubmitting
+                  ? `${t("auth.common.password.change_password.label.submitting")}`
+                  : t("auth.common.password.change_password.label.default")
+              }
+              loading={isSubmitting}
+              disabled={isButtonDisabled}
+            />
           </div>
         </div>
       </form>

@@ -5,12 +5,11 @@
  */
 
 import { useEffect, useState } from "react";
-import { CircleCheck, XCircle } from "lucide-react";
+import { CloseCircleOutline, TickCircleOutline } from "@makeplane/propel/icons";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { API_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { Spinner } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
 // constants
 // helpers
 import { EAuthModes } from "@/helpers/authentication.helper";
@@ -118,7 +117,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
               aria-label={t("aria_labels.auth_forms.clear_email")}
               onClick={handleEmailClear}
             >
-              <XCircle className="size-5 stroke-placeholder" />
+              <CloseCircleOutline className="size-5 text-placeholder" />
             </button>
           )}
         </InputGroup>
@@ -142,7 +141,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
         </InputGroup>
         <div className="flex w-full items-center justify-between px-1 pt-1 text-11">
           <p className="flex items-center gap-1 font-medium text-success-primary">
-            <CircleCheck height={12} width={12} />
+            <TickCircleOutline height={12} width={12} />
             {t("auth.common.unique_code.paste_code")}
           </p>
           <button
@@ -165,15 +164,15 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       </div>
 
       <div className="space-y-2.5">
-        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-          {isRequestingNewCode ? (
-            t("auth.common.unique_code.sending_code")
-          ) : isSubmitting ? (
-            <Spinner height="20px" width="20px" />
-          ) : (
-            t("common.continue")
-          )}
-        </Button>
+        <Button
+          type="submit"
+          variant="primary"
+          size="lg"
+          stretch="full"
+          disabled={isButtonDisabled}
+          loading={isSubmitting}
+          label={isRequestingNewCode ? t("auth.common.unique_code.sending_code") : t("common.continue")}
+        />
       </div>
     </form>
   );

@@ -8,11 +8,10 @@ import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
 import ts from "highlight.js/lib/languages/typescript";
 import { common, createLowlight } from "lowlight";
-import { CheckIcon } from "lucide-react";
+import { CopyOutline, TickOutline } from "@makeplane/propel/icons";
 import { useState } from "react";
-import { CopyIcon } from "@plane/propel/icons";
 // ui
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
 // types
@@ -46,7 +45,7 @@ export function CodeBlockComponent({ node }: Props) {
 
   return (
     <NodeViewWrapper key={attrs[ECodeBlockAttributeNames.ID]} className="code-block group/code relative">
-      <Tooltip tooltipContent="Copy code">
+      <Tooltip label="Copy code">
         <button
           type="button"
           className={cn(
@@ -58,9 +57,9 @@ export function CodeBlockComponent({ node }: Props) {
           onClick={(e) => void copyToClipboard(e)}
         >
           {copied ? (
-            <CheckIcon className="h-3 w-3 text-success-primary" strokeWidth={3} />
+            <TickOutline className="h-3 w-3 text-success-primary" />
           ) : (
-            <CopyIcon className="h-3 w-3 text-tertiary group-hover/button:text-primary" />
+            <CopyOutline className="h-3 w-3 text-tertiary group-hover/button:text-primary" />
           )}
         </button>
       </Tooltip>
