@@ -6,15 +6,16 @@
 
 import { observer } from "mobx-react";
 // plane types
-import { PriorityIcon, StateGroupIcon, WorkItemsIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { PriorityIcon, StateGroupIcon } from "@plane/blocks/icons";
+import { WorkItemsOutline } from "@makeplane/propel/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TActivityEntityData, TIssueEntityData } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // plane ui
 import { calculateTimeAgo, generateWorkItemLink } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
-import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { MemberSelect } from "@/components/dropdowns/member/member-select";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -23,7 +24,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 
 type BlockProps = {
   activity: TActivityEntityData;
-  ref: React.RefObject<HTMLDivElement>;
+  ref: React.RefObject<HTMLDivElement | null>;
   workspaceSlug: string;
 };
 export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
@@ -82,7 +83,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
           ) : (
             <div className="flex items-center justify-center gap-2">
               <div className="grid size-8 flex-shrink-0 place-items-center rounded-sm bg-layer-2">
-                <WorkItemsIcon className="size-4 text-tertiary" />
+                <WorkItemsOutline className="size-4 text-tertiary" />
               </div>
               <div className="text-13 font-medium whitespace-nowrap text-placeholder">
                 {issueDetails?.project_identifier}-{issueDetails?.sequence_id}
@@ -98,7 +99,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
       }
       quickActionElement={
         <div className="flex gap-4">
-          <Tooltip tooltipHeading="State" tooltipContent={state?.name ?? "State"}>
+          <Tooltip label={`State: ${state?.name ?? "State"}`} layout="stacked">
             <div>
               <StateGroupIcon
                 stateGroup={state?.group ?? "backlog"}
@@ -108,25 +109,20 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
               />
             </div>
           </Tooltip>
-          <Tooltip tooltipHeading="Priority" tooltipContent={issueDetails?.priority ?? "Priority"}>
+          <Tooltip label={`Priority: ${issueDetails?.priority ?? "Priority"}`}>
             <div>
-              <PriorityIcon priority={issueDetails?.priority} withContainer size={12} />
+              <PriorityIcon priority={issueDetails?.priority} className="size-4" />
             </div>
           </Tooltip>
           {issueDetails?.assignees?.length > 0 && (
             <div className="h-5">
-              <MemberDropdown
+              <MemberSelect
                 projectId={issueDetails?.project_id}
                 value={issueDetails?.assignees}
                 onChange={() => {}}
                 disabled
                 multiple
-                buttonVariant={issueDetails?.assignees?.length > 0 ? "transparent-without-text" : "border-without-text"}
-                buttonClassName={issueDetails?.assignees?.length > 0 ? "hover:bg-transparent px-0" : ""}
-                showTooltip={issueDetails?.assignees?.length === 0}
-                placeholder="Assignees"
-                optionsClassName="z-10"
-                tooltipContent=""
+                variant="avatar-group-sm"
               />
             </div>
           )}

@@ -8,14 +8,14 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
-import { CheckCircle } from "lucide-react";
+import { TickCircleOutline } from "@makeplane/propel/icons";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Button } from "@makeplane/propel/components/button";
+import { setToast } from "@plane/blocks/toast";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // ui
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/skeleton";
 // assets
 import GithubLogo from "@/app/assets/services/github.png?url";
 import SlackLogo from "@/app/assets/services/slack.png?url";
@@ -90,7 +90,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
         setDeletingIntegration(false);
 
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Deleted successfully!",
           message: `${integration.title} integration deleted successfully.`,
         });
@@ -99,7 +99,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
         setDeletingIntegration(false);
 
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: `${integration.title} integration could not be deleted. Please try again.`,
         });
@@ -124,7 +124,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
           <h3 className="flex items-center gap-2 text-body-xs-medium">
             {integration.title}
             {workspaceIntegrations
-              ? isInstalled && <CheckCircle className="h-3.5 w-3.5 fill-transparent text-success-primary" />
+              ? isInstalled && <TickCircleOutline className="h-3.5 w-3.5 fill-transparent text-success-primary" />
               : null}
           </h3>
           <p className="text-body-xs-regular text-secondary">
@@ -140,40 +140,42 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
       {workspaceIntegrations ? (
         isInstalled ? (
           <Tooltip
-            isMobile={isMobile}
-            disabled={isUserAdmin}
-            tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
+            label={!isUserAdmin ? "You don't have permission to perform this" : ""}
+            layout="stacked"
+            disabled={isUserAdmin || isMobile}
           >
             <Button
-              className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
-              variant="error-fill"
+              render={<button className={!isUserAdmin ? "hover:cursor-not-allowed" : ""} />}
+              variant="danger"
+              size="sm"
+              stretch="auto"
               onClick={() => {
                 if (!isUserAdmin) return;
                 handleRemoveIntegration();
               }}
               disabled={!isUserAdmin}
               loading={deletingIntegration}
-            >
-              {deletingIntegration ? "Uninstalling..." : "Uninstall"}
-            </Button>
+              label={deletingIntegration ? "Uninstalling..." : "Uninstall"}
+            />
           </Tooltip>
         ) : (
           <Tooltip
-            isMobile={isMobile}
-            disabled={isUserAdmin}
-            tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
+            label={!isUserAdmin ? "You don't have permission to perform this" : ""}
+            layout="stacked"
+            disabled={isUserAdmin || isMobile}
           >
             <Button
-              className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
+              render={<button className={!isUserAdmin ? "hover:cursor-not-allowed" : ""} />}
               variant="primary"
+              size="sm"
+              stretch="auto"
               onClick={() => {
                 if (!isUserAdmin) return;
                 startAuth();
               }}
               loading={isInstalling}
-            >
-              {isInstalling ? "Installing..." : "Install"}
-            </Button>
+              label={isInstalling ? "Installing..." : "Install"}
+            />
           </Tooltip>
         )
       ) : (

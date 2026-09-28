@@ -23,6 +23,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
+    "@makeplane/propel": "catalog:",
     "@plane/constants": "workspace:*",
     "@plane/types": "workspace:*",
     "chroma-js": "catalog:",

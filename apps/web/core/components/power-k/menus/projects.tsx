@@ -6,7 +6,7 @@
 
 import React from "react";
 // components
-import { Logo } from "@plane/propel/emoji-icon-picker";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
 // plane imports
 import type { TPartialProject } from "@plane/types";
 // local imports

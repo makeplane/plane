@@ -7,14 +7,13 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ListFilter } from "lucide-react";
+import { CloseOutline, FilterOutline, SearchOutline } from "@makeplane/propel/icons";
 // plane helpers
 import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TModuleFilters } from "@plane/types";
 // ui
 import { cn, calculateTotalFilters } from "@plane/utils";
@@ -29,7 +28,8 @@ import { useMember } from "@/hooks/store/use-member";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { ModuleLayoutIcon } from "./module-layout-icon";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 // i18n
 
 export const ModuleViewHeader = observer(function ModuleViewHeader() {
@@ -104,13 +104,14 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
         {!isSearchOpen && (
           <IconButton
             variant="ghost"
-            size="lg"
-            className="p- -mr-1"
+            size="md"
+            render={<button type="button" className="-mr-1" />}
             onClick={() => {
               setIsSearchOpen(true);
               inputRef.current?.focus();
             }}
-            icon={SearchIcon}
+            icon={<Icon icon={SearchOutline} />}
+            aria-label={t("common.search.label")}
           />
         )}
         <div
@@ -121,7 +122,7 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
             }
           )}
         >
-          <SearchIcon className="h-3.5 w-3.5" />
+          <SearchOutline className="h-3.5 w-3.5" />
           <input
             ref={inputRef}
             className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
@@ -139,7 +140,7 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
                 setIsSearchOpen(false);
               }}
             >
-              <CloseIcon className="h-3 w-3" />
+              <CloseOutline className="h-3 w-3" />
             </button>
           )}
         </div>
@@ -154,7 +155,7 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
         }}
       />
       <FiltersDropdown
-        icon={<ListFilter className="h-3 w-3" />}
+        icon={<FilterOutline className="h-3 w-3" />}
         title="Filters"
         placement="bottom-end"
         isFiltersApplied={isFiltersApplied}
@@ -172,7 +173,7 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
       </FiltersDropdown>
       <div className="hidden items-center gap-1 rounded-sm bg-layer-3 p-1 md:flex">
         {MODULE_VIEW_LAYOUTS.map((layout) => (
-          <Tooltip key={layout.key} tooltipContent={t(layout.i18n_title)} isMobile={isMobile}>
+          <Tooltip key={layout.key} label={t(layout.i18n_title)} disabled={isMobile}>
             <button
               type="button"
               className={cn(
