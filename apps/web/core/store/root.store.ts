@@ -16,6 +16,8 @@ import type { IBasePowerKStore as IPowerKStore } from "@/store/base-power-k.stor
 import { BasePowerKStore as PowerKStore } from "@/store/base-power-k.store";
 import type { IStateStore } from "@/store/state.store";
 import { StateStore } from "@/store/state.store";
+import type { IWorkflowStore } from "@/store/workflow.store";
+import { WorkflowStore } from "@/store/workflow.store";
 import type { ICommandPaletteStore } from "@/store/base-command-palette.store";
 import { CommandPaletteStore } from "@/store/base-command-palette.store";
 import { WorkspaceRootStore } from "@/store/workspace";
@@ -90,6 +92,7 @@ export class CoreRootStore {
   globalView: IGlobalViewStore;
   issue: IIssueRootStore;
   state: IStateStore;
+  workflow: IWorkflowStore;
   label: ILabelStore;
   analytics: IAnalyticsStore;
   projectPages: IProjectPageStore;
@@ -130,6 +133,7 @@ export class CoreRootStore {
     this.globalView = new GlobalViewStore(this);
     this.issue = new IssueRootStore(this);
     this.state = new StateStore(this);
+    this.workflow = new WorkflowStore(this);
     this.label = new LabelStore(this);
     this.multipleSelect = new MultipleSelectStore();
     this.projectInbox = new ProjectInboxStore(this);
@@ -168,6 +172,7 @@ export class CoreRootStore {
     this.globalView = new GlobalViewStore(this);
     this.issue = new IssueRootStore(this);
     this.state = new StateStore(this);
+    this.workflow = new WorkflowStore(this);
     this.label = new LabelStore(this);
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);

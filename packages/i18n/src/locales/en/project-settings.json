@@ -316,7 +316,135 @@
           "title": "Error!",
           "message": "Failed to add states. Please try again."
         }
-      }
+      },
+      "list": {
+        "default_badge": "Default",
+        "active_badge": "Active",
+        "inactive_badge": "Inactive",
+        "assigned_types": "Assigned work item types",
+        "unassigned_types": "All types",
+        "modified_at": "Modified",
+        "empty_state": {
+          "title": "No workflows yet",
+          "description": "Create your first workflow to control how work items move through this project."
+        },
+        "no_results": "No workflows match your search.",
+        "enable": "Enable workflow",
+        "disable": "Disable workflow",
+        "toggle_error": "Could not update the workflow. Please try again.",
+        "toggle_success": "Workflow updated successfully.",
+        "row_actions": "Workflow actions"
+      },
+      "filters": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "all_statuses": "All statuses",
+        "all_types": "All work item types"
+      },
+      "states": {
+        "heading": "States in this revision",
+        "description": "Only states included here can be reached by this workflow. At least one must allow new work items.",
+        "add_heading": "Add states",
+        "add_description": "Pick the project states this workflow should include.",
+        "allow_new_work_items": "Allow new work items",
+        "allow_new_work_items_tooltip": "Work items in this workflow can be created in this state.",
+        "add_button": "Add states",
+        "empty_state": {
+          "title": "No states included",
+          "description": "Add at least one project state before this revision can be published."
+        },
+        "all_included": "All project states are already included in this revision.",
+        "success": {
+          "title": "Success!",
+          "message": "States added successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Failed to update states. Please try again."
+        },
+        "remove_confirm": "Remove this state from the revision? Items already bound to it keep their current state."
+      },
+      "transitions": {
+        "heading": "Transitions",
+        "description": "Transitions move a work item from one state to another. Every active transition needs at least one actor.",
+        "add_button": "Add transition",
+        "empty_state": {
+          "title": "No transitions configured",
+          "description": "Without transitions a published workflow cannot move work items between states."
+        },
+        "source": "From state",
+        "target": "To state",
+        "reject": "Reject to state",
+        "type": "Type",
+        "by": "By",
+        "actors": "Allowed actors",
+        "add_actor": "Add actor",
+        "no_actors": "No actors configured",
+        "no_actors_tooltip": "An active transition with no actors cannot be performed and returns an error at runtime.",
+        "active": "Enabled",
+        "approval": "Approval",
+        "transition": "Transition",
+        "add_heading": "Add transition",
+        "add_description": "Choose the states this transition connects.",
+        "same_state": "From and to state must differ.",
+        "missing_actors": "Add at least one actor so this transition can be performed.",
+        "success": {
+          "title": "Success!",
+          "message": "Transitions updated successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Failed to update transitions. Please try again."
+        },
+        "mixed_flow_type": "All enabled transitions out of a state must be the same type.",
+        "read_only_notice": "Published and retired revisions are read-only. Create a draft revision to make changes."
+      },
+      "types": {
+        "heading": "Work item types",
+        "description": "Assign this workflow to specific work item types. Anything unassigned uses the project's default workflow.",
+        "assign_button": "Assign type",
+        "none_assigned": "No work item types assigned",
+        "empty_select": "This workflow is already assigned to every work item type.",
+        "success": {
+          "title": "Success!",
+          "message": "Work item type assignment updated."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Failed to update work item type assignment. Please try again."
+        }
+      },
+      "revision": {
+        "heading": "Revision",
+        "draft": "Draft",
+        "published": "Published",
+        "retired": "Retired",
+        "version": "Version {{version}}",
+        "no_revision": "No revision has been created yet.",
+        "create_draft": "Create draft revision",
+        "publish": "Publish revision",
+        "publish_loading": "Publishing revision",
+        "publish_success": {
+          "title": "Success!",
+          "message": "Revision published successfully."
+        },
+        "publish_error": {
+          "title": "Error!",
+          "message": "Failed to publish revision. Please try again."
+        },
+        "publish_blocked_heading": "This revision cannot be published yet",
+        "publish_blocked_hint": "Fix the following before publishing. The server validates the same rules on publish."
+      },
+      "errors": {
+        "generic": "Something went wrong. Please try again.",
+        "server_error": "The server could not process this request. Please try again.",
+        "default_immutable": "The default workflow cannot be deleted. Deactivate it instead.",
+        "revision_not_draft": "Only draft revisions can be edited. Create a draft revision first.",
+        "workflows_disabled": "Workflows are disabled on this instance, so revisions cannot be published.",
+        "load_failed": "Could not load workflows. Please try again.",
+        "not_authorized": "You do not have permission to manage workflows in this project."
+      },
+      "state_name": "State name"
     },
     "work_item_types": {
       "heading": "Work item Types",
