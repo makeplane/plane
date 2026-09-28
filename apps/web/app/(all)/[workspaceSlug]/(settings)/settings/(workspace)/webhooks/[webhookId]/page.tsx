@@ -8,7 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IWebhook } from "@plane/types";
 // ui
 // components
@@ -63,14 +63,14 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
     try {
       await updateWebhook(workspaceSlug, formData.id, payload);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: "Webhook updated successfully.",
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: error?.error ?? "Something went wrong. Please try again.",
       });

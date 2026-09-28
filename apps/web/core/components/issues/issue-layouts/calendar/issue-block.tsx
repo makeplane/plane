@@ -7,12 +7,13 @@
 import { useState, useRef, forwardRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-import { Popover } from "@plane/propel/popover";
+import { useTranslation } from "@plane/i18n";
+import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
 import type { TIssue } from "@plane/types";
-import { ControlLink } from "@plane/ui";
+import { ControlLink } from "@plane/blocks/layout";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -43,9 +44,10 @@ export const CalendarIssueBlock = observer(
     const [isMenuActive, setIsMenuActive] = useState(false);
     // refs
     const blockRef = useRef(null);
-    const menuActionRef = useRef<HTMLDivElement | null>(null);
+    const menuActionRef = useRef<HTMLButtonElement | null>(null);
     // hooks
     const { workspaceSlug } = useParams();
+    const { t } = useTranslation();
     const { getProjectStates } = useProjectState();
     const { getIsIssuePeeked } = useIssueDetail();
     const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
@@ -58,24 +60,31 @@ export const CalendarIssueBlock = observer(
     const projectIdentifier = getProjectIdentifierById(issue?.project_id);
 
     // handlers
-    const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug.toString(), issue, isMobile);
+    const handleIssuePeekOverview = (peekIssue: TIssue) =>
+      handleRedirection(workspaceSlug?.toString(), peekIssue, isMobile);
 
     useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
     const customActionButton = (
-      <div
+      // The quick-action menu grafts its trigger behaviour onto this element (MenuTrigger render),
+      // so it has to be a real button.
+      <button
+        type="button"
         ref={menuActionRef}
         className={`w-full cursor-pointer rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
           isMenuActive ? "bg-layer-1-active text-primary" : "text-secondary"
         }`}
+        aria-label={t("aria_labels.common.more_actions")}
         onClick={() => setIsMenuActive(!isMenuActive)}
       >
-        <MoreHorizontal className="h-3.5 w-3.5" />
-      </div>
+        <MoreHorizontalOutline className="h-3.5 w-3.5" />
+      </button>
     );
 
     const isMenuActionRefAboveScreenBottom =
-      menuActionRef?.current && menuActionRef?.current?.getBoundingClientRect().bottom < window.innerHeight - 220;
+      typeof window !== "undefined" &&
+      menuActionRef?.current &&
+      menuActionRef?.current?.getBoundingClientRect().bottom < window.innerHeight - 220;
 
     const placement = isMenuActionRefAboveScreenBottom ? "bottom-end" : "top-end";
 
@@ -90,9 +99,10 @@ export const CalendarIssueBlock = observer(
     });
 
     return (
-      <Popover delay={100} openOnHover>
-        <Popover.Button
-          className="w-full"
+      <Popover>
+        <PopoverTrigger
+          openOnHover
+          delay={100}
           render={
             <ControlLink
               id={`issue-${issue.id}`}
@@ -136,7 +146,10 @@ export const CalendarIssueBlock = observer(
                     )}
                     <div className="truncate text-13 font-medium md:text-11 md:font-regular">{issue.name}</div>
                   </div>
+                  {/* Wrapper exists only to stop clicks reaching the ControlLink; the
+                      quick-action menu inside carries its own interactive semantics. */}
                   <div
+                    role="presentation"
                     className={cn("size-5 flex-shrink-0", {
                       "hidden group-hover/calendar-block:block": !isMobile,
                       block: isMenuActive,
@@ -158,19 +171,17 @@ export const CalendarIssueBlock = observer(
             </ControlLink>
           }
         />
-        <Popover.Panel side="bottom" align="start">
-          <>
-            {issue.project_id && (
-              <WorkItemPreviewCard
-                projectId={issue.project_id}
-                stateDetails={{
-                  id: issue.state_id ?? undefined,
-                }}
-                workItem={issue}
-              />
-            )}
-          </>
-        </Popover.Panel>
+        <PopoverContent side="bottom" align="start" sideOffset={8}>
+          {issue.project_id && (
+            <WorkItemPreviewCard
+              projectId={issue.project_id}
+              stateDetails={{
+                id: issue.state_id ?? undefined,
+              }}
+              workItem={issue}
+            />
+          )}
+        </PopoverContent>
       </Popover>
     );
   })

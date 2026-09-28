@@ -6,40 +6,31 @@
 
 import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { ListFilterPlus } from "lucide-react";
-import { Transition } from "@headlessui/react";
+import { AddFilterOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty } from "@plane/types";
-import { cn, EHeaderVariant, Header, Loader } from "@plane/ui";
+import { EHeaderVariant, Header } from "@plane/blocks/layout";
+import { Loader } from "@plane/blocks/skeleton";
+import { cn } from "@plane/utils";
 // local imports
 import type { TAddFilterButtonProps } from "./add-filters/button";
 import { AddFilterButton } from "./add-filters/button";
 import { FilterItem } from "./filter-item/root";
+import { ElementTransition, RowTransition } from "./transition-components";
 
 export type TFiltersRowProps<K extends TFilterProperty, E extends TExternalFilter> = {
   buttonConfig?: TAddFilterButtonProps<K, E>["buttonConfig"];
   disabledAllOperations?: boolean;
   filter: IFilterInstance<K, E>;
   variant?: "modal" | "header";
-  trackerElements?: {
-    clearFilter?: string;
-    saveView?: string;
-    updateView?: string;
-  };
 };
 
 export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty, E extends TExternalFilter>(
   props: TFiltersRowProps<K, E>
 ) {
-  const {
-    buttonConfig,
-    disabledAllOperations: disabledAllOperationsProp = false,
-    filter,
-    variant = "header",
-    trackerElements,
-  } = props;
+  const { buttonConfig, disabledAllOperations: disabledAllOperationsProp = false, filter, variant = "header" } = props;
   // states
   const [isUpdating, setIsUpdating] = useState(false);
   // derived values
@@ -75,10 +66,10 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
         buttonConfig={{
           label: null,
           ...(variant === "modal" ? modalButtonConfig : headerButtonConfig),
-          size: "lg",
+          size: "md",
           iconConfig: {
             shouldShowIcon: true,
-            iconComponent: ListFilterPlus,
+            iconComponent: AddFilterOutline,
           },
           ...buttonConfig,
           isDisabled: disabledAllOperations,
@@ -92,34 +83,31 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
       <ElementTransition show={filter.canClearFilters}>
         <Button
           variant="secondary"
-          className={COMMON_OPERATION_BUTTON_CLASSNAME}
+          size="sm"
+          stretch="auto"
+          label={filter.clearFilterOptions?.label ?? "Clear all"}
           onClick={filter.clearFilters}
-          data-ph-element={trackerElements?.clearFilter}
-        >
-          {filter.clearFilterOptions?.label ?? "Clear all"}
-        </Button>
+        />
       </ElementTransition>
       <ElementTransition show={filter.canSaveView}>
         <Button
           variant="secondary"
-          className={COMMON_OPERATION_BUTTON_CLASSNAME}
+          size="sm"
+          stretch="auto"
+          label={filter.saveViewOptions?.label ?? "Save view"}
           onClick={filter.saveView}
-          data-ph-element={trackerElements?.saveView}
-        >
-          {filter.saveViewOptions?.label ?? "Save view"}
-        </Button>
+        />
       </ElementTransition>
       <ElementTransition show={filter.canUpdateView}>
         <Button
           variant="secondary"
-          className={COMMON_OPERATION_BUTTON_CLASSNAME}
+          size="sm"
+          stretch="auto"
+          label={isUpdating ? "Confirming" : (filter.updateViewOptions?.label ?? "Update view")}
           onClick={handleUpdate}
           loading={isUpdating}
           disabled={isUpdating}
-          data-ph-element={trackerElements?.updateView}
-        >
-          {isUpdating ? "Confirming" : (filter.updateViewOptions?.label ?? "Update view")}
-        </Button>
+        />
       </ElementTransition>
     </>
   );
@@ -158,48 +146,4 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   }
 
   return <RowTransition show={filter.isVisible}>{variant === "modal" ? ModalVariant : HeaderVariant}</RowTransition>;
-});
-
-const COMMON_OPERATION_BUTTON_CLASSNAME = "py-1";
-
-type TElementTransitionProps = {
-  children: React.ReactNode;
-  show: boolean;
-};
-
-const ElementTransition = observer(function ElementTransition(props: TElementTransitionProps) {
-  return (
-    <Transition
-      show={props.show}
-      enter="transition ease-out duration-200"
-      enterFrom="opacity-0 scale-95"
-      enterTo="opacity-100 scale-100"
-      leave="transition ease-in duration-150"
-      leaveFrom="opacity-100 scale-100"
-      leaveTo="opacity-0 scale-95"
-    >
-      {props.children}
-    </Transition>
-  );
-});
-
-type TRowTransitionProps = {
-  children: React.ReactNode;
-  show: boolean;
-};
-
-const RowTransition = observer(function RowTransition(props: TRowTransitionProps) {
-  return (
-    <Transition
-      show={props.show}
-      enter="transition-all duration-150 ease-out"
-      enterFrom="opacity-0 -translate-y-1"
-      enterTo="opacity-100 translate-y-0"
-      leave="transition-all duration-100 ease-in"
-      leaveFrom="opacity-100 translate-y-0"
-      leaveTo="opacity-0 -translate-y-1"
-    >
-      {props.children}
-    </Transition>
-  );
 });

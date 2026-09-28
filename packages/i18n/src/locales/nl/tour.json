@@ -1,0 +1,195 @@
+{
+  "product_tour": {
+    "workitems": {
+      "step_zero": {
+        "title": "Welkom in je werkruimte",
+        "description": "Om je op weg te helpen, hebben we een demoproject voor je aangemaakt. Laten we je eerste werkitem toevoegen."
+      },
+      "step_one": {
+        "title": "Klik op “+ Nieuw werkitem”",
+        "description": "Begin door op de knop “+ Nieuw werkitem” te klikken. Je kunt taken, bugs of een aangepast type maken dat bij je behoeften past."
+      },
+      "step_two": {
+        "title": "Filter je werkitems",
+        "description": "Gebruik filters om je lijst snel te verkleinen. Je kunt filteren op status, prioriteit of teamleden. "
+      },
+      "step_three": {
+        "title": "Bekijk, groepeer en orden werkitems naar wens.",
+        "description": "Bekijk vereiste eigenschappen en groepeer of orden werkitems zoals jij wilt."
+      },
+      "step_four": {
+        "title": "Visualiseer zoals jij wilt",
+        "description": "Selecteer welke eigenschappen je in de lijst wilt zien. Je kunt werkitems ook op jouw manier groeperen en sorteren."
+      }
+    },
+    "cycle": {
+      "step_zero": {
+        "title": "Boek voortgang met cycli",
+        "description": "Druk op Q om een cyclus aan te maken. Geef deze een naam en stel datums in, met slechts een cyclus per project."
+      },
+      "step_one": {
+        "title": "Een nieuwe cyclus aanmaken",
+        "description": "Druk op Q om een cyclus aan te maken. Geef deze een naam en stel datums in, met slechts een cyclus per project."
+      },
+      "step_two": {
+        "title": "Klik op “+”",
+        "description": "Begin door op de knop “+” te klikken. Voeg nieuwe of bestaande werkitems direct toe vanaf de cycluspagina."
+      },
+      "step_three": {
+        "title": "Cyclusoverzicht",
+        "description": "Volg de voortgang van de cyclus, de productiviteit van het team en de prioriteiten, en onderzoek het als iets achterloopt."
+      },
+      "step_four": {
+        "title": "Werkitems overzetten",
+        "description": "Na de vervaldatum wordt een cyclus automatisch voltooid. Verplaats onafgerond werk naar een andere cyclus."
+      }
+    },
+    "module": {
+      "step_zero": {
+        "title": "Deel je project op in modules",
+        "description": "Modules zijn kleinere, gerichte projecten waarmee gebruikers werkitems binnen specifieke periodes kunnen groeperen en organiseren."
+      },
+      "step_one": {
+        "title": "Module aanmaken",
+        "description": "Modules zijn kleinere, gerichte projecten waarmee gebruikers werkitems binnen specifieke periodes kunnen groeperen en organiseren."
+      },
+      "step_two": {
+        "title": "Klik op “+”",
+        "description": "Begin door op de knop “+” te klikken. Voeg nieuwe of bestaande werkitems direct toe vanaf de modulepagina."
+      },
+      "step_three": {
+        "title": "Modulestatussen",
+        "description": "Modules gebruiken deze statussen om gebruikers te helpen plannen en de voortgang en fase duidelijk te volgen."
+      },
+      "step_four": {
+        "title": "Modulevoortgang",
+        "description": "De voortgang van een module wordt gevolgd via voltooide items, met analytics om de prestaties te bewaken."
+      }
+    },
+    "page": {
+      "step_zero": {
+        "title": "Documenteer met door AI aangedreven pagina's",
+        "description": "Met pagina's in Plane kun je projectinformatie vastleggen, organiseren en er samen aan werken, zonder externe tools."
+      },
+      "step_one": {
+        "title": "Maak een pagina openbaar of privé",
+        "description": "Pagina's kunnen openbaar worden gemaakt, zichtbaar voor iedereen in je werkruimte, of privé, alleen toegankelijk voor jou."
+      },
+      "step_two": {
+        "title": "Gebruik de /-opdracht",
+        "description": "Gebruik / op een pagina om inhoud toe te voegen uit 16 bloktypen, waaronder lijsten, afbeeldingen, tabellen en embeds."
+      },
+      "step_three": {
+        "title": "Pagina-acties",
+        "description": "Zodra je pagina is aangemaakt, kun je op het menu ••• rechtsboven klikken om de volgende acties uit te voeren."
+      },
+      "step_four": {
+        "title": "Inhoudsopgave",
+        "description": "Krijg een overzicht van je pagina door op het paneelpictogram te klikken om alle koppen te zien."
+      },
+      "step_five": {
+        "title": "Versiegeschiedenis",
+        "description": "Pagina's houden alle bewerkingen bij met versiegeschiedenis, zodat je eerdere versies kunt herstellen wanneer nodig."
+      }
+    },
+    "intake": {
+      "step_zero": {
+        "title": "Stroomlijn verzoeken met intake",
+        "description": "Een functie die alleen in Plane beschikbaar is en waarmee gasten werkitems kunnen aanmaken voor bugs, verzoeken of tickets."
+      },
+      "step_one": {
+        "title": "Open/gesloten intakeverzoeken",
+        "description": "Openstaande verzoeken blijven op het tabblad Open staan, en zodra een beheerder of lid ze heeft afgehandeld, verplaatsen ze naar Gesloten."
+      },
+      "step_two": {
+        "title": "Een openstaand verzoek accepteren/afwijzen",
+        "description": "Accepteer om het werkitem te bewerken en naar je project te verplaatsen, of wijs het af om het als Geannuleerd te markeren."
+      },
+      "step_three": {
+        "title": "Voorlopig uitstellen",
+        "description": "Een werkitem kan worden uitgesteld om het later te beoordelen. Het wordt naar onderaan je lijst met openstaande verzoeken verplaatst."
+      }
+    },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "Stop met wisselen tussen tabbladen. Verbind je wereld.",
+        "description": "Koppel GitHub en Slack om PR's te volgen en chats samen te vatten, direct in Plane AI."
+      }
+    },
+    "navigation": {
+      "modal": {
+        "title": "Navigatie, opnieuw uitgevonden",
+        "sub_title": "Je werkruimte is nu eenvoudiger te verkennen met een slimmere, vereenvoudigde navigatie.",
+        "highlight_1": "Gestroomlijnde structuur van het linkerpaneel voor sneller ontdekken",
+        "highlight_2": "Verbeterd globaal zoeken om direct naar alles te springen",
+        "highlight_3": "Slimmere categoriegroepering voor helderheid en focus",
+        "footer": "Wil je een korte rondleiding?"
+      },
+      "step_zero": {
+        "title": "Vind direct alles",
+        "description": "Gebruik universeel zoeken om naar taken, projecten, pagina's en mensen te springen zonder je flow te verliezen."
+      },
+      "step_one": {
+        "title": "Houd grip op updates",
+        "description": "Je postvak IN houdt alle vermeldingen, goedkeuringen en activiteit op een plek, zodat je nooit belangrijk werk mist."
+      },
+      "step_two": {
+        "title": "Personaliseer je navigatie",
+        "description": "Pas aan wat je ziet en hoe je navigeert in Voorkeuren."
+      }
+    },
+    "actions": {
+      "close": "Sluiten",
+      "next": "Volgende",
+      "back": "Terug",
+      "done": "Klaar",
+      "take_a_tour": "Volg een rondleiding",
+      "get_started": "Aan de slag",
+      "got_it": "Begrepen"
+    },
+    "seed_data": {
+      "title": "Hier is je demoproject",
+      "description": "Met projecten beheer je je teams, taken en alles wat je nodig hebt om dingen gedaan te krijgen binnen je werkruimte."
+    }
+  },
+  "get_started": {
+    "title": "Hoi {name}, welkom aan boord!",
+    "description": "Hier is alles wat je nodig hebt om je reis met Plane te starten.",
+    "checklist_section": {
+      "title": "Aan de slag",
+      "description": "Begin met je installatie en zie je ideeën sneller werkelijkheid worden.",
+      "checklist_items": {
+        "item_1": {
+          "title": "Een project aanmaken"
+        },
+        "item_2": {
+          "title": "Een werkitem aanmaken"
+        },
+        "item_3": {
+          "title": "Teamleden uitnodigen"
+        },
+        "item_4": {
+          "title": "Een pagina aanmaken"
+        },
+        "item_5": {
+          "title": "Plane AI-chat proberen"
+        },
+        "item_6": {
+          "title": "Integraties koppelen"
+        }
+      }
+    },
+    "team_section": {
+      "title": "Nodig je team uit",
+      "description": "Nodig teamgenoten uit en begin samen te bouwen."
+    },
+    "integrations_section": {
+      "title": "Geef je werkruimte een boost",
+      "more_integrations": "Bekijk meer integraties"
+    },
+    "switch_to_plane_section": {
+      "title": "Ontdek waarom teams overstappen op Plane",
+      "description": "Vergelijk Plane met de tools die je nu gebruikt en zie het verschil."
+    }
+  }
+}

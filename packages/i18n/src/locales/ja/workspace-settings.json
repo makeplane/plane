@@ -111,7 +111,7 @@
         },
         "secret_key": {
           "title": "シークレットキー",
-          "message": "Webhookペイロードにサインインするためのトークンを生成"
+          "message": "Webhookペイロードに署名するためのトークンを生成"
         },
         "options": {
           "all": "すべてを送信",
@@ -176,8 +176,8 @@
         "title": "インテグレーション",
         "heading": "インテグレーション",
         "description": "人気のツールやサービスと接続して、ワークフローエコシステム全体で作業を同期します。",
-        "page_title": "Plane のデータを利用可能なアプリや自分のアプリで利用できます。",
-        "page_description": "このワークスペースまたはあなたが使用しているすべての連携を表示します。"
+        "page_title": "Planeのデータを既存のアプリや独自のアプリで利用できます。",
+        "page_description": "このワークスペースまたは自分が使用中のすべての連携を確認できます。"
       },
       "imports": {
         "title": "インポート",
@@ -187,7 +187,7 @@
       "worklogs": {
         "title": "作業ログ",
         "heading": "作業ログ",
-        "description": "あらゆるプロジェクトの誰の作業ログ（タイムシート）でもダウンロードできます。"
+        "description": "すべてのプロジェクトについて、任意のメンバーの作業ログ（タイムシート）をダウンロードできます。"
       },
       "group_syncing": {
         "title": "グループ同期",
@@ -408,7 +408,7 @@
         "app_consent_workspace_permissions_title": "{app}は以下を要求しています",
         "app_consent_user_permissions_title": "{app}は以下のリソースに対するユーザーの許可も要求できます。これらの権限はユーザーによってのみ要求され、承認されます。",
         "app_consent_accept_title": "承認することで",
-        "app_consent_accept_1": "アプリにPlane内外でアプリを使用できる場所であなたのPlaneデータへのアクセスを許可します",
+        "app_consent_accept_1": "Plane内外でこのアプリを使用する際に、Planeデータへのアクセスを許可します",
         "app_consent_accept_2": "{app}のプライバシーポリシーと利用規約に同意します",
         "accepting": "承認中...",
         "accept": "承認",
@@ -442,7 +442,7 @@
         "contact_email_error": "連絡先メールは必須です",
         "invalid_contact_email_error": "無効な連絡先メール",
         "upload_attachments": "添付ファイルをアップロード",
-        "uploading_images": "アップロード中 {count} 画像{count, plural, one {s} other {s}}",
+        "uploading_images": "{count, plural, one {#枚の画像をアップロード中} other {#枚の画像をアップロード中}}",
         "drop_images_here": "画像をここにドラッグ&ドロップ",
         "click_to_upload_images": "画像をクリックしてアップロード",
         "invalid_file_or_exceeds_size_limit": "無効なファイルまたはサイズの制限を超えています ({size} MB)",
@@ -477,7 +477,7 @@
       "plane-intelligence": {
         "title": "Plane AI",
         "heading": "Plane AI",
-        "description": "あなたの作業がより知能的で速くなるように、ネイティブに接続されたAIを使用してください。"
+        "description": "作業やナレッジベースと直接連携するAIで、よりスマートかつ迅速に作業を進められます。"
       },
       "runners": {
         "title": "Plane Runner",

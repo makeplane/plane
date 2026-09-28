@@ -2,6 +2,9 @@
   "compilerOptions": {
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
+      "@/layouts/*": ["./layouts/*"],
+      "@/lib/*": ["./lib/*"],
+      "@/services/*": ["./services/*"],
       "@/*": ["./core/*"],
       "@/app/*": ["./app/*"],
       "@/helpers/*": ["./helpers/*"],

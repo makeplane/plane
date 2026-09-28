@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
+import { setPromiseToast, setToast } from "@plane/blocks/toast";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // assets
@@ -98,7 +98,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           console.log("Error in updating issue:", error);
           setToast({
             title: t("common.error.label"),
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             message: t("entity.update.failed", { entity: t("issue.label") }),
           });
         }
@@ -109,14 +109,14 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           else await removeIssue(workspaceSlug, projectId, issueId);
           setToast({
             title: t("common.success"),
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             message: t("entity.delete.success", { entity: t("issue.label") }),
           });
         } catch (error) {
           console.log("Error in deleting issue:", error);
           setToast({
             title: t("common.error.label"),
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             message: t("entity.delete.failed", { entity: t("issue.label") }),
           });
         }
@@ -133,7 +133,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           await addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
         } catch (_error) {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("common.error.label"),
             message: t("issue.add.cycle.failed"),
           });
@@ -144,7 +144,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
         } catch (_error) {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("common.error.label"),
             message: t("issue.add.cycle.failed"),
           });
@@ -251,7 +251,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           </div>
           <div
             className="fixed right-0 z-[5] h-full w-full min-w-[300px] border-l border-subtle bg-surface-1 sm:w-1/2 md:relative md:w-1/4 lg:min-w-80 xl:min-w-96"
-            style={issueDetailSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}
+            style={issueDetailSidebarCollapsed ? { right: "-100vw" } : {}}
           >
             <IssueDetailsSidebar
               workspaceSlug={workspaceSlug}

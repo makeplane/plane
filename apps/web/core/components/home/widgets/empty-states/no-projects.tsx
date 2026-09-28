@@ -9,12 +9,11 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Hotel } from "lucide-react";
+import { CloseOutline, MembersOutline, ProjectsOutline, TickOutline } from "@makeplane/propel/icons";
 // plane ui
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { MembersPropertyIcon, CheckIcon, ProjectIcon, CloseIcon } from "@plane/propel/icons";
 import { cn, getFileURL } from "@plane/utils";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
@@ -52,7 +51,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
       id: "create-project",
       title: "home.empty.create_project.title",
       description: "home.empty.create_project.description",
-      icon: <ProjectIcon className="size-4" />,
+      icon: <ProjectsOutline className="size-4" />,
       flag: "projects",
       cta: {
         text: "home.empty.create_project.cta",
@@ -69,7 +68,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
       id: "invite-team",
       title: "home.empty.invite_team.title",
       description: "home.empty.invite_team.description",
-      icon: <MembersPropertyIcon className="size-4" />,
+      icon: <MembersOutline className="size-4" />,
       flag: "visited_members",
       cta: {
         text: "home.empty.invite_team.cta",
@@ -81,7 +80,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
       id: "configure-workspace",
       title: "home.empty.configure_workspace.title",
       description: "home.empty.configure_workspace.description",
-      icon: <Hotel className="size-4" />,
+      icon: <ProjectsOutline className="size-4" />,
       flag: "visited_workspace",
       cta: {
         text: "home.empty.configure_workspace.cta",
@@ -145,7 +144,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
             setValue({ ...storedValue, hide: true });
           }}
         >
-          <CloseIcon className="size-4" />
+          <CloseOutline className="size-4" />
           {t("home.empty.not_right_now")}
         </button>
       </div>
@@ -165,7 +164,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
               <p className="mb-2 text-11 text-tertiary">{t(item.description)}</p>
               {isStateComplete ? (
                 <div className="flex w-fit items-center gap-2 rounded-full bg-[#17a34a] p-1">
-                  <CheckIcon className="size-3 text-accent-primary text-on-color" />
+                  <TickOutline className="size-3 text-accent-primary text-on-color" />
                 </div>
               ) : (
                 !item.cta.disabled &&

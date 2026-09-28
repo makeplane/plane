@@ -8,13 +8,15 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // Plane Imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ORGANIZATION_SIZE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { EditIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { EditOutline } from "@makeplane/propel/icons";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspace } from "@plane/types";
-import { CustomSelect, Input } from "@plane/ui";
+import { Select, SelectContent, SelectItem, SelectList, SelectTrigger } from "@makeplane/propel/components/select";
 import { cn, copyUrlToClipboard, getFileURL, validateWorkspaceName } from "@plane/utils";
 // components
 import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
@@ -70,7 +72,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
       await updateWorkspace(currentWorkspace.slug, payload);
       setToast({
         title: "Success!",
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         message: "Workspace updated successfully",
       });
     } catch (err: unknown) {
@@ -90,13 +92,13 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
         logo_url: "",
       });
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: "Workspace picture removed successfully.",
       });
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "There was some error in deleting your profile picture. Please try again.",
       });
@@ -109,7 +111,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
     void copyUrlToClipboard(`${currentWorkspace.slug}`)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Workspace URL copied to the clipboard.",
         });
         return undefined;
@@ -177,7 +179,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
               >
                 {workspaceLogo && workspaceLogo !== "" ? (
                   <>
-                    <EditIcon className="h-3 w-3" />
+                    <EditOutline className="h-3 w-3" />
                     {t("workspace_settings.settings.general.edit_logo")}
                   </>
                 ) : (
@@ -198,18 +200,21 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                   validate: (value) => validateWorkspaceName(value, true),
                 }}
                 render={({ field: { value, onChange, ref } }) => (
-                  <Input
-                    id="name"
-                    name="name"
-                    type="text"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    hasError={Boolean(errors.name)}
-                    placeholder={t("workspace_settings.settings.general.name")}
-                    className="w-full rounded-md"
-                    disabled={!isAdmin}
-                  />
+                  <Field name="name" invalid={Boolean(errors.name)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="name"
+                        name="name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        placeholder={t("workspace_settings.settings.general.name")}
+                        disabled={!isAdmin}
+                      />
+                    </InputGroup>
+                  </Field>
                 )}
               />
               {errors.name && <p className="text-caption-sm-regular text-danger-primary">{errors.name.message}</p>}
@@ -222,23 +227,23 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                 name="organization_size"
                 control={control}
                 render={({ field: { value, onChange } }) => (
-                  <CustomSelect
-                    value={value}
-                    onChange={onChange}
-                    label={
-                      ORGANIZATION_SIZE.find((c) => c === value) ??
-                      t("workspace_settings.settings.general.errors.company_size.select_a_range")
-                    }
-                    buttonClassName="border border-subtle bg-layer-2 !shadow-none !rounded-md"
-                    input
+                  <Select<string>
+                    value={value || null}
+                    onValueChange={(next) => onChange(next ?? "")}
                     disabled={!isAdmin}
                   >
-                    {ORGANIZATION_SIZE.map((item) => (
-                      <CustomSelect.Option key={item} value={item}>
-                        {item}
-                      </CustomSelect.Option>
-                    ))}
-                  </CustomSelect>
+                    <SelectTrigger
+                      size="2xl"
+                      placeholder={t("workspace_settings.settings.general.errors.company_size.select_a_range")}
+                    />
+                    <SelectContent side="bottom" align="end">
+                      <SelectList>
+                        {ORGANIZATION_SIZE.map((item) => (
+                          <SelectItem key={item} value={item} size="lg" label={item} />
+                        ))}
+                      </SelectList>
+                    </SelectContent>
+                  </Select>
                 )}
               />
             </div>
@@ -248,20 +253,23 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                 control={control}
                 name="url"
                 render={({ field: { onChange, ref } }) => (
-                  <Input
-                    id="url"
-                    name="url"
-                    type="url"
-                    value={`${
-                      typeof window !== "undefined" &&
-                      window.location.origin.replace("http://", "").replace("https://", "")
-                    }/${currentWorkspace.slug}`}
-                    onChange={onChange}
-                    ref={ref}
-                    hasError={Boolean(errors.url)}
-                    className="w-full cursor-not-allowed rounded-md !bg-layer-1"
-                    disabled
-                  />
+                  <Field name="url" invalid={Boolean(errors.url)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="url"
+                        name="url"
+                        type="url"
+                        value={`${
+                          typeof window !== "undefined" &&
+                          window.location.origin.replace("http://", "").replace("https://", "")
+                        }/${currentWorkspace.slug}`}
+                        onChange={onChange}
+                        ref={ref}
+                        disabled
+                      />
+                    </InputGroup>
+                  </Field>
                 )}
               />
             </div>
@@ -285,14 +293,14 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
           <div className="flex items-center justify-between py-2">
             <Button
               variant="primary"
-              size="lg"
+              size="md"
+              stretch="auto"
+              label={isLoading ? t("updating") : t("workspace_settings.settings.general.update_workspace")}
               onClick={(e) => {
                 void handleSubmit(onSubmit)(e);
               }}
               loading={isLoading}
-            >
-              {isLoading ? t("updating") : t("workspace_settings.settings.general.update_workspace")}
-            </Button>
+            />
           </div>
         )}
       </div>

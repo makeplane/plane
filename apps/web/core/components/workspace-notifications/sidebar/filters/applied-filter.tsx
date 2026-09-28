@@ -8,8 +8,10 @@ import { observer } from "mobx-react";
 // plane imports
 import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
-import { Header, EHeaderVariant, Tag } from "@plane/ui";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Pill } from "@makeplane/propel/components/pill";
+import { CloseOutline } from "@makeplane/propel/icons";
+import { Header, EHeaderVariant } from "@plane/blocks/layout";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 
@@ -47,24 +49,23 @@ export const AppliedFilters = observer(function AppliedFilters(props: TAppliedFi
           const isSelected = filters?.type?.[filter?.value] || false;
           if (!isSelected) return <></>;
           return (
-            <Tag
+            <Pill
               key={filter.value}
-              className="flex-start flex flex-wrap"
+              size="md"
+              variant="outline"
+              label={t(filter.i18n_label)}
+              endIcon={<Icon icon={CloseOutline} />}
               onClick={() => handleFilterTypeChange(filter?.value, !isSelected)}
-            >
-              <div className="whitespace-nowrap text-secondary">{t(filter.i18n_label)}</div>
-              <div className="flex h-4 w-4 items-center justify-center rounded-xs text-secondary transition-all hover:text-primary">
-                <CloseIcon className="h-3 w-3" />
-              </div>
-            </Tag>
+            />
           );
         })}
-        <button type="button" onClick={handleClearFilters}>
-          <Tag>
-            {t("common.clear_all")}
-            <CloseIcon height={12} width={12} strokeWidth={2} />
-          </Tag>
-        </button>
+        <Pill
+          size="md"
+          variant="outline"
+          label={t("common.clear_all")}
+          endIcon={<Icon icon={CloseOutline} />}
+          onClick={handleClearFilters}
+        />
       </Header.LeftItem>
     </Header>
   );

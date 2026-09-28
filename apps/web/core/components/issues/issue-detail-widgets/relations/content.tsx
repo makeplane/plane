@@ -7,10 +7,11 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { Collapsible } from "@makeplane/propel/components/collapsible";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue, TIssueServiceType, TIssueRelationTypes } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-import { Collapsible } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 import { useTimeLineRelationOptions } from "@/components/relations";
@@ -137,24 +138,29 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
         {filteredRelationsArray.map((relation) => (
           <div key={relation.relationKey}>
             <Collapsible
-              buttonClassName="w-full"
-              title={
-                <div className={`flex h-9 w-full items-center gap-1 px-2.5 py-1 ${relation.className}`}>
-                  <span>{relation.icon ? relation.icon(14) : null}</span>
-                  <span className="text-13 leading-5 font-medium">{relation.label}</span>
-                </div>
-              }
               defaultOpen
+              icon={
+                relation.icon ? (
+                  <span className={cn("flex items-center justify-center rounded p-0.5", relation.className)}>
+                    {relation.icon(14)}
+                  </span>
+                ) : undefined
+              }
+              trigger={<span className="text-13 leading-5 font-medium">{relation.label}</span>}
             >
-              <RelationIssueList
-                workspaceSlug={workspaceSlug}
-                issueId={issueId}
-                relationKey={relation.relationKey}
-                issueIds={relation.issueIds}
-                disabled={disabled}
-                handleIssueCrudState={handleIssueCrudState}
-                issueServiceType={issueServiceType}
-              />
+              {/* Cancels this nested Collapsible's own panel inset so rows realign under
+                  the outer Relations collapsible's single inset instead of stacking two. */}
+              <div className="-mx-3">
+                <RelationIssueList
+                  workspaceSlug={workspaceSlug}
+                  issueId={issueId}
+                  relationKey={relation.relationKey}
+                  issueIds={relation.issueIds}
+                  disabled={disabled}
+                  handleIssueCrudState={handleIssueCrudState}
+                  issueServiceType={issueServiceType}
+                />
+              </div>
             </Collapsible>
           </div>
         ))}

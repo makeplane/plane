@@ -8,9 +8,9 @@ import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import type { FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
-import { PlusIcon } from "@plane/propel/icons";
+import { AddOutline } from "@makeplane/propel/icons";
 // plane imports
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -61,7 +61,7 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
           .create(currentFile)
           .catch(() => {
             setToast({
-              type: TOAST_TYPE.ERROR,
+              type: "error",
               title: "Error!",
               message: "File could not be attached. Try uploading again.",
             });
@@ -75,7 +75,7 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
       }
 
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message:
           totalAttachedFiles > 1
@@ -103,7 +103,7 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
     >
       <button {...getRootProps()} type="button" disabled={disabled}>
         <input {...getInputProps()} />
-        {customButton ? customButton : <PlusIcon className="h-4 w-4" />}
+        {customButton ? customButton : <AddOutline className="h-4 w-4" />}
       </button>
     </div>
   );
