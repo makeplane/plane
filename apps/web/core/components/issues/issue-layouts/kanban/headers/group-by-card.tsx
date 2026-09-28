@@ -8,12 +8,13 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // lucide icons
-import { Minimize2, Maximize2, Circle } from "lucide-react";
-import { PlusIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Circle } from "lucide-react";
+import { AddOutline, ArrowCollapseOutline, FullScreenOutline } from "@makeplane/propel/icons";
+import { setToast } from "@plane/blocks/toast";
 import type { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
+import { useTranslation } from "@plane/i18n";
 // ui
-import { CustomMenu } from "@plane/ui";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
@@ -50,6 +51,8 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     addIssuesToView,
     isEpic = false,
   } = props;
+  // plane hooks
+  const { t } = useTranslation();
   const verticalAlignPosition = sub_group_by ? false : collapsedGroups?.group_by.includes(column_id);
   // states
   const [isOpen, setIsOpen] = React.useState(false);
@@ -71,13 +74,13 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
       await addIssuesToView?.(issues);
 
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: "Work items added to the cycle successfully.",
       });
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Selected work items could not be added to the cycle. Please try again.",
       });
@@ -140,47 +143,49 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover"
             onClick={() => handleCollapsedGroups("group_by", column_id)}
           >
-            {verticalAlignPosition ? (
-              <Maximize2 width={14} strokeWidth={2} />
-            ) : (
-              <Minimize2 width={14} strokeWidth={2} />
-            )}
+            {verticalAlignPosition ? <FullScreenOutline width={14} /> : <ArrowCollapseOutline width={14} />}
           </button>
         )}
 
         {!disableIssueCreation &&
           (renderExistingIssueModal ? (
-            <CustomMenu
-              customButton={
-                <span className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover">
-                  <PlusIcon height={14} width={14} strokeWidth={2} />
-                </span>
-              }
-              placement="bottom-end"
-            >
-              <CustomMenu.MenuItem
-                onClick={() => {
-                  setIsOpen(true);
-                }}
-              >
-                <span className="flex items-center justify-start gap-2">Create work item</span>
-              </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem
-                onClick={() => {
-                  setOpenExistingIssueListModal(true);
-                }}
-              >
-                <span className="flex items-center justify-start gap-2">Add an existing work item</span>
-              </CustomMenu.MenuItem>
-            </CustomMenu>
+            <Menu>
+              <MenuTrigger
+                render={
+                  <button
+                    type="button"
+                    aria-label={t("common.add")}
+                    className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover"
+                  >
+                    <AddOutline height={14} width={14} />
+                  </button>
+                }
+              />
+              <MenuContent side="bottom" align="end">
+                <MenuItem
+                  label="Create work item"
+                  onClick={() => {
+                    setIsOpen(true);
+                  }}
+                />
+                <MenuItem
+                  label="Add an existing work item"
+                  onClick={() => {
+                    setOpenExistingIssueListModal(true);
+                  }}
+                />
+              </MenuContent>
+            </Menu>
           ) : (
             <button
+              type="button"
+              aria-label={t("common.add")}
               className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover"
               onClick={() => {
                 setIsOpen(true);
               }}
             >
-              <PlusIcon width={14} strokeWidth={2} />
+              <AddOutline width={14} />
             </button>
           ))}
       </div>

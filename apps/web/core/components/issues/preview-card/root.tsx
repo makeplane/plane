@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import { PriorityIcon, StateGroupIcon } from "@plane/blocks/icons";
 import type { TIssue, TStateGroups } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -38,7 +38,7 @@ export const WorkItemPreviewCard = observer(function WorkItemPreviewCard(props: 
   const stateName = stateDetails?.name ?? fallbackStateDetails?.name;
 
   return (
-    <div className="w-72 space-y-2 rounded-lg border-[0.5px] border-strong bg-surface-1 p-3 shadow-raised-200">
+    <div className="w-72 space-y-2">
       <div className="flex items-center justify-between gap-3 text-secondary">
         <IssueIdentifier
           size="xs"
@@ -57,7 +57,7 @@ export const WorkItemPreviewCard = observer(function WorkItemPreviewCard(props: 
         <h6 className="text-13 wrap-break-word">{workItem.name}</h6>
       </div>
       <div className="flex h-5 items-center gap-1">
-        <PriorityIcon priority={workItem.priority} withContainer />
+        <PriorityIcon priority={workItem.priority} />
         <WorkItemPreviewCardDate
           startDate={workItem.start_date}
           stateGroup={stateGroup}

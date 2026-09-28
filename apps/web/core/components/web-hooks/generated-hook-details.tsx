@@ -7,7 +7,7 @@
 // components
 // ui
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IWebhook } from "@plane/types";
 // types
 import { WebhookSecretKey } from "./form";
@@ -31,9 +31,7 @@ export function GeneratedHookDetails(props: Props) {
         <WebhookSecretKey data={webhookDetails} />
       </div>
       <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-        <Button variant="secondary" size="lg" onClick={handleClose}>
-          Close
-        </Button>
+        <Button variant="secondary" size="md" stretch="auto" label="Close" onClick={handleClose} />
       </div>
     </>
   );

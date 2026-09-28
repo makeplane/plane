@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // types
 import type { TIssue } from "@plane/types";
 // components
-import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { PrioritySelect } from "@/components/dropdowns/priority/priority-select";
 
 type Props = {
   issue: TIssue;
@@ -23,14 +23,15 @@ export const SpreadsheetPriorityColumn = observer(function SpreadsheetPriorityCo
 
   return (
     <div className="h-11 border-b-[0.5px] border-subtle">
-      <PriorityDropdown
+      <PrioritySelect
+        testId="spreadsheet-priority-select"
         value={issue.priority}
         onChange={(data) => onChange(issue, { priority: data }, { changed_property: "priority", change_details: data })}
         disabled={disabled}
-        buttonVariant="transparent-with-text"
-        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x"
-        buttonContainerClassName="w-full"
         onClose={onClose}
+        // `.clickable` is what the table's keyboard navigation clicks on Enter / Space in a focused cell.
+        className="clickable"
+        variant="table-cell"
       />
     </div>
   );

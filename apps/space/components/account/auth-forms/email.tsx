@@ -8,12 +8,12 @@ import type { FormEvent } from "react";
 import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
-import { CircleAlert, XCircle } from "lucide-react";
+import { CloseCircleOutline, WarningCircleOutline } from "@makeplane/propel/icons";
 // types
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IEmailCheckData } from "@plane/types";
 // ui
-import { Input, Spinner } from "@plane/ui";
+import { Input } from "@makeplane/propel/components/input";
 // helpers
 import { cn } from "@plane/utils";
 import { checkEmailValidity } from "@/helpers/string.helper";
@@ -57,7 +57,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
         </label>
         <div
           className={cn(
-            `relative flex items-center rounded-md border bg-surface-1`,
+            `relative flex h-10 items-center rounded-md border bg-surface-1 px-3 [&_input]:disable-autofill-style`,
             !isFocused && Boolean(emailError?.email) ? `border-danger-strong` : `border-subtle`
           )}
           onFocus={() => {
@@ -71,11 +71,12 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
             id="email"
             name="email"
             type="email"
+            size="xl"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@company.com"
-            className={`h-10 w-full border-0 disable-autofill-style placeholder:text-placeholder autofill:bg-danger-subtle focus:bg-none active:bg-transparent`}
             autoComplete="off"
+            // oxlint-disable-next-line jsx-a11y/no-autofocus -- sole primary field of a dedicated auth step; matches standard sign-in flows
             autoFocus
             ref={inputRef}
           />
@@ -89,20 +90,26 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
               }}
               tabIndex={-1}
             >
-              <XCircle className="h-10 w-11 stroke-placeholder px-3 text-11 hover:cursor-pointer" />
+              <CloseCircleOutline className="h-10 w-11 px-3 text-11 text-placeholder hover:cursor-pointer" />
             </button>
           )}
         </div>
         {emailError?.email && !isFocused && (
           <p className="flex items-center gap-1 px-0.5 text-11 text-danger-primary">
-            <CircleAlert height={12} width={12} />
+            <WarningCircleOutline height={12} width={12} />
             {emailError.email}
           </p>
         )}
       </div>
-      <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-        {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
-      </Button>
+      <Button
+        type="submit"
+        variant="primary"
+        size="lg"
+        stretch="full"
+        disabled={isButtonDisabled}
+        loading={isSubmitting}
+        label="Continue"
+      />
     </form>
   );
 });

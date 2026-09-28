@@ -7,7 +7,7 @@
 import { useMemo } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { SlidersHorizontal } from "lucide-react";
+import { PreferencesOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { IIssueDisplayFilterOptions, ILayoutDisplayFiltersOptions, IIssueDisplayProperties } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -56,7 +56,7 @@ export const SubIssueDisplayFilters = observer(function SubIssueDisplayFilters(p
               )}
             >
               {isFilterApplied && <span className="absolute -top-1 -right-1 rounded-full bg-accent-primary p-1" />}
-              <SlidersHorizontal className="h-3.5 w-3.5 text-primary" />
+              <PreferencesOutline className="h-3.5 w-3.5 text-primary" />
             </div>
           }
         >
