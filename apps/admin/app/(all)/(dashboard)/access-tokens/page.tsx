@@ -105,14 +105,16 @@ function CreateInstanceTokenModal({
           </div>
           <button
             type="button"
-            className="flex w-full items-center justify-between rounded-md border border-subtle px-3 py-2 font-mono text-body-xs-regular"
+            className="font-mono flex w-full items-center justify-between rounded-md border border-subtle px-3 py-2 text-body-xs-regular"
             onClick={() => generated.token && void copyTextToClipboard(generated.token)}
           >
             <span className="truncate">{generated.token}</span>
             <span className="ml-3">Copy</span>
           </button>
           <div className="flex justify-end">
-            <Button variant="primary" onClick={close}>Close</Button>
+            <Button variant="primary" onClick={close}>
+              Close
+            </Button>
           </div>
         </div>
       ) : (
@@ -120,16 +122,23 @@ function CreateInstanceTokenModal({
           <div>
             <h3 className="text-h4-medium text-primary">Create instance access token</h3>
             <p className="mt-1 text-body-xs-regular text-tertiary">
-              For central MCP agents, daily/weekly digests, and instance-wide automation. This is not an instance-admin token.
+              For central MCP agents, daily/weekly digests, and instance-wide automation. This is not an instance-admin
+              token.
             </p>
           </div>
-          <label className="block space-y-1 text-body-xs-regular text-secondary">
+          <label htmlFor="instance-token-name" className="block space-y-1 text-body-xs-regular text-secondary">
             <span>Token name</span>
-            <Input value={label} onChange={(event) => setLabel(event.target.value)} placeholder="e.g. MCP daily digest" />
+            <Input
+              id="instance-token-name"
+              value={label}
+              onChange={(event) => setLabel(event.target.value)}
+              placeholder="e.g. MCP daily digest"
+            />
           </label>
-          <label className="block space-y-1 text-body-xs-regular text-secondary">
+          <label htmlFor="instance-token-description" className="block space-y-1 text-body-xs-regular text-secondary">
             <span>Description (optional)</span>
             <TextArea
+              id="instance-token-description"
               value={description}
               onChange={(event) => setDescription(event.target.value)}
               placeholder="What will this token be used for?"
@@ -138,11 +147,13 @@ function CreateInstanceTokenModal({
             />
           </label>
           <div className="flex gap-2">
-            {([
-              ["read", "Read only"],
-              ["read-write", "Read + write"],
-              ["custom", "Custom"],
-            ] as const).map(([value, title]) => (
+            {(
+              [
+                ["read", "Read only"],
+                ["read-write", "Read + write"],
+                ["custom", "Custom"],
+              ] as const
+            ).map(([value, title]) => (
               <Button
                 key={value}
                 variant={mode === value ? "primary" : "secondary"}
@@ -172,8 +183,14 @@ function CreateInstanceTokenModal({
             </div>
           )}
           <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={close} disabled={submitting}>Cancel</Button>
-            <Button variant="primary" onClick={() => void create()} disabled={submitting || !label.trim() || !scopes.length}>
+            <Button variant="secondary" onClick={close} disabled={submitting}>
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => void create()}
+              disabled={submitting || !label.trim() || !scopes.length}
+            >
               {submitting ? "Creating…" : "Create token"}
             </Button>
           </div>
@@ -194,7 +211,11 @@ export default function InstanceAccessTokensPage(_props: Route.ComponentProps) {
       await mutate();
       setToast({ type: TOAST_TYPE.SUCCESS, title: "Token revoked", message: "The instance token is no longer valid." });
     } catch (error: any) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Could not revoke token", message: error?.detail || error?.message || "Try again." });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Could not revoke token",
+        message: error?.detail || error?.message || "Try again.",
+      });
     }
   };
 
@@ -241,11 +262,15 @@ export default function InstanceAccessTokensPage(_props: Route.ComponentProps) {
                 </div>
                 {token.description && <p className="mt-1 text-body-xs-regular text-secondary">{token.description}</p>}
                 <p className="mt-1 text-caption-sm-regular text-tertiary">
-                  {token.scopes.length} scopes · {token.last_used ? `Last used ${renderFormattedDate(token.last_used)}` : "Never used"}
+                  {token.scopes.length} scopes ·{" "}
+                  {token.last_used ? `Last used ${renderFormattedDate(token.last_used)}` : "Never used"}
                 </p>
                 <div className="mt-2 flex flex-wrap gap-1">
                   {token.scopes.map((scope) => (
-                    <span key={scope} className="rounded bg-layer-1 px-1.5 py-0.5 font-mono text-caption-sm-regular text-tertiary">
+                    <span
+                      key={scope}
+                      className="font-mono rounded bg-layer-1 px-1.5 py-0.5 text-caption-sm-regular text-tertiary"
+                    >
                       {scope}
                     </span>
                   ))}

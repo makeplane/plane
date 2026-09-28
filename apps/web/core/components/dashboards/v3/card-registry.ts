@@ -551,8 +551,16 @@ export const WORKSPACE_DASHBOARD_SECTIONS: { id: TCardSection; titleKey: string;
   { id: "kpi", titleKey: "dashboard_v3.section.kpi", subtitleKey: "dashboard_v3.section.kpi_subtitle" },
   { id: "delivery", titleKey: "dashboard_v3.section.delivery", subtitleKey: "dashboard_v3.section.delivery_subtitle" },
   { id: "workload", titleKey: "dashboard_v3.section.workload", subtitleKey: "dashboard_v3.section.workload_subtitle" },
-  { id: "distribution", titleKey: "dashboard_v3.section.distribution", subtitleKey: "dashboard_v3.section.distribution_subtitle" },
-  { id: "attention", titleKey: "dashboard_v3.section.attention", subtitleKey: "dashboard_v3.section.attention_subtitle" },
+  {
+    id: "distribution",
+    titleKey: "dashboard_v3.section.distribution",
+    subtitleKey: "dashboard_v3.section.distribution_subtitle",
+  },
+  {
+    id: "attention",
+    titleKey: "dashboard_v3.section.attention",
+    subtitleKey: "dashboard_v3.section.attention_subtitle",
+  },
 ];
 
 const CARDS_BY_ID = new Map(WORKSPACE_DASHBOARD_CARDS.map((card) => [card.id, card]));

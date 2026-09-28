@@ -71,8 +71,8 @@ export function MediaEmbedBlock(props: MediaEmbedNodeViewProps) {
               className="absolute inset-0 h-full w-full rounded"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-              title={alt || "Embedded video"}
-              sandbox="allow-scripts allow-same-origin allow-popups"
+              title="Embedded video"
+              sandbox="allow-scripts allow-popups allow-presentation"
             />
           </div>
         );
@@ -121,7 +121,9 @@ export function MediaEmbedBlock(props: MediaEmbedNodeViewProps) {
       {isEditing ? (
         <div className="space-y-3 p-3" contentEditable={false}>
           <div>
-            <label htmlFor="media-embed-url" className="text-xs text-custom-text-200 mb-1 block font-medium">URL</label>
+            <label htmlFor="media-embed-url" className="text-xs text-custom-text-200 mb-1 block font-medium">
+              URL
+            </label>
             <input
               ref={inputRef}
               id="media-embed-url"
@@ -133,7 +135,9 @@ export function MediaEmbedBlock(props: MediaEmbedNodeViewProps) {
             />
           </div>
           <div>
-            <label htmlFor="media-embed-alt" className="text-xs text-custom-text-200 mb-1 block font-medium">Alt text</label>
+            <label htmlFor="media-embed-alt" className="text-xs text-custom-text-200 mb-1 block font-medium">
+              Alt text
+            </label>
             <input
               id="media-embed-alt"
               type="text"
@@ -144,7 +148,9 @@ export function MediaEmbedBlock(props: MediaEmbedNodeViewProps) {
             />
           </div>
           <div>
-            <label htmlFor="media-embed-caption" className="text-xs text-custom-text-200 mb-1 block font-medium">Caption</label>
+            <label htmlFor="media-embed-caption" className="text-xs text-custom-text-200 mb-1 block font-medium">
+              Caption
+            </label>
             <input
               id="media-embed-caption"
               type="text"

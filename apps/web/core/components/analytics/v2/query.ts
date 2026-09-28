@@ -154,9 +154,7 @@ export function buildInsightQuery(input: TInsightQueryInput): TAnalyticsQueryV2 
   const timePreset: TAnalyticsTimePreset = inherited
     ? inherited.period_preset
     : toTimePreset(input.duration ?? undefined);
-  const timeBasis: TAnalyticsDateBasis = inherited
-    ? inherited.dateBasis
-    : input.dateBasis ?? "created_at";
+  const timeBasis: TAnalyticsDateBasis = inherited ? inherited.dateBasis : (input.dateBasis ?? "created_at");
   const timeGroup: TAnalyticsDateGrouping | undefined = isDateDimension(primaryKey)
     ? (inherited?.date_bucket ?? input.dateGrouping ?? "day")
     : undefined;
@@ -172,9 +170,7 @@ export function buildInsightQuery(input: TInsightQueryInput): TAnalyticsQueryV2 
   // Project IDs: inherited scope is authoritative. When the
   // dashboard has project_ids selected, only THOSE flow through;
   // the analytics store's selectedProjects is ignored.
-  const projectIds = inherited
-    ? inherited.projectIds
-    : (input.projectIds ?? []).filter(Boolean);
+  const projectIds = inherited ? inherited.projectIds : (input.projectIds ?? []).filter(Boolean);
 
   return {
     version: 1,
