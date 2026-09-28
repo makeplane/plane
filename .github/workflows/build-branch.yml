@@ -65,6 +65,7 @@ jobs:
       dh_img_live: ${{ steps.set_env_variables.outputs.DH_IMG_LIVE }}
       dh_img_backend: ${{ steps.set_env_variables.outputs.DH_IMG_BACKEND }}
       dh_img_proxy: ${{ steps.set_env_variables.outputs.DH_IMG_PROXY }}
+      dh_img_minio: ${{ steps.set_env_variables.outputs.DH_IMG_MINIO }}
       dh_img_aio: ${{ steps.set_env_variables.outputs.DH_IMG_AIO }}
 
       build_type: ${{steps.set_env_variables.outputs.BUILD_TYPE}}
@@ -101,6 +102,7 @@ jobs:
           echo "DH_IMG_LIVE=plane-live" >> $GITHUB_OUTPUT
           echo "DH_IMG_BACKEND=plane-backend" >> $GITHUB_OUTPUT
           echo "DH_IMG_PROXY=plane-proxy" >> $GITHUB_OUTPUT
+          echo "DH_IMG_MINIO=plane-minio" >> $GITHUB_OUTPUT
           echo "DH_IMG_AIO=plane-aio-community" >> $GITHUB_OUTPUT
 
           echo "BUILD_TYPE=${{env.BUILD_TYPE}}" >> $GITHUB_OUTPUT
@@ -458,6 +460,55 @@ jobs:
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_proxy }}
           digest-artifact-pattern: digest-proxy-*
+          expected-platforms: ${{ needs.branch_build_setup.outputs.gh_expected_platforms }}
+
+  branch_build_push_minio:
+    name: Build-Push MinIO Docker Image (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    needs: [branch_build_setup]
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.branch_build_setup.outputs.gh_build_matrix) }}
+    steps:
+      - name: MinIO Build and Push
+        uses: makeplane/actions/build-push@v1.6.0
+        with:
+          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
+          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          docker-image-owner: makeplane
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_minio }}
+          build-context: ./docker/minio
+          dockerfile-path: ./docker/minio/Dockerfile
+          buildx-driver: docker-container
+          buildx-version: latest
+          buildx-platforms: ${{ matrix.platform }}
+          buildx-endpoint: ""
+          push-by-digest: "true"
+          cache-scope-suffix: -${{ matrix.arch }}
+          digest-artifact-name: digest-minio-${{ matrix.arch }}
+
+  branch_merge_minio:
+    name: Merge MinIO Manifest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    needs: [branch_build_setup, branch_build_push_minio]
+    steps:
+      - name: Merge MinIO Manifest
+        uses: makeplane/actions/merge-manifest@v1.6.0
+        with:
+          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
+          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          docker-image-owner: makeplane
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_minio }}
+          digest-artifact-pattern: digest-minio-*
           expected-platforms: ${{ needs.branch_build_setup.outputs.gh_expected_platforms }}
 
   # Split out of branch_build_push_aio: build.sh generates the dist/ assets and
