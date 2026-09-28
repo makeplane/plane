@@ -7,7 +7,7 @@ export type WikiSidebarScope = TWikiScope & { label: string; href: string; activ
 export function getCreatableWikiScopes(scopes: TWikiScope[]): TWikiScope[] {
   return scopes
     .filter((scope) => scope.can_create && (scope.is_default || scope.is_member))
-    .sort((a, b) => {
+    .toSorted((a, b) => {
       if (a.is_default !== b.is_default) return a.is_default ? -1 : 1;
       return a.name.localeCompare(b.name);
     });
@@ -60,10 +60,7 @@ export function getCollectionSubtreePages(pages: TPage[], associations: TPageCol
   return pages.filter((page) => !!page.id && included.has(page.id));
 }
 
-export function getLooseWikiPages(
-  pages: TPage[],
-  collectionPagesById: Record<string, TPageCollectionPage[]>
-): TPage[] {
+export function getLooseWikiPages(pages: TPage[], collectionPagesById: Record<string, TPageCollectionPage[]>): TPage[] {
   const claimed = new Set<string>();
   for (const associations of Object.values(collectionPagesById)) {
     for (const page of getCollectionSubtreePages(pages, associations)) {

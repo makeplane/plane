@@ -873,5 +873,33 @@
       "description": "작업 항목을 JSON 파일로 내보냅니다.",
       "short_description": "JSON으로 내보내기"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "전역 날짜 기준과 관계없이 {basis} 기준으로 집계됨",
+      "workload_by_labels": "레이블별 워크로드"
+    },
+    "control": {
+      "assignees": "담당자",
+      "labels": "레이블",
+      "cycles": "사이클",
+      "modules": "모듈",
+      "created_by": "작성자",
+      "comparison": "비교",
+      "previous_period": "이전 기간",
+      "previous_week": "지난 주",
+      "previous_month": "지난 달",
+      "previous_quarter": "이전 분기",
+      "previous_year": "작년",
+      "workload_by_labels": "레이블별"
+    },
+    "scope": {
+      "personal": "개인",
+      "team": "팀"
+    },
+    "action": {
+      "view_work_items": "작업 항목 보기",
+      "vs_previous": "이전 대비"
+    }
   }
 }

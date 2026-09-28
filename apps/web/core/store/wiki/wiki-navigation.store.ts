@@ -29,7 +29,10 @@ export interface IWikiNavigationStore {
   scopes: Record<string, TWikiNavigationScopeState>;
   getScope: (workspaceSlug: string) => TWikiNavigationScopeState;
   fetchScope: (workspaceSlug: string) => Promise<TWikiNavigationScopeState>;
-  invalidateScope: (workspaceSlug: string, affectedCollectionIds?: string[]) => Promise<TWikiNavigationScopeState | undefined>;
+  invalidateScope: (
+    workspaceSlug: string,
+    affectedCollectionIds?: string[]
+  ) => Promise<TWikiNavigationScopeState | undefined>;
   fetchCollectionPages: (workspaceSlug: string, collectionId: string) => Promise<TPageCollectionPage[]>;
 }
 
@@ -95,7 +98,9 @@ export class WikiNavigationStore implements IWikiNavigationStore {
     // the page or Collection list, so refreshing only fetchScope() would leave
     // collectionPagesById stale and the sidebar would keep rendering the old
     // membership until a full reload.
-    const loadedCollectionIds = [...new Set([...Object.keys(currentScope.collectionPagesById), ...affectedCollectionIds])];
+    const loadedCollectionIds = [
+      ...new Set([...Object.keys(currentScope.collectionPagesById), ...affectedCollectionIds]),
+    ];
 
     // Wait out an in-flight load so a stale response cannot land after the
     // mutation that invalidated this scope.

@@ -46,11 +46,11 @@ describe("dashboard preferences store", () => {
     store.setIdentity("ws-1", "user-1");
   });
 
-  test("starts from product defaults for all twelve cards", () => {
+  test("starts from product defaults for all fourteen cards", () => {
     const snapshot = store.getSnapshot();
     expect(snapshot.schema_version).toBe(DASHBOARD_PREFERENCES_SCHEMA_VERSION);
-    expect(Object.keys(snapshot.cards)).toHaveLength(12);
-    expect(snapshot.global.timePreset).toBe("this_quarter");
+    expect(Object.keys(snapshot.cards)).toHaveLength(14);
+    expect(snapshot.global.timePreset).toBe("this_month");
   });
 
   test("a card change survives a reload", () => {
@@ -84,7 +84,7 @@ describe("dashboard preferences store", () => {
 
     const other = new DashboardPreferencesStore(storage);
     other.setIdentity("ws-2", "user-1");
-    expect(other.getGlobalScope().timePreset).toBe("this_quarter");
+    expect(other.getGlobalScope().timePreset).toBe("this_month");
   });
 
   test("switching identity swaps the whole bag in memory", () => {
@@ -101,7 +101,7 @@ describe("dashboard preferences store", () => {
     store.reset();
 
     const snapshot = store.getSnapshot();
-    expect(snapshot.global.timePreset).toBe("this_quarter");
+    expect(snapshot.global.timePreset).toBe("this_month");
     expect(snapshot.cards.workload_by_assignee.metric).toBe("work_item_count");
   });
 
@@ -163,7 +163,7 @@ describe("preference sanitisation (§15.3)", () => {
     });
     expect(sanitized.cards).not.toHaveProperty("removed_card");
     expect(sanitized.cards.work_by_project.metric).toBe("estimate_points");
-    expect(Object.keys(sanitized.cards)).toHaveLength(12);
+    expect(Object.keys(sanitized.cards)).toHaveLength(14);
   });
 
   test("a stale renderer the card dropped falls back to the product default", () => {
@@ -180,7 +180,40 @@ describe("preference sanitisation (§15.3)", () => {
       global: 7,
       cards: "nope",
     });
-    expect(sanitized.global.timePreset).toBe("this_quarter");
-    expect(Object.keys(sanitized.cards)).toHaveLength(12);
+    expect(sanitized.global.timePreset).toBe("this_month");
+    expect(Object.keys(sanitized.cards)).toHaveLength(14);
+  });
+
+  test("truncated timePreset string falls back to default", () => {
+    // A corrupted payload (e.g. from a stale Vite module, manual localStorage
+    // edit, or a future schema that stored an enum index) must not produce a
+    // value the analytics engine would reject as "Invalid query".
+    const sanitized = sanitizeDashboardPreferences({
+      schema_version: DASHBOARD_PREFERENCES_SCHEMA_VERSION,
+      global: {
+        timePreset: "t",
+        dateBasis: "lifecycle_overlap",
+        filters: {},
+        projectIds: [],
+        comparison: "none",
+      },
+      cards: {},
+    });
+    expect(sanitized.global.timePreset).toBe("this_month");
+  });
+
+  test("truncated dateBasis string falls back to default", () => {
+    const sanitized = sanitizeDashboardPreferences({
+      schema_version: DASHBOARD_PREFERENCES_SCHEMA_VERSION,
+      global: {
+        timePreset: "this_month",
+        dateBasis: "c",
+        filters: {},
+        projectIds: [],
+        comparison: "none",
+      },
+      cards: {},
+    });
+    expect(sanitized.global.dateBasis).toBe("lifecycle_overlap");
   });
 });

@@ -42,6 +42,8 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
     tabIndex,
     noResultsMessage = "No matches found",
     defaultOpen = false,
+    selectedContent,
+    multipleLabel,
   } = props;
   const [query, setQuery] = useState("");
 
@@ -58,9 +60,20 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
+  // §single-vs-multi — Headless UI's `Combobox` expects a single primitive when
+  // not `multiple`, and an array when `multiple`. Callers historically pass
+  // `value` as an array either way (the dashboard does); normalize here so the
+  // Headless UI contract is satisfied and `onChange` always returns the array
+  // shape the caller passed.
+  const valueArr = Array.isArray(value) ? value : value === undefined || value === null ? [] : [value];
+  const handleSingleChange = (v: unknown) => {
+    if (Array.isArray(v)) onChange(v);
+    else if (v === undefined || v === null) onChange([]);
+    else onChange([v as never]);
+  };
   const comboboxProps: any = {
-    value,
-    onChange,
+    value: multiple ? valueArr : valueArr[0],
+    onChange: multiple ? onChange : handleSingleChange,
     disabled,
   };
 
@@ -134,7 +147,16 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                   )}
                   onClick={toggleDropdown}
                 >
-                  {label}
+                  {(() => {
+                    const selectedOption = options?.find((o) => o.value === value?.[0]);
+                    if (multiple && Array.isArray(value) && value.length > 1) {
+                      return multipleLabel ? multipleLabel(value.length) : `${value.length} selected`;
+                    }
+                    if (selectedContent && Array.isArray(value) && value.length === 1) {
+                      return selectedContent(value[0], selectedOption);
+                    }
+                    return label;
+                  })()}
                   {!noChevron && !disabled && (
                     <ChevronDownIcon className={cn("h-3 w-3 flex-shrink-0", chevronClassName)} aria-hidden="true" />
                   )}

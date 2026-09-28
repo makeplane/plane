@@ -15,6 +15,7 @@ export * from "./command-palette";
 export * from "./common";
 export * from "./cycle";
 export * from "./dashboard";
+export * from "./dashboard-operations";
 export * from "./de-dupe";
 export * from "./description_version";
 export * from "./editor";

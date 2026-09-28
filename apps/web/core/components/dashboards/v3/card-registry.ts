@@ -56,6 +56,8 @@ export type TCardId =
   | "work_state_distribution"
   | "workload_by_assignee"
   | "workload_allocation_matrix"
+  | "all_members_workload"
+  | "workload_by_labels"
   | "priority_distribution"
   | "work_by_project"
   | "attention_required";
@@ -79,7 +81,7 @@ export interface TCardDefinition {
   /** Stable logical id — preferences attach here, never to a layout slot (§5.1). */
   id: TCardId;
   /** §7 A–L label, kept for traceability to the spec and the backend fixture. */
-  letter: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L";
+  letter: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N";
   section: TCardSection;
   titleKey: string;
   /** Full-bleed card — matrix and work-item tables need the width (§6). */
@@ -402,6 +404,54 @@ const WORKLOAD_DEFINITIONS: TCardDefinition[] = [
     defaultTimePreset: "none",
     filters: {},
   },
+  {
+    id: "workload_by_labels",
+    letter: "M",
+    section: "workload",
+    titleKey: "dashboard_v3.card.workload_by_labels",
+    wide: false,
+    defaults: {
+      metric: "work_item_count",
+      dimension: "labels",
+      breakdown: null,
+      display: "value_and_percentage",
+      normalization: "group_total",
+      allocation: "full_credit",
+      renderer: "bar",
+    },
+    controls: ["metric", "dimension", "breakdown", "display", "normalization", "renderer"],
+    allowedRenderers: ["bar", "matrix", "work_item_table"],
+    allowedMetrics: ["work_item_count", "estimate_points", "pending_work_items"],
+    allowedDimensions: ["labels", "project", "state_group", "priority"],
+    allowedBreakdowns: CATEGORICAL_BREAKDOWNS,
+    timeDependent: false,
+    defaultTimePreset: "none",
+    filters: {},
+  },
+  {
+    id: "all_members_workload",
+    letter: "N",
+    section: "workload",
+    titleKey: "dashboard_v3.card.all_members_workload",
+    wide: true,
+    defaults: {
+      metric: "work_item_count",
+      dimension: "assignees",
+      breakdown: null,
+      display: "value",
+      normalization: "none",
+      allocation: "split_equal",
+      renderer: "bar",
+    },
+    controls: ["metric", "display", "normalization", "allocation", "renderer"],
+    allowedRenderers: ["bar", "matrix", "work_item_table"],
+    allowedMetrics: ["work_item_count", "estimate_points", "pending_work_items"],
+    allowedDimensions: ["assignees", "created_by"],
+    allowedBreakdowns: [],
+    timeDependent: false,
+    defaultTimePreset: "none",
+    filters: {},
+  },
 ];
 
 /** §7.4 — distribution. */
@@ -497,12 +547,20 @@ export const WORKSPACE_DASHBOARD_CARDS: TCardDefinition[] = [
   ...ATTENTION_DEFINITIONS,
 ];
 
-export const WORKSPACE_DASHBOARD_SECTIONS: { id: TCardSection; titleKey: string }[] = [
-  { id: "kpi", titleKey: "dashboard_v3.section.kpi" },
-  { id: "delivery", titleKey: "dashboard_v3.section.delivery" },
-  { id: "workload", titleKey: "dashboard_v3.section.workload" },
-  { id: "distribution", titleKey: "dashboard_v3.section.distribution" },
-  { id: "attention", titleKey: "dashboard_v3.section.attention" },
+export const WORKSPACE_DASHBOARD_SECTIONS: { id: TCardSection; titleKey: string; subtitleKey?: string }[] = [
+  { id: "kpi", titleKey: "dashboard_v3.section.kpi", subtitleKey: "dashboard_v3.section.kpi_subtitle" },
+  { id: "delivery", titleKey: "dashboard_v3.section.delivery", subtitleKey: "dashboard_v3.section.delivery_subtitle" },
+  { id: "workload", titleKey: "dashboard_v3.section.workload", subtitleKey: "dashboard_v3.section.workload_subtitle" },
+  {
+    id: "distribution",
+    titleKey: "dashboard_v3.section.distribution",
+    subtitleKey: "dashboard_v3.section.distribution_subtitle",
+  },
+  {
+    id: "attention",
+    titleKey: "dashboard_v3.section.attention",
+    subtitleKey: "dashboard_v3.section.attention_subtitle",
+  },
 ];
 
 const CARDS_BY_ID = new Map(WORKSPACE_DASHBOARD_CARDS.map((card) => [card.id, card]));

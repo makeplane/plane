@@ -24,6 +24,7 @@
     "check:format": "oxfmt --check .",
     "fix:lint": "oxlint --fix .",
     "fix:format": "oxfmt .",
+    "test": "vitest run",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
@@ -59,17 +60,22 @@
     "@storybook/addon-webpack5-compiler-swc": "catalog:",
     "@storybook/react": "catalog:",
     "@storybook/react-webpack5": "catalog:",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.0",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-color": "catalog:",
     "@types/react-dom": "catalog:",
     "autoprefixer": "catalog:",
+    "jsdom": "26.1.0",
     "postcss-cli": "catalog:",
     "postcss-nested": "catalog:",
     "storybook": "catalog:",
     "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:",

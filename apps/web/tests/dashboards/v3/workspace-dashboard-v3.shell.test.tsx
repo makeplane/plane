@@ -10,7 +10,7 @@
 /**
  * Workspace Dashboard v3 shell behaviour (spec §6, §8, §20, §24.2).
  *
- * Asserts the four acceptance behaviours the issue names: the twelve cards
+ * Asserts the four acceptance behaviours the issue names: the fourteen cards
  * render across the §7 sections at every breakpoint, one global-filter change
  * produces exactly one batch request, a card-local change moves only that
  * card's payload, and an empty workspace lands in the data-empty state.
@@ -118,7 +118,7 @@ import { WORKSPACE_DASHBOARD_CARDS } from "@/components/dashboards/v3/card-regis
 
 const response = (totals: Record<string, number>, cells: unknown[] = []): TAnalyticsQueryResponseV2 => ({
   query: { version: 1, source: "work_items", metrics: [{ key: "work_item_count" }], dimensions: [] },
-  resolved: { start: null, end: null, timezone: "UTC", preset: "this_quarter", visible_project_count: 1 },
+  resolved: { start: null, end: null, timezone: "UTC", preset: "this_month", visible_project_count: 1 },
   schema: { metrics: [], dimensions: [] },
   data: cells as TAnalyticsQueryResponseV2["data"],
   totals,
@@ -146,8 +146,8 @@ beforeEach(() => {
       status: "ok",
       data: isBatchEmpty
         ? response({})
-        : response({ work_item_count: 12, pending_work_items: 5, in_progress_work_items: 3, completed_work_items: 2 }, [
-            { group: "g1", series: null, value: 12, percentage: 1, display: "12" },
+        : response({ work_item_count: 14, pending_work_items: 5, in_progress_work_items: 3, completed_work_items: 2 }, [
+            { group: "g1", series: null, value: 14, percentage: 1, display: "14" },
           ]),
     })),
   });
@@ -160,7 +160,7 @@ afterEach(() => {
 });
 
 describe("Workspace Dashboard v3 shell", () => {
-  test("renders all twelve cards across the §7 sections", async () => {
+  test("renders all fourteen cards across the §7 sections", async () => {
     await renderShell();
 
     for (const card of WORKSPACE_DASHBOARD_CARDS) {
@@ -170,6 +170,23 @@ describe("Workspace Dashboard v3 shell", () => {
 
     for (const section of ["kpi", "delivery", "workload", "distribution", "attention"]) {
       expect(screen.getByTestId(`dashboard-v3-section-${section}`)).toBeTruthy();
+    }
+  });
+
+  test("§7.3 H — workload_by_assignee is the only card with a header control", async () => {
+    await renderShell();
+
+    // The mock CustomSearchSelect renders a <select>. Exactly one card ships
+    // the dimension swap: workload_by_assignee.
+    const assignsFrame = screen.getByTestId("dashboard-v3-card-frame-workload_by_assignee");
+    expect(assignsFrame.querySelector("select")).toBeTruthy();
+
+    // The other fourteen cards no longer have any header select beyond the
+    // global-controls / project select mocks.
+    const otherCards = WORKSPACE_DASHBOARD_CARDS.filter((card) => card.id !== "workload_by_assignee");
+    for (const card of otherCards) {
+      const frame = screen.getByTestId(`dashboard-v3-card-frame-${card.id}`);
+      expect(frame.querySelector("select")).toBeNull();
     }
   });
 
@@ -206,7 +223,7 @@ describe("Workspace Dashboard v3 shell", () => {
 
     await flush();
     expect(batchCalls).toHaveLength(1);
-    expect(batchCalls[0].payload.queries).toHaveLength(12);
+    expect(batchCalls[0].payload.queries).toHaveLength(14);
   });
 
   test("a card-local change moves only that card's query", async () => {
@@ -253,7 +270,7 @@ describe("Workspace Dashboard v3 shell", () => {
     }
   });
 
-  test("§11 — one failed card keeps the other eleven rendering", async () => {
+  test("§11 — one failed card keeps the other fourteen rendering", async () => {
     batchResponse = (payload) => ({
       results: payload.queries.map((query, index) =>
         index === 3
@@ -290,7 +307,7 @@ describe("Workspace Dashboard v3 shell", () => {
     const second = render(<WorkspaceDashboardShell workspaceSlug="acme" />);
     await flush();
     expect(second.getByTestId("dashboard-v3-card-priority_distribution")).toBeTruthy();
-    expect(batchCalls[batchCalls.length - 1].payload.queries).toHaveLength(12);
+    expect(batchCalls[batchCalls.length - 1].payload.queries).toHaveLength(14);
   });
 
   test("the whole request failing is still per-card, never a blank page", async () => {
@@ -326,5 +343,18 @@ describe("preference store wiring in the shell", () => {
 
     await renderShell();
     expect(screen.getByTestId("dashboard-v3-card-work_by_project")).toBeTruthy();
+  });
+
+  test("smart-default hook runs on mount for MEMBER role", async () => {
+    // The default useUser mock in this file returns { data: { id: "user-1" } }
+    // with no `role` field, which the smart-default hook treats as non-ADMIN
+    // → "personal" view + assignees scoped to the current user.
+    dashboardPreferencesStore.reset();
+    expect(dashboardPreferencesStore.getViewMode()).toBeNull();
+
+    await renderShell();
+
+    expect(dashboardPreferencesStore.getViewMode()).toBe("personal");
+    expect(dashboardPreferencesStore.getGlobalScope().filters.assignees).toEqual(["user-1"]);
   });
 });

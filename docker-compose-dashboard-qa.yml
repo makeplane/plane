@@ -1,0 +1,167 @@
+# docker-compose-dashboard-qa.yml
+#
+# Isolated persistent QA API for the Team Operations Dashboard frontend
+# (ctx_3fd621777db4). Runs the backend on host port 8100 with a
+# dedicated PostgreSQL DB so the main API (host :8000, db ``plane``)
+# stays untouched. Seeded with a useful fixture for the frontend to
+# consume immediately.
+#
+# Frontend should hit http://localhost:8100/api/...
+#
+# Bring up:
+#   docker compose -p plane-dashboard-qa -f docker-compose-dashboard-qa.yml \
+#       --env-file apps/api/.env up -d --build
+#
+# Share endpoint/readiness/login with the coordinator:
+#   /tmp/plane-dashboard-qa-ready.json is written after the seed runs.
+
+services:
+  dashboard-qa-db:
+    container_name: plane-dashboard-qa-db
+    image: postgres:15.7-alpine
+    restart: unless-stopped
+    networks:
+      - dashboard_qa_net
+    command: postgres -c 'max_connections=200'
+    tmpfs:
+      - /var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: planeqa
+      POSTGRES_PASSWORD: planeqa
+      POSTGRES_DB: planeqa
+      PGDATA: /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U planeqa -d planeqa"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  dashboard-qa-migrator:
+    container_name: plane-dashboard-qa-migrator
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: "no"
+    networks:
+      - dashboard_qa_net
+    command: ./bin/docker-entrypoint-migrator.sh
+    environment:
+      DEBUG: "0"
+      SECRET_KEY: dashboard-qa-secret-not-for-prod-9f2e1c
+      POSTGRES_USER: planeqa
+      POSTGRES_PASSWORD: planeqa
+      POSTGRES_HOST: dashboard-qa-db
+      POSTGRES_DB: planeqa
+      POSTGRES_PORT: 5432
+      DATABASE_URL: postgresql://planeqa:planeqa@dashboard-qa-db:5432/planeqa
+      REDIS_URL: redis://dashboard-qa-redis:6379/
+      RABBITMQ_HOST: dashboard-qa-mq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: planeqa
+      RABBITMQ_PASSWORD: planeqa
+      RABBITMQ_VHOST: /
+      AWS_REGION: ""
+      AWS_ACCESS_KEY_ID: access-key
+      AWS_SECRET_ACCESS_KEY: secret-key
+      AWS_S3_ENDPOINT_URL: http://dashboard-qa-minio:9000
+      AWS_S3_BUCKET_NAME: uploads
+      USE_MINIO: "0"
+      CORS_ALLOWED_ORIGINS: "http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3100,http://127.0.0.1:3000,http://127.0.0.1:3001,http://127.0.0.1:3002,http://127.0.0.1:3100"
+      WEB_URL: "http://localhost:8100"
+      APP_BASE_URL: "http://localhost:3100"
+      APP_BASE_PATH: ""
+      GUNICORN_WORKERS: "2"
+      DOCKERIZED: "1"
+    depends_on:
+      dashboard-qa-db:
+        condition: service_healthy
+
+  dashboard-qa-redis:
+    container_name: plane-dashboard-qa-redis
+    image: valkey/valkey:7.2.11-alpine
+    restart: unless-stopped
+    networks:
+      - dashboard_qa_net
+    tmpfs:
+      - /data
+
+  dashboard-qa-mq:
+    container_name: plane-dashboard-qa-mq
+    image: rabbitmq:3.13.6-management-alpine
+    restart: unless-stopped
+    networks:
+      - dashboard_qa_net
+    environment:
+      RABBITMQ_DEFAULT_USER: planeqa
+      RABBITMQ_DEFAULT_PASS: planeqa
+      RABBITMQ_DEFAULT_VHOST: /
+
+  dashboard-qa-minio:
+    container_name: plane-dashboard-qa-minio
+    image: pgsty/silo
+    restart: unless-stopped
+    networks:
+      - dashboard_qa_net
+    command: server /export --console-address ":9090"
+    environment:
+      MINIO_ROOT_USER: access-key
+      MINIO_ROOT_PASSWORD: secret-key
+    tmpfs:
+      - /export
+
+  dashboard-qa-api:
+    container_name: plane-dashboard-qa-api
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    networks:
+      - dashboard_qa_net
+    command: ./bin/docker-entrypoint-api.sh
+    ports:
+      - "8100:8000"
+    environment:
+      DEBUG: "0"
+      SECRET_KEY: dashboard-qa-secret-not-for-prod-9f2e1c
+      POSTGRES_USER: planeqa
+      POSTGRES_PASSWORD: planeqa
+      POSTGRES_HOST: dashboard-qa-db
+      POSTGRES_DB: planeqa
+      POSTGRES_PORT: 5432
+      DATABASE_URL: postgresql://planeqa:planeqa@dashboard-qa-db:5432/planeqa
+      REDIS_URL: redis://dashboard-qa-redis:6379/
+      RABBITMQ_HOST: dashboard-qa-mq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: planeqa
+      RABBITMQ_PASSWORD: planeqa
+      RABBITMQ_VHOST: /
+      AWS_REGION: ""
+      AWS_ACCESS_KEY_ID: access-key
+      AWS_SECRET_ACCESS_KEY: secret-key
+      AWS_S3_ENDPOINT_URL: http://dashboard-qa-minio:9000
+      AWS_S3_BUCKET_NAME: uploads
+      USE_MINIO: "0"
+      CORS_ALLOWED_ORIGINS: "http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3100,http://127.0.0.1:3000,http://127.0.0.1:3001,http://127.0.0.1:3002,http://127.0.0.1:3100"
+      WEB_URL: "http://localhost:8100"
+      APP_BASE_URL: "http://localhost:3100"
+      APP_BASE_PATH: ""
+      GUNICORN_WORKERS: "2"
+      DOCKERIZED: "1"
+      WORKSPACE_DASHBOARDS: "1"
+    depends_on:
+      dashboard-qa-db:
+        condition: service_healthy
+      dashboard-qa-migrator:
+        condition: service_completed_successfully
+      dashboard-qa-redis:
+        condition: service_started
+      dashboard-qa-mq:
+        condition: service_started
+
+networks:
+  dashboard_qa_net:
+    driver: bridge

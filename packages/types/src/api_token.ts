@@ -21,7 +21,6 @@ export interface IApiToken {
   workspace: string;
 }
 
-
 export type TServiceAccessTokenScopeLevel = "workspace" | "instance";
 
 export interface IServiceAccessTokenWorkspace {

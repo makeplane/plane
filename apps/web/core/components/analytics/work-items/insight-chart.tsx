@@ -48,7 +48,7 @@ import {
   toMetricKey,
 } from "../v2";
 import InsightDrilldownDrawer from "../v2/insight-drilldown";
-import type { InsightChartRow } from "../v2/cells";
+import { SERIES_FALLBACK_KEY, type InsightChartRow } from "../v2/cells";
 import { useInsightValueResolver } from "../v2/use-insight-value-resolver";
 
 declare module "@tanstack/react-table" {
@@ -207,9 +207,10 @@ const InsightChart = observer(function InsightChart(props: Props) {
       });
     }
     for (const key of seriesKeys) {
-      const label = chartData.schema[key] ?? key;
+      const columnId = key || SERIES_FALLBACK_KEY;
+      const label = (chartData.schema[key] ?? key) || "—";
       metricColumns.push({
-        id: key,
+        id: columnId,
         accessorFn: (row) => row.__display[key] ?? "",
         header: () => <div className="text-right">{label}</div>,
         cell: ({ row }) =>
@@ -229,7 +230,7 @@ const InsightChart = observer(function InsightChart(props: Props) {
       });
       if (display !== "value") {
         metricColumns.push({
-          id: `${key}__pct`,
+          id: `${columnId}__pct`,
           accessorFn: (row) => formatPercentage(row.__pct[key]),
           header: () => <div className="text-right">{`${label} %`}</div>,
           cell: ({ row }) => <div className="text-right">{formatPercentage(row.original.__pct[key])}</div>,

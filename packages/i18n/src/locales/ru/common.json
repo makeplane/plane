@@ -873,5 +873,33 @@
       "description": "Экспорт рабочих элементов в JSON-файл.",
       "short_description": "Экспорт в json"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "Подсчёт по {basis}, независимо от глобальной базы дат",
+      "workload_by_labels": "Нагрузка по меткам"
+    },
+    "control": {
+      "assignees": "Назначенные",
+      "labels": "Метки",
+      "cycles": "Циклы",
+      "modules": "Модули",
+      "created_by": "Создано",
+      "comparison": "Сравнение",
+      "previous_period": "Предыдущий период",
+      "previous_week": "Прошлая неделя",
+      "previous_month": "Прошлый месяц",
+      "previous_quarter": "Прошлый квартал",
+      "previous_year": "Прошлый год",
+      "workload_by_labels": "По меткам"
+    },
+    "scope": {
+      "personal": "Личный",
+      "team": "Команда"
+    },
+    "action": {
+      "view_work_items": "Просмотр задач",
+      "vs_previous": "vs предыдущий"
+    }
   }
 }

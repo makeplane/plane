@@ -861,7 +861,12 @@
       "delivery": "Delivery",
       "workload": "Workload",
       "distribution": "Distribution",
-      "attention": "Needs attention"
+      "attention": "Needs attention",
+      "kpi_subtitle": "Today at a glance",
+      "delivery_subtitle": "How work is moving this period",
+      "workload_subtitle": "Who is carrying what",
+      "distribution_subtitle": "Where work is concentrated",
+      "attention_subtitle": "Items that need you"
     },
     "card": {
       "open_work_items": "Open work items",
@@ -881,7 +886,9 @@
       "no_data": "No data for the current filters.",
       "error": "This card could not be loaded.",
       "truncated": "Results were truncated because the query hit the work budget. Exported values may be partial.",
-      "basis_override": "Counted by {{basis}}, regardless of the global date basis"
+      "basis_override": "Counted by {basis}, regardless of the global date basis",
+      "workload_by_labels": "Workload by labels",
+      "all_members_workload": "All members workload"
     },
     "control": {
       "time_range": "Time range",
@@ -889,6 +896,7 @@
       "projects": "Projects",
       "priority": "Priority",
       "states": "States",
+      "selected_count": "{count} selected",
       "reset": "Reset",
       "reset_card": "Reset this card",
       "metric": "Calculate",
@@ -898,7 +906,20 @@
       "normalization": "Normalize",
       "allocation": "Allocation",
       "date_grouping": "Date grouping",
-      "visualization": "Visualization"
+      "visualization": "Visualization",
+      "assignees": "Assignees",
+      "labels": "Labels",
+      "cycles": "Cycles",
+      "modules": "Modules",
+      "created_by": "Created by",
+      "comparison": "Comparison",
+      "no_comparison": "No comparison",
+      "previous_period": "Previous period",
+      "previous_week": "Previous week",
+      "previous_month": "Previous month",
+      "previous_quarter": "Previous quarter",
+      "previous_year": "Previous year",
+      "workload_by_labels": "Workload by labels"
     },
     "time": {
       "today": "Today",
@@ -930,6 +951,25 @@
       "started": "Started",
       "completed": "Completed",
       "cancelled": "Cancelled"
+    },
+    "action": {
+      "view_work_items": "View work items",
+      "vs_previous": "vs previous"
+    },
+    "scope": {
+      "personal": "Personal",
+      "team": "Team"
+    },
+    "welcome": {
+      "greeting": "Welcome back, {name}",
+      "subtitle": "{openItems} open · {inProgress} in progress · {dueSoon} due soon"
+    },
+    "color": {
+      "open": "blue",
+      "in_progress": "amber",
+      "completed": "green",
+      "overdue": "red",
+      "blocked": "purple"
     }
   },
   "pi_chat": "Plane AI",

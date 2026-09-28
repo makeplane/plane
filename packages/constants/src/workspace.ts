@@ -202,6 +202,13 @@ export interface IWorkspaceSidebarNavigationItem {
   highlight: (pathname: string, url: string) => boolean;
 }
 
+/**
+ * Trailing slashes are inconsistent between nav hrefs and resolved router paths, so
+ * route matching compares them normalized. Keeps an entry active for both its index
+ * route and any nested child routes (e.g. `/dashboards` and `/dashboards/:id`).
+ */
+const stripTrailingSlashes = (value: string): string => value.replace(/\/+$/, "");
+
 export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
   views: {
     key: "views",
@@ -275,6 +282,17 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspac
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     highlight: (pathname: string, url: string) => pathname === url,
   },
+  dashboards: {
+    key: "dashboards",
+    labelTranslationKey: "sidebar.dashboards",
+    href: `/dashboards/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => {
+      const base = stripTrailingSlashes(url);
+      const current = stripTrailingSlashes(pathname);
+      return current === base || current.startsWith(`${base}/`);
+    },
+  },
   wiki: {
     key: "wiki",
     labelTranslationKey: "sidebar.wiki",
@@ -297,6 +315,7 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarN
 
 export const WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["projects"],
+  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["dashboards"],
 ];
 
 export const IS_FAVORITE_MENU_OPEN = "is_favorite_menu_open";

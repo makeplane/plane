@@ -226,10 +226,7 @@ export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRoo
 
     const renderedDays =
       Math.abs(
-        getNumberOfDaysBetweenTwoDates(
-          new Date(currentViewData.data.startDate),
-          new Date(currentViewData.data.endDate)
-        )
+        getNumberOfDaysBetweenTwoDates(new Date(currentViewData.data.startDate), new Date(currentViewData.data.endDate))
       ) + 1;
 
     updateCurrentViewData(nextState);

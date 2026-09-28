@@ -17,7 +17,7 @@
  * only has to re-run it when a preference changes.
  */
 
-import type { TAnalyticsQueryResponseV2, TAnalyticsQueryV2 } from "@plane/types";
+import type { TAnalyticsComparison, TAnalyticsQueryResponseV2, TAnalyticsQueryV2 } from "@plane/types";
 import type { TAnalyticsBatchResultEntry } from "@/components/analytics/v2/batch-composer";
 import { isDateDimension } from "@/components/analytics/v2/mapping";
 import { reconcileDisplayNormalization } from "@/components/analytics/v2/query";
@@ -47,10 +47,16 @@ export interface TWorkspaceDashboardGlobalScope {
    * client-side (§14, §20).
    */
   projectIds: string[];
+  /**
+   * Period-over-period comparison applied at the global scope. Mirrors
+   * `TAnalyticsComparison` from `@plane/types` — the engine rejects anything
+   * outside that vocab, so this field must round-trip through it exactly.
+   */
+  comparison: TAnalyticsComparison;
 }
 
 export type TWorkspaceDashboardCardResult =
-  | { status: "ok"; data: TAnalyticsQueryResponseV2 }
+  | { status: "ok"; data: TAnalyticsQueryResponseV2; comparison?: { totals: Record<string, number> } }
   | { status: "error"; error: { code: string; message: string } }
   | { status: "pending" };
 
@@ -72,10 +78,11 @@ export type TWorkspaceDashboardBatchRequest = { queries: TWorkspaceDashboardBatc
 
 /** §8.1 / §8.3 product defaults for the global control row. */
 export const DEFAULT_GLOBAL_SCOPE: TWorkspaceDashboardGlobalScope = {
-  timePreset: "this_quarter",
+  timePreset: "this_month",
   dateBasis: "lifecycle_overlap",
   filters: {},
   projectIds: [],
+  comparison: "none",
 };
 
 /**
@@ -165,7 +172,7 @@ export function buildCardQuery(
     dimensions,
     filters: intersectFilters(scope.filters, card.filters),
     time,
-    comparison: { type: "none" },
+    comparison: { type: scope.comparison },
     normalization,
     display,
     allocation: pref.allocation,
@@ -200,10 +207,31 @@ const asQueryResponse = (data: unknown): TAnalyticsQueryResponseV2 | null => {
 };
 
 /**
+ * The engine's V2 wire response exposes a single `previous_total` scalar per
+ * query (one metric per dashboard card today, §7). The card UI wants a
+ * metric-keyed map so the same code path renders a delta for whichever
+ * metric the card is currently showing.
+ */
+const asComparisonTotals = (
+  data: unknown,
+  metricKey: string | undefined
+): { totals: Record<string, number> } | undefined => {
+  if (!data || typeof data !== "object" || !metricKey) return undefined;
+  const resolved = (data as { resolved?: { comparison?: { previous_total?: number } } }).resolved;
+  const previousTotal = resolved?.comparison?.previous_total;
+  if (typeof previousTotal !== "number") return undefined;
+  return { totals: { [metricKey]: previousTotal } };
+};
+
+/**
  * §11 / §24.2.15 — fold the response back into a card-keyed map.
  *
  * A card the engine answered with `error`, or did not answer at all, gets its
  * own error state. The rest of the dashboard keeps rendering.
+ *
+ * §12 — the engine's `resolved.comparison.previous_total` scalar is promoted
+ * into a per-metric `comparison.totals` map so the KPI band can render a
+ * delta without re-deriving the comparison window client-side.
  */
 export function normalizeDashboardBatchResponse(
   results: TAnalyticsBatchResultEntry[] | undefined
@@ -213,8 +241,10 @@ export function normalizeDashboardBatchResponse(
   for (const entry of results ?? []) {
     if (!entry || typeof entry.key !== "string") continue;
     const data = entry.status === "ok" ? asQueryResponse(entry.data) : null;
-    if (data) out[entry.key] = { status: "ok", data };
-    else {
+    if (data) {
+      const metricKey = data.query?.metrics?.[0]?.key;
+      out[entry.key] = { status: "ok", data, comparison: asComparisonTotals(entry.data, metricKey) };
+    } else {
       out[entry.key] = {
         status: "error",
         error: entry.error ?? { code: "INVALID_QUERY", message: "Invalid query" },

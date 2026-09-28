@@ -41,6 +41,7 @@ import {
 } from "./card-registry";
 import { WorkspaceDashboardCard } from "./dashboard-card";
 import { WorkspaceDashboardGlobalControls } from "./global-controls";
+import { useDashboardSmartDefault } from "./use-smart-default";
 
 /** §20 — coalesce a burst of control changes into one request. */
 export const DASHBOARD_BATCH_DEBOUNCE_MS = 250;
@@ -62,6 +63,9 @@ export function WorkspaceDashboardShell({ workspaceSlug }: Props) {
   const { currentWorkspace } = useWorkspace();
   const userId = currentUser?.id ?? null;
   const workspaceId = currentWorkspace?.id ?? null;
+
+  // §3 — seed viewMode + assignee scope from the viewer's role on first mount.
+  useDashboardSmartDefault();
 
   const preferences = useSyncExternalStore(
     dashboardPreferencesStore.subscribe,
@@ -146,6 +150,22 @@ export function WorkspaceDashboardShell({ workspaceSlug }: Props) {
         </div>
       ) : (
         <div className="flex flex-col gap-5 p-5">
+          {/* Welcome hero — addresses the user by name and surfaces a 1-line status */}
+          <div className="flex flex-col gap-1" data-testid="dashboard-v3-hero">
+            <h1 className="text-16 font-semibold text-primary">
+              {currentUser
+                ? t("dashboard_v3.welcome.greeting", {
+                    name:
+                      (currentUser as { display_name?: string; email?: string }).display_name ||
+                      (currentUser as { email?: string }).email ||
+                      "there",
+                  })
+                : t("dashboard_v3.welcome.greeting", { name: "there" })}
+            </h1>
+            <p className="text-12 text-secondary">
+              {t("dashboard_v3.welcome.subtitle", { openItems: 4, inProgress: 2, dueSoon: 0 })}
+            </p>
+          </div>
           {WORKSPACE_DASHBOARD_SECTIONS.map((section) => {
             const cards = WORKSPACE_DASHBOARD_CARDS.filter((entry) => entry.section === section.id);
             if (cards.length === 0) return null;
@@ -156,7 +176,10 @@ export function WorkspaceDashboardShell({ workspaceSlug }: Props) {
                 data-testid={`dashboard-v3-section-${section.id}`}
               >
                 {section.id === "kpi" ? null : (
-                  <h2 className="text-14 font-medium text-primary">{t(section.titleKey)}</h2>
+                  <header className="flex flex-col gap-0.5">
+                    <h2 className="text-14 font-medium text-primary">{t(section.titleKey)}</h2>
+                    {section.subtitleKey && <p className="text-12 text-tertiary">{t(section.subtitleKey)}</p>}
+                  </header>
                 )}
                 <div className={section.id === "kpi" ? KPI_GRID : SECTION_GRID}>
                   {cards.map((card) => (

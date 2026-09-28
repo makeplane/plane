@@ -20,12 +20,33 @@ import { ANALYTICS_DATE_BASIS_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CustomSearchSelect } from "@plane/ui";
-import type { TAnalyticsTimePreset } from "@plane/types";
+import type { TAnalyticsComparison, TAnalyticsTimePreset } from "@plane/types";
 import { ProjectSelect } from "@/components/analytics/select/project";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 import type { TWorkspaceDashboardGlobalScope } from "./batch-composer";
+
+/**
+ * §8 — single-value trigger label. Renders the control label, a separator,
+ * and the resolved option's `query`. When the engine returns a value the
+ * options list doesn't know about (defensive, shouldn't happen) we fall
+ * back to the label so the trigger never reads empty.
+ */
+function TriggerRow({ label, option, fallback }: { label: string; option?: { query: string }; fallback: string }) {
+  return (
+    <span className="flex items-center gap-1 truncate">
+      <span className="text-tertiary">{label}</span>
+      <span className="text-tertiary">·</span>
+      <span className="truncate font-medium">{option?.query ?? fallback}</span>
+    </span>
+  );
+}
 
 /** §8.1 — every preset the engine resolves, workspace-timezone aware. */
 const TIME_PRESET_LABEL_KEYS: { value: TAnalyticsTimePreset; labelKey: string }[] = [
@@ -64,6 +85,17 @@ const STATE_GROUP_OPTIONS = [
   { value: "cancelled", labelKey: "dashboard_v3.state_group.cancelled" },
 ];
 
+/** §8.3 — period-over-period comparison options mirror the engine's
+ *  `TAnalyticsComparison` vocabulary. */
+const COMPARISON_OPTIONS: { value: TAnalyticsComparison; labelKey: string }[] = [
+  { value: "none", labelKey: "dashboard_v3.control.no_comparison" },
+  { value: "previous_period", labelKey: "dashboard_v3.control.previous_period" },
+  { value: "previous_week", labelKey: "dashboard_v3.control.previous_week" },
+  { value: "previous_month", labelKey: "dashboard_v3.control.previous_month" },
+  { value: "previous_quarter", labelKey: "dashboard_v3.control.previous_quarter" },
+  { value: "previous_year", labelKey: "dashboard_v3.control.previous_year" },
+];
+
 const toOptions = (entries: { value: string; labelKey: string }[], t: (key: string) => string) =>
   entries.map((entry) => ({
     value: entry.value,
@@ -83,6 +115,13 @@ type Props = {
 export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: Props) {
   const { t } = useTranslation();
   const { joinedProjectIds } = useProject();
+  const { currentWorkspace } = useWorkspace();
+  const { workspaceLabels } = useLabel();
+  const { cycleMap } = useCycle();
+  const { moduleMap } = useModule();
+  const { workspace: workspaceMemberStore } = useMember();
+  const workspaceSlug = currentWorkspace?.slug;
+  const workspaceId = currentWorkspace?.id;
 
   const timeOptions = toOptions(TIME_PRESET_LABEL_KEYS, t);
   const priorityOptions = toOptions(PRIORITY_OPTIONS, t);
@@ -92,6 +131,51 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
     query: option.label,
     content: <span>{option.label}</span>,
   }));
+
+  // §8.3 — viewer-scoped option lists. Labels are workspace-scoped by
+  // design (the store exposes `workspaceLabels`); cycles and modules are
+  // project-scoped entities that `fetchWorkspaceCycles` / `fetchWorkspaceModules`
+  // hydrate into the flat `cycleMap` / `moduleMap` keyed by id, so we filter
+  // by the current workspace's id. Members come from the workspace member
+  // store (no project filter — every workspace member is eligible).
+  const labelOptions = (workspaceLabels ?? [])
+    .filter((label) => !label.parent)
+    .map((label) => ({
+      value: label.id,
+      query: label.name,
+      content: <span>{label.name}</span>,
+    }));
+  const cycleOptions = workspaceId
+    ? Object.values(cycleMap ?? {})
+        .filter((cycle) => cycle?.workspace_id === workspaceId && !cycle?.archived_at)
+        .toSorted((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+        .map((cycle) => ({
+          value: cycle.id,
+          query: cycle.name,
+          content: <span>{cycle.name}</span>,
+        }))
+    : [];
+  const moduleOptions = workspaceId
+    ? Object.values(moduleMap ?? {})
+        .filter((module) => module?.workspace_id === workspaceId && !module?.archived_at)
+        .toSorted((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+        .map((module) => ({
+          value: module.id,
+          query: module.name,
+          content: <span>{module.name}</span>,
+        }))
+    : [];
+  const memberIdList: string[] = workspaceSlug ? (workspaceMemberStore.getWorkspaceMemberIds(workspaceSlug) ?? []) : [];
+  const memberOptions = memberIdList.map((memberId) => {
+    const details = workspaceMemberStore.getWorkspaceMemberDetails(memberId);
+    const user = details?.member;
+    const name = user?.display_name || `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() || user?.email;
+    return {
+      value: memberId,
+      query: name ?? memberId,
+      content: <span>{name ?? memberId}</span>,
+    };
+  });
 
   const setFilter = (key: string, values: string[] | null) => {
     const filters = { ...scope.filters };
@@ -113,6 +197,13 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
           onChange={(value: string[]) => onChange({ timePreset: value[0] as TAnalyticsTimePreset })}
           options={timeOptions}
           label={t("dashboard_v3.control.time_range")}
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.time_range")}
+              option={option}
+              fallback={t("dashboard_v3.control.time_range")}
+            />
+          )}
         />
         <CustomSearchSelect
           value={[scope.dateBasis]}
@@ -121,6 +212,13 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
           }
           options={dateBasisOptions}
           label={t("dashboard_v3.control.date_basis")}
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.date_basis")}
+              option={option}
+              fallback={t("dashboard_v3.control.date_basis")}
+            />
+          )}
         />
         <CustomSearchSelect
           value={scope.filters.priority ?? []}
@@ -128,6 +226,14 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
           options={priorityOptions}
           label={t("dashboard_v3.control.priority")}
           multiple
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.priority")}
+              option={option}
+              fallback={t("dashboard_v3.control.priority")}
+            />
+          )}
+          multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
         />
         <CustomSearchSelect
           value={scope.filters.state_group ?? []}
@@ -135,7 +241,105 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
           options={stateGroupOptions}
           label={t("dashboard_v3.control.states")}
           multiple
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.states")}
+              option={option}
+              fallback={t("dashboard_v3.control.states")}
+            />
+          )}
+          multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
         />
+        <CustomSearchSelect
+          value={scope.filters.assignees ?? []}
+          onChange={(value: string[]) => setFilter("assignees", value)}
+          options={memberOptions}
+          label={t("dashboard_v3.control.assignees")}
+          multiple
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.assignees")}
+              option={option}
+              fallback={t("dashboard_v3.control.assignees")}
+            />
+          )}
+          multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
+        />
+        <CustomSearchSelect
+          value={scope.filters.labels ?? []}
+          onChange={(value: string[]) => setFilter("labels", value)}
+          options={labelOptions}
+          label={t("dashboard_v3.control.labels")}
+          multiple
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.labels")}
+              option={option}
+              fallback={t("dashboard_v3.control.labels")}
+            />
+          )}
+          multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
+        />
+        <CustomSearchSelect
+          value={scope.filters.cycle ?? []}
+          onChange={(value: string[]) => setFilter("cycle", value)}
+          options={cycleOptions}
+          label={t("dashboard_v3.control.cycles")}
+          multiple
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.cycles")}
+              option={option}
+              fallback={t("dashboard_v3.control.cycles")}
+            />
+          )}
+          multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
+        />
+        <CustomSearchSelect
+          value={scope.filters.module ?? []}
+          onChange={(value: string[]) => setFilter("module", value)}
+          options={moduleOptions}
+          label={t("dashboard_v3.control.modules")}
+          multiple
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.modules")}
+              option={option}
+              fallback={t("dashboard_v3.control.modules")}
+            />
+          )}
+          multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
+        />
+        <CustomSearchSelect
+          value={scope.filters.created_by ?? []}
+          onChange={(value: string[]) => setFilter("created_by", value)}
+          options={memberOptions}
+          label={t("dashboard_v3.control.created_by")}
+          multiple
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.created_by")}
+              option={option}
+              fallback={t("dashboard_v3.control.created_by")}
+            />
+          )}
+          multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
+        />
+        {scope.timePreset !== "none" && (
+          <CustomSearchSelect
+            value={[scope.comparison]}
+            onChange={(value: string[]) => onChange({ comparison: value[0] as TAnalyticsComparison })}
+            options={toOptions(COMPARISON_OPTIONS, t)}
+            label={t("dashboard_v3.control.comparison")}
+            selectedContent={(_value, option) => (
+              <TriggerRow
+                label={t("dashboard_v3.control.comparison")}
+                option={option}
+                fallback={t("dashboard_v3.control.comparison")}
+              />
+            )}
+          />
+        )}
         <Button variant="tertiary" size="sm" onClick={onReset} data-testid="dashboard-v3-reset">
           {t("dashboard_v3.control.reset")}
         </Button>

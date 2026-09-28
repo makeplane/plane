@@ -1,11 +1,15 @@
 {
   "extends": "@plane/typescript-config/react-library.json",
-  "include": ["src"],
+  "include": ["src", "tests"],
   "compilerOptions": {
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "exactOptionalPropertyTypes": false,
-    "noImplicitReturns": false
+    "noImplicitReturns": false,
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "exclude": ["dist", "node_modules"]
 }

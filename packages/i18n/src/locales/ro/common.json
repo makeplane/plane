@@ -873,5 +873,33 @@
       "description": "Exportă activitățile într-un fișier JSON.",
       "short_description": "Exportă ca JSON"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "Numărate după {basis}, indiferent de baza de date globală",
+      "workload_by_labels": "Volum de muncă pe etichete"
+    },
+    "control": {
+      "assignees": "Atribuiți",
+      "labels": "Etichete",
+      "cycles": "Cicluri",
+      "modules": "Module",
+      "created_by": "Creat de",
+      "comparison": "Comparație",
+      "previous_period": "Perioada anterioară",
+      "previous_week": "Săptămâna anterioară",
+      "previous_month": "Luna anterioară",
+      "previous_quarter": "Trimestrul anterior",
+      "previous_year": "Anul anterior",
+      "workload_by_labels": "Volum pe etichete"
+    },
+    "scope": {
+      "personal": "Personal",
+      "team": "Echipă"
+    },
+    "action": {
+      "view_work_items": "Vezi elementele de lucru",
+      "vs_previous": "vs anterioare"
+    }
   }
 }

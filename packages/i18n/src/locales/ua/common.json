@@ -873,5 +873,33 @@
       "description": "Експортуйте одиниці у формат JSON.",
       "short_description": "Експортувати як JSON"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "Підрахунок за {basis}, незалежно від глобальної бази дат",
+      "workload_by_labels": "Навантаження за мітками"
+    },
+    "control": {
+      "assignees": "Призначені",
+      "labels": "Мітки",
+      "cycles": "Цикли",
+      "modules": "Модулі",
+      "created_by": "Створено",
+      "comparison": "Порівняння",
+      "previous_period": "Попередній період",
+      "previous_week": "Минулий тиждень",
+      "previous_month": "Минулий місяць",
+      "previous_quarter": "Минулий квартал",
+      "previous_year": "Минулий рік",
+      "workload_by_labels": "За мітками"
+    },
+    "scope": {
+      "personal": "Особистий",
+      "team": "Команда"
+    },
+    "action": {
+      "view_work_items": "Переглянути робочі елементи",
+      "vs_previous": "vs попередній"
+    }
   }
 }

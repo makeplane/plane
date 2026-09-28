@@ -23,10 +23,7 @@ type QuarterWeekChunk = {
   label: string;
 };
 
-const getQuarterWeekChunks = (
-  quarterBlock: IQuarterMonthBlock,
-  startOfWeek: EStartOfTheWeek
-): QuarterWeekChunk[] => {
+const getQuarterWeekChunks = (quarterBlock: IQuarterMonthBlock, startOfWeek: EStartOfTheWeek): QuarterWeekChunk[] => {
   const firstMonth = quarterBlock.children[0];
   const lastMonth = quarterBlock.children[quarterBlock.children.length - 1];
   if (!firstMonth || !lastMonth) return [];
@@ -37,8 +34,10 @@ const getQuarterWeekChunks = (
   today.setHours(0, 0, 0, 0);
 
   const chunks: QuarterWeekChunk[] = [];
-  const cursor = new Date(quarterStart);
+  let cursor = new Date(quarterStart);
 
+  // oxlint thinks `cursor` is unmodified because advancement uses setTime/setDate.
+  // eslint-disable-next-line no-unmodified-loop-condition -- cursor advances at loop end
   while (cursor <= quarterEnd) {
     const startDate = new Date(cursor);
     const dayOffset = (startDate.getDay() + 7 - startOfWeek) % 7;

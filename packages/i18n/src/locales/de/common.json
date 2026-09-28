@@ -873,5 +873,33 @@
       "description": "Arbeitselemente in JSON exportieren.",
       "short_description": "Als JSON exportieren"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "Gezählt nach {basis}, unabhängig von der globalen Datumsbasis",
+      "workload_by_labels": "Arbeitsauslastung nach Labels"
+    },
+    "control": {
+      "assignees": "Zuständig",
+      "labels": "Labels",
+      "cycles": "Zyklen",
+      "modules": "Module",
+      "created_by": "Erstellt von",
+      "comparison": "Vergleich",
+      "previous_period": "Vorheriger Zeitraum",
+      "previous_week": "Vorherige Woche",
+      "previous_month": "Vorheriger Monat",
+      "previous_quarter": "Vorheriges Quartal",
+      "previous_year": "Vorheriges Jahr",
+      "workload_by_labels": "Auslastung nach Labels"
+    },
+    "scope": {
+      "personal": "Persönlich",
+      "team": "Team"
+    },
+    "action": {
+      "view_work_items": "Arbeitselemente ansehen",
+      "vs_previous": "vs. vorherige"
+    }
   }
 }

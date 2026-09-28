@@ -69,7 +69,6 @@ export class APITokenService extends APIService {
   }
 }
 
-
 export class ServiceAccessTokenService extends APIService {
   constructor(BASE_URL?: string) {
     super(BASE_URL || API_BASE_URL);
@@ -83,10 +82,7 @@ export class ServiceAccessTokenService extends APIService {
       });
   }
 
-  async createWorkspace(
-    workspaceSlug: string,
-    data: IServiceAccessTokenCreate
-  ): Promise<IServiceAccessToken> {
+  async createWorkspace(workspaceSlug: string, data: IServiceAccessTokenCreate): Promise<IServiceAccessToken> {
     return this.post(`/api/workspaces/${workspaceSlug}/service-tokens/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -130,10 +126,7 @@ export class ServiceAccessTokenService extends APIService {
       });
   }
 
-  async updateInstance(
-    tokenId: string,
-    data: Partial<IServiceAccessTokenCreate>
-  ): Promise<IServiceAccessToken> {
+  async updateInstance(tokenId: string, data: Partial<IServiceAccessTokenCreate>): Promise<IServiceAccessToken> {
     return this.patch(`/api/instances/service-tokens/${tokenId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {

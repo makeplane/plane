@@ -4,5 +4,6 @@
  * See the LICENSE file for details.
  */
 
+export * from "./dashboard";
 export * from "./store";
 export * from "./utils";

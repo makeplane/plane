@@ -873,5 +873,33 @@
       "description": "Exporta elementos de trabajo a un archivo JSON.",
       "short_description": "Exportar como json"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "Contado por {basis}, independientemente de la base de fecha global",
+      "workload_by_labels": "Carga de trabajo por etiquetas"
+    },
+    "control": {
+      "assignees": "Asignados",
+      "labels": "Etiquetas",
+      "cycles": "Ciclos",
+      "modules": "Módulos",
+      "created_by": "Creado por",
+      "comparison": "Comparación",
+      "previous_period": "Periodo anterior",
+      "previous_week": "Semana anterior",
+      "previous_month": "Mes anterior",
+      "previous_quarter": "Trimestre anterior",
+      "previous_year": "Año anterior",
+      "workload_by_labels": "Carga por etiquetas"
+    },
+    "scope": {
+      "personal": "Personal",
+      "team": "Equipo"
+    },
+    "action": {
+      "view_work_items": "Ver elementos de trabajo",
+      "vs_previous": "vs anterior"
+    }
   }
 }

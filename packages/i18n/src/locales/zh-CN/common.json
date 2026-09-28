@@ -873,5 +873,33 @@
       "description": "将工作项导出为 JSON 文件。",
       "short_description": "导出为 JSON"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "按 {basis} 统计，与全局日期基准无关",
+      "workload_by_labels": "按标签划分的工作量"
+    },
+    "control": {
+      "assignees": "负责人",
+      "labels": "标签",
+      "cycles": "周期",
+      "modules": "模块",
+      "created_by": "创建者",
+      "comparison": "对比",
+      "previous_period": "上一周期",
+      "previous_week": "上周",
+      "previous_month": "上月",
+      "previous_quarter": "上季度",
+      "previous_year": "上年",
+      "workload_by_labels": "按标签"
+    },
+    "scope": {
+      "personal": "个人",
+      "team": "团队"
+    },
+    "action": {
+      "view_work_items": "查看工作项",
+      "vs_previous": "较上一周期"
+    }
   }
 }
