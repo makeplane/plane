@@ -17,6 +17,7 @@ import {
   PageIcon,
   StatePropertyIcon,
   ViewsIcon,
+  WorkflowsPropertyIcon,
 } from "@plane/propel/icons";
 import type { TProjectSettingsTabs } from "@plane/types";
 // components
@@ -33,5 +34,6 @@ export const PROJECT_SETTINGS_ICONS: Record<TProjectSettingsTabs, LucideIcon | R
   states: StatePropertyIcon,
   labels: LabelPropertyIcon,
   estimates: EstimatePropertyIcon,
+  workflows: WorkflowsPropertyIcon,
   automations: Zap,
 };

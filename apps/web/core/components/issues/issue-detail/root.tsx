@@ -1,3 +1,4 @@
+// oxlint-disable no-shadow
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -22,6 +23,8 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+// helpers
+import { getWorkflowErrorMessage } from "@/utils/workflow-error";
 // local components
 import { IssuePeekOverview } from "../peek-overview";
 import { IssueMainContent } from "./main-content";
@@ -99,7 +102,13 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           setToast({
             title: t("common.error.label"),
             type: TOAST_TYPE.ERROR,
-            message: t("entity.update.failed", { entity: t("issue.label") }),
+            // §23.5 — a state change the workflow rejects (illegal transition,
+            // pending approval, unresolvable approver) must surface the
+            // backend's blocker string, not a generic "update failed".
+            // `getWorkflowErrorMessage` returns the API's message verbatim
+            // when there is one and this exact generic text otherwise, so
+            // the workflows-off path is unchanged.
+            message: getWorkflowErrorMessage(error, t("entity.update.failed", { entity: t("issue.label") })),
           });
         }
       },
