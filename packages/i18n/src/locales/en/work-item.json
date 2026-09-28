@@ -266,6 +266,32 @@
       "click_to_downvote": "Click to downvote",
       "click_to_view_upvotes": "Click to view upvotes",
       "click_to_view_downvotes": "Click to view downvotes"
+    },
+    "workflow_approval": {
+      "badge": {
+        "pending": "Approval pending"
+      },
+      "waiting_for": "Waiting for approval",
+      "approvers": "Approvers",
+      "add_comment": "Add a comment (optional)",
+      "comment_placeholder": "Why are you approving or rejecting?",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approve_to": "Approve → {state}",
+      "reject_to": "Reject → {state}",
+      "activity": {
+        "requested": "requested approval{movement}.",
+        "approved": "approved the move{movement}.",
+        "rejected": "rejected the approval request.",
+        "comment": "Comment: {comment}"
+      },
+      "toast": {
+        "load_failed": "Could not load the approval status of this work item.",
+        "decision": {
+          "success": "Work item moved to {state}.",
+          "error": "The decision could not be recorded."
+        }
+      }
     }
   },
   "sub_work_item": {

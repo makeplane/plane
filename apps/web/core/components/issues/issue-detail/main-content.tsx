@@ -14,6 +14,7 @@ import { EFileAssetType, EIssueServiceType } from "@plane/types";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { DescriptionInput } from "@/components/editor/rich-text/description-input";
+import { IssueApprovalRoot } from "@/components/issue-approval";
 import { IssueTypeSwitcher } from "@/components/issues/issue-type-switcher";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -94,6 +95,16 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
             <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
           </div>
         </div>
+
+        {/* §23.3 — approval badge + approve/reject, next to the item header.
+            Only archive locks the controls: who may decide is the approval's
+            snapshotted approver list (§11.2), which the server reports. */}
+        <IssueApprovalRoot
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          disabled={isArchived}
+        />
 
         <IssueTitleInput
           workspaceSlug={workspaceSlug}

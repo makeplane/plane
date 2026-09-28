@@ -4,5 +4,5 @@
  * See the LICENSE file for details.
  */
 
-export * from "./workflow-state-list";
-export * from "./workflow-approval-bar";
+export * from "./root";
+export * from "./approval-activity";

@@ -185,7 +185,7 @@ export interface IIssueWorkflowActionsResponse {
   workflow: { id: string; revision_id: string; version: number } | null;
   state: { id: string; name: string } | null;
   transitions: IIssueWorkflowTransition[];
-  approval: null;
+  approval: IIssueWorkflowPendingApproval | null;
 }
 
 export interface IIssueWorkflowTransition {
@@ -194,6 +194,81 @@ export interface IIssueWorkflowTransition {
   target_state_name: string;
   flow_type: TWorkflowFlowType;
   allowed: boolean;
+}
+
+// ---------------------------------------------------------------------------
+// Approval runtime — §7.8–§7.10, §11, §17.3
+// ---------------------------------------------------------------------------
+
+/** §7.8 `WorkflowApprovalStatus`. */
+export type TWorkflowApprovalStatus = "pending" | "approved" | "rejected" | "cancelled";
+
+/** §7.10 `WorkflowApprovalDecisionType`. */
+export type TWorkflowApprovalDecisionType = "approve" | "reject";
+
+/**
+ * The `approval` block of `GET /issues/:id/workflow/actions/`.
+ *
+ * Eligibility is the server's call (§11.2, §18.2): `can_decide` is true only
+ * when the requesting user is on the approval's snapshotted approver list, so
+ * the UI renders the approve/reject controls from this flag and never decides
+ * eligibility itself.
+ */
+export interface IIssueWorkflowPendingApproval {
+  id: string;
+  status: TWorkflowApprovalStatus;
+  source_state_id: string;
+  source_state_name: string | null;
+  target_state_id: string;
+  target_state_name: string | null;
+  reject_state_id: string | null;
+  can_decide: boolean;
+  approver_user_ids: string[];
+}
+
+/** §7.10 audit row, as returned by the approval read endpoint. */
+export interface IWorkflowApprovalDecision {
+  id: string;
+  decision: TWorkflowApprovalDecisionType;
+  actor_id: string | null;
+  comment: string;
+  idempotency_key: string | null;
+  created_at: string | null;
+}
+
+/** `GET /issues/:id/approvals/:approval_id/` — the pending approval in full. */
+export interface IWorkflowApprovalDetail extends IIssueWorkflowPendingApproval {
+  issue_id: string;
+  flow_id: string;
+  requested_at: string | null;
+  requested_by: string | null;
+  resolved_at: string | null;
+  resolved_by: string | null;
+  resolution_comment: string;
+  decisions: IWorkflowApprovalDecision[];
+}
+
+/** `ApprovalSummary.to_dict()` — the chained next approval after a decision. */
+export interface IWorkflowApprovalNextSummary {
+  approval_id: string;
+  approver_user_ids: string[];
+  source_type_summary: Record<string, number>;
+}
+
+/**
+ * `POST .../approve/` and `.../reject/` result — §11 `DecisionResult`.
+ *
+ * `next_approval` is a chained approval summary, or `{ error, detail }` when
+ * the next step had no resolvable approver (§12.8) — the decision itself still
+ * succeeded, so the UI reports it as a warning rather than a failure.
+ */
+export interface IWorkflowApprovalDecisionResult {
+  approval_id: string;
+  decision: TWorkflowApprovalDecisionType;
+  decision_id: string;
+  new_state_id: string;
+  new_state_name: string | null;
+  next_approval?: IWorkflowApprovalNextSummary | IWorkflowErrorPayload;
 }
 
 // ---------------------------------------------------------------------------

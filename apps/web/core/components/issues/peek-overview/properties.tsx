@@ -35,6 +35,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useIssueWorkflowStateIds } from "@/hooks/use-issue-workflow-state-ids";
 // plane web components
 import { IssueParentSelectRoot } from "@/components/issues/parent-select-root";
 import type { TIssueOperations } from "../issue-detail";
@@ -62,6 +63,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   const { getUserDetails } = useMember();
   // derived values
   const issue = getIssueById(issueId);
+  const workflowStateIds = useIssueWorkflowStateIds(issueId);
   if (!issue) return <></>;
   const createdByDetails = getUserDetails(issue?.created_by);
   const projectDetails = getProjectById(issue.project_id);
@@ -83,6 +85,9 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             value={issue?.state_id}
             onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
             projectId={projectId}
+            // §23.3 / §23.4 — undefined while no workflow is bound, which
+            // keeps the picker on the full project state list.
+            stateIds={workflowStateIds}
             disabled={disabled}
             buttonVariant="transparent-with-text"
             className="group w-full grow"

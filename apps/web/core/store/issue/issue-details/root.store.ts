@@ -15,11 +15,14 @@ import type {
   TIssueReaction,
   TIssueRelationTypes,
   TIssueServiceType,
+  TWorkflowApprovalDecisionType,
   TWorkItemWidgets,
 } from "@plane/types";
 // plane web store
 import { IssueActivityStore } from "./activity.store";
 import type { IIssueActivityStore, IIssueActivityStoreActions, TActivityLoader } from "./activity.store";
+import { IssueApprovalStore } from "./approval.store";
+import type { IIssueApprovalStore, IIssueApprovalStoreActions } from "./approval.store";
 import type { IIssueRootStore } from "../root.store";
 import { IssueAttachmentStore } from "./attachment.store";
 import type { IIssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachment.store";
@@ -70,6 +73,7 @@ export interface IIssueDetail
     IIssueAttachmentStoreActions,
     IIssueRelationStoreActions,
     IIssueActivityStoreActions,
+    IIssueApprovalStoreActions,
     IIssueCommentStoreActions,
     IIssueCommentReactionStoreActions {
   // observables
@@ -114,6 +118,7 @@ export interface IIssueDetail
   reaction: IIssueReactionStore;
   attachment: IIssueAttachmentStore;
   activity: IIssueActivityStore;
+  approval: IIssueApprovalStore;
   comment: IIssueCommentStore;
   commentReaction: IIssueCommentReactionStore;
   subIssues: IIssueSubIssuesStore;
@@ -161,6 +166,7 @@ export class IssueDetail implements IIssueDetail {
   subscription: IIssueSubscriptionStore;
   relation: IIssueRelationStore;
   activity: IIssueActivityStore;
+  approval: IIssueApprovalStore;
   comment: IIssueCommentStore;
   commentReaction: IIssueCommentReactionStore;
 
@@ -209,6 +215,7 @@ export class IssueDetail implements IIssueDetail {
     this.reaction = new IssueReactionStore(this, serviceType);
     this.attachment = new IssueAttachmentStore(rootStore, serviceType);
     this.activity = new IssueActivityStore(rootStore.rootStore, serviceType);
+    this.approval = new IssueApprovalStore(this);
     this.comment = new IssueCommentStore(this, serviceType);
     this.commentReaction = new IssueCommentReactionStore(this);
     this.subIssues = new IssueSubIssuesStore(this, serviceType);
@@ -255,8 +262,8 @@ export class IssueDetail implements IIssueDetail {
     this.openWidgets = state;
     if (this.lastWidgetAction) this.lastWidgetAction = null;
   };
-  setLastWidgetAction = (action: TWorkItemWidgets) => {
-    this.openWidgets = [action];
+  setLastWidgetAction = (widget: TWorkItemWidgets) => {
+    this.openWidgets = [widget];
   };
   toggleOpenWidget = (state: TWorkItemWidgets) => {
     if (this.openWidgets && this.openWidgets.includes(state))
@@ -383,6 +390,19 @@ export class IssueDetail implements IIssueDetail {
   // activity
   fetchActivities = async (workspaceSlug: string, projectId: string, issueId: string, loaderType?: TActivityLoader) =>
     this.activity.fetchActivities(workspaceSlug, projectId, issueId, loaderType);
+
+  // approval
+  fetchApprovalState = async (workspaceSlug: string, projectId: string, issueId: string) =>
+    this.approval.fetchApprovalState(workspaceSlug, projectId, issueId);
+  decideApproval = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    approvalId: string,
+    decision: TWorkflowApprovalDecisionType,
+    comment: string,
+    idempotencyKey: string
+  ) => this.approval.decideApproval(workspaceSlug, projectId, issueId, approvalId, decision, comment, idempotencyKey);
 
   // comment
   fetchComments = async (workspaceSlug: string, projectId: string, issueId: string, loaderType?: TCommentLoader) =>
