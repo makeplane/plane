@@ -6,9 +6,7 @@
 
 import { useState } from "react";
 // plane imports
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// hooks
-import useKeypress from "@/hooks/use-keypress";
+import { Dialog, DialogContent } from "@makeplane/propel/components/dialog";
 // local imports
 import { InboxIssueCreateRoot } from "./create-root";
 
@@ -26,27 +24,28 @@ export function InboxIssueCreateModalRoot(props: TInboxIssueCreateModalRoot) {
   // handlers
   const handleDuplicateIssueModal = (value: boolean) => setIsDuplicateModalOpen(value);
 
-  useKeypress("Escape", () => {
-    if (modalState) {
-      handleModalClose();
-      setIsDuplicateModalOpen(false);
-    }
-  });
-
   return (
-    <ModalCore
-      isOpen={modalState}
-      position={EModalPosition.TOP}
-      width={isDuplicateModalOpen ? EModalWidth.VIXL : EModalWidth.XXXXL}
-      className="rounded-lg !bg-transparent shadow-none transition-[width] ease-linear"
+    <Dialog
+      open={modalState}
+      // The legacy modal passed no `handleClose`, so an outside press never dismissed it, but a
+      // window-level Escape listener closed it. Base UI's Escape is now that single Escape path.
+      disablePointerDismissal
+      onOpenChange={(open) => {
+        if (!open) {
+          handleModalClose();
+          setIsDuplicateModalOpen(false);
+        }
+      }}
     >
-      <InboxIssueCreateRoot
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        handleModalClose={handleModalClose}
-        isDuplicateModalOpen={isDuplicateModalOpen}
-        handleDuplicateIssueModal={handleDuplicateIssueModal}
-      />
-    </ModalCore>
+      <DialogContent size="lg">
+        <InboxIssueCreateRoot
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          handleModalClose={handleModalClose}
+          isDuplicateModalOpen={isDuplicateModalOpen}
+          handleDuplicateIssueModal={handleDuplicateIssueModal}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }

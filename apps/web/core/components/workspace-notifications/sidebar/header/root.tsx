@@ -7,8 +7,9 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { InboxIcon } from "@plane/propel/icons";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { InboxOutline } from "@makeplane/propel/icons";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // local imports
@@ -33,7 +34,7 @@ export const NotificationSidebarHeader = observer(function NotificationSidebarHe
             component={
               <BreadcrumbLink
                 label={t("notification.label")}
-                icon={<InboxIcon className="h-4 w-4 text-primary" />}
+                icon={<InboxOutline className="h-4 w-4 text-primary" />}
                 disableTooltip
               />
             }

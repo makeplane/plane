@@ -8,6 +8,7 @@
   "submit": "Senden",
   "cancel": "Abbrechen",
   "loading": "Wird geladen",
+  "searching": "Wird gesucht...",
   "error": "Fehler",
   "success": "Erfolg",
   "warning": "Warnung",
@@ -303,6 +304,9 @@
   "create_new_label": "Neues Label erstellen",
   "label_name": "Label-Name",
   "failed_to_create_label": "Label konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+  "no_matching_labels": "Keine passenden Labels",
+  "adding_label": "„{name}“ wird hinzugefügt",
+  "add_label_to_labels": "„{name}“ zu Labels hinzufügen",
   "start_date": "Startdatum",
   "end_date": "Enddatum",
   "due_date": "Fälligkeitsdatum",
@@ -486,7 +490,7 @@
     "project_timezone": "Projektzeitzone",
     "created_on": "Erstellt am",
     "updated_on": "Aktualisiert am",
-    "completed_on": "Completed on",
+    "completed_on": "Abgeschlossen am",
     "update_project": "Projekt aktualisieren",
     "identifier_already_exists": "Der Bezeichner existiert bereits",
     "add_more": "Mehr hinzufügen",
@@ -522,6 +526,7 @@
       "updated_on": "Aktualisiert am"
     },
     "sort": {
+      "label": "Sortieren",
       "asc": "Aufsteigend",
       "desc": "Absteigend",
       "created_on": "Erstellt am",
@@ -619,7 +624,8 @@
       "enable": "Aktivieren",
       "disable": "Deaktivieren",
       "copy_markdown": "Markdown kopieren",
-      "reply": "Antworten"
+      "reply": "Antworten",
+      "add_reaction": "Reaktion hinzufügen"
     },
     "name": "Name",
     "discard": "Verwerfen",
@@ -713,11 +719,11 @@
     "details": "Details",
     "project_structure": "Projektstruktur",
     "custom_properties": "Benutzerdefinierte Eigenschaften",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Ihr Profil",
+    "developer": "Entwickler",
+    "work_structure": "Arbeitsstruktur",
+    "execution": "Ausführung",
+    "administration": "Verwaltung"
   },
   "chart": {
     "x_axis": "X-Achse",
@@ -831,8 +837,8 @@
   "enter_number_of_projects": "Anzahl der Projekte eingeben",
   "pin": "Anheften",
   "unpin": "Lösen",
-  "workspace_dashboards": "Däschbords",
-  "pi_chat": "AI Tschät",
+  "workspace_dashboards": "Dashboards",
+  "pi_chat": "Plane AI",
   "in_app": "In-App",
   "forms": "Forms",
   "milestones": "Meilensteine",
@@ -867,5 +873,6 @@
       "description": "Arbeitselemente in JSON exportieren.",
       "short_description": "Als JSON exportieren"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# Label} other {# Labels}}"
 }

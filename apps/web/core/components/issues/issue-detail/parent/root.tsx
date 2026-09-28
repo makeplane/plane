@@ -6,13 +6,16 @@
 
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
-import { MinusCircle } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { MoreHorizontalOutline, RemoveOutline } from "@makeplane/propel/icons";
 import type { TIssue } from "@plane/types";
 // component
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // ui
-import { ControlLink, CustomMenu } from "@plane/ui";
+import { ControlLink } from "@plane/blocks/layout";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuGroup, MenuItem, MenuLabel, MenuTrigger } from "@makeplane/propel/components/menu";
 // helpers
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
@@ -91,19 +94,33 @@ export const IssueParentDetail = observer(function IssueParentDetail(props: TIss
           </div>
         </ControlLink>
 
-        <CustomMenu ellipsis optionsClassName="p-1.5">
-          <div className="border-b border-strong text-11 font-medium text-secondary">{t("issue.sibling.label")}</div>
-
-          <IssueParentSiblings workspaceSlug={workspaceSlug} currentIssue={issue} parentIssue={parentIssue} />
-
-          <CustomMenu.MenuItem
-            onClick={() => issueOperations.update(workspaceSlug, projectId, issueId, { parent_id: null })}
-            className="flex items-center gap-2 py-2 text-danger-primary"
-          >
-            <MinusCircle className="h-4 w-4" />
-            <span>{t("issue.remove.parent.label")}</span>
-          </CustomMenu.MenuItem>
-        </CustomMenu>
+        <Menu>
+          {/* Icon-only trigger, so it needs an explicit accessible name. */}
+          <MenuTrigger
+            render={
+              <IconButton
+                variant="ghost"
+                size="sm"
+                aria-label={t("aria_labels.common.more_actions")}
+                icon={<Icon icon={MoreHorizontalOutline} />}
+              />
+            }
+          />
+          <MenuContent side="bottom" align="start">
+            <MenuGroup>
+              <MenuLabel>{t("issue.sibling.label")}</MenuLabel>
+              <IssueParentSiblings workspaceSlug={workspaceSlug} currentIssue={issue} parentIssue={parentIssue} />
+            </MenuGroup>
+            <MenuItem
+              variant="danger"
+              icon={<Icon icon={RemoveOutline} />}
+              label={t("issue.remove.parent.label")}
+              onClick={() => {
+                void issueOperations.update(workspaceSlug, projectId, issueId, { parent_id: null });
+              }}
+            />
+          </MenuContent>
+        </Menu>
       </div>
     </>
   );

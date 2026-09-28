@@ -29,6 +29,19 @@
       "hide_password": "Ẩn mật khẩu",
       "close_alert": "Đóng cảnh báo",
       "close_popover": "Đóng popover"
+    },
+    "breadcrumb": {
+      "trail": "Đường dẫn điều hướng",
+      "show_more": "Hiển thị thêm đường dẫn điều hướng"
+    },
+    "common": {
+      "more_actions": "Thao tác khác",
+      "remove": "Xóa"
+    },
+    "color_picker": {
+      "open": "Mở bộ chọn màu",
+      "swatches": "Màu có sẵn",
+      "hex_input": "Màu hệ hex"
     }
   }
 }

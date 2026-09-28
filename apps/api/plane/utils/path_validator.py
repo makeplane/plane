@@ -113,6 +113,15 @@ def validate_next_path(next_path: str) -> str:
         return ""
 
     next_path = next_path.replace("\\", "")
+
+    # Browsers (per the WHATWG URL spec) strip every ASCII tab/CR/LF from a
+    # URL before parsing it, so "/\t/\t/evil.com" is what the browser
+    # actually navigates on, even though urlparse() sees a netloc-free,
+    # scheme-free string here and a literal .startswith("//") below would
+    # miss it too (the second character is a tab, not a slash). Strip them
+    # here so every check downstream sees what the browser will.
+    next_path = next_path.translate(str.maketrans("", "", "\t\r\n"))
+
     parsed_url = urlparse(next_path)
 
     # Block absolute URLs or anything with scheme/netloc
@@ -121,6 +130,17 @@ def validate_next_path(next_path: str) -> str:
 
     # Must start with a forward slash and not be empty
     if not next_path or not next_path.startswith("/"):
+        return ""
+
+    # Reject authority-relative paths (//, ///, ////, ...). urlparse() only
+    # treats a leading "//" as a netloc when what follows still looks like a
+    # bare host (e.g. "//example.com/"); for "///example.com/" both scheme
+    # and netloc come back empty, so the branch above never fires and this
+    # string would otherwise sail through every check below unmodified. The
+    # browser itself still resolves any leading "//" as authority-relative
+    # against an http(s) base, navigating off-domain regardless of what
+    # urlparse() made of it server-side.
+    if next_path.startswith("//"):
         return ""
 
     # Prevent path traversal

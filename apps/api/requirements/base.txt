@@ -3,7 +3,7 @@
 # django
 Django==5.2.15
 # rest framework
-djangorestframework==3.17.1
+djangorestframework==3.17.2
 # postgres
 psycopg==3.3.4
 psycopg-binary==3.3.4
