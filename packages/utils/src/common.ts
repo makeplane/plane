@@ -20,7 +20,7 @@ const isCustomTypography = (value: string) =>
 const isCustomFontSize = (value: string) => /^(9|10|11|12|13|14|16|18|20|24|28|32|40)$/.test(value);
 
 // Matches custom text color classes: text-primary, text-on-color, text-secondary, etc.
-const CUSTOM_TEXT_COLORS = [
+const CUSTOM_TEXT_COLORS = new Set([
   "primary",
   "secondary",
   "tertiary",
@@ -40,8 +40,8 @@ const CUSTOM_TEXT_COLORS = [
   "danger",
   "danger-primary",
   "danger-secondary",
-];
-const isCustomTextColor = (value: string) => CUSTOM_TEXT_COLORS.includes(value);
+]);
+const isCustomTextColor = (value: string) => CUSTOM_TEXT_COLORS.has(value);
 
 const twMerge = extendTailwindMerge<"custom-typography" | "custom-text-color">({
   override: {
@@ -76,28 +76,44 @@ export const extractIds = <T extends { id: string }>(items: T[]): string[] => it
 /**
  * Checks if an ID exists and is valid within the provided list
  */
-export const isValidId = (id: string | null | undefined, validIds: string[]): boolean => !!id && validIds.includes(id);
+export const isValidId = (id: string | null | undefined, validIds: string[]): boolean => {
+  if (!id || !validIds || validIds.length === 0) return false;
+  return validIds.includes(id);
+};
 
 /**
- * Filters an array to only include valid IDs
+ * Filters an array to only include valid IDs.
+ * Performance Optimization: Uses a Set for O(1) lookups instead of O(M) Array.prototype.includes,
+ * reducing overall complexity from O(N * M) to O(N + M).
  */
-export const filterValidIds = (ids: string[], validIds: string[]): string[] =>
-  ids.filter((id) => validIds.includes(id));
+export const filterValidIds = (ids: string[], validIds: string[]): string[] => {
+  if (!ids || ids.length === 0) return [];
+  if (!validIds || validIds.length === 0) return [];
+  const validSet = new Set(validIds);
+  return ids.filter((id) => validSet.has(id));
+};
 
 /**
- * Filters an array to include only valid IDs, returning both valid and invalid IDs
+ * Filters an array to include only valid IDs, returning both valid and invalid IDs.
+ * Performance Optimization: Uses a Set for O(1) lookups instead of O(M) Array.prototype.includes,
+ * reducing overall complexity from O(N * M) to O(N + M).
  */
 export const partitionValidIds = (ids: string[], validIds: string[]): { valid: string[]; invalid: string[] } => {
+  if (!ids || ids.length === 0) return { valid: [], invalid: [] };
+  if (!validIds || validIds.length === 0) return { valid: [], invalid: [...ids] };
+
+  const validSet = new Set(validIds);
   const valid: string[] = [];
   const invalid: string[] = [];
 
-  ids.forEach((id) => {
-    if (validIds.includes(id)) {
+  for (let i = 0; i < ids.length; i++) {
+    const id = ids[i];
+    if (validSet.has(id)) {
       valid.push(id);
     } else {
       invalid.push(id);
     }
-  });
+  }
 
   return { valid, invalid };
 };
