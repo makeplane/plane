@@ -32,10 +32,10 @@ export const StartOfWeekPreference = observer(function StartOfWeekPreference(pro
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("toast.success"),
-        message: "First day of the week updated successfully",
+        message: t("profile_ui.first_day_updated"),
       });
     } catch (_error) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Update failed", message: "Please try again later." });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("profile_ui.update_failed"), message: t("profile_ui.try_again_later") });
     }
   };
 

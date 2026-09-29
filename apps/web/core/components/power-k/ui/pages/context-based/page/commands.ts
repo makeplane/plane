@@ -53,10 +53,10 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Some error occurred",
+        title: t("power_k_ui.some_error_occurred"),
       });
     }
-  }, [addToFavorites, removePageFromFavorites, isFavorite]);
+  }, [addToFavorites, removePageFromFavorites, isFavorite, t]);
 
   const copyPageUrlToClipboard = useCallback(() => {
     const url = new URL(window.location.href);

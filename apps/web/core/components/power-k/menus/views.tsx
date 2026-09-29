@@ -8,6 +8,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Layers } from "lucide-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import type { IProjectView } from "@plane/types";
 // local imports
 import { PowerKMenuBuilder } from "./builder";
@@ -18,6 +19,8 @@ type Props = {
 };
 
 export const PowerKViewsMenu = observer(function PowerKViewsMenu({ views, onSelect }: Props) {
+  const { t } = useTranslation();
+
   return (
     <PowerKMenuBuilder
       items={views}
@@ -26,7 +29,7 @@ export const PowerKViewsMenu = observer(function PowerKViewsMenu({ views, onSele
       getValue={(view) => view.name}
       getLabel={(view) => view.name}
       onSelect={onSelect}
-      emptyText="No views found"
+      emptyText={t("power_k_ui.empty_menu.views")}
     />
   );
 });
