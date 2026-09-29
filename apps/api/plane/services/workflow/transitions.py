@@ -375,6 +375,33 @@ class TransitionService:
         if str(issue.state_id) == str(target_state_id):
             return issue
 
+        # §14 / §30 P1.4 — required-property validation runs on every
+        # state-mutation path, including the §17.4 / §25 Phase 1
+        # workflows-disabled legacy path. A caller that wires around
+        # the workflow gate still has to satisfy the property contract
+        # before ``Issue.state`` is mutated.
+        if not system_bypass:
+            try:
+                from plane.services.workflow_properties import (
+                    validate_required_properties_for_issue,
+                )
+                from plane.services.workflow_properties.errors import (
+                    WorkflowPropertyError,
+                )
+            except ImportError:
+                validate_required_properties_for_issue = None
+
+            if validate_required_properties_for_issue is not None:
+                try:
+                    validate_required_properties_for_issue(issue)
+                except WorkflowPropertyError as exc:
+                    # Surface via the existing workflow-error
+                    # convention so clients see the same envelope as
+                    # other transition rejections (§23.5).
+                    from .errors import WorkflowPreconditionFailed
+
+                    raise WorkflowPreconditionFailed(detail=exc.to_payload())
+
         # §17.4 + §25 Phase 1 — no enforcement, no service-layer
         # involvement. The caller still gets back the (unchanged)
         # issue; the underlying serializer/view handles the
