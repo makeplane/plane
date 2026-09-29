@@ -57,6 +57,12 @@ def transfer_cycle_issues(
     # Get the new cycle
     new_cycle = Cycle.objects.filter(workspace__slug=slug, project_id=project_id, pk=new_cycle_id).first()
 
+    if new_cycle is None:
+        return {
+            "success": False,
+            "error": "Destination cycle not found",
+        }
+
     # Check if new cycle is already completed
     if new_cycle.end_date is not None and new_cycle.end_date < timezone.now():
         return {

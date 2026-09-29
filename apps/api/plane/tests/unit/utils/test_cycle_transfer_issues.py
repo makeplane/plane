@@ -15,6 +15,7 @@ failure during the issue move rolls back the snapshot write as well.
 
 import threading
 import time
+import uuid
 from unittest import mock
 
 import pytest
@@ -163,6 +164,35 @@ class TestTransferCycleIssuesAtomicity:
 
         assert source_cycle.progress_snapshot != {}
         assert incomplete_cycle_issue.cycle_id == destination_cycle.id
+
+    def test_missing_destination_cycle_returns_error_and_changes_nothing(
+        self,
+        project,
+        source_cycle,
+        incomplete_cycle_issue,
+        create_user,
+        dummy_request,
+    ):
+        """A destination cycle id that does not exist in the project must
+        yield an error dict, not an AttributeError from dereferencing None."""
+        with mock.patch("plane.utils.cycle_transfer_issues.issue_activity.delay") as mock_activity:
+            result = transfer_cycle_issues(
+                slug=project.workspace.slug,
+                project_id=str(project.id),
+                cycle_id=str(source_cycle.id),
+                new_cycle_id=str(uuid.uuid4()),
+                request=dummy_request,
+                user_id=str(create_user.id),
+            )
+
+        assert result == {"success": False, "error": "Destination cycle not found"}
+
+        source_cycle.refresh_from_db()
+        incomplete_cycle_issue.refresh_from_db()
+
+        assert source_cycle.progress_snapshot == {}
+        assert incomplete_cycle_issue.cycle_id == source_cycle.id
+        mock_activity.assert_not_called()
 
 
 @pytest.mark.unit
