@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // ui
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -20,14 +20,13 @@ export const WorkspaceEditionBadge = observer(function WorkspaceEditionBadge() {
 
   return (
     <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
-      <a
-        href={PI_PLANE_REPO_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={getButtonStyling("tertiary", "lg")}
+      <Button
+        variant="tertiary"
+        size="lg"
+        onClick={() => window.open(PI_PLANE_REPO_URL, "_blank", "noopener,noreferrer")}
       >
         Pi-Plane
-      </a>
+      </Button>
     </Tooltip>
   );
 });
