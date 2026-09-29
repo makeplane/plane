@@ -253,21 +253,29 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             ).filter(
                 workspace__slug=slug,
                 project__identifier=project_identifier,
+                # A project identifier is only unique among live projects
+                # (`project_unique_identifier_workspace_when_deleted_at_null`), so it
+                # can be reused once the project holding it is soft-deleted. Soft
+                # deletion cascades to the work items asynchronously, so until that
+                # task runs both projects' rows answer to the same identifier. Scope
+                # the lookup to the live project, the one the identifier actually
+                # names, rather than resolving across a project boundary.
+                project__deleted_at__isnull=True,
                 sequence_id=issue_identifier,
             )
 
             try:
                 issue = issue_queryset.get()
             except Issue.MultipleObjectsReturned:
-                # `(project, sequence_id)` carries no database-level uniqueness
-                # constraint. It is kept unique only by the project-scoped advisory
-                # lock `Issue.save()` takes while deriving the next sequence, so any
-                # path that writes rows without going through `save()` — a
-                # `bulk_create`, a data migration, a restore — can leave a project
-                # with two work items sharing an identifier. Resolve to the most
-                # recent match so the lookup stays deterministic instead of letting
-                # `MultipleObjectsReturned` escape as a 500, and log the anomaly so
-                # the duplicate rows can be found and cleaned up.
+                # Within that one project, `(project, sequence_id)` still carries no
+                # database-level uniqueness constraint. It is kept unique only by the
+                # project-scoped advisory lock `Issue.save()` takes while deriving the
+                # next sequence, so any path that writes rows without going through
+                # `save()` — a `bulk_create`, a data migration, a restore — can leave a
+                # project with two work items sharing an identifier. Resolve to the
+                # most recent match so the lookup stays deterministic instead of
+                # letting `MultipleObjectsReturned` escape as a 500, and log the
+                # anomaly so the duplicate rows can be found and cleaned up.
                 issue = issue_queryset.order_by("-created_at", "id").first()
                 if issue is None:
                     # `issue_objects` hides soft-deleted, archived, draft and triage

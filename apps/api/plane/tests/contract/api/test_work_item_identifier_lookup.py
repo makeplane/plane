@@ -10,6 +10,10 @@ so any write that skips ``save()`` can leave a project with two work items shari
 identifier. The lookup used a bare ``.get()``, so those projects answered
 ``MultipleObjectsReturned`` — an exception ``handle_exception`` does not map, making
 every request for that identifier an HTTP 500.
+
+A project identifier is also only unique among live projects, so it can be reused after
+the project holding it is soft-deleted. Collapsing duplicates must not reach across that
+boundary and answer with a different project's work item.
 """
 
 import logging
@@ -49,6 +53,7 @@ def project(db, workspace, create_user):
 
 @pytest.fixture
 def state(db, workspace, project):
+    """A default backlog state, required to create a work item."""
     return State.objects.create(
         name="Todo",
         project=project,
@@ -59,6 +64,7 @@ def state(db, workspace, project):
 
 
 def _create_issue(workspace, project, state, user, name):
+    """Create a work item, letting ``save()`` assign the next ``sequence_id``."""
     return Issue.objects.create(
         name=name,
         workspace=workspace,
@@ -157,6 +163,57 @@ class TestWorkItemIdentifierLookup:
 
         assert [response.status_code for response in responses] == [status.HTTP_200_OK] * 3
         assert len({str(response.data["id"]) for response in responses}) == 1
+
+    @pytest.mark.django_db
+    def test_identifier_reused_after_soft_delete_resolves_to_the_live_project(
+        self, api_key_client, workspace, project, state, create_user
+    ):
+        """A reused identifier must not resolve into the soft-deleted project.
+
+        The soft-deleted project's work item is made the more recent of the two, so
+        ordering alone would pick it.
+        """
+        live_issue = _create_issue(workspace, project, state, create_user, "Live")
+        _force_sequence_id(live_issue, 1, timezone.now() - timedelta(hours=1))
+
+        # Soft-delete the project; the cascade to its work items runs asynchronously,
+        # so its rows stay visible in the meantime.
+        Project.objects.filter(pk=project.pk).update(deleted_at=timezone.now())
+        stale_issue, stale_project = live_issue, project
+
+        # The unique constraint only covers live projects, so the identifier is free.
+        revived = Project.objects.create(
+            name="Revived Project",
+            identifier=stale_project.identifier,
+            workspace=workspace,
+            created_by=create_user,
+        )
+        ProjectMember.objects.create(project=revived, member=create_user, role=20, is_active=True)
+        revived_state = State.objects.create(
+            name="Todo", project=revived, workspace=workspace, group="backlog", default=True
+        )
+        revived_issue = _create_issue(workspace, revived, revived_state, create_user, "Revived")
+        _force_sequence_id(stale_issue, 1, timezone.now())
+        _force_sequence_id(revived_issue, 1, timezone.now() - timedelta(hours=2))
+
+        for url in _identifier_urls(workspace, revived, 1):
+            response = api_key_client.get(url)
+
+            assert response.status_code == status.HTTP_200_OK
+            assert str(response.data["id"]) == str(revived_issue.id)
+
+    @pytest.mark.django_db
+    def test_work_item_of_a_soft_deleted_project_is_not_reachable(
+        self, api_key_client, workspace, project, state, create_user
+    ):
+        """With no live project behind the identifier there is nothing to return."""
+        _create_issue(workspace, project, state, create_user, "Orphan")
+        Project.objects.filter(pk=project.pk).update(deleted_at=timezone.now())
+
+        for url in _identifier_urls(workspace, project, 1):
+            response = api_key_client.get(url)
+
+            assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @pytest.mark.django_db
     def test_unknown_identifier_still_returns_404(self, api_key_client, workspace, project, state, create_user):
