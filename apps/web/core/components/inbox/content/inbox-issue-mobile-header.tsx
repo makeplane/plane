@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 import { Clock, FileStack, MoreHorizontal, PanelLeft, MoveRight } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { IconButton, getIconButtonStyling } from "@plane/propel/icon-button";
 import {
   LinkIcon,
@@ -79,6 +80,8 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
     isProjectAdmin,
     handleActionWithPermission,
   } = props;
+  // translation
+  const { t } = useTranslation();
   const router = useAppRouter();
   const { getProjectIdentifierById } = useProject();
 
@@ -116,14 +119,14 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             variant="secondary"
             size="lg"
             icon={ChevronUpIcon}
-            aria-label="Previous work item"
+            aria-label={t("inbox_ui.previous_work_item")}
             onClick={() => handleInboxIssueNavigation("prev")}
           />
           <IconButton
             variant="secondary"
             size="lg"
             icon={ChevronDownIcon}
-            aria-label="Next work item"
+            aria-label={t("inbox_ui.next_work_item")}
             onClick={() => handleInboxIssueNavigation("next")}
           />
         </div>
@@ -143,7 +146,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
               <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
                 <div className="flex items-center gap-2">
                   <LinkIcon width={14} height={14} strokeWidth={2} />
-                  Copy work item link
+                  {t("inbox_issue.actions.copy")}
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -151,7 +154,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
               <CustomMenu.MenuItem onClick={() => router.push(workItemLink)}>
                 <div className="flex items-center gap-2">
                   <NewTabIcon width={14} height={14} strokeWidth={2} />
-                  Open work item
+                  {t("inbox_issue.actions.open")}
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -161,13 +164,13 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   handleActionWithPermission(
                     isProjectAdmin,
                     handleIssueSnoozeAction,
-                    "Only project admins can snooze/Un-snooze work items"
+                    t("inbox_issue.errors.snooze_permission")
                   )
                 }
               >
                 <div className="flex items-center gap-2">
                   <Clock size={14} strokeWidth={2} />
-                  {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0 ? "Un-snooze" : "Snooze"}
+                  {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0 ? t("inbox_issue.actions.unsnooze") : t("inbox_issue.actions.snooze")}
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -177,13 +180,13 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   handleActionWithPermission(
                     isProjectAdmin,
                     () => setSelectDuplicateIssue(true),
-                    "Only project admins can mark work items as duplicate"
+                    t("inbox_ui.errors.duplicate_permission")
                   )
                 }
               >
                 <div className="flex items-center gap-2">
                   <FileStack size={14} strokeWidth={2} />
-                  Mark as duplicate
+                  {t("inbox_issue.actions.mark_as_duplicate")}
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -193,13 +196,13 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   handleActionWithPermission(
                     isProjectAdmin,
                     () => setAcceptIssueModal(true),
-                    "Only project admins can accept work items"
+                    t("inbox_issue.errors.accept_permission")
                   )
                 }
               >
                 <div className="flex items-center gap-2 text-success-secondary">
                   <CheckCircleFilledIcon width={14} height={14} />
-                  Accept
+                  {t("inbox_issue.actions.accept")}
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -209,13 +212,13 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   handleActionWithPermission(
                     isProjectAdmin,
                     () => setDeclineIssueModal(true),
-                    "Only project admins can deny work items"
+                    t("inbox_issue.errors.decline_permission")
                   )
                 }
               >
                 <div className="flex items-center gap-2 text-danger-secondary">
                   <CloseCircleFilledIcon width={14} height={14} />
-                  Decline
+                  {t("inbox_issue.actions.decline")}
                 </div>
               </CustomMenu.MenuItem>
             )}

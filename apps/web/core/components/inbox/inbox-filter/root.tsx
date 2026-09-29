@@ -5,6 +5,7 @@
  */
 
 import { ListFilter } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
 // plane imports
 import { ChevronDownIcon } from "@plane/propel/icons";
@@ -17,22 +18,26 @@ import useSize from "@/hooks/use-window-size";
 import { InboxIssueFilterSelection } from "./filters/filter-selection";
 import { InboxIssueOrderByDropdown } from "./sorting/order-by";
 
+function LargeButton() {
+  const { t } = useTranslation();
+  return (
+    <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-tertiary")}>
+      <ListFilter className="size-3" />
+      <span>{t("common.filters")}</span>
+      <ChevronDownIcon className="size-3" strokeWidth={2} />
+    </div>
+  );
+}
+
 const smallButton = <ListFilter className="size-3" />;
 
-const largeButton = (
-  <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-tertiary")}>
-    <ListFilter className="size-3" />
-    <span>Filters</span>
-    <ChevronDownIcon className="size-3" strokeWidth={2} />
-  </div>
-);
 export function FiltersRoot() {
   const windowSize = useSize();
 
   return (
     <div className="relative flex items-center gap-2">
       <div>
-        <FiltersDropdown menuButton={windowSize[0] > 1280 ? largeButton : smallButton} title="" placement="bottom-end">
+        <FiltersDropdown menuButton={windowSize[0] > 1280 ? <LargeButton /> : smallButton} title="" placement="bottom-end">
           <InboxIssueFilterSelection />
         </FiltersDropdown>
       </div>

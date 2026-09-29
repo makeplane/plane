@@ -111,7 +111,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: "Editor is still processing changes. Please wait before proceeding.",
+        message: t("inbox_ui.editor_processing"),
       });
       event.preventDefault(); // Prevent default action if editor is not ready to discard
     }
@@ -143,7 +143,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: "Editor is still processing changes. Please wait before proceeding.",
+        message: t("inbox_ui.editor_processing"),
       });
       return;
     }
@@ -176,16 +176,16 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
         }
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: `Success!`,
-          message: "Work item created successfully.",
+          title: t("toast.success"),
+          message: t("inbox_ui.create_success"),
         });
       })
       .catch((error) => {
         console.error(error);
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: `Error!`,
-          message: "Some error occurred. Please try again.",
+          title: t("toast.error"),
+          message: t("inbox_ui.create_error"),
         });
       });
     setFormSubmitting(false);
@@ -254,7 +254,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
                     setToast({
                       type: TOAST_TYPE.ERROR,
                       title: t("toast.error"),
-                      message: "Editor is still processing changes. Please wait before proceeding.",
+                      message: t("inbox_ui.editor_processing"),
                     });
                   }
                 }}
