@@ -31,6 +31,9 @@ from plane.utils.core.mixins import ReadReplicaControlMixin
 
 logger = logging.getLogger("plane.api")
 
+# Views call request.data.get()/.pop(). A scalar parses, then raises AttributeError.
+_NON_CONTAINER_BODY_ERROR = "Request body must be a JSON object or array."
+
 
 class TimezoneMixin:
     """
@@ -55,9 +58,8 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
 
     def initial(self, request, *args, **kwargs):
         super().initial(request, *args, **kwargs)
-        # Views call request.data.get()/.pop(); a scalar JSON body would 500.
         if request.method in ("POST", "PUT", "PATCH") and not isinstance(request.data, (dict, list)):
-            raise ParseError("Request body must be a JSON object.")
+            raise ParseError(_NON_CONTAINER_BODY_ERROR)
 
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):
@@ -168,9 +170,8 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
 
     def initial(self, request, *args, **kwargs):
         super().initial(request, *args, **kwargs)
-        # Views call request.data.get()/.pop(); a scalar JSON body would 500.
         if request.method in ("POST", "PUT", "PATCH") and not isinstance(request.data, (dict, list)):
-            raise ParseError("Request body must be a JSON object.")
+            raise ParseError(_NON_CONTAINER_BODY_ERROR)
 
     def get_queryset(self):
         try:
