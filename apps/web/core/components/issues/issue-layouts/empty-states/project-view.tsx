@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EIssuesStoreType } from "@plane/types";
 // hooks
@@ -16,6 +17,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 export const ProjectViewEmptyState = observer(function ProjectViewEmptyState() {
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
+  const { t } = useTranslation();
   const { allowPermissions } = useUserPermissions();
 
   // auth
@@ -25,14 +27,13 @@ export const ProjectViewEmptyState = observer(function ProjectViewEmptyState() {
   );
 
   return (
-    // TODO: Add translation
     <EmptyStateDetailed
       assetKey="work-item"
-      title="View work items will appear here"
-      description="Work items help you track individual pieces of work. With work items, keep track of what's going on, who is working on it, and what's done."
+      title={t("issue_ui.project_view_empty.title")}
+      description={t("issue_ui.project_view_empty.description")}
       actions={[
         {
-          label: "New work item",
+          label: t("issue.new"),
           onClick: () => {
             toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
           },

@@ -41,7 +41,7 @@ export const FilterStateGroup = observer(function FilterStateGroup(props: Props)
   return (
     <>
       <FilterHeader
-        title={`State group${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("common.state_group")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />

@@ -42,7 +42,7 @@ export const ProjectArchivedEmptyState = observer(function ProjectArchivedEmptyS
           description={t("common_empty_state.search.description")}
           actions={[
             {
-              label: "Clear filters",
+              label: t("issue_ui.clear_filters"),
               onClick: archivedWorkItemFilter?.clearFilters,
               disabled: !canPerformEmptyStateActions || !archivedWorkItemFilter,
               variant: "secondary",

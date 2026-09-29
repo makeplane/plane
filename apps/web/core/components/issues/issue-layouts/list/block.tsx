@@ -10,6 +10,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { useTranslation } from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -75,6 +76,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     canDrag,
     isEpic = false,
   } = props;
+  const { t } = useTranslation();
   // ref
   const issueRef = useRef<HTMLDivElement | null>(null);
   // router
@@ -199,10 +201,10 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
           if (!isDraggingAllowed) {
             setToast({
               type: TOAST_TYPE.WARNING,
-              title: "Cannot move work item",
+              title: t("issue_ui.cannot_move.title"),
               message: !canEditIssueProperties
-                ? "You are not allowed to move this work item"
-                : "Drag and drop is disabled for the current grouping",
+                ? t("issue_ui.cannot_move.not_allowed")
+                : t("issue_ui.cannot_move.dnd_disabled"),
             });
           }
         }}
@@ -214,11 +216,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
               {projectId && canSelectIssues && !isEpic && (
                 <Tooltip
                   tooltipContent={
-                    <>
-                      Only work items within the current
-                      <br />
-                      project can be selected.
-                    </>
+                    t("issue_ui.select_within_project")
                   }
                   disabled={issue.project_id === projectId}
                 >

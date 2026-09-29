@@ -12,6 +12,7 @@ import { MoreHorizontal } from "lucide-react";
 import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
 // types
 import { Tooltip } from "@plane/propel/tooltip";
@@ -189,6 +190,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
     selectionHelpers,
     isEpic = false,
   } = props;
+  const { t } = useTranslation();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   // refs
@@ -311,11 +313,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
               {projectId && canSelectIssues && (
                 <Tooltip
                   tooltipContent={
-                    <>
-                      Only work items within the current
-                      <br />
-                      project can be selected.
-                    </>
+                    t("issue_ui.select_within_project")
                   }
                   disabled={issueDetail.project_id === projectId}
                 >

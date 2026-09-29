@@ -61,7 +61,7 @@ export const FilterCreatedBy = observer(function FilterCreatedBy(props: Props) {
   return (
     <>
       <FilterHeader
-        title={`Created by${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("common.created_by")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -80,7 +80,7 @@ export const FilterCreatedBy = observer(function FilterCreatedBy(props: Props) {
                       isChecked={appliedFilters?.includes(member.id) ? true : false}
                       onClick={() => handleUpdate(member.id)}
                       icon={<Avatar name={member.display_name} src={getFileURL(member.avatar_url)} size="md" />}
-                      title={currentUser?.id === member.id ? "You" : member?.display_name}
+                      title={currentUser?.id === member.id ? t("common.you") : member?.display_name}
                     />
                   );
                 })}
