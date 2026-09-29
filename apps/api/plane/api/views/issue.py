@@ -253,13 +253,8 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             ).filter(
                 workspace__slug=slug,
                 project__identifier=project_identifier,
-                # A project identifier is only unique among live projects
-                # (`project_unique_identifier_workspace_when_deleted_at_null`), so it
-                # can be reused once the project holding it is soft-deleted. Soft
-                # deletion cascades to the work items asynchronously, so until that
-                # task runs both projects' rows answer to the same identifier. Scope
-                # the lookup to the live project, the one the identifier actually
-                # names, rather than resolving across a project boundary.
+                # Identifiers are only unique among live projects, so a soft-deleted
+                # project still answers to one its replacement now owns.
                 project__deleted_at__isnull=True,
                 sequence_id=issue_identifier,
             )
@@ -267,20 +262,12 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             try:
                 issue = issue_queryset.get()
             except Issue.MultipleObjectsReturned:
-                # Within that one project, `(project, sequence_id)` still carries no
-                # database-level uniqueness constraint. It is kept unique only by the
-                # project-scoped advisory lock `Issue.save()` takes while deriving the
-                # next sequence, so any path that writes rows without going through
-                # `save()` — a `bulk_create`, a data migration, a restore — can leave a
-                # project with two work items sharing an identifier. Resolve to the
-                # most recent match so the lookup stays deterministic instead of
-                # letting `MultipleObjectsReturned` escape as a 500, and log the
-                # anomaly so the duplicate rows can be found and cleaned up.
+                # `(project, sequence_id)` has no unique constraint, only the advisory
+                # lock in `Issue.save()`, so writes that skip `save()` can collide.
+                # Pick deterministically instead of letting this escape as a 500.
                 issue = issue_queryset.order_by("-created_at", "id").first()
                 if issue is None:
-                    # `issue_objects` hides soft-deleted, archived, draft and triage
-                    # rows, so a concurrent write can drop every match between the two
-                    # queries. Answer as though it never matched.
+                    # A concurrent write can hide every match between the two queries.
                     return Response({"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND)
                 logger.warning(
                     "Multiple work items match identifier %s-%s in workspace '%s'; "

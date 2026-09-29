@@ -2,18 +2,10 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Work-item lookup by ``<project_identifier>-<sequence_id>`` tolerates duplicates.
+"""Work-item lookup by ``<project_identifier>-<sequence_id>``.
 
-``(project, sequence_id)`` has no unique constraint. It is kept unique only by the
-project-scoped advisory lock ``Issue.save()`` takes while deriving the next sequence,
-so any write that skips ``save()`` can leave a project with two work items sharing an
-identifier. The lookup used a bare ``.get()``, so those projects answered
-``MultipleObjectsReturned`` — an exception ``handle_exception`` does not map, making
-every request for that identifier an HTTP 500.
-
-A project identifier is also only unique among live projects, so it can be reused after
-the project holding it is soft-deleted. Collapsing duplicates must not reach across that
-boundary and answer with a different project's work item.
+Neither ``(project, sequence_id)`` nor a project identifier is unique on its own, so a
+bare ``.get()`` here either 500s or answers with the wrong project's work item.
 """
 
 import logging
@@ -29,12 +21,7 @@ from plane.db.models import Issue, Project, ProjectMember, State
 
 @pytest.fixture(autouse=True)
 def reset_api_key_throttle(api_token):
-    """Keep these tests independent of how many ran before them.
-
-    Every test authenticates with the same API key, and ``ApiKeyRateThrottle``
-    buckets by key, so a full-suite run can exhaust the limit before reaching this
-    module and answer 429 instead of the status under test.
-    """
+    """All tests share one API key, so a full-suite run can 429 this module."""
     cache.delete(f"api_key:{api_token.token}")
 
 
@@ -77,10 +64,8 @@ def _create_issue(workspace, project, state, user, name):
 def _force_sequence_id(issue, sequence_id, created_at):
     """Collide two work items on one ``sequence_id``.
 
-    ``Issue.save()`` derives ``sequence_id`` under an advisory lock and ``created_at``
-    is ``auto_now_add``, so neither can be set through the model. A queryset
-    ``update()`` writes both columns directly, which is exactly how the paths that
-    skip ``save()`` produce the duplicate in the first place.
+    ``save()`` assigns ``sequence_id`` and ``created_at`` is ``auto_now_add``, so an
+    ``update()`` is the only way in — the same way the real duplicates get written.
     """
     Issue.objects.filter(pk=issue.pk).update(sequence_id=sequence_id, created_at=created_at)
     issue.refresh_from_db()
@@ -168,16 +153,11 @@ class TestWorkItemIdentifierLookup:
     def test_identifier_reused_after_soft_delete_resolves_to_the_live_project(
         self, api_key_client, workspace, project, state, create_user
     ):
-        """A reused identifier must not resolve into the soft-deleted project.
-
-        The soft-deleted project's work item is made the more recent of the two, so
-        ordering alone would pick it.
-        """
+        """The stale work item is the newer one, so ordering alone would pick it."""
         live_issue = _create_issue(workspace, project, state, create_user, "Live")
         _force_sequence_id(live_issue, 1, timezone.now() - timedelta(hours=1))
 
-        # Soft-delete the project; the cascade to its work items runs asynchronously,
-        # so its rows stay visible in the meantime.
+        # The cascade to its work items is async, so they stay visible meanwhile.
         Project.objects.filter(pk=project.pk).update(deleted_at=timezone.now())
         stale_issue, stale_project = live_issue, project
 
