@@ -9,6 +9,11 @@ import type { TPage } from "@plane/types";
 import { IssuePageService, type TWorkItemPage } from "@/services/issue";
 import { ProjectPageService, WorkspacePageService } from "@/services/page";
 
+type TIssuePagesErrors = {
+  linked: boolean;
+  available: boolean;
+};
+
 export function useIssuePages(workspaceSlug: string, projectId: string, issueId: string) {
   const issuePageService = useMemo(() => new IssuePageService(), []);
   const projectPageService = useMemo(() => new ProjectPageService(), []);
@@ -16,28 +21,49 @@ export function useIssuePages(workspaceSlug: string, projectId: string, issueId:
   const [links, setLinks] = useState<TWorkItemPage[]>([]);
   const [pages, setPages] = useState<TPage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [errors, setErrors] = useState<TIssuePagesErrors>({ linked: false, available: false });
 
   const refresh = useCallback(async () => {
     if (!workspaceSlug || !projectId || !issueId) return;
     setIsLoading(true);
-    try {
-      const [linkedPages, projectPages, workspacePages] = await Promise.all([
-        issuePageService.list(workspaceSlug, projectId, issueId),
-        projectPageService.fetchAll(workspaceSlug, projectId),
-        workspacePageService.fetchAll(workspaceSlug),
-      ]);
-      const pageMap = new Map<string, TPage>();
-      [...projectPages, ...workspacePages].forEach((page) => {
-        if (page.id) pageMap.set(page.id, page);
-      });
-      linkedPages.forEach((link) => {
+    setErrors({ linked: false, available: false });
+
+    const [linkedResult, projectResult, workspaceResult] = await Promise.allSettled([
+      issuePageService.list(workspaceSlug, projectId, issueId),
+      projectPageService.fetchAll(workspaceSlug, projectId),
+      workspacePageService.fetchAll(workspaceSlug),
+    ]);
+    const nextErrors: TIssuePagesErrors = { linked: false, available: false };
+    const pageMap = new Map<string, TPage>();
+
+    if (linkedResult.status === "fulfilled") {
+      setLinks(linkedResult.value);
+      linkedResult.value.forEach((link) => {
         if (link.page?.id) pageMap.set(link.page.id, link.page);
       });
-      setLinks(linkedPages);
-      setPages([...pageMap.values()]);
-    } finally {
-      setIsLoading(false);
+    } else {
+      nextErrors.linked = true;
     }
+
+    if (projectResult.status === "fulfilled") {
+      projectResult.value.forEach((page) => {
+        if (page.id) pageMap.set(page.id, page);
+      });
+    } else {
+      nextErrors.available = true;
+    }
+
+    if (workspaceResult.status === "fulfilled") {
+      workspaceResult.value.forEach((page) => {
+        if (page.id) pageMap.set(page.id, page);
+      });
+    } else {
+      nextErrors.available = true;
+    }
+
+    setPages([...pageMap.values()]);
+    setErrors(nextErrors);
+    setIsLoading(false);
   }, [issueId, issuePageService, projectId, projectPageService, workspacePageService, workspaceSlug]);
 
   useEffect(() => {
@@ -60,5 +86,5 @@ export function useIssuePages(workspaceSlug: string, projectId: string, issueId:
     [issueId, issuePageService, projectId, workspaceSlug]
   );
 
-  return { links, pages, isLoading, refresh, attach, detach };
+  return { links, pages, errors, isLoading, refresh, attach, detach };
 }

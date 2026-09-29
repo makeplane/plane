@@ -10,6 +10,28 @@ http://openhands-bridge.internal:8645/plane
 
 Target ini hanya valid karena bridge dan Plane API berada pada network `plane-app_default`. Jika URL validator Plane menolak hostname, tambahkan `openhands-bridge.internal` ke `WEBHOOK_ALLOWED_HOSTS` lalu recreate service Plane yang membaca setting tersebut.
 
+Bridge yang dijalankan dari Compose terpisah harus bergabung ke network eksternal
+`plane-app_default`, menyediakan alias `openhands-bridge.internal`, dan listen pada
+`0.0.0.0:8645` untuk path `/plane`. Contoh deklarasi network:
+
+```yaml
+networks:
+  plane-app_default:
+    external: true
+
+services:
+  openhands-bridge:
+    networks:
+      plane-app_default:
+        aliases:
+          - openhands-bridge.internal
+    expose:
+      - "8645"
+```
+
+`expose` hanya membuat port tersedia di network Docker; tidak perlu mem-publish
+port bridge ke host untuk delivery internal ini.
+
 ## Secret separation
 
 | Secret                 | Pemilik                                                        | Fungsi                                                                 |

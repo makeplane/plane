@@ -29,7 +29,11 @@ type Props = {
 export const IssuePagesCollapsibleContent = observer(function IssuePagesCollapsibleContent(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled, pickerOpen, onPickerClose, onCountChange } = props;
   const { t } = useTranslation();
-  const { links, pages, isLoading, attach, detach } = useIssuePages(workspaceSlug, projectId, issueId);
+  const { links, pages, errors, isLoading, refresh, attach, detach } = useIssuePages(
+    workspaceSlug,
+    projectId,
+    issueId
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const isAttachingRef = useRef(false);
 
@@ -85,13 +89,21 @@ export const IssuePagesCollapsibleContent = observer(function IssuePagesCollapsi
   return (
     <>
       <div className="flex flex-col gap-2 px-2.5 pb-2.5">
+        {(errors.linked || errors.available) && (
+          <div className="flex items-center justify-between gap-2 px-1 py-2 text-13 text-tertiary">
+            <span>{t("common.something_went_wrong_please_try_again")}</span>
+            <button type="button" className="text-accent-primary hover:underline" onClick={refresh}>
+              {t("common.retry")}
+            </button>
+          </div>
+        )}
         {isLoading && links.length === 0 ? (
           <Loader className="space-y-2">
             <Loader.Item height="40px" />
           </Loader>
-        ) : links.length === 0 ? (
+        ) : links.length === 0 && !errors.linked ? (
           <p className="px-1 py-2 text-13 text-tertiary">{t("issue.pages.show_wiki_pages")}</p>
-        ) : (
+        ) : links.length > 0 ? (
           links.map((link) => {
             const pageId = link.page?.id;
             const projectPage = pageId && link.page?.project_ids?.includes(projectId);
@@ -124,7 +136,7 @@ export const IssuePagesCollapsibleContent = observer(function IssuePagesCollapsi
               </div>
             );
           })
-        )}
+        ) : null}
       </div>
 
       <ModalCore

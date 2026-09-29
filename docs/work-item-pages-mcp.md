@@ -86,7 +86,7 @@ Project create writes both the Page and its active `ProjectPage` membership in o
 ### Page lifecycle and permissions
 
 - Authentication and the existing `WorkspaceEntityPermission`/`ProjectEntityPermission` guards apply.
-- A locked Page rejects every update except `{\"is_locked\": false}`.
+- A locked Page rejects every update except `{"is_locked": false}`.
 - Only the owner can change `access`; another member changing it receives `400 Bad Request`.
 - Project archive/unarchive is reversible and cascades to descendants. Unarchive detaches a child from a parent that remains archived.
 - Project delete requires the Page to be archived first and permits only the owner or a project admin. It clears child parent references and related favorite/recent-visit records.
