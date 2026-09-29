@@ -374,5 +374,75 @@
         }
       }
     }
+  },
+  "core_ui": {
+    "select_work_item": "Wybierz co najmniej jeden element pracy.",
+    "work_items_deleted": "Elementy pracy zostały usunięte!",
+    "try_again_error": "Coś poszło nie tak. Spróbuj ponownie.",
+    "search_ellipsis": "Szukaj...",
+    "gpt_enter_task": "Wpisz zadanie, aby uzyskać pomoc AI.",
+    "theme": {
+      "neutral_color": "Kolor neutralny",
+      "neutral_color_required": "Kolor neutralny jest wymagany",
+      "brand_color": "Kolor marki",
+      "brand_color_required": "Kolor marki jest wymagany",
+      "invalid_hex": "Wprowadź prawidłowy kod hex",
+      "reloading": "Przeładowanie w celu zastosowania zmian...",
+      "download_success": "Konfiguracja motywu została pobrana.",
+      "download_failed": "Nie udało się pobrać konfiguracji motywu.",
+      "import_success": "Konfiguracja motywu została zaimportowana",
+      "updated": "Motyw zaktualizowany",
+      "updating": "Aktualizowanie motywu...",
+      "update_failed": "Nie udało się zaktualizować motywu. Spróbuj ponownie."
+    },
+    "markdown_copied": "Markdown skopiowany do schowka.",
+    "account_deactivated": "Konto zostało dezaktywowane.",
+    "estimate": {
+      "deleted_title": "Estymacja usunięta",
+      "deleted_message": "Estymacja została usunięta z projektu.",
+      "delete_failed_title": "Usunięcie estymacji nie powiodło się",
+      "delete_failed_message": "Nie udało się usunąć estymacji, spróbuj ponownie."
+    },
+    "drag_drop_manual_only": "Przeciąganie i upuszczanie jest dostępne tylko przy sortowaniu ręcznym",
+    "image_picker": {
+      "images": "Obrazy",
+      "upload": "Prześlij",
+      "search_images": "Szukaj obrazów",
+      "not_uploaded": "Nie przesłano obrazu",
+      "could_not_upload": "Nie udało się przesłać obrazu"
+    },
+    "sidebar": {
+      "main": "Główny pasek boczny",
+      "resize": "Zmień rozmiar paska bocznego",
+      "peek": "Podgląd paska bocznego"
+    },
+    "search_commands": "Szukaj poleceń...",
+    "delete_label": "Usuń etykietę",
+    "select_expiration_date": "Wybierz datę wygaśnięcia.",
+    "sign_out_failed": "Nie udało się wylogować. Spróbuj ponownie.",
+    "set_date": "Ustaw datę",
+    "enter_months": "Wpisz liczbę miesięcy",
+    "months": "Miesiące",
+    "select_month_range": "Wybierz miesiąc od 1 do 12.",
+    "auth": {
+      "reset_password": "Zresetuj hasło",
+      "regain_access": "Odzyskaj dostęp do swojego konta.",
+      "create_new_password": "Utwórz nowe hasło.",
+      "set_password": "Ustaw hasło"
+    },
+    "invitation": {
+      "not_found": "Nie znaleziono zaproszenia",
+      "invited_to": "Zaproszono Cię do {workspace}",
+      "already_member": "Jesteś już członkiem {workspace}",
+      "description": "Twoja przestrzeń robocza to miejsce, w którym tworzysz projekty, współpracujesz nad elementami pracy i organizujesz różne nurty pracy na swoim koncie Plane.",
+      "accept": "Akceptuj",
+      "ignore": "Ignoruj",
+      "continue_home": "Przejdź do strony głównej",
+      "link_inactive": "Ten link zaproszenia nie jest już aktywny.",
+      "start_empty_project": "Lub zacznij od pustego projektu",
+      "sign_in_continue": "Zaloguj się, aby kontynuować",
+      "star_github": "Daj nam gwiazdkę na GitHubie",
+      "join_community": "Dołącz do naszej społeczności aktywnych twórców"
+    }
   }
 }

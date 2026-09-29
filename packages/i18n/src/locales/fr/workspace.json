@@ -374,5 +374,75 @@
         }
       }
     }
+  },
+  "core_ui": {
+    "select_work_item": "Veuillez sélectionner au moins un élément de travail.",
+    "work_items_deleted": "Éléments de travail supprimés avec succès !",
+    "try_again_error": "Une erreur s'est produite. Veuillez réessayer.",
+    "search_ellipsis": "Rechercher...",
+    "gpt_enter_task": "Saisissez une tâche pour obtenir l'aide de l'IA.",
+    "theme": {
+      "neutral_color": "Couleur neutre",
+      "neutral_color_required": "La couleur neutre est obligatoire",
+      "brand_color": "Couleur de la marque",
+      "brand_color_required": "La couleur de la marque est obligatoire",
+      "invalid_hex": "Saisissez un code hexadécimal valide",
+      "reloading": "Rechargement pour appliquer les modifications...",
+      "download_success": "Configuration du thème téléchargée avec succès.",
+      "download_failed": "Échec du téléchargement de la configuration du thème.",
+      "import_success": "Configuration du thème importée avec succès",
+      "updated": "Thème mis à jour",
+      "updating": "Mise à jour du thème...",
+      "update_failed": "Échec de la mise à jour du thème. Veuillez réessayer."
+    },
+    "markdown_copied": "Markdown copié dans le presse-papiers.",
+    "account_deactivated": "Compte désactivé avec succès.",
+    "estimate": {
+      "deleted_title": "Estimation supprimée",
+      "deleted_message": "L'estimation a été supprimée de votre projet.",
+      "delete_failed_title": "Échec de la suppression de l'estimation",
+      "delete_failed_message": "Impossible de supprimer l'estimation, veuillez réessayer."
+    },
+    "drag_drop_manual_only": "Le glisser-déposer n'est activé que lors du tri manuel",
+    "image_picker": {
+      "images": "Images",
+      "upload": "Téléverser",
+      "search_images": "Rechercher des images",
+      "not_uploaded": "Image non téléversée",
+      "could_not_upload": "L'image n'a pas pu être téléversée"
+    },
+    "sidebar": {
+      "main": "Barre latérale principale",
+      "resize": "Redimensionner la barre latérale",
+      "peek": "Aperçu de la barre latérale"
+    },
+    "search_commands": "Rechercher des commandes...",
+    "delete_label": "Supprimer l'étiquette",
+    "select_expiration_date": "Veuillez sélectionner une date d'expiration.",
+    "sign_out_failed": "Échec de la déconnexion. Veuillez réessayer.",
+    "set_date": "Définir la date",
+    "enter_months": "Saisissez les mois",
+    "months": "Mois",
+    "select_month_range": "Sélectionnez un mois entre 1 et 12.",
+    "auth": {
+      "reset_password": "Réinitialiser le mot de passe",
+      "regain_access": "Retrouvez l'accès à votre compte.",
+      "create_new_password": "Créez un nouveau mot de passe.",
+      "set_password": "Définir le mot de passe"
+    },
+    "invitation": {
+      "not_found": "Invitation introuvable",
+      "invited_to": "Vous avez été invité à rejoindre {workspace}",
+      "already_member": "Vous êtes déjà membre de {workspace}",
+      "description": "Votre espace de travail est l'endroit où vous créez des projets, collaborez sur vos éléments de travail et organisez différents flux de travail dans votre compte Plane.",
+      "accept": "Accepter",
+      "ignore": "Ignorer",
+      "continue_home": "Continuer vers l'accueil",
+      "link_inactive": "Ce lien d'invitation n'est plus actif.",
+      "start_empty_project": "Ou commencez avec un projet vide",
+      "sign_in_continue": "Connectez-vous pour continuer",
+      "star_github": "Mettez-nous une étoile sur GitHub",
+      "join_community": "Rejoignez notre communauté de créateurs actifs"
+    }
   }
 }

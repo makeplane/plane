@@ -374,5 +374,75 @@
         }
       }
     }
+  },
+  "core_ui": {
+    "select_work_item": "작업 항목을 하나 이상 선택하세요.",
+    "work_items_deleted": "작업 항목이 삭제되었습니다!",
+    "try_again_error": "문제가 발생했습니다. 다시 시도하세요.",
+    "search_ellipsis": "검색...",
+    "gpt_enter_task": "AI 지원을 받으려면 작업을 입력하세요.",
+    "theme": {
+      "neutral_color": "중립 색상",
+      "neutral_color_required": "중립 색상은 필수입니다",
+      "brand_color": "브랜드 색상",
+      "brand_color_required": "브랜드 색상은 필수입니다",
+      "invalid_hex": "유효한 16진수 코드를 입력하세요",
+      "reloading": "변경 사항을 적용하기 위해 다시 로드하는 중...",
+      "download_success": "테마 구성을 다운로드했습니다.",
+      "download_failed": "테마 구성을 다운로드하지 못했습니다.",
+      "import_success": "테마 구성을 가져왔습니다",
+      "updated": "테마가 업데이트되었습니다",
+      "updating": "테마 업데이트 중...",
+      "update_failed": "테마를 업데이트하지 못했습니다. 다시 시도하세요."
+    },
+    "markdown_copied": "Markdown이 클립보드에 복사되었습니다.",
+    "account_deactivated": "계정이 비활성화되었습니다.",
+    "estimate": {
+      "deleted_title": "추정치가 삭제되었습니다",
+      "deleted_message": "추정치가 프로젝트에서 제거되었습니다.",
+      "delete_failed_title": "추정치 삭제 실패",
+      "delete_failed_message": "추정치를 삭제할 수 없습니다. 다시 시도하세요."
+    },
+    "drag_drop_manual_only": "드래그 앤 드롭은 수동 정렬일 때만 사용할 수 있습니다",
+    "image_picker": {
+      "images": "이미지",
+      "upload": "업로드",
+      "search_images": "이미지 검색",
+      "not_uploaded": "이미지가 업로드되지 않았습니다",
+      "could_not_upload": "이미지를 업로드할 수 없습니다"
+    },
+    "sidebar": {
+      "main": "기본 사이드바",
+      "resize": "사이드바 크기 조절",
+      "peek": "사이드바 미리 보기"
+    },
+    "search_commands": "명령 검색...",
+    "delete_label": "레이블 삭제",
+    "select_expiration_date": "만료일을 선택하세요.",
+    "sign_out_failed": "로그아웃하지 못했습니다. 다시 시도하세요.",
+    "set_date": "날짜 설정",
+    "enter_months": "개월 수 입력",
+    "months": "개월",
+    "select_month_range": "1에서 12 사이의 개월 수를 선택하세요.",
+    "auth": {
+      "reset_password": "비밀번호 재설정",
+      "regain_access": "계정에 다시 액세스하세요.",
+      "create_new_password": "새 비밀번호를 만드세요.",
+      "set_password": "비밀번호 설정"
+    },
+    "invitation": {
+      "not_found": "초대를 찾을 수 없습니다",
+      "invited_to": "{workspace}에 초대되었습니다",
+      "already_member": "이미 {workspace}의 멤버입니다",
+      "description": "워크스페이스는 프로젝트를 만들고, 작업 항목을 함께 처리하며, Plane 계정에서 다양한 작업 흐름을 정리하는 공간입니다.",
+      "accept": "수락",
+      "ignore": "무시",
+      "continue_home": "홈으로 계속",
+      "link_inactive": "이 초대 링크는 더 이상 유효하지 않습니다.",
+      "start_empty_project": "또는 빈 프로젝트로 시작",
+      "sign_in_continue": "계속하려면 로그인하세요",
+      "star_github": "GitHub에서 스타 누르기",
+      "join_community": "활발한 크리에이터 커뮤니티에 참여하세요"
+    }
   }
 }

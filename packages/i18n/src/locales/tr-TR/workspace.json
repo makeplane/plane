@@ -374,5 +374,75 @@
         }
       }
     }
+  },
+  "core_ui": {
+    "select_work_item": "Lütfen en az bir iş öğesi seçin.",
+    "work_items_deleted": "İş öğeleri başarıyla silindi!",
+    "try_again_error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+    "search_ellipsis": "Ara...",
+    "gpt_enter_task": "Yapay zeka desteği almak için bir görev girin.",
+    "theme": {
+      "neutral_color": "Nötr renk",
+      "neutral_color_required": "Nötr renk gereklidir",
+      "brand_color": "Marka rengi",
+      "brand_color_required": "Marka rengi gereklidir",
+      "invalid_hex": "Geçerli bir hex kodu girin",
+      "reloading": "Değişiklikleri uygulamak için yeniden yükleniyor...",
+      "download_success": "Tema yapılandırması başarıyla indirildi.",
+      "download_failed": "Tema yapılandırması indirilemedi.",
+      "import_success": "Tema yapılandırması başarıyla içe aktarıldı",
+      "updated": "Tema güncellendi",
+      "updating": "Tema güncelleniyor...",
+      "update_failed": "Tema güncellenemedi. Lütfen tekrar deneyin."
+    },
+    "markdown_copied": "Markdown panoya kopyalandı.",
+    "account_deactivated": "Hesap başarıyla devre dışı bırakıldı.",
+    "estimate": {
+      "deleted_title": "Tahmin silindi",
+      "deleted_message": "Tahmin projenizden kaldırıldı.",
+      "delete_failed_title": "Tahmin silme başarısız oldu",
+      "delete_failed_message": "Tahmin silinemedi, lütfen tekrar deneyin."
+    },
+    "drag_drop_manual_only": "Sürükle ve bırak yalnızca manuel sıralamada etkindir",
+    "image_picker": {
+      "images": "Görseller",
+      "upload": "Yükle",
+      "search_images": "Görsel ara",
+      "not_uploaded": "Görsel yüklenmedi",
+      "could_not_upload": "Görsel yüklenemedi"
+    },
+    "sidebar": {
+      "main": "Ana kenar çubuğu",
+      "resize": "Kenar çubuğunu yeniden boyutlandır",
+      "peek": "Kenar çubuğu önizlemesi"
+    },
+    "search_commands": "Komut ara...",
+    "delete_label": "Etiketi sil",
+    "select_expiration_date": "Lütfen bir son kullanma tarihi seçin.",
+    "sign_out_failed": "Çıkış yapılamadı. Lütfen tekrar deneyin.",
+    "set_date": "Tarih ayarla",
+    "enter_months": "Ay girin",
+    "months": "Ay",
+    "select_month_range": "1 ile 12 arasında bir ay seçin.",
+    "auth": {
+      "reset_password": "Şifreyi sıfırla",
+      "regain_access": "Hesabınıza yeniden erişin.",
+      "create_new_password": "Yeni bir şifre oluşturun.",
+      "set_password": "Şifre belirle"
+    },
+    "invitation": {
+      "not_found": "Davet bulunamadı",
+      "invited_to": "{workspace} çalışma alanına davet edildiniz",
+      "already_member": "Zaten {workspace} çalışma alanının üyesisiniz",
+      "description": "Çalışma alanınız; projeler oluşturduğunuz, iş öğeleri üzerinde iş birliği yaptığınız ve Plane hesabınızdaki farklı iş akışlarını düzenlediğiniz yerdir.",
+      "accept": "Kabul et",
+      "ignore": "Yoksay",
+      "continue_home": "Ana sayfaya devam et",
+      "link_inactive": "Bu davet bağlantısı artık etkin değil.",
+      "start_empty_project": "Veya boş bir projeyle başlayın",
+      "sign_in_continue": "Devam etmek için giriş yapın",
+      "star_github": "GitHub'da bize yıldız verin",
+      "join_community": "Aktif yaratıcılardan oluşan topluluğumuza katılın"
+    }
   }
 }

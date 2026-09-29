@@ -374,5 +374,75 @@
         }
       }
     }
+  },
+  "core_ui": {
+    "select_work_item": "Bitte wähle mindestens ein Arbeitselement aus.",
+    "work_items_deleted": "Arbeitselemente erfolgreich gelöscht!",
+    "try_again_error": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+    "search_ellipsis": "Suchen...",
+    "gpt_enter_task": "Bitte gib eine Aufgabe ein, um KI-Unterstützung zu erhalten.",
+    "theme": {
+      "neutral_color": "Neutrale Farbe",
+      "neutral_color_required": "Neutrale Farbe ist erforderlich",
+      "brand_color": "Markenfarbe",
+      "brand_color_required": "Markenfarbe ist erforderlich",
+      "invalid_hex": "Gib einen gültigen Hex-Code ein",
+      "reloading": "Seite wird neu geladen, um die Änderungen anzuwenden...",
+      "download_success": "Themenkonfiguration erfolgreich heruntergeladen.",
+      "download_failed": "Themenkonfiguration konnte nicht heruntergeladen werden.",
+      "import_success": "Themenkonfiguration erfolgreich importiert",
+      "updated": "Theme aktualisiert",
+      "updating": "Theme wird aktualisiert...",
+      "update_failed": "Theme konnte nicht aktualisiert werden. Bitte versuche es erneut."
+    },
+    "markdown_copied": "Markdown in die Zwischenablage kopiert.",
+    "account_deactivated": "Konto erfolgreich deaktiviert.",
+    "estimate": {
+      "deleted_title": "Schätzung gelöscht",
+      "deleted_message": "Die Schätzung wurde aus deinem Projekt entfernt.",
+      "delete_failed_title": "Löschen der Schätzung fehlgeschlagen",
+      "delete_failed_message": "Die Schätzung konnte nicht gelöscht werden. Bitte versuche es erneut."
+    },
+    "drag_drop_manual_only": "Drag-and-drop ist nur bei manueller Sortierung aktiviert",
+    "image_picker": {
+      "images": "Bilder",
+      "upload": "Hochladen",
+      "search_images": "Nach Bildern suchen",
+      "not_uploaded": "Bild nicht hochgeladen",
+      "could_not_upload": "Das Bild konnte nicht hochgeladen werden"
+    },
+    "sidebar": {
+      "main": "Hauptseitenleiste",
+      "resize": "Seitenleiste in der Größe ändern",
+      "peek": "Vorschau der Seitenleiste"
+    },
+    "search_commands": "Befehle suchen...",
+    "delete_label": "Label löschen",
+    "select_expiration_date": "Bitte wähle ein Ablaufdatum aus.",
+    "sign_out_failed": "Abmeldung fehlgeschlagen. Bitte versuche es erneut.",
+    "set_date": "Datum festlegen",
+    "enter_months": "Monate eingeben",
+    "months": "Monate",
+    "select_month_range": "Wähle einen Monat zwischen 1 und 12.",
+    "auth": {
+      "reset_password": "Passwort zurücksetzen",
+      "regain_access": "Erhalte wieder Zugriff auf dein Konto.",
+      "create_new_password": "Erstelle ein neues Passwort.",
+      "set_password": "Passwort festlegen"
+    },
+    "invitation": {
+      "not_found": "Einladung nicht gefunden",
+      "invited_to": "Du wurdest zu {workspace} eingeladen",
+      "already_member": "Du bist bereits Mitglied von {workspace}",
+      "description": "In deinem Arbeitsbereich erstellst du Projekte, arbeitest an Arbeitselementen zusammen und organisierst verschiedene Arbeitsströme in deinem Plane-Konto.",
+      "accept": "Annehmen",
+      "ignore": "Ignorieren",
+      "continue_home": "Weiter zur Startseite",
+      "link_inactive": "Dieser Einladungslink ist nicht mehr aktiv.",
+      "start_empty_project": "Oder beginne mit einem leeren Projekt",
+      "sign_in_continue": "Zum Fortfahren anmelden",
+      "star_github": "Gib uns einen Stern auf GitHub",
+      "join_community": "Werde Teil unserer Community aktiver Creator"
+    }
   }
 }

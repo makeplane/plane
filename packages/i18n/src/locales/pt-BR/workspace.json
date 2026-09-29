@@ -374,5 +374,75 @@
         }
       }
     }
+  },
+  "core_ui": {
+    "select_work_item": "Selecione pelo menos um item de trabalho.",
+    "work_items_deleted": "Itens de trabalho excluídos com sucesso!",
+    "try_again_error": "Algo deu errado. Tente novamente.",
+    "search_ellipsis": "Pesquisar...",
+    "gpt_enter_task": "Insira uma tarefa para obter ajuda da IA.",
+    "theme": {
+      "neutral_color": "Cor neutra",
+      "neutral_color_required": "A cor neutra é obrigatória",
+      "brand_color": "Cor da marca",
+      "brand_color_required": "A cor da marca é obrigatória",
+      "invalid_hex": "Insira um código hexadecimal válido",
+      "reloading": "Recarregando para aplicar as alterações...",
+      "download_success": "Configuração do tema baixada com sucesso.",
+      "download_failed": "Falha ao baixar a configuração do tema.",
+      "import_success": "Configuração do tema importada com sucesso",
+      "updated": "Tema atualizado",
+      "updating": "Atualizando tema...",
+      "update_failed": "Falha ao atualizar o tema. Tente novamente."
+    },
+    "markdown_copied": "Markdown copiado para a área de transferência.",
+    "account_deactivated": "Conta desativada com sucesso.",
+    "estimate": {
+      "deleted_title": "Estimativa excluída",
+      "deleted_message": "A estimativa foi removida do seu projeto.",
+      "delete_failed_title": "Falha ao excluir a estimativa",
+      "delete_failed_message": "Não foi possível excluir a estimativa. Tente novamente."
+    },
+    "drag_drop_manual_only": "Arrastar e soltar só está ativado na ordenação manual",
+    "image_picker": {
+      "images": "Imagens",
+      "upload": "Enviar",
+      "search_images": "Pesquisar imagens",
+      "not_uploaded": "Imagem não enviada",
+      "could_not_upload": "Não foi possível enviar a imagem"
+    },
+    "sidebar": {
+      "main": "Barra lateral principal",
+      "resize": "Redimensionar barra lateral",
+      "peek": "Visualização rápida da barra lateral"
+    },
+    "search_commands": "Pesquisar comandos...",
+    "delete_label": "Excluir rótulo",
+    "select_expiration_date": "Selecione uma data de expiração.",
+    "sign_out_failed": "Falha ao sair. Tente novamente.",
+    "set_date": "Definir data",
+    "enter_months": "Insira os meses",
+    "months": "Meses",
+    "select_month_range": "Selecione um mês entre 1 e 12.",
+    "auth": {
+      "reset_password": "Redefinir senha",
+      "regain_access": "Recupere o acesso à sua conta.",
+      "create_new_password": "Crie uma nova senha.",
+      "set_password": "Definir senha"
+    },
+    "invitation": {
+      "not_found": "Convite não encontrado",
+      "invited_to": "Você foi convidado para {workspace}",
+      "already_member": "Você já é membro de {workspace}",
+      "description": "Seu espaço de trabalho é onde você criará projetos, colaborará em itens de trabalho e organizará diferentes fluxos de trabalho na sua conta do Plane.",
+      "accept": "Aceitar",
+      "ignore": "Ignorar",
+      "continue_home": "Continuar para o início",
+      "link_inactive": "Este link de convite não está mais ativo.",
+      "start_empty_project": "Ou comece com um projeto vazio",
+      "sign_in_continue": "Entre para continuar",
+      "star_github": "Dê uma estrela no GitHub",
+      "join_community": "Junte-se à nossa comunidade de criadores ativos"
+    }
   }
 }

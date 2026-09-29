@@ -374,5 +374,75 @@
         }
       }
     }
+  },
+  "core_ui": {
+    "select_work_item": "Please select at least one work item.",
+    "work_items_deleted": "Work items deleted successfully!",
+    "try_again_error": "Something went wrong. Please try again.",
+    "search_ellipsis": "Search...",
+    "gpt_enter_task": "Please enter some task to get AI assistance.",
+    "theme": {
+      "neutral_color": "Neutral color",
+      "neutral_color_required": "Neutral color is required",
+      "brand_color": "Brand color",
+      "brand_color_required": "Brand color is required",
+      "invalid_hex": "Enter a valid hex code",
+      "reloading": "Reloading to apply changes...",
+      "download_success": "Theme configuration downloaded successfully.",
+      "download_failed": "Failed to download theme configuration.",
+      "import_success": "Theme configuration imported successfully",
+      "updated": "Theme updated",
+      "updating": "Updating theme...",
+      "update_failed": "Failed to update theme. Please try again."
+    },
+    "markdown_copied": "Markdown copied to clipboard.",
+    "account_deactivated": "Account deactivated successfully.",
+    "estimate": {
+      "deleted_title": "Estimate deleted",
+      "deleted_message": "Estimate has been removed from your project.",
+      "delete_failed_title": "Estimate deletion failed",
+      "delete_failed_message": "We were unable to delete the estimate, please try again."
+    },
+    "drag_drop_manual_only": "Drag and drop is only enabled when sorted by manual",
+    "image_picker": {
+      "images": "Images",
+      "upload": "Upload",
+      "search_images": "Search for images",
+      "not_uploaded": "Image not uploaded",
+      "could_not_upload": "The image could not be uploaded"
+    },
+    "sidebar": {
+      "main": "Main sidebar",
+      "resize": "Resize sidebar",
+      "peek": "Sidebar peek view"
+    },
+    "search_commands": "Search commands...",
+    "delete_label": "Delete Label",
+    "select_expiration_date": "Please select an expiration date.",
+    "sign_out_failed": "Failed to sign out. Please try again.",
+    "set_date": "Set date",
+    "enter_months": "Enter Months",
+    "months": "Months",
+    "select_month_range": "Select a month between 1 and 12.",
+    "auth": {
+      "reset_password": "Reset password",
+      "regain_access": "Regain access to your account.",
+      "create_new_password": "Create a new password.",
+      "set_password": "Set password"
+    },
+    "invitation": {
+      "not_found": "Invitation not found",
+      "invited_to": "You have been invited to {workspace}",
+      "already_member": "You are already a member of {workspace}",
+      "description": "Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account.",
+      "accept": "Accept",
+      "ignore": "Ignore",
+      "continue_home": "Continue to home",
+      "link_inactive": "This invitation link is not active anymore.",
+      "start_empty_project": "Or start from an empty project",
+      "sign_in_continue": "Sign in to continue",
+      "star_github": "Star us on GitHub",
+      "join_community": "Join our community of active creators"
+    }
   }
 }

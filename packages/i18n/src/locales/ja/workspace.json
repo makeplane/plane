@@ -374,5 +374,75 @@
         }
       }
     }
+  },
+  "core_ui": {
+    "select_work_item": "作業項目を少なくとも1つ選択してください。",
+    "work_items_deleted": "作業項目を削除しました！",
+    "try_again_error": "問題が発生しました。もう一度お試しください。",
+    "search_ellipsis": "検索...",
+    "gpt_enter_task": "AIのサポートを受けるには、タスクを入力してください。",
+    "theme": {
+      "neutral_color": "ニュートラルカラー",
+      "neutral_color_required": "ニュートラルカラーは必須です",
+      "brand_color": "ブランドカラー",
+      "brand_color_required": "ブランドカラーは必須です",
+      "invalid_hex": "有効な16進コードを入力してください",
+      "reloading": "変更を適用するために再読み込みしています...",
+      "download_success": "テーマ設定をダウンロードしました。",
+      "download_failed": "テーマ設定のダウンロードに失敗しました。",
+      "import_success": "テーマ設定をインポートしました",
+      "updated": "テーマを更新しました",
+      "updating": "テーマを更新しています...",
+      "update_failed": "テーマの更新に失敗しました。もう一度お試しください。"
+    },
+    "markdown_copied": "Markdownをクリップボードにコピーしました。",
+    "account_deactivated": "アカウントを無効化しました。",
+    "estimate": {
+      "deleted_title": "見積もりを削除しました",
+      "deleted_message": "見積もりがプロジェクトから削除されました。",
+      "delete_failed_title": "見積もりの削除に失敗しました",
+      "delete_failed_message": "見積もりを削除できませんでした。もう一度お試しください。"
+    },
+    "drag_drop_manual_only": "ドラッグ＆ドロップは手動並べ替えの場合のみ有効です",
+    "image_picker": {
+      "images": "画像",
+      "upload": "アップロード",
+      "search_images": "画像を検索",
+      "not_uploaded": "画像がアップロードされませんでした",
+      "could_not_upload": "画像をアップロードできませんでした"
+    },
+    "sidebar": {
+      "main": "メインサイドバー",
+      "resize": "サイドバーのサイズを変更",
+      "peek": "サイドバーのプレビュー"
+    },
+    "search_commands": "コマンドを検索...",
+    "delete_label": "ラベルを削除",
+    "select_expiration_date": "有効期限を選択してください。",
+    "sign_out_failed": "サインアウトに失敗しました。もう一度お試しください。",
+    "set_date": "日付を設定",
+    "enter_months": "月数を入力",
+    "months": "か月",
+    "select_month_range": "1〜12の間で月を選択してください。",
+    "auth": {
+      "reset_password": "パスワードをリセット",
+      "regain_access": "アカウントへのアクセスを回復します。",
+      "create_new_password": "新しいパスワードを作成します。",
+      "set_password": "パスワードを設定"
+    },
+    "invitation": {
+      "not_found": "招待が見つかりません",
+      "invited_to": "{workspace} に招待されました",
+      "already_member": "すでに {workspace} のメンバーです",
+      "description": "ワークスペースでは、プロジェクトの作成、作業項目での共同作業、Planeアカウント内のさまざまな作業の整理を行います。",
+      "accept": "承諾",
+      "ignore": "無視",
+      "continue_home": "ホームに進む",
+      "link_inactive": "この招待リンクは無効になっています。",
+      "start_empty_project": "または空のプロジェクトから始める",
+      "sign_in_continue": "サインインして続行",
+      "star_github": "GitHubでスターを付ける",
+      "join_community": "アクティブなクリエイターのコミュニティに参加"
+    }
   }
 }

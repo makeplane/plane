@@ -374,5 +374,75 @@
         }
       }
     }
+  },
+  "core_ui": {
+    "select_work_item": "Selectează cel puțin un element de lucru.",
+    "work_items_deleted": "Elementele de lucru au fost șterse cu succes!",
+    "try_again_error": "Ceva nu a funcționat. Te rugăm să încerci din nou.",
+    "search_ellipsis": "Caută...",
+    "gpt_enter_task": "Introdu o sarcină pentru a primi ajutor de la AI.",
+    "theme": {
+      "neutral_color": "Culoare neutră",
+      "neutral_color_required": "Culoarea neutră este obligatorie",
+      "brand_color": "Culoarea brandului",
+      "brand_color_required": "Culoarea brandului este obligatorie",
+      "invalid_hex": "Introdu un cod hex valid",
+      "reloading": "Se reîncarcă pentru a aplica modificările...",
+      "download_success": "Configurația temei a fost descărcată cu succes.",
+      "download_failed": "Descărcarea configurației temei a eșuat.",
+      "import_success": "Configurația temei a fost importată cu succes",
+      "updated": "Tema a fost actualizată",
+      "updating": "Se actualizează tema...",
+      "update_failed": "Actualizarea temei a eșuat. Te rugăm să încerci din nou."
+    },
+    "markdown_copied": "Markdown a fost copiat în clipboard.",
+    "account_deactivated": "Contul a fost dezactivat cu succes.",
+    "estimate": {
+      "deleted_title": "Estimarea a fost ștearsă",
+      "deleted_message": "Estimarea a fost eliminată din proiectul tău.",
+      "delete_failed_title": "Ștergerea estimării a eșuat",
+      "delete_failed_message": "Nu am putut șterge estimarea, te rugăm să încerci din nou."
+    },
+    "drag_drop_manual_only": "Glisarea este activată doar la sortarea manuală",
+    "image_picker": {
+      "images": "Imagini",
+      "upload": "Încarcă",
+      "search_images": "Caută imagini",
+      "not_uploaded": "Imaginea nu a fost încărcată",
+      "could_not_upload": "Imaginea nu a putut fi încărcată"
+    },
+    "sidebar": {
+      "main": "Bara laterală principală",
+      "resize": "Redimensionează bara laterală",
+      "peek": "Previzualizare bară laterală"
+    },
+    "search_commands": "Caută comenzi...",
+    "delete_label": "Șterge eticheta",
+    "select_expiration_date": "Selectează o dată de expirare.",
+    "sign_out_failed": "Deconectarea a eșuat. Te rugăm să încerci din nou.",
+    "set_date": "Setează data",
+    "enter_months": "Introdu lunile",
+    "months": "Luni",
+    "select_month_range": "Selectează o lună între 1 și 12.",
+    "auth": {
+      "reset_password": "Resetează parola",
+      "regain_access": "Recapătă accesul la contul tău.",
+      "create_new_password": "Creează o parolă nouă.",
+      "set_password": "Setează parola"
+    },
+    "invitation": {
+      "not_found": "Invitația nu a fost găsită",
+      "invited_to": "Ai fost invitat în {workspace}",
+      "already_member": "Ești deja membru al {workspace}",
+      "description": "Spațiul tău de lucru este locul unde vei crea proiecte, vei colabora la elementele de lucru și vei organiza diferite fluxuri de lucru în contul tău Plane.",
+      "accept": "Acceptă",
+      "ignore": "Ignoră",
+      "continue_home": "Continuă către pagina principală",
+      "link_inactive": "Acest link de invitație nu mai este activ.",
+      "start_empty_project": "Sau începe cu un proiect gol",
+      "sign_in_continue": "Autentifică-te pentru a continua",
+      "star_github": "Dă-ne o stea pe GitHub",
+      "join_community": "Alătură-te comunității noastre de creatori activi"
+    }
   }
 }
