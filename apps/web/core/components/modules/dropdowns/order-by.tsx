@@ -67,7 +67,7 @@ export function ModuleOrderByDropdown(props: Props) {
               if (isDescending) onChange(value.slice(1) as TModuleOrderByOptions);
             }}
           >
-            Ascending
+            {t("common.order_by.asc")}
             {!isDescending && <CheckIcon className="h-3 w-3" />}
           </CustomMenu.MenuItem>
           <CustomMenu.MenuItem
@@ -76,7 +76,7 @@ export function ModuleOrderByDropdown(props: Props) {
               if (!isDescending) onChange(`-${value}` as TModuleOrderByOptions);
             }}
           >
-            Descending
+            {t("common.order_by.desc")}
             {isDescending && <CheckIcon className="h-3 w-3" />}
           </CustomMenu.MenuItem>
         </>

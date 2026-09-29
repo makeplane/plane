@@ -101,13 +101,13 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("toast.success"),
-        message: "Module link deleted successfully.",
+        message: t("links.toasts.removed.message"),
       });
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: "Some error occurred",
+        message: t("common.error.message"),
       });
     }
   };
@@ -120,7 +120,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
     setToast({
       type: TOAST_TYPE.SUCCESS,
       title: t("toast.success"),
-      message: "Module updated successfully.",
+      message: t("entity.update.success", { entity: t("common.module") }),
     });
   };
 

@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 
 import { MODULE_TRACKER_ELEMENTS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { CopyIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -28,6 +29,7 @@ type Props = {
 };
 
 export const ModulesLinksListItem = observer(function ModulesLinksListItem(props: Props) {
+  const { t } = useTranslation();
   const { handleDeleteLink, handleEditLink, isEditingAllowed, link } = props;
   // store hooks
   const { getUserDetails } = useMember();
@@ -42,8 +44,8 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
     copyTextToClipboard(text).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Copied to clipboard",
-        message: "The URL has been successfully copied to your clipboard",
+        title: t("copied_to_clipboard"),
+        message: t("copied_to_clipboard_description"),
       })
     );
   };
