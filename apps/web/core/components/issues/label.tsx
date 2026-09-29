@@ -27,7 +27,12 @@ export function ViewIssueLabel({ labelDetails, maxRender = 1 }: Props) {
                 key={label.id}
                 className="shadow-sm flex flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11"
               >
-                <Tooltip position="top" tooltipHeading={t("common.label")} tooltipContent={label.name} isMobile={isMobile}>
+                <Tooltip
+                  position="top"
+                  tooltipHeading={t("common.label")}
+                  tooltipContent={label.name}
+                  isMobile={isMobile}
+                >
                   <div className="flex items-center gap-1.5 text-secondary">
                     <span
                       className="h-2 w-2 flex-shrink-0 rounded-full"

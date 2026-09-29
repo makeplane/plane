@@ -71,7 +71,12 @@ export const FilterStartDate = observer(function FilterStartDate(props: Props) {
                   multiple
                 />
               ))}
-              <FilterOption isChecked={isCustomDateSelected()} onClick={handleCustomDate} title={t("issue_ui.filters.custom")} multiple />
+              <FilterOption
+                isChecked={isCustomDateSelected()}
+                onClick={handleCustomDate}
+                title={t("issue_ui.filters.custom")}
+                multiple
+              />
             </>
           ) : (
             <p className="text-11 text-placeholder italic">{t("common.search.no_matches_found")}</p>

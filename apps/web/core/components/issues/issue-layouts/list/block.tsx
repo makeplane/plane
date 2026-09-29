@@ -214,12 +214,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
             <div className="flex items-center gap-1" style={isSubIssue ? { marginLeft } : {}}>
               {/* select checkbox */}
               {projectId && canSelectIssues && !isEpic && (
-                <Tooltip
-                  tooltipContent={
-                    t("issue_ui.select_within_project")
-                  }
-                  disabled={issue.project_id === projectId}
-                >
+                <Tooltip tooltipContent={t("issue_ui.select_within_project")} disabled={issue.project_id === projectId}>
                   <div className="absolute left-1 grid w-3.5 flex-shrink-0 place-items-center">
                     <MultipleSelectEntityAction
                       className={cn(
