@@ -25,8 +25,15 @@
 </p>
 
 > [!IMPORTANT]
-> **Piątnica Fork — Work in Progress**
-> This is an internal fork of Plane tailored for our organization's needs. The project is currently under active development. It may contain experimental features or configurations specific to our environment. Feel free to explore and use it at your own risk.
+> **Pi-Plane (Piątnica Fork of Plane) — Work in Progress**
+>
+> This is an internal modified version of Plane, forked by Okręgowa Spółdzielnia Mleczarska w Piątnicy (OSM Piątnica) and tailored to our organization's needs. The project is currently under active development. It may contain experimental features or configurations specific to our environment. Feel free to explore and use it at your own risk.
+>
+> **Original software:**  
+> Copyright (c) 2023-present Plane Software, Inc. and contributors
+>
+> **Modifications:**  
+> Copyright (c) 2026-present OSM Piątnica and contributors
 
 Meet [Plane](https://plane.so/), an open-source project management tool to track issues, run ~sprints~ cycles, and manage product roadmaps without the chaos of managing the tool itself. 🧘‍♀️
 
