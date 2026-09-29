@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, test, vi } from "vitest";
-import { CustomSearchSelect } from "@/dropdowns/custom-search-select";
+import { CustomSearchSelect, mirrorCallerShapeOnSingleChange } from "@/dropdowns/custom-search-select";
 
 vi.mock("@plane/hooks", () => ({ useOutsideClickDetector: () => {} }));
 
@@ -92,5 +92,62 @@ describe("CustomSearchSelect — selectedContent opt-in", () => {
       />
     );
     expect(getTrigger()).toHaveTextContent("Selected b");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// §bug-class — single-select onChange must mirror the caller's input shape.
+//
+// The project-invite modal passes `value` as a scalar and expects `onChange`
+// to fire with a scalar. The dashboard's single-select filters pass `value`
+// as a one-element array and expect `onChange` to fire with an array. The
+// component must preserve the caller's input shape on output so both
+// contract holders keep working — wrapping everything in an array broke
+// downstream code that uses the chosen value as a dict key (which is what
+// caused the `unhashable type: 'list'` 500 on POST /project-members/).
+//
+// These tests exercise the real exported helper that the component uses
+// internally, so a regression in the shape-mirroring logic in
+// `custom-search-select.tsx` will fail here.
+// ---------------------------------------------------------------------------
+describe("mirrorCallerShapeOnSingleChange", () => {
+  test("scalar-in → scalar-out (project-invite modal pattern)", () => {
+    const seen: unknown[] = [];
+    const handler = mirrorCallerShapeOnSingleChange("a", (v) => seen.push(v));
+    handler("a");
+    expect(seen).toEqual(["a"]);
+    handler("b");
+    expect(seen).toEqual(["a", "b"]);
+  });
+
+  test("array-in → array-out (dashboard single-select pattern)", () => {
+    const seen: unknown[] = [];
+    const handler = mirrorCallerShapeOnSingleChange(["a"], (v) => seen.push(v));
+    handler("b");
+    expect(seen).toEqual([["b"]]);
+  });
+
+  test("scalar-in cleared → undefined-out (Headless UI emits undefined)", () => {
+    const seen: unknown[] = [];
+    const handler = mirrorCallerShapeOnSingleChange("a", (v) => seen.push(v));
+    handler(undefined);
+    expect(seen).toEqual([undefined]);
+  });
+
+  test("array-in cleared → empty-array-out (Headless UI emits null)", () => {
+    const seen: unknown[] = [];
+    const handler = mirrorCallerShapeOnSingleChange(["a"], (v) => seen.push(v));
+    handler(null);
+    expect(seen).toEqual([[]]);
+  });
+
+  test("undefined-in → whatever-passes-through", () => {
+    // Initial render before the parent hydrates the value: we still pass
+    // through Headless UI's payload verbatim. This is the same behavior as
+    // the scalar branch and matches the contract documented on the helper.
+    const seen: unknown[] = [];
+    const handler = mirrorCallerShapeOnSingleChange(undefined, (v) => seen.push(v));
+    handler("a");
+    expect(seen).toEqual(["a"]);
   });
 });
