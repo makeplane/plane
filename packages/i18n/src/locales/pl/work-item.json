@@ -422,5 +422,91 @@
       "label": "Tytuł epiku",
       "required": "Tytuł epiku jest wymagany."
     }
+  },
+  "issue_ui": {
+    "id_copied": "Identyfikator elementu pracy skopiowany do schowka",
+    "click_to_copy": "Kliknij, aby skopiować",
+    "asset_duplication_failed": "Duplikowanie zasobu nie powiodło się. Spróbuj ponownie później.",
+    "required": "To pole jest wymagane",
+    "no_siblings": "Brak powiązanych elementów pracy",
+    "attachments": {
+      "uploading": "Przesyłanie załącznika...",
+      "uploaded_title": "Załącznik przesłany",
+      "uploaded_message": "Załącznik został pomyślnie przesłany",
+      "not_uploaded_title": "Załącznik nie został przesłany",
+      "not_uploaded_message": "Nie udało się przesłać załącznika",
+      "removed_title": "Załącznik usunięty",
+      "removed_message": "Załącznik został pomyślnie usunięty",
+      "not_removed_title": "Załącznik nie został usunięty",
+      "not_removed_message": "Nie udało się usunąć załącznika",
+      "drop_here": "Upuść tutaj...",
+      "uploading_short": "Przesyłanie...",
+      "click_or_drag": "Kliknij lub przeciągnij plik tutaj",
+      "invalid_file": "Nieprawidłowy typ lub rozmiar pliku (maks. {size} MB)"
+    },
+    "due_before_start": "Termin wykonania nie może być wcześniejszy niż data rozpoczęcia elementu pracy.",
+    "clear_filters": "Wyczyść filtry",
+    "add_to_cycle_success": "Elementy pracy zostały pomyślnie dodane do cyklu.",
+    "add_to_cycle_failed": "Nie udało się dodać wybranych elementów pracy do cyklu. Spróbuj ponownie.",
+    "add_to_module_success": "Elementy pracy zostały pomyślnie dodane do modułu.",
+    "add_to_module_failed": "Nie udało się dodać wybranych elementów pracy do modułu. Spróbuj ponownie.",
+    "project_view_empty": {
+      "title": "Elementy pracy widoku pojawią się tutaj",
+      "description": "Elementy pracy pomagają śledzić poszczególne zadania. Dzięki nim wiesz, co się dzieje, kto nad tym pracuje i co jest zrobione."
+    },
+    "sub_group_by": "Podgrupuj według",
+    "filters": {
+      "custom": "Niestandardowe",
+      "mention": "Wzmianka"
+    },
+    "cannot_move": {
+      "title": "Nie można przenieść elementu pracy",
+      "not_allowed": "Nie masz uprawnień do przenoszenia tego elementu pracy",
+      "dnd_disabled": "Przeciąganie i upuszczanie jest wyłączone dla bieżącego grupowania"
+    },
+    "select_within_project": "Można wybierać tylko elementy pracy z bieżącego projektu.",
+    "drop_to_delete": "Upuść tutaj, aby usunąć element pracy.",
+    "view_not_exist": {
+      "title": "Widok nie istnieje",
+      "description": "Widok, którego szukasz, nie istnieje lub nie masz uprawnień do jego wyświetlenia."
+    },
+    "go_to_all_work_items": "Przejdź do wszystkich elementów pracy",
+    "save_as": "Zapisz jako",
+    "columns": {
+      "select_cycle": "Wybierz cykl",
+      "select_modules": "Wybierz moduły"
+    },
+    "quick_actions": {
+      "action_not_available": "Akcja niedostępna",
+      "not_implemented": "Akcja {action} nie jest zaimplementowana.",
+      "restore_success_title": "Przywrócono pomyślnie",
+      "restore_success_message": "Twój element pracy znajdziesz wśród elementów pracy projektu.",
+      "restore_failed": "Nie udało się przywrócić elementu pracy. Spróbuj ponownie.",
+      "remove_from_cycle": "Usuń z cyklu",
+      "remove_from_module": "Usuń z modułu"
+    },
+    "close_peek": "Zamknij podgląd",
+    "labels_count": "Etykiety: {count}",
+    "view_epic": "Zobacz epik",
+    "view_work_item": "Zobacz element pracy",
+    "save_draft": {
+      "title": "Zapisać ten szkic?",
+      "description": "Możesz zapisać ten element pracy w szkicach, aby wrócić do niego później."
+    },
+    "delete_confirm": {
+      "work_item": "Czy na pewno chcesz usunąć element pracy {identifier}? Wszystkie dane związane z tym elementem pracy zostaną trwale usunięte. Tej czynności nie można cofnąć.",
+      "epic": "Czy na pewno chcesz usunąć epik {identifier}? Wszystkie dane związane z tym epikiem zostaną trwale usunięte. Tej czynności nie można cofnąć."
+    },
+    "work_item_deleted": "Ten element pracy został usunięty",
+    "epics_link_copied": "Link do epików skopiowany do schowka.",
+    "work_items_link_copied": "Link do elementów pracy skopiowany do schowka.",
+    "editor_processing": "Edytor wciąż przetwarza zmiany. Poczekaj, zanim przejdziesz dalej.",
+    "ai_title_not_informative": "Tytuł elementu pracy jest zbyt mało informacyjny, aby wygenerować opis. Spróbuj z innym tytułem.",
+    "ai_rate_limit": "Osiągnięto maksymalną liczbę 50 zapytań miesięcznie na użytkownika.",
+    "generic_error": "Wystąpił błąd. Spróbuj ponownie.",
+    "move_to_project_failed": "Nie udało się przenieść elementu pracy do projektu. Spróbuj ponownie.",
+    "project_work_items_count": "{count, plural, one {W tym projekcie jest # element pracy} few {W tym projekcie są # elementy pracy} many {W tym projekcie jest # elementów pracy} other {W tym projekcie jest # elementu pracy}}",
+    "archived_banner": "Ten element pracy został zarchiwizowany. Przejdź do sekcji Archiwa, aby go przywrócić.",
+    "go_to_archives": "Przejdź do archiwów"
   }
 }

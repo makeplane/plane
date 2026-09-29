@@ -422,5 +422,91 @@
       "label": "エピックのタイトル",
       "required": "エピックのタイトルは必須です。"
     }
+  },
+  "issue_ui": {
+    "id_copied": "作業項目IDをクリップボードにコピーしました",
+    "click_to_copy": "クリックしてコピー",
+    "asset_duplication_failed": "アセットの複製に失敗しました。しばらくしてからもう一度お試しください。",
+    "required": "この項目は必須です",
+    "no_siblings": "同階層の作業項目はありません",
+    "attachments": {
+      "uploading": "添付ファイルをアップロード中...",
+      "uploaded_title": "添付ファイルをアップロードしました",
+      "uploaded_message": "添付ファイルが正常にアップロードされました",
+      "not_uploaded_title": "添付ファイルをアップロードできませんでした",
+      "not_uploaded_message": "添付ファイルをアップロードできませんでした",
+      "removed_title": "添付ファイルを削除しました",
+      "removed_message": "添付ファイルが正常に削除されました",
+      "not_removed_title": "添付ファイルを削除できませんでした",
+      "not_removed_message": "添付ファイルを削除できませんでした",
+      "drop_here": "ここにドロップ...",
+      "uploading_short": "アップロード中...",
+      "click_or_drag": "クリックするか、ファイルをここにドラッグしてください",
+      "invalid_file": "ファイルの種類またはサイズが無効です（最大 {size} MB）"
+    },
+    "due_before_start": "期限日を作業項目の開始日より前にすることはできません。",
+    "clear_filters": "フィルターをクリア",
+    "add_to_cycle_success": "作業項目がサイクルに追加されました。",
+    "add_to_cycle_failed": "選択した作業項目をサイクルに追加できませんでした。もう一度お試しください。",
+    "add_to_module_success": "作業項目がモジュールに追加されました。",
+    "add_to_module_failed": "選択した作業項目をモジュールに追加できませんでした。もう一度お試しください。",
+    "project_view_empty": {
+      "title": "ビューの作業項目がここに表示されます",
+      "description": "作業項目を使うと、個々の作業を追跡できます。何が起きているか、誰が担当しているか、何が完了したかを把握しましょう。"
+    },
+    "sub_group_by": "サブグループ化",
+    "filters": {
+      "custom": "カスタム",
+      "mention": "メンション"
+    },
+    "cannot_move": {
+      "title": "作業項目を移動できません",
+      "not_allowed": "この作業項目を移動する権限がありません",
+      "dnd_disabled": "現在のグループ化ではドラッグ＆ドロップが無効です"
+    },
+    "select_within_project": "現在のプロジェクト内の作業項目のみ選択できます。",
+    "drop_to_delete": "ここにドロップして作業項目を削除します。",
+    "view_not_exist": {
+      "title": "ビューが存在しません",
+      "description": "お探しのビューは存在しないか、表示する権限がありません。"
+    },
+    "go_to_all_work_items": "すべての作業項目へ移動",
+    "save_as": "名前を付けて保存",
+    "columns": {
+      "select_cycle": "サイクルを選択",
+      "select_modules": "モジュールを選択"
+    },
+    "quick_actions": {
+      "action_not_available": "操作は利用できません",
+      "not_implemented": "{action}の操作は実装されていません。",
+      "restore_success_title": "復元しました",
+      "restore_success_message": "作業項目はプロジェクトの作業項目で確認できます。",
+      "restore_failed": "作業項目を復元できませんでした。もう一度お試しください。",
+      "remove_from_cycle": "サイクルから削除",
+      "remove_from_module": "モジュールから削除"
+    },
+    "close_peek": "プレビューを閉じる",
+    "labels_count": "ラベル {count} 件",
+    "view_epic": "エピックを表示",
+    "view_work_item": "作業項目を表示",
+    "save_draft": {
+      "title": "この下書きを保存しますか？",
+      "description": "この作業項目を下書きに保存すると、後で続きから作業できます。"
+    },
+    "delete_confirm": {
+      "work_item": "作業項目 {identifier} を削除してもよろしいですか？この作業項目に関連するすべてのデータが完全に削除されます。この操作は元に戻せません。",
+      "epic": "エピック {identifier} を削除してもよろしいですか？このエピックに関連するすべてのデータが完全に削除されます。この操作は元に戻せません。"
+    },
+    "work_item_deleted": "この作業項目は削除されました",
+    "epics_link_copied": "エピックのリンクをクリップボードにコピーしました。",
+    "work_items_link_copied": "作業項目のリンクをクリップボードにコピーしました。",
+    "editor_processing": "エディターはまだ変更を処理中です。しばらくお待ちください。",
+    "ai_title_not_informative": "作業項目のタイトルが簡潔すぎて説明を生成できません。別のタイトルでお試しください。",
+    "ai_rate_limit": "ユーザーあたり月50件のリクエスト上限に達しました。",
+    "generic_error": "エラーが発生しました。もう一度お試しください。",
+    "move_to_project_failed": "作業項目をプロジェクトに移動できませんでした。もう一度お試しください。",
+    "project_work_items_count": "{count, plural, other {このプロジェクトには作業項目が # 件あります}}",
+    "archived_banner": "この作業項目はアーカイブされました。復元するにはアーカイブセクションを開いてください。",
+    "go_to_archives": "アーカイブへ移動"
   }
 }

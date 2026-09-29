@@ -422,5 +422,91 @@
       "label": "Titlu sarcină majoră",
       "required": "Titlul sarcinii majore este obligatoriu."
     }
+  },
+  "issue_ui": {
+    "id_copied": "ID-ul activității a fost copiat în clipboard",
+    "click_to_copy": "Faceți clic pentru a copia",
+    "asset_duplication_failed": "Duplicarea resursei a eșuat. Vă rugăm să încercați din nou mai târziu.",
+    "required": "Acest câmp este obligatoriu",
+    "no_siblings": "Nicio activitate de același nivel",
+    "attachments": {
+      "uploading": "Se încarcă atașamentul...",
+      "uploaded_title": "Atașament încărcat",
+      "uploaded_message": "Atașamentul a fost încărcat cu succes",
+      "not_uploaded_title": "Atașament neîncărcat",
+      "not_uploaded_message": "Atașamentul nu a putut fi încărcat",
+      "removed_title": "Atașament eliminat",
+      "removed_message": "Atașamentul a fost eliminat cu succes",
+      "not_removed_title": "Atașament neeliminat",
+      "not_removed_message": "Atașamentul nu a putut fi eliminat",
+      "drop_here": "Plasați aici...",
+      "uploading_short": "Se încarcă...",
+      "click_or_drag": "Faceți clic sau trageți un fișier aici",
+      "invalid_file": "Tip sau dimensiune de fișier nevalidă (max. {size} MB)"
+    },
+    "due_before_start": "Data limită nu poate fi anterioară datei de început a activității.",
+    "clear_filters": "Șterge filtrele",
+    "add_to_cycle_success": "Activitățile au fost adăugate în ciclu cu succes.",
+    "add_to_cycle_failed": "Activitățile selectate nu au putut fi adăugate în ciclu. Vă rugăm să încercați din nou.",
+    "add_to_module_success": "Activitățile au fost adăugate în modul cu succes.",
+    "add_to_module_failed": "Activitățile selectate nu au putut fi adăugate în modul. Vă rugăm să încercați din nou.",
+    "project_view_empty": {
+      "title": "Activitățile perspectivei vor apărea aici",
+      "description": "Activitățile vă ajută să urmăriți fiecare bucată de muncă. Cu ele, aflați ce se întâmplă, cine lucrează la ele și ce este gata."
+    },
+    "sub_group_by": "Subgrupează după",
+    "filters": {
+      "custom": "Personalizat",
+      "mention": "Mențiune"
+    },
+    "cannot_move": {
+      "title": "Activitatea nu poate fi mutată",
+      "not_allowed": "Nu aveți permisiunea de a muta această activitate",
+      "dnd_disabled": "Tragerea și plasarea sunt dezactivate pentru gruparea curentă"
+    },
+    "select_within_project": "Pot fi selectate doar activitățile din proiectul curent.",
+    "drop_to_delete": "Plasați aici pentru a șterge activitatea.",
+    "view_not_exist": {
+      "title": "Perspectiva nu există",
+      "description": "Perspectiva pe care o căutați nu există sau nu aveți permisiunea de a o vizualiza."
+    },
+    "go_to_all_work_items": "Mergi la toate activitățile",
+    "save_as": "Salvează ca",
+    "columns": {
+      "select_cycle": "Selectați ciclul",
+      "select_modules": "Selectați modulele"
+    },
+    "quick_actions": {
+      "action_not_available": "Acțiune indisponibilă",
+      "not_implemented": "Acțiunea {action} nu este implementată.",
+      "restore_success_title": "Restaurare reușită",
+      "restore_success_message": "Activitatea dvs. poate fi găsită în activitățile proiectului.",
+      "restore_failed": "Activitatea nu a putut fi restaurată. Vă rugăm să încercați din nou.",
+      "remove_from_cycle": "Elimină din ciclu",
+      "remove_from_module": "Elimină din modul"
+    },
+    "close_peek": "Închide previzualizarea",
+    "labels_count": "{count} etichete",
+    "view_epic": "Vezi sarcina majoră",
+    "view_work_item": "Vezi activitatea",
+    "save_draft": {
+      "title": "Salvați această schiță?",
+      "description": "Puteți salva această activitate în schițe pentru a reveni la ea mai târziu."
+    },
+    "delete_confirm": {
+      "work_item": "Sigur doriți să ștergeți activitatea {identifier}? Toate datele legate de activitate vor fi eliminate definitiv. Această acțiune nu poate fi anulată.",
+      "epic": "Sigur doriți să ștergeți sarcina majoră {identifier}? Toate datele legate de sarcina majoră vor fi eliminate definitiv. Această acțiune nu poate fi anulată."
+    },
+    "work_item_deleted": "Această activitate a fost ștearsă",
+    "epics_link_copied": "Linkul către sarcinile majore a fost copiat în clipboard.",
+    "work_items_link_copied": "Linkul către activități a fost copiat în clipboard.",
+    "editor_processing": "Editorul încă procesează modificările. Vă rugăm să așteptați înainte de a continua.",
+    "ai_title_not_informative": "Titlul activității nu este suficient de informativ pentru a genera descrierea. Vă rugăm să încercați cu un alt titlu.",
+    "ai_rate_limit": "Ați atins numărul maxim de 50 de solicitări pe lună per utilizator.",
+    "generic_error": "A apărut o eroare. Vă rugăm să încercați din nou.",
+    "move_to_project_failed": "Mutarea activității în proiect a eșuat. Vă rugăm să încercați din nou.",
+    "project_work_items_count": "{count, plural, one {În acest proiect există # activitate} few {În acest proiect există # activități} other {În acest proiect există # de activități}}",
+    "archived_banner": "Această activitate a fost arhivată. Vizitați secțiunea Arhive pentru a o restaura.",
+    "go_to_archives": "Mergi la arhive"
   }
 }

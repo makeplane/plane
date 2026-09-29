@@ -422,5 +422,91 @@
       "label": "Epic Title",
       "required": "Epic title is required."
     }
+  },
+  "issue_ui": {
+    "id_copied": "Work item ID copied to clipboard",
+    "click_to_copy": "Click to copy",
+    "asset_duplication_failed": "Asset duplication failed. Please try again later.",
+    "required": "This is required",
+    "no_siblings": "No sibling work items",
+    "attachments": {
+      "uploading": "Uploading attachment...",
+      "uploaded_title": "Attachment uploaded",
+      "uploaded_message": "The attachment has been successfully uploaded",
+      "not_uploaded_title": "Attachment not uploaded",
+      "not_uploaded_message": "The attachment could not be uploaded",
+      "removed_title": "Attachment removed",
+      "removed_message": "The attachment has been successfully removed",
+      "not_removed_title": "Attachment not removed",
+      "not_removed_message": "The attachment could not be removed",
+      "drop_here": "Drop here...",
+      "uploading_short": "Uploading...",
+      "click_or_drag": "Click or drag a file here",
+      "invalid_file": "Invalid file type or size (max {size} MB)"
+    },
+    "due_before_start": "Due date cannot be before the start date of the work item.",
+    "clear_filters": "Clear filters",
+    "add_to_cycle_success": "Work items added to the cycle successfully.",
+    "add_to_cycle_failed": "Selected work items could not be added to the cycle. Please try again.",
+    "add_to_module_success": "Work items added to the module successfully.",
+    "add_to_module_failed": "Selected work items could not be added to the module. Please try again.",
+    "project_view_empty": {
+      "title": "View work items will appear here",
+      "description": "Work items help you track individual pieces of work. With work items, keep track of what's going on, who is working on it, and what's done."
+    },
+    "sub_group_by": "Sub-group by",
+    "filters": {
+      "custom": "Custom",
+      "mention": "Mention"
+    },
+    "cannot_move": {
+      "title": "Cannot move work item",
+      "not_allowed": "You are not allowed to move this work item",
+      "dnd_disabled": "Drag and drop is disabled for the current grouping"
+    },
+    "select_within_project": "Only work items within the current project can be selected.",
+    "drop_to_delete": "Drop here to delete the work item.",
+    "view_not_exist": {
+      "title": "View does not exist",
+      "description": "The view you are looking for does not exist or you don't have permission to view it."
+    },
+    "go_to_all_work_items": "Go to All work items",
+    "save_as": "Save as",
+    "columns": {
+      "select_cycle": "Select cycle",
+      "select_modules": "Select modules"
+    },
+    "quick_actions": {
+      "action_not_available": "Action not available",
+      "not_implemented": "{action} action is not implemented.",
+      "restore_success_title": "Restore success",
+      "restore_success_message": "Your work item can be found in project work items.",
+      "restore_failed": "Work item could not be restored. Please try again.",
+      "remove_from_cycle": "Remove from cycle",
+      "remove_from_module": "Remove from module"
+    },
+    "close_peek": "Close the peek view",
+    "labels_count": "{count} Labels",
+    "view_epic": "View epic",
+    "view_work_item": "View work item",
+    "save_draft": {
+      "title": "Save this draft?",
+      "description": "You can save this work item to Drafts so you can come back to it later."
+    },
+    "delete_confirm": {
+      "work_item": "Are you sure you want to delete work item {identifier}? All of the data related to the work item will be permanently removed. This action cannot be undone.",
+      "epic": "Are you sure you want to delete epic {identifier}? All of the data related to the epic will be permanently removed. This action cannot be undone."
+    },
+    "work_item_deleted": "This work item has been deleted",
+    "epics_link_copied": "Epics link copied to clipboard.",
+    "work_items_link_copied": "Work items link copied to clipboard.",
+    "editor_processing": "Editor is still processing changes. Please wait before proceeding.",
+    "ai_title_not_informative": "Work item title isn't informative enough to generate the description. Please try with a different title.",
+    "ai_rate_limit": "You have reached the maximum number of requests of 50 requests per month per user.",
+    "generic_error": "Some error occurred. Please try again.",
+    "move_to_project_failed": "Failed to move work item to project. Please try again.",
+    "project_work_items_count": "{count, plural, one {There is # work item in this project} other {There are # work items in this project}}",
+    "archived_banner": "This work item has been archived. Visit the Archives section to restore it.",
+    "go_to_archives": "Go to archives"
   }
 }
