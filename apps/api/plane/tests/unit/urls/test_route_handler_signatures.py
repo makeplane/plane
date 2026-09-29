@@ -186,15 +186,20 @@ def test_handler_accepts_route_kwargs(route, cls, method, handler, captured):
 class _Handlers:
     """Signatures the sweep must classify correctly, including ones no view uses yet."""
 
-    def fits(self, request, slug, pk=None): ...
+    def fits(self, request, slug, pk=None):
+        pass
 
-    def needs_pk(self, request, slug, pk): ...
+    def needs_pk(self, request, slug, pk):
+        pass
 
-    def needs_pk_with_kwargs(self, request, slug, pk, **kwargs): ...
+    def needs_pk_with_kwargs(self, request, slug, pk, **kwargs):
+        pass
 
-    def kwargs_only(self, request, **kwargs): ...
+    def kwargs_only(self, request, **kwargs):
+        pass
 
-    def takes_nothing(self, request): ...
+    def takes_nothing(self, request):
+        pass
 
 
 @pytest.mark.unit
