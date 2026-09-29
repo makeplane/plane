@@ -9,7 +9,7 @@ import pytest
 
 # Module imports
 from plane.db.models import IssueWorkflowBinding
-from plane.services.workflow import actors
+from plane.services.workflow import transitions as transitions_module
 from plane.services.workflow.errors import (
     WorkflowActorNotAuthorized,
     WorkflowBypassReasonRequired,
@@ -198,7 +198,12 @@ class TestComputeAllowedActions:
             from plane.services.workflow.errors import WorkflowActorNotAuthorized
             raise WorkflowActorNotAuthorized("forced deny")
 
-        monkeypatch.setattr(actors, "authorize_actor", deny)
+        # ``transitions`` imports ``authorize_actor`` as a name in
+        # its own module namespace, so we patch the *imported*
+        # binding (``transitions.authorize_actor``) — patching the
+        # source module alone would leave the local binding intact
+        # and silently make this test a no-op.
+        monkeypatch.setattr(transitions_module, "authorize_actor", deny)
 
         actions = TransitionService.compute_allowed_actions(
             issue=workflow_issue,
@@ -211,7 +216,7 @@ class TestComputeAllowedActions:
         def allow(*args, **kwargs):
             return None
 
-        monkeypatch.setattr(actors, "authorize_actor", allow)
+        monkeypatch.setattr(transitions_module, "authorize_actor", allow)
         actions = TransitionService.compute_allowed_actions(
             issue=workflow_issue,
             actor_id=str(workflow_issue.created_by_id),

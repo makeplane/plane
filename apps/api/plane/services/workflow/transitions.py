@@ -145,12 +145,18 @@ class TransitionService:
         *,
         issue: Issue,
         actor_id: Optional[str] = None,
+        is_admin: bool = False,
     ) -> AllowedActions:
         """Return the allowed-actions payload for an issue.
 
         No exceptions are raised — even when enforcement is off or
         the issue has no workflow, the caller gets a benign payload
         with ``transitions=[]``.
+
+        ``is_admin`` is plumbed through to ``_approval_block_for`` so
+        the approver list is only revealed to admins (or to eligible
+        approvers). Non-eligible, non-admin actors get ``None`` per
+        §23.3.
         """
         if issue.state_id is None:
             return AllowedActions(
@@ -248,11 +254,14 @@ class TransitionService:
 
         # §17.3 — surface the pending approval, if any. The approval
         # block is filled in by reading the snapshotted approver list
-        # so the UI can render the "can decide" indicator.
+        # so the UI can render the "can decide" indicator. Admins and
+        # eligible approvers get the full user list; everyone else gets
+        # ``None`` (§23.3 redacts hidden membership data).
         approval_block = _approval_block_for(
             effective=effective,
             issue=issue,
             actor_id=actor_id,
+            is_admin=is_admin,
         )
 
         actions = AllowedActions(
@@ -367,8 +376,12 @@ class TransitionService:
         (§18.2 + §18.3).
         """
         # §10.1 — same-state update is a no-op (no audit, no transition).
+        # ``of=("self",)`` is required because ``Issue.state`` is a
+        # nullable FK; locking only the Issue row avoids Postgres'
+        # "FOR UPDATE cannot be applied to the nullable side of an
+        # outer join" error.
         issue = (
-            Issue.objects.select_for_update()
+            Issue.objects.select_for_update(of=("self",))
             .select_related("state", "project", "workspace")
             .get(pk=issue_id)
         )
@@ -698,6 +711,7 @@ def _approval_block_for(
     effective: EffectiveWorkflow,
     issue: Issue,
     actor_id: Optional[str],
+    is_admin: bool = False,
 ) -> Optional[dict]:
     """§17.3 — build the ``approval`` block for ``compute_allowed_actions``.
 
@@ -708,10 +722,13 @@ def _approval_block_for(
       approver list (§11.2 + §18.2);
     - ``target_state_name`` / ``reject_state_name`` — surface the
       destinations so the UI can render previews;
-    - ``approver_user_ids`` — the snapshot (admins only — exposed
-      here for the UI badge; non-eligible actors do not see hidden
-      membership data per §23.3 because the can_decide flag is
-      applied first).
+    - ``approver_user_ids`` — the snapshot, returned ONLY to eligible
+      approvers (those with ``can_decide=True``) or admins. Everyone
+      else sees ``None`` per §23.3 so we do not leak hidden
+      membership data to non-eligible viewers.
+    - ``approver_count`` — non-identifying count for everyone, so the
+      UI can render the "Pending · N approver(s)" badge without seeing
+      the actual user list.
     """
     try:
         from plane.db.models import (
@@ -728,7 +745,13 @@ def _approval_block_for(
             binding=effective.binding or _binding_for_issue(issue),
             status=WorkflowApprovalStatus.PENDING,
         )
-        .select_related("flow", "source_state", "issue")
+        .select_related(
+            "flow",
+            "flow__target_state__state",
+            "flow__reject_state",
+            "source_state",
+            "issue",
+        )
         .first()
     )
     if approval is None:
@@ -742,6 +765,26 @@ def _approval_block_for(
     )
     can_decide = bool(actor_id) and str(actor_id) in {str(u) for u in approver_ids}
 
+    # §23.3 — the approver list is gated: only an eligible approver or
+    # an admin sees the actual user ids. Everyone else (including the
+    # issue creator who is not on the snapshotted approver list) gets
+    # ``None`` so the response never leaks hidden membership data.
+    show_approvers = can_decide or is_admin
+
+    target_state_row = approval.flow.target_state
+    reject_state_row = approval.flow.reject_state
+    target_state_name = (
+        target_state_row.state.name if target_state_row and target_state_row.state else None
+    )
+    # ``reject_state`` is a ``WorkflowState`` so the readable name lives
+    # on ``reject_state.state.name``; fall back to None if either the
+    # row or its underlying state has gone missing.
+    reject_state_name = (
+        reject_state_row.state.name
+        if reject_state_row and reject_state_row.state
+        else None
+    )
+
     return {
         "id": str(approval.id),
         "status": approval.status,
@@ -749,19 +792,27 @@ def _approval_block_for(
         "source_state_name": (
             approval.source_state.name if approval.source_state else None
         ),
-        "target_state_id": str(approval.flow.target_state_id),
-        "target_state_name": (
-            approval.flow.target_state.state.name
-            if approval.flow.target_state and approval.flow.target_state.state
-            else None
+        # The UI surfaces State IDs (not WorkflowState IDs); the
+        # flow's ``target_state`` / ``reject_state`` are
+        # WorkflowState rows, so we drill through ``.state_id`` to
+        # expose the underlying State.id that callers can act on.
+        "target_state_id": (
+            str(target_state_row.state_id)
+            if target_state_row
+            else str(approval.flow.target_state_id)
         ),
+        "target_state_name": target_state_name,
         "reject_state_id": (
-            str(approval.flow.reject_state_id)
-            if approval.flow.reject_state_id
+            str(reject_state_row.state_id)
+            if reject_state_row
             else None
         ),
+        "reject_state_name": reject_state_name,
         "can_decide": can_decide,
-        "approver_user_ids": [str(u) for u in approver_ids],
+        "approver_count": len(approver_ids),
+        "approver_user_ids": (
+            [str(u) for u in approver_ids] if show_approvers else None
+        ),
     }
 
 

@@ -125,10 +125,16 @@ def _create_binding(
     The schema enforces a ``OneToOneField(issue)`` so a concurrent
     bind is rejected by the database; we map the ``IntegrityError``
     to a clean read of the existing row.
+
+    ``IssueWorkflowBinding`` is a ``ProjectBaseModel`` so we must
+    populate ``project`` (and the derived ``workspace`` via the
+    ``ProjectBaseModel.save`` hook) before insert. The
+    ``Project.project`` is sourced from ``issue.project``.
     """
     try:
         return IssueWorkflowBinding.objects.create(
             issue=issue,
+            project=issue.project,
             workflow=effective.workflow,
             workflow_revision=effective.revision,
             bound_at=timezone.now(),

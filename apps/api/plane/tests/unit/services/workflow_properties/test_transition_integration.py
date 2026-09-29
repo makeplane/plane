@@ -29,7 +29,7 @@ from plane.services.workflow.transitions import TransitionService
 
 
 @pytest.fixture
-def simple_workflow(db, property_project, create_user):
+def simple_workflow(db, property_project, property_state, create_user):
     """A minimal published workflow with one Todo state."""
     workflow = Workflow.objects.create(
         project=property_project,
@@ -47,15 +47,14 @@ def simple_workflow(db, property_project, create_user):
         status=WorkflowRevisionStatus.PUBLISHED,
         published_by=create_user,
     )
-    state = State.objects.filter(project=property_project).first()
     WorkflowState.objects.create(
         project=property_project,
         workspace=property_project.workspace,
         revision=revision,
-        state=state,
+        state=property_state,
         allow_new_work_items=True,
     )
-    return workflow, revision, state
+    return workflow, revision, property_state
 
 
 @pytest.mark.unit

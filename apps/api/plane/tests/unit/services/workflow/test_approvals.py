@@ -49,10 +49,16 @@ from plane.services.workflow.transitions import TransitionService
 @pytest.fixture
 def second_member(db, workspace, create_user, workflow_project):
     """A second project member used as the snapshotted approver."""
+    from uuid import uuid4
+
     from plane.db.models import User, WorkspaceMember
 
+    unique = uuid4().hex[:8]
     second = User.objects.create(
-        email="second@plane.so", first_name="Second", last_name="Member"
+        email=f"second-{unique}@plane.so",
+        username=f"second-{unique}",
+        first_name="Second",
+        last_name="Member",
     )
     WorkspaceMember.objects.create(
         workspace=workspace, member=second, role=20

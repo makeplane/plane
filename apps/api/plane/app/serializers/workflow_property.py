@@ -348,15 +348,13 @@ class IssuePropertyValueWriteSerializer(BaseSerializer):
         attrs["property"] = property_obj
         attrs.pop("property_id", None)
         if "value_json" in attrs:
-            value = attrs["value_json"]
-            value = coerce_property_value(value, property_obj.property_type)
-            try:
-                validate_value(
-                    value,
-                    property_obj.property_type,
-                    property_obj.config or {},
-                )
-            except WorkflowPropertyInvalidValue as exc:
-                raise serializers.ValidationError(exc.to_payload())
+            # Coercion only — type validation lives in
+            # ``persist_property_values`` so a type mismatch returns
+            # the §14 ``WORKFLOW_PROPERTY_INVALID_VALUE`` envelope
+            # with HTTP 422 (instead of DRF's default 400). Coercion
+            # is best-effort: ``coerce_property_value`` returns the
+            # original value untouched when it cannot normalise, so a
+            # bad shape flows through to the service validator.
+            value = coerce_property_value(attrs["value_json"], property_obj.property_type)
             attrs["value_json"] = value
         return attrs
