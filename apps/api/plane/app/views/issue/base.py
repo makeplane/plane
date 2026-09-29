@@ -10,6 +10,7 @@ import json
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import transaction
 from django.db.models import (
     Count,
     Exists,
@@ -719,19 +720,26 @@ class IssueViewSet(BaseViewSet):
         issue_id = issue.id
 
         issue.delete()
-        webhook_activity.delay(
-            event="issue",
-            verb="deleted",
-            field=None,
-            old_value=None,
-            new_value=None,
-            actor_id=request.user.id,
-            slug=slug,
-            current_site=base_host(request=request, is_app=True),
-            event_id=issue_id,
-            old_identifier=None,
-            new_identifier=None,
-        )
+
+        # Dispatch only after the delete commits, and absorb broker failures
+        # with robust=True so a down broker cannot turn a successful delete
+        # into a 500 (same pattern as project creation in api/views/project.py).
+        def _dispatch_delete_webhook():
+            webhook_activity.delay(
+                event="issue",
+                verb="deleted",
+                field=None,
+                old_value=None,
+                new_value=None,
+                actor_id=request.user.id,
+                slug=slug,
+                current_site=base_host(request=request, is_app=True),
+                event_id=issue_id,
+                old_identifier=None,
+                new_identifier=None,
+            )
+
+        transaction.on_commit(_dispatch_delete_webhook, robust=True)
         # delete the issue from recent visits
         UserRecentVisit.objects.filter(
             project_id=project_id,
