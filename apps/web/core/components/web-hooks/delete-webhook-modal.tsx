@@ -44,13 +44,13 @@ export function DeleteWebhookModal(props: IDeleteWebhook) {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("toast.success"),
-        message: "Webhook deleted successfully.",
+        message: t("project_components.webhooks.deleted"),
       });
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: "Webhook could not be deleted. Please try again.",
+        message: t("project_components.webhooks.delete_error"),
       });
     }
     setIsDeleting(false);
@@ -62,12 +62,9 @@ export function DeleteWebhookModal(props: IDeleteWebhook) {
       handleSubmit={handleDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title="Delete webhook"
+      title={t("project_components.webhooks.delete_title")}
       content={
-        <>
-          Are you sure you want to delete this webhook? Future events will not be delivered to this webhook. This action
-          cannot be undone.
-        </>
+        <>{t("project_components.webhooks.delete_description")}</>
       }
     />
   );

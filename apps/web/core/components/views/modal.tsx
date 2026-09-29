@@ -54,13 +54,13 @@ export const CreateUpdateProjectViewModal = observer(function CreateUpdateProjec
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("toast.success"),
-        message: "View created successfully.",
+        message: t("project_components.views.created"),
       });
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: "Failed to create view. Please try again.",
+        message: t("project_components.views.create_error"),
       });
     }
   };
@@ -75,7 +75,7 @@ export const CreateUpdateProjectViewModal = observer(function CreateUpdateProjec
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: "Failed to update view. Please try again.",
+        message: t("project_components.views.update_error"),
       });
     }
   };

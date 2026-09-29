@@ -32,7 +32,7 @@ export function GeneratedHookDetails(props: Props) {
       </div>
       <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
         <Button variant="secondary" size="lg" onClick={handleClose}>
-          Close
+          {t("close")}
         </Button>
       </div>
     </>

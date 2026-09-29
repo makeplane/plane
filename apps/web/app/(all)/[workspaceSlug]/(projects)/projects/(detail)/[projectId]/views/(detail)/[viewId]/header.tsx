@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import {
   EIssueFilterType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
@@ -39,6 +40,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader() {
+  // translation
+  const { t } = useTranslation();
   // refs
   const parentRef = useRef(null);
   // router
@@ -128,7 +131,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
-                label="Views"
+                label={t("views")}
                 href={`/${workspaceSlug}/projects/${projectId}/views/`}
                 icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
               />
@@ -181,7 +184,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
           )}
           {viewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.PROJECT_VIEW} entityId={viewId} />}
           {!viewDetails.is_locked && (
-            <FiltersDropdown title="Display" placement="bottom-end">
+            <FiltersDropdown title={t("common.display")} placement="bottom-end">
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[activeLayout] : undefined
@@ -205,7 +208,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
             }}
             data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.PROJECT_VIEW}
           >
-            Add work item
+            {t("add_work_item")}
           </Button>
         )}
         <div className="hidden md:block">
