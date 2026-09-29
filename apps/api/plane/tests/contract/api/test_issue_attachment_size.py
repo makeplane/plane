@@ -5,7 +5,8 @@
 """POST /api/v1/.../issues/{issue_id}/issue-attachments/ with ``size`` as a string.
 
 ``size`` was passed straight to ``min(size, FILE_SIZE_LIMIT)``, so a numeric
-string like ``"53314"`` raised ``TypeError`` (HTTP 500).
+string like ``"53314"`` raised ``TypeError`` (HTTP 500). Non-positive sizes and
+non-finite numbers (``1e400``) must be 400, not a signed upload with a bad range.
 """
 
 from unittest import mock
@@ -47,6 +48,30 @@ def test_string_size_is_accepted(s3, api_key_client, workspace, issue):
 def test_non_numeric_size_is_400(api_key_client, workspace, issue):
     response = api_key_client.post(
         url(workspace, issue), {"name": "a.png", "type": "image/png", "size": "big"}, format="json"
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+@pytest.mark.parametrize("size", ["-1", -1])
+def test_non_positive_size_is_400(api_key_client, workspace, issue, size):
+    response = api_key_client.post(
+        url(workspace, issue), {"name": "a.png", "type": "image/png", "size": size}, format="json"
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_overflow_size_is_400(api_key_client, workspace, issue):
+    # JSON 1e400 is parsed as inf; int(inf) raises OverflowError.
+    response = api_key_client.post(
+        url(workspace, issue),
+        data='{"name": "a.png", "type": "image/png", "size": 1e400}',
+        content_type="application/json",
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
