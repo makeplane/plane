@@ -16,6 +16,7 @@ import type {
   IWorkflowRevision,
   IWorkflowState,
   IWorkflowTypeAssignment,
+  TProjectWorkflowToggle,
   TWorkflowCreatePayload,
   TWorkflowFlowActorCreatePayload,
   TWorkflowFlowCreatePayload,
@@ -41,6 +42,32 @@ import { APIService } from "@/services/api.service";
 export class ProjectWorkflowService extends APIService {
   constructor() {
     super(API_BASE_URL);
+  }
+
+  // -- §7.1 project-level workflow toggle --------------------------------
+
+  /** The persisted `Project.workflow_enabled` for this project. */
+  async getWorkflowToggle(workspaceSlug: string, projectId: string): Promise<TProjectWorkflowToggle> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/workflow-toggle/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /** Flips the project-level switch; the response carries the stored value. */
+  async setWorkflowToggle(
+    workspaceSlug: string,
+    projectId: string,
+    workflowEnabled: boolean
+  ): Promise<TProjectWorkflowToggle> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/workflow-toggle/`, {
+      workflow_enabled: workflowEnabled,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 
   // -- §17.1 workflow CRUD -------------------------------------------------

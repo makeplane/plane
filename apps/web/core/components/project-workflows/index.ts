@@ -13,4 +13,5 @@ export * from "./workflow-states";
 export * from "./workflow-transitions";
 export * from "./workflow-type-assignments";
 export * from "./workflow-publish";
+export * from "./workflow-toggle";
 export * from "./actor-labels";

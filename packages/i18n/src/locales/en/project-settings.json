@@ -226,13 +226,16 @@
           },
           "success": {
             "title": "Success!",
-            "message": "Workflows enabled successfully."
+            "message": "Workflows enabled successfully.",
+            "disabled_message": "Workflows disabled successfully."
           },
           "error": {
             "title": "Error!",
-            "message": "Failed to enable workflows. Please try again."
+            "message": "Failed to enable workflows. Please try again.",
+            "disabled_message": "Failed to disable workflows. Please try again."
           }
-        }
+        },
+        "disabled_notice": "Workflows are turned off for this project, so work items move freely between states. The workflows below are saved but not enforced until you turn workflows back on."
       },
       "heading": "Workflows",
       "description": "Automate work item transitions and set rules to control how tasks move through your project pipeline.",
