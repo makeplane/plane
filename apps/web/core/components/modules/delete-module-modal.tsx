@@ -77,11 +77,7 @@ export const DeleteModuleModal = observer(function DeleteModuleModal(props: Prop
       isSubmitting={isDeleteLoading}
       isOpen={isOpen}
       title={t("project_module.delete_module")}
-      content={
-        <>
-          {t("module_ui.delete_modal_description", { name: data?.name })}
-        </>
-      }
+      content={<>{t("module_ui.delete_modal_description", { name: data?.name })}</>}
     />
   );
 });

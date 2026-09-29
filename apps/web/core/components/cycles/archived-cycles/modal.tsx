@@ -67,9 +67,7 @@ export function ArchiveCycleModal(props: Props) {
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.LG}>
       <div className="px-5 py-4">
         <h3 className="text-18 font-medium 2xl:text-20">{t("cycle_ui.archive_modal_title", { name: cycleName })}</h3>
-        <p className="mt-3 text-13 text-secondary">
-          {t("cycle_ui.archive_modal_description")}
-        </p>
+        <p className="mt-3 text-13 text-secondary">{t("cycle_ui.archive_modal_description")}</p>
         <div className="mt-3 flex justify-end gap-2">
           <Button variant="secondary" size="lg" onClick={onClose}>
             {t("common.cancel")}

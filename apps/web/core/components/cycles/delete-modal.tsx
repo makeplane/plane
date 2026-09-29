@@ -83,11 +83,7 @@ export const CycleDeleteModal = observer(function CycleDeleteModal(props: ICycle
       isSubmitting={loader}
       isOpen={isOpen}
       title={t("cycle_ui.delete_modal_title")}
-      content={
-        <>
-          {t("cycle_ui.delete_modal_description", { name: cycle?.name })}
-        </>
-      }
+      content={<>{t("cycle_ui.delete_modal_description", { name: cycle?.name })}</>}
     />
   );
 });

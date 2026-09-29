@@ -83,7 +83,9 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
           maxHeight={"md"}
           className="flex flex-grow justify-center text-13 text-secondary"
           placement="bottom-start"
-          customButton={<span className="flex flex-grow justify-center text-13 text-secondary">{t("common.layout")}</span>}
+          customButton={
+            <span className="flex flex-grow justify-center text-13 text-secondary">{t("common.layout")}</span>
+          }
           customButtonClassName="flex flex-grow justify-center text-secondary text-13"
           closeOnSelect
         >
