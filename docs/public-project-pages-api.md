@@ -5,10 +5,10 @@
 This document records the maintenance decisions and version history for the
 public project Pages collection API introduced for Plane issue #9484.
 
-Slice 4 is complete: the API-key-authenticated public `GET` and `POST`
+Slice 5 is complete: the API-key-authenticated public `GET` and `POST`
 collection routes, allowlisted read/write serializers, privacy-aware query,
-atomic persistence, archival filtering, and focused automated coverage are
-implemented.
+atomic persistence, archival filtering, generated OpenAPI schema, and focused
+automated coverage are implemented.
 
 ## Scope
 
@@ -76,6 +76,7 @@ or generated secret material in this ledger.
 | 0.2     | 2026-09-29 | Added the public `GET` project Pages collection: URL registration, metadata-only serializer, visibility-constrained query, and focused unit/contract tests. No database schema, container, or deployed AIO resource changed.                                                                                                                                                              | Serializer unit test passes; six isolated Compose API contract tests pass for successful listing, project isolation, soft-deleted links, private Pages, missing key, and non-member access.           | Additive `/api/v1` `GET` surface. Roll back by reverting the URL, view, serializer, and tests; no migration or data rollback is needed.                                                                                                   |
 | 0.3     | 2026-09-29 | Added the public `POST` project Pages collection: explicit writable-field allowlist, server-derived ownership and workspace, HTML sanitization, and atomic `Page` plus active `ProjectPage` persistence. No database schema, container, or deployed AIO resource changed.                                                                                                                 | Three serializer unit tests and eleven isolated Compose API contract tests pass, including POST-to-GET flow, persistence, guest denial, invalid input, server-field rejection, and HTML sanitization. | Additive `/api/v1` `POST` surface. Roll back by reverting the POST handler, create serializer, route method registration, and related tests; no migration or data rollback is needed.                                                     |
 | 0.4     | 2026-09-29 | Hardened the bounded collection surface against archived Page leakage by excluding archived Page records from the list query. Added regressions for revoked/expired API-key rejection, inactive membership, content/UI-state non-leakage, cross-project and lifecycle-field injection, and unsupported mutation methods. No database schema, container, or deployed AIO resource changed. | The new archived-Page regression failed before the query change and passes after it. The isolated Compose API contract suite covers all collection security paths.                                    | Compatible tightening of collection visibility: archived Pages no longer appear. Roll back by reverting the archival predicate and Slice 4 tests only if this boundary is intentionally changed; no migration or data rollback is needed. |
+| 0.5     | 2026-09-29 | Added OpenAPI annotations for the existing GET/POST collection operations, including API-key security, path/pagination parameters, request/response schemas, and validated examples. Enabled drf-spectacular only in the disposable test Compose service so schema generation is tested without altering the deployed AIO runtime. No database schema or deployed AIO resource changed.   | The schema contract was red at 404 before enabling the test-only schema surface. It validates the two operations, request fields, auth scheme, and example serializer compatibility after the change. | Additive documentation metadata and test-only configuration. Roll back by reverting annotations, OpenAPI tag metadata, test Compose flag, and schema tests; product routes and persisted data are unaffected.                             |
 
 ## Maintenance procedure
 
