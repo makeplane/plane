@@ -54,5 +54,18 @@
       "2_weeks": "2 settimane",
       "custom": "Personalizzato"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "Seleziona una data",
+      "no_time_available": "Nessun orario disponibile per questa data.",
+      "pick_date": "Scegli una data",
+      "pick_time": "Scegli un orario",
+      "select_date": "Seleziona data",
+      "select_time": "Seleziona un orario",
+      "submitting": "Invio in corso...",
+      "time_required": "Seleziona un orario",
+      "title": "Personalizza il tempo di posticipo"
+    }
   }
 }

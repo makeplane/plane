@@ -83,5 +83,26 @@
         "title": "Seleziona un elemento di lavoro per visualizzarne i dettagli."
       }
     }
+  },
+  "inbox_ui": {
+    "create_error": "Si è verificato un errore. Riprova.",
+    "create_success": "Elemento di lavoro creato con successo.",
+    "created_date": "Data di creazione",
+    "delete_failed": "Eliminazione dell'elemento di lavoro non riuscita",
+    "editor_processing": "L'editor sta ancora elaborando le modifiche. Attendi prima di continuare.",
+    "empty_closed": {
+      "description": "Qui trovi tutti gli elementi di lavoro, sia accettati che rifiutati.",
+      "title": "Nessuna richiesta ancora chiusa"
+    },
+    "errors": {
+      "duplicate_permission": "Solo gli amministratori del progetto possono contrassegnare gli elementi di lavoro come duplicati"
+    },
+    "last_updated_date": "Data ultimo aggiornamento",
+    "next_work_item": "Elemento di lavoro successivo",
+    "permission_denied": "Permesso negato",
+    "previous_work_item": "Elemento di lavoro precedente",
+    "search_placeholder": "Cerca...",
+    "update_failed": "Aggiornamento dell'elemento di lavoro non riuscito",
+    "updated_date": "Data di aggiornamento"
   }
 }

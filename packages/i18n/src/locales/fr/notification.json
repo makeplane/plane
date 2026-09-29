@@ -54,5 +54,18 @@
       "2_weeks": "2 semaines",
       "custom": "Personnalisé"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "Veuillez sélectionner une date",
+      "no_time_available": "Aucune heure disponible pour cette date.",
+      "pick_date": "Choisissez une date",
+      "pick_time": "Choisissez une heure",
+      "select_date": "Sélectionner une date",
+      "select_time": "Sélectionnez une heure",
+      "submitting": "Envoi en cours...",
+      "time_required": "Veuillez sélectionner une heure",
+      "title": "Personnaliser la durée du report"
+    }
   }
 }

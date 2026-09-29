@@ -83,5 +83,26 @@
         "title": "작업 항목의 세부 정보를 보려면 선택하세요."
       }
     }
+  },
+  "inbox_ui": {
+    "create_error": "오류가 발생했습니다. 다시 시도해 주세요.",
+    "create_success": "작업 항목이 생성되었습니다.",
+    "created_date": "생성일",
+    "delete_failed": "작업 항목을 삭제하지 못했습니다",
+    "editor_processing": "편집기가 아직 변경 사항을 처리 중입니다. 계속하기 전에 기다려 주세요.",
+    "empty_closed": {
+      "description": "수락되었거나 거절된 모든 작업 항목을 여기에서 확인할 수 있습니다.",
+      "title": "아직 종료된 요청이 없습니다"
+    },
+    "errors": {
+      "duplicate_permission": "프로젝트 관리자만 작업 항목을 중복으로 표시할 수 있습니다"
+    },
+    "last_updated_date": "마지막 업데이트 날짜",
+    "next_work_item": "다음 작업 항목",
+    "permission_denied": "권한이 거부되었습니다",
+    "previous_work_item": "이전 작업 항목",
+    "search_placeholder": "검색...",
+    "update_failed": "작업 항목을 업데이트하지 못했습니다",
+    "updated_date": "업데이트 날짜"
   }
 }

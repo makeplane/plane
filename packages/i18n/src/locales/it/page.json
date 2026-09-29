@@ -111,5 +111,101 @@
       "success_message": "Pagina rimossa dalla raccolta.",
       "error_message": "Non è stato possibile rimuovere la pagina dalla raccolta. Riprova."
     }
+  },
+  "page_ui": {
+    "add_page": "Aggiungi pagina",
+    "ai": {
+      "add_to_next_line": "Aggiungi alla riga successiva",
+      "answering": "L'IA sta rispondendo...",
+      "prompt_placeholder": "Di' all'IA cosa fare...",
+      "regenerate_response": "Rigenera la risposta",
+      "replace_selection": "Sostituisci selezione"
+    },
+    "content_limit_banner": {
+      "dismiss": "Chiudi l'avviso sul limite dei contenuti",
+      "message": "Limite di contenuto raggiunto e sincronizzazione in tempo reale disattivata. Crea una nuova pagina o usa pagine nidificate per continuare a sincronizzare."
+    },
+    "create_modal": {
+      "creating": "Creazione",
+      "submit": "Crea pagina",
+      "title": "Crea pagina"
+    },
+    "delete_modal": {
+      "content_prefix": "Sei sicuro di voler eliminare la pagina",
+      "content_suffix": "? La pagina verrà eliminata definitivamente. Questa azione non può essere annullata.",
+      "error": "Impossibile eliminare la pagina. Riprova.",
+      "success": "Pagina eliminata con successo.",
+      "title": "Elimina pagina"
+    },
+    "editor": {
+      "background_colors": "Colori di sfondo",
+      "full_width": "Larghezza intera",
+      "markdown_copied": "Markdown copiato negli appunti.",
+      "sticky_toolbar": "Barra degli strumenti fissa",
+      "text_colors": "Colori del testo"
+    },
+    "export_modal": {
+      "content_everything": "Tutto",
+      "content_no_images": "Senza immagini",
+      "error": "Impossibile esportare la pagina. Riprova più tardi.",
+      "export_format": "Formato di esportazione",
+      "exporting": "Esportazione",
+      "include_content": "Includi contenuto",
+      "page_format": "Formato pagina",
+      "success": "Pagina esportata con successo.",
+      "title": "Esporta pagina"
+    },
+    "hooks": {
+      "work_item_update_error": "Errore durante l'aggiornamento dell'elemento di lavoro"
+    },
+    "lock": {
+      "locked": "Bloccata",
+      "unlocked": "Sbloccata"
+    },
+    "not_found": {
+      "description": "La pagina a cui stai cercando di accedere non esiste o non hai il permesso di visualizzarla.",
+      "title": "Pagina non trovata",
+      "view_other_pages": "Visualizza altre pagine"
+    },
+    "offline": {
+      "description": "Puoi continuare a modificare. Le modifiche verranno sincronizzate quando tornerai online.",
+      "heading": "Sei offline.",
+      "label": "Offline"
+    },
+    "operations": {
+      "add_favorite_error": "Impossibile aggiungere la pagina ai preferiti. Riprova più tardi.",
+      "add_favorite_success": "Pagina aggiunta ai preferiti.",
+      "archive_error": "Impossibile archiviare la pagina. Riprova più tardi.",
+      "archive_success": "Pagina archiviata con successo.",
+      "duplicate_error": "Impossibile duplicare la pagina. Riprova più tardi.",
+      "duplicate_success": "Pagina duplicata con successo.",
+      "link_copied": "Link copiato!",
+      "link_copied_message": "Link della pagina copiato negli appunti.",
+      "lock_error": "Impossibile bloccare la pagina. Riprova più tardi.",
+      "lock_success": "Pagina bloccata con successo.",
+      "remove_favorite_error": "Impossibile rimuovere la pagina dai preferiti. Riprova più tardi.",
+      "remove_favorite_success": "Pagina rimossa dai preferiti.",
+      "restore_error": "Impossibile ripristinare la pagina. Riprova più tardi.",
+      "restore_success": "Pagina ripristinata con successo.",
+      "unlock_error": "Impossibile sbloccare la pagina. Riprova più tardi.",
+      "unlock_success": "Pagina sbloccata con successo."
+    },
+    "realtime": {
+      "deleted": "Pagina eliminata",
+      "deleted_by": "Pagina eliminata da {name}",
+      "load_failed": "Impossibile caricare la pagina",
+      "save_failed": "Impossibile salvare la pagina"
+    },
+    "search_pages": "Cerca pagine",
+    "version": {
+      "error_description": "Impossibile caricare la versione, riprova.",
+      "error_title": "Qualcosa è andato storto!",
+      "loading_details": "Caricamento dei dettagli della versione",
+      "restore_failed": "Impossibile ripristinare la versione della pagina.",
+      "restored": "Versione della pagina ripristinata.",
+      "restoring": "Ripristino",
+      "try_again": "Riprova",
+      "view_only": "Sola lettura"
+    }
   }
 }

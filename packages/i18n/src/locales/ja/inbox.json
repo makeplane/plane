@@ -83,5 +83,26 @@
         "title": "詳細を表示する作業項目を選択してください。"
       }
     }
+  },
+  "inbox_ui": {
+    "create_error": "エラーが発生しました。もう一度お試しください。",
+    "create_success": "作業項目を作成しました。",
+    "created_date": "作成日",
+    "delete_failed": "作業項目を削除できませんでした",
+    "editor_processing": "エディターがまだ変更を処理中です。続行する前にお待ちください。",
+    "empty_closed": {
+      "description": "承認・却下を問わず、すべての作業項目がここに表示されます。",
+      "title": "クローズされたリクエストはまだありません"
+    },
+    "errors": {
+      "duplicate_permission": "作業項目を重複としてマークできるのはプロジェクト管理者のみです"
+    },
+    "last_updated_date": "最終更新日",
+    "next_work_item": "次の作業項目",
+    "permission_denied": "権限がありません",
+    "previous_work_item": "前の作業項目",
+    "search_placeholder": "検索...",
+    "update_failed": "作業項目を更新できませんでした",
+    "updated_date": "更新日"
   }
 }

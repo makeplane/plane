@@ -152,5 +152,20 @@
         "label": "カスタムテーマ"
       }
     }
+  },
+  "analytics_ui": {
+    "add_metric": "指標を追加",
+    "add_property": "プロパティを追加",
+    "count": "件数",
+    "no_value": "値なし",
+    "projects_more": "3件以上のプロジェクト"
+  },
+  "profile_ui": {
+    "completion_percentage": "完了率",
+    "first_day_updated": "週の開始日を更新しました",
+    "try_again_later": "後でもう一度お試しください。",
+    "update_failed": "更新に失敗しました",
+    "workload_not_started": "未着手",
+    "workload_working_on": "作業中"
   }
 }

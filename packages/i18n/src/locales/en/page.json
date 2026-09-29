@@ -111,5 +111,101 @@
       "success_message": "Page removed from collection.",
       "error_message": "Page could not be removed from the collection. Please try again."
     }
+  },
+  "page_ui": {
+    "add_page": "Add page",
+    "ai": {
+      "add_to_next_line": "Add to next line",
+      "answering": "AI is answering...",
+      "prompt_placeholder": "Tell AI what to do...",
+      "regenerate_response": "Re-generate response",
+      "replace_selection": "Replace selection"
+    },
+    "content_limit_banner": {
+      "dismiss": "Dismiss content limit warning",
+      "message": "Content limit reached and live sync is off. Create a new page or use nested pages to continue syncing."
+    },
+    "create_modal": {
+      "creating": "Creating",
+      "submit": "Create page",
+      "title": "Create page"
+    },
+    "delete_modal": {
+      "content_prefix": "Are you sure you want to delete the page",
+      "content_suffix": "? The page will be deleted permanently. This action cannot be undone.",
+      "error": "Page could not be deleted. Please try again.",
+      "success": "Page deleted successfully.",
+      "title": "Delete page"
+    },
+    "editor": {
+      "background_colors": "Background colors",
+      "full_width": "Full width",
+      "markdown_copied": "Markdown copied to clipboard.",
+      "sticky_toolbar": "Sticky toolbar",
+      "text_colors": "Text colors"
+    },
+    "export_modal": {
+      "content_everything": "Everything",
+      "content_no_images": "No images",
+      "error": "Page could not be exported. Please try again later.",
+      "export_format": "Export format",
+      "exporting": "Exporting",
+      "include_content": "Include content",
+      "page_format": "Page format",
+      "success": "Page exported successfully.",
+      "title": "Export page"
+    },
+    "hooks": {
+      "work_item_update_error": "Error while updating work item"
+    },
+    "lock": {
+      "locked": "Locked",
+      "unlocked": "Unlocked"
+    },
+    "not_found": {
+      "description": "The page you are trying to access doesn't exist or you don't have permission to view it.",
+      "title": "Page not found",
+      "view_other_pages": "View other pages"
+    },
+    "offline": {
+      "description": "You can continue making changes. They will be synced when you are back online.",
+      "heading": "You are offline.",
+      "label": "Offline"
+    },
+    "operations": {
+      "add_favorite_error": "Page could not be added to favorites. Please try again later.",
+      "add_favorite_success": "Page added to favorites.",
+      "archive_error": "Page could not be archived. Please try again later.",
+      "archive_success": "Page archived successfully.",
+      "duplicate_error": "Page could not be duplicated. Please try again later.",
+      "duplicate_success": "Page duplicated successfully.",
+      "link_copied": "Link copied!",
+      "link_copied_message": "Page link copied to clipboard.",
+      "lock_error": "Page could not be locked. Please try again later.",
+      "lock_success": "Page locked successfully.",
+      "remove_favorite_error": "Page could not be removed from favorites. Please try again later.",
+      "remove_favorite_success": "Page removed from favorites.",
+      "restore_error": "Page could not be restored. Please try again later.",
+      "restore_success": "Page restored successfully.",
+      "unlock_error": "Page could not be unlocked. Please try again later.",
+      "unlock_success": "Page unlocked successfully."
+    },
+    "realtime": {
+      "deleted": "Page deleted",
+      "deleted_by": "Page deleted by {name}",
+      "load_failed": "Failed to load page",
+      "save_failed": "Failed to save page"
+    },
+    "search_pages": "Search pages",
+    "version": {
+      "error_description": "The version could not be loaded, please try again.",
+      "error_title": "Something went wrong!",
+      "loading_details": "Loading version details",
+      "restore_failed": "Failed to restore page version.",
+      "restored": "Page version restored.",
+      "restoring": "Restoring",
+      "try_again": "Try again",
+      "view_only": "View only"
+    }
   }
 }

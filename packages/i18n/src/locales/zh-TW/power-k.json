@@ -188,5 +188,23 @@
       "preferences": "偏好設定",
       "help": "說明"
     }
+  },
+  "power_k_ui": {
+    "clear_context": "清除上下文 (Backspace)",
+    "empty_menu": {
+      "cycles": "找不到週期",
+      "labels": "找不到標籤",
+      "modules": "找不到模組",
+      "projects": "找不到專案",
+      "settings": "找不到設定",
+      "views": "找不到檢視",
+      "workspaces": "找不到工作區"
+    },
+    "epic_update_error": "無法更新 Epic，請再試一次。",
+    "module_update_error": "無法更新模組，請再試一次。",
+    "no_estimate_found": "找不到估算",
+    "reloading_to_apply": "正在重新載入以套用變更...",
+    "some_error_occurred": "發生錯誤",
+    "work_item_update_error": "無法更新工作項目，請再試一次。"
   }
 }

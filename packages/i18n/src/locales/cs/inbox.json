@@ -83,5 +83,26 @@
         "title": "Vyberte pracovní položku pro zobrazení podrobností."
       }
     }
+  },
+  "inbox_ui": {
+    "create_error": "Došlo k chybě. Zkuste to prosím znovu.",
+    "create_success": "Pracovní položka byla úspěšně vytvořena.",
+    "created_date": "Datum vytvoření",
+    "delete_failed": "Smazání pracovní položky se nezdařilo",
+    "editor_processing": "Editor stále zpracovává změny. Před pokračováním prosím počkejte.",
+    "empty_closed": {
+      "description": "Zde najdete všechny pracovní položky, ať už přijaté, nebo zamítnuté.",
+      "title": "Zatím nebyl uzavřen žádný požadavek"
+    },
+    "errors": {
+      "duplicate_permission": "Pouze správci projektu mohou označit pracovní položky jako duplikáty"
+    },
+    "last_updated_date": "Datum poslední aktualizace",
+    "next_work_item": "Další pracovní položka",
+    "permission_denied": "Přístup odepřen",
+    "previous_work_item": "Předchozí pracovní položka",
+    "search_placeholder": "Hledat...",
+    "update_failed": "Aktualizace pracovní položky se nezdařila",
+    "updated_date": "Datum aktualizace"
   }
 }

@@ -54,5 +54,18 @@
       "2_weeks": "2 tygodnie",
       "custom": "Niestandardowe"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "Wybierz datę",
+      "no_time_available": "Brak dostępnych godzin dla tej daty.",
+      "pick_date": "Wybierz datę",
+      "pick_time": "Wybierz godzinę",
+      "select_date": "Wybierz datę",
+      "select_time": "Wybierz godzinę",
+      "submitting": "Wysyłanie...",
+      "time_required": "Wybierz godzinę",
+      "title": "Dostosuj czas odłożenia"
+    }
   }
 }

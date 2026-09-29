@@ -111,5 +111,101 @@
       "success_message": "Seite aus Sammlung entfernt.",
       "error_message": "Die Seite konnte nicht aus der Sammlung entfernt werden. Bitte versuchen Sie es erneut."
     }
+  },
+  "page_ui": {
+    "add_page": "Seite hinzufügen",
+    "ai": {
+      "add_to_next_line": "In nächster Zeile hinzufügen",
+      "answering": "KI antwortet...",
+      "prompt_placeholder": "Sag der KI, was sie tun soll...",
+      "regenerate_response": "Antwort neu generieren",
+      "replace_selection": "Auswahl ersetzen"
+    },
+    "content_limit_banner": {
+      "dismiss": "Warnung zum Inhaltslimit schließen",
+      "message": "Das Inhaltslimit wurde erreicht und die Live-Synchronisierung ist deaktiviert. Erstelle eine neue Seite oder verwende verschachtelte Seiten, um weiter zu synchronisieren."
+    },
+    "create_modal": {
+      "creating": "Wird erstellt",
+      "submit": "Seite erstellen",
+      "title": "Seite erstellen"
+    },
+    "delete_modal": {
+      "content_prefix": "Möchtest du die Seite wirklich löschen:",
+      "content_suffix": "? Die Seite wird dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "error": "Die Seite konnte nicht gelöscht werden. Bitte versuche es erneut.",
+      "success": "Seite erfolgreich gelöscht.",
+      "title": "Seite löschen"
+    },
+    "editor": {
+      "background_colors": "Hintergrundfarben",
+      "full_width": "Volle Breite",
+      "markdown_copied": "Markdown in die Zwischenablage kopiert.",
+      "sticky_toolbar": "Fixierte Symbolleiste",
+      "text_colors": "Textfarben"
+    },
+    "export_modal": {
+      "content_everything": "Alles",
+      "content_no_images": "Keine Bilder",
+      "error": "Die Seite konnte nicht exportiert werden. Bitte versuche es später erneut.",
+      "export_format": "Exportformat",
+      "exporting": "Wird exportiert",
+      "include_content": "Inhalt einbeziehen",
+      "page_format": "Seitenformat",
+      "success": "Seite erfolgreich exportiert.",
+      "title": "Seite exportieren"
+    },
+    "hooks": {
+      "work_item_update_error": "Fehler beim Aktualisieren des Arbeitselements"
+    },
+    "lock": {
+      "locked": "Gesperrt",
+      "unlocked": "Entsperrt"
+    },
+    "not_found": {
+      "description": "Die Seite, auf die du zugreifen möchtest, existiert nicht oder du hast keine Berechtigung, sie anzuzeigen.",
+      "title": "Seite nicht gefunden",
+      "view_other_pages": "Andere Seiten anzeigen"
+    },
+    "offline": {
+      "description": "Du kannst weiterhin Änderungen vornehmen. Sie werden synchronisiert, sobald du wieder online bist.",
+      "heading": "Du bist offline.",
+      "label": "Offline"
+    },
+    "operations": {
+      "add_favorite_error": "Die Seite konnte nicht zu den Favoriten hinzugefügt werden. Bitte versuche es später erneut.",
+      "add_favorite_success": "Seite zu den Favoriten hinzugefügt.",
+      "archive_error": "Die Seite konnte nicht archiviert werden. Bitte versuche es später erneut.",
+      "archive_success": "Seite erfolgreich archiviert.",
+      "duplicate_error": "Die Seite konnte nicht dupliziert werden. Bitte versuche es später erneut.",
+      "duplicate_success": "Seite erfolgreich dupliziert.",
+      "link_copied": "Link kopiert!",
+      "link_copied_message": "Seitenlink in die Zwischenablage kopiert.",
+      "lock_error": "Die Seite konnte nicht gesperrt werden. Bitte versuche es später erneut.",
+      "lock_success": "Seite erfolgreich gesperrt.",
+      "remove_favorite_error": "Die Seite konnte nicht aus den Favoriten entfernt werden. Bitte versuche es später erneut.",
+      "remove_favorite_success": "Seite aus den Favoriten entfernt.",
+      "restore_error": "Die Seite konnte nicht wiederhergestellt werden. Bitte versuche es später erneut.",
+      "restore_success": "Seite erfolgreich wiederhergestellt.",
+      "unlock_error": "Die Seite konnte nicht entsperrt werden. Bitte versuche es später erneut.",
+      "unlock_success": "Seite erfolgreich entsperrt."
+    },
+    "realtime": {
+      "deleted": "Seite gelöscht",
+      "deleted_by": "Seite gelöscht von {name}",
+      "load_failed": "Seite konnte nicht geladen werden",
+      "save_failed": "Seite konnte nicht gespeichert werden"
+    },
+    "search_pages": "Seiten durchsuchen",
+    "version": {
+      "error_description": "Die Version konnte nicht geladen werden. Bitte versuche es erneut.",
+      "error_title": "Etwas ist schiefgelaufen!",
+      "loading_details": "Versionsdetails werden geladen",
+      "restore_failed": "Die Seitenversion konnte nicht wiederhergestellt werden.",
+      "restored": "Seitenversion wiederhergestellt.",
+      "restoring": "Wird wiederhergestellt",
+      "try_again": "Erneut versuchen",
+      "view_only": "Nur Ansicht"
+    }
   }
 }

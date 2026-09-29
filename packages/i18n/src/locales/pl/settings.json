@@ -152,5 +152,20 @@
         "label": "Motyw niestandardowy"
       }
     }
+  },
+  "analytics_ui": {
+    "add_metric": "Dodaj metrykę",
+    "add_property": "Dodaj właściwość",
+    "count": "Liczba",
+    "no_value": "Brak wartości",
+    "projects_more": "3+ projekty"
+  },
+  "profile_ui": {
+    "completion_percentage": "Procent ukończenia",
+    "first_day_updated": "Pierwszy dzień tygodnia został zaktualizowany",
+    "try_again_later": "Spróbuj ponownie później.",
+    "update_failed": "Aktualizacja nie powiodła się",
+    "workload_not_started": "Nierozpoczęte",
+    "workload_working_on": "W trakcie realizacji"
   }
 }

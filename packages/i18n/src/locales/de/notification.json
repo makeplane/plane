@@ -54,5 +54,18 @@
       "2_weeks": "2 Wochen",
       "custom": "Benutzerdefiniert"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "Bitte wähle ein Datum aus",
+      "no_time_available": "Für dieses Datum ist keine Uhrzeit verfügbar.",
+      "pick_date": "Datum auswählen",
+      "pick_time": "Uhrzeit auswählen",
+      "select_date": "Datum auswählen",
+      "select_time": "Uhrzeit auswählen",
+      "submitting": "Wird gesendet...",
+      "time_required": "Bitte wähle eine Uhrzeit aus",
+      "title": "Snooze-Zeit anpassen"
+    }
   }
 }

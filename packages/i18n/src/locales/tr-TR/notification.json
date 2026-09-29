@@ -54,5 +54,18 @@
       "2_weeks": "2 hafta",
       "custom": "Özel"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "Lütfen bir tarih seçin",
+      "no_time_available": "Bu tarih için uygun saat yok.",
+      "pick_date": "Bir tarih seçin",
+      "pick_time": "Bir saat seçin",
+      "select_date": "Tarih seçin",
+      "select_time": "Bir saat seçin",
+      "submitting": "Gönderiliyor...",
+      "time_required": "Lütfen bir saat seçin",
+      "title": "Erteleme süresini özelleştir"
+    }
   }
 }

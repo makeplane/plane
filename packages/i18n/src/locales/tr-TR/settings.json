@@ -152,5 +152,20 @@
         "label": "Özel tema"
       }
     }
+  },
+  "analytics_ui": {
+    "add_metric": "Metrik ekle",
+    "add_property": "Özellik ekle",
+    "count": "Sayı",
+    "no_value": "Değer yok",
+    "projects_more": "3+ proje"
+  },
+  "profile_ui": {
+    "completion_percentage": "Tamamlanma yüzdesi",
+    "first_day_updated": "Haftanın ilk günü başarıyla güncellendi",
+    "try_again_later": "Lütfen daha sonra tekrar deneyin.",
+    "update_failed": "Güncelleme başarısız",
+    "workload_not_started": "Başlanmadı",
+    "workload_working_on": "Üzerinde çalışılıyor"
   }
 }

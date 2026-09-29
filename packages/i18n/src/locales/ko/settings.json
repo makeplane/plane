@@ -152,5 +152,20 @@
         "label": "사용자 정의 테마"
       }
     }
+  },
+  "analytics_ui": {
+    "add_metric": "지표 추가",
+    "add_property": "속성 추가",
+    "count": "개수",
+    "no_value": "값 없음",
+    "projects_more": "프로젝트 3개 이상"
+  },
+  "profile_ui": {
+    "completion_percentage": "완료율",
+    "first_day_updated": "한 주의 시작일이 업데이트되었습니다",
+    "try_again_later": "나중에 다시 시도해 주세요.",
+    "update_failed": "업데이트 실패",
+    "workload_not_started": "시작 전",
+    "workload_working_on": "진행 중"
   }
 }

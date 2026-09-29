@@ -83,5 +83,26 @@
         "title": "Selecciona un elemento de trabajo para ver sus detalles."
       }
     }
+  },
+  "inbox_ui": {
+    "create_error": "Se produjo un error. Inténtalo de nuevo.",
+    "create_success": "Elemento de trabajo creado correctamente.",
+    "created_date": "Fecha de creación",
+    "delete_failed": "No se pudo eliminar el elemento de trabajo",
+    "editor_processing": "El editor sigue procesando los cambios. Espera antes de continuar.",
+    "empty_closed": {
+      "description": "Aquí encontrarás todos los elementos de trabajo, tanto aceptados como rechazados.",
+      "title": "Aún no se ha cerrado ninguna solicitud"
+    },
+    "errors": {
+      "duplicate_permission": "Solo los administradores del proyecto pueden marcar elementos de trabajo como duplicados"
+    },
+    "last_updated_date": "Fecha de última actualización",
+    "next_work_item": "Siguiente elemento de trabajo",
+    "permission_denied": "Permiso denegado",
+    "previous_work_item": "Elemento de trabajo anterior",
+    "search_placeholder": "Buscar...",
+    "update_failed": "No se pudo actualizar el elemento de trabajo",
+    "updated_date": "Fecha de actualización"
   }
 }

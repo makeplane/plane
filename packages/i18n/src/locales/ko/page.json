@@ -111,5 +111,101 @@
       "success_message": "페이지가 컬렉션에서 제거되었습니다.",
       "error_message": "페이지를 컬렉션에서 제거할 수 없습니다. 다시 시도해 주세요."
     }
+  },
+  "page_ui": {
+    "add_page": "페이지 추가",
+    "ai": {
+      "add_to_next_line": "다음 줄에 추가",
+      "answering": "AI가 답변 중...",
+      "prompt_placeholder": "AI에게 할 일을 알려주세요...",
+      "regenerate_response": "응답 다시 생성",
+      "replace_selection": "선택 항목 바꾸기"
+    },
+    "content_limit_banner": {
+      "dismiss": "콘텐츠 제한 경고 닫기",
+      "message": "콘텐츠 제한에 도달하여 실시간 동기화가 꺼졌습니다. 동기화를 계속하려면 새 페이지를 만들거나 중첩 페이지를 사용하세요."
+    },
+    "create_modal": {
+      "creating": "생성 중",
+      "submit": "페이지 만들기",
+      "title": "페이지 만들기"
+    },
+    "delete_modal": {
+      "content_prefix": "정말로 페이지",
+      "content_suffix": "을(를) 삭제하시겠습니까? 페이지가 영구적으로 삭제되며 이 작업은 되돌릴 수 없습니다.",
+      "error": "페이지를 삭제할 수 없습니다. 다시 시도해 주세요.",
+      "success": "페이지가 삭제되었습니다.",
+      "title": "페이지 삭제"
+    },
+    "editor": {
+      "background_colors": "배경색",
+      "full_width": "전체 너비",
+      "markdown_copied": "Markdown이 클립보드에 복사되었습니다.",
+      "sticky_toolbar": "고정 도구 모음",
+      "text_colors": "글자색"
+    },
+    "export_modal": {
+      "content_everything": "모두",
+      "content_no_images": "이미지 제외",
+      "error": "페이지를 내보낼 수 없습니다. 나중에 다시 시도해 주세요.",
+      "export_format": "내보내기 형식",
+      "exporting": "내보내는 중",
+      "include_content": "포함할 콘텐츠",
+      "page_format": "페이지 형식",
+      "success": "페이지를 내보냈습니다.",
+      "title": "페이지 내보내기"
+    },
+    "hooks": {
+      "work_item_update_error": "작업 항목을 업데이트하는 중 오류가 발생했습니다"
+    },
+    "lock": {
+      "locked": "잠김",
+      "unlocked": "잠금 해제됨"
+    },
+    "not_found": {
+      "description": "접근하려는 페이지가 존재하지 않거나 볼 수 있는 권한이 없습니다.",
+      "title": "페이지를 찾을 수 없습니다",
+      "view_other_pages": "다른 페이지 보기"
+    },
+    "offline": {
+      "description": "계속 변경할 수 있습니다. 다시 온라인 상태가 되면 동기화됩니다.",
+      "heading": "오프라인 상태입니다.",
+      "label": "오프라인"
+    },
+    "operations": {
+      "add_favorite_error": "페이지를 즐겨찾기에 추가할 수 없습니다. 나중에 다시 시도해 주세요.",
+      "add_favorite_success": "페이지를 즐겨찾기에 추가했습니다.",
+      "archive_error": "페이지를 보관할 수 없습니다. 나중에 다시 시도해 주세요.",
+      "archive_success": "페이지를 보관했습니다.",
+      "duplicate_error": "페이지를 복제할 수 없습니다. 나중에 다시 시도해 주세요.",
+      "duplicate_success": "페이지를 복제했습니다.",
+      "link_copied": "링크가 복사되었습니다!",
+      "link_copied_message": "페이지 링크가 클립보드에 복사되었습니다.",
+      "lock_error": "페이지를 잠글 수 없습니다. 나중에 다시 시도해 주세요.",
+      "lock_success": "페이지를 잠갔습니다.",
+      "remove_favorite_error": "페이지를 즐겨찾기에서 제거할 수 없습니다. 나중에 다시 시도해 주세요.",
+      "remove_favorite_success": "페이지를 즐겨찾기에서 제거했습니다.",
+      "restore_error": "페이지를 복원할 수 없습니다. 나중에 다시 시도해 주세요.",
+      "restore_success": "페이지를 복원했습니다.",
+      "unlock_error": "페이지 잠금을 해제할 수 없습니다. 나중에 다시 시도해 주세요.",
+      "unlock_success": "페이지 잠금을 해제했습니다."
+    },
+    "realtime": {
+      "deleted": "페이지가 삭제되었습니다",
+      "deleted_by": "{name}님이 페이지를 삭제했습니다",
+      "load_failed": "페이지를 불러오지 못했습니다",
+      "save_failed": "페이지를 저장하지 못했습니다"
+    },
+    "search_pages": "페이지 검색",
+    "version": {
+      "error_description": "버전을 불러올 수 없습니다. 다시 시도해 주세요.",
+      "error_title": "문제가 발생했습니다!",
+      "loading_details": "버전 세부 정보 불러오는 중",
+      "restore_failed": "페이지 버전을 복원하지 못했습니다.",
+      "restored": "페이지 버전을 복원했습니다.",
+      "restoring": "복원 중",
+      "try_again": "다시 시도",
+      "view_only": "보기 전용"
+    }
   }
 }

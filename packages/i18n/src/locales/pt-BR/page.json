@@ -111,5 +111,101 @@
       "success_message": "Página removida da coleção.",
       "error_message": "Não foi possível remover a página da coleção. Tente novamente."
     }
+  },
+  "page_ui": {
+    "add_page": "Adicionar página",
+    "ai": {
+      "add_to_next_line": "Adicionar na próxima linha",
+      "answering": "A IA está respondendo...",
+      "prompt_placeholder": "Diga à IA o que fazer...",
+      "regenerate_response": "Gerar resposta novamente",
+      "replace_selection": "Substituir seleção"
+    },
+    "content_limit_banner": {
+      "dismiss": "Dispensar o aviso de limite de conteúdo",
+      "message": "O limite de conteúdo foi atingido e a sincronização em tempo real está desativada. Crie uma nova página ou use páginas aninhadas para continuar sincronizando."
+    },
+    "create_modal": {
+      "creating": "Criando",
+      "submit": "Criar página",
+      "title": "Criar página"
+    },
+    "delete_modal": {
+      "content_prefix": "Tem certeza de que deseja excluir a página",
+      "content_suffix": "? A página será excluída permanentemente. Esta ação não pode ser desfeita.",
+      "error": "Não foi possível excluir a página. Tente novamente.",
+      "success": "Página excluída com sucesso.",
+      "title": "Excluir página"
+    },
+    "editor": {
+      "background_colors": "Cores de fundo",
+      "full_width": "Largura total",
+      "markdown_copied": "Markdown copiado para a área de transferência.",
+      "sticky_toolbar": "Barra de ferramentas fixa",
+      "text_colors": "Cores do texto"
+    },
+    "export_modal": {
+      "content_everything": "Tudo",
+      "content_no_images": "Sem imagens",
+      "error": "Não foi possível exportar a página. Tente novamente mais tarde.",
+      "export_format": "Formato de exportação",
+      "exporting": "Exportando",
+      "include_content": "Incluir conteúdo",
+      "page_format": "Formato da página",
+      "success": "Página exportada com sucesso.",
+      "title": "Exportar página"
+    },
+    "hooks": {
+      "work_item_update_error": "Erro ao atualizar o item de trabalho"
+    },
+    "lock": {
+      "locked": "Bloqueada",
+      "unlocked": "Desbloqueada"
+    },
+    "not_found": {
+      "description": "A página que você está tentando acessar não existe ou você não tem permissão para visualizá-la.",
+      "title": "Página não encontrada",
+      "view_other_pages": "Ver outras páginas"
+    },
+    "offline": {
+      "description": "Você pode continuar fazendo alterações. Elas serão sincronizadas quando você voltar a ficar online.",
+      "heading": "Você está offline.",
+      "label": "Offline"
+    },
+    "operations": {
+      "add_favorite_error": "Não foi possível adicionar a página aos favoritos. Tente novamente mais tarde.",
+      "add_favorite_success": "Página adicionada aos favoritos.",
+      "archive_error": "Não foi possível arquivar a página. Tente novamente mais tarde.",
+      "archive_success": "Página arquivada com sucesso.",
+      "duplicate_error": "Não foi possível duplicar a página. Tente novamente mais tarde.",
+      "duplicate_success": "Página duplicada com sucesso.",
+      "link_copied": "Link copiado!",
+      "link_copied_message": "Link da página copiado para a área de transferência.",
+      "lock_error": "Não foi possível bloquear a página. Tente novamente mais tarde.",
+      "lock_success": "Página bloqueada com sucesso.",
+      "remove_favorite_error": "Não foi possível remover a página dos favoritos. Tente novamente mais tarde.",
+      "remove_favorite_success": "Página removida dos favoritos.",
+      "restore_error": "Não foi possível restaurar a página. Tente novamente mais tarde.",
+      "restore_success": "Página restaurada com sucesso.",
+      "unlock_error": "Não foi possível desbloquear a página. Tente novamente mais tarde.",
+      "unlock_success": "Página desbloqueada com sucesso."
+    },
+    "realtime": {
+      "deleted": "Página excluída",
+      "deleted_by": "Página excluída por {name}",
+      "load_failed": "Falha ao carregar a página",
+      "save_failed": "Falha ao salvar a página"
+    },
+    "search_pages": "Pesquisar páginas",
+    "version": {
+      "error_description": "Não foi possível carregar a versão, tente novamente.",
+      "error_title": "Algo deu errado!",
+      "loading_details": "Carregando detalhes da versão",
+      "restore_failed": "Falha ao restaurar a versão da página.",
+      "restored": "Versão da página restaurada.",
+      "restoring": "Restaurando",
+      "try_again": "Tentar novamente",
+      "view_only": "Somente visualização"
+    }
   }
 }

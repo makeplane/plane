@@ -188,5 +188,23 @@
       "preferences": "Tùy chọn",
       "help": "Trợ giúp"
     }
+  },
+  "power_k_ui": {
+    "clear_context": "Xóa ngữ cảnh (Backspace)",
+    "empty_menu": {
+      "cycles": "Không tìm thấy chu kỳ",
+      "labels": "Không tìm thấy nhãn",
+      "modules": "Không tìm thấy mô-đun",
+      "projects": "Không tìm thấy dự án",
+      "settings": "Không tìm thấy cài đặt",
+      "views": "Không tìm thấy chế độ xem",
+      "workspaces": "Không tìm thấy không gian làm việc"
+    },
+    "epic_update_error": "Không thể cập nhật epic. Vui lòng thử lại.",
+    "module_update_error": "Không thể cập nhật mô-đun. Vui lòng thử lại.",
+    "no_estimate_found": "Không tìm thấy ước tính",
+    "reloading_to_apply": "Đang tải lại để áp dụng thay đổi...",
+    "some_error_occurred": "Đã xảy ra lỗi",
+    "work_item_update_error": "Không thể cập nhật mục công việc. Vui lòng thử lại."
   }
 }

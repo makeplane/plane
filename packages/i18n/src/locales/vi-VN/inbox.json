@@ -83,5 +83,26 @@
         "title": "Chọn một mục công việc để xem chi tiết."
       }
     }
+  },
+  "inbox_ui": {
+    "create_error": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "create_success": "Đã tạo mục công việc thành công.",
+    "created_date": "Ngày tạo",
+    "delete_failed": "Xóa mục công việc thất bại",
+    "editor_processing": "Trình soạn thảo vẫn đang xử lý các thay đổi. Vui lòng đợi trước khi tiếp tục.",
+    "empty_closed": {
+      "description": "Tất cả mục công việc, dù được chấp nhận hay bị từ chối, đều có thể tìm thấy ở đây.",
+      "title": "Chưa có yêu cầu nào được đóng"
+    },
+    "errors": {
+      "duplicate_permission": "Chỉ quản trị viên dự án mới có thể đánh dấu mục công việc là trùng lặp"
+    },
+    "last_updated_date": "Ngày cập nhật gần nhất",
+    "next_work_item": "Mục công việc tiếp theo",
+    "permission_denied": "Quyền bị từ chối",
+    "previous_work_item": "Mục công việc trước",
+    "search_placeholder": "Tìm kiếm...",
+    "update_failed": "Cập nhật mục công việc thất bại",
+    "updated_date": "Ngày cập nhật"
   }
 }

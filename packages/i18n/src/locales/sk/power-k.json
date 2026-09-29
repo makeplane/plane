@@ -188,5 +188,23 @@
       "preferences": "Predvoľby",
       "help": "Pomoc"
     }
+  },
+  "power_k_ui": {
+    "clear_context": "Vymazať kontext (Backspace)",
+    "empty_menu": {
+      "cycles": "Nenašli sa žiadne cykly",
+      "labels": "Nenašli sa žiadne štítky",
+      "modules": "Nenašli sa žiadne moduly",
+      "projects": "Nenašli sa žiadne projekty",
+      "settings": "Nenašli sa žiadne nastavenia",
+      "views": "Nenašli sa žiadne zobrazenia",
+      "workspaces": "Nenašli sa žiadne pracovné priestory"
+    },
+    "epic_update_error": "Epiku sa nepodarilo aktualizovať. Skúste to prosím znova.",
+    "module_update_error": "Modul sa nepodarilo aktualizovať. Skúste to prosím znova.",
+    "no_estimate_found": "Nenašiel sa žiadny odhad",
+    "reloading_to_apply": "Načítava sa znova na použitie zmien...",
+    "some_error_occurred": "Vyskytla sa chyba",
+    "work_item_update_error": "Pracovnú položku sa nepodarilo aktualizovať. Skúste to prosím znova."
   }
 }

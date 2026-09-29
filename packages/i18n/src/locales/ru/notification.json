@@ -54,5 +54,18 @@
       "2_weeks": "2 недели",
       "custom": "Другое"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "Выберите дату",
+      "no_time_available": "Для этой даты нет доступного времени.",
+      "pick_date": "Выберите дату",
+      "pick_time": "Выберите время",
+      "select_date": "Выберите дату",
+      "select_time": "Выберите время",
+      "submitting": "Отправка...",
+      "time_required": "Выберите время",
+      "title": "Настроить время откладывания"
+    }
   }
 }

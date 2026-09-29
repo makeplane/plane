@@ -152,5 +152,20 @@
         "label": "Користувацька тема"
       }
     }
+  },
+  "analytics_ui": {
+    "add_metric": "Додати метрику",
+    "add_property": "Додати властивість",
+    "count": "Кількість",
+    "no_value": "Немає значення",
+    "projects_more": "3+ проєкти"
+  },
+  "profile_ui": {
+    "completion_percentage": "Відсоток виконання",
+    "first_day_updated": "Перший день тижня успішно оновлено",
+    "try_again_later": "Спробуйте пізніше.",
+    "update_failed": "Не вдалося оновити",
+    "workload_not_started": "Не розпочато",
+    "workload_working_on": "У роботі"
   }
 }

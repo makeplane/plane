@@ -111,5 +111,101 @@
       "success_message": "页面已从集合中移除。",
       "error_message": "无法将页面从集合中移除。请重试。"
     }
+  },
+  "page_ui": {
+    "add_page": "添加页面",
+    "ai": {
+      "add_to_next_line": "添加到下一行",
+      "answering": "AI 正在回答...",
+      "prompt_placeholder": "告诉 AI 要做什么...",
+      "regenerate_response": "重新生成回复",
+      "replace_selection": "替换所选内容"
+    },
+    "content_limit_banner": {
+      "dismiss": "关闭内容上限警告",
+      "message": "已达到内容上限，实时同步已关闭。请创建新页面或使用嵌套页面以继续同步。"
+    },
+    "create_modal": {
+      "creating": "正在创建",
+      "submit": "创建页面",
+      "title": "创建页面"
+    },
+    "delete_modal": {
+      "content_prefix": "确定要删除页面",
+      "content_suffix": "吗？该页面将被永久删除，此操作无法撤销。",
+      "error": "无法删除页面，请重试。",
+      "success": "页面已成功删除。",
+      "title": "删除页面"
+    },
+    "editor": {
+      "background_colors": "背景颜色",
+      "full_width": "全宽",
+      "markdown_copied": "已将 Markdown 复制到剪贴板。",
+      "sticky_toolbar": "固定工具栏",
+      "text_colors": "文字颜色"
+    },
+    "export_modal": {
+      "content_everything": "全部",
+      "content_no_images": "不含图片",
+      "error": "无法导出页面，请稍后重试。",
+      "export_format": "导出格式",
+      "exporting": "正在导出",
+      "include_content": "包含内容",
+      "page_format": "页面格式",
+      "success": "页面已成功导出。",
+      "title": "导出页面"
+    },
+    "hooks": {
+      "work_item_update_error": "更新工作项时出错"
+    },
+    "lock": {
+      "locked": "已锁定",
+      "unlocked": "已解锁"
+    },
+    "not_found": {
+      "description": "您尝试访问的页面不存在，或您没有查看权限。",
+      "title": "未找到页面",
+      "view_other_pages": "查看其他页面"
+    },
+    "offline": {
+      "description": "您可以继续进行更改，恢复联网后将自动同步。",
+      "heading": "您已离线。",
+      "label": "离线"
+    },
+    "operations": {
+      "add_favorite_error": "无法将页面添加到收藏，请稍后重试。",
+      "add_favorite_success": "页面已添加到收藏。",
+      "archive_error": "无法归档页面，请稍后重试。",
+      "archive_success": "页面已成功归档。",
+      "duplicate_error": "无法复制页面，请稍后重试。",
+      "duplicate_success": "页面已成功复制。",
+      "link_copied": "链接已复制！",
+      "link_copied_message": "页面链接已复制到剪贴板。",
+      "lock_error": "无法锁定页面，请稍后重试。",
+      "lock_success": "页面已成功锁定。",
+      "remove_favorite_error": "无法将页面从收藏中移除，请稍后重试。",
+      "remove_favorite_success": "页面已从收藏中移除。",
+      "restore_error": "无法恢复页面，请稍后重试。",
+      "restore_success": "页面已成功恢复。",
+      "unlock_error": "无法解锁页面，请稍后重试。",
+      "unlock_success": "页面已成功解锁。"
+    },
+    "realtime": {
+      "deleted": "页面已删除",
+      "deleted_by": "页面已被 {name} 删除",
+      "load_failed": "加载页面失败",
+      "save_failed": "保存页面失败"
+    },
+    "search_pages": "搜索页面",
+    "version": {
+      "error_description": "无法加载该版本，请重试。",
+      "error_title": "出错了！",
+      "loading_details": "正在加载版本详情",
+      "restore_failed": "恢复页面版本失败。",
+      "restored": "页面版本已恢复。",
+      "restoring": "正在恢复",
+      "try_again": "重试",
+      "view_only": "仅查看"
+    }
   }
 }

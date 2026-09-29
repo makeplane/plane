@@ -54,5 +54,18 @@
       "2_weeks": "2 weeks",
       "custom": "Custom"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "Please select a date",
+      "no_time_available": "No available time for this date.",
+      "pick_date": "Pick a date",
+      "pick_time": "Pick a time",
+      "select_date": "Select date",
+      "select_time": "Select a time",
+      "submitting": "Submitting...",
+      "time_required": "Please select a time",
+      "title": "Customize snooze time"
+    }
   }
 }

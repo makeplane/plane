@@ -152,5 +152,20 @@
         "label": "Tema personalizado"
       }
     }
+  },
+  "analytics_ui": {
+    "add_metric": "Adicionar métrica",
+    "add_property": "Adicionar propriedade",
+    "count": "Contagem",
+    "no_value": "Sem valor",
+    "projects_more": "3+ projetos"
+  },
+  "profile_ui": {
+    "completion_percentage": "Porcentagem de conclusão",
+    "first_day_updated": "Primeiro dia da semana atualizado com sucesso",
+    "try_again_later": "Tente novamente mais tarde.",
+    "update_failed": "Falha na atualização",
+    "workload_not_started": "Não iniciado",
+    "workload_working_on": "Em andamento"
   }
 }

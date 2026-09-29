@@ -54,5 +54,18 @@
       "2_weeks": "2 týždne",
       "custom": "Vlastné"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "Vyberte prosím dátum",
+      "no_time_available": "Pre tento dátum nie je k dispozícii žiadny čas.",
+      "pick_date": "Vyberte dátum",
+      "pick_time": "Vyberte čas",
+      "select_date": "Vyberte dátum",
+      "select_time": "Vyberte čas",
+      "submitting": "Odosiela sa...",
+      "time_required": "Vyberte prosím čas",
+      "title": "Prispôsobiť čas odloženia"
+    }
   }
 }

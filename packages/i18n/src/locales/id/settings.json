@@ -152,5 +152,20 @@
         "label": "Tema kustom"
       }
     }
+  },
+  "analytics_ui": {
+    "add_metric": "Tambah metrik",
+    "add_property": "Tambah properti",
+    "count": "Jumlah",
+    "no_value": "Tanpa nilai",
+    "projects_more": "3+ proyek"
+  },
+  "profile_ui": {
+    "completion_percentage": "Persentase penyelesaian",
+    "first_day_updated": "Hari pertama dalam seminggu berhasil diperbarui",
+    "try_again_later": "Silakan coba lagi nanti.",
+    "update_failed": "Pembaruan gagal",
+    "workload_not_started": "Belum dimulai",
+    "workload_working_on": "Sedang dikerjakan"
   }
 }

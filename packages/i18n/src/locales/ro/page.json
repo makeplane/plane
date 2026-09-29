@@ -111,5 +111,101 @@
       "success_message": "Pagina a fost eliminată din colecție.",
       "error_message": "Pagina nu a putut fi eliminată din colecție. Te rugăm să încerci din nou."
     }
+  },
+  "page_ui": {
+    "add_page": "Adaugă pagină",
+    "ai": {
+      "add_to_next_line": "Adaugă pe rândul următor",
+      "answering": "AI răspunde...",
+      "prompt_placeholder": "Spune-i AI-ului ce să facă...",
+      "regenerate_response": "Regenerează răspunsul",
+      "replace_selection": "Înlocuiește selecția"
+    },
+    "content_limit_banner": {
+      "dismiss": "Închide avertismentul de limită a conținutului",
+      "message": "Limita de conținut a fost atinsă, iar sincronizarea în timp real este dezactivată. Creează o pagină nouă sau folosește pagini imbricate pentru a continua sincronizarea."
+    },
+    "create_modal": {
+      "creating": "Se creează",
+      "submit": "Creează pagina",
+      "title": "Creează pagina"
+    },
+    "delete_modal": {
+      "content_prefix": "Sigur vrei să ștergi pagina",
+      "content_suffix": "? Pagina va fi ștearsă definitiv. Această acțiune nu poate fi anulată.",
+      "error": "Pagina nu a putut fi ștearsă. Te rugăm să încerci din nou.",
+      "success": "Pagina a fost ștearsă cu succes.",
+      "title": "Șterge pagina"
+    },
+    "editor": {
+      "background_colors": "Culori de fundal",
+      "full_width": "Lățime completă",
+      "markdown_copied": "Markdown a fost copiat în clipboard.",
+      "sticky_toolbar": "Bară de instrumente fixă",
+      "text_colors": "Culori text"
+    },
+    "export_modal": {
+      "content_everything": "Tot",
+      "content_no_images": "Fără imagini",
+      "error": "Pagina nu a putut fi exportată. Te rugăm să încerci din nou mai târziu.",
+      "export_format": "Format de export",
+      "exporting": "Se exportă",
+      "include_content": "Include conținutul",
+      "page_format": "Format pagină",
+      "success": "Pagina a fost exportată cu succes.",
+      "title": "Exportă pagina"
+    },
+    "hooks": {
+      "work_item_update_error": "Eroare la actualizarea elementului de lucru"
+    },
+    "lock": {
+      "locked": "Blocată",
+      "unlocked": "Deblocată"
+    },
+    "not_found": {
+      "description": "Pagina pe care încerci să o accesezi nu există sau nu ai permisiunea de a o vizualiza.",
+      "title": "Pagina nu a fost găsită",
+      "view_other_pages": "Vezi alte pagini"
+    },
+    "offline": {
+      "description": "Poți continua să faci modificări. Vor fi sincronizate când vei fi din nou online.",
+      "heading": "Ești offline.",
+      "label": "Offline"
+    },
+    "operations": {
+      "add_favorite_error": "Pagina nu a putut fi adăugată la favorite. Te rugăm să încerci din nou mai târziu.",
+      "add_favorite_success": "Pagina a fost adăugată la favorite.",
+      "archive_error": "Pagina nu a putut fi arhivată. Te rugăm să încerci din nou mai târziu.",
+      "archive_success": "Pagina a fost arhivată cu succes.",
+      "duplicate_error": "Pagina nu a putut fi duplicată. Te rugăm să încerci din nou mai târziu.",
+      "duplicate_success": "Pagina a fost duplicată cu succes.",
+      "link_copied": "Link copiat!",
+      "link_copied_message": "Linkul paginii a fost copiat în clipboard.",
+      "lock_error": "Pagina nu a putut fi blocată. Te rugăm să încerci din nou mai târziu.",
+      "lock_success": "Pagina a fost blocată cu succes.",
+      "remove_favorite_error": "Pagina nu a putut fi eliminată din favorite. Te rugăm să încerci din nou mai târziu.",
+      "remove_favorite_success": "Pagina a fost eliminată din favorite.",
+      "restore_error": "Pagina nu a putut fi restaurată. Te rugăm să încerci din nou mai târziu.",
+      "restore_success": "Pagina a fost restaurată cu succes.",
+      "unlock_error": "Pagina nu a putut fi deblocată. Te rugăm să încerci din nou mai târziu.",
+      "unlock_success": "Pagina a fost deblocată cu succes."
+    },
+    "realtime": {
+      "deleted": "Pagină ștearsă",
+      "deleted_by": "Pagină ștearsă de {name}",
+      "load_failed": "Nu s-a putut încărca pagina",
+      "save_failed": "Nu s-a putut salva pagina"
+    },
+    "search_pages": "Caută pagini",
+    "version": {
+      "error_description": "Versiunea nu a putut fi încărcată, te rugăm să încerci din nou.",
+      "error_title": "Ceva nu a funcționat!",
+      "loading_details": "Se încarcă detaliile versiunii",
+      "restore_failed": "Nu s-a putut restaura versiunea paginii.",
+      "restored": "Versiunea paginii a fost restaurată.",
+      "restoring": "Se restaurează",
+      "try_again": "Încearcă din nou",
+      "view_only": "Doar vizualizare"
+    }
   }
 }

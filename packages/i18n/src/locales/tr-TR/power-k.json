@@ -188,5 +188,23 @@
       "preferences": "Tercihler",
       "help": "Yardım"
     }
+  },
+  "power_k_ui": {
+    "clear_context": "Bağlamı temizle (Backspace)",
+    "empty_menu": {
+      "cycles": "Döngü bulunamadı",
+      "labels": "Etiket bulunamadı",
+      "modules": "Modül bulunamadı",
+      "projects": "Proje bulunamadı",
+      "settings": "Ayar bulunamadı",
+      "views": "Görünüm bulunamadı",
+      "workspaces": "Çalışma alanı bulunamadı"
+    },
+    "epic_update_error": "Epik güncellenemedi. Lütfen tekrar deneyin.",
+    "module_update_error": "Modül güncellenemedi. Lütfen tekrar deneyin.",
+    "no_estimate_found": "Tahmin bulunamadı",
+    "reloading_to_apply": "Değişiklikleri uygulamak için yeniden yükleniyor...",
+    "some_error_occurred": "Bir hata oluştu",
+    "work_item_update_error": "İş öğesi güncellenemedi. Lütfen tekrar deneyin."
   }
 }

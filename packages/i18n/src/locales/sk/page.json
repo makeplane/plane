@@ -111,5 +111,101 @@
       "success_message": "Stránka bola odstránená z kolekcie.",
       "error_message": "Stránku sa nepodarilo odstrániť z kolekcie. Skúste to prosím znova."
     }
+  },
+  "page_ui": {
+    "add_page": "Pridať stránku",
+    "ai": {
+      "add_to_next_line": "Pridať na ďalší riadok",
+      "answering": "AI odpovedá...",
+      "prompt_placeholder": "Povedzte AI, čo má robiť...",
+      "regenerate_response": "Znovu vygenerovať odpoveď",
+      "replace_selection": "Nahradiť výber"
+    },
+    "content_limit_banner": {
+      "dismiss": "Zavrieť upozornenie na limit obsahu",
+      "message": "Bol dosiahnutý limit obsahu a živá synchronizácia je vypnutá. Vytvorte novú stránku alebo použite vnorené stránky, aby ste mohli pokračovať v synchronizácii."
+    },
+    "create_modal": {
+      "creating": "Vytvára sa",
+      "submit": "Vytvoriť stránku",
+      "title": "Vytvoriť stránku"
+    },
+    "delete_modal": {
+      "content_prefix": "Naozaj chcete zmazať stránku",
+      "content_suffix": "? Stránka bude natrvalo zmazaná. Túto akciu nemožno vrátiť späť.",
+      "error": "Stránku sa nepodarilo zmazať. Skúste to prosím znova.",
+      "success": "Stránka bola úspešne zmazaná.",
+      "title": "Zmazať stránku"
+    },
+    "editor": {
+      "background_colors": "Farby pozadia",
+      "full_width": "Plná šírka",
+      "markdown_copied": "Markdown bol skopírovaný do schránky.",
+      "sticky_toolbar": "Pripnutý panel nástrojov",
+      "text_colors": "Farby textu"
+    },
+    "export_modal": {
+      "content_everything": "Všetko",
+      "content_no_images": "Bez obrázkov",
+      "error": "Stránku sa nepodarilo exportovať. Skúste to prosím neskôr.",
+      "export_format": "Formát exportu",
+      "exporting": "Exportuje sa",
+      "include_content": "Zahrnúť obsah",
+      "page_format": "Formát stránky",
+      "success": "Stránka bola úspešne exportovaná.",
+      "title": "Exportovať stránku"
+    },
+    "hooks": {
+      "work_item_update_error": "Chyba pri aktualizácii pracovnej položky"
+    },
+    "lock": {
+      "locked": "Uzamknuté",
+      "unlocked": "Odomknuté"
+    },
+    "not_found": {
+      "description": "Stránka, ku ktorej sa pokúšate získať prístup, neexistuje alebo nemáte oprávnenie ju zobraziť.",
+      "title": "Stránka sa nenašla",
+      "view_other_pages": "Zobraziť ďalšie stránky"
+    },
+    "offline": {
+      "description": "Môžete pokračovať v úpravách. Po obnovení pripojenia sa synchronizujú.",
+      "heading": "Ste offline.",
+      "label": "Offline"
+    },
+    "operations": {
+      "add_favorite_error": "Stránku sa nepodarilo pridať medzi obľúbené. Skúste to prosím neskôr.",
+      "add_favorite_success": "Stránka bola pridaná medzi obľúbené.",
+      "archive_error": "Stránku sa nepodarilo archivovať. Skúste to prosím neskôr.",
+      "archive_success": "Stránka bola úspešne archivovaná.",
+      "duplicate_error": "Stránku sa nepodarilo duplikovať. Skúste to prosím neskôr.",
+      "duplicate_success": "Stránka bola úspešne duplikovaná.",
+      "link_copied": "Odkaz skopírovaný!",
+      "link_copied_message": "Odkaz na stránku bol skopírovaný do schránky.",
+      "lock_error": "Stránku sa nepodarilo uzamknúť. Skúste to prosím neskôr.",
+      "lock_success": "Stránka bola úspešne uzamknutá.",
+      "remove_favorite_error": "Stránku sa nepodarilo odstrániť z obľúbených. Skúste to prosím neskôr.",
+      "remove_favorite_success": "Stránka bola odstránená z obľúbených.",
+      "restore_error": "Stránku sa nepodarilo obnoviť. Skúste to prosím neskôr.",
+      "restore_success": "Stránka bola úspešne obnovená.",
+      "unlock_error": "Stránku sa nepodarilo odomknúť. Skúste to prosím neskôr.",
+      "unlock_success": "Stránka bola úspešne odomknutá."
+    },
+    "realtime": {
+      "deleted": "Stránka bola zmazaná",
+      "deleted_by": "Stránku zmazal(a) {name}",
+      "load_failed": "Stránku sa nepodarilo načítať",
+      "save_failed": "Stránku sa nepodarilo uložiť"
+    },
+    "search_pages": "Hľadať stránky",
+    "version": {
+      "error_description": "Verziu sa nepodarilo načítať, skúste to prosím znova.",
+      "error_title": "Niečo sa pokazilo!",
+      "loading_details": "Načítavajú sa podrobnosti verzie",
+      "restore_failed": "Verziu stránky sa nepodarilo obnoviť.",
+      "restored": "Verzia stránky bola obnovená.",
+      "restoring": "Obnovuje sa",
+      "try_again": "Skúsiť znova",
+      "view_only": "Iba na čítanie"
+    }
   }
 }

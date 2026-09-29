@@ -54,5 +54,18 @@
       "2_weeks": "2 週",
       "custom": "自訂"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "請選擇日期",
+      "no_time_available": "此日期沒有可選時間。",
+      "pick_date": "選擇日期",
+      "pick_time": "選擇時間",
+      "select_date": "選擇日期",
+      "select_time": "選擇時間",
+      "submitting": "提交中...",
+      "time_required": "請選擇時間",
+      "title": "自訂延後提醒時間"
+    }
   }
 }

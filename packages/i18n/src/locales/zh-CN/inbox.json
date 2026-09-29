@@ -83,5 +83,26 @@
         "title": "选择一个工作项以查看其详细信息。"
       }
     }
+  },
+  "inbox_ui": {
+    "create_error": "发生错误，请重试。",
+    "create_success": "工作项创建成功。",
+    "created_date": "创建日期",
+    "delete_failed": "删除工作项失败",
+    "editor_processing": "编辑器仍在处理更改，请稍候再继续。",
+    "empty_closed": {
+      "description": "无论已接受还是已拒绝，所有工作项都可以在这里找到。",
+      "title": "尚无已关闭的请求"
+    },
+    "errors": {
+      "duplicate_permission": "只有项目管理员可以将工作项标记为重复"
+    },
+    "last_updated_date": "最后更新日期",
+    "next_work_item": "下一个工作项",
+    "permission_denied": "权限被拒绝",
+    "previous_work_item": "上一个工作项",
+    "search_placeholder": "搜索...",
+    "update_failed": "更新工作项失败",
+    "updated_date": "更新日期"
   }
 }

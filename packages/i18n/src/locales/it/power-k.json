@@ -188,5 +188,23 @@
       "preferences": "Preferenze",
       "help": "Aiuto"
     }
+  },
+  "power_k_ui": {
+    "clear_context": "Cancella contesto (Backspace)",
+    "empty_menu": {
+      "cycles": "Nessun ciclo trovato",
+      "labels": "Nessuna etichetta trovata",
+      "modules": "Nessun modulo trovato",
+      "projects": "Nessun progetto trovato",
+      "settings": "Nessuna impostazione trovata",
+      "views": "Nessuna vista trovata",
+      "workspaces": "Nessuno spazio di lavoro trovato"
+    },
+    "epic_update_error": "Impossibile aggiornare l'epic. Riprova.",
+    "module_update_error": "Impossibile aggiornare il modulo. Riprova.",
+    "no_estimate_found": "Nessuna stima trovata",
+    "reloading_to_apply": "Ricaricamento per applicare le modifiche...",
+    "some_error_occurred": "Si è verificato un errore",
+    "work_item_update_error": "Impossibile aggiornare l'elemento di lavoro. Riprova."
   }
 }

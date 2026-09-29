@@ -152,5 +152,20 @@
         "label": "Пользовательская тема"
       }
     }
+  },
+  "analytics_ui": {
+    "add_metric": "Добавить метрику",
+    "add_property": "Добавить свойство",
+    "count": "Количество",
+    "no_value": "Нет значения",
+    "projects_more": "3+ проекта"
+  },
+  "profile_ui": {
+    "completion_percentage": "Процент выполнения",
+    "first_day_updated": "Первый день недели успешно обновлён",
+    "try_again_later": "Повторите попытку позже.",
+    "update_failed": "Не удалось обновить",
+    "workload_not_started": "Не начато",
+    "workload_working_on": "В работе"
   }
 }

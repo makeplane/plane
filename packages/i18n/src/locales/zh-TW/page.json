@@ -111,5 +111,101 @@
       "success_message": "頁面已從集合中移除。",
       "error_message": "無法將頁面從集合中移除。請再試一次。"
     }
+  },
+  "page_ui": {
+    "add_page": "新增頁面",
+    "ai": {
+      "add_to_next_line": "新增到下一行",
+      "answering": "AI 正在回答...",
+      "prompt_placeholder": "告訴 AI 要做什麼...",
+      "regenerate_response": "重新產生回應",
+      "replace_selection": "取代選取內容"
+    },
+    "content_limit_banner": {
+      "dismiss": "關閉內容上限警告",
+      "message": "已達到內容上限，即時同步已關閉。請建立新頁面或使用巢狀頁面以繼續同步。"
+    },
+    "create_modal": {
+      "creating": "建立中",
+      "submit": "建立頁面",
+      "title": "建立頁面"
+    },
+    "delete_modal": {
+      "content_prefix": "確定要刪除頁面",
+      "content_suffix": "嗎？該頁面將被永久刪除，此操作無法復原。",
+      "error": "無法刪除頁面，請再試一次。",
+      "success": "頁面已成功刪除。",
+      "title": "刪除頁面"
+    },
+    "editor": {
+      "background_colors": "背景顏色",
+      "full_width": "全寬",
+      "markdown_copied": "已將 Markdown 複製到剪貼簿。",
+      "sticky_toolbar": "固定工具列",
+      "text_colors": "文字顏色"
+    },
+    "export_modal": {
+      "content_everything": "全部",
+      "content_no_images": "不含圖片",
+      "error": "無法匯出頁面，請稍後再試。",
+      "export_format": "匯出格式",
+      "exporting": "匯出中",
+      "include_content": "包含內容",
+      "page_format": "頁面格式",
+      "success": "頁面已成功匯出。",
+      "title": "匯出頁面"
+    },
+    "hooks": {
+      "work_item_update_error": "更新工作項目時發生錯誤"
+    },
+    "lock": {
+      "locked": "已鎖定",
+      "unlocked": "已解除鎖定"
+    },
+    "not_found": {
+      "description": "您嘗試存取的頁面不存在，或您沒有檢視權限。",
+      "title": "找不到頁面",
+      "view_other_pages": "檢視其他頁面"
+    },
+    "offline": {
+      "description": "您可以繼續進行變更，重新連線後將自動同步。",
+      "heading": "您已離線。",
+      "label": "離線"
+    },
+    "operations": {
+      "add_favorite_error": "無法將頁面加入我的最愛，請稍後再試。",
+      "add_favorite_success": "頁面已加入我的最愛。",
+      "archive_error": "無法封存頁面，請稍後再試。",
+      "archive_success": "頁面已成功封存。",
+      "duplicate_error": "無法複製頁面，請稍後再試。",
+      "duplicate_success": "頁面已成功複製。",
+      "link_copied": "連結已複製！",
+      "link_copied_message": "頁面連結已複製到剪貼簿。",
+      "lock_error": "無法鎖定頁面，請稍後再試。",
+      "lock_success": "頁面已成功鎖定。",
+      "remove_favorite_error": "無法將頁面從我的最愛移除，請稍後再試。",
+      "remove_favorite_success": "頁面已從我的最愛移除。",
+      "restore_error": "無法還原頁面，請稍後再試。",
+      "restore_success": "頁面已成功還原。",
+      "unlock_error": "無法解除鎖定頁面，請稍後再試。",
+      "unlock_success": "頁面已成功解除鎖定。"
+    },
+    "realtime": {
+      "deleted": "頁面已刪除",
+      "deleted_by": "頁面已被 {name} 刪除",
+      "load_failed": "載入頁面失敗",
+      "save_failed": "儲存頁面失敗"
+    },
+    "search_pages": "搜尋頁面",
+    "version": {
+      "error_description": "無法載入該版本，請再試一次。",
+      "error_title": "發生錯誤！",
+      "loading_details": "正在載入版本詳細資料",
+      "restore_failed": "還原頁面版本失敗。",
+      "restored": "頁面版本已還原。",
+      "restoring": "還原中",
+      "try_again": "重試",
+      "view_only": "僅供檢視"
+    }
   }
 }
