@@ -37,5 +37,36 @@
         "title": "Dodaj etykiety do elementów pracy, aby zobaczyć\n podział pracy według etykiet."
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "Użytkownik",
+    "no_labels": "Brak etykiet",
+    "pending_points": "Oczekujące punkty - {count}",
+    "pending_work_items": "Oczekujące elementy pracy - {count}",
+    "closed_progress": "{closed}/{total} {label} zamknięto",
+    "burn_down": "Burndown",
+    "burn_up": "Burnup",
+    "status_filter_title": "Status cyklu",
+    "custom": "Niestandardowy",
+    "archive_success_title": "Zarchiwizowano pomyślnie",
+    "archive_success_message": "Twoje archiwa znajdziesz w archiwach projektu.",
+    "archive_error": "Cykl nie mógł zostać zarchiwizowany. Spróbuj ponownie.",
+    "archive_modal_title": "Archiwizuj cykl {name}",
+    "archive_modal_description": "Czy na pewno chcesz zarchiwizować cykl? Wszystkie archiwa można później przywrócić.",
+    "delete_modal_title": "Usuń cykl",
+    "delete_modal_description": "Czy na pewno chcesz usunąć cykl „{name}”? Wszystkie powiązane dane zostaną trwale usunięte. Tej czynności nie można cofnąć.",
+    "create_success": "Cykl został pomyślnie utworzony.",
+    "create_error": "Nie udało się utworzyć cyklu. Spróbuj ponownie.",
+    "transfer_title": "Przenieś elementy pracy",
+    "transfer_search_placeholder": "Szukaj cyklu...",
+    "transfer_success": "Elementy pracy zostały pomyślnie przeniesione",
+    "transfer_error": "Nie udało się przenieść elementów pracy. Spróbuj ponownie.",
+    "transfer_fetch_error": "Nie udało się pobrać szczegółów cyklu",
+    "no_current_cycle": "Nie masz żadnego bieżącego cyklu. Utwórz go, aby przenieść elementy pracy.",
+    "completed_not_editable": "Zakończone cykle nie podlegają edycji.",
+    "work_items_in_cycle": "Elementy pracy w tym cyklu: {count}",
+    "not_found_title": "Cykl nie istnieje",
+    "not_found_description": "Szukany cykl nie istnieje lub został usunięty.",
+    "view_other_cycles": "Zobacz inne cykle"
   }
 }

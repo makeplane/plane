@@ -37,5 +37,36 @@
         "title": "Přidejte štítky k pracovním položkám, abyste viděli\n rozdělení práce podle štítků."
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "Uživatel",
+    "no_labels": "Žádné štítky",
+    "pending_points": "Nevyřízené body - {count}",
+    "pending_work_items": "Nevyřízené pracovní položky - {count}",
+    "closed_progress": "{closed}/{total} {label} uzavřeno",
+    "burn_down": "Burndown",
+    "burn_up": "Burnup",
+    "status_filter_title": "Stav cyklu",
+    "custom": "Vlastní",
+    "archive_success_title": "Archivace úspěšná",
+    "archive_success_message": "Vaše archivy najdete v archivech projektu.",
+    "archive_error": "Cyklus nelze archivovat. Zkuste to prosím znovu.",
+    "archive_modal_title": "Archivovat cyklus {name}",
+    "archive_modal_description": "Opravdu chcete archivovat cyklus? Všechny vaše archivy lze později obnovit.",
+    "delete_modal_title": "Smazat cyklus",
+    "delete_modal_description": "Opravdu chcete smazat cyklus „{name}“? Všechna související data budou trvale odstraněna. Tuto akci nelze vrátit zpět.",
+    "create_success": "Cyklus byl úspěšně vytvořen.",
+    "create_error": "Cyklus se nepodařilo vytvořit. Zkuste to prosím znovu.",
+    "transfer_title": "Převést pracovní položky",
+    "transfer_search_placeholder": "Hledat cyklus...",
+    "transfer_success": "Pracovní položky byly úspěšně převedeny",
+    "transfer_error": "Pracovní položky se nepodařilo převést. Zkuste to prosím znovu.",
+    "transfer_fetch_error": "Nepodařilo se načíst podrobnosti cyklu",
+    "no_current_cycle": "Nemáte žádný aktuální cyklus. Vytvořte prosím nový, abyste mohli převést pracovní položky.",
+    "completed_not_editable": "Dokončené cykly nelze upravovat.",
+    "work_items_in_cycle": "Pracovní položky v tomto cyklu: {count}",
+    "not_found_title": "Cyklus neexistuje",
+    "not_found_description": "Hledaný cyklus neexistuje nebo byl smazán.",
+    "view_other_cycles": "Zobrazit další cykly"
   }
 }

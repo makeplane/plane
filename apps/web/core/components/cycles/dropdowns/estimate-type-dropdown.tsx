@@ -6,6 +6,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import type { TCycleEstimateType } from "@plane/types";
 import { EEstimateSystem } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
@@ -23,28 +24,30 @@ type TProps = {
 };
 
 export const EstimateTypeDropdown = observer(function EstimateTypeDropdown(props: TProps) {
+  const { t } = useTranslation();
   const { value, onChange, projectId, cycleId, showDefault = false } = props;
   const { getIsPointsDataAvailable } = useCycle();
   const { areEstimateEnabledByProjectId, currentProjectEstimateType } = useProjectEstimates();
+  const selectedOption = cycleEstimateOptions.find((v) => v.value === value);
   const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
   return (getIsPointsDataAvailable(cycleId) || isCurrentProjectEstimateEnabled) &&
     currentProjectEstimateType !== EEstimateSystem.CATEGORIES ? (
     <div className="relative flex items-center gap-2">
       <CustomSelect
         value={value}
-        label={<span>{cycleEstimateOptions.find((v) => v.value === value)?.label ?? "None"}</span>}
+        label={<span>{t(selectedOption?.labelKey ?? "common.none")}</span>}
         onChange={onChange}
         maxHeight="lg"
         buttonClassName="bg-surface-2 border-none rounded-sm text-13 font-medium "
       >
         {cycleEstimateOptions.map((item) => (
           <CustomSelect.Option key={item.value} value={item.value}>
-            {item.label}
+            {t(item.labelKey)}
           </CustomSelect.Option>
         ))}
       </CustomSelect>
     </div>
   ) : showDefault ? (
-    <span className="capitalize">{cycleEstimateOptions.find((v) => v.value === value)?.label ?? value}</span>
+    <span className="capitalize">{selectedOption ? t(selectedOption.labelKey) : value}</span>
   ) : null;
 });

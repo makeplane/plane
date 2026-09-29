@@ -37,5 +37,36 @@
         "title": "Pridajte štítky k pracovným položkám, aby ste videli\n rozdelenie práce podľa štítkov."
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "Používateľ",
+    "no_labels": "Žiadne štítky",
+    "pending_points": "Nevybavené body - {count}",
+    "pending_work_items": "Nevybavené pracovné položky - {count}",
+    "closed_progress": "{closed}/{total} {label} – uzavreté",
+    "burn_down": "Burndown",
+    "burn_up": "Burnup",
+    "status_filter_title": "Stav cyklu",
+    "custom": "Vlastné",
+    "archive_success_title": "Archivácia úspešná",
+    "archive_success_message": "Vaše archívy nájdete v archívoch projektu.",
+    "archive_error": "Cyklus sa nepodarilo archivovať. Skúste to prosím znova.",
+    "archive_modal_title": "Archivovať cyklus {name}",
+    "archive_modal_description": "Naozaj chcete archivovať cyklus? Všetky vaše archívy je možné neskôr obnoviť.",
+    "delete_modal_title": "Odstrániť cyklus",
+    "delete_modal_description": "Naozaj chcete odstrániť cyklus „{name}“? Všetky súvisiace údaje budú natrvalo odstránené. Túto akciu nemožno vrátiť späť.",
+    "create_success": "Cyklus bol úspešne vytvorený.",
+    "create_error": "Cyklus sa nepodarilo vytvoriť. Skúste to prosím znova.",
+    "transfer_title": "Presunúť pracovné položky",
+    "transfer_search_placeholder": "Hľadať cyklus...",
+    "transfer_success": "Pracovné položky boli úspešne presunuté",
+    "transfer_error": "Pracovné položky sa nepodarilo presunúť. Skúste to prosím znova.",
+    "transfer_fetch_error": "Nepodarilo sa načítať podrobnosti cyklu",
+    "no_current_cycle": "Nemáte žiadny aktuálny cyklus. Vytvorte prosím nový, aby ste mohli presunúť pracovné položky.",
+    "completed_not_editable": "Dokončené cykly nie je možné upravovať.",
+    "work_items_in_cycle": "Pracovné položky v tomto cykle: {count}",
+    "not_found_title": "Cyklus neexistuje",
+    "not_found_description": "Hľadaný cyklus neexistuje alebo bol odstránený.",
+    "view_other_cycles": "Zobraziť ďalšie cykly"
   }
 }

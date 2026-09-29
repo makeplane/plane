@@ -37,5 +37,36 @@
         "title": "為工作項目添加標籤，以查看按標籤\n劃分的工作明細。"
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "使用者",
+    "no_labels": "無標籤",
+    "pending_points": "待處理點數 - {count}",
+    "pending_work_items": "待處理工作事項 - {count}",
+    "closed_progress": "{closed}/{total} {label}已關閉",
+    "burn_down": "燃盡圖",
+    "burn_up": "燃起圖",
+    "status_filter_title": "週期狀態",
+    "custom": "自訂",
+    "archive_success_title": "封存成功",
+    "archive_success_message": "您可以在專案封存中找到已封存的內容。",
+    "archive_error": "無法封存週期，請再試一次。",
+    "archive_modal_title": "封存週期：{name}",
+    "archive_modal_description": "確定要封存此週期嗎？您的所有封存項目稍後皆可還原。",
+    "delete_modal_title": "刪除週期",
+    "delete_modal_description": "確定要刪除週期「{name}」嗎？所有相關資料都將被永久刪除，此操作無法復原。",
+    "create_success": "週期建立成功。",
+    "create_error": "無法建立週期，請再試一次。",
+    "transfer_title": "轉移工作事項",
+    "transfer_search_placeholder": "搜尋週期...",
+    "transfer_success": "工作事項已成功轉移",
+    "transfer_error": "無法轉移工作事項，請再試一次。",
+    "transfer_fetch_error": "無法取得週期詳細資料",
+    "no_current_cycle": "您目前沒有任何週期。請建立一個週期以轉移工作事項。",
+    "completed_not_editable": "已完成的週期無法編輯。",
+    "work_items_in_cycle": "此週期中的工作事項：{count}",
+    "not_found_title": "週期不存在",
+    "not_found_description": "您要尋找的週期不存在或已被刪除。",
+    "view_other_cycles": "檢視其他週期"
   }
 }

@@ -37,5 +37,36 @@
         "title": "Add labels to work items to see the\n breakdown of work by labels."
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "მომხმარებელი",
+    "no_labels": "იარლიყების გარეშე",
+    "pending_points": "მოლოდინში მყოფი ქულები - {count}",
+    "pending_work_items": "მოლოდინში მყოფი სამუშაო ელემენტები - {count}",
+    "closed_progress": "{closed}/{total} {label} დახურულია",
+    "burn_down": "Burn-down",
+    "burn_up": "Burn-up",
+    "status_filter_title": "ციკლის სტატუსი",
+    "custom": "მორგებული",
+    "archive_success_title": "დაარქივება წარმატებულია",
+    "archive_success_message": "თქვენი არქივები იხილეთ პროექტის არქივებში.",
+    "archive_error": "ციკლი ვერ დაარქივდა. გთხოვთ, სცადოთ ხელახლა.",
+    "archive_modal_title": "ციკლის დაარქივება: {name}",
+    "archive_modal_description": "დარწმუნებული ხართ, რომ გსურთ ციკლის დაარქივება? ყველა თქვენი არქივი მოგვიანებით აღდგენადია.",
+    "delete_modal_title": "ციკლის წაშლა",
+    "delete_modal_description": "დარწმუნებული ხართ, რომ გსურთ ციკლის „{name}“ წაშლა? ყველა დაკავშირებული მონაცემი სამუდამოდ წაიშლება. ეს მოქმედება ვერ გაუქმდება.",
+    "create_success": "ციკლი წარმატებით შეიქმნა.",
+    "create_error": "ციკლი ვერ შეიქმნა. გთხოვთ, სცადოთ ხელახლა.",
+    "transfer_title": "სამუშაო ელემენტების გადატანა",
+    "transfer_search_placeholder": "ციკლის ძიება...",
+    "transfer_success": "სამუშაო ელემენტები წარმატებით გადატანილია",
+    "transfer_error": "სამუშაო ელემენტების გადატანა ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა.",
+    "transfer_fetch_error": "ციკლის დეტალების მიღება ვერ მოხერხდა",
+    "no_current_cycle": "თქვენ არ გაქვთ მიმდინარე ციკლი. შექმენით ერთი სამუშაო ელემენტების გადასატანად.",
+    "completed_not_editable": "დასრულებული ციკლები არ რედაქტირდება.",
+    "work_items_in_cycle": "სამუშაო ელემენტები ამ ციკლის ფარგლებში: {count}",
+    "not_found_title": "ციკლი არ არსებობს",
+    "not_found_description": "ციკლი, რომელსაც ეძებთ, არ არსებობს ან წაშლილია.",
+    "view_other_cycles": "სხვა ციკლების ნახვა"
   }
 }

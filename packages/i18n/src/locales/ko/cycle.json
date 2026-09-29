@@ -37,5 +37,36 @@
         "title": "작업 항목에 레이블을 추가하여 레이블별\n 작업 분석을 확인하세요."
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "사용자",
+    "no_labels": "라벨 없음",
+    "pending_points": "대기 중인 포인트 - {count}",
+    "pending_work_items": "대기 중인 작업 항목 - {count}",
+    "closed_progress": "{closed}/{total} {label} 완료",
+    "burn_down": "번다운",
+    "burn_up": "번업",
+    "status_filter_title": "주기 상태",
+    "custom": "사용자 지정",
+    "archive_success_title": "보관 성공",
+    "archive_success_message": "보관 항목은 프로젝트 보관함에서 확인할 수 있습니다.",
+    "archive_error": "주기을(를) 보관하지 못했습니다. 다시 시도해주세요.",
+    "archive_modal_title": "주기 보관: {name}",
+    "archive_modal_description": "주기을(를) 보관하시겠습니까? 보관된 항목은 나중에 복원할 수 있습니다.",
+    "delete_modal_title": "주기 삭제",
+    "delete_modal_description": "주기 “{name}”을(를) 삭제하시겠습니까? 관련된 모든 데이터가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.",
+    "create_success": "주기을(를) 생성했습니다.",
+    "create_error": "주기을(를) 생성하지 못했습니다. 다시 시도해주세요.",
+    "transfer_title": "작업 항목 이전",
+    "transfer_search_placeholder": "주기 검색...",
+    "transfer_success": "작업 항목을 이전했습니다",
+    "transfer_error": "작업 항목을 이전하지 못했습니다. 다시 시도해주세요.",
+    "transfer_fetch_error": "주기 세부 정보를 가져오지 못했습니다",
+    "no_current_cycle": "현재 주기가 없습니다. 작업 항목을 이전하려면 주기를 만드세요.",
+    "completed_not_editable": "완료된 주기는 편집할 수 없습니다.",
+    "work_items_in_cycle": "이 주기의 작업 항목: {count}",
+    "not_found_title": "주기이(가) 존재하지 않습니다",
+    "not_found_description": "찾으시는 주기이(가) 존재하지 않거나 삭제되었습니다.",
+    "view_other_cycles": "다른 주기 보기"
   }
 }

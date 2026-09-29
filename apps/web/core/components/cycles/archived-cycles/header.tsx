@@ -10,6 +10,7 @@ import { useParams } from "next/navigation";
 // icons
 import { ListFilter } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // plane helpers
 // types
@@ -24,6 +25,7 @@ import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 import { CycleFiltersSelection } from "../dropdowns";
 
 export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
+  const { t } = useTranslation();
   // router
   const { projectId } = useParams();
   // refs
@@ -101,7 +103,7 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
           <input
             ref={inputRef}
             className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
-            placeholder="Search"
+            placeholder={t("search")}
             value={archivedCyclesSearchQuery}
             onChange={(e) => updateArchivedCyclesSearchQuery(e.target.value)}
             onKeyDown={handleInputKeyDown}
@@ -121,7 +123,7 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
         </div>
         <FiltersDropdown
           icon={<ListFilter className="h-3 w-3" />}
-          title="Filters"
+          title={t("common.filters")}
           placement="bottom-end"
           isFiltersApplied={isFiltersApplied}
         >
