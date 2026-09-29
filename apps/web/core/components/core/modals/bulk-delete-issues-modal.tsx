@@ -104,7 +104,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: "Please select at least one work item.",
+        message: t("core_ui.select_work_item"),
       });
       return;
     }
@@ -116,7 +116,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("toast.success"),
-          message: "Work items deleted successfully!",
+          message: t("core_ui.work_items_deleted"),
         });
         handleClose();
       })
@@ -124,7 +124,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
-          message: "Something went wrong. Please try again.",
+          message: t("core_ui.try_again_error"),
         })
       );
   };
@@ -177,7 +177,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
             <input
               type="text"
               className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-primary outline-none focus:ring-0 sm:text-13"
-              placeholder="Search..."
+              placeholder={t("core_ui.search_ellipsis")}
               onChange={(event) => setQuery(event.target.value)}
             />
           </div>

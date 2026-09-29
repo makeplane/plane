@@ -7,6 +7,7 @@
 import { useParams } from "next/navigation";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { IProject } from "@plane/types";
 // ui
@@ -22,6 +23,7 @@ type Props = {
 };
 
 export function SelectMonthModal({ type, initialValues, isOpen, handleClose, handleChange }: Props) {
+  const { t } = useTranslation();
   const { workspaceSlug, projectId } = useParams();
 
   const {
@@ -57,7 +59,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                     control={control}
                     name="close_in"
                     rules={{
-                      required: "Select a month between 1 and 12.",
+                      required: t("core_ui.select_month_range"),
                       min: 1,
                       max: 12,
                     }}
@@ -71,12 +73,12 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                           onChange={onChange}
                           ref={ref}
                           hasError={Boolean(errors.close_in)}
-                          placeholder="Enter Months"
+                          placeholder={t("core_ui.enter_months")}
                           className="w-full border-subtle"
                           min={1}
                           max={12}
                         />
-                        <span className="absolute top-2.5 right-8 text-13 text-secondary">Months</span>
+                        <span className="absolute top-2.5 right-8 text-13 text-secondary">{t("core_ui.months")}</span>
                       </div>
                     )}
                   />
@@ -91,7 +93,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                     control={control}
                     name="archive_in"
                     rules={{
-                      required: "Select a month between 1 and 12.",
+                      required: t("core_ui.select_month_range"),
                       min: 1,
                       max: 12,
                     }}
@@ -105,12 +107,12 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                           onChange={onChange}
                           ref={ref}
                           hasError={Boolean(errors.archive_in)}
-                          placeholder="Enter Months"
+                          placeholder={t("core_ui.enter_months")}
                           className="w-full border-subtle"
                           min={1}
                           max={12}
                         />
-                        <span className="absolute top-2.5 right-8 text-13 text-secondary">Months</span>
+                        <span className="absolute top-2.5 right-8 text-13 text-secondary">{t("core_ui.months")}</span>
                       </div>
                     )}
                   />
