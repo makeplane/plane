@@ -4,6 +4,7 @@
 
 # Python imports
 import json
+import logging
 import uuid
 import re
 
@@ -161,6 +162,9 @@ from plane.utils.openapi import (
 from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 
 
+logger = logging.getLogger("plane.api")
+
+
 def user_has_issue_permission(user_id, project_id, issue=None, allowed_roles=None, allow_creator=True):
     if allow_creator and issue is not None and user_id == issue.created_by_id:
         return True
@@ -241,16 +245,44 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             # sequence_id is an integer, so anything else can't be a work item here.
             if not issue_identifier.isdecimal():
                 return Response({"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND)
-            issue = Issue.issue_objects.annotate(
+            issue_queryset = Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
-            ).get(
+            ).filter(
                 workspace__slug=slug,
                 project__identifier=project_identifier,
                 sequence_id=issue_identifier,
             )
+
+            try:
+                issue = issue_queryset.get()
+            except Issue.MultipleObjectsReturned:
+                # `(project, sequence_id)` carries no database-level uniqueness
+                # constraint. It is kept unique only by the project-scoped advisory
+                # lock `Issue.save()` takes while deriving the next sequence, so any
+                # path that writes rows without going through `save()` — a
+                # `bulk_create`, a data migration, a restore — can leave a project
+                # with two work items sharing an identifier. Resolve to the most
+                # recent match so the lookup stays deterministic instead of letting
+                # `MultipleObjectsReturned` escape as a 500, and log the anomaly so
+                # the duplicate rows can be found and cleaned up.
+                issue = issue_queryset.order_by("-created_at", "id").first()
+                if issue is None:
+                    # `issue_objects` hides soft-deleted, archived, draft and triage
+                    # rows, so a concurrent write can drop every match between the two
+                    # queries. Answer as though it never matched.
+                    return Response({"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND)
+                logger.warning(
+                    "Multiple work items match identifier %s-%s in workspace '%s'; "
+                    "returning the most recent match (id=%s). Investigate the duplicate sequence_id.",
+                    project_identifier,
+                    issue_identifier,
+                    slug,
+                    issue.id,
+                )
+
             return Response(
                 IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
                 status=status.HTTP_200_OK,
