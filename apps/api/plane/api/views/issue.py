@@ -89,7 +89,7 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.utils.issue_relation_mapper import get_actual_relation
-from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.app.permissions import ROLE
 from plane.utils.openapi import (
     work_item_docs,
@@ -866,7 +866,21 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
         current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
+        issue_id = issue.id
         issue.delete()
+        webhook_activity.delay(
+            event="issue",
+            verb="deleted",
+            field=None,
+            old_value=None,
+            new_value=None,
+            actor_id=request.user.id,
+            slug=slug,
+            current_site=base_host(request=request, is_app=True),
+            event_id=issue_id,
+            old_identifier=None,
+            new_identifier=None,
+        )
         issue_activity.delay(
             type="issue.activity.deleted",
             requested_data=json.dumps({"issue_id": str(pk)}),

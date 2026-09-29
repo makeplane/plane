@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 import pytest
+from unittest import mock
 from rest_framework import status
 
 from plane.db.models import Issue, Project, ProjectMember, State
@@ -125,3 +126,17 @@ class TestIssueByIdentifier:
 
         assert response.status_code == status.HTTP_200_OK
         assert str(response.data["id"]) == str(issue.id)
+
+
+@pytest.mark.contract
+class TestIssueDeleteWebhook:
+    @pytest.mark.django_db
+    def test_public_api_delete_dispatches_webhook(self, api_key_client, workspace, project, issue):
+        url = f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/issues/{issue.id}/"
+        with mock.patch("plane.api.views.issue.webhook_activity") as mocked_webhook:
+            response = api_key_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        mocked_webhook.delay.assert_called_once()
+        assert mocked_webhook.delay.call_args.kwargs["verb"] == "deleted"
+        assert mocked_webhook.delay.call_args.kwargs["event_id"] == issue.id
