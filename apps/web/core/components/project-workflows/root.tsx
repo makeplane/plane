@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TWorkflowCreatePayload } from "@plane/types";
 // components
-import { WorkflowDetail, WorkflowList } from "@/components/project-workflows";
+import { WorkflowDetail, WorkflowList, WorkflowToggle } from "@/components/project-workflows";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -69,6 +69,27 @@ export const ProjectWorkflowRoot = observer(function ProjectWorkflowRoot(props: 
     }
   );
 
+  // §7.1 — the project-level master switch lives on its own endpoint, so it
+  // is read independently of the workflow list.
+  const { isLoading: isWorkflowToggleLoading } = useSWR(
+    workspaceSlug && projectId ? `PROJECT_WORKFLOW_TOGGLE_${workspaceSlug}_${projectId}` : null,
+    async () => {
+      await workflowStore.fetchWorkflowToggle(workspaceSlug, projectId);
+      return true;
+    },
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      onError: (error: unknown) => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("common.error"),
+          message: getWorkflowErrorMessage(error, t("project_settings.workflows.errors.load_failed")),
+        });
+      },
+    }
+  );
+
   // The nested revision tree is only in the detail payload; load it on demand
   // rather than fetching every workflow up front.
   const handleSelect = async (workflowId: string) => {
@@ -110,11 +131,24 @@ export const ProjectWorkflowRoot = observer(function ProjectWorkflowRoot(props: 
 
   const handleDelete = (workflowId: string) => workflowStore.deleteWorkflow(workspaceSlug, projectId, workflowId);
 
+  const handleToggleProjectWorkflow = async (nextValue: boolean) => {
+    await workflowStore.setWorkflowToggle(workspaceSlug, projectId, nextValue);
+  };
+
   const selectedWorkflow = selectedWorkflowId ? workflowStore.getWorkflowById(selectedWorkflowId) : undefined;
   const isLoading = !workflowStore.fetchedMap[projectId];
 
   return (
     <div className="flex h-full flex-col gap-6">
+      <WorkflowToggle
+        // `undefined` until the read lands — the switch renders off and inert
+        // rather than assuming the project default.
+        isEnabled={workflowStore.workflowEnabledMap[projectId]}
+        isLoading={isWorkflowToggleLoading}
+        isEditable={isEditable}
+        onToggle={handleToggleProjectWorkflow}
+      />
+
       <WorkflowList
         workflows={workflowStore.projectWorkflows}
         typeAssignments={workflowStore.getTypeAssignmentsByProjectId(projectId)}

@@ -106,6 +106,20 @@ export interface IWorkflowTypeAssignment {
 }
 
 // ---------------------------------------------------------------------------
+// Project-level toggle — §7.1, §23.1
+// ---------------------------------------------------------------------------
+
+/**
+ * `GET` / `PATCH .../workflow-toggle/` body. Request and response are the
+ * same shape: the endpoint echoes the persisted `Project.workflow_enabled`
+ * rather than accepting the client's word for it, so the UI must render the
+ * response value and never an optimistic one.
+ */
+export type TProjectWorkflowToggle = {
+  workflow_enabled: boolean;
+};
+
+// ---------------------------------------------------------------------------
 // Write payloads — §17.1, §17.2
 // ---------------------------------------------------------------------------
 

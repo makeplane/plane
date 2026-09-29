@@ -41,6 +41,9 @@ export interface IWorkflowStore {
    */
   flowActorCacheMap: Record<string, IWorkflowFlowActor[]>;
   typeAssignmentMap: Record<string, IWorkflowTypeAssignment[]>;
+  /** §7.1 `Project.workflow_enabled` per project — the project-level master switch. */
+  workflowEnabledMap: Record<string, boolean>;
+  workflowToggleFetchedMap: Record<string, boolean>;
   // computed
   /** Project workflows in §23.1 list order, detail-shaped (revisions included). */
   projectWorkflows: IWorkflowDetail[] | undefined;
@@ -55,6 +58,9 @@ export interface IWorkflowStore {
   fetchProjectWorkflows: (workspaceSlug: string, projectId: string) => Promise<IWorkflow[]>;
   fetchWorkflowDetail: (workspaceSlug: string, projectId: string, workflowId: string) => Promise<IWorkflowDetail>;
   fetchTypeAssignments: (workspaceSlug: string, projectId: string) => Promise<IWorkflowTypeAssignment[]>;
+  // §7.1 project-level toggle
+  fetchWorkflowToggle: (workspaceSlug: string, projectId: string) => Promise<boolean>;
+  setWorkflowToggle: (workspaceSlug: string, projectId: string, workflowEnabled: boolean) => Promise<boolean>;
   // workflow crud
   createWorkflow: (workspaceSlug: string, projectId: string, data: TWorkflowCreatePayload) => Promise<IWorkflowDetail>;
   updateWorkflow: (
@@ -136,6 +142,8 @@ export class WorkflowStore implements IWorkflowStore {
   projectWorkflowIdsMap: Record<string, string[]> = {};
   flowActorCacheMap: Record<string, IWorkflowFlowActor[]> = {};
   typeAssignmentMap: Record<string, IWorkflowTypeAssignment[]> = {};
+  workflowEnabledMap: Record<string, boolean> = {};
+  workflowToggleFetchedMap: Record<string, boolean> = {};
 
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
@@ -145,10 +153,14 @@ export class WorkflowStore implements IWorkflowStore {
       projectWorkflowIdsMap: observable,
       flowActorCacheMap: observable,
       typeAssignmentMap: observable,
+      workflowEnabledMap: observable,
+      workflowToggleFetchedMap: observable,
       projectWorkflows: computed,
       fetchProjectWorkflows: action,
       fetchWorkflowDetail: action,
       fetchTypeAssignments: action,
+      fetchWorkflowToggle: action,
+      setWorkflowToggle: action,
       createWorkflow: action,
       updateWorkflow: action,
       deleteWorkflow: action,
@@ -272,6 +284,31 @@ export class WorkflowStore implements IWorkflowStore {
       this.typeAssignmentMap[projectId] = response;
     });
     return response;
+  };
+
+  // -- §7.1 project-level toggle ------------------------------------------
+
+  fetchWorkflowToggle = async (workspaceSlug: string, projectId: string) => {
+    const response = await this.workflowService.getWorkflowToggle(workspaceSlug, projectId);
+    runInAction(() => {
+      this.workflowEnabledMap[projectId] = response.workflow_enabled;
+      this.workflowToggleFetchedMap[projectId] = true;
+    });
+    return response.workflow_enabled;
+  };
+
+  /**
+   * The stored value is the source of truth: state is written only from the
+   * response, so a rejected write leaves the switch on its previous value
+   * rather than an optimistic guess.
+   */
+  setWorkflowToggle = async (workspaceSlug: string, projectId: string, workflowEnabled: boolean) => {
+    const response = await this.workflowService.setWorkflowToggle(workspaceSlug, projectId, workflowEnabled);
+    runInAction(() => {
+      this.workflowEnabledMap[projectId] = response.workflow_enabled;
+      this.workflowToggleFetchedMap[projectId] = true;
+    });
+    return response.workflow_enabled;
   };
 
   // -- workflow crud ------------------------------------------------------
