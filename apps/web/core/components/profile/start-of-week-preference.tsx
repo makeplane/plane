@@ -35,7 +35,11 @@ export const StartOfWeekPreference = observer(function StartOfWeekPreference(pro
         message: t("profile_ui.first_day_updated"),
       });
     } catch (_error) {
-      setToast({ type: TOAST_TYPE.ERROR, title: t("profile_ui.update_failed"), message: t("profile_ui.try_again_later") });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("profile_ui.update_failed"),
+        message: t("profile_ui.try_again_later"),
+      });
     }
   };
 

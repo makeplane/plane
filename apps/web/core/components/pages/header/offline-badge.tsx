@@ -26,10 +26,7 @@ export const PageOfflineBadge = observer(function PageOfflineBadge({ page }: Pro
   if (!page.isContentEditable || isOnline) return null;
 
   return (
-    <Tooltip
-      tooltipHeading={t("page_ui.offline.heading")}
-      tooltipContent={t("page_ui.offline.description")}
-    >
+    <Tooltip tooltipHeading={t("page_ui.offline.heading")} tooltipContent={t("page_ui.offline.description")}>
       <div className="flex h-7 flex-shrink-0 items-center gap-2 rounded-full bg-layer-1 px-3 py-0.5 text-11 font-medium text-tertiary">
         <span className="size-1.5 flex-shrink-0 rounded-full bg-layer-1" />
         <span>{t("page_ui.offline.label")}</span>

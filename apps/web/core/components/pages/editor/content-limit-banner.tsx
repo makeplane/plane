@@ -21,9 +21,7 @@ export function ContentLimitBanner({ className, onDismiss }: Props) {
         <span className="text-amber-500">
           <TriangleAlert />
         </span>
-        <span className="font-medium">
-          {t("page_ui.content_limit_banner.message")}
-        </span>
+        <span className="font-medium">{t("page_ui.content_limit_banner.message")}</span>
       </div>
       {onDismiss && (
         <button

@@ -14,6 +14,8 @@ type Props = {
 export function PowerKMenuEmptyState({ emptyText }: Props) {
   const { t } = useTranslation();
   return (
-    <div className="px-3 py-8 text-center text-13 text-tertiary">{emptyText ?? t("power_k.search_menu.no_results")}</div>
+    <div className="px-3 py-8 text-center text-13 text-tertiary">
+      {emptyText ?? t("power_k.search_menu.no_results")}
+    </div>
   );
 }

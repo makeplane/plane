@@ -165,9 +165,7 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center">
         <h3 className="text-center text-16 font-semibold">{t("page_ui.not_found.title")}</h3>
-        <p className="mt-3 text-center text-13 text-secondary">
-          {t("page_ui.not_found.description")}
-        </p>
+        <p className="mt-3 text-center text-13 text-secondary">{t("page_ui.not_found.description")}</p>
         <Link
           href={`/${workspaceSlug}/projects/${projectId}/pages`}
           className={cn(getButtonStyling("secondary", "base"), "mt-5")}

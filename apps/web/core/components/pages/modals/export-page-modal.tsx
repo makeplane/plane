@@ -242,7 +242,11 @@ export function ExportPageModal(props: Props) {
                 name="content_variety"
                 render={({ field: { onChange, value } }) => (
                   <CustomSelect
-                    label={value === "everything" ? t("page_ui.export_modal.content_everything") : t("page_ui.export_modal.content_no_images")}
+                    label={
+                      value === "everything"
+                        ? t("page_ui.export_modal.content_everything")
+                        : t("page_ui.export_modal.content_no_images")
+                    }
                     buttonClassName="border-none"
                     value={value}
                     onChange={(val: TContentVariety) => onChange(val)}
