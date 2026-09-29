@@ -22,7 +22,7 @@ with RD-487.
 | 3 | Public REST PATCH `/api/v1/...issues/:id/` (PAT) | `apps/api/plane/api/serializers/issue.py::IssueSerializer.update` | ❌ → ✅ **fixed in RD-487** | Now routes through `TransitionService.transition` |
 | 4 | Public REST POST `/api/v1/...issues/` (PAT create) | `apps/api/plane/api/serializers/issue.py::IssueSerializer.create` | ❌ → ✅ **fixed in RD-487** | Now routes through `TransitionService.validate_creation_state` |
 | 5 | Service token / API token write | shared with surfaces 1–4 | ✅ Yes | `WorkspaceServiceTokenEndpoint` issues a token that authenticates as the same user; same RBAC |
-| 6 | MCP (planned) | n/a — not yet shipped | n/a | Out of scope for RD-487; tracked under P1.x |
+| 6 | MCP (planned, external) | transitively governed — calls hit /api/v1/... which is wired in RD-487 (rows 3–4); no in-repo surface to wire | n/a (server lives outside this repo per `docs/service-access-tokens-spec.md` §15) | Documented; no code change |
 | 7 | Bulk update `BulkUpdateIssuesEndpoint` | `apps/api/plane/app/views/issue/base.py` | ✅ Yes (RD-459) | Verified still wired |
 | 8 | Intake accept / reject | `apps/api/plane/app/views/intake/base.py` | ✅ Yes (RD-459) | Verified still wired |
 | 9 | Importer | `apps/api/plane/app/views/exporter/...` and `app/views/issue/importer/...` | ✅ Yes (RD-459) | Verified still wired |
@@ -73,8 +73,14 @@ gating conditions for the wire paths above to be *safe*:
 
 ## What's still on the runway
 
-- MCP integration is tracked separately; it is the only §34 surface
-  not yet exercised by tests.
+- MCP integration is tracked separately — the server is external
+  (`docs/service-access-tokens-spec.md` §15) and speaks to this app
+  over the public REST `/api/v1/...` surface. §34 is therefore
+  *transitively* satisfied: every state mutation MCP can attempt goes
+  through the same serializer code paths as rows 3–4 above, which
+  are now exercised by the RD-489 PAT-authenticated create+update
+  conformance test in
+  `apps/api/plane/tests/unit/services/workflow_properties/test_transition_integration.py`.
 - The `/api/v1/...` issue view's bulk update path
   (`BulkUpdateIssuesEndpoint`) is intentionally not migrated to the
   public serializer — the bulk endpoint is app-only — but it does
