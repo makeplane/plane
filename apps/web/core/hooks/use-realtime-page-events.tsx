@@ -7,6 +7,7 @@
 import { useCallback, useMemo } from "react";
 // plane imports
 import type { EventToPayloadMap } from "@plane/editor";
+import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // types
 import type { IUserLite } from "@plane/types";
@@ -47,6 +48,7 @@ export const useRealtimePageEvents = ({
   customRealtimeEventHandlers,
   handlers,
 }: UsePageEventsProps) => {
+  const { t } = useTranslation();
   const router = useAppRouter();
   const { removePage, getPageById } = usePageStore(storeType);
 
@@ -58,7 +60,7 @@ export const useRealtimePageEvents = ({
       if (!userId) return "";
       try {
         const userDetails = getUserDetails(userId);
-        return userDetails?.display_name ? ` by ${userDetails.display_name}` : "";
+        return userDetails?.display_name ?? "";
       } catch {
         return "";
       }
@@ -119,8 +121,10 @@ export const useRealtimePageEvents = ({
               if (page.id === pageId && data?.user_id !== currentUser?.id) {
                 setToast({
                   type: TOAST_TYPE.ERROR,
-                  title: "Page deleted",
-                  message: `Page deleted${getUserDisplayText(data.user_id)}`,
+                  title: t("page_ui.realtime.deleted"),
+                  message: getUserDisplayText(data.user_id)
+                    ? t("page_ui.realtime.deleted_by", { name: getUserDisplayText(data.user_id) })
+                    : t("page_ui.realtime.deleted"),
                 });
                 router.push(handlers.getRedirectionLink());
               } else if (page.id === pageId) {
@@ -148,7 +152,7 @@ export const useRealtimePageEvents = ({
             // Show toast notification
             setToast({
               type: TOAST_TYPE.ERROR,
-              title: errorType === "fetch" ? "Failed to load page" : "Failed to save page",
+              title: errorType === "fetch" ? t("page_ui.realtime.load_failed") : t("page_ui.realtime.save_failed"),
               message: errorMessage,
             });
 
@@ -173,7 +177,7 @@ export const useRealtimePageEvents = ({
         ...customRealtimeEventHandlers,
       };
     },
-    [getPageById, removePage, page, currentUser, getUserDisplayText, router, handlers, customRealtimeEventHandlers]
+    [getPageById, removePage, page, currentUser, getUserDisplayText, router, handlers, customRealtimeEventHandlers, t]
   );
 
   // The main function that will be returned from this hook

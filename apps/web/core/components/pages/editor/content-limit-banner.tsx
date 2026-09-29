@@ -5,6 +5,7 @@
  */
 
 import { TriangleAlert } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export function ContentLimitBanner({ className, onDismiss }: Props) {
+  const { t } = useTranslation();
   return (
     <div className={cn("text-sm flex items-center gap-2 border-b border-subtle-1 bg-layer-2 px-4 py-2.5", className)}>
       <div className="mx-auto flex items-center gap-2 text-secondary">
@@ -20,7 +22,7 @@ export function ContentLimitBanner({ className, onDismiss }: Props) {
           <TriangleAlert />
         </span>
         <span className="font-medium">
-          Content limit reached and live sync is off. Create a new page or use nested pages to continue syncing.
+          {t("page_ui.content_limit_banner.message")}
         </span>
       </div>
       {onDismiss && (
@@ -28,7 +30,7 @@ export function ContentLimitBanner({ className, onDismiss }: Props) {
           type="button"
           onClick={onDismiss}
           className="ml-auto text-placeholder hover:text-secondary"
-          aria-label="Dismiss content limit warning"
+          aria-label={t("page_ui.content_limit_banner.dismiss")}
         >
           ✕
         </button>

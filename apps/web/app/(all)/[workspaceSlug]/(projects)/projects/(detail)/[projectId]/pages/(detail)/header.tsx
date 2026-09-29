@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { PageIcon } from "@plane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
@@ -32,6 +33,8 @@ export interface IPagesHeaderProps {
 const storeType = EPageStoreType.PROJECT;
 
 export const PageDetailsHeader = observer(function PageDetailsHeader() {
+  // translation
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   const { workspaceSlug, pageId, projectId } = useParams();
@@ -73,7 +76,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
-                  label="Pages"
+                  label={t("common.pages")}
                   href={`/${workspaceSlug}/projects/${projectId}/pages/`}
                   icon={<PageIcon className="h-4 w-4 text-tertiary" />}
                 />
