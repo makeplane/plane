@@ -186,7 +186,7 @@ class ApprovalService:
                 binding=binding,
                 status=WorkflowApprovalStatus.PENDING,
             )
-            .select_for_update()
+            .select_for_update(of=("self",))
             .first()
         )
         if existing_pending is not None:
@@ -194,6 +194,8 @@ class ApprovalService:
 
         approval = WorkflowApproval.objects.create(
             issue=issue,
+            project=issue.project,
+            workspace=issue.workspace,
             binding=binding,
             flow=flow,
             source_state_id=issue.state_id,
@@ -226,6 +228,19 @@ class ApprovalService:
             approval=approval,
             issue=issue,
             actor_id=actor_id,
+        )
+
+        # §21 — emit a Work Item activity row so the transition
+        # history interleaves with approval request / decision rows
+        # chronologically. The row is persisted in the same atomic
+        # block so a roll-back of the approval also rolls back the
+        # activity entry.
+        ApprovalService._emit_activity(
+            issue=issue,
+            actor_id=actor_id,
+            verb="approval_requested",
+            approval=approval,
+            comment="requested approval on",
         )
 
         logger.info(
@@ -277,13 +292,20 @@ class ApprovalService:
             )
 
         with transaction.atomic():
+            # ``of=("self",)`` — Issue.state / Issue.project / Issue.workspace
+            # are nullable FKs, so the default lock-target set would
+            # include them and Postgres would refuse with "FOR
+            # UPDATE cannot be applied to the nullable side of an
+            # outer join".
             approval = (
-                WorkflowApproval.objects.select_for_update()
+                WorkflowApproval.objects.select_for_update(of=("self",))
                 .select_related(
                     "issue",
                     "issue__state",
                     "issue__project",
                     "flow",
+                    "flow__target_state__state",
+                    "flow__reject_state__state",
                     "binding",
                 )
                 .filter(pk=approval_id)
@@ -308,12 +330,20 @@ class ApprovalService:
                 if existing is not None:
                     # Replay: the outcome must be the original one,
                     # not whatever the live approval status now says.
+                    # ``target_state`` / ``reject_state`` are
+                    # WorkflowState rows; project through ``.state_id``
+                    # so the lookup hits the underlying State. Use
+                    # ``all_state_objects`` because the reject
+                    # destination can be a triage state which the
+                    # default ``objects`` manager hides.
                     target_state_id = (
-                        str(flow.target_state_id)
+                        str(flow.target_state.state_id)
                         if existing.decision == WorkflowApprovalDecisionType.APPROVE.value
-                        else str(flow.reject_state_id)
+                        else str(flow.reject_state.state_id)
                     )
-                    target_state = State.objects.filter(pk=target_state_id).first()
+                    target_state = State.all_state_objects.filter(
+                        pk=target_state_id
+                    ).first()
                     return DecisionResult(
                         approval_id=str(approval.id),
                         decision=existing.decision,
@@ -353,8 +383,16 @@ class ApprovalService:
 
             # §10 — determine destination state. Approve targets the
             # flow's target_state; reject targets the reject_state.
+            # ``flow.target_state`` / ``flow.reject_state`` are
+            # ``WorkflowState`` rows so we reach the underlying State
+            # via ``.state_id`` (NOT the WorkflowState PK).
             if decision == WorkflowApprovalDecisionType.APPROVE.value:
-                destination_state_id = str(flow.target_state_id)
+                # select_related so we don't lazy-load an extra row.
+                if flow.target_state_id is None or flow.target_state is None:
+                    raise WorkflowFlowValidation(
+                        detail="Approval flow is missing a target_state.",
+                    )
+                destination_state_id = str(flow.target_state.state_id)
                 terminal_status = WorkflowApprovalStatus.APPROVED
             else:
                 if flow.reject_state_id is None:
@@ -362,14 +400,25 @@ class ApprovalService:
                     raise WorkflowFlowValidation(
                         detail="Approval flow is missing a reject_state.",
                     )
-                destination_state_id = str(flow.reject_state_id)
+                if flow.reject_state is None:
+                    raise WorkflowFlowValidation(
+                        detail="Approval flow's reject_state row is missing.",
+                    )
+                destination_state_id = str(flow.reject_state.state_id)
                 terminal_status = WorkflowApprovalStatus.REJECTED
 
             # Apply state mutation transactionally so §11.2 step 3
             # cannot leave the approval resolved but the issue in the
             # old state. The Issue row is locked via
             # ``select_for_update`` through the joined query above.
-            destination_state = State.objects.filter(pk=destination_state_id).first()
+            # ``State.objects`` excludes triage states by design
+            # (``StateManager.get_queryset``), but a reject can land
+            # an item back in a triage bucket — so we read through
+            # ``all_state_objects`` to include every valid
+            # destination.
+            destination_state = (
+                State.all_state_objects.filter(pk=destination_state_id).first()
+            )
             if destination_state is None:
                 raise WorkflowNotFound(
                     detail=f"Destination state {destination_state_id} not found.",
@@ -494,6 +543,35 @@ class ApprovalService:
                 actor_id=actor_id,
             )
 
+            # §21 — emit a Work Item activity row so the resolution
+            # is recorded alongside the state transition. The verb
+            # follows the spec naming ("approval_approved" /
+            # "approval_rejected"); old/new carry the destination
+            # state name so the UI history view can render the move
+            # without re-resolving the state id.
+            ApprovalService._emit_activity(
+                issue=issue,
+                actor_id=actor_id,
+                verb=(
+                    "approval_approved"
+                    if decision == WorkflowApprovalDecisionType.APPROVE.value
+                    else "approval_rejected"
+                ),
+                approval=approval,
+                old_value=(
+                    State.all_state_objects.filter(pk=previous_state_id).first().name
+                    if previous_state_id
+                    else None
+                ),
+                new_value=issue.state.name if issue.state else None,
+                comment=(
+                    "approved and moved to"
+                    if decision == WorkflowApprovalDecisionType.APPROVE.value
+                    else "rejected and moved to"
+                ),
+                extra_comment=comment or "",
+            )
+
         return DecisionResult(
             approval_id=str(approval.id),
             decision=decision,
@@ -526,6 +604,28 @@ class ApprovalService:
             WorkflowApproval.objects.filter(pk=approval_id, issue_id=issue_id)
             .select_related("flow", "binding", "source_state", "issue")
             .first()
+        )
+
+    @staticmethod
+    def list_approvals_for_issue(issue_id) -> list[WorkflowApproval]:
+        """§21 — return every approval bound to ``issue_id``.
+
+        Newest first so the activity UI can render the history in
+        reverse-chronological order. Includes resolved rows so a
+        reload can replay prior decisions even after the issue has
+        moved on.
+        """
+        return list(
+            WorkflowApproval.objects.filter(issue_id=issue_id)
+            .select_related(
+                "flow",
+                "flow__target_state__state",
+                "flow__reject_state",
+                "source_state",
+                "issue",
+                "binding",
+            )
+            .order_by("-created_at")
         )
 
     @staticmethod
@@ -798,6 +898,86 @@ class ApprovalService:
                 "workflow.approval_resolution_notification_failed",
                 exc_info=True,
                 extra={"approval_id": str(approval.id)},
+            )
+
+    @staticmethod
+    def _emit_activity(
+        *,
+        issue: Issue,
+        actor_id: Optional[str],
+        verb: str,
+        approval: WorkflowApproval,
+        comment: str,
+        old_value: Optional[str] = None,
+        new_value: Optional[str] = None,
+        extra_comment: str = "",
+    ) -> None:
+        """§21 — emit a Work Item activity row for an approval event.
+
+        Approval requests and decisions must surface in the same
+        activity stream as state transitions so the UI can render a
+        single chronological history without consulting a second
+        table. The row is created in the caller's transaction; the
+        caller is responsible for the surrounding ``atomic`` block.
+
+        Field semantics:
+
+        - ``verb`` — one of ``approval_requested`` / ``approval_approved``
+          / ``approval_rejected``; the UI maps these to its history
+          panel.
+        - ``field`` — pinned to ``"approval"`` so the row groups with
+          other workflow events.
+        - ``old_value`` / ``new_value`` — the source / destination
+          state name; ``None`` for the request verb (the issue has
+          not moved yet).
+        - ``comment`` — short user-facing verb phrase; ``extra_comment``
+          is appended as the human-decision comment when present.
+        """
+        try:
+            from plane.db.models import IssueActivity
+
+            full_comment = comment
+            if extra_comment:
+                # Append the decision comment so the activity row
+                # carries both the verb phrase and the user's note.
+                full_comment = f"{comment}\n\n{extra_comment}" if comment else extra_comment
+            # ``target_state`` / ``reject_state`` are WorkflowState
+            # rows; the FE history renderer expects State IDs so we
+            # project through ``.state_id``. ``source_state_id`` is
+            # already a State FK so it stays as-is.
+            new_identifier = None
+            if verb == "approval_approved":
+                target = approval.flow.target_state
+                new_identifier = str(target.state_id) if target else None
+            elif verb == "approval_rejected":
+                reject = approval.flow.reject_state
+                new_identifier = str(reject.state_id) if reject else None
+            IssueActivity.objects.create(
+                issue=issue,
+                project=issue.project,
+                workspace=issue.workspace,
+                actor_id=actor_id,
+                verb=verb,
+                field="approval",
+                old_value=old_value,
+                new_value=new_value,
+                old_identifier=approval.source_state_id,
+                new_identifier=new_identifier,
+                comment=full_comment,
+            )
+        except Exception:  # pragma: no cover - defensive
+            # Activity emission must never break the approval
+            # transaction — the audit row in WorkflowApprovalDecision
+            # remains the source of truth, the activity row is a
+            # convenience for the UI.
+            logger.warning(
+                "workflow.approval_activity_emit_failed",
+                exc_info=True,
+                extra={
+                    "approval_id": str(approval.id),
+                    "issue_id": str(issue.id),
+                    "verb": verb,
+                },
             )
 
 

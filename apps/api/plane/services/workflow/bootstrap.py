@@ -122,11 +122,15 @@ def _create_default_workflow(
     # One WorkflowState per project State. We include triage states
     # so existing flow graphs survive; the ``allow_new_work_items``
     # bit is what controls whether creation can land in a state.
+    # NOTE: ``bulk_create`` bypasses ``Model.save`` so the
+    # ``ProjectBaseModel.save`` workspace-from-project hook does not
+    # fire. We set ``workspace`` explicitly on each row.
     workflow_states = []
     for state in states:
         workflow_states.append(
             WorkflowState(
                 project=project,
+                workspace=project.workspace,
                 revision=revision,
                 state=state,
                 sequence=state.sequence if state.sequence is not None else 65535,
@@ -154,6 +158,7 @@ def _create_default_workflow(
     # Build the full cross-product of transition flows so enabling
     # workflows on a populated project does not break any existing
     # user. Admins can prune transitions to tighten the process.
+    # Same ``bulk_create`` caveat as above: populate ``workspace``.
     ws_by_state_id = {
         str(ws.state_id): ws for ws in WorkflowState.objects.filter(revision=revision)
     }
@@ -162,6 +167,7 @@ def _create_default_workflow(
         flows_to_create.append(
             WorkflowFlow(
                 project=project,
+                workspace=project.workspace,
                 revision=revision,
                 source_state=src,
                 target_state=dst,
@@ -186,6 +192,7 @@ def _create_default_workflow(
     actors_to_create = [
         WorkflowFlowActor(
             project=project,
+            workspace=project.workspace,
             flow=flow,
             actor_type=WorkflowFlowActorType.ALL_PROJECT_MEMBERS,
             config={},

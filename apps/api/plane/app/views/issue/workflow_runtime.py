@@ -44,6 +44,36 @@ def _get_issue_for_request(slug, project_id, issue_id) -> Issue | None:
     )
 
 
+def _is_project_admin(user, slug, project_id) -> bool:
+    """Return ``True`` iff ``user`` is a project admin for ``project_id``.
+
+    §23.3 — admins see the full approval-snapshot list. We treat both
+    workspace-level admins (override path) and project-level admins as
+    "admin" here; the existing ``allow_permission`` decorator already
+    covers the auth-gate, this helper just tells the service whether to
+    redact ``approver_user_ids``.
+    """
+    if user is None or getattr(user, "id", None) is None:
+        return False
+    from plane.db.models import ProjectMember, WorkspaceMember
+
+    project_member = ProjectMember.objects.filter(
+        member=user,
+        workspace__slug=slug,
+        project_id=project_id,
+        role=ROLE.ADMIN.value,
+        is_active=True,
+    ).first()
+    if project_member is not None:
+        return True
+    return WorkspaceMember.objects.filter(
+        member=user,
+        workspace__slug=slug,
+        role=ROLE.ADMIN.value,
+        is_active=True,
+    ).exists()
+
+
 class IssueWorkflowEndpoint(BaseAPIView):
     """§17.3 — ``GET`` bound workflow + revision snapshot."""
 
@@ -105,9 +135,15 @@ class IssueWorkflowActionsEndpoint(BaseAPIView):
                 {"error": "Issue not found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
+        # §23.3 — admins see the full approver list; everyone else
+        # gets ``None`` unless they are on the snapshotted approver
+        # list themselves. We resolve the actor's project role so the
+        # service does not have to query ProjectMember itself.
+        is_admin = _is_project_admin(request.user, slug, project_id)
         actions = TransitionService.compute_allowed_actions(
             issue=issue,
             actor_id=str(request.user.id),
+            is_admin=is_admin,
         )
         return Response(actions.to_dict(), status=status.HTTP_200_OK)
 

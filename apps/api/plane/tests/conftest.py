@@ -35,9 +35,19 @@ def user_data():
 
 @pytest.fixture
 def create_user(db, user_data):
-    """Create and return a user instance"""
+    """Create and return a user instance.
+
+    ``User.username`` is ``unique=True`` and the model does not
+    auto-populate it. Without an explicit value the first test in a
+    run gets the empty string and every subsequent test collides on
+    the unique constraint. A per-call uuid suffix keeps the fixture
+    reusable across the suite.
+    """
+    import uuid
+
     user = User.objects.create(
         email=user_data["email"],
+        username=f"test-{uuid.uuid4().hex[:12]}",
         first_name=user_data["first_name"],
         last_name=user_data["last_name"],
     )

@@ -36,6 +36,7 @@ from plane.app.views import (
     IssueWorkflowEndpoint,
     IssueApprovalApproveEndpoint,
     IssueApprovalDetailEndpoint,
+    IssueApprovalListEndpoint,
     IssueApprovalRejectEndpoint,
 )
 
@@ -300,8 +301,14 @@ urlpatterns = [
         IssueTransitionEndpoint.as_view(),
         name="issue-transitions",
     ),
-    # §17.3 — approval runtime endpoints. Three URLs per approval:
-    # the detail getter, and the approve/reject POSTs.
+    # §17.3 — approval runtime endpoints. Per-approval URLs plus a
+    # per-issue history listing for §21 (so the activity UI can show
+    # the full approval chronology after reload).
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/approvals/",
+        IssueApprovalListEndpoint.as_view(),
+        name="issue-approval-list",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/approvals/<uuid:approval_id>/",
         IssueApprovalDetailEndpoint.as_view(),
