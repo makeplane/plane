@@ -123,7 +123,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name='workspaceproperty',
-            index=models.Index(fields=['workspace', 'is_active'], name='workspace_properties_active_idx'),
+            index=models.Index(fields=['workspace', 'is_active'], name='wf_workspace_props_active_idx'),
         ),
         migrations.AddConstraint(
             model_name='workspaceproperty',
@@ -131,7 +131,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name='issuetypeproperty',
-            index=models.Index(fields=['issue_type', 'is_required'], name='issue_type_properties_lookup_idx'),
+            index=models.Index(fields=['issue_type', 'is_required'], name='wf_issue_type_props_lookup_idx'),
         ),
         migrations.AddConstraint(
             model_name='issuetypeproperty',
@@ -139,7 +139,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name='issuepropertyvalue',
-            index=models.Index(fields=['issue'], name='issue_property_values_issue_idx'),
+            index=models.Index(fields=['issue'], name='wf_issue_prop_val_issue_idx'),
         ),
         migrations.AddConstraint(
             model_name='issuepropertyvalue',

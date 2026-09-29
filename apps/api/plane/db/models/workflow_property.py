@@ -138,7 +138,7 @@ class WorkspaceProperty(BaseModel):
             # (and filter by type for the issue-type editor).
             models.Index(
                 fields=["workspace", "is_active"],
-                name="workspace_properties_active_idx",
+                name="wf_workspace_props_active_idx",
             ),
         ]
         constraints = [
@@ -200,7 +200,7 @@ class IssueTypeProperty(ProjectBaseModel):
             # single query (the form renderer does this).
             models.Index(
                 fields=["issue_type", "is_required"],
-                name="issue_type_properties_lookup_idx",
+                name="wf_issue_type_props_lookup_idx",
             ),
         ]
         constraints = [
@@ -259,7 +259,7 @@ class IssuePropertyValue(ProjectBaseModel):
             # an issue in one query.
             models.Index(
                 fields=["issue"],
-                name="issue_property_values_issue_idx",
+                name="wf_issue_prop_val_issue_idx",
             ),
         ]
         constraints = [
