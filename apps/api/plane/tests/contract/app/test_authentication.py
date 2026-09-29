@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
 from django.test import Client
+from rest_framework.test import APIClient
 from django.core.exceptions import ValidationError
 from unittest.mock import patch
 
@@ -738,6 +739,92 @@ class TestBotUserLoginBlocked:
         assert "BOT_USER_LOGIN_FORBIDDEN" not in response.url
         assert "error_code" not in response.url
         assert "_auth_user_id" in django_client.session
+
+
+@pytest.mark.contract
+class TestPublicAuthEndpointsWithStaleSession:
+    """Pre-login endpoints must still answer when the caller holds a valid session.
+
+    The web auth form calls these without a CSRF token. In
+    ``apps/web/core/services/auth.service.ts`` ``emailCheck`` and
+    ``generateUniqueCode`` both post with ``{ headers: {} }``, and
+    ``sendResetPasswordLink`` passes no config at all.
+
+    DRF's ``SessionAuthentication`` only enforces CSRF when a session cookie
+    actually authenticates a user, and ``permission_classes = [AllowAny]``
+    relaxes permissions without skipping authentication. So the anonymous path
+    returned 200 while the same call from a logged-in browser was rejected with
+    ``403 {"detail": "CSRF Failed: CSRF token missing."}`` — the first step of the
+    sign-in form failed whenever a session cookie rode along.
+
+    These endpoints are public lookups keyed on the submitted email and never
+    read ``request.user``, so they must not be session-authenticated at all.
+    """
+
+    EMAIL = "stale-session@plane.so"
+
+    # Literal paths: the URL names are reused between the app and space variants,
+    # so reverse() would be ambiguous.
+    ENDPOINTS = [
+        "/auth/email-check/",
+        "/auth/spaces/email-check/",
+        "/auth/magic-generate/",
+        "/auth/spaces/magic-generate/",
+        "/auth/forgot-password/",
+        "/auth/spaces/forgot-password/",
+    ]
+
+    @pytest.fixture
+    def csrf_client(self):
+        """An APIClient that performs real CSRF checks (the default skips them)."""
+        return APIClient(enforce_csrf_checks=True)
+
+    @pytest.fixture
+    def setup_user(self, db):
+        user = User.objects.create(email=self.EMAIL, is_active=True)
+        user.set_password("user@123")
+        user.save()
+        return user
+
+    @pytest.mark.django_db
+    def test_anonymous_email_check_is_allowed(self, api_client, setup_instance):
+        """Control: the anonymous call already returns 200 — the failure needs a session."""
+        response = api_client.post("/auth/email-check/", {"email": "nobody@plane.so"}, format="json")
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["existing"] is False
+
+    @pytest.mark.django_db
+    def test_email_check_with_valid_session_is_allowed(self, csrf_client, setup_user, setup_instance):
+        """Regression: a logged-in browser on the sign-in form gets 200, not 403."""
+        csrf_client.force_login(setup_user)
+
+        response = csrf_client.post("/auth/email-check/", {"email": self.EMAIL}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK, f"blocked for a logged-in caller: {response.data}"
+        assert response.data["existing"] is True
+        assert response.data["status"] == "CREDENTIAL"
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("endpoint", ENDPOINTS)
+    def test_no_public_auth_endpoint_403s_with_valid_session(
+        self, endpoint, csrf_client, setup_user, setup_instance
+    ):
+        """No pre-login endpoint may answer 403 just because a session cookie is present.
+
+        The specific per-endpoint status still varies (magic-generate needs SMTP,
+        forgot-password needs a configured host), so assert the invariant that
+        matters: none of them is rejected by CSRF.
+        """
+        csrf_client.force_login(setup_user)
+
+        with (
+            patch("plane.bgtasks.magic_link_code_task.magic_link.delay"),
+            patch("plane.bgtasks.forgot_password_task.forgot_password.delay"),
+        ):
+            response = csrf_client.post(endpoint, {"email": self.EMAIL}, format="json")
+
+        assert response.status_code != status.HTTP_403_FORBIDDEN, f"{endpoint} rejected a logged-in caller"
+        assert "CSRF" not in str(response.data), f"{endpoint} rejected a logged-in caller"
 
 
 @pytest.mark.contract

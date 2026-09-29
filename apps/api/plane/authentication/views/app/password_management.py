@@ -45,6 +45,11 @@ def generate_password_token(user):
 class ForgotPasswordEndpoint(APIView):
     permission_classes = [AllowAny]
 
+    # Public pre-login endpoint: the target user is derived from the submitted
+    # email, not from the session. Session authentication would make DRF enforce
+    # CSRF on a request the web client sends without a CSRF header.
+    authentication_classes = []
+
     throttle_classes = [AuthenticationThrottle]
 
     def post(self, request):

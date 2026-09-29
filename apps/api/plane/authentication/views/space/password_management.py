@@ -45,6 +45,9 @@ def generate_password_token(user):
 class ForgotPasswordSpaceEndpoint(APIView):
     permission_classes = [AllowAny]
 
+    # See ForgotPasswordEndpoint: public pre-login endpoint, no session dependency.
+    authentication_classes = []
+
     throttle_classes = [AuthenticationThrottle]
 
     def post(self, request):

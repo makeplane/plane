@@ -29,6 +29,10 @@ from plane.license.utils.instance_value import get_configuration_value
 class EmailCheckSpaceEndpoint(APIView):
     permission_classes = [AllowAny]
 
+    # See EmailCheckEndpoint: public pre-login lookup, no session dependency, so
+    # no session authentication (and therefore no CSRF enforcement).
+    authentication_classes = []
+
     throttle_classes = [AuthenticationThrottle]
 
     def post(self, request):

@@ -35,6 +35,9 @@ from plane.utils.path_validator import get_safe_redirect_url, validate_next_path
 class MagicGenerateSpaceEndpoint(APIView):
     permission_classes = [AllowAny]
 
+    # See MagicGenerateEndpoint: public pre-login endpoint, no session dependency.
+    authentication_classes = []
+
     throttle_classes = [AuthenticationThrottle]
 
     def post(self, request):

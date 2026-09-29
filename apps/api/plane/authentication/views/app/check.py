@@ -29,6 +29,14 @@ from plane.license.utils.instance_value import get_configuration_value
 class EmailCheckEndpoint(APIView):
     permission_classes = [AllowAny]
 
+    # Pre-login lookup keyed only on the submitted email — it never reads
+    # ``request.user``. Leaving DRF's default SessionAuthentication in place made
+    # it CSRF-enforcing for any caller who happened to hold a valid session
+    # cookie, so the sign-in form's first step 403'd with "CSRF token missing"
+    # for a logged-in browser (the web client posts without a CSRF header).
+    # Dropping authentication keeps the endpoint public and CSRF-exempt.
+    authentication_classes = []
+
     throttle_classes = [AuthenticationThrottle]
 
     def post(self, request):

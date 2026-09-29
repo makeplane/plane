@@ -36,6 +36,11 @@ from plane.utils.path_validator import get_safe_redirect_url
 class MagicGenerateEndpoint(APIView):
     permission_classes = [AllowAny]
 
+    # Public pre-login endpoint: it mails a code to the submitted address and
+    # never reads ``request.user``. Session authentication here would make DRF
+    # enforce CSRF on a request the web client sends without a CSRF header.
+    authentication_classes = []
+
     throttle_classes = [AuthenticationThrottle]
 
     def post(self, request):
