@@ -154,7 +154,7 @@ export const useWorkItemCommentOperations = (
           });
           return res;
         } catch {
-          throw new Error("Asset duplication failed. Please try again later.");
+          throw new Error(t("issue_ui.asset_duplication_failed"));
         }
       },
       addCommentReaction: async (commentId, reaction) => {
@@ -164,13 +164,13 @@ export const useWorkItemCommentOperations = (
           setToast({
             title: t("toast.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: "Reaction created successfully",
+            message: t("updates.reaction.create.success.message"),
           });
         } catch {
           setToast({
             title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
-            message: "Reaction creation failed",
+            message: t("updates.reaction.create.error.message"),
           });
         }
       },
@@ -181,13 +181,13 @@ export const useWorkItemCommentOperations = (
           setToast({
             title: t("toast.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: "Reaction removed successfully",
+            message: t("updates.reaction.remove.success.message"),
           });
         } catch {
           setToast({
             title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
-            message: "Reaction remove failed",
+            message: t("updates.reaction.remove.error.message"),
           });
         }
       },
