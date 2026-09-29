@@ -7,6 +7,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
@@ -27,16 +28,16 @@ type Props = {
 };
 
 const PROJECT_ROLE_OPTIONS: IRoleOption[] = [
-  { value: String(EUserProjectRoles.ADMIN), label: "Admin" },
-  { value: String(EUserProjectRoles.MEMBER), label: "Member" },
-  { value: String(EUserProjectRoles.GUEST), label: "Guest" },
+  { value: String(EUserProjectRoles.ADMIN), label: "role_details.admin.title" },
+  { value: String(EUserProjectRoles.MEMBER), label: "role_details.member.title" },
+  { value: String(EUserProjectRoles.GUEST), label: "role_details.guest.title" },
 ];
 
 const WORKSPACE_ROLE_OPTIONS: IRoleOption[] = [
-  { value: String(EUserWorkspaceRoles.ADMIN), label: "Admin" },
-  { value: String(EUserWorkspaceRoles.MEMBER), label: "Member" },
-  { value: String(EUserWorkspaceRoles.GUEST), label: "Guest" },
-  { value: "suspended", label: "Suspended" },
+  { value: String(EUserWorkspaceRoles.ADMIN), label: "role_details.admin.title" },
+  { value: String(EUserWorkspaceRoles.MEMBER), label: "role_details.member.title" },
+  { value: String(EUserWorkspaceRoles.GUEST), label: "role_details.guest.title" },
+  { value: "suspended", label: "project_components.shared.suspended" },
 ];
 
 // Role filter group component
@@ -49,6 +50,8 @@ const RoleFilterGroup = observer(function RoleFilterGroup({
   handleUpdate: (role: string) => void;
   memberType: "project" | "workspace";
 }) {
+  // translation
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(true);
   const appliedFiltersCount = appliedFilters?.length ?? 0;
   const roleOptions = memberType === "project" ? PROJECT_ROLE_OPTIONS : WORKSPACE_ROLE_OPTIONS;
@@ -56,7 +59,7 @@ const RoleFilterGroup = observer(function RoleFilterGroup({
   return (
     <div className="space-y-2">
       <FilterHeader
-        title={`Roles${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("project_components.shared.roles")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={isExpanded}
         handleIsPreviewEnabled={() => setIsExpanded(!isExpanded)}
       />
@@ -69,7 +72,7 @@ const RoleFilterGroup = observer(function RoleFilterGroup({
               <FilterOption
                 key={`role-${role.value}`}
                 isChecked={isSelected}
-                title={role.label}
+                title={t(role.label)}
                 onClick={() => handleUpdate(role.value)}
               />
             );
@@ -94,6 +97,8 @@ export const MemberListFilters = observer(function MemberListFilters(props: Prop
 // Dropdown component for member list filters
 export const MemberListFiltersDropdown = observer(function MemberListFiltersDropdown(props: Props) {
   const { appliedFilters, handleUpdate, memberType } = props;
+  // translation
+  const { t } = useTranslation();
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
@@ -102,7 +107,7 @@ export const MemberListFiltersDropdown = observer(function MemberListFiltersDrop
       customButton={
         <div className="relative">
           <Button variant="secondary" size="lg" className="flex items-center gap-2">
-            <span>Filters</span>
+            <span>{t("common.filters")}</span>
             <ChevronDownIcon className="h-3 w-3" />
           </Button>
           {appliedFiltersCount > 0 && (

@@ -41,7 +41,7 @@ export const StateCreate = observer(function StateCreate(props: TStateCreate) {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("toast.success"),
-        message: "State created successfully.",
+        message: t("project_components.states.created"),
       });
       handleClose();
       return { status: "success" };
@@ -51,14 +51,14 @@ export const StateCreate = observer(function StateCreate(props: TStateCreate) {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
-          message: "State with that name already exists. Please try again with another name.",
+          message: t("project_components.states.create_name_exists"),
         });
         return { status: "already_exists" };
       } else {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
-          message: errorStatus.data.error ?? "State could not be created. Please try again.",
+          message: errorStatus.data.error ?? t("project_components.states.create_error"),
         });
         return { status: "error" };
       }

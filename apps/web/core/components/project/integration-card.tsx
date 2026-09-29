@@ -27,11 +27,11 @@ type Props = {
 const integrationDetails: { [key: string]: any } = {
   github: {
     logo: GithubLogo,
-    description: "Select GitHub repository to enable sync.",
+    description: "project_components.integration_card.github_description",
   },
   slack: {
     logo: SlackLogo,
-    description: "Get regular updates and control which notification you want to receive.",
+    description: "project_components.integration_card.slack_description",
   },
 };
 
@@ -80,7 +80,7 @@ export function IntegrationCard({ integration }: Props) {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
-          message: "Repository could not be synced with the project. Please try again.",
+          message: t("project_components.integration_card.sync_error"),
         });
       });
   };
@@ -100,7 +100,7 @@ export function IntegrationCard({ integration }: Props) {
             <div>
               <h3 className="flex items-center gap-4 text-13 font-medium">{integration.integration_detail.title}</h3>
               <p className="text-13 tracking-tight text-secondary">
-                {integrationDetails[integration.integration_detail.provider].description}
+                {t(integrationDetails[integration.integration_detail.provider].description)}
               </p>
             </div>
           </div>
@@ -115,7 +115,7 @@ export function IntegrationCard({ integration }: Props) {
               label={
                 syncedGithubRepository && syncedGithubRepository.length > 0
                   ? `${syncedGithubRepository[0].repo_detail.owner}/${syncedGithubRepository[0].repo_detail.name}`
-                  : "Select Repository"
+                  : t("project_components.integration_card.select_repository")
               }
               onChange={handleChange}
             />

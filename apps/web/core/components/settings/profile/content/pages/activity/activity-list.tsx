@@ -10,6 +10,7 @@ import Link from "next/link";
 import useSWR from "swr";
 // icons
 import { History, MessageSquare } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // hooks
 import { ActivityIcon, ActivityMessage } from "@/components/core/activity";
@@ -33,6 +34,8 @@ type Props = {
 
 export const ActivityProfileSettingsList = observer(function ProfileActivityListPage(props: Props) {
   const { cursor, perPage, updateResultsCount, updateTotalPages, updateEmptyState } = props;
+  // translation
+  const { t } = useTranslation();
   // store hooks
   const { data: currentUser } = useUserProfile();
 
@@ -166,7 +169,7 @@ export const ActivityProfileSettingsList = observer(function ProfileActivityList
                               >
                                 <span className="text-gray font-medium">
                                   {currentUser?.id === activityItem.actor_detail.id
-                                    ? "You"
+                                    ? t("you")
                                     : activityItem.actor_detail.display_name}
                                 </span>
                               </Link>

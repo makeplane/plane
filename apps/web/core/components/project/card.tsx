@@ -81,10 +81,10 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
 
     const addToFavoritePromise = addProjectToFavorites(workspaceSlug.toString(), project.id);
     setPromiseToast(addToFavoritePromise, {
-      loading: "Adding project to favorites...",
+      loading: t("project_components.card.adding_to_favorites"),
       success: {
         title: t("toast.success"),
-        message: () => "Project added to favorites.",
+        message: () => t("project_components.card.added_to_favorites"),
         actionItems: () => {
           if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
           return <></>;
@@ -92,7 +92,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
       },
       error: {
         title: t("toast.error"),
-        message: () => "Couldn't add the project to favorites. Please try again.",
+        message: () => t("couldnt_add_the_project_to_favorites"),
       },
     });
   };
@@ -102,14 +102,14 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
 
     const removeFromFavoritePromise = removeProjectFromFavorites(workspaceSlug.toString(), project.id);
     setPromiseToast(removeFromFavoritePromise, {
-      loading: "Removing project from favorites...",
+      loading: t("project_components.card.removing_from_favorites"),
       success: {
         title: t("toast.success"),
-        message: () => "Project removed from favorites.",
+        message: () => t("project_components.card.removed_from_favorites"),
       },
       error: {
         title: t("toast.error"),
-        message: () => "Couldn't remove the project from favorites. Please try again.",
+        message: () => t("couldnt_remove_the_project_from_favorites"),
       },
     });
   };
@@ -119,8 +119,8 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
     copyUrlToClipboard(projectLink).then(() =>
       setToast({
         type: TOAST_TYPE.INFO,
-        title: "Link Copied!",
-        message: "Project link copied to clipboard.",
+        title: t("common.link_copied"),
+        message: t("project_components.card.link_copied_message"),
       })
     );
   const handleOpenInNewTab = () => window.open(`/${projectLink}`, "_blank");
@@ -129,42 +129,42 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
     {
       key: "settings",
       action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`),
-      title: "Settings",
+      title: t("settings"),
       icon: Settings,
       shouldRender: !isArchived && (hasAdminRole || hasMemberRole),
     },
     {
       key: "join",
       action: () => setJoinProjectModal(true),
-      title: "Join",
+      title: t("common.join"),
       icon: UserPlus,
       shouldRender: !isMemberOfProject && !isArchived,
     },
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
-      title: "Open in new tab",
+      title: t("open_in_new_tab"),
       icon: NewTabIcon,
       shouldRender: !isMemberOfProject && !isArchived,
     },
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copy link",
+      title: t("copy_link"),
       icon: LinkIcon,
       shouldRender: !isArchived,
     },
     {
       key: "restore",
       action: () => setRestoreProject(true),
-      title: "Restore",
+      title: t("restore"),
       icon: ArchiveRestoreIcon,
       shouldRender: isArchived && hasAdminRole,
     },
     {
       key: "delete",
       action: () => setDeleteProjectModal(true),
-      title: "Delete",
+      title: t("delete"),
       icon: TrashIcon,
       shouldRender: isArchived && hasAdminRole,
     },
@@ -277,15 +277,17 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
           <p className="line-clamp-2 text-13 break-words text-tertiary">
             {project.description && project.description.trim() !== ""
               ? project.description
-              : `Created on ${renderFormattedDate(project.created_at)}`}
+              : t("project_components.card.created_on", { date: renderFormattedDate(project.created_at) })}
           </p>
           <div className="item-center flex justify-between">
             <div className="flex items-center justify-center gap-2">
               <Tooltip
                 isMobile={isMobile}
-                tooltipHeading="Members"
+                tooltipHeading={t("members")}
                 tooltipContent={
-                  project.members && project.members.length > 0 ? `${project.members.length} Members` : "No Member"
+                  project.members && project.members.length > 0
+                    ? t("member", { count: project.members.length })
+                    : t("project_components.card.no_member")
                 }
                 position="top"
               >
@@ -302,10 +304,10 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </AvatarGroup>
                   </div>
                 ) : (
-                  <span className="text-13 text-placeholder italic">No Member Yet</span>
+                  <span className="text-13 text-placeholder italic">{t("project_components.card.no_member_yet")}</span>
                 )}
               </Tooltip>
-              {isArchived && <div className="text-11 font-medium text-placeholder">Archived</div>}
+              {isArchived && <div className="text-11 font-medium text-placeholder">{t("project_components.shared.archived")}</div>}
             </div>
             {isArchived ? (
               hasAdminRole && (
@@ -320,7 +322,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                   >
                     <div className="flex items-center gap-1.5">
                       <ArchiveRestoreIcon className="h-3.5 w-3.5" />
-                      Restore
+                      {t("restore")}
                     </div>
                   </div>
                   <div
@@ -351,7 +353,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                   ) : (
                     <span className="flex items-center gap-1 text-13 text-placeholder">
                       <CheckIcon className="h-3.5 w-3.5" />
-                      Joined
+                      {t("project_components.shared.joined")}
                     </span>
                   ))}
                 {!isMemberOfProject && (
@@ -365,7 +367,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                         setJoinProjectModal(true);
                       }}
                     >
-                      Join
+                      {t("common.join")}
                     </Button>
                   </div>
                 )}

@@ -71,28 +71,28 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: t("toast.error"),
-                message: "Something went wrong please try again later.",
+                message: t("something_went_wrong_please_try_again"),
               });
             });
         } else {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
-            message: "Please confirm leaving the project by typing the 'Leave Project'.",
+            message: t("project_components.leave_modal.confirm_phrase_error", { phrase: "Leave Project" }),
           });
         }
       } else {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
-          message: "Please enter the project name as shown in the description.",
+          message: t("project_components.leave_modal.project_name_error"),
         });
       }
     } else {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: "Please fill all fields.",
+        message: t("project_components.leave_modal.fill_all_fields"),
       });
     }
   };
@@ -105,27 +105,25 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
             <AlertTriangleIcon className="h-6 w-6 text-danger-primary" aria-hidden="true" />
           </span>
           <span className="flex items-center justify-start">
-            <h3 className="text-18 font-medium 2xl:text-20">Leave Project</h3>
+            <h3 className="text-18 font-medium 2xl:text-20">{t("project_components.leave_modal.title")}</h3>
           </span>
         </div>
 
         <span>
           <p className="text-13 leading-7 text-secondary">
-            Are you sure you want to leave the project -
-            <span className="font-medium text-primary">{` "${project?.name}" `}</span>? All of the work items associated
-            with you will become inaccessible.
+            {t("project_components.leave_modal.description", { name: project?.name })}
           </p>
         </span>
 
         <div className="text-secondary">
           <p className="text-13 break-words">
-            Enter the project name <span className="font-medium text-primary">{project?.name}</span> to continue:
+            {t("project_components.delete_modal.enter_project_name", { name: project?.name })}
           </p>
           <Controller
             control={control}
             name="projectName"
             rules={{
-              required: "Label title is required",
+              required: t("project_components.leave_modal.project_name_required"),
             }}
             render={({ field: { value, onChange, ref } }) => (
               <Input
@@ -136,7 +134,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
                 onChange={onChange}
                 ref={ref}
                 hasError={Boolean(errors.projectName)}
-                placeholder="Enter project name"
+                placeholder={t("project_components.leave_modal.project_name_placeholder")}
                 className="mt-2 w-full"
               />
             )}
@@ -145,7 +143,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
 
         <div className="text-secondary">
           <p className="text-13">
-            To confirm, type <span className="font-medium text-primary">Leave Project</span> below:
+            {t("project_components.delete_modal.confirm_type", { phrase: "Leave Project" })}
           </p>
           <Controller
             control={control}
@@ -159,7 +157,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
                 onChange={onChange}
                 ref={ref}
                 hasError={Boolean(errors.confirmLeave)}
-                placeholder="Enter 'leave project'"
+                placeholder={t("project_components.delete_modal.confirm_placeholder", { phrase: "leave project" })}
                 className="mt-2 w-full"
               />
             )}
@@ -167,10 +165,10 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
         </div>
         <div className="flex justify-end gap-2">
           <Button variant="secondary" size="lg" onClick={handleClose}>
-            Cancel
+            {t("cancel")}
           </Button>
           <Button variant="error-fill" size="lg" type="submit" loading={isSubmitting}>
-            {isSubmitting ? "Leaving..." : "Leave Project"}
+            {isSubmitting ? t("project_components.shared.leaving") : t("project_components.leave_modal.title")}
           </Button>
         </div>
       </form>

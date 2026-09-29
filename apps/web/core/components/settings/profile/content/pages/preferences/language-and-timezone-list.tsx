@@ -33,13 +33,13 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
         await updateCurrentUser({ user_timezone: value });
         setToast({
           title: t("toast.success"),
-          message: "Timezone updated successfully",
+          message: t("project_components.profile.timezone_updated"),
           type: TOAST_TYPE.SUCCESS,
         });
       } catch (_error) {
         setToast({
           title: t("toast.error"),
-          message: "Failed to update timezone",
+          message: t("project_components.profile.timezone_error"),
           type: TOAST_TYPE.ERROR,
         });
       }
@@ -50,13 +50,13 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
         await updateUserProfile({ language: value });
         setToast({
           title: t("toast.success"),
-          message: "Language updated successfully",
+          message: t("project_components.profile.language_updated"),
           type: TOAST_TYPE.SUCCESS,
         });
       } catch (_error) {
         setToast({
           title: t("toast.error"),
-          message: "Failed to update language",
+          message: t("project_components.profile.language_error"),
           type: TOAST_TYPE.ERROR,
         });
       }
@@ -81,7 +81,7 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
           control={
             <CustomSelect
               value={profile?.language}
-              label={profile?.language ? getLanguageLabel(profile?.language) : "Select a language"}
+              label={profile?.language ? getLanguageLabel(profile?.language) : t("project_components.profile.select_language")}
               onChange={handleLanguageChange}
               buttonClassName="border border-subtle-1"
               className="rounded-md"
@@ -98,8 +98,8 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
         />
         <StartOfWeekPreference
           option={{
-            title: "First day of the week",
-            description: "This will change how all calendars in your app look.",
+            title: t("project_components.profile.first_day_of_week"),
+            description: t("project_components.profile.first_day_of_week_description"),
           }}
         />
       </div>

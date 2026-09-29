@@ -6,6 +6,7 @@
 
 import Link from "next/link";
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
 import { EPillVariant, Pill, EPillSize } from "@plane/propel/pill";
 import { ToggleSwitch } from "@plane/ui";
@@ -22,6 +23,8 @@ type Props = {
 
 export function ProjectFeatureToggle(props: Props) {
   const { workspaceSlug, projectId, featureItem, value, handleSubmit, disabled } = props;
+  // translation
+  const { t } = useTranslation();
   return featureItem?.href ? (
     <Link href={joinUrlPath(workspaceSlug, "settings", "projects", projectId, "features", featureItem?.href)}>
       <div className="flex items-center gap-2">
@@ -30,7 +33,7 @@ export function ProjectFeatureToggle(props: Props) {
           size={EPillSize.SM}
           className="rounded-lg border-none"
         >
-          {value ? "Enabled" : "Disabled"}
+          {value ? t("common.enabled") : t("common.disabled")}
         </Pill>
         <ChevronRightIcon className="h-4 w-4 text-tertiary" />
       </div>
