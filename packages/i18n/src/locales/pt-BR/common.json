@@ -872,5 +872,116 @@
       "description": "Exporte itens de trabalho para um arquivo JSON.",
       "short_description": "Exportar como JSON"
     }
+  },
+  "onboarding": {
+    "skip": "Pular",
+    "profile": {
+      "title": "Crie seu perfil.",
+      "description": "É assim que você aparecerá no Plane.",
+      "choose_image": "Escolher imagem",
+      "upload_image": "Enviar imagem",
+      "change_image": "Alterar imagem",
+      "name_placeholder": "Digite seu nome completo",
+      "first_name_required": "O nome é obrigatório",
+      "last_name_required": "O sobrenome é obrigatório",
+      "first_name_max_length": "O nome deve ter no máximo 50 caracteres.",
+      "last_name_max_length": "O sobrenome deve ter no máximo 50 caracteres.",
+      "name_max_length": "O nome deve ter no máximo 50 caracteres.",
+      "first_name_placeholder": "Wilbur",
+      "last_name_placeholder": "Wright",
+      "new_password_placeholder": "Nova senha...",
+      "role_question": "Qual é a sua função? Escolha uma.",
+      "domain_question": "Qual é a sua área de atuação? Escolha uma ou mais.",
+      "marketing_consent": "Concordo em receber comunicações de marketing do Plane",
+      "passwords_do_not_match": "As senhas não coincidem",
+      "passwords_match": "As senhas coincidem",
+      "seniority_levels": {
+        "individual_contributor": "Contribuidor individual",
+        "senior_leader": "Liderança sênior",
+        "manager": "Gerente",
+        "executive": "Executivo",
+        "freelancer": "Freelancer",
+        "student": "Estudante"
+      },
+      "domains": {
+        "engineering": "Engenharia",
+        "product": "Produto",
+        "marketing": "Marketing",
+        "sales": "Vendas",
+        "operations": "Operações",
+        "legal": "Jurídico",
+        "finance": "Finanças",
+        "human_resources": "Recursos Humanos",
+        "project": "Projeto",
+        "other": "Outro"
+      },
+      "toast": {
+        "profile_setup_completed": "Configuração do perfil concluída!",
+        "profile_setup_failed": "Falha na configuração do perfil. Tente novamente!",
+        "user_details_update_failed": "Falha ao atualizar os dados do usuário. Tente novamente!"
+      }
+    },
+    "role": {
+      "title": "Qual é a sua função?",
+      "description": "Vamos configurar o Plane para o seu jeito de trabalhar.",
+      "select_one": "Selecione uma",
+      "options": {
+        "product_manager": "Gerente de Produto",
+        "engineering_manager": "Gerente de Engenharia",
+        "designer": "Designer",
+        "developer": "Desenvolvedor",
+        "founder_executive": "Fundador/Executivo",
+        "operations_manager": "Gerente de Operações",
+        "others": "Outros"
+      }
+    },
+    "usecase": {
+      "title": "O que traz você ao Plane?",
+      "description": "Conte-nos seus objetivos e o tamanho da sua equipe.",
+      "select_multiple": "Selecione uma ou mais",
+      "select_at_least_one": "Selecione pelo menos uma opção"
+    },
+    "workspace": {
+      "invited_title": "Você foi convidado!",
+      "invited_description": "Aceite os convites para colaborar com sua equipe.",
+      "continue_to_workspace": "Continuar para o workspace",
+      "create_own": "Crie seu próprio workspace",
+      "no_invitations_found": "Nenhum convite encontrado",
+      "join_or_create_title": "Aceitar convites ou criar um workspace",
+      "all_work_unified": "Todo o seu trabalho, unificado.",
+      "name_placeholder": "Digite o nome do workspace",
+      "create_new": "Criar novo workspace",
+      "join_existing": "Entrar em um workspace existente",
+      "join_invited_workspaces": "Quero entrar nos workspaces para os quais fui convidado",
+      "creation_restricted_message": "Parece que você não tem convites para nenhum workspace e o administrador da sua instância restringiu a criação de novos workspaces. Peça a um proprietário ou administrador de workspace que convide você primeiro e volte a esta tela para participar."
+    },
+    "team": {
+      "invite_teammates": "Convide seus colegas de equipe",
+      "invite_teammates_description": "O trabalho no Plane rende mais em equipe. Convide-os agora para aproveitar todo o potencial do Plane.",
+      "add_another": "Adicionar outro",
+      "do_it_later": "Farei isso depois",
+      "invalid_email": "E-mail inválido",
+      "invalid_email_hint": "Isso não parece um endereço de e-mail.",
+      "toast": {
+        "invite_success_message": "Convites enviados com sucesso."
+      }
+    },
+    "switch_account": {
+      "title": "Trocar de conta",
+      "switching": "Trocando...",
+      "description_prefix": "Se você se cadastrou com",
+      "description_suffix": "sem querer, pode trocar para outra conta por aqui.",
+      "wrong_email": "E-mail errado?",
+      "toast": {
+        "sign_out_failed": "Falha ao sair. Tente novamente."
+      }
+    },
+    "step_indicator": "{current} de {total} etapas",
+    "finish": {
+      "toast": {
+        "title": "Falha",
+        "message": "Falha ao concluir a integração. Tente novamente mais tarde."
+      }
+    }
   }
 }

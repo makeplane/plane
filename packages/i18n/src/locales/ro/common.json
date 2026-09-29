@@ -872,5 +872,116 @@
       "description": "Exportă activitățile într-un fișier JSON.",
       "short_description": "Exportă ca JSON"
     }
+  },
+  "onboarding": {
+    "skip": "Omite",
+    "profile": {
+      "title": "Creează-ți profilul.",
+      "description": "Așa vei apărea în Plane.",
+      "choose_image": "Alege imaginea",
+      "upload_image": "Încarcă imaginea",
+      "change_image": "Schimbă imaginea",
+      "name_placeholder": "Introdu numele complet",
+      "first_name_required": "Prenumele este obligatoriu",
+      "last_name_required": "Numele de familie este obligatoriu",
+      "first_name_max_length": "Prenumele trebuie să aibă maximum 50 de caractere.",
+      "last_name_max_length": "Numele de familie trebuie să aibă maximum 50 de caractere.",
+      "name_max_length": "Numele trebuie să aibă maximum 50 de caractere.",
+      "first_name_placeholder": "Wilbur",
+      "last_name_placeholder": "Wright",
+      "new_password_placeholder": "Parolă nouă...",
+      "role_question": "Ce rol ai? Alege unul.",
+      "domain_question": "Care este domeniul tău de expertiză? Alege unul sau mai multe.",
+      "marketing_consent": "Sunt de acord să primesc comunicări de marketing de la Plane",
+      "passwords_do_not_match": "Parolele nu coincid",
+      "passwords_match": "Parolele coincid",
+      "seniority_levels": {
+        "individual_contributor": "Contributor individual",
+        "senior_leader": "Lider senior",
+        "manager": "Manager",
+        "executive": "Director executiv",
+        "freelancer": "Freelancer",
+        "student": "Student"
+      },
+      "domains": {
+        "engineering": "Inginerie",
+        "product": "Produs",
+        "marketing": "Marketing",
+        "sales": "Vânzări",
+        "operations": "Operațiuni",
+        "legal": "Juridic",
+        "finance": "Finanțe",
+        "human_resources": "Resurse umane",
+        "project": "Proiect",
+        "other": "Altele"
+      },
+      "toast": {
+        "profile_setup_completed": "Configurarea profilului a fost finalizată!",
+        "profile_setup_failed": "Configurarea profilului a eșuat. Încearcă din nou!",
+        "user_details_update_failed": "Actualizarea datelor utilizatorului a eșuat. Încearcă din nou!"
+      }
+    },
+    "role": {
+      "title": "Ce rol ai?",
+      "description": "Hai să configurăm Plane după modul tău de lucru.",
+      "select_one": "Alege unul",
+      "options": {
+        "product_manager": "Product Manager",
+        "engineering_manager": "Engineering Manager",
+        "designer": "Designer",
+        "developer": "Dezvoltator",
+        "founder_executive": "Fondator/Director executiv",
+        "operations_manager": "Manager de operațiuni",
+        "others": "Altele"
+      }
+    },
+    "usecase": {
+      "title": "Ce te aduce în Plane?",
+      "description": "Spune-ne obiectivele și dimensiunea echipei tale.",
+      "select_multiple": "Alege unul sau mai multe",
+      "select_at_least_one": "Selectează cel puțin o opțiune"
+    },
+    "workspace": {
+      "invited_title": "Ai fost invitat!",
+      "invited_description": "Acceptă invitațiile pentru a colabora cu echipa ta.",
+      "continue_to_workspace": "Continuă către spațiul de lucru",
+      "create_own": "Creează-ți propriul spațiu de lucru",
+      "no_invitations_found": "Nu s-au găsit invitații",
+      "join_or_create_title": "Acceptă invitații sau creează un spațiu de lucru",
+      "all_work_unified": "Toată munca ta, unificată.",
+      "name_placeholder": "Introdu numele spațiului de lucru",
+      "create_new": "Creează un spațiu de lucru nou",
+      "join_existing": "Alătură-te unui spațiu de lucru existent",
+      "join_invited_workspaces": "Vreau să mă alătur spațiilor de lucru la care am fost invitat",
+      "creation_restricted_message": "Se pare că nu ai invitații la niciun spațiu de lucru, iar administratorul instanței a restricționat crearea de noi spații de lucru. Cere mai întâi unui proprietar sau administrator al unui spațiu de lucru să te invite, apoi revino pe acest ecran pentru a te alătura."
+    },
+    "team": {
+      "invite_teammates": "Invită-ți colegii de echipă",
+      "invite_teammates_description": "Munca în Plane merge cel mai bine în echipă. Invită-i acum pentru a folosi Plane la adevăratul potențial.",
+      "add_another": "Adaugă altul",
+      "do_it_later": "Voi face asta mai târziu",
+      "invalid_email": "Adresă de e-mail invalidă",
+      "invalid_email_hint": "Aceasta nu pare a fi o adresă de e-mail.",
+      "toast": {
+        "invite_success_message": "Invitațiile au fost trimise cu succes."
+      }
+    },
+    "switch_account": {
+      "title": "Schimbă contul",
+      "switching": "Se schimbă...",
+      "description_prefix": "Dacă te-ai înregistrat cu",
+      "description_suffix": "din greșeală, poți trece aici la un alt cont.",
+      "wrong_email": "Adresă de e-mail greșită?",
+      "toast": {
+        "sign_out_failed": "Deconectarea a eșuat. Încearcă din nou."
+      }
+    },
+    "step_indicator": "{current} din {total} pași",
+    "finish": {
+      "toast": {
+        "title": "Eșec",
+        "message": "Finalizarea onboarding-ului a eșuat. Încearcă din nou mai târziu."
+      }
+    }
   }
 }

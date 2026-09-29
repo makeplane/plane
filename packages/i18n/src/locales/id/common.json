@@ -872,5 +872,116 @@
       "description": "Ekspor item kerja ke file JSON.",
       "short_description": "Ekspor sebagai json"
     }
+  },
+  "onboarding": {
+    "skip": "Lewati",
+    "profile": {
+      "title": "Buat profil Anda.",
+      "description": "Beginilah Anda akan ditampilkan di Plane.",
+      "choose_image": "Pilih gambar",
+      "upload_image": "Unggah gambar",
+      "change_image": "Ubah gambar",
+      "name_placeholder": "Masukkan nama lengkap Anda",
+      "first_name_required": "Nama depan wajib diisi",
+      "last_name_required": "Nama belakang wajib diisi",
+      "first_name_max_length": "Nama depan maksimal 50 karakter.",
+      "last_name_max_length": "Nama belakang maksimal 50 karakter.",
+      "name_max_length": "Nama maksimal 50 karakter.",
+      "first_name_placeholder": "Budi",
+      "last_name_placeholder": "Santoso",
+      "new_password_placeholder": "Kata sandi baru...",
+      "role_question": "Anda bekerja dengan peran apa? Pilih satu.",
+      "domain_question": "Apa bidang keahlian Anda? Pilih satu atau lebih.",
+      "marketing_consent": "Saya setuju menerima komunikasi pemasaran dari Plane",
+      "passwords_do_not_match": "Kata sandi tidak cocok",
+      "passwords_match": "Kata sandi cocok",
+      "seniority_levels": {
+        "individual_contributor": "Kontributor individu",
+        "senior_leader": "Pemimpin senior",
+        "manager": "Manajer",
+        "executive": "Eksekutif",
+        "freelancer": "Freelancer",
+        "student": "Pelajar"
+      },
+      "domains": {
+        "engineering": "Teknik",
+        "product": "Produk",
+        "marketing": "Pemasaran",
+        "sales": "Penjualan",
+        "operations": "Operasional",
+        "legal": "Hukum",
+        "finance": "Keuangan",
+        "human_resources": "Sumber daya manusia",
+        "project": "Proyek",
+        "other": "Lainnya"
+      },
+      "toast": {
+        "profile_setup_completed": "Penyiapan profil selesai!",
+        "profile_setup_failed": "Penyiapan profil gagal. Silakan coba lagi!",
+        "user_details_update_failed": "Pembaruan detail pengguna gagal. Silakan coba lagi!"
+      }
+    },
+    "role": {
+      "title": "Apa peran Anda?",
+      "description": "Mari siapkan Plane sesuai cara kerja Anda.",
+      "select_one": "Pilih satu",
+      "options": {
+        "product_manager": "Manajer Produk",
+        "engineering_manager": "Manajer Teknik",
+        "designer": "Desainer",
+        "developer": "Developer",
+        "founder_executive": "Pendiri/Eksekutif",
+        "operations_manager": "Manajer Operasional",
+        "others": "Lainnya"
+      }
+    },
+    "usecase": {
+      "title": "Apa yang membawa Anda ke Plane?",
+      "description": "Ceritakan tujuan dan ukuran tim Anda.",
+      "select_multiple": "Pilih satu atau lebih",
+      "select_at_least_one": "Silakan pilih setidaknya satu opsi"
+    },
+    "workspace": {
+      "invited_title": "Anda diundang!",
+      "invited_description": "Terima undangan untuk berkolaborasi dengan tim Anda.",
+      "continue_to_workspace": "Lanjut ke ruang kerja",
+      "create_own": "Buat ruang kerja Anda sendiri",
+      "no_invitations_found": "Tidak ada undangan ditemukan",
+      "join_or_create_title": "Gabung lewat undangan atau buat ruang kerja",
+      "all_work_unified": "Semua pekerjaan Anda — terpadu.",
+      "name_placeholder": "Masukkan nama ruang kerja",
+      "create_new": "Buat ruang kerja baru",
+      "join_existing": "Gabung ke ruang kerja yang ada",
+      "join_invited_workspaces": "Saya ingin bergabung ke ruang kerja yang mengundang saya",
+      "creation_restricted_message": "Anda tampaknya tidak memiliki undangan ke ruang kerja mana pun dan admin instance Anda telah membatasi pembuatan ruang kerja baru. Mintalah pemilik atau admin ruang kerja untuk mengundang Anda terlebih dahulu, lalu kembali ke layar ini untuk bergabung."
+    },
+    "team": {
+      "invite_teammates": "Undang rekan tim Anda",
+      "invite_teammates_description": "Bekerja di Plane paling baik bersama tim Anda. Undang mereka sekarang untuk memaksimalkan Plane.",
+      "add_another": "Tambah lagi",
+      "do_it_later": "Nanti saja",
+      "invalid_email": "Email tidak valid",
+      "invalid_email_hint": "Itu tidak terlihat seperti alamat email.",
+      "toast": {
+        "invite_success_message": "Undangan berhasil dikirim."
+      }
+    },
+    "switch_account": {
+      "title": "Ganti akun",
+      "switching": "Mengganti...",
+      "description_prefix": "Jika Anda tidak sengaja mendaftar melalui",
+      "description_suffix": "Anda dapat beralih ke akun lain dari sini.",
+      "wrong_email": "Alamat email salah?",
+      "toast": {
+        "sign_out_failed": "Gagal keluar. Silakan coba lagi."
+      }
+    },
+    "step_indicator": "{current} dari {total} langkah",
+    "finish": {
+      "toast": {
+        "title": "Gagal",
+        "message": "Gagal menyelesaikan onboarding. Silakan coba lagi nanti."
+      }
+    }
   }
 }

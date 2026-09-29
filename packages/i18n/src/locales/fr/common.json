@@ -872,5 +872,116 @@
       "description": "Exportez les éléments de travail vers un fichier JSON.",
       "short_description": "Exporter en json"
     }
+  },
+  "onboarding": {
+    "skip": "Passer",
+    "profile": {
+      "title": "Créez votre profil.",
+      "description": "C’est ainsi que vous apparaîtrez dans Plane.",
+      "choose_image": "Choisir une image",
+      "upload_image": "Téléverser une image",
+      "change_image": "Changer l’image",
+      "name_placeholder": "Saisissez votre nom complet",
+      "first_name_required": "Le prénom est obligatoire",
+      "last_name_required": "Le nom est obligatoire",
+      "first_name_max_length": "Le prénom ne doit pas dépasser 50 caractères.",
+      "last_name_max_length": "Le nom ne doit pas dépasser 50 caractères.",
+      "name_max_length": "Le nom ne doit pas dépasser 50 caractères.",
+      "first_name_placeholder": "Jean",
+      "last_name_placeholder": "Dupont",
+      "new_password_placeholder": "Nouveau mot de passe...",
+      "role_question": "Quel rôle occupez-vous ? Choisissez-en un.",
+      "domain_question": "Quel est votre domaine d’expertise ? Choisissez-en un ou plusieurs.",
+      "marketing_consent": "J’accepte de recevoir les communications marketing de Plane",
+      "passwords_do_not_match": "Les mots de passe ne correspondent pas",
+      "passwords_match": "Les mots de passe correspondent",
+      "seniority_levels": {
+        "individual_contributor": "Contributeur individuel",
+        "senior_leader": "Cadre dirigeant",
+        "manager": "Manager",
+        "executive": "Dirigeant",
+        "freelancer": "Indépendant",
+        "student": "Étudiant"
+      },
+      "domains": {
+        "engineering": "Ingénierie",
+        "product": "Produit",
+        "marketing": "Marketing",
+        "sales": "Ventes",
+        "operations": "Opérations",
+        "legal": "Juridique",
+        "finance": "Finance",
+        "human_resources": "Ressources humaines",
+        "project": "Projet",
+        "other": "Autre"
+      },
+      "toast": {
+        "profile_setup_completed": "Configuration du profil terminée !",
+        "profile_setup_failed": "Échec de la configuration du profil. Veuillez réessayer !",
+        "user_details_update_failed": "Échec de la mise à jour des informations de l’utilisateur. Veuillez réessayer !"
+      }
+    },
+    "role": {
+      "title": "Quel est votre rôle ?",
+      "description": "Configurons Plane selon votre façon de travailler.",
+      "select_one": "Choisissez-en un",
+      "options": {
+        "product_manager": "Product Manager",
+        "engineering_manager": "Responsable ingénierie",
+        "designer": "Designer",
+        "developer": "Développeur",
+        "founder_executive": "Fondateur/Dirigeant",
+        "operations_manager": "Responsable des opérations",
+        "others": "Autres"
+      }
+    },
+    "usecase": {
+      "title": "Qu’est-ce qui vous amène sur Plane ?",
+      "description": "Parlez-nous de vos objectifs et de la taille de votre équipe.",
+      "select_multiple": "Choisissez-en un ou plusieurs",
+      "select_at_least_one": "Veuillez sélectionner au moins une option"
+    },
+    "workspace": {
+      "invited_title": "Vous êtes invité !",
+      "invited_description": "Acceptez les invitations pour collaborer avec votre équipe.",
+      "continue_to_workspace": "Continuer vers l’espace de travail",
+      "create_own": "Créer votre propre espace de travail",
+      "no_invitations_found": "Aucune invitation trouvée",
+      "join_or_create_title": "Rejoignez des invitations ou créez un espace de travail",
+      "all_work_unified": "Tout votre travail — unifié.",
+      "name_placeholder": "Saisissez le nom de l’espace de travail",
+      "create_new": "Créer un nouvel espace de travail",
+      "join_existing": "Rejoindre un espace de travail existant",
+      "join_invited_workspaces": "Je veux rejoindre les espaces de travail auxquels j’ai été invité",
+      "creation_restricted_message": "Vous ne semblez avoir aucune invitation à un espace de travail et l’administrateur de votre instance a restreint la création de nouveaux espaces de travail. Demandez à un propriétaire ou à un administrateur d’espace de travail de vous inviter, puis revenez sur cet écran pour le rejoindre."
+    },
+    "team": {
+      "invite_teammates": "Invitez vos coéquipiers",
+      "invite_teammates_description": "Le travail dans Plane est plus efficace en équipe. Invitez-les dès maintenant pour tirer pleinement parti de Plane.",
+      "add_another": "Ajouter un autre",
+      "do_it_later": "Je le ferai plus tard",
+      "invalid_email": "Adresse e-mail invalide",
+      "invalid_email_hint": "Cela ne ressemble pas à une adresse e-mail.",
+      "toast": {
+        "invite_success_message": "Invitations envoyées avec succès."
+      }
+    },
+    "switch_account": {
+      "title": "Changer de compte",
+      "switching": "Changement en cours...",
+      "description_prefix": "Si vous vous êtes inscrit avec",
+      "description_suffix": "par erreur, vous pouvez passer à un autre compte ici.",
+      "wrong_email": "Mauvaise adresse e-mail ?",
+      "toast": {
+        "sign_out_failed": "Échec de la déconnexion. Veuillez réessayer."
+      }
+    },
+    "step_indicator": "{current} sur {total} étapes",
+    "finish": {
+      "toast": {
+        "title": "Échec",
+        "message": "Échec de la finalisation de l’intégration. Veuillez réessayer plus tard."
+      }
+    }
   }
 }

@@ -872,5 +872,116 @@
       "description": "Esporta elementi di lavoro in un file JSON.",
       "short_description": "Esporta come JSON"
     }
+  },
+  "onboarding": {
+    "skip": "Salta",
+    "profile": {
+      "title": "Crea il tuo profilo.",
+      "description": "Così apparirai in Plane.",
+      "choose_image": "Scegli immagine",
+      "upload_image": "Carica immagine",
+      "change_image": "Cambia immagine",
+      "name_placeholder": "Inserisci il tuo nome completo",
+      "first_name_required": "Il nome è obbligatorio",
+      "last_name_required": "Il cognome è obbligatorio",
+      "first_name_max_length": "Il nome deve contenere al massimo 50 caratteri.",
+      "last_name_max_length": "Il cognome deve contenere al massimo 50 caratteri.",
+      "name_max_length": "Il nome deve contenere al massimo 50 caratteri.",
+      "first_name_placeholder": "Mario",
+      "last_name_placeholder": "Rossi",
+      "new_password_placeholder": "Nuova password...",
+      "role_question": "Con quale ruolo lavori? Scegline uno.",
+      "domain_question": "Qual è la tua area di competenza? Scegline una o più.",
+      "marketing_consent": "Accetto le comunicazioni di marketing di Plane",
+      "passwords_do_not_match": "Le password non corrispondono",
+      "passwords_match": "Le password corrispondono",
+      "seniority_levels": {
+        "individual_contributor": "Collaboratore individuale",
+        "senior_leader": "Senior Leader",
+        "manager": "Manager",
+        "executive": "Dirigente",
+        "freelancer": "Freelance",
+        "student": "Studente"
+      },
+      "domains": {
+        "engineering": "Ingegneria",
+        "product": "Prodotto",
+        "marketing": "Marketing",
+        "sales": "Vendite",
+        "operations": "Operations",
+        "legal": "Legale",
+        "finance": "Finanza",
+        "human_resources": "Risorse umane",
+        "project": "Progetto",
+        "other": "Altro"
+      },
+      "toast": {
+        "profile_setup_completed": "Configurazione del profilo completata!",
+        "profile_setup_failed": "Configurazione del profilo non riuscita. Riprova!",
+        "user_details_update_failed": "Aggiornamento dei dati utente non riuscito. Riprova!"
+      }
+    },
+    "role": {
+      "title": "Qual è il tuo ruolo?",
+      "description": "Configuriamo Plane in base al tuo modo di lavorare.",
+      "select_one": "Scegline uno",
+      "options": {
+        "product_manager": "Product Manager",
+        "engineering_manager": "Engineering Manager",
+        "designer": "Designer",
+        "developer": "Sviluppatore",
+        "founder_executive": "Fondatore/Dirigente",
+        "operations_manager": "Operations Manager",
+        "others": "Altri"
+      }
+    },
+    "usecase": {
+      "title": "Cosa ti porta su Plane?",
+      "description": "Raccontaci i tuoi obiettivi e la dimensione del tuo team.",
+      "select_multiple": "Scegline uno o più",
+      "select_at_least_one": "Seleziona almeno un'opzione"
+    },
+    "workspace": {
+      "invited_title": "Sei stato invitato!",
+      "invited_description": "Accetta gli inviti per collaborare con il tuo team.",
+      "continue_to_workspace": "Continua allo spazio di lavoro",
+      "create_own": "Crea il tuo spazio di lavoro",
+      "no_invitations_found": "Nessun invito trovato",
+      "join_or_create_title": "Accetta inviti o crea uno spazio di lavoro",
+      "all_work_unified": "Tutto il tuo lavoro, unificato.",
+      "name_placeholder": "Inserisci il nome dello spazio di lavoro",
+      "create_new": "Crea nuovo spazio di lavoro",
+      "join_existing": "Unisciti a uno spazio di lavoro esistente",
+      "join_invited_workspaces": "Voglio unirmi agli spazi di lavoro a cui sono stato invitato",
+      "creation_restricted_message": "Sembra che tu non abbia inviti a nessuno spazio di lavoro e che l'amministratore della tua istanza abbia limitato la creazione di nuovi spazi di lavoro. Chiedi a un proprietario o amministratore di uno spazio di lavoro di invitarti, poi torna a questa schermata per unirti."
+    },
+    "team": {
+      "invite_teammates": "Invita i tuoi colleghi",
+      "invite_teammates_description": "Lavorare in Plane funziona meglio con il tuo team. Invitali ora per sfruttare Plane al massimo.",
+      "add_another": "Aggiungine un altro",
+      "do_it_later": "Lo farò più tardi",
+      "invalid_email": "Indirizzo e-mail non valido",
+      "invalid_email_hint": "Questo non sembra un indirizzo e-mail.",
+      "toast": {
+        "invite_success_message": "Inviti inviati con successo."
+      }
+    },
+    "switch_account": {
+      "title": "Cambia account",
+      "switching": "Cambio in corso...",
+      "description_prefix": "Se ti sei registrato con",
+      "description_suffix": "involontariamente, puoi passare a un altro account da qui.",
+      "wrong_email": "Indirizzo e-mail sbagliato?",
+      "toast": {
+        "sign_out_failed": "Disconnessione non riuscita. Riprova."
+      }
+    },
+    "step_indicator": "{current} di {total} passaggi",
+    "finish": {
+      "toast": {
+        "title": "Non riuscito",
+        "message": "Impossibile completare l'onboarding. Riprova più tardi."
+      }
+    }
   }
 }

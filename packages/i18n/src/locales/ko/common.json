@@ -872,5 +872,116 @@
       "description": "작업 항목을 JSON 파일로 내보냅니다.",
       "short_description": "JSON으로 내보내기"
     }
+  },
+  "onboarding": {
+    "skip": "건너뛰기",
+    "profile": {
+      "title": "프로필 만들기",
+      "description": "Plane에서 표시될 이름입니다.",
+      "choose_image": "이미지 선택",
+      "upload_image": "이미지 업로드",
+      "change_image": "이미지 변경",
+      "name_placeholder": "전체 이름을 입력하세요",
+      "first_name_required": "이름은 필수입니다",
+      "last_name_required": "성은 필수입니다",
+      "first_name_max_length": "이름은 50자 이내여야 합니다.",
+      "last_name_max_length": "성은 50자 이내여야 합니다.",
+      "name_max_length": "이름은 50자 이내여야 합니다.",
+      "first_name_placeholder": "Wilbur",
+      "last_name_placeholder": "Wright",
+      "new_password_placeholder": "새 비밀번호...",
+      "role_question": "어떤 역할로 일하고 계신가요? 하나를 선택하세요.",
+      "domain_question": "전문 분야는 무엇인가요? 하나 이상 선택하세요.",
+      "marketing_consent": "Plane 마케팅 커뮤니케이션 수신에 동의합니다",
+      "passwords_do_not_match": "비밀번호가 일치하지 않습니다",
+      "passwords_match": "비밀번호가 일치합니다",
+      "seniority_levels": {
+        "individual_contributor": "개인 기여자",
+        "senior_leader": "시니어 리더",
+        "manager": "매니저",
+        "executive": "임원",
+        "freelancer": "프리랜서",
+        "student": "학생"
+      },
+      "domains": {
+        "engineering": "엔지니어링",
+        "product": "제품",
+        "marketing": "마케팅",
+        "sales": "영업",
+        "operations": "운영",
+        "legal": "법무",
+        "finance": "재무",
+        "human_resources": "인사",
+        "project": "프로젝트",
+        "other": "기타"
+      },
+      "toast": {
+        "profile_setup_completed": "프로필 설정이 완료되었습니다!",
+        "profile_setup_failed": "프로필 설정에 실패했습니다. 다시 시도해 주세요!",
+        "user_details_update_failed": "사용자 정보 업데이트에 실패했습니다. 다시 시도해 주세요!"
+      }
+    },
+    "role": {
+      "title": "어떤 역할을 맡고 계신가요?",
+      "description": "업무 방식에 맞게 Plane을 설정해 보세요.",
+      "select_one": "하나 선택",
+      "options": {
+        "product_manager": "프로덕트 매니저",
+        "engineering_manager": "엔지니어링 매니저",
+        "designer": "디자이너",
+        "developer": "개발자",
+        "founder_executive": "창업자/임원",
+        "operations_manager": "운영 매니저",
+        "others": "기타"
+      }
+    },
+    "usecase": {
+      "title": "Plane을 사용하시려는 이유는 무엇인가요?",
+      "description": "목표와 팀 규모를 알려 주세요.",
+      "select_multiple": "하나 이상 선택",
+      "select_at_least_one": "옵션을 하나 이상 선택해 주세요"
+    },
+    "workspace": {
+      "invited_title": "초대받았습니다!",
+      "invited_description": "초대를 수락하고 팀과 협업하세요.",
+      "continue_to_workspace": "워크스페이스로 계속",
+      "create_own": "나만의 워크스페이스 만들기",
+      "no_invitations_found": "초대를 찾을 수 없습니다",
+      "join_or_create_title": "초대에 참여하거나 워크스페이스 만들기",
+      "all_work_unified": "모든 업무를 하나로.",
+      "name_placeholder": "워크스페이스 이름을 입력하세요",
+      "create_new": "새 워크스페이스 만들기",
+      "join_existing": "기존 워크스페이스 참여",
+      "join_invited_workspaces": "초대받은 워크스페이스에 참여하고 싶습니다",
+      "creation_restricted_message": "워크스페이스 초대가 없고 인스턴스 관리자가 새 워크스페이스 생성을 제한한 것 같습니다. 먼저 워크스페이스 소유자 또는 관리자에게 초대를 요청한 후 이 화면으로 돌아와 참여하세요."
+    },
+    "team": {
+      "invite_teammates": "팀원 초대",
+      "invite_teammates_description": "Plane은 팀과 함께할 때 가장 효과적입니다. 지금 초대하여 Plane을 최대한 활용하세요.",
+      "add_another": "추가",
+      "do_it_later": "나중에 하기",
+      "invalid_email": "잘못된 이메일",
+      "invalid_email_hint": "올바른 이메일 주소가 아닙니다.",
+      "toast": {
+        "invite_success_message": "초대를 보냈습니다."
+      }
+    },
+    "switch_account": {
+      "title": "계정 전환",
+      "switching": "전환 중...",
+      "description_prefix": "실수로",
+      "description_suffix": "(으)로 가입했다면 여기에서 다른 계정으로 전환할 수 있습니다.",
+      "wrong_email": "이메일 주소가 잘못되었나요?",
+      "toast": {
+        "sign_out_failed": "로그아웃에 실패했습니다. 다시 시도해 주세요."
+      }
+    },
+    "step_indicator": "{current}/{total} 단계",
+    "finish": {
+      "toast": {
+        "title": "실패",
+        "message": "온보딩을 완료하지 못했습니다. 나중에 다시 시도해 주세요."
+      }
+    }
   }
 }

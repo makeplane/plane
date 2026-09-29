@@ -872,5 +872,116 @@
       "description": "İş öğelerini JSON dosyasına aktarın.",
       "short_description": "JSON olarak aktar"
     }
+  },
+  "onboarding": {
+    "skip": "Atla",
+    "profile": {
+      "title": "Profilini oluştur.",
+      "description": "Plane'de bu şekilde görüneceksin.",
+      "choose_image": "Görsel seç",
+      "upload_image": "Görsel yükle",
+      "change_image": "Görseli değiştir",
+      "name_placeholder": "Adını ve soyadını gir",
+      "first_name_required": "Ad zorunludur",
+      "last_name_required": "Soyad zorunludur",
+      "first_name_max_length": "Ad en fazla 50 karakter olmalıdır.",
+      "last_name_max_length": "Soyad en fazla 50 karakter olmalıdır.",
+      "name_max_length": "İsim en fazla 50 karakter olmalıdır.",
+      "first_name_placeholder": "Wilbur",
+      "last_name_placeholder": "Wright",
+      "new_password_placeholder": "Yeni parola...",
+      "role_question": "Hangi rolde çalışıyorsun? Birini seç.",
+      "domain_question": "Uzmanlık alanın nedir? Bir veya daha fazlasını seç.",
+      "marketing_consent": "Plane pazarlama iletişimlerini kabul ediyorum",
+      "passwords_do_not_match": "Parolalar eşleşmiyor",
+      "passwords_match": "Parolalar eşleşiyor",
+      "seniority_levels": {
+        "individual_contributor": "Bireysel katkıda bulunan",
+        "senior_leader": "Üst düzey lider",
+        "manager": "Yönetici",
+        "executive": "Üst yönetici",
+        "freelancer": "Serbest çalışan",
+        "student": "Öğrenci"
+      },
+      "domains": {
+        "engineering": "Mühendislik",
+        "product": "Ürün",
+        "marketing": "Pazarlama",
+        "sales": "Satış",
+        "operations": "Operasyon",
+        "legal": "Hukuk",
+        "finance": "Finans",
+        "human_resources": "İnsan Kaynakları",
+        "project": "Proje",
+        "other": "Diğer"
+      },
+      "toast": {
+        "profile_setup_completed": "Profil kurulumu tamamlandı!",
+        "profile_setup_failed": "Profil kurulumu başarısız oldu. Lütfen tekrar dene!",
+        "user_details_update_failed": "Kullanıcı bilgileri güncellenemedi. Lütfen tekrar dene!"
+      }
+    },
+    "role": {
+      "title": "Rolün nedir?",
+      "description": "Plane'i çalışma şekline göre ayarlayalım.",
+      "select_one": "Birini seç",
+      "options": {
+        "product_manager": "Ürün Yöneticisi",
+        "engineering_manager": "Mühendislik Yöneticisi",
+        "designer": "Tasarımcı",
+        "developer": "Geliştirici",
+        "founder_executive": "Kurucu/Üst Yönetici",
+        "operations_manager": "Operasyon Yöneticisi",
+        "others": "Diğer"
+      }
+    },
+    "usecase": {
+      "title": "Seni Plane'e ne getirdi?",
+      "description": "Hedeflerini ve ekip büyüklüğünü bize anlat.",
+      "select_multiple": "Bir veya daha fazlasını seç",
+      "select_at_least_one": "Lütfen en az bir seçenek seç"
+    },
+    "workspace": {
+      "invited_title": "Davet edildin!",
+      "invited_description": "Ekibinle iş birliği yapmak için davetleri kabul et.",
+      "continue_to_workspace": "Çalışma alanına devam et",
+      "create_own": "Kendi çalışma alanını oluştur",
+      "no_invitations_found": "Davet bulunamadı",
+      "join_or_create_title": "Davetlere katıl veya çalışma alanı oluştur",
+      "all_work_unified": "Tüm işlerin — tek yerde.",
+      "name_placeholder": "Çalışma alanı adını gir",
+      "create_new": "Yeni çalışma alanı oluştur",
+      "join_existing": "Mevcut çalışma alanına katıl",
+      "join_invited_workspaces": "Davet edildiğim çalışma alanlarına katılmak istiyorum",
+      "creation_restricted_message": "Görünüşe göre bir çalışma alanına davetin yok ve örnek yöneticin yeni çalışma alanı oluşturmayı kısıtlamış. Lütfen önce bir çalışma alanı sahibinden veya yöneticisinden seni davet etmesini iste, ardından bu ekrana dönüp katıl."
+    },
+    "team": {
+      "invite_teammates": "Ekip arkadaşlarını davet et",
+      "invite_teammates_description": "Plane'de çalışmak ekibinle en iyisidir. Plane'in potansiyelinden yararlanmak için onları şimdi davet et.",
+      "add_another": "Başka ekle",
+      "do_it_later": "Sonra yapacağım",
+      "invalid_email": "Geçersiz e-posta",
+      "invalid_email_hint": "Bu bir e-posta adresine benzemiyor.",
+      "toast": {
+        "invite_success_message": "Davetler başarıyla gönderildi."
+      }
+    },
+    "switch_account": {
+      "title": "Hesap değiştir",
+      "switching": "Değiştiriliyor...",
+      "description_prefix": "Yanlışlıkla şu adresle kaydolduysan:",
+      "description_suffix": "farklı bir hesaba buradan geçebilirsin.",
+      "wrong_email": "Yanlış e-posta adresi mi?",
+      "toast": {
+        "sign_out_failed": "Çıkış yapılamadı. Lütfen tekrar dene."
+      }
+    },
+    "step_indicator": "{current} / {total} adım",
+    "finish": {
+      "toast": {
+        "title": "Başarısız",
+        "message": "Onboarding tamamlanamadı. Lütfen daha sonra tekrar dene."
+      }
+    }
   }
 }
