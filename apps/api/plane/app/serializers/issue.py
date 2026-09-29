@@ -97,6 +97,16 @@ class IssueCreateSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    # §14 — write-only property values supplied with the create call.
+    # Each entry is ``{"property_id": uuid, "value_json": <typed>}``;
+    # the validation + persistence happens in
+    # ``_enforce_required_properties`` + ``create`` so the same code
+    # path serves the form renderer payload and the bulk value API.
+    property_values = serializers.ListField(
+        child=serializers.DictField(),
+        write_only=True,
+        required=False,
+    )
     project_id = serializers.UUIDField(source="project.id", read_only=True)
     workspace_id = serializers.UUIDField(source="workspace.id", read_only=True)
 
@@ -202,6 +212,14 @@ class IssueCreateSerializer(BaseSerializer):
         if self.instance is None and attrs.get("state") is not None:
             self._enforce_workflow_creation_gate(attrs)
 
+        # §14 / §30 P1.4 — required-property check on create. Runs even
+        # when workflows are off so properties can be enforced on their
+        # own. Values supplied via ``property_values`` are merged with
+        # ``default_value`` from the type-property attachment before the
+        # check so a default-supplied value satisfies the requirement.
+        if self.instance is None:
+            self._enforce_required_properties(attrs)
+
         return attrs
 
     def _enforce_workflow_creation_gate(self, attrs):
@@ -237,9 +255,110 @@ class IssueCreateSerializer(BaseSerializer):
         if resolved_state is not None:
             attrs["state"] = resolved_state
 
+    def _enforce_required_properties(self, attrs):
+        """§14 / §30 P1.4 — server-side required-property check.
+
+        Runs on every ``IssueCreateSerializer.validate`` so direct API
+        callers (admin UI, integrations, scripts) cannot bypass it.
+        The shape mirrors the bulk value write endpoint:
+        ``attrs["property_values"]`` may carry
+        ``[{"property_id": "...", "value_json": ...}, ...]``. Values
+        supplied there are type-checked, then merged with the type's
+        ``default_value`` rows for the required check.
+        """
+        issue_type_id = attrs.get("type_id")
+        project_id = self.context.get("project_id")
+        if not issue_type_id or not project_id:
+            return
+        try:
+            from plane.db.models import IssueTypeProperty
+            from plane.services.workflow_properties.errors import (
+                WorkflowPropertyError,
+            )
+            from plane.services.workflow_properties.validators import (
+                validate_required_properties,
+                validate_value,
+            )
+        except ImportError:
+            return
+
+        attachments = list(
+            IssueTypeProperty.objects.filter(
+                project_id=project_id,
+                issue_type_id=issue_type_id,
+                deleted_at__isnull=True,
+                property__is_active=True,
+                property__deleted_at__isnull=True,
+            ).select_related("property")
+        )
+        if not attachments:
+            return
+
+        # Build a {property_id: value_json} map from caller-supplied
+        # values (validating each against the property type first).
+        values_by_property_id: dict = {}
+        supplied = attrs.get("property_values")
+        resolved_supplied: list = []
+        if isinstance(supplied, list):
+            from plane.db.models import WorkspaceProperty
+
+            for entry in supplied:
+                if not isinstance(entry, dict):
+                    continue
+                property_obj = entry.get("property")
+                if property_obj is None:
+                    # Wire format carries the UUID as ``property_id``;
+                    # resolve it here so downstream code can read the
+                    # type / config without another DB hit.
+                    property_uuid = entry.get("property_id")
+                    if not property_uuid:
+                        continue
+                    property_obj = WorkspaceProperty.objects.filter(
+                        pk=property_uuid, workspace_id=project.workspace_id
+                    ).first()
+                    if property_obj is None:
+                        raise serializers.ValidationError(
+                            {
+                                "property_values": (
+                                    f"Unknown property_id: {property_uuid}."
+                                )
+                            }
+                        )
+                property_id = str(property_obj.id)
+                value = entry.get("value_json")
+                try:
+                    validate_value(
+                        value,
+                        property_obj.property_type,
+                        property_obj.config or {},
+                    )
+                except WorkflowPropertyError as exc:
+                    raise serializers.ValidationError(
+                        {"property_values": exc.to_payload()}
+                    )
+                values_by_property_id[property_id] = value
+                resolved_supplied.append(
+                    {"property": property_obj, "value_json": value}
+                )
+        attrs["property_values"] = resolved_supplied
+
+        # Fill the remaining slots from the type's default_value.
+        for attachment in attachments:
+            property_id = str(attachment.property_id)
+            if property_id in values_by_property_id:
+                continue
+            if attachment.is_required and attachment.default_value is not None:
+                values_by_property_id[property_id] = attachment.default_value
+
+        try:
+            validate_required_properties(attachments, values_by_property_id)
+        except WorkflowPropertyError as exc:
+            raise serializers.ValidationError(exc.to_payload())
+
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
         labels = validated_data.pop("label_ids", None)
+        property_values = validated_data.pop("property_values", None)
 
         project_id = self.context["project_id"]
         workspace_id = self.context["workspace_id"]
@@ -325,6 +444,32 @@ class IssueCreateSerializer(BaseSerializer):
                 )
             except IntegrityError:
                 pass
+
+        # §14 — persist any caller-supplied property values on create.
+        # Defaults supplied through the type attachment were already
+        # applied during ``_enforce_required_properties``; here we just
+        # write the explicit ones the caller asked for.
+        if property_values:
+            try:
+                from plane.services.workflow_properties import (
+                    persist_property_values,
+                )
+            except ImportError:
+                persist_property_values = None
+            if persist_property_values is not None:
+                values_by_property_id = {
+                    str(entry["property"].id): entry.get("value_json")
+                    for entry in property_values
+                    if isinstance(entry, dict) and entry.get("property") is not None
+                }
+                if values_by_property_id:
+                    persist_property_values(
+                        issue=issue,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        actor_id=str(created_by_id) if created_by_id else None,
+                        values_by_property_id=values_by_property_id,
+                    )
 
         return issue
 

@@ -276,6 +276,16 @@ from .workflow import (
     WorkflowTypeAssignmentListEndpoint,
 )
 
+from .workflow_property import (
+    IssuePropertyPayloadEndpoint,
+    IssuePropertyValueBulkEndpoint,
+    IssuePropertyValueListEndpoint,
+    IssueTypePropertyDetailEndpoint,
+    IssueTypePropertyListEndpoint,
+    WorkspacePropertyDetailEndpoint,
+    WorkspacePropertyListEndpoint,
+)
+
 from .issue.workflow_runtime import (
     IssueTransitionEndpoint,
     IssueWorkflowActionsEndpoint,

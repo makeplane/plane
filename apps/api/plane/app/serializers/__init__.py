@@ -180,3 +180,15 @@ from .workflow import (
     WorkflowTypeAssignmentWriteSerializer,
     WorkflowUpdateSerializer,
 )
+
+from .workflow_property import (
+    IssuePropertyPayloadSerializer,
+    IssuePropertyValueReadSerializer,
+    IssuePropertyValueWriteSerializer,
+    IssueTypePropertyReadSerializer,
+    IssueTypePropertyUpdateSerializer,
+    IssueTypePropertyWriteSerializer,
+    WorkspacePropertyCreateSerializer,
+    WorkspacePropertyReadSerializer,
+    WorkspacePropertyUpdateSerializer,
+)

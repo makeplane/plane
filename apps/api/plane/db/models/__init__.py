@@ -99,6 +99,12 @@ from .workflow_approval import (
     WorkflowApprovalDecisionType,
     WorkflowApprovalStatus,
 )
+from .workflow_property import (
+    IssuePropertyValue,
+    IssueTypeProperty,
+    WorkspaceProperty,
+    WorkflowPropertyType,
+)
 from .workspace import (
     Workspace,
     WorkspaceBaseModel,
