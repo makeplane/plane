@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
@@ -27,6 +28,7 @@ const issueService = new IssueService();
 export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchivedIssueDetailsHeader() {
   // router
   const { workspaceSlug, projectId, archivedIssueId } = useParams();
+  const { t } = useTranslation();
   // store hooks
   const { currentProjectDetails, loader } = useProject();
 
@@ -46,7 +48,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
             component={
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
-                label="Archives"
+                label={t("archives")}
                 icon={<ArchiveIcon className="h-4 w-4 text-tertiary" />}
               />
             }
@@ -55,7 +57,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
             component={
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
-                label="Work items"
+                label={t("common.work_items")}
                 icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
               />
             }

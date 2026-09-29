@@ -99,7 +99,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: "Editor is still processing changes. Please wait before proceeding.",
+        message: t("issue_ui.editor_processing"),
       });
       event.preventDefault(); // Prevent default action if editor is not ready to discard
     }
@@ -129,8 +129,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
-            message:
-              "Work item title isn't informative enough to generate the description. Please try with a different title.",
+            message: t("issue_ui.ai_title_not_informative"),
           });
         else handleAiAssistance(res.response_html);
       })
@@ -141,13 +140,13 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
-            message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
+            message: error || t("issue_ui.ai_rate_limit"),
           });
         else
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
-            message: error || "Some error occurred. Please try again.",
+            message: error || t("issue_ui.generic_error"),
           });
       })
       .finally(() => setIAmFeelingLucky(false));
