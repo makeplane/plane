@@ -1,8 +1,2 @@
-.oxlintrc.json   @sriramveeraghanta @lifeiscontent
-.oxfmtrc.json   @sriramveeraghanta @lifeiscontent
-apps/api/           @dheeru0198 @pablohashescobar
-apps/web/           @sriramveeraghanta
-apps/space/         @sriramveeraghanta
-apps/admin/         @sriramveeraghanta
-apps/live/          @Palanikannan1437
-deployments/        @mguptahub
+# All changes are owned jointly by these reviewers
+* @piotrjacak @TomaszChojnowski885 @Pawel-Kranzberg
