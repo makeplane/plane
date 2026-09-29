@@ -63,9 +63,7 @@ export function DeleteWebhookModal(props: IDeleteWebhook) {
       isSubmitting={isDeleting}
       isOpen={isOpen}
       title={t("project_components.webhooks.delete_title")}
-      content={
-        <>{t("project_components.webhooks.delete_description")}</>
-      }
+      content={<>{t("project_components.webhooks.delete_description")}</>}
     />
   );
 }

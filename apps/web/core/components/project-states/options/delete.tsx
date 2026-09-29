@@ -50,8 +50,7 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
-          message:
-            t("project_components.states.delete_has_work_items"),
+          message: t("project_components.states.delete_has_work_items"),
         });
       } else {
         setToast({
@@ -72,9 +71,7 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
         isSubmitting={isDelete}
         isOpen={isDeleteModal}
         title={t("project_components.states.delete_title")}
-        content={
-          <>{t("project_components.states.delete_description", { name: state?.name })}</>
-        }
+        content={<>{t("project_components.states.delete_description", { name: state?.name })}</>}
       />
 
       <button

@@ -191,7 +191,9 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
               onClick={() => handleUnPublishProject(watch("id") ?? "")}
               loading={isUnPublishing}
             >
-              {isUnPublishing ? t("project_components.publish_modal.unpublishing") : t("project_components.publish_modal.unpublish")}
+              {isUnPublishing
+                ? t("project_components.publish_modal.unpublishing")
+                : t("project_components.publish_modal.unpublish")}
             </Button>
           )}
         </div>

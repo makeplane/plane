@@ -72,12 +72,12 @@ export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMember
               <p className="text-13 text-secondary">
                 {isCurrentUser ? (
                   <>
-                    {t("project_components.confirm_member_remove.leave_description", { name: currentProjectDetails?.name })}
+                    {t("project_components.confirm_member_remove.leave_description", {
+                      name: currentProjectDetails?.name,
+                    })}
                   </>
                 ) : (
-                  <>
-                    {t("project_components.confirm_member_remove.remove_description", { name: data?.display_name })}
-                  </>
+                  <>{t("project_components.confirm_member_remove.remove_description", { name: data?.display_name })}</>
                 )}
               </p>
             </div>

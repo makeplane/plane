@@ -142,9 +142,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
         </div>
 
         <div className="text-secondary">
-          <p className="text-13">
-            {t("project_components.delete_modal.confirm_type", { phrase: "Leave Project" })}
-          </p>
+          <p className="text-13">{t("project_components.delete_modal.confirm_type", { phrase: "Leave Project" })}</p>
           <Controller
             control={control}
             name="confirmLeave"

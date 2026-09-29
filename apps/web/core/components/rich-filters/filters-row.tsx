@@ -121,7 +121,9 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
           disabled={isUpdating}
           data-ph-element={trackerElements?.updateView}
         >
-          {isUpdating ? t("common.confirming") : (filter.updateViewOptions?.label ?? t("project_components.rich_filters.update_view"))}
+          {isUpdating
+            ? t("common.confirming")
+            : (filter.updateViewOptions?.label ?? t("project_components.rich_filters.update_view"))}
         </Button>
       </ElementTransition>
     </>

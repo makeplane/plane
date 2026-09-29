@@ -56,9 +56,7 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XL}>
       <div className="space-y-5 px-5 py-8 sm:p-6">
         <h3 className="text-16 leading-6 font-medium text-primary">{t("project_components.join_modal.title")}</h3>
-        <p>
-          {t("project_components.join_modal.description", { name: project?.name })}
-        </p>
+        <p>{t("project_components.join_modal.description", { name: project?.name })}</p>
         <div className="space-y-3" />
       </div>
       <div className="mt-5 flex justify-end gap-2 px-5 pb-8 sm:px-6 sm:pb-6">

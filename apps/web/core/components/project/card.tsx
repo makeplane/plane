@@ -307,7 +307,9 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                   <span className="text-13 text-placeholder italic">{t("project_components.card.no_member_yet")}</span>
                 )}
               </Tooltip>
-              {isArchived && <div className="text-11 font-medium text-placeholder">{t("project_components.shared.archived")}</div>}
+              {isArchived && (
+                <div className="text-11 font-medium text-placeholder">{t("project_components.shared.archived")}</div>
+              )}
             </div>
             {isArchived ? (
               hasAdminRole && (
