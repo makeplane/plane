@@ -1902,7 +1902,11 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
 
         name = sanitize_filename(request.data.get("name"))
         type = request.data.get("type", False)
-        size = request.data.get("size")
+        # Clients may send size as a numeric string ("53314")
+        try:
+            size = int(request.data.get("size") or 0)
+        except (TypeError, ValueError):
+            size = 0
         external_id = request.data.get("external_id")
         external_source = request.data.get("external_source")
 
