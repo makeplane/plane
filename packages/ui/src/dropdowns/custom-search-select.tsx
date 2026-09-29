@@ -18,6 +18,37 @@ import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { cn } from "../utils";
 import type { ICustomSearchSelectProps } from "./helper";
 
+/**
+ * §single-vs-multi — Headless UI's `Combobox` single-select mode passes a
+ * scalar to `onChange` (the selected option's `value`), but multiple-select
+ * mode passes an array. Some single-select callers in this codebase wrap
+ * `value` in a one-element array (e.g. the dashboard's analytics filters),
+ * while others pass a scalar (e.g. the project-invite modal). We mirror
+ * whatever shape the caller used on `value` so the `onChange` callback
+ * receives a payload matching the documented contract — and so a downstream
+ * scalar consumer doesn't suddenly receive a `list` and crash a Python
+ * endpoint that hashes it as a dict key.
+ *
+ * Exported for direct unit testing; the component uses this internally.
+ */
+export function mirrorCallerShapeOnSingleChange(
+  currentValue: unknown,
+  onChange: (v: unknown) => void
+): (selected: unknown) => void {
+  return (selected: unknown) => {
+    if (Array.isArray(currentValue)) {
+      // Caller passed an array — preserve that shape on output.
+      if (Array.isArray(selected)) onChange(selected);
+      else if (selected === undefined || selected === null) onChange([]);
+      else onChange([selected]);
+    } else {
+      // Caller passed a scalar (or undefined/null) — return what Headless UI
+      // gave us so the consumer's `value` prop stays scalar-shaped.
+      onChange(selected);
+    }
+  };
+}
+
 export function CustomSearchSelect(props: ICustomSearchSelectProps) {
   const {
     customButtonClassName = "",
@@ -60,17 +91,13 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
-  // §single-vs-multi — Headless UI's `Combobox` expects a single primitive when
-  // not `multiple`, and an array when `multiple`. Callers historically pass
-  // `value` as an array either way (the dashboard does); normalize here so the
-  // Headless UI contract is satisfied and `onChange` always returns the array
-  // shape the caller passed.
+  // §single-vs-multi — see `mirrorCallerShapeOnSingleChange` above for the
+  // contract we honor here: single-select callers pass `value` either as a
+  // scalar or as a one-element array, and they get back the same shape they
+  // passed. (The component is the single source of truth — HeadlessUI only
+  // emits a scalar from a single-select click.)
   const valueArr = Array.isArray(value) ? value : value === undefined || value === null ? [] : [value];
-  const handleSingleChange = (v: unknown) => {
-    if (Array.isArray(v)) onChange(v);
-    else if (v === undefined || v === null) onChange([]);
-    else onChange([v as never]);
-  };
+  const handleSingleChange = mirrorCallerShapeOnSingleChange(value, onChange);
   const comboboxProps: any = {
     value: multiple ? valueArr : valueArr[0],
     onChange: multiple ? onChange : handleSingleChange,

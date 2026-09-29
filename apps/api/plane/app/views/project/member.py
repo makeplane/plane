@@ -62,8 +62,21 @@ class ProjectMemberViewSet(BaseViewSet):
         bulk_project_members = []
         bulk_issue_props = []
 
-        # Create a dictionary of the member_id and their roles
-        member_roles = {member.get("member_id"): member.get("role") for member in members}
+        # Create a dictionary of the member_id and their roles.
+        # `member_id` must be a hashable string — some legacy clients wrap it
+        # in a list (which then crashes here with `TypeError: unhashable type:
+        # 'list'`, returning 500 instead of a clean 400). Reject those up
+        # front so the bug is visible to the caller, not buried as a stack
+        # trace in the API logs.
+        member_roles = {}
+        for member in members:
+            member_id = member.get("member_id")
+            if not isinstance(member_id, (str, int)):
+                return Response(
+                    {"error": "Each member entry must include a string 'member_id'"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            member_roles[member_id] = member.get("role")
 
         # check the workspace role of the new user
         for member in member_roles:
