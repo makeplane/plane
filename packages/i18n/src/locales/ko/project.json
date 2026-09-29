@@ -414,5 +414,209 @@
         }
       }
     }
+  },
+  "project_components": {
+    "archive_restore_modal": {
+      "archive_description": "이 프로젝트와 해당 작업 항목, 사이클, 모듈, 페이지가 보관됩니다. 작업 항목은 검색에 표시되지 않습니다. 프로젝트 관리자만 프로젝트를 복원할 수 있습니다.",
+      "archive_error": "프로젝트를 보관할 수 없습니다. 다시 시도해 주세요.",
+      "archive_heading": "{name} 보관",
+      "archive_success_message": "{name}이(가) 성공적으로 보관되었습니다",
+      "archive_success_title": "보관 성공",
+      "restore_description": "프로젝트를 복원하면 활성화되며 프로젝트의 모든 멤버에게 표시됩니다. 계속하시겠습니까?",
+      "restore_error": "프로젝트를 복원할 수 없습니다. 다시 시도해 주세요.",
+      "restore_heading": "{name} 복원",
+      "restore_success_message": "{name}은(는) 내 프로젝트에서 찾을 수 있습니다.",
+      "restore_success_title": "복원 성공"
+    },
+    "card": {
+      "added_to_favorites": "프로젝트를 즐겨찾기에 추가했습니다.",
+      "adding_to_favorites": "프로젝트를 즐겨찾기에 추가하는 중...",
+      "created_on": "생성일: {date}",
+      "link_copied_message": "프로젝트 링크가 클립보드에 복사되었습니다.",
+      "no_member": "멤버 없음",
+      "no_member_yet": "아직 멤버가 없습니다",
+      "removed_from_favorites": "프로젝트를 즐겨찾기에서 제거했습니다.",
+      "removing_from_favorites": "프로젝트를 즐겨찾기에서 제거하는 중..."
+    },
+    "confirm_member_remove": {
+      "leave_description": "{name} 프로젝트에서 나가시겠습니까? 다시 초대받거나 프로젝트가 공개인 경우 다시 참여할 수 있습니다.",
+      "leave_title": "프로젝트에서 나가시겠습니까?",
+      "remove_description": "멤버 {name}을(를) 제거하시겠습니까? 더 이상 이 프로젝트에 접근할 수 없습니다. 이 작업은 되돌릴 수 없습니다.",
+      "remove_title": "{name}을(를) 제거하시겠습니까?"
+    },
+    "control_section": {
+      "archive_description": "프로젝트를 보관하면 사이드 탐색에서 숨겨지지만 프로젝트 페이지에서는 계속 접근할 수 있습니다. 언제든지 프로젝트를 복원하거나 삭제할 수 있습니다.",
+      "delete_description": "프로젝트를 삭제하면 프로젝트 내의 모든 데이터와 리소스가 영구적으로 제거되며 복구할 수 없습니다."
+    },
+    "delete_modal": {
+      "confirm_placeholder": "“{phrase}” 입력",
+      "confirm_type": "확인하려면 아래에 {phrase}을(를) 입력하세요:",
+      "deleted_success": "프로젝트가 성공적으로 삭제되었습니다.",
+      "description": "{name} 프로젝트를 삭제하시겠습니까? 프로젝트와 관련된 모든 데이터가 영구적으로 제거됩니다. 이 작업은 되돌릴 수 없습니다.",
+      "enter_project_name": "계속하려면 프로젝트 이름 {name}을(를) 입력하세요:"
+    },
+    "features": {
+      "pro_feature": "Pro 기능",
+      "update_error": "프로젝트 기능을 업데이트하는 중 문제가 발생했습니다. 다시 시도해 주세요.",
+      "updated": "프로젝트 기능이 성공적으로 업데이트되었습니다.",
+      "updating": "프로젝트 기능 업데이트 중..."
+    },
+    "form": {
+      "cover_image_error": "커버 이미지 처리에 실패했습니다",
+      "name_max_length": "프로젝트 이름은 255자 미만이어야 합니다"
+    },
+    "integration_card": {
+      "github_description": "동기화를 사용하려면 GitHub 저장소를 선택하세요.",
+      "select_repository": "저장소 선택",
+      "slack_description": "정기적인 업데이트를 받고 수신할 알림을 설정하세요.",
+      "sync_error": "저장소를 프로젝트와 동기화할 수 없습니다. 다시 시도해 주세요."
+    },
+    "invitation_modal": {
+      "members_added": "멤버가 성공적으로 추가되었습니다.",
+      "select_member_required": "멤버를 선택하세요",
+      "select_role_required": "역할 선택"
+    },
+    "join_modal": {
+      "description": "{name} 프로젝트에 참여하시겠습니까? 계속하려면 아래의 “프로젝트 참여” 버튼을 클릭하세요.",
+      "join_project": "프로젝트 참여",
+      "title": "프로젝트에 참여하시겠습니까?"
+    },
+    "leave_modal": {
+      "confirm_phrase_error": "프로젝트 나가기를 확인하려면 “{phrase}”을(를) 입력하세요.",
+      "description": "“{name}” 프로젝트에서 나가시겠습니까? 나와 관련된 모든 작업 항목에 접근할 수 없게 됩니다.",
+      "fill_all_fields": "모든 필드를 입력하세요.",
+      "project_name_error": "설명에 표시된 대로 프로젝트 이름을 입력하세요.",
+      "project_name_placeholder": "프로젝트 이름 입력",
+      "project_name_required": "프로젝트 이름은 필수입니다",
+      "title": "프로젝트 나가기"
+    },
+    "member_columns": {
+      "role_error_message": "멤버 역할을 업데이트하는 중 오류가 발생했습니다. 다시 시도해 주세요.",
+      "role_error_title": "아직 이 역할을 변경할 수 없습니다.",
+      "role_required": "역할은 필수입니다."
+    },
+    "member_defaults": {
+      "guest_access": "게스트 액세스"
+    },
+    "member_list_item": {
+      "leave_error_title": "아직 이 프로젝트에서 나갈 수 없습니다.",
+      "remove_error_title": "아직 이 프로젝트에서 멤버를 제거할 수 없습니다."
+    },
+    "multi_select_modal": {
+      "search_placeholder": "프로젝트 검색"
+    },
+    "profile": {
+      "cover_image_alt": "커버 이미지",
+      "display_name_placeholder": "표시 이름을 입력하세요",
+      "display_name_required": "표시 이름은 필수입니다.",
+      "email_placeholder": "이메일을 입력하세요",
+      "email_required": "이메일은 필수입니다.",
+      "first_day_of_week": "한 주의 시작 요일",
+      "first_day_of_week_description": "앱의 모든 캘린더 모양이 변경됩니다.",
+      "first_name_placeholder": "이름을 입력하세요",
+      "first_name_required": "이름을 입력하세요",
+      "language_error": "언어를 업데이트하지 못했습니다",
+      "language_updated": "언어가 성공적으로 업데이트되었습니다",
+      "last_name_placeholder": "성을 입력하세요",
+      "picture_delete_error": "프로필 사진을 삭제하는 중 오류가 발생했습니다. 다시 시도해 주세요.",
+      "picture_deleted": "프로필 사진이 성공적으로 삭제되었습니다.",
+      "select_language": "언어 선택",
+      "timezone_error": "시간대를 업데이트하지 못했습니다",
+      "timezone_updated": "시간대가 성공적으로 업데이트되었습니다",
+      "update_error": "프로필을 업데이트하는 중 오류가 발생했습니다. 다시 시도해 주세요.",
+      "updated": "프로필이 성공적으로 업데이트되었습니다."
+    },
+    "publish_modal": {
+      "allow_comments": "댓글 허용",
+      "allow_reactions": "반응 허용",
+      "allow_voting": "투표 허용",
+      "anyone_with_link": "링크가 있는 모든 사용자가 접근할 수 있습니다",
+      "link_copied": "게시된 페이지 링크가 복사되었습니다.",
+      "live_on_web": "이 프로젝트는 현재 웹에 게시되어 있습니다",
+      "publishing": "게시 중",
+      "select_layout_error": "프로젝트를 게시하려면 보기 레이아웃을 하나 이상 선택하세요.",
+      "settings_updated": "게시 설정이 성공적으로 업데이트되었습니다!",
+      "unpublish": "게시 취소",
+      "unpublish_error": "프로젝트 게시를 취소하는 중 문제가 발생했습니다.",
+      "unpublishing": "게시 취소 중",
+      "update_settings": "설정 업데이트"
+    },
+    "rich_filters": {
+      "all_filters_applied": "모든 필터가 적용됨",
+      "config_error_message": "이 필터가 올바르게 구성되지 않아 적용할 수 없습니다",
+      "config_error_title": "필터 구성 오류",
+      "filter_type_not_supported": "지원되지 않는 필터 유형",
+      "invalid_filter": "잘못된 필터",
+      "invalid_tooltip": "이 필터 조건은 더 이상 유효하지 않습니다. 속성이 삭제되었거나 접근 권한이 변경되었을 수 있습니다.",
+      "remove_filter": "필터 제거",
+      "save_view": "보기 저장",
+      "update_view": "보기 업데이트"
+    },
+    "shared": {
+      "archived": "보관됨",
+      "custom": "사용자 지정",
+      "joined": "참여함",
+      "joining": "참여 중...",
+      "leaving": "나가는 중...",
+      "removing": "제거하는 중...",
+      "restoring": "복원 중",
+      "roles": "역할",
+      "suspended": "정지됨"
+    },
+    "states": {
+      "cannot_delete_default": "기본 상태는 삭제할 수 없습니다.",
+      "cannot_empty_group": "그룹은 비워둘 수 없습니다.",
+      "create_error": "상태를 만들 수 없습니다. 다시 시도해 주세요.",
+      "create_name_exists": "같은 이름의 상태가 이미 있습니다. 다른 이름으로 다시 시도해 주세요.",
+      "created": "상태가 성공적으로 생성되었습니다.",
+      "delete_description": "{name} 상태를 삭제하시겠습니까? 상태와 관련된 모든 데이터가 영구적으로 제거됩니다. 이 작업은 되돌릴 수 없습니다.",
+      "delete_error": "상태를 삭제할 수 없습니다. 다시 시도해 주세요.",
+      "delete_has_work_items": "이 상태에는 작업 항목이 포함되어 있습니다. 상태를 삭제하려면 작업 항목을 다른 상태로 옮겨 주세요.",
+      "delete_title": "상태 삭제",
+      "description_placeholder": "멤버를 위해 이 상태를 설명하세요.",
+      "mark_as_default": "기본값으로 설정",
+      "marking_as_default": "기본값으로 설정 중",
+      "update_error": "상태를 업데이트할 수 없습니다. 다시 시도해 주세요.",
+      "update_name_exists": "같은 이름의 다른 상태가 이미 있습니다. 다른 이름으로 다시 시도해 주세요.",
+      "updated": "상태가 성공적으로 업데이트되었습니다."
+    },
+    "view_filters": {
+      "view_not_found_message": "업데이트하려는 보기가 존재하지 않습니다.",
+      "view_not_found_title": "보기를 찾을 수 없습니다",
+      "view_update_error": "보기를 업데이트할 수 없습니다. 다시 시도해 주세요.",
+      "view_updated": "보기가 성공적으로 업데이트되었습니다."
+    },
+    "views": {
+      "add_view": "보기 추가",
+      "create_error": "보기를 만들지 못했습니다. 다시 시도해 주세요.",
+      "created": "보기가 성공적으로 생성되었습니다.",
+      "delete_error": "보기를 삭제할 수 없습니다. 다시 시도해 주세요.",
+      "deleted": "보기가 성공적으로 삭제되었습니다.",
+      "not_found_description": "찾으시는 보기가 없거나 볼 수 있는 권한이 없습니다.",
+      "not_found_title": "보기가 존재하지 않습니다",
+      "update_error": "보기를 업데이트하지 못했습니다. 다시 시도해 주세요.",
+      "view_other_views": "다른 보기 보기"
+    },
+    "webhooks": {
+      "copy_secret_key": "비밀 키 복사",
+      "danger_zone": "위험 영역",
+      "danger_zone_description": "웹훅을 삭제하면 복원할 수 없습니다. 이후 이벤트는 이 웹훅으로 전달되지 않습니다.",
+      "delete_description": "이 웹훅을 삭제하시겠습니까? 이후 이벤트는 이 웹훅으로 전달되지 않습니다. 이 작업은 되돌릴 수 없습니다.",
+      "delete_error": "웹훅을 삭제할 수 없습니다. 다시 시도해 주세요.",
+      "delete_title": "웹훅 삭제",
+      "deleted": "웹훅이 성공적으로 삭제되었습니다.",
+      "empty_description": "웹훅을 만들어 실시간 업데이트를 받고 작업을 자동화하세요",
+      "empty_title": "웹훅 없음",
+      "events": {
+        "cycle": "사이클 생성, 업데이트 또는 삭제",
+        "issue": "작업 항목 생성, 업데이트, 삭제 또는 사이클/모듈에 추가",
+        "issue_comment": "댓글 게시, 업데이트 또는 삭제",
+        "issue_comment_label": "작업 항목 댓글",
+        "module": "모듈 생성, 업데이트 또는 삭제",
+        "project": "프로젝트 생성, 업데이트 또는 삭제"
+      },
+      "key_regenerated": "새 키가 성공적으로 다시 생성되었습니다.",
+      "view_secret_key": "비밀 키 보기"
+    }
   }
 }

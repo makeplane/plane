@@ -414,5 +414,209 @@
         }
       }
     }
+  },
+  "project_components": {
+    "archive_restore_modal": {
+      "archive_description": "このプロジェクトと、その作業項目、サイクル、モジュール、ページがアーカイブされます。作業項目は検索結果に表示されなくなります。プロジェクトを復元できるのはプロジェクト管理者のみです。",
+      "archive_error": "プロジェクトをアーカイブできませんでした。もう一度お試しください。",
+      "archive_heading": "{name} をアーカイブ",
+      "archive_success_message": "{name} を正常にアーカイブしました",
+      "archive_success_title": "アーカイブ成功",
+      "restore_description": "プロジェクトを復元すると有効化され、プロジェクトのすべてのメンバーに表示されます。続行してもよろしいですか？",
+      "restore_error": "プロジェクトを復元できませんでした。もう一度お試しください。",
+      "restore_heading": "{name} を復元",
+      "restore_success_message": "{name} はプロジェクト一覧で確認できます。",
+      "restore_success_title": "復元成功"
+    },
+    "card": {
+      "added_to_favorites": "プロジェクトをお気に入りに追加しました。",
+      "adding_to_favorites": "プロジェクトをお気に入りに追加しています...",
+      "created_on": "作成日: {date}",
+      "link_copied_message": "プロジェクトのリンクをクリップボードにコピーしました。",
+      "no_member": "メンバーなし",
+      "no_member_yet": "メンバーはまだいません",
+      "removed_from_favorites": "プロジェクトをお気に入りから削除しました。",
+      "removing_from_favorites": "プロジェクトをお気に入りから削除しています..."
+    },
+    "confirm_member_remove": {
+      "leave_description": "プロジェクト {name} から退出してもよろしいですか？再度招待された場合、またはプロジェクトが公開されている場合は、再び参加できます。",
+      "leave_title": "プロジェクトから退出しますか？",
+      "remove_description": "メンバー {name} を削除してもよろしいですか？このプロジェクトにアクセスできなくなります。この操作は元に戻せません。",
+      "remove_title": "{name} を削除しますか？"
+    },
+    "control_section": {
+      "archive_description": "プロジェクトをアーカイブすると、サイドナビゲーションから非表示になりますが、プロジェクトページからはアクセスできます。プロジェクトはいつでも復元または削除できます。",
+      "delete_description": "プロジェクトを削除すると、プロジェクト内のすべてのデータとリソースが完全に削除され、復元できません。"
+    },
+    "delete_modal": {
+      "confirm_placeholder": "「{phrase}」と入力",
+      "confirm_type": "確認のため、下に {phrase} と入力してください：",
+      "deleted_success": "プロジェクトを削除しました。",
+      "description": "プロジェクト {name} を削除してもよろしいですか？プロジェクトに関連するすべてのデータが完全に削除されます。この操作は元に戻せません。",
+      "enter_project_name": "続行するには、プロジェクト名 {name} を入力してください："
+    },
+    "features": {
+      "pro_feature": "Pro機能",
+      "update_error": "プロジェクト機能の更新中に問題が発生しました。もう一度お試しください。",
+      "updated": "プロジェクト機能を更新しました。",
+      "updating": "プロジェクト機能を更新しています..."
+    },
+    "form": {
+      "cover_image_error": "カバー画像の処理に失敗しました",
+      "name_max_length": "プロジェクト名は255文字未満にしてください"
+    },
+    "integration_card": {
+      "github_description": "同期を有効にするには、GitHubリポジトリを選択してください。",
+      "select_repository": "リポジトリを選択",
+      "slack_description": "定期的な更新を受け取り、受け取る通知を管理できます。",
+      "sync_error": "リポジトリをプロジェクトと同期できませんでした。もう一度お試しください。"
+    },
+    "invitation_modal": {
+      "members_added": "メンバーを追加しました。",
+      "select_member_required": "メンバーを選択してください",
+      "select_role_required": "ロールを選択"
+    },
+    "join_modal": {
+      "description": "プロジェクト {name} に参加してもよろしいですか？続行するには、下の「プロジェクトに参加」ボタンをクリックしてください。",
+      "join_project": "プロジェクトに参加",
+      "title": "プロジェクトに参加しますか？"
+    },
+    "leave_modal": {
+      "confirm_phrase_error": "プロジェクトから退出するには「{phrase}」と入力して確認してください。",
+      "description": "プロジェクト「{name}」から退出してもよろしいですか？あなたに関連付けられているすべての作業項目にアクセスできなくなります。",
+      "fill_all_fields": "すべての項目を入力してください。",
+      "project_name_error": "説明に表示されているとおりにプロジェクト名を入力してください。",
+      "project_name_placeholder": "プロジェクト名を入力",
+      "project_name_required": "プロジェクト名は必須です",
+      "title": "プロジェクトから退出"
+    },
+    "member_columns": {
+      "role_error_message": "メンバーのロールの更新中にエラーが発生しました。もう一度お試しください。",
+      "role_error_title": "このロールはまだ変更できません。",
+      "role_required": "ロールは必須です。"
+    },
+    "member_defaults": {
+      "guest_access": "ゲストアクセス"
+    },
+    "member_list_item": {
+      "leave_error_title": "このプロジェクトからはまだ退出できません。",
+      "remove_error_title": "このメンバーをプロジェクトからまだ削除できません。"
+    },
+    "multi_select_modal": {
+      "search_placeholder": "プロジェクトを検索"
+    },
+    "profile": {
+      "cover_image_alt": "カバー画像",
+      "display_name_placeholder": "表示名を入力",
+      "display_name_required": "表示名は必須です。",
+      "email_placeholder": "メールアドレスを入力",
+      "email_required": "メールアドレスは必須です。",
+      "first_day_of_week": "週の開始曜日",
+      "first_day_of_week_description": "アプリ内のすべてのカレンダーの表示が変わります。",
+      "first_name_placeholder": "名を入力",
+      "first_name_required": "名を入力してください",
+      "language_error": "言語の更新に失敗しました",
+      "language_updated": "言語を更新しました",
+      "last_name_placeholder": "姓を入力",
+      "picture_delete_error": "プロフィール画像の削除中にエラーが発生しました。もう一度お試しください。",
+      "picture_deleted": "プロフィール画像を削除しました。",
+      "select_language": "言語を選択",
+      "timezone_error": "タイムゾーンの更新に失敗しました",
+      "timezone_updated": "タイムゾーンを更新しました",
+      "update_error": "プロフィールの更新中にエラーが発生しました。もう一度お試しください。",
+      "updated": "プロフィールを更新しました。"
+    },
+    "publish_modal": {
+      "allow_comments": "コメントを許可",
+      "allow_reactions": "リアクションを許可",
+      "allow_voting": "投票を許可",
+      "anyone_with_link": "リンクを知っている全員がアクセスできます",
+      "link_copied": "公開ページのリンクをコピーしました。",
+      "live_on_web": "このプロジェクトはウェブで公開されています",
+      "publishing": "公開中",
+      "select_layout_error": "プロジェクトを公開するには、表示レイアウトを1つ以上選択してください。",
+      "settings_updated": "公開設定を更新しました！",
+      "unpublish": "公開を停止",
+      "unpublish_error": "プロジェクトの公開停止中に問題が発生しました。",
+      "unpublishing": "公開停止中",
+      "update_settings": "設定を更新"
+    },
+    "rich_filters": {
+      "all_filters_applied": "すべてのフィルターが適用済み",
+      "config_error_message": "このフィルターは正しく設定されていないため適用できません",
+      "config_error_title": "フィルター設定エラー",
+      "filter_type_not_supported": "サポートされていないフィルタータイプです",
+      "invalid_filter": "無効なフィルター",
+      "invalid_tooltip": "このフィルター条件は無効になりました。プロパティが削除されたか、アクセス権が変更された可能性があります。",
+      "remove_filter": "フィルターを削除",
+      "save_view": "ビューを保存",
+      "update_view": "ビューを更新"
+    },
+    "shared": {
+      "archived": "アーカイブ済み",
+      "custom": "カスタム",
+      "joined": "参加済み",
+      "joining": "参加中...",
+      "leaving": "退出中...",
+      "removing": "削除中...",
+      "restoring": "復元中",
+      "roles": "ロール",
+      "suspended": "停止中"
+    },
+    "states": {
+      "cannot_delete_default": "デフォルトのステートは削除できません。",
+      "cannot_empty_group": "グループを空にすることはできません。",
+      "create_error": "ステートを作成できませんでした。もう一度お試しください。",
+      "create_name_exists": "その名前のステートはすでに存在します。別の名前でもう一度お試しください。",
+      "created": "ステートを作成しました。",
+      "delete_description": "ステート {name} を削除してもよろしいですか？ステートに関連するすべてのデータが完全に削除されます。この操作は元に戻せません。",
+      "delete_error": "ステートを削除できませんでした。もう一度お試しください。",
+      "delete_has_work_items": "このステートには作業項目が含まれています。削除するには、それらを別のステートに移動してください。",
+      "delete_title": "ステートを削除",
+      "description_placeholder": "メンバー向けにこのステートを説明してください。",
+      "mark_as_default": "デフォルトに設定",
+      "marking_as_default": "デフォルトに設定中",
+      "update_error": "ステートを更新できませんでした。もう一度お試しください。",
+      "update_name_exists": "同じ名前の別のステートがすでに存在します。別の名前でもう一度お試しください。",
+      "updated": "ステートを更新しました。"
+    },
+    "view_filters": {
+      "view_not_found_message": "更新しようとしているビューは存在しません。",
+      "view_not_found_title": "ビューが見つかりませんでした",
+      "view_update_error": "ビューを更新できませんでした。もう一度お試しください。",
+      "view_updated": "ビューを更新しました。"
+    },
+    "views": {
+      "add_view": "ビューを追加",
+      "create_error": "ビューの作成に失敗しました。もう一度お試しください。",
+      "created": "ビューを作成しました。",
+      "delete_error": "ビューを削除できませんでした。もう一度お試しください。",
+      "deleted": "ビューを削除しました。",
+      "not_found_description": "お探しのビューは存在しないか、表示する権限がありません。",
+      "not_found_title": "ビューが存在しません",
+      "update_error": "ビューの更新に失敗しました。もう一度お試しください。",
+      "view_other_views": "他のビューを表示"
+    },
+    "webhooks": {
+      "copy_secret_key": "シークレットキーをコピー",
+      "danger_zone": "危険ゾーン",
+      "danger_zone_description": "Webhookを削除すると復元できません。今後のイベントはこのWebhookに配信されなくなります。",
+      "delete_description": "このWebhookを削除してもよろしいですか？今後のイベントはこのWebhookに配信されません。この操作は元に戻せません。",
+      "delete_error": "Webhookを削除できませんでした。もう一度お試しください。",
+      "delete_title": "Webhookを削除",
+      "deleted": "Webhookを削除しました。",
+      "empty_description": "Webhookを作成して、リアルタイムの更新を受け取り、アクションを自動化しましょう",
+      "empty_title": "Webhookなし",
+      "events": {
+        "cycle": "サイクルの作成、更新、削除",
+        "issue": "作業項目の作成、更新、削除、サイクルまたはモジュールへの追加",
+        "issue_comment": "コメントの投稿、更新、削除",
+        "issue_comment_label": "作業項目のコメント",
+        "module": "モジュールの作成、更新、削除",
+        "project": "プロジェクトの作成、更新、削除"
+      },
+      "key_regenerated": "新しいキーを再生成しました。",
+      "view_secret_key": "シークレットキーを表示"
+    }
   }
 }

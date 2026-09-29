@@ -414,5 +414,209 @@
         }
       }
     }
+  },
+  "project_components": {
+    "archive_restore_modal": {
+      "archive_description": "Proyek ini beserta item kerja, siklus, modul, dan halamannya akan diarsipkan. Item kerjanya tidak akan muncul di pencarian. Hanya admin proyek yang dapat memulihkan proyek ini.",
+      "archive_error": "Proyek tidak dapat diarsipkan. Silakan coba lagi.",
+      "archive_heading": "Arsipkan {name}",
+      "archive_success_message": "{name} berhasil diarsipkan",
+      "archive_success_title": "Arsip berhasil",
+      "restore_description": "Memulihkan proyek akan mengaktifkannya dan membuatnya terlihat oleh semua anggota proyek. Yakin ingin melanjutkan?",
+      "restore_error": "Proyek tidak dapat dipulihkan. Silakan coba lagi.",
+      "restore_heading": "Pulihkan {name}",
+      "restore_success_message": "Anda dapat menemukan {name} di proyek Anda.",
+      "restore_success_title": "Pemulihan berhasil"
+    },
+    "card": {
+      "added_to_favorites": "Proyek ditambahkan ke favorit.",
+      "adding_to_favorites": "Menambahkan proyek ke favorit...",
+      "created_on": "Dibuat pada {date}",
+      "link_copied_message": "Tautan proyek disalin ke papan klip.",
+      "no_member": "Tidak ada anggota",
+      "no_member_yet": "Belum ada anggota",
+      "removed_from_favorites": "Proyek dihapus dari favorit.",
+      "removing_from_favorites": "Menghapus proyek dari favorit..."
+    },
+    "confirm_member_remove": {
+      "leave_description": "Yakin ingin keluar dari proyek {name}? Anda dapat bergabung kembali jika diundang lagi atau jika proyek ini publik.",
+      "leave_title": "Keluar dari proyek?",
+      "remove_description": "Yakin ingin menghapus anggota {name}? Mereka tidak akan lagi memiliki akses ke proyek ini. Tindakan ini tidak dapat dibatalkan.",
+      "remove_title": "Hapus {name}?"
+    },
+    "control_section": {
+      "archive_description": "Mengarsipkan proyek akan menghapusnya dari navigasi samping, tetapi Anda masih dapat mengaksesnya dari halaman proyek. Anda dapat memulihkan atau menghapus proyek kapan saja.",
+      "delete_description": "Saat menghapus proyek, semua data dan sumber daya di dalamnya akan dihapus secara permanen dan tidak dapat dipulihkan."
+    },
+    "delete_modal": {
+      "confirm_placeholder": "Masukkan “{phrase}”",
+      "confirm_type": "Untuk mengonfirmasi, ketik {phrase} di bawah:",
+      "deleted_success": "Proyek berhasil dihapus.",
+      "description": "Yakin ingin menghapus proyek {name}? Semua data terkait proyek akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.",
+      "enter_project_name": "Masukkan nama proyek {name} untuk melanjutkan:"
+    },
+    "features": {
+      "pro_feature": "Fitur Pro",
+      "update_error": "Terjadi kesalahan saat memperbarui fitur proyek. Silakan coba lagi.",
+      "updated": "Fitur proyek berhasil diperbarui.",
+      "updating": "Memperbarui fitur proyek..."
+    },
+    "form": {
+      "cover_image_error": "Gagal memproses gambar sampul",
+      "name_max_length": "Nama proyek harus kurang dari 255 karakter"
+    },
+    "integration_card": {
+      "github_description": "Pilih repositori GitHub untuk mengaktifkan sinkronisasi.",
+      "select_repository": "Pilih repositori",
+      "slack_description": "Dapatkan pembaruan rutin dan atur notifikasi mana yang ingin Anda terima.",
+      "sync_error": "Repositori tidak dapat disinkronkan dengan proyek. Silakan coba lagi."
+    },
+    "invitation_modal": {
+      "members_added": "Anggota berhasil ditambahkan.",
+      "select_member_required": "Silakan pilih anggota",
+      "select_role_required": "Pilih peran"
+    },
+    "join_modal": {
+      "description": "Yakin ingin bergabung dengan proyek {name}? Klik tombol “Gabung ke proyek” di bawah untuk melanjutkan.",
+      "join_project": "Gabung ke proyek",
+      "title": "Gabung ke proyek?"
+    },
+    "leave_modal": {
+      "confirm_phrase_error": "Harap konfirmasi keluar dari proyek dengan mengetik “{phrase}”.",
+      "description": "Yakin ingin keluar dari proyek “{name}”? Semua item kerja yang terkait dengan Anda tidak akan dapat diakses.",
+      "fill_all_fields": "Harap isi semua kolom.",
+      "project_name_error": "Harap masukkan nama proyek seperti yang ditampilkan dalam deskripsi.",
+      "project_name_placeholder": "Masukkan nama proyek",
+      "project_name_required": "Nama proyek wajib diisi",
+      "title": "Keluar dari proyek"
+    },
+    "member_columns": {
+      "role_error_message": "Terjadi kesalahan saat memperbarui peran anggota. Silakan coba lagi.",
+      "role_error_title": "Anda belum dapat mengubah peran ini.",
+      "role_required": "Peran wajib diisi."
+    },
+    "member_defaults": {
+      "guest_access": "Akses tamu"
+    },
+    "member_list_item": {
+      "leave_error_title": "Anda belum dapat keluar dari proyek ini.",
+      "remove_error_title": "Anda belum dapat menghapus anggota ini dari proyek."
+    },
+    "multi_select_modal": {
+      "search_placeholder": "Cari proyek"
+    },
+    "profile": {
+      "cover_image_alt": "Gambar sampul",
+      "display_name_placeholder": "Masukkan nama tampilan Anda",
+      "display_name_required": "Nama tampilan wajib diisi.",
+      "email_placeholder": "Masukkan email Anda",
+      "email_required": "Email wajib diisi.",
+      "first_day_of_week": "Hari pertama dalam seminggu",
+      "first_day_of_week_description": "Ini akan mengubah tampilan semua kalender di aplikasi Anda.",
+      "first_name_placeholder": "Masukkan nama depan Anda",
+      "first_name_required": "Silakan masukkan nama depan",
+      "language_error": "Gagal memperbarui bahasa",
+      "language_updated": "Bahasa berhasil diperbarui",
+      "last_name_placeholder": "Masukkan nama belakang Anda",
+      "picture_delete_error": "Terjadi kesalahan saat menghapus foto profil Anda. Silakan coba lagi.",
+      "picture_deleted": "Foto profil berhasil dihapus.",
+      "select_language": "Pilih bahasa",
+      "timezone_error": "Gagal memperbarui zona waktu",
+      "timezone_updated": "Zona waktu berhasil diperbarui",
+      "update_error": "Terjadi kesalahan saat memperbarui profil Anda. Silakan coba lagi.",
+      "updated": "Profil berhasil diperbarui."
+    },
+    "publish_modal": {
+      "allow_comments": "Izinkan komentar",
+      "allow_reactions": "Izinkan reaksi",
+      "allow_voting": "Izinkan pemungutan suara",
+      "anyone_with_link": "Siapa saja yang memiliki tautan dapat mengakses",
+      "link_copied": "Tautan halaman yang dipublikasikan berhasil disalin.",
+      "live_on_web": "Proyek ini kini tayang di web",
+      "publishing": "Memublikasikan",
+      "select_layout_error": "Pilih setidaknya satu tata letak tampilan untuk memublikasikan proyek.",
+      "settings_updated": "Pengaturan publikasi berhasil diperbarui!",
+      "unpublish": "Batalkan publikasi",
+      "unpublish_error": "Terjadi kesalahan saat membatalkan publikasi proyek.",
+      "unpublishing": "Membatalkan publikasi",
+      "update_settings": "Perbarui pengaturan"
+    },
+    "rich_filters": {
+      "all_filters_applied": "Semua filter diterapkan",
+      "config_error_message": "Filter ini tidak dikonfigurasi dengan benar dan tidak dapat diterapkan",
+      "config_error_title": "Kesalahan konfigurasi filter",
+      "filter_type_not_supported": "Jenis filter tidak didukung",
+      "invalid_filter": "Filter tidak valid",
+      "invalid_tooltip": "Kondisi filter ini tidak lagi valid. Properti mungkin telah dihapus atau akses Anda ke properti tersebut telah berubah.",
+      "remove_filter": "Hapus filter",
+      "save_view": "Simpan tampilan",
+      "update_view": "Perbarui tampilan"
+    },
+    "shared": {
+      "archived": "Diarsipkan",
+      "custom": "Kustom",
+      "joined": "Bergabung",
+      "joining": "Bergabung...",
+      "leaving": "Keluar...",
+      "removing": "Menghapus...",
+      "restoring": "Memulihkan",
+      "roles": "Peran",
+      "suspended": "Ditangguhkan"
+    },
+    "states": {
+      "cannot_delete_default": "Status default tidak dapat dihapus.",
+      "cannot_empty_group": "Grup tidak boleh kosong.",
+      "create_error": "Status tidak dapat dibuat. Silakan coba lagi.",
+      "create_name_exists": "Status dengan nama tersebut sudah ada. Silakan coba lagi dengan nama lain.",
+      "created": "Status berhasil dibuat.",
+      "delete_description": "Yakin ingin menghapus status {name}? Semua data terkait status akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.",
+      "delete_error": "Status tidak dapat dihapus. Silakan coba lagi.",
+      "delete_has_work_items": "Status ini berisi beberapa item kerja. Pindahkan ke status lain untuk menghapus status ini.",
+      "delete_title": "Hapus status",
+      "description_placeholder": "Jelaskan status ini untuk anggota Anda.",
+      "mark_as_default": "Jadikan default",
+      "marking_as_default": "Menjadikan default",
+      "update_error": "Status tidak dapat diperbarui. Silakan coba lagi.",
+      "update_name_exists": "Status lain dengan nama yang sama sudah ada. Silakan coba lagi dengan nama lain.",
+      "updated": "Status berhasil diperbarui."
+    },
+    "view_filters": {
+      "view_not_found_message": "Tampilan yang ingin Anda perbarui tidak ada.",
+      "view_not_found_title": "Kami tidak dapat menemukan tampilan",
+      "view_update_error": "Tampilan Anda tidak dapat diperbarui. Silakan coba lagi.",
+      "view_updated": "Tampilan Anda berhasil diperbarui."
+    },
+    "views": {
+      "add_view": "Tambah tampilan",
+      "create_error": "Gagal membuat tampilan. Silakan coba lagi.",
+      "created": "Tampilan berhasil dibuat.",
+      "delete_error": "Tampilan tidak dapat dihapus. Silakan coba lagi.",
+      "deleted": "Tampilan berhasil dihapus.",
+      "not_found_description": "Tampilan yang Anda cari tidak ada atau Anda tidak memiliki izin untuk melihatnya.",
+      "not_found_title": "Tampilan tidak ada",
+      "update_error": "Gagal memperbarui tampilan. Silakan coba lagi.",
+      "view_other_views": "Lihat tampilan lain"
+    },
+    "webhooks": {
+      "copy_secret_key": "Salin kunci rahasia",
+      "danger_zone": "Zona berbahaya",
+      "danger_zone_description": "Setelah webhook dihapus, webhook tidak dapat dipulihkan. Peristiwa mendatang tidak akan lagi dikirim ke webhook ini.",
+      "delete_description": "Yakin ingin menghapus webhook ini? Peristiwa mendatang tidak akan dikirim ke webhook ini. Tindakan ini tidak dapat dibatalkan.",
+      "delete_error": "Webhook tidak dapat dihapus. Silakan coba lagi.",
+      "delete_title": "Hapus webhook",
+      "deleted": "Webhook berhasil dihapus.",
+      "empty_description": "Buat webhook untuk menerima pembaruan real-time dan mengotomatiskan tindakan",
+      "empty_title": "Tidak ada webhook",
+      "events": {
+        "cycle": "Siklus dibuat, diperbarui, atau dihapus",
+        "issue": "Item kerja dibuat, diperbarui, dihapus, atau ditambahkan ke siklus atau modul",
+        "issue_comment": "Komentar diposting, diperbarui, atau dihapus",
+        "issue_comment_label": "Komentar item kerja",
+        "module": "Modul dibuat, diperbarui, atau dihapus",
+        "project": "Proyek dibuat, diperbarui, atau dihapus"
+      },
+      "key_regenerated": "Kunci baru berhasil dibuat ulang.",
+      "view_secret_key": "Lihat kunci rahasia"
+    }
   }
 }
