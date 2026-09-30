@@ -422,5 +422,91 @@
       "label": "Título do Épico",
       "required": "O título do épico é obrigatório."
     }
+  },
+  "issue_ui": {
+    "id_copied": "ID do item de trabalho copiado para a área de transferência",
+    "click_to_copy": "Clique para copiar",
+    "asset_duplication_failed": "Falha ao duplicar o recurso. Tente novamente mais tarde.",
+    "required": "Este campo é obrigatório",
+    "no_siblings": "Nenhum item de trabalho irmão",
+    "attachments": {
+      "uploading": "Enviando anexo...",
+      "uploaded_title": "Anexo enviado",
+      "uploaded_message": "O anexo foi enviado com sucesso",
+      "not_uploaded_title": "Anexo não enviado",
+      "not_uploaded_message": "Não foi possível enviar o anexo",
+      "removed_title": "Anexo removido",
+      "removed_message": "O anexo foi removido com sucesso",
+      "not_removed_title": "Anexo não removido",
+      "not_removed_message": "Não foi possível remover o anexo",
+      "drop_here": "Solte aqui...",
+      "uploading_short": "Enviando...",
+      "click_or_drag": "Clique ou arraste um arquivo aqui",
+      "invalid_file": "Tipo ou tamanho de arquivo inválido (máx. {size} MB)"
+    },
+    "due_before_start": "A data de vencimento não pode ser anterior à data de início do item de trabalho.",
+    "clear_filters": "Limpar filtros",
+    "add_to_cycle_success": "Itens de trabalho adicionados ao ciclo com sucesso.",
+    "add_to_cycle_failed": "Não foi possível adicionar os itens de trabalho selecionados ao ciclo. Tente novamente.",
+    "add_to_module_success": "Itens de trabalho adicionados ao módulo com sucesso.",
+    "add_to_module_failed": "Não foi possível adicionar os itens de trabalho selecionados ao módulo. Tente novamente.",
+    "project_view_empty": {
+      "title": "Os itens de trabalho da visualização aparecerão aqui",
+      "description": "Os itens de trabalho ajudam você a acompanhar cada parte do trabalho. Com eles, você sabe o que está acontecendo, quem está trabalhando e o que já foi feito."
+    },
+    "sub_group_by": "Subagrupar por",
+    "filters": {
+      "custom": "Personalizado",
+      "mention": "Menção"
+    },
+    "cannot_move": {
+      "title": "Não é possível mover o item de trabalho",
+      "not_allowed": "Você não tem permissão para mover este item de trabalho",
+      "dnd_disabled": "Arrastar e soltar está desativado para o agrupamento atual"
+    },
+    "select_within_project": "Somente itens de trabalho do projeto atual podem ser selecionados.",
+    "drop_to_delete": "Solte aqui para excluir o item de trabalho.",
+    "view_not_exist": {
+      "title": "A visualização não existe",
+      "description": "A visualização que você procura não existe ou você não tem permissão para vê-la."
+    },
+    "go_to_all_work_items": "Ir para todos os itens de trabalho",
+    "save_as": "Salvar como",
+    "columns": {
+      "select_cycle": "Selecionar ciclo",
+      "select_modules": "Selecionar módulos"
+    },
+    "quick_actions": {
+      "action_not_available": "Ação não disponível",
+      "not_implemented": "A ação {action} não está implementada.",
+      "restore_success_title": "Restauração concluída",
+      "restore_success_message": "Seu item de trabalho pode ser encontrado nos itens de trabalho do projeto.",
+      "restore_failed": "Não foi possível restaurar o item de trabalho. Tente novamente.",
+      "remove_from_cycle": "Remover do ciclo",
+      "remove_from_module": "Remover do módulo"
+    },
+    "close_peek": "Fechar a visualização rápida",
+    "labels_count": "{count} etiquetas",
+    "view_epic": "Ver épico",
+    "view_work_item": "Ver item de trabalho",
+    "save_draft": {
+      "title": "Salvar este rascunho?",
+      "description": "Você pode salvar este item de trabalho em rascunhos para voltar a ele mais tarde."
+    },
+    "delete_confirm": {
+      "work_item": "Tem certeza de que deseja excluir o item de trabalho {identifier}? Todos os dados relacionados ao item de trabalho serão removidos permanentemente. Esta ação não pode ser desfeita.",
+      "epic": "Tem certeza de que deseja excluir o épico {identifier}? Todos os dados relacionados ao épico serão removidos permanentemente. Esta ação não pode ser desfeita."
+    },
+    "work_item_deleted": "Este item de trabalho foi excluído",
+    "epics_link_copied": "Link dos épicos copiado para a área de transferência.",
+    "work_items_link_copied": "Link dos itens de trabalho copiado para a área de transferência.",
+    "editor_processing": "O editor ainda está processando as alterações. Aguarde antes de continuar.",
+    "ai_title_not_informative": "O título do item de trabalho não é informativo o suficiente para gerar a descrição. Tente com um título diferente.",
+    "ai_rate_limit": "Você atingiu o número máximo de 50 solicitações por mês por usuário.",
+    "generic_error": "Ocorreu um erro. Tente novamente.",
+    "move_to_project_failed": "Falha ao mover o item de trabalho para o projeto. Tente novamente.",
+    "project_work_items_count": "{count, plural, one {Há # item de trabalho neste projeto} other {Há # itens de trabalho neste projeto}}",
+    "archived_banner": "Este item de trabalho foi arquivado. Acesse a seção Arquivos para restaurá-lo.",
+    "go_to_archives": "Ir para arquivos"
   }
 }

@@ -1,10 +1,12 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import { useMemo } from "react";
+import { useTranslation } from "@plane/i18n";
 import { setPromiseToast, TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
@@ -36,6 +38,7 @@ export const useAttachmentOperations = (
   const {
     attachment: { createAttachment, removeAttachment, getAttachmentsUploadStatusByIssueId },
   } = useIssueDetail(issueServiceType);
+  const { t } = useTranslation();
 
   const attachmentOperations: TAttachmentOperations = useMemo(
     () => ({
@@ -43,14 +46,14 @@ export const useAttachmentOperations = (
         if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
         const attachmentUploadPromise = createAttachment(workspaceSlug, projectId, issueId, file);
         setPromiseToast(attachmentUploadPromise, {
-          loading: "Uploading attachment...",
+          loading: t("issue_ui.attachments.uploading"),
           success: {
-            title: "Attachment uploaded",
-            message: () => "The attachment has been successfully uploaded",
+            title: t("issue_ui.attachments.uploaded_title"),
+            message: () => t("issue_ui.attachments.uploaded_message"),
           },
           error: {
-            title: "Attachment not uploaded",
-            message: () => "The attachment could not be uploaded",
+            title: t("issue_ui.attachments.not_uploaded_title"),
+            message: () => t("issue_ui.attachments.not_uploaded_message"),
           },
         });
 
@@ -61,20 +64,20 @@ export const useAttachmentOperations = (
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await removeAttachment(workspaceSlug, projectId, issueId, attachmentId);
           setToast({
-            message: "The attachment has been successfully removed",
+            message: t("issue_ui.attachments.removed_message"),
             type: TOAST_TYPE.SUCCESS,
-            title: "Attachment removed",
+            title: t("issue_ui.attachments.removed_title"),
           });
         } catch (_error) {
           setToast({
-            message: "The Attachment could not be removed",
+            message: t("issue_ui.attachments.not_removed_message"),
             type: TOAST_TYPE.ERROR,
-            title: "Attachment not removed",
+            title: t("issue_ui.attachments.not_removed_title"),
           });
         }
       },
     }),
-    [workspaceSlug, projectId, issueId, createAttachment, removeAttachment]
+    [workspaceSlug, projectId, issueId, createAttachment, removeAttachment, t]
   );
   const attachmentsUploadStatus = getAttachmentsUploadStatusByIssueId(issueId);
 

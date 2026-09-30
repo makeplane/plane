@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -8,6 +9,7 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Banner } from "@plane/propel/banner";
 import { Button } from "@plane/propel/button";
 import { ArchiveIcon } from "@plane/propel/icons";
@@ -25,6 +27,7 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug, projectId, archivedIssueId } = params;
   const router = useRouter();
+  const { t } = useTranslation();
   // states
   // hooks
   const {
@@ -69,14 +72,14 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
         <>
           <Banner
             variant="warning"
-            title="This work item has been archived. Visit the Archives section to restore it."
+            title={t("issue_ui.archived_banner")}
             icon={<ArchiveIcon className="size-4" />}
             action={
               <Button
                 variant="secondary"
                 onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/`)}
               >
-                Go to archives
+                {t("issue_ui.go_to_archives")}
               </Button>
             }
             className="border-b border-subtle"

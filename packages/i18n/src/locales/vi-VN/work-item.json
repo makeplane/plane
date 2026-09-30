@@ -422,5 +422,91 @@
       "label": "Tiêu đề sử thi",
       "required": "Tiêu đề sử thi là bắt buộc"
     }
+  },
+  "issue_ui": {
+    "id_copied": "Đã sao chép ID mục công việc vào bộ nhớ tạm",
+    "click_to_copy": "Nhấp để sao chép",
+    "asset_duplication_failed": "Nhân bản tài nguyên thất bại. Vui lòng thử lại sau.",
+    "required": "Trường này là bắt buộc",
+    "no_siblings": "Không có mục công việc cùng cấp",
+    "attachments": {
+      "uploading": "Đang tải lên tệp đính kèm...",
+      "uploaded_title": "Đã tải lên tệp đính kèm",
+      "uploaded_message": "Tệp đính kèm đã được tải lên thành công",
+      "not_uploaded_title": "Tệp đính kèm chưa được tải lên",
+      "not_uploaded_message": "Không thể tải lên tệp đính kèm",
+      "removed_title": "Đã xóa tệp đính kèm",
+      "removed_message": "Tệp đính kèm đã được xóa thành công",
+      "not_removed_title": "Tệp đính kèm chưa được xóa",
+      "not_removed_message": "Không thể xóa tệp đính kèm",
+      "drop_here": "Thả vào đây...",
+      "uploading_short": "Đang tải lên...",
+      "click_or_drag": "Nhấp hoặc kéo tệp vào đây",
+      "invalid_file": "Loại hoặc kích thước tệp không hợp lệ (tối đa {size} MB)"
+    },
+    "due_before_start": "Ngày đến hạn không thể trước ngày bắt đầu của mục công việc.",
+    "clear_filters": "Xóa bộ lọc",
+    "add_to_cycle_success": "Đã thêm các mục công việc vào chu kỳ thành công.",
+    "add_to_cycle_failed": "Không thể thêm các mục công việc đã chọn vào chu kỳ. Vui lòng thử lại.",
+    "add_to_module_success": "Đã thêm các mục công việc vào mô-đun thành công.",
+    "add_to_module_failed": "Không thể thêm các mục công việc đã chọn vào mô-đun. Vui lòng thử lại.",
+    "project_view_empty": {
+      "title": "Các mục công việc của chế độ xem sẽ xuất hiện ở đây",
+      "description": "Mục công việc giúp bạn theo dõi từng phần công việc. Với mục công việc, bạn biết điều gì đang diễn ra, ai đang thực hiện và điều gì đã hoàn thành."
+    },
+    "sub_group_by": "Nhóm phụ theo",
+    "filters": {
+      "custom": "Tùy chỉnh",
+      "mention": "Đề cập"
+    },
+    "cannot_move": {
+      "title": "Không thể di chuyển mục công việc",
+      "not_allowed": "Bạn không có quyền di chuyển mục công việc này",
+      "dnd_disabled": "Kéo và thả bị tắt đối với cách nhóm hiện tại"
+    },
+    "select_within_project": "Chỉ có thể chọn các mục công việc trong dự án hiện tại.",
+    "drop_to_delete": "Thả vào đây để xóa mục công việc.",
+    "view_not_exist": {
+      "title": "Chế độ xem không tồn tại",
+      "description": "Chế độ xem bạn tìm không tồn tại hoặc bạn không có quyền xem."
+    },
+    "go_to_all_work_items": "Đi tới tất cả mục công việc",
+    "save_as": "Lưu thành",
+    "columns": {
+      "select_cycle": "Chọn chu kỳ",
+      "select_modules": "Chọn mô-đun"
+    },
+    "quick_actions": {
+      "action_not_available": "Hành động không khả dụng",
+      "not_implemented": "Hành động {action} chưa được triển khai.",
+      "restore_success_title": "Khôi phục thành công",
+      "restore_success_message": "Bạn có thể tìm thấy mục công việc trong các mục công việc của dự án.",
+      "restore_failed": "Không thể khôi phục mục công việc. Vui lòng thử lại.",
+      "remove_from_cycle": "Xóa khỏi chu kỳ",
+      "remove_from_module": "Xóa khỏi mô-đun"
+    },
+    "close_peek": "Đóng chế độ xem nhanh",
+    "labels_count": "{count} nhãn",
+    "view_epic": "Xem sử thi",
+    "view_work_item": "Xem mục công việc",
+    "save_draft": {
+      "title": "Lưu bản nháp này?",
+      "description": "Bạn có thể lưu mục công việc này vào bản nháp để quay lại sau."
+    },
+    "delete_confirm": {
+      "work_item": "Bạn có chắc chắn muốn xóa mục công việc {identifier}? Tất cả dữ liệu liên quan đến mục công việc sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.",
+      "epic": "Bạn có chắc chắn muốn xóa sử thi {identifier}? Tất cả dữ liệu liên quan đến sử thi sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác."
+    },
+    "work_item_deleted": "Mục công việc này đã bị xóa",
+    "epics_link_copied": "Đã sao chép liên kết sử thi vào bộ nhớ tạm.",
+    "work_items_link_copied": "Đã sao chép liên kết mục công việc vào bộ nhớ tạm.",
+    "editor_processing": "Trình soạn thảo vẫn đang xử lý các thay đổi. Vui lòng đợi trước khi tiếp tục.",
+    "ai_title_not_informative": "Tiêu đề mục công việc chưa đủ thông tin để tạo mô tả. Vui lòng thử với tiêu đề khác.",
+    "ai_rate_limit": "Bạn đã đạt số lượng yêu cầu tối đa là 50 yêu cầu mỗi tháng cho mỗi người dùng.",
+    "generic_error": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "move_to_project_failed": "Di chuyển mục công việc sang dự án thất bại. Vui lòng thử lại.",
+    "project_work_items_count": "{count, plural, other {Dự án này có # mục công việc}}",
+    "archived_banner": "Mục công việc này đã được lưu trữ. Truy cập phần Lưu trữ để khôi phục.",
+    "go_to_archives": "Đi tới lưu trữ"
   }
 }

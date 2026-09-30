@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -9,6 +10,7 @@ import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 // components
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
@@ -23,6 +25,7 @@ type Props = {
 
 export const SpreadsheetModuleColumn = observer(function SpreadsheetModuleColumn(props: Props) {
   const { issue, disabled, onClose } = props;
+  const { t } = useTranslation();
   // router
   const { workspaceSlug } = useParams();
   // hooks
@@ -53,7 +56,7 @@ export const SpreadsheetModuleColumn = observer(function SpreadsheetModuleColumn
         value={issue?.module_ids ?? []}
         onChange={handleModule}
         disabled={disabled}
-        placeholder="Select modules"
+        placeholder={t("issue_ui.columns.select_modules")}
         buttonVariant="transparent-with-text"
         buttonContainerClassName="w-full relative flex items-center p-2 group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x"
         buttonClassName="relative leading-4 h-4.5 bg-transparent hover:bg-transparent !px-0"

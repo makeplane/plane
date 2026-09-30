@@ -422,5 +422,91 @@
       "label": "史诗标题",
       "required": "史诗标题为必填项"
     }
+  },
+  "issue_ui": {
+    "id_copied": "工作项 ID 已复制到剪贴板",
+    "click_to_copy": "点击复制",
+    "asset_duplication_failed": "资源复制失败。请稍后重试。",
+    "required": "此项为必填项",
+    "no_siblings": "没有同级工作项",
+    "attachments": {
+      "uploading": "正在上传附件...",
+      "uploaded_title": "附件已上传",
+      "uploaded_message": "附件已成功上传",
+      "not_uploaded_title": "附件未上传",
+      "not_uploaded_message": "无法上传附件",
+      "removed_title": "附件已删除",
+      "removed_message": "附件已成功删除",
+      "not_removed_title": "附件未删除",
+      "not_removed_message": "无法删除附件",
+      "drop_here": "拖放到此处...",
+      "uploading_short": "正在上传...",
+      "click_or_drag": "点击或将文件拖到此处",
+      "invalid_file": "文件类型或大小无效（最大 {size} MB）"
+    },
+    "due_before_start": "截止日期不能早于工作项的开始日期。",
+    "clear_filters": "清除过滤器",
+    "add_to_cycle_success": "工作项已成功添加到周期。",
+    "add_to_cycle_failed": "无法将所选工作项添加到周期。请重试。",
+    "add_to_module_success": "工作项已成功添加到模块。",
+    "add_to_module_failed": "无法将所选工作项添加到模块。请重试。",
+    "project_view_empty": {
+      "title": "视图的工作项将显示在此处",
+      "description": "工作项可帮助您跟踪每一项具体工作。通过工作项，您可以了解进展情况、负责人以及已完成的内容。"
+    },
+    "sub_group_by": "子分组依据",
+    "filters": {
+      "custom": "自定义",
+      "mention": "提及"
+    },
+    "cannot_move": {
+      "title": "无法移动工作项",
+      "not_allowed": "您无权移动此工作项",
+      "dnd_disabled": "当前分组已禁用拖放"
+    },
+    "select_within_project": "只能选择当前项目内的工作项。",
+    "drop_to_delete": "拖放到此处以删除工作项。",
+    "view_not_exist": {
+      "title": "视图不存在",
+      "description": "您查找的视图不存在，或您没有查看权限。"
+    },
+    "go_to_all_work_items": "前往所有工作项",
+    "save_as": "另存为",
+    "columns": {
+      "select_cycle": "选择周期",
+      "select_modules": "选择模块"
+    },
+    "quick_actions": {
+      "action_not_available": "操作不可用",
+      "not_implemented": "{action}操作尚未实现。",
+      "restore_success_title": "恢复成功",
+      "restore_success_message": "您可以在项目工作项中找到该工作项。",
+      "restore_failed": "无法恢复工作项。请重试。",
+      "remove_from_cycle": "从周期中移除",
+      "remove_from_module": "从模块中移除"
+    },
+    "close_peek": "关闭预览",
+    "labels_count": "{count} 个标签",
+    "view_epic": "查看史诗",
+    "view_work_item": "查看工作项",
+    "save_draft": {
+      "title": "保存此草稿？",
+      "description": "您可以将此工作项保存到草稿，以便稍后继续处理。"
+    },
+    "delete_confirm": {
+      "work_item": "确定要删除工作项 {identifier} 吗？与该工作项相关的所有数据将被永久删除。此操作无法撤销。",
+      "epic": "确定要删除史诗 {identifier} 吗？与该史诗相关的所有数据将被永久删除。此操作无法撤销。"
+    },
+    "work_item_deleted": "此工作项已被删除",
+    "epics_link_copied": "史诗链接已复制到剪贴板。",
+    "work_items_link_copied": "工作项链接已复制到剪贴板。",
+    "editor_processing": "编辑器仍在处理更改。请稍候再继续。",
+    "ai_title_not_informative": "工作项标题信息不足，无法生成描述。请尝试使用其他标题。",
+    "ai_rate_limit": "您已达到每位用户每月 50 次请求的上限。",
+    "generic_error": "发生错误。请重试。",
+    "move_to_project_failed": "无法将工作项移动到项目。请重试。",
+    "project_work_items_count": "{count, plural, other {此项目中有 # 个工作项}}",
+    "archived_banner": "此工作项已归档。请前往归档部分进行恢复。",
+    "go_to_archives": "前往归档"
   }
 }

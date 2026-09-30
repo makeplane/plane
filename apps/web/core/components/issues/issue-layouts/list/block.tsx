@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -10,6 +11,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { useTranslation } from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -75,6 +77,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     canDrag,
     isEpic = false,
   } = props;
+  const { t } = useTranslation();
   // ref
   const issueRef = useRef<HTMLDivElement | null>(null);
   // router
@@ -199,10 +202,10 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
           if (!isDraggingAllowed) {
             setToast({
               type: TOAST_TYPE.WARNING,
-              title: "Cannot move work item",
+              title: t("issue_ui.cannot_move.title"),
               message: !canEditIssueProperties
-                ? "You are not allowed to move this work item"
-                : "Drag and drop is disabled for the current grouping",
+                ? t("issue_ui.cannot_move.not_allowed")
+                : t("issue_ui.cannot_move.dnd_disabled"),
             });
           }
         }}
@@ -212,16 +215,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
             <div className="flex items-center gap-1" style={isSubIssue ? { marginLeft } : {}}>
               {/* select checkbox */}
               {projectId && canSelectIssues && !isEpic && (
-                <Tooltip
-                  tooltipContent={
-                    <>
-                      Only work items within the current
-                      <br />
-                      project can be selected.
-                    </>
-                  }
-                  disabled={issue.project_id === projectId}
-                >
+                <Tooltip tooltipContent={t("issue_ui.select_within_project")} disabled={issue.project_id === projectId}>
                   <div className="absolute left-1 grid w-3.5 flex-shrink-0 place-items-center">
                     <MultipleSelectEntityAction
                       className={cn(

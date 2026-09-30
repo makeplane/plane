@@ -422,5 +422,91 @@
       "label": "Judul Epik",
       "required": "Judul epik wajib diisi."
     }
+  },
+  "issue_ui": {
+    "id_copied": "ID item kerja disalin ke papan klip",
+    "click_to_copy": "Klik untuk menyalin",
+    "asset_duplication_failed": "Duplikasi aset gagal. Silakan coba lagi nanti.",
+    "required": "Wajib diisi",
+    "no_siblings": "Tidak ada item kerja sejajar",
+    "attachments": {
+      "uploading": "Mengunggah lampiran...",
+      "uploaded_title": "Lampiran diunggah",
+      "uploaded_message": "Lampiran berhasil diunggah",
+      "not_uploaded_title": "Lampiran tidak diunggah",
+      "not_uploaded_message": "Lampiran tidak dapat diunggah",
+      "removed_title": "Lampiran dihapus",
+      "removed_message": "Lampiran berhasil dihapus",
+      "not_removed_title": "Lampiran tidak dihapus",
+      "not_removed_message": "Lampiran tidak dapat dihapus",
+      "drop_here": "Letakkan di sini...",
+      "uploading_short": "Mengunggah...",
+      "click_or_drag": "Klik atau seret file ke sini",
+      "invalid_file": "Jenis atau ukuran file tidak valid (maks. {size} MB)"
+    },
+    "due_before_start": "Tanggal jatuh tempo tidak boleh sebelum tanggal mulai item kerja.",
+    "clear_filters": "Hapus filter",
+    "add_to_cycle_success": "Item kerja berhasil ditambahkan ke siklus.",
+    "add_to_cycle_failed": "Item kerja yang dipilih tidak dapat ditambahkan ke siklus. Silakan coba lagi.",
+    "add_to_module_success": "Item kerja berhasil ditambahkan ke modul.",
+    "add_to_module_failed": "Item kerja yang dipilih tidak dapat ditambahkan ke modul. Silakan coba lagi.",
+    "project_view_empty": {
+      "title": "Item kerja tampilan akan muncul di sini",
+      "description": "Item kerja membantu Anda melacak setiap pekerjaan. Dengan item kerja, pantau apa yang sedang terjadi, siapa yang mengerjakannya, dan apa yang sudah selesai."
+    },
+    "sub_group_by": "Sub-kelompok berdasarkan",
+    "filters": {
+      "custom": "Kustom",
+      "mention": "Sebutan"
+    },
+    "cannot_move": {
+      "title": "Tidak dapat memindahkan item kerja",
+      "not_allowed": "Anda tidak diizinkan memindahkan item kerja ini",
+      "dnd_disabled": "Seret dan lepas dinonaktifkan untuk pengelompokan saat ini"
+    },
+    "select_within_project": "Hanya item kerja dalam proyek saat ini yang dapat dipilih.",
+    "drop_to_delete": "Letakkan di sini untuk menghapus item kerja.",
+    "view_not_exist": {
+      "title": "Tampilan tidak ada",
+      "description": "Tampilan yang Anda cari tidak ada atau Anda tidak memiliki izin untuk melihatnya."
+    },
+    "go_to_all_work_items": "Buka semua item kerja",
+    "save_as": "Simpan sebagai",
+    "columns": {
+      "select_cycle": "Pilih siklus",
+      "select_modules": "Pilih modul"
+    },
+    "quick_actions": {
+      "action_not_available": "Tindakan tidak tersedia",
+      "not_implemented": "Tindakan {action} belum diimplementasikan.",
+      "restore_success_title": "Pemulihan berhasil",
+      "restore_success_message": "Item kerja Anda dapat ditemukan di item kerja proyek.",
+      "restore_failed": "Item kerja tidak dapat dipulihkan. Silakan coba lagi.",
+      "remove_from_cycle": "Hapus dari siklus",
+      "remove_from_module": "Hapus dari modul"
+    },
+    "close_peek": "Tutup tampilan pratinjau",
+    "labels_count": "{count} Label",
+    "view_epic": "Lihat epik",
+    "view_work_item": "Lihat item kerja",
+    "save_draft": {
+      "title": "Simpan draf ini?",
+      "description": "Anda dapat menyimpan item kerja ini ke Draf agar dapat kembali ke sana nanti."
+    },
+    "delete_confirm": {
+      "work_item": "Apakah Anda yakin ingin menghapus item kerja {identifier}? Semua data yang terkait dengan item kerja akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.",
+      "epic": "Apakah Anda yakin ingin menghapus epik {identifier}? Semua data yang terkait dengan epik akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
+    },
+    "work_item_deleted": "Item kerja ini telah dihapus",
+    "epics_link_copied": "Tautan epik disalin ke papan klip.",
+    "work_items_link_copied": "Tautan item kerja disalin ke papan klip.",
+    "editor_processing": "Editor masih memproses perubahan. Harap tunggu sebelum melanjutkan.",
+    "ai_title_not_informative": "Judul item kerja kurang informatif untuk membuat deskripsi. Silakan coba dengan judul lain.",
+    "ai_rate_limit": "Anda telah mencapai batas maksimum 50 permintaan per bulan per pengguna.",
+    "generic_error": "Terjadi kesalahan. Silakan coba lagi.",
+    "move_to_project_failed": "Gagal memindahkan item kerja ke proyek. Silakan coba lagi.",
+    "project_work_items_count": "{count, plural, other {Ada # item kerja di proyek ini}}",
+    "archived_banner": "Item kerja ini telah diarsipkan. Kunjungi bagian Arsip untuk memulihkannya.",
+    "go_to_archives": "Buka arsip"
   }
 }

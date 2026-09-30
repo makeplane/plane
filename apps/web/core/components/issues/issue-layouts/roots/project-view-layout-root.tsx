@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -10,6 +11,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane constants
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // hooks
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
@@ -51,6 +53,7 @@ export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
   // hooks
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { getViewById } = useProjectView();
+  const { t } = useTranslation();
   // derived values
   const projectView = viewId ? getViewById(viewId) : undefined;
   const workItemFilters = viewId ? issuesFilter?.getIssueFilters(viewId) : undefined;
@@ -88,7 +91,7 @@ export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
       <ProjectLevelWorkItemFiltersHOC
         enableSaveView
         saveViewOptions={{
-          label: "Save as",
+          label: t("issue_ui.save_as"),
         }}
         enableUpdateView
         entityId={viewId}

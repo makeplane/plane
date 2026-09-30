@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -12,6 +13,7 @@ import { MoreHorizontal } from "lucide-react";
 import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
 // types
 import { Tooltip } from "@plane/propel/tooltip";
@@ -189,6 +191,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
     selectionHelpers,
     isEpic = false,
   } = props;
+  const { t } = useTranslation();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   // refs
@@ -310,13 +313,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
               {/* select checkbox */}
               {projectId && canSelectIssues && (
                 <Tooltip
-                  tooltipContent={
-                    <>
-                      Only work items within the current
-                      <br />
-                      project can be selected.
-                    </>
-                  }
+                  tooltipContent={t("issue_ui.select_within_project")}
                   disabled={issueDetail.project_id === projectId}
                 >
                   <div className="absolute left-1 mr-1 grid w-3.5 flex-shrink-0 place-items-center">

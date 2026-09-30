@@ -60,7 +60,7 @@ export const FilterLabels = observer(function FilterLabels(props: Props) {
   return (
     <>
       <FilterHeader
-        title={`Label${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("common.label")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />

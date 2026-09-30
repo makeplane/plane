@@ -1,11 +1,13 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import { useCallback, useMemo, useState } from "react";
 
+import { useTranslation } from "@plane/i18n";
 import { PlusIcon } from "@plane/propel/icons";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -35,6 +37,7 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
   const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks
   const { toggleIssueLinkModal: toggleIssueLinkModalStore, createLink, updateLink, removeLink } = useIssueDetail();
+  const { t } = useTranslation();
   // state
   const [isIssueLinkModal, setIsIssueLinkModal] = useState(false);
   const toggleIssueLinkModal = useCallback(
@@ -52,16 +55,16 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await createLink(workspaceSlug, projectId, issueId, data);
           setToast({
-            message: "The link has been successfully created",
+            message: t("links.toasts.created.message"),
             type: TOAST_TYPE.SUCCESS,
-            title: "Link created",
+            title: t("links.toasts.created.title"),
           });
           toggleIssueLinkModal(false);
         } catch (error: any) {
           setToast({
-            message: error?.data?.error ?? "The link could not be created",
+            message: error?.data?.error ?? t("links.toasts.not_created.message"),
             type: TOAST_TYPE.ERROR,
-            title: "Link not created",
+            title: t("links.toasts.not_created.title"),
           });
           throw error;
         }
@@ -71,16 +74,16 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await updateLink(workspaceSlug, projectId, issueId, linkId, data);
           setToast({
-            message: "The link has been successfully updated",
+            message: t("links.toasts.updated.message"),
             type: TOAST_TYPE.SUCCESS,
-            title: "Link updated",
+            title: t("links.toasts.updated.title"),
           });
           toggleIssueLinkModal(false);
         } catch (error) {
           setToast({
-            message: "The link could not be updated",
+            message: t("links.toasts.not_updated.message"),
             type: TOAST_TYPE.ERROR,
-            title: "Link not updated",
+            title: t("links.toasts.not_updated.title"),
           });
           throw error;
         }
@@ -90,21 +93,21 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await removeLink(workspaceSlug, projectId, issueId, linkId);
           setToast({
-            message: "The link has been successfully removed",
+            message: t("links.toasts.removed.message"),
             type: TOAST_TYPE.SUCCESS,
-            title: "Link removed",
+            title: t("links.toasts.removed.title"),
           });
           toggleIssueLinkModal(false);
         } catch {
           setToast({
-            message: "The link could not be removed",
+            message: t("links.toasts.not_removed.message"),
             type: TOAST_TYPE.ERROR,
-            title: "Link not removed",
+            title: t("links.toasts.not_removed.title"),
           });
         }
       },
     }),
-    [workspaceSlug, projectId, issueId, createLink, updateLink, removeLink, toggleIssueLinkModal]
+    [workspaceSlug, projectId, issueId, createLink, updateLink, removeLink, toggleIssueLinkModal, t]
   );
 
   const handleOnClose = () => {
@@ -122,7 +125,7 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
 
       <div className="py-1 text-11">
         <div className="flex items-center justify-between gap-2">
-          <h4>Links</h4>
+          <h4>{t("common.links")}</h4>
           {!disabled && (
             <button
               type="button"

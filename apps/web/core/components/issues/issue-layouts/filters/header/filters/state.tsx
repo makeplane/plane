@@ -52,7 +52,7 @@ export const FilterState = observer(function FilterState(props: Props) {
   return (
     <>
       <FilterHeader
-        title={`State${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("common.state")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />

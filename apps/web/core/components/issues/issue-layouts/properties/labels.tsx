@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -56,7 +57,7 @@ const NoLabel = observer(function NoLabel({ isMobile, noLabelBorder, fullWidth, 
     <Tooltip
       position="top"
       tooltipHeading={t("common.labels")}
-      tooltipContent="None"
+      tooltipContent={t("none")}
       isMobile={isMobile}
       renderByDefault={false}
     >

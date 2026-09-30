@@ -422,5 +422,91 @@
       "label": "Epic-Titel",
       "required": "Ein Titel für das Epic ist erforderlich."
     }
+  },
+  "issue_ui": {
+    "id_copied": "Arbeitselement-ID in die Zwischenablage kopiert",
+    "click_to_copy": "Zum Kopieren klicken",
+    "asset_duplication_failed": "Duplizieren der Datei fehlgeschlagen. Bitte versuchen Sie es später erneut.",
+    "required": "Dies ist erforderlich",
+    "no_siblings": "Keine verwandten Arbeitselemente",
+    "attachments": {
+      "uploading": "Anhang wird hochgeladen...",
+      "uploaded_title": "Anhang hochgeladen",
+      "uploaded_message": "Der Anhang wurde erfolgreich hochgeladen",
+      "not_uploaded_title": "Anhang nicht hochgeladen",
+      "not_uploaded_message": "Der Anhang konnte nicht hochgeladen werden",
+      "removed_title": "Anhang entfernt",
+      "removed_message": "Der Anhang wurde erfolgreich entfernt",
+      "not_removed_title": "Anhang nicht entfernt",
+      "not_removed_message": "Der Anhang konnte nicht entfernt werden",
+      "drop_here": "Hier ablegen...",
+      "uploading_short": "Wird hochgeladen...",
+      "click_or_drag": "Klicken Sie oder ziehen Sie eine Datei hierher",
+      "invalid_file": "Ungültiger Dateityp oder ungültige Dateigröße (max. {size} MB)"
+    },
+    "due_before_start": "Das Fälligkeitsdatum darf nicht vor dem Startdatum des Arbeitselements liegen.",
+    "clear_filters": "Filter entfernen",
+    "add_to_cycle_success": "Arbeitselemente wurden erfolgreich zum Zyklus hinzugefügt.",
+    "add_to_cycle_failed": "Die ausgewählten Arbeitselemente konnten dem Zyklus nicht hinzugefügt werden. Bitte versuchen Sie es erneut.",
+    "add_to_module_success": "Arbeitselemente wurden erfolgreich zum Modul hinzugefügt.",
+    "add_to_module_failed": "Die ausgewählten Arbeitselemente konnten dem Modul nicht hinzugefügt werden. Bitte versuchen Sie es erneut.",
+    "project_view_empty": {
+      "title": "Arbeitselemente der Ansicht werden hier angezeigt",
+      "description": "Arbeitselemente helfen Ihnen, einzelne Arbeitsschritte zu verfolgen. Behalten Sie den Überblick, was passiert, wer daran arbeitet und was erledigt ist."
+    },
+    "sub_group_by": "Untergruppieren nach",
+    "filters": {
+      "custom": "Benutzerdefiniert",
+      "mention": "Erwähnung"
+    },
+    "cannot_move": {
+      "title": "Arbeitselement kann nicht verschoben werden",
+      "not_allowed": "Sie dürfen dieses Arbeitselement nicht verschieben",
+      "dnd_disabled": "Drag & Drop ist für die aktuelle Gruppierung deaktiviert"
+    },
+    "select_within_project": "Es können nur Arbeitselemente des aktuellen Projekts ausgewählt werden.",
+    "drop_to_delete": "Hier ablegen, um das Arbeitselement zu löschen.",
+    "view_not_exist": {
+      "title": "Ansicht existiert nicht",
+      "description": "Die gesuchte Ansicht existiert nicht oder Sie haben keine Berechtigung, sie anzuzeigen."
+    },
+    "go_to_all_work_items": "Zu allen Arbeitselementen",
+    "save_as": "Speichern unter",
+    "columns": {
+      "select_cycle": "Zyklus auswählen",
+      "select_modules": "Module auswählen"
+    },
+    "quick_actions": {
+      "action_not_available": "Aktion nicht verfügbar",
+      "not_implemented": "Die Aktion {action} ist nicht implementiert.",
+      "restore_success_title": "Wiederherstellung erfolgreich",
+      "restore_success_message": "Ihr Arbeitselement finden Sie unter den Arbeitselementen des Projekts.",
+      "restore_failed": "Das Arbeitselement konnte nicht wiederhergestellt werden. Bitte versuchen Sie es erneut.",
+      "remove_from_cycle": "Aus Zyklus entfernen",
+      "remove_from_module": "Aus Modul entfernen"
+    },
+    "close_peek": "Vorschau schließen",
+    "labels_count": "{count} Labels",
+    "view_epic": "Epic anzeigen",
+    "view_work_item": "Arbeitselement anzeigen",
+    "save_draft": {
+      "title": "Diesen Entwurf speichern?",
+      "description": "Sie können dieses Arbeitselement als Entwurf speichern, um später darauf zurückzukommen."
+    },
+    "delete_confirm": {
+      "work_item": "Sind Sie sicher, dass Sie das Arbeitselement {identifier} löschen möchten? Alle Daten zu diesem Arbeitselement werden dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "epic": "Sind Sie sicher, dass Sie das Epic {identifier} löschen möchten? Alle Daten zu diesem Epic werden dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "work_item_deleted": "Dieses Arbeitselement wurde gelöscht",
+    "epics_link_copied": "Link zu Epics in die Zwischenablage kopiert.",
+    "work_items_link_copied": "Link zu Arbeitselementen in die Zwischenablage kopiert.",
+    "editor_processing": "Der Editor verarbeitet noch Änderungen. Bitte warten Sie, bevor Sie fortfahren.",
+    "ai_title_not_informative": "Der Titel des Arbeitselements ist nicht aussagekräftig genug, um eine Beschreibung zu generieren. Bitte versuchen Sie es mit einem anderen Titel.",
+    "ai_rate_limit": "Sie haben die maximale Anzahl von 50 Anfragen pro Monat und Benutzer erreicht.",
+    "generic_error": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "move_to_project_failed": "Das Arbeitselement konnte nicht in das Projekt verschoben werden. Bitte versuchen Sie es erneut.",
+    "project_work_items_count": "{count, plural, one {In diesem Projekt gibt es # Arbeitselement} other {In diesem Projekt gibt es # Arbeitselemente}}",
+    "archived_banner": "Dieses Arbeitselement wurde archiviert. Besuchen Sie den Bereich Archive, um es wiederherzustellen.",
+    "go_to_archives": "Zu den Archiven"
   }
 }

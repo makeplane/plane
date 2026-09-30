@@ -422,5 +422,91 @@
       "label": "Epic 標題",
       "required": "Epic 標題為必填。"
     }
+  },
+  "issue_ui": {
+    "id_copied": "工作事項 ID 已複製到剪貼簿",
+    "click_to_copy": "點擊複製",
+    "asset_duplication_failed": "資源複製失敗。請稍後再試。",
+    "required": "此項為必填",
+    "no_siblings": "沒有同層級的工作事項",
+    "attachments": {
+      "uploading": "正在上傳附件...",
+      "uploaded_title": "附件已上傳",
+      "uploaded_message": "附件已成功上傳",
+      "not_uploaded_title": "附件未上傳",
+      "not_uploaded_message": "無法上傳附件",
+      "removed_title": "附件已移除",
+      "removed_message": "附件已成功移除",
+      "not_removed_title": "附件未移除",
+      "not_removed_message": "無法移除附件",
+      "drop_here": "拖放到此處...",
+      "uploading_short": "正在上傳...",
+      "click_or_drag": "點擊或將檔案拖曳到此處",
+      "invalid_file": "檔案類型或大小無效（最大 {size} MB）"
+    },
+    "due_before_start": "截止日期不能早於工作事項的開始日期。",
+    "clear_filters": "清除過濾器",
+    "add_to_cycle_success": "工作事項已成功加入週期。",
+    "add_to_cycle_failed": "無法將所選工作事項加入週期。請再試一次。",
+    "add_to_module_success": "工作事項已成功加入模組。",
+    "add_to_module_failed": "無法將所選工作事項加入模組。請再試一次。",
+    "project_view_empty": {
+      "title": "檢視的工作事項將顯示在此處",
+      "description": "工作事項可協助您追蹤每一項具體工作。透過工作事項，您可以掌握進度、負責人以及已完成的內容。"
+    },
+    "sub_group_by": "子分組依據",
+    "filters": {
+      "custom": "自訂",
+      "mention": "提及"
+    },
+    "cannot_move": {
+      "title": "無法移動工作事項",
+      "not_allowed": "您無權移動此工作事項",
+      "dnd_disabled": "目前的分組已停用拖放"
+    },
+    "select_within_project": "只能選取目前專案內的工作事項。",
+    "drop_to_delete": "拖放到此處以刪除工作事項。",
+    "view_not_exist": {
+      "title": "檢視不存在",
+      "description": "您尋找的檢視不存在，或您沒有檢視權限。"
+    },
+    "go_to_all_work_items": "前往所有工作事項",
+    "save_as": "另存為",
+    "columns": {
+      "select_cycle": "選擇週期",
+      "select_modules": "選擇模組"
+    },
+    "quick_actions": {
+      "action_not_available": "操作無法使用",
+      "not_implemented": "{action}操作尚未實作。",
+      "restore_success_title": "還原成功",
+      "restore_success_message": "您可以在專案工作事項中找到該工作事項。",
+      "restore_failed": "無法還原工作事項。請再試一次。",
+      "remove_from_cycle": "從週期中移除",
+      "remove_from_module": "從模組中移除"
+    },
+    "close_peek": "關閉預覽",
+    "labels_count": "{count} 個標籤",
+    "view_epic": "檢視 Epic",
+    "view_work_item": "檢視工作事項",
+    "save_draft": {
+      "title": "儲存此草稿？",
+      "description": "您可以將此工作事項儲存為草稿，以便稍後繼續處理。"
+    },
+    "delete_confirm": {
+      "work_item": "確定要刪除工作事項 {identifier} 嗎？與該工作事項相關的所有資料將被永久刪除。此操作無法復原。",
+      "epic": "確定要刪除 Epic {identifier} 嗎？與該 Epic 相關的所有資料將被永久刪除。此操作無法復原。"
+    },
+    "work_item_deleted": "此工作事項已被刪除",
+    "epics_link_copied": "Epic 連結已複製到剪貼簿。",
+    "work_items_link_copied": "工作事項連結已複製到剪貼簿。",
+    "editor_processing": "編輯器仍在處理變更。請稍候再繼續。",
+    "ai_title_not_informative": "工作事項標題資訊不足，無法產生描述。請嘗試使用其他標題。",
+    "ai_rate_limit": "您已達到每位使用者每月 50 次請求的上限。",
+    "generic_error": "發生錯誤。請再試一次。",
+    "move_to_project_failed": "無法將工作事項移動到專案。請再試一次。",
+    "project_work_items_count": "{count, plural, other {此專案中有 # 個工作事項}}",
+    "archived_banner": "此工作事項已封存。請前往封存區段進行還原。",
+    "go_to_archives": "前往封存"
   }
 }

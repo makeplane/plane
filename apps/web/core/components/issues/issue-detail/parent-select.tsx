@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -91,7 +92,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
       >
         {issue.parent_id && parentIssue ? (
           <div className="flex items-center gap-1.5">
-            <Tooltip tooltipHeading="Title" tooltipContent={parentIssue.name} isMobile={isMobile}>
+            <Tooltip tooltipHeading={t("common.title")} tooltipContent={parentIssue.name} isMobile={isMobile}>
               <Link href={workItemLink} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
                 {parentIssue?.project_id && parentIssueProjectDetails && (
                   <IssueIdentifier

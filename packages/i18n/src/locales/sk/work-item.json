@@ -422,5 +422,91 @@
       "label": "Názov epiky",
       "required": "Názov epiky je povinný."
     }
+  },
+  "issue_ui": {
+    "id_copied": "ID pracovnej položky bolo skopírované do schránky",
+    "click_to_copy": "Kliknutím skopírujete",
+    "asset_duplication_failed": "Duplikácia súboru zlyhala. Skúste to prosím neskôr.",
+    "required": "Toto pole je povinné",
+    "no_siblings": "Žiadne súvisiace pracovné položky",
+    "attachments": {
+      "uploading": "Nahráva sa príloha...",
+      "uploaded_title": "Príloha nahraná",
+      "uploaded_message": "Príloha bola úspešne nahraná",
+      "not_uploaded_title": "Príloha nenahraná",
+      "not_uploaded_message": "Prílohu sa nepodarilo nahrať",
+      "removed_title": "Príloha odstránená",
+      "removed_message": "Príloha bola úspešne odstránená",
+      "not_removed_title": "Príloha neodstránená",
+      "not_removed_message": "Prílohu sa nepodarilo odstrániť",
+      "drop_here": "Pustite súbor sem...",
+      "uploading_short": "Nahráva sa...",
+      "click_or_drag": "Kliknite alebo sem presuňte súbor",
+      "invalid_file": "Neplatný typ alebo veľkosť súboru (max. {size} MB)"
+    },
+    "due_before_start": "Termín nemôže byť skorší ako dátum začiatku pracovnej položky.",
+    "clear_filters": "Vymazať filtre",
+    "add_to_cycle_success": "Pracovné položky boli úspešne pridané do cyklu.",
+    "add_to_cycle_failed": "Vybrané pracovné položky sa nepodarilo pridať do cyklu. Skúste to prosím znova.",
+    "add_to_module_success": "Pracovné položky boli úspešne pridané do modulu.",
+    "add_to_module_failed": "Vybrané pracovné položky sa nepodarilo pridať do modulu. Skúste to prosím znova.",
+    "project_view_empty": {
+      "title": "Pracovné položky pohľadu sa zobrazia tu",
+      "description": "Pracovné položky vám pomáhajú sledovať jednotlivé časti práce. S nimi máte prehľad o tom, čo sa deje, kto na čom pracuje a čo je hotové."
+    },
+    "sub_group_by": "Podskupina podľa",
+    "filters": {
+      "custom": "Vlastné",
+      "mention": "Zmienka"
+    },
+    "cannot_move": {
+      "title": "Pracovnú položku nemožno presunúť",
+      "not_allowed": "Nemáte oprávnenie presunúť túto pracovnú položku",
+      "dnd_disabled": "Presúvanie je pre aktuálne zoskupenie vypnuté"
+    },
+    "select_within_project": "Vybrať možno iba pracovné položky z aktuálneho projektu.",
+    "drop_to_delete": "Pustite sem pre odstránenie pracovnej položky.",
+    "view_not_exist": {
+      "title": "Pohľad neexistuje",
+      "description": "Pohľad, ktorý hľadáte, neexistuje alebo nemáte oprávnenie ho zobraziť."
+    },
+    "go_to_all_work_items": "Prejsť na všetky pracovné položky",
+    "save_as": "Uložiť ako",
+    "columns": {
+      "select_cycle": "Vyberte cyklus",
+      "select_modules": "Vyberte moduly"
+    },
+    "quick_actions": {
+      "action_not_available": "Akcia nie je dostupná",
+      "not_implemented": "Akcia {action} nie je implementovaná.",
+      "restore_success_title": "Obnovenie prebehlo úspešne",
+      "restore_success_message": "Vašu pracovnú položku nájdete medzi pracovnými položkami projektu.",
+      "restore_failed": "Pracovnú položku sa nepodarilo obnoviť. Skúste to prosím znova.",
+      "remove_from_cycle": "Odstrániť z cyklu",
+      "remove_from_module": "Odstrániť z modulu"
+    },
+    "close_peek": "Zavrieť náhľad",
+    "labels_count": "Štítky: {count}",
+    "view_epic": "Zobraziť epiku",
+    "view_work_item": "Zobraziť pracovnú položku",
+    "save_draft": {
+      "title": "Uložiť tento koncept?",
+      "description": "Túto pracovnú položku môžete uložiť do konceptov a vrátiť sa k nej neskôr."
+    },
+    "delete_confirm": {
+      "work_item": "Naozaj chcete odstrániť pracovnú položku {identifier}? Všetky údaje súvisiace s touto pracovnou položkou budú natrvalo odstránené. Túto akciu nemožno vrátiť späť.",
+      "epic": "Naozaj chcete odstrániť epiku {identifier}? Všetky údaje súvisiace s touto epikou budú natrvalo odstránené. Túto akciu nemožno vrátiť späť."
+    },
+    "work_item_deleted": "Táto pracovná položka bola odstránená",
+    "epics_link_copied": "Odkaz na epiky bol skopírovaný do schránky.",
+    "work_items_link_copied": "Odkaz na pracovné položky bol skopírovaný do schránky.",
+    "editor_processing": "Editor stále spracúva zmeny. Pred pokračovaním prosím počkajte.",
+    "ai_title_not_informative": "Názov pracovnej položky nie je dostatočne výstižný na vygenerovanie popisu. Skúste prosím iný názov.",
+    "ai_rate_limit": "Dosiahli ste maximálny počet 50 požiadaviek za mesiac na používateľa.",
+    "generic_error": "Vyskytla sa chyba. Skúste to prosím znova.",
+    "move_to_project_failed": "Presun pracovnej položky do projektu zlyhal. Skúste to prosím znova.",
+    "project_work_items_count": "{count, plural, one {V tomto projekte je # pracovná položka} few {V tomto projekte sú # pracovné položky} many {V tomto projekte je # pracovnej položky} other {V tomto projekte je # pracovných položiek}}",
+    "archived_banner": "Táto pracovná položka bola archivovaná. Ak ju chcete obnoviť, prejdite do sekcie Archívy.",
+    "go_to_archives": "Prejsť do archívov"
   }
 }

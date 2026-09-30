@@ -57,7 +57,7 @@ export const FilterProjects = observer(function FilterProjects(props: Props) {
   return (
     <>
       <FilterHeader
-        title={`Project${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("common.project")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />

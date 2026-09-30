@@ -62,7 +62,7 @@ export const FilterAssignees = observer(function FilterAssignees(props: Props) {
   return (
     <>
       <FilterHeader
-        title={`Assignee${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("common.assignee")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -88,7 +88,7 @@ export const FilterAssignees = observer(function FilterAssignees(props: Props) {
                           size="md"
                         />
                       }
-                      title={currentUser?.id === member.id ? "You" : member?.display_name}
+                      title={currentUser?.id === member.id ? t("common.you") : member?.display_name}
                     />
                   );
                 })}

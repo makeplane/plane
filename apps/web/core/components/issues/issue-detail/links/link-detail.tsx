@@ -1,9 +1,11 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { NewTabIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -32,6 +34,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
   } = useIssueDetail();
   const { getUserDetails } = useMember();
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
 
@@ -53,8 +56,8 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
             copyTextToClipboard(linkDetail.url);
             setToast({
               type: TOAST_TYPE.SUCCESS,
-              title: "Link copied!",
-              message: "Link copied to clipboard",
+              title: t("common.link_copied"),
+              message: t("common.link_copied_to_clipboard"),
             });
           }}
         >

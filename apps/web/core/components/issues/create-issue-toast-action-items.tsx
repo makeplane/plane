@@ -1,11 +1,13 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // plane imports
 // helpers
@@ -24,6 +26,7 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
   props: TCreateIssueToastActionItems
 ) {
   const { workspaceSlug, issueId, isEpic = false } = props;
+  const { t } = useTranslation();
   // state
   const [copied, setCopied] = useState(false);
   // store hooks
@@ -67,12 +70,12 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
         rel="noopener noreferrer"
         className="rounded-sm px-2 py-1 font-medium text-accent-primary hover:bg-surface-2"
       >
-        {`View ${isEpic ? "epic" : "work item"}`}
+        {isEpic ? t("issue_ui.view_epic") : t("issue_ui.view_work_item")}
       </a>
 
       {copied ? (
         <>
-          <span className="cursor-default px-2 py-1 text-secondary">Copied!</span>
+          <span className="cursor-default px-2 py-1 text-secondary">{t("common.copied")}</span>
         </>
       ) : (
         <>
@@ -80,7 +83,7 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
             className="hidden cursor-pointer rounded-sm px-2 py-1 text-tertiary group-hover:flex hover:bg-surface-2 hover:text-secondary"
             onClick={copyToClipboard}
           >
-            Copy link
+            {t("common.actions.copy_link")}
           </button>
         </>
       )}

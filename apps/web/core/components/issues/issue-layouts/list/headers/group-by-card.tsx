@@ -85,13 +85,13 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("toast.success"),
-        message: "Work items added to the cycle successfully.",
+        message: t("issue_ui.add_to_cycle_success"),
       });
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: "Selected work items could not be added to the cycle. Please try again.",
+        message: t("issue_ui.add_to_cycle_failed"),
       });
     }
   };
@@ -143,14 +143,14 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
                   setIsOpen(true);
                 }}
               >
-                <span className="flex items-center justify-start gap-2">Create work item</span>
+                <span className="flex items-center justify-start gap-2">{t("create_work_item")}</span>
               </CustomMenu.MenuItem>
               <CustomMenu.MenuItem
                 onClick={() => {
                   setOpenExistingIssueListModal(true);
                 }}
               >
-                <span className="flex items-center justify-start gap-2">Add an existing work item</span>
+                <span className="flex items-center justify-start gap-2">{t("issue.add.existing")}</span>
               </CustomMenu.MenuItem>
             </CustomMenu>
           ) : (

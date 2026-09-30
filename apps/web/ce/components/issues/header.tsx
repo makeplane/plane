@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -73,7 +74,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
-                  label="Work Items"
+                  label={t("common.work_items")}
                   href={`/${workspaceSlug}/projects/${projectId}/issues/`}
                   icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
                   isLast
@@ -85,7 +86,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
           {issuesCount && issuesCount > 0 ? (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "work items" : "work item"} in this project`}
+              tooltipContent={t("issue_ui.project_work_items_count", { count: issuesCount })}
               position="bottom"
             >
               <CountChip count={issuesCount} />

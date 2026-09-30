@@ -422,5 +422,91 @@
       "label": "Epik Başlığı",
       "required": "Epik başlığı gereklidir."
     }
+  },
+  "issue_ui": {
+    "id_copied": "İş öğesi kimliği panoya kopyalandı",
+    "click_to_copy": "Kopyalamak için tıklayın",
+    "asset_duplication_failed": "Varlık çoğaltma başarısız oldu. Lütfen daha sonra tekrar deneyin.",
+    "required": "Bu alan zorunludur",
+    "no_siblings": "Kardeş iş öğesi yok",
+    "attachments": {
+      "uploading": "Ek yükleniyor...",
+      "uploaded_title": "Ek yüklendi",
+      "uploaded_message": "Ek başarıyla yüklendi",
+      "not_uploaded_title": "Ek yüklenmedi",
+      "not_uploaded_message": "Ek yüklenemedi",
+      "removed_title": "Ek kaldırıldı",
+      "removed_message": "Ek başarıyla kaldırıldı",
+      "not_removed_title": "Ek kaldırılmadı",
+      "not_removed_message": "Ek kaldırılamadı",
+      "drop_here": "Buraya bırakın...",
+      "uploading_short": "Yükleniyor...",
+      "click_or_drag": "Bir dosyayı buraya tıklayın veya sürükleyin",
+      "invalid_file": "Geçersiz dosya türü veya boyutu (maks. {size} MB)"
+    },
+    "due_before_start": "Bitiş tarihi, iş öğesinin başlangıç tarihinden önce olamaz.",
+    "clear_filters": "Filtreleri temizle",
+    "add_to_cycle_success": "İş öğeleri döngüye başarıyla eklendi.",
+    "add_to_cycle_failed": "Seçilen iş öğeleri döngüye eklenemedi. Lütfen tekrar deneyin.",
+    "add_to_module_success": "İş öğeleri modüle başarıyla eklendi.",
+    "add_to_module_failed": "Seçilen iş öğeleri modüle eklenemedi. Lütfen tekrar deneyin.",
+    "project_view_empty": {
+      "title": "Görünümün iş öğeleri burada görünecek",
+      "description": "İş öğeleri, işin tek tek parçalarını takip etmenize yardımcı olur. İş öğeleriyle neler olduğunu, kimin üzerinde çalıştığını ve nelerin tamamlandığını izleyin."
+    },
+    "sub_group_by": "Alt gruplandırma ölçütü",
+    "filters": {
+      "custom": "Özel",
+      "mention": "Bahsetme"
+    },
+    "cannot_move": {
+      "title": "İş öğesi taşınamıyor",
+      "not_allowed": "Bu iş öğesini taşımaya izniniz yok",
+      "dnd_disabled": "Geçerli gruplandırma için sürükle ve bırak devre dışı"
+    },
+    "select_within_project": "Yalnızca geçerli projedeki iş öğeleri seçilebilir.",
+    "drop_to_delete": "İş öğesini silmek için buraya bırakın.",
+    "view_not_exist": {
+      "title": "Görünüm mevcut değil",
+      "description": "Aradığınız görünüm mevcut değil veya görüntüleme izniniz yok."
+    },
+    "go_to_all_work_items": "Tüm iş öğelerine git",
+    "save_as": "Farklı kaydet",
+    "columns": {
+      "select_cycle": "Döngü seç",
+      "select_modules": "Modülleri seç"
+    },
+    "quick_actions": {
+      "action_not_available": "Eylem kullanılamıyor",
+      "not_implemented": "{action} eylemi uygulanmadı.",
+      "restore_success_title": "Geri yükleme başarılı",
+      "restore_success_message": "İş öğenizi proje iş öğeleri arasında bulabilirsiniz.",
+      "restore_failed": "İş öğesi geri yüklenemedi. Lütfen tekrar deneyin.",
+      "remove_from_cycle": "Döngüden kaldır",
+      "remove_from_module": "Modülden kaldır"
+    },
+    "close_peek": "Önizlemeyi kapat",
+    "labels_count": "{count} Etiket",
+    "view_epic": "Epiği görüntüle",
+    "view_work_item": "İş öğesini görüntüle",
+    "save_draft": {
+      "title": "Bu taslak kaydedilsin mi?",
+      "description": "Bu iş öğesini daha sonra dönebilmek için Taslaklara kaydedebilirsiniz."
+    },
+    "delete_confirm": {
+      "work_item": "{identifier} iş öğesini silmek istediğinizden emin misiniz? İş öğesiyle ilgili tüm veriler kalıcı olarak silinecektir. Bu işlem geri alınamaz.",
+      "epic": "{identifier} epiğini silmek istediğinizden emin misiniz? Epikle ilgili tüm veriler kalıcı olarak silinecektir. Bu işlem geri alınamaz."
+    },
+    "work_item_deleted": "Bu iş öğesi silindi",
+    "epics_link_copied": "Epik bağlantısı panoya kopyalandı.",
+    "work_items_link_copied": "İş öğeleri bağlantısı panoya kopyalandı.",
+    "editor_processing": "Düzenleyici hâlâ değişiklikleri işliyor. Devam etmeden önce lütfen bekleyin.",
+    "ai_title_not_informative": "İş öğesi başlığı açıklama oluşturmak için yeterince bilgilendirici değil. Lütfen farklı bir başlıkla deneyin.",
+    "ai_rate_limit": "Kullanıcı başına ayda 50 istek olan maksimum sınıra ulaştınız.",
+    "generic_error": "Bir hata oluştu. Lütfen tekrar deneyin.",
+    "move_to_project_failed": "İş öğesi projeye taşınamadı. Lütfen tekrar deneyin.",
+    "project_work_items_count": "{count, plural, one {Bu projede # iş öğesi var} other {Bu projede # iş öğesi var}}",
+    "archived_banner": "Bu iş öğesi arşivlendi. Geri yüklemek için Arşivler bölümünü ziyaret edin.",
+    "go_to_archives": "Arşivlere git"
   }
 }

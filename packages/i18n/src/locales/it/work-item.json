@@ -422,5 +422,91 @@
       "label": "Titolo Epic",
       "required": "Il titolo dell'Epic è obbligatorio."
     }
+  },
+  "issue_ui": {
+    "id_copied": "ID dell'elemento di lavoro copiato negli appunti",
+    "click_to_copy": "Clicca per copiare",
+    "asset_duplication_failed": "Duplicazione della risorsa non riuscita. Riprova più tardi.",
+    "required": "Campo obbligatorio",
+    "no_siblings": "Nessun elemento di lavoro correlato",
+    "attachments": {
+      "uploading": "Caricamento dell'allegato...",
+      "uploaded_title": "Allegato caricato",
+      "uploaded_message": "L'allegato è stato caricato con successo",
+      "not_uploaded_title": "Allegato non caricato",
+      "not_uploaded_message": "Non è stato possibile caricare l'allegato",
+      "removed_title": "Allegato rimosso",
+      "removed_message": "L'allegato è stato rimosso con successo",
+      "not_removed_title": "Allegato non rimosso",
+      "not_removed_message": "Non è stato possibile rimuovere l'allegato",
+      "drop_here": "Rilascia qui...",
+      "uploading_short": "Caricamento...",
+      "click_or_drag": "Clicca o trascina qui un file",
+      "invalid_file": "Tipo o dimensione del file non valida (max {size} MB)"
+    },
+    "due_before_start": "La data di scadenza non può essere precedente alla data di inizio dell'elemento di lavoro.",
+    "clear_filters": "Cancella filtri",
+    "add_to_cycle_success": "Elementi di lavoro aggiunti al ciclo con successo.",
+    "add_to_cycle_failed": "Non è stato possibile aggiungere gli elementi di lavoro selezionati al ciclo. Riprova.",
+    "add_to_module_success": "Elementi di lavoro aggiunti al modulo con successo.",
+    "add_to_module_failed": "Non è stato possibile aggiungere gli elementi di lavoro selezionati al modulo. Riprova.",
+    "project_view_empty": {
+      "title": "Gli elementi di lavoro della visualizzazione appariranno qui",
+      "description": "Gli elementi di lavoro ti aiutano a tracciare le singole attività. Con essi puoi sapere cosa sta succedendo, chi ci sta lavorando e cosa è stato completato."
+    },
+    "sub_group_by": "Sottoraggruppa per",
+    "filters": {
+      "custom": "Personalizzato",
+      "mention": "Menzione"
+    },
+    "cannot_move": {
+      "title": "Impossibile spostare l'elemento di lavoro",
+      "not_allowed": "Non hai il permesso di spostare questo elemento di lavoro",
+      "dnd_disabled": "Il trascinamento è disabilitato per il raggruppamento corrente"
+    },
+    "select_within_project": "Possono essere selezionati solo gli elementi di lavoro del progetto corrente.",
+    "drop_to_delete": "Rilascia qui per eliminare l'elemento di lavoro.",
+    "view_not_exist": {
+      "title": "La visualizzazione non esiste",
+      "description": "La visualizzazione che cerchi non esiste o non hai il permesso di vederla."
+    },
+    "go_to_all_work_items": "Vai a tutti gli elementi di lavoro",
+    "save_as": "Salva come",
+    "columns": {
+      "select_cycle": "Seleziona ciclo",
+      "select_modules": "Seleziona moduli"
+    },
+    "quick_actions": {
+      "action_not_available": "Azione non disponibile",
+      "not_implemented": "L'azione {action} non è implementata.",
+      "restore_success_title": "Ripristino riuscito",
+      "restore_success_message": "Il tuo elemento di lavoro si trova tra gli elementi di lavoro del progetto.",
+      "restore_failed": "Non è stato possibile ripristinare l'elemento di lavoro. Riprova.",
+      "remove_from_cycle": "Rimuovi dal ciclo",
+      "remove_from_module": "Rimuovi dal modulo"
+    },
+    "close_peek": "Chiudi l'anteprima",
+    "labels_count": "{count} etichette",
+    "view_epic": "Visualizza epic",
+    "view_work_item": "Visualizza elemento di lavoro",
+    "save_draft": {
+      "title": "Salvare questa bozza?",
+      "description": "Puoi salvare questo elemento di lavoro nelle bozze per tornarci più tardi."
+    },
+    "delete_confirm": {
+      "work_item": "Sei sicuro di voler eliminare l'elemento di lavoro {identifier}? Tutti i dati relativi all'elemento di lavoro verranno rimossi definitivamente. Questa azione non può essere annullata.",
+      "epic": "Sei sicuro di voler eliminare l'epic {identifier}? Tutti i dati relativi all'epic verranno rimossi definitivamente. Questa azione non può essere annullata."
+    },
+    "work_item_deleted": "Questo elemento di lavoro è stato eliminato",
+    "epics_link_copied": "Link degli epic copiato negli appunti.",
+    "work_items_link_copied": "Link degli elementi di lavoro copiato negli appunti.",
+    "editor_processing": "L'editor sta ancora elaborando le modifiche. Attendi prima di procedere.",
+    "ai_title_not_informative": "Il titolo dell'elemento di lavoro non è abbastanza informativo per generare la descrizione. Prova con un titolo diverso.",
+    "ai_rate_limit": "Hai raggiunto il numero massimo di 50 richieste al mese per utente.",
+    "generic_error": "Si è verificato un errore. Riprova.",
+    "move_to_project_failed": "Impossibile spostare l'elemento di lavoro nel progetto. Riprova.",
+    "project_work_items_count": "{count, plural, one {C'è # elemento di lavoro in questo progetto} other {Ci sono # elementi di lavoro in questo progetto}}",
+    "archived_banner": "Questo elemento di lavoro è stato archiviato. Visita la sezione Archivi per ripristinarlo.",
+    "go_to_archives": "Vai agli archivi"
   }
 }

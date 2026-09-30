@@ -60,14 +60,14 @@ export const CycleEmptyState = observer(function CycleEmptyState() {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("toast.success"),
-          message: "Work items added to the cycle successfully.",
+          message: t("issue_ui.add_to_cycle_success"),
         })
       )
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
-          message: "Selected work items could not be added to the cycle. Please try again.",
+          message: t("issue_ui.add_to_cycle_failed"),
         })
       );
   };
@@ -97,7 +97,7 @@ export const CycleEmptyState = observer(function CycleEmptyState() {
             description={t("common_empty_state.search.description")}
             actions={[
               {
-                label: "Clear filters",
+                label: t("issue_ui.clear_filters"),
                 onClick: cycleWorkItemFilter?.clearFilters,
                 disabled: !canPerformEmptyStateActions || !cycleWorkItemFilter,
                 variant: "secondary",

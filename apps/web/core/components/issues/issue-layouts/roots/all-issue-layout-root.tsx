@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -10,6 +11,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { GLOBAL_VIEW_TRACKER_ELEMENTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { EIssueLayoutTypes } from "@plane/types";
 import { EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
@@ -41,6 +43,7 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   const globalViewId = routerGlobalViewId ? routerGlobalViewId.toString() : undefined;
   // search params
   const searchParams = useSearchParams();
+  const { t } = useTranslation();
   // store hooks
   const {
     issuesFilter: { filters, fetchFilters, updateFilterExpression },
@@ -115,12 +118,12 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   if (!isLoading && !globalViewsLoading && !issuesLoading && !viewDetails && !isDefaultView) {
     return (
       <EmptyStateDetailed
-        title="View does not exist"
-        description="The view you are looking for does not exist or you don't have permission to view it."
+        title={t("issue_ui.view_not_exist.title")}
+        description={t("issue_ui.view_not_exist.description")}
         assetKey="view"
         actions={[
           {
-            label: "Go to All work items",
+            label: t("issue_ui.go_to_all_work_items"),
             onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues`),
             variant: "primary",
           },
@@ -135,7 +138,7 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
       <WorkspaceLevelWorkItemFiltersHOC
         enableSaveView
         saveViewOptions={{
-          label: "Save as",
+          label: t("issue_ui.save_as"),
         }}
         enableUpdateView
         entityId={globalViewId}

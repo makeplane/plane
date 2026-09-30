@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -10,6 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { usePopper } from "react-popper";
 import { Loader } from "lucide-react";
 import { Popover } from "@headlessui/react";
+import { useTranslation } from "@plane/i18n";
 import { PlusIcon, CloseIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 // hooks
@@ -34,6 +36,7 @@ const defaultValues: Partial<IIssueLabel> = {
 
 export function LabelCreate(props: ILabelCreate) {
   const { workspaceSlug, projectId, issueId, values, labelOperations, disabled = false } = props;
+  const { t } = useTranslation();
   // state
   const [isCreateToggle, setIsCreateToggle] = useState(false);
   const handleIsCreateToggle = () => setIsCreateToggle(!isCreateToggle);
@@ -131,7 +134,7 @@ export function LabelCreate(props: ILabelCreate) {
             control={control}
             name="name"
             rules={{
-              required: "This is required",
+              required: t("issue_ui.required"),
             }}
             render={({ field: { value, onChange, ref } }) => (
               <Input
@@ -142,7 +145,7 @@ export function LabelCreate(props: ILabelCreate) {
                 onChange={onChange}
                 ref={ref}
                 hasError={Boolean(errors.name)}
-                placeholder="Title"
+                placeholder={t("common.title")}
                 className="w-full px-1.5 py-1 text-11"
                 disabled={isSubmitting}
               />

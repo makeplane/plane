@@ -422,5 +422,91 @@
       "label": "에픽 제목",
       "required": "에픽 제목이 필요합니다."
     }
+  },
+  "issue_ui": {
+    "id_copied": "작업 항목 ID가 클립보드에 복사되었습니다",
+    "click_to_copy": "클릭하여 복사",
+    "asset_duplication_failed": "자산 복제에 실패했습니다. 나중에 다시 시도해 주세요.",
+    "required": "필수 항목입니다",
+    "no_siblings": "동일 수준의 작업 항목이 없습니다",
+    "attachments": {
+      "uploading": "첨부 파일 업로드 중...",
+      "uploaded_title": "첨부 파일이 업로드되었습니다",
+      "uploaded_message": "첨부 파일이 성공적으로 업로드되었습니다",
+      "not_uploaded_title": "첨부 파일이 업로드되지 않았습니다",
+      "not_uploaded_message": "첨부 파일을 업로드할 수 없습니다",
+      "removed_title": "첨부 파일이 삭제되었습니다",
+      "removed_message": "첨부 파일이 성공적으로 삭제되었습니다",
+      "not_removed_title": "첨부 파일이 삭제되지 않았습니다",
+      "not_removed_message": "첨부 파일을 삭제할 수 없습니다",
+      "drop_here": "여기에 놓으세요...",
+      "uploading_short": "업로드 중...",
+      "click_or_drag": "클릭하거나 파일을 여기로 끌어다 놓으세요",
+      "invalid_file": "잘못된 파일 형식 또는 크기입니다 (최대 {size}MB)"
+    },
+    "due_before_start": "마감일은 작업 항목의 시작일보다 이전일 수 없습니다.",
+    "clear_filters": "필터 지우기",
+    "add_to_cycle_success": "작업 항목이 주기에 성공적으로 추가되었습니다.",
+    "add_to_cycle_failed": "선택한 작업 항목을 주기에 추가할 수 없습니다. 다시 시도해 주세요.",
+    "add_to_module_success": "작업 항목이 모듈에 성공적으로 추가되었습니다.",
+    "add_to_module_failed": "선택한 작업 항목을 모듈에 추가할 수 없습니다. 다시 시도해 주세요.",
+    "project_view_empty": {
+      "title": "뷰의 작업 항목이 여기에 표시됩니다",
+      "description": "작업 항목은 개별 작업을 추적하는 데 도움이 됩니다. 무슨 일이 진행 중인지, 누가 작업하는지, 무엇이 완료되었는지 확인하세요."
+    },
+    "sub_group_by": "하위 그룹화 기준",
+    "filters": {
+      "custom": "사용자 지정",
+      "mention": "멘션"
+    },
+    "cannot_move": {
+      "title": "작업 항목을 이동할 수 없습니다",
+      "not_allowed": "이 작업 항목을 이동할 권한이 없습니다",
+      "dnd_disabled": "현재 그룹화에서는 끌어서 놓기가 비활성화되어 있습니다"
+    },
+    "select_within_project": "현재 프로젝트의 작업 항목만 선택할 수 있습니다.",
+    "drop_to_delete": "작업 항목을 삭제하려면 여기에 놓으세요.",
+    "view_not_exist": {
+      "title": "뷰가 존재하지 않습니다",
+      "description": "찾으시는 뷰가 존재하지 않거나 볼 수 있는 권한이 없습니다."
+    },
+    "go_to_all_work_items": "모든 작업 항목으로 이동",
+    "save_as": "다른 이름으로 저장",
+    "columns": {
+      "select_cycle": "주기 선택",
+      "select_modules": "모듈 선택"
+    },
+    "quick_actions": {
+      "action_not_available": "사용할 수 없는 작업",
+      "not_implemented": "{action} 작업이 구현되지 않았습니다.",
+      "restore_success_title": "복원 성공",
+      "restore_success_message": "작업 항목은 프로젝트 작업 항목에서 찾을 수 있습니다.",
+      "restore_failed": "작업 항목을 복원할 수 없습니다. 다시 시도해 주세요.",
+      "remove_from_cycle": "주기에서 제거",
+      "remove_from_module": "모듈에서 제거"
+    },
+    "close_peek": "미리보기 닫기",
+    "labels_count": "레이블 {count}개",
+    "view_epic": "에픽 보기",
+    "view_work_item": "작업 항목 보기",
+    "save_draft": {
+      "title": "이 초안을 저장하시겠습니까?",
+      "description": "이 작업 항목을 초안에 저장하면 나중에 다시 돌아올 수 있습니다."
+    },
+    "delete_confirm": {
+      "work_item": "작업 항목 {identifier}을(를) 삭제하시겠습니까? 이 작업 항목과 관련된 모든 데이터가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.",
+      "epic": "에픽 {identifier}을(를) 삭제하시겠습니까? 이 에픽과 관련된 모든 데이터가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다."
+    },
+    "work_item_deleted": "이 작업 항목은 삭제되었습니다",
+    "epics_link_copied": "에픽 링크가 클립보드에 복사되었습니다.",
+    "work_items_link_copied": "작업 항목 링크가 클립보드에 복사되었습니다.",
+    "editor_processing": "편집기가 아직 변경 사항을 처리 중입니다. 계속하기 전에 잠시 기다려 주세요.",
+    "ai_title_not_informative": "작업 항목 제목이 설명을 생성하기에 충분하지 않습니다. 다른 제목으로 시도해 주세요.",
+    "ai_rate_limit": "사용자당 월 50회 요청 한도에 도달했습니다.",
+    "generic_error": "오류가 발생했습니다. 다시 시도해 주세요.",
+    "move_to_project_failed": "작업 항목을 프로젝트로 이동하지 못했습니다. 다시 시도해 주세요.",
+    "project_work_items_count": "{count, plural, other {이 프로젝트에는 작업 항목이 #개 있습니다}}",
+    "archived_banner": "이 작업 항목은 보관되었습니다. 복원하려면 아카이브 섹션을 방문하세요.",
+    "go_to_archives": "아카이브로 이동"
   }
 }

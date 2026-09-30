@@ -1,11 +1,13 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import React from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { StartDatePropertyIcon } from "@plane/propel/icons";
 // types
 import type { TIssue } from "@plane/types";
@@ -23,6 +25,7 @@ type Props = {
 
 export const SpreadsheetStartDateColumn = observer(function SpreadsheetStartDateColumn(props: Props) {
   const { issue, onChange, disabled, onClose } = props;
+  const { t } = useTranslation();
 
   return (
     <div className="h-11 border-b-[0.5px] border-subtle">
@@ -41,7 +44,7 @@ export const SpreadsheetStartDateColumn = observer(function SpreadsheetStartDate
           );
         }}
         disabled={disabled}
-        placeholder="Start date"
+        placeholder={t("start_date")}
         icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="transparent-with-text"
         buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x"
