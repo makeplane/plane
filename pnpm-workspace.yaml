@@ -250,12 +250,15 @@ overrides:
   axios: "catalog:"
   follow-redirects: 1.16.0
   uuid: "catalog:"
-  # SSRF / host-confusion in the URI parser (percent-decoding, IDN
-  # canonicalization and IPv6 normalization): CVE-2026-75899, -75931, -75975 and
-  # -76172, all fixed in 3.1.6. The previous floor pinned 3.1.5, which is the
-  # affected version. fast-uri reaches us only through ajv, so stay on the
-  # patched 3.x rather than 4.x, which is outside ajv's ^3.0.1 range.
-  fast-uri: 3.1.6
+  # EXACT pin, not a floor: fast-uri reaches us only through ajv, whose range is
+  # ^3.0.1, and 4.x is outside it. So bump the NUMBER here when a new advisory
+  # lands -- do not widen to a range, which would drift onto 4.x.
+  # 3.1.6 covered CVE-2026-75899/-75931/-75975/-76172 (SSRF and host confusion
+  # via percent-decoding, IDN canonicalization and IPv6 normalization). It is now
+  # itself affected by CVE-2026-84292 (authority injection via unvalidated port
+  # serialization) and CVE-2026-84394 (host confusion via unbalanced URI
+  # brackets), fixed in 3.1.7. 3.1.8 is the newest 3.x and carries both.
+  fast-uri: 3.1.8
   "js-yaml@4": 4.3.2
   linkify-it: 5.0.2
   body-parser: 1.20.6
