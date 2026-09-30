@@ -1,13 +1,15 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
+import { useTranslation } from "@plane/i18n";
+import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import type { TProjectDisplayFilters, TProjectFilters } from "@plane/types";
 // components
 import { FilterOption } from "@/components/issues/issue-layouts/filters";
@@ -29,6 +31,8 @@ type Props = {
 
 export const ProjectFiltersSelection = observer(function ProjectFiltersSelection(props: Props) {
   const { displayFilters, filters, handleFiltersUpdate, handleDisplayFiltersUpdate, memberIds } = props;
+  // translation
+  const { t } = useTranslation();
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
   // store
@@ -42,7 +46,7 @@ export const ProjectFiltersSelection = observer(function ProjectFiltersSelection
           <input
             type="text"
             className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
-            placeholder="Search"
+            placeholder={t("search")}
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
             autoFocus={!isMobile}
@@ -63,7 +67,7 @@ export const ProjectFiltersSelection = observer(function ProjectFiltersSelection
                 my_projects: !displayFilters.my_projects,
               })
             }
-            title="My projects"
+            title={t("workspace_projects.scope.my_projects")}
           />
         </div>
 

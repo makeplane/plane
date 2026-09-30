@@ -414,5 +414,209 @@
         }
       }
     }
+  },
+  "project_components": {
+    "archive_restore_modal": {
+      "archive_description": "此專案及其工作項目、週期、模組和頁面將被封存。其工作項目不會出現在搜尋中。只有專案管理員可以還原此專案。",
+      "archive_error": "無法封存專案，請再試一次。",
+      "archive_heading": "封存 {name}",
+      "archive_success_message": "{name} 已成功封存",
+      "archive_success_title": "封存成功",
+      "restore_description": "還原專案會啟用該專案，並讓專案所有成員都能看到。確定要繼續嗎？",
+      "restore_error": "無法還原專案，請再試一次。",
+      "restore_heading": "還原 {name}",
+      "restore_success_message": "您可以在您的專案中找到 {name}。",
+      "restore_success_title": "還原成功"
+    },
+    "card": {
+      "added_to_favorites": "專案已加入我的最愛。",
+      "adding_to_favorites": "正在將專案加入我的最愛...",
+      "created_on": "建立於 {date}",
+      "link_copied_message": "專案連結已複製到剪貼簿。",
+      "no_member": "無成員",
+      "no_member_yet": "尚無成員",
+      "removed_from_favorites": "專案已從我的最愛移除。",
+      "removing_from_favorites": "正在將專案從我的最愛移除..."
+    },
+    "confirm_member_remove": {
+      "leave_description": "確定要離開專案 {name} 嗎？如果再次受邀或專案為公開，您可以重新加入。",
+      "leave_title": "離開專案？",
+      "remove_description": "確定要移除成員 {name} 嗎？他們將無法再存取此專案。此操作無法復原。",
+      "remove_title": "移除 {name}？"
+    },
+    "control_section": {
+      "archive_description": "封存專案會將其從側邊導覽中移除，但您仍可從專案頁面存取。您可以隨時還原或刪除該專案。",
+      "delete_description": "刪除專案時，該專案中的所有資料和資源都將被永久移除且無法復原。"
+    },
+    "delete_modal": {
+      "confirm_placeholder": "輸入「{phrase}」",
+      "confirm_type": "若要確認，請在下方輸入 {phrase}：",
+      "deleted_success": "專案已成功刪除。",
+      "description": "確定要刪除專案 {name} 嗎？與該專案相關的所有資料都將被永久移除。此操作無法復原。",
+      "enter_project_name": "輸入專案名稱 {name} 以繼續："
+    },
+    "features": {
+      "pro_feature": "專業版功能",
+      "update_error": "更新專案功能時發生錯誤，請再試一次。",
+      "updated": "專案功能已成功更新。",
+      "updating": "正在更新專案功能..."
+    },
+    "form": {
+      "cover_image_error": "處理封面圖片失敗",
+      "name_max_length": "專案名稱必須少於 255 個字元"
+    },
+    "integration_card": {
+      "github_description": "選擇 GitHub 儲存庫以啟用同步。",
+      "select_repository": "選擇儲存庫",
+      "slack_description": "取得定期更新，並控制您想接收的通知。",
+      "sync_error": "無法將儲存庫與專案同步，請再試一次。"
+    },
+    "invitation_modal": {
+      "members_added": "成員已成功新增。",
+      "select_member_required": "請選擇成員",
+      "select_role_required": "選擇角色"
+    },
+    "join_modal": {
+      "description": "確定要加入專案 {name} 嗎？請點擊下方的「加入專案」按鈕繼續。",
+      "join_project": "加入專案",
+      "title": "加入專案？"
+    },
+    "leave_modal": {
+      "confirm_phrase_error": "請輸入「{phrase}」以確認離開專案。",
+      "description": "確定要離開專案「{name}」嗎？與您相關的所有工作項目都將無法存取。",
+      "fill_all_fields": "請填寫所有欄位。",
+      "project_name_error": "請依說明中顯示的內容輸入專案名稱。",
+      "project_name_placeholder": "輸入專案名稱",
+      "project_name_required": "專案名稱為必填",
+      "title": "離開專案"
+    },
+    "member_columns": {
+      "role_error_message": "更新成員角色時發生錯誤，請再試一次。",
+      "role_error_title": "暫時無法變更此角色。",
+      "role_required": "角色為必填。"
+    },
+    "member_defaults": {
+      "guest_access": "訪客存取"
+    },
+    "member_list_item": {
+      "leave_error_title": "暫時無法離開此專案。",
+      "remove_error_title": "暫時無法將成員從此專案中移除。"
+    },
+    "multi_select_modal": {
+      "search_placeholder": "搜尋專案"
+    },
+    "profile": {
+      "cover_image_alt": "封面圖片",
+      "display_name_placeholder": "輸入您的顯示名稱",
+      "display_name_required": "顯示名稱為必填。",
+      "email_placeholder": "輸入您的電子郵件",
+      "email_required": "電子郵件為必填。",
+      "first_day_of_week": "每週的第一天",
+      "first_day_of_week_description": "這將變更應用程式中所有日曆的顯示方式。",
+      "first_name_placeholder": "輸入您的名字",
+      "first_name_required": "請輸入名字",
+      "language_error": "更新語言失敗",
+      "language_updated": "語言已成功更新",
+      "last_name_placeholder": "輸入您的姓氏",
+      "picture_delete_error": "刪除大頭貼時發生錯誤，請再試一次。",
+      "picture_deleted": "大頭貼已成功刪除。",
+      "select_language": "選擇語言",
+      "timezone_error": "更新時區失敗",
+      "timezone_updated": "時區已成功更新",
+      "update_error": "更新個人資料時發生錯誤，請再試一次。",
+      "updated": "個人資料已成功更新。"
+    },
+    "publish_modal": {
+      "allow_comments": "允許留言",
+      "allow_reactions": "允許回應表情",
+      "allow_voting": "允許投票",
+      "anyone_with_link": "任何擁有連結的人都可以存取",
+      "link_copied": "已成功複製已發佈頁面的連結。",
+      "live_on_web": "此專案現已在網路上發佈",
+      "publishing": "發佈中",
+      "select_layout_error": "請至少選擇一種檢視版面配置以發佈專案。",
+      "settings_updated": "發佈設定已成功更新！",
+      "unpublish": "取消發佈",
+      "unpublish_error": "取消發佈專案時發生錯誤。",
+      "unpublishing": "正在取消發佈",
+      "update_settings": "更新設定"
+    },
+    "rich_filters": {
+      "all_filters_applied": "已套用所有篩選器",
+      "config_error_message": "此篩選器設定不正確，無法套用",
+      "config_error_title": "篩選器設定錯誤",
+      "filter_type_not_supported": "不支援的篩選器類型",
+      "invalid_filter": "無效的篩選器",
+      "invalid_tooltip": "此篩選條件已失效。該屬性可能已被刪除，或您對它的存取權限已變更。",
+      "remove_filter": "移除篩選器",
+      "save_view": "儲存檢視",
+      "update_view": "更新檢視"
+    },
+    "shared": {
+      "archived": "已封存",
+      "custom": "自訂",
+      "joined": "已加入",
+      "joining": "加入中...",
+      "leaving": "離開中...",
+      "removing": "移除中...",
+      "restoring": "還原中",
+      "roles": "角色",
+      "suspended": "已停用"
+    },
+    "states": {
+      "cannot_delete_default": "無法刪除預設狀態。",
+      "cannot_empty_group": "群組不能為空。",
+      "create_error": "無法建立狀態，請再試一次。",
+      "create_name_exists": "該名稱的狀態已存在，請使用其他名稱再試一次。",
+      "created": "狀態已成功建立。",
+      "delete_description": "確定要刪除狀態 {name} 嗎？與該狀態相關的所有資料都將被永久移除。此操作無法復原。",
+      "delete_error": "無法刪除狀態，請再試一次。",
+      "delete_has_work_items": "此狀態包含一些工作項目，請先將它們移至其他狀態後再刪除此狀態。",
+      "delete_title": "刪除狀態",
+      "description_placeholder": "為您的成員描述此狀態。",
+      "mark_as_default": "設為預設",
+      "marking_as_default": "正在設為預設",
+      "update_error": "無法更新狀態，請再試一次。",
+      "update_name_exists": "已存在同名的其他狀態，請使用其他名稱再試一次。",
+      "updated": "狀態已成功更新。"
+    },
+    "view_filters": {
+      "view_not_found_message": "您要更新的檢視不存在。",
+      "view_not_found_title": "找不到該檢視",
+      "view_update_error": "無法更新您的檢視，請再試一次。",
+      "view_updated": "您的檢視已成功更新。"
+    },
+    "views": {
+      "add_view": "新增檢視",
+      "create_error": "建立檢視失敗，請再試一次。",
+      "created": "檢視已成功建立。",
+      "delete_error": "無法刪除檢視，請再試一次。",
+      "deleted": "檢視已成功刪除。",
+      "not_found_description": "您要找的檢視不存在，或您沒有檢視權限。",
+      "not_found_title": "檢視不存在",
+      "update_error": "更新檢視失敗，請再試一次。",
+      "view_other_views": "檢視其他檢視"
+    },
+    "webhooks": {
+      "copy_secret_key": "複製密鑰",
+      "danger_zone": "危險區域",
+      "danger_zone_description": "Webhook 一旦刪除便無法還原，之後的事件將不再傳送到此 Webhook。",
+      "delete_description": "確定要刪除此 Webhook 嗎？之後的事件將不再傳送到此 Webhook。此操作無法復原。",
+      "delete_error": "無法刪除 Webhook，請再試一次。",
+      "delete_title": "刪除 Webhook",
+      "deleted": "Webhook 已成功刪除。",
+      "empty_description": "建立 Webhook 以接收即時更新並自動執行操作",
+      "empty_title": "尚無 Webhook",
+      "events": {
+        "cycle": "週期被建立、更新或刪除",
+        "issue": "工作項目被建立、更新、刪除，或被加入週期或模組",
+        "issue_comment": "留言被發佈、更新或刪除",
+        "issue_comment_label": "工作項目留言",
+        "module": "模組被建立、更新或刪除",
+        "project": "專案被建立、更新或刪除"
+      },
+      "key_regenerated": "已成功重新產生新密鑰。",
+      "view_secret_key": "檢視密鑰"
+    }
   }
 }

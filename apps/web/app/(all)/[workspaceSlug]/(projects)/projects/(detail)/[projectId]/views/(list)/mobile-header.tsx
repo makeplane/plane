@@ -1,12 +1,14 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import { observer } from "mobx-react";
 // icons
 import { ListFilter } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { ChevronDownIcon } from "@plane/propel/icons";
 // components
 import { Row } from "@plane/ui";
@@ -18,6 +20,8 @@ import { useMember } from "@/hooks/store/use-member";
 import { useProjectView } from "@/hooks/store/use-project-view";
 
 export const ViewMobileHeader = observer(function ViewMobileHeader() {
+  // translation
+  const { t } = useTranslation();
   // store hooks
   const { filters, updateFilters } = useProjectView();
   const {
@@ -41,7 +45,7 @@ export const ViewMobileHeader = observer(function ViewMobileHeader() {
         <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
           <FiltersDropdown
             icon={<ListFilter className="h-3 w-3" />}
-            title="Filters"
+            title={t("common.filters")}
             placement="bottom-end"
             isFiltersApplied={false}
             menuButton={

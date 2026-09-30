@@ -414,5 +414,209 @@
         }
       }
     }
+  },
+  "project_components": {
+    "archive_restore_modal": {
+      "archive_description": "This project and its work items, cycles, modules, and pages will be archived. Its work items won't appear in search. Only project admins can restore the project.",
+      "archive_error": "Project could not be archived. Please try again.",
+      "archive_heading": "Archive {name}",
+      "archive_success_message": "{name} has been archived successfully",
+      "archive_success_title": "Archive success",
+      "restore_description": "Restoring a project will activate it and make it visible to all members of the project. Are you sure you want to continue?",
+      "restore_error": "Project could not be restored. Please try again.",
+      "restore_heading": "Restore {name}",
+      "restore_success_message": "You can find {name} in your projects.",
+      "restore_success_title": "Restore success"
+    },
+    "card": {
+      "added_to_favorites": "Project added to favorites.",
+      "adding_to_favorites": "Adding project to favorites...",
+      "created_on": "Created on {date}",
+      "link_copied_message": "Project link copied to clipboard.",
+      "no_member": "No members",
+      "no_member_yet": "No members yet",
+      "removed_from_favorites": "Project removed from favorites.",
+      "removing_from_favorites": "Removing project from favorites..."
+    },
+    "confirm_member_remove": {
+      "leave_description": "Are you sure you want to leave the {name} project? You will be able to join the project if invited again or if it's public.",
+      "leave_title": "Leave project?",
+      "remove_description": "Are you sure you want to remove member {name}? They will no longer have access to this project. This action cannot be undone.",
+      "remove_title": "Remove {name}?"
+    },
+    "control_section": {
+      "archive_description": "Archiving a project will unlist your project from your side navigation although you will still be able to access it from your projects page. You can restore the project or delete it whenever you want.",
+      "delete_description": "When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered."
+    },
+    "delete_modal": {
+      "confirm_placeholder": "Enter “{phrase}”",
+      "confirm_type": "To confirm, type {phrase} below:",
+      "deleted_success": "Project deleted successfully.",
+      "description": "Are you sure you want to delete project {name}? All of the data related to the project will be permanently removed. This action cannot be undone.",
+      "enter_project_name": "Enter the project name {name} to continue:"
+    },
+    "features": {
+      "pro_feature": "Pro feature",
+      "update_error": "Something went wrong while updating project feature. Please try again.",
+      "updated": "Project feature updated successfully.",
+      "updating": "Updating project feature..."
+    },
+    "form": {
+      "cover_image_error": "Failed to process cover image",
+      "name_max_length": "Project name should be less than 255 characters"
+    },
+    "integration_card": {
+      "github_description": "Select GitHub repository to enable sync.",
+      "select_repository": "Select Repository",
+      "slack_description": "Get regular updates and control which notification you want to receive.",
+      "sync_error": "Repository could not be synced with the project. Please try again."
+    },
+    "invitation_modal": {
+      "members_added": "Members added successfully.",
+      "select_member_required": "Please select a member",
+      "select_role_required": "Select role"
+    },
+    "join_modal": {
+      "description": "Are you sure you want to join the project {name}? Please click the “Join project” button below to continue.",
+      "join_project": "Join project",
+      "title": "Join project?"
+    },
+    "leave_modal": {
+      "confirm_phrase_error": "Please confirm leaving the project by typing “{phrase}”.",
+      "description": "Are you sure you want to leave the project “{name}”? All of the work items associated with you will become inaccessible.",
+      "fill_all_fields": "Please fill all fields.",
+      "project_name_error": "Please enter the project name as shown in the description.",
+      "project_name_placeholder": "Enter project name",
+      "project_name_required": "Project name is required",
+      "title": "Leave Project"
+    },
+    "member_columns": {
+      "role_error_message": "An error occurred while updating member role. Please try again.",
+      "role_error_title": "You can’t change this role yet.",
+      "role_required": "Role is required."
+    },
+    "member_defaults": {
+      "guest_access": "Guest access"
+    },
+    "member_list_item": {
+      "leave_error_title": "You can’t leave this project yet.",
+      "remove_error_title": "You can't remove the member from this project yet."
+    },
+    "multi_select_modal": {
+      "search_placeholder": "Search for projects"
+    },
+    "profile": {
+      "cover_image_alt": "Cover image",
+      "display_name_placeholder": "Enter your display name",
+      "display_name_required": "Display name is required.",
+      "email_placeholder": "Enter your email",
+      "email_required": "Email is required.",
+      "first_day_of_week": "First day of the week",
+      "first_day_of_week_description": "This will change how all calendars in your app look.",
+      "first_name_placeholder": "Enter your first name",
+      "first_name_required": "Please enter first name",
+      "language_error": "Failed to update language",
+      "language_updated": "Language updated successfully",
+      "last_name_placeholder": "Enter your last name",
+      "picture_delete_error": "There was some error in deleting your profile picture. Please try again.",
+      "picture_deleted": "Profile picture deleted successfully.",
+      "select_language": "Select a language",
+      "timezone_error": "Failed to update timezone",
+      "timezone_updated": "Timezone updated successfully",
+      "update_error": "There was some error in updating your profile. Please try again.",
+      "updated": "Profile updated successfully."
+    },
+    "publish_modal": {
+      "allow_comments": "Allow comments",
+      "allow_reactions": "Allow reactions",
+      "allow_voting": "Allow voting",
+      "anyone_with_link": "Anyone with the link can access",
+      "link_copied": "Published page link copied successfully.",
+      "live_on_web": "This project is now live on web",
+      "publishing": "Publishing",
+      "select_layout_error": "Please select at least one view layout to publish the project.",
+      "settings_updated": "Publish settings updated successfully!",
+      "unpublish": "Unpublish",
+      "unpublish_error": "Something went wrong while unpublishing the project.",
+      "unpublishing": "Unpublishing",
+      "update_settings": "Update settings"
+    },
+    "rich_filters": {
+      "all_filters_applied": "All filters applied",
+      "config_error_message": "This filter is not properly configured and cannot be applied",
+      "config_error_title": "Filter configuration error",
+      "filter_type_not_supported": "Filter type not supported",
+      "invalid_filter": "Invalid filter",
+      "invalid_tooltip": "This filter condition is no longer valid. The property may have been deleted or your access to it may have changed.",
+      "remove_filter": "Remove filter",
+      "save_view": "Save view",
+      "update_view": "Update view"
+    },
+    "shared": {
+      "archived": "Archived",
+      "custom": "Custom",
+      "joined": "Joined",
+      "joining": "Joining...",
+      "leaving": "Leaving...",
+      "removing": "Removing...",
+      "restoring": "Restoring",
+      "roles": "Roles",
+      "suspended": "Suspended"
+    },
+    "states": {
+      "cannot_delete_default": "Cannot delete the default state.",
+      "cannot_empty_group": "Cannot have an empty group.",
+      "create_error": "State could not be created. Please try again.",
+      "create_name_exists": "State with that name already exists. Please try again with another name.",
+      "created": "State created successfully.",
+      "delete_description": "Are you sure you want to delete state {name}? All of the data related to the state will be permanently removed. This action cannot be undone.",
+      "delete_error": "State could not be deleted. Please try again.",
+      "delete_has_work_items": "This state contains some work items within it, please move them to some other state to delete this state.",
+      "delete_title": "Delete state",
+      "description_placeholder": "Describe this state for your members.",
+      "mark_as_default": "Mark as default",
+      "marking_as_default": "Marking as default",
+      "update_error": "State could not be updated. Please try again.",
+      "update_name_exists": "Another state exists with the same name. Please try again with another name.",
+      "updated": "State updated successfully."
+    },
+    "view_filters": {
+      "view_not_found_message": "The view you're trying to update doesn't exist.",
+      "view_not_found_title": "We couldn't find the view",
+      "view_update_error": "Your view could not be updated. Please try again.",
+      "view_updated": "Your view has been updated successfully."
+    },
+    "views": {
+      "add_view": "Add view",
+      "create_error": "Failed to create view. Please try again.",
+      "created": "View created successfully.",
+      "delete_error": "View could not be deleted. Please try again.",
+      "deleted": "View deleted successfully.",
+      "not_found_description": "The view you are looking for does not exist or you don't have permission to view it.",
+      "not_found_title": "View does not exist",
+      "update_error": "Failed to update view. Please try again.",
+      "view_other_views": "View other views"
+    },
+    "webhooks": {
+      "copy_secret_key": "Copy secret key",
+      "danger_zone": "Danger zone",
+      "danger_zone_description": "Once a webhook is deleted, it cannot be restored. Future events will no longer be delivered to this webhook.",
+      "delete_description": "Are you sure you want to delete this webhook? Future events will not be delivered to this webhook. This action cannot be undone.",
+      "delete_error": "Webhook could not be deleted. Please try again.",
+      "delete_title": "Delete webhook",
+      "deleted": "Webhook deleted successfully.",
+      "empty_description": "Create webhooks to receive real-time updates and automate actions",
+      "empty_title": "No webhooks",
+      "events": {
+        "cycle": "Cycle created, updated, or deleted",
+        "issue": "Work item created, updated, deleted, added to a cycle or module",
+        "issue_comment": "Comment posted, updated, or deleted",
+        "issue_comment_label": "Work item comments",
+        "module": "Module created, updated, or deleted",
+        "project": "Project created, updated, or deleted"
+      },
+      "key_regenerated": "New key regenerated successfully.",
+      "view_secret_key": "View secret key"
+    }
   }
 }

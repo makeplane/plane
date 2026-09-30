@@ -51,14 +51,13 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
-          message:
-            "This state contains some work items within it, please move them to some other state to delete this state.",
+          message: t("project_components.states.delete_has_work_items"),
         });
       } else {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
-          message: "State could not be deleted. Please try again.",
+          message: t("project_components.states.delete_error"),
         });
       }
       setIsDelete(false);
@@ -72,13 +71,8 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
         handleSubmit={handleDeleteState}
         isSubmitting={isDelete}
         isOpen={isDeleteModal}
-        title="Delete State"
-        content={
-          <>
-            Are you sure you want to delete state- <span className="font-medium text-primary">{state?.name}</span>? All
-            of the data related to the state will be permanently removed. This action cannot be undone.
-          </>
-        }
+        title={t("project_components.states.delete_title")}
+        content={<>{t("project_components.states.delete_description", { name: state?.name })}</>}
       />
 
       <button
@@ -92,7 +86,11 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
       >
         <Tooltip
           tooltipContent={
-            state.default ? "Cannot delete the default state." : totalStates === 1 ? `Cannot have an empty group.` : ``
+            state.default
+              ? t("project_components.states.cannot_delete_default")
+              : totalStates === 1
+                ? t("project_components.states.cannot_empty_group")
+                : ""
           }
           isMobile={isMobile}
           disabled={!isDeleteDisabled}

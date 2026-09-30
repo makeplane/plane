@@ -1,13 +1,15 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
-// types
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -35,6 +37,8 @@ type Props = {
 
 export const ViewQuickActions = observer(function ViewQuickActions(props: Props) {
   const { parentRef, projectId, view, workspaceSlug, customClassName } = props;
+  // translation
+  const { t } = useTranslation();
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
@@ -55,8 +59,8 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
     copyUrlToClipboard(viewLink).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "View link copied to clipboard.",
+        title: t("common.link_copied"),
+        message: t("view_link_copied_to_clipboard"),
       });
     });
   const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");

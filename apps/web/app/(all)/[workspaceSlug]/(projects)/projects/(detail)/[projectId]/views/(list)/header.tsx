@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -8,6 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { ViewsIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
@@ -21,6 +23,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
+  // translation
+  const { t } = useTranslation();
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { toggleCreateViewModal } = useCommandPalette();
@@ -35,7 +39,7 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
-                  label="Views"
+                  label={t("views")}
                   href={`/${workspaceSlug}/projects/${projectId}/views/`}
                   icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
                   isLast
@@ -54,7 +58,7 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
               size="lg"
               onClick={() => toggleCreateViewModal(true)}
             >
-              Add view
+              {t("project_components.views.add_view")}
             </Button>
           </div>
         </Header.RightItem>

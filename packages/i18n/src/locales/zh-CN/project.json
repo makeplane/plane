@@ -414,5 +414,209 @@
         }
       }
     }
+  },
+  "project_components": {
+    "archive_restore_modal": {
+      "archive_description": "此项目及其工作项、周期、模块和页面将被归档。其工作项不会出现在搜索中。只有项目管理员可以恢复该项目。",
+      "archive_error": "无法归档项目，请重试。",
+      "archive_heading": "归档 {name}",
+      "archive_success_message": "{name} 已成功归档",
+      "archive_success_title": "归档成功",
+      "restore_description": "恢复项目将激活该项目，并对项目的所有成员可见。确定要继续吗？",
+      "restore_error": "无法恢复项目，请重试。",
+      "restore_heading": "恢复 {name}",
+      "restore_success_message": "您可以在您的项目中找到 {name}。",
+      "restore_success_title": "恢复成功"
+    },
+    "card": {
+      "added_to_favorites": "项目已添加到收藏。",
+      "adding_to_favorites": "正在将项目添加到收藏...",
+      "created_on": "创建于 {date}",
+      "link_copied_message": "项目链接已复制到剪贴板。",
+      "no_member": "无成员",
+      "no_member_yet": "暂无成员",
+      "removed_from_favorites": "项目已从收藏中移除。",
+      "removing_from_favorites": "正在将项目从收藏中移除..."
+    },
+    "confirm_member_remove": {
+      "leave_description": "确定要离开项目 {name} 吗？如果再次被邀请或项目是公开的，您可以重新加入。",
+      "leave_title": "离开项目？",
+      "remove_description": "确定要移除成员 {name} 吗？他们将无法再访问此项目。此操作无法撤销。",
+      "remove_title": "移除 {name}？"
+    },
+    "control_section": {
+      "archive_description": "归档项目会将其从侧边导航中移除，但您仍可从项目页面访问它。您可以随时恢复或删除该项目。",
+      "delete_description": "删除项目时，该项目中的所有数据和资源将被永久删除且无法恢复。"
+    },
+    "delete_modal": {
+      "confirm_placeholder": "输入“{phrase}”",
+      "confirm_type": "要确认，请在下方输入 {phrase}：",
+      "deleted_success": "项目已成功删除。",
+      "description": "确定要删除项目 {name} 吗？与该项目相关的所有数据都将被永久删除。此操作无法撤销。",
+      "enter_project_name": "输入项目名称 {name} 以继续："
+    },
+    "features": {
+      "pro_feature": "专业版功能",
+      "update_error": "更新项目功能时出错，请重试。",
+      "updated": "项目功能已成功更新。",
+      "updating": "正在更新项目功能..."
+    },
+    "form": {
+      "cover_image_error": "处理封面图片失败",
+      "name_max_length": "项目名称必须少于 255 个字符"
+    },
+    "integration_card": {
+      "github_description": "选择 GitHub 仓库以启用同步。",
+      "select_repository": "选择仓库",
+      "slack_description": "获取定期更新，并控制您想接收的通知。",
+      "sync_error": "无法将仓库与项目同步，请重试。"
+    },
+    "invitation_modal": {
+      "members_added": "成员已成功添加。",
+      "select_member_required": "请选择成员",
+      "select_role_required": "选择角色"
+    },
+    "join_modal": {
+      "description": "确定要加入项目 {name} 吗？请点击下方的“加入项目”按钮继续。",
+      "join_project": "加入项目",
+      "title": "加入项目？"
+    },
+    "leave_modal": {
+      "confirm_phrase_error": "请输入“{phrase}”以确认离开项目。",
+      "description": "确定要离开项目“{name}”吗？与您相关的所有工作项将无法访问。",
+      "fill_all_fields": "请填写所有字段。",
+      "project_name_error": "请按说明中显示的内容输入项目名称。",
+      "project_name_placeholder": "输入项目名称",
+      "project_name_required": "项目名称为必填项",
+      "title": "离开项目"
+    },
+    "member_columns": {
+      "role_error_message": "更新成员角色时出错，请重试。",
+      "role_error_title": "暂时无法更改此角色。",
+      "role_required": "角色为必填项。"
+    },
+    "member_defaults": {
+      "guest_access": "访客访问"
+    },
+    "member_list_item": {
+      "leave_error_title": "暂时无法离开此项目。",
+      "remove_error_title": "暂时无法将成员从此项目中移除。"
+    },
+    "multi_select_modal": {
+      "search_placeholder": "搜索项目"
+    },
+    "profile": {
+      "cover_image_alt": "封面图片",
+      "display_name_placeholder": "输入您的显示名称",
+      "display_name_required": "显示名称为必填项。",
+      "email_placeholder": "输入您的电子邮箱",
+      "email_required": "电子邮箱为必填项。",
+      "first_day_of_week": "每周的第一天",
+      "first_day_of_week_description": "这将更改应用中所有日历的显示方式。",
+      "first_name_placeholder": "输入您的名字",
+      "first_name_required": "请输入名字",
+      "language_error": "更新语言失败",
+      "language_updated": "语言已成功更新",
+      "last_name_placeholder": "输入您的姓氏",
+      "picture_delete_error": "删除头像时出错，请重试。",
+      "picture_deleted": "头像已成功删除。",
+      "select_language": "选择语言",
+      "timezone_error": "更新时区失败",
+      "timezone_updated": "时区已成功更新",
+      "update_error": "更新个人资料时出错，请重试。",
+      "updated": "个人资料已成功更新。"
+    },
+    "publish_modal": {
+      "allow_comments": "允许评论",
+      "allow_reactions": "允许表情回应",
+      "allow_voting": "允许投票",
+      "anyone_with_link": "任何拥有链接的人都可以访问",
+      "link_copied": "已成功复制已发布页面的链接。",
+      "live_on_web": "此项目现已在网络上发布",
+      "publishing": "发布中",
+      "select_layout_error": "请至少选择一种视图布局以发布项目。",
+      "settings_updated": "发布设置已成功更新！",
+      "unpublish": "取消发布",
+      "unpublish_error": "取消发布项目时出错。",
+      "unpublishing": "正在取消发布",
+      "update_settings": "更新设置"
+    },
+    "rich_filters": {
+      "all_filters_applied": "已应用所有筛选器",
+      "config_error_message": "此筛选器配置不正确，无法应用",
+      "config_error_title": "筛选器配置错误",
+      "filter_type_not_supported": "不支持的筛选器类型",
+      "invalid_filter": "无效的筛选器",
+      "invalid_tooltip": "此筛选条件已失效。该属性可能已被删除，或您对它的访问权限已更改。",
+      "remove_filter": "移除筛选器",
+      "save_view": "保存视图",
+      "update_view": "更新视图"
+    },
+    "shared": {
+      "archived": "已归档",
+      "custom": "自定义",
+      "joined": "已加入",
+      "joining": "加入中...",
+      "leaving": "离开中...",
+      "removing": "移除中...",
+      "restoring": "恢复中",
+      "roles": "角色",
+      "suspended": "已停用"
+    },
+    "states": {
+      "cannot_delete_default": "无法删除默认状态。",
+      "cannot_empty_group": "分组不能为空。",
+      "create_error": "无法创建状态，请重试。",
+      "create_name_exists": "该名称的状态已存在，请使用其他名称重试。",
+      "created": "状态已成功创建。",
+      "delete_description": "确定要删除状态 {name} 吗？与该状态相关的所有数据都将被永久删除。此操作无法撤销。",
+      "delete_error": "无法删除状态，请重试。",
+      "delete_has_work_items": "此状态包含一些工作项，请先将它们移到其他状态后再删除此状态。",
+      "delete_title": "删除状态",
+      "description_placeholder": "为您的成员描述此状态。",
+      "mark_as_default": "设为默认",
+      "marking_as_default": "正在设为默认",
+      "update_error": "无法更新状态，请重试。",
+      "update_name_exists": "已存在同名的其他状态，请使用其他名称重试。",
+      "updated": "状态已成功更新。"
+    },
+    "view_filters": {
+      "view_not_found_message": "您要更新的视图不存在。",
+      "view_not_found_title": "找不到该视图",
+      "view_update_error": "无法更新您的视图，请重试。",
+      "view_updated": "您的视图已成功更新。"
+    },
+    "views": {
+      "add_view": "添加视图",
+      "create_error": "创建视图失败，请重试。",
+      "created": "视图已成功创建。",
+      "delete_error": "无法删除视图，请重试。",
+      "deleted": "视图已成功删除。",
+      "not_found_description": "您查找的视图不存在，或您没有查看权限。",
+      "not_found_title": "视图不存在",
+      "update_error": "更新视图失败，请重试。",
+      "view_other_views": "查看其他视图"
+    },
+    "webhooks": {
+      "copy_secret_key": "复制密钥",
+      "danger_zone": "危险区域",
+      "danger_zone_description": "Webhook 一旦删除便无法恢复，之后的事件将不再发送到此 Webhook。",
+      "delete_description": "确定要删除此 Webhook 吗？之后的事件将不再发送到此 Webhook。此操作无法撤销。",
+      "delete_error": "无法删除 Webhook，请重试。",
+      "delete_title": "删除 Webhook",
+      "deleted": "Webhook 已成功删除。",
+      "empty_description": "创建 Webhook 以接收实时更新并自动执行操作",
+      "empty_title": "暂无 Webhook",
+      "events": {
+        "cycle": "周期被创建、更新或删除",
+        "issue": "工作项被创建、更新、删除，或被添加到周期或模块",
+        "issue_comment": "评论被发布、更新或删除",
+        "issue_comment_label": "工作项评论",
+        "module": "模块被创建、更新或删除",
+        "project": "项目被创建、更新或删除"
+      },
+      "key_regenerated": "已成功重新生成新密钥。",
+      "view_secret_key": "查看密钥"
+    }
   }
 }

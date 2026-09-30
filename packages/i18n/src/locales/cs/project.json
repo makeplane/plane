@@ -414,5 +414,209 @@
         }
       }
     }
+  },
+  "project_components": {
+    "archive_restore_modal": {
+      "archive_description": "Tento projekt a jeho pracovní položky, cykly, moduly a stránky budou archivovány. Jeho pracovní položky se nebudou zobrazovat ve vyhledávání. Projekt mohou obnovit pouze správci projektu.",
+      "archive_error": "Projekt se nepodařilo archivovat. Zkuste to prosím znovu.",
+      "archive_heading": "Archivovat {name}",
+      "archive_success_message": "Projekt {name} byl úspěšně archivován",
+      "archive_success_title": "Archivace úspěšná",
+      "restore_description": "Obnovením projektu jej aktivujete a zviditelníte všem jeho členům. Opravdu chcete pokračovat?",
+      "restore_error": "Projekt se nepodařilo obnovit. Zkuste to prosím znovu.",
+      "restore_heading": "Obnovit {name}",
+      "restore_success_message": "Projekt {name} najdete mezi svými projekty.",
+      "restore_success_title": "Obnovení úspěšné"
+    },
+    "card": {
+      "added_to_favorites": "Projekt byl přidán do oblíbených.",
+      "adding_to_favorites": "Přidávání projektu do oblíbených...",
+      "created_on": "Vytvořeno {date}",
+      "link_copied_message": "Odkaz na projekt byl zkopírován do schránky.",
+      "no_member": "Žádní členové",
+      "no_member_yet": "Zatím žádní členové",
+      "removed_from_favorites": "Projekt byl odebrán z oblíbených.",
+      "removing_from_favorites": "Odebírání projektu z oblíbených..."
+    },
+    "confirm_member_remove": {
+      "leave_description": "Opravdu chcete opustit projekt {name}? Do projektu se budete moci znovu připojit, pokud budete znovu pozváni nebo pokud je veřejný.",
+      "leave_title": "Opustit projekt?",
+      "remove_description": "Opravdu chcete odebrat člena {name}? Ztratí přístup k tomuto projektu. Tuto akci nelze vrátit zpět.",
+      "remove_title": "Odebrat {name}?"
+    },
+    "control_section": {
+      "archive_description": "Archivací projektu se projekt odebere z boční navigace, ale stále k němu budete mít přístup ze stránky projektů. Projekt můžete kdykoli obnovit nebo smazat.",
+      "delete_description": "Po smazání projektu budou všechna data a zdroje v něm trvale odstraněna a nelze je obnovit."
+    },
+    "delete_modal": {
+      "confirm_placeholder": "Zadejte „{phrase}“",
+      "confirm_type": "Pro potvrzení zadejte níže: {phrase}",
+      "deleted_success": "Projekt byl úspěšně smazán.",
+      "description": "Opravdu chcete smazat projekt {name}? Všechna data související s projektem budou trvale odstraněna. Tuto akci nelze vrátit zpět.",
+      "enter_project_name": "Chcete-li pokračovat, zadejte název projektu {name}:"
+    },
+    "features": {
+      "pro_feature": "Funkce Pro",
+      "update_error": "Při aktualizaci funkce projektu se něco pokazilo. Zkuste to prosím znovu.",
+      "updated": "Funkce projektu byla úspěšně aktualizována.",
+      "updating": "Aktualizace funkce projektu..."
+    },
+    "form": {
+      "cover_image_error": "Zpracování obrázku obálky se nezdařilo",
+      "name_max_length": "Název projektu musí mít méně než 255 znaků"
+    },
+    "integration_card": {
+      "github_description": "Vyberte repozitář GitHub pro zapnutí synchronizace.",
+      "select_repository": "Vyberte repozitář",
+      "slack_description": "Získávejte pravidelné aktualizace a určete, která oznámení chcete dostávat.",
+      "sync_error": "Repozitář se nepodařilo synchronizovat s projektem. Zkuste to prosím znovu."
+    },
+    "invitation_modal": {
+      "members_added": "Členové byli úspěšně přidáni.",
+      "select_member_required": "Vyberte člena",
+      "select_role_required": "Vyberte roli"
+    },
+    "join_modal": {
+      "description": "Opravdu se chcete připojit k projektu {name}? Pokračujte kliknutím na tlačítko „Připojit se k projektu“ níže.",
+      "join_project": "Připojit se k projektu",
+      "title": "Připojit se k projektu?"
+    },
+    "leave_modal": {
+      "confirm_phrase_error": "Potvrďte opuštění projektu zadáním „{phrase}“.",
+      "description": "Opravdu chcete opustit projekt „{name}“? Všechny pracovní položky, které se vás týkají, se stanou nepřístupnými.",
+      "fill_all_fields": "Vyplňte všechna pole.",
+      "project_name_error": "Zadejte název projektu přesně podle popisu.",
+      "project_name_placeholder": "Zadejte název projektu",
+      "project_name_required": "Název projektu je povinný",
+      "title": "Opustit projekt"
+    },
+    "member_columns": {
+      "role_error_message": "Při aktualizaci role člena došlo k chybě. Zkuste to prosím znovu.",
+      "role_error_title": "Tuto roli zatím nemůžete změnit.",
+      "role_required": "Role je povinná."
+    },
+    "member_defaults": {
+      "guest_access": "Přístup hostů"
+    },
+    "member_list_item": {
+      "leave_error_title": "Tento projekt zatím nemůžete opustit.",
+      "remove_error_title": "Tohoto člena zatím nemůžete z projektu odebrat."
+    },
+    "multi_select_modal": {
+      "search_placeholder": "Hledat projekty"
+    },
+    "profile": {
+      "cover_image_alt": "Obrázek obálky",
+      "display_name_placeholder": "Zadejte své zobrazované jméno",
+      "display_name_required": "Zobrazované jméno je povinné.",
+      "email_placeholder": "Zadejte svůj e-mail",
+      "email_required": "E-mail je povinný.",
+      "first_day_of_week": "První den v týdnu",
+      "first_day_of_week_description": "Změní se tím vzhled všech kalendářů ve vaší aplikaci.",
+      "first_name_placeholder": "Zadejte své křestní jméno",
+      "first_name_required": "Zadejte křestní jméno",
+      "language_error": "Aktualizace jazyka se nezdařila",
+      "language_updated": "Jazyk byl úspěšně aktualizován",
+      "last_name_placeholder": "Zadejte své příjmení",
+      "picture_delete_error": "Při mazání profilového obrázku došlo k chybě. Zkuste to prosím znovu.",
+      "picture_deleted": "Profilový obrázek byl úspěšně smazán.",
+      "select_language": "Vyberte jazyk",
+      "timezone_error": "Aktualizace časového pásma se nezdařila",
+      "timezone_updated": "Časové pásmo bylo úspěšně aktualizováno",
+      "update_error": "Při aktualizaci profilu došlo k chybě. Zkuste to prosím znovu.",
+      "updated": "Profil byl úspěšně aktualizován."
+    },
+    "publish_modal": {
+      "allow_comments": "Povolit komentáře",
+      "allow_reactions": "Povolit reakce",
+      "allow_voting": "Povolit hlasování",
+      "anyone_with_link": "Přístup má každý, kdo má odkaz",
+      "link_copied": "Odkaz na publikovanou stránku byl zkopírován.",
+      "live_on_web": "Tento projekt je nyní dostupný na webu",
+      "publishing": "Publikování",
+      "select_layout_error": "Vyberte alespoň jedno rozvržení zobrazení pro publikování projektu.",
+      "settings_updated": "Nastavení publikování bylo úspěšně aktualizováno!",
+      "unpublish": "Zrušit publikování",
+      "unpublish_error": "Při rušení publikování projektu se něco pokazilo.",
+      "unpublishing": "Ruší se publikování",
+      "update_settings": "Aktualizovat nastavení"
+    },
+    "rich_filters": {
+      "all_filters_applied": "Všechny filtry použity",
+      "config_error_message": "Tento filtr není správně nakonfigurován a nelze jej použít",
+      "config_error_title": "Chyba konfigurace filtru",
+      "filter_type_not_supported": "Typ filtru není podporován",
+      "invalid_filter": "Neplatný filtr",
+      "invalid_tooltip": "Tato podmínka filtru již není platná. Vlastnost mohla být smazána nebo se mohl změnit váš přístup k ní.",
+      "remove_filter": "Odebrat filtr",
+      "save_view": "Uložit pohled",
+      "update_view": "Aktualizovat pohled"
+    },
+    "shared": {
+      "archived": "Archivováno",
+      "custom": "Vlastní",
+      "joined": "Připojeno",
+      "joining": "Připojování...",
+      "leaving": "Opouští se...",
+      "removing": "Odebírání...",
+      "restoring": "Obnovování",
+      "roles": "Role",
+      "suspended": "Pozastavení"
+    },
+    "states": {
+      "cannot_delete_default": "Výchozí stav nelze smazat.",
+      "cannot_empty_group": "Skupina nemůže být prázdná.",
+      "create_error": "Stav se nepodařilo vytvořit. Zkuste to prosím znovu.",
+      "create_name_exists": "Stav s tímto názvem již existuje. Zkuste to prosím znovu s jiným názvem.",
+      "created": "Stav byl úspěšně vytvořen.",
+      "delete_description": "Opravdu chcete smazat stav {name}? Všechna data související se stavem budou trvale odstraněna. Tuto akci nelze vrátit zpět.",
+      "delete_error": "Stav se nepodařilo smazat. Zkuste to prosím znovu.",
+      "delete_has_work_items": "Tento stav obsahuje pracovní položky. Chcete-li jej smazat, přesuňte je do jiného stavu.",
+      "delete_title": "Smazat stav",
+      "description_placeholder": "Popište tento stav pro své členy.",
+      "mark_as_default": "Nastavit jako výchozí",
+      "marking_as_default": "Nastavování jako výchozí",
+      "update_error": "Stav se nepodařilo aktualizovat. Zkuste to prosím znovu.",
+      "update_name_exists": "Jiný stav se stejným názvem již existuje. Zkuste to prosím znovu s jiným názvem.",
+      "updated": "Stav byl úspěšně aktualizován."
+    },
+    "view_filters": {
+      "view_not_found_message": "Pohled, který se pokoušíte aktualizovat, neexistuje.",
+      "view_not_found_title": "Pohled se nepodařilo najít",
+      "view_update_error": "Váš pohled se nepodařilo aktualizovat. Zkuste to prosím znovu.",
+      "view_updated": "Váš pohled byl úspěšně aktualizován."
+    },
+    "views": {
+      "add_view": "Přidat pohled",
+      "create_error": "Pohled se nepodařilo vytvořit. Zkuste to prosím znovu.",
+      "created": "Pohled byl úspěšně vytvořen.",
+      "delete_error": "Pohled se nepodařilo smazat. Zkuste to prosím znovu.",
+      "deleted": "Pohled byl úspěšně smazán.",
+      "not_found_description": "Pohled, který hledáte, neexistuje nebo nemáte oprávnění jej zobrazit.",
+      "not_found_title": "Pohled neexistuje",
+      "update_error": "Pohled se nepodařilo aktualizovat. Zkuste to prosím znovu.",
+      "view_other_views": "Zobrazit další pohledy"
+    },
+    "webhooks": {
+      "copy_secret_key": "Kopírovat tajný klíč",
+      "danger_zone": "Nebezpečná zóna",
+      "danger_zone_description": "Po smazání webhooku jej nelze obnovit. Budoucí události již nebudou na tento webhook doručovány.",
+      "delete_description": "Opravdu chcete tento webhook smazat? Budoucí události na něj nebudou doručovány. Tuto akci nelze vrátit zpět.",
+      "delete_error": "Webhook se nepodařilo smazat. Zkuste to prosím znovu.",
+      "delete_title": "Smazat webhook",
+      "deleted": "Webhook byl úspěšně smazán.",
+      "empty_description": "Vytvořte webhooky pro příjem aktualizací v reálném čase a automatizaci akcí",
+      "empty_title": "Žádné webhooky",
+      "events": {
+        "cycle": "Cyklus vytvořen, aktualizován nebo smazán",
+        "issue": "Pracovní položka vytvořena, aktualizována, smazána nebo přidána do cyklu či modulu",
+        "issue_comment": "Komentář přidán, aktualizován nebo smazán",
+        "issue_comment_label": "Komentáře k pracovním položkám",
+        "module": "Modul vytvořen, aktualizován nebo smazán",
+        "project": "Projekt vytvořen, aktualizován nebo smazán"
+      },
+      "key_regenerated": "Nový klíč byl úspěšně vygenerován.",
+      "view_secret_key": "Zobrazit tajný klíč"
+    }
   }
 }

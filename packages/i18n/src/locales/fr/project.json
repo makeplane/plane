@@ -414,5 +414,209 @@
         }
       }
     }
+  },
+  "project_components": {
+    "archive_restore_modal": {
+      "archive_description": "Ce projet ainsi que ses éléments de travail, cycles, modules et pages seront archivés. Ses éléments de travail n'apparaîtront plus dans la recherche. Seuls les administrateurs du projet peuvent le restaurer.",
+      "archive_error": "Le projet n'a pas pu être archivé. Veuillez réessayer.",
+      "archive_heading": "Archiver {name}",
+      "archive_success_message": "{name} a été archivé avec succès",
+      "archive_success_title": "Archivage réussi",
+      "restore_description": "La restauration d'un projet l'activera et le rendra visible à tous ses membres. Voulez-vous vraiment continuer ?",
+      "restore_error": "Le projet n'a pas pu être restauré. Veuillez réessayer.",
+      "restore_heading": "Restaurer {name}",
+      "restore_success_message": "Vous pouvez retrouver {name} dans vos projets.",
+      "restore_success_title": "Restauration réussie"
+    },
+    "card": {
+      "added_to_favorites": "Projet ajouté aux favoris.",
+      "adding_to_favorites": "Ajout du projet aux favoris...",
+      "created_on": "Créé le {date}",
+      "link_copied_message": "Lien du projet copié dans le presse-papiers.",
+      "no_member": "Aucun membre",
+      "no_member_yet": "Aucun membre pour l'instant",
+      "removed_from_favorites": "Projet retiré des favoris.",
+      "removing_from_favorites": "Retrait du projet des favoris..."
+    },
+    "confirm_member_remove": {
+      "leave_description": "Voulez-vous vraiment quitter le projet {name} ? Vous pourrez le rejoindre si vous y êtes invité à nouveau ou s'il est public.",
+      "leave_title": "Quitter le projet ?",
+      "remove_description": "Voulez-vous vraiment retirer le membre {name} ? Il n'aura plus accès à ce projet. Cette action est irréversible.",
+      "remove_title": "Retirer {name} ?"
+    },
+    "control_section": {
+      "archive_description": "L'archivage d'un projet le retire de la navigation latérale, mais vous pourrez toujours y accéder depuis la page des projets. Vous pouvez le restaurer ou le supprimer à tout moment.",
+      "delete_description": "La suppression d'un projet entraîne la suppression définitive de toutes ses données et ressources, qui ne pourront pas être récupérées."
+    },
+    "delete_modal": {
+      "confirm_placeholder": "Saisissez « {phrase} »",
+      "confirm_type": "Pour confirmer, saisissez {phrase} ci-dessous :",
+      "deleted_success": "Projet supprimé avec succès.",
+      "description": "Voulez-vous vraiment supprimer le projet {name} ? Toutes les données liées au projet seront définitivement supprimées. Cette action est irréversible.",
+      "enter_project_name": "Saisissez le nom du projet {name} pour continuer :"
+    },
+    "features": {
+      "pro_feature": "Fonctionnalité Pro",
+      "update_error": "Une erreur s'est produite lors de la mise à jour de la fonctionnalité du projet. Veuillez réessayer.",
+      "updated": "Fonctionnalité du projet mise à jour avec succès.",
+      "updating": "Mise à jour de la fonctionnalité du projet..."
+    },
+    "form": {
+      "cover_image_error": "Échec du traitement de l'image de couverture",
+      "name_max_length": "Le nom du projet doit contenir moins de 255 caractères"
+    },
+    "integration_card": {
+      "github_description": "Sélectionnez un dépôt GitHub pour activer la synchronisation.",
+      "select_repository": "Sélectionner un dépôt",
+      "slack_description": "Recevez des mises à jour régulières et choisissez les notifications que vous souhaitez recevoir.",
+      "sync_error": "Le dépôt n'a pas pu être synchronisé avec le projet. Veuillez réessayer."
+    },
+    "invitation_modal": {
+      "members_added": "Membres ajoutés avec succès.",
+      "select_member_required": "Veuillez sélectionner un membre",
+      "select_role_required": "Sélectionnez un rôle"
+    },
+    "join_modal": {
+      "description": "Voulez-vous vraiment rejoindre le projet {name} ? Cliquez sur le bouton « Rejoindre le projet » ci-dessous pour continuer.",
+      "join_project": "Rejoindre le projet",
+      "title": "Rejoindre le projet ?"
+    },
+    "leave_modal": {
+      "confirm_phrase_error": "Veuillez confirmer que vous quittez le projet en saisissant « {phrase} ».",
+      "description": "Voulez-vous vraiment quitter le projet « {name} » ? Tous les éléments de travail qui vous sont associés deviendront inaccessibles.",
+      "fill_all_fields": "Veuillez remplir tous les champs.",
+      "project_name_error": "Veuillez saisir le nom du projet tel qu'il apparaît dans la description.",
+      "project_name_placeholder": "Saisissez le nom du projet",
+      "project_name_required": "Le nom du projet est obligatoire",
+      "title": "Quitter le projet"
+    },
+    "member_columns": {
+      "role_error_message": "Une erreur s'est produite lors de la mise à jour du rôle du membre. Veuillez réessayer.",
+      "role_error_title": "Vous ne pouvez pas encore modifier ce rôle.",
+      "role_required": "Le rôle est obligatoire."
+    },
+    "member_defaults": {
+      "guest_access": "Accès invité"
+    },
+    "member_list_item": {
+      "leave_error_title": "Vous ne pouvez pas encore quitter ce projet.",
+      "remove_error_title": "Vous ne pouvez pas encore retirer ce membre du projet."
+    },
+    "multi_select_modal": {
+      "search_placeholder": "Rechercher des projets"
+    },
+    "profile": {
+      "cover_image_alt": "Image de couverture",
+      "display_name_placeholder": "Saisissez votre nom d'affichage",
+      "display_name_required": "Le nom d'affichage est obligatoire.",
+      "email_placeholder": "Saisissez votre e-mail",
+      "email_required": "L'e-mail est obligatoire.",
+      "first_day_of_week": "Premier jour de la semaine",
+      "first_day_of_week_description": "Cela modifiera l'apparence de tous les calendriers de votre application.",
+      "first_name_placeholder": "Saisissez votre prénom",
+      "first_name_required": "Veuillez saisir le prénom",
+      "language_error": "Échec de la mise à jour de la langue",
+      "language_updated": "Langue mise à jour avec succès",
+      "last_name_placeholder": "Saisissez votre nom de famille",
+      "picture_delete_error": "Une erreur s'est produite lors de la suppression de votre photo de profil. Veuillez réessayer.",
+      "picture_deleted": "Photo de profil supprimée avec succès.",
+      "select_language": "Sélectionnez une langue",
+      "timezone_error": "Échec de la mise à jour du fuseau horaire",
+      "timezone_updated": "Fuseau horaire mis à jour avec succès",
+      "update_error": "Une erreur s'est produite lors de la mise à jour de votre profil. Veuillez réessayer.",
+      "updated": "Profil mis à jour avec succès."
+    },
+    "publish_modal": {
+      "allow_comments": "Autoriser les commentaires",
+      "allow_reactions": "Autoriser les réactions",
+      "allow_voting": "Autoriser le vote",
+      "anyone_with_link": "Toute personne disposant du lien peut y accéder",
+      "link_copied": "Lien de la page publiée copié avec succès.",
+      "live_on_web": "Ce projet est maintenant en ligne sur le web",
+      "publishing": "Publication",
+      "select_layout_error": "Veuillez sélectionner au moins une disposition d'affichage pour publier le projet.",
+      "settings_updated": "Paramètres de publication mis à jour avec succès !",
+      "unpublish": "Dépublier",
+      "unpublish_error": "Une erreur s'est produite lors de la dépublication du projet.",
+      "unpublishing": "Dépublication",
+      "update_settings": "Mettre à jour les paramètres"
+    },
+    "rich_filters": {
+      "all_filters_applied": "Tous les filtres sont appliqués",
+      "config_error_message": "Ce filtre n'est pas correctement configuré et ne peut pas être appliqué",
+      "config_error_title": "Erreur de configuration du filtre",
+      "filter_type_not_supported": "Type de filtre non pris en charge",
+      "invalid_filter": "Filtre non valide",
+      "invalid_tooltip": "Cette condition de filtre n'est plus valide. La propriété a peut-être été supprimée ou votre accès à celle-ci a changé.",
+      "remove_filter": "Supprimer le filtre",
+      "save_view": "Enregistrer la vue",
+      "update_view": "Mettre à jour la vue"
+    },
+    "shared": {
+      "archived": "Archivé",
+      "custom": "Personnalisé",
+      "joined": "Rejoint",
+      "joining": "Adhésion...",
+      "leaving": "Départ...",
+      "removing": "Suppression...",
+      "restoring": "Restauration",
+      "roles": "Rôles",
+      "suspended": "Suspendus"
+    },
+    "states": {
+      "cannot_delete_default": "Impossible de supprimer l'état par défaut.",
+      "cannot_empty_group": "Un groupe ne peut pas être vide.",
+      "create_error": "L'état n'a pas pu être créé. Veuillez réessayer.",
+      "create_name_exists": "Un état portant ce nom existe déjà. Veuillez réessayer avec un autre nom.",
+      "created": "État créé avec succès.",
+      "delete_description": "Voulez-vous vraiment supprimer l'état {name} ? Toutes les données liées à l'état seront définitivement supprimées. Cette action est irréversible.",
+      "delete_error": "L'état n'a pas pu être supprimé. Veuillez réessayer.",
+      "delete_has_work_items": "Cet état contient des éléments de travail. Déplacez-les vers un autre état pour pouvoir le supprimer.",
+      "delete_title": "Supprimer l'état",
+      "description_placeholder": "Décrivez cet état pour vos membres.",
+      "mark_as_default": "Définir par défaut",
+      "marking_as_default": "Définition par défaut",
+      "update_error": "L'état n'a pas pu être mis à jour. Veuillez réessayer.",
+      "update_name_exists": "Un autre état porte déjà ce nom. Veuillez réessayer avec un autre nom.",
+      "updated": "État mis à jour avec succès."
+    },
+    "view_filters": {
+      "view_not_found_message": "La vue que vous essayez de mettre à jour n'existe pas.",
+      "view_not_found_title": "Nous n'avons pas trouvé la vue",
+      "view_update_error": "Votre vue n'a pas pu être mise à jour. Veuillez réessayer.",
+      "view_updated": "Votre vue a été mise à jour avec succès."
+    },
+    "views": {
+      "add_view": "Ajouter une vue",
+      "create_error": "Échec de la création de la vue. Veuillez réessayer.",
+      "created": "Vue créée avec succès.",
+      "delete_error": "La vue n'a pas pu être supprimée. Veuillez réessayer.",
+      "deleted": "Vue supprimée avec succès.",
+      "not_found_description": "La vue que vous recherchez n'existe pas ou vous n'avez pas l'autorisation de la consulter.",
+      "not_found_title": "La vue n'existe pas",
+      "update_error": "Échec de la mise à jour de la vue. Veuillez réessayer.",
+      "view_other_views": "Voir les autres vues"
+    },
+    "webhooks": {
+      "copy_secret_key": "Copier la clé secrète",
+      "danger_zone": "Zone de danger",
+      "danger_zone_description": "Une fois un webhook supprimé, il ne peut plus être restauré. Les futurs événements ne lui seront plus transmis.",
+      "delete_description": "Voulez-vous vraiment supprimer ce webhook ? Les futurs événements ne lui seront plus transmis. Cette action est irréversible.",
+      "delete_error": "Le webhook n'a pas pu être supprimé. Veuillez réessayer.",
+      "delete_title": "Supprimer le webhook",
+      "deleted": "Webhook supprimé avec succès.",
+      "empty_description": "Créez des webhooks pour recevoir des mises à jour en temps réel et automatiser des actions",
+      "empty_title": "Aucun webhook",
+      "events": {
+        "cycle": "Cycle créé, mis à jour ou supprimé",
+        "issue": "Élément de travail créé, mis à jour, supprimé ou ajouté à un cycle ou module",
+        "issue_comment": "Commentaire publié, mis à jour ou supprimé",
+        "issue_comment_label": "Commentaires des éléments de travail",
+        "module": "Module créé, mis à jour ou supprimé",
+        "project": "Projet créé, mis à jour ou supprimé"
+      },
+      "key_regenerated": "Nouvelle clé régénérée avec succès.",
+      "view_secret_key": "Afficher la clé secrète"
+    }
   }
 }

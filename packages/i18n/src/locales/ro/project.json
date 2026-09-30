@@ -414,5 +414,209 @@
         }
       }
     }
+  },
+  "project_components": {
+    "archive_restore_modal": {
+      "archive_description": "Acest proiect, împreună cu elementele de lucru, ciclurile, modulele și paginile sale, va fi arhivat. Elementele sale de lucru nu vor apărea în căutare. Doar administratorii proiectului îl pot restaura.",
+      "archive_error": "Proiectul nu a putut fi arhivat. Încearcă din nou.",
+      "archive_heading": "Arhivează {name}",
+      "archive_success_message": "{name} a fost arhivat cu succes",
+      "archive_success_title": "Arhivare reușită",
+      "restore_description": "Restaurarea unui proiect îl va activa și îl va face vizibil pentru toți membrii proiectului. Sigur vrei să continui?",
+      "restore_error": "Proiectul nu a putut fi restaurat. Încearcă din nou.",
+      "restore_heading": "Restaurează {name}",
+      "restore_success_message": "Găsești {name} în proiectele tale.",
+      "restore_success_title": "Restaurare reușită"
+    },
+    "card": {
+      "added_to_favorites": "Proiect adăugat la favorite.",
+      "adding_to_favorites": "Se adaugă proiectul la favorite...",
+      "created_on": "Creat la {date}",
+      "link_copied_message": "Linkul proiectului a fost copiat în clipboard.",
+      "no_member": "Niciun membru",
+      "no_member_yet": "Încă niciun membru",
+      "removed_from_favorites": "Proiect eliminat din favorite.",
+      "removing_from_favorites": "Se elimină proiectul din favorite..."
+    },
+    "confirm_member_remove": {
+      "leave_description": "Sigur vrei să părăsești proiectul {name}? Vei putea reveni dacă ești invitat din nou sau dacă proiectul este public.",
+      "leave_title": "Părăsești proiectul?",
+      "remove_description": "Sigur vrei să elimini membrul {name}? Nu va mai avea acces la acest proiect. Această acțiune nu poate fi anulată.",
+      "remove_title": "Elimini pe {name}?"
+    },
+    "control_section": {
+      "archive_description": "Arhivarea unui proiect îl va elimina din navigarea laterală, dar îl vei putea accesa în continuare din pagina de proiecte. Poți restaura sau șterge proiectul oricând.",
+      "delete_description": "La ștergerea unui proiect, toate datele și resursele din el vor fi eliminate definitiv și nu vor putea fi recuperate."
+    },
+    "delete_modal": {
+      "confirm_placeholder": "Introdu „{phrase}”",
+      "confirm_type": "Pentru confirmare, tastează {phrase} mai jos:",
+      "deleted_success": "Proiect șters cu succes.",
+      "description": "Sigur vrei să ștergi proiectul {name}? Toate datele legate de proiect vor fi eliminate definitiv. Această acțiune nu poate fi anulată.",
+      "enter_project_name": "Introdu numele proiectului {name} pentru a continua:"
+    },
+    "features": {
+      "pro_feature": "Funcție Pro",
+      "update_error": "A apărut o eroare la actualizarea funcției proiectului. Încearcă din nou.",
+      "updated": "Funcția proiectului a fost actualizată cu succes.",
+      "updating": "Se actualizează funcția proiectului..."
+    },
+    "form": {
+      "cover_image_error": "Nu s-a putut procesa imaginea de copertă",
+      "name_max_length": "Numele proiectului trebuie să aibă mai puțin de 255 de caractere"
+    },
+    "integration_card": {
+      "github_description": "Selectează un depozit GitHub pentru a activa sincronizarea.",
+      "select_repository": "Selectează depozitul",
+      "slack_description": "Primește actualizări regulate și controlează ce notificări dorești să primești.",
+      "sync_error": "Depozitul nu a putut fi sincronizat cu proiectul. Încearcă din nou."
+    },
+    "invitation_modal": {
+      "members_added": "Membri adăugați cu succes.",
+      "select_member_required": "Selectează un membru",
+      "select_role_required": "Selectează un rol"
+    },
+    "join_modal": {
+      "description": "Sigur vrei să te alături proiectului {name}? Apasă butonul „Alătură-te proiectului” de mai jos pentru a continua.",
+      "join_project": "Alătură-te proiectului",
+      "title": "Te alături proiectului?"
+    },
+    "leave_modal": {
+      "confirm_phrase_error": "Confirmă părăsirea proiectului tastând „{phrase}”.",
+      "description": "Sigur vrei să părăsești proiectul „{name}”? Toate elementele de lucru asociate ție vor deveni inaccesibile.",
+      "fill_all_fields": "Completează toate câmpurile.",
+      "project_name_error": "Introdu numele proiectului așa cum apare în descriere.",
+      "project_name_placeholder": "Introdu numele proiectului",
+      "project_name_required": "Numele proiectului este obligatoriu",
+      "title": "Părăsește proiectul"
+    },
+    "member_columns": {
+      "role_error_message": "A apărut o eroare la actualizarea rolului membrului. Încearcă din nou.",
+      "role_error_title": "Nu poți schimba încă acest rol.",
+      "role_required": "Rolul este obligatoriu."
+    },
+    "member_defaults": {
+      "guest_access": "Acces pentru invitați"
+    },
+    "member_list_item": {
+      "leave_error_title": "Nu poți părăsi încă acest proiect.",
+      "remove_error_title": "Nu poți elimina încă membrul din acest proiect."
+    },
+    "multi_select_modal": {
+      "search_placeholder": "Caută proiecte"
+    },
+    "profile": {
+      "cover_image_alt": "Imagine de copertă",
+      "display_name_placeholder": "Introdu numele tău afișat",
+      "display_name_required": "Numele afișat este obligatoriu.",
+      "email_placeholder": "Introdu adresa ta de e-mail",
+      "email_required": "Adresa de e-mail este obligatorie.",
+      "first_day_of_week": "Prima zi a săptămânii",
+      "first_day_of_week_description": "Aceasta va schimba aspectul tuturor calendarelor din aplicația ta.",
+      "first_name_placeholder": "Introdu prenumele tău",
+      "first_name_required": "Introdu prenumele",
+      "language_error": "Actualizarea limbii a eșuat",
+      "language_updated": "Limba a fost actualizată cu succes",
+      "last_name_placeholder": "Introdu numele tău de familie",
+      "picture_delete_error": "A apărut o eroare la ștergerea pozei de profil. Încearcă din nou.",
+      "picture_deleted": "Poza de profil a fost ștearsă cu succes.",
+      "select_language": "Selectează o limbă",
+      "timezone_error": "Actualizarea fusului orar a eșuat",
+      "timezone_updated": "Fusul orar a fost actualizat cu succes",
+      "update_error": "A apărut o eroare la actualizarea profilului. Încearcă din nou.",
+      "updated": "Profilul a fost actualizat cu succes."
+    },
+    "publish_modal": {
+      "allow_comments": "Permite comentarii",
+      "allow_reactions": "Permite reacții",
+      "allow_voting": "Permite votarea",
+      "anyone_with_link": "Oricine are linkul poate accesa",
+      "link_copied": "Linkul paginii publicate a fost copiat cu succes.",
+      "live_on_web": "Acest proiect este acum live pe web",
+      "publishing": "Se publică",
+      "select_layout_error": "Selectează cel puțin un aspect de vizualizare pentru a publica proiectul.",
+      "settings_updated": "Setările de publicare au fost actualizate cu succes!",
+      "unpublish": "Anulează publicarea",
+      "unpublish_error": "A apărut o eroare la anularea publicării proiectului.",
+      "unpublishing": "Se anulează publicarea",
+      "update_settings": "Actualizează setările"
+    },
+    "rich_filters": {
+      "all_filters_applied": "Toate filtrele sunt aplicate",
+      "config_error_message": "Acest filtru nu este configurat corect și nu poate fi aplicat",
+      "config_error_title": "Eroare de configurare a filtrului",
+      "filter_type_not_supported": "Tipul de filtru nu este acceptat",
+      "invalid_filter": "Filtru nevalid",
+      "invalid_tooltip": "Această condiție de filtru nu mai este validă. Proprietatea ar putea fi ștearsă sau accesul tău la ea s-ar putea fi schimbat.",
+      "remove_filter": "Elimină filtrul",
+      "save_view": "Salvează vizualizarea",
+      "update_view": "Actualizează vizualizarea"
+    },
+    "shared": {
+      "archived": "Arhivat",
+      "custom": "Personalizat",
+      "joined": "Alăturat",
+      "joining": "Se alătură...",
+      "leaving": "Se părăsește...",
+      "removing": "Se elimină...",
+      "restoring": "Se restaurează",
+      "roles": "Roluri",
+      "suspended": "Suspendați"
+    },
+    "states": {
+      "cannot_delete_default": "Starea implicită nu poate fi ștearsă.",
+      "cannot_empty_group": "Un grup nu poate fi gol.",
+      "create_error": "Starea nu a putut fi creată. Încearcă din nou.",
+      "create_name_exists": "Există deja o stare cu acest nume. Încearcă din nou cu alt nume.",
+      "created": "Starea a fost creată cu succes.",
+      "delete_description": "Sigur vrei să ștergi starea {name}? Toate datele legate de stare vor fi eliminate definitiv. Această acțiune nu poate fi anulată.",
+      "delete_error": "Starea nu a putut fi ștearsă. Încearcă din nou.",
+      "delete_has_work_items": "Această stare conține elemente de lucru. Mută-le într-o altă stare pentru a o șterge.",
+      "delete_title": "Șterge starea",
+      "description_placeholder": "Descrie această stare pentru membrii tăi.",
+      "mark_as_default": "Marchează ca implicit",
+      "marking_as_default": "Se marchează ca implicit",
+      "update_error": "Starea nu a putut fi actualizată. Încearcă din nou.",
+      "update_name_exists": "Există deja o altă stare cu același nume. Încearcă din nou cu alt nume.",
+      "updated": "Starea a fost actualizată cu succes."
+    },
+    "view_filters": {
+      "view_not_found_message": "Vizualizarea pe care încerci să o actualizezi nu există.",
+      "view_not_found_title": "Nu am găsit vizualizarea",
+      "view_update_error": "Vizualizarea ta nu a putut fi actualizată. Încearcă din nou.",
+      "view_updated": "Vizualizarea ta a fost actualizată cu succes."
+    },
+    "views": {
+      "add_view": "Adaugă vizualizare",
+      "create_error": "Crearea vizualizării a eșuat. Încearcă din nou.",
+      "created": "Vizualizarea a fost creată cu succes.",
+      "delete_error": "Vizualizarea nu a putut fi ștearsă. Încearcă din nou.",
+      "deleted": "Vizualizarea a fost ștearsă cu succes.",
+      "not_found_description": "Vizualizarea pe care o cauți nu există sau nu ai permisiunea de a o vedea.",
+      "not_found_title": "Vizualizarea nu există",
+      "update_error": "Actualizarea vizualizării a eșuat. Încearcă din nou.",
+      "view_other_views": "Vezi alte vizualizări"
+    },
+    "webhooks": {
+      "copy_secret_key": "Copiază cheia secretă",
+      "danger_zone": "Zonă periculoasă",
+      "danger_zone_description": "După ce un webhook este șters, nu mai poate fi restaurat. Evenimentele viitoare nu vor mai fi livrate acestui webhook.",
+      "delete_description": "Sigur vrei să ștergi acest webhook? Evenimentele viitoare nu vor mai fi livrate acestui webhook. Această acțiune nu poate fi anulată.",
+      "delete_error": "Webhook-ul nu a putut fi șters. Încearcă din nou.",
+      "delete_title": "Șterge webhook-ul",
+      "deleted": "Webhook-ul a fost șters cu succes.",
+      "empty_description": "Creează webhook-uri pentru a primi actualizări în timp real și a automatiza acțiuni",
+      "empty_title": "Niciun webhook",
+      "events": {
+        "cycle": "Ciclu creat, actualizat sau șters",
+        "issue": "Element de lucru creat, actualizat, șters sau adăugat la un ciclu sau modul",
+        "issue_comment": "Comentariu postat, actualizat sau șters",
+        "issue_comment_label": "Comentarii la elementele de lucru",
+        "module": "Modul creat, actualizat sau șters",
+        "project": "Proiect creat, actualizat sau șters"
+      },
+      "key_regenerated": "Cheia nouă a fost regenerată cu succes.",
+      "view_secret_key": "Vezi cheia secretă"
+    }
   }
 }

@@ -414,5 +414,209 @@
         }
       }
     }
+  },
+  "project_components": {
+    "archive_restore_modal": {
+      "archive_description": "Bu proje ile iş öğeleri, döngüleri, modülleri ve sayfaları arşivlenecek. İş öğeleri aramada görünmeyecek. Projeyi yalnızca proje yöneticileri geri yükleyebilir.",
+      "archive_error": "Proje arşivlenemedi. Lütfen tekrar deneyin.",
+      "archive_heading": "{name} arşivle",
+      "archive_success_message": "{name} başarıyla arşivlendi",
+      "archive_success_title": "Arşivleme başarılı",
+      "restore_description": "Bir projeyi geri yüklemek onu etkinleştirir ve projenin tüm üyeleri tarafından görünür hale getirir. Devam etmek istediğinizden emin misiniz?",
+      "restore_error": "Proje geri yüklenemedi. Lütfen tekrar deneyin.",
+      "restore_heading": "{name} geri yükle",
+      "restore_success_message": "{name} projesini projelerinizde bulabilirsiniz.",
+      "restore_success_title": "Geri yükleme başarılı"
+    },
+    "card": {
+      "added_to_favorites": "Proje favorilere eklendi.",
+      "adding_to_favorites": "Proje favorilere ekleniyor...",
+      "created_on": "Oluşturulma tarihi: {date}",
+      "link_copied_message": "Proje bağlantısı panoya kopyalandı.",
+      "no_member": "Üye yok",
+      "no_member_yet": "Henüz üye yok",
+      "removed_from_favorites": "Proje favorilerden kaldırıldı.",
+      "removing_from_favorites": "Proje favorilerden kaldırılıyor..."
+    },
+    "confirm_member_remove": {
+      "leave_description": "{name} projesinden ayrılmak istediğinizden emin misiniz? Tekrar davet edilirseniz veya proje herkese açıksa yeniden katılabilirsiniz.",
+      "leave_title": "Projeden ayrılınsın mı?",
+      "remove_description": "{name} üyesini kaldırmak istediğinizden emin misiniz? Artık bu projeye erişemeyecek. Bu işlem geri alınamaz.",
+      "remove_title": "{name} kaldırılsın mı?"
+    },
+    "control_section": {
+      "archive_description": "Bir projeyi arşivlemek onu yan gezinmeden kaldırır, ancak projeler sayfasından erişmeye devam edebilirsiniz. Projeyi istediğiniz zaman geri yükleyebilir veya silebilirsiniz.",
+      "delete_description": "Bir proje silindiğinde, projedeki tüm veriler ve kaynaklar kalıcı olarak kaldırılır ve geri alınamaz."
+    },
+    "delete_modal": {
+      "confirm_placeholder": "“{phrase}” yazın",
+      "confirm_type": "Onaylamak için aşağıya {phrase} yazın:",
+      "deleted_success": "Proje başarıyla silindi.",
+      "description": "{name} projesini silmek istediğinizden emin misiniz? Projeyle ilgili tüm veriler kalıcı olarak kaldırılacak. Bu işlem geri alınamaz.",
+      "enter_project_name": "Devam etmek için proje adını ({name}) girin:"
+    },
+    "features": {
+      "pro_feature": "Pro özellik",
+      "update_error": "Proje özelliği güncellenirken bir sorun oluştu. Lütfen tekrar deneyin.",
+      "updated": "Proje özelliği başarıyla güncellendi.",
+      "updating": "Proje özelliği güncelleniyor..."
+    },
+    "form": {
+      "cover_image_error": "Kapak resmi işlenemedi",
+      "name_max_length": "Proje adı 255 karakterden kısa olmalıdır"
+    },
+    "integration_card": {
+      "github_description": "Senkronizasyonu etkinleştirmek için GitHub deposunu seçin.",
+      "select_repository": "Depo seç",
+      "slack_description": "Düzenli güncellemeler alın ve hangi bildirimleri almak istediğinizi belirleyin.",
+      "sync_error": "Depo projeyle senkronize edilemedi. Lütfen tekrar deneyin."
+    },
+    "invitation_modal": {
+      "members_added": "Üyeler başarıyla eklendi.",
+      "select_member_required": "Lütfen bir üye seçin",
+      "select_role_required": "Rol seçin"
+    },
+    "join_modal": {
+      "description": "{name} projesine katılmak istediğinizden emin misiniz? Devam etmek için aşağıdaki “Projeye katıl” düğmesine tıklayın.",
+      "join_project": "Projeye katıl",
+      "title": "Projeye katılınsın mı?"
+    },
+    "leave_modal": {
+      "confirm_phrase_error": "Projeden ayrılmayı onaylamak için “{phrase}” yazın.",
+      "description": "“{name}” projesinden ayrılmak istediğinizden emin misiniz? Sizinle ilişkili tüm iş öğeleri erişilemez hale gelecek.",
+      "fill_all_fields": "Lütfen tüm alanları doldurun.",
+      "project_name_error": "Lütfen proje adını açıklamada gösterildiği gibi girin.",
+      "project_name_placeholder": "Proje adını girin",
+      "project_name_required": "Proje adı gereklidir",
+      "title": "Projeden ayrıl"
+    },
+    "member_columns": {
+      "role_error_message": "Üye rolü güncellenirken bir hata oluştu. Lütfen tekrar deneyin.",
+      "role_error_title": "Bu rolü henüz değiştiremezsiniz.",
+      "role_required": "Rol gereklidir."
+    },
+    "member_defaults": {
+      "guest_access": "Konuk erişimi"
+    },
+    "member_list_item": {
+      "leave_error_title": "Bu projeden henüz ayrılamazsınız.",
+      "remove_error_title": "Üyeyi bu projeden henüz kaldıramazsınız."
+    },
+    "multi_select_modal": {
+      "search_placeholder": "Proje ara"
+    },
+    "profile": {
+      "cover_image_alt": "Kapak resmi",
+      "display_name_placeholder": "Görünen adınızı girin",
+      "display_name_required": "Görünen ad gereklidir.",
+      "email_placeholder": "E-postanızı girin",
+      "email_required": "E-posta gereklidir.",
+      "first_day_of_week": "Haftanın ilk günü",
+      "first_day_of_week_description": "Bu, uygulamanızdaki tüm takvimlerin görünümünü değiştirecek.",
+      "first_name_placeholder": "Adınızı girin",
+      "first_name_required": "Lütfen adınızı girin",
+      "language_error": "Dil güncellenemedi",
+      "language_updated": "Dil başarıyla güncellendi",
+      "last_name_placeholder": "Soyadınızı girin",
+      "picture_delete_error": "Profil fotoğrafınız silinirken bir hata oluştu. Lütfen tekrar deneyin.",
+      "picture_deleted": "Profil fotoğrafı başarıyla silindi.",
+      "select_language": "Bir dil seçin",
+      "timezone_error": "Saat dilimi güncellenemedi",
+      "timezone_updated": "Saat dilimi başarıyla güncellendi",
+      "update_error": "Profiliniz güncellenirken bir hata oluştu. Lütfen tekrar deneyin.",
+      "updated": "Profil başarıyla güncellendi."
+    },
+    "publish_modal": {
+      "allow_comments": "Yorumlara izin ver",
+      "allow_reactions": "Tepkilere izin ver",
+      "allow_voting": "Oylamaya izin ver",
+      "anyone_with_link": "Bağlantıya sahip herkes erişebilir",
+      "link_copied": "Yayınlanan sayfa bağlantısı başarıyla kopyalandı.",
+      "live_on_web": "Bu proje artık web'de yayında",
+      "publishing": "Yayınlanıyor",
+      "select_layout_error": "Projeyi yayınlamak için en az bir görünüm düzeni seçin.",
+      "settings_updated": "Yayın ayarları başarıyla güncellendi!",
+      "unpublish": "Yayından kaldır",
+      "unpublish_error": "Proje yayından kaldırılırken bir sorun oluştu.",
+      "unpublishing": "Yayından kaldırılıyor",
+      "update_settings": "Ayarları güncelle"
+    },
+    "rich_filters": {
+      "all_filters_applied": "Tüm filtreler uygulandı",
+      "config_error_message": "Bu filtre düzgün yapılandırılmamış ve uygulanamaz",
+      "config_error_title": "Filtre yapılandırma hatası",
+      "filter_type_not_supported": "Filtre türü desteklenmiyor",
+      "invalid_filter": "Geçersiz filtre",
+      "invalid_tooltip": "Bu filtre koşulu artık geçerli değil. Özellik silinmiş olabilir veya ona erişiminiz değişmiş olabilir.",
+      "remove_filter": "Filtreyi kaldır",
+      "save_view": "Görünümü kaydet",
+      "update_view": "Görünümü güncelle"
+    },
+    "shared": {
+      "archived": "Arşivlendi",
+      "custom": "Özel",
+      "joined": "Katıldı",
+      "joining": "Katılınıyor...",
+      "leaving": "Ayrılınıyor...",
+      "removing": "Kaldırılıyor...",
+      "restoring": "Geri yükleniyor",
+      "roles": "Roller",
+      "suspended": "Askıya alındı"
+    },
+    "states": {
+      "cannot_delete_default": "Varsayılan durum silinemez.",
+      "cannot_empty_group": "Grup boş olamaz.",
+      "create_error": "Durum oluşturulamadı. Lütfen tekrar deneyin.",
+      "create_name_exists": "Bu ada sahip bir durum zaten var. Lütfen başka bir adla tekrar deneyin.",
+      "created": "Durum başarıyla oluşturuldu.",
+      "delete_description": "{name} durumunu silmek istediğinizden emin misiniz? Duma ilişkin tüm veriler kalıcı olarak kaldırılacak. Bu işlem geri alınamaz.",
+      "delete_error": "Durum silinemedi. Lütfen tekrar deneyin.",
+      "delete_has_work_items": "Bu durum bazı iş öğeleri içeriyor. Bu durumu silmek için lütfen onları başka bir duruma taşıyın.",
+      "delete_title": "Durumu sil",
+      "description_placeholder": "Bu durumu üyeleriniz için açıklayın.",
+      "mark_as_default": "Varsayılan olarak işaretle",
+      "marking_as_default": "Varsayılan olarak işaretleniyor",
+      "update_error": "Durum güncellenemedi. Lütfen tekrar deneyin.",
+      "update_name_exists": "Aynı ada sahip başka bir durum var. Lütfen başka bir adla tekrar deneyin.",
+      "updated": "Durum başarıyla güncellendi."
+    },
+    "view_filters": {
+      "view_not_found_message": "Güncellemeye çalıştığınız görünüm mevcut değil.",
+      "view_not_found_title": "Görünüm bulunamadı",
+      "view_update_error": "Görünümünüz güncellenemedi. Lütfen tekrar deneyin.",
+      "view_updated": "Görünümünüz başarıyla güncellendi."
+    },
+    "views": {
+      "add_view": "Görünüm ekle",
+      "create_error": "Görünüm oluşturulamadı. Lütfen tekrar deneyin.",
+      "created": "Görünüm başarıyla oluşturuldu.",
+      "delete_error": "Görünüm silinemedi. Lütfen tekrar deneyin.",
+      "deleted": "Görünüm başarıyla silindi.",
+      "not_found_description": "Aradığınız görünüm mevcut değil veya onu görüntüleme izniniz yok.",
+      "not_found_title": "Görünüm mevcut değil",
+      "update_error": "Görünüm güncellenemedi. Lütfen tekrar deneyin.",
+      "view_other_views": "Diğer görünümleri gör"
+    },
+    "webhooks": {
+      "copy_secret_key": "Gizli anahtarı kopyala",
+      "danger_zone": "Tehlikeli bölge",
+      "danger_zone_description": "Bir webhook silindikten sonra geri yüklenemez. Gelecekteki olaylar artık bu webhook'a iletilmeyecek.",
+      "delete_description": "Bu webhook'u silmek istediğinizden emin misiniz? Gelecekteki olaylar bu webhook'a iletilmeyecek. Bu işlem geri alınamaz.",
+      "delete_error": "Webhook silinemedi. Lütfen tekrar deneyin.",
+      "delete_title": "Webhook'u sil",
+      "deleted": "Webhook başarıyla silindi.",
+      "empty_description": "Gerçek zamanlı güncellemeler almak ve eylemleri otomatikleştirmek için webhook'lar oluşturun",
+      "empty_title": "Webhook yok",
+      "events": {
+        "cycle": "Döngü oluşturuldu, güncellendi veya silindi",
+        "issue": "İş öğesi oluşturuldu, güncellendi, silindi veya bir döngüye ya da modüle eklendi",
+        "issue_comment": "Yorum gönderildi, güncellendi veya silindi",
+        "issue_comment_label": "İş öğesi yorumları",
+        "module": "Modül oluşturuldu, güncellendi veya silindi",
+        "project": "Proje oluşturuldu, güncellendi veya silindi"
+      },
+      "key_regenerated": "Yeni anahtar başarıyla yeniden oluşturuldu.",
+      "view_secret_key": "Gizli anahtarı görüntüle"
+    }
   }
 }

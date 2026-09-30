@@ -90,7 +90,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
         setToast({
           title: t("toast.success"),
           type: TOAST_TYPE.SUCCESS,
-          message: "Members added successfully.",
+          message: t("project_components.invitation_modal.members_added"),
         });
       })
       .catch((error) => {
@@ -190,7 +190,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                   <Controller
                     control={control}
                     name={`members.${index}.member_id`}
-                    rules={{ required: "Please select a member" }}
+                    rules={{ required: t("project_components.invitation_modal.select_member_required") }}
                     render={({ field: { value, onChange } }) => {
                       const selectedMember = getWorkspaceMemberDetails(value);
                       return (
@@ -241,7 +241,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                     <Controller
                       name={`members.${index}.role`}
                       control={control}
-                      rules={{ required: "Select Role" }}
+                      rules={{ required: t("project_components.invitation_modal.select_role_required") }}
                       render={({ field }) => (
                         <CustomSelect
                           {...field}

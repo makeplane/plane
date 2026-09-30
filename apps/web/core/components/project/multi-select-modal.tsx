@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -93,7 +94,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
           <SearchIcon className="size-4 flex-shrink-0 text-placeholder" aria-hidden="true" />
           <Combobox.Input
             className="h-12 w-full border-0 bg-transparent text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
-            placeholder="Search for projects"
+            placeholder={t("project_components.multi_select_modal.search_placeholder")}
             displayValue={() => ""}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

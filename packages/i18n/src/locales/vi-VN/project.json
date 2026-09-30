@@ -414,5 +414,209 @@
         }
       }
     }
+  },
+  "project_components": {
+    "archive_restore_modal": {
+      "archive_description": "Dự án này cùng các mục công việc, chu kỳ, mô-đun và trang của nó sẽ được lưu trữ. Các mục công việc sẽ không xuất hiện trong tìm kiếm. Chỉ quản trị viên dự án mới có thể khôi phục dự án.",
+      "archive_error": "Không thể lưu trữ dự án. Vui lòng thử lại.",
+      "archive_heading": "Lưu trữ {name}",
+      "archive_success_message": "{name} đã được lưu trữ thành công",
+      "archive_success_title": "Lưu trữ thành công",
+      "restore_description": "Khôi phục dự án sẽ kích hoạt lại và hiển thị dự án cho tất cả thành viên. Bạn có chắc chắn muốn tiếp tục không?",
+      "restore_error": "Không thể khôi phục dự án. Vui lòng thử lại.",
+      "restore_heading": "Khôi phục {name}",
+      "restore_success_message": "Bạn có thể tìm thấy {name} trong danh sách dự án của mình.",
+      "restore_success_title": "Khôi phục thành công"
+    },
+    "card": {
+      "added_to_favorites": "Đã thêm dự án vào mục yêu thích.",
+      "adding_to_favorites": "Đang thêm dự án vào mục yêu thích...",
+      "created_on": "Được tạo vào {date}",
+      "link_copied_message": "Đã sao chép liên kết dự án vào bộ nhớ tạm.",
+      "no_member": "Không có thành viên",
+      "no_member_yet": "Chưa có thành viên",
+      "removed_from_favorites": "Đã xóa dự án khỏi mục yêu thích.",
+      "removing_from_favorites": "Đang xóa dự án khỏi mục yêu thích..."
+    },
+    "confirm_member_remove": {
+      "leave_description": "Bạn có chắc chắn muốn rời khỏi dự án {name}? Bạn có thể tham gia lại nếu được mời lần nữa hoặc nếu dự án ở chế độ công khai.",
+      "leave_title": "Rời khỏi dự án?",
+      "remove_description": "Bạn có chắc chắn muốn xóa thành viên {name}? Họ sẽ không còn quyền truy cập vào dự án này. Hành động này không thể hoàn tác.",
+      "remove_title": "Xóa {name}?"
+    },
+    "control_section": {
+      "archive_description": "Lưu trữ dự án sẽ ẩn dự án khỏi thanh điều hướng bên, nhưng bạn vẫn có thể truy cập từ trang dự án. Bạn có thể khôi phục hoặc xóa dự án bất cứ lúc nào.",
+      "delete_description": "Khi xóa dự án, tất cả dữ liệu và tài nguyên trong dự án sẽ bị xóa vĩnh viễn và không thể khôi phục."
+    },
+    "delete_modal": {
+      "confirm_placeholder": "Nhập “{phrase}”",
+      "confirm_type": "Để xác nhận, hãy nhập {phrase} bên dưới:",
+      "deleted_success": "Đã xóa dự án thành công.",
+      "description": "Bạn có chắc chắn muốn xóa dự án {name}? Tất cả dữ liệu liên quan đến dự án sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.",
+      "enter_project_name": "Nhập tên dự án {name} để tiếp tục:"
+    },
+    "features": {
+      "pro_feature": "Tính năng Pro",
+      "update_error": "Đã xảy ra lỗi khi cập nhật tính năng dự án. Vui lòng thử lại.",
+      "updated": "Đã cập nhật tính năng dự án thành công.",
+      "updating": "Đang cập nhật tính năng dự án..."
+    },
+    "form": {
+      "cover_image_error": "Không thể xử lý ảnh bìa",
+      "name_max_length": "Tên dự án phải ít hơn 255 ký tự"
+    },
+    "integration_card": {
+      "github_description": "Chọn kho lưu trữ GitHub để bật đồng bộ hóa.",
+      "select_repository": "Chọn kho lưu trữ",
+      "slack_description": "Nhận cập nhật thường xuyên và kiểm soát thông báo bạn muốn nhận.",
+      "sync_error": "Không thể đồng bộ kho lưu trữ với dự án. Vui lòng thử lại."
+    },
+    "invitation_modal": {
+      "members_added": "Đã thêm thành viên thành công.",
+      "select_member_required": "Vui lòng chọn một thành viên",
+      "select_role_required": "Chọn vai trò"
+    },
+    "join_modal": {
+      "description": "Bạn có chắc chắn muốn tham gia dự án {name}? Vui lòng nhấp vào nút “Tham gia dự án” bên dưới để tiếp tục.",
+      "join_project": "Tham gia dự án",
+      "title": "Tham gia dự án?"
+    },
+    "leave_modal": {
+      "confirm_phrase_error": "Vui lòng xác nhận rời dự án bằng cách nhập “{phrase}”.",
+      "description": "Bạn có chắc chắn muốn rời khỏi dự án “{name}”? Tất cả các mục công việc liên quan đến bạn sẽ không thể truy cập.",
+      "fill_all_fields": "Vui lòng điền tất cả các trường.",
+      "project_name_error": "Vui lòng nhập tên dự án như được hiển thị trong phần mô tả.",
+      "project_name_placeholder": "Nhập tên dự án",
+      "project_name_required": "Tên dự án là bắt buộc",
+      "title": "Rời khỏi dự án"
+    },
+    "member_columns": {
+      "role_error_message": "Đã xảy ra lỗi khi cập nhật vai trò thành viên. Vui lòng thử lại.",
+      "role_error_title": "Bạn chưa thể thay đổi vai trò này.",
+      "role_required": "Vai trò là bắt buộc."
+    },
+    "member_defaults": {
+      "guest_access": "Quyền truy cập của khách"
+    },
+    "member_list_item": {
+      "leave_error_title": "Bạn chưa thể rời khỏi dự án này.",
+      "remove_error_title": "Bạn chưa thể xóa thành viên khỏi dự án này."
+    },
+    "multi_select_modal": {
+      "search_placeholder": "Tìm kiếm dự án"
+    },
+    "profile": {
+      "cover_image_alt": "Ảnh bìa",
+      "display_name_placeholder": "Nhập tên hiển thị của bạn",
+      "display_name_required": "Tên hiển thị là bắt buộc.",
+      "email_placeholder": "Nhập email của bạn",
+      "email_required": "Email là bắt buộc.",
+      "first_day_of_week": "Ngày đầu tiên trong tuần",
+      "first_day_of_week_description": "Điều này sẽ thay đổi giao diện của tất cả lịch trong ứng dụng của bạn.",
+      "first_name_placeholder": "Nhập tên của bạn",
+      "first_name_required": "Vui lòng nhập tên",
+      "language_error": "Không thể cập nhật ngôn ngữ",
+      "language_updated": "Đã cập nhật ngôn ngữ thành công",
+      "last_name_placeholder": "Nhập họ của bạn",
+      "picture_delete_error": "Đã xảy ra lỗi khi xóa ảnh hồ sơ của bạn. Vui lòng thử lại.",
+      "picture_deleted": "Đã xóa ảnh hồ sơ thành công.",
+      "select_language": "Chọn ngôn ngữ",
+      "timezone_error": "Không thể cập nhật múi giờ",
+      "timezone_updated": "Đã cập nhật múi giờ thành công",
+      "update_error": "Đã xảy ra lỗi khi cập nhật hồ sơ của bạn. Vui lòng thử lại.",
+      "updated": "Đã cập nhật hồ sơ thành công."
+    },
+    "publish_modal": {
+      "allow_comments": "Cho phép bình luận",
+      "allow_reactions": "Cho phép biểu cảm",
+      "allow_voting": "Cho phép bỏ phiếu",
+      "anyone_with_link": "Bất kỳ ai có liên kết đều có thể truy cập",
+      "link_copied": "Đã sao chép liên kết trang đã xuất bản.",
+      "live_on_web": "Dự án này hiện đã được đăng trực tuyến",
+      "publishing": "Đang xuất bản",
+      "select_layout_error": "Vui lòng chọn ít nhất một bố cục hiển thị để xuất bản dự án.",
+      "settings_updated": "Đã cập nhật cài đặt xuất bản thành công!",
+      "unpublish": "Hủy xuất bản",
+      "unpublish_error": "Đã xảy ra lỗi khi hủy xuất bản dự án.",
+      "unpublishing": "Đang hủy xuất bản",
+      "update_settings": "Cập nhật cài đặt"
+    },
+    "rich_filters": {
+      "all_filters_applied": "Đã áp dụng tất cả bộ lọc",
+      "config_error_message": "Bộ lọc này chưa được cấu hình đúng và không thể áp dụng",
+      "config_error_title": "Lỗi cấu hình bộ lọc",
+      "filter_type_not_supported": "Loại bộ lọc không được hỗ trợ",
+      "invalid_filter": "Bộ lọc không hợp lệ",
+      "invalid_tooltip": "Điều kiện bộ lọc này không còn hợp lệ. Thuộc tính có thể đã bị xóa hoặc quyền truy cập của bạn đã thay đổi.",
+      "remove_filter": "Xóa bộ lọc",
+      "save_view": "Lưu chế độ xem",
+      "update_view": "Cập nhật chế độ xem"
+    },
+    "shared": {
+      "archived": "Đã lưu trữ",
+      "custom": "Tùy chỉnh",
+      "joined": "Đã tham gia",
+      "joining": "Đang tham gia...",
+      "leaving": "Đang rời...",
+      "removing": "Đang xóa...",
+      "restoring": "Đang khôi phục",
+      "roles": "Vai trò",
+      "suspended": "Bị tạm ngưng"
+    },
+    "states": {
+      "cannot_delete_default": "Không thể xóa trạng thái mặc định.",
+      "cannot_empty_group": "Không thể có nhóm trống.",
+      "create_error": "Không thể tạo trạng thái. Vui lòng thử lại.",
+      "create_name_exists": "Trạng thái có tên này đã tồn tại. Vui lòng thử lại với tên khác.",
+      "created": "Đã tạo trạng thái thành công.",
+      "delete_description": "Bạn có chắc chắn muốn xóa trạng thái {name}? Tất cả dữ liệu liên quan đến trạng thái sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.",
+      "delete_error": "Không thể xóa trạng thái. Vui lòng thử lại.",
+      "delete_has_work_items": "Trạng thái này chứa một số mục công việc. Hãy chuyển chúng sang trạng thái khác để xóa trạng thái này.",
+      "delete_title": "Xóa trạng thái",
+      "description_placeholder": "Mô tả trạng thái này cho các thành viên của bạn.",
+      "mark_as_default": "Đặt làm mặc định",
+      "marking_as_default": "Đang đặt làm mặc định",
+      "update_error": "Không thể cập nhật trạng thái. Vui lòng thử lại.",
+      "update_name_exists": "Đã có một trạng thái khác cùng tên. Vui lòng thử lại với tên khác.",
+      "updated": "Đã cập nhật trạng thái thành công."
+    },
+    "view_filters": {
+      "view_not_found_message": "Chế độ xem bạn đang cố cập nhật không tồn tại.",
+      "view_not_found_title": "Chúng tôi không tìm thấy chế độ xem",
+      "view_update_error": "Không thể cập nhật chế độ xem của bạn. Vui lòng thử lại.",
+      "view_updated": "Chế độ xem của bạn đã được cập nhật thành công."
+    },
+    "views": {
+      "add_view": "Thêm chế độ xem",
+      "create_error": "Không thể tạo chế độ xem. Vui lòng thử lại.",
+      "created": "Đã tạo chế độ xem thành công.",
+      "delete_error": "Không thể xóa chế độ xem. Vui lòng thử lại.",
+      "deleted": "Đã xóa chế độ xem thành công.",
+      "not_found_description": "Chế độ xem bạn đang tìm không tồn tại hoặc bạn không có quyền xem.",
+      "not_found_title": "Chế độ xem không tồn tại",
+      "update_error": "Không thể cập nhật chế độ xem. Vui lòng thử lại.",
+      "view_other_views": "Xem các chế độ xem khác"
+    },
+    "webhooks": {
+      "copy_secret_key": "Sao chép khóa bí mật",
+      "danger_zone": "Vùng nguy hiểm",
+      "danger_zone_description": "Sau khi xóa webhook, bạn không thể khôi phục. Các sự kiện trong tương lai sẽ không còn được gửi đến webhook này.",
+      "delete_description": "Bạn có chắc chắn muốn xóa webhook này? Các sự kiện trong tương lai sẽ không được gửi đến webhook này. Hành động này không thể hoàn tác.",
+      "delete_error": "Không thể xóa webhook. Vui lòng thử lại.",
+      "delete_title": "Xóa webhook",
+      "deleted": "Đã xóa webhook thành công.",
+      "empty_description": "Tạo webhook để nhận cập nhật theo thời gian thực và tự động hóa các hành động",
+      "empty_title": "Chưa có webhook",
+      "events": {
+        "cycle": "Chu kỳ được tạo, cập nhật hoặc xóa",
+        "issue": "Mục công việc được tạo, cập nhật, xóa hoặc thêm vào chu kỳ hoặc mô-đun",
+        "issue_comment": "Bình luận được đăng, cập nhật hoặc xóa",
+        "issue_comment_label": "Bình luận mục công việc",
+        "module": "Mô-đun được tạo, cập nhật hoặc xóa",
+        "project": "Dự án được tạo, cập nhật hoặc xóa"
+      },
+      "key_regenerated": "Đã tạo lại khóa mới thành công.",
+      "view_secret_key": "Xem khóa bí mật"
+    }
   }
 }

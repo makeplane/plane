@@ -414,5 +414,209 @@
         }
       }
     }
+  },
+  "project_components": {
+    "archive_restore_modal": {
+      "archive_description": "Dieses Projekt sowie seine Arbeitselemente, Zyklen, Module und Seiten werden archiviert. Seine Arbeitselemente erscheinen nicht mehr in der Suche. Nur Projektadministratoren können das Projekt wiederherstellen.",
+      "archive_error": "Das Projekt konnte nicht archiviert werden. Bitte versuchen Sie es erneut.",
+      "archive_heading": "{name} archivieren",
+      "archive_success_message": "{name} wurde erfolgreich archiviert",
+      "archive_success_title": "Archivierung erfolgreich",
+      "restore_description": "Durch das Wiederherstellen wird das Projekt aktiviert und für alle Projektmitglieder sichtbar. Möchten Sie wirklich fortfahren?",
+      "restore_error": "Das Projekt konnte nicht wiederhergestellt werden. Bitte versuchen Sie es erneut.",
+      "restore_heading": "{name} wiederherstellen",
+      "restore_success_message": "Sie finden {name} in Ihren Projekten.",
+      "restore_success_title": "Wiederherstellung erfolgreich"
+    },
+    "card": {
+      "added_to_favorites": "Projekt zu Favoriten hinzugefügt.",
+      "adding_to_favorites": "Projekt wird zu Favoriten hinzugefügt...",
+      "created_on": "Erstellt am {date}",
+      "link_copied_message": "Projektlink in die Zwischenablage kopiert.",
+      "no_member": "Keine Mitglieder",
+      "no_member_yet": "Noch keine Mitglieder",
+      "removed_from_favorites": "Projekt aus Favoriten entfernt.",
+      "removing_from_favorites": "Projekt wird aus Favoriten entfernt..."
+    },
+    "confirm_member_remove": {
+      "leave_description": "Möchten Sie das Projekt {name} wirklich verlassen? Sie können wieder beitreten, wenn Sie erneut eingeladen werden oder das Projekt öffentlich ist.",
+      "leave_title": "Projekt verlassen?",
+      "remove_description": "Möchten Sie das Mitglied {name} wirklich entfernen? Es hat dann keinen Zugriff mehr auf dieses Projekt. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "remove_title": "{name} entfernen?"
+    },
+    "control_section": {
+      "archive_description": "Beim Archivieren wird das Projekt aus der Seitennavigation entfernt, Sie können aber weiterhin über die Projektseite darauf zugreifen. Sie können das Projekt jederzeit wiederherstellen oder löschen.",
+      "delete_description": "Beim Löschen eines Projekts werden alle Daten und Ressourcen darin dauerhaft entfernt und können nicht wiederhergestellt werden."
+    },
+    "delete_modal": {
+      "confirm_placeholder": "„{phrase}“ eingeben",
+      "confirm_type": "Geben Sie zur Bestätigung unten {phrase} ein:",
+      "deleted_success": "Projekt erfolgreich gelöscht.",
+      "description": "Möchten Sie das Projekt {name} wirklich löschen? Alle zum Projekt gehörenden Daten werden dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "enter_project_name": "Geben Sie zum Fortfahren den Projektnamen {name} ein:"
+    },
+    "features": {
+      "pro_feature": "Pro-Funktion",
+      "update_error": "Beim Aktualisieren der Projektfunktion ist etwas schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "updated": "Projektfunktion erfolgreich aktualisiert.",
+      "updating": "Projektfunktion wird aktualisiert..."
+    },
+    "form": {
+      "cover_image_error": "Titelbild konnte nicht verarbeitet werden",
+      "name_max_length": "Der Projektname muss weniger als 255 Zeichen lang sein"
+    },
+    "integration_card": {
+      "github_description": "Wählen Sie ein GitHub-Repository, um die Synchronisierung zu aktivieren.",
+      "select_repository": "Repository auswählen",
+      "slack_description": "Erhalten Sie regelmäßige Updates und steuern Sie, welche Benachrichtigungen Sie erhalten möchten.",
+      "sync_error": "Das Repository konnte nicht mit dem Projekt synchronisiert werden. Bitte versuchen Sie es erneut."
+    },
+    "invitation_modal": {
+      "members_added": "Mitglieder erfolgreich hinzugefügt.",
+      "select_member_required": "Bitte wählen Sie ein Mitglied aus",
+      "select_role_required": "Rolle auswählen"
+    },
+    "join_modal": {
+      "description": "Möchten Sie dem Projekt {name} wirklich beitreten? Klicken Sie unten auf „Projekt beitreten“, um fortzufahren.",
+      "join_project": "Projekt beitreten",
+      "title": "Projekt beitreten?"
+    },
+    "leave_modal": {
+      "confirm_phrase_error": "Bitte bestätigen Sie das Verlassen des Projekts, indem Sie „{phrase}“ eingeben.",
+      "description": "Möchten Sie das Projekt „{name}“ wirklich verlassen? Alle Arbeitselemente, die Ihnen zugeordnet sind, werden unzugänglich.",
+      "fill_all_fields": "Bitte füllen Sie alle Felder aus.",
+      "project_name_error": "Bitte geben Sie den Projektnamen wie in der Beschreibung angezeigt ein.",
+      "project_name_placeholder": "Projektnamen eingeben",
+      "project_name_required": "Projektname ist erforderlich",
+      "title": "Projekt verlassen"
+    },
+    "member_columns": {
+      "role_error_message": "Beim Aktualisieren der Mitgliedsrolle ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+      "role_error_title": "Sie können diese Rolle noch nicht ändern.",
+      "role_required": "Rolle ist erforderlich."
+    },
+    "member_defaults": {
+      "guest_access": "Gastzugriff"
+    },
+    "member_list_item": {
+      "leave_error_title": "Sie können dieses Projekt noch nicht verlassen.",
+      "remove_error_title": "Sie können das Mitglied noch nicht aus diesem Projekt entfernen."
+    },
+    "multi_select_modal": {
+      "search_placeholder": "Projekte suchen"
+    },
+    "profile": {
+      "cover_image_alt": "Titelbild",
+      "display_name_placeholder": "Geben Sie Ihren Anzeigenamen ein",
+      "display_name_required": "Anzeigename ist erforderlich.",
+      "email_placeholder": "Geben Sie Ihre E-Mail-Adresse ein",
+      "email_required": "E-Mail ist erforderlich.",
+      "first_day_of_week": "Erster Tag der Woche",
+      "first_day_of_week_description": "Dadurch ändert sich die Darstellung aller Kalender in Ihrer App.",
+      "first_name_placeholder": "Geben Sie Ihren Vornamen ein",
+      "first_name_required": "Bitte geben Sie den Vornamen ein",
+      "language_error": "Sprache konnte nicht aktualisiert werden",
+      "language_updated": "Sprache erfolgreich aktualisiert",
+      "last_name_placeholder": "Geben Sie Ihren Nachnamen ein",
+      "picture_delete_error": "Beim Löschen Ihres Profilbilds ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+      "picture_deleted": "Profilbild erfolgreich gelöscht.",
+      "select_language": "Sprache auswählen",
+      "timezone_error": "Zeitzone konnte nicht aktualisiert werden",
+      "timezone_updated": "Zeitzone erfolgreich aktualisiert",
+      "update_error": "Beim Aktualisieren Ihres Profils ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+      "updated": "Profil erfolgreich aktualisiert."
+    },
+    "publish_modal": {
+      "allow_comments": "Kommentare zulassen",
+      "allow_reactions": "Reaktionen zulassen",
+      "allow_voting": "Abstimmung zulassen",
+      "anyone_with_link": "Jeder mit dem Link hat Zugriff",
+      "link_copied": "Link zur veröffentlichten Seite erfolgreich kopiert.",
+      "live_on_web": "Dieses Projekt ist jetzt im Web live",
+      "publishing": "Wird veröffentlicht",
+      "select_layout_error": "Bitte wählen Sie mindestens ein Ansichtslayout aus, um das Projekt zu veröffentlichen.",
+      "settings_updated": "Veröffentlichungseinstellungen erfolgreich aktualisiert!",
+      "unpublish": "Veröffentlichung aufheben",
+      "unpublish_error": "Beim Aufheben der Veröffentlichung des Projekts ist etwas schiefgelaufen.",
+      "unpublishing": "Veröffentlichung wird aufgehoben",
+      "update_settings": "Einstellungen aktualisieren"
+    },
+    "rich_filters": {
+      "all_filters_applied": "Alle Filter angewendet",
+      "config_error_message": "Dieser Filter ist nicht richtig konfiguriert und kann nicht angewendet werden",
+      "config_error_title": "Fehler bei der Filterkonfiguration",
+      "filter_type_not_supported": "Filtertyp wird nicht unterstützt",
+      "invalid_filter": "Ungültiger Filter",
+      "invalid_tooltip": "Diese Filterbedingung ist nicht mehr gültig. Die Eigenschaft wurde möglicherweise gelöscht oder Ihr Zugriff darauf hat sich geändert.",
+      "remove_filter": "Filter entfernen",
+      "save_view": "Ansicht speichern",
+      "update_view": "Ansicht aktualisieren"
+    },
+    "shared": {
+      "archived": "Archiviert",
+      "custom": "Benutzerdefiniert",
+      "joined": "Beigetreten",
+      "joining": "Beitritt...",
+      "leaving": "Wird verlassen...",
+      "removing": "Wird entfernt...",
+      "restoring": "Wird wiederhergestellt",
+      "roles": "Rollen",
+      "suspended": "Gesperrt"
+    },
+    "states": {
+      "cannot_delete_default": "Der Standardstatus kann nicht gelöscht werden.",
+      "cannot_empty_group": "Eine Gruppe darf nicht leer sein.",
+      "create_error": "Der Status konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+      "create_name_exists": "Ein Status mit diesem Namen existiert bereits. Bitte versuchen Sie es mit einem anderen Namen.",
+      "created": "Status erfolgreich erstellt.",
+      "delete_description": "Möchten Sie den Status {name} wirklich löschen? Alle zum Status gehörenden Daten werden dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "delete_error": "Der Status konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+      "delete_has_work_items": "Dieser Status enthält Arbeitselemente. Verschieben Sie diese in einen anderen Status, um ihn zu löschen.",
+      "delete_title": "Status löschen",
+      "description_placeholder": "Beschreiben Sie diesen Status für Ihre Mitglieder.",
+      "mark_as_default": "Als Standard festlegen",
+      "marking_as_default": "Wird als Standard festgelegt",
+      "update_error": "Der Status konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+      "update_name_exists": "Ein anderer Status mit demselben Namen existiert bereits. Bitte versuchen Sie es mit einem anderen Namen.",
+      "updated": "Status erfolgreich aktualisiert."
+    },
+    "view_filters": {
+      "view_not_found_message": "Die Ansicht, die Sie aktualisieren möchten, existiert nicht.",
+      "view_not_found_title": "Wir konnten die Ansicht nicht finden",
+      "view_update_error": "Ihre Ansicht konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+      "view_updated": "Ihre Ansicht wurde erfolgreich aktualisiert."
+    },
+    "views": {
+      "add_view": "Ansicht hinzufügen",
+      "create_error": "Die Ansicht konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+      "created": "Ansicht erfolgreich erstellt.",
+      "delete_error": "Die Ansicht konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+      "deleted": "Ansicht erfolgreich gelöscht.",
+      "not_found_description": "Die gesuchte Ansicht existiert nicht oder Sie haben keine Berechtigung, sie anzuzeigen.",
+      "not_found_title": "Ansicht existiert nicht",
+      "update_error": "Die Ansicht konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+      "view_other_views": "Andere Ansichten anzeigen"
+    },
+    "webhooks": {
+      "copy_secret_key": "Geheimen Schlüssel kopieren",
+      "danger_zone": "Gefahrenbereich",
+      "danger_zone_description": "Ein gelöschter Webhook kann nicht wiederhergestellt werden. Zukünftige Ereignisse werden nicht mehr an diesen Webhook zugestellt.",
+      "delete_description": "Möchten Sie diesen Webhook wirklich löschen? Zukünftige Ereignisse werden nicht mehr an diesen Webhook zugestellt. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "delete_error": "Der Webhook konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+      "delete_title": "Webhook löschen",
+      "deleted": "Webhook erfolgreich gelöscht.",
+      "empty_description": "Erstellen Sie Webhooks, um Echtzeit-Updates zu erhalten und Aktionen zu automatisieren",
+      "empty_title": "Keine Webhooks",
+      "events": {
+        "cycle": "Zyklus erstellt, aktualisiert oder gelöscht",
+        "issue": "Arbeitselement erstellt, aktualisiert, gelöscht oder zu einem Zyklus oder Modul hinzugefügt",
+        "issue_comment": "Kommentar gepostet, aktualisiert oder gelöscht",
+        "issue_comment_label": "Kommentare zu Arbeitselementen",
+        "module": "Modul erstellt, aktualisiert oder gelöscht",
+        "project": "Projekt erstellt, aktualisiert oder gelöscht"
+      },
+      "key_regenerated": "Neuer Schlüssel erfolgreich generiert.",
+      "view_secret_key": "Geheimen Schlüssel anzeigen"
+    }
   }
 }

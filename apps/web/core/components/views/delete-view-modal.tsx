@@ -48,13 +48,13 @@ export const DeleteProjectViewModal = observer(function DeleteProjectViewModal(p
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("toast.success"),
-        message: "View deleted successfully.",
+        message: t("project_components.views.deleted"),
       });
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: "View could not be deleted. Please try again.",
+        message: t("project_components.views.delete_error"),
       });
     }
     setIsDeleteLoading(false);
