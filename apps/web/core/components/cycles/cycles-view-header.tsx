@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -100,7 +101,7 @@ export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props)
           <input
             ref={inputRef}
             className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
-            placeholder="Search"
+            placeholder={t("search")}
             value={searchQuery}
             onChange={(e) => updateSearchQuery(e.target.value)}
             onKeyDown={handleInputKeyDown}

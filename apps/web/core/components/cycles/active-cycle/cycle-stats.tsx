@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -302,7 +303,13 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                         title={
                           <div className="flex items-center gap-2">
                             <div className="h-5 w-5 rounded-full border-2 border-subtle bg-layer-1">
-                              <img src={userImage} height="100%" width="100%" className="rounded-full" alt="User" />
+                              <img
+                                src={userImage}
+                                height="100%"
+                                width="100%"
+                                className="rounded-full"
+                                alt={t("cycle_ui.user_avatar_alt")}
+                              />
                             </div>
                             <span>{t("no_assignee")}</span>
                           </div>
@@ -342,7 +349,9 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                             backgroundColor: label.color ?? "#000000",
                           }}
                         />
-                        <span className="truncate text-11 text-ellipsis">{label.label_name ?? "No labels"}</span>
+                        <span className="truncate text-11 text-ellipsis">
+                          {label.label_name ?? t("cycle_ui.no_labels")}
+                        </span>
                       </div>
                     }
                     completed={label.completed_issues}

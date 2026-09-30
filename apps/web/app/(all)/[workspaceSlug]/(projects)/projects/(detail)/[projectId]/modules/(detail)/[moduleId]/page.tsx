@@ -1,12 +1,14 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // assets
 import emptyModule from "@/app/assets/empty-state/module.svg?url";
@@ -23,6 +25,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import type { Route } from "./+types/page";
 
 function ModuleIssuesPage({ params }: Route.ComponentProps) {
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId, moduleId } = params;
@@ -53,10 +56,10 @@ function ModuleIssuesPage({ params }: Route.ComponentProps) {
       {error ? (
         <EmptyState
           image={emptyModule}
-          title="Module does not exist"
-          description="The module you are looking for does not exist or has been deleted."
+          title={t("module_ui.not_found_title")}
+          description={t("module_ui.not_found_description")}
           primaryButton={{
-            text: "View other modules",
+            text: t("module_ui.view_other_modules"),
             onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/modules`),
           }}
         />

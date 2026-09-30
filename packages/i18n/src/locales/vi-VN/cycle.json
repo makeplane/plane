@@ -37,5 +37,36 @@
         "title": "Thêm nhãn vào mục công việc để xem\n phân tích công việc theo nhãn."
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "Người dùng",
+    "no_labels": "Không có nhãn",
+    "pending_points": "Điểm đang chờ - {count}",
+    "pending_work_items": "Mục công việc đang chờ - {count}",
+    "closed_progress": "{closed}/{total} {label} đã đóng",
+    "burn_down": "Burn-down",
+    "burn_up": "Burn-up",
+    "status_filter_title": "Trạng thái chu kỳ",
+    "custom": "Tùy chỉnh",
+    "archive_success_title": "Lưu trữ thành công",
+    "archive_success_message": "Bạn có thể tìm thấy các bản lưu trữ trong phần lưu trữ của dự án.",
+    "archive_error": "Không thể lưu trữ chu kỳ. Vui lòng thử lại.",
+    "archive_modal_title": "Lưu trữ chu kỳ {name}",
+    "archive_modal_description": "Bạn có chắc chắn muốn lưu trữ chu kỳ này không? Tất cả bản lưu trữ của bạn có thể được khôi phục sau.",
+    "delete_modal_title": "Xóa chu kỳ",
+    "delete_modal_description": "Bạn có chắc chắn muốn xóa chu kỳ “{name}” không? Tất cả dữ liệu liên quan sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.",
+    "create_success": "Đã tạo chu kỳ thành công.",
+    "create_error": "Không thể tạo chu kỳ. Vui lòng thử lại.",
+    "transfer_title": "Chuyển mục công việc",
+    "transfer_search_placeholder": "Tìm kiếm chu kỳ...",
+    "transfer_success": "Đã chuyển các mục công việc thành công",
+    "transfer_error": "Không thể chuyển các mục công việc. Vui lòng thử lại.",
+    "transfer_fetch_error": "Không thể tải chi tiết chu kỳ",
+    "no_current_cycle": "Bạn chưa có chu kỳ hiện tại nào. Vui lòng tạo một chu kỳ để chuyển các mục công việc.",
+    "completed_not_editable": "Không thể chỉnh sửa các chu kỳ đã hoàn thành.",
+    "work_items_in_cycle": "Mục công việc trong chu kỳ này: {count}",
+    "not_found_title": "Chu kỳ không tồn tại",
+    "not_found_description": "Chu kỳ bạn đang tìm không tồn tại hoặc đã bị xóa.",
+    "view_other_cycles": "Xem các chu kỳ khác"
   }
 }

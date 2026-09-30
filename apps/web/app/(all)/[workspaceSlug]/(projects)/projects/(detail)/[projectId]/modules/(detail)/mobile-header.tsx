@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -83,7 +84,9 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
           maxHeight={"md"}
           className="flex flex-grow justify-center text-13 text-secondary"
           placement="bottom-start"
-          customButton={<span className="flex flex-grow justify-center text-13 text-secondary">Layout</span>}
+          customButton={
+            <span className="flex flex-grow justify-center text-13 text-secondary">{t("common.layout")}</span>
+          }
           customButtonClassName="flex flex-grow justify-center text-secondary text-13"
           closeOnSelect
         >
@@ -102,11 +105,11 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
         </CustomMenu>
         <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
           <FiltersDropdown
-            title="Display"
+            title={t("common.display")}
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-13 text-secondary">
-                Display
+                {t("common.display")}
                 <ChevronDownIcon className="ml-2 h-4 w-4 text-secondary" />
               </span>
             }
@@ -130,7 +133,7 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
           onClick={() => setAnalyticsModal(true)}
           className="flex flex-grow justify-center border-l border-subtle text-13 text-secondary"
         >
-          Analytics
+          {t("common.analytics")}
         </button>
       </div>
     </div>

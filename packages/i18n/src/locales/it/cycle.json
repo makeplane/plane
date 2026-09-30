@@ -37,5 +37,36 @@
         "title": "Aggiungi etichette agli elementi di lavoro per vedere la\n distribuzione del lavoro per etichette."
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "Utente",
+    "no_labels": "Nessuna etichetta",
+    "pending_points": "Punti in sospeso - {count}",
+    "pending_work_items": "Elementi di lavoro in sospeso - {count}",
+    "closed_progress": "{closed}/{total} {label} chiusi",
+    "burn_down": "Burn-down",
+    "burn_up": "Burn-up",
+    "status_filter_title": "Stato del ciclo",
+    "custom": "Personalizzato",
+    "archive_success_title": "Archiviazione riuscita",
+    "archive_success_message": "Puoi trovare i tuoi archivi negli archivi del progetto.",
+    "archive_error": "Il ciclo non può essere archiviato. Per favore, riprova.",
+    "archive_modal_title": "Archivia il ciclo {name}",
+    "archive_modal_description": "Sei sicuro di voler archiviare il ciclo? Tutti i tuoi archivi potranno essere ripristinati in seguito.",
+    "delete_modal_title": "Elimina il ciclo",
+    "delete_modal_description": "Sei sicuro di voler eliminare il ciclo “{name}”? Tutti i dati correlati verranno rimossi definitivamente. Questa azione non può essere annullata.",
+    "create_success": "Il ciclo è stato creato con successo.",
+    "create_error": "Impossibile creare il ciclo. Per favore, riprova.",
+    "transfer_title": "Trasferisci elementi di lavoro",
+    "transfer_search_placeholder": "Cerca un ciclo...",
+    "transfer_success": "Gli elementi di lavoro sono stati trasferiti con successo",
+    "transfer_error": "Impossibile trasferire gli elementi di lavoro. Per favore, riprova.",
+    "transfer_fetch_error": "Impossibile recuperare i dettagli del ciclo",
+    "no_current_cycle": "Non hai nessun ciclo corrente. Creane uno per trasferire gli elementi di lavoro.",
+    "completed_not_editable": "I cicli completati non sono modificabili.",
+    "work_items_in_cycle": "Elementi di lavoro in questo ciclo: {count}",
+    "not_found_title": "Il ciclo non esiste",
+    "not_found_description": "Il ciclo che stai cercando non esiste o è stato eliminato.",
+    "view_other_cycles": "Visualizza altri cicli"
   }
 }

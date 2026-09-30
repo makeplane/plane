@@ -37,5 +37,36 @@
         "title": "Fügen Sie Arbeitsaufgaben Labels hinzu, um die\n Aufschlüsselung der Arbeit nach Labels zu sehen."
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "Benutzer",
+    "no_labels": "Keine Labels",
+    "pending_points": "Ausstehende Punkte - {count}",
+    "pending_work_items": "Ausstehende Arbeitselemente - {count}",
+    "closed_progress": "{closed}/{total} {label} geschlossen",
+    "burn_down": "Burndown",
+    "burn_up": "Burnup",
+    "status_filter_title": "Status des Zyklus",
+    "custom": "Benutzerdefiniert",
+    "archive_success_title": "Archivierung erfolgreich",
+    "archive_success_message": "Ihre Archive finden Sie in den Projektarchiven.",
+    "archive_error": "Der Zyklus konnte nicht archiviert werden. Bitte versuchen Sie es erneut.",
+    "archive_modal_title": "Zyklus archivieren: {name}",
+    "archive_modal_description": "Möchten Sie den Zyklus wirklich archivieren? Alle Ihre Archive können später wiederhergestellt werden.",
+    "delete_modal_title": "Zyklus löschen",
+    "delete_modal_description": "Möchten Sie den Zyklus „{name}“ wirklich löschen? Alle zugehörigen Daten werden dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "create_success": "Der Zyklus wurde erfolgreich erstellt.",
+    "create_error": "Der Zyklus konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+    "transfer_title": "Arbeitselemente übertragen",
+    "transfer_search_placeholder": "Nach einem Zyklus suchen...",
+    "transfer_success": "Arbeitselemente wurden erfolgreich übertragen",
+    "transfer_error": "Arbeitselemente konnten nicht übertragen werden. Bitte versuchen Sie es erneut.",
+    "transfer_fetch_error": "Zyklusdetails konnten nicht abgerufen werden",
+    "no_current_cycle": "Sie haben keinen aktuellen Zyklus. Bitte erstellen Sie einen, um die Arbeitselemente zu übertragen.",
+    "completed_not_editable": "Abgeschlossene Zyklen können nicht bearbeitet werden.",
+    "work_items_in_cycle": "Arbeitselemente in diesem Zyklus: {count}",
+    "not_found_title": "Der Zyklus existiert nicht",
+    "not_found_description": "Der Zyklus wurde nicht gefunden oder bereits gelöscht.",
+    "view_other_cycles": "Weitere Zyklen anzeigen"
   }
 }

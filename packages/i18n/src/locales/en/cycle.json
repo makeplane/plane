@@ -37,5 +37,36 @@
         "title": "Add labels to work items to see the\n breakdown of work by labels."
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "User",
+    "no_labels": "No labels",
+    "pending_points": "Pending points - {count}",
+    "pending_work_items": "Pending work items - {count}",
+    "closed_progress": "{closed}/{total} {label} closed",
+    "burn_down": "Burn-down",
+    "burn_up": "Burn-up",
+    "status_filter_title": "Status of the cycle",
+    "custom": "Custom",
+    "archive_success_title": "Archive success",
+    "archive_success_message": "Your archives can be found in project archives.",
+    "archive_error": "Cycle could not be archived. Please try again.",
+    "archive_modal_title": "Archive cycle {name}",
+    "archive_modal_description": "Are you sure you want to archive the cycle? All your archives can be restored later.",
+    "delete_modal_title": "Delete cycle",
+    "delete_modal_description": "Are you sure you want to delete cycle \"{name}\"? All of the data related to the cycle will be permanently removed. This action cannot be undone.",
+    "create_success": "Cycle created successfully.",
+    "create_error": "Error in creating cycle. Please try again.",
+    "transfer_title": "Transfer work items",
+    "transfer_search_placeholder": "Search for a cycle...",
+    "transfer_success": "Work items have been transferred successfully",
+    "transfer_error": "Unable to transfer work items. Please try again.",
+    "transfer_fetch_error": "Unable to fetch cycle details",
+    "no_current_cycle": "You don’t have any current cycle. Please create one to transfer the work items.",
+    "completed_not_editable": "Completed cycles are not editable.",
+    "work_items_in_cycle": "Work items in this cycle: {count}",
+    "not_found_title": "Cycle does not exist",
+    "not_found_description": "The cycle you are looking for does not exist or has been deleted.",
+    "view_other_cycles": "View other cycles"
   }
 }

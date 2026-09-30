@@ -37,5 +37,36 @@
         "title": "Tambahkan label ke item kerja untuk melihat\n pembagian pekerjaan berdasarkan label."
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "Pengguna",
+    "no_labels": "Tanpa label",
+    "pending_points": "Poin tertunda - {count}",
+    "pending_work_items": "Item kerja tertunda - {count}",
+    "closed_progress": "{closed}/{total} {label} ditutup",
+    "burn_down": "Burn-down",
+    "burn_up": "Burn-up",
+    "status_filter_title": "Status siklus",
+    "custom": "Kustom",
+    "archive_success_title": "Berhasil diarsipkan",
+    "archive_success_message": "Arsip Anda dapat ditemukan di arsip proyek.",
+    "archive_error": "Siklus tidak dapat diarsipkan. Silakan coba lagi.",
+    "archive_modal_title": "Arsipkan siklus {name}",
+    "archive_modal_description": "Apakah Anda yakin ingin mengarsipkan siklus ini? Semua arsip Anda dapat dipulihkan nanti.",
+    "delete_modal_title": "Hapus siklus",
+    "delete_modal_description": "Apakah Anda yakin ingin menghapus siklus “{name}”? Semua data terkait akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.",
+    "create_success": "Siklus berhasil dibuat.",
+    "create_error": "Siklus tidak dapat dibuat. Silakan coba lagi.",
+    "transfer_title": "Transfer item kerja",
+    "transfer_search_placeholder": "Cari siklus...",
+    "transfer_success": "Item kerja berhasil ditransfer",
+    "transfer_error": "Tidak dapat mentransfer item kerja. Silakan coba lagi.",
+    "transfer_fetch_error": "Tidak dapat mengambil detail siklus",
+    "no_current_cycle": "Anda tidak memiliki siklus saat ini. Silakan buat satu untuk mentransfer item kerja.",
+    "completed_not_editable": "Siklus yang telah selesai tidak dapat diedit.",
+    "work_items_in_cycle": "Item kerja di siklus ini: {count}",
+    "not_found_title": "Siklus tidak ada",
+    "not_found_description": "Siklus yang Anda cari tidak ada atau telah dihapus.",
+    "view_other_cycles": "Lihat siklus lainnya"
   }
 }

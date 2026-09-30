@@ -1,10 +1,13 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import { observer } from "mobx-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // assets
 import AllFiltersImage from "@/app/assets/empty-state/cycle/all-filters.svg?url";
 import NameFilterImage from "@/app/assets/empty-state/cycle/name-filter.svg?url";
@@ -22,6 +25,7 @@ export interface IArchivedCyclesView {
 }
 
 export const ArchivedCyclesView = observer(function ArchivedCyclesView(props: IArchivedCyclesView) {
+  const { t } = useTranslation();
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getFilteredArchivedCycleIds, loader } = useCycle();
@@ -38,13 +42,13 @@ export const ArchivedCyclesView = observer(function ArchivedCyclesView(props: IA
           <img
             src={archivedCyclesSearchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
             className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
-            alt="No matching cycles"
+            alt={t("project_cycles.no_matching_cycles")}
           />
-          <h5 className="mt-7 mb-1 text-18 font-medium">No matching cycles</h5>
+          <h5 className="mt-7 mb-1 text-18 font-medium">{t("project_cycles.no_matching_cycles")}</h5>
           <p className="text-14 text-placeholder">
             {archivedCyclesSearchQuery.trim() === ""
-              ? "Remove the filters to see all cycles"
-              : "Remove the search criteria to see all cycles"}
+              ? t("project_cycles.remove_filters_to_see_all_cycles")
+              : t("project_cycles.remove_search_criteria_to_see_all_cycles")}
           </p>
         </div>
       </div>

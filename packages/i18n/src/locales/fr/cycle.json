@@ -37,5 +37,36 @@
         "title": "Ajoutez des étiquettes aux éléments de travail pour voir la\n répartition du travail par étiquettes."
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "Utilisateur",
+    "no_labels": "Aucune étiquette",
+    "pending_points": "Points en attente - {count}",
+    "pending_work_items": "Éléments de travail en attente - {count}",
+    "closed_progress": "{closed}/{total} {label} clôturés",
+    "burn_down": "Burn-down",
+    "burn_up": "Burn-up",
+    "status_filter_title": "Statut du cycle",
+    "custom": "Personnalisé",
+    "archive_success_title": "Archivage réussi",
+    "archive_success_message": "Vos archives se trouvent dans les archives du projet.",
+    "archive_error": "Le cycle n’a pas pu être archivé. Veuillez réessayer.",
+    "archive_modal_title": "Archiver le cycle {name}",
+    "archive_modal_description": "Voulez-vous vraiment archiver le cycle ? Toutes vos archives pourront être restaurées ultérieurement.",
+    "delete_modal_title": "Supprimer le cycle",
+    "delete_modal_description": "Voulez-vous vraiment supprimer le cycle « {name} » ? Toutes les données associées seront définitivement supprimées. Cette action est irréversible.",
+    "create_success": "Le cycle a été créé avec succès.",
+    "create_error": "Le cycle n’a pas pu être créé. Veuillez réessayer.",
+    "transfer_title": "Transférer les éléments de travail",
+    "transfer_search_placeholder": "Rechercher un cycle...",
+    "transfer_success": "Les éléments de travail ont été transférés avec succès",
+    "transfer_error": "Impossible de transférer les éléments de travail. Veuillez réessayer.",
+    "transfer_fetch_error": "Impossible de récupérer les détails du cycle",
+    "no_current_cycle": "Vous n’avez aucun cycle en cours. Veuillez en créer un pour transférer les éléments de travail.",
+    "completed_not_editable": "Les cycles terminés ne sont pas modifiables.",
+    "work_items_in_cycle": "Éléments de travail dans ce cycle : {count}",
+    "not_found_title": "Le cycle n’existe pas",
+    "not_found_description": "Le cycle que vous recherchez n’existe pas ou a été supprimé.",
+    "view_other_cycles": "Voir d’autres cycles"
   }
 }

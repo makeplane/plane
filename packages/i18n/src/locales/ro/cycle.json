@@ -37,5 +37,36 @@
         "title": "Adaugă etichete la elementele de lucru pentru a vedea\n defalcarea muncii după etichete."
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "Utilizator",
+    "no_labels": "Fără etichete",
+    "pending_points": "Puncte în așteptare - {count}",
+    "pending_work_items": "Activități în așteptare - {count}",
+    "closed_progress": "{closed}/{total} {label} închise",
+    "burn_down": "Burn-down",
+    "burn_up": "Burn-up",
+    "status_filter_title": "Starea ciclului",
+    "custom": "Personalizat",
+    "archive_success_title": "Arhivare reușită",
+    "archive_success_message": "Arhivele tale se găsesc în arhivele proiectului.",
+    "archive_error": "Ciclul nu a putut fi arhivat. Te rugăm să încerci din nou.",
+    "archive_modal_title": "Arhivează ciclul {name}",
+    "archive_modal_description": "Sigur vrei să arhivezi ciclul? Toate arhivele tale pot fi restaurate ulterior.",
+    "delete_modal_title": "Șterge ciclul",
+    "delete_modal_description": "Sigur vrei să ștergi ciclul „{name}”? Toate datele asociate vor fi eliminate definitiv. Această acțiune nu poate fi anulată.",
+    "create_success": "Ciclul a fost creat cu succes.",
+    "create_error": "Ciclul nu a putut fi creat. Te rugăm să încerci din nou.",
+    "transfer_title": "Transferă activitățile",
+    "transfer_search_placeholder": "Caută un ciclu...",
+    "transfer_success": "Activitățile au fost transferate cu succes",
+    "transfer_error": "Activitățile nu au putut fi transferate. Te rugăm să încerci din nou.",
+    "transfer_fetch_error": "Nu s-au putut obține detaliile ciclului",
+    "no_current_cycle": "Nu ai niciun ciclu curent. Creează unul pentru a transfera activitățile.",
+    "completed_not_editable": "Ciclurile finalizate nu pot fi editate.",
+    "work_items_in_cycle": "Activități în acest ciclu: {count}",
+    "not_found_title": "Ciclul nu există",
+    "not_found_description": "Ciclul pe care îl cauți nu există sau a fost șters.",
+    "view_other_cycles": "Vezi alte cicluri"
   }
 }

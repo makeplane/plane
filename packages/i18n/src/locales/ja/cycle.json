@@ -37,5 +37,36 @@
         "title": "作業項目にラベルを追加して、\nラベル別の作業内訳を確認できます。"
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "ユーザー",
+    "no_labels": "ラベルなし",
+    "pending_points": "保留中のポイント - {count}",
+    "pending_work_items": "保留中の作業項目 - {count}",
+    "closed_progress": "{closed}/{total} {label} 完了",
+    "burn_down": "バーンダウン",
+    "burn_up": "バーンアップ",
+    "status_filter_title": "サイクルのステータス",
+    "custom": "カスタム",
+    "archive_success_title": "アーカイブ成功",
+    "archive_success_message": "アーカイブはプロジェクトのアーカイブで確認できます。",
+    "archive_error": "サイクルをアーカイブできませんでした。もう一度お試しください。",
+    "archive_modal_title": "サイクルをアーカイブ: {name}",
+    "archive_modal_description": "サイクルをアーカイブしてもよろしいですか？アーカイブはすべて後で復元できます。",
+    "delete_modal_title": "サイクルを削除",
+    "delete_modal_description": "サイクル「{name}」を削除してもよろしいですか？関連するすべてのデータが完全に削除されます。この操作は元に戻せません。",
+    "create_success": "サイクルを作成しました。",
+    "create_error": "サイクルを作成できませんでした。もう一度お試しください。",
+    "transfer_title": "作業項目を移行",
+    "transfer_search_placeholder": "サイクルを検索...",
+    "transfer_success": "作業項目を移行しました",
+    "transfer_error": "作業項目を移行できませんでした。もう一度お試しください。",
+    "transfer_fetch_error": "サイクルの詳細を取得できませんでした",
+    "no_current_cycle": "現在のサイクルがありません。作業項目を移行するには、サイクルを作成してください。",
+    "completed_not_editable": "完了したサイクルは編集できません。",
+    "work_items_in_cycle": "このサイクルの作業項目: {count}",
+    "not_found_title": "サイクルが存在しません",
+    "not_found_description": "お探しのサイクルは存在しないか、削除されました。",
+    "view_other_cycles": "他のサイクルを表示"
   }
 }

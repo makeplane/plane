@@ -37,5 +37,36 @@
         "title": "为工作项添加标签以查看按标签\n划分的工作明细"
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "用户",
+    "no_labels": "无标签",
+    "pending_points": "待处理点数 - {count}",
+    "pending_work_items": "待处理工作项 - {count}",
+    "closed_progress": "{closed}/{total} {label}已关闭",
+    "burn_down": "燃尽图",
+    "burn_up": "燃起图",
+    "status_filter_title": "周期状态",
+    "custom": "自定义",
+    "archive_success_title": "归档成功",
+    "archive_success_message": "您可以在项目归档中找到已归档的内容。",
+    "archive_error": "无法归档周期，请重试。",
+    "archive_modal_title": "归档周期：{name}",
+    "archive_modal_description": "确定要归档该周期吗？您的所有归档稍后均可恢复。",
+    "delete_modal_title": "删除周期",
+    "delete_modal_description": "确定要删除周期“{name}”吗？所有相关数据都将被永久删除，此操作无法撤销。",
+    "create_success": "周期创建成功。",
+    "create_error": "无法创建周期，请重试。",
+    "transfer_title": "转移工作项",
+    "transfer_search_placeholder": "搜索周期...",
+    "transfer_success": "工作项已成功转移",
+    "transfer_error": "无法转移工作项，请重试。",
+    "transfer_fetch_error": "无法获取周期详情",
+    "no_current_cycle": "您当前没有任何周期。请创建一个周期以转移工作项。",
+    "completed_not_editable": "已完成的周期不可编辑。",
+    "work_items_in_cycle": "此周期中的工作项：{count}",
+    "not_found_title": "周期不存在",
+    "not_found_description": "您查找的周期不存在或已被删除。",
+    "view_other_cycles": "查看其他周期"
   }
 }

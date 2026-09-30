@@ -37,5 +37,36 @@
         "title": "Etiketlere göre iş dağılımını görmek için iş öğelerine etiketler ekleyin."
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "Kullanıcı",
+    "no_labels": "Etiket yok",
+    "pending_points": "Bekleyen puanlar - {count}",
+    "pending_work_items": "Bekleyen iş öğeleri - {count}",
+    "closed_progress": "{closed}/{total} {label} kapatıldı",
+    "burn_down": "Burn-down",
+    "burn_up": "Burn-up",
+    "status_filter_title": "Döngü durumu",
+    "custom": "Özel",
+    "archive_success_title": "Arşivleme başarılı",
+    "archive_success_message": "Arşivlerinize proje arşivlerinde ulaşabilirsiniz.",
+    "archive_error": "Döngü arşivlenemedi. Lütfen tekrar deneyin.",
+    "archive_modal_title": "Döngü arşivle: {name}",
+    "archive_modal_description": "Döngüyü arşivlemek istediğinizden emin misiniz? Tüm arşivleriniz daha sonra geri yüklenebilir.",
+    "delete_modal_title": "Döngüyü sil",
+    "delete_modal_description": "“{name}” adlı döngüyü silmek istediğinizden emin misiniz? İlgili tüm veriler kalıcı olarak kaldırılacaktır. Bu işlem geri alınamaz.",
+    "create_success": "Döngü başarıyla oluşturuldu.",
+    "create_error": "Döngü oluşturulamadı. Lütfen tekrar deneyin.",
+    "transfer_title": "İş öğelerini aktar",
+    "transfer_search_placeholder": "Döngü ara...",
+    "transfer_success": "İş öğeleri başarıyla aktarıldı",
+    "transfer_error": "İş öğeleri aktarılamadı. Lütfen tekrar deneyin.",
+    "transfer_fetch_error": "Döngü ayrıntıları alınamadı",
+    "no_current_cycle": "Mevcut bir döngünüz yok. İş öğelerini aktarmak için lütfen bir tane oluşturun.",
+    "completed_not_editable": "Tamamlanan döngüler düzenlenemez.",
+    "work_items_in_cycle": "Bu döngü içindeki iş öğeleri: {count}",
+    "not_found_title": "Döngü mevcut değil",
+    "not_found_description": "Aradığınız döngü mevcut değil veya silinmiş.",
+    "view_other_cycles": "Diğer döngüler görüntüle"
   }
 }

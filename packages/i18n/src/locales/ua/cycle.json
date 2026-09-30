@@ -37,5 +37,36 @@
         "title": "Додайте лейбли до робочих елементів, щоб\n побачити розподіл роботи за лейблами."
       }
     }
+  },
+  "cycle_ui": {
+    "user_avatar_alt": "Користувач",
+    "no_labels": "Немає міток",
+    "pending_points": "Очікувані бали - {count}",
+    "pending_work_items": "Очікувані робочі одиниці - {count}",
+    "closed_progress": "{closed}/{total} {label} закрито",
+    "burn_down": "Burn-down",
+    "burn_up": "Burn-up",
+    "status_filter_title": "Статус циклу",
+    "custom": "Власний",
+    "archive_success_title": "Архівацію виконано",
+    "archive_success_message": "Ваші архіви можна знайти в архівах проєкту.",
+    "archive_error": "Цикл не вдалося архівувати. Будь ласка, спробуйте ще раз.",
+    "archive_modal_title": "Архівувати цикл {name}",
+    "archive_modal_description": "Ви впевнені, що хочете архівувати цикл? Усі ваші архіви можна буде відновити пізніше.",
+    "delete_modal_title": "Видалити цикл",
+    "delete_modal_description": "Ви впевнені, що хочете видалити цикл «{name}»? Усі пов’язані дані буде остаточно видалено. Цю дію неможливо скасувати.",
+    "create_success": "Цикл успішно створено.",
+    "create_error": "Не вдалося створити цикл. Будь ласка, спробуйте ще раз.",
+    "transfer_title": "Перенести робочі одиниці",
+    "transfer_search_placeholder": "Пошук циклу...",
+    "transfer_success": "Робочі одиниці успішно перенесено",
+    "transfer_error": "Не вдалося перенести робочі одиниці. Будь ласка, спробуйте ще раз.",
+    "transfer_fetch_error": "Не вдалося отримати відомості про цикл",
+    "no_current_cycle": "У вас немає поточного циклу. Створіть його, щоб перенести робочі одиниці.",
+    "completed_not_editable": "Завершені цикли не можна редагувати.",
+    "work_items_in_cycle": "Робочі одиниці в цьому циклі: {count}",
+    "not_found_title": "Цикл не існує",
+    "not_found_description": "Шуканий цикл не існує або був видалений.",
+    "view_other_cycles": "Переглянути інші цикли"
   }
 }

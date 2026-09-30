@@ -71,14 +71,14 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
     );
 
     setPromiseToast(addToFavoritePromise, {
-      loading: "Adding module to favorites...",
+      loading: t("module_ui.adding_to_favorites"),
       success: {
         title: t("toast.success"),
-        message: () => "Module added to favorites.",
+        message: () => t("module_ui.added_to_favorites"),
       },
       error: {
         title: t("toast.error"),
-        message: () => "Couldn't add the module to favorites. Please try again.",
+        message: () => t("module_ui.add_favorite_error"),
       },
     });
   };
@@ -95,14 +95,14 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
     );
 
     setPromiseToast(removeFromFavoritePromise, {
-      loading: "Removing module from favorites...",
+      loading: t("module_ui.removing_from_favorites"),
       success: {
         title: t("toast.success"),
-        message: () => "Module removed from favorites.",
+        message: () => t("module_ui.removed_from_favorites"),
       },
       error: {
         title: t("toast.error"),
-        message: () => "Couldn't remove the module from favorites. Please try again.",
+        message: () => t("module_ui.remove_favorite_error"),
       },
     });
   };
@@ -115,14 +115,14 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("toast.success"),
-          message: "Module updated successfully.",
+          message: t("entity.update.success", { entity: t("common.module") }),
         });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
-          message: err?.detail ?? "Module could not be updated. Please try again.",
+          message: err?.detail ?? t("module_ui.update_error"),
         });
       });
   };
@@ -167,7 +167,7 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
           <ButtonAvatars showTooltip={false} userIds={moduleLeadDetails?.id} />
         </span>
       ) : (
-        <Tooltip tooltipContent="No lead">
+        <Tooltip tooltipContent={t("module_ui.no_lead")}>
           <SquareUser className="h-4 w-4 text-tertiary" />
         </Tooltip>
       )}

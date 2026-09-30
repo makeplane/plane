@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -30,16 +31,16 @@ type TCycleAnalyticsProgress = {
 };
 type Options = {
   value: string;
-  label: string;
+  labelKey: string;
 };
 
 export const cycleEstimateOptions: Options[] = [
-  { value: "issues", label: "Work items" },
-  { value: "points", label: "Estimates" },
+  { value: "issues", labelKey: "common.work_items" },
+  { value: "points", labelKey: "common.estimates" },
 ];
 export const cycleChartOptions: Options[] = [
-  { value: "burndown", label: "Burn-down" },
-  { value: "burnup", label: "Burn-up" },
+  { value: "burndown", labelKey: "cycle_ui.burn_down" },
+  { value: "burnup", labelKey: "cycle_ui.burn_up" },
 ];
 
 export const validateCycleSnapshot = (cycleDetails: ICycle | null): ICycle | null => {

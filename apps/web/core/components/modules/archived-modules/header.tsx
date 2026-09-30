@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -10,6 +11,7 @@ import { useParams } from "next/navigation";
 // icons
 import { ListFilter } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // plane helpers
 // types
@@ -25,6 +27,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 
 export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
+  const { t } = useTranslation();
   // router
   const { projectId } = useParams();
   // refs
@@ -111,7 +114,7 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
           <input
             ref={inputRef}
             className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
-            placeholder="Search"
+            placeholder={t("search")}
             value={archivedModulesSearchQuery}
             onChange={(e) => updateArchivedModulesSearchQuery(e.target.value)}
             onKeyDown={handleInputKeyDown}
@@ -140,7 +143,7 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
         />
         <FiltersDropdown
           icon={<ListFilter className="h-3 w-3" />}
-          title="Filters"
+          title={t("common.filters")}
           placement="bottom-end"
           isFiltersApplied={isFiltersApplied}
         >

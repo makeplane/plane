@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -142,7 +143,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink
-                    label="Cycles"
+                    label={t("common.cycles")}
                     href={`/${workspaceSlug}/projects/${projectId}/cycles/`}
                     icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
                   />
@@ -171,9 +172,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
             {workItemsCount && workItemsCount > 0 ? (
               <Tooltip
                 isMobile={isMobile}
-                tooltipContent={`There are ${workItemsCount} ${
-                  workItemsCount > 1 ? "work items" : "work item"
-                } in this cycle`}
+                tooltipContent={t("cycle_ui.work_items_in_cycle", { count: workItemsCount })}
                 position="bottom"
               >
                 <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2 text-center text-11 font-semibold text-accent-primary">
@@ -234,7 +233,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
             {canUserCreateIssue && (
               <>
                 <Button onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
-                  <span className="hidden @4xl:flex">Analytics</span>
+                  <span className="hidden @4xl:flex">{t("common.analytics")}</span>
                   <span className="@4xl:hidden">
                     <ChartNoAxesColumn className="size-3.5" />
                   </span>

@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -51,7 +52,7 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
-                  label="Modules"
+                  label={t("common.modules")}
                   href={`/${workspaceSlug}/projects/${projectId}/modules/`}
                   icon={<ModuleIcon className="h-4 w-4 text-tertiary" />}
                   isLast

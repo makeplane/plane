@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -46,7 +47,7 @@ export function ModuleStatusSelect({ control, error, tabIndex }: Props) {
                   <StatePropertyIcon className={`h-3 w-3 ${error ? "text-danger-primary" : "text-secondary"}`} />
                 )}
                 {(selectedValue && t(selectedValue?.i18n_label)) ?? (
-                  <span className={`${error ? "text-danger-primary" : "text-secondary"}`}>Status</span>
+                  <span className={`${error ? "text-danger-primary" : "text-secondary"}`}>{t("module_ui.status")}</span>
                 )}
               </div>
             }

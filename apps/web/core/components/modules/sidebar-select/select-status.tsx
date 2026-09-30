@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -31,7 +32,7 @@ export function SidebarStatusSelect({ control, submitChanges, watch }: Props) {
     <div className="flex flex-wrap items-center py-2">
       <div className="flex items-center gap-x-2 text-13 sm:basis-1/2">
         <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
-        <p>Status</p>
+        <p>{t("module_ui.status")}</p>
       </div>
       <div className="sm:basis-1/2">
         <Controller

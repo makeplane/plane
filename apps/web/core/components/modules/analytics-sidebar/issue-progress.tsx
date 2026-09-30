@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -165,7 +166,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
               </div>
             ) : (
               <div className="relative flex w-full items-center justify-between gap-2">
-                <div className="text-13 font-medium text-secondary">Progress</div>
+                <div className="text-13 font-medium text-secondary">{t("common.progress")}</div>
                 <div className="flex items-center gap-1">
                   <AlertCircle height={14} width={14} className="text-secondary" />
                   <span className="text-11 text-secondary italic">
