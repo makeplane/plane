@@ -169,7 +169,7 @@
   "project_created_successfully": "專案建立成功",
   "project_created_successfully_description": "專案建立成功。您現在可以開始新增工作事項。",
   "project_name_already_taken": "專案名稱已被使用。",
-  "project_name_cannot_contain_special_characters": "專案名稱不能包含特殊字元。",
+  "project_name_cannot_contain_special_characters": "專案名稱不能包含以下任何字元：; $ ^ { } * = | ' < > %",
   "project_identifier_already_taken": "專案識別碼已被使用。",
   "project_cover_image_alt": "專案封面圖片",
   "name_is_required": "名稱為必填",

@@ -169,7 +169,7 @@
   "project_created_successfully": "პროექტი წარმატებით შეიქმნა",
   "project_created_successfully_description": "პროექტი წარმატებით შეიქმნა. ახლა შეგიძლიათ დაიწყოთ სამუშაო ელემენტების დამატება.",
   "project_name_already_taken": "პროექტის სახელი უკვე დაკავებულია.",
-  "project_name_cannot_contain_special_characters": "The project name cannot contain special characters.",
+  "project_name_cannot_contain_special_characters": "The project name cannot contain any of these characters: ; $ ^ { } * = | ' < > %",
   "project_identifier_already_taken": "პროექტის იდენტიფიკატორი უკვე დაკავებულია.",
   "project_cover_image_alt": "პროექტის გარეკანის სურათი",
   "name_is_required": "სახელი სავალდებულოა",

@@ -169,7 +169,7 @@
   "project_created_successfully": "Проект успешно создан",
   "project_created_successfully_description": "Проект успешно создан. Теперь вы можете добавлять рабочие элементы.",
   "project_name_already_taken": "Имя проекта уже используется.",
-  "project_name_cannot_contain_special_characters": "Название проекта не может содержать специальные символы.",
+  "project_name_cannot_contain_special_characters": "Название проекта не может содержать ни один из этих символов: ; $ ^ { } * = | ' < > %",
   "project_identifier_already_taken": "Идентификатор проекта уже используется.",
   "project_cover_image_alt": "Обложка проекта",
   "name_is_required": "Требуется имя",

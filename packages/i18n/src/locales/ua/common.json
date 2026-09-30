@@ -169,7 +169,7 @@
   "project_created_successfully": "Проєкт успішно створено",
   "project_created_successfully_description": "Проєкт успішно створений. Тепер ви можете почати додавати робочі одиниці.",
   "project_name_already_taken": "Назва проекту вже використовується.",
-  "project_name_cannot_contain_special_characters": "Назва проєкту не може містити спеціальні символи.",
+  "project_name_cannot_contain_special_characters": "Назва проєкту не може містити жодного з цих символів: ; $ ^ { } * = | ' < > %",
   "project_identifier_already_taken": "Ідентифікатор проекту вже використовується.",
   "project_cover_image_alt": "Обкладинка проєкту",
   "name_is_required": "Назва є обов'язковою",

@@ -169,7 +169,7 @@
   "project_created_successfully": "Proyek berhasil dibuat",
   "project_created_successfully_description": "Proyek berhasil dibuat. Anda sekarang dapat mulai menambahkan item kerja ke dalamnya.",
   "project_name_already_taken": "Nama proyek sudah digunakan",
-  "project_name_cannot_contain_special_characters": "Nama proyek tidak boleh mengandung karakter khusus.",
+  "project_name_cannot_contain_special_characters": "Nama proyek tidak boleh mengandung karakter berikut: ; $ ^ { } * = | ' < > %",
   "project_identifier_already_taken": "ID proyek sudah digunakan",
   "project_cover_image_alt": "Gambar sampul proyek",
   "name_is_required": "Nama diperlukan",

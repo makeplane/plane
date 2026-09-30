@@ -110,7 +110,9 @@ class ProjectCreateSerializer(BaseSerializer):
         project_identifier = data.get("identifier", None)
 
         if project_name is not None and re.match(Project.FORBIDDEN_NAME_CHARS_PATTERN, project_name):
-            raise serializers.ValidationError("Project name cannot contain special characters.")
+            raise serializers.ValidationError(
+                f"Project name cannot contain any of these characters: {Project.FORBIDDEN_NAME_CHARS_DISPLAY}"
+            )
 
         if project_identifier is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_identifier):
             raise serializers.ValidationError("Project identifier cannot contain special characters.")
@@ -178,7 +180,9 @@ class ProjectUpdateSerializer(ProjectCreateSerializer):
         project_identifier = validated_data.get("identifier", None)
 
         if project_name is not None and re.match(Project.FORBIDDEN_NAME_CHARS_PATTERN, project_name):
-            raise serializers.ValidationError("Project name cannot contain special characters.")
+            raise serializers.ValidationError(
+                f"Project name cannot contain any of these characters: {Project.FORBIDDEN_NAME_CHARS_DISPLAY}"
+            )
 
         if project_identifier is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_identifier):
             raise serializers.ValidationError("Project identifier cannot contain special characters.")
@@ -237,7 +241,9 @@ class ProjectSerializer(BaseSerializer):
         project_identifier = data.get("identifier", None)
 
         if project_name is not None and re.match(Project.FORBIDDEN_NAME_CHARS_PATTERN, project_name):
-            raise serializers.ValidationError("Project name cannot contain special characters.")
+            raise serializers.ValidationError(
+                f"Project name cannot contain any of these characters: {Project.FORBIDDEN_NAME_CHARS_DISPLAY}"
+            )
 
         if project_identifier is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_identifier):
             raise serializers.ValidationError("Project identifier cannot contain special characters.")

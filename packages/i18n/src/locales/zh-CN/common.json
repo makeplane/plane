@@ -169,7 +169,7 @@
   "project_created_successfully": "项目创建成功",
   "project_created_successfully_description": "项目创建成功。您现在可以开始添加工作项了。",
   "project_name_already_taken": "项目名称已被使用。",
-  "project_name_cannot_contain_special_characters": "项目名称不能包含特殊字符。",
+  "project_name_cannot_contain_special_characters": "项目名称不能包含以下任何字符：; $ ^ { } * = | ' < > %",
   "project_identifier_already_taken": "项目标识符已被使用。",
   "project_cover_image_alt": "项目封面图片",
   "name_is_required": "名称为必填项",

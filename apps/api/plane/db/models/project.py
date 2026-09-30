@@ -147,6 +147,8 @@ class Project(BaseModel):
     FORBIDDEN_IDENTIFIER_CHARS_PATTERN = r"^.*[&+,:;$^}{*=?@#|'<>.()%!-].*$"
     # Project names may contain "+", "-", "&", ",", ".", parentheses, "@", "#", "!", "?" and ":" (unlike identifiers)
     FORBIDDEN_NAME_CHARS_PATTERN = r"^.*[;$^}{*=|'<>%].*$"
+    # Human-readable list of the characters blocked by FORBIDDEN_NAME_CHARS_PATTERN, used in error messages
+    FORBIDDEN_NAME_CHARS_DISPLAY = "; $ ^ { } * = | ' < > %"
 
     class Meta:
         unique_together = [

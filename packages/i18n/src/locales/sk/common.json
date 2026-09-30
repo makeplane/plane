@@ -169,7 +169,7 @@
   "project_created_successfully": "Projekt bol úspešne vytvorený",
   "project_created_successfully_description": "Projekt bol úspešne vytvorený. Teraz môžete začať pridávať pracovné položky.",
   "project_name_already_taken": "Názov projektu je už použitý.",
-  "project_name_cannot_contain_special_characters": "Názov projektu nesmie obsahovať špeciálne znaky.",
+  "project_name_cannot_contain_special_characters": "Názov projektu nesmie obsahovať žiadny z týchto znakov: ; $ ^ { } * = | ' < > %",
   "project_identifier_already_taken": "Identifikátor projektu je už použitý.",
   "project_cover_image_alt": "Úvodný obrázok projektu",
   "name_is_required": "Názov je povinný",
