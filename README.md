@@ -33,7 +33,12 @@
 > Copyright (c) 2023-present Plane Software, Inc. and contributors
 >
 > **Modifications:**  
-> Copyright (c) 2026-present OSM Piątnica and contributors
+> Copyright (c) 2026-present Okręgowa Spółdzielnia Mleczarska w Piątnicy
+>
+> **File notices:**  
+> Files created by Okręgowa Spółdzielnia Mleczarska w Piątnicy carry only our copyright line. Upstream files we changed keep the Plane Software notice and add a "Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy" line. Files that cannot hold comments, such as JSON locale files, carry no per-file notice; in them, Okręgowa Spółdzielnia Mleczarska w Piątnicy claims copyright only in the keys and translations it added or changed, and the rest remains under the original copyright holders' notices.
+>
+> All of the above is licensed under AGPL-3.0-only; see [LICENSE.txt](LICENSE.txt).
 
 Meet [Plane](https://plane.so/), an open-source project management tool to track issues, run ~sprints~ cycles, and manage product roadmaps without the chaos of managing the tool itself. 🧘‍♀️
 
