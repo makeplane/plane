@@ -176,6 +176,11 @@
     "footer": {
       "workspace_level": "La nivel de spațiu de lucru"
     },
+    "shortcuts_modal": {
+      "search_placeholder": "Căutați scurtături de tastatură",
+      "no_results": "Nicio scurtătură de tastatură găsită pentru „{query}”",
+      "sequence_separator": "apoi"
+    },
     "group_titles": {
       "actions": "Acțiuni",
       "contextual": "Contextual",

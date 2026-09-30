@@ -8,6 +8,7 @@
   "submit": "გაგზავნა",
   "cancel": "გაუქმება",
   "loading": "ჩატვირთვა",
+  "searching": "ძიება მიმდინარეობს...",
   "error": "შეცდომა",
   "success": "წარმატება",
   "warning": "გაფრთხილება",
@@ -303,6 +304,9 @@
   "create_new_label": "ახალი იარლიყის შექმნა",
   "label_name": "Label name",
   "failed_to_create_label": "Failed to create label. Please try again.",
+  "no_matching_labels": "შესაბამისი იარლიყები არ მოიძებნა",
+  "adding_label": "„{name}“ ემატება",
+  "add_label_to_labels": "დაამატეთ „{name}“ იარლიყებში",
   "start_date": "დაწყების თარიღი",
   "end_date": "დასრულების თარიღი",
   "due_date": "ვადის თარიღი",
@@ -522,6 +526,7 @@
       "updated_on": "განახლებულია"
     },
     "sort": {
+      "label": "დალაგება",
       "asc": "აღმავალი",
       "desc": "დაღმავალი",
       "created_on": "შექმნილია",
@@ -619,7 +624,8 @@
       "enable": "ჩართვა",
       "disable": "გამორთვა",
       "copy_markdown": "Markdown-ის კოპირება",
-      "reply": "Reply"
+      "reply": "Reply",
+      "add_reaction": "რეაქციის დამატება"
     },
     "name": "სახელი",
     "discard": "გაუქმება",
@@ -867,5 +873,6 @@
       "description": "ექსპორტირეთ სამუშაო ელემენტები JSON ფაილში.",
       "short_description": "ექსპორტი json-ად"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# იარლიყი} other {# იარლიყი}}"
 }

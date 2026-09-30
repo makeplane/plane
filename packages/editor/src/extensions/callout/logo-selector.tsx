@@ -5,7 +5,7 @@
  */
 
 // plane imports
-import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
+import { EmojiPicker, Logo } from "@plane/blocks/emoji-icon-picker";
 import type { TLogoProps } from "@plane/types";
 import { cn } from "@plane/utils";
 // types
@@ -95,7 +95,7 @@ export function CalloutBlockLogoSelector(props: Props) {
           handleOpen(false);
         }}
         defaultIconColor={logoValue?.in_use && logoValue.in_use === "icon" ? logoValue?.icon?.color : undefined}
-        defaultOpen={logoValue.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON}
+        defaultOpen={logoValue.in_use === "emoji" ? "emoji" : "icon"}
         disabled={disabled}
         searchDisabled
       />

@@ -4,14 +4,23 @@
  * See the LICENSE file for details.
  */
 
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme as useNextTheme } from "next-themes";
+import { Icon } from "@makeplane/propel/components/icon";
+import {
+  Menu,
+  MenuContent,
+  MenuGroup,
+  MenuItem,
+  MenuLabel,
+  MenuSeparator,
+  MenuTrigger,
+} from "@makeplane/propel/components/menu";
+import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
 import { AccessAndRolesOutline, LogOutOutline, PaletteOutline } from "@makeplane/propel/icons";
-import { Menu, Transition } from "@headlessui/react";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
-import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
 import { AuthService } from "@plane/services";
 import { getFileURL, cn } from "@plane/utils";
 // hooks
@@ -28,6 +37,11 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
   const { resolvedTheme, setTheme } = useNextTheme();
   // state
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
+  // refs
+  // A Base UI menu closes (and unmounts its rows) on item press, so a submit button inside the
+  // panel would be detached before the browser ran the default action. The sign-out form lives
+  // outside the menu and the row submits it explicitly.
+  const signOutFormRef = useRef<HTMLFormElement>(null);
 
   const handleThemeSwitch = () => {
     const newTheme = resolvedTheme === "dark" ? "light" : "dark";
@@ -37,42 +51,23 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
   const handleSignOut = () => signOut();
 
   const getSidebarMenuItems = () => (
-    <Menu.Items
-      className={cn(
-        "shadow-lg absolute left-0 z-20 mt-1.5 flex w-52 flex-col divide-y divide-subtle rounded-md border border-subtle bg-surface-1 px-1 py-2 text-11 outline-none",
-        {
-          "left-4": isSidebarCollapsed,
-        }
-      )}
-    >
-      <div className="flex flex-col gap-2.5 pb-2">
-        <span className="truncate px-2 text-secondary">{currentUser?.email}</span>
-      </div>
-      <div className="py-2">
-        <Menu.Item
-          as="button"
-          type="button"
-          className="flex w-full items-center gap-2 rounded-sm px-2 py-1 hover:bg-layer-1-hover"
-          onClick={handleThemeSwitch}
-        >
-          <PaletteOutline className="h-4 w-4 stroke-[1.5]" />
-          Switch to {resolvedTheme === "dark" ? "light" : "dark"} mode
-        </Menu.Item>
-      </div>
-      <div className="py-2">
-        <form method="POST" action={`${API_BASE_URL}/api/instances/admins/sign-out/`} onSubmit={handleSignOut}>
-          <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
-          <Menu.Item
-            as="button"
-            type="submit"
-            className="flex w-full items-center gap-2 rounded-sm px-2 py-1 hover:bg-layer-1-hover"
-          >
-            <LogOutOutline className="h-4 w-4 stroke-[1.5]" />
-            Sign out
-          </Menu.Item>
-        </form>
-      </div>
-    </Menu.Items>
+    <MenuContent side="bottom" align="start">
+      <MenuGroup>
+        <MenuLabel>{currentUser?.email}</MenuLabel>
+      </MenuGroup>
+      <MenuSeparator />
+      <MenuItem
+        icon={<Icon icon={PaletteOutline} />}
+        label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
+        onClick={handleThemeSwitch}
+      />
+      <MenuSeparator />
+      <MenuItem
+        icon={<Icon icon={LogOutOutline} />}
+        label="Sign out"
+        onClick={() => signOutFormRef.current?.requestSubmit()}
+      />
+    </MenuContent>
   );
 
   useEffect(() => {
@@ -82,35 +77,38 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
 
   return (
     <div className="flex max-h-header items-center gap-x-5 gap-y-2 border-b border-subtle px-4 py-2.5">
+      <form
+        ref={signOutFormRef}
+        className="hidden"
+        method="POST"
+        action={`${API_BASE_URL}/api/instances/admins/sign-out/`}
+        onSubmit={handleSignOut}
+      >
+        <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
+      </form>
       <div className="h-full w-full truncate">
         <div
           className={`flex flex-grow items-center gap-x-2 truncate rounded-sm ${
             isSidebarCollapsed ? "justify-center" : ""
           }`}
         >
-          <Menu as="div" className="flex-shrink-0">
-            <Menu.Button
-              className={cn("grid place-items-center outline-none", {
-                "cursor-default": !isSidebarCollapsed,
-              })}
-            >
-              <div className="flex size-8 flex-shrink-0 items-center justify-center rounded-sm bg-layer-1">
-                <AccessAndRolesOutline className="size-5 text-primary" />
-              </div>
-            </Menu.Button>
-            {isSidebarCollapsed && (
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                {getSidebarMenuItems()}
-              </Transition>
-            )}
+          <Menu>
+            <MenuTrigger
+              render={
+                <button
+                  type="button"
+                  aria-label="Instance admin menu"
+                  className={cn("grid flex-shrink-0 place-items-center outline-none", {
+                    "cursor-default": !isSidebarCollapsed,
+                  })}
+                >
+                  <div className="flex size-8 flex-shrink-0 items-center justify-center rounded-sm bg-layer-1">
+                    <AccessAndRolesOutline className="size-5 text-primary" />
+                  </div>
+                </button>
+              }
+            />
+            {isSidebarCollapsed && getSidebarMenuItems()}
           </Menu>
 
           {!isSidebarCollapsed && (
@@ -122,27 +120,24 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
       </div>
 
       {!isSidebarCollapsed && currentUser && (
-        <Menu as="div" className="relative flex-shrink-0">
-          <Menu.Button className="grid place-items-center outline-none">
-            <WorkspaceAvatar
-              alt={currentUser.display_name ?? "Admin user"}
-              fallback={currentUser.display_name?.[0]?.toUpperCase()}
-              src={getFileURL(currentUser.avatar_url)}
-              size="sm"
-            />
-          </Menu.Button>
-
-          <Transition
-            as={Fragment}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
-          >
-            {getSidebarMenuItems()}
-          </Transition>
+        <Menu>
+          <MenuTrigger
+            render={
+              <button
+                type="button"
+                aria-label="Account menu"
+                className="grid flex-shrink-0 place-items-center outline-none"
+              >
+                <WorkspaceAvatar
+                  alt={currentUser.display_name ?? "Admin user"}
+                  fallback={currentUser.display_name?.[0]?.toUpperCase()}
+                  src={getFileURL(currentUser.avatar_url)}
+                  size="sm"
+                />
+              </button>
+            }
+          />
+          {getSidebarMenuItems()}
         </Menu>
       )}
     </div>

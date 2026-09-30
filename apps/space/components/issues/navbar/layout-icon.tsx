@@ -6,7 +6,7 @@
 
 import type { TIssueLayout } from "@plane/constants";
 import { BoardOutline, ListOutline } from "@makeplane/propel/icons";
-import type { ISvgIcons } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/blocks/icons";
 
 export function IssueLayoutIcon({
   layout,

@@ -9,10 +9,11 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { Banner } from "@makeplane/propel/components/banner";
+import { Icon } from "@makeplane/propel/components/icon";
 import { ArchiveOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { Loader } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { Loader } from "@plane/blocks/skeleton";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { IssueDetailRoot } from "@/components/issues/issue-detail";
@@ -73,14 +74,15 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
             placement="page"
             variant="warning"
             title={t("issue.archive.banner_message")}
-            icon={<ArchiveOutline />}
+            icon={<Icon icon={ArchiveOutline} />}
             actions={
               <Button
                 variant="secondary"
+                size="sm"
+                stretch="auto"
+                label={t("issue.archive.go_to_archives")}
                 onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/`)}
-              >
-                {t("issue.archive.go_to_archives")}
-              </Button>
+              />
             }
           />
           <div className="flex h-full overflow-hidden">

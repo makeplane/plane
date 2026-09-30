@@ -9,9 +9,10 @@ import { observer } from "mobx-react";
 import { CloseCircleOutline, HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // plane imports
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
+import { Input } from "@makeplane/propel/components/input";
 import { AuthService } from "@plane/services";
-import { Input, Spinner, PasswordStrengthIndicator } from "@plane/ui";
+import { PasswordStrengthIndicator } from "@plane/blocks/auth";
 import { getPasswordStrength } from "@plane/utils";
 // types
 import { EAuthModes, EAuthSteps } from "@/types/auth";
@@ -125,15 +126,15 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         <label className="text-13 font-medium text-tertiary" htmlFor="email">
           Email
         </label>
-        <div className={`relative flex items-center rounded-md border border-subtle bg-surface-1`}>
+        <div className="relative flex h-10 items-center rounded-md border border-subtle bg-surface-1 px-3 [&_input]:disable-autofill-style">
           <Input
             id="email"
             name="email"
             type="email"
+            size="xl"
             value={passwordFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder="name@company.com"
-            className={`h-10 w-full border-0 disable-autofill-style placeholder:text-placeholder`}
             disabled
           />
           {passwordFormData.email.length > 0 && (
@@ -154,17 +155,19 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         <label className="text-13 font-medium text-tertiary" htmlFor="password">
           {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"}
         </label>
-        <div className="relative flex items-center rounded-md bg-surface-1">
+        <div className="relative flex h-10 items-center rounded-md border border-subtle bg-surface-1 pr-12 pl-3 [&_input]:disable-autofill-style">
           <Input
+            id="password"
             type={showPassword?.password ? "text" : "password"}
             name="password"
+            size="xl"
             value={passwordFormData.password}
             onChange={(e) => handleFormChange("password", e.target.value)}
             placeholder="Enter password"
-            className="h-10 w-full border border-subtle !bg-surface-1 pr-12 disable-autofill-style placeholder:text-placeholder"
             onFocus={() => setIsPasswordInputFocused(true)}
             onBlur={() => setIsPasswordInputFocused(false)}
             autoComplete="off"
+            // oxlint-disable-next-line jsx-a11y/no-autofocus -- sole primary field of a dedicated auth step; matches standard sign-in flows
             autoFocus
           />
           {showPassword?.password ? (
@@ -195,14 +198,15 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
             Confirm password
           </label>
-          <div className="relative flex items-center rounded-md bg-surface-1">
+          <div className="relative flex h-10 items-center rounded-md border border-subtle bg-surface-1 pr-12 pl-3 [&_input]:disable-autofill-style">
             <Input
+              id="confirm_password"
               type={showPassword?.retypePassword ? "text" : "password"}
               name="confirm_password"
+              size="xl"
               value={passwordFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder="Confirm password"
-              className="h-10 w-full border border-subtle !bg-surface-1 pr-12 disable-autofill-style placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
               autoComplete="off"
@@ -236,31 +240,36 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
       <div className="space-y-2.5">
         {mode === EAuthModes.SIGN_IN ? (
           <>
-            <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-              {isSubmitting ? (
-                <Spinner height="20px" width="20px" />
-              ) : isSMTPConfigured ? (
-                "Continue"
-              ) : (
-                "Go to workspace"
-              )}
-            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              stretch="full"
+              disabled={isButtonDisabled}
+              loading={isSubmitting}
+              label={isSMTPConfigured ? "Continue" : "Go to workspace"}
+            />
             {isSMTPConfigured && (
               <Button
                 type="button"
-                onClick={redirectToUniqueCodeSignIn}
                 variant="secondary"
-                className="w-full"
-                size="xl"
-              >
-                Sign in with unique code
-              </Button>
+                size="lg"
+                stretch="full"
+                label="Sign in with unique code"
+                onClick={redirectToUniqueCodeSignIn}
+              />
             )}
           </>
         ) : (
-          <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-            {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
-          </Button>
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            stretch="full"
+            disabled={isButtonDisabled}
+            loading={isSubmitting}
+            label="Create account"
+          />
         )}
       </div>
     </form>

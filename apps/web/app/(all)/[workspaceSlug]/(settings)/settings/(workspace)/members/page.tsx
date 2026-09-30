@@ -9,9 +9,9 @@ import { observer } from "mobx-react";
 // types
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { SearchOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspaceBulkInviteFormData } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -58,7 +58,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
       setInviteModal(false);
 
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: t("workspace_settings.settings.members.invitations_sent_successfully"),
       });
@@ -69,7 +69,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
         message = err.error;
       }
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: `${message ?? t("something_went_wrong_please_try_again")}`,
       });
@@ -136,9 +136,13 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
               memberType="workspace"
             />
             {canPerformWorkspaceAdminActions && (
-              <Button variant="primary" size="lg" onClick={() => setInviteModal(true)}>
-                {t("workspace_settings.settings.members.add_member")}
-              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label={t("workspace_settings.settings.members.add_member")}
+                onClick={() => setInviteModal(true)}
+              />
             )}
           </div>
         </div>

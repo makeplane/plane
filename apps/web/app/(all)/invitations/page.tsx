@@ -14,9 +14,9 @@ import { TickCircleOutline } from "@makeplane/propel/icons";
 import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import { Button } from "@plane/propel/button";
-import { PlaneLogo } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { PlaneLogo } from "@plane/blocks/icons";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { truncateText } from "@plane/utils";
 // assets
@@ -67,7 +67,7 @@ function UserInvitationsPage() {
   const submitInvitations = () => {
     if (invitationsRespond.length === 0) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("error"),
         message: t("please_select_at_least_one_invitation"),
       });
@@ -91,7 +91,7 @@ function UserInvitationsPage() {
           })
           .catch(() => {
             setToast({
-              type: TOAST_TYPE.ERROR,
+              type: "error",
               title: t("error"),
               message: t("something_went_wrong_please_try_again"),
             });
@@ -100,7 +100,7 @@ function UserInvitationsPage() {
       })
       .catch((_err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("error"),
           message: t("something_went_wrong_please_try_again"),
         });
@@ -134,28 +134,32 @@ function UserInvitationsPage() {
                     const isSelected = invitationsRespond.includes(invitation.id);
 
                     return (
-                      <div
+                      <button
                         key={invitation.id}
-                        className={`flex cursor-pointer items-center gap-2 rounded-sm border px-3.5 py-5 ${
+                        type="button"
+                        className={`flex w-full cursor-pointer items-center gap-2 rounded-sm border px-3.5 py-5 text-left ${
                           isSelected ? "border-accent-strong" : "border-subtle hover:bg-layer-1"
                         }`}
+                        aria-pressed={isSelected}
                         onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                       >
-                        <div className="flex-shrink-0">
+                        <span className="flex-shrink-0">
                           <WorkspaceLogo
                             logo={invitation.workspace.logo_url}
                             name={invitation.workspace.name}
                             classNames="size-9 flex-shrink-0"
                           />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="text-13 font-medium">{truncateText(invitation.workspace.name, 30)}</div>
-                          <p className="text-11 text-secondary">{ROLE[invitation.role]}</p>
-                        </div>
+                        </span>
+                        <span className="block min-w-0 flex-1">
+                          <span className="block text-13 font-medium">
+                            {truncateText(invitation.workspace.name, 30)}
+                          </span>
+                          <span className="block text-11 text-secondary">{ROLE[invitation.role]}</span>
+                        </span>
                         <span className={`flex-shrink-0 ${isSelected ? "text-accent-primary" : "text-secondary"}`}>
                           <TickCircleOutline className="h-5 w-5" />
                         </span>
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
@@ -163,20 +167,21 @@ function UserInvitationsPage() {
                   <Button
                     variant="primary"
                     type="submit"
-                    size="lg"
+                    size="md"
+                    stretch="auto"
+                    label={t("accept_and_join")}
                     onClick={submitInvitations}
                     disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
                     loading={isJoiningWorkspaces}
-                  >
-                    {t("accept_and_join")}
-                  </Button>
-                  <Link href={`/${redirectWorkspaceSlug}`}>
-                    <span>
-                      <Button variant="secondary" size="lg">
-                        {t("go_home")}
-                      </Button>
-                    </span>
-                  </Link>
+                  />
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    stretch="auto"
+                    nativeButton={false}
+                    render={<Link href={`/${redirectWorkspaceSlug}`} />}
+                    label={t("go_home")}
+                  />
                 </div>
               </div>
             </div>

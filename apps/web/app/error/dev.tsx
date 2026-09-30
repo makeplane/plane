@@ -8,8 +8,8 @@
 import { isRouteErrorResponse } from "react-router";
 import { Banner } from "@makeplane/propel/components/banner";
 import { InfoFilled } from "@makeplane/propel/icons";
-import { Button } from "@plane/propel/button";
-import { Card, ECardVariant } from "@plane/propel/card";
+import { Button } from "@makeplane/propel/components/button";
+import { Card } from "@plane/blocks/card";
 
 interface ErrorActionsProps {
   onGoHome: () => void;
@@ -19,14 +19,8 @@ interface ErrorActionsProps {
 function ErrorActions({ onGoHome, onReload }: ErrorActionsProps) {
   return (
     <div className="flex gap-3 pt-2">
-      <Button variant="primary" size="lg" onClick={onGoHome}>
-        Go to home
-      </Button>
-      {onReload && (
-        <Button variant="secondary" size="lg" onClick={onReload}>
-          Reload page
-        </Button>
-      )}
+      <Button variant="primary" size="md" stretch="auto" label="Go to home" onClick={onGoHome} />
+      {onReload && <Button variant="secondary" size="md" stretch="auto" label="Reload page" onClick={onReload} />}
     </div>
   );
 }
@@ -44,7 +38,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
         <div className="mt-12 w-full max-w-4xl space-y-4 transition-none">
           <Banner placement="page" variant="danger" icon={<InfoFilled />} title="Route Error Response" />
 
-          <Card variant={ECardVariant.WITH_SHADOW} className="!p-6 transition-none">
+          <Card variant="with-shadow" className="!p-6 transition-none">
             <div className="space-y-4">
               <div>
                 <h2 className="mb-2 text-20 font-semibold text-danger-primary">
@@ -73,7 +67,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
       <div className="flex min-h-screen items-start justify-center bg-surface-2 p-6 transition-none">
         <div className="mt-12 w-full max-w-4xl space-y-4 transition-none">
           <Banner placement="page" variant="danger" icon={<InfoFilled />} title="Runtime Error" />
-          <Card variant={ECardVariant.WITH_SHADOW} className="!p-6 transition-none">
+          <Card variant="with-shadow" className="!p-6 transition-none">
             <div className="space-y-4">
               <div>
                 <h2 className="mb-2 text-20 font-semibold text-danger-primary">Error</h2>
@@ -102,7 +96,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
             </div>
           </Card>
 
-          <Card variant={ECardVariant.WITHOUT_SHADOW} className="bg-layer-1 !p-4 transition-none">
+          <Card variant="without-shadow" className="bg-layer-1 !p-4 transition-none">
             <div className="flex items-start gap-3">
               <InfoFilled className="mt-0.5 size-5 flex-shrink-0 text-tertiary" />
               <div className="space-y-1">
@@ -124,7 +118,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
       <div className="mt-12 w-full max-w-4xl space-y-4 transition-none">
         <Banner placement="page" variant="danger" icon={<InfoFilled />} title="Unknown Error" />
 
-        <Card variant={ECardVariant.WITH_SHADOW} className="!p-6">
+        <Card variant="with-shadow" className="!p-6">
           <div className="space-y-4">
             <div>
               <h2 className="mb-2 text-20 font-semibold text-primary">Unknown Error</h2>

@@ -13,7 +13,8 @@ import { useTranslation } from "@plane/i18n";
 import { BoardOutline, CalendarOutline, ChevronDownOutline, ListOutline } from "@makeplane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
@@ -79,27 +80,25 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
         projectDetails={currentProjectDetails}
       />
       <div className="flex justify-evenly border-b border-subtle bg-surface-1 py-2">
-        <CustomMenu
-          maxHeight={"md"}
-          className="flex flex-grow justify-center text-13 text-secondary"
-          placement="bottom-start"
-          customButton={<span className="flex flex-grow justify-center text-13 text-secondary">Layout</span>}
-          customButtonClassName="flex flex-grow justify-center text-secondary text-13"
-          closeOnSelect
-        >
-          {SUPPORTED_LAYOUTS.map((layout, index) => (
-            <CustomMenu.MenuItem
-              key={layout.key}
-              onClick={() => {
-                handleLayoutChange(ISSUE_LAYOUTS[index].key);
-              }}
-              className="flex items-center gap-2"
-            >
-              <IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="h-3 w-3" />
-              <div className="text-tertiary">{t(layout.i18n_title)}</div>
-            </CustomMenu.MenuItem>
-          ))}
-        </CustomMenu>
+        <Menu>
+          <MenuTrigger
+            render={<button type="button" className="flex flex-grow justify-center text-13 text-secondary" />}
+          >
+            Layout
+          </MenuTrigger>
+          <MenuContent side="bottom" align="start">
+            {SUPPORTED_LAYOUTS.map((layout, index) => (
+              <MenuItem
+                key={layout.key}
+                label={t(layout.i18n_title)}
+                icon={<Icon icon={<IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="size-3" />} />}
+                onClick={() => {
+                  handleLayoutChange(ISSUE_LAYOUTS[index].key);
+                }}
+              />
+            ))}
+          </MenuContent>
+        </Menu>
         <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
           <FiltersDropdown
             title="Display"

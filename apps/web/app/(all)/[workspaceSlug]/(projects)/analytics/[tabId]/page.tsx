@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 // plane package imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import { Tab, Tabs, TabsList, TabsPanel } from "@makeplane/propel/components/tabs";
 // components
 import { cn } from "@plane/utils";

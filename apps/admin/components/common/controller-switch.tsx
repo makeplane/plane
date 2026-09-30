@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useId } from "react";
 import type { Control, FieldPath, FieldValues } from "react-hook-form";
 import { Controller } from "react-hook-form";
 // plane internal packages
@@ -24,10 +25,13 @@ export function ControllerSwitch<T extends FieldValues>(props: Props<T>) {
     control,
     field: { name, label },
   } = props;
+  const labelId = useId();
 
   return (
     <div className="flex items-center justify-between gap-1">
-      <h4 className="text-sm text-custom-text-300">Refresh user attributes from {label} during sign in</h4>
+      <h4 id={labelId} className="text-sm text-custom-text-300">
+        Refresh user attributes from {label} during sign in
+      </h4>
       <div className="relative">
         <Controller
           control={control}
@@ -35,7 +39,14 @@ export function ControllerSwitch<T extends FieldValues>(props: Props<T>) {
           render={({ field: { value, onChange } }) => {
             const parsedValue = Number.parseInt(typeof value === "string" ? value : String(value ?? "0"), 10);
             const isOn = !Number.isNaN(parsedValue) && parsedValue !== 0;
-            return <Switch checked={isOn} onCheckedChange={() => onChange(isOn ? "0" : "1")} size="sm" />;
+            return (
+              <Switch
+                checked={isOn}
+                onCheckedChange={() => onChange(isOn ? "0" : "1")}
+                size="sm"
+                aria-labelledby={labelId}
+              />
+            );
           }}
         />
       </div>

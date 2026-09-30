@@ -176,6 +176,11 @@
     "footer": {
       "workspace_level": "Arbeitsbereich-Ebene"
     },
+    "shortcuts_modal": {
+      "search_placeholder": "Tastaturkürzel suchen",
+      "no_results": "Keine Tastaturkürzel für „{query}“ gefunden",
+      "sequence_separator": "dann"
+    },
     "group_titles": {
       "actions": "Aktionen",
       "contextual": "Kontextbezogen",

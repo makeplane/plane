@@ -18,7 +18,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, ParseError
 from rest_framework.generics import GenericAPIView
 
 # Module imports
@@ -30,6 +30,9 @@ from plane.utils.core.mixins import ReadReplicaControlMixin
 
 
 logger = logging.getLogger("plane.api")
+
+# Views call request.data.get()/.pop(). A scalar parses, then raises AttributeError.
+_NON_CONTAINER_BODY_ERROR = "Request body must be a JSON object or array."
 
 
 class TimezoneMixin:
@@ -52,6 +55,11 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
     permission_classes = [IsAuthenticated]
 
     use_read_replica = False
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        if request.method in ("POST", "PUT", "PATCH") and not isinstance(request.data, (dict, list)):
+            raise ParseError(_NON_CONTAINER_BODY_ERROR)
 
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):
@@ -159,6 +167,11 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
         IsAuthenticated,
     ]
     use_read_replica = False
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        if request.method in ("POST", "PUT", "PATCH") and not isinstance(request.data, (dict, list)):
+            raise ParseError(_NON_CONTAINER_BODY_ERROR)
 
     def get_queryset(self):
         try:

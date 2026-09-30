@@ -34,13 +34,7 @@ export const GiteaConfiguration = observer(function GiteaConfiguration(props: Pr
     <>
       {GiteaConfigured ? (
         <div className="flex items-center gap-4">
-          <AnchorButton
-            variant="primary"
-            size="sm"
-            nativeButton={false}
-            render={<Link href="/authentication/gitea" />}
-            label="Edit"
-          />
+          <AnchorButton variant="primary" size="sm" render={<Link href="/authentication/gitea" />} label="Edit" />
           <Switch
             checked={Boolean(parseInt(GiteaConfig))}
             onCheckedChange={() => {
@@ -49,6 +43,7 @@ export const GiteaConfiguration = observer(function GiteaConfiguration(props: Pr
                 : updateConfig("IS_GITEA_ENABLED", "1");
             }}
             size="sm"
+            aria-label="Enable Gitea"
             disabled={disabled}
           />
         </div>

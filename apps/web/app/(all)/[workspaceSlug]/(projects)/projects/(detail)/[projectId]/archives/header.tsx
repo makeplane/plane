@@ -10,16 +10,17 @@ import { ArchiveOutline, CyclesOutline, ModuleOutline, WorkItemsOutline } from "
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 // ui
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 
 type TProps = {
   activeTab: "issues" | "cycles" | "modules";
@@ -52,8 +53,8 @@ const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
 export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(props: TProps) {
   const { activeTab } = props;
   // router
-  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   // store hooks
   const {
     issues: { getGroupIssueCount },
@@ -71,8 +72,12 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
     <Header>
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
-          <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <Breadcrumbs isLoading={loader === "init-loader"}>
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+              {...projectCrumb}
+            />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink

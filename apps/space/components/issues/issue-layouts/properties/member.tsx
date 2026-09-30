@@ -9,7 +9,8 @@ import { observer } from "mobx-react";
 import type { LucideIcon } from "lucide-react";
 import { MembersOutline } from "@makeplane/propel/icons";
 // plane ui
-import { Avatar, AvatarGroup } from "@plane/ui";
+import { Avatar } from "@makeplane/propel/components/avatar";
+import { AvatarGroup } from "@makeplane/propel/components/avatar-group";
 // plane utils
 import { cn } from "@plane/utils";
 // hooks
@@ -33,21 +34,32 @@ export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps)
 
   if (Array.isArray(members)) {
     if (members.length > 1) {
+      const resolvedMembers = members.filter(Boolean);
       return (
-        <AvatarGroup size="md" showTooltip={!showTooltip}>
-          {members.map((member) => {
-            if (!member) return;
-            return <Avatar key={member.id} src={member.member__avatar} name={member.member__display_name} />;
-          })}
+        <AvatarGroup
+          size="xs"
+          label={resolvedMembers.map((member) => member.member__display_name).join(", ")}
+          overflowTooltip={showTooltip ? undefined : `${resolvedMembers.length} total`}
+        >
+          {resolvedMembers.map((member) => (
+            <Avatar
+              key={member.id}
+              src={member.member__avatar}
+              alt={member.member__display_name}
+              fallback={member.member__display_name?.[0]?.toUpperCase()}
+              tooltip={!showTooltip}
+            />
+          ))}
         </AvatarGroup>
       );
     } else if (members.length === 1) {
       return (
         <Avatar
+          size="xs"
           src={members[0].member__avatar}
-          name={members[0].member__display_name}
-          size="md"
-          showTooltip={!showTooltip}
+          alt={members[0].member__display_name}
+          fallback={members[0].member__display_name?.[0]?.toUpperCase()}
+          tooltip={!showTooltip}
         />
       );
     }
