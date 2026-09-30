@@ -250,14 +250,22 @@ overrides:
   axios: "catalog:"
   follow-redirects: 1.16.0
   uuid: "catalog:"
-  # EXACT pin, not a floor: fast-uri reaches us only through ajv, whose range is
-  # ^3.0.1, and 4.x is outside it. So bump the NUMBER here when a new advisory
-  # lands -- do not widen to a range, which would drift onto 4.x.
-  # 3.1.6 covered CVE-2026-75899/-75931/-75975/-76172 (SSRF and host confusion
-  # via percent-decoding, IDN canonicalization and IPv6 normalization). It is now
-  # itself affected by CVE-2026-84292 (authority injection via unvalidated port
-  # serialization) and CVE-2026-84394 (host confusion via unbalanced URI
-  # brackets), fixed in 3.1.7. 3.1.8 is the newest 3.x and carries both.
+  # EXACT pin, not a floor. Bump the NUMBER when a new advisory lands -- never
+  # widen to a range, which would drift onto 4.x. The only consumer in this tree
+  # is ajv (range ^3.0.1, resolves ajv@8.18.0), so that is the one range a bump
+  # has to satisfy. Re-check that before crossing a major; plane-ee additionally
+  # has @todesktop/cli pinning it, which this repo does not.
+  #
+  # 3.1.8 is the minimum, NOT 3.1.7 -- do not "simplify" down to the 3.1.7 floor:
+  #   3.1.6  was itself the fix for CVE-2026-75899/-75931/-75975/-76172 (SSRF
+  #          and host confusion via percent-decoding, IDN canonicalization and
+  #          IPv6 normalization), which is why this pin keeps moving.
+  #   3.1.7  CVE-2026-84292 (authority injection via unvalidated port
+  #          serialization) and CVE-2026-84394 (host confusion via unbalanced
+  #          URI brackets) -- both HIGH, the pair the nightly scan flagged.
+  #   3.1.8  CVE-2026-86472 / GHSA-hrr3-gc8f-f4qj (inconsistent host case
+  #          normalization via percent-encoded octets) -- MEDIUM, so the
+  #          HIGH/CRITICAL-only nightly would NOT catch a slip back to 3.1.7.
   fast-uri: 3.1.8
   "js-yaml@4": 4.3.2
   linkify-it: 5.0.2
