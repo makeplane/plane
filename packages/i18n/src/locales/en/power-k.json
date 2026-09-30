@@ -188,5 +188,23 @@
       "preferences": "Preferences",
       "help": "Help"
     }
+  },
+  "power_k_ui": {
+    "clear_context": "Clear context (Backspace)",
+    "empty_menu": {
+      "cycles": "No cycles found",
+      "labels": "No labels found",
+      "modules": "No modules found",
+      "projects": "No projects found",
+      "settings": "No settings found",
+      "views": "No views found",
+      "workspaces": "No workspaces found"
+    },
+    "epic_update_error": "Epic could not be updated. Please try again.",
+    "module_update_error": "Module could not be updated. Please try again.",
+    "no_estimate_found": "No estimate found",
+    "reloading_to_apply": "Reloading to apply changes...",
+    "some_error_occurred": "Some error occurred",
+    "work_item_update_error": "Work item could not be updated. Please try again."
   }
 }

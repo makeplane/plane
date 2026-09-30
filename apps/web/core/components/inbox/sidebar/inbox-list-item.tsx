@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -9,6 +10,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Row, Avatar } from "@plane/ui";
@@ -35,6 +37,8 @@ type InboxIssueListItemProps = {
 
 export const InboxIssueListItem = observer(function InboxIssueListItem(props: InboxIssueListItemProps) {
   const { workspaceSlug, projectId, inboxIssueId, projectIdentifier, setIsMobileSidebar } = props;
+  // translation
+  const { t } = useTranslation();
   // router
   const searchParams = useSearchParams();
   const selectedInboxIssueId = searchParams.get("inboxIssueId");
@@ -85,7 +89,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
           <div className="flex items-center justify-between">
             <div className="flex flex-wrap items-center gap-2">
               <Tooltip
-                tooltipHeading="Created on"
+                tooltipHeading={t("common.created_on")}
                 tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}
                 isMobile={isMobile}
               >

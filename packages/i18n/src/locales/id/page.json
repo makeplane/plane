@@ -111,5 +111,101 @@
       "success_message": "Halaman dihapus dari koleksi.",
       "error_message": "Halaman tidak dapat dihapus dari koleksi. Silakan coba lagi."
     }
+  },
+  "page_ui": {
+    "add_page": "Tambah halaman",
+    "ai": {
+      "add_to_next_line": "Tambahkan ke baris berikutnya",
+      "answering": "AI sedang menjawab...",
+      "prompt_placeholder": "Beri tahu AI apa yang harus dilakukan...",
+      "regenerate_response": "Buat ulang respons",
+      "replace_selection": "Ganti pilihan"
+    },
+    "content_limit_banner": {
+      "dismiss": "Tutup peringatan batas konten",
+      "message": "Batas konten tercapai dan sinkronisasi langsung nonaktif. Buat halaman baru atau gunakan halaman bersarang untuk melanjutkan sinkronisasi."
+    },
+    "create_modal": {
+      "creating": "Membuat",
+      "submit": "Buat halaman",
+      "title": "Buat halaman"
+    },
+    "delete_modal": {
+      "content_prefix": "Apakah Anda yakin ingin menghapus halaman",
+      "content_suffix": "? Halaman akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.",
+      "error": "Halaman tidak dapat dihapus. Silakan coba lagi.",
+      "success": "Halaman berhasil dihapus.",
+      "title": "Hapus halaman"
+    },
+    "editor": {
+      "background_colors": "Warna latar belakang",
+      "full_width": "Lebar penuh",
+      "markdown_copied": "Markdown disalin ke papan klip.",
+      "sticky_toolbar": "Bilah alat tetap",
+      "text_colors": "Warna teks"
+    },
+    "export_modal": {
+      "content_everything": "Semuanya",
+      "content_no_images": "Tanpa gambar",
+      "error": "Halaman tidak dapat diekspor. Silakan coba lagi nanti.",
+      "export_format": "Format ekspor",
+      "exporting": "Mengekspor",
+      "include_content": "Sertakan konten",
+      "page_format": "Format halaman",
+      "success": "Halaman berhasil diekspor.",
+      "title": "Ekspor halaman"
+    },
+    "hooks": {
+      "work_item_update_error": "Kesalahan saat memperbarui item kerja"
+    },
+    "lock": {
+      "locked": "Terkunci",
+      "unlocked": "Kunci dibuka"
+    },
+    "not_found": {
+      "description": "Halaman yang ingin Anda akses tidak ada atau Anda tidak memiliki izin untuk melihatnya.",
+      "title": "Halaman tidak ditemukan",
+      "view_other_pages": "Lihat halaman lain"
+    },
+    "offline": {
+      "description": "Anda dapat terus melakukan perubahan. Perubahan akan disinkronkan saat Anda kembali online.",
+      "heading": "Anda sedang offline.",
+      "label": "Offline"
+    },
+    "operations": {
+      "add_favorite_error": "Halaman tidak dapat ditambahkan ke favorit. Silakan coba lagi nanti.",
+      "add_favorite_success": "Halaman ditambahkan ke favorit.",
+      "archive_error": "Halaman tidak dapat diarsipkan. Silakan coba lagi nanti.",
+      "archive_success": "Halaman berhasil diarsipkan.",
+      "duplicate_error": "Halaman tidak dapat diduplikasi. Silakan coba lagi nanti.",
+      "duplicate_success": "Halaman berhasil diduplikasi.",
+      "link_copied": "Tautan disalin!",
+      "link_copied_message": "Tautan halaman disalin ke papan klip.",
+      "lock_error": "Halaman tidak dapat dikunci. Silakan coba lagi nanti.",
+      "lock_success": "Halaman berhasil dikunci.",
+      "remove_favorite_error": "Halaman tidak dapat dihapus dari favorit. Silakan coba lagi nanti.",
+      "remove_favorite_success": "Halaman dihapus dari favorit.",
+      "restore_error": "Halaman tidak dapat dipulihkan. Silakan coba lagi nanti.",
+      "restore_success": "Halaman berhasil dipulihkan.",
+      "unlock_error": "Kunci halaman tidak dapat dibuka. Silakan coba lagi nanti.",
+      "unlock_success": "Kunci halaman berhasil dibuka."
+    },
+    "realtime": {
+      "deleted": "Halaman dihapus",
+      "deleted_by": "Halaman dihapus oleh {name}",
+      "load_failed": "Gagal memuat halaman",
+      "save_failed": "Gagal menyimpan halaman"
+    },
+    "search_pages": "Cari halaman",
+    "version": {
+      "error_description": "Versi tidak dapat dimuat, silakan coba lagi.",
+      "error_title": "Terjadi kesalahan!",
+      "loading_details": "Memuat detail versi",
+      "restore_failed": "Gagal memulihkan versi halaman.",
+      "restored": "Versi halaman dipulihkan.",
+      "restoring": "Memulihkan",
+      "try_again": "Coba lagi",
+      "view_only": "Hanya lihat"
+    }
   }
 }

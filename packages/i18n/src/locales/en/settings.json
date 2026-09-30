@@ -152,5 +152,20 @@
         "label": "Custom theme"
       }
     }
+  },
+  "analytics_ui": {
+    "add_metric": "Add metric",
+    "add_property": "Add property",
+    "count": "Count",
+    "no_value": "No value",
+    "projects_more": "3+ projects"
+  },
+  "profile_ui": {
+    "completion_percentage": "Completion percentage",
+    "first_day_updated": "First day of the week updated successfully",
+    "try_again_later": "Please try again later.",
+    "update_failed": "Update failed",
+    "workload_not_started": "Not started",
+    "workload_working_on": "Working on"
   }
 }

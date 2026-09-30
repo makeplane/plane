@@ -54,5 +54,18 @@
       "2_weeks": "2 კვირა",
       "custom": "მორგებული"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "გთხოვთ, აირჩიოთ თარიღი",
+      "no_time_available": "ამ თარიღისთვის თავისუფალი დრო არ არის.",
+      "pick_date": "აირჩიეთ თარიღი",
+      "pick_time": "აირჩიეთ დრო",
+      "select_date": "აირჩიეთ თარიღი",
+      "select_time": "აირჩიეთ დრო",
+      "submitting": "იგზავნება...",
+      "time_required": "გთხოვთ, აირჩიოთ დრო",
+      "title": "გადადების დროის მორგება"
+    }
   }
 }

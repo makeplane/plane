@@ -152,5 +152,20 @@
         "label": "Benutzerdefiniertes Theme"
       }
     }
+  },
+  "analytics_ui": {
+    "add_metric": "Metrik hinzufügen",
+    "add_property": "Eigenschaft hinzufügen",
+    "count": "Anzahl",
+    "no_value": "Kein Wert",
+    "projects_more": "3+ Projekte"
+  },
+  "profile_ui": {
+    "completion_percentage": "Fertigstellungsgrad",
+    "first_day_updated": "Erster Tag der Woche erfolgreich aktualisiert",
+    "try_again_later": "Bitte versuche es später erneut.",
+    "update_failed": "Aktualisierung fehlgeschlagen",
+    "workload_not_started": "Nicht begonnen",
+    "workload_working_on": "In Bearbeitung"
   }
 }

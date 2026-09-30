@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -9,6 +10,7 @@ import { observer } from "mobx-react";
 // editor
 import type { EditorRefApi } from "@plane/editor";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { TextArea } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 // helpers
@@ -24,6 +26,8 @@ type Props = {
 
 export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
   const { editorRef, readOnly, title, updateTitle } = props;
+  // translation
+  const { t } = useTranslation();
   // states
   const [isLengthVisible, setIsLengthVisible] = useState(false);
   // page filters
@@ -52,7 +56,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
         <div className="relative">
           <TextArea
             className={cn(titleFontClassName, "block w-full resize-none rounded-none border-none p-0 outline-none")}
-            placeholder="Untitled"
+            placeholder={t("wiki_collections.list.untitled")}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();

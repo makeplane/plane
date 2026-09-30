@@ -83,5 +83,26 @@
         "title": "Sélectionnez un élément de travail pour voir ses détails."
       }
     }
+  },
+  "inbox_ui": {
+    "create_error": "Une erreur s'est produite. Veuillez réessayer.",
+    "create_success": "Élément de travail créé avec succès.",
+    "created_date": "Date de création",
+    "delete_failed": "Échec de la suppression de l'élément de travail",
+    "editor_processing": "L'éditeur traite encore les modifications. Veuillez patienter avant de continuer.",
+    "empty_closed": {
+      "description": "Tous les éléments de travail, qu'ils soient acceptés ou refusés, se trouvent ici.",
+      "title": "Aucune demande n'a encore été clôturée"
+    },
+    "errors": {
+      "duplicate_permission": "Seuls les administrateurs du projet peuvent marquer des éléments de travail comme doublons"
+    },
+    "last_updated_date": "Date de dernière mise à jour",
+    "next_work_item": "Élément de travail suivant",
+    "permission_denied": "Autorisation refusée",
+    "previous_work_item": "Élément de travail précédent",
+    "search_placeholder": "Rechercher...",
+    "update_failed": "Échec de la mise à jour de l'élément de travail",
+    "updated_date": "Date de mise à jour"
   }
 }

@@ -54,5 +54,18 @@
       "2_weeks": "2 tuần",
       "custom": "Tùy chỉnh"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "Vui lòng chọn ngày",
+      "no_time_available": "Không có thời gian khả dụng cho ngày này.",
+      "pick_date": "Chọn ngày",
+      "pick_time": "Chọn thời gian",
+      "select_date": "Chọn ngày",
+      "select_time": "Chọn thời gian",
+      "submitting": "Đang gửi...",
+      "time_required": "Vui lòng chọn thời gian",
+      "title": "Tùy chỉnh thời gian tạm hoãn"
+    }
   }
 }

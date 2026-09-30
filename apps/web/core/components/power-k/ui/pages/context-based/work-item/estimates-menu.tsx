@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -66,7 +67,7 @@ export const PowerKWorkItemEstimatesMenu = observer(function PowerKWorkItemEstim
           );
         })
       ) : (
-        <div className="text-center">No estimate found</div>
+        <div className="text-center">{t("power_k_ui.no_estimate_found")}</div>
       )}
     </Command.Group>
   );

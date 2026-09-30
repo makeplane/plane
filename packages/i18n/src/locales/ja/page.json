@@ -111,5 +111,101 @@
       "success_message": "ページをコレクションから削除しました。",
       "error_message": "ページをコレクションから削除できませんでした。もう一度お試しください。"
     }
+  },
+  "page_ui": {
+    "add_page": "ページを追加",
+    "ai": {
+      "add_to_next_line": "次の行に追加",
+      "answering": "AI が回答中...",
+      "prompt_placeholder": "AI に指示を入力...",
+      "regenerate_response": "回答を再生成",
+      "replace_selection": "選択範囲を置換"
+    },
+    "content_limit_banner": {
+      "dismiss": "コンテンツ上限の警告を閉じる",
+      "message": "コンテンツの上限に達したため、ライブ同期がオフになっています。同期を続けるには、新しいページを作成するか、ネストされたページを使用してください。"
+    },
+    "create_modal": {
+      "creating": "作成中",
+      "submit": "ページを作成",
+      "title": "ページを作成"
+    },
+    "delete_modal": {
+      "content_prefix": "ページ",
+      "content_suffix": "を削除してもよろしいですか？ページは完全に削除されます。この操作は元に戻せません。",
+      "error": "ページを削除できませんでした。もう一度お試しください。",
+      "success": "ページを削除しました。",
+      "title": "ページを削除"
+    },
+    "editor": {
+      "background_colors": "背景色",
+      "full_width": "全幅",
+      "markdown_copied": "Markdown をクリップボードにコピーしました。",
+      "sticky_toolbar": "ツールバーを固定",
+      "text_colors": "文字色"
+    },
+    "export_modal": {
+      "content_everything": "すべて",
+      "content_no_images": "画像なし",
+      "error": "ページをエクスポートできませんでした。後でもう一度お試しください。",
+      "export_format": "エクスポート形式",
+      "exporting": "エクスポート中",
+      "include_content": "含めるコンテンツ",
+      "page_format": "ページ形式",
+      "success": "ページをエクスポートしました。",
+      "title": "ページをエクスポート"
+    },
+    "hooks": {
+      "work_item_update_error": "作業項目の更新中にエラーが発生しました"
+    },
+    "lock": {
+      "locked": "ロック済み",
+      "unlocked": "ロック解除済み"
+    },
+    "not_found": {
+      "description": "アクセスしようとしているページは存在しないか、表示する権限がありません。",
+      "title": "ページが見つかりません",
+      "view_other_pages": "他のページを表示"
+    },
+    "offline": {
+      "description": "変更を続けることができます。オンラインに戻ると同期されます。",
+      "heading": "オフラインです。",
+      "label": "オフライン"
+    },
+    "operations": {
+      "add_favorite_error": "ページをお気に入りに追加できませんでした。後でもう一度お試しください。",
+      "add_favorite_success": "ページをお気に入りに追加しました。",
+      "archive_error": "ページをアーカイブできませんでした。後でもう一度お試しください。",
+      "archive_success": "ページをアーカイブしました。",
+      "duplicate_error": "ページを複製できませんでした。後でもう一度お試しください。",
+      "duplicate_success": "ページを複製しました。",
+      "link_copied": "リンクをコピーしました！",
+      "link_copied_message": "ページのリンクをクリップボードにコピーしました。",
+      "lock_error": "ページをロックできませんでした。後でもう一度お試しください。",
+      "lock_success": "ページをロックしました。",
+      "remove_favorite_error": "ページをお気に入りから削除できませんでした。後でもう一度お試しください。",
+      "remove_favorite_success": "ページをお気に入りから削除しました。",
+      "restore_error": "ページを復元できませんでした。後でもう一度お試しください。",
+      "restore_success": "ページを復元しました。",
+      "unlock_error": "ページのロックを解除できませんでした。後でもう一度お試しください。",
+      "unlock_success": "ページのロックを解除しました。"
+    },
+    "realtime": {
+      "deleted": "ページが削除されました",
+      "deleted_by": "{name} がページを削除しました",
+      "load_failed": "ページを読み込めませんでした",
+      "save_failed": "ページを保存できませんでした"
+    },
+    "search_pages": "ページを検索",
+    "version": {
+      "error_description": "バージョンを読み込めませんでした。もう一度お試しください。",
+      "error_title": "問題が発生しました！",
+      "loading_details": "バージョンの詳細を読み込み中",
+      "restore_failed": "ページのバージョンを復元できませんでした。",
+      "restored": "ページのバージョンを復元しました。",
+      "restoring": "復元中",
+      "try_again": "再試行",
+      "view_only": "閲覧のみ"
+    }
   }
 }

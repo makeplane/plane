@@ -188,5 +188,23 @@
       "preferences": "Preferências",
       "help": "Ajuda"
     }
+  },
+  "power_k_ui": {
+    "clear_context": "Limpar contexto (Backspace)",
+    "empty_menu": {
+      "cycles": "Nenhum ciclo encontrado",
+      "labels": "Nenhum rótulo encontrado",
+      "modules": "Nenhum módulo encontrado",
+      "projects": "Nenhum projeto encontrado",
+      "settings": "Nenhuma configuração encontrada",
+      "views": "Nenhuma visualização encontrada",
+      "workspaces": "Nenhum espaço de trabalho encontrado"
+    },
+    "epic_update_error": "Não foi possível atualizar o épico. Tente novamente.",
+    "module_update_error": "Não foi possível atualizar o módulo. Tente novamente.",
+    "no_estimate_found": "Nenhuma estimativa encontrada",
+    "reloading_to_apply": "Recarregando para aplicar as alterações...",
+    "some_error_occurred": "Ocorreu um erro",
+    "work_item_update_error": "Não foi possível atualizar o item de trabalho. Tente novamente."
   }
 }

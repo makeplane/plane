@@ -152,5 +152,20 @@
         "label": "Vlastní téma"
       }
     }
+  },
+  "analytics_ui": {
+    "add_metric": "Přidat metriku",
+    "add_property": "Přidat vlastnost",
+    "count": "Počet",
+    "no_value": "Žádná hodnota",
+    "projects_more": "3+ projekty"
+  },
+  "profile_ui": {
+    "completion_percentage": "Procento dokončení",
+    "first_day_updated": "První den v týdnu byl úspěšně aktualizován",
+    "try_again_later": "Zkuste to prosím později.",
+    "update_failed": "Aktualizace se nezdařila",
+    "workload_not_started": "Nezahájeno",
+    "workload_working_on": "Rozpracováno"
   }
 }

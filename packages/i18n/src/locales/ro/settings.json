@@ -152,5 +152,20 @@
         "label": "Temă personalizată"
       }
     }
+  },
+  "analytics_ui": {
+    "add_metric": "Adaugă metrică",
+    "add_property": "Adaugă proprietate",
+    "count": "Număr",
+    "no_value": "Fără valoare",
+    "projects_more": "3+ proiecte"
+  },
+  "profile_ui": {
+    "completion_percentage": "Procent de finalizare",
+    "first_day_updated": "Prima zi a săptămânii a fost actualizată cu succes",
+    "try_again_later": "Te rugăm să încerci din nou mai târziu.",
+    "update_failed": "Actualizarea a eșuat",
+    "workload_not_started": "Neînceput",
+    "workload_working_on": "În lucru"
   }
 }

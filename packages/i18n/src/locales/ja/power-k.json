@@ -188,5 +188,23 @@
       "preferences": "環境設定",
       "help": "ヘルプ"
     }
+  },
+  "power_k_ui": {
+    "clear_context": "コンテキストをクリア (Backspace)",
+    "empty_menu": {
+      "cycles": "サイクルが見つかりません",
+      "labels": "ラベルが見つかりません",
+      "modules": "モジュールが見つかりません",
+      "projects": "プロジェクトが見つかりません",
+      "settings": "設定が見つかりません",
+      "views": "ビューが見つかりません",
+      "workspaces": "ワークスペースが見つかりません"
+    },
+    "epic_update_error": "エピックを更新できませんでした。もう一度お試しください。",
+    "module_update_error": "モジュールを更新できませんでした。もう一度お試しください。",
+    "no_estimate_found": "見積もりが見つかりません",
+    "reloading_to_apply": "変更を適用するために再読み込みしています...",
+    "some_error_occurred": "エラーが発生しました",
+    "work_item_update_error": "作業項目を更新できませんでした。もう一度お試しください。"
   }
 }

@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -36,9 +37,9 @@ export function ProfileWorkload({ stateDistribution }: Props) {
                 <div className="flex-col space-y-1">
                   <span className="text-13 text-placeholder">
                     {group.state_group === "unstarted"
-                      ? "Not started"
+                      ? t("profile_ui.workload_not_started")
                       : group.state_group === "started"
-                        ? "Working on"
+                        ? t("profile_ui.workload_working_on")
                         : STATE_GROUPS[group.state_group].label}
                   </span>
                   <p className="text-18 font-semibold">{group.state_count}</p>

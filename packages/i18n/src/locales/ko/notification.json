@@ -54,5 +54,18 @@
       "2_weeks": "2주",
       "custom": "사용자 정의"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "날짜를 선택해 주세요",
+      "no_time_available": "이 날짜에 사용할 수 있는 시간이 없습니다.",
+      "pick_date": "날짜 선택",
+      "pick_time": "시간 선택",
+      "select_date": "날짜 선택",
+      "select_time": "시간 선택",
+      "submitting": "제출 중...",
+      "time_required": "시간을 선택해 주세요",
+      "title": "일시 중지 시간 사용자 지정"
+    }
   }
 }

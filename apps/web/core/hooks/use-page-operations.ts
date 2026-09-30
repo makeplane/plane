@@ -68,8 +68,8 @@ export const usePageOperations = (
         await copyUrlToClipboard(pageLink);
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Link Copied!",
-          message: "Page link copied to clipboard.",
+          title: t("page_ui.operations.link_copied"),
+          message: t("page_ui.operations.link_copied_message"),
         });
       },
       duplicate: async () => {
@@ -78,13 +78,13 @@ export const usePageOperations = (
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("toast.success"),
-            message: "Page duplicated successfully.",
+            message: t("page_ui.operations.duplicate_success"),
           });
         } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
-            message: "Page could not be duplicated. Please try again later.",
+            message: t("page_ui.operations.duplicate_error"),
           });
         }
       },
@@ -116,13 +116,13 @@ export const usePageOperations = (
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: t("toast.success"),
-              message: "Page restored successfully.",
+              message: t("page_ui.operations.restore_success"),
             });
           } catch (_error) {
             setToast({
               type: TOAST_TYPE.ERROR,
               title: t("toast.error"),
-              message: "Page could not be restored. Please try again later.",
+              message: t("page_ui.operations.restore_error"),
             });
           }
         } else {
@@ -131,13 +131,13 @@ export const usePageOperations = (
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: t("toast.success"),
-              message: "Page archived successfully.",
+              message: t("page_ui.operations.archive_success"),
             });
           } catch (_error) {
             setToast({
               type: TOAST_TYPE.ERROR,
               title: t("toast.error"),
-              message: "Page could not be archived. Please try again later.",
+              message: t("page_ui.operations.archive_error"),
             });
           }
         }
@@ -149,13 +149,13 @@ export const usePageOperations = (
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: t("toast.success"),
-              message: "Page removed from favorites.",
+              message: t("page_ui.operations.remove_favorite_success"),
             });
           } catch (_error) {
             setToast({
               type: TOAST_TYPE.ERROR,
               title: t("toast.error"),
-              message: "Page could not be removed from favorites. Please try again later.",
+              message: t("page_ui.operations.remove_favorite_error"),
             });
           }
         } else {
@@ -165,13 +165,13 @@ export const usePageOperations = (
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: t("toast.success"),
-              message: "Page added to favorites.",
+              message: t("page_ui.operations.add_favorite_success"),
             });
           } catch (_error) {
             setToast({
               type: TOAST_TYPE.ERROR,
               title: t("toast.error"),
-              message: "Page could not be added to favorites. Please try again later.",
+              message: t("page_ui.operations.add_favorite_error"),
             });
           }
         }
@@ -183,13 +183,13 @@ export const usePageOperations = (
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: t("toast.success"),
-              message: "Page unlocked successfully.",
+              message: t("page_ui.operations.unlock_success"),
             });
           } catch (_error) {
             setToast({
               type: TOAST_TYPE.ERROR,
               title: t("toast.error"),
-              message: "Page could not be unlocked. Please try again later.",
+              message: t("page_ui.operations.unlock_error"),
             });
           }
         } else {
@@ -198,13 +198,13 @@ export const usePageOperations = (
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: t("toast.success"),
-              message: "Page locked successfully.",
+              message: t("page_ui.operations.lock_success"),
             });
           } catch (_error) {
             setToast({
               type: TOAST_TYPE.ERROR,
               title: t("toast.error"),
-              message: "Page could not be locked. Please try again later.",
+              message: t("page_ui.operations.lock_error"),
             });
           }
         }
@@ -222,6 +222,7 @@ export const usePageOperations = (
     isFavoriteMenuOpen,
     removePageFromFavorites,
     toggleFavoriteMenu,
+    t,
   ]);
   return {
     pageOperations,

@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -122,7 +123,7 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
               description={t("workspace_projects.empty_state.no_projects.description")}
               actions={[
                 {
-                  label: "Create a project",
+                  label: t("home.empty.create_project.title"),
                   onClick: () => {
                     toggleCreateProjectModal(true);
                   },

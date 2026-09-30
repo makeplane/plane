@@ -54,5 +54,18 @@
       "2_weeks": "2 semanas",
       "custom": "Personalizado"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "Selecciona una fecha",
+      "no_time_available": "No hay horas disponibles para esta fecha.",
+      "pick_date": "Elige una fecha",
+      "pick_time": "Elige una hora",
+      "select_date": "Seleccionar fecha",
+      "select_time": "Selecciona una hora",
+      "submitting": "Enviando...",
+      "time_required": "Selecciona una hora",
+      "title": "Personalizar el tiempo de posposición"
+    }
   }
 }

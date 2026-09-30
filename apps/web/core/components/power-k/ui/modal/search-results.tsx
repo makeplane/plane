@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -8,6 +9,7 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import type { IWorkspaceSearchResults } from "@plane/types";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -22,6 +24,8 @@ type Props = {
 
 export const PowerKModalSearchResults = observer(function PowerKModalSearchResults(props: Props) {
   const { closePalette, results } = props;
+  // translation
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   const { projectId: routerProjectId } = useParams();
@@ -38,7 +42,7 @@ export const PowerKModalSearchResults = observer(function PowerKModalSearchResul
         if (section.length <= 0) return null;
 
         return (
-          <Command.Group key={key} heading={currentSection.title}>
+          <Command.Group key={key} heading={t(currentSection.title)}>
             {section.map((item) => {
               let value = `${key}-${item?.id}-${item.name}`;
 

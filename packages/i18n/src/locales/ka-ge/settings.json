@@ -152,5 +152,20 @@
         "label": "მორგებული თემა"
       }
     }
+  },
+  "analytics_ui": {
+    "add_metric": "მეტრიკის დამატება",
+    "add_property": "თვისების დამატება",
+    "count": "რაოდენობა",
+    "no_value": "მნიშვნელობის გარეშე",
+    "projects_more": "3+ პროექტი"
+  },
+  "profile_ui": {
+    "completion_percentage": "დასრულების პროცენტი",
+    "first_day_updated": "კვირის პირველი დღე წარმატებით განახლდა",
+    "try_again_later": "გთხოვთ, სცადოთ მოგვიანებით.",
+    "update_failed": "განახლება ვერ მოხერხდა",
+    "workload_not_started": "დაუწყებელი",
+    "workload_working_on": "მუშავდება"
   }
 }

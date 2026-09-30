@@ -83,5 +83,26 @@
         "title": "Selectează o cerere pentru a-i vedea detaliile."
       }
     }
+  },
+  "inbox_ui": {
+    "create_error": "A apărut o eroare. Te rugăm să încerci din nou.",
+    "create_success": "Elementul de lucru a fost creat cu succes.",
+    "created_date": "Data creării",
+    "delete_failed": "Ștergerea elementului de lucru a eșuat",
+    "editor_processing": "Editorul încă procesează modificările. Te rugăm să aștepți înainte de a continua.",
+    "empty_closed": {
+      "description": "Aici găsești toate elementele de lucru, fie acceptate, fie respinse.",
+      "title": "Nicio solicitare închisă încă"
+    },
+    "errors": {
+      "duplicate_permission": "Doar administratorii proiectului pot marca elementele de lucru ca duplicate"
+    },
+    "last_updated_date": "Data ultimei actualizări",
+    "next_work_item": "Următorul element de lucru",
+    "permission_denied": "Permisiune refuzată",
+    "previous_work_item": "Elementul de lucru anterior",
+    "search_placeholder": "Caută...",
+    "update_failed": "Actualizarea elementului de lucru a eșuat",
+    "updated_date": "Data actualizării"
   }
 }

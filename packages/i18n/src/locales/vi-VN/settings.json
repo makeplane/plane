@@ -152,5 +152,20 @@
         "label": "Chủ đề tùy chỉnh"
       }
     }
+  },
+  "analytics_ui": {
+    "add_metric": "Thêm chỉ số",
+    "add_property": "Thêm thuộc tính",
+    "count": "Số lượng",
+    "no_value": "Không có giá trị",
+    "projects_more": "3+ dự án"
+  },
+  "profile_ui": {
+    "completion_percentage": "Phần trăm hoàn thành",
+    "first_day_updated": "Đã cập nhật ngày đầu tuần thành công",
+    "try_again_later": "Vui lòng thử lại sau.",
+    "update_failed": "Cập nhật thất bại",
+    "workload_not_started": "Chưa bắt đầu",
+    "workload_working_on": "Đang thực hiện"
   }
 }

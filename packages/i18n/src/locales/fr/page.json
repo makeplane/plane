@@ -111,5 +111,101 @@
       "success_message": "Page retirée de la collection.",
       "error_message": "La page n'a pas pu être retirée de la collection. Veuillez réessayer."
     }
+  },
+  "page_ui": {
+    "add_page": "Ajouter une page",
+    "ai": {
+      "add_to_next_line": "Ajouter à la ligne suivante",
+      "answering": "L'IA est en train de répondre...",
+      "prompt_placeholder": "Dites à l'IA quoi faire...",
+      "regenerate_response": "Régénérer la réponse",
+      "replace_selection": "Remplacer la sélection"
+    },
+    "content_limit_banner": {
+      "dismiss": "Fermer l'avertissement de limite de contenu",
+      "message": "La limite de contenu est atteinte et la synchronisation en direct est désactivée. Créez une nouvelle page ou utilisez des pages imbriquées pour continuer la synchronisation."
+    },
+    "create_modal": {
+      "creating": "Création",
+      "submit": "Créer la page",
+      "title": "Créer la page"
+    },
+    "delete_modal": {
+      "content_prefix": "Voulez-vous vraiment supprimer la page",
+      "content_suffix": " ? La page sera supprimée définitivement. Cette action est irréversible.",
+      "error": "La page n'a pas pu être supprimée. Veuillez réessayer.",
+      "success": "Page supprimée avec succès.",
+      "title": "Supprimer la page"
+    },
+    "editor": {
+      "background_colors": "Couleurs d'arrière-plan",
+      "full_width": "Pleine largeur",
+      "markdown_copied": "Markdown copié dans le presse-papiers.",
+      "sticky_toolbar": "Barre d'outils fixe",
+      "text_colors": "Couleurs du texte"
+    },
+    "export_modal": {
+      "content_everything": "Tout",
+      "content_no_images": "Sans images",
+      "error": "La page n'a pas pu être exportée. Veuillez réessayer plus tard.",
+      "export_format": "Format d'exportation",
+      "exporting": "Exportation",
+      "include_content": "Inclure le contenu",
+      "page_format": "Format de page",
+      "success": "Page exportée avec succès.",
+      "title": "Exporter la page"
+    },
+    "hooks": {
+      "work_item_update_error": "Erreur lors de la mise à jour de l'élément de travail"
+    },
+    "lock": {
+      "locked": "Verrouillée",
+      "unlocked": "Déverrouillée"
+    },
+    "not_found": {
+      "description": "La page à laquelle vous essayez d'accéder n'existe pas ou vous n'avez pas l'autorisation de la consulter.",
+      "title": "Page introuvable",
+      "view_other_pages": "Voir les autres pages"
+    },
+    "offline": {
+      "description": "Vous pouvez continuer à effectuer des modifications. Elles seront synchronisées lorsque vous serez de nouveau en ligne.",
+      "heading": "Vous êtes hors ligne.",
+      "label": "Hors ligne"
+    },
+    "operations": {
+      "add_favorite_error": "La page n'a pas pu être ajoutée aux favoris. Veuillez réessayer plus tard.",
+      "add_favorite_success": "Page ajoutée aux favoris.",
+      "archive_error": "La page n'a pas pu être archivée. Veuillez réessayer plus tard.",
+      "archive_success": "Page archivée avec succès.",
+      "duplicate_error": "La page n'a pas pu être dupliquée. Veuillez réessayer plus tard.",
+      "duplicate_success": "Page dupliquée avec succès.",
+      "link_copied": "Lien copié !",
+      "link_copied_message": "Lien de la page copié dans le presse-papiers.",
+      "lock_error": "La page n'a pas pu être verrouillée. Veuillez réessayer plus tard.",
+      "lock_success": "Page verrouillée avec succès.",
+      "remove_favorite_error": "La page n'a pas pu être retirée des favoris. Veuillez réessayer plus tard.",
+      "remove_favorite_success": "Page retirée des favoris.",
+      "restore_error": "La page n'a pas pu être restaurée. Veuillez réessayer plus tard.",
+      "restore_success": "Page restaurée avec succès.",
+      "unlock_error": "La page n'a pas pu être déverrouillée. Veuillez réessayer plus tard.",
+      "unlock_success": "Page déverrouillée avec succès."
+    },
+    "realtime": {
+      "deleted": "Page supprimée",
+      "deleted_by": "Page supprimée par {name}",
+      "load_failed": "Échec du chargement de la page",
+      "save_failed": "Échec de l'enregistrement de la page"
+    },
+    "search_pages": "Rechercher des pages",
+    "version": {
+      "error_description": "La version n'a pas pu être chargée, veuillez réessayer.",
+      "error_title": "Une erreur s'est produite !",
+      "loading_details": "Chargement des détails de la version",
+      "restore_failed": "Échec de la restauration de la version de la page.",
+      "restored": "Version de la page restaurée.",
+      "restoring": "Restauration",
+      "try_again": "Réessayer",
+      "view_only": "Lecture seule"
+    }
   }
 }

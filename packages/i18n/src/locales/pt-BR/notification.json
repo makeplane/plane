@@ -54,5 +54,18 @@
       "2_weeks": "2 semanas",
       "custom": "Personalizado"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "Selecione uma data",
+      "no_time_available": "Nenhum horário disponível para esta data.",
+      "pick_date": "Escolha uma data",
+      "pick_time": "Escolha um horário",
+      "select_date": "Selecionar data",
+      "select_time": "Selecione um horário",
+      "submitting": "Enviando...",
+      "time_required": "Selecione um horário",
+      "title": "Personalizar o tempo de adiamento"
+    }
   }
 }

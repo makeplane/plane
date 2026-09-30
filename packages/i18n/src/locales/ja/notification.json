@@ -54,5 +54,18 @@
       "2_weeks": "2週間",
       "custom": "カスタム"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "日付を選択してください",
+      "no_time_available": "この日付に選択可能な時刻はありません。",
+      "pick_date": "日付を選択",
+      "pick_time": "時刻を選択",
+      "select_date": "日付を選択",
+      "select_time": "時刻を選択",
+      "submitting": "送信中...",
+      "time_required": "時刻を選択してください",
+      "title": "スヌーズ時間をカスタマイズ"
+    }
   }
 }

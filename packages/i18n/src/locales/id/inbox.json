@@ -83,5 +83,26 @@
         "title": "Pilih item kerja untuk melihat detailnya."
       }
     }
+  },
+  "inbox_ui": {
+    "create_error": "Terjadi kesalahan. Silakan coba lagi.",
+    "create_success": "Item kerja berhasil dibuat.",
+    "created_date": "Tanggal dibuat",
+    "delete_failed": "Gagal menghapus item kerja",
+    "editor_processing": "Editor masih memproses perubahan. Harap tunggu sebelum melanjutkan.",
+    "empty_closed": {
+      "description": "Semua item kerja, baik yang diterima maupun ditolak, dapat ditemukan di sini.",
+      "title": "Belum ada permintaan yang ditutup"
+    },
+    "errors": {
+      "duplicate_permission": "Hanya admin proyek yang dapat menandai item kerja sebagai duplikat"
+    },
+    "last_updated_date": "Tanggal pembaruan terakhir",
+    "next_work_item": "Item kerja berikutnya",
+    "permission_denied": "Izin ditolak",
+    "previous_work_item": "Item kerja sebelumnya",
+    "search_placeholder": "Cari...",
+    "update_failed": "Gagal memperbarui item kerja",
+    "updated_date": "Tanggal diperbarui"
   }
 }

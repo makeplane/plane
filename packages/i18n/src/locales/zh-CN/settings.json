@@ -152,5 +152,20 @@
         "label": "自定义主题"
       }
     }
+  },
+  "analytics_ui": {
+    "add_metric": "添加指标",
+    "add_property": "添加属性",
+    "count": "数量",
+    "no_value": "无值",
+    "projects_more": "3 个以上项目"
+  },
+  "profile_ui": {
+    "completion_percentage": "完成百分比",
+    "first_day_updated": "每周第一天已成功更新",
+    "try_again_later": "请稍后重试。",
+    "update_failed": "更新失败",
+    "workload_not_started": "未开始",
+    "workload_working_on": "进行中"
   }
 }

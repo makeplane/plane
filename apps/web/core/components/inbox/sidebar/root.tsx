@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -161,11 +162,10 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
                     rootClassName="px-page-x"
                   />
                 ) : (
-                  // TODO: Add translation
                   <EmptyStateDetailed
                     assetKey="inbox"
-                    title="No request closed yet"
-                    description="All the work items whether accepted or declined can be found here."
+                    title={t("inbox_ui.empty_closed.title")}
+                    description={t("inbox_ui.empty_closed.description")}
                     assetClassName="size-20"
                     className="px-10"
                   />

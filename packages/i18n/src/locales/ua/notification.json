@@ -54,5 +54,18 @@
       "2_weeks": "2 тижні",
       "custom": "Власне"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "Виберіть дату",
+      "no_time_available": "Для цієї дати немає доступного часу.",
+      "pick_date": "Виберіть дату",
+      "pick_time": "Виберіть час",
+      "select_date": "Виберіть дату",
+      "select_time": "Виберіть час",
+      "submitting": "Надсилання...",
+      "time_required": "Виберіть час",
+      "title": "Налаштувати час відкладання"
+    }
   }
 }

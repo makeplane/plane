@@ -111,5 +111,101 @@
       "success_message": "Strona została usunięta z kolekcji.",
       "error_message": "Nie udało się usunąć strony z kolekcji. Spróbuj ponownie."
     }
+  },
+  "page_ui": {
+    "add_page": "Dodaj stronę",
+    "ai": {
+      "add_to_next_line": "Dodaj w następnej linii",
+      "answering": "AI odpowiada...",
+      "prompt_placeholder": "Powiedz AI, co ma zrobić...",
+      "regenerate_response": "Wygeneruj odpowiedź ponownie",
+      "replace_selection": "Zastąp zaznaczenie"
+    },
+    "content_limit_banner": {
+      "dismiss": "Zamknij ostrzeżenie o limicie treści",
+      "message": "Osiągnięto limit treści, a synchronizacja na żywo jest wyłączona. Utwórz nową stronę lub użyj stron zagnieżdżonych, aby kontynuować synchronizację."
+    },
+    "create_modal": {
+      "creating": "Tworzenie",
+      "submit": "Utwórz stronę",
+      "title": "Utwórz stronę"
+    },
+    "delete_modal": {
+      "content_prefix": "Czy na pewno chcesz usunąć stronę",
+      "content_suffix": "? Strona zostanie trwale usunięta. Tej czynności nie można cofnąć.",
+      "error": "Nie udało się usunąć strony. Spróbuj ponownie.",
+      "success": "Strona została usunięta.",
+      "title": "Usuń stronę"
+    },
+    "editor": {
+      "background_colors": "Kolory tła",
+      "full_width": "Pełna szerokość",
+      "markdown_copied": "Skopiowano Markdown do schowka.",
+      "sticky_toolbar": "Przypięty pasek narzędzi",
+      "text_colors": "Kolory tekstu"
+    },
+    "export_modal": {
+      "content_everything": "Wszystko",
+      "content_no_images": "Bez obrazów",
+      "error": "Nie udało się wyeksportować strony. Spróbuj ponownie później.",
+      "export_format": "Format eksportu",
+      "exporting": "Eksportowanie",
+      "include_content": "Uwzględnij zawartość",
+      "page_format": "Format strony",
+      "success": "Strona została wyeksportowana.",
+      "title": "Eksportuj stronę"
+    },
+    "hooks": {
+      "work_item_update_error": "Błąd podczas aktualizacji elementu pracy"
+    },
+    "lock": {
+      "locked": "Zablokowana",
+      "unlocked": "Odblokowana"
+    },
+    "not_found": {
+      "description": "Strona, do której próbujesz uzyskać dostęp, nie istnieje lub nie masz uprawnień do jej wyświetlenia.",
+      "title": "Nie znaleziono strony",
+      "view_other_pages": "Zobacz inne strony"
+    },
+    "offline": {
+      "description": "Możesz dalej wprowadzać zmiany. Zostaną zsynchronizowane po odzyskaniu połączenia.",
+      "heading": "Jesteś offline.",
+      "label": "Offline"
+    },
+    "operations": {
+      "add_favorite_error": "Nie udało się dodać strony do ulubionych. Spróbuj ponownie później.",
+      "add_favorite_success": "Strona została dodana do ulubionych.",
+      "archive_error": "Nie udało się zarchiwizować strony. Spróbuj ponownie później.",
+      "archive_success": "Strona została zarchiwizowana.",
+      "duplicate_error": "Nie udało się zduplikować strony. Spróbuj ponownie później.",
+      "duplicate_success": "Strona została zduplikowana.",
+      "link_copied": "Skopiowano link!",
+      "link_copied_message": "Link do strony skopiowano do schowka.",
+      "lock_error": "Nie udało się zablokować strony. Spróbuj ponownie później.",
+      "lock_success": "Strona została zablokowana.",
+      "remove_favorite_error": "Nie udało się usunąć strony z ulubionych. Spróbuj ponownie później.",
+      "remove_favorite_success": "Strona została usunięta z ulubionych.",
+      "restore_error": "Nie udało się przywrócić strony. Spróbuj ponownie później.",
+      "restore_success": "Strona została przywrócona.",
+      "unlock_error": "Nie udało się odblokować strony. Spróbuj ponownie później.",
+      "unlock_success": "Strona została odblokowana."
+    },
+    "realtime": {
+      "deleted": "Strona została usunięta",
+      "deleted_by": "Stronę usunął(a) {name}",
+      "load_failed": "Nie udało się wczytać strony",
+      "save_failed": "Nie udało się zapisać strony"
+    },
+    "search_pages": "Szukaj stron",
+    "version": {
+      "error_description": "Nie udało się wczytać wersji, spróbuj ponownie.",
+      "error_title": "Coś poszło nie tak!",
+      "loading_details": "Wczytywanie szczegółów wersji",
+      "restore_failed": "Nie udało się przywrócić wersji strony.",
+      "restored": "Przywrócono wersję strony.",
+      "restoring": "Przywracanie",
+      "try_again": "Spróbuj ponownie",
+      "view_only": "Tylko do odczytu"
+    }
   }
 }

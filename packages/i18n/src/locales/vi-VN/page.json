@@ -111,5 +111,101 @@
       "success_message": "Đã xóa trang khỏi bộ sưu tập.",
       "error_message": "Không thể xóa trang khỏi bộ sưu tập. Vui lòng thử lại."
     }
+  },
+  "page_ui": {
+    "add_page": "Thêm trang",
+    "ai": {
+      "add_to_next_line": "Thêm vào dòng tiếp theo",
+      "answering": "AI đang trả lời...",
+      "prompt_placeholder": "Cho AI biết cần làm gì...",
+      "regenerate_response": "Tạo lại phản hồi",
+      "replace_selection": "Thay thế phần đã chọn"
+    },
+    "content_limit_banner": {
+      "dismiss": "Đóng cảnh báo giới hạn nội dung",
+      "message": "Đã đạt giới hạn nội dung và đồng bộ trực tiếp đã tắt. Hãy tạo trang mới hoặc dùng trang lồng nhau để tiếp tục đồng bộ."
+    },
+    "create_modal": {
+      "creating": "Đang tạo",
+      "submit": "Tạo trang",
+      "title": "Tạo trang"
+    },
+    "delete_modal": {
+      "content_prefix": "Bạn có chắc chắn muốn xóa trang",
+      "content_suffix": "? Trang sẽ bị xóa vĩnh viễn. Không thể hoàn tác hành động này.",
+      "error": "Không thể xóa trang. Vui lòng thử lại.",
+      "success": "Đã xóa trang thành công.",
+      "title": "Xóa trang"
+    },
+    "editor": {
+      "background_colors": "Màu nền",
+      "full_width": "Toàn chiều rộng",
+      "markdown_copied": "Đã sao chép Markdown vào bộ nhớ tạm.",
+      "sticky_toolbar": "Thanh công cụ cố định",
+      "text_colors": "Màu chữ"
+    },
+    "export_modal": {
+      "content_everything": "Tất cả",
+      "content_no_images": "Không có hình ảnh",
+      "error": "Không thể xuất trang. Vui lòng thử lại sau.",
+      "export_format": "Định dạng xuất",
+      "exporting": "Đang xuất",
+      "include_content": "Bao gồm nội dung",
+      "page_format": "Định dạng trang",
+      "success": "Đã xuất trang thành công.",
+      "title": "Xuất trang"
+    },
+    "hooks": {
+      "work_item_update_error": "Lỗi khi cập nhật mục công việc"
+    },
+    "lock": {
+      "locked": "Đã khóa",
+      "unlocked": "Đã mở khóa"
+    },
+    "not_found": {
+      "description": "Trang bạn đang cố truy cập không tồn tại hoặc bạn không có quyền xem trang đó.",
+      "title": "Không tìm thấy trang",
+      "view_other_pages": "Xem các trang khác"
+    },
+    "offline": {
+      "description": "Bạn có thể tiếp tục thực hiện thay đổi. Chúng sẽ được đồng bộ khi bạn trực tuyến trở lại.",
+      "heading": "Bạn đang ngoại tuyến.",
+      "label": "Ngoại tuyến"
+    },
+    "operations": {
+      "add_favorite_error": "Không thể thêm trang vào mục yêu thích. Vui lòng thử lại sau.",
+      "add_favorite_success": "Đã thêm trang vào mục yêu thích.",
+      "archive_error": "Không thể lưu trữ trang. Vui lòng thử lại sau.",
+      "archive_success": "Đã lưu trữ trang thành công.",
+      "duplicate_error": "Không thể nhân bản trang. Vui lòng thử lại sau.",
+      "duplicate_success": "Đã nhân bản trang thành công.",
+      "link_copied": "Đã sao chép liên kết!",
+      "link_copied_message": "Đã sao chép liên kết trang vào bộ nhớ tạm.",
+      "lock_error": "Không thể khóa trang. Vui lòng thử lại sau.",
+      "lock_success": "Đã khóa trang thành công.",
+      "remove_favorite_error": "Không thể xóa trang khỏi mục yêu thích. Vui lòng thử lại sau.",
+      "remove_favorite_success": "Đã xóa trang khỏi mục yêu thích.",
+      "restore_error": "Không thể khôi phục trang. Vui lòng thử lại sau.",
+      "restore_success": "Đã khôi phục trang thành công.",
+      "unlock_error": "Không thể mở khóa trang. Vui lòng thử lại sau.",
+      "unlock_success": "Đã mở khóa trang thành công."
+    },
+    "realtime": {
+      "deleted": "Trang đã bị xóa",
+      "deleted_by": "Trang đã bị {name} xóa",
+      "load_failed": "Không thể tải trang",
+      "save_failed": "Không thể lưu trang"
+    },
+    "search_pages": "Tìm kiếm trang",
+    "version": {
+      "error_description": "Không thể tải phiên bản, vui lòng thử lại.",
+      "error_title": "Đã xảy ra lỗi!",
+      "loading_details": "Đang tải chi tiết phiên bản",
+      "restore_failed": "Không thể khôi phục phiên bản trang.",
+      "restored": "Đã khôi phục phiên bản trang.",
+      "restoring": "Đang khôi phục",
+      "try_again": "Thử lại",
+      "view_only": "Chỉ xem"
+    }
   }
 }

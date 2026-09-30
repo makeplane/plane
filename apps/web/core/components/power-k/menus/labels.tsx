@@ -1,12 +1,14 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import type { IIssueLabel } from "@plane/types";
 // local imports
 import { PowerKMenuBuilder } from "./builder";
@@ -18,6 +20,8 @@ type Props = {
 };
 
 export const PowerKLabelsMenu = observer(function PowerKLabelsMenu({ labels, onSelect, value }: Props) {
+  const { t } = useTranslation();
+
   return (
     <PowerKMenuBuilder
       items={labels}
@@ -31,7 +35,7 @@ export const PowerKLabelsMenu = observer(function PowerKLabelsMenu({ labels, onS
       getLabel={(label) => label.name}
       isSelected={(label) => !!value?.includes(label.id)}
       onSelect={onSelect}
-      emptyText="No labels found"
+      emptyText={t("power_k_ui.empty_menu.labels")}
     />
   );
 });

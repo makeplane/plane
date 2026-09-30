@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -11,6 +12,7 @@ import { Controller } from "react-hook-form";
 import { SlidersHorizontal } from "lucide-react";
 // plane package imports
 import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { CalendarLayoutIcon } from "@plane/propel/icons";
 import type { IAnalyticsParams } from "@plane/types";
 import { ChartYAxisMetric } from "@plane/types";
@@ -30,6 +32,8 @@ type Props = {
 
 export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(props: Props) {
   const { control, params, classNames, isEpic } = props;
+  // translation
+  const { t } = useTranslation();
   const xAxisOptions = useMemo(
     () => ANALYTICS_X_AXIS_VALUES.filter((option) => option.value !== params.group_by),
     [params.group_by]
@@ -72,7 +76,7 @@ export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(pro
                 <div className="flex items-center gap-2">
                   <CalendarLayoutIcon className="h-3 w-3" />
                   <span className={cn("text-secondary", value && "text-primary")}>
-                    {xAxisOptions.find((v) => v.value === value)?.label || "Add Property"}
+                    {xAxisOptions.find((v) => v.value === value)?.label || t("analytics_ui.add_property")}
                   </span>
                 </div>
               }
@@ -93,12 +97,12 @@ export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(pro
                 <div className="flex items-center gap-2">
                   <SlidersHorizontal className="h-3 w-3" />
                   <span className={cn("text-secondary", value && "text-primary")}>
-                    {groupByOptions.find((v) => v.value === value)?.label || "Add Property"}
+                    {groupByOptions.find((v) => v.value === value)?.label || t("analytics_ui.add_property")}
                   </span>
                 </div>
               }
               options={groupByOptions}
-              placeholder="Group By"
+              placeholder={t("common.group_by")}
               allowNoValue
             />
           )}

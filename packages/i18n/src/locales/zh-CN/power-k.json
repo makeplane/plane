@@ -188,5 +188,23 @@
       "preferences": "偏好设置",
       "help": "帮助"
     }
+  },
+  "power_k_ui": {
+    "clear_context": "清除上下文 (Backspace)",
+    "empty_menu": {
+      "cycles": "未找到周期",
+      "labels": "未找到标签",
+      "modules": "未找到模块",
+      "projects": "未找到项目",
+      "settings": "未找到设置",
+      "views": "未找到视图",
+      "workspaces": "未找到工作区"
+    },
+    "epic_update_error": "无法更新 Epic，请重试。",
+    "module_update_error": "无法更新模块，请重试。",
+    "no_estimate_found": "未找到估算",
+    "reloading_to_apply": "正在重新加载以应用更改...",
+    "some_error_occurred": "发生错误",
+    "work_item_update_error": "无法更新工作项，请重试。"
   }
 }

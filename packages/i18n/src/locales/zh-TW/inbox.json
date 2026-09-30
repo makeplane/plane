@@ -83,5 +83,26 @@
         "title": "選擇工作事項以檢視其詳細資訊。"
       }
     }
+  },
+  "inbox_ui": {
+    "create_error": "發生錯誤，請再試一次。",
+    "create_success": "工作項目建立成功。",
+    "created_date": "建立日期",
+    "delete_failed": "刪除工作項目失敗",
+    "editor_processing": "編輯器仍在處理變更，請稍候再繼續。",
+    "empty_closed": {
+      "description": "無論已接受或已拒絕，所有工作項目都可以在這裡找到。",
+      "title": "尚無已關閉的請求"
+    },
+    "errors": {
+      "duplicate_permission": "只有專案管理員可以將工作項目標記為重複"
+    },
+    "last_updated_date": "最後更新日期",
+    "next_work_item": "下一個工作項目",
+    "permission_denied": "權限遭拒",
+    "previous_work_item": "上一個工作項目",
+    "search_placeholder": "搜尋...",
+    "update_failed": "更新工作項目失敗",
+    "updated_date": "更新日期"
   }
 }

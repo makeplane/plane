@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -8,6 +9,7 @@ import { useCallback } from "react";
 // plane editor
 import type { TMentionSection, TMentionSuggestion } from "@plane/editor";
 // plane types
+import { useTranslation } from "@plane/i18n";
 import type { TSearchEntities, TSearchEntityRequestPayload, TSearchResponse, TUserSearchResponse } from "@plane/types";
 // plane ui
 import { Avatar } from "@plane/ui";
@@ -23,6 +25,8 @@ type TArgs = {
 
 export const useEditorMention = (args: TArgs) => {
   const { enableAdvancedMentions = false, searchEntity } = args;
+  // translation
+  const { t } = useTranslation();
   // additional mentions
   const { editorMentionTypes, updateAdditionalSections } = useAdditionalEditorMention({
     enableAdvancedMentions,
@@ -59,7 +63,7 @@ export const useEditorMention = (args: TArgs) => {
             }));
             suggestionSections.push({
               key: "users",
-              title: "Users",
+              title: t("common.users"),
               items,
             });
           }
@@ -73,7 +77,7 @@ export const useEditorMention = (args: TArgs) => {
         throw error;
       }
     },
-    [editorMentionTypes, searchEntity, updateAdditionalSections]
+    [editorMentionTypes, searchEntity, updateAdditionalSections, t]
   );
 
   return {

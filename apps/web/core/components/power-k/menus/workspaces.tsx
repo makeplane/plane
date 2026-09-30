@@ -1,11 +1,13 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import React from "react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import type { IWorkspace } from "@plane/types";
 // components
 import { WorkspaceLogo } from "@/components/workspace/logo";
@@ -18,6 +20,8 @@ type Props = {
 };
 
 export function PowerKWorkspacesMenu({ workspaces, onSelect }: Props) {
+  const { t } = useTranslation();
+
   return (
     <PowerKMenuBuilder
       items={workspaces}
@@ -28,7 +32,7 @@ export function PowerKWorkspacesMenu({ workspaces, onSelect }: Props) {
       getValue={(workspace) => workspace.name}
       getLabel={(workspace) => workspace.name}
       onSelect={onSelect}
-      emptyText="No workspaces found"
+      emptyText={t("power_k_ui.empty_menu.workspaces")}
     />
   );
 }

@@ -111,5 +111,101 @@
       "success_message": "Sayfa koleksiyondan kaldırıldı.",
       "error_message": "Sayfa koleksiyondan kaldırılamadı. Lütfen tekrar deneyin."
     }
+  },
+  "page_ui": {
+    "add_page": "Sayfa ekle",
+    "ai": {
+      "add_to_next_line": "Sonraki satıra ekle",
+      "answering": "Yapay zeka yanıtlıyor...",
+      "prompt_placeholder": "Yapay zekaya ne yapacağını söyleyin...",
+      "regenerate_response": "Yanıtı yeniden oluştur",
+      "replace_selection": "Seçimi değiştir"
+    },
+    "content_limit_banner": {
+      "dismiss": "İçerik sınırı uyarısını kapat",
+      "message": "İçerik sınırına ulaşıldı ve canlı senkronizasyon kapalı. Senkronizasyona devam etmek için yeni bir sayfa oluşturun veya iç içe sayfalar kullanın."
+    },
+    "create_modal": {
+      "creating": "Oluşturuluyor",
+      "submit": "Sayfa oluştur",
+      "title": "Sayfa oluştur"
+    },
+    "delete_modal": {
+      "content_prefix": "Şu sayfayı silmek istediğinizden emin misiniz:",
+      "content_suffix": "? Sayfa kalıcı olarak silinecek. Bu işlem geri alınamaz.",
+      "error": "Sayfa silinemedi. Lütfen tekrar deneyin.",
+      "success": "Sayfa başarıyla silindi.",
+      "title": "Sayfayı sil"
+    },
+    "editor": {
+      "background_colors": "Arka plan renkleri",
+      "full_width": "Tam genişlik",
+      "markdown_copied": "Markdown panoya kopyalandı.",
+      "sticky_toolbar": "Sabit araç çubuğu",
+      "text_colors": "Metin renkleri"
+    },
+    "export_modal": {
+      "content_everything": "Her şey",
+      "content_no_images": "Görseller olmadan",
+      "error": "Sayfa dışa aktarılamadı. Lütfen daha sonra tekrar deneyin.",
+      "export_format": "Dışa aktarma biçimi",
+      "exporting": "Dışa aktarılıyor",
+      "include_content": "İçeriği dahil et",
+      "page_format": "Sayfa biçimi",
+      "success": "Sayfa başarıyla dışa aktarıldı.",
+      "title": "Sayfayı dışa aktar"
+    },
+    "hooks": {
+      "work_item_update_error": "İş öğesi güncellenirken hata oluştu"
+    },
+    "lock": {
+      "locked": "Kilitli",
+      "unlocked": "Kilidi açık"
+    },
+    "not_found": {
+      "description": "Erişmeye çalıştığınız sayfa mevcut değil veya görüntüleme izniniz yok.",
+      "title": "Sayfa bulunamadı",
+      "view_other_pages": "Diğer sayfaları görüntüle"
+    },
+    "offline": {
+      "description": "Değişiklik yapmaya devam edebilirsiniz. Tekrar çevrimiçi olduğunuzda senkronize edilecekler.",
+      "heading": "Çevrimdışısınız.",
+      "label": "Çevrimdışı"
+    },
+    "operations": {
+      "add_favorite_error": "Sayfa favorilere eklenemedi. Lütfen daha sonra tekrar deneyin.",
+      "add_favorite_success": "Sayfa favorilere eklendi.",
+      "archive_error": "Sayfa arşivlenemedi. Lütfen daha sonra tekrar deneyin.",
+      "archive_success": "Sayfa başarıyla arşivlendi.",
+      "duplicate_error": "Sayfa çoğaltılamadı. Lütfen daha sonra tekrar deneyin.",
+      "duplicate_success": "Sayfa başarıyla çoğaltıldı.",
+      "link_copied": "Bağlantı kopyalandı!",
+      "link_copied_message": "Sayfa bağlantısı panoya kopyalandı.",
+      "lock_error": "Sayfa kilitlenemedi. Lütfen daha sonra tekrar deneyin.",
+      "lock_success": "Sayfa başarıyla kilitlendi.",
+      "remove_favorite_error": "Sayfa favorilerden kaldırılamadı. Lütfen daha sonra tekrar deneyin.",
+      "remove_favorite_success": "Sayfa favorilerden kaldırıldı.",
+      "restore_error": "Sayfa geri yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+      "restore_success": "Sayfa başarıyla geri yüklendi.",
+      "unlock_error": "Sayfanın kilidi açılamadı. Lütfen daha sonra tekrar deneyin.",
+      "unlock_success": "Sayfanın kilidi başarıyla açıldı."
+    },
+    "realtime": {
+      "deleted": "Sayfa silindi",
+      "deleted_by": "Sayfa {name} tarafından silindi",
+      "load_failed": "Sayfa yüklenemedi",
+      "save_failed": "Sayfa kaydedilemedi"
+    },
+    "search_pages": "Sayfa ara",
+    "version": {
+      "error_description": "Sürüm yüklenemedi, lütfen tekrar deneyin.",
+      "error_title": "Bir şeyler ters gitti!",
+      "loading_details": "Sürüm ayrıntıları yükleniyor",
+      "restore_failed": "Sayfa sürümü geri yüklenemedi.",
+      "restored": "Sayfa sürümü geri yüklendi.",
+      "restoring": "Geri yükleniyor",
+      "try_again": "Tekrar dene",
+      "view_only": "Yalnızca görüntüleme"
+    }
   }
 }

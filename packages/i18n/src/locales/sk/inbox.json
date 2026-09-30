@@ -83,5 +83,26 @@
         "title": "Vyberte pracovnú položku pre zobrazenie detailov."
       }
     }
+  },
+  "inbox_ui": {
+    "create_error": "Vyskytla sa chyba. Skúste to prosím znova.",
+    "create_success": "Pracovná položka bola úspešne vytvorená.",
+    "created_date": "Dátum vytvorenia",
+    "delete_failed": "Zmazanie pracovnej položky zlyhalo",
+    "editor_processing": "Editor stále spracúva zmeny. Pred pokračovaním prosím počkajte.",
+    "empty_closed": {
+      "description": "Tu nájdete všetky pracovné položky, či už prijaté, alebo zamietnuté.",
+      "title": "Zatiaľ nebola uzavretá žiadna požiadavka"
+    },
+    "errors": {
+      "duplicate_permission": "Iba správcovia projektu môžu označiť pracovné položky ako duplikáty"
+    },
+    "last_updated_date": "Dátum poslednej aktualizácie",
+    "next_work_item": "Ďalšia pracovná položka",
+    "permission_denied": "Prístup zamietnutý",
+    "previous_work_item": "Predchádzajúca pracovná položka",
+    "search_placeholder": "Hľadať...",
+    "update_failed": "Aktualizácia pracovnej položky zlyhala",
+    "updated_date": "Dátum aktualizácie"
   }
 }

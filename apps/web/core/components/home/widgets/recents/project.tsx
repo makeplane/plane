@@ -1,11 +1,13 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import { useRouter } from "next/navigation";
 // plane types
+import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { TActivityEntityData, TProjectEntityData } from "@plane/types";
 import { calculateTimeAgo } from "@plane/utils";
@@ -21,6 +23,8 @@ type BlockProps = {
 };
 export function RecentProject(props: BlockProps) {
   const { activity, ref, workspaceSlug } = props;
+  // translation
+  const { t } = useTranslation();
   // router
   const router = useRouter();
   // derived values
@@ -63,7 +67,7 @@ export function RecentProject(props: BlockProps) {
                 }
                 buttonClassName={projectDetails?.project_members?.length > 0 ? "hover:bg-transparent px-0" : ""}
                 showTooltip={projectDetails?.project_members?.length === 0}
-                placeholder="Assignees"
+                placeholder={t("assignees")}
                 optionsClassName="z-10"
                 tooltipContent=""
               />

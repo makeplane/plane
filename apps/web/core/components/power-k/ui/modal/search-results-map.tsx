@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -25,6 +26,7 @@ export type TPowerKSearchResultGroupDetails = {
   icon?: React.ComponentType<{ className?: string }>;
   itemName: (item: any) => React.ReactNode;
   path: (item: any, projectId: string | undefined) => string;
+  /** i18n key for the group heading */
   title: string;
 };
 
@@ -38,7 +40,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     ),
     path: (cycle: IWorkspaceDefaultSearchResult) =>
       `/${cycle?.workspace__slug}/projects/${cycle?.project_id}/cycles/${cycle?.id}`,
-    title: "Cycles",
+    title: "common.cycles",
   },
   issue: {
     itemName: (workItem: IWorkspaceIssueSearchResult) => (
@@ -61,7 +63,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
         projectIdentifier: workItem.project__identifier,
         sequenceId: workItem?.sequence_id,
       }),
-    title: "Work items",
+    title: "common.work_items",
   },
   issue_view: {
     icon: Layers,
@@ -72,7 +74,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     ),
     path: (view: IWorkspaceDefaultSearchResult) =>
       `/${view?.workspace__slug}/projects/${view?.project_id}/views/${view?.id}`,
-    title: "Views",
+    title: "common.views",
   },
   module: {
     icon: DiceIcon,
@@ -83,7 +85,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     ),
     path: (module: IWorkspaceDefaultSearchResult) =>
       `/${module?.workspace__slug}/projects/${module?.project_id}/modules/${module?.id}`,
-    title: "Modules",
+    title: "common.modules",
   },
   page: {
     icon: FileText,
@@ -99,19 +101,19 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
         ? `/${page?.workspace__slug}/projects/${redirectProjectId}/pages/${page?.id}`
         : `/${page?.workspace__slug}/wiki/${page?.id}`;
     },
-    title: "Pages",
+    title: "common.pages",
   },
   project: {
     icon: Briefcase,
     itemName: (project: IWorkspaceProjectSearchResult) => project?.name,
     path: (project: IWorkspaceProjectSearchResult) => `/${project?.workspace__slug}/projects/${project?.id}/issues/`,
-    title: "Projects",
+    title: "common.projects",
   },
   workspace: {
     icon: LayoutGrid,
     itemName: (workspace: IWorkspaceSearchResult) => workspace?.name,
     path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/`,
-    title: "Workspaces",
+    title: "common.workspaces",
   },
   ...SEARCH_RESULTS_GROUPS_MAP_EXTENDED,
 };

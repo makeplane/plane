@@ -54,5 +54,18 @@
       "2_weeks": "2 minggu",
       "custom": "Kustom"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "Silakan pilih tanggal",
+      "no_time_available": "Tidak ada waktu yang tersedia untuk tanggal ini.",
+      "pick_date": "Pilih tanggal",
+      "pick_time": "Pilih waktu",
+      "select_date": "Pilih tanggal",
+      "select_time": "Pilih waktu",
+      "submitting": "Mengirim...",
+      "time_required": "Silakan pilih waktu",
+      "title": "Sesuaikan waktu tunda"
+    }
   }
 }

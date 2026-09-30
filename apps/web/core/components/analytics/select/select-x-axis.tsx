@@ -1,10 +1,12 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 // plane package imports
+import { useTranslation } from "@plane/i18n";
 import type { ChartXAxisProperty } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 
@@ -20,9 +22,11 @@ type Props = {
 
 export function SelectXAxis(props: Props) {
   const { value, onChange, options, hiddenOptions, allowNoValue, label } = props;
+  // translation
+  const { t } = useTranslation();
   return (
     <CustomSelect value={value} label={label} onChange={onChange} maxHeight="lg">
-      {allowNoValue && <CustomSelect.Option value={null}>No value</CustomSelect.Option>}
+      {allowNoValue && <CustomSelect.Option value={null}>{t("analytics_ui.no_value")}</CustomSelect.Option>}
       {options.map((item) => {
         if (hiddenOptions?.includes(item.value)) return null;
         return (

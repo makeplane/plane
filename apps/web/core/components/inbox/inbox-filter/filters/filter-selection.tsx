@@ -1,11 +1,13 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
@@ -19,6 +21,8 @@ import { FilterPriority } from "./priority";
 import { FilterStatus } from "./status";
 
 export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelection() {
+  // translation
+  const { t } = useTranslation();
   // hooks
   const { isMobile } = usePlatformOS();
   const {
@@ -36,7 +40,7 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
           <input
             type="text"
             className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
-            placeholder="Search"
+            placeholder={t("search")}
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
             autoFocus={!isMobile}
@@ -82,11 +86,11 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
         </div>
         {/* Created at */}
         <div className="py-2">
-          <FilterDate filterKey="created_at" label="Created date" searchQuery={filtersSearchQuery} />
+          <FilterDate filterKey="created_at" label={t("inbox_ui.created_date")} searchQuery={filtersSearchQuery} />
         </div>
         {/* Updated at */}
         <div className="py-2">
-          <FilterDate filterKey="updated_at" label="Last updated date" searchQuery={filtersSearchQuery} />
+          <FilterDate filterKey="updated_at" label={t("inbox_ui.last_updated_date")} searchQuery={filtersSearchQuery} />
         </div>
       </div>
     </div>

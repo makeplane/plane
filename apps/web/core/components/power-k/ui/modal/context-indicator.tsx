@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -40,8 +41,8 @@ export function PowerKModalContextIndicator(props: Props) {
           type="button"
           onClick={handleClearContext}
           className="grid shrink-0 place-items-center p-1 text-secondary transition-colors hover:text-primary"
-          title="Clear context (Backspace)"
-          aria-label="Clear context (Backspace)"
+          title={t("power_k_ui.clear_context")}
+          aria-label={t("power_k_ui.clear_context")}
           tabIndex={-1}
         >
           <X className="size-2.5" />

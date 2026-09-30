@@ -188,5 +188,23 @@
       "preferences": "Preferințe",
       "help": "Ajutor"
     }
+  },
+  "power_k_ui": {
+    "clear_context": "Șterge contextul (Backspace)",
+    "empty_menu": {
+      "cycles": "Nu s-au găsit cicluri",
+      "labels": "Nu s-au găsit etichete",
+      "modules": "Nu s-au găsit module",
+      "projects": "Nu s-au găsit proiecte",
+      "settings": "Nu s-au găsit setări",
+      "views": "Nu s-au găsit vizualizări",
+      "workspaces": "Nu s-au găsit spații de lucru"
+    },
+    "epic_update_error": "Epicul nu a putut fi actualizat. Te rugăm să încerci din nou.",
+    "module_update_error": "Modulul nu a putut fi actualizat. Te rugăm să încerci din nou.",
+    "no_estimate_found": "Nu s-a găsit nicio estimare",
+    "reloading_to_apply": "Se reîncarcă pentru a aplica modificările...",
+    "some_error_occurred": "A apărut o eroare",
+    "work_item_update_error": "Elementul de lucru nu a putut fi actualizat. Te rugăm să încerci din nou."
   }
 }

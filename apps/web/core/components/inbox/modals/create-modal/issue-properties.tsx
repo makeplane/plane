@@ -1,12 +1,14 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ETabIndices } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ParentPropertyIcon } from "@plane/propel/icons";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -35,6 +37,8 @@ type TInboxIssueProperties = {
 
 export const InboxIssueProperties = observer(function InboxIssueProperties(props: TInboxIssueProperties) {
   const { projectId, data, handleData, isVisible = false } = props;
+  // translation
+  const { t } = useTranslation();
   // hooks
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { isMobile } = usePlatformOS();
@@ -85,7 +89,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
           onChange={(assigneeIds) => handleData("assignee_ids", assigneeIds)}
           buttonVariant={(data?.assignee_ids || [])?.length > 0 ? "transparent-without-text" : "border-with-text"}
           buttonClassName={(data?.assignee_ids || [])?.length > 0 ? "hover:bg-transparent" : ""}
-          placeholder="Assignees"
+          placeholder={t("assignees")}
           multiple
           tabIndex={getIndex("assignee_ids")}
         />
@@ -109,7 +113,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
             onChange={(date) => handleData("start_date", date ? renderFormattedPayloadDate(date) : "")}
             buttonVariant="border-with-text"
             minDate={minDate ?? undefined}
-            placeholder="Start date"
+            placeholder={t("start_date")}
             tabIndex={getIndex("start_date")}
           />
         </div>
@@ -122,7 +126,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
           onChange={(date) => handleData("target_date", date ? renderFormattedPayloadDate(date) : "")}
           buttonVariant="border-with-text"
           minDate={minDate ?? undefined}
-          placeholder="Due date"
+          placeholder={t("due_date")}
           tabIndex={getIndex("target_date")}
         />
       </div>
@@ -134,7 +138,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
             value={data?.cycle_id || ""}
             onChange={(cycleId) => handleData("cycle_id", cycleId)}
             projectId={projectId}
-            placeholder="Cycle"
+            placeholder={t("common.cycle")}
             buttonVariant="border-with-text"
             tabIndex={getIndex("cycle_id")}
           />
@@ -148,7 +152,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
             value={data?.module_ids || []}
             onChange={(moduleIds) => handleData("module_ids", moduleIds)}
             projectId={projectId}
-            placeholder="Modules"
+            placeholder={t("modules")}
             buttonVariant="border-with-text"
             multiple
             showCount
@@ -165,7 +169,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
             onChange={(estimatePoint) => handleData("estimate_point", estimatePoint)}
             projectId={projectId}
             buttonVariant="border-with-text"
-            placeholder="Estimate"
+            placeholder={t("estimate")}
             tabIndex={getIndex("estimate_point")}
           />
         </div>
@@ -185,7 +189,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
                   <span className="whitespace-nowrap">
                     {selectedParentIssue
                       ? `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
-                      : `Add parent`}
+                      : t("add_parent")}
                   </span>
                 </button>
               }
@@ -196,7 +200,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
             >
               <>
                 <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueModalOpen(true)}>
-                  Change parent work item
+                  {t("change_parent_issue")}
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem
                   className="!p-1"
@@ -205,7 +209,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
                     setSelectedParentIssue(undefined);
                   }}
                 >
-                  Remove parent work item
+                  {t("remove_parent_issue")}
                 </CustomMenu.MenuItem>
               </>
             </CustomMenu>
@@ -216,7 +220,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
               onClick={() => setParentIssueModalOpen(true)}
             >
               <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />
-              <span className="whitespace-nowrap">Add parent</span>
+              <span className="whitespace-nowrap">{t("add_parent")}</span>
             </button>
           )}
 

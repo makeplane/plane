@@ -188,5 +188,23 @@
       "preferences": "Präferenzen",
       "help": "Hilfe"
     }
+  },
+  "power_k_ui": {
+    "clear_context": "Kontext löschen (Rücktaste)",
+    "empty_menu": {
+      "cycles": "Keine Zyklen gefunden",
+      "labels": "Keine Labels gefunden",
+      "modules": "Keine Module gefunden",
+      "projects": "Keine Projekte gefunden",
+      "settings": "Keine Einstellungen gefunden",
+      "views": "Keine Ansichten gefunden",
+      "workspaces": "Keine Arbeitsbereiche gefunden"
+    },
+    "epic_update_error": "Das Epic konnte nicht aktualisiert werden. Bitte versuche es erneut.",
+    "module_update_error": "Das Modul konnte nicht aktualisiert werden. Bitte versuche es erneut.",
+    "no_estimate_found": "Keine Schätzung gefunden",
+    "reloading_to_apply": "Seite wird neu geladen, um die Änderungen anzuwenden...",
+    "some_error_occurred": "Ein Fehler ist aufgetreten",
+    "work_item_update_error": "Das Arbeitselement konnte nicht aktualisiert werden. Bitte versuche es erneut."
   }
 }

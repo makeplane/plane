@@ -83,5 +83,26 @@
         "title": "Wählen Sie ein Arbeitselement, um Details anzuzeigen."
       }
     }
+  },
+  "inbox_ui": {
+    "create_error": "Ein Fehler ist aufgetreten. Bitte versuche es erneut.",
+    "create_success": "Arbeitselement erfolgreich erstellt.",
+    "created_date": "Erstellungsdatum",
+    "delete_failed": "Arbeitselement konnte nicht gelöscht werden",
+    "editor_processing": "Der Editor verarbeitet noch Änderungen. Bitte warte, bevor du fortfährst.",
+    "empty_closed": {
+      "description": "Hier findest du alle Arbeitselemente, egal ob akzeptiert oder abgelehnt.",
+      "title": "Noch keine Anfrage abgeschlossen"
+    },
+    "errors": {
+      "duplicate_permission": "Nur Projektadministratoren können Arbeitselemente als Duplikat markieren"
+    },
+    "last_updated_date": "Datum der letzten Aktualisierung",
+    "next_work_item": "Nächstes Arbeitselement",
+    "permission_denied": "Zugriff verweigert",
+    "previous_work_item": "Vorheriges Arbeitselement",
+    "search_placeholder": "Suchen...",
+    "update_failed": "Arbeitselement konnte nicht aktualisiert werden",
+    "updated_date": "Aktualisierungsdatum"
   }
 }

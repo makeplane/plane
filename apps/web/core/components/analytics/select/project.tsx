@@ -1,11 +1,13 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import { observer } from "mobx-react";
 // plane package imports
+import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronDownIcon, ProjectIcon } from "@plane/propel/icons";
@@ -22,6 +24,8 @@ type Props = {
 
 export const ProjectSelect = observer(function ProjectSelect(props: Props) {
   const { value, onChange, projectIds } = props;
+  // translation
+  const { t } = useTranslation();
   const { getProjectById } = useProject();
 
   const options = projectIds?.map((projectId) => {
@@ -53,13 +57,13 @@ export const ProjectSelect = observer(function ProjectSelect(props: Props) {
         <div className={cn(getButtonStyling("secondary", "lg"), "gap-2")}>
           <ProjectIcon className="h-4 w-4" />
           {value && value.length > 3
-            ? `3+ projects`
+            ? t("analytics_ui.projects_more")
             : value && value.length > 0
               ? projectIds
                   ?.filter((p) => value.includes(p))
                   .map((p) => getProjectById(p)?.name)
                   .join(", ")
-              : "All projects"}
+              : t("workspace_analytics.all_projects")}
           <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
         </div>
       }

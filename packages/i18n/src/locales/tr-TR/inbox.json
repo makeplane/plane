@@ -83,5 +83,26 @@
         "title": "Detaylarını görüntülemek için bir iş öğesi seçin."
       }
     }
+  },
+  "inbox_ui": {
+    "create_error": "Bir hata oluştu. Lütfen tekrar deneyin.",
+    "create_success": "İş öğesi başarıyla oluşturuldu.",
+    "created_date": "Oluşturulma tarihi",
+    "delete_failed": "İş öğesi silinemedi",
+    "editor_processing": "Düzenleyici hâlâ değişiklikleri işliyor. Devam etmeden önce lütfen bekleyin.",
+    "empty_closed": {
+      "description": "Kabul edilen veya reddedilen tüm iş öğelerini burada bulabilirsiniz.",
+      "title": "Henüz kapatılmış bir talep yok"
+    },
+    "errors": {
+      "duplicate_permission": "İş öğelerini yalnızca proje yöneticileri kopya olarak işaretleyebilir"
+    },
+    "last_updated_date": "Son güncelleme tarihi",
+    "next_work_item": "Sonraki iş öğesi",
+    "permission_denied": "İzin reddedildi",
+    "previous_work_item": "Önceki iş öğesi",
+    "search_placeholder": "Ara...",
+    "update_failed": "İş öğesi güncellenemedi",
+    "updated_date": "Güncellenme tarihi"
   }
 }

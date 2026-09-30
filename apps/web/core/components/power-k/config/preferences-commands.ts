@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -34,8 +35,8 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
         .then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Theme updated",
-            message: "Reloading to apply changes...",
+            title: t("power_k.preferences_actions.toast.theme.success"),
+            message: t("power_k_ui.reloading_to_apply"),
           });
           // reload the page after showing the toast
           window.location.reload();

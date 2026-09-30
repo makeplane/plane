@@ -188,5 +188,23 @@
       "preferences": "Préférences",
       "help": "Aide"
     }
+  },
+  "power_k_ui": {
+    "clear_context": "Effacer le contexte (Retour arrière)",
+    "empty_menu": {
+      "cycles": "Aucun cycle trouvé",
+      "labels": "Aucune étiquette trouvée",
+      "modules": "Aucun module trouvé",
+      "projects": "Aucun projet trouvé",
+      "settings": "Aucun paramètre trouvé",
+      "views": "Aucune vue trouvée",
+      "workspaces": "Aucun espace de travail trouvé"
+    },
+    "epic_update_error": "L'epic n'a pas pu être mis à jour. Veuillez réessayer.",
+    "module_update_error": "Le module n'a pas pu être mis à jour. Veuillez réessayer.",
+    "no_estimate_found": "Aucune estimation trouvée",
+    "reloading_to_apply": "Rechargement pour appliquer les modifications...",
+    "some_error_occurred": "Une erreur s'est produite",
+    "work_item_update_error": "L'élément de travail n'a pas pu être mis à jour. Veuillez réessayer."
   }
 }

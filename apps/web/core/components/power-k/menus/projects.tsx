@@ -1,11 +1,13 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import React from "react";
 // components
+import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 // plane imports
 import type { TPartialProject } from "@/plane-web/types";
@@ -18,6 +20,8 @@ type Props = {
 };
 
 export function PowerKProjectsMenu({ projects, onSelect }: Props) {
+  const { t } = useTranslation();
+
   return (
     <PowerKMenuBuilder
       items={projects}
@@ -30,7 +34,7 @@ export function PowerKProjectsMenu({ projects, onSelect }: Props) {
       getValue={(project) => project.name}
       getLabel={(project) => project.name}
       onSelect={onSelect}
-      emptyText="No projects found"
+      emptyText={t("power_k_ui.empty_menu.projects")}
     />
   );
 }

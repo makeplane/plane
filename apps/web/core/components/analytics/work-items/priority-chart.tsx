@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -95,7 +96,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
       parsedBars = [
         {
           key: "count",
-          label: "Count",
+          label: t("analytics_ui.count"),
           stackId: "bar-one",
           fill: (payload) => generateBarColor(payload.key, { x_axis, y_axis, group_by }, baseColors, workspaceStates),
           textClassName: "",
@@ -137,7 +138,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
       parsedBars = [];
     }
     return parsedBars;
-  }, [chart_model, group_by, parsedData, resolvedTheme, workspaceStates, x_axis, y_axis]);
+  }, [chart_model, group_by, parsedData, resolvedTheme, workspaceStates, x_axis, y_axis, t]);
 
   const yAxisLabel = useMemo(
     () => ANALYTICS_Y_AXIS_VALUES.find((item) => item.value === props.y_axis)?.label ?? props.y_axis,
@@ -163,18 +164,18 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
       },
       {
         accessorKey: "count",
-        header: () => <div className="text-right">Count</div>,
+        header: () => <div className="text-right">{t("analytics_ui.count")}</div>,
         cell: ({ row }) => <div className="text-right">{row.original.count}</div>,
         meta: {
           export: {
             key: "Count",
             value: (row) => row.original.count,
-            label: "Count",
+            label: t("analytics_ui.count"),
           },
         },
       },
     ],
-    [xAxisLabel]
+    [xAxisLabel, t]
   );
 
   const columns: ColumnDef<TChartDatum>[] = useMemo(

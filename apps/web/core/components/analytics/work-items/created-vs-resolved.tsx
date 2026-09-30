@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -65,7 +66,7 @@ const CreatedVsResolved = observer(function CreatedVsResolved() {
     () => [
       {
         key: "completed_issues",
-        label: "Resolved",
+        label: t("common.resolved"),
         fill: "#19803833",
         fillOpacity: 1,
         stackId: "bar-one",
@@ -76,7 +77,7 @@ const CreatedVsResolved = observer(function CreatedVsResolved() {
       },
       {
         key: "created_issues",
-        label: "Created",
+        label: t("created"),
         fill: "#1192E833",
         fillOpacity: 1,
         stackId: "bar-one",
@@ -86,7 +87,7 @@ const CreatedVsResolved = observer(function CreatedVsResolved() {
         strokeOpacity: 1,
       },
     ],
-    []
+    [t]
   );
 
   return (

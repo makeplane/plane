@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -11,6 +12,7 @@ import { Popover } from "@headlessui/react";
 import { COLORS_LIST } from "@plane/editor";
 import type { TEditorCommands } from "@plane/editor";
 // helpers
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -26,6 +28,8 @@ type Props = {
 
 export const ColorDropdown = memo(function ColorDropdown(props: Props) {
   const { handleColorSelect, isColorActive } = props;
+  // translation
+  const { t } = useTranslation();
 
   const activeTextColor = COLORS_LIST.find((c) => isColorActive("text-color", c.key));
   const activeBackgroundColor = COLORS_LIST.find((c) => isColorActive("background-color", c.key));
@@ -68,7 +72,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
             className="fixed z-20 mt-1 space-y-2 rounded-md border-[0.5px] border-strong bg-surface-1 p-2 shadow-raised-200"
           >
             <div className="space-y-1.5">
-              <p className="text-11 font-semibold text-tertiary">Text colors</p>
+              <p className="text-11 font-semibold text-tertiary">{t("page_ui.editor.text_colors")}</p>
               <div className="flex items-center gap-2">
                 {COLORS_LIST.map((color) => (
                   <button
@@ -91,7 +95,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
               </div>
             </div>
             <div className="space-y-1.5">
-              <p className="text-11 font-semibold text-tertiary">Background colors</p>
+              <p className="text-11 font-semibold text-tertiary">{t("page_ui.editor.background_colors")}</p>
               <div className="flex items-center gap-2">
                 {COLORS_LIST.map((color) => (
                   <button

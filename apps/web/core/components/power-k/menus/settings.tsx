@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -8,6 +9,7 @@ import React from "react";
 import { observer } from "mobx-react";
 // local imports
 import { PowerKMenuBuilder } from "./builder";
+import { useTranslation } from "@plane/i18n";
 
 type TSettingItem = {
   key: string;
@@ -22,6 +24,8 @@ type Props = {
 };
 
 export const PowerKSettingsMenu = observer(function PowerKSettingsMenu({ settings, onSelect }: Props) {
+  const { t } = useTranslation();
+
   return (
     <PowerKMenuBuilder
       items={settings}
@@ -30,7 +34,7 @@ export const PowerKSettingsMenu = observer(function PowerKSettingsMenu({ setting
       getValue={(setting) => setting.label}
       getLabel={(setting) => setting.label}
       onSelect={onSelect}
-      emptyText="No settings found"
+      emptyText={t("power_k_ui.empty_menu.settings")}
     />
   );
 });

@@ -54,5 +54,18 @@
       "2_weeks": "2 săptămâni",
       "custom": "Personalizat"
     }
+  },
+  "notification_ui": {
+    "snooze_modal": {
+      "date_required": "Te rugăm să selectezi o dată",
+      "no_time_available": "Nu există ore disponibile pentru această dată.",
+      "pick_date": "Alege o dată",
+      "pick_time": "Alege o oră",
+      "select_date": "Selectează data",
+      "select_time": "Selectează o oră",
+      "submitting": "Se trimite...",
+      "time_required": "Te rugăm să selectezi o oră",
+      "title": "Personalizează timpul de amânare"
+    }
   }
 }

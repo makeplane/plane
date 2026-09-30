@@ -83,5 +83,26 @@
         "title": "Select a work item to view its details."
       }
     }
+  },
+  "inbox_ui": {
+    "create_error": "Some error occurred. Please try again.",
+    "create_success": "Work item created successfully.",
+    "created_date": "Created date",
+    "delete_failed": "Work item delete failed",
+    "editor_processing": "Editor is still processing changes. Please wait before proceeding.",
+    "empty_closed": {
+      "description": "All the work items whether accepted or declined can be found here.",
+      "title": "No request closed yet"
+    },
+    "errors": {
+      "duplicate_permission": "Only project admins can mark work items as duplicate"
+    },
+    "last_updated_date": "Last updated date",
+    "next_work_item": "Next work item",
+    "permission_denied": "Permission denied",
+    "previous_work_item": "Previous work item",
+    "search_placeholder": "Search...",
+    "update_failed": "Work item update failed",
+    "updated_date": "Updated date"
   }
 }

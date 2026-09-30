@@ -1,11 +1,13 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import { observer } from "mobx-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { Header, EHeaderVariant } from "@plane/ui";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
@@ -18,6 +20,8 @@ import { InboxIssueAppliedFiltersState } from "./state";
 import { InboxIssueAppliedFiltersStatus } from "./status";
 
 export const InboxIssueAppliedFilters = observer(function InboxIssueAppliedFilters() {
+  // translation
+  const { t } = useTranslation();
   const { getAppliedFiltersCount } = useProjectInbox();
 
   if (getAppliedFiltersCount === 0) return <></>;
@@ -30,15 +34,15 @@ export const InboxIssueAppliedFilters = observer(function InboxIssueAppliedFilte
       {/* priority */}
       <InboxIssueAppliedFiltersPriority />
       {/* assignees */}
-      <InboxIssueAppliedFiltersMember filterKey="assignees" label="Assignees" />
+      <InboxIssueAppliedFiltersMember filterKey="assignees" label={t("assignees")} />
       {/* created_by */}
-      <InboxIssueAppliedFiltersMember filterKey="created_by" label="Created By" />
+      <InboxIssueAppliedFiltersMember filterKey="created_by" label={t("common.created_by")} />
       {/* label */}
       <InboxIssueAppliedFiltersLabel />
       {/* created_at */}
-      <InboxIssueAppliedFiltersDate filterKey="created_at" label="Created date" />
+      <InboxIssueAppliedFiltersDate filterKey="created_at" label={t("inbox_ui.created_date")} />
       {/* updated_at */}
-      <InboxIssueAppliedFiltersDate filterKey="updated_at" label="Updated date" />
+      <InboxIssueAppliedFiltersDate filterKey="updated_at" label={t("inbox_ui.updated_date")} />
     </Header>
   );
 });

@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -171,7 +172,11 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                           </div>
                           <div className="flex flex-shrink-0 items-center gap-2">
                             {project.assigned_issues > 0 && (
-                              <Tooltip tooltipContent="Completion percentage" position="left" isMobile={isMobile}>
+                              <Tooltip
+                                tooltipContent={t("profile_ui.completion_percentage")}
+                                position="left"
+                                isMobile={isMobile}
+                              >
                                 <div
                                   className={`rounded-sm px-1 py-0.5 text-11 font-medium ${
                                     completedIssuePercentage <= 35

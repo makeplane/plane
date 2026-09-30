@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -9,6 +10,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { EyeIcon, TriangleAlert } from "lucide-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TPageVersion } from "@plane/types";
@@ -40,6 +42,8 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
     restoreEnabled,
     storeType,
   } = props;
+  // translation
+  const { t } = useTranslation();
   // states
   const [isRestoring, setIsRestoring] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
@@ -60,14 +64,14 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Page version restored.",
+          title: t("page_ui.version.restored"),
         });
         handleClose();
       })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Failed to restore page version.",
+          title: t("page_ui.version.restore_failed"),
         })
       )
       .finally(() => setIsRestoring(false));
@@ -90,11 +94,11 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               <TriangleAlert className="size-10" />
             </span>
             <div>
-              <h6 className="text-16 font-semibold">Something went wrong!</h6>
-              <p className="text-13 text-tertiary">The version could not be loaded, please try again.</p>
+              <h6 className="text-16 font-semibold">{t("page_ui.version.error_title")}</h6>
+              <p className="text-13 text-tertiary">{t("page_ui.version.error_description")}</p>
             </div>
             <Button variant="link" onClick={handleRetry} loading={isRetrying}>
-              Try again
+              {t("page_ui.version.try_again")}
             </Button>
           </div>
         </div>
@@ -105,16 +109,16 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               <h6 className="text-14 font-medium">
                 {versionDetails
                   ? `${renderFormattedDate(versionDetails.last_saved_at)} ${renderFormattedTime(versionDetails.last_saved_at)}`
-                  : "Loading version details"}
+                  : t("page_ui.version.loading_details")}
               </h6>
               <span className="flex flex-shrink-0 items-center gap-1 rounded-sm bg-accent-primary/20 px-1.5 py-1 text-11 font-medium text-accent-primary">
                 <EyeIcon className="size-3 flex-shrink-0" />
-                View only
+                {t("page_ui.version.view_only")}
               </span>
             </div>
             {restoreEnabled && (
               <Button variant="primary" className="flex-shrink-0" onClick={handleRestoreVersion} loading={isRestoring}>
-                {isRestoring ? "Restoring" : "Restore"}
+                {isRestoring ? t("page_ui.version.restoring") : t("restore")}
               </Button>
             )}
           </div>
