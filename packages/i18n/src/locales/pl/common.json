@@ -489,7 +489,7 @@
     "project_timezone": "Strefa czasowa projektu",
     "created_on": "Utworzono dnia",
     "updated_on": "Zaktualizowano",
-    "completed_on": "Completed on",
+    "completed_on": "Zakończono dnia",
     "update_project": "Zaktualizuj projekt",
     "identifier_already_exists": "Identyfikator już istnieje",
     "add_more": "Dodaj więcej",
@@ -516,8 +516,8 @@
     "order_by": {
       "label": "Sortuj według",
       "manual": "Ręcznie - Ranking",
-      "last_created": "Last created",
-      "last_updated": "Last updated",
+      "last_created": "Ostatnio utworzone",
+      "last_updated": "Ostatnio zaktualizowane",
       "start_date": "Data rozpoczęcia",
       "due_date": "Termin",
       "asc": "Rosnąco",
@@ -718,11 +718,11 @@
     "details": "Szczegóły",
     "project_structure": "Struktura projektu",
     "custom_properties": "Właściwości niestandardowe",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Twój profil",
+    "developer": "Dla programistów",
+    "work_structure": "Struktura pracy",
+    "execution": "Realizacja",
+    "administration": "Administracja"
   },
   "chart": {
     "x_axis": "Oś X",
