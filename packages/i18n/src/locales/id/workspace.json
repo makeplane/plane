@@ -374,5 +374,75 @@
         }
       }
     }
+  },
+  "core_ui": {
+    "select_work_item": "Pilih setidaknya satu item pekerjaan.",
+    "work_items_deleted": "Item pekerjaan berhasil dihapus!",
+    "try_again_error": "Terjadi kesalahan. Silakan coba lagi.",
+    "search_ellipsis": "Cari...",
+    "gpt_enter_task": "Masukkan tugas untuk mendapatkan bantuan AI.",
+    "theme": {
+      "neutral_color": "Warna netral",
+      "neutral_color_required": "Warna netral wajib diisi",
+      "brand_color": "Warna merek",
+      "brand_color_required": "Warna merek wajib diisi",
+      "invalid_hex": "Masukkan kode hex yang valid",
+      "reloading": "Memuat ulang untuk menerapkan perubahan...",
+      "download_success": "Konfigurasi tema berhasil diunduh.",
+      "download_failed": "Gagal mengunduh konfigurasi tema.",
+      "import_success": "Konfigurasi tema berhasil diimpor",
+      "updated": "Tema diperbarui",
+      "updating": "Memperbarui tema...",
+      "update_failed": "Gagal memperbarui tema. Silakan coba lagi."
+    },
+    "markdown_copied": "Markdown disalin ke papan klip.",
+    "account_deactivated": "Akun berhasil dinonaktifkan.",
+    "estimate": {
+      "deleted_title": "Estimasi dihapus",
+      "deleted_message": "Estimasi telah dihapus dari proyek Anda.",
+      "delete_failed_title": "Penghapusan estimasi gagal",
+      "delete_failed_message": "Kami tidak dapat menghapus estimasi, silakan coba lagi."
+    },
+    "drag_drop_manual_only": "Seret dan lepas hanya diaktifkan saat diurutkan secara manual",
+    "image_picker": {
+      "images": "Gambar",
+      "upload": "Unggah",
+      "search_images": "Cari gambar",
+      "not_uploaded": "Gambar tidak diunggah",
+      "could_not_upload": "Gambar tidak dapat diunggah"
+    },
+    "sidebar": {
+      "main": "Bilah sisi utama",
+      "resize": "Ubah ukuran bilah sisi",
+      "peek": "Pratinjau bilah sisi"
+    },
+    "search_commands": "Cari perintah...",
+    "delete_label": "Hapus label",
+    "select_expiration_date": "Pilih tanggal kedaluwarsa.",
+    "sign_out_failed": "Gagal keluar. Silakan coba lagi.",
+    "set_date": "Atur tanggal",
+    "enter_months": "Masukkan bulan",
+    "months": "Bulan",
+    "select_month_range": "Pilih bulan antara 1 dan 12.",
+    "auth": {
+      "reset_password": "Atur ulang kata sandi",
+      "regain_access": "Dapatkan kembali akses ke akun Anda.",
+      "create_new_password": "Buat kata sandi baru.",
+      "set_password": "Atur kata sandi"
+    },
+    "invitation": {
+      "not_found": "Undangan tidak ditemukan",
+      "invited_to": "Anda diundang ke {workspace}",
+      "already_member": "Anda sudah menjadi anggota {workspace}",
+      "description": "Ruang kerja adalah tempat Anda membuat proyek, berkolaborasi pada item pekerjaan, dan mengatur berbagai alur kerja di akun Plane Anda.",
+      "accept": "Terima",
+      "ignore": "Abaikan",
+      "continue_home": "Lanjutkan ke beranda",
+      "link_inactive": "Tautan undangan ini tidak lagi aktif.",
+      "start_empty_project": "Atau mulai dari proyek kosong",
+      "sign_in_continue": "Masuk untuk melanjutkan",
+      "star_github": "Beri kami bintang di GitHub",
+      "join_community": "Bergabunglah dengan komunitas kreator aktif kami"
+    }
   }
 }

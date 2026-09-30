@@ -374,5 +374,75 @@
         }
       }
     }
+  },
+  "core_ui": {
+    "select_work_item": "Selecciona al menos un elemento de trabajo.",
+    "work_items_deleted": "¡Elementos de trabajo eliminados correctamente!",
+    "try_again_error": "Algo salió mal. Inténtalo de nuevo.",
+    "search_ellipsis": "Buscar...",
+    "gpt_enter_task": "Introduce una tarea para obtener ayuda de la IA.",
+    "theme": {
+      "neutral_color": "Color neutro",
+      "neutral_color_required": "El color neutro es obligatorio",
+      "brand_color": "Color de marca",
+      "brand_color_required": "El color de marca es obligatorio",
+      "invalid_hex": "Introduce un código hexadecimal válido",
+      "reloading": "Recargando para aplicar los cambios...",
+      "download_success": "Configuración del tema descargada correctamente.",
+      "download_failed": "No se pudo descargar la configuración del tema.",
+      "import_success": "Configuración del tema importada correctamente",
+      "updated": "Tema actualizado",
+      "updating": "Actualizando tema...",
+      "update_failed": "No se pudo actualizar el tema. Inténtalo de nuevo."
+    },
+    "markdown_copied": "Markdown copiado al portapapeles.",
+    "account_deactivated": "Cuenta desactivada correctamente.",
+    "estimate": {
+      "deleted_title": "Estimación eliminada",
+      "deleted_message": "La estimación se ha eliminado de tu proyecto.",
+      "delete_failed_title": "Error al eliminar la estimación",
+      "delete_failed_message": "No pudimos eliminar la estimación, inténtalo de nuevo."
+    },
+    "drag_drop_manual_only": "Arrastrar y soltar solo está habilitado con el orden manual",
+    "image_picker": {
+      "images": "Imágenes",
+      "upload": "Subir",
+      "search_images": "Buscar imágenes",
+      "not_uploaded": "Imagen no subida",
+      "could_not_upload": "No se pudo subir la imagen"
+    },
+    "sidebar": {
+      "main": "Barra lateral principal",
+      "resize": "Cambiar tamaño de la barra lateral",
+      "peek": "Vista previa de la barra lateral"
+    },
+    "search_commands": "Buscar comandos...",
+    "delete_label": "Eliminar etiqueta",
+    "select_expiration_date": "Selecciona una fecha de vencimiento.",
+    "sign_out_failed": "No se pudo cerrar la sesión. Inténtalo de nuevo.",
+    "set_date": "Establecer fecha",
+    "enter_months": "Introduce los meses",
+    "months": "Meses",
+    "select_month_range": "Selecciona un mes entre 1 y 12.",
+    "auth": {
+      "reset_password": "Restablecer contraseña",
+      "regain_access": "Recupera el acceso a tu cuenta.",
+      "create_new_password": "Crea una nueva contraseña.",
+      "set_password": "Establecer contraseña"
+    },
+    "invitation": {
+      "not_found": "Invitación no encontrada",
+      "invited_to": "Has sido invitado a {workspace}",
+      "already_member": "Ya eres miembro de {workspace}",
+      "description": "Tu espacio de trabajo es donde crearás proyectos, colaborarás en tus elementos de trabajo y organizarás diferentes flujos de trabajo en tu cuenta de Plane.",
+      "accept": "Aceptar",
+      "ignore": "Ignorar",
+      "continue_home": "Continuar al inicio",
+      "link_inactive": "Este enlace de invitación ya no está activo.",
+      "start_empty_project": "O empieza desde un proyecto vacío",
+      "sign_in_continue": "Inicia sesión para continuar",
+      "star_github": "Danos una estrella en GitHub",
+      "join_community": "Únete a nuestra comunidad de creadores activos"
+    }
   }
 }

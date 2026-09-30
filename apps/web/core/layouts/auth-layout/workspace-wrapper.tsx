@@ -136,7 +136,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: "Failed to sign out. Please try again.",
+        message: t("core_ui.sign_out_failed"),
       })
     );
   };

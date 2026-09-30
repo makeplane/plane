@@ -374,5 +374,75 @@
         }
       }
     }
+  },
+  "core_ui": {
+    "select_work_item": "Vui lòng chọn ít nhất một mục công việc.",
+    "work_items_deleted": "Đã xóa các mục công việc thành công!",
+    "try_again_error": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "search_ellipsis": "Tìm kiếm...",
+    "gpt_enter_task": "Vui lòng nhập một tác vụ để nhận hỗ trợ từ AI.",
+    "theme": {
+      "neutral_color": "Màu trung tính",
+      "neutral_color_required": "Màu trung tính là bắt buộc",
+      "brand_color": "Màu thương hiệu",
+      "brand_color_required": "Màu thương hiệu là bắt buộc",
+      "invalid_hex": "Nhập mã hex hợp lệ",
+      "reloading": "Đang tải lại để áp dụng thay đổi...",
+      "download_success": "Đã tải xuống cấu hình giao diện thành công.",
+      "download_failed": "Không thể tải xuống cấu hình giao diện.",
+      "import_success": "Đã nhập cấu hình giao diện thành công",
+      "updated": "Đã cập nhật giao diện",
+      "updating": "Đang cập nhật giao diện...",
+      "update_failed": "Không thể cập nhật giao diện. Vui lòng thử lại."
+    },
+    "markdown_copied": "Đã sao chép Markdown vào bảng nhớ tạm.",
+    "account_deactivated": "Đã vô hiệu hóa tài khoản thành công.",
+    "estimate": {
+      "deleted_title": "Đã xóa ước tính",
+      "deleted_message": "Ước tính đã được xóa khỏi dự án của bạn.",
+      "delete_failed_title": "Xóa ước tính thất bại",
+      "delete_failed_message": "Chúng tôi không thể xóa ước tính, vui lòng thử lại."
+    },
+    "drag_drop_manual_only": "Kéo và thả chỉ khả dụng khi sắp xếp thủ công",
+    "image_picker": {
+      "images": "Hình ảnh",
+      "upload": "Tải lên",
+      "search_images": "Tìm kiếm hình ảnh",
+      "not_uploaded": "Hình ảnh chưa được tải lên",
+      "could_not_upload": "Không thể tải hình ảnh lên"
+    },
+    "sidebar": {
+      "main": "Thanh bên chính",
+      "resize": "Thay đổi kích thước thanh bên",
+      "peek": "Xem nhanh thanh bên"
+    },
+    "search_commands": "Tìm kiếm lệnh...",
+    "delete_label": "Xóa nhãn",
+    "select_expiration_date": "Vui lòng chọn ngày hết hạn.",
+    "sign_out_failed": "Đăng xuất thất bại. Vui lòng thử lại.",
+    "set_date": "Đặt ngày",
+    "enter_months": "Nhập số tháng",
+    "months": "Tháng",
+    "select_month_range": "Chọn một tháng từ 1 đến 12.",
+    "auth": {
+      "reset_password": "Đặt lại mật khẩu",
+      "regain_access": "Lấy lại quyền truy cập vào tài khoản của bạn.",
+      "create_new_password": "Tạo mật khẩu mới.",
+      "set_password": "Đặt mật khẩu"
+    },
+    "invitation": {
+      "not_found": "Không tìm thấy lời mời",
+      "invited_to": "Bạn đã được mời tham gia {workspace}",
+      "already_member": "Bạn đã là thành viên của {workspace}",
+      "description": "Không gian làm việc là nơi bạn tạo dự án, cộng tác trên các mục công việc và sắp xếp các luồng công việc khác nhau trong tài khoản Plane của bạn.",
+      "accept": "Chấp nhận",
+      "ignore": "Bỏ qua",
+      "continue_home": "Tiếp tục đến trang chủ",
+      "link_inactive": "Liên kết mời này không còn hiệu lực.",
+      "start_empty_project": "Hoặc bắt đầu từ một dự án trống",
+      "sign_in_continue": "Đăng nhập để tiếp tục",
+      "star_github": "Gắn sao cho chúng tôi trên GitHub",
+      "join_community": "Tham gia cộng đồng những người sáng tạo tích cực của chúng tôi"
+    }
   }
 }

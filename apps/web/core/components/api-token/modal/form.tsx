@@ -92,7 +92,7 @@ export function CreateApiTokenForm(props: Props) {
       return setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: "Please select an expiration date.",
+        message: t("core_ui.select_expiration_date"),
       });
 
     const payload: Partial<IApiToken> = {
@@ -218,7 +218,7 @@ export function CreateApiTokenForm(props: Props) {
                     minDate={tomorrow}
                     icon={<Calendar className="h-3 w-3" />}
                     buttonVariant="border-with-text"
-                    placeholder="Set date"
+                    placeholder={t("core_ui.set_date")}
                     disabled={neverExpires}
                   />
                 </div>

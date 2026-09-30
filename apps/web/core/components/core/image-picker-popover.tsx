@@ -14,6 +14,7 @@ import { Controller } from "react-hook-form";
 import useSWR from "swr";
 import { Popover } from "@headlessui/react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Tabs } from "@plane/propel/tabs";
@@ -77,6 +78,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
   const workspaceSlug = workspaceSlugProp ?? workspaceSlugFromParams;
   // store hooks
   const { config } = useInstance();
+  const { t } = useTranslation();
   // derived values
   const hasUnsplashConfigured = config?.has_unsplash_configured || false;
   const tabOptions: TTabOption[] = useMemo(
@@ -88,16 +90,16 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
       },
       {
         key: "images",
-        title: "Images",
+        title: t("core_ui.image_picker.images"),
         isEnabled: true,
       },
       {
         key: "upload",
-        title: "Upload",
+        title: t("core_ui.image_picker.upload"),
         isEnabled: true,
       },
     ],
-    [hasUnsplashConfigured]
+    [hasUnsplashConfigured, t]
   );
 
   const enabledTabs = useMemo(() => tabOptions.filter((tab) => tab.isEnabled), [tabOptions]);
@@ -153,9 +155,9 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
           console.error("Error uploading user cover image:", error);
           setIsImageUploading(false);
           setToast({
-            message: error?.error ?? "The image could not be uploaded",
+            message: error?.error ?? t("core_ui.image_picker.could_not_upload"),
             type: TOAST_TYPE.ERROR,
-            title: "Image not uploaded",
+            title: t("core_ui.image_picker.not_uploaded"),
           });
         });
     } else {
@@ -174,9 +176,9 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
           console.error("Error uploading project cover image:", error);
           setIsImageUploading(false);
           setToast({
-            message: error?.error ?? "The image could not be uploaded",
+            message: error?.error ?? t("core_ui.image_picker.could_not_upload"),
             type: TOAST_TYPE.ERROR,
-            title: "Image not uploaded",
+            title: t("core_ui.image_picker.not_uploaded"),
           });
         });
     }
@@ -246,7 +248,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                               value={searchValue}
                               onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                               ref={searchInputRef}
-                              placeholder="Search for images"
+                              placeholder={t("core_ui.image_picker.search_images")}
                               className="w-full text-13"
                             />
                           )}

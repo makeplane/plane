@@ -374,5 +374,75 @@
         }
       }
     }
+  },
+  "core_ui": {
+    "select_work_item": "請至少選擇一個工作項目。",
+    "work_items_deleted": "工作項目已成功刪除！",
+    "try_again_error": "發生錯誤，請再試一次。",
+    "search_ellipsis": "搜尋...",
+    "gpt_enter_task": "請輸入任務以取得 AI 協助。",
+    "theme": {
+      "neutral_color": "中性色",
+      "neutral_color_required": "中性色為必填項",
+      "brand_color": "品牌色",
+      "brand_color_required": "品牌色為必填項",
+      "invalid_hex": "請輸入有效的十六進位代碼",
+      "reloading": "正在重新載入以套用變更...",
+      "download_success": "主題設定下載成功。",
+      "download_failed": "下載主題設定失敗。",
+      "import_success": "主題設定匯入成功",
+      "updated": "主題已更新",
+      "updating": "正在更新主題...",
+      "update_failed": "更新主題失敗，請再試一次。"
+    },
+    "markdown_copied": "Markdown 已複製到剪貼簿。",
+    "account_deactivated": "帳戶已成功停用。",
+    "estimate": {
+      "deleted_title": "估算已刪除",
+      "deleted_message": "估算已從您的專案中移除。",
+      "delete_failed_title": "刪除估算失敗",
+      "delete_failed_message": "無法刪除估算，請再試一次。"
+    },
+    "drag_drop_manual_only": "僅在手動排序時才可拖放",
+    "image_picker": {
+      "images": "圖片",
+      "upload": "上傳",
+      "search_images": "搜尋圖片",
+      "not_uploaded": "圖片未上傳",
+      "could_not_upload": "無法上傳圖片"
+    },
+    "sidebar": {
+      "main": "主側邊欄",
+      "resize": "調整側邊欄大小",
+      "peek": "側邊欄預覽"
+    },
+    "search_commands": "搜尋指令...",
+    "delete_label": "刪除標籤",
+    "select_expiration_date": "請選擇到期日期。",
+    "sign_out_failed": "登出失敗，請再試一次。",
+    "set_date": "設定日期",
+    "enter_months": "輸入月數",
+    "months": "個月",
+    "select_month_range": "請選擇 1 到 12 之間的月份。",
+    "auth": {
+      "reset_password": "重設密碼",
+      "regain_access": "恢復對您帳戶的存取。",
+      "create_new_password": "建立新密碼。",
+      "set_password": "設定密碼"
+    },
+    "invitation": {
+      "not_found": "找不到邀請",
+      "invited_to": "您已受邀加入 {workspace}",
+      "already_member": "您已經是 {workspace} 的成員",
+      "description": "工作區是您在 Plane 帳戶中建立專案、協作處理工作項目以及組織不同工作流程的地方。",
+      "accept": "接受",
+      "ignore": "忽略",
+      "continue_home": "繼續前往首頁",
+      "link_inactive": "此邀請連結已失效。",
+      "start_empty_project": "或從空白專案開始",
+      "sign_in_continue": "登入以繼續",
+      "star_github": "在 GitHub 上為我們加星",
+      "join_community": "加入我們活躍的創作者社群"
+    }
   }
 }

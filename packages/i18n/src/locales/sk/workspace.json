@@ -374,5 +374,75 @@
         }
       }
     }
+  },
+  "core_ui": {
+    "select_work_item": "Vyberte aspoň jednu pracovnú položku.",
+    "work_items_deleted": "Pracovné položky boli úspešne odstránené!",
+    "try_again_error": "Niečo sa pokazilo. Skúste to prosím znova.",
+    "search_ellipsis": "Hľadať...",
+    "gpt_enter_task": "Zadajte úlohu, s ktorou vám AI pomôže.",
+    "theme": {
+      "neutral_color": "Neutrálna farba",
+      "neutral_color_required": "Neutrálna farba je povinná",
+      "brand_color": "Farba značky",
+      "brand_color_required": "Farba značky je povinná",
+      "invalid_hex": "Zadajte platný hex kód",
+      "reloading": "Opätovné načítanie na uplatnenie zmien...",
+      "download_success": "Konfigurácia motívu bola úspešne stiahnutá.",
+      "download_failed": "Konfiguráciu motívu sa nepodarilo stiahnuť.",
+      "import_success": "Konfigurácia motívu bola úspešne importovaná",
+      "updated": "Motív aktualizovaný",
+      "updating": "Aktualizácia motívu...",
+      "update_failed": "Motív sa nepodarilo aktualizovať. Skúste to prosím znova."
+    },
+    "markdown_copied": "Markdown skopírovaný do schránky.",
+    "account_deactivated": "Účet bol úspešne deaktivovaný.",
+    "estimate": {
+      "deleted_title": "Odhad odstránený",
+      "deleted_message": "Odhad bol odstránený z vášho projektu.",
+      "delete_failed_title": "Odstránenie odhadu zlyhalo",
+      "delete_failed_message": "Odhad sa nepodarilo odstrániť, skúste to prosím znova."
+    },
+    "drag_drop_manual_only": "Presúvanie je povolené iba pri ručnom zoradení",
+    "image_picker": {
+      "images": "Obrázky",
+      "upload": "Nahrať",
+      "search_images": "Hľadať obrázky",
+      "not_uploaded": "Obrázok sa nenahral",
+      "could_not_upload": "Obrázok sa nepodarilo nahrať"
+    },
+    "sidebar": {
+      "main": "Hlavný bočný panel",
+      "resize": "Zmeniť veľkosť bočného panela",
+      "peek": "Náhľad bočného panela"
+    },
+    "search_commands": "Hľadať príkazy...",
+    "delete_label": "Odstrániť štítok",
+    "select_expiration_date": "Vyberte dátum vypršania platnosti.",
+    "sign_out_failed": "Odhlásenie zlyhalo. Skúste to prosím znova.",
+    "set_date": "Nastaviť dátum",
+    "enter_months": "Zadajte mesiace",
+    "months": "Mesiace",
+    "select_month_range": "Vyberte mesiac od 1 do 12.",
+    "auth": {
+      "reset_password": "Obnoviť heslo",
+      "regain_access": "Získajte späť prístup k svojmu účtu.",
+      "create_new_password": "Vytvorte nové heslo.",
+      "set_password": "Nastaviť heslo"
+    },
+    "invitation": {
+      "not_found": "Pozvánka sa nenašla",
+      "invited_to": "Boli ste pozvaní do {workspace}",
+      "already_member": "Ste už členom {workspace}",
+      "description": "Váš pracovný priestor je miesto, kde vytvárate projekty, spolupracujete na pracovných položkách a organizujete rôzne prúdy práce vo svojom účte Plane.",
+      "accept": "Prijať",
+      "ignore": "Ignorovať",
+      "continue_home": "Pokračovať na domovskú stránku",
+      "link_inactive": "Tento odkaz na pozvánku už nie je aktívny.",
+      "start_empty_project": "Alebo začnite s prázdnym projektom",
+      "sign_in_continue": "Pre pokračovanie sa prihláste",
+      "star_github": "Ohodnoťte nás na GitHube",
+      "join_community": "Pripojte sa k našej komunite aktívnych tvorcov"
+    }
   }
 }

@@ -1,12 +1,14 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -30,6 +32,7 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
   const { areEstimateEnabledByProjectId, deleteEstimate } = useProjectEstimates();
   const { asJson: estimate } = useEstimate(estimateId);
   const { updateProject } = useProject();
+  const { t } = useTranslation();
   // states
   const [buttonLoader, setButtonLoader] = useState(false);
 
@@ -44,16 +47,16 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
       setButtonLoader(false);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Estimate deleted",
-        message: "Estimate has been removed from your project.",
+        title: t("core_ui.estimate.deleted_title"),
+        message: t("core_ui.estimate.deleted_message"),
       });
       handleClose();
     } catch (_error) {
       setButtonLoader(false);
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Estimate creation failed",
-        message: "We were unable to delete the estimate, please try again.",
+        title: t("core_ui.estimate.delete_failed_title"),
+        message: t("core_ui.estimate.delete_failed_message"),
       });
     }
   };

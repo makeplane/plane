@@ -374,5 +374,75 @@
         }
       }
     }
+  },
+  "core_ui": {
+    "select_work_item": "请至少选择一个工作项。",
+    "work_items_deleted": "工作项已成功删除！",
+    "try_again_error": "出了点问题，请重试。",
+    "search_ellipsis": "搜索...",
+    "gpt_enter_task": "请输入任务以获取 AI 协助。",
+    "theme": {
+      "neutral_color": "中性色",
+      "neutral_color_required": "中性色为必填项",
+      "brand_color": "品牌色",
+      "brand_color_required": "品牌色为必填项",
+      "invalid_hex": "请输入有效的十六进制代码",
+      "reloading": "正在重新加载以应用更改...",
+      "download_success": "主题配置下载成功。",
+      "download_failed": "下载主题配置失败。",
+      "import_success": "主题配置导入成功",
+      "updated": "主题已更新",
+      "updating": "正在更新主题...",
+      "update_failed": "更新主题失败，请重试。"
+    },
+    "markdown_copied": "Markdown 已复制到剪贴板。",
+    "account_deactivated": "账户已成功停用。",
+    "estimate": {
+      "deleted_title": "估算已删除",
+      "deleted_message": "估算已从您的项目中移除。",
+      "delete_failed_title": "删除估算失败",
+      "delete_failed_message": "无法删除估算，请重试。"
+    },
+    "drag_drop_manual_only": "仅在手动排序时才可拖放",
+    "image_picker": {
+      "images": "图片",
+      "upload": "上传",
+      "search_images": "搜索图片",
+      "not_uploaded": "图片未上传",
+      "could_not_upload": "无法上传图片"
+    },
+    "sidebar": {
+      "main": "主侧边栏",
+      "resize": "调整侧边栏大小",
+      "peek": "侧边栏预览"
+    },
+    "search_commands": "搜索命令...",
+    "delete_label": "删除标签",
+    "select_expiration_date": "请选择过期日期。",
+    "sign_out_failed": "退出登录失败，请重试。",
+    "set_date": "设置日期",
+    "enter_months": "输入月数",
+    "months": "个月",
+    "select_month_range": "请选择 1 到 12 之间的月份。",
+    "auth": {
+      "reset_password": "重置密码",
+      "regain_access": "恢复对您账户的访问。",
+      "create_new_password": "创建新密码。",
+      "set_password": "设置密码"
+    },
+    "invitation": {
+      "not_found": "未找到邀请",
+      "invited_to": "您已被邀请加入 {workspace}",
+      "already_member": "您已经是 {workspace} 的成员",
+      "description": "工作区是您在 Plane 账户中创建项目、协作处理工作项以及组织不同工作流的地方。",
+      "accept": "接受",
+      "ignore": "忽略",
+      "continue_home": "继续前往主页",
+      "link_inactive": "此邀请链接已失效。",
+      "start_empty_project": "或从空项目开始",
+      "sign_in_continue": "登录以继续",
+      "star_github": "在 GitHub 上为我们点星",
+      "join_community": "加入我们活跃的创作者社区"
+    }
   }
 }
