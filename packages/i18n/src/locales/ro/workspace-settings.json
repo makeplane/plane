@@ -345,7 +345,7 @@
           "placeholder": "https://example.com/webhook"
         },
         "webhook_secret": {
-          "label": "Secret webhook",
+          "label": "Secretul webhook-ului",
           "description": "Secret folosit pentru a verifica cererile webhook primite.",
           "placeholder": "Introdu o cheie secretă aleatorie"
         },

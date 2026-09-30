@@ -345,7 +345,7 @@
           "placeholder": "https://example.com/webhook"
         },
         "webhook_secret": {
-          "label": "Secret Webhook",
+          "label": "Secret webhook",
           "description": "Secret utilisé pour vérifier les requêtes webhook entrantes.",
           "placeholder": "Saisissez une clé secrète aléatoire"
         },
@@ -360,7 +360,7 @@
         "client_id_and_secret_download": "Vous pouvez télécharger un CSV avec la clé ici.",
         "application_id": "ID Application",
         "client_id": "ID Client",
-        "client_secret": "Secret Client",
+        "client_secret": "Secret client",
         "export_as_csv": "Exporter en CSV",
         "slug_already_exists": "Le slug existe déjà",
         "failed_to_create_application": "Échec de la création de l'application",

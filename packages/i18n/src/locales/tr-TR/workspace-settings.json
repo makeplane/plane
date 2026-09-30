@@ -360,7 +360,7 @@
         "client_id_and_secret_download": "Anahtarı buradan CSV olarak indirebilirsiniz.",
         "application_id": "Aplikasyon ID",
         "client_id": "Klayınt ID",
-        "client_secret": "Klayınt Sikrıt",
+        "client_secret": "İstemci Gizli Anahtarı",
         "export_as_csv": "CSV olarak dışa aktar",
         "slug_already_exists": "Slag zaten mevcut",
         "failed_to_create_application": "Aplikasyon oluşturulamadı",
