@@ -872,5 +872,116 @@
       "description": "ექსპორტირეთ სამუშაო ელემენტები JSON ფაილში.",
       "short_description": "ექსპორტი json-ად"
     }
+  },
+  "onboarding": {
+    "skip": "გამოტოვება",
+    "profile": {
+      "title": "შექმენით თქვენი პროფილი.",
+      "description": "ასე გამოჩნდებით Plane-ში.",
+      "choose_image": "სურათის არჩევა",
+      "upload_image": "სურათის ატვირთვა",
+      "change_image": "სურათის შეცვლა",
+      "name_placeholder": "შეიყვანეთ თქვენი სრული სახელი",
+      "first_name_required": "სახელი სავალდებულოა",
+      "last_name_required": "გვარი სავალდებულოა",
+      "first_name_max_length": "სახელი არ უნდა აღემატებოდეს 50 სიმბოლოს.",
+      "last_name_max_length": "გვარი არ უნდა აღემატებოდეს 50 სიმბოლოს.",
+      "name_max_length": "სახელი არ უნდა აღემატებოდეს 50 სიმბოლოს.",
+      "first_name_placeholder": "Wilbur",
+      "last_name_placeholder": "Wright",
+      "new_password_placeholder": "ახალი პაროლი...",
+      "role_question": "რა როლში მუშაობთ? აირჩიეთ ერთი.",
+      "domain_question": "რა არის თქვენი ექსპერტიზის სფერო? აირჩიეთ ერთი ან რამდენიმე.",
+      "marketing_consent": "ვეთანხმები Plane-ის მარკეტინგულ შეტყობინებებს",
+      "passwords_do_not_match": "პაროლები არ ემთხვევა",
+      "passwords_match": "პაროლები ემთხვევა",
+      "seniority_levels": {
+        "individual_contributor": "ინდივიდუალური კონტრიბუტორი",
+        "senior_leader": "უფროსი ლიდერი",
+        "manager": "მენეჯერი",
+        "executive": "აღმასრულებელი დირექტორი",
+        "freelancer": "ფრილანსერი",
+        "student": "სტუდენტი"
+      },
+      "domains": {
+        "engineering": "ინჟინერია",
+        "product": "პროდუქტი",
+        "marketing": "მარკეტინგი",
+        "sales": "გაყიდვები",
+        "operations": "ოპერაციები",
+        "legal": "იურიდიული",
+        "finance": "ფინანსები",
+        "human_resources": "ადამიანური რესურსები",
+        "project": "პროექტი",
+        "other": "სხვა"
+      },
+      "toast": {
+        "profile_setup_completed": "პროფილის დაყენება დასრულდა!",
+        "profile_setup_failed": "პროფილის დაყენება ვერ მოხერხდა. სცადეთ ხელახლა!",
+        "user_details_update_failed": "მომხმარებლის მონაცემების განახლება ვერ მოხერხდა. სცადეთ ხელახლა!"
+      }
+    },
+    "role": {
+      "title": "რა არის თქვენი როლი?",
+      "description": "მოდით, Plane თქვენი მუშაობის სტილის მიხედვით დავაყენოთ.",
+      "select_one": "აირჩიეთ ერთი",
+      "options": {
+        "product_manager": "პროდუქტის მენეჯერი",
+        "engineering_manager": "ინჟინერიის მენეჯერი",
+        "designer": "დიზაინერი",
+        "developer": "დეველოპერი",
+        "founder_executive": "დამფუძნებელი/აღმასრულებელი",
+        "operations_manager": "ოპერაციების მენეჯერი",
+        "others": "სხვა"
+      }
+    },
+    "usecase": {
+      "title": "რამ მოგიყვანათ Plane-ში?",
+      "description": "გვითხარით თქვენი მიზნებისა და გუნდის ზომის შესახებ.",
+      "select_multiple": "აირჩიეთ ერთი ან მეტი",
+      "select_at_least_one": "გთხოვთ, აირჩიოთ მინიმუმ ერთი ვარიანტი"
+    },
+    "workspace": {
+      "invited_title": "თქვენ მოგიწვიეს!",
+      "invited_description": "მიიღეთ მოწვევები, რათა გუნდთან ერთად ითანამშრომლოთ.",
+      "continue_to_workspace": "სამუშაო სივრცეში გადასვლა",
+      "create_own": "შექმენით საკუთარი სამუშაო სივრცე",
+      "no_invitations_found": "მოწვევები ვერ მოიძებნა",
+      "join_or_create_title": "შეუერთდით მოწვევებს ან შექმენით სამუშაო სივრცე",
+      "all_work_unified": "თქვენი მთელი სამუშაო — ერთიანად.",
+      "name_placeholder": "შეიყვანეთ სამუშაო სივრცის სახელი",
+      "create_new": "ახალი სამუშაო სივრცის შექმნა",
+      "join_existing": "არსებულ სამუშაო სივრცეში გაწევრიანება",
+      "join_invited_workspaces": "მსურს მოწვეულ სამუშაო სივრცეებში გაწევრიანება",
+      "creation_restricted_message": "როგორც ჩანს, სამუშაო სივრცეში მოწვევები არ გაქვთ, ხოლო ინსტანსის ადმინისტრატორმა ახალი სამუშაო სივრცეების შექმნა შეზღუდა. სთხოვეთ სამუშაო სივრცის მფლობელს ან ადმინისტრატორს, რომ ჯერ მოგიწვიოთ, და დაბრუნდით ამ ეკრანზე გასაწევრიანებლად."
+    },
+    "team": {
+      "invite_teammates": "მოიწვიეთ თქვენი გუნდის წევრები",
+      "invite_teammates_description": "Plane-ში მუშაობა გუნდთან ერთად ყველაზე ეფექტურია. მოიწვიეთ ისინი ახლავე, რომ Plane-ის შესაძლებლობები სრულად გამოიყენოთ.",
+      "add_another": "სხვის დამატება",
+      "do_it_later": "მოგვიანებით გავაკეთებ",
+      "invalid_email": "არასწორი ელფოსტა",
+      "invalid_email_hint": "ეს ელფოსტის მისამართს არ ჰგავს.",
+      "toast": {
+        "invite_success_message": "მოწვევები წარმატებით გაიგზავნა."
+      }
+    },
+    "switch_account": {
+      "title": "ანგარიშის გადართვა",
+      "switching": "გადართვა...",
+      "description_prefix": "თუ",
+      "description_suffix": "-ით შემთხვევით დარეგისტრირდით, აქედან შეგიძლიათ სხვა ანგარიშზე გადართვა.",
+      "wrong_email": "არასწორი ელფოსტის მისამართი?",
+      "toast": {
+        "sign_out_failed": "გამოსვლა ვერ მოხერხდა. სცადეთ ხელახლა."
+      }
+    },
+    "step_indicator": "{current} / {total} ნაბიჯი",
+    "finish": {
+      "toast": {
+        "title": "წარუმატებელია",
+        "message": "ონბორდინგის დასრულება ვერ მოხერხდა. სცადეთ მოგვიანებით."
+      }
+    }
   }
 }

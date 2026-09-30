@@ -872,5 +872,116 @@
       "description": "Xuất mục công việc thành tệp JSON.",
       "short_description": "Xuất sang JSON"
     }
+  },
+  "onboarding": {
+    "skip": "Bỏ qua",
+    "profile": {
+      "title": "Tạo hồ sơ của bạn.",
+      "description": "Đây là cách bạn sẽ hiển thị trong Plane.",
+      "choose_image": "Chọn ảnh",
+      "upload_image": "Tải ảnh lên",
+      "change_image": "Đổi ảnh",
+      "name_placeholder": "Nhập họ và tên của bạn",
+      "first_name_required": "Tên là bắt buộc",
+      "last_name_required": "Họ là bắt buộc",
+      "first_name_max_length": "Tên không được vượt quá 50 ký tự.",
+      "last_name_max_length": "Họ không được vượt quá 50 ký tự.",
+      "name_max_length": "Họ tên không được vượt quá 50 ký tự.",
+      "first_name_placeholder": "Wilbur",
+      "last_name_placeholder": "Wright",
+      "new_password_placeholder": "Mật khẩu mới...",
+      "role_question": "Bạn đang làm việc ở vai trò nào? Chọn một.",
+      "domain_question": "Chuyên môn của bạn là gì? Chọn một hoặc nhiều.",
+      "marketing_consent": "Tôi đồng ý nhận thông tin tiếp thị từ Plane",
+      "passwords_do_not_match": "Mật khẩu không khớp",
+      "passwords_match": "Mật khẩu khớp",
+      "seniority_levels": {
+        "individual_contributor": "Cá nhân đóng góp",
+        "senior_leader": "Lãnh đạo cấp cao",
+        "manager": "Quản lý",
+        "executive": "Điều hành",
+        "freelancer": "Freelancer",
+        "student": "Sinh viên"
+      },
+      "domains": {
+        "engineering": "Kỹ thuật",
+        "product": "Sản phẩm",
+        "marketing": "Marketing",
+        "sales": "Bán hàng",
+        "operations": "Vận hành",
+        "legal": "Pháp lý",
+        "finance": "Tài chính",
+        "human_resources": "Nhân sự",
+        "project": "Dự án",
+        "other": "Khác"
+      },
+      "toast": {
+        "profile_setup_completed": "Đã hoàn tất thiết lập hồ sơ!",
+        "profile_setup_failed": "Thiết lập hồ sơ thất bại. Vui lòng thử lại!",
+        "user_details_update_failed": "Cập nhật thông tin người dùng thất bại. Vui lòng thử lại!"
+      }
+    },
+    "role": {
+      "title": "Vai trò của bạn là gì?",
+      "description": "Hãy thiết lập Plane theo cách bạn làm việc.",
+      "select_one": "Chọn một",
+      "options": {
+        "product_manager": "Quản lý sản phẩm",
+        "engineering_manager": "Quản lý kỹ thuật",
+        "designer": "Nhà thiết kế",
+        "developer": "Lập trình viên",
+        "founder_executive": "Nhà sáng lập/Điều hành",
+        "operations_manager": "Quản lý vận hành",
+        "others": "Khác"
+      }
+    },
+    "usecase": {
+      "title": "Điều gì đưa bạn đến với Plane?",
+      "description": "Hãy cho chúng tôi biết mục tiêu và quy mô nhóm của bạn.",
+      "select_multiple": "Chọn một hoặc nhiều",
+      "select_at_least_one": "Vui lòng chọn ít nhất một tùy chọn"
+    },
+    "workspace": {
+      "invited_title": "Bạn đã được mời!",
+      "invited_description": "Chấp nhận lời mời để cộng tác với nhóm của bạn.",
+      "continue_to_workspace": "Tiếp tục đến không gian làm việc",
+      "create_own": "Tạo không gian làm việc của riêng bạn",
+      "no_invitations_found": "Không tìm thấy lời mời nào",
+      "join_or_create_title": "Tham gia qua lời mời hoặc tạo không gian làm việc",
+      "all_work_unified": "Toàn bộ công việc của bạn — hợp nhất.",
+      "name_placeholder": "Nhập tên không gian làm việc",
+      "create_new": "Tạo không gian làm việc mới",
+      "join_existing": "Tham gia không gian làm việc hiện có",
+      "join_invited_workspaces": "Tôi muốn tham gia các không gian làm việc đã mời tôi",
+      "creation_restricted_message": "Có vẻ bạn chưa có lời mời nào vào không gian làm việc và quản trị viên phiên bản của bạn đã hạn chế việc tạo không gian làm việc mới. Vui lòng nhờ chủ sở hữu hoặc quản trị viên của một không gian làm việc mời bạn trước, sau đó quay lại màn hình này để tham gia."
+    },
+    "team": {
+      "invite_teammates": "Mời đồng đội của bạn",
+      "invite_teammates_description": "Làm việc trong Plane hiệu quả nhất khi có nhóm của bạn. Hãy mời họ ngay để khai thác tối đa Plane.",
+      "add_another": "Thêm người khác",
+      "do_it_later": "Tôi sẽ làm sau",
+      "invalid_email": "Email không hợp lệ",
+      "invalid_email_hint": "Đây có vẻ không phải là địa chỉ email.",
+      "toast": {
+        "invite_success_message": "Đã gửi lời mời thành công."
+      }
+    },
+    "switch_account": {
+      "title": "Chuyển tài khoản",
+      "switching": "Đang chuyển...",
+      "description_prefix": "Nếu bạn đã vô tình đăng ký bằng",
+      "description_suffix": ", bạn có thể chuyển sang tài khoản khác tại đây.",
+      "wrong_email": "Sai địa chỉ email?",
+      "toast": {
+        "sign_out_failed": "Đăng xuất thất bại. Vui lòng thử lại."
+      }
+    },
+    "step_indicator": "{current}/{total} bước",
+    "finish": {
+      "toast": {
+        "title": "Thất bại",
+        "message": "Không thể hoàn tất quá trình làm quen. Vui lòng thử lại sau."
+      }
+    }
   }
 }

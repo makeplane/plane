@@ -872,5 +872,116 @@
       "description": "作業項目をJSONファイルにエクスポートします。",
       "short_description": "JSONとしてエクスポート"
     }
+  },
+  "onboarding": {
+    "skip": "スキップ",
+    "profile": {
+      "title": "プロフィールを作成",
+      "description": "Planeでの表示名を設定します。",
+      "choose_image": "画像を選択",
+      "upload_image": "画像をアップロード",
+      "change_image": "画像を変更",
+      "name_placeholder": "フルネームを入力",
+      "first_name_required": "名は必須です",
+      "last_name_required": "姓は必須です",
+      "first_name_max_length": "名は50文字以内で入力してください。",
+      "last_name_max_length": "姓は50文字以内で入力してください。",
+      "name_max_length": "名前は50文字以内で入力してください。",
+      "first_name_placeholder": "Wilbur",
+      "last_name_placeholder": "Wright",
+      "new_password_placeholder": "新しいパスワード...",
+      "role_question": "あなたの役職を選択してください。1つ選択できます。",
+      "domain_question": "専門分野を選択してください。複数選択できます。",
+      "marketing_consent": "Planeからのマーケティング情報の受信に同意します",
+      "passwords_do_not_match": "パスワードが一致しません",
+      "passwords_match": "パスワードが一致しました",
+      "seniority_levels": {
+        "individual_contributor": "個人の貢献者",
+        "senior_leader": "シニアリーダー",
+        "manager": "マネージャー",
+        "executive": "エグゼクティブ",
+        "freelancer": "フリーランサー",
+        "student": "学生"
+      },
+      "domains": {
+        "engineering": "エンジニアリング",
+        "product": "プロダクト",
+        "marketing": "マーケティング",
+        "sales": "営業",
+        "operations": "オペレーション",
+        "legal": "法務",
+        "finance": "財務",
+        "human_resources": "人事",
+        "project": "プロジェクト",
+        "other": "その他"
+      },
+      "toast": {
+        "profile_setup_completed": "プロフィールの設定が完了しました！",
+        "profile_setup_failed": "プロフィールの設定に失敗しました。もう一度お試しください。",
+        "user_details_update_failed": "ユーザー情報の更新に失敗しました。もう一度お試しください。"
+      }
+    },
+    "role": {
+      "title": "あなたの役割は何ですか？",
+      "description": "あなたの働き方に合わせてPlaneを設定しましょう。",
+      "select_one": "1つ選択",
+      "options": {
+        "product_manager": "プロダクトマネージャー",
+        "engineering_manager": "エンジニアリングマネージャー",
+        "designer": "デザイナー",
+        "developer": "開発者",
+        "founder_executive": "創業者/経営者",
+        "operations_manager": "オペレーションマネージャー",
+        "others": "その他"
+      }
+    },
+    "usecase": {
+      "title": "Planeを使う目的は何ですか？",
+      "description": "目標とチームの規模を教えてください。",
+      "select_multiple": "1つ以上選択",
+      "select_at_least_one": "少なくとも1つのオプションを選択してください"
+    },
+    "workspace": {
+      "invited_title": "招待が届いています！",
+      "invited_description": "招待を承諾して、チームと共同作業を始めましょう。",
+      "continue_to_workspace": "ワークスペースに進む",
+      "create_own": "自分のワークスペースを作成",
+      "no_invitations_found": "招待は見つかりません",
+      "join_or_create_title": "招待に参加するか、ワークスペースを作成",
+      "all_work_unified": "すべての仕事を、ひとつに。",
+      "name_placeholder": "ワークスペース名を入力",
+      "create_new": "新しいワークスペースを作成",
+      "join_existing": "既存のワークスペースに参加",
+      "join_invited_workspaces": "招待されたワークスペースに参加したい",
+      "creation_restricted_message": "ワークスペースへの招待が見つからず、インスタンス管理者が新規ワークスペースの作成を制限しているようです。まずワークスペースのオーナーまたは管理者に招待を依頼し、この画面に戻って参加してください。"
+    },
+    "team": {
+      "invite_teammates": "チームメイトを招待",
+      "invite_teammates_description": "Planeはチームで使うと最大限に力を発揮します。今すぐ招待して、Planeを活用しましょう。",
+      "add_another": "さらに追加",
+      "do_it_later": "後で行う",
+      "invalid_email": "無効なメールアドレス",
+      "invalid_email_hint": "メールアドレスの形式が正しくありません。",
+      "toast": {
+        "invite_success_message": "招待を送信しました。"
+      }
+    },
+    "switch_account": {
+      "title": "アカウントの切り替え",
+      "switching": "切り替え中...",
+      "description_prefix": "誤って",
+      "description_suffix": "で登録した場合は、ここから別のアカウントに切り替えられます。",
+      "wrong_email": "メールアドレスが違いますか？",
+      "toast": {
+        "sign_out_failed": "サインアウトに失敗しました。もう一度お試しください。"
+      }
+    },
+    "step_indicator": "{current}/{total} ステップ",
+    "finish": {
+      "toast": {
+        "title": "失敗しました",
+        "message": "オンボーディングを完了できませんでした。しばらくしてからもう一度お試しください。"
+      }
+    }
   }
 }

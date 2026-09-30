@@ -872,5 +872,116 @@
       "description": "將工作事項匯出為 JSON 檔案。",
       "short_description": "匯出為 JSON"
     }
+  },
+  "onboarding": {
+    "skip": "略過",
+    "profile": {
+      "title": "建立您的個人檔案。",
+      "description": "這是您在 Plane 中的顯示方式。",
+      "choose_image": "選擇圖片",
+      "upload_image": "上傳圖片",
+      "change_image": "更換圖片",
+      "name_placeholder": "輸入您的全名",
+      "first_name_required": "名字為必填",
+      "last_name_required": "姓氏為必填",
+      "first_name_max_length": "名字不得超過 50 個字元。",
+      "last_name_max_length": "姓氏不得超過 50 個字元。",
+      "name_max_length": "姓名不得超過 50 個字元。",
+      "first_name_placeholder": "Wilbur",
+      "last_name_placeholder": "Wright",
+      "new_password_placeholder": "新密碼...",
+      "role_question": "您擔任什麼角色？請選擇一項。",
+      "domain_question": "您的專業領域是什麼？請選擇一項或多項。",
+      "marketing_consent": "我同意接收 Plane 的行銷訊息",
+      "passwords_do_not_match": "密碼不一致",
+      "passwords_match": "密碼一致",
+      "seniority_levels": {
+        "individual_contributor": "個人貢獻者",
+        "senior_leader": "高階主管",
+        "manager": "經理",
+        "executive": "高階管理者",
+        "freelancer": "自由工作者",
+        "student": "學生"
+      },
+      "domains": {
+        "engineering": "工程",
+        "product": "產品",
+        "marketing": "行銷",
+        "sales": "銷售",
+        "operations": "營運",
+        "legal": "法務",
+        "finance": "財務",
+        "human_resources": "人力資源",
+        "project": "專案",
+        "other": "其他"
+      },
+      "toast": {
+        "profile_setup_completed": "個人檔案設定完成！",
+        "profile_setup_failed": "個人檔案設定失敗，請再試一次！",
+        "user_details_update_failed": "使用者資料更新失敗，請再試一次！"
+      }
+    },
+    "role": {
+      "title": "您的角色是什麼？",
+      "description": "讓我們依照您的工作方式來設定 Plane。",
+      "select_one": "請選擇一項",
+      "options": {
+        "product_manager": "產品經理",
+        "engineering_manager": "工程經理",
+        "designer": "設計師",
+        "developer": "開發人員",
+        "founder_executive": "創辦人/高階管理者",
+        "operations_manager": "營運經理",
+        "others": "其他"
+      }
+    },
+    "usecase": {
+      "title": "是什麼讓您來到 Plane？",
+      "description": "告訴我們您的目標和團隊規模。",
+      "select_multiple": "請選擇一項或多項",
+      "select_at_least_one": "請至少選擇一個選項"
+    },
+    "workspace": {
+      "invited_title": "您已受邀！",
+      "invited_description": "接受邀請，與您的團隊協作。",
+      "continue_to_workspace": "繼續前往工作區",
+      "create_own": "建立您自己的工作區",
+      "no_invitations_found": "找不到邀請",
+      "join_or_create_title": "加入邀請或建立工作區",
+      "all_work_unified": "您的所有工作，盡在一處。",
+      "name_placeholder": "輸入工作區名稱",
+      "create_new": "建立新工作區",
+      "join_existing": "加入現有工作區",
+      "join_invited_workspaces": "我想加入受邀的工作區",
+      "creation_restricted_message": "您似乎沒有任何工作區邀請，且執行個體管理員已限制建立新工作區。請先請工作區擁有者或管理員邀請您加入工作區，然後返回此畫面加入。"
+    },
+    "team": {
+      "invite_teammates": "邀請您的團隊成員",
+      "invite_teammates_description": "在 Plane 中與團隊一起工作效果最佳。立即邀請他們，充分發揮 Plane 的潛力。",
+      "add_another": "再新增一位",
+      "do_it_later": "稍後再說",
+      "invalid_email": "電子郵件無效",
+      "invalid_email_hint": "這看起來不像電子郵件地址。",
+      "toast": {
+        "invite_success_message": "邀請已成功傳送。"
+      }
+    },
+    "switch_account": {
+      "title": "切換帳號",
+      "switching": "正在切換...",
+      "description_prefix": "如果您不小心透過",
+      "description_suffix": "註冊了帳號，可以在此切換到其他帳號。",
+      "wrong_email": "電子郵件地址有誤？",
+      "toast": {
+        "sign_out_failed": "登出失敗，請再試一次。"
+      }
+    },
+    "step_indicator": "第 {current} 步，共 {total} 步",
+    "finish": {
+      "toast": {
+        "title": "失敗",
+        "message": "無法完成新手引導，請稍後再試。"
+      }
+    }
   }
 }

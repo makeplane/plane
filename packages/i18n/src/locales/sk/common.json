@@ -872,5 +872,116 @@
       "description": "Exportujte položky do JSON.",
       "short_description": "Exportovať ako JSON"
     }
+  },
+  "onboarding": {
+    "skip": "Preskočiť",
+    "profile": {
+      "title": "Vytvorte si profil.",
+      "description": "Takto sa budete zobrazovať v Plane.",
+      "choose_image": "Vybrať obrázok",
+      "upload_image": "Nahrať obrázok",
+      "change_image": "Zmeniť obrázok",
+      "name_placeholder": "Zadajte svoje celé meno",
+      "first_name_required": "Meno je povinné",
+      "last_name_required": "Priezvisko je povinné",
+      "first_name_max_length": "Meno môže mať najviac 50 znakov.",
+      "last_name_max_length": "Priezvisko môže mať najviac 50 znakov.",
+      "name_max_length": "Meno môže mať najviac 50 znakov.",
+      "first_name_placeholder": "Wilbur",
+      "last_name_placeholder": "Wright",
+      "new_password_placeholder": "Nové heslo...",
+      "role_question": "Akú rolu zastávate? Vyberte jednu.",
+      "domain_question": "Aká je vaša odborná oblasť? Vyberte jednu alebo viac.",
+      "marketing_consent": "Súhlasím so zasielaním marketingových informácií od Plane",
+      "passwords_do_not_match": "Heslá sa nezhodujú",
+      "passwords_match": "Heslá sa zhodujú",
+      "seniority_levels": {
+        "individual_contributor": "Samostatný prispievateľ",
+        "senior_leader": "Vedúci pracovník",
+        "manager": "Manažér",
+        "executive": "Výkonný riaditeľ",
+        "freelancer": "Freelancer",
+        "student": "Študent"
+      },
+      "domains": {
+        "engineering": "Inžinierstvo",
+        "product": "Produkt",
+        "marketing": "Marketing",
+        "sales": "Predaj",
+        "operations": "Prevádzka",
+        "legal": "Právo",
+        "finance": "Financie",
+        "human_resources": "Ľudské zdroje",
+        "project": "Projekt",
+        "other": "Iné"
+      },
+      "toast": {
+        "profile_setup_completed": "Nastavenie profilu bolo dokončené!",
+        "profile_setup_failed": "Nastavenie profilu zlyhalo. Skúste to znova!",
+        "user_details_update_failed": "Aktualizácia údajov používateľa zlyhala. Skúste to znova!"
+      }
+    },
+    "role": {
+      "title": "Aká je vaša rola?",
+      "description": "Nastavme Plane podľa toho, ako pracujete.",
+      "select_one": "Vyberte jednu",
+      "options": {
+        "product_manager": "Produktový manažér",
+        "engineering_manager": "Vedúci vývoja",
+        "designer": "Dizajnér",
+        "developer": "Vývojár",
+        "founder_executive": "Zakladateľ/Vedenie",
+        "operations_manager": "Manažér prevádzky",
+        "others": "Iné"
+      }
+    },
+    "usecase": {
+      "title": "Čo vás privádza do Plane?",
+      "description": "Povedzte nám o svojich cieľoch a veľkosti tímu.",
+      "select_multiple": "Vyberte jednu alebo viac",
+      "select_at_least_one": "Vyberte aspoň jednu možnosť"
+    },
+    "workspace": {
+      "invited_title": "Ste pozvaní!",
+      "invited_description": "Prijmite pozvánky a spolupracujte so svojím tímom.",
+      "continue_to_workspace": "Pokračovať do pracovného priestoru",
+      "create_own": "Vytvoriť vlastný pracovný priestor",
+      "no_invitations_found": "Nenašli sa žiadne pozvánky",
+      "join_or_create_title": "Prijmite pozvánky alebo vytvorte pracovný priestor",
+      "all_work_unified": "Všetka vaša práca — na jednom mieste.",
+      "name_placeholder": "Zadajte názov pracovného priestoru",
+      "create_new": "Vytvoriť nový pracovný priestor",
+      "join_existing": "Pripojiť sa k existujúcemu pracovnému priestoru",
+      "join_invited_workspaces": "Chcem sa pripojiť k pracovným priestorom, do ktorých som pozvaný",
+      "creation_restricted_message": "Zdá sa, že nemáte žiadne pozvánky do pracovného priestoru a správca vašej inštancie obmedzil vytváranie nových pracovných priestorov. Požiadajte vlastníka alebo správcu pracovného priestoru, aby vás najprv pozval, a potom sa vráťte na túto obrazovku a pripojte sa."
+    },
+    "team": {
+      "invite_teammates": "Pozvite svojich kolegov",
+      "invite_teammates_description": "Práca v Plane funguje najlepšie s vaším tímom. Pozvite ho hneď a využite Plane naplno.",
+      "add_another": "Pridať ďalšieho",
+      "do_it_later": "Urobím to neskôr",
+      "invalid_email": "Neplatná e-mailová adresa",
+      "invalid_email_hint": "Toto nevyzerá ako e-mailová adresa.",
+      "toast": {
+        "invite_success_message": "Pozvánky boli úspešne odoslané."
+      }
+    },
+    "switch_account": {
+      "title": "Prepnúť účet",
+      "switching": "Prepína sa...",
+      "description_prefix": "Ak ste sa nechtiac zaregistrovali pomocou adresy",
+      "description_suffix": ", môžete si tu prepnúť na iný účet.",
+      "wrong_email": "Nesprávna e-mailová adresa?",
+      "toast": {
+        "sign_out_failed": "Odhlásenie zlyhalo. Skúste to znova."
+      }
+    },
+    "step_indicator": "{current} z {total} krokov",
+    "finish": {
+      "toast": {
+        "title": "Zlyhalo",
+        "message": "Dokončenie zaškolenia zlyhalo. Skúste to znova neskôr."
+      }
+    }
   }
 }

@@ -872,5 +872,116 @@
       "description": "将工作项导出为 JSON 文件。",
       "short_description": "导出为 JSON"
     }
+  },
+  "onboarding": {
+    "skip": "跳过",
+    "profile": {
+      "title": "创建您的个人资料。",
+      "description": "这是您在 Plane 中的显示方式。",
+      "choose_image": "选择图片",
+      "upload_image": "上传图片",
+      "change_image": "更换图片",
+      "name_placeholder": "输入您的全名",
+      "first_name_required": "名字为必填项",
+      "last_name_required": "姓氏为必填项",
+      "first_name_max_length": "名字不能超过 50 个字符。",
+      "last_name_max_length": "姓氏不能超过 50 个字符。",
+      "name_max_length": "姓名不能超过 50 个字符。",
+      "first_name_placeholder": "Wilbur",
+      "last_name_placeholder": "Wright",
+      "new_password_placeholder": "新密码...",
+      "role_question": "您担任什么角色？请选择一项。",
+      "domain_question": "您的专业领域是什么？请选择一项或多项。",
+      "marketing_consent": "我同意接收 Plane 的营销信息",
+      "passwords_do_not_match": "密码不匹配",
+      "passwords_match": "密码匹配",
+      "seniority_levels": {
+        "individual_contributor": "个人贡献者",
+        "senior_leader": "高级领导",
+        "manager": "经理",
+        "executive": "高管",
+        "freelancer": "自由职业者",
+        "student": "学生"
+      },
+      "domains": {
+        "engineering": "工程",
+        "product": "产品",
+        "marketing": "市场",
+        "sales": "销售",
+        "operations": "运营",
+        "legal": "法务",
+        "finance": "财务",
+        "human_resources": "人力资源",
+        "project": "项目",
+        "other": "其他"
+      },
+      "toast": {
+        "profile_setup_completed": "个人资料设置完成！",
+        "profile_setup_failed": "个人资料设置失败，请重试！",
+        "user_details_update_failed": "用户信息更新失败，请重试！"
+      }
+    },
+    "role": {
+      "title": "您的角色是什么？",
+      "description": "让我们根据您的工作方式来设置 Plane。",
+      "select_one": "请选择一项",
+      "options": {
+        "product_manager": "产品经理",
+        "engineering_manager": "工程经理",
+        "designer": "设计师",
+        "developer": "开发人员",
+        "founder_executive": "创始人/高管",
+        "operations_manager": "运营经理",
+        "others": "其他"
+      }
+    },
+    "usecase": {
+      "title": "是什么让您来到 Plane？",
+      "description": "告诉我们您的目标和团队规模。",
+      "select_multiple": "请选择一项或多项",
+      "select_at_least_one": "请至少选择一个选项"
+    },
+    "workspace": {
+      "invited_title": "您已受邀！",
+      "invited_description": "接受邀请，与您的团队协作。",
+      "continue_to_workspace": "继续前往工作区",
+      "create_own": "创建您自己的工作区",
+      "no_invitations_found": "未找到邀请",
+      "join_or_create_title": "加入邀请或创建工作区",
+      "all_work_unified": "您的所有工作，尽在一处。",
+      "name_placeholder": "输入工作区名称",
+      "create_new": "创建新工作区",
+      "join_existing": "加入现有工作区",
+      "join_invited_workspaces": "我想加入受邀的工作区",
+      "creation_restricted_message": "您似乎没有任何工作区邀请，并且实例管理员已限制创建新工作区。请先让工作区所有者或管理员邀请您加入工作区，然后返回此页面加入。"
+    },
+    "team": {
+      "invite_teammates": "邀请您的团队成员",
+      "invite_teammates_description": "在 Plane 中与团队一起工作效果最佳。立即邀请他们，充分发挥 Plane 的潜力。",
+      "add_another": "再添加一个",
+      "do_it_later": "稍后再说",
+      "invalid_email": "邮箱无效",
+      "invalid_email_hint": "这看起来不像邮箱地址。",
+      "toast": {
+        "invite_success_message": "邀请发送成功。"
+      }
+    },
+    "switch_account": {
+      "title": "切换账号",
+      "switching": "正在切换...",
+      "description_prefix": "如果您不小心通过",
+      "description_suffix": "注册了账号，可以在此切换到其他账号。",
+      "wrong_email": "邮箱地址有误？",
+      "toast": {
+        "sign_out_failed": "退出登录失败，请重试。"
+      }
+    },
+    "step_indicator": "第 {current} 步，共 {total} 步",
+    "finish": {
+      "toast": {
+        "title": "失败",
+        "message": "完成引导失败，请稍后重试。"
+      }
+    }
   }
 }

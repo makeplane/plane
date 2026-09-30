@@ -872,5 +872,116 @@
       "description": "Arbeitselemente in JSON exportieren.",
       "short_description": "Als JSON exportieren"
     }
+  },
+  "onboarding": {
+    "skip": "Überspringen",
+    "profile": {
+      "title": "Erstellen Sie Ihr Profil.",
+      "description": "So werden Sie in Plane angezeigt.",
+      "choose_image": "Bild auswählen",
+      "upload_image": "Bild hochladen",
+      "change_image": "Bild ändern",
+      "name_placeholder": "Geben Sie Ihren vollständigen Namen ein",
+      "first_name_required": "Vorname ist erforderlich",
+      "last_name_required": "Nachname ist erforderlich",
+      "first_name_max_length": "Der Vorname darf höchstens 50 Zeichen lang sein.",
+      "last_name_max_length": "Der Nachname darf höchstens 50 Zeichen lang sein.",
+      "name_max_length": "Der Name darf höchstens 50 Zeichen lang sein.",
+      "first_name_placeholder": "Max",
+      "last_name_placeholder": "Mustermann",
+      "new_password_placeholder": "Neues Passwort...",
+      "role_question": "In welcher Rolle arbeiten Sie? Wählen Sie eine aus.",
+      "domain_question": "Was ist Ihr Fachgebiet? Wählen Sie eines oder mehrere aus.",
+      "marketing_consent": "Ich stimme den Marketing-Mitteilungen von Plane zu",
+      "passwords_do_not_match": "Passwörter stimmen nicht überein",
+      "passwords_match": "Passwörter stimmen überein",
+      "seniority_levels": {
+        "individual_contributor": "Einzelmitarbeiter",
+        "senior_leader": "Führungskraft",
+        "manager": "Manager",
+        "executive": "Geschäftsführer",
+        "freelancer": "Freiberufler",
+        "student": "Student"
+      },
+      "domains": {
+        "engineering": "Entwicklung",
+        "product": "Produkt",
+        "marketing": "Marketing",
+        "sales": "Vertrieb",
+        "operations": "Betrieb",
+        "legal": "Recht",
+        "finance": "Finanzen",
+        "human_resources": "Personalwesen",
+        "project": "Projekt",
+        "other": "Sonstiges"
+      },
+      "toast": {
+        "profile_setup_completed": "Profileinrichtung abgeschlossen!",
+        "profile_setup_failed": "Profileinrichtung fehlgeschlagen. Bitte versuchen Sie es erneut!",
+        "user_details_update_failed": "Aktualisierung der Benutzerdaten fehlgeschlagen. Bitte versuchen Sie es erneut!"
+      }
+    },
+    "role": {
+      "title": "Was ist Ihre Rolle?",
+      "description": "Richten wir Plane passend zu Ihrer Arbeitsweise ein.",
+      "select_one": "Eine auswählen",
+      "options": {
+        "product_manager": "Produktmanager",
+        "engineering_manager": "Entwicklungsleiter",
+        "designer": "Designer",
+        "developer": "Entwickler",
+        "founder_executive": "Gründer/Geschäftsführer",
+        "operations_manager": "Betriebsleiter",
+        "others": "Andere"
+      }
+    },
+    "usecase": {
+      "title": "Was führt Sie zu Plane?",
+      "description": "Nennen Sie uns Ihre Ziele und Teamgröße.",
+      "select_multiple": "Eine oder mehrere auswählen",
+      "select_at_least_one": "Bitte wählen Sie mindestens eine Option aus"
+    },
+    "workspace": {
+      "invited_title": "Sie wurden eingeladen!",
+      "invited_description": "Nehmen Sie die Einladungen an, um mit Ihrem Team zusammenzuarbeiten.",
+      "continue_to_workspace": "Weiter zum Arbeitsbereich",
+      "create_own": "Eigenen Arbeitsbereich erstellen",
+      "no_invitations_found": "Keine Einladungen gefunden",
+      "join_or_create_title": "Einladungen annehmen oder Arbeitsbereich erstellen",
+      "all_work_unified": "Ihre gesamte Arbeit — an einem Ort.",
+      "name_placeholder": "Namen des Arbeitsbereichs eingeben",
+      "create_new": "Neuen Arbeitsbereich erstellen",
+      "join_existing": "Bestehendem Arbeitsbereich beitreten",
+      "join_invited_workspaces": "Ich möchte eingeladenen Arbeitsbereichen beitreten",
+      "creation_restricted_message": "Sie haben anscheinend keine Einladungen zu einem Arbeitsbereich, und Ihr Instanzadministrator hat das Erstellen neuer Arbeitsbereiche eingeschränkt. Bitten Sie einen Eigentümer oder Administrator eines Arbeitsbereichs, Sie einzuladen, und kehren Sie dann zu diesem Bildschirm zurück, um beizutreten."
+    },
+    "team": {
+      "invite_teammates": "Laden Sie Ihre Teammitglieder ein",
+      "invite_teammates_description": "In Plane arbeitet es sich am besten im Team. Laden Sie sie jetzt ein, um Plane voll auszuschöpfen.",
+      "add_another": "Weitere hinzufügen",
+      "do_it_later": "Später erledigen",
+      "invalid_email": "Ungültige E-Mail-Adresse",
+      "invalid_email_hint": "Das sieht nicht wie eine E-Mail-Adresse aus.",
+      "toast": {
+        "invite_success_message": "Einladungen erfolgreich gesendet."
+      }
+    },
+    "switch_account": {
+      "title": "Konto wechseln",
+      "switching": "Wechsel läuft...",
+      "description_prefix": "Wenn Sie sich versehentlich mit",
+      "description_suffix": "registriert haben, können Sie hier zu einem anderen Konto wechseln.",
+      "wrong_email": "Falsche E-Mail-Adresse?",
+      "toast": {
+        "sign_out_failed": "Abmeldung fehlgeschlagen. Bitte versuchen Sie es erneut."
+      }
+    },
+    "step_indicator": "{current} von {total} Schritten",
+    "finish": {
+      "toast": {
+        "title": "Fehlgeschlagen",
+        "message": "Das Abschließen des Onboardings ist fehlgeschlagen. Bitte versuchen Sie es später erneut."
+      }
+    }
   }
 }

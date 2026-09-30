@@ -872,5 +872,116 @@
       "description": "Експортуйте одиниці у формат JSON.",
       "short_description": "Експортувати як JSON"
     }
+  },
+  "onboarding": {
+    "skip": "Пропустити",
+    "profile": {
+      "title": "Створіть свій профіль.",
+      "description": "Ось так ви виглядатимете в Plane.",
+      "choose_image": "Вибрати зображення",
+      "upload_image": "Завантажити зображення",
+      "change_image": "Змінити зображення",
+      "name_placeholder": "Введіть своє повне ім'я",
+      "first_name_required": "Ім'я є обов'язковим",
+      "last_name_required": "Прізвище є обов'язковим",
+      "first_name_max_length": "Ім'я має містити не більше 50 символів.",
+      "last_name_max_length": "Прізвище має містити не більше 50 символів.",
+      "name_max_length": "Ім'я має містити не більше 50 символів.",
+      "first_name_placeholder": "Wilbur",
+      "last_name_placeholder": "Wright",
+      "new_password_placeholder": "Новий пароль...",
+      "role_question": "Яку роль ви виконуєте? Оберіть одну.",
+      "domain_question": "Яка ваша сфера експертизи? Оберіть одну або кілька.",
+      "marketing_consent": "Я погоджуюся отримувати маркетингові повідомлення від Plane",
+      "passwords_do_not_match": "Паролі не збігаються",
+      "passwords_match": "Паролі збігаються",
+      "seniority_levels": {
+        "individual_contributor": "Індивідуальний виконавець",
+        "senior_leader": "Старший керівник",
+        "manager": "Менеджер",
+        "executive": "Топменеджер",
+        "freelancer": "Фрілансер",
+        "student": "Студент"
+      },
+      "domains": {
+        "engineering": "Розробка",
+        "product": "Продукт",
+        "marketing": "Маркетинг",
+        "sales": "Продажі",
+        "operations": "Операції",
+        "legal": "Юридичний відділ",
+        "finance": "Фінанси",
+        "human_resources": "Управління персоналом",
+        "project": "Проєкт",
+        "other": "Інше"
+      },
+      "toast": {
+        "profile_setup_completed": "Налаштування профілю завершено!",
+        "profile_setup_failed": "Не вдалося налаштувати профіль. Спробуйте ще раз!",
+        "user_details_update_failed": "Не вдалося оновити дані користувача. Спробуйте ще раз!"
+      }
+    },
+    "role": {
+      "title": "Яка ваша роль?",
+      "description": "Налаштуймо Plane під ваш спосіб роботи.",
+      "select_one": "Оберіть одну",
+      "options": {
+        "product_manager": "Продакт-менеджер",
+        "engineering_manager": "Керівник розробки",
+        "designer": "Дизайнер",
+        "developer": "Розробник",
+        "founder_executive": "Засновник/Керівник",
+        "operations_manager": "Операційний менеджер",
+        "others": "Інше"
+      }
+    },
+    "usecase": {
+      "title": "Що привело вас до Plane?",
+      "description": "Розкажіть про свої цілі та розмір команди.",
+      "select_multiple": "Оберіть одну або кілька",
+      "select_at_least_one": "Оберіть принаймні один варіант"
+    },
+    "workspace": {
+      "invited_title": "Вас запрошено!",
+      "invited_description": "Прийміть запрошення, щоб співпрацювати зі своєю командою.",
+      "continue_to_workspace": "Перейти до робочого простору",
+      "create_own": "Створити власний робочий простір",
+      "no_invitations_found": "Запрошень не знайдено",
+      "join_or_create_title": "Приєднайтеся за запрошенням або створіть робочий простір",
+      "all_work_unified": "Уся ваша робота — в одному місці.",
+      "name_placeholder": "Введіть назву робочого простору",
+      "create_new": "Створити новий робочий простір",
+      "join_existing": "Приєднатися до наявного робочого простору",
+      "join_invited_workspaces": "Я хочу приєднатися до робочих просторів, до яких мене запрошено",
+      "creation_restricted_message": "Схоже, у вас немає запрошень до робочого простору, а адміністратор вашого екземпляра обмежив створення нових робочих просторів. Попросіть власника або адміністратора робочого простору спочатку запросити вас, а потім поверніться на цей екран, щоб приєднатися."
+    },
+    "team": {
+      "invite_teammates": "Запросіть своїх колег",
+      "invite_teammates_description": "Робота в Plane найефективніша з вашою командою. Запросіть колег зараз, щоб розкрити весь потенціал Plane.",
+      "add_another": "Додати ще",
+      "do_it_later": "Зроблю це пізніше",
+      "invalid_email": "Недійсна адреса електронної пошти",
+      "invalid_email_hint": "Це не схоже на адресу електронної пошти.",
+      "toast": {
+        "invite_success_message": "Запрошення успішно надіслано."
+      }
+    },
+    "switch_account": {
+      "title": "Змінити обліковий запис",
+      "switching": "Перемикання...",
+      "description_prefix": "Якщо ви випадково зареєструвалися через",
+      "description_suffix": ", тут можна перейти на інший обліковий запис.",
+      "wrong_email": "Неправильна адреса електронної пошти?",
+      "toast": {
+        "sign_out_failed": "Не вдалося вийти. Спробуйте ще раз."
+      }
+    },
+    "step_indicator": "{current} з {total} кроків",
+    "finish": {
+      "toast": {
+        "title": "Помилка",
+        "message": "Не вдалося завершити онбординг. Спробуйте пізніше."
+      }
+    }
   }
 }
