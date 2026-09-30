@@ -2,45 +2,14 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from django.db import transaction
-from django.db.models import Q
 from rest_framework import serializers, status
 from rest_framework.response import Response
 
 from plane.api.serializers import WorkItemPageCreateSerializer, WorkItemPageSerializer
 from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import Issue, Page, WorkItemPage
+from plane.db.models import WorkItemPage
+from plane.utils.work_item_page import attach_page_to_work_item, work_item_page_queryset
 from .base import BaseAPIView
-
-
-def visible_page_queryset(slug, project_id, user):
-    return (
-        Page.objects.filter(workspace__slug=slug, deleted_at__isnull=True)
-        .filter(
-            Q(is_global=True)
-            | Q(
-                project_pages__project_id=project_id,
-                project_pages__deleted_at__isnull=True,
-            )
-        )
-        .filter(Q(owned_by=user) | Q(access=Page.PUBLIC_ACCESS))
-        .distinct()
-    )
-
-
-def work_item_page_queryset(slug, project_id, issue_id, user):
-    return (
-        WorkItemPage.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue_id=issue_id,
-            issue__project_id=project_id,
-            page__deleted_at__isnull=True,
-        )
-        .filter(page__in=visible_page_queryset(slug, project_id, user))
-        .select_related("page", "issue", "project", "workspace", "created_by", "updated_by")
-        .distinct()
-    )
 
 
 class WorkItemPageListCreateAPIEndpoint(BaseAPIView):
@@ -70,42 +39,20 @@ class WorkItemPageListCreateAPIEndpoint(BaseAPIView):
         serializer = WorkItemPageCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        issue = Issue.objects.filter(
-            pk=issue_id,
-            project_id=project_id,
-            workspace__slug=slug,
-            deleted_at__isnull=True,
-        ).first()
-        if issue is None:
+        link, result = attach_page_to_work_item(
+            slug,
+            project_id,
+            issue_id,
+            serializer.validated_data["page_id"],
+            request.user,
+        )
+        if result == "issue":
             raise serializers.ValidationError({"issue_id": "Work item not found."})
-
-        page = visible_page_queryset(slug, project_id, request.user).filter(
-            pk=serializer.validated_data["page_id"]
-        ).first()
-        if page is None:
+        if result == "page":
             return Response({"error": "Page not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        with transaction.atomic():
-            link = WorkItemPage.all_objects.filter(
-                project_id=project_id,
-                issue_id=issue_id,
-                page_id=page.id,
-            ).first()
-            if link is not None:
-                if link.deleted_at is not None:
-                    link.deleted_at = None
-                    link.updated_by_id = request.user.id
-                    link.save(update_fields=["deleted_at", "updated_by"])
-                return Response(WorkItemPageSerializer(link).data, status=status.HTTP_200_OK)
-
-            link = WorkItemPage.objects.create(
-                project=issue.project,
-                issue=issue,
-                page=page,
-                created_by_id=request.user.id,
-            )
-
-        return Response(WorkItemPageSerializer(link).data, status=status.HTTP_201_CREATED)
+        response_status = status.HTTP_201_CREATED if result else status.HTTP_200_OK
+        return Response(WorkItemPageSerializer(link).data, status=response_status)
 
 
 class WorkItemPageDetailAPIEndpoint(BaseAPIView):

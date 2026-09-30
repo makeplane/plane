@@ -29,10 +29,11 @@ type Props = {
 export const IssuePagesCollapsibleContent = observer(function IssuePagesCollapsibleContent(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled, pickerOpen, onPickerClose, onCountChange } = props;
   const { t } = useTranslation();
-  const { links, pages, errors, isLoading, refresh, attach, detach } = useIssuePages(
+  const { links, pages, errors, isLoading, isLoadingAvailable, refresh, attach, detach } = useIssuePages(
     workspaceSlug,
     projectId,
-    issueId
+    issueId,
+    pickerOpen
   );
   const [searchTerm, setSearchTerm] = useState("");
   const isAttachingRef = useRef(false);
@@ -160,7 +161,11 @@ export const IssuePagesCollapsibleContent = observer(function IssuePagesCollapsi
             />
           </div>
           <div role="listbox" className="vertical-scrollbar scrollbar-md max-h-80 overflow-y-auto p-2">
-            {availablePages.length === 0 ? (
+            {isLoadingAvailable ? (
+              <Loader className="space-y-2">
+                <Loader.Item height="40px" />
+              </Loader>
+            ) : availablePages.length === 0 ? (
               <p className="p-3 text-13 text-tertiary">{t("issue.pages.show_wiki_pages")}</p>
             ) : (
               availablePages.map((page) => (
