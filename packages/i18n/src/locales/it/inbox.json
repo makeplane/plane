@@ -10,7 +10,7 @@
         "description": "Rifiutato"
       },
       "snoozed": {
-        "title": "Snoozed",
+        "title": "Posticipato",
         "description": "{days, plural, one {# giorno} other {# giorni}} rimanenti"
       },
       "accepted": {

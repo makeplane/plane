@@ -229,7 +229,7 @@
             "message": "Alur kerja berhasil diaktifkan."
           },
           "error": {
-            "title": "Error!",
+            "title": "Kesalahan!",
             "message": "Gagal mengaktifkan alur kerja. Silakan coba lagi."
           }
         }
@@ -282,7 +282,7 @@
           "message": "Alur kerja berhasil dibuat."
         },
         "error": {
-          "title": "Error!",
+          "title": "Kesalahan!",
           "message": "Gagal membuat alur kerja. Silakan coba lagi."
         }
       },
@@ -292,7 +292,7 @@
           "message": "Alur kerja berhasil diperbarui."
         },
         "error": {
-          "title": "Error!",
+          "title": "Kesalahan!",
           "message": "Gagal memperbarui alur kerja. Silakan coba lagi."
         }
       },
@@ -303,7 +303,7 @@
           "message": "Alur kerja berhasil dihapus."
         },
         "error": {
-          "title": "Error!",
+          "title": "Kesalahan!",
           "message": "Gagal menghapus alur kerja. Silakan coba lagi."
         }
       },
@@ -313,7 +313,7 @@
           "message": "Status berhasil ditambahkan."
         },
         "error": {
-          "title": "Error!",
+          "title": "Kesalahan!",
           "message": "Gagal menambahkan status. Silakan coba lagi."
         }
       }

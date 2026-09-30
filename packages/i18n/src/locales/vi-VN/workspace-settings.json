@@ -100,7 +100,7 @@
       "webhooks": {
         "heading": "Webhook",
         "description": "Tự động hóa thông báo đến các dịch vụ bên ngoài khi các sự kiện dự án xảy ra.",
-        "title": "Webhooks",
+        "title": "Webhook",
         "add_webhook": "Thêm webhook",
         "modal": {
           "title": "Tạo webhook",
@@ -392,7 +392,7 @@
         "regenerate_client_secret_confirm_title": "Bạn có chắc chắn muốn tạo lại khóa bí mật?",
         "regenerate_client_secret_confirm_description": "Ứng dụng sử dụng khóa này sẽ ngừng hoạt động. Bạn sẽ cần cập nhật khóa trong ứng dụng.",
         "regenerate_client_secret_confirm_cancel": "Hủy bỏ",
-        "regenerate_client_secret_confirm_regenerate": "Regenerate",
+        "regenerate_client_secret_confirm_regenerate": "Tạo lại",
         "read_only_access_to_workspace": "Truy cập chỉ đọc vào workspace của bạn",
         "write_access_to_workspace": "Truy cập viết vào workspace của bạn",
         "read_only_access_to_user_profile": "Truy cập chỉ đọc vào hồ sơ người dùng của bạn",

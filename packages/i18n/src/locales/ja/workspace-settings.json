@@ -340,7 +340,7 @@
           "placeholder": "https://example.com/setup"
         },
         "webhook_url": {
-          "label": "Webhook URL",
+          "label": "WebhookのURL",
           "description": "これは、アプリがインストールされているワークスペースからのWebhookイベントや更新を送信する場所です。",
           "placeholder": "https://example.com/webhook"
         },

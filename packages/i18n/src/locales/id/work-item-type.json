@@ -420,7 +420,7 @@
               "message": "Tingkat hierarki {level} berhasil ditetapkan sebagai default."
             },
             "error": {
-              "title": "Error!",
+              "title": "Kesalahan!",
               "message": "Gagal menetapkan tingkat hierarki {level} sebagai default. Silakan coba lagi."
             }
           }

@@ -489,7 +489,7 @@
     "project_timezone": "Часовий пояс проєкту",
     "created_on": "Створено",
     "updated_on": "Оновлено",
-    "completed_on": "Completed on",
+    "completed_on": "Завершено",
     "update_project": "Оновити проєкт",
     "identifier_already_exists": "Такий ідентифікатор уже існує",
     "add_more": "Додати ще",
@@ -718,11 +718,11 @@
     "details": "Деталі",
     "project_structure": "Структура проєкту",
     "custom_properties": "Користувацькі властивості",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Ваш профіль",
+    "developer": "Розробник",
+    "work_structure": "Структура роботи",
+    "execution": "Виконання",
+    "administration": "Адміністрування"
   },
   "chart": {
     "x_axis": "Вісь X",

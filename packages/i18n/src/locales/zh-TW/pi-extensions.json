@@ -350,7 +350,7 @@
             "epic": {
               "description": "可拆分為多個任務的大型工作。",
               "disabled": "此模板已停用 Epic。",
-              "title": "Epic"
+              "title": "史詩"
             },
             "optional_badge": "選用",
             "properties_empty": "此類型尚無自訂屬性。",
@@ -482,7 +482,7 @@
         "delete_confirm": "要移除此工作項目類型嗎？現有工作項目的資料將會保留。",
         "description": "定義具有獨立識別、自訂屬性與專案範圍的工作項目類型。可切換類型的啟用狀態，而不影響現有項目。",
         "edit_type": "編輯類型",
-        "epic_badge": "Epic",
+        "epic_badge": "史詩",
         "form": {
           "description_label": "描述",
           "is_active": "啟用",

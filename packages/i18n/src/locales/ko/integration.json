@@ -282,7 +282,7 @@
     "base_url_placeholder": "e.g., \"https://gh.plane.town\"",
     "base_url_error": "Base URL는 필수입니다",
     "invalid_base_url_error": "Base URL이 유효하지 않습니다",
-    "client_id_title": "Client ID",
+    "client_id_title": "클라이언트 ID",
     "client_id_description": "깃허브 엔터프라이즈 조직에서 생성한 앱의 Client ID입니다.",
     "client_id_placeholder": "e.g., \"1234567890\"",
     "client_id_error": "Client ID는 필수입니다",

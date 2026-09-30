@@ -50,7 +50,7 @@
       "move": "Déplacer {value} vers les éléments de travail du projet"
     },
     "source": {
-      "in-app": "in-app"
+      "in-app": "dans l'application"
     },
     "order_by": {
       "created_at": "Créé le",
@@ -58,7 +58,7 @@
       "id": "ID"
     },
     "label": "Intake",
-    "page_label": "{workspace} - Intake",
+    "page_label": "{workspace} - Réception",
     "modal": {
       "title": "Créer un élément de travail Intake"
     },

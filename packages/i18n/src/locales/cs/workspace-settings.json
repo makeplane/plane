@@ -340,7 +340,7 @@
           "placeholder": "https://example.com/setup"
         },
         "webhook_url": {
-          "label": "Webhook URL",
+          "label": "URL Webhooku",
           "description": "Sem budeme odesílat události webhook a aktualizace z pracovních prostorů, kde je vaše aplikace nainstalována.",
           "placeholder": "https://example.com/webhook"
         },

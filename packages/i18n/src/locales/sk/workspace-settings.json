@@ -340,12 +340,12 @@
           "placeholder": "https://example.com/setup"
         },
         "webhook_url": {
-          "label": "Webhook URL",
+          "label": "URL Webhooku",
           "description": "Tu budeme posielať udalosti webhook a aktualizácie z pracovných priestorov, kde je vaša aplikácia nainštalovaná.",
           "placeholder": "https://example.com/webhook"
         },
         "webhook_secret": {
-          "label": "Webhook Secret",
+          "label": "Tajomstvo Webhooku",
           "description": "Tajný kľúč používaný na overenie prichádzajúcich webhook požiadaviek.",
           "placeholder": "Zadajte náhodný tajný kľúč"
         },

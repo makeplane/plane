@@ -277,7 +277,7 @@
     "app_name_description": "Il slug dell'app che hai creato nella tua organizzazione GitHub Enterprise.",
     "app_name_error": "App slug è richiesto",
     "app_name_placeholder": "e.g., \"plane-github-enterprise\"",
-    "base_url_title": "Base URL",
+    "base_url_title": "URL Base",
     "base_url_description": "L'URL base della tua organizzazione GitHub Enterprise.",
     "base_url_placeholder": "e.g., \"https://gh.plane.town\"",
     "base_url_error": "Base URL è richiesto",

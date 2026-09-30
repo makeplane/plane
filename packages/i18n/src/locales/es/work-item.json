@@ -409,7 +409,7 @@
   },
   "epic": {
     "new": "Nuevo Epic",
-    "label": "{count, plural, one {Epic} other {Epics}}",
+    "label": "{count, plural, one {Épica} other {Épicas}}",
     "adding": "Agregando epic",
     "create": {
       "success": "Epic creado correctamente"

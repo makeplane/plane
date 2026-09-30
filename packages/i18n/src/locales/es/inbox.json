@@ -58,7 +58,7 @@
       "id": "ID"
     },
     "label": "Intake",
-    "page_label": "{workspace} - Intake",
+    "page_label": "{workspace} - Entrada",
     "modal": {
       "title": "Crear elemento de trabajo de intake"
     },

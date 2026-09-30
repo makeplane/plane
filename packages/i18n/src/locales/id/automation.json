@@ -170,7 +170,7 @@
           "message": "Otomatisasi berhasil dibuat."
         },
         "error": {
-          "title": "Error!",
+          "title": "Kesalahan!",
           "message": "Pembuatan otomatisasi gagal."
         }
       },
@@ -180,7 +180,7 @@
           "message": "Otomatisasi berhasil diperbarui."
         },
         "error": {
-          "title": "Error!",
+          "title": "Kesalahan!",
           "message": "Pembaruan otomatisasi gagal."
         }
       },
@@ -190,7 +190,7 @@
           "message": "Otomatisasi berhasil diaktifkan."
         },
         "error": {
-          "title": "Error!",
+          "title": "Kesalahan!",
           "message": "Pengaktifan otomatisasi gagal."
         }
       },
@@ -200,7 +200,7 @@
           "message": "Otomatisasi berhasil dinonaktifkan."
         },
         "error": {
-          "title": "Error!",
+          "title": "Kesalahan!",
           "message": "Penonaktifan otomatisasi gagal."
         }
       },
@@ -217,13 +217,13 @@
       "action": {
         "create": {
           "error": {
-            "title": "Error!",
+            "title": "Kesalahan!",
             "message": "Gagal membuat aksi. Silakan coba lagi!"
           }
         },
         "update": {
           "error": {
-            "title": "Error!",
+            "title": "Kesalahan!",
             "message": "Gagal memperbarui aksi. Silakan coba lagi!"
           }
         }

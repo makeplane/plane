@@ -146,8 +146,8 @@
             }
           },
           "category": {
-            "label": "Category",
-            "placeholder": "Choose where you think this fits best. You can choose more than one.",
+            "label": "Kategorie",
+            "placeholder": "Vyberte, kam to podle vás nejlépe patří. Můžete vybrat více možností.",
             "validation": {
               "required": "Musíte vybrat alespoň jednu kategorii"
             }

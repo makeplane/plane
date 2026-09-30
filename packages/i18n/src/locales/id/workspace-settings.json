@@ -9,7 +9,7 @@
       "general": {
         "title": "Umum",
         "upload_logo": "Unggah logo",
-        "edit_logo": "Edit logo",
+        "edit_logo": "Sunting logo",
         "name": "Nama ruang kerja",
         "company_size": "Ukuran perusahaan",
         "url": "URL ruang kerja",
@@ -392,7 +392,7 @@
         "regenerate_client_secret_confirm_title": "Apakah Anda yakin ingin menghasilkan kembali kunci rahasia klien?",
         "regenerate_client_secret_confirm_description": "Aplikasi yang menggunakan kunci rahasia ini akan berhenti bekerja. Anda perlu memperbarui kunci rahasia di aplikasi.",
         "regenerate_client_secret_confirm_cancel": "Batalkan",
-        "regenerate_client_secret_confirm_regenerate": "Regenerate",
+        "regenerate_client_secret_confirm_regenerate": "Buat ulang",
         "read_only_access_to_workspace": "Akses baca-saja ke workspace Anda",
         "write_access_to_workspace": "Akses tulis ke workspace Anda",
         "read_only_access_to_user_profile": "Akses baca-saja ke profil pengguna Anda",

@@ -269,7 +269,7 @@
     "description": "Připojte a synchronizujte svou organizaci GitHub Enterprise s Plane.",
     "app_form_title": "Konfigurace GitHub Enterprise",
     "app_form_description": "Konfigurujte GitHub Enterprise pro připojení s Plane.",
-    "app_id_title": "App ID",
+    "app_id_title": "ID aplikace",
     "app_id_description": "ID aplikace, kterou jste vytvořili v organizaci GitHub Enterprise.",
     "app_id_placeholder": "např., \"1234567890\"",
     "app_id_error": "App ID je povinné pole",

@@ -430,7 +430,7 @@
         "support_url_title": "Destek URL",
         "support_url_error": "Destek URL gerekli",
         "invalid_support_url_error": "Geçersiz destek URL",
-        "video_url_title": "Video URL",
+        "video_url_title": "Video URL'si",
         "video_url_error": "Video URL gerekli",
         "invalid_video_url_error": "Geçersiz video URL",
         "setup_url_error": "Kurulum URL gerekli",

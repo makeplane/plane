@@ -97,7 +97,7 @@
           "message": "Halaman berhasil dipindahkan."
         },
         "error": {
-          "title": "Error!",
+          "title": "Kesalahan!",
           "message": "Halaman tidak dapat dipindahkan. Silakan coba lagi nanti."
         },
         "collection_error": {
