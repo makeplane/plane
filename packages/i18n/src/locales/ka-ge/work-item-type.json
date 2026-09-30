@@ -1,110 +1,110 @@
 {
   "work_item_types": {
-    "label": "Work item Types",
-    "label_lowercase": "work item types",
+    "label": "სამუშაო ელემენტების ტიპები",
+    "label_lowercase": "სამუშაო ელემენტების ტიპები",
     "settings": {
-      "description": "Customize and add your own properties to tailor it to your team's needs.",
-      "cant_delete_default_message": "This work item type cannot be deleted because it's set as the default for this project",
-      "set_as_default": "Set as default",
-      "cant_set_default_inactive_message": "Activate this type before setting it as default",
+      "description": "მოარგეთ და დაამატეთ საკუთარი თვისებები თქვენი გუნდის საჭიროებების დასაკმაყოფილებლად.",
+      "cant_delete_default_message": "სამუშაო ელემენტის ამ ტიპის წაშლა შეუძლებელია, რადგან იგი ამ პროექტისთვის ნაგულისხმევ ტიპად არის დაყენებული",
+      "set_as_default": "ნაგულისხმევად დაყენება",
+      "cant_set_default_inactive_message": "ნაგულისხმევად დაყენებამდე გაააქტიურეთ ეს ტიპი",
       "set_default_confirmation": {
-        "title": "Set as default work item type",
-        "description": "Setting {name} as the default will import it to all projects in this workspace. All new work items will use this type by default.",
-        "confirm_button": "Set as default"
+        "title": "სამუშაო ელემენტის ნაგულისხმევ ტიპად დაყენება",
+        "description": "{name}-ის ნაგულისხმევად დაყენება მას ამ სამუშაო სივრცის ყველა პროექტში დაამატებს. ყველა ახალი სამუშაო ელემენტი ნაგულისხმევად ამ ტიპს გამოიყენებს.",
+        "confirm_button": "ნაგულისხმევად დაყენება"
       },
       "properties": {
-        "title": "Properties",
-        "description": "Create and customize properties.",
-        "tooltip": "Each work item type comes with a default set of properties like Title, Description, Assignee, State, Priority, Start date, Due date, Module, Cycle etc. You can also customize and add your own properties to tailor it to your team's needs.",
-        "add_button": "Add new property",
+        "title": "თვისებები",
+        "description": "შექმენით და მოარგეთ თვისებები.",
+        "tooltip": "სამუშაო ელემენტის თითოეულ ტიპს აქვს ნაგულისხმევი თვისებები, როგორიცაა სათაური, აღწერა, პასუხისმგებელი პირი, მდგომარეობა, პრიორიტეტი, დაწყების თარიღი, ვადა, მოდული, ციკლი და სხვ. ასევე შეგიძლიათ მოარგოთ და დაამატოთ საკუთარი თვისებები თქვენი გუნდის საჭიროებების დასაკმაყოფილებლად.",
+        "add_button": "ახალი თვისების დამატება",
         "project": {
           "add_button": {
-            "import_from_workspace": "Import from workspace"
+            "import_from_workspace": "სამუშაო სივრციდან იმპორტი"
           }
         },
         "dropdown": {
-          "label": "Property type",
-          "placeholder": "Select type"
+          "label": "თვისების ტიპი",
+          "placeholder": "აირჩიეთ ტიპი"
         },
         "property_type": {
           "text": {
-            "label": "Text"
+            "label": "ტექსტი"
           },
           "number": {
-            "label": "Number"
+            "label": "რიცხვი"
           },
           "dropdown": {
-            "label": "Dropdown"
+            "label": "ჩამოსაშლელი სია"
           },
           "boolean": {
-            "label": "Boolean"
+            "label": "ლოგიკური"
           },
           "date": {
-            "label": "Date"
+            "label": "თარიღი"
           },
           "member_picker": {
-            "label": "Member picker"
+            "label": "წევრის არჩევა"
           },
           "formula": {
-            "label": "Formula"
+            "label": "ფორმულა"
           }
         },
         "attributes": {
-          "label": "Attributes",
+          "label": "ატრიბუტები",
           "text": {
             "single_line": {
-              "label": "Single line"
+              "label": "ერთი სტრიქონი"
             },
             "multi_line": {
-              "label": "Paragraph"
+              "label": "აბზაცი"
             },
             "readonly": {
-              "label": "Read only",
-              "header": "Read only data"
+              "label": "მხოლოდ წაკითხვა",
+              "header": "მონაცემები მხოლოდ წასაკითხად"
             },
             "invalid_text_format": {
-              "label": "Invalid text format"
+              "label": "ტექსტის არასწორი ფორმატი"
             }
           },
           "number": {
             "default": {
-              "placeholder": "Add number"
+              "placeholder": "რიცხვის დამატება"
             }
           },
           "relation": {
             "single_select": {
-              "label": "Single select"
+              "label": "ერთი ვარიანტის არჩევა"
             },
             "multi_select": {
-              "label": "Multi select"
+              "label": "რამდენიმე ვარიანტის არჩევა"
             },
             "no_default_value": {
-              "label": "No default value"
+              "label": "ნაგულისხმევი მნიშვნელობა არ არის"
             }
           },
           "boolean": {
-            "label": "True | False",
-            "no_default": "No default value"
+            "label": "ჭეშმარიტი | მცდარი",
+            "no_default": "ნაგულისხმევი მნიშვნელობა არ არის"
           },
           "option": {
             "create_update": {
-              "label": "Options",
+              "label": "ვარიანტები",
               "form": {
-                "placeholder": "Add option",
+                "placeholder": "ვარიანტის დამატება",
                 "errors": {
                   "name": {
-                    "required": "Option name is required.",
-                    "integrity": "Option with same name already exists."
+                    "required": "ვარიანტის სახელი სავალდებულოა.",
+                    "integrity": "ამავე სახელის ვარიანტი უკვე არსებობს."
                   }
                 }
               }
             },
             "select": {
               "placeholder": {
-                "single": "Select option",
+                "single": "აირჩიეთ ვარიანტი",
                 "multi": {
-                  "default": "Select options",
-                  "variable": "{count} options selected"
+                  "default": "აირჩიეთ ვარიანტები",
+                  "variable": "არჩეულია {count} ვარიანტი"
                 }
               }
             }
@@ -113,215 +113,215 @@
         "toast": {
           "create": {
             "success": {
-              "title": "Success!",
-              "message": "Property {name} created successfully."
+              "title": "წარმატებით შესრულდა!",
+              "message": "თვისება {name} წარმატებით შეიქმნა."
             },
             "error": {
-              "title": "Error!",
-              "message": "Failed to create property. Please try again!"
+              "title": "შეცდომა!",
+              "message": "თვისების შექმნა ვერ მოხერხდა. სცადეთ ხელახლა!"
             }
           },
           "update": {
             "success": {
-              "title": "Success!",
-              "message": "Property {name} updated successfully."
+              "title": "წარმატებით შესრულდა!",
+              "message": "თვისება {name} წარმატებით განახლდა."
             },
             "error": {
-              "title": "Error!",
-              "message": "Failed to update property. Please try again!"
+              "title": "შეცდომა!",
+              "message": "თვისების განახლება ვერ მოხერხდა. სცადეთ ხელახლა!"
             }
           },
           "delete": {
             "success": {
-              "title": "Success!",
-              "message": "Property {name} deleted successfully."
+              "title": "წარმატებით შესრულდა!",
+              "message": "თვისება {name} წარმატებით წაიშალა."
             },
             "error": {
-              "title": "Error!",
-              "message": "Failed to delete property. Please try again!"
+              "title": "შეცდომა!",
+              "message": "თვისების წაშლა ვერ მოხერხდა. სცადეთ ხელახლა!"
             }
           },
           "enable_disable": {
-            "loading": "{action} {name} property",
+            "loading": "{name} თვისების {action}",
             "success": {
-              "title": "Success!",
-              "message": "Property {name} {action} successfully."
+              "title": "წარმატებით შესრულდა!",
+              "message": "თვისებაზე {name} მოქმედება {action} წარმატებით შესრულდა."
             },
             "error": {
-              "title": "Error!",
-              "message": "Failed to {action} property. Please try again!"
+              "title": "შეცდომა!",
+              "message": "თვისებაზე მოქმედების {action} შესრულება ვერ მოხერხდა. სცადეთ ხელახლა!"
             }
           }
         },
         "create_update": {
           "title": {
-            "create": "Create new custom property",
-            "update": "Update custom property"
+            "create": "ახალი მორგებული თვისების შექმნა",
+            "update": "მორგებული თვისების განახლება"
           },
           "form": {
             "display_name": {
-              "placeholder": "Title"
+              "placeholder": "სათაური"
             },
             "description": {
-              "placeholder": "Description"
+              "placeholder": "აღწერა"
             }
           },
           "errors": {
             "name": {
-              "required": "You must name your property.",
-              "max_length": "Property name should not exceed 255 characters."
+              "required": "თქვენს თვისებას სახელი უნდა დაარქვათ.",
+              "max_length": "თვისების სახელი არ უნდა აღემატებოდეს 255 სიმბოლოს."
             },
             "property_type": {
-              "required": "You must select a property type."
+              "required": "უნდა აირჩიოთ თვისების ტიპი."
             },
             "options": {
-              "required": "You must add at least one option."
+              "required": "უნდა დაამატოთ სულ მცირე ერთი ვარიანტი."
             },
             "formula": {
-              "required": "Formula expression is required.",
-              "invalid": "Invalid formula: {error}",
-              "circular_reference": "Circular reference detected. A formula cannot reference itself directly or indirectly.",
-              "invalid_reference": "Formula references non-existent property."
+              "required": "ფორმულის გამოსახულება სავალდებულოა.",
+              "invalid": "არასწორი ფორმულა: {error}",
+              "circular_reference": "აღმოჩენილია ციკლური მითითება. ფორმულა არ შეიძლება პირდაპირ ან ირიბად საკუთარ თავს მიუთითებდეს.",
+              "invalid_reference": "ფორმულა მიუთითებს არარსებულ თვისებაზე."
             }
           }
         },
         "formula": {
-          "field_label": "Formula field",
-          "tooltip": "Enter a formula using '{'Field Name'}' syntax. Supports +, -, *, /, & operators.",
-          "placeholder": "Write the formula",
-          "test_button": "Test",
-          "validating": "Validating",
-          "validation_success": "Formula is valid! Returns {resultType}",
-          "validation_success_with_refs": "Formula is valid! Returns {resultType} ({count} field(s) referenced)",
+          "field_label": "ფორმულის ველი",
+          "tooltip": "შეიყვანეთ ფორმულა '{'Field Name'}' სინტაქსით. მხარდაჭერილია +, -, *, /, & ოპერატორები.",
+          "placeholder": "დაწერეთ ფორმულა",
+          "test_button": "ტესტირება",
+          "validating": "მოწმდება",
+          "validation_success": "ფორმულა სწორია! აბრუნებს {resultType}-ს",
+          "validation_success_with_refs": "ფორმულა სწორია! აბრუნებს {resultType}-ს (მითითებულია {count} ველი)",
           "error": {
-            "empty": "Please enter a formula",
-            "missing_context": "Missing workspace, project, or work item type context",
-            "validation_failed": "Validation failed"
+            "empty": "შეიყვანეთ ფორმულა",
+            "missing_context": "აკლია სამუშაო სივრცის, პროექტის ან სამუშაო ელემენტის ტიპის კონტექსტი",
+            "validation_failed": "შემოწმება ვერ მოხერხდა"
           },
           "picker": {
-            "no_match": "No matching properties",
-            "no_available": "No available properties"
+            "no_match": "შესაბამისი თვისებები არ არის",
+            "no_available": "ხელმისაწვდომი თვისებები არ არის"
           }
         },
         "enable_disable": {
-          "label": "Active",
+          "label": "აქტიური",
           "tooltip": {
-            "disabled": "Click to disable",
-            "enabled": "Click to enable"
+            "disabled": "დააწკაპუნეთ გამოსართავად",
+            "enabled": "დააწკაპუნეთ ჩასართავად"
           }
         },
         "delete_confirmation": {
-          "title": "Delete this property",
-          "description": "Deletion of properties may lead to loss of existing data.",
-          "secondary_description": "Do you want to disable the property instead?",
-          "primary_button": "{action}, delete it",
-          "secondary_button": "Yes, disable it"
+          "title": "ამ თვისების წაშლა",
+          "description": "თვისებების წაშლამ შეიძლება არსებული მონაცემების დაკარგვა გამოიწვიოს.",
+          "secondary_description": "გსურთ ამის ნაცვლად თვისება გამორთოთ?",
+          "primary_button": "{action}, წაშალეთ",
+          "secondary_button": "დიახ, გამორთეთ"
         },
         "mandate_confirmation": {
-          "label": "Mandatory property",
-          "content": "There seems to be a default option for this property. Making the property mandatory will remove the default value and the users will have to add a value of their choice.",
+          "label": "სავალდებულო თვისება",
+          "content": "როგორც ჩანს, ამ თვისებას ნაგულისხმევი ვარიანტი აქვს. თვისების სავალდებულოდ მონიშვნისას ნაგულისხმევი მნიშვნელობა წაიშლება და მომხმარებლებს საკუთარი მნიშვნელობის მითითება მოუწევთ.",
           "tooltip": {
-            "disabled": "This property type cannot be made mandatory",
-            "enabled": "Uncheck to mark the field as optional",
-            "checked": "Check to mark the field as mandatory"
+            "disabled": "ამ ტიპის თვისების სავალდებულოდ მონიშვნა შეუძლებელია",
+            "enabled": "მოხსენით მონიშვნა ველის არასავალდებულოდ აღსანიშნავად",
+            "checked": "მონიშნეთ ველის სავალდებულოდ აღსანიშნავად"
           }
         },
         "empty_state": {
-          "title": "Add custom properties",
-          "description": "New properties you add for this work item type will show here."
+          "title": "მორგებული თვისებების დამატება",
+          "description": "ამ სამუშაო ელემენტის ტიპისთვის დამატებული ახალი თვისებები აქ გამოჩნდება."
         }
       },
       "types": {
-        "title": "Types",
-        "description": "Create and customize work item types with properties.",
+        "title": "ტიპები",
+        "description": "შექმენით და მოარგეთ სამუშაო ელემენტების ტიპები თვისებებით.",
         "sort_options": {
-          "project_count": "Number of projects part of"
+          "project_count": "იმ პროექტების რაოდენობა, რომელთა ნაწილიცაა"
         },
         "filter_options": {
-          "show_active": "Show active",
-          "show_inactive": "Show inactive"
+          "show_active": "აქტიურების ჩვენება",
+          "show_inactive": "არააქტიურების ჩვენება"
         },
         "project": {
           "add_button": {
-            "create_new": "Create new",
-            "import_from_workspace": "Import from workspace"
+            "create_new": "ახლის შექმნა",
+            "import_from_workspace": "სამუშაო სივრციდან იმპორტი"
           },
           "banner": {
-            "with_access": "Enable work item types to import types from workspace level",
-            "without_access": "Work item types are disabled. Contact workspace admin to enable them in workspace settings."
+            "with_access": "ჩართეთ სამუშაო ელემენტების ტიპები სამუშაო სივრცის დონიდან ტიპების იმპორტისთვის",
+            "without_access": "სამუშაო ელემენტების ტიპები გამორთულია. სამუშაო სივრცის პარამეტრებში მათ ჩასართავად დაუკავშირდით სამუშაო სივრცის ადმინისტრატორს."
           }
         }
       },
       "linked_properties": {
-        "title": "Custom properties",
-        "add_button": "Add properties",
+        "title": "მორგებული თვისებები",
+        "add_button": "თვისებების დამატება",
         "modal": {
-          "title": "Add properties",
+          "title": "თვისებების დამატება",
           "empty": {
-            "title": "No properties available",
-            "description": "All properties have already been linked to this type."
+            "title": "ხელმისაწვდომი თვისებები არ არის",
+            "description": "ყველა თვისება უკვე დაკავშირებულია ამ ტიპთან."
           }
         },
         "unlink_confirmation": {
-          "title": "Unlink property",
-          "description": "Unlinking this property will permanently delete all its values across every work item using this type. This action cannot be undone.",
-          "input_label": "Type",
-          "input_label_suffix": "to continue:",
-          "confirm": "Unlink property",
-          "loading": "Unlinking"
+          "title": "თვისების კავშირის მოხსნა",
+          "description": "ამ თვისების კავშირის მოხსნისას სამუდამოდ წაიშლება მისი ყველა მნიშვნელობა ამ ტიპის ყველა სამუშაო ელემენტში. ამ მოქმედების გაუქმება შეუძლებელია.",
+          "input_label": "აკრიფეთ",
+          "input_label_suffix": "გასაგრძელებლად:",
+          "confirm": "თვისების კავშირის მოხსნა",
+          "loading": "იხსნება კავშირი"
         }
       },
       "item_delete_confirmation": {
-        "title": "Delete this type",
-        "description": "Deletion of types may lead to loss of existing data.",
-        "can_disable_warning": "Do you want to disable the type instead?",
-        "primary_button": "Yes, delete it",
+        "title": "ამ ტიპის წაშლა",
+        "description": "ტიპების წაშლამ შეიძლება არსებული მონაცემების დაკარგვა გამოიწვიოს.",
+        "can_disable_warning": "გსურთ ამის ნაცვლად ტიპი გამორთოთ?",
+        "primary_button": "დიახ, წაშალეთ",
         "toast": {
           "success": {
-            "title": "Success!",
-            "message": "Work item type deleted successfully."
+            "title": "წარმატებით შესრულდა!",
+            "message": "სამუშაო ელემენტის ტიპი წარმატებით წაიშალა."
           },
           "error": {
-            "title": "Error!",
-            "message": "Failed to delete work item type. Please try again!"
+            "title": "შეცდომა!",
+            "message": "სამუშაო ელემენტის ტიპის წაშლა ვერ მოხერხდა. სცადეთ ხელახლა!"
           }
         },
         "errors": {
-          "cannot_delete_default_work_item_type": "Cannot delete default work item type",
-          "cannot_delete_work_item_type_with_associated_work_items": "Cannot delete work item type with associated work items"
+          "cannot_delete_default_work_item_type": "სამუშაო ელემენტის ნაგულისხმევი ტიპის წაშლა შეუძლებელია",
+          "cannot_delete_work_item_type_with_associated_work_items": "დაკავშირებული სამუშაო ელემენტების მქონე ტიპის წაშლა შეუძლებელია"
         }
       }
     },
     "create": {
-      "title": "Create work item type",
-      "button": "Add work item type",
+      "title": "სამუშაო ელემენტის ტიპის შექმნა",
+      "button": "სამუშაო ელემენტის ტიპის დამატება",
       "toast": {
         "success": {
-          "title": "Success!",
-          "message": "Work item type created successfully."
+          "title": "წარმატებით შესრულდა!",
+          "message": "სამუშაო ელემენტის ტიპი წარმატებით შეიქმნა."
         },
         "error": {
-          "title": "Error!",
+          "title": "შეცდომა!",
           "message": {
-            "default": "Failed to create work item type. Please try again!",
-            "conflict": "{name} type already exists. Choose a different name."
+            "default": "სამუშაო ელემენტის ტიპის შექმნა ვერ მოხერხდა. სცადეთ ხელახლა!",
+            "conflict": "ტიპი {name} უკვე არსებობს. აირჩიეთ სხვა სახელი."
           }
         }
       }
     },
     "update": {
-      "title": "Update work item type",
-      "button": "Update work item type",
+      "title": "სამუშაო ელემენტის ტიპის განახლება",
+      "button": "სამუშაო ელემენტის ტიპის განახლება",
       "toast": {
         "success": {
-          "title": "Success!",
-          "message": "Work item type {name} updated successfully."
+          "title": "წარმატებით შესრულდა!",
+          "message": "სამუშაო ელემენტის ტიპი {name} წარმატებით განახლდა."
         },
         "error": {
-          "title": "Error!",
+          "title": "შეცდომა!",
           "message": {
-            "default": "Failed to update work item type. Please try again!",
-            "conflict": "{name} type already exists. Choose a different name."
+            "default": "სამუშაო ელემენტის ტიპის განახლება ვერ მოხერხდა. სცადეთ ხელახლა!",
+            "conflict": "ტიპი {name} უკვე არსებობს. აირჩიეთ სხვა სახელი."
           }
         }
       }
@@ -329,148 +329,148 @@
     "create_update": {
       "form": {
         "name": {
-          "placeholder": "Give this work item type a unique name"
+          "placeholder": "დაარქვით სამუშაო ელემენტის ამ ტიპს უნიკალური სახელი"
         },
         "description": {
-          "placeholder": "Describe what this work item type is meant for and when it's to be used."
+          "placeholder": "აღწერეთ, რისთვის არის განკუთვნილი სამუშაო ელემენტის ეს ტიპი და როდის უნდა გამოიყენოთ."
         }
       }
     },
     "enable_disable": {
       "toast": {
-        "loading": "{action} {name} work item type",
+        "loading": "სამუშაო ელემენტის ტიპის {name} {action}",
         "success": {
-          "title": "Success!",
-          "message": "Work item type {name} {action} successfully."
+          "title": "წარმატებით შესრულდა!",
+          "message": "სამუშაო ელემენტის ტიპზე {name} მოქმედება {action} წარმატებით შესრულდა."
         },
         "error": {
-          "title": "Error!",
-          "message": "Failed to {action} work item type. Please try again!"
+          "title": "შეცდომა!",
+          "message": "სამუშაო ელემენტის ტიპზე მოქმედების {action} შესრულება ვერ მოხერხდა. სცადეთ ხელახლა!"
         }
       },
-      "tooltip": "Click to {action}"
+      "tooltip": "დააწკაპუნეთ მოქმედებისთვის: {action}"
     },
     "change_confirmation": {
-      "title": "Change work item type?",
-      "description": "Changing the work item type may result in loss of custom property values that are specific to the current type. This action cannot be undone.",
+      "title": "შევცვალოთ სამუშაო ელემენტის ტიპი?",
+      "description": "სამუშაო ელემენტის ტიპის შეცვლამ შეიძლება მიმდინარე ტიპისთვის დამახასიათებელი მორგებული თვისებების მნიშვნელობების დაკარგვა გამოიწვიოს. ამ მოქმედების გაუქმება შეუძლებელია.",
       "button": {
-        "loading": "Changing",
-        "default": "Change type"
+        "loading": "იცვლება",
+        "default": "ტიპის შეცვლა"
       }
     },
     "empty_state": {
       "enable": {
-        "title": "Enable Work item Types",
-        "description": "Shape work items to your work with Work item types. Customize with icons, backgrounds, and properties and configure them for this project.",
+        "title": "სამუშაო ელემენტების ტიპების ჩართვა",
+        "description": "სამუშაო ელემენტების ტიპებით მოარგეთ ისინი თქვენს სამუშაოს. გამოიყენეთ ხატულები, ფონები და თვისებები და დააკონფიგურირეთ ისინი ამ პროექტისთვის.",
         "primary_button": {
-          "text": "Enable"
+          "text": "ჩართვა"
         },
         "confirmation": {
-          "title": "Once enabled, Work item Types can't be disabled.",
-          "description": "Plane's Work Item will become the default work item type for this project and will show up with its icon and background in this project.",
+          "title": "ჩართვის შემდეგ სამუშაო ელემენტების ტიპებს ვეღარ გამორთავთ.",
+          "description": "Plane-ის სამუშაო ელემენტი ამ პროექტის ნაგულისხმევი ტიპი გახდება და პროექტში თავისი ხატულითა და ფონით გამოჩნდება.",
           "button": {
-            "default": "Enable",
-            "loading": "Setting up"
+            "default": "ჩართვა",
+            "loading": "მიმდინარეობს კონფიგურაცია"
           }
         }
       },
       "get_pro": {
-        "title": "Get Pro to enable Work item types.",
-        "description": "Shape work items to your work with Work item types. Customize with icons, backgrounds, and properties and configure them for this project.",
+        "title": "სამუშაო ელემენტების ტიპების ჩასართავად შეიძინეთ Pro.",
+        "description": "სამუშაო ელემენტების ტიპებით მოარგეთ ისინი თქვენს სამუშაოს. გამოიყენეთ ხატულები, ფონები და თვისებები და დააკონფიგურირეთ ისინი ამ პროექტისთვის.",
         "primary_button": {
-          "text": "Get Pro"
+          "text": "Pro-ს შეძენა"
         }
       },
       "upgrade": {
-        "title": "Upgrade to enable Work item types.",
-        "description": "Shape work items to your work with Work item types. Customize with icons, backgrounds, and properties and configure them for this project.",
+        "title": "სამუშაო ელემენტების ტიპების ჩასართავად გააუმჯობესეთ ტარიფი.",
+        "description": "სამუშაო ელემენტების ტიპებით მოარგეთ ისინი თქვენს სამუშაოს. გამოიყენეთ ხატულები, ფონები და თვისებები და დააკონფიგურირეთ ისინი ამ პროექტისთვის.",
         "primary_button": {
-          "text": "Upgrade"
+          "text": "გაუმჯობესება"
         }
       }
     }
   },
   "work_item_type_hierarchy": {
     "settings": {
-      "title": "Hierarchy",
-      "tab_label": "Hierarchy",
-      "description": "Set up hierarchy levels to organize your work. Each level defines a parent relationship with the item directly above it and child relationship with the item directly below it. ",
-      "sidebar_label": "Hierarchy",
+      "title": "იერარქია",
+      "tab_label": "იერარქია",
+      "description": "დააყენეთ იერარქიის დონეები თქვენი სამუშაოს ორგანიზებისთვის. თითოეული დონე მშობელი ელემენტით უკავშირდება უშუალოდ მის ზემოთ არსებულ ელემენტს, ხოლო შვილობილი ელემენტით — უშუალოდ მის ქვემოთ არსებულს. ",
+      "sidebar_label": "იერარქია",
       "enable_control": {
-        "title": "Enable hierarchy",
-        "description": "Create parent-child relationships between different work item types.",
-        "tooltip": "You cannot disable hierarchy once it is enabled."
+        "title": "იერარქიის ჩართვა",
+        "description": "შექმენით მშობელი-შვილობილი კავშირები სამუშაო ელემენტების სხვადასხვა ტიპს შორის.",
+        "tooltip": "იერარქიის ჩართვის შემდეგ მის გამორთვას ვეღარ შეძლებთ."
       },
       "workspace_work_item_types_disabled_banner": {
-        "content": "Define Work Item Types first to create a new hierarchy.",
-        "cta": "Work item types settings"
+        "content": "ახალი იერარქიის შესაქმნელად ჯერ განსაზღვრეთ სამუშაო ელემენტების ტიპები.",
+        "cta": "სამუშაო ელემენტების ტიპების პარამეტრები"
       }
     },
     "levels": {
-      "max_level_placeholder": "Drag and drop type to add a new hierarchy level",
-      "empty_level_placeholder": "Drag and drop a work item type to level {level}",
-      "drag_tooltip": "Drag to change level",
+      "max_level_placeholder": "გადმოათრიეთ და ჩააგდეთ ტიპი იერარქიის ახალი დონის დასამატებლად",
+      "empty_level_placeholder": "გადმოათრიეთ და ჩააგდეთ სამუშაო ელემენტის ტიპი {level} დონეზე",
+      "drag_tooltip": "დონის შესაცვლელად გადაათრიეთ",
       "quick_actions": {
         "set_as_default": {
-          "label": "Set as default",
+          "label": "ნაგულისხმევად დაყენება",
           "toast": {
-            "loading": "Setting as default...",
+            "loading": "ყენდება ნაგულისხმევად...",
             "success": {
-              "title": "Success!",
-              "message": "Hierarchy level {level} set as default successfully."
+              "title": "წარმატებით შესრულდა!",
+              "message": "იერარქიის {level} დონე წარმატებით დაყენდა ნაგულისხმევად."
             },
             "error": {
-              "title": "Error!",
-              "message": "Failed to set hierarchy level {level} as default. Please try again."
+              "title": "შეცდომა!",
+              "message": "იერარქიის {level} დონის ნაგულისხმევად დაყენება ვერ მოხერხდა. სცადეთ ხელახლა."
             }
           }
         }
       },
       "update_level_toast": {
-        "loading": "Moving {workItemTypeName} to level {level}...",
+        "loading": "{workItemTypeName} გადადის {level} დონეზე...",
         "success": {
-          "title": "Success!",
-          "message": "{workItemTypeName} moved to level {level} successfully."
+          "title": "წარმატებით შესრულდა!",
+          "message": "{workItemTypeName} წარმატებით გადავიდა {level} დონეზე."
         }
       }
     },
     "break_hierarchy_modal": {
-      "title": "Validation error!",
+      "title": "შემოწმების შეცდომა!",
       "content": {
-        "intro": "Work item type {workItemTypeName} has:",
-        "parent_items": "{count, plural, one {parent work item} other {parent work items}}",
-        "child_items": "{count, plural, one {sub-work item} other {sub-work items}}",
-        "parent_line_suffix_when_also_children": ", and ",
-        "footer": "This change will remove parent and child relationships from existing work items of {workItemTypeName} work item type."
+        "intro": "სამუშაო ელემენტის ტიპს {workItemTypeName} აქვს:",
+        "parent_items": "{count, plural, one {მშობელი სამუშაო ელემენტი} other {მშობელი სამუშაო ელემენტები}}",
+        "child_items": "{count, plural, one {ქვესამუშაო ელემენტი} other {ქვესამუშაო ელემენტები}}",
+        "parent_line_suffix_when_also_children": ", და ",
+        "footer": "ეს ცვლილება {workItemTypeName} ტიპის არსებულ სამუშაო ელემენტებს მშობელ და შვილობილ კავშირებს მოუხსნის."
       },
       "confirm_input": {
-        "label": "Type in \"Confirm\" to continue.",
+        "label": "გასაგრძელებლად აკრიფეთ \"Confirm\".",
         "placeholder": "Confirm"
       },
       "error_toast": {
-        "title": "Error!",
-        "message": "Failed to break hierarchy. Please try again."
+        "title": "შეცდომა!",
+        "message": "იერარქიის კავშირების გაწყვეტა ვერ მოხერხდა. სცადეთ ხელახლა."
       },
       "confirm_button": {
-        "loading": "Applying",
-        "default": "Apply & Unlink"
+        "loading": "გამოიყენება",
+        "default": "გამოყენება და კავშირის მოხსნა"
       }
     },
     "work_item_modal": {
       "invalid_work_item_type_create_toast": {
-        "title": "Error!",
-        "message": "The selected work item type cannot be used to create a new work item since it breaks the hierarchy rules."
+        "title": "შეცდომა!",
+        "message": "სამუშაო ელემენტის არჩეული ტიპით ახალი სამუშაო ელემენტის შექმნა შეუძლებელია, რადგან ეს იერარქიის წესებს არღვევს."
       },
       "invalid_work_item_type_update_toast": {
-        "title": "Error!",
-        "message": "Work item type cannot be updated since it breaks the hierarchy rules."
+        "title": "შეცდომა!",
+        "message": "სამუშაო ელემენტის ტიპის განახლება შეუძლებელია, რადგან ეს იერარქიის წესებს არღვევს."
       }
     },
     "work_item_type_modal": {
-      "level": "Hierarchy level",
+      "level": "იერარქიის დონე",
       "invalid_level_toast": {
-        "title": "Error!",
-        "message": "Work item type cannot be updated since it breaks the hierarchy rules."
+        "title": "შეცდომა!",
+        "message": "სამუშაო ელემენტის ტიპის განახლება შეუძლებელია, რადგან ეს იერარქიის წესებს არღვევს."
       }
     }
   }

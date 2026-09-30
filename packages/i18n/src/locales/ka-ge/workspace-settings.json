@@ -13,7 +13,7 @@
         "name": "სამუშაო სივრცის სახელი",
         "company_size": "კომპანიის ზომა",
         "url": "სამუშაო სივრცის URL",
-        "workspace_timezone": "Workspace Timezone",
+        "workspace_timezone": "სამუშაო სივრცის დროის სარტყელი",
         "update_workspace": "სამუშაო სივრცის განახლება",
         "delete_workspace": "ამ სამუშაო სივრცის წაშლა",
         "delete_workspace_description": "სამუშაო სივრცის წაშლისას, სამუშაო სივრცეში არსებული ყველა მონაცემი და რესურსი სამუდამოდ წაიშლება და მათი აღდგენა შეუძლებელი იქნება.",
@@ -82,7 +82,7 @@
         "export_separate_files": "მონაცემების ექსპორტი ცალკეულ ფაილებში",
         "exporting_projects": "პროექტის ექსპორტირება",
         "format": "ფორმატი",
-        "filters_info": "Apply filters to export specific work items based on your criteria.",
+        "filters_info": "გამოიყენეთ ფილტრები თქვენი კრიტერიუმების მიხედვით კონკრეტული სამუშაო ელემენტების ექსპორტისთვის.",
         "modal": {
           "title": "ექსპორტი",
           "toasts": {
@@ -105,7 +105,7 @@
         "modal": {
           "title": "ვებჰუკის შექმნა",
           "details": "ვებჰუკის დეტალები",
-          "payload": "Payload URL",
+          "payload": "მონაცემების მიმღები URL",
           "question": "რომელი მოვლენები გსურთ გააქტიუროთ ამ ვებჰუკისთვის?",
           "error": "URL სავალდებულოა"
         },
@@ -151,8 +151,8 @@
         }
       },
       "api_tokens": {
-        "heading": "Access Tokens",
-        "description": "Generate secure API tokens to integrate your data with external systems and applications.",
+        "heading": "წვდომის ტოკენები",
+        "description": "შექმენით უსაფრთხო API ტოკენები თქვენი მონაცემების გარე სისტემებსა და აპლიკაციებთან ინტეგრაციისთვის.",
         "title": "პერსონალური წვდომის ტოკენები",
         "add_token": "პერსონალური წვდომის ტოკენის დამატება",
         "create_token": "ტოკენის შექმნა",
@@ -173,317 +173,317 @@
         }
       },
       "integrations": {
-        "title": "Integrations",
-        "heading": "Integrations",
-        "description": "Connect with popular tools and services to sync your work across your entire workflow ecosystem.",
-        "page_title": "Work with your Plane data in available apps or your own.",
-        "page_description": "View all the integrations in use by this workspace or you."
+        "title": "ინტეგრაციები",
+        "heading": "ინტეგრაციები",
+        "description": "დაუკავშირდით პოპულარულ ხელსაწყოებსა და სერვისებს თქვენი სამუშაოს მთელი პროცესის მასშტაბით სინქრონიზაციისთვის.",
+        "page_title": "იმუშავეთ თქვენი Plane მონაცემებით ხელმისაწვდომ ან საკუთარ აპებში.",
+        "page_description": "ნახეთ ყველა ინტეგრაცია, რომელსაც ეს სამუშაო სივრცე ან თქვენ იყენებთ."
       },
       "imports": {
-        "title": "Imports",
-        "heading": "Imports",
-        "description": "Connect and import data from your existing project management tools to streamline your workflow integration."
+        "title": "იმპორტები",
+        "heading": "იმპორტები",
+        "description": "დააკავშირეთ და შემოიტანეთ მონაცემები პროექტების მართვის თქვენი არსებული ხელსაწყოებიდან სამუშაო პროცესის ინტეგრაციის გასამარტივებლად."
       },
       "worklogs": {
-        "title": "Worklogs",
-        "heading": "Worklogs",
-        "description": "Download worklogs AKA timesheets for anyone in any project."
+        "title": "სამუშაო ჩანაწერები",
+        "heading": "სამუშაო ჩანაწერები",
+        "description": "ჩამოტვირთეთ ნებისმიერი პირის სამუშაო ჩანაწერები, ანუ დროის აღრიცხვის ცხრილები, ნებისმიერი პროექტიდან."
       },
       "group_syncing": {
-        "title": "Group syncing",
-        "heading": "Group syncing",
-        "description": "Link identity provider groups to projects and roles. User access updates automatically when group membership changes in your IdP, simplifying onboarding and offboarding.",
+        "title": "ჯგუფების სინქრონიზაცია",
+        "heading": "ჯგუფების სინქრონიზაცია",
+        "description": "დააკავშირეთ იდენტობის პროვაიდერის ჯგუფები პროექტებთან და როლებთან. თქვენს IdP-ში ჯგუფის წევრობის ცვლილებისას მომხმარებლის წვდომა ავტომატურად განახლდება, რაც ამარტივებს წევრების დამატებასა და წვდომის მოხსნას.",
         "enable": {
-          "title": "Enable group syncing",
-          "description": "Automatically add users to projects based on identity provider groups."
+          "title": "ჯგუფების სინქრონიზაციის ჩართვა",
+          "description": "ავტომატურად დაამატეთ მომხმარებლები პროექტებში იდენტობის პროვაიდერის ჯგუფების მიხედვით."
         },
         "config": {
-          "title": "Configure group sync",
-          "description": "Set up how identity provider groups are mapped to projects and roles.",
+          "title": "ჯგუფების სინქრონიზაციის კონფიგურაცია",
+          "description": "განსაზღვრეთ იდენტობის პროვაიდერის ჯგუფების შესაბამისობა პროექტებთან და როლებთან.",
           "sync_on_login": {
-            "title": "Sync on login",
-            "description": "Update group membership and project access when a user signs in."
+            "title": "სინქრონიზაცია შესვლისას",
+            "description": "განაახლეთ ჯგუფის წევრობა და პროექტზე წვდომა მომხმარებლის შესვლისას."
           },
           "sync_offline": {
-            "title": "Offline sync",
-            "description": "Runs sync every six hours automatically, without waiting for users to log in."
+            "title": "სინქრონიზაცია შესვლის გარეშე",
+            "description": "სინქრონიზაციას ავტომატურად ასრულებს ყოველ ექვს საათში, მომხმარებლის შესვლის ლოდინის გარეშე."
           },
           "auto_remove": {
-            "title": "Auto remove",
-            "description": "Automatically remove users from projects when they no longer match the group."
+            "title": "ავტომატური ამოღება",
+            "description": "ავტომატურად ამოიღეთ მომხმარებლები პროექტებიდან, როცა ისინი ჯგუფს აღარ შეესაბამებიან."
           },
           "group_attribute_key": {
-            "title": "Group attribute key",
-            "description": "The identity provider attribute used to identify and sync user groups.",
-            "placeholder": "Groups"
+            "title": "ჯგუფის ატრიბუტის გასაღები",
+            "description": "იდენტობის პროვაიდერის ატრიბუტი, რომელიც მომხმარებლის ჯგუფების ამოსაცნობად და სინქრონიზაციისთვის გამოიყენება.",
+            "placeholder": "ჯგუფები"
           }
         },
         "group_mapping": {
-          "title": "Group mapping",
-          "description": "Link identity provider groups to projects and roles.",
-          "button_text": "Add new group sync"
+          "title": "ჯგუფების შესაბამისობა",
+          "description": "დააკავშირეთ იდენტობის პროვაიდერის ჯგუფები პროექტებთან და როლებთან.",
+          "button_text": "ჯგუფების ახალი სინქრონიზაციის დამატება"
         },
         "toast": {
-          "updating": "Updating group syncing feature",
-          "success": "Group syncing feature updated successfully.",
-          "error": "Failed to update group syncing feature!"
+          "updating": "ახლდება ჯგუფების სინქრონიზაციის ფუნქცია",
+          "success": "ჯგუფების სინქრონიზაციის ფუნქცია წარმატებით განახლდა.",
+          "error": "ჯგუფების სინქრონიზაციის ფუნქციის განახლება ვერ მოხერხდა!"
         },
         "delete_modal": {
-          "title": "Delete group sync",
-          "content": "New users from this identity group will no longer be added to the project. Users already added will keep their current role."
+          "title": "ჯგუფების სინქრონიზაციის წაშლა",
+          "content": "ამ იდენტობის ჯგუფის ახალი მომხმარებლები პროექტში აღარ დაემატებიან. უკვე დამატებული მომხმარებლები მიმდინარე როლს შეინარჩუნებენ."
         },
         "modal": {
           "idp_group_name": {
-            "text": "User group",
-            "required": "User group is required",
-            "placeholder": "Enter the IdP group names"
+            "text": "მომხმარებლის ჯგუფი",
+            "required": "მომხმარებლის ჯგუფი სავალდებულოა",
+            "placeholder": "შეიყვანეთ IdP ჯგუფების სახელები"
           },
           "project": {
-            "text": "Project",
-            "required": "Project is required",
-            "placeholder": "Select a project"
+            "text": "პროექტი",
+            "required": "პროექტი სავალდებულოა",
+            "placeholder": "აირჩიეთ პროექტი"
           },
           "default_role": {
-            "text": "Project role",
-            "required": "Project role is required",
-            "placeholder": "Select a project role"
+            "text": "პროექტის როლი",
+            "required": "პროექტის როლი სავალდებულოა",
+            "placeholder": "აირჩიეთ პროექტის როლი"
           }
         }
       },
       "identity": {
-        "title": "Identity",
-        "heading": "Identity",
-        "description": "Configure your domain and enable Single sign-on"
+        "title": "იდენტობა",
+        "heading": "იდენტობა",
+        "description": "დააკონფიგურირეთ თქვენი დომენი და ჩართეთ ერთიანი ავტორიზაცია"
       },
       "project_states": {
-        "title": "Project states",
-        "heading": "See progress overview for all projects.",
-        "description": "Project States is a Plane-only feature for tracking progress of all your projects by any project property.",
-        "go_to_settings": "Go to settings"
+        "title": "პროექტის მდგომარეობები",
+        "heading": "ნახეთ ყველა პროექტის პროგრესის მიმოხილვა.",
+        "description": "პროექტის მდგომარეობები მხოლოდ Plane-ში არსებული ფუნქციაა, რომლითაც ყველა პროექტის პროგრესს პროექტის ნებისმიერი თვისების მიხედვით აღრიცხავთ.",
+        "go_to_settings": "პარამეტრებზე გადასვლა"
       },
       "projects": {
-        "title": "Projects",
-        "description": "Manage project states, and enable project labels, and other configuration.",
+        "title": "პროექტები",
+        "description": "მართეთ პროექტის მდგომარეობები, ჩართეთ პროექტის ჭდეები და სხვა პარამეტრები.",
         "tabs": {
-          "states": "Project states",
-          "labels": "Project labels"
+          "states": "პროექტის მდგომარეობები",
+          "labels": "პროექტის ჭდეები"
         }
       },
       "templates": {
-        "title": "Templates",
-        "heading": "Templates",
-        "description": "Save 80% time spent on creating projects, work items, and pages when you use templates."
+        "title": "შაბლონები",
+        "heading": "შაბლონები",
+        "description": "შაბლონების გამოყენებით დაზოგეთ პროექტების, სამუშაო ელემენტებისა და გვერდების შექმნაზე დახარჯული დროის 80%."
       },
       "relations": {
-        "title": "Relations",
-        "heading": "Relations",
-        "description": "Create and manage relation types that connect work items across your workspace."
+        "title": "კავშირები",
+        "heading": "კავშირები",
+        "description": "შექმენით და მართეთ კავშირის ტიპები, რომლებიც სამუშაო ელემენტებს თქვენს სამუშაო სივრცეში აკავშირებს."
       },
       "cancel_trial": {
-        "title": "Cancel your trial first.",
-        "description": "You have an active trial to one of our paid plans. Please cancel it first to proceed.",
-        "dismiss": "Dismiss",
-        "cancel": "Cancel trial",
-        "cancel_success_title": "Trial cancelled.",
-        "cancel_success_message": "You can now delete the workspace.",
-        "cancel_error_title": "That didn't work.",
-        "cancel_error_message": "Try again, please."
+        "title": "ჯერ გააუქმეთ საცდელი პერიოდი.",
+        "description": "ჩვენი ერთ-ერთი ფასიანი ტარიფის აქტიური საცდელი პერიოდი გაქვთ. გასაგრძელებლად ჯერ გააუქმეთ იგი.",
+        "dismiss": "დახურვა",
+        "cancel": "საცდელი პერიოდის გაუქმება",
+        "cancel_success_title": "საცდელი პერიოდი გაუქმდა.",
+        "cancel_success_message": "ახლა შეგიძლიათ სამუშაო სივრცის წაშლა.",
+        "cancel_error_title": "ეს ვერ შესრულდა.",
+        "cancel_error_message": "სცადეთ ხელახლა."
       },
       "applications": {
-        "internal": "Internal",
-        "title": "Applications",
-        "applicationId_copied": "Application ID copied to clipboard",
-        "clientId_copied": "Client ID copied to clipboard",
-        "clientSecret_copied": "Client Secret copied to clipboard",
-        "third_party_apps": "Third-party apps",
-        "your_apps": "Your apps",
-        "connect": "Connect",
-        "connected": "Connected",
-        "disconnect": "Disconnect",
-        "install": "Install",
-        "installed": "Installed",
-        "configure": "Configure",
-        "app_available": "You have made this app available to use with a Plane workspace",
+        "internal": "შიდა",
+        "title": "აპლიკაციები",
+        "applicationId_copied": "აპლიკაციის ID დაკოპირდა გაცვლის ბუფერში",
+        "clientId_copied": "კლიენტის ID დაკოპირდა გაცვლის ბუფერში",
+        "clientSecret_copied": "კლიენტის საიდუმლო გასაღები დაკოპირდა გაცვლის ბუფერში",
+        "third_party_apps": "მესამე მხარის აპები",
+        "your_apps": "თქვენი აპები",
+        "connect": "დაკავშირება",
+        "connected": "დაკავშირებულია",
+        "disconnect": "გათიშვა",
+        "install": "ინსტალაცია",
+        "installed": "დაინსტალირებულია",
+        "configure": "კონფიგურაცია",
+        "app_available": "ეს აპი Plane სამუშაო სივრცეში გამოსაყენებლად ხელმისაწვდომი გახადეთ",
         "app_credentials_regenrated": {
-          "title": "App credentials successfully re-generated",
-          "description": "Replace the client secret everywhere it's used. The previous secret is no longer valid."
+          "title": "აპის ავტორიზაციის მონაცემები წარმატებით შეიქმნა ხელახლა",
+          "description": "შეცვალეთ კლიენტის საიდუმლო გასაღები ყველგან, სადაც გამოიყენება. წინა გასაღები აღარ არის მოქმედი."
         },
         "app_created": {
-          "title": "App created successfully",
-          "description": "Use the credentials to install the app in a Plane workspace"
+          "title": "აპი წარმატებით შეიქმნა",
+          "description": "გამოიყენეთ ავტორიზაციის მონაცემები აპის Plane სამუშაო სივრცეში დასაინსტალირებლად"
         },
-        "installed_apps": "Installed apps",
-        "all_apps": "All apps",
-        "internal_apps": "Internal apps",
-        "app_name_title": "App Name",
+        "installed_apps": "დაინსტალირებული აპები",
+        "all_apps": "ყველა აპი",
+        "internal_apps": "შიდა აპები",
+        "app_name_title": "აპის სახელი",
         "app_description_title": {
-          "label": "Long Description",
-          "placeholder": "Write a long description for marketplace. Press ‘/’ for commands."
+          "label": "ვრცელი აღწერა",
+          "placeholder": "დაწერეთ ვრცელი აღწერა მარკეტპლეისისთვის. ბრძანებებისთვის დააჭირეთ „/“-ს."
         },
         "authorization_grant_type": {
-          "title": "Connection Type",
-          "description": "Choose if your app should be installed once for the workspace or let every user connect their own account"
+          "title": "კავშირის ტიპი",
+          "description": "აირჩიეთ, აპი ერთხელ უნდა დაინსტალირდეს სამუშაო სივრცისთვის თუ თითოეულ მომხმარებელს საკუთარი ანგარიშის დაკავშირება შეეძლოს"
         },
         "website": {
-          "title": "Website",
-          "description": "Link to your app's website.",
+          "title": "ვებსაიტი",
+          "description": "თქვენი აპის ვებსაიტის ბმული.",
           "placeholder": "https://example.com"
         },
         "app_maker": {
-          "title": "App Maker",
-          "description": "The person or organization creating the app."
+          "title": "აპის შემქმნელი",
+          "description": "აპის შემქმნელი პირი ან ორგანიზაცია."
         },
-        "app_maker_error": "Maker name is required",
+        "app_maker_error": "შემქმნელის სახელი სავალდებულოა",
         "setup_url": {
-          "label": "Setup URL",
-          "description": "Users will be redirected to this URL when they install the app.",
+          "label": "კონფიგურაციის URL",
+          "description": "აპის ინსტალაციისას მომხმარებლები ამ URL-ზე გადამისამართდებიან.",
           "placeholder": "https://example.com/setup"
         },
         "webhook_url": {
           "label": "Webhook URL",
-          "description": "This is where we will send webhook events and updates from the workspaces where your app is installed.",
+          "description": "აქ გავგზავნით Webhook მოვლენებსა და განახლებებს იმ სამუშაო სივრცეებიდან, სადაც თქვენი აპია დაინსტალირებული.",
           "placeholder": "https://example.com/webhook"
         },
         "webhook_secret": {
-          "label": "Webhook Secret",
-          "description": "Secret used to verify incoming webhook requests.",
-          "placeholder": "Enter a random secret key"
+          "label": "Webhook-ის საიდუმლო გასაღები",
+          "description": "საიდუმლო გასაღები შემომავალი Webhook მოთხოვნების შესამოწმებლად.",
+          "placeholder": "შეიყვანეთ შემთხვევითი საიდუმლო გასაღები"
         },
         "redirect_uris": {
-          "label": "Redirect URIs (space separated)",
-          "description": "Users will be redirected to this path after they have authenticated with Plane.",
+          "label": "გადამისამართების URI-ები (გამოყოფილი გამოტოვებებით)",
+          "description": "Plane-ში ავთენტიფიკაციის შემდეგ მომხმარებლები ამ მისამართზე გადამისამართდებიან.",
           "placeholder": "https://example.com https://example.com/"
         },
-        "app_available_description": "Connect a Plane workspace to start using it",
-        "client_id_and_secret": "Client ID and Secret",
-        "client_id_and_secret_description": "Copy and save this secret key in Pages. You can't see this key again after you hit Close.",
-        "client_id_and_secret_download": "You can download a CSV with the key from here.",
-        "application_id": "Application ID",
-        "client_id": "Client ID",
-        "client_secret": "Client Secret",
-        "export_as_csv": "Export as CSV",
-        "slug_already_exists": "Slug already exists",
-        "failed_to_create_application": "Failed to create application",
-        "upload_logo": "Upload Logo",
-        "app_name_error": "App name is required",
-        "app_short_description_title": "Short Description",
-        "app_short_description_error": "App short description is required",
-        "app_description_error": "App description is required",
-        "app_slug_title": "App slug",
-        "app_slug_error": "App slug is required",
-        "invalid_website_error": "Invalid website",
+        "app_available_description": "გამოყენების დასაწყებად დააკავშირეთ Plane სამუშაო სივრცე",
+        "client_id_and_secret": "კლიენტის ID და საიდუმლო გასაღები",
+        "client_id_and_secret_description": "დააკოპირეთ და შეინახეთ ეს საიდუმლო გასაღები გვერდებში. „დახურვაზე“ დაწკაპუნების შემდეგ ამ გასაღებს ვეღარ ნახავთ.",
+        "client_id_and_secret_download": "აქედან შეგიძლიათ ჩამოტვირთოთ CSV ფაილი გასაღებით.",
+        "application_id": "აპლიკაციის ID",
+        "client_id": "კლიენტის ID",
+        "client_secret": "კლიენტის საიდუმლო გასაღები",
+        "export_as_csv": "ექსპორტი CSV ფორმატში",
+        "slug_already_exists": "მოკლე იდენტიფიკატორი უკვე არსებობს",
+        "failed_to_create_application": "აპლიკაციის შექმნა ვერ მოხერხდა",
+        "upload_logo": "ლოგოს ატვირთვა",
+        "app_name_error": "აპის სახელი სავალდებულოა",
+        "app_short_description_title": "მოკლე აღწერა",
+        "app_short_description_error": "აპის მოკლე აღწერა სავალდებულოა",
+        "app_description_error": "აპის აღწერა სავალდებულოა",
+        "app_slug_title": "აპის მოკლე იდენტიფიკატორი",
+        "app_slug_error": "აპის მოკლე იდენტიფიკატორი სავალდებულოა",
+        "invalid_website_error": "არასწორი ვებსაიტი",
         "webhook_url_title": "Webhook URL",
-        "webhook_url_error": "Webhook URL is required",
-        "invalid_webhook_url_error": "Invalid webhook URL",
-        "redirect_uris_title": "Redirect URIs",
-        "redirect_uris_error": "Redirect URIs are required",
-        "invalid_redirect_uris_error": "Invalid redirect URIs",
-        "redirect_uris_description": "Enter space seperated URIs where the app will redirect to after the user e.g https://example.com https://example.com/",
-        "authorized_javascript_origins_title": "Authorized Javascript Origins",
-        "authorized_javascript_origins_error": "Authorized Javascript Origins are required",
-        "invalid_authorized_javascript_origins_error": "Invalid authorized Javascript Origins",
-        "authorized_javascript_origins_description": "Enter space seperated origins where the app will be allowed to make requests e.g app.com example.com",
-        "create_app": "Create app",
-        "update_app": "Update app",
-        "build_your_own_app": "Build your own app",
-        "edit_app_details": "Edit app details",
-        "regenerate_client_secret_description": "Regenerate the client secret. If you regenerate the secret, you can copy the key or download it to a CSV file right after.",
-        "regenerate_client_secret": "Regenerate client secret",
-        "regenerate_client_secret_confirm_title": "Sure you want to regenerate the client secret?",
-        "regenerate_client_secret_confirm_description": "App using this secret will stop working. You will need to update the secret in the app.",
-        "regenerate_client_secret_confirm_cancel": "Cancel",
-        "regenerate_client_secret_confirm_regenerate": "Regenerate",
-        "read_only_access_to_workspace": "Read-only access to your workspace",
-        "write_access_to_workspace": "Write access to your workspace",
-        "read_only_access_to_user_profile": "Read-only access to your user profile",
-        "write_access_to_user_profile": "Write access to your user profile",
-        "connect_app_to_workspace": "Connect {app} to your workspace {workspace}",
-        "user_permissions": "User permissions",
-        "user_permissions_description": "User permissions are used to grant access to the user's profile.",
-        "workspace_permissions": "Workspace permissions",
-        "workspace_permissions_description": "Workspace permissions are used to grant access to the workspace.",
-        "with_the_permissions": "with the permissions",
-        "app_consent_title": "{app} is requesting access to your Plane workspace and profile.",
-        "choose_workspace_to_connect_app_with": "Choose a workspace to connect the app with",
-        "app_consent_workspace_permissions_title": "{app} would like",
-        "app_consent_user_permissions_title": "{app} can also request a user's permission to the following resources. These permissions will be requested and authorized of and by a user only.",
-        "app_consent_accept_title": "By accepting, you",
-        "app_consent_accept_1": "Grant the app access to your Plane data wherever you can use the app in or outside Plane",
-        "app_consent_accept_2": "Agree to {app}'s Privacy Policy and Terms Of Use",
-        "accepting": "Accepting...",
-        "accept": "Accept",
-        "categories": "Categories",
-        "select_app_categories": "Select app categories",
-        "categories_title": "Categories",
-        "categories_error": "Categories are required",
-        "invalid_categories_error": "Invalid categories",
-        "categories_description": "Select the categories that best describe the app",
-        "supported_plans": "Supported Plans",
-        "supported_plans_description": "Select the workspace plans that can install this application. Leave empty to allow all plans.",
-        "select_plans": "Select Plans",
-        "privacy_policy_url_title": "Privacy Policy URL",
-        "privacy_policy_url_error": "Privacy Policy URL is required",
-        "invalid_privacy_policy_url_error": "Invalid privacy policy URL",
-        "terms_of_service_url_title": "Terms of Service URL",
-        "terms_of_service_url_error": "Terms of Service URL is required",
-        "invalid_terms_of_service_url_error": "Invalid terms of service URL",
-        "support_url_title": "Support URL",
-        "support_url_error": "Support URL is required",
-        "invalid_support_url_error": "Invalid support URL",
-        "video_url_title": "Video URL",
-        "video_url_error": "Video URL is required",
-        "invalid_video_url_error": "Invalid video URL",
-        "setup_url_error": "Setup URL is required",
-        "invalid_setup_url_error": "Invalid setup URL",
-        "configuration_url_title": "Configuration URL",
-        "configuration_url_error": "Configuration URL is required",
-        "invalid_configuration_url_error": "Invalid configuration URL",
-        "contact_email_title": "Contact Email",
-        "contact_email_error": "Contact Email is required",
-        "invalid_contact_email_error": "Invalid contact email",
-        "upload_attachments": "Upload Attachments",
-        "uploading_images": "Uploading {count} Image{count, plural, one {s} other {s}}",
-        "drop_images_here": "Drop images here",
-        "click_to_upload_images": "Click to upload images",
-        "invalid_file_or_exceeds_size_limit": "Invalid file or exceeds size limit ({size} MB)",
-        "uploading": "Uploading...",
-        "upload_and_save": "Upload & Save",
-        "app_consent_no_access_title": "Request to install",
-        "app_consent_no_access_description": "This app can only be installed after a workspace admin installs it. Contact your workspace admin to proceed.",
-        "app_consent_unapproved_title": "This app hasn't been reviewed or approved by Plane yet.",
-        "app_consent_unapproved_description": "Make sure you trust this app before connecting it to your workspace.",
-        "go_to_app": "Go to app",
-        "enable_app_mentions": "Enable App Mentions",
-        "enable_app_mentions_tooltip": "When this is enabled, Users can mention or assign Work Items to this application.",
-        "scopes": "Scopes",
-        "select_scopes": "Select Scopes",
-        "read_access_to": "Read-only access to",
-        "write_access_to": "Write access to",
-        "global_permission_expiration": "Global scopes are expiring soon. Use granular scopes instead. For example, use project:read instead of a global read.",
-        "selected_scopes": "{count} selected",
-        "scopes_and_permissions": "Scopes & Permissions",
-        "read": "Read",
-        "write": "Write",
+        "webhook_url_error": "Webhook URL სავალდებულოა",
+        "invalid_webhook_url_error": "არასწორი Webhook URL",
+        "redirect_uris_title": "გადამისამართების URI-ები",
+        "redirect_uris_error": "გადამისამართების URI-ები სავალდებულოა",
+        "invalid_redirect_uris_error": "არასწორი გადამისამართების URI-ები",
+        "redirect_uris_description": "შეიყვანეთ გამოტოვებებით გამოყოფილი URI-ები, რომლებზეც აპი მომხმარებელს გადამისამართებს, მაგ., https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "JavaScript-ის ნებადართული წყაროები",
+        "authorized_javascript_origins_error": "JavaScript-ის ნებადართული წყაროები სავალდებულოა",
+        "invalid_authorized_javascript_origins_error": "არასწორი JavaScript-ის ნებადართული წყაროები",
+        "authorized_javascript_origins_description": "შეიყვანეთ გამოტოვებებით გამოყოფილი წყაროები, საიდანაც აპს მოთხოვნების გაგზავნის უფლება ექნება, მაგ., app.com example.com",
+        "create_app": "აპის შექმნა",
+        "update_app": "აპის განახლება",
+        "build_your_own_app": "შექმენით თქვენი საკუთარი აპი",
+        "edit_app_details": "აპის დეტალების რედაქტირება",
+        "regenerate_client_secret_description": "ხელახლა შექმენით კლიენტის საიდუმლო გასაღები. ამის შემდეგ შეგიძლიათ დაუყოვნებლივ დააკოპიროთ გასაღები ან ჩამოტვირთოთ CSV ფაილში.",
+        "regenerate_client_secret": "კლიენტის საიდუმლო გასაღების ხელახლა შექმნა",
+        "regenerate_client_secret_confirm_title": "დარწმუნებული ხართ, რომ გსურთ კლიენტის საიდუმლო გასაღების ხელახლა შექმნა?",
+        "regenerate_client_secret_confirm_description": "ამ საიდუმლო გასაღების მომხმარებელი აპი მუშაობას შეწყვეტს. აპში საიდუმლო გასაღების განახლება დაგჭირდებათ.",
+        "regenerate_client_secret_confirm_cancel": "გაუქმება",
+        "regenerate_client_secret_confirm_regenerate": "ხელახლა შექმნა",
+        "read_only_access_to_workspace": "თქვენს სამუშაო სივრცეზე მხოლოდ წაკითხვის წვდომა",
+        "write_access_to_workspace": "თქვენს სამუშაო სივრცეზე ჩაწერის წვდომა",
+        "read_only_access_to_user_profile": "თქვენს მომხმარებლის პროფილზე მხოლოდ წაკითხვის წვდომა",
+        "write_access_to_user_profile": "თქვენს მომხმარებლის პროფილზე ჩაწერის წვდომა",
+        "connect_app_to_workspace": "დააკავშირეთ {app} თქვენს სამუშაო სივრცესთან {workspace}",
+        "user_permissions": "მომხმარებლის უფლებები",
+        "user_permissions_description": "მომხმარებლის უფლებები გამოიყენება მომხმარებლის პროფილზე წვდომის მისანიჭებლად.",
+        "workspace_permissions": "სამუშაო სივრცის უფლებები",
+        "workspace_permissions_description": "სამუშაო სივრცის უფლებები გამოიყენება სამუშაო სივრცეზე წვდომის მისანიჭებლად.",
+        "with_the_permissions": "შემდეგი უფლებებით",
+        "app_consent_title": "{app} ითხოვს წვდომას თქვენს Plane სამუშაო სივრცესა და პროფილზე.",
+        "choose_workspace_to_connect_app_with": "აირჩიეთ სამუშაო სივრცე აპის დასაკავშირებლად",
+        "app_consent_workspace_permissions_title": "{app}-ს სურს",
+        "app_consent_user_permissions_title": "{app}-ს ასევე შეუძლია მოითხოვოს მომხმარებლის ნებართვა შემდეგ რესურსებზე. ამ უფლებებს მხოლოდ მომხმარებელი მოითხოვს და დაამტკიცებს.",
+        "app_consent_accept_title": "დათანხმებით თქვენ",
+        "app_consent_accept_1": "ანიჭებთ აპს წვდომას თქვენს Plane მონაცემებზე ყველგან, სადაც აპის გამოყენება შეგიძლიათ, Plane-ის შიგნით ან მის გარეთ",
+        "app_consent_accept_2": "ეთანხმებით {app}-ის კონფიდენციალურობის პოლიტიკასა და გამოყენების პირობებს",
+        "accepting": "მიმდინარეობს დათანხმება...",
+        "accept": "დათანხმება",
+        "categories": "კატეგორიები",
+        "select_app_categories": "აირჩიეთ აპის კატეგორიები",
+        "categories_title": "კატეგორიები",
+        "categories_error": "კატეგორიები სავალდებულოა",
+        "invalid_categories_error": "არასწორი კატეგორიები",
+        "categories_description": "აირჩიეთ კატეგორიები, რომლებიც საუკეთესოდ აღწერს აპს",
+        "supported_plans": "მხარდაჭერილი ტარიფები",
+        "supported_plans_description": "აირჩიეთ სამუშაო სივრცის ტარიფები, რომლებზეც ამ აპლიკაციის ინსტალაცია შეიძლება. ყველა ტარიფის დასაშვებად დატოვეთ ცარიელი.",
+        "select_plans": "აირჩიეთ ტარიფები",
+        "privacy_policy_url_title": "კონფიდენციალურობის პოლიტიკის URL",
+        "privacy_policy_url_error": "კონფიდენციალურობის პოლიტიკის URL სავალდებულოა",
+        "invalid_privacy_policy_url_error": "კონფიდენციალურობის პოლიტიკის არასწორი URL",
+        "terms_of_service_url_title": "მომსახურების პირობების URL",
+        "terms_of_service_url_error": "მომსახურების პირობების URL სავალდებულოა",
+        "invalid_terms_of_service_url_error": "მომსახურების პირობების არასწორი URL",
+        "support_url_title": "მხარდაჭერის URL",
+        "support_url_error": "მხარდაჭერის URL სავალდებულოა",
+        "invalid_support_url_error": "მხარდაჭერის არასწორი URL",
+        "video_url_title": "ვიდეოს URL",
+        "video_url_error": "ვიდეოს URL სავალდებულოა",
+        "invalid_video_url_error": "ვიდეოს არასწორი URL",
+        "setup_url_error": "კონფიგურაციის URL სავალდებულოა",
+        "invalid_setup_url_error": "კონფიგურაციის არასწორი URL",
+        "configuration_url_title": "კონფიგურაციის URL",
+        "configuration_url_error": "კონფიგურაციის URL სავალდებულოა",
+        "invalid_configuration_url_error": "კონფიგურაციის არასწორი URL",
+        "contact_email_title": "საკონტაქტო ელფოსტა",
+        "contact_email_error": "საკონტაქტო ელფოსტა სავალდებულოა",
+        "invalid_contact_email_error": "არასწორი საკონტაქტო ელფოსტა",
+        "upload_attachments": "დანართების ატვირთვა",
+        "uploading_images": "იტვირთება {count} {count, plural, one {სურათი} other {სურათი}}",
+        "drop_images_here": "ჩააგდეთ სურათები აქ",
+        "click_to_upload_images": "დააწკაპუნეთ სურათების ასატვირთად",
+        "invalid_file_or_exceeds_size_limit": "ფაილი არასწორია ან აჭარბებს ზომის ლიმიტს ({size} MB)",
+        "uploading": "იტვირთება...",
+        "upload_and_save": "ატვირთვა და შენახვა",
+        "app_consent_no_access_title": "ინსტალაციის მოთხოვნა",
+        "app_consent_no_access_description": "ამ აპის ინსტალაცია შესაძლებელია მხოლოდ სამუშაო სივრცის ადმინისტრატორის მიერ მისი ინსტალაციის შემდეგ. გასაგრძელებლად დაუკავშირდით სამუშაო სივრცის ადმინისტრატორს.",
+        "app_consent_unapproved_title": "ეს აპი Plane-ს ჯერ არ განუხილავს ან დაუმტკიცებია.",
+        "app_consent_unapproved_description": "სამუშაო სივრცესთან დაკავშირებამდე დარწმუნდით, რომ ამ აპს ენდობით.",
+        "go_to_app": "აპზე გადასვლა",
+        "enable_app_mentions": "აპის ხსენებების ჩართვა",
+        "enable_app_mentions_tooltip": "როცა ეს ჩართულია, მომხმარებლებს შეუძლიათ აპლიკაციის ხსენება ან მისთვის სამუშაო ელემენტების დანიშვნა.",
+        "scopes": "წვდომის არეალები",
+        "select_scopes": "აირჩიეთ წვდომის არეალები",
+        "read_access_to": "მხოლოდ წაკითხვის წვდომა",
+        "write_access_to": "ჩაწერის წვდომა",
+        "global_permission_expiration": "გლობალური წვდომის არეალების მოქმედება მალე დასრულდება. გამოიყენეთ უფრო კონკრეტული არეალები. მაგალითად, გლობალური წაკითხვის უფლების ნაცვლად გამოიყენეთ project:read.",
+        "selected_scopes": "არჩეულია {count}",
+        "scopes_and_permissions": "წვდომის არეალები და უფლებები",
+        "read": "წაკითხვა",
+        "write": "ჩაწერა",
         "scope_description": {
-          "projects": "Access to projects, and all project related entities",
-          "wiki": "Access to wiki, and all wiki related entities",
-          "workspaces": "Access to workspaces, and all workspace related entities",
-          "stickies": "Access to stickies, and all sticky related entities",
-          "profile": "Access to user profile information",
-          "agents": "Access to agents, and all agent related entities",
-          "assets": "Access to assets, and all asset related entities"
+          "projects": "წვდომა პროექტებსა და პროექტთან დაკავშირებულ ყველა ერთეულზე",
+          "wiki": "წვდომა ვიკისა და ვიკისთან დაკავშირებულ ყველა ერთეულზე",
+          "workspaces": "წვდომა სამუშაო სივრცეებსა და სამუშაო სივრცესთან დაკავშირებულ ყველა ერთეულზე",
+          "stickies": "წვდომა ჩანიშვნებსა და ჩანიშვნებთან დაკავშირებულ ყველა ერთეულზე",
+          "profile": "წვდომა მომხმარებლის პროფილის ინფორმაციაზე",
+          "agents": "წვდომა აგენტებსა და აგენტებთან დაკავშირებულ ყველა ერთეულზე",
+          "assets": "წვდომა რესურსებსა და რესურსებთან დაკავშირებულ ყველა ერთეულზე"
         }
       },
       "plane-intelligence": {
         "title": "Plane AI",
         "heading": "Plane AI",
-        "description": "See your work get smarter and faster with AI that is natively connected to your work and knowledge base. "
+        "description": "ნახეთ, როგორ ხდება თქვენი მუშაობა უფრო ჭკვიანი და სწრაფი AI-ით, რომელიც უშუალოდ უკავშირდება თქვენს სამუშაოსა და ცოდნის ბაზას. "
       },
       "runners": {
         "title": "Plane Runner",
-        "heading": "Scripts",
-        "new_script": "New Script",
-        "description": "Automate your workflows with custom scripts and automation rules."
+        "heading": "სკრიპტები",
+        "new_script": "ახალი სკრიპტი",
+        "description": "შეასრულეთ თქვენი სამუშაო პროცესები ავტომატურად მორგებული სკრიპტებითა და ავტომატიზაციის წესებით."
       }
     },
     "empty_state": {

@@ -57,8 +57,8 @@
       "updated_at": "განახლების თარიღი",
       "id": "ID"
     },
-    "label": "Intake",
-    "page_label": "{workspace} - Intake",
+    "label": "შემოსული მოთხოვნები",
+    "page_label": "{workspace} - შემოსული მოთხოვნები",
     "modal": {
       "title": "Intake-ის სამუშაო ელემენტის შექმნა"
     },

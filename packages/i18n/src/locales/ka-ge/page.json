@@ -23,7 +23,7 @@
         "version_history": {
           "label": "ვერსიის ისტორია",
           "current_version": "მიმდინარე ვერსია",
-          "highlight_changes": "Highlight changes"
+          "highlight_changes": "ცვლილებების გამოკვეთა"
         }
       },
       "assets": {
@@ -35,41 +35,41 @@
         }
       },
       "comments": {
-        "label": "Comments",
+        "label": "კომენტარები",
         "empty_state": {
-          "title": "No comments",
-          "description": "Add comments to see them here."
+          "title": "კომენტარები არ არის",
+          "description": "დაამატეთ კომენტარები, რათა აქ გამოჩნდეს."
         }
       }
     },
     "toasts": {
       "errors": {
-        "wrong_name": "The sticky name cannot be longer than 100 characters.",
-        "already_exists": "There already exists a sticky with no description"
+        "wrong_name": "ჩანიშვნის სახელი არ შეიძლება 100 სიმბოლოზე გრძელი იყოს.",
+        "already_exists": "უკვე არსებობს ჩანიშვნა აღწერის გარეშე"
       },
       "created": {
-        "title": "Sticky created",
-        "message": "The sticky has been successfully created"
+        "title": "ჩანიშვნა შეიქმნა",
+        "message": "ჩანიშვნა წარმატებით შეიქმნა"
       },
       "not_created": {
-        "title": "Sticky not created",
-        "message": "The sticky could not be created"
+        "title": "ჩანიშვნა არ შეიქმნა",
+        "message": "ჩანიშვნის შექმნა ვერ მოხერხდა"
       },
       "updated": {
-        "title": "Sticky updated",
-        "message": "The sticky has been successfully updated"
+        "title": "ჩანიშვნა განახლდა",
+        "message": "ჩანიშვნა წარმატებით განახლდა"
       },
       "not_updated": {
-        "title": "Sticky not updated",
-        "message": "The sticky could not be updated"
+        "title": "ჩანიშვნა არ განახლდა",
+        "message": "ჩანიშვნის განახლება ვერ მოხერხდა"
       },
       "removed": {
-        "title": "Sticky removed",
-        "message": "The sticky has been successfully removed"
+        "title": "ჩანიშვნა წაიშალა",
+        "message": "ჩანიშვნა წარმატებით წაიშალა"
       },
       "not_removed": {
-        "title": "Sticky not removed",
-        "message": "The sticky could not be removed"
+        "title": "ჩანიშვნა არ წაიშალა",
+        "message": "ჩანიშვნის წაშლა ვერ მოხერხდა"
       }
     },
     "open_button": "ნავიგაციის პანელის გახსნა",
@@ -79,37 +79,37 @@
   "page_actions": {
     "move_page": {
       "submit_button": {
-        "default": "Move",
-        "loading": "Moving"
+        "default": "გადატანა",
+        "loading": "გადადის"
       },
-      "cannot_move_to_teamspace": "Private and shared pages cannot be moved to a teamspace.",
+      "cannot_move_to_teamspace": "პირადი და გაზიარებული გვერდების გუნდის სივრცეში გადატანა შეუძლებელია.",
       "placeholders": {
-        "workspace_to_all": "Search for projects and teamspaces",
-        "workspace_to_project": "Search for projects",
-        "project_to_all": "Search for projects and teamspaces",
-        "project_to_project": "Search for projects",
-        "project_to_all_with_wiki": "Search for wiki collections, projects, and teamspaces",
-        "project_to_project_with_wiki": "Search for wiki collections and projects"
+        "workspace_to_all": "პროექტებისა და გუნდის სივრცეების ძიება",
+        "workspace_to_project": "პროექტების ძიება",
+        "project_to_all": "პროექტებისა და გუნდის სივრცეების ძიება",
+        "project_to_project": "პროექტების ძიება",
+        "project_to_all_with_wiki": "ვიკის კოლექციების, პროექტებისა და გუნდის სივრცეების ძიება",
+        "project_to_project_with_wiki": "ვიკის კოლექციებისა და პროექტების ძიება"
       },
       "toasts": {
         "success": {
-          "title": "Success!",
-          "message": "Page moved successfully."
+          "title": "წარმატებით შესრულდა!",
+          "message": "გვერდი წარმატებით გადავიდა."
         },
         "error": {
-          "title": "Error!",
-          "message": "Page could not be moved. Please try again later."
+          "title": "შეცდომა!",
+          "message": "გვერდის გადატანა ვერ მოხერხდა. სცადეთ მოგვიანებით."
         },
         "collection_error": {
-          "title": "Moved to wiki",
-          "message": "Page was moved to wiki, but could not be added to the selected collection. It remains in General."
+          "title": "გადავიდა ვიკიში",
+          "message": "გვერდი ვიკიში გადავიდა, თუმცა არჩეულ კოლექციაში მისი დამატება ვერ მოხერხდა. იგი რჩება ზოგად განყოფილებაში."
         }
       }
     },
     "remove_from_collection": {
-      "label": "Remove from collection",
-      "success_message": "Page removed from collection.",
-      "error_message": "Page could not be removed from the collection. Please try again."
+      "label": "კოლექციიდან ამოღება",
+      "success_message": "გვერდი ამოღებულია კოლექციიდან.",
+      "error_message": "გვერდის კოლექციიდან ამოღება ვერ მოხერხდა. სცადეთ ხელახლა."
     }
   },
   "page_ui": {

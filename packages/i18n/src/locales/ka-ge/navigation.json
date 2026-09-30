@@ -7,7 +7,7 @@
     }
   },
   "sidebar": {
-    "stickies": "Stickies",
+    "stickies": "ჩანიშვნები",
     "your_work": "შენი სამუშაო",
     "projects": "პროექტები",
     "pages": "გვერდები",
@@ -20,15 +20,15 @@
     "work_items": "სამუშაო ელემენტები",
     "cycles": "ციკლები",
     "modules": "მოდულები",
-    "intake": "Intake",
+    "intake": "შემოსული მოთხოვნები",
     "drafts": "მონახაზები",
     "favorites": "ფავორიტები",
     "pro": "Pro",
     "upgrade": "გააუმჯობესე",
     "pi_chat": "Plane AI",
-    "epics": "Epics",
-    "upgrade_plan": "Upgrade plan",
+    "epics": "ეპიკები",
+    "upgrade_plan": "ტარიფის გაუმჯობესება",
     "plane_pro": "Plane Pro",
-    "business": "Business"
+    "business": "ბიზნესი"
   }
 }

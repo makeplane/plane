@@ -1,224 +1,224 @@
 {
   "templates": {
     "settings": {
-      "title": "Templates",
-      "description": "Save 80% time spent on creating projects, work items, and pages when you use templates.",
-      "new_project_template": "New project template",
-      "new_work_item_template": "New work item template",
-      "new_page_template": "New page template",
+      "title": "შაბლონები",
+      "description": "შაბლონების გამოყენებით დაზოგეთ პროექტების, სამუშაო ელემენტებისა და გვერდების შექმნაზე დახარჯული დროის 80%.",
+      "new_project_template": "პროექტის ახალი შაბლონი",
+      "new_work_item_template": "სამუშაო ელემენტის ახალი შაბლონი",
+      "new_page_template": "გვერდის ახალი შაბლონი",
       "options": {
         "project": {
-          "label": "Project templates"
+          "label": "პროექტის შაბლონები"
         },
         "work_item": {
-          "label": "Work item templates"
+          "label": "სამუშაო ელემენტის შაბლონები"
         },
         "page": {
-          "label": "Page templates"
+          "label": "გვერდის შაბლონები"
         }
       },
       "create_template": {
-        "label": "Create template",
+        "label": "შაბლონის შექმნა",
         "no_permission": {
-          "project": "Contact your project admin to create templates",
-          "workspace": "Contact your workspace admin to create templates"
+          "project": "შაბლონების შესაქმნელად დაუკავშირდით თქვენი პროექტის ადმინისტრატორს",
+          "workspace": "შაბლონების შესაქმნელად დაუკავშირდით თქვენი სამუშაო სივრცის ადმინისტრატორს"
         }
       },
       "use_template": {
         "button": {
-          "default": "Use template",
-          "loading": "Applying"
+          "default": "შაბლონის გამოყენება",
+          "loading": "გამოიყენება"
         }
       },
       "template_source": {
         "workspace": {
-          "info": "Derived from workspace"
+          "info": "მიღებულია სამუშაო სივრციდან"
         },
         "project": {
-          "info": "Derived from project"
+          "info": "მიღებულია პროექტიდან"
         }
       },
       "form": {
         "project": {
           "template": {
             "name": {
-              "placeholder": "Name your project template.",
+              "placeholder": "დაარქვით სახელი თქვენი პროექტის შაბლონს.",
               "validation": {
-                "required": "Template name is required",
-                "maxLength": "Template name should be less than 255 characters"
+                "required": "შაბლონის სახელი სავალდებულოა",
+                "maxLength": "შაბლონის სახელი 255 სიმბოლოზე ნაკლები უნდა იყოს"
               }
             },
             "description": {
-              "placeholder": "Describe when and how to use this template."
+              "placeholder": "აღწერეთ, როდის და როგორ უნდა გამოიყენოთ ეს შაბლონი."
             }
           },
           "name": {
-            "placeholder": "Name your project.",
+            "placeholder": "დაარქვით სახელი თქვენს პროექტს.",
             "validation": {
-              "required": "Project title is required",
-              "maxLength": "Project title should be less than 255 characters"
+              "required": "პროექტის სათაური სავალდებულოა",
+              "maxLength": "პროექტის სათაური 255 სიმბოლოზე ნაკლები უნდა იყოს"
             }
           },
           "description": {
-            "placeholder": "Describe the purpose and goals of this project."
+            "placeholder": "აღწერეთ ამ პროექტის მიზანი და ამოცანები."
           },
           "button": {
-            "create": "Create project template",
-            "update": "Update project template"
+            "create": "პროექტის შაბლონის შექმნა",
+            "update": "პროექტის შაბლონის განახლება"
           }
         },
         "work_item": {
           "template": {
             "name": {
-              "placeholder": "Name your work-item template.",
+              "placeholder": "დაარქვით სახელი სამუშაო ელემენტის შაბლონს.",
               "validation": {
-                "required": "Template name is required",
-                "maxLength": "Template name should be less than 255 characters"
+                "required": "შაბლონის სახელი სავალდებულოა",
+                "maxLength": "შაბლონის სახელი 255 სიმბოლოზე ნაკლები უნდა იყოს"
               }
             },
             "description": {
-              "placeholder": "Describe when and how to use this template."
+              "placeholder": "აღწერეთ, როდის და როგორ უნდა გამოიყენოთ ეს შაბლონი."
             }
           },
           "name": {
-            "placeholder": "Give this work item a title.",
+            "placeholder": "მიუთითეთ სამუშაო ელემენტის სათაური.",
             "validation": {
-              "required": "Work item title is required",
-              "maxLength": "Work item title should be less than 255 characters"
+              "required": "სამუშაო ელემენტის სათაური სავალდებულოა",
+              "maxLength": "სამუშაო ელემენტის სათაური 255 სიმბოლოზე ნაკლები უნდა იყოს"
             }
           },
           "description": {
-            "placeholder": "Describe this work item so its clear what you will accomplish when you complete this."
+            "placeholder": "აღწერეთ ეს სამუშაო ელემენტი ისე, რომ ნათელი იყოს, რას მიაღწევთ მისი დასრულებით."
           },
           "button": {
-            "create": "Create work-item template",
-            "update": "Update work-item template"
+            "create": "სამუშაო ელემენტის შაბლონის შექმნა",
+            "update": "სამუშაო ელემენტის შაბლონის განახლება"
           }
         },
         "page": {
           "template": {
             "name": {
-              "placeholder": "Name your page template.",
+              "placeholder": "დაარქვით სახელი გვერდის შაბლონს.",
               "validation": {
-                "required": "Template name is required",
-                "maxLength": "Template name should be less than 255 characters"
+                "required": "შაბლონის სახელი სავალდებულოა",
+                "maxLength": "შაბლონის სახელი 255 სიმბოლოზე ნაკლები უნდა იყოს"
               }
             },
             "description": {
-              "placeholder": "Describe when and how to use this template."
+              "placeholder": "აღწერეთ, როდის და როგორ უნდა გამოიყენოთ ეს შაბლონი."
             }
           },
           "name": {
-            "placeholder": "Untitled page",
+            "placeholder": "უსათაურო გვერდი",
             "validation": {
-              "maxLength": "Page name should be less than 255 characters"
+              "maxLength": "გვერდის სახელი 255 სიმბოლოზე ნაკლები უნდა იყოს"
             }
           },
           "button": {
-            "create": "Create page template",
-            "update": "Update page template"
+            "create": "გვერდის შაბლონის შექმნა",
+            "update": "გვერდის შაბლონის განახლება"
           }
         },
         "publish": {
-          "action": "{isPublished, select, true {Publish settings} other {Publish to Marketplace}}",
-          "unpublish_action": "Unpublish from Marketplace",
-          "title": "Make your template discoverable and recognizable.",
+          "action": "{isPublished, select, true {გამოქვეყნების პარამეტრები} other {მარკეტპლეისზე გამოქვეყნება}}",
+          "unpublish_action": "მარკეტპლეისიდან გამოქვეყნების მოხსნა",
+          "title": "გახადეთ თქვენი შაბლონი ადვილად საპოვნელი და ამოსაცნობი.",
           "name": {
-            "label": "Name of template",
-            "placeholder": "Name your template",
+            "label": "შაბლონის სახელი",
+            "placeholder": "დაარქვით სახელი თქვენს შაბლონს",
             "validation": {
-              "required": "Template name is required",
-              "maxLength": "Template name should be less than 255 characters"
+              "required": "შაბლონის სახელი სავალდებულოა",
+              "maxLength": "შაბლონის სახელი 255 სიმბოლოზე ნაკლები უნდა იყოს"
             }
           },
           "short_description": {
-            "label": "Short description",
-            "placeholder": "This template is great for Project Managers who manage several projects at the same time.",
+            "label": "მოკლე აღწერა",
+            "placeholder": "ეს შაბლონი შესანიშნავია პროექტის მენეჯერებისთვის, რომლებიც ერთდროულად რამდენიმე პროექტს მართავენ.",
             "validation": {
-              "required": "Short description is required"
+              "required": "მოკლე აღწერა სავალდებულოა"
             }
           },
           "description": {
-            "label": "Description",
-            "placeholder": "Enhance productivity and streamline communication with our Speech-To-Text integration.\n• Real-time transcription: Convert spoken words into accurate text instantly.\n• Task and comment creation: Add tasks, descriptions, and comments through voice commands.",
+            "label": "აღწერა",
+            "placeholder": "გაზარდეთ პროდუქტიულობა და გაამარტივეთ კომუნიკაცია მეტყველების ტექსტად გარდაქმნის ჩვენი ინტეგრაციით.\n• ტრანსკრიფცია რეალურ დროში: წარმოთქმული სიტყვები მყისიერად გარდაქმენით ზუსტ ტექსტად.\n• ამოცანებისა და კომენტარების შექმნა: ხმოვანი ბრძანებებით დაამატეთ ამოცანები, აღწერები და კომენტარები.",
             "validation": {
-              "required": "Description is required"
+              "required": "აღწერა სავალდებულოა"
             }
           },
           "category": {
-            "label": "Category",
-            "placeholder": "Choose where you think this fits best. You can choose more than one.",
+            "label": "კატეგორია",
+            "placeholder": "აირჩიეთ ყველაზე შესაფერისი კატეგორია. შეგიძლიათ ერთზე მეტი აირჩიოთ.",
             "validation": {
-              "required": "At least one category is required"
+              "required": "სულ მცირე ერთი კატეგორია სავალდებულოა"
             }
           },
           "keywords": {
-            "label": "Keywords",
-            "placeholder": "Use terms that you think your users will search for when looking for this template.",
-            "helperText": "Enter comma-separated keywords that are likely to help people find this from search.",
+            "label": "საკვანძო სიტყვები",
+            "placeholder": "გამოიყენეთ სიტყვები, რომლებსაც, თქვენი აზრით, მომხმარებლები ამ შაბლონის ძიებისას გამოიყენებენ.",
+            "helperText": "შეიყვანეთ მძიმეებით გამოყოფილი საკვანძო სიტყვები, რომლებიც ადამიანებს ამ შაბლონის ძიებით პოვნაში დაეხმარება.",
             "validation": {
-              "required": "At least one keyword is required"
+              "required": "სულ მცირე ერთი საკვანძო სიტყვა სავალდებულოა"
             }
           },
           "website": {
-            "label": "Website URL",
+            "label": "ვებსაიტის URL",
             "placeholder": "https://plane.so",
             "validation": {
-              "invalid": "Invalid URL",
-              "maxLength": "URL should be less than 800 characters"
+              "invalid": "არასწორი URL",
+              "maxLength": "URL 800 სიმბოლოზე ნაკლები უნდა იყოს"
             }
           },
           "company_name": {
-            "label": "Company name",
+            "label": "კომპანიის სახელი",
             "placeholder": "Plane",
             "validation": {
-              "required": "Company name is required",
-              "maxLength": "Company name should be less than 255 characters"
+              "required": "კომპანიის სახელი სავალდებულოა",
+              "maxLength": "კომპანიის სახელი 255 სიმბოლოზე ნაკლები უნდა იყოს"
             }
           },
           "contact_email": {
-            "label": "Contact email",
+            "label": "საკონტაქტო ელფოსტა",
             "placeholder": "help@plane.so",
             "validation": {
-              "invalid": "Invalid email address",
-              "maxLength": "Contact email should be less than 255 characters"
+              "invalid": "ელფოსტის არასწორი მისამართი",
+              "maxLength": "საკონტაქტო ელფოსტა 255 სიმბოლოზე ნაკლები უნდა იყოს"
             }
           },
           "privacy_policy_url": {
-            "label": "Link to your privacy policy",
+            "label": "თქვენი კონფიდენციალურობის პოლიტიკის ბმული",
             "placeholder": "https://planes.so/privacy-policy",
             "validation": {
-              "invalid": "Invalid URL",
-              "maxLength": "URL should be less than 800 characters"
+              "invalid": "არასწორი URL",
+              "maxLength": "URL 800 სიმბოლოზე ნაკლები უნდა იყოს"
             }
           },
           "terms_of_service_url": {
-            "label": "Link to your terms of use",
+            "label": "თქვენი გამოყენების პირობების ბმული",
             "placeholder": "https://planes.so/terms-of-use",
             "validation": {
-              "invalid": "Invalid URL",
-              "maxLength": "URL should be less than 800 characters"
+              "invalid": "არასწორი URL",
+              "maxLength": "URL 800 სიმბოლოზე ნაკლები უნდა იყოს"
             }
           },
           "cover_image": {
-            "label": "Add a cover image that will be displayed in the marketplace",
-            "upload_title": "Upload cover image",
-            "upload_placeholder": "Click to upload or drag and drop to upload a cover image",
-            "drop_here": "Drop here",
-            "click_to_upload": "Click to upload",
-            "invalid_file_or_exceeds_size_limit": "Invalid file or exceeds size limit. Please try again.",
-            "upload_and_save": "Upload and save",
-            "uploading": "Uploading",
-            "remove": "Remove",
-            "removing": "Removing",
+            "label": "დაამატეთ გარეკანის სურათი, რომელიც მარკეტპლეისზე გამოჩნდება",
+            "upload_title": "გარეკანის სურათის ატვირთვა",
+            "upload_placeholder": "გარეკანის სურათის ასატვირთად დააწკაპუნეთ ან გადმოათრიეთ და ჩააგდეთ",
+            "drop_here": "ჩააგდეთ აქ",
+            "click_to_upload": "დააწკაპუნეთ ასატვირთად",
+            "invalid_file_or_exceeds_size_limit": "ფაილი არასწორია ან აჭარბებს ზომის ლიმიტს. სცადეთ ხელახლა.",
+            "upload_and_save": "ატვირთვა და შენახვა",
+            "uploading": "იტვირთება",
+            "remove": "ამოღება",
+            "removing": "ამოიღება",
             "validation": {
-              "required": "Cover image is required"
+              "required": "გარეკანის სურათი სავალდებულოა"
             }
           },
           "attach_screenshots": {
-            "label": "Include pictures you think will make viewers of this template.",
+            "label": "დაამატეთ სურათები, რომლებიც, თქვენი აზრით, ამ შაბლონით მნახველებს დააინტერესებს.",
             "validation": {
-              "required": "At least one screenshot is required"
+              "required": "სულ მცირე ერთი ეკრანის სურათი სავალდებულოა"
             }
           }
         }
@@ -226,107 +226,107 @@
     },
     "empty_state": {
       "upgrade": {
-        "title": "Templates",
-        "description": "With project, work-item, and page templates in Plane, you don't have to create a project from scratch or set work item props manually.",
-        "sub_description": "Get 80% of your admin time back when you use Templates."
+        "title": "შაბლონები",
+        "description": "Plane-ის პროექტის, სამუშაო ელემენტისა და გვერდის შაბლონებით აღარ გჭირდებათ პროექტის ნულიდან შექმნა ან სამუშაო ელემენტის თვისებების ხელით დაყენება.",
+        "sub_description": "შაბლონების გამოყენებით დაიბრუნეთ ადმინისტრაციულ საქმეებზე დახარჯული დროის 80%."
       },
       "no_templates": {
-        "button": "Create your first template"
+        "button": "შექმენით თქვენი პირველი შაბლონი"
       },
       "no_labels": {
-        "description": "No labels yet. Create labels to help organize and filter work items in you project."
+        "description": "ჭდეები ჯერ არ არის. შექმენით ჭდეები თქვენს პროექტში სამუშაო ელემენტების დასაჯგუფებლად და გასაფილტრად."
       },
       "no_modules": {
-        "description": "No modules yet. Organize work into sub-projects with dedicated leads and assignees."
+        "description": "მოდულები ჯერ არ არის. დააჯგუფეთ სამუშაო ქვეპროექტებად საკუთარი ხელმძღვანელებითა და პასუხისმგებელი პირებით."
       },
       "no_work_items": {
-        "description": "No work items yet. Add one to structure your work better."
+        "description": "სამუშაო ელემენტები ჯერ არ არის. დაამატეთ ერთი სამუშაოს უკეთ ორგანიზებისთვის."
       },
       "no_sub_work_items": {
-        "description": "No sub-work items yet. Add one to structure your work better."
+        "description": "ქვესამუშაო ელემენტები ჯერ არ არის. დაამატეთ ერთი სამუშაოს უკეთ ორგანიზებისთვის."
       },
       "page": {
         "no_templates": {
-          "title": "There are no templates you have access to.",
-          "description": "Please create a template"
+          "title": "თქვენთვის ხელმისაწვდომი შაბლონები არ არის.",
+          "description": "შექმენით შაბლონი"
         },
         "no_results": {
-          "title": "That didn't match a template.",
-          "description": "Try searching by other terms."
+          "title": "შესაბამისი შაბლონი ვერ მოიძებნა.",
+          "description": "სცადეთ სხვა სიტყვებით ძიება."
         }
       }
     },
     "toasts": {
       "create": {
         "success": {
-          "title": "Template created",
-          "message": "{templateName}, the {templateType} template, is now available for your workspace."
+          "title": "შაბლონი შეიქმნა",
+          "message": "{templateType} ტიპის შაბლონი {templateName} უკვე ხელმისაწვდომია თქვენი სამუშაო სივრცისთვის."
         },
         "error": {
-          "title": "We couldn't create that template this time.",
-          "message": "Try saving your details again or copy them over to a new template, preferably in another tab."
+          "title": "ამჯერად ამ შაბლონის შექმნა ვერ მოხერხდა.",
+          "message": "ხელახლა სცადეთ მონაცემების შენახვა ან გადაიტანეთ ისინი ახალ შაბლონში, სასურველია სხვა ჩანართში."
         }
       },
       "update": {
         "success": {
-          "title": "Template changed",
-          "message": "{templateName}, the {templateType} template, was changed."
+          "title": "შაბლონი შეიცვალა",
+          "message": "{templateType} ტიპის შაბლონი {templateName} შეიცვალა."
         },
         "error": {
-          "title": "We couldn't save changes to this template.",
-          "message": "Try saving your details again or come back to this template later. If there's trouble still, reach out to us."
+          "title": "ამ შაბლონში ცვლილებების შენახვა ვერ მოხერხდა.",
+          "message": "ხელახლა სცადეთ მონაცემების შენახვა ან მოგვიანებით დაუბრუნდით ამ შაბლონს. თუ პრობლემა კვლავ დარჩება, დაგვიკავშირდით."
         }
       },
       "delete": {
         "success": {
-          "title": "Template deleted",
-          "message": "{templateName}, the {templateType} template, has now been deleted from your workspace."
+          "title": "შაბლონი წაიშალა",
+          "message": "{templateType} ტიპის შაბლონი {templateName} თქვენი სამუშაო სივრციდან წაიშალა."
         },
         "error": {
-          "title": "We couldn't delete that template this.",
-          "message": "Try deleting it again or come back to it later. If you can't delete it then, reach out to us."
+          "title": "ამჯერად ამ შაბლონის წაშლა ვერ მოხერხდა.",
+          "message": "სცადეთ ხელახლა წაშლა ან მოგვიანებით დაუბრუნდით მას. თუ კვლავ ვერ წაშლით, დაგვიკავშირდით."
         }
       },
       "unpublish": {
         "success": {
-          "title": "Template unpublished",
-          "message": "{templateName}, the {templateType} template, has now been unpublished."
+          "title": "შაბლონის გამოქვეყნება მოიხსნა",
+          "message": "{templateType} ტიპის შაბლონ {templateName}-ს გამოქვეყნება მოეხსნა."
         },
         "error": {
-          "title": "We couldn't unpublish that template this.",
-          "message": "Try unpublishing it again or come back to it later. If you can't unpublish it then, reach out to us."
+          "title": "ამჯერად ამ შაბლონის გამოქვეყნების მოხსნა ვერ მოხერხდა.",
+          "message": "ხელახლა სცადეთ გამოქვეყნების მოხსნა ან მოგვიანებით დაუბრუნდით მას. თუ კვლავ ვერ მოხსნით, დაგვიკავშირდით."
         }
       }
     },
     "delete_confirmation": {
-      "title": "Delete template",
+      "title": "შაბლონის წაშლა",
       "description": {
-        "prefix": "Are you sure you want to delete template-",
-        "suffix": "? All of the data related to the template will be permanently removed. This action cannot be undone."
+        "prefix": "დარწმუნებული ხართ, რომ გსურთ შაბლონის წაშლა —",
+        "suffix": "? შაბლონთან დაკავშირებული ყველა მონაცემი სამუდამოდ წაიშლება. ამ მოქმედების გაუქმება შეუძლებელია."
       }
     },
     "unpublish_confirmation": {
-      "title": "Unpublish template",
+      "title": "შაბლონის გამოქვეყნების მოხსნა",
       "description": {
-        "prefix": "Are you sure you want to unpublish template-",
-        "suffix": "? This template will no longer be available to users on the marketplace."
+        "prefix": "დარწმუნებული ხართ, რომ გსურთ შაბლონის გამოქვეყნების მოხსნა —",
+        "suffix": "? ეს შაბლონი მარკეტპლეისის მომხმარებლებისთვის აღარ იქნება ხელმისაწვდომი."
       }
     },
     "dropdown": {
       "add": {
-        "work_item": "Add new template",
-        "project": "Add new template"
+        "work_item": "ახალი შაბლონის დამატება",
+        "project": "ახალი შაბლონის დამატება"
       },
       "label": {
-        "project": "Pick a project template",
-        "page": "Choose from template"
+        "project": "აირჩიეთ პროექტის შაბლონი",
+        "page": "შაბლონიდან არჩევა"
       },
       "tooltip": {
-        "work_item": "Pick a work item template"
+        "work_item": "აირჩიეთ სამუშაო ელემენტის შაბლონი"
       },
       "no_results": {
-        "work_item": "No templates found.",
-        "project": "No templates found."
+        "work_item": "შაბლონები ვერ მოიძებნა.",
+        "project": "შაბლონები ვერ მოიძებნა."
       }
     }
   }
