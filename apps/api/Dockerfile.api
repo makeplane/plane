@@ -33,6 +33,8 @@ RUN apk add --no-cache --virtual .build-deps \
     "make" \
     "postgresql-dev" \
     "libc-dev" \
+    "libxml2-dev" \
+    "libxslt-dev" \
     "linux-headers" \
     && \
     pip install -r requirements.txt --compile --no-cache-dir \
