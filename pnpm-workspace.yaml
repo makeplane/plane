@@ -250,12 +250,10 @@ overrides:
   axios: "catalog:"
   follow-redirects: 1.16.0
   uuid: "catalog:"
-  # SSRF / host-confusion in the URI parser (percent-decoding, IDN
-  # canonicalization and IPv6 normalization): CVE-2026-75899, -75931, -75975 and
-  # -76172, all fixed in 3.1.6. The previous floor pinned 3.1.5, which is the
-  # affected version. fast-uri reaches us only through ajv, so stay on the
-  # patched 3.x rather than 4.x, which is outside ajv's ^3.0.1 range.
-  fast-uri: 3.1.6
+  # EXACT pin: bump the number, never widen -- 4.x breaks ajv's ^3.0.1 (the only
+  # consumer here). Floor is 3.1.8, not 3.1.7: it also fixes GHSA-hrr3-gc8f-f4qj,
+  # which is MEDIUM so the HIGH/CRITICAL scan won't catch a slip back.
+  fast-uri: 3.1.8
   "js-yaml@4": 4.3.2
   linkify-it: 5.0.2
   body-parser: 1.20.6
