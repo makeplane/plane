@@ -1,270 +1,270 @@
 {
   "automations": {
     "settings": {
-      "title": "Custom automations",
-      "create_automation": "Create automation"
+      "title": "მორგებული ავტომატიზაციები",
+      "create_automation": "ავტომატიზაციის შექმნა"
     },
     "scope": {
-      "label": "Scope",
-      "run_on": "Run on"
+      "label": "მოქმედების არეალი",
+      "run_on": "გაშვება"
     },
     "trigger": {
-      "label": "Trigger",
-      "add_trigger": "Add trigger",
-      "sidebar_header": "Trigger configuration",
-      "input_label": "What’s the trigger for this automation?",
-      "input_placeholder": "Select an option",
-      "section_plane_events": "Plane events",
-      "section_time_based": "Time based",
-      "fixed_schedule": "Fixed schedule",
+      "label": "გამშვები პირობა",
+      "add_trigger": "გამშვები პირობის დამატება",
+      "sidebar_header": "გამშვები პირობის კონფიგურაცია",
+      "input_label": "რა არის ამ ავტომატიზაციის გამშვები პირობა?",
+      "input_placeholder": "აირჩიეთ ვარიანტი",
+      "section_plane_events": "Plane-ის მოვლენები",
+      "section_time_based": "დროზე დაფუძნებული",
+      "fixed_schedule": "ფიქსირებული განრიგი",
       "schedule": {
-        "frequency": "Frequency",
-        "select_day": "Select day",
-        "day_of_month": "Day of month",
-        "monthly_every": "Every",
-        "monthly_day_aria": "Day {day}",
-        "time": "Time",
-        "hour": "Hour",
-        "minute": "Minute",
-        "hour_suffix": "hr",
-        "minute_suffix": "min",
+        "frequency": "სიხშირე",
+        "select_day": "აირჩიეთ დღე",
+        "day_of_month": "თვის დღე",
+        "monthly_every": "ყოველი",
+        "monthly_day_aria": "დღე {day}",
+        "time": "დრო",
+        "hour": "საათი",
+        "minute": "წუთი",
+        "hour_suffix": "სთ",
+        "minute_suffix": "წთ",
         "am": "AM",
         "pm": "PM",
-        "timezone": "Timezone",
-        "timezone_placeholder": "Select a timezone",
-        "frequency_daily": "Daily",
-        "frequency_weekly": "Weekly",
-        "frequency_monthly": "Monthly",
-        "on": "On",
-        "validation_weekly_day_required": "Select at least one day of the week.",
-        "validation_monthly_date_required": "Select a day of the month.",
-        "main_content_schedule_summary_daily": "Every day at {time} ({timezone}).",
-        "main_content_schedule_summary_weekly": "Every week on {days} at {time} ({timezone}).",
-        "main_content_schedule_summary_monthly": "Every month on day {day} at {time} ({timezone}).",
-        "schedule_mode": "Schedule mode",
-        "schedule_mode_fixed": "Fixed",
+        "timezone": "დროის სარტყელი",
+        "timezone_placeholder": "აირჩიეთ დროის სარტყელი",
+        "frequency_daily": "ყოველდღიურად",
+        "frequency_weekly": "ყოველკვირეულად",
+        "frequency_monthly": "ყოველთვიურად",
+        "on": "დღეები",
+        "validation_weekly_day_required": "აირჩიეთ კვირის სულ მცირე ერთი დღე.",
+        "validation_monthly_date_required": "აირჩიეთ თვის დღე.",
+        "main_content_schedule_summary_daily": "ყოველდღე {time}-ზე ({timezone}).",
+        "main_content_schedule_summary_weekly": "ყოველ კვირას, {days}, {time}-ზე ({timezone}).",
+        "main_content_schedule_summary_monthly": "ყოველთვიურად, თვის {day} რიცხვში, {time}-ზე ({timezone}).",
+        "schedule_mode": "განრიგის რეჟიმი",
+        "schedule_mode_fixed": "ფიქსირებული",
         "schedule_mode_cron": "Cron",
-        "cron_expression_label": "Enter Cron expression",
+        "cron_expression_label": "შეიყვანეთ Cron გამოსახულება",
         "cron_expression_placeholder": "0 9 * * 1-5",
-        "cron_invalid": "Invalid cron expression.",
-        "cron_preview": "This Cron expression runs \"{description}\".",
+        "cron_invalid": "არასწორი cron გამოსახულება.",
+        "cron_preview": "ეს Cron გამოსახულება ასრულებს „{description}“-ს.",
         "main_content_cron_summary": "{description} ({timezone})."
       },
       "button": {
-        "previous": "Back",
-        "next": "Add action"
+        "previous": "უკან",
+        "next": "მოქმედების დამატება"
       },
       "warning": {
-        "disabled_trigger_switching": "You can't change the trigger type once created"
+        "disabled_trigger_switching": "შექმნის შემდეგ გამშვები პირობის ტიპს ვეღარ შეცვლით"
       }
     },
     "condition": {
-      "label": "Provided",
-      "add_condition": "Add condition",
-      "adding_condition": "Adding condition"
+      "label": "იმ პირობით, რომ",
+      "add_condition": "პირობის დამატება",
+      "adding_condition": "ემატება პირობა"
     },
     "action": {
-      "label": "Action",
-      "add_action": "Add action",
-      "sidebar_header": "Actions",
-      "input_label": "What does the automation do?",
-      "input_placeholder": "Select an option",
+      "label": "მოქმედება",
+      "add_action": "მოქმედების დამატება",
+      "sidebar_header": "მოქმედებები",
+      "input_label": "რას აკეთებს ავტომატიზაცია?",
+      "input_placeholder": "აირჩიეთ ვარიანტი",
       "handler_name": {
-        "add_comment": "Add comment",
-        "change_property": "Change property",
-        "run_script": "Run Script"
+        "add_comment": "კომენტარის დამატება",
+        "change_property": "თვისების შეცვლა",
+        "run_script": "სკრიპტის გაშვება"
       },
       "configuration": {
-        "label": "Configuration",
+        "label": "კონფიგურაცია",
         "change_property": {
           "placeholders": {
-            "property_name": "Select a property",
-            "change_type": "Select",
-            "property_value_select": "{count, plural, one{Select value} other{Select values}}",
-            "property_value_select_date": "Select date"
+            "property_name": "აირჩიეთ თვისება",
+            "change_type": "არჩევა",
+            "property_value_select": "{count, plural, one{აირჩიეთ მნიშვნელობა} other{აირჩიეთ მნიშვნელობები}}",
+            "property_value_select_date": "აირჩიეთ თარიღი"
           },
           "validation": {
-            "property_name_required": "Property name is required",
-            "change_type_required": "Change type is required",
-            "property_value_required": "Property value is required"
+            "property_name_required": "თვისების სახელი სავალდებულოა",
+            "change_type_required": "ცვლილების ტიპი სავალდებულოა",
+            "property_value_required": "თვისების მნიშვნელობა სავალდებულოა"
           }
         }
       },
       "comment_block": {
-        "title": "Add comment"
+        "title": "კომენტარის დამატება"
       },
       "run_script_block": {
-        "title": "Run script"
+        "title": "სკრიპტის გაშვება"
       },
       "change_property_block": {
-        "title": "Change property"
+        "title": "თვისების შეცვლა"
       },
       "validation": {
-        "delete_only_action": "Disable the automation before deleting its only action."
+        "delete_only_action": "გამორთეთ ავტომატიზაცია მისი ერთადერთი მოქმედების წაშლამდე."
       }
     },
     "conjunctions": {
-      "and": "And",
-      "or": "Or",
-      "if": "If",
-      "then": "Then"
+      "and": "და",
+      "or": "ან",
+      "if": "თუ",
+      "then": "მაშინ"
     },
     "enable": {
-      "alert": "Hit 'Enable' whenever your automation is complete. Once enabled, the automation will be ready to run.",
+      "alert": "როცა ავტომატიზაციას დაასრულებთ, დააწკაპუნეთ „ჩართვაზე“. ჩართვის შემდეგ ავტომატიზაცია გასაშვებად მზად იქნება.",
       "validation": {
-        "required": "Automation must have a trigger and at least one action to be enabled."
+        "required": "ჩასართავად ავტომატიზაციას უნდა ჰქონდეს გამშვები პირობა და სულ მცირე ერთი მოქმედება."
       }
     },
     "delete": {
       "validation": {
-        "enabled": "Automation must be disabled before deleting it."
+        "enabled": "წაშლამდე ავტომატიზაცია უნდა გამორთოთ."
       }
     },
     "table": {
-      "title": "Automation title",
-      "scope": "Scope",
-      "projects": "Projects",
-      "last_run_on": "Last run on",
-      "created_on": "Created on",
-      "last_updated_on": "Last updated on",
-      "last_run_status": "Last run status",
-      "average_duration": "Average duration",
-      "owner": "Owner",
-      "executions": "Executions"
+      "title": "ავტომატიზაციის სათაური",
+      "scope": "მოქმედების არეალი",
+      "projects": "პროექტები",
+      "last_run_on": "ბოლო გაშვების თარიღი",
+      "created_on": "შექმნის თარიღი",
+      "last_updated_on": "ბოლო განახლების თარიღი",
+      "last_run_status": "ბოლო გაშვების სტატუსი",
+      "average_duration": "საშუალო ხანგრძლივობა",
+      "owner": "მფლობელი",
+      "executions": "შესრულებები"
     },
     "create_modal": {
       "heading": {
-        "create": "Create automation",
-        "update": "Update automation"
+        "create": "ავტომატიზაციის შექმნა",
+        "update": "ავტომატიზაციის განახლება"
       },
       "title": {
-        "placeholder": "Name your automation.",
-        "required_error": "Title is required"
+        "placeholder": "დაარქვით სახელი თქვენს ავტომატიზაციას.",
+        "required_error": "სათაური სავალდებულოა"
       },
       "description": {
-        "placeholder": "Describe your automation."
+        "placeholder": "აღწერეთ თქვენი ავტომატიზაცია."
       },
       "submit_button": {
-        "create": "Create automation",
-        "update": "Update automation"
+        "create": "ავტომატიზაციის შექმნა",
+        "update": "ავტომატიზაციის განახლება"
       }
     },
     "delete_modal": {
-      "heading": "Delete automation"
+      "heading": "ავტომატიზაციის წაშლა"
     },
     "activity": {
       "filters": {
-        "show_fails": "Show fails",
-        "all": "All",
-        "only_activity": "Only activity",
-        "only_run_history": "Only run history"
+        "show_fails": "წარუმატებელი შესრულებების ჩვენება",
+        "all": "ყველა",
+        "only_activity": "მხოლოდ აქტივობა",
+        "only_run_history": "მხოლოდ გაშვებების ისტორია"
       },
       "run_history": {
-        "initiator": "Initiator"
+        "initiator": "ინიციატორი"
       }
     },
     "toasts": {
       "create": {
         "success": {
-          "title": "Success!",
-          "message": "Automation created successfully."
+          "title": "წარმატებით შესრულდა!",
+          "message": "ავტომატიზაცია წარმატებით შეიქმნა."
         },
         "error": {
-          "title": "Error!",
-          "message": "Automation creation failed."
+          "title": "შეცდომა!",
+          "message": "ავტომატიზაციის შექმნა ვერ მოხერხდა."
         }
       },
       "update": {
         "success": {
-          "title": "Success!",
-          "message": "Automation updated successfully."
+          "title": "წარმატებით შესრულდა!",
+          "message": "ავტომატიზაცია წარმატებით განახლდა."
         },
         "error": {
-          "title": "Error!",
-          "message": "Automation update failed."
+          "title": "შეცდომა!",
+          "message": "ავტომატიზაციის განახლება ვერ მოხერხდა."
         }
       },
       "enable": {
         "success": {
-          "title": "Success!",
-          "message": "Automation enabled successfully."
+          "title": "წარმატებით შესრულდა!",
+          "message": "ავტომატიზაცია წარმატებით ჩაირთო."
         },
         "error": {
-          "title": "Error!",
-          "message": "Automation enable failed."
+          "title": "შეცდომა!",
+          "message": "ავტომატიზაციის ჩართვა ვერ მოხერხდა."
         }
       },
       "disable": {
         "success": {
-          "title": "Success!",
-          "message": "Automation disabled successfully."
+          "title": "წარმატებით შესრულდა!",
+          "message": "ავტომატიზაცია წარმატებით გამოირთო."
         },
         "error": {
-          "title": "Error!",
-          "message": "Automation disable failed."
+          "title": "შეცდომა!",
+          "message": "ავტომატიზაციის გამორთვა ვერ მოხერხდა."
         }
       },
       "delete": {
         "success": {
-          "title": "Automation deleted",
-          "message": "{name}, the automation, has now been deleted from your project."
+          "title": "ავტომატიზაცია წაიშალა",
+          "message": "ავტომატიზაცია {name} თქვენი პროექტიდან წაიშალა."
         },
         "error": {
-          "title": "We couldn't delete that automation this time.",
-          "message": "Try deleting it again or come back to it later. If you can't delete it then, reach out to us."
+          "title": "ამჯერად ამ ავტომატიზაციის წაშლა ვერ მოხერხდა.",
+          "message": "სცადეთ ხელახლა წაშლა ან მოგვიანებით დაუბრუნდით მას. თუ კვლავ ვერ წაშლით, დაგვიკავშირდით."
         }
       },
       "action": {
         "create": {
           "error": {
-            "title": "Error!",
-            "message": "Failed to create action. Please try again!"
+            "title": "შეცდომა!",
+            "message": "მოქმედების შექმნა ვერ მოხერხდა. სცადეთ ხელახლა!"
           }
         },
         "update": {
           "error": {
-            "title": "Error!",
-            "message": "Failed to update action. Please try again!"
+            "title": "შეცდომა!",
+            "message": "მოქმედების განახლება ვერ მოხერხდა. სცადეთ ხელახლა!"
           }
         }
       }
     },
     "empty_state": {
       "no_automations": {
-        "title": "There’re no automations to show yet.",
-        "description": "Automations help you eliminate repetitive tasks by setting triggers, conditions, and actions. Create one to save time and keep work moving effortlessly."
+        "title": "ავტომატიზაციები ჯერ არ არის.",
+        "description": "ავტომატიზაციები განმეორებადი ამოცანების თავიდან აცილებაში გეხმარებათ გამშვები პირობების, პირობებისა და მოქმედებების განსაზღვრით. შექმენით ავტომატიზაცია დროის დასაზოგად და მუშაობის შეუფერხებლად გასაგრძელებლად."
       },
       "upgrade": {
-        "title": "Automations",
-        "description": "Automations are a way to automate tasks in your project.",
-        "sub_description": "Get 80% of your admin time back when you use Automations."
+        "title": "ავტომატიზაციები",
+        "description": "ავტომატიზაციები თქვენს პროექტში ამოცანების ავტომატურად შესრულების საშუალებაა.",
+        "sub_description": "ავტომატიზაციების გამოყენებით დაიბრუნეთ ადმინისტრაციულ საქმეებზე დახარჯული დროის 80%."
       }
     },
     "global_automations": {
       "project_select": {
-        "label": "Select projects to run this automation on",
+        "label": "აირჩიეთ პროექტები, რომლებშიც ეს ავტომატიზაცია უნდა გაეშვას",
         "all_projects": {
-          "label": "All projects",
-          "description": "Automation will run for all projects in the workspace."
+          "label": "ყველა პროექტი",
+          "description": "ავტომატიზაცია სამუშაო სივრცის ყველა პროექტში გაეშვება."
         },
         "select_projects": {
-          "label": "Select projects",
-          "description": "Automation will run for selected projects in the workspace.",
-          "placeholder": "Select projects"
+          "label": "აირჩიეთ პროექტები",
+          "description": "ავტომატიზაცია სამუშაო სივრცის არჩეულ პროექტებში გაეშვება.",
+          "placeholder": "აირჩიეთ პროექტები"
         }
       },
       "settings": {
-        "sidebar_label": "Automations",
-        "title": "Automations",
-        "description": "Standardize processes across your workspace with global automations."
+        "sidebar_label": "ავტომატიზაციები",
+        "title": "ავტომატიზაციები",
+        "description": "დაამკვიდრეთ ერთიანი პროცესები თქვენს სამუშაო სივრცეში გლობალური ავტომატიზაციებით."
       },
       "table": {
         "scope": {
-          "global": "Global",
+          "global": "გლობალური",
           "project": {
-            "label": "Project",
-            "multiple": "Multiple",
-            "all": "All"
+            "label": "პროექტი",
+            "multiple": "რამდენიმე",
+            "all": "ყველა"
           }
         }
       }

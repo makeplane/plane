@@ -25,16 +25,16 @@
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
-        "title": "Add work items to the cycle to view it's\n progress"
+        "title": "ციკლს დაამატეთ სამუშაო ელემენტები მისი\n პროგრესის სანახავად"
       },
       "priority": {
-        "title": "Observe high priority work items tackled in\n the cycle at a glance."
+        "title": "ერთი შეხედვით ნახეთ ციკლში შესრულებული\n მაღალი პრიორიტეტის სამუშაო ელემენტები."
       },
       "assignee": {
-        "title": "Add assignees to work items to see a\n breakdown of work by assignees."
+        "title": "სამუშაო ელემენტებს მიუთითეთ პასუხისმგებელი პირები, რათა\n ნახოთ სამუშაოს განაწილება მათ მიხედვით."
       },
       "label": {
-        "title": "Add labels to work items to see the\n breakdown of work by labels."
+        "title": "სამუშაო ელემენტებს დაამატეთ ჭდეები, რათა\n ნახოთ სამუშაოს განაწილება ჭდეების მიხედვით."
       }
     }
   },
@@ -44,8 +44,8 @@
     "pending_points": "მოლოდინში მყოფი ქულები - {count}",
     "pending_work_items": "მოლოდინში მყოფი სამუშაო ელემენტები - {count}",
     "closed_progress": "{closed}/{total} {label} დახურულია",
-    "burn_down": "Burn-down",
-    "burn_up": "Burn-up",
+    "burn_down": "დარჩენილი სამუშაოს დიაგრამა",
+    "burn_up": "შესრულებული სამუშაოს დიაგრამა",
     "status_filter_title": "ციკლის სტატუსი",
     "custom": "მორგებული",
     "archive_success_title": "დაარქივება წარმატებულია",

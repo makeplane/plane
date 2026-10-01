@@ -21,11 +21,11 @@
     "members": {
       "label": "წევრები",
       "project_lead": "პროექტის ხელმძღვანელი",
-      "project_lead_description": "Select the project lead for the project.",
+      "project_lead_description": "აირჩიეთ პროექტის ხელმძღვანელი.",
       "default_assignee": "ნაგულისხმევი მინიჭებული",
-      "default_assignee_description": "Select the default assignee for the project.",
-      "project_subscribers": "Project subscribers",
-      "project_subscribers_description": "Select members who will receive notifications for this project.",
+      "default_assignee_description": "აირჩიეთ პროექტის ნაგულისხმევი პასუხისმგებელი პირი.",
+      "project_subscribers": "პროექტის გამომწერები",
+      "project_subscribers_description": "აირჩიეთ წევრები, რომლებიც ამ პროექტის შეტყობინებებს მიიღებენ.",
       "guest_super_permissions": {
         "title": "სტუმარ მომხმარებლებს მიეცით წვდომა ყველა სამუშაო ელემენტის ნახვაზე:",
         "sub_heading": "ეს სტუმრებს მისცემს წვდომას პროექტის ყველა სამუშაო ელემენტის ნახვაზე."
@@ -111,22 +111,22 @@
         },
         "reorder": {
           "success": {
-            "title": "Estimates re-ordered",
-            "message": "Estimates have been re-ordered in your project."
+            "title": "შეფასებების მიმდევრობა შეიცვალა",
+            "message": "თქვენს პროექტში შეფასებების მიმდევრობა შეიცვალა."
           },
           "error": {
-            "title": "Estimate re-order failed",
-            "message": "We were unable to re-order the estimates, please try again"
+            "title": "შეფასებების მიმდევრობის შეცვლა ვერ მოხერხდა",
+            "message": "შეფასებების მიმდევრობის შეცვლა ვერ მოხერხდა. სცადეთ ხელახლა"
           }
         },
         "switch": {
           "success": {
-            "title": "Estimate system created",
-            "message": "Created and Enabled successfully"
+            "title": "შეფასების სისტემა შეიქმნა",
+            "message": "წარმატებით შეიქმნა და ჩაირთო"
           },
           "error": {
-            "title": "Error",
-            "message": "Something went wrong"
+            "title": "შეცდომა",
+            "message": "რაღაც შეცდომა მოხდა"
           }
         }
       },
@@ -139,8 +139,8 @@
         "already_exists": "შეფასების მნიშვნელობა უკვე არსებობს.",
         "unsaved_changes": "თქვენ გაქვთ შეუნახავი ცვლილებები, გთხოვთ, შეინახოთ ისინი 'დასრულებაზე' დაწკაპუნებამდე",
         "remove_empty": "შეფასება არ შეიძლება იყოს ცარიელი. შეიყვანეთ მნიშვნელობა თითოეულ ველში ან ამოიღეთ ისინი, რომლებსაც მნიშვნელობები არ გაქვთ.",
-        "fill": "Please fill this estimate field",
-        "repeat": "Estimate value cannot be repeated"
+        "fill": "შეავსეთ შეფასების ეს ველი",
+        "repeat": "შეფასების მნიშვნელობა არ უნდა მეორდებოდეს"
       },
       "systems": {
         "points": {
@@ -162,19 +162,19 @@
         }
       },
       "edit": {
-        "title": "Edit estimate system",
+        "title": "შეფასების სისტემის რედაქტირება",
         "add_or_update": {
-          "title": "Add, update or remove estimates",
-          "description": "Manage current system either adding, updating or removing the points or categories."
+          "title": "შეფასებების დამატება, განახლება ან წაშლა",
+          "description": "მართეთ მიმდინარე სისტემა ქულების ან კატეგორიების დამატებით, განახლებით ან წაშლით."
         },
         "switch": {
-          "title": "Change estimate type",
-          "description": "Convert your points system to categories system and vice versa."
+          "title": "შეფასების ტიპის შეცვლა",
+          "description": "გარდაქმენით ქულების სისტემა კატეგორიების სისტემად და პირიქით."
         }
       },
-      "switch": "Switch estimate system",
-      "current": "Current estimate system",
-      "select": "Select an estimate system"
+      "switch": "შეფასების სისტემის შეცვლა",
+      "current": "მიმდინარე შეფასების სისტემა",
+      "select": "აირჩიეთ შეფასების სისტემა"
     },
     "automations": {
       "label": "ავტომატიზაციები",
@@ -192,9 +192,9 @@
         "auto_close_status": "ავტო-დახურვის სტატუსი"
       },
       "auto-remind": {
-        "title": "Auto-reminders",
-        "description": "Plane will automatically send reminders via email and in-app notifications to keep your team on track with deadlines.",
-        "duration": "Send reminder before"
+        "title": "ავტომატური შეხსენებები",
+        "description": "Plane ავტომატურად გაგზავნის შეხსენებებს ელფოსტით და აპის შეტყობინებებით, რათა თქვენმა გუნდმა ვადები დაიცვას.",
+        "duration": "შეხსენების წინასწარ გაგზავნა"
       }
     },
     "empty_state": {
@@ -208,315 +208,315 @@
         "primary_button": "შეფასების სისტემის დამატება"
       },
       "integrations": {
-        "title": "No integrations configured",
-        "description": "Configure GitHub and other integrations to sync your project work items."
+        "title": "ინტეგრაციები კონფიგურირებული არ არის",
+        "description": "დააკონფიგურირეთ GitHub და სხვა ინტეგრაციები თქვენი პროექტის სამუშაო ელემენტების სინქრონიზაციისთვის."
       }
     },
     "workflows": {
       "toggle": {
-        "title": "Enable workflows",
-        "description": "Set workflows to control work item movement",
-        "no_states_tooltip": "No states are added to the workflow.",
-        "no_work_item_types_tooltip": "No work item types are added to the workflow.",
-        "no_states_or_work_item_types_tooltip": "No states or work item types are added to the workflow.",
+        "title": "სამუშაო პროცესების ჩართვა",
+        "description": "დააყენეთ სამუშაო პროცესები სამუშაო ელემენტების გადაადგილების სამართავად",
+        "no_states_tooltip": "სამუშაო პროცესს მდგომარეობები არ აქვს დამატებული.",
+        "no_work_item_types_tooltip": "სამუშაო პროცესს სამუშაო ელემენტების ტიპები არ აქვს დამატებული.",
+        "no_states_or_work_item_types_tooltip": "სამუშაო პროცესს მდგომარეობები ან სამუშაო ელემენტების ტიპები არ აქვს დამატებული.",
         "toast": {
           "loading": {
-            "enabling": "Enabling workflows",
-            "disabling": "Disabling workflows"
+            "enabling": "ირთვება სამუშაო პროცესები",
+            "disabling": "ითიშება სამუშაო პროცესები"
           },
           "success": {
-            "title": "Success!",
-            "message": "Workflows enabled successfully."
+            "title": "წარმატებით შესრულდა!",
+            "message": "სამუშაო პროცესები წარმატებით ჩაირთო."
           },
           "error": {
-            "title": "Error!",
-            "message": "Failed to enable workflows. Please try again."
+            "title": "შეცდომა!",
+            "message": "სამუშაო პროცესების ჩართვა ვერ მოხერხდა. სცადეთ ხელახლა."
           }
         }
       },
-      "heading": "Workflows",
-      "description": "Automate work item transitions and set rules to control how tasks move through your project pipeline.",
-      "add_button": "Add new workflow",
-      "search": "Search workflows",
+      "heading": "სამუშაო პროცესები",
+      "description": "ავტომატურად შეცვალეთ სამუშაო ელემენტების მდგომარეობები და განსაზღვრეთ წესები, თუ როგორ უნდა გაიაროს ამოცანებმა თქვენი პროექტის ეტაპები.",
+      "add_button": "ახალი სამუშაო პროცესის დამატება",
+      "search": "სამუშაო პროცესების ძიება",
       "detail": {
-        "define": "Define workflow",
-        "add_states": "Add states",
+        "define": "სამუშაო პროცესის განსაზღვრა",
+        "add_states": "მდგომარეობების დამატება",
         "unmapped_states": {
-          "title": "Unmapped states detected",
-          "description": "Some work items for the selected types are currently in states that do not exist in this workflow.",
-          "note": "If you enable this workflow, these items will automatically move to the initial state for this workflow.",
-          "label": "Missing states",
-          "tooltip": "Some work items are in states that are not mapped to this workflow. Open the workflow to review."
+          "title": "აღმოჩენილია შეუსაბამო მდგომარეობები",
+          "description": "არჩეული ტიპების ზოგიერთი სამუშაო ელემენტი ამჟამად ისეთ მდგომარეობაშია, რომელიც ამ სამუშაო პროცესში არ არსებობს.",
+          "note": "თუ ამ სამუშაო პროცესს ჩართავთ, ეს ელემენტები ავტომატურად გადავა ამ სამუშაო პროცესის საწყის მდგომარეობაში.",
+          "label": "გამოტოვებული მდგომარეობები",
+          "tooltip": "ზოგიერთი სამუშაო ელემენტის მდგომარეობა ამ სამუშაო პროცესს არ შეესაბამება. გასაცნობად გახსენით სამუშაო პროცესი."
         }
       },
       "select_states": {
         "empty_state": {
-          "title": "All states are in use",
-          "description": "All defined states for this project are already present in your current workflow."
+          "title": "ყველა მდგომარეობა გამოყენებულია",
+          "description": "ამ პროექტისთვის განსაზღვრული ყველა მდგომარეობა უკვე არის თქვენს მიმდინარე სამუშაო პროცესში."
         }
       },
       "default_footer": {
-        "fallback_message": "This workflow applies to any work item type that is not assigned to a workflow."
+        "fallback_message": "ეს სამუშაო პროცესი ვრცელდება სამუშაო ელემენტის ნებისმიერ ტიპზე, რომელიც სხვა სამუშაო პროცესს არ აქვს მინიჭებული."
       },
       "create": {
-        "heading": "Create new workflow",
+        "heading": "ახალი სამუშაო პროცესის შექმნა",
         "name": {
-          "placeholder": "Add a unique name",
+          "placeholder": "დაამატეთ უნიკალური სახელი",
           "validation": {
-            "max_length": "Name must be less than 255 characters",
-            "required": "Name is required",
-            "invalid": "Name can only contain letters, numbers, spaces, hyphens, and apostrophes"
+            "max_length": "სახელი 255 სიმბოლოზე ნაკლები უნდა იყოს",
+            "required": "სახელი სავალდებულოა",
+            "invalid": "სახელი შეიძლება შეიცავდეს მხოლოდ ასოებს, ციფრებს, გამოტოვებებს, დეფისებსა და აპოსტროფებს"
           }
         },
         "description": {
-          "placeholder": "Add a short description",
+          "placeholder": "დაამატეთ მოკლე აღწერა",
           "validation": {
-            "invalid": "Description can only contain letters, numbers, spaces, hyphens, and apostrophes"
+            "invalid": "აღწერა შეიძლება შეიცავდეს მხოლოდ ასოებს, ციფრებს, გამოტოვებებს, დეფისებსა და აპოსტროფებს"
           }
         },
         "work_item_type": {
-          "label": "Work item type"
+          "label": "სამუშაო ელემენტის ტიპი"
         },
         "success": {
-          "title": "Success!",
-          "message": "Workflow created successfully."
+          "title": "წარმატებით შესრულდა!",
+          "message": "სამუშაო პროცესი წარმატებით შეიქმნა."
         },
         "error": {
-          "title": "Error!",
-          "message": "Failed to create workflow. Please try again."
+          "title": "შეცდომა!",
+          "message": "სამუშაო პროცესის შექმნა ვერ მოხერხდა. სცადეთ ხელახლა."
         }
       },
       "update": {
         "success": {
-          "title": "Success!",
-          "message": "Workflow updated successfully."
+          "title": "წარმატებით შესრულდა!",
+          "message": "სამუშაო პროცესი წარმატებით განახლდა."
         },
         "error": {
-          "title": "Error!",
-          "message": "Failed to update workflow. Please try again."
+          "title": "შეცდომა!",
+          "message": "სამუშაო პროცესის განახლება ვერ მოხერხდა. სცადეთ ხელახლა."
         }
       },
       "delete": {
-        "loading": "Deleting workflow",
+        "loading": "იშლება სამუშაო პროცესი",
         "success": {
-          "title": "Success!",
-          "message": "Workflow deleted successfully."
+          "title": "წარმატებით შესრულდა!",
+          "message": "სამუშაო პროცესი წარმატებით წაიშალა."
         },
         "error": {
-          "title": "Error!",
-          "message": "Failed to delete workflow. Please try again."
+          "title": "შეცდომა!",
+          "message": "სამუშაო პროცესის წაშლა ვერ მოხერხდა. სცადეთ ხელახლა."
         }
       },
       "add_states": {
         "success": {
-          "title": "Success!",
-          "message": "States added successfully."
+          "title": "წარმატებით შესრულდა!",
+          "message": "მდგომარეობები წარმატებით დაემატა."
         },
         "error": {
-          "title": "Error!",
-          "message": "Failed to add states. Please try again."
+          "title": "შეცდომა!",
+          "message": "მდგომარეობების დამატება ვერ მოხერხდა. სცადეთ ხელახლა."
         }
       }
     },
     "work_item_types": {
-      "heading": "Work item Types",
-      "description": "Create and customize different types of work items with unique properties"
+      "heading": "სამუშაო ელემენტების ტიპები",
+      "description": "შექმენით და მოარგეთ სამუშაო ელემენტების სხვადასხვა ტიპი უნიკალური თვისებებით"
     },
     "features": {
       "cycles": {
-        "title": "Cycles",
-        "short_title": "Cycles",
-        "description": "Schedule work in flexible periods that adapt to this project's unique rhythm and pace.",
-        "toggle_title": "Enable cycles",
-        "toggle_description": "Plan work in focused timeframes."
+        "title": "ციკლები",
+        "short_title": "ციკლები",
+        "description": "დაგეგმეთ სამუშაო მოქნილ პერიოდებად, რომლებიც ამ პროექტის უნიკალურ რიტმსა და ტემპს ერგება.",
+        "toggle_title": "ციკლების ჩართვა",
+        "toggle_description": "დაგეგმეთ სამუშაო განსაზღვრულ პერიოდებში."
       },
       "modules": {
-        "title": "Modules",
-        "short_title": "Modules",
-        "description": "Organize work into sub-projects with dedicated leads and assignees.",
-        "toggle_title": "Enable modules",
-        "toggle_description": "Project members will be able to create and edit modules."
+        "title": "მოდულები",
+        "short_title": "მოდულები",
+        "description": "დააჯგუფეთ სამუშაო ქვეპროექტებად საკუთარი ხელმძღვანელებითა და პასუხისმგებელი პირებით.",
+        "toggle_title": "მოდულების ჩართვა",
+        "toggle_description": "პროექტის წევრებს მოდულების შექმნა და რედაქტირება შეეძლებათ."
       },
       "views": {
-        "title": "Views",
-        "short_title": "Views",
-        "description": "Save custom sorts, filters, and display options or share them with your team.",
-        "toggle_title": "Enable views",
-        "toggle_description": "Project members will be able to create and edit views."
+        "title": "ხედები",
+        "short_title": "ხედები",
+        "description": "შეინახეთ მორგებული დახარისხება, ფილტრები და ჩვენების პარამეტრები ან გაუზიარეთ ისინი თქვენს გუნდს.",
+        "toggle_title": "ხედების ჩართვა",
+        "toggle_description": "პროექტის წევრებს ხედების შექმნა და რედაქტირება შეეძლებათ."
       },
       "pages": {
-        "title": "Pages",
-        "short_title": "Pages",
-        "description": "Create and edit free-form content; notes, docs, anything.",
-        "toggle_title": "Enable pages",
-        "toggle_description": "Project members will be able to create and edit pages."
+        "title": "გვერდები",
+        "short_title": "გვერდები",
+        "description": "შექმენით და დაარედაქტირეთ თავისუფალი ფორმის შინაარსი: ჩანაწერები, დოკუმენტები და სხვა.",
+        "toggle_title": "გვერდების ჩართვა",
+        "toggle_description": "პროექტის წევრებს გვერდების შექმნა და რედაქტირება შეეძლებათ."
       },
       "intake": {
-        "intake_responsibility": "Intake responsibility",
-        "intake_sources": "Intake sources",
-        "title": "Intake",
-        "short_title": "Intake",
-        "description": "Let non-members share bugs, feedback, and suggestions; without disrupting your workflow.",
-        "toggle_title": "Enable intake",
-        "toggle_description": "Let project members create in app intake requests.",
-        "toggle_tooltip_on": "Ask your Project Admin to turn this on.",
-        "toggle_tooltip_off": "Ask your Project Admin to turn this off.",
+        "intake_responsibility": "შემოსულ მოთხოვნებზე პასუხისმგებლობა",
+        "intake_sources": "შემოსული მოთხოვნების წყაროები",
+        "title": "შემოსული მოთხოვნები",
+        "short_title": "შემოსული მოთხოვნები",
+        "description": "მიეცით არაწევრებს შეცდომების, გამოხმაურებისა და წინადადებების გაზიარების საშუალება თქვენი სამუშაო პროცესის შეფერხების გარეშე.",
+        "toggle_title": "შემოსული მოთხოვნების ჩართვა",
+        "toggle_description": "მიეცით პროექტის წევრებს აპში მოთხოვნების შექმნის საშუალება.",
+        "toggle_tooltip_on": "სთხოვეთ პროექტის ადმინისტრატორს ამის ჩართვა.",
+        "toggle_tooltip_off": "სთხოვეთ პროექტის ადმინისტრატორს ამის გამორთვა.",
         "notify_assignee": {
-          "title": "Notify assignees",
-          "description": "For a new request to intake, default assignees will be alerted via notifications"
+          "title": "პასუხისმგებელი პირების შეტყობინება",
+          "description": "ახალი შემოსული მოთხოვნის შესახებ ნაგულისხმევი პასუხისმგებელი პირები შეტყობინებებს მიიღებენ"
         },
         "in_app": {
-          "title": "In-app",
-          "description": "Get new work items from Members and Guests in your workspace without disruption to your existing work items."
+          "title": "აპში",
+          "description": "მიიღეთ ახალი სამუშაო ელემენტები თქვენი სამუშაო სივრცის წევრებისა და სტუმრებისგან არსებული სამუშაო ელემენტების შეფერხების გარეშე."
         },
         "email": {
-          "title": "Email",
-          "description": "Collect new work items from anyone who sends an email to a Plane email address.",
-          "fieldName": "Email ID"
+          "title": "ელფოსტა",
+          "description": "მიიღეთ ახალი სამუშაო ელემენტები ყველასგან, ვინც Plane-ის ელფოსტის მისამართზე წერილს გამოგზავნის.",
+          "fieldName": "ელფოსტის მისამართი"
         },
         "form": {
-          "title": "Forms",
-          "description": "Let folks outside your workspace create potential new work items for you via a dedicated and secure form.",
-          "fieldName": "Default form URL",
-          "create_forms": "Create Forms using work item types",
-          "manage_forms": "Manage forms",
-          "manage_forms_tooltip": "Ask your Workspace Admin to manage this.",
-          "create_form": "Create form",
-          "edit_form": "Edit form details",
-          "form_title": "Form title",
-          "form_title_required": "Form title is required",
-          "work_item_type": "Work item type",
-          "remove_property": "Remove property",
-          "select_properties": "Select properties",
-          "search_placeholder": "Search for properties",
+          "title": "ფორმები",
+          "description": "მიეცით თქვენი სამუშაო სივრცის გარეთ მყოფ ადამიანებს ახალი სამუშაო ელემენტების შეთავაზების საშუალება სპეციალური, დაცული ფორმით.",
+          "fieldName": "ნაგულისხმევი ფორმის URL",
+          "create_forms": "ფორმების შექმნა სამუშაო ელემენტების ტიპებით",
+          "manage_forms": "ფორმების მართვა",
+          "manage_forms_tooltip": "სთხოვეთ თქვენი სამუშაო სივრცის ადმინისტრატორს ამის მართვა.",
+          "create_form": "ფორმის შექმნა",
+          "edit_form": "ფორმის დეტალების რედაქტირება",
+          "form_title": "ფორმის სათაური",
+          "form_title_required": "ფორმის სათაური სავალდებულოა",
+          "work_item_type": "სამუშაო ელემენტის ტიპი",
+          "remove_property": "თვისების ამოღება",
+          "select_properties": "აირჩიეთ თვისებები",
+          "search_placeholder": "თვისებების ძიება",
           "toasts": {
-            "success_create": "Intake form created successfully",
-            "success_update": "Intake form updated successfully",
-            "error_create": "Failed to create intake form",
-            "error_update": "Failed to update intake form"
+            "success_create": "შემოსული მოთხოვნების ფორმა წარმატებით შეიქმნა",
+            "success_update": "შემოსული მოთხოვნების ფორმა წარმატებით განახლდა",
+            "error_create": "შემოსული მოთხოვნების ფორმის შექმნა ვერ მოხერხდა",
+            "error_update": "შემოსული მოთხოვნების ფორმის განახლება ვერ მოხერხდა"
           }
         },
         "toasts": {
           "set": {
-            "loading": "Setting assignees...",
+            "loading": "ინიშნებიან პასუხისმგებელი პირები...",
             "success": {
-              "title": "Success!",
-              "message": "Assignees set successfully."
+              "title": "წარმატებით შესრულდა!",
+              "message": "პასუხისმგებელი პირები წარმატებით დაინიშნენ."
             },
             "error": {
-              "title": "Error!",
-              "message": "Something went wrong while setting assignees. Please try again."
+              "title": "შეცდომა!",
+              "message": "პასუხისმგებელი პირების დანიშვნისას შეცდომა მოხდა. სცადეთ ხელახლა."
             }
           }
         }
       },
       "time_tracking": {
-        "title": "Time tracking",
-        "short_title": "Time tracking",
-        "description": "Log time spent on work items and projects.",
-        "toggle_title": "Enable time tracking",
-        "toggle_description": "Project members will be able to log time worked."
+        "title": "დროის აღრიცხვა",
+        "short_title": "დროის აღრიცხვა",
+        "description": "აღრიცხეთ სამუშაო ელემენტებსა და პროექტებზე დახარჯული დრო.",
+        "toggle_title": "დროის აღრიცხვის ჩართვა",
+        "toggle_description": "პროექტის წევრებს ნამუშევარი დროის აღრიცხვა შეეძლებათ."
       },
       "milestones": {
-        "title": "Milestones",
-        "short_title": "Milestones",
-        "description": "Milestones provide a layer to align work items toward shared completion dates.",
-        "toggle_title": "Enable milestones",
-        "toggle_description": "Organize work items by milestone deadlines."
+        "title": "ეტაპები",
+        "short_title": "ეტაპები",
+        "description": "ეტაპები სამუშაო ელემენტების საერთო დასრულების თარიღების მიხედვით გაერთიანების საშუალებას გაძლევთ.",
+        "toggle_title": "ეტაპების ჩართვა",
+        "toggle_description": "დააჯგუფეთ სამუშაო ელემენტები ეტაპების ვადების მიხედვით."
       },
       "toasts": {
-        "loading": "Updating project feature...",
-        "success": "Project feature updated successfully.",
-        "error": "Something went wrong while updating project feature. Please try again."
+        "loading": "ახლდება პროექტის ფუნქცია...",
+        "success": "პროექტის ფუნქცია წარმატებით განახლდა.",
+        "error": "პროექტის ფუნქციის განახლებისას შეცდომა მოხდა. სცადეთ ხელახლა."
       }
     },
     "project_updates": {
-      "heading": "Project Updates",
-      "description": "Consolidated tracking and progress monitoring for this project"
+      "heading": "პროექტის განახლებები",
+      "description": "ამ პროექტის სამუშაოს ერთიანი აღრიცხვა და პროგრესის მონიტორინგი"
     },
     "templates": {
-      "heading": "Templates",
-      "description": "Save 80% time spent on creating projects, work items, and pages when you use templates."
+      "heading": "შაბლონები",
+      "description": "შაბლონების გამოყენებით დაზოგეთ პროექტების, სამუშაო ელემენტებისა და გვერდების შექმნაზე დახარჯული დროის 80%."
     },
     "cycles": {
       "auto_schedule": {
-        "heading": "Auto-schedule cycles",
-        "description": "Keep cycles moving without manual setup.",
-        "tooltip": "Automatically create new cycles based on your chosen schedule.",
-        "edit_button": "Edit",
+        "heading": "ციკლების ავტომატური დაგეგმვა",
+        "description": "გააგრძელეთ ციკლები ხელით კონფიგურაციის გარეშე.",
+        "tooltip": "ავტომატურად შექმენით ახალი ციკლები არჩეული განრიგის მიხედვით.",
+        "edit_button": "რედაქტირება",
         "form": {
           "cycle_title": {
-            "label": "Cycle Title",
-            "placeholder": "Title",
-            "tooltip": "The title will be appended with numbers for subsequent cycles. For eg: Design - 1/2/3",
+            "label": "ციკლის სათაური",
+            "placeholder": "სათაური",
+            "tooltip": "მომდევნო ციკლების სათაურს ნომრები დაემატება. მაგალითად: დიზაინი - 1/2/3",
             "validation": {
-              "required": "Cycle title is required",
-              "max_length": "Title must not exceed 255 characters"
+              "required": "ციკლის სათაური სავალდებულოა",
+              "max_length": "სათაური არ უნდა აღემატებოდეს 255 სიმბოლოს"
             }
           },
           "cycle_duration": {
-            "label": "Cycle Duration",
-            "unit": "Weeks",
+            "label": "ციკლის ხანგრძლივობა",
+            "unit": "კვირები",
             "validation": {
-              "required": "Cycle duration is required",
-              "min": "Cycle duration must be at least 1 week",
-              "max": "Cycle duration cannot exceed 30 weeks",
-              "positive": "Cycle duration must be positive"
+              "required": "ციკლის ხანგრძლივობა სავალდებულოა",
+              "min": "ციკლის ხანგრძლივობა სულ მცირე 1 კვირა უნდა იყოს",
+              "max": "ციკლის ხანგრძლივობა არ უნდა აღემატებოდეს 30 კვირას",
+              "positive": "ციკლის ხანგრძლივობა დადებითი უნდა იყოს"
             }
           },
           "cooldown_period": {
-            "label": "Cooldown Period",
-            "unit": "days",
-            "tooltip": "Pause between cycles before the next begins.",
+            "label": "შუალედური შესვენება",
+            "unit": "დღე",
+            "tooltip": "შესვენება ციკლებს შორის მომდევნო ციკლის დაწყებამდე.",
             "validation": {
-              "required": "Cooldown period is required",
-              "negative": "Cooldown period cannot be negative"
+              "required": "შუალედური შესვენება სავალდებულოა",
+              "negative": "შუალედური შესვენება უარყოფითი არ უნდა იყოს"
             }
           },
           "start_date": {
-            "label": "Cycle starts day",
+            "label": "ციკლის დაწყების დღე",
             "validation": {
-              "required": "Start date is required",
-              "past": "Start date cannot be in the past"
+              "required": "დაწყების თარიღი სავალდებულოა",
+              "past": "დაწყების თარიღი წარსულში არ უნდა იყოს"
             }
           },
           "number_of_cycles": {
-            "label": "Number of future cycles",
+            "label": "მომავალი ციკლების რაოდენობა",
             "validation": {
-              "required": "Number of cycles is required",
-              "min": "At least 1 cycle is required",
-              "max": "Cannot schedule more than 3 cycles"
+              "required": "ციკლების რაოდენობა სავალდებულოა",
+              "min": "სულ მცირე 1 ციკლი სავალდებულოა",
+              "max": "3-ზე მეტი ციკლის დაგეგმვა შეუძლებელია"
             }
           },
           "auto_rollover": {
-            "label": "Auto-rollover work items",
-            "tooltip": "On the day a cycle completes, move all unfinished work items into the next cycle."
+            "label": "სამუშაო ელემენტების ავტომატური გადატანა",
+            "tooltip": "ციკლის დასრულების დღეს გადაიტანეთ ყველა დაუსრულებელი სამუშაო ელემენტი მომდევნო ციკლში."
           }
         },
         "toast": {
           "toggle": {
-            "loading_enable": "Enabling auto-schedule cycles",
-            "loading_disable": "Disabling auto-schedule cycles",
+            "loading_enable": "ირთვება ციკლების ავტომატური დაგეგმვა",
+            "loading_disable": "ითიშება ციკლების ავტომატური დაგეგმვა",
             "success": {
-              "title": "Success!",
-              "message": "Auto-schedule cycles toggled successfully."
+              "title": "წარმატებით შესრულდა!",
+              "message": "ციკლების ავტომატური დაგეგმვის პარამეტრი წარმატებით შეიცვალა."
             },
             "error": {
-              "title": "Error!",
-              "message": "Failed to toggle auto-schedule cycles."
+              "title": "შეცდომა!",
+              "message": "ციკლების ავტომატური დაგეგმვის პარამეტრის შეცვლა ვერ მოხერხდა."
             }
           },
           "save": {
-            "loading": "Saving auto-schedule cycles configuration",
+            "loading": "ინახება ციკლების ავტომატური დაგეგმვის კონფიგურაცია",
             "success": {
-              "title": "Success!",
-              "message_create": "Auto-schedule cycles configuration saved successfully.",
-              "message_update": "Auto-schedule cycles configuration updated successfully."
+              "title": "წარმატებით შესრულდა!",
+              "message_create": "ციკლების ავტომატური დაგეგმვის კონფიგურაცია წარმატებით შეინახა.",
+              "message_update": "ციკლების ავტომატური დაგეგმვის კონფიგურაცია წარმატებით განახლდა."
             },
             "error": {
-              "title": "Error!",
-              "message_create": "Failed to save auto-schedule cycles configuration.",
-              "message_update": "Failed to update auto-schedule cycles configuration."
+              "title": "შეცდომა!",
+              "message_create": "ციკლების ავტომატური დაგეგმვის კონფიგურაციის შენახვა ვერ მოხერხდა.",
+              "message_update": "ციკლების ავტომატური დაგეგმვის კონფიგურაციის განახლება ვერ მოხერხდა."
             }
           }
         }

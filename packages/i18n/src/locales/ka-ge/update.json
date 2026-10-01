@@ -1,68 +1,68 @@
 {
   "updates": {
     "progress": {
-      "title": "Progress",
-      "since_last_update": "Since last update",
-      "comments": "{count, plural, one{# Comment} other{# Comments}}"
+      "title": "პროგრესი",
+      "since_last_update": "ბოლო განახლების შემდეგ",
+      "comments": "{count, plural, one{# კომენტარი} other{# კომენტარი}}"
     },
-    "add_update": "Add Update",
-    "add_update_placeholder": "Add your update here",
+    "add_update": "განახლების დამატება",
+    "add_update_placeholder": "დაამატეთ თქვენი განახლება აქ",
     "empty": {
-      "title": "No updates yet",
-      "description": "You can see the updates here."
+      "title": "განახლებები ჯერ არ არის",
+      "description": "განახლებების ნახვა აქ შეგიძლიათ."
     },
     "reaction": {
       "create": {
         "success": {
-          "title": "Reaction created",
-          "message": "The reaction has been successfully created"
+          "title": "რეაქცია შეიქმნა",
+          "message": "რეაქცია წარმატებით შეიქმნა"
         },
         "error": {
-          "title": "Reaction not created",
-          "message": "The reaction could not be created"
+          "title": "რეაქცია არ შეიქმნა",
+          "message": "რეაქციის შექმნა ვერ მოხერხდა"
         }
       },
       "remove": {
         "success": {
-          "title": "Reaction removed",
-          "message": "The reaction has been successfully removed"
+          "title": "რეაქცია წაიშალა",
+          "message": "რეაქცია წარმატებით წაიშალა"
         },
         "error": {
-          "title": "Reaction not removed",
-          "message": "The reaction could not be removed"
+          "title": "რეაქცია არ წაიშალა",
+          "message": "რეაქციის წაშლა ვერ მოხერხდა"
         }
       }
     },
     "create": {
       "success": {
-        "title": "Update created",
-        "message": "The update has been successfully created"
+        "title": "განახლება შეიქმნა",
+        "message": "განახლება წარმატებით შეიქმნა"
       },
       "error": {
-        "title": "Update not created",
-        "message": "The update could not be created"
+        "title": "განახლება არ შეიქმნა",
+        "message": "განახლების შექმნა ვერ მოხერხდა"
       }
     },
     "delete": {
-      "title": "Delete update",
-      "confirmation": "Are you sure you want to delete this update? This is an irreversible action.",
+      "title": "განახლების წაშლა",
+      "confirmation": "დარწმუნებული ხართ, რომ გსურთ ამ განახლების წაშლა? ეს მოქმედება შეუქცევადია.",
       "success": {
-        "title": "Update deleted",
-        "message": "The update has been successfully deleted"
+        "title": "განახლება წაიშალა",
+        "message": "განახლება წარმატებით წაიშალა"
       },
       "error": {
-        "title": "Update not deleted",
-        "message": "The update could not be deleted"
+        "title": "განახლება არ წაიშალა",
+        "message": "განახლების წაშლა ვერ მოხერხდა"
       }
     },
     "update": {
       "success": {
-        "title": "Updated",
-        "message": "The update has been successfully updated"
+        "title": "განახლებულია",
+        "message": "განახლება წარმატებით განახლდა"
       },
       "error": {
-        "title": "Update not updated",
-        "message": "The update could not be updated"
+        "title": "განახლება არ განახლდა",
+        "message": "განახლების შეცვლა ვერ მოხერხდა"
       }
     }
   }

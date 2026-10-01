@@ -1,65 +1,65 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Drop files here or click to upload"
+      "drag_and_drop": "ჩააგდეთ ფაილები აქ ან დააწკაპუნეთ ასატვირთად"
     },
     "errors": {
       "file_too_large": {
-        "title": "File too large.",
-        "description": "Maximum size per file is {maxFileSize}MB"
+        "title": "ფაილი ძალიან დიდია.",
+        "description": "თითოეული ფაილის მაქსიმალური ზომაა {maxFileSize}MB"
       },
       "unsupported_file_type": {
-        "title": "Unsupported file type.",
-        "description": "See supported formats"
+        "title": "ფაილის ტიპი არ არის მხარდაჭერილი.",
+        "description": "მხარდაჭერილი ფორმატების ნახვა"
       },
       "default": {
-        "title": "Upload failed.",
-        "description": "Something went wrong. Please try again."
+        "title": "ატვირთვა ვერ მოხერხდა.",
+        "description": "რაღაც შეცდომა მოხდა. სცადეთ ხელახლა."
       }
     },
     "upgrade": {
-      "description": "Upgrade your plan to view this attachment."
+      "description": "ამ დანართის სანახავად გააუმჯობესეთ თქვენი ტარიფი."
     },
     "aria": {
-      "click_to_upload": "Click to upload attachment"
+      "click_to_upload": "დააწკაპუნეთ დანართის ასატვირთად"
     }
   },
   "externalEmbedComponent": {
     "block_menu": {
-      "convert_to_embed": "Convert to Embed",
-      "convert_to_link": "Convert to Link",
-      "convert_to_richcard": "Convert to Rich Card"
+      "convert_to_embed": "ჩაშენებულ ელემენტად გარდაქმნა",
+      "convert_to_link": "ბმულად გარდაქმნა",
+      "convert_to_richcard": "გაფართოებულ ბარათად გარდაქმნა"
     },
     "placeholder": {
-      "insert_embed": "Insert your preferred embed link here, such as YouTube video, Figma design, etc.",
-      "link": "Enter or paste a link"
+      "insert_embed": "აქ ჩასვით სასურველი ჩაშენების ბმული, მაგალითად, YouTube ვიდეოს, Figma დიზაინის და სხვ.",
+      "link": "შეიყვანეთ ან ჩასვით ბმული"
     },
     "input_modal": {
-      "embed": "Embed",
-      "works_with_links": "Works with YouTube, Figma, Google Docs and more"
+      "embed": "ჩაშენება",
+      "works_with_links": "მუშაობს YouTube-თან, Figma-სთან, Google Docs-თან და სხვებთან"
     },
     "error": {
-      "not_valid_link": "Please enter a valid URL."
+      "not_valid_link": "შეიყვანეთ სწორი URL."
     }
   },
   "ai_block": {
     "content": {
-      "placeholder": "Describe the content of this block",
-      "generated_here": "Your AI content will be generated here"
+      "placeholder": "აღწერეთ ამ ბლოკის შინაარსი",
+      "generated_here": "AI-ის მიერ შექმნილი შინაარსი აქ გამოჩნდება"
     },
     "block_types": {
-      "placeholder": "Select block type",
-      "summarize_page": "Summarize Page",
-      "custom_prompt": "Custom Prompt"
+      "placeholder": "აირჩიეთ ბლოკის ტიპი",
+      "summarize_page": "გვერდის შეჯამება",
+      "custom_prompt": "მორგებული მოთხოვნა"
     },
     "actions": {
-      "discard": "Discard",
-      "generate": "Generate",
-      "generating": "Generating",
-      "rewriting": "Rewriting",
-      "rewrite": "Rewrite",
-      "use_this": "Use this",
-      "refine": "Refine"
+      "discard": "უარყოფა",
+      "generate": "გენერირება",
+      "generating": "გენერირდება",
+      "rewriting": "გადაიწერება",
+      "rewrite": "გადაწერა",
+      "use_this": "ამის გამოყენება",
+      "refine": "დახვეწა"
     }
   }
 }

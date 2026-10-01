@@ -66,12 +66,12 @@
     "title": "მთავარი",
     "star_us_on_github": "დაგვიფასეთ GitHub-ზე",
     "business_trial_banner": {
-      "title": "Your 14-day Business plan trial is live!",
-      "description": "Explore all Business features. When you're ready, choose to subscribe. You'll not be billed automatically.",
-      "trial_ends_today": "Trial ends today",
-      "trial_ends_in_days": "Trial ends in {days, plural, one {# day} other {# days}}",
-      "start_subscription": "Start subscription",
-      "explore_business_features": "Explore Business features"
+      "title": "Business ტარიფის თქვენი 14-დღიანი საცდელი პერიოდი დაიწყო!",
+      "description": "გაეცანით Business-ის ყველა ფუნქციას. როცა მზად იქნებით, გამოიწერეთ ტარიფი. თანხა ავტომატურად არ ჩამოგეჭრებათ.",
+      "trial_ends_today": "საცდელი პერიოდი დღეს სრულდება",
+      "trial_ends_in_days": "საცდელი პერიოდი სრულდება {days, plural, one {# დღეში} other {# დღეში}}",
+      "start_subscription": "გამოწერის დაწყება",
+      "explore_business_features": "Business-ის ფუნქციების გაცნობა"
     }
   }
 }

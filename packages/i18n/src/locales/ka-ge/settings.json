@@ -2,40 +2,40 @@
   "account_settings": {
     "profile": {
       "change_email_modal": {
-        "title": "Change email",
-        "description": "Enter a new email address to receive a verification link.",
+        "title": "ელფოსტის შეცვლა",
+        "description": "დადასტურების ბმულის მისაღებად შეიყვანეთ ელფოსტის ახალი მისამართი.",
         "toasts": {
-          "success_title": "Success!",
-          "success_message": "Email updated successfully. Please sign in again."
+          "success_title": "წარმატებით შესრულდა!",
+          "success_message": "ელფოსტა წარმატებით განახლდა. ხელახლა შედით ანგარიშში."
         },
         "form": {
           "email": {
-            "label": "New email",
-            "placeholder": "Enter your email",
+            "label": "ახალი ელფოსტა",
+            "placeholder": "შეიყვანეთ თქვენი ელფოსტა",
             "errors": {
-              "required": "Email is required",
-              "invalid": "Email is invalid",
-              "exists": "Email already exists. Please use a different one.",
-              "validation_failed": "Email validation failed. Please try again."
+              "required": "ელფოსტა სავალდებულოა",
+              "invalid": "არასწორი ელფოსტა",
+              "exists": "ელფოსტა უკვე არსებობს. გამოიყენეთ სხვა მისამართი.",
+              "validation_failed": "ელფოსტის შემოწმება ვერ მოხერხდა. სცადეთ ხელახლა."
             }
           },
           "code": {
-            "label": "Unique code",
+            "label": "უნიკალური კოდი",
             "placeholder": "123456",
-            "helper_text": "Verification code sent to your new email.",
+            "helper_text": "დადასტურების კოდი გაიგზავნა თქვენს ახალ ელფოსტაზე.",
             "errors": {
-              "required": "Unique code is required",
-              "invalid": "Invalid verification code. Please try again."
+              "required": "უნიკალური კოდი სავალდებულოა",
+              "invalid": "დადასტურების კოდი არასწორია. სცადეთ ხელახლა."
             }
           }
         },
         "actions": {
-          "continue": "Continue",
-          "confirm": "Confirm",
-          "cancel": "Cancel"
+          "continue": "გაგრძელება",
+          "confirm": "დადასტურება",
+          "cancel": "გაუქმება"
         },
         "states": {
-          "sending": "Sending"
+          "sending": "იგზავნება"
         }
       }
     },
@@ -46,15 +46,15 @@
     "notifications": {
       "heading": "ელფოსტის შეტყობინებები",
       "description": "იყავით ინფორმირებული თქვენს გამოწერილ სამუშაო ელემენტებზე. ჩართეთ ეს, რომ მიიღოთ შეტყობინებები.",
-      "select_default_view": "Select default view",
-      "compact": "Compact",
-      "full": "Full Screen"
+      "select_default_view": "აირჩიეთ ნაგულისხმევი ხედი",
+      "compact": "კომპაქტური",
+      "full": "სრული ეკრანი"
     },
     "security": {
       "heading": "უსაფრთხოება"
     },
     "api_tokens": {
-      "title": "Personal Access Tokens",
+      "title": "პირადი წვდომის ტოკენები",
       "description": "შექმენით უსაფრთხო API ტოკენები თქვენი მონაცემების ინტეგრაციისთვის გარე სისტემებთან და აპლიკაციებთან."
     },
     "activity": {
@@ -62,9 +62,9 @@
       "description": "თვალყური ადევნეთ თქვენს ბოლო მოქმედებებს და ცვლილებებს ყველა პროექტსა და სამუშაო ელემენტში."
     },
     "connections": {
-      "title": "Connections",
-      "heading": "Connections",
-      "description": "Manage your workspace connections settings."
+      "title": "კავშირები",
+      "heading": "კავშირები",
+      "description": "მართეთ თქვენი სამუშაო სივრცის კავშირების პარამეტრები."
     }
   },
   "profile": {
@@ -103,7 +103,7 @@
       "preferences": "პრეფერენციები",
       "notifications": "შეტყობინებები",
       "api-tokens": "პერსონალური წვდომის ტოკენები",
-      "connections": "Connections"
+      "connections": "კავშირები"
     },
     "tabs": {
       "summary": "შეჯამება",

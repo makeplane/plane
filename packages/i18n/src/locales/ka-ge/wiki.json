@@ -1,113 +1,113 @@
 {
   "wiki_collections": {
     "predefined": {
-      "general": "General",
-      "private": "Private",
-      "shared": "Shared",
-      "archived": "Archived"
+      "general": "ზოგადი",
+      "private": "პირადი",
+      "shared": "გაზიარებული",
+      "archived": "დაარქივებული"
     },
-    "fallback_name": "Collection",
+    "fallback_name": "კოლექცია",
     "form": {
-      "name_required": "Collection title is required",
-      "name_max_length": "Collection name must be less than 255 characters",
-      "name_placeholder_create": "Give a title to the collection",
-      "name_placeholder_edit": "Collection name"
+      "name_required": "კოლექციის სათაური სავალდებულოა",
+      "name_max_length": "კოლექციის სახელი 255 სიმბოლოზე ნაკლები უნდა იყოს",
+      "name_placeholder_create": "დაარქვით სათაური კოლექციას",
+      "name_placeholder_edit": "კოლექციის სახელი"
     },
     "create_modal": {
-      "title": "Create a collection",
-      "submit": "Create collection"
+      "title": "კოლექციის შექმნა",
+      "submit": "კოლექციის შექმნა"
     },
     "edit_modal": {
-      "title": "Edit collection"
+      "title": "კოლექციის რედაქტირება"
     },
     "delete_modal": {
-      "title": "Delete collection",
-      "page_count": "This collection has {pageCount} {pageCount, plural, one {page} other {pages}}. Choose what happens to them.",
-      "transfer_title": "Transfer pages and delete collection",
-      "transfer_description": "Move all pages to another collection before deleting. Pages and their permissions are preserved.",
-      "transfer_warning": "Moved pages will inherit the permissions of the selected collection.",
-      "transfer_target_label": "Move pages to",
-      "transfer_target_placeholder": "Select a collection",
-      "delete_with_pages_title": "Delete collection with pages",
-      "delete_with_pages_description": "Permanently delete the collection and all its pages. This action can't be undone.",
-      "submit": "Delete collection"
+      "title": "კოლექციის წაშლა",
+      "page_count": "ამ კოლექციაში არის {pageCount} {pageCount, plural, one {გვერდი} other {გვერდი}}. აირჩიეთ, რა მოუვიდეს მათ.",
+      "transfer_title": "გვერდების გადატანა და კოლექციის წაშლა",
+      "transfer_description": "წაშლამდე ყველა გვერდი სხვა კოლექციაში გადაიტანეთ. გვერდები და მათი წვდომის უფლებები შენარჩუნდება.",
+      "transfer_warning": "გადატანილ გვერდებზე გავრცელდება არჩეული კოლექციის წვდომის უფლებები.",
+      "transfer_target_label": "გვერდების გადატანა",
+      "transfer_target_placeholder": "აირჩიეთ კოლექცია",
+      "delete_with_pages_title": "კოლექციის წაშლა გვერდებთან ერთად",
+      "delete_with_pages_description": "სამუდამოდ წაშალეთ კოლექცია და მისი ყველა გვერდი. ამ მოქმედების გაუქმება შეუძლებელია.",
+      "submit": "კოლექციის წაშლა"
     },
     "header": {
-      "add_page": "Add page"
+      "add_page": "გვერდის დამატება"
     },
     "menu": {
-      "create_new_page": "Create new page",
-      "add_existing_page": "Add existing page",
-      "edit_collection": "Edit collection",
-      "collection_options": "Collection options"
+      "create_new_page": "ახალი გვერდის შექმნა",
+      "add_existing_page": "არსებული გვერდის დამატება",
+      "edit_collection": "კოლექციის რედაქტირება",
+      "collection_options": "კოლექციის პარამეტრები"
     },
     "add_existing_page_modal": {
-      "search_placeholder": "Search for pages",
-      "success_message": "{count} {count, plural, one {page} other {pages}} added to collection.",
-      "error_message": "Pages could not be moved. Please try again.",
-      "no_pages_found": "No pages found matching your search",
-      "no_pages_available": "No pages available to move",
-      "submit": "Move"
+      "search_placeholder": "გვერდების ძიება",
+      "success_message": "კოლექციას დაემატა {count} {count, plural, one {გვერდი} other {გვერდი}}.",
+      "error_message": "გვერდების გადატანა ვერ მოხერხდა. სცადეთ ხელახლა.",
+      "no_pages_found": "ძიების შესაბამისი გვერდები ვერ მოიძებნა",
+      "no_pages_available": "გადასატანი გვერდები არ არის",
+      "submit": "გადატანა"
     },
     "list": {
-      "invite_only": "Invite only",
-      "remove_error": "Failed to remove page from collection.",
-      "no_matching_pages": "No matching pages",
-      "remove_search_criteria": "Remove the search criteria to see all pages",
-      "remove_filters": "Remove the filters to see all pages",
-      "no_pages_title": "No pages yet",
-      "no_pages_description": "This collection doesn't have any pages right now.",
-      "untitled": "Untitled",
-      "restricted_access": "Restricted Access",
-      "collapse_page": "Collapse page",
-      "expand_page": "Expand page",
-      "page_actions": "Page actions",
-      "page_link_copied": "Page link copied to clipboard.",
+      "invite_only": "მხოლოდ მოწვევით",
+      "remove_error": "გვერდის კოლექციიდან ამოღება ვერ მოხერხდა.",
+      "no_matching_pages": "შესაბამისი გვერდები არ არის",
+      "remove_search_criteria": "ყველა გვერდის სანახავად გაასუფთავეთ ძიების კრიტერიუმები",
+      "remove_filters": "ყველა გვერდის სანახავად მოხსენით ფილტრები",
+      "no_pages_title": "გვერდები ჯერ არ არის",
+      "no_pages_description": "ამ კოლექციაში ამჟამად გვერდები არ არის.",
+      "untitled": "უსათაურო",
+      "restricted_access": "შეზღუდული წვდომა",
+      "collapse_page": "გვერდის შეკეცვა",
+      "expand_page": "გვერდის გაშლა",
+      "page_actions": "გვერდის მოქმედებები",
+      "page_link_copied": "გვერდის ბმული დაკოპირდა გაცვლის ბუფერში.",
       "columns": {
-        "page_name": "Page name",
-        "owner": "Owner",
-        "nested_pages": "Nested pages",
-        "last_activity": "Last activity",
-        "actions": "Actions"
+        "page_name": "გვერდის სახელი",
+        "owner": "მფლობელი",
+        "nested_pages": "ჩადგმული გვერდები",
+        "last_activity": "ბოლო აქტივობა",
+        "actions": "მოქმედებები"
       }
     },
     "toasts": {
-      "created": "Collection created successfully.",
-      "create_error": "Collection could not be created. Please try again.",
-      "renamed": "Collection renamed successfully.",
-      "rename_error": "Collection could not be updated. Please try again.",
-      "transferred_deleted": "Pages transferred and collection deleted.",
-      "deleted_with_pages": "Collection and its pages deleted.",
-      "delete_error": "Collection could not be deleted. Please try again.",
-      "target_required": "Please select a collection to move pages to.",
-      "create_page_error": "Page could not be created. Please try again.",
-      "create_page_in_collection_error": "Page could not be created or added to the collection. Please try again.",
-      "collection_link_copied": "Collection link copied to clipboard."
+      "created": "კოლექცია წარმატებით შეიქმნა.",
+      "create_error": "კოლექციის შექმნა ვერ მოხერხდა. სცადეთ ხელახლა.",
+      "renamed": "კოლექციის სახელი წარმატებით შეიცვალა.",
+      "rename_error": "კოლექციის განახლება ვერ მოხერხდა. სცადეთ ხელახლა.",
+      "transferred_deleted": "გვერდები გადავიდა და კოლექცია წაიშალა.",
+      "deleted_with_pages": "კოლექცია და მისი გვერდები წაიშალა.",
+      "delete_error": "კოლექციის წაშლა ვერ მოხერხდა. სცადეთ ხელახლა.",
+      "target_required": "აირჩიეთ კოლექცია გვერდების გადასატანად.",
+      "create_page_error": "გვერდის შექმნა ვერ მოხერხდა. სცადეთ ხელახლა.",
+      "create_page_in_collection_error": "გვერდის შექმნა ან კოლექციაში დამატება ვერ მოხერხდა. სცადეთ ხელახლა.",
+      "collection_link_copied": "კოლექციის ბმული დაკოპირდა გაცვლის ბუფერში."
     }
   },
   "wiki": {
     "upgrade_flow": {
-      "title": "Upgrade to unlock Wiki",
-      "description": "Unlock public pages, version history, shared pages, real-time collaboration, and workspace pages for wikis, company-wide docs, and knowledge bases with Plane Pro.",
+      "title": "გააუმჯობესეთ ტარიფი ვიკის გასააქტიურებლად",
+      "description": "Plane Pro-ით მიიღეთ საჯარო გვერდები, ვერსიების ისტორია, გაზიარებული გვერდები, რეალურ დროში თანამშრომლობა და სამუშაო სივრცის გვერდები ვიკისთვის, კომპანიის საერთო დოკუმენტებისა და ცოდნის ბაზებისთვის.",
       "upgrade_button": {
-        "text": "Upgrade"
+        "text": "გაუმჯობესება"
       },
       "learn_more_button": {
-        "text": "Learn more"
+        "text": "მეტის გაგება"
       },
       "download_button": {
-        "text": "Download data",
-        "loading": "Downloading"
+        "text": "მონაცემების ჩამოტვირთვა",
+        "loading": "ჩამოიტვირთება"
       },
       "tabs": {
-        "nested_pages": "Nested Pages",
-        "add_embeds": "Add embeds",
-        "publish_pages": "Publish pages",
-        "comments": "Comments"
+        "nested_pages": "ჩადგმული გვერდები",
+        "add_embeds": "ჩაშენებული ელემენტების დამატება",
+        "publish_pages": "გვერდების გამოქვეყნება",
+        "comments": "კომენტარები"
       }
     },
     "nested_pages_download_banner": {
-      "title": "Nested pages require a paid plan. Upgrade to unlock."
+      "title": "ჩადგმულ გვერდებს ფასიანი ტარიფი სჭირდება. გასააქტიურებლად გააუმჯობესეთ ტარიფი."
     }
   }
 }
