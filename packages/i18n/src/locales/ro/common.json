@@ -169,7 +169,7 @@
   "project_created_successfully": "Proiect creat cu succes",
   "project_created_successfully_description": "Proiect creat cu succes. Poți începe să adaugi activități în el.",
   "project_name_already_taken": "Numele proiectului este deja folosit.",
-  "project_name_cannot_contain_special_characters": "Numele proiectului nu poate conține caractere speciale.",
+  "project_name_cannot_contain_special_characters": "Numele proiectului nu poate conține niciunul dintre aceste caractere: ; $ ^ { } * = | ' < > %",
   "project_identifier_already_taken": "Identificatorul proiectului este deja folosit.",
   "project_cover_image_alt": "Coperta proiectului",
   "name_is_required": "Numele este obligatoriu",

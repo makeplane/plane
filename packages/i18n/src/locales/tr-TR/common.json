@@ -169,7 +169,7 @@
   "project_created_successfully": "Proje başarıyla oluşturuldu",
   "project_created_successfully_description": "Proje başarıyla oluşturuldu. Artık iş öğeleri eklemeye başlayabilirsiniz.",
   "project_name_already_taken": "Proje ismi zaten kullanılıyor.",
-  "project_name_cannot_contain_special_characters": "Proje adı özel karakterler içeremez.",
+  "project_name_cannot_contain_special_characters": "Proje adı şu karakterlerden hiçbirini içeremez: ; $ ^ { } * = | ' < > %",
   "project_identifier_already_taken": "Proje kimliği zaten kullanılıyor.",
   "project_cover_image_alt": "Proje kapak resmi",
   "name_is_required": "Ad gereklidir",

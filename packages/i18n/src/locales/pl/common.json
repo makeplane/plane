@@ -169,7 +169,7 @@
   "project_created_successfully": "Projekt utworzono pomyślnie",
   "project_created_successfully_description": "Projekt został pomyślnie utworzony. Teraz możesz dodawać elementy pracy.",
   "project_name_already_taken": "Nazwa projektu jest już zajęta.",
-  "project_name_cannot_contain_special_characters": "Nazwa projektu nie może zawierać znaków specjalnych.",
+  "project_name_cannot_contain_special_characters": "Nazwa projektu nie może zawierać żadnego z tych znaków: ; $ ^ { } * = | ' < > %",
   "project_identifier_already_taken": "Identyfikator projektu jest już zajęty.",
   "project_cover_image_alt": "Obraz w tle projektu",
   "name_is_required": "Nazwa jest wymagana",

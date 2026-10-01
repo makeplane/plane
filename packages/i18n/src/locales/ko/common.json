@@ -169,7 +169,7 @@
   "project_created_successfully": "프로젝트가 성공적으로 생성되었습니다",
   "project_created_successfully_description": "프로젝트가 성공적으로 생성되었습니다. 이제 작업 항목을 추가할 수 있습니다.",
   "project_name_already_taken": "프로젝트 이름이 이미 사용 중입니다.",
-  "project_name_cannot_contain_special_characters": "프로젝트 이름에는 특수 문자를 사용할 수 없습니다.",
+  "project_name_cannot_contain_special_characters": "프로젝트 이름에는 다음 문자를 사용할 수 없습니다: ; $ ^ { } * = | ' < > %",
   "project_identifier_already_taken": "프로젝트 식별자가 이미 사용 중입니다.",
   "project_cover_image_alt": "프로젝트 커버 이미지",
   "name_is_required": "이름이 필요합니다",

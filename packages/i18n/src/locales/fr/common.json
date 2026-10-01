@@ -169,7 +169,7 @@
   "project_created_successfully": "Projet créé avec succès",
   "project_created_successfully_description": "Projet créé avec succès. Vous pouvez maintenant commencer à ajouter des éléments de travail.",
   "project_name_already_taken": "Le nom du projet est déjà pris.",
-  "project_name_cannot_contain_special_characters": "Le nom du projet ne peut pas contenir de caractères spéciaux.",
+  "project_name_cannot_contain_special_characters": "Le nom du projet ne peut contenir aucun de ces caractères : ; $ ^ { } * = | ' < > %",
   "project_identifier_already_taken": "L’identifiant du projet est déjà pris.",
   "project_cover_image_alt": "Image de couverture du projet",
   "name_is_required": "Le nom est requis",

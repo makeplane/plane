@@ -169,7 +169,7 @@
   "project_created_successfully": "Projekt erfolgreich erstellt",
   "project_created_successfully_description": "Das Projekt wurde erfolgreich erstellt. Sie können nun Arbeitselemente hinzufügen.",
   "project_name_already_taken": "Der Projektname ist bereits vergeben.",
-  "project_name_cannot_contain_special_characters": "Der Projektname darf keine Sonderzeichen enthalten.",
+  "project_name_cannot_contain_special_characters": "Der Projektname darf keines dieser Zeichen enthalten: ; $ ^ { } * = | ' < > %",
   "project_identifier_already_taken": "Der Projekt-Identifier ist bereits vergeben.",
   "project_cover_image_alt": "Titelbild des Projekts",
   "name_is_required": "Name ist erforderlich",
