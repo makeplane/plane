@@ -72,7 +72,7 @@ services:
       retries: 10
 
   test-minio:
-    image: minio/minio
+    image: docker.io/pgsty/minio:RELEASE.2026-08-04T00-00-00Z
     networks:
       - test_env
     env_file:
