@@ -279,17 +279,22 @@ class IssueViewViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
+            .filter(project__archived_at__isnull=True)
             .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
+                Exists(
+                    ProjectMember.objects.filter(
+                        project_id=OuterRef("project_id"),
+                        member=self.request.user,
+                        is_active=True,
+                        deleted_at__isnull=True,
+                    )
+                )
             )
             .filter(Q(owned_by=self.request.user) | Q(access=1))
             .select_related("project")
             .select_related("workspace")
             .annotate(is_favorite=Exists(subquery))
             .order_by("-is_favorite", "name")
-            .distinct()
         )
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
