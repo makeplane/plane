@@ -1,5 +1,6 @@
 # Copyright (c) 2023-present Plane Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
+# Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
 # See the LICENSE file for details.
 
 # Third party imports
@@ -40,7 +41,7 @@ class ProjectSerializer(BaseSerializer):
         project_id = self.instance.id if self.instance else None
         workspace_id = self.context["workspace_id"]
 
-        if re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, name):
+        if re.match(Project.FORBIDDEN_NAME_CHARS_PATTERN, name):
             raise serializers.ValidationError(detail="PROJECT_NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS")
 
         project = Project.objects.filter(name=name, workspace_id=workspace_id)

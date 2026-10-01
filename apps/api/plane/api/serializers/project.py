@@ -1,5 +1,6 @@
 # Copyright (c) 2023-present Plane Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
+# Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
 # See the LICENSE file for details.
 
 # Third party imports
@@ -108,7 +109,7 @@ class ProjectCreateSerializer(BaseSerializer):
         project_name = data.get("name", None)
         project_identifier = data.get("identifier", None)
 
-        if project_name is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_name):
+        if project_name is not None and re.match(Project.FORBIDDEN_NAME_CHARS_PATTERN, project_name):
             raise serializers.ValidationError("Project name cannot contain special characters.")
 
         if project_identifier is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_identifier):
@@ -176,7 +177,7 @@ class ProjectUpdateSerializer(ProjectCreateSerializer):
         project_name = validated_data.get("name", None)
         project_identifier = validated_data.get("identifier", None)
 
-        if project_name is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_name):
+        if project_name is not None and re.match(Project.FORBIDDEN_NAME_CHARS_PATTERN, project_name):
             raise serializers.ValidationError("Project name cannot contain special characters.")
 
         if project_identifier is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_identifier):
@@ -235,7 +236,7 @@ class ProjectSerializer(BaseSerializer):
         project_name = data.get("name", None)
         project_identifier = data.get("identifier", None)
 
-        if project_name is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_name):
+        if project_name is not None and re.match(Project.FORBIDDEN_NAME_CHARS_PATTERN, project_name):
             raise serializers.ValidationError("Project name cannot contain special characters.")
 
         if project_identifier is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_identifier):
