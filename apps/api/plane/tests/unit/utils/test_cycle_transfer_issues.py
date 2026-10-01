@@ -19,7 +19,7 @@ import uuid
 from unittest import mock
 
 import pytest
-from django.db import connections
+from django.db import connection, connections
 from django.http import HttpRequest
 
 from plane.db.models import Cycle, CycleIssue, Issue, Project, ProjectMember, State
@@ -201,17 +201,44 @@ class TestTransferCycleIssuesConcurrency:
     """Regression test for the race CodeRabbit flagged on PR #9684.
 
     transfer_cycle_issues used to lock the source cycle (select_for_update)
-    only around the final writes, after already reading old_cycle's issue
-    counts and distributions. Two concurrent transfers of the SAME source
-    cycle could both read that data before either had moved anything. The
-    first to acquire the lock would move the issues and save an accurate
-    snapshot; the second would then acquire the lock, overwrite that
-    snapshot with data computed before the first transfer's move (now
-    stale), and move zero issues - while still returning
-    {"success": True}. The fix locks the source cycle first, before any of
-    the counting queries, so a transfer's snapshot always reflects the
-    state as of when it actually acquired the lock.
+    only around the final writes, after already reading the cycle's issue
+    counts. Two concurrent transfers of the SAME source cycle could both read
+    those counts before either had moved anything. The first to commit would
+    save an accurate snapshot; the second would then acquire the lock,
+    overwrite that snapshot with counts read before the first transfer's move
+    (now stale), and move zero issues, while still returning
+    {"success": True}. The fix locks the source cycle first, before any of the
+    counting queries, so the second transfer waits for the first and reads
+    fresh data.
+
+    The schedule is forced with events instead of sleeps. Each worker pauses
+    right after its first counting query (the snapshot read) at a hook installed
+    through connection.execute_wrapper, and the main thread then:
+
+    1. starts B while A is paused after its read,
+    2. waits until B either blocks on the row lock (fixed code) or also
+       completes its read (broken code, where both reads are now stale),
+    3. lets A commit, then lets B continue.
     """
+
+    WAIT_TIMEOUT = 15
+
+    @staticmethod
+    def _transfer_is_waiting_on_row_lock() -> bool:
+        """True if some other backend is blocked waiting for a row lock taken
+        by a `SELECT ... FOR UPDATE` (i.e. thread B is queued behind A)."""
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT count(*)
+                FROM pg_stat_activity
+                WHERE datname = current_database()
+                  AND pid <> pg_backend_pid()
+                  AND wait_event_type = 'Lock'
+                  AND query ILIKE '%%FOR UPDATE%%'
+                """
+            )
+            return cursor.fetchone()[0] > 0
 
     def test_concurrent_transfers_do_not_persist_a_stale_snapshot(
         self,
@@ -231,67 +258,87 @@ class TestTransferCycleIssuesConcurrency:
             owned_by=create_user,
         )
 
-        # Fires once thread A is holding the source cycle's row lock,
-        # mid-transaction (snapshot saved, not yet committed), and is about
-        # to perform the real issue move. Starting thread B only after this
-        # fires guarantees B's call genuinely overlaps with A's in-flight
-        # transfer instead of running strictly after it.
-        a_holds_lock = threading.Event()
+        read_done = {"A": threading.Event(), "B": threading.Event()}
+        proceed = {"A": threading.Event(), "B": threading.Event()}
         errors = []
 
-        real_bulk_update = CycleIssue.objects.bulk_update
+        def make_hook(name):
+            hooked = False
 
-        def delayed_bulk_update(objs, fields, batch_size=100):
-            if threading.current_thread().name == "transfer-A":
-                a_holds_lock.set()
-                # Give thread B a real window to run its own read(s) and
-                # reach (and, with the fix, block on) the row lock before A
-                # finally commits and releases it.
-                time.sleep(1.0)
-            return real_bulk_update(objs, fields, batch_size=batch_size)
+            def hook(execute, sql, params, many, context):
+                nonlocal hooked
+                result = execute(sql, params, many, context)
+                # The first COUNT query is the snapshot read of the source
+                # cycle's issue counts. Pause the thread straight after it.
+                if not hooked and "COUNT(" in sql.upper():
+                    hooked = True
+                    read_done[name].set()
+                    if not proceed[name].wait(timeout=self.WAIT_TIMEOUT):
+                        raise TimeoutError(f"thread {name} was never released")
+                return result
 
-        def run_transfer(thread_name, destination):
-            threading.current_thread().name = thread_name
+            return hook
+
+        def run_transfer(name, destination):
             request = HttpRequest()
             request.META["HTTP_HOST"] = "app.plane.so"
             try:
-                transfer_cycle_issues(
-                    slug=project.workspace.slug,
-                    project_id=str(project.id),
-                    cycle_id=str(source_cycle.id),
-                    new_cycle_id=str(destination.id),
-                    request=request,
-                    user_id=str(create_user.id),
-                )
-            except Exception as exc:  # pragma: no cover - surfaced via `errors`
+                with connection.execute_wrapper(make_hook(name)):
+                    transfer_cycle_issues(
+                        slug=project.workspace.slug,
+                        project_id=str(project.id),
+                        cycle_id=str(source_cycle.id),
+                        new_cycle_id=str(destination.id),
+                        request=request,
+                        user_id=str(create_user.id),
+                    )
+            except Exception as exc:  # surfaced via `errors`
                 errors.append(exc)
             finally:
                 connections.close_all()
 
-        # Both mocks are entered once, in the main thread, around both
-        # worker threads - patching the same attribute from two threads
-        # independently is itself racy (whichever thread's context manager
-        # exits first restores the target, possibly while the other thread
-        # is still mid-call).
-        with (
-            mock.patch(
-                "plane.utils.cycle_transfer_issues.CycleIssue.objects.bulk_update",
-                side_effect=delayed_bulk_update,
-            ),
-            mock.patch("plane.utils.cycle_transfer_issues.issue_activity.delay"),
-        ):
-            thread_a = threading.Thread(target=run_transfer, args=("transfer-A", destination_cycle))
-            thread_a.start()
-            assert a_holds_lock.wait(timeout=5), "thread A never reached the row lock"
+        # daemon threads: a deadlock must fail the test, not hang the run.
+        thread_a = threading.Thread(target=run_transfer, args=("A", destination_cycle), daemon=True)
+        thread_b = threading.Thread(target=run_transfer, args=("B", second_destination_cycle), daemon=True)
 
-            thread_b = threading.Thread(target=run_transfer, args=("transfer-B", second_destination_cycle))
-            thread_b.start()
+        b_blocked_on_lock = False
+        try:
+            with mock.patch("plane.utils.cycle_transfer_issues.issue_activity.delay"):
+                thread_a.start()
+                assert read_done["A"].wait(self.WAIT_TIMEOUT), "thread A never read the snapshot counts"
 
-            thread_a.join(timeout=15)
-            thread_b.join(timeout=15)
+                # A has read the counts and is paused before writing anything.
+                # With the lock taken up front, A holds it here and B queues
+                # behind it. Without it, B runs on and reads the same stale
+                # counts.
+                thread_b.start()
+                deadline = time.monotonic() + self.WAIT_TIMEOUT
+                while time.monotonic() < deadline:
+                    if read_done["B"].is_set():
+                        break
+                    if self._transfer_is_waiting_on_row_lock():
+                        b_blocked_on_lock = True
+                        break
+                    time.sleep(0.01)
+                else:
+                    pytest.fail("thread B neither blocked on the row lock nor read the counts")
 
-        assert not thread_a.is_alive(), "thread A did not finish"
-        assert not thread_b.is_alive(), "thread B did not finish"
+                if b_blocked_on_lock:
+                    assert not read_done["B"].is_set(), "thread B read the counts while A held the lock"
+
+                # Let A commit first, then B.
+                proceed["A"].set()
+                thread_a.join(self.WAIT_TIMEOUT)
+                assert not thread_a.is_alive(), "thread A did not finish"
+
+                proceed["B"].set()
+                thread_b.join(self.WAIT_TIMEOUT)
+                assert not thread_b.is_alive(), "thread B did not finish"
+        finally:
+            # Never leave a worker parked on an event if an assertion fired.
+            proceed["A"].set()
+            proceed["B"].set()
+
         assert not errors, f"transfer_cycle_issues raised: {errors!r}"
 
         source_cycle.refresh_from_db()
@@ -306,8 +353,10 @@ class TestTransferCycleIssuesConcurrency:
         # The single issue can only be claimed by whichever transfer wins
         # the race for the row lock; the other legitimately moves nothing.
         # But whatever ends up persisted as the source cycle's
-        # progress_snapshot must match reality, not data read before the
+        # progress_snapshot must match reality, not counts read before the
         # winning transfer moved the issue out.
         assert actual_remaining == 0
         assert source_cycle.progress_snapshot["backlog_issues"] == actual_remaining
         assert source_cycle.progress_snapshot["total_issues"] == actual_remaining
+        # B must have been serialized behind A by the source-cycle row lock.
+        assert b_blocked_on_lock, "thread B was not blocked by the source cycle row lock"
