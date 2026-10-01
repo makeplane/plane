@@ -169,7 +169,7 @@
   "project_created_successfully": "Projekt úspěšně vytvořen",
   "project_created_successfully_description": "Projekt byl úspěšně vytvořen. Nyní můžete začít přidávat pracovní položky.",
   "project_name_already_taken": "Název projektu už je zabraný.",
-  "project_name_cannot_contain_special_characters": "Název projektu nesmí obsahovat speciální znaky.",
+  "project_name_cannot_contain_special_characters": "Název projektu nesmí obsahovat žádný z těchto znaků: ; $ ^ { } * = | ' < > %",
   "project_identifier_already_taken": "Identifikátor projektu už je zabraný.",
   "project_cover_image_alt": "Úvodní obrázek projektu",
   "name_is_required": "Název je povinný",

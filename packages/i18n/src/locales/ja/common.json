@@ -169,7 +169,7 @@
   "project_created_successfully": "プロジェクトが正常に作成されました",
   "project_created_successfully_description": "プロジェクトが正常に作成されました。作業項目を追加できるようになりました。",
   "project_name_already_taken": "プロジェクト名は既に使用されています。",
-  "project_name_cannot_contain_special_characters": "プロジェクト名に特殊文字を含めることはできません。",
+  "project_name_cannot_contain_special_characters": "プロジェクト名に次の文字は使用できません：; $ ^ { } * = | ' < > %",
   "project_identifier_already_taken": "プロジェクト識別子は既に使用されています。",
   "project_cover_image_alt": "プロジェクトのカバー画像",
   "name_is_required": "名前は必須です",
