@@ -34,7 +34,7 @@
             "label": "Số"
           },
           "dropdown": {
-            "label": "Dropdown"
+            "label": "Danh sách thả xuống"
           },
           "boolean": {
             "label": "Boolean"

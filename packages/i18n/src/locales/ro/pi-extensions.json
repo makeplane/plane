@@ -173,7 +173,7 @@
           "processing": "Se procesează"
         },
         "tabs": {
-          "export": "Export",
+          "export": "Exportă",
           "import": "Import"
         },
         "work_items_export": {
@@ -259,7 +259,7 @@
             "types": {
               "boolean": "Boolean",
               "date": "Dată",
-              "dropdown": "Dropdown",
+              "dropdown": "Listă derulantă",
               "member_picker": "Membru",
               "number": "Număr",
               "text": "Text"
@@ -350,7 +350,7 @@
             "epic": {
               "description": "Bloc mare de activitate ce poate fi împărțit în sarcini.",
               "disabled": "Epicele sunt dezactivate pentru acest șablon.",
-              "title": "Epic"
+              "title": "Sarcină majoră"
             },
             "optional_badge": "Opțional",
             "properties_empty": "Nicio proprietate personalizată pentru acest tip.",
@@ -482,7 +482,7 @@
         "delete_confirm": "Elimini acest tip de activitate? Activitățile existente își păstrează datele.",
         "description": "Definește tipuri de activități cu identitate proprie, proprietăți personalizate și domeniu de aplicare la nivel de proiect. Activează sau dezactivează tipurile fără a afecta activitățile existente.",
         "edit_type": "Editează tipul",
-        "epic_badge": "Epic",
+        "epic_badge": "Sarcină majoră",
         "form": {
           "description_label": "Descriere",
           "is_active": "Activ",
@@ -506,7 +506,7 @@
             "types": {
               "boolean": "Boolean",
               "date": "Dată",
-              "dropdown": "Dropdown",
+              "dropdown": "Listă derulantă",
               "member_picker": "Membru",
               "number": "Număr",
               "text": "Text"

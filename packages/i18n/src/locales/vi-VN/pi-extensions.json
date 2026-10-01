@@ -259,7 +259,7 @@
             "types": {
               "boolean": "Boolean",
               "date": "Ngày",
-              "dropdown": "Dropdown",
+              "dropdown": "Danh sách thả xuống",
               "member_picker": "Thành viên",
               "number": "Số",
               "text": "Văn bản"
@@ -506,7 +506,7 @@
             "types": {
               "boolean": "Boolean",
               "date": "Ngày",
-              "dropdown": "Dropdown",
+              "dropdown": "Danh sách thả xuống",
               "member_picker": "Thành viên",
               "number": "Số",
               "text": "Văn bản"

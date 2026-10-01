@@ -144,7 +144,7 @@
   },
   "work_item_templates": {
     "apply_failed_toast": "Tidak dapat menerapkan template item kerja.",
-    "dropdown_placeholder": "Template",
+    "dropdown_placeholder": "Templat",
     "loading": "Memuat template…",
     "none": "Tidak ada template"
   },
@@ -234,7 +234,7 @@
         "add_template": "Tambah template",
         "delete_confirm": "Hapus template proyek ini? Proyek yang sudah ada tidak akan terpengaruh.",
         "description": "Buat pengaturan proyek yang dapat digunakan kembali dengan properti default, fitur yang diaktifkan, status, label, dan tipe item kerja.",
-        "edit_template": "Edit template",
+        "edit_template": "Sunting templat",
         "form": {
           "add_label": "Tambah label",
           "add_state": "Tambah status",
@@ -322,7 +322,7 @@
           "section_properties": "Properti default proyek",
           "section_states": "Status",
           "section_states_hint": "Tentukan status workflow default untuk proyek baru.",
-          "section_template": "Template",
+          "section_template": "Templat",
           "section_work_item_types": "Tipe item kerja",
           "section_work_item_types_hint": "Konfigurasikan tipe item kerja default dan properti kustom untuk proyek yang dibuat dari template ini.",
           "state_groups": {
@@ -423,7 +423,7 @@
         "add_template": "Tambah template",
         "delete_confirm": "Apakah Anda yakin ingin menghapus template item kerja ini?",
         "description": "Buat set awal yang dapat digunakan kembali untuk item kerja baru (judul, deskripsi, penugas, prioritas, dan lainnya). Template dapat mencakup seluruh ruang kerja atau hanya satu proyek.",
-        "edit_template": "Edit template",
+        "edit_template": "Sunting templat",
         "form": {
           "default_values_section_hint": "Saat seseorang menerapkan template ini ketika membuat item kerja, bidang-bidang ini akan terisi otomatis. Semua di sini bersifat opsional.",
           "default_values_section_title": "Nilai default item kerja",
@@ -444,7 +444,7 @@
         },
         "heading": "Template item kerja",
         "table": {
-          "name": "Template",
+          "name": "Templat",
           "project": "Proyek",
           "scope": "Cakupan",
           "workspace_wide": "Semua proyek"

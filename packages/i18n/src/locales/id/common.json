@@ -489,7 +489,7 @@
     "project_timezone": "Zona waktu proyek",
     "created_on": "Dibuat pada",
     "updated_on": "Diperbarui pada",
-    "completed_on": "Completed on",
+    "completed_on": "Diselesaikan pada",
     "update_project": "Perbarui proyek",
     "identifier_already_exists": "Pengidentifikasi sudah ada",
     "add_more": "Tambah lebih banyak",
@@ -718,11 +718,11 @@
     "details": "Detail",
     "project_structure": "Struktur proyek",
     "custom_properties": "Properti kustom",
-    "your_profile": "Your profile",
+    "your_profile": "Profil Anda",
     "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "work_structure": "Struktur kerja",
+    "execution": "Pelaksanaan",
+    "administration": "Administrasi"
   },
   "chart": {
     "x_axis": "Sumbu-X",

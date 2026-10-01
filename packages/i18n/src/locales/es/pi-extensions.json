@@ -350,7 +350,7 @@
             "epic": {
               "description": "Cuerpo de trabajo grande que se puede dividir en tareas.",
               "disabled": "Los Epics están deshabilitados para esta plantilla.",
-              "title": "Epic"
+              "title": "Épica"
             },
             "optional_badge": "Opcional",
             "properties_empty": "No hay propiedades personalizadas para este tipo.",
@@ -482,7 +482,7 @@
         "delete_confirm": "¿Eliminar este tipo de elemento de trabajo? Los elementos de trabajo existentes conservan sus datos.",
         "description": "Define tipos de elementos de trabajo con su propia identidad, propiedades personalizadas y alcance de proyecto. Activa o desactiva tipos sin afectar los elementos existentes.",
         "edit_type": "Editar tipo",
-        "epic_badge": "Epic",
+        "epic_badge": "Épica",
         "form": {
           "description_label": "Descripción",
           "is_active": "Activo",

@@ -489,7 +489,7 @@
     "project_timezone": "Časové pásmo projektu",
     "created_on": "Vytvorené dňa",
     "updated_on": "Aktualizované",
-    "completed_on": "Completed on",
+    "completed_on": "Dokončené dňa",
     "update_project": "Aktualizovať projekt",
     "identifier_already_exists": "Identifikátor už existuje",
     "add_more": "Pridať viac",
@@ -718,11 +718,11 @@
     "details": "Podrobnosti",
     "project_structure": "Štruktúra projektu",
     "custom_properties": "Vlastné vlastnosti",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Váš profil",
+    "developer": "Vývojár",
+    "work_structure": "Štruktúra práce",
+    "execution": "Realizácia",
+    "administration": "Administrácia"
   },
   "chart": {
     "x_axis": "Os X",
@@ -844,7 +844,7 @@
   "milestones_description": "Míľniky poskytujú vrstvu na zjednotenie pracovných položiek k spoločným dátumom dokončenia.",
   "file_upload": {
     "upload_text": "Kliknite sem na nahratie súboru",
-    "drag_drop_text": "Drag and Drop",
+    "drag_drop_text": "Potiahnite a pustite",
     "processing": "Spracováva sa",
     "invalid_file_type": "Neplatný typ súboru",
     "missing_fields": "Chýbajúce polia",

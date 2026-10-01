@@ -57,7 +57,7 @@
           "message": "Workflow {action} berhasil"
         },
         "error": {
-          "title": "Error",
+          "title": "Kesalahan",
           "message": "Workflow tidak dapat {action}. Silakan coba lagi."
         }
       },

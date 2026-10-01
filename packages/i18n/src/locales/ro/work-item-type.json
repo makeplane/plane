@@ -34,7 +34,7 @@
             "label": "Număr"
           },
           "dropdown": {
-            "label": "Dropdown"
+            "label": "Listă derulantă"
           },
           "boolean": {
             "label": "Boolean"

@@ -340,7 +340,7 @@
           "placeholder": "https://example.com/setup"
         },
         "webhook_url": {
-          "label": "Webhook URL",
+          "label": "URL Webhooku",
           "description": "Sem budeme odesílat události webhook a aktualizace z pracovních prostorů, kde je vaše aplikace nainstalována.",
           "placeholder": "https://example.com/webhook"
         },
@@ -360,7 +360,7 @@
         "client_id_and_secret_download": "Můžete si stáhnout CSV s klíčem odsud.",
         "application_id": "ID Aplikace",
         "client_id": "ID Klienta",
-        "client_secret": "Tajemství Klienta",
+        "client_secret": "Tajný klíč klienta",
         "export_as_csv": "Exportovat jako CSV",
         "slug_already_exists": "Slug již existuje",
         "failed_to_create_application": "Nepodařilo se vytvořit aplikaci",

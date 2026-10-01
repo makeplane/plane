@@ -234,7 +234,7 @@
           }
         }
       },
-      "heading": "Workflows",
+      "heading": "Arbeitsabläufe",
       "description": "Automatisieren Sie Übergänge von Arbeitselementen und legen Sie Regeln fest, um zu steuern, wie Aufgaben durch Ihre Projektpipeline fließen.",
       "add_button": "Neuen Workflow hinzufügen",
       "search": "Workflows suchen",

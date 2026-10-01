@@ -360,7 +360,7 @@
         "client_id_and_secret_download": "Puedes descargar un CSV con la clave desde aquí.",
         "application_id": "ID de Aplicación",
         "client_id": "ID de Cliente",
-        "client_secret": "Secreto de Cliente",
+        "client_secret": "Secreto del cliente",
         "export_as_csv": "Exportar como CSV",
         "slug_already_exists": "El slug ya existe",
         "failed_to_create_application": "Error al crear la aplicación",

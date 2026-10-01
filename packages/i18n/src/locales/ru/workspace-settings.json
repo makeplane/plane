@@ -360,7 +360,7 @@
         "client_id_and_secret_download": "Вы можете скачать CSV с ключом отсюда.",
         "application_id": "ID Приложения",
         "client_id": "ID Клиента",
-        "client_secret": "Секрет Клиента",
+        "client_secret": "Секрет клиента",
         "export_as_csv": "Экспорт в CSV",
         "slug_already_exists": "Слаг уже существует",
         "failed_to_create_application": "Не удалось создать приложение",

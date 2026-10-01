@@ -291,7 +291,7 @@
       },
       "applications": {
         "internal": "Intern",
-        "title": "Applications",
+        "title": "Aplicații",
         "applicationId_copied": "ID-ul aplicației copiat în clipboard",
         "clientId_copied": "ID-ul clientului copiat în clipboard",
         "clientSecret_copied": "Secretul clientului copiat în clipboard",
@@ -345,7 +345,7 @@
           "placeholder": "https://example.com/webhook"
         },
         "webhook_secret": {
-          "label": "Secret webhook",
+          "label": "Secretul webhook-ului",
           "description": "Secret folosit pentru a verifica cererile webhook primite.",
           "placeholder": "Introdu o cheie secretă aleatorie"
         },
@@ -387,12 +387,12 @@
         "update_app": "Actualizează aplicație",
         "build_your_own_app": "Construiți propria aplicație",
         "edit_app_details": "Editează detaliile aplicației",
-        "regenerate_client_secret_description": "Regenerate the client secret. If you regenerate the secret, you can copy the key or download it to a CSV file right after.",
-        "regenerate_client_secret": "Regenerate client secret",
+        "regenerate_client_secret_description": "Regenerează secretul clientului. Dacă regenerezi secretul, poți copia cheia sau o poți descărca într-un fișier CSV imediat după.",
+        "regenerate_client_secret": "Regenerează secretul clientului",
         "regenerate_client_secret_confirm_title": "Sigur vrei să regenerezi secretul client?",
         "regenerate_client_secret_confirm_description": "Aplicația care folosește acest secret va înceta să funcționeze. Trebuie să actualizezi secretul în aplicație.",
         "regenerate_client_secret_confirm_cancel": "Anulează",
-        "regenerate_client_secret_confirm_regenerate": "Regenerate",
+        "regenerate_client_secret_confirm_regenerate": "Regenerează",
         "read_only_access_to_workspace": "Acces doar pentru citire la workspace-ul tău",
         "write_access_to_workspace": "Acces pentru scriere la workspace-ul tău",
         "read_only_access_to_user_profile": "Acces doar pentru citire la profilul tău",
@@ -422,7 +422,7 @@
         "supported_plans_description": "Selectează planurile de spațiu de lucru care pot instala această aplicație. Lasă gol pentru a permite toate planurile.",
         "select_plans": "Selectează Planuri",
         "privacy_policy_url_title": "URL-ul politică de confidențialitate",
-        "privacy_policy_url_error": "Privacy Policy URL is required",
+        "privacy_policy_url_error": "URL-ul Politicii de confidențialitate este obligatoriu",
         "invalid_privacy_policy_url_error": "URL-ul politică de confidențialitate este invalid",
         "terms_of_service_url_title": "URL-ul termenilor de serviciu",
         "terms_of_service_url_error": "URL-ul termenilor de serviciu este obligatoriu",
