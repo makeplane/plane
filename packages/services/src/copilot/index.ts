@@ -5,3 +5,4 @@
  */
 
 export * from "./copilot.service";
+export * from "./copilot-stream";

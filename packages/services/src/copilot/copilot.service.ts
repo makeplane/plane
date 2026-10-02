@@ -14,6 +14,8 @@ import type {
 } from "@plane/types";
 // api service
 import { APIService } from "../api.service";
+import type { TCopilotStreamHandlers, TCopilotStreamOptions } from "./copilot-stream";
+import { CopilotStreamConnection } from "./copilot-stream";
 
 /**
  * Service class for the planning copilot.
@@ -154,5 +156,28 @@ export class CopilotService extends APIService {
       .catch((error) => {
         throw error?.response?.data;
       });
+  }
+
+  /**
+   * Opens the SSE stream of a session, with cookie auth, typed events and reconnect.
+   * @param {string} workspaceSlug - The unique identifier for the workspace
+   * @param {string} projectId - The project that holds the page or work item
+   * @param {string} sessionId - The session to stream
+   * @param {TCopilotStreamHandlers} handlers - Event and lifecycle callbacks
+   * @param {TCopilotStreamOptions} options - Resume cursor and reconnect tuning
+   * @returns {CopilotStreamConnection} The open connection; call `close()` to stop it
+   */
+  openStream(
+    workspaceSlug: string,
+    projectId: string,
+    sessionId: string,
+    handlers: TCopilotStreamHandlers,
+    options: TCopilotStreamOptions = {}
+  ): CopilotStreamConnection {
+    const path = COPILOT_ENDPOINTS.stream(workspaceSlug, projectId, sessionId);
+    const url = `${this.baseURL}${path}`;
+    const connection = new CopilotStreamConnection(url, handlers, options);
+    void connection.connect();
+    return connection;
   }
 }
