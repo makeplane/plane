@@ -139,4 +139,20 @@ export class CopilotService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  /**
+   * Stops the running turn, cancelling any running tool calls.
+   * @param {string} workspaceSlug - The unique identifier for the workspace
+   * @param {string} projectId - The project that holds the page or work item
+   * @param {string} sessionId - The session whose turn to stop
+   * @returns {Promise<{ cancelled: number }>} The number of tool calls cancelled
+   * @throws {Error} Throws the response data if the request fails
+   */
+  async stopStream(workspaceSlug: string, projectId: string, sessionId: string): Promise<{ cancelled: number }> {
+    return this.post(COPILOT_ENDPOINTS.stop(workspaceSlug, projectId, sessionId))
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

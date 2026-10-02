@@ -54,6 +54,10 @@ def _messages_url(slug, project_id, session_id):
     return f"{_session_url(slug, project_id, session_id)}messages/"
 
 
+def _stop_url(slug, project_id, session_id):
+    return f"{_session_url(slug, project_id, session_id)}stop/"
+
+
 def _make_project(workspace, identifier):
     return Project.objects.create(name=f"Project {identifier}", identifier=identifier, workspace=workspace)
 
@@ -871,5 +875,76 @@ class TestCopilotMessageCreate:
         response = api_client.post(
             _messages_url(workspace.slug, project.id, copilot_session.id), {"content": "Hi"}, format="json"
         )
+
+        assert response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestCopilotStop:
+    @pytest.fixture
+    def copilot_session(self, project, page):
+        return CopilotSession.objects.create(project=project, entity_type=CopilotEntityType.PAGE, entity_id=page.id)
+
+    def test_stop_cancels_running_tool_calls(self, session_client, workspace, project, copilot_session):
+        message = CopilotMessage.objects.create(
+            session=copilot_session, role=CopilotMessageRole.ASSISTANT, content="Partial reply", sequence=1
+        )
+        running = CopilotToolCall.objects.create(
+            message=message, name=CopilotToolName.ASK_USER, status=CopilotToolStatus.RUNNING
+        )
+        CopilotToolCall.objects.create(
+            message=message, name=CopilotToolName.SEARCH_TICKETS, status=CopilotToolStatus.DONE
+        )
+
+        response = session_client.post(_stop_url(workspace.slug, project.id, copilot_session.id), {}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json() == {"cancelled": 1}
+        running.refresh_from_db()
+        assert running.status == CopilotToolStatus.FAILED
+        assert running.error["code"] == "cancelled"
+        # The partial message is kept.
+        message.refresh_from_db()
+        assert message.content == "Partial reply"
+        # No tool call is left running.
+        assert not CopilotToolCall.objects.filter(
+            message__session=copilot_session, status=CopilotToolStatus.RUNNING
+        ).exists()
+
+    def test_stop_with_nothing_running_is_a_noop(self, session_client, workspace, project, copilot_session):
+        message = CopilotMessage.objects.create(session=copilot_session, role=CopilotMessageRole.ASSISTANT, sequence=1)
+        done = CopilotToolCall.objects.create(
+            message=message, name=CopilotToolName.SEARCH_TICKETS, status=CopilotToolStatus.DONE
+        )
+
+        response = session_client.post(_stop_url(workspace.slug, project.id, copilot_session.id), {}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json() == {"cancelled": 0}
+        done.refresh_from_db()
+        assert done.status == CopilotToolStatus.DONE
+
+    def test_stop_on_unknown_session_is_not_found(self, session_client, workspace, project):
+        response = session_client.post(_stop_url(workspace.slug, project.id, uuid.uuid4()), {}, format="json")
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_stop_on_inaccessible_entity_is_not_found(self, session_client, workspace, project, page, copilot_session):
+        ProjectPage.objects.filter(page=page, project=project).update(deleted_at=timezone.now())
+
+        response = session_client.post(_stop_url(workspace.slug, project.id, copilot_session.id), {}, format="json")
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_stop_guests_are_denied(self, session_client, workspace, project, create_user, copilot_session):
+        _demote_to_guest(workspace, project, create_user)
+
+        response = session_client.post(_stop_url(workspace.slug, project.id, copilot_session.id), {}, format="json")
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_stop_anonymous_is_denied(self, api_client, workspace, project, copilot_session):
+        response = api_client.post(_stop_url(workspace.slug, project.id, copilot_session.id), {}, format="json")
 
         assert response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
