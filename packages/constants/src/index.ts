@@ -5,6 +5,7 @@
  */
 
 export * from "./ai";
+export * from "./ai-copilot";
 export * from "./analytics";
 export * from "./auth";
 export * from "./calendar";
