@@ -82,6 +82,12 @@ corepack enable pnpm || success=false
 # Install Node dependencies
 pnpm install || success=false
 
+# Repair the packages/i18n/locales symlink.
+# Git checks it out as a plain text file on Windows when core.symlinks is false,
+# which silently breaks all translation loading (the UI shows raw keys).
+echo -e "\n${YELLOW}Checking the i18n locales link...${NC}"
+node ./packages/i18n/scripts/fix-locales-link.mjs || success=false
+
 # Summary
 echo -e "\n${YELLOW}Setup status:${NC}"
 if [ "$success" = true ]; then
