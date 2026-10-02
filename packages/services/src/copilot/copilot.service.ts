@@ -6,7 +6,7 @@
 
 // plane imports
 import { API_BASE_URL, COPILOT_ENDPOINTS } from "@plane/constants";
-import type { TCopilotCreateSessionPayload, TCopilotSession } from "@plane/types";
+import type { TCopilotCreateSessionPayload, TCopilotMemory, TCopilotSession } from "@plane/types";
 // api service
 import { APIService } from "../api.service";
 
@@ -50,6 +50,63 @@ export class CopilotService extends APIService {
    */
   async getSession(workspaceSlug: string, projectId: string, sessionId: string): Promise<TCopilotSession> {
     return this.get(COPILOT_ENDPOINTS.session(workspaceSlug, projectId, sessionId))
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Lists the memories of a session.
+   * @param {string} workspaceSlug - The unique identifier for the workspace
+   * @param {string} projectId - The project that holds the page or work item
+   * @param {string} sessionId - The session whose memories to list
+   * @returns {Promise<TCopilotMemory[]>} The memories of the session
+   * @throws {Error} Throws the response data if the request fails
+   */
+  async listMemories(workspaceSlug: string, projectId: string, sessionId: string): Promise<TCopilotMemory[]> {
+    return this.get(COPILOT_ENDPOINTS.memories(workspaceSlug, projectId, sessionId))
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Updates the content of a memory.
+   * @param {string} workspaceSlug - The unique identifier for the workspace
+   * @param {string} projectId - The project that holds the page or work item
+   * @param {string} sessionId - The session the memory belongs to
+   * @param {string} memoryId - The memory to update
+   * @param {string} content - The new content
+   * @returns {Promise<TCopilotMemory>} The updated memory
+   * @throws {Error} Throws the response data if the request fails
+   */
+  async updateMemory(
+    workspaceSlug: string,
+    projectId: string,
+    sessionId: string,
+    memoryId: string,
+    content: string
+  ): Promise<TCopilotMemory> {
+    return this.patch(COPILOT_ENDPOINTS.memory(workspaceSlug, projectId, sessionId, memoryId), { content })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Deletes a memory.
+   * @param {string} workspaceSlug - The unique identifier for the workspace
+   * @param {string} projectId - The project that holds the page or work item
+   * @param {string} sessionId - The session the memory belongs to
+   * @param {string} memoryId - The memory to delete
+   * @returns {Promise<void>} Resolves when the memory is deleted
+   * @throws {Error} Throws the response data if the request fails
+   */
+  async deleteMemory(workspaceSlug: string, projectId: string, sessionId: string, memoryId: string): Promise<void> {
+    return this.delete(COPILOT_ENDPOINTS.memory(workspaceSlug, projectId, sessionId, memoryId))
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -6,6 +6,7 @@ from .analytic import urlpatterns as analytic_urls
 from .api import urlpatterns as api_urls
 from .asset import urlpatterns as asset_urls
 from .copilot import urlpatterns as copilot_urls
+from .copilot_memory import urlpatterns as copilot_memory_urls
 from .cycle import urlpatterns as cycle_urls
 from .estimate import urlpatterns as estimate_urls
 from .external import urlpatterns as external_urls
@@ -28,6 +29,7 @@ urlpatterns = [
     *analytic_urls,
     *asset_urls,
     *copilot_urls,
+    *copilot_memory_urls,
     *cycle_urls,
     *estimate_urls,
     *external_urls,

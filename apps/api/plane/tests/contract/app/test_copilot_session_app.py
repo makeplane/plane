@@ -38,12 +38,20 @@ def _session_url(slug, project_id, session_id):
     return f"{_sessions_url(slug, project_id)}{session_id}/"
 
 
+def _memories_url(slug, project_id, session_id):
+    return f"{_session_url(slug, project_id, session_id)}memories/"
+
+
+def _memory_url(slug, project_id, session_id, memory_id):
+    return f"{_memories_url(slug, project_id, session_id)}{memory_id}/"
+
+
 def _make_project(workspace, identifier):
     return Project.objects.create(name=f"Project {identifier}", identifier=identifier, workspace=workspace)
 
 
-def _make_page(workspace, project, owner, access=Page.PUBLIC_ACCESS):
-    page = Page.objects.create(workspace=workspace, owned_by=owner, access=access, name="Planning page")
+def _make_page(workspace, project, owner, access=Page.PUBLIC_ACCESS, name="Planning page"):
+    page = Page.objects.create(workspace=workspace, owned_by=owner, access=access, name=name)
     ProjectPage.objects.create(workspace=workspace, project=project, page=page)
     return page
 
@@ -400,3 +408,177 @@ class TestCopilotSessionRetrieve:
         response = api_client.get(_session_url(workspace.slug, project.id, copilot_session.id))
 
         assert response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestCopilotMemoryEndpoints:
+    @pytest.fixture
+    def copilot_session(self, project, page):
+        return CopilotSession.objects.create(project=project, entity_type=CopilotEntityType.PAGE, entity_id=page.id)
+
+    def test_list_returns_the_memories_of_the_session(
+        self, session_client, workspace, project, copilot_session, other_user
+    ):
+        first = CopilotMemory.objects.create(session=copilot_session, content="Launch is in March")
+        second = CopilotMemory.objects.create(session=copilot_session, content="Budget is fixed")
+        other_page = _make_page(workspace, project, other_user)
+        other_session = CopilotSession.objects.create(
+            project=project, entity_type=CopilotEntityType.PAGE, entity_id=other_page.id
+        )
+        CopilotMemory.objects.create(session=other_session, content="Not this session")
+
+        response = session_client.get(_memories_url(workspace.slug, project.id, copilot_session.id))
+
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()
+        assert [m["id"] for m in data] == [str(first.id), str(second.id)]
+        assert [m["content"] for m in data] == ["Launch is in March", "Budget is fixed"]
+
+    def test_list_excludes_soft_deleted_memories(self, session_client, workspace, project, copilot_session, other_user):
+        memory = CopilotMemory.objects.create(session=copilot_session, content="Removed")
+        with mock.patch("plane.db.mixins.soft_delete_related_objects"):
+            memory.delete()
+
+        response = session_client.get(_memories_url(workspace.slug, project.id, copilot_session.id))
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json() == []
+
+    def test_list_of_another_session_is_not_found(self, session_client, workspace, project, copilot_session):
+        other_session = CopilotSession.objects.create(
+            project=project, entity_type=CopilotEntityType.PAGE, entity_id=uuid.uuid4()
+        )
+
+        response = session_client.get(_memories_url(workspace.slug, project.id, other_session.id))
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_patch_updates_the_content(self, session_client, workspace, project, copilot_session):
+        memory = CopilotMemory.objects.create(session=copilot_session, content="Launch is in March")
+
+        response = session_client.patch(
+            _memory_url(workspace.slug, project.id, copilot_session.id, memory.id),
+            {"content": "Launch is in April"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()["content"] == "Launch is in April"
+        memory.refresh_from_db()
+        assert memory.content == "Launch is in April"
+
+    def test_patch_blank_content_is_rejected(self, session_client, workspace, project, copilot_session):
+        memory = CopilotMemory.objects.create(session=copilot_session, content="Launch is in March")
+
+        response = session_client.patch(
+            _memory_url(workspace.slug, project.id, copilot_session.id, memory.id),
+            {"content": "   "},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        memory.refresh_from_db()
+        assert memory.content == "Launch is in March"
+
+    def test_patch_of_another_session_is_not_found(self, session_client, workspace, project, copilot_session):
+        memory = CopilotMemory.objects.create(session=copilot_session, content="Launch is in March")
+        other_session = CopilotSession.objects.create(
+            project=project, entity_type=CopilotEntityType.PAGE, entity_id=uuid.uuid4()
+        )
+
+        response = session_client.patch(
+            _memory_url(workspace.slug, project.id, other_session.id, memory.id),
+            {"content": "Launch is in April"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        memory.refresh_from_db()
+        assert memory.content == "Launch is in March"
+
+    def test_patch_of_another_project_is_not_found(
+        self, session_client, workspace, project, copilot_session, create_user
+    ):
+        memory = CopilotMemory.objects.create(session=copilot_session, content="Launch is in March")
+        other_project = _make_project(workspace, "CPB")
+        ProjectMember.objects.create(workspace=workspace, project=other_project, member=create_user, role=15)
+
+        response = session_client.patch(
+            _memory_url(workspace.slug, other_project.id, copilot_session.id, memory.id),
+            {"content": "Launch is in April"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        memory.refresh_from_db()
+        assert memory.content == "Launch is in March"
+
+    def test_delete_soft_deletes_the_memory(self, session_client, workspace, project, copilot_session):
+        memory = CopilotMemory.objects.create(session=copilot_session, content="Launch is in March")
+
+        with mock.patch("plane.db.mixins.soft_delete_related_objects") as task:
+            response = session_client.delete(_memory_url(workspace.slug, project.id, copilot_session.id, memory.id))
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not CopilotMemory.objects.filter(pk=memory.pk).exists()
+        assert CopilotMemory.all_objects.filter(pk=memory.pk, deleted_at__isnull=False).exists()
+        task.delay.assert_called_once()
+
+    def test_delete_of_another_session_is_not_found(self, session_client, workspace, project, copilot_session):
+        memory = CopilotMemory.objects.create(session=copilot_session, content="Launch is in March")
+        other_session = CopilotSession.objects.create(
+            project=project, entity_type=CopilotEntityType.PAGE, entity_id=uuid.uuid4()
+        )
+
+        response = session_client.delete(_memory_url(workspace.slug, project.id, other_session.id, memory.id))
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert CopilotMemory.objects.filter(pk=memory.pk).exists()
+
+    def test_guests_are_denied(self, session_client, workspace, project, create_user, copilot_session):
+        memory = CopilotMemory.objects.create(session=copilot_session, content="Launch is in March")
+        _demote_to_guest(workspace, project, create_user)
+
+        list_response = session_client.get(_memories_url(workspace.slug, project.id, copilot_session.id))
+        patch_response = session_client.patch(
+            _memory_url(workspace.slug, project.id, copilot_session.id, memory.id),
+            {"content": "Changed"},
+            format="json",
+        )
+        delete_response = session_client.delete(_memory_url(workspace.slug, project.id, copilot_session.id, memory.id))
+
+        assert list_response.status_code == status.HTTP_403_FORBIDDEN
+        assert patch_response.status_code == status.HTTP_403_FORBIDDEN
+        assert delete_response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_non_members_are_denied(self, session_client, workspace, project, create_user, copilot_session):
+        memory = CopilotMemory.objects.create(session=copilot_session, content="Launch is in March")
+        ProjectMember.objects.filter(project=project, member=create_user).delete()
+
+        list_response = session_client.get(_memories_url(workspace.slug, project.id, copilot_session.id))
+        patch_response = session_client.patch(
+            _memory_url(workspace.slug, project.id, copilot_session.id, memory.id),
+            {"content": "Changed"},
+            format="json",
+        )
+        delete_response = session_client.delete(_memory_url(workspace.slug, project.id, copilot_session.id, memory.id))
+
+        assert list_response.status_code == status.HTTP_403_FORBIDDEN
+        assert patch_response.status_code == status.HTTP_403_FORBIDDEN
+        assert delete_response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_anonymous_requests_are_denied(self, api_client, workspace, project, copilot_session):
+        memory = CopilotMemory.objects.create(session=copilot_session, content="Launch is in March")
+
+        list_response = api_client.get(_memories_url(workspace.slug, project.id, copilot_session.id))
+        patch_response = api_client.patch(
+            _memory_url(workspace.slug, project.id, copilot_session.id, memory.id),
+            {"content": "Changed"},
+            format="json",
+        )
+        delete_response = api_client.delete(_memory_url(workspace.slug, project.id, copilot_session.id, memory.id))
+
+        assert list_response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
+        assert patch_response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
+        assert delete_response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)

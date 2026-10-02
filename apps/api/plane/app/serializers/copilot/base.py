@@ -9,7 +9,7 @@ from rest_framework import serializers
 from plane.db.models import CopilotMemory, CopilotMessage, CopilotSession, CopilotToolCall
 from plane.utils.copilot_constants import INTERACTIVE_TOOL_NAMES, CopilotEntityType, CopilotToolStatus
 
-from .base import BaseSerializer
+from ..base import BaseSerializer
 
 
 class CopilotSessionCreateSerializer(serializers.Serializer):
