@@ -14,6 +14,7 @@ import { Breadcrumbs, BreadcrumbNavigationSelect } from "@plane/blocks/breadcrum
 import { Header } from "@plane/blocks/layout";
 import { getPageName } from "@plane/utils";
 // components
+import { CopilotPanelToggle } from "@/components/ai-copilot";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { PageAccessIcon } from "@/components/common/page-access-icon";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
@@ -112,6 +113,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
       <Header.RightItem>
         <PageSyncingBadge syncStatus={page.isSyncingWithServer} />
         <PageHeaderActions page={page} storeType={storeType} />
+        <CopilotPanelToggle />
       </Header.RightItem>
     </Header>
   );

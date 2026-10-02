@@ -16,6 +16,7 @@ import { EFileAssetType } from "@plane/types";
 // plane utils
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
+import { CopilotRoot } from "@/components/ai-copilot";
 import { PageHead } from "@/components/core/page-title";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import type { TPageRootConfig, TPageRootHandlers } from "@/components/pages/editor/page-root";
@@ -182,16 +183,23 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
       <PageHead title={name} />
       <div className="flex h-full flex-col justify-between">
         <div className="relative flex h-full w-full flex-shrink-0 flex-col overflow-hidden">
-          <PageRoot
-            config={pageRootConfig}
-            handlers={pageRootHandlers}
-            storeType={storeType}
-            page={page}
-            webhookConnectionParams={webhookConnectionParams}
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-          />
-          <IssuePeekOverview />
+          <div className="flex h-full w-full overflow-hidden">
+            <div className="relative flex h-full min-w-0 flex-1 flex-col overflow-hidden">
+              <PageRoot
+                config={pageRootConfig}
+                handlers={pageRootHandlers}
+                storeType={storeType}
+                page={page}
+                webhookConnectionParams={webhookConnectionParams}
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+              />
+              <IssuePeekOverview />
+            </div>
+            {workspaceId && projectId && id && (
+              <CopilotRoot workspaceSlug={workspaceSlug} projectId={projectId} entityType="page" entityId={id} />
+            )}
+          </div>
         </div>
       </div>
     </>

@@ -17,6 +17,7 @@ import { Loader } from "@plane/blocks/skeleton";
 import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp?url";
 import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?url";
 // components
+import { CopilotPanelToggle, CopilotRoot } from "@/components/ai-copilot";
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
 // hooks
@@ -129,12 +130,25 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
       <PageHead title={pageTitle} />
       {workspaceSlug && projectId && issueId && (
         <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
-          <WorkItemDetailRoot
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
-            issueId={issueId.toString()}
-            issue={issue}
-          />
+          <div className="flex h-full w-full overflow-hidden">
+            <div className="relative flex h-full min-w-0 flex-1 flex-col overflow-hidden">
+              <div className="absolute top-3 right-3 z-[6]">
+                <CopilotPanelToggle />
+              </div>
+              <WorkItemDetailRoot
+                workspaceSlug={workspaceSlug.toString()}
+                projectId={projectId.toString()}
+                issueId={issueId.toString()}
+                issue={issue}
+              />
+            </div>
+            <CopilotRoot
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={projectId.toString()}
+              entityType="issue"
+              entityId={issueId.toString()}
+            />
+          </div>
         </ProjectAuthWrapper>
       )}
     </>
