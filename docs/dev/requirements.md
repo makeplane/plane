@@ -31,6 +31,44 @@ Humans and AI agents collaborate simultaneously on a single live Document/Page. 
 
 ---
 
+## Hard Requirements (Codebase Conformance)
+
+All new code must follow the existing structure and conventions of the codebase. These rules are mandatory. Any exception requires explicit approval.
+
+### Backend (`apps/api`)
+
+- **Placement:** new code goes in the existing Django apps. Views, serializers and URLs go under `plane/app` (`views/`, `serializers/`, `urls/`). Models go under `plane/db/models`. Celery tasks go under `plane/bgtasks`. Do not create a parallel project or a new top-level app unless unavoidable.
+- **Views:** subclass the existing `BaseViewSet` or `BaseAPIView` from `plane/app/views/base.py`. Register routes through the existing `plane/app/urls` modules.
+- **Models:** inherit `BaseModel` (audit fields and soft delete). Add Django migrations in the existing way. Scope data by workspace and project like the other models.
+- **Permissions:** use `@allow_permission` with the `ROLE` enum or the existing permission classes. Do not add a separate authorisation mechanism.
+- **Serializers, errors, logging:** use DRF serializers, the existing exception handling, and `log_exception` from `plane.utils.exception_logger`.
+- **Config and LLM:** reuse `get_llm_config()` and the instance configuration for any future LLM settings. Do not add a second configuration path.
+- **Tests:** follow `apps/api/tests/TESTING_GUIDE.md` (pytest, existing fixtures and markers).
+
+### Frontend (`apps/web`, `packages/*`)
+
+- **Placement:**
+  - Components go in `apps/web/components/<feature>/`, with kebab-case files, role-based names (`root.tsx`, `modal.tsx`, `form.tsx`) and an `index.ts` barrel.
+  - Routes go through `apps/web/app/routes/core.ts`.
+  - MobX stores go in `apps/web/store/`, wrapped by a `hooks/store/use-*.ts` hook.
+  - API clients go in `packages/services`.
+  - Shared types and constants go in `packages/types` and `packages/constants`.
+- **Component conventions:**
+  - `observer(function Name(props: Props) {...})` with named exports.
+  - The AGPL licence header on every file.
+  - The existing import grouping.
+  - `useTranslation()` for all user-facing text.
+  - `setToast` for feedback.
+- **Reuse before building:** use existing components and libraries first.
+  - Primitives from `@makeplane/propel` (`Dialog`, `Menu`, `Combobox`, `Field`, `Input`, `TextArea`, `Switch`, `Collapsible`, `Tabs`, `Tooltip`, `Banner`, `Button` and others).
+  - Composites from `@plane/blocks` through subpath imports (`toast`, `empty-state`, `skeleton` and others).
+  - Existing editor, dropdown and issue-picker components where applicable.
+  - A new component or third-party dependency is allowed only if nothing existing fits, and the reason must be documented.
+- **Styling:** use Tailwind with the existing semantic tokens (`bg-surface-1`, `text-primary`, `border-subtle` and so on), `cn()` from `@plane/utils`, and the existing scrollbar utilities. No hard-coded colours, no new CSS framework.
+- **Tooling:** new code must pass `pnpm check` (format, lint and types) and follow `AGENTS.md` (`catalog:` and `workspace:*` dependencies, strict TypeScript).
+
+---
+
 ## Functional Requirements
 
 ### 1. Interface & The Chat Experience
