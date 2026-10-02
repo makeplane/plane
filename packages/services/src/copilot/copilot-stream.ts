@@ -126,6 +126,11 @@ export class CopilotStreamConnection {
     return this.closed;
   }
 
+  /** The sequence of the most recent event seen, to resume a later stream from. */
+  get lastSeenSequence(): number | undefined {
+    return this.lastEventId;
+  }
+
   /** Open (or re-open) the stream. */
   async connect(): Promise<void> {
     if (this.closed) return;

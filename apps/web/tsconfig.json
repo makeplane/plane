@@ -14,5 +14,7 @@
     "types": ["vite/client"]
   },
   "extends": "@plane/typescript-config/react-router.json",
-  "include": ["**/*", "**/.server/**/*", "**/.client/**/*", ".react-router/types/**/*"]
+  "include": ["**/*", "**/.server/**/*", "**/.client/**/*", ".react-router/types/**/*"],
+  // Store tests use vitest, which the web app adopts in task 4.4; exclude them from tsc until then.
+  "exclude": ["**/*.test.ts", "**/*.test.tsx"]
 }

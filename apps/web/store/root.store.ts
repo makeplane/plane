@@ -18,6 +18,8 @@ import type { IStateStore } from "@/store/state.store";
 import { StateStore } from "@/store/state.store";
 import type { ICommandPaletteStore } from "@/store/base-command-palette.store";
 import { CommandPaletteStore } from "@/store/base-command-palette.store";
+import type { ICopilotStore } from "@/store/copilot.store";
+import { CopilotStore } from "@/store/copilot.store";
 import { WorkspaceRootStore } from "@/store/workspace";
 import type { ITimelineStore } from "./timeline/timeline.store";
 import { TimeLineStore } from "./timeline/timeline.store";
@@ -90,6 +92,7 @@ export class CoreRootStore {
   projectPages: IProjectPageStore;
   router: IRouterStore;
   commandPalette: ICommandPaletteStore;
+  copilot: ICopilotStore;
   theme: IThemeStore;
   instance: IInstanceStore;
   user: IUserStore;
@@ -107,6 +110,7 @@ export class CoreRootStore {
   constructor() {
     this.router = new RouterStore();
     this.commandPalette = new CommandPaletteStore();
+    this.copilot = new CopilotStore();
     this.instance = new InstanceStore();
     this.user = new UserStore(this);
     this.theme = new ThemeStore();
@@ -143,6 +147,7 @@ export class CoreRootStore {
     void setLanguage(FALLBACK_LANGUAGE);
     this.router = new RouterStore();
     this.commandPalette = new CommandPaletteStore();
+    this.copilot = new CopilotStore();
     this.instance = new InstanceStore();
     this.user = new UserStore(this);
     this.workspaceRoot = new WorkspaceRootStore(this);
