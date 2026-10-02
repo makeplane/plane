@@ -4,7 +4,7 @@
 
 from django.urls import path
 
-from plane.app.views import CopilotSessionViewSet, CopilotSessionStreamViewSet
+from plane.app.views import CopilotMessageViewSet, CopilotSessionViewSet, CopilotSessionStreamViewSet
 
 
 urlpatterns = [
@@ -22,5 +22,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/copilot/sessions/<uuid:session_id>/stream/",
         CopilotSessionStreamViewSet.as_view({"get": "stream"}),
         name="copilot-session-stream",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/copilot/sessions/<uuid:session_id>/messages/",
+        CopilotMessageViewSet.as_view({"post": "create"}),
+        name="copilot-messages",
     ),
 ]

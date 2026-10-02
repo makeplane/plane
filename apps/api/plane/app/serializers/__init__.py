@@ -129,6 +129,7 @@ from .exporter import ExporterHistorySerializer
 from .copilot import (
     CopilotMemorySerializer,
     CopilotMemoryUpdateSerializer,
+    CopilotMessageCreateSerializer,
     CopilotMessageSerializer,
     CopilotSessionCreateSerializer,
     CopilotSessionSerializer,

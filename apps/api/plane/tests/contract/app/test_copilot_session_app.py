@@ -50,6 +50,10 @@ def _stream_url(slug, project_id, session_id):
     return f"{_session_url(slug, project_id, session_id)}stream/"
 
 
+def _messages_url(slug, project_id, session_id):
+    return f"{_session_url(slug, project_id, session_id)}messages/"
+
+
 def _make_project(workspace, identifier):
     return Project.objects.create(name=f"Project {identifier}", identifier=identifier, workspace=workspace)
 
@@ -729,5 +733,143 @@ class TestCopilotSessionStream:
 
     def test_stream_anonymous_is_denied(self, api_client, workspace, project, copilot_session):
         response = api_client.get(_stream_url(workspace.slug, project.id, copilot_session.id))
+
+        assert response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestCopilotMessageCreate:
+    @pytest.fixture
+    def copilot_session(self, project, page):
+        return CopilotSession.objects.create(project=project, entity_type=CopilotEntityType.PAGE, entity_id=page.id)
+
+    def test_posts_a_message_and_runs_the_first_turn(self, session_client, workspace, project, copilot_session):
+        response = session_client.post(
+            _messages_url(workspace.slug, project.id, copilot_session.id),
+            {"content": "Help me plan this"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED
+        data = response.json()
+        assert data["user_message"]["content"] == "Help me plan this"
+        assert data["user_message"]["role"] == "user"
+        assert data["user_message"]["sequence"] == 1
+        # The first script step is a text-only opening, so the assistant replies with text.
+        assert data["assistant_message"] is not None
+        assert data["assistant_message"]["role"] == "assistant"
+        assert data["assistant_message"]["sequence"] == 2
+        assert data["assistant_message"]["content"]
+        assert data["finished"] is False
+        copilot_session.refresh_from_db()
+        assert copilot_session.script_cursor == 1
+
+    def test_persists_both_messages(self, session_client, workspace, project, copilot_session):
+        session_client.post(
+            _messages_url(workspace.slug, project.id, copilot_session.id),
+            {"content": "Help me plan this"},
+            format="json",
+        )
+
+        assert copilot_session.messages.filter(role="user").count() == 1
+        assert copilot_session.messages.filter(role="assistant").count() == 1
+
+    @pytest.mark.parametrize("payload", [{}, {"content": ""}, {"content": "   "}, {"content": "x" * 4001}])
+    def test_invalid_content_is_rejected(self, session_client, workspace, project, copilot_session, payload):
+        response = session_client.post(
+            _messages_url(workspace.slug, project.id, copilot_session.id), payload, format="json"
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert copilot_session.messages.count() == 0
+
+    def test_rejects_a_message_while_an_interactive_turn_is_running(
+        self, session_client, workspace, project, copilot_session
+    ):
+        # Start the ask_user turn so an interactive tool is running and unanswered.
+        reply = CopilotMessage.objects.create(session=copilot_session, role=CopilotMessageRole.ASSISTANT, sequence=1)
+        CopilotToolCall.objects.create(
+            message=reply, name=CopilotToolName.ASK_USER, status=CopilotToolStatus.RUNNING, is_answered=False
+        )
+
+        response = session_client.post(
+            _messages_url(workspace.slug, project.id, copilot_session.id),
+            {"content": "Next"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_409_CONFLICT
+        assert not copilot_session.messages.filter(role="user").exists()
+
+    def test_allows_a_message_after_a_completed_turn(self, session_client, workspace, project, copilot_session):
+        reply = CopilotMessage.objects.create(session=copilot_session, role=CopilotMessageRole.ASSISTANT, sequence=1)
+        CopilotToolCall.objects.create(
+            message=reply, name=CopilotToolName.ASK_USER, status=CopilotToolStatus.DONE, is_answered=True
+        )
+
+        response = session_client.post(
+            _messages_url(workspace.slug, project.id, copilot_session.id),
+            {"content": "Next"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+    def test_allows_a_message_after_a_failed_turn(self, session_client, workspace, project, copilot_session):
+        reply = CopilotMessage.objects.create(session=copilot_session, role=CopilotMessageRole.ASSISTANT, sequence=1)
+        CopilotToolCall.objects.create(
+            message=reply, name=CopilotToolName.SEARCH_TICKETS, status=CopilotToolStatus.FAILED, is_answered=False
+        )
+
+        response = session_client.post(
+            _messages_url(workspace.slug, project.id, copilot_session.id),
+            {"content": "Next"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+    def test_message_on_unknown_session_is_not_found(self, session_client, workspace, project):
+        response = session_client.post(
+            _messages_url(workspace.slug, project.id, uuid.uuid4()), {"content": "Hi"}, format="json"
+        )
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_message_on_inaccessible_entity_is_not_found(
+        self, session_client, workspace, project, page, copilot_session
+    ):
+        ProjectPage.objects.filter(page=page, project=project).update(deleted_at=timezone.now())
+
+        response = session_client.post(
+            _messages_url(workspace.slug, project.id, copilot_session.id), {"content": "Hi"}, format="json"
+        )
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_guests_are_denied(self, session_client, workspace, project, create_user, copilot_session):
+        _demote_to_guest(workspace, project, create_user)
+
+        response = session_client.post(
+            _messages_url(workspace.slug, project.id, copilot_session.id), {"content": "Hi"}, format="json"
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert not copilot_session.messages.exists()
+
+    def test_non_members_are_denied(self, session_client, workspace, project, create_user, copilot_session):
+        ProjectMember.objects.filter(project=project, member=create_user).delete()
+
+        response = session_client.post(
+            _messages_url(workspace.slug, project.id, copilot_session.id), {"content": "Hi"}, format="json"
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_anonymous_is_denied(self, api_client, workspace, project, copilot_session):
+        response = api_client.post(
+            _messages_url(workspace.slug, project.id, copilot_session.id), {"content": "Hi"}, format="json"
+        )
 
         assert response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)

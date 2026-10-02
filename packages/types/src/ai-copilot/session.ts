@@ -58,3 +58,10 @@ export type TCopilotSession = {
   created_at: string;
   updated_at: string;
 };
+
+// Response of POST messages/. `assistant_message` is null when the script is finished.
+export type TCopilotSendMessageResponse = {
+  user_message: TCopilotMessage;
+  assistant_message: TCopilotMessage | null;
+  finished: boolean;
+};

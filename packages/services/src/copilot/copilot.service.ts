@@ -6,7 +6,12 @@
 
 // plane imports
 import { API_BASE_URL, COPILOT_ENDPOINTS } from "@plane/constants";
-import type { TCopilotCreateSessionPayload, TCopilotMemory, TCopilotSession } from "@plane/types";
+import type {
+  TCopilotCreateSessionPayload,
+  TCopilotMemory,
+  TCopilotSendMessageResponse,
+  TCopilotSession,
+} from "@plane/types";
 // api service
 import { APIService } from "../api.service";
 
@@ -107,6 +112,28 @@ export class CopilotService extends APIService {
    */
   async deleteMemory(workspaceSlug: string, projectId: string, sessionId: string, memoryId: string): Promise<void> {
     return this.delete(COPILOT_ENDPOINTS.memory(workspaceSlug, projectId, sessionId, memoryId))
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Sends a user message, which persists it and runs the next agent turn.
+   * @param {string} workspaceSlug - The unique identifier for the workspace
+   * @param {string} projectId - The project that holds the page or work item
+   * @param {string} sessionId - The session to post to
+   * @param {string} content - The message text
+   * @returns {Promise<TCopilotSendMessageResponse>} The persisted messages and whether the script is finished
+   * @throws {Error} Throws the response data if the request fails
+   */
+  async sendMessage(
+    workspaceSlug: string,
+    projectId: string,
+    sessionId: string,
+    content: string
+  ): Promise<TCopilotSendMessageResponse> {
+    return this.post(COPILOT_ENDPOINTS.messages(workspaceSlug, projectId, sessionId), { content })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

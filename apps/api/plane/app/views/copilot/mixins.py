@@ -18,11 +18,11 @@ SESSION_NOT_FOUND_ERROR = {"error": "The required object does not exist."}
 class CopilotBaseViewSet(BaseViewSet):
     model = CopilotSession
 
-    def get_queryset(self):
-        return super().get_queryset().filter(workspace__slug=self.workspace_slug, project_id=self.project_id)
+    def get_session_queryset(self):
+        return CopilotSession.objects.filter(workspace__slug=self.workspace_slug, project_id=self.project_id)
 
     def get_session(self):
-        return self.get_queryset().filter(pk=self.kwargs.get("session_id")).first()
+        return self.get_session_queryset().filter(pk=self.kwargs.get("session_id")).first()
 
     def check_session_entity_access(self, request, session):
         """Return a 404 response when the session's entity is not accessible, else None."""

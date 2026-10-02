@@ -134,4 +134,26 @@ describe("CopilotService", () => {
       await expect(service.deleteMemory("acme", "project-1", "session-1", "memory-1")).rejects.toEqual(error);
     });
   });
+
+  describe("sendMessage", () => {
+    it("posts the content and returns the user and assistant messages", async () => {
+      const data = { user_message: { id: "m1" }, assistant_message: { id: "m2" }, finished: false };
+      const post = vi.spyOn(APIService.prototype, "post").mockResolvedValue({ data } as never);
+
+      const result = await service.sendMessage("acme", "project-1", "session-1", "Help me plan");
+
+      expect(post).toHaveBeenCalledWith(
+        "/api/workspaces/acme/projects/project-1/copilot/sessions/session-1/messages/",
+        { content: "Help me plan" }
+      );
+      expect(result).toEqual(data);
+    });
+
+    it("throws the response data when the request fails", async () => {
+      const error = { error: "A turn is already running for this session." };
+      vi.spyOn(APIService.prototype, "post").mockRejectedValue({ response: { data: error } });
+
+      await expect(service.sendMessage("acme", "project-1", "session-1", "Next")).rejects.toEqual(error);
+    });
+  });
 });

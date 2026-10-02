@@ -10,3 +10,4 @@ from .base import (
     CopilotToolCallSerializer,
 )
 from .memory import CopilotMemoryUpdateSerializer
+from .message import CopilotMessageCreateSerializer

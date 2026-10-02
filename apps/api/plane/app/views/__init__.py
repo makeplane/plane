@@ -227,6 +227,7 @@ from .exporter.base import ExportIssuesEndpoint
 
 from .copilot.base import CopilotSessionViewSet
 from .copilot.memory import CopilotMemoryViewSet
+from .copilot.message import CopilotMessageViewSet
 from .copilot.stream import CopilotSessionStreamViewSet
 
 
