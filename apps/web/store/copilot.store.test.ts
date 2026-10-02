@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import type { TCopilotStreamEvent } from "@plane/types";
+import type { TCopilotSession, TCopilotStreamEvent } from "@plane/types";
 import { CopilotStore } from "@/store/copilot.store";
 
 const messageDelta = (sequence: number, messageId: string, delta: string, done = false): TCopilotStreamEvent => ({
@@ -169,5 +169,119 @@ describe("CopilotStore state", () => {
     expect(store.toolCalls).toEqual({});
     expect(store.memories).toEqual([]);
     expect(store.streamStatus).toBe("idle");
+  });
+});
+
+describe("CopilotStore hydration", () => {
+  const hydratedSession: TCopilotSession = {
+    id: "s1",
+    workspace: "w1",
+    project: "p1",
+    entity_type: "page",
+    entity_id: "page-1",
+    messages: [
+      {
+        id: "m1",
+        role: "user",
+        content: "Plan this",
+        sequence: 1,
+        tool_calls: [],
+        created_at: "",
+        updated_at: "",
+      },
+      {
+        id: "m2",
+        role: "assistant",
+        content: "Here are questions",
+        sequence: 2,
+        tool_calls: [
+          {
+            id: "t1",
+            name: "ask_user",
+            args: { questions: [] },
+            result: { answers: { goal: { value: "v1" } } },
+            error: null,
+            status: "done",
+            is_stale: false,
+            is_answered: true,
+            awaiting_input: false,
+            created_at: "",
+            updated_at: "",
+          } as never,
+        ],
+        created_at: "",
+        updated_at: "",
+      },
+    ],
+    memories: [{ id: "mem1", content: "Budget is fixed", created_at: "", updated_at: "" }],
+    created_at: "",
+    updated_at: "",
+  };
+
+  it("hydrates messages, tool calls and memories from the session", async () => {
+    const store = new CopilotStore();
+    (store as unknown as { service: { getSession: () => Promise<TCopilotSession> } }).service = {
+      getSession: async () => hydratedSession,
+    };
+
+    await store.loadSession("acme", "project-1", "s1");
+
+    expect(store.session?.id).toBe("s1");
+    expect(store.messages.map((m) => m.id)).toEqual(["m1", "m2"]);
+    expect(store.toolCalls["t1"].status).toBe("done");
+    expect(store.toolCalls["t1"].is_answered).toBe(true);
+    expect(store.toolCalls["t1"].result).toEqual({ answers: { goal: { value: "v1" } } });
+    expect(store.memories).toHaveLength(1);
+    // A hydrated transcript resets the resume cursor so the next stream starts fresh.
+    expect(store.lastSequence).toBeUndefined();
+  });
+
+  it("orders messages by sequence", async () => {
+    const store = new CopilotStore();
+    const outOfOrder: TCopilotSession = {
+      ...hydratedSession,
+      messages: [hydratedSession.messages[1], hydratedSession.messages[0]],
+    };
+    (store as unknown as { service: { getSession: () => Promise<TCopilotSession> } }).service = {
+      getSession: async () => outOfOrder,
+    };
+
+    await store.loadSession("acme", "project-1", "s1");
+
+    expect(store.messages.map((m) => m.sequence)).toEqual([1, 2]);
+  });
+
+  it("hasRunningTurn reflects a running unanswered interactive call after hydration", async () => {
+    const store = new CopilotStore();
+    const running: TCopilotSession = {
+      ...hydratedSession,
+      messages: [
+        {
+          ...hydratedSession.messages[1],
+          tool_calls: [
+            {
+              id: "t2",
+              name: "propose_edit",
+              args: {},
+              result: null,
+              error: null,
+              status: "running",
+              is_stale: false,
+              is_answered: false,
+              awaiting_input: true,
+              created_at: "",
+              updated_at: "",
+            } as never,
+          ],
+        },
+      ],
+    };
+    (store as unknown as { service: { getSession: () => Promise<TCopilotSession> } }).service = {
+      getSession: async () => running,
+    };
+
+    await store.loadSession("acme", "project-1", "s1");
+
+    expect(store.hasRunningTurn).toBe(true);
   });
 });

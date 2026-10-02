@@ -43,7 +43,8 @@ export const CopilotRoot = observer(function CopilotRoot(props: Props) {
       })
       .then((session) => {
         if (cancelled || !session) return null;
-        store.openStream(workspaceSlug, projectId, session.id);
+        // Reconnect the stream only when the transcript shows an in-progress turn.
+        if (store.hasRunningTurn) store.openStream(workspaceSlug, projectId, session.id);
         return session;
       })
       .catch((err) => {

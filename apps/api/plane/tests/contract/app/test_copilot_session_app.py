@@ -319,6 +319,7 @@ class TestCopilotSessionRetrieve:
         assert data["messages"][0]["tool_calls"] == []
         (tool_call,) = data["messages"][1]["tool_calls"]
         assert tool_call["name"] == "ask_user"
+        assert tool_call["args"] == {"questions": []}
         assert tool_call["status"] == "done"
         assert tool_call["result"] == {"answers": {}}
         assert tool_call["is_answered"] is True
