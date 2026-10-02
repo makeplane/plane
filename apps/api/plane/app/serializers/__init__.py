@@ -126,6 +126,14 @@ from .notification import NotificationSerializer, UserNotificationPreferenceSeri
 
 from .exporter import ExporterHistorySerializer
 
+from .copilot import (
+    CopilotMemorySerializer,
+    CopilotMessageSerializer,
+    CopilotSessionCreateSerializer,
+    CopilotSessionSerializer,
+    CopilotToolCallSerializer,
+)
+
 from .webhook import WebhookSerializer, WebhookLogSerializer
 
 from .favorite import UserFavoriteSerializer

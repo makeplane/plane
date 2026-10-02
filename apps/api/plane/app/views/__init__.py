@@ -225,6 +225,8 @@ from .notification.base import (
 
 from .exporter.base import ExportIssuesEndpoint
 
+from .copilot.base import CopilotSessionViewSet
+
 
 from .webhook.base import (
     WebhookEndpoint,

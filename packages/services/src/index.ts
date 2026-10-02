@@ -7,6 +7,7 @@
 export * from "./ai";
 export * from "./developer";
 export * from "./auth";
+export * from "./copilot";
 export * from "./cycle";
 export * from "./dashboard";
 export * from "./instance";
