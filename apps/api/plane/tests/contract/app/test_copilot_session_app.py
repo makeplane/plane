@@ -46,6 +46,10 @@ def _memory_url(slug, project_id, session_id, memory_id):
     return f"{_memories_url(slug, project_id, session_id)}{memory_id}/"
 
 
+def _stream_url(slug, project_id, session_id):
+    return f"{_session_url(slug, project_id, session_id)}stream/"
+
+
 def _make_project(workspace, identifier):
     return Project.objects.create(name=f"Project {identifier}", identifier=identifier, workspace=workspace)
 
@@ -582,3 +586,148 @@ class TestCopilotMemoryEndpoints:
         assert list_response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
         assert patch_response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
         assert delete_response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
+
+
+def _collect_stream(response, limit):
+    body = b""
+    events = []
+    for chunk in response.streaming_content:
+        body += chunk
+        text = body.decode()
+        while "\n\n" in text:
+            raw, text = text.split("\n\n", 1)
+            events.append(raw)
+            if len(events) >= limit:
+                return events
+        body = text.encode()
+    return events
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestCopilotSessionStream:
+    @pytest.fixture
+    def copilot_session(self, project, page):
+        return CopilotSession.objects.create(project=project, entity_type=CopilotEntityType.PAGE, entity_id=page.id)
+
+    def test_stream_is_open_and_sets_sse_headers(self, session_client, workspace, project, copilot_session):
+        response = session_client.get(_stream_url(workspace.slug, project.id, copilot_session.id))
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response["Content-Type"].startswith("text/event-stream")
+        assert response["Cache-Control"] == "no-cache"
+        assert response["X-Accel-Buffering"] == "no"
+        first = _collect_stream(response, 1)
+        assert first[0].startswith(": stream open")
+        response.close()
+
+    def test_stream_replays_persisted_transcript(self, session_client, workspace, project, copilot_session):
+        CopilotMessage.objects.create(
+            session=copilot_session, role=CopilotMessageRole.USER, content="Plan the launch", sequence=1
+        )
+        reply = CopilotMessage.objects.create(
+            session=copilot_session, role=CopilotMessageRole.ASSISTANT, content="Which scope?", sequence=2
+        )
+        tool_call = CopilotToolCall.objects.create(
+            message=reply,
+            name=CopilotToolName.ASK_USER,
+            args={
+                "questions": [
+                    {"id": "q1", "type": "short_text", "label": "Scope", "required": True, "allow_not_sure": False}
+                ]
+            },
+            status=CopilotToolStatus.DONE,
+            result={"answers": {"q1": {"value": "v1"}}},
+            is_answered=True,
+        )
+
+        response = session_client.get(_stream_url(workspace.slug, project.id, copilot_session.id))
+        events = _collect_stream(response, 4)
+        response.close()
+
+        # comment, then: assistant message_delta, then tool_call start, then tool_call end
+        assert events[0].startswith(": stream open")
+        assert events[1].startswith("id: 2000\nevent: message_delta")
+        assert '"done": true' in events[1]
+        assert '"message_id": "' + str(reply.id) + '"' in events[1]
+        assert events[2].startswith("id: 2001\nevent: tool_call_start")
+        assert '"id": "' + str(tool_call.id) + '"' in events[2]
+        assert '"name": "ask_user"' in events[2]
+        assert events[3].startswith("id: 2003\nevent: tool_call_end")
+        assert '"status": "done"' in events[3]
+        assert '"result"' in events[3]
+
+    def test_stream_skips_user_messages(self, session_client, workspace, project, copilot_session):
+        CopilotMessage.objects.create(
+            session=copilot_session, role=CopilotMessageRole.USER, content="Only user", sequence=1
+        )
+
+        response = session_client.get(_stream_url(workspace.slug, project.id, copilot_session.id))
+        events = _collect_stream(response, 2)
+        response.close()
+
+        assert events[0].startswith(": stream open")
+        assert events[1].startswith(": replayed")
+
+    def test_stream_resumes_after_last_event_id(self, session_client, workspace, project, copilot_session):
+        reply = CopilotMessage.objects.create(
+            session=copilot_session, role=CopilotMessageRole.ASSISTANT, content="First", sequence=1
+        )
+        CopilotToolCall.objects.create(message=reply, name=CopilotToolName.ASK_USER, status=CopilotToolStatus.RUNNING)
+        later = CopilotMessage.objects.create(
+            session=copilot_session, role=CopilotMessageRole.ASSISTANT, content="Second", sequence=2
+        )
+
+        response = session_client.get(
+            _stream_url(workspace.slug, project.id, copilot_session.id),
+            HTTP_LAST_EVENT_ID="1002",
+        )
+        events = _collect_stream(response, 2)
+        response.close()
+
+        # comment, then only the newer message (sequence 2 -> 2000)
+        assert events[0].startswith(": stream open")
+        assert events[1].startswith("id: 2000\nevent: message_delta")
+        assert str(later.id) in events[1]
+
+    def test_stream_running_tool_call_shows_awaiting_input(self, session_client, workspace, project, copilot_session):
+        reply = CopilotMessage.objects.create(
+            session=copilot_session, role=CopilotMessageRole.ASSISTANT, content="Question", sequence=1
+        )
+        CopilotToolCall.objects.create(
+            message=reply, name=CopilotToolName.ASK_USER, status=CopilotToolStatus.RUNNING, is_answered=False
+        )
+
+        response = session_client.get(_stream_url(workspace.slug, project.id, copilot_session.id))
+        events = _collect_stream(response, 3)
+        response.close()
+
+        # comment, message_delta, tool_call_start with awaiting_input true, then heartbeats
+        assert events[2].startswith("id: 1001\nevent: tool_call_start")
+        assert '"awaiting_input": true' in events[2]
+
+    def test_stream_unknown_session_is_not_found(self, session_client, workspace, project):
+        response = session_client.get(_stream_url(workspace.slug, project.id, uuid.uuid4()))
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_stream_of_inaccessible_entity_is_not_found(
+        self, session_client, workspace, project, page, copilot_session
+    ):
+        ProjectPage.objects.filter(page=page, project=project).update(deleted_at=timezone.now())
+
+        response = session_client.get(_stream_url(workspace.slug, project.id, copilot_session.id))
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_stream_guests_are_denied(self, session_client, workspace, project, create_user, copilot_session):
+        _demote_to_guest(workspace, project, create_user)
+
+        response = session_client.get(_stream_url(workspace.slug, project.id, copilot_session.id))
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_stream_anonymous_is_denied(self, api_client, workspace, project, copilot_session):
+        response = api_client.get(_stream_url(workspace.slug, project.id, copilot_session.id))
+
+        assert response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)

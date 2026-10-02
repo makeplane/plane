@@ -4,7 +4,7 @@
 
 from django.urls import path
 
-from plane.app.views import CopilotSessionViewSet
+from plane.app.views import CopilotSessionViewSet, CopilotSessionStreamViewSet
 
 
 urlpatterns = [
@@ -17,5 +17,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/copilot/sessions/<uuid:pk>/",
         CopilotSessionViewSet.as_view({"get": "retrieve"}),
         name="copilot-session",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/copilot/sessions/<uuid:session_id>/stream/",
+        CopilotSessionStreamViewSet.as_view({"get": "stream"}),
+        name="copilot-session-stream",
     ),
 ]
