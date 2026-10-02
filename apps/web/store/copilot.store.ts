@@ -89,7 +89,7 @@ export class CopilotStore implements ICopilotStore {
     const session = await this.service.getSession(workspaceSlug, projectId, sessionId);
     runInAction(() => {
       this.session = session;
-      this.messages = [...session.messages].toSorted((a, b) => a.sequence - b.sequence);
+      this.messages = [...session.messages].toSorted((a: TCopilotMessage, b: TCopilotMessage) => a.sequence - b.sequence);
       this.toolCalls = {};
       for (const message of this.messages) {
         for (const toolCall of message.tool_calls) {

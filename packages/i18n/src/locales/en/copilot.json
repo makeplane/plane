@@ -1,0 +1,21 @@
+{
+  "copilot": {
+    "title": "Planning copilot",
+    "placeholder": "Ask the planning copilot...",
+    "send": "Send",
+    "stop": "Stop generating",
+    "close": "Close",
+    "open": "Open copilot",
+    "collapse": "Collapse panel",
+    "expand": "Expand panel",
+    "loading": "Loading conversation",
+    "empty_state": {
+      "title": "Plan with the copilot",
+      "description": "Answer a few questions and I'll help you turn this into a solid plan."
+    },
+    "error_state": {
+      "title": "Something went wrong",
+      "description": "The conversation could not be loaded. Try again."
+    }
+  }
+}
