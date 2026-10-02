@@ -17,6 +17,7 @@ import {
   ProjectsOutline,
   StartDateOutline,
   StateOutline,
+  TextOutline,
   UserOutline,
 } from "@makeplane/propel/icons";
 // plane imports
@@ -50,6 +51,7 @@ import {
   getStateGroupFilterConfig,
   getSubscriberFilterConfig,
   getTargetDateFilterConfig,
+  getTitleFilterConfig,
   getUpdatedAtFilterConfig,
   isLoaderReady,
 } from "@plane/utils";
@@ -146,6 +148,16 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
    * @returns True if the filter is enabled, false otherwise.
    */
   const isFilterEnabled = useCallback((key: TWorkItemFilterProperty) => filtersToShow.has(key), [filtersToShow]);
+
+  const titleFilterConfig = useMemo(
+    () =>
+      getTitleFilterConfig<TWorkItemFilterProperty>("name")({
+        isEnabled: isFilterEnabled("name"),
+        filterIcon: TextOutline,
+        ...operatorConfigs,
+      }),
+    [isFilterEnabled, operatorConfigs]
+  );
 
   // state group filter config
   const stateGroupFilterConfig = useMemo(
@@ -365,6 +377,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   return {
     areAllConfigsInitialized,
     configs: [
+      titleFilterConfig,
       stateFilterConfig,
       stateGroupFilterConfig,
       assigneeFilterConfig,
@@ -382,6 +395,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       subscriberFilterConfig,
     ],
     configMap: {
+      name: titleFilterConfig,
       project_id: projectFilterConfig,
       state_group: stateGroupFilterConfig,
       state_id: stateFilterConfig,
