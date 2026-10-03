@@ -7,6 +7,8 @@ import json
 import os
 import secrets
 
+# Third party imports
+from redis_lua_py import Key, redis, script
 
 # Module imports
 from plane.authentication.adapter.credential import CredentialAdapter
@@ -19,6 +21,18 @@ from plane.authentication.adapter.error import (
 from plane.db.models import User
 
 
+# Atomic INCR + first-time EXPIRE for the verify-attempt counter.
+# Using a dedicated counter key with this script makes the increment
+# safe under concurrent wrong-code requests; a plain JSON read/modify/
+# write would race and let parallel attackers exceed the cap.
+@script
+def increment_verify_attempts(key: Key, ttl: int) -> int:
+    count = redis.incr(key)
+    if count == 1:
+        redis.expire(key, ttl)
+    return count
+
+
 class MagicCodeProvider(CredentialAdapter):
     provider = "magic-code"
 
@@ -26,18 +40,6 @@ class MagicCodeProvider(CredentialAdapter):
     # is invalidated. Prevents brute-forcing the 6-digit code space within
     # the token TTL window.
     MAX_VERIFY_ATTEMPTS = 5
-
-    # Atomic INCR + first-time EXPIRE for the verify-attempt counter.
-    # Using a dedicated counter key with this script makes the increment
-    # safe under concurrent wrong-code requests; a plain JSON read/modify/
-    # write would race and let parallel attackers exceed the cap.
-    _INCREMENT_VERIFY_ATTEMPTS_SCRIPT = (
-        'local count = redis.call("INCR", KEYS[1]) '
-        'if count == 1 then '
-        '    redis.call("EXPIRE", KEYS[1], tonumber(ARGV[1])) '
-        'end '
-        'return count'
-    )
 
     @staticmethod
     def _verify_attempts_key(token_key):
@@ -157,13 +159,10 @@ class MagicCodeProvider(CredentialAdapter):
                 remaining_ttl = ri.ttl(self.key)
                 if remaining_ttl is None or remaining_ttl <= 0:
                     remaining_ttl = 1
-                verify_attempts = int(
-                    ri.eval(
-                        self._INCREMENT_VERIFY_ATTEMPTS_SCRIPT,
-                        1,
-                        self._verify_attempts_key(self.key),
-                        remaining_ttl,
-                    )
+                verify_attempts = increment_verify_attempts(
+                    ri,
+                    key=self._verify_attempts_key(self.key),
+                    ttl=remaining_ttl,
                 )
 
                 if verify_attempts >= self.MAX_VERIFY_ATTEMPTS:
