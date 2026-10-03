@@ -271,8 +271,8 @@ class CycleIssueViewSet(BaseViewSet):
                     cycle_id=cycle_id,
                     issue_id=issue,
                 )
-                for issue in new_issues
             ],
+            ignore_conflicts=True,
             batch_size=10,
         )
 
