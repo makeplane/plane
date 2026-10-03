@@ -32,6 +32,11 @@ export const CORE_COMPARISON_OPERATOR = {
   RANGE: "range",
 } as const;
 
+/** Case-insensitive substring matching for text fields. */
+export const CORE_TEXT_OPERATOR = {
+  ICONTAINS: "icontains",
+} as const;
+
 /**
  * Core operators that support multiple values
  */
@@ -44,6 +49,7 @@ export const CORE_OPERATORS = {
   ...CORE_EQUALITY_OPERATOR,
   ...CORE_COLLECTION_OPERATOR,
   ...CORE_COMPARISON_OPERATOR,
+  ...CORE_TEXT_OPERATOR,
 } as const;
 
 /**
