@@ -40,7 +40,19 @@ class CycleWriteSerializer(BaseSerializer):
     class Meta:
         model = Cycle
         fields = "__all__"
-        read_only_fields = ["workspace", "project", "owned_by", "archived_at"]
+        # created_by/updated_by are audit fields set server-side by BaseModel.save()
+        # from the request user; with fields="__all__" they are otherwise
+        # client-writable, letting a caller forge attribution on the cycle. save()
+        # never re-stamps them on update, so a supplied value would survive — mark
+        # them read-only so the client value is ignored.
+        read_only_fields = [
+            "workspace",
+            "project",
+            "owned_by",
+            "archived_at",
+            "created_by",
+            "updated_by",
+        ]
 
 
 class CycleSerializer(BaseSerializer):
