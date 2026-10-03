@@ -15,10 +15,30 @@ import type { i18n as I18nInstance } from "i18next";
 
 export const i18nInstance: I18nInstance = i18n.createInstance();
 
+declare global {
+  interface ImportMeta {
+    glob(pattern: string): Record<string, () => Promise<{ default: object }>>;
+  }
+}
+
+// A fully dynamic template import (`import(`../locales/${lang}/${ns}.json`)`)
+// cannot be statically analyzed by the bundler, so the JSON never ends up in
+// the bundle and every translation 404s at runtime. import.meta.glob is
+// expanded by vite at build time, which inlines a loader for every locale
+// file. Keep this as a plain `import.meta.glob(...)` call — wrapping it in a
+// cast or optional chain hides it from vite's syntax transform.
+const localeLoaders = import.meta.glob("../locales/*/*.json");
+
 i18nInstance
   .use(ICU)
   .use(initReactI18next)
-  .use(resourcesToBackend((language: string, namespace: string) => import(`../locales/${language}/${namespace}.json`)));
+  .use(
+    resourcesToBackend((language: string, namespace: string) => {
+      const loader = localeLoaders[`../locales/${language}/${namespace}.json`];
+      if (!loader) return Promise.reject(new Error(`Missing locale file: ${language}/${namespace}`));
+      return loader();
+    }),
+  );
 
 const initialLng =
   typeof window !== "undefined" ? localStorage.getItem(LANGUAGE_STORAGE_KEY) || FALLBACK_LANGUAGE : FALLBACK_LANGUAGE;
