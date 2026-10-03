@@ -11,6 +11,11 @@ import { createFilterConfig, createFilterFieldConfig, createOperatorConfigEntry 
 
 type TCreateTitleFilterParams = TCreateFilterConfigParams & IFilterIconConfig;
 
+/**
+ * Create a Title filter factory with a scalar, case-insensitive substring operator.
+ * @param key - The work-item property to bind the filter to.
+ * @returns A factory accepting filter enablement, operator and icon options.
+ */
 export const getTitleFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateTitleFilterParams> =>
   (params) =>

@@ -15,11 +15,17 @@ type TTextFilterValueInputProps = {
   onChange: (value: string | null) => void;
 };
 
+/**
+ * Render a text filter whose local draft resets when the committed value changes.
+ */
 export function TextFilterValueInput(props: TTextFilterValueInputProps) {
-  // A restored or externally changed expression replaces any uncommitted draft.
   return <TextFilterInput key={props.value} {...props} />;
 }
 
+/**
+ * Keep edits local until blur or Enter, and discard them on Escape.
+ * Trim committed text and emit null to clear an empty condition.
+ */
 function TextFilterInput({ value, placeholder, isDisabled, onChange }: TTextFilterValueInputProps) {
   // Store only an edit; the committed value remains owned by the filter expression.
   const [draft, setDraft] = useState<string | null>(null);

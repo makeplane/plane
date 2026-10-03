@@ -11,6 +11,9 @@ import { getTitleFilterConfig } from "@plane/utils";
 import { FilterInstance } from "../rich-filters/filter";
 import { workItemFiltersAdapter } from "./adapter";
 
+/**
+ * Create a title-enabled filter instance and capture expression changes and saved-view payloads.
+ */
 function createFilter(initialExpression: TWorkItemFilterExpression = {}) {
   const changes: TWorkItemFilterExpression[] = [];
   const saved: TWorkItemFilterExpression[] = [];

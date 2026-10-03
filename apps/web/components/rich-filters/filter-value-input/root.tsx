@@ -27,6 +27,9 @@ import { MultiSelectFilterValueInput } from "./select/multi";
 import { SingleSelectFilterValueInput } from "./select/single";
 import { TextFilterValueInput } from "./text";
 
+/**
+ * Render the value editor selected by the condition's filter field type.
+ */
 export const FilterValueInput = observer(function FilterValueInput<P extends TFilterProperty, V extends TFilterValue>(
   props: TFilterValueInputProps<P, V>
 ) {

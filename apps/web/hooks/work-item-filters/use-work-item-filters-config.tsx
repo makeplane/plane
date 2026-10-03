@@ -90,6 +90,10 @@ export type TWorkItemFiltersConfig = {
   members: IUserLite[];
 };
 
+/**
+ * Build work-item filter configs with enablement based on allowed properties and entity data.
+ * Return both ordered configs and a property lookup alongside their initialization state.
+ */
 export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps): TWorkItemFiltersConfig => {
   const { allowedFilters, cycleIds, labelIds, memberIds, moduleIds, projectId, projectIds, stateIds, workspaceSlug } =
     props;
@@ -134,9 +138,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   );
   const projects = useMemo(
     () =>
-      projectIds
-        ? (projectIds.map((projectId) => getProjectById(projectId)).filter((project) => project) as IProject[])
-        : [],
+      projectIds ? (projectIds.map((id) => getProjectById(id)).filter((candidate) => candidate) as IProject[]) : [],
     [projectIds, getProjectById]
   );
   const areAllConfigsInitialized = useMemo(() => isLoaderReady(projectLoader), [projectLoader]);
@@ -368,7 +370,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         isEnabled: isFilterEnabled("project_id") && projects !== undefined,
         filterIcon: ProjectsOutline,
         projects: projects,
-        getOptionIcon: (project) => <Logo logo={project.logo_props} size={12} />,
+        getOptionIcon: (option) => <Logo logo={option.logo_props} size={12} />,
         ...operatorConfigs,
       }),
     [isFilterEnabled, projects, operatorConfigs]
