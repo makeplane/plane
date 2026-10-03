@@ -31,7 +31,7 @@ export const PERSON_NAME_REGEX = /^[\p{L}\s'-]+$/u;
  * Use case: International usernames like "josé_123", "李明.dev", "müller-2024"
  * Blocks: Spaces and injection-risk characters
  */
-export const DISPLAY_NAME_REGEX = /^[\p{L}\p{N}_.-]+$/u;
+export const DISPLAY_NAME_REGEX = /^[\p{L}\p{N}_. -]+$/u;
 
 /**
  * Company/Organization Name Pattern (for company_name, workspace names)
@@ -113,7 +113,7 @@ export const validateDisplayName = (displayName: string): boolean | string => {
   }
 
   if (!DISPLAY_NAME_REGEX.test(displayName)) {
-    return "Display name can only contain letters, numbers, periods, hyphens, and underscores";
+    return "Display name can only contain letters, numbers, spaces, periods, hyphens, and underscores";
   }
 
   return true;
