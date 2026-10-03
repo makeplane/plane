@@ -180,7 +180,11 @@ class PageBinaryUpdateSerializer(serializers.Serializer):
     def validate_description_binary(self, value):
         """Validate the base64-encoded binary data"""
         if not value:
-            return value
+            # None, not the empty string: description_binary is a BinaryField, so
+            # storing "" raised "bytes or buffer expected, got <class 'str'>" and
+            # surfaced as a 500. NULL is how an absent document is already
+            # represented, and the fetch path derives one from the HTML.
+            return None
 
         try:
             # Decode the base64 data
