@@ -132,9 +132,7 @@ class TestCycleIssueCrossTenantBOLA:
             "Cross-tenant reassignment: victim's CycleIssue was moved to the attacker's cycle"
         )
         # No CycleIssue for the victim's issue should exist under the attacker's cycle.
-        assert not CycleIssue.objects.filter(
-            cycle_id=attacker_cycle.id, issue_id=victim_issue.id
-        ).exists()
+        assert not CycleIssue.objects.filter(cycle_id=attacker_cycle.id, issue_id=victim_issue.id).exists()
 
     @pytest.mark.django_db
     def test_same_tenant_reassignment_still_works(
