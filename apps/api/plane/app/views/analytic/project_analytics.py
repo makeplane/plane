@@ -193,7 +193,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
             cycle_issues = CycleIssue.objects.filter(**self.filters["base_filters"], cycle_id=cycle_id).values_list(
                 "issue_id", flat=True
             )
-            cycle = Cycle.objects.filter(id=cycle_id).first()
+            cycle = Cycle.objects.filter(id=cycle_id, workspace__slug=self._workspace_slug).first()
             if cycle and cycle.start_date:
                 start_date = cycle.start_date.date()
                 end_date = cycle.end_date.date()
@@ -205,7 +205,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
             module_issues = ModuleIssue.objects.filter(**self.filters["base_filters"], module_id=module_id).values_list(
                 "issue_id", flat=True
             )
-            module = Module.objects.filter(id=module_id).first()
+            module = Module.objects.filter(id=module_id, workspace__slug=self._workspace_slug).first()
             if module and module.start_date:
                 start_date = module.start_date
                 end_date = module.target_date
