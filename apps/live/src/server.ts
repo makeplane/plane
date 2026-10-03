@@ -19,6 +19,8 @@ import { logger, loggerMiddleware } from "@plane/logger";
 import { CONTROLLERS } from "@/controllers";
 // env
 import { env } from "@/env";
+// cors
+import { parseAllowedOrigins } from "@/lib/cors-origins";
 // hocuspocus server
 import { HocusPocusServerManager } from "@/hocuspocus";
 // redis
@@ -69,7 +71,7 @@ export class Server {
   }
 
   private setupCors() {
-    const allowedOrigins = env.CORS_ALLOWED_ORIGINS.split(",").map((s) => s.trim());
+    const allowedOrigins = parseAllowedOrigins(env.CORS_ALLOWED_ORIGINS);
     this.app.use(
       cors({
         origin: allowedOrigins.length > 0 ? allowedOrigins : false,
