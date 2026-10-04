@@ -89,7 +89,7 @@ catalog:
   "@vitest/coverage-v8": "^4.1.11"
   "ast-types": "0.14.2"
   "autoprefixer": "^10.4.19"
-  "axios": "1.18.1"
+  "axios": "1.20.0"
   "buffer": "^6.0.3"
   "chroma-js": "^3.2.0"
   "class-variance-authority": "0.7.1"
@@ -208,9 +208,9 @@ overrides:
   mdast-util-to-hast: 13.2.1
   valibot: 1.4.2
   glob: 11.1.0
-  # brace-expansion <5.0.9 has two DoS advisories (GHSA-mh99-v99m-4gvg, GHSA-rgw5-rvv9-x895,
-  # the second bypasses the first's mitigation) reachable via serve>serve-handler>minimatch.
-  brace-expansion: 5.0.9
+  # EXACT pin, bump the number. Stack-exhaustion DoS (CVE-2026-102276, -102278, fixed
+  # 5.0.11) reachable via serve>serve-handler>minimatch.
+  brace-expansion: 5.0.12
   nanoid: 3.3.18
   esbuild: 0.28.1
   "@babel/core": 7.29.7
@@ -233,7 +233,7 @@ overrides:
   serialize-javascript: 7.0.5
   "ajv@6": 6.14.0
   "ajv@8": 8.18.0
-  "undici@7": 7.29.0
+  "undici@7": 7.30.0
   flatted: 3.4.2
   picomatch: 2.3.2
   "yaml@1": 1.10.3
