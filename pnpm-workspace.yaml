@@ -49,7 +49,7 @@ catalog:
   "@tanstack/virtual-core": "^3.13.12"
   "@testing-library/react": "16.3.3"
   "@testing-library/user-event": "14.6.1"
-  "@tiptap/core": "^2.22.3"
+  "@tiptap/core": "^3.30.5"
   "@tiptap/extension-blockquote": "^2.22.3"
   "@tiptap/extension-character-count": "^2.22.3"
   "@tiptap/extension-collaboration": "^2.22.3"
