@@ -10,6 +10,12 @@
 - `pnpm fix` - Auto-fix format and lint issues
 - `pnpm turbo run <command> --filter=<package>` - Target specific package/app
 
+## Cloud Agent
+
+`.cursor/environment.json` is the Cloud Agent environment. The image supplies Node 22.22.0, pnpm 11.10.0, and Docker. `bash .cursor/install.sh` copies any missing `.env` files, adds a Django `SECRET_KEY` when `apps/api/.env` does not have one, runs `pnpm install --frozen-lockfile`, and builds the local API image. `bash .cursor/start.sh` starts Docker and `docker compose -f docker-compose-local.yml up -d` (Postgres, Valkey, RabbitMQ, MinIO, API on :8000). The `dev` terminal runs `pnpm dev` (web :3000, admin :3001, space :3002, live :3100).
+
+Do not re-run `./setup.sh` on a checkout that already has `.env` files. It overwrites those files and appends another `SECRET_KEY`.
+
 ## Code Style
 
 - **Imports**: Use `workspace:*` for internal packages, `catalog:` for external deps

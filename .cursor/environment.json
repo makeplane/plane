@@ -1,0 +1,32 @@
+{
+  "name": "Plane",
+  "user": "ubuntu",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "install": "bash .cursor/install.sh",
+  "start": "bash .cursor/start.sh",
+  "terminals": [
+    {
+      "name": "dev",
+      "command": "bash .cursor/run-dev.sh",
+      "description": "pnpm dev: web :3000, admin :3001, space :3002, live :3100"
+    },
+    {
+      "name": "api",
+      "command": "bash .cursor/logs-api.sh",
+      "description": "Docker logs for the Django API, worker, and beat"
+    }
+  ],
+  "ports": [
+    { "name": "web", "port": 3000 },
+    { "name": "admin", "port": 3001 },
+    { "name": "space", "port": 3002 },
+    { "name": "live", "port": 3100 },
+    { "name": "api", "port": 8000 },
+    { "name": "postgres", "port": 5432 },
+    { "name": "redis", "port": 6379 },
+    { "name": "minio", "port": 9000 },
+    { "name": "minio console", "port": 9090 }
+  ]
+}
