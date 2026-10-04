@@ -4,6 +4,7 @@
 
 # Python imports
 import json
+import logging
 from datetime import timedelta
 
 # Third party imports
@@ -15,8 +16,11 @@ from django.utils import timezone
 
 # Module imports
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.db.models import Issue, Project, State
+from plane.db.models import IntakeIssue, Issue, Project, State
+from plane.db.models.intake import IntakeIssueStatus
 from plane.utils.exception_logger import log_exception
+
+logger = logging.getLogger("plane.worker")
 
 
 @shared_task
@@ -144,6 +148,27 @@ def close_old_issues():
                         for issue in issues_to_update
                     ]
         return
+    except Exception as e:
+        log_exception(e)
+        return
+
+
+@shared_task
+def unsnooze_expired_intake_issues():
+    """Return intake items whose snooze has lapsed to PENDING.
+
+    ``snoozed_till`` is already the wake-up instant (a picked day is stored as
+    its midnight in the project timezone, and Project.save() re-times it if that
+    timezone changes), so a plain comparison with now is enough. A bulk
+    ``update()`` is fine: nothing listens for SNOOZED -> PENDING.
+    """
+    try:
+        now = timezone.now()
+        updated_count = IntakeIssue.objects.filter(status=IntakeIssueStatus.SNOOZED, snoozed_till__lte=now).update(
+            status=IntakeIssueStatus.PENDING, snoozed_till=None, updated_at=now
+        )
+        logger.info("unsnooze_expired_intake_issues: returned %d intake issues to pending", updated_count)
+        return updated_count
     except Exception as e:
         log_exception(e)
         return

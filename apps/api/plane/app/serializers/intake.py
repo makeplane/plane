@@ -12,6 +12,7 @@ from .project import ProjectLiteSerializer
 from .state import StateLiteSerializer
 from .user import UserLiteSerializer
 from plane.db.models import Intake, IntakeIssue, Issue, StateGroup, State
+from plane.utils.timezone_converter import project_day_start_utc
 
 
 class IntakeSerializer(BaseSerializer):
@@ -45,6 +46,13 @@ class IntakeIssueSerializer(BaseSerializer):
         Validate that if status is being changed to accepted (1),
         the project has a default state to transition to.
         """
+
+        # A bare "YYYY-MM-DD" is the picked day itself. Parsed as-is it would be UTC
+        # midnight, which IntakeIssue.save() could floor to the previous day in a
+        # timezone behind UTC, so resolve it in the project timezone here.
+        raw_snoozed_till = self.initial_data.get("snoozed_till")
+        if attrs.get("snoozed_till") and isinstance(raw_snoozed_till, str) and len(raw_snoozed_till) == 10:
+            attrs["snoozed_till"] = project_day_start_utc(raw_snoozed_till, self.instance.project_id)
 
         # Check if status is being updated to accepted
         if attrs.get("status") == 1:

@@ -4,6 +4,7 @@
 
 # Python imports
 import pytz
+from datetime import datetime, time
 from uuid import uuid4
 from enum import Enum
 
@@ -14,7 +15,7 @@ from django.db import models
 from django.db.models import Q
 
 # Module imports
-from plane.db.mixins import AuditModel
+from plane.db.mixins import AuditModel, ChangeTrackerMixin
 
 from .base import BaseModel
 
@@ -65,7 +66,9 @@ def get_default_preferences():
     return {"pages": {"block_display": True}, "navigation": {"default_tab": "work_items", "hide_in_more_menu": []}}
 
 
-class Project(BaseModel):
+class Project(ChangeTrackerMixin, BaseModel):
+    TRACKED_FIELDS = ["timezone"]
+
     NETWORK_CHOICES = ((0, "Secret"), (2, "Public"))
     name = models.CharField(max_length=255, verbose_name="Project Name")
     description = models.TextField(verbose_name="Project Description", blank=True)
@@ -164,6 +167,26 @@ class Project(BaseModel):
         db_table = "projects"
         ordering = ("-created_at",)
 
+    def _retime_intake_snoozes(self, old_timezone):
+        """Move open intake snoozes to the same day's midnight in the new timezone.
+
+        A snooze is stored as its day's midnight in the project timezone (see
+        IntakeIssue.save()), so a timezone change would otherwise wake it at the
+        old zone's midnight.
+        """
+        # Inline import: intake.py imports from this module (ProjectBaseModel).
+        from plane.db.models.intake import IntakeIssue, IntakeIssueStatus
+
+        old_tz, new_tz = pytz.timezone(old_timezone), pytz.timezone(self.timezone)
+        retimed = []
+        for intake_issue in IntakeIssue.objects.filter(
+            project_id=self.id, status=IntakeIssueStatus.SNOOZED, snoozed_till__isnull=False
+        ).only("id", "snoozed_till"):
+            day = intake_issue.snoozed_till.astimezone(old_tz).date()
+            intake_issue.snoozed_till = new_tz.localize(datetime.combine(day, time.min))
+            retimed.append(intake_issue)
+        IntakeIssue.objects.bulk_update(retimed, ["snoozed_till"])
+
     def save(self, *args, **kwargs):
         from plane.db.models import Workspace
 
@@ -174,7 +197,13 @@ class Project(BaseModel):
             workspace = Workspace.objects.get(id=self.workspace_id)
             self.timezone = workspace.timezone
 
-        return super().save(*args, **kwargs)
+        # Read before super().save(): the change tracker resets once it returns.
+        old_timezone = self.old_values.get("timezone") if not is_creating and self.has_changed("timezone") else None
+
+        super().save(*args, **kwargs)
+
+        if old_timezone:
+            self._retime_intake_snoozes(old_timezone)
 
 
 class ProjectBaseModel(BaseModel):
