@@ -204,3 +204,22 @@ class TestS3StorageSignedURLExpiration:
         mock_s3_client.generate_presigned_url.assert_called_once()
         call_kwargs = mock_s3_client.generate_presigned_url.call_args[1]
         assert call_kwargs["ExpiresIn"] == 120
+
+
+@pytest.mark.unit
+class TestS3StorageDefaultStorage:
+    """S3Storage is STORAGES["default"]; FileField saves go through S3Boto3Storage._save.
+
+    ``__init__`` never called ``super().__init__()``, so ``location`` was missing and
+    every direct file upload raised ``AttributeError: 'S3Storage' object has no
+    attribute 'location'``.
+    """
+
+    @patch("plane.settings.storage.boto3")
+    def test_base_storage_attributes_are_initialised(self, mock_boto3):
+        mock_boto3.client.return_value = Mock()
+
+        storage = S3Storage()
+
+        assert storage.location == ""
+        assert storage._normalize_name("ws/file.png") == "ws/file.png"

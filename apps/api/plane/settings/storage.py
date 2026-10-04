@@ -23,6 +23,9 @@ class S3Storage(S3Boto3Storage):
     """S3 storage class to generate presigned URLs for S3 objects"""
 
     def __init__(self, request=None):
+        # Let django-storages set up its own state (location, bucket_name, ...) so
+        # this class also works as the default FileField storage.
+        super().__init__()
         # Get the AWS credentials and bucket name from the environment
         self.aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID")
         # Use the AWS_SECRET_ACCESS_KEY environment variable for the secret key
