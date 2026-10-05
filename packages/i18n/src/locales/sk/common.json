@@ -515,7 +515,7 @@
     "workspace_level": "Úroveň pracovného priestoru",
     "order_by": {
       "label": "Triediť podľa",
-      "manual": "Manuálne - Poradie",
+      "manual": "Manuálne",
       "last_created": "Naposledy vytvorené",
       "last_updated": "Naposledy aktualizované",
       "start_date": "Dátum začiatku",
