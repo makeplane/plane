@@ -19,7 +19,5 @@ export const getIssueOrderByField = (orderBy: TIssueOrderByOptions): TIssueOrder
 export const getIssueOrderByDirection = (orderBy: TIssueOrderByOptions): TIssueOrderByDirection =>
   orderBy.startsWith("-") ? "desc" : "asc";
 
-export const buildIssueOrderBy = (
-  field: TIssueOrderByField,
-  direction: TIssueOrderByDirection
-): TIssueOrderByOptions => (direction === "desc" ? `-${field}` : field) as TIssueOrderByOptions;
+export const buildIssueOrderBy = (field: TIssueOrderByField, direction: TIssueOrderByDirection): TIssueOrderByOptions =>
+  (direction === "desc" ? `-${field}` : field) as TIssueOrderByOptions;
