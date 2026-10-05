@@ -31,14 +31,18 @@ jobs:
       - name: Set up uv
         uses: astral-sh/setup-uv@v7
         with:
-          version: "0.12.21"
-          python-version: "3.12"
+          # uv version comes from [tool.uv] required-version.
+          version-file: "apps/api/pyproject.toml"
+          # Same patch release as the production image (python:3.12.12-alpine).
+          python-version: "3.12.12"
           enable-cache: true
           cache-dependency-glob: "apps/api/uv.lock"
-      # --locked fails the job if uv.lock is out of date with pyproject.toml.
+      # Only the dev group (ruff) is needed to lint. --locked still fails the
+      # job if uv.lock is out of date with pyproject.toml.
       - name: Install API Dependencies
         working-directory: apps/api
-        run: uv sync --locked
+        run: uv sync --locked --only-group dev
+      # No --fix: fixable violations must fail the job, not be rewritten on the runner.
       - name: Lint apps/api
         working-directory: apps/api
-        run: uv run --no-sync ruff check --fix .
+        run: uv run --no-sync ruff check .

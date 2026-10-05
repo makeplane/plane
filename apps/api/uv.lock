@@ -1075,8 +1075,6 @@ dependencies = [
     { name = "opentelemetry-instrumentation-django" },
     { name = "opentelemetry-sdk" },
     { name = "psycopg" },
-    { name = "psycopg-binary" },
-    { name = "psycopg-c", marker = "sys_platform == 'linux'" },
     { name = "pyjwt" },
     { name = "python-json-logger" },
     { name = "pytz" },
@@ -1093,16 +1091,19 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "django-debug-toolbar" },
+    { name = "psycopg-binary" },
     { name = "ruff" },
 ]
 production = [
     { name = "gunicorn" },
+    { name = "psycopg-c" },
 ]
 test = [
     { name = "coverage" },
     { name = "factory-boy" },
     { name = "freezegun" },
     { name = "httpx" },
+    { name = "psycopg-binary" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "pytest-django" },
@@ -1140,8 +1141,6 @@ requires-dist = [
     { name = "opentelemetry-instrumentation-django", specifier = "==0.49b1" },
     { name = "opentelemetry-sdk", specifier = "==1.28.1" },
     { name = "psycopg", specifier = "==3.3.4" },
-    { name = "psycopg-binary", specifier = "==3.3.4" },
-    { name = "psycopg-c", marker = "sys_platform == 'linux'", specifier = "==3.3.4" },
     { name = "pyjwt", specifier = "==2.15.1" },
     { name = "python-json-logger", specifier = "==4.0.0" },
     { name = "pytz", specifier = "==2024.1" },
@@ -1158,14 +1157,19 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "django-debug-toolbar", specifier = "==6.0.0" },
+    { name = "psycopg-binary", specifier = "==3.3.4" },
     { name = "ruff", specifier = "==0.9.7" },
 ]
-production = [{ name = "gunicorn", specifier = "==23.0.0" }]
+production = [
+    { name = "gunicorn", specifier = "==23.0.0" },
+    { name = "psycopg-c", specifier = "==3.3.4" },
+]
 test = [
     { name = "coverage", specifier = "==7.2.7" },
     { name = "factory-boy", specifier = "==3.3.0" },
     { name = "freezegun", specifier = "==1.2.2" },
     { name = "httpx", specifier = "==0.28.1" },
+    { name = "psycopg-binary", specifier = "==3.3.4" },
     { name = "pytest", specifier = "==9.0.3" },
     { name = "pytest-cov", specifier = "==4.1.0" },
     { name = "pytest-django", specifier = "==4.12.0" },

@@ -8,12 +8,9 @@ dependencies = [
     "Django==5.2.17",
     # rest framework
     "djangorestframework==3.17.2",
-    # postgres
+    # postgres (the psycopg implementation comes from a group: psycopg-c in
+    # production, psycopg-binary in dev/test)
     "psycopg==3.3.4",
-    "psycopg-binary==3.3.4",
-    # Built from source against libpq (Linux images/CI); elsewhere, e.g. local
-    # macOS, psycopg falls back to psycopg-binary.
-    "psycopg-c==3.3.4; sys_platform == 'linux'",
     "dj-database-url==3.0.1",
     # redis
     "redis==5.0.4",
@@ -82,19 +79,25 @@ dependencies = [
 ]
 
 [dependency-groups]
-# Installed only in the production image (Dockerfile.api):
+# Installed only by the production image (Dockerfile.api) and migration-check:
 #   uv sync --no-default-groups --group production
 production = [
     # server
     "gunicorn==23.0.0",
+    # postgres C implementation, built from source (needs pg_config and a compiler)
+    "psycopg-c==3.3.4",
 ]
 dev = [
+    # postgres prebuilt wheel, so local setups never compile psycopg-c
+    "psycopg-binary==3.3.4",
     # debug toolbar
     "django-debug-toolbar==6.0.0",
     # formatter
     "ruff==0.9.7",
 ]
 test = [
+    # postgres prebuilt wheel (also in dev, so either group works on its own)
+    "psycopg-binary==3.3.4",
     # test framework
     "pytest==9.0.3",
     "pytest-django==4.12.0",
@@ -108,100 +111,11 @@ test = [
 ]
 
 [tool.uv]
+# Every uv that touches uv.lock is this exact version: CI reads it via
+# setup-uv's version-file, and the Dockerfiles pin the same image. Bump all together.
+required-version = "==0.12.21"
 # The API is a Django app, not an installable package: uv only manages its
 # environment and never builds or installs the project itself.
 package = false
 # A plain `uv sync` sets up everything needed to develop and run the tests.
 default-groups = ["dev", "test"]
-
-[tool.ruff]
-# Exclude a variety of commonly ignored directories.
-exclude = [
-    ".bzr",
-    ".direnv",
-    ".eggs",
-    ".git",
-    ".git-rewrite",
-    ".hg",
-    ".mypy_cache",
-    ".nox",
-    ".pants.d",
-    ".pytype",
-    ".ruff_cache",
-    ".svn",
-    ".tox",
-    ".venv",
-    "__pypackages__",
-    "_build",
-    "buck-out",
-    "build",
-    "dist",
-    "node_modules",
-    "venv",
-    "**/migrations/*",
-]
-
-# Same as Black.
-line-length = 120
-indent-width = 4
-
-[tool.ruff.format]
-# Use double quotes for strings.
-quote-style = "double"
-
-# Indent with spaces, rather than tabs.
-indent-style = "space"
-
-# Respect magic trailing commas.
-# skip-magic-trailing-comma = true
-
-# Automatically detect the appropriate line ending.
-line-ending = "auto"
-
-[tool.ruff.lint]
-# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
-select = ["E", "F"]
-ignore = []
-
-# Allow autofix for all enabled rules (when `--fix`) is provided.
-fixable = ["ALL"]
-unfixable = []
-
-# Allow unused variables when underscore-prefixed.
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-
-[tool.ruff.lint.pep8-naming]
-# Allow lowercase variables like "id"
-classmethod-decorators = ["classmethod", "validator", "root_validator"]
-
-[tool.ruff.lint.per-file-ignores]
-# Ignore specific rules for tests
-"tests/*" = ["E402", "F401", "F811"]
-# Ignore imported but unused in __init__.py files
-"__init__.py" = ["F401"]
-
-[tool.ruff.lint.mccabe]
-# Unlike Flake8, default to a complexity level of 10.
-max-complexity = 10
-
-[tool.ruff.lint.isort]
-combine-as-imports = true
-detect-same-package = true
-force-wrap-aliases = true
-known-first-party = ["plane"]
-known-third-party = ["rest_framework"]
-relative-imports-order = "closest-to-furthest"
-
-[tool.ruff.lint.flake8-tidy-imports]
-ban-relative-imports = "parents"
-
-[tool.ruff.lint.pycodestyle]
-ignore-overlong-task-comments = true
-max-doc-length = 88
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
-
-[tool.ruff.lint.pylint]
-max-args = 8
-max-statements = 50

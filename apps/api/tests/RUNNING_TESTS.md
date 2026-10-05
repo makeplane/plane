@@ -41,11 +41,11 @@ Use `docker compose run` to override the default `pytest` command. Anything you 
 docker compose -f docker-compose-test.yml run --rm --build api-tests pytest -m unit
 
 # A single directory, filtered by name
-docker compose -f docker-compose-test.yml run --rm api-tests \
+docker compose -f docker-compose-test.yml run --rm --build api-tests \
   pytest plane/tests/unit -k "test_workspace"
 
 # Single file with verbose output
-docker compose -f docker-compose-test.yml run --rm api-tests \
+docker compose -f docker-compose-test.yml run --rm --build api-tests \
   pytest plane/tests/unit/models/test_workspace.py -vv
 ```
 

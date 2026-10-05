@@ -139,6 +139,10 @@ services:
       - -c
       - |
         set -e
+        if ! command -v uv >/dev/null 2>&1; then
+          echo "api-tests image predates the uv migration; rebuild it: docker compose -f docker-compose-test.yml build api-tests" >&2
+          exit 1
+        fi
         uv sync --locked --inexact
         # STATIC_ROOT must exist or Django's static middleware emits a
         # UserWarning on every request (~100 of the warnings in test runs).
