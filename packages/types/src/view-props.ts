@@ -59,6 +59,13 @@ export type TIssueOrderByOptions =
   | "sub_issues_count"
   | "-sub_issues_count";
 
+// the direction a work item list is sorted in; "desc" is the "-" prefixed variant of an order by key
+export type TIssueOrderByDirection = "asc" | "desc";
+
+type TStripDescendingPrefix<T> = T extends `-${infer F}` ? F : T;
+// an order by key without its direction prefix, i.e. the property the list is sorted on
+export type TIssueOrderByField = TStripDescendingPrefix<TIssueOrderByOptions>;
+
 export type TIssueGroupingFilters = "active" | "backlog";
 
 export type TIssueExtraOptions = "show_empty_groups" | "sub_issue";

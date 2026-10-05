@@ -515,6 +515,7 @@
     "workspace_level": "La nivel de spațiu de lucru",
     "order_by": {
       "label": "Ordonează după",
+      "direction": "Direcție",
       "manual": "Manual - Rang",
       "last_created": "Ultima creată",
       "last_updated": "Ultima actualizată",

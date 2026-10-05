@@ -8,6 +8,8 @@
 
 import type {
   TIssueGroupByOptions,
+  TIssueOrderByDirection,
+  TIssueOrderByField,
   TIssueOrderByOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
@@ -129,17 +131,62 @@ export const ISSUE_GROUP_BY_OPTIONS: {
   { key: null, titleTranslationKey: "common.none" },
 ];
 
+// what a work item list can be sorted on; the direction is chosen separately (see ISSUE_ORDER_BY_DIRECTION_OPTIONS)
 export const ISSUE_ORDER_BY_OPTIONS: {
-  key: TIssueOrderByOptions;
+  key: TIssueOrderByField;
   titleTranslationKey: string;
+  // manual (rank) ordering has no direction
+  isDirectional: boolean;
+  // direction used when switching to this field from a field without a direction
+  defaultDirection: TIssueOrderByDirection;
 }[] = [
-  { key: "sort_order", titleTranslationKey: "common.order_by.manual" },
-  { key: "-created_at", titleTranslationKey: "common.order_by.last_created" },
-  { key: "-updated_at", titleTranslationKey: "common.order_by.last_updated" },
-  { key: "start_date", titleTranslationKey: "common.order_by.start_date" },
-  { key: "target_date", titleTranslationKey: "common.order_by.due_date" },
-  { key: "-priority", titleTranslationKey: "common.priority" },
-  { key: "duration", titleTranslationKey: "duration" },
+  {
+    key: "sort_order",
+    titleTranslationKey: "common.order_by.manual",
+    isDirectional: false,
+    defaultDirection: "asc",
+  },
+  {
+    key: "created_at",
+    titleTranslationKey: "common.sort.created_on",
+    isDirectional: true,
+    defaultDirection: "desc",
+  },
+  {
+    key: "updated_at",
+    titleTranslationKey: "common.sort.updated_on",
+    isDirectional: true,
+    defaultDirection: "desc",
+  },
+  {
+    key: "start_date",
+    titleTranslationKey: "common.order_by.start_date",
+    isDirectional: true,
+    defaultDirection: "asc",
+  },
+  {
+    key: "target_date",
+    titleTranslationKey: "common.order_by.due_date",
+    isDirectional: true,
+    defaultDirection: "asc",
+  },
+  {
+    key: "priority",
+    titleTranslationKey: "common.priority",
+    isDirectional: true,
+    defaultDirection: "desc",
+  },
+  {
+    key: "duration",
+    titleTranslationKey: "duration",
+    isDirectional: true,
+    defaultDirection: "asc",
+  },
+];
+
+export const ISSUE_ORDER_BY_DIRECTION_OPTIONS: { key: TIssueOrderByDirection; titleTranslationKey: string }[] = [
+  { key: "asc", titleTranslationKey: "common.order_by.asc" },
+  { key: "desc", titleTranslationKey: "common.order_by.desc" },
 ];
 
 export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [
