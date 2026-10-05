@@ -1,0 +1,2 @@
+# Local uv/virtualenv environments hold host-platform binaries; never ship them.
+.venv
