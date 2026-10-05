@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# pnpm dev for the web, admin, space, and live apps, plus workspace package watchers.
+# Frontend terminal. CONTRIBUTING starts the web apps with `pnpm dev`
+# (web :3000, admin :3001, space :3002, live :3100), separate from compose.
 # Terminals start beside the boot script, so wait until the API is accepting connections.
 set -euo pipefail
 

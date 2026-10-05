@@ -2,7 +2,7 @@
 
 ## Commands
 
-- `pnpm dev` - Start all dev servers (web:3000, admin:3001)
+- `pnpm dev` - Start frontend dev servers (web:3000, admin:3001, space:3002, live:3100)
 - `pnpm build` - Build all packages and apps
 - `pnpm check` - Run all checks (format, lint, types)
 - `pnpm check:lint` - OxLint across all packages
@@ -12,7 +12,13 @@
 
 ## Cloud Agent
 
-`.cursor/environment.json` is the Cloud Agent environment. The image supplies Node 22.22.0, pnpm 11.10.0, and Docker. `bash .cursor/install.sh` copies any missing `.env` files, adds a Django `SECRET_KEY` when `apps/api/.env` does not have one, runs `pnpm install --frozen-lockfile`, and builds the local API image. `bash .cursor/start.sh` starts Docker and `docker compose -f docker-compose-local.yml up -d` (Postgres, Valkey, RabbitMQ, MinIO, API on :8000). The `dev` terminal runs `pnpm dev` (web :3000, admin :3001, space :3002, live :3100).
+`.cursor/environment.json` follows the local setup in CONTRIBUTING.md. The image is only the Cloud Agent toolchain: Node 22.22.0 (`.node-version`), pnpm 11.10.0, and Docker with fuse-overlayfs. It does not install Plane or boot the app.
+
+`bash .cursor/install.sh` is a safe `./setup.sh`. It copies missing `.env` files from the examples, adds `SECRET_KEY` to `apps/api/.env` only when that line is absent, and runs `pnpm install --frozen-lockfile`. It also pulls and builds the images `docker-compose-local.yml` needs. It never overwrites an existing env file and never appends a second `SECRET_KEY`.
+
+`bash .cursor/start.sh` runs `docker compose -f docker-compose-local.yml up -d` and waits until the API is healthy on :8000. The `frontend` terminal runs `pnpm dev` (web :3000, admin :3001, space :3002, live :3100). The `backend` terminal follows compose logs for the API, worker, and beat.
+
+When `stack.sh` lands in the repo, install and start should call that script instead of these compose and pnpm steps.
 
 Do not re-run `./setup.sh` on a checkout that already has `.env` files. It overwrites those files and appends another `SECRET_KEY`.
 

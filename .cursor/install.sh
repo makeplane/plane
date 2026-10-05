@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
-# Idempotent repository bootstrap for Cloud Agents.
-# Toolchain (Node, pnpm, Docker) comes from .cursor/Dockerfile.
-# This script only refreshes env files, JS dependencies, and local images.
+# Safe equivalent of ./setup.sh for Cloud Agents, plus the image pulls and
+# builds docker-compose-local.yml needs before `up`.
+#
+# Unlike ./setup.sh, this never overwrites an existing .env file and never
+# appends a second SECRET_KEY.
+#
+# When stack.sh lands in the repo, call it from here instead of the steps below.
+# Do not add a second way to boot Plane.
 set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
@@ -16,6 +21,7 @@ if (major < 22 || (major === 22 && minor < 22)) {
 console.log(`node v${process.versions.node}`);
 '
 
+# setup.sh copies these six files. Copy only when the destination is missing.
 copy_env_if_missing ".env.example" ".env"
 copy_env_if_missing "apps/web/.env.example" "apps/web/.env"
 copy_env_if_missing "apps/api/.env.example" "apps/api/.env"
@@ -36,12 +42,14 @@ echo "pnpm $(pnpm -v)"
 
 pnpm install --frozen-lockfile
 
+# CONTRIBUTING assumes Docker is already running. Cloud Agent VMs start the
+# daemon here so the image pulls below can run during install.
 ensure_docker
 
 echo "pulling local infrastructure images"
 docker compose -f docker-compose-local.yml pull plane-db plane-redis plane-mq plane-minio
 
-# api, worker, beat-worker, and migrator share Dockerfile.dev.
+# api, worker, beat-worker, and migrator share apps/api/Dockerfile.dev.
 # Build api first so the other services reuse the layer cache.
 echo "building local API image"
 docker compose -f docker-compose-local.yml build api

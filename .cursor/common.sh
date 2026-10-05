@@ -40,9 +40,10 @@ ensure_secret_key() {
     return 0
   fi
   local secret_key
-  # Do not pipe /dev/urandom into head: with pipefail, head closing the pipe
-  # exits the script with SIGPIPE (141) before the key is written.
-  secret_key="$(python3 -c 'import secrets,string; alphabet=string.ascii_lowercase+string.digits; print("".join(secrets.choice(alphabet) for _ in range(50)), end="")')"
+  # Same alphabet as setup.sh (a-z0-9, 50 chars). Generate with node so the
+  # image does not need Python. Do not pipe /dev/urandom into head: with
+  # pipefail, head closing the pipe exits 141 before the key is written.
+  secret_key="$(node -e 'const {randomInt}=require("crypto"); const alphabet="abcdefghijklmnopqrstuvwxyz0123456789"; let secret=""; for (let i=0;i<50;i++) secret+=alphabet[randomInt(alphabet.length)]; process.stdout.write(secret);')"
   if [ -z "$secret_key" ]; then
     echo "failed to generate SECRET_KEY" >&2
     return 1

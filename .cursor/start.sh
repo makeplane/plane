@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
-# Per-boot services. Must be safe to run more than once.
-# Dev servers are launched from terminals (.cursor/run-dev.sh), not here.
+# Backend start from CONTRIBUTING.md:
+#   docker compose -f docker-compose-local.yml up -d
+# Then wait until the API answers on :8000.
+#
+# Frontends stay out of this script. A terminal runs `pnpm dev`.
+# When stack.sh lands in the repo, call it from here instead.
 set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 cd "$(plane_root)"
 
+# Cloud Agent VMs have no running Docker daemon until this starts it.
+# The Plane stack itself is only the compose file below.
 ensure_docker
 
 if [ ! -f apps/api/.env ] || [ ! -f .env ]; then

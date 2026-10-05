@@ -8,14 +8,14 @@
   "start": "bash .cursor/start.sh",
   "terminals": [
     {
-      "name": "dev",
-      "command": "bash .cursor/run-dev.sh",
-      "description": "pnpm dev: web :3000, admin :3001, space :3002, live :3100"
+      "name": "backend",
+      "command": "bash .cursor/logs-backend.sh",
+      "description": "Compose logs for the local API, worker, and beat"
     },
     {
-      "name": "api",
-      "command": "bash .cursor/logs-api.sh",
-      "description": "Docker logs for the Django API, worker, and beat"
+      "name": "frontend",
+      "command": "bash .cursor/run-frontend.sh",
+      "description": "pnpm dev: web :3000, admin :3001, space :3002, live :3100"
     }
   ],
   "ports": [

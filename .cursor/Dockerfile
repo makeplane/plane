@@ -1,14 +1,19 @@
 FROM ubuntu:24.04
 
+# Thin Cloud Agent toolchain only: Node (matches .node-version), pnpm, and Docker.
+# Plane is not installed or booted in this image. Contributors start it with
+# ./setup.sh, docker compose -f docker-compose-local.yml, and pnpm dev
+# (see CONTRIBUTING.md). Cloud Agents run the safe equivalents in
+# .cursor/install.sh and .cursor/start.sh.
+
 ENV DEBIAN_FRONTEND=noninteractive \
     COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
     COREPACK_DEFAULT_TO_LATEST=0 \
     COREPACK_HOME=/usr/local/share/corepack \
     PATH="/usr/local/bin:${PATH}" \
-    BASH_ENV="/etc/profile.d/99-plane-path.sh"
+    BASH_ENV="/etc/profile.d/99-local-bin-path.sh"
 
-# git and curl are required by Cloud Agents. python3 and build tools cover
-# native Node addons (esbuild, swc, msgpackr) when prebuilds are unavailable.
+# git and curl are required by Cloud Agents.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -17,9 +22,6 @@ RUN apt-get update \
         gnupg \
         sudo \
         xz-utils \
-        python3 \
-        build-essential \
-        pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 # Matches .node-version and package.json engines.node (>=22.22.0).
@@ -33,7 +35,7 @@ RUN curl --retry 3 --retry-delay 5 -fsSL \
     && corepack prepare pnpm@11.10.0 --activate \
     && chmod -R a+rX /usr/local/share/corepack
 
-RUN printf '%s\n' 'export PATH="/usr/local/bin:${PATH}"' > /etc/profile.d/99-plane-path.sh \
+RUN printf '%s\n' 'export PATH="/usr/local/bin:${PATH}"' > /etc/profile.d/99-local-bin-path.sh \
     && printf '%s\n%s\n' 'export PATH="/usr/local/bin:${PATH}"' "$(cat /etc/bash.bashrc)" > /etc/bash.bashrc
 
 ########################################################

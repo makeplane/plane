@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Follow API container logs once compose has created the api service.
+# Backend terminal. Follow compose logs for the local API once start.sh has
+# created the containers. This does not start the stack.
 set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
