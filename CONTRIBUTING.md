@@ -215,8 +215,8 @@ export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
 ```ts
       private importLanguageFile(language: TLanguage): Promise<any> {
       switch (language) {
-          case "your-lang":
-          return import("../locales/your-lang/translations.json");
+          case "da":
+          return import("../locales/da/common.json");
           // ...
       }
       }

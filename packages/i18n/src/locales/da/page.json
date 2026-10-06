@@ -1,0 +1,118 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Disposition",
+        "empty_state": {
+          "title": "Mangler overskrifter",
+          "description": "Lad os tilføje nogle overskrifter på denne side for at se dem her."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Ord",
+          "characters": "Tegn",
+          "paragraphs": "Afsnit",
+          "read_time": "Læsetid"
+        },
+        "actors_info": {
+          "edited_by": "Redigeret af",
+          "created_by": "Oprettet af"
+        },
+        "version_history": {
+          "label": "Versionshistorik",
+          "current_version": "Nuværende version",
+          "highlight_changes": "Fremhæv ændringer"
+        }
+      },
+      "assets": {
+        "label": "Filer",
+        "download_button": "Download",
+        "empty_state": {
+          "title": "Mangler billeder",
+          "description": "Tilføj billeder for at se dem her."
+        }
+      },
+      "comments": {
+        "label": "Kommentarer",
+        "empty_state": {
+          "title": "Ingen kommentarer",
+          "description": "Tilføj kommentarer for at se dem her."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Sticky-navnet må ikke være længere end 100 tegn.",
+        "already_exists": "Der findes allerede en sticky note uden beskrivelse"
+      },
+      "created": {
+        "title": "Sticky oprettet",
+        "message": "Sticky note blev oprettet med succes"
+      },
+      "not_created": {
+        "title": "Sticky ikke oprettet",
+        "message": "Sticky note kunne ikke oprettes"
+      },
+      "updated": {
+        "title": "Sticky opdateret",
+        "message": "Sticky note blev opdateret med succes"
+      },
+      "not_updated": {
+        "title": "Sticky ikke opdateret",
+        "message": "Sticky note kunne ikke opdateres"
+      },
+      "removed": {
+        "title": "Sticky fjernet",
+        "message": "Sticky note blev fjernet med succes"
+      },
+      "not_removed": {
+        "title": "Sticky ikke fjernet",
+        "message": "Sticky note kunne ikke fjernes"
+      }
+    },
+    "open_button": "Åbn navigationspanel",
+    "close_button": "Luk navigationspanel",
+    "outline_floating_button": "Åbn disposition"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Flyt",
+        "loading": "Flytter"
+      },
+      "cannot_move_to_teamspace": "Private og delte sider kan ikke flyttes til et teamrum.",
+      "placeholders": {
+        "workspace_to_all": "Søg efter projekter og teamrum",
+        "workspace_to_project": "Søg efter projekter",
+        "project_to_all": "Søg efter projekter og teamrum",
+        "project_to_project": "Søg efter projekter",
+        "project_to_all_with_wiki": "Søg efter wiki-samlinger, projekter og teamrum",
+        "project_to_project_with_wiki": "Søg efter wiki-samlinger og projekter"
+      },
+      "toasts": {
+        "success": {
+          "title": "Succes!",
+          "message": "Siden blev flyttet med succes."
+        },
+        "error": {
+          "title": "Fejl!",
+          "message": "Siden kunne ikke flyttes. Prøv venligst igen senere."
+        },
+        "collection_error": {
+          "title": "Flyttet til wiki",
+          "message": "Siden blev flyttet til wiki, men kunne ikke tilføjes til den valgte samling. Den forbliver under Generelt."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Fjern fra samling",
+      "success_message": "Side fjernet fra samlingen.",
+      "error_message": "Siden kunne ikke fjernes fra samlingen. Prøv venligst igen."
+    }
+  },
+  "page_content_limit_banner": {
+    "message": "Indholdsgrænsen er nået, og live-synkronisering er slået fra. Opret en ny side eller brug underliggende sider for at fortsætte synkroniseringen."
+  }
+}

@@ -1,0 +1,333 @@
+{
+  "templates": {
+    "settings": {
+      "title": "Skabeloner",
+      "description": "Spar 80 % af tiden brugt på at oprette projekter, opgaver og sider, når du bruger skabeloner.",
+      "new_project_template": "Ny projektskabelon",
+      "new_work_item_template": "Ny opgaveskabelon",
+      "new_page_template": "Ny sideskabelon",
+      "options": {
+        "project": {
+          "label": "Projektskabeloner"
+        },
+        "work_item": {
+          "label": "Opgaveskabeloner"
+        },
+        "page": {
+          "label": "Sideskabeloner"
+        }
+      },
+      "create_template": {
+        "label": "Opret skabelon",
+        "no_permission": {
+          "project": "Kontakt din projektadministrator for at oprette skabeloner",
+          "workspace": "Kontakt din arbejdsområdeadministrator for at oprette skabeloner"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "Brug skabelon",
+          "loading": "Anvender"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Afledt af arbejdsområde"
+        },
+        "project": {
+          "info": "Afledt af projekt"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Giv din projektskabelon et navn.",
+              "validation": {
+                "required": "Skabelonnavn er påkrævet",
+                "maxLength": "Skabelonnavnet skal være kortere end 255 tegn"
+              }
+            },
+            "description": {
+              "placeholder": "Beskriv hvornår og hvordan denne skabelon skal bruges."
+            }
+          },
+          "name": {
+            "placeholder": "Giv dit projekt et navn.",
+            "validation": {
+              "required": "Projekttitel er påkrævet",
+              "maxLength": "Projekttitlen skal være kortere end 255 tegn"
+            }
+          },
+          "description": {
+            "placeholder": "Beskriv formålet og målene for dette projekt."
+          },
+          "button": {
+            "create": "Opret projektskabelon",
+            "update": "Opdater projektskabelon"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Giv din opgaveskabelon et navn.",
+              "validation": {
+                "required": "Skabelonnavn er påkrævet",
+                "maxLength": "Skabelonnavnet skal være kortere end 255 tegn"
+              }
+            },
+            "description": {
+              "placeholder": "Beskriv hvornår og hvordan denne skabelon skal bruges."
+            }
+          },
+          "name": {
+            "placeholder": "Giv denne opgave en titel.",
+            "validation": {
+              "required": "Opgavetitel er påkrævet",
+              "maxLength": "Opgavetitlen skal være kortere end 255 tegn"
+            }
+          },
+          "description": {
+            "placeholder": "Beskriv denne opgave, så det er klart, hvad du vil opnå, når du færdiggør den."
+          },
+          "button": {
+            "create": "Opret opgaveskabelon",
+            "update": "Opdater opgaveskabelon"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Giv din sideskabelon et navn.",
+              "validation": {
+                "required": "Skabelonnavn er påkrævet",
+                "maxLength": "Skabelonnavnet skal være kortere end 255 tegn"
+              }
+            },
+            "description": {
+              "placeholder": "Beskriv hvornår og hvordan denne skabelon skal bruges."
+            }
+          },
+          "name": {
+            "placeholder": "Unavngivet side",
+            "validation": {
+              "maxLength": "Sidenavnet skal være kortere end 255 tegn"
+            }
+          },
+          "button": {
+            "create": "Opret sideskabelon",
+            "update": "Opdater sideskabelon"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Offentliggørelsesindstillinger} other {Offentliggør på markedspladsen}}",
+          "unpublish_action": "Fjern offentliggørelse fra markedspladsen",
+          "title": "Gør din skabelon findbar og genkendelig.",
+          "name": {
+            "label": "Navn på skabelon",
+            "placeholder": "Giv din skabelon et navn",
+            "validation": {
+              "required": "Skabelonnavn er påkrævet",
+              "maxLength": "Skabelonnavnet skal være kortere end 255 tegn"
+            }
+          },
+          "short_description": {
+            "label": "Kort beskrivelse",
+            "placeholder": "Denne skabelon er fantastisk til projektledere, der administrerer flere projekter samtidigt.",
+            "validation": {
+              "required": "Kort beskrivelse er påkrævet"
+            }
+          },
+          "description": {
+            "label": "Beskrivelse",
+            "placeholder": "Forøg produktiviteten og strømlin kommunikationen med vores Speech-To-Text integration.\n• Realtidstranskribering: Konverter talte ord til præcis tekst med det samme.\n• Opgave- og kommentaroprettelse: Tilføj opgaver, beskrivelser og kommentarer via stemmekommandoer.",
+            "validation": {
+              "required": "Beskrivelse er påkrævet"
+            }
+          },
+          "category": {
+            "label": "Kategori",
+            "placeholder": "Vælg hvor du synes dette passer bedst. Du kan vælge mere end én.",
+            "validation": {
+              "required": "Mindst én kategori er påkrævet"
+            }
+          },
+          "keywords": {
+            "label": "Nøgleord",
+            "placeholder": "Brug udtryk, som du tror dine brugere vil søge efter, når de leder efter denne skabelon.",
+            "helperText": "Indtast komma-separerede nøgleord, der sandsynligvis vil hjælpe folk med at finde denne fra søgning.",
+            "validation": {
+              "required": "Mindst ét nøgleord er påkrævet"
+            }
+          },
+          "website": {
+            "label": "Hjemmeside-URL",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "Ugyldig URL",
+              "maxLength": "URL skal være kortere end 800 tegn"
+            }
+          },
+          "company_name": {
+            "label": "Virksomhedsnavn",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Virksomhedsnavn er påkrævet",
+              "maxLength": "Virksomhedsnavn skal være kortere end 255 tegn"
+            }
+          },
+          "contact_email": {
+            "label": "Kontakt-e-mail",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Ugyldig e-mailadresse",
+              "maxLength": "Kontakt-e-mail skal være kortere end 255 tegn"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Link til din privatlivspolitik",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "Ugyldig URL",
+              "maxLength": "URL skal være kortere end 800 tegn"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Link til dine vilkår for anvendelse",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "Ugyldig URL",
+              "maxLength": "URL skal være kortere end 800 tegn"
+            }
+          },
+          "cover_image": {
+            "label": "Tilføj et coverbillede, der vil blive vist på markedspladsen",
+            "upload_title": "Upload coverbillede",
+            "upload_placeholder": "Klik for at uploade eller træk og slip for at uploade et coverbillede",
+            "drop_here": "Slip her",
+            "click_to_upload": "Klik for at uploade",
+            "invalid_file_or_exceeds_size_limit": "Ugyldig fil eller overskrider størrelsesgrænsen. Prøv venligst igen.",
+            "upload_and_save": "Upload og gem",
+            "uploading": "Uploader",
+            "remove": "Fjern",
+            "removing": "Fjerner",
+            "validation": {
+              "required": "Coverbillede er påkrævet"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Inkluder billeder, som du tror vil hjælpe seere af denne skabelon.",
+            "validation": {
+              "required": "Mindst ét skærmbillede er påkrævet"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Skabeloner",
+        "description": "Med projekt-, opgave- og sideskabeloner i Plane behøver du ikke at oprette et projekt fra bunden eller angive opgaveegenskaber manuelt.",
+        "sub_description": "Få 80 % af din administrative tid tilbage, når du bruger skabeloner."
+      },
+      "no_templates": {
+        "button": "Opret din første skabelon"
+      },
+      "no_labels": {
+        "description": "Ingen etiketter endnu. Opret etiketter for at hjælpe med at organisere og filtrere opgaver i dit projekt."
+      },
+      "no_modules": {
+        "description": "Ingen moduler endnu. Organiser arbejde i underprojekter med dedikerede ledere og tildelte personer."
+      },
+      "no_work_items": {
+        "description": "Ingen opgaver endnu. Tilføj en for at strukturere dit arbejde bedre."
+      },
+      "no_sub_work_items": {
+        "description": "Ingen underopgaver endnu. Tilføj en for at strukturere dit arbejde bedre."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Der er ingen skabeloner, du har adgang til.",
+          "description": "Opret venligst en skabelon"
+        },
+        "no_results": {
+          "title": "Det matchede ikke en skabelon.",
+          "description": "Prøv at søge med andre ord."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Skabelon oprettet",
+          "message": "{templateName}, {templateType}-skabelonen, er nu tilgængelig for dit arbejdsområde."
+        },
+        "error": {
+          "title": "Vi kunne ikke oprette den skabelon denne gang.",
+          "message": "Prøv at gemme dine oplysninger igen eller kopier dem over til en ny skabelon, gerne i en anden fane."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Skabelon ændret",
+          "message": "{templateName}, {templateType}-skabelonen, blev ændret."
+        },
+        "error": {
+          "title": "Vi kunne ikke gemme ændringer i denne skabelon.",
+          "message": "Prøv at gemme dine oplysninger igen eller vend tilbage til denne skabelon senere. Hvis der stadig er problemer, så kontakt os."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Skabelon slettet",
+          "message": "{templateName}, {templateType}-skabelonen, er nu blevet slettet fra dit arbejdsområde."
+        },
+        "error": {
+          "title": "Vi kunne ikke slette den skabelon denne gang.",
+          "message": "Prøv at slette den igen eller vend tilbage til den senere. Hvis du stadig ikke kan slette den, bedes du kontakte os."
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Skabelon ikke længere offentliggjort",
+          "message": "{templateName}, {templateType}-skabelonen, er nu blevet fjernet fra offentliggørelse."
+        },
+        "error": {
+          "title": "Vi kunne ikke fjerne offentliggørelsen af den skabelon denne gang.",
+          "message": "Prøv at fjerne offentliggørelsen igen eller vend tilbage til den senere. Hvis du stadig ikke kan fjerne offentliggørelsen, bedes du kontakte os."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Slet skabelon",
+      "description": {
+        "prefix": "Er du sikker på, at du vil slette skabelonen-",
+        "suffix": "? Alle data relateret til skabelonen vil blive permanent fjernet. Denne handling kan ikke fortrydes."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Fjern offentliggørelse af skabelon",
+      "description": {
+        "prefix": "Er du sikker på, at du vil fjerne offentliggørelsen af skabelonen-",
+        "suffix": "? Denne skabelon vil ikke længere være tilgængelig for brugere på markedspladsen."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Tilføj ny skabelon",
+        "project": "Tilføj ny skabelon"
+      },
+      "label": {
+        "project": "Vælg en projektskabelon",
+        "page": "Vælg fra skabelon"
+      },
+      "tooltip": {
+        "work_item": "Vælg en opgaveskabelon"
+      },
+      "no_results": {
+        "work_item": "Ingen skabeloner fundet.",
+        "project": "Ingen skabeloner fundet."
+      }
+    }
+  }
+}

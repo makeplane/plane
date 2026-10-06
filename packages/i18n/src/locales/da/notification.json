@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "Indbakke",
+    "page_label": "{workspace} - Indbakke",
+    "options": {
+      "mark_all_as_read": "Læs alle",
+      "mark_read": "Læs",
+      "mark_unread": "Marker som ulæst",
+      "refresh": "Genindlæs",
+      "filters": "Indbakke-filtre",
+      "show_unread": "Vis ulæste",
+      "show_snoozed": "Vis udsatte",
+      "show_archived": "Vis arkiverede",
+      "mark_archive": "Arkiver",
+      "mark_unarchive": "Fjern fra arkiv",
+      "mark_snooze": "Udsæt",
+      "mark_unsnooze": "Fjern udsættelse"
+    },
+    "toasts": {
+      "read": "Notifikation markeret som læst",
+      "unread": "Notifikation markeret som ulæst",
+      "archived": "Notifikation markeret som arkiveret",
+      "unarchived": "Notifikation fjernet fra arkiv",
+      "snoozed": "Notifikation udsat",
+      "unsnoozed": "Notifikation ikke længere udsat"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Vælg for at se detaljer."
+      },
+      "all": {
+        "title": "Ingen opgaver tildelt",
+        "description": "Opdateringer for opgaver tildelt dig kan\n ses her"
+      },
+      "mentions": {
+        "title": "Ingen opgaver tildelt",
+        "description": "Opdateringer for opgaver tildelt dig kan\n ses her"
+      }
+    },
+    "tabs": {
+      "all": "Alle",
+      "mentions": "Omtaler"
+    },
+    "filter": {
+      "assigned": "Tildelt mig",
+      "created": "Oprettet af mig",
+      "subscribed": "Abonneret af mig"
+    },
+    "snooze": {
+      "1_day": "1 dag",
+      "3_days": "3 dage",
+      "5_days": "5 dage",
+      "1_week": "1 uge",
+      "2_weeks": "2 uger",
+      "custom": "Tilpasset"
+    }
+  }
+}

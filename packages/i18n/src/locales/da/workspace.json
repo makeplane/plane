@@ -1,0 +1,378 @@
+{
+  "workspace_creation": {
+    "heading": "Opret dit arbejdsområde",
+    "subheading": "For at begynde at bruge Plane skal du oprette eller deltage i et arbejdsområde.",
+    "form": {
+      "name": {
+        "label": "Giv dit arbejdsområde et navn",
+        "placeholder": "Noget velkendt og genkendeligt er altid bedst."
+      },
+      "url": {
+        "label": "Indstil dit arbejdsområdes URL",
+        "placeholder": "Skriv eller indsæt en URL",
+        "edit_slug": "Du kan kun redigere sluggen af URL'en"
+      },
+      "organization_size": {
+        "label": "Hvor mange mennesker skal bruge dette arbejdsområde?",
+        "placeholder": "Vælg et interval"
+      }
+    },
+    "errors": {
+      "creation_disabled": {
+        "title": "Kun din instansadministrator kan oprette arbejdsområder",
+        "description": "Hvis du kender din instansadministrators e-mailadresse, skal du klikke på knappen nedenfor for at komme i kontakt med dem.",
+        "request_button": "Anmod hos instansadministrator"
+      },
+      "validation": {
+        "name_alphanumeric": "Arbejdsområdenavne må kun indeholde (' '), ('-'), ('_') og alfanumeriske tegn.",
+        "name_length": "Begræns dit navn til 80 tegn.",
+        "url_alphanumeric": "URL'er må kun indeholde ('-') og alfanumeriske tegn.",
+        "url_length": "Begræns din URL til 48 tegn.",
+        "url_already_taken": "Arbejdsområde-URL er allerede optaget!"
+      }
+    },
+    "request_email": {
+      "subject": "Anmodning om et nyt arbejdsområde",
+      "body": "Hej instansadministrator(er),\n\nOpret venligst et nyt arbejdsområde med URL'en [/workspace-name] til [formål med at oprette arbejdsområdet].\n\nTak,\n{firstName} {lastName}\n{email}"
+    },
+    "button": {
+      "default": "Opret arbejdsområde",
+      "loading": "Opretter arbejdsområde"
+    },
+    "toast": {
+      "success": {
+        "title": "Succes",
+        "message": "Arbejdsområde oprettet med succes"
+      },
+      "error": {
+        "title": "Fejl",
+        "message": "Arbejdsområde kunne ikke oprettes. Prøv venligst igen."
+      }
+    }
+  },
+  "workspace_dashboard": {
+    "empty_state": {
+      "general": {
+        "title": "Oversigt over dine projekter, aktivitet og nøgletal",
+        "description": "Velkommen til Plane, vi er glade for at have dig her. Opret dit første projekt og spor dine opgaver, så forvandles denne side til et rum, der hjælper dig med at skabe fremskridt. Administratorer vil også se elementer, der hjælper deres team videre.",
+        "primary_button": {
+          "text": "Byg dit første projekt",
+          "comic": {
+            "title": "Alt starter med et projekt i Plane",
+            "description": "Et projekt kan være et produkts roadmap, en markedsføringskampagne eller lancering af en ny bil."
+          }
+        }
+      }
+    }
+  },
+  "workspace_analytics": {
+    "label": "Analyse",
+    "page_label": "{workspace} - Analyse",
+    "open_tasks": "Åbne opgaver i alt",
+    "error": "Der opstod en fejl ved hentning af data.",
+    "work_items_closed_in": "Opgaver lukket i",
+    "selected_projects": "Valgte projekter",
+    "total_members": "Medlemmer i alt",
+    "total_cycles": "Cyklusser i alt",
+    "total_modules": "Moduler i alt",
+    "pending_work_items": {
+      "title": "Afventende opgaver",
+      "empty_state": "Analyse af afventende opgaver fordelt på kolleger vises her."
+    },
+    "work_items_closed_in_a_year": {
+      "title": "Opgaver lukket på et år",
+      "empty_state": "Luk opgaver for at se analyse af samme i form af en graf."
+    },
+    "most_work_items_created": {
+      "title": "Flest opgaver oprettet",
+      "empty_state": "Kolleger og antallet af opgaver oprettet af dem vises her."
+    },
+    "most_work_items_closed": {
+      "title": "Flest opgaver lukket",
+      "empty_state": "Kolleger og antallet af opgaver lukket af dem vises her."
+    },
+    "tabs": {
+      "scope_and_demand": "Omfang og Efterspørgsel",
+      "custom": "Tilpasset Analyse"
+    },
+    "total": "I alt {entity}",
+    "started_work_items": "Påbegyndt {entity}",
+    "backlog_work_items": "Opgaverum {entity}",
+    "un_started_work_items": "Ikke-påbegyndt {entity}",
+    "completed_work_items": "Afsluttet {entity}",
+    "project_insights": "Projektindsigter",
+    "summary_of_projects": "Projektoversigt",
+    "all_projects": "Alle projekter",
+    "trend_on_charts": "Tendens i grafer",
+    "active_projects": "Aktive projekter",
+    "customized_insights": "Tilpassede indsigter",
+    "created_vs_resolved": "Oprettet mod Løst",
+    "empty_state": {
+      "project_insights": {
+        "title": "Ingen data endnu",
+        "description": "Opgaver tildelt dig, opdelt efter status, vises her."
+      },
+      "created_vs_resolved": {
+        "title": "Ingen data endnu",
+        "description": "Opgaver oprettet og løst over tid vises her."
+      },
+      "customized_insights": {
+        "title": "Ingen data endnu",
+        "description": "Opgaver tildelt dig, opdelt efter status, vises her."
+      },
+      "general": {
+        "title": "Spor fremdrift, arbejdsbelastning og tildelinger. Opdag tendenser, fjern blokeringer og flyt arbejde hurtigere",
+        "description": "Se omfang i forhold til efterspørgsel, estimater og ændringer i omfang. Få ydeevne pr. teammedlem og team, og sørg for at dit projekt kører til tiden.",
+        "primary_button": {
+          "text": "Start dit første projekt",
+          "comic": {
+            "title": "Analyse fungerer bedst med Cyklusser + Moduler",
+            "description": "Først tidsafgrænser du dine opgaver i Cyklusser, og hvis du kan, grupperer du opgaver, der strækker sig over mere end én cyklus i Moduler. Tjek begge i venstre menu."
+          }
+        }
+      },
+      "cycle_progress": {
+        "title": "Ingen data endnu",
+        "description": "Analyse af cyklusfremdrift vises her. Tilføj opgaver til cyklusser for at begynde at spore fremdrift."
+      },
+      "module_progress": {
+        "title": "Ingen data endnu",
+        "description": "Analyse af modulfremdrift vises her. Tilføj opgaver til moduler for at begynde at spore fremdrift."
+      },
+      "intake_trends": {
+        "title": "Ingen data endnu",
+        "description": "Analyse af indbakketendenser vises her. Tilføj opgaver til indbakke for at begynde at spore tendenser."
+      }
+    },
+    "upgrade_to_plan": "Opgrader til {plan} for at låse op for {tab}",
+    "workitem_resolved_vs_pending": "Opgaver løst mod afventende",
+    "projects_by_status": "Projekter efter status",
+    "active_users": "Aktive brugere",
+    "intake_trends": "Indbakketendenser"
+  },
+  "workspace_projects": {
+    "label": "{count, plural, one {Projekt} other {Projekter}}",
+    "create": {
+      "label": "Tilføj projekt"
+    },
+    "network": {
+      "label": "Netværk",
+      "private": {
+        "title": "Privat",
+        "description": "Kun tilgængelig via invitation"
+      },
+      "public": {
+        "title": "Offentlig",
+        "description": "Alle i arbejdsområdet undtagen gæster kan deltage"
+      }
+    },
+    "error": {
+      "permission": "Du har ikke adgang til at udføre denne handling.",
+      "cycle_delete": "Kunne ikke slette cyklus",
+      "module_delete": "Kunne ikke slette modul",
+      "issue_delete": "Kunne ikke slette opgave"
+    },
+    "state": {
+      "backlog": "Opgaverum (Backlog)",
+      "unstarted": "Ikke startet",
+      "started": "Startet",
+      "completed": "Afsluttet",
+      "cancelled": "Annulleret"
+    },
+    "sort": {
+      "manual": "Manuel",
+      "name": "Navn",
+      "created_at": "Oprettelsesdato",
+      "members_length": "Antal medlemmer"
+    },
+    "scope": {
+      "my_projects": "Mine projekter",
+      "archived_projects": "Arkiveret"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# måned} other{# måneder}}",
+      "days_count": "{days, plural, one{# dag} other{# dage}}"
+    },
+    "empty_state": {
+      "general": {
+        "title": "Ingen aktive projekter",
+        "description": "Tænk på hvert projekt som det overordnede element for målrettet arbejde. Projekter er der, hvor jobs, cyklusser og moduler bor, og sammen med dine kolleger hjælper de dig med at nå dét mål. Opret et nyt projekt eller filtrer efter arkiverede projekter.",
+        "primary_button": {
+          "text": "Start dit første projekt",
+          "comic": {
+            "title": "Alt starter med et projekt i Plane",
+            "description": "Et projekt kan være et produkts roadmap, en markedsføringskampagne eller lancering af en ny bil."
+          }
+        }
+      },
+      "no_projects": {
+        "title": "Intet projekt",
+        "description": "For at oprette opgaver eller styre dit arbejde skal du oprette et projekt eller være en del af et.",
+        "primary_button": {
+          "text": "Start dit første projekt",
+          "comic": {
+            "title": "Alt starter med et projekt i Plane",
+            "description": "Et projekt kan være et produkts roadmap, en markedsføringskampagne eller lancering af en ny bil."
+          }
+        }
+      },
+      "filter": {
+        "title": "Ingen matchende projekter",
+        "description": "Ingen projekter fundet med de matchende kriterier.\n Opret et nyt projekt i stedet."
+      },
+      "search": {
+        "description": "Ingen projekter fundet med de matchende kriterier.\nOpret et nyt projekt i stedet"
+      }
+    }
+  },
+  "workspace_views": {
+    "add_view": "Tilføj visning",
+    "empty_state": {
+      "all-issues": {
+        "title": "Ingen opgaver i projektet",
+        "description": "Første projekt færdigt! Opdel nu dit arbejde i sporbare enheder med opgaver. Lad os komme i gang!",
+        "primary_button": {
+          "text": "Opret ny opgave"
+        }
+      },
+      "assigned": {
+        "title": "Ingen opgaver endnu",
+        "description": "Opgaver tildelt dig kan spores herfra.",
+        "primary_button": {
+          "text": "Opret ny opgave"
+        }
+      },
+      "created": {
+        "title": "Ingen opgaver endnu",
+        "description": "Alle opgaver oprettet af dig lander her, spor dem direkte her.",
+        "primary_button": {
+          "text": "Opret ny opgave"
+        }
+      },
+      "subscribed": {
+        "title": "Ingen opgaver endnu",
+        "description": "Abonner på opgaver, du er interesseret i, og spor dem alle her."
+      },
+      "custom-view": {
+        "title": "Ingen opgaver endnu",
+        "description": "Opgaver der gælder for filtrene, kan spores alle sammen her."
+      }
+    },
+    "delete_view": {
+      "title": "Er du sikker på, at du vil slette denne visning?",
+      "content": "Hvis du bekræfter, vil alle sorterings-, filtrerings- og visningsindstillinger + det layout du har valgt for denne visning, blive permanent slettet uden mulighed for genoprettelse."
+    }
+  },
+  "workspace_draft_issues": {
+    "draft_an_issue": "Opret kladdeopgave",
+    "empty_state": {
+      "title": "Halvfærdige opgaver og snart kommentarer vil blive vist her.",
+      "description": "For at prøve dette af kan du begynde at tilføje en opgave og forlade den midtvejs eller oprette din første kladde nedenfor. 😉",
+      "primary_button": {
+        "text": "Opret din første kladde"
+      }
+    },
+    "delete_modal": {
+      "title": "Slet kladde",
+      "description": "Er du sikker på, at du vil slette denne kladde? Dette kan ikke fortrydes."
+    },
+    "toasts": {
+      "created": {
+        "success": "Kladde oprettet",
+        "error": "Opgaven kunne ikke oprettes. Prøv venligst igen."
+      },
+      "deleted": {
+        "success": "Kladde slettet"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Skriv en note, et dokument eller en hel videnbase. Få Galileo, Planes AI-assistent, til at hjælpe dig i gang",
+        "description": "Sider er et ide- og tankerum i Plane. Tag mødenoter, formater dem nemt, indlejre opgaver, placer dem ved hjælp af et bibliotek af komponenter, og hold dem alle i dit projekts kontekst. For at gøre hurtigt proces med et dokument kan du tilkalde Galileo, Planes AI, med en genvej eller et klik på en knap.",
+        "primary_button": {
+          "text": "Opret din første side"
+        }
+      },
+      "private": {
+        "title": "Ingen private sider endnu",
+        "description": "Gem dine private tanker her. Når du er klar til at dele dem, er teamet blot et klik væk.",
+        "primary_button": {
+          "text": "Opret din første side"
+        }
+      },
+      "public": {
+        "title": "Ingen arbejdsområdesider endnu",
+        "description": "Se sider delt med alle i dit arbejdsområde lige her.",
+        "primary_button": {
+          "text": "Opret din første side"
+        }
+      },
+      "archived": {
+        "title": "Ingen arkiverede sider endnu",
+        "description": "Arkiver sider, der ikke er i dit fokus i øjeblikket. Få adgang til dem her efter behov."
+      },
+      "shared": {
+        "title": "Ingen delte sider endnu",
+        "description": "Sider som andre har delt med dig, vil blive vist her."
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "Ingen aktive cyklusser",
+        "description": "Cyklusser for dine projekter, der inkluderer en periode, der indeholder dags dato i sit interval. Find fremdrift og detaljer for alle dine aktive cyklusser her."
+      }
+    }
+  },
+  "workspace": {
+    "members_import": {
+      "title": "Importer medlemmer fra CSV",
+      "description": "Upload en CSV med kolonnerne: Email, Display Name, First Name, Last Name, Role (5, 15 eller 20)",
+      "dropzone": {
+        "active": "Slip CSV-fil her",
+        "inactive": "Træk og slip eller klik for at uploade",
+        "file_type": "Kun .csv-filer er understøttet"
+      },
+      "buttons": {
+        "cancel": "Annuller",
+        "import": "Importer",
+        "try_again": "Prøv igen",
+        "close": "Luk",
+        "done": "Færdig"
+      },
+      "progress": {
+        "uploading": "Uploader...",
+        "importing": "Importerer..."
+      },
+      "summary": {
+        "title": {
+          "failed": "Import mislykkedes",
+          "complete": "Import fuldført"
+        },
+        "message": {
+          "seat_limit": "Kunne ikke importere medlemmer på grund af pladsbegrænsninger.",
+          "success": "{count} medlem{plural} blev tilføjet til arbejdsområdet med succes.",
+          "no_imports": "Ingen medlemmer blev importeret fra CSV-filen."
+        },
+        "stats": {
+          "successful": "Gennemført",
+          "failed": "Mislykkedes"
+        },
+        "download_errors": "Download fejl"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Ugyldig fil",
+          "message": "Kun CSV-filer er understøttet."
+        },
+        "import_failed": {
+          "title": "Import mislykkedes",
+          "message": "Noget gik galt."
+        }
+      }
+    }
+  }
+}

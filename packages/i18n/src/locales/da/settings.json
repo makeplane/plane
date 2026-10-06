@@ -1,0 +1,156 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "Skift e-mail",
+        "description": "Indtast en ny e-mailadresse for at modtage et bekræftelseslink.",
+        "toasts": {
+          "success_title": "Succes!",
+          "success_message": "E-mail opdateret med succes. Log venligst ind igen."
+        },
+        "form": {
+          "email": {
+            "label": "Ny e-mail",
+            "placeholder": "Indtast din e-mail",
+            "errors": {
+              "required": "E-mail er påkrævet",
+              "invalid": "E-mail er ugyldig",
+              "exists": "E-mail findes allerede. Brug venligst en anden.",
+              "validation_failed": "E-mailvalidering mislykkedes. Prøv venligst igen."
+            }
+          },
+          "code": {
+            "label": "Unik kode",
+            "placeholder": "123456",
+            "helper_text": "Bekræftelseskode sendt til din nye e-mail.",
+            "errors": {
+              "required": "Unik kode er påkrævet",
+              "invalid": "Ugyldig bekræftelseskode. Prøv venligst igen."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Fortsæt",
+          "confirm": "Bekræft",
+          "cancel": "Annuller"
+        },
+        "states": {
+          "sending": "Sender"
+        }
+      }
+    },
+    "preferences": {
+      "heading": "Præferencer",
+      "description": "Tilpas din app-oplevelse til den måde, du arbejder på"
+    },
+    "notifications": {
+      "heading": "E-mailnotifikationer",
+      "description": "Hold dig opdateret om opgaver, du abonnerer på. Aktivér dette for at få besked.",
+      "select_default_view": "Vælg standardvisning",
+      "compact": "Kompakt",
+      "full": "Fuld skærm"
+    },
+    "security": {
+      "heading": "Sikkerhed"
+    },
+    "api_tokens": {
+      "title": "Personlige adgangstokens",
+      "description": "Generer sikre API-tokens for at integrere dine data med eksterne systemer og applikationer."
+    },
+    "activity": {
+      "heading": "Aktivitet",
+      "description": "Spor dine seneste handlinger og ændringer på tværs af alle projekter og opgaver."
+    },
+    "connections": {
+      "title": "Forbindelser",
+      "heading": "Forbindelser",
+      "description": "Administrer dine indstillinger for arbejdsområdeforbindelser."
+    }
+  },
+  "profile": {
+    "label": "Profil",
+    "page_label": "Dit arbejde",
+    "work": "Arbejde",
+    "details": {
+      "joined_on": "Tilsluttet den",
+      "time_zone": "Tidszone"
+    },
+    "stats": {
+      "workload": "Arbejdsbelastning",
+      "overview": "Oversigt",
+      "created": "Opgaver oprettet",
+      "assigned": "Opgaver tildelt",
+      "subscribed": "Opgaver abonneret",
+      "state_distribution": {
+        "title": "Opgaver efter status",
+        "empty": "Opret opgaver for at se dem efter status i grafen for bedre analyse."
+      },
+      "priority_distribution": {
+        "title": "Opgaver efter prioritet",
+        "empty": "Opret opgaver for at se dem efter prioritet i grafen for bedre analyse."
+      },
+      "recent_activity": {
+        "title": "Seneste aktivitet",
+        "empty": "Vi kunne ikke finde data. Venligst tjek dine input",
+        "button": "Download dagens aktivitet",
+        "button_loading": "Downloader"
+      }
+    },
+    "actions": {
+      "profile": "Profil",
+      "security": "Sikkerhed",
+      "activity": "Aktivitet",
+      "preferences": "Præferencer",
+      "notifications": "Notifikationer",
+      "api-tokens": "Personlige adgangstokens",
+      "connections": "Forbindelser"
+    },
+    "tabs": {
+      "summary": "Oversigt",
+      "assigned": "Tildelt",
+      "created": "Oprettet",
+      "subscribed": "Abonneret",
+      "activity": "Aktivitet"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "Ingen aktiviteter endnu",
+        "description": "Kom i gang ved at oprette en ny opgave! Tilføj detaljer og egenskaber til den. Udforsk mere i Plane for at se din aktivitet."
+      },
+      "assigned": {
+        "title": "Ingen opgaver er tildelt dig",
+        "description": "Opgaver tildelt dig kan spores herfra."
+      },
+      "created": {
+        "title": "Ingen opgaver endnu",
+        "description": "Alle opgaver oprettet af dig lander her, spor dem direkte her."
+      },
+      "subscribed": {
+        "title": "Ingen opgaver endnu",
+        "description": "Abonner på opgaver, du er interesseret i, og spor dem alle her."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Systemstandard"
+      },
+      "light": {
+        "label": "Lys"
+      },
+      "dark": {
+        "label": "Mørk"
+      },
+      "light_contrast": {
+        "label": "Lys høj kontrast"
+      },
+      "dark_contrast": {
+        "label": "Mørk høj kontrast"
+      },
+      "custom": {
+        "label": "Tilpasset tema"
+      }
+    }
+  }
+}
