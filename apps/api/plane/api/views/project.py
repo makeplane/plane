@@ -37,6 +37,7 @@ from plane.db.models import (
     StateGroup,
     IntakeIssue,
     ProjectPage,
+    User,
 )
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.utils.exception_logger import log_exception
@@ -195,12 +196,33 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                 )
             )
         )
+        fields = self.fields
+        expand = self.expand
+        expanded_user_fields = set(expand or ()) & {
+            "created_by",
+            "updated_by",
+            "project_lead",
+            "default_assignee",
+        }
+        if fields:
+            expanded_user_fields.intersection_update(fields)
+
+        # UserLiteSerializer reads avatar_url. Batch users with their avatars
+        # without widening the annotated, distinct project query.
+        if expanded_user_fields:
+            user_prefetches = []
+            for field in sorted(expanded_user_fields):
+                if field == "project_lead":
+                    # get_queryset() already joins this user; fetch its avatar directly.
+                    user_prefetches.append("project_lead__avatar_asset")
+                else:
+                    user_prefetches.append(Prefetch(field, queryset=User._base_manager.select_related("avatar_asset")))
+            projects = projects.prefetch_related(*user_prefetches)
+
         return self.paginate(
             request=request,
             queryset=(projects),
-            on_results=lambda projects: (
-                ProjectSerializer(projects, many=True, fields=self.fields, expand=self.expand).data
-            ),
+            on_results=lambda projects: ProjectSerializer(projects, many=True, fields=fields, expand=expand).data,
         )
 
     @project_docs(
