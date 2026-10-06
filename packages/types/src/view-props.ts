@@ -57,7 +57,11 @@ export type TIssueOrderByOptions =
   | "attachment_count"
   | "-attachment_count"
   | "sub_issues_count"
-  | "-sub_issues_count";
+  | "-sub_issues_count"
+  | "sequence_id"
+  | "-sequence_id"
+  | "name"
+  | "-name";
 
 // the direction a work item list is sorted in; "desc" is the "-" prefixed variant of an order by key
 export type TIssueOrderByDirection = "asc" | "desc";

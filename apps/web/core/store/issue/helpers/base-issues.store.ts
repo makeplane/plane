@@ -178,7 +178,15 @@ const ISSUE_ORDERBY_KEY: Record<TIssueOrderByOptions, keyof TIssue> = {
   "-attachment_count": "attachment_count",
   sub_issues_count: "sub_issues_count",
   "-sub_issues_count": "sub_issues_count",
+  sequence_id: "sequence_id",
+  "-sequence_id": "sequence_id",
+  name: "name",
+  "-name": "name",
 };
+
+// locale aware, case insensitive comparison that orders numbers inside names naturally ("2" before "10")
+const compareIssuesByName = (a: TIssue, b: TIssue) =>
+  (a.name ?? "").localeCompare(b.name ?? "", undefined, { numeric: true, sensitivity: "base" });
 
 export abstract class BaseIssuesStore implements IBaseIssuesStore {
   loader: Record<string, TLoader> = {};
@@ -1793,6 +1801,14 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     switch (key) {
       case "sort_order":
         return getIssueIds(orderBy(array, "sort_order"));
+      case "sequence_id":
+        return getIssueIds(orderBy(array, "sequence_id"));
+      case "-sequence_id":
+        return getIssueIds(orderBy(array, "sequence_id", ["desc"]));
+      case "name":
+        return getIssueIds([...array].sort(compareIssuesByName));
+      case "-name":
+        return getIssueIds([...array].sort((a, b) => compareIssuesByName(b, a)));
       case "state__name":
         return getIssueIds(
           orderBy(array, (issue) =>

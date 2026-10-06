@@ -147,6 +147,18 @@ export const ISSUE_ORDER_BY_OPTIONS: {
     defaultDirection: "asc",
   },
   {
+    key: "sequence_id",
+    titleTranslationKey: "issue.display.properties.id",
+    isDirectional: true,
+    defaultDirection: "asc",
+  },
+  {
+    key: "name",
+    titleTranslationKey: "common.name",
+    isDirectional: true,
+    defaultDirection: "asc",
+  },
+  {
     key: "created_at",
     titleTranslationKey: "common.sort.created_on",
     isDirectional: true,
