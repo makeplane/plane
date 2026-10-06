@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Link til din privatlivspolitik",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://plane.so/legals/privacy-policy",
             "validation": {
               "invalid": "Ugyldig URL",
               "maxLength": "URL skal være kortere end 800 tegn"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Link til dine vilkår for anvendelse",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://plane.so/legals/terms-and-conditions",
             "validation": {
               "invalid": "Ugyldig URL",
               "maxLength": "URL skal være kortere end 800 tegn"

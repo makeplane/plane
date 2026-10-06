@@ -290,7 +290,7 @@
     "empty_state": {
       "general": {
         "title": "Skriv en note, et dokument eller en hel videnbase. Få Galileo, Planes AI-assistent, til at hjælpe dig i gang",
-        "description": "Sider er et ide- og tankerum i Plane. Tag mødenoter, formater dem nemt, indlejre opgaver, placer dem ved hjælp af et bibliotek af komponenter, og hold dem alle i dit projekts kontekst. For at gøre hurtigt proces med et dokument kan du tilkalde Galileo, Planes AI, med en genvej eller et klik på en knap.",
+        "description": "Sider er et ide- og tankerum i Plane. tag mødenoter, formater dem nemt, indlejr opgaver, placer dem ved hjælp af et bibliotek af komponenter, og hold dem alle i dit projekts kontekst. For hurtigt at udarbejde et dokument kan du tilkalde Galileo, Planes AI, med en genvej eller et klik på en knap.",
         "primary_button": {
           "text": "Opret din første side"
         }

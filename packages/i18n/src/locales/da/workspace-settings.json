@@ -305,7 +305,7 @@
         "configure": "Konfigurer",
         "app_available": "Du har gjort denne app tilgængelig til brug med et Plane-arbejdsområde",
         "app_credentials_regenrated": {
-          "title": "App-adgangsoplysninger blev genagenereret med succes",
+          "title": "App-adgangsoplysninger blev genereret igen med succes",
           "description": "Erstat klienthemmeligheden overalt, hvor den bruges. Den forrige hemmelighed er ikke længere gyldig."
         },
         "app_created": {
@@ -387,12 +387,12 @@
         "update_app": "Opdater app",
         "build_your_own_app": "Byg din egen app",
         "edit_app_details": "Rediger appdetaljer",
-        "regenerate_client_secret_description": "Genagenerer klienthemmeligheden. Hvis du genagenererer hemmeligheden, kan du kopiere nøglen eller downloade den til en CSV-fil lige efter.",
-        "regenerate_client_secret": "Genagenerer klienthemmelighed",
-        "regenerate_client_secret_confirm_title": "Sikker på, at du vil genagenerere klienthemmeligheden?",
+        "regenerate_client_secret_description": "Regenerer klienthemmeligheden. Hvis du regenererer hemmeligheden, kan du kopiere nøglen eller downloade den til en CSV-fil lige efter.",
+        "regenerate_client_secret": "Regenerer klienthemmelighed",
+        "regenerate_client_secret_confirm_title": "Sikker på, at du vil regenerere klienthemmeligheden?",
         "regenerate_client_secret_confirm_description": "Apps der bruger denne hemmelighed, vil stoppe med at virke. Du skal opdatere hemmeligheden i appen.",
         "regenerate_client_secret_confirm_cancel": "Annuller",
-        "regenerate_client_secret_confirm_regenerate": "Genagenerer",
+        "regenerate_client_secret_confirm_regenerate": "Regenererer",
         "read_only_access_to_workspace": "Skrivebeskyttet adgang til dit arbejdsområde",
         "write_access_to_workspace": "Skriveadgang til dit arbejdsområde",
         "read_only_access_to_user_profile": "Skrivebeskyttet adgang til din brugerprofil",

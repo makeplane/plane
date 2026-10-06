@@ -29,12 +29,12 @@
         "title": "Vælg for at se detaljer."
       },
       "all": {
-        "title": "Ingen opgaver tildelt",
-        "description": "Opdateringer for opgaver tildelt dig kan\n ses her"
+        "title": "Ingen notifikationer endnu",
+        "description": "Opdateringer om dit arbejde og dit projekt vises her"
       },
       "mentions": {
-        "title": "Ingen opgaver tildelt",
-        "description": "Opdateringer for opgaver tildelt dig kan\n ses her"
+        "title": "Ingen omtaler endnu",
+        "description": "Når nogen nævner dig i opgaver eller kommentarer, vises det her"
       }
     },
     "tabs": {

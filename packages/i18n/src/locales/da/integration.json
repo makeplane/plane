@@ -23,7 +23,7 @@
     "connect_org": "Forbind organisation",
     "connect_org_description": "Forbind din GitHub-organisation med Plane",
     "processing": "Behandler",
-    "org_added_desc": "GitHub-org tilføjet af og tidspunkt",
+    "org_added_desc": "Viser hvem der tilføjede GitHub-organisationen og hvornår",
     "connection_fetch_error": "Fejl ved hentning af forbindelsesoplysninger fra serveren",
     "personal_account_connected": "Personlig konto forbundet",
     "personal_account_connected_description": "Din GitHub-konto er nu forbundet til Plane",
