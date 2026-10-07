@@ -44,20 +44,25 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: "3.12.x"
-          cache: "pip"
-          cache-dependency-path: "apps/api/requirements/*.txt"
+          # uv version comes from [tool.uv] required-version.
+          version-file: "apps/api/pyproject.toml"
+          # Same patch release as the production image (python:3.12.12-alpine);
+          # uv fetches a managed build instead of the runner's older system 3.12.
+          python-version: "3.12.12"
+          enable-cache: true
+          cache-dependency-glob: "apps/api/uv.lock"
 
+      # Same dependency set as the production image (Dockerfile.api).
       - name: Install API dependencies
         working-directory: apps/api
-        run: pip install -r requirements.txt
+        run: uv sync --locked --no-default-groups --group production
 
       - name: Django system checks
         working-directory: apps/api
-        run: python manage.py check
+        run: uv run --no-sync python manage.py check
 
       # Fails on two leaf nodes in one app (the PR and the base branch both
       # numbered a migration off the same parent), on a dependency pointing at
@@ -65,7 +70,7 @@ jobs:
       # written to a migration at all.
       - name: Migration graph and model/migration drift
         working-directory: apps/api
-        run: python manage.py makemigrations --check --dry-run
+        run: uv run --no-sync python manage.py makemigrations --check --dry-run
 
       # HEAD^1 is the base branch tip, HEAD^2 the PR head, so this is exactly
       # what the PR does to files that already exist on the base branch.
