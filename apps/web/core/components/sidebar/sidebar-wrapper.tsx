@@ -1,6 +1,8 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * Copyright (c) 2026-present Okręgowa Spółdzielnia Mleczarska w Piątnicy
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -22,12 +24,13 @@ import { IconButton } from "@plane/propel/icon-button";
 
 type TSidebarWrapperProps = {
   title: string;
+  showCustomizeNavigation?: boolean;
   children: React.ReactNode;
   quickActions?: React.ReactNode;
 };
 
 export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWrapperProps) {
-  const { title, children, quickActions } = props;
+  const { title, children, quickActions, showCustomizeNavigation = false } = props;
   // state
   const [isCustomizeNavDialogOpen, setIsCustomizeNavDialogOpen] = useState(false);
   // store hooks
@@ -57,7 +60,7 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
           <div className="flex items-center justify-between gap-2 px-2">
             <span className="pt-1 text-16 font-medium text-primary">{title}</span>
             <div className="flex items-center gap-2">
-              {title === "Projects" && (
+              {showCustomizeNavigation && (
                 <IconButton
                   size="base"
                   variant="ghost"
