@@ -236,26 +236,19 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
         Retrieve a specific work item using workspace slug, project identifier, and issue identifier.
         This endpoint provides workspace-level access to work items.
         """
-        # `<project_identifier>-<issue_identifier>` splits a path segment on its
-        # last hyphen, so a UUID in that position leaves a non-numeric
-        # `issue_identifier`. Filtering `sequence_id` on it raises ValueError,
-        # which surfaces as a 500 rather than a 404.
+        # The route splits `<project_identifier>-<issue_identifier>` on the last
+        # hyphen, so a UUID there leaves a non-numeric identifier to filter on.
         sequence_id = None
         if project_identifier and issue_identifier:
             try:
-                # isdecimal() rather than isdigit(), which also accepts
-                # superscript digits that int() then rejects. int() covers the
-                # remaining case: CPython refuses to convert decimal strings
-                # longer than 4300 digits.
+                # isdecimal() rejects the superscript digits isdigit() allows;
+                # int() rejects decimal strings longer than 4300 characters.
                 sequence_id = int(issue_identifier) if issue_identifier.isdecimal() else None
             except ValueError:
                 sequence_id = None
 
         if sequence_id is None:
-            return Response(
-                {"error": "The requested resource does not exist."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+            return Response({"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND)
 
         issue = Issue.issue_objects.annotate(
             sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
@@ -1327,10 +1320,13 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
         issue_link = IssueLink.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder)
+        previous_url = issue_link.url
         serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"))
+            updated_url = serializer.data.get("url")
+            if updated_url and updated_url != previous_url:
+                crawl_work_item_link_title.delay(serializer.data.get("id"), updated_url)
             issue_activity.delay(
                 type="link.activity.updated",
                 requested_data=requested_data,
@@ -1919,12 +1915,18 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
 
         name = sanitize_filename(request.data.get("name"))
         type = request.data.get("type", False)
-        size = request.data.get("size")
+        # Clients may send size as a numeric string ("53314").
+        # 1e400 parses as inf (OverflowError). Non-positive values must not
+        # reach the S3 content-length-range, which is [1, size].
+        try:
+            size = int(request.data.get("size") or 0)
+        except (TypeError, ValueError, OverflowError):
+            size = 0
         external_id = request.data.get("external_id")
         external_source = request.data.get("external_source")
 
         # Check if the request is valid
-        if not name or not size:
+        if not name or size <= 0:
             return Response(
                 {"error": "Invalid request.", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,

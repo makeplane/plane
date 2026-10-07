@@ -1,0 +1,36 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import * as React from "react";
+
+import { ModuleBacklogIcon } from "./backlog";
+import { ModuleCancelledIcon } from "./cancelled";
+import { ModuleCompletedIcon } from "./completed";
+import { ModuleInProgressIcon } from "./in-progress";
+import { ModulePausedIcon } from "./paused";
+import { ModulePlannedIcon } from "./planned";
+
+export type ModuleStatus = "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled";
+
+/** @deprecated Use ModuleStatus instead. */
+export type TModuleStatus = ModuleStatus;
+
+export type ModuleStatusIconProps = {
+  status: ModuleStatus;
+  className?: string;
+  height?: string;
+  width?: string;
+};
+
+export function ModuleStatusIcon({ status, className, height = "12px", width = "12px" }: ModuleStatusIconProps) {
+  if (status === "backlog") return <ModuleBacklogIcon className={className} height={height} width={width} />;
+  else if (status === "cancelled") return <ModuleCancelledIcon className={className} height={height} width={width} />;
+  else if (status === "completed") return <ModuleCompletedIcon className={className} height={height} width={width} />;
+  else if (status === "in-progress")
+    return <ModuleInProgressIcon className={className} height={height} width={width} />;
+  else if (status === "paused") return <ModulePausedIcon className={className} height={height} width={width} />;
+  else return <ModulePlannedIcon className={className} height={height} width={width} />;
+}

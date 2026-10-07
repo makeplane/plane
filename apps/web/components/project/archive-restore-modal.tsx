@@ -1,0 +1,135 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useState } from "react";
+// ui
+import { Button } from "@makeplane/propel/components/button";
+import { setToast } from "@plane/blocks/toast";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
+// hooks
+import { useProject } from "@/hooks/store/use-project";
+import { useAppRouter } from "@/hooks/use-app-router";
+
+type Props = {
+  workspaceSlug: string;
+
+  projectId: string;
+  isOpen: boolean;
+  onClose: () => void;
+  archive: boolean;
+};
+
+export function ArchiveRestoreProjectModal(props: Props) {
+  const { workspaceSlug, projectId, isOpen, onClose, archive } = props;
+  // router
+  const router = useAppRouter();
+  // states
+  const [isLoading, setIsLoading] = useState(false);
+  // store hooks
+  const { getProjectById, archiveProject, restoreProject } = useProject();
+
+  const projectDetails = getProjectById(projectId);
+  if (!projectDetails) return null;
+
+  const handleClose = () => {
+    setIsLoading(false);
+    onClose();
+  };
+
+  const handleArchiveProject = async () => {
+    setIsLoading(true);
+    await archiveProject(workspaceSlug, projectId)
+      .then(() => {
+        setToast({
+          type: "success",
+          title: "Archive success",
+          message: `${projectDetails.name} has been archived successfully`,
+        });
+        onClose();
+        router.push(`/${workspaceSlug}/projects/`);
+        return;
+      })
+      .catch(() =>
+        setToast({
+          type: "error",
+          title: "Error!",
+          message: "Project could not be archived. Please try again.",
+        })
+      )
+      .finally(() => setIsLoading(false));
+  };
+
+  const handleRestoreProject = async () => {
+    setIsLoading(true);
+    await restoreProject(workspaceSlug, projectId)
+      .then(() => {
+        setToast({
+          type: "success",
+          title: "Restore success",
+          message: `You can find ${projectDetails.name} in your projects.`,
+        });
+        onClose();
+        router.push(`/${workspaceSlug}/projects/`);
+        return;
+      })
+      .catch(() =>
+        setToast({
+          type: "error",
+          title: "Error!",
+          message: "Project could not be restored. Please try again.",
+        })
+      )
+      .finally(() => setIsLoading(false));
+  };
+
+  return (
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="sm">
+        <DialogMain>
+          <DialogHeader>
+            <DialogHeading>
+              <DialogTitle>
+                {archive ? "Archive" : "Restore"} {projectDetails.name}
+              </DialogTitle>
+            </DialogHeading>
+          </DialogHeader>
+          <DialogBody>
+            <p className="text-13 text-secondary">
+              {archive
+                ? "This project and its work items, cycles, modules, and pages will be archived. Its work items won't appear in search. Only project admins can restore the project."
+                : "Restoring a project will activate it and make it visible to all members of the project. Are you sure you want to continue?"}
+            </p>
+          </DialogBody>
+        </DialogMain>
+        <DialogActions>
+          <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={onClose} />
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label={archive ? (isLoading ? "Archiving" : "Archive") : isLoading ? "Restoring" : "Restore"}
+            onClick={archive ? handleArchiveProject : handleRestoreProject}
+            loading={isLoading}
+          />
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
+  );
+}

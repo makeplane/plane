@@ -1,0 +1,52 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { observer } from "mobx-react";
+import { INBOX_STATUS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { CloseOutline } from "@makeplane/propel/icons";
+import type { TInboxIssueStatus } from "@plane/types";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
+import { InboxStatusIcon } from "../../inbox-status-icon";
+
+export const InboxIssueAppliedFiltersStatus = observer(function InboxIssueAppliedFiltersStatus() {
+  // hooks
+  const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
+  const { t } = useTranslation();
+  // derived values
+  const filteredValues = inboxFilters?.status || [];
+  const currentOptionDetail = (status: TInboxIssueStatus) => INBOX_STATUS.find((s) => s.status === status) || undefined;
+
+  const handleFilterValue = (value: TInboxIssueStatus): TInboxIssueStatus[] =>
+    filteredValues?.includes(value) ? filteredValues.filter((v) => v !== value) : [...filteredValues, value];
+
+  if (filteredValues.length === 0) return <></>;
+  return (
+    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary">
+      <div className="text-11 text-secondary">Status</div>
+      {filteredValues.map((value) => {
+        const optionDetail = currentOptionDetail(value);
+        if (!optionDetail) return <></>;
+        return (
+          <div key={value} className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
+            <div className="relative flex h-3 w-3 flex-shrink-0 items-center justify-center overflow-hidden">
+              <InboxStatusIcon type={optionDetail?.status} />
+            </div>
+            <div className="truncate text-11">{t(optionDetail?.i18n_title)}</div>
+            {handleFilterValue(optionDetail?.status).length >= 1 && (
+              <div
+                className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
+                onClick={() => handleInboxIssueFilters("status", handleFilterValue(optionDetail?.status))}
+              >
+                <CloseOutline className={`h-3 w-3`} />
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+});
