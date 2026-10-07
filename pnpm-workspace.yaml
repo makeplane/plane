@@ -288,7 +288,7 @@ overrides:
   # postcss and friends; CVE-2026-93749 fixed in 1.2.2.
   source-map-js: ">=1.2.2 <2"
   # oxfmt 0.35.0 pins tinypool 2.1.0 exactly; CVE-2026-104848/104849 (critical) fixed in 2.1.2.
-  tinypool: ">=2.1.2 <3"
+  "tinypool@2": ">=2.1.2 <3"
 
 allowBuilds:
   "@parcel/watcher": true
