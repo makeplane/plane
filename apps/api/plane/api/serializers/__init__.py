@@ -64,6 +64,7 @@ from .asset import (
 from .invite import WorkspaceInviteSerializer
 from .member import (
     ProjectMemberSerializer,
+    ProjectMemberUserLiteSerializer,
     WorkspaceMemberLiteAPISerializer,
     ProjectMemberLiteAPISerializer,
 )
