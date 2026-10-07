@@ -515,6 +515,7 @@
     "workspace_level": "Nivel de espacio de trabajo",
     "order_by": {
       "label": "Ordenar por",
+      "direction": "Dirección",
       "manual": "Manual",
       "last_created": "Último creado",
       "last_updated": "Última actualización",

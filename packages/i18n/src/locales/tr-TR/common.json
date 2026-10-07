@@ -515,6 +515,7 @@
     "workspace_level": "Çalışma Alanı Seviyesi",
     "order_by": {
       "label": "Sırala",
+      "direction": "Yön",
       "manual": "Manuel",
       "last_created": "Son oluşturulan",
       "last_updated": "Son güncellenen",

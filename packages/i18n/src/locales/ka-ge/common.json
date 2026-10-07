@@ -515,6 +515,7 @@
     "workspace_level": "სამუშაო სივრცის დონე",
     "order_by": {
       "label": "დალაგება",
+      "direction": "მიმართულება",
       "manual": "ხელით",
       "last_created": "ბოლო შექმნილი",
       "last_updated": "ბოლო განახლებული",
