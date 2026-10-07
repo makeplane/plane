@@ -516,7 +516,7 @@
     "order_by": {
       "label": "Ordonează după",
       "direction": "Direcție",
-      "manual": "Manual - Rang",
+      "manual": "Manual",
       "last_created": "Ultima creată",
       "last_updated": "Ultima actualizată",
       "start_date": "Data de început",

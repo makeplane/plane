@@ -516,7 +516,7 @@
     "order_by": {
       "label": "Sortieren nach",
       "direction": "Richtung",
-      "manual": "Manuell - Rang",
+      "manual": "Manuell",
       "last_created": "Zuletzt erstellt",
       "last_updated": "Zuletzt aktualisiert",
       "start_date": "Startdatum",

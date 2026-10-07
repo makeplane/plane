@@ -516,7 +516,7 @@
     "order_by": {
       "label": "Řadit podle",
       "direction": "Směr",
-      "manual": "Ručně - Pořadí",
+      "manual": "Ručně",
       "last_created": "Naposledy vytvořené",
       "last_updated": "Naposledy aktualizované",
       "start_date": "Datum začátku",

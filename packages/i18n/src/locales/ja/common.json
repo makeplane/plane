@@ -516,7 +516,7 @@
     "order_by": {
       "label": "並び順",
       "direction": "方向",
-      "manual": "手動 - ランク",
+      "manual": "手動",
       "last_created": "最終作成日",
       "last_updated": "最終更新日",
       "start_date": "開始日",

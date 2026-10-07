@@ -516,7 +516,7 @@
     "order_by": {
       "label": "Сортувати за",
       "direction": "Напрямок",
-      "manual": "Вручну — Ранг",
+      "manual": "Вручну",
       "last_created": "Останні створені",
       "last_updated": "Останні оновлені",
       "start_date": "Дата початку",

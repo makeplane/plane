@@ -516,7 +516,7 @@
     "order_by": {
       "label": "Triediť podľa",
       "direction": "Smer",
-      "manual": "Manuálne - Poradie",
+      "manual": "Manuálne",
       "last_created": "Naposledy vytvorené",
       "last_updated": "Naposledy aktualizované",
       "start_date": "Dátum začiatku",
