@@ -515,7 +515,7 @@
     "workspace_level": "Úroveň pracovního prostoru",
     "order_by": {
       "label": "Řadit podle",
-      "manual": "Ručně - Pořadí",
+      "manual": "Ručně",
       "last_created": "Naposledy vytvořené",
       "last_updated": "Naposledy aktualizované",
       "start_date": "Datum začátku",
