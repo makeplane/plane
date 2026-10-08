@@ -13,8 +13,10 @@ import type { CoreRootStore } from "./root.store";
 
 export interface IIssueTypesStore {
   issueTypes: Record<string, TIssueType>;
+  projectIssueTypes: Record<string, TIssueType[]>;
   workspaceIssueTypes: TIssueType[];
   getIssueTypeById: (id: string) => TIssueType | undefined;
+  getProjectIssueTypes: (projectId: string) => TIssueType[];
   fetchProjectIssueTypes: (workspaceSlug: string, projectId: string) => Promise<TIssueType[]>;
   fetchWorkspaceIssueTypes: (workspaceSlug: string) => Promise<TIssueType[]>;
   createIssueType: (workspaceSlug: string, projectId: string, data: TCreateIssueType) => Promise<TIssueType>;
@@ -30,6 +32,7 @@ export interface IIssueTypesStore {
 
 export class IssueTypesStore implements IIssueTypesStore {
   issueTypes: Record<string, TIssueType> = {};
+  projectIssueTypes: Record<string, TIssueType[]> = {};
   workspaceIssueTypes: TIssueType[] = [];
   service: IssueTypesService;
   rootStore: CoreRootStore;
@@ -37,6 +40,7 @@ export class IssueTypesStore implements IIssueTypesStore {
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       issueTypes: observable,
+      projectIssueTypes: observable,
       workspaceIssueTypes: observable,
       getIssueTypeById: action,
       fetchProjectIssueTypes: action,
@@ -52,6 +56,8 @@ export class IssueTypesStore implements IIssueTypesStore {
 
   getIssueTypeById = (id: string) => this.issueTypes[id];
 
+  getProjectIssueTypes = (projectId: string) => this.projectIssueTypes[projectId] ?? [];
+
   private setTypes = (types: TIssueType[]) => {
     const next = { ...this.issueTypes };
     types.forEach((t) => (next[t.id] = t));
@@ -60,7 +66,10 @@ export class IssueTypesStore implements IIssueTypesStore {
 
   fetchProjectIssueTypes = async (workspaceSlug: string, projectId: string) => {
     const types = await this.service.getProjectIssueTypes(workspaceSlug, projectId);
-    runInAction(() => this.setTypes(types));
+    runInAction(() => {
+      this.setTypes(types);
+      this.projectIssueTypes = { ...this.projectIssueTypes, [projectId]: types };
+    });
     return types;
   };
 

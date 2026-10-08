@@ -33,14 +33,11 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
 
   /**
    * The default active work item type for a project, or `null` when the project has none. Read from
-   * the issue-types store, which the create-modal selector populates via `PROJECT_ISSUE_TYPES`.
+   * the per-project list the create-modal selector caches via `PROJECT_ISSUE_TYPES` (the project-level
+   * endpoint does not annotate `project_ids`, so membership must come from the fetched list itself).
    */
-  const getIssueTypeIdOnProjectChange = (projectId: string): string | null => {
-    const projectTypes = Object.values(issueTypesStore.issueTypes).filter((type) =>
-      type.project_ids?.includes(projectId)
-    );
-    return projectTypes.find((type) => type.is_default && type.is_active)?.id ?? null;
-  };
+  const getIssueTypeIdOnProjectChange = (projectId: string): string | null =>
+    issueTypesStore.getProjectIssueTypes(projectId).find((type) => type.is_default && type.is_active)?.id ?? null;
 
   return (
     <IssueModalContext.Provider

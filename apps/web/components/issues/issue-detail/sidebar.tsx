@@ -99,17 +99,19 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               />
             </SidebarPropertyListItem>
 
-            <SidebarPropertyListItem icon={WorkItemsOutline} label={t("issue.display.properties.issue_type")}>
-              <IssueTypeDropdown
-                value={issue?.type_id}
-                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { type_id: val })}
-                projectId={projectId}
-                workspaceSlug={workspaceSlug}
-                disabled={!isEditable}
-                variant="select-ghost-md"
-                testId="work-item-type-select"
-              />
-            </SidebarPropertyListItem>
+            {projectDetails?.is_issue_type_enabled && (
+              <SidebarPropertyListItem icon={WorkItemsOutline} label={t("issue.display.properties.issue_type")}>
+                <IssueTypeDropdown
+                  value={issue?.type_id}
+                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { type_id: val })}
+                  projectId={projectId}
+                  workspaceSlug={workspaceSlug}
+                  disabled={!isEditable}
+                  variant="select-ghost-md"
+                  testId="work-item-type-select"
+                />
+              </SidebarPropertyListItem>
+            )}
 
             <SidebarPropertyListItem icon={MembersOutline} label={t("common.assignees")}>
               <MemberSelect
