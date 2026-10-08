@@ -114,9 +114,9 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(issue_queryset),
-            on_results=lambda intake_issues: IntakeIssueSerializer(
-                intake_issues, many=True, fields=self.fields, expand=self.expand
-            ).data,
+            on_results=lambda intake_issues: (
+                IntakeIssueSerializer(intake_issues, many=True, fields=self.fields, expand=self.expand).data
+            ),
         )
 
     @intake_docs(
@@ -148,6 +148,13 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         """
         if not request.data.get("issue", {}).get("name", False):
             return Response({"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        name_max_length = Issue._meta.get_field("name").max_length
+        if len(str(request.data["issue"]["name"])) > name_max_length:
+            return Response(
+                {"error": f"Name must be at most {name_max_length} characters"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
 
