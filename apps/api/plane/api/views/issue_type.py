@@ -250,21 +250,24 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
     # list issue types and get issue type by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, type_id):
-        issue_type = self.get_queryset().get(pk=type_id)
-        issue_type = self.get_queryset().annotate(
-            project_ids=Coalesce(
-                Subquery(
-                    ProjectIssueType.objects.filter(
-                        issue_type=OuterRef("pk"), workspace__slug=slug
-                    )
-                    .values("issue_type")
-                    .annotate(project_ids=ArrayAgg("project_id", distinct=True))
-                    .values("project_ids")
-                ),
-                [],
+        issue_type = (
+            self.get_queryset()
+            .annotate(
+                project_ids=Coalesce(
+                    Subquery(
+                        ProjectIssueType.objects.filter(
+                            issue_type=OuterRef("pk"), workspace__slug=slug
+                        )
+                        .values("issue_type")
+                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                        .values("project_ids")
+                    ),
+                    [],
+                )
             )
+            .get(pk=type_id)
         )
-        serializer = self.serializer_class(issue_type, many=True)
+        serializer = self.serializer_class(issue_type)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # update issue type by id
@@ -302,7 +305,11 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
 
             # don't allow updating the external id if it already exists in another issue type
             # checking if the external id is being updated to a different issue type
-            if external_id and external_existing_issue_type.id != issue_type.id:
+            if (
+                external_id
+                and external_existing_issue_type
+                and external_existing_issue_type.id != issue_type.id
+            ):
                 return Response(
                     {
                         "error": "Work item type with the same external id and external source already exists",

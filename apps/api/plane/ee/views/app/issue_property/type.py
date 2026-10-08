@@ -166,7 +166,11 @@ class IssueTypeEndpoint(BaseAPIView):
         )
 
         # Default cannot be made in active
-        if issue_type.is_default and not request.data.get("is_active"):
+        if (
+            issue_type.is_default
+            and "is_active" in request.data
+            and not request.data.get("is_active")
+        ):
             return Response(
                 {
                     "error": "Default work item type cannot be inactive",
