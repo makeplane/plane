@@ -43,6 +43,37 @@ class ProjectMemberSerializer(BaseSerializer):
         read_only_fields = ["id"]
 
 
+class ProjectMemberUserLiteSerializer(BaseSerializer):
+    """
+    Lightweight project member response serializer.
+
+    Returns the existing user fields together with the project membership ID.
+    """
+
+    id = serializers.UUIDField(source="member.id", read_only=True)
+    first_name = serializers.CharField(source="member.first_name", read_only=True)
+    last_name = serializers.CharField(source="member.last_name", read_only=True)
+    email = serializers.EmailField(source="member.email", read_only=True)
+    avatar = serializers.CharField(source="member.avatar", read_only=True, allow_null=True)
+    avatar_url = serializers.CharField(source="member.avatar_url", read_only=True, allow_null=True)
+    display_name = serializers.CharField(source="member.display_name", read_only=True)
+    project_member_id = serializers.UUIDField(source="id", read_only=True)
+
+    class Meta:
+        model = ProjectMember
+        fields = [
+            "id",
+            "project_member_id",
+            "first_name",
+            "last_name",
+            "email",
+            "avatar",
+            "avatar_url",
+            "display_name",
+        ]
+        read_only_fields = fields
+
+
 class BaseMemberLiteAPISerializer(BaseSerializer):
     """Common flattened member representation for paginated member pickers/directories."""
 
@@ -81,5 +112,11 @@ class WorkspaceMemberLiteAPISerializer(BaseMemberLiteAPISerializer):
 class ProjectMemberLiteAPISerializer(BaseMemberLiteAPISerializer):
     """Minimal ProjectMember representation for paginated member pickers/directories."""
 
+    project_member_id = serializers.UUIDField(source="id", read_only=True)
+
     class Meta(BaseMemberLiteAPISerializer.Meta):
         model = ProjectMember
+        fields = [
+            *BaseMemberLiteAPISerializer.Meta.fields,
+            "project_member_id",
+        ]
