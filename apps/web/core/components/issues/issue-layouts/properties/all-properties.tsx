@@ -45,6 +45,7 @@ import { useIssuePageLinks } from "@/hooks/use-issue-page-links";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components
 import { IssuePropertyLabels } from "./labels";
+import { TimeLoggedBadge } from "@/components/time-tracking/work-item/time-logged-badge";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
 
 export interface IIssueProperties {
@@ -502,6 +503,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           isMobile={isMobile}
           renderByDefault={false}
         >
+          {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events, jsx_a11y/no-static-element-interactions */}
           <div
             className="flex h-5 max-w-40 flex-shrink-0 cursor-pointer items-center gap-1.5 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1 hover:bg-layer-1"
             onFocus={handleEventPropagation}
@@ -516,6 +518,9 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>
+
+      {/* time logged */}
+      <TimeLoggedBadge issue={issue} displayProperties={displayProperties} />
 
       {/* label */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">

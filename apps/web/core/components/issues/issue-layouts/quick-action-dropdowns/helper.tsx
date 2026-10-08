@@ -13,6 +13,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EIssuesStoreType, TIssue } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
+import { useTimeTrackingMenuItems } from "@/components/time-tracking/work-item/use-time-tracking-menu-items";
 import { createCopyMenuWithDuplication } from "./copy-menu-helper";
 
 // Generic helper function to handle optional function calls gracefully
@@ -140,6 +141,7 @@ export const useIssueActionHandlers = (props: MenuItemFactoryProps) => {
 export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
   const { t } = useTranslation();
   const actionHandlers = useIssueActionHandlers(props);
+  const timeTrackingMenuItems = useTimeTrackingMenuItems(props.issue, props.workspaceSlug);
 
   const {
     issue,
@@ -262,6 +264,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     createArchiveMenuItem,
     createRestoreMenuItem,
     createDeleteMenuItem,
+    ...timeTrackingMenuItems,
   };
 };
 
@@ -275,6 +278,8 @@ export const useProjectIssueMenuItems = (props: MenuItemFactoryProps): TContextM
       factory.createCopyMenuItem(),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
+      factory.createTimerMenuItem(),
+      factory.createLogTimeMenuItem(),
       factory.createArchiveMenuItem(),
       factory.createDeleteMenuItem(),
     ],
@@ -289,6 +294,8 @@ export const useWorkItemDetailMenuItems = (props: MenuItemFactoryProps): TContex
     () => [
       factory.createCopyMenuItem(props.workspaceSlug),
       factory.createOpenInNewTabMenuItem(),
+      factory.createTimerMenuItem(),
+      factory.createLogTimeMenuItem(),
       factory.createArchiveMenuItem(),
       factory.createRestoreMenuItem(),
       factory.createDeleteMenuItem(),
@@ -307,6 +314,8 @@ export const useAllIssueMenuItems = (props: MenuItemFactoryProps): TContextMenuI
       factory.createCopyMenuItem(),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
+      factory.createTimerMenuItem(),
+      factory.createLogTimeMenuItem(),
       factory.createArchiveMenuItem(),
       factory.createDeleteMenuItem(),
     ],
@@ -331,6 +340,8 @@ export const useCycleIssueMenuItems = (props: MenuItemFactoryProps): TContextMen
       factory.createCopyMenuItem(),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
+      factory.createTimerMenuItem(),
+      factory.createLogTimeMenuItem(),
       factory.createRemoveFromCycleMenuItem(),
       factory.createArchiveMenuItem(),
       factory.createDeleteMenuItem(),
@@ -357,6 +368,8 @@ export const useModuleIssueMenuItems = (props: MenuItemFactoryProps): TContextMe
       factory.createCopyMenuItem(),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
+      factory.createTimerMenuItem(),
+      factory.createLogTimeMenuItem(),
       factory.createRemoveFromModuleMenuItem(),
       factory.createArchiveMenuItem(),
       factory.createDeleteMenuItem(),

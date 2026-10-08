@@ -65,6 +65,8 @@ import { RouterStore } from "./router.store";
 import type { IStickyStore } from "./sticky/sticky.store";
 import { StickyStore } from "./sticky/sticky.store";
 import type { IThemeStore } from "./theme.store";
+import type { ITimerStore } from "./time-tracking/timer.store";
+import { TimerStore } from "./time-tracking/timer.store";
 import { ThemeStore } from "./theme.store";
 import type { IUserStore } from "./user";
 import { UserStore } from "./user";
@@ -103,6 +105,7 @@ export class CoreRootStore {
   workItemFilters: IWorkItemFilterStore;
   powerK: IPowerKStore;
   timelineStore: ITimelineStore;
+  timer: ITimerStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -135,6 +138,7 @@ export class CoreRootStore {
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
     this.timelineStore = new TimeLineStore(this);
+    this.timer = new TimerStore();
   }
 
   resetOnSignOut() {
@@ -169,6 +173,7 @@ export class CoreRootStore {
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
     this.timelineStore = new TimeLineStore(this);
+    this.timer = new TimerStore();
   }
 }
 

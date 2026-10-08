@@ -13,6 +13,7 @@ import { usePowerKHelpCommands } from "./help-commands";
 import { usePowerKMiscellaneousCommands } from "./miscellaneous-commands";
 import { usePowerKNavigationCommands } from "./navigation/root";
 import { usePowerKPreferencesCommands } from "./preferences-commands";
+import { usePowerKTimeTrackingCommands } from "./time-tracking-commands";
 
 export const useProjectsAppPowerKCommands = (): TPowerKCommandConfig[] => {
   const navigationCommands = usePowerKNavigationCommands();
@@ -22,6 +23,7 @@ export const useProjectsAppPowerKCommands = (): TPowerKCommandConfig[] => {
   const miscellaneousCommands = usePowerKMiscellaneousCommands();
   const preferencesCommands = usePowerKPreferencesCommands();
   const helpCommands = usePowerKHelpCommands();
+  const timeTrackingCommands = usePowerKTimeTrackingCommands();
 
   return [
     ...navigationCommands,
@@ -29,6 +31,7 @@ export const useProjectsAppPowerKCommands = (): TPowerKCommandConfig[] => {
     ...contextualCommands,
     ...accountCommands,
     ...miscellaneousCommands,
+    ...timeTrackingCommands,
     ...preferencesCommands,
     ...helpCommands,
   ];

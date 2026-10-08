@@ -10,6 +10,7 @@ import { getValidKeysFromObject } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useTimeLineRelationOptions } from "@/components/relations";
+import { IssueTimeEntryActivity } from "./actions/time-entry";
 // local components
 import {
   IssueDefaultActivity,
@@ -91,6 +92,8 @@ export const IssueActivityItem = observer(function IssueActivityItem(props: TIss
     case "intake":
     case "inbox":
       return <IssueInboxActivity {...componentDefaultProps} />;
+    case "time_entry":
+      return <IssueTimeEntryActivity {...componentDefaultProps} />;
     default:
       return null;
   }

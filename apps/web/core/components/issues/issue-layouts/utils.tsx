@@ -10,7 +10,7 @@ import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tre
 import { clone, isNil, pull, uniq, concat } from "lodash-es";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import type { FC } from "react";
-import { CalendarDays, LayersIcon, Paperclip } from "lucide-react";
+import { CalendarDays, LayersIcon, Paperclip, Timer } from "lucide-react";
 // plane types
 import { EIconSize, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
 import { Logo } from "@plane/propel/emoji-icon-picker";
@@ -72,6 +72,7 @@ import {
   SpreadsheetStartDateColumn,
   SpreadsheetStateColumn,
   SpreadsheetSubIssueColumn,
+  SpreadsheetTimeColumn,
   SpreadsheetUpdatedOnColumn,
 } from "@/components/issues/issue-layouts/spreadsheet/columns";
 
@@ -845,6 +846,7 @@ export const SpreadSheetPropertyIconMap: Record<string, FC<ISvgIcons>> = {
   StatePropertyIcon: StatePropertyIcon,
   Link2: LinkIcon,
   PageIcon: PageIcon,
+  TimerIcon: Timer,
   Paperclip: Paperclip,
   LayersIcon: LayersIcon,
 };
@@ -859,6 +861,7 @@ export const SPREADSHEET_COLUMNS: { [key in keyof IIssueDisplayProperties]: TSpr
   cycle: SpreadsheetCycleColumn,
   link: SpreadsheetLinkColumn,
   page: SpreadsheetPageColumn,
+  time_logged: SpreadsheetTimeColumn,
   priority: SpreadsheetPriorityColumn,
   start_date: SpreadsheetStartDateColumn,
   state: SpreadsheetStateColumn,

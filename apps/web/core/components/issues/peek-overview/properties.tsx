@@ -31,6 +31,7 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
+import { WorkItemTimeProperty } from "@/components/time-tracking/work-item/time-property";
 // helpers
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
@@ -204,6 +205,8 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             />
           </SidebarPropertyListItem>
         )}
+
+        <WorkItemTimeProperty workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
 
         {projectDetails?.module_view && (
           <SidebarPropertyListItem icon={ModuleIcon} label={t("common.modules")}>

@@ -39,6 +39,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 // components
 import { IssueParentSelectRoot } from "@/components/issues/parent-select-root";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
+import { WorkItemTimeProperty } from "@/components/time-tracking/work-item/time-property";
 import { IssueCycleSelect } from "./cycle-select";
 import { IssueLabel } from "./label";
 import { IssueModuleSelect } from "./module-select";
@@ -204,6 +205,8 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 />
               </SidebarPropertyListItem>
             )}
+
+            <WorkItemTimeProperty workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
 
             {projectDetails?.module_view && (
               <SidebarPropertyListItem icon={ModuleIcon} label={t("common.modules")}>
