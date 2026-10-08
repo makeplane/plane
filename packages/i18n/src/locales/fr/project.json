@@ -338,7 +338,7 @@
   },
   "project_modules": {
     "status": {
-      "backlog": "Backlog",
+      "backlog": "En attente",
       "planned": "Planifié",
       "in_progress": "En cours",
       "paused": "En pause",
