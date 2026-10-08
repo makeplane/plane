@@ -364,6 +364,9 @@ ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
 # Skip environment variable configuration
 SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 
+# EE features (this fork: replaces the removed billing flag provider)
+EE_FEATURES_ENABLED = os.environ.get("EE_FEATURES_ENABLED", "1") == "1"
+
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
 # Cookie Settings
