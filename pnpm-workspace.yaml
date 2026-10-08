@@ -89,14 +89,14 @@ catalog:
   "@vitest/coverage-v8": "^4.1.11"
   "ast-types": "0.14.2"
   "autoprefixer": "^10.4.19"
-  "axios": "1.18.1"
+  "axios": "1.20.0"
   "buffer": "^6.0.3"
   "chroma-js": "^3.2.0"
   "class-variance-authority": "0.7.1"
   "clsx": "^2.1.1"
   "cmdk": "^1.1.1"
   "comlink": "^4.4.1"
-  "compression": "1.8.1"
+  "compression": "1.8.2"
   "cors": "^2.8.5"
   "date-fns": "^4.1.0"
   "dotenv": "16.4.7"
@@ -159,7 +159,7 @@ catalog:
   "remark-stringify": "^11.0.0"
   "sanitize-html": "2.17.7"
   "serve": "14.2.5"
-  "sharp": "^0.35.4"
+  "sharp": "^0.35.5"
   "smooth-scroll-into-view-if-needed": "^2.0.2"
   "storybook": "10.4.6"
   "swr": "2.4.2"
@@ -208,16 +208,20 @@ overrides:
   mdast-util-to-hast: 13.2.1
   valibot: 1.4.2
   glob: 11.1.0
-  # brace-expansion <5.0.9 has two DoS advisories (GHSA-mh99-v99m-4gvg, GHSA-rgw5-rvv9-x895,
-  # the second bypasses the first's mitigation) reachable via serve>serve-handler>minimatch.
-  brace-expansion: 5.0.9
+  # EXACT pin, bump the number. Stack-exhaustion DoS (CVE-2026-102276, -102278, fixed
+  # 5.0.11) reachable via serve>serve-handler>minimatch.
+  brace-expansion: 5.0.12
   nanoid: 3.3.18
   esbuild: 0.28.1
   "@babel/core": 7.29.7
   "@babel/helpers": 7.29.7
   "@babel/runtime": 7.29.7
   chokidar: 3.6.0
-  prosemirror-view: 1.40.0
+  # EXACT pin, bump the number. CVE-2026-104847 fixed in 1.42.3; 1.42.6 needs
+  # prosemirror-model ^1.25.12, pinned below so the graph keeps one model copy
+  # (two copies break ProseMirror's instanceof checks).
+  prosemirror-view: 1.42.6
+  prosemirror-model: 1.25.12
   "@types/express": 4.17.23
   typescript: "catalog:"
   vite: "catalog:"
@@ -233,7 +237,7 @@ overrides:
   serialize-javascript: 7.0.5
   "ajv@6": 6.14.0
   "ajv@8": 8.18.0
-  "undici@7": 7.29.0
+  "undici@7": 7.30.0
   flatted: 3.4.2
   picomatch: 2.3.2
   "yaml@1": 1.10.3
@@ -276,6 +280,15 @@ overrides:
   # already allows the fix -- the lockfile simply predates both. Hold below
   # 5.0.0, which is outside that range.
   toml: ">=4.2.0 <5"
+  # The lockfile predates the 2026-10-05 advisories below.
+  # serve 14.2.5 pins compression 1.8.1 exactly; CVE-2026-87776 fixed in 1.8.2.
+  compression: "catalog:"
+  # express ~2.0.7 / ^2.0.7 already allow it; CVE-2026-90711 (critical) fixed in 2.0.8.
+  proxy-addr: ">=2.0.8 <3"
+  # postcss and friends; CVE-2026-93749 fixed in 1.2.2.
+  source-map-js: ">=1.2.2 <2"
+  # oxfmt 0.35.0 pins tinypool 2.1.0 exactly; CVE-2026-104848/104849 (critical) fixed in 2.1.2.
+  "tinypool@2": ">=2.1.2 <3"
 
 allowBuilds:
   "@parcel/watcher": true
