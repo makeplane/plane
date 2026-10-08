@@ -23,6 +23,7 @@ export type TCreateIssueType = {
   name: string;
   description?: string;
   logo_props?: Record<string, unknown>;
+  is_active?: boolean;
 };
 
 export type TUpdateIssueType = Partial<Pick<TIssueType, "name" | "description" | "logo_props" | "is_active">>;
