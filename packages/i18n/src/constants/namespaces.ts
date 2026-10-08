@@ -25,6 +25,7 @@ export const NAMESPACES = [
   "settings",
   "stickies",
   "template",
+  "time-tracking",
   "tour",
   "update",
   "wiki",

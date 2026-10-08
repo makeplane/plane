@@ -33,6 +33,7 @@ export enum EIssueGroupByToServerOptions {
   "cycle" = "cycle_id",
   "module" = "issue_module__module_id",
   "target_date" = "target_date",
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   "project" = "project_id",
   "created_by" = "created_by",
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
@@ -150,6 +151,7 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   "sub_issue_count",
   "link",
   "page",
+  "time_logged",
   "attachment_count",
   "estimate",
   "created_on",
@@ -204,6 +206,7 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   },
   { key: "link", titleTranslationKey: "common.link" },
   { key: "page", titleTranslationKey: "common.page" },
+  { key: "time_logged", titleTranslationKey: "time-tracking.display_property" },
   {
     key: "estimate",
     titleTranslationKey: "common.estimate",
@@ -226,6 +229,7 @@ export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "updated_on",
   "link",
   "page",
+  "time_logged",
   "attachment_count",
   "sub_issue_count",
 ];
@@ -344,6 +348,15 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "created_at",
     descendingOrderTitle: "",
     icon: "PageIcon",
+    disableSorting: true,
+  },
+  time_logged: {
+    i18n_title: "time-tracking.display_property",
+    ascendingOrderKey: "-created_at",
+    ascendingOrderTitle: "",
+    descendingOrderKey: "created_at",
+    descendingOrderTitle: "",
+    icon: "TimerIcon",
     disableSorting: true,
   },
   attachment_count: {
