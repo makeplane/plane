@@ -7,7 +7,8 @@ import json
 
 # Django imports
 from django.core import serializers
-from django.db.models import Count, F, Func, OuterRef, Prefetch, Q
+from django.db.models import Count, F, Func, IntegerField, OuterRef, Prefetch, Q, Subquery
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -75,6 +76,56 @@ from plane.utils.openapi import (
 )
 
 
+def _module_issue_count_subquery(state_group=None):
+    """Return a Coalesce(Subquery) that counts active module issues, optionally filtered by state group."""
+    filters = Q(
+        module_id=OuterRef("pk"),
+        issue__archived_at__isnull=True,
+        issue__is_draft=False,
+        deleted_at__isnull=True,
+    )
+    if state_group:
+        filters &= Q(issue__state__group=state_group)
+    return Coalesce(
+        Subquery(
+            ModuleIssue.objects.filter(filters)
+            .order_by()
+            .values("module_id")
+            .annotate(count=Count("id"))
+            .values("count"),
+            output_field=IntegerField(),
+        ),
+        0,
+    )
+
+
+def _build_module_queryset(slug, project_id, order_by="-created_at"):
+    """Build the base Module queryset with issue-count annotations.
+
+    Uses correlated subqueries for each state-group count to avoid the row
+    inflation caused by COUNT(DISTINCT ...) across a multi-table join path.
+    """
+    return (
+        Module.objects.filter(project_id=project_id)
+        .filter(workspace__slug=slug)
+        .select_related("project", "workspace", "lead")
+        .prefetch_related("members")
+        .prefetch_related(
+            Prefetch(
+                "link_module",
+                queryset=ModuleLink.objects.select_related("module", "created_by"),
+            )
+        )
+        .annotate(total_issues=_module_issue_count_subquery())
+        .annotate(completed_issues=_module_issue_count_subquery("completed"))
+        .annotate(cancelled_issues=_module_issue_count_subquery("cancelled"))
+        .annotate(started_issues=_module_issue_count_subquery("started"))
+        .annotate(unstarted_issues=_module_issue_count_subquery("unstarted"))
+        .annotate(backlog_issues=_module_issue_count_subquery("backlog"))
+        .order_by(order_by)
+    )
+
+
 class ModuleListCreateAPIEndpoint(BaseAPIView):
     """Module List and Create Endpoint"""
 
@@ -85,91 +136,11 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
-        return (
-            Module.objects.filter(project_id=self.kwargs.get("project_id"))
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("lead")
-            .prefetch_related("members")
-            .prefetch_related(
-                Prefetch(
-                    "link_module",
-                    queryset=ModuleLink.objects.select_related("module", "created_by"),
-                )
-            )
-            .annotate(
-                total_issues=Count(
-                    "issue_module",
-                    filter=Q(
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                completed_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="completed",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                cancelled_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="cancelled",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                started_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="started",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                unstarted_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="unstarted",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                backlog_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="backlog",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .order_by(self.kwargs.get("order_by", "-created_at"))
+        """Return active (non-archived) modules for the project."""
+        return _build_module_queryset(
+            slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
+            order_by=self.kwargs.get("order_by", "-created_at"),
         )
 
     @module_docs(
@@ -336,91 +307,11 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
-        return (
-            Module.objects.filter(project_id=self.kwargs.get("project_id"))
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("lead")
-            .prefetch_related("members")
-            .prefetch_related(
-                Prefetch(
-                    "link_module",
-                    queryset=ModuleLink.objects.select_related("module", "created_by"),
-                )
-            )
-            .annotate(
-                total_issues=Count(
-                    "issue_module",
-                    filter=Q(
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                completed_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="completed",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                cancelled_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="cancelled",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                started_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="started",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                unstarted_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="unstarted",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                backlog_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="backlog",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .order_by(self.kwargs.get("order_by", "-created_at"))
+        """Return the module queryset for detail, update, and delete operations."""
+        return _build_module_queryset(
+            slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
+            order_by=self.kwargs.get("order_by", "-created_at"),
         )
 
     @module_docs(
@@ -943,93 +834,12 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
-        return (
-            Module.objects.filter(project_id=self.kwargs.get("project_id"))
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(archived_at__isnull=False)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("lead")
-            .prefetch_related("members")
-            .prefetch_related(
-                Prefetch(
-                    "link_module",
-                    queryset=ModuleLink.objects.select_related("module", "created_by"),
-                )
-            )
-            .annotate(
-                total_issues=Count(
-                    "issue_module",
-                    filter=Q(
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                completed_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="completed",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                cancelled_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="cancelled",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                started_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="started",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                unstarted_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="unstarted",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                backlog_issues=Count(
-                    "issue_module__issue__state__group",
-                    filter=Q(
-                        issue_module__issue__state__group="backlog",
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                    distinct=True,
-                )
-            )
-            .order_by(self.kwargs.get("order_by", "-created_at"))
-        )
+        """Return only archived modules for the project."""
+        return _build_module_queryset(
+            slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
+            order_by=self.kwargs.get("order_by", "-created_at"),
+        ).filter(archived_at__isnull=False)
 
     @module_docs(
         operation_id="list_archived_modules",
