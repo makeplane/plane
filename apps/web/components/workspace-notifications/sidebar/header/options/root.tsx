@@ -1,0 +1,91 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { observer } from "mobx-react";
+import { CheckDoneOutline, RefreshOutline } from "@makeplane/propel/icons";
+// plane imports
+import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+// hooks
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// local imports
+import { NotificationFilter } from "../../filters/menu";
+import { NotificationHeaderMenuOption } from "./menu-option";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
+
+type TNotificationSidebarHeaderOptions = {
+  workspaceSlug: string;
+};
+
+export const NotificationSidebarHeaderOptions = observer(function NotificationSidebarHeaderOptions(
+  props: TNotificationSidebarHeaderOptions
+) {
+  const { workspaceSlug } = props;
+  // hooks
+  const { isMobile } = usePlatformOS();
+  const { loader, getNotifications, markAllNotificationsAsRead } = useWorkspaceNotifications();
+  const { t } = useTranslation();
+
+  const refreshNotifications = async () => {
+    if (loader) return;
+    try {
+      await getNotifications(workspaceSlug, ENotificationLoader.MUTATION_LOADER, ENotificationQueryParamType.CURRENT);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleMarkAllNotificationsAsRead = async () => {
+    // NOTE: We are using loader to prevent continues request when we are making all the notification to read
+    if (loader) return;
+    try {
+      await markAllNotificationsAsRead(workspaceSlug);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <div className="relative flex items-center justify-center gap-2 text-body-xs-medium">
+      {/* mark all notifications as read*/}
+      <Tooltip label={t("notification.options.mark_all_as_read")} side="bottom" disabled={isMobile}>
+        <IconButton
+          size="sm"
+          variant="ghost"
+          icon={<Icon icon={CheckDoneOutline} />}
+          loading={loader === ENotificationLoader.MARK_ALL_AS_READY}
+          aria-label={t("notification.options.mark_all_as_read")}
+          onClick={() => {
+            void handleMarkAllNotificationsAsRead();
+          }}
+        />
+      </Tooltip>
+
+      {/* refetch current notifications */}
+      <Tooltip label={t("notification.options.refresh")} side="bottom" disabled={isMobile}>
+        <IconButton
+          size="sm"
+          variant="ghost"
+          icon={<Icon icon={RefreshOutline} />}
+          aria-label={t("notification.options.refresh")}
+          loading={loader === ENotificationLoader.MUTATION_LOADER}
+          onClick={() => {
+            void refreshNotifications();
+          }}
+        />
+      </Tooltip>
+
+      {/* notification filters */}
+      <NotificationFilter />
+
+      {/* notification menu options */}
+      <NotificationHeaderMenuOption />
+    </div>
+  );
+});

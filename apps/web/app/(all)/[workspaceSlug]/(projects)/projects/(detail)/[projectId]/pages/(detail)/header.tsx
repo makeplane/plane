@@ -1,9 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { PageIcon } from "@plane/propel/icons";
-import type { ICustomSearchSelectOption } from "@plane/types";
-import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
+import { PagesOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
+import type { BreadcrumbNavigationItem } from "@plane/blocks/breadcrumb";
+import { Breadcrumbs, BreadcrumbNavigationSelect } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 import { getPageName } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -11,13 +19,12 @@ import { PageAccessIcon } from "@/components/common/page-access-icon";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
+import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web imports
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
-import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePage, usePageStore } from "@/hooks/store";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -26,9 +33,12 @@ export interface IPagesHeaderProps {
 const storeType = EPageStoreType.PROJECT;
 
 export const PageDetailsHeader = observer(function PageDetailsHeader() {
+  // plane hooks
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   const { workspaceSlug, pageId, projectId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   // store hooks
   const { loader } = useProject();
   const { getPageById, getCurrentProjectPageIds } = usePageStore(storeType);
@@ -40,21 +50,21 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
   const projectPageIds = getCurrentProjectPageIds(projectId?.toString());
 
   const switcherOptions = projectPageIds
-    .map((id) => {
+    .map<BreadcrumbNavigationItem | undefined>((id) => {
       const _page = id === pageId ? page : getPageById(id);
-      if (!_page) return;
+      if (!_page?.id) return;
       return {
-        value: _page.id,
-        query: _page.name,
+        key: _page.id,
+        label: getPageName(_page.name),
         content: (
-          <div className="flex gap-2 items-center justify-between">
-            <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={PageIcon} />
+          <div className="flex items-center justify-between gap-2">
+            <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={PagesOutline} />
             <PageAccessIcon {..._page} />
           </div>
         ),
       };
     })
-    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
+    .filter((option) => option !== undefined);
 
   if (!page) return null;
 
@@ -63,41 +73,44 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
       <Header.LeftItem>
         <div>
           <Breadcrumbs isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+              {...projectCrumb}
+            />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
                   label="Pages"
                   href={`/${workspaceSlug}/projects/${projectId}/pages/`}
-                  icon={<PageIcon className="h-4 w-4 text-tertiary" />}
+                  icon={<PagesOutline className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
 
             <Breadcrumbs.Item
               component={
-                <BreadcrumbNavigationSearchDropdown
-                  selectedItem={pageId?.toString() ?? ""}
+                <BreadcrumbNavigationSelect
+                  selectedItemKey={pageId?.toString() ?? ""}
                   navigationItems={switcherOptions}
                   onChange={(value: string) => {
                     router.push(`/${workspaceSlug}/projects/${projectId}/pages/${value}`);
                   }}
-                  title={getPageName(page?.name)}
-                  icon={
-                    <Breadcrumbs.Icon>
-                      <SwitcherIcon logo_props={page.logo_props} LabelIcon={PageIcon} size={16} />
-                    </Breadcrumbs.Icon>
-                  }
+                  label={getPageName(page?.name)}
+                  icon={<SwitcherIcon logo_props={page.logo_props} LabelIcon={PagesOutline} size={16} />}
+                  placeholder={t("pages")}
+                  searchPlaceholder={t("common.search.label")}
+                  emptyMessage={t("common.search.no_matches_found")}
                   isLast
                 />
               }
+              isLast
             />
           </Breadcrumbs>
         </div>
       </Header.LeftItem>
       <Header.RightItem>
         <PageSyncingBadge syncStatus={page.isSyncingWithServer} />
-        <PageDetailsHeaderExtraActions page={page} storeType={storeType} />
         <PageHeaderActions page={page} storeType={storeType} />
       </Header.RightItem>
     </Header>

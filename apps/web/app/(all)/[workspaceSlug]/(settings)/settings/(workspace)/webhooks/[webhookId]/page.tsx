@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { setToast } from "@plane/blocks/toast";
 import type { IWebhook } from "@plane/types";
 // ui
 // components
@@ -11,11 +17,12 @@ import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "@/components/web-hooks";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWebhook } from "@/hooks/store/use-webhook";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
+// local imports
 import type { Route } from "./+types/page";
+import { WebhookDetailsWorkspaceSettingsHeader } from "./header";
 
 function WebhookDetailsPage({ params }: Route.ComponentProps) {
   // states
@@ -55,27 +62,15 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
 
     try {
       await updateWebhook(workspaceSlug, formData.id, payload);
-
-      captureSuccess({
-        eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_updated,
-        payload: { webhook: formData.id },
-      });
-
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: "Webhook updated successfully.",
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      captureError({
-        eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_updated,
-        payload: { webhook: formData.id },
-        error: error as Error,
-      });
-
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: error?.error ?? "Something went wrong. Please try again.",
       });
@@ -100,7 +95,7 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
     );
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<WebhookDetailsWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
       <DeleteWebhookModal isOpen={deleteWebhookModal} onClose={() => setDeleteWebhookModal(false)} />
       <div className="w-full space-y-8 overflow-y-auto">

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third Party imports
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
@@ -57,7 +61,10 @@ class ProjectMemberPermission(BasePermission):
         ## Safe Methods -> Handle the filtering logic in queryset
         if request.method in SAFE_METHODS:
             return ProjectMember.objects.filter(
-                workspace__slug=view.workspace_slug, member=request.user, is_active=True
+                workspace__slug=view.workspace_slug,
+                member=request.user,
+                project_id=view.project_id,
+                is_active=True,
             ).exists()
         ## Only workspace owners or admins can create the projects
         if request.method == "POST":

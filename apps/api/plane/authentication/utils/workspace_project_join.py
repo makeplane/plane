@@ -1,3 +1,8 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
+# Module imports
 from plane.db.models import (
     ProjectMember,
     ProjectMemberInvite,
@@ -25,15 +30,13 @@ def process_workspace_project_invitations(user):
         ignore_conflicts=True,
     )
 
-    [
+    for workspace_member_invite in workspace_member_invites:
         invalidate_cache_directly(
             path=f"/api/workspaces/{str(workspace_member_invite.workspace.slug)}/members/",
             url_params=False,
             user=False,
             multiple=True,
         )
-        for workspace_member_invite in workspace_member_invites
-    ]
 
     # Check if user has any project invites
     project_member_invites = ProjectMemberInvite.objects.filter(email=user.email, accepted=True)

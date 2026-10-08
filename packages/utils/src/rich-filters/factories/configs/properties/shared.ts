@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import type { IProject, IUserLite, TOperatorConfigMap, TSupportedOperators } from "@plane/types";
 import { COMPARISON_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
@@ -41,7 +47,7 @@ export const getMemberMultiSelectConfig = (params: TCreateUserFilterParams, sing
 
 // ------------ Date Operators ------------
 
-export const getSupportedDateOperators = (params: TCreateDateFilterParams): TOperatorConfigMap<Date> =>
+export const getSupportedDateOperators = (params: TCreateDateFilterParams): TOperatorConfigMap =>
   new Map([
     createOperatorConfigEntry(EQUALITY_OPERATOR.EXACT, params, (updatedParams) => getDatePickerConfig(updatedParams)),
     createOperatorConfigEntry(COMPARISON_OPERATOR.RANGE, params, (updatedParams) =>

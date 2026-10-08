@@ -1,0 +1,156 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "Change email",
+        "description": "Enter a new email address to receive a verification link.",
+        "toasts": {
+          "success_title": "Success!",
+          "success_message": "Email updated successfully. Please sign in again."
+        },
+        "form": {
+          "email": {
+            "label": "New email",
+            "placeholder": "Enter your email",
+            "errors": {
+              "required": "Email is required",
+              "invalid": "Email is invalid",
+              "exists": "Email already exists. Please use a different one.",
+              "validation_failed": "Email validation failed. Please try again."
+            }
+          },
+          "code": {
+            "label": "Unique code",
+            "placeholder": "123456",
+            "helper_text": "Verification code sent to your new email.",
+            "errors": {
+              "required": "Unique code is required",
+              "invalid": "Invalid verification code. Please try again."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Continue",
+          "confirm": "Confirm",
+          "cancel": "Cancel"
+        },
+        "states": {
+          "sending": "Sending"
+        }
+      }
+    },
+    "preferences": {
+      "heading": "Preferences",
+      "description": "Customize your app experience the way you work"
+    },
+    "notifications": {
+      "heading": "Email notifications",
+      "description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified.",
+      "select_default_view": "Select default view",
+      "compact": "Compact",
+      "full": "Full Screen"
+    },
+    "security": {
+      "heading": "Security"
+    },
+    "api_tokens": {
+      "title": "Personal Access Tokens",
+      "description": "Generate secure API tokens to integrate your data with external systems and applications."
+    },
+    "activity": {
+      "heading": "Activity",
+      "description": "Track your recent actions and changes across all projects and work items."
+    },
+    "connections": {
+      "title": "Connections",
+      "heading": "Connections",
+      "description": "Manage your workspace connections settings."
+    }
+  },
+  "profile": {
+    "label": "Profile",
+    "page_label": "Your work",
+    "work": "Work",
+    "details": {
+      "joined_on": "Joined on",
+      "time_zone": "Timezone"
+    },
+    "stats": {
+      "workload": "Workload",
+      "overview": "Overview",
+      "created": "Work items created",
+      "assigned": "Work items assigned",
+      "subscribed": "Work items subscribed",
+      "state_distribution": {
+        "title": "Work items by state",
+        "empty": "Create work items to view the them by states in the graph for better analysis."
+      },
+      "priority_distribution": {
+        "title": "Work items by Priority",
+        "empty": "Create work items to view the them by priority in the graph for better analysis."
+      },
+      "recent_activity": {
+        "title": "Recent activity",
+        "empty": "We couldn't find data. Kindly view your inputs",
+        "button": "Download today's activity",
+        "button_loading": "Downloading"
+      }
+    },
+    "actions": {
+      "profile": "Profile",
+      "security": "Security",
+      "activity": "Activity",
+      "preferences": "Preferences",
+      "notifications": "Notifications",
+      "api-tokens": "Personal Access Tokens",
+      "connections": "Connections"
+    },
+    "tabs": {
+      "summary": "Summary",
+      "assigned": "Assigned",
+      "created": "Created",
+      "subscribed": "Subscribed",
+      "activity": "Activity"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "No activities yet",
+        "description": "Get started by creating a new work item! Add details and properties to it. Explore more in Plane to see your activity."
+      },
+      "assigned": {
+        "title": "No work items are assigned to you",
+        "description": "Work items assigned to you can be tracked from here."
+      },
+      "created": {
+        "title": "No work items yet",
+        "description": "All work items created by you come here, track them here directly."
+      },
+      "subscribed": {
+        "title": "No work items yet",
+        "description": "Subscribe to work items you are interested in, track all of them here."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "System preference"
+      },
+      "light": {
+        "label": "Light"
+      },
+      "dark": {
+        "label": "Dark"
+      },
+      "light_contrast": {
+        "label": "Light high contrast"
+      },
+      "dark_contrast": {
+        "label": "Dark high contrast"
+      },
+      "custom": {
+        "label": "Custom theme"
+      }
+    }
+  }
+}

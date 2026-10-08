@@ -1,0 +1,34 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Tidak ada hasil ditemukan"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "Stickies",
+    "your_work": "Pekerjaan anda",
+    "projects": "Projek",
+    "pages": "Halaman",
+    "new_work_item": "Item kerja baru",
+    "home": "Beranda",
+    "inbox": "Inbox",
+    "workspace": "Workspace",
+    "views": "Views",
+    "analytics": "Analitik",
+    "work_items": "Item kerja",
+    "cycles": "Siklus",
+    "modules": "Modul",
+    "intake": "Intake",
+    "drafts": "Draft",
+    "favorites": "Favorit",
+    "pro": "Pro",
+    "upgrade": "Upgrade",
+    "pi_chat": "Plane AI",
+    "epics": "Epics",
+    "upgrade_plan": "Tingkatkan paket",
+    "plane_pro": "Plane Pro",
+    "business": "Bisnis"
+  }
+}

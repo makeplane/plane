@@ -1,9 +1,10 @@
 {
-  "$schema": "https://turborepo.com/schema.json",
-  "globalDependencies": [".npmrc", ".prettierrc", "eslint.config.mjs"],
+  "$schema": "https://v2-8-12.turborepo.dev/schema.json",
+  "globalDependencies": [".npmrc", ".oxfmtrc.json", ".oxlintrc.json"],
   "globalEnv": [
     "APP_VERSION",
     "DEV",
+    "PROD",
     "LOG_LEVEL",
     "NODE_ENV",
     "SENTRY_DSN",
@@ -14,12 +15,8 @@
     "VITE_API_BASE_PATH",
     "VITE_API_BASE_URL",
     "VITE_APP_VERSION",
-    "VITE_ENABLE_SESSION_RECORDER",
     "VITE_LIVE_BASE_PATH",
     "VITE_LIVE_BASE_URL",
-    "VITE_POSTHOG_DEBUG",
-    "VITE_POSTHOG_HOST",
-    "VITE_POSTHOG_KEY",
     "VITE_SENTRY_DSN",
     "VITE_SENTRY_ENVIRONMENT",
     "VITE_SENTRY_PROFILES_SAMPLE_RATE",
@@ -27,7 +24,6 @@
     "VITE_SENTRY_REPLAYS_SESSION_SAMPLE_RATE",
     "VITE_SENTRY_SEND_DEFAULT_PII",
     "VITE_SENTRY_TRACES_SAMPLE_RATE",
-    "VITE_SESSION_RECORDER_KEY",
     "VITE_SPACE_BASE_PATH",
     "VITE_SPACE_BASE_URL",
     "VITE_SUPPORT_EMAIL",
@@ -53,12 +49,11 @@
     },
     "check:format": {
       "inputs": ["$TURBO_DEFAULT$"],
-      "outputs": ["node_modules/.cache/prettier/**"]
+      "outputs": []
     },
     "check:lint": {
-      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
-      "outputs": ["node_modules/.cache/eslint/**"]
+      "outputs": []
     },
     "check:types": {
       "dependsOn": ["^build"],
@@ -79,12 +74,11 @@
     },
     "fix:format": {
       "inputs": ["$TURBO_DEFAULT$"],
-      "outputs": ["node_modules/.cache/prettier/**"]
+      "outputs": []
     },
     "fix:lint": {
-      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
-      "outputs": ["node_modules/.cache/eslint/**"]
+      "outputs": []
     },
     "start": {
       "cache": false,

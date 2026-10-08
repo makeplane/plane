@@ -1,0 +1,70 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useState, useRef, useEffect, useCallback } from "react";
+import { observer } from "mobx-react";
+
+import { LinkOutline, TickOutline } from "@makeplane/propel/icons";
+// plane imports
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
+// hooks
+import { usePageOperations } from "@/hooks/use-page-operations";
+// store
+import type { TPageInstance } from "@/store/pages/base-page";
+
+type Props = {
+  page: TPageInstance;
+};
+
+export const PageCopyLinkControl = observer(function PageCopyLinkControl({ page }: Props) {
+  const [isCopied, setIsCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // page operations
+  const { pageOperations } = usePageOperations({
+    page,
+  });
+
+  // Cleanup timer on unmount
+  useEffect(
+    () => () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    },
+    []
+  );
+
+  const handleCopy = useCallback(() => {
+    pageOperations.copyLink();
+    setIsCopied(true);
+
+    // Clear previous timer if it exists
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+
+    // Set new timer
+    timerRef.current = setTimeout(() => {
+      setIsCopied(false);
+      timerRef.current = null;
+    }, 1000);
+  }, [pageOperations]);
+
+  return (
+    <Tooltip label={isCopied ? "Copied!" : "Copy link"} side="bottom">
+      <IconButton
+        variant="ghost"
+        size="md"
+        icon={isCopied ? <Icon icon={<TickOutline className="text-success-primary" />} /> : <Icon icon={LinkOutline} />}
+        onClick={handleCopy}
+        aria-label={isCopied ? "Copied link" : "Copy link"}
+      />
+    </Tooltip>
+  );
+});

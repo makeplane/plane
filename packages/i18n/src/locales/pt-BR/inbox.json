@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Pendente",
+        "description": "Pendente"
+      },
+      "declined": {
+        "title": "Recusado",
+        "description": "Recusado"
+      },
+      "snoozed": {
+        "title": "Adiado",
+        "description": "{days, plural, one{Falta # dia} other{Faltam # dias}}"
+      },
+      "accepted": {
+        "title": "Aceito",
+        "description": "Aceito"
+      },
+      "duplicate": {
+        "title": "Duplicado",
+        "description": "Duplicado"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "Recusar item de trabalho",
+        "content": "Tem certeza de que deseja recusar o item de trabalho {value}?"
+      },
+      "delete": {
+        "title": "Excluir item de trabalho",
+        "content": "Tem certeza de que deseja excluir o item de trabalho {value}?",
+        "success": "Item de trabalho excluído com sucesso"
+      }
+    },
+    "errors": {
+      "snooze_permission": "Apenas administradores do projeto podem adiar/reativar itens de trabalho",
+      "accept_permission": "Apenas administradores do projeto podem aceitar itens de trabalho",
+      "decline_permission": "Apenas administradores do projeto podem recusar itens de trabalho"
+    },
+    "actions": {
+      "accept": "Aceitar",
+      "decline": "Recusar",
+      "snooze": "Adiar",
+      "unsnooze": "Reativar",
+      "copy": "Copiar link do item de trabalho",
+      "delete": "Excluir",
+      "open": "Abrir item de trabalho",
+      "mark_as_duplicate": "Marcar como duplicado",
+      "move": "Mover {value} para os itens de trabalho do projeto"
+    },
+    "source": {
+      "in-app": "no aplicativo"
+    },
+    "order_by": {
+      "created_at": "Criado em",
+      "updated_at": "Atualizado em",
+      "id": "ID"
+    },
+    "label": "Admissão",
+    "page_label": "{workspace} - Admissão",
+    "modal": {
+      "title": "Criar item de trabalho de admissão"
+    },
+    "tabs": {
+      "open": "Aberto",
+      "closed": "Fechado"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "Nenhum item de trabalho aberto",
+        "description": "Encontre itens de trabalho abertos aqui. Crie um novo item de trabalho."
+      },
+      "sidebar_closed_tab": {
+        "title": "Nenhum item de trabalho fechado",
+        "description": "Todos os itens de trabalho, sejam aceitos ou recusados, podem ser encontrados aqui."
+      },
+      "sidebar_filter": {
+        "title": "Nenhum item de trabalho correspondente",
+        "description": "Nenhum item de trabalho corresponde ao filtro aplicado na admissão. Crie um novo item de trabalho."
+      },
+      "detail": {
+        "title": "Selecione um item de trabalho para visualizar seus detalhes."
+      }
+    }
+  }
+}

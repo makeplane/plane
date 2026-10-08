@@ -1,0 +1,100 @@
+{
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Neue Arbeitsaufgaben erlauben",
+      "work_item_creation_disable_tooltip": "Erstellung von Arbeitsaufgaben ist für diesen Status deaktiviert",
+      "default_state": "Der Standardstatus erlaubt allen Mitgliedern, neue Arbeitsaufgaben zu erstellen. Dies kann nicht geändert werden",
+      "state_change_count": "{count, plural, one {1 erlaubte Statusänderung} other {{count} erlaubte Statusänderungen}}",
+      "movers_count": "{count, plural, one {1 aufgelisteter Prüfer} other {{count} aufgelistete Prüfer}}",
+      "state_changes": {
+        "label": {
+          "default": "Erlaubte Statusänderung hinzufügen",
+          "loading": "Erlaubte Statusänderung wird hinzugefügt"
+        },
+        "move_to": "Status ändern zu",
+        "movers": {
+          "label": "Bei Prüfung durch",
+          "tooltip": "Prüfer sind Personen, die berechtigt sind, Arbeitsaufgaben von einem Status in einen anderen zu verschieben.",
+          "add": "Prüfer hinzufügen"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Sie können diese Arbeitsaufgabe nicht hierher verschieben."
+    },
+    "workflow_enabled": {
+      "label": "Statusänderung"
+    },
+    "workflow_tree": {
+      "label": "Für Arbeitsaufgaben in",
+      "state_change_label": "kann es verschieben nach"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Kontrollieren Sie das Chaos von Änderungen und Überprüfungen mit Workflows.",
+        "description": "Legen Sie Regeln fest, wohin sich Ihre Arbeit bewegt, durch wen und wann mit Workflows in Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Änderungsverlauf anzeigen",
+      "reset_workflow": "Workflow zurücksetzen"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Sind Sie sicher, dass Sie diesen Workflow zurücksetzen möchten?",
+        "description": "Wenn Sie diesen Workflow zurücksetzen, werden alle Ihre Statusänderungsregeln gelöscht und Sie müssen sie erneut erstellen, um sie in diesem Projekt auszuführen."
+      },
+      "delete_state_change": {
+        "title": "Sind Sie sicher, dass Sie diese Statusänderungsregel löschen möchten?",
+        "description": "Einmal gelöscht, können Sie diese Änderung nicht rückgängig machen und müssen die Regel erneut festlegen, wenn Sie möchten, dass sie für dieses Projekt gilt."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "Workflow wird {action}",
+        "success": {
+          "title": "Erfolg",
+          "message": "Workflow erfolgreich {action}"
+        },
+        "error": {
+          "title": "Fehler",
+          "message": "Workflow konnte nicht {action} werden. Bitte versuchen Sie es erneut."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Erfolg",
+          "message": "Workflow erfolgreich zurückgesetzt"
+        },
+        "error": {
+          "title": "Fehler beim Zurücksetzen des Workflows",
+          "message": "Workflow konnte nicht zurückgesetzt werden. Bitte versuchen Sie es erneut."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Fehler beim Hinzufügen der Statusänderungsregel",
+          "message": "Statusänderungsregel konnte nicht hinzugefügt werden. Bitte versuchen Sie es erneut."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Fehler beim Ändern der Statusänderungsregel",
+          "message": "Statusänderungsregel konnte nicht geändert werden. Bitte versuchen Sie es erneut."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Fehler beim Entfernen der Statusänderungsregel",
+          "message": "Statusänderungsregel konnte nicht entfernt werden. Bitte versuchen Sie es erneut."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Fehler beim Ändern der Prüfer der Statusänderungsregel",
+          "message": "Prüfer der Statusänderungsregel konnten nicht geändert werden. Bitte versuchen Sie es erneut."
+        }
+      }
+    }
+  }
+}

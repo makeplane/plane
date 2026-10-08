@@ -1,23 +1,30 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 // constants
-import { EPageAccess, PROJECT_PAGE_TRACKER_EVENTS, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 // plane types
-import { Button } from "@plane/propel/button";
-import { PageIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { PagesOutline } from "@makeplane/propel/icons";
+import { setToast } from "@plane/blocks/toast";
 import type { TPage } from "@plane/types";
 // plane ui
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 // helpers
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
+import { EPageStoreType, usePageStore } from "@/hooks/store";
 
 export const PagesListHeader = observer(function PagesListHeader() {
   // states
@@ -25,6 +32,7 @@ export const PagesListHeader = observer(function PagesListHeader() {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   const searchParams = useSearchParams();
   const pageType = searchParams.get("type");
   // store hooks
@@ -39,26 +47,14 @@ export const PagesListHeader = observer(function PagesListHeader() {
     };
 
     await createPage(payload)
+      // oxlint-disable-next-line promise/always-return
       .then((res) => {
-        captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            id: res?.id,
-            state: "SUCCESS",
-          },
-        });
         const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
         router.push(pageId);
       })
       .catch((err) => {
-        captureError({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            state: "ERROR",
-          },
-        });
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: err?.data?.error || "Page could not be created. Please try again.",
         });
@@ -70,13 +66,17 @@ export const PagesListHeader = observer(function PagesListHeader() {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <CommonProjectBreadcrumbs
+            workspaceSlug={workspaceSlug?.toString()}
+            projectId={projectId?.toString()}
+            {...projectCrumb}
+          />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
                 label="Pages"
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/`}
-                icon={<PageIcon className="h-4 w-4 text-tertiary" />}
+                icon={<PagesOutline className="h-4 w-4 text-tertiary" />}
                 isLast
               />
             }
@@ -88,13 +88,12 @@ export const PagesListHeader = observer(function PagesListHeader() {
         <Header.RightItem>
           <Button
             variant="primary"
-            size="lg"
+            size="md"
+            stretch="auto"
+            label={isCreatingPage ? "Adding" : "Add page"}
             onClick={handleCreatePage}
             loading={isCreatingPage}
-            data-ph-element={PROJECT_TRACKER_ELEMENTS.CREATE_HEADER_BUTTON}
-          >
-            {isCreatingPage ? "Adding" : "Add page"}
-          </Button>
+          />
         </Header.RightItem>
       )}
     </Header>

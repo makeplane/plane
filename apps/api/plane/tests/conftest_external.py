@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 import pytest
 from unittest.mock import MagicMock, patch
 
@@ -45,41 +49,6 @@ def mock_elasticsearch():
     # Start the patch
     with patch("elasticsearch.Elasticsearch", return_value=mock_es_client):
         yield mock_es_client
-
-
-@pytest.fixture
-def mock_mongodb():
-    """
-    Mock MongoDB for testing without actual MongoDB connection.
-
-    This fixture patches PyMongo to return a MagicMock that behaves like a MongoDB client.
-    """
-    # Create mock MongoDB clients and collections
-    mock_mongo_client = MagicMock()
-    mock_mongo_db = MagicMock()
-    mock_mongo_collection = MagicMock()
-
-    # Set up the chain: client -> database -> collection
-    mock_mongo_client.__getitem__.return_value = mock_mongo_db
-    mock_mongo_client.get_database.return_value = mock_mongo_db
-    mock_mongo_db.__getitem__.return_value = mock_mongo_collection
-
-    # Configure common MongoDB collection operations
-    mock_mongo_collection.find_one.return_value = None
-    mock_mongo_collection.find.return_value = MagicMock(__iter__=lambda x: iter([]), count=lambda: 0)
-    mock_mongo_collection.insert_one.return_value = MagicMock(inserted_id="mock_id_123", acknowledged=True)
-    mock_mongo_collection.insert_many.return_value = MagicMock(
-        inserted_ids=["mock_id_123", "mock_id_456"], acknowledged=True
-    )
-    mock_mongo_collection.update_one.return_value = MagicMock(modified_count=1, matched_count=1, acknowledged=True)
-    mock_mongo_collection.update_many.return_value = MagicMock(modified_count=2, matched_count=2, acknowledged=True)
-    mock_mongo_collection.delete_one.return_value = MagicMock(deleted_count=1, acknowledged=True)
-    mock_mongo_collection.delete_many.return_value = MagicMock(deleted_count=2, acknowledged=True)
-    mock_mongo_collection.count_documents.return_value = 0
-
-    # Start the patch
-    with patch("pymongo.MongoClient", return_value=mock_mongo_client):
-        yield mock_mongo_client
 
 
 @pytest.fixture

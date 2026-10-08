@@ -1,0 +1,100 @@
+{
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Zezwalaj na nowe elementy pracy",
+      "work_item_creation_disable_tooltip": "Tworzenie elementów pracy jest wyłączone dla tego stanu",
+      "default_state": "Stan domyślny pozwala wszystkim członkom tworzyć nowe elementy pracy. Nie można tego zmienić",
+      "state_change_count": "{count, plural, one {1 dozwolona zmiana stanu} other {{count} dozwolone zmiany stanu}}",
+      "movers_count": "{count, plural, one {1 wymieniony recenzent} other {{count} wymienionych recenzentów}}",
+      "state_changes": {
+        "label": {
+          "default": "Dodaj dozwoloną zmianę stanu",
+          "loading": "Dodawanie dozwolonej zmiany stanu"
+        },
+        "move_to": "Zmień stan na",
+        "movers": {
+          "label": "Gdy zrecenzowane przez",
+          "tooltip": "Recenzenci to osoby, które mają pozwolenie na przenoszenie elementów pracy z jednego stanu do drugiego.",
+          "add": "Dodaj recenzentów"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Nie możesz przenieść tego elementu pracy tutaj."
+    },
+    "workflow_enabled": {
+      "label": "Zmiana stanu"
+    },
+    "workflow_tree": {
+      "label": "Dla elementów pracy w",
+      "state_change_label": "może przenieść to do"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Kontroluj chaos zmian i recenzji dzięki Workflowom.",
+        "description": "Ustaw reguły dotyczące tego, gdzie przenosi się Twoja praca, przez kogo i kiedy, dzięki Workflowom w Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Zobacz historię zmian",
+      "reset_workflow": "Zresetuj workflow"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Czy na pewno chcesz zresetować ten workflow?",
+        "description": "Jeśli zresetujesz ten workflow, wszystkie Twoje reguły zmiany stanu zostaną usunięte i będziesz musiał je utworzyć ponownie, aby uruchomić je w tym projekcie."
+      },
+      "delete_state_change": {
+        "title": "Czy na pewno chcesz usunąć tę regułę zmiany stanu?",
+        "description": "Po usunięciu nie możesz cofnąć tej zmiany i będziesz musiał ponownie ustawić regułę, jeśli chcesz, aby działała dla tego projektu."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} workflow",
+        "success": {
+          "title": "Sukces",
+          "message": "Workflow {action} pomyślnie"
+        },
+        "error": {
+          "title": "Błąd",
+          "message": "Workflow nie mógł zostać {action}. Spróbuj ponownie."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Sukces",
+          "message": "Workflow zresetowany pomyślnie"
+        },
+        "error": {
+          "title": "Błąd resetowania workflow",
+          "message": "Workflow nie mógł zostać zresetowany. Spróbuj ponownie."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Błąd dodawania reguły zmiany stanu",
+          "message": "Reguła zmiany stanu nie mogła zostać dodana. Spróbuj ponownie."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Błąd modyfikowania reguły zmiany stanu",
+          "message": "Reguła zmiany stanu nie mogła zostać zmodyfikowana. Spróbuj ponownie."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Błąd usuwania reguły zmiany stanu",
+          "message": "Reguła zmiany stanu nie mogła zostać usunięta. Spróbuj ponownie."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Błąd modyfikowania recenzentów reguły zmiany stanu",
+          "message": "Recenzenci reguły zmiany stanu nie mogli zostać zmodyfikowani. Spróbuj ponownie."
+        }
+      }
+    }
+  }
+}

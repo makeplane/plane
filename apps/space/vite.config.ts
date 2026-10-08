@@ -1,5 +1,5 @@
 import path from "node:path";
-import * as dotenv from "@dotenvx/dotenvx";
+import * as dotenv from "dotenv";
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -29,7 +29,6 @@ export default defineConfig(() => ({
   resolve: {
     alias: {
       // Next.js compatibility shims used within space
-      "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
       "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
     },
     dedupe: ["react", "react-dom"],

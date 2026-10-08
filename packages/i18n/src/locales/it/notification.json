@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "Notifiche",
+    "page_label": "{workspace} - Notifiche",
+    "options": {
+      "mark_all_as_read": "Segna tutto come letto",
+      "mark_read": "Segna come letto",
+      "mark_unread": "Segna come non letto",
+      "refresh": "Aggiorna",
+      "filters": "Filtri Notifiche",
+      "show_unread": "Mostra non lette",
+      "show_snoozed": "Mostra snoozate",
+      "show_archived": "Mostra archiviate",
+      "mark_archive": "Archivia",
+      "mark_unarchive": "Rimuovi da archivio",
+      "mark_snooze": "Snoozed",
+      "mark_unsnooze": "Annulla snooze"
+    },
+    "toasts": {
+      "read": "Notifica segnata come letta",
+      "unread": "Notifica segnata come non letta",
+      "archived": "Notifica archiviata",
+      "unarchived": "Notifica rimossa dall'archivio",
+      "snoozed": "Notifica snoozata",
+      "unsnoozed": "Notifica desnoozata"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Seleziona per visualizzare i dettagli."
+      },
+      "all": {
+        "title": "Nessun elemento di lavoro assegnato",
+        "description": "Qui puoi vedere gli aggiornamenti degli elementi di lavoro assegnati a te"
+      },
+      "mentions": {
+        "title": "Nessun elemento di lavoro assegnato",
+        "description": "Qui puoi vedere gli aggiornamenti degli elementi di lavoro assegnati a te"
+      }
+    },
+    "tabs": {
+      "all": "Tutti",
+      "mentions": "Menzioni"
+    },
+    "filter": {
+      "assigned": "Assegnati a me",
+      "created": "Creati da me",
+      "subscribed": "Iscritti da me"
+    },
+    "snooze": {
+      "1_day": "1 giorno",
+      "3_days": "3 giorni",
+      "5_days": "5 giorni",
+      "1_week": "1 settimana",
+      "2_weeks": "2 settimane",
+      "custom": "Personalizzato"
+    }
+  }
+}

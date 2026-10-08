@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 from datetime import datetime
@@ -42,11 +46,12 @@ from plane.db.models import (
     UserRecentVisit,
 )
 from plane.utils.error_codes import ERROR_CODES
+from plane.utils.order_queryset import PAGE_ORDER_BY_ALLOWLIST, sanitize_order_by
 
 # Local imports
 from ..base import BaseAPIView, BaseViewSet
 from plane.bgtasks.page_transaction_task import page_transaction
-from plane.bgtasks.page_version_task import page_version
+from plane.bgtasks.page_version_task import track_page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
 from plane.app.permissions import ProjectPagePermission
@@ -96,9 +101,23 @@ class PageViewSet(BaseViewSet):
             .select_related("workspace")
             .select_related("owned_by")
             .annotate(is_favorite=Exists(subquery))
-            .order_by(self.request.GET.get("order_by", "-created_at"))
             .prefetch_related("labels")
-            .order_by("-is_favorite", "-created_at")
+            # Sanitize the user-supplied order_by against an allowlist: Django
+            # resolves the field at call time, so an unknown field raises
+            # FieldError (500 DoS) and a relation path (e.g. owned_by__password)
+            # enables ORM relational traversal. Favourites stay
+            # pinned first; the sanitized user ordering is the secondary sort
+            # (a single .order_by() so it is not overridden), with id as a
+            # stable tiebreak for pagination.
+            .order_by(
+                "-is_favorite",
+                sanitize_order_by(
+                    self.request.GET.get("order_by", "-created_at"),
+                    PAGE_ORDER_BY_ALLOWLIST,
+                    default="-created_at",
+                ),
+                "id",
+            )
             .annotate(
                 project=Exists(
                     ProjectPage.objects.filter(page_id=OuterRef("id"), project_id=self.kwargs.get("project_id"))
@@ -128,7 +147,7 @@ class PageViewSet(BaseViewSet):
             context={
                 "project_id": project_id,
                 "owned_by_id": request.user.id,
-                "description": request.data.get("description", {}),
+                "description_json": request.data.get("description_json", {}),
                 "description_binary": request.data.get("description_binary", None),
                 "description_html": request.data.get("description_html", "<p></p>"),
             },
@@ -541,26 +560,28 @@ class PagesDescriptionViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Store the old description_html before saving (needed for both tasks)
+        old_description_html = page.description_html
+
         # Serialize the existing instance
-        existing_instance = json.dumps({"description_html": page.description_html}, cls=DjangoJSONEncoder)
+        existing_instance = json.dumps({"description_html": old_description_html}, cls=DjangoJSONEncoder)
 
         # Use serializer for validation and update
         serializer = PageBinaryUpdateSerializer(page, data=request.data, partial=True)
         if serializer.is_valid():
+            serializer.save()
+
             # Capture the page transaction
             if request.data.get("description_html"):
                 page_transaction.delay(
                     new_description_html=request.data.get("description_html", "<p></p>"),
-                    old_description_html=page.description_html,
+                    old_description_html=old_description_html,
                     page_id=page_id,
                 )
 
-            # Update the page using serializer
-            updated_page = serializer.save()
-
             # Run background tasks
-            page_version.delay(
-                page_id=updated_page.id,
+            track_page_version.delay(
+                page_id=page_id,
                 existing_instance=existing_instance,
                 user_id=request.user.id,
             )

@@ -1,12 +1,22 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
+// components
+import { PageWrapper } from "@/components/common/page-wrapper";
+import { Skeleton } from "@/components/common/skeleton";
+import { setToast } from "@plane/blocks/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
-// components
+// types
 import type { Route } from "./+types/page";
+// local
 import { InstanceEmailForm } from "./email-config-form";
 
 const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.ComponentProps) {
@@ -27,13 +37,13 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
         setToast({
           title: "Email feature disabled",
           message: "Email feature has been disabled",
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
         });
       } catch (_error) {
         setToast({
           title: "Error disabling email",
           message: "Failed to disable email feature. Please try again.",
-          type: TOAST_TYPE.ERROR,
+          type: "error",
         });
       } finally {
         setIsSubmitting(false);
@@ -49,44 +59,49 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
   }, [formattedConfig]);
 
   return (
-    <>
-      <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
-        <div className="flex items-center justify-between gap-4 border-b border-subtle mx-4 py-4 space-y-1 flex-shrink-0">
-          <div className="py-4 space-y-1 flex-shrink-0">
-            <div className="text-18 font-medium text-primary">Secure emails from your own instance</div>
+    <PageWrapper
+      header={{
+        title: "Secure emails from your own instance",
+        description: (
+          <>
+            Plane can send useful emails to you and your users from your own instance without talking to the Internet.
             <div className="text-13 font-regular text-tertiary">
-              Plane can send useful emails to you and your users from your own instance without talking to the Internet.
-              <div className="text-13 font-regular text-tertiary">
-                Set it up below and please test your settings before you save them.&nbsp;
-                <span className="text-danger">Misconfigs can lead to email bounces and errors.</span>
-              </div>
+              Set it up below and please test your settings before you save them.&nbsp;
+              <span className="text-danger-primary">Misconfigs can lead to email bounces and errors.</span>
             </div>
-          </div>
-          {isLoading ? (
-            <Loader>
-              <Loader.Item width="24px" height="16px" className="rounded-full" />
-            </Loader>
+          </>
+        ),
+        actions: isLoading ? (
+          <Skeleton>
+            <Skeleton.Item width="24px" height="16px" className="rounded-full" />
+          </Skeleton>
+        ) : (
+          <Switch
+            aria-label="Enable SMTP email"
+            checked={isSMTPEnabled}
+            onCheckedChange={handleToggle}
+            size="sm"
+            disabled={isSubmitting}
+          />
+        ),
+      }}
+    >
+      {isSMTPEnabled && !isLoading && (
+        <>
+          {formattedConfig ? (
+            <InstanceEmailForm config={formattedConfig} />
           ) : (
-            <ToggleSwitch value={isSMTPEnabled} onChange={handleToggle} size="sm" disabled={isSubmitting} />
+            <Skeleton className="space-y-10">
+              <Skeleton.Item height="50px" width="75%" />
+              <Skeleton.Item height="50px" width="75%" />
+              <Skeleton.Item height="50px" width="40%" />
+              <Skeleton.Item height="50px" width="40%" />
+              <Skeleton.Item height="50px" width="20%" />
+            </Skeleton>
           )}
-        </div>
-        {isSMTPEnabled && !isLoading && (
-          <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
-            {formattedConfig ? (
-              <InstanceEmailForm config={formattedConfig} />
-            ) : (
-              <Loader className="space-y-10">
-                <Loader.Item height="50px" width="75%" />
-                <Loader.Item height="50px" width="75%" />
-                <Loader.Item height="50px" width="40%" />
-                <Loader.Item height="50px" width="40%" />
-                <Loader.Item height="50px" width="20%" />
-              </Loader>
-            )}
-          </div>
-        )}
-      </div>
-    </>
+        </>
+      )}
+    </PageWrapper>
   );
 });
 

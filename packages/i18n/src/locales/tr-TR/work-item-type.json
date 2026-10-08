@@ -1,0 +1,477 @@
+{
+  "work_item_types": {
+    "label": "İş Öğesi Tipleri",
+    "label_lowercase": "iş öğesi tipleri",
+    "settings": {
+      "description": "Ekibinizin ihtiyaçlarına göre özelleştirin ve kendi özelliklerinizi ekleyin.",
+      "cant_delete_default_message": "Bu iş öğesi türü mevcut iş öğeleriyle bağlantılı olduğundan silinemez.",
+      "set_as_default": "Varsayılan olarak ayarla",
+      "cant_set_default_inactive_message": "Varsayılan olarak ayarlamadan önce bu türü etkinleştirin",
+      "set_default_confirmation": {
+        "title": "Varsayılan iş öğesi türü olarak ayarla",
+        "description": "{name} türünü varsayılan olarak ayarlamak, bu çalışma alanındaki tüm projelere aktarılmasını sağlar. Tüm yeni iş öğeleri varsayılan olarak bu türü kullanacaktır.",
+        "confirm_button": "Varsayılan olarak ayarla"
+      },
+      "properties": {
+        "title": "Özel özellikler",
+        "description": "Özellikler oluşturun ve özelleştirin.",
+        "tooltip": "Her iş öğesi tipi, Başlık, Açıklama, Atanan Kişi, Durum, Öncelik, Başlangıç tarihi, Bitiş tarihi, Modül, Döngü vb. gibi varsayılan bir özellik seti ile gelir. Ayrıca ekibinizin ihtiyaçlarına göre kendi özelliklerinizi özelleştirebilir ve ekleyebilirsiniz.",
+        "add_button": "Yeni özellik ekle",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Çalışma alanından içe aktar"
+          }
+        },
+        "dropdown": {
+          "label": "Özellik tipi",
+          "placeholder": "Tip seçin"
+        },
+        "property_type": {
+          "text": {
+            "label": "Metin"
+          },
+          "number": {
+            "label": "Sayı"
+          },
+          "dropdown": {
+            "label": "Açılır Liste"
+          },
+          "boolean": {
+            "label": "Boolean"
+          },
+          "date": {
+            "label": "Tarih"
+          },
+          "member_picker": {
+            "label": "Üye seçici"
+          },
+          "formula": {
+            "label": "Formül"
+          }
+        },
+        "attributes": {
+          "label": "Özellikler",
+          "text": {
+            "single_line": {
+              "label": "Tek satır"
+            },
+            "multi_line": {
+              "label": "Paragraf"
+            },
+            "readonly": {
+              "label": "Salt okunur",
+              "header": "Salt okunur veri"
+            },
+            "invalid_text_format": {
+              "label": "Geçersiz metin formatı"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Sayı ekle"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Tek seçim"
+            },
+            "multi_select": {
+              "label": "Çoklu seçim"
+            },
+            "no_default_value": {
+              "label": "Varsayılan değer yok"
+            }
+          },
+          "boolean": {
+            "label": "Doğru | Yanlış",
+            "no_default": "Varsayılan değer yok"
+          },
+          "option": {
+            "create_update": {
+              "label": "Seçenekler",
+              "form": {
+                "placeholder": "Seçenek ekle",
+                "errors": {
+                  "name": {
+                    "required": "Seçenek adı gereklidir.",
+                    "integrity": "Aynı ada sahip seçenek zaten var."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Seçenek seçin",
+                "multi": {
+                  "default": "Seçenekler seçin",
+                  "variable": "{count} seçenek seçildi"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "Başarılı!",
+              "message": "Özellik {name} başarıyla oluşturuldu."
+            },
+            "error": {
+              "title": "Hata!",
+              "message": "Özellik oluşturulamadı. Lütfen tekrar deneyin!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "Başarılı!",
+              "message": "Özellik {name} başarıyla güncellendi."
+            },
+            "error": {
+              "title": "Hata!",
+              "message": "Özellik güncellenemedi. Lütfen tekrar deneyin!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "Başarılı!",
+              "message": "Özellik {name} başarıyla silindi."
+            },
+            "error": {
+              "title": "Hata!",
+              "message": "Özellik silinemedi. Lütfen tekrar deneyin!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{name} özelliği {action}",
+            "success": {
+              "title": "Başarılı!",
+              "message": "Özellik {name} başarıyla {action}."
+            },
+            "error": {
+              "title": "Hata!",
+              "message": "Özellik {action} başarısız oldu. Lütfen tekrar deneyin!"
+            }
+          }
+        },
+        "create_update": {
+          "title": {
+            "create": "Yeni özel özellik oluştur",
+            "update": "Özel özelliği güncelle"
+          },
+          "form": {
+            "display_name": {
+              "placeholder": "Başlık"
+            },
+            "description": {
+              "placeholder": "Açıklama"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Özelliğinize bir isim vermelisiniz.",
+              "max_length": "Özellik adı 255 karakteri geçmemelidir."
+            },
+            "property_type": {
+              "required": "Bir özellik tipi seçmelisiniz."
+            },
+            "options": {
+              "required": "En az bir seçenek eklemelisiniz."
+            },
+            "formula": {
+              "required": "Formül ifadesi gereklidir.",
+              "invalid": "Geçersiz formül: {error}",
+              "circular_reference": "Döngüsel referans algılandı. Bir formül doğrudan veya dolaylı olarak kendisine referans veremez.",
+              "invalid_reference": "Formül var olmayan bir özelliğe referans veriyor."
+            }
+          }
+        },
+        "formula": {
+          "field_label": "Formül alanı",
+          "tooltip": "'{'Alan Adı'}' sözdizimini kullanarak bir formül girin. +, -, *, / ve & operatörlerini destekler.",
+          "placeholder": "Formülü yazın",
+          "test_button": "Test",
+          "validating": "Doğrulanıyor",
+          "validation_success": "Formül geçerli! {resultType} döndürür",
+          "validation_success_with_refs": "Formül geçerli! {resultType} döndürür ({count} alan referans verildi)",
+          "error": {
+            "empty": "Lütfen bir formül girin",
+            "missing_context": "Çalışma alanı, proje veya iş öğesi türü bağlamı eksik",
+            "validation_failed": "Doğrulama başarısız"
+          },
+          "picker": {
+            "no_match": "Eşleşen özellik yok",
+            "no_available": "Kullanılabilir özellik yok"
+          }
+        },
+        "enable_disable": {
+          "label": "Aktif",
+          "tooltip": {
+            "disabled": "Devre dışı bırakmak için tıklayın",
+            "enabled": "Etkinleştirmek için tıklayın"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Bu özelliği sil",
+          "description": "Özelliklerin silinmesi mevcut verilerin kaybına neden olabilir.",
+          "secondary_description": "Bunun yerine özelliği devre dışı bırakmak ister misiniz?",
+          "primary_button": "{action}, sil",
+          "secondary_button": "Evet, devre dışı bırak"
+        },
+        "mandate_confirmation": {
+          "label": "Zorunlu özellik",
+          "content": "Bu özellik için varsayılan bir seçenek olduğu görünüyor. Özelliği zorunlu hale getirmek varsayılan değeri kaldıracak ve kullanıcıların kendi seçtikleri bir değer eklemeleri gerekecek.",
+          "tooltip": {
+            "disabled": "Bu özellik türü zorunlu hale getirilemez",
+            "enabled": "Alanı isteğe bağlı olarak işaretlemek için işareti kaldırın",
+            "checked": "Alanı zorunlu olarak işaretlemek için işaretleyin"
+          }
+        },
+        "empty_state": {
+          "title": "Özel özellikler ekle",
+          "description": "Bu iş öğesi tipi için eklediğiniz yeni özellikler burada gösterilecektir."
+        }
+      },
+      "types": {
+        "title": "Türler",
+        "description": "Özelliklere sahip iş öğesi türleri oluşturun ve özelleştirin.",
+        "sort_options": {
+          "project_count": "Dahil olduğu proje sayısı"
+        },
+        "filter_options": {
+          "show_active": "Aktifleri göster",
+          "show_inactive": "Pasifleri göster"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Yeni oluştur",
+            "import_from_workspace": "Çalışma alanından içe aktar"
+          },
+          "banner": {
+            "with_access": "Çalışma alanı seviyesinden türleri içe aktarmak için iş öğesi türlerini etkinleştirin",
+            "without_access": "İş öğesi türleri devre dışı. Çalışma alanı ayarlarından etkinleştirmek için çalışma alanı yöneticisiyle iletişime geçin."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Özel özellikler",
+        "add_button": "Özellik ekle",
+        "modal": {
+          "title": "Özellik ekle",
+          "empty": {
+            "title": "Kullanılabilir özellik yok",
+            "description": "Tüm özellikler zaten bu türe bağlandı."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Özelliğin bağlantısını kaldır",
+          "description": "Bu özelliğin bağlantısını kaldırmak, bu türü kullanan her iş öğesindeki tüm değerlerini kalıcı olarak siler. Bu işlem geri alınamaz.",
+          "input_label": "Yazın",
+          "input_label_suffix": "devam etmek için:",
+          "confirm": "Özelliğin bağlantısını kaldır",
+          "loading": "Bağlantı kaldırılıyor"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Bu türü sil",
+        "description": "Türlerin silinmesi mevcut verilerin kaybına yol açabilir.",
+        "can_disable_warning": "Bunun yerine türü devre dışı bırakmak ister misiniz?",
+        "primary_button": "Evet, sil",
+        "toast": {
+          "success": {
+            "title": "Başarılı!",
+            "message": "İş öğesi türü başarıyla silindi."
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "İş öğesi türü silinemedi. Lütfen tekrar deneyin!"
+          }
+        },
+        "errors": {
+          "cannot_delete_default_work_item_type": "Varsayılan iş öğesi türü silinemez",
+          "cannot_delete_work_item_type_with_associated_work_items": "İlişkili iş öğeleri olan iş öğesi türü silinemez"
+        }
+      }
+    },
+    "create": {
+      "title": "İş öğesi tipi oluştur",
+      "button": "İş öğesi tipi ekle",
+      "toast": {
+        "success": {
+          "title": "Başarılı!",
+          "message": "İş öğesi tipi başarıyla oluşturuldu."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": {
+            "default": "İş öğesi tipi oluşturulamadı. Lütfen tekrar deneyin!",
+            "conflict": "{name} türü zaten mevcut. Farklı bir ad seçin."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "İş öğesi tipini güncelle",
+      "button": "İş öğesi tipini güncelle",
+      "toast": {
+        "success": {
+          "title": "Başarılı!",
+          "message": "İş öğesi tipi {name} başarıyla güncellendi."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": {
+            "default": "İş öğesi tipi güncellenemedi. Lütfen tekrar deneyin!",
+            "conflict": "{name} türü zaten mevcut. Farklı bir ad seçin."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Bu iş öğesi tipine benzersiz bir isim verin"
+        },
+        "description": {
+          "placeholder": "Bu iş öğesi tipinin ne için olduğunu ve ne zaman kullanılacağını açıklayın."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{name} iş öğesi tipi {action}",
+        "success": {
+          "title": "Başarılı!",
+          "message": "İş öğesi tipi {name} başarıyla {action}."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "İş öğesi tipi {action} başarısız oldu. Lütfen tekrar deneyin!"
+        }
+      },
+      "tooltip": "{action} için tıklayın"
+    },
+    "change_confirmation": {
+      "title": "İş öğesi tipini değiştir?",
+      "description": "İş öğesi tipini değiştirmek, mevcut tipe özgü özel özellik değerlerinin kaybına neden olabilir. Bu işlem geri alınamaz.",
+      "button": {
+        "loading": "Değiştiriliyor",
+        "default": "Tipi değiştir"
+      }
+    },
+    "empty_state": {
+      "enable": {
+        "title": "İş Öğesi Tiplerini Etkinleştir",
+        "description": "İş öğelerinizi İş öğesi tipleriyle şekillendirin. Simgeler, arka planlar ve özelliklerle özelleştirin ve bu proje için yapılandırın.",
+        "primary_button": {
+          "text": "Etkinleştir"
+        },
+        "confirmation": {
+          "title": "Bir kez etkinleştirildikten sonra, İş Öğesi Tipleri devre dışı bırakılamaz.",
+          "description": "Plane'in İş Öğesi, bu proje için varsayılan iş öğesi tipi haline gelecek ve bu projede simgesi ve arka planıyla görünecektir.",
+          "button": {
+            "default": "Etkinleştir",
+            "loading": "Ayarlanıyor"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "İş öğesi tiplerini etkinleştirmek için Pro'ya geçin.",
+        "description": "İş öğelerinizi İş öğesi tipleriyle şekillendirin. Simgeler, arka planlar ve özelliklerle özelleştirin ve bu proje için yapılandırın.",
+        "primary_button": {
+          "text": "Pro'ya Geç"
+        }
+      },
+      "upgrade": {
+        "title": "İş öğesi tiplerini etkinleştirmek için yükseltin.",
+        "description": "İş öğelerinizi İş öğesi tipleriyle şekillendirin. Simgeler, arka planlar ve özelliklerle özelleştirin ve bu proje için yapılandırın.",
+        "primary_button": {
+          "text": "Yükselt"
+        }
+      }
+    }
+  },
+  "work_item_type_hierarchy": {
+    "settings": {
+      "title": "Hiyerarşi",
+      "tab_label": "Hiyerarşi",
+      "description": "Çalışmanızı düzenlemek için hiyerarşi seviyeleri oluşturun. Her seviye, doğrudan üstündeki öğeyle üst ilişkisi ve doğrudan altındaki öğeyle alt ilişkisi tanımlar. ",
+      "sidebar_label": "Hiyerarşi",
+      "enable_control": {
+        "title": "Hiyerarşiyi etkinleştir",
+        "description": "Farklı iş öğesi türleri arasında üst-alt ilişkileri oluşturun.",
+        "tooltip": "Hiyerarşi etkinleştirildikten sonra devre dışı bırakılamaz."
+      },
+      "workspace_work_item_types_disabled_banner": {
+        "content": "Yeni bir hiyerarşi oluşturmak için önce İş Öğesi Türlerini tanımlayın.",
+        "cta": "İş öğesi türleri ayarları"
+      }
+    },
+    "levels": {
+      "max_level_placeholder": "Yeni bir hiyerarşi seviyesi eklemek için türü sürükleyip bırakın",
+      "empty_level_placeholder": "{level}. seviyeye bir iş öğesi türünü sürükleyip bırakın",
+      "drag_tooltip": "Seviyeyi değiştirmek için sürükleyin",
+      "quick_actions": {
+        "set_as_default": {
+          "label": "Varsayılan olarak ayarla",
+          "toast": {
+            "loading": "Varsayılan olarak ayarlanıyor...",
+            "success": {
+              "title": "Başarılı!",
+              "message": "{level}. hiyerarşi seviyesi varsayılan olarak başarıyla ayarlandı."
+            },
+            "error": {
+              "title": "Hata!",
+              "message": "{level}. hiyerarşi seviyesi varsayılan olarak ayarlanamadı. Lütfen tekrar deneyin."
+            }
+          }
+        }
+      },
+      "update_level_toast": {
+        "loading": "{workItemTypeName}, {level}. seviyeye taşınıyor...",
+        "success": {
+          "title": "Başarılı!",
+          "message": "{workItemTypeName}, {level}. seviyeye başarıyla taşındı."
+        }
+      }
+    },
+    "break_hierarchy_modal": {
+      "title": "Kaydetmek mevcut bağlantıları kopardı",
+      "content": {
+        "intro": "{workItemTypeName} iş öğesi türünde şunlar var:",
+        "parent_items": "{count, plural, one {# üst bağlantı kaldırılacak} other {# üst bağlantı kaldırılacak}}.",
+        "child_items": "{count, plural, one {alt iş öğesi} other {alt iş öğeleri}}",
+        "parent_line_suffix_when_also_children": ", ve ",
+        "footer": "Bu değişiklik, {workItemTypeName} iş öğesi türündeki mevcut iş öğelerinden üst-alt ilişkilerini kaldıracaktır."
+      },
+      "confirm_input": {
+        "label": "Devam etmek için «onayla» yazın.",
+        "placeholder": "onayla"
+      },
+      "error_toast": {
+        "title": "Hata!",
+        "message": "Bağlantılar kaldırılamadı ve kaydedilemedi. Lütfen tekrar deneyin."
+      },
+      "confirm_button": {
+        "loading": "Kaydediliyor",
+        "default": "Yine de kaydet"
+      }
+    },
+    "work_item_modal": {
+      "invalid_work_item_type_create_toast": {
+        "title": "Hata!",
+        "message": "Seçilen iş öğesi türü, hiyerarşi kurallarını bozduğundan yeni bir iş öğesi oluşturmak için kullanılamaz."
+      },
+      "invalid_work_item_type_update_toast": {
+        "title": "Hata!",
+        "message": "İş öğesi türü, hiyerarşi kurallarını bozduğundan güncellenemiyor."
+      }
+    },
+    "work_item_type_modal": {
+      "level": "Hiyerarşi seviyesi",
+      "invalid_level_toast": {
+        "title": "Hata!",
+        "message": "Çalışma öğesi türü, hiyerarşi kurallarını ihlal ettiğinden güncellenemiyor."
+      }
+    }
+  }
+}

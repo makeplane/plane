@@ -1,11 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
-import { Button, getButtonStyling } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { setToast } from "@plane/blocks/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGitlabAuthenticationConfigurationKeys } from "@plane/types";
 // components
 import { CodeBlock } from "@/components/common/code-block";
@@ -24,6 +30,11 @@ type Props = {
 };
 
 type GitlabConfigFormValues = Record<TInstanceGitlabAuthenticationConfigurationKeys, string>;
+
+const GITLAB_FORM_SWITCH_FIELD: TControllerSwitchFormField<GitlabConfigFormValues> = {
+  name: "ENABLE_GITLAB_SYNC",
+  label: "GitLab",
+};
 
 export function InstanceGitlabConfigForm(props: Props) {
   const { config } = props;
@@ -48,7 +59,7 @@ export function InstanceGitlabConfigForm(props: Props) {
 
   const originURL = !isEmpty(API_BASE_URL) ? API_BASE_URL : typeof window !== "undefined" ? window.location.origin : "";
 
-  const GITLAB_FORM_FIELDS: TControllerInputFormField[] = [
+  const GITLAB_FORM_FIELDS: TControllerInputFormField<GitlabConfigFormValues>[] = [
     {
       key: "GITLAB_HOST",
       type: "text",
@@ -70,7 +81,6 @@ export function InstanceGitlabConfigForm(props: Props) {
         <>
           Get this from your{" "}
           <a
-            tabIndex={-1}
             href="https://docs.gitlab.com/ee/integration/oauth_provider.html"
             target="_blank"
             className="text-accent-primary hover:underline"
@@ -93,7 +103,6 @@ export function InstanceGitlabConfigForm(props: Props) {
         <>
           The client secret is also found in your{" "}
           <a
-            tabIndex={-1}
             href="https://docs.gitlab.com/ee/integration/oauth_provider.html"
             target="_blank"
             className="text-accent-primary hover:underline"
@@ -110,11 +119,6 @@ export function InstanceGitlabConfigForm(props: Props) {
     },
   ];
 
-  const GITLAB_FORM_SWITCH_FIELD: TControllerSwitchFormField<GitlabConfigFormValues> = {
-    name: "ENABLE_GITLAB_SYNC",
-    label: "GitLab",
-  };
-
   const GITLAB_SERVICE_FIELD: TCopyField[] = [
     {
       key: "Callback_URL",
@@ -124,7 +128,6 @@ export function InstanceGitlabConfigForm(props: Props) {
         <>
           We will auto-generate this. Paste this into the <CodeBlock darkerShade>Redirect URI</CodeBlock> field of your{" "}
           <a
-            tabIndex={-1}
             href="https://docs.gitlab.com/ee/integration/oauth_provider.html"
             target="_blank"
             className="text-accent-primary hover:underline"
@@ -144,7 +147,7 @@ export function InstanceGitlabConfigForm(props: Props) {
     try {
       const response = await updateInstanceConfigurations(payload);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Done!",
         message: "Your GitLab authentication is configured. You should test it now.",
       });
@@ -174,8 +177,8 @@ export function InstanceGitlabConfigForm(props: Props) {
         handleClose={() => setIsDiscardChangesModalOpen(false)}
       />
       <div className="flex flex-col gap-8">
-        <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
-          <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
+        <div className="grid w-full grid-cols-2 gap-x-12 gap-y-8">
+          <div className="col-span-2 flex flex-col gap-y-4 pt-1 md:col-span-1">
             <div className="pt-2.5 text-18 font-medium">GitLab-provided details for Plane</div>
             {GITLAB_FORM_FIELDS.map((field) => (
               <ControllerInput
@@ -195,21 +198,26 @@ export function InstanceGitlabConfigForm(props: Props) {
               <div className="flex items-center gap-4">
                 <Button
                   variant="primary"
-                  size="lg"
+                  size="md"
+                  stretch="auto"
                   onClick={(e) => void handleSubmit(onSubmit)(e)}
                   loading={isSubmitting}
                   disabled={!isDirty}
-                >
-                  {isSubmitting ? "Saving..." : "Save changes"}
-                </Button>
-                <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
-                  Go back
-                </Link>
+                  label={isSubmitting ? "Saving" : "Save changes"}
+                />
+                <Button
+                  variant="secondary"
+                  size="md"
+                  stretch="auto"
+                  nativeButton={false}
+                  render={<Link href="/authentication" onClick={handleGoBack} />}
+                  label="Go back"
+                />
               </div>
             </div>
           </div>
           <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-layer-1/60 rounded-lg">
+            <div className="flex flex-col gap-y-4 rounded-lg bg-layer-3 px-6 pt-1.5 pb-4">
               <div className="pt-2 text-18 font-medium">Plane-provided details for GitLab</div>
               {GITLAB_SERVICE_FIELD.map((field) => (
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />

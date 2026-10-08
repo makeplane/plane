@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "收件匣",
+    "page_label": "{workspace} - 收件匣",
+    "options": {
+      "mark_all_as_read": "全部標記為已讀",
+      "mark_read": "標記為已讀",
+      "mark_unread": "標記為未讀",
+      "refresh": "重新整理",
+      "filters": "收件匣篩選器",
+      "show_unread": "顯示未讀",
+      "show_snoozed": "顯示已延後",
+      "show_archived": "顯示已封存",
+      "mark_archive": "封存",
+      "mark_unarchive": "取消封存",
+      "mark_snooze": "延後",
+      "mark_unsnooze": "取消延後"
+    },
+    "toasts": {
+      "read": "通知已標記為已讀",
+      "unread": "通知已標記為未讀",
+      "archived": "通知已標記為已封存",
+      "unarchived": "通知已標記為未封存",
+      "snoozed": "通知已延後",
+      "unsnoozed": "通知已取消延後"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "選擇以檢視詳細資訊。"
+      },
+      "all": {
+        "title": "沒有指派的工作事項",
+        "description": "您可以在這裡看到指派給您的工作事項的更新"
+      },
+      "mentions": {
+        "title": "沒有指派的工作事項",
+        "description": "您可以在這裡看到指派給您的工作事項的更新"
+      }
+    },
+    "tabs": {
+      "all": "全部",
+      "mentions": "提及"
+    },
+    "filter": {
+      "assigned": "指派給我",
+      "created": "由我建立",
+      "subscribed": "由我訂閱"
+    },
+    "snooze": {
+      "1_day": "1 天",
+      "3_days": "3 天",
+      "5_days": "5 天",
+      "1_week": "1 週",
+      "2_weeks": "2 週",
+      "custom": "自訂"
+    }
+  }
+}

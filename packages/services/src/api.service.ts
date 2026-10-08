@@ -1,5 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
-import axios from "axios";
+import { create } from "axios";
+import { normalizeAPIRequestURL } from "./helpers/url";
 
 /**
  * Abstract base class for making HTTP requests using axios
@@ -15,9 +22,22 @@ export abstract class APIService {
    */
   constructor(baseURL: string) {
     this.baseURL = baseURL;
-    this.axiosInstance = axios.create({
+    this.axiosInstance = create({
       baseURL,
       withCredentials: true,
+    });
+
+    this.axiosInstance.interceptors.request.use((config) => {
+      try {
+        if (config.url) {
+          config.url = normalizeAPIRequestURL(config.url, this.baseURL);
+        }
+      } catch (error) {
+        // Never block a request because of slash normalization — fall back to the
+        // original URL and let the call proceed.
+        console.warn("[APIService] Failed to normalize trailing slash:", config.url, error);
+      }
+      return config;
     });
   }
 

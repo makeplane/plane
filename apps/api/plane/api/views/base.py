@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import zoneinfo
 import logging
@@ -14,19 +18,21 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, ParseError
 from rest_framework.generics import GenericAPIView
 
 # Module imports
-from plane.db.models.api import APIToken
 from plane.api.middleware.api_authentication import APIKeyAuthentication
-from plane.api.rate_limit import ApiKeyRateThrottle, ServiceTokenRateThrottle
+from plane.api.rate_limit import ApiKeyRateThrottle
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 from plane.utils.core.mixins import ReadReplicaControlMixin
 
 
 logger = logging.getLogger("plane.api")
+
+# Views call request.data.get()/.pop(). A scalar parses, then raises AttributeError.
+_NON_CONTAINER_BODY_ERROR = "Request body must be a JSON object or array."
 
 
 class TimezoneMixin:
@@ -50,25 +56,18 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
 
     use_read_replica = False
 
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        if request.method in ("POST", "PUT", "PATCH") and not isinstance(request.data, (dict, list)):
+            raise ParseError(_NON_CONTAINER_BODY_ERROR)
+
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):
             queryset = backend().filter_queryset(self.request, queryset, self)
         return queryset
 
     def get_throttles(self):
-        throttle_classes = []
-        api_key = self.request.headers.get("X-Api-Key")
-
-        if api_key:
-            service_token = APIToken.objects.filter(token=api_key, is_service=True).first()
-
-            if service_token:
-                throttle_classes.append(ServiceTokenRateThrottle())
-                return throttle_classes
-
-        throttle_classes.append(ApiKeyRateThrottle())
-
-        return throttle_classes
+        return [ApiKeyRateThrottle()]
 
     def handle_exception(self, exc):
         """
@@ -119,7 +118,7 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
             return response
         except Exception as exc:
             response = self.handle_exception(exc)
-            return exc
+            return response
 
     def finalize_response(self, request, response, *args, **kwargs):
         # Call super to get the default response
@@ -168,6 +167,11 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
         IsAuthenticated,
     ]
     use_read_replica = False
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        if request.method in ("POST", "PUT", "PATCH") and not isinstance(request.data, (dict, list)):
+            raise ParseError(_NON_CONTAINER_BODY_ERROR)
 
     def get_queryset(self):
         try:

@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "Suas anotações",
+    "placeholder": "clique para digitar aqui",
+    "all": "Todas as anotações",
+    "no-data": "Anote uma ideia, capture um insight ou registre uma onda cerebral. Adicione uma anotação para começar.",
+    "add": "Adicionar anotação",
+    "search_placeholder": "Pesquisar por título",
+    "delete": "Excluir anotação",
+    "delete_confirmation": "Tem certeza de que deseja excluir esta anotação?",
+    "empty_state": {
+      "simple": "Anote uma ideia, capture um insight ou registre uma onda cerebral. Adicione uma anotação para começar.",
+      "general": {
+        "title": "As anotações são notas rápidas e tarefas que você anota rapidamente.",
+        "description": "Capture seus pensamentos e ideias sem esforço, criando anotações que você pode acessar a qualquer momento e de qualquer lugar.",
+        "primary_button": {
+          "text": "Adicionar anotação"
+        }
+      },
+      "search": {
+        "title": "Isso não corresponde a nenhuma de suas anotações.",
+        "description": "Tente um termo diferente ou nos informe\nse você tem certeza de que sua pesquisa está correta.",
+        "primary_button": {
+          "text": "Adicionar anotação"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "O nome da anotação não pode ter mais de 100 caracteres.",
+        "already_exists": "Já existe uma anotação sem descrição"
+      },
+      "created": {
+        "title": "Anotação criada",
+        "message": "A anotação foi criada com sucesso"
+      },
+      "not_created": {
+        "title": "Anotação não criada",
+        "message": "A anotação não pôde ser criada"
+      },
+      "updated": {
+        "title": "Anotação atualizada",
+        "message": "A anotação foi atualizada com sucesso"
+      },
+      "not_updated": {
+        "title": "Anotação não atualizada",
+        "message": "A anotação não pôde ser atualizada"
+      },
+      "removed": {
+        "title": "Anotação removida",
+        "message": "A anotação foi removida com sucesso"
+      },
+      "not_removed": {
+        "title": "Anotação não removida",
+        "message": "A anotação não pôde ser removida"
+      }
+    }
+  }
+}

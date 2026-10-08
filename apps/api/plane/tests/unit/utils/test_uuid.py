@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 import uuid
 import pytest
 from plane.utils.uuid import is_valid_uuid, convert_uuid_to_integer

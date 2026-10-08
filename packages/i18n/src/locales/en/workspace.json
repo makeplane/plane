@@ -1,0 +1,378 @@
+{
+  "workspace_creation": {
+    "heading": "Create your workspace",
+    "subheading": "To start using Plane, you need to create or join a workspace.",
+    "form": {
+      "name": {
+        "label": "Name your workspace",
+        "placeholder": "Something familiar and recognizable is always best."
+      },
+      "url": {
+        "label": "Set your workspace's URL",
+        "placeholder": "Type or paste a URL",
+        "edit_slug": "You can only edit the slug of the URL"
+      },
+      "organization_size": {
+        "label": "How many people will use this workspace?",
+        "placeholder": "Select a range"
+      }
+    },
+    "errors": {
+      "creation_disabled": {
+        "title": "Only your instance admin can create workspaces",
+        "description": "If you know your instance admin's email address, click the button below to get in touch with them.",
+        "request_button": "Request instance admin"
+      },
+      "validation": {
+        "name_alphanumeric": "Workspaces names can contain only (' '), ('-'), ('_') and alphanumeric characters.",
+        "name_length": "Limit your name to 80 characters.",
+        "url_alphanumeric": "URLs can contain only ('-') and alphanumeric characters.",
+        "url_length": "Limit your URL to 48 characters.",
+        "url_already_taken": "Workspace URL is already taken!"
+      }
+    },
+    "request_email": {
+      "subject": "Requesting a new workspace",
+      "body": "Hi instance admin(s),\n\nPlease create a new workspace with the URL [/workspace-name] for [purpose of creating the workspace].\n\nThanks,\n{firstName} {lastName}\n{email}"
+    },
+    "button": {
+      "default": "Create workspace",
+      "loading": "Creating workspace"
+    },
+    "toast": {
+      "success": {
+        "title": "Success",
+        "message": "Workspace created successfully"
+      },
+      "error": {
+        "title": "Error",
+        "message": "Workspace could not be created. Please try again."
+      }
+    }
+  },
+  "workspace_dashboard": {
+    "empty_state": {
+      "general": {
+        "title": "Overview of your projects, activity, and metrics",
+        "description": "Welcome to Plane, we are excited to have you here. Create your first project and track your work items, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
+        "primary_button": {
+          "text": "Build your first project",
+          "comic": {
+            "title": "Everything starts with a project in Plane",
+            "description": "A project could be a product's roadmap, a marketing campaign, or launching a new car."
+          }
+        }
+      }
+    }
+  },
+  "workspace_analytics": {
+    "label": "Analytics",
+    "page_label": "{workspace} - Analytics",
+    "open_tasks": "Total open tasks",
+    "error": "There was some error in fetching the data.",
+    "work_items_closed_in": "Work items closed in",
+    "selected_projects": "Selected projects",
+    "total_members": "Total members",
+    "total_cycles": "Total cycles",
+    "total_modules": "Total modules",
+    "pending_work_items": {
+      "title": "Pending work items",
+      "empty_state": "Analysis of pending work items by co-workers appears here."
+    },
+    "work_items_closed_in_a_year": {
+      "title": "Work items closed in a year",
+      "empty_state": "Close work items to view analysis of the same in the form of a graph."
+    },
+    "most_work_items_created": {
+      "title": "Most work items created",
+      "empty_state": "Co-workers and the number of work items created by them appears here."
+    },
+    "most_work_items_closed": {
+      "title": "Most work items closed",
+      "empty_state": "Co-workers and the number of work items closed by them appears here."
+    },
+    "tabs": {
+      "scope_and_demand": "Scope and Demand",
+      "custom": "Custom Analytics"
+    },
+    "total": "Total {entity}",
+    "started_work_items": "Started {entity}",
+    "backlog_work_items": "Backlog {entity}",
+    "un_started_work_items": "Unstarted {entity}",
+    "completed_work_items": "Completed {entity}",
+    "project_insights": "Project Insights",
+    "summary_of_projects": "Summary of Projects",
+    "all_projects": "All Projects",
+    "trend_on_charts": "Trend on charts",
+    "active_projects": "Active Projects",
+    "customized_insights": "Customized Insights",
+    "created_vs_resolved": "Created vs Resolved",
+    "empty_state": {
+      "project_insights": {
+        "title": "No data yet",
+        "description": "Work items assigned to you, broken down by state, will show up here."
+      },
+      "created_vs_resolved": {
+        "title": "No data yet",
+        "description": "Work items created and resolved over time will show up here."
+      },
+      "customized_insights": {
+        "title": "No data yet",
+        "description": "Work items assigned to you, broken down by state, will show up here."
+      },
+      "general": {
+        "title": "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
+        "description": "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
+        "primary_button": {
+          "text": "Start your first project",
+          "comic": {
+            "title": "Analytics works best with Cycles + Modules",
+            "description": "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav."
+          }
+        }
+      },
+      "cycle_progress": {
+        "title": "No data yet",
+        "description": "Cycle progress analytics will appear here. Add work items to cycles to start tracking progress."
+      },
+      "module_progress": {
+        "title": "No data yet",
+        "description": "Module progress analytics will appear here. Add work items to modules to start tracking progress."
+      },
+      "intake_trends": {
+        "title": "No data yet",
+        "description": "Intake trends analytics will appear here. Add work items to intake to start tracking trends."
+      }
+    },
+    "upgrade_to_plan": "Upgrade to {plan} to unlock {tab}",
+    "workitem_resolved_vs_pending": "Work items resolved vs pending",
+    "projects_by_status": "Projects by status",
+    "active_users": "Active users",
+    "intake_trends": "Intake Trends"
+  },
+  "workspace_projects": {
+    "label": "{count, plural, one {Project} other {Projects}}",
+    "create": {
+      "label": "Add Project"
+    },
+    "network": {
+      "label": "Network",
+      "private": {
+        "title": "Private",
+        "description": "Accessible only by invite"
+      },
+      "public": {
+        "title": "Public",
+        "description": "Anyone in the workspace except Guests can join"
+      }
+    },
+    "error": {
+      "permission": "You don't have permission to perform this action.",
+      "cycle_delete": "Failed to delete cycle",
+      "module_delete": "Failed to delete module",
+      "issue_delete": "Failed to delete work item"
+    },
+    "state": {
+      "backlog": "Backlog",
+      "unstarted": "Unstarted",
+      "started": "Started",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "sort": {
+      "manual": "Manual",
+      "name": "Name",
+      "created_at": "Created date",
+      "members_length": "Number of members"
+    },
+    "scope": {
+      "my_projects": "My projects",
+      "archived_projects": "Archived"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# month} other{# months}}",
+      "days_count": "{days, plural, one{# day} other{# days}}"
+    },
+    "empty_state": {
+      "general": {
+        "title": "No active projects",
+        "description": "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects.",
+        "primary_button": {
+          "text": "Start your first project",
+          "comic": {
+            "title": "Everything starts with a project in Plane",
+            "description": "A project could be a product's roadmap, a marketing campaign, or launching a new car."
+          }
+        }
+      },
+      "no_projects": {
+        "title": "No project",
+        "description": "To create work items or manage your work, you need to create a project or be a part of one.",
+        "primary_button": {
+          "text": "Start your first project",
+          "comic": {
+            "title": "Everything starts with a project in Plane",
+            "description": "A project could be a product's roadmap, a marketing campaign, or launching a new car."
+          }
+        }
+      },
+      "filter": {
+        "title": "No matching projects",
+        "description": "No projects detected with the matching criteria.\n Create a new project instead."
+      },
+      "search": {
+        "description": "No projects detected with the matching criteria.\nCreate a new project instead"
+      }
+    }
+  },
+  "workspace_views": {
+    "add_view": "Add view",
+    "empty_state": {
+      "all-issues": {
+        "title": "No work items in the project",
+        "description": "First project done! Now, slice your work into trackable pieces with work items. Let's go!",
+        "primary_button": {
+          "text": "Create new work item"
+        }
+      },
+      "assigned": {
+        "title": "No work items yet",
+        "description": "Work items assigned to you can be tracked from here.",
+        "primary_button": {
+          "text": "Create new work item"
+        }
+      },
+      "created": {
+        "title": "No work items yet",
+        "description": "All work items created by you come here, track them here directly.",
+        "primary_button": {
+          "text": "Create new work item"
+        }
+      },
+      "subscribed": {
+        "title": "No work items yet",
+        "description": "Subscribe to work items you are interested in, track all of them here."
+      },
+      "custom-view": {
+        "title": "No work items yet",
+        "description": "Work items that applies to the filters, track all of them here."
+      }
+    },
+    "delete_view": {
+      "title": "Are you sure you want to delete this view?",
+      "content": "If you confirm, all the sort, filter, and display options + the layout you have chosen for this view will be permanently deleted without any way to restore them."
+    }
+  },
+  "workspace_draft_issues": {
+    "draft_an_issue": "Draft a work item",
+    "empty_state": {
+      "title": "Half-written work items, and soon, comments will show up here.",
+      "description": "To try this out, start adding a work item and leave it mid-way or create your first draft below. 😉",
+      "primary_button": {
+        "text": "Create your first draft"
+      }
+    },
+    "delete_modal": {
+      "title": "Delete draft",
+      "description": "Are you sure you want to delete this draft? This can't be undone."
+    },
+    "toasts": {
+      "created": {
+        "success": "Draft created",
+        "error": "Work item could not be created. Please try again."
+      },
+      "deleted": {
+        "success": "Draft deleted"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Write a note, a doc, or a full knowledge base. Get Galileo, Plane's AI assistant, to help you get started",
+        "description": "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your project's context. To make short work of any doc, invoke Galileo, Plane's AI, with a shortcut or the click of a button.",
+        "primary_button": {
+          "text": "Create your first page"
+        }
+      },
+      "private": {
+        "title": "No private pages yet",
+        "description": "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
+        "primary_button": {
+          "text": "Create your first page"
+        }
+      },
+      "public": {
+        "title": "No workspace pages yet",
+        "description": "See pages shared with everyone in your workspace right here.",
+        "primary_button": {
+          "text": "Create your first page"
+        }
+      },
+      "archived": {
+        "title": "No archived pages yet",
+        "description": "Archive pages not on your radar. Access them here when needed."
+      },
+      "shared": {
+        "title": "No shared pages yet",
+        "description": "Pages that others have shared with you will appear here."
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "No active cycles",
+        "description": "Cycles of your projects that includes any period that encompasses today's date within its range. Find the progress and details of all your active cycle here."
+      }
+    }
+  },
+  "workspace": {
+    "members_import": {
+      "title": "Import Members from CSV",
+      "description": "Upload a CSV with columns: Email, Display Name, First Name, Last Name, Role (5, 15, or 20)",
+      "dropzone": {
+        "active": "Drop CSV file here",
+        "inactive": "Drag & drop or click to upload",
+        "file_type": "Only .csv files supported"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "import": "Import",
+        "try_again": "Try Again",
+        "close": "Close",
+        "done": "Done"
+      },
+      "progress": {
+        "uploading": "Uploading...",
+        "importing": "Importing..."
+      },
+      "summary": {
+        "title": {
+          "failed": "Import Failed",
+          "complete": "Import Complete"
+        },
+        "message": {
+          "seat_limit": "Unable to import members due to seat limit restrictions.",
+          "success": "Successfully added {count} member{plural} to the workspace.",
+          "no_imports": "No members were imported from the CSV file."
+        },
+        "stats": {
+          "successful": "Successful",
+          "failed": "Failed"
+        },
+        "download_errors": "Download errors"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Invalid file",
+          "message": "Only CSV files are supported."
+        },
+        "import_failed": {
+          "title": "Import failed",
+          "message": "Something went wrong."
+        }
+      }
+    }
+  }
+}

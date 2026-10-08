@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { redirect } from "react-router";
 // plane imports
 import { SitesProjectPublishService } from "@plane/services";
@@ -44,7 +50,7 @@ export const clientLoader = async ({ params, request }: Route.ClientLoaderArgs) 
 
 export default function IssuesPage() {
   return (
-    <div className="flex h-screen min-h-[500px] w-full justify-center items-center">
+    <div className="flex h-screen min-h-[500px] w-full items-center justify-center">
       <LogoSpinner />
     </div>
   );

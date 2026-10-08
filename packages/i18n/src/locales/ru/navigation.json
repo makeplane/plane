@@ -1,0 +1,34 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Ничего не найдено"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "Стикеры",
+    "your_work": "Ваша работа",
+    "projects": "Проекты",
+    "pages": "Страницы",
+    "new_work_item": "Новый рабочий элемент",
+    "home": "Главная",
+    "inbox": "Входящие",
+    "workspace": "Рабочие пространства",
+    "views": "Представления",
+    "analytics": "Аналитика",
+    "work_items": "Рабочие элементы",
+    "cycles": "Циклы",
+    "modules": "Модули",
+    "intake": "Предложения",
+    "drafts": "Черновики",
+    "favorites": "Избранное",
+    "pro": "Pro",
+    "upgrade": "Обновить",
+    "pi_chat": "AI Чат",
+    "epics": "Эпики",
+    "upgrade_plan": "Апгрейд план",
+    "plane_pro": "Плейн Про",
+    "business": "Бизнес"
+  }
+}

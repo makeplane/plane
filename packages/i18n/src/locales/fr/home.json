@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "Guide de démarrage rapide",
+      "not_right_now": "Pas maintenant",
+      "create_project": {
+        "title": "Créer un projet",
+        "description": "La plupart des choses commencent par un projet dans Plane.",
+        "cta": "Commencer"
+      },
+      "invite_team": {
+        "title": "Inviter votre équipe",
+        "description": "Construisez, déployez et travaillez avec vos collègues.",
+        "cta": "Les faire entrer"
+      },
+      "configure_workspace": {
+        "title": "Configurez votre espace de travail.",
+        "description": "Activez ou désactivez des fonctionnalités ou allez plus loin.",
+        "cta": "Configurer cet espace de travail"
+      },
+      "personalize_account": {
+        "title": "Faites de Plane le vôtre.",
+        "description": "Choisissez votre photo, vos couleurs et plus encore.",
+        "cta": "Personnaliser maintenant"
+      },
+      "widgets": {
+        "title": "C'est calme sans widgets, activez-les",
+        "description": "Il semble que tous vos widgets soient désactivés. Activez-les\nmaintenant pour améliorer votre expérience !",
+        "primary_button": {
+          "text": "Gérer les widgets"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "Enregistrez des liens vers des éléments de travail que vous souhaitez avoir à portée de main.",
+      "add": "Ajouter un lien rapide",
+      "title": "Lien rapide",
+      "title_plural": "Liens rapides"
+    },
+    "recents": {
+      "title": "Récents",
+      "empty": {
+        "project": "Vos projets récents apparaîtront ici une fois que vous en aurez visité un.",
+        "page": "Vos pages récentes apparaîtront ici une fois que vous en aurez visité une.",
+        "issue": "Vos éléments de travail récents apparaîtront ici une fois que vous en aurez visité un.",
+        "default": "Vous n’avez pas encore d’éléments récents."
+      },
+      "filters": {
+        "all": "Tous",
+        "projects": "Projets",
+        "pages": "Pages",
+        "issues": "Éléments de travail"
+      }
+    },
+    "new_at_plane": {
+      "title": "Nouveau sur Plane"
+    },
+    "quick_tutorial": {
+      "title": "Tutoriel rapide"
+    },
+    "widget": {
+      "reordered_successfully": "Widget réorganisé avec succès.",
+      "reordering_failed": "Une erreur s’est produite lors de la réorganisation du widget."
+    },
+    "manage_widgets": "Gérer les widgets",
+    "title": "Accueil",
+    "star_us_on_github": "Donnez-nous une étoile sur GitHub",
+    "business_trial_banner": {
+      "title": "Votre essai de 14 jours du plan Business est actif !",
+      "description": "Explorez toutes les fonctionnalités Business. Quand vous êtes prêt, choisissez de vous abonner. Vous ne serez pas facturé automatiquement.",
+      "trial_ends_today": "L'essai se termine aujourd'hui",
+      "trial_ends_in_days": "L'essai se termine dans {days, plural, one {# jour} other {# jours}}",
+      "start_subscription": "Démarrer l'abonnement",
+      "explore_business_features": "Explorer les fonctionnalités Business"
+    }
+  }
+}

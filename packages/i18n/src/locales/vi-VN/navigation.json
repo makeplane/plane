@@ -1,0 +1,34 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Không tìm thấy kết quả"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "Ghi chú nhanh",
+    "your_work": "Công việc của tôi",
+    "projects": "Dự án",
+    "pages": "Trang",
+    "new_work_item": "Mục công việc mới",
+    "home": "Trang chủ",
+    "inbox": "Hộp thư đến",
+    "workspace": "Không gian làm việc",
+    "views": "Chế độ xem",
+    "analytics": "Phân tích",
+    "work_items": "Mục công việc",
+    "cycles": "Chu kỳ",
+    "modules": "Mô-đun",
+    "intake": "Thu thập",
+    "drafts": "Bản nháp",
+    "favorites": "Yêu thích",
+    "pro": "Phiên bản Pro",
+    "upgrade": "Nâng cấp",
+    "pi_chat": "Plane AI",
+    "epics": "Epics",
+    "upgrade_plan": "Nâng cấp gói",
+    "plane_pro": "Plane Pro",
+    "business": "Doanh nghiệp"
+  }
+}

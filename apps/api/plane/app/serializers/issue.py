@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.utils import timezone
 from django.core.validators import URLValidator
@@ -18,7 +22,7 @@ from plane.db.models import (
     Issue,
     IssueActivity,
     IssueComment,
-    IssueUserProperty,
+    ProjectUserProperty,
     IssueAssignee,
     IssueSubscriber,
     IssueLabel,
@@ -53,7 +57,7 @@ class IssueFlatSerializer(BaseSerializer):
         fields = [
             "id",
             "name",
-            "description",
+            "description_json",
             "description_html",
             "priority",
             "start_date",
@@ -106,6 +110,7 @@ class IssueCreateSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "completed_at",
         ]
 
     def to_representation(self, instance):
@@ -346,9 +351,9 @@ class IssueActivitySerializer(BaseSerializer):
         fields = "__all__"
 
 
-class IssueUserPropertySerializer(BaseSerializer):
+class ProjectUserPropertySerializer(BaseSerializer):
     class Meta:
-        model = IssueUserProperty
+        model = ProjectUserProperty
         fields = "__all__"
         read_only_fields = ["user", "workspace", "project"]
 
@@ -709,6 +714,15 @@ class IssueCommentSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def validate(self, attrs):
+        if "comment_html" in attrs and attrs["comment_html"]:
+            is_valid, error_msg, sanitized_html = validate_html_content(attrs["comment_html"])
+            if not is_valid:
+                raise serializers.ValidationError({"comment_html": "HTML content is not valid"})
+            if sanitized_html is not None:
+                attrs["comment_html"] = sanitized_html
+        return attrs
 
 
 class IssueStateFlatSerializer(BaseSerializer):

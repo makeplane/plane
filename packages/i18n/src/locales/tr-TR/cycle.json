@@ -1,0 +1,41 @@
+{
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "İlerlemeyi görüntülemek için döngüye iş öğeleri ekleyin"
+      },
+      "chart": {
+        "title": "Burndown grafiğini görüntülemek için döngüye iş öğeleri ekleyin."
+      },
+      "priority_issue": {
+        "title": "Döngüde ele alınan yüksek öncelikli iş öğelerini bir bakışta görün."
+      },
+      "assignee": {
+        "title": "Atananları iş öğelerine ekleyerek iş dağılımını görün."
+      },
+      "label": {
+        "title": "Etiketleri iş öğelerine ekleyerek iş dağılımını görün."
+      }
+    }
+  },
+  "cycle": {
+    "label": "{count, plural, one {Döngü} other {Döngüler}}",
+    "no_cycle": "Döngü yok"
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Döngünün ilerlemesini görüntülemek için iş öğeleri ekleyin"
+      },
+      "priority": {
+        "title": "Döngüde ele alınan yüksek öncelikli iş öğelerini bir bakışta gözlemleyin."
+      },
+      "assignee": {
+        "title": "Atayanlara göre iş dağılımını görmek için iş öğelerine atayan ekleyin."
+      },
+      "label": {
+        "title": "Etiketlere göre iş dağılımını görmek için iş öğelerine etiketler ekleyin."
+      }
+    }
+  }
+}

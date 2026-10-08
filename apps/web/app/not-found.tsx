@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import Link from "next/link";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 // images
 import Image404 from "@/app/assets/404.svg?url";
 // types
@@ -26,13 +32,16 @@ function PageNotFound() {
               temporarily unavailable.
             </p>
           </div>
-          <Link href="/">
-            <span className="flex justify-center">
-              <Button variant="secondary" size="lg">
-                Go to Home
-              </Button>
-            </span>
-          </Link>
+          <div className="flex justify-center">
+            <Button
+              variant="secondary"
+              size="md"
+              stretch="auto"
+              label="Go to Home"
+              nativeButton={false}
+              render={<Link href="/" />}
+            />
+          </div>
         </div>
       </div>
     </div>

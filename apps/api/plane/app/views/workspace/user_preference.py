@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Module imports
 from ..base import BaseAPIView
 from plane.db.models.workspace import WorkspaceUserPreference
@@ -81,7 +85,9 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
             if not key:
                 continue
 
-            preference = WorkspaceUserPreference.objects.filter(key=key, workspace__slug=slug).first()
+            preference = WorkspaceUserPreference.objects.filter(
+                key=key, workspace__slug=slug, user=request.user
+            ).first()
 
             if not preference:
                 continue

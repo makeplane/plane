@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 from smtplib import (
     SMTPAuthenticationError,
@@ -41,7 +45,8 @@ class InstanceConfigurationEndpoint(BaseAPIView):
 
         bulk_configurations = []
         for configuration in configurations:
-            value = request.data.get(configuration.key, configuration.value)
+            raw_value = request.data.get(configuration.key, configuration.value)
+            value = "" if raw_value is None else str(raw_value).strip()
             if configuration.is_encrypted:
                 configuration.value = encrypt_data(value)
             else:

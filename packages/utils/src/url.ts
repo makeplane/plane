@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import tlds from "./tlds";
 
 const PROTOCOL_REGEX = /^[a-zA-Z]+:\/\//;
@@ -255,7 +261,7 @@ export function extractURLComponents(url: URL | string): IURLComponents | undefi
     }
 
     return undefined;
-  } catch (error) {
+  } catch (_error) {
     return undefined;
   }
 }
@@ -317,7 +323,7 @@ export function isValidNextPath(url: string): boolean {
     ];
 
     return !maliciousPatterns.some((pattern) => pattern.test(pathname));
-  } catch (error) {
+  } catch (_error) {
     // If URL constructor fails, it's an invalid path
     return false;
   }

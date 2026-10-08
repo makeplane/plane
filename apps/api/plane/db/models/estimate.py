@@ -1,16 +1,24 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q
 
 # Module imports
 from .project import ProjectBaseModel
 
+class EstimateType(models.TextChoices):
+    CATEGORIES = "categories", "Categories"
+    POINTS = "points", "Points"
+
 
 class Estimate(ProjectBaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField(verbose_name="Estimate Description", blank=True)
-    type = models.CharField(max_length=255, default="categories")
+    type = models.CharField(max_length=255, choices=EstimateType.choices, default=EstimateType.CATEGORIES)
     last_used = models.BooleanField(default=False)
 
     def __str__(self):
@@ -34,7 +42,7 @@ class Estimate(ProjectBaseModel):
 
 class EstimatePoint(ProjectBaseModel):
     estimate = models.ForeignKey("db.Estimate", on_delete=models.CASCADE, related_name="points")
-    key = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(12)])
+    key = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     description = models.TextField(blank=True)
     value = models.CharField(max_length=255)
 

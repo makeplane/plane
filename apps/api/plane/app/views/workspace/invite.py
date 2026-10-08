@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 from datetime import datetime
 
@@ -18,15 +22,14 @@ from rest_framework.response import Response
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.app.serializers import (
     WorkSpaceMemberInviteSerializer,
+    WorkSpaceMemberInvitePublicSerializer,
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.bgtasks.event_tracking_task import workspace_invite_event
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
 from plane.utils.host import base_host
-from plane.utils.ip_address import get_client_ip
 from .. import BaseViewSet
 
 
@@ -146,12 +149,27 @@ class WorkspaceJoinEndpoint(BaseAPIView):
     def post(self, request, slug, pk):
         workspace_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
 
-        email = request.data.get("email", "")
+        token = request.data.get("token", "")
 
-        # Check the email
-        if email == "" or workspace_invite.email != email:
+        # Validate the token to verify the user received the invitation email
+        if not token or workspace_invite.token != token:
             return Response(
                 {"error": "You do not have permission to join the workspace"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Require an authenticated session — the accepting user must be the
+        # person who was invited.  Without this check an attacker who registers
+        # with the invited address (email-squat) and obtains the token via the
+        # GET endpoint can steal the workspace membership (GHSA-4vj8-p63v-8p24).
+        if not request.user.is_authenticated:
+            return Response(
+                {"error": "Authentication required to accept workspace invitation"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        if request.user.email.lower() != workspace_invite.email.lower():
+            return Response(
+                {"error": "You do not have permission to accept this invitation"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
@@ -163,7 +181,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
 
             if workspace_invite.accepted:
                 # Check if the user created account after invitation
-                user = User.objects.filter(email=email).first()
+                user = User.objects.filter(email=workspace_invite.email).first()
 
                 # If the user is present then create the workspace member
                 if user is not None:
@@ -190,16 +208,6 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     # Delete the invitation
                     workspace_invite.delete()
 
-                # Send event
-                workspace_invite_event.delay(
-                    user=user.id if user is not None else None,
-                    email=email,
-                    user_agent=request.META.get("HTTP_USER_AGENT"),
-                    ip=get_client_ip(request=request),
-                    event_name="MEMBER_ACCEPTED",
-                    accepted_from="EMAIL",
-                )
-
                 return Response(
                     {"message": "Workspace Invitation Accepted"},
                     status=status.HTTP_200_OK,
@@ -218,7 +226,10 @@ class WorkspaceJoinEndpoint(BaseAPIView):
 
     def get(self, request, slug, pk):
         workspace_invitation = WorkspaceMemberInvite.objects.get(workspace__slug=slug, pk=pk)
-        serializer = WorkSpaceMemberInviteSerializer(workspace_invitation)
+        # Use the public serializer that omits the token and invite_link fields so
+        # that an unauthenticated caller cannot retrieve the acceptance token
+        # (GHSA-86mg-259g-pwgg / GHSA-gf48-p6jp-cwc4).
+        serializer = WorkSpaceMemberInvitePublicSerializer(workspace_invitation)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

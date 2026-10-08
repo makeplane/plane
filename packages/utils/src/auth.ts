@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 // plane imports
 import type { TAuthErrorInfo } from "@plane/constants";
@@ -93,6 +99,10 @@ const errorCodeMessages: {
     title: `Invalid password`,
     message: () => `Invalid password. Please try again.`,
   },
+  [EAuthErrorCodes.PASSWORD_TOO_WEAK]: {
+    title: `Password too weak`,
+    message: () => `Please use a stronger password.`,
+  },
   [EAuthErrorCodes.SMTP_NOT_CONFIGURED]: {
     title: `SMTP not configured`,
     message: () => `SMTP not configured. Please contact your administrator.`,
@@ -132,6 +142,10 @@ const errorCodeMessages: {
     message: () => `Invalid email. Please try again.`,
   },
   // sign in
+  [EAuthErrorCodes.BOT_USER_LOGIN_FORBIDDEN]: {
+    title: `Sign in not allowed`,
+    message: () => `This account cannot be used to sign in. Please use a personal account.`,
+  },
   [EAuthErrorCodes.USER_ACCOUNT_DEACTIVATED]: {
     title: `User account deactivated`,
     message: () => `User account deactivated. Please contact administrator.`,
@@ -339,6 +353,7 @@ export const authErrorHandler = (errorCode: EAuthErrorCodes, email?: string): TA
     EAuthErrorCodes.ADMIN_AUTHENTICATION_FAILED,
     EAuthErrorCodes.ADMIN_USER_ALREADY_EXIST,
     EAuthErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
+    EAuthErrorCodes.BOT_USER_LOGIN_FORBIDDEN,
     EAuthErrorCodes.USER_ACCOUNT_DEACTIVATED,
   ];
 

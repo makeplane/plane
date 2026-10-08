@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Ausstehend",
+        "description": "Ausstehend"
+      },
+      "declined": {
+        "title": "Abgelehnt",
+        "description": "Abgelehnt"
+      },
+      "snoozed": {
+        "title": "Verschoben",
+        "description": "Noch {days, plural, one{# Tag} few{# Tage} other{# Tage}}"
+      },
+      "accepted": {
+        "title": "Angenommen",
+        "description": "Angenommen"
+      },
+      "duplicate": {
+        "title": "Duplikat",
+        "description": "Duplikat"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "Arbeitselement ablehnen",
+        "content": "Möchten Sie das Arbeitselement {value} wirklich ablehnen?"
+      },
+      "delete": {
+        "title": "Arbeitselement löschen",
+        "content": "Möchten Sie das Arbeitselement {value} wirklich löschen?",
+        "success": "Arbeitselement erfolgreich gelöscht"
+      }
+    },
+    "errors": {
+      "snooze_permission": "Nur Projektadministratoren können Arbeitselemente verschieben/wiederherstellen",
+      "accept_permission": "Nur Projektadministratoren können Arbeitselemente annehmen",
+      "decline_permission": "Nur Projektadministratoren können Arbeitselemente ablehnen"
+    },
+    "actions": {
+      "accept": "Annehmen",
+      "decline": "Ablehnen",
+      "snooze": "Verschieben",
+      "unsnooze": "Wiederherstellen",
+      "copy": "Link zum Arbeitselement kopieren",
+      "delete": "Löschen",
+      "open": "Arbeitselement öffnen",
+      "mark_as_duplicate": "Als Duplikat markieren",
+      "move": "{value} in die Arbeitselemente des Projekts verschieben"
+    },
+    "source": {
+      "in-app": "in der App"
+    },
+    "order_by": {
+      "created_at": "Erstellt am",
+      "updated_at": "Aktualisiert am",
+      "id": "ID"
+    },
+    "label": "Eingang",
+    "page_label": "{workspace} - Eingang",
+    "modal": {
+      "title": "Angenommenes Arbeitselement erstellen"
+    },
+    "tabs": {
+      "open": "Offen",
+      "closed": "Geschlossen"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "Keine offenen Arbeitselemente",
+        "description": "Offene Arbeitselemente werden hier angezeigt. Erstellen Sie ein neues."
+      },
+      "sidebar_closed_tab": {
+        "title": "Keine geschlossenen Arbeitselemente",
+        "description": "Alle angenommenen oder abgelehnten Arbeitselemente erscheinen hier."
+      },
+      "sidebar_filter": {
+        "title": "Keine passenden Arbeitselemente",
+        "description": "Kein Element passt zum Eingang-Filter. Erstellen Sie ein neues."
+      },
+      "detail": {
+        "title": "Wählen Sie ein Arbeitselement, um Details anzuzeigen."
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "Hộp thư đến",
+    "page_label": "{workspace} - Hộp thư đến",
+    "options": {
+      "mark_all_as_read": "Đánh dấu tất cả là đã đọc",
+      "mark_read": "Đánh dấu đã đọc",
+      "mark_unread": "Đánh dấu chưa đọc",
+      "refresh": "Làm mới",
+      "filters": "Bộ lọc hộp thư đến",
+      "show_unread": "Hiển thị chưa đọc",
+      "show_snoozed": "Hiển thị đã tạm hoãn",
+      "show_archived": "Hiển thị đã lưu trữ",
+      "mark_archive": "Lưu trữ",
+      "mark_unarchive": "Hủy lưu trữ",
+      "mark_snooze": "Tạm hoãn",
+      "mark_unsnooze": "Hủy tạm hoãn"
+    },
+    "toasts": {
+      "read": "Thông báo đã được đánh dấu là đã đọc",
+      "unread": "Thông báo đã được đánh dấu là chưa đọc",
+      "archived": "Thông báo đã được đánh dấu là đã lưu trữ",
+      "unarchived": "Thông báo đã được đánh dấu là đã hủy lưu trữ",
+      "snoozed": "Thông báo đã được tạm hoãn",
+      "unsnoozed": "Thông báo đã được hủy tạm hoãn"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Chọn để xem chi tiết."
+      },
+      "all": {
+        "title": "Không có mục công việc được giao",
+        "description": "Xem cập nhật về mục công việc được giao cho bạn tại đây"
+      },
+      "mentions": {
+        "title": "Không có mục công việc được giao",
+        "description": "Xem cập nhật về mục công việc được giao cho bạn tại đây"
+      }
+    },
+    "tabs": {
+      "all": "Tất cả",
+      "mentions": "Đề cập"
+    },
+    "filter": {
+      "assigned": "Được giao cho tôi",
+      "created": "Được tạo bởi tôi",
+      "subscribed": "Được đăng ký bởi tôi"
+    },
+    "snooze": {
+      "1_day": "1 ngày",
+      "3_days": "3 ngày",
+      "5_days": "5 ngày",
+      "1_week": "1 tuần",
+      "2_weeks": "2 tuần",
+      "custom": "Tùy chỉnh"
+    }
+  }
+}

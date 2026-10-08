@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
@@ -376,7 +380,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                                 assignees__avatar_asset__isnull=False,
                                 then=Concat(
                                     Value("/api/assets/v2/static/"),
-                                    "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                    Cast("assignees__avatar_asset", models.CharField()),
                                     Value("/"),
                                 ),
                             ),
@@ -481,7 +485,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                             assignees__avatar_asset__isnull=False,
                             then=Concat(
                                 Value("/api/assets/v2/static/"),
-                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Cast("assignees__avatar_asset", models.CharField()),
                                 Value("/"),
                             ),
                         ),
@@ -583,7 +587,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
     def post(self, request, slug, project_id, cycle_id):
         cycle = Cycle.objects.get(pk=cycle_id, project_id=project_id, workspace__slug=slug)
 
-        if cycle.end_date >= timezone.now():
+        if cycle.end_date is None or cycle.end_date >= timezone.now():
             return Response(
                 {"error": "Only completed cycles can be archived"},
                 status=status.HTTP_400_BAD_REQUEST,

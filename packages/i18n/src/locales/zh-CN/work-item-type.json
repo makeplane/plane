@@ -1,0 +1,477 @@
+{
+  "work_item_types": {
+    "label": "工作项类型",
+    "label_lowercase": "工作项类型",
+    "settings": {
+      "description": "自定义并添加您自己的属性以适应团队需求。",
+      "cant_delete_default_message": "无法删除此工作项类型，因为它已设置为该项目的默认类型。",
+      "set_as_default": "设为默认",
+      "cant_set_default_inactive_message": "请先激活此类型再将其设为默认",
+      "set_default_confirmation": {
+        "title": "设为默认工作项类型",
+        "description": "将 {name} 设为默认后，它将被导入到此工作区的所有项目中。所有新工作项将默认使用此类型。",
+        "confirm_button": "设为默认"
+      },
+      "properties": {
+        "title": "属性",
+        "description": "创建和自定义属性。",
+        "tooltip": "每种工作项类型都带有一组默认属性，如标题、描述、负责人、状态、优先级、开始日期、截止日期、模块、周期等。您还可以自定义并添加自己的属性以满足团队需求。",
+        "add_button": "添加新属性",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "从工作区导入"
+          }
+        },
+        "dropdown": {
+          "label": "属性类型",
+          "placeholder": "选择类型"
+        },
+        "property_type": {
+          "text": {
+            "label": "文本"
+          },
+          "number": {
+            "label": "数字"
+          },
+          "dropdown": {
+            "label": "下拉菜单"
+          },
+          "boolean": {
+            "label": "布尔值"
+          },
+          "date": {
+            "label": "日期"
+          },
+          "member_picker": {
+            "label": "成员选择器"
+          },
+          "formula": {
+            "label": "公式"
+          }
+        },
+        "attributes": {
+          "label": "属性",
+          "text": {
+            "single_line": {
+              "label": "单行"
+            },
+            "multi_line": {
+              "label": "段落"
+            },
+            "readonly": {
+              "label": "只读",
+              "header": "只读数据"
+            },
+            "invalid_text_format": {
+              "label": "无效的文本格式"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "添加数字"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "单选"
+            },
+            "multi_select": {
+              "label": "多选"
+            },
+            "no_default_value": {
+              "label": "无默认值"
+            }
+          },
+          "boolean": {
+            "label": "真 | 假",
+            "no_default": "无默认值"
+          },
+          "option": {
+            "create_update": {
+              "label": "选项",
+              "form": {
+                "placeholder": "添加选项",
+                "errors": {
+                  "name": {
+                    "required": "选项名称是必需的。",
+                    "integrity": "已存在同名选项。"
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "选择选项",
+                "multi": {
+                  "default": "选择选项",
+                  "variable": "已选择 {count} 个选项"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "成功！",
+              "message": "属性 {name} 创建成功。"
+            },
+            "error": {
+              "title": "错误！",
+              "message": "创建属性失败。请重试！"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "成功！",
+              "message": "属性 {name} 更新成功。"
+            },
+            "error": {
+              "title": "错误！",
+              "message": "更新属性失败。请重试！"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "成功！",
+              "message": "属性 {name} 删除成功。"
+            },
+            "error": {
+              "title": "错误！",
+              "message": "删除属性失败。请重试！"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} {name} 属性",
+            "success": {
+              "title": "成功！",
+              "message": "属性 {name} {action} 成功。"
+            },
+            "error": {
+              "title": "错误！",
+              "message": "{action} 属性失败。请重试！"
+            }
+          }
+        },
+        "create_update": {
+          "title": {
+            "create": "创建新的自定义属性",
+            "update": "更新自定义属性"
+          },
+          "form": {
+            "display_name": {
+              "placeholder": "标题"
+            },
+            "description": {
+              "placeholder": "描述"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "您必须为属性命名。",
+              "max_length": "属性名称不应超过255个字符。"
+            },
+            "property_type": {
+              "required": "您必须选择一个属性类型。"
+            },
+            "options": {
+              "required": "您必须添加至少一个选项。"
+            },
+            "formula": {
+              "required": "公式表达式是必需的。",
+              "invalid": "无效的公式：{error}",
+              "circular_reference": "检测到循环引用。公式不能直接或间接引用自身。",
+              "invalid_reference": "公式引用了不存在的属性。"
+            }
+          }
+        },
+        "formula": {
+          "field_label": "公式字段",
+          "tooltip": "使用 '{'字段名称'}' 语法输入公式。支持 +、-、*、/ 和 & 运算符。",
+          "placeholder": "编写公式",
+          "test_button": "测试",
+          "validating": "验证中",
+          "validation_success": "公式有效！返回 {resultType}",
+          "validation_success_with_refs": "公式有效！返回 {resultType}（引用了 {count} 个字段）",
+          "error": {
+            "empty": "请输入公式",
+            "missing_context": "缺少工作空间、项目或工作项类型上下文",
+            "validation_failed": "验证失败"
+          },
+          "picker": {
+            "no_match": "没有匹配的属性",
+            "no_available": "没有可用的属性"
+          }
+        },
+        "enable_disable": {
+          "label": "活动",
+          "tooltip": {
+            "disabled": "点击禁用",
+            "enabled": "点击启用"
+          }
+        },
+        "delete_confirmation": {
+          "title": "删除此属性",
+          "description": "删除属性可能导致现有数据丢失。",
+          "secondary_description": "您是否想要禁用该属性？",
+          "primary_button": "{action}，删除它",
+          "secondary_button": "是的，禁用它"
+        },
+        "mandate_confirmation": {
+          "label": "必填属性",
+          "content": "此属性似乎有默认选项。将属性设为必填将删除默认值，用户必须添加他们选择的值。",
+          "tooltip": {
+            "disabled": "此属性类型无法设为必填",
+            "enabled": "取消选中以将字段标记为可选",
+            "checked": "选中以将字段标记为必填"
+          }
+        },
+        "empty_state": {
+          "title": "添加自定义属性",
+          "description": "您为此工作项类型添加的新属性将显示在此处。"
+        }
+      },
+      "types": {
+        "title": "类型",
+        "description": "使用属性创建和自定义工作项类型。",
+        "sort_options": {
+          "project_count": "所属项目数量"
+        },
+        "filter_options": {
+          "show_active": "显示活动",
+          "show_inactive": "显示不活动"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "新建",
+            "import_from_workspace": "从工作区导入"
+          },
+          "banner": {
+            "with_access": "启用工作项类型以从工作区级别导入类型",
+            "without_access": "工作项类型已禁用。请联系工作区管理员在工作区设置中启用。"
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "自定义属性",
+        "add_button": "添加属性",
+        "modal": {
+          "title": "添加属性",
+          "empty": {
+            "title": "没有可用属性",
+            "description": "所有属性均已关联到此类型。"
+          }
+        },
+        "unlink_confirmation": {
+          "title": "取消关联属性",
+          "description": "取消关联此属性将永久删除使用此类型的所有工作项中该属性的所有值。此操作无法撤销。",
+          "input_label": "输入",
+          "input_label_suffix": "以继续：",
+          "confirm": "取消关联属性",
+          "loading": "正在取消关联"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "删除此类型",
+        "description": "删除类型可能会导致现有数据丢失。",
+        "can_disable_warning": "您想改为禁用该类型吗？",
+        "primary_button": "是的，删除它",
+        "toast": {
+          "success": {
+            "title": "成功！",
+            "message": "工作项类型已成功删除。"
+          },
+          "error": {
+            "title": "错误！",
+            "message": "删除工作项类型失败。请再试一次！"
+          }
+        },
+        "errors": {
+          "cannot_delete_default_work_item_type": "无法删除默认工作项类型",
+          "cannot_delete_work_item_type_with_associated_work_items": "无法删除有关联工作项的工作项类型"
+        }
+      }
+    },
+    "create": {
+      "title": "创建工作项类型",
+      "button": "添加工作项类型",
+      "toast": {
+        "success": {
+          "title": "成功！",
+          "message": "工作项类型创建成功。"
+        },
+        "error": {
+          "title": "错误！",
+          "message": {
+            "default": "创建工作项类型失败。请重试！",
+            "conflict": "{name} 类型已存在。请选择其他名称。"
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "更新工作项类型",
+      "button": "更新工作项类型",
+      "toast": {
+        "success": {
+          "title": "成功！",
+          "message": "工作项类型 {name} 更新成功。"
+        },
+        "error": {
+          "title": "错误！",
+          "message": {
+            "default": "更新工作项类型失败。请重试！",
+            "conflict": "{name} 类型已存在。请选择其他名称。"
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "为此工作项类型取一个独特的名称"
+        },
+        "description": {
+          "placeholder": "描述此工作项类型的用途和使用时机。"
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} {name} 工作项类型",
+        "success": {
+          "title": "成功！",
+          "message": "工作项类型 {name} {action} 成功。"
+        },
+        "error": {
+          "title": "错误！",
+          "message": "{action} 工作项类型失败。请重试！"
+        }
+      },
+      "tooltip": "点击 {action}"
+    },
+    "change_confirmation": {
+      "title": "更改工作项类型？",
+      "description": "更改工作项类型可能会导致丢失特定于当前类型的自定义属性值。此操作无法撤销。",
+      "button": {
+        "loading": "更改中",
+        "default": "更改类型"
+      }
+    },
+    "empty_state": {
+      "enable": {
+        "title": "启用工作项类型",
+        "description": "使用工作项类型塑造您的工作项。使用图标、背景和属性进行自定义，并为此项目配置它们。",
+        "primary_button": {
+          "text": "启用"
+        },
+        "confirmation": {
+          "title": "一旦启用，工作项类型将无法禁用。",
+          "description": "Plane的工作项将成为此项目的默认工作项类型，并将在此项目中显示其图标和背景。",
+          "button": {
+            "default": "启用",
+            "loading": "正在设置"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "获取 Pro 版以启用工作项类型。",
+        "description": "使用工作项类型塑造您的工作项。使用图标、背景和属性进行自定义，并为此项目配置它们。",
+        "primary_button": {
+          "text": "获取 Pro 版"
+        }
+      },
+      "upgrade": {
+        "title": "升级以启用工作项类型。",
+        "description": "使用工作项类型塑造您的工作项。使用图标、背景和属性进行自定义，并为此项目配置它们。",
+        "primary_button": {
+          "text": "升级"
+        }
+      }
+    }
+  },
+  "work_item_type_hierarchy": {
+    "settings": {
+      "title": "层级",
+      "tab_label": "层级",
+      "description": "设置层级结构以整理您的工作。每个层级定义与直接上方项目的父关系，以及与直接下方项目的子关系。 ",
+      "sidebar_label": "层级",
+      "enable_control": {
+        "title": "启用层级",
+        "description": "在不同工作项类型之间建立父子关系。",
+        "tooltip": "层级一旦启用便无法停用。"
+      },
+      "workspace_work_item_types_disabled_banner": {
+        "content": "请先定义工作项类型，再创建新的层级。",
+        "cta": "工作项类型设置"
+      }
+    },
+    "levels": {
+      "max_level_placeholder": "拖放类型以添加新的层级",
+      "empty_level_placeholder": "将工作项类型拖放到第 {level} 层",
+      "drag_tooltip": "拖动以更改层级",
+      "quick_actions": {
+        "set_as_default": {
+          "label": "设为默认",
+          "toast": {
+            "loading": "正在设为默认...",
+            "success": {
+              "title": "成功！",
+              "message": "层级 {level} 已成功设为默认。"
+            },
+            "error": {
+              "title": "错误！",
+              "message": "无法将层级 {level} 设为默认，请重试。"
+            }
+          }
+        }
+      },
+      "update_level_toast": {
+        "loading": "正在将 {workItemTypeName} 移动到层级 {level}...",
+        "success": {
+          "title": "成功！",
+          "message": "{workItemTypeName} 已成功移动到层级 {level}。"
+        }
+      }
+    },
+    "break_hierarchy_modal": {
+      "title": "保存后将断开现有链接",
+      "content": {
+        "intro": "工作项类型 {workItemTypeName} 包含：",
+        "parent_items": "{count, plural, other {将清除 # 个父级链接}}。",
+        "child_items": "{count, plural, other {个子工作项}}",
+        "parent_line_suffix_when_also_children": "，以及 ",
+        "footer": "此变更将从 {workItemTypeName} 工作项类型的现有工作项中移除父子关系。"
+      },
+      "confirm_input": {
+        "label": "请输入「确认」以继续。",
+        "placeholder": "确认"
+      },
+      "error_toast": {
+        "title": "错误！",
+        "message": "解除链接并保存失败，请重试。"
+      },
+      "confirm_button": {
+        "loading": "正在保存",
+        "default": "仍要保存"
+      }
+    },
+    "work_item_modal": {
+      "invalid_work_item_type_create_toast": {
+        "title": "错误！",
+        "message": "所选工作项类型违反层级规则，无法用于创建新的工作项。"
+      },
+      "invalid_work_item_type_update_toast": {
+        "title": "错误！",
+        "message": "工作项类型因违反层级规则而无法更新。"
+      }
+    },
+    "work_item_type_modal": {
+      "level": "层级",
+      "invalid_level_toast": {
+        "title": "错误！",
+        "message": "工作项类型无法更新，因为它违反了层级规则。"
+      }
+    }
+  }
+}

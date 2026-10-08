@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "Vaše poznámky",
+    "placeholder": "kliknutím začněte psát",
+    "all": "Všechny poznámky",
+    "no-data": "Zapisujte nápady a myšlenky. Přidejte první poznámku.",
+    "add": "Přidat poznámku",
+    "search_placeholder": "Hledat podle názvu",
+    "delete": "Smazat poznámku",
+    "delete_confirmation": "Opravdu chcete smazat tuto poznámku?",
+    "empty_state": {
+      "simple": "Zapisujte nápady a myšlenky. Přidejte první poznámku.",
+      "general": {
+        "title": "Poznámky jsou rychlé záznamy.",
+        "description": "Zapisujte myšlenky a přistupujte k nim odkudkoli.",
+        "primary_button": {
+          "text": "Přidat poznámku"
+        }
+      },
+      "search": {
+        "title": "Nenalezeny žádné poznámky.",
+        "description": "Zkuste jiný termín nebo vytvořte novou.",
+        "primary_button": {
+          "text": "Přidat poznámku"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Název poznámky může mít max. 100 znaků.",
+        "already_exists": "Poznámka bez popisu již existuje"
+      },
+      "created": {
+        "title": "Poznámka vytvořena",
+        "message": "Poznámka úspěšně vytvořena"
+      },
+      "not_created": {
+        "title": "Vytvoření selhalo",
+        "message": "Poznámku nelze vytvořit"
+      },
+      "updated": {
+        "title": "Poznámka aktualizována",
+        "message": "Poznámka úspěšně aktualizována"
+      },
+      "not_updated": {
+        "title": "Aktualizace selhala",
+        "message": "Poznámku nelze aktualizovat"
+      },
+      "removed": {
+        "title": "Poznámka smazána",
+        "message": "Poznámka úspěšně smazána"
+      },
+      "not_removed": {
+        "title": "Mazání selhalo",
+        "message": "Poznámku nelze smazat"
+      }
+    }
+  }
+}

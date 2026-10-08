@@ -1,0 +1,34 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Niciun rezultat găsit"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "Notițe",
+    "your_work": "Munca ta",
+    "projects": "Proiecte",
+    "pages": "Documentație",
+    "new_work_item": "Activitate nouă",
+    "home": "Acasă",
+    "inbox": "Căsuță de mesaje",
+    "workspace": "Spațiu de lucru",
+    "views": "Perspective",
+    "analytics": "Statistici",
+    "work_items": "Activități",
+    "cycles": "Cicluri",
+    "modules": "Module",
+    "intake": "Cereri",
+    "drafts": "Schițe",
+    "favorites": "Favorite",
+    "pro": "Pro",
+    "upgrade": "Treci la versiunea superioară",
+    "pi_chat": "Plane AI",
+    "epics": "Epice",
+    "upgrade_plan": "Actualizare plan",
+    "plane_pro": "Plane Pro",
+    "business": "Business"
+  }
+}

@@ -1,64 +1,56 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { lazy, Suspense } from "react";
-import { useTheme, ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
 // Plane Imports
 import { WEB_SWR_CONFIG } from "@plane/constants";
 import { TranslationProvider } from "@plane/i18n";
-import { Toast } from "@plane/propel/toast";
-// helpers
-import { resolveGeneralTheme } from "@plane/utils";
-// polyfills
-import "@/lib/polyfills";
-// progress bar
-import { AppProgressBar } from "@/lib/b-progress";
+import { PlaneToastProvider } from "@plane/blocks/toast";
 // mobx store provider
 import { StoreProvider } from "@/lib/store-context";
-// wrappers
-import { InstanceWrapper } from "@/lib/wrappers/instance-wrapper";
 
 // lazy imports
+const AppProgressBar = lazy(function AppProgressBar() {
+  return import("@/lib/b-progress/AppProgressBar");
+});
+
 const StoreWrapper = lazy(function StoreWrapper() {
   return import("@/lib/wrappers/store-wrapper");
 });
 
-const PostHogProvider = lazy(function PostHogProvider() {
-  return import("@/lib/posthog-provider");
-});
-
-const ChatSupportModal = lazy(function ChatSupportModal() {
-  return import("@/components/global/chat-support-modal");
+const InstanceWrapper = lazy(function InstanceWrapper() {
+  return import("@/lib/wrappers/instance-wrapper");
 });
 
 export interface IAppProvider {
   children: React.ReactNode;
 }
 
-function ToastWithTheme() {
-  const { resolvedTheme } = useTheme();
-  return <Toast theme={resolveGeneralTheme(resolvedTheme)} />;
-}
-
 export function AppProvider(props: IAppProvider) {
   const { children } = props;
-  // themes
+
   return (
     <StoreProvider>
-      <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
+      <>
         <AppProgressBar />
         <TranslationProvider>
-          <ToastWithTheme />
-          <StoreWrapper>
-            <InstanceWrapper>
-              <Suspense>
-                <ChatSupportModal />
-                <PostHogProvider>
+          {/* The toast viewport is a provider that calls `useTranslation`, so it sits inside
+              TranslationProvider and wraps everything that can raise a toast. */}
+          <PlaneToastProvider>
+            <StoreWrapper>
+              <InstanceWrapper>
+                <Suspense>
                   <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
-                </PostHogProvider>
-              </Suspense>
-            </InstanceWrapper>
-          </StoreWrapper>
+                </Suspense>
+              </InstanceWrapper>
+            </StoreWrapper>
+          </PlaneToastProvider>
         </TranslationProvider>
-      </ThemeProvider>
+      </>
     </StoreProvider>
   );
 }

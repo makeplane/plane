@@ -1,0 +1,100 @@
+{
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Permite elemente noi de lucru",
+      "work_item_creation_disable_tooltip": "Crearea de elemente de lucru este dezactivată pentru această stare",
+      "default_state": "Starea implicită permite tuturor membrilor să creeze elemente noi de lucru. Acest lucru nu poate fi schimbat",
+      "state_change_count": "{count, plural, one {1 schimbare de stare permisă} other {{count} schimbări de stare permise}}",
+      "movers_count": "{count, plural, one {1 evaluator listat} other {{count} evaluatori listați}}",
+      "state_changes": {
+        "label": {
+          "default": "Adaugă schimbare de stare permisă",
+          "loading": "Se adaugă schimbare de stare permisă"
+        },
+        "move_to": "Schimbă starea la",
+        "movers": {
+          "label": "Când este evaluat de",
+          "tooltip": "Evaluatorii sunt persoane care au permisiunea de a muta elemente de lucru dintr-o stare în alta.",
+          "add": "Adaugă evaluatori"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Nu poți muta acest element de lucru aici."
+    },
+    "workflow_enabled": {
+      "label": "Schimbare de stare"
+    },
+    "workflow_tree": {
+      "label": "Pentru elemente de lucru în",
+      "state_change_label": "poate să-l mute la"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Controlează haosul schimbărilor și evaluărilor cu Fluxuri de lucru.",
+        "description": "Setează reguli pentru unde se mută lucrul tău, de către cine și când cu Fluxuri de lucru în Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Vezi istoricul schimbărilor",
+      "reset_workflow": "Resetează fluxul de lucru"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Ești sigur că vrei să resetezi acest flux de lucru?",
+        "description": "Dacă resetezi acest flux de lucru, toate regulile tale de schimbare a stării vor fi șterse și va trebui să le creezi din nou pentru a le rula în acest proiect."
+      },
+      "delete_state_change": {
+        "title": "Ești sigur că vrei să ștergi această regulă de schimbare a stării?",
+        "description": "Odată ștearsă, nu poți anula această schimbare și va trebui să setezi regula din nou dacă vrei să o rulezi pentru acest proiect."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} flux de lucru",
+        "success": {
+          "title": "Succes",
+          "message": "Flux de lucru {action} cu succes"
+        },
+        "error": {
+          "title": "Eroare",
+          "message": "Fluxul de lucru nu a putut fi {action}. Te rugăm să încerci din nou."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Succes",
+          "message": "Fluxul de lucru a fost resetat cu succes"
+        },
+        "error": {
+          "title": "Eroare la resetarea fluxului de lucru",
+          "message": "Fluxul de lucru nu a putut fi resetat. Te rugăm să încerci din nou."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Eroare la adăugarea regulii de schimbare a stării",
+          "message": "Regula de schimbare a stării nu a putut fi adăugată. Te rugăm să încerci din nou."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Eroare la modificarea regulii de schimbare a stării",
+          "message": "Regula de schimbare a stării nu a putut fi modificată. Te rugăm să încerci din nou."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Eroare la eliminarea regulii de schimbare a stării",
+          "message": "Regula de schimbare a stării nu a putut fi eliminată. Te rugăm să încerci din nou."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Eroare la modificarea evaluatorilor regulii de schimbare a stării",
+          "message": "Evaluatorii regulii de schimbare a stării nu au putut fi modificați. Te rugăm să încerci din nou."
+        }
+      }
+    }
+  }
+}

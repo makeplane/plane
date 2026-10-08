@@ -1,0 +1,100 @@
+{
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Consenti nuovi elementi di lavoro",
+      "work_item_creation_disable_tooltip": "La creazione di elementi di lavoro è disabilitata per questo stato",
+      "default_state": "Stato predefinito consente a tutti i membri di creare nuovi elementi di lavoro. Questo non può essere cambiato",
+      "state_change_count": "{count, plural, one {1 cambiamento stato consentito} other {{count} cambiamenti stato consentiti}}",
+      "movers_count": "{count, plural, one {1 revisore elencato} other {{count} revisori elencati}}",
+      "state_changes": {
+        "label": {
+          "default": "Aggiungi cambiamento stato consentito",
+          "loading": "Aggiungi cambiamento stato consentito"
+        },
+        "move_to": "Cambia stato su",
+        "movers": {
+          "label": "Quando rivisto da",
+          "tooltip": "Revisori sono persone che sono consentite per spostare elementi di lavoro da uno stato all'altro.",
+          "add": "Aggiungi revisori"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Non puoi spostare questo elemento di lavoro qui."
+    },
+    "workflow_enabled": {
+      "label": "Cambia stato"
+    },
+    "workflow_tree": {
+      "label": "Per elementi di lavoro in",
+      "state_change_label": "può spostarlo su"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Controlla il caos dei cambiamenti e delle revisioni con i Flussi di Lavoro.",
+        "description": "Imposta regole su dove il tuo lavoro si sposta, da chi e quando con i Flussi di Lavoro in Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Visualizza cronologia cambiamenti",
+      "reset_workflow": "Resetta flusso di lavoro"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Sei sicuro di voler resettare questo flusso di lavoro?",
+        "description": "Se resetti questo flusso di lavoro, tutte le tue regole di cambiamento stato verranno eliminate e dovrai crearle di nuovo per eseguirle in questo progetto."
+      },
+      "delete_state_change": {
+        "title": "Sei sicuro di voler eliminare questa regola di cambiamento stato?",
+        "description": "Una volta eliminata, non puoi annullare questo cambiamento e dovrai impostare nuovamente la regola se la vuoi eseguire per questo progetto."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} flusso di lavoro",
+        "success": {
+          "title": "Successo",
+          "message": "Flusso di lavoro {action} con successo"
+        },
+        "error": {
+          "title": "Errore",
+          "message": "Flusso di lavoro non può essere {action}. Per favore riprova."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Successo",
+          "message": "Flusso di lavoro resettato con successo"
+        },
+        "error": {
+          "title": "Errore resettando flusso di lavoro",
+          "message": "Flusso di lavoro non può essere resettato. Per favore riprova."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Errore aggiungendo regola cambiamento stato",
+          "message": "Regola cambiamento stato non può essere aggiunta. Per favore riprova."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Errore modificando regola cambiamento stato",
+          "message": "Regola cambiamento stato non può essere modificata. Per favore riprova."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Errore rimuovendo regola cambiamento stato",
+          "message": "Regola cambiamento stato non può essere rimossa. Per favore riprova."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Errore modificando revisori cambiamento stato",
+          "message": "Revisori cambiamento stato non può essere modificato. Per favore riprova."
+        }
+      }
+    }
+  }
+}

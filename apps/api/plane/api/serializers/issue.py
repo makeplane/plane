@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.utils import timezone
 from lxml import html
@@ -16,6 +20,7 @@ from plane.db.models import (
     IssueComment,
     IssueLabel,
     IssueLink,
+    IssueRelation,
     Label,
     ProjectMember,
     State,
@@ -64,8 +69,8 @@ class IssueSerializer(BaseSerializer):
 
     class Meta:
         model = Issue
-        read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
-        exclude = ["description", "description_stripped"]
+        read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at", "completed_at"]
+        exclude = ["description_json", "description_stripped"]
 
     def validate(self, data):
         if (
@@ -100,18 +105,32 @@ class IssueSerializer(BaseSerializer):
 
         # Validate assignees are from project
         if data.get("assignees", []):
-            data["assignees"] = ProjectMember.objects.filter(
-                project_id=self.context.get("project_id"),
-                is_active=True,
-                role__gte=15,
-                member_id__in=data["assignees"],
-            ).values_list("member_id", flat=True)
+            valid_assignee_ids = set(
+                ProjectMember.objects.filter(
+                    project_id=self.context.get("project_id"),
+                    is_active=True,
+                    role__gte=15,
+                    member_id__in=data["assignees"],
+                ).values_list("member_id", flat=True)
+            )
+            invalid_assignee_ids = set(data["assignees"]) - valid_assignee_ids
+            if invalid_assignee_ids:
+                raise serializers.ValidationError(
+                    f"Assignees {list(invalid_assignee_ids)} are not active members of this project"
+                )
+            data["assignees"] = list(valid_assignee_ids)
 
         # Validate labels are from project
         if data.get("labels", []):
-            data["labels"] = Label.objects.filter(
-                project_id=self.context.get("project_id"), id__in=data["labels"]
-            ).values_list("id", flat=True)
+            valid_label_ids = set(
+                Label.objects.filter(
+                    project_id=self.context.get("project_id"), id__in=data["labels"]
+                ).values_list("id", flat=True)
+            )
+            invalid_label_ids = set(data["labels"]) - valid_label_ids
+            if invalid_label_ids:
+                raise serializers.ValidationError(f"Labels {list(invalid_label_ids)} do not belong to this project")
+            data["labels"] = list(valid_label_ids)
 
         # Check state is from the project only else raise validation error
         if (
@@ -475,6 +494,192 @@ class IssueLinkSerializer(BaseSerializer):
         ]
 
 
+class IssueRelationRefSerializer(serializers.Serializer):
+    """Project-scoped reference to a related work item."""
+
+    project_id = serializers.UUIDField(help_text="Project containing the related work item")
+    issue_id = serializers.UUIDField(help_text="ID of the related work item")
+
+
+class IssueRelationResponseSerializer(serializers.Serializer):
+    """
+    Serializer for issue relations response showing grouped relation types.
+
+    Each list contains project_id and issue_id pairs so clients can resolve
+    cross-project relations.
+    """
+
+    blocking = serializers.ListField(
+        child=IssueRelationRefSerializer(),
+        help_text="Work items blocking this issue",
+    )
+    blocked_by = serializers.ListField(
+        child=IssueRelationRefSerializer(),
+        help_text="Work items this issue is blocked by",
+    )
+    duplicate = serializers.ListField(
+        child=IssueRelationRefSerializer(),
+        help_text="Duplicate work items",
+    )
+    relates_to = serializers.ListField(
+        child=IssueRelationRefSerializer(),
+        help_text="Related work items",
+    )
+    start_after = serializers.ListField(
+        child=IssueRelationRefSerializer(),
+        help_text="Work items that start after this issue",
+    )
+    start_before = serializers.ListField(
+        child=IssueRelationRefSerializer(),
+        help_text="Work items that start before this issue",
+    )
+    finish_after = serializers.ListField(
+        child=IssueRelationRefSerializer(),
+        help_text="Work items that finish after this issue",
+    )
+    finish_before = serializers.ListField(
+        child=IssueRelationRefSerializer(),
+        help_text="Work items that finish before this issue",
+    )
+
+
+class IssueRelationCreateSerializer(serializers.Serializer):
+    """
+    Serializer for creating issue relations.
+
+    Creates issue relations with the specified relation type and issues.
+    Validates relation types and ensures proper issue ID format.
+    """
+
+    RELATION_TYPE_CHOICES = [
+        ("blocking", "Blocking"),
+        ("blocked_by", "Blocked By"),
+        ("duplicate", "Duplicate"),
+        ("relates_to", "Relates To"),
+        ("start_before", "Start Before"),
+        ("start_after", "Start After"),
+        ("finish_before", "Finish Before"),
+        ("finish_after", "Finish After"),
+    ]
+
+    relation_type = serializers.ChoiceField(
+        choices=RELATION_TYPE_CHOICES,
+        required=True,
+        help_text="Type of relationship between work items",
+    )
+    issues = serializers.ListField(
+        child=serializers.UUIDField(),
+        required=True,
+        min_length=1,
+        help_text="Array of work item IDs to create relations with",
+    )
+
+    def validate_issues(self, value):
+        """Validate that issues list is not empty and contains valid UUIDs."""
+        if not value:
+            raise serializers.ValidationError("At least one issue ID is required.")
+        return value
+
+
+class IssueRelationRemoveSerializer(serializers.Serializer):
+    """
+    Serializer for removing issue relations.
+
+    Removes existing relationships between work items by specifying
+    the related issue ID.
+    """
+
+    related_issue = serializers.UUIDField(
+        required=True, help_text="ID of the related work item to remove relation with"
+    )
+
+
+class IssueRelationSerializer(BaseSerializer):
+    """
+    Serializer for issue relationships showing related issue details.
+
+    Provides comprehensive information about related issues including
+    project context, sequence ID, and relationship type.
+    """
+
+    id = serializers.UUIDField(source="related_issue.id", read_only=True)
+    project_id = serializers.UUIDField(source="related_issue.project_id", read_only=True)
+    sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
+    name = serializers.CharField(source="related_issue.name", read_only=True)
+    relation_type = serializers.CharField(read_only=True)
+    state_id = serializers.UUIDField(source="related_issue.state.id", read_only=True)
+    priority = serializers.CharField(source="related_issue.priority", read_only=True)
+
+    class Meta:
+        model = IssueRelation
+        fields = [
+            "id",
+            "project_id",
+            "sequence_id",
+            "relation_type",
+            "name",
+            "state_id",
+            "priority",
+            "created_by",
+            "created_at",
+            "updated_at",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "created_at",
+            "updated_by",
+            "updated_at",
+        ]
+
+
+class RelatedIssueSerializer(BaseSerializer):
+    """
+    Serializer for reverse issue relationships showing issue details.
+
+    Provides comprehensive information about the source issue in a relationship
+    including project context, sequence ID, and relationship type.
+    """
+
+    id = serializers.UUIDField(source="issue.id", read_only=True)
+    project_id = serializers.PrimaryKeyRelatedField(source="issue.project_id", read_only=True)
+    sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
+    name = serializers.CharField(source="issue.name", read_only=True)
+    type_id = serializers.UUIDField(source="issue.type.id", read_only=True)
+    relation_type = serializers.CharField(read_only=True)
+    is_epic = serializers.BooleanField(source="issue.type.is_epic", read_only=True)
+    state_id = serializers.UUIDField(source="issue.state.id", read_only=True)
+    priority = serializers.CharField(source="issue.priority", read_only=True)
+
+    class Meta:
+        model = IssueRelation
+        fields = [
+            "id",
+            "project_id",
+            "sequence_id",
+            "relation_type",
+            "name",
+            "type_id",
+            "is_epic",
+            "state_id",
+            "priority",
+            "created_by",
+            "created_at",
+            "updated_by",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "created_at",
+            "updated_by",
+            "updated_at",
+        ]
+
+
 class IssueAttachmentSerializer(BaseSerializer):
     """
     Serializer for work item file attachments.
@@ -554,14 +759,12 @@ class IssueCommentSerializer(BaseSerializer):
         exclude = ["comment_stripped", "comment_json"]
 
     def validate(self, data):
-        try:
-            if data.get("comment_html", None) is not None:
-                parsed = html.fromstring(data["comment_html"])
-                parsed_str = html.tostring(parsed, encoding="unicode")
-                data["comment_html"] = parsed_str
-
-        except Exception:
-            raise serializers.ValidationError("Invalid HTML passed")
+        if "comment_html" in data and data["comment_html"]:
+            is_valid, error_msg, sanitized_html = validate_html_content(data["comment_html"])
+            if not is_valid:
+                raise serializers.ValidationError({"comment_html": "HTML content is not valid"})
+            if sanitized_html is not None:
+                data["comment_html"] = sanitized_html
         return data
 
 
@@ -633,6 +836,7 @@ class IssueExpandSerializer(BaseSerializer):
     labels = serializers.SerializerMethodField()
     assignees = serializers.SerializerMethodField()
     state = StateLiteSerializer(read_only=True)
+    description = serializers.JSONField(source="description_json", read_only=True)
 
     def get_labels(self, obj):
         expand = self.context.get("expand", [])
@@ -658,6 +862,7 @@ class IssueExpandSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "completed_at",
         ]
 
 

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // types
 import type { ILinkDetails, ModuleLink } from "@plane/types";
 // services
@@ -12,9 +18,6 @@ export class ModuleLinkService extends APIService {
    * Creates an instance of ModuleLinkService.
    * @param {string} baseURL - The base URL for the API endpoints
    */
-  constructor(baseURL: string) {
-    super(baseURL);
-  }
 
   /**
    * Creates a new module link.

@@ -1,8 +1,12 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import Q, UUIDField, Value, F, Case, When, JSONField, CharField
-from django.db.models.functions import Coalesce, JSONObject, Concat
+from django.db.models.functions import Cast, Coalesce, JSONObject, Concat
 from django.db.models import QuerySet
 
 from typing import List, Optional, Dict, Any, Union
@@ -121,7 +125,7 @@ def issue_on_results(
                                     votes__actor__avatar_asset__isnull=False,
                                     then=Concat(
                                         Value("/api/assets/v2/static/"),
-                                        F("votes__actor__avatar_asset"),
+                                        Cast("votes__actor__avatar_asset", CharField()),
                                         Value("/"),
                                     ),
                                 ),
@@ -155,7 +159,7 @@ def issue_on_results(
                                     issue_reactions__actor__avatar_asset__isnull=False,
                                     then=Concat(
                                         Value("/api/assets/v2/static/"),
-                                        F("issue_reactions__actor__avatar_asset"),
+                                        Cast("issue_reactions__actor__avatar_asset", CharField()),
                                         Value("/"),
                                     ),
                                 ),

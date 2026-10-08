@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 
@@ -212,6 +216,15 @@ class IssueRelationViewSet(BaseViewSet):
 
         issues = request.data.get("issues", [])
         project = Project.objects.get(pk=project_id)
+
+        # Scope to workspace to prevent cross-tenant IDOR
+        # Relations can cross projects so only workspace scope is enforced
+        issues = list(
+            Issue.issue_objects.filter(
+                workspace__slug=slug,
+                pk__in=issues,
+            ).values_list("id", flat=True)
+        )
 
         issue_relation = IssueRelation.objects.bulk_create(
             [

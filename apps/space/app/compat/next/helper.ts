@@ -1,4 +1,10 @@
 /**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+/**
  * Ensures that a URL has a trailing slash while preserving query parameters and fragments
  * @param url - The URL to process
  * @returns The URL with a trailing slash added to the pathname (if not already present)

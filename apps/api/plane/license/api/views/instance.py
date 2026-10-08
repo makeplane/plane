@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import os
 
@@ -55,12 +59,8 @@ class InstanceEndpoint(BaseAPIView):
             ENABLE_MAGIC_LINK_LOGIN,
             ENABLE_EMAIL_PASSWORD,
             SLACK_CLIENT_ID,
-            POSTHOG_API_KEY,
-            POSTHOG_HOST,
             UNSPLASH_ACCESS_KEY,
             LLM_API_KEY,
-            IS_INTERCOM_ENABLED,
-            INTERCOM_APP_ID,
         ) = get_configuration_value(
             [
                 {
@@ -105,29 +105,12 @@ class InstanceEndpoint(BaseAPIView):
                     "default": os.environ.get("SLACK_CLIENT_ID", None),
                 },
                 {
-                    "key": "POSTHOG_API_KEY",
-                    "default": os.environ.get("POSTHOG_API_KEY", None),
-                },
-                {
-                    "key": "POSTHOG_HOST",
-                    "default": os.environ.get("POSTHOG_HOST", None),
-                },
-                {
                     "key": "UNSPLASH_ACCESS_KEY",
                     "default": os.environ.get("UNSPLASH_ACCESS_KEY", ""),
                 },
                 {
                     "key": "LLM_API_KEY",
                     "default": os.environ.get("LLM_API_KEY", ""),
-                },
-                # Intercom settings
-                {
-                    "key": "IS_INTERCOM_ENABLED",
-                    "default": os.environ.get("IS_INTERCOM_ENABLED", "1"),
-                },
-                {
-                    "key": "INTERCOM_APP_ID",
-                    "default": os.environ.get("INTERCOM_APP_ID", ""),
                 },
             ]
         )
@@ -149,10 +132,6 @@ class InstanceEndpoint(BaseAPIView):
         # Slack client
         data["slack_client_id"] = SLACK_CLIENT_ID
 
-        # Posthog
-        data["posthog_api_key"] = POSTHOG_API_KEY
-        data["posthog_host"] = POSTHOG_HOST
-
         # Unsplash
         data["has_unsplash_configured"] = bool(UNSPLASH_ACCESS_KEY)
 
@@ -164,10 +143,6 @@ class InstanceEndpoint(BaseAPIView):
 
         # is smtp configured
         data["is_smtp_configured"] = bool(EMAIL_HOST)
-
-        # Intercom settings
-        data["is_intercom_enabled"] = IS_INTERCOM_ENABLED == "1"
-        data["intercom_app_id"] = INTERCOM_APP_ID
 
         # Base URL
         data["admin_base_url"] = settings.ADMIN_BASE_URL

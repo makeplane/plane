@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { describe, it, expect } from "vitest";
 import { applyTransform } from "@hypermod/utils";
 import * as transformer from "../remove-directives";
@@ -189,7 +195,7 @@ describe("remove-directives", () => {
       import type { FC } from "react";
       import { useState } from "react";
       // plane imports
-      import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+      import { ConfirmDialog } from "@plane/blocks/dialog";
 
       export function MyComponent() {
         return <div>Hello</div>;
@@ -202,7 +208,7 @@ describe("remove-directives", () => {
       "import type { FC } from "react";
             import { useState } from "react";
             // plane imports
-            import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+            import { ConfirmDialog } from "@plane/blocks/dialog";
 
             export function MyComponent() {
               return <div>Hello</div>;
@@ -242,7 +248,7 @@ describe("remove-directives", () => {
       import type { FC } from "react";
       import { useState } from "react";
       // plane imports
-      import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+      import { ConfirmDialog } from "@plane/blocks/dialog";
       // hooks
       import useKeypress from "@/hooks/use-keypress";
       // local imports
@@ -267,7 +273,7 @@ describe("remove-directives", () => {
       "import type { FC } from "react";
             import { useState } from "react";
             // plane imports
-            import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+            import { ConfirmDialog } from "@plane/blocks/dialog";
             // hooks
             import useKeypress from "@/hooks/use-keypress";
             // local imports

@@ -1,15 +1,28 @@
 /**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+/**
  * Theme System Constants
  * Defines shade stops, default configurations, and color modes
  */
 
 /**
- * Alpha mapping for 14-shade palette system
+ * Alpha mapping for 14-shade palette system.
+ *
+ * Must mirror the --alpha-white-* / --alpha-black-* ladder in
+ * @makeplane/propel (styles/variables.css), which is the source of truth for
+ * the default themes. These values are only applied for custom themes, so any
+ * drift shows up as custom themes rendering differently from the default one —
+ * silently, with no build error. Rungs 100-300 are deliberately much lighter
+ * than the linear 0.05 step the rest of the scale follows.
  */
 export const ALPHA_MAPPING = {
-  100: 0.05,
-  200: 0.1,
-  300: 0.15,
+  100: 0.04,
+  200: 0.06,
+  300: 0.08,
   400: 0.2,
   500: 0.3,
   600: 0.4,
@@ -112,3 +125,33 @@ export type SaturationCurve = "ease-in-out" | "linear";
  * Default saturation curve
  */
 export const DEFAULT_SATURATION_CURVE: SaturationCurve = "ease-in-out";
+
+/**
+ * Editor color backgrounds for light mode
+ * Used for stickies and editor elements
+ */
+export const EDITOR_COLORS_LIGHT = {
+  gray: "#d6d6d8",
+  peach: "#ffd5d7",
+  pink: "#fdd4e3",
+  orange: "#ffe3cd",
+  green: "#c3f0de",
+  "light-blue": "#c5eff9",
+  "dark-blue": "#c9dafb",
+  purple: "#e3d8fd",
+} as const;
+
+/**
+ * Editor color backgrounds for dark mode
+ * Used for stickies and editor elements
+ */
+export const EDITOR_COLORS_DARK = {
+  gray: "#404144",
+  peach: "#593032",
+  pink: "#562e3d",
+  orange: "#583e2a",
+  green: "#1d4a3b",
+  "light-blue": "#1f495c",
+  "dark-blue": "#223558",
+  purple: "#3d325a",
+};

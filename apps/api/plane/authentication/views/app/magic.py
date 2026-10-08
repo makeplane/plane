@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
@@ -22,7 +26,10 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
-from plane.authentication.rate_limit import AuthenticationThrottle
+from plane.authentication.rate_limit import (
+    AuthenticationThrottle,
+    throttle_auth_redirect,
+)
 from plane.utils.path_validator import get_safe_redirect_url
 
 
@@ -55,6 +62,7 @@ class MagicGenerateEndpoint(APIView):
 
 
 class MagicSignInEndpoint(View):
+    @throttle_auth_redirect(is_app=True)
     def post(self, request):
         # set the referer as session to redirect after login
         code = request.POST.get("code", "").strip()
@@ -126,6 +134,7 @@ class MagicSignInEndpoint(View):
 
 
 class MagicSignUpEndpoint(View):
+    @throttle_auth_redirect(is_app=True)
     def post(self, request):
         # set the referer as session to redirect after login
         code = request.POST.get("code", "").strip()

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 from typing import Optional
 import logging
@@ -59,7 +63,7 @@ def sync_issue_description_version(batch_size=5000, offset=0, countdown=300):
                     "description_binary",
                     "description_html",
                     "description_stripped",
-                    "description",
+                    "description_json",
                 )[offset:end_offset]
             )
 
@@ -92,7 +96,7 @@ def sync_issue_description_version(batch_size=5000, offset=0, countdown=300):
                         description_binary=issue.description_binary,
                         description_html=issue.description_html,
                         description_stripped=issue.description_stripped,
-                        description_json=issue.description,
+                        description_json=issue.description_json,
                     )
                 )
 

@@ -1,0 +1,100 @@
+{
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Permitir novos itens de trabalho",
+      "work_item_creation_disable_tooltip": "A criação de itens de trabalho está desativada para este estado",
+      "default_state": "O estado padrão permite que todos os membros criem novos itens de trabalho. Isso não pode ser alterado",
+      "state_change_count": "{count, plural, one {1 mudança de estado permitida} other {{count} mudanças de estado permitidas}}",
+      "movers_count": "{count, plural, one {1 revisor listado} other {{count} revisores listados}}",
+      "state_changes": {
+        "label": {
+          "default": "Adicionar mudança de estado permitida",
+          "loading": "Adicionando mudança de estado permitida"
+        },
+        "move_to": "Mudar estado para",
+        "movers": {
+          "label": "Quando revisado por",
+          "tooltip": "Revisores são pessoas que têm permissão para mover itens de trabalho de um estado para outro.",
+          "add": "Adicionar revisores"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Você não pode mover este item de trabalho para cá."
+    },
+    "workflow_enabled": {
+      "label": "Mudança de estado"
+    },
+    "workflow_tree": {
+      "label": "Para itens de trabalho em",
+      "state_change_label": "pode movê-lo para"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Controle o caos de mudanças e revisões com Fluxos de Trabalho.",
+        "description": "Defina regras para onde seu trabalho se move, por quem e quando com Fluxos de Trabalho no Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Ver histórico de mudanças",
+      "reset_workflow": "Reiniciar fluxo de trabalho"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Tem certeza de que deseja reiniciar este fluxo de trabalho?",
+        "description": "Se você reiniciar este fluxo de trabalho, todas as suas regras de mudança de estado serão excluídas e você terá que criá-las novamente para executá-las neste projeto."
+      },
+      "delete_state_change": {
+        "title": "Tem certeza de que deseja excluir esta regra de mudança de estado?",
+        "description": "Uma vez excluída, você não pode desfazer esta alteração e terá que definir a regra novamente se quiser que ela funcione para este projeto."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} fluxo de trabalho",
+        "success": {
+          "title": "Sucesso",
+          "message": "Fluxo de trabalho {action} com sucesso"
+        },
+        "error": {
+          "title": "Erro",
+          "message": "Fluxo de trabalho não pôde ser {action}. Por favor, tente novamente."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Sucesso",
+          "message": "Fluxo de trabalho reiniciado com sucesso"
+        },
+        "error": {
+          "title": "Erro ao reiniciar fluxo de trabalho",
+          "message": "Fluxo de trabalho não pôde ser reiniciado. Por favor, tente novamente."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Erro ao adicionar regra de mudança de estado",
+          "message": "A regra de mudança de estado não pôde ser adicionada. Por favor, tente novamente."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Erro ao modificar regra de mudança de estado",
+          "message": "A regra de mudança de estado não pôde ser modificada. Por favor, tente novamente."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Erro ao remover regra de mudança de estado",
+          "message": "A regra de mudança de estado não pôde ser removida. Por favor, tente novamente."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Erro ao modificar revisores da regra de mudança de estado",
+          "message": "Os revisores da regra de mudança de estado não puderam ser modificados. Por favor, tente novamente."
+        }
+      }
+    }
+  }
+}

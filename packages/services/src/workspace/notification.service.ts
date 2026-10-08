@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { API_BASE_URL } from "@plane/constants";
 import type {
   TUnreadNotificationsCount,
@@ -36,7 +42,7 @@ export class WorkspaceNotificationService extends APIService {
     workspaceSlug: string,
     params: TNotificationPaginatedInfoQueryParams
   ): Promise<TNotificationPaginatedInfo | undefined> {
-    return this.get(`/api/workspaces/${workspaceSlug}/users/notifications`, { params })
+    return this.get(`/api/workspaces/${workspaceSlug}/users/notifications/`, { params })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

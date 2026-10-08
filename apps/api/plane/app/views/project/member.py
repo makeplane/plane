@@ -1,6 +1,11 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Min
 
 # Module imports
 from .base import BaseViewSet, BaseAPIView
@@ -13,7 +18,7 @@ from plane.app.serializers import (
 
 from plane.app.permissions import WorkspaceUserPermission
 
-from plane.db.models import Project, ProjectMember, IssueUserProperty, WorkspaceMember
+from plane.db.models import Project, ProjectMember, ProjectUserProperty, WorkspaceMember
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
 from plane.app.permissions.base import allow_permission, ROLE
@@ -89,24 +94,23 @@ class ProjectMemberViewSet(BaseViewSet):
         # Update the roles of the existing members
         ProjectMember.objects.bulk_update(bulk_project_members, ["is_active", "role"], batch_size=100)
 
-        # Get the list of project members of the requested workspace with the given slug
-        project_members = (
-            ProjectMember.objects.filter(
+        # Get the minimum sort_order for each member in the workspace
+        member_sort_orders = (
+            ProjectUserProperty.objects.filter(
                 workspace__slug=slug,
-                member_id__in=[member.get("member_id") for member in members],
+                user_id__in=[member.get("member_id") for member in members],
             )
-            .values("member_id", "sort_order")
-            .order_by("sort_order")
+            .values("user_id")
+            .annotate(min_sort_order=Min("sort_order"))
         )
+        # Convert to dictionary for easy lookup: {user_id: min_sort_order}
+        sort_order_map = {str(item["user_id"]): item["min_sort_order"] for item in member_sort_orders}
 
         # Loop through requested members
         for member in members:
-            # Get the sort orders of the member
-            sort_order = [
-                project_member.get("sort_order")
-                for project_member in project_members
-                if str(project_member.get("member_id")) == str(member.get("member_id"))
-            ]
+            member_id = str(member.get("member_id"))
+            # Get the minimum sort_order for this member, or use default
+            min_sort_order = sort_order_map.get(member_id)
             # Create a new project member
             bulk_project_members.append(
                 ProjectMember(
@@ -114,22 +118,22 @@ class ProjectMemberViewSet(BaseViewSet):
                     role=member.get("role", 5),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
-                    sort_order=(sort_order[0] - 10000 if len(sort_order) else 65535),
                 )
             )
             # Create a new issue property
             bulk_issue_props.append(
-                IssueUserProperty(
+                ProjectUserProperty(
                     user_id=member.get("member_id"),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
+                    sort_order=(min_sort_order - 10000 if min_sort_order is not None else 65535),
                 )
             )
 
         # Bulk create the project members and issue properties
         project_members = ProjectMember.objects.bulk_create(bulk_project_members, batch_size=10, ignore_conflicts=True)
 
-        _ = IssueUserProperty.objects.bulk_create(bulk_issue_props, batch_size=10, ignore_conflicts=True)
+        _ = ProjectUserProperty.objects.bulk_create(bulk_issue_props, batch_size=10, ignore_conflicts=True)
 
         project_members = ProjectMember.objects.filter(
             project_id=project_id,
@@ -202,11 +206,15 @@ class ProjectMemberViewSet(BaseViewSet):
     def partial_update(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(pk=pk, workspace__slug=slug, project_id=project_id, is_active=True)
 
-        # Fetch the workspace role of the project member
-        workspace_role = WorkspaceMember.objects.get(
+        # Fetch the target's workspace role (used to cap the new project role)
+        target_workspace_role = WorkspaceMember.objects.get(
             workspace__slug=slug, member=project_member.member, is_active=True
         ).role
-        is_workspace_admin = workspace_role == ROLE.ADMIN.value
+        # Fetch the requester's workspace role to decide if they may bypass project-role checks
+        requester_workspace_role = WorkspaceMember.objects.get(
+            workspace__slug=slug, member=request.user, is_active=True
+        ).role
+        is_workspace_admin = requester_workspace_role == ROLE.ADMIN.value
 
         # Check if the user is not editing their own role if they are not an admin
         if request.user.id == project_member.member_id and not is_workspace_admin:
@@ -222,21 +230,55 @@ class ProjectMemberViewSet(BaseViewSet):
             is_active=True,
         )
 
-        if workspace_role in [5] and int(request.data.get("role", project_member.role)) in [15, 20]:
-            return Response(
-                {"error": "You cannot add a user with role higher than the workspace role"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        if "role" in request.data:
+            # Only Admins can modify roles
+            if requested_project_member.role < ROLE.ADMIN.value and not is_workspace_admin:
+                return Response(
+                    {"error": "You do not have permission to update roles"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
-        if (
-            "role" in request.data
-            and int(request.data.get("role", project_member.role)) > requested_project_member.role
-            and not is_workspace_admin
-        ):
-            return Response(
-                {"error": "You cannot update a role that is higher than your own role"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            # Cannot modify a member whose role is equal to or higher than your own
+            if project_member.role >= requested_project_member.role and not is_workspace_admin:
+                return Response(
+                    {"error": "You cannot update the role of a member with a role equal to or higher than your own"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            new_role = int(request.data.get("role"))
+
+            # Cannot assign a role equal to or higher than your own
+            if new_role >= requested_project_member.role and not is_workspace_admin:
+                return Response(
+                    {"error": "You cannot assign a role equal to or higher than your own"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            # Cannot assign a role higher than the target's workspace role
+            if target_workspace_role in [5] and new_role in [15, 20]:
+                return Response(
+                    {"error": "You cannot add a user with role higher than the workspace role"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        # Guard privileged `is_active` mutations (member (de)activation). These are NOT
+        # covered by the role block above, so without this check a GUEST could PATCH
+        # {"is_active": false} while omitting "role" to deactivate any member — including
+        # admins — and take over the project. Mirror the role block and destroy(): only a
+        # project admin (or workspace admin) may (de)activate a member, and never one whose
+        # role is equal to or higher than the requester's own.
+        if "is_active" in request.data:
+            if requested_project_member.role < ROLE.ADMIN.value and not is_workspace_admin:
+                return Response(
+                    {"error": "You do not have permission to update member status"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            if project_member.role >= requested_project_member.role and not is_workspace_admin:
+                return Response(
+                    {"error": "You cannot update the status of a member with a role equal to or higher than your own"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True)
 

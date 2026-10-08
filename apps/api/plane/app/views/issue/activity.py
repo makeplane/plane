@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 from itertools import chain
 
@@ -75,7 +79,10 @@ class IssueActivityEndpoint(BaseAPIView):
             return Response(issue_comments, status=status.HTTP_200_OK)
 
         result_list = sorted(
-            chain(issue_activities, issue_comments),
+            chain(
+                IssueActivitySerializer(issue_activities, many=True).data,
+                IssueCommentSerializer(issue_comments, many=True).data,
+            ),
             key=lambda instance: instance["created_at"],
         )
 

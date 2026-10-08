@@ -1,0 +1,508 @@
+{
+  "workspace_settings": {
+    "label": "Ustawienia przestrzeni roboczej",
+    "page_label": "{workspace} - Ustawienia ogólne",
+    "key_created": "Klucz utworzony",
+    "copy_key": "Skopiuj i zapisz ten klucz w Plane Pages. Po zamknięciu nie będzie widoczny ponownie. Plik CSV z kluczem został pobrany.",
+    "token_copied": "Token skopiowano do schowka.",
+    "settings": {
+      "general": {
+        "title": "Ogólne",
+        "upload_logo": "Prześlij logo",
+        "edit_logo": "Edytuj logo",
+        "name": "Nazwa przestrzeni roboczej",
+        "company_size": "Rozmiar firmy",
+        "url": "URL przestrzeni roboczej",
+        "workspace_timezone": "Strefa czasowa przestrzeni roboczej",
+        "update_workspace": "Zaktualizuj przestrzeń",
+        "delete_workspace": "Usuń tę przestrzeń",
+        "delete_workspace_description": "Usunięcie przestrzeni spowoduje wymazanie wszystkich danych i zasobów. Ta akcja jest nieodwracalna.",
+        "delete_btn": "Usuń przestrzeń",
+        "delete_modal": {
+          "title": "Czy na pewno chcesz usunąć tę przestrzeń?",
+          "description": "Masz aktywną wersję próbną. Najpierw ją anuluj.",
+          "dismiss": "Zamknij",
+          "cancel": "Anuluj wersję próbną",
+          "success_title": "Przestrzeń usunięta.",
+          "success_message": "Zostaniesz przekierowany do profilu.",
+          "error_title": "Nie udało się.",
+          "error_message": "Spróbuj ponownie."
+        },
+        "errors": {
+          "name": {
+            "required": "Nazwa jest wymagana",
+            "max_length": "Nazwa przestrzeni nie może przekraczać 80 znaków"
+          },
+          "company_size": {
+            "required": "Rozmiar firmy jest wymagany",
+            "select_a_range": "Wybierz rozmiar organizacji"
+          }
+        }
+      },
+      "members": {
+        "title": "Członkowie",
+        "add_member": "Dodaj członka",
+        "pending_invites": "Oczekujące zaproszenia",
+        "invitations_sent_successfully": "Zaproszenia wysłano pomyślnie",
+        "leave_confirmation": "Czy na pewno chcesz opuścić przestrzeń? Stracisz dostęp. Ta akcja jest nieodwracalna.",
+        "details": {
+          "full_name": "Imię i nazwisko",
+          "display_name": "Nazwa wyświetlana",
+          "email_address": "Adres e-mail",
+          "account_type": "Typ konta",
+          "authentication": "Uwierzytelnianie",
+          "joining_date": "Data dołączenia"
+        },
+        "modal": {
+          "title": "Zaproś współpracowników",
+          "description": "Zaproś osoby do współpracy.",
+          "button": "Wyślij zaproszenia",
+          "button_loading": "Wysyłanie zaproszeń",
+          "placeholder": "imię@firma.pl",
+          "errors": {
+            "required": "Wymagany jest adres e-mail.",
+            "invalid": "E-mail jest nieprawidłowy"
+          }
+        }
+      },
+      "billing_and_plans": {
+        "heading": "Rozliczenia i plany",
+        "description": "Wybierz plan, zarządzaj subskrypcjami i łatwo dokonaj uaktualnienia w miarę rozwoju Twoich potrzeb.",
+        "title": "Rozliczenia i plany",
+        "current_plan": "Obecny plan",
+        "free_plan": "Używasz bezpłatnego planu",
+        "view_plans": "Wyświetl plany"
+      },
+      "exports": {
+        "heading": "Eksporty",
+        "description": "Eksportuj dane projektu w różnych formatach i uzyskaj dostęp do historii eksportów z linkami do pobrania.",
+        "title": "Eksporty",
+        "exporting": "Eksportowanie",
+        "previous_exports": "Poprzednie eksporty",
+        "export_separate_files": "Eksportuj dane do oddzielnych plików",
+        "exporting_projects": "Eksportowanie projektu",
+        "format": "Format",
+        "filters_info": "Zastosuj filtry, aby wyeksportować określone elementy robocze według Twoich kryteriów.",
+        "modal": {
+          "title": "Eksport do",
+          "toasts": {
+            "success": {
+              "title": "Eksport zakończony sukcesem",
+              "message": "Wyeksportowane {entity} można pobrać z poprzednich eksportów."
+            },
+            "error": {
+              "title": "Eksport nie powiódł się",
+              "message": "Spróbuj ponownie."
+            }
+          }
+        }
+      },
+      "webhooks": {
+        "heading": "Webhooki",
+        "description": "Automatyzuj powiadomienia do usług zewnętrznych, gdy wystąpią zdarzenia projektowe.",
+        "title": "Webhooki",
+        "add_webhook": "Dodaj webhook",
+        "modal": {
+          "title": "Utwórz webhook",
+          "details": "Szczegóły webhooka",
+          "payload": "URL payloadu",
+          "question": "Które zdarzenia mają uruchamiać ten webhook?",
+          "error": "URL jest wymagany"
+        },
+        "secret_key": {
+          "title": "Klucz tajny",
+          "message": "Wygeneruj token do logowania webhooka"
+        },
+        "options": {
+          "all": "Wysyłaj wszystko",
+          "individual": "Wybierz pojedyncze zdarzenia"
+        },
+        "toasts": {
+          "created": {
+            "title": "Webhook utworzony",
+            "message": "Webhook został pomyślnie utworzony"
+          },
+          "not_created": {
+            "title": "Webhook nie został utworzony",
+            "message": "Nie udało się utworzyć webhooka"
+          },
+          "updated": {
+            "title": "Webhook zaktualizowany",
+            "message": "Webhook został pomyślnie zaktualizowany"
+          },
+          "not_updated": {
+            "title": "Aktualizacja webhooka nie powiodła się",
+            "message": "Nie udało się zaktualizować webhooka"
+          },
+          "removed": {
+            "title": "Webhook usunięty",
+            "message": "Webhook został pomyślnie usunięty"
+          },
+          "not_removed": {
+            "title": "Usunięcie webhooka nie powiodło się",
+            "message": "Nie udało się usunąć webhooka"
+          },
+          "secret_key_copied": {
+            "message": "Klucz tajny skopiowany do schowka."
+          },
+          "secret_key_not_copied": {
+            "message": "Błąd podczas kopiowania klucza."
+          }
+        }
+      },
+      "api_tokens": {
+        "heading": "Tokeny API",
+        "description": "Generuj bezpieczne tokeny API, aby integrować swoje dane z zewnętrznymi systemami i aplikacjami.",
+        "title": "Tokeny API",
+        "add_token": "Dodaj token dostępu",
+        "create_token": "Utwórz token",
+        "never_expires": "Nigdy nie wygasa",
+        "generate_token": "Wygeneruj token",
+        "generating": "Generowanie",
+        "delete": {
+          "title": "Usuń token API",
+          "description": "Aplikacje używające tego tokena stracą dostęp. Ta akcja jest nieodwracalna.",
+          "success": {
+            "title": "Sukces!",
+            "message": "Token pomyślnie usunięto"
+          },
+          "error": {
+            "title": "Błąd!",
+            "message": "Usunięcie tokena nie powiodło się"
+          }
+        }
+      },
+      "integrations": {
+        "title": "Integracje",
+        "heading": "Integracje",
+        "description": "Łącz się z popularnymi narzędziami i usługami, aby synchronizować pracę w całym ekosystemie przepływu pracy.",
+        "page_title": "Pracuj ze swoimi danymi Plane w dostępnych aplikacjach lub we własnych.",
+        "page_description": "Zobacz wszystkie integracje używane przez tę przestrzeń roboczą lub przez Ciebie."
+      },
+      "imports": {
+        "title": "Importy",
+        "heading": "Importy",
+        "description": "Łącz i importuj dane z istniejących narzędzi do zarządzania projektami, aby usprawnić integrację przepływu pracy."
+      },
+      "worklogs": {
+        "title": "Logi pracy",
+        "heading": "Logi pracy",
+        "description": "Pobierz logi pracy (karty czasu pracy) dla każdej osoby w dowolnym projekcie."
+      },
+      "group_syncing": {
+        "title": "Synchronizacja grup",
+        "heading": "Synchronizacja grup",
+        "description": "Połącz grupy dostawcy tożsamości z projektami i rolami. Dostęp użytkowników jest automatycznie aktualizowany przy zmianach członkostwa w grupie w Twoim IdP, upraszczając onboardingu i offboarding.",
+        "enable": {
+          "title": "Włącz synchronizację grup",
+          "description": "Automatycznie dodawaj użytkowników do projektów na podstawie grup dostawcy tożsamości."
+        },
+        "config": {
+          "title": "Skonfiguruj synchronizację grup",
+          "description": "Ustaw, jak grupy dostawcy tożsamości są mapowane na projekty i role.",
+          "sync_on_login": {
+            "title": "Synchronizacja przy logowaniu",
+            "description": "Aktualizuj członkostwo w grupie i dostęp do projektu przy logowaniu użytkownika."
+          },
+          "sync_offline": {
+            "title": "Synchronizacja offline",
+            "description": "Uruchamia synchronizację co sześć godzin automatycznie, bez czekania na logowanie użytkowników."
+          },
+          "auto_remove": {
+            "title": "Automatyczne usuwanie",
+            "description": "Automatycznie usuwaj użytkowników z projektów, gdy nie pasują już do grupy."
+          },
+          "group_attribute_key": {
+            "title": "Klucz atrybutu grupy",
+            "description": "Atrybut dostawcy tożsamości używany do identyfikacji i synchronizacji grup użytkowników.",
+            "placeholder": "Grupy"
+          }
+        },
+        "group_mapping": {
+          "title": "Mapowanie grup",
+          "description": "Połącz grupy dostawcy tożsamości z projektami i rolami.",
+          "button_text": "Dodaj nową synchronizację grupy"
+        },
+        "toast": {
+          "updating": "Aktualizowanie funkcji synchronizacji grup",
+          "success": "Funkcja synchronizacji grup została pomyślnie zaktualizowana.",
+          "error": "Nie udało się zaktualizować funkcji synchronizacji grup!"
+        },
+        "delete_modal": {
+          "title": "Usuń synchronizację grupy",
+          "content": "Nowi użytkownicy z tej grupy tożsamości nie będą już dodawani do projektu. Już dodani użytkownicy zachowają swoją obecną rolę."
+        },
+        "modal": {
+          "idp_group_name": {
+            "text": "Grupa użytkowników",
+            "required": "Grupa użytkowników jest wymagana",
+            "placeholder": "Wprowadź nazwy grup IdP"
+          },
+          "project": {
+            "text": "Projekt",
+            "required": "Projekt jest wymagany",
+            "placeholder": "Wybierz projekt"
+          },
+          "default_role": {
+            "text": "Rola projektu",
+            "required": "Rola projektu jest wymagana",
+            "placeholder": "Wybierz rolę projektu"
+          }
+        }
+      },
+      "identity": {
+        "title": "Tożsamość",
+        "heading": "Tożsamość",
+        "description": "Skonfiguruj swoją domenę i włącz logowanie jednokrotne"
+      },
+      "project_states": {
+        "title": "Stany projektu",
+        "heading": "Zobacz przegląd postępu dla wszystkich projektów.",
+        "description": "Stany projektów to funkcja Plane służąca do śledzenia postępu wszystkich projektów według dowolnej właściwości projektu.",
+        "go_to_settings": "Przejdź do ustawień"
+      },
+      "projects": {
+        "title": "Projekty",
+        "description": "Zarządzaj stanami projektów, włączaj etykiety projektów i inne konfiguracje.",
+        "tabs": {
+          "states": "Stany projektu",
+          "labels": "Etykiety projektu"
+        }
+      },
+      "templates": {
+        "title": "Szablony",
+        "heading": "Szablony",
+        "description": "Zaoszczędź 80% czasu poświęcanego na tworzenie projektów, elementów pracy i stron, gdy używasz szablonów."
+      },
+      "relations": {
+        "title": "Relacje",
+        "heading": "Relacje",
+        "description": "Twórz typy relacji i zarządzaj nimi, które łączą elementy pracy w całej przestrzeni roboczej."
+      },
+      "cancel_trial": {
+        "title": "Najpierw anuluj swój okres próbny.",
+        "description": "Masz aktywny okres próbny jednego z naszych płatnych planów. Proszę najpierw go anulować, aby kontynuować.",
+        "dismiss": "Odrzuć",
+        "cancel": "Anuluj okres próbny",
+        "cancel_success_title": "Okres próbny anulowany.",
+        "cancel_success_message": "Teraz możesz usunąć workspace.",
+        "cancel_error_title": "To nie zadziałało.",
+        "cancel_error_message": "Spróbuj ponownie, proszę."
+      },
+      "applications": {
+        "internal": "Wewnętrzny",
+        "title": "Aplikacje",
+        "applicationId_copied": "ID aplikacji skopiowane do schowka",
+        "clientId_copied": "ID klienta skopiowane do schowka",
+        "clientSecret_copied": "Sekret klienta skopiowany do schowka",
+        "third_party_apps": "Aplikacje zewnętrzne",
+        "your_apps": "Twoje aplikacje",
+        "connect": "Połącz",
+        "connected": "Połączono",
+        "disconnect": "Odłącz",
+        "install": "Zainstaluj",
+        "installed": "Zainstalowano",
+        "configure": "Konfiguruj",
+        "app_available": "Udostępniłeś tę aplikację do użytku z przestrzenią roboczą Plane",
+        "app_credentials_regenrated": {
+          "title": "Dane uwierzytelniające aplikacji zostały pomyślnie wygenerowane ponownie",
+          "description": "Zastąp sekret klienta wszędzie tam, gdzie jest używany. Poprzedni sekret nie jest już ważny."
+        },
+        "app_created": {
+          "title": "Aplikacja została pomyślnie utworzona",
+          "description": "Użyj danych uwierzytelniających, aby zainstalować aplikację w przestrzeni roboczej Plane"
+        },
+        "installed_apps": "Zainstalowane aplikacje",
+        "all_apps": "Wszystkie aplikacje",
+        "internal_apps": "Aplikacje wewnętrzne",
+        "app_name_title": "Jak nazwiesz tę aplikację",
+        "app_description_title": {
+          "label": "Długi opis",
+          "placeholder": "Napisz długi opis dla marketplace. Naciśnij '/', aby zobaczyć polecenia."
+        },
+        "authorization_grant_type": {
+          "title": "Typ połączenia",
+          "description": "Wybierz, czy Twoja aplikacja ma być zainstalowana raz dla obszaru roboczego, czy pozwolić każdemu użytkownikowi na połączenie własnego konta"
+        },
+        "website": {
+          "title": "Strona internetowa",
+          "description": "Link do strony internetowej Twojej aplikacji.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Twórca aplikacji",
+          "description": "Osoba lub organizacja tworząca aplikację."
+        },
+        "app_maker_error": "Twórca aplikacji jest wymagany",
+        "setup_url": {
+          "label": "URL konfiguracji",
+          "description": "Użytkownicy zostaną przekierowani na ten adres URL po zainstalowaniu aplikacji.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL webhooka",
+          "description": "Tutaj będziemy wysyłać zdarzenia webhook i aktualizacje z przestrzeni roboczych, w których zainstalowano Twoją aplikację.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Sekret webhooka",
+          "description": "Sekret używany do weryfikacji przychodzących żądań webhooka.",
+          "placeholder": "Wprowadź losowy klucz sekretny"
+        },
+        "redirect_uris": {
+          "label": "URI przekierowań (oddzielone spacją)",
+          "description": "Użytkownicy zostaną przekierowani na tę ścieżkę po uwierzytelnieniu się w Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_available_description": "Połącz przestrzeń roboczą Plane, aby rozpocząć korzystanie",
+        "client_id_and_secret": "ID i Sekret Klienta",
+        "client_id_and_secret_description": "Skopiuj i zapisz ten klucz sekretny. Nie będziesz mógł zobaczyć tego klucza po kliknięciu Zamknij.",
+        "client_id_and_secret_download": "Możesz pobrać CSV z kluczem stąd.",
+        "application_id": "ID Aplikacji",
+        "client_id": "ID Klienta",
+        "client_secret": "Sekret Klienta",
+        "export_as_csv": "Eksportuj jako CSV",
+        "slug_already_exists": "Slug już istnieje",
+        "failed_to_create_application": "Nie udało się utworzyć aplikacji",
+        "upload_logo": "Prześlij Logo",
+        "app_name_error": "Nazwa aplikacji jest wymagana",
+        "app_short_description_title": "Podaj krótki opis tej aplikacji",
+        "app_short_description_error": "Krótki opis aplikacji jest wymagany",
+        "app_description_error": "Opis aplikacji jest wymagany",
+        "app_slug_title": "Slug aplikacji",
+        "app_slug_error": "Slug aplikacji jest wymagany",
+        "invalid_website_error": "Nieprawidłowa strona internetowa",
+        "webhook_url_title": "URL Webhooka",
+        "webhook_url_error": "URL webhooka jest wymagany",
+        "invalid_webhook_url_error": "Nieprawidłowy URL webhooka",
+        "redirect_uris_title": "URI przekierowania",
+        "redirect_uris_error": "URI przekierowania są wymagane",
+        "invalid_redirect_uris_error": "Nieprawidłowe URI przekierowania",
+        "redirect_uris_description": "Wprowadź URI oddzielone spacjami, gdzie aplikacja przekieruje po użytkowniku, np. https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Autoryzowane źródła JavaScript",
+        "authorized_javascript_origins_error": "Autoryzowane źródła JavaScript są wymagane",
+        "invalid_authorized_javascript_origins_error": "Nieprawidłowe autoryzowane źródła JavaScript",
+        "authorized_javascript_origins_description": "Wprowadź źródła oddzielone spacjami, z których aplikacja będzie mogła wysyłać żądania, np. app.com example.com",
+        "create_app": "Utwórz aplikację",
+        "update_app": "Aktualizuj aplikację",
+        "build_your_own_app": "Zbuduj własną aplikację",
+        "edit_app_details": "Edytuj szczegóły aplikacji",
+        "regenerate_client_secret_description": "Wygeneruj ponownie sekret klienta. Po regeneracji możesz skopiować klucz lub pobrać go do pliku CSV.",
+        "regenerate_client_secret": "Wygeneruj ponownie sekret klienta",
+        "regenerate_client_secret_confirm_title": "Czy na pewno chcesz wygenerować ponownie sekret klienta?",
+        "regenerate_client_secret_confirm_description": "Aplikacja używająca tego sekretu przestanie działać. Będziesz musiał zaktualizować sekret w aplikacji.",
+        "regenerate_client_secret_confirm_cancel": "Anuluj",
+        "regenerate_client_secret_confirm_regenerate": "Wygeneruj ponownie",
+        "read_only_access_to_workspace": "Dostęp tylko do odczytu do Twojej przestrzeni roboczej",
+        "write_access_to_workspace": "Dostęp do zapisu do Twojej przestrzeni roboczej",
+        "read_only_access_to_user_profile": "Dostęp tylko do odczytu do Twojego profilu użytkownika",
+        "write_access_to_user_profile": "Dostęp do zapisu do Twojego profilu użytkownika",
+        "connect_app_to_workspace": "Połącz {app} z Twoją przestrzenią roboczą {workspace}",
+        "user_permissions": "Uprawnienia użytkownika",
+        "user_permissions_description": "Uprawnienia użytkownika są używane do przyznawania dostępu do profilu użytkownika.",
+        "workspace_permissions": "Uprawnienia przestrzeni roboczej",
+        "workspace_permissions_description": "Uprawnienia przestrzeni roboczej są używane do przyznawania dostępu do przestrzeni roboczej.",
+        "with_the_permissions": "z uprawnieniami",
+        "app_consent_title": "{app} prosi o dostęp do Twojej przestrzeni roboczej i profilu Plane.",
+        "choose_workspace_to_connect_app_with": "Wybierz przestrzeń roboczą, z którą chcesz połączyć aplikację",
+        "app_consent_workspace_permissions_title": "{app} chciałby",
+        "app_consent_user_permissions_title": "{app} może również poprosić o uprawnienia użytkownika do następujących zasobów. Te uprawnienia będą wymagane i autoryzowane tylko przez użytkownika.",
+        "app_consent_accept_title": "Akceptując",
+        "app_consent_accept_1": "Udzielasz aplikacji dostępu do Twoich danych Plane wszędzie tam, gdzie możesz używać aplikacji w lub poza Plane",
+        "app_consent_accept_2": "Zgadzasz się na Politykę Prywatności i Warunki Użytkowania {app}",
+        "accepting": "Akceptowanie...",
+        "accept": "Akceptuj",
+        "categories": "Kategorie",
+        "select_app_categories": "Wybierz kategorie aplikacji",
+        "categories_title": "Kategorie",
+        "categories_error": "Kategorie są wymagane",
+        "invalid_categories_error": "Nieprawidłowe kategorie",
+        "categories_description": "Wybierz kategorie, które najlepiej opisują aplikację",
+        "supported_plans": "Obsługiwane Plany",
+        "supported_plans_description": "Wybierz plany obszaru roboczego, które mogą zainstalować tę aplikację. Pozostaw puste, aby zezwolić na wszystkie plany.",
+        "select_plans": "Wybierz Plany",
+        "privacy_policy_url_title": "URL Polityki Prywatności",
+        "privacy_policy_url_error": "URL Polityki Prywatności jest wymagany",
+        "invalid_privacy_policy_url_error": "Nieprawidłowy URL Polityki Prywatności",
+        "terms_of_service_url_title": "URL Warunków Użytkowania",
+        "terms_of_service_url_error": "URL Warunków Użytkowania jest wymagany",
+        "invalid_terms_of_service_url_error": "Nieprawidłowy URL Warunków Użytkowania",
+        "support_url_title": "URL Obsługi",
+        "support_url_error": "URL Obsługi jest wymagany",
+        "invalid_support_url_error": "Nieprawidłowy URL Obsługi",
+        "video_url_title": "URL Filmu",
+        "video_url_error": "URL Filmu jest wymagany",
+        "invalid_video_url_error": "Nieprawidłowy URL Filmu",
+        "setup_url_error": "URL Konfiguracji jest wymagany",
+        "invalid_setup_url_error": "Nieprawidłowy URL Konfiguracji",
+        "configuration_url_title": "URL Konfiguracji",
+        "configuration_url_error": "URL Konfiguracji jest wymagany",
+        "invalid_configuration_url_error": "Nieprawidłowy URL Konfiguracji",
+        "contact_email_title": "Email kontaktu",
+        "contact_email_error": "Email kontaktu jest wymagany",
+        "invalid_contact_email_error": "Nieprawidłowy email kontaktu",
+        "upload_attachments": "Prześlij załączniki",
+        "uploading_images": "Przesyłanie {count} obrazu{count, plural, one {s} other {s}}",
+        "drop_images_here": "Rzucaj obrazy tutaj",
+        "click_to_upload_images": "Kliknij, aby przesłać obrazy",
+        "invalid_file_or_exceeds_size_limit": "Nieprawidłowy plik lub przekracza limit rozmiaru ({size} MB)",
+        "uploading": "Przesyłanie...",
+        "upload_and_save": "Prześlij i zapisz",
+        "app_consent_no_access_title": "Prośba o instalację",
+        "app_consent_no_access_description": "Aplikacja może być zainstalowana dopiero po tym, jak administrator workspace ją zainstaluje. Skontaktuj się z administratorem workspace, aby kontynuować.",
+        "app_consent_unapproved_title": "Ta aplikacja nie została jeszcze sprawdzona ani zatwierdzona przez Plane.",
+        "app_consent_unapproved_description": "Upewnij się, że ufasz tej aplikacji, zanim połączysz ją ze swoją przestrzenią roboczą.",
+        "go_to_app": "Przejdź do aplikacji",
+        "enable_app_mentions": "Włącz wzmianki o aplikacji",
+        "enable_app_mentions_tooltip": "Po włączeniu tej opcji użytkownicy mogą wspominać lub przypisywać elementy pracy do tej aplikacji.",
+        "scopes": "Zakresy",
+        "select_scopes": "Wybierz zakresy",
+        "read_access_to": "Dostęp tylko do odczytu do",
+        "write_access_to": "Dostęp do zapisu do",
+        "global_permission_expiration": "Zakresy globalne wkrótce wygasną. Zamiast tego używaj zakresów szczegółowych. Na przykład użyj project:read zamiast globalnego odczytu.",
+        "selected_scopes": "{count} wybranych",
+        "scopes_and_permissions": "Zakresy i uprawnienia",
+        "read": "Odczyt",
+        "write": "Zapis",
+        "scope_description": {
+          "projects": "Dostęp do projektów i wszystkich powiązanych encji",
+          "wiki": "Dostęp do wiki i wszystkich powiązanych encji",
+          "workspaces": "Dostęp do obszarów roboczych i wszystkich powiązanych encji",
+          "stickies": "Dostęp do notatek i wszystkich powiązanych encji",
+          "profile": "Dostęp do informacji o profilu użytkownika",
+          "agents": "Dostęp do agentów i wszystkich powiązanych encji",
+          "assets": "Dostęp do zasobów i wszystkich powiązanych encji"
+        }
+      },
+      "plane-intelligence": {
+        "title": "Plane AI",
+        "heading": "Plane AI",
+        "description": "Twoja praca staje się inteligentniejsza i szybsza dzięki AI, która jest natywnie połączona z Twoją pracą i bazą wiedzy."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Skrypty",
+        "new_script": "Nowy skrypt",
+        "description": "Automatyzuj swoje przepływy pracy za pomocą niestandardowych skryptów i reguł automatyzacji."
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "Brak tokenów API",
+        "description": "Używaj API, aby zintegrować Plane z zewnętrznymi systemami."
+      },
+      "webhooks": {
+        "title": "Brak webhooków",
+        "description": "Utwórz webhooki, aby zautomatyzować działania."
+      },
+      "exports": {
+        "title": "Brak eksportów",
+        "description": "Znajdziesz tu historię swoich eksportów."
+      },
+      "imports": {
+        "title": "Brak importów",
+        "description": "Znajdziesz tu historię swoich importów."
+      }
+    }
+  }
+}

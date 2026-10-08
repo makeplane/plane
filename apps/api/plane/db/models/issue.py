@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python import
 from uuid import uuid4
 
@@ -13,12 +17,12 @@ from django import apps
 
 # Module imports
 from plane.utils.html_processor import strip_tags
-from plane.db.mixins import SoftDeletionManager
+from plane.utils.path_validator import sanitize_filename
+from plane.db.mixins import SoftDeletionManager, ChangeTrackerMixin
 from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
 from plane.utils.uuid import convert_uuid_to_integer
 from .description import Description
-from plane.db.mixins import ChangeTrackerMixin
 from .state import StateGroup
 
 
@@ -90,14 +94,6 @@ class IssueManager(SoftDeletionManager):
         return (
             super()
             .get_queryset()
-            .filter(
-                models.Q(issue_intake__status=1)
-                | models.Q(issue_intake__status=-1)
-                | models.Q(issue_intake__status=2)
-                | models.Q(issue_intake__isnull=True)
-            )
-            .filter(deleted_at__isnull=True)
-            .filter(state__is_triage=False)
             .exclude(state__group=StateGroup.TRIAGE.value)
             .exclude(archived_at__isnull=False)
             .exclude(project__archived_at__isnull=False)
@@ -105,7 +101,9 @@ class IssueManager(SoftDeletionManager):
         )
 
 
-class Issue(ProjectBaseModel):
+class Issue(ChangeTrackerMixin, ProjectBaseModel):
+    TRACKED_FIELDS = ["state_id"]
+
     PRIORITY_CHOICES = (
         ("urgent", "Urgent"),
         ("high", "High"),
@@ -136,7 +134,7 @@ class Issue(ProjectBaseModel):
         blank=True,
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name")
-    description = models.JSONField(blank=True, default=dict)
+    description_json = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     description_binary = models.BinaryField(null=True)
@@ -180,30 +178,8 @@ class Issue(ProjectBaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
-        if self.state is None:
-            try:
-                from plane.db.models import State
-
-                default_state = State.objects.filter(
-                    ~models.Q(is_triage=True), project=self.project, default=True
-                ).first()
-                if default_state is None:
-                    random_state = State.objects.filter(~models.Q(is_triage=True), project=self.project).first()
-                    self.state = random_state
-                else:
-                    self.state = default_state
-            except ImportError:
-                pass
-        else:
-            try:
-                from plane.db.models import State
-
-                if self.state.group == "completed":
-                    self.completed_at = timezone.now()
-                else:
-                    self.completed_at = None
-            except ImportError:
-                pass
+        self._ensure_default_state()
+        kwargs = self._sync_completed_at(kwargs)
 
         if self._state.adding:
             with transaction.atomic():
@@ -248,6 +224,35 @@ class Issue(ProjectBaseModel):
     def __str__(self):
         """Return name of the issue"""
         return f"{self.name} <{self.project.name}>"
+
+    def _ensure_default_state(self):
+        """Assign a default state when none is set."""
+        if self.state is not None:
+            return
+        try:
+            from plane.db.models import State
+
+            default_state = State.objects.filter(~models.Q(is_triage=True), project=self.project, default=True).first()
+            self.state = default_state or State.objects.filter(~models.Q(is_triage=True), project=self.project).first()
+        except ImportError as e:
+            log_exception(e)
+
+    def _sync_completed_at(self, kwargs):
+        """Update completed_at when state changes. Returns kwargs."""
+        if not self.state:
+            return kwargs
+        if not self._state.adding and not self.has_changed("state_id"):
+            return kwargs
+
+        if self.state.group == StateGroup.COMPLETED.value:
+            self.completed_at = timezone.now()
+        else:
+            self.completed_at = None
+
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            kwargs["update_fields"] = list(set(update_fields) | {"completed_at"})
+        return kwargs
 
 
 class IssueBlocker(ProjectBaseModel):
@@ -380,6 +385,7 @@ class IssueLink(ProjectBaseModel):
 
 
 def get_upload_path(instance, filename):
+    filename = sanitize_filename(filename) or uuid4().hex
     return f"{instance.workspace.id}/{uuid4().hex}-{filename}"
 
 
@@ -532,36 +538,6 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
     def __str__(self):
         """Return issue of the comment"""
         return str(self.issue)
-
-
-class IssueUserProperty(ProjectBaseModel):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="issue_property_user",
-    )
-    filters = models.JSONField(default=get_default_filters)
-    display_filters = models.JSONField(default=get_default_display_filters)
-    display_properties = models.JSONField(default=get_default_display_properties)
-    rich_filters = models.JSONField(default=dict)
-
-    class Meta:
-        verbose_name = "Issue User Property"
-        verbose_name_plural = "Issue User Properties"
-        db_table = "issue_user_properties"
-        ordering = ("-created_at",)
-        unique_together = ["user", "project", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "project"],
-                condition=Q(deleted_at__isnull=True),
-                name="issue_user_property_unique_user_project_when_deleted_at_null",
-            )
-        ]
-
-    def __str__(self):
-        """Return properties status of the issue"""
-        return str(self.user)
 
 
 class IssueLabel(ProjectBaseModel):
@@ -838,7 +814,7 @@ class IssueDescriptionVersion(ProjectBaseModel):
                 description_binary=issue.description_binary,
                 description_html=issue.description_html,
                 description_stripped=issue.description_stripped,
-                description_json=issue.description,
+                description_json=issue.description_json,
             )
             return True
         except Exception as e:

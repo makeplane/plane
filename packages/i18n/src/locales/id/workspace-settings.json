@@ -1,0 +1,508 @@
+{
+  "workspace_settings": {
+    "label": "Pengaturan ruang kerja",
+    "page_label": "{workspace} - Pengaturan Umum",
+    "key_created": "Kunci dibuat",
+    "copy_key": "Salin dan simpan kunci rahasia ini di Halaman Plane. Anda tidak dapat melihat kunci ini setelah Anda menekan Tutup. File CSV yang berisi kunci telah diunduh.",
+    "token_copied": "Token disalin ke clipboard.",
+    "settings": {
+      "general": {
+        "title": "Umum",
+        "upload_logo": "Unggah logo",
+        "edit_logo": "Edit logo",
+        "name": "Nama ruang kerja",
+        "company_size": "Ukuran perusahaan",
+        "url": "URL ruang kerja",
+        "workspace_timezone": "Zona waktu ruang kerja",
+        "update_workspace": "Perbarui ruang kerja",
+        "delete_workspace": "Hapus ruang kerja ini",
+        "delete_workspace_description": "Ketika menghapus ruang kerja, semua data dan sumber daya di dalam ruang kerja tersebut akan dihapus secara permanen dan tidak dapat dipulihkan.",
+        "delete_btn": "Hapus ruang kerja ini",
+        "delete_modal": {
+          "title": "Apakah Anda yakin ingin menghapus ruang kerja ini?",
+          "description": "Anda memiliki percobaan aktif untuk salah satu rencana berbayar kami. Silakan batalkan terlebih dahulu untuk melanjutkan.",
+          "dismiss": "Tutup",
+          "cancel": "Batalkan percobaan",
+          "success_title": "Ruang kerja dihapus.",
+          "success_message": "Anda akan segera diarahkan ke halaman profil Anda.",
+          "error_title": "Itu tidak berhasil.",
+          "error_message": "Silakan coba lagi."
+        },
+        "errors": {
+          "name": {
+            "required": "Nama diperlukan",
+            "max_length": "Nama ruang kerja tidak boleh lebih dari 80 karakter"
+          },
+          "company_size": {
+            "required": "Ukuran perusahaan diperlukan",
+            "select_a_range": "Pilih ukuran organisasi"
+          }
+        }
+      },
+      "members": {
+        "title": "Anggota",
+        "add_member": "Tambah anggota",
+        "pending_invites": "Undangan yang tertunda",
+        "invitations_sent_successfully": "Undangan berhasil dikirim",
+        "leave_confirmation": "Apakah Anda yakin ingin meninggalkan ruang kerja? Anda tidak akan lagi memiliki akses ke ruang kerja ini. Tindakan ini tidak dapat dibatalkan.",
+        "details": {
+          "full_name": "Nama lengkap",
+          "display_name": "Nama tampilan",
+          "email_address": "Alamat email",
+          "account_type": "Tipe akun",
+          "authentication": "Autentikasi",
+          "joining_date": "Tanggal bergabung"
+        },
+        "modal": {
+          "title": "Undang orang untuk berkolaborasi",
+          "description": "Undang orang untuk berkolaborasi di ruang kerja Anda.",
+          "button": "Kirim undangan",
+          "button_loading": "Mengirim undangan",
+          "placeholder": "name@company.com",
+          "errors": {
+            "required": "Kami perlu alamat email untuk mengundang mereka.",
+            "invalid": "Email tidak valid"
+          }
+        }
+      },
+      "billing_and_plans": {
+        "heading": "Penagihan & Rencana",
+        "description": "Pilih rencana Anda, kelola langganan, dan tingkatkan dengan mudah seiring pertumbuhan kebutuhan Anda.",
+        "title": "Penagihan & Rencana",
+        "current_plan": "Rencana saat ini",
+        "free_plan": "Anda saat ini menggunakan rencana gratis",
+        "view_plans": "Lihat rencana"
+      },
+      "exports": {
+        "heading": "Ekspor",
+        "description": "Ekspor data proyek Anda dalam berbagai format dan akses riwayat ekspor Anda dengan tautan unduhan.",
+        "title": "Ekspor",
+        "exporting": "Mengeskpor",
+        "previous_exports": "Ekspor sebelumnya",
+        "export_separate_files": "Ekspor data ke file terpisah",
+        "exporting_projects": "Mengekspor proyek",
+        "format": "Format",
+        "filters_info": "Terapkan filter untuk mengekspor item kerja tertentu berdasarkan kriteria Anda.",
+        "modal": {
+          "title": "Ekspor ke",
+          "toasts": {
+            "success": {
+              "title": "Ekspor berhasil",
+              "message": "Anda akan dapat mengunduh {entity} yang diekspor dari ekspor sebelumnya."
+            },
+            "error": {
+              "title": "Ekspor gagal",
+              "message": "Ekspor tidak berhasil. Silakan coba lagi."
+            }
+          }
+        }
+      },
+      "webhooks": {
+        "heading": "Webhook",
+        "description": "Otomatiskan notifikasi ke layanan eksternal saat peristiwa proyek terjadi.",
+        "title": "Webhook",
+        "add_webhook": "Tambah webhook",
+        "modal": {
+          "title": "Buat webhook",
+          "details": "Detail webhook",
+          "payload": "Payload URL",
+          "question": "Peristiwa apa yang ingin Anda picu untuk webhook ini?",
+          "error": "URL diperlukan"
+        },
+        "secret_key": {
+          "title": "Kunci rahasia",
+          "message": "Hasilkan token untuk masuk ke payload webhook"
+        },
+        "options": {
+          "all": "Kirim saya semuanya",
+          "individual": "Pilih peristiwa individu"
+        },
+        "toasts": {
+          "created": {
+            "title": "Webhook dibuat",
+            "message": "Webhook telah berhasil dibuat"
+          },
+          "not_created": {
+            "title": "Webhook tidak dibuat",
+            "message": "Webhook tidak dapat dibuat"
+          },
+          "updated": {
+            "title": "Webhook diperbarui",
+            "message": "Webhook telah berhasil diperbarui"
+          },
+          "not_updated": {
+            "title": "Webhook tidak diperbarui",
+            "message": "Webhook tidak dapat diperbarui"
+          },
+          "removed": {
+            "title": "Webhook dihapus",
+            "message": "Webhook telah berhasil dihapus"
+          },
+          "not_removed": {
+            "title": "Webhook tidak dihapus",
+            "message": "Webhook tidak dapat dihapus"
+          },
+          "secret_key_copied": {
+            "message": "Kunci rahasia disalin ke clipboard."
+          },
+          "secret_key_not_copied": {
+            "message": "Terjadi kesalahan saat menyalin kunci rahasia."
+          }
+        }
+      },
+      "api_tokens": {
+        "heading": "Token API",
+        "description": "Buat token API yang aman untuk mengintegrasikan data Anda dengan sistem dan aplikasi eksternal.",
+        "title": "Token API",
+        "add_token": "Tambah token akses",
+        "create_token": "Buat token",
+        "never_expires": "Tidak pernah kedaluwarsa",
+        "generate_token": "Hasilkan token",
+        "generating": "Menghasilkan",
+        "delete": {
+          "title": "Hapus token API",
+          "description": "Setiap aplikasi yang menggunakan token ini tidak akan memiliki akses ke data Plane. Tindakan ini tidak dapat dibatalkan.",
+          "success": {
+            "title": "Sukses!",
+            "message": "Token API telah berhasil dihapus"
+          },
+          "error": {
+            "title": "Kesalahan!",
+            "message": "Token API tidak dapat dihapus"
+          }
+        }
+      },
+      "integrations": {
+        "title": "Integrasi",
+        "heading": "Integrasi",
+        "description": "Hubungkan dengan alat dan layanan populer untuk menyinkronkan pekerjaan Anda di seluruh ekosistem alur kerja Anda.",
+        "page_title": "Gunakan data Plane Anda di aplikasi yang tersedia atau aplikasi Anda sendiri.",
+        "page_description": "Lihat semua integrasi yang digunakan oleh workspace ini atau oleh Anda."
+      },
+      "imports": {
+        "title": "Impor",
+        "heading": "Impor",
+        "description": "Hubungkan dan impor data dari alat manajemen proyek Anda yang sudah ada untuk menyederhanakan integrasi alur kerja."
+      },
+      "worklogs": {
+        "title": "Log kerja",
+        "heading": "Log kerja",
+        "description": "Unduh log kerja alias lembar waktu untuk siapa pun dalam proyek apa pun."
+      },
+      "group_syncing": {
+        "title": "Sinkronisasi grup",
+        "heading": "Sinkronisasi grup",
+        "description": "Tautkan grup penyedia identitas ke proyek dan peran. Akses pengguna diperbarui secara otomatis saat keanggotaan grup berubah di IdP Anda, menyederhanakan onboarding dan offboarding.",
+        "enable": {
+          "title": "Aktifkan sinkronisasi grup",
+          "description": "Secara otomatis menambahkan pengguna ke proyek berdasarkan grup penyedia identitas."
+        },
+        "config": {
+          "title": "Konfigurasi sinkronisasi grup",
+          "description": "Atur cara grup penyedia identitas dipetakan ke proyek dan peran.",
+          "sync_on_login": {
+            "title": "Sinkronisasi saat login",
+            "description": "Perbarui keanggotaan grup dan akses proyek saat pengguna masuk."
+          },
+          "sync_offline": {
+            "title": "Sinkronisasi offline",
+            "description": "Menjalankan sinkronisasi setiap enam jam secara otomatis, tanpa menunggu pengguna login."
+          },
+          "auto_remove": {
+            "title": "Hapus otomatis",
+            "description": "Secara otomatis menghapus pengguna dari proyek ketika mereka tidak lagi cocok dengan grup."
+          },
+          "group_attribute_key": {
+            "title": "Kunci atribut grup",
+            "description": "Atribut penyedia identitas yang digunakan untuk mengidentifikasi dan menyinkronkan grup pengguna.",
+            "placeholder": "Grup"
+          }
+        },
+        "group_mapping": {
+          "title": "Pemetaan grup",
+          "description": "Tautkan grup penyedia identitas ke proyek dan peran.",
+          "button_text": "Tambah sinkronisasi grup baru"
+        },
+        "toast": {
+          "updating": "Memperbarui fitur sinkronisasi grup",
+          "success": "Fitur sinkronisasi grup berhasil diperbarui.",
+          "error": "Gagal memperbarui fitur sinkronisasi grup!"
+        },
+        "delete_modal": {
+          "title": "Hapus sinkronisasi grup",
+          "content": "Pengguna baru dari grup identitas ini tidak akan lagi ditambahkan ke proyek. Pengguna yang sudah ditambahkan akan mempertahankan peran mereka saat ini."
+        },
+        "modal": {
+          "idp_group_name": {
+            "text": "Grup pengguna",
+            "required": "Grup pengguna wajib diisi",
+            "placeholder": "Masukkan nama grup IdP"
+          },
+          "project": {
+            "text": "Proyek",
+            "required": "Proyek wajib diisi",
+            "placeholder": "Pilih proyek"
+          },
+          "default_role": {
+            "text": "Peran proyek",
+            "required": "Peran proyek wajib diisi",
+            "placeholder": "Pilih peran proyek"
+          }
+        }
+      },
+      "identity": {
+        "title": "Identitas",
+        "heading": "Identitas",
+        "description": "Konfigurasi domain Anda dan aktifkan Single sign-on"
+      },
+      "project_states": {
+        "title": "Status proyek",
+        "heading": "Lihat ikhtisar kemajuan untuk semua proyek.",
+        "description": "Status Proyek adalah fitur khusus Plane untuk melacak kemajuan semua proyek Anda berdasarkan properti proyek apa pun.",
+        "go_to_settings": "Pergi ke pengaturan"
+      },
+      "projects": {
+        "title": "Proyek",
+        "description": "Kelola status proyek, aktifkan label proyek, dan konfigurasi lainnya.",
+        "tabs": {
+          "states": "Status proyek",
+          "labels": "Label proyek"
+        }
+      },
+      "templates": {
+        "title": "Templat",
+        "heading": "Templat",
+        "description": "Hemat 80% waktu yang dihabiskan untuk membuat proyek, item kerja, dan halaman saat Anda menggunakan templat."
+      },
+      "relations": {
+        "title": "Relasi",
+        "heading": "Relasi",
+        "description": "Buat dan kelola tipe relasi yang menghubungkan item kerja di seluruh ruang kerja Anda."
+      },
+      "cancel_trial": {
+        "title": "Batalkan uji coba Anda terlebih dahulu.",
+        "description": "Anda memiliki uji coba aktif untuk salah satu paket berbayar kami. Silakan batalkan terlebih dahulu untuk melanjutkan.",
+        "dismiss": "Tutup",
+        "cancel": "Batalkan uji coba",
+        "cancel_success_title": "Uji coba dibatalkan.",
+        "cancel_success_message": "Anda sekarang dapat menghapus workspace.",
+        "cancel_error_title": "Itu tidak berhasil.",
+        "cancel_error_message": "Silakan coba lagi."
+      },
+      "applications": {
+        "internal": "Internal",
+        "title": "Aplikasi",
+        "applicationId_copied": "ID aplikasi disalin ke clipboard",
+        "clientId_copied": "ID klien disalin ke clipboard",
+        "clientSecret_copied": "Kunci rahasia klien disalin ke clipboard",
+        "third_party_apps": "Aplikasi pihak ketiga",
+        "your_apps": "Aplikasi Anda",
+        "connect": "Koneksi",
+        "connected": "Terhubung",
+        "disconnect": "Putuskan",
+        "install": "Pasang",
+        "installed": "Terpasang",
+        "configure": "Konfigurasi",
+        "app_available": "Anda telah membuat aplikasi ini tersedia untuk digunakan dengan workspace Plane",
+        "app_credentials_regenrated": {
+          "title": "Kredensial aplikasi berhasil digenerasi ulang",
+          "description": "Ganti client secret di semua tempat yang digunakan. Secret sebelumnya sudah tidak berlaku."
+        },
+        "app_created": {
+          "title": "Aplikasi berhasil dibuat",
+          "description": "Gunakan kredensial untuk menginstal aplikasi di ruang kerja Plane"
+        },
+        "installed_apps": "Aplikasi terpasang",
+        "all_apps": "Semua aplikasi",
+        "internal_apps": "Aplikasi internal",
+        "app_name_title": "Apa nama Anda untuk aplikasi ini",
+        "app_description_title": {
+          "label": "Deskripsi panjang",
+          "placeholder": "Tulis deskripsi panjang untuk marketplace. Tekan '/' untuk perintah."
+        },
+        "authorization_grant_type": {
+          "title": "Jenis Koneksi",
+          "description": "Pilih apakah aplikasi Anda harus diinstal sekali untuk workspace atau biarkan setiap pengguna menghubungkan akun mereka sendiri"
+        },
+        "website": {
+          "title": "Situs web",
+          "description": "Tautan ke situs web aplikasi Anda.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Pembuat Aplikasi",
+          "description": "Orang atau organisasi yang membuat aplikasi."
+        },
+        "app_maker_error": "Pembuat aplikasi diperlukan",
+        "setup_url": {
+          "label": "URL pengaturan",
+          "description": "Pengguna akan diarahkan ke URL ini saat mereka menginstal aplikasi.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL webhook",
+          "description": "Di sinilah kami akan mengirimkan event dan pembaruan webhook dari workspace tempat aplikasi Anda terpasang.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Rahasia Webhook",
+          "description": "Rahasia yang digunakan untuk memverifikasi permintaan webhook yang masuk.",
+          "placeholder": "Masukkan kunci rahasia acak"
+        },
+        "redirect_uris": {
+          "label": "URI pengalihan (dipisahkan spasi)",
+          "description": "Pengguna akan diarahkan ke jalur ini setelah mereka masuk dengan Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_available_description": "Hubungkan workspace Plane untuk mulai menggunakannya",
+        "client_id_and_secret": "ID klien dan Rahasia",
+        "client_id_and_secret_description": "Salin dan simpan kunci rahasia ini di Pages. Anda tidak dapat melihat kunci ini lagi setelah Anda menutupnya.",
+        "client_id_and_secret_download": "Anda dapat mengunduh CSV dengan kunci dari sini.",
+        "application_id": "ID Aplikasi",
+        "client_id": "ID Klien",
+        "client_secret": "Rahasia Klien",
+        "export_as_csv": "Ekspor sebagai CSV",
+        "slug_already_exists": "Slug sudah ada",
+        "failed_to_create_application": "Gagal membuat aplikasi",
+        "upload_logo": "Unggah Logo",
+        "app_name_error": "Nama aplikasi diperlukan",
+        "app_short_description_title": "Berikan aplikasi ini deskripsi singkat",
+        "app_short_description_error": "Deskripsi aplikasi singkat diperlukan",
+        "app_description_error": "Deskripsi aplikasi diperlukan",
+        "app_slug_title": "Slug aplikasi",
+        "app_slug_error": "Slug aplikasi diperlukan",
+        "invalid_website_error": "Website tidak valid",
+        "webhook_url_title": "URL Webhook",
+        "webhook_url_error": "URL Webhook diperlukan",
+        "invalid_webhook_url_error": "URL Webhook tidak valid",
+        "redirect_uris_title": "Redirect URIs",
+        "redirect_uris_error": "Redirect URIs diperlukan",
+        "invalid_redirect_uris_error": "Redirect URIs tidak valid",
+        "redirect_uris_description": "Masukkan URI yang dipisahkan oleh spasi di mana aplikasi akan diarahkan setelah pengguna e.g https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Authorized Javascript Origins",
+        "authorized_javascript_origins_error": "Authorized Javascript Origins diperlukan",
+        "invalid_authorized_javascript_origins_error": "Authorized Javascript Origins tidak valid",
+        "authorized_javascript_origins_description": "Masukkan URI yang dipisahkan oleh spasi di mana aplikasi akan diizinkan untuk membuat permintaan e.g app.com example.com",
+        "create_app": "Buat aplikasi",
+        "update_app": "Perbarui aplikasi",
+        "build_your_own_app": "Bangun aplikasi Anda sendiri",
+        "edit_app_details": "Edit detail aplikasi",
+        "regenerate_client_secret_description": "Regenerate kunci rahasia klien. Jika Anda menghasilkan kunci rahasia, Anda dapat menyalin kunci atau mengunduhnya ke file CSV setelah itu.",
+        "regenerate_client_secret": "Regenerate kunci rahasia klien",
+        "regenerate_client_secret_confirm_title": "Apakah Anda yakin ingin menghasilkan kembali kunci rahasia klien?",
+        "regenerate_client_secret_confirm_description": "Aplikasi yang menggunakan kunci rahasia ini akan berhenti bekerja. Anda perlu memperbarui kunci rahasia di aplikasi.",
+        "regenerate_client_secret_confirm_cancel": "Batalkan",
+        "regenerate_client_secret_confirm_regenerate": "Regenerate",
+        "read_only_access_to_workspace": "Akses baca-saja ke workspace Anda",
+        "write_access_to_workspace": "Akses tulis ke workspace Anda",
+        "read_only_access_to_user_profile": "Akses baca-saja ke profil pengguna Anda",
+        "write_access_to_user_profile": "Akses tulis ke profil pengguna Anda",
+        "connect_app_to_workspace": "Koneksikan {app} ke workspace Anda {workspace}",
+        "user_permissions": "Izin pengguna",
+        "user_permissions_description": "Izin pengguna digunakan untuk memberikan akses ke profil pengguna.",
+        "workspace_permissions": "Izin workspace",
+        "workspace_permissions_description": "Izin workspace digunakan untuk memberikan akses ke workspace.",
+        "with_the_permissions": "dengan izin",
+        "app_consent_title": "{app} meminta akses ke workspace Anda dan profil Plane.",
+        "choose_workspace_to_connect_app_with": "Pilih workspace untuk menghubungkan aplikasi",
+        "app_consent_workspace_permissions_title": "{app} ingin",
+        "app_consent_user_permissions_title": "{app} juga dapat meminta izin pengguna untuk sumber daya berikut. Izin ini akan diminta dan diotorisasi hanya oleh pengguna.",
+        "app_consent_accept_title": "Dengan menerima, Anda",
+        "app_consent_accept_1": "Berikan akses ke data Plane Anda di mana pun Anda dapat menggunakan aplikasi di dalam atau di luar Plane",
+        "app_consent_accept_2": "Setuju dengan {app}'s Privacy Policy dan Terms Of Use",
+        "accepting": "Menerima...",
+        "accept": "Menerima",
+        "categories": "Kategori",
+        "select_app_categories": "Pilih kategori aplikasi",
+        "categories_title": "Kategori",
+        "categories_error": "Kategori diperlukan",
+        "invalid_categories_error": "Kategori tidak valid",
+        "categories_description": "Pilih kategori yang paling sesuai dengan aplikasi",
+        "supported_plans": "Paket yang Didukung",
+        "supported_plans_description": "Pilih paket workspace yang dapat menginstal aplikasi ini. Kosongkan untuk mengizinkan semua paket.",
+        "select_plans": "Pilih Paket",
+        "privacy_policy_url_title": "URL Privacy Policy",
+        "privacy_policy_url_error": "URL Privacy Policy diperlukan",
+        "invalid_privacy_policy_url_error": "URL Privacy Policy tidak valid",
+        "terms_of_service_url_title": "URL Terms of Service",
+        "terms_of_service_url_error": "URL Terms of Service diperlukan",
+        "invalid_terms_of_service_url_error": "URL Terms of Service tidak valid",
+        "support_url_title": "URL Support",
+        "support_url_error": "URL Support diperlukan",
+        "invalid_support_url_error": "URL Support tidak valid",
+        "video_url_title": "URL Video",
+        "video_url_error": "URL Video diperlukan",
+        "invalid_video_url_error": "URL Video tidak valid",
+        "setup_url_error": "URL Setup diperlukan",
+        "invalid_setup_url_error": "URL Setup tidak valid",
+        "configuration_url_title": "URL Konfigurasi",
+        "configuration_url_error": "URL Konfigurasi diperlukan",
+        "invalid_configuration_url_error": "URL Konfigurasi tidak valid",
+        "contact_email_title": "Email Kontak",
+        "contact_email_error": "Email Kontak diperlukan",
+        "invalid_contact_email_error": "Email Kontak tidak valid",
+        "upload_attachments": "Unggah Lampiran",
+        "uploading_images": "Mengunggah {count} Gambar{count, plural, one {s} other {s}}",
+        "drop_images_here": "Letakkan gambar di sini",
+        "click_to_upload_images": "Klik untuk mengunggah gambar",
+        "invalid_file_or_exceeds_size_limit": "File tidak valid atau melebihi batas ukuran ({size} MB)",
+        "uploading": "Mengunggah...",
+        "upload_and_save": "Unggah dan Simpan",
+        "app_consent_no_access_title": "Permintaan untuk menginstal",
+        "app_consent_no_access_description": "Aplikasi ini hanya dapat diinstal setelah admin workspace menginstalnya. Hubungi admin workspace Anda untuk melanjutkan.",
+        "app_consent_unapproved_title": "Aplikasi ini belum ditinjau atau disetujui oleh Plane.",
+        "app_consent_unapproved_description": "Pastikan Anda memercayai aplikasi ini sebelum menghubungkannya ke ruang kerja Anda.",
+        "go_to_app": "Buka aplikasi",
+        "enable_app_mentions": "Aktifkan penyebutan aplikasi",
+        "enable_app_mentions_tooltip": "Saat ini diaktifkan, pengguna dapat menyebut atau menetapkan Work Items ke aplikasi ini.",
+        "scopes": "Lingkup",
+        "select_scopes": "Pilih Lingkup",
+        "read_access_to": "Akses baca-saja ke",
+        "write_access_to": "Akses tulis ke",
+        "global_permission_expiration": "Lingkup global akan segera berakhir. Gunakan lingkup granular sebagai gantinya. Misalnya, gunakan project:read alih-alih baca global.",
+        "selected_scopes": "{count} dipilih",
+        "scopes_and_permissions": "Lingkup & Izin",
+        "read": "Baca",
+        "write": "Tulis",
+        "scope_description": {
+          "projects": "Akses ke proyek dan semua entitas terkait proyek",
+          "wiki": "Akses ke wiki dan semua entitas terkait wiki",
+          "workspaces": "Akses ke workspace dan semua entitas terkait workspace",
+          "stickies": "Akses ke stickies dan semua entitas terkait sticky",
+          "profile": "Akses ke informasi profil pengguna",
+          "agents": "Akses ke agen dan semua entitas terkait agen",
+          "assets": "Akses ke aset dan semua entitas terkait aset"
+        }
+      },
+      "plane-intelligence": {
+        "title": "Plane AI",
+        "heading": "Plane AI",
+        "description": "Lihat pekerjaan Anda menjadi lebih cerdas dan lebih cepat dengan AI yang terhubung secara native ke pekerjaan dan basis pengetahuan Anda."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Skrip",
+        "new_script": "Skrip Baru",
+        "description": "Otomatisasi alur kerja Anda dengan skrip kustom dan aturan otomatisasi."
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "Belum ada token API yang dibuat",
+        "description": "API Plane dapat digunakan untuk mengintegrasikan data Anda di Plane dengan sistem eksternal mana pun. Buat token untuk memulai."
+      },
+      "webhooks": {
+        "title": "Belum ada webhook yang ditambahkan",
+        "description": "Buat webhook untuk menerima pembaruan waktu nyata dan mengotomatiskan tindakan."
+      },
+      "exports": {
+        "title": "Belum ada ekspor",
+        "description": "Setiap kali Anda mengekspor, Anda juga akan memiliki salinan di sini untuk referensi."
+      },
+      "imports": {
+        "title": "Belum ada impor",
+        "description": "Temukan semua impor Anda sebelumnya di sini dan unduh."
+      }
+    }
+  }
+}

@@ -1,6 +1,14 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third party imports
 import random
 from rest_framework import serializers
+
+
+# Python imports
+import re
 
 # Module imports
 from plane.db.models import Project, ProjectIdentifier, WorkspaceMember, State, Estimate
@@ -97,13 +105,29 @@ class ProjectCreateSerializer(BaseSerializer):
         ]
 
     def validate(self, data):
-        if data.get("project_lead", None) is not None:
-            # Check if the project lead is a member of the workspace
-            if not WorkspaceMember.objects.filter(
+        project_name = data.get("name", None)
+        project_identifier = data.get("identifier", None)
+
+        if project_name is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_name):
+            raise serializers.ValidationError("Project name cannot contain special characters.")
+
+        if project_identifier is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_identifier):
+            raise serializers.ValidationError("Project identifier cannot contain special characters.")
+
+        project_lead = data.get("project_lead")
+        if (
+            project_lead
+            and not WorkspaceMember.objects.filter(
                 workspace_id=self.context["workspace_id"],
-                member_id=data.get("project_lead"),
-            ).exists():
-                raise serializers.ValidationError("Project lead should be a user in the workspace")
+                member=project_lead,
+                is_active=True,
+            ).exists()
+        ):
+            # Field-shaped error so DRF surfaces it under the specific key
+            # rather than as non_field_errors. Also requires the membership
+            # to be active so that revoked / removed members can't slip
+            # through and trigger the FK error downstream.
+            raise serializers.ValidationError({"project_lead": "The provided user is not a member of this workspace."})
 
         if data.get("default_assignee", None) is not None:
             # Check if the default assignee is a member of the workspace
@@ -156,6 +180,15 @@ class ProjectUpdateSerializer(ProjectCreateSerializer):
         read_only_fields = ProjectCreateSerializer.Meta.read_only_fields
 
     def update(self, instance, validated_data):
+        project_name = validated_data.get("name", None)
+        project_identifier = validated_data.get("identifier", None)
+
+        if project_name is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_name):
+            raise serializers.ValidationError("Project name cannot contain special characters.")
+
+        if project_identifier is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_identifier):
+            raise serializers.ValidationError("Project identifier cannot contain special characters.")
+
         """Update a project"""
         if (
             validated_data.get("default_state", None) is not None
@@ -206,6 +239,15 @@ class ProjectSerializer(BaseSerializer):
         ]
 
     def validate(self, data):
+        project_name = data.get("name", None)
+        project_identifier = data.get("identifier", None)
+
+        if project_name is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_name):
+            raise serializers.ValidationError("Project name cannot contain special characters.")
+
+        if project_identifier is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_identifier):
+            raise serializers.ValidationError("Project identifier cannot contain special characters.")
+
         # Check project lead should be a member of the workspace
         if (
             data.get("project_lead", None) is not None
@@ -276,5 +318,6 @@ class ProjectLiteSerializer(BaseSerializer):
             "emoji",
             "description",
             "cover_image_url",
+            "archived_at",
         ]
         read_only_fields = fields

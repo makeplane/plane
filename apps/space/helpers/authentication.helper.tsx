@@ -1,4 +1,10 @@
-import Link from "next/link";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { Link } from "react-router";
 // helpers
 import { SUPPORT_EMAIL } from "@plane/constants";
 
@@ -36,6 +42,7 @@ export enum EAuthenticationErrorCodes {
   INVALID_EMAIL_MAGIC_SIGN_UP = "5050",
   MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED = "5055",
   // Sign In
+  BOT_USER_LOGIN_FORBIDDEN = "5017",
   USER_ACCOUNT_DEACTIVATED = "5019",
   USER_DOES_NOT_EXIST = "5060",
   AUTHENTICATION_FAILED_SIGN_IN = "5065",
@@ -123,8 +130,8 @@ const errorCodeMessages: {
       <div>
         Your account is already registered.&nbsp;
         <Link
-          className="underline underline-offset-4 font-medium hover:font-bold transition-all"
-          href={`/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`}
+          className="font-medium underline underline-offset-4 transition-all hover:font-bold"
+          to={`/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Sign In
         </Link>
@@ -154,6 +161,10 @@ const errorCodeMessages: {
   },
 
   // sign in
+  [EAuthenticationErrorCodes.BOT_USER_LOGIN_FORBIDDEN]: {
+    title: `Sign in not allowed`,
+    message: () => `This account cannot be used to sign in. Please use a personal account.`,
+  },
   [EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED]: {
     title: `User account deactivated`,
     message: () => `User account deactivated. Please contact ${SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
@@ -165,8 +176,8 @@ const errorCodeMessages: {
       <div>
         No account found.&nbsp;
         <Link
-          className="underline underline-offset-4 font-medium hover:font-bold transition-all"
-          href={`/${email ? `?email=${encodeURIComponent(email)}` : ``}`}
+          className="font-medium underline underline-offset-4 transition-all hover:font-bold"
+          to={`/${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Create one
         </Link>
@@ -311,7 +322,7 @@ const errorCodeMessages: {
     message: () => (
       <div>
         Admin user already exists.&nbsp;
-        <Link className="underline underline-offset-4 font-medium hover:font-bold transition-all" href={`/admin`}>
+        <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" to={`/admin`}>
           Sign In
         </Link>
         &nbsp;now.
@@ -323,7 +334,7 @@ const errorCodeMessages: {
     message: () => (
       <div>
         Admin user does not exist.&nbsp;
-        <Link className="underline underline-offset-4 font-medium hover:font-bold transition-all" href={`/admin`}>
+        <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" to={`/admin`}>
           Sign In
         </Link>
         &nbsp;now.
@@ -378,6 +389,7 @@ export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: s
     EAuthenticationErrorCodes.ADMIN_AUTHENTICATION_FAILED,
     EAuthenticationErrorCodes.ADMIN_USER_ALREADY_EXIST,
     EAuthenticationErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
+    EAuthenticationErrorCodes.BOT_USER_LOGIN_FORBIDDEN,
     EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED,
   ];
 

@@ -1,0 +1,34 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "結果が見つかりません"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "付箋",
+    "your_work": "あなたの作業",
+    "projects": "プロジェクト",
+    "pages": "ページ",
+    "new_work_item": "新規作業項目",
+    "home": "ホーム",
+    "inbox": "受信トレイ",
+    "workspace": "ワークスペース",
+    "views": "ビュー",
+    "analytics": "アナリティクス",
+    "work_items": "作業項目",
+    "cycles": "サイクル",
+    "modules": "モジュール",
+    "intake": "インテーク",
+    "drafts": "下書き",
+    "favorites": "お気に入り",
+    "pro": "プロ",
+    "upgrade": "アップグレード",
+    "pi_chat": "AIチャット",
+    "epics": "エピック",
+    "upgrade_plan": "プランをアップグレード",
+    "plane_pro": "Plane Pro",
+    "business": "ビジネス"
+  }
+}

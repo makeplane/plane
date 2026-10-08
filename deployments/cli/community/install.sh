@@ -5,7 +5,7 @@ SCRIPT_DIR=$PWD
 SERVICE_FOLDER=plane-app
 PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
 export APP_RELEASE=stable
-export DOCKERHUB_USER=artifacts.plane.so/makeplane
+export DOCKERHUB_USER=makeplane
 export PULL_POLICY=${PULL_POLICY:-if_not_present}
 export GH_REPO=makeplane/plane
 export RELEASE_DOWNLOAD_URL="https://github.com/$GH_REPO/releases/download"
@@ -23,16 +23,16 @@ function print_header() {
 clear
 
 cat <<"EOF"
---------------------------------------------
- ____  _                          ///////// 
-|  _ \| | __ _ _ __   ___         ///////// 
-| |_) | |/ _` | '_ \ / _ \   /////    ///// 
-|  __/| | (_| | | | |  __/   /////    ///// 
-|_|   |_|\__,_|_| |_|\___|        ////      
-                                  ////      
---------------------------------------------
-Project management tool from the future
---------------------------------------------
+##+.    ##+    .##-                  
+ ######+.######-.######.              
+ #######.   -###    +#####+.          
+ #######.      +       +######.       
+ #######.              .#######       
+ #######.              .#######       
+  #######       +      .#######       
+    .+#####+    ###-   .#######       
+        .######.-#####+.+######       
+            -##.    -##    .+##
 EOF
 }
 
@@ -57,7 +57,7 @@ function spinner() {
 
 function checkLatestRelease(){
     echo "Checking for the latest release..." >&2
-    local latest_release=$(curl -sSL https://api.github.com/repos/$GH_REPO/releases/latest |  grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//;s/"//g')
+    local latest_release=$(curl -sSL https://api.github.com/repos/$GH_REPO/releases/latest |  grep -o '"tag_name": *"[^"]*"' | sed 's/"tag_name": *"//;s/"//g')
     if [ -z "$latest_release" ]; then
         echo "Failed to check for the latest release. Exiting..." >&2
         exit 1
@@ -217,7 +217,9 @@ function install() {
     echo ""
 
     if [ "$APP_RELEASE" == "stable" ]; then
-        export APP_RELEASE=$(checkLatestRelease)
+        # exit inside checkLatestRelease only leaves the $(...) subshell
+        APP_RELEASE=$(checkLatestRelease) || exit 1
+        export APP_RELEASE
     fi
 
     local build_image=$(initialize)
@@ -424,7 +426,8 @@ function restartServices() {
     startServices
 }
 function upgrade() {
-    local latest_release=$(checkLatestRelease)
+    local latest_release
+    latest_release=$(checkLatestRelease) || exit 1
 
     echo ""
     echo "Current release: $APP_RELEASE"
@@ -690,7 +693,7 @@ if [ -f "$DOCKER_ENV_PATH" ]; then
     CUSTOM_BUILD=$(getEnvValue "CUSTOM_BUILD" "$DOCKER_ENV_PATH")
 
     if [ -z "$DOCKERHUB_USER" ]; then
-        DOCKERHUB_USER=artifacts.plane.so/makeplane
+        DOCKERHUB_USER=makeplane
         updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" "$DOCKER_ENV_PATH"
     fi
 

@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Oczekujące",
+        "description": "Oczekujące"
+      },
+      "declined": {
+        "title": "Odrzucone",
+        "description": "Odrzucone"
+      },
+      "snoozed": {
+        "title": "Odłożone",
+        "description": "Pozostało {days, plural, one{# dzień} few{# dni} other{# dni}}"
+      },
+      "accepted": {
+        "title": "Zaakceptowane",
+        "description": "Zaakceptowane"
+      },
+      "duplicate": {
+        "title": "Duplikat",
+        "description": "Duplikat"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "Odrzuć element pracy",
+        "content": "Czy na pewno chcesz odrzucić element pracy {value}?"
+      },
+      "delete": {
+        "title": "Usuń element pracy",
+        "content": "Czy na pewno chcesz usunąć element pracy {value}?",
+        "success": "Element pracy usunięto pomyślnie"
+      }
+    },
+    "errors": {
+      "snooze_permission": "Tylko administratorzy projektu mogą odkładać/odkładać ponownie elementy pracy",
+      "accept_permission": "Tylko administratorzy projektu mogą akceptować elementy pracy",
+      "decline_permission": "Tylko administratorzy projektu mogą odrzucać elementy pracy"
+    },
+    "actions": {
+      "accept": "Zaakceptuj",
+      "decline": "Odrzuć",
+      "snooze": "Odłóż",
+      "unsnooze": "Anuluj odłożenie",
+      "copy": "Kopiuj link do elementu pracy",
+      "delete": "Usuń",
+      "open": "Otwórz element pracy",
+      "mark_as_duplicate": "Oznacz jako duplikat",
+      "move": "Przenieś {value} do elementów pracy projektu"
+    },
+    "source": {
+      "in-app": "w aplikacji"
+    },
+    "order_by": {
+      "created_at": "Utworzono dnia",
+      "updated_at": "Zaktualizowano dnia",
+      "id": "ID"
+    },
+    "label": "Zgłoszenia",
+    "page_label": "{workspace} - Zgłoszenia",
+    "modal": {
+      "title": "Utwórz przyjęty element pracy"
+    },
+    "tabs": {
+      "open": "Otwarte",
+      "closed": "Zamknięte"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "Brak otwartych elementów pracy",
+        "description": "Tutaj znajdziesz otwarte elementy pracy. Utwórz nowy."
+      },
+      "sidebar_closed_tab": {
+        "title": "Brak zamkniętych elementów pracy",
+        "description": "Wszystkie zaakceptowane lub odrzucone elementy pracy pojawią się tutaj."
+      },
+      "sidebar_filter": {
+        "title": "Brak pasujących elementów pracy",
+        "description": "Żaden element nie pasuje do filtra w zgłoszeniach. Utwórz nowy."
+      },
+      "detail": {
+        "title": "Wybierz element pracy, aby zobaczyć szczegóły."
+      }
+    }
+  }
+}

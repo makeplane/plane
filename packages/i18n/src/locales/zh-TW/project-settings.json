@@ -1,0 +1,526 @@
+{
+  "project_settings": {
+    "general": {
+      "enter_project_id": "輸入專案 ID",
+      "please_select_a_timezone": "請選擇時區",
+      "archive_project": {
+        "title": "封存專案",
+        "description": "封存專案將不再從您的側邊導覽列中列出您的專案，但您仍然可以從專案頁面存取它。您可以隨時還原專案或刪除它。",
+        "button": "封存專案"
+      },
+      "delete_project": {
+        "title": "刪除專案",
+        "description": "刪除專案時，該專案內的所有資料和資源都將被永久移除且無法復原。",
+        "button": "刪除我的專案"
+      },
+      "toast": {
+        "success": "專案更新成功",
+        "error": "無法更新專案。請再試一次。"
+      }
+    },
+    "members": {
+      "label": "成員",
+      "project_lead": "專案負責人",
+      "project_lead_description": "請選擇該專案的專案負責人。",
+      "default_assignee": "預設指派對象",
+      "default_assignee_description": "請選擇該專案的預設指派人。",
+      "project_subscribers": "專案訂閱者",
+      "project_subscribers_description": "請選擇將接收此專案通知的成員。",
+      "guest_super_permissions": {
+        "title": "授予訪客使用者檢視所有工作事項的權限：",
+        "sub_heading": "這將允許訪客檢視所有專案工作事項。"
+      },
+      "invite_members": {
+        "title": "邀請成員",
+        "sub_heading": "邀請成員參與您的專案。",
+        "select_co_worker": "選擇同事"
+      }
+    },
+    "states": {
+      "heading": "狀態",
+      "description": "定義並自訂工作流程狀態以追蹤工作事項的進度。",
+      "describe_this_state_for_your_members": "為您的成員描述此狀態。",
+      "empty_state": {
+        "title": "{groupKey} 群組沒有可用的狀態",
+        "description": "請建立新狀態"
+      }
+    },
+    "labels": {
+      "heading": "標籤",
+      "description": "建立自訂標籤以分類和整理您的工作事項",
+      "label_title": "標籤標題",
+      "label_title_is_required": "標籤標題為必填",
+      "label_max_char": "標籤名稱不應超過 255 個字元",
+      "toast": {
+        "error": "更新標籤時發生錯誤"
+      }
+    },
+    "estimates": {
+      "heading": "評估",
+      "description": "幫助你傳達團隊的複雜性和工作負荷。",
+      "label": "預估",
+      "title": "為我的專案啟用預估",
+      "enable_description": "它們能幫助您傳達團隊的複雜度和工作量。",
+      "no_estimate": "無預估",
+      "new": "新估算系統",
+      "create": {
+        "custom": "自訂",
+        "start_from_scratch": "從頭開始",
+        "choose_template": "選擇範本",
+        "choose_estimate_system": "選擇預估系統",
+        "enter_estimate_point": "輸入預估",
+        "step": "步驟 {step} 共 {total}",
+        "label": "建立預估"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "預估已建立",
+            "message": "預估已成功建立"
+          },
+          "error": {
+            "title": "預估建立失敗",
+            "message": "我們無法建立新的預估，請重試。"
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "預估已修改",
+            "message": "專案中的預估已更新。"
+          },
+          "error": {
+            "title": "預估修改失敗",
+            "message": "我們無法修改預估，請重試"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "成功！",
+            "message": "預估已啟用。"
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "成功！",
+            "message": "預估已停用。"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "無法停用預估。請重試"
+          }
+        },
+        "reorder": {
+          "success": {
+            "title": "估算已重新排序",
+            "message": "估算已在您的專案中重新排序。"
+          },
+          "error": {
+            "title": "估算重新排序失敗",
+            "message": "我們無法重新排序估算，請再試一次"
+          }
+        },
+        "switch": {
+          "success": {
+            "title": "估算系統已建立",
+            "message": "已成功建立並啟用"
+          },
+          "error": {
+            "title": "錯誤",
+            "message": "發生錯誤"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "預估必須大於0。",
+        "unable_to_process": "我們無法處理你的請求，請重試。",
+        "numeric": "預估必須是數值。",
+        "character": "預估必須是字元值。",
+        "empty": "預估值不能為空。",
+        "already_exists": "預估值已存在。",
+        "unsaved_changes": "你有未儲存的變更。請在點擊完成前儲存",
+        "remove_empty": "預估不能為空。在每個欄位中輸入值或移除沒有值的欄位。",
+        "fill": "請填寫此估算欄位",
+        "repeat": "估算值不能重複"
+      },
+      "systems": {
+        "points": {
+          "label": "點數",
+          "fibonacci": "費波那契數列",
+          "linear": "線性",
+          "squares": "平方數",
+          "custom": "自訂"
+        },
+        "categories": {
+          "label": "類別",
+          "t_shirt_sizes": "T恤尺寸",
+          "easy_to_hard": "簡單到困難",
+          "custom": "自訂"
+        },
+        "time": {
+          "label": "時間",
+          "hours": "小時"
+        }
+      },
+      "edit": {
+        "title": "編輯估算系統",
+        "add_or_update": {
+          "title": "新增、更新或移除估算",
+          "description": "透過新增、更新或移除點數或類別來管理目前系統。"
+        },
+        "switch": {
+          "title": "變更估算類型",
+          "description": "將點數系統轉換為類別系統，反之亦然。"
+        }
+      },
+      "switch": "切換估算系統",
+      "current": "目前估算系統",
+      "select": "選擇估算系統"
+    },
+    "automations": {
+      "label": "自動化",
+      "heading": "自動化",
+      "description": "設定自動化動作以簡化您的專案管理流程並減少手動任務。",
+      "auto-archive": {
+        "title": "自動封存已關閉的工作項目",
+        "description": "Plane將自動封存已完成或已取消的工作項目。",
+        "duration": "自動封存已關閉的工作項目"
+      },
+      "auto-close": {
+        "title": "自動關閉工作項目",
+        "description": "Plane將自動關閉未完成或未取消的工作項目。",
+        "duration": "自動關閉非活動工作項目",
+        "auto_close_status": "自動關閉狀態"
+      },
+      "auto-remind": {
+        "title": "自動提醒",
+        "description": "Plane 將自動通過電子郵件和應用程式通知來提醒您的團隊保持進度。",
+        "duration": "提前提醒"
+      }
+    },
+    "empty_state": {
+      "labels": {
+        "title": "尚無標籤",
+        "description": "建立標籤以協助組織和篩選專案中的工作事項。"
+      },
+      "estimates": {
+        "title": "尚無評估系統",
+        "description": "建立一組評估以傳達每個工作事項的工作量。",
+        "primary_button": "新增評估系統"
+      },
+      "integrations": {
+        "title": "未配置整合",
+        "description": "配置 GitHub 和其他整合以同步您的專案工作項目。"
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "啟用工作流程",
+        "description": "設定工作流程以控制工作事項的流轉",
+        "no_states_tooltip": "此工作流程尚未新增任何狀態。",
+        "no_work_item_types_tooltip": "此工作流程尚未新增任何工作事項類型。",
+        "no_states_or_work_item_types_tooltip": "此工作流程尚未新增任何狀態或工作事項類型。",
+        "toast": {
+          "loading": {
+            "enabling": "正在啟用工作流程",
+            "disabling": "正在停用工作流程"
+          },
+          "success": {
+            "title": "成功！",
+            "message": "工作流程已成功啟用。"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "啟用工作流程失敗。請再試一次。"
+          }
+        }
+      },
+      "heading": "工作流程",
+      "description": "自動化工作事項轉換，並設定規則以控制任務在您的專案流程中推進的方式。",
+      "add_button": "新增工作流程",
+      "search": "搜尋工作流程",
+      "detail": {
+        "define": "定義工作流程",
+        "add_states": "新增狀態",
+        "unmapped_states": {
+          "title": "偵測到未對應的狀態",
+          "description": "所選類型的某些工作事項目前處於此工作流程中不存在的狀態。",
+          "note": "如果您啟用此工作流程，這些項目將自動移至此工作流程的初始狀態。",
+          "label": "缺少的狀態",
+          "tooltip": "某些工作事項處於未對應至此工作流程的狀態。開啟工作流程以檢視。"
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "所有狀態皆已使用中",
+          "description": "此專案定義的所有狀態皆已存在於您目前的工作流程中。"
+        }
+      },
+      "default_footer": {
+        "fallback_message": "此工作流程適用於任何未指派給工作流程的工作事項類型。"
+      },
+      "create": {
+        "heading": "建立新工作流程",
+        "name": {
+          "placeholder": "新增一個獨特的名稱",
+          "validation": {
+            "max_length": "名稱長度必須少於 255 個字元",
+            "required": "名稱為必填",
+            "invalid": "名稱只能包含字母、數字、空格、連字號和撇號"
+          }
+        },
+        "description": {
+          "placeholder": "新增簡短描述",
+          "validation": {
+            "invalid": "描述只能包含字母、數字、空格、連字號和撇號"
+          }
+        },
+        "work_item_type": {
+          "label": "工作事項類型"
+        },
+        "success": {
+          "title": "成功！",
+          "message": "工作流程建立成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "建立工作流程失敗。請再試一次。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "工作流程更新成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "更新工作流程失敗。請再試一次。"
+        }
+      },
+      "delete": {
+        "loading": "正在刪除工作流程",
+        "success": {
+          "title": "成功！",
+          "message": "工作流程刪除成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "刪除工作流程失敗。請再試一次。"
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "成功！",
+          "message": "狀態新增成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "新增狀態失敗。請再試一次。"
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "工作事項類型",
+      "description": "使用獨特屬性建立和自訂不同類型的工作事項"
+    },
+    "features": {
+      "cycles": {
+        "title": "週期",
+        "short_title": "週期",
+        "description": "在靈活的時間段內安排工作，以適應該專案獨特的節奏和步調。",
+        "toggle_title": "啟用週期",
+        "toggle_description": "在集中的時間段內規劃工作。"
+      },
+      "modules": {
+        "title": "模組",
+        "short_title": "模組",
+        "description": "將工作組織成具有專門負責人和受讓人的子專案。",
+        "toggle_title": "啟用模組",
+        "toggle_description": "專案成員將能夠建立和編輯模組。"
+      },
+      "views": {
+        "title": "檢視",
+        "short_title": "檢視",
+        "description": "儲存自訂排序、篩選器和顯示選項，或與團隊共享。",
+        "toggle_title": "啟用檢視",
+        "toggle_description": "專案成員將能夠建立和編輯檢視。"
+      },
+      "pages": {
+        "title": "頁面",
+        "short_title": "頁面",
+        "description": "建立和編輯自由格式的內容：筆記、文件、任何內容。",
+        "toggle_title": "啟用頁面",
+        "toggle_description": "專案成員將能夠建立和編輯頁面。"
+      },
+      "intake": {
+        "intake_responsibility": "接收責任",
+        "intake_sources": "接收來源",
+        "title": "接收",
+        "short_title": "接收",
+        "description": "讓非成員分享錯誤、回饋和建議；而不會中斷您的工作流程。",
+        "toggle_title": "啟用接收",
+        "toggle_description": "允許專案成員在應用程式中建立接收請求。",
+        "toggle_tooltip_on": "請專案管理員代為開啟。",
+        "toggle_tooltip_off": "請專案管理員代為關閉。",
+        "notify_assignee": {
+          "title": "通知負責人",
+          "description": "對於新的接收請求，預設負責人將透過通知收到提醒"
+        },
+        "in_app": {
+          "title": "應用程式內",
+          "description": "從工作區的成員與訪客取得新的工作項目，不影響現有工作項目。"
+        },
+        "email": {
+          "title": "電子郵件",
+          "description": "從任何寄信到 Plane 電子郵件地址的人收集新的工作項目。",
+          "fieldName": "電子郵件 ID"
+        },
+        "form": {
+          "title": "表單",
+          "description": "讓工作區外的人透過專用安全表單為您建立潛在的新工作項目。",
+          "fieldName": "預設表單 URL",
+          "create_forms": "使用工作項目類型建立表單",
+          "manage_forms": "管理表單",
+          "manage_forms_tooltip": "請工作區管理員代為管理。",
+          "create_form": "建立表單",
+          "edit_form": "編輯表單詳細資訊",
+          "form_title": "表單標題",
+          "form_title_required": "表單標題為必填",
+          "work_item_type": "工作項目類型",
+          "remove_property": "移除屬性",
+          "select_properties": "選擇屬性",
+          "search_placeholder": "搜尋屬性",
+          "toasts": {
+            "success_create": "接收表單已成功建立",
+            "success_update": "接收表單已成功更新",
+            "error_create": "無法建立接收表單",
+            "error_update": "無法更新接收表單"
+          }
+        },
+        "toasts": {
+          "set": {
+            "loading": "正在設定負責人...",
+            "success": {
+              "title": "成功！",
+              "message": "負責人設定成功。"
+            },
+            "error": {
+              "title": "錯誤！",
+              "message": "設定負責人時出現問題。請重試。"
+            }
+          }
+        }
+      },
+      "time_tracking": {
+        "title": "時間追蹤",
+        "short_title": "時間追蹤",
+        "description": "記錄在工作項目和專案上花費的時間。",
+        "toggle_title": "啟用時間追蹤",
+        "toggle_description": "專案成員將能夠記錄工作時間。"
+      },
+      "milestones": {
+        "title": "里程碑",
+        "short_title": "里程碑",
+        "description": "里程碑提供了一個層，用於將工作項目對齊到共享的完成日期。",
+        "toggle_title": "啟用里程碑",
+        "toggle_description": "按里程碑截止日期組織工作項目。"
+      },
+      "toasts": {
+        "loading": "正在更新專案功能...",
+        "success": "專案功能更新成功。",
+        "error": "更新專案功能時發生錯誤。請再試一次。"
+      }
+    },
+    "project_updates": {
+      "heading": "專案更新",
+      "description": "此專案的整合追蹤和進度監控"
+    },
+    "templates": {
+      "heading": "模板",
+      "description": "使用範本可節省 80% 建立專案、工作事項和頁面所花費的時間。"
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "自動排程週期",
+        "description": "無需手動設定即可保持週期運作。",
+        "tooltip": "根據您選擇的排程自動建立新週期。",
+        "edit_button": "編輯",
+        "form": {
+          "cycle_title": {
+            "label": "週期標題",
+            "placeholder": "標題",
+            "tooltip": "標題將為後續週期添加編號。例如：設計 - 1/2/3",
+            "validation": {
+              "required": "週期標題為必填項",
+              "max_length": "標題不得超過255個字元"
+            }
+          },
+          "cycle_duration": {
+            "label": "週期持續時間",
+            "unit": "週",
+            "validation": {
+              "required": "週期持續時間為必填項",
+              "min": "週期持續時間必須至少為1週",
+              "max": "週期持續時間不得超過30週",
+              "positive": "週期持續時間必須為正數"
+            }
+          },
+          "cooldown_period": {
+            "label": "冷卻期",
+            "unit": "天",
+            "tooltip": "下一個週期開始前的週期間隔暫停期。",
+            "validation": {
+              "required": "冷卻期為必填項",
+              "negative": "冷卻期不能為負數"
+            }
+          },
+          "start_date": {
+            "label": "週期開始日",
+            "validation": {
+              "required": "開始日期為必填項",
+              "past": "開始日期不能是過去的日期"
+            }
+          },
+          "number_of_cycles": {
+            "label": "未來週期數",
+            "validation": {
+              "required": "週期數為必填項",
+              "min": "至少需要1個週期",
+              "max": "無法排程超過3個週期"
+            }
+          },
+          "auto_rollover": {
+            "label": "工作項自動結轉",
+            "tooltip": "在週期完成的當天，將所有未完成的工作項移至下一個週期。"
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "正在啟用自動排程週期",
+            "loading_disable": "正在停用自動排程週期",
+            "success": {
+              "title": "成功！",
+              "message": "自動排程週期已成功切換。"
+            },
+            "error": {
+              "title": "錯誤！",
+              "message": "切換自動排程週期失敗。"
+            }
+          },
+          "save": {
+            "loading": "正在儲存自動排程週期設定",
+            "success": {
+              "title": "成功！",
+              "message_create": "自動排程週期設定已成功儲存。",
+              "message_update": "自動排程週期設定已成功更新。"
+            },
+            "error": {
+              "title": "錯誤！",
+              "message_create": "儲存自動排程週期設定失敗。",
+              "message_update": "更新自動排程週期設定失敗。"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,508 @@
+{
+  "workspace_settings": {
+    "label": "Workspace settings",
+    "page_label": "{workspace} - General settings",
+    "key_created": "Key created",
+    "copy_key": "Copy and save this secret key in Plane Pages. You can't see this key after you hit Close. A CSV file containing the key has been downloaded.",
+    "token_copied": "Token copied to clipboard.",
+    "settings": {
+      "general": {
+        "title": "General",
+        "upload_logo": "Upload logo",
+        "edit_logo": "Edit logo",
+        "name": "Workspace name",
+        "company_size": "Company size",
+        "url": "Workspace URL",
+        "workspace_timezone": "Workspace Timezone",
+        "update_workspace": "Update workspace",
+        "delete_workspace": "Delete this workspace",
+        "delete_workspace_description": "When deleting a workspace, all of the data and resources within that workspace will be permanently removed and cannot be recovered.",
+        "delete_btn": "Delete this workspace",
+        "delete_modal": {
+          "title": "Are you sure you want to delete this workspace?",
+          "description": "You have an active trial to one of our paid plans. Please cancel it first to proceed.",
+          "dismiss": "Dismiss",
+          "cancel": "Cancel trial",
+          "success_title": "Workspace deleted.",
+          "success_message": "You will soon go to your profile page.",
+          "error_title": "That didn't work.",
+          "error_message": "Try again, please."
+        },
+        "errors": {
+          "name": {
+            "required": "Name is required",
+            "max_length": "Workspace name should not exceed 80 characters"
+          },
+          "company_size": {
+            "required": "Company size is required",
+            "select_a_range": "Select organization size"
+          }
+        }
+      },
+      "members": {
+        "title": "Members",
+        "add_member": "Add member",
+        "pending_invites": "Pending invites",
+        "invitations_sent_successfully": "Invitations sent successfully",
+        "leave_confirmation": "Are you sure you want to leave the workspace? You will no longer have access to this workspace. This action cannot be undone.",
+        "details": {
+          "full_name": "Full name",
+          "display_name": "Display name",
+          "email_address": "Email address",
+          "account_type": "Account type",
+          "authentication": "Authentication",
+          "joining_date": "Joining date"
+        },
+        "modal": {
+          "title": "Invite people to collaborate",
+          "description": "Invite people to collaborate on your workspace.",
+          "button": "Send invitations",
+          "button_loading": "Sending invitations",
+          "placeholder": "name@company.com",
+          "errors": {
+            "required": "We need an email address to invite them.",
+            "invalid": "Email is invalid"
+          }
+        }
+      },
+      "billing_and_plans": {
+        "heading": "Billing & Plans",
+        "description": "Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
+        "title": "Billing & Plans",
+        "current_plan": "Current plan",
+        "free_plan": "You are currently using the free plan",
+        "view_plans": "View plans"
+      },
+      "exports": {
+        "heading": "Exports",
+        "description": "Export your project data in various formats and access your export history with download links.",
+        "title": "Exports",
+        "exporting": "Exporting",
+        "previous_exports": "Previous exports",
+        "export_separate_files": "Export the data into separate files",
+        "exporting_projects": "Exporting project",
+        "format": "Format",
+        "filters_info": "Apply filters to export specific work items based on your criteria.",
+        "modal": {
+          "title": "Export to",
+          "toasts": {
+            "success": {
+              "title": "Export successful",
+              "message": "You will be able to download the exported {entity} from the previous export."
+            },
+            "error": {
+              "title": "Export failed",
+              "message": "Export was unsuccessful. Please try again."
+            }
+          }
+        }
+      },
+      "webhooks": {
+        "heading": "Webhooks",
+        "description": "Automate notifications to external services when project events occur.",
+        "title": "Webhooks",
+        "add_webhook": "Add webhook",
+        "modal": {
+          "title": "Create webhook",
+          "details": "Webhook details",
+          "payload": "Payload URL",
+          "question": "Which events would you like to trigger this webhook?",
+          "error": "URL is required"
+        },
+        "secret_key": {
+          "title": "Secret key",
+          "message": "Generate a token to sign-in to the webhook payload"
+        },
+        "options": {
+          "all": "Send me everything",
+          "individual": "Select individual events"
+        },
+        "toasts": {
+          "created": {
+            "title": "Webhook created",
+            "message": "The webhook has been successfully created"
+          },
+          "not_created": {
+            "title": "Webhook not created",
+            "message": "The webhook could not be created"
+          },
+          "updated": {
+            "title": "Webhook updated",
+            "message": "The webhook has been successfully updated"
+          },
+          "not_updated": {
+            "title": "Webhook not updated",
+            "message": "The webhook could not be updated"
+          },
+          "removed": {
+            "title": "Webhook removed",
+            "message": "The webhook has been successfully removed"
+          },
+          "not_removed": {
+            "title": "Webhook not removed",
+            "message": "The webhook could not be removed"
+          },
+          "secret_key_copied": {
+            "message": "Secret key copied to clipboard."
+          },
+          "secret_key_not_copied": {
+            "message": "Error occurred while copying secret key."
+          }
+        }
+      },
+      "api_tokens": {
+        "heading": "Access Tokens",
+        "description": "Generate secure API tokens to integrate your data with external systems and applications.",
+        "title": "Access Tokens",
+        "add_token": "Add access token",
+        "create_token": "Create token",
+        "never_expires": "Never expires",
+        "generate_token": "Generate token",
+        "generating": "Generating",
+        "delete": {
+          "title": "Delete access token",
+          "description": "Any application using this token will no longer have the access to Plane data. This action cannot be undone.",
+          "success": {
+            "title": "Success!",
+            "message": "The token has been successfully deleted"
+          },
+          "error": {
+            "title": "Error!",
+            "message": "The token could not be deleted"
+          }
+        }
+      },
+      "integrations": {
+        "title": "Integrations",
+        "heading": "Integrations",
+        "description": "Connect with popular tools and services to sync your work across your entire workflow ecosystem.",
+        "page_title": "Work with your Plane data in available apps or your own.",
+        "page_description": "View all the integrations in use by this workspace or you."
+      },
+      "imports": {
+        "title": "Imports",
+        "heading": "Imports",
+        "description": "Connect and import data from your existing project management tools to streamline your workflow integration."
+      },
+      "worklogs": {
+        "title": "Worklogs",
+        "heading": "Worklogs",
+        "description": "Download worklogs AKA timesheets for anyone in any project."
+      },
+      "group_syncing": {
+        "title": "Group syncing",
+        "heading": "Group syncing",
+        "description": "Link identity provider groups to projects and roles. User access updates automatically when group membership changes in your IdP, simplifying onboarding and offboarding.",
+        "enable": {
+          "title": "Enable group syncing",
+          "description": "Automatically add users to projects based on identity provider groups."
+        },
+        "config": {
+          "title": "Configure group sync",
+          "description": "Set up how identity provider groups are mapped to projects and roles.",
+          "sync_on_login": {
+            "title": "Sync on login",
+            "description": "Update group membership and project access when a user signs in."
+          },
+          "sync_offline": {
+            "title": "Offline sync",
+            "description": "Runs sync every six hours automatically, without waiting for users to log in."
+          },
+          "auto_remove": {
+            "title": "Auto remove",
+            "description": "Automatically remove users from projects when they no longer match the group."
+          },
+          "group_attribute_key": {
+            "title": "Group attribute key",
+            "description": "The identity provider attribute used to identify and sync user groups.",
+            "placeholder": "Groups"
+          }
+        },
+        "group_mapping": {
+          "title": "Group mapping",
+          "description": "Link identity provider groups to projects and roles.",
+          "button_text": "Add new group sync"
+        },
+        "toast": {
+          "updating": "Updating group syncing feature",
+          "success": "Group syncing feature updated successfully.",
+          "error": "Failed to update group syncing feature!"
+        },
+        "delete_modal": {
+          "title": "Delete group sync",
+          "content": "New users from this identity group will no longer be added to the project. Users already added will keep their current role."
+        },
+        "modal": {
+          "idp_group_name": {
+            "text": "User group",
+            "required": "User group is required",
+            "placeholder": "Enter the IdP group names"
+          },
+          "project": {
+            "text": "Project",
+            "required": "Project is required",
+            "placeholder": "Select a project"
+          },
+          "default_role": {
+            "text": "Project role",
+            "required": "Project role is required",
+            "placeholder": "Select a project role"
+          }
+        }
+      },
+      "identity": {
+        "title": "Identity",
+        "heading": "Identity",
+        "description": "Configure your domain and enable Single sign-on"
+      },
+      "project_states": {
+        "title": "Project states",
+        "heading": "See progress overview for all projects.",
+        "description": "Project States is a Plane-only feature for tracking progress of all your projects by any project property.",
+        "go_to_settings": "Go to settings"
+      },
+      "projects": {
+        "title": "Projects",
+        "description": "Manage project states, and enable project labels, and other configuration.",
+        "tabs": {
+          "states": "Project states",
+          "labels": "Project labels"
+        }
+      },
+      "templates": {
+        "title": "Templates",
+        "heading": "Templates",
+        "description": "Save 80% time spent on creating projects, work items, and pages when you use templates."
+      },
+      "relations": {
+        "title": "Relations",
+        "heading": "Relations",
+        "description": "Create and manage relation types that connect work items across your workspace."
+      },
+      "cancel_trial": {
+        "title": "Cancel your trial first.",
+        "description": "You have an active trial to one of our paid plans. Please cancel it first to proceed.",
+        "dismiss": "Dismiss",
+        "cancel": "Cancel trial",
+        "cancel_success_title": "Trial cancelled.",
+        "cancel_success_message": "You can now delete the workspace.",
+        "cancel_error_title": "That didn't work.",
+        "cancel_error_message": "Try again, please."
+      },
+      "applications": {
+        "internal": "Internal",
+        "title": "Applications",
+        "applicationId_copied": "Application ID copied to clipboard",
+        "clientId_copied": "Client ID copied to clipboard",
+        "clientSecret_copied": "Client Secret copied to clipboard",
+        "third_party_apps": "Third-party apps",
+        "your_apps": "Your apps",
+        "connect": "Connect",
+        "connected": "Connected",
+        "disconnect": "Disconnect",
+        "install": "Install",
+        "installed": "Installed",
+        "configure": "Configure",
+        "app_available": "You have made this app available to use with a Plane workspace",
+        "app_credentials_regenrated": {
+          "title": "App credentials successfully re-generated",
+          "description": "Replace the client secret everywhere it's used. The previous secret is no longer valid."
+        },
+        "app_created": {
+          "title": "App created successfully",
+          "description": "Use the credentials to install the app in a Plane workspace"
+        },
+        "installed_apps": "Installed apps",
+        "all_apps": "All apps",
+        "internal_apps": "Internal apps",
+        "app_name_title": "App Name",
+        "app_description_title": {
+          "label": "Long Description",
+          "placeholder": "Write a long description for marketplace. Press ‘/’ for commands."
+        },
+        "authorization_grant_type": {
+          "title": "Connection Type",
+          "description": "Choose if your app should be installed once for the workspace or let every user connect their own account"
+        },
+        "website": {
+          "title": "Website",
+          "description": "Link to your app's website.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "App Maker",
+          "description": "The person or organization creating the app."
+        },
+        "app_maker_error": "Maker name is required",
+        "setup_url": {
+          "label": "Setup URL",
+          "description": "Users will be redirected to this URL when they install the app.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "This is where we will send webhook events and updates from the workspaces where your app is installed.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Webhook Secret",
+          "description": "Secret used to verify incoming webhook requests.",
+          "placeholder": "Enter a random secret key"
+        },
+        "redirect_uris": {
+          "label": "Redirect URIs (space separated)",
+          "description": "Users will be redirected to this path after they have authenticated with Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_available_description": "Connect a Plane workspace to start using it",
+        "client_id_and_secret": "Client ID and Secret",
+        "client_id_and_secret_description": "Copy and save this secret key in Pages. You can't see this key again after you hit Close.",
+        "client_id_and_secret_download": "You can download a CSV with the key from here.",
+        "application_id": "Application ID",
+        "client_id": "Client ID",
+        "client_secret": "Client Secret",
+        "export_as_csv": "Export as CSV",
+        "slug_already_exists": "Slug already exists",
+        "failed_to_create_application": "Failed to create application",
+        "upload_logo": "Upload Logo",
+        "app_name_error": "App name is required",
+        "app_short_description_title": "Short Description",
+        "app_short_description_error": "App short description is required",
+        "app_description_error": "App description is required",
+        "app_slug_title": "App slug",
+        "app_slug_error": "App slug is required",
+        "invalid_website_error": "Invalid website",
+        "webhook_url_title": "Webhook URL",
+        "webhook_url_error": "Webhook URL is required",
+        "invalid_webhook_url_error": "Invalid webhook URL",
+        "redirect_uris_title": "Redirect URIs",
+        "redirect_uris_error": "Redirect URIs are required",
+        "invalid_redirect_uris_error": "Invalid redirect URIs",
+        "redirect_uris_description": "Enter space seperated URIs where the app will redirect to after the user e.g https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Authorized Javascript Origins",
+        "authorized_javascript_origins_error": "Authorized Javascript Origins are required",
+        "invalid_authorized_javascript_origins_error": "Invalid authorized Javascript Origins",
+        "authorized_javascript_origins_description": "Enter space seperated origins where the app will be allowed to make requests e.g app.com example.com",
+        "create_app": "Create app",
+        "update_app": "Update app",
+        "build_your_own_app": "Build your own app",
+        "edit_app_details": "Edit app details",
+        "regenerate_client_secret_description": "Regenerate the client secret. If you regenerate the secret, you can copy the key or download it to a CSV file right after.",
+        "regenerate_client_secret": "Regenerate client secret",
+        "regenerate_client_secret_confirm_title": "Sure you want to regenerate the client secret?",
+        "regenerate_client_secret_confirm_description": "App using this secret will stop working. You will need to update the secret in the app.",
+        "regenerate_client_secret_confirm_cancel": "Cancel",
+        "regenerate_client_secret_confirm_regenerate": "Regenerate",
+        "read_only_access_to_workspace": "Read-only access to your workspace",
+        "write_access_to_workspace": "Write access to your workspace",
+        "read_only_access_to_user_profile": "Read-only access to your user profile",
+        "write_access_to_user_profile": "Write access to your user profile",
+        "connect_app_to_workspace": "Connect {app} to your workspace {workspace}",
+        "user_permissions": "User permissions",
+        "user_permissions_description": "User permissions are used to grant access to the user's profile.",
+        "workspace_permissions": "Workspace permissions",
+        "workspace_permissions_description": "Workspace permissions are used to grant access to the workspace.",
+        "with_the_permissions": "with the permissions",
+        "app_consent_title": "{app} is requesting access to your Plane workspace and profile.",
+        "choose_workspace_to_connect_app_with": "Choose a workspace to connect the app with",
+        "app_consent_workspace_permissions_title": "{app} would like",
+        "app_consent_user_permissions_title": "{app} can also request a user's permission to the following resources. These permissions will be requested and authorized of and by a user only.",
+        "app_consent_accept_title": "By accepting, you",
+        "app_consent_accept_1": "Grant the app access to your Plane data wherever you can use the app in or outside Plane",
+        "app_consent_accept_2": "Agree to {app}'s Privacy Policy and Terms Of Use",
+        "accepting": "Accepting...",
+        "accept": "Accept",
+        "categories": "Categories",
+        "select_app_categories": "Select app categories",
+        "categories_title": "Categories",
+        "categories_error": "Categories are required",
+        "invalid_categories_error": "Invalid categories",
+        "categories_description": "Select the categories that best describe the app",
+        "supported_plans": "Supported Plans",
+        "supported_plans_description": "Select the workspace plans that can install this application. Leave empty to allow all plans.",
+        "select_plans": "Select Plans",
+        "privacy_policy_url_title": "Privacy Policy URL",
+        "privacy_policy_url_error": "Privacy Policy URL is required",
+        "invalid_privacy_policy_url_error": "Invalid privacy policy URL",
+        "terms_of_service_url_title": "Terms of Service URL",
+        "terms_of_service_url_error": "Terms of Service URL is required",
+        "invalid_terms_of_service_url_error": "Invalid terms of service URL",
+        "support_url_title": "Support URL",
+        "support_url_error": "Support URL is required",
+        "invalid_support_url_error": "Invalid support URL",
+        "video_url_title": "Video URL",
+        "video_url_error": "Video URL is required",
+        "invalid_video_url_error": "Invalid video URL",
+        "setup_url_error": "Setup URL is required",
+        "invalid_setup_url_error": "Invalid setup URL",
+        "configuration_url_title": "Configuration URL",
+        "configuration_url_error": "Configuration URL is required",
+        "invalid_configuration_url_error": "Invalid configuration URL",
+        "contact_email_title": "Contact Email",
+        "contact_email_error": "Contact Email is required",
+        "invalid_contact_email_error": "Invalid contact email",
+        "upload_attachments": "Upload Attachments",
+        "uploading_images": "Uploading {count} Image{count, plural, one {s} other {s}}",
+        "drop_images_here": "Drop images here",
+        "click_to_upload_images": "Click to upload images",
+        "invalid_file_or_exceeds_size_limit": "Invalid file or exceeds size limit ({size} MB)",
+        "uploading": "Uploading...",
+        "upload_and_save": "Upload & Save",
+        "app_consent_no_access_title": "Request to install",
+        "app_consent_no_access_description": "This app can only be installed after a workspace admin installs it. Contact your workspace admin to proceed.",
+        "app_consent_unapproved_title": "This app hasn't been reviewed or approved by Plane yet.",
+        "app_consent_unapproved_description": "Make sure you trust this app before connecting it to your workspace.",
+        "go_to_app": "Go to app",
+        "enable_app_mentions": "Enable App Mentions",
+        "enable_app_mentions_tooltip": "When this is enabled, Users can mention or assign Work Items to this application.",
+        "scopes": "Scopes",
+        "select_scopes": "Select Scopes",
+        "read_access_to": "Read-only access to",
+        "write_access_to": "Write access to",
+        "global_permission_expiration": "Global scopes are expiring soon. Use granular scopes instead. For example, use project:read instead of a global read.",
+        "selected_scopes": "{count} selected",
+        "scopes_and_permissions": "Scopes & Permissions",
+        "read": "Read",
+        "write": "Write",
+        "scope_description": {
+          "projects": "Access to projects, and all project related entities",
+          "wiki": "Access to wiki, and all wiki related entities",
+          "workspaces": "Access to workspaces, and all workspace related entities",
+          "stickies": "Access to stickies, and all sticky related entities",
+          "profile": "Access to user profile information",
+          "agents": "Access to agents, and all agent related entities",
+          "assets": "Access to assets, and all asset related entities"
+        }
+      },
+      "plane-intelligence": {
+        "title": "Plane AI",
+        "heading": "Plane AI",
+        "description": "See your work get smarter and faster with AI that is natively connected to your work and knowledge base. "
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Scripts",
+        "new_script": "New Script",
+        "description": "Automate your workflows with custom scripts and automation rules."
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "No access tokens created",
+        "description": "Plane APIs can be used to integrate your data in Plane with any external system. Create a token to get started."
+      },
+      "webhooks": {
+        "title": "No webhooks added",
+        "description": "Create webhooks to receive real-time updates and automate actions."
+      },
+      "exports": {
+        "title": "No exports yet",
+        "description": "Anytime you export, you will also have a copy here for reference."
+      },
+      "imports": {
+        "title": "No imports yet",
+        "description": "Find all your previous imports here and download them."
+      }
+    }
+  }
+}

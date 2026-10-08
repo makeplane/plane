@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.db.models import Q, Count
 
@@ -17,7 +21,12 @@ class WorkspaceCyclesEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         cycles = (
-            Cycle.objects.filter(workspace__slug=slug)
+            Cycle.objects.filter(
+                workspace__slug=slug,
+                project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
+            )
             .select_related("project")
             .select_related("workspace")
             .select_related("owned_by")

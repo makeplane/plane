@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third party imports
 from rest_framework import serializers
 
@@ -27,6 +31,7 @@ from plane.utils.url import contains_url
 from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
+    has_alphanumeric,
 )
 
 # Django imports
@@ -44,6 +49,13 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
         # Check if the name contains a URL
         if contains_url(value):
             raise serializers.ValidationError("Name must not contain URLs")
+        # Reject symbol-only names like "-_________-" that have no letter or
+        # digit. Mirrors the frontend HAS_ALPHANUMERIC_REGEX check so the rule
+        # cannot be bypassed via a direct API call.
+        if not has_alphanumeric(value):
+            raise serializers.ValidationError(
+                "Name must contain at least one letter or number"
+            )
         return value
 
     def validate_slug(self, value):
@@ -107,7 +119,7 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
     invite_link = serializers.SerializerMethodField()
 
     def get_invite_link(self, obj):
-        return f"/workspace-invitations/?invitation_id={obj.id}&email={obj.email}&slug={obj.workspace.slug}"
+        return f"/workspace-invitations/?invitation_id={obj.id}&slug={obj.workspace.slug}&token={obj.token}"
 
     class Meta:
         model = WorkspaceMemberInvite
@@ -123,6 +135,33 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
             "updated_at",
             "invite_link",
         ]
+
+
+class WorkSpaceMemberInvitePublicSerializer(BaseSerializer):
+    """Safe read-only serializer for the public workspace invite GET endpoint.
+
+    Intentionally excludes ``token`` and ``invite_link`` so that an
+    unauthenticated caller cannot retrieve the acceptance token and use it to
+    hijack an invitation (GHSA-86mg-259g-pwgg / GHSA-gf48-p6jp-cwc4).
+    """
+
+    workspace = WorkspaceLiteSerializer(read_only=True)
+
+    class Meta:
+        model = WorkspaceMemberInvite
+        fields = [
+            "id",
+            "email",
+            "workspace",
+            "role",
+            "message",
+            "accepted",
+            "responded_at",
+            "created_at",
+            "updated_at",
+            "created_by",
+        ]
+        read_only_fields = fields
 
 
 class WorkspaceThemeSerializer(BaseSerializer):

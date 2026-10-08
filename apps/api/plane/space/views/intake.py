@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 
@@ -19,6 +23,7 @@ from plane.app.serializers import (
     IssueCreateSerializer,
     IssueStateIntakeSerializer,
 )
+from plane.utils.content_validator import validate_html_content
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models.intake import SourceType
@@ -108,6 +113,14 @@ class IntakeIssuePublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Ensure the intake belongs to this board before writing: a
+        # caller-supplied intake_id must be bound to the anchor.
+        if str(intake_id) != str(project_deploy_board.intake_id):
+            return Response(
+                {"error": "Intake does not belong to this Project Board"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if not request.data.get("issue", {}).get("name", False):
             return Response({"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -137,11 +150,16 @@ class IntakeIssuePublicViewSet(BaseViewSet):
                 default=False,
             )
 
+        # Sanitize description_html before saving to prevent stored XSS
+        raw_description_html = request.data.get("issue", {}).get("description_html", "<p></p>")
+        _, _, sanitized_description_html = validate_html_content(raw_description_html)
+        safe_description_html = sanitized_description_html if sanitized_description_html is not None else "<p></p>"
+
         # create an issue
         issue = Issue.objects.create(
             name=request.data.get("issue", {}).get("name"),
-            description=request.data.get("issue", {}).get("description", {}),
-            description_html=request.data.get("issue", {}).get("description_html", "<p></p>"),
+            description_json=request.data.get("issue", {}).get("description_json", {}),
+            description_html=safe_description_html,
             priority=request.data.get("issue", {}).get("priority", "low"),
             project_id=project_deploy_board.project_id,
             state_id=triage_state.id,
@@ -201,7 +219,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         issue_data = {
             "name": issue_data.get("name", issue.name),
             "description_html": issue_data.get("description_html", issue.description_html),
-            "description": issue_data.get("description", issue.description),
+            "description_json": issue_data.get("description_json", issue.description_json),
         }
 
         issue_serializer = IssueCreateSerializer(

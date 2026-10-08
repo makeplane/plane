@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "Catatan tempel Anda",
+    "placeholder": "klik untuk mengetik di sini",
+    "all": "Semua catatan tempel",
+    "no-data": "Tuliskan sebuah ide, tangkap momen aha, atau catat pemikiran brilian. Tambahkan catatan tempel untuk memulai.",
+    "add": "Tambah catatan tempel",
+    "search_placeholder": "Cari berdasarkan judul",
+    "delete": "Hapus catatan tempel",
+    "delete_confirmation": "Apakah Anda yakin ingin menghapus catatan tempel ini?",
+    "empty_state": {
+      "simple": "Tuliskan sebuah ide, tangkap momen aha, atau catat pemikiran brilian. Tambahkan catatan tempel untuk memulai.",
+      "general": {
+        "title": "Catatan tempel adalah catatan cepat dan tugas yang Anda buat secara langsung.",
+        "description": "Tangkap pemikiran dan ide Anda dengan mudah dengan membuat catatan tempel yang dapat Anda akses kapan saja dan dari mana saja.",
+        "primary_button": {
+          "text": "Tambah catatan tempel"
+        }
+      },
+      "search": {
+        "title": "Itu tidak cocok dengan salah satu catatan tempel Anda.",
+        "description": "Coba istilah yang berbeda atau beri tahu kami\njika Anda yakin pencarian Anda benar. ",
+        "primary_button": {
+          "text": "Tambah catatan tempel"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Nama catatan tempel tidak boleh lebih dari 100 karakter.",
+        "already_exists": "Sudah ada catatan tempel dengan tidak ada deskripsi"
+      },
+      "created": {
+        "title": "Catatan tempel berhasil dibuat",
+        "message": "Catatan tempel telah berhasil dibuat"
+      },
+      "not_created": {
+        "title": "Catatan tempel tidak dibuat",
+        "message": "Catatan tempel tidak dapat dibuat"
+      },
+      "updated": {
+        "title": "Catatan tempel diperbarui",
+        "message": "Catatan tempel telah berhasil diperbarui"
+      },
+      "not_updated": {
+        "title": "Catatan tempel tidak diperbarui",
+        "message": "Catatan tempel tidak dapat diperbarui"
+      },
+      "removed": {
+        "title": "Catatan tempel dihapus",
+        "message": "Catatan tempel telah berhasil dihapus"
+      },
+      "not_removed": {
+        "title": "Catatan tempel tidak dihapus",
+        "message": "Catatan tempel tidak dapat dihapus"
+      }
+    }
+  }
+}

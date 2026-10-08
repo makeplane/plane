@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import zoneinfo
 from django.conf import settings
@@ -110,7 +114,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             return response
         except Exception as exc:
             response = self.handle_exception(exc)
-            return exc
+            return response
 
     @property
     def workspace_slug(self):
@@ -193,7 +197,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
         except Exception as exc:
             response = self.handle_exception(exc)
-            return exc
+            return response
 
     @property
     def workspace_slug(self):

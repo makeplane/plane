@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { TIssuePriorities } from "../issues";
 
 export type TWorkspaceDraftIssue = {
@@ -9,7 +15,7 @@ export type TWorkspaceDraftIssue = {
   priority: TIssuePriorities | undefined;
   label_ids: string[];
   assignee_ids: string[];
-  estimate_point: string | undefined;
+  estimate_point: string | null | undefined;
 
   project_id: string | undefined;
   parent_id: string | undefined;

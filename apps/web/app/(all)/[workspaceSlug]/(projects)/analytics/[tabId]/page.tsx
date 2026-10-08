@@ -1,22 +1,27 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane package imports
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { Tabs } from "@plane/propel/tabs";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
+import { Tab, Tabs, TabsList, TabsPanel } from "@makeplane/propel/components/tabs";
 // components
 import { cn } from "@plane/utils";
 import AnalyticsFilterActions from "@/components/analytics/analytics-filter-actions";
 import { PageHead } from "@/components/core/page-title";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAnalyticsTabs } from "@/plane-web/components/analytics/use-analytics-tabs";
+import { useAnalyticsTabs } from "@/components/analytics/use-analytics-tabs";
 import type { Route } from "./+types/page";
 
 function AnalyticsPage({ params }: Route.ComponentProps) {
@@ -67,46 +72,33 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
       {workspaceProjectIds && (
         <>
           {workspaceProjectIds.length > 0 || loader === "init-loader" ? (
-            <div className="flex h-full overflow-hidden ">
-              <Tabs value={selectedTab} onValueChange={handleTabChange} className="w-full h-full">
-                <div className={"flex flex-col w-full h-full"}>
+            <div className="flex h-full overflow-hidden">
+              <Tabs variant="contained" value={selectedTab} onValueChange={handleTabChange}>
+                <div className={"flex h-full w-full flex-col"}>
                   <div
                     className={cn(
-                      "px-6 py-2 border-b border-subtle flex items-center gap-4 overflow-hidden w-full justify-between bg-surface-1"
+                      "flex w-full items-center justify-between gap-4 overflow-hidden border-b border-subtle bg-surface-1 px-6 py-2"
                     )}
                   >
-                    <Tabs.List className={"overflow-x-auto flex w-fit h-7"}>
+                    <TabsList>
                       {ANALYTICS_TABS.map((tab) => (
-                        <Tabs.Trigger
-                          key={tab.key}
-                          value={tab.key}
-                          disabled={tab.isDisabled}
-                          size="md"
-                          className="px-3 h-6"
-                          onClick={() => {
-                            if (!tab.isDisabled) {
-                              handleTabChange(tab.key);
-                            }
-                          }}
-                        >
-                          {tab.label}
-                        </Tabs.Trigger>
+                        <Tab key={tab.key} value={tab.key} disabled={tab.isDisabled} label={tab.label} />
                       ))}
-                    </Tabs.List>
+                    </TabsList>
 
                     <div className="flex-shrink-0">
                       <AnalyticsFilterActions />
                     </div>
                   </div>
-                  {ANALYTICS_TABS.map((tab) => (
-                    <Tabs.Content
-                      key={tab.key}
-                      value={tab.key}
-                      className={"h-full overflow-hidden overflow-y-auto px-2"}
-                    >
-                      <tab.content />
-                    </Tabs.Content>
-                  ))}
+                  {/* Grid wrapper: Propel's TabsPanel omits className, so the single mounted panel
+                      gets its fill height from a one-row grid instead. */}
+                  <div className="grid min-h-0 w-full flex-1 grid-rows-1 overflow-x-hidden overflow-y-auto px-2">
+                    {ANALYTICS_TABS.map((tab) => (
+                      <TabsPanel key={tab.key} value={tab.key}>
+                        <tab.content />
+                      </TabsPanel>
+                    ))}
+                  </div>
                 </div>
               </Tabs>
             </div>
@@ -120,7 +112,6 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
                   label: "Create a project",
                   onClick: () => {
                     toggleCreateProjectModal(true);
-                    captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
                   },
                   disabled: !canPerformEmptyStateActions,
                 },

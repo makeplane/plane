@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Header, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/blocks/layout";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -25,7 +31,7 @@ export function ProfileNavbar(props: Props) {
           <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>
             <span
               className={cn(
-                `flex whitespace-nowrap border-b-2 p-4 text-13 font-medium outline-none text-tertiary hover:text-primary ${
+                `flex border-b-2 p-4 text-13 font-medium whitespace-nowrap text-tertiary outline-none hover:text-primary ${
                   pathname === `/${workspaceSlug}/profile/${userId}${tab.selected}`
                     ? "border-accent-strong text-accent-primary hover:text-accent-primary"
                     : "border-transparent"

@@ -113,10 +113,10 @@
   /* end font sizes and line heights */
 
   /* font styles */
-  --font-style: "Inter", sans-serif;
+  --font-style: "Inter Variable", sans-serif;
 
   &.sans-serif {
-    --font-style: "Inter", sans-serif;
+    --font-style: "Inter Variable", sans-serif;
   }
   &.serif {
     --font-style: serif;

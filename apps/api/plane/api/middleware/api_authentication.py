@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.utils import timezone
 from django.db.models import Q
@@ -28,6 +32,7 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
                 Q(Q(expired_at__gt=timezone.now()) | Q(expired_at__isnull=True)),
                 token=token,
                 is_active=True,
+                user__is_active=True,
             )
         except APIToken.DoesNotExist:
             raise AuthenticationFailed("Given API token is not valid")

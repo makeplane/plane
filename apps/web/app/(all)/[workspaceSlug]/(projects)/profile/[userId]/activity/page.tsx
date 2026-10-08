@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { DownloadActivityButton } from "@/components/profile/activity/download-button";
@@ -58,9 +64,13 @@ function ProfileActivityPage() {
           {activityPages}
           {pageCount < totalPages && resultsCount !== 0 && (
             <div className="flex w-full items-center justify-center text-11">
-              <Button variant="secondary" onClick={handleLoadMore}>
-                {t("common.load_more")}
-              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                stretch="auto"
+                label={t("common.load_more")}
+                onClick={handleLoadMore}
+              />
             </div>
           )}
         </div>

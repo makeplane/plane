@@ -1,0 +1,113 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "Allgemein",
+      "private": "Privat",
+      "shared": "Geteilt",
+      "archived": "Archiviert"
+    },
+    "fallback_name": "Sammlung",
+    "form": {
+      "name_required": "Ein Sammlungstitel ist erforderlich",
+      "name_max_length": "Der Sammlungsname muss kürzer als 255 Zeichen sein",
+      "name_placeholder_create": "Geben Sie der Sammlung einen Titel",
+      "name_placeholder_edit": "Sammlungsname"
+    },
+    "create_modal": {
+      "title": "Sammlung erstellen",
+      "submit": "Sammlung erstellen"
+    },
+    "edit_modal": {
+      "title": "Sammlung bearbeiten"
+    },
+    "delete_modal": {
+      "title": "Sammlung löschen",
+      "page_count": "Diese Sammlung enthält {pageCount} Seiten. Wählen Sie aus, was mit ihnen passieren soll.",
+      "transfer_title": "Seiten verschieben und Sammlung löschen",
+      "transfer_description": "Verschieben Sie vor dem Löschen alle Seiten in eine andere Sammlung. Seiten und ihre Berechtigungen bleiben erhalten.",
+      "transfer_warning": "Verschobene Seiten übernehmen die Berechtigungen der ausgewählten Sammlung.",
+      "transfer_target_label": "Seiten verschieben nach",
+      "transfer_target_placeholder": "Sammlung auswählen",
+      "delete_with_pages_title": "Sammlung mit Seiten löschen",
+      "delete_with_pages_description": "Löscht die Sammlung und alle ihre Seiten dauerhaft. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "submit": "Sammlung löschen"
+    },
+    "header": {
+      "add_page": "Seite hinzufügen"
+    },
+    "menu": {
+      "create_new_page": "Neue Seite erstellen",
+      "add_existing_page": "Vorhandene Seite hinzufügen",
+      "edit_collection": "Sammlung bearbeiten",
+      "collection_options": "Sammlungsoptionen"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "Nach Seiten suchen",
+      "success_message": "{count} Seiten zur Sammlung hinzugefügt.",
+      "error_message": "Seiten konnten nicht verschoben werden. Bitte versuchen Sie es erneut.",
+      "no_pages_found": "Keine Seiten gefunden, die Ihrer Suche entsprechen",
+      "no_pages_available": "Keine Seiten zum Verschieben verfügbar",
+      "submit": "Verschieben"
+    },
+    "list": {
+      "invite_only": "Nur auf Einladung",
+      "remove_error": "Die Seite konnte nicht aus der Sammlung entfernt werden.",
+      "no_matching_pages": "Keine passenden Seiten",
+      "remove_search_criteria": "Entfernen Sie die Suchkriterien, um alle Seiten zu sehen",
+      "remove_filters": "Entfernen Sie die Filter, um alle Seiten zu sehen",
+      "no_pages_title": "Noch keine Seiten",
+      "no_pages_description": "Diese Sammlung enthält derzeit keine Seiten.",
+      "untitled": "Ohne Titel",
+      "restricted_access": "Eingeschränkter Zugriff",
+      "collapse_page": "Seite einklappen",
+      "expand_page": "Seite ausklappen",
+      "page_actions": "Seitenaktionen",
+      "page_link_copied": "Seitenlink in die Zwischenablage kopiert.",
+      "columns": {
+        "page_name": "Seitenname",
+        "owner": "Eigentümer",
+        "nested_pages": "Unterseiten",
+        "last_activity": "Letzte Aktivität",
+        "actions": "Aktionen"
+      }
+    },
+    "toasts": {
+      "created": "Sammlung erfolgreich erstellt.",
+      "create_error": "Sammlung konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+      "renamed": "Sammlung erfolgreich umbenannt.",
+      "rename_error": "Sammlung konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+      "transferred_deleted": "Seiten wurden verschoben und die Sammlung gelöscht.",
+      "deleted_with_pages": "Sammlung und ihre Seiten wurden gelöscht.",
+      "delete_error": "Sammlung konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+      "target_required": "Bitte wählen Sie eine Sammlung aus, in die die Seiten verschoben werden sollen.",
+      "create_page_error": "Seite konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+      "create_page_in_collection_error": "Seite konnte nicht erstellt oder zur Sammlung hinzugefügt werden. Bitte versuchen Sie es erneut.",
+      "collection_link_copied": "Sammlungslink in die Zwischenablage kopiert."
+    }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "Upgrade zum Freischalten von Wiki",
+      "description": "Schalten Sie öffentliche Seiten, Versionsverlauf, geteilte Seiten, Echtzeit-Zusammenarbeit und Arbeitsbereichsseiten für Wikis, unternehmensweite Dokumente und Wissensdatenbanken mit Plane Pro frei.",
+      "upgrade_button": {
+        "text": "Upgrade"
+      },
+      "learn_more_button": {
+        "text": "Mehr erfahren"
+      },
+      "download_button": {
+        "text": "Daten herunterladen",
+        "loading": "Wird heruntergeladen"
+      },
+      "tabs": {
+        "nested_pages": "Verschachtelte Seiten",
+        "add_embeds": "Einbettungen hinzufügen",
+        "publish_pages": "Seiten veröffentlichen",
+        "comments": "Kommentare"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "Verschachtelte Seiten erfordern einen kostenpflichtigen Plan. Führen Sie ein Upgrade durch, um sie freizuschalten."
+    }
+  }
+}

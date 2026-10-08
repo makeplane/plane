@@ -1,0 +1,34 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Nenašli sa žiadne výsledky"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "Poznámky",
+    "your_work": "Vaša práca",
+    "projects": "Projekty",
+    "pages": "Stránky",
+    "new_work_item": "Nová pracovná položka",
+    "home": "Domov",
+    "inbox": "Doručená pošta",
+    "workspace": "Pracovný priestor",
+    "views": "Pohľady",
+    "analytics": "Analytika",
+    "work_items": "Pracovné položky",
+    "cycles": "Cykly",
+    "modules": "Moduly",
+    "intake": "Príjem",
+    "drafts": "Koncepty",
+    "favorites": "Obľúbené",
+    "pro": "Pro",
+    "upgrade": "Upgrade",
+    "pi_chat": "AI Čet",
+    "epics": "Epiky",
+    "upgrade_plan": "Apgrejd plán",
+    "plane_pro": "Plejn Pro",
+    "business": "Biznis"
+  }
+}

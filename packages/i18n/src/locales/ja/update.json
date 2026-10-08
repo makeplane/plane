@@ -1,0 +1,69 @@
+{
+  "updates": {
+    "progress": {
+      "title": "進捗",
+      "since_last_update": "前回の更新以降",
+      "comments": "{count, plural, one{# コメント} other{# コメント}}"
+    },
+    "add_update": "更新情報を追加",
+    "add_update_placeholder": "更新内容を入力してください",
+    "empty": {
+      "title": "更新情報はまだありません",
+      "description": "追加された更新情報がここに表示されます。"
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "リアクションを追加しました",
+          "message": "リアクションを追加しました。"
+        },
+        "error": {
+          "title": "リアクションを追加できませんでした",
+          "message": "リアクションを追加できませんでした。"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "リアクションを削除しました",
+          "message": "リアクションを削除しました。"
+        },
+        "error": {
+          "title": "リアクションを削除できませんでした",
+          "message": "リアクションを削除できませんでした。"
+        }
+      }
+    },
+    "create": {
+      "success": {
+        "title": "更新情報を作成しました",
+        "message": "更新情報を作成しました。"
+      },
+      "error": {
+        "title": "更新情報を作成できませんでした",
+        "message": "更新情報を作成できませんでした。"
+      }
+    },
+    "delete": {
+      "title": "更新情報を削除",
+      "confirmation": "この更新情報を削除してもよろしいですか？この操作は元に戻せません。",
+      "success": {
+        "title": "更新情報を削除しました",
+        "message": "更新情報を削除しました。"
+      },
+      "error": {
+        "title": "更新情報を削除できませんでした",
+        "message": "更新情報を削除できませんでした。"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "更新情報を編集しました",
+        "message": "更新情報を編集しました。"
+      },
+      "error": {
+        "title": "更新情報を編集できませんでした",
+        "message": "更新情報を編集できませんでした。"
+      }
+    }
+  }
+}

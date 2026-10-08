@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 import uuid
@@ -20,6 +24,7 @@ from django.db.models import (
     When,
     Subquery,
 )
+
 from django.utils import timezone
 from django.conf import settings
 
@@ -41,6 +46,9 @@ from plane.api.serializers import (
     IssueActivitySerializer,
     IssueCommentSerializer,
     IssueLinkSerializer,
+    IssueRelationCreateSerializer,
+    IssueRelationResponseSerializer,
+    IssueRelationSerializer,
     IssueSerializer,
     LabelSerializer,
     IssueAttachmentUploadSerializer,
@@ -49,6 +57,7 @@ from plane.api.serializers import (
     IssueLinkCreateSerializer,
     IssueLinkUpdateSerializer,
     LabelCreateUpdateSerializer,
+    RelatedIssueSerializer,
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -62,6 +71,7 @@ from plane.db.models import (
     FileAsset,
     IssueComment,
     IssueLink,
+    IssueRelation,
     Label,
     Project,
     ProjectMember,
@@ -69,13 +79,21 @@ from plane.db.models import (
     Workspace,
 )
 from plane.settings.storage import S3Storage
+from plane.utils.path_validator import sanitize_filename
+from plane.utils.order_queryset import (
+    ACTIVITY_ORDER_BY_ALLOWLIST,
+    ISSUE_ORDER_BY_ALLOWLIST,
+    sanitize_order_by,
+)
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
+from plane.utils.issue_relation_mapper import get_actual_relation
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
 from plane.utils.openapi import (
     work_item_docs,
+    work_item_relation_docs,
     label_docs,
     issue_link_docs,
     issue_comment_docs,
@@ -219,6 +237,10 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
         This endpoint provides workspace-level access to work items.
         """
         if issue_identifier and project_identifier:
+            # The `<project_identifier>-<issue_identifier>` route also matches UUIDs;
+            # sequence_id is an integer, so anything else can't be a work item here.
+            if not issue_identifier.isdecimal():
+                return Response({"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND)
             issue = Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
@@ -296,6 +318,20 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         Supports filtering, ordering, and field selection through query parameters.
         """
 
+        unsupported_filters = [param for param in ("pql", "filters") if request.GET.get(param)]
+        if unsupported_filters:
+            return Response(
+                {
+                    "pql": (
+                        "PQL and structured filters are not supported on this Plane edition. "
+                        "Remove the pql/filters parameter and filter results client-side, or use "
+                        "a Plane edition that supports work item query filtering."
+                    ),
+                    "unsupported_parameters": unsupported_filters,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         external_id = request.GET.get("external_id")
         external_source = request.GET.get("external_source")
 
@@ -315,7 +351,14 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         priority_order = ["urgent", "high", "medium", "low", "none"]
         state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
-        order_by_param = request.GET.get("order_by", "-created_at")
+        # Reject any field not in the allowlist before it reaches .order_by().
+        # An unrecognised value is replaced with the safe default, preventing
+        # ORM order_by injection via relational traversal (GHSA-p885-6jpg-cr2p).
+        order_by_param = sanitize_order_by(
+            request.GET.get("order_by", "-created_at"),
+            ISSUE_ORDER_BY_ALLOWLIST,
+            default="-created_at",
+        )
 
         issue_queryset = (
             self.get_queryset()
@@ -465,6 +508,8 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
                 project_id=str(project_id),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
             )
 
             # Send the model activity
@@ -624,6 +669,18 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         project_id=str(project_id),
                         current_instance=current_instance,
                         epoch=int(timezone.now().timestamp()),
+                        notification=True,
+                        origin=base_host(request=request, is_app=True),
+                    )
+                    # Send the model activity for webhook dispatch
+                    model_activity.delay(
+                        model_name="issue",
+                        model_id=str(issue.id),
+                        requested_data=request.data,
+                        current_instance=current_instance,
+                        actor_id=request.user.id,
+                        slug=slug,
+                        origin=base_host(request=request, is_app=True),
                     )
                     return Response(serializer.data, status=status.HTTP_200_OK)
                 return Response(
@@ -672,6 +729,18 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         project_id=str(project_id),
                         current_instance=None,
                         epoch=int(timezone.now().timestamp()),
+                        notification=True,
+                        origin=base_host(request=request, is_app=True),
+                    )
+                    # Send the model activity for webhook dispatch
+                    model_activity.delay(
+                        model_name="issue",
+                        model_id=str(serializer.data["id"]),
+                        requested_data=request.data,
+                        current_instance=None,
+                        actor_id=request.user.id,
+                        slug=slug,
+                        origin=base_host(request=request, is_app=True),
                     )
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -747,6 +816,18 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 project_id=str(project_id),
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
+            )
+            # Send the model activity for webhook dispatch
+            model_activity.delay(
+                model_name="issue",
+                model_id=str(pk),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1085,9 +1166,9 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
-            on_results=lambda issue_links: IssueLinkSerializer(
-                issue_links, many=True, fields=self.fields, expand=self.expand
-            ).data,
+            on_results=lambda issue_links: (
+                IssueLinkSerializer(issue_links, many=True, fields=self.fields, expand=self.expand).data
+            ),
         )
 
     @issue_link_docs(
@@ -1192,9 +1273,9 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
             return self.paginate(
                 request=request,
                 queryset=(self.get_queryset()),
-                on_results=lambda issue_links: IssueLinkSerializer(
-                    issue_links, many=True, fields=self.fields, expand=self.expand
-                ).data,
+                on_results=lambda issue_links: (
+                    IssueLinkSerializer(issue_links, many=True, fields=self.fields, expand=self.expand).data
+                ),
             )
         issue_link = self.get_queryset().get(pk=pk)
         serializer = IssueLinkSerializer(issue_link, fields=self.fields, expand=self.expand)
@@ -1230,10 +1311,13 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
         issue_link = IssueLink.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder)
+        previous_url = issue_link.url
         serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"))
+            updated_url = serializer.data.get("url")
+            if updated_url and updated_url != previous_url:
+                crawl_work_item_link_title.delay(serializer.data.get("id"), updated_url)
             issue_activity.delay(
                 type="link.activity.updated",
                 requested_data=requested_data,
@@ -1343,9 +1427,9 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
-            on_results=lambda issue_comments: IssueCommentSerializer(
-                issue_comments, many=True, fields=self.fields, expand=self.expand
-            ).data,
+            on_results=lambda issue_comments: (
+                IssueCommentSerializer(issue_comments, many=True, fields=self.fields, expand=self.expand).data
+            ),
         )
 
     @issue_comment_docs(
@@ -1649,14 +1733,16 @@ class IssueActivityListAPIEndpoint(BaseAPIView):
             )
             .filter(project__archived_at__isnull=True)
             .select_related("actor", "workspace", "issue", "project")
-        ).order_by(request.GET.get("order_by", "created_at"))
+        ).order_by(
+            sanitize_order_by(request.GET.get("order_by", "created_at"), ACTIVITY_ORDER_BY_ALLOWLIST, "created_at")
+        )
 
         return self.paginate(
             request=request,
             queryset=(issue_activities),
-            on_results=lambda issue_activity: IssueActivitySerializer(
-                issue_activity, many=True, fields=self.fields, expand=self.expand
-            ).data,
+            on_results=lambda issue_activity: (
+                IssueActivitySerializer(issue_activity, many=True, fields=self.fields, expand=self.expand).data
+            ),
         )
 
 
@@ -1706,7 +1792,9 @@ class IssueActivityDetailAPIEndpoint(BaseAPIView):
                 .filter(project__archived_at__isnull=True)
                 .select_related("actor", "workspace", "issue", "project")
             )
-            .order_by(request.GET.get("order_by", "created_at"))
+            .order_by(
+                sanitize_order_by(request.GET.get("order_by", "created_at"), ACTIVITY_ORDER_BY_ALLOWLIST, "created_at")
+            )
             .first()
         )
 
@@ -1816,14 +1904,20 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        name = request.data.get("name")
+        name = sanitize_filename(request.data.get("name"))
         type = request.data.get("type", False)
-        size = request.data.get("size")
+        # Clients may send size as a numeric string ("53314").
+        # 1e400 parses as inf (OverflowError). Non-positive values must not
+        # reach the S3 content-length-range, which is [1, size].
+        try:
+            size = int(request.data.get("size") or 0)
+        except (TypeError, ValueError, OverflowError):
+            size = 0
         external_id = request.data.get("external_id")
         external_source = request.data.get("external_source")
 
         # Check if the request is valid
-        if not name or not size:
+        if not name or size <= 0:
             return Response(
                 {"error": "Invalid request.", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -2216,3 +2310,293 @@ class IssueSearchEndpoint(BaseAPIView):
         )[: int(limit)]
 
         return Response({"issues": issue_results}, status=status.HTTP_200_OK)
+
+
+class IssueRelationListCreateAPIEndpoint(BaseAPIView):
+    """Issue Relation List and Create Endpoint"""
+
+    serializer_class = IssueRelationSerializer
+    model = IssueRelation
+    permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
+
+    @work_item_relation_docs(
+        operation_id="list_work_item_relations",
+        summary="List work item relations",
+        description="Retrieve all relationships for a work item including blocking, blocked_by, duplicate, relates_to, start_before, start_after, finish_before, and finish_after relations.",  # noqa E501
+        parameters=[
+            ISSUE_ID_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Work item relations grouped by relation type",
+                response=IssueRelationResponseSerializer,
+                examples=[
+                    OpenApiExample(
+                        name="Work Item Relations Response",
+                        value={
+                            "blocking": [
+                                {
+                                    "project_id": "550e8400-e29b-41d4-a716-446655440010",
+                                    "issue_id": "550e8400-e29b-41d4-a716-446655440000",
+                                },
+                                {
+                                    "project_id": "550e8400-e29b-41d4-a716-446655440010",
+                                    "issue_id": "550e8400-e29b-41d4-a716-446655440001",
+                                },
+                            ],
+                            "blocked_by": [
+                                {
+                                    "project_id": "550e8400-e29b-41d4-a716-446655440011",
+                                    "issue_id": "550e8400-e29b-41d4-a716-446655440002",
+                                },
+                            ],
+                            "duplicate": [],
+                            "relates_to": [
+                                {
+                                    "project_id": "550e8400-e29b-41d4-a716-446655440010",
+                                    "issue_id": "550e8400-e29b-41d4-a716-446655440003",
+                                },
+                            ],
+                            "start_after": [],
+                            "start_before": [
+                                {
+                                    "project_id": "550e8400-e29b-41d4-a716-446655440012",
+                                    "issue_id": "550e8400-e29b-41d4-a716-446655440004",
+                                },
+                            ],
+                            "finish_after": [],
+                            "finish_before": [],
+                        },
+                    )
+                ],
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug, project_id, issue_id):
+        """List work item relations
+
+        Retrieve all relationships for a work item organized by relation type.
+        Returns a structured response with relations grouped by type.
+        """
+        relations = IssueRelation.objects.filter(
+            Q(issue_id=issue_id) | Q(related_issue_id=issue_id),
+            workspace__slug=slug,
+        ).values(
+            "relation_type",
+            "issue_id",
+            "related_issue_id",
+            issue_project_id=F("issue__project_id"),
+            related_issue_project_id=F("related_issue__project_id"),
+        )
+
+        response_data = {
+            "blocking": [],
+            "blocked_by": [],
+            "duplicate": [],
+            "relates_to": [],
+            "start_after": [],
+            "start_before": [],
+            "finish_after": [],
+            "finish_before": [],
+        }
+        seen_duplicate = set()
+        seen_relates_to = set()
+
+        for rel in relations:
+            rt = rel["relation_type"]
+            if rt == "blocked_by":
+                if str(rel["related_issue_id"]) == str(issue_id):
+                    response_data["blocking"].append(
+                        {"project_id": str(rel["issue_project_id"]), "issue_id": str(rel["issue_id"])}
+                    )
+                if str(rel["issue_id"]) == str(issue_id):
+                    response_data["blocked_by"].append(
+                        {"project_id": str(rel["related_issue_project_id"]), "issue_id": str(rel["related_issue_id"])}
+                    )
+            elif rt == "duplicate":
+                if str(rel["issue_id"]) == str(issue_id) and rel["related_issue_id"] not in seen_duplicate:
+                    seen_duplicate.add(rel["related_issue_id"])
+                    response_data["duplicate"].append(
+                        {"project_id": str(rel["related_issue_project_id"]), "issue_id": str(rel["related_issue_id"])}
+                    )
+                if str(rel["related_issue_id"]) == str(issue_id) and rel["issue_id"] not in seen_duplicate:
+                    seen_duplicate.add(rel["issue_id"])
+                    response_data["duplicate"].append(
+                        {"project_id": str(rel["issue_project_id"]), "issue_id": str(rel["issue_id"])}
+                    )
+            elif rt == "relates_to":
+                if str(rel["issue_id"]) == str(issue_id) and rel["related_issue_id"] not in seen_relates_to:
+                    seen_relates_to.add(rel["related_issue_id"])
+                    response_data["relates_to"].append(
+                        {"project_id": str(rel["related_issue_project_id"]), "issue_id": str(rel["related_issue_id"])}
+                    )
+                if str(rel["related_issue_id"]) == str(issue_id) and rel["issue_id"] not in seen_relates_to:
+                    seen_relates_to.add(rel["issue_id"])
+                    response_data["relates_to"].append(
+                        {"project_id": str(rel["issue_project_id"]), "issue_id": str(rel["issue_id"])}
+                    )
+            elif rt == "start_before":
+                if str(rel["related_issue_id"]) == str(issue_id):
+                    response_data["start_after"].append(
+                        {"project_id": str(rel["issue_project_id"]), "issue_id": str(rel["issue_id"])}
+                    )
+                if str(rel["issue_id"]) == str(issue_id):
+                    response_data["start_before"].append(
+                        {"project_id": str(rel["related_issue_project_id"]), "issue_id": str(rel["related_issue_id"])}
+                    )
+            elif rt == "finish_before":
+                if str(rel["related_issue_id"]) == str(issue_id):
+                    response_data["finish_after"].append(
+                        {"project_id": str(rel["issue_project_id"]), "issue_id": str(rel["issue_id"])}
+                    )
+                if str(rel["issue_id"]) == str(issue_id):
+                    response_data["finish_before"].append(
+                        {"project_id": str(rel["related_issue_project_id"]), "issue_id": str(rel["related_issue_id"])}
+                    )
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    @work_item_relation_docs(
+        operation_id="create_work_item_relation",
+        summary="Create work item relation",
+        description="Create relationships between work items. Supports various relation types including blocking, blocked_by, duplicate, relates_to, start_before, start_after, finish_before, and finish_after.",  # noqa E501
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request=IssueRelationCreateSerializer,
+            examples=[
+                OpenApiExample(
+                    name="Create blocking relation",
+                    value={
+                        "relation_type": "blocking",
+                        "issues": [
+                            "550e8400-e29b-41d4-a716-446655440000",
+                            "550e8400-e29b-41d4-a716-446655440001",
+                        ],
+                    },
+                )
+            ],
+        ),
+        responses={
+            201: OpenApiResponse(
+                description="Work item relations created successfully",
+                response=IssueRelationSerializer(many=True),
+                examples=[
+                    OpenApiExample(
+                        name="Relations created",
+                        value=[
+                            {
+                                "id": "550e8400-e29b-41d4-a716-446655440000",
+                                "name": "Fix authentication bug",
+                                "sequence_id": 42,
+                                "project_id": "550e8400-e29b-41d4-a716-446655440001",
+                                "relation_type": "blocked_by",
+                                "state_id": "550e8400-e29b-41d4-a716-446655440002",
+                                "priority": "high",
+                                "created_at": "2024-01-15T10:00:00Z",
+                                "updated_at": "2024-01-15T10:00:00Z",
+                                "created_by": "550e8400-e29b-41d4-a716-446655440004",
+                                "updated_by": "550e8400-e29b-41d4-a716-446655440004",
+                            }
+                        ],
+                    )
+                ],
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id, issue_id):
+        """Create work item relation
+
+        Create relationships between work items with specified relation type.
+        Automatically tracks relation creation activity.
+        """
+        # Validate request data using serializer
+        serializer = IssueRelationCreateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        relation_type = serializer.validated_data["relation_type"]
+        issues = serializer.validated_data["issues"]
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+
+        actual_relation = get_actual_relation(relation_type)
+        is_reverse = relation_type in ["blocking", "start_after", "finish_after"]
+
+        # Scope to workspace to prevent cross-tenant IDOR
+        # Relations can cross projects so only workspace scope is enforced
+        issues = list(
+            Issue.issue_objects.filter(
+                workspace__slug=slug,
+                pk__in=issues,
+            ).values_list("id", flat=True)
+        )
+
+        IssueRelation.objects.bulk_create(
+            [
+                IssueRelation(
+                    issue_id=(issue if is_reverse else issue_id),
+                    related_issue_id=(issue_id if is_reverse else issue),
+                    relation_type=actual_relation,
+                    project_id=project_id,
+                    workspace_id=project.workspace_id,
+                    created_by=request.user,
+                    updated_by=request.user,
+                )
+                for issue in issues
+            ],
+            batch_size=10,
+            ignore_conflicts=True,
+        )
+
+        issue_activity.delay(
+            type="issue_relation.activity.created",
+            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+            actor_id=str(request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
+        )
+
+        # Re-fetch with select_related to avoid N+1 queries in serializers.
+        # bulk_create with ignore_conflicts=True may not return PKs,
+        # so query by the issue/related_issue pairs and relation type.
+        if is_reverse:
+            refetch_filter = Q(
+                issue_id__in=issues,
+                related_issue_id=issue_id,
+                relation_type=actual_relation,
+            )
+        else:
+            refetch_filter = Q(
+                issue_id=issue_id,
+                related_issue_id__in=issues,
+                relation_type=actual_relation,
+            )
+
+        refetched_relations = IssueRelation.objects.filter(
+            refetch_filter,
+            workspace__slug=slug,
+        ).select_related(
+            "issue__state",
+            "related_issue__state",
+        )
+
+        serializer_class = RelatedIssueSerializer if is_reverse else IssueRelationSerializer
+        return Response(
+            serializer_class(refetched_relations, many=True).data,
+            status=status.HTTP_201_CREATED,
+        )

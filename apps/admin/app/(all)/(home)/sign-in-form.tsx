@@ -1,16 +1,22 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
+import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // plane internal packages
 import type { EAdminAuthErrorCodes, TAdminAuthErrorInfo } from "@plane/constants";
 import { API_BASE_URL } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { AuthService } from "@plane/services";
-import { Input, Spinner } from "@plane/ui";
 // components
 import { Banner } from "@/components/common/banner";
 // local components
-import { FormHeader } from "../../../core/components/instance/form-header";
+import { FormHeader } from "@/components/instance/form-header";
 import { AuthBanner } from "./auth-banner";
 import { AuthHeader } from "./auth-header";
 import { authErrorHandler } from "./auth-helpers";
@@ -105,8 +111,8 @@ export function InstanceSignInForm() {
   return (
     <>
       <AuthHeader />
-      <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
-        <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
+      <div className="mt-10 flex w-full flex-grow flex-col items-center justify-center py-6">
+        <div className="relative flex w-full max-w-[22.5rem] flex-col gap-6">
           <FormHeader
             heading="Manage your Plane instance"
             subHeading="Configure instance-wide settings to secure your instance"
@@ -121,69 +127,75 @@ export function InstanceSignInForm() {
             {errorData.type && errorData?.message ? (
               <Banner type="error" message={errorData?.message} />
             ) : (
-              <>
-                {errorInfo && <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />}
-              </>
+              <>{errorInfo && <AuthBanner bannerData={errorInfo} handleBannerData={setErrorInfo} />}</>
             )}
             <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
 
             <div className="w-full space-y-1">
-              <label className="text-13 text-tertiary font-medium" htmlFor="email">
-                Email <span className="text-red-500">*</span>
+              <label className="text-13 font-medium text-tertiary" htmlFor="email">
+                Email <span className="text-danger-primary">*</span>
               </label>
-              <Input
-                className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
-                id="email"
-                name="email"
-                type="email"
-                inputSize="md"
-                placeholder="name@company.com"
-                value={formData.email}
-                onChange={(e) => handleFormChange("email", e.target.value)}
-                autoComplete="on"
-                autoFocus
-              />
+              <InputGroup size="lg">
+                <Input
+                  size="lg"
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="name@company.com"
+                  value={formData.email}
+                  onChange={(e) => handleFormChange("email", e.target.value)}
+                  autoComplete="off"
+                  autoFocus
+                />
+              </InputGroup>
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-13 text-tertiary font-medium" htmlFor="password">
-                Password <span className="text-red-500">*</span>
+              <label className="text-13 font-medium text-tertiary" htmlFor="password">
+                Password <span className="text-danger-primary">*</span>
               </label>
-              <div className="relative">
+              <InputGroup size="lg">
                 <Input
-                  className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
+                  size="lg"
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
-                  inputSize="md"
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={(e) => handleFormChange("password", e.target.value)}
-                  autoComplete="on"
+                  autoComplete="off"
                 />
                 {showPassword ? (
                   <button
                     type="button"
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
+                    aria-label="Hide password"
+                    className="flex items-center justify-center text-placeholder"
                     onClick={() => setShowPassword(false)}
                   >
-                    <EyeOff className="h-4 w-4" />
+                    <HideOutline className="h-4 w-4" />
                   </button>
                 ) : (
                   <button
                     type="button"
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
+                    aria-label="Show password"
+                    className="flex items-center justify-center text-placeholder"
                     onClick={() => setShowPassword(true)}
                   >
-                    <Eye className="h-4 w-4" />
+                    <ShowOutline className="h-4 w-4" />
                   </button>
                 )}
-              </div>
+              </InputGroup>
             </div>
             <div className="py-2">
-              <Button type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
-                {isSubmitting ? <Spinner height="20px" width="20px" /> : "Sign in"}
-              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                stretch="full"
+                disabled={isButtonDisabled}
+                loading={isSubmitting}
+                label="Sign in"
+              />
             </div>
           </form>
         </div>

@@ -1,5 +1,12 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third party imports
 from rest_framework import serializers
+
+# Python imports
+import re
 
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
@@ -33,6 +40,9 @@ class ProjectSerializer(BaseSerializer):
         project_id = self.instance.id if self.instance else None
         workspace_id = self.context["workspace_id"]
 
+        if re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, name):
+            raise serializers.ValidationError(detail="PROJECT_NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS")
+
         project = Project.objects.filter(name=name, workspace_id=workspace_id)
 
         if project_id:
@@ -48,6 +58,9 @@ class ProjectSerializer(BaseSerializer):
     def validate_identifier(self, identifier):
         project_id = self.instance.id if self.instance else None
         workspace_id = self.context["workspace_id"]
+
+        if re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, identifier):
+            raise serializers.ValidationError(detail="PROJECT_IDENTIFIER_CANNOT_CONTAIN_SPECIAL_CHARACTERS")
 
         project = Project.objects.filter(identifier=identifier, workspace_id=workspace_id)
 
@@ -188,6 +201,31 @@ class ProjectMemberInviteSerializer(BaseSerializer):
     class Meta:
         model = ProjectMemberInvite
         fields = "__all__"
+
+
+class ProjectMemberInvitePublicSerializer(BaseSerializer):
+    """Safe read-only serializer for the public project invite GET endpoint.
+
+    Intentionally excludes ``email`` and ``token`` so that an unauthenticated
+    caller cannot retrieve the invitee's email address or the acceptance token
+    (GHSA-2r58-hgv7-635q).
+    """
+
+    project = ProjectLiteSerializer(read_only=True)
+    workspace = WorkspaceLiteSerializer(read_only=True)
+
+    class Meta:
+        model = ProjectMemberInvite
+        fields = [
+            "id",
+            "project",
+            "workspace",
+            "role",
+            "message",
+            "accepted",
+            "responded_at",
+        ]
+        read_only_fields = fields
 
 
 class ProjectIdentifierSerializer(BaseSerializer):

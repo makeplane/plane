@@ -1,15 +1,20 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-import { SingleIntegrationCard } from "@/components/integration";
-import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
-import { IntegrationAndImportExportBanner } from "@/components/ui/integration-and-import-export-banner";
+import { SingleIntegrationCard } from "@/components/integration/single-integration-card";
 import { IntegrationsSettingsLoader } from "@/components/ui/loader/settings/integration";
 // constants
-import { APP_INTEGRATIONS } from "@/constants/fetch-keys";
+import { APP_INTEGRATIONS } from "@plane/constants";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -19,6 +24,8 @@ import { IntegrationService } from "@/services/integrations";
 const integrationService = new IntegrationService();
 
 function WorkspaceIntegrationsPage() {
+  // translation
+  const { t } = useTranslation();
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
@@ -33,10 +40,12 @@ function WorkspaceIntegrationsPage() {
   if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   return (
-    <SettingsContentWrapper size="lg">
+    <>
       <PageHead title={pageTitle} />
       <section className="w-full overflow-y-auto">
-        <IntegrationAndImportExportBanner bannerName="Integrations" />
+        <div className="flex items-start gap-3 border-b border-subtle py-3.5">
+          <h3 className="text-18 font-medium">{t("integrations.integrations")}</h3>
+        </div>
         <div>
           {appIntegrations ? (
             appIntegrations.map((integration) => (
@@ -47,7 +56,7 @@ function WorkspaceIntegrationsPage() {
           )}
         </div>
       </section>
-    </SettingsContentWrapper>
+    </>
   );
 }
 

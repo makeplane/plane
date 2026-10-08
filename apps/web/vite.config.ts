@@ -1,5 +1,5 @@
 import path from "node:path";
-import * as dotenv from "@dotenvx/dotenvx";
+import * as dotenv from "dotenv";
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -29,7 +29,7 @@ export default defineConfig(() => ({
       "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
       "next/script": path.resolve(__dirname, "app/compat/next/script.tsx"),
     },
-    dedupe: ["react", "react-dom", "@headlessui/react"],
+    dedupe: ["react", "react-dom"],
   },
   server: {
     host: "127.0.0.1",

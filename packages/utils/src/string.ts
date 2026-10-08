@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import sanitizeHtml from "sanitize-html";
 import type { Content, JSONContent } from "@plane/types";
 
@@ -86,6 +92,25 @@ export const getFirstCharacters = (str: string) => {
   } else {
     return words[0].charAt(0) + words[1].charAt(0);
   }
+};
+
+const PARENTHETICAL_TOKEN_RE = /^\(.*\)$/;
+
+/**
+ * Name to feed Avatar `alt` (and therefore Propel's derived initials). Drops standalone
+ * parenthetical tokens such as "(you)" so they are not treated as a last name ("S(").
+ *
+ * @example
+ * getAvatarName("sibira.gopal (you)") // "sibira.gopal"
+ * getAvatarName("Jane Doe") // "Jane Doe"
+ */
+export const getAvatarName = (label: string | null | undefined): string => {
+  if (!label) return "";
+  return label
+    .trim()
+    .split(/\s+/)
+    .filter((token) => token.length > 0 && !PARENTHETICAL_TOKEN_RE.test(token))
+    .join(" ");
 };
 
 /**

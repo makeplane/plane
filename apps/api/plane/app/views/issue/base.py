@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import copy
 import json
@@ -34,7 +38,7 @@ from plane.app.serializers import (
     IssueDetailSerializer,
     IssueListDetailSerializer,
     IssueSerializer,
-    IssueUserPropertySerializer,
+    ProjectUserPropertySerializer,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
@@ -51,7 +55,7 @@ from plane.db.models import (
     IssueReaction,
     IssueRelation,
     IssueSubscriber,
-    IssueUserProperty,
+    ProjectUserProperty,
     ModuleIssue,
     Project,
     ProjectMember,
@@ -89,12 +93,25 @@ class IssueListEndpoint(BaseAPIView):
         # Base queryset with basic filters
         queryset = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issue_ids)
 
+        # Restrict guests without full feature access to issues they created,
+        # mirroring IssueViewSet.list.
+        if ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            member=request.user,
+            role=ROLE.GUEST.value,
+            is_active=True,
+            project__guest_view_all_features=False,
+        ).exists():
+            queryset = queryset.filter(created_by=request.user)
+
         # Apply filtering from filterset
         queryset = self.filter_queryset(queryset)
 
         # Apply legacy filters
         filters = issue_filters(request.query_params, "GET")
         issue_queryset = queryset.filter(**filters)
+        issue_queryset = issue_queryset.filter(state__deleted_at__isnull=True)
 
         # Add select_related, prefetch_related if fields or expand is not None
         if self.fields or self.expand:
@@ -153,7 +170,7 @@ class IssueListEndpoint(BaseAPIView):
         )
 
         if self.fields or self.expand:
-            issues = IssueSerializer(queryset, many=True, fields=self.fields, expand=self.expand).data
+            issues = IssueSerializer(issue_queryset, many=True, fields=self.fields, expand=self.expand).data
         else:
             issues = issue_queryset.values(
                 "id",
@@ -723,23 +740,33 @@ class IssueViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueUserDisplayPropertyEndpoint(BaseAPIView):
+class ProjectUserDisplayPropertyEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id):
-        issue_property = IssueUserProperty.objects.get(user=request.user, project_id=project_id)
+        try:
+            issue_property = ProjectUserProperty.objects.get(
+                user=request.user, 
+                project_id=project_id
+            )
+        except ProjectUserProperty.DoesNotExist:
+            issue_property = ProjectUserProperty.objects.create(
+                user=request.user, 
+                project_id=project_id
+            )
 
-        issue_property.rich_filters = request.data.get("rich_filters", issue_property.rich_filters)
-        issue_property.filters = request.data.get("filters", issue_property.filters)
-        issue_property.display_filters = request.data.get("display_filters", issue_property.display_filters)
-        issue_property.display_properties = request.data.get("display_properties", issue_property.display_properties)
-        issue_property.save()
-        serializer = IssueUserPropertySerializer(issue_property)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = ProjectUserPropertySerializer(
+            issue_property, 
+            data=request.data,
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
-        issue_property, _ = IssueUserProperty.objects.get_or_create(user=request.user, project_id=project_id)
-        serializer = IssueUserPropertySerializer(issue_property)
+        issue_property, _ = ProjectUserProperty.objects.get_or_create(user=request.user, project_id=project_id)
+        serializer = ProjectUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -756,10 +783,10 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
         total_issues = len(issues)
 
         # First, delete all related cycle issues
-        CycleIssue.objects.filter(issue_id__in=issue_ids).delete()
+        CycleIssue.objects.filter(issue__in=issues).delete()
 
         # Then, delete all related module issues
-        ModuleIssue.objects.filter(issue_id__in=issue_ids).delete()
+        ModuleIssue.objects.filter(issue__in=issues).delete()
 
         # Finally, delete the issues themselves
         issues.delete()
@@ -1104,7 +1131,7 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
         epoch = int(timezone.now().timestamp())
 
         # Fetch all relevant issues in a single query
-        issues = list(Issue.objects.filter(id__in=issue_ids))
+        issues = list(Issue.objects.filter(id__in=issue_ids, workspace__slug=slug, project_id=project_id))
         issues_dict = {str(issue.id): issue for issue in issues}
         issues_to_update = []
 

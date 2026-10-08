@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "受信トレイ",
+    "page_label": "{workspace} - 受信トレイ",
+    "options": {
+      "mark_all_as_read": "すべて既読にする",
+      "mark_read": "既読にする",
+      "mark_unread": "未読にする",
+      "refresh": "更新",
+      "filters": "受信トレイフィルター",
+      "show_unread": "未読を表示",
+      "show_snoozed": "スヌーズを表示",
+      "show_archived": "アーカイブを表示",
+      "mark_archive": "アーカイブ",
+      "mark_unarchive": "アーカイブ解除",
+      "mark_snooze": "スヌーズ",
+      "mark_unsnooze": "スヌーズ解除"
+    },
+    "toasts": {
+      "read": "通知を既読にしました",
+      "unread": "通知を未読にしました",
+      "archived": "通知をアーカイブしました",
+      "unarchived": "通知をアーカイブ解除しました",
+      "snoozed": "通知をスヌーズしました",
+      "unsnoozed": "通知のスヌーズを解除しました"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "詳細を表示するには選択してください。"
+      },
+      "all": {
+        "title": "割り当てられた作業項目がありません",
+        "description": "あなたに割り当てられた作業項目の更新が\nここに表示されます"
+      },
+      "mentions": {
+        "title": "割り当てられた作業項目がありません",
+        "description": "あなたに割り当てられた作業項目の更新が\nここに表示されます"
+      }
+    },
+    "tabs": {
+      "all": "すべて",
+      "mentions": "メンション"
+    },
+    "filter": {
+      "assigned": "自分に割り当て",
+      "created": "自分が作成",
+      "subscribed": "自分が購読"
+    },
+    "snooze": {
+      "1_day": "1日",
+      "3_days": "3日",
+      "5_days": "5日",
+      "1_week": "1週間",
+      "2_weeks": "2週間",
+      "custom": "カスタム"
+    }
+  }
+}

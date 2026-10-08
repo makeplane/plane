@@ -1,14 +1,19 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 // plane types
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 import type { TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
 // plane ui
 // plane utils
-import { cn } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
@@ -21,9 +26,9 @@ import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
-import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePage, usePageStore } from "@/hooks/store";
 // plane web services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // services
 import { ProjectPageService, ProjectPageVersionService } from "@/services/page";
 import type { Route } from "./+types/page";
@@ -147,24 +152,26 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
 
   if ((!page || !id) && !pageDetailsError)
     return (
-      <div className="size-full grid place-items-center">
+      <div className="grid size-full place-items-center">
         <LogoSpinner />
       </div>
     );
 
   if (pageDetailsError || !canCurrentUserAccessPage)
     return (
-      <div className="h-full w-full flex flex-col items-center justify-center">
-        <h3 className="text-16 font-semibold text-center">Page not found</h3>
-        <p className="text-13 text-secondary text-center mt-3">
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <h3 className="text-center text-16 font-semibold">Page not found</h3>
+        <p className="mt-3 text-center text-13 text-secondary">
           The page you are trying to access doesn{"'"}t exist or you don{"'"}t have permission to view it.
         </p>
-        <Link
-          href={`/${workspaceSlug}/projects/${projectId}/pages`}
-          className={cn(getButtonStyling("secondary", "base"), "mt-5")}
+        <Button
+          variant="secondary"
+          size="sm"
+          stretch="auto"
+          render={<Link href={`/${workspaceSlug}/projects/${projectId}/pages`} className="mt-5" />}
         >
           View other Pages
-        </Link>
+        </Button>
       </div>
     );
 
@@ -174,7 +181,7 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
     <>
       <PageHead title={name} />
       <div className="flex h-full flex-col justify-between">
-        <div className="relative h-full w-full flex-shrink-0 flex flex-col overflow-hidden">
+        <div className="relative flex h-full w-full flex-shrink-0 flex-col overflow-hidden">
           <PageRoot
             config={pageRootConfig}
             handlers={pageRootHandlers}

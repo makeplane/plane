@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -8,6 +12,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 # Module imports
 from plane.authentication.provider.credentials.email import EmailProvider
 from plane.authentication.utils.login import user_login
+from plane.authentication.rate_limit import throttle_auth_redirect
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
 from plane.db.models import User
@@ -19,6 +24,7 @@ from plane.utils.path_validator import get_safe_redirect_url, validate_next_path
 
 
 class SignInAuthSpaceEndpoint(View):
+    @throttle_auth_redirect(is_space=True)
     def post(self, request):
         next_path = request.POST.get("next_path")
         # Check instance configuration
@@ -104,6 +110,7 @@ class SignInAuthSpaceEndpoint(View):
 
 
 class SignUpAuthSpaceEndpoint(View):
+    @throttle_auth_redirect(is_space=True)
     def post(self, request):
         next_path = request.POST.get("next_path")
         # Check instance configuration

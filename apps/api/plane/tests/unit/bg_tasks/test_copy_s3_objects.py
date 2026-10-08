@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 import pytest
 from plane.db.models import Project, ProjectMember, Issue, FileAsset
 from unittest.mock import patch, MagicMock
@@ -74,6 +78,7 @@ class TestCopyS3Objects:
             mock_sync.return_value = {
                 "description": "test description",
                 "description_binary": base64.b64encode(b"test binary").decode(),
+                "description_json": {"type": "doc", "content": []},
             }
 
             # Call the actual function (not .delay())

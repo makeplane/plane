@@ -15,8 +15,8 @@ print_header(){
     echo "    SITE_ADDRESS (default: ':80')"
     echo "    FILE_SIZE_LIMIT (default: 5242880)"
     echo "    APP_PROTOCOL (http or https)"
-    echo "    SECRET_KEY (default: 60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5)"
-    echo "    LIVE_SERVER_SECRET_KEY (default: htbqvBJAgpm9bzvf3r4urJer0ENReatceh)"
+    echo "    SECRET_KEY (auto-generated on first boot if not set)"
+    echo "    LIVE_SERVER_SECRET_KEY (auto-generated on first boot if not set)"
     echo ""
     echo ""
 }
@@ -145,9 +145,35 @@ update_env_file(){
     update_env_value "USE_MINIO" "0"
 
     # Optional environment variables
-    update_env_value "SECRET_KEY" "${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}"
+    # SECRET_KEY: if absent or set to a known placeholder/insecure value, preserve whatever
+    # is already stored in plane.env (survives restarts), or generate a fresh random value on
+    # first boot. Never write a publicly-known or placeholder value into plane.env.
+    local _insecure_sk="60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5"
+    local _placeholder_sk="change-this-key-on-deployment"
+    if [ -z "$SECRET_KEY" ] || [ "$SECRET_KEY" = "$_insecure_sk" ] || [ "$SECRET_KEY" = "$_placeholder_sk" ]; then
+        local _stored_sk
+        _stored_sk=$(grep "^SECRET_KEY=" plane.env 2>/dev/null | cut -d'=' -f2-)
+        if [ -n "$_stored_sk" ] && [ "$_stored_sk" != "$_insecure_sk" ] && [ "$_stored_sk" != "$_placeholder_sk" ]; then
+            SECRET_KEY="$_stored_sk"
+        else
+            SECRET_KEY=$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c50)
+        fi
+    fi
+    update_env_value "SECRET_KEY" "$SECRET_KEY"
     update_env_value "FILE_SIZE_LIMIT" "${FILE_SIZE_LIMIT:-5242880}"
-    update_env_value "LIVE_SERVER_SECRET_KEY" "${LIVE_SERVER_SECRET_KEY:-htbqvBJAgpm9bzvf3r4urJer0ENReatceh}"
+    # LIVE_SERVER_SECRET_KEY: same first-boot generation strategy.
+    local _insecure_lssk="htbqvBJAgpm9bzvf3r4urJer0ENReatceh"
+    local _placeholder_lssk="change-this-key-on-deployment"
+    if [ -z "$LIVE_SERVER_SECRET_KEY" ] || [ "$LIVE_SERVER_SECRET_KEY" = "$_insecure_lssk" ] || [ "$LIVE_SERVER_SECRET_KEY" = "$_placeholder_lssk" ]; then
+        local _stored_lssk
+        _stored_lssk=$(grep "^LIVE_SERVER_SECRET_KEY=" plane.env 2>/dev/null | cut -d'=' -f2-)
+        if [ -n "$_stored_lssk" ] && [ "$_stored_lssk" != "$_insecure_lssk" ] && [ "$_stored_lssk" != "$_placeholder_lssk" ]; then
+            LIVE_SERVER_SECRET_KEY="$_stored_lssk"
+        else
+            LIVE_SERVER_SECRET_KEY=$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c50)
+        fi
+    fi
+    update_env_value "LIVE_SERVER_SECRET_KEY" "$LIVE_SERVER_SECRET_KEY"
 
     update_env_value "API_KEY_RATE_LIMIT" "${API_KEY_RATE_LIMIT:-60/minute}"
 

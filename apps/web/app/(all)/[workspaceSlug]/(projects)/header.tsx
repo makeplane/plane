@@ -1,10 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
-import { Shapes } from "lucide-react";
+import { HomeOutline, WidgetOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { HomeIcon } from "@plane/propel/icons";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
@@ -24,22 +32,32 @@ export const WorkspaceDashboardHeader = observer(function WorkspaceDashboardHead
             <Breadcrumbs>
               <Breadcrumbs.Item
                 component={
-                  <BreadcrumbLink label={t("home.title")} icon={<HomeIcon className="h-4 w-4 text-tertiary" />} />
+                  <BreadcrumbLink label={t("home.title")} icon={<HomeOutline className="h-4 w-4 text-tertiary" />} />
                 }
               />
             </Breadcrumbs>
           </div>
         </Header.LeftItem>
         <Header.RightItem>
-          <Button
-            variant="secondary"
-            size="lg"
-            onClick={() => toggleWidgetSettings(true)}
-            className="my-auto mb-0"
-            prependIcon={<Shapes />}
-          >
-            <div className="hidden sm:hidden md:block">{t("home.manage_widgets")}</div>
-          </Button>
+          <div className="my-auto mb-0 md:hidden">
+            <IconButton
+              variant="secondary"
+              size="md"
+              onClick={() => toggleWidgetSettings(true)}
+              icon={<Icon icon={WidgetOutline} />}
+              aria-label={t("home.manage_widgets")}
+            />
+          </div>
+          <div className="my-auto mb-0 hidden md:block">
+            <Button
+              variant="secondary"
+              size="md"
+              stretch="auto"
+              onClick={() => toggleWidgetSettings(true)}
+              icon={<Icon icon={WidgetOutline} />}
+              label={t("home.manage_widgets")}
+            />
+          </div>
         </Header.RightItem>
       </Header>
     </>
