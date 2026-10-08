@@ -11,6 +11,7 @@ import useSWR from "swr";
 import { Select } from "@plane/blocks/select";
 import type { SelectVariant } from "@plane/blocks/select";
 import { PROJECT_ISSUE_TYPES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import type { TIssueType } from "@plane/types";
 // components
 import { getIssueTypeLogoIcon, IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
@@ -49,13 +50,16 @@ export const IssueTypeDropdown = observer(function IssueTypeDropdown(props: TIss
     workspaceSlug,
     disabled = false,
     variant = "pill-md",
-    placeholder = "Work item type",
+    placeholder,
     className,
     tabIndex,
     testId,
   } = props;
   // store hooks
   const { fetchProjectIssueTypes, getIssueTypeById } = useIssueTypes();
+  // translation
+  const { t } = useTranslation();
+  const resolvedPlaceholder = placeholder ?? t("work_item_types.label");
 
   const { data: types } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUE_TYPES(workspaceSlug, projectId) : null,
@@ -76,7 +80,7 @@ export const IssueTypeDropdown = observer(function IssueTypeDropdown(props: TIss
       value={selectedType}
       onChange={onChange}
       disabled={disabled}
-      placeholder={placeholder}
+      placeholder={resolvedPlaceholder}
       pinSelected={false}
       getOptionValue={(type) => type.id}
       getOptionLabel={(type) => type.name}
@@ -92,12 +96,12 @@ export const IssueTypeDropdown = observer(function IssueTypeDropdown(props: TIss
           const type = selected[0];
           return type ? <IssueTypeLogo icon_props={getIssueTypeLogoIcon(type.logo_props)} size="sm" /> : undefined;
         }}
-        label={(selected) => selected[0]?.name ?? placeholder}
+        label={(selected) => selected[0]?.name ?? resolvedPlaceholder}
       >
         {(selected) => {
           const type = selected[0];
-          const label = type?.name ?? placeholder;
-          return (!!type || !!placeholder) && <span className="min-w-0 grow truncate text-left">{label}</span>;
+          const label = type?.name ?? resolvedPlaceholder;
+          return (!!type || !!resolvedPlaceholder) && <span className="min-w-0 grow truncate text-left">{label}</span>;
         }}
       </Select.Trigger>
     </Select>
