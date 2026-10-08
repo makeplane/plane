@@ -49,12 +49,13 @@ export const IssueTypeDeleteModal = observer(function IssueTypeDeleteModal(props
       await mutate(PROJECT_ISSUE_TYPES(workspaceSlug, projectId));
       handleClose();
     } catch (error) {
+      const errorMessage =
+        (error as { error?: string; data?: { error?: string } })?.error ??
+        (error as { data?: { error?: string } })?.data?.error;
       setToast({
         type: "error",
         title: t("work_item_types.settings.item_delete_confirmation.toast.error.title"),
-        message:
-          (error as { error?: string })?.error ??
-          t("work_item_types.settings.item_delete_confirmation.toast.error.message"),
+        message: errorMessage ?? t("work_item_types.settings.item_delete_confirmation.toast.error.message"),
       });
     } finally {
       setIsDeleting(false);

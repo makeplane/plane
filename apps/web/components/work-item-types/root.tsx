@@ -52,7 +52,8 @@ export const WorkItemTypesRoot = observer(function WorkItemTypesRoot() {
   if (!workspaceSlug || !projectId) return null;
 
   const handleEnableDisable = async (issueType: TIssueType) => {
-    const action = issueType.is_active ? "disable" : "enable";
+    const action = issueType.is_active ? t("common.actions.disable") : t("common.actions.enable");
+    const toastAction = issueType.is_active ? t("common.disabled") : t("common.enabled");
     try {
       await issueTypesStore.updateIssueType(workspaceSlug, projectId, issueType.id, {
         is_active: !issueType.is_active,
@@ -61,7 +62,10 @@ export const WorkItemTypesRoot = observer(function WorkItemTypesRoot() {
       setToast({
         type: "success",
         title: t("work_item_types.enable_disable.toast.success.title"),
-        message: t("work_item_types.enable_disable.toast.success.message", { name: issueType.name, action }),
+        message: t("work_item_types.enable_disable.toast.success.message", {
+          name: issueType.name,
+          action: toastAction,
+        }),
       });
     } catch {
       setToast({

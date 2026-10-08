@@ -80,7 +80,7 @@ export const IssueTypeListItem = observer(function IssueTypeListItem(props: Prop
           size="md"
           icon={<Icon icon={isActive ? ToggleOffOutline : ToggleOnOutline} />}
           aria-label={t("work_item_types.enable_disable.tooltip", {
-            action: isActive ? "disable" : "enable",
+            action: isActive ? t("common.actions.disable") : t("common.actions.enable"),
           })}
           loading={isToggling}
           disabled={isDefault}
