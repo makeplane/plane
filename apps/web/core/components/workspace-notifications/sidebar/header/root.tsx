@@ -2,10 +2,8 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/propel/button";
 import { ChevronLeftIcon, InboxIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
-import { cn } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // local imports
@@ -28,10 +26,8 @@ export const NotificationSidebarHeader = observer(function NotificationSidebarHe
         <div className="flex items-center gap-2">
           <Link
             href={`/${workspaceSlug}`}
-            className={cn(
-              getButtonStyling("secondary", "base"),
-              "flex items-center justify-center gap-2 text-tertiary rounded-lg h-6 w-6 p-1 hover:bg-surface-2 hover:text-secondary"
-            )}
+            aria-label={t("back_to_workspace")}
+            className="flex h-6 w-6 items-center justify-center rounded-lg p-1 text-tertiary hover:bg-surface-2 hover:text-secondary"
           >
             <ChevronLeftIcon className="h-4 w-4" />
           </Link>
