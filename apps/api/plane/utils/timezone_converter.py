@@ -94,6 +94,13 @@ def convert_to_utc(date, project_id, is_start_date=False):
         return utc_datetime
 
 
+def project_day_start_utc(date, project_id):
+    """Midnight of ``date`` ("YYYY-MM-DD") in the project's timezone, as UTC."""
+    project_tz = pytz.timezone(Project.objects.values_list("timezone", flat=True).get(id=project_id))
+    day = datetime.strptime(date, "%Y-%m-%d").date()
+    return project_tz.localize(datetime.combine(day, time.min)).astimezone(pytz.utc)
+
+
 def convert_utc_to_project_timezone(utc_datetime, project_id):
     """
     Converts a UTC datetime (stored in the database) to the project's local timezone.
