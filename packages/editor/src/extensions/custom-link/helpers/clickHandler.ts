@@ -50,6 +50,11 @@ export function clickHandler(options: ClickHandlerOptions): Plugin {
             return false;
           }
 
+          // Suppress the native anchor navigation: in a non-editable view
+          // ProseMirror doesn't swallow the click, so without this the
+          // browser opens a second tab via the underlying <a target="_blank">
+          // in addition to the one below (#9386).
+          event.preventDefault();
           window.open(href, target);
 
           return true;
