@@ -20,11 +20,13 @@ import {
   StartDateOutline,
   StateOutline,
   UserOutline,
+  WorkItemsOutline,
 } from "@makeplane/propel/icons";
 import { DateSelect } from "@plane/blocks/property-select";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import { EstimateSelect } from "@/components/dropdowns/estimate/estimate-select";
+import { IssueTypeDropdown } from "@/components/dropdowns/issue-type";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MemberSelect } from "@/components/dropdowns/member/member-select";
 import { PrioritySelect } from "@/components/dropdowns/priority/priority-select";
@@ -94,6 +96,18 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 disabled={!isEditable}
                 variant="select-ghost-md"
                 tooltip
+              />
+            </SidebarPropertyListItem>
+
+            <SidebarPropertyListItem icon={WorkItemsOutline} label={t("issue.display.properties.issue_type")}>
+              <IssueTypeDropdown
+                value={issue?.type_id}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { type_id: val })}
+                projectId={projectId}
+                workspaceSlug={workspaceSlug}
+                disabled={!isEditable}
+                variant="select-ghost-md"
+                testId="work-item-type-select"
               />
             </SidebarPropertyListItem>
 

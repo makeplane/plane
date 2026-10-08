@@ -28,6 +28,7 @@ import {
 // components
 import { CycleSelect } from "@/components/dropdowns/cycle/cycle-select";
 import { EstimateSelect } from "@/components/dropdowns/estimate/estimate-select";
+import { IssueTypeDropdown } from "@/components/dropdowns/issue-type";
 import { MemberSelect } from "@/components/dropdowns/member/member-select";
 import { ModuleSelect } from "@/components/dropdowns/module/module-select";
 import { PrioritySelect } from "@/components/dropdowns/priority/priority-select";
@@ -112,6 +113,10 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
 
   const handlePriority = async (value: TIssuePriorities) => {
     if (updateIssue) await updateIssue(issue.project_id, issue.id, { priority: value });
+  };
+
+  const handleType = async (typeId: string | null) => {
+    if (updateIssue) await updateIssue(issue.project_id, issue.id, { type_id: typeId });
   };
 
   const handleLabel = async (ids: string[]) => {
@@ -217,6 +222,22 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             disabled={isReadOnly}
             variant="pill-sm"
             tooltip
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
+
+      {/* work item type */}
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="issue_type">
+        {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <IssueTypeDropdown
+            value={issue.type_id}
+            onChange={handleType}
+            projectId={issue.project_id}
+            workspaceSlug={workspaceSlug?.toString() ?? ""}
+            disabled={isReadOnly}
+            variant="pill-sm"
+            testId="work-item-type-pill"
           />
         </div>
       </WithDisplayPropertiesHOC>
