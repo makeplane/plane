@@ -7,11 +7,36 @@ from django.db import models
 from django.db.models import Q
 
 # Module imports
-from .project import ProjectBaseModel
+from .project import ProjectBaseModel, ProjectMember
 from .base import BaseModel
+from plane.db.mixins import SoftDeletionQuerySet, SoftDeletionManager
+
+
+class IssueTypeQuerySet(SoftDeletionQuerySet):
+    """QuerySet for issue types that handles accessibility.
+
+    NOTE: the EE teamspace branch of accessible_to is deferred to the
+    Teamspaces phase (Plan 06); only project-membership access is applied here.
+    """
+
+    def accessible_to(self, user_id, slug):
+        member_project_ids = ProjectMember.objects.filter(
+            member_id=user_id, workspace__slug=slug, is_active=True
+        ).values_list("project_id", flat=True)
+        return self.filter(project_issue_types__project_id__in=member_project_ids)
+
+
+class IssueTypeManager(SoftDeletionManager):
+    def get_queryset(self):
+        return IssueTypeQuerySet(self.model, using=self._db).filter(deleted_at__isnull=True)
+
+    def accessible_to(self, user_id, slug):
+        return self.get_queryset().accessible_to(user_id, slug)
 
 
 class IssueType(BaseModel):
+    objects = IssueTypeManager()
+
     workspace = models.ForeignKey("db.Workspace", related_name="issue_types", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
