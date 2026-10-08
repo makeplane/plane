@@ -29,7 +29,8 @@ const detectMimeTypeFromExtension = (filename: string): string => {
   const parts = filename.split(".");
   if (parts.length < 2) return "";
   const extension = parts[parts.length - 1]?.toLowerCase() || "";
-  return EXTENSION_MIME_TYPE_MAP[extension] || "";
+  // own-property check so names like `file.constructor` don't resolve to Object.prototype members
+  return Object.hasOwn(EXTENSION_MIME_TYPE_MAP, extension) ? EXTENSION_MIME_TYPE_MAP[extension] : "";
 };
 
 /**
@@ -113,7 +114,6 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
   const filenameError = validateFilename(file.name);
   if (filenameError) {
     console.warn(`File validation warning: ${filenameError}`);
-    return "";
   }
 
   try {
@@ -126,6 +126,10 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
   }
 
   // Plain-text formats (markdown, mdx, …) have no magic bytes — fall back to extension.
+  // The filename is the only evidence here, so a suspicious one is rejected instead of trusted.
+  if (filenameError) {
+    return "";
+  }
   const extensionType = detectMimeTypeFromExtension(file.name);
   if (extensionType) {
     return extensionType;

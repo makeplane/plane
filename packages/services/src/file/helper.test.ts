@@ -11,6 +11,11 @@ import { getFileMetaDataForUpload } from "./helper";
 const createFile = (name: string, contents: BlobPart[] = ["# Markdown"]): File =>
   new File(contents, name, { type: "" });
 
+const pngHeader = new Uint8Array([
+  0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00,
+  0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1f, 0x15, 0xc4, 0x89,
+]);
+
 describe("getFileMetaDataForUpload", () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -42,18 +47,25 @@ describe("getFileMetaDataForUpload", () => {
     expect(metadata.type).toBe("");
   });
 
-  it("returns an empty type for an unsupported extension without a detectable signature", async () => {
-    const metadata = await getFileMetaDataForUpload(createFile("notes.bin"));
+  it.each(["notes.bin", "notes.constructor", "notes.__proto__"])(
+    "returns an empty type for the unsupported extension %s without a detectable signature",
+    async (filename) => {
+      const metadata = await getFileMetaDataForUpload(createFile(filename));
 
-    expect(metadata.type).toBe("");
-  });
+      expect(metadata.type).toBe("");
+    }
+  );
 
   it("prefers a detected signature over the filename extension", async () => {
-    const pngHeader = new Uint8Array([
-      0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00,
-      0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1f, 0x15, 0xc4, 0x89,
-    ]);
     const metadata = await getFileMetaDataForUpload(createFile("image.md", [pngHeader]));
+
+    expect(metadata.type).toBe("image/png");
+  });
+
+  it("keeps the detected signature type when the filename only triggers a warning", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+
+    const metadata = await getFileMetaDataForUpload(createFile("deploy.sh.png", [pngHeader]));
 
     expect(metadata.type).toBe("image/png");
   });
