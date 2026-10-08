@@ -67,13 +67,17 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Normalise emails the same way user emails are stored (lowercased, stripped) so that
+        # the membership check below cannot be bypassed by casing or whitespace differences
+        emails = [{**email, "email": (email.get("email") or "").strip().lower()} for email in emails]
+
         # Get the workspace object
         workspace = Workspace.objects.get(slug=slug)
 
         # Check if user is already a member of workspace
         workspace_members = WorkspaceMember.objects.filter(
             workspace_id=workspace.id,
-            member__email__in=[email.get("email") for email in emails],
+            member__email__in=[email["email"] for email in emails],
             is_active=True,
         ).select_related("member", "member__avatar_asset")
 
@@ -89,10 +93,10 @@ class WorkspaceInvitationsViewset(BaseViewSet):
         workspace_invitations = []
         for email in emails:
             try:
-                validate_email(email.get("email"))
+                validate_email(email["email"])
                 workspace_invitations.append(
                     WorkspaceMemberInvite(
-                        email=email.get("email").strip().lower(),
+                        email=email["email"],
                         workspace_id=workspace.id,
                         token=jwt.encode(
                             {"email": email, "timestamp": datetime.now().timestamp()},
