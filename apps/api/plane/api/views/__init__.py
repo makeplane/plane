@@ -65,6 +65,11 @@ from .intake import (
     IntakeIssueDetailAPIEndpoint,
 )
 
+from .issue_type import (
+    IssueTypeListCreateAPIEndpoint,
+    IssueTypeDetailAPIEndpoint,
+)
+
 from .asset import UserAssetEndpoint, UserServerAssetEndpoint, GenericAssetEndpoint
 
 from .user import UserEndpoint

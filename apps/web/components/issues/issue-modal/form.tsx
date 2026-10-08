@@ -25,6 +25,7 @@ import {
   DialogMain,
   DialogTitle,
 } from "@makeplane/propel/components/dialog";
+import { ChevronRightOutline } from "@makeplane/propel/icons";
 import { setToast } from "@plane/blocks/toast";
 import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
@@ -42,11 +43,13 @@ import {
   IssueParentTag,
   IssueProjectSelect,
   IssueTitleInput,
+  IssueTypeSelector,
 } from "@/components/issues/issue-modal/components";
 // helpers
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssueTypes } from "@/hooks/store/use-issue-types";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
@@ -117,6 +120,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
 
   // store hooks
   const { getProjectById } = useProject();
+  const issueTypesStore = useIssueTypes();
   const {
     workItemTemplateId,
     isApplyingTemplate,
@@ -195,8 +199,10 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     const issueTypeIdOnProjectChange = getIssueTypeIdOnProjectChange(projectId);
     if (issueTypeIdOnProjectChange) setValue("type_id", issueTypeIdOnProjectChange, { shouldValidate: true });
 
+    // re-run once the project's types land in the store (the selector fetches them), so the
+    // default type is applied even when the store is still empty on the first pass
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, projectId]);
+  }, [data, projectId, issueTypesStore.issueTypes]);
 
   useEffect(() => {
     if (workItemTemplateId && editorRef.current) {
@@ -373,6 +379,17 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                     disabled={!!data?.id || !!data?.sourceIssueId || isProjectSelectionDisabled}
                     handleFormChange={handleFormChange}
                   />
+                  {projectId && getProjectById(projectId)?.is_issue_type_enabled && (
+                    <>
+                      <ChevronRightOutline className="h-3.5 w-3.5 shrink-0 text-tertiary" aria-hidden="true" />
+                      <IssueTypeSelector
+                        control={control}
+                        projectId={projectId}
+                        disabled={!!data?.sourceIssueId}
+                        handleFormChange={handleFormChange}
+                      />
+                    </>
+                  )}
                 </div>
               </div>
               {watch("parent_id") && selectedParentIssue && (

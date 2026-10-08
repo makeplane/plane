@@ -11,6 +11,7 @@ import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // components
 import { IssueModalContext } from "@/components/issues/issue-modal/context";
 // hooks
+import { useIssueTypes } from "@/hooks/store/use-issue-types";
 import { useUser } from "@/hooks/store/user/user-user";
 
 export type TIssueModalProviderProps = {
@@ -26,8 +27,17 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
+  const issueTypesStore = useIssueTypes();
   // derived values
   const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
+
+  /**
+   * The default active work item type for a project, or `null` when the project has none. Read from
+   * the per-project list the create-modal selector caches via `PROJECT_ISSUE_TYPES` (the project-level
+   * endpoint does not annotate `project_ids`, so membership must come from the fetched list itself).
+   */
+  const getIssueTypeIdOnProjectChange = (projectId: string): string | null =>
+    issueTypesStore.getProjectIssueTypes(projectId).find((type) => type.is_default && type.is_active)?.id ?? null;
 
   return (
     <IssueModalContext.Provider
@@ -44,7 +54,7 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
         setIssuePropertyValues: () => {},
         issuePropertyValueErrors: {},
         setIssuePropertyValueErrors: () => {},
-        getIssueTypeIdOnProjectChange: () => null,
+        getIssueTypeIdOnProjectChange,
         getActiveAdditionalPropertiesLength: () => 0,
         handlePropertyValuesValidation: () => true,
         handleCreateUpdatePropertyValues: () => Promise.resolve(),

@@ -69,3 +69,5 @@ RESTRICTED_WORKSPACE_SLUGS = [
     "instances",
     "instance",
 ]
+
+RESTRICTED_ISSUE_PROPERTY_DISPLAY_NAMES = ["state", "due date", "cycle", "modules"]
