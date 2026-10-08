@@ -1,0 +1,34 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Ingen resultater fundet"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "Sticky notes",
+    "your_work": "Dit arbejde",
+    "projects": "Projekter",
+    "pages": "Sider",
+    "new_work_item": "Ny opgave",
+    "home": "Hjem",
+    "inbox": "Indbakke",
+    "workspace": "Arbejdsområde",
+    "views": "Visninger",
+    "analytics": "Analyse",
+    "work_items": "Opgaver",
+    "cycles": "Cyklusser",
+    "modules": "Moduler",
+    "intake": "Indbakke",
+    "drafts": "Kladder",
+    "favorites": "Favoritter",
+    "pro": "Pro",
+    "upgrade": "Opgrader",
+    "pi_chat": "Plane AI",
+    "epics": "Eposser",
+    "upgrade_plan": "Opgrader abonnement",
+    "plane_pro": "Plane Pro",
+    "business": "Business"
+  }
+}

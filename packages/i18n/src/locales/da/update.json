@@ -1,0 +1,69 @@
+{
+  "updates": {
+    "progress": {
+      "title": "Fremdrift",
+      "since_last_update": "Siden sidste opdatering",
+      "comments": "{count, plural, one{# kommentar} other{# kommentarer}}"
+    },
+    "add_update": "Tilføj opdatering",
+    "add_update_placeholder": "Tilføj din opdatering her",
+    "empty": {
+      "title": "Ingen opdateringer endnu",
+      "description": "Du kan se opdateringerne her."
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reaktion oprettet",
+          "message": "Reaktionen blev oprettet med succes"
+        },
+        "error": {
+          "title": "Reaktion ikke oprettet",
+          "message": "Reaktionen kunne ikke oprettes"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reaktion fjernet",
+          "message": "Reaktionen blev fjernet med succes"
+        },
+        "error": {
+          "title": "Reaktion ikke fjernet",
+          "message": "Reaktionen kunne ikke fjernes"
+        }
+      }
+    },
+    "create": {
+      "success": {
+        "title": "Opdatering oprettet",
+        "message": "Opdateringen blev oprettet med succes"
+      },
+      "error": {
+        "title": "Opdatering ikke oprettet",
+        "message": "Opdateringen kunne ikke oprettes"
+      }
+    },
+    "delete": {
+      "title": "Slet opdatering",
+      "confirmation": "Er du sikker på, at du vil slette denne opdatering? Denne handling kan ikke fortrydes.",
+      "success": {
+        "title": "Opdatering slettet",
+        "message": "Opdateringen blev slettet med succes"
+      },
+      "error": {
+        "title": "Opdatering ikke slettet",
+        "message": "Opdateringen kunne ikke slettes"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Opdateret",
+        "message": "Opdateringen blev opdateret med succes"
+      },
+      "error": {
+        "title": "Opdatering ikke opdateret",
+        "message": "Opdateringen kunne ikke opdateres"
+      }
+    }
+  }
+}

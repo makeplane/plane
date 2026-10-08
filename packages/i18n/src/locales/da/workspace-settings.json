@@ -1,0 +1,508 @@
+{
+  "workspace_settings": {
+    "label": "Arbejdsområdeindstillinger",
+    "page_label": "{workspace} - Generelle indstillinger",
+    "key_created": "Nøgle oprettet",
+    "copy_key": "Kopiér og gem denne hemmelige nøgle i Plane Pages. Du kan ikke se denne nøgle igen, når du trykker på Luk. En CSV-fil indeholdende nøglen er blevet downloadet.",
+    "token_copied": "Token kopieret til udklipsholder.",
+    "settings": {
+      "general": {
+        "title": "Generelt",
+        "upload_logo": "Upload logo",
+        "edit_logo": "Rediger logo",
+        "name": "Navn på arbejdsområde",
+        "company_size": "Virksomhedsstørrelse",
+        "url": "Arbejdsområde-URL",
+        "workspace_timezone": "Arbejdsområdets tidszone",
+        "update_workspace": "Opdater arbejdsområde",
+        "delete_workspace": "Slet dette arbejdsområde",
+        "delete_workspace_description": "Når et arbejdsområde slettes, vil alle data og ressourcer i det arbejdsområde blive permanent fjernet og kan ikke genskabes.",
+        "delete_btn": "Slet dette arbejdsområde",
+        "delete_modal": {
+          "title": "Er du sikker på, at du vil slette dette arbejdsområde?",
+          "description": "Du har en aktiv prøveperiode på en af vores betalte abonnementer. Annuller den venligst først for at fortsætte.",
+          "dismiss": "Afvis",
+          "cancel": "Annuller prøveperiode",
+          "success_title": "Arbejdsområde slettet.",
+          "success_message": "Du vil snart blive sendt til din profilside.",
+          "error_title": "Det virkede ikke.",
+          "error_message": "Prøv venligst igen."
+        },
+        "errors": {
+          "name": {
+            "required": "Navn er påkrævet",
+            "max_length": "Arbejdsområdets navn må ikke overskride 80 tegn"
+          },
+          "company_size": {
+            "required": "Virksomhedsstørrelse er påkrævet",
+            "select_a_range": "Vælg organisationsstørrelse"
+          }
+        }
+      },
+      "members": {
+        "title": "Medlemmer",
+        "add_member": "Tilføj medlem",
+        "pending_invites": "Afventende invitationer",
+        "invitations_sent_successfully": "Invitationer sendt med succes",
+        "leave_confirmation": "Er du sikker på, at du vil forlade arbejdsområdet? Du vil ikke længere have adgang til dette arbejdsområde. Denne handling kan ikke fortrydes.",
+        "details": {
+          "full_name": "Fulde navn",
+          "display_name": "Visningsnavn",
+          "email_address": "E-mailadresse",
+          "account_type": "Kontotype",
+          "authentication": "Godkendelse",
+          "joining_date": "Tilmeldingsdato"
+        },
+        "modal": {
+          "title": "Inviter folk til at samarbejde",
+          "description": "Inviter folk til at samarbejde i dit arbejdsområde.",
+          "button": "Send invitationer",
+          "button_loading": "Sender invitationer",
+          "placeholder": "navn@virksomhed.com",
+          "errors": {
+            "required": "Vi har brug for en e-mailadresse for at invitere dem.",
+            "invalid": "E-mail er ugyldig"
+          }
+        }
+      },
+      "billing_and_plans": {
+        "heading": "Fakturering & Abonnementer",
+        "description": "Vælg dit abonnement, administrer abonnementer, og opgrader nemt, efterhånden som dine behov vokser.",
+        "title": "Fakturering & Abonnementer",
+        "current_plan": "Nuværende abonnement",
+        "free_plan": "Du bruger i øjeblikket gratis-abonnementet",
+        "view_plans": "Se abonnementer"
+      },
+      "exports": {
+        "heading": "Eksporter",
+        "description": "Eksporter dine projektdata i forskellige formater og få adgang til din eksporthistorik med downloadlinks.",
+        "title": "Eksporter",
+        "exporting": "Eksporterer",
+        "previous_exports": "Tidligere eksporter",
+        "export_separate_files": "Eksporter dataene til separate filer",
+        "exporting_projects": "Eksporterer projekt",
+        "format": "Format",
+        "filters_info": "Anvend filtre for at eksportere specifikke opgaver baseret på dine kriterier.",
+        "modal": {
+          "title": "Eksporter til",
+          "toasts": {
+            "success": {
+              "title": "Eksport lykkedes",
+              "message": "Du vil kunne downloade den eksporterede {entity} fra tidligere eksport."
+            },
+            "error": {
+              "title": "Eksport mislykkedes",
+              "message": "Eksporten mislykkedes. Prøv venligst igen."
+            }
+          }
+        }
+      },
+      "webhooks": {
+        "heading": "Webhooks",
+        "description": "Automatisér notifikationer til eksterne tjenester, når der sker projekthændelser.",
+        "title": "Webhooks",
+        "add_webhook": "Tilføj webhook",
+        "modal": {
+          "title": "Opret webhook",
+          "details": "Webhook-detaljer",
+          "payload": "Payload-URL",
+          "question": "Hvilke hændelser vil du have til at udløse denne webhook?",
+          "error": "URL er påkrævet"
+        },
+        "secret_key": {
+          "title": "Hemmelig nøgle",
+          "message": "Generer en token for at logge ind på webhook-payloaden"
+        },
+        "options": {
+          "all": "Send mig alt",
+          "individual": "Vælg individuelle hændelser"
+        },
+        "toasts": {
+          "created": {
+            "title": "Webhook oprettet",
+            "message": "Webhooken blev oprettet med succes"
+          },
+          "not_created": {
+            "title": "Webhook ikke oprettet",
+            "message": "Webhooken kunne ikke oprettes"
+          },
+          "updated": {
+            "title": "Webhook opdateret",
+            "message": "Webhooken blev opdateret med succes"
+          },
+          "not_updated": {
+            "title": "Webhook ikke opdateret",
+            "message": "Webhooken kunne ikke opdateres"
+          },
+          "removed": {
+            "title": "Webhook fjernet",
+            "message": "Webhooken blev fjernet med succes"
+          },
+          "not_removed": {
+            "title": "Webhook ikke fjernet",
+            "message": "Webhooken kunne ikke fjernes"
+          },
+          "secret_key_copied": {
+            "message": "Hemmelig nøgle kopieret til udklipsholder."
+          },
+          "secret_key_not_copied": {
+            "message": "Der opstod en fejl under kopiering af hemmelig nøgle."
+          }
+        }
+      },
+      "api_tokens": {
+        "heading": "Adgangstokens",
+        "description": "Generer sikre API-tokens for at integrere dine data med eksterne systemer og applikationer.",
+        "title": "Adgangstokens",
+        "add_token": "Tilføj adgangstoken",
+        "create_token": "Opret token",
+        "never_expires": "Udløber aldrig",
+        "generate_token": "Generer token",
+        "generating": "Genererer",
+        "delete": {
+          "title": "Slet adgangstoken",
+          "description": "Enhver applikation, der bruger denne token, vil ikke længere have adgang til Plane-data. Denne handling kan ikke fortrydes.",
+          "success": {
+            "title": "Succes!",
+            "message": "Tokenen blev slettet med succes"
+          },
+          "error": {
+            "title": "Fejl!",
+            "message": "Tokenen kunne ikke slettes"
+          }
+        }
+      },
+      "integrations": {
+        "title": "Integrationer",
+        "heading": "Integrationer",
+        "description": "Forbind med populære værktøjer og tjenester for at synkronisere dit arbejde på tværs af hele dit arbejdsflow-økosystem.",
+        "page_title": "Arbejd med dine Plane-data i tilgængelige apps eller dine egne.",
+        "page_description": "Se alle integrationer i brug i dette arbejdsområde eller af dig."
+      },
+      "imports": {
+        "title": "Importer",
+        "heading": "Importer",
+        "description": "Forbind og importer data fra dine eksisterende projektstyringsværktøjer for at strømline din arbejdsflowintegration."
+      },
+      "worklogs": {
+        "title": "Arbejdslogge",
+        "heading": "Arbejdslogge",
+        "description": "Download arbejdslogge (timeregistreringer) for enhver person i ethvert projekt."
+      },
+      "group_syncing": {
+        "title": "Gruppesynkronisering",
+        "heading": "Gruppesynkronisering",
+        "description": "Knyt identitetsudbydergrupper til projekter og roller. Brugeradgang opdateres automatisk, når gruppemedlemskab ændres i din IdP, hvilket forenkler onboarding og offboarding.",
+        "enable": {
+          "title": "Aktivér gruppesynkronisering",
+          "description": "Tilføj automatisk brugere til projekter baseret på identitetsudbydergrupper."
+        },
+        "config": {
+          "title": "Konfigurer gruppesynkronisering",
+          "description": "Opsæt hvordan identitetsudbydergrupper kortlægges til projekter og roller.",
+          "sync_on_login": {
+            "title": "Synkroniser ved login",
+            "description": "Opdater gruppemedlemskab og projektadgang, når en bruger logger ind."
+          },
+          "sync_offline": {
+            "title": "Offline-synkronisering",
+            "description": "Kører automatisk synkronisering hver sjette time uden at vente på, at brugere logger ind."
+          },
+          "auto_remove": {
+            "title": "Auto-fjernelse",
+            "description": "Fjern automatisk brugere fra projekter, når de ikke længere matcher gruppen."
+          },
+          "group_attribute_key": {
+            "title": "Gruppeattributnøgle",
+            "description": "Identitetsudbyderattributten, der bruges til at identificere og synkronisere brugergrupper.",
+            "placeholder": "Grupper"
+          }
+        },
+        "group_mapping": {
+          "title": "Gruppekortlægning",
+          "description": "Knyt identitetsudbydergrupper til projekter og roller.",
+          "button_text": "Tilføj ny gruppesynkronisering"
+        },
+        "toast": {
+          "updating": "Opdaterer gruppesynkroniseringsfunktion",
+          "success": "Gruppesynkroniseringsfunktion opdateret med succes.",
+          "error": "Kunne ikke opdatere gruppesynkroniseringsfunktion!"
+        },
+        "delete_modal": {
+          "title": "Slet gruppesynkronisering",
+          "content": "Nye brugere fra denne identitetsgruppe vil ikke længere blive tilføjet til projektet. Brugere der allerede er tilføjet, bevarer deres nuværende rolle."
+        },
+        "modal": {
+          "idp_group_name": {
+            "text": "Brugergruppe",
+            "required": "Brugergruppe er påkrævet",
+            "placeholder": "Indtast IdP-gruppenavnene"
+          },
+          "project": {
+            "text": "Projekt",
+            "required": "Projekt er påkrævet",
+            "placeholder": "Vælg et projekt"
+          },
+          "default_role": {
+            "text": "Projektrolle",
+            "required": "Projektrolle er påkrævet",
+            "placeholder": "Vælg en projektrolle"
+          }
+        }
+      },
+      "identity": {
+        "title": "Identitet",
+        "heading": "Identitet",
+        "description": "Konfigurer dit domæne og aktivér Single sign-on"
+      },
+      "project_states": {
+        "title": "Projektstatusser",
+        "heading": "Se fremdriftsoversigt for alle projekter.",
+        "description": "Projektstatusser er en unik Plane-funktion til at spore fremdrift af alle dine projekter ud fra en hvilken som helst projektegenskab.",
+        "go_to_settings": "Gå til indstillinger"
+      },
+      "projects": {
+        "title": "Projekter",
+        "description": "Administrer projektstatusser, og aktivér projektetiketter og anden konfiguration.",
+        "tabs": {
+          "states": "Projektstatusser",
+          "labels": "Projektetiketter"
+        }
+      },
+      "templates": {
+        "title": "Skabeloner",
+        "heading": "Skabeloner",
+        "description": "Spar 80 % af tiden brugt på at oprette projekter, opgaver og sider, når du bruger skabeloner."
+      },
+      "relations": {
+        "title": "Relationer",
+        "heading": "Relationer",
+        "description": "Opret og administrer relationstyper, der forbinder opgaver på tværs af dit arbejdsområde."
+      },
+      "cancel_trial": {
+        "title": "Annuller din prøveperiode først.",
+        "description": "Du har en aktiv prøveperiode på et af vores betalte abonnementer. Annuller den venligst først for at fortsætte.",
+        "dismiss": "Afvis",
+        "cancel": "Annuller prøveperiode",
+        "cancel_success_title": "Prøveperiode annulleret.",
+        "cancel_success_message": "Du kan nu slette arbejdsområdet.",
+        "cancel_error_title": "Det virkede ikke.",
+        "cancel_error_message": "Prøv venligst igen."
+      },
+      "applications": {
+        "internal": "Intern",
+        "title": "Applikationer",
+        "applicationId_copied": "Applikations-ID kopieret til udklipsholder",
+        "clientId_copied": "Klient-ID kopieret til udklipsholder",
+        "clientSecret_copied": "Klienthemmelighed kopieret til udklipsholder",
+        "third_party_apps": "Tredjepartsapps",
+        "your_apps": "Dine apps",
+        "connect": "Forbind",
+        "connected": "Forbundet",
+        "disconnect": "Afbryd",
+        "install": "Installer",
+        "installed": "Installeret",
+        "configure": "Konfigurer",
+        "app_available": "Du har gjort denne app tilgængelig til brug med et Plane-arbejdsområde",
+        "app_credentials_regenrated": {
+          "title": "App-adgangsoplysninger blev genereret igen med succes",
+          "description": "Erstat klienthemmeligheden overalt, hvor den bruges. Den forrige hemmelighed er ikke længere gyldig."
+        },
+        "app_created": {
+          "title": "App oprettet med succes",
+          "description": "Brug adgangsoplysningerne til at installere appen i et Plane-arbejdsområde"
+        },
+        "installed_apps": "Installerede apps",
+        "all_apps": "Alle apps",
+        "internal_apps": "Interne apps",
+        "app_name_title": "Appnavn",
+        "app_description_title": {
+          "label": "Lang beskrivelse",
+          "placeholder": "Skriv en lang beskrivelse til markedspladsen. Tryk på ‘/’ for kommandoer."
+        },
+        "authorization_grant_type": {
+          "title": "Forbindelsestype",
+          "description": "Vælg om din app skal installeres én gang for arbejdsområdet, eller om hver bruger skal kunne forbinde deres egen konto"
+        },
+        "website": {
+          "title": "Hjemmeside",
+          "description": "Link til din apps hjemmeside.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "App-skaber",
+          "description": "Personen eller organisationen der opretter appen."
+        },
+        "app_maker_error": "Skabernavn er påkrævet",
+        "setup_url": {
+          "label": "Opsætnings-URL",
+          "description": "Brugere vil blive omdirigeret til denne URL, når de installerer appen.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook-URL",
+          "description": "Det er her, vi sender webhook-hændelser og opdateringer fra de arbejdsområder, hvor din app er installeret.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Webhook-hemmelighed",
+          "description": "Hemmelighed brugt til at bekræfte indkommende webhook-anmodninger.",
+          "placeholder": "Indtast en tilfældig hemmelig nøgle"
+        },
+        "redirect_uris": {
+          "label": "Omdirigerings-URI'er (mellemrumsepareret)",
+          "description": "Brugere vil blive omdirigeret til denne sti, efter de har godkendt med Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_available_description": "Forbind et Plane-arbejdsområde for at begynde at bruge den",
+        "client_id_and_secret": "Klient-ID og Hemmelighed",
+        "client_id_and_secret_description": "Kopiér og gem denne hemmelige nøgle i Pages. Du kan ikke se denne nøgle igen, efter du trykker på Luk.",
+        "client_id_and_secret_download": "Du kan downloade en CSV med nøglen herfra.",
+        "application_id": "Applikations-ID",
+        "client_id": "Klient-ID",
+        "client_secret": "Klienthemmelighed",
+        "export_as_csv": "Eksporter som CSV",
+        "slug_already_exists": "Slug findes allerede",
+        "failed_to_create_application": "Kunne ikke oprette applikation",
+        "upload_logo": "Upload logo",
+        "app_name_error": "Appnavn er påkrævet",
+        "app_short_description_title": "Kort beskrivelse",
+        "app_short_description_error": "Appens korte beskrivelse er påkrævet",
+        "app_description_error": "Appbeskrivelse er påkrævet",
+        "app_slug_title": "App-slug",
+        "app_slug_error": "App-slug er påkrævet",
+        "invalid_website_error": "Ugyldig hjemmeside",
+        "webhook_url_title": "Webhook-URL",
+        "webhook_url_error": "Webhook-URL er påkrævet",
+        "invalid_webhook_url_error": "Ugyldig webhook-URL",
+        "redirect_uris_title": "Omdirigerings-URI'er",
+        "redirect_uris_error": "Omdirigerings-URI'er er påkrævet",
+        "invalid_redirect_uris_error": "Ugyldige omdirigerings-URI'er",
+        "redirect_uris_description": "Indtast mellemrumseparerede URI'er, hvortil appen vil omdirigere f.eks. https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Autoriserede Javascript-oprindelser",
+        "authorized_javascript_origins_error": "Autoriserede Javascript-oprindelser er påkrævet",
+        "invalid_authorized_javascript_origins_error": "Ugyldige autoriserede Javascript-oprindelser",
+        "authorized_javascript_origins_description": "Indtast mellemrumseparerede oprindelser, hvorfra appen må foretage anmodninger f.eks. app.com example.com",
+        "create_app": "Opret app",
+        "update_app": "Opdater app",
+        "build_your_own_app": "Byg din egen app",
+        "edit_app_details": "Rediger appdetaljer",
+        "regenerate_client_secret_description": "Regenerer klienthemmeligheden. Hvis du regenererer hemmeligheden, kan du kopiere nøglen eller downloade den til en CSV-fil lige efter.",
+        "regenerate_client_secret": "Regenerer klienthemmelighed",
+        "regenerate_client_secret_confirm_title": "Sikker på, at du vil regenerere klienthemmeligheden?",
+        "regenerate_client_secret_confirm_description": "Apps der bruger denne hemmelighed, vil stoppe med at virke. Du skal opdatere hemmeligheden i appen.",
+        "regenerate_client_secret_confirm_cancel": "Annuller",
+        "regenerate_client_secret_confirm_regenerate": "Regenererer",
+        "read_only_access_to_workspace": "Skrivebeskyttet adgang til dit arbejdsområde",
+        "write_access_to_workspace": "Skriveadgang til dit arbejdsområde",
+        "read_only_access_to_user_profile": "Skrivebeskyttet adgang til din brugerprofil",
+        "write_access_to_user_profile": "Skriveadgang til din brugerprofil",
+        "connect_app_to_workspace": "Forbind {app} til dit arbejdsområde {workspace}",
+        "user_permissions": "Brugerrettigheder",
+        "user_permissions_description": "Brugerrettigheder bruges til at give adgang til brugerens profil.",
+        "workspace_permissions": "Arbejdsområderettigheder",
+        "workspace_permissions_description": "Arbejdsområderettigheder bruges til at give adgang til arbejdsområdet.",
+        "with_the_permissions": "med rettighederne",
+        "app_consent_title": "{app} anmoder om adgang til dit Plane-arbejdsområde og din profil.",
+        "choose_workspace_to_connect_app_with": "Vælg et arbejdsområde at forbinde appen med",
+        "app_consent_workspace_permissions_title": "{app} ønsker",
+        "app_consent_user_permissions_title": "{app} kan også anmode om en brugers tilladelse til følgende ressourcer. Disse rettigheder anmodes om og autoriseres af brugeren selv.",
+        "app_consent_accept_title": "Ved at acceptere",
+        "app_consent_accept_1": "Giver du appen adgang til dine Plane-data, uanset hvor du kan bruge appen i eller uden for Plane",
+        "app_consent_accept_2": "Accepterer du {app}'s privatlivspolitik og brugervilkår",
+        "accepting": "Accepterer...",
+        "accept": "Accepter",
+        "categories": "Kategorier",
+        "select_app_categories": "Vælg appkategorier",
+        "categories_title": "Kategorier",
+        "categories_error": "Kategorier er påkrævet",
+        "invalid_categories_error": "Ugyldige kategorier",
+        "categories_description": "Vælg de kategorier, der bedst beskriver appen",
+        "supported_plans": "Understøttede abonnementer",
+        "supported_plans_description": "Vælg de arbejdsområde-abonnementer, der kan installere denne applikation. Efterlad tom for at tillade alle abonnementer.",
+        "select_plans": "Vælg abonnementer",
+        "privacy_policy_url_title": "Privatlivspolitik-URL",
+        "privacy_policy_url_error": "Privatlivspolitik-URL er påkrævet",
+        "invalid_privacy_policy_url_error": "Ugyldig privatlivspolitik-URL",
+        "terms_of_service_url_title": "Brugervilkår-URL",
+        "terms_of_service_url_error": "Brugervilkår-URL er påkrævet",
+        "invalid_terms_of_service_url_error": "Ugyldige brugervilkår-URL",
+        "support_url_title": "Support-URL",
+        "support_url_error": "Support-URL er påkrævet",
+        "invalid_support_url_error": "Ugyldig support-URL",
+        "video_url_title": "Video-URL",
+        "video_url_error": "Video-URL er påkrævet",
+        "invalid_video_url_error": "Ugyldig video-URL",
+        "setup_url_error": "Opsætnings-URL er påkrævet",
+        "invalid_setup_url_error": "Ugyldig opsætnings-URL",
+        "configuration_url_title": "Konfigurations-URL",
+        "configuration_url_error": "Konfigurations-URL er påkrævet",
+        "invalid_configuration_url_error": "Ugyldig konfigurations-URL",
+        "contact_email_title": "Kontakt-e-mail",
+        "contact_email_error": "Kontakt-e-mail er påkrævet",
+        "invalid_contact_email_error": "Ugyldig kontakt-e-mail",
+        "upload_attachments": "Upload vedhæftninger",
+        "uploading_images": "Uploader {count} billed{count, plural, one {e} other {er}}",
+        "drop_images_here": "Slip billeder her",
+        "click_to_upload_images": "Klik for at uploade billeder",
+        "invalid_file_or_exceeds_size_limit": "Ugyldig fil eller overskrider størrelsesgrænsen ({size} MB)",
+        "uploading": "Uploader...",
+        "upload_and_save": "Upload & Gem",
+        "app_consent_no_access_title": "Anmod om at installere",
+        "app_consent_no_access_description": "Denne app kan kun installeres, efter en arbejdsområdeadministrator installerer den. Kontakt din arbejdsområdeadministrator for at fortsætte.",
+        "app_consent_unapproved_title": "Denne app er endnu ikke blevet gennemgået eller godkendt af Plane.",
+        "app_consent_unapproved_description": "Sørg for, at du stoler på denne app, før du forbinder den til dit arbejdsområde.",
+        "go_to_app": "Gå til app",
+        "enable_app_mentions": "Aktivér app-omtaler",
+        "enable_app_mentions_tooltip": "Når dette er aktiveret, kan brugere omtale eller tildele opgaver til denne applikation.",
+        "scopes": "Omfang (Scopes)",
+        "select_scopes": "Vælg omfang",
+        "read_access_to": "Skrivebeskyttet adgang til",
+        "write_access_to": "Skriveadgang til",
+        "global_permission_expiration": "Globale scopes udløber snart. Brug granulerede scopes i stedet. For eksempel, brug project:read i stedet for en global læseadgang.",
+        "selected_scopes": "{count} valgt",
+        "scopes_and_permissions": "Scopes & Rettigheder",
+        "read": "Læs",
+        "write": "Skriv",
+        "scope_description": {
+          "projects": "Adgang til projekter og alle projektrelaterede entiteter",
+          "wiki": "Adgang til wiki og alle wikirelaterede entiteter",
+          "workspaces": "Adgang til arbejdsområder og alle arbejdsområderelaterede entiteter",
+          "stickies": "Adgang til sticky notes og alle sticky note-relaterede entiteter",
+          "profile": "Adgang til brugerprofiloplysninger",
+          "agents": "Adgang til agenter og alle agentrelaterede entiteter",
+          "assets": "Adgang til filer/assets og alle filrelaterede entiteter"
+        }
+      },
+      "plane-intelligence": {
+        "title": "Plane AI",
+        "heading": "Plane AI",
+        "description": "Se dit arbejde blive smartere og hurtigere med AI, der er naturligt forbundet til dit arbejde og din videnbase."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Scripts",
+        "new_script": "Nyt script",
+        "description": "Automatisér dine arbejdsflows med tilpassede scripts og automatiseringsregler."
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "Ingen adgangstokens oprettet",
+        "description": "Plane API'er kan bruges til at integrere dine data i Plane med ethvert eksternt system. Opret en token for at komme i gang."
+      },
+      "webhooks": {
+        "title": "Ingen webhooks tilføjet",
+        "description": "Opret webhooks for at modtage realtidsopdateringer og automatisere handlinger."
+      },
+      "exports": {
+        "title": "Ingen eksporter endnu",
+        "description": "Hver gang du eksporterer, vil du også have en kopi her til reference."
+      },
+      "imports": {
+        "title": "Ingen importer endnu",
+        "description": "Find alle dine tidligere importer her og download dem."
+      }
+    }
+  }
+}
