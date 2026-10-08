@@ -8,30 +8,30 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { ChartNoAxesColumn, PanelRight, SlidersHorizontal } from "lucide-react";
+import { BarOutline, CyclesOutline, PreferencesOutline, RightSidePaneOutline } from "@makeplane/propel/icons";
 // plane imports
 import {
+  CYCLE_STATUS,
   EIssueFilterType,
   EUserPermissions,
   EUserPermissionsLevel,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { IconButton } from "@plane/propel/icon-button";
-import { CycleIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
-import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { Button } from "@makeplane/propel/components/button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, TCycleGroups } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-import { Breadcrumbs, BreadcrumbNavigationSearchDropdown, Header } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { SwitcherLabel } from "@/components/common/switcher-label";
 import { CycleQuickActions } from "@/components/cycles/quick-actions";
+import { CycleSelect } from "@/components/dropdowns/cycle/cycle-select";
 import {
   DisplayFiltersSelection,
   FiltersDropdown,
@@ -49,6 +49,10 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
+
+/** The breadcrumb switcher offers every cycle of the project, completed ones included. */
+const ALL_CYCLE_STATUSES: TCycleGroups[] = CYCLE_STATUS.map((status) => status.value);
 
 export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
   // refs
@@ -58,6 +62,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId, cycleId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   // i18n
   const { t } = useTranslation();
   // store hooks
@@ -65,7 +70,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
     issuesFilter: { issueFilters, updateFilters },
     issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.CYCLE);
-  const { currentProjectCycleIds, getCycleById } = useCycle();
+  const { getCycleById } = useCycle();
   const { toggleCreateIssueModal } = useCommandPalette();
   const { currentProjectDetails, loader } = useProject();
   const { isMobile } = usePlatformOS();
@@ -112,18 +117,6 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
     EUserPermissionsLevel.PROJECT
   );
 
-  const switcherOptions = currentProjectCycleIds
-    ?.map((id) => {
-      const _cycle = id === cycleId ? cycleDetails : getCycleById(id);
-      if (!_cycle) return;
-      return {
-        value: _cycle.id,
-        query: _cycle.name,
-        content: <SwitcherLabel name={_cycle.name} LabelIcon={CycleIcon} />,
-      };
-    })
-    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
-
   const workItemsCount = getGroupIssueCount(undefined, undefined, false);
 
   return (
@@ -137,32 +130,33 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
       <Header>
         <Header.LeftItem>
           <div className="flex items-center gap-2">
-            <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-              <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <Breadcrumbs isLoading={loader === "init-loader"}>
+              <CommonProjectBreadcrumbs
+                workspaceSlug={workspaceSlug?.toString()}
+                projectId={projectId?.toString()}
+                {...projectCrumb}
+              />
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink
                     label="Cycles"
                     href={`/${workspaceSlug}/projects/${projectId}/cycles/`}
-                    icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
+                    icon={<CyclesOutline className="h-4 w-4 text-tertiary" />}
                   />
                 }
               />
               <Breadcrumbs.Item
                 component={
-                  <BreadcrumbNavigationSearchDropdown
-                    selectedItem={cycleId}
-                    navigationItems={switcherOptions}
-                    onChange={(value: string) => {
-                      router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${value}`);
+                  <CycleSelect
+                    projectId={projectId?.toString()}
+                    value={cycleId?.toString()}
+                    onChange={(id) => {
+                      if (id) router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${id}`);
                     }}
-                    title={cycleDetails?.name}
-                    icon={
-                      <Breadcrumbs.Icon>
-                        <CycleIcon className="size-4 flex-shrink-0 text-tertiary" />
-                      </Breadcrumbs.Icon>
-                    }
-                    isLast
+                    variant="breadcrumb"
+                    placeholder={cycleDetails?.name}
+                    status={ALL_CYCLE_STATUSES}
+                    clearable={false}
                   />
                 }
                 isLast
@@ -170,11 +164,10 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
             </Breadcrumbs>
             {workItemsCount && workItemsCount > 0 ? (
               <Tooltip
-                isMobile={isMobile}
-                tooltipContent={`There are ${workItemsCount} ${
-                  workItemsCount > 1 ? "work items" : "work item"
-                } in this cycle`}
-                position="bottom"
+                label={`There are ${workItemsCount} ${workItemsCount > 1 ? "work items" : "work item"} in this cycle`}
+                layout="stacked"
+                side="bottom"
+                disabled={isMobile}
               >
                 <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2 text-center text-11 font-semibold text-accent-primary">
                   {workItemsCount}
@@ -215,7 +208,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
             <FiltersDropdown
               title={t("common.display")}
               placement="bottom-end"
-              miniIcon={<SlidersHorizontal className="size-3.5" />}
+              miniIcon={<PreferencesOutline className="size-3.5" />}
             >
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
@@ -233,34 +226,45 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
 
             {canUserCreateIssue && (
               <>
-                <Button onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
-                  <span className="hidden @4xl:flex">Analytics</span>
-                  <span className="@4xl:hidden">
-                    <ChartNoAxesColumn className="size-3.5" />
-                  </span>
-                </Button>
+                <span className="hidden @4xl:flex">
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    stretch="auto"
+                    label="Analytics"
+                    onClick={() => setAnalyticsModal(true)}
+                  />
+                </span>
+                <span className="@4xl:hidden">
+                  <IconButton
+                    variant="secondary"
+                    size="md"
+                    icon={<Icon icon={BarOutline} />}
+                    aria-label="Analytics"
+                    onClick={() => setAnalyticsModal(true)}
+                  />
+                </span>
                 {!isCompletedCycle && (
                   <Button
                     variant="primary"
-                    size="lg"
+                    size="md"
+                    stretch="auto"
+                    label={t("issue.add.label")}
                     onClick={() => {
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
-                    data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.CYCLE}
-                  >
-                    {t("issue.add.label")}
-                  </Button>
+                  />
                 )}
               </>
             )}
             <IconButton
-              variant="tertiary"
-              size="lg"
-              icon={PanelRight}
+              // the open state was a bespoke accent class; it maps to the tertiary fill
+              variant={isSidebarCollapsed ? "ghost" : "tertiary"}
+              size="md"
+              icon={<Icon icon={RightSidePaneOutline} />}
+              aria-label="Toggle sidebar"
+              aria-pressed={!isSidebarCollapsed}
               onClick={toggleSidebar}
-              className={cn({
-                "bg-accent-subtle text-accent-primary": !isSidebarCollapsed,
-              })}
             />
             <CycleQuickActions
               parentRef={parentRef}

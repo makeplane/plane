@@ -1,6 +1,6 @@
 {
   "name": "@plane/services",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
@@ -14,12 +14,12 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch --no-clean",
-    "test": "vitest run",
     "check:lint": "oxlint --max-warnings=6 .",
     "check:types": "tsc --noEmit",
     "check:format": "oxfmt --check .",
     "fix:lint": "oxlint --fix .",
     "fix:format": "oxfmt .",
+    "test": "vitest run",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {

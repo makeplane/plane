@@ -172,7 +172,9 @@
       },
       "failed": {
         "message": "Không thể lưu trữ mục công việc. Vui lòng thử lại."
-      }
+      },
+      "banner_message": "Mục công việc này đã được lưu trữ. Truy cập mục Lưu trữ để khôi phục.",
+      "go_to_archives": "Đi đến lưu trữ"
     },
     "restore": {
       "success": {
@@ -326,6 +328,10 @@
         "title": "Không thể cập nhật mục công việc",
         "message": "Thay đổi trạng thái không được phép cho một số mục công việc. Đảm bảo thay đổi trạng thái được cho phép."
       }
+    },
+    "upgrade_banner": {
+      "message": "Thay đổi trạng thái, mức ưu tiên và nhiều thứ khác cho nhiều mục công việc cùng lúc. Tiết kiệm trung bình ba phút cho mỗi thao tác.",
+      "cta": "Nâng cấp lên One"
     }
   },
   "recurring_work_items": {
