@@ -92,6 +92,10 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.exporter_expired_task.delete_old_s3_link",
         "schedule": crontab(hour=3, minute=45),  # UTC 03:45
     },
+    "stop-stale-timers": {
+        "task": "plane.time_tracking.tasks.stop_stale_timers",
+        "schedule": crontab(minute="*/15"),  # Every 15 minutes
+    },
 }
 
 
