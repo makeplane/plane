@@ -157,7 +157,7 @@ def _request_to_ip(method, scheme, hostname, ip, port, path, *, headers, timeout
     return response
 
 
-def _fetch_validated_hop(method, url, *, allowed_ips, allowed_hosts, headers, timeout, **kwargs):
+def _fetch_validated_hop(method, url, *, allowed_ips, allowed_hosts, allow_private=False, headers, timeout, **kwargs):
     """
     Resolve ``url``'s host, validate it, then issue a single (non-redirecting)
     request pinned to a resolved IP. Returns ``(response, normalized_host)``.
@@ -166,6 +166,9 @@ def _fetch_validated_hop(method, url, *, allowed_ips, allowed_hosts, headers, ti
     whose IPs are dynamic): they skip the private-IP *block* check, but the
     connection is STILL pinned to the resolved IP so a trusted hostname cannot
     be rebound to a different internal target between validation and connect.
+
+    ``allow_private`` applies that same "skip the block check but still pin"
+    treatment globally (dev-only escape hatch — see ``WEBHOOK_ALLOW_PRIVATE_URLS``).
     """
     scheme, hostname, port, path, auth = _split_target(url)
 
@@ -174,10 +177,12 @@ def _fetch_validated_hop(method, url, *, allowed_ips, allowed_hosts, headers, ti
         (h or "").rstrip(".").lower() for h in allowed_hosts if h
     }
 
-    # Resolve once (and validate unless the host is operator-trusted), then pin
-    # the connection to a resolved IP literal — urllib3 performs no second DNS
-    # lookup, so the address validated here is exactly the one reached.
-    ips = resolve_and_validate(hostname, allowed_ips=allowed_ips, require_safe=not trusted)
+    # Resolve once (and validate unless the host is operator-trusted or the
+    # dev-only allow_private escape hatch is on), then pin the connection to a
+    # resolved IP literal — urllib3 performs no second DNS lookup, so the address
+    # validated here is exactly the one reached (pinning is preserved even when
+    # the block check is skipped).
+    ips = resolve_and_validate(hostname, allowed_ips=allowed_ips, require_safe=not (trusted or allow_private))
 
     last_exc = None
     for ip in ips:
@@ -201,6 +206,7 @@ def pinned_fetch(
     *,
     allowed_ips=None,
     allowed_hosts=None,
+    allow_private=False,
     headers=None,
     timeout=30,
     **kwargs,
@@ -210,13 +216,17 @@ def pinned_fetch(
     connection to a validated IP (defeating DNS rebinding). Does NOT follow
     redirects.
 
+    ``allow_private`` is a dev-only escape hatch (see ``WEBHOOK_ALLOW_PRIVATE_URLS``):
+    when True the private/internal-IP block is skipped, but the host is still
+    resolved and the connection is still pinned to the resolved IP.
+
     Raises:
         ValueError: if the URL is invalid or resolves to a blocked address.
         requests.RequestException: on network/transport errors.
     """
     response, _ = _fetch_validated_hop(
         method, url,
-        allowed_ips=allowed_ips, allowed_hosts=allowed_hosts,
+        allowed_ips=allowed_ips, allowed_hosts=allowed_hosts, allow_private=allow_private,
         headers=headers, timeout=timeout, **kwargs,
     )
     return response
@@ -243,12 +253,18 @@ def pinned_fetch_following_redirects(
         requests.TooManyRedirects: if the hop limit is exceeded.
         requests.RequestException: on network/transport errors.
     """
+    # The redirect-following path is used only by fully-guarded, non-webhook
+    # callers (OAuth avatar, link unfurling). Pin allow_private=False explicitly
+    # so the dev-only private-network escape hatch can never reach this path —
+    # even accidentally via **kwargs (a duplicate key would raise, not silently
+    # enable the bypass).
+    kwargs.pop("allow_private", None)
     current_url = url
     redirects = 0
     while True:
         response, _ = _fetch_validated_hop(
             method, current_url,
-            allowed_ips=allowed_ips, allowed_hosts=allowed_hosts,
+            allowed_ips=allowed_ips, allowed_hosts=allowed_hosts, allow_private=False,
             headers=headers, timeout=timeout, **kwargs,
         )
 
