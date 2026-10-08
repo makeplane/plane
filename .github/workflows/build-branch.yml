@@ -49,6 +49,10 @@ env:
 
 jobs:
   branch_build_setup:
+    # Public release image tags must only be produced from known release refs.
+    # Manual dispatch otherwise permits arbitrary branches to reach the public
+    # Docker Hub namespace through the shared build action.
+    if: ${{ github.ref_name == 'master' || github.ref_name == 'preview' || github.ref_name == 'canary' || (github.ref_type == 'tag' && startsWith(github.ref_name, 'v') && github.event.inputs.build_type == 'Release') }}
     name: Build Setup
     runs-on: ubuntu-24.04
     outputs:
