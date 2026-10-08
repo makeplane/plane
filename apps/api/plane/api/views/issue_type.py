@@ -24,8 +24,16 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 
-def get_boolean_value(value):
-    return str(value).lower() in ("1", "true", "yes", "on")
+def get_boolean_value(value) -> bool | None:
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return value.lower() == "true"
+    if isinstance(value, int):
+        return value != 0
+    return False
 
 
 class IssueTypeListCreateAPIEndpoint(BaseAPIView):
