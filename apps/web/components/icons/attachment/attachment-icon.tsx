@@ -25,7 +25,7 @@ import {
 } from "@/components/icons/attachment";
 
 export const getFileIcon = (fileType: string, size: number = 28) => {
-  switch (fileType) {
+  switch (fileType.toLowerCase()) {
     case "pdf":
       return <PdfIcon height={size} width={size} />;
     case "csv":
@@ -47,6 +47,9 @@ export const getFileIcon = (fileType: string, size: number = 28) => {
     case "js":
       return <JavaScriptIcon height={size} width={size} />;
     case "txt":
+    case "md":
+    case "markdown":
+    case "mdx":
       return <TxtIcon height={size} width={size} />;
     case "svg":
       return <SvgIcon height={size} width={size} />;
