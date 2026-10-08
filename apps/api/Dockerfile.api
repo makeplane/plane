@@ -44,6 +44,8 @@ RUN --mount=from=uv,source=/uv,target=/bin/uv \
     "make" \
     "postgresql-dev" \
     "libc-dev" \
+    "libxml2-dev" \
+    "libxslt-dev" \
     "linux-headers" \
     && \
     uv sync --locked --inexact --no-default-groups --group production \

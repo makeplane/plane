@@ -4,6 +4,6 @@
  * See the LICENSE file for details.
  */
 
-export * from "./project-page-version.service";
-export * from "./project-page.service";
-export * from "./workspace-page.service";
+export * from "./root";
+export * from "./content";
+export * from "./title";

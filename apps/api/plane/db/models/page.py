@@ -14,6 +14,7 @@ from django.db import models
 from plane.utils.html_processor import strip_tags
 
 from .base import BaseModel
+from .project import ProjectBaseModel
 
 
 def get_view_props():
@@ -153,6 +154,28 @@ class ProjectPage(BaseModel):
 
     def __str__(self):
         return f"{self.project.name} {self.page.name}"
+
+
+class WorkItemPage(ProjectBaseModel):
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="work_item_pages")
+    page = models.ForeignKey("db.Page", on_delete=models.CASCADE, related_name="work_item_pages")
+
+    class Meta:
+        unique_together = ["issue", "page", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "page"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="work_item_page_unique_issue_page_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Work Item Page"
+        verbose_name_plural = "Work Item Pages"
+        db_table = "work_item_pages"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.page.name}"
 
 
 class PageVersion(BaseModel):
