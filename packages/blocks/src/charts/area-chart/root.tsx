@@ -31,6 +31,7 @@ export const AreaChart = React.memo(function AreaChart<K extends string, T exten
     },
     customTicks,
     showTooltip = true,
+    tooltipValueFormatter,
     comparisonLine,
   } = props;
   // states
@@ -184,6 +185,7 @@ export const AreaChart = React.memo(function AreaChart<K extends string, T exten
                   itemKeys={itemKeys}
                   itemLabels={itemLabels}
                   itemDotColors={itemDotColors}
+                  valueFormatter={tooltipValueFormatter}
                 />
               )}
             />
