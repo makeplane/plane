@@ -319,6 +319,7 @@ def webhook_send_task(
             webhook.url,
             allowed_ips=settings.WEBHOOK_ALLOWED_IPS,
             allowed_hosts=settings.WEBHOOK_ALLOWED_HOSTS,
+            allow_private=settings.WEBHOOK_ALLOW_PRIVATE_URLS,
             headers=headers,
             json=payload,
             timeout=30,
