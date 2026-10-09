@@ -7,7 +7,7 @@ from django.test import RequestFactory
 from rest_framework.exceptions import ParseError
 from rest_framework.request import Request
 
-from plane.utils.paginator import BasePaginator, Cursor, CursorResult
+from plane.utils.paginator import BasePaginator, Cursor, CursorResult, OffsetPaginator
 
 
 class _StubGroupedPaginator:
@@ -121,3 +121,80 @@ class TestPaginateGroupByValidation:
             paginator_cls=_StubGroupedPaginator,
         )
         assert response.data["grouped_by"] is None
+
+
+class _FakeQuerySet:
+    """Minimal queryset stand-in for OffsetPaginator.
+
+    Tracks how many times count() is called and whether the paginator ever
+    evaluated the result set, so both can be asserted without a database.
+    """
+
+    def __init__(self, rows, stats=None):
+        self._rows = rows
+        self.stats = stats if stats is not None else {"count_calls": 0, "evaluated": 0}
+
+    def __getitem__(self, key):
+        # Slicing stays lazy, mirroring QuerySet.__getitem__ on an unevaluated
+        # queryset.
+        return _FakeQuerySet(self._rows[key], self.stats)
+
+    def count(self):
+        self.stats["count_calls"] += 1
+        return len(self._rows)
+
+    def __iter__(self):
+        self.stats["evaluated"] += 1
+        return iter(self._rows)
+
+    def __len__(self):
+        self.stats["evaluated"] += 1
+        return len(self._rows)
+
+
+@pytest.mark.unit
+class TestOffsetPaginatorNextPage:
+    """The next-page flag is derived from total_count instead of a second
+    COUNT over the page window. These pin the equivalence and the query count.
+    """
+
+    @pytest.mark.parametrize(
+        ("total", "page", "expected"),
+        [
+            (25, 0, True),  # more rows follow
+            (25, 1, True),
+            (25, 2, False),  # final, partial page
+            (0, 0, False),  # empty result set
+            (10, 0, False),  # exactly one full page, nothing after it
+            (11, 0, True),  # one row past the page boundary
+            (20, 1, False),  # exact multiple: page 1 is the last
+            (21, 1, True),
+        ],
+    )
+    def test_next_page_flag_matches_row_count(self, total, page, expected):
+        queryset = _FakeQuerySet(list(range(total)))
+        result = OffsetPaginator(queryset).get_result(limit=10, cursor=Cursor(10, page, False))
+        assert result.next.has_results is expected
+
+    def test_page_costs_a_single_count_query(self):
+        queryset = _FakeQuerySet(list(range(25)))
+        OffsetPaginator(queryset).get_result(limit=10, cursor=Cursor(10, 0, False))
+        assert queryset.stats["count_calls"] == 1
+
+    def test_total_count_queryset_is_counted_instead_of_the_page_queryset(self):
+        queryset = _FakeQuerySet(list(range(25)))
+        total_count_queryset = _FakeQuerySet(list(range(25)))
+        OffsetPaginator(queryset, total_count_queryset=total_count_queryset).get_result(
+            limit=10, cursor=Cursor(10, 0, False)
+        )
+        assert total_count_queryset.stats["count_calls"] == 1
+        assert queryset.stats["count_calls"] == 0
+
+    def test_results_are_handed_back_unevaluated(self):
+        # on_results callbacks call queryset methods on this — issue_on_results
+        # does `issues.values(...)` (plane/utils/grouper.py). The paginator must
+        # not collapse it into a list.
+        queryset = _FakeQuerySet(list(range(25)))
+        result = OffsetPaginator(queryset).get_result(limit=10, cursor=Cursor(10, 0, False))
+        assert queryset.stats["evaluated"] == 0
+        assert hasattr(result.results, "count")
