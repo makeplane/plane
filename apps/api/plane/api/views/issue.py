@@ -2177,6 +2177,9 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        if guest_cannot_view_issue(request.user.id, issue, slug):
+            raise Issue.DoesNotExist()
+
         issue_attachment = FileAsset.objects.get(
             id=pk,
             workspace__slug=slug,
@@ -2330,6 +2333,9 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
                 {"error": "You are not allowed to upload this attachment"},
                 status=status.HTTP_403_FORBIDDEN,
             )
+
+        if guest_cannot_view_issue(request.user.id, issue, slug):
+            raise Issue.DoesNotExist()
 
         issue_attachment = FileAsset.objects.get(
             id=pk,
