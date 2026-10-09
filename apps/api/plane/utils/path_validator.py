@@ -154,18 +154,21 @@ def validate_next_path(next_path: str) -> str:
     return next_path
 
 
-def get_safe_redirect_url(base_url: str, next_path: str = "", params: dict = {}) -> str:
+def get_safe_redirect_url(base_url: str, next_path: str = "", params: dict | None = None) -> str:
     """
     Safely construct a redirect URL with validated next_path.
 
     Args:
         base_url (str): The base URL to redirect to
         next_path (str): The next path to append
-        params (dict): The parameters to append
+        params (dict, optional): The parameters to append
     Returns:
         str: The safe redirect URL
     """
     from urllib.parse import urlencode
+
+    if params is None:
+        params = {}
 
     # Validate the next path
     validated_path = validate_next_path(next_path)
