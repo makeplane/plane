@@ -32,6 +32,7 @@ authenticated user. That endpoint now requires project membership (or
 issue-creator) in addition to the guest scoping above.
 """
 
+from unittest import mock
 from uuid import uuid4
 
 import pytest
@@ -1016,6 +1017,79 @@ class TestWorkItemAttachmentWriteGuestScope:
 
 
 # ---------------------------------------------------------------------------
+# 12b. Work item attachment create -- IssueAttachmentListCreateAPIEndpoint.post
+# ---------------------------------------------------------------------------
+
+# .post checked user_has_issue_permission (which admits GUEST) but never
+# guest_cannot_view_issue -- a restricted guest could request an upload URL
+# for a foreign issue by UUID.
+
+
+def _attachment_create_payload():
+    return {"name": "f.txt", "type": "text/plain", "size": 10}
+
+
+@pytest.mark.contract
+class TestWorkItemAttachmentCreateGuestScope:
+    @pytest.mark.django_db
+    def test_guest_denied_create_on_foreign_issue(self, guest_client, workspace, project, foreign_issue):
+        response = guest_client.post(
+            _attachments_url(workspace, project, foreign_issue),
+            data=_attachment_create_payload(),
+            format="json",
+        )
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert not FileAsset.objects.filter(issue_id=foreign_issue.id).exists()
+
+    @pytest.mark.django_db
+    @mock.patch("plane.api.views.issue.S3Storage")
+    def test_guest_allowed_create_on_own_issue(self, s3, guest_client, workspace, project, own_issue):
+        s3.return_value.generate_presigned_post.return_value = {}
+        response = guest_client.post(
+            _attachments_url(workspace, project, own_issue),
+            data=_attachment_create_payload(),
+            format="json",
+        )
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert FileAsset.objects.filter(
+            issue_id=own_issue.id, entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT
+        ).exists()
+
+    @pytest.mark.django_db
+    @mock.patch("plane.api.views.issue.S3Storage")
+    def test_guest_with_view_all_allowed_create_on_foreign_issue(
+        self, s3, guest_client, workspace, project, foreign_issue
+    ):
+        s3.return_value.generate_presigned_post.return_value = {}
+        _enable_guest_view_all(project)
+        response = guest_client.post(
+            _attachments_url(workspace, project, foreign_issue),
+            data=_attachment_create_payload(),
+            format="json",
+        )
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
+    @mock.patch("plane.api.views.issue.S3Storage")
+    def test_admin_allowed_create_on_foreign_issue(self, s3, api_key_client, workspace, project, foreign_issue):
+        s3.return_value.generate_presigned_post.return_value = {}
+        response = api_key_client.post(
+            _attachments_url(workspace, project, foreign_issue),
+            data=_attachment_create_payload(),
+            format="json",
+        )
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+
+# ---------------------------------------------------------------------------
 # 14. Work item relations -- IssueRelationListCreateAPIEndpoint.get
 # ---------------------------------------------------------------------------
 
@@ -1253,6 +1327,63 @@ class TestWorkItemCommentWriteGuestScope:
     ):
         response = api_key_client.delete(_comment_detail_url(workspace, project, foreign_issue, foreign_comment))
         assert response.status_code == status.HTTP_204_NO_CONTENT, f"Got {response.status_code}: {response.data!r}"
+
+
+# ---------------------------------------------------------------------------
+# 9b. Work item comment create -- IssueCommentListCreateAPIEndpoint.post
+# ---------------------------------------------------------------------------
+
+# .post never called get_queryset (the GET-side guest check) and
+# ProjectLitePermission admits every active guest -- so a restricted guest
+# could create a comment on a foreign issue by UUID.
+
+
+def _comment_create_payload():
+    return {"comment_html": "<p>New comment</p>"}
+
+
+@pytest.mark.contract
+class TestWorkItemCommentCreateGuestScope:
+    @pytest.mark.django_db
+    def test_guest_denied_create_on_foreign_issue(self, guest_client, workspace, project, foreign_issue):
+        response = guest_client.post(
+            _comments_url(workspace, project, foreign_issue),
+            data=_comment_create_payload(),
+            format="json",
+        )
+        assert response.status_code == status.HTTP_404_NOT_FOUND, f"Got {response.status_code}: {response.data!r}"
+        assert not IssueComment.objects.filter(issue=foreign_issue).exists()
+
+    @pytest.mark.django_db
+    def test_guest_allowed_create_on_own_issue(self, guest_client, workspace, project, own_issue):
+        response = guest_client.post(
+            _comments_url(workspace, project, own_issue),
+            data=_comment_create_payload(),
+            format="json",
+        )
+        assert response.status_code == status.HTTP_201_CREATED, f"Got {response.status_code}: {response.data!r}"
+        assert IssueComment.objects.filter(issue=own_issue).exists()
+
+    @pytest.mark.django_db
+    def test_guest_with_view_all_allowed_create_on_foreign_issue(
+        self, guest_client, workspace, project, foreign_issue
+    ):
+        _enable_guest_view_all(project)
+        response = guest_client.post(
+            _comments_url(workspace, project, foreign_issue),
+            data=_comment_create_payload(),
+            format="json",
+        )
+        assert response.status_code == status.HTTP_201_CREATED, f"Got {response.status_code}: {response.data!r}"
+
+    @pytest.mark.django_db
+    def test_admin_allowed_create_on_foreign_issue(self, api_key_client, workspace, project, foreign_issue):
+        response = api_key_client.post(
+            _comments_url(workspace, project, foreign_issue),
+            data=_comment_create_payload(),
+            format="json",
+        )
+        assert response.status_code == status.HTTP_201_CREATED, f"Got {response.status_code}: {response.data!r}"
 
 
 # ---------------------------------------------------------------------------

@@ -1518,6 +1518,10 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
         Add a new comment to a work item with HTML content.
         Supports external ID tracking for integration purposes.
         """
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+        if guest_cannot_view_issue(request.user.id, issue, slug):
+            raise Issue.DoesNotExist()
+
         # Validation check if the issue already exists
         if (
             request.data.get("external_id")
@@ -1984,6 +1988,9 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
                 {"error": "You are not allowed to upload this attachment"},
                 status=status.HTTP_403_FORBIDDEN,
             )
+
+        if guest_cannot_view_issue(request.user.id, issue, slug):
+            raise Issue.DoesNotExist()
 
         name = sanitize_filename(request.data.get("name"))
         type = request.data.get("type", False)
