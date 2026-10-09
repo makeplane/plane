@@ -64,6 +64,28 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
+`setup.sh` copies each service’s `.env.example` to `.env` (root, `apps/api`, `apps/web`, `apps/admin`, `apps/space`, `apps/live`) and generates a Django `SECRET_KEY` for the API. Review those files if you need custom values; the defaults work with the local Docker Compose stack.
+
+#### Environment variables
+
+If these are missing or wrong, the API and supporting services fail to connect on first run. Defaults come from `apps/api/.env.example` and `apps/live/.env.example` (copied by `setup.sh`):
+
+| Variable | Where | Purpose | Local Docker default |
+| -------- | ----- | ------- | -------------------- |
+| `DATABASE_URL` | `apps/api/.env` | Postgres connection for the Django API | `postgresql://plane:plane@plane-db:5432/plane` |
+| `REDIS_URL` | `apps/api/.env`, `apps/live/.env` | Redis/Valkey for cache, sessions, and realtime | API: `redis://plane-redis:6379/` · Live: `redis://localhost:6379/` |
+| `PORT` | `apps/live/.env` | Port the live (collab) server listens on | `3100` |
+
+Related values used to build those URLs (also in `apps/api/.env.example`): `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DB`, `REDIS_HOST`, `REDIS_PORT`.
+
+Local app ports after a successful start:
+
+- Web: [http://localhost:3000](http://localhost:3000)
+- Admin (God mode): [http://localhost:3001](http://localhost:3001)
+- Space: [http://localhost:3002](http://localhost:3002)
+- Live: [http://localhost:3100](http://localhost:3100)
+- API: [http://localhost:8000](http://localhost:8000)
+
 3. Start the containers
 
 ```bash
