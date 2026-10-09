@@ -959,6 +959,61 @@ class TestWorkItemAttachmentWriteGuestScope:
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
 
+    @pytest.mark.django_db
+    def test_guest_denied_matching_foreign_parent_delete(
+        self, guest_client, workspace, project, foreign_issue, foreign_attachment
+    ):
+        """A restricted guest supplying a foreign issue's own, correctly
+        matched issue_id/attachment pair must still be denied -- guest
+        visibility on the parent issue needs checking too."""
+        response = guest_client.delete(_attachment_detail_url(workspace, project, foreign_issue, foreign_attachment))
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        foreign_attachment.refresh_from_db()
+        assert foreign_attachment.is_deleted is False
+
+    @pytest.mark.django_db
+    def test_guest_denied_matching_foreign_parent_patch(
+        self, guest_client, workspace, project, foreign_issue, foreign_attachment
+    ):
+        response = guest_client.patch(
+            _attachment_detail_url(workspace, project, foreign_issue, foreign_attachment),
+            data={"is_uploaded": True},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
+    def test_guest_with_view_all_allowed_matching_foreign_parent_delete(
+        self, guest_client, workspace, project, foreign_issue, foreign_attachment
+    ):
+        """Positive control: guest_view_all_features=True lifts the new
+        check, same as everywhere else it's applied."""
+        _enable_guest_view_all(project)
+        response = guest_client.delete(_attachment_detail_url(workspace, project, foreign_issue, foreign_attachment))
+        assert response.status_code == status.HTTP_204_NO_CONTENT, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        foreign_attachment.refresh_from_db()
+        assert foreign_attachment.is_deleted is True
+
+    @pytest.mark.django_db
+    def test_guest_with_view_all_allowed_matching_foreign_parent_patch(
+        self, guest_client, workspace, project, foreign_issue, foreign_attachment
+    ):
+        _enable_guest_view_all(project)
+        response = guest_client.patch(
+            _attachment_detail_url(workspace, project, foreign_issue, foreign_attachment),
+            data={"is_uploaded": True},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_204_NO_CONTENT, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
 
 # ---------------------------------------------------------------------------
 # 14. Work item relations -- IssueRelationListCreateAPIEndpoint.get
