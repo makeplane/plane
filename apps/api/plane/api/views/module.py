@@ -41,7 +41,7 @@ from plane.db.models import (
 )
 
 from .base import BaseAPIView
-from .issue import is_restricted_guest
+from .issue import guest_cannot_view_issue, is_restricted_guest
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.host import base_host
 from plane.utils.order_queryset import ISSUE_ORDER_BY_ALLOWLIST, MODULE_ORDER_BY_ALLOWLIST, sanitize_order_by
@@ -860,6 +860,10 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
         Retrieve all work items assigned to a module with detailed information.
         Returns paginated results including assignees, labels, and attachments.
         """
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+        if guest_cannot_view_issue(request.user.id, issue, slug):
+            raise Issue.DoesNotExist()
+
         order_by = sanitize_order_by(request.GET.get("order_by", "created_at"), ISSUE_ORDER_BY_ALLOWLIST, "created_at")
         issues = (
             Issue.issue_objects.filter(

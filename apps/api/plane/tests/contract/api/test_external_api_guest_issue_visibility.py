@@ -832,6 +832,30 @@ class TestWorkItemAttachmentDetailGuestScope:
         response = api_key_client.get(_attachment_detail_url(workspace, project, foreign_issue, foreign_attachment))
         assert response.status_code == status.HTTP_302_FOUND, f"Got {response.status_code}: {response.data!r}"
 
+    @pytest.mark.django_db
+    def test_guest_denied_cross_parent_attachment(
+        self, guest_client, workspace, project, own_issue, foreign_attachment
+    ):
+        """The asset lookup was bound to workspace/project only, not issue_id.
+        A guest could pair their own authorized issue_id with a foreign
+        issue's attachment pk in the same project and still get the download."""
+        response = guest_client.get(_attachment_detail_url(workspace, project, own_issue, foreign_attachment))
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
+    def test_admin_denied_cross_parent_attachment(
+        self, api_key_client, workspace, project, own_issue, foreign_attachment
+    ):
+        """Even a non-guest (admin/member) must not be able to download an
+        attachment belonging to a different issue by pairing an authorized
+        issue_id with a foreign attachment pk."""
+        response = api_key_client.get(_attachment_detail_url(workspace, project, own_issue, foreign_attachment))
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
 
 # ---------------------------------------------------------------------------
 # 14. Work item relations -- IssueRelationListCreateAPIEndpoint.get
@@ -987,3 +1011,158 @@ class TestModuleIssueListGuestScope:
         assert response.status_code == status.HTTP_200_OK
         ids = {str(row["id"]) for row in response.data["results"]}
         assert {str(own_issue.id), str(foreign_issue.id)} <= ids
+
+
+# ---------------------------------------------------------------------------
+# 17/18. Work item comment writes -- IssueCommentDetailAPIEndpoint.patch/delete
+# ---------------------------------------------------------------------------
+#
+# ProjectLitePermission lets any active project member -- including a
+# restricted guest -- reach patch/delete, which never checked
+# guest_cannot_view_issue before mutating the comment.
+
+
+def _comment_patch_payload():
+    return {"comment_html": "<p>Edited by guest</p>"}
+
+
+@pytest.mark.contract
+class TestWorkItemCommentWriteGuestScope:
+    @pytest.mark.django_db
+    def test_guest_denied_patch_on_foreign_issue_comment(
+        self, guest_client, workspace, project, foreign_issue, foreign_comment
+    ):
+        response = guest_client.patch(
+            _comment_detail_url(workspace, project, foreign_issue, foreign_comment),
+            data=_comment_patch_payload(),
+            format="json",
+        )
+        assert response.status_code == status.HTTP_404_NOT_FOUND, f"Got {response.status_code}: {response.data!r}"
+
+    @pytest.mark.django_db
+    def test_guest_denied_delete_on_foreign_issue_comment(
+        self, guest_client, workspace, project, foreign_issue, foreign_comment
+    ):
+        response = guest_client.delete(_comment_detail_url(workspace, project, foreign_issue, foreign_comment))
+        assert response.status_code == status.HTTP_404_NOT_FOUND, f"Got {response.status_code}: {response.data!r}"
+        foreign_comment.refresh_from_db()
+
+    @pytest.mark.django_db
+    def test_guest_allowed_patch_on_own_issue_comment(self, guest_client, workspace, project, own_issue, own_comment):
+        response = guest_client.patch(
+            _comment_detail_url(workspace, project, own_issue, own_comment),
+            data=_comment_patch_payload(),
+            format="json",
+        )
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        own_comment.refresh_from_db()
+        assert "Edited by guest" in own_comment.comment_html
+
+    @pytest.mark.django_db
+    def test_guest_allowed_delete_on_own_issue_comment(
+        self, guest_client, workspace, project, own_issue, own_comment
+    ):
+        response = guest_client.delete(_comment_detail_url(workspace, project, own_issue, own_comment))
+        assert response.status_code == status.HTTP_204_NO_CONTENT, f"Got {response.status_code}: {response.data!r}"
+        assert not IssueComment.objects.filter(pk=own_comment.pk).exists()
+
+    @pytest.mark.django_db
+    def test_guest_with_view_all_allowed_patch_on_foreign_issue_comment(
+        self, guest_client, workspace, project, foreign_issue, foreign_comment
+    ):
+        _enable_guest_view_all(project)
+        response = guest_client.patch(
+            _comment_detail_url(workspace, project, foreign_issue, foreign_comment),
+            data=_comment_patch_payload(),
+            format="json",
+        )
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+
+    @pytest.mark.django_db
+    def test_admin_allowed_patch_on_foreign_issue_comment(
+        self, api_key_client, workspace, project, foreign_issue, foreign_comment
+    ):
+        response = api_key_client.patch(
+            _comment_detail_url(workspace, project, foreign_issue, foreign_comment),
+            data=_comment_patch_payload(),
+            format="json",
+        )
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+
+    @pytest.mark.django_db
+    def test_admin_allowed_delete_on_foreign_issue_comment(
+        self, api_key_client, workspace, project, foreign_issue, foreign_comment
+    ):
+        response = api_key_client.delete(_comment_detail_url(workspace, project, foreign_issue, foreign_comment))
+        assert response.status_code == status.HTTP_204_NO_CONTENT, f"Got {response.status_code}: {response.data!r}"
+
+
+# ---------------------------------------------------------------------------
+# 19. Module issue detail -- ModuleIssueDetailAPIEndpoint.get
+# ---------------------------------------------------------------------------
+#
+# guest_cannot_view_issue was added here defensively, but the URL router
+# for this path only ever exposes http_method_names=["delete"] -- GET is
+# unreachable dead code, so the test below documents the 405 instead.
+
+
+def _module_issue_detail_url(workspace, project, module, issue):
+    return f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/modules/{module.id}/module-issues/{issue.id}/"
+
+
+@pytest.mark.contract
+class TestModuleIssueDetailGuestScope:
+    @pytest.mark.django_db
+    def test_module_issue_detail_get_is_not_routed(
+        self, guest_client, workspace, project, module, module_memberships, own_issue, foreign_issue
+    ):
+        """GET is not wired to module-issues-detail (only DELETE is), so this
+        guarded method is not reachable and not an exploitable gap here."""
+        own_response = guest_client.get(_module_issue_detail_url(workspace, project, module, own_issue))
+        foreign_response = guest_client.get(_module_issue_detail_url(workspace, project, module, foreign_issue))
+        assert own_response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED, own_response.data
+        assert foreign_response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED, foreign_response.data
+
+
+# ---------------------------------------------------------------------------
+# 20. Cycle issue detail -- CycleIssueDetailAPIEndpoint.get
+# ---------------------------------------------------------------------------
+
+
+def _cycle_issue_detail_url(workspace, project, cycle, issue):
+    return f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/cycles/{cycle.id}/cycle-issues/{issue.id}/"
+
+
+@pytest.mark.contract
+class TestCycleIssueDetailGuestScope:
+    @pytest.mark.django_db
+    def test_guest_denied_foreign_cycle_issue_detail(
+        self, guest_client, workspace, project, cycle, cycle_memberships, foreign_issue
+    ):
+        """CycleIssueDetailAPIEndpoint.get had no restricted-guest check at
+        all -- only its list sibling was scoped."""
+        response = guest_client.get(_cycle_issue_detail_url(workspace, project, cycle, foreign_issue))
+        assert response.status_code == status.HTTP_404_NOT_FOUND, f"Got {response.status_code}: {response.data!r}"
+
+    @pytest.mark.django_db
+    def test_guest_allowed_own_cycle_issue_detail(
+        self, guest_client, workspace, project, cycle, cycle_memberships, own_issue
+    ):
+        response = guest_client.get(_cycle_issue_detail_url(workspace, project, cycle, own_issue))
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        assert str(response.data["issue"]) == str(own_issue.id)
+
+    @pytest.mark.django_db
+    def test_guest_with_view_all_allowed_foreign_cycle_issue_detail(
+        self, guest_client, workspace, project, cycle, cycle_memberships, foreign_issue
+    ):
+        _enable_guest_view_all(project)
+        response = guest_client.get(_cycle_issue_detail_url(workspace, project, cycle, foreign_issue))
+        assert response.status_code == status.HTTP_200_OK
+
+    @pytest.mark.django_db
+    def test_admin_allowed_foreign_cycle_issue_detail(
+        self, api_key_client, workspace, project, cycle, cycle_memberships, foreign_issue
+    ):
+        response = api_key_client.get(_cycle_issue_detail_url(workspace, project, cycle, foreign_issue))
+        assert response.status_code == status.HTTP_200_OK
