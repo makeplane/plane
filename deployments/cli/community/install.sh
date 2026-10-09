@@ -197,11 +197,9 @@ function buildYourOwnImage(){
     REPO=https://github.com/$GH_REPO.git
     git clone "$REPO" "$PLANE_TEMP_CODE_DIR"  --branch "$BRANCH" --single-branch --depth 1
 
-    cp "$PLANE_TEMP_CODE_DIR/deployments/cli/community/build.yml" "$PLANE_TEMP_CODE_DIR/build.yml"
-
     cd "$PLANE_TEMP_CODE_DIR" || exit
 
-    /bin/bash -c "$COMPOSE_CMD -f build.yml build --no-cache"  >&2
+    /bin/bash -c "$COMPOSE_CMD -f deployments/cli/community/build.yml build --no-cache"  >&2
     if [ $? -ne 0 ]; then
         echo "Build failed. Exiting..."
         exit 1
