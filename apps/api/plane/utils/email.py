@@ -3,18 +3,17 @@
 # See the LICENSE file for details.
 
 # Python imports
-import html
 import re
 
-# Django imports
-from django.utils.html import strip_tags
+# Third party imports
+from bs4 import BeautifulSoup
 
 
 def generate_plain_text_from_html(html_content):
     """
     Generate clean plain text from HTML email template.
-    Removes all HTML tags, CSS styles, and excessive whitespace, and decodes
-    HTML character references so the text/plain part reads as literal text.
+    Preserves link destinations, removes HTML tags, styles, scripts, and excessive
+    whitespace, and decodes HTML character references for the text/plain part.
 
     Args:
         html_content (str): The HTML content to convert to plain text
@@ -23,13 +22,21 @@ def generate_plain_text_from_html(html_content):
         str: Clean plain text without HTML tags, styles, excessive whitespace,
             or HTML character references
     """
-    # Remove style tags and their content
-    html_content = re.sub(r"<style[^>]*>.*?</style>", "", html_content, flags=re.DOTALL | re.IGNORECASE)
+    soup = BeautifulSoup(html_content, "html.parser")
+    for tag in soup.find_all(["style", "script"]):
+        tag.decompose()
 
-    # Strip HTML tags, then decode character references. `strip_tags` re-emits
-    # entity refs verbatim, so URLs escaped for the HTML part would otherwise
-    # reach the text/plain part as `?a=1&amp;b=2` and break when pasted.
-    text_content = html.unescape(strip_tags(html_content))
+    for link in soup.find_all("a", href=True):
+        href = link["href"].strip()
+        label = link.get_text().strip()
+        # A visible URL (or mailto address) already carries its destination.
+        visible_destination = href[7:] if href.lower().startswith("mailto:") else href
+        if href and label not in (href, visible_destination):
+            link.append(f" ({href})" if label else href)
+
+    # The parser decodes entities once. Appending hrefs as text before extracting
+    # it preserves query strings, including literal angle brackets in the URL.
+    text_content = soup.get_text()
 
     # Remove excessive empty lines
     text_content = re.sub(r"\n\s*\n\s*\n+", "\n\n", text_content)
