@@ -236,25 +236,34 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
         Retrieve a specific work item using workspace slug, project identifier, and issue identifier.
         This endpoint provides workspace-level access to work items.
         """
-        if issue_identifier and project_identifier:
-            # The `<project_identifier>-<issue_identifier>` route also matches UUIDs;
-            # sequence_id is an integer, so anything else can't be a work item here.
-            if not issue_identifier.isdecimal():
-                return Response({"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND)
-            issue = Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            ).get(
-                workspace__slug=slug,
-                project__identifier=project_identifier,
-                sequence_id=issue_identifier,
-            )
-            return Response(
-                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
-                status=status.HTTP_200_OK,
-            )
+        # The route splits `<project_identifier>-<issue_identifier>` on the last
+        # hyphen, so a UUID there leaves a non-numeric identifier to filter on.
+        sequence_id = None
+        if project_identifier and issue_identifier:
+            try:
+                # isdecimal() rejects the superscript digits isdigit() allows;
+                # int() rejects decimal strings longer than 4300 characters.
+                sequence_id = int(issue_identifier) if issue_identifier.isdecimal() else None
+            except ValueError:
+                sequence_id = None
+
+        if sequence_id is None:
+            return Response({"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        issue = Issue.issue_objects.annotate(
+            sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        ).get(
+            workspace__slug=slug,
+            project__identifier=project_identifier,
+            sequence_id=sequence_id,
+        )
+        return Response(
+            IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+            status=status.HTTP_200_OK,
+        )
 
 
 class IssueListCreateAPIEndpoint(BaseAPIView):
