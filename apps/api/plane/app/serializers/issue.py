@@ -125,12 +125,11 @@ class IssueCreateSerializer(BaseSerializer):
         allow_triage = self.context.get("allow_triage_state", False)
         state_manager = State.triage_objects if allow_triage else State.objects
 
-        if (
-            attrs.get("start_date", None) is not None
-            and attrs.get("target_date", None) is not None
-            and attrs.get("start_date", None) > attrs.get("target_date", None)
-        ):
-            raise serializers.ValidationError("Start date cannot exceed target date")
+        if "start_date" in attrs or "target_date" in attrs:
+            start_date = attrs.get("start_date", getattr(self.instance, "start_date", None))
+            target_date = attrs.get("target_date", getattr(self.instance, "target_date", None))
+            if start_date is not None and target_date is not None and start_date > target_date:
+                raise serializers.ValidationError("Start date cannot exceed target date")
 
         # Validate description content for security
         if "description_html" in attrs and attrs["description_html"]:
