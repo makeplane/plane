@@ -15,6 +15,7 @@ print_header(){
     echo "    SITE_ADDRESS (default: ':80')"
     echo "    FILE_SIZE_LIMIT (default: 5242880)"
     echo "    APP_PROTOCOL (http or https)"
+    echo "    CORS_ALLOWED_ORIGINS (default: http(s)://DOMAIN_NAME, comma-separated)"
     echo "    SECRET_KEY (auto-generated on first boot if not set)"
     echo "    LIVE_SERVER_SECRET_KEY (auto-generated on first boot if not set)"
     echo ""
@@ -128,7 +129,12 @@ update_env_file(){
         update_env_value "SITE_ADDRESS" ":80"
     fi
     update_env_value "WEB_URL" "$app_protocol://$DOMAIN_NAME"
-    update_env_value "CORS_ALLOWED_ORIGINS" "http://$DOMAIN_NAME,https://$DOMAIN_NAME"
+    # Honor operator-supplied CORS_ALLOWED_ORIGINS. Overwriting with DOMAIN_NAME
+    # on every boot made extra frontend origins (and an empty override) a no-op.
+    if [ -z "$CORS_ALLOWED_ORIGINS" ]; then
+        CORS_ALLOWED_ORIGINS="http://$DOMAIN_NAME,https://$DOMAIN_NAME"
+    fi
+    update_env_value "CORS_ALLOWED_ORIGINS" "$CORS_ALLOWED_ORIGINS"
 
     # update database url
     update_env_value "DATABASE_URL" "$DATABASE_URL"
