@@ -50,6 +50,7 @@ from plane.utils.cycle_transfer_issues import transfer_cycle_issues
 from plane.utils.order_queryset import CYCLE_ORDER_BY_ALLOWLIST, ISSUE_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.utils.host import base_host
 from .base import BaseAPIView
+from .issue import is_restricted_guest
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.openapi.decorators import cycle_docs
 from plane.utils.openapi import (
@@ -939,6 +940,11 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
                 .values("count")
             )
         )
+
+        # Restricted guests (GUEST role, guest_view_all_features disabled) may
+        # only see work items they created -- mirrors IssueDetailEndpoint.get.
+        if is_restricted_guest(request.user.id, project_id, slug):
+            issues = issues.filter(created_by=request.user)
 
         return self.paginate(
             request=request,
