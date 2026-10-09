@@ -676,6 +676,47 @@ CYCLE_ISSUE_EXAMPLE = OpenApiExample(
     },
 )
 
+# Page Examples
+PAGE_CREATE_EXAMPLE = OpenApiExample(
+    "PageCreateSerializer",
+    value={
+        "name": "Meeting Notes",
+        "description_html": "<h1>Meeting Notes</h1><p>Notes from the weekly sync.</p>",
+        "access": 0,
+        "color": "#3f76ff",
+        "external_id": "1234567890",
+        "external_source": "github",
+    },
+    description="Example request for creating a page",
+)
+
+PAGE_UPDATE_EXAMPLE = OpenApiExample(
+    "PageUpdateSerializer",
+    value={
+        "name": "Updated Meeting Notes",
+        "description_html": "<h1>Meeting Notes</h1><p>Updated notes from the weekly sync.</p>",
+    },
+    description="Example request for updating a page",
+)
+
+PAGE_EXAMPLE = OpenApiExample(
+    name="Page",
+    value={
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "Meeting Notes",
+        "description_html": "<h1>Meeting Notes</h1><p>Notes from the weekly sync.</p>",
+        "access": 0,
+        "color": "#3f76ff",
+        "parent": None,
+        "is_locked": False,
+        "archived_at": None,
+        "view_props": {"full_width": False},
+        "logo_props": {},
+        "created_at": "2024-01-01T10:30:00Z",
+        "updated_at": "2024-01-10T15:45:00Z",
+    },
+)
+
 STICKY_EXAMPLE = OpenApiExample(
     name="Sticky",
     value={
