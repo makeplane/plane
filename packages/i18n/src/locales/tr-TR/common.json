@@ -490,7 +490,7 @@
     "project_timezone": "Proje Saat Dilimi",
     "created_on": "Oluşturulma tarihi",
     "updated_on": "Güncellenme tarihi",
-    "completed_on": "Completed on",
+    "completed_on": "Tamamlanma tarihi",
     "update_project": "Projeyi güncelle",
     "identifier_already_exists": "Tanımlayıcı zaten var",
     "add_more": "Daha fazla ekle",
@@ -719,11 +719,11 @@
     "details": "Ayrıntılar",
     "project_structure": "Proje yapısı",
     "custom_properties": "Özel özellikler",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Profiliniz",
+    "developer": "Geliştirici",
+    "work_structure": "Çalışma yapısı",
+    "execution": "Yürütme",
+    "administration": "Yönetim"
   },
   "chart": {
     "x_axis": "X ekseni",
