@@ -857,6 +857,109 @@ class TestWorkItemAttachmentDetailGuestScope:
         )
 
 
+@pytest.mark.contract
+class TestWorkItemAttachmentWriteGuestScope:
+    """delete/patch had the same unbound FileAsset lookup as .get(): no
+    issue_id/entity_type filter. A caller could pair an authorized issue_id
+    with a foreign issue's attachment pk to delete or modify its metadata."""
+
+    @pytest.mark.django_db
+    def test_guest_denied_cross_parent_delete(self, guest_client, workspace, project, own_issue, foreign_attachment):
+        response = guest_client.delete(_attachment_detail_url(workspace, project, own_issue, foreign_attachment))
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        foreign_attachment.refresh_from_db()
+        assert foreign_attachment.is_deleted is False
+
+    @pytest.mark.django_db
+    def test_guest_denied_cross_parent_patch(self, guest_client, workspace, project, own_issue, foreign_attachment):
+        response = guest_client.patch(
+            _attachment_detail_url(workspace, project, own_issue, foreign_attachment),
+            data={"is_uploaded": True},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
+    def test_admin_denied_cross_parent_delete(
+        self, api_key_client, workspace, project, own_issue, foreign_attachment
+    ):
+        """Non-guest callers are affected too -- the unbound lookup was not a
+        guest-only gap."""
+        response = api_key_client.delete(_attachment_detail_url(workspace, project, own_issue, foreign_attachment))
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        foreign_attachment.refresh_from_db()
+        assert foreign_attachment.is_deleted is False
+
+    @pytest.mark.django_db
+    def test_admin_denied_cross_parent_patch(self, api_key_client, workspace, project, own_issue, foreign_attachment):
+        response = api_key_client.patch(
+            _attachment_detail_url(workspace, project, own_issue, foreign_attachment),
+            data={"is_uploaded": True},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
+    def test_guest_allowed_delete_on_own_issue_own_attachment(
+        self, guest_client, workspace, project, own_issue, own_attachment
+    ):
+        """Positive control: same-issue delete still works after scoping."""
+        response = guest_client.delete(_attachment_detail_url(workspace, project, own_issue, own_attachment))
+        assert response.status_code == status.HTTP_204_NO_CONTENT, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        own_attachment.refresh_from_db()
+        assert own_attachment.is_deleted is True
+
+    @pytest.mark.django_db
+    def test_guest_allowed_patch_on_own_issue_own_attachment(
+        self, guest_client, workspace, project, own_issue, own_attachment
+    ):
+        """Positive control: same-issue patch still works after scoping."""
+        response = guest_client.patch(
+            _attachment_detail_url(workspace, project, own_issue, own_attachment),
+            data={"is_uploaded": True},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_204_NO_CONTENT, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
+    def test_admin_allowed_delete_on_foreign_issue_own_attachment(
+        self, api_key_client, workspace, project, foreign_issue, foreign_attachment
+    ):
+        """Positive control, non-guest: a correctly-paired issue_id/pk on the
+        same issue still works."""
+        response = api_key_client.delete(
+            _attachment_detail_url(workspace, project, foreign_issue, foreign_attachment)
+        )
+        assert response.status_code == status.HTTP_204_NO_CONTENT, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
+    def test_admin_allowed_patch_on_foreign_issue_own_attachment(
+        self, api_key_client, workspace, project, foreign_issue, foreign_attachment
+    ):
+        response = api_key_client.patch(
+            _attachment_detail_url(workspace, project, foreign_issue, foreign_attachment),
+            data={"is_uploaded": True},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_204_NO_CONTENT, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+
 # ---------------------------------------------------------------------------
 # 14. Work item relations -- IssueRelationListCreateAPIEndpoint.get
 # ---------------------------------------------------------------------------
