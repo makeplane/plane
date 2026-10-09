@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import type { EQUALITY_OPERATOR, COLLECTION_OPERATOR, COMPARISON_OPERATOR } from "../operators";
+import type { EQUALITY_OPERATOR, COLLECTION_OPERATOR, COMPARISON_OPERATOR, CORE_TEXT_OPERATOR } from "../operators";
+import type { TTextFilterFieldConfig } from "../field-types";
 import type { TCoreExactOperatorConfigs, TCoreInOperatorConfigs, TCoreRangeOperatorConfigs } from "./core";
 import type {
   TExtendedExactOperatorConfigs,
@@ -37,6 +38,7 @@ export type TRangeOperatorConfigs = TCoreRangeOperatorConfigs | TExtendedRangeOp
  * Each operator maps to its composed (core + extended) configurations.
  */
 export type TOperatorSpecificConfigs = {
+  [CORE_TEXT_OPERATOR.ICONTAINS]: TTextFilterFieldConfig;
   [EQUALITY_OPERATOR.EXACT]: TExactOperatorConfigs;
   [COLLECTION_OPERATOR.IN]: TInOperatorConfigs;
   [COMPARISON_OPERATOR.RANGE]: TRangeOperatorConfigs;
