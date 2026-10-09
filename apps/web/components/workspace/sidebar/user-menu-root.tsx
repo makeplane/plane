@@ -122,16 +122,6 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
                   })
                 }
               />
-              <MenuItem
-                icon={<Icon icon={SettingsOutline} />}
-                label={t("preferences")}
-                onClick={() =>
-                  toggleProfileSettingsModal({
-                    activeTab: "preferences",
-                    isOpen: true,
-                  })
-                }
-              />
             </div>
             <div>
               <MenuItem icon={<Icon icon={LogOutOutline} />} label={t("sign_out")} onClick={handleSignOut} />
