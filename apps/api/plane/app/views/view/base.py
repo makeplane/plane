@@ -117,8 +117,46 @@ class WorkspaceViewViewSet(BaseViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def retrieve(self, request, slug, pk):
+        # Requires workspace membership, matching list() above. This was the only
+        # action on this class with no check at all, and get_queryset() does not
+        # supply one either: it filters on workspace__slug and then
+        # `Q(owned_by=request.user) | Q(access=1)`. That second clause looks like
+        # a visibility predicate but is vacuous — `access` is in the
+        # serializer's read_only_fields so the API never sets it, and the model
+        # defaults it to 1 (Public), so every row matches. A caller with no
+        # membership in the workspace could therefore read any global view in it
+        # by id.
         issue_view = self.get_queryset().filter(pk=pk).first()
+
+        # get_queryset() is scoped to the URL workspace, so None means either no
+        # such view or one belonging to a workspace this URL does not name.
+        # Serializing None yields a hollow object — every field null or empty —
+        # returned as 200, and enqueues a recent-visit for an entity that does
+        # not exist. Answer 404, as the other retrieve endpoints do.
+        if issue_view is None:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Reapply the same guest-ownership restriction list() enforces above.
+        # get_queryset()'s `Q(owned_by=request.user) | Q(access=1)` is vacuous
+        # (see comment above), so without this a GUEST who owns no views could
+        # still fetch any other member's global view directly by id. Answer 404
+        # rather than 403, consistent with the "missing view" branch above —
+        # this endpoint does not otherwise distinguish "not found" from "not
+        # visible to you".
+        if (
+            WorkspaceMember.objects.filter(workspace__slug=slug, member=request.user, role=5, is_active=True).exists()
+            and issue_view.owned_by_id != request.user.id
+        ):
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         serializer = IssueViewSerializer(issue_view)
         recent_visited_task.delay(
             slug=slug,
