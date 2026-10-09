@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { START_OF_THE_WEEK_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Select, SelectDropdownPlacementContext } from "@plane/blocks/select";
 import { setToast } from "@plane/blocks/toast";
 import type { EStartOfTheWeek } from "@plane/types";
@@ -17,8 +18,8 @@ import { useUserProfile } from "@/hooks/store/user";
 
 type TStartOfWeekOption = (typeof START_OF_THE_WEEK_OPTIONS)[number];
 
-const getStartOfWeekOption = (startOfWeek: EStartOfTheWeek) =>
-  START_OF_THE_WEEK_OPTIONS.find((option) => option.value === startOfWeek) ?? null;
+const getStartOfWeekOption = (startOfWeek: EStartOfTheWeek, options: TStartOfWeekOption[]) =>
+  options.find((option) => option.value === startOfWeek) ?? null;
 
 // The dropdown opens flush with the control's right edge, as `placement="bottom-end"` did.
 const DROPDOWN_PLACEMENT = { side: "bottom", align: "end" } as const;
@@ -28,6 +29,7 @@ export const StartOfWeekPreference = observer(function StartOfWeekPreference(pro
 }) {
   // hooks
   const { data: userProfile, updateUserProfile } = useUserProfile();
+  const { t } = useTranslation();
 
   const handleStartOfWeekChange = async (val: number) => {
     try {
@@ -39,7 +41,11 @@ export const StartOfWeekPreference = observer(function StartOfWeekPreference(pro
   };
 
   // derived values
-  const selectedOption = getStartOfWeekOption(userProfile.start_of_the_week);
+  const translatedOptions: TStartOfWeekOption[] = START_OF_THE_WEEK_OPTIONS.map((option) => ({
+    value: option.value,
+    label: t(option.label.toLowerCase()),
+  }));
+  const selectedOption = getStartOfWeekOption(userProfile.start_of_the_week, translatedOptions);
 
   return (
     <SettingsControlItem
@@ -48,7 +54,7 @@ export const StartOfWeekPreference = observer(function StartOfWeekPreference(pro
       control={
         <SelectDropdownPlacementContext.Provider value={DROPDOWN_PLACEMENT}>
           <Select<TStartOfWeekOption>
-            getValues={() => START_OF_THE_WEEK_OPTIONS}
+            getValues={() => translatedOptions}
             value={selectedOption}
             onChange={(val) => void handleStartOfWeekChange(Number(val))}
             getOptionValue={(option) => String(option.value)}
