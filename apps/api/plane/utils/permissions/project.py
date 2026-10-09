@@ -66,12 +66,16 @@ class ProjectMemberPermission(BasePermission):
                 project_id=view.project_id,
                 is_active=True,
             ).exists()
-        ## Only workspace owners or admins can create the projects
+        # Scope POST to the URL project, as the other two branches already do.
+        # A workspace-only check would let any member create sub-resources in a
+        # project they do not belong to. Kept identical to the copy in
+        # app/permissions/project.py — the two must not drift.
         if request.method == "POST":
-            return WorkspaceMember.objects.filter(
+            return ProjectMember.objects.filter(
                 workspace__slug=view.workspace_slug,
                 member=request.user,
                 role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+                project_id=view.project_id,
                 is_active=True,
             ).exists()
 
