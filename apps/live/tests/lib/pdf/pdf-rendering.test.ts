@@ -6,10 +6,21 @@
 
 import { describe, it, expect } from "vitest";
 import { PDFParse } from "pdf-parse";
+import sharp from "sharp";
 import { renderPlaneDocToPdfBuffer } from "@/lib/pdf";
 import type { TipTapDocument, PDFExportMetadata } from "@/lib/pdf";
 
 const PDF_HEADER = "%PDF-";
+
+/** A tiny valid JPEG data URI, standing in for a pre-fetched/resolved image src. */
+async function tinyJpegDataUri(): Promise<string> {
+  const buffer = await sharp({
+    create: { width: 2, height: 2, channels: 3, background: { r: 255, g: 0, b: 0 } },
+  })
+    .jpeg()
+    .toBuffer();
+  return `data:image/jpeg;base64,${buffer.toString("base64")}`;
+}
 
 /**
  * Helper to extract text content from a PDF buffer
@@ -727,6 +738,70 @@ describe("PDF Rendering Integration", () => {
       const text = await extractPdfText(buffer);
 
       expect(text).toContain("Text after image");
+    });
+  });
+
+  describe("image node SSRF pre-resolution", () => {
+    // The `image` renderer never fetches its own src or hands the raw URL to
+    // @react-pdf/image at render time — pdf-export.service.ts pre-fetches every
+    // external `image`-node src (through the redirect-safe path) before rendering
+    // starts and hands the result in via metadata.resolvedImageUrls, the same way
+    // it already does for `imageComponent` assets. These tests exercise that
+    // renderer-level contract directly, without going through the fetch pipeline.
+
+    it("renders the pre-resolved data URI when metadata carries a resolved entry for the src", async () => {
+      const src = "https://images.example.com/photo.png";
+      const doc: TipTapDocument = {
+        type: "doc",
+        content: [{ type: "image", attrs: { src } }],
+      };
+      const metadata: PDFExportMetadata = { resolvedImageUrls: { [src]: await tinyJpegDataUri() } };
+
+      const buffer = await renderPlaneDocToPdfBuffer(doc, { metadata });
+
+      expect(buffer.toString("ascii", 0, 5)).toBe(PDF_HEADER);
+    });
+
+    it("renders the placeholder, never the raw src, when the src has no pre-resolved entry", async () => {
+      const doc: TipTapDocument = {
+        type: "doc",
+        content: [{ type: "image", attrs: { src: "https://images.example.com/never-fetched.png" } }],
+      };
+
+      // No metadata at all: the renderer must fall back to the placeholder rather
+      // than passing the raw external URL straight to <Image>.
+      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const text = await extractPdfText(buffer);
+
+      expect(text).toContain("Image unavailable");
+    });
+
+    it("renders the placeholder for a src that failed pre-resolution (e.g. blocked by SSRF checks)", async () => {
+      const src = "http://169.254.169.254/latest/meta-data/";
+      const doc: TipTapDocument = {
+        type: "doc",
+        content: [{ type: "image", attrs: { src } }],
+      };
+      // A failed pre-fetch (unsafe src, unsafe redirect target, or network error)
+      // simply omits the key from resolvedImageUrls — it never carries a fallback
+      // to the raw src.
+      const metadata: PDFExportMetadata = { resolvedImageUrls: {} };
+
+      const buffer = await renderPlaneDocToPdfBuffer(doc, { metadata });
+      const text = await extractPdfText(buffer);
+
+      expect(text).toContain("Image unavailable");
+    });
+
+    it("still renders inline data: URIs directly, with no pre-fetch entry required", async () => {
+      const doc: TipTapDocument = {
+        type: "doc",
+        content: [{ type: "image", attrs: { src: await tinyJpegDataUri() } }],
+      };
+
+      const buffer = await renderPlaneDocToPdfBuffer(doc);
+
+      expect(buffer.toString("ascii", 0, 5)).toBe(PDF_HEADER);
     });
   });
 });
