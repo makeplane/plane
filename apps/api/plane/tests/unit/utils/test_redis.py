@@ -47,6 +47,23 @@ class TestRedisInstance:
             assert connection["password"] == "password"
             assert connection["db"] == 0
 
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "redis://rediss:password@cache.example:6379/4",
+            "redis://user:rediss-password@cache.example:6379/4",
+            "redis://rediss-cache.example:6379/4",
+        ],
+    )
+    def test_plain_urls_with_rediss_outside_scheme(self, settings, url):
+        settings.REDIS_URL = url
+        settings.REDIS_SSL = "rediss" in url
+
+        with redis_instance() as client:
+            connection = client.connection_pool.make_connection()
+            assert type(connection) is Connection
+            assert connection.db == 4
+
     def test_tls_retains_existing_certificate_verification_default(self, settings):
         settings.REDIS_SSL = True
         settings.REDIS_URL = "rediss://cache.example:6380/0"

@@ -8,7 +8,7 @@ from django.conf import settings
 
 def redis_instance():
     # connect to redis
-    if settings.REDIS_SSL:
+    if settings.REDIS_SSL and settings.REDIS_URL and settings.REDIS_URL.startswith("rediss://"):
         # Use the same URL parsing for TLS credentials, database and query options.
         ri = redis.Redis.from_url(settings.REDIS_URL, db=0, ssl_cert_reqs=None)
     else:
