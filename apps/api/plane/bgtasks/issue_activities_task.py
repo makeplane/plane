@@ -565,18 +565,17 @@ def create_issue_activity(
     epoch,
 ):
     issue = Issue.objects.get(pk=issue_id)
-    issue_activity = IssueActivity.objects.create(
-        issue_id=issue_id,
-        project_id=project_id,
-        workspace_id=workspace_id,
-        comment="created the issue",
-        verb="created",
-        actor_id=actor_id,
-        epoch=epoch,
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="created the issue",
+            verb="created",
+            actor_id=issue.created_by_id,
+            epoch=epoch,
+        )
     )
-    issue_activity.created_at = issue.created_at
-    issue_activity.actor_id = issue.created_by_id
-    issue_activity.save(update_fields=["created_at", "actor_id"])
     requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data.get("assignee_ids") is not None:
         track_assignees(
