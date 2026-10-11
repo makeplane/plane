@@ -41,7 +41,20 @@
     },
     "preferences": {
       "heading": "偏好設定",
-      "description": "以您工作的方式自訂您的應用程式體驗"
+      "description": "以您工作的方式自訂您的應用程式體驗",
+      "first_day_of_week": {
+        "title": "每週的第一天",
+        "description": "這將變更應用程式中所有行事曆的顯示方式。",
+        "days": {
+          "sunday": "星期日",
+          "monday": "星期一",
+          "tuesday": "星期二",
+          "wednesday": "星期三",
+          "thursday": "星期四",
+          "friday": "星期五",
+          "saturday": "星期六"
+        }
+      }
     },
     "notifications": {
       "heading": "電子郵件通知",

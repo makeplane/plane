@@ -41,7 +41,20 @@
     },
     "preferences": {
       "heading": "Preferințe",
-      "description": "Personalizează experiența aplicației așa cum lucrezi"
+      "description": "Personalizează experiența aplicației așa cum lucrezi",
+      "first_day_of_week": {
+        "title": "Prima zi a săptămânii",
+        "description": "Aceasta va schimba modul de afișare a tuturor calendarelor din aplicație.",
+        "days": {
+          "sunday": "Duminică",
+          "monday": "Luni",
+          "tuesday": "Marți",
+          "wednesday": "Miercuri",
+          "thursday": "Joi",
+          "friday": "Vineri",
+          "saturday": "Sâmbătă"
+        }
+      }
     },
     "notifications": {
       "heading": "Notificări prin e-mail",

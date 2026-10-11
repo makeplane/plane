@@ -41,7 +41,20 @@
     },
     "preferences": {
       "heading": "Predvoľby",
-      "description": "Prispôsobte si aplikáciu spôsobu, akým pracujete"
+      "description": "Prispôsobte si aplikáciu spôsobu, akým pracujete",
+      "first_day_of_week": {
+        "title": "Prvý deň týždňa",
+        "description": "Týmto sa zmení zobrazenie všetkých kalendárov v aplikácii.",
+        "days": {
+          "sunday": "Nedeľa",
+          "monday": "Pondelok",
+          "tuesday": "Utorok",
+          "wednesday": "Streda",
+          "thursday": "Štvrtok",
+          "friday": "Piatok",
+          "saturday": "Sobota"
+        }
+      }
     },
     "notifications": {
       "heading": "E-mailové oznámenia",

@@ -41,7 +41,20 @@
     },
     "preferences": {
       "heading": "Preferencje",
-      "description": "Dostosuj sposób korzystania z aplikacji do swojego stylu pracy"
+      "description": "Dostosuj sposób korzystania z aplikacji do swojego stylu pracy",
+      "first_day_of_week": {
+        "title": "Pierwszy dzień tygodnia",
+        "description": "Zmieni to sposób wyświetlania wszystkich kalendarzy w aplikacji.",
+        "days": {
+          "sunday": "Niedziela",
+          "monday": "Poniedziałek",
+          "tuesday": "Wtorek",
+          "wednesday": "Środa",
+          "thursday": "Czwartek",
+          "friday": "Piątek",
+          "saturday": "Sobota"
+        }
+      }
     },
     "notifications": {
       "heading": "Powiadomienia e-mail",

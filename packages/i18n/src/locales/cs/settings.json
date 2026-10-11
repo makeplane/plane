@@ -41,7 +41,20 @@
     },
     "preferences": {
       "heading": "Předvolby",
-      "description": "Přizpůsobte si prostředí aplikace podle toho, jak pracujete"
+      "description": "Přizpůsobte si prostředí aplikace podle toho, jak pracujete",
+      "first_day_of_week": {
+        "title": "První den v týdnu",
+        "description": "Tím se změní zobrazení všech kalendářů v aplikaci.",
+        "days": {
+          "sunday": "Neděle",
+          "monday": "Pondělí",
+          "tuesday": "Úterý",
+          "wednesday": "Středa",
+          "thursday": "Čtvrtek",
+          "friday": "Pátek",
+          "saturday": "Sobota"
+        }
+      }
     },
     "notifications": {
       "heading": "E-mailová oznámení",

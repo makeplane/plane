@@ -41,7 +41,20 @@
     },
     "preferences": {
       "heading": "Tùy chọn",
-      "description": "Tùy chỉnh trải nghiệm ứng dụng theo cách bạn làm việc"
+      "description": "Tùy chỉnh trải nghiệm ứng dụng theo cách bạn làm việc",
+      "first_day_of_week": {
+        "title": "Ngày đầu tiên trong tuần",
+        "description": "Điều này sẽ thay đổi cách hiển thị tất cả lịch trong ứng dụng.",
+        "days": {
+          "sunday": "Chủ Nhật",
+          "monday": "Thứ Hai",
+          "tuesday": "Thứ Ba",
+          "wednesday": "Thứ Tư",
+          "thursday": "Thứ Năm",
+          "friday": "Thứ Sáu",
+          "saturday": "Thứ Bảy"
+        }
+      }
     },
     "notifications": {
       "heading": "Thông báo qua email",

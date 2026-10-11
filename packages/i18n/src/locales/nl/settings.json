@@ -41,7 +41,20 @@
     },
     "preferences": {
       "heading": "Voorkeuren",
-      "description": "Pas je app-ervaring aan zoals jij werkt"
+      "description": "Pas je app-ervaring aan zoals jij werkt",
+      "first_day_of_week": {
+        "title": "Eerste dag van de week",
+        "description": "Hiermee wordt de weergave van alle agenda’s in je app gewijzigd.",
+        "days": {
+          "sunday": "Zondag",
+          "monday": "Maandag",
+          "tuesday": "Dinsdag",
+          "wednesday": "Woensdag",
+          "thursday": "Donderdag",
+          "friday": "Vrijdag",
+          "saturday": "Zaterdag"
+        }
+      }
     },
     "notifications": {
       "heading": "E-mailmeldingen",
