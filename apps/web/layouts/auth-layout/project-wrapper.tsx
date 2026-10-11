@@ -91,19 +91,6 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // On the work items page, start the display filters together with the project details: the layout root
-  // (issue-layouts/roots/project-layout-root.tsx, same SWR key) asks for them only after the project
-  // details are loaded, and the work items request waits for them — one network round trip less.
-  // Only on the first mount: on client navigation the layout root's own useSWR (child effect) runs first.
-  const isWorkItemsPage = !!pathname?.includes(`/projects/${projectId}/issues`);
-  useEffect(() => {
-    if (!isWorkItemsPage) return;
-    void preload(`PROJECT_ISSUES_${workspaceSlug}_${projectId}`, () =>
-      projectIssuesFilter.fetchFilters(workspaceSlug, projectId)
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // fetching project details
   const { isLoading: isProjectDetailsLoading, error: projectDetailsError } = useSWR(
     PROJECT_DETAILS(workspaceSlug, projectId),
@@ -172,6 +159,20 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   };
 
   const isProjectLoading = (isParentLoading || isProjectDetailsLoading) && !projectDetailsError;
+
+  // On the work items page, start the display filters together with the project details: the layout root
+  // (issue-layouts/roots/project-layout-root.tsx, same SWR key) asks for them only after the project
+  // details are loaded, and the work items request waits for them — one network round trip less.
+  // Only while the children are not rendered yet (first mount, project details still loading): when they
+  // are, the layout root's own useSWR (a child effect, which runs first) already makes the request.
+  const isWorkItemsPage = !!pathname?.includes(`/projects/${projectId}/issues`);
+  useEffect(() => {
+    if (!isWorkItemsPage || !isProjectLoading) return;
+    void preload(`PROJECT_ISSUES_${workspaceSlug}_${projectId}`, () =>
+      projectIssuesFilter.fetchFilters(workspaceSlug, projectId)
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (isProjectLoading) return null;
 
