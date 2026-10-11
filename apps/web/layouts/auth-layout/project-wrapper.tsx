@@ -7,10 +7,11 @@
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import useSWR from "swr";
+import { usePathname } from "next/navigation";
+import useSWR, { preload } from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { GANTT_TIMELINE_TYPE } from "@plane/types";
+import { EIssuesStoreType, GANTT_TIMELINE_TYPE } from "@plane/types";
 // components
 import { ProjectAccessRestriction } from "@/components/auth-screens/project/project-access-restriction";
 import {
@@ -29,6 +30,7 @@ import {
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useCycle } from "@/hooks/store/use-cycle";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
@@ -51,7 +53,7 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   const [isJoiningProject, setIsJoiningProject] = useState(false);
   // store hooks
   const { fetchUserProjectInfo, allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
-  const { fetchProjectDetails } = useProject();
+  const { fetchProjectDetails, getProjectById } = useProject();
   const { joinProject } = useUserPermissions();
   const { fetchAllCycles } = useCycle();
   const { fetchModulesSlim, fetchModules } = useModule();
@@ -64,6 +66,8 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   const { data: currentUserData } = useUser();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
+  const { issuesFilter: projectIssuesFilter } = useIssues(EIssuesStoreType.PROJECT);
+  const pathname = usePathname();
   // derived values
   const hasPermissionToCurrentProject = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
@@ -72,10 +76,31 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
     projectId
   );
   const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
+  // The keys below contain the role, which is undefined for a moment after mount (the workspace's project
+  // roles arrive ~40 ms later): every key changed and all project data was fetched twice. Without a role
+  // the user sees the access restriction anyway, so fetch only once the role is known.
+  const roleKey = (key: string) => (currentProjectRole ? key : null);
+  // Data of a project feature that is turned off is not needed: skip it. The flags come with the
+  // workspace's project list, so wait for the project to be known before deciding.
+  const project = getProjectById(projectId);
+  const featureKey = (key: string, enabled: boolean | undefined) => (project && enabled ? roleKey(key) : null);
   const isWorkspaceAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
   // Initialize module timeline chart
   useEffect(() => {
     initGantt();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // On the work items page, start the display filters together with the project details: the layout root
+  // (issue-layouts/roots/project-layout-root.tsx, same SWR key) asks for them only after the project
+  // details are loaded, and the work items request waits for them — one network round trip less.
+  // Only on the first mount: on client navigation the layout root's own useSWR (child effect) runs first.
+  const isWorkItemsPage = !!pathname?.includes(`/projects/${projectId}/issues`);
+  useEffect(() => {
+    if (!isWorkItemsPage) return;
+    void preload(`PROJECT_ISSUES_${workspaceSlug}_${projectId}`, () =>
+      projectIssuesFilter.fetchFilters(workspaceSlug, projectId)
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -88,53 +113,57 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   useSWR(PROJECT_ME_INFORMATION(workspaceSlug, projectId), () => fetchUserProjectInfo(workspaceSlug, projectId));
   // fetching project member preferences
   useSWR(
-    currentUserData?.id ? PROJECT_MEMBER_PREFERENCES(projectId, currentProjectRole) : null,
+    currentUserData?.id ? roleKey(PROJECT_MEMBER_PREFERENCES(projectId, currentProjectRole)) : null,
     currentUserData?.id ? () => fetchProjectUserProperties(workspaceSlug, projectId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project labels
-  useSWR(PROJECT_LABELS(projectId, currentProjectRole), () => fetchProjectLabels(workspaceSlug, projectId), {
+  useSWR(roleKey(PROJECT_LABELS(projectId, currentProjectRole)), () => fetchProjectLabels(workspaceSlug, projectId), {
     revalidateIfStale: false,
     revalidateOnFocus: false,
   });
   // fetching project members
-  useSWR(PROJECT_MEMBERS(projectId, currentProjectRole), () => fetchProjectMembers(workspaceSlug, projectId), {
+  useSWR(roleKey(PROJECT_MEMBERS(projectId, currentProjectRole)), () => fetchProjectMembers(workspaceSlug, projectId), {
     revalidateIfStale: false,
     revalidateOnFocus: false,
   });
   // fetching project states
-  useSWR(PROJECT_STATES(projectId, currentProjectRole), () => fetchProjectStates(workspaceSlug, projectId), {
+  useSWR(roleKey(PROJECT_STATES(projectId, currentProjectRole)), () => fetchProjectStates(workspaceSlug, projectId), {
     revalidateIfStale: false,
     revalidateOnFocus: false,
   });
   // fetching project intake state
-  useSWR(PROJECT_INTAKE_STATE(projectId, currentProjectRole), () => fetchProjectIntakeState(workspaceSlug, projectId), {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-  });
+  useSWR(
+    featureKey(PROJECT_INTAKE_STATE(projectId, currentProjectRole), project?.inbox_view),
+    () => fetchProjectIntakeState(workspaceSlug, projectId),
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
   // fetching project estimates
-  useSWR(PROJECT_ESTIMATES(projectId, currentProjectRole), () => getProjectEstimates(workspaceSlug, projectId), {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-  });
+  useSWR(
+    roleKey(PROJECT_ESTIMATES(projectId, currentProjectRole)),
+    () => getProjectEstimates(workspaceSlug, projectId),
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
   // fetching project cycles
-  useSWR(PROJECT_ALL_CYCLES(projectId, currentProjectRole), () => fetchAllCycles(workspaceSlug, projectId), {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-  });
+  useSWR(
+    featureKey(PROJECT_ALL_CYCLES(projectId, currentProjectRole), project?.cycle_view),
+    () => fetchAllCycles(workspaceSlug, projectId),
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
   // fetching project modules
   useSWR(
-    PROJECT_MODULES(projectId, currentProjectRole),
+    featureKey(PROJECT_MODULES(projectId, currentProjectRole), project?.module_view),
     async () => {
       await Promise.all([fetchModulesSlim(workspaceSlug, projectId), fetchModules(workspaceSlug, projectId)]);
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project views
-  useSWR(PROJECT_VIEWS(projectId, currentProjectRole), () => fetchViews(workspaceSlug, projectId), {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-  });
+  useSWR(
+    featureKey(PROJECT_VIEWS(projectId, currentProjectRole), project?.issue_views_view),
+    () => fetchViews(workspaceSlug, projectId),
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
   // handle join project
   const handleJoinProject = () => {
