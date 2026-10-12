@@ -1,3 +1,6 @@
+# Keep in step with required-version in pyproject.toml; bump tag and digest together.
+FROM ghcr.io/astral-sh/uv:0.12.21@sha256:a7aed3216253ee804de3e2d8afa5073baa1a177335345d43845cd4165e43b711 AS uv
+
 FROM python:3.12.5-alpine AS backend
 
 # set environment variables
@@ -5,6 +8,12 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
 ENV INSTANCE_CHANGELOG_URL https://sites.plane.so/pages/691ef037bcfe416a902e48cb55f59891/
+# Install into the image's Python (/usr/local), not /code/.venv: the compose
+# files bind-mount the source over /code, which would hide an in-tree venv.
+ENV UV_PROJECT_ENVIRONMENT=/usr/local
+ENV UV_PYTHON_DOWNLOADS=never
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_NO_CACHE=1
 
 RUN apk --no-cache add \
     "bash~=5.2" \
@@ -25,11 +34,11 @@ RUN apk --no-cache add \
 
 WORKDIR /code
 
-COPY requirements.txt ./requirements.txt
-ADD requirements ./requirements
+COPY --from=uv /uv /usr/local/bin/uv
+COPY pyproject.toml uv.lock ./
 
-# Install the local development settings
-RUN pip install -r requirements/local.txt --compile --no-cache-dir
+# Install the default groups (dev + test). --inexact keeps the base image's pip.
+RUN uv sync --locked --inexact
 
 
 COPY . .
