@@ -13,12 +13,25 @@ from rest_framework import status
 
 # Module import
 from .base import BaseAPIView
-from plane.db.models import APIToken
+from plane.app.permissions import ROLE
+from plane.db.models import APIToken, WorkspaceMember
 from plane.app.serializers import APITokenSerializer, APITokenReadSerializer
+
+
+def _is_guest_only(user) -> bool:
+    """True when the user has active workspace memberships and none above Guest."""
+    roles = list(WorkspaceMember.objects.filter(member=user, is_active=True).values_list("role", flat=True))
+    return bool(roles) and max(roles) <= ROLE.GUEST.value
 
 
 class ApiTokenEndpoint(BaseAPIView):
     def post(self, request: Request) -> Response:
+        if _is_guest_only(request.user):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         label = request.data.get("label", str(uuid4().hex))
         description = request.data.get("description", "")
         expired_at = request.data.get("expired_at", None)

@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
 
-from plane.db.models import APIToken, User
+from plane.db.models import APIToken, User, Workspace, WorkspaceMember
 
 
 @pytest.mark.contract
@@ -417,3 +417,109 @@ class TestApiTokenEndpoint:
         for url, method in endpoints:
             response = getattr(api_client, method)(url)
             assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def _make_workspace(owner, slug):
+    return Workspace.objects.create(name=slug, slug=slug, owner=owner)
+
+
+def _join(workspace, user, role, is_active=True):
+    return WorkspaceMember.objects.create(workspace=workspace, member=user, role=role, is_active=is_active)
+
+
+@pytest.mark.contract
+class TestApiTokenCreateRole:
+    """Personal token creation requires a non-guest workspace role"""
+
+    @pytest.fixture
+    def owner_user(self, db):
+        suffix = uuid4().hex[:12]
+        return User.objects.create(email=f"owner-{suffix}@plane.so", username=f"owner-{suffix}")
+
+    @pytest.fixture
+    def ws_a(self, owner_user):
+        return _make_workspace(owner_user, f"ws-a-{uuid4().hex[:8]}")
+
+    @pytest.fixture
+    def ws_b(self, owner_user):
+        return _make_workspace(owner_user, f"ws-b-{uuid4().hex[:8]}")
+
+    @pytest.mark.django_db
+    def test_guest_only_cannot_create_token(self, session_client, create_user, ws_a, api_token_data):
+        _join(ws_a, create_user, 5)
+        session_client.force_authenticate(user=create_user)
+
+        response = session_client.post(reverse("api-tokens"), api_token_data, format="json")
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.data == {"error": "You don't have the required permissions."}
+        assert not APIToken.objects.filter(user=create_user).exists()
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("role", [15, 20])
+    def test_member_and_admin_can_create_token(self, session_client, create_user, ws_a, api_token_data, role):
+        _join(ws_a, create_user, role)
+        session_client.force_authenticate(user=create_user)
+
+        response = session_client.post(reverse("api-tokens"), api_token_data, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert APIToken.objects.filter(user=create_user).count() == 1
+
+    @pytest.mark.django_db
+    def test_guest_in_one_workspace_member_in_another_can_create_token(
+        self, session_client, create_user, ws_a, ws_b, api_token_data
+    ):
+        _join(ws_a, create_user, 5)
+        _join(ws_b, create_user, 15)
+        session_client.force_authenticate(user=create_user)
+
+        response = session_client.post(reverse("api-tokens"), api_token_data, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+    @pytest.mark.django_db
+    def test_inactive_member_with_active_guest_cannot_create_token(
+        self, session_client, create_user, ws_a, ws_b, api_token_data
+    ):
+        _join(ws_a, create_user, 5)
+        _join(ws_b, create_user, 15, is_active=False)
+        session_client.force_authenticate(user=create_user)
+
+        response = session_client.post(reverse("api-tokens"), api_token_data, format="json")
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert not APIToken.objects.filter(user=create_user).exists()
+
+    @pytest.mark.django_db
+    def test_user_without_memberships_can_create_token(self, session_client, create_user, api_token_data):
+        session_client.force_authenticate(user=create_user)
+
+        response = session_client.post(reverse("api-tokens"), api_token_data, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+    @pytest.mark.django_db
+    def test_guest_keeps_existing_token(self, api_client, session_client, create_user, ws_a):
+        _join(ws_a, create_user, 5)
+        token = APIToken.objects.create(label="Existing", user=create_user, user_type=0)
+
+        api_client.credentials(HTTP_X_API_KEY=token.token)
+        me = api_client.get("/api/v1/users/me/")
+        assert me.status_code == status.HTTP_200_OK
+
+        api_client.credentials()
+        session_client.force_authenticate(user=create_user)
+        listing = session_client.get(reverse("api-tokens"))
+        assert listing.status_code == status.HTTP_200_OK
+        assert [str(t["id"]) for t in listing.data] == [str(token.pk)]
+
+        detail_url = reverse("api-tokens-details", kwargs={"pk": token.pk})
+        patched = session_client.patch(detail_url, {"label": "Renamed"}, format="json")
+        assert patched.status_code == status.HTTP_200_OK
+        token.refresh_from_db()
+        assert token.label == "Renamed"
+
+        deleted = session_client.delete(detail_url)
+        assert deleted.status_code == status.HTTP_204_NO_CONTENT
+        assert not APIToken.objects.filter(pk=token.pk).exists()
