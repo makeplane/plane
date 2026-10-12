@@ -147,6 +147,98 @@ function updateEnvFile() {
     fi
 }
 
+SECRET_PLACEHOLDER="change-this-key-on-deployment"
+OLD_DEFAULT_SECRET_KEY="60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5"
+OLD_DEFAULT_LIVE_KEYS="htbqvBJAgpm9bzvf3r4urJer0ENReatceh 2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW"
+
+function generateSecret() {
+    local secret=""
+    if command -v openssl > /dev/null 2>&1; then
+        secret=$(openssl rand -hex 32 2> /dev/null)
+    fi
+    if [ ${#secret} -ne 64 ]; then
+        secret=$(head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n')
+    fi
+    if [ ${#secret} -ne 64 ]; then
+        return 1
+    fi
+    echo "$secret"
+}
+
+function setEnvValueLiteral() {
+    local key=$1
+    local value=$2
+    local file=$3
+
+    # awk reads the value from the environment, so no character is interpreted
+    KEY="$key" VAL="$value" awk 'BEGIN { p = ENVIRON["KEY"] "=" } index($0, p) == 1 { print p ENVIRON["VAL"]; next } { print }' "$file" > "$file.tmp" \
+        && mv "$file.tmp" "$file"
+}
+
+function generateInstallSecrets() {
+    local file=$1
+    local key value generated=false
+
+    for key in SECRET_KEY LIVE_SERVER_SECRET_KEY; do
+        if [ "$(getEnvValue "$key" "$file")" == "$SECRET_PLACEHOLDER" ]; then
+            if ! value=$(generateSecret); then
+                echo "Could not generate a random value for $key. Set it manually in $file" >&2
+                continue
+            fi
+            setEnvValueLiteral "$key" "$value" "$file"
+            generated=true
+        fi
+    done
+
+    if [ "$generated" == "true" ]; then
+        echo "" >&2
+        echo "Unique SECRET_KEY and LIVE_SERVER_SECRET_KEY values were generated in $file." >&2
+        echo "Back up this file together with your data volumes; it is required to restore your data." >&2
+        echo "" >&2
+    fi
+}
+
+function isTemplateSecret() {
+    local key=$1
+    local value=$2
+    local old
+
+    if [ -z "$value" ] || [ "$value" == "$SECRET_PLACEHOLDER" ]; then
+        return 0
+    fi
+    if [ "$key" == "SECRET_KEY" ] && [ "$value" == "$OLD_DEFAULT_SECRET_KEY" ]; then
+        return 0
+    fi
+    if [ "$key" == "LIVE_SERVER_SECRET_KEY" ]; then
+        for old in $OLD_DEFAULT_LIVE_KEYS; do
+            [ "$value" == "$old" ] && return 0
+        done
+    fi
+    return 1
+}
+
+function warnTemplateSecrets() {
+    local file=$1
+    local key flagged=""
+
+    for key in SECRET_KEY LIVE_SERVER_SECRET_KEY; do
+        if isTemplateSecret "$key" "$(getEnvValue "$key" "$file")"; then
+            flagged="$flagged $key"
+        fi
+    done
+
+    if [ -n "$flagged" ]; then
+        echo "" >&2
+        echo "NOTICE: $file still uses a template or default value for:$flagged" >&2
+        echo "Your installation keeps working. To set a unique value, stop the services," >&2
+        echo "edit $file (for example with: openssl rand -hex 32) and start the services again." >&2
+        echo "Changing SECRET_KEY signs all users out, and saved instance settings (email, OAuth)" >&2
+        echo "must be re-entered in the admin app because they cannot be decrypted with a different key." >&2
+        echo "Changing LIVE_SERVER_SECRET_KEY has no effect on saved data." >&2
+        echo "" >&2
+    fi
+}
+
 function download() {
     cd $SCRIPT_DIR || exit 1  
     TS=$(date +%s)
@@ -202,18 +294,26 @@ function download() {
         fi
     fi
 
+    local FRESH_INSTALL=false
     if [ -f "$DOCKER_ENV_PATH" ];
     then
         cp "$DOCKER_ENV_PATH" "$PLANE_INSTALL_DIR/archive/$TS.env"
         cp "$DOCKER_ENV_PATH" "$PLANE_INSTALL_DIR/plane.env.bak"
+    else
+        FRESH_INSTALL=true
     fi
 
     mv $PLANE_INSTALL_DIR/variables-upgrade.env $DOCKER_ENV_PATH
 
     syncEnvFile
 
+    if [ "$FRESH_INSTALL" == "true" ]; then
+        generateInstallSecrets "$DOCKER_ENV_PATH"
+    fi
+
     updateEnvFile "APP_RELEASE" "$APP_RELEASE" "$DOCKER_ENV_PATH"
 
+    warnTemplateSecrets "$DOCKER_ENV_PATH"
 }
 function deployStack() {   
     # Check if docker compose file and env file exist
@@ -227,6 +327,7 @@ function deployStack() {
         getStackName
     fi
     echo "Starting ${stack_name} stack..."
+    warnTemplateSecrets "$DOCKER_ENV_PATH"
 
     # Pull envs 
     if [ -f "$DOCKER_ENV_PATH" ]; then

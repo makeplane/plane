@@ -92,8 +92,10 @@ docker run --name myaio --rm -it \
 
 #### Security & Secrets
 
-- `SECRET_KEY`: Django secret key (default provided)
-- `LIVE_SERVER_SECRET_KEY`: Live server secret (default provided)
+- `SECRET_KEY`: Django secret key. Generated on first boot if not set. Also used to encrypt saved instance settings (email, OAuth), so set the same value explicitly whenever the container is recreated.
+- `LIVE_SERVER_SECRET_KEY`: Live server secret. Generated on first boot if not set.
+
+The generated values are kept in the container's `plane.env` and are reused when the same container restarts. A new container generates new values unless you pass them as environment variables (for example `openssl rand -hex 32`).
 
 #### File Handling
 

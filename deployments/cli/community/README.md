@@ -139,6 +139,17 @@ Again the `options [1-7]` will be popped up, and this time hit `7` to exit.
 
 ---
 
+### Secrets and backup
+
+New installs generate a unique `SECRET_KEY` and `LIVE_SERVER_SECRET_KEY` in `plane.env`. Upgrades keep the values already in `plane.env`. If an existing install still uses a template or default value, the script prints a notice; you can replace it as described below.
+
+- `SECRET_KEY` also encrypts instance settings saved in the admin app (email, OAuth). Changing it signs all users out, and those settings must be entered again.
+- `LIVE_SERVER_SECRET_KEY` can be changed at any time without affecting saved data.
+- If you run `docker compose` yourself instead of `setup.sh`, set both keys to non-empty values (for example `openssl rand -hex 32`) in `plane.env` before the first start. Every container must receive the same value.
+- Back up `plane.env` together with your data volumes. `restore.sh` restores the data volumes only; a new `plane.env` has new keys, and settings encrypted with the old `SECRET_KEY` cannot be read.
+
+---
+
 ### Continue with setup - Environment Settings
 
 Before proceeding, we suggest used to review `.env` file and set the values.
