@@ -155,6 +155,13 @@ SECRET_PLACEHOLDER="change-this-key-on-deployment"
 OLD_DEFAULT_SECRET_KEY="60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5"
 OLD_DEFAULT_LIVE_KEYS="htbqvBJAgpm9bzvf3r4urJer0ENReatceh 2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW"
 
+function dockerVolumeAbsent() {
+    local volumes
+    docker info > /dev/null 2>&1 || return 1
+    volumes=$(docker volume ls -q 2> /dev/null) || return 1
+    ! echo "$volumes" | grep -Fxq "$1"
+}
+
 function generateSecret() {
     local secret=""
     if command -v openssl > /dev/null 2>&1; then
@@ -391,7 +398,7 @@ function download() {
     then
         cp "$DOCKER_ENV_PATH" "$PLANE_INSTALL_DIR/archive/$TS.env"
         cp "$DOCKER_ENV_PATH" "$PLANE_INSTALL_DIR/plane.env.bak"
-    elif ! docker volume inspect "${SERVICE_FOLDER}_pgdata" > /dev/null 2>&1; then
+    elif dockerVolumeAbsent "${SERVICE_FOLDER}_pgdata"; then
         FRESH_INSTALL=true
     fi
 
