@@ -136,15 +136,25 @@ def test_previous_cursor_with_unchanged_page_size_is_preserved():
 
 
 @pytest.mark.parametrize("transformed", [[], [{"id": 1}], {"items": []}, (), None])
-def test_callback_output_cardinality_is_not_used_for_page_count(transformed):
+@pytest.mark.parametrize("count_page_in_database", [False, True])
+def test_callback_output_cardinality_is_not_used_for_page_count(transformed, count_page_in_database):
     rows = _queryset()
     callback = mock.Mock(return_value=transformed)
-    response = BasePaginator().paginate(_request(), paginator=_StaticPaginator(_result(rows)), on_results=callback)
+    response = BasePaginator().paginate(
+        _request(),
+        paginator=_StaticPaginator(_result(rows)),
+        on_results=callback,
+        count_page_in_database=count_page_in_database,
+    )
     callback.assert_called_once_with(rows)
     assert response.data["results"] is transformed
     assert response.data["count"] == 4
-    rows.count.assert_called_once_with()
-    rows.__len__.assert_not_called()
+    if count_page_in_database:
+        rows.count.assert_called_once_with()
+        rows.__len__.assert_not_called()
+    else:
+        rows.count.assert_not_called()
+        rows.__len__.assert_called_once_with()
 
 
 def test_controller_output_does_not_change_source_count():
@@ -154,6 +164,7 @@ def test_controller_output_does_not_change_source_count():
         paginator=_StaticPaginator(_result(rows)),
         on_results=lambda _: [{"id": 1}],
         controller=lambda _: {"summary": "not a row list"},
+        count_page_in_database=True,
     )
     assert response.data["count"] == 4
     assert response.data["results"] == {"summary": "not a row list"}
@@ -168,6 +179,7 @@ def test_group_container_count_is_not_confused_with_raw_row_count():
         paginator=_StaticPaginator(_result(rows)),
         on_results=lambda _: [{"id": 1}],
         group_by_field_name="priority",
+        count_page_in_database=True,
     )
     assert response.data["count"] == 4
     assert len(response.data["results"]) == 1
@@ -177,7 +189,9 @@ def test_group_container_count_is_not_confused_with_raw_row_count():
 @pytest.mark.parametrize("callback", [None, lambda rows: rows])
 def test_raw_queryset_response_keeps_the_single_evaluation_path(callback):
     rows = _queryset()
-    response = BasePaginator().paginate(_request(), paginator=_StaticPaginator(_result(rows)), on_results=callback)
+    response = BasePaginator().paginate(
+        _request(), paginator=_StaticPaginator(_result(rows)), on_results=callback, count_page_in_database=True
+    )
     assert response.data["results"] is rows
     assert response.data["count"] == 4
     rows.count.assert_not_called()
@@ -191,6 +205,7 @@ def test_controller_returning_original_queryset_preserves_cache_filling():
         paginator=_StaticPaginator(_result(rows)),
         on_results=lambda _: [],
         controller=lambda _: rows,
+        count_page_in_database=True,
     )
     assert response.data["results"] is rows
     rows.count.assert_not_called()
@@ -200,7 +215,10 @@ def test_controller_returning_original_queryset_preserves_cache_filling():
 @pytest.mark.parametrize("rows", [[], [1, 2], (1, 2, 3), "abc"])
 def test_non_queryset_result_keeps_sequence_length(rows):
     response = BasePaginator().paginate(
-        _request(), paginator=_StaticPaginator(_result(rows)), on_results=lambda _: {"filtered": []}
+        _request(),
+        paginator=_StaticPaginator(_result(rows)),
+        on_results=lambda _: {"filtered": []},
+        count_page_in_database=True,
     )
     assert response.data["count"] == len(rows)
 
@@ -212,7 +230,10 @@ def test_custom_cursor_result_length_contract_is_preserved():
 
     rows = _queryset()
     response = BasePaginator().paginate(
-        _request(), paginator=_StaticPaginator(_result(rows, cls=CustomResult)), on_results=lambda _: []
+        _request(),
+        paginator=_StaticPaginator(_result(rows, cls=CustomResult)),
+        on_results=lambda _: [],
+        count_page_in_database=True,
     )
     assert response.data["count"] == 17
     rows.count.assert_not_called()
@@ -230,7 +251,9 @@ def test_cursor_result_sequence_contract_itself_is_unchanged():
 def test_locking_queryset_keeps_its_evaluation_semantics():
     rows = _queryset()
     rows.query.select_for_update = True
-    response = BasePaginator().paginate(_request(), paginator=_StaticPaginator(_result(rows)), on_results=lambda _: [])
+    response = BasePaginator().paginate(
+        _request(), paginator=_StaticPaginator(_result(rows)), on_results=lambda _: [], count_page_in_database=True
+    )
     assert response.data["count"] == 4
     rows.count.assert_not_called()
     rows.__len__.assert_called_once_with()
@@ -240,7 +263,9 @@ def test_unsliced_queryset_keeps_ordering_sensitive_length_semantics():
     rows = _queryset()
     rows.query.is_sliced = False
     rows.count.return_value = 1
-    response = BasePaginator().paginate(_request(), paginator=_StaticPaginator(_result(rows)), on_results=lambda _: [])
+    response = BasePaginator().paginate(
+        _request(), paginator=_StaticPaginator(_result(rows)), on_results=lambda _: [], count_page_in_database=True
+    )
     assert response.data["count"] == 4
     rows.count.assert_not_called()
     rows.__len__.assert_called_once_with()
@@ -252,6 +277,7 @@ def test_controller_without_callback_keeps_existing_cache_behavior():
         _request(),
         paginator=_StaticPaginator(_result(rows)),
         controller=lambda _: {"summary": "controller-only"},
+        count_page_in_database=True,
     )
     assert response.data["count"] == 4
     assert response.data["results"] == {"summary": "controller-only"}

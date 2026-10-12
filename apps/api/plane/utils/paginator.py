@@ -672,9 +672,16 @@ class BasePaginator:
         sub_group_by_fields=None,
         count_filter=None,
         total_count_queryset=None,
+        count_page_in_database=False,
         **paginator_kwargs,
     ):
-        """Paginate the request"""
+        """Paginate the request.
+
+        Enable count_page_in_database only when callbacks and controllers
+        eagerly build the response without retaining lazy references to the
+        original page. By default, evaluate that page so rendering can reuse
+        its cache, including when it is nested inside another response object.
+        """
         per_page = self.get_per_page(request, default_per_page, max_per_page)
         # Convert the cursor value to integer and float from string
         input_cursor = None
@@ -727,14 +734,15 @@ class BasePaginator:
         else:
             results = results
 
-        # A callback can evaluate a projection without populating the original
-        # page's cache. Count that page in SQL instead of fetching its models.
+        # An opted-in callback can evaluate a projection without populating
+        # the original page's cache. Count it instead of fetching its models.
         # Do not count the transformed output: callbacks and controllers may
         # change its cardinality. Only optimize SQL-sliced pages: counting an
         # unsliced DISTINCT/GROUP BY query can discard ordering-dependent
         # columns. Keep custom lengths, row locks and raw-render cache reuse.
         if (
-            on_results
+            count_page_in_database
+            and on_results
             and type(cursor_result) is CursorResult
             and isinstance(cursor_result.results, QuerySet)
             and cursor_result.results.query.is_sliced

@@ -139,7 +139,11 @@ def test_projected_page_count_does_not_rehydrate_original_page(user_ids, page):
     count_queryset = fresh_users(user_ids)
     with capture_statements() as statements, mock.patch.object(User, "from_db", wraps=User.from_db) as hydrate:
         response = BasePaginator().paginate(
-            request(page), queryset=fresh_users(user_ids), total_count_queryset=count_queryset, on_results=project
+            request(page),
+            queryset=fresh_users(user_ids),
+            total_count_queryset=count_queryset,
+            on_results=project,
+            count_page_in_database=True,
         )
     assert response.data["results"] == expected
     assert response.data["count"] == len(expected)
@@ -165,7 +169,9 @@ def test_transformed_cardinality_does_not_replace_raw_page_count(user_ids, kind)
         return projected[:1] if kind == "filter" else {"items": projected}
 
     with mock.patch.object(User, "from_db", wraps=User.from_db) as hydrate:
-        response = BasePaginator().paginate(request(), paginator=StaticPaginator(raw), on_results=transform)
+        response = BasePaginator().paginate(
+            request(), paginator=StaticPaginator(raw), on_results=transform, count_page_in_database=True
+        )
     assert response.data["count"] == 9
     assert len(response.data["results"]) == 1
     assert raw._result_cache is None
@@ -184,7 +190,9 @@ def test_raw_or_serialized_page_is_fetched_only_once(user_ids, callback_kind):
 
     callback = {"none": None, "passthrough": passthrough, "serialize": serialize}[callback_kind]
     with capture_statements() as statements, mock.patch.object(User, "from_db", wraps=User.from_db) as hydrate:
-        response = BasePaginator().paginate(request(), paginator=StaticPaginator(page), on_results=callback)
+        response = BasePaginator().paginate(
+            request(), paginator=StaticPaginator(page), on_results=callback, count_page_in_database=True
+        )
         list(response.data["results"])
     assert response.data["count"] == 4
     assert hydrate.call_count == 4
@@ -196,7 +204,10 @@ def test_grouped_annotation_count_keeps_raw_queryset_cardinality(user_ids):
     raw = fresh_users(user_ids).order_by().values("is_active").annotate(user_count=Count("pk"))
     with capture_statements() as statements, mock.patch.object(User, "from_db", wraps=User.from_db) as hydrate:
         response = BasePaginator().paginate(
-            request(), paginator=StaticPaginator(raw), on_results=lambda rows: list(rows.values("user_count"))
+            request(),
+            paginator=StaticPaginator(raw),
+            on_results=lambda rows: list(rows.values("user_count")),
+            count_page_in_database=True,
         )
     assert response.data["count"] == 1
     assert response.data["results"] == [{"user_count": 9}]
@@ -212,7 +223,10 @@ def test_window_filtered_page_is_counted_without_hydration(user_ids):
     )
     with mock.patch.object(User, "from_db", wraps=User.from_db) as hydrate:
         response = BasePaginator().paginate(
-            request(), paginator=StaticPaginator(raw), on_results=lambda rows: list(rows.values("id", "position"))
+            request(),
+            paginator=StaticPaginator(raw),
+            on_results=lambda rows: list(rows.values("id", "position")),
+            count_page_in_database=True,
         )
     assert response.data["count"] == 2
     assert len(response.data["results"]) == 2
@@ -223,7 +237,9 @@ def test_window_filtered_page_is_counted_without_hydration(user_ids):
 def test_values_queryset_input_remains_supported(user_ids):
     raw = fresh_users(user_ids).values("id", "first_name")[:4]
     with capture_statements() as statements:
-        response = BasePaginator().paginate(request(), paginator=StaticPaginator(raw), on_results=list)
+        response = BasePaginator().paginate(
+            request(), paginator=StaticPaginator(raw), on_results=list, count_page_in_database=True
+        )
     assert response.data["count"] == 4
     assert len(response.data["results"]) == 4
     assert len(statements) == 1
@@ -250,7 +266,9 @@ def test_locking_page_still_acquires_and_releases_row_locks(user_ids):
     with ThreadPoolExecutor(max_workers=1) as executor:
         with transaction.atomic(using="default"):
             raw = fresh_users(user_ids).select_for_update()[:9]
-            response = BasePaginator().paginate(request(), paginator=StaticPaginator(raw), on_results=lambda _: [])
+            response = BasePaginator().paginate(
+                request(), paginator=StaticPaginator(raw), on_results=lambda _: [], count_page_in_database=True
+            )
             assert response.data["count"] == 9
             assert executor.submit(try_lock).result(timeout=10) == "locked"
         assert executor.submit(try_lock).result(timeout=10) == "acquired"
@@ -264,7 +282,10 @@ def test_unsliced_ordering_sensitive_distinct_preserves_original_length(user_ids
     expected = list(raw.all())
     assert len(expected) == 9
     response = BasePaginator().paginate(
-        request(), paginator=StaticPaginator(raw), on_results=lambda rows: list(rows.values("is_active"))
+        request(),
+        paginator=StaticPaginator(raw),
+        on_results=lambda rows: list(rows.values("is_active")),
+        count_page_in_database=True,
     )
     assert response.data["results"] == expected
     assert response.data["count"] == len(expected)
@@ -276,9 +297,66 @@ def test_sliced_ordering_sensitive_distinct_keeps_the_page_boundary(user_ids):
     assert len(expected) == 4
     with capture_statements() as statements:
         response = BasePaginator().paginate(
-            request(), paginator=StaticPaginator(raw), on_results=lambda rows: list(rows.values("is_active"))
+            request(),
+            paginator=StaticPaginator(raw),
+            on_results=lambda rows: list(rows.values("is_active")),
+            count_page_in_database=True,
         )
     assert response.data["results"] == expected
     assert response.data["count"] == 4
     assert raw._result_cache is None
     assert any("COUNT(" in item["sql"].upper() for item in statements)
+
+
+@pytest.mark.parametrize("wrapper_kind", ["mapping", "list"])
+@pytest.mark.parametrize("wrapper_stage", ["callback", "controller"])
+def test_lazy_wrapped_values_page_does_not_gain_a_count_query(user_ids, wrapper_kind, wrapper_stage):
+    import json
+
+    from rest_framework.renderers import JSONRenderer
+
+    raw = fresh_users(user_ids).values("id", "first_name")[:4]
+    expected = json.loads(JSONRenderer().render(list(raw.all())))
+
+    def wrap(rows):
+        return {"items": rows} if wrapper_kind == "mapping" else [rows]
+
+    with capture_statements() as statements:
+        response = BasePaginator().paginate(
+            request(),
+            paginator=StaticPaginator(raw),
+            on_results=wrap if wrapper_stage == "callback" else lambda rows: rows,
+            controller=wrap if wrapper_stage == "controller" else None,
+        )
+        # Rendering belongs INSIDE the query capture. Returning Response alone
+        # does not consume a lazy queryset inside a list/dict wrapper.
+        rendered = json.loads(JSONRenderer().render(response.data))
+
+    rows = rendered["results"]["items"] if wrapper_kind == "mapping" else rendered["results"][0]
+    assert rendered["count"] == len(rows) == 4
+    assert rows == expected
+    assert raw._result_cache is not None
+    assert len(statements) == 1, statements
+
+
+def test_deferred_model_projection_reuses_the_page_cache_by_default(user_ids):
+    import json
+
+    from rest_framework.renderers import JSONRenderer
+
+    raw = fresh_users(user_ids)[:4]
+    expected_ids = [str(pk) for pk in raw.values_list("id", flat=True)]
+
+    def defer_projection(rows):
+        for user in rows:
+            yield {"id": user.id}
+
+    with capture_statements() as statements, mock.patch.object(User, "from_db", wraps=User.from_db) as hydrate:
+        response = BasePaginator().paginate(request(), paginator=StaticPaginator(raw), on_results=defer_projection)
+        rendered = json.loads(JSONRenderer().render(response.data))
+
+    assert rendered["count"] == 4
+    assert [row["id"] for row in rendered["results"]] == expected_ids
+    assert raw._result_cache is not None
+    assert hydrate.call_count == 4
+    assert len(statements) == 1, statements

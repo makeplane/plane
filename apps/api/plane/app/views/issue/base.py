@@ -399,6 +399,8 @@ class IssueViewSet(BaseViewSet):
                 queryset=issue_queryset,
                 total_count_queryset=filtered_issue_queryset,
                 on_results=lambda issues: issue_on_results(group_by=group_by, issues=issues, sub_group_by=sub_group_by),
+                # issue_on_results eagerly materializes its values projection.
+                count_page_in_database=True,
             )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
