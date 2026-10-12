@@ -330,13 +330,17 @@ class ModuleIssueViewSet(BaseViewSet):
             module_id=module_id,
             issue_id=issue_id,
         )
+        existing = module_issue.select_related("module").first()
+        # Already removed (e.g. a repeated delete): nothing to do
+        if existing is None:
+            return Response(status=status.HTTP_204_NO_CONTENT)
         issue_activity.delay(
             type="module.activity.deleted",
             requested_data=json.dumps({"module_id": str(module_id)}),
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),
-            current_instance=json.dumps({"module_name": module_issue.first().module.name}),
+            current_instance=json.dumps({"module_name": existing.module.name}),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=base_host(request=request, is_app=True),
