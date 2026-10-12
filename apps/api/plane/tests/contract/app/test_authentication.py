@@ -74,21 +74,6 @@ def django_client():
     return client
 
 
-@pytest.fixture(autouse=True)
-def _reset_authentication_throttle():
-    """
-    Reset the shared AuthenticationThrottle bucket around every test in this module.
-
-    All auth endpoints share one per-IP throttle bucket (scope "authentication")
-    and the test client always presents the same IP, so without clearing the cache
-    between tests the request count accumulates across tests and later ones trip
-    RATE_LIMIT_EXCEEDED. Clearing here keeps each test's rate-limit budget isolated.
-    """
-    cache.clear()
-    yield
-    cache.clear()
-
-
 @pytest.mark.contract
 class TestMagicLinkGenerate:
     """Test magic link generation functionality"""
@@ -500,12 +485,12 @@ class TestMagicSignInVerifyAttempts:
     @pytest.fixture(autouse=True)
     def _clear_state(self):
         """Reset throttle cache and magic-link redis state between tests in this class."""
-        cache.clear()
+        _clear_auth_throttle_keys()
         ri = redis_instance()
         ri.delete(f"magic_{self.EMAIL}")
         ri.delete(f"magic_{self.EMAIL}:verify_attempts")
         yield
-        cache.clear()
+        _clear_auth_throttle_keys()
         ri.delete(f"magic_{self.EMAIL}")
         ri.delete(f"magic_{self.EMAIL}:verify_attempts")
 
@@ -603,12 +588,12 @@ class TestMagicSignUpVerifyAttempts:
 
     @pytest.fixture(autouse=True)
     def _clear_state(self):
-        cache.clear()
+        _clear_auth_throttle_keys()
         ri = redis_instance()
         ri.delete(f"magic_{self.EMAIL}")
         ri.delete(f"magic_{self.EMAIL}:verify_attempts")
         yield
-        cache.clear()
+        _clear_auth_throttle_keys()
         ri.delete(f"magic_{self.EMAIL}")
         ri.delete(f"magic_{self.EMAIL}:verify_attempts")
 
@@ -638,9 +623,9 @@ class TestAuthenticationThrottle:
 
     @pytest.fixture(autouse=True)
     def _clear_state(self):
-        cache.clear()
+        _clear_auth_throttle_keys()
         yield
-        cache.clear()
+        _clear_auth_throttle_keys()
 
     @pytest.mark.django_db
     def test_magic_sign_in_throttled(self, django_client, setup_instance):
@@ -738,12 +723,12 @@ class TestBotUserLoginBlocked:
     @pytest.fixture(autouse=True)
     def _clear_state(self):
         """Reset throttle cache and the bot's magic-link redis state around each test."""
-        cache.clear()
+        _clear_auth_throttle_keys()
         ri = redis_instance()
         ri.delete(f"magic_{self.BOT_EMAIL}")
         ri.delete(f"magic_{self.BOT_EMAIL}:verify_attempts")
         yield
-        cache.clear()
+        _clear_auth_throttle_keys()
         ri.delete(f"magic_{self.BOT_EMAIL}")
         ri.delete(f"magic_{self.BOT_EMAIL}:verify_attempts")
 
@@ -822,9 +807,9 @@ class TestBotUserAdminSignInBlocked:
 
     @pytest.fixture(autouse=True)
     def _clear_state(self):
-        cache.clear()
+        _clear_auth_throttle_keys()
         yield
-        cache.clear()
+        _clear_auth_throttle_keys()
 
     @pytest.fixture
     def bot_user(self, db):
