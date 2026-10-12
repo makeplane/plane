@@ -204,3 +204,21 @@ class TestS3StorageSignedURLExpiration:
         mock_s3_client.generate_presigned_url.assert_called_once()
         call_kwargs = mock_s3_client.generate_presigned_url.call_args[1]
         assert call_kwargs["ExpiresIn"] == 120
+
+
+@pytest.mark.unit
+class TestS3StorageObjectMetadata:
+    """``get_object_metadata`` returns None for a missing object without reporting it."""
+
+    @pytest.mark.parametrize("code, logged", [("404", False), ("NoSuchKey", False), ("403", True)])
+    @patch("plane.settings.storage.log_exception")
+    @patch("plane.settings.storage.boto3")
+    def test_missing_object_is_not_logged(self, mock_boto3, mock_log, code, logged):
+        from botocore.exceptions import ClientError
+
+        client = Mock()
+        client.head_object.side_effect = ClientError({"Error": {"Code": code}}, "HeadObject")
+        mock_boto3.client.return_value = client
+
+        assert S3Storage().get_object_metadata("ws/missing.png") is None
+        assert mock_log.called is logged

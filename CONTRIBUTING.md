@@ -38,7 +38,7 @@ This helps us triage and manage issues more efficiently.
 
 - Docker Engine installed and running
 - Node.js version 20+ [LTS version](https://nodejs.org/en/about/previous-releases)
-- Python version 3.8+
+- Python version 3.12 and [uv](https://docs.astral.sh/uv/) (only needed to run the API outside Docker)
 - Postgres version v14
 - Redis version v6.2.7
 - **Memory**: Minimum **12 GB RAM** recommended
