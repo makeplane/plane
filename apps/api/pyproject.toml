@@ -2,95 +2,120 @@
 name = "Plane"
 version = "0.24.0"
 description = "Open-source project management that unlocks customer value"
-
-[tool.ruff]
-# Exclude a variety of commonly ignored directories.
-exclude = [
-    ".bzr",
-    ".direnv",
-    ".eggs",
-    ".git",
-    ".git-rewrite",
-    ".hg",
-    ".mypy_cache",
-    ".nox",
-    ".pants.d",
-    ".pytype",
-    ".ruff_cache",
-    ".svn",
-    ".tox",
-    ".venv",
-    "__pypackages__",
-    "_build",
-    "buck-out",
-    "build",
-    "dist",
-    "node_modules",
-    "venv",
-    "**/migrations/*",
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    # django
+    "Django==5.2.17",
+    # rest framework
+    "djangorestframework==3.17.2",
+    # postgres (the psycopg implementation comes from a group: psycopg-c in
+    # production, psycopg-binary in dev/test)
+    "psycopg==3.3.4",
+    "dj-database-url==3.0.1",
+    # redis
+    "redis==5.0.4",
+    "django-redis==7.0.0",
+    # cors
+    "django-cors-headers==4.9.0",
+    # celery
+    "celery==5.5.3",
+    "django_celery_beat==2.9.0",
+    "django-celery-results==2.6.0",
+    # file serve
+    "whitenoise==6.12.0",
+    # fake data
+    "faker==25.0.0",
+    # filters
+    "django-filter==25.2",
+    # json model
+    "jsonmodels==2.7.0",
+    # storage
+    "django-storages==1.14.6",
+    # user management
+    "django-crum==0.7.9",
+    # web server
+    "uvicorn==0.29.0",
+    # sockets
+    "channels==4.3.2",
+    # ai
+    "openai==1.63.2",
+    # slack
+    "slack-sdk==3.27.1",
+    # apm
+    "scout-apm==3.5.3",
+    # xlsx generation
+    "openpyxl==3.1.2",
+    # logging
+    "python-json-logger==4.0.0",
+    # html parser
+    "beautifulsoup4==4.12.3",
+    # crypto
+    "cryptography==50.0.0",
+    # html validator
+    "lxml==6.1.0",
+    # s3
+    "boto3==1.34.96",
+    # http client (pinned to address CVE-2026-44431 and CVE-2026-44432)
+    "urllib3>=2.8.0",
+    # requests — used directly for webhook delivery & link unfurling; pinned to
+    # >=2.32 for the get_connection_with_tls_context adapter hook (SSRF IP pinning)
+    "requests==2.33.0",
+    # password validator
+    "zxcvbn==4.4.28",
+    # timezone
+    "pytz==2024.1",
+    # jwt
+    "PyJWT==2.15.1",
+    # OpenTelemetry
+    "opentelemetry-api==1.28.1",
+    "opentelemetry-sdk==1.28.1",
+    "opentelemetry-instrumentation-django==0.49b1",
+    "opentelemetry-exporter-otlp==1.28.1",
+    "opentelemetry-exporter-otlp-proto-grpc==1.28.1",
+    # OpenAPI Specification
+    "drf-spectacular==0.29.0",
+    # html sanitizer
+    "nh3==0.2.18",
 ]
 
-# Same as Black.
-line-length = 120
-indent-width = 4
+[dependency-groups]
+# Installed only by the production image (Dockerfile.api) and migration-check:
+#   uv sync --no-default-groups --group production
+production = [
+    # server
+    "gunicorn==23.0.0",
+    # postgres C implementation, built from source (needs pg_config and a compiler)
+    "psycopg-c==3.3.4",
+]
+dev = [
+    # postgres prebuilt wheel, so local setups never compile psycopg-c
+    "psycopg-binary==3.3.4",
+    # debug toolbar
+    "django-debug-toolbar==6.0.0",
+    # formatter
+    "ruff==0.9.7",
+]
+test = [
+    # postgres prebuilt wheel (also in dev, so either group works on its own)
+    "psycopg-binary==3.3.4",
+    # test framework
+    "pytest==9.0.3",
+    "pytest-django==4.12.0",
+    "pytest-cov==4.1.0",
+    "pytest-xdist==3.3.1",
+    "pytest-mock==3.11.1",
+    "factory-boy==3.3.0",
+    "freezegun==1.2.2",
+    "coverage==7.2.7",
+    "httpx==0.28.1",
+]
 
-[tool.ruff.format]
-# Use double quotes for strings.
-quote-style = "double"
-
-# Indent with spaces, rather than tabs.
-indent-style = "space"
-
-# Respect magic trailing commas.
-# skip-magic-trailing-comma = true
-
-# Automatically detect the appropriate line ending.
-line-ending = "auto"
-
-[tool.ruff.lint]
-# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
-select = ["E", "F"]
-ignore = []
-
-# Allow autofix for all enabled rules (when `--fix`) is provided.
-fixable = ["ALL"]
-unfixable = []
-
-# Allow unused variables when underscore-prefixed.
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-
-[tool.ruff.lint.pep8-naming]
-# Allow lowercase variables like "id"
-classmethod-decorators = ["classmethod", "validator", "root_validator"]
-
-[tool.ruff.lint.per-file-ignores]
-# Ignore specific rules for tests
-"tests/*" = ["E402", "F401", "F811"]
-# Ignore imported but unused in __init__.py files
-"__init__.py" = ["F401"]
-
-[tool.ruff.lint.mccabe]
-# Unlike Flake8, default to a complexity level of 10.
-max-complexity = 10
-
-[tool.ruff.lint.isort]
-combine-as-imports = true
-detect-same-package = true
-force-wrap-aliases = true
-known-first-party = ["plane"]
-known-third-party = ["rest_framework"]
-relative-imports-order = "closest-to-furthest"
-
-[tool.ruff.lint.flake8-tidy-imports]
-ban-relative-imports = "parents"
-
-[tool.ruff.lint.pycodestyle]
-ignore-overlong-task-comments = true
-max-doc-length = 88
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
-
-[tool.ruff.lint.pylint]
-max-args = 8
-max-statements = 50
+[tool.uv]
+# Every uv that touches uv.lock is this exact version: CI reads it via
+# setup-uv's version-file, and the Dockerfiles pin the same image. Bump all together.
+required-version = "==0.12.21"
+# The API is a Django app, not an installable package: uv only manages its
+# environment and never builds or installs the project itself.
+package = false
+# A plain `uv sync` sets up everything needed to develop and run the tests.
+default-groups = ["dev", "test"]
