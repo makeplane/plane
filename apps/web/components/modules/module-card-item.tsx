@@ -19,6 +19,7 @@ import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IModule } from "@plane/types";
 import { Card } from "@plane/blocks/card";
 import { FavoriteStar } from "@plane/blocks/common";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { DateRangeSelect } from "@plane/blocks/property-select";
 import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@plane/utils";
 // components
@@ -180,9 +181,16 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
         <Card>
           <div>
             <div className="flex items-center justify-between gap-2">
-              <Tooltip label={moduleDetails.name} layout="stacked" disabled={isMobile}>
-                <span className="truncate text-14 font-medium">{moduleDetails.name}</span>
-              </Tooltip>
+              <div className="flex min-w-0 items-center gap-2">
+                {moduleDetails.logo_props?.in_use && (
+                  <span className="flex flex-shrink-0 items-center">
+                    <Logo logo={moduleDetails.logo_props} size={16} type="lucide" />
+                  </span>
+                )}
+                <Tooltip label={moduleDetails.name} layout="stacked" disabled={isMobile}>
+                  <span className="truncate text-14 font-medium">{moduleDetails.name}</span>
+                </Tooltip>
+              </div>
               {/* Ruling 38: guard both halves — the card root is a `Link`. */}
               <div
                 className="flex items-center gap-2"
