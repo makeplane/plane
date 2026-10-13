@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
+ * Modified by Okręgowa Spółdzielnia Mleczarska w Piątnicy in 2026.
  * See the LICENSE file for details.
  */
 
@@ -61,7 +62,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
       <div
         className={`flex origin-bottom flex-col gap-2 transition-all duration-300 ease-in-out ${isExpanded ? "mb-2 scale-y-100 opacity-100 " : "h-0 scale-y-0 opacity-0"}`}
       >
-        <Tooltip tooltipContent="All stickies" isMobile={false} position="left">
+        <Tooltip tooltipContent="All stickies" isMobile={false} position="right">
           <button
             className="btn btn--icon shadow-sm flex h-10 w-10 items-center justify-center rounded-full bg-surface-1"
             onClick={() => toggleAllStickiesModal(true)}
@@ -71,7 +72,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
         </Tooltip>
         {recentStickyId && (
           <Tooltip
-            className="-mr-30 translate-x-10 scale-75"
+            className="-ml-30 -translate-x-10 scale-75"
             tooltipContent={
               <div className="-m-2 max-h-[150px]">
                 <StickyNote
@@ -88,7 +89,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
               </div>
             }
             isMobile={false}
-            position="left"
+            position="right"
             disabled={showRecentSticky}
           >
             <button
@@ -100,7 +101,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
             </button>
           </Tooltip>
         )}
-        <Tooltip tooltipContent="Add sticky" isMobile={false} position="left">
+        <Tooltip tooltipContent="Add sticky" isMobile={false} position="right">
           <button
             className="btn btn--icon shadow-sm flex h-10 w-10 items-center justify-center rounded-full bg-surface-1"
             onClick={() => {
@@ -127,7 +128,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
 
       <div
         className={cn(
-          "absolute right-0 bottom-16 z-[20]",
+          "absolute bottom-16 left-0 z-[20]",
           "transform transition-all duration-300 ease-in-out",
           newSticky || showRecentSticky ? "min-h-[300px] translate-y-[0%]" : "h-0 translate-y-[100%]"
         )}
