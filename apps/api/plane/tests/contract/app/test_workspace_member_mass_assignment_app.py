@@ -8,9 +8,8 @@ Regression tests for WEB-8332.
 ``WorkSpaceMemberViewSet.partial_update`` is only meant to update a member's
 ``role``. Before the fix it passed ``request.data`` verbatim to
 ``WorkSpaceMemberSerializer`` (declared ``fields = "__all__"`` with only the
-nested ``member`` read-only). ``DynamicBaseSerializer`` ignores the ``fields=``
-kwarg for writes, so ``workspace`` (FK), ``is_active`` and other columns were
-mass-assignable.
+nested ``member`` read-only), so ``workspace`` (FK), ``is_active`` and other
+columns were mass-assignable.
 
 An admin of an attacker-owned workspace could therefore PATCH a controlled
 member row setting ``workspace`` = victim-workspace UUID and ``role`` = 20,
@@ -19,7 +18,8 @@ invitation — a full cross-tenant takeover. The ``@allow_permission(level=
 "WORKSPACE")`` decorator authorizes against the URL slug and does NOT prevent
 the write from moving the row to a different workspace.
 
-The fix restricts the writable payload to ``role`` only.
+The fix rejects any payload other than ``{"role": ...}`` and makes the
+tenancy/state columns read-only on the serializers.
 """
 
 import uuid
@@ -28,173 +28,156 @@ import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from plane.db.models import Project, ProjectMember, User, Workspace, WorkspaceMember
+from plane.db.models import Project, ProjectMember, WorkspaceMember
+from plane.tests.factories import UserFactory, WorkspaceFactory
 
 
 def _member_detail_url(slug: str, pk: uuid.UUID) -> str:
     return f"/api/workspaces/{slug}/members/{pk}/"
 
 
-def _make_user(email: str) -> User:
-    local_part = email.split("@")[0]
-    user = User.objects.create(email=email, username=local_part, first_name=local_part)
-    user.set_password("test-password")
-    user.save()
-    return user
-
-
-def _make_workspace(name: str, slug: str, owner: User) -> Workspace:
-    workspace = Workspace.objects.create(name=name, slug=slug, owner=owner)
-    WorkspaceMember.objects.create(workspace=workspace, member=owner, role=20, is_active=True)
-    return workspace
-
-
-def _add_member(workspace: Workspace, user: User, *, role: int) -> WorkspaceMember:
+def _add_member(workspace, username: str, *, role: int) -> WorkspaceMember:
     return WorkspaceMember.objects.create(
-        workspace=workspace, member=user, role=role, is_active=True
+        workspace=workspace, member=UserFactory(username=username), role=role, is_active=True
     )
 
 
-@pytest.fixture
-def attacker_workspace(db):
-    """A workspace fully controlled by the attacker (they are the admin/owner)."""
-    attacker = _make_user("ws-attacker@plane.so")
-    workspace = _make_workspace("Attacker Workspace", "attacker-ws", attacker)
-    return workspace, attacker
+def _add_project(workspace, owner, identifier: str, *members) -> Project:
+    """Create a project whose only members are ``(user, role)`` pairs in ``members``."""
+    project = Project.objects.create(name=identifier, identifier=identifier, workspace=workspace, created_by=owner)
+    for user, role in members:
+        ProjectMember.objects.create(workspace=workspace, project=project, member=user, role=role, is_active=True)
+    return project
 
 
 @pytest.fixture
-def victim_workspace(db):
-    """An unrelated workspace the attacker has no membership in."""
-    victim_owner = _make_user("ws-victim-owner@plane.so")
-    workspace = _make_workspace("Victim Workspace", "victim-ws", victim_owner)
-    return workspace, victim_owner
+def admin_client(create_user):
+    client = APIClient()
+    client.force_authenticate(user=create_user)
+    return client
 
 
 @pytest.mark.contract
 @pytest.mark.django_db
 class TestWorkspaceMemberMassAssignment:
-    def test_admin_cannot_move_member_to_another_workspace(self, attacker_workspace, victim_workspace):
+    def test_admin_cannot_move_member_to_another_workspace(self, admin_client, workspace):
         """
         Core takeover vector: a workspace admin must not be able to relocate a
         member row into another workspace via the ``workspace`` FK.
         """
-        attacker_ws, attacker = attacker_workspace
-        victim_ws, _ = victim_workspace
+        victim_ws = WorkspaceFactory(owner=UserFactory(username="victim-owner"))
+        puppet_member = _add_member(workspace, "puppet", role=15)
 
-        # A puppet account the attacker controls, sitting in the attacker workspace.
-        puppet = _make_user("puppet@plane.so")
-        puppet_member = _add_member(attacker_ws, puppet, role=15)
-
-        victim_members_before = WorkspaceMember.objects.filter(workspace=victim_ws).count()
-
-        client = APIClient()
-        client.force_authenticate(user=attacker)
-        response = client.patch(
-            _member_detail_url(attacker_ws.slug, puppet_member.id),
+        response = admin_client.patch(
+            _member_detail_url(workspace.slug, puppet_member.id),
             {"workspace": str(victim_ws.id), "role": 20},
             format="json",
         )
 
-        # The request itself succeeds (admin updating a role is legitimate) ...
-        assert response.status_code == status.HTTP_200_OK
-        # ... but the member row must NOT have moved to the victim workspace.
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
         puppet_member.refresh_from_db()
-        assert puppet_member.workspace_id == attacker_ws.id
-        assert puppet_member.workspace_id != victim_ws.id
-        # ... and the allowed field in the same payload (role) WAS applied, proving
-        # the fix filters the payload rather than rejecting it wholesale.
-        assert puppet_member.role == 20
-        # And no new member appeared in the victim workspace.
-        assert WorkspaceMember.objects.filter(workspace=victim_ws).count() == victim_members_before
-        assert not WorkspaceMember.objects.filter(workspace=victim_ws, member=puppet).exists()
+        assert puppet_member.workspace_id == workspace.id
+        # The whole payload is rejected, including the otherwise-allowed role.
+        assert puppet_member.role == 15
+        assert not WorkspaceMember.objects.filter(workspace=victim_ws).exists()
 
-    def test_patch_is_active_false_does_not_deactivate(self, attacker_workspace):
-        """``is_active`` must not be assignable through this endpoint, and a payload
-        with no writable field must be a no-op (no phantom write)."""
-        attacker_ws, attacker = attacker_workspace
-        target = _make_user("active-target@plane.so")
-        target_member = _add_member(attacker_ws, target, role=15)
+    def test_patch_is_active_false_is_rejected(self, admin_client, workspace):
+        """``is_active`` must not be assignable, and a rejected payload must not write."""
+        target_member = _add_member(workspace, "active-target", role=15)
         original_updated_at = target_member.updated_at
 
-        client = APIClient()
-        client.force_authenticate(user=attacker)
-        response = client.patch(
-            _member_detail_url(attacker_ws.slug, target_member.id),
+        response = admin_client.patch(
+            _member_detail_url(workspace.slug, target_member.id),
             {"is_active": False},
             format="json",
         )
 
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
         target_member.refresh_from_db()
         assert target_member.is_active is True
-        # No writable field was supplied, so the row must not have been re-saved.
-        assert target_member.updated_at == original_updated_at, (
-            "A forbidden-only payload triggered a no-op write"
-        )
+        assert target_member.updated_at == original_updated_at
 
-    def test_legitimate_role_update_still_works(self, attacker_workspace):
+    @pytest.mark.parametrize("body", ["xroley", 5, ["role"]])
+    def test_non_object_body_is_400_not_500(self, admin_client, workspace, body):
+        target_member = _add_member(workspace, "body-target", role=15)
+
+        response = admin_client.patch(_member_detail_url(workspace.slug, target_member.id), body, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        target_member.refresh_from_db()
+        assert target_member.role == 15
+
+    def test_legitimate_role_update_still_works(self, admin_client, workspace):
         """Positive control: the intended ``role`` update still functions."""
-        attacker_ws, attacker = attacker_workspace
-        target = _make_user("role-target@plane.so")
-        target_member = _add_member(attacker_ws, target, role=15)
+        target_member = _add_member(workspace, "role-target", role=15)
 
-        client = APIClient()
-        client.force_authenticate(user=attacker)
-        response = client.patch(
-            _member_detail_url(attacker_ws.slug, target_member.id),
-            {"role": 5},
-            format="json",
-        )
+        response = admin_client.patch(_member_detail_url(workspace.slug, target_member.id), {"role": 20}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["role"] == 20
+        target_member.refresh_from_db()
+        assert target_member.role == 20
+
+    def test_demote_to_guest_downgrades_project_roles(self, admin_client, workspace, create_user):
+        target_member = _add_member(workspace, "demote-target", role=15)
+        project = _add_project(workspace, create_user, "DT", (target_member.member, 20), (create_user, 20))
+        project_member = ProjectMember.objects.get(project=project, member=target_member.member)
+        original_updated_at = project_member.updated_at
+
+        response = admin_client.patch(_member_detail_url(workspace.slug, target_member.id), {"role": 5}, format="json")
 
         assert response.status_code == status.HTTP_200_OK
         target_member.refresh_from_db()
         assert target_member.role == 5
+        project_member.refresh_from_db()
+        assert project_member.role == 5
+        assert project_member.updated_at > original_updated_at
 
-    def test_self_role_update_still_forbidden(self, attacker_workspace):
+    def test_demote_sole_project_admin_is_rejected(self, admin_client, workspace, create_user):
+        """Demoting to guest must not leave a project with no admin, matching leave()/destroy()."""
+        target_member = _add_member(workspace, "sole-admin", role=15)
+        project = _add_project(workspace, create_user, "SA", (target_member.member, 20))
+
+        response = admin_client.patch(_member_detail_url(workspace.slug, target_member.id), {"role": 5}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        target_member.refresh_from_db()
+        assert target_member.role == 15
+        assert ProjectMember.objects.get(project=project, member=target_member.member).role == 20
+
+    def test_self_role_update_still_forbidden(self, admin_client, workspace, create_user):
         """Positive control: the self-role-update guard is preserved."""
-        attacker_ws, attacker = attacker_workspace
-        own_member = WorkspaceMember.objects.get(workspace=attacker_ws, member=attacker)
+        own_member = WorkspaceMember.objects.get(workspace=workspace, member=create_user)
 
-        client = APIClient()
-        client.force_authenticate(user=attacker)
-        response = client.patch(
-            _member_detail_url(attacker_ws.slug, own_member.id),
-            {"role": 5},
-            format="json",
-        )
+        response = admin_client.patch(_member_detail_url(workspace.slug, own_member.id), {"role": 5}, format="json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         own_member.refresh_from_db()
         assert own_member.role == 20
 
-    def test_non_integer_role_is_400_not_500(self, attacker_workspace):
-        """A non-integer role must be a validation error (400), not a 500 — and
-        the guest project-role cascade must not run when the update is invalid."""
-        attacker_ws, attacker = attacker_workspace
-        target = _make_user("bad-role-target@plane.so")
-        target_member = _add_member(attacker_ws, target, role=15)
+    # 5.0 passed the old ``int(role) == 5`` check, so the old code downgraded project
+    # roles before the serializer rejected the value.
+    @pytest.mark.parametrize("role", ["not-a-number", 5.0])
+    def test_invalid_role_is_400_and_skips_guest_downgrade(self, admin_client, workspace, create_user, role):
+        target_member = _add_member(workspace, "bad-role-target", role=15)
+        project = _add_project(workspace, create_user, "CP", (target_member.member, 15), (create_user, 20))
 
-        # Seed a non-guest project-role for the same member. The guest cascade
-        # (role == 5 -> downgrade every ProjectMember to guest) must not run when
-        # the workspace-member update fails validation, so this must stay at 15.
-        project = Project.objects.create(
-            name="Cascade Project", identifier="CP", workspace=attacker_ws, created_by=attacker
-        )
-        project_member = ProjectMember.objects.create(
-            workspace=attacker_ws, project=project, member=target, role=15, is_active=True
-        )
-
-        client = APIClient()
-        client.force_authenticate(user=attacker)
-        response = client.patch(
-            _member_detail_url(attacker_ws.slug, target_member.id),
-            {"role": "not-a-number"},
-            format="json",
+        response = admin_client.patch(
+            _member_detail_url(workspace.slug, target_member.id), {"role": role}, format="json"
         )
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         target_member.refresh_from_db()
         assert target_member.role == 15
-        project_member.refresh_from_db()
-        assert project_member.role == 15, "Guest cascade ran despite the invalid update"
+        assert ProjectMember.objects.get(project=project, member=target_member.member).role == 15
+
+    def test_remove_sole_project_admin_is_rejected(self, admin_client, workspace, create_user):
+        """destroy() must refuse to remove the only member/admin of a project."""
+        target_member = _add_member(workspace, "remove-target", role=15)
+        _add_project(workspace, create_user, "RT", (target_member.member, 20))
+
+        response = admin_client.delete(_member_detail_url(workspace.slug, target_member.id))
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        target_member.refresh_from_db()
+        assert target_member.is_active is True

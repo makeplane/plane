@@ -28,6 +28,21 @@ from plane.utils.cache import invalidate_cache
 from .. import BaseViewSet
 
 
+def is_sole_admin_of_any_project(slug, user_id):
+    """Whether the user is the only member, and an admin, of a project in the workspace."""
+    return (
+        Project.objects.annotate(
+            total_members=Count("project_projectmember"),
+            member_with_role=Count(
+                "project_projectmember",
+                filter=Q(project_projectmember__member_id=user_id, project_projectmember__role=20),
+            ),
+        )
+        .filter(total_members=1, member_with_role=1, workspace__slug=slug)
+        .exists()
+    )
+
+
 class WorkSpaceMemberViewSet(BaseViewSet):
     serializer_class = WorkspaceMemberAdminSerializer
     model = WorkspaceMember
@@ -76,7 +91,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def partial_update(self, request, slug, pk):
-        workspace_member = WorkspaceMember.objects.get(
+        workspace_member = WorkspaceMember.objects.select_related("member", "member__avatar_asset").get(
             pk=pk, workspace__slug=slug, member__is_bot=False, is_active=True
         )
         if request.user.id == workspace_member.member_id:
@@ -85,45 +100,39 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # SECURITY: The only field this endpoint is allowed to mutate is ``role``.
-        # ``WorkSpaceMemberSerializer`` is declared with ``fields = "__all__"`` and
-        # ``DynamicBaseSerializer`` ignores the ``fields=`` kwarg for writes, so
-        # passing ``request.data`` verbatim would let a workspace admin mass-assign
-        # ``workspace`` (relocating a controlled member row into a victim workspace as
-        # an admin — full cross-tenant takeover), ``is_active``, and other columns.
-        # Restrict the writable payload to ``role`` only.
-        allowed_data = {}
-        if "role" in request.data:
-            allowed_data["role"] = request.data.get("role")
-
-        # If the payload carried no writable field (e.g. only forbidden keys like
-        # ``workspace``/``is_active``), there is nothing to update. Return the
-        # current member without calling ``save()`` so we don't issue a no-op write
-        # that bumps ``updated_at``/``updated_by`` or runs the guest cascade.
-        if not allowed_data:
+        # SECURITY: only ``role`` is writable here. Passing other keys through let an
+        # admin move a member row into another workspace via ``workspace``.
+        if not isinstance(request.data, dict) or set(request.data) != {"role"}:
             return Response(
-                WorkSpaceMemberSerializer(workspace_member).data,
-                status=status.HTTP_200_OK,
+                {"error": "Only the role of a workspace member can be updated"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = WorkSpaceMemberSerializer(workspace_member, data=allowed_data, partial=True)
-
+        serializer = WorkSpaceMemberSerializer(workspace_member, data=request.data, partial=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        role = serializer.validated_data["role"]
 
-        # Validate the role (via the serializer) BEFORE cascading, and do the
-        # cascade + save atomically. Otherwise a bad role (e.g. non-integer) would
-        # 500 on the manual int() cast, and the guest project-role downgrade could
-        # persist even if the member update never succeeds.
+        # A guest can't hold any other project role, so demoting downgrades every project membership.
+        is_guest = role == ROLE.GUEST.value
+        if is_guest and is_sole_admin_of_any_project(slug, workspace_member.member_id):
+            return Response(
+                {
+                    "error": "User is a part of some projects where they are the only admin, they should either leave that project or promote another user to admin."  # noqa: E501
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         with transaction.atomic():
-            # If a user is moved to a guest role they can't hold any other project role.
-            if serializer.validated_data.get("role") == 5:
+            if is_guest:
                 ProjectMember.objects.filter(
-                    workspace__slug=slug, member_id=workspace_member.member_id
-                ).update(role=5)
-            serializer.save()
+                    workspace_id=workspace_member.workspace_id, member_id=workspace_member.member_id
+                ).update(role=ROLE.GUEST.value, updated_at=timezone.now())
+            workspace_member.role = role
+            # Write only these columns so a concurrent removal or view_props save isn't reverted.
+            workspace_member.save(update_fields=["role", "updated_at", "updated_by"])
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(WorkSpaceMemberSerializer(workspace_member).data, status=status.HTTP_200_OK)
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, slug, pk):
@@ -149,20 +158,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if (
-            Project.objects.annotate(
-                total_members=Count("project_projectmember"),
-                member_with_role=Count(
-                    "project_projectmember",
-                    filter=Q(
-                        project_projectmember__member_id=workspace_member.id,
-                        project_projectmember__role=20,
-                    ),
-                ),
-            )
-            .filter(total_members=1, member_with_role=1, workspace__slug=slug)
-            .exists()
-        ):
+        if is_sole_admin_of_any_project(slug, workspace_member.member_id):
             return Response(
                 {
                     "error": "User is a part of some projects where they are the only admin, they should either leave that project or promote another user to admin."  # noqa: E501
@@ -203,20 +199,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if (
-            Project.objects.annotate(
-                total_members=Count("project_projectmember"),
-                member_with_role=Count(
-                    "project_projectmember",
-                    filter=Q(
-                        project_projectmember__member_id=request.user.id,
-                        project_projectmember__role=20,
-                    ),
-                ),
-            )
-            .filter(total_members=1, member_with_role=1, workspace__slug=slug)
-            .exists()
-        ):
+        if is_sole_admin_of_any_project(slug, request.user.id):
             return Response(
                 {
                     "error": "You are a part of some projects where you are the only admin, you should either leave the project or promote another user to admin."  # noqa: E501
