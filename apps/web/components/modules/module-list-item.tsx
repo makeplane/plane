@@ -8,7 +8,7 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 // icons
-import { InfoOutline, TickOutline } from "@makeplane/propel/icons";
+import { InfoOutline, ModuleOutline, TickOutline } from "@makeplane/propel/icons";
 // ui
 import { CircularProgress } from "@makeplane/propel/components/circular-progress";
 // components
@@ -100,7 +100,14 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
               )}
             </div>
           </div>
-          {moduleDetails.logo_props?.in_use && <Logo logo={moduleDetails.logo_props} size={16} type="lucide" />}
+          {moduleDetails.logo_props?.in_use && (
+            <Logo
+              logo={moduleDetails.logo_props}
+              size={16}
+              type="lucide"
+              fallback={<ModuleOutline className="h-4 w-4 text-tertiary" />}
+            />
+          )}
         </div>
       }
       appendTitleElement={

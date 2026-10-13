@@ -69,6 +69,26 @@ describe("ModuleSelect logos", () => {
     expect(trigger.querySelector("svg")).not.toBeNull();
   });
 
+  it("shows an image logo in the trigger", () => {
+    const withImage: ModuleOption = {
+      id: "client-c",
+      name: "Client C",
+      logo_props: { in_use: "image", image: { url: "https://cdn.example.com/client-c.png" } },
+    };
+    render(
+      <ModuleSelect
+        getValues={getValues}
+        value={withImage}
+        onChange={vi.fn()}
+        variant="breadcrumb"
+        placeholder="Modules"
+      />
+    );
+
+    const trigger = screen.getByRole("button", { name: /Client C/ });
+    expect(trigger.querySelector("img")?.getAttribute("src")).toBe("https://cdn.example.com/client-c.png");
+  });
+
   it("shows each module's own logo next to its option", async () => {
     const user = userEvent.setup();
     render(

@@ -17,7 +17,7 @@ export type ChangeHandlerPayload =
       };
     };
 
-export type EmojiIconPickerType = "emoji" | "icon";
+export type EmojiIconPickerType = "emoji" | "icon" | "image";
 
 export type IconsListConfig = {
   defaultColor: string;
@@ -132,3 +132,26 @@ export function stringToEmoji(emojiString: string): string {
 }
 
 export const getEmojiSize = (size: number) => size * 0.9 * 0.0625;
+
+/** Path prefix of files served by Plane's own asset endpoints; resolved against the API base URL. */
+const LOGO_IMAGE_ASSET_PATH_PREFIX = "/api/assets/";
+
+/**
+ * Returns the image-logo URL when it is safe to render, otherwise `undefined`.
+ * Accepts absolute `http:`/`https:` URLs and Plane asset paths (`/api/assets/...`); rejects every
+ * other scheme (`javascript:`, `data:`, `blob:`…), protocol-relative `//host` URLs and other relative
+ * paths. Logo data is user-supplied JSON, so this runs at render time, not only when the logo is picked.
+ * @param url - The stored image URL
+ * @returns The URL to render, or `undefined` when it must not be rendered
+ */
+export function sanitizeLogoImageUrl(url: string | null | undefined): string | undefined {
+  const value = url?.trim();
+  if (!value) return undefined;
+  if (value.startsWith(LOGO_IMAGE_ASSET_PATH_PREFIX)) return value;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:" ? parsed.href : undefined;
+  } catch {
+    return undefined;
+  }
+}

@@ -18,7 +18,7 @@ export type ModuleOption = {
   name: string;
   /** Owning project's short code, shown as a pill when `showIdentifier` is set. */
   identifier?: string;
-  /** The module's emoji/icon logo; the generic module glyph is shown when it is not set. */
+  /** The module's emoji, icon or image logo; the generic module glyph is shown when it is not set. */
   logo_props?: TLogoProps;
 };
 
@@ -68,7 +68,12 @@ function ModuleLogo({
   if (logoProps?.in_use) {
     return (
       <span className={cn("grid shrink-0 place-items-center", className)}>
-        <Logo logo={logoProps} size={size} type="lucide" />
+        <Logo
+          logo={logoProps}
+          size={size}
+          type="lucide"
+          fallback={<ModuleOutline style={{ height: size, width: size }} />}
+        />
       </span>
     );
   }

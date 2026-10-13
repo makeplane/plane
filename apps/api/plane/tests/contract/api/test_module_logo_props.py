@@ -17,6 +17,7 @@ from plane.db.models import Module, Project, ProjectMember
 
 EMOJI_LOGO = {"in_use": "emoji", "emoji": {"value": "128640"}}
 ICON_LOGO = {"in_use": "icon", "icon": {"name": "Rocket", "color": "#5e6ad2"}}
+IMAGE_LOGO = {"in_use": "image", "image": {"url": "https://cdn.example.com/client-a.png"}}
 
 
 def _list_url(slug, project_id):
@@ -49,17 +50,18 @@ def project(db, workspace, create_user):
 @pytest.mark.contract
 class TestModuleLogoProps:
     @pytest.mark.django_db
-    def test_create_module_with_logo_props(self, api_key_client, workspace, project):
+    @pytest.mark.parametrize("logo_props", [EMOJI_LOGO, ICON_LOGO, IMAGE_LOGO], ids=["emoji", "icon", "image"])
+    def test_create_module_with_logo_props(self, api_key_client, workspace, project, logo_props):
         with mock.patch("plane.api.views.module.model_activity"):
             response = api_key_client.post(
                 _list_url(workspace.slug, project.id),
-                {"name": "Client A", "logo_props": EMOJI_LOGO},
+                {"name": "Client A", "logo_props": logo_props},
                 format="json",
             )
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert response.data["logo_props"] == EMOJI_LOGO
-        assert Module.objects.get(pk=response.data["id"]).logo_props == EMOJI_LOGO
+        assert response.data["logo_props"] == logo_props
+        assert Module.objects.get(pk=response.data["id"]).logo_props == logo_props
 
     @pytest.mark.django_db
     def test_create_module_without_logo_props_defaults_to_empty(self, api_key_client, workspace, project):

@@ -15,6 +15,7 @@ import { EmojiRoot } from "./emoji/emoji";
 import type { ChangeHandlerPayload, EmojiIconPickerType } from "./helper";
 import { emojiToString } from "./helper";
 import { IconRoot } from "./icon/icon-root";
+import { ImageRoot } from "./image/image-root";
 
 export type EmojiPickerProps = {
   isOpen: boolean;
@@ -36,6 +37,13 @@ export type EmojiPickerProps = {
   side?: Side;
   align?: Align;
   showEmojiTab?: boolean;
+  /**
+   * Adds an "Image" tab that takes an image URL (`http(s):` or a Plane asset path). The tab is only
+   * shown when this handler is passed, so existing pickers are unchanged.
+   */
+  onImageChange?: (value: { url: string }) => void;
+  /** Pre-fills the image tab's URL field, e.g. with the image logo currently in use. */
+  defaultImageUrl?: string;
 };
 
 export function EmojiPicker(props: EmojiPickerProps) {
@@ -57,6 +65,8 @@ export function EmojiPicker(props: EmojiPickerProps) {
     side = "bottom",
     align = "start",
     showEmojiTab = true,
+    onImageChange,
+    defaultImageUrl,
   } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -102,6 +112,14 @@ export function EmojiPicker(props: EmojiPickerProps) {
     [onChange, closeOnSelect, handleOpenChange]
   );
 
+  const handleImageChange = useCallback(
+    (value: { url: string }) => {
+      onImageChange?.(value);
+      if (closeOnSelect) handleOpenChange(false);
+    },
+    [onImageChange, closeOnSelect, handleOpenChange]
+  );
+
   const tabs = useMemo(
     () =>
       [
@@ -135,6 +153,13 @@ export function EmojiPicker(props: EmojiPickerProps) {
             />
           ),
         },
+        onImageChange
+          ? {
+              key: "image",
+              label: "Image",
+              content: <ImageRoot defaultValue={defaultImageUrl} onChange={handleImageChange} />,
+            }
+          : null,
       ].filter((tab): tab is NonNullable<typeof tab> => !!tab),
     [
       defaultIconColor,
@@ -145,8 +170,13 @@ export function EmojiPicker(props: EmojiPickerProps) {
       handleEmojiChange,
       handleIconChange,
       showEmojiTab,
+      onImageChange,
+      defaultImageUrl,
+      handleImageChange,
     ]
   );
+  // Open on the requested tab when it is shown, otherwise on the first one.
+  const initialTab = tabs.some((tab) => tab.key === defaultOpen) ? defaultOpen : tabs[0]?.key;
 
   return (
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
@@ -177,7 +207,7 @@ export function EmojiPicker(props: EmojiPickerProps) {
         }}
       >
         <div className={cn("flex min-h-0 flex-col", dropdownClassName)}>
-          <Tabs variant="contained" stretch="full" defaultValue={showEmojiTab ? defaultOpen : "icon"}>
+          <Tabs variant="contained" stretch="full" defaultValue={initialTab}>
             {tabs.length > 1 && (
               <TabsList>
                 {tabs.map((tab) => (

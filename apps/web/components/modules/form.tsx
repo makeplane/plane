@@ -131,7 +131,12 @@ export function ModuleForm(props: Props) {
               label={
                 <span className="grid h-9 w-9 place-items-center rounded-md bg-surface-2">
                   {logoValue?.in_use ? (
-                    <Logo logo={logoValue} size={18} type="lucide" />
+                    <Logo
+                      logo={logoValue}
+                      size={18}
+                      type="lucide"
+                      fallback={<ModuleOutline className="h-4 w-4 text-tertiary" />}
+                    />
                   ) : (
                     <ModuleOutline className="h-4 w-4 text-tertiary" />
                   )}
@@ -147,8 +152,13 @@ export function ModuleForm(props: Props) {
                 );
                 setIsLogoPickerOpen(false);
               }}
+              onImageChange={({ url }) => {
+                setValue("logo_props", { in_use: "image", image: { url } }, { shouldDirty: true });
+                setIsLogoPickerOpen(false);
+              }}
               defaultIconColor={logoValue?.in_use === "icon" ? logoValue.icon?.color : undefined}
-              defaultOpen={logoValue?.in_use === "emoji" ? "emoji" : "icon"}
+              defaultImageUrl={logoValue?.in_use === "image" ? logoValue.image?.url : undefined}
+              defaultOpen={logoValue?.in_use ?? "icon"}
             />
             <div className="w-full space-y-1">
               <Controller

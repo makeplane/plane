@@ -9,7 +9,7 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
-import { CalendarOutline, InfoOutline, UserAltOutline, WorkItemsOutline } from "@makeplane/propel/icons";
+import { CalendarOutline, InfoOutline, ModuleOutline, UserAltOutline, WorkItemsOutline } from "@makeplane/propel/icons";
 // plane package imports
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
@@ -184,7 +184,12 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
               <div className="flex min-w-0 items-center gap-2">
                 {moduleDetails.logo_props?.in_use && (
                   <span className="flex flex-shrink-0 items-center">
-                    <Logo logo={moduleDetails.logo_props} size={16} type="lucide" />
+                    <Logo
+                      logo={moduleDetails.logo_props}
+                      size={16}
+                      type="lucide"
+                      fallback={<ModuleOutline className="h-4 w-4 text-tertiary" />}
+                    />
                   </span>
                 )}
                 <Tooltip label={moduleDetails.name} layout="stacked" disabled={isMobile}>
