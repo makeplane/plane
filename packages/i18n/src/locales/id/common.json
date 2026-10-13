@@ -422,7 +422,7 @@
   "common": {
     "sub_group_by": "Subkelompokkan berdasarkan",
     "filter_labels": {
-      "subscriber": "Pelanggan"
+      "subscriber": "Pengikut"
     },
     "filter_messages": {
       "all_applied": "Semua filter telah diterapkan",
