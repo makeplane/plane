@@ -420,6 +420,16 @@
     }
   },
   "common": {
+    "sub_group_by": "子分组方式",
+    "filter_labels": {
+      "subscriber": "订阅者"
+    },
+    "filter_messages": {
+      "all_applied": "已添加所有筛选条件",
+      "configuration_error": "筛选配置错误",
+      "configuration_invalid": "此筛选条件配置有误，无法应用。"
+    },
+    "project_work_item_count": "此项目共有 {count, number} 个工作项",
     "all": "全部",
     "no_items_in_this_group": "此组中没有项目",
     "drop_here_to_move": "拖放到此处以移动",
