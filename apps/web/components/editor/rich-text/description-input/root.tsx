@@ -146,6 +146,8 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
   // ref to track the description the editor content is based on. Unlike lastSavedContent, it does not follow
   // initialValue, since a refetched description is not loaded into an editor that is already mounted.
   const baseDescription = useRef(normalizeDescription(initialValue));
+  // ref to count edits made by the user (not migrations), to tell whether they typed while a save was in flight
+  const userEditCount = useRef(0);
   // ref to chain saves, so a save always starts from the base left by the previous one
   const pendingSave = useRef<Promise<void>>(Promise.resolve());
   const internalEditorRef = useRef<EditorRefApi>(null);
@@ -168,9 +170,26 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
     },
   });
 
+  // replace the editor content with a stored description and continue editing from it
+  const loadDescription = useCallback(
+    (description: string) => {
+      lastSavedContent.current = description;
+      baseDescription.current = description;
+      hasUnsavedChanges.current = false;
+      reset({
+        id: entityId,
+        description_html: description,
+        isMigrationUpdate: false,
+      });
+      resolvedEditorRef.current?.setEditorValue(description, false);
+    },
+    [entityId, reset, resolvedEditorRef]
+  );
+
   // submit handler
   const handleDescriptionFormSubmit = useCallback(
     async (formData: TFormData) => {
+      const userEditCountAtSave = userEditCount.current;
       try {
         await onSubmit(
           {
@@ -182,14 +201,21 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
         );
       } catch (error) {
         if (!isDescriptionConflictError(error)) throw error;
-        setConflictingDescription(normalizeDescription(error.description_html));
+        const latestDescription = normalizeDescription(error.description_html);
+        // a migration save only re-formats the loaded description (e.g. another viewer opened and migrated it first),
+        // so adopt the latest version silently unless the user typed since
+        if (formData.isMigrationUpdate && userEditCount.current === userEditCountAtSave) {
+          loadDescription(latestDescription);
+          return;
+        }
+        setConflictingDescription(latestDescription);
         return;
       }
       // Update lastSavedContent and the base after successful save
       lastSavedContent.current = formData.description_html;
       baseDescription.current = formData.description_html;
     },
-    [onSubmit]
+    [loadDescription, onSubmit]
   );
 
   const saveDescription = () => {
@@ -270,15 +296,7 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
   const handleLoadLatestDescription = () => {
     if (conflictingDescription === null) return;
     debouncedFormSave.cancel();
-    lastSavedContent.current = conflictingDescription;
-    baseDescription.current = conflictingDescription;
-    hasUnsavedChanges.current = false;
-    reset({
-      id: entityId,
-      description_html: conflictingDescription,
-      isMigrationUpdate: false,
-    });
-    resolvedEditorRef.current?.setEditorValue(conflictingDescription, false);
+    loadDescription(conflictingDescription);
     setConflictingDescription(null);
   };
 
@@ -319,6 +337,7 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
             onChange={(description_json, description_html, options) => {
               if (description_html === lastSavedContent.current) return;
               setIsSubmitting("submitting");
+              if (!options?.isMigrationUpdate) userEditCount.current += 1;
               onChange(description_html);
               setValue("isMigrationUpdate", !!options?.isMigrationUpdate);
               setValue("description_json", description_json);
