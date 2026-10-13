@@ -43,3 +43,8 @@ RUN echo "apk-security-patch ${APK_SECURITY_PATCH}" && apk update && apk upgrade
 COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
 
 COPY Caddyfile.ce /etc/caddy/Caddyfile
+COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+# The caddy base image's own command, restated because setting ENTRYPOINT clears an inherited CMD.
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]

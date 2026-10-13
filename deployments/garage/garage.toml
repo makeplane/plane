@@ -1,0 +1,21 @@
+# Garage config for use as Plane's object store. Single node: SQLite metadata (LMDB can corrupt after an
+# unclean shutdown, with no peer to recover from), fsync on, 6-hourly metadata snapshots, path-style S3.
+# Secrets are not in this file: they come from garage.env.
+metadata_dir = "/var/lib/garage/meta"
+data_dir = "/var/lib/garage/data"
+db_engine = "sqlite"
+metadata_fsync = true
+data_fsync = true
+metadata_auto_snapshot_interval = "6h"
+compression_level = 1
+replication_factor = 1
+rpc_bind_addr = "[::]:3901"
+rpc_public_addr = "127.0.0.1:3901"
+
+[s3_api]
+api_bind_addr = "[::]:3900"
+# Must equal AWS_REGION in Plane's plane.env: Garage rejects requests signed for any other region.
+s3_region = "us-east-1"
+
+[admin]
+api_bind_addr = "[::]:3903"
