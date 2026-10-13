@@ -422,7 +422,7 @@
   "common": {
     "sub_group_by": "Nhóm phụ theo",
     "filter_labels": {
-      "subscriber": "Người đăng ký"
+      "subscriber": "Người theo dõi"
     },
     "filter_messages": {
       "all_applied": "Đã áp dụng tất cả bộ lọc",
