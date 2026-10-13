@@ -825,6 +825,12 @@
     "previously_edited_by": "先前編輯者",
     "edited_by": "編輯者"
   },
+  "description_conflict": {
+    "title": "此描述已被變更",
+    "content": "在您開始編輯後，其他人更新了此描述，因此您最近的變更未儲存。請載入最新版本以繼續。請先複製您想保留的內容。",
+    "load_latest": "載入最新版本",
+    "keep_editing": "繼續編輯"
+  },
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能啟動。這可能是因為一個或多個 Plane 服務啟動失敗。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "從 setup.sh 和 Docker 日誌中選擇 View Logs 來確認。"

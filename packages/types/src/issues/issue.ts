@@ -100,6 +100,8 @@ export type TIssue = TBaseIssue & {
   tempId?: string;
   // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
   sourceIssueId?: string;
+  // base_description_html is the description an edit started from, sent with description updates so the API can reject stale saves. It is not a part of the API response.
+  base_description_html?: string;
   state__group?: TStateGroups | null;
 };
 

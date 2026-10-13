@@ -208,6 +208,18 @@ def _compute_html_sanitization_diff(before_html: str, after_html: str):
         return {"removed_tags": {}, "removed_attributes": {}}
 
 
+def sanitize_html(html_content: str) -> str:
+    """
+    Run the nh3 allowlist used for stored rich text, without size checks or logging.
+    """
+    return nh3.clean(
+        html_content,
+        tags=ALLOWED_TAGS,
+        attributes=ATTRIBUTES,
+        url_schemes=SAFE_PROTOCOLS,
+    )
+
+
 def validate_html_content(html_content: str):
     """
     Sanitize HTML content using nh3.
@@ -221,12 +233,7 @@ def validate_html_content(html_content: str):
         return False, "HTML content exceeds maximum size limit (10MB)", None
 
     try:
-        clean_html = nh3.clean(
-            html_content,
-            tags=ALLOWED_TAGS,
-            attributes=ATTRIBUTES,
-            url_schemes=SAFE_PROTOCOLS,
-        )
+        clean_html = sanitize_html(html_content)
         # Report removals to logger (Sentry) if anything was stripped
         diff = _compute_html_sanitization_diff(html_content, clean_html)
         if diff.get("removed_tags") or diff.get("removed_attributes"):

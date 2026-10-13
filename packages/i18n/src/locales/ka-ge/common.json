@@ -825,6 +825,12 @@
     "previously_edited_by": "წინა რედაქტორი",
     "edited_by": "დარედაქტირებულია"
   },
+  "description_conflict": {
+    "title": "ეს აღწერა შეიცვალა",
+    "content": "რედაქტირების დაწყების შემდეგ ვიღაცამ ეს აღწერა განაახლა, ამიტომ თქვენი ბოლო ცვლილებები არ შეინახა. გასაგრძელებლად ჩატვირთეთ უახლესი ვერსია. ჯერ დააკოპირეთ ის, რისი შენახვაც გსურთ.",
+    "load_latest": "უახლესი ვერსიის ჩატვირთვა",
+    "keep_editing": "რედაქტირების გაგრძელება"
+  },
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane არ გაუშვია. ეს შეიძლება იყოს იმის გამო, რომ ერთი ან მეტი Plane სერვისი ვერ გაუშვეს.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "აირჩიეთ ლოგების ნახვა setup.sh-დან და Docker ლოგებიდან დასარწმუნებლად."

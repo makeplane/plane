@@ -16,6 +16,7 @@ import { EIssuesStoreType } from "@plane/types";
 import emptyIssue from "@/app/assets/empty-state/issue.svg?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
+import { isDescriptionConflictError } from "@/components/editor/rich-text/description-input";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -60,7 +61,7 @@ export type TIssueDetailRoot = {
 
 export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDetailRoot) {
   const { t } = useTranslation();
-  const { workspaceSlug, projectId, issueId, is_archived = false } = props;
+  const { is_archived = false } = props;
   // router
   const router = useAppRouter();
   // hooks
@@ -95,6 +96,8 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
         try {
           await updateIssue(workspaceSlug, projectId, issueId, data);
         } catch (error) {
+          // let the description input resolve conflicting description edits
+          if (isDescriptionConflictError(error)) throw error;
           console.log("Error in updating issue:", error);
           setToast({
             title: t("common.error.label"),
@@ -215,6 +218,8 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
     ]
   );
 
+  // route ids are read after issueOperations, whose callbacks take their own ids
+  const { workspaceSlug, projectId, issueId } = props;
   // issue details
   const issue = getIssueById(issueId);
   // checking if issue is editable, based on user role

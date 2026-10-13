@@ -825,6 +825,12 @@
     "previously_edited_by": "之前编辑者",
     "edited_by": "编辑者"
   },
+  "description_conflict": {
+    "title": "此描述已被更改",
+    "content": "在您开始编辑后，其他人更新了此描述，因此您最近的更改未保存。请加载最新版本以继续。请先复制您想保留的内容。",
+    "load_latest": "加载最新版本",
+    "keep_editing": "继续编辑"
+  },
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能启动。这可能是因为一个或多个 Plane 服务启动失败。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "请选择“查看日志”来查看 setup.sh 和 Docker 日志，以确认问题。"
