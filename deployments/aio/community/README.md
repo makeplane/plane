@@ -92,15 +92,12 @@ docker run --name myaio --rm -it \
 
 #### Security & Secrets
 
-- `SECRET_KEY`: Signs sessions and tokens and encrypts saved instance settings (email password, OAuth client secrets, AI and Unsplash keys). If not set, it is generated on first start and stored in `/app/data/.secrets.env`, so `/app/data` must be a named volume or bind mount. If that file is lost while the database is kept, saved instance settings cannot be decrypted and must be re-entered in the admin app. To manage the value yourself, pass `SECRET_KEY` on every start of every container. Changing it on an existing database signs users out and requires re-entering saved instance settings.
-- `LIVE_SERVER_SECRET_KEY`: Shared secret between services. Generated and stored in the same file if not set; it encrypts nothing and is safe to change.
+- `SECRET_KEY` (required): Django secret key. It also encrypts saved instance settings, so keep the same value across restarts and container recreation. No default is provided and none is generated.
+- `LIVE_SERVER_SECRET_KEY` (required): Live server secret. No default is provided and none is generated.
 
-#### Upgrading an existing installation
+Set both to unique, private values, either in `plane.env` (`variables.env`) or as environment variables. The container exits at startup if either is empty or still set to a default/placeholder value.
 
-- If `SECRET_KEY` is not set and no stored value exists yet, the existing database is checked once, so settings encrypted with the previous default key keep working. In that case the previous default is kept and a warning is printed, because it is publicly known; to move off it, set a new `SECRET_KEY` and re-enter the saved instance settings.
-- Mount `/app/data` so the stored value is reused when the container is recreated.
-- Multi-replica deployments must pass the same explicit `SECRET_KEY` to every container.
-- In v1.4.0 to v1.4.2 a container started without `SECRET_KEY` received a new generated key on every recreation. Before recreating such a container, read the current key from the running container's `/app/plane.env` and pass it as `SECRET_KEY`.
+In v1.4.0 to v1.4.2 a container started without `SECRET_KEY` received a generated key that changed on every recreation. When upgrading such a container, read the current key from the running container's `/app/plane.env` and pass it as `SECRET_KEY`.
 
 #### File Handling
 
@@ -119,9 +116,7 @@ The following ports are exposed:
 
 ## Volume Mounts
 
-### Persistent Volumes
-
-`/app/data` is required for stable generated secrets; `/app/logs` is recommended.
+### Recommended Persistent Volumes
 
 ```bash
 -v /path/to/logs:/app/logs \
