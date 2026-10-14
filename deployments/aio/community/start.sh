@@ -63,7 +63,11 @@ update_env_value(){
 
     # if key and value are not empty, update the value
     if [ -n "$key" ] && [ -n "$value" ]; then
-        sed -i "s|^$key=.*|$key=$value|" plane.env
+        # awk reads key/value from the environment so the value is written verbatim
+        UEV_KEY="$key" UEV_VAL="$value" awk '
+            index($0, ENVIRON["UEV_KEY"] "=") == 1 { print ENVIRON["UEV_KEY"] "=" ENVIRON["UEV_VAL"]; next }
+            { print }
+        ' plane.env > plane.env.tmp && mv plane.env.tmp plane.env
         return 0
     fi
 
@@ -207,7 +211,13 @@ main(){
     update_env_file
 
     # load plane.env as exported variables
-    export $(grep -v '^#' plane.env | xargs)
+    # read line by line so values are exported verbatim (no word-splitting or quote stripping)
+    while IFS= read -r line || [ -n "$line" ]; do
+        case "$line" in
+            ""|\#*|"="*) continue ;;
+            *=*) export "${line%%=*}=${line#*=}" ;;
+        esac
+    done < plane.env
 
     /usr/local/bin/supervisord -c /etc/supervisor/conf.d/supervisor.conf
 }
