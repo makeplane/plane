@@ -4,13 +4,23 @@
  * See the LICENSE file for details.
  */
 
+import { Fragment } from "react";
 import { observer } from "mobx-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Settings } from "lucide-react";
 // icons
-import { Breadcrumbs } from "@plane/ui";
-// components
-import { BreadcrumbLink } from "../breadcrumb-link";
+import { Menu } from "lucide-react";
+import { SettingsOutline } from "@makeplane/propel/icons";
+// plane internal packages
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@makeplane/propel/components/breadcrumb";
+import { Icon } from "@makeplane/propel/components/icon";
 // hooks
 import { useTheme } from "@/hooks/store";
 // local imports
@@ -55,33 +65,36 @@ const generateBreadcrumbItems = (pathname: string) => {
 export const AdminHeader = observer(function AdminHeader() {
   const pathName = usePathname();
 
-  const breadcrumbItems = generateBreadcrumbItems(pathName || "");
+  const breadcrumbItems = generateBreadcrumbItems(pathName || "").filter((item) => item.title);
 
   return (
     <div className="relative z-10 flex h-header w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-subtle bg-surface-1 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <HamburgerToggle />
         <div>
-          <Breadcrumbs>
-            <Breadcrumbs.Item
-              component={
+          <Breadcrumb aria-label="Breadcrumb">
+            <BreadcrumbList>
+              <BreadcrumbItem>
                 <BreadcrumbLink
-                  href="/general/"
                   label="Settings"
-                  icon={<Settings className="h-4 w-4 text-tertiary" />}
+                  icon={<Icon icon={SettingsOutline} tint="tertiary" />}
+                  render={<Link href="/general/" />}
                 />
-              }
-            />
-            {breadcrumbItems.map(
-              (item) =>
-                item.title && (
-                  <Breadcrumbs.Item
-                    key={item.title}
-                    component={<BreadcrumbLink href={item.href} label={item.title} />}
-                  />
-                )
-            )}
-          </Breadcrumbs>
+              </BreadcrumbItem>
+              {breadcrumbItems.map((item, index) => (
+                <Fragment key={item.href}>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    {index === breadcrumbItems.length - 1 ? (
+                      <BreadcrumbPage label={item.title} />
+                    ) : (
+                      <BreadcrumbLink label={item.title} render={<Link href={item.href} />} />
+                    )}
+                  </BreadcrumbItem>
+                </Fragment>
+              ))}
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
       </div>
     </div>

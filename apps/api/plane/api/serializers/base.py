@@ -2,8 +2,15 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Django imports
+from django.db import models
+
 # Third party imports
 from rest_framework import serializers
+
+
+# Distinguishes "the instance has no such attribute" from "the attribute is None".
+_MISSING = object()
 
 
 class BaseSerializer(serializers.ModelSerializer):
@@ -106,11 +113,27 @@ class BaseSerializer(serializers.ModelSerializer):
                     }
                     # Check if field in expansion  then expand the field
                     if expand in expansion:
-                        if isinstance(response.get(expand), list):
-                            exp_serializer = expansion[expand](getattr(instance, expand), many=True)
-                        else:
-                            exp_serializer = expansion[expand](getattr(instance, expand))
-                        response[expand] = exp_serializer.data
+                        # Resolve against the instance rather than guessing arity from the
+                        # already-serialized value: a to-many relation the serializer does
+                        # not render is not a list in `response`. `_MISSING` separates "no
+                        # such relation" from "the relation is null" -- a missing reverse
+                        # relation raises RelatedObjectDoesNotExist, an AttributeError.
+                        related = getattr(instance, expand, _MISSING)
+                        if isinstance(related, models.Manager):
+                            response[expand] = expansion[expand](related, many=True).data
+                        elif isinstance(related, models.Model):
+                            response[expand] = expansion[expand](related).data
+                        elif related is None:
+                            # A null relation stays null, matching the unexpanded
+                            # response. Serializing None emits an object built from the
+                            # nested serializer's defaults instead, which is what made
+                            # `expand` unusable for `updated_by`: it is null until the
+                            # first update.
+                            response[expand] = None
+                        # Anything else means `expand` names something that is not a
+                        # relation on this instance -- a queryset annotation or a
+                        # SerializerMethodField of the same name. Leave the value the
+                        # serializer already produced rather than clobbering it.
                     else:
                         # You might need to handle this case differently
                         response[expand] = getattr(instance, f"{expand}_id", None)

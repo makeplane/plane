@@ -8,6 +8,7 @@
   "submit": "Kirim",
   "cancel": "Batal",
   "loading": "Memuat",
+  "searching": "Mencari...",
   "error": "Kesalahan",
   "success": "Sukses",
   "warning": "Peringatan",
@@ -303,6 +304,9 @@
   "create_new_label": "Buat label baru",
   "label_name": "Nama label",
   "failed_to_create_label": "Gagal membuat label. Silakan coba lagi.",
+  "no_matching_labels": "Tidak ada label yang cocok",
+  "adding_label": "Menambahkan \"{name}\"",
+  "add_label_to_labels": "Tambahkan \"{name}\" ke label",
   "start_date": "Tanggal mulai",
   "end_date": "Tanggal akhir",
   "due_date": "Tanggal jatuh tempo",
@@ -522,6 +526,7 @@
       "updated_on": "Diperbarui pada"
     },
     "sort": {
+      "label": "Urutkan",
       "asc": "Menaik",
       "desc": "Menurun",
       "created_on": "Dibuat pada",
@@ -619,7 +624,8 @@
       "enable": "Aktifkan",
       "disable": "Nonaktifkan",
       "copy_markdown": "Salin markdown",
-      "reply": "Balas"
+      "reply": "Balas",
+      "add_reaction": "Tambah reaksi"
     },
     "name": "Nama",
     "discard": "Buang",
@@ -867,5 +873,6 @@
       "description": "Ekspor item kerja ke file JSON.",
       "short_description": "Ekspor sebagai json"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# label} other {# label}}"
 }

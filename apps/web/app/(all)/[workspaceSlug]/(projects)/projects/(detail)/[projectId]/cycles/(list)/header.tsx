@@ -7,11 +7,12 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { EUserPermissions, EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { CycleIcon } from "@plane/propel/icons";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { CyclesOutline } from "@makeplane/propel/icons";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { CyclesViewHeader } from "@/components/cycles/cycles-view-header";
@@ -19,14 +20,14 @@ import { CyclesViewHeader } from "@/components/cycles/cycles-view-header";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 
 export const CyclesListHeader = observer(function CyclesListHeader() {
   // router
-  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
 
   // store hooks
   const { toggleCreateCycleModal } = useCommandPalette();
@@ -42,14 +43,18 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
   return (
     <Header>
       <Header.LeftItem>
-        <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+        <Breadcrumbs isLoading={loader === "init-loader"}>
+          <CommonProjectBreadcrumbs
+            workspaceSlug={workspaceSlug?.toString()}
+            projectId={projectId?.toString()}
+            {...projectCrumb}
+          />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
                 label="Cycles"
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/cycles/`}
-                icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
+                icon={<CyclesOutline className="h-4 w-4 text-tertiary" />}
                 isLast
               />
             }
@@ -60,17 +65,30 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
       {canUserCreateCycle && currentProjectDetails ? (
         <Header.RightItem>
           <CyclesViewHeader projectId={currentProjectDetails.id} />
-          <Button
-            variant="primary"
-            size="lg"
-            data-ph-element={CYCLE_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
-            onClick={() => {
-              toggleCreateCycleModal(true);
-            }}
-          >
-            <div className="block sm:hidden">{t("add")}</div>
-            <div className="hidden sm:block">{t("project_cycles.add_cycle")}</div>
-          </Button>
+          <div className="flex">
+            <div className="block sm:hidden">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label={t("add")}
+                onClick={() => {
+                  toggleCreateCycleModal(true);
+                }}
+              />
+            </div>
+            <div className="hidden sm:block">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label={t("project_cycles.add_cycle")}
+                onClick={() => {
+                  toggleCreateCycleModal(true);
+                }}
+              />
+            </div>
+          </div>
         </Header.RightItem>
       ) : (
         <></>

@@ -5,11 +5,11 @@
  */
 
 import { useState } from "react";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDownOutline, TopArrowOutline } from "@makeplane/propel/icons";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
@@ -81,20 +81,13 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
     <div className="flex items-center gap-2">
       {/* upvote button 👇 */}
       <Tooltip
-        tooltipContent={
-          <div>
-            {allUpVotes.length > 0 ? (
-              <>
-                {allUpVotes
-                  .map((r) => r.actor_details?.display_name)
-                  .splice(0, VOTES_LIMIT)
-                  .join(", ")}
-                {allUpVotes.length > VOTES_LIMIT && " and " + (allUpVotes.length - VOTES_LIMIT) + " more"}
-              </>
-            ) : (
-              "No upvotes yet"
-            )}
-          </div>
+        label={
+          allUpVotes.length > 0
+            ? allUpVotes
+                .map((r) => r.actor_details?.display_name)
+                .slice(0, VOTES_LIMIT)
+                .join(", ") + (allUpVotes.length > VOTES_LIMIT ? ` and ${allUpVotes.length - VOTES_LIMIT} more` : "")
+            : "No upvotes yet"
         }
       >
         <button
@@ -115,27 +108,21 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             }
           )}
         >
-          <ArrowUp className="size-3.5 shrink-0" />
+          <TopArrowOutline className="size-3.5 shrink-0" />
           <span className="text-13 font-regular transition-opacity ease-in-out">{allUpVotes.length}</span>
         </button>
       </Tooltip>
 
       {/* downvote button 👇 */}
       <Tooltip
-        tooltipContent={
-          <div>
-            {allDownVotes.length > 0 ? (
-              <>
-                {allDownVotes
-                  .map((r) => r.actor_details.display_name)
-                  .splice(0, VOTES_LIMIT)
-                  .join(", ")}
-                {allDownVotes.length > VOTES_LIMIT && " and " + (allDownVotes.length - VOTES_LIMIT) + " more"}
-              </>
-            ) : (
-              "No downvotes yet"
-            )}
-          </div>
+        label={
+          allDownVotes.length > 0
+            ? allDownVotes
+                .map((r) => r.actor_details.display_name)
+                .slice(0, VOTES_LIMIT)
+                .join(", ") +
+              (allDownVotes.length > VOTES_LIMIT ? ` and ${allDownVotes.length - VOTES_LIMIT} more` : "")
+            : "No downvotes yet"
         }
       >
         <button
@@ -156,7 +143,7 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             }
           )}
         >
-          <ArrowDown className="size-3.5 shrink-0" />
+          <ArrowDownOutline className="size-3.5 shrink-0" />
           <span className="text-13 font-regular transition-opacity ease-in-out">{allDownVotes.length}</span>
         </button>
       </Tooltip>

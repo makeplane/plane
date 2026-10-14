@@ -8,13 +8,13 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTheme } from "next-themes";
-import { EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import type { TCycleFilters } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components
-import { Header, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/blocks/layout";
 import { calculateTotalFilters } from "@plane/utils";
 // assets
 import darkEmptyState from "@/app/assets/empty-state/disabled-feature/cycles-dark.webp?url";
@@ -113,7 +113,6 @@ function ProjectCyclesPage({ params }: Route.ComponentProps) {
                   onClick: () => setCreateModal(true),
                   variant: "primary",
                   disabled: !hasMemberLevelPermission,
-                  "data-ph-element": CYCLE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON,
                 },
               ]}
             />

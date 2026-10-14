@@ -1,6 +1,6 @@
 {
   "name": "@plane/types",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
@@ -30,7 +30,7 @@
     "typescript": "catalog:"
   },
   "peerDependencies": {
-    "react": "catalog:",
-    "react-dom": "catalog:"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }

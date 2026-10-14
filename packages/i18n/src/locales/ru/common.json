@@ -8,6 +8,7 @@
   "submit": "Отправить",
   "cancel": "Отменить",
   "loading": "Загрузка",
+  "searching": "Поиск...",
   "error": "Ошибка",
   "success": "Успешно",
   "warning": "Предупреждение",
@@ -57,7 +58,7 @@
     "no_worklogs": "Записей о работе пока нет",
     "no_history": "Истории пока нет"
   },
-  "preferences": "Настройки",
+  "preferences": "Предпочтения",
   "language_and_time": "Язык и время",
   "notifications": "Уведомления",
   "workspaces": "Рабочие пространства",
@@ -303,6 +304,9 @@
   "create_new_label": "Создать новую метку",
   "label_name": "Название метки",
   "failed_to_create_label": "Не удалось создать метку. Пожалуйста, попробуйте снова.",
+  "no_matching_labels": "Нет совпадающих меток",
+  "adding_label": "Добавление «{name}»",
+  "add_label_to_labels": "Добавить «{name}» в метки",
   "start_date": "Дата начала",
   "end_date": "Дата окончания",
   "due_date": "Срок выполнения",
@@ -522,6 +526,7 @@
       "updated_on": "Дата обновления"
     },
     "sort": {
+      "label": "Сортировка",
       "asc": "По возрастанию",
       "desc": "По убыванию",
       "created_on": "Дата создания",
@@ -619,7 +624,8 @@
       "enable": "Включить",
       "disable": "Отключить",
       "copy_markdown": "Копировать markdown",
-      "reply": "Ответить"
+      "reply": "Ответить",
+      "add_reaction": "Добавить реакцию"
     },
     "name": "Название",
     "discard": "Отменить",
@@ -760,7 +766,7 @@
   "attachment": {
     "error": "Ошибка прикрепления файла",
     "only_one_file_allowed": "Можно загрузить только один файл",
-    "file_size_limit": "Максимальный размер файла - {size} МБ",
+    "file_size_limit": "Максимальный размер файла — {size} МБ",
     "drag_and_drop": "Перетащите файл для загрузки",
     "delete": "Удалить вложение"
   },
@@ -867,5 +873,6 @@
       "description": "Экспорт рабочих элементов в JSON-файл.",
       "short_description": "Экспорт в json"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# метка} few {# метки} many {# меток} other {# метки}}"
 }

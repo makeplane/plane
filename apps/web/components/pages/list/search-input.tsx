@@ -1,0 +1,92 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useRef, useState } from "react";
+// plane imports
+import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
+import { cn } from "@plane/utils";
+
+type Props = {
+  searchQuery: string;
+  updateSearchQuery: (val: string) => void;
+};
+
+export function PageSearchInput(props: Props) {
+  const { searchQuery, updateSearchQuery } = props;
+  // plane hooks
+  const { t } = useTranslation();
+  // states
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  // refs
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // outside click detector hook
+  useOutsideClickDetector(inputRef, () => {
+    if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
+  });
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Escape") {
+      if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
+      else {
+        setIsSearchOpen(false);
+        inputRef.current?.blur();
+      }
+    }
+  };
+
+  return (
+    <div className="flex">
+      {!isSearchOpen && (
+        <IconButton
+          variant="ghost"
+          size="md"
+          render={<button type="button" className="my-auto -mr-1 shrink-0" />}
+          onClick={() => {
+            setIsSearchOpen(true);
+            inputRef.current?.focus();
+          }}
+          icon={<Icon icon={SearchOutline} />}
+          aria-label={t("search")}
+        />
+      )}
+      <div
+        className={cn(
+          "flex w-0 items-center justify-start overflow-hidden rounded-md border border-transparent text-placeholder opacity-0 transition-[width] ease-linear",
+          {
+            "w-64 border-subtle px-2.5 py-1.5 opacity-100": isSearchOpen,
+          }
+        )}
+      >
+        <SearchOutline className="h-3.5 w-3.5" />
+        <input
+          ref={inputRef}
+          className="ml-2 w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
+          placeholder="Search pages"
+          value={searchQuery}
+          onChange={(e) => updateSearchQuery(e.target.value)}
+          onKeyDown={handleInputKeyDown}
+        />
+        {isSearchOpen && (
+          <button
+            type="button"
+            className="grid place-items-center"
+            onClick={() => {
+              updateSearchQuery("");
+              setIsSearchOpen(false);
+            }}
+          >
+            <CloseOutline className="h-3 w-3" />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}

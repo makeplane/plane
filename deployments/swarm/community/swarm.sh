@@ -220,7 +220,7 @@ function deployStack() {
     if [ ! -f "$DOCKER_FILE_PATH" ] || [ ! -f "$DOCKER_ENV_PATH" ]; then
         echo "Configuration files not found"
         echo "Downloading it now......"
-        APP_RELEASE=$(checkLatestRelease)
+        APP_RELEASE=$(checkLatestRelease) || exit 1
         download
     fi
     if [ -z "$stack_name" ]; then
@@ -335,7 +335,8 @@ function upgrade() {
         exit 1
     fi
     
-    local latest_release=$(checkLatestRelease)
+    local latest_release
+    latest_release=$(checkLatestRelease) || exit 1
 
     echo ""
     echo "Current release: $APP_RELEASE"

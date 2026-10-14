@@ -217,7 +217,9 @@ function install() {
     echo ""
 
     if [ "$APP_RELEASE" == "stable" ]; then
-        export APP_RELEASE=$(checkLatestRelease)
+        # exit inside checkLatestRelease only leaves the $(...) subshell
+        APP_RELEASE=$(checkLatestRelease) || exit 1
+        export APP_RELEASE
     fi
 
     local build_image=$(initialize)
@@ -424,7 +426,8 @@ function restartServices() {
     startServices
 }
 function upgrade() {
-    local latest_release=$(checkLatestRelease)
+    local latest_release
+    latest_release=$(checkLatestRelease) || exit 1
 
     echo ""
     echo "Current release: $APP_RELEASE"

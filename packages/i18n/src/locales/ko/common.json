@@ -8,6 +8,7 @@
   "submit": "제출",
   "cancel": "취소",
   "loading": "로딩 중",
+  "searching": "검색 중...",
   "error": "오류",
   "success": "성공",
   "warning": "경고",
@@ -128,8 +129,8 @@
   "10000_feet_view_description": "모든 프로젝트의 주기를 한 번에 확인할 수 있습니다.",
   "get_snapshot_of_each_active_cycle": "각 활성 주기의 스냅샷을 얻으세요.",
   "get_snapshot_of_each_active_cycle_description": "모든 활성 주기의 고수준 메트릭을 추적하고, 진행 상태를 확인하며, 마감일에 대한 범위를 파악합니다.",
-  "compare_burndowns": "버다운 비교",
-  "compare_burndowns_description": "각 팀의 성과를 모니터링하고 각 주기의 버다운 보고서를 확인합니다.",
+  "compare_burndowns": "번다운 비교",
+  "compare_burndowns_description": "각 팀의 성과를 모니터링하고 각 주기의 번다운 보고서를 확인합니다.",
   "quickly_see_make_or_break_issues": "빠르게 중요한 작업 항목을 확인하세요.",
   "quickly_see_make_or_break_issues_description": "각 주기의 고우선 작업 항목을 미리 보고 마감일에 대한 모든 작업 항목을 한 번에 확인합니다.",
   "zoom_into_cycles_that_need_attention": "주의가 필요한 주기를 확대하세요.",
@@ -303,6 +304,9 @@
   "create_new_label": "새 레이블 생성",
   "label_name": "레이블 이름",
   "failed_to_create_label": "레이블 생성에 실패했습니다. 다시 시도해 주세요.",
+  "no_matching_labels": "일치하는 레이블 없음",
+  "adding_label": "\"{name}\" 추가 중",
+  "add_label_to_labels": "\"{name}\"을(를) 레이블에 추가",
   "start_date": "시작 날짜",
   "end_date": "종료 날짜",
   "due_date": "마감일",
@@ -522,6 +526,7 @@
       "updated_on": "업데이트일"
     },
     "sort": {
+      "label": "정렬",
       "asc": "오름차순",
       "desc": "내림차순",
       "created_on": "생성일",
@@ -619,7 +624,8 @@
       "enable": "활성화",
       "disable": "비활성화",
       "copy_markdown": "마크다운 복사",
-      "reply": "답글"
+      "reply": "답글",
+      "add_reaction": "반응 추가"
     },
     "name": "이름",
     "discard": "폐기",
@@ -867,5 +873,6 @@
       "description": "작업 항목을 JSON 파일로 내보냅니다.",
       "short_description": "JSON으로 내보내기"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {레이블 #개} other {레이블 #개}}"
 }

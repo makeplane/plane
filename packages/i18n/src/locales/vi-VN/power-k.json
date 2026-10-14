@@ -176,6 +176,11 @@
     "footer": {
       "workspace_level": "Cấp không gian làm việc"
     },
+    "shortcuts_modal": {
+      "search_placeholder": "Tìm phím tắt",
+      "no_results": "Không tìm thấy phím tắt cho \"{query}\"",
+      "sequence_separator": "rồi"
+    },
     "group_titles": {
       "actions": "Hành động",
       "contextual": "Theo ngữ cảnh",

@@ -1,0 +1,149 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { observer } from "mobx-react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Controller, useForm } from "react-hook-form";
+// icons
+import { TickCircleOutline } from "@makeplane/propel/icons";
+// plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@makeplane/propel/components/button";
+import { AnchorButton } from "@makeplane/propel/components/anchor-button";
+import { setToast } from "@plane/blocks/toast";
+
+import { checkEmailValidity } from "@plane/utils";
+// hooks
+import useTimer from "@/hooks/use-timer";
+// services
+import { AuthService } from "@/services/auth.service";
+// local components
+import { FormContainer } from "./common/container";
+import { AuthFormHeader } from "./common/header";
+
+type TForgotPasswordFormValues = {
+  email: string;
+};
+
+const defaultValues: TForgotPasswordFormValues = {
+  email: "",
+};
+
+// services
+const authService = new AuthService();
+
+export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
+  // search params
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+  // plane hooks
+  const { t } = useTranslation();
+  // timer
+  const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(0);
+
+  // form info
+  const {
+    control,
+    formState: { errors, isSubmitting, isValid },
+    handleSubmit,
+  } = useForm<TForgotPasswordFormValues>({
+    defaultValues: {
+      ...defaultValues,
+      email: email?.toString() ?? "",
+    },
+  });
+
+  const handleForgotPassword = async (formData: TForgotPasswordFormValues) => {
+    await authService
+      .sendResetPasswordLink({
+        email: formData.email,
+      })
+      .then(() => {
+        setToast({
+          type: "success",
+          title: t("auth.forgot_password.toast.success.title"),
+          message: t("auth.forgot_password.toast.success.message"),
+        });
+        setResendCodeTimer(30);
+      })
+      .catch((err) => {
+        setToast({
+          type: "error",
+          title: t("auth.forgot_password.toast.error.title"),
+          message: err?.error ?? t("auth.forgot_password.toast.error.message"),
+        });
+      });
+  };
+
+  return (
+    <FormContainer>
+      <AuthFormHeader title="Reset password" description="Regain access to your account." />
+      <form onSubmit={handleSubmit(handleForgotPassword)} className="space-y-4">
+        <div className="space-y-1">
+          <label className="text-13 font-medium text-tertiary" htmlFor="email">
+            {t("auth.common.email.label")}
+          </label>
+          <Controller
+            control={control}
+            name="email"
+            rules={{
+              required: t("auth.common.email.errors.required"),
+              validate: (value) => checkEmailValidity(value) || t("auth.common.email.errors.invalid"),
+            }}
+            render={({ field: { value, onChange, ref } }) => (
+              <Field name="email" invalid={Boolean(errors.email)}>
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    placeholder={t("auth.common.email.placeholder")}
+                    autoComplete="off"
+                    disabled={resendTimerCode > 0}
+                  />
+                </InputGroup>
+              </Field>
+            )}
+          />
+          {resendTimerCode > 0 && (
+            <p className="flex w-full items-start gap-1 px-1 text-11 font-medium text-success-primary">
+              <TickCircleOutline height={12} width={12} className="mt-0.5" />
+              {t("auth.forgot_password.email_sent")}
+            </p>
+          )}
+        </div>
+        <Button
+          type="submit"
+          variant="primary"
+          size="lg"
+          stretch="full"
+          label={
+            resendTimerCode > 0
+              ? t("auth.common.resend_in", { seconds: resendTimerCode })
+              : t("auth.forgot_password.send_reset_link")
+          }
+          disabled={!isValid}
+          loading={isSubmitting || resendTimerCode > 0}
+        />
+        <div className="flex h-7 items-center justify-center">
+          <AnchorButton
+            variant="primary"
+            size="md"
+            render={<Link href="/" />}
+            label={t("auth.common.back_to_sign_in")}
+          />
+        </div>
+      </form>
+    </FormContainer>
+  );
+});

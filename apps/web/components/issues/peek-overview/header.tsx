@@ -1,0 +1,237 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useRef } from "react";
+import { observer } from "mobx-react";
+import Link from "next/link";
+import {
+  ArrowNarrowRightOutline,
+  DragDropOutline,
+  FullScreenPeekOutline,
+  LinkOutline,
+  ModalPeekOutline,
+  SidePeekOutline,
+} from "@makeplane/propel/icons";
+// plane imports
+import { useTranslation } from "@plane/i18n";
+import { setToast } from "@plane/blocks/toast";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+import type { TNameDescriptionLoader } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
+import { Select } from "@plane/blocks/select";
+import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
+// hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
+import { useUser } from "@/hooks/store/user";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// local imports
+import { IssueSubscription } from "../issue-detail/subscription";
+import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
+import { NameDescriptionUpdateStatus } from "../issue-update-status";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
+
+export type TPeekModes = "side-peek" | "modal" | "full-screen";
+
+type TPeekOption = { key: TPeekModes; icon: any; i18n_title: string };
+
+const PEEK_OPTIONS: TPeekOption[] = [
+  {
+    key: "side-peek",
+    icon: SidePeekOutline,
+    i18n_title: "common.side_peek",
+  },
+  {
+    key: "modal",
+    icon: ModalPeekOutline,
+    i18n_title: "common.modal",
+  },
+  {
+    key: "full-screen",
+    icon: FullScreenPeekOutline,
+    i18n_title: "common.full_screen",
+  },
+];
+
+export type PeekOverviewHeaderProps = {
+  peekMode: TPeekModes;
+  setPeekMode: (value: TPeekModes) => void;
+  removeRoutePeekId: () => void;
+  workspaceSlug: string;
+  projectId: string;
+  issueId: string;
+  isArchived: boolean;
+  disabled: boolean;
+  embedIssue: boolean;
+  toggleDeleteIssueModal: (value: boolean) => void;
+  toggleArchiveIssueModal: (value: boolean) => void;
+  toggleDuplicateIssueModal: (value: boolean) => void;
+  toggleEditIssueModal: (value: boolean) => void;
+  handleRestoreIssue: () => Promise<void>;
+  isSubmitting: TNameDescriptionLoader;
+};
+
+export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader(props: PeekOverviewHeaderProps) {
+  const {
+    peekMode,
+    setPeekMode,
+    workspaceSlug,
+    projectId,
+    issueId,
+    isArchived,
+    disabled,
+    embedIssue = false,
+    removeRoutePeekId,
+    toggleDeleteIssueModal,
+    toggleArchiveIssueModal,
+    toggleDuplicateIssueModal,
+    toggleEditIssueModal,
+    handleRestoreIssue,
+    isSubmitting,
+  } = props;
+  // ref
+  const parentRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
+  // store hooks
+  const { data: currentUser } = useUser();
+  const {
+    issue: { getIssueById },
+    setPeekIssue,
+    removeIssue,
+    archiveIssue,
+    getIsIssuePeeked,
+  } = useIssueDetail();
+  const { isMobile } = usePlatformOS();
+  const { getProjectIdentifierById } = useProject();
+  // derived values
+  const issueDetails = getIssueById(issueId);
+  const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
+  const projectIdentifier = getProjectIdentifierById(issueDetails?.project_id);
+  const {
+    issues: { removeIssue: removeArchivedIssue },
+  } = useIssues(EIssuesStoreType.ARCHIVED);
+
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issueDetails?.project_id,
+    issueId,
+    projectIdentifier,
+    sequenceId: issueDetails?.sequence_id,
+    isArchived,
+  });
+
+  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    copyUrlToClipboard(workItemLink).then(() => {
+      setToast({
+        type: "success",
+        title: t("common.link_copied"),
+        message: t("common.link_copied_to_clipboard"),
+      });
+    });
+  };
+
+  const handleDeleteIssue = async () => {
+    try {
+      const deleteIssue = issueDetails?.archived_at ? removeArchivedIssue : removeIssue;
+
+      return deleteIssue(workspaceSlug, projectId, issueId).then(() => {
+        setPeekIssue(undefined);
+      });
+    } catch (_error) {
+      setToast({
+        title: t("toast.error"),
+        type: "error",
+        message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
+      });
+    }
+  };
+
+  const handleArchiveIssue = async () => {
+    await archiveIssue(workspaceSlug, projectId, issueId);
+    // check and remove if issue is peeked
+    if (getIsIssuePeeked(issueId)) {
+      removeRoutePeekId();
+    }
+  };
+
+  return (
+    <div
+      className={`relative flex items-center justify-between p-4 ${
+        currentMode?.key === "full-screen" ? "border-b border-subtle" : ""
+      }`}
+    >
+      <div className="flex items-center gap-4">
+        <Tooltip label={t("common.close_peek_view")} disabled={isMobile}>
+          <button onClick={removeRoutePeekId}>
+            <ArrowNarrowRightOutline className="h-4 w-4 text-tertiary hover:text-secondary" />
+          </button>
+        </Tooltip>
+
+        <Tooltip label={t("issue.open_in_full_screen")} disabled={isMobile}>
+          <Link href={workItemLink} onClick={() => removeRoutePeekId()}>
+            <DragDropOutline className="h-4 w-4 text-tertiary hover:text-secondary" />
+          </Link>
+        </Tooltip>
+        {currentMode && embedIssue === false && (
+          <div className="flex flex-shrink-0 items-center gap-2">
+            <Select<TPeekOption>
+              getValues={() => PEEK_OPTIONS}
+              value={currentMode}
+              onChange={(val) => setPeekMode(val as TPeekModes)}
+              getOptionValue={(mode) => mode.key}
+              getOptionLabel={(mode) => t(mode.i18n_title)}
+              getOptionIcon={(mode) => <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />}
+              showSearch={false}
+              pinSelected={false}
+            >
+              <Select.Trigger
+                variant="icon-md"
+                prependIcon={<currentMode.icon className="h-4 w-4 text-tertiary hover:text-secondary" />}
+                tooltip={isMobile ? false : { heading: t("common.toggle_peek_view_layout") }}
+              />
+            </Select>
+          </div>
+        )}
+      </div>
+      <div className="flex items-center gap-x-4">
+        <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
+        <div className="flex items-center gap-2">
+          {currentUser && !isArchived && (
+            <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
+          )}
+          <Tooltip label={t("common.actions.copy_link")} disabled={isMobile}>
+            <IconButton
+              variant="secondary"
+              size="md"
+              onClick={handleCopyText}
+              icon={<Icon icon={LinkOutline} />}
+              aria-label={t("common.actions.copy_link")}
+            />
+          </Tooltip>
+          {issueDetails && (
+            <WorkItemDetailQuickActions
+              parentRef={parentRef}
+              issue={issueDetails}
+              handleDelete={handleDeleteIssue}
+              handleArchive={handleArchiveIssue}
+              handleRestore={handleRestoreIssue}
+              readOnly={disabled}
+              toggleDeleteIssueModal={toggleDeleteIssueModal}
+              toggleArchiveIssueModal={toggleArchiveIssueModal}
+              toggleDuplicateIssueModal={toggleDuplicateIssueModal}
+              toggleEditIssueModal={toggleEditIssueModal}
+              isPeekMode
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+});

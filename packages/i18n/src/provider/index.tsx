@@ -4,26 +4,18 @@
  * See the LICENSE file for details.
  */
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { I18nextProvider } from "react-i18next";
-import { i18nInstance, initPromise } from "../core";
+import { i18nInstance } from "../core";
 
 interface TranslationProviderProps {
   children: React.ReactNode;
 }
 
-export const TranslationProvider: React.FC<TranslationProviderProps> = ({ children }) => {
-  const [isReady, setIsReady] = useState(i18nInstance.isInitialized);
-
-  useEffect(() => {
-    initPromise
-      .then(() => setIsReady(true))
-      .catch((err) => {
-        console.error("Failed to initialize i18n:", err);
-        setIsReady(true);
-      });
-  }, []);
-
-  if (!isReady) return null;
-  return <I18nextProvider i18n={i18nInstance}>{children}</I18nextProvider>;
-};
+// Render the provider unconditionally: translation readiness is handled before
+// hydration (entry.client awaits initPromise). Gating on init with `return null`
+// makes the first client render diverge from the server HTML, and React 19
+// leaves server DOM it could not adopt in place instead of clearing it.
+export const TranslationProvider: React.FC<TranslationProviderProps> = ({ children }) => (
+  <I18nextProvider i18n={i18nInstance}>{children}</I18nextProvider>
+);

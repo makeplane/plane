@@ -4,14 +4,16 @@
  * See the LICENSE file for details.
  */
 
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { MessageSquare, MoreVertical } from "lucide-react";
-import { Menu, Transition } from "@headlessui/react";
+import { ChatOutline, CloseOutline, MoreVerticalOutline, TickOutline } from "@makeplane/propel/icons";
 // plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import type { EditorRefApi } from "@plane/editor";
-import { CheckIcon, CloseIcon } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import type { TIssuePublicComment } from "@plane/types";
 import { getFileURL } from "@plane/utils";
 // components
@@ -37,6 +39,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
   const { data: currentUser } = useUser();
   const { workspace: workspaceID } = usePublish(anchor);
   const isInIframe = useIsInIframe();
+  const { t } = useTranslation();
 
   // states
   const [isEditing, setIsEditing] = useState(false);
@@ -89,7 +92,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
         )}
 
         <span className="absolute -right-1 -bottom-0.5 rounded-tl-sm bg-layer-1 px-0.5 py-px">
-          <MessageSquare className="size-3 text-secondary" aria-hidden="true" strokeWidth={2} />
+          <ChatOutline className="size-3 text-secondary" aria-hidden="true" />
         </span>
       </div>
       <div className="min-w-0 flex-1">
@@ -140,14 +143,14 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                 disabled={isSubmitting}
                 className="group shadow-md rounded-sm border border-success-strong bg-success-primary p-2 duration-300 hover:bg-success-primary"
               >
-                <CheckIcon className="h-3 w-3 text-on-color" strokeWidth={2} />
+                <TickOutline className="h-3 w-3 text-on-color" />
               </button>
               <button
                 type="button"
                 className="group shadow-md rounded-sm border border-danger-strong bg-danger-primary p-2 duration-300 hover:bg-danger-primary-hover"
                 onClick={() => setIsEditing(false)}
               >
-                <CloseIcon className="h-3 w-3 text-on-color" strokeWidth={2} />
+                <CloseOutline className="h-3 w-3 text-on-color" />
               </button>
             </div>
           </form>
@@ -168,59 +171,21 @@ export const CommentCard = observer(function CommentCard(props: Props) {
         </div>
       </div>
       {!isInIframe && currentUser?.id === comment?.actor_detail?.id && (
-        <Menu as="div" className="relative w-min text-left">
-          <Menu.Button
-            type="button"
-            onClick={() => {}}
-            className="relative grid cursor-pointer place-items-center rounded-sm p-1 text-tertiary outline-none hover:bg-layer-transparent-hover"
-          >
-            <MoreVertical className="size-4" strokeWidth={2} />
-          </Menu.Button>
-
-          <Transition
-            as={React.Fragment}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
-          >
-            <Menu.Items className="shadow-lg absolute right-0 z-10 mt-1 max-h-36 min-w-[8rem] origin-top-right overflow-auto overflow-y-scroll rounded-md border border-strong bg-surface-1 p-1 text-11 whitespace-nowrap focus:outline-none">
-              <Menu.Item>
-                {({ active }) => (
-                  <div className="py-1">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsEditing(true);
-                      }}
-                      className={`w-full truncate rounded-sm px-1 py-1.5 text-left text-secondary select-none hover:bg-layer-transparent-hover ${
-                        active ? "bg-layer-transparent-hover" : ""
-                      }`}
-                    >
-                      Edit
-                    </button>
-                  </div>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <div className="py-1">
-                    <button
-                      type="button"
-                      onClick={handleDelete}
-                      className={`w-full truncate rounded-sm px-1 py-1.5 text-left text-secondary select-none hover:bg-layer-transparent-hover ${
-                        active ? "bg-layer-transparent-hover" : ""
-                      }`}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </Menu.Item>
-            </Menu.Items>
-          </Transition>
+        <Menu>
+          <MenuTrigger
+            render={
+              <IconButton
+                variant="ghost"
+                size="sm"
+                aria-label={t("aria_labels.common.more_actions")}
+                icon={<Icon icon={<MoreVerticalOutline />} />}
+              />
+            }
+          />
+          <MenuContent side="bottom" align="end">
+            <MenuItem label={t("edit")} onClick={() => setIsEditing(true)} />
+            <MenuItem label={t("delete")} onClick={handleDelete} />
+          </MenuContent>
         </Menu>
       )}
     </div>

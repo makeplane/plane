@@ -46,9 +46,7 @@ from plane.app.permissions import ROLE, allow_permission
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.workspace_seed_task import workspace_seed
-from plane.bgtasks.event_tracking_task import track_event
 from plane.utils.url import contains_url
-from plane.utils.analytics_events import WORKSPACE_CREATED, WORKSPACE_DELETED
 from plane.utils.csv_utils import sanitize_csv_row
 
 
@@ -138,20 +136,6 @@ class WorkSpaceViewSet(BaseViewSet):
 
                 workspace_seed.delay(serializer.data["id"])
 
-                track_event.delay(
-                    user_id=request.user.id,
-                    event_name=WORKSPACE_CREATED,
-                    slug=data["slug"],
-                    event_properties={
-                        "user_id": request.user.id,
-                        "workspace_id": data["id"],
-                        "workspace_slug": data["slug"],
-                        "role": "owner",
-                        "workspace_name": data["name"],
-                        "created_at": data["created_at"],
-                    },
-                )
-
                 return Response(data, status=status.HTTP_201_CREATED)
             return Response(
                 [serializer.errors[error][0] for error in serializer.errors],
@@ -185,19 +169,6 @@ class WorkSpaceViewSet(BaseViewSet):
         # Get the workspace
         workspace = self.get_object()
         self.remove_last_workspace_ids_from_user_settings(workspace.id)
-        track_event.delay(
-            user_id=request.user.id,
-            event_name=WORKSPACE_DELETED,
-            slug=workspace.slug,
-            event_properties={
-                "user_id": request.user.id,
-                "workspace_id": workspace.id,
-                "workspace_slug": workspace.slug,
-                "role": "owner",
-                "workspace_name": workspace.name,
-                "deleted_at": str(timezone.now().isoformat()),
-            },
-        )
         return super().destroy(request, *args, **kwargs)
 
 

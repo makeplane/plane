@@ -1,6 +1,6 @@
 {
   "name": "@plane/utils",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "private": true,
   "description": "Helper functions shared across multiple apps internally",
   "license": "AGPL-3.0",
@@ -23,6 +23,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
+    "@makeplane/propel": "catalog:",
     "@plane/constants": "workspace:*",
     "@plane/types": "workspace:*",
     "chroma-js": "catalog:",

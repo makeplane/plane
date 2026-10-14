@@ -29,6 +29,19 @@
       "hide_password": "Hide password",
       "close_alert": "Close alert",
       "close_popover": "Close popover"
+    },
+    "breadcrumb": {
+      "trail": "Breadcrumb",
+      "show_more": "Show more breadcrumbs"
+    },
+    "common": {
+      "more_actions": "More actions",
+      "remove": "Remove"
+    },
+    "color_picker": {
+      "open": "Open color picker",
+      "swatches": "Preset colors",
+      "hex_input": "Hex color"
     }
   }
 }

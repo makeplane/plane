@@ -172,7 +172,9 @@
       },
       "failed": {
         "message": "无法归档工作项。请重试。"
-      }
+      },
+      "banner_message": "此工作项已归档。请前往归档部分以恢复它。",
+      "go_to_archives": "前往归档"
     },
     "restore": {
       "success": {
@@ -326,6 +328,10 @@
         "title": "无法更新工作项",
         "message": "某些工作项的状态更改不被允许。请确保状态更改是被允许的。"
       }
+    },
+    "upgrade_banner": {
+      "message": "一次性更改多个工作项的状态、优先级等。平均每次操作可节省三分钟。",
+      "cta": "升级到 One"
     }
   },
   "recurring_work_items": {

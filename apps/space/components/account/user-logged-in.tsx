@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { PlaneLockup } from "@plane/propel/icons";
+import { PlaneLockup } from "@plane/blocks/icons";
 // assets
 import UserLoggedInImage from "@/app/assets/user-logged-in.svg?url";
 // components

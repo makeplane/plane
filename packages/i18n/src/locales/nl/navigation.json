@@ -1,0 +1,34 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Geen resultaten gevonden"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "Stickies",
+    "your_work": "Jouw werk",
+    "projects": "Projecten",
+    "pages": "Pagina's",
+    "new_work_item": "Nieuw werkitem",
+    "home": "Home",
+    "inbox": "Postvak IN",
+    "workspace": "Werkruimte",
+    "views": "Weergaven",
+    "analytics": "Analyses",
+    "work_items": "Werkitems",
+    "cycles": "Cycli",
+    "modules": "Modules",
+    "intake": "Intake",
+    "drafts": "Concepten",
+    "favorites": "Favorieten",
+    "pro": "Pro",
+    "upgrade": "Upgraden",
+    "pi_chat": "Plane AI",
+    "epics": "Epics",
+    "upgrade_plan": "Abonnement upgraden",
+    "plane_pro": "Plane Pro",
+    "business": "Business"
+  }
+}

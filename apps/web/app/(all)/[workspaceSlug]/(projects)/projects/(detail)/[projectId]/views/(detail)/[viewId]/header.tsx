@@ -14,14 +14,16 @@ import {
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   EUserPermissions,
   EUserPermissionsLevel,
-  WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
-import { Button } from "@plane/propel/button";
-import { LockIcon, ViewsIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
-import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@makeplane/propel/components/button";
+import { LockOutline, ViewsOutline } from "@makeplane/propel/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EViewAccess, EIssueLayoutTypes } from "@plane/types";
-import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
+import type { BreadcrumbNavigationItem } from "@plane/blocks/breadcrumb";
+import { Breadcrumbs, BreadcrumbNavigationSelect } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
@@ -37,6 +39,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 
 export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader() {
   // refs
@@ -44,7 +47,10 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId, viewId: routerViewId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   const viewId = routerViewId ? routerViewId.toString() : undefined;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -108,56 +114,60 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
 
   if (!viewDetails) return;
 
-  const switcherOptions = projectViewIds
-    ?.map((id) => {
+  const switcherOptions = (projectViewIds ?? [])
+    .map<BreadcrumbNavigationItem | undefined>((id) => {
       const _view = id === viewId ? viewDetails : getViewById(id);
       if (!_view) return;
       return {
-        value: _view.id,
-        query: _view.name,
-        content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={ViewsIcon} />,
+        key: _view.id,
+        label: _view.name,
+        content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={ViewsOutline} />,
       };
     })
-    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
+    .filter((option) => option !== undefined);
 
   return (
     <Header>
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <CommonProjectBreadcrumbs
+            workspaceSlug={workspaceSlug?.toString()}
+            projectId={projectId?.toString()}
+            {...projectCrumb}
+          />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
                 label="Views"
                 href={`/${workspaceSlug}/projects/${projectId}/views/`}
-                icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
+                icon={<ViewsOutline className="h-4 w-4 text-tertiary" />}
               />
             }
           />
           <Breadcrumbs.Item
             component={
-              <BreadcrumbNavigationSearchDropdown
-                selectedItem={viewId?.toString() ?? ""}
+              <BreadcrumbNavigationSelect
+                selectedItemKey={viewId ?? ""}
                 navigationItems={switcherOptions}
                 onChange={(value: string) => {
                   router.push(`/${workspaceSlug}/projects/${projectId}/views/${value}`);
                 }}
-                title={viewDetails?.name}
-                icon={
-                  <Breadcrumbs.Icon>
-                    <SwitcherIcon logo_props={viewDetails.logo_props} LabelIcon={ViewsIcon} size={16} />
-                  </Breadcrumbs.Icon>
-                }
+                label={viewDetails?.name}
+                icon={<SwitcherIcon logo_props={viewDetails.logo_props} LabelIcon={ViewsOutline} size={16} />}
+                placeholder={t("views")}
+                searchPlaceholder={t("common.search.label")}
+                emptyMessage={t("common.search.no_matches_found")}
                 isLast
               />
             }
+            isLast
           />
         </Breadcrumbs>
 
         {viewDetails?.access === EViewAccess.PRIVATE ? (
           <div className="cursor-default text-tertiary">
-            <Tooltip tooltipContent={"Private"}>
-              <LockIcon className="h-4 w-4" />
+            <Tooltip label={"Private"}>
+              <LockOutline className="h-4 w-4" />
             </Tooltip>
           </div>
         ) : (
@@ -199,14 +209,13 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
         {canUserCreateIssue && (
           <Button
             variant="primary"
-            size="lg"
+            size="md"
+            stretch="auto"
+            label="Add work item"
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
             }}
-            data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.PROJECT_VIEW}
-          >
-            Add work item
-          </Button>
+          />
         )}
         <div className="hidden md:block">
           <ViewQuickActions

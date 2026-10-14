@@ -28,10 +28,10 @@
     "active_cycle": {
       "label": "활성 주기",
       "progress": "진행",
-      "chart": "버다운 차트",
+      "chart": "번다운 차트",
       "priority_issue": "우선순위 작업 항목",
       "assignees": "담당자",
-      "issue_burndown": "작업 항목 버다운",
+      "issue_burndown": "작업 항목 번다운",
       "ideal": "이상적인",
       "current": "현재",
       "labels": "레이블",

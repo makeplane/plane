@@ -6,14 +6,15 @@
 
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Telescope } from "lucide-react";
+import { UsageOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { Switch } from "@makeplane/propel/components/switch";
 import type { IInstance, IInstanceAdmin } from "@plane/types";
-import { Input, ToggleSwitch } from "@plane/ui";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
+import { setToast } from "@plane/blocks/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -45,7 +46,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
     await updateInstanceInfo(payload)
       .then(() =>
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success",
           message: "Settings updated successfully",
         })
@@ -71,28 +72,36 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
 
           <div className="flex flex-col gap-1">
             <h4 className="text-13 text-tertiary">Email</h4>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={instanceAdmins[0]?.user_detail?.email ?? ""}
-              placeholder="Admin email"
-              className="w-full cursor-not-allowed !text-placeholder"
-              autoComplete="on"
-              disabled
-            />
+            <div className="w-full">
+              <InputGroup size="lg">
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  size="lg"
+                  value={instanceAdmins[0]?.user_detail?.email ?? ""}
+                  placeholder="Admin email"
+                  autoComplete="on"
+                  disabled
+                />
+              </InputGroup>
+            </div>
           </div>
 
           <div className="flex flex-col gap-1">
             <h4 className="text-13 text-tertiary">Instance ID</h4>
-            <Input
-              id="instance_id"
-              name="instance_id"
-              type="text"
-              value={instance.instance_id}
-              className="w-full cursor-not-allowed rounded-md font-medium !text-placeholder"
-              disabled
-            />
+            <div className="w-full">
+              <InputGroup size="lg">
+                <Input
+                  id="instance_id"
+                  name="instance_id"
+                  type="text"
+                  size="lg"
+                  value={instance.instance_id}
+                  disabled
+                />
+              </InputGroup>
+            </div>
           </div>
         </div>
       </div>
@@ -103,7 +112,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
           <div className="flex grow items-center gap-4">
             <div className="shrink-0">
               <div className="flex size-11 items-center justify-center rounded-lg bg-layer-1">
-                <Telescope className="size-5 text-tertiary" />
+                <UsageOutline className="size-5 text-tertiary" />
               </div>
             </div>
             <div className="grow">
@@ -127,7 +136,13 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
               control={control}
               name="is_telemetry_enabled"
               render={({ field: { value, onChange } }) => (
-                <ToggleSwitch value={value ?? false} onChange={onChange} size="sm" disabled={isSubmitting} />
+                <Switch
+                  aria-label="Let Plane collect anonymous usage data"
+                  checked={value ?? false}
+                  onCheckedChange={onChange}
+                  size="sm"
+                  disabled={isSubmitting}
+                />
               )}
             />
           </div>
@@ -137,14 +152,14 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
       <div>
         <Button
           variant="primary"
-          size="lg"
+          size="md"
+          stretch="auto"
           onClick={() => {
             void handleSubmit(onSubmit)();
           }}
           loading={isSubmitting}
-        >
-          {isSubmitting ? "Saving" : "Save changes"}
-        </Button>
+          label={isSubmitting ? "Saving" : "Save changes"}
+        />
       </div>
     </div>
   );

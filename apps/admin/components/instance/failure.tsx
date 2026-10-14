@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 // assets
 import { AuthHeader } from "@/app/(all)/(home)/auth-header";
 import InstanceFailureDarkImage from "@/app/assets/instance/instance-failure-dark.svg?url";
@@ -34,9 +34,7 @@ export const InstanceFailureView = observer(function InstanceFailureView() {
             </p>
           </div>
           <div className="flex justify-center">
-            <Button size="lg" onClick={handleRetry}>
-              Retry
-            </Button>
+            <Button variant="primary" size="md" stretch="auto" onClick={handleRetry} label="Retry" />
           </div>
         </div>
       </div>
