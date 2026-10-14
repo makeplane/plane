@@ -7,6 +7,7 @@ from django.db import IntegrityError
 
 # Third party imports
 from rest_framework import status
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 
@@ -45,7 +46,7 @@ class StateListCreateAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_permissions(self):
-        if self.request.method == "GET":
+        if self.request.method in SAFE_METHODS:
             return [ProjectEntityPermission()]
         return [ProjectAdminPermission()]
 
@@ -173,7 +174,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_permissions(self):
-        if self.request.method == "GET":
+        if self.request.method in SAFE_METHODS:
             return [ProjectEntityPermission()]
         return [ProjectAdminPermission()]
 

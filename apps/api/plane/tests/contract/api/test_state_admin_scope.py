@@ -59,13 +59,15 @@ class TestStateV1AdminScope:
         list_url = _states_url(workspace.slug, project.id)
         detail_url = f"{list_url}{state.id}/"
 
-        assert member_client.get(list_url).status_code == status.HTTP_200_OK
-        assert member_client.get(detail_url).status_code == status.HTTP_200_OK
-        new_state = {"name": "New", "color": "#ffffff", "group": "started"}
-        assert member_client.post(list_url, new_state, format="json").status_code == status.HTTP_403_FORBIDDEN
-        patch = member_client.patch(detail_url, {"name": "Renamed", "default": True}, format="json")
-        assert patch.status_code == status.HTTP_403_FORBIDDEN
-        assert member_client.delete(detail_url).status_code == status.HTTP_403_FORBIDDEN
+        reads = [member_client.get(list_url), member_client.get(detail_url)]
+        writes = [
+            member_client.post(list_url, {"name": "New", "color": "#ffffff", "group": "started"}, format="json"),
+            member_client.patch(detail_url, {"name": "Renamed", "default": True}, format="json"),
+            member_client.delete(detail_url),
+        ]
+
+        assert [r.status_code for r in reads] == [status.HTTP_200_OK] * 2
+        assert [r.status_code for r in writes] == [status.HTTP_403_FORBIDDEN] * 3
 
         state.refresh_from_db()
         assert (state.name, state.default) == ("Backlog", False)
