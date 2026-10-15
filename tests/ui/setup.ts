@@ -28,7 +28,7 @@ if (!window.PointerEvent) {
     constructor(type: string, options: PointerEventInit = {}) {
       super(type, options);
       this.pointerId = options.pointerId ?? 1;
-      this.pointerType = options.pointerType ?? "mouse";
+      this.pointerType = options.pointerType ?? "";
       this.isPrimary = options.isPrimary ?? true;
     }
   }
