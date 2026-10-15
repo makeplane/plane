@@ -5,8 +5,14 @@
  */
 
 import { observer } from "mobx-react";
-import { CircleDashed, Microscope } from "lucide-react";
-import { AlertOctagonOutline, BarOutline, FolderOutline, SearchOutline } from "@makeplane/propel/icons";
+import {
+  AlertOctagonOutline,
+  AnalyticsOutline,
+  BarOutline,
+  CircleDashedOutline,
+  FolderOutline,
+  SearchOutline,
+} from "@makeplane/propel/icons";
 // plane imports
 import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -38,7 +44,7 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
     title: "Get a snapshot of each active cycle.",
     description:
       "Track high-level metrics for all active cycles, see their state of progress, and get a sense of scope against deadlines.",
-    icon: CircleDashed,
+    icon: CircleDashedOutline,
   },
   {
     key: "compare_burndowns",
@@ -64,7 +70,7 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
     title: "Stay ahead of blockers.",
     description:
       "Spot challenges from one project to another and see inter-cycle dependencies that aren’t obvious from any other view.",
-    icon: Microscope,
+    icon: AnalyticsOutline,
   },
 ];
 

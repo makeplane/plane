@@ -7,9 +7,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// lucide icons
-import { Circle } from "lucide-react";
-import { AddOutline, ArrowCollapseOutline, FullScreenOutline } from "@makeplane/propel/icons";
+// icons
+import { AddOutline, ArrowCollapseOutline, CircleOutline, FullScreenOutline } from "@makeplane/propel/icons";
 import { setToast } from "@plane/blocks/toast";
 import type { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
 import { useTranslation } from "@plane/i18n";
@@ -116,7 +115,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
         }`}
       >
         <div className="flex size-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-xs">
-          {icon ? icon : <Circle width={14} strokeWidth={2} />}
+          {icon ? icon : <CircleOutline width={14} height={14} />}
         </div>
 
         <div

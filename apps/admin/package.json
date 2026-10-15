@@ -33,7 +33,6 @@
     "@react-router/node": "catalog:",
     "isbot": "catalog:",
     "lodash-es": "catalog:",
-    "lucide-react": "catalog:",
     "mobx": "catalog:",
     "mobx-react": "catalog:",
     "next-themes": "catalog:",

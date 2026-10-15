@@ -7,7 +7,7 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowRightCircle } from "lucide-react";
+import { ArrowCircleRightOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Tabs } from "@makeplane/propel/components/tabs";
@@ -101,7 +101,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
             onClick={handleClose}
             aria-label={t("page_navigation_pane.close_button")}
           >
-            <ArrowRightCircle className="size-3.5" />
+            <ArrowCircleRightOutline className="size-3.5" />
           </button>
         </Tooltip>
       </div>

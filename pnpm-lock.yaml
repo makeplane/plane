@@ -590,9 +590,6 @@ importers:
       lodash-es:
         specifier: 4.18.1
         version: 4.18.1
-      lucide-react:
-        specifier: 'catalog:'
-        version: 0.469.0(react@19.2.8)
       mobx:
         specifier: 'catalog:'
         version: 6.12.0
@@ -871,9 +868,6 @@ importers:
       lodash-es:
         specifier: 4.18.1
         version: 4.18.1
-      lucide-react:
-        specifier: 'catalog:'
-        version: 0.469.0(react@19.2.8)
       mobx:
         specifier: 'catalog:'
         version: 6.12.0
@@ -1040,9 +1034,6 @@ importers:
       lodash-es:
         specifier: 4.18.1
         version: 4.18.1
-      lucide-react:
-        specifier: 'catalog:'
-        version: 0.469.0(react@19.2.8)
       mobx:
         specifier: 'catalog:'
         version: 6.12.0
@@ -1424,9 +1415,6 @@ importers:
       lowlight:
         specifier: 'catalog:'
         version: 3.3.0
-      lucide-react:
-        specifier: 'catalog:'
-        version: 0.469.0(react@19.2.8)
       prosemirror-codemark:
         specifier: 'catalog:'
         version: 0.4.2(prosemirror-inputrules@1.5.0)(prosemirror-model@1.25.12)(prosemirror-state@1.4.3)(prosemirror-view@1.42.6)
@@ -1716,9 +1704,6 @@ importers:
       lodash-es:
         specifier: 4.18.1
         version: 4.18.1
-      lucide-react:
-        specifier: 'catalog:'
-        version: 0.469.0(react@19.2.8)
       mdast:
         specifier: 'catalog:'
         version: 3.0.0

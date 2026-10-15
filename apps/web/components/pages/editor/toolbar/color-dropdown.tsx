@@ -5,8 +5,7 @@
  */
 
 import { memo } from "react";
-import { ChevronDown } from "lucide-react";
-import { DeactivatedOutline, TextOutline } from "@makeplane/propel/icons";
+import { ChevronDownOutline, DeactivatedOutline, TextOutline } from "@makeplane/propel/icons";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
@@ -58,7 +57,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
           />
         </span>
         <span className="inline-flex transition-transform duration-200 group-data-popup-open:rotate-180">
-          <Icon icon={ChevronDown} tint="secondary" />
+          <Icon icon={ChevronDownOutline} tint="secondary" />
         </span>
       </PopoverTrigger>
       <PopoverContent variant="rich" side="bottom" align="start">
