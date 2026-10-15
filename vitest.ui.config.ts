@@ -12,7 +12,11 @@ export default defineConfig({
     maxWorkers: 2,
     projects: ["web", "admin", "space"].map((app) => ({
       resolve: {
-        alias: { "@": path.resolve(__dirname, "apps", app) },
+        alias: {
+          "@": path.resolve(__dirname, "apps", app),
+          "next/link": path.resolve(__dirname, "apps", app, "app/compat/next/link.tsx"),
+          "next/navigation": path.resolve(__dirname, "apps", app, "app/compat/next/navigation.ts"),
+        },
       },
       test: {
         name: app,

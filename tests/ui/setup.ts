@@ -19,6 +19,21 @@ class TestResizeObserver {
 }
 
 vi.stubGlobal("ResizeObserver", TestResizeObserver);
+if (!window.PointerEvent) {
+  class TestPointerEvent extends MouseEvent {
+    readonly pointerId: number;
+    readonly pointerType: string;
+    readonly isPrimary: boolean;
+
+    constructor(type: string, options: PointerEventInit = {}) {
+      super(type, options);
+      this.pointerId = options.pointerId ?? 1;
+      this.pointerType = options.pointerType ?? "mouse";
+      this.isPrimary = options.isPrimary ?? true;
+    }
+  }
+  vi.stubGlobal("PointerEvent", TestPointerEvent);
+}
 Object.defineProperty(window, "matchMedia", {
   configurable: true,
   value: (query: string) => ({
