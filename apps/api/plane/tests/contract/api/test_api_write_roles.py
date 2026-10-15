@@ -118,7 +118,8 @@ class TestCommentEditDelete:
         with mock.patch("plane.api.views.issue.issue_activity"), mock.patch("plane.api.views.issue.model_activity"):
             resp = client.patch(url, {"comment_html": "<p>edited</p>"}, format="json")
             assert resp.status_code == status.HTTP_200_OK
-            assert client.delete(url).status_code == status.HTTP_204_NO_CONTENT
+            resp = client.delete(url)
+            assert resp.status_code == status.HTTP_204_NO_CONTENT
 
     @pytest.mark.parametrize("fixture_name", ["member_user", "guest_user"])
     def test_non_creator_non_admin_denied(
@@ -131,7 +132,8 @@ class TestCommentEditDelete:
         resp = client.patch(url, {"comment_html": "<p>x</p>"}, format="json")
         assert resp.status_code == status.HTTP_403_FORBIDDEN
         assert "error" in resp.data
-        assert client.delete(url).status_code == status.HTTP_403_FORBIDDEN
+        resp = client.delete(url)
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
         assert IssueComment.objects.filter(pk=comment.pk).exists()
 
     def test_non_creator_member_denied_on_peer_comment(
@@ -140,8 +142,10 @@ class TestCommentEditDelete:
         comment = _comment(workspace, project, issue, other_member_user)
         url = _comment_url(workspace, project, issue, comment)
         client = client_for(member_user)
-        assert client.patch(url, {"comment_html": "<p>x</p>"}, format="json").status_code == 403
-        assert client.delete(url).status_code == status.HTTP_403_FORBIDDEN
+        resp = client.patch(url, {"comment_html": "<p>x</p>"}, format="json")
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
+        resp = client.delete(url)
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
 
     def test_admin_can_edit_and_delete_any_comment(self, api_key_client, workspace, project, issue, member_user):
         comment = _comment(workspace, project, issue, member_user)
@@ -149,7 +153,8 @@ class TestCommentEditDelete:
         with mock.patch("plane.api.views.issue.issue_activity"), mock.patch("plane.api.views.issue.model_activity"):
             resp = api_key_client.patch(url, {"comment_html": "<p>mod</p>"}, format="json")
             assert resp.status_code == status.HTTP_200_OK
-            assert api_key_client.delete(url).status_code == status.HTTP_204_NO_CONTENT
+            resp = api_key_client.delete(url)
+            assert resp.status_code == status.HTTP_204_NO_CONTENT
 
     @pytest.mark.parametrize("fixture_name", ["member_user", "guest_user"])
     def test_creator_with_revoked_membership_denied(self, request, client_for, workspace, project, issue, fixture_name):
@@ -158,8 +163,10 @@ class TestCommentEditDelete:
         url = _comment_url(workspace, project, issue, comment)
         client = client_for(user)
         ProjectMember.objects.filter(project=project, member=user).update(is_active=False)
-        assert client.patch(url, {"comment_html": "<p>x</p>"}, format="json").status_code == status.HTTP_403_FORBIDDEN
-        assert client.delete(url).status_code == status.HTTP_403_FORBIDDEN
+        resp = client.patch(url, {"comment_html": "<p>x</p>"}, format="json")
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
+        resp = client.delete(url)
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
         assert IssueComment.objects.filter(pk=comment.pk).exists()
 
 
@@ -235,7 +242,8 @@ class TestAttachmentDelete:
         asset.refresh_from_db()
         assert asset.is_uploaded is True
         assert asset.created_by_id == create_user.id
-        assert client.delete(url).status_code == status.HTTP_403_FORBIDDEN
+        resp = client.delete(url)
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
         asset.refresh_from_db()
         assert asset.is_deleted is False
 
@@ -270,6 +278,21 @@ class TestProjectMemberRoleCap:
         assert resp.status_code == status.HTTP_400_BAD_REQUEST
         pm.refresh_from_db()
         assert pm.role == GUEST
+
+    @pytest.mark.parametrize("role", [ADMIN, MEMBER])
+    def test_cannot_reassign_elevated_row_to_workspace_guest_without_role(
+        self, api_key_client, workspace, project, role
+    ):
+        holder = _make_user(workspace, project, ADMIN, role)
+        guest = _make_user(workspace, project, GUEST, None)
+        pm = ProjectMember.objects.get(project=project, member=holder)
+        resp = api_key_client.patch(
+            f"{_members_url(workspace, project)}{pm.id}/", {"member": str(guest.id)}, format="json"
+        )
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+        pm.refresh_from_db()
+        assert pm.role == role
+        assert pm.member_id == holder.id
 
     def test_can_promote_workspace_member_to_admin(self, api_key_client, workspace, project, member_user):
         pm = ProjectMember.objects.get(project=project, member=member_user)

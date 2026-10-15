@@ -41,6 +41,8 @@ class ProjectMemberSerializer(BaseSerializer):
         # Mirrors ProjectMemberViewSet.partial_update: a project role cannot
         # exceed the target's workspace role (workspace guests stay guests).
         role = attrs.get("role")
+        if role is None and self.instance is not None:
+            role = self.instance.role
         member = attrs.get("member") or (self.instance.member if self.instance else None)
         slug = self.context.get("slug")
         if role is not None and member is not None and slug:
