@@ -11,7 +11,7 @@ from enum import Enum
 # Django imports
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 
 # Module imports
@@ -179,9 +179,12 @@ class Project(ChangeTrackerMixin, BaseModel):
 
         old_tz, new_tz = pytz.timezone(old_timezone), pytz.timezone(self.timezone)
         retimed = []
-        for intake_issue in IntakeIssue.objects.filter(
-            project_id=self.id, status=IntakeIssueStatus.SNOOZED, snoozed_till__isnull=False
-        ).only("id", "snoozed_till"):
+        # Row locks make a concurrent unsnooze wait, then re-check its filter against the retimed value.
+        for intake_issue in (
+            IntakeIssue.objects.select_for_update()
+            .filter(project_id=self.id, status=IntakeIssueStatus.SNOOZED, snoozed_till__isnull=False)
+            .only("id", "snoozed_till")
+        ):
             day = intake_issue.snoozed_till.astimezone(old_tz).date()
             intake_issue.snoozed_till = new_tz.localize(datetime.combine(day, time.min))
             retimed.append(intake_issue)
@@ -198,11 +201,15 @@ class Project(ChangeTrackerMixin, BaseModel):
             self.timezone = workspace.timezone
 
         # Read before super().save(): the change tracker resets once it returns.
-        old_timezone = self.old_values.get("timezone") if not is_creating and self.has_changed("timezone") else None
+        update_fields = kwargs.get("update_fields")
+        timezone_persisted = update_fields is None or "timezone" in update_fields
+        if is_creating or not timezone_persisted or not self.has_changed("timezone"):
+            return super().save(*args, **kwargs)
 
-        super().save(*args, **kwargs)
-
-        if old_timezone:
+        old_timezone = self.old_values.get("timezone")
+        # One transaction so the unsnooze beat task never sees the new timezone with old-timezone snoozes.
+        with transaction.atomic():
+            super().save(*args, **kwargs)
             self._retime_intake_snoozes(old_timezone)
 
 

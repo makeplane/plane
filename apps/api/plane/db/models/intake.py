@@ -87,6 +87,14 @@ class IntakeIssue(ChangeTrackerMixin, ProjectBaseModel):
         verbose_name_plural = "IntakeIssues"
         db_table = "intake_issues"
         ordering = ("-created_at",)
+        indexes = [
+            # Small partial index for the unsnooze beat task, which scans for lapsed snoozes every few minutes.
+            models.Index(
+                fields=["snoozed_till"],
+                condition=models.Q(status=IntakeIssueStatus.SNOOZED),
+                name="intake_issue_snoozed_till_idx",
+            ),
+        ]
 
     def __str__(self):
         """Return name of the Issue"""

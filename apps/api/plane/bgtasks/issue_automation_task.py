@@ -171,4 +171,4 @@ def unsnooze_expired_intake_issues():
         return updated_count
     except Exception as e:
         log_exception(e)
-        return
+        return 0

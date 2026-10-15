@@ -91,3 +91,15 @@ def test_project_timezone_change_retimes_snoozes(make_row):
     snoozed.refresh_from_db()
     # Same day, now midnight in New York (EDT = UTC-04:00).
     assert snoozed.snoozed_till == _utc(2026, 10, 5, 4, 0)
+
+
+def test_unsaved_timezone_change_leaves_snoozes(make_row):
+    snoozed = make_row()
+    before = _snooze(snoozed, "2026-10-05")
+
+    project = snoozed.project
+    project.timezone = "America/New_York"
+    project.save(update_fields=["name"])  # timezone not persisted
+
+    snoozed.refresh_from_db()
+    assert snoozed.snoozed_till == before
