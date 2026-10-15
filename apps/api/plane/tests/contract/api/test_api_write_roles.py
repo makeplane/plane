@@ -151,8 +151,19 @@ class TestCommentEditDelete:
             assert resp.status_code == status.HTTP_200_OK
             assert api_key_client.delete(url).status_code == status.HTTP_204_NO_CONTENT
 
+    @pytest.mark.parametrize("fixture_name", ["member_user", "guest_user"])
+    def test_creator_with_revoked_membership_denied(self, request, client_for, workspace, project, issue, fixture_name):
+        user = request.getfixturevalue(fixture_name)
+        comment = _comment(workspace, project, issue, user)
+        url = _comment_url(workspace, project, issue, comment)
+        client = client_for(user)
+        ProjectMember.objects.filter(project=project, member=user).update(is_active=False)
+        assert client.patch(url, {"comment_html": "<p>x</p>"}, format="json").status_code == status.HTTP_403_FORBIDDEN
+        assert client.delete(url).status_code == status.HTTP_403_FORBIDDEN
+        assert IssueComment.objects.filter(pk=comment.pk).exists()
 
-def _attachment(workspace, project, issue, author):
+
+def _attachment(workspace, project, issue, author, is_uploaded=True):
     asset = FileAsset(
         workspace=workspace,
         project=project,
@@ -160,7 +171,7 @@ def _attachment(workspace, project, issue, author):
         entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
         asset="uploads/x.txt",
         attributes={"name": "x.txt", "size": 1},
-        is_uploaded=True,
+        is_uploaded=is_uploaded,
     )
     asset.save(created_by_id=author.id)
     return asset
@@ -197,6 +208,36 @@ class TestAttachmentDelete:
         with mock.patch("plane.api.views.issue.issue_activity"):
             resp = api_key_client.delete(_attachment_url(workspace, project, issue, asset))
         assert resp.status_code == status.HTTP_204_NO_CONTENT
+
+    @pytest.mark.parametrize("fixture_name", ["member_user", "guest_user"])
+    def test_creator_with_revoked_membership_denied(self, request, client_for, workspace, project, issue, fixture_name):
+        user = request.getfixturevalue(fixture_name)
+        asset = _attachment(workspace, project, issue, user)
+        client = client_for(user)
+        ProjectMember.objects.filter(project=project, member=user).update(is_active=False)
+        resp = client.delete(_attachment_url(workspace, project, issue, asset))
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
+        asset.refresh_from_db()
+        assert asset.is_deleted is False
+
+    def test_patch_confirm_preserves_creator_and_blocks_takeover(
+        self, client_for, workspace, project, issue, create_user, member_user
+    ):
+        asset = _attachment(workspace, project, issue, create_user, is_uploaded=False)
+        url = _attachment_url(workspace, project, issue, asset)
+        client = client_for(member_user)
+        with (
+            mock.patch("plane.api.views.issue.issue_activity"),
+            mock.patch("plane.api.views.issue.get_asset_object_metadata"),
+        ):
+            resp = client.patch(url, {"is_uploaded": True}, format="json")
+        assert resp.status_code == status.HTTP_204_NO_CONTENT
+        asset.refresh_from_db()
+        assert asset.is_uploaded is True
+        assert asset.created_by_id == create_user.id
+        assert client.delete(url).status_code == status.HTTP_403_FORBIDDEN
+        asset.refresh_from_db()
+        assert asset.is_deleted is False
 
 
 def _members_url(ws, project):

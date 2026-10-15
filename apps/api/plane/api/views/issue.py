@@ -179,6 +179,10 @@ def user_has_issue_permission(user_id, project_id, issue=None, allowed_roles=Non
     return qs.exists()
 
 
+def is_active_project_member(user_id, project_id):
+    return ProjectMember.objects.filter(project_id=project_id, member_id=user_id, is_active=True).exists()
+
+
 def is_restricted_guest(user_id, project_id, slug):
     """A "restricted guest" holds the GUEST role on a project that has not
     enabled `guest_view_all_features`, and may only see work items they
@@ -1706,6 +1710,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
                 examples=[ISSUE_COMMENT_EXAMPLE],
             ),
             400: INVALID_REQUEST_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
             404: COMMENT_NOT_FOUND_RESPONSE,
             409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
@@ -1721,7 +1726,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
             raise Issue.DoesNotExist()
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         if not (
-            issue_comment.created_by_id == request.user.id
+            (issue_comment.created_by_id == request.user.id and is_active_project_member(request.user.id, project_id))
             or ProjectMember.objects.filter(
                 project_id=project_id,
                 member_id=request.user.id,
@@ -1792,6 +1797,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         ],
         responses={
             204: OpenApiResponse(description="Work item comment deleted successfully"),
+            403: FORBIDDEN_RESPONSE,
             404: COMMENT_NOT_FOUND_RESPONSE,
         },
     )
@@ -1806,7 +1812,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
             raise Issue.DoesNotExist()
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         if not (
-            issue_comment.created_by_id == request.user.id
+            (issue_comment.created_by_id == request.user.id and is_active_project_member(request.user.id, project_id))
             or ProjectMember.objects.filter(
                 project_id=project_id,
                 member_id=request.user.id,
@@ -2205,6 +2211,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         ],
         responses={
             204: OpenApiResponse(description="Work item attachment deleted successfully"),
+            403: FORBIDDEN_RESPONSE,
             404: ATTACHMENT_NOT_FOUND_RESPONSE,
         },
     )
@@ -2226,13 +2233,19 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
             entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
         )
 
-        # only the attachment's creator or a project admin may delete it
-        if not user_has_issue_permission(
-            request.user.id,
-            project_id=project_id,
-            issue=issue_attachment,
-            allowed_roles=[ROLE.ADMIN.value],
-            allow_creator=True,
+        # only the attachment's creator (while still an active project member)
+        # or a project admin may delete it
+        if not (
+            (
+                issue_attachment.created_by_id == request.user.id
+                and is_active_project_member(request.user.id, project_id)
+            )
+            or user_has_issue_permission(
+                request.user.id,
+                project_id=project_id,
+                allowed_roles=[ROLE.ADMIN.value],
+                allow_creator=False,
+            )
         ):
             return Response(
                 {"error": "You are not allowed to delete this attachment"},
@@ -2414,7 +2427,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
 
             # Update the attachment
             issue_attachment.is_uploaded = True
-            issue_attachment.created_by = request.user
+            # do NOT reassign created_by here -- it is also the creator-or-admin delete credential
 
         # Get the storage metadata
         if not issue_attachment.storage_metadata:
