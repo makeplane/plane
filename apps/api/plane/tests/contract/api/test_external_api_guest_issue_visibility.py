@@ -484,7 +484,7 @@ class TestWorkItemLinkDetailGuestScope:
 
 @pytest.fixture
 def own_comment(db, workspace, project, own_issue, guest_user):
-    return IssueComment.objects.create(
+    comment = IssueComment(
         workspace=workspace,
         project=project,
         issue=own_issue,
@@ -492,13 +492,15 @@ def own_comment(db, workspace, project, own_issue, guest_user):
         comment_html="<p>Guest's own comment</p>",
         access="INTERNAL",
     )
+    comment.save(created_by_id=guest_user.id)
+    return comment
 
 
 @pytest.fixture
 def foreign_comment(db, workspace, project, foreign_issue, create_user):
     """An INTERNAL comment on the foreign issue; guest scoping is per issue,
     independent of the comment's access value."""
-    return IssueComment.objects.create(
+    comment = IssueComment(
         workspace=workspace,
         project=project,
         issue=foreign_issue,
@@ -506,6 +508,8 @@ def foreign_comment(db, workspace, project, foreign_issue, create_user):
         comment_html="<p>Internal comment on someone else's issue</p>",
         access="INTERNAL",
     )
+    comment.save(created_by_id=create_user.id)
+    return comment
 
 
 def _comments_url(workspace, project, issue):
@@ -700,17 +704,19 @@ class TestWorkItemActivityDetailGuestScope:
 
 
 def _make_attachment(workspace, project, issue, created_by):
-    return FileAsset.objects.create(
+    asset = FileAsset(
         attributes={"name": "f.txt", "type": "text/plain", "size": 10},
         asset="f.txt",
         size=10,
         workspace=workspace,
         project=project,
         issue=issue,
-        created_by=created_by,
         entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
         is_uploaded=True,
     )
+    # BaseModel.save() overwrites created_by from the request context; pass the id explicitly
+    asset.save(created_by_id=created_by.id)
+    return asset
 
 
 @pytest.fixture
@@ -979,17 +985,18 @@ class TestWorkItemAttachmentWriteGuestScope:
         )
 
     @pytest.mark.django_db
-    def test_guest_with_view_all_allowed_matching_foreign_parent_delete(
+    def test_guest_with_view_all_still_denied_delete_of_non_authored_attachment(
         self, guest_client, workspace, project, foreign_issue, foreign_attachment
     ):
-        """Positive control: guest_view_all_features=True lifts the restriction."""
+        """guest_view_all_features lifts visibility scoping only; deleting
+        someone else's attachment still needs creator-or-admin."""
         _enable_guest_view_all(project)
         response = guest_client.delete(_attachment_detail_url(workspace, project, foreign_issue, foreign_attachment))
-        assert response.status_code == status.HTTP_204_NO_CONTENT, (
+        assert response.status_code == status.HTTP_403_FORBIDDEN, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         foreign_attachment.refresh_from_db()
-        assert foreign_attachment.is_deleted is True
+        assert foreign_attachment.is_deleted is False
 
     @pytest.mark.django_db
     def test_guest_with_view_all_allowed_matching_foreign_parent_patch(
@@ -1304,7 +1311,7 @@ class TestWorkItemCommentWriteGuestScope:
         assert not IssueComment.objects.filter(pk=own_comment.pk).exists()
 
     @pytest.mark.django_db
-    def test_guest_with_view_all_allowed_patch_on_foreign_issue_comment(
+    def test_guest_with_view_all_denied_patch_on_foreign_issue_comment_not_authored(
         self, guest_client, workspace, project, foreign_issue, foreign_comment
     ):
         _enable_guest_view_all(project)
@@ -1313,7 +1320,7 @@ class TestWorkItemCommentWriteGuestScope:
             data=_comment_patch_payload(),
             format="json",
         )
-        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        assert response.status_code == status.HTTP_403_FORBIDDEN, f"Got {response.status_code}: {response.data!r}"
 
     @pytest.mark.django_db
     def test_admin_allowed_patch_on_foreign_issue_comment(
