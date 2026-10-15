@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // icons
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 import { MembersOutline } from "@makeplane/propel/icons";
 // plane ui
 import { Avatar } from "@makeplane/propel/components/avatar";
@@ -26,7 +26,7 @@ type Props = {
 type AvatarProps = {
   showTooltip: boolean;
   members: TPublicMember[];
-  icon?: LucideIcon;
+  icon?: IconGlyph;
 };
 
 export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps) {

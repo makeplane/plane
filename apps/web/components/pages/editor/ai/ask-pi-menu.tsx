@@ -5,8 +5,7 @@
  */
 
 import { useState } from "react";
-import { CircleArrowUp } from "lucide-react";
-import { AiStar1Outline, CornerRightDownOutline, RefreshOutline } from "@makeplane/propel/icons";
+import { AiStar1Outline, CornerRightDownOutline, RefreshOutline, UpgradeOutline } from "@makeplane/propel/icons";
 // ui
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 // components
@@ -111,7 +110,7 @@ export function AskPiMenu(props: Props) {
             placeholder="Tell AI what to do..."
           />
           <span className="grid size-4 flex-shrink-0 place-items-center">
-            <CircleArrowUp className="size-4 text-secondary" />
+            <UpgradeOutline className="size-4 text-secondary" />
           </span>
         </div>
       </div>

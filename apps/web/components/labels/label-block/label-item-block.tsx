@@ -6,7 +6,7 @@
 
 import type { MutableRefObject } from "react";
 import { useRef, useState } from "react";
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 // plane helpers
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
@@ -25,7 +25,7 @@ import { cn } from "@plane/utils";
 import { LabelName } from "./label-name";
 
 export interface ICustomMenuItem {
-  CustomIcon: LucideIcon | React.FC<ISvgIcons>;
+  CustomIcon: IconGlyph | React.FC<ISvgIcons>;
   onClick: (label: IIssueLabel) => void;
   isVisible: boolean;
   text: string;

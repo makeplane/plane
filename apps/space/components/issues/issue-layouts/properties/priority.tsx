@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { SignalHigh } from "lucide-react";
+import { PriorityHigh } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // types
 import { PriorityIcon } from "@plane/blocks/icons";
@@ -55,7 +55,7 @@ export function IssueBlockPriority({
             className={cn("size-3", { "size-3.5": !shouldShowName })}
           />
         ) : (
-          <SignalHigh className="size-3" />
+          <PriorityHigh className="size-3" />
         )}
         {shouldShowName && <span className="pl-2 text-13">{t(priority_detail?.titleTranslationKey || "")}</span>}
       </div>

@@ -6,7 +6,7 @@
 
 import type { FormEvent } from "react";
 import { useState } from "react";
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 
 // plane imports
 import { ETabIndices, EPageAccess } from "@plane/constants";
@@ -43,7 +43,7 @@ type Props = {
 const PAGE_ACCESS_SPECIFIERS: {
   key: EPageAccess;
   i18n_label: string;
-  icon: LucideIcon | React.FC<ISvgIcons>;
+  icon: IconGlyph | React.FC<ISvgIcons>;
 }[] = [
   { key: EPageAccess.PUBLIC, i18n_label: "common.access.public", icon: GlobeOutline },
   { key: EPageAccess.PRIVATE, i18n_label: "common.access.private", icon: LockOutline },

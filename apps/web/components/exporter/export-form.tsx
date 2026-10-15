@@ -8,7 +8,6 @@ import { useState } from "react";
 import { intersection } from "lodash-es";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-// import { Info } from "lucide-react";
 import {
   EUserPermissions,
   EUserPermissionsLevel,

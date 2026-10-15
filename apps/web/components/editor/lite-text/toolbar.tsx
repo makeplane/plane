@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useState, useCallback } from "react";
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // editor
@@ -37,7 +37,7 @@ type Props = {
 };
 
 type TCommentAccessType = {
-  icon: LucideIcon | React.FC<ISvgIcons>;
+  icon: IconGlyph | React.FC<ISvgIcons>;
   key: EIssueCommentAccessSpecifier;
   label: "Private" | "Public";
 };

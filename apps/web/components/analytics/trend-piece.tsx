@@ -6,7 +6,7 @@
 
 // plane package imports
 import React from "react";
-import { TrendingDown, TrendingUp } from "lucide-react";
+import { TrendDownOutline, TrendUpOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 // plane web components
 
@@ -72,11 +72,11 @@ function TrendPiece(props: Props) {
     >
       {trendIconVisible &&
         (isOnTrack ? (
-          <TrendingUp className={config.icon} />
+          <TrendUpOutline className={config.icon} />
         ) : isOffTrack ? (
-          <TrendingDown className={config.icon} />
+          <TrendDownOutline className={config.icon} />
         ) : (
-          <TrendingDown className={config.icon} />
+          <TrendDownOutline className={config.icon} />
         ))}
       {Math.round(Math.abs(percentage))}%
     </div>
