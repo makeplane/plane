@@ -7,12 +7,10 @@
 import { observer } from "mobx-react";
 // plane ui
 import { StateGroupIcon } from "@plane/blocks/icons";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TStateGroups } from "@plane/types";
-// plane utils
-import { cn } from "@plane/utils";
 //hooks
 import { useStates } from "@/hooks/store/use-state";
+import { ReadOnlyProperty } from "./read-only-property";
 
 type Props = {
   shouldShowBorder?: boolean;
@@ -37,17 +35,11 @@ export const IssueBlockState = observer(function IssueBlockState(props: Props) {
   if (!state) return null;
 
   return (
-    <Tooltip label={`State: ${state.name}`}>
-      <div
-        className={cn("flex h-full w-full items-center justify-between gap-1 rounded-sm px-2.5 py-1 text-11", {
-          "border-[0.5px] border-strong": shouldShowBorder,
-        })}
-      >
-        <div className="flex w-full items-center gap-1.5">
-          <StateGroupIcon stateGroup={state.group} />
-          <div className="text-11">{state.name}</div>
-        </div>
-      </div>
-    </Tooltip>
+    <ReadOnlyProperty
+      icon={<StateGroupIcon stateGroup={state.group} />}
+      label={state.name}
+      tooltip={`State: ${state.name}`}
+      shouldShowBorder={shouldShowBorder}
+    />
   );
 });

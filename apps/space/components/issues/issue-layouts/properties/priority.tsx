@@ -4,14 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import { PriorityHigh } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // types
 import { PriorityIcon } from "@plane/blocks/icons";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssuePriorities } from "@plane/types";
 // constants
-import { cn, getIssuePriorityFilters } from "@plane/utils";
+import { getIssuePriorityFilters } from "@plane/utils";
+import { ReadOnlyProperty } from "./read-only-property";
 
 export function IssueBlockPriority({
   priority,
@@ -24,41 +23,14 @@ export function IssueBlockPriority({
   const { t } = useTranslation();
   const priority_detail = priority != null ? getIssuePriorityFilters(priority) : null;
 
-  const priorityClasses = {
-    urgent: "bg-layer-2 text-priority-urgent border-priority-urgent px-1",
-    high: "bg-layer-2 text-priority-high border-priority-high",
-    medium: "bg-layer-2 text-priority-medium border-priority-medium",
-    low: "bg-layer-2 text-priority-low border-priority-low",
-    none: "bg-layer-2 text-priority-none border-priority-none",
-  };
-
-  if (priority_detail === null) return <></>;
+  if (!priority_detail) return null;
+  const priorityLabel = t(priority_detail.titleTranslationKey);
 
   return (
-    <Tooltip label={`Priority: ${t(priority_detail?.titleTranslationKey || "")}`}>
-      <div
-        className={cn(
-          "flex h-full items-center gap-1.5 rounded-sm border-[0.5px] px-2 py-0.5 text-11",
-          priorityClasses[priority ?? "none"],
-          {
-            // compact the icons if text is hidden
-            "px-0.5": !shouldShowName,
-            // highlight the whole button if text is hidden and priority is urgent
-            "border-priority-urgent": priority === "urgent" && shouldShowName,
-          }
-        )}
-      >
-        {priority ? (
-          <PriorityIcon
-            priority={priority}
-            // increase the icon size if text is hidden
-            className={cn("size-3", { "size-3.5": !shouldShowName })}
-          />
-        ) : (
-          <PriorityHigh className="size-3" />
-        )}
-        {shouldShowName && <span className="pl-2 text-13">{t(priority_detail?.titleTranslationKey || "")}</span>}
-      </div>
-    </Tooltip>
+    <ReadOnlyProperty
+      icon={<PriorityIcon priority={priority} />}
+      label={shouldShowName ? priorityLabel : undefined}
+      tooltip={`Priority: ${priorityLabel}`}
+    />
   );
 }
