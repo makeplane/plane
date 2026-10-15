@@ -524,18 +524,9 @@ importers:
 
   .:
     devDependencies:
-      '@testing-library/react':
-        specifier: 'catalog:'
-        version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@testing-library/user-event':
-        specifier: 'catalog:'
-        version: 14.6.1(@testing-library/dom@10.4.2)
       husky:
         specifier: 'catalog:'
         version: 9.1.7
-      jsdom:
-        specifier: 'catalog:'
-        version: 23.2.0
       lint-staged:
         specifier: 'catalog:'
         version: 16.2.7
@@ -551,9 +542,6 @@ importers:
       turbo:
         specifier: 'catalog:'
         version: 2.10.11
-      vitest:
-        specifier: 'catalog:'
-        version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@22.12.0)(@vitest/coverage-v8@4.1.11)(jsdom@23.2.0)(vite@8.0.16(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
 
   apps/admin:
     dependencies:
@@ -1536,7 +1524,7 @@ importers:
         version: 19.2.8
       react-i18next:
         specifier: 'catalog:'
-        version: 16.6.6(i18next@25.10.9(typescript@5.8.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.8.3)
+        version: 16.6.6(i18next@25.10.9(typescript@5.8.3))(react@19.2.8)(typescript@5.8.3)
     devDependencies:
       '@plane/typescript-config':
         specifier: workspace:*
@@ -13697,7 +13685,7 @@ snapshots:
     dependencies:
       react: 19.2.8
 
-  react-i18next@16.6.6(i18next@25.10.9(typescript@5.8.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.8.3):
+  react-i18next@16.6.6(i18next@25.10.9(typescript@5.8.3))(react@19.2.8)(typescript@5.8.3):
     dependencies:
       '@babel/runtime': 7.29.7
       html-parse-stringify: 3.0.1
@@ -13705,7 +13693,6 @@ snapshots:
       react: 19.2.8
       use-sync-external-store: 1.6.0(react@19.2.8)
     optionalDependencies:
-      react-dom: 19.2.8(react@19.2.8)
       typescript: 5.8.3
 
   react-is@19.2.8: {}
