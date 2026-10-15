@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useFilter } from "@makeplane/propel/components/combobox";
 import { ComboboxField } from "@makeplane/propel/components/combobox-field";
-import type { ComboboxFieldProps, ComboboxTriggerWidth, FieldSize } from "@makeplane/propel/components/combobox-field";
+import type { ComboboxTriggerWidth, FieldSize } from "@makeplane/propel/components/combobox-field";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // hooks
@@ -32,7 +32,6 @@ type TTimezoneSelect = {
   label?: string;
   size?: FieldSize;
   width?: ComboboxTriggerWidth;
-  sizing?: ComboboxFieldProps<string>["sizing"];
   className?: string;
   /** @deprecated No effect: the Propel trigger owns its chrome. Kept until call sites drop it. */
   buttonClassName?: string;
@@ -66,7 +65,6 @@ export const TimezoneSelect = observer(function TimezoneSelect(props: TTimezoneS
     label = "Select a timezone",
     size = "lg",
     width,
-    sizing,
     className = "",
     disabled = false,
   } = props;
@@ -88,7 +86,6 @@ export const TimezoneSelect = observer(function TimezoneSelect(props: TTimezoneS
         aria-label={label}
         size={size}
         width={width}
-        sizing={sizing}
         items={options}
         value={value ?? null}
         onValueChange={(nextValue) => {
