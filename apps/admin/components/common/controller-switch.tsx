@@ -29,14 +29,14 @@ export function ControllerSwitch<T extends FieldValues>(props: Props<T>) {
 
   return (
     <div className="flex items-center justify-between gap-1">
-      <h4 id={labelId} className="text-sm text-custom-text-300">
+      <h4 id={labelId} className="text-body-xs-regular text-tertiary">
         Refresh user attributes from {label} during sign in
       </h4>
       <div className="relative">
         <Controller
           control={control}
           name={name as FieldPath<T>}
-          render={({ field: { value, onChange } }) => {
+          render={({ field: { value, onChange, onBlur, ref } }) => {
             const parsedValue = Number.parseInt(typeof value === "string" ? value : String(value ?? "0"), 10);
             const isOn = !Number.isNaN(parsedValue) && parsedValue !== 0;
             return (
@@ -45,6 +45,8 @@ export function ControllerSwitch<T extends FieldValues>(props: Props<T>) {
                 onCheckedChange={() => onChange(isOn ? "0" : "1")}
                 size="sm"
                 aria-labelledby={labelId}
+                onBlur={onBlur}
+                ref={ref}
               />
             );
           }}
