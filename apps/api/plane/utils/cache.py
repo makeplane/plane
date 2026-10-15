@@ -69,7 +69,13 @@ def invalidate_cache_directly(path=None, url_params=False, user=True, request=No
         cache.delete(key)
 
 
-def invalidate_cache(path=None, url_params=False, user=True, multiple=False):
+def invalidate_cache(path=None, url_params=False, user=True, multiple=False, after_write=False):
+    """Invalidate a cached response before the view runs.
+
+    With ``after_write``, invalidate again once the view returns a successful response,
+    so a read that cached the old data while the write was in flight doesn't survive it.
+    """
+
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
@@ -81,7 +87,16 @@ def invalidate_cache(path=None, url_params=False, user=True, multiple=False):
                 request=request,
                 multiple=multiple,
             )
-            return view_func(instance, request, *args, **kwargs)
+            response = view_func(instance, request, *args, **kwargs)
+            if after_write and response.status_code < 400:
+                invalidate_cache_directly(
+                    path=path,
+                    url_params=url_params,
+                    user=user,
+                    request=request,
+                    multiple=multiple,
+                )
+            return response
 
         return _wrapped_view
 
