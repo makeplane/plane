@@ -38,6 +38,7 @@ export function EmojiRoot(props: EmojiRootProps) {
 
   return (
     <EmojiPicker.Root
+      columns={8}
       data-slot="emoji-picker"
       className="isolate flex h-full w-full flex-col rounded-md border-none"
       onEmojiSelect={(val) => onChange(val.emoji)}
@@ -63,29 +64,38 @@ export function EmojiRoot(props: EmojiRootProps) {
           data-slot="emoji-picker-list"
           className={cn("pb-2 select-none")}
           components={{
-            CategoryHeader: ({ category, ...props }) => (
+            CategoryHeader: ({ category, ...headerProps }) => (
               // frimousse renders headers sticky inside the scrolling viewport, so they need an
               // opaque background or rows scroll visibly underneath the label text.
               <div
                 data-slot="emoji-picker-list-category-header"
                 className="bg-layer-2 px-3 pb-1.5 text-caption-sm-medium text-tertiary"
-                {...props}
+                {...headerProps}
               >
                 {category.label}
               </div>
             ),
-            Row: ({ children, ...props }) => (
-              <div data-slot="emoji-picker-list-row" className="scroll-my-1.5 px-1.5" {...props}>
+            Row: ({ children, style, ...rowProps }) => (
+              <div
+                data-slot="emoji-picker-list-row"
+                className="scroll-my-1.5 px-1.5"
+                {...rowProps}
+                style={{
+                  ...style,
+                  display: "grid",
+                  gridTemplateColumns: "repeat(var(--frimousse-list-columns), 2rem)",
+                }}
+              >
                 {children}
               </div>
             ),
-            Emoji: ({ emoji, ...props }) => (
+            Emoji: ({ emoji, ...emojiProps }) => (
               <button
                 type="button"
                 aria-label={emoji?.label ?? emoji?.emoji}
                 data-slot="emoji-picker-list-emoji"
                 className="data-active:bg-accent flex size-8 items-center justify-center rounded-md text-body-md-regular"
-                {...props}
+                {...emojiProps}
               >
                 {emoji.emoji}
               </button>

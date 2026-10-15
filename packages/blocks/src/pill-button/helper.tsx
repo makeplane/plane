@@ -6,6 +6,7 @@
 
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
+import type { PillSize } from "@makeplane/propel/elements/pill";
 
 const pillButtonVariants = cva(
   "group inline-flex items-center justify-start rounded-md border border-subtle-1 bg-layer-2 text-secondary transition-colors outline-none hover:border-strong hover:bg-layer-2-hover active:border-strong active:bg-layer-2-active disabled:pointer-events-none disabled:cursor-not-allowed disabled:border-subtle-1 disabled:bg-layer-transparent disabled:text-disabled",
@@ -26,6 +27,13 @@ const pillButtonVariants = cva(
 );
 
 export type PillButtonSize = NonNullable<VariantProps<typeof pillButtonVariants>["size"]>;
+
+/** Keep CE's existing 20/24/28px size names while using Propel's pill scale. */
+export const PROPEL_PILL_SIZE: Record<PillButtonSize, PillSize> = {
+  sm: "xs",
+  md: "sm",
+  lg: "md",
+};
 
 // Primary helper — returns the full CVA className for a pill-button trigger.
 export function getPillButtonClassName(size: PillButtonSize, isActive?: boolean, className?: string): string {
