@@ -36,7 +36,7 @@ export function ControllerSwitch<T extends FieldValues>(props: Props<T>) {
         <Controller
           control={control}
           name={name as FieldPath<T>}
-          render={({ field: { value, onChange, onBlur, ref } }) => {
+          render={({ field: { value, onChange } }) => {
             const parsedValue = Number.parseInt(typeof value === "string" ? value : String(value ?? "0"), 10);
             const isOn = !Number.isNaN(parsedValue) && parsedValue !== 0;
             return (
@@ -45,8 +45,6 @@ export function ControllerSwitch<T extends FieldValues>(props: Props<T>) {
                 onCheckedChange={() => onChange(isOn ? "0" : "1")}
                 size="sm"
                 aria-labelledby={labelId}
-                onBlur={onBlur}
-                ref={ref}
               />
             );
           }}

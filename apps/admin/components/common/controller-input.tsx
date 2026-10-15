@@ -48,7 +48,7 @@ export function ControllerInput<TFieldValues extends FieldValues = FieldValues>(
       control={control}
       name={name}
       rules={{ required: required ? `${label} is required.` : false }}
-      render={({ field: { value, onChange, onBlur, ref }, fieldState }) => (
+      render={({ field: { value, onChange, ref }, fieldState }) => (
         <InputField
           size="lg"
           orientation="vertical"
@@ -59,7 +59,6 @@ export function ControllerInput<TFieldValues extends FieldValues = FieldValues>(
           required={required}
           value={value ?? ""}
           onChange={onChange}
-          onBlur={onBlur}
           ref={ref}
           error={error ? (fieldState.error?.message ?? `${label} is invalid.`) : undefined}
           hint={description}
