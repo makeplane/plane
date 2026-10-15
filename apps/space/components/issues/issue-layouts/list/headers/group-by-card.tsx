@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { CircleDashed } from "lucide-react";
+import { CircleDashedOutline } from "@makeplane/propel/icons";
 
 interface IHeaderGroupByCard {
   groupID: string;
@@ -26,7 +26,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
         role="button"
       >
         <div className="grid size-3.5 shrink-0 place-items-center overflow-hidden">
-          {icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
+          {icon ?? <CircleDashedOutline className="size-3.5" />}
         </div>
 
         <div className="relative flex w-full cursor-pointer items-center gap-1 overflow-hidden">

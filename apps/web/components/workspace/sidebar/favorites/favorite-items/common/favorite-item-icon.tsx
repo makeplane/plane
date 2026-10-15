@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 // plane imports
 import type { TLogoProps } from "@plane/types";
 import { FavoriteFolderIcon } from "@plane/blocks/icons";
@@ -12,7 +12,7 @@ import { CyclesOutline, ModuleOutline, PagesOutline, ProjectsOutline, ViewsOutli
 import type { ISvgIcons } from "@plane/blocks/icons";
 import { Logo } from "@plane/blocks/emoji-icon-picker";
 
-const ICON_MAP: Record<string, React.FC<ISvgIcons> | LucideIcon> = {
+const ICON_MAP: Record<string, React.FC<ISvgIcons> | IconGlyph> = {
   page: PagesOutline,
   project: ProjectsOutline,
   view: ViewsOutline,

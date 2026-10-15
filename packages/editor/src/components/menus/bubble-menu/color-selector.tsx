@@ -5,8 +5,7 @@
  */
 
 import type { Editor } from "@tiptap/react";
-import { Ban } from "lucide-react";
-import { TextOutline } from "@makeplane/propel/icons";
+import { DeactivatedOutline, TextOutline } from "@makeplane/propel/icons";
 import { useMemo } from "react";
 // plane utils
 import { cn } from "@plane/utils";
@@ -84,7 +83,7 @@ export function BubbleMenuColorSelector(props: Props) {
               className="grid size-6 flex-shrink-0 place-items-center rounded-sm border-[0.5px] border-strong-1 text-tertiary transition-colors hover:bg-layer-1"
               onClick={() => TextColorItem(editor).command({ color: undefined })}
             >
-              <Ban className="size-4" />
+              <DeactivatedOutline className="size-4" />
             </button>
           </div>
         </div>
@@ -107,7 +106,7 @@ export function BubbleMenuColorSelector(props: Props) {
               className="grid size-6 flex-shrink-0 place-items-center rounded-sm border-[0.5px] border-strong-1 text-tertiary transition-colors hover:bg-layer-1"
               onClick={() => BackgroundColorItem(editor).command({ color: undefined })}
             >
-              <Ban className="size-4" />
+              <DeactivatedOutline className="size-4" />
             </button>
           </div>
         </div>
