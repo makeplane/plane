@@ -160,7 +160,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
                 setIsOpen(true);
               }}
             >
-              <AddOutline width={14} height={14} />
+              <AddOutline width={14} />
             </button>
           ))}
 

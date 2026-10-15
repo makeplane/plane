@@ -142,11 +142,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover"
             onClick={() => handleCollapsedGroups("group_by", column_id)}
           >
-            {verticalAlignPosition ? (
-              <FullScreenOutline width={14} height={14} />
-            ) : (
-              <ArrowCollapseOutline width={14} height={14} />
-            )}
+            {verticalAlignPosition ? <FullScreenOutline width={14} /> : <ArrowCollapseOutline width={14} />}
           </button>
         )}
 
@@ -188,7 +184,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
                 setIsOpen(true);
               }}
             >
-              <AddOutline width={14} height={14} />
+              <AddOutline width={14} />
             </button>
           ))}
       </div>
