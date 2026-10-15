@@ -1683,6 +1683,19 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         if guest_cannot_view_issue(request.user.id, issue, slug):
             raise Issue.DoesNotExist()
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
+        if not (
+            issue_comment.created_by_id == request.user.id
+            or ProjectMember.objects.filter(
+                project_id=project_id,
+                member_id=request.user.id,
+                role=ROLE.ADMIN.value,
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "You are not allowed to edit this comment"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
 
@@ -1755,6 +1768,19 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         if guest_cannot_view_issue(request.user.id, issue, slug):
             raise Issue.DoesNotExist()
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
+        if not (
+            issue_comment.created_by_id == request.user.id
+            or ProjectMember.objects.filter(
+                project_id=project_id,
+                member_id=request.user.id,
+                role=ROLE.ADMIN.value,
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "You are not allowed to delete this comment"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
         issue_comment.delete()
         issue_activity.delay(
@@ -2160,19 +2186,6 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         Records deletion activity and triggers metadata cleanup.
         """
         issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-        # if the request user is creator or admin then delete the attachment
-        if not user_has_issue_permission(
-            request.user.id,
-            project_id=project_id,
-            issue=issue,
-            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
-            allow_creator=True,
-        ):
-            return Response(
-                {"error": "You are not allowed to delete this attachment"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         if guest_cannot_view_issue(request.user.id, issue, slug):
             raise Issue.DoesNotExist()
 
@@ -2183,6 +2196,20 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
             issue_id=issue_id,
             entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
         )
+
+        # only the attachment's creator or a project admin may delete it
+        if not user_has_issue_permission(
+            request.user.id,
+            project_id=project_id,
+            issue=issue_attachment,
+            allowed_roles=[ROLE.ADMIN.value],
+            allow_creator=True,
+        ):
+            return Response(
+                {"error": "You are not allowed to delete this attachment"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         issue_attachment.is_deleted = True
         issue_attachment.deleted_at = timezone.now()
         issue_attachment.save()
