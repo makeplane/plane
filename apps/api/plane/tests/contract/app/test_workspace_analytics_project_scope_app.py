@@ -14,6 +14,7 @@ from unittest.mock import patch
 from uuid import uuid4
 
 import pytest
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -138,3 +139,19 @@ class TestWorkspaceAnalyticsProjectScope:
             analytic_export_task(email=user.email, data=data, slug=workspace.slug, user_id=str(user.id))
         rows = send.call_args.args[3]
         assert rows[1:] == expected_rows
+
+    @pytest.mark.django_db
+    def test_soft_deleted_membership_excludes_project(
+        self, session_client, create_user, workspace, issue, analytic_view
+    ):
+        # Soft-deleted membership row that is still is_active=True
+        ProjectMember.objects.filter(project=issue.project, member=create_user).update(deleted_at=timezone.now())
+
+        assert session_client.get(ANALYTICS_URL.format(slug=workspace.slug)).data["total"] == 0
+        assert session_client.get(DEFAULT_ANALYTICS_URL.format(slug=workspace.slug)).data["total_issues"] == 0
+        saved_url = SAVED_ANALYTICS_URL.format(slug=workspace.slug, analytic_id=analytic_view.id)
+        assert session_client.get(saved_url).data["total"] == 0
+        data = {"x_axis": "state_id", "y_axis": "issue_count"}
+        with patch("plane.bgtasks.analytic_plot_export.send_export_email") as send:
+            analytic_export_task(email=create_user.email, data=data, slug=workspace.slug, user_id=str(create_user.id))
+        assert send.call_args.args[3][1:] == []

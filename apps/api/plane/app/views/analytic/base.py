@@ -61,6 +61,7 @@ class AnalyticsEndpoint(BaseAPIView):
         filters.update(
             project__project_projectmember__member=request.user,
             project__project_projectmember__is_active=True,
+            project__project_projectmember__deleted_at__isnull=True,
         )
 
         # Get the issues for the workspace with the additional filters applied
@@ -201,6 +202,7 @@ class SavedAnalyticEndpoint(BaseAPIView):
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
             project__project_projectmember__is_active=True,
+            project__project_projectmember__deleted_at__isnull=True,
             **filter,
         )
 
@@ -266,6 +268,7 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
             project__project_projectmember__is_active=True,
+            project__project_projectmember__deleted_at__isnull=True,
             **filters,
         )
 

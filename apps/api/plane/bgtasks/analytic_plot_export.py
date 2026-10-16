@@ -354,6 +354,7 @@ def analytic_export_task(email, data, slug, user_id):
         filters.update(
             project__project_projectmember__member_id=user_id,
             project__project_projectmember__is_active=True,
+            project__project_projectmember__deleted_at__isnull=True,
         )
         queryset = Issue.issue_objects.filter(**filters, workspace__slug=slug)
 
