@@ -31,6 +31,18 @@ from celery import shared_task
 from bs4 import BeautifulSoup
 
 
+def activity_value_as_str(value):
+    """
+    Serialize activity old/new values for notification / email payloads.
+
+    Avoid str(None) → "None", which was rendered as literal comment text in
+    issue-update emails when comments were deleted (new_value left null).
+    """
+    if value is None:
+        return ""
+    return str(value)
+
+
 # =========== Issue Description Html Parsing and notification Functions ======================
 
 
@@ -178,8 +190,8 @@ def create_mention_notification(project, notification_comment, issue, actor_id, 
                 "verb": str(activity.get("verb")),
                 "field": str(activity.get("field")),
                 "actor": str(activity.get("actor_id")),
-                "new_value": str(activity.get("new_value")),
-                "old_value": str(activity.get("old_value")),
+                "new_value": activity_value_as_str(activity.get("new_value")),
+                "old_value": activity_value_as_str(activity.get("old_value")),
                 "old_identifier": (str(activity.get("old_identifier")) if activity.get("old_identifier") else None),
                 "new_identifier": (str(activity.get("new_identifier")) if activity.get("new_identifier") else None),
             },
@@ -385,8 +397,8 @@ def notifications(
                                     "verb": str(issue_activity.get("verb")),
                                     "field": str(issue_activity.get("field")),
                                     "actor": str(issue_activity.get("actor_id")),
-                                    "new_value": str(issue_activity.get("new_value")),
-                                    "old_value": str(issue_activity.get("old_value")),
+                                    "new_value": activity_value_as_str(issue_activity.get("new_value")),
+                                    "old_value": activity_value_as_str(issue_activity.get("old_value")),
                                     "issue_comment": str(
                                         issue_comment.comment_stripped if issue_comment is not None else ""
                                     ),
@@ -428,8 +440,8 @@ def notifications(
                                         "verb": str(issue_activity.get("verb")),
                                         "field": str(issue_activity.get("field")),
                                         "actor": str(issue_activity.get("actor_id")),
-                                        "new_value": str(issue_activity.get("new_value")),
-                                        "old_value": str(issue_activity.get("old_value")),
+                                        "new_value": activity_value_as_str(issue_activity.get("new_value")),
+                                        "old_value": activity_value_as_str(issue_activity.get("old_value")),
                                         "issue_comment": str(
                                             issue_comment.comment_stripped if issue_comment is not None else ""
                                         ),
@@ -500,8 +512,8 @@ def notifications(
                                             "verb": str(issue_activity.get("verb")),
                                             "field": str("mention"),
                                             "actor": str(issue_activity.get("actor_id")),
-                                            "new_value": str(issue_activity.get("new_value")),
-                                            "old_value": str(issue_activity.get("old_value")),
+                                            "new_value": activity_value_as_str(issue_activity.get("new_value")),
+                                            "old_value": activity_value_as_str(issue_activity.get("old_value")),
                                             "old_identifier": (
                                                 str(issue_activity.get("old_identifier"))
                                                 if issue_activity.get("old_identifier")
@@ -553,8 +565,8 @@ def notifications(
                                         "verb": str(last_activity.verb),
                                         "field": str(last_activity.field),
                                         "actor": str(last_activity.actor_id),
-                                        "new_value": str(last_activity.new_value),
-                                        "old_value": str(last_activity.old_value),
+                                        "new_value": activity_value_as_str(last_activity.new_value),
+                                        "old_value": activity_value_as_str(last_activity.old_value),
                                         "old_identifier": (
                                             str(issue_activity.get("old_identifier"))
                                             if issue_activity.get("old_identifier")
@@ -590,8 +602,8 @@ def notifications(
                                             "verb": str(last_activity.verb),
                                             "field": "mention",
                                             "actor": str(last_activity.actor_id),
-                                            "new_value": str(last_activity.new_value),
-                                            "old_value": str(last_activity.old_value),
+                                            "new_value": activity_value_as_str(last_activity.new_value),
+                                            "old_value": activity_value_as_str(last_activity.old_value),
                                             "old_identifier": (
                                                 str(issue_activity.get("old_identifier"))
                                                 if issue_activity.get("old_identifier")
@@ -639,8 +651,8 @@ def notifications(
                                                 "verb": str(issue_activity.get("verb")),
                                                 "field": str("mention"),
                                                 "actor": str(issue_activity.get("actor_id")),
-                                                "new_value": str(issue_activity.get("new_value")),
-                                                "old_value": str(issue_activity.get("old_value")),
+                                                "new_value": activity_value_as_str(issue_activity.get("new_value")),
+                                                "old_value": activity_value_as_str(issue_activity.get("old_value")),
                                                 "old_identifier": (
                                                     str(issue_activity.get("old_identifier"))
                                                     if issue_activity.get("old_identifier")
