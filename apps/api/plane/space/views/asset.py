@@ -112,7 +112,8 @@ class EntityAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         entity_type = request.data.get("entity_type", "")
-        entity_identifier = request.data.get("entity_identifier")
+        # The client sends "" for a comment that does not exist yet; keep such uploads unbound
+        entity_identifier = request.data.get("entity_identifier") or None
 
         # Clamp the client-provided size to [1, FILE_SIZE_LIMIT] so the signed
         # upload policy cannot exceed the instance limit and always carries a
@@ -240,6 +241,12 @@ class EntityBulkAssetEndpoint(BaseAPIView):
         # Check if the project is published
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
+
+        if not deploy_board.is_comments_enabled:
+            return Response(
+                {"error": "Comments are not enabled for this project"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Assets may only be bound to the caller's own comment on this board
         if not _is_own_board_comment(entity_id, deploy_board, request.user):

@@ -147,6 +147,16 @@ class TestSpaceAssetUploadScope:
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert not FileAsset.objects.filter(project=setup["project"]).exists()
 
+    def test_upload_with_empty_comment_id_is_unbound(self, setup):
+        """The Spaces client sends entity_identifier="" before the comment exists."""
+        response = _client(setup["commenter"]).post(
+            UPLOAD_URL.format(anchor=setup["board"].anchor),
+            _upload_payload(entity_identifier=""),
+            format="json",
+        )
+        assert response.status_code == status.HTTP_200_OK
+        assert FileAsset.objects.get(id=response.data["asset_id"]).comment_id is None
+
     def test_comment_image_upload_and_bind(self, setup):
         """The Spaces comment-image flow: upload, then bind to the caller's new comment."""
         client = _client(setup["commenter"])
@@ -175,6 +185,20 @@ class TestSpaceAssetUploadScope:
 @pytest.mark.contract
 @pytest.mark.django_db
 class TestSpaceAssetBulkBindScope:
+    def test_bulk_refused_when_comments_disabled(self, setup):
+        board = setup["board"]
+        board.is_comments_enabled = False
+        board.save()
+        asset = _asset(setup["project"], setup["commenter"])
+        response = _client(setup["commenter"]).post(
+            BULK_URL.format(anchor=board.anchor, entity_id=setup["own_comment"].id),
+            {"asset_ids": [str(asset.id)]},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        asset.refresh_from_db()
+        assert asset.comment_id is None
+
     def test_bulk_does_not_bind_others_asset(self, setup):
         asset = _asset(setup["project"], _user("owner"))
         response = _client(setup["commenter"]).post(
