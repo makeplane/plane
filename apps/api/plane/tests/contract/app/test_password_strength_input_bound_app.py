@@ -2,10 +2,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Password strength checks score only a bounded prefix of the password.
-
-zxcvbn's cost grows superlinearly with input length, so sign-up must not feed it
-the whole submitted password. Long passwords are still accepted and stored in full.
+"""Password strength checks score at most ZXCVBN_MAX_LENGTH characters from each end
+of the password. Long passwords are still accepted and stored in full.
 """
 
 import uuid
@@ -52,7 +50,7 @@ def django_client():
 @pytest.mark.contract
 @pytest.mark.parametrize("url_name", ["sign-up", "space-sign-up"])
 @patch("plane.authentication.adapter.base.user_activation_email")
-def test_sign_up_scores_bounded_password_prefix(_mock_email, url_name, django_client, setup_instance):
+def test_sign_up_scores_bounded_password_windows(_mock_email, url_name, django_client, setup_instance):
     email = f"{url_name}@plane.so"
     with patch.object(matching, "omnimatch", wraps=matching.omnimatch) as omnimatch:
         django_client.post(reverse(url_name), {"email": email, "password": LONG_STRONG_PASSWORD})
@@ -60,6 +58,15 @@ def test_sign_up_scores_bounded_password_prefix(_mock_email, url_name, django_cl
     assert omnimatch.called
     assert max(len(call.args[0]) for call in omnimatch.call_args_list) <= ZXCVBN_MAX_LENGTH
     assert User.objects.get(email=email).check_password(LONG_STRONG_PASSWORD)
+
+
+@pytest.mark.contract
+@patch("plane.authentication.adapter.base.user_activation_email")
+def test_sign_up_accepts_long_password_with_strong_tail(_mock_email, django_client, setup_instance):
+    password = "password" * 16 + "Xk9#mQ2$vL7@pR4!"
+    django_client.post(reverse("sign-up"), {"email": "tail@plane.so", "password": password})
+
+    assert User.objects.get(email="tail@plane.so").check_password(password)
 
 
 @pytest.mark.contract

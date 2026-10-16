@@ -5,9 +5,11 @@
 # Third party imports
 from zxcvbn import zxcvbn
 
-# zxcvbn's cost grows superlinearly with input length, so only a bounded prefix is scored.
+# Score at most this many characters from each end of the password, so the cost of
+# scoring stays bounded. The password is strong if either window is strong.
 ZXCVBN_MAX_LENGTH = 128
 
 
 def is_password_strong(password):
-    return zxcvbn(password[:ZXCVBN_MAX_LENGTH])["score"] >= 3
+    windows = {password[:ZXCVBN_MAX_LENGTH], password[-ZXCVBN_MAX_LENGTH:]}
+    return any(zxcvbn(window)["score"] >= 3 for window in windows)
