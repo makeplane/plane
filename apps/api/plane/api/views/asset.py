@@ -444,13 +444,14 @@ class GenericAssetEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Generate presigned URL for GET; inline only for the stored object's real (safe) type
+            # Generate presigned URL for GET. Inline only for an allow-listed image type, which S3Storage
+            # pins as the response Content-Type; any other type downloads.
             storage = S3Storage(request=request, is_server=True)
             presigned_url = storage.generate_presigned_url(
                 object_name=asset.asset.name,
                 filename=asset.attributes.get("name"),
                 disposition="inline",
-                content_type=(asset.storage_metadata or {}).get("ContentType"),
+                content_type=asset.attributes.get("type"),
             )
 
             return Response(

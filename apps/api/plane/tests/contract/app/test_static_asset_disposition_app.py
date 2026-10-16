@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""The unauthenticated static asset endpoint must only serve inline what the stored
-object really is, and only for safe image types. The client-editable
-``attributes['type']`` must not decide it."""
+"""Asset URLs are served inline only for allow-listed image types, with the response
+Content-Type pinned to that type. Any other type, or a missing type, is served as an
+attachment with no Content-Type override."""
 
 from unittest import mock
 
@@ -17,20 +17,22 @@ from plane.db.models import FileAsset
 @pytest.mark.contract
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "storage_metadata, expected_disposition, expected_type",
+    "claimed_type, expected_disposition, expected_type",
     [
-        ({"ContentType": "image/svg+xml"}, "attachment", None),
-        ({"ContentType": "text/html; charset=utf-8"}, "attachment", None),
-        ({"size": 10}, "attachment", None),
-        ({"ContentType": "image/png"}, "inline", "image/png"),
+        ("image/png", "inline", "image/png"),
+        ("image/svg+xml", "attachment", None),
+        ("text/html", "attachment", None),
+        (None, "attachment", None),
     ],
 )
-def test_static_asset_disposition_follows_stored_type(
-    workspace, create_user, storage_metadata, expected_disposition, expected_type
+def test_static_asset_disposition_follows_allow_list(
+    workspace, create_user, claimed_type, expected_disposition, expected_type
 ):
+    attributes = {"name": "a.png", "size": 10}
+    if claimed_type:
+        attributes["type"] = claimed_type
     asset = FileAsset.objects.create(
-        # Client-claimed type, editable through the PATCH handlers
-        attributes={"name": "a.png", "type": "image/png", "size": 10},
+        attributes=attributes,
         asset=f"{workspace.id}/avatar",
         size=10,
         workspace=workspace,
@@ -38,7 +40,6 @@ def test_static_asset_disposition_follows_stored_type(
         created_by=create_user,
         entity_type=FileAsset.EntityTypeContext.USER_AVATAR,
         is_uploaded=True,
-        storage_metadata=storage_metadata,
     )
 
     with mock.patch("plane.settings.storage.boto3") as mock_boto3:

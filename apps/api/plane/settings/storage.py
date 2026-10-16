@@ -123,9 +123,10 @@ class S3Storage(S3Boto3Storage):
     ):
         """Generate a presigned URL to share an S3 object.
 
-        Inline is honoured only when ``content_type`` (the stored object's type) is an
-        inline-safe image, and that type is pinned on the response. Anything else,
-        including SVG and HTML, is served as an attachment.
+        Inline is honoured only when ``content_type`` is in ``INLINE_SAFE_MIME_TYPES``,
+        and that type is then pinned as the response Content-Type, whatever the stored
+        object's own type is. Anything else, including SVG and HTML, or a missing type,
+        is served as an attachment.
         """
         if expiration is None:
             expiration = self.signed_url_expiration

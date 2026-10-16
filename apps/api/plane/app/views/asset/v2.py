@@ -516,13 +516,14 @@ class StaticFileAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the presigned URL; inline only for the stored object's real (safe) type
+        # Get the presigned URL. Inline only for an allow-listed image type, which S3Storage
+        # pins as the response Content-Type; any other type downloads.
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
         signed_url = storage.generate_presigned_url(
             object_name=asset.asset.name,
             disposition="inline",
-            content_type=(asset.storage_metadata or {}).get("ContentType"),
+            content_type=asset.attributes.get("type"),
         )
         # Redirect to the signed URL
         return HttpResponseRedirect(signed_url)
