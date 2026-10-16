@@ -242,6 +242,22 @@ if os.environ.get("ENABLE_READ_REPLICA", "0") == "1":
 REDIS_URL = os.environ.get("REDIS_URL")
 REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
 
+
+def _redis_ssl_kwargs():
+    """
+    TLS options for rediss:// connections. The server certificate and hostname are
+    verified against the system CA bundle, or REDIS_SSL_CA_CERTS when set.
+    REDIS_SSL_CERT_REQS=none turns verification off.
+    """
+    cert_reqs = os.environ.get("REDIS_SSL_CERT_REQS", "").strip().lower() or "required"
+    kwargs = {"ssl_cert_reqs": cert_reqs, "ssl_check_hostname": cert_reqs != "none"}
+    if os.environ.get("REDIS_SSL_CA_CERTS"):
+        kwargs["ssl_ca_certs"] = os.environ["REDIS_SSL_CA_CERTS"]
+    return kwargs
+
+
+REDIS_SSL_KWARGS = _redis_ssl_kwargs()
+
 if REDIS_SSL:
     CACHES = {
         "default": {
@@ -249,7 +265,7 @@ if REDIS_SSL:
             "LOCATION": REDIS_URL,
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                "CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": False},
+                "CONNECTION_POOL_KWARGS": REDIS_SSL_KWARGS,
             },
         }
     }
