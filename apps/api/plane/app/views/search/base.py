@@ -174,12 +174,14 @@ class GlobalSearchEndpoint(BaseAPIView):
                 q |= Q(**{f"{field}__icontains": query})
 
         pages = (
-            # Guests only see pages they own unless guest_view_all_features
+            # Guests only see pages they own unless guest_view_all_features;
+            # private pages are owner-only, as in PageViewSet
             Page.objects.filter(
                 q,
                 Q(projects__project_projectmember__role__gt=ROLE.GUEST.value)
                 | Q(projects__guest_view_all_features=True)
                 | Q(owned_by=self.request.user),
+                Q(owned_by=self.request.user) | Q(access=Page.PUBLIC_ACCESS),
                 projects__project_projectmember__member=self.request.user,
                 projects__project_projectmember__is_active=True,
                 projects__project_projectmember__deleted_at__isnull=True,

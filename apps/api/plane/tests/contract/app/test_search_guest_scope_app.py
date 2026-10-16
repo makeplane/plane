@@ -7,7 +7,8 @@
 In a project with ``guest_view_all_features=False`` a GUEST only sees the
 issues they created and the pages and views they own, matching the project
 list endpoints. Search (``search-issues``, ``search`` and ``entity-search``)
-applies the same rule per result project.
+applies the same rule per result project. Global search also keeps private
+pages owner-only for every project member, as the page list does.
 """
 
 from uuid import uuid4
@@ -134,3 +135,36 @@ class TestSearchGuestScope:
         results = _search(session_client, workspace, project, endpoint)
         for entity, ids in results.items():
             assert {own[entity], foreign[entity]} <= ids, entity
+
+
+@pytest.fixture
+def member(db, workspace, project):
+    unique_id = uuid4().hex[:8]
+    user = User.objects.create(email=f"member-{unique_id}@plane.so", username=f"member_{unique_id}")
+    WorkspaceMember.objects.create(workspace=workspace, member=user, role=15)
+    ProjectMember.objects.create(project=project, member=user, workspace=workspace, role=15)
+    client = APIClient()
+    client.force_authenticate(user=user)
+    return user, client
+
+
+def _page(workspace, project, owner, access):
+    page = Page.objects.create(workspace=workspace, owned_by=owner, name=f"page {uuid4().hex[:6]}", access=access)
+    ProjectPage.objects.create(workspace=workspace, project=project, page=page)
+    return str(page.id)
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+@pytest.mark.parametrize("endpoint", ["global", "global-project"])
+class TestGlobalSearchPrivatePages:
+    def test_private_pages_are_owner_only(self, workspace, project, create_user, member, endpoint):
+        user, client = member
+        others_private = _page(workspace, project, create_user, Page.PRIVATE_ACCESS)
+        others_public = _page(workspace, project, create_user, Page.PUBLIC_ACCESS)
+        own_private = _page(workspace, project, user, Page.PRIVATE_ACCESS)
+
+        ids = _search(client, workspace, project, endpoint)["page"]
+
+        assert others_private not in ids
+        assert {others_public, own_private} <= ids
