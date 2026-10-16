@@ -50,7 +50,8 @@ from plane.authentication.utils.host import user_ip
 from plane.bgtasks.user_deactivation_email_task import user_deactivation_email
 from plane.utils.host import base_host
 from plane.bgtasks.user_email_update_task import send_email_update_magic_code, send_email_update_confirmation
-from plane.authentication.rate_limit import EmailVerificationThrottle
+from plane.authentication.rate_limit import AuthenticationThrottle, EmailVerificationThrottle
+from plane.authentication.provider.credentials.magic_code import MagicCodeProvider
 
 
 logger = logging.getLogger("plane")
@@ -69,7 +70,9 @@ class UserEndpoint(BaseViewSet):
         Apply rate limiting to specific endpoints.
         """
         if self.action == "generate_email_verification_code":
-            return [EmailVerificationThrottle()]
+            return [EmailVerificationThrottle(), AuthenticationThrottle()]
+        if self.action == "update_email":
+            return [AuthenticationThrottle()]
         return super().get_throttles()
 
     @method_decorator(cache_control(private=True, max_age=12))
@@ -158,6 +161,8 @@ class UserEndpoint(BaseViewSet):
             # Store in cache with 10 minute expiration
             cache_data = json.dumps({"token": token})
             cache.set(cache_key, cache_data, timeout=600)
+            # Each newly issued code starts with a fresh verify-attempt budget.
+            cache.delete(f"{cache_key}:verify_attempts")
 
             # Send magic code to the new email
             send_email_update_magic_code.delay(new_email, token)
@@ -209,7 +214,12 @@ class UserEndpoint(BaseViewSet):
             data = json.loads(cached_data)
             stored_token = data.get("token")
 
-            if str(stored_token) != str(code):
+            if not secrets.compare_digest(str(stored_token).encode(), str(code).encode()):
+                # Atomically count wrong codes; invalidate the code once the cap is reached.
+                attempts_key = f"{cache_key}:verify_attempts"
+                cache.add(attempts_key, 0, timeout=600)
+                if cache.incr(attempts_key) >= MagicCodeProvider.MAX_VERIFY_ATTEMPTS:
+                    cache.delete_many([cache_key, attempts_key])
                 return Response(
                     {"error": "Invalid verification code"},
                     status=status.HTTP_400_BAD_REQUEST,
