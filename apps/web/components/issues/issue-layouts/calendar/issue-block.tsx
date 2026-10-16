@@ -101,7 +101,8 @@ export const CalendarIssueBlock = observer(
     return (
       <Popover>
         <PopoverTrigger
-          openOnHover
+          openOnHover={!isMobile}
+          openOnClick={!isMobile}
           delay={100}
           render={
             <ControlLink
@@ -109,7 +110,7 @@ export const CalendarIssueBlock = observer(
               href={workItemLink}
               onClick={() => handleIssuePeekOverview(issue)}
               className="block w-full rounded-sm border-b border-subtle text-13 text-primary hover:border-subtle-1 md:border-[1px]"
-              disabled={!!issue?.tempId || isMobile}
+              disabled={!!issue?.tempId}
               ref={ref}
             >
               <>
