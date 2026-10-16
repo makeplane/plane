@@ -646,11 +646,25 @@ class BasePaginator:
         except ValueError:
             raise ParseError(detail="Invalid per_page parameter.")
 
-        max_per_page = max(max_per_page, default_per_page)
+        max_per_page = self._effective_max_per_page(max_per_page, default_per_page)
+        # A non-positive per_page reaches OffsetPaginator.get_result() unmodified.
+        # A negative value produces a negative slice bound
+        # (queryset[offset : offset + per_page]), which raises Django's unhandled
+        # "Negative indexing is not supported" (HTTP 500) — the same crash class
+        # the cursor-bound check below closes, just reachable on every paginated
+        # endpoint via a plain query param. A zero value reaches
+        # math.ceil(count / limit) with limit=0 and raises an unhandled
+        # ZeroDivisionError (HTTP 500) instead.
+        if per_page <= 0:
+            raise ParseError(detail="Invalid per_page value. Must be greater than zero.")
         if per_page > max_per_page:
             raise ParseError(detail=f"Invalid per_page value. Cannot exceed {max_per_page}.")
 
         return per_page
+
+    @staticmethod
+    def _effective_max_per_page(max_per_page, default_per_page):
+        return max(max_per_page, default_per_page)
 
     def paginate(
         self,
@@ -678,6 +692,17 @@ class BasePaginator:
         try:
             input_cursor = cursor_cls.from_string(request.GET.get(self.cursor_name, f"{per_page}:0:0"))
         except ValueError:
+            raise ParseError(detail="Invalid cursor parameter.")
+
+        # Bound the client-supplied cursor before it drives any slicing. The grouped
+        # paginators use cursor.value as the per-group page size
+        # (stop = offset + (cursor.value or limit) + 1). Left unbounded, a negative value
+        # slices the queryset with a negative stop -> "Negative indexing is not supported"
+        # (HTTP 500), and a huge value fetches far more than max_per_page rows per group
+        # (max_per_page cap bypass / resource-exhaustion DoS). cursor.offset is the page
+        # index and must be non-negative.
+        effective_max_per_page = self._effective_max_per_page(max_per_page, default_per_page)
+        if not (0 <= input_cursor.value <= effective_max_per_page) or input_cursor.offset < 0:
             raise ParseError(detail="Invalid cursor parameter.")
 
         if not paginator:
