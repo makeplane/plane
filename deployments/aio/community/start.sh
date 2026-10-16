@@ -219,6 +219,11 @@ main(){
         esac
     done < plane.env
 
+    # Recreate log dirs at boot. A host bind of /app/logs replaces the
+    # directories baked into the image, and supervisord refuses to start
+    # if stdout_logfile's parent path is missing.
+    mkdir -p /app/logs/access /app/logs/error
+
     /usr/local/bin/supervisord -c /etc/supervisor/conf.d/supervisor.conf
 }
 
