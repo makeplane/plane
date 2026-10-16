@@ -8,7 +8,8 @@ In a project with ``guest_view_all_features=False`` a GUEST only sees the
 issues they created and the pages and views they own, matching the project
 list endpoints. Search (``search-issues``, ``search`` and ``entity-search``)
 applies the same rule per result project. Global search also keeps private
-pages owner-only for every project member, as the page list does.
+pages and views owner-only for every project member, as the page and view
+lists do.
 """
 
 from uuid import uuid4
@@ -84,7 +85,7 @@ def _search(client, workspace, project, endpoint):
         response = client.get(f"/api/workspaces/{slug}/projects/{project.id}/search-issues/")
         results = {"issue": response.data}
     elif endpoint == "issue-search-workspace":
-        # workspace_search covers every project the caller belongs to, whatever the URL project
+        # search applies each result project's guest rule, independent of the URL project
         response = client.get(f"/api/workspaces/{slug}/projects/{uuid4()}/search-issues/", {"workspace_search": "true"})
         results = {"issue": response.data}
     elif endpoint in ("global", "global-project"):
@@ -154,10 +155,17 @@ def _page(workspace, project, owner, access):
     return str(page.id)
 
 
+def _view(workspace, project, owner, access):
+    view = IssueView.objects.create(
+        workspace=workspace, project=project, owned_by=owner, name=f"view {uuid4().hex[:6]}", access=access
+    )
+    return str(view.id)
+
+
 @pytest.mark.contract
 @pytest.mark.django_db
 @pytest.mark.parametrize("endpoint", ["global", "global-project"])
-class TestGlobalSearchPrivatePages:
+class TestGlobalSearchPrivateAccess:
     def test_private_pages_are_owner_only(self, workspace, project, create_user, member, endpoint):
         user, client = member
         others_private = _page(workspace, project, create_user, Page.PRIVATE_ACCESS)
@@ -165,6 +173,17 @@ class TestGlobalSearchPrivatePages:
         own_private = _page(workspace, project, user, Page.PRIVATE_ACCESS)
 
         ids = _search(client, workspace, project, endpoint)["page"]
+
+        assert others_private not in ids
+        assert {others_public, own_private} <= ids
+
+    def test_private_views_are_owner_only(self, workspace, project, create_user, member, endpoint):
+        user, client = member
+        others_private = _view(workspace, project, create_user, 0)
+        others_public = _view(workspace, project, create_user, 1)
+        own_private = _view(workspace, project, user, 0)
+
+        ids = _search(client, workspace, project, endpoint)["issue_view"]
 
         assert others_private not in ids
         assert {others_public, own_private} <= ids

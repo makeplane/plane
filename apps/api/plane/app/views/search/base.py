@@ -226,12 +226,14 @@ class GlobalSearchEndpoint(BaseAPIView):
             for field in fields:
                 q |= Q(**{f"{field}__icontains": query})
 
-        # Guests only see views they own unless guest_view_all_features
+        # Guests only see views they own unless guest_view_all_features;
+        # private views are owner-only, as in IssueViewViewSet
         issue_views = IssueView.objects.filter(
             q,
             Q(project__project_projectmember__role__gt=ROLE.GUEST.value)
             | Q(project__guest_view_all_features=True)
             | Q(owned_by=self.request.user),
+            Q(owned_by=self.request.user) | Q(access=1),
             project__project_projectmember__member=self.request.user,
             project__project_projectmember__is_active=True,
             project__project_projectmember__deleted_at__isnull=True,
