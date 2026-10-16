@@ -112,6 +112,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
                     handleLabelDelete={handleLabelDelete}
                     isLabelGroup
                     dragHandleRef={dragHandleRef}
+                    disabled={!isEditable}
                   />
                 )}
 
