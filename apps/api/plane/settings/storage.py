@@ -6,6 +6,9 @@
 import os
 import uuid
 
+# Django imports
+from django.conf import settings
+
 # Third party imports
 import boto3
 from botocore.exceptions import ClientError
@@ -116,19 +119,27 @@ class S3Storage(S3Boto3Storage):
         http_method="GET",
         disposition="inline",
         filename=None,
+        content_type=None,
     ):
-        """Generate a presigned URL to share an S3 object"""
+        """Generate a presigned URL to share an S3 object.
+
+        Inline is honoured only when ``content_type`` (the stored object's type) is an
+        inline-safe image, and that type is pinned on the response. Anything else,
+        including SVG and HTML, is served as an attachment.
+        """
         if expiration is None:
             expiration = self.signed_url_expiration
-        content_disposition = self._get_content_disposition(disposition, filename)
+        params = {"Bucket": self.aws_storage_bucket_name, "Key": str(object_name)}
+        content_type = (content_type or "").split(";")[0].strip().lower()
+        if disposition == "inline" and content_type in settings.INLINE_SAFE_MIME_TYPES:
+            params["ResponseContentType"] = content_type
+        else:
+            disposition = "attachment"
+        params["ResponseContentDisposition"] = self._get_content_disposition(disposition, filename)
         try:
             response = self.s3_client.generate_presigned_url(
                 "get_object",
-                Params={
-                    "Bucket": self.aws_storage_bucket_name,
-                    "Key": str(object_name),
-                    "ResponseContentDisposition": content_disposition,
-                },
+                Params=params,
                 ExpiresIn=expiration,
                 HttpMethod=http_method,
             )
