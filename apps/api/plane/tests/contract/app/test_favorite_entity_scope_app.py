@@ -8,6 +8,8 @@ Favorites only point at entities the user can see.
 Every favorite endpoint requires the favorited project, cycle, module, view or
 page to belong to the URL workspace (and URL project) and to be visible to the
 caller: an active project member, with private pages and views owner-only.
+Workspace views (no project) need active workspace membership and follow the
+workspace view list: own or public views only.
 Favorites resolve their entity_data under the same rule, so a row that points
 elsewhere carries no entity data.
 """
@@ -28,6 +30,7 @@ from plane.db.models import (
     User,
     UserFavorite,
     Workspace,
+    WorkspaceMember,
 )
 
 ENTITY_TYPES = ["cycle", "module", "view", "page"]
@@ -96,7 +99,11 @@ def _favorite_exists(user, entity):
 def _workspace_favorite(client, workspace, entity_type, entity_id, project_id):
     return client.post(
         f"/api/workspaces/{workspace.slug}/user-favorites/",
-        {"entity_type": entity_type, "entity_identifier": str(entity_id), "project_id": str(project_id)},
+        {
+            "entity_type": entity_type,
+            "entity_identifier": str(entity_id),
+            "project_id": str(project_id) if project_id else None,
+        },
         format="json",
     )
 
@@ -190,6 +197,41 @@ class TestWorkspaceFavoriteEntityScope:
 
 
 @pytest.mark.contract
+class TestWorkspaceViewFavorites:
+    @pytest.fixture
+    def other(self, db, workspace):
+        other = _user("other")
+        WorkspaceMember.objects.create(workspace=workspace, member=other, role=15)
+        return other
+
+    def _view(self, workspace, owner, access):
+        return IssueView.objects.create(
+            name=f"Workspace view {access}", workspace=workspace, owned_by=owner, query={}, access=access
+        )
+
+    @pytest.mark.django_db
+    def test_public_workspace_view_can_be_favorited(self, session_client, workspace, create_user, other):
+        view = self._view(workspace, other, access=1)
+        response = _workspace_favorite(session_client, workspace, "view", view.id, None)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()["entity_data"]["name"] == view.name
+
+        response = session_client.get(f"/api/workspaces/{workspace.slug}/user-favorites/")
+        assert response.status_code == status.HTTP_200_OK
+        rows = {row["entity_identifier"]: row for row in response.json()}
+        assert rows[str(view.id)]["entity_data"]["name"] == view.name
+
+    @pytest.mark.django_db
+    def test_private_workspace_view_of_another_user_is_not_found(self, session_client, workspace, create_user, other):
+        view = self._view(workspace, other, access=0)
+        response = _workspace_favorite(session_client, workspace, "view", view.id, None)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert not _favorite_exists(create_user, view)
+
+
+@pytest.mark.contract
 class TestEntityFavoriteEndpointScope:
     @pytest.mark.django_db
     @pytest.mark.parametrize("entity_type", ENTITY_TYPES)
@@ -261,3 +303,19 @@ class TestFavoriteListEntityData:
         for _, entity in unseen:
             assert rows[str(entity.id)]["entity_data"] is None
             assert entity.name not in response.content.decode()
+
+    @pytest.mark.django_db
+    def test_page_in_several_projects_reports_favorite_project(self, session_client, workspace, create_user, scope):
+        page = scope["own"]["page"]
+        own_project = scope["own_project"]
+        # Linked to a second, newer project as well
+        second_project = _project(workspace, "TWO", [create_user])
+        ProjectPage.objects.create(workspace=workspace, project=second_project, page=page)
+
+        response = _workspace_favorite(session_client, workspace, "page", page.id, own_project.id)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()["entity_data"]["project_id"] == str(own_project.id)
+
+        response = session_client.get(f"/api/workspaces/{workspace.slug}/user-favorites/")
+        rows = {row["entity_identifier"]: row for row in response.json()}
+        assert rows[str(page.id)]["entity_data"]["project_id"] == str(own_project.id)
