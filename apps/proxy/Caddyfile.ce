@@ -17,8 +17,8 @@
 
 	reverse_proxy /static/* api:8000
 
-	reverse_proxy /{$BUCKET_NAME}/* plane-minio:9000
-	reverse_proxy /{$BUCKET_NAME} plane-minio:9000
+	reverse_proxy /{$BUCKET_NAME}/* {$AWS_S3_ENDPOINT_URL:plane-minio:9000}
+	reverse_proxy /{$BUCKET_NAME} {$AWS_S3_ENDPOINT_URL:plane-minio:9000}
 
 	reverse_proxy /* web:3000
 }
