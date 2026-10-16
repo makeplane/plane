@@ -30,7 +30,7 @@ class TestRedisSslKwargs:
             ({}, {"ssl_cert_reqs": "required", "ssl_check_hostname": True}),
             ({"REDIS_SSL_CERT_REQS": ""}, {"ssl_cert_reqs": "required", "ssl_check_hostname": True}),
             ({"REDIS_SSL_CERT_REQS": " Required "}, {"ssl_cert_reqs": "required", "ssl_check_hostname": True}),
-            ({"REDIS_SSL_CERT_REQS": "optional"}, {"ssl_cert_reqs": "optional", "ssl_check_hostname": True}),
+            ({"REDIS_SSL_CERT_REQS": "optional"}, {"ssl_cert_reqs": "optional", "ssl_check_hostname": False}),
             ({"REDIS_SSL_CERT_REQS": "none"}, {"ssl_cert_reqs": "none", "ssl_check_hostname": False}),
             (
                 {"REDIS_SSL_CA_CERTS": CA_BUNDLE},
@@ -149,6 +149,29 @@ class TestRedisInstance:
             connection = client.connection_pool.make_connection()
             assert connection.cert_reqs == ssl.CERT_NONE
             assert connection.check_hostname is False
+
+    @pytest.mark.parametrize(
+        ("query", "cert_reqs"),
+        [("ssl_cert_reqs=none", ssl.CERT_NONE), ("ssl_check_hostname=false", ssl.CERT_REQUIRED)],
+    )
+    # Re-executes the settings module so REDIS_SSL_KWARGS is derived from REDIS_URL.
+    @pytest.mark.filterwarnings("ignore::RuntimeWarning")
+    def test_tls_url_options_control_verification(self, settings, redis_tls_env, query, cert_reqs):
+        redis_tls_env.setenv("REDIS_URL", f"rediss://host:6380/0?{query}")
+        common = runpy.run_module("plane.settings.common")
+        settings.REDIS_SSL = common["REDIS_SSL"]
+        settings.REDIS_URL = common["REDIS_URL"]
+        settings.REDIS_SSL_KWARGS = common["REDIS_SSL_KWARGS"]
+
+        with redis_instance() as client:
+            connection = client.connection_pool.make_connection()
+            assert connection.cert_reqs == cert_reqs
+            assert connection.check_hostname is False
+
+        # Same context setup as SSLConnection._connect; raises ValueError for CERT_NONE with check_hostname on
+        context = ssl.create_default_context()
+        context.check_hostname = connection.check_hostname
+        context.verify_mode = connection.cert_reqs
 
     def test_tls_honors_explicit_url_options(self, settings):
         settings.REDIS_SSL = True
