@@ -25,6 +25,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import IssueViewSerializer, ViewIssueListSerializer
+from plane.app.serializers.favorite import get_favorite_entities
 from plane.db.models import (
     Issue,
     FileAsset,
@@ -418,6 +419,10 @@ class IssueViewFavoriteViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
+        # 404 unless the view is in this project and visible to the user
+        get_favorite_entities("view", request.user.id, project_id).get(
+            pk=request.data.get("view"), workspace__slug=slug
+        )
         _ = UserFavorite.objects.create(
             user=request.user,
             entity_identifier=request.data.get("view"),

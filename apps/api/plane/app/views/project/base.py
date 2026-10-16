@@ -22,6 +22,7 @@ from plane.app.serializers import (
     ProjectListSerializer,
     ProjectSerializer,
 )
+from plane.app.serializers.favorite import get_favorite_entities
 from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
@@ -512,6 +513,9 @@ class ProjectFavoritesViewSet(BaseViewSet):
         serializer.save(user=self.request.user)
 
     def create(self, request, slug):
+        project_id = request.data.get("project")
+        # 404 unless the project is in this workspace and visible to the user
+        get_favorite_entities("project", request.user.id, project_id).get(pk=project_id, workspace__slug=slug)
         _ = UserFavorite.objects.create(
             user=request.user,
             entity_type="project",
