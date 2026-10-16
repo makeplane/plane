@@ -7,7 +7,7 @@
 - A cycle can be deleted by a project admin or its creator; an update never changes the owner
   unless one is sent.
 - Label writes are project-admin-only.
-- Only active workspace members can be added to a project.
+- Only active workspace members can be added to a project or have their project role changed.
 """
 
 import pytest
@@ -18,7 +18,7 @@ from plane.db.models import Cycle, Label, ProjectMember
 from plane.db.models.api import APIToken
 from plane.tests.factories import ProjectFactory, ProjectMemberFactory, UserFactory, WorkspaceMemberFactory
 
-ADMIN, MEMBER = 20, 15
+ADMIN, MEMBER, GUEST = 20, 15, 5
 
 
 @pytest.fixture
@@ -56,18 +56,33 @@ def _cycle(project, owner, creator):
 @pytest.mark.contract
 @pytest.mark.django_db
 class TestCycleDeleteAndOwner:
-    def test_member_update_keeps_owner_and_cannot_delete_others_cycle(
-        self, member_client, workspace, project, create_user
+    def test_update_without_owner_keeps_owner(self, member_client, workspace, project, create_user):
+        cycle = _cycle(project, owner=create_user, creator=create_user)
+        url = f"{_project_url(workspace, project)}/cycles/{cycle.id}/"
+
+        response = member_client.patch(url, {"name": "Renamed"}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK, response.data
+        cycle.refresh_from_db()
+        assert (cycle.name, cycle.owned_by_id) == ("Renamed", create_user.id)
+
+    def test_update_with_null_owner_assigns_requester(
+        self, member_client, workspace, project, create_user, member_user
     ):
         cycle = _cycle(project, owner=create_user, creator=create_user)
         url = f"{_project_url(workspace, project)}/cycles/{cycle.id}/"
 
-        patch = member_client.patch(url, {"name": "Renamed"}, format="json")
-        assert patch.status_code == status.HTTP_200_OK, patch.data
-        cycle.refresh_from_db()
-        assert (cycle.name, cycle.owned_by_id) == ("Renamed", create_user.id)
+        response = member_client.patch(url, {"name": "Renamed", "owned_by": None}, format="json")
 
-        assert member_client.delete(url).status_code == status.HTTP_403_FORBIDDEN
+        assert response.status_code == status.HTTP_200_OK, response.data
+        cycle.refresh_from_db()
+        assert (cycle.name, cycle.owned_by_id) == ("Renamed", member_user.id)
+
+    def test_cycle_delete_requires_admin_or_creator(self, member_client, workspace, project, create_user):
+        cycle = _cycle(project, owner=create_user, creator=create_user)
+        response = member_client.delete(f"{_project_url(workspace, project)}/cycles/{cycle.id}/")
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
         assert Cycle.objects.filter(id=cycle.id).exists()
 
     def test_owner_who_is_not_creator_cannot_delete(self, member_client, workspace, project, create_user, member_user):
@@ -109,7 +124,7 @@ class TestLabelWritesAdminOnly:
 
 @pytest.mark.contract
 @pytest.mark.django_db
-class TestProjectMemberAddRequiresActiveWorkspaceMember:
+class TestProjectMemberWritesRequireActiveWorkspaceMember:
     @pytest.mark.parametrize(
         "is_active, expected", [(False, status.HTTP_400_BAD_REQUEST), (True, status.HTTP_201_CREATED)]
     )
@@ -123,3 +138,17 @@ class TestProjectMemberAddRequiresActiveWorkspaceMember:
 
         assert response.status_code == expected, response.data
         assert ProjectMember.objects.filter(project=project, member=user).exists() is is_active
+
+    @pytest.mark.parametrize("is_active, expected", [(False, status.HTTP_400_BAD_REQUEST), (True, status.HTTP_200_OK)])
+    def test_role_only_update(self, api_key_client, workspace, project, is_active, expected):
+        user = UserFactory()
+        WorkspaceMemberFactory(workspace=workspace, member=user, role=MEMBER, is_active=is_active)
+        project_member = ProjectMemberFactory(project=project, member=user, role=MEMBER)
+
+        response = api_key_client.patch(
+            f"{_project_url(workspace, project)}/members/{project_member.id}/", {"role": GUEST}, format="json"
+        )
+
+        assert response.status_code == expected, response.data
+        project_member.refresh_from_db()
+        assert project_member.role == (GUEST if is_active else MEMBER)

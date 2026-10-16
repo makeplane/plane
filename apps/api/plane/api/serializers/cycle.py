@@ -91,12 +91,9 @@ class CycleCreateSerializer(BaseSerializer):
                 project_id=project_id,
             )
 
-        if not data.get("owned_by"):
-            # Default the owner on create only; an update without an owner keeps the current one.
-            if self.instance:
-                data.pop("owned_by", None)
-            else:
-                data["owned_by"] = self.context["request"].user
+        # Create, or an explicit null on update, assigns the requester; an update that omits it keeps the owner.
+        if not data.get("owned_by") and (self.instance is None or "owned_by" in data):
+            data["owned_by"] = self.context["request"].user
 
         return data
 
