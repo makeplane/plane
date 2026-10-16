@@ -825,6 +825,12 @@
     "previously_edited_by": "Önceki düzenleyen",
     "edited_by": "Tarafından düzenlendi"
   },
+  "description_conflict": {
+    "title": "Bu açıklama değiştirildi",
+    "content": "Siz düzenlemeye başladıktan sonra biri bu açıklamayı güncelledi, bu nedenle son değişiklikleriniz kaydedilmedi. Devam etmek için en son sürümü yükleyin. Önce saklamak istediklerinizi kopyalayın.",
+    "load_latest": "En son sürümü yükle",
+    "keep_editing": "Düzenlemeye devam et"
+  },
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane başlatılamadı. Bu, bir veya daha fazla Plane servisinin başlatılamaması nedeniyle olabilir.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Emin olmak için setup.sh ve Docker loglarından View Logs&apos;u seçin."

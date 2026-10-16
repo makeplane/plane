@@ -825,6 +825,12 @@
     "previously_edited_by": "Précédemment modifié par",
     "edited_by": "Modifié par"
   },
+  "description_conflict": {
+    "title": "Cette description a été modifiée",
+    "content": "Quelqu'un a mis à jour cette description après que vous avez commencé à la modifier ; vos dernières modifications n'ont donc pas été enregistrées. Chargez la dernière version pour continuer. Copiez d'abord ce que vous souhaitez conserver.",
+    "load_latest": "Charger la dernière version",
+    "keep_editing": "Continuer la modification"
+  },
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane n’a pas démarré. Cela pourrait être dû au fait qu’un ou plusieurs services Plane ont échoué à démarrer.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choisissez View Logs depuis setup.sh et les logs Docker pour en être sûr."

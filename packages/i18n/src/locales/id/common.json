@@ -825,6 +825,12 @@
     "previously_edited_by": "Sebelumnya disunting oleh",
     "edited_by": "Disunting oleh"
   },
+  "description_conflict": {
+    "title": "Deskripsi ini telah diubah",
+    "content": "Seseorang memperbarui deskripsi ini setelah Anda mulai mengeditnya, sehingga perubahan terbaru Anda tidak disimpan. Muat versi terbaru untuk melanjutkan. Salin terlebih dahulu apa pun yang ingin Anda simpan.",
+    "load_latest": "Muat versi terbaru",
+    "keep_editing": "Lanjutkan mengedit"
+  },
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane tidak berhasil dimulai. Ini bisa karena satu atau lebih layanan Plane gagal untuk dimulai.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Pilih View Logs dari setup.sh dan log Docker untuk memastikan."
