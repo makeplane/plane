@@ -29,7 +29,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.app.permissions import WorkspaceEntityPermission, WorkspaceViewerPermission
+from plane.app.permissions import ROLE, WorkspaceEntityPermission, WorkspaceViewerPermission
 
 # Module imports
 from plane.app.serializers import (
@@ -137,6 +137,10 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
 
         order_by_param = request.GET.get("order_by", "-created_at")
         issue_queryset = Issue.issue_objects.filter(
+            # Guests only see issues they created unless guest_view_all_features is enabled
+            Q(project__project_projectmember__role__gt=ROLE.GUEST.value)
+            | Q(project__guest_view_all_features=True)
+            | Q(created_by=request.user),
             id__in=Issue.issue_objects.filter(
                 Q(assignees__in=[user_id]) | Q(created_by_id=user_id) | Q(issue_subscribers__subscriber_id=user_id),
                 workspace__slug=slug,
@@ -144,6 +148,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
             project__project_projectmember__is_active=True,
+            project__project_projectmember__deleted_at__isnull=True,
         )
 
         # Apply filtering from filterset
@@ -403,6 +408,8 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
 
 
 class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
+    permission_classes = [WorkspaceViewerPermission]
+
     def get(self, request, slug, user_id):
         filters = issue_filters(request.query_params, "GET")
 
@@ -505,6 +512,9 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             workspace__slug=slug,
             cycle__start_date__gt=timezone.now(),
             issue__assignees__in=[user_id],
+            project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__deleted_at__isnull=True,
         ).values("cycle__name", "cycle__id", "cycle__project_id")
 
         present_cycle = CycleIssue.objects.filter(
@@ -512,6 +522,9 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             cycle__start_date__lt=timezone.now(),
             cycle__end_date__gt=timezone.now(),
             issue__assignees__in=[user_id],
+            project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__deleted_at__isnull=True,
         ).values("cycle__name", "cycle__id", "cycle__project_id")
 
         return Response(
