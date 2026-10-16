@@ -49,6 +49,7 @@ Getting started with Plane is simple. Choose the setup that works best for you:
 
 - **Work Items**
   Efficiently create and manage tasks with a robust rich text editor that supports file uploads. Enhance organization and tracking by adding sub-properties and referencing related issues.
+  In a project's Work Items filter menu, choose **Title** to match a case-insensitive substring of the work item name (not its description or ID). Type a value and press Enter or leave the input to apply it; Escape discards an uncommitted edit. Surrounding whitespace is trimmed, and committing an empty value or using the chip's remove button removes the condition. Title combines with the existing filters using AND and is retained by project filter persistence and **Save view**.
 
 - **Cycles**
   Maintain your team’s momentum with Cycles. Track progress effortlessly using burn-down charts and other insightful tools.
@@ -68,6 +69,19 @@ Getting started with Plane is simple. Choose the setup that works best for you:
 ## 🛠️ Local development
 
 See [CONTRIBUTING](./CONTRIBUTING.md)
+
+Title-filter regression checks:
+
+```sh
+pnpm turbo run build --filter=@plane/shared-state...
+pnpm --filter @plane/shared-state test
+pnpm --filter web test
+docker compose -f docker-compose-test.yml run --rm api-tests \
+  pytest plane/tests/unit/utils/test_issue_title_filters.py \
+  plane/tests/unit/utils/test_issue_datetime_filters.py -q
+```
+
+The rich-filter payload uses `{"name__icontains":"login"}` or that condition inside the existing `and` group. Project lists refetch from the API; no separate client-side title matcher or search endpoint is used.
 
 ## ⚙️ Built with
 
