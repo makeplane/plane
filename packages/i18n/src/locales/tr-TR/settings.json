@@ -41,7 +41,20 @@
     },
     "preferences": {
       "heading": "Tercihler",
-      "description": "Uygulama deneyiminizi çalışma şeklinize göre özelleştirin"
+      "description": "Uygulama deneyiminizi çalışma şeklinize göre özelleştirin",
+      "first_day_of_week": {
+        "title": "Haftanın ilk günü",
+        "description": "Bu, uygulamanızdaki tüm takvimlerin görünümünü değiştirecek.",
+        "days": {
+          "sunday": "Pazar",
+          "monday": "Pazartesi",
+          "tuesday": "Salı",
+          "wednesday": "Çarşamba",
+          "thursday": "Perşembe",
+          "friday": "Cuma",
+          "saturday": "Cumartesi"
+        }
+      }
     },
     "notifications": {
       "heading": "E-posta bildirimleri",

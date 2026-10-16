@@ -41,7 +41,20 @@
     },
     "preferences": {
       "heading": "偏好设置",
-      "description": "按照您的工作方式自定义您的应用体验"
+      "description": "按照您的工作方式自定义您的应用体验",
+      "first_day_of_week": {
+        "title": "每周的第一天",
+        "description": "这将改变应用中所有日历的显示方式。",
+        "days": {
+          "sunday": "星期日",
+          "monday": "星期一",
+          "tuesday": "星期二",
+          "wednesday": "星期三",
+          "thursday": "星期四",
+          "friday": "星期五",
+          "saturday": "星期六"
+        }
+      }
     },
     "notifications": {
       "heading": "邮件通知",

@@ -41,7 +41,20 @@
     },
     "preferences": {
       "heading": "환경 설정",
-      "description": "작업 방식에 맞게 앱 환경을 사용자 정의하세요"
+      "description": "작업 방식에 맞게 앱 환경을 사용자 정의하세요",
+      "first_day_of_week": {
+        "title": "주의 첫날",
+        "description": "앱의 모든 캘린더 표시 방식이 변경됩니다.",
+        "days": {
+          "sunday": "일요일",
+          "monday": "월요일",
+          "tuesday": "화요일",
+          "wednesday": "수요일",
+          "thursday": "목요일",
+          "friday": "금요일",
+          "saturday": "토요일"
+        }
+      }
     },
     "notifications": {
       "heading": "이메일 알림",
