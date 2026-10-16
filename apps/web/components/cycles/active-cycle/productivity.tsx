@@ -75,12 +75,14 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
                   <Fragment>
                     {estimateType === "points" ? (
                       <ProgressChart
+                        projectId={projectId}
                         distribution={completionChartDistributionData}
                         totalIssues={cycle.total_estimate_points || 0}
                         plotTitle={"points"}
                       />
                     ) : (
                       <ProgressChart
+                        projectId={projectId}
                         distribution={completionChartDistributionData}
                         totalIssues={cycle.total_issues || 0}
                         plotTitle={"work items"}

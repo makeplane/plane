@@ -134,6 +134,11 @@
         "title": "Chưa có sprint đã lưu trữ",
         "description": "Để tổ chức dự án của bạn, hãy lưu trữ sprint đã hoàn thành. Bạn có thể tìm thấy chúng ở đây sau khi lưu trữ."
       }
+    },
+    "working_days": {
+      "count": "{count, plural, other {# ngày làm việc}}",
+      "starts_on_non_working": "Bắt đầu vào ngày nghỉ",
+      "ends_on_non_working": "Kết thúc vào ngày nghỉ"
     }
   },
   "project_views": {

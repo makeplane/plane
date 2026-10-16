@@ -520,6 +520,34 @@
             }
           }
         }
+      },
+      "working_days": {
+        "heading": "Ngày làm việc",
+        "description": "Biểu đồ burndown và số ngày của sprint chỉ tính các ngày này. Ngày nghỉ và ngày lễ sẽ được bỏ qua.",
+        "weekdays": {
+          "1": "T2",
+          "2": "T3",
+          "3": "T4",
+          "4": "T5",
+          "5": "T6",
+          "6": "T7",
+          "7": "CN"
+        },
+        "reset": "Đặt lại T2–T6",
+        "save": "Lưu ngày làm việc",
+        "min_one": "Chọn ít nhất một ngày làm việc.",
+        "holidays": {
+          "heading": "Ngày lễ",
+          "description": "Các ngày nghỉ sẽ bị bỏ qua kể cả khi rơi vào ngày làm việc.",
+          "add": "Thêm ngày lễ",
+          "empty": "Chưa có ngày lễ nào.",
+          "remove": "Xóa ngày lễ"
+        },
+        "toast": {
+          "loading": "Đang lưu ngày làm việc",
+          "success": "Đã cập nhật ngày làm việc.",
+          "error": "Không thể cập nhật ngày làm việc. Vui lòng thử lại."
+        }
       }
     }
   }

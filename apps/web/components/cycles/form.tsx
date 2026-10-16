@@ -17,10 +17,11 @@ import { DateRangeSelect } from "@plane/blocks/property-select";
 import { Button } from "@makeplane/propel/components/button";
 import { CalendarOutline } from "@makeplane/propel/icons";
 import type { ICycle } from "@plane/types";
-import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
+import { countWorkingDays, getDate, getTabIndex, isWorkingDay, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { ProjectSelect } from "@/components/dropdowns/project/project-select";
 // hooks
+import { useProject } from "@/hooks/store/use-project";
 import { useUserProfile } from "@/hooks/store/user";
 import { useUser } from "@/hooks/store/user/user-user";
 
@@ -54,6 +55,7 @@ export function CycleForm(props: Props) {
     handleSubmit,
     control,
     reset,
+    watch,
   } = useForm<ICycle>({
     defaultValues: {
       project_id: projectId,
@@ -65,6 +67,15 @@ export function CycleForm(props: Props) {
   });
 
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CYCLE, isMobile);
+
+  // d2m-plane: working-day summary for the selected sprint range
+  const { getProjectById } = useProject();
+  const [watchedProjectId, watchedStartDate, watchedEndDate] = watch(["project_id", "start_date", "end_date"]);
+  const formProject = getProjectById(watchedProjectId || projectId);
+  const hasDateRange = !!watchedStartDate && !!watchedEndDate;
+  const workingDayCount = hasDateRange ? countWorkingDays(watchedStartDate, watchedEndDate, formProject) : 0;
+  const startsOnNonWorkingDay = !!watchedStartDate && !isWorkingDay(watchedStartDate, formProject);
+  const endsOnNonWorkingDay = !!watchedEndDate && !isWorkingDay(watchedEndDate, formProject);
 
   useEffect(() => {
     reset({
@@ -186,6 +197,21 @@ export function CycleForm(props: Props) {
                 />
               )}
             />
+            {hasDateRange && (
+              <span className="text-caption-md-regular text-tertiary">
+                {t("project_cycles.working_days.count", { count: workingDayCount })}
+              </span>
+            )}
+            {(startsOnNonWorkingDay || endsOnNonWorkingDay) && (
+              <span className="text-caption-md-regular text-warning-primary">
+                {[
+                  startsOnNonWorkingDay ? t("project_cycles.working_days.starts_on_non_working") : null,
+                  endsOnNonWorkingDay ? t("project_cycles.working_days.ends_on_non_working") : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </span>
+            )}
           </div>
         </div>
       </div>

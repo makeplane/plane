@@ -131,12 +131,14 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
           <Fragment>
             {plotType === "points" ? (
               <ProgressChart
+                projectId={projectId}
                 distribution={completionChartDistributionData}
                 totalIssues={totalEstimatePoints}
                 plotTitle={"points"}
               />
             ) : (
               <ProgressChart
+                projectId={projectId}
                 distribution={completionChartDistributionData}
                 totalIssues={totalIssues}
                 plotTitle={"work items"}

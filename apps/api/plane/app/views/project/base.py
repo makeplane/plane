@@ -190,6 +190,8 @@ class ProjectViewSet(BaseViewSet):
             "guest_view_all_features",
             "project_lead",
             "network",
+            "working_days",
+            "holidays",
             "created_at",
             "updated_at",
             "created_by",

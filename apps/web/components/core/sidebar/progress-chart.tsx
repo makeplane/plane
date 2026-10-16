@@ -5,23 +5,42 @@
  */
 
 import React from "react";
+import { observer } from "mobx-react";
 // plane imports
 import { AreaChart } from "@plane/blocks/charts/area-chart";
 import type { TChartData, TModuleCompletionChartDistribution } from "@plane/types";
-import { renderFormattedDateWithoutYear } from "@plane/utils";
+import { filterWorkingDayKeys, renderFormattedDateWithoutYear } from "@plane/utils";
+// hooks
+import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
   distribution: TModuleCompletionChartDistribution;
   totalIssues: number;
   className?: string;
   plotTitle?: string;
+  /** d2m-plane: when set, the chart skips the project's non-working days and holidays. */
+  projectId?: string;
 };
 
-function ProgressChart({ distribution, totalIssues, className = "", plotTitle = "work items" }: Props) {
-  const chartData: TChartData<string, string>[] = Object.keys(distribution ?? []).map((key, index) => ({
+const ProgressChart = observer(function ProgressChart({
+  distribution,
+  totalIssues,
+  className = "",
+  plotTitle = "work items",
+  projectId,
+}: Props) {
+  // store hooks
+  const { getProjectById } = useProject();
+  // derived values
+  const project = projectId ? getProjectById(projectId) : undefined;
+  const allDates = Object.keys(distribution ?? {});
+  // d2m-plane: only plot working days so the ideal line does not drop over weekends/holidays
+  const dates = project ? filterWorkingDayKeys(allDates, project) : allDates;
+  const lastIndex = Math.max(dates.length - 1, 1);
+  const chartData: TChartData<string, string>[] = dates.map((key, index) => ({
     name: renderFormattedDateWithoutYear(key),
     current: distribution[key] ?? 0,
-    ideal: totalIssues * (1 - index / (Object.keys(distribution ?? []).length - 1)),
+    ideal: totalIssues * (1 - index / lastIndex),
   }));
 
   return (
@@ -71,6 +90,6 @@ function ProgressChart({ distribution, totalIssues, className = "", plotTitle = 
       />
     </div>
   );
-}
+});
 
 export default ProgressChart;

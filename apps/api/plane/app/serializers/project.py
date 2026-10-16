@@ -7,6 +7,7 @@ from rest_framework import serializers
 
 # Python imports
 import re
+from datetime import date
 
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
@@ -35,6 +36,29 @@ class ProjectSerializer(BaseSerializer):
         model = Project
         fields = "__all__"
         read_only_fields = ["workspace", "deleted_at"]
+
+    # d2m-plane: working calendar validation
+    def validate_working_days(self, working_days):
+        if not isinstance(working_days, list) or not working_days:
+            raise serializers.ValidationError("Select at least one working day.")
+        if any(isinstance(day, bool) or not isinstance(day, int) or day < 1 or day > 7 for day in working_days):
+            raise serializers.ValidationError("Working days must be ISO weekdays between 1 (Mon) and 7 (Sun).")
+        return sorted(set(working_days))
+
+    def validate_holidays(self, holidays):
+        if holidays is None:
+            return []
+        if not isinstance(holidays, list):
+            raise serializers.ValidationError("Holidays must be a list of dates.")
+        if len(holidays) > 500:
+            raise serializers.ValidationError("Too many holidays (max 500).")
+        cleaned = set()
+        for value in holidays:
+            try:
+                cleaned.add(date.fromisoformat(str(value)[:10]).isoformat())
+            except ValueError:
+                raise serializers.ValidationError(f"Invalid holiday date: {value}")
+        return sorted(cleaned)
 
     def validate_name(self, name):
         project_id = self.instance.id if self.instance else None

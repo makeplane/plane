@@ -520,6 +520,34 @@
             }
           }
         }
+      },
+      "working_days": {
+        "heading": "Working days",
+        "description": "Sprint burndown charts and day counts only use these days. Non-working days and holidays are skipped.",
+        "weekdays": {
+          "1": "Mon",
+          "2": "Tue",
+          "3": "Wed",
+          "4": "Thu",
+          "5": "Fri",
+          "6": "Sat",
+          "7": "Sun"
+        },
+        "reset": "Reset to Mon–Fri",
+        "save": "Save working days",
+        "min_one": "Select at least one working day.",
+        "holidays": {
+          "heading": "Holidays",
+          "description": "Days off that are skipped even when they fall on a working day.",
+          "add": "Add holiday",
+          "empty": "No holidays added yet.",
+          "remove": "Remove holiday"
+        },
+        "toast": {
+          "loading": "Saving working days",
+          "success": "Working days updated.",
+          "error": "Couldn't update working days. Please try again."
+        }
       }
     }
   }

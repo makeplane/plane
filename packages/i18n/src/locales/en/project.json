@@ -134,6 +134,11 @@
         "title": "No archived sprints yet",
         "description": "To tidy up your project, archive completed sprints. Find them here once archived."
       }
+    },
+    "working_days": {
+      "count": "{count, plural, one {# working day} other {# working days}}",
+      "starts_on_non_working": "Starts on a non-working day",
+      "ends_on_non_working": "Ends on a non-working day"
     }
   },
   "project_views": {

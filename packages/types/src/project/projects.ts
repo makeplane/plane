@@ -40,6 +40,9 @@ export interface IPartialProject {
   created_by?: string;
   updated_by?: string;
   intake_count?: number;
+  // d2m-plane: working calendar (ISO weekdays 1 = Mon … 7 = Sun, holidays as YYYY-MM-DD)
+  working_days?: number[];
+  holidays?: string[];
 }
 
 export interface IProject extends IPartialProject {

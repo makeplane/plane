@@ -65,6 +65,11 @@ def get_default_preferences():
     return {"pages": {"block_display": True}, "navigation": {"default_tab": "work_items", "hide_in_more_menu": []}}
 
 
+def get_default_working_days():
+    # ISO weekdays: 1 = Monday ... 7 = Sunday (d2m-plane)
+    return [1, 2, 3, 4, 5]
+
+
 class Project(BaseModel):
     NETWORK_CHOICES = ((0, "Secret"), (2, "Public"))
     name = models.CharField(max_length=255, verbose_name="Project Name")
@@ -115,6 +120,9 @@ class Project(BaseModel):
     # timezone
     TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
+    # d2m-plane: working calendar used by sprint (cycle) burndown and planning
+    working_days = models.JSONField(default=get_default_working_days)
+    holidays = models.JSONField(default=list, blank=True)
     # external_id for imports
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)

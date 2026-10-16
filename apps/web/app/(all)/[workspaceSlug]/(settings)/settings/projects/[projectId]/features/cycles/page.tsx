@@ -12,6 +12,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { ProjectSettingsFeatureControlItem } from "@/components/settings/project/content/feature-control-item";
+import { ProjectWorkingDaysSettings } from "@/components/settings/project/content/working-days";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -56,6 +57,12 @@ function FeaturesCyclesSettingsPage({ params }: Route.ComponentProps) {
             workspaceSlug={workspaceSlug}
           />
         </div>
+        {/* d2m-plane: working calendar for sprint charts */}
+        {currentProjectDetails?.cycle_view && (
+          <div className="mt-4">
+            <ProjectWorkingDaysSettings workspaceSlug={workspaceSlug} projectId={projectId} />
+          </div>
+        )}
       </section>
     </SettingsContentWrapper>
   );
