@@ -118,96 +118,65 @@ class MagicCodeProvider(CredentialAdapter):
         ri.delete(self._verify_attempts_key(key))
         return key, token
 
+    @staticmethod
+    def _raise_for_email(error, email):
+        """Raise ``error`` as its SIGN_IN or SIGN_UP variant, depending on whether the user exists."""
+        variant = "SIGN_IN" if User.objects.filter(email=email).exists() else "SIGN_UP"
+        error_message = f"{error}_{variant}"
+        raise AuthenticationException(
+            error_code=AUTHENTICATION_ERROR_CODES[error_message],
+            error_message=error_message,
+            payload={"email": email},
+        )
+
     def set_user_data(self):
         ri = redis_instance()
+        email = str(self.key).replace("magic_", "", 1)
+        attempts_key = self._verify_attempts_key(self.key)
         if ri.exists(self.key):
-            data = json.loads(ri.get(self.key))
-            token = data["token"]
-            email = data["email"]
+            # Count the attempt before comparing, so at most MAX_VERIFY_ATTEMPTS
+            # codes are compared against a token, including concurrent ones.
+            # The Lua script sets the TTL only on the first increment, so the
+            # counter expires with the token. ri.ttl() returns -2 (missing),
+            # -1 (no expiry), 0 (under one second left) or a positive int.
+            # Clamp to >=1 because EXPIRE key 0 deletes the key immediately,
+            # which would reset the count.
+            remaining_ttl = ri.ttl(self.key)
+            if remaining_ttl is None or remaining_ttl <= 0:
+                remaining_ttl = 1
+            verify_attempts = int(ri.eval(self._INCREMENT_COUNTER_SCRIPT, 1, attempts_key, remaining_ttl))
 
-            if str(token) == str(self.code):
-                super().set_user_data(
-                    {
-                        "email": email,
-                        "user": {
-                            "avatar": "",
-                            "first_name": "",
-                            "last_name": "",
-                            "provider_id": "",
-                            "is_password_autoset": True,
-                        },
-                    }
-                )
-                # Delete the token and its counters from redis on success.
-                ri.delete(self.key)
-                ri.delete(self._verify_attempts_key(self.key))
-                ri.delete(self._issued_key(self.key))
-                return
-            else:
-                email = str(self.key).replace("magic_", "", 1)
-                user_exists = User.objects.filter(email=email).exists()
+            # Read the token after counting the attempt: a token removed in the
+            # meantime is reported as expired rather than compared.
+            raw = ri.get(self.key)
+            exhausted = verify_attempts > self.MAX_VERIFY_ATTEMPTS
+            if raw is not None and not exhausted:
+                data = json.loads(raw)
+                if str(data["token"]) == str(self.code):
+                    super().set_user_data(
+                        {
+                            "email": data["email"],
+                            "user": {
+                                "avatar": "",
+                                "first_name": "",
+                                "last_name": "",
+                                "provider_id": "",
+                                "is_password_autoset": True,
+                            },
+                        }
+                    )
+                    # Delete the token and its counters from redis on success.
+                    ri.delete(self.key, attempts_key, self._issued_key(self.key))
+                    return
+                exhausted = verify_attempts == self.MAX_VERIFY_ATTEMPTS
 
-                # Atomically increment the verify-attempt counter in Redis.
-                # The Lua script sets the TTL only on the first increment so
-                # the lockout window matches the remaining token TTL and does
-                # not get extended by every wrong-code attempt.
-                # ri.ttl() returns -2 (missing), -1 (no expiry), 0 (sub-second
-                # remaining; Redis floors to whole seconds), or a positive int.
-                # Clamp to >=1 because EXPIRE key 0 immediately deletes the key
-                # and would let an attacker bypass the cap in the final second.
-                remaining_ttl = ri.ttl(self.key)
-                if remaining_ttl is None or remaining_ttl <= 0:
-                    remaining_ttl = 1
-                verify_attempts = int(
-                    ri.eval(
-                        self._INCREMENT_COUNTER_SCRIPT,
-                        1,
-                        self._verify_attempts_key(self.key),
-                        remaining_ttl,
-                    )
-                )
+            if exhausted:
+                # Invalidate the token and its verify counter in one DEL so
+                # further attempts must regenerate; regeneration is capped by
+                # the separate issued-code counter, which is left in place.
+                ri.delete(self.key, attempts_key)
+                self._raise_for_email("EMAIL_CODE_ATTEMPT_EXHAUSTED", email)
+            if raw is not None:
+                self._raise_for_email("INVALID_MAGIC_CODE", email)
 
-                if verify_attempts >= self.MAX_VERIFY_ATTEMPTS:
-                    # Invalidate the token (and counter) so further attempts
-                    # must regenerate; regeneration is capped by the separate
-                    # issued-code counter, which is left in place here.
-                    ri.delete(self.key)
-                    ri.delete(self._verify_attempts_key(self.key))
-                    if user_exists:
-                        raise AuthenticationException(
-                            error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN"],
-                            error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN",
-                            payload={"email": str(email)},
-                        )
-                    raise AuthenticationException(
-                        error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP"],
-                        error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP",
-                        payload={"email": str(email)},
-                    )
-
-                if user_exists:
-                    raise AuthenticationException(
-                        error_code=AUTHENTICATION_ERROR_CODES["INVALID_MAGIC_CODE_SIGN_IN"],
-                        error_message="INVALID_MAGIC_CODE_SIGN_IN",
-                        payload={"email": str(email)},
-                    )
-                else:
-                    raise AuthenticationException(
-                        error_code=AUTHENTICATION_ERROR_CODES["INVALID_MAGIC_CODE_SIGN_UP"],
-                        error_message="INVALID_MAGIC_CODE_SIGN_UP",
-                        payload={"email": str(email)},
-                    )
-        else:
-            email = str(self.key).replace("magic_", "", 1)
-            if User.objects.filter(email=email).exists():
-                raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_MAGIC_CODE_SIGN_IN"],
-                    error_message="EXPIRED_MAGIC_CODE_SIGN_IN",
-                    payload={"email": str(email)},
-                )
-            else:
-                raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_MAGIC_CODE_SIGN_UP"],
-                    error_message="EXPIRED_MAGIC_CODE_SIGN_UP",
-                    payload={"email": str(email)},
-                )
+        self._raise_for_email("EXPIRED_MAGIC_CODE", email)
