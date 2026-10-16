@@ -109,6 +109,28 @@ class TestGenericAssetCrossWorkspaceIDOR:
         assert FileAsset.objects.filter(workspace=victim_workspace).count() == 0
 
     @pytest.mark.django_db
+    @pytest.mark.parametrize(
+        "mime_type",
+        [
+            "application/csv",
+            "text/comma-separated-values",
+            "text/x-markdown",
+            "application/markdown",
+        ],
+    )
+    def test_post_accepts_csv_and_markdown_mime_aliases(self, api_key_client, workspace, mime_type):
+        """Valid CSV and Markdown MIME aliases must pass asset validation."""
+        url = self.list_url(workspace.slug)
+        payload = {"name": "document.txt", "type": mime_type, "size": 1024}
+
+        with mock.patch("plane.api.views.asset.S3Storage") as mock_storage:
+            mock_storage.return_value.generate_presigned_post.return_value = {"url": "x", "fields": {}}
+            response = api_key_client.post(url, payload, format="json")
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        assert response.data.get("error") != "Invalid file type."
+
+    @pytest.mark.django_db
     def test_patch_cross_workspace_asset_returns_403(self, api_key_client, victim_workspace, victim_asset):
         """PATCH on another workspace's asset must be forbidden and must leave
         the asset untouched."""
