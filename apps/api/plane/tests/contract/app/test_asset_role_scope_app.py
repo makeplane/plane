@@ -78,14 +78,14 @@ def attachment(workspace, project, create_user):
 @pytest.mark.django_db
 class TestProjectAssetRoleScope:
     @pytest.mark.parametrize("role", [GUEST, MEMBER])
-    def test_non_admin_cannot_delete_others_attachment(self, workspace, project, attachment, role):
+    def test_attachment_delete_requires_admin_or_uploader(self, workspace, project, attachment, role):
         client = _client(_user(workspace, project, workspace_role=role))
         for url in (_project_url(workspace, project, attachment), _workspace_url(workspace, attachment)):
             assert client.delete(url).status_code == status.HTTP_403_FORBIDDEN
         attachment.refresh_from_db()
         assert attachment.is_deleted is False
 
-    def test_guest_cannot_rename_others_attachment(self, workspace, project, attachment):
+    def test_attachment_update_requires_admin_or_uploader(self, workspace, project, attachment):
         client = _client(_user(workspace, project, workspace_role=GUEST))
         response = client.patch(
             _project_url(workspace, project, attachment), {"attributes": {"name": "x.png"}}, format="json"
@@ -94,7 +94,7 @@ class TestProjectAssetRoleScope:
         attachment.refresh_from_db()
         assert attachment.attributes["name"] == "file.png"
 
-    def test_project_admin_can_delete_others_attachment(self, workspace, project):
+    def test_project_admin_can_delete_any_attachment(self, workspace, project):
         uploader = _user(workspace, project, workspace_role=MEMBER)
         attachment = _asset(workspace, uploader, FileAsset.EntityTypeContext.ISSUE_ATTACHMENT, project)
         admin = _user(workspace, project, workspace_role=MEMBER, project_role=ADMIN)
@@ -115,7 +115,7 @@ class TestProjectAssetRoleScope:
         assert client.delete(url).status_code == status.HTTP_204_NO_CONTENT
 
     @pytest.mark.parametrize("role,expected", [(GUEST, 403), (MEMBER, 204)])
-    def test_description_image_needs_member(self, workspace, project, create_user, role, expected):
+    def test_description_image_delete_requires_member(self, workspace, project, create_user, role, expected):
         image = _asset(workspace, create_user, FileAsset.EntityTypeContext.ISSUE_DESCRIPTION, project)
         client = _client(_user(workspace, project, workspace_role=role))
         assert client.delete(_project_url(workspace, project, image)).status_code == expected
@@ -125,7 +125,7 @@ class TestProjectAssetRoleScope:
 @pytest.mark.django_db
 class TestBrandingAssetRoleScope:
     @pytest.mark.parametrize("role", [GUEST, MEMBER])
-    def test_non_admin_cannot_set_or_remove_workspace_logo(self, workspace, create_user, role):
+    def test_workspace_logo_change_requires_workspace_admin(self, workspace, create_user, role):
         current = _asset(workspace, create_user, FileAsset.EntityTypeContext.WORKSPACE_LOGO)
         workspace.logo_asset_id = current.id
         workspace.save()
@@ -145,7 +145,7 @@ class TestBrandingAssetRoleScope:
         assert workspace.logo_asset_id == logo.id
 
     @pytest.mark.parametrize("role", [GUEST, MEMBER])
-    def test_non_admin_cannot_set_project_cover(self, workspace, project, role):
+    def test_project_cover_change_requires_project_admin(self, workspace, project, role):
         user = _user(workspace, project, workspace_role=role)
         cover = _asset(workspace, user, FileAsset.EntityTypeContext.PROJECT_COVER, project)
         unassigned = _asset(workspace, user, FileAsset.EntityTypeContext.PROJECT_COVER)
