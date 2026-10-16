@@ -170,3 +170,63 @@ class TestProjectMemberIsActiveAuthz:
         assert response.status_code == status.HTTP_200_OK
         victim.refresh_from_db()
         assert victim.is_active is False
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestProjectMemberPartialUpdateScope:
+    """Only project admins (or workspace admins) may edit membership rows, and system fields stay read-only."""
+
+    def test_guest_cannot_set_deleted_at_on_admin(self, workspace, project, create_user):
+        guest = _make_user("guest-deleted-at@plane.so")
+        _add_member(workspace, project, guest, ws_role=15, project_role=5)
+        admin_member = ProjectMember.objects.get(project=project, member=create_user)
+
+        client = APIClient()
+        client.force_authenticate(user=guest)
+        response = client.patch(
+            _member_detail_url(workspace.slug, project.id, admin_member.id),
+            {"deleted_at": "2024-01-01T00:00:00Z"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert ProjectMember.objects.filter(pk=admin_member.pk, deleted_at__isnull=True).exists()
+
+    def test_member_cannot_edit_other_members_row(self, workspace, project):
+        member = _make_user("member-editor@plane.so")
+        peer = _make_user("member-peer@plane.so")
+        _add_member(workspace, project, member, ws_role=15, project_role=15)
+        peer_member = _add_member(workspace, project, peer, ws_role=15, project_role=5)
+
+        client = APIClient()
+        client.force_authenticate(user=member)
+        response = client.patch(
+            _member_detail_url(workspace.slug, project.id, peer_member.id),
+            {"sort_order": 1},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        peer_member.refresh_from_db()
+        assert peer_member.sort_order != 1
+
+    def test_admin_patch_ignores_system_fields(self, workspace, project, create_user):
+        admin = _make_user("admin-system-fields@plane.so")
+        target = _make_user("target-system-fields@plane.so")
+        _add_member(workspace, project, admin, ws_role=15, project_role=20)
+        target_member = _add_member(workspace, project, target, ws_role=15, project_role=5)
+
+        client = APIClient()
+        client.force_authenticate(user=admin)
+        response = client.patch(
+            _member_detail_url(workspace.slug, project.id, target_member.id),
+            {"role": 15, "deleted_at": "2024-01-01T00:00:00Z", "created_by": str(admin.id)},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        target_member = ProjectMember.objects.get(pk=target_member.pk)
+        assert target_member.role == 15
+        assert target_member.deleted_at is None
+        assert target_member.created_by_id != admin.id
