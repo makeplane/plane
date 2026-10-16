@@ -717,52 +717,25 @@ class CycleProgressEndpoint(BaseAPIView):
             completed_issues = cycle.progress_snapshot.get("completed_issues", 0)
             total_issues = cycle.progress_snapshot.get("total_issues", 0)
         else:
-            backlog_issues = Issue.issue_objects.filter(
+            issue_counts = Issue.issue_objects.filter(
                 issue_cycle__cycle_id=cycle_id,
                 issue_cycle__deleted_at__isnull=True,
                 workspace__slug=slug,
                 project_id=project_id,
-                state__group="backlog",
-            ).count()
-
-            unstarted_issues = Issue.issue_objects.filter(
-                issue_cycle__cycle_id=cycle_id,
-                issue_cycle__deleted_at__isnull=True,
-                workspace__slug=slug,
-                project_id=project_id,
-                state__group="unstarted",
-            ).count()
-
-            started_issues = Issue.issue_objects.filter(
-                issue_cycle__cycle_id=cycle_id,
-                issue_cycle__deleted_at__isnull=True,
-                workspace__slug=slug,
-                project_id=project_id,
-                state__group="started",
-            ).count()
-
-            cancelled_issues = Issue.issue_objects.filter(
-                issue_cycle__cycle_id=cycle_id,
-                issue_cycle__deleted_at__isnull=True,
-                workspace__slug=slug,
-                project_id=project_id,
-                state__group="cancelled",
-            ).count()
-
-            completed_issues = Issue.issue_objects.filter(
-                issue_cycle__cycle_id=cycle_id,
-                issue_cycle__deleted_at__isnull=True,
-                workspace__slug=slug,
-                project_id=project_id,
-                state__group="completed",
-            ).count()
-
-            total_issues = Issue.issue_objects.filter(
-                issue_cycle__cycle_id=cycle_id,
-                issue_cycle__deleted_at__isnull=True,
-                workspace__slug=slug,
-                project_id=project_id,
-            ).count()
+            ).aggregate(
+                backlog_issues=Count("id", filter=Q(state__group="backlog")),
+                unstarted_issues=Count("id", filter=Q(state__group="unstarted")),
+                started_issues=Count("id", filter=Q(state__group="started")),
+                cancelled_issues=Count("id", filter=Q(state__group="cancelled")),
+                completed_issues=Count("id", filter=Q(state__group="completed")),
+                total_issues=Count("id"),
+            )
+            backlog_issues = issue_counts["backlog_issues"]
+            unstarted_issues = issue_counts["unstarted_issues"]
+            started_issues = issue_counts["started_issues"]
+            cancelled_issues = issue_counts["cancelled_issues"]
+            completed_issues = issue_counts["completed_issues"]
+            total_issues = issue_counts["total_issues"]
 
         return Response(
             {
