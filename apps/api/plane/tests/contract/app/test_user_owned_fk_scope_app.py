@@ -27,13 +27,12 @@ def other_user(db):
     return User.objects.create(email="other@plane.so", username="other_user")
 
 
-def _asset(user, entity_type, workspace=None):
+def _asset(user, entity_type):
     return FileAsset.objects.create(
         attributes={"name": "image.png", "type": "image/png", "size": 1024},
         asset="image.png",
         size=1024,
         user=user,
-        workspace=workspace,
         entity_type=entity_type,
         storage_metadata={"size": 1024},
     )
@@ -58,10 +57,13 @@ class TestNotificationPreferenceOwner:
 @pytest.mark.contract
 @pytest.mark.django_db
 class TestUserAssetOwner:
-    def test_patch_refuses_asset_of_another_user(self, session_client, create_user, other_user, workspace):
-        foreign = _asset(other_user, FileAsset.EntityTypeContext.ISSUE_ATTACHMENT, workspace)
-
-        for field in ("avatar_asset", "cover_image_asset"):
+    def test_patch_refuses_asset_of_another_user(self, session_client, create_user, other_user):
+        # Matching entity types, so only the owner differs
+        for field, entity_type in (
+            ("avatar_asset", FileAsset.EntityTypeContext.USER_AVATAR),
+            ("cover_image_asset", FileAsset.EntityTypeContext.USER_COVER),
+        ):
+            foreign = _asset(other_user, entity_type)
             response = session_client.patch(USER_URL, {field: str(foreign.id)}, format="json")
             assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -91,7 +93,8 @@ class TestUserAssetOwner:
         create_user.refresh_from_db()
         assert create_user.cover_image_asset_id is None
 
-    def test_avatar_upload_does_not_delete_asset_of_another_user(self, session_client, create_user, other_user):
+    def test_avatar_replacement_respects_asset_owner(self, session_client, create_user, other_user):
+        """Replacing the avatar only removes a previous avatar the user owns."""
         foreign = _asset(other_user, FileAsset.EntityTypeContext.USER_AVATAR)
         User.objects.filter(pk=create_user.pk).update(avatar_asset=foreign)
         new_avatar = _asset(create_user, FileAsset.EntityTypeContext.USER_AVATAR)
