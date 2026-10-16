@@ -69,7 +69,22 @@ class IssueSerializer(BaseSerializer):
 
     class Meta:
         model = Issue
-        read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at", "completed_at"]
+        # SECURITY: created_by must stay read-only, matching updated_by right beside it.
+        # created_by is a plain FK with no auto_now_add-style protection, so leaving it
+        # out of this list let any project member set an issue's creator to an arbitrary
+        # user via PATCH — serializer.update() setattrs it before BaseModel.save() runs,
+        # and BaseModel.save() only auto-protects created_by on create (self._state.adding),
+        # never on update. That forged created_by then passed IssueDetailAPIEndpoint.delete's
+        # "creator can delete" check, letting a member delete work items only an admin should.
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "updated_at",
+            "completed_at",
+        ]
         exclude = ["description_json", "description_stripped"]
 
     def validate(self, data):
