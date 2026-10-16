@@ -10,7 +10,9 @@ import { Controller } from "react-hook-form";
 // icons
 import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // plane internal packages
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { InputField } from "@makeplane/propel/components/input-field";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 
 // Generic over the form's values because react-hook-form's Control is invariant: its
 // `_options.validate` narrows `name` to a keyof union, so `Control<any>` no longer
@@ -40,59 +42,41 @@ export function ControllerInput<TFieldValues extends FieldValues = FieldValues>(
   const { name, control, type, label, description, placeholder, error, required } = props;
   // states
   const [showPassword, setShowPassword] = useState(false);
-  const descriptionId = description ? `${name}-description` : undefined;
 
   return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={name} className="text-13 text-tertiary">
-        {label}
-      </label>
-      <InputGroup size="lg">
-        <Controller
-          control={control}
+    <Controller
+      control={control}
+      name={name}
+      rules={{ required: required ? `${label} is required.` : false }}
+      render={({ field: { value, onChange, ref }, fieldState }) => (
+        <InputField
+          size="lg"
+          orientation="vertical"
+          id={name}
           name={name}
-          rules={{ required: required ? `${label} is required.` : false }}
-          render={({ field: { value, onChange, ref } }) => (
-            <Input
-              size="lg"
-              id={name}
-              name={name}
-              type={type === "password" && showPassword ? "text" : type}
-              value={value}
-              onChange={onChange}
-              ref={ref}
-              aria-invalid={error}
-              aria-describedby={descriptionId}
-              placeholder={placeholder}
-            />
-          )}
+          type={type === "password" && showPassword ? "text" : type}
+          label={label}
+          required={required}
+          value={value ?? ""}
+          onChange={onChange}
+          ref={ref}
+          error={error ? (fieldState.error?.message ?? `${label} is invalid.`) : undefined}
+          hint={description}
+          placeholder={placeholder}
+          endIcon={
+            type === "password" ? (
+              <IconButton
+                variant="ghost"
+                size="sm"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-pressed={showPassword}
+                icon={<Icon icon={showPassword ? HideOutline : ShowOutline} />}
+                onClick={() => setShowPassword((visible) => !visible)}
+              />
+            ) : undefined
+          }
         />
-        {type === "password" &&
-          (showPassword ? (
-            <button
-              type="button"
-              aria-label="Hide password"
-              className="flex items-center justify-center text-placeholder"
-              onClick={() => setShowPassword(false)}
-            >
-              <HideOutline className="h-4 w-4" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              aria-label="Show password"
-              className="flex items-center justify-center text-placeholder"
-              onClick={() => setShowPassword(true)}
-            >
-              <ShowOutline className="h-4 w-4" />
-            </button>
-          ))}
-      </InputGroup>
-      {description && (
-        <p id={descriptionId} className="pt-0.5 text-11 text-tertiary">
-          {description}
-        </p>
       )}
-    </div>
+    />
   );
 }

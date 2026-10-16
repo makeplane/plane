@@ -36,17 +36,17 @@ export function AuthenticationMethodCard(props: Props) {
         </div>
         <div className="grow">
           <div
-            className={cn("leading-5 font-medium text-primary", {
-              "text-13": withBorder,
-              "text-18": !withBorder,
+            className={cn("text-primary", {
+              "text-body-xs-medium": withBorder,
+              "text-h5-medium": !withBorder,
             })}
           >
             {name}
           </div>
           <div
-            className={cn("leading-5 font-regular text-tertiary", {
-              "text-11": withBorder,
-              "text-13": !withBorder,
+            className={cn("text-tertiary", {
+              "text-caption-sm-regular": withBorder,
+              "text-body-xs-regular": !withBorder,
             })}
           >
             {description}
