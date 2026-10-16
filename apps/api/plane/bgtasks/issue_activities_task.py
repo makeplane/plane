@@ -132,8 +132,18 @@ def track_parent(
         return
 
     if current_parent_id != requested_parent_id:
-        old_parent = Issue.objects.filter(pk=current_parent_id).first() if current_parent_id is not None else None
-        new_parent = Issue.objects.filter(pk=requested_parent_id).first() if requested_parent_id is not None else None
+        old_parent = (
+            Issue.objects.filter(pk=current_parent_id, project_id=project_id).first()
+            if current_parent_id is not None
+            else None
+        )
+        new_parent = (
+            Issue.objects.filter(pk=requested_parent_id, project_id=project_id).first()
+            if requested_parent_id is not None
+            else None
+        )
+        if requested_parent_id is not None and new_parent is None:
+            return
 
         issue_activities.append(
             IssueActivity(
@@ -310,7 +320,9 @@ def track_labels(
         if not is_valid_uuid(added_label):
             continue
 
-        label = Label.objects.get(pk=added_label)
+        label = Label.objects.filter(pk=added_label, project_id=project_id).first()
+        if label is None:
+            continue
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -334,7 +346,9 @@ def track_labels(
         if not is_valid_uuid(dropped_label):
             continue
 
-        label = Label.objects.get(pk=dropped_label)
+        label = Label.objects.filter(pk=dropped_label, project_id=project_id).first()
+        if label is None:
+            continue
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -377,7 +391,14 @@ def track_assignees(
         if not is_valid_uuid(added_asignee):
             continue
 
-        assignee = User.objects.get(pk=added_asignee)
+        assignee = User.objects.filter(
+            pk=added_asignee,
+            member_workspace__workspace_id=workspace_id,
+            member_workspace__is_active=True,
+            member_workspace__deleted_at__isnull=True,
+        ).first()
+        if assignee is None:
+            continue
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -412,7 +433,14 @@ def track_assignees(
         if not is_valid_uuid(dropped_assignee):
             continue
 
-        assignee = User.objects.get(pk=dropped_assignee)
+        # Deactivated members can still be unassigned, so is_active is not required here
+        assignee = User.objects.filter(
+            pk=dropped_assignee,
+            member_workspace__workspace_id=workspace_id,
+            member_workspace__deleted_at__isnull=True,
+        ).first()
+        if assignee is None:
+            continue
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -442,15 +470,17 @@ def track_estimate_points(
 ):
     if current_instance.get("estimate_point") != requested_data.get("estimate_point"):
         old_estimate = (
-            EstimatePoint.objects.filter(pk=current_instance.get("estimate_point")).first()
+            EstimatePoint.objects.filter(pk=current_instance.get("estimate_point"), project_id=project_id).first()
             if current_instance.get("estimate_point") is not None
             else None
         )
         new_estimate = (
-            EstimatePoint.objects.filter(pk=requested_data.get("estimate_point")).first()
+            EstimatePoint.objects.filter(pk=requested_data.get("estimate_point"), project_id=project_id).first()
             if requested_data.get("estimate_point") is not None
             else None
         )
+        if requested_data.get("estimate_point") is not None and new_estimate is None:
+            return
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -770,12 +800,13 @@ def create_cycle_issue_activity(
     created_records = json.loads(current_instance.get("created_cycle_issues", []))
 
     for updated_record in updated_records:
-        old_cycle = Cycle.objects.filter(pk=updated_record.get("old_cycle_id", None)).first()
-        new_cycle = Cycle.objects.filter(pk=updated_record.get("new_cycle_id", None)).first()
-        issue = Issue.objects.filter(pk=updated_record.get("issue_id")).first()
-        if issue:
-            issue.updated_at = timezone.now()
-            issue.save(update_fields=["updated_at"])
+        old_cycle = Cycle.objects.filter(pk=updated_record.get("old_cycle_id", None), project_id=project_id).first()
+        new_cycle = Cycle.objects.filter(pk=updated_record.get("new_cycle_id", None), project_id=project_id).first()
+        issue = Issue.objects.filter(pk=updated_record.get("issue_id"), project_id=project_id).first()
+        if issue is None:
+            continue
+        issue.updated_at = timezone.now()
+        issue.save(update_fields=["updated_at"])
 
         issue_activities.append(
             IssueActivity(
@@ -796,11 +827,12 @@ def create_cycle_issue_activity(
         )
 
     for created_record in created_records:
-        cycle = Cycle.objects.filter(pk=created_record.get("fields").get("cycle")).first()
-        issue = Issue.objects.filter(pk=created_record.get("fields").get("issue")).first()
-        if issue:
-            issue.updated_at = timezone.now()
-            issue.save(update_fields=["updated_at"])
+        cycle = Cycle.objects.filter(pk=created_record.get("fields").get("cycle"), project_id=project_id).first()
+        issue = Issue.objects.filter(pk=created_record.get("fields").get("issue"), project_id=project_id).first()
+        if cycle is None or issue is None:
+            continue
+        issue.updated_at = timezone.now()
+        issue.save(update_fields=["updated_at"])
 
         issue_activities.append(
             IssueActivity(
@@ -834,13 +866,14 @@ def delete_cycle_issue_activity(
 
     cycle_id = requested_data.get("cycle_id", "")
     cycle_name = requested_data.get("cycle_name", "")
-    cycle = Cycle.objects.filter(pk=cycle_id).first()
+    cycle = Cycle.objects.filter(pk=cycle_id, project_id=project_id).first()
     issues = requested_data.get("issues")
     for issue in issues:
-        current_issue = Issue.objects.filter(pk=issue).first()
-        if current_issue:
-            current_issue.updated_at = timezone.now()
-            current_issue.save(update_fields=["updated_at"])
+        current_issue = Issue.objects.filter(pk=issue, project_id=project_id).first()
+        if current_issue is None:
+            continue
+        current_issue.updated_at = timezone.now()
+        current_issue.save(update_fields=["updated_at"])
         issue_activities.append(
             IssueActivity(
                 issue_id=issue,
@@ -869,22 +902,23 @@ def create_module_issue_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    module = Module.objects.filter(pk=requested_data.get("module_id")).first()
-    issue = Issue.objects.filter(pk=issue_id).first()
-    if issue:
-        issue.updated_at = timezone.now()
-        issue.save(update_fields=["updated_at"])
+    module = Module.objects.filter(pk=requested_data.get("module_id"), project_id=project_id).first()
+    issue = Issue.objects.filter(pk=issue_id, project_id=project_id).first()
+    if module is None or issue is None:
+        return
+    issue.updated_at = timezone.now()
+    issue.save(update_fields=["updated_at"])
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
             actor_id=actor_id,
             verb="created",
             old_value="",
-            new_value=module.name if module else "",
+            new_value=module.name,
             field="modules",
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"added module {module.name if module else ''}",
+            comment=f"added module {module.name}",
             new_identifier=requested_data.get("module_id"),
             epoch=epoch,
         )
@@ -904,7 +938,9 @@ def delete_module_issue_activity(
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = json.loads(current_instance) if current_instance is not None else None
     module_name = current_instance.get("module_name")
-    current_issue = Issue.objects.filter(pk=issue_id).first()
+    current_issue = Issue.objects.filter(pk=issue_id, project_id=project_id).first()
+    if issue_id is not None and current_issue is None:
+        return
     if current_issue:
         current_issue.updated_at = timezone.now()
         current_issue.save(update_fields=["updated_at"])
@@ -1288,7 +1324,10 @@ def create_issue_relation_activity(
     current_instance = json.loads(current_instance) if current_instance is not None else None
     if current_instance is None and requested_data.get("issues") is not None:
         for related_issue in requested_data.get("issues"):
-            issue = Issue.objects.get(pk=related_issue)
+            # Relations can span projects, so only the workspace is enforced
+            issue = Issue.objects.filter(pk=related_issue, workspace_id=workspace_id).first()
+            if issue is None:
+                continue
             issue_activities.append(
                 IssueActivity(
                     issue_id=issue_id,
@@ -1335,7 +1374,9 @@ def delete_issue_relation_activity(
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = json.loads(current_instance) if current_instance is not None else None
-    issue = Issue.objects.get(pk=requested_data.get("related_issue"))
+    issue = Issue.objects.filter(pk=requested_data.get("related_issue"), workspace_id=workspace_id).first()
+    if issue is None:
+        return
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
@@ -1529,7 +1570,7 @@ def issue_activity(
                 ri = redis_instance()
                 # set the request origin in redis
                 ri.set(str(issue_id), origin, ex=600)
-            issue = Issue.objects.filter(pk=issue_id).first()
+            issue = Issue.objects.filter(pk=issue_id, project_id=project_id).first()
             if issue:
                 try:
                     issue.updated_at = timezone.now()
