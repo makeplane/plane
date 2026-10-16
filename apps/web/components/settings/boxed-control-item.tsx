@@ -29,7 +29,16 @@ export function SettingsBoxedControlItem(props: Props) {
       )}
     >
       <div className="flex min-w-0 flex-col gap-1.5">
-        <Field.Label nativeLabel={false} render={<FieldLabel size="xl" inset={false} render={<h4>{title}</h4>} />}>
+        <Field.Label
+          nativeLabel={false}
+          render={
+            <FieldLabel
+              size="xl"
+              inset={false}
+              render={({ children, ...headingProps }) => <h4 {...headingProps}>{children}</h4>}
+            />
+          }
+        >
           {title}
         </Field.Label>
         {description && <FieldDescription size="md">{description}</FieldDescription>}
