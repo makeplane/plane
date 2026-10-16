@@ -30,3 +30,20 @@ class TestCookiesSecure:
 
     def test_all_https_cors_origins_is_secure(self):
         assert _cookies_secure("http://localhost", ["https://plane.example.com"]) is True
+
+    def test_unset_web_url_falls_back_to_https_app_base_url(self):
+        assert _cookies_secure(None, [], app_base_url="https://plane.example.com") is True
+
+    def test_empty_web_url_falls_back_to_https_app_base_url(self):
+        origins = ["http://plane.example.com"]
+        assert _cookies_secure("", origins, app_base_url="https://plane.example.com") is True
+
+    def test_unset_web_url_with_http_app_base_url_is_non_secure(self):
+        assert _cookies_secure(None, ["http://localhost"], app_base_url="http://localhost") is False
+
+    def test_http_app_base_url_with_all_https_cors_origins_is_secure(self):
+        origins = ["https://plane.example.com"]
+        assert _cookies_secure(None, origins, app_base_url="http://localhost") is True
+
+    def test_web_url_takes_precedence_over_app_base_url(self):
+        assert _cookies_secure("http://localhost", [], app_base_url="https://plane.example.com") is False
