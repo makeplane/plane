@@ -2,13 +2,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Issue sub-resource create endpoints bind the URL issue (or comment) to the URL
+"""Issue sub-resource creates bind the URL ``issue_id`` / ``comment_id`` to the URL
 workspace + project.
 
-``ProjectEntityPermission`` / ``allow_permission`` only check membership of the URL
-``project_id``. Link, attachment (legacy + V2), reaction, subscriber and comment
-reaction creates must 404 and write nothing when the URL ``issue_id`` /
-``comment_id`` belongs to another project or workspace.
+Link, attachment (legacy + V2), reaction, subscriber and comment reaction creates
+404 and write nothing when the URL issue or comment belongs to another project or
+workspace. Adding a subscriber also requires the subscriber to be an active member
+of the URL project.
 """
 
 from unittest import mock
@@ -169,3 +169,26 @@ def test_issue_in_url_project_is_created(member_client, member, own_workspace, o
 
     assert response.status_code in (status.HTTP_200_OK, status.HTTP_201_CREATED), response.content
     assert _rows(endpoint, own_issue) == 1
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_subscriber_must_be_project_member(member_client, own_workspace, own_issue):
+    base = f"/api/workspaces/{own_workspace.slug}/projects/{own_issue.project_id}"
+    url = f"{base}/issues/{own_issue.id}/issue-subscribers/"
+    outsider = _user("outsider")
+    WorkspaceMember.objects.create(workspace=own_workspace, member=outsider, role=20)
+
+    response = member_client.post(url, {"subscriber": str(outsider.id)}, format="json")
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.content
+    assert not IssueSubscriber.objects.filter(issue=own_issue, subscriber=outsider).exists()
+
+    colleague = _user("colleague")
+    WorkspaceMember.objects.create(workspace=own_workspace, member=colleague, role=20)
+    ProjectMember.objects.create(project=own_issue.project, member=colleague, workspace=own_workspace, role=15)
+
+    response = member_client.post(url, {"subscriber": str(colleague.id)}, format="json")
+
+    assert response.status_code == status.HTTP_201_CREATED, response.content
+    assert IssueSubscriber.objects.filter(issue=own_issue, subscriber=colleague).exists()

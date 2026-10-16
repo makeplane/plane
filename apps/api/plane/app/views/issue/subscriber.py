@@ -5,6 +5,7 @@
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 
 # Module imports
 from .. import BaseViewSet
@@ -34,6 +35,14 @@ class IssueSubscriberViewSet(BaseViewSet):
             workspace__slug=self.kwargs.get("slug"),
             project_id=self.kwargs.get("project_id"),
         )
+        # The subscriber must be an active member of the URL project.
+        if not ProjectMember.objects.filter(
+            workspace__slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
+            member=serializer.validated_data["subscriber"],
+            is_active=True,
+        ).exists():
+            raise ValidationError({"error": "Subscriber must be a member of the project."})
         serializer.save(
             project_id=self.kwargs.get("project_id"),
             issue_id=self.kwargs.get("issue_id"),

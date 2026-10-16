@@ -46,8 +46,7 @@ class IssueLinkViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id, issue_id):
-        # The permission class only checks membership of project_id; the URL issue
-        # must also belong to that workspace + project (404 otherwise).
+        # The URL issue must belong to the URL workspace + project (404 otherwise).
         Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
