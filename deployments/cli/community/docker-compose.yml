@@ -205,7 +205,7 @@ services:
 
   # Comment this if you using any external s3 compatible storage
   plane-minio:
-    image: docker.io/pgsty/minio:RELEASE.2026-08-04T00-00-00Z
+    image: docker.io/pgsty/silo:RELEASE.2026-09-16T00-00-00Z
     command: server /export --console-address ":9090"
     deploy:
       replicas: 1
