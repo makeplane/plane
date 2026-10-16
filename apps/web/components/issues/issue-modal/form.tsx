@@ -465,11 +465,12 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                   variant={moveToIssue ? "secondary" : "primary"}
                   size="md"
                   stretch="auto"
-                  type="submit"
+                  type="button"
                   ref={submitBtnRef}
                   loading={isSubmitting}
                   disabled={isDisabled}
                   label={isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
+                  onClick={() => handleSubmit((data) => handleFormSubmit(data))()}
                 />
               </div>
               {moveToIssue && (
