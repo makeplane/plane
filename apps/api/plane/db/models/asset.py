@@ -98,6 +98,15 @@ class FileAsset(BaseModel):
             self.EntityTypeContext.PAGE_DESCRIPTION,
             self.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION,
         ]:
+            # Description assets are not always project-bound. Workspace-level
+            # pages have no project (Page relates to projects through a M2M),
+            # and WorkspaceFileAssetEndpoint never sets project_id, so the
+            # column is NULL for those assets. Interpolating it would emit
+            # `projects/None/`, which 404s. Fall back to the workspace-scoped
+            # route instead, mirroring the two branches the clients' own URL
+            # builder (`getEditorAssetSrc`) already picks between.
+            if self.project_id is None:
+                return f"/api/assets/v2/workspaces/{self.workspace.slug}/{self.id}/"
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/{self.id}/"
 
         return None
