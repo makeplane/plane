@@ -35,8 +35,8 @@ def _generation_key(custom_path):
 def _bump_generation(custom_path):
     """Start a new generation so responses read before this point are never served"""
     generation_key = _generation_key(custom_path)
-    cache.add(generation_key, 0, timeout=None)
-    cache.incr(generation_key)
+    if not cache.add(generation_key, 1, timeout=None):
+        cache.incr(generation_key)
 
 
 def cache_response(timeout=60 * 60, path=None, user=True):
