@@ -1,0 +1,41 @@
+{
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "Tilføj opgaver til cyklussen for at se dens fremdrift"
+      },
+      "chart": {
+        "title": "Tilføj opgaver til cyklussen for at se burndown-diagrammet."
+      },
+      "priority_issue": {
+        "title": "Se et overblik over højprioriterede opgaver, der håndteres i cyklussen."
+      },
+      "assignee": {
+        "title": "Tildel personer til opgaver for at se en opdeling af arbejdet pr. person."
+      },
+      "label": {
+        "title": "Tilføj etiketter til opgaver for at se opdelingen af arbejdet pr. etiket."
+      }
+    }
+  },
+  "cycle": {
+    "label": "{count, plural, one {Cyklus} other {Cyklusser}}",
+    "no_cycle": "Ingen cyklus"
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Tilføj opgaver til cyklussen for at se dens\n fremdrift"
+      },
+      "priority": {
+        "title": "Se et overblik over højprioriterede opgaver, der håndteres i\n cyklussen."
+      },
+      "assignee": {
+        "title": "Tildel personer til opgaver for at se en\n opdeling af arbejdet pr. person."
+      },
+      "label": {
+        "title": "Tilføj etiketter til opgaver for at se\n opdelingen af arbejdet pr. etiket."
+      }
+    }
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "Masseslet opgaver"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "Opgavehandlinger",
+        "indicator": "Opgave",
+        "change_state": "Skift status",
+        "change_priority": "Skift prioritet",
+        "change_assignees": "Tildel til",
+        "assign_to_me": "Tildel til mig",
+        "unassign_from_me": "Fjern tildeling fra mig",
+        "change_estimate": "Skift estimat",
+        "add_to_cycle": "Tilføj til cyklus",
+        "add_to_modules": "Tilføj til moduler",
+        "add_labels": "Tilføj etiketter",
+        "subscribe": "Abonner på notifikationer",
+        "unsubscribe": "Afmeld notifikationer",
+        "delete": "Slet",
+        "copy_id": "Kopiér ID",
+        "copy_id_toast_success": "Opgave-ID kopieret til udklipsholder.",
+        "copy_id_toast_error": "Der opstod en fejl under kopiering af opgave-ID til udklipsholder.",
+        "copy_title": "Kopiér titel",
+        "copy_title_toast_success": "Opgavetitel kopieret til udklipsholder.",
+        "copy_title_toast_error": "Der opstod en fejl under kopiering af opgavetitel til udklipsholder.",
+        "copy_url": "Kopiér URL",
+        "copy_url_toast_success": "Opgave-URL kopieret til udklipsholder.",
+        "copy_url_toast_error": "Der opstod en fejl under kopiering af opgave-URL til udklipsholder."
+      },
+      "cycle": {
+        "title": "Cyklushandlinger",
+        "indicator": "Cyklus",
+        "add_to_favorites": "Tilføj til favoritter",
+        "remove_from_favorites": "Fjern fra favoritter",
+        "copy_url": "Kopiér URL",
+        "copy_url_toast_success": "Cyklus-URL kopieret til udklipsholder.",
+        "copy_url_toast_error": "Der opstod en fejl under kopiering af cyklus-URL til udklipsholder."
+      },
+      "module": {
+        "title": "Modulhandlinger",
+        "indicator": "Modul",
+        "add_remove_members": "Tilføj/fjern medlemmer",
+        "change_status": "Skift status",
+        "add_to_favorites": "Tilføj til favoritter",
+        "remove_from_favorites": "Fjern fra favoritter",
+        "copy_url": "Kopiér URL",
+        "copy_url_toast_success": "Modul-URL kopieret til udklipsholder.",
+        "copy_url_toast_error": "Der opstod en fejl under kopiering af modul-URL til udklipsholder."
+      },
+      "page": {
+        "title": "Sidehandlinger",
+        "indicator": "Side",
+        "lock": "Lås",
+        "unlock": "Lås op",
+        "make_private": "Gør privat",
+        "make_public": "Gør offentlig",
+        "archive": "Arkiver",
+        "restore": "Genskab",
+        "add_to_favorites": "Tilføj til favoritter",
+        "remove_from_favorites": "Fjern fra favoritter",
+        "copy_url": "Kopiér URL",
+        "copy_url_toast_success": "Side-URL kopieret til udklipsholder.",
+        "copy_url_toast_error": "Der opstod en fejl under kopiering af side-URL til udklipsholder."
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "Ny opgave",
+      "create_page": "Ny side",
+      "create_view": "Ny visning",
+      "create_cycle": "Ny cyklus",
+      "create_module": "Nyt modul",
+      "create_project": "Nyt projekt",
+      "create_workspace": "Nyt arbejdsområde",
+      "create_project_automation": "Ny automatisering"
+    },
+    "navigation_actions": {
+      "open_workspace": "Åbn et arbejdsområde",
+      "nav_home": "Gå til start",
+      "nav_inbox": "Gå til indbakke",
+      "nav_your_work": "Gå til dit arbejde",
+      "nav_account_settings": "Gå til kontoindstillinger",
+      "open_project": "Åbn et projekt",
+      "nav_projects_list": "Gå til projektliste",
+      "nav_all_workspace_work_items": "Gå til alle opgaver",
+      "nav_assigned_workspace_work_items": "Gå til tildelte opgaver",
+      "nav_created_workspace_work_items": "Gå til oprettede opgaver",
+      "nav_subscribed_workspace_work_items": "Gå til abonnerede opgaver",
+      "nav_workspace_analytics": "Gå til arbejdsområdeanalyse",
+      "nav_workspace_drafts": "Gå til arbejdsområdekladder",
+      "nav_workspace_archives": "Gå til arbejdsområdearkiver",
+      "open_workspace_setting": "Åbn en indstilling for arbejdsområdet",
+      "nav_workspace_settings": "Gå til arbejdsområdeindstillinger",
+      "nav_project_work_items": "Gå til opgaver",
+      "open_project_cycle": "Åbn en cyklus",
+      "nav_project_cycles": "Gå til cyklusser",
+      "open_project_module": "Åbn et modul",
+      "nav_project_modules": "Gå til moduler",
+      "open_project_view": "Åbn en projektvisning",
+      "nav_project_views": "Gå til projektvisninger",
+      "nav_project_pages": "Gå til sider",
+      "nav_project_intake": "Gå til indbakke",
+      "nav_project_archives": "Gå til projektarkiver",
+      "open_project_setting": "Åbn en projektindstilling",
+      "nav_project_settings": "Gå til projektindstillinger",
+      "nav_workspace_active_cycle": "Gå til alle aktive cyklusser",
+      "nav_project_overview": "Gå til projektoversigt"
+    },
+    "account_actions": {
+      "sign_out": "Log ud",
+      "workspace_invites": "Invitationer til arbejdsområde"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "Slå app-sidebjælke til/fra",
+      "copy_current_page_url": "Kopiér aktuel side-URL",
+      "copy_current_page_url_toast_success": "Aktuel side-URL kopieret til udklipsholder.",
+      "copy_current_page_url_toast_error": "Der opstod en fejl under kopiering af den aktuelle side-URL til udklipsholder.",
+      "focus_top_nav_search": "Fokuser på søgefelt"
+    },
+    "preferences_actions": {
+      "update_theme": "Skift brugerfladetema",
+      "update_timezone": "Skift tidszone",
+      "update_start_of_week": "Skift ugens første dag",
+      "update_language": "Skift brugerfladesprog",
+      "toast": {
+        "theme": {
+          "success": "Tema opdateret med succes.",
+          "error": "Kunne ikke opdatere tema. Prøv venligst igen."
+        },
+        "timezone": {
+          "success": "Tidszone opdateret med succes.",
+          "error": "Kunne ikke opdatere tidszone. Prøv venligst igen."
+        },
+        "generic": {
+          "success": "Præferencer opdateret med succes.",
+          "error": "Kunne ikke opdatere præferencer. Prøv venligst igen."
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "Åbn tastaturgenveje",
+      "open_plane_documentation": "Åbn Plane-dokumentation",
+      "join_forum": "Deltag i vores forum",
+      "report_bug": "Rapporter en fejl",
+      "chat_with_us": "Chat med os"
+    },
+    "page_placeholders": {
+      "default": "Skriv en kommando eller søg",
+      "open_workspace": "Åbn et arbejdsområde",
+      "open_project": "Åbn et projekt",
+      "open_workspace_setting": "Åbn en arbejdsområdeindstilling",
+      "open_project_cycle": "Åbn en cyklus",
+      "open_project_module": "Åbn et modul",
+      "open_project_view": "Åbn en projektvisning",
+      "open_project_setting": "Åbn en projektindstilling",
+      "update_work_item_state": "Skift status",
+      "update_work_item_priority": "Skift prioritet",
+      "update_work_item_assignee": "Tildel til",
+      "update_work_item_estimate": "Skift estimat",
+      "update_work_item_cycle": "Tilføj til cyklus",
+      "update_work_item_module": "Tilføj til moduler",
+      "update_work_item_labels": "Tilføj etiketter",
+      "update_module_member": "Skift medlemmer",
+      "update_module_status": "Skift status",
+      "update_theme": "Skift tema",
+      "update_timezone": "Skift tidszone",
+      "update_start_of_week": "Skift ugens første dag",
+      "update_language": "Skift sprog"
+    },
+    "search_menu": {
+      "no_results": "Ingen resultater fundet",
+      "clear_search": "Ryd søgning",
+      "go_to_advanced_search": "Gå til avanceret søgning"
+    },
+    "footer": {
+      "workspace_level": "Arbejdsområdeniveau"
+    },
+    "shortcuts_modal": {
+      "search_placeholder": "Søg efter genveje",
+      "no_results": "Ingen genveje fundet for \"{query}\"",
+      "sequence_separator": "derefter"
+    },
+    "group_titles": {
+      "actions": "Handlinger",
+      "contextual": "Kontekstuel",
+      "navigation": "Naviger",
+      "create": "Opret",
+      "general": "Generelt",
+      "settings": "Indstillinger",
+      "account": "Konto",
+      "miscellaneous": "Diverse",
+      "preferences": "Præferencer",
+      "help": "Hjælp"
+    }
+  }
+}
