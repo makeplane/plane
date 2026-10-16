@@ -177,8 +177,9 @@ class TestProjectMemberIsActiveAuthz:
 class TestProjectMemberPartialUpdateScope:
     """Only project admins (or workspace admins) may edit membership rows, and system fields stay read-only."""
 
-    def test_guest_cannot_set_deleted_at_on_admin(self, workspace, project, create_user):
-        guest = _make_user("guest-deleted-at@plane.so")
+    def test_guest_cannot_modify_other_membership(self, workspace, project, create_user):
+        """A project GUEST cannot update another member's membership row."""
+        guest = _make_user("guest-other-row@plane.so")
         _add_member(workspace, project, guest, ws_role=15, project_role=5)
         admin_member = ProjectMember.objects.get(project=project, member=create_user)
 
