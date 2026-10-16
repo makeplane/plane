@@ -2,11 +2,10 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Contract tests for WorkSpaceViewSet update authorization.
+"""Contract tests for WorkSpaceViewSet updates.
 
-Editing workspace settings is workspace-admin-only. ``partial_update`` enforced that, but
-``WorkSpaceBasePermission`` let members through for PUT, which routes to the undecorated
-``update``. The permission class now requires the admin role for both PUT and PATCH.
+Editing workspace settings (PUT or PATCH) is workspace-admin-only, and ``deleted_at``
+is read-only on update; a workspace is deleted only through ``destroy()``.
 """
 
 import pytest
@@ -49,3 +48,12 @@ class TestWorkspaceUpdateAdminScope:
         assert response.status_code == status.HTTP_200_OK, response.data
         workspace.refresh_from_db()
         assert workspace.name == "Renamed"
+
+    def test_update_leaves_deleted_at_unchanged(self, workspace):
+        client = _client_for(workspace, ADMIN)
+        response = client.patch(
+            f"/api/workspaces/{workspace.slug}/", {"deleted_at": "2026-01-01T00:00:00Z"}, format="json"
+        )
+        assert response.status_code == status.HTTP_200_OK, response.data
+        workspace.refresh_from_db()
+        assert workspace.deleted_at is None
