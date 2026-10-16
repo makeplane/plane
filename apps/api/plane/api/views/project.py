@@ -413,10 +413,11 @@ class ProjectListLiteAPIEndpoint(BaseAPIView):
         if not include_archived:
             projects = projects.filter(archived_at__isnull=True)
 
+        # sort_order is a per-member annotation on the full list; Project has no such column.
         projects = projects.order_by(
             sanitize_order_by(
                 request.GET.get("order_by", "-created_at"),
-                PROJECT_ORDER_BY_ALLOWLIST,
+                PROJECT_ORDER_BY_ALLOWLIST - {"sort_order"},
                 default="-created_at",
             )
         )
