@@ -6,18 +6,15 @@
 
 import { observer } from "mobx-react";
 // plane imports
+import { SelectField } from "@makeplane/propel/components/select-field";
 import { SUPPORTED_LANGUAGES, useTranslation } from "@plane/i18n";
-import { Select } from "@plane/blocks/select";
 import { setToast } from "@plane/blocks/toast";
 // components
-import { TimezoneSelect } from "@/components/global";
+import { TimezoneSelect } from "@/components/global/timezone-select";
 import { StartOfWeekPreference } from "@/components/profile/start-of-week-preference";
 import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks
 import { useUser, useUserProfile } from "@/hooks/store/user";
-
-/** A supported UI language, in the shape the `Select` renders. */
-type LanguageOption = { value: string; label: string };
 
 export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
   function ProfileSettingsLanguageAndTimezonePreferencesList() {
@@ -65,46 +62,37 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
       }
     };
 
-    const getLanguageLabel = (value: string) => {
-      const selectedLanguage = SUPPORTED_LANGUAGES.find((l) => l.value === value);
-      if (!selectedLanguage) return value;
-      return selectedLanguage.label;
-    };
-
-    const languageOptions: LanguageOption[] = SUPPORTED_LANGUAGES.map((item) => ({
-      value: item.value,
-      label: item.label,
-    }));
-    const selectedLanguageOption = languageOptions.find((option) => option.value === profile?.language) ?? null;
-
     return (
       <div className="flex flex-col gap-y-1">
         <SettingsControlItem
           title={t("timezone")}
           description={t("timezone_setting")}
-          control={<TimezoneSelect value={user?.user_timezone || "Asia/Kolkata"} onChange={handleTimezoneChange} />}
+          control={
+            <TimezoneSelect
+              value={user?.user_timezone || "Asia/Kolkata"}
+              onChange={handleTimezoneChange}
+              label={t("timezone")}
+              size="md"
+              width="fit"
+              className="max-w-64"
+            />
+          }
         />
         <SettingsControlItem
           title={t("language")}
           description={t("language_setting")}
           control={
-            <Select<LanguageOption>
-              getValues={() => languageOptions}
-              value={selectedLanguageOption}
-              onChange={(value) => void handleLanguageChange(value)}
-              getOptionValue={(option) => option.value}
-              getOptionLabel={(option) => option.label}
+            <SelectField<string>
+              aria-label={t("language")}
+              size="md"
+              width="fit"
+              options={SUPPORTED_LANGUAGES}
+              value={profile?.language ?? null}
+              onValueChange={(value) => {
+                if (value !== null) void handleLanguageChange(value);
+              }}
               placeholder="Select a language"
-              showSearch={false}
-              pinSelected={false}
-              contentSizing="anchor"
-            >
-              <Select.Trigger<LanguageOption> variant="select-md" className="w-42 max-w-full">
-                <span className="min-w-0 grow truncate text-left">
-                  {profile?.language ? getLanguageLabel(profile.language) : "Select a language"}
-                </span>
-              </Select.Trigger>
-            </Select>
+            />
           }
         />
         <StartOfWeekPreference
