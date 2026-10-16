@@ -3,12 +3,9 @@
 # See the LICENSE file for details.
 
 """
-Regression tests for INFRA-1115 / INFRA-1119.
-
-ProjectPagePermission now enforces the guest_view_all_features rule for every
-page-scoped endpoint: a project guest can only reach pages they own unless the
-project enables guest_view_all_features. Previously only PageViewSet.retrieve
-applied it, so the description and version endpoints served any public page.
+ProjectPagePermission applies the guest_view_all_features rule to every
+page-scoped endpoint: project guests may only access pages they own unless the
+project enables guest_view_all_features.
 """
 
 import uuid
