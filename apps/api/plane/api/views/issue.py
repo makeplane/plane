@@ -875,6 +875,8 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             project_id=str(project_id),
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -1212,6 +1214,8 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
                 actor_id=str(link.created_by_id),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
             )
             serializer = IssueLinkSerializer(link)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -1326,6 +1330,8 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
                 project_id=str(project_id),
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
             )
             serializer = IssueLinkSerializer(issue_link)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -1359,6 +1365,8 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
             project_id=str(project_id),
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
         )
         issue_link.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1496,12 +1504,20 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
 
             issue_activity.delay(
                 type="comment.activity.created",
-                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
+                # Serialize the saved comment rather than the write serializer: the
+                # latter carries no ``id``, so ``create_comment_activity`` stores the
+                # activity with ``issue_comment_id=None`` and ``notification_task``
+                # then skips comment-mention extraction entirely, which is gated on
+                # that field. The update path already reads the id out of
+                # ``current_instance``, which is why only creates lose mentions.
+                requested_data=json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder),
                 actor_id=str(issue_comment.created_by_id),
                 issue_id=str(self.kwargs.get("issue_id")),
                 project_id=str(self.kwargs.get("project_id")),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
             )
 
             # Send the model activity
@@ -1642,6 +1658,8 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
                 project_id=str(project_id),
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
             )
             # Send the model activity
             model_activity.delay(
@@ -1688,6 +1706,8 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
             project_id=str(project_id),
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
