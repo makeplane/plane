@@ -15,6 +15,7 @@ from plane.db.models import (
     WorkspaceMember,
     User,
 )
+from plane.app.permissions import ROLE
 
 
 class TestProjectBase:
@@ -227,6 +228,100 @@ class TestProjectAPIPost(TestProjectBase):
         response_data = response.json()
         assert response_data["description"] == project_data["description"]
         assert response_data["network"] == project_data["network"]
+
+
+@pytest.mark.contract
+class TestProjectMemberAPI:
+    """Test project member role operations"""
+
+    def get_project_member_url(self, workspace_slug: str, project_id: uuid.UUID, pk: uuid.UUID) -> str:
+        return f"/api/workspaces/{workspace_slug}/projects/{project_id}/members/{pk}/"
+
+    @pytest.mark.django_db
+    def test_workspace_admin_can_promote_member_above_project_role(self, session_client, workspace, create_user):
+        """Workspace admins can assign project roles above their own project role."""
+        project = Project.objects.create(name="Role Project", identifier="RP", workspace=workspace)
+        requesting_project_member = ProjectMember.objects.create(
+            project=project, member=create_user, role=ROLE.GUEST.value, is_active=True
+        )
+
+        target_user = User.objects.create_user(email="target@example.com", username="target")
+        WorkspaceMember.objects.create(
+            workspace=workspace, member=target_user, role=ROLE.MEMBER.value, is_active=True
+        )
+        target_project_member = ProjectMember.objects.create(
+            project=project, member=target_user, role=ROLE.MEMBER.value, is_active=True
+        )
+
+        url = self.get_project_member_url(workspace.slug, project.id, target_project_member.id)
+        response = session_client.patch(url, {"role": ROLE.ADMIN.value}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        target_project_member.refresh_from_db()
+        assert target_project_member.role == ROLE.ADMIN.value
+
+        requesting_project_member.refresh_from_db()
+        assert requesting_project_member.role == ROLE.GUEST.value
+
+    @pytest.mark.django_db
+    def test_non_admin_project_member_cannot_promote_member_to_admin(self, api_client, workspace):
+        """Non-admin project members cannot promote project members."""
+        project = Project.objects.create(name="Protected Role Project", identifier="PRP", workspace=workspace)
+
+        requesting_user = User.objects.create_user(email="requester@example.com", username="requester")
+        WorkspaceMember.objects.create(
+            workspace=workspace, member=requesting_user, role=ROLE.MEMBER.value, is_active=True
+        )
+        ProjectMember.objects.create(project=project, member=requesting_user, role=ROLE.MEMBER.value, is_active=True)
+
+        target_user = User.objects.create_user(email="member-target@example.com", username="member-target")
+        WorkspaceMember.objects.create(
+            workspace=workspace, member=target_user, role=ROLE.MEMBER.value, is_active=True
+        )
+        target_project_member = ProjectMember.objects.create(
+            project=project, member=target_user, role=ROLE.MEMBER.value, is_active=True
+        )
+
+        api_client.force_authenticate(user=requesting_user)
+
+        url = self.get_project_member_url(workspace.slug, project.id, target_project_member.id)
+        response = api_client.patch(url, {"role": ROLE.ADMIN.value}, format="json")
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.data["error"] == "You do not have permission to update roles"
+
+        target_project_member.refresh_from_db()
+        assert target_project_member.role == ROLE.MEMBER.value
+
+    @pytest.mark.django_db
+    def test_project_member_cannot_promote_lower_project_member(self, api_client, workspace):
+        """Non-admin project members cannot promote lower project members."""
+        project = Project.objects.create(name="No Expansion Project", identifier="NEP", workspace=workspace)
+
+        requesting_user = User.objects.create_user(email="role-member@example.com", username="role-member")
+        WorkspaceMember.objects.create(
+            workspace=workspace, member=requesting_user, role=ROLE.MEMBER.value, is_active=True
+        )
+        ProjectMember.objects.create(project=project, member=requesting_user, role=ROLE.MEMBER.value, is_active=True)
+
+        target_user = User.objects.create_user(email="lower-target@example.com", username="lower-target")
+        WorkspaceMember.objects.create(
+            workspace=workspace, member=target_user, role=ROLE.MEMBER.value, is_active=True
+        )
+        target_project_member = ProjectMember.objects.create(
+            project=project, member=target_user, role=ROLE.GUEST.value, is_active=True
+        )
+
+        api_client.force_authenticate(user=requesting_user)
+
+        url = self.get_project_member_url(workspace.slug, project.id, target_project_member.id)
+        response = api_client.patch(url, {"role": ROLE.MEMBER.value}, format="json")
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.data["error"] == "You do not have permission to update roles"
+
+        target_project_member.refresh_from_db()
+        assert target_project_member.role == ROLE.GUEST.value
 
 
 @pytest.mark.contract
