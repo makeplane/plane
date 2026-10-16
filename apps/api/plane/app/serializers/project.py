@@ -251,7 +251,8 @@ class DeployBoardSerializer(BaseSerializer):
     class Meta:
         model = DeployBoard
         fields = "__all__"
-        read_only_fields = ["workspace", "project", "anchor"]
+        # The published entity is fixed when the board is created from the URL project.
+        read_only_fields = ["workspace", "project", "anchor", "entity_identifier", "entity_name"]
 
 
 class ProjectPublicMemberSerializer(BaseSerializer):
