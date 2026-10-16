@@ -119,6 +119,7 @@ class TestMagicLinkGenerate:
 
         ri = redis_instance()
         ri.delete("magic_user@plane.so")
+        ri.delete("magic_user@plane.so:issued")
 
         response = api_client.post(url, {"email": "user@plane.so"}, format="json")
         assert response.status_code == status.HTTP_200_OK
@@ -137,6 +138,7 @@ class TestMagicLinkGenerate:
 
         ri = redis_instance()
         ri.delete("magic_user@plane.so")
+        ri.delete("magic_user@plane.so:issued")
 
         for _ in range(4):
             api_client.post(url, {"email": "user@plane.so"}, format="json")
@@ -265,6 +267,7 @@ class TestMagicSignIn:
         """Test magic link sign-in with expired/invalid link"""
         ri = redis_instance()
         ri.delete("magic_user@plane.so")
+        ri.delete("magic_user@plane.so:issued")
 
         url = reverse("magic-sign-in")
         response = django_client.post(url, {"email": "user@plane.so", "code": "xxxx-xxxxx-xxxx"}, follow=False)
@@ -315,6 +318,7 @@ class TestMagicSignIn:
 
         # The user should now be authenticated
         assert "_auth_user_id" in django_client.session
+        assert not ri.exists("magic_user@plane.so:issued")
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.magic_link_code_task.magic_link.delay")
@@ -489,10 +493,12 @@ class TestMagicSignInVerifyAttempts:
         ri = redis_instance()
         ri.delete(f"magic_{self.EMAIL}")
         ri.delete(f"magic_{self.EMAIL}:verify_attempts")
+        ri.delete(f"magic_{self.EMAIL}:issued")
         yield
         _clear_auth_throttle_keys()
         ri.delete(f"magic_{self.EMAIL}")
         ri.delete(f"magic_{self.EMAIL}:verify_attempts")
+        ri.delete(f"magic_{self.EMAIL}:issued")
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.magic_link_code_task.magic_link.delay")
@@ -501,12 +507,12 @@ class TestMagicSignInVerifyAttempts:
     ):
         """
         After MAX_VERIFY_ATTEMPTS wrong codes the next verify must redirect with
-        EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN and the code must be burned.
+        EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN and both Redis keys must be gone.
 
         With MAX_VERIFY_ATTEMPTS=5 the 5th wrong attempt itself triggers exhaustion
         (4 INVALID + 1 EXHAUSTED), matching the >= check in set_user_data.
         """
-        token = _generate_magic_token(api_client, self.EMAIL)
+        _generate_magic_token(api_client, self.EMAIL)
         url = reverse("magic-sign-in")
         ri = redis_instance()
 
@@ -525,26 +531,25 @@ class TestMagicSignInVerifyAttempts:
         assert response.status_code == 302
         assert "EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN" in response.url
 
-        # The code is burned but the record (and its regeneration count) stays.
-        assert json.loads(ri.get(f"magic_{self.EMAIL}"))["token"] is None
+        # Both the token and the counter must be deleted.
+        assert not ri.exists(f"magic_{self.EMAIL}")
         assert not ri.exists(f"magic_{self.EMAIL}:verify_attempts")
 
-        # Even the originally issued code no longer signs in.
-        response = django_client.post(url, {"email": self.EMAIL, "code": token}, follow=False)
+        # Follow-up verify now sees the key as missing and reports EXPIRED.
+        response = django_client.post(url, {"email": self.EMAIL, "code": "000000"}, follow=False)
         assert response.status_code == 302
-        assert "EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN" in response.url
-        assert "_auth_user_id" not in django_client.session
+        assert "EXPIRED_MAGIC_CODE_SIGN_IN" in response.url
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.magic_link_code_task.magic_link.delay")
     def test_exhaustion_does_not_reset_regeneration_cap(
         self, mock_magic_link, django_client, api_client, setup_user, setup_instance
     ):
-        """Burning codes by guessing must not let /magic-generate/ issue codes forever."""
+        """Codes issued per email stay capped per window when earlier codes hit the verify cap."""
         url = reverse("magic-sign-in")
         gen_url = reverse("magic-generate")
 
-        # initiate() allows the first code plus 3 regenerations per window.
+        # The first code plus 3 regenerations are issued; the next request is refused.
         for _ in range(4):
             # Stay under the per-IP throttle; this test is about the per-email cap.
             _clear_auth_throttle_keys()
@@ -616,10 +621,12 @@ class TestMagicSignUpVerifyAttempts:
         ri = redis_instance()
         ri.delete(f"magic_{self.EMAIL}")
         ri.delete(f"magic_{self.EMAIL}:verify_attempts")
+        ri.delete(f"magic_{self.EMAIL}:issued")
         yield
         _clear_auth_throttle_keys()
         ri.delete(f"magic_{self.EMAIL}")
         ri.delete(f"magic_{self.EMAIL}:verify_attempts")
+        ri.delete(f"magic_{self.EMAIL}:issued")
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.magic_link_code_task.magic_link.delay")
@@ -637,7 +644,7 @@ class TestMagicSignUpVerifyAttempts:
 
         response = django_client.post(url, {"email": self.EMAIL, "code": "000000"}, follow=False)
         assert "EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP" in response.url
-        assert json.loads(ri.get(f"magic_{self.EMAIL}"))["token"] is None
+        assert not ri.exists(f"magic_{self.EMAIL}")
         assert not ri.exists(f"magic_{self.EMAIL}:verify_attempts")
 
 
@@ -751,10 +758,12 @@ class TestBotUserLoginBlocked:
         ri = redis_instance()
         ri.delete(f"magic_{self.BOT_EMAIL}")
         ri.delete(f"magic_{self.BOT_EMAIL}:verify_attempts")
+        ri.delete(f"magic_{self.BOT_EMAIL}:issued")
         yield
         _clear_auth_throttle_keys()
         ri.delete(f"magic_{self.BOT_EMAIL}")
         ri.delete(f"magic_{self.BOT_EMAIL}:verify_attempts")
+        ri.delete(f"magic_{self.BOT_EMAIL}:issued")
 
     @pytest.fixture
     def bot_user(self, db):

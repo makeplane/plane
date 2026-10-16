@@ -27,11 +27,17 @@ class MagicCodeProvider(CredentialAdapter):
     # the token TTL window.
     MAX_VERIFY_ATTEMPTS = 5
 
-    # Atomic INCR + first-time EXPIRE for the verify-attempt counter.
-    # Using a dedicated counter key with this script makes the increment
-    # safe under concurrent wrong-code requests; a plain JSON read/modify/
-    # write would race and let parallel attackers exceed the cap.
-    _INCREMENT_VERIFY_ATTEMPTS_SCRIPT = (
+    # Codes issued per email are capped per window, independent of token
+    # lifetime: the first code plus three regenerations. The window starts at
+    # the first code and is not extended by later requests.
+    MAX_CODES_PER_WINDOW = 4
+    ISSUE_WINDOW_SECONDS = 600
+
+    # Atomic INCR + first-time EXPIRE for the verify-attempt and issued-code
+    # counters. Using dedicated counter keys with this script makes the
+    # increment safe under concurrent requests; a plain JSON read/modify/write
+    # would race and let parallel requests exceed the cap.
+    _INCREMENT_COUNTER_SCRIPT = (
         'local count = redis.call("INCR", KEYS[1]) '
         'if count == 1 then '
         '    redis.call("EXPIRE", KEYS[1], tonumber(ARGV[1])) '
@@ -42,6 +48,10 @@ class MagicCodeProvider(CredentialAdapter):
     @staticmethod
     def _verify_attempts_key(token_key):
         return f"{token_key}:verify_attempts"
+
+    @staticmethod
+    def _issued_key(token_key):
+        return f"{token_key}:issued"
 
     def __init__(self, request, key, code=None, callback=None):
         (EMAIL_HOST, ENABLE_MAGIC_LINK_LOGIN) = get_configuration_value(
@@ -80,39 +90,29 @@ class MagicCodeProvider(CredentialAdapter):
 
         key = "magic_" + str(self.key)
 
-        # Check if the key already exists in python
-        if ri.exists(key):
-            data = json.loads(ri.get(key))
+        issued = int(
+            ri.eval(
+                self._INCREMENT_COUNTER_SCRIPT,
+                1,
+                self._issued_key(key),
+                self.ISSUE_WINDOW_SECONDS,
+            )
+        )
+        if issued > self.MAX_CODES_PER_WINDOW:
+            email = str(self.key)
+            if User.objects.filter(email=email).exists():
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN"],
+                    error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN",
+                    payload={"email": email},
+                )
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP"],
+                error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP",
+                payload={"email": email},
+            )
 
-            current_attempt = data["current_attempt"] + 1
-
-            if data["current_attempt"] > 2:
-                email = str(self.key).replace("magic_", "", 1)
-                if User.objects.filter(email=email).exists():
-                    raise AuthenticationException(
-                        error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN"],
-                        error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN",
-                        payload={"email": str(email)},
-                    )
-                else:
-                    raise AuthenticationException(
-                        error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP"],
-                        error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP",
-                        payload={"email": self.key},
-                    )
-
-            value = {
-                "current_attempt": current_attempt,
-                "email": str(self.key),
-                "token": token,
-            }
-            expiry = 600
-            ri.set(key, json.dumps(value), ex=expiry)
-        else:
-            value = {"current_attempt": 0, "email": self.key, "token": token}
-            expiry = 600
-
-            ri.set(key, json.dumps(value), ex=expiry)
+        ri.set(key, json.dumps({"email": str(self.key), "token": token}), ex=600)
         # Reset the verify-attempt counter so each newly issued token starts
         # with a fresh budget of MAX_VERIFY_ATTEMPTS.
         ri.delete(self._verify_attempts_key(key))
@@ -125,7 +125,7 @@ class MagicCodeProvider(CredentialAdapter):
             token = data["token"]
             email = data["email"]
 
-            if token is not None and str(token) == str(self.code):
+            if str(token) == str(self.code):
                 super().set_user_data(
                     {
                         "email": email,
@@ -138,9 +138,10 @@ class MagicCodeProvider(CredentialAdapter):
                         },
                     }
                 )
-                # Delete the token and its counter from redis on success.
+                # Delete the token and its counters from redis on success.
                 ri.delete(self.key)
                 ri.delete(self._verify_attempts_key(self.key))
+                ri.delete(self._issued_key(self.key))
                 return
             else:
                 email = str(self.key).replace("magic_", "", 1)
@@ -157,25 +158,20 @@ class MagicCodeProvider(CredentialAdapter):
                 remaining_ttl = ri.ttl(self.key)
                 if remaining_ttl is None or remaining_ttl <= 0:
                     remaining_ttl = 1
-                if token is None:
-                    # Code already burned by too many wrong guesses.
-                    verify_attempts = self.MAX_VERIFY_ATTEMPTS
-                else:
-                    verify_attempts = int(
-                        ri.eval(
-                            self._INCREMENT_VERIFY_ATTEMPTS_SCRIPT,
-                            1,
-                            self._verify_attempts_key(self.key),
-                            remaining_ttl,
-                        )
+                verify_attempts = int(
+                    ri.eval(
+                        self._INCREMENT_COUNTER_SCRIPT,
+                        1,
+                        self._verify_attempts_key(self.key),
+                        remaining_ttl,
                     )
+                )
 
                 if verify_attempts >= self.MAX_VERIFY_ATTEMPTS:
-                    # Burn the code but keep the record: its current_attempt
-                    # is what caps how many codes initiate() issues for this
-                    # email, so deleting it would allow unlimited regeneration.
-                    data["token"] = None
-                    ri.set(self.key, json.dumps(data), ex=remaining_ttl)
+                    # Invalidate the token (and counter) so further attempts
+                    # must regenerate; regeneration is capped by the separate
+                    # issued-code counter, which is left in place here.
+                    ri.delete(self.key)
                     ri.delete(self._verify_attempts_key(self.key))
                     if user_exists:
                         raise AuthenticationException(
