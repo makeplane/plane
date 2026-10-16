@@ -6,8 +6,8 @@
 
 Creating, updating or converting a draft requires the caller to be an active
 ADMIN/MEMBER of the draft's project in the URL workspace, the same rule
-``IssueViewSet.create`` enforces. A draft's cycle and modules must belong to
-the draft's project.
+``IssueViewSet.create`` enforces. A draft's cycle and modules, including those
+sent when converting it, must belong to the draft's project.
 """
 
 from unittest import mock
@@ -19,11 +19,13 @@ from rest_framework.test import APIClient
 
 from plane.db.models import (
     Cycle,
+    CycleIssue,
     DraftIssue,
     DraftIssueCycle,
     DraftIssueModule,
     Issue,
     Module,
+    ModuleIssue,
     Project,
     ProjectMember,
     User,
@@ -319,3 +321,62 @@ class TestDraftCycleModuleProjectScope:
         )
         assert DraftIssueCycle.objects.get(draft_issue=draft).cycle_id == new_cycle.id
         assert DraftIssueModule.objects.get(draft_issue=draft).module_id == new_module.id
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("key", ["other", "foreign"])
+    def test_convert_rejects_cycle_from_another_project(
+        self, member_client, workspace, create_user, member, projects, key
+    ):
+        draft = _draft(workspace, projects["own"], member)
+
+        response = member_client.post(
+            draft_to_issue_url(workspace.slug, draft.id),
+            {"name": "Issue", "cycle_id": str(_cycle(projects[key], create_user).id)},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert not Issue.objects.filter(name="Issue").exists()
+        assert not CycleIssue.objects.exists()
+        assert DraftIssue.objects.filter(pk=draft.id).exists()
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("key", ["other", "foreign"])
+    def test_convert_rejects_module_from_another_project(self, member_client, workspace, member, projects, key):
+        draft = _draft(workspace, projects["own"], member)
+
+        response = member_client.post(
+            draft_to_issue_url(workspace.slug, draft.id),
+            {"name": "Issue", "module_ids": [str(_module(projects["own"]).id), str(_module(projects[key]).id)]},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert not Issue.objects.filter(name="Issue").exists()
+        assert not ModuleIssue.objects.exists()
+        assert DraftIssue.objects.filter(pk=draft.id).exists()
+
+    @pytest.mark.django_db
+    def test_convert_accepts_cycle_and_modules_from_own_project(
+        self, member_client, workspace, create_user, member, projects
+    ):
+        own = projects["own"]
+        cycle, module = _cycle(own, create_user), _module(own)
+        draft = _draft(workspace, own, member)
+
+        response = member_client.post(
+            draft_to_issue_url(workspace.slug, draft.id),
+            {"name": "Issue", "cycle_id": str(cycle.id), "module_ids": [str(module.id)]},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        issue = Issue.objects.get(name="Issue")
+        assert CycleIssue.objects.get(issue=issue).cycle_id == cycle.id
+        assert ModuleIssue.objects.get(issue=issue).module_id == module.id

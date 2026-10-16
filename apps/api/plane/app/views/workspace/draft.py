@@ -255,6 +255,14 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        # The cycle and modules must belong to the draft's project (400 otherwise).
+        DraftIssueCreateSerializer.check_cycle_and_modules(
+            request.data.get("cycle_id"),
+            request.data.get("module_ids"),
+            draft_issue.project_id,
+            draft_issue.workspace_id,
+        )
+
         serializer = IssueCreateSerializer(
             data=request.data,
             context={
