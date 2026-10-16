@@ -6,7 +6,8 @@
 
 A board's identity (``entity_identifier``, ``entity_name``, ``project``,
 ``workspace``, ``anchor``) is fixed at publish time from the URL project and is
-read-only afterwards; only the publish settings are editable.
+read-only afterwards; only the publish settings are editable. A board's intake
+must belong to the board's own project.
 """
 
 from uuid import uuid4
@@ -14,11 +15,15 @@ from uuid import uuid4
 import pytest
 from rest_framework import status
 
-from plane.db.models import DeployBoard, Project, ProjectMember, Workspace
+from plane.db.models import DeployBoard, Intake, Project, ProjectMember, Workspace
+
+
+def _boards_url(slug, project_id):
+    return f"/api/workspaces/{slug}/projects/{project_id}/project-deploy-boards/"
 
 
 def _board_url(slug, project_id, pk):
-    return f"/api/workspaces/{slug}/projects/{project_id}/project-deploy-boards/{pk}/"
+    return f"{_boards_url(slug, project_id)}{pk}/"
 
 
 @pytest.fixture
@@ -91,3 +96,57 @@ class TestDeployBoardIdentityReadOnly:
         assert board.is_reactions_enabled is True
         assert board.is_votes_enabled is True
         assert board.view_props == view_props
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestDeployBoardIntakeProjectScope:
+    def test_partial_update_rejects_intake_from_another_project(
+        self, session_client, workspace, project, other_project, board
+    ):
+        own_intake = Intake.objects.create(name="Own", project=project, workspace=workspace)
+        other_intake = Intake.objects.create(name="Other", project=other_project, workspace=workspace)
+        board.intake = own_intake
+        board.save()
+
+        response = session_client.patch(
+            _board_url(workspace.slug, project.id, board.id), {"intake": str(other_intake.id)}, format="json"
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, response.data
+        board.refresh_from_db()
+        assert board.intake_id == own_intake.id
+
+    def test_partial_update_accepts_own_project_intake_or_null(self, session_client, workspace, project, board):
+        own_intake = Intake.objects.create(name="Own", project=project, workspace=workspace)
+        url = _board_url(workspace.slug, project.id, board.id)
+
+        response = session_client.patch(url, {"intake": str(own_intake.id)}, format="json")
+        assert response.status_code == status.HTTP_200_OK, response.data
+        board.refresh_from_db()
+        assert board.intake_id == own_intake.id
+
+        response = session_client.patch(url, {"intake": None}, format="json")
+        assert response.status_code == status.HTTP_200_OK, response.data
+        board.refresh_from_db()
+        assert board.intake_id is None
+
+    def test_create_rejects_intake_from_another_project(self, session_client, workspace, project, other_project):
+        other_intake = Intake.objects.create(name="Other", project=other_project, workspace=workspace)
+
+        response = session_client.post(
+            _boards_url(workspace.slug, project.id), {"intake": str(other_intake.id)}, format="json"
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, response.data
+        assert not DeployBoard.objects.filter(project=project).exists()
+
+    def test_create_accepts_own_project_intake(self, session_client, workspace, project):
+        own_intake = Intake.objects.create(name="Own", project=project, workspace=workspace)
+
+        response = session_client.post(
+            _boards_url(workspace.slug, project.id), {"intake": str(own_intake.id)}, format="json"
+        )
+
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert DeployBoard.objects.get(project=project).intake_id == own_intake.id
