@@ -98,9 +98,9 @@
         }
       },
       "webhooks": {
-        "heading": "Webhooks",
+        "heading": "Webhook",
         "description": "在项目事件发生时自动向外部服务发送通知。",
-        "title": "Webhooks",
+        "title": "Webhook",
         "add_webhook": "添加 webhook",
         "modal": {
           "title": "创建 webhook",
@@ -340,7 +340,7 @@
           "placeholder": "https://example.com/setup"
         },
         "webhook_url": {
-          "label": "Webhook URL",
+          "label": "Webhook 网址",
           "description": "我们将在此接收来自安装了您应用的工作区的 Webhook 事件和更新。",
           "placeholder": "https://example.com/webhook"
         },
@@ -372,7 +372,7 @@
         "app_slug_title": "应用别名",
         "app_slug_error": "应用别名为必填项",
         "invalid_website_error": "无效的网站",
-        "webhook_url_title": "Webhook URL",
+        "webhook_url_title": "Webhook 网址",
         "webhook_url_error": "Webhook URL为必填项",
         "invalid_webhook_url_error": "无效的Webhook URL",
         "redirect_uris_title": "重定向URI",

@@ -42,6 +42,14 @@ export function useTranslation(): TTranslationStore {
   // async loads per component, causing a re-render cascade.
   const { t, i18n } = useI18nextTranslation();
 
+  // Consumers use the translator in memoized labels and language-sensitive effects.
+  // Keep its identity stable until react-i18next changes the underlying translator.
+  const translate = useCallback(
+    (key: string, params?: Record<string, unknown>) =>
+      coerceToString(key, params === undefined ? t(key) : t(key, params)),
+    [t]
+  );
+
   const changeLanguage = useCallback(
     (lng: TLanguage) => {
       void (async () => {
@@ -59,8 +67,7 @@ export function useTranslation(): TTranslationStore {
   );
 
   return {
-    t: (key: string, params?: Record<string, unknown>) =>
-      coerceToString(key, params === undefined ? t(key) : t(key, params)),
+    t: translate,
     currentLocale: i18n.language as TLanguage,
     changeLanguage,
     languages: SUPPORTED_LANGUAGES,
