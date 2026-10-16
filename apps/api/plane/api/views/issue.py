@@ -4,6 +4,7 @@
 
 # Python imports
 import json
+import logging
 import uuid
 import re
 
@@ -161,6 +162,9 @@ from plane.utils.openapi import (
 from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 
 
+logger = logging.getLogger("plane.api")
+
+
 def user_has_issue_permission(user_id, project_id, issue=None, allowed_roles=None, allow_creator=True):
     if allow_creator and issue is not None and user_id == issue.created_by_id:
         return True
@@ -241,16 +245,39 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             # sequence_id is an integer, so anything else can't be a work item here.
             if not issue_identifier.isdecimal():
                 return Response({"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND)
-            issue = Issue.issue_objects.annotate(
+            issue_queryset = Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
-            ).get(
+            ).filter(
                 workspace__slug=slug,
                 project__identifier=project_identifier,
+                # Identifiers are only unique among live projects, so a soft-deleted
+                # project still answers to one its replacement now owns.
+                project__deleted_at__isnull=True,
                 sequence_id=issue_identifier,
             )
+
+            try:
+                issue = issue_queryset.get()
+            except Issue.MultipleObjectsReturned:
+                # `(project, sequence_id)` has no unique constraint, only the advisory
+                # lock in `Issue.save()`, so writes that skip `save()` can collide.
+                # Pick deterministically instead of letting this escape as a 500.
+                issue = issue_queryset.order_by("-created_at", "id").first()
+                if issue is None:
+                    # A concurrent write can hide every match between the two queries.
+                    return Response({"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND)
+                logger.warning(
+                    "Multiple work items match identifier %s-%s in workspace '%s'; "
+                    "returning the most recent match (id=%s). Investigate the duplicate sequence_id.",
+                    project_identifier,
+                    issue_identifier,
+                    slug,
+                    issue.id,
+                )
+
             return Response(
                 IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
                 status=status.HTTP_200_OK,
