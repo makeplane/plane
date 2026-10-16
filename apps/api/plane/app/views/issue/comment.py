@@ -116,11 +116,14 @@ class IssueCommentViewSet(BaseViewSet):
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment)
     def partial_update(self, request, slug, project_id, issue_id, pk):
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
-        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        # Only the content and visibility are editable; actor, parent and the
+        # other relations stay as they were when the comment was created.
+        data = {key: request.data[key] for key in ("comment_html", "comment_json", "access") if key in request.data}
+        requested_data = json.dumps(data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
-        serializer = IssueCommentSerializer(issue_comment, data=request.data, partial=True)
+        serializer = IssueCommentSerializer(issue_comment, data=data, partial=True)
         if serializer.is_valid():
-            if "comment_html" in request.data and request.data["comment_html"] != issue_comment.comment_html:
+            if "comment_html" in data and data["comment_html"] != issue_comment.comment_html:
                 serializer.save(edited_at=timezone.now())
             else:
                 serializer.save()
@@ -139,7 +142,7 @@ class IssueCommentViewSet(BaseViewSet):
             model_activity.delay(
                 model_name="issue_comment",
                 model_id=str(pk),
-                requested_data=request.data,
+                requested_data=data,
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,

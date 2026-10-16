@@ -208,6 +208,66 @@ class TestIssueCommentCreateScope:
 
 
 @pytest.mark.contract
+class TestIssueCommentUpdateFields:
+    """An author's PATCH may change the comment content and access, nothing else."""
+
+    @pytest.fixture
+    def comment(self, attacker, attacker_workspace, attacker_project, attacker_issue):
+        return IssueComment.objects.create(
+            comment_html="<p>original</p>",
+            issue=attacker_issue,
+            project=attacker_project,
+            workspace=attacker_workspace,
+            actor=attacker,
+            created_by=attacker,
+            access="INTERNAL",
+        )
+
+    @pytest.mark.django_db
+    def test_update_only_changes_content(
+        self, attacker_client, attacker, attacker_workspace, attacker_project, attacker_issue, comment
+    ):
+        other_user = _make_user("other")
+        other_comment = IssueComment.objects.create(
+            comment_html="<p>other</p>",
+            issue=attacker_issue,
+            project=attacker_project,
+            workspace=attacker_workspace,
+            actor=other_user,
+        )
+        url = f"{comments_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)}{comment.id}/"
+        with mock.patch("plane.app.views.issue.comment.issue_activity") as activity:
+            response = attacker_client.patch(
+                url,
+                {"comment_html": "<p>edited</p>", "actor": str(other_user.id), "parent": str(other_comment.id)},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        comment.refresh_from_db()
+        assert comment.comment_html == "<p>edited</p>"
+        assert comment.actor_id == attacker.id
+        assert comment.parent_id is None
+        requested_data = activity.delay.call_args.kwargs["requested_data"]
+        assert "actor" not in requested_data and "parent" not in requested_data
+
+    @pytest.mark.django_db
+    def test_update_can_change_access(
+        self, attacker_client, attacker_workspace, attacker_project, attacker_issue, comment
+    ):
+        url = f"{comments_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)}{comment.id}/"
+        response = attacker_client.patch(url, {"access": "EXTERNAL"}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        comment.refresh_from_db()
+        assert comment.access == "EXTERNAL"
+
+
+@pytest.mark.contract
 class TestIssueRelationCreateScope:
     """The URL side of the relation must belong to the URL project too."""
 
