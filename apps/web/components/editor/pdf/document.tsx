@@ -17,6 +17,9 @@ import interSemibold from "@/app/assets/fonts/inter/semibold.ttf?url";
 import interThin from "@/app/assets/fonts/inter/thin.ttf?url";
 import interUltraBold from "@/app/assets/fonts/inter/ultrabold.ttf?url";
 import interUltraLight from "@/app/assets/fonts/inter/ultralight.ttf?url";
+// Vazirmatn — Persian/Arabic font for RTL content.
+import vazirmatnBold from "@/app/assets/fonts/vazirmatn/bold.ttf?url";
+import vazirmatnRegular from "@/app/assets/fonts/vazirmatn/regular.ttf?url";
 // plane imports
 import { convertRemToPixel } from "@plane/utils";
 
@@ -24,6 +27,11 @@ const EDITOR_PDF_FONT_FAMILY_STYLES: Styles = {
   "*:not(.courier, .courier-bold)": { fontFamily: "Inter" },
   ".courier": { fontFamily: "Courier" },
   ".courier-bold": { fontFamily: "Courier-Bold" },
+  // RTL content (Persian, Arabic, Hebrew) — use font with GSUB shaping tables
+  "[dir='rtl']": {
+    fontFamily: "Vazirmatn",
+    textAlign: "right",
+  },
 };
 
 const EDITOR_PDF_TYPOGRAPHY_STYLES: Styles = {
@@ -210,6 +218,14 @@ Font.register({
     { src: interUltraBold, fontWeight: "ultrabold", fontStyle: "italic" },
     { src: interHeavy, fontWeight: "heavy" },
     { src: interHeavy, fontWeight: "heavy", fontStyle: "italic" },
+  ],
+});
+
+Font.register({
+  family: "Vazirmatn",
+  fonts: [
+    { src: vazirmatnRegular, fontWeight: "normal" },
+    { src: vazirmatnBold, fontWeight: "bold" },
   ],
 });
 

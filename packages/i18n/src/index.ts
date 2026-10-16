@@ -21,4 +21,11 @@ export { setLanguage } from "./core/set-language";
 export { initPromise } from "./core";
 
 // Constants
-export { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY } from "./constants/language";
+export {
+  FALLBACK_LANGUAGE,
+  SUPPORTED_LANGUAGES,
+  LANGUAGE_STORAGE_KEY,
+  RTL_LANGUAGES,
+  isRTLLanguage,
+  getLanguageDirection,
+} from "./constants/language";

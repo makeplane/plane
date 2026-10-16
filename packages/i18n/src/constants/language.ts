@@ -31,6 +31,17 @@ export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
   { label: "ქართული", value: "ka-ge" },
   { label: "Nederlands", value: "nl" },
   { label: "Български", value: "bg" },
+  { label: "فارسی", value: "fa" },
 ];
 
 export const LANGUAGE_STORAGE_KEY = "userLanguage";
+
+// Languages that render right-to-left. Used to set the document `dir` attribute
+// so the entire UI layout (not just text) mirrors for these locales.
+// When adding a new RTL locale (e.g. Arabic "ar", Hebrew "he", Urdu "ur"),
+// register it in TLanguage + SUPPORTED_LANGUAGES first, then add it here.
+export const RTL_LANGUAGES: TLanguage[] = ["fa"];
+
+export const isRTLLanguage = (lng: TLanguage): boolean => RTL_LANGUAGES.includes(lng);
+
+export const getLanguageDirection = (lng: TLanguage): "rtl" | "ltr" => (isRTLLanguage(lng) ? "rtl" : "ltr");

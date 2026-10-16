@@ -5,7 +5,7 @@
  */
 
 import { initPromise, i18nInstance } from "./instance";
-import { LANGUAGE_STORAGE_KEY } from "../constants/language";
+import { LANGUAGE_STORAGE_KEY, getLanguageDirection } from "../constants/language";
 import type { TLanguage } from "../types";
 
 export async function setLanguage(lng: TLanguage): Promise<void> {
@@ -14,5 +14,8 @@ export async function setLanguage(lng: TLanguage): Promise<void> {
   if (typeof window !== "undefined") {
     localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
     document.documentElement.lang = lng;
+    // Mirror the whole UI for RTL locales (e.g. Persian) by setting the
+    // document direction, not just translating the text.
+    document.documentElement.dir = getLanguageDirection(lng);
   }
 }

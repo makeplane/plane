@@ -1,0 +1,113 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "عمومی",
+      "private": "خصوصی",
+      "shared": "به اشتراک گذاشته‌شده",
+      "archived": "بایگانی‌شده"
+    },
+    "fallback_name": "مجموعه",
+    "form": {
+      "name_required": "عنوان مجموعه الزامی است",
+      "name_max_length": "نام مجموعه باید کمتر از ۲۵۵ کاراکتر باشد",
+      "name_placeholder_create": "یک عنوان برای مجموعه وارد کنید",
+      "name_placeholder_edit": "نام مجموعه"
+    },
+    "create_modal": {
+      "title": "ایجاد مجموعه",
+      "submit": "ایجاد مجموعه"
+    },
+    "edit_modal": {
+      "title": "ویرایش مجموعه"
+    },
+    "delete_modal": {
+      "title": "حذف مجموعه",
+      "page_count": "این مجموعه {pageCount} {pageCount, plural, one {صفحه} other {صفحه}} دارد. انتخاب کنید با آن‌ها چه اتفاقی بیفتد.",
+      "transfer_title": "انتقال صفحات و حذف مجموعه",
+      "transfer_description": "قبل از حذف، همه صفحات را به مجموعه دیگری منتقل کنید. صفحات و مجوزهایشان حفظ می‌شوند.",
+      "transfer_warning": "صفحات منتقل‌شده مجوزهای مجموعه انتخاب‌شده را به ارث می‌برند.",
+      "transfer_target_label": "انتقال صفحات به",
+      "transfer_target_placeholder": "یک مجموعه انتخاب کنید",
+      "delete_with_pages_title": "حذف مجموعه با صفحات",
+      "delete_with_pages_description": "مجموعه و همه صفحات آن را به‌طور دائمی حذف کنید. این عمل قابل بازگشت نیست.",
+      "submit": "حذف مجموعه"
+    },
+    "header": {
+      "add_page": "افزودن صفحه"
+    },
+    "menu": {
+      "create_new_page": "ایجاد صفحه جدید",
+      "add_existing_page": "افزودن صفحه موجود",
+      "edit_collection": "ویرایش مجموعه",
+      "collection_options": "گزینه‌های مجموعه"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "جستجوی صفحات",
+      "success_message": "{count} {count, plural, one {صفحه} other {صفحه}} به مجموعه اضافه شد.",
+      "error_message": "صفحات منتقل نشدند. لطفاً دوباره تلاش کنید.",
+      "no_pages_found": "صفحه‌ای با جستجوی شما یافت نشد",
+      "no_pages_available": "هیچ صفحه‌ای برای انتقال در دسترس نیست",
+      "submit": "انتقال"
+    },
+    "list": {
+      "invite_only": "فقط با دعوت",
+      "remove_error": "حذف صفحه از مجموعه ناموفق بود.",
+      "no_matching_pages": "هیچ صفحه منطبقی یافت نشد",
+      "remove_search_criteria": "معیار جستجو را حذف کنید تا همه صفحات نمایش داده شوند",
+      "remove_filters": "فیلترها را حذف کنید تا همه صفحات نمایش داده شوند",
+      "no_pages_title": "هنوز صفحه‌ای وجود ندارد",
+      "no_pages_description": "این مجموعه در حال حاضر هیچ صفحه‌ای ندارد.",
+      "untitled": "بدون عنوان",
+      "restricted_access": "دسترسی محدود",
+      "collapse_page": "جمع کردن صفحه",
+      "expand_page": "گسترش صفحه",
+      "page_actions": "عملکردهای صفحه",
+      "page_link_copied": "لینک صفحه در کلیپ‌بورد کپی شد.",
+      "columns": {
+        "page_name": "نام صفحه",
+        "owner": "مالک",
+        "nested_pages": "صفحات تودرتو",
+        "last_activity": "آخرین فعالیت",
+        "actions": "عملکردها"
+      }
+    },
+    "toasts": {
+      "created": "مجموعه با موفقیت ایجاد شد.",
+      "create_error": "مجموعه ایجاد نشد. لطفاً دوباره تلاش کنید.",
+      "renamed": "مجموعه با موفقیت تغییر نام داد.",
+      "rename_error": "مجموعه به‌روزرسانی نشد. لطفاً دوباره تلاش کنید.",
+      "transferred_deleted": "صفحات منتقل شدند و مجموعه حذف شد.",
+      "deleted_with_pages": "مجموعه و صفحات آن حذف شدند.",
+      "delete_error": "مجموعه حذف نشد. لطفاً دوباره تلاش کنید.",
+      "target_required": "لطفاً یک مجموعه برای انتقال صفحات انتخاب کنید.",
+      "create_page_error": "صفحه ایجاد نشد. لطفاً دوباره تلاش کنید.",
+      "create_page_in_collection_error": "صفحه ایجاد نشد یا به مجموعه اضافه نشد. لطفاً دوباره تلاش کنید.",
+      "collection_link_copied": "لینک مجموعه در کلیپ‌بورد کپی شد."
+    }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "برای باز کردن Wiki ارتقا دهید",
+      "description": "با Plane Pro صفحات عمومی، تاریخچه نسخه، صفحات به اشتراک گذاشته‌شده، همکاری در زمان واقعی و صفحات فضای کاری برای ویکی‌ها، اسناد سراسری شرکت و پایگاه‌های دانش را باز کنید.",
+      "upgrade_button": {
+        "text": "ارتقا"
+      },
+      "learn_more_button": {
+        "text": "بیشتر بدانید"
+      },
+      "download_button": {
+        "text": "دانلود داده‌ها",
+        "loading": "در حال دانلود"
+      },
+      "tabs": {
+        "nested_pages": "صفحات تودرتو",
+        "add_embeds": "افزودن جاسازی‌ها",
+        "publish_pages": "انتشار صفحات",
+        "comments": "کامنت‌ها"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "صفحات تودرتو نیاز به پلن پولی دارند. برای باز کردن ارتقا دهید."
+    }
+  }
+}

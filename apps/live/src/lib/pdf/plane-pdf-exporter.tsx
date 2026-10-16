@@ -5,7 +5,9 @@
  */
 
 import { createRequire } from "module";
+import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import { Document, Font, Page, pdf, Text } from "@react-pdf/renderer";
 import { createKeyGenerator, renderNode } from "./node-renderers";
 import { pdfStyles } from "./styles";
@@ -46,6 +48,32 @@ Font.register({
       src: path.join(interFontDir, "files/inter-latin-700-italic.woff"),
       fontWeight: 700,
       fontStyle: "italic",
+    },
+  ],
+});
+
+// Resolve Vazirmatn font files for Persian / Arabic RTL content in PDF exports
+const vazirmatnCandidates = [
+  path.resolve(process.cwd(), "apps/live/fonts/vazirmatn"),
+  path.resolve(process.cwd(), "fonts/vazirmatn"),
+  path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../fonts/vazirmatn"),
+];
+const vazirmatnFontDir = vazirmatnCandidates.find((dir) => fs.existsSync(dir)) || vazirmatnCandidates[0];
+
+Font.register({
+  family: "Vazirmatn",
+  fonts: [
+    {
+      src: fs.existsSync(path.join(vazirmatnFontDir, "vazirmatn-regular.woff"))
+        ? path.join(vazirmatnFontDir, "vazirmatn-regular.woff")
+        : path.join(vazirmatnFontDir, "vazirmatn-regular.ttf"),
+      fontWeight: 400,
+    },
+    {
+      src: fs.existsSync(path.join(vazirmatnFontDir, "vazirmatn-bold.woff"))
+        ? path.join(vazirmatnFontDir, "vazirmatn-bold.woff")
+        : path.join(vazirmatnFontDir, "vazirmatn-bold.ttf"),
+      fontWeight: 700,
     },
   ],
 });

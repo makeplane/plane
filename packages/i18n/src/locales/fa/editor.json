@@ -1,0 +1,65 @@
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "فایل‌ها را اینجا رها کنید یا برای آپلود کلیک کنید"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "فایل بیش از حد بزرگ است.",
+        "description": "حداکثر اندازه هر فایل {maxFileSize} مگابایت است"
+      },
+      "unsupported_file_type": {
+        "title": "نوع فایل پشتیبانی‌نشده.",
+        "description": "فرمت‌های پشتیبانی‌شده را ببینید"
+      },
+      "default": {
+        "title": "آپلود ناموفق بود.",
+        "description": "مشکلی پیش آمد. لطفاً دوباره تلاش کنید."
+      }
+    },
+    "upgrade": {
+      "description": "پلن خود را ارتقا دهید تا این پیوست را مشاهده کنید."
+    },
+    "aria": {
+      "click_to_upload": "برای آپلود پیوست کلیک کنید"
+    }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "تبدیل به جاسازی",
+      "convert_to_link": "تبدیل به لینک",
+      "convert_to_richcard": "تبدیل به کارت غنی"
+    },
+    "placeholder": {
+      "insert_embed": "لینک جاسازی دلخواه خود را اینجا وارد کنید، مانند ویدیوی YouTube، طرح Figma و غیره.",
+      "link": "یک لینک وارد یا پیست کنید"
+    },
+    "input_modal": {
+      "embed": "جاسازی",
+      "works_with_links": "با YouTube، Figma، Google Docs و موارد دیگر کار می‌کند"
+    },
+    "error": {
+      "not_valid_link": "لطفاً یک URL معتبر وارد کنید."
+    }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "محتوای این بلاک را توصیف کنید",
+      "generated_here": "محتوای هوش مصنوعی شما اینجا تولید خواهد شد"
+    },
+    "block_types": {
+      "placeholder": "نوع بلاک را انتخاب کنید",
+      "summarize_page": "خلاصه صفحه",
+      "custom_prompt": "پرامپت سفارشی"
+    },
+    "actions": {
+      "discard": "دور انداختن",
+      "generate": "تولید",
+      "generating": "در حال تولید",
+      "rewriting": "در حال بازنویسی",
+      "rewrite": "بازنویسی",
+      "use_this": "استفاده از این",
+      "refine": "پالایش"
+    }
+  }
+}
