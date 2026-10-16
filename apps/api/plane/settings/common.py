@@ -90,6 +90,16 @@ WEBHOOK_DISALLOWED_DOMAINS = [
     if _d.strip()
 ]
 
+# Dev-only escape hatch: when set, webhook targets that resolve to
+# private/loopback/link-local addresses (e.g. http://host.docker.internal:<port>/
+# for a service running on the docker host) are permitted instead of rejected by
+# the SSRF guard. Scheme (http/https) and URL well-formedness are still enforced,
+# and outbound delivery is still pinned to the resolved IP (no DNS rebinding).
+# SECURITY WARNING: this disables the SSRF private-network protection for webhook
+# registration AND delivery — never enable it in production. Intended only for
+# local / docker-compose development against an engine on the host.
+WEBHOOK_ALLOW_PRIVATE_URLS = os.environ.get("WEBHOOK_ALLOW_PRIVATE_URLS", "0") == "1"
+
 # Allowed Hosts
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
 
