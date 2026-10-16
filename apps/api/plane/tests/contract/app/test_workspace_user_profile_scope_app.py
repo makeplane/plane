@@ -5,9 +5,9 @@
 """Contract tests for workspace user-profile endpoint scoping.
 
 ``WorkspaceUserProfileStatsEndpoint`` requires active workspace membership and
-only reports cycles from projects the requester is an active member of.
-``WorkspaceUserProfileIssuesEndpoint`` limits project guests to issues they
-created unless ``guest_view_all_features`` is enabled.
+only reports counts and cycles from projects the requester is an active member
+of. Both endpoints limit project guests to issues they created unless
+``guest_view_all_features`` is enabled.
 """
 
 from datetime import timedelta
@@ -23,8 +23,10 @@ from plane.db.models import (
     CycleIssue,
     Issue,
     IssueAssignee,
+    IssueSubscriber,
     Project,
     ProjectMember,
+    State,
     User,
     WorkspaceMember,
 )
@@ -120,6 +122,41 @@ class TestWorkspaceUserProfileStatsScope:
         response = session_client.get(STATS_URL.format(slug=workspace.slug, user_id=create_user.id))
         assert response.status_code == status.HTTP_200_OK
         assert {str(row["cycle__id"]) for row in response.data["present_cycles"]} == {str(present_cycle.id)}
+
+
+    @pytest.mark.django_db
+    def test_restricted_guest_stats_cover_only_own_issues(self, workspace, project, create_user, guest, present_cycle):
+        """A guest without guest_view_all_features gets counts and cycles only from issues they created."""
+        # present_cycle holds an issue created by the profile user; add one created by the guest.
+        own = _make_issue("Guest's own issue", project, workspace, guest)
+        IssueAssignee.objects.create(issue=own, assignee=create_user, project=project, workspace=workspace)
+        now = timezone.now()
+        upcoming = Cycle.objects.create(
+            name="Upcoming Cycle",
+            project=project,
+            workspace=workspace,
+            owned_by=create_user,
+            start_date=now + timedelta(days=8),
+            end_date=now + timedelta(days=15),
+        )
+        CycleIssue.objects.create(issue=own, cycle=upcoming, project=project, workspace=workspace)
+        done = State.objects.create(name="Done", group="completed", project=project, workspace=workspace)
+        Issue.objects.filter(project=project).update(state=done)
+        for issue in Issue.objects.filter(project=project):
+            IssueSubscriber.objects.create(issue=issue, subscriber=create_user, project=project, workspace=workspace)
+
+        response = _client(guest).get(STATS_URL.format(slug=workspace.slug, user_id=create_user.id))
+        assert response.status_code == status.HTTP_200_OK
+        data = response.data
+        assert data["created_issues"] == 0
+        assert data["assigned_issues"] == 1
+        assert data["completed_issues"] == 1
+        assert data["pending_issues"] == 0
+        assert data["subscribed_issues"] == 1
+        assert [(r["state_group"], r["state_count"]) for r in data["state_distribution"]] == [("completed", 1)]
+        assert [(r["priority"], r["priority_count"]) for r in data["priority_distribution"]] == [("none", 1)]
+        assert list(data["present_cycles"]) == []
+        assert {str(r["cycle__id"]) for r in data["upcoming_cycles"]} == {str(upcoming.id)}
 
 
 @pytest.mark.contract

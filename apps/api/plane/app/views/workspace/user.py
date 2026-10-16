@@ -65,6 +65,23 @@ from plane.utils.filters import ComplexFilterBackend
 from plane.utils.filters import IssueFilterSet
 
 
+def _visible_issues_q(user, prefix=""):
+    """
+    Limit to issues (reached through ``prefix``) in projects where ``user`` is an
+    active project member. Guests see only issues they created unless the
+    project enables ``guest_view_all_features``.
+
+    Use within a single ``filter()`` call so every condition shares one
+    project-member join.
+    """
+    member = f"{prefix}project__project_projectmember__"
+    return Q(**{f"{member}member": user, f"{member}is_active": True, f"{member}deleted_at__isnull": True}) & (
+        Q(**{f"{member}role__gt": ROLE.GUEST.value})
+        | Q(**{f"{prefix}project__guest_view_all_features": True})
+        | Q(**{f"{prefix}created_by": user})
+    )
+
+
 class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
     def get(self, request):
         user = User.objects.get(pk=request.user.id)
@@ -137,18 +154,12 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
 
         order_by_param = request.GET.get("order_by", "-created_at")
         issue_queryset = Issue.issue_objects.filter(
-            # Guests only see issues they created unless guest_view_all_features is enabled
-            Q(project__project_projectmember__role__gt=ROLE.GUEST.value)
-            | Q(project__guest_view_all_features=True)
-            | Q(created_by=request.user),
+            _visible_issues_q(request.user),
             id__in=Issue.issue_objects.filter(
                 Q(assignees__in=[user_id]) | Q(created_by_id=user_id) | Q(issue_subscribers__subscriber_id=user_id),
                 workspace__slug=slug,
             ).values_list("id", flat=True),
             workspace__slug=slug,
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
-            project__project_projectmember__deleted_at__isnull=True,
         )
 
         # Apply filtering from filterset
@@ -416,9 +427,8 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
         state_distribution = (
             Issue.issue_objects.filter(
                 (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
+                _visible_issues_q(request.user),
                 workspace__slug=slug,
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
             )
             .filter(**filters)
             .annotate(state_group=F("state__group"))
@@ -432,9 +442,8 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
         priority_distribution = (
             Issue.issue_objects.filter(
                 (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
+                _visible_issues_q(request.user),
                 workspace__slug=slug,
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
             )
             .filter(**filters)
             .values("priority")
@@ -452,9 +461,8 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
 
         created_issues = (
             Issue.issue_objects.filter(
+                _visible_issues_q(request.user),
                 workspace__slug=slug,
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
                 created_by_id=user_id,
             )
             .filter(**filters)
@@ -464,9 +472,8 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
         assigned_issues_count = (
             Issue.issue_objects.filter(
                 (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
+                _visible_issues_q(request.user),
                 workspace__slug=slug,
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
             )
             .filter(**filters)
             .count()
@@ -476,9 +483,8 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 ~Q(state__group__in=["completed", "cancelled"]),
                 (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
+                _visible_issues_q(request.user),
                 workspace__slug=slug,
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
             )
             .filter(**filters)
             .count()
@@ -487,10 +493,9 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
         completed_issues_count = (
             Issue.issue_objects.filter(
                 (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
+                _visible_issues_q(request.user),
                 workspace__slug=slug,
                 state__group="completed",
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
             )
             .filter(**filters)
             .count()
@@ -498,10 +503,9 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
 
         subscribed_issues_count = (
             IssueSubscriber.objects.filter(
+                _visible_issues_q(request.user, prefix="issue__"),
                 workspace__slug=slug,
                 subscriber_id=user_id,
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
             )
             .filter(**filters)
@@ -509,22 +513,18 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
         )
 
         upcoming_cycles = CycleIssue.objects.filter(
+            _visible_issues_q(request.user, prefix="issue__"),
             workspace__slug=slug,
             cycle__start_date__gt=timezone.now(),
             issue__assignees__in=[user_id],
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
-            project__project_projectmember__deleted_at__isnull=True,
         ).values("cycle__name", "cycle__id", "cycle__project_id")
 
         present_cycle = CycleIssue.objects.filter(
+            _visible_issues_q(request.user, prefix="issue__"),
             workspace__slug=slug,
             cycle__start_date__lt=timezone.now(),
             cycle__end_date__gt=timezone.now(),
             issue__assignees__in=[user_id],
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
-            project__project_projectmember__deleted_at__isnull=True,
         ).values("cycle__name", "cycle__id", "cycle__project_id")
 
         return Response(
