@@ -125,7 +125,7 @@ class MagicCodeProvider(CredentialAdapter):
             token = data["token"]
             email = data["email"]
 
-            if str(token) == str(self.code):
+            if token is not None and str(token) == str(self.code):
                 super().set_user_data(
                     {
                         "email": email,
@@ -157,19 +157,25 @@ class MagicCodeProvider(CredentialAdapter):
                 remaining_ttl = ri.ttl(self.key)
                 if remaining_ttl is None or remaining_ttl <= 0:
                     remaining_ttl = 1
-                verify_attempts = int(
-                    ri.eval(
-                        self._INCREMENT_VERIFY_ATTEMPTS_SCRIPT,
-                        1,
-                        self._verify_attempts_key(self.key),
-                        remaining_ttl,
+                if token is None:
+                    # Code already burned by too many wrong guesses.
+                    verify_attempts = self.MAX_VERIFY_ATTEMPTS
+                else:
+                    verify_attempts = int(
+                        ri.eval(
+                            self._INCREMENT_VERIFY_ATTEMPTS_SCRIPT,
+                            1,
+                            self._verify_attempts_key(self.key),
+                            remaining_ttl,
+                        )
                     )
-                )
 
                 if verify_attempts >= self.MAX_VERIFY_ATTEMPTS:
-                    # Invalidate the token (and counter) so further attempts
-                    # must regenerate; regeneration is itself attempt-counted.
-                    ri.delete(self.key)
+                    # Burn the code but keep the record: its current_attempt
+                    # is what caps how many codes initiate() issues for this
+                    # email, so deleting it would allow unlimited regeneration.
+                    data["token"] = None
+                    ri.set(self.key, json.dumps(data), ex=remaining_ttl)
                     ri.delete(self._verify_attempts_key(self.key))
                     if user_exists:
                         raise AuthenticationException(
