@@ -3,9 +3,11 @@
 # See the LICENSE file for details.
 
 import pytest
+from django.core.cache import cache
 from rest_framework.test import APIClient
 from pytest_django.fixtures import django_db_setup
 
+from plane.api.rate_limit import ApiKeyRateThrottle
 from plane.db.models import User, Workspace, WorkspaceMember
 from plane.db.models.api import APIToken
 
@@ -60,6 +62,11 @@ def api_token(db, create_user):
 @pytest.fixture
 def api_key_client(api_client, api_token):
     """Return an API key authenticated client for external API testing"""
+    # ApiKeyRateThrottle counts requests per token in the shared cache, which
+    # outlives the test that made them. Every test reuses the same token, so
+    # the history accumulates until later tests are rate limited into 429s.
+    # Give each test the full budget.
+    cache.delete(f"{ApiKeyRateThrottle.scope}:{api_token.token}")
     api_client.credentials(HTTP_X_API_KEY=api_token.token)
     return api_client
 
