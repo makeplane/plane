@@ -73,7 +73,7 @@
     "work_items_closed_in": "Work items closed in",
     "selected_projects": "Selected projects",
     "total_members": "Total members",
-    "total_cycles": "Total cycles",
+    "total_cycles": "Total sprints",
     "total_modules": "Total modules",
     "pending_work_items": {
       "title": "Pending work items",
@@ -126,14 +126,14 @@
         "primary_button": {
           "text": "Start your first project",
           "comic": {
-            "title": "Analytics works best with Cycles + Modules",
-            "description": "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav."
+            "title": "Analytics works best with Sprints + Modules",
+            "description": "First, timebox your issues into Sprints and, if you can, group issues that span more than a sprint into Modules. Check out both on the left nav."
           }
         }
       },
       "cycle_progress": {
         "title": "No data yet",
-        "description": "Cycle progress analytics will appear here. Add work items to cycles to start tracking progress."
+        "description": "Sprint progress analytics will appear here. Add work items to sprints to start tracking progress."
       },
       "module_progress": {
         "title": "No data yet",
@@ -168,7 +168,7 @@
     },
     "error": {
       "permission": "You don't have permission to perform this action.",
-      "cycle_delete": "Failed to delete cycle",
+      "cycle_delete": "Failed to delete sprint",
       "module_delete": "Failed to delete module",
       "issue_delete": "Failed to delete work item"
     },
@@ -196,7 +196,7 @@
     "empty_state": {
       "general": {
         "title": "No active projects",
-        "description": "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects.",
+        "description": "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Sprints, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects.",
         "primary_button": {
           "text": "Start your first project",
           "comic": {
@@ -322,8 +322,8 @@
   "workspace_cycles": {
     "empty_state": {
       "active": {
-        "title": "No active cycles",
-        "description": "Cycles of your projects that includes any period that encompasses today's date within its range. Find the progress and details of all your active cycle here."
+        "title": "No active sprints",
+        "description": "Sprints of your projects that includes any period that encompasses today's date within its range. Find the progress and details of all your active sprint here."
       }
     }
   },

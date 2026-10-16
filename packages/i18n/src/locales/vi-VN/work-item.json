@@ -11,9 +11,9 @@
       "press_enter": "Nhấn 'Enter' để thêm mục công việc khác",
       "label": "Thêm mục công việc",
       "cycle": {
-        "failed": "Không thể thêm mục công việc vào chu kỳ. Vui lòng thử lại.",
-        "success": "{count, plural, one {Mục công việc} other {Mục công việc}} đã được thêm vào chu kỳ thành công.",
-        "loading": "Đang thêm {count, plural, one {mục công việc} other {mục công việc}} vào chu kỳ"
+        "failed": "Không thể thêm mục công việc vào sprint. Vui lòng thử lại.",
+        "success": "{count, plural, one {Mục công việc} other {Mục công việc}} đã được thêm vào sprint thành công.",
+        "loading": "Đang thêm {count, plural, one {mục công việc} other {mục công việc}} vào sprint"
       },
       "assignee": "Thêm người phụ trách",
       "start_date": "Thêm ngày bắt đầu",
@@ -28,9 +28,9 @@
     "remove": {
       "label": "Xóa mục công việc",
       "cycle": {
-        "loading": "Đang xóa mục công việc khỏi chu kỳ",
-        "success": "Đã xóa mục công việc khỏi chu kỳ thành công.",
-        "failed": "Không thể xóa mục công việc khỏi chu kỳ. Vui lòng thử lại."
+        "loading": "Đang xóa mục công việc khỏi sprint",
+        "success": "Đã xóa mục công việc khỏi sprint thành công.",
+        "failed": "Không thể xóa mục công việc khỏi sprint. Vui lòng thử lại."
       },
       "module": {
         "loading": "Đang xóa mục công việc khỏi mô-đun",

@@ -22,7 +22,7 @@ const sidebarOptions: {
   },
   {
     key: "cycles",
-    label: "Cycles",
+    label: "Sprints",
     Icon: CyclesOutline,
   },
   {

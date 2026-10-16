@@ -425,7 +425,7 @@ const activityDetails: {
           <>
             <span className="flex-shrink-0">
               added {showIssue ? <IssueLink activity={activity} /> : "this work item"}{" "}
-              <span className="whitespace-nowrap">to the cycle</span>{" "}
+              <span className="whitespace-nowrap">to the sprint</span>{" "}
             </span>
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
@@ -440,7 +440,7 @@ const activityDetails: {
       else if (activity.verb === "updated")
         return (
           <>
-            <span className="flex-shrink-0 whitespace-nowrap">set the cycle to </span>
+            <span className="flex-shrink-0 whitespace-nowrap">set the sprint to </span>
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"

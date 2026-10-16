@@ -324,10 +324,10 @@
     },
     "features": {
       "cycles": {
-        "title": "Cycles",
-        "short_title": "Cycles",
+        "title": "Sprints",
+        "short_title": "Sprints",
         "description": "Schedule work in flexible periods that adapt to this project's unique rhythm and pace.",
-        "toggle_title": "Enable cycles",
+        "toggle_title": "Enable sprints",
         "toggle_description": "Plan work in focused timeframes."
       },
       "modules": {
@@ -440,83 +440,83 @@
     },
     "cycles": {
       "auto_schedule": {
-        "heading": "Auto-schedule cycles",
-        "description": "Keep cycles moving without manual setup.",
-        "tooltip": "Automatically create new cycles based on your chosen schedule.",
+        "heading": "Auto-schedule sprints",
+        "description": "Keep sprints moving without manual setup.",
+        "tooltip": "Automatically create new sprints based on your chosen schedule.",
         "edit_button": "Edit",
         "form": {
           "cycle_title": {
-            "label": "Cycle Title",
+            "label": "Sprint Title",
             "placeholder": "Title",
-            "tooltip": "The title will be appended with numbers for subsequent cycles. For eg: Design - 1/2/3",
+            "tooltip": "The title will be appended with numbers for subsequent sprints. For eg: Design - 1/2/3",
             "validation": {
-              "required": "Cycle title is required",
+              "required": "Sprint title is required",
               "max_length": "Title must not exceed 255 characters"
             }
           },
           "cycle_duration": {
-            "label": "Cycle Duration",
+            "label": "Sprint Duration",
             "unit": "Weeks",
             "validation": {
-              "required": "Cycle duration is required",
-              "min": "Cycle duration must be at least 1 week",
-              "max": "Cycle duration cannot exceed 30 weeks",
-              "positive": "Cycle duration must be positive"
+              "required": "Sprint duration is required",
+              "min": "Sprint duration must be at least 1 week",
+              "max": "Sprint duration cannot exceed 30 weeks",
+              "positive": "Sprint duration must be positive"
             }
           },
           "cooldown_period": {
             "label": "Cooldown Period",
             "unit": "days",
-            "tooltip": "Pause between cycles before the next begins.",
+            "tooltip": "Pause between sprints before the next begins.",
             "validation": {
               "required": "Cooldown period is required",
               "negative": "Cooldown period cannot be negative"
             }
           },
           "start_date": {
-            "label": "Cycle starts day",
+            "label": "Sprint starts day",
             "validation": {
               "required": "Start date is required",
               "past": "Start date cannot be in the past"
             }
           },
           "number_of_cycles": {
-            "label": "Number of future cycles",
+            "label": "Number of future sprints",
             "validation": {
-              "required": "Number of cycles is required",
-              "min": "At least 1 cycle is required",
-              "max": "Cannot schedule more than 3 cycles"
+              "required": "Number of sprints is required",
+              "min": "At least 1 sprint is required",
+              "max": "Cannot schedule more than 3 sprints"
             }
           },
           "auto_rollover": {
             "label": "Auto-rollover work items",
-            "tooltip": "On the day a cycle completes, move all unfinished work items into the next cycle."
+            "tooltip": "On the day a sprint completes, move all unfinished work items into the next sprint."
           }
         },
         "toast": {
           "toggle": {
-            "loading_enable": "Enabling auto-schedule cycles",
-            "loading_disable": "Disabling auto-schedule cycles",
+            "loading_enable": "Enabling auto-schedule sprints",
+            "loading_disable": "Disabling auto-schedule sprints",
             "success": {
               "title": "Success!",
-              "message": "Auto-schedule cycles toggled successfully."
+              "message": "Auto-schedule sprints toggled successfully."
             },
             "error": {
               "title": "Error!",
-              "message": "Failed to toggle auto-schedule cycles."
+              "message": "Failed to toggle auto-schedule sprints."
             }
           },
           "save": {
-            "loading": "Saving auto-schedule cycles configuration",
+            "loading": "Saving auto-schedule sprints configuration",
             "success": {
               "title": "Success!",
-              "message_create": "Auto-schedule cycles configuration saved successfully.",
-              "message_update": "Auto-schedule cycles configuration updated successfully."
+              "message_create": "Auto-schedule sprints configuration saved successfully.",
+              "message_update": "Auto-schedule sprints configuration updated successfully."
             },
             "error": {
               "title": "Error!",
-              "message_create": "Failed to save auto-schedule cycles configuration.",
-              "message_update": "Failed to update auto-schedule cycles configuration."
+              "message_create": "Failed to save auto-schedule sprints configuration.",
+              "message_update": "Failed to update auto-schedule sprints configuration."
             }
           }
         }

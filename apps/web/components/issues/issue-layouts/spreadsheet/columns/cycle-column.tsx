@@ -45,7 +45,7 @@ export const SpreadsheetCycleColumn = observer(function SpreadsheetCycleColumn(p
         value={issue.cycle_id}
         onChange={handleCycle}
         disabled={disabled}
-        placeholder="Select cycle"
+        placeholder="Select sprint"
         // `.clickable` is what the table's keyboard navigation clicks on Enter / Space in a focused cell.
         className="clickable"
         variant="table-cell"

@@ -73,7 +73,7 @@
     "work_items_closed_in": "Mục công việc đã đóng trong",
     "selected_projects": "Dự án đã chọn",
     "total_members": "Tổng số thành viên",
-    "total_cycles": "Tổng số chu kỳ",
+    "total_cycles": "Tổng số sprint",
     "total_modules": "Tổng số mô-đun",
     "pending_work_items": {
       "title": "Mục công việc đang chờ xử lý",
@@ -126,14 +126,14 @@
         "primary_button": {
           "text": "Bắt đầu dự án đầu tiên của bạn",
           "comic": {
-            "title": "Phân tích hoạt động tốt nhất với Chu kỳ + Mô-đun",
-            "description": "Đầu tiên, giới hạn thời gian các vấn đề của bạn trong Chu kỳ và, nếu có thể, nhóm các vấn đề kéo dài hơn một chu kỳ vào Mô-đun. Kiểm tra cả hai trong điều hướng bên trái."
+            "title": "Phân tích hoạt động tốt nhất với Sprint + Mô-đun",
+            "description": "Đầu tiên, giới hạn thời gian các vấn đề của bạn trong Sprint và, nếu có thể, nhóm các vấn đề kéo dài hơn một sprint vào Mô-đun. Kiểm tra cả hai trong điều hướng bên trái."
           }
         }
       },
       "cycle_progress": {
         "title": "Chưa có dữ liệu",
-        "description": "Phân tích tiến độ chu kỳ sẽ hiển thị ở đây. Thêm các hạng mục công việc vào chu kỳ để bắt đầu theo dõi tiến độ."
+        "description": "Phân tích tiến độ sprint sẽ hiển thị ở đây. Thêm các hạng mục công việc vào sprint để bắt đầu theo dõi tiến độ."
       },
       "module_progress": {
         "title": "Chưa có dữ liệu",
@@ -168,7 +168,7 @@
     },
     "error": {
       "permission": "Bạn không có quyền thực hiện thao tác này.",
-      "cycle_delete": "Xóa chu kỳ thất bại",
+      "cycle_delete": "Xóa sprint thất bại",
       "module_delete": "Xóa mô-đun thất bại",
       "issue_delete": "Xóa mục công việc thất bại"
     },
@@ -196,7 +196,7 @@
     "empty_state": {
       "general": {
         "title": "Không có dự án hoạt động",
-        "description": "Coi mỗi dự án như là cấp cha của công việc định hướng mục tiêu. Dự án là nơi chứa mục công việc, chu kỳ và mô-đun, cùng với đồng nghiệp giúp bạn đạt được mục tiêu. Tạo dự án mới hoặc lọc dự án đã lưu trữ.",
+        "description": "Coi mỗi dự án như là cấp cha của công việc định hướng mục tiêu. Dự án là nơi chứa mục công việc, sprint và mô-đun, cùng với đồng nghiệp giúp bạn đạt được mục tiêu. Tạo dự án mới hoặc lọc dự án đã lưu trữ.",
         "primary_button": {
           "text": "Bắt đầu dự án đầu tiên của bạn",
           "comic": {
@@ -322,8 +322,8 @@
   "workspace_cycles": {
     "empty_state": {
       "active": {
-        "title": "Không có chu kỳ đang hoạt động",
-        "description": "Chu kỳ của các dự án của bạn bao gồm bất kỳ khoảng thời gian nào bao gồm ngày hôm nay trong phạm vi của nó. Tìm tiến độ và chi tiết của tất cả chu kỳ đang hoạt động của bạn tại đây."
+        "title": "Không có sprint đang hoạt động",
+        "description": "Sprint của các dự án của bạn bao gồm bất kỳ khoảng thời gian nào bao gồm ngày hôm nay trong phạm vi của nó. Tìm tiến độ và chi tiết của tất cả sprint đang hoạt động của bạn tại đây."
       }
     }
   },

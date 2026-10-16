@@ -92,7 +92,7 @@ export const CyclesListItem = observer(function CyclesListItem(props: TCyclesLis
               value={progress}
               size="md"
               variant={progress === 100 ? "success" : "brand"}
-              aria-label="Cycle progress"
+              aria-label="Sprint progress"
             />
           </div>
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">

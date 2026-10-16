@@ -84,7 +84,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
       setToast({
         type: "error",
         title: "Error",
-        message: error.error || "Unable to fetch cycle details",
+        message: error.error || "Unable to fetch sprint details",
       });
     });
   };
@@ -125,7 +125,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
             <SearchOutline className="h-4 w-4 text-secondary" />
             <input
               className="text-13 outline-none"
-              placeholder="Search for a cycle..."
+              placeholder="Search for a sprint..."
               onChange={(e) => setQuery(e.target.value)}
               value={query}
             />
@@ -166,7 +166,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                   <div className="flex w-full items-center justify-center gap-4 p-5 text-13">
                     <WarningCircleOutline className="h-3.5 w-3.5 text-secondary" />
                     <span className="text-center text-secondary">
-                      You don’t have any current cycle. Please create one to transfer the work items.
+                      You don’t have any current sprint. Please create one to transfer the work items.
                     </span>
                   </div>
                 )

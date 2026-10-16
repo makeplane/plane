@@ -13,7 +13,7 @@
         "assign_to_me": "Assign to me",
         "unassign_from_me": "Un-assign from me",
         "change_estimate": "Change estimate",
-        "add_to_cycle": "Add to cycle",
+        "add_to_cycle": "Add to sprint",
         "add_to_modules": "Add to modules",
         "add_labels": "Add labels",
         "subscribe": "Subscribe to notifications",
@@ -30,13 +30,13 @@
         "copy_url_toast_error": "Some error occurred while copying the work item URL to clipboard."
       },
       "cycle": {
-        "title": "Cycle actions",
-        "indicator": "Cycle",
+        "title": "Sprint actions",
+        "indicator": "Sprint",
         "add_to_favorites": "Add to favorites",
         "remove_from_favorites": "Remove from favorites",
         "copy_url": "Copy URL",
-        "copy_url_toast_success": "Cycle URL copied to clipboard.",
-        "copy_url_toast_error": "Some error occurred while copying the cycle URL to clipboard."
+        "copy_url_toast_success": "Sprint URL copied to clipboard.",
+        "copy_url_toast_error": "Some error occurred while copying the sprint URL to clipboard."
       },
       "module": {
         "title": "Module actions",
@@ -69,7 +69,7 @@
       "create_work_item": "New work item",
       "create_page": "New page",
       "create_view": "New view",
-      "create_cycle": "New cycle",
+      "create_cycle": "New sprint",
       "create_module": "New module",
       "create_project": "New project",
       "create_workspace": "New workspace",
@@ -93,8 +93,8 @@
       "open_workspace_setting": "Open a workspace setting",
       "nav_workspace_settings": "Go to workspace settings",
       "nav_project_work_items": "Go to work items",
-      "open_project_cycle": "Open a cycle",
-      "nav_project_cycles": "Go to cycles",
+      "open_project_cycle": "Open a sprint",
+      "nav_project_cycles": "Go to sprints",
       "open_project_module": "Open a module",
       "nav_project_modules": "Go to modules",
       "open_project_view": "Open a project view",
@@ -104,7 +104,7 @@
       "nav_project_archives": "Go to project archives",
       "open_project_setting": "Open a project setting",
       "nav_project_settings": "Go to project settings",
-      "nav_workspace_active_cycle": "Go to all active cycles",
+      "nav_workspace_active_cycle": "Go to all active sprints",
       "nav_project_overview": "Go to project overview"
     },
     "account_actions": {
@@ -150,7 +150,7 @@
       "open_workspace": "Open a workspace",
       "open_project": "Open a project",
       "open_workspace_setting": "Open a workspace setting",
-      "open_project_cycle": "Open a cycle",
+      "open_project_cycle": "Open a sprint",
       "open_project_module": "Open a module",
       "open_project_view": "Open a project view",
       "open_project_setting": "Open a project setting",
@@ -158,7 +158,7 @@
       "update_work_item_priority": "Change priority",
       "update_work_item_assignee": "Assign to",
       "update_work_item_estimate": "Change estimate",
-      "update_work_item_cycle": "Add to cycle",
+      "update_work_item_cycle": "Add to sprint",
       "update_work_item_module": "Add to modules",
       "update_work_item_labels": "Add labels",
       "update_module_member": "Change members",

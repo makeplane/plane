@@ -15,7 +15,7 @@
       "properties": {
         "title": "Thuộc tính",
         "description": "Tạo và tùy chỉnh thuộc tính.",
-        "tooltip": "Mỗi loại mục công việc đi kèm với một bộ thuộc tính mặc định như Tiêu đề, Mô tả, Người được giao, Trạng thái, Ưu tiên, Ngày bắt đầu, Ngày đến hạn, Module, Chu kỳ, v.v. Bạn cũng có thể tùy chỉnh và thêm thuộc tính riêng của mình để phù hợp với nhu cầu của nhóm bạn.",
+        "tooltip": "Mỗi loại mục công việc đi kèm với một bộ thuộc tính mặc định như Tiêu đề, Mô tả, Người được giao, Trạng thái, Ưu tiên, Ngày bắt đầu, Ngày đến hạn, Module, Sprint, v.v. Bạn cũng có thể tùy chỉnh và thêm thuộc tính riêng của mình để phù hợp với nhu cầu của nhóm bạn.",
         "add_button": "Thêm thuộc tính mới",
         "project": {
           "add_button": {

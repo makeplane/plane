@@ -36,7 +36,7 @@ export const PLANE_COMMUNITY_PRODUCTS: Record<string, IPaymentProduct> = {
     id: EProductSubscriptionEnum.PRO,
     name: "Plane Pro",
     description:
-      "More views, more cycles powers, more pages features, new reports, and better dashboards are waiting to be unlocked.",
+      "More views, more sprint powers, more pages features, new reports, and better dashboards are waiting to be unlocked.",
     type: "PRO",
     prices: [
       {

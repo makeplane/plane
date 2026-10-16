@@ -139,7 +139,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink
-                    label="Cycles"
+                    label="Sprints"
                     href={`/${workspaceSlug}/projects/${projectId}/cycles/`}
                     icon={<CyclesOutline className="h-4 w-4 text-tertiary" />}
                   />
@@ -164,7 +164,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
             </Breadcrumbs>
             {workItemsCount && workItemsCount > 0 ? (
               <Tooltip
-                label={`There are ${workItemsCount} ${workItemsCount > 1 ? "work items" : "work item"} in this cycle`}
+                label={`There are ${workItemsCount} ${workItemsCount > 1 ? "work items" : "work item"} in this sprint`}
                 layout="stacked"
                 side="bottom"
                 disabled={isMobile}

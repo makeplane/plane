@@ -13,7 +13,7 @@
         "assign_to_me": "Giao cho tôi",
         "unassign_from_me": "Hủy giao khỏi tôi",
         "change_estimate": "Đổi ước tính",
-        "add_to_cycle": "Thêm vào chu kỳ",
+        "add_to_cycle": "Thêm vào sprint",
         "add_to_modules": "Thêm vào mô-đun",
         "add_labels": "Thêm nhãn",
         "subscribe": "Đăng ký thông báo",
@@ -30,13 +30,13 @@
         "copy_url_toast_error": "Đã xảy ra lỗi khi sao chép URL mục công việc vào bảng tạm."
       },
       "cycle": {
-        "title": "Hành động chu kỳ",
-        "indicator": "Chu kỳ",
+        "title": "Hành động sprint",
+        "indicator": "Sprint",
         "add_to_favorites": "Thêm vào mục yêu thích",
         "remove_from_favorites": "Xóa khỏi mục yêu thích",
         "copy_url": "Sao chép URL",
-        "copy_url_toast_success": "Đã sao chép URL chu kỳ vào bảng tạm.",
-        "copy_url_toast_error": "Đã xảy ra lỗi khi sao chép URL chu kỳ vào bảng tạm."
+        "copy_url_toast_success": "Đã sao chép URL sprint vào bảng tạm.",
+        "copy_url_toast_error": "Đã xảy ra lỗi khi sao chép URL sprint vào bảng tạm."
       },
       "module": {
         "title": "Hành động mô-đun",
@@ -69,7 +69,7 @@
       "create_work_item": "Mục công việc mới",
       "create_page": "Trang mới",
       "create_view": "Chế độ xem mới",
-      "create_cycle": "Chu kỳ mới",
+      "create_cycle": "Sprint mới",
       "create_module": "Mô-đun mới",
       "create_project": "Dự án mới",
       "create_workspace": "Không gian làm việc mới",
@@ -93,8 +93,8 @@
       "open_workspace_setting": "Mở một cài đặt không gian làm việc",
       "nav_workspace_settings": "Đi đến cài đặt không gian làm việc",
       "nav_project_work_items": "Đi đến mục công việc",
-      "open_project_cycle": "Mở một chu kỳ",
-      "nav_project_cycles": "Đi đến chu kỳ",
+      "open_project_cycle": "Mở một sprint",
+      "nav_project_cycles": "Đi đến sprint",
       "open_project_module": "Mở một mô-đun",
       "nav_project_modules": "Đi đến mô-đun",
       "open_project_view": "Mở một chế độ xem dự án",
@@ -104,7 +104,7 @@
       "nav_project_archives": "Đi đến lưu trữ dự án",
       "open_project_setting": "Mở một cài đặt dự án",
       "nav_project_settings": "Đi đến cài đặt dự án",
-      "nav_workspace_active_cycle": "Đi đến tất cả chu kỳ đang hoạt động",
+      "nav_workspace_active_cycle": "Đi đến tất cả sprint đang hoạt động",
       "nav_project_overview": "Đi đến tổng quan dự án"
     },
     "account_actions": {
@@ -150,7 +150,7 @@
       "open_workspace": "Mở một không gian làm việc",
       "open_project": "Mở một dự án",
       "open_workspace_setting": "Mở một cài đặt không gian làm việc",
-      "open_project_cycle": "Mở một chu kỳ",
+      "open_project_cycle": "Mở một sprint",
       "open_project_module": "Mở một mô-đun",
       "open_project_view": "Mở một chế độ xem dự án",
       "open_project_setting": "Mở một cài đặt dự án",
@@ -158,7 +158,7 @@
       "update_work_item_priority": "Đổi mức độ ưu tiên",
       "update_work_item_assignee": "Giao cho",
       "update_work_item_estimate": "Đổi ước tính",
-      "update_work_item_cycle": "Thêm vào chu kỳ",
+      "update_work_item_cycle": "Thêm vào sprint",
       "update_work_item_module": "Thêm vào mô-đun",
       "update_work_item_labels": "Thêm nhãn",
       "update_module_member": "Đổi thành viên",

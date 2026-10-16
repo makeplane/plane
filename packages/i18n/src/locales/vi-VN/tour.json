@@ -24,24 +24,24 @@
     },
     "cycle": {
       "step_zero": {
-        "title": "Đạt tiến độ với Chu kỳ",
-        "description": "Nhấn Q để tạo Chu kỳ. Đặt tên và thiết lập ngày—chỉ một chu kỳ cho mỗi dự án."
+        "title": "Đạt tiến độ với Sprint",
+        "description": "Nhấn Q để tạo Sprint. Đặt tên và thiết lập ngày—chỉ một sprint cho mỗi dự án."
       },
       "step_one": {
-        "title": "Tạo chu kỳ mới",
-        "description": "Nhấn Q để tạo Chu kỳ. Đặt tên và thiết lập ngày—chỉ một chu kỳ cho mỗi dự án."
+        "title": "Tạo sprint mới",
+        "description": "Nhấn Q để tạo Sprint. Đặt tên và thiết lập ngày—chỉ một sprint cho mỗi dự án."
       },
       "step_two": {
         "title": "Nhấp vào \"+\"",
-        "description": "Bắt đầu bằng cách nhấp vào nút \"+\". Thêm các mục công việc mới hoặc hiện có trực tiếp từ trang Chu kỳ."
+        "description": "Bắt đầu bằng cách nhấp vào nút \"+\". Thêm các mục công việc mới hoặc hiện có trực tiếp từ trang Sprint."
       },
       "step_three": {
-        "title": "Tóm tắt chu kỳ",
-        "description": "Theo dõi tiến độ chu kỳ, năng suất của nhóm và các ưu tiên—và điều tra nếu có gì tụt hậu."
+        "title": "Tóm tắt sprint",
+        "description": "Theo dõi tiến độ sprint, năng suất của nhóm và các ưu tiên—và điều tra nếu có gì tụt hậu."
       },
       "step_four": {
         "title": "Chuyển các mục công việc",
-        "description": "Sau ngày đáo hạn, chu kỳ tự động hoàn thành. Di chuyển công việc chưa hoàn thành sang chu kỳ khác."
+        "description": "Sau ngày đáo hạn, sprint tự động hoàn thành. Di chuyển công việc chưa hoàn thành sang sprint khác."
       }
     },
     "module": {

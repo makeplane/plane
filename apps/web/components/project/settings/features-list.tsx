@@ -31,7 +31,7 @@ const PROJECT_FEATURES_LIST = {
   cycles: {
     key: "cycles",
     property: "cycle_view",
-    title: "Cycles",
+    title: "Sprints",
     description: "Timebox work as you see fit per project and change frequency from one period to the next.",
     icon: <CyclesOutline className="h-5 w-5 flex-shrink-0 rotate-180 text-tertiary" />,
     isPro: false,

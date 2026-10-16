@@ -20,7 +20,7 @@ function ProjectArchivedCyclesPage({ params }: Route.ComponentProps) {
   const { getProjectById } = useProject();
   // derived values
   const project = getProjectById(projectId);
-  const pageTitle = project?.name && `${project?.name} - Archived cycles`;
+  const pageTitle = project?.name && `${project?.name} - Archived sprints`;
 
   return (
     <>

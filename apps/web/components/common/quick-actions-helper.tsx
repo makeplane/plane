@@ -81,7 +81,7 @@ export const useCycleMenuItems = (props: UseCycleMenuItemsProps): MenuResult => 
     factory.createArchiveMenuItem(handlers.handleArchive, {
       shouldRender: isEditingAllowed && !isArchived,
       disabled: !isCompleted,
-      description: isCompleted ? undefined : "Only completed cycles can be archived",
+      description: isCompleted ? undefined : "Only completed sprints can be archived",
     }),
     factory.createRestoreMenuItem(handlers.handleRestore, isEditingAllowed && isArchived),
     factory.createDeleteMenuItem(handlers.handleDelete, isEditingAllowed && !isCompleted && !isArchived),

@@ -244,9 +244,9 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
 
   const createRemoveFromCycleMenuItem = (): TContextMenuItem => ({
     key: "remove-from-cycle",
-    title: "Remove from cycle",
+    title: "Remove from sprint",
     icon: CloseCircleOutline,
-    action: () => handleOptionalAction(handleRemoveFromView, "Remove from cycle"),
+    action: () => handleOptionalAction(handleRemoveFromView, "Remove from sprint"),
     shouldRender: isEditingAllowed,
   });
 

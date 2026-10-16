@@ -65,7 +65,7 @@ export function CycleSelect(props: CycleSelectProps) {
     onChange,
     disabled = false,
     placeholder = "",
-    searchPlaceholder = "Search cycles...",
+    searchPlaceholder = "Search sprints...",
     onClose,
     variant,
     className,

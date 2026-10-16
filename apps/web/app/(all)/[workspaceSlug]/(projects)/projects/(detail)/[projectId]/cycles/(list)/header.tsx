@@ -52,7 +52,7 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
-                label="Cycles"
+                label="Sprints"
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/cycles/`}
                 icon={<CyclesOutline className="h-4 w-4 text-tertiary" />}
                 isLast

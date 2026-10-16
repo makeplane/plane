@@ -200,7 +200,7 @@ const getCycleColumns = (): IGroupByColumn[] | undefined => {
       icon: <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5" />,
       payload: { cycle_id: cycle.id },
       isDropDisabled,
-      dropErrorMessage: isDropDisabled ? "Work item cannot be moved to completed cycles" : undefined,
+      dropErrorMessage: isDropDisabled ? "Work item cannot be moved to completed sprints" : undefined,
     });
   });
   cycles.push({

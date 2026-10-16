@@ -135,7 +135,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
           value={data?.cycle_id || null}
           onChange={(cycleId) => handleData("cycle_id", cycleId)}
           projectId={projectId}
-          placeholder="Cycle"
+          placeholder="Sprint"
           variant="pill-md"
           tabIndex={getIndex("cycle_id")}
         />

@@ -24,24 +24,24 @@
     },
     "cycle": {
       "step_zero": {
-        "title": "Make progress with Cycles",
-        "description": "Press Q to create a Cycle. Name it and set dates—only one cycle per project."
+        "title": "Make progress with Sprints",
+        "description": "Press Q to create a Sprint. Name it and set dates—only one sprint per project."
       },
       "step_one": {
-        "title": "Create a new cycle",
-        "description": "Press Q to create a Cycle. Name it and set dates—only one cycle per project."
+        "title": "Create a new sprint",
+        "description": "Press Q to create a Sprint. Name it and set dates—only one sprint per project."
       },
       "step_two": {
         "title": "Click “+ ”",
-        "description": "Start by clicking the “+” button. Add new or existing work items directly from the Cycle page."
+        "description": "Start by clicking the “+” button. Add new or existing work items directly from the Sprint page."
       },
       "step_three": {
-        "title": "Cycle summary",
-        "description": "Track cycle progress, team productivity, and priorities—and investigate if things fall behind."
+        "title": "Sprint summary",
+        "description": "Track sprint progress, team productivity, and priorities—and investigate if things fall behind."
       },
       "step_four": {
         "title": "Transfer work items",
-        "description": "After the due date, a cycle auto-completes. Move unfinished work to another cycle."
+        "description": "After the due date, a sprint auto-completes. Move unfinished work to another sprint."
       }
     },
     "module": {

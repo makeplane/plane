@@ -53,7 +53,7 @@ export const useNavigationItems = ({
       {
         i18n_key: "sidebar.cycles",
         key: "cycles",
-        name: "Cycles",
+        name: "Sprints",
         href: `/${workspaceSlug}/projects/${projectId}/cycles`,
         icon: CyclesOutline,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],

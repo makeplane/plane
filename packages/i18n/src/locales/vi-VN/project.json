@@ -7,26 +7,26 @@
     }
   },
   "project_cycles": {
-    "add_cycle": "Thêm chu kỳ",
+    "add_cycle": "Thêm sprint",
     "more_details": "Thêm chi tiết",
-    "cycle": "Chu kỳ",
-    "update_cycle": "Cập nhật chu kỳ",
-    "create_cycle": "Tạo chu kỳ",
-    "no_matching_cycles": "Không có chu kỳ phù hợp",
-    "remove_filters_to_see_all_cycles": "Xóa bộ lọc để xem tất cả chu kỳ",
-    "remove_search_criteria_to_see_all_cycles": "Xóa tiêu chí tìm kiếm để xem tất cả chu kỳ",
-    "only_completed_cycles_can_be_archived": "Chỉ có thể lưu trữ chu kỳ đã hoàn thành",
+    "cycle": "Sprint",
+    "update_cycle": "Cập nhật sprint",
+    "create_cycle": "Tạo sprint",
+    "no_matching_cycles": "Không có sprint phù hợp",
+    "remove_filters_to_see_all_cycles": "Xóa bộ lọc để xem tất cả sprint",
+    "remove_search_criteria_to_see_all_cycles": "Xóa tiêu chí tìm kiếm để xem tất cả sprint",
+    "only_completed_cycles_can_be_archived": "Chỉ có thể lưu trữ sprint đã hoàn thành",
     "start_date": "Ngày bắt đầu",
     "end_date": "Ngày kết thúc",
     "in_your_timezone": "Trong múi giờ của bạn",
     "transfer_work_items": "Chuyển {count} mục công việc",
     "transfer": {
-      "no_cycles_available": "Không có chu kỳ nào khác để chuyển mục công việc."
+      "no_cycles_available": "Không có sprint nào khác để chuyển mục công việc."
     },
     "date_range": "Khoảng thời gian",
     "add_date": "Thêm ngày",
     "active_cycle": {
-      "label": "Chu kỳ hoạt động",
+      "label": "Sprint hoạt động",
       "progress": "Tiến độ",
       "chart": "Biểu đồ burndown",
       "priority_issue": "Mục công việc ưu tiên",
@@ -39,10 +39,10 @@
       "leading": "Vượt tiến độ"
     },
     "upcoming_cycle": {
-      "label": "Chu kỳ sắp tới"
+      "label": "Sprint sắp tới"
     },
     "completed_cycle": {
-      "label": "Chu kỳ đã hoàn thành"
+      "label": "Sprint đã hoàn thành"
     },
     "status": {
       "days_left": "Số ngày còn lại",
@@ -53,68 +53,68 @@
     },
     "action": {
       "restore": {
-        "title": "Khôi phục chu kỳ",
+        "title": "Khôi phục sprint",
         "success": {
-          "title": "Đã khôi phục chu kỳ",
-          "description": "Chu kỳ đã được khôi phục."
+          "title": "Đã khôi phục sprint",
+          "description": "Sprint đã được khôi phục."
         },
         "failed": {
-          "title": "Khôi phục chu kỳ thất bại",
-          "description": "Không thể khôi phục chu kỳ. Vui lòng thử lại."
+          "title": "Khôi phục sprint thất bại",
+          "description": "Không thể khôi phục sprint. Vui lòng thử lại."
         }
       },
       "favorite": {
-        "loading": "Đang thêm chu kỳ vào mục yêu thích",
+        "loading": "Đang thêm sprint vào mục yêu thích",
         "success": {
-          "description": "Chu kỳ đã được thêm vào mục yêu thích.",
+          "description": "Sprint đã được thêm vào mục yêu thích.",
           "title": "Thành công!"
         },
         "failed": {
-          "description": "Không thể thêm chu kỳ vào mục yêu thích. Vui lòng thử lại.",
+          "description": "Không thể thêm sprint vào mục yêu thích. Vui lòng thử lại.",
           "title": "Lỗi!"
         }
       },
       "unfavorite": {
-        "loading": "Đang xóa chu kỳ khỏi mục yêu thích",
+        "loading": "Đang xóa sprint khỏi mục yêu thích",
         "success": {
-          "description": "Chu kỳ đã được xóa khỏi mục yêu thích.",
+          "description": "Sprint đã được xóa khỏi mục yêu thích.",
           "title": "Thành công!"
         },
         "failed": {
-          "description": "Không thể xóa chu kỳ khỏi mục yêu thích. Vui lòng thử lại.",
+          "description": "Không thể xóa sprint khỏi mục yêu thích. Vui lòng thử lại.",
           "title": "Lỗi!"
         }
       },
       "update": {
-        "loading": "Đang cập nhật chu kỳ",
+        "loading": "Đang cập nhật sprint",
         "success": {
-          "description": "Chu kỳ đã được cập nhật thành công.",
+          "description": "Sprint đã được cập nhật thành công.",
           "title": "Thành công!"
         },
         "failed": {
-          "description": "Đã xảy ra lỗi khi cập nhật chu kỳ. Vui lòng thử lại.",
+          "description": "Đã xảy ra lỗi khi cập nhật sprint. Vui lòng thử lại.",
           "title": "Lỗi!"
         },
         "error": {
-          "already_exists": "Đã tồn tại chu kỳ trong khoảng thời gian đã cho, nếu bạn muốn tạo chu kỳ nháp, bạn có thể làm vậy bằng cách xóa cả hai ngày."
+          "already_exists": "Đã tồn tại sprint trong khoảng thời gian đã cho, nếu bạn muốn tạo sprint nháp, bạn có thể làm vậy bằng cách xóa cả hai ngày."
         }
       }
     },
     "empty_state": {
       "general": {
-        "title": "Nhóm và đặt khung thời gian cho công việc của bạn trong chu kỳ.",
+        "title": "Nhóm và đặt khung thời gian cho công việc của bạn trong sprint.",
         "description": "Chia nhỏ công việc theo khung thời gian, đặt ngày từ thời hạn dự án và đạt được tiến độ cụ thể với tư cách là một nhóm.",
         "primary_button": {
-          "text": "Thiết lập chu kỳ đầu tiên của bạn",
+          "text": "Thiết lập sprint đầu tiên của bạn",
           "comic": {
-            "title": "Chu kỳ là khung thời gian lặp lại.",
-            "description": "Sprint, iteration hoặc bất kỳ thuật ngữ nào khác bạn sử dụng để theo dõi công việc hàng tuần hoặc hai tuần một lần đều là một chu kỳ."
+            "title": "Sprint là khung thời gian lặp lại.",
+            "description": "Sprint là khung thời gian lặp lại để lên kế hoạch và theo dõi công việc hàng tuần hoặc hai tuần một lần."
           }
         }
       },
       "no_issues": {
-        "title": "Chưa thêm mục công việc vào chu kỳ",
-        "description": "Thêm hoặc tạo mục công việc bạn muốn đặt khung thời gian và giao trong chu kỳ này",
+        "title": "Chưa thêm mục công việc vào sprint",
+        "description": "Thêm hoặc tạo mục công việc bạn muốn đặt khung thời gian và giao trong sprint này",
         "primary_button": {
           "text": "Tạo mục công việc mới"
         },
@@ -123,16 +123,16 @@
         }
       },
       "completed_no_issues": {
-        "title": "Không có mục công việc trong chu kỳ",
-        "description": "Không có mục công việc trong chu kỳ. Mục công việc đã được chuyển hoặc ẩn. Để xem mục công việc đã ẩn (nếu có), vui lòng cập nhật thuộc tính hiển thị của bạn tương ứng."
+        "title": "Không có mục công việc trong sprint",
+        "description": "Không có mục công việc trong sprint. Mục công việc đã được chuyển hoặc ẩn. Để xem mục công việc đã ẩn (nếu có), vui lòng cập nhật thuộc tính hiển thị của bạn tương ứng."
       },
       "active": {
-        "title": "Không có chu kỳ hoạt động",
-        "description": "Chu kỳ hoạt động bao gồm bất kỳ khoảng thời gian nào có ngày hôm nay trong phạm vi của nó. Tìm tiến độ và chi tiết về chu kỳ hoạt động ở đây."
+        "title": "Không có sprint hoạt động",
+        "description": "Sprint hoạt động bao gồm bất kỳ khoảng thời gian nào có ngày hôm nay trong phạm vi của nó. Tìm tiến độ và chi tiết về sprint hoạt động ở đây."
       },
       "archived": {
-        "title": "Chưa có chu kỳ đã lưu trữ",
-        "description": "Để tổ chức dự án của bạn, hãy lưu trữ chu kỳ đã hoàn thành. Bạn có thể tìm thấy chúng ở đây sau khi lưu trữ."
+        "title": "Chưa có sprint đã lưu trữ",
+        "description": "Để tổ chức dự án của bạn, hãy lưu trữ sprint đã hoàn thành. Bạn có thể tìm thấy chúng ở đây sau khi lưu trữ."
       }
     }
   },
@@ -307,8 +307,8 @@
         }
       },
       "cycle": {
-        "title": "Dự án này chưa bật tính năng chu kỳ.",
-        "description": "Chia nhỏ công việc theo khung thời gian, đặt ngày từ thời hạn dự án, và đạt được tiến độ cụ thể với tư cách là một nhóm. Bật tính năng chu kỳ cho dự án của bạn để bắt đầu sử dụng.",
+        "title": "Dự án này chưa bật tính năng sprint.",
+        "description": "Chia nhỏ công việc theo khung thời gian, đặt ngày từ thời hạn dự án, và đạt được tiến độ cụ thể với tư cách là một nhóm. Bật tính năng sprint cho dự án của bạn để bắt đầu sử dụng.",
         "primary_button": {
           "text": "Quản lý tính năng"
         }

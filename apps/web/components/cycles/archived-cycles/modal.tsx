@@ -54,7 +54,7 @@ export function ArchiveCycleModal(props: Props) {
         setToast({
           type: "error",
           title: "Error!",
-          message: "Cycle could not be archived. Please try again.",
+          message: "Sprint could not be archived. Please try again.",
         });
       })
       .finally(() => setIsArchiving(false));
@@ -67,8 +67,8 @@ export function ArchiveCycleModal(props: Props) {
       handleSubmit={handleArchiveCycle}
       isSubmitting={isArchiving}
       variant="primary"
-      title={`Archive cycle ${cycleName ?? ""}`}
-      content="Are you sure you want to archive the cycle? All your archives can be restored later."
+      title={`Archive sprint ${cycleName ?? ""}`}
+      content="Are you sure you want to archive the sprint? All your archives can be restored later."
       primaryButtonText={{ loading: "Archiving", default: "Archive" }}
       secondaryButtonText="Cancel"
     />

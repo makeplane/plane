@@ -39,7 +39,7 @@ const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
     icon: WorkItemsOutline,
   },
   cycles: {
-    label: "Cycles",
+    label: "Sprints",
     href: "/cycles",
     icon: CyclesOutline,
   },

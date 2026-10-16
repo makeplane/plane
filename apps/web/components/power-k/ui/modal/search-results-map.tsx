@@ -42,7 +42,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     ),
     path: (cycle: IWorkspaceDefaultSearchResult) =>
       `/${cycle?.workspace__slug}/projects/${cycle?.project_id}/cycles/${cycle?.id}`,
-    title: "Cycles",
+    title: "Sprints",
   },
   issue: {
     itemName: (workItem: IWorkspaceIssueSearchResult) => (

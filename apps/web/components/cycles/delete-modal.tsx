@@ -50,7 +50,7 @@ export const CycleDeleteModal = observer(function CycleDeleteModal(props: ICycle
           setToast({
             type: "success",
             title: "Success!",
-            message: "Cycle deleted successfully.",
+            message: "Sprint deleted successfully.",
           });
         })
         .catch((errors) => {
@@ -82,7 +82,7 @@ export const CycleDeleteModal = observer(function CycleDeleteModal(props: ICycle
       handleSubmit={formSubmit}
       isSubmitting={loader}
       isOpen={isOpen}
-      title="Delete cycle"
+      title="Delete sprint"
       content={
         <>
           Are you sure you want to delete cycle{' "'}

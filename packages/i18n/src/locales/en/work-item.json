@@ -11,9 +11,9 @@
       "press_enter": "Press 'Enter' to add another work item",
       "label": "Add work item",
       "cycle": {
-        "failed": "Work item could not be added to the cycle. Please try again.",
-        "success": "{count, plural, one {Work item} other {Work items}} added to the cycle successfully.",
-        "loading": "Adding {count, plural, one {work item} other {work items}} to the cycle"
+        "failed": "Work item could not be added to the sprint. Please try again.",
+        "success": "{count, plural, one {Work item} other {Work items}} added to the sprint successfully.",
+        "loading": "Adding {count, plural, one {work item} other {work items}} to the sprint"
       },
       "assignee": "Add assignees",
       "start_date": "Add start date",
@@ -28,9 +28,9 @@
     "remove": {
       "label": "Remove work item",
       "cycle": {
-        "loading": "Removing work item from the cycle",
-        "success": "Work item removed from the cycle successfully.",
-        "failed": "Work item could not be removed from the cycle. Please try again."
+        "loading": "Removing work item from the sprint",
+        "success": "Work item removed from the sprint successfully.",
+        "failed": "Work item could not be removed from the sprint. Please try again."
       },
       "module": {
         "loading": "Removing work item from the module",

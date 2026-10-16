@@ -21,7 +21,7 @@ export function TransferIssues(props: Props) {
     <div className="-mt-2 mb-4 flex items-center justify-between px-4 pt-6">
       <div className="flex items-center gap-2 text-13 text-secondary">
         <WarningCircleOutline className="h-3.5 w-3.5 text-secondary" />
-        <span>Completed cycles are not editable.</span>
+        <span>Completed sprints are not editable.</span>
       </div>
 
       {canTransferIssues && (

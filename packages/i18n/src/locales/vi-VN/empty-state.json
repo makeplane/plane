@@ -41,13 +41,13 @@
       "cta_primary": "Tạo mục công việc đầu tiên của bạn"
     },
     "cycles": {
-      "title": "Nhóm và giới hạn thời gian công việc của bạn trong Chu kỳ.",
+      "title": "Nhóm và giới hạn thời gian công việc của bạn trong Sprint.",
       "description": "Chia nhỏ công việc thành các phần có giới hạn thời gian, làm ngược từ thời hạn dự án để đặt ngày và tạo tiến triển cụ thể như một đội.",
-      "cta_primary": "Đặt chu kỳ đầu tiên của bạn"
+      "cta_primary": "Đặt sprint đầu tiên của bạn"
     },
     "cycle_work_items": {
-      "title": "Không có mục công việc để hiển thị trong chu kỳ này",
-      "description": "Tạo các mục công việc để bắt đầu giám sát tiến độ của đội bạn trong chu kỳ này và đạt được mục tiêu đúng hạn.",
+      "title": "Không có mục công việc để hiển thị trong sprint này",
+      "description": "Tạo các mục công việc để bắt đầu giám sát tiến độ của đội bạn trong sprint này và đạt được mục tiêu đúng hạn.",
       "cta_primary": "Tạo mục công việc",
       "cta_secondary": "Thêm mục công việc hiện có"
     },
@@ -117,8 +117,8 @@
       "cta_primary": "Thiết lập tự động hóa"
     },
     "archive_cycles": {
-      "title": "Chưa có chu kỳ được lưu trữ",
-      "description": "Để sắp xếp dự án của bạn, hãy lưu trữ các chu kỳ đã hoàn thành. Tìm chúng ở đây sau khi lưu trữ."
+      "title": "Chưa có sprint được lưu trữ",
+      "description": "Để sắp xếp dự án của bạn, hãy lưu trữ các sprint đã hoàn thành. Tìm chúng ở đây sau khi lưu trữ."
     },
     "archive_modules": {
       "title": "Chưa có Mô-đun được lưu trữ",
@@ -160,7 +160,7 @@
       "title": "Tạo dự án với các mục công việc và người được giao để bắt đầu theo dõi hiệu suất, tiến độ và tác động của đội ở đây."
     },
     "analytics_no_cycle": {
-      "title": "Tạo chu kỳ để tổ chức công việc thành các giai đoạn có giới hạn thời gian và theo dõi tiến độ qua các sprint."
+      "title": "Tạo sprint để tổ chức công việc thành các giai đoạn có giới hạn thời gian và theo dõi tiến độ qua các sprint."
     },
     "analytics_no_module": {
       "title": "Tạo mô-đun để tổ chức công việc của bạn và theo dõi tiến độ qua các giai đoạn khác nhau."
@@ -178,8 +178,8 @@
       "cta_secondary": "Tài liệu"
     },
     "active_cycles": {
-      "title": "Không có chu kỳ hoạt động",
-      "description": "Bạn không có chu kỳ đang tiến hành ngay bây giờ. Các chu kỳ hoạt động xuất hiện ở đây khi chúng bao gồm ngày hôm nay."
+      "title": "Không có sprint hoạt động",
+      "description": "Bạn không có sprint đang tiến hành ngay bây giờ. Các sprint hoạt động xuất hiện ở đây khi chúng bao gồm ngày hôm nay."
     },
     "dashboard": {
       "title": "Trực quan hóa tiến độ của bạn với bảng điều khiển",

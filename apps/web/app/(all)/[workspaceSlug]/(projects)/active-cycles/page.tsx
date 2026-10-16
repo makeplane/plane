@@ -15,7 +15,7 @@ import { WorkspaceActiveCyclesUpgrade } from "@/components/active-cycles/workspa
 function WorkspaceActiveCyclesPage() {
   const { currentWorkspace } = useWorkspace();
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Active Cycles` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Active Sprints` : undefined;
 
   return (
     <>

@@ -15,7 +15,7 @@
       "properties": {
         "title": "Properties",
         "description": "Create and customize properties.",
-        "tooltip": "Each work item type comes with a default set of properties like Title, Description, Assignee, State, Priority, Start date, Due date, Module, Cycle etc. You can also customize and add your own properties to tailor it to your team's needs.",
+        "tooltip": "Each work item type comes with a default set of properties like Title, Description, Assignee, State, Priority, Start date, Due date, Module, Sprint etc. You can also customize and add your own properties to tailor it to your team's needs.",
         "add_button": "Add new property",
         "project": {
           "add_button": {
