@@ -21,8 +21,7 @@ export type SelectTriggerVariant =
   | "icon"
   | "search-input";
 
-/** `pill` / `icon` trigger chrome size — source of truth is `PillButtonSize` in `@plane/blocks/pill-button`,
- * which in turn tracks `@makeplane/propel`'s pill button scale. */
+/** Existing CE pill/icon sizes. Pill triggers map `sm/md/lg` to Propel's `xs/sm/md` scale. */
 export type SelectTriggerSize = PillButtonSize;
 
 /** `select` / `select-ghost` trigger chrome size — propel's combobox scale, so a step means the same
@@ -349,10 +348,11 @@ export type SelectTriggerProps<T> = {
    * when a hand-composed trigger has to go inert on its own. */
   disabled?: boolean;
   /**
-   * The single source of chrome. `pill-{size}` renders the propel pill button (via `getPillButtonClassName`);
+   * The single source of chrome. `pill-{size}` composes Propel's `Pill` / `IconPill` elements;
    * `icon-{size}` is prepend-only (no label children) with transparent chrome — for compact attribute rows;
-   * `table-cell` / `breadcrumb` use the `triggerVariants` styles; `select-{size}` / `select-ghost-{size}`
-   * use `getSelectClassName` and render `SelectContent`. Defaults to `pill-sm`; unrecognised values fall
+   * `table-cell` keeps Plane's row geometry; `breadcrumb` uses Propel's breadcrumb element;
+   * `select-{size}` / `select-ghost-{size}` use Propel's `ComboboxTrigger` and render `SelectContent`.
+   * Unrecognised values fall
    * back to `pill-sm` in `splitSelectVariant`.
    */
   variant: SelectVariant;
@@ -360,10 +360,10 @@ export type SelectTriggerProps<T> = {
   isActive?: boolean;
   /** Escape hatch merged onto the trigger button after the variant classes. */
   className?: string;
-  /** Leading icon, size-cloned into the trigger's `PillButtonContent`. Element or a render-prop of the selection. */
+  /** Leading icon, rendered in Propel's decorative icon slot. Element or a render-prop of the selection. */
   prependIcon?: IconElement | ((selected: T[]) => IconElement | undefined);
   /**
-   * Trailing icon, size-cloned into the trigger's `PillButtonContent`. Element or a render-prop of
+   * Trailing icon, rendered in Propel's decorative icon slot. Element or a render-prop of
    * the selection. Pass `null` (or a render-prop returning `null`) to suppress the trailing glyph
    * entirely on every variant that draws one — that is how the legacy `noChevron` sites drop the
    * `select-*` and `breadcrumb` chrome's own chevron, which `undefined` would leave in place.
