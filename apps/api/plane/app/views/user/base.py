@@ -56,6 +56,10 @@ from plane.authentication.provider.credentials.magic_code import MagicCodeProvid
 
 logger = logging.getLogger("plane")
 
+# Email-change codes issued per target address, across all accounts, per window.
+EMAIL_UPDATE_CODES_PER_TARGET = 5
+EMAIL_UPDATE_CODES_WINDOW = 3600
+
 
 class UserEndpoint(BaseViewSet):
     serializer_class = UserSerializer
@@ -150,6 +154,12 @@ class UserEndpoint(BaseViewSet):
         validation_error = self._validate_new_email(user, new_email)
         if validation_error:
             return validation_error
+
+        # Atomically count codes issued to this address; refuse past the cap.
+        issued_key = f"email_update_issued:{new_email}"
+        cache.add(issued_key, 0, timeout=EMAIL_UPDATE_CODES_WINDOW)
+        if cache.incr(issued_key) > EMAIL_UPDATE_CODES_PER_TARGET:
+            self.throttled(request, None)
 
         try:
             # Generate magic code for email verification

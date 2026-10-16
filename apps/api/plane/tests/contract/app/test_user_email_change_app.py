@@ -8,20 +8,28 @@ import pytest
 from django.core.cache import cache
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.test import APIClient
 
 from plane.authentication.provider.credentials.magic_code import MagicCodeProvider
 from plane.authentication.rate_limit import AuthenticationThrottle
+from plane.db.models import User
 
 NEW_EMAIL = "changed@plane.so"
+CODES_PER_TARGET = 5
+
+
+def _clear_request_throttles():
+    cache.delete_pattern("throttle_authentication_*")
+    cache.delete_pattern("throttle_email_verification_*")
 
 
 @pytest.fixture(autouse=True)
 def _clear_throttle_state():
-    cache.delete_pattern("throttle_authentication_*")
-    cache.delete_pattern("throttle_email_verification_*")
+    _clear_request_throttles()
+    cache.delete_pattern("email_update_issued:*")
     yield
-    cache.delete_pattern("throttle_authentication_*")
-    cache.delete_pattern("throttle_email_verification_*")
+    _clear_request_throttles()
+    cache.delete_pattern("email_update_issued:*")
 
 
 @pytest.fixture
@@ -97,3 +105,22 @@ class TestUserEmailChangeVerification:
 
             response = session_client.post(url, {"email": NEW_EMAIL}, format="json")
             assert response.status_code == status.HTTP_429_TOO_MANY_REQUESTS
+
+    @pytest.mark.django_db
+    def test_generate_code_capped_per_target_email(self, mock_email_tasks):
+        """Codes issued for one address are capped across accounts, independent of request throttles."""
+        url = reverse("user-email-verify-code")
+
+        def request_from_new_account(index):
+            _clear_request_throttles()
+            client = APIClient()
+            user = User.objects.create(username=f"requester{index}", email=f"requester{index}@plane.so")
+            client.force_authenticate(user=user)
+            return client.post(url, {"email": NEW_EMAIL}, format="json")
+
+        for index in range(CODES_PER_TARGET):
+            assert request_from_new_account(index).status_code == status.HTTP_200_OK
+
+        response = request_from_new_account(CODES_PER_TARGET)
+        assert response.status_code == status.HTTP_429_TOO_MANY_REQUESTS
+        assert mock_email_tasks.call_count == CODES_PER_TARGET
