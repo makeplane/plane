@@ -36,11 +36,13 @@ export const CustomStarterKitExtension = (args: TArgs) => {
     paragraph: {
       HTMLAttributes: {
         class: "editor-paragraph-block",
+        dir: "auto",
       },
     },
     heading: {
       HTMLAttributes: {
         class: "editor-heading-block",
+        dir: "auto",
       },
     },
     dropcursor: {

@@ -113,10 +113,10 @@
   /* end font sizes and line heights */
 
   /* font styles */
-  --font-style: "Inter Variable", sans-serif;
+  --font-style: "Inter Variable", "Vazirmatn", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   &.sans-serif {
-    --font-style: "Inter Variable", sans-serif;
+    --font-style: "Inter Variable", "Vazirmatn", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
   &.serif {
     --font-style: serif;

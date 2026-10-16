@@ -15,6 +15,9 @@ export const TitleExtensions: Extensions = [
   }),
   Heading.configure({
     levels: [1],
+    HTMLAttributes: {
+      dir: "auto",
+    },
   }) as AnyExtension,
   Text,
 ];

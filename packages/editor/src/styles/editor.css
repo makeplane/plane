@@ -21,6 +21,19 @@
   -moz-appearance: textfield;
 }
 
+.ProseMirror p,
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror h4,
+.ProseMirror h5,
+.ProseMirror h6,
+.ProseMirror blockquote,
+.ProseMirror li {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
 /* Placeholder only for the first line in an empty editor. */
 .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);

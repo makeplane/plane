@@ -6,6 +6,11 @@
   border-radius: 0;
 }
 
+.page-title-editor .ProseMirror h1 {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
 .page-title-editor .ProseMirror {
   background-color: transparent;
   font-weight: bold;

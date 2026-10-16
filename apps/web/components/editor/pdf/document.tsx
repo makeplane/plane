@@ -229,6 +229,29 @@ Font.register({
   ],
 });
 
+const RTL_REGEX = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+
+function preprocessHtmlForPdf(html: string): string {
+  if (typeof DOMParser === "undefined") return html;
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+    const elements = doc.body.querySelectorAll("p, h1, h2, h3, h4, h5, h6, blockquote, li, td, div");
+    elements.forEach((el) => {
+      const text = el.textContent || "";
+      const dirAttr = el.getAttribute("dir");
+      if (RTL_REGEX.test(text) || dirAttr === "auto" || dirAttr === "rtl") {
+        if (RTL_REGEX.test(text)) {
+          el.setAttribute("dir", "rtl");
+        }
+      }
+    });
+    return doc.body.innerHTML;
+  } catch {
+    return html;
+  }
+}
+
 type Props = {
   content: string;
   pageFormat: PageProps["size"];
@@ -236,6 +259,7 @@ type Props = {
 
 export function PDFDocument(props: Props) {
   const { content, pageFormat } = props;
+  const processedContent = preprocessHtmlForPdf(content);
 
   return (
     <Document>
@@ -246,7 +270,7 @@ export function PDFDocument(props: Props) {
           padding: 64,
         }}
       >
-        <Html stylesheet={EDITOR_PDF_DOCUMENT_STYLESHEET}>{content}</Html>
+        <Html stylesheet={EDITOR_PDF_DOCUMENT_STYLESHEET}>{processedContent}</Html>
       </Page>
     </Document>
   );

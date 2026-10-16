@@ -88,10 +88,15 @@ export const createPdfDocument = (doc: TipTapDocument, options: PDFExportOptions
   const getKey = createKeyGenerator();
   const renderedContent = content.map((node, index) => renderNode(node, "doc", index, mergedMetadata, getKey));
 
+  const isTitleRtl = title
+    ? /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(title)
+    : false;
+  const titleStyle = [pdfStyles.title, isTitleRtl ? { fontFamily: "Vazirmatn", textAlign: "right" } : {}];
+
   return (
     <Document title={title} author={author} subject={subject}>
       <Page size={pageSize} orientation={pageOrientation} style={pdfStyles.page}>
-        {title && <Text style={pdfStyles.title}>{title}</Text>}
+        {title && <Text style={titleStyle}>{title}</Text>}
         {renderedContent}
       </Page>
     </Document>
