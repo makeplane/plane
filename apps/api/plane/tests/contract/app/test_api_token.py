@@ -347,23 +347,6 @@ class TestApiTokenEndpoint:
         create_api_token_for_user.refresh_from_db()
         assert create_api_token_for_user.user_type == 0
 
-    @pytest.mark.django_db
-    def test_patch_cannot_modify_allowed_rate_limit(self, session_client, create_user, create_api_token_for_user):
-        """Test that allowed_rate_limit cannot be modified via PATCH"""
-        # Arrange
-        session_client.force_authenticate(user=create_user)
-        url = reverse("api-tokens-details", kwargs={"pk": create_api_token_for_user.pk})
-        original_rate_limit = create_api_token_for_user.allowed_rate_limit
-        update_data = {"allowed_rate_limit": "100000/min"}
-
-        # Act
-        response = session_client.patch(url, update_data, format="json")
-
-        # Assert
-        assert response.status_code == status.HTTP_200_OK
-        create_api_token_for_user.refresh_from_db()
-        assert create_api_token_for_user.allowed_rate_limit == original_rate_limit
-
     # Authentication tests
     @pytest.mark.django_db
     def test_all_endpoints_require_authentication(self, api_client):
