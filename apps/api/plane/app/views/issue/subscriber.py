@@ -10,7 +10,7 @@ from rest_framework import status
 from .. import BaseViewSet
 from plane.app.serializers import IssueSubscriberSerializer, ProjectMemberLiteSerializer
 from plane.app.permissions import ProjectEntityPermission, ProjectLitePermission
-from plane.db.models import IssueSubscriber, ProjectMember
+from plane.db.models import Issue, IssueSubscriber, ProjectMember
 
 
 class IssueSubscriberViewSet(BaseViewSet):
@@ -28,6 +28,12 @@ class IssueSubscriberViewSet(BaseViewSet):
         return super(IssueSubscriberViewSet, self).get_permissions()
 
     def perform_create(self, serializer):
+        # The URL issue must belong to the URL workspace + project (404 otherwise).
+        Issue.objects.get(
+            pk=self.kwargs.get("issue_id"),
+            workspace__slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
+        )
         serializer.save(
             project_id=self.kwargs.get("project_id"),
             issue_id=self.kwargs.get("issue_id"),
@@ -67,6 +73,7 @@ class IssueSubscriberViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def subscribe(self, request, slug, project_id, issue_id):
+        Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
         if IssueSubscriber.objects.filter(
             issue_id=issue_id,
             subscriber=request.user,

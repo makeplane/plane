@@ -190,6 +190,8 @@ class CommentReactionViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, comment_id):
         try:
+            # The URL comment must belong to the URL workspace + project (404 otherwise).
+            IssueComment.objects.get(pk=comment_id, workspace__slug=slug, project_id=project_id)
             serializer = CommentReactionSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(
