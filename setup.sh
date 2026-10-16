@@ -77,8 +77,16 @@ else
     success=false
 fi
 
-# Activate pnpm (version set in package.json)
+# Activate pnpm via corepack
+echo -e "${YELLOW}Setting up pnpm...${NC}"
+if ! command -v corepack &>/dev/null; then
+    echo -e "${RED}Error: corepack not found.${NC}"
+    echo -e "${RED}Install Node.js 16.9+ (which bundles corepack) and re-run this script.${NC}"
+    echo -e "${RED}See: https://nodejs.org/en/download${NC}"
+    exit 1
+fi
 corepack enable pnpm || success=false
+
 # Install Node dependencies
 pnpm install || success=false
 
