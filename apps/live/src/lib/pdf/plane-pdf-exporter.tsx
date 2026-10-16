@@ -91,7 +91,7 @@ export const createPdfDocument = (doc: TipTapDocument, options: PDFExportOptions
   const isTitleRtl = title
     ? /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(title)
     : false;
-  const titleStyle = [pdfStyles.title, isTitleRtl ? { fontFamily: "Vazirmatn", textAlign: "right" } : {}];
+  const titleStyle = [pdfStyles.title, isTitleRtl ? ({ fontFamily: "Vazirmatn", textAlign: "right" as const }) : {}];
 
   return (
     <Document title={title} author={author} subject={subject}>
