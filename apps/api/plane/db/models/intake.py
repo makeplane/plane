@@ -2,9 +2,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-# Python imports
-from datetime import datetime, time
-
 # Third party imports
 import pytz
 
@@ -105,7 +102,9 @@ class IntakeIssue(ChangeTrackerMixin, ProjectBaseModel):
         # that day in the project's timezone. Project.save() re-times it if the
         # project timezone later changes.
         if self.snoozed_till and (self._state.adding or self.has_changed("snoozed_till")):
+            # Inline import: timezone_converter imports plane.db.models.
+            from plane.utils.timezone_converter import project_day_start
+
             project_tz = pytz.timezone(Project.objects.values_list("timezone", flat=True).get(id=self.project_id))
-            day = self.snoozed_till.astimezone(project_tz).date()
-            self.snoozed_till = project_tz.localize(datetime.combine(day, time.min))
+            self.snoozed_till = project_day_start(self.snoozed_till.astimezone(project_tz).date(), project_tz)
         super().save(*args, **kwargs)

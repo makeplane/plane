@@ -4,7 +4,6 @@
 
 # Python imports
 import pytz
-from datetime import datetime, time
 from uuid import uuid4
 from enum import Enum
 
@@ -174,8 +173,10 @@ class Project(ChangeTrackerMixin, BaseModel):
         IntakeIssue.save()), so a timezone change would otherwise wake it at the
         old zone's midnight.
         """
-        # Inline import: intake.py imports from this module (ProjectBaseModel).
+        # Inline imports: intake.py imports from this module (ProjectBaseModel), and
+        # timezone_converter imports plane.db.models.
         from plane.db.models.intake import IntakeIssue, IntakeIssueStatus
+        from plane.utils.timezone_converter import project_day_start
 
         old_tz, new_tz = pytz.timezone(old_timezone), pytz.timezone(self.timezone)
         retimed = []
@@ -185,8 +186,7 @@ class Project(ChangeTrackerMixin, BaseModel):
             .filter(project_id=self.id, status=IntakeIssueStatus.SNOOZED, snoozed_till__isnull=False)
             .only("id", "snoozed_till")
         ):
-            day = intake_issue.snoozed_till.astimezone(old_tz).date()
-            intake_issue.snoozed_till = new_tz.localize(datetime.combine(day, time.min))
+            intake_issue.snoozed_till = project_day_start(intake_issue.snoozed_till.astimezone(old_tz).date(), new_tz)
             retimed.append(intake_issue)
         IntakeIssue.objects.bulk_update(retimed, ["snoozed_till"])
 
@@ -202,11 +202,25 @@ class Project(ChangeTrackerMixin, BaseModel):
 
         # Read before super().save(): the change tracker resets once it returns.
         update_fields = kwargs.get("update_fields")
-        timezone_persisted = update_fields is None or "timezone" in update_fields
-        if is_creating or not timezone_persisted or not self.has_changed("timezone"):
+        if update_fields is not None:
+            # Materialize so the membership check below can't exhaust a generator before Django reads it.
+            update_fields = kwargs["update_fields"] = tuple(update_fields)
+        # A still-deferred timezone is not written, even when update_fields is None.
+        timezone_persisted = "timezone" not in self.get_deferred_fields() and (
+            update_fields is None or "timezone" in update_fields
+        )
+        if is_creating or not timezone_persisted:
             return super().save(*args, **kwargs)
 
-        old_timezone = self.old_values.get("timezone")
+        # A timezone deferred at load has no tracked original, so compare against the stored one.
+        old_timezone = (
+            self.old_values["timezone"]
+            if "timezone" in self.old_values
+            else Project.objects.values_list("timezone", flat=True).get(pk=self.pk)
+        )
+        if old_timezone == self.timezone:
+            return super().save(*args, **kwargs)
+
         # One transaction so the unsnooze beat task never sees the new timezone with old-timezone snoozes.
         with transaction.atomic():
             super().save(*args, **kwargs)

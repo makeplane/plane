@@ -167,7 +167,8 @@ def unsnooze_expired_intake_issues():
         updated_count = IntakeIssue.objects.filter(status=IntakeIssueStatus.SNOOZED, snoozed_till__lte=now).update(
             status=IntakeIssueStatus.PENDING, snoozed_till=None, updated_at=now
         )
-        logger.info("unsnooze_expired_intake_issues: returned %d intake issues to pending", updated_count)
+        if updated_count:
+            logger.info("unsnooze_expired_intake_issues: returned %d intake issues to pending", updated_count)
         return updated_count
     except Exception as e:
         log_exception(e)

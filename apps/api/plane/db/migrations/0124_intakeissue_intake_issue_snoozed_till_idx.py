@@ -3,6 +3,8 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+    # Required by AddIndexConcurrently. A failed build leaves an INVALID index; before retrying, run
+    # DROP INDEX CONCURRENTLY IF EXISTS intake_issue_snoozed_till_idx;
     atomic = False
 
     dependencies = [

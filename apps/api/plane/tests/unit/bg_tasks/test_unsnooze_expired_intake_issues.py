@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, timezone as dt_timezone
 import pytest
 from django.utils import timezone
 
+from plane.api.serializers import IntakeIssueUpdateSerializer
 from plane.app.serializers import IntakeIssueSerializer
 from plane.bgtasks.issue_automation_task import unsnooze_expired_intake_issues
 from plane.db.models import Intake, IntakeIssue, Issue, Project, State
@@ -38,8 +39,8 @@ def make_row(db, workspace, create_user):
     return make
 
 
-def _snooze(intake_issue, value):
-    serializer = IntakeIssueSerializer(
+def _snooze(intake_issue, value, serializer_class=IntakeIssueSerializer):
+    serializer = serializer_class(
         intake_issue, data={"status": IntakeIssueStatus.SNOOZED, "snoozed_till": value}, partial=True
     )
     assert serializer.is_valid(), serializer.errors
@@ -71,6 +72,15 @@ def test_date_only_snooze_wakes_at_project_midnight(make_row):
     assert _snooze(row, "2026-10-05T09:00:00Z") == _utc(2026, 10, 4, 18, 30)
 
 
+@pytest.mark.parametrize("serializer_class", [IntakeIssueSerializer, IntakeIssueUpdateSerializer])
+def test_date_only_snooze_west_of_utc_keeps_the_picked_day(make_row, serializer_class):
+    row = make_row()
+    # .update() skips Project.save(), so there is nothing to retime.
+    Project.objects.filter(pk=row.project_id).update(timezone="America/New_York")
+    # Parsed as UTC midnight this would floor to Oct 4 in New York (EDT = UTC-04:00).
+    assert _snooze(row, "2026-10-05", serializer_class) == _utc(2026, 10, 5, 4, 0)
+
+
 def test_direct_model_write_is_floored_to_project_midnight(make_row):
     row = make_row()
     row.status = IntakeIssueStatus.SNOOZED
@@ -90,6 +100,20 @@ def test_project_timezone_change_retimes_snoozes(make_row):
 
     snoozed.refresh_from_db()
     # Same day, now midnight in New York (EDT = UTC-04:00).
+    assert snoozed.snoozed_till == _utc(2026, 10, 5, 4, 0)
+
+
+def test_deferred_timezone_change_retimes_snoozes(make_row):
+    snoozed = make_row()
+    _snooze(snoozed, "2026-10-05")
+
+    project = Project.objects.only("id", "identifier").get(pk=snoozed.project_id)
+    project.timezone = "America/New_York"
+    # A generator must still reach Django intact after the timezone membership check.
+    project.save(update_fields=(field for field in ["timezone"]))
+
+    snoozed.refresh_from_db()
+    assert Project.objects.get(pk=project.pk).timezone == "America/New_York"
     assert snoozed.snoozed_till == _utc(2026, 10, 5, 4, 0)
 
 
