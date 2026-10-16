@@ -39,11 +39,47 @@ export const CoreEditorProps = (props: TArgs): EditorProps => {
       if (!event.clipboardData) return false;
 
       const htmlContent = event.clipboardData.getData("text/plane-editor-html");
-      if (!htmlContent) return false;
+      if (htmlContent) {
+        const { processedHtml } = processAssetDuplication(htmlContent);
+        view.pasteHTML(processedHtml);
+        return true;
+      }
 
-      const { processedHtml } = processAssetDuplication(htmlContent);
-      view.pasteHTML(processedHtml);
-      return true;
+      const plainText = event.clipboardData.getData("text/plain");
+      if (plainText && !event.defaultPrevented) {
+        let signals = 0;
+        if (/^#{1,6}\s+\S+/m.test(plainText)) signals += 2;
+        if (/^[-*+]\s+\S+/m.test(plainText)) signals += 2;
+        if (/^\d+\.\s+\S+/m.test(plainText)) signals += 2;
+        if (/^>\s+\S+/m.test(plainText)) signals += 2;
+        if (/```[\s\S]*?```/m.test(plainText)) signals += 3;
+        if (/`[^`\n]+`/.test(plainText)) signals += 1;
+        if (/(\*\*|__)[^\n]+?(\*\*|__)/.test(plainText)) signals += 1;
+        if (/\[[^\]]+\]\(https?:\/\/[^\s)]+\)/.test(plainText)) signals += 2;
+        if (/^-\s+\[[ xX]\]\s+\S+/m.test(plainText)) signals += 2;
+
+        if (signals > 0) {
+          const html = event.clipboardData.getData("text/html");
+          if (!html || !/<table|<img|<h[1-6]/i.test(html)) {
+            try {
+              // @ts-expect-error markdown-it in bundle
+              const mdFactory = typeof markdownit !== "undefined" ? markdownit : null;
+              if (mdFactory) {
+                const rendered = mdFactory({ html: true, linkify: true, breaks: true }).render(plainText);
+                if (rendered) {
+                  view.pasteHTML(rendered);
+                  event.preventDefault();
+                  return true;
+                }
+              }
+            } catch (err) {
+              console.error("Markdown paste error:", err);
+            }
+          }
+        }
+      }
+
+      return false;
     },
   };
 };
