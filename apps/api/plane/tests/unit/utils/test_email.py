@@ -81,8 +81,8 @@ class TestGeneratePlainTextFromHtml:
 
         assert email_utils._remove_style_blocks(html_content) == expected
 
-    def test_unclosed_style_tags_convert_in_linear_time(self):
-        """~100k chars of `<style` openers without `</style>` must convert quickly."""
+    def test_style_removal_scales_linearly(self):
+        """Style removal runs in linear time on large input."""
         html_content = "<p>" + "<style-x>" * 11000 + "</p>"
 
         start = time.perf_counter()

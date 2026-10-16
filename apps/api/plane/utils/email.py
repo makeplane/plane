@@ -15,11 +15,8 @@ _STYLE_CLOSE_RE = re.compile(r"</style>", re.IGNORECASE)
 
 def _remove_style_blocks(html_content):
     """
-    Remove `<style ...>...</style>` blocks in a single linear pass.
-
-    Same result as `re.sub(r"<style[^>]*>.*?</style>", "", ..., flags=re.DOTALL | re.IGNORECASE)`,
-    but each scan resumes where the previous one ended, and the scan stops as
-    soon as a block cannot be closed (no later block could be closed either).
+    Remove `<style ...>...</style>` blocks (case-insensitive) in a single
+    forward scan, leaving the surrounding content unchanged.
     """
     parts = []
     pos = 0
