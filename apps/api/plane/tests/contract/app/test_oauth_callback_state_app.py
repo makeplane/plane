@@ -77,3 +77,19 @@ class TestOAuthCallbackState:
 
         assert "error_code" in response.url
         provider.assert_not_called()
+
+
+APP_CALLBACKS = ["github-callback", "gitlab-callback", "google-callback", "gitea-callback"]
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+@pytest.mark.parametrize("url_name", APP_CALLBACKS)
+def test_refused_without_session_redirects_to_app_host(url_name, settings):
+    settings.APP_BASE_URL = "http://app.example.com"
+
+    response = Client().get(reverse(url_name), {"code": "oauth-code", "state": "some-state"})
+
+    assert response.status_code == 302
+    assert response.url.startswith("http://app.example.com")
+    assert "error_code" in response.url
