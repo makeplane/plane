@@ -187,7 +187,9 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
 
         project_id = request.data.get("project_id", issue.project_id)
 
-        if project_id and not can_write_project(request.user, slug, project_id):
+        # The draft stays in its own project; any other supplied project is checked too.
+        project_ids = {str(pid) for pid in (issue.project_id, project_id) if pid}
+        if any(not can_write_project(request.user, slug, pid) for pid in project_ids):
             return Response(
                 {"error": "You don't have the required permissions."},
                 status=status.HTTP_403_FORBIDDEN,
