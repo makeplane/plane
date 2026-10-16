@@ -72,7 +72,7 @@ services:
       retries: 10
 
   test-minio:
-    image: minio/minio
+    image: docker.io/pgsty/silo:RELEASE.2026-09-16T00-00-00Z
     networks:
       - test_env
     env_file:
@@ -83,7 +83,7 @@ services:
     entrypoint: >
       /bin/sh -c "
       mkdir -p /export/${AWS_S3_BUCKET_NAME:-uploads} &&
-      minio server /export --console-address ':9090' &
+      silo server /export --console-address ':9090' &
       sleep 3 &&
       mc alias set local http://localhost:9000 ${AWS_ACCESS_KEY_ID:-access-key} ${AWS_SECRET_ACCESS_KEY:-secret-key} &&
       mc mb local/${AWS_S3_BUCKET_NAME:-uploads} -p || true &&
