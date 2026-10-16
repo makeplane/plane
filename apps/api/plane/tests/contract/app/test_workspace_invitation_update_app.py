@@ -3,10 +3,9 @@
 # See the LICENSE file for details.
 
 """
-Regression tests for INFRA-1132 / INFRA-1155.
-
-``PATCH /api/workspaces/<slug>/invitations/<pk>/`` must only change ``role``, and
-never to a role above the requester's own (the same cap ``create()`` enforces).
+Invitation updates (``PATCH /api/workspaces/<slug>/invitations/<pk>/``) may only
+change ``role``, and members may only assign invitation roles up to their own
+role, the same rule ``create()`` applies.
 """
 
 import pytest
@@ -38,7 +37,7 @@ def invite(workspace):
 @pytest.mark.contract
 @pytest.mark.django_db
 class TestWorkspaceInvitationUpdate:
-    def test_member_cannot_raise_invite_above_own_role(self, member_client, workspace, invite):
+    def test_member_invite_role_capped_at_own_role(self, member_client, workspace, invite):
         response = member_client.patch(_url(workspace.slug, invite.id), {"role": 20}, format="json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
