@@ -621,7 +621,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
         Only admins or the cycle creator can perform this action.
         """
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
-        if cycle.owned_by_id != request.user.id and (
+        if cycle.created_by_id != request.user.id and (
             not ProjectMember.objects.filter(
                 workspace__slug=slug,
                 member=request.user,
