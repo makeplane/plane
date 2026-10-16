@@ -391,11 +391,13 @@ def track_assignees(
         if not is_valid_uuid(added_asignee):
             continue
 
+        # Same rule as IssueCreateSerializer: active project members with role >= MEMBER
         assignee = User.objects.filter(
             pk=added_asignee,
-            member_workspace__workspace_id=workspace_id,
-            member_workspace__is_active=True,
-            member_workspace__deleted_at__isnull=True,
+            member_project__project_id=project_id,
+            member_project__role__gte=15,
+            member_project__is_active=True,
+            member_project__deleted_at__isnull=True,
         ).first()
         if assignee is None:
             continue
@@ -1323,6 +1325,9 @@ def create_issue_relation_activity(
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = json.loads(current_instance) if current_instance is not None else None
     if current_instance is None and requested_data.get("issues") is not None:
+        current_issue = Issue.objects.filter(pk=issue_id, project_id=project_id, workspace_id=workspace_id).first()
+        if current_issue is None:
+            return
         for related_issue in requested_data.get("issues"):
             # Relations can span projects, so only the workspace is enforced
             issue = Issue.objects.filter(pk=related_issue, workspace_id=workspace_id).first()
@@ -1344,14 +1349,13 @@ def create_issue_relation_activity(
                 )
             )
             inverse_relation = get_inverse_relation(requested_data.get("relation_type"))
-            issue = Issue.objects.get(pk=issue_id)
             issue_activities.append(
                 IssueActivity(
                     issue_id=related_issue,
                     actor_id=actor_id,
                     verb="updated",
                     old_value="",
-                    new_value=f"{issue.project.identifier}-{issue.sequence_id}",
+                    new_value=f"{current_issue.project.identifier}-{current_issue.sequence_id}",
                     field=inverse_relation,
                     project_id=project_id,
                     workspace_id=workspace_id,
@@ -1374,8 +1378,9 @@ def delete_issue_relation_activity(
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = json.loads(current_instance) if current_instance is not None else None
+    current_issue = Issue.objects.filter(pk=issue_id, project_id=project_id, workspace_id=workspace_id).first()
     issue = Issue.objects.filter(pk=requested_data.get("related_issue"), workspace_id=workspace_id).first()
-    if issue is None:
+    if current_issue is None or issue is None:
         return
     issue_activities.append(
         IssueActivity(
@@ -1392,13 +1397,12 @@ def delete_issue_relation_activity(
             epoch=epoch,
         )
     )
-    issue = Issue.objects.get(pk=issue_id)
     issue_activities.append(
         IssueActivity(
             issue_id=requested_data.get("related_issue"),
             actor_id=actor_id,
             verb="deleted",
-            old_value=f"{issue.project.identifier}-{issue.sequence_id}",
+            old_value=f"{current_issue.project.identifier}-{current_issue.sequence_id}",
             new_value="",
             field=(
                 "blocking"

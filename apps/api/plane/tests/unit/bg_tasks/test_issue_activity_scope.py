@@ -6,6 +6,7 @@
 ids outside that scope are skipped."""
 
 import json
+from unittest import mock
 
 import pytest
 from django.utils import timezone
@@ -19,6 +20,7 @@ from plane.db.models import (
     Label,
     Module,
     Project,
+    ProjectMember,
     User,
     Workspace,
     WorkspaceMember,
@@ -32,6 +34,11 @@ def scope(db, workspace, create_user):
     project = Project.objects.create(name="Home", identifier="HOME", workspace=workspace, created_by=create_user)
     issue = Issue.objects.create(name="Home issue", project=project, workspace=workspace)
     sibling = Issue.objects.create(name="Sibling issue", project=project, workspace=workspace)
+    ProjectMember.objects.create(project=project, member=create_user, workspace=workspace, role=20)
+
+    # Same workspace, but not a member of this project
+    bystander = User.objects.create(email="bystander@plane.so", username="bystander", display_name="bystander-name")
+    WorkspaceMember.objects.create(workspace=workspace, member=bystander, role=15)
 
     outsider = User.objects.create(email="outsider@plane.so", username="outsider", display_name="outsider-name")
     other_ws = Workspace.objects.create(name="Other", owner=outsider, slug="other-ws")
@@ -43,6 +50,10 @@ def scope(db, workspace, create_user):
         "project": project,
         "issue": issue,
         "sibling": sibling,
+        "archived": Issue.objects.create(
+            name="Archived issue", project=project, workspace=workspace, archived_at=timezone.now().date()
+        ),
+        "bystander": bystander,
         "label": Label.objects.create(name="home-label", project=project, workspace=workspace),
         "outsider": outsider,
         "foreign_issue": Issue.objects.create(name="Foreign issue", project=other_project, workspace=other_ws),
@@ -92,6 +103,59 @@ def test_relation_activity_skips_issues_outside_workspace(scope):
     assert IssueActivity.objects.filter(issue=sibling, old_identifier=scope["issue"].id).exists()
 
 
+def test_relation_activity_skips_activity_issue_outside_project(scope):
+    foreign, sibling = scope["foreign_issue"], scope["sibling"]
+    _run(
+        scope,
+        "issue_relation.activity.created",
+        {"relation_type": "relates_to", "issues": [str(sibling.id)]},
+        issue_id=foreign.id,
+    )
+    _run(
+        scope,
+        "issue_relation.activity.deleted",
+        {"relation_type": "relates_to", "related_issue": str(sibling.id)},
+        {},
+        issue_id=foreign.id,
+    )
+
+    assert not _refs(foreign, sibling).exists()
+
+
+@pytest.mark.parametrize(
+    "client_fixture,view_module,url",
+    [
+        (
+            "session_client",
+            "plane.app.views.issue.relation",
+            "/api/workspaces/{slug}/projects/{project}/issues/{issue}/issue-relation/",
+        ),
+        (
+            "api_key_client",
+            "plane.api.views.issue",
+            "/api/v1/workspaces/{slug}/projects/{project}/work-items/{issue}/relations/",
+        ),
+    ],
+)
+def test_relation_activity_only_covers_related_issues(scope, request, client_fixture, view_module, url):
+    issue, sibling, archived = scope["issue"], scope["sibling"], scope["archived"]
+    client = request.getfixturevalue(client_fixture)
+    with (
+        mock.patch(f"{view_module}.issue_activity") as task,
+        mock.patch(f"{view_module}.base_host", return_value="http://testserver"),
+    ):
+        response = client.post(
+            url.format(slug=scope["project"].workspace.slug, project=scope["project"].id, issue=issue.id),
+            {"relation_type": "relates_to", "issues": [str(archived.id), str(sibling.id)]},
+            format="json",
+        )
+    assert response.status_code == 201, response.data
+    issue_activity(**{**task.delay.call_args.kwargs, "notification": False, "origin": None})
+
+    assert not _refs(archived).exists()
+    assert IssueActivity.objects.filter(issue=issue, old_identifier=sibling.id).exists()
+
+
 def test_label_activity_skips_labels_outside_project(scope):
     label, foreign_label = scope["label"], scope["foreign_label"]
     _run(
@@ -118,6 +182,14 @@ def test_assignee_activity_skips_users_outside_workspace(scope):
     assert not IssueActivity.objects.filter(new_value=outsider.display_name).exists()
     assert not IssueSubscriber.objects.filter(subscriber=outsider).exists()
     assert IssueActivity.objects.filter(issue=scope["issue"], field="assignees", new_identifier=user.id).exists()
+
+
+def test_assignee_activity_requires_project_membership(scope):
+    bystander = scope["bystander"]
+    _run(scope, "issue.activity.updated", {"assignee_ids": [str(bystander.id)]}, {"assignee_ids": []})
+
+    assert not IssueActivity.objects.filter(field="assignees", new_identifier=bystander.id).exists()
+    assert not IssueSubscriber.objects.filter(subscriber=bystander).exists()
 
 
 def test_parent_activity_skips_issues_outside_project(scope):
