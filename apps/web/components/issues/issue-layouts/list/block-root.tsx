@@ -48,7 +48,10 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
+// The inner function must not be named IssueBlockRoot: inside a named function expression that name means
+// the unwrapped function, so the nested <IssueBlockRoot> rows below would render without observer and
+// would not re-render when their sub-work items load.
+export const IssueBlockRoot = observer(function IssueBlockRootInner(props: Props) {
   const {
     issueId,
     issuesMap,

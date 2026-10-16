@@ -53,7 +53,10 @@ interface Props {
   isEpic?: boolean;
 }
 
-export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: Props) {
+// The inner function must not be named SpreadsheetIssueRow: inside a named function expression that name means
+// the unwrapped function, so the nested <SpreadsheetIssueRow> rows below would render without observer and
+// would not re-render when their sub-work items load.
+export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRowInner(props: Props) {
   const {
     displayProperties,
     issueId,
@@ -365,6 +368,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
                   </div>
                 </div>
                 <div
+                  role="presentation"
                   className={`opacity-0 transition-opacity group-hover:opacity-100 ${isMenuActive ? "!opacity-100" : ""}`}
                   onClick={(e) => e.stopPropagation()}
                 >
