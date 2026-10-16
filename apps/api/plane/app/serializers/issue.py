@@ -111,6 +111,7 @@ class IssueCreateSerializer(BaseSerializer):
             "created_at",
             "updated_at",
             "completed_at",
+            "deleted_at",
         ]
 
     def to_representation(self, instance):
