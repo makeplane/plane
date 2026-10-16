@@ -36,11 +36,24 @@ from plane.db.models import (
     DraftIssueCycle,
     Workspace,
     FileAsset,
+    ProjectMember,
 )
 from .. import BaseViewSet
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 from plane.utils.host import base_host
+
+
+def can_write_project(user, slug, project_id):
+    # Same rule IssueViewSet.create enforces: an active ADMIN/MEMBER of the
+    # project, which must belong to the URL workspace.
+    return ProjectMember.objects.filter(
+        member=user,
+        workspace__slug=slug,
+        project_id=project_id,
+        role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+        is_active=True,
+    ).exists()
 
 
 class WorkspaceDraftIssueViewSet(BaseViewSet):
@@ -111,12 +124,19 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
+        project_id = request.data.get("project_id", None)
+
+        if project_id and not can_write_project(request.user, slug, project_id):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         serializer = DraftIssueCreateSerializer(
             data=request.data,
             context={
                 "workspace_id": workspace.id,
-                "project_id": request.data.get("project_id", None),
+                "project_id": project_id,
             },
         )
         if serializer.is_valid():
@@ -166,6 +186,12 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
         project_id = request.data.get("project_id", issue.project_id)
+
+        if project_id and not can_write_project(request.user, slug, project_id):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         serializer = DraftIssueCreateSerializer(
             issue,
@@ -219,6 +245,12 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             return Response(
                 {"error": "Project is required to create an issue."},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not can_write_project(request.user, slug, draft_issue.project_id):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         serializer = IssueCreateSerializer(

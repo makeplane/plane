@@ -54,6 +54,8 @@ class DraftIssueCreateSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "workspace",
+            # Set only from the membership-checked project_id at create.
+            "project",
             "created_by",
             "updated_by",
             "created_at",
