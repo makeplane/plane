@@ -6,6 +6,7 @@
 
 ``create_module_issues``, ``create_issue_modules`` and module-link create return 404
 and write nothing when the path module or issue belongs to another project.
+``create_issue_modules`` only links body module ids that belong to the URL project.
 """
 
 from unittest import mock
@@ -64,6 +65,21 @@ def test_issue_modules_require_issue_in_url_project(activity, session_client, wo
     response = session_client.post(url.format(s["issue"].id), {"modules": [str(s["module"].id)]}, format="json")
     assert response.status_code == status.HTTP_201_CREATED
     assert ModuleIssue.objects.filter(module=s["module"], issue=s["issue"]).exists()
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+@mock.patch("plane.app.views.module.issue.issue_activity")
+def test_issue_modules_only_link_modules_in_url_project(activity, session_client, workspace, setup):
+    s = setup
+    url = f"{base(workspace, s['project'])}/issues/{s['issue'].id}/modules/"
+    body = {"modules": [str(s["other_module"].id), str(s["module"].id)]}
+
+    response = session_client.post(url, body, format="json")
+    assert response.status_code == status.HTTP_201_CREATED
+    assert not ModuleIssue.objects.filter(module=s["other_module"]).exists()
+    assert ModuleIssue.objects.filter(module=s["module"], issue=s["issue"]).exists()
+    assert activity.delay.call_count == 1
 
 
 @pytest.mark.contract
