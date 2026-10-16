@@ -5,7 +5,9 @@
  */
 
 import { ModuleOutline } from "@makeplane/propel/icons";
-import type { TPaginatedResponse } from "@plane/types";
+import type { TLogoProps, TPaginatedResponse } from "@plane/types";
+import { cn } from "@plane/utils";
+import { Logo } from "../emoji-icon-picker/logo";
 import { Select } from "../select/select";
 import type { SelectPaginationParams, SelectTooltip, SelectVariant } from "../select/types";
 import { ProjectIdentifierElement } from "./shared/project-identifier-element";
@@ -16,6 +18,8 @@ export type ModuleOption = {
   name: string;
   /** Owning project's short code, shown as a pill when `showIdentifier` is set. */
   identifier?: string;
+  /** The module's emoji, icon or image logo; the generic module glyph is shown when it is not set. */
+  logo_props?: TLogoProps;
 };
 
 type ModuleSelectBaseProps = {
@@ -47,6 +51,34 @@ export type ModuleSelectProps =
       onChange: (id: string) => void;
       variant: SelectVariant;
     });
+
+/**
+ * The module's own logo when it has one, otherwise the generic module glyph. `className` lands on the
+ * outer element either way, so hosts that `cloneElement` sizing onto their prepend icon keep working.
+ */
+function ModuleLogo({
+  logoProps,
+  className,
+  size = 14,
+}: {
+  logoProps?: TLogoProps;
+  className?: string;
+  size?: number;
+}) {
+  if (logoProps?.in_use) {
+    return (
+      <span className={cn("grid shrink-0 place-items-center", className)}>
+        <Logo
+          logo={logoProps}
+          size={size}
+          type="lucide"
+          fallback={<ModuleOutline style={{ height: size, width: size }} />}
+        />
+      </span>
+    );
+  }
+  return <ModuleOutline className={className} />;
+}
 
 function triggerLabel(selected: ModuleOption[], showCountOnMultiple: boolean, placeholder?: string): string {
   if (selected.length === 0) return placeholder ?? "";
@@ -89,7 +121,9 @@ export function ModuleSelect(props: ModuleSelectProps) {
         onClose={onClose}
         getOptionValue={(module) => module.id}
         getOptionLabel={(module) => module.name}
-        getOptionIcon={() => <ModuleOutline className="size-4 shrink-0 text-primary" />}
+        getOptionIcon={(module) => (
+          <ModuleLogo logoProps={module.logo_props} size={16} className="size-4 shrink-0 text-primary" />
+        )}
         getOptionTrailing={
           showIdentifier
             ? (module) =>
@@ -102,7 +136,7 @@ export function ModuleSelect(props: ModuleSelectProps) {
           variant={variant}
           tabIndex={tabIndex}
           className={className}
-          prependIcon={<ModuleOutline />}
+          prependIcon={(modules) => <ModuleLogo logoProps={modules[0]?.logo_props} />}
           label={(modules) => modules[0]?.name ?? placeholder}
           tooltip={tooltip}
         >
@@ -147,7 +181,9 @@ export function ModuleSelect(props: ModuleSelectProps) {
       onClose={onClose}
       getOptionValue={(module) => module.id}
       getOptionLabel={(module) => module.name}
-      getOptionIcon={() => <ModuleOutline className="size-4 shrink-0 text-primary" />}
+      getOptionIcon={(module) => (
+        <ModuleLogo logoProps={module.logo_props} size={16} className="size-4 shrink-0 text-primary" />
+      )}
       getOptionTrailing={
         showIdentifier
           ? (module) =>
@@ -173,7 +209,7 @@ export function ModuleSelect(props: ModuleSelectProps) {
                   key={module.id}
                   className="flex h-5 max-w-full items-center gap-1 rounded-sm bg-layer-3 px-1.5 text-caption-md-medium text-secondary"
                 >
-                  <ModuleOutline className="size-3.5 shrink-0" />
+                  <ModuleLogo logoProps={module.logo_props} className="size-3.5 shrink-0" />
                   <span className="truncate">{module.name}</span>
                 </span>
               ))}

@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import type { TLogoProps } from "../common";
 import type { ILinkDetails } from "../issues";
 import type { TIssue } from "../issues/issue";
 import type { IIssueFilterOptions } from "../view-props";
@@ -77,6 +78,7 @@ export interface IModule {
   project_id: string;
   lead_id: string | null;
   member_ids: string[];
+  logo_props?: TLogoProps;
   link_module?: ILinkDetails[];
   sub_issues?: number;
   is_favorite: boolean;

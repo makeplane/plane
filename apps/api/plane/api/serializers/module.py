@@ -45,6 +45,7 @@ class ModuleCreateSerializer(BaseSerializer):
             "members",
             "external_source",
             "external_id",
+            "logo_props",
         ]
         read_only_fields = [
             "id",
