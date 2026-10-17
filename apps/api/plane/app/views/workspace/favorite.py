@@ -78,7 +78,9 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def patch(self, request, slug, favorite_id):
         favorite = UserFavorite.objects.get(user=request.user, workspace__slug=slug, pk=favorite_id)
-        serializer = UserFavoriteSerializer(favorite, data=request.data, partial=True)
+        # Only the name, position and folder can change; the favorited entity stays fixed
+        data = {key: request.data[key] for key in ("name", "sequence", "parent") if key in request.data}
+        serializer = UserFavoriteSerializer(favorite, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

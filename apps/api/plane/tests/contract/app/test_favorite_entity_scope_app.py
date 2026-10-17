@@ -185,6 +185,23 @@ class TestWorkspaceFavoriteEntityScope:
             assert response.status_code == status.HTTP_200_OK
 
     @pytest.mark.django_db
+    def test_patch_keeps_favorited_entity(self, session_client, workspace, create_user, scope):
+        own_cycle = scope["own"]["cycle"]
+        response = _workspace_favorite(session_client, workspace, "cycle", own_cycle.id, scope["own_project"].id)
+        favorite_id = response.json()["id"]
+
+        response = session_client.patch(
+            f"/api/workspaces/{workspace.slug}/user-favorites/{favorite_id}/",
+            {"entity_type": "module", "entity_identifier": str(scope["secret"]["cycle"].id), "sequence": 1000},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        favorite = UserFavorite.objects.get(pk=favorite_id)
+        assert (favorite.entity_type, favorite.entity_identifier) == ("cycle", own_cycle.id)
+        assert favorite.sequence == 1000
+
+    @pytest.mark.django_db
     def test_folder_favorite_still_works(self, session_client, workspace, create_user):
         response = session_client.post(
             f"/api/workspaces/{workspace.slug}/user-favorites/",
