@@ -104,6 +104,7 @@ from .page import (
     PageBinaryUpdateSerializer,
     PageVersionDetailSerializer,
 )
+from .work_item_page import WorkItemPageCreateSerializer, WorkItemPageSerializer
 
 from .estimate import (
     EstimateSerializer,
