@@ -34,7 +34,8 @@ def can_modify_asset(user, asset):
     Follows the rule of the entity the asset belongs to: the workspace logo needs a
     workspace admin and a project cover a project admin (as in the settings views), an
     issue attachment a project admin or its uploader (as in attachment delete), and
-    any other asset a member, an admin or its uploader.
+    any other asset a member, an admin or its uploader. The uploader must still be an
+    active member of the asset's project, if it has one.
     """
     workspace_role = (
         WorkspaceMember.objects.filter(member=user, workspace_id=asset.workspace_id, is_active=True)
@@ -59,7 +60,7 @@ def can_modify_asset(user, asset):
         if asset.entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
             return role == ROLE.ADMIN.value
 
-    if asset.created_by_id == user.id:
+    if asset.created_by_id == user.id and role is not None:
         return True
     if asset.entity_type == FileAsset.EntityTypeContext.ISSUE_ATTACHMENT:
         return role == ROLE.ADMIN.value

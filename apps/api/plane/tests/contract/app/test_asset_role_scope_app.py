@@ -7,14 +7,18 @@
 The generic asset routes follow the rule of the entity an asset belongs to: the
 workspace logo is workspace-admin-only, a project cover is project-admin-only, an
 issue attachment may be changed by a project admin or its uploader, and any other
-project asset by a member, an admin or its uploader.
+project asset by a member, an admin or its uploader. The uploader must still be an
+active member of the asset's project. The legacy routes keyed by asset path follow
+the same rules.
 """
+
+from uuid import uuid4
 
 import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from plane.db.models import FileAsset
+from plane.db.models import FileAsset, ProjectMember
 from plane.tests.factories import ProjectFactory, ProjectMemberFactory, UserFactory, WorkspaceMemberFactory
 
 ADMIN, MEMBER, GUEST = 20, 15, 5
@@ -37,7 +41,7 @@ def _client(user):
 def _asset(workspace, created_by, entity_type, project=None, is_uploaded=True):
     asset = FileAsset(
         attributes={"name": "file.png", "type": "image/png", "size": 256},
-        asset=f"{workspace.id}/file.png",
+        asset=f"{workspace.id}/{uuid4().hex}-file.png",
         size=256,
         workspace=workspace,
         project=project,
@@ -56,6 +60,14 @@ def _project_url(workspace, project, asset):
 
 def _workspace_url(workspace, asset):
     return f"/api/assets/v2/workspaces/{workspace.slug}/{asset.id}/"
+
+
+def _legacy_url(workspace, asset):
+    return f"/api/workspaces/file-assets/{workspace.id}/{asset.asset.name.split('/', 1)[1]}/"
+
+
+def _restore_url(workspace, asset):
+    return f"/api/assets/v2/workspaces/{workspace.slug}/restore/{asset.id}/"
 
 
 def _bulk_url(workspace, project):
@@ -137,6 +149,46 @@ class TestProjectAssetRoleScope:
         client = _client(_user(workspace, project, workspace_role=role))
         response = client.delete(_project_url(workspace, project, image))
         assert response.status_code == expected
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestAssetUploaderAndLegacyRouteScope:
+    def test_legacy_delete_and_restore_require_admin_or_uploader(self, workspace, project):
+        uploader = _user(workspace, project, workspace_role=MEMBER)
+        attachment = _asset(workspace, uploader, FileAsset.EntityTypeContext.ISSUE_ATTACHMENT, project)
+        other = _client(_user(workspace, project, workspace_role=MEMBER))
+        url = _legacy_url(workspace, attachment)
+
+        assert other.delete(url).status_code == status.HTTP_403_FORBIDDEN
+        attachment.refresh_from_db()
+        assert attachment.is_deleted is False
+        assert _client(uploader).delete(url).status_code == status.HTTP_204_NO_CONTENT
+
+        assert other.post(f"{url}restore/").status_code == status.HTTP_403_FORBIDDEN
+        attachment.refresh_from_db()
+        assert attachment.is_deleted is True
+        assert _client(uploader).post(f"{url}restore/").status_code == status.HTTP_204_NO_CONTENT
+        attachment.refresh_from_db()
+        assert attachment.is_deleted is False
+
+    def test_uploader_needs_active_project_membership(self, session_client, workspace, project):
+        uploader = _user(workspace, project, workspace_role=MEMBER)
+        attachment = _asset(workspace, uploader, FileAsset.EntityTypeContext.ISSUE_ATTACHMENT, project)
+        ProjectMember.objects.filter(project=project, member=uploader).update(is_active=False)
+        client = _client(uploader)
+        legacy_url = _legacy_url(workspace, attachment)
+
+        for url in (legacy_url, _workspace_url(workspace, attachment)):
+            assert client.delete(url).status_code == status.HTTP_403_FORBIDDEN
+        attachment.refresh_from_db()
+        assert attachment.is_deleted is False
+
+        assert session_client.delete(legacy_url).status_code == status.HTTP_204_NO_CONTENT
+        for url in (f"{legacy_url}restore/", _restore_url(workspace, attachment)):
+            assert client.post(url).status_code == status.HTTP_403_FORBIDDEN
+        attachment.refresh_from_db()
+        assert attachment.is_deleted is True
 
 
 @pytest.mark.contract
