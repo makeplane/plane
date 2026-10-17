@@ -22,6 +22,7 @@ from plane.db.models import (
     Cycle,
     CycleIssue,
     Issue,
+    IssueActivity,
     IssueAssignee,
     IssueSubscriber,
     Project,
@@ -33,6 +34,7 @@ from plane.db.models import (
 
 STATS_URL = "/api/workspaces/{slug}/user-stats/{user_id}/"
 ISSUES_URL = "/api/workspaces/{slug}/user-issues/{user_id}/"
+ACTIVITY_URL = "/api/workspaces/{slug}/user-activity/{user_id}/"
 
 
 def _make_user(prefix):
@@ -188,3 +190,52 @@ class TestWorkspaceUserProfileIssuesGuestScope:
     @pytest.mark.django_db
     def test_project_admin_sees_all_issues(self, session_client, workspace, create_user, issues):
         assert self._ids(session_client, workspace, create_user) == {str(i.id) for i in issues}
+
+
+@pytest.mark.contract
+class TestWorkspaceUserActivityGuestScope:
+    @pytest.fixture
+    def issues(self, workspace, project, create_user, guest):
+        """One issue created by the guest and one by the profile user, each with an activity by the profile user."""
+        own = _make_issue("Guest's own issue", project, workspace, guest)
+        foreign = _make_issue("Someone else's issue", project, workspace, create_user)
+        for issue in (own, foreign):
+            IssueActivity.objects.create(
+                issue=issue, project=project, workspace=workspace, actor=create_user, verb="updated", field="name"
+            )
+        return own, foreign
+
+    def _issue_ids(self, client, workspace, user):
+        response = client.get(ACTIVITY_URL.format(slug=workspace.slug, user_id=user.id))
+        assert response.status_code == status.HTTP_200_OK, response.data
+        return {str(row["issue"]) for row in response.data["results"]}
+
+    def _export_rows(self, client, workspace, user):
+        response = client.post(
+            f"{ACTIVITY_URL.format(slug=workspace.slug, user_id=user.id)}export/",
+            {"date": str(timezone.now().date())},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_200_OK
+        return response.content.decode().strip().splitlines()[1:]
+
+    @pytest.mark.django_db
+    def test_restricted_guest_sees_only_own_issue_activity(self, workspace, create_user, guest, issues):
+        own, _ = issues
+        assert self._issue_ids(_client(guest), workspace, create_user) == {str(own.id)}
+        # Export needs a workspace member role; the project role stays guest.
+        WorkspaceMember.objects.filter(workspace=workspace, member=guest).update(role=15)
+        assert len(self._export_rows(_client(guest), workspace, create_user)) == 1
+
+    @pytest.mark.django_db
+    def test_guest_with_view_all_sees_all_activity(self, workspace, project, create_user, guest, issues):
+        project.guest_view_all_features = True
+        project.save(update_fields=["guest_view_all_features"])
+        assert self._issue_ids(_client(guest), workspace, create_user) == {str(i.id) for i in issues}
+        WorkspaceMember.objects.filter(workspace=workspace, member=guest).update(role=15)
+        assert len(self._export_rows(_client(guest), workspace, create_user)) == 2
+
+    @pytest.mark.django_db
+    def test_project_admin_sees_all_activity(self, session_client, workspace, create_user, issues):
+        assert self._issue_ids(session_client, workspace, create_user) == {str(i.id) for i in issues}
+        assert len(self._export_rows(session_client, workspace, create_user)) == 2
