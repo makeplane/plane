@@ -116,6 +116,13 @@ class IssueCreateSerializer(BaseSerializer):
             "sequence_id",
         ]
 
+    def get_fields(self):
+        fields = super().get_fields()
+        # is_draft is set when a work item is created, not changed afterwards.
+        if self.instance is not None:
+            fields["is_draft"].read_only = True
+        return fields
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         assignee_ids = self.initial_data.get("assignee_ids")

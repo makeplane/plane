@@ -69,6 +69,7 @@ from plane.utils.grouper import (
     issue_queryset_grouper,
 )
 from plane.utils.host import base_host
+from plane.utils.serializers import writable_data
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
@@ -680,11 +681,7 @@ class IssueViewSet(BaseViewSet):
         if serializer.is_valid():
             serializer.save()
             # Read-only fields are ignored on save, so they are not reported as changes either.
-            accepted_data = {
-                key: value
-                for key, value in request.data.items()
-                if key not in IssueCreateSerializer.Meta.read_only_fields
-            }
+            accepted_data = writable_data(serializer, request.data)
             # Check if the update is a migration description update
             is_migration_description_update = skip_activity and is_description_update
             # Log all the updates

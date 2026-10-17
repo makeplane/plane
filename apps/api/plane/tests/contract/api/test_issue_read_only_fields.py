@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""``deleted_at``, ``archived_at`` and ``sequence_id`` are read-only on work item PATCH.
+"""``deleted_at``, ``archived_at``, ``sequence_id`` and ``is_draft`` are read-only on work item PATCH.
 
 Delete, archive and unarchive go through their dedicated endpoints."""
 
@@ -13,6 +13,7 @@ import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from plane.api.serializers import IssueSerializer
 from plane.db.models import APIToken, Issue, Project, ProjectMember, WorkspaceMember
 from plane.tests.factories import UserFactory
 
@@ -21,6 +22,7 @@ READ_ONLY_FIELDS = [
     ("deleted_at", "2020-01-01T00:00:00Z"),
     ("archived_at", "2020-01-01"),
     ("sequence_id", 999),
+    ("is_draft", True),
 ]
 
 
@@ -59,3 +61,8 @@ def test_patch_does_not_set_read_only_field(workspace, create_user, field, value
     assert field not in activity_data
     assert activity_data["name"] == "Renamed"
     assert field not in model_activity.delay.call_args.kwargs["requested_data"]
+
+
+@pytest.mark.contract
+def test_is_draft_stays_writable_on_create():
+    assert not IssueSerializer().fields["is_draft"].read_only

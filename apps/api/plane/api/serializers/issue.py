@@ -82,6 +82,13 @@ class IssueSerializer(BaseSerializer):
         ]
         exclude = ["description_json", "description_stripped"]
 
+    def get_fields(self):
+        fields = super().get_fields()
+        # is_draft is set when a work item is created, not changed afterwards.
+        if self.instance is not None:
+            fields["is_draft"].read_only = True
+        return fields
+
     def validate(self, data):
         if (
             data.get("start_date", None) is not None
