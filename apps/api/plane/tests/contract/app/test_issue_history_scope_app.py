@@ -93,3 +93,21 @@ def test_comment_list_only_returns_issue_in_url_project(
     response = session_client.get(comments_url(workspace.slug, own_project.id, own_issue.id))
     assert response.status_code == status.HTTP_200_OK
     assert len(response.data) == 1
+
+    # Update and delete are bound to the URL project too.
+    foreign_comment = IssueComment.objects.get(issue=foreign)
+    foreign_comment_url = f"{comments_url(workspace.slug, own_project.id, foreign.id)}{foreign_comment.id}/"
+    response = session_client.patch(foreign_comment_url, {"comment_html": "<p>edited</p>"}, format="json")
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert SECRET not in str(response.data)
+    response = session_client.delete(foreign_comment_url)
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert IssueComment.objects.filter(pk=foreign_comment.id).exists()
+
+    own_comment = IssueComment.objects.get(issue=own_issue)
+    response = session_client.patch(
+        f"{comments_url(workspace.slug, own_project.id, own_issue.id)}{own_comment.id}/",
+        {"comment_html": "<p>edited</p>"},
+        format="json",
+    )
+    assert response.status_code == status.HTTP_200_OK
