@@ -585,15 +585,23 @@ class TestMagicSignInVerifyAttempts:
         """Codes issued per email stay capped per window when earlier codes hit the verify cap."""
         url = reverse("magic-sign-in")
         gen_url = reverse("magic-generate")
+        ri = redis_instance()
+        issued_key = f"magic_{self.EMAIL}:issued"
 
         # The first code plus 3 regenerations are issued; the next request is refused.
-        for _ in range(4):
+        for request_number in range(4):
             # Stay under the per-IP throttle; this test is about the per-email cap.
             _clear_auth_throttle_keys()
             _generate_magic_token(api_client, self.EMAIL)
             for _ in range(MagicCodeProvider.MAX_VERIFY_ATTEMPTS):
                 response = django_client.post(url, {"email": self.EMAIL, "code": "000000"}, follow=False)
             assert "EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN" in response.url
+            # The issue window is fixed: later requests must not extend its TTL.
+            if request_number == 0:
+                assert 0 < ri.ttl(issued_key) <= MagicCodeProvider.ISSUE_WINDOW_SECONDS
+                ri.expire(issued_key, 60)
+            else:
+                assert 0 < ri.ttl(issued_key) <= 60
 
         _clear_auth_throttle_keys()
         response = api_client.post(gen_url, {"email": self.EMAIL}, format="json")

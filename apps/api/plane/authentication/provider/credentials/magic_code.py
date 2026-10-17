@@ -112,7 +112,9 @@ class MagicCodeProvider(CredentialAdapter):
                 payload={"email": email},
             )
 
-        ri.set(key, json.dumps({"email": str(self.key), "token": token}), ex=600)
+        # current_attempt is kept only so pre-upgrade pods can read the record
+        # during a rolling deploy; drop it next release.
+        ri.set(key, json.dumps({"current_attempt": 0, "email": str(self.key), "token": token}), ex=600)
         # Reset the verify-attempt counter so each newly issued token starts
         # with a fresh budget of MAX_VERIFY_ATTEMPTS.
         ri.delete(self._verify_attempts_key(key))
