@@ -14,6 +14,8 @@ from django.utils import timezone
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Cycle,
+    Estimate,
+    EstimatePoint,
     Issue,
     IssueActivity,
     IssueSubscriber,
@@ -209,3 +211,50 @@ def test_module_and_cycle_activity_skip_objects_outside_project(scope):
     )
 
     assert not _refs(scope["foreign_module"], scope["foreign_cycle"], scope["foreign_issue"]).exists()
+
+
+def _estimate_point(project, value):
+    estimate = Estimate.objects.create(name=f"{project.identifier} pts", project=project, workspace=project.workspace)
+    return EstimatePoint.objects.create(estimate=estimate, value=value, project=project, workspace=project.workspace)
+
+
+def test_estimate_activity_skips_points_outside_project(scope):
+    foreign_point = _estimate_point(scope["foreign_issue"].project, "13")
+    home_point = _estimate_point(scope["project"], "3")
+
+    _run(scope, "issue.activity.updated", {"estimate_point": str(foreign_point.id)}, {"estimate_point": None})
+    assert not IssueActivity.objects.filter(field__startswith="estimate_").exists()
+
+    _run(scope, "issue.activity.updated", {"estimate_point": str(home_point.id)}, {"estimate_point": None})
+    assert IssueActivity.objects.filter(
+        issue=scope["issue"], field__startswith="estimate_", new_identifier=home_point.id
+    ).exists()
+
+
+def test_assignee_removal_recorded_for_deactivated_member(scope):
+    workspace = scope["project"].workspace
+    former = User.objects.create(email="former@plane.so", username="former", display_name="former-name")
+    WorkspaceMember.objects.create(workspace=workspace, member=former, role=15, is_active=False)
+    ProjectMember.objects.create(project=scope["project"], member=former, workspace=workspace, role=15, is_active=False)
+
+    _run(scope, "issue.activity.updated", {"assignee_ids": []}, {"assignee_ids": [str(former.id)]})
+
+    assert IssueActivity.objects.filter(issue=scope["issue"], field="assignees", old_identifier=former.id).exists()
+
+
+def test_relation_delete_recorded_across_projects_in_workspace(scope):
+    workspace = scope["project"].workspace
+    neighbour_project = Project.objects.create(
+        name="Neighbour", identifier="NBR", workspace=workspace, created_by=scope["user"]
+    )
+    neighbour = Issue.objects.create(name="Neighbour issue", project=neighbour_project, workspace=workspace)
+
+    _run(
+        scope,
+        "issue_relation.activity.deleted",
+        {"relation_type": "relates_to", "related_issue": str(neighbour.id)},
+        {},
+    )
+
+    assert IssueActivity.objects.filter(issue=scope["issue"], verb="deleted", old_identifier=neighbour.id).exists()
+    assert IssueActivity.objects.filter(issue=neighbour, verb="deleted", field="relates_to").exists()
