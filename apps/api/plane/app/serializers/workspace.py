@@ -80,6 +80,7 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
             "updated_at",
             "owner",
             "logo_url",
+            "deleted_at",
         ]
 
 
