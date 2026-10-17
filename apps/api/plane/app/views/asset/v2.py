@@ -587,6 +587,11 @@ class AssetRestoreEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def post(self, request, slug, asset_id):
         asset = FileAsset.all_objects.get(id=asset_id, workspace__slug=slug)
+        if not can_modify_asset(request.user, asset):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         asset.is_deleted = False
         asset.deleted_at = None
         asset.save(update_fields=["is_deleted", "deleted_at"])

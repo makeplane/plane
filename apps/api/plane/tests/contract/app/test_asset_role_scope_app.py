@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Contract tests for role rules on asset confirm/update/delete.
+"""Contract tests for role rules on asset confirm/update/delete/restore.
 
 The generic asset routes follow the rule of the entity an asset belongs to: the
 workspace logo is workspace-admin-only, a project cover is project-admin-only, an
@@ -81,7 +81,8 @@ class TestProjectAssetRoleScope:
     def test_attachment_delete_requires_admin_or_uploader(self, workspace, project, attachment, role):
         client = _client(_user(workspace, project, workspace_role=role))
         for url in (_project_url(workspace, project, attachment), _workspace_url(workspace, attachment)):
-            assert client.delete(url).status_code == status.HTTP_403_FORBIDDEN
+            response = client.delete(url)
+            assert response.status_code == status.HTTP_403_FORBIDDEN
         attachment.refresh_from_db()
         assert attachment.is_deleted is False
 
@@ -102,6 +103,21 @@ class TestProjectAssetRoleScope:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not FileAsset.objects.filter(id=attachment.id).exists()
 
+    def test_attachment_restore_requires_admin_or_uploader(self, session_client, workspace, project):
+        uploader = _user(workspace, project, workspace_role=GUEST)
+        attachment = _asset(workspace, uploader, FileAsset.EntityTypeContext.ISSUE_ATTACHMENT, project)
+        restore_url = f"/api/assets/v2/workspaces/{workspace.slug}/restore/{attachment.id}/"
+        response = session_client.delete(_project_url(workspace, project, attachment))
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+        response = _client(_user(workspace, project, workspace_role=GUEST)).post(restore_url)
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert FileAsset.all_objects.get(id=attachment.id).is_deleted is True
+
+        response = _client(uploader).post(restore_url)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert FileAsset.all_objects.get(id=attachment.id).is_deleted is False
+
     @pytest.mark.parametrize("entity_type", ["ISSUE_ATTACHMENT", "ISSUE_DESCRIPTION"])
     def test_guest_uploader_can_confirm_and_delete_own_asset(self, workspace, project, entity_type):
         guest = _user(workspace, project, workspace_role=GUEST)
@@ -112,13 +128,15 @@ class TestProjectAssetRoleScope:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         asset.refresh_from_db()
         assert asset.is_uploaded is True
-        assert client.delete(url).status_code == status.HTTP_204_NO_CONTENT
+        response = client.delete(url)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
 
     @pytest.mark.parametrize("role,expected", [(GUEST, 403), (MEMBER, 204)])
     def test_description_image_delete_requires_member(self, workspace, project, create_user, role, expected):
         image = _asset(workspace, create_user, FileAsset.EntityTypeContext.ISSUE_DESCRIPTION, project)
         client = _client(_user(workspace, project, workspace_role=role))
-        assert client.delete(_project_url(workspace, project, image)).status_code == expected
+        response = client.delete(_project_url(workspace, project, image))
+        assert response.status_code == expected
 
 
 @pytest.mark.contract
@@ -133,14 +151,18 @@ class TestBrandingAssetRoleScope:
         replacement = _asset(workspace, user, FileAsset.EntityTypeContext.WORKSPACE_LOGO)
         client = _client(user)
 
-        assert client.patch(_workspace_url(workspace, replacement)).status_code == status.HTTP_403_FORBIDDEN
-        assert client.delete(_workspace_url(workspace, current)).status_code == status.HTTP_403_FORBIDDEN
+        response = client.patch(_workspace_url(workspace, replacement))
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        response = client.delete(_workspace_url(workspace, current))
+        assert response.status_code == status.HTTP_403_FORBIDDEN
         workspace.refresh_from_db()
         assert workspace.logo_asset_id == current.id
 
     def test_workspace_admin_can_set_workspace_logo(self, session_client, workspace, create_user):
         logo = _asset(workspace, create_user, FileAsset.EntityTypeContext.WORKSPACE_LOGO)
-        assert session_client.patch(_workspace_url(workspace, logo)).status_code == status.HTTP_204_NO_CONTENT
+        response = session_client.patch(_workspace_url(workspace, logo))
+        assert response.status_code == status.HTTP_204_NO_CONTENT
         workspace.refresh_from_db()
         assert workspace.logo_asset_id == logo.id
 
@@ -151,7 +173,9 @@ class TestBrandingAssetRoleScope:
         unassigned = _asset(workspace, user, FileAsset.EntityTypeContext.PROJECT_COVER)
         client = _client(user)
 
-        assert client.patch(_workspace_url(workspace, cover)).status_code == status.HTTP_403_FORBIDDEN
+        response = client.patch(_workspace_url(workspace, cover))
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
         response = client.post(_bulk_url(workspace, project), {"asset_ids": [str(unassigned.id)]}, format="json")
         assert response.status_code == status.HTTP_403_FORBIDDEN
         project.refresh_from_db()
@@ -159,7 +183,8 @@ class TestBrandingAssetRoleScope:
 
     def test_project_admin_can_set_project_cover(self, session_client, workspace, project, create_user):
         cover = _asset(workspace, create_user, FileAsset.EntityTypeContext.PROJECT_COVER, project)
-        assert session_client.patch(_workspace_url(workspace, cover)).status_code == status.HTTP_204_NO_CONTENT
+        response = session_client.patch(_workspace_url(workspace, cover))
+        assert response.status_code == status.HTTP_204_NO_CONTENT
         project.refresh_from_db()
         assert project.cover_image_asset_id == cover.id
 
@@ -175,4 +200,5 @@ class TestBrandingAssetRoleScope:
         """A cover uploaded before its project exists is confirmed by its uploader."""
         user = _user(workspace, workspace_role=MEMBER)
         cover = _asset(workspace, user, FileAsset.EntityTypeContext.PROJECT_COVER, is_uploaded=False)
-        assert _client(user).patch(_workspace_url(workspace, cover)).status_code == status.HTTP_204_NO_CONTENT
+        response = _client(user).patch(_workspace_url(workspace, cover))
+        assert response.status_code == status.HTTP_204_NO_CONTENT
