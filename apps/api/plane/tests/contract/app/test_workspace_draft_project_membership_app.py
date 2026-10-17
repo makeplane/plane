@@ -28,6 +28,7 @@ from plane.db.models import (
     ModuleIssue,
     Project,
     ProjectMember,
+    State,
     User,
     Workspace,
     WorkspaceMember,
@@ -177,6 +178,27 @@ class TestDraftUpdateProjectMembership:
         )
         draft.refresh_from_db()
         assert draft.name == "Draft"
+
+    @pytest.mark.django_db
+    def test_update_validates_state_against_draft_project(
+        self, member_client, workspace, create_user, member, projects
+    ):
+        second = _project(workspace, "SEC", create_user)
+        ProjectMember.objects.create(project=second, member=member, workspace=workspace, role=15)
+        second_state = State.objects.create(name="Todo", project=second, workspace=workspace, group="backlog")
+        draft = _draft(workspace, projects["own"], member)
+
+        response = member_client.patch(
+            draft_url(workspace.slug, draft.id),
+            {"project_id": str(second.id), "state_id": str(second_state.id)},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        draft.refresh_from_db()
+        assert draft.state_id is None
 
     @pytest.mark.django_db
     def test_can_update_draft_in_own_project(self, member_client, workspace, member, projects):

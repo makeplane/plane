@@ -200,7 +200,8 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             data=request.data,
             partial=True,
             context={
-                "project_id": project_id,
+                # Validate related objects against the draft's own project, which a PATCH cannot change.
+                "project_id": issue.project_id,
                 "cycle_id": request.data.get("cycle_id", "not_provided"),
             },
         )
