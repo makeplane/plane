@@ -66,6 +66,7 @@ class EntityAssetEndpoint(BaseAPIView):
         # Generate a presigned URL to share an S3 object
         signed_url = storage.generate_presigned_url(
             object_name=asset.asset.name,
+            filename=asset.attributes.get("name"),
             disposition="inline",
             content_type=asset.attributes.get("type"),
         )
