@@ -100,6 +100,30 @@ class TestUserEmailChangeVerification:
         assert create_user.email != NEW_EMAIL
 
     @pytest.mark.django_db
+    def test_code_invalidated_after_attempt_is_counted_is_not_compared(
+        self, session_client, create_user, mock_email_tasks
+    ):
+        """The code is read after the attempt is counted, so a concurrent invalidation is honoured."""
+        code = _generate_code(session_client, mock_email_tasks)
+        code_key = f"magic_email_update_{create_user.id}_{NEW_EMAIL}"
+        real_incr = cache.incr
+
+        def incr_then_invalidate(key, *args, **kwargs):
+            value = real_incr(key, *args, **kwargs)
+            if key == f"{code_key}:verify_attempts":
+                # A concurrent request reaches the cap and deletes the code and its counter.
+                cache.delete_many([code_key, key])
+            return value
+
+        with patch.object(cache, "incr", side_effect=incr_then_invalidate):
+            response = session_client.patch(
+                reverse("user-email-update"), {"email": NEW_EMAIL, "code": code}, format="json"
+            )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        create_user.refresh_from_db()
+        assert create_user.email != NEW_EMAIL
+
+    @pytest.mark.django_db
     def test_update_email_throttled(self, session_client, create_user):
         """Code verification from one IP is limited by AuthenticationThrottle."""
         url = reverse("user-email-update")

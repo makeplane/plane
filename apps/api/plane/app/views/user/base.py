@@ -212,6 +212,13 @@ class UserEndpoint(BaseViewSet):
         # Verify the magic code
         try:
             cache_key = f"magic_email_update_{user.id}_{new_email}"
+
+            # Count every attempt before reading the code so concurrent requests share one
+            # budget and a code invalidated in the meantime is never compared. The code and
+            # its counter are deleted together once the cap is reached.
+            attempts_key = f"{cache_key}:verify_attempts"
+            cache.add(attempts_key, 0, timeout=600)
+            attempts = cache.incr(attempts_key)
             cached_data = cache.get(cache_key)
 
             if not cached_data:
@@ -224,11 +231,6 @@ class UserEndpoint(BaseViewSet):
             data = json.loads(cached_data)
             stored_token = data.get("token")
 
-            # Count every attempt before comparing so concurrent requests share one budget;
-            # invalidate the code once the cap is reached.
-            attempts_key = f"{cache_key}:verify_attempts"
-            cache.add(attempts_key, 0, timeout=600)
-            attempts = cache.incr(attempts_key)
             if attempts > MagicCodeProvider.MAX_VERIFY_ATTEMPTS or not secrets.compare_digest(
                 str(stored_token).encode(), str(code).encode()
             ):
