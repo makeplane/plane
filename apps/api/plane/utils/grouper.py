@@ -149,6 +149,9 @@ def issue_group_values(
     queryset: Optional[QuerySet] = None,
     user: Optional[Any] = None,
 ) -> List[Union[str, Any]]:
+    if not project_id and user is None:
+        raise ValueError("issue_group_values needs a project_id or a user")
+
     # Project-scoped keys come from the given project, workspace-wide ones from the user's projects
     project_ids = (
         [project_id]
