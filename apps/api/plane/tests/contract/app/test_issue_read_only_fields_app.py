@@ -6,6 +6,9 @@
 
 Delete, archive and unarchive go through their dedicated endpoints."""
 
+import json
+from unittest import mock
+
 import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -36,13 +39,22 @@ def test_partial_update_does_not_set_read_only_field(workspace, create_user, fie
     client = APIClient()
     client.force_authenticate(user=member)
 
-    response = client.patch(
-        f"/api/workspaces/{workspace.slug}/projects/{project.id}/issues/{issue.id}/",
-        {"name": "Renamed", field: value},
-        format="json",
-    )
+    with (
+        mock.patch("plane.app.views.issue.base.issue_activity") as issue_activity,
+        mock.patch("plane.app.views.issue.base.model_activity") as model_activity,
+    ):
+        response = client.patch(
+            f"/api/workspaces/{workspace.slug}/projects/{project.id}/issues/{issue.id}/",
+            {"name": "Renamed", field: value},
+            format="json",
+        )
 
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.data
     issue = Issue.all_objects.get(pk=issue.id)
     assert getattr(issue, field) == original
     assert issue.name == "Renamed"
+    # The ignored field is not reported as a change.
+    activity_data = json.loads(issue_activity.delay.call_args.kwargs["requested_data"])
+    assert field not in activity_data
+    assert activity_data["name"] == "Renamed"
+    assert field not in model_activity.delay.call_args.kwargs["requested_data"]

@@ -781,7 +781,6 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         project = Project.objects.get(pk=project_id)
         current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
-        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueSerializer(
             issue,
             data=request.data,
@@ -808,9 +807,13 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 )
 
             serializer.save()
+            # Read-only fields are ignored on save, so they are not reported as changes either.
+            accepted_data = {
+                key: value for key, value in request.data.items() if key not in IssueSerializer.Meta.read_only_fields
+            }
             issue_activity.delay(
                 type="issue.activity.updated",
-                requested_data=requested_data,
+                requested_data=json.dumps(accepted_data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 issue_id=str(pk),
                 project_id=str(project_id),
@@ -823,7 +826,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             model_activity.delay(
                 model_name="issue",
                 model_id=str(pk),
-                requested_data=request.data,
+                requested_data=accepted_data,
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,
