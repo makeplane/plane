@@ -161,6 +161,7 @@ class ProjectMemberSerializer(BaseSerializer):
     class Meta:
         model = ProjectMember
         fields = "__all__"
+        read_only_fields = ["deleted_at", "created_by", "updated_by"]
 
 
 class ProjectMemberPreferenceSerializer(BaseSerializer):
