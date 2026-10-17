@@ -567,10 +567,14 @@ class DeployBoardViewSet(BaseViewSet):
         if not Project.objects.filter(pk=project_id, workspace__slug=slug).exists():
             return Response({"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
+        # A board can only publish an intake from its own project.
+        if intake and not Intake.objects.filter(pk=intake, project_id=project_id).exists():
+            return Response({"error": "Intake is not valid"}, status=status.HTTP_400_BAD_REQUEST)
+
         project_deploy_board, _ = DeployBoard.objects.get_or_create(
             entity_name="project", entity_identifier=project_id, project_id=project_id
         )
-        project_deploy_board.intake = intake
+        project_deploy_board.intake_id = intake
         project_deploy_board.view_props = views
         project_deploy_board.is_votes_enabled = votes
         project_deploy_board.is_comments_enabled = comments
