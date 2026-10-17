@@ -302,8 +302,17 @@ USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
 
 STORAGES = {"staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"}}
 STORAGES["default"] = {"BACKEND": "plane.settings.storage.S3Storage"}
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
+# No fallback: when unset, boto3 resolves credentials through its default chain, as S3Storage does.
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+# The bundled MinIO uses these as its root login, so the placeholder pair from the
+# env templates must not reach a running deployment.
+if USE_MINIO and (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY) == ("access-key", "secret-key"):
+    _logger.critical(
+        "SECURITY: AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY are set to the placeholder values "
+        "from the env templates while USE_MINIO is on. Set unique object-storage credentials "
+        "(the CLI installer generates them on install and upgrade) and restart MinIO and Plane."
+    )
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
 AWS_REGION = os.environ.get("AWS_REGION", "")
 AWS_DEFAULT_ACL = "public-read"
