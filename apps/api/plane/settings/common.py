@@ -305,8 +305,7 @@ STORAGES["default"] = {"BACKEND": "plane.settings.storage.S3Storage"}
 # No fallback: when unset, boto3 resolves credentials through its default chain, as S3Storage does.
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
-# The bundled MinIO uses these as its root login, so the placeholder secret from the
-# env templates must not reach a running deployment, whatever the access key is.
+# Warn when the storage credentials are still the template values.
 if USE_MINIO and AWS_SECRET_ACCESS_KEY == "secret-key":
     _logger.critical(
         "SECURITY: AWS_SECRET_ACCESS_KEY is set to the placeholder value from the env templates "
