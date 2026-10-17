@@ -212,6 +212,24 @@ class TestProjectMemberPartialUpdateScope:
         peer_member.refresh_from_db()
         assert peer_member.sort_order != 1
 
+    def test_workspace_admin_without_project_membership_cannot_edit(self, workspace, project, create_user):
+        """A workspace ADMIN who is not a member of the project cannot edit its membership rows."""
+        ws_admin = _make_user("ws-admin-non-member@plane.so")
+        WorkspaceMember.objects.create(workspace=workspace, member=ws_admin, role=20, is_active=True)
+        admin_member = ProjectMember.objects.get(project=project, member=create_user)
+
+        client = APIClient()
+        client.force_authenticate(user=ws_admin)
+        response = client.patch(
+            _member_detail_url(workspace.slug, project.id, admin_member.id),
+            {"role": 15},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        admin_member.refresh_from_db()
+        assert admin_member.role == 20
+
     def test_admin_patch_ignores_system_fields(self, workspace, project, create_user):
         admin = _make_user("admin-system-fields@plane.so")
         target = _make_user("target-system-fields@plane.so")
