@@ -55,6 +55,7 @@ class TestProjectSelfJoinRole:
         removed.refresh_from_db()
         assert removed.is_active is True
         assert removed.role == MEMBER
+        assert removed.updated_by_id == joiner.id
 
     def test_new_joiner_gets_workspace_role(self, workspace, project, joiner):
         response = _join(joiner, workspace, project)
