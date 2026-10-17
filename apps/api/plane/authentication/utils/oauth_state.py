@@ -9,7 +9,11 @@ import secrets
 def validate_oauth_state(request, state):
     """Return True only if `state` matches the non-empty state stored in the session at initiation.
 
-    The stored state is removed on every check, so it can only be used once.
+    A matching state is removed from the session, so it can only be used once. A missing or
+    mismatched state leaves the stored one in place for the login it belongs to.
     """
-    expected = request.session.pop("state", None)
-    return bool(state and expected) and secrets.compare_digest(state.encode(), expected.encode())
+    expected = request.session.get("state")
+    if not (state and expected and secrets.compare_digest(state.encode(), expected.encode())):
+        return False
+    del request.session["state"]
+    return True

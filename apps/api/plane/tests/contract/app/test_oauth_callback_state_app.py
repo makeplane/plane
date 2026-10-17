@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 from unittest.mock import patch
+from urllib.parse import urlparse
 
 import pytest
 from django.test import Client
@@ -10,6 +11,8 @@ from django.urls import reverse
 
 CALLBACKS = [
     ("github-callback", "plane.authentication.views.app.github.GitHubOAuthProvider"),
+    ("gitlab-callback", "plane.authentication.views.app.gitlab.GitLabOAuthProvider"),
+    ("google-callback", "plane.authentication.views.app.google.GoogleOAuthProvider"),
     ("gitea-callback", "plane.authentication.views.app.gitea.GiteaOAuthProvider"),
     ("space-gitea-callback", "plane.authentication.views.space.gitea.GiteaOAuthProvider"),
 ]
@@ -57,6 +60,22 @@ class TestOAuthCallbackState:
         provider.assert_not_called()
         assert "_auth_user_id" not in client.session
 
+    def test_mismatched_state_keeps_pending_state(self, url_name, provider_path, create_user):
+        client = _client(session_state="expected-state")
+
+        with patch(provider_path) as provider:
+            response = client.get(reverse(url_name), {"code": "oauth-code", "state": "other-state"})
+
+        assert "error_code" in response.url
+        provider.assert_not_called()
+
+        with patch(provider_path) as provider:
+            provider.return_value.authenticate.return_value = create_user
+            response = client.get(reverse(url_name), {"code": "oauth-code", "state": "expected-state"})
+
+        assert "error_code" not in response.url
+        assert client.session["_auth_user_id"] == str(create_user.id)
+
     def test_matching_state_logs_in_once(self, url_name, provider_path, create_user):
         client = _client(session_state="expected-state")
         params = {"code": "oauth-code", "state": "expected-state"}
@@ -91,5 +110,6 @@ def test_refused_without_session_redirects_to_app_host(url_name, settings):
     response = Client().get(reverse(url_name), {"code": "oauth-code", "state": "some-state"})
 
     assert response.status_code == 302
-    assert response.url.startswith("http://app.example.com")
+    location = urlparse(response.url)
+    assert (location.scheme, location.netloc) == ("http", "app.example.com")
     assert "error_code" in response.url
