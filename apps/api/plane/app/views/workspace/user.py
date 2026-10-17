@@ -307,6 +307,16 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
         user_data = target_workspace_member.member
         projects = []
         if requesting_workspace_member.role >= 15:
+            # Per project, the caller sees the counts of the issues they can view (the _visible_issues_q rule):
+            # guests only their own issues unless the project enables guest_view_all_features.
+            caller_role = ProjectMember.objects.filter(
+                project_id=OuterRef("pk"), member=request.user, is_active=True
+            ).values("role")[:1]
+            visible = (
+                Q(caller_role__gt=ROLE.GUEST.value)
+                | Q(guest_view_all_features=True)
+                | Q(project_issue__created_by=request.user)
+            )
             projects = (
                 Project.objects.filter(
                     workspace__slug=slug,
@@ -314,6 +324,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                     project_projectmember__is_active=True,
                     archived_at__isnull=True,
                 )
+                .annotate(caller_role=Subquery(caller_role))
                 .annotate(
                     created_issues=Count(
                         "project_issue",
@@ -321,7 +332,8 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                             project_issue__created_by_id=user_id,
                             project_issue__archived_at__isnull=True,
                             project_issue__is_draft=False,
-                        ),
+                        )
+                        & visible,
                     )
                 )
                 .annotate(
@@ -331,7 +343,8 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                             project_issue__assignees__in=[user_id],
                             project_issue__archived_at__isnull=True,
                             project_issue__is_draft=False,
-                        ),
+                        )
+                        & visible,
                     )
                 )
                 .annotate(
@@ -342,7 +355,8 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                             project_issue__assignees__in=[user_id],
                             project_issue__archived_at__isnull=True,
                             project_issue__is_draft=False,
-                        ),
+                        )
+                        & visible,
                     )
                 )
                 .annotate(
@@ -357,7 +371,8 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                             project_issue__assignees__in=[user_id],
                             project_issue__archived_at__isnull=True,
                             project_issue__is_draft=False,
-                        ),
+                        )
+                        & visible,
                     )
                 )
                 .values(
@@ -511,8 +526,10 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             .count()
         )
 
+        # The cycle must be in the issue's project, so the membership check covers the cycle's project too.
         upcoming_cycles = CycleIssue.objects.filter(
             _visible_issues_q(request.user, prefix="issue__"),
+            cycle__project_id=F("issue__project_id"),
             workspace__slug=slug,
             cycle__start_date__gt=timezone.now(),
             issue__assignees__in=[user_id],
@@ -520,6 +537,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
 
         present_cycle = CycleIssue.objects.filter(
             _visible_issues_q(request.user, prefix="issue__"),
+            cycle__project_id=F("issue__project_id"),
             workspace__slug=slug,
             cycle__start_date__lt=timezone.now(),
             cycle__end_date__gt=timezone.now(),

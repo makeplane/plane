@@ -35,6 +35,7 @@ from plane.db.models import (
 STATS_URL = "/api/workspaces/{slug}/user-stats/{user_id}/"
 ISSUES_URL = "/api/workspaces/{slug}/user-issues/{user_id}/"
 ACTIVITY_URL = "/api/workspaces/{slug}/user-activity/{user_id}/"
+PROFILE_URL = "/api/workspaces/{slug}/user-profile/{user_id}/"
 
 
 def _make_user(prefix):
@@ -125,6 +126,30 @@ class TestWorkspaceUserProfileStatsScope:
         assert response.status_code == status.HTTP_200_OK
         assert {str(row["cycle__id"]) for row in response.data["present_cycles"]} == {str(present_cycle.id)}
 
+    @pytest.mark.django_db
+    def test_cycle_from_another_project_is_hidden(self, workspace, project, create_user):
+        """A cycle row whose cycle is in a different project than its issue is not reported."""
+        member = _make_user("member")
+        WorkspaceMember.objects.create(workspace=workspace, member=member, role=15)
+        ProjectMember.objects.create(project=project, member=member, workspace=workspace, role=15)
+        other = Project.objects.create(name="Other", identifier="OTH", workspace=workspace, created_by=create_user)
+        ProjectMember.objects.create(project=other, member=create_user, workspace=workspace, role=20)
+        now = timezone.now()
+        other_cycle = Cycle.objects.create(
+            name="Other Cycle",
+            project=other,
+            workspace=workspace,
+            owned_by=create_user,
+            start_date=now - timedelta(days=1),
+            end_date=now + timedelta(days=7),
+        )
+        issue = _make_issue("Issue", project, workspace, create_user)
+        IssueAssignee.objects.create(issue=issue, assignee=create_user, project=project, workspace=workspace)
+        CycleIssue.objects.create(issue=issue, cycle=other_cycle, project=project, workspace=workspace)
+
+        response = _client(member).get(STATS_URL.format(slug=workspace.slug, user_id=create_user.id))
+        assert response.status_code == status.HTTP_200_OK
+        assert list(response.data["present_cycles"]) == []
 
     @pytest.mark.django_db
     def test_restricted_guest_stats_cover_only_own_issues(self, workspace, project, create_user, guest, present_cycle):
@@ -239,3 +264,30 @@ class TestWorkspaceUserActivityGuestScope:
     def test_project_admin_sees_all_activity(self, session_client, workspace, create_user, issues):
         assert self._issue_ids(session_client, workspace, create_user) == {str(i.id) for i in issues}
         assert len(self._export_rows(session_client, workspace, create_user)) == 2
+
+
+@pytest.mark.contract
+class TestWorkspaceUserProfileProjectCounts:
+    @pytest.mark.django_db
+    def test_per_project_counts_follow_project_role(self, workspace, project, create_user):
+        """A workspace member who is a guest in a restricted project gets counts only for issues they created there,
+        and full counts in a project where they are a member."""
+        caller = _make_user("caller")
+        WorkspaceMember.objects.create(workspace=workspace, member=caller, role=15)
+        ProjectMember.objects.create(project=project, member=caller, workspace=workspace, role=5)
+        open_project = Project.objects.create(
+            name="Open", identifier="OPN", workspace=workspace, created_by=create_user
+        )
+        ProjectMember.objects.create(project=open_project, member=create_user, workspace=workspace, role=20)
+        ProjectMember.objects.create(project=open_project, member=caller, workspace=workspace, role=15)
+        for target in (project, open_project):
+            for author in (create_user, caller):
+                issue = _make_issue(f"{author.username} issue", target, workspace, author)
+                IssueAssignee.objects.create(issue=issue, assignee=create_user, project=target, workspace=workspace)
+
+        response = _client(caller).get(PROFILE_URL.format(slug=workspace.slug, user_id=create_user.id))
+        assert response.status_code == status.HTTP_200_OK, response.data
+        counts = {
+            str(row["id"]): (row["created_issues"], row["assigned_issues"]) for row in response.data["project_data"]
+        }
+        assert counts == {str(project.id): (0, 1), str(open_project.id): (1, 2)}
