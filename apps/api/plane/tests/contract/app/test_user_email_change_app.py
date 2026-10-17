@@ -85,6 +85,21 @@ class TestUserEmailChangeVerification:
         assert create_user.email == NEW_EMAIL
 
     @pytest.mark.django_db
+    def test_correct_code_rejected_once_attempts_exhausted(self, session_client, create_user, mock_email_tasks):
+        """Attempts are counted before the code is compared, so a used-up budget rejects even the correct code."""
+        code = _generate_code(session_client, mock_email_tasks)
+        cache.set(
+            f"magic_email_update_{create_user.id}_{NEW_EMAIL}:verify_attempts",
+            MagicCodeProvider.MAX_VERIFY_ATTEMPTS,
+            timeout=600,
+        )
+
+        response = session_client.patch(reverse("user-email-update"), {"email": NEW_EMAIL, "code": code}, format="json")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        create_user.refresh_from_db()
+        assert create_user.email != NEW_EMAIL
+
+    @pytest.mark.django_db
     def test_update_email_throttled(self, session_client, create_user):
         """Code verification from one IP is limited by AuthenticationThrottle."""
         url = reverse("user-email-update")

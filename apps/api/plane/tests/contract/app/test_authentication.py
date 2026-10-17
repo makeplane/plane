@@ -733,6 +733,18 @@ class TestAuthenticationThrottle:
             assert response.status_code == status.HTTP_429_TOO_MANY_REQUESTS
 
     @pytest.mark.django_db
+    def test_change_password_throttled(self, session_client, setup_instance):
+        """Old-password checks on change-password share the per-IP budget for signed-in callers."""
+        url = "/auth/change-password/"
+        payload = {"old_password": "wrong-password", "new_password": "a-Much-Stronger-Pass-2024!"}
+        with patch.object(AuthenticationThrottle, "rate", "1/minute"):
+            response = session_client.post(url, payload, format="json")
+            assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+            response = session_client.post(url, payload, format="json")
+            assert response.status_code == status.HTTP_429_TOO_MANY_REQUESTS
+
+    @pytest.mark.django_db
     @pytest.mark.parametrize("path", ["/api/instances/admins/sign-in/", "/api/instances/admins/sign-up/"])
     def test_instance_admin_auth_throttled(self, django_client, setup_instance, path):
         """Instance-admin sign-in / sign-up share the per-IP budget and redirect to the admin app."""

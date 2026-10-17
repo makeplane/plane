@@ -224,11 +224,15 @@ class UserEndpoint(BaseViewSet):
             data = json.loads(cached_data)
             stored_token = data.get("token")
 
-            if not secrets.compare_digest(str(stored_token).encode(), str(code).encode()):
-                # Atomically count wrong codes; invalidate the code once the cap is reached.
-                attempts_key = f"{cache_key}:verify_attempts"
-                cache.add(attempts_key, 0, timeout=600)
-                if cache.incr(attempts_key) >= MagicCodeProvider.MAX_VERIFY_ATTEMPTS:
+            # Count every attempt before comparing so concurrent requests share one budget;
+            # invalidate the code once the cap is reached.
+            attempts_key = f"{cache_key}:verify_attempts"
+            cache.add(attempts_key, 0, timeout=600)
+            attempts = cache.incr(attempts_key)
+            if attempts > MagicCodeProvider.MAX_VERIFY_ATTEMPTS or not secrets.compare_digest(
+                str(stored_token).encode(), str(code).encode()
+            ):
+                if attempts >= MagicCodeProvider.MAX_VERIFY_ATTEMPTS:
                     cache.delete_many([cache_key, attempts_key])
                 return Response(
                     {"error": "Invalid verification code"},
