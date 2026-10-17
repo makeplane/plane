@@ -268,7 +268,8 @@ class Adapter:
                 user.save()
             return
         except FileAsset.DoesNotExist:
-            pass
+            # Not the user's own asset: drop the link without touching the asset
+            user.avatar_asset = None
         except Exception as e:
             log_exception(e)
             return

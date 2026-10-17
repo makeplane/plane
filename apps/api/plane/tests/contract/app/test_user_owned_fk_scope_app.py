@@ -9,9 +9,12 @@ avatar/cover can only link (and replace) the user's own asset of the matching
 entity type.
 """
 
+from unittest.mock import patch
+
 import pytest
 from rest_framework import status
 
+from plane.authentication.adapter.base import Adapter
 from plane.db.models import FileAsset, User, UserNotificationPreference
 
 USER_URL = "/api/users/me/"
@@ -104,6 +107,20 @@ class TestUserAssetOwner:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         create_user.refresh_from_db()
         assert create_user.avatar_asset_id == new_avatar.id
+        foreign.refresh_from_db()
+        assert foreign.is_deleted is False
+
+    def test_login_avatar_sync_unlinks_asset_of_another_user(self, create_user, other_user):
+        """The provider-login avatar sync drops the link but leaves another user's asset alone."""
+        foreign = _asset(other_user, FileAsset.EntityTypeContext.USER_AVATAR)
+        User.objects.filter(pk=create_user.pk).update(avatar_asset=foreign)
+        create_user.refresh_from_db()
+
+        with patch("plane.authentication.adapter.base.S3Storage") as storage:
+            Adapter(request=None, provider="github").delete_old_avatar(create_user)
+
+        storage.return_value.delete_files.assert_not_called()
+        assert create_user.avatar_asset_id is None
         foreign.refresh_from_db()
         assert foreign.is_deleted is False
 
