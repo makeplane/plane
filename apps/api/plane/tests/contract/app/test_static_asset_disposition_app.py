@@ -91,3 +91,36 @@ def test_spaces_asset_disposition_follows_allow_list(
     assert params["ResponseContentDisposition"].split(";")[0] == expected_disposition
     assert params.get("ResponseContentType") == expected_type
     assert "a.png" in params["ResponseContentDisposition"]
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "attributes, expected_disposition",
+    [
+        ({"name": 123, "type": "image/png", "size": 10}, "inline"),
+        ({"name": "a.png", "type": 123, "size": 10}, "attachment"),
+    ],
+)
+def test_static_asset_with_non_string_attributes_still_redirects(
+    workspace, create_user, attributes, expected_disposition
+):
+    asset = FileAsset.objects.create(
+        attributes=attributes,
+        asset=f"{workspace.id}/avatar",
+        size=10,
+        workspace=workspace,
+        user=create_user,
+        created_by=create_user,
+        entity_type=FileAsset.EntityTypeContext.USER_AVATAR,
+        is_uploaded=True,
+    )
+
+    with mock.patch("plane.settings.storage.boto3") as mock_boto3:
+        s3_client = mock_boto3.client.return_value
+        s3_client.generate_presigned_url.return_value = "https://signed.example/avatar"
+        response = APIClient().get(f"/api/assets/v2/static/{asset.id}/")
+
+    assert response.status_code == 302
+    params = s3_client.generate_presigned_url.call_args.kwargs["Params"]
+    assert params["ResponseContentDisposition"].startswith(f"{expected_disposition}; filename*=UTF-8''")
