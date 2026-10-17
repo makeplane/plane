@@ -420,6 +420,16 @@
     }
   },
   "common": {
+    "sub_group_by": "Subagrupar por",
+    "filter_labels": {
+      "subscriber": "Inscrito"
+    },
+    "filter_messages": {
+      "all_applied": "Todos os filtros aplicados",
+      "configuration_error": "Erro de configuração do filtro",
+      "configuration_invalid": "Este filtro não está configurado corretamente e não pode ser aplicado"
+    },
+    "project_work_item_count": "Itens de trabalho neste projeto: {count, number}",
     "all": "Todos",
     "no_items_in_this_group": "Nenhum item neste grupo",
     "drop_here_to_move": "Solte aqui para mover",

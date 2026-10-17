@@ -420,6 +420,16 @@
     }
   },
   "common": {
+    "sub_group_by": "Podgrupuj według",
+    "filter_labels": {
+      "subscriber": "Subskrybent"
+    },
+    "filter_messages": {
+      "all_applied": "Wszystkie filtry zastosowane",
+      "configuration_error": "Błąd konfiguracji filtra",
+      "configuration_invalid": "Ten filtr nie jest poprawnie skonfigurowany i nie można go zastosować"
+    },
+    "project_work_item_count": "Elementy pracy w tym projekcie: {count, number}",
     "all": "Wszystko",
     "no_items_in_this_group": "Brak elementów w tej grupie",
     "drop_here_to_move": "Upuść tutaj, aby przenieść",

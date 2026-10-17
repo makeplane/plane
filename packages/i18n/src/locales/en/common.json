@@ -420,6 +420,16 @@
     }
   },
   "common": {
+    "sub_group_by": "Sub-group by",
+    "filter_labels": {
+      "subscriber": "Subscriber"
+    },
+    "filter_messages": {
+      "all_applied": "All filters applied",
+      "configuration_error": "Filter configuration error",
+      "configuration_invalid": "This filter is not properly configured and cannot be applied"
+    },
+    "project_work_item_count": "Work items in this project: {count, number}",
     "all": "All",
     "no_items_in_this_group": "No items in this group",
     "drop_here_to_move": "Drop here to move",

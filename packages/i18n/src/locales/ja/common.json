@@ -420,6 +420,16 @@
     }
   },
   "common": {
+    "sub_group_by": "サブグループ化の基準",
+    "filter_labels": {
+      "subscriber": "購読者"
+    },
+    "filter_messages": {
+      "all_applied": "すべてのフィルターが適用されています",
+      "configuration_error": "フィルター設定エラー",
+      "configuration_invalid": "このフィルターは正しく設定されていないため、適用できません"
+    },
+    "project_work_item_count": "このプロジェクトの作業項目数：{count, number}",
     "all": "すべて",
     "no_items_in_this_group": "このグループにアイテムはありません",
     "drop_here_to_move": "移動するにはここにドロップ",

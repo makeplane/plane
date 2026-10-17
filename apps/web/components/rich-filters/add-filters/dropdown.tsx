@@ -52,7 +52,8 @@ export const AddFilterDropdown = observer(function AddFilterDropdown<
     ? availableConfigs.filter((config) => config.label.toLowerCase().includes(normalizedQuery))
     : availableConfigs;
   // Every filter already applied reads differently from a search that matched nothing.
-  const emptyLabel = availableConfigs.length === 0 ? "All filters applied" : t("common.search.no_matching_results");
+  const emptyLabel =
+    availableConfigs.length === 0 ? t("common.filter_messages.all_applied") : t("common.search.no_matching_results");
 
   const handleFilterSelect = (property: P) => {
     const config = filter.configManager.getConfigByProperty(property);
@@ -61,8 +62,8 @@ export const AddFilterDropdown = observer(function AddFilterDropdown<
       props.handleFilterSelect(property, operator, isNegation);
     } else {
       setToast({
-        title: "Filter configuration error",
-        message: "This filter is not properly configured and cannot be applied",
+        title: t("common.filter_messages.configuration_error"),
+        message: t("common.filter_messages.configuration_invalid"),
         type: "error",
       });
     }
