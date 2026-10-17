@@ -86,8 +86,7 @@ def test_comment_list_only_returns_issue_in_url_project(
     _rows_in_project(own_issue, own_project, create_user)
 
     response = session_client.get(comments_url(workspace.slug, own_project.id, foreign.id))
-    assert response.status_code == status.HTTP_200_OK
-    assert response.data == []
+    assert response.status_code == status.HTTP_404_NOT_FOUND
     assert SECRET not in str(response.data)
 
     response = session_client.get(comments_url(workspace.slug, own_project.id, own_issue.id))

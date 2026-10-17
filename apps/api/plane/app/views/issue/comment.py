@@ -23,6 +23,7 @@ from plane.db.models import IssueComment, ProjectMember, CommentReaction, Projec
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
 from plane.bgtasks.webhook_task import model_activity
+from .relation import issue_in_project
 
 
 class IssueCommentViewSet(BaseViewSet):
@@ -59,6 +60,13 @@ class IssueCommentViewSet(BaseViewSet):
             )
             .distinct()
         )
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def list(self, request, slug, project_id, issue_id):
+        # Same as the history endpoint: the issue must belong to the URL workspace + project.
+        if not issue_in_project(issue_id, slug, project_id, include_archived=True):
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+        return super().list(request, slug, project_id, issue_id)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, issue_id):
