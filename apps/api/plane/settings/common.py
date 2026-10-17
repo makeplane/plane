@@ -540,20 +540,9 @@ ATTACHMENT_MIME_TYPES = [
     "text/markdown",
 ]
 
-# MIME types that browsers can execute as scripts when served inline.
-# These must always be served with Content-Disposition: attachment, even if they
-# somehow end up stored (e.g. uploaded before this restriction was added).
-SCRIPT_CAPABLE_MIME_TYPES: frozenset[str] = frozenset(
-    [
-        "image/svg+xml",  # SVG with onload / embedded <script> tags
-        "text/javascript",
-        "application/javascript",
-        "text/html",
-        "application/xhtml+xml",
-        "text/xml",
-        "application/xml",
-    ]
-)
+# The only MIME types ever served inline (S3Storage.generate_presigned_url pins the
+# type on the response). Everything else, including SVG and HTML, downloads.
+INLINE_SAFE_MIME_TYPES: frozenset[str] = frozenset(["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"])
 
 # Seed directory path
 SEED_DIR = os.path.join(BASE_DIR, "seeds")
