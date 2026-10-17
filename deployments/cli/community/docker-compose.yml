@@ -12,15 +12,16 @@ x-redis-env: &redis-env
   REDIS_PORT: ${REDIS_PORT:-6379}
   REDIS_URL: ${REDIS_URL:-redis://plane-redis:6379/}
 
+# setup.sh generates these keys. The placeholder fallbacks keep older installs starting (MinIO and the
+# API must agree), and the API logs a critical warning while the placeholder secret is in use.
 x-minio-env: &minio-env
-  # Required: MinIO falls back to its own default login when these are empty. install.sh generates them.
-  MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:?set AWS_ACCESS_KEY_ID in plane.env}
-  MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:?set AWS_SECRET_ACCESS_KEY in plane.env}
+  MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:-access-key}
+  MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:-secret-key}
 
 x-aws-s3-env: &aws-s3-env
   AWS_REGION: ${AWS_REGION:-}
-  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-access-key}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-secret-key}
   AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL:-http://plane-minio:9000}
   AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
 

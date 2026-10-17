@@ -21,7 +21,7 @@ def _load_common_settings():
 
 
 def _storage_warnings(caplog):
-    return [r for r in caplog.records if r.levelno == logging.CRITICAL and "AWS_ACCESS_KEY_ID" in r.getMessage()]
+    return [r for r in caplog.records if r.levelno == logging.CRITICAL and "AWS_SECRET_ACCESS_KEY" in r.getMessage()]
 
 
 @pytest.mark.unit
@@ -39,6 +39,7 @@ class TestStorageCredentialSettings:
         "use_minio, access_key, secret_key, expect_warning",
         [
             ("1", "access-key", "secret-key", True),
+            ("1", "custom-key", "secret-key", True),
             ("1", "unit-test-access", "unit-test-secret-value", False),
             ("0", "access-key", "secret-key", False),
         ],

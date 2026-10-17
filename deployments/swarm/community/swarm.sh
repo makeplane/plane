@@ -104,10 +104,14 @@ function generateStorageCredentials(){
         return 0
     fi
 
-    # Empty values fell back to the access-key/secret-key placeholders in older releases.
+    # Empty values fall back to the access-key/secret-key placeholders in docker-compose.yml.
+    # Older templates quoted the values, so quotes are ignored when comparing.
     local access_key=$(getEnvValue "AWS_ACCESS_KEY_ID" "$DOCKER_ENV_PATH")
     local secret_key=$(getEnvValue "AWS_SECRET_ACCESS_KEY" "$DOCKER_ENV_PATH")
-    if [ "${access_key:-access-key}" != "access-key" ] || [ "${secret_key:-secret-key}" != "secret-key" ]; then
+    access_key=${access_key//[\"\']/}
+    secret_key=${secret_key//[\"\']/}
+    # The secret is what protects MinIO, so keep the pair only when the secret is not the template one.
+    if [ "${secret_key:-secret-key}" != "secret-key" ]; then
         return 0
     fi
 
