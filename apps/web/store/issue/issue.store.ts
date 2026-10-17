@@ -110,6 +110,8 @@ export class IssueStore implements IIssueStore {
     runInAction(() => {
       set(this.issuesMap, [issueId, "updated_at"], getCurrentDateTimeInISO());
       Object.keys(issue).forEach((key) => {
+        // request-only field, not a part of the work item
+        if (key === "base_description_html") return;
         set(this.issuesMap, [issueId, key], issue[key as keyof TIssue]);
       });
     });

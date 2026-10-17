@@ -10,6 +10,7 @@ import json
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import transaction
 from django.db.models import (
     Count,
     Exists,
@@ -61,6 +62,7 @@ from plane.db.models import (
     ProjectMember,
     UserRecentVisit,
 )
+from plane.utils.description_conflict import is_description_stale
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.global_paginator import paginate
 from plane.utils.grouper import (
@@ -630,6 +632,8 @@ class IssueViewSet(BaseViewSet):
         queryset = self.apply_annotations(queryset)
 
         skip_activity = request.data.pop("skip_activity", False)
+        # Description the client's editor started from, used to reject stale overwrites
+        base_description_html = request.data.pop("base_description_html", None)
         is_description_update = request.data.get("description_html") is not None
 
         issue = (
@@ -679,7 +683,24 @@ class IssueViewSet(BaseViewSet):
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(issue, data=request.data, partial=True, context={"project_id": project_id})
         if serializer.is_valid():
-            serializer.save()
+            with transaction.atomic():
+                if is_description_update and base_description_html is not None:
+                    # Lock the row so a concurrent save cannot land between the check and the write
+                    stored_description_html = (
+                        Issue.all_objects.select_for_update()
+                        .values_list("description_html", flat=True)
+                        .get(pk=issue.pk)
+                    )
+                    if is_description_stale(base_description_html, stored_description_html):
+                        return Response(
+                            {
+                                "error": "The description was updated by someone else",
+                                "code": "DESCRIPTION_CONFLICT",
+                                "description_html": stored_description_html,
+                            },
+                            status=status.HTTP_409_CONFLICT,
+                        )
+                serializer.save()
             # Check if the update is a migration description update
             is_migration_description_update = skip_activity and is_description_update
             # Log all the updates
