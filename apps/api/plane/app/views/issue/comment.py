@@ -24,6 +24,10 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
 from plane.bgtasks.webhook_task import model_activity
 
+# Only the content and visibility are client-writable; actor, parent and the
+# other relations are set by the server.
+COMMENT_WRITABLE_FIELDS = ("comment_html", "comment_json", "access")
+
 
 class IssueCommentViewSet(BaseViewSet):
     serializer_class = IssueCommentSerializer
@@ -86,7 +90,8 @@ class IssueCommentViewSet(BaseViewSet):
                 {"error": "You are not allowed to comment on the issue"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = IssueCommentSerializer(data=request.data)
+        data = {key: request.data[key] for key in COMMENT_WRITABLE_FIELDS if key in request.data}
+        serializer = IssueCommentSerializer(data=data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id, actor=request.user)
             issue_activity.delay(
@@ -104,7 +109,7 @@ class IssueCommentViewSet(BaseViewSet):
             model_activity.delay(
                 model_name="issue_comment",
                 model_id=str(serializer.data["id"]),
-                requested_data=request.data,
+                requested_data=data,
                 current_instance=None,
                 actor_id=request.user.id,
                 slug=slug,
@@ -116,9 +121,7 @@ class IssueCommentViewSet(BaseViewSet):
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment)
     def partial_update(self, request, slug, project_id, issue_id, pk):
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
-        # Only the content and visibility are editable; actor, parent and the
-        # other relations stay as they were when the comment was created.
-        data = {key: request.data[key] for key in ("comment_html", "comment_json", "access") if key in request.data}
+        data = {key: request.data[key] for key in COMMENT_WRITABLE_FIELDS if key in request.data}
         requested_data = json.dumps(data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
         serializer = IssueCommentSerializer(issue_comment, data=data, partial=True)

@@ -18,6 +18,7 @@ The fix binds every caller-supplied object id to the board's project + workspace
 before writing, and scopes the comment-list read to the board's project.
 """
 
+import json
 from unittest import mock
 from uuid import uuid4
 
@@ -623,6 +624,21 @@ class TestSpacesBoardCommentWritableFields:
         )
         comment.refresh_from_db()
         assert comment.comment_html == "<p>board external comment</p>"
+
+    @pytest.mark.django_db
+    def test_update_activity_has_previous_content(self, session_client, board):
+        comment = board["comment"]
+        with mock.patch("plane.space.views.issue.issue_activity") as activity:
+            response = session_client.patch(
+                comment_detail_url(board["anchor"], board["issue"].id, comment.id),
+                {"comment_html": "<p>edited</p>"},
+                format="json",
+            )
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        current_instance = json.loads(activity.delay.call_args.kwargs["current_instance"])
+        assert current_instance["comment_html"] == "<p>board external comment</p>"
 
     @pytest.mark.django_db
     def test_create_ignores_system_fields(self, session_client, board, victim, other_user, create_user):
