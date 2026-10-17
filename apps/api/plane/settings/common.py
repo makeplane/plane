@@ -251,12 +251,12 @@ def _redis_ssl_kwargs(url=None):
     REDIS_SSL_CERT_REQS=none turns verification off.
 
     Query options in the URL override these kwargs in redis-py, so an ssl_cert_reqs
-    there takes precedence over REDIS_SSL_CERT_REQS. The hostname is only checked
-    when certificates are required; an explicit ssl_check_hostname in the URL still wins.
+    there takes precedence over REDIS_SSL_CERT_REQS. The hostname is checked unless
+    verification is off (none); an explicit ssl_check_hostname in the URL still wins.
     """
     url_cert_reqs = parse_qs(urlparse(url or "").query).get("ssl_cert_reqs", [""])[0]
     cert_reqs = (url_cert_reqs or os.environ.get("REDIS_SSL_CERT_REQS", "")).strip().lower() or "required"
-    kwargs = {"ssl_cert_reqs": cert_reqs, "ssl_check_hostname": cert_reqs == "required"}
+    kwargs = {"ssl_cert_reqs": cert_reqs, "ssl_check_hostname": cert_reqs != "none"}
     if os.environ.get("REDIS_SSL_CA_CERTS"):
         kwargs["ssl_ca_certs"] = os.environ["REDIS_SSL_CA_CERTS"]
     return kwargs

@@ -30,7 +30,7 @@ class TestRedisSslKwargs:
             ({}, {"ssl_cert_reqs": "required", "ssl_check_hostname": True}),
             ({"REDIS_SSL_CERT_REQS": ""}, {"ssl_cert_reqs": "required", "ssl_check_hostname": True}),
             ({"REDIS_SSL_CERT_REQS": " Required "}, {"ssl_cert_reqs": "required", "ssl_check_hostname": True}),
-            ({"REDIS_SSL_CERT_REQS": "optional"}, {"ssl_cert_reqs": "optional", "ssl_check_hostname": False}),
+            ({"REDIS_SSL_CERT_REQS": "optional"}, {"ssl_cert_reqs": "optional", "ssl_check_hostname": True}),
             ({"REDIS_SSL_CERT_REQS": "none"}, {"ssl_cert_reqs": "none", "ssl_check_hostname": False}),
             (
                 {"REDIS_SSL_CA_CERTS": CA_BUNDLE},
@@ -138,6 +138,17 @@ class TestRedisInstance:
             connection = client.connection_pool.make_connection()
             assert connection.cert_reqs == ssl.CERT_REQUIRED
             assert connection.ca_certs == CA_BUNDLE
+
+    def test_tls_optional_still_checks_hostname(self, settings, redis_tls_env):
+        redis_tls_env.setenv("REDIS_SSL_CERT_REQS", "optional")
+        settings.REDIS_SSL = True
+        settings.REDIS_URL = "rediss://cache.example:6380/0"
+        settings.REDIS_SSL_KWARGS = _redis_ssl_kwargs()
+
+        with redis_instance() as client:
+            connection = client.connection_pool.make_connection()
+            assert connection.cert_reqs == ssl.CERT_OPTIONAL
+            assert connection.check_hostname is True
 
     def test_tls_verification_can_be_turned_off_explicitly(self, settings, redis_tls_env):
         redis_tls_env.setenv("REDIS_SSL_CERT_REQS", "none")
