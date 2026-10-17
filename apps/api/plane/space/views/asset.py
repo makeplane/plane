@@ -60,18 +60,15 @@ class EntityAssetEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        # Get the presigned URL.
-        # Force attachment disposition for script-capable MIME types to prevent
-        # same-origin XSS when Spaces assets are served on the application's origin.
+        # Get the presigned URL. Inline only for an allow-listed image type, which S3Storage
+        # pins as the response Content-Type; any other type downloads.
         storage = S3Storage(request=request)
-        asset_mime_type = (asset.attributes.get("type") or "").split(";")[0].strip().lower()
-        disposition = (
-            "attachment" if asset_mime_type in settings.SCRIPT_CAPABLE_MIME_TYPES else "inline"
-        )
         # Generate a presigned URL to share an S3 object
         signed_url = storage.generate_presigned_url(
             object_name=asset.asset.name,
-            disposition=disposition,
+            filename=asset.attributes.get("name"),
+            disposition="inline",
+            content_type=asset.attributes.get("type"),
         )
         # Redirect to the signed URL
         return HttpResponseRedirect(signed_url)
