@@ -6,7 +6,7 @@
 
 - A cycle can be deleted by a project admin or its creator; an update never changes the owner
   unless one is sent.
-- Label writes are project-admin-only.
+- Label writes are project-admin-only. As in the app, a workspace admin who is a project member counts as admin.
 - Only active workspace members can be added to a project or have their project role changed.
 """
 
@@ -40,6 +40,16 @@ def member_user(workspace, project):
 def member_client(member_user):
     client = APIClient()
     client.credentials(HTTP_X_API_KEY=APIToken.objects.create(user=member_user).token)
+    return client
+
+
+def _client_for_workspace_admin(workspace, project, project_role):
+    user = UserFactory()
+    WorkspaceMemberFactory(workspace=workspace, member=user, role=ADMIN)
+    if project_role is not None:
+        ProjectMemberFactory(project=project, member=user, role=project_role)
+    client = APIClient()
+    client.credentials(HTTP_X_API_KEY=APIToken.objects.create(user=user).token)
     return client
 
 
@@ -120,6 +130,32 @@ class TestLabelWritesAdminOnly:
         label.refresh_from_db()
         assert label.name == "bug"
         assert Label.objects.filter(project=project).count() == 1
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestWorkspaceAdminCountsAsProjectAdmin:
+    @pytest.mark.parametrize(
+        "project_role, expected", [(MEMBER, status.HTTP_201_CREATED), (None, status.HTTP_403_FORBIDDEN)]
+    )
+    def test_label_create(self, workspace, project, project_role, expected):
+        client = _client_for_workspace_admin(workspace, project, project_role)
+
+        response = client.post(
+            f"{_project_url(workspace, project)}/labels/", {"name": "feature", "color": "#00ff00"}, format="json"
+        )
+
+        assert response.status_code == expected, response.data
+        assert Label.objects.filter(project=project, name="feature").exists() is (expected == status.HTTP_201_CREATED)
+
+    def test_cycle_delete(self, workspace, project, create_user):
+        client = _client_for_workspace_admin(workspace, project, MEMBER)
+        cycle = _cycle(project, owner=create_user, creator=create_user)
+
+        response = client.delete(f"{_project_url(workspace, project)}/cycles/{cycle.id}/")
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Cycle.objects.filter(id=cycle.id).exists()
 
 
 @pytest.mark.contract
