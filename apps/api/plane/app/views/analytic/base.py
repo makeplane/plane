@@ -57,6 +57,12 @@ class AnalyticsEndpoint(BaseAPIView):
 
         # Additional filters that need to be applied
         filters = issue_filters(request.GET, "GET")
+        # Only include projects the user is an active member of
+        filters.update(
+            project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__deleted_at__isnull=True,
+        )
 
         # Get the issues for the workspace with the additional filters applied
         queryset = Issue.issue_objects.filter(workspace__slug=slug, **filters)
@@ -192,7 +198,13 @@ class SavedAnalyticEndpoint(BaseAPIView):
         analytic_view = AnalyticView.objects.get(pk=analytic_id, workspace__slug=slug)
 
         filter = analytic_view.query
-        queryset = Issue.issue_objects.filter(**filter)
+        queryset = Issue.issue_objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__deleted_at__isnull=True,
+            **filter,
+        )
 
         x_axis = analytic_view.query_dict.get("x_axis", False)
         y_axis = analytic_view.query_dict.get("y_axis", False)
@@ -240,7 +252,7 @@ class ExportAnalyticsEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        analytic_export_task.delay(email=request.user.email, data=request.data, slug=slug)
+        analytic_export_task.delay(email=request.user.email, data=request.data, slug=slug, user_id=str(request.user.id))
 
         return Response(
             {"message": f"Once the export is ready it will be emailed to you at {str(request.user.email)}"},
@@ -252,7 +264,13 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug):
         filters = issue_filters(request.GET, "GET")
-        base_issues = Issue.issue_objects.filter(workspace__slug=slug, **filters)
+        base_issues = Issue.issue_objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__deleted_at__isnull=True,
+            **filters,
+        )
 
         total_issues = base_issues.count()
 
