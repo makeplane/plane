@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // icons
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 import { MembersOutline } from "@makeplane/propel/icons";
 // plane ui
 import { Avatar } from "@makeplane/propel/components/avatar";
@@ -17,6 +17,7 @@ import { cn } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 //
 import type { TPublicMember } from "@/types/member";
+import { ReadOnlyProperty } from "./read-only-property";
 
 type Props = {
   memberIds: string[];
@@ -26,7 +27,7 @@ type Props = {
 type AvatarProps = {
   showTooltip: boolean;
   members: TPublicMember[];
-  icon?: LucideIcon;
+  icon?: IconGlyph;
 };
 
 export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps) {
@@ -76,6 +77,17 @@ export const IssueBlockMembers = observer(function IssueBlockMembers({ memberIds
   const { getMembersByIds } = useMember();
 
   const members = getMembersByIds(memberIds);
+
+  if (members.length === 0) {
+    return (
+      <ReadOnlyProperty
+        icon={MembersOutline}
+        label={shouldShowBorder ? undefined : "No Assignees"}
+        tooltip="Assignees: None"
+        shouldShowBorder={shouldShowBorder}
+      />
+    );
+  }
 
   return (
     <div className="relative flex h-full flex-wrap items-center gap-1">

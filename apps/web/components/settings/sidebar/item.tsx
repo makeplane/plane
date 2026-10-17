@@ -8,7 +8,7 @@ import React from "react";
 import Link from "next/link";
 // plane imports
 import { cn } from "@plane/utils";
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 import type { ISvgIcons } from "@plane/blocks/icons";
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
 } & ({ as: "button"; onClick: () => void } | { as: "link"; href: string }) &
   (
     | {
-        icon: LucideIcon | React.FC<ISvgIcons>;
+        icon: IconGlyph | React.FC<ISvgIcons>;
       }
     | { iconNode: React.ReactElement }
   );

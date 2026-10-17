@@ -18,11 +18,11 @@ import {
   DialogTitle,
 } from "@makeplane/propel/components/dialog";
 import { InputField } from "@makeplane/propel/components/input-field";
+import { SelectField } from "@makeplane/propel/components/select-field";
 import { Switch } from "@makeplane/propel/components/switch";
 import { TextAreaField } from "@makeplane/propel/components/text-area-field";
 import { CalendarOutline } from "@makeplane/propel/icons";
 import { DateSelect } from "@plane/blocks/property-select";
-import { Select } from "@plane/blocks/select";
 import { setToast } from "@plane/blocks/toast";
 import { useTranslation } from "@plane/i18n";
 import type { IApiToken } from "@plane/types";
@@ -61,11 +61,9 @@ const EXPIRY_DATE_OPTIONS = [
 ];
 
 /** The expiry picker's rows: the presets plus the "Custom" row that reveals the date picker. */
-type TExpiryOption = { key: string; label: string };
-
-const EXPIRY_SELECT_OPTIONS: TExpiryOption[] = [
-  ...EXPIRY_DATE_OPTIONS.map(({ key, label }) => ({ key, label })),
-  { key: "custom", label: "Custom" },
+const EXPIRY_SELECT_OPTIONS = [
+  ...EXPIRY_DATE_OPTIONS.map(({ key, label }) => ({ value: key, label })),
+  { value: "custom", label: "Custom" },
 ];
 
 const defaultValues: Partial<IApiToken> = {
@@ -134,7 +132,7 @@ export function CreateApiTokenForm(props: Props) {
 
     await onSubmit(payload).then(() => {
       reset(defaultValues);
-      setCustomDate(null);
+      return setCustomDate(null);
     });
   };
 
@@ -201,31 +199,27 @@ export function CreateApiTokenForm(props: Props) {
                 <Controller
                   control={control}
                   name="expired_at"
-                  render={({ field: { onChange, value } }) => {
-                    const selectedOption = EXPIRY_SELECT_OPTIONS.find((option) => option.key === value) ?? null;
-
-                    return (
-                      <Select<TExpiryOption>
-                        getValues={() => EXPIRY_SELECT_OPTIONS}
-                        value={selectedOption}
-                        onChange={onChange}
-                        getOptionValue={(option) => option.key}
-                        getOptionLabel={(option) => option.label}
-                        showSearch={false}
-                        pinSelected={false}
-                        disabled={neverExpires}
-                      >
-                        {/* `select-md` rather than the pill chrome the old button matched in height:
-                          `SelectTriggerChrome` clamps every pill trigger to `max-w-40`, which clips
-                          the longest label here ("Set expiration date"). */}
-                        <Select.Trigger variant="select-md" className="w-auto" prependIcon={<CalendarOutline />}>
-                          <span className="min-w-0 grow truncate text-left">
-                            {value === "custom" ? "Custom date" : (selectedOption?.label ?? "Set expiration date")}
-                          </span>
-                        </Select.Trigger>
-                      </Select>
-                    );
-                  }}
+                  render={({ field: { onChange, value } }) => (
+                    <SelectField<string>
+                      name="expired_at"
+                      aria-label="Set expiration date"
+                      size="md"
+                      variant="pill"
+                      value={value ?? null}
+                      onValueChange={(expiry) => {
+                        if (expiry) onChange(expiry);
+                      }}
+                      options={EXPIRY_SELECT_OPTIONS}
+                      itemToStringLabel={(expiry) =>
+                        expiry === "custom"
+                          ? "Custom date"
+                          : (EXPIRY_SELECT_OPTIONS.find((option) => option.value === expiry)?.label ?? expiry)
+                      }
+                      icon={<CalendarOutline className="size-3.5 shrink-0" />}
+                      placeholder="Set expiration date"
+                      disabled={neverExpires}
+                    />
+                  )}
                 />
                 {expiredAt === "custom" && (
                   <DateSelect

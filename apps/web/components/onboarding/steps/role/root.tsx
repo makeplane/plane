@@ -6,10 +6,10 @@
 
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { PenTool } from "lucide-react";
 import {
   CubeOutline,
   MonitorOutline,
+  PenToolOutline,
   RefreshOutline,
   RocketOutline,
   TickOutline,
@@ -33,7 +33,7 @@ type Props = {
 const ROLES = [
   { id: "product-manager", label: "Product Manager", icon: CubeOutline },
   { id: "engineering-manager", label: "Engineering Manager", icon: ViewsOutline },
-  { id: "designer", label: "Designer", icon: PenTool },
+  { id: "designer", label: "Designer", icon: PenToolOutline },
   { id: "developer", label: "Developer", icon: MonitorOutline },
   { id: "founder-executive", label: "Founder/Executive", icon: RocketOutline },
   { id: "operations-manager", label: "Operations Manager", icon: RefreshOutline },

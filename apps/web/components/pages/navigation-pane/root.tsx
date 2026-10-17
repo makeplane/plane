@@ -7,11 +7,11 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowRightCircle } from "lucide-react";
+import { ArrowCircleRightOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Tabs } from "@makeplane/propel/components/tabs";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web components
@@ -94,32 +94,25 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
       }}
     >
       <div className="mb-3.5 px-3.5">
-        <Tooltip label={t("page_navigation_pane.close_button")}>
-          <button
-            type="button"
-            className="grid size-3.5 place-items-center text-secondary transition-colors hover:text-primary"
-            onClick={handleClose}
-            aria-label={t("page_navigation_pane.close_button")}
-          >
-            <ArrowRightCircle className="size-3.5" />
-          </button>
-        </Tooltip>
+        <IconButton
+          variant="ghost"
+          size="sm"
+          icon={<ArrowCircleRightOutline className="size-3.5" />}
+          onClick={handleClose}
+          aria-label={t("page_navigation_pane.close_button")}
+        />
       </div>
 
       <div className="animate-slide-in-right flex flex-1 flex-col overflow-hidden">
         {ActiveExtension ? (
           <ActiveExtension.component page={page} extensionData={ActiveExtension.data} storeType={storeType} />
         ) : showNavigationTabs ? (
-          // Row wrapper: Propel's Tabs root omits className, so it takes its full height by
-          // stretching as a flex item.
-          <div className="flex h-full w-full">
-            <Tabs variant="contained" stretch="full" value={activeTab} onValueChange={handleTabChange}>
-              <div className="flex h-full w-full flex-col">
-                <PageNavigationPaneTabsList />
-                <PageNavigationPaneTabPanelsRoot page={page} versionHistory={versionHistory} />
-              </div>
-            </Tabs>
-          </div>
+          <Tabs variant="contained" stretch="full" layout="fill" value={activeTab} onValueChange={handleTabChange}>
+            <div className="flex h-full w-full flex-col">
+              <PageNavigationPaneTabsList />
+              <PageNavigationPaneTabPanelsRoot page={page} versionHistory={versionHistory} />
+            </div>
+          </Tabs>
         ) : null}
       </div>
     </aside>

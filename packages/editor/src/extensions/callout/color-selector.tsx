@@ -4,8 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Ban } from "lucide-react";
-import { ChevronDownOutline } from "@makeplane/propel/icons";
+import { ChevronDownOutline, DeactivatedOutline } from "@makeplane/propel/icons";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
@@ -71,7 +70,7 @@ export function CalloutBlockColorSelector(props: Props) {
                 className="grid size-6 flex-shrink-0 place-items-center rounded-sm border-[0.5px] border-strong-1 text-tertiary transition-colors hover:bg-layer-1-hover"
                 onClick={() => handleColorSelect(null)}
               >
-                <Ban className="size-4" />
+                <DeactivatedOutline className="size-4" />
               </button>
             </div>
           </section>

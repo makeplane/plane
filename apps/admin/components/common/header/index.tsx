@@ -9,8 +9,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 // icons
-import { Menu } from "lucide-react";
-import { SettingsOutline } from "@makeplane/propel/icons";
+import { MenuOutline, SettingsOutline } from "@makeplane/propel/icons";
 // plane internal packages
 import {
   Breadcrumb,
@@ -36,7 +35,7 @@ export const HamburgerToggle = observer(function HamburgerToggle() {
       className="group flex size-7 cursor-pointer items-center justify-center rounded-sm bg-layer-1 transition-all hover:bg-layer-1-hover md:hidden"
       onClick={() => toggleSidebar(!isSidebarCollapsed)}
     >
-      <Menu size={14} className="text-secondary transition-all group-hover:text-primary" />
+      <MenuOutline width={14} height={14} className="text-secondary transition-all group-hover:text-primary" />
     </button>
   );
 });

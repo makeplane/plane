@@ -7,11 +7,10 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
-import { CircleMinus } from "lucide-react";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
-import { MoreHorizontalOutline } from "@makeplane/propel/icons";
+import { MoreHorizontalOutline, UserMinusOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Select } from "@plane/blocks/select";
 import { setToast } from "@plane/blocks/toast";
@@ -94,7 +93,7 @@ export function NameColumn(props: NameProps) {
             <MenuContent side="bottom" align="end">
               <MenuItem
                 variant="danger"
-                icon={<Icon icon={CircleMinus} />}
+                icon={<Icon icon={UserMinusOutline} />}
                 label={rowData.member?.id === currentUser?.id ? t("leave") : t("remove")}
                 onClick={() => setRemoveMemberModal(rowData)}
               />

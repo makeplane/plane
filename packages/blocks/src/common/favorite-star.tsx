@@ -5,6 +5,7 @@
  */
 
 import React from "react";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { StarFilled, StarOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // helpers
@@ -24,29 +25,35 @@ export function FavoriteStar(props: Props) {
   const { t } = useTranslation();
 
   return (
-    <button
+    <IconButton
       type="button"
-      className={cn("grid h-4 w-4 place-items-center", buttonClassName)}
+      variant="ghost"
+      size="sm"
+      showTooltip={false}
+      render={<button className={buttonClassName} />}
       onClick={onClick}
       aria-label={ariaLabel ?? t("add_to_favorites")}
       aria-pressed={selected}
-    >
-      <StarOutline
-        aria-hidden="true"
-        className={cn(
-          "col-start-1 row-start-1 h-4 w-4 text-tertiary transition-opacity motion-reduce:transition-none",
-          iconClassName,
-          selected ? "opacity-0" : "opacity-100"
-        )}
-      />
-      <StarFilled
-        aria-hidden="true"
-        className={cn(
-          "col-start-1 row-start-1 h-4 w-4 text-(--color-label-yellow-icon) transition-opacity motion-reduce:transition-none",
-          iconClassName,
-          selected ? "opacity-100" : "opacity-0"
-        )}
-      />
-    </button>
+      icon={
+        <span aria-hidden="true" className="grid place-items-center">
+          <StarOutline
+            aria-hidden="true"
+            className={cn(
+              "col-start-1 row-start-1 h-3.5 w-3.5 transition-opacity motion-reduce:transition-none",
+              iconClassName,
+              selected ? "opacity-0" : "opacity-100"
+            )}
+          />
+          <StarFilled
+            aria-hidden="true"
+            className={cn(
+              "col-start-1 row-start-1 h-3.5 w-3.5 text-label-yellow-icon-strong transition-opacity motion-reduce:transition-none",
+              iconClassName,
+              selected ? "opacity-100" : "opacity-0"
+            )}
+          />
+        </span>
+      }
+    />
   );
 }

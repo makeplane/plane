@@ -9,7 +9,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // store hooks
 // icons
-import { TriangleIcon, SignalMediumIcon } from "lucide-react";
 import {
   ArchiveOutline,
   AttachOutline,
@@ -18,12 +17,14 @@ import {
   CyclesOutline,
   DuplicateOfOutline,
   EpicOutline,
+  EstimateOutline,
   GridOutline,
   IntakeOutline,
   LabelsOutline,
   LinkOutline,
   MembersOutline,
   ModuleOutline,
+  PriorityMedium,
   RelatesToOutline,
   WorkItemsOutline,
 } from "@makeplane/propel/icons";
@@ -268,7 +269,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <TriangleIcon size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <EstimateOutline width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   issue: {
     message: (activity) => {
@@ -573,7 +574,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <SignalMediumIcon size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <PriorityMedium width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   relates_to: {
     message: (activity, showIssue) => {

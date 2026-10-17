@@ -5,7 +5,7 @@
  */
 
 import type React from "react";
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 import { KeyOutline, LockOutline, SettingsOutline, SubscribeOutline, UserOutline } from "@makeplane/propel/icons";
 import { observer } from "mobx-react";
 import { useParams } from "react-router";
@@ -22,7 +22,7 @@ import type { TProfileSettingsTabs } from "@plane/types";
 import { SettingsSidebarItem } from "../../sidebar/item";
 import { ProfileSettingsSidebarWorkspaceOptions } from "./workspace-options";
 
-const ICONS: Record<TProfileSettingsTabs, LucideIcon | React.FC<ISvgIcons>> = {
+const ICONS: Record<TProfileSettingsTabs, IconGlyph | React.FC<ISvgIcons>> = {
   general: UserOutline,
   security: LockOutline,
   preferences: SettingsOutline,

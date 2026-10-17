@@ -10,7 +10,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SITES_ISSUE_LAYOUTS } from "@plane/constants";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
@@ -40,35 +41,31 @@ export const IssuesLayoutSelection = observer(function IssuesLayoutSelection(pro
   // derived values
   const issueFilters = getIssueFilters(anchor);
   const activeLayout = issueFilters?.display_filters?.layout || undefined;
+  const visibleLayouts = SITES_ISSUE_LAYOUTS.filter((layout) => layoutOptions[layout.key]);
 
   const handleCurrentBoardView = (boardView: TIssueLayout) => {
-    updateIssueFilters(anchor, "display_filters", "layout", boardView);
+    if (activeLayout === boardView) return;
+    void updateIssueFilters(anchor, "display_filters", "layout", boardView);
     const { queryParam } = queryParamGenerator({ board: boardView, peekId, priority, state, labels });
     router.push(`/issues/${anchor}?${queryParam}`);
   };
 
-  return (
-    <div className="flex items-center gap-1 rounded-sm bg-layer-2 p-1">
-      {SITES_ISSUE_LAYOUTS.map((layout) => {
-        if (!layoutOptions[layout.key]) return;
+  if (visibleLayouts.length === 0 || (visibleLayouts.length === 1 && visibleLayouts[0]?.key === activeLayout))
+    return null;
 
-        return (
-          <Tooltip key={layout.key} label={t(layout.titleTranslationKey)}>
-            <button
-              type="button"
-              className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover ${
-                activeLayout == layout.key ? "bg-layer-transparent-active hover:bg-layer-transparent-selected" : ""
-              }`}
-              onClick={() => handleCurrentBoardView(layout.key)}
-            >
-              <IssueLayoutIcon
-                layout={layout.key}
-                className={`size-3.5 ${activeLayout == layout.key ? "text-primary" : "text-secondary"}`}
-              />
-            </button>
-          </Tooltip>
-        );
-      })}
+  return (
+    <div role="group" aria-label={t("common.layout")} className="flex items-center gap-0.5 rounded-lg bg-layer-3 p-0.5">
+      {visibleLayouts.map((layout) => (
+        <IconButton
+          key={layout.key}
+          size="sm"
+          variant={activeLayout === layout.key ? "secondary" : "ghost"}
+          aria-label={t(layout.titleTranslationKey)}
+          aria-pressed={activeLayout === layout.key}
+          icon={<Icon icon={<IssueLayoutIcon layout={layout.key} />} />}
+          onClick={() => handleCurrentBoardView(layout.key)}
+        />
+      ))}
     </div>
   );
 });

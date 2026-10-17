@@ -5,7 +5,6 @@
  */
 
 import type { ComponentType, SVGProps } from "react";
-import { FileArchive, FileSpreadsheet } from "lucide-react";
 import {
   Chrome,
   CodeOutline,
@@ -13,6 +12,8 @@ import {
   Dribbble,
   Facebook,
   Figma,
+  FileZipOutline,
+  FileSpreadsheetOutline,
   Github,
   ImageOutline,
   Instagram,
@@ -49,8 +50,8 @@ const FILE_TYPE_MATCHERS: IconMatcher[] = [
   { pattern: /\.(jpg|jpeg|png|gif|bmp|svg|webp)$/, icon: ImageOutline },
   { pattern: /\.(mp4|mov|avi|wmv|flv|mkv)$/, icon: VideoOutline },
   { pattern: /\.(mp3|wav|ogg)$/, icon: MusicOutline },
-  { pattern: /\.(zip|rar|7z|tar|gz)$/, icon: FileArchive },
-  { pattern: /\.(xls|xlsx|csv)$/, icon: FileSpreadsheet },
+  { pattern: /\.(zip|rar|7z|tar|gz)$/, icon: FileZipOutline },
+  { pattern: /\.(xls|xlsx|csv)$/, icon: FileSpreadsheetOutline },
   { pattern: /\.(pdf|doc|docx|txt)$/, icon: DocumentationOutline },
   { pattern: /\.(html|js|ts|jsx|tsx|css|scss)$/, icon: CodeOutline },
 ];

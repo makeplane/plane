@@ -7,7 +7,6 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { Circle } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -101,7 +100,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Circle className="h-1.5 w-1.5 fill-accent-primary" strokeWidth={2} />
+            <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent-primary" />
             {t("workspace_projects.network.public.title")}
             <NewTabOutline className="hidden h-3 w-3 group-hover:block" />
           </a>

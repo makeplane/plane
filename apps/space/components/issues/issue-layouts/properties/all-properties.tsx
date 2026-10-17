@@ -7,9 +7,7 @@
 import { observer } from "mobx-react";
 import { AttachOutline, LinkOutline, ViewsOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IIssueDisplayProperties } from "@plane/types";
-import { cn } from "@plane/utils";
 // components
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with-display-properties-HOC";
 // helpers
@@ -23,6 +21,7 @@ import { IssueBlockMembers } from "./member";
 import { IssueBlockModules } from "./modules";
 import { IssueBlockPriority } from "./priority";
 import { IssueBlockState } from "./state";
+import { ReadOnlyProperty } from "./read-only-property";
 
 export interface IIssueProperties {
   issue: IIssue;
@@ -47,7 +46,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       {/* state */}
       {issue.state_id && (
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
-          <div className="h-5">
+          <div className="h-6">
             <IssueBlockState stateId={issue.state_id} />
           </div>
         </WithDisplayPropertiesHOC>
@@ -55,14 +54,14 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
 
       {/* priority */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
-        <div className="h-5">
+        <div className="h-6">
           <IssueBlockPriority priority={issue.priority} />
         </div>
       </WithDisplayPropertiesHOC>
 
       {/* label */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
-        <div className="h-5">
+        <div className="h-6 max-w-full min-w-0">
           <IssueBlockLabels labelIds={issue.label_ids} />
         </div>
       </WithDisplayPropertiesHOC>
@@ -70,7 +69,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       {/* start date */}
       {issue?.start_date && (
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
-          <div className="h-5">
+          <div className="h-6">
             <IssueBlockDate
               due_date={issue?.start_date}
               stateId={issue?.state_id ?? undefined}
@@ -83,7 +82,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       {/* target/due date */}
       {issue?.target_date && (
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
-          <div className="h-5">
+          <div className="h-6">
             <IssueBlockDate due_date={issue?.target_date} stateId={issue?.state_id ?? undefined} />
           </div>
         </WithDisplayPropertiesHOC>
@@ -91,7 +90,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
 
       {/* assignee */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
-        <div className="h-5">
+        <div className="h-6">
           <IssueBlockMembers memberIds={issue.assignee_ids} />
         </div>
       </WithDisplayPropertiesHOC>
@@ -99,7 +98,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       {/* modules */}
       {issue.module_ids && issue.module_ids.length > 0 && (
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
-          <div className="h-5">
+          <div className="h-6">
             <IssueBlockModules moduleIds={issue.module_ids} />
           </div>
         </WithDisplayPropertiesHOC>
@@ -108,7 +107,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       {/* cycles */}
       {issue.cycle_id && (
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
-          <div className="h-5">
+          <div className="h-6">
             <IssueBlockCycle cycleId={issue.cycle_id} />
           </div>
         </WithDisplayPropertiesHOC>
@@ -137,19 +136,11 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         displayPropertyKey="sub_issue_count"
         shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!issue.sub_issues_count}
       >
-        <Tooltip label={`Sub-work items: ${issue.sub_issues_count}`}>
-          <div
-            className={cn(
-              "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1",
-              {
-                "cursor-pointer hover:bg-layer-1": issue.sub_issues_count,
-              }
-            )}
-          >
-            <ViewsOutline className="h-3 w-3 flex-shrink-0" />
-            <div className="text-11">{issue.sub_issues_count}</div>
-          </div>
-        </Tooltip>
+        <ReadOnlyProperty
+          icon={ViewsOutline}
+          label={String(issue.sub_issues_count)}
+          tooltip={`Sub-work items: ${issue.sub_issues_count}`}
+        />
       </WithDisplayPropertiesHOC>
 
       {/* attachments */}
@@ -158,12 +149,11 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         displayPropertyKey="attachment_count"
         shouldRenderProperty={(properties) => !!properties.attachment_count && !!issue.attachment_count}
       >
-        <Tooltip label={`Attachments: ${issue.attachment_count}`}>
-          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
-            <AttachOutline className="h-3 w-3 flex-shrink-0" />
-            <div className="text-11">{issue.attachment_count}</div>
-          </div>
-        </Tooltip>
+        <ReadOnlyProperty
+          icon={AttachOutline}
+          label={String(issue.attachment_count)}
+          tooltip={`Attachments: ${issue.attachment_count}`}
+        />
       </WithDisplayPropertiesHOC>
 
       {/* link */}
@@ -172,12 +162,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         displayPropertyKey="link"
         shouldRenderProperty={(properties) => !!properties.link && !!issue.link_count}
       >
-        <Tooltip label={`Links: ${issue.link_count}`}>
-          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
-            <LinkOutline className="h-3 w-3 flex-shrink-0" />
-            <div className="text-11">{issue.link_count}</div>
-          </div>
-        </Tooltip>
+        <ReadOnlyProperty icon={LinkOutline} label={String(issue.link_count)} tooltip={`Links: ${issue.link_count}`} />
       </WithDisplayPropertiesHOC>
     </div>
   );
