@@ -11,6 +11,7 @@
   URL workspace that the caller is an active member of.
 - Workspace-level issue grouping only uses project, state and cycle ids from
   projects the caller is an active member of.
+- Public board issue grouping only uses ids from the board's project.
 """
 
 from uuid import uuid4
@@ -21,6 +22,7 @@ from rest_framework.test import APIClient
 
 from plane.db.models import (
     Cycle,
+    DeployBoard,
     Issue,
     Project,
     ProjectMember,
@@ -33,6 +35,7 @@ from plane.db.models import (
 PROJECT_STATS_URL = "/api/workspaces/{slug}/project-stats/"
 ADVANCE_ANALYTICS_URL = "/api/workspaces/{slug}/advance-analytics/"
 USER_ISSUES_URL = "/api/workspaces/{slug}/user-issues/{user_id}/"
+PUBLIC_ISSUES_URL = "/api/public/anchor/{anchor}/issues/"
 
 
 def _make_user(prefix):
@@ -173,3 +176,20 @@ class TestUserIssuesGroupingProjectScope:
         own_id, secret_id = grouping_objects[group_by]
         assert str(own_id) in response.data["results"]
         assert str(secret_id) not in response.data["results"]
+
+
+@pytest.mark.contract
+class TestPublicBoardGroupingProjectScope:
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("group_by", ["project_id", "state_id", "cycle_id"])
+    def test_group_keys_limited_to_board_project(self, workspace, own_project, grouping_objects, group_by):
+        board = DeployBoard.objects.create(
+            entity_name="project", entity_identifier=own_project.id, project=own_project, workspace=workspace
+        )
+        response = APIClient().get(PUBLIC_ISSUES_URL.format(anchor=board.anchor), {"group_by": group_by})
+        assert response.status_code == status.HTTP_200_OK, response.data
+        own_id, secret_id = grouping_objects[group_by]
+        assert str(own_id) in response.data["results"]
+        assert str(secret_id) not in response.data["results"]
+        if group_by == "project_id":
+            assert set(response.data["results"]) == {str(own_project.id)}
