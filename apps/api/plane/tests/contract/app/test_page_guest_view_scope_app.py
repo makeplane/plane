@@ -60,7 +60,7 @@ class TestPageGuestViewScope:
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.django_db
-    @pytest.mark.parametrize("endpoint", ["description", "versions", "version_detail"])
+    @pytest.mark.parametrize("endpoint", ["retrieve", "description", "versions", "version_detail"])
     def test_guest_allowed_own_page(self, session_client, workspace, create_user, endpoint):
         _, project = self._setup(workspace, create_user, guest_view_all_features=False)
         page, version = _make_page(workspace, project, create_user)
@@ -70,7 +70,7 @@ class TestPageGuestViewScope:
         assert response.status_code == status.HTTP_200_OK
 
     @pytest.mark.django_db
-    @pytest.mark.parametrize("endpoint", ["description", "versions", "version_detail"])
+    @pytest.mark.parametrize("endpoint", ["retrieve", "description", "versions", "version_detail"])
     def test_guest_allowed_when_guest_view_all_features(self, session_client, workspace, create_user, endpoint):
         owner, project = self._setup(workspace, create_user, guest_view_all_features=True)
         page, version = _make_page(workspace, project, owner)
