@@ -5,7 +5,8 @@
 """Contract tests for project scope on workspace drafts (INFRA-1125, INFRA-1136).
 
 Creating, updating or converting a draft requires the caller to be an active
-ADMIN/MEMBER of the draft's project in the URL workspace, the same rule
+ADMIN/MEMBER of the draft's project in the URL workspace (or a workspace ADMIN
+who is an active member of it at any role), the same rule
 ``IssueViewSet.create`` enforces. A draft's cycle and modules, including those
 sent when converting it, must belong to the draft's project.
 """
@@ -402,3 +403,61 @@ class TestDraftCycleModuleProjectScope:
         issue = Issue.objects.get(name="Issue")
         assert CycleIssue.objects.get(issue=issue).cycle_id == cycle.id
         assert ModuleIssue.objects.get(issue=issue).module_id == module.id
+
+
+@pytest.mark.contract
+class TestDraftWorkspaceAdminProjectGuest:
+    """A workspace ADMIN who is an active member of the project at any role may
+    write issues there (the ``allow_permission`` workspace-admin rule)."""
+
+    @pytest.fixture
+    def admin(self, db, workspace):
+        uid = uuid4().hex[:8]
+        user = User.objects.create(email=f"admin-{uid}@plane.so", username=f"admin_{uid}")
+        WorkspaceMember.objects.create(workspace=workspace, member=user, role=20)
+        return user
+
+    @pytest.fixture
+    def admin_client(self, admin):
+        client = APIClient()
+        client.force_authenticate(user=admin)
+        return client
+
+    @pytest.mark.django_db
+    def test_workspace_admin_project_guest_can_create_update_and_convert_draft(
+        self, admin_client, admin, workspace, create_user
+    ):
+        project = _project(workspace, "ADM", create_user)
+        ProjectMember.objects.create(project=project, member=admin, workspace=workspace, role=5)
+
+        response = admin_client.post(
+            drafts_url(workspace.slug), {"name": "x", "project_id": str(project.id)}, format="json"
+        )
+        assert response.status_code == status.HTTP_201_CREATED, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        draft = DraftIssue.objects.get(name="x")
+
+        response = admin_client.patch(draft_url(workspace.slug, draft.id), {"name": "y"}, format="json")
+        assert response.status_code == status.HTTP_204_NO_CONTENT, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+        response = admin_client.post(draft_to_issue_url(workspace.slug, draft.id), {"name": "Issue"}, format="json")
+        assert response.status_code == status.HTTP_201_CREATED, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert Issue.objects.get(name="Issue").project_id == project.id
+
+    @pytest.mark.django_db
+    def test_workspace_admin_not_in_project_cannot_create_draft(self, admin_client, workspace, create_user):
+        project = _project(workspace, "NIP", create_user)
+
+        response = admin_client.post(
+            drafts_url(workspace.slug), {"name": "x", "project_id": str(project.id)}, format="json"
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert not DraftIssue.objects.filter(name="x").exists()
