@@ -29,7 +29,7 @@ def load_rest_framework(monkeypatch):
 
 @pytest.mark.unit
 class TestNumProxiesSetting:
-    @pytest.mark.parametrize("value", [None, "", "abc", "-1"])
+    @pytest.mark.parametrize("value", [None, "", "abc", "-1", "9" * 5000])
     def test_unset_or_invalid_keeps_drf_default(self, load_rest_framework, value):
         assert "NUM_PROXIES" not in load_rest_framework(value)
 
