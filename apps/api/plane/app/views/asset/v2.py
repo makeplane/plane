@@ -28,6 +28,45 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.throttles.asset import AssetRateThrottle
 
 
+def can_modify_asset(user, asset):
+    """Whether the user may confirm, update or delete the asset.
+
+    Follows the rule of the entity the asset belongs to: the workspace logo needs a
+    workspace admin and a project cover a project admin (as in the settings views), an
+    issue attachment a project admin or its uploader (as in attachment delete), and
+    any other asset a member, an admin or its uploader. The uploader must still be an
+    active member of the asset's project, if it has one.
+    """
+    workspace_role = (
+        WorkspaceMember.objects.filter(member=user, workspace_id=asset.workspace_id, is_active=True)
+        .values_list("role", flat=True)
+        .first()
+    )
+    if asset.entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
+        return workspace_role == ROLE.ADMIN.value
+
+    role = workspace_role
+    if asset.project_id:
+        role = (
+            ProjectMember.objects.filter(
+                member=user, workspace_id=asset.workspace_id, project_id=asset.project_id, is_active=True
+            )
+            .values_list("role", flat=True)
+            .first()
+        )
+        # Workspace admins act as admins in the projects they belong to, as in allow_permission
+        if role is not None and workspace_role == ROLE.ADMIN.value:
+            role = ROLE.ADMIN.value
+        if asset.entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
+            return role == ROLE.ADMIN.value
+
+    if asset.created_by_id == user.id and role is not None:
+        return True
+    if asset.entity_type == FileAsset.EntityTypeContext.ISSUE_ATTACHMENT:
+        return role == ROLE.ADMIN.value
+    return role in (ROLE.ADMIN.value, ROLE.MEMBER.value)
+
+
 class UserAssetsV2Endpoint(BaseAPIView):
     """This endpoint is used to upload user profile images."""
 
@@ -425,6 +464,11 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 {"error": "You don't have access to this asset."},
                 status=status.HTTP_403_FORBIDDEN,
             )
+        if not can_modify_asset(request.user, asset):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
@@ -450,6 +494,11 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         if not self.has_project_asset_access(request, asset):
             return Response(
                 {"error": "You don't have access to this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        if not can_modify_asset(request.user, asset):
+            return Response(
+                {"error": "You don't have the required permissions."},
                 status=status.HTTP_403_FORBIDDEN,
             )
         asset.is_deleted = True
@@ -537,6 +586,11 @@ class AssetRestoreEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def post(self, request, slug, asset_id):
         asset = FileAsset.all_objects.get(id=asset_id, workspace__slug=slug)
+        if not can_modify_asset(request.user, asset):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         asset.is_deleted = False
         asset.deleted_at = None
         asset.save(update_fields=["is_deleted", "deleted_at"])
@@ -646,6 +700,11 @@ class ProjectAssetEndpoint(BaseAPIView):
     def patch(self, request, slug, project_id, pk):
         # get the asset id
         asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
+        if not can_modify_asset(request.user, asset):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
@@ -662,6 +721,11 @@ class ProjectAssetEndpoint(BaseAPIView):
     def delete(self, request, slug, project_id, pk):
         # Get the asset
         asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
+        if not can_modify_asset(request.user, asset):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # Check deleted assets
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
@@ -732,6 +796,13 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
 
         # Check if the asset is uploaded
         if asset.entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
+            # Check against the project the cover is about to be set on
+            asset.project_id = project_id
+            if not can_modify_asset(request.user, asset):
+                return Response(
+                    {"error": "You don't have the required permissions."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
             assets.update(project_id=project_id)
             [self.save_project_cover(asset, project_id) for asset in assets]
 
