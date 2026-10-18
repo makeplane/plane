@@ -37,8 +37,10 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
+    IssueActivity,
     IssueComment,
     IssueRelation,
     Project,
@@ -205,6 +207,118 @@ class TestIssueCommentCreateScope:
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         assert IssueComment.objects.filter(issue_id=attacker_issue.id).exists()
+
+
+@pytest.mark.contract
+class TestIssueCommentUpdateFields:
+    """An author's PATCH may change the comment content and access, nothing else."""
+
+    @pytest.fixture
+    def comment(self, attacker, attacker_workspace, attacker_project, attacker_issue):
+        return IssueComment.objects.create(
+            comment_html="<p>original</p>",
+            issue=attacker_issue,
+            project=attacker_project,
+            workspace=attacker_workspace,
+            actor=attacker,
+            created_by=attacker,
+            access="INTERNAL",
+        )
+
+    @pytest.mark.django_db
+    def test_update_only_changes_content(
+        self, attacker_client, attacker, attacker_workspace, attacker_project, attacker_issue, comment
+    ):
+        other_user = _make_user("other")
+        other_comment = IssueComment.objects.create(
+            comment_html="<p>other</p>",
+            issue=attacker_issue,
+            project=attacker_project,
+            workspace=attacker_workspace,
+            actor=other_user,
+        )
+        url = f"{comments_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)}{comment.id}/"
+        with mock.patch("plane.app.views.issue.comment.issue_activity") as activity:
+            response = attacker_client.patch(
+                url,
+                {"comment_html": "<p>edited</p>", "actor": str(other_user.id), "parent": str(other_comment.id)},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        comment.refresh_from_db()
+        assert comment.comment_html == "<p>edited</p>"
+        assert comment.actor_id == attacker.id
+        assert comment.parent_id is None
+        requested_data = activity.delay.call_args.kwargs["requested_data"]
+        assert "actor" not in requested_data and "parent" not in requested_data
+
+    @pytest.mark.django_db
+    def test_update_can_change_access(
+        self, attacker_client, attacker_workspace, attacker_project, attacker_issue, comment
+    ):
+        url = f"{comments_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)}{comment.id}/"
+        response = attacker_client.patch(url, {"access": "EXTERNAL"}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        comment.refresh_from_db()
+        assert comment.access == "EXTERNAL"
+
+    @pytest.mark.django_db
+    def test_comment_activity_recorded_only_for_html_change(
+        self, attacker_client, attacker_workspace, attacker_project, attacker_issue, comment
+    ):
+        url = f"{comments_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)}{comment.id}/"
+
+        def patch_and_run_activity(payload):
+            with mock.patch("plane.app.views.issue.comment.issue_activity") as activity:
+                response = attacker_client.patch(url, payload, format="json")
+            assert response.status_code == status.HTTP_200_OK
+            issue_activity(**{**activity.delay.call_args.kwargs, "notification": False, "origin": None})
+
+        patch_and_run_activity({"access": "EXTERNAL"})
+        assert not IssueActivity.objects.filter(issue_comment_id=comment.id, verb="updated").exists()
+
+        patch_and_run_activity({"comment_html": "<p>edited</p>"})
+        assert IssueActivity.objects.filter(
+            issue_comment_id=comment.id, verb="updated", new_value="<p>edited</p>"
+        ).exists()
+
+    @pytest.mark.django_db
+    def test_create_ignores_system_fields(
+        self, attacker_client, attacker_workspace, attacker_project, attacker_issue, victim_issue
+    ):
+        foreign_parent = IssueComment.objects.create(
+            comment_html="<p>foreign</p>",
+            issue=victim_issue,
+            project=victim_issue.project,
+            workspace=victim_issue.workspace,
+        )
+        url = comments_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)
+        with mock.patch("plane.app.views.issue.comment.model_activity") as webhook:
+            response = attacker_client.post(
+                url,
+                {
+                    "comment_html": "<p>new</p>",
+                    "parent": str(foreign_parent.id),
+                    "edited_at": "2024-01-01T00:00:00Z",
+                    "external_id": "ext-1",
+                },
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_201_CREATED, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        comment = IssueComment.objects.get(id=response.data["id"])
+        assert comment.parent_id is None
+        assert comment.edited_at is None
+        assert comment.external_id is None
+        assert set(webhook.delay.call_args.kwargs["requested_data"]) == {"comment_html"}
 
 
 @pytest.mark.contract

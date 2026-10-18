@@ -25,6 +25,10 @@ from plane.utils.host import base_host
 from plane.bgtasks.webhook_task import model_activity
 from .relation import issue_in_project
 
+# Only the content and visibility are client-writable; actor, parent and the
+# other relations are set by the server.
+COMMENT_WRITABLE_FIELDS = ("comment_html", "comment_json", "access")
+
 
 class IssueCommentViewSet(BaseViewSet):
     serializer_class = IssueCommentSerializer
@@ -94,7 +98,8 @@ class IssueCommentViewSet(BaseViewSet):
                 {"error": "You are not allowed to comment on the issue"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = IssueCommentSerializer(data=request.data)
+        data = {key: request.data[key] for key in COMMENT_WRITABLE_FIELDS if key in request.data}
+        serializer = IssueCommentSerializer(data=data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id, actor=request.user)
             issue_activity.delay(
@@ -112,7 +117,7 @@ class IssueCommentViewSet(BaseViewSet):
             model_activity.delay(
                 model_name="issue_comment",
                 model_id=str(serializer.data["id"]),
-                requested_data=request.data,
+                requested_data=data,
                 current_instance=None,
                 actor_id=request.user.id,
                 slug=slug,
@@ -126,11 +131,12 @@ class IssueCommentViewSet(BaseViewSet):
         issue_comment = IssueComment.objects.get(
             workspace__slug=slug, project_id=project_id, issue_id=issue_id, issue__project_id=project_id, pk=pk
         )
-        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        data = {key: request.data[key] for key in COMMENT_WRITABLE_FIELDS if key in request.data}
+        requested_data = json.dumps(data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
-        serializer = IssueCommentSerializer(issue_comment, data=request.data, partial=True)
+        serializer = IssueCommentSerializer(issue_comment, data=data, partial=True)
         if serializer.is_valid():
-            if "comment_html" in request.data and request.data["comment_html"] != issue_comment.comment_html:
+            if "comment_html" in data and data["comment_html"] != issue_comment.comment_html:
                 serializer.save(edited_at=timezone.now())
             else:
                 serializer.save()
@@ -149,7 +155,7 @@ class IssueCommentViewSet(BaseViewSet):
             model_activity.delay(
                 model_name="issue_comment",
                 model_id=str(pk),
-                requested_data=request.data,
+                requested_data=data,
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,
