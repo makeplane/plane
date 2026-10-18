@@ -28,7 +28,7 @@ class ProjectMemberSerializer(BaseSerializer):
             raise serializers.ValidationError("Slug is required", code="INVALID_SLUG")
         if not value:
             raise serializers.ValidationError("Member is required", code="INVALID_MEMBER")
-        if not WorkspaceMember.objects.filter(workspace__slug=slug, member=value).exists():
+        if not WorkspaceMember.objects.filter(workspace__slug=slug, member=value, is_active=True).exists():
             raise serializers.ValidationError("Member not found in workspace", code="INVALID_MEMBER")
         return value
 
