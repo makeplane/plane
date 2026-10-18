@@ -8,7 +8,7 @@ The AIO image contains the following services:
 
 - **Web App** (Port 3001): Main Plane web interface
 - **Space** (Port 3002): Public project spaces
-- **Admin** (Port 3003): Administrative interface  
+- **Admin** (Port 3003): Administrative interface
 - **API Server** (Port 3004): Backend API
 - **Live Server** (Port 3005): Real-time collaboration
 - **Proxy** (Port 80, 443): Caddy reverse proxy
@@ -21,7 +21,7 @@ The AIO image contains the following services:
 The AIO image requires these external services to be running:
 
 - **PostgreSQL Database**: For data storage
-- **Redis**: For caching and session management  
+- **Redis**: For caching and session management
 - **RabbitMQ**: For message queuing
 - **S3-Compatible Storage**: For file uploads (AWS S3 or MinIO)
 
@@ -33,7 +33,7 @@ You must provide these environment variables:
 
 - `DOMAIN_NAME`: Your domain name or IP address
 - `DATABASE_URL`: PostgreSQL connection string
-- `REDIS_URL`: Redis connection string  
+- `REDIS_URL`: Redis connection string
 - `AMQP_URL`: RabbitMQ connection string
 
 #### Storage Configuration
@@ -59,6 +59,8 @@ docker run --name plane-aio --rm -it \
     -e AWS_ACCESS_KEY_ID=your-access-key \
     -e AWS_SECRET_ACCESS_KEY=your-secret-key \
     -e AWS_S3_BUCKET_NAME=your-bucket \
+    -e SECRET_KEY=your-unique-secret-key \
+    -e LIVE_SERVER_SECRET_KEY=your-unique-live-server-secret \
     makeplane/plane-aio-community:latest
 ```
 
@@ -89,11 +91,14 @@ docker run --name myaio --rm -it \
 
 - `SITE_ADDRESS`: Server bind address (default: `:80`)
 
-
 #### Security & Secrets
 
-- `SECRET_KEY`: Django secret key (default provided)
-- `LIVE_SERVER_SECRET_KEY`: Live server secret (default provided)
+- `SECRET_KEY` (required): Django secret key. It also encrypts saved instance settings, so keep the same value across restarts and container recreation. No default is provided and none is generated.
+- `LIVE_SERVER_SECRET_KEY` (required): Live server secret. No default is provided and none is generated.
+
+Set both to unique, private values, either in `plane.env` (`variables.env`) or as environment variables. The container exits at startup if either is empty or still set to a default/placeholder value.
+
+In v1.4.0 to v1.4.2 a container started without `SECRET_KEY` received a generated key that changed on every recreation. When upgrading such a container, read the current key from the running container's `/app/plane.env` and pass it as `SECRET_KEY`.
 
 #### File Handling
 
@@ -116,7 +121,7 @@ The following ports are exposed:
 
 ```bash
 -v /path/to/logs:/app/logs \
--v /path/to/data:/app/data 
+-v /path/to/data:/app/data
 ```
 
 ## Building the Image
@@ -153,7 +158,7 @@ docker exec -it <container-name> supervisorctl status
 ### Common Issues
 
 1. **Database Connection Failed**: Ensure PostgreSQL is accessible and credentials are correct
-2. **Redis Connection Failed**: Verify Redis server is running and URL is correct  
+2. **Redis Connection Failed**: Verify Redis server is running and URL is correct
 3. **File Upload Issues**: Check S3 credentials and bucket permissions
 
 ### Environment Validation

@@ -49,7 +49,9 @@ catalog:
   "@tanstack/virtual-core": "^3.13.12"
   "@testing-library/react": "16.3.3"
   "@testing-library/user-event": "14.6.1"
-  "@tiptap/core": "^2.22.3"
+  # 2.27.3 backports the mergeAttributes __proto__ fix (GHSA-cp6q-959q-f8rh); the
+  # advisory only lists 3.30.4 as patched, so Dependabot keeps flagging 2.x.
+  "@tiptap/core": "^2.27.3"
   "@tiptap/extension-blockquote": "^2.22.3"
   "@tiptap/extension-character-count": "^2.22.3"
   "@tiptap/extension-collaboration": "^2.22.3"
@@ -230,7 +232,7 @@ overrides:
   webpack: 5.104.1
   lodash-es: "catalog:"
   lodash: 4.18.1
-  markdown-it: 14.2.0
+  markdown-it: 14.3.2
   rollup: 4.59.0
   "minimatch@3": 3.1.4
   "minimatch@10": 10.2.3
@@ -249,8 +251,9 @@ overrides:
   "router>path-to-regexp": "^8.4.2"
   defu: 6.1.5
   postcss: 8.5.25
-  "postcss-selector-parser@>=7.1.0 <7.1.3": "7.1.3"
-  "postcss-selector-parser@>=6.1.0 <6.1.3": "6.1.3"
+  # No 6.x fix for CVE-2026-104844 (fixed 7.1.6). @tailwindcss/typography pins 6.0.10 but
+  # only uses parser()/selector(); 7.0.0's sole break is safe insertion during iteration.
+  postcss-selector-parser: 7.1.6
   axios: "catalog:"
   follow-redirects: 1.16.0
   uuid: "catalog:"
@@ -268,7 +271,7 @@ overrides:
   "@opentelemetry/core": 2.8.0
   "@opentelemetry/resources": 2.8.0
   "@opentelemetry/sdk-trace-base": 2.8.0
-  morgan: 1.12.0
+  morgan: 1.12.1
   # Prototype pollution and unbounded query-cache growth, both reachable as DoS
   # (CVE-2026-73088 / CVE-2026-73089). browserslist is build tooling only
   # (babel/postcss/vite), but the runtime images copy node_modules wholesale, so
