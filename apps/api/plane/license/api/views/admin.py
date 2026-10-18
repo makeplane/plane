@@ -5,7 +5,6 @@
 # Python imports
 from urllib.parse import urlencode, urljoin
 import uuid
-from zxcvbn import zxcvbn
 
 # Django imports
 from django.http import HttpResponseRedirect
@@ -35,6 +34,7 @@ from plane.utils.cache import cache_response, invalidate_cache
 from plane.authentication.utils.login import user_login
 from plane.authentication.utils.host import base_host, user_ip
 from plane.authentication.rate_limit import throttle_auth_redirect
+from plane.authentication.utils.password import is_password_strong
 from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
     AuthenticationException,
@@ -194,8 +194,7 @@ class InstanceAdminSignUpEndpoint(View):
             )
             return HttpResponseRedirect(url)
         else:
-            results = zxcvbn(password)
-            if results["score"] < 3:
+            if not is_password_strong(password):
                 exc = AuthenticationException(
                     error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
                     error_message="PASSWORD_TOO_WEAK",

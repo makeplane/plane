@@ -21,6 +21,8 @@ from plane.db.models import (
     DraftIssueCycle,
     DraftIssueModule,
     ProjectMember,
+    Cycle,
+    Module,
     EstimatePoint,
 )
 from plane.utils.content_validator import (
@@ -54,6 +56,8 @@ class DraftIssueCreateSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "workspace",
+            # Set only from the membership-checked project_id at create.
+            "project",
             "created_by",
             "updated_by",
             "created_at",
@@ -137,7 +141,31 @@ class DraftIssueCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Estimate point is not valid please pass a valid estimate_point_id")
 
+        # Cycle and modules must belong to the draft's own project
+        if self.instance:
+            project_id, workspace_id = self.instance.project_id, self.instance.workspace_id
+        else:
+            project_id, workspace_id = self.context.get("project_id"), self.context.get("workspace_id")
+
+        self.check_cycle_and_modules(
+            self.initial_data.get("cycle_id"), self.initial_data.get("module_ids"), project_id, workspace_id
+        )
+
         return attrs
+
+    @staticmethod
+    def check_cycle_and_modules(cycle_id, module_ids, project_id, workspace_id):
+        """Raise ValidationError unless the cycle and modules belong to the given project and workspace."""
+        if (
+            cycle_id
+            and not Cycle.objects.filter(pk=cycle_id, project_id=project_id, workspace_id=workspace_id).exists()
+        ):
+            raise serializers.ValidationError("Cycle is not valid please pass a valid cycle_id")
+
+        if module_ids and Module.objects.filter(
+            pk__in=module_ids, project_id=project_id, workspace_id=workspace_id
+        ).count() != len(set(module_ids)):
+            raise serializers.ValidationError("Modules are not valid please pass valid module_ids")
 
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)

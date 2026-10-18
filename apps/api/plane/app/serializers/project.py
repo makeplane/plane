@@ -161,6 +161,7 @@ class ProjectMemberSerializer(BaseSerializer):
     class Meta:
         model = ProjectMember
         fields = "__all__"
+        read_only_fields = ["deleted_at", "created_by", "updated_by"]
 
 
 class ProjectMemberPreferenceSerializer(BaseSerializer):
@@ -251,7 +252,14 @@ class DeployBoardSerializer(BaseSerializer):
     class Meta:
         model = DeployBoard
         fields = "__all__"
-        read_only_fields = ["workspace", "project", "anchor"]
+        # The published entity is fixed when the board is created from the URL project.
+        read_only_fields = ["workspace", "project", "anchor", "entity_identifier", "entity_name"]
+
+    def validate_intake(self, intake):
+        # A board can only publish an intake from its own project.
+        if intake and intake.project_id != getattr(self.instance, "project_id", None):
+            raise serializers.ValidationError("Intake is not valid please pass a valid intake")
+        return intake
 
 
 class ProjectPublicMemberSerializer(BaseSerializer):
