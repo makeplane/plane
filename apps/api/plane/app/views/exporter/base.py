@@ -10,6 +10,7 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import ExporterHistorySerializer
 from plane.bgtasks.export_task import issue_export_task
 from plane.db.models import ExporterHistory, Project, Workspace
+from plane.utils.order_queryset import EXPORTER_HISTORY_ORDER_BY_ALLOWLIST, sanitize_order_by
 
 # Module imports
 from .. import BaseAPIView
@@ -72,7 +73,9 @@ class ExportIssuesEndpoint(BaseAPIView):
 
         if request.GET.get("per_page", False) and request.GET.get("cursor", False):
             return self.paginate(
-                order_by=request.GET.get("order_by", "-created_at"),
+                order_by=sanitize_order_by(
+                    request.GET.get("order_by", "-created_at"), EXPORTER_HISTORY_ORDER_BY_ALLOWLIST, "-created_at"
+                ),
                 request=request,
                 queryset=exporter_history,
                 on_results=lambda exporter_history: ExporterHistorySerializer(exporter_history, many=True).data,
