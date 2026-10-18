@@ -210,12 +210,14 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                             slug=slug,
                             filters=filters,
                             queryset=total_issue_queryset,
+                            user=request.user,
                         ),
                         sub_group_by_fields=issue_group_values(
                             field=sub_group_by,
                             slug=slug,
                             filters=filters,
                             queryset=total_issue_queryset,
+                            user=request.user,
                         ),
                         group_by_field_name=group_by,
                         sub_group_by_field_name=sub_group_by,
@@ -244,6 +246,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                         slug=slug,
                         filters=filters,
                         queryset=total_issue_queryset,
+                        user=request.user,
                     ),
                     group_by_field_name=group_by,
                     count_filter=Q(
