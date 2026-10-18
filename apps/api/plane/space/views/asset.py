@@ -16,12 +16,23 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-from plane.db.models import DeployBoard, FileAsset
+from plane.db.models import DeployBoard, FileAsset, IssueComment
 from plane.settings.storage import S3Storage
 from plane.utils.path_validator import sanitize_filename
 
 # Module imports
 from .base import BaseAPIView
+
+
+def _is_own_board_comment(comment_id, deploy_board, user):
+    """An EXTERNAL comment in the board's project + workspace authored by the user."""
+    return IssueComment.objects.filter(
+        id=comment_id,
+        project_id=deploy_board.project_id,
+        workspace_id=deploy_board.workspace_id,
+        access="EXTERNAL",
+        actor=user,
+    ).exists()
 
 
 class EntityAssetEndpoint(BaseAPIView):
@@ -80,6 +91,13 @@ class EntityAssetEndpoint(BaseAPIView):
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
+        # Public uploads are only for comment images on boards with comments enabled
+        if not deploy_board.is_comments_enabled:
+            return Response(
+                {"error": "Comments are not enabled for this project"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Get the asset
         name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", "image/jpeg")
@@ -91,7 +109,8 @@ class EntityAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         entity_type = request.data.get("entity_type", "")
-        entity_identifier = request.data.get("entity_identifier")
+        # The client sends "" for a comment that does not exist yet; keep such uploads unbound
+        entity_identifier = request.data.get("entity_identifier") or None
 
         # Clamp the client-provided size to [1, FILE_SIZE_LIMIT] so the signed
         # upload policy cannot exceed the instance limit and always carries a
@@ -99,11 +118,15 @@ class EntityAssetEndpoint(BaseAPIView):
         size_limit = max(1, min(size, settings.FILE_SIZE_LIMIT))
 
         # Check if the entity type is allowed
-        if entity_type not in FileAsset.EntityTypeContext.values:
+        if entity_type != FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:
             return Response(
                 {"error": "Invalid entity type.", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # An existing comment must be the caller's own comment on this board
+        if entity_identifier and not _is_own_board_comment(entity_identifier, deploy_board, request.user):
+            return Response({"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Check if the file type is allowed
         allowed_types = [
@@ -216,6 +239,16 @@ class EntityBulkAssetEndpoint(BaseAPIView):
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
+        if not deploy_board.is_comments_enabled:
+            return Response(
+                {"error": "Comments are not enabled for this project"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Assets may only be bound to the caller's own comment on this board
+        if not _is_own_board_comment(entity_id, deploy_board, request.user):
+            return Response({"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND)
+
         asset_ids = request.data.get("asset_ids", [])
 
         # Check if the asset ids are provided
@@ -238,8 +271,9 @@ class EntityBulkAssetEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        # Check if the entity type is allowed
-        if asset.entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:
-            # update the attributes
-            assets.update(comment_id=entity_id)
+        # Only the caller's own comment images are bound
+        assets.filter(
+            entity_type=FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+            created_by=request.user,
+        ).update(comment_id=entity_id)
         return Response(status=status.HTTP_204_NO_CONTENT)
