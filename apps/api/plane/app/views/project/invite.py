@@ -153,10 +153,11 @@ class UserProjectInvitationsViewset(BaseViewSet):
         # network check above (GHSA-45hc-q4mw-jhxm).
         validated_project_ids = [str(p.id) for p in projects]
 
-        # If the user was already part of workspace
+        # If the user was already part of the project, reactivate them with the
+        # same role a new joiner gets; a previous project role is not restored.
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug, project_id__in=validated_project_ids, member=request.user
-        ).update(is_active=True)
+            workspace__slug=slug, project_id__in=validated_project_ids, member=request.user, is_active=False
+        ).update(is_active=True, role=workspace_role, updated_by=request.user, updated_at=timezone.now())
 
         ProjectMember.objects.bulk_create(
             [
