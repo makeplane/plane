@@ -33,6 +33,7 @@ from plane.db.models import User, Profile
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.authentication.utils.login import user_login
 from plane.authentication.utils.host import base_host, user_ip
+from plane.authentication.rate_limit import throttle_auth_redirect
 from plane.authentication.utils.password import is_password_strong
 from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
@@ -90,6 +91,7 @@ class InstanceAdminEndpoint(BaseAPIView):
 class InstanceAdminSignUpEndpoint(View):
     permission_classes = [AllowAny]
 
+    @throttle_auth_redirect(is_admin=True)
     @invalidate_cache(path="/api/instances/", user=False)
     def post(self, request):
         # Check instance first (outside the transaction — no need to lock yet)
@@ -268,6 +270,7 @@ class InstanceAdminSignUpEndpoint(View):
 class InstanceAdminSignInEndpoint(View):
     permission_classes = [AllowAny]
 
+    @throttle_auth_redirect(is_admin=True)
     @invalidate_cache(path="/api/instances/", user=False)
     def post(self, request):
         # Check instance first

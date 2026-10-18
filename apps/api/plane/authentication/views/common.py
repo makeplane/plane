@@ -23,6 +23,7 @@ from plane.authentication.adapter.error import (
 from django.middleware.csrf import get_token
 from plane.utils.cache import invalidate_cache
 from plane.authentication.utils.host import base_host
+from plane.authentication.rate_limit import AuthenticationThrottle
 
 
 class CSRFTokenEndpoint(APIView):
@@ -45,6 +46,8 @@ def csrf_failure(request, reason=""):
 
 
 class ChangePasswordEndpoint(APIView):
+    throttle_classes = [AuthenticationThrottle]
+
     def post(self, request):
         user = User.objects.get(pk=request.user.id)
 
