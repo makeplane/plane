@@ -15,6 +15,7 @@ from unittest.mock import patch
 
 from plane.authentication.provider.credentials.magic_code import MagicCodeProvider
 from plane.authentication.rate_limit import AuthenticationThrottle
+from plane.authentication.utils.host import base_host
 from plane.db.models import User
 from plane.settings.redis import redis_instance
 from plane.license.models import Instance
@@ -779,6 +780,59 @@ class TestAuthenticationThrottle:
 
             response = django_client.post(url, {"email": "throttle-up@plane.so", "password": "secret123"}, follow=False)
             assert "RATE_LIMIT_EXCEEDED" in response.url
+
+    @pytest.mark.django_db
+    def test_password_sign_in_throttled_for_authenticated_session(self, django_client, create_user, setup_instance):
+        """A signed-in session shares the same per-IP budget as anonymous callers."""
+        django_client.force_login(create_user)
+        url = reverse("sign-in")
+        with patch.object(AuthenticationThrottle, "rate", "2/minute"):
+            for _ in range(2):
+                response = django_client.post(
+                    url, {"email": "throttle@plane.so", "password": "secret123"}, follow=False
+                )
+                assert "RATE_LIMIT_EXCEEDED" not in response.url
+
+            response = django_client.post(url, {"email": "throttle@plane.so", "password": "secret123"}, follow=False)
+            assert response.status_code == 302
+            assert "RATE_LIMIT_EXCEEDED" in response.url
+
+    @pytest.mark.django_db
+    def test_email_check_throttled_for_authenticated_session(self, session_client, setup_instance):
+        """DRF auth endpoints (throttle_classes) also throttle signed-in callers per IP."""
+        url = reverse("email-check")
+        with patch.object(AuthenticationThrottle, "rate", "1/minute"):
+            response = session_client.post(url, {"email": "throttle@plane.so"}, format="json")
+            assert response.status_code != status.HTTP_429_TOO_MANY_REQUESTS
+
+            response = session_client.post(url, {"email": "throttle@plane.so"}, format="json")
+            assert response.status_code == status.HTTP_429_TOO_MANY_REQUESTS
+
+    @pytest.mark.django_db
+    def test_change_password_throttled(self, session_client, setup_instance):
+        """Old-password checks on change-password share the per-IP budget for signed-in callers."""
+        url = "/auth/change-password/"
+        payload = {"old_password": "wrong-password", "new_password": "a-Much-Stronger-Pass-2024!"}
+        with patch.object(AuthenticationThrottle, "rate", "1/minute"):
+            response = session_client.post(url, payload, format="json")
+            assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+            response = session_client.post(url, payload, format="json")
+            assert response.status_code == status.HTTP_429_TOO_MANY_REQUESTS
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("path", ["/api/instances/admins/sign-in/", "/api/instances/admins/sign-up/"])
+    def test_instance_admin_auth_throttled(self, django_client, setup_instance, path):
+        """Instance-admin sign-in / sign-up share the per-IP budget and redirect to the admin app."""
+        admin_base = base_host(request=None, is_admin=True).rstrip("/")
+        with patch.object(AuthenticationThrottle, "rate", "1/minute"):
+            response = django_client.post(path, {"email": "throttle@plane.so", "password": "secret123"}, follow=False)
+            assert "RATE_LIMIT_EXCEEDED" not in response.url
+
+            response = django_client.post(path, {"email": "throttle@plane.so", "password": "secret123"}, follow=False)
+            assert response.status_code == 302
+            assert "RATE_LIMIT_EXCEEDED" in response.url
+            assert response.url.startswith(admin_base)
 
 
 @pytest.mark.contract
