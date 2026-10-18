@@ -13,6 +13,7 @@ from ..base import BaseAPIView, BaseViewSet
 from plane.app.permissions import WorkspaceMemberPermission
 from plane.db.models import FileAsset, Workspace
 from plane.app.serializers import FileAssetSerializer
+from .v2 import can_modify_asset
 
 
 class FileAssetEndpoint(BaseAPIView):
@@ -48,6 +49,11 @@ class FileAssetEndpoint(BaseAPIView):
     def delete(self, request, workspace_id, asset_key):
         asset_key = str(workspace_id) + "/" + asset_key
         file_asset = FileAsset.objects.get(asset=asset_key)
+        if not can_modify_asset(request.user, file_asset):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         file_asset.is_deleted = True
         file_asset.save(update_fields=["is_deleted"])
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -59,6 +65,11 @@ class FileAssetViewSet(BaseViewSet):
     def restore(self, request, workspace_id, asset_key):
         asset_key = str(workspace_id) + "/" + asset_key
         file_asset = FileAsset.objects.get(asset=asset_key)
+        if not can_modify_asset(request.user, file_asset):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         file_asset.is_deleted = False
         file_asset.save(update_fields=["is_deleted"])
         return Response(status=status.HTTP_204_NO_CONTENT)
