@@ -15,8 +15,9 @@ print_header(){
     echo "    SITE_ADDRESS (default: ':80')"
     echo "    FILE_SIZE_LIMIT (default: 5242880)"
     echo "    APP_PROTOCOL (http or https)"
-    echo "    SECRET_KEY (auto-generated on first boot if not set)"
-    echo "    LIVE_SERVER_SECRET_KEY (auto-generated on first boot if not set)"
+    echo ""
+    echo "Required secrets (no default, set a unique value for each):"
+    echo "    SECRET_KEY, LIVE_SERVER_SECRET_KEY"
     echo ""
     echo ""
 }
@@ -62,10 +63,58 @@ update_env_value(){
 
     # if key and value are not empty, update the value
     if [ -n "$key" ] && [ -n "$value" ]; then
-        sed -i "s|^$key=.*|$key=$value|" plane.env
+        # awk reads key/value from the environment so the value is written verbatim
+        UEV_KEY="$key" UEV_VAL="$value" awk '
+            index($0, ENVIRON["UEV_KEY"] "=") == 1 { print ENVIRON["UEV_KEY"] "=" ENVIRON["UEV_VAL"]; next }
+            { print }
+        ' plane.env > plane.env.tmp && mv plane.env.tmp plane.env
         return 0
     fi
 
+}
+
+# Value from the environment, else from plane.env (variables.env), else empty.
+resolved_value(){
+    local key="$1"
+    if [ -n "${!key}" ]; then
+        printf '%s' "${!key}"
+    else
+        { grep -m1 "^$key=" plane.env || true; } | cut -d'=' -f2-
+    fi
+}
+
+check_secrets(){
+    echo "Checking required secrets..."
+    local insecure_defaults=("60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5"
+                             "htbqvBJAgpm9bzvf3r4urJer0ENReatceh"
+                             "change-this-key-on-deployment")
+    local invalid_keys=()
+    local key value default
+    for key in "SECRET_KEY" "LIVE_SERVER_SECRET_KEY"; do
+        value=$(resolved_value "$key")
+        if [ -z "$value" ]; then
+            echo "  ❌  '$key' is not set or is empty"
+            invalid_keys+=("$key")
+            continue
+        fi
+        for default in "${insecure_defaults[@]}"; do
+            if [ "$value" = "$default" ]; then
+                echo "  ❌  '$key' is set to a default/placeholder value"
+                invalid_keys+=("$key")
+                break
+            fi
+        done
+    done
+
+    if [ ${#invalid_keys[@]} -gt 0 ]; then
+        echo ""
+        echo "SECRET_KEY and LIVE_SERVER_SECRET_KEY must be set to unique, private values."
+        echo "Set them in plane.env (variables.env) or pass them as environment variables,"
+        echo "then start the container again."
+        exit 1
+    fi
+    echo "✅ Required secrets are set"
+    echo ""
 }
 
 check_pre_requisites(){
@@ -76,6 +125,7 @@ check_pre_requisites(){
         echo "plane.env file not found"
         exit 1
     fi
+    check_secrets
     # add a new line to the end of the file
     echo "" >> plane.env
     echo "" >> plane.env
@@ -145,34 +195,8 @@ update_env_file(){
     update_env_value "USE_MINIO" "0"
 
     # Optional environment variables
-    # SECRET_KEY: if absent or set to a known placeholder/insecure value, preserve whatever
-    # is already stored in plane.env (survives restarts), or generate a fresh random value on
-    # first boot. Never write a publicly-known or placeholder value into plane.env.
-    local _insecure_sk="60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5"
-    local _placeholder_sk="change-this-key-on-deployment"
-    if [ -z "$SECRET_KEY" ] || [ "$SECRET_KEY" = "$_insecure_sk" ] || [ "$SECRET_KEY" = "$_placeholder_sk" ]; then
-        local _stored_sk
-        _stored_sk=$(grep "^SECRET_KEY=" plane.env 2>/dev/null | cut -d'=' -f2-)
-        if [ -n "$_stored_sk" ] && [ "$_stored_sk" != "$_insecure_sk" ] && [ "$_stored_sk" != "$_placeholder_sk" ]; then
-            SECRET_KEY="$_stored_sk"
-        else
-            SECRET_KEY=$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c50)
-        fi
-    fi
     update_env_value "SECRET_KEY" "$SECRET_KEY"
     update_env_value "FILE_SIZE_LIMIT" "${FILE_SIZE_LIMIT:-5242880}"
-    # LIVE_SERVER_SECRET_KEY: same first-boot generation strategy.
-    local _insecure_lssk="htbqvBJAgpm9bzvf3r4urJer0ENReatceh"
-    local _placeholder_lssk="change-this-key-on-deployment"
-    if [ -z "$LIVE_SERVER_SECRET_KEY" ] || [ "$LIVE_SERVER_SECRET_KEY" = "$_insecure_lssk" ] || [ "$LIVE_SERVER_SECRET_KEY" = "$_placeholder_lssk" ]; then
-        local _stored_lssk
-        _stored_lssk=$(grep "^LIVE_SERVER_SECRET_KEY=" plane.env 2>/dev/null | cut -d'=' -f2-)
-        if [ -n "$_stored_lssk" ] && [ "$_stored_lssk" != "$_insecure_lssk" ] && [ "$_stored_lssk" != "$_placeholder_lssk" ]; then
-            LIVE_SERVER_SECRET_KEY="$_stored_lssk"
-        else
-            LIVE_SERVER_SECRET_KEY=$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c50)
-        fi
-    fi
     update_env_value "LIVE_SERVER_SECRET_KEY" "$LIVE_SERVER_SECRET_KEY"
 
     update_env_value "API_KEY_RATE_LIMIT" "${API_KEY_RATE_LIMIT:-60/minute}"
@@ -187,7 +211,13 @@ main(){
     update_env_file
 
     # load plane.env as exported variables
-    export $(grep -v '^#' plane.env | xargs)
+    # read line by line so values are exported verbatim (no word-splitting or quote stripping)
+    while IFS= read -r line || [ -n "$line" ]; do
+        case "$line" in
+            ""|\#*|"="*) continue ;;
+            *=*) export "${line%%=*}=${line#*=}" ;;
+        esac
+    done < plane.env
 
     /usr/local/bin/supervisord -c /etc/supervisor/conf.d/supervisor.conf
 }
