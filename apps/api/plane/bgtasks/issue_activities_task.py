@@ -738,7 +738,8 @@ def update_comment_activity(
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = json.loads(current_instance) if current_instance is not None else None
 
-    if current_instance.get("comment_html") != requested_data.get("comment_html"):
+    # Only a change to the comment's HTML is recorded; payloads without it (e.g. access only) are not.
+    if "comment_html" in requested_data and current_instance.get("comment_html") != requested_data["comment_html"]:
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
