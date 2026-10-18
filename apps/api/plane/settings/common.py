@@ -184,10 +184,8 @@ cors_origins_raw = os.environ.get("CORS_ALLOWED_ORIGINS", "")
 cors_allowed_origins = [origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()]
 if cors_allowed_origins:
     CORS_ALLOWED_ORIGINS = cors_allowed_origins
-    secure_origins = False if [origin for origin in cors_allowed_origins if "http:" in origin] else True
 else:
     CORS_ALLOW_ALL_ORIGINS = True
-    secure_origins = False
 
 CORS_ALLOW_HEADERS = [*default_headers, "X-API-Key"]
 
@@ -366,8 +364,24 @@ SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
+
+def _cookies_secure(web_url, cors_allowed_origins, app_base_url=None):
+    """
+    Cookies are Secure when Plane is served over https, or when every configured
+    CORS origin is https. Plain-http installs keep non-Secure cookies.
+
+    The serving URL is WEB_URL, falling back to APP_BASE_URL when WEB_URL is
+    unset or empty, matching the precedence used by base_host().
+    """
+    if (web_url or app_base_url or "").strip().lower().startswith("https://"):
+        return True
+    return bool(cors_allowed_origins) and not any("http:" in origin for origin in cors_allowed_origins)
+
+
 # Cookie Settings
-SESSION_COOKIE_SECURE = secure_origins
+SESSION_COOKIE_SECURE = _cookies_secure(
+    os.environ.get("WEB_URL"), cors_allowed_origins, app_base_url=os.environ.get("APP_BASE_URL")
+)
 SESSION_COOKIE_HTTPONLY = True
 SESSION_ENGINE = "plane.db.models.session"
 SESSION_COOKIE_AGE = int(os.environ.get("SESSION_COOKIE_AGE", 604800))
@@ -380,7 +394,7 @@ ADMIN_SESSION_COOKIE_NAME = "admin-session-id"
 ADMIN_SESSION_COOKIE_AGE = int(os.environ.get("ADMIN_SESSION_COOKIE_AGE", 3600))
 
 # CSRF cookies
-CSRF_COOKIE_SECURE = secure_origins
+CSRF_COOKIE_SECURE = SESSION_COOKIE_SECURE
 CSRF_COOKIE_HTTPONLY = True
 CSRF_TRUSTED_ORIGINS = cors_allowed_origins
 CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
