@@ -254,7 +254,7 @@ class Adapter:
         """Delete the old avatar if it exists"""
         try:
             if user.avatar_asset:
-                asset = FileAsset.objects.get(pk=user.avatar_asset_id)
+                asset = FileAsset.objects.get(pk=user.avatar_asset_id, user_id=user.id)
                 storage = S3Storage(request=self.request)
                 storage.delete_files(object_names=[asset.asset.name])
 
@@ -265,7 +265,8 @@ class Adapter:
                 user.save()
             return
         except FileAsset.DoesNotExist:
-            pass
+            # Not the user's own asset: drop the link without touching the asset
+            user.avatar_asset = None
         except Exception as e:
             log_exception(e)
             return
