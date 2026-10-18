@@ -766,6 +766,12 @@ class ModuleLinkViewSet(BaseViewSet):
     serializer_class = ModuleLinkSerializer
 
     def perform_create(self, serializer):
+        # The URL module must belong to the URL workspace + project (404 otherwise).
+        Module.objects.get(
+            pk=self.kwargs.get("module_id"),
+            project_id=self.kwargs.get("project_id"),
+            workspace__slug=self.kwargs.get("slug"),
+        )
         serializer.save(
             project_id=self.kwargs.get("project_id"),
             module_id=self.kwargs.get("module_id"),
