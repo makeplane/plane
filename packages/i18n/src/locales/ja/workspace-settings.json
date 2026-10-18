@@ -14,6 +14,8 @@
         "company_size": "会社の規模",
         "url": "ワークスペースURL",
         "workspace_timezone": "ワークスペースのタイムゾーン",
+        "default_time_format": "既定の時刻表示形式",
+        "default_time_format_description": "個人設定で時刻の表示形式を選択していないメンバーに適用されます。",
         "update_workspace": "ワークスペースを更新",
         "delete_workspace": "このワークスペースを削除",
         "delete_workspace_description": "ワークスペースを削除すると、そのワークスペース内のすべてのデータとリソースが完全に削除され、復元することはできません。",

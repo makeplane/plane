@@ -4,13 +4,15 @@
  * See the LICENSE file for details.
  */
 
+import { observer } from "mobx-react";
 import type { ReactNode } from "react";
 import { HierarchyOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
+import { renderFormattedDate, calculateTimeAgo } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useTimeFormat } from "@/hooks/use-time-format";
 // local imports
 import { IssueUser } from "../";
 import { IssueCreatorDisplay } from "./issue-creator";
@@ -23,7 +25,9 @@ type TIssueActivityBlockComponent = {
   customUserName?: string;
 };
 
-export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent) {
+export const IssueActivityBlockComponent = observer(function IssueActivityBlockComponent(
+  props: TIssueActivityBlockComponent
+) {
   const { icon, activityId, ends, children, customUserName } = props;
   // hooks
   const {
@@ -32,6 +36,7 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
 
   const activity = getActivityById(activityId);
   const { isMobile } = usePlatformOS();
+  const { formatTime } = useTimeFormat();
   if (!activity) return <></>;
   return (
     <div
@@ -52,7 +57,7 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
         <span> {children} </span>
         <span>
           <Tooltip
-            label={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
+            label={`${renderFormattedDate(activity.created_at)}, ${formatTime(activity.created_at)}`}
             disabled={isMobile}
           >
             <span className="whitespace-nowrap text-tertiary"> {calculateTimeAgo(activity.created_at)}</span>
@@ -61,4 +66,4 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
       </div>
     </div>
   );
-}
+});

@@ -19,6 +19,11 @@ from plane.utils.color import get_random_color
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
 
 
+class TimeFormat(models.TextChoices):
+    TWELVE_HOUR = "12-hour", "12-hour"
+    TWENTY_FOUR_HOUR = "24-hour", "24-hour"
+
+
 def get_default_props():
     return {
         "filters": {
@@ -136,6 +141,8 @@ class Workspace(BaseModel):
     slug = models.SlugField(max_length=48, db_index=True, unique=True, validators=[slug_validator])
     organization_size = models.CharField(max_length=20, blank=True, null=True)
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
+    # Clock used for members who have not picked one in their profile
+    time_format = models.CharField(max_length=10, choices=TimeFormat.choices, default=TimeFormat.TWELVE_HOUR)
     background_color = models.CharField(max_length=255, default=get_random_color)
 
     def __str__(self):

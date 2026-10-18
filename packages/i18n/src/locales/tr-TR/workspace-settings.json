@@ -14,6 +14,8 @@
         "company_size": "Şirket Büyüklüğü",
         "url": "Çalışma Alanı URL'si",
         "workspace_timezone": "Çalışma Alanı Saat Dilimi",
+        "default_time_format": "Varsayılan saat biçimi",
+        "default_time_format_description": "Tercihlerinde saat biçimi seçmemiş üyeler için kullanılır.",
         "update_workspace": "Çalışma Alanını Güncelle",
         "delete_workspace": "Bu çalışma alanını sil",
         "delete_workspace_description": "Bir çalışma alanı silindiğinde, içindeki tüm veri ve kaynaklar kalıcı olarak kaldırılır ve kurtarılamaz.",

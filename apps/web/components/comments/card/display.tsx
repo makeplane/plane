@@ -16,7 +16,7 @@ import { useHashScroll } from "@plane/hooks";
 import { GlobeOutline, LockOutline } from "@makeplane/propel/icons";
 import { EIssueCommentAccessSpecifier } from "@plane/types";
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
-import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import { calculateTimeAgo, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
 // local imports
@@ -24,6 +24,7 @@ import { CommentReactions } from "../comment-reaction";
 import { CommentCardEditForm } from "./edit-form";
 import { EmojiReactionButton, EmojiReactionPicker } from "@plane/blocks/emoji-reaction";
 import { useMember } from "@/hooks/store/use-member";
+import { useTimeFormat } from "@/hooks/use-time-format";
 
 export type TCommentCardDisplayProps = {
   activityOperations: TCommentsOperations;
@@ -56,6 +57,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
     renderFooter,
     renderQuickActions,
   } = props;
+  const { formatTime } = useTimeFormat();
   // states
   const [highlightClassName, setHighlightClassName] = useState("");
   // state
@@ -124,7 +126,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
           <div className="text-caption-sm-regular text-tertiary">
             commented{" "}
             <Tooltip
-              label={`${renderFormattedDate(comment.created_at)} at ${renderFormattedTime(comment.created_at)}`}
+              label={`${renderFormattedDate(comment.created_at)} at ${formatTime(comment.created_at)}`}
               side="bottom"
               layout="single"
               delay={200}

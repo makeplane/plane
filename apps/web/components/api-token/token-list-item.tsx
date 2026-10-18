@@ -4,27 +4,30 @@
  * See the LICENSE file for details.
  */
 
+import { observer } from "mobx-react";
 import { useState } from "react";
 import { CloseCircleOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IApiToken } from "@plane/types";
-import { renderFormattedDate, calculateTimeAgo, renderFormattedTime } from "@plane/utils";
+import { renderFormattedDate, calculateTimeAgo } from "@plane/utils";
 // components
 import { DeleteApiTokenModal } from "@/components/api-token/delete-token-modal";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useTimeFormat } from "@/hooks/use-time-format";
 
 type Props = {
   token: IApiToken;
 };
 
-export function ApiTokenListItem(props: Props) {
+export const ApiTokenListItem = observer(function ApiTokenListItem(props: Props) {
   const { token } = props;
   // states
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   // hooks
   const { isMobile } = usePlatformOS();
+  const { formatTime } = useTimeFormat();
 
   return (
     <>
@@ -55,7 +58,7 @@ export function ApiTokenListItem(props: Props) {
           <p className="mb-1 text-11 leading-6 text-placeholder">
             {token.is_active
               ? token.expired_at
-                ? `Expires ${renderFormattedDate(token.expired_at)} at ${renderFormattedTime(token.expired_at)}`
+                ? `Expires ${renderFormattedDate(token.expired_at)} at ${formatTime(token.expired_at)}`
                 : "Never expires"
               : `Expired ${calculateTimeAgo(token.expired_at)}`}
           </p>
@@ -63,4 +66,4 @@ export function ApiTokenListItem(props: Props) {
       </div>
     </>
   );
-}
+});

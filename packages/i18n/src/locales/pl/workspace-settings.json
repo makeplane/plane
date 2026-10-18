@@ -14,6 +14,8 @@
         "company_size": "Rozmiar firmy",
         "url": "URL przestrzeni roboczej",
         "workspace_timezone": "Strefa czasowa przestrzeni roboczej",
+        "default_time_format": "Domyślny format czasu",
+        "default_time_format_description": "Używany dla członków, którzy nie wybrali formatu czasu w swoich preferencjach.",
         "update_workspace": "Zaktualizuj przestrzeń",
         "delete_workspace": "Usuń tę przestrzeń",
         "delete_workspace_description": "Usunięcie przestrzeni spowoduje wymazanie wszystkich danych i zasobów. Ta akcja jest nieodwracalna.",

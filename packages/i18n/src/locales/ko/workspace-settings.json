@@ -14,6 +14,8 @@
         "company_size": "회사 규모",
         "url": "작업 공간 URL",
         "workspace_timezone": "작업 공간 시간대",
+        "default_time_format": "기본 시간 형식",
+        "default_time_format_description": "환경설정에서 시간 형식을 선택하지 않은 멤버에게 적용됩니다.",
         "update_workspace": "작업 공간 업데이트",
         "delete_workspace": "이 작업 공간 삭제",
         "delete_workspace_description": "작업 공간을 삭제하면 해당 작업 공간 내의 모든 데이터와 리소스가 영구적으로 삭제되며 복구할 수 없습니다.",

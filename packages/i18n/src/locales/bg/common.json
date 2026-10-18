@@ -74,6 +74,13 @@
   "select_or_customize_your_interface_color_scheme": "Изберете или персонализирайте цветовата схема на интерфейса.",
   "timezone_setting": "Текуща настройка на часовата зона.",
   "language_setting": "Изберете езика на потребителския интерфейс.",
+  "time_format": {
+    "label": "Формат на часа",
+    "description": "Изберете как се показва часът в приложението.",
+    "12_hour": "12-часов (02:43 PM)",
+    "24_hour": "24-часов (14:43)",
+    "update_success": "Форматът на часа е обновен успешно"
+  },
   "settings_moved_to_preferences": "Настройките за часова зона и език са преместени в предпочитанията.",
   "go_to_preferences": "Към предпочитанията",
   "select_the_cursor_motion_style_that_feels_right_for_you": "Изберете стила на движение на курсора, който ви подхожда.",

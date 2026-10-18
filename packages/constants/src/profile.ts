@@ -5,6 +5,7 @@
  */
 
 // plane imports
+import type { TTimeFormat } from "@plane/types";
 import { EStartOfTheWeek } from "@plane/types";
 
 export const PROFILE_VIEWER_TAB = [
@@ -89,4 +90,18 @@ export const START_OF_THE_WEEK_OPTIONS = [
     value: EStartOfTheWeek.SATURDAY,
     label: "Saturday",
   },
+];
+
+/**
+ * @description The fallback clock when neither the user nor the workspace picked one
+ */
+export const DEFAULT_TIME_FORMAT: TTimeFormat = "12-hour";
+
+/**
+ * @description The options for the time format, labels are i18n keys
+ * @constant
+ */
+export const TIME_FORMAT_OPTIONS: { value: TTimeFormat; i18n_label: string }[] = [
+  { value: "12-hour", i18n_label: "time_format.12_hour" },
+  { value: "24-hour", i18n_label: "time_format.24_hour" },
 ];
