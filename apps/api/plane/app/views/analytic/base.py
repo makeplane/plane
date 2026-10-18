@@ -23,6 +23,7 @@ from plane.db.models import (
     AnalyticView,
     Issue,
     Workspace,
+    WorkspaceMember,
     Project,
     ProjectMember,
     Cycle,
@@ -425,6 +426,19 @@ class ProjectStatsEndpoint(BaseAPIView):
             requested_fields = valid_fields
 
         projects = Project.objects.filter(workspace__slug=slug)
+        # Same visibility as the project list: admins see every project, members see
+        # projects they belong to plus public ones, guests only projects they belong to
+        role = (
+            WorkspaceMember.objects.filter(workspace__slug=slug, member=request.user, is_active=True)
+            .values_list("role", flat=True)
+            .first()
+        )
+        if role != ROLE.ADMIN.value:
+            member_projects = ProjectMember.objects.filter(workspace__slug=slug, member=request.user, is_active=True)
+            visible = Q(id__in=member_projects.values("project_id"))
+            if role == ROLE.MEMBER.value:
+                visible |= Q(network=2)
+            projects = projects.filter(visible)
         if project_ids:
             projects = projects.filter(id__in=project_ids.split(","))
 
