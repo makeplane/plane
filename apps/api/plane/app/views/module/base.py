@@ -49,6 +49,7 @@ from plane.app.serializers import (
     ModuleUserPropertiesSerializer,
     ModuleWriteSerializer,
 )
+from plane.app.serializers.favorite import get_favorite_entities
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
@@ -808,6 +809,10 @@ class ModuleFavoriteViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id):
+        # 404 unless the module is in this project and visible to the user
+        get_favorite_entities("module", request.user.id, project_id).get(
+            pk=request.data.get("module"), workspace__slug=slug
+        )
         _ = UserFavorite.objects.create(
             project_id=project_id,
             user=request.user,
