@@ -102,6 +102,14 @@ class TestGeneratePlainTextFromHtml:
     def test_preserves_link_destinations(self, html_content, expected):
         assert generate_plain_text_from_html(html_content).strip() == expected
 
+    @pytest.mark.parametrize("content", ["", '<img src="button.png" alt="Open" />'])
+    def test_separates_unlabelled_adjacent_link_destinations(self, content):
+        first = "https://example.com/first?source=email&view=detail"
+        second = "https://example.com/second"
+        html_content = f'<a href="{first}">{content}</a><a href="{second}">{content}</a>'
+
+        assert generate_plain_text_from_html(html_content).split() == [first, second]
+
     def test_issue_update_multipart_email_keeps_action_links_in_plain_text(self):
         issue_url = "https://example.com/acme/project/issues/123?source=email&view=detail"
         preferences_url = "https://example.com/settings/profile/notifications"

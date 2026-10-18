@@ -57,7 +57,7 @@ def generate_plain_text_from_html(html_content):
         # A visible URL (or mailto address) already carries its destination.
         visible_destination = href[7:] if href.lower().startswith("mailto:") else href
         if href and label not in (href, visible_destination):
-            link.append(f" ({href})" if label else href)
+            link.append(f" ({href})" if label else f" {href} ")
 
     # The parser decodes entities once. Appending hrefs as text before extracting
     # it preserves query strings, including literal angle brackets in the URL.
