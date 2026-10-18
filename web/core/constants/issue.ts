@@ -375,6 +375,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: TIssueFiltersToDisplayByPageType =
         "created_by",
         "labels",
         "start_date",
+        "completed_at",
         "issue_type",
       ],
       display_properties: ["key", "issue_type"],

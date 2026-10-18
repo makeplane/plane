@@ -256,21 +256,20 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                         <FilterSelection
                           filters={filters ?? {}}
                           handleFiltersUpdate={(key, value) => {
-                            const newValues = filters?.[key] ?? [];
-
                             if (Array.isArray(value)) {
-                              value.forEach((val) => {
-                                if (!newValues.includes(val)) newValues.push(val);
+                              onChange({
+                                ...filters,
+                                [key]: value,
                               });
                             } else {
+                              const newValues = filters?.[key] ?? [];
                               if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
                               else newValues.push(value);
+                              onChange({
+                                ...filters,
+                                [key]: newValues,
+                              });
                             }
-
-                            onChange({
-                              ...filters,
-                              [key]: newValues,
-                            });
                           }}
                           layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[displayFilters.layout]}
                           labels={projectLabels ?? undefined}

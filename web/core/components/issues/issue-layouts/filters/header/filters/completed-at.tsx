@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { DateFilterModal } from "@/components/core";
 import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
-import { DATE_AFTER_FILTER_OPTIONS } from "@/constants/filters";
+import { DATE_BEFORE_FILTER_OPTIONS } from "@/constants/filters";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -21,7 +21,7 @@ export const FilterCompletedAt: React.FC<Props> = observer((props) => {
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = DATE_AFTER_FILTER_OPTIONS.filter((d) =>
+  const filteredOptions = DATE_BEFORE_FILTER_OPTIONS.filter((d) =>
     d.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -30,10 +30,7 @@ export const FilterCompletedAt: React.FC<Props> = observer((props) => {
     return isCustomDateApplied.length > 0 ? true : false;
   };
   const handleCustomDate = () => {
-    if (isCustomDateSelected()) {
-      const updateAppliedFilters = appliedFilters?.filter((f) => f.includes("-")) || [];
-      handleUpdate(updateAppliedFilters);
-    } else setIsDateFilterModalOpen(true);
+    setIsDateFilterModalOpen(true);
   };
 
   return (
