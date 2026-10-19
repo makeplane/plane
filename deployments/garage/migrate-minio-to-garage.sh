@@ -113,6 +113,12 @@ if [[ -f "$GARAGE_ENV_FILE" ]]; then
     log "reusing settings from $GARAGE_ENV_FILE"
     # shellcheck disable=SC1090
     source "$GARAGE_ENV_FILE"
+    if [[ -n "${GARAGE_DEFAULT_ACCESS_KEY:-}" && -n "${GARAGE_DEFAULT_SECRET_KEY:-}" ]]; then
+        if [[ "${AWS_ACCESS_KEY_ID:-$GARAGE_DEFAULT_ACCESS_KEY}" != "$GARAGE_DEFAULT_ACCESS_KEY" ||
+              "${AWS_SECRET_ACCESS_KEY:-$GARAGE_DEFAULT_SECRET_KEY}" != "$GARAGE_DEFAULT_SECRET_KEY" ]]; then
+            die "AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY differ from the key saved in $GARAGE_ENV_FILE. Unset them to reuse it."
+        fi
+    fi
     AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-${GARAGE_DEFAULT_ACCESS_KEY:-}}
     AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-${GARAGE_DEFAULT_SECRET_KEY:-}}
 fi
@@ -227,43 +233,42 @@ mc "mc ls garage/$BUCKET >/dev/null" || die "Garage is up but bucket $BUCKET is 
 # ---------------------------------------------------------------- copy and verify
 
 if ! mc "mc ls minio/$BUCKET >/dev/null 2>&1"; then
-    warn "MinIO has no bucket '$BUCKET': nothing to copy. Garage is provisioned and empty."
-    SRC_COUNT=0
-else
-    OTHER=$(mc "mc ls minio" | awk '{print $NF}' | tr -d / | grep -vxF "$BUCKET" || true)
-    [[ -z "$OTHER" ]] || warn "MinIO also has bucket(s) Plane does not use, not copied: $(echo $OTHER)"
-    if mc "mc anonymous get minio/$BUCKET" | grep -qiE "download|public"; then
-        warn "bucket '$BUCKET' is anonymously readable on MinIO. Garage has no anonymous reads, so links saved by old Plane releases as /$BUCKET/<key> stop loading."
-    fi
-
-    SRC_BYTES=$(mc "mc du --json minio/$BUCKET" | sed -n 's/.*"size":\([0-9]*\).*/\1/p' | tail -1)
-    # The mc image has df but no awk or sed, so df's output is parsed here on the host.
-    FREE_BYTES=$(docker run --rm "${GARAGE_MOUNTS[@]}" --entrypoint df "$MC_IMAGE" -Pk /var/lib/garage | awk 'NR==2{print $4*1024}')
-    if [[ -n "$SRC_BYTES" && -n "$FREE_BYTES" && "$FREE_BYTES" -lt $((SRC_BYTES * 12 / 10)) ]]; then
-        die "not enough space: need about $((SRC_BYTES * 12 / 10 / 1048576)) MiB free for Garage, have $((FREE_BYTES / 1048576)) MiB"
-    fi
-
-    log "copying bucket '$BUCKET' ($(( ${SRC_BYTES:-0} / 1048576 )) MiB) from MinIO to Garage"
-    # No --preserve: it would also copy the bucket policy, which Garage does not implement (501).
-    mc "mc mirror --retry minio/$BUCKET garage/$BUCKET" | tail -3
-
-    log "verifying"
-    DIFF=$(mc "mc diff minio/$BUCKET garage/$BUCKET" || true)
-    SRC_COUNT=$(mc "mc ls -r minio/$BUCKET | wc -l" | tr -d ' ')
-    DST_COUNT=$(mc "mc ls -r garage/$BUCKET | wc -l" | tr -d ' ')
-    if [[ -n "$DIFF" || "$SRC_COUNT" != "$DST_COUNT" ]]; then
-        echo "$DIFF" | head -20 >&2
-        die "verification failed: MinIO has $SRC_COUNT objects, Garage has $DST_COUNT. Rerun to copy what is missing."
-    fi
-    if [[ "$VERIFY_CONTENT" == 1 ]]; then
-        log "comparing sha256 of every object"
-        HASHES='mc find "$1" | while IFS= read -r p; do printf "%s  %s\n" "$(mc cat "$p" | sha256sum | cut -d" " -f1)" "${p#"$1"/}"; done | sort'
-        if [[ "$(mc "f() { $HASHES; }; f minio/$BUCKET")" != "$(mc "f() { $HASHES; }; f garage/$BUCKET")" ]]; then
-            die "content verification failed: some objects differ. Rerun the script."
-        fi
-    fi
-    log "verified: $SRC_COUNT objects, names and sizes identical$([[ "$VERIFY_CONTENT" == 1 ]] && echo ", sha256 identical")"
+    # Plane creates its bucket on first start, so a missing one means the wrong volume or BUCKET.
+    die "MinIO has no bucket '$BUCKET' (it has: $(mc "mc ls minio" | awk '{print $NF}' | tr -d / | xargs)). Check <minio-volume> or set BUCKET."
 fi
+OTHER=$(mc "mc ls minio" | awk '{print $NF}' | tr -d / | grep -vxF "$BUCKET" || true)
+[[ -z "$OTHER" ]] || warn "MinIO also has bucket(s) Plane does not use, not copied: $(echo $OTHER)"
+if mc "mc anonymous get minio/$BUCKET" | grep -qiE "download|public"; then
+    warn "bucket '$BUCKET' is anonymously readable on MinIO. Garage has no anonymous reads, so links saved by old Plane releases as /$BUCKET/<key> stop loading."
+fi
+
+SRC_BYTES=$(mc "mc du --json minio/$BUCKET" | sed -n 's/.*"size":\([0-9]*\).*/\1/p' | tail -1)
+# The mc image has df but no awk or sed, so df's output is parsed here on the host.
+FREE_BYTES=$(docker run --rm "${GARAGE_MOUNTS[@]}" --entrypoint df "$MC_IMAGE" -Pk /var/lib/garage | awk 'NR==2{print $4*1024}')
+if [[ -n "$SRC_BYTES" && -n "$FREE_BYTES" && "$FREE_BYTES" -lt $((SRC_BYTES * 12 / 10)) ]]; then
+    die "not enough space: need about $((SRC_BYTES * 12 / 10 / 1048576)) MiB free for Garage, have $((FREE_BYTES / 1048576)) MiB"
+fi
+
+log "copying bucket '$BUCKET' ($(( ${SRC_BYTES:-0} / 1048576 )) MiB) from MinIO to Garage"
+# No --preserve: it would also copy the bucket policy, which Garage does not implement (501).
+mc "mc mirror --retry minio/$BUCKET garage/$BUCKET" | tail -3
+
+log "verifying"
+DIFF=$(mc "mc diff minio/$BUCKET garage/$BUCKET" || true)
+SRC_COUNT=$(mc "mc ls -r minio/$BUCKET | wc -l" | tr -d ' ')
+DST_COUNT=$(mc "mc ls -r garage/$BUCKET | wc -l" | tr -d ' ')
+if [[ -n "$DIFF" || "$SRC_COUNT" != "$DST_COUNT" ]]; then
+    echo "$DIFF" | head -20 >&2
+    die "verification failed: MinIO has $SRC_COUNT objects, Garage has $DST_COUNT. Rerun to copy what is missing."
+fi
+if [[ "$VERIFY_CONTENT" == 1 ]]; then
+    log "comparing sha256 of every object"
+    HASHES='mc find "$1" | while IFS= read -r p; do printf "%s  %s\n" "$(mc cat "$p" | sha256sum | cut -d" " -f1)" "${p#"$1"/}"; done | sort'
+    if [[ "$(mc "f() { $HASHES; }; f minio/$BUCKET")" != "$(mc "f() { $HASHES; }; f garage/$BUCKET")" ]]; then
+        die "content verification failed: some objects differ. Rerun the script."
+    fi
+fi
+log "verified: $SRC_COUNT objects, names and sizes identical$([[ "$VERIFY_CONTENT" == 1 ]] && echo ", sha256 identical")"
 
 # ---------------------------------------------------------------- next steps
 

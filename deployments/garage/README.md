@@ -23,7 +23,8 @@ connect Plane to it.
 - Docker with Compose v2.
 - Disk for Garage: about 1.2× the size of your files. Check with `docker system df -v | grep plane-app_uploads`.
 
-The commands below run from the directory that holds `setup.sh` and the `plane-app/` folder.
+Plane's `setup.sh` works on the `plane-app/` folder in the directory you run it from, so the commands below call it
+as `(cd .. && ./setup.sh)` from inside `garage/`.
 
 ## 1. Prepare Garage
 
@@ -37,7 +38,7 @@ Then follow **one** of the two paths.
 
 ### 1a. You already have files in Plane (migrate from the bundled MinIO)
 
-1. Stop Plane, so nothing writes to MinIO during the copy: run `./setup.sh` and choose **Stop**.
+1. Stop Plane, so nothing writes to MinIO during the copy: run `(cd .. && ./setup.sh)` and choose **Stop**.
 2. Copy the files into Garage's data directory. Plane's MinIO data lives in the Docker volume
    `plane-app_uploads`:
    ```sh
@@ -85,7 +86,7 @@ AWS_S3_ENDPOINT_URL=http://garage:3900
 - The proxy forwards file requests to whatever `AWS_S3_ENDPOINT_URL` names.
 - `AWS_REGION` must equal `s3_region` in `garage.toml`.
 
-Start Plane with `./setup.sh` → **Start**. Start Plane **before** Garage: Plane creates the
+Start Plane with `(cd .. && ./setup.sh)` → **Start**. Start Plane **before** Garage: Plane creates the
 `plane-app_default` network that Garage joins. Until Garage is up in step 3, file uploads and downloads fail.
 
 The bundled MinIO container keeps running but is no longer used.
@@ -118,13 +119,18 @@ Your MinIO data in the `plane-app_uploads` volume is untouched until you delete 
 1. Restore the previous values of `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_S3_ENDPOINT_URL`
    (`http://plane-minio:9000`) in `plane-app/plane.env`. On this install the bundled MinIO also uses the
    access key and secret as its own login.
-2. Restart Plane with `./setup.sh` → **Restart**.
+2. Restart Plane with `(cd .. && ./setup.sh)` → **Restart**.
 
 Files uploaded while Plane used Garage exist only in Garage. To keep them, copy them back before switching,
 for example with `mc mirror` from Garage to MinIO.
 
-Once you're satisfied with Garage, typically after a week, reclaim the space with
-`docker volume rm plane-app_uploads`.
+Once you're satisfied with Garage, typically after a week, reclaim the space. Docker won't remove the volume
+while the MinIO container exists, and **Stop** removes Plane's containers:
+
+1. Stop Plane with `(cd .. && ./setup.sh)` → **Stop**.
+2. Run `docker volume rm plane-app_uploads`.
+3. Start Plane with `(cd .. && ./setup.sh)` → **Start**. Compose creates a new, empty `plane-app_uploads` for the
+   unused MinIO container, so after this you can't roll back to MinIO without copying your files back first.
 
 ## Operating Garage
 
