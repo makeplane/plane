@@ -5,6 +5,8 @@
  */
 
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@makeplane/propel/components/button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
@@ -64,9 +66,11 @@ export function ProjectAppliedFiltersList(props: Props) {
           if (!value) return;
           if (Array.isArray(value) && value.length === 0) return;
 
+          const filterLabel = replaceUnderscoreIfSnakeCase(filterKey);
+
           return (
             <div key={filterKey} className={FILTER_GROUP_CLASSNAME}>
-              <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+              <span className="text-11 text-tertiary">{filterLabel}</span>
               {filterKey === "access" && (
                 <AppliedAccessFilters
                   editable={isEditingAllowed}
@@ -89,13 +93,14 @@ export function ProjectAppliedFiltersList(props: Props) {
                 />
               )}
               {isEditingAllowed && (
-                <button
+                <IconButton
                   type="button"
-                  className="grid place-items-center text-tertiary hover:text-secondary"
+                  variant="ghost"
+                  size="xs"
+                  aria-label={`${t("aria_labels.common.remove")}: ${filterLabel}`}
                   onClick={() => handleRemoveFilter(filterKey, null)}
-                >
-                  <CloseOutline height={12} width={12} />
-                </button>
+                  icon={<CloseOutline height={12} width={12} />}
+                />
               )}
             </div>
           );
@@ -112,10 +117,14 @@ export function ProjectAppliedFiltersList(props: Props) {
           </div>
         )}
         {isEditingAllowed && (
-          <button type="button" className={FILTER_GROUP_CLASSNAME} onClick={handleClearAllFilters}>
-            {t("common.clear_all")}
-            <CloseOutline height={12} width={12} />
-          </button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            stretch="auto"
+            label={t("common.clear_all")}
+            onClick={handleClearAllFilters}
+          />
         )}
       </Header.LeftItem>
       <Header.RightItem>
