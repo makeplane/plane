@@ -8,6 +8,8 @@ import { observer } from "mobx-react";
 import { CloseOutline } from "@makeplane/propel/icons";
 // plane ui
 import { Avatar } from "@makeplane/propel/components/avatar";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { useTranslation } from "@plane/i18n";
 // helpers
 import { getFileURL } from "@plane/utils";
 // types
@@ -21,6 +23,7 @@ type Props = {
 
 export const AppliedMembersFilters = observer(function AppliedMembersFilters(props: Props) {
   const { handleRemove, values, editable } = props;
+  const { t } = useTranslation();
   // store hooks
   const {
     workspace: { getWorkspaceMemberDetails },
@@ -43,13 +46,18 @@ export const AppliedMembersFilters = observer(function AppliedMembersFilters(pro
             />
             <span className="normal-case">{memberDetails.display_name}</span>
             {editable && (
-              <button
+              <IconButton
                 type="button"
-                className="grid place-items-center text-tertiary hover:text-secondary"
+                variant="ghost"
+                size="xs"
+                aria-label={
+                  memberDetails.display_name
+                    ? `${t("aria_labels.common.remove")}: ${memberDetails.display_name}`
+                    : t("aria_labels.common.remove")
+                }
                 onClick={() => handleRemove(memberId)}
-              >
-                <CloseOutline height={10} width={10} />
-              </button>
+                icon={<CloseOutline height={10} width={10} />}
+              />
             )}
           </div>
         );
