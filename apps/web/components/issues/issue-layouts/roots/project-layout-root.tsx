@@ -14,6 +14,7 @@ import { Spinner } from "@plane/blocks/spinner";
 // components
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { LayoutErrorFallback } from "@/components/common/layout-error-boundary";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
@@ -86,7 +87,19 @@ export const ProjectLayoutRoot = observer(function ProjectLayoutRoot() {
                   <Spinner className="h-4 w-4" />
                 </div>
               )}
-              <ProjectIssueLayout activeLayout={activeLayout} />
+              <div className={issues.hasFetchError ? "hidden" : "contents"}>
+                <ProjectIssueLayout activeLayout={activeLayout} />
+              </div>
+
+              {issues.hasFetchError && (
+                <div className="absolute inset-0 z-10 bg-surface-1">
+                  <LayoutErrorFallback
+                    onRetry={() => {
+                      void issues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "init-loader");
+                    }}
+                  />
+                </div>
+              )}
             </div>
             {/* peek overview */}
             <IssuePeekOverview />
