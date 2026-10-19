@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 
 // plane internal packages
 import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
 import { NewTabOutline } from "@makeplane/propel/icons";
 import { WEB_BASE_URL } from "@plane/constants";
 import { getFileURL } from "@plane/utils";
@@ -34,20 +35,12 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
       rel="noreferrer"
     >
       <div className="flex items-start gap-4">
-        <span
-          className={`relative mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center p-2 text-11 uppercase ${
-            !workspace?.logo_url && "rounded-lg bg-accent-primary text-on-color"
-          }`}
-        >
-          {workspace?.logo_url && workspace.logo_url !== "" ? (
-            <img
-              src={getFileURL(workspace.logo_url)}
-              className="absolute top-0 left-0 h-full w-full rounded-sm object-cover"
-              alt="Workspace Logo"
-            />
-          ) : (
-            (workspace?.name?.[0] ?? "...")
-          )}
+        <span className="mt-1 flex flex-shrink-0">
+          <WorkspaceAvatar
+            size="lg"
+            src={workspace?.logo_url && workspace.logo_url !== "" ? getFileURL(workspace.logo_url) : undefined}
+            fallback={<span className="uppercase">{workspace?.name?.[0] ?? "..."}</span>}
+          />
         </span>
         <div className="flex flex-col items-start gap-1">
           <div className="flex w-full flex-wrap items-center gap-2.5">
