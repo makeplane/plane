@@ -6,6 +6,9 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { useTranslation } from "@plane/i18n";
 import type { TModuleStatus } from "@plane/blocks/icons";
 // plane imports
 import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
@@ -38,6 +41,7 @@ export const ModuleFiltersSelection = observer(function ModuleFiltersSelection(p
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
   // store
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
@@ -50,12 +54,19 @@ export const ModuleFiltersSelection = observer(function ModuleFiltersSelection(p
             placeholder="Search"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
+            // oxlint-disable-next-line jsx-a11y/no-autofocus -- preserve the existing desktop filter-search focus
             autoFocus={!isMobile}
           />
           {filtersSearchQuery !== "" && (
-            <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
-              <CloseOutline className="text-tertiary" height={12} width={12} />
-            </button>
+            <IconButton
+              type="button"
+              variant="ghost"
+              size="xs"
+              aria-label={t("common.clear")}
+              showTooltip={!isMobile}
+              onClick={() => setFiltersSearchQuery("")}
+              icon={<Icon icon={CloseOutline} />}
+            />
           )}
         </div>
       </div>

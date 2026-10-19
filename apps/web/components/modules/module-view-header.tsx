@@ -133,16 +133,18 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
             onKeyDown={handleInputKeyDown}
           />
           {isSearchOpen && (
-            <button
+            <IconButton
               type="button"
-              className="grid place-items-center"
+              variant="ghost"
+              size="xs"
+              aria-label={t("close")}
+              showTooltip={!isMobile}
               onClick={() => {
                 // updateSearchQuery("");
                 setIsSearchOpen(false);
               }}
-            >
-              <CloseOutline className="h-3 w-3" />
-            </button>
+              icon={<Icon icon={CloseOutline} />}
+            />
           )}
         </div>
       </div>
