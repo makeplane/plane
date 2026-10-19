@@ -5,6 +5,8 @@
  */
 
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@makeplane/propel/components/button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 import type { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
 // components
@@ -25,11 +27,10 @@ type Props = {
 };
 
 const MEMBERS_FILTERS = new Set(["lead", "members"]);
-const DATE_FILTERS = ["start_date", "target_date"];
+const DATE_FILTERS = new Set(["start_date", "target_date"]);
 
 /**
- * Container chrome for a group of filter chips plus their remove buttons (the legacy `Tag`
- * outline), shared by the "Clear all" control so it reads as one more chip in the row.
+ * Container chrome for grouped filter chips and their remove actions.
  */
 const FILTER_GROUP_CLASSNAME =
   "my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary";
@@ -53,7 +54,7 @@ export function ModuleAppliedFiltersList(props: Props) {
 
   return (
     <Header variant={EHeaderVariant.TERNARY}>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {Object.entries(appliedFilters).map(([key, value]) => {
           const filterKey = key as keyof TModuleFilters;
 
@@ -71,7 +72,7 @@ export function ModuleAppliedFiltersList(props: Props) {
                     values={value}
                   />
                 )}
-                {DATE_FILTERS.includes(filterKey) && (
+                {DATE_FILTERS.has(filterKey) && (
                   <AppliedDateFilters
                     editable={isEditingAllowed}
                     handleRemove={(val) => handleRemoveFilter(filterKey, val)}
@@ -86,13 +87,14 @@ export function ModuleAppliedFiltersList(props: Props) {
                   />
                 )}
                 {isEditingAllowed && (
-                  <button
+                  <IconButton
                     type="button"
-                    className="grid place-items-center text-tertiary hover:text-secondary"
+                    variant="ghost"
+                    size="xs"
+                    aria-label={`${t("aria_labels.common.remove")}: ${replaceUnderscoreIfSnakeCase(filterKey)}`}
                     onClick={() => handleRemoveFilter(filterKey, null)}
-                  >
-                    <CloseOutline height={12} width={12} />
-                  </button>
+                    icon={<CloseOutline height={12} width={12} />}
+                  />
                 )}
               </div>
             </div>
@@ -108,30 +110,33 @@ export function ModuleAppliedFiltersList(props: Props) {
               <div className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
                 Favorite
                 {isEditingAllowed && (
-                  <button
+                  <IconButton
                     type="button"
-                    className="grid place-items-center text-tertiary hover:text-secondary"
+                    variant="ghost"
+                    size="xs"
+                    aria-label={`${t("aria_labels.common.remove")}: Favorite`}
                     onClick={() =>
                       handleDisplayFiltersUpdate &&
                       handleDisplayFiltersUpdate({
                         favorites: !isFavoriteFilterApplied,
                       })
                     }
-                  >
-                    <CloseOutline height={10} width={10} />
-                  </button>
+                    icon={<CloseOutline height={10} width={10} />}
+                  />
                 )}
               </div>
             </div>
           </div>
         )}
         {isEditingAllowed && (
-          <button type="button" onClick={handleClearAllFilters}>
-            <span className={FILTER_GROUP_CLASSNAME}>
-              {t("common.clear_all")}
-              <CloseOutline height={12} width={12} />
-            </span>
-          </button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            stretch="auto"
+            label={t("common.clear_all")}
+            onClick={handleClearAllFilters}
+          />
         )}
       </div>
     </Header>
