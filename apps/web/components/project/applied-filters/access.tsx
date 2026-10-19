@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 // constants
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 
 type Props = {
@@ -24,17 +25,21 @@ export const AppliedAccessFilters = observer(function AppliedAccessFilters(props
     <>
       {values.map((status) => {
         const accessDetails = NETWORK_CHOICES.find((s) => `${s.key}` === status);
+        const accessLabel = accessDetails ? t(accessDetails.i18n_label) : "";
         return (
           <div key={status} className="flex items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-11">
-            {accessDetails && t(accessDetails?.i18n_label)}
+            {accessLabel}
             {editable && (
-              <button
+              <IconButton
                 type="button"
-                className="grid place-items-center text-tertiary hover:text-secondary"
+                variant="ghost"
+                size="xs"
+                aria-label={
+                  accessLabel ? `${t("aria_labels.common.remove")}: ${accessLabel}` : t("aria_labels.common.remove")
+                }
                 onClick={() => handleRemove(status)}
-              >
-                <CloseOutline height={10} width={10} />
-              </button>
+                icon={<CloseOutline height={10} width={10} />}
+              />
             )}
           </div>
         );
