@@ -125,8 +125,8 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
               id="extended-sidebar-toggle"
               aria-label={t(
                 isExtendedSidebarOpened
-                  ? "aria_labels.app_sidebar.close_extended_sidebar"
-                  : "aria_labels.app_sidebar.open_extended_sidebar"
+                  ? "aria_labels.projects_sidebar.close_extended_sidebar"
+                  : "aria_labels.projects_sidebar.open_extended_sidebar"
               )}
             >
               <MoreHorizontalOutline className="size-4 flex-shrink-0" />
