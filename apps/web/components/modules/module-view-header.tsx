@@ -7,6 +7,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { Tab, Tabs, TabsList } from "@makeplane/propel/components/tabs";
 import { CloseOutline, FilterOutline, SearchOutline } from "@makeplane/propel/icons";
 // plane helpers
 import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
@@ -54,7 +55,7 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
   const { t } = useTranslation();
 
   // states
-  const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "" ? true : false);
+  const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "");
 
   // handlers
   const handleFilters = useCallback(
@@ -171,27 +172,25 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
           memberIds={workspaceMemberIds ?? undefined}
         />
       </FiltersDropdown>
-      <div className="hidden items-center gap-1 rounded-sm bg-layer-3 p-1 md:flex">
-        {MODULE_VIEW_LAYOUTS.map((layout) => (
-          <Tooltip key={layout.key} label={t(layout.i18n_title)} disabled={isMobile}>
-            <button
-              type="button"
-              className={cn(
-                "group grid h-5.5 w-7 place-items-center overflow-hidden rounded-sm transition-all hover:bg-layer-transparent-hover",
-                {
-                  "bg-layer-transparent-active hover:bg-layer-transparent-active":
-                    displayFilters?.layout === layout.key,
-                }
-              )}
-              onClick={() => {
-                if (!projectId) return;
-                updateDisplayFilters(projectId.toString(), { layout: layout.key });
-              }}
-            >
-              <ModuleLayoutIcon layoutType={layout.key} />
-            </button>
-          </Tooltip>
-        ))}
+      <div className="hidden md:block">
+        <Tabs value={displayFilters?.layout ?? null} variant="contained" stretch="auto">
+          <TabsList aria-label={t("common.layout")}>
+            {MODULE_VIEW_LAYOUTS.map((layout) => (
+              <Tooltip key={layout.key} label={t(layout.i18n_title)} disabled={isMobile}>
+                <Tab
+                  value={layout.key}
+                  label=""
+                  aria-label={t(layout.i18n_title)}
+                  icon={<ModuleLayoutIcon layoutType={layout.key} size={16} />}
+                  onClick={() => {
+                    if (!projectId) return;
+                    updateDisplayFilters(projectId.toString(), { layout: layout.key });
+                  }}
+                />
+              </Tooltip>
+            ))}
+          </TabsList>
+        </Tabs>
       </div>
     </div>
   );
