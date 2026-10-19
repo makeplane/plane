@@ -59,7 +59,6 @@ export const TimeFormatPreference = observer(function TimeFormatPreference() {
             getOptionLabel={(option) => option.label}
             showSearch={false}
             pinSelected={false}
-            contentSizing="anchor"
           >
             <Select.Trigger<TTimeFormatOption> variant="select-md" className="w-42 max-w-full border-subtle-1">
               {(selected) => <span className="min-w-0 grow truncate text-left">{selected[0]?.label}</span>}
