@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/blocks/icons";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 import type { TIssuePriorities } from "@plane/types";
 // hooks
@@ -40,22 +41,26 @@ export const InboxIssueAppliedFiltersPriority = observer(function InboxIssueAppl
               <PriorityIcon priority={optionDetail.key} className="h-3 w-3" />
             </div>
             <div className="truncate text-11">{optionDetail?.title}</div>
-            <div
-              className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
+            <IconButton
+              type="button"
+              variant="ghost"
+              size="xs"
+              aria-label={`${t("aria_labels.common.remove")}: ${optionDetail.title}`}
               onClick={() => handleInboxIssueFilters("priority", handleFilterValue(optionDetail?.key))}
-            >
-              <CloseOutline className={`h-3 w-3`} />
-            </div>
+              icon={<CloseOutline className="h-3 w-3" />}
+            />
           </div>
         );
       })}
 
-      <div
-        className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
+      <IconButton
+        type="button"
+        variant="ghost"
+        size="xs"
+        aria-label={`${t("aria_labels.common.remove")}: ${t("common.priority")}`}
         onClick={clearFilter}
-      >
-        <CloseOutline className={`h-3 w-3`} />
-      </div>
+        icon={<CloseOutline className="h-3 w-3" />}
+      />
     </div>
   );
 });

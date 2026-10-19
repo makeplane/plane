@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 import { INBOX_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 import type { TInboxIssueStatus } from "@plane/types";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
@@ -37,12 +38,14 @@ export const InboxIssueAppliedFiltersStatus = observer(function InboxIssueApplie
             </div>
             <div className="truncate text-11">{t(optionDetail?.i18n_title)}</div>
             {handleFilterValue(optionDetail?.status).length >= 1 && (
-              <div
-                className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
+              <IconButton
+                type="button"
+                variant="ghost"
+                size="xs"
+                aria-label={`${t("aria_labels.common.remove")}: ${t(optionDetail.i18n_title)}`}
                 onClick={() => handleInboxIssueFilters("status", handleFilterValue(optionDetail?.status))}
-              >
-                <CloseOutline className={`h-3 w-3`} />
-              </div>
+                icon={<CloseOutline className="h-3 w-3" />}
+              />
             )}
           </div>
         );
