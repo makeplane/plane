@@ -218,15 +218,25 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
             )}
             {isPinned ? (
               <Tooltip label="Unpin">
-                <UnpinOutline
-                  className="size-3.5 flex-shrink-0 text-placeholder outline-none hover:text-tertiary"
+                <IconButton
+                  type="button"
+                  variant="ghost"
+                  size="xs"
+                  aria-label="Unpin"
+                  showTooltip={false}
+                  icon={<Icon icon={UnpinOutline} tint="placeholder" />}
                   onClick={() => unPinNavigationItem(item.key)}
                 />
               </Tooltip>
             ) : (
               <Tooltip label="Pin">
-                <PinOutline
-                  className="size-3.5 flex-shrink-0 text-placeholder outline-none hover:text-tertiary"
+                <IconButton
+                  type="button"
+                  variant="ghost"
+                  size="xs"
+                  aria-label="Pin"
+                  showTooltip={false}
+                  icon={<Icon icon={PinOutline} tint="placeholder" />}
                   onClick={() => pinNavigationItem(item.key)}
                 />
               </Tooltip>
