@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { CYCLE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 
@@ -25,6 +26,7 @@ export const AppliedStatusFilters = observer(function AppliedStatusFilters(props
     <>
       {values.map((status) => {
         const statusDetails = CYCLE_STATUS.find((s) => s.value === status);
+        const statusLabel = statusDetails ? t(statusDetails.i18n_title) : "";
         return (
           <div
             key={status}
@@ -34,15 +36,18 @@ export const AppliedStatusFilters = observer(function AppliedStatusFilters(props
               statusDetails?.textColor
             )}
           >
-            {statusDetails && t(statusDetails?.i18n_title)}
+            {statusLabel}
             {editable && (
-              <button
+              <IconButton
                 type="button"
-                className="grid place-items-center text-tertiary hover:text-secondary"
+                variant="ghost"
+                size="xs"
+                aria-label={
+                  statusLabel ? `${t("aria_labels.common.remove")}: ${statusLabel}` : t("aria_labels.common.remove")
+                }
                 onClick={() => handleRemove(status)}
-              >
-                <CloseOutline height={10} width={10} />
-              </button>
+                icon={<CloseOutline height={10} width={10} />}
+              />
             )}
           </div>
         );
