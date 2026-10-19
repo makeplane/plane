@@ -12,7 +12,11 @@ import { Avatar } from "@makeplane/propel/components/avatar";
 import { Loader } from "@plane/blocks/skeleton";
 // components
 import { getFileURL } from "@plane/utils";
-import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
+import {
+  ModuleFilterHeader as FilterHeader,
+  ModuleFilterOption as FilterOption,
+  ModuleFilterViewToggle,
+} from "./menu-controls";
 // helpers
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -75,7 +79,7 @@ export const FilterLead = observer(function FilterLead(props: Props) {
                   return (
                     <FilterOption
                       key={`lead-${member.id}`}
-                      isChecked={appliedFilters?.includes(member.id) ? true : false}
+                      isChecked={appliedFilters?.includes(member.id) ?? false}
                       onClick={() => handleUpdate(member.id)}
                       icon={
                         <Avatar
@@ -90,13 +94,10 @@ export const FilterLead = observer(function FilterLead(props: Props) {
                   );
                 })}
                 {sortedOptions.length > 5 && (
-                  <button
-                    type="button"
-                    className="ml-8 text-11 font-medium text-accent-primary"
+                  <ModuleFilterViewToggle
+                    label={itemsToRender === sortedOptions.length ? "View less" : "View all"}
                     onClick={handleViewToggle}
-                  >
-                    {itemsToRender === sortedOptions.length ? "View less" : "View all"}
-                  </button>
+                  />
                 )}
               </>
             ) : (

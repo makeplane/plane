@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 // icons
-import { CloseOutline, FilterOutline, SearchOutline } from "@makeplane/propel/icons";
+import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // plane helpers
@@ -19,9 +19,9 @@ import type { TModuleFilters } from "@plane/types";
 import { cn, calculateTotalFilters } from "@plane/utils";
 // components
 import { ArchiveTabsList } from "@/components/archives";
-import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
-import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules";
+import { ModuleOrderByDropdown } from "@/components/modules";
 // helpers
+import { ModuleFiltersDropdown } from "@/components/modules/dropdowns/filters/dropdown";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
@@ -148,24 +148,18 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
             });
           }}
         />
-        <FiltersDropdown
-          icon={<FilterOutline className="h-3 w-3" />}
-          title="Filters"
-          placement="bottom-end"
+        <ModuleFiltersDropdown
           isFiltersApplied={isFiltersApplied}
-        >
-          <ModuleFiltersSelection
-            displayFilters={currentProjectDisplayFilters ?? {}}
-            filters={currentProjectArchivedFilters ?? {}}
-            handleDisplayFiltersUpdate={(val) => {
-              if (!projectId) return;
-              updateDisplayFilters(projectId.toString(), val);
-            }}
-            handleFiltersUpdate={handleFilters}
-            memberIds={workspaceMemberIds ?? undefined}
-            isArchived
-          />
-        </FiltersDropdown>
+          displayFilters={currentProjectDisplayFilters ?? {}}
+          filters={currentProjectArchivedFilters ?? {}}
+          handleDisplayFiltersUpdate={(val) => {
+            if (!projectId) return;
+            updateDisplayFilters(projectId.toString(), val);
+          }}
+          handleFiltersUpdate={handleFilters}
+          memberIds={workspaceMemberIds ?? undefined}
+          isArchived
+        />
       </div>
     </div>
   );

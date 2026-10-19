@@ -11,7 +11,11 @@ import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
 // components
 import { isInDateFormat } from "@plane/utils";
 import { DateFilterModal } from "@/components/core/filters/date-filter-modal";
-import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
+import {
+  ModuleFilterHeader as FilterHeader,
+  ModuleFilterOption as FilterOption,
+  useModuleFilterMenu,
+} from "./menu-controls";
 
 // helpers
 
@@ -23,6 +27,7 @@ type Props = {
 
 export const FilterStartDate = observer(function FilterStartDate(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
+  const menu = useModuleFilterMenu();
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
   const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
@@ -35,13 +40,14 @@ export const FilterStartDate = observer(function FilterStartDate(props: Props) {
 
   const isCustomDateSelected = () => {
     const isValidDateSelected = appliedFilters?.filter((f) => isInDateFormat(f.split(";")[0])) || [];
-    return isValidDateSelected.length > 0 ? true : false;
+    return isValidDateSelected.length > 0;
   };
   const handleCustomDate = () => {
     if (isCustomDateSelected()) {
       const updateAppliedFilters = appliedFilters?.filter((f) => f.includes("-")) || [];
       handleUpdate(updateAppliedFilters);
-    } else setIsDateFilterModalOpen(true);
+    } else if (menu) menu.openDateModal({ title: "Start date", key: "start_date" });
+    else setIsDateFilterModalOpen(true);
   };
 
   return (
@@ -66,7 +72,7 @@ export const FilterStartDate = observer(function FilterStartDate(props: Props) {
               {filteredOptions.map((option) => (
                 <FilterOption
                   key={option.value}
-                  isChecked={appliedFilters?.includes(option.value) ? true : false}
+                  isChecked={appliedFilters?.includes(option.value) ?? false}
                   onClick={() => handleUpdate(option.value)}
                   title={option.name}
                   multiple

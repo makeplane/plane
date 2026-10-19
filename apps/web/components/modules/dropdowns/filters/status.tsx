@@ -11,7 +11,7 @@ import { useTranslation } from "@plane/i18n";
 import { ModuleStatusIcon } from "@plane/blocks/icons";
 import type { TModuleStatus } from "@plane/types";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
+import { ModuleFilterHeader as FilterHeader, ModuleFilterOption as FilterOption } from "./menu-controls";
 
 type Props = {
   appliedFilters: TModuleStatus[] | null;
@@ -41,7 +41,7 @@ export const FilterStatus = observer(function FilterStatus(props: Props) {
             filteredOptions.map((status) => (
               <FilterOption
                 key={status.value}
-                isChecked={appliedFilters?.includes(status.value) ? true : false}
+                isChecked={appliedFilters?.includes(status.value) ?? false}
                 onClick={() => handleUpdate(status.value)}
                 icon={<ModuleStatusIcon status={status.value} />}
                 title={t(status.i18n_label)}

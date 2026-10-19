@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Tab, Tabs, TabsList } from "@makeplane/propel/components/tabs";
-import { CloseOutline, FilterOutline, SearchOutline } from "@makeplane/propel/icons";
+import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 // plane helpers
 import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -20,10 +20,10 @@ import type { TModuleFilters } from "@plane/types";
 import { cn, calculateTotalFilters } from "@plane/utils";
 // plane utils
 // components
-import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
-import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules/dropdowns";
+import { ModuleOrderByDropdown } from "@/components/modules/dropdowns";
 // constants
 // helpers
+import { ModuleFiltersDropdown } from "@/components/modules/dropdowns/filters/dropdown";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
@@ -157,23 +157,17 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
           });
         }}
       />
-      <FiltersDropdown
-        icon={<FilterOutline className="h-3 w-3" />}
-        title="Filters"
-        placement="bottom-end"
+      <ModuleFiltersDropdown
         isFiltersApplied={isFiltersApplied}
-      >
-        <ModuleFiltersSelection
-          displayFilters={displayFilters ?? {}}
-          filters={filters ?? {}}
-          handleDisplayFiltersUpdate={(val) => {
-            if (!projectId) return;
-            updateDisplayFilters(projectId.toString(), val);
-          }}
-          handleFiltersUpdate={handleFilters}
-          memberIds={workspaceMemberIds ?? undefined}
-        />
-      </FiltersDropdown>
+        displayFilters={displayFilters ?? {}}
+        filters={filters ?? {}}
+        handleDisplayFiltersUpdate={(val) => {
+          if (!projectId) return;
+          updateDisplayFilters(projectId.toString(), val);
+        }}
+        handleFiltersUpdate={handleFilters}
+        memberIds={workspaceMemberIds ?? undefined}
+      />
       <div className="hidden md:block">
         <Tabs value={displayFilters?.layout ?? null} variant="contained" stretch="auto">
           <TabsList aria-label={t("common.layout")}>
