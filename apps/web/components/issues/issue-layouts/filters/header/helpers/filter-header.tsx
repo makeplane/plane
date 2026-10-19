@@ -5,6 +5,8 @@
  */
 
 // plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { ChevronDownOutline, ChevronUpOutline } from "@makeplane/propel/icons";
 
 type Props = {
@@ -17,13 +19,16 @@ export function FilterHeader({ title, isPreviewEnabled, handleIsPreviewEnabled }
   return (
     <div className="sticky top-0 flex items-center justify-between gap-2 bg-surface-1">
       <div className="flex-grow truncate text-caption-sm-medium text-placeholder">{title}</div>
-      <button
+      <IconButton
         type="button"
-        className="grid h-5 w-5 flex-shrink-0 place-items-center rounded-sm hover:bg-layer-transparent-hover"
+        variant="ghost"
+        size="xs"
+        aria-label={title}
+        aria-expanded={isPreviewEnabled}
+        showTooltip={false}
         onClick={handleIsPreviewEnabled}
-      >
-        {isPreviewEnabled ? <ChevronUpOutline height={14} width={14} /> : <ChevronDownOutline height={14} width={14} />}
-      </button>
+        icon={<Icon icon={isPreviewEnabled ? ChevronUpOutline : ChevronDownOutline} />}
+      />
     </div>
   );
 }
