@@ -192,6 +192,7 @@ class ProjectViewSet(BaseViewSet):
             "network",
             "working_days",
             "holidays",
+            "state_group_order",
             "created_at",
             "updated_at",
             "created_by",

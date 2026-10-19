@@ -49,7 +49,7 @@ import type {
 import { EIssuesStoreType } from "@plane/types";
 // plane ui
 
-import { renderFormattedDate, getFileURL } from "@plane/utils";
+import { renderFormattedDate, getFileURL, getOrderedStateGroupKeys } from "@plane/utils";
 // store
 import { store } from "@/lib/store-context";
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
@@ -256,19 +256,24 @@ const getStateColumns = ({ projectId }: TGetColumns): IGroupByColumn[] | undefin
   }));
 };
 
-const getStateGroupColumns = (): IGroupByColumn[] => {
-  const stateGroups = STATE_GROUPS;
+const getStateGroupColumns = ({ projectId }: TGetColumns): IGroupByColumn[] => {
+  // d2m-plane: respect the project's custom state group order
+  // (project-level layouts don't pass projectId, so fall back to the current route's project)
+  const _projectId = projectId ?? store.router.projectId;
+  const groupOrder = _projectId ? store.projectRoot.project.getProjectById(_projectId)?.state_group_order : undefined;
   // map state groups to group by columns
-  return Object.values(stateGroups).map((stateGroup) => ({
-    id: stateGroup.key,
-    name: stateGroup.label,
-    icon: (
-      <div className="size-4 rounded-full">
-        <StateGroupIcon stateGroup={stateGroup.key} size={EIconSize.LG} />
-      </div>
-    ),
-    payload: {},
-  }));
+  return getOrderedStateGroupKeys(groupOrder)
+    .map((groupKey) => STATE_GROUPS[groupKey])
+    .map((stateGroup) => ({
+      id: stateGroup.key,
+      name: stateGroup.label,
+      icon: (
+        <div className="size-4 rounded-full">
+          <StateGroupIcon stateGroup={stateGroup.key} size={EIconSize.LG} />
+        </div>
+      ),
+      payload: {},
+    }));
 };
 
 const getPriorityColumns = (): IGroupByColumn[] => {
@@ -654,6 +659,28 @@ export const isSubGrouped = (groupedIssueIds: TGroupedIssues) => {
   }
 
   return true;
+};
+
+/**
+ * Removes sub-work items from a top-level list when their parent work item is also
+ * present in the same list. Those children are already reachable by expanding the
+ * parent row, so rendering them twice (nested + top-level) clutters the layout.
+ * Sub-work items whose parent is NOT in the list (e.g. parent is in another sprint,
+ * another group, or filtered out) are kept so they never disappear from the view.
+ * @param issueIds top-level work item ids for a group / list
+ * @param getIssue resolver returning the work item for an id
+ * @returns filtered list of ids
+ */
+export const filterNestedSubIssueIds = (
+  issueIds: string[] | undefined,
+  getIssue: (issueId: string) => Pick<TIssue, "parent_id"> | undefined
+): string[] => {
+  if (!Array.isArray(issueIds) || issueIds.length === 0) return issueIds ?? [];
+  const idSet = new Set(issueIds);
+  return issueIds.filter((issueId) => {
+    const parentId = getIssue(issueId)?.parent_id;
+    return !parentId || !idSet.has(parentId);
+  });
 };
 
 /**

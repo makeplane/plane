@@ -19,6 +19,8 @@ type TGroupList = {
   groupListClassName?: string;
   groupItemClassName?: string;
   stateItemClassName?: string;
+  // d2m-plane: reorder state groups via drag & drop
+  handleGroupDrop?: (sourceGroupKey: TStateGroups, targetGroupKey: TStateGroups, edge: "top" | "bottom") => void;
 };
 
 export const GroupList = observer(function GroupList(props: TGroupList) {
@@ -29,6 +31,7 @@ export const GroupList = observer(function GroupList(props: TGroupList) {
     groupListClassName,
     groupItemClassName,
     stateItemClassName,
+    handleGroupDrop,
   } = props;
   // states
   const [groupsExpanded, setGroupsExpanded] = useState<Partial<TStateGroups>[]>([
@@ -74,6 +77,8 @@ export const GroupList = observer(function GroupList(props: TGroupList) {
             handleExpand={handleExpand}
             groupItemClassName={groupItemClassName}
             stateItemClassName={stateItemClassName}
+            isGroupDraggable={isEditable && !!handleGroupDrop}
+            handleGroupDrop={handleGroupDrop}
           />
         );
       })}

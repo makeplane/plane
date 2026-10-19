@@ -123,6 +123,8 @@ class Project(BaseModel):
     # d2m-plane: working calendar used by sprint (cycle) burndown and planning
     working_days = models.JSONField(default=get_default_working_days)
     holidays = models.JSONField(default=list, blank=True)
+    # d2m-plane: custom display order of state groups (empty = default order)
+    state_group_order = models.JSONField(default=list, blank=True)
     # external_id for imports
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)

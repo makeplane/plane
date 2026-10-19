@@ -7,21 +7,40 @@
 // plane imports
 import type { TDraggableData } from "@plane/constants";
 import { STATE_GROUPS } from "@plane/constants";
-import type { IState, IStateResponse } from "@plane/types";
+import type { IState, IStateResponse, TStateGroups } from "@plane/types";
 
 export const orderStateGroups = (unorderedStateGroups: IStateResponse | undefined): IStateResponse | undefined => {
   if (!unorderedStateGroups) return undefined;
   return Object.assign({ backlog: [], unstarted: [], started: [], completed: [], cancelled: [] }, unorderedStateGroups);
 };
 
-export const sortStates = (states: IState[]) => {
+/**
+ * d2m-plane: returns the state group keys in display order.
+ * Uses the project's custom order when it is valid, falling back to the default STATE_GROUPS order.
+ * Unknown keys are ignored and missing keys are appended in default order.
+ */
+export const getOrderedStateGroupKeys = (customOrder?: readonly string[] | null): TStateGroups[] => {
+  const defaultOrder = Object.keys(STATE_GROUPS) as TStateGroups[];
+  if (!customOrder || customOrder.length === 0) return defaultOrder;
+  const ordered: TStateGroups[] = [];
+  customOrder.forEach((key) => {
+    if (key in STATE_GROUPS && !ordered.includes(key as TStateGroups)) ordered.push(key as TStateGroups);
+  });
+  defaultOrder.forEach((key) => {
+    if (!ordered.includes(key)) ordered.push(key);
+  });
+  return ordered;
+};
+
+export const sortStates = (states: IState[], groupOrder?: readonly string[] | null) => {
   if (!states || states.length === 0) return;
 
+  const orderedGroups: string[] = getOrderedStateGroupKeys(groupOrder);
   return states.sort((stateA, stateB) => {
     if (stateA.group === stateB.group) {
       return stateA.sequence - stateB.sequence;
     }
-    return Object.keys(STATE_GROUPS).indexOf(stateA.group) - Object.keys(STATE_GROUPS).indexOf(stateB.group);
+    return orderedGroups.indexOf(stateA.group) - orderedGroups.indexOf(stateB.group);
   });
 };
 

@@ -12,13 +12,14 @@ import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from
 // components
 import { SpreadsheetIssueRowLoader } from "@/components/ui/loader/layouts/spreadsheet-layout-loader";
 // hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 // local imports
 import type { TRenderQuickActions } from "../list/list-view-types";
-import { getDisplayPropertiesCount } from "../utils";
+import { filterNestedSubIssueIds, getDisplayPropertiesCount } from "../utils";
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
 
@@ -66,6 +67,12 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
   const {
     issues: { getIssueLoader },
   } = useIssuesStore();
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+
+  // hide sub-work items whose parent is already rendered in this table (they show up nested under the parent)
+  const topLevelIssueIds = filterNestedSubIssueIds(issueIds, getIssueById);
 
   const handleScroll = useCallback(() => {
     if (!containerRef.current) return;
@@ -123,7 +130,7 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
         isEpic={isEpic}
       />
       <tbody>
-        {issueIds.map((id) => (
+        {topLevelIssueIds.map((id) => (
           <SpreadsheetIssueRow
             key={id}
             issueId={id}

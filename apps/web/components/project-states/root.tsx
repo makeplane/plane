@@ -4,15 +4,18 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
 import { EUserPermissionsLevel } from "@plane/constants";
-import type { IState, TStateOperationsCallbacks } from "@plane/types";
+import { setToast } from "@plane/blocks/toast";
+import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
+import { getOrderedStateGroupKeys } from "@plane/utils";
 import { ProjectStateLoader, GroupList } from "@/components/project-states";
 // hooks
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
 
@@ -34,6 +37,7 @@ export const ProjectStateRoot = observer(function ProjectStateRoot(props: TProje
     markStateAsDefault,
   } = useProjectState();
   const { allowPermissions } = useUserPermissions();
+  const { getProjectById, updateProject } = useProject();
   // derived values
   const isEditable = allowPermissions(
     [EUserProjectRoles.ADMIN],
@@ -63,6 +67,26 @@ export const ProjectStateRoot = observer(function ProjectStateRoot(props: TProje
     [workspaceSlug, projectId, createState, moveStatePosition, updateState, deleteState, markStateAsDefault]
   );
 
+  // d2m-plane: reorder state groups (saved per project, applies to everyone)
+  const currentGroupOrder = getProjectById(projectId)?.state_group_order;
+  const handleGroupDrop = useCallback(
+    (sourceGroupKey: TStateGroups, targetGroupKey: TStateGroups, edge: "top" | "bottom") => {
+      if (sourceGroupKey === targetGroupKey) return;
+      const nextOrder = getOrderedStateGroupKeys(currentGroupOrder).filter((key) => key !== sourceGroupKey);
+      const targetIndex = nextOrder.indexOf(targetGroupKey);
+      if (targetIndex === -1) return;
+      nextOrder.splice(edge === "bottom" ? targetIndex + 1 : targetIndex, 0, sourceGroupKey);
+      updateProject(workspaceSlug, projectId, { state_group_order: nextOrder }).catch(() => {
+        setToast({
+          type: "error",
+          title: "Error!",
+          message: "State group order could not be saved. Please try again.",
+        });
+      });
+    },
+    [currentGroupOrder, updateProject, workspaceSlug, projectId]
+  );
+
   // Loader
   if (!groupedProjectStates) return <ProjectStateLoader />;
 
@@ -71,6 +95,7 @@ export const ProjectStateRoot = observer(function ProjectStateRoot(props: TProje
       groupedStates={groupedProjectStates}
       stateOperationsCallbacks={stateOperationsCallbacks}
       isEditable={isEditable}
+      handleGroupDrop={handleGroupDrop}
     />
   );
 });

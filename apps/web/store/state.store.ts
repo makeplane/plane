@@ -8,10 +8,9 @@ import { set, groupBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { STATE_GROUPS } from "@plane/constants";
 import type { IIntakeState, IState } from "@plane/types";
 // helpers
-import { sortStates } from "@plane/utils";
+import { getOrderedStateGroupKeys, sortStates } from "@plane/utils";
 // plane web
 import { ProjectStateService } from "@/services/project/project-state.service";
 import type { RootStore } from "@/store/root.store";
@@ -111,8 +110,17 @@ export class StateStore implements IStateStore {
     const projectId = this.router.projectId;
     const workspaceSlug = this.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[workspaceSlug])) return;
-    return sortStates(Object.values(this.stateMap).filter((state) => state.project_id === projectId));
+    return sortStates(
+      Object.values(this.stateMap).filter((state) => state.project_id === projectId),
+      this.getProjectStateGroupOrder(projectId)
+    );
   }
+
+  /**
+   * d2m-plane: returns the custom state group order configured on the project (if any)
+   */
+  getProjectStateGroupOrder = (projectId: string | null | undefined) =>
+    projectId ? this.rootStore.projectRoot.project.getProjectById(projectId)?.state_group_order : undefined;
 
   /**
    * Returns the stateMap belongs to a specific project grouped by group
@@ -123,8 +131,8 @@ export class StateStore implements IStateStore {
     // First group the existing states
     const groupedStates = groupBy(this.projectStates, "group") as Record<string, IState[]>;
 
-    // Ensure all STATE_GROUPS are present
-    const allGroups = Object.keys(STATE_GROUPS).reduce(
+    // Ensure all STATE_GROUPS are present, in the project's configured order
+    const allGroups = getOrderedStateGroupKeys(this.getProjectStateGroupOrder(this.router.projectId)).reduce(
       (acc, group) => ({
         // oxlint-disable-next-line oxc/no-accumulating-spread
         ...acc,
@@ -162,7 +170,10 @@ export class StateStore implements IStateStore {
   getProjectStates = computedFn((projectId: string | null | undefined) => {
     const workspaceSlug = this.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[workspaceSlug])) return;
-    return sortStates(Object.values(this.stateMap).filter((state) => state.project_id === projectId));
+    return sortStates(
+      Object.values(this.stateMap).filter((state) => state.project_id === projectId),
+      this.getProjectStateGroupOrder(projectId)
+    );
   });
 
   /**

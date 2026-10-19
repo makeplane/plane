@@ -60,6 +60,18 @@ class ProjectSerializer(BaseSerializer):
                 raise serializers.ValidationError(f"Invalid holiday date: {value}")
         return sorted(cleaned)
 
+    # d2m-plane: custom state group order (display only)
+    STATE_GROUP_KEYS = ["backlog", "unstarted", "started", "completed", "cancelled"]
+
+    def validate_state_group_order(self, state_group_order):
+        if state_group_order is None or state_group_order == []:
+            return []
+        if not isinstance(state_group_order, list) or sorted(state_group_order) != sorted(self.STATE_GROUP_KEYS):
+            raise serializers.ValidationError(
+                "State group order must contain each of " + ", ".join(self.STATE_GROUP_KEYS) + " exactly once."
+            )
+        return state_group_order
+
     def validate_name(self, name):
         project_id = self.instance.id if self.instance else None
         workspace_id = self.context["workspace_id"]

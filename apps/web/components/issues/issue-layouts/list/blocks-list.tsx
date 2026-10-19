@@ -5,11 +5,13 @@
  */
 
 import type { MutableRefObject } from "react";
+import { observer } from "mobx-react";
 // components
 import type { TIssue, IIssueDisplayProperties, TIssueMap, TGroupedIssues } from "@plane/types";
 // hooks
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
+import { filterNestedSubIssueIds } from "../utils";
 import { IssueBlockRoot } from "./block-root";
 import type { TRenderQuickActions } from "./list-view-types";
 
@@ -28,7 +30,7 @@ interface Props {
   isEpic?: boolean;
 }
 
-export function IssueBlocksList(props: Props) {
+export const IssueBlocksList = observer(function IssueBlocksList(props: Props) {
   const {
     issueIds,
     issuesMap,
@@ -44,11 +46,13 @@ export function IssueBlocksList(props: Props) {
     isEpic = false,
   } = props;
 
+  // hide sub-work items whose parent is already rendered in this list (they show up nested under the parent)
+  const topLevelIssueIds = filterNestedSubIssueIds(issueIds as string[] | undefined, (id) => issuesMap[id]);
+
   return (
     <div className="relative h-full w-full">
-      {issueIds &&
-        issueIds.length > 0 &&
-        issueIds.map((issueId: string, index: number) => (
+      {topLevelIssueIds.length > 0 &&
+        topLevelIssueIds.map((issueId: string, index: number) => (
           <IssueBlockRoot
             key={issueId}
             issueId={issueId}
@@ -62,7 +66,7 @@ export function IssueBlocksList(props: Props) {
             containerRef={containerRef}
             selectionHelpers={selectionHelpers}
             groupId={groupId}
-            isLastChild={index === issueIds.length - 1}
+            isLastChild={index === topLevelIssueIds.length - 1}
             isDragAllowed={isDragAllowed}
             canDropOverIssue={canDropOverIssue}
             isEpic={isEpic}
@@ -70,4 +74,4 @@ export function IssueBlocksList(props: Props) {
         ))}
     </div>
   );
-}
+});

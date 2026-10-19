@@ -43,6 +43,8 @@ export interface IPartialProject {
   // d2m-plane: working calendar (ISO weekdays 1 = Mon … 7 = Sun, holidays as YYYY-MM-DD)
   working_days?: number[];
   holidays?: string[];
+  // d2m-plane: custom display order of state groups (empty = default order)
+  state_group_order?: TStateGroups[];
 }
 
 export interface IProject extends IPartialProject {
