@@ -94,13 +94,16 @@ The bundled MinIO container keeps running but is no longer used.
 ## 3. Start Garage on Plane's network
 
 ```sh
-docker compose --env-file garage.env up -d
+docker compose up -d
 docker compose ps        # garage should show "healthy"
 ```
 
 On first start, Garage sets up its single-node layout and creates the access key and bucket from
-`garage.env`. On later starts that step does nothing. If your Plane install uses a different folder
-name, find its network with `docker network ls` and start Garage with `PLANE_NETWORK=<name>` in front.
+`garage.env`. On later starts that step does nothing.
+
+If your Plane install uses a different folder name, find its network with `docker network ls` and save it
+before starting Garage: `echo "PLANE_NETWORK=<name>" > .env`. Compose reads `.env` on every command in this
+directory. Don't add `--env-file`: it stops Compose from reading `.env`.
 
 Garage stays attached to Plane's network across Plane restarts. If Plane is stopped while Garage runs,
 Docker keeps the network and may print `network … has active endpoints`. That's expected.
@@ -157,7 +160,7 @@ Changes made after the snapshot are lost.
 ### Upgrade
 
 Read the [release notes](https://git.deuxfleurs.fr/Deuxfleurs/garage/releases) first. Then change the
-`image:` tag in `docker-compose.yml` and run `docker compose --env-file garage.env up -d`. Back up before
+`image:` tag in `docker-compose.yml` and run `docker compose up -d`. Back up before
 upgrading across a major version.
 
 ### Monitor
@@ -187,7 +190,7 @@ upgrading across a major version.
 |---|---|
 | Garage exits with `Secret keys should be at least 16 characters long` | `GARAGE_DEFAULT_SECRET_KEY` is too short. Generate one with `openssl rand -hex 32` |
 | Garage exits with `Invalid RPC secret key` | `GARAGE_RPC_SECRET` must be exactly 64 hex characters |
-| `network plane-app_default not found` when starting Garage | Start Plane first (step 2), or set `PLANE_NETWORK` to your install's network |
+| `network plane-app_default not found` when starting Garage | Start Plane first (step 2), or save `PLANE_NETWORK=<network>` in `.env` (step 3) |
 | Script: `container … is using plane-app_uploads` | Plane is still running. Stop it first |
 | Script: `not enough space` | Free up disk, or point the second argument at a larger disk |
 | Uploads fail after switching | Check that Garage is running and `healthy`, that `AWS_REGION` matches `s3_region`, and that you're on Plane vX.Y.Z or newer |
