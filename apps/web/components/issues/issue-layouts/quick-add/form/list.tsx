@@ -5,11 +5,12 @@
  */
 
 import { observer } from "mobx-react";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import type { TQuickAddIssueForm } from "../root";
 
 export const ListQuickAddIssueForm = observer(function ListQuickAddIssueForm(props: TQuickAddIssueForm) {
-  const { ref, projectDetail, register, onSubmit, isEpic } = props;
+  const { ref, projectDetail, register, onSubmit, isEpic, hasError } = props;
   const { t } = useTranslation();
   return (
     <div className="shadow-raised-200">
@@ -18,17 +19,22 @@ export const ListQuickAddIssueForm = observer(function ListQuickAddIssueForm(pro
         onSubmit={onSubmit}
         className="flex w-full items-center gap-x-3 border-[0.5px] border-t-0 border-subtle bg-surface-1 px-3"
       >
-        <div className="flex w-full items-center gap-3">
+        <div className="flex w-full min-w-0 items-center gap-3 py-1.5">
           <div className="text-11 font-medium text-placeholder">{projectDetail?.identifier ?? "..."}</div>
-          <input
-            type="text"
-            autoComplete="off"
-            placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
-            {...register("name", {
-              required: isEpic ? t("epic.title.required") : t("issue.title.required"),
-            })}
-            className="w-full rounded-md bg-transparent px-2 py-3 text-13 leading-5 font-medium text-secondary outline-none"
-          />
+          <InputGroup size="lg">
+            <Input
+              size="lg"
+              type="text"
+              autoComplete="off"
+              aria-label={isEpic ? t("epic.title.label") : t("issue.title.label")}
+              aria-invalid={hasError}
+              data-invalid={hasError || undefined}
+              placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
+              {...register("name", {
+                required: isEpic ? t("epic.title.required") : t("issue.title.required"),
+              })}
+            />
+          </InputGroup>
         </div>
       </form>
       <div className="px-3 py-2 text-11 text-secondary italic">
