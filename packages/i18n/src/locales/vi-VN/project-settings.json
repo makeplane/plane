@@ -43,6 +43,10 @@
       "empty_state": {
         "title": "Không có trạng thái trong nhóm {groupKey}",
         "description": "Vui lòng tạo một trạng thái mới"
+      },
+      "closed": {
+        "title": "Đã đóng",
+        "description": "Trạng thái kết thúc. Mục công việc ở đây được tính là hoàn thành và bị ẩn khỏi các view, trừ khi bật \"Hiển thị mục đã đóng\" trong Display."
       }
     },
     "labels": {

@@ -122,7 +122,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         },
         extra_options: {
           access: true,
-          values: ["show_empty_groups", "sub_issue"],
+          values: ["show_empty_groups", "sub_issue", "show_closed"],
         },
       },
       kanban: {
@@ -134,7 +134,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         },
         extra_options: {
           access: true,
-          values: ["show_empty_groups"],
+          values: ["show_empty_groups", "show_closed"],
         },
       },
     },
@@ -188,7 +188,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         },
         extra_options: {
           access: true,
-          values: ["sub_issue"],
+          values: ["sub_issue", "show_closed"],
         },
       },
       list: {
@@ -227,7 +227,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         },
         extra_options: {
           access: true,
-          values: ["show_empty_groups", "sub_issue"],
+          values: ["show_empty_groups", "sub_issue", "show_closed"],
         },
       },
       kanban: {
@@ -240,7 +240,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         },
         extra_options: {
           access: true,
-          values: ["show_empty_groups", "sub_issue"],
+          values: ["show_empty_groups", "sub_issue", "show_closed"],
         },
       },
       calendar: {
@@ -250,7 +250,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         },
         extra_options: {
           access: true,
-          values: ["sub_issue"],
+          values: ["sub_issue", "show_closed"],
         },
       },
       spreadsheet: {
@@ -261,7 +261,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         },
         extra_options: {
           access: true,
-          values: ["sub_issue"],
+          values: ["sub_issue", "show_closed"],
         },
       },
       gantt_chart: {
@@ -272,7 +272,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         },
         extra_options: {
           access: true,
-          values: ["sub_issue"],
+          values: ["sub_issue", "show_closed"],
         },
       },
     },

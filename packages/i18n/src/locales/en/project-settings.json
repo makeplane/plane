@@ -43,6 +43,10 @@
       "empty_state": {
         "title": "No states available for the {groupKey} group",
         "description": "Please create a new state"
+      },
+      "closed": {
+        "title": "Closed",
+        "description": "Final state. Work items here count as completed and are hidden from views unless \"Show closed\" is enabled in Display."
       }
     },
     "labels": {

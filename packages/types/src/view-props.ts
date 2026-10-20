@@ -58,7 +58,7 @@ export type TIssueOrderByOptions =
 
 export type TIssueGroupingFilters = "active" | "backlog";
 
-export type TIssueExtraOptions = "show_empty_groups" | "sub_issue";
+export type TIssueExtraOptions = "show_empty_groups" | "sub_issue" | "show_closed";
 
 export type TIssueParams =
   | "priority"
@@ -80,6 +80,7 @@ export type TIssueParams =
   | "order_by"
   | "type"
   | "sub_issue"
+  | "show_closed"
   | "show_empty_groups"
   | "cursor"
   | "per_page"
@@ -157,6 +158,8 @@ export interface IIssueDisplayFilterOptions {
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   sub_issue?: boolean;
+  // d2m-plane: show work items in the project's "Closed" state (hidden by default)
+  show_closed?: boolean;
 }
 export interface IIssueDisplayProperties {
   assignee?: boolean;

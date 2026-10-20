@@ -67,14 +67,16 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
       </div>
       {!disabled && (
         <div className="hidden items-center gap-2 group-hover:flex">
-          {/* state mark as default option */}
-          <div className="flex-shrink-0 text-11 transition-all">
-            <StateMarksAsDefault
-              stateId={state.id}
-              isDefault={state.default ? true : false}
-              markStateAsDefaultCallback={props.stateOperationsCallbacks.markStateAsDefault}
-            />
-          </div>
+          {/* state mark as default option (d2m-plane: not for the Closed state) */}
+          {!state.is_closed && (
+            <div className="flex-shrink-0 text-11 transition-all">
+              <StateMarksAsDefault
+                stateId={state.id}
+                isDefault={state.default ? true : false}
+                markStateAsDefaultCallback={props.stateOperationsCallbacks.markStateAsDefault}
+              />
+            </div>
+          )}
           {/* state edit options */}
           <div className="flex items-center gap-1 transition-all">
             <IconButton
@@ -85,11 +87,13 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
               onClick={() => setUpdateStateModal(true)}
               icon={<Icon icon={EditOutline} />}
             />
-            <StateDelete
-              totalStates={stateCount}
-              state={state}
-              deleteStateCallback={props.stateOperationsCallbacks.deleteState}
-            />
+            {!state.is_closed && (
+              <StateDelete
+                totalStates={stateCount}
+                state={state}
+                deleteStateCallback={props.stateOperationsCallbacks.deleteState}
+              />
+            )}
           </div>
         </div>
       )}

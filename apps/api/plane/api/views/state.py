@@ -247,6 +247,13 @@ class StateDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # d2m-plane: the Closed state is permanent
+        if state.is_closed:
+            return Response(
+                {"error": "The Closed state cannot be deleted"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Check for any issues in the state
         issue_exist = Issue.objects.filter(state=state_id).exists()
 

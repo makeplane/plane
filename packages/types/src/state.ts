@@ -17,6 +17,8 @@ export interface IState {
   sequence: number;
   workspace_id: string;
   order: number;
+  // d2m-plane: the single per-project "Closed" state (completed group, hidden from views by default)
+  is_closed?: boolean;
 }
 
 export interface IStateLite {

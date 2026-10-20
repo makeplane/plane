@@ -26,6 +26,7 @@ export interface IStateStore {
   workspaceStates: IState[] | undefined;
   projectStates: IState[] | undefined;
   groupedProjectStates: Record<string, IState[]> | undefined;
+  projectClosedState: IState | undefined;
   // computed actions
   getStateById: (stateId: string | null | undefined) => IState | undefined;
   getIntakeStateById: (intakeStateId: string | null | undefined) => IIntakeState | undefined;
@@ -78,6 +79,7 @@ export class StateStore implements IStateStore {
       // computed
       projectStates: computed,
       groupedProjectStates: computed,
+      projectClosedState: computed,
       // fetch action
       fetchProjectStates: action,
       fetchProjectIntakeState: action,
@@ -128,8 +130,11 @@ export class StateStore implements IStateStore {
   get groupedProjectStates() {
     if (!this.router.projectId) return;
 
-    // First group the existing states
-    const groupedStates = groupBy(this.projectStates, "group") as Record<string, IState[]>;
+    // First group the existing states (d2m-plane: the Closed state is shown separately, see projectClosedState)
+    const groupedStates = groupBy(
+      this.projectStates?.filter((state) => !state.is_closed),
+      "group"
+    ) as Record<string, IState[]>;
 
     // Ensure all STATE_GROUPS are present, in the project's configured order
     const allGroups = getOrderedStateGroupKeys(this.getProjectStateGroupOrder(this.router.projectId)).reduce(
@@ -142,6 +147,13 @@ export class StateStore implements IStateStore {
     );
 
     return allGroups;
+  }
+
+  /**
+   * d2m-plane: returns the current project's "Closed" state (if any)
+   */
+  get projectClosedState() {
+    return this.projectStates?.find((state) => state.is_closed);
   }
 
   /**

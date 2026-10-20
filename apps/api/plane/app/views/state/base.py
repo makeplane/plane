@@ -108,6 +108,12 @@ class StateViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN])
     def mark_as_default(self, request, slug, project_id, pk):
         state = self.get_queryset().get(pk=pk)
+        # d2m-plane: new work items must never start in the Closed state
+        if state.is_closed:
+            return Response(
+                {"error": "The Closed state cannot be the default state"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         # One UPDATE, so concurrent calls can't leave the project with zero or two defaults
         State.objects.filter(project_id=project_id).update(
             default=Case(When(pk=state.pk, then=Value(True)), default=Value(False))
@@ -122,6 +128,13 @@ class StateViewSet(BaseViewSet):
         if state.default:
             return Response(
                 {"error": "Default state cannot be deleted"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # d2m-plane: the Closed state is permanent
+        if state.is_closed:
+            return Response(
+                {"error": "The Closed state cannot be deleted"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

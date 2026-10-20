@@ -389,6 +389,13 @@ def filter_sub_issue_toggle(params, issue_filter, method, prefix=""):
     return issue_filter
 
 
+def filter_show_closed_toggle(params, issue_filter, method, prefix=""):
+    # d2m-plane: work items in the project's "Closed" state are hidden unless show_closed=true
+    if str(params.get("show_closed", "false")).lower() != "true":
+        issue_filter[f"{prefix}state__is_closed"] = False
+    return issue_filter
+
+
 def filter_subscribed_issues(params, issue_filter, method, prefix=""):
     if method == "GET":
         subscribers = [item for item in params.get("subscriber").split(",") if item != "null"]
@@ -452,6 +459,7 @@ def issue_filters(query_params, method, prefix=""):
         "intake_status": filter_intake_status,
         "inbox_status": filter_inbox_status,
         "sub_issue": filter_sub_issue_toggle,
+        "show_closed": filter_show_closed_toggle,
         "subscriber": filter_subscribed_issues,
         "start_target_date": filter_start_target_date_issues,
     }

@@ -1215,6 +1215,21 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // Get display filters to check if 'Show sub Work items' is enabled - Do not add Work item to main list if disabled.
     const isShowWorkItemsEnabled = this.issueFilterStore.issueFilters?.displayFilters?.sub_issue ?? false;
 
+    // d2m-plane: work items in the "Closed" state are hidden unless 'Show closed' is enabled.
+    // Moving a work item into Closed removes it from the list; creating one directly in Closed doesn't add it.
+    const isShowClosedEnabled = this.issueFilterStore.issueFilters?.displayFilters?.show_closed ?? false;
+    if (!isShowClosedEnabled && action !== EIssueGroupedAction.DELETE) {
+      const isClosedState = (stateId: string | null | undefined) =>
+        !!stateId && !!this.rootIssueStore.rootStore.state.getStateById(stateId)?.is_closed;
+      if (issue && isClosedState(issue.state_id)) {
+        // already hidden (or never listed) -> nothing to do
+        if (!issueBeforeUpdate || isClosedState(issueBeforeUpdate.state_id)) return;
+        // just moved into Closed -> remove it from wherever it was listed
+        this.updateIssueList(undefined, issueBeforeUpdate, EIssueGroupedAction.DELETE);
+        return;
+      }
+    }
+
     // get issueUpdates from another method by passing down the three arguments
     // issueUpdates is nothing but an array of objects that contain the path of the issueId list that need updating and also the action that needs to be performed at the path
     const issueUpdates = this.getUpdateDetails(issue, issueBeforeUpdate, action);

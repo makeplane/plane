@@ -80,7 +80,8 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
         dropTargetForElements({
           element: elementRef,
           // d2m-plane: ignore state-group drags (handled by the group container)
-          canDrop: ({ source }) => source.data?.type !== "STATE_GROUP",
+          // d2m-plane: also nothing can be dropped onto the Closed state
+          canDrop: ({ source }) => source.data?.type !== "STATE_GROUP" && !state.is_closed,
           getData: ({ input, element }) =>
             attachClosestEdge(initialData, {
               input,

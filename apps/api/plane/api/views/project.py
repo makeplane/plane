@@ -264,6 +264,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                                 workspace=serializer.instance.workspace,
                                 group=state["group"],
                                 default=state.get("default", False),
+                                is_closed=state.get("is_closed", False),
                                 created_by=request.user,
                             )
                             for state in DEFAULT_STATES

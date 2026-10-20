@@ -22,6 +22,12 @@ class StateSerializer(BaseSerializer):
     def validate(self, data):
         if data.get("group", None) == StateGroup.TRIAGE.value:
             raise serializers.ValidationError("Cannot create triage state")
+        # d2m-plane: the Closed state must stay in the completed group and can't be the default state
+        if self.instance and self.instance.is_closed:
+            if data.get("group", StateGroup.COMPLETED.value) != StateGroup.COMPLETED.value:
+                raise serializers.ValidationError("The Closed state must stay in the completed group")
+            if data.get("default"):
+                raise serializers.ValidationError("The Closed state cannot be the default state")
         return data
 
     def save(self, **kwargs):
@@ -45,6 +51,7 @@ class StateSerializer(BaseSerializer):
             "project",
             "deleted_at",
             "slug",
+            "is_closed",
         ]
 
 

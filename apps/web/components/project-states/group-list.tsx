@@ -11,6 +11,7 @@ import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/typ
 import { cn } from "@plane/utils";
 // components
 import { GroupItem } from "@/components/project-states";
+import { ClosedStateGroup } from "./closed-state-group";
 
 type TGroupList = {
   groupedStates: Record<string, IState[]>;
@@ -21,6 +22,8 @@ type TGroupList = {
   stateItemClassName?: string;
   // d2m-plane: reorder state groups via drag & drop
   handleGroupDrop?: (sourceGroupKey: TStateGroups, targetGroupKey: TStateGroups, edge: "top" | "bottom") => void;
+  // d2m-plane: the project's Closed state, rendered as its own block at the bottom
+  closedState?: IState;
 };
 
 export const GroupList = observer(function GroupList(props: TGroupList) {
@@ -32,6 +35,7 @@ export const GroupList = observer(function GroupList(props: TGroupList) {
     groupItemClassName,
     stateItemClassName,
     handleGroupDrop,
+    closedState,
   } = props;
   // states
   const [groupsExpanded, setGroupsExpanded] = useState<Partial<TStateGroups>[]>([
@@ -82,6 +86,15 @@ export const GroupList = observer(function GroupList(props: TGroupList) {
           />
         );
       })}
+      {closedState && (
+        <ClosedStateGroup
+          closedState={closedState}
+          stateOperationsCallbacks={stateOperationsCallbacks}
+          isEditable={isEditable}
+          groupItemClassName={groupItemClassName}
+          stateItemClassName={stateItemClassName}
+        />
+      )}
     </div>
   );
 });

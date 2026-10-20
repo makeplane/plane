@@ -29,6 +29,7 @@ export const ProjectStateRoot = observer(function ProjectStateRoot(props: TProje
   // hooks
   const {
     groupedProjectStates,
+    projectClosedState,
     fetchProjectStates,
     createState,
     moveStatePosition,
@@ -96,6 +97,7 @@ export const ProjectStateRoot = observer(function ProjectStateRoot(props: TProje
       stateOperationsCallbacks={stateOperationsCallbacks}
       isEditable={isEditable}
       handleGroupDrop={handleGroupDrop}
+      closedState={projectClosedState}
     />
   );
 });

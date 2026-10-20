@@ -48,6 +48,14 @@ DEFAULT_STATES = [
         "group": StateGroup.COMPLETED.value,
     },
     {
+        # d2m-plane: final "Closed" state (ClickUp-like): counts as completed, hidden from views by default
+        "name": "Closed",
+        "color": "#A1A1AA",
+        "sequence": 50000,
+        "group": StateGroup.COMPLETED.value,
+        "is_closed": True,
+    },
+    {
         "name": "Cancelled",
         "color": "#9AA4BC",
         "sequence": 55000,
@@ -88,6 +96,8 @@ class State(ProjectBaseModel):
         max_length=20,
     )
     is_triage = models.BooleanField(default=False)
+    # d2m-plane: the single per-project "Closed" state (completed group, hidden from views unless show_closed)
+    is_closed = models.BooleanField(default=False)
     default = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
@@ -107,7 +117,13 @@ class State(ProjectBaseModel):
                 fields=["name", "project"],
                 condition=Q(deleted_at__isnull=True),
                 name="state_unique_name_project_when_deleted_at_null",
-            )
+            ),
+            # d2m-plane: at most one Closed state per project
+            models.UniqueConstraint(
+                fields=["project"],
+                condition=Q(deleted_at__isnull=True, is_closed=True),
+                name="state_unique_closed_per_project_when_deleted_at_null",
+            ),
         ]
         verbose_name = "State"
         verbose_name_plural = "States"
