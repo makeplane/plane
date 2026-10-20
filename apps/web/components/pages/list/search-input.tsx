@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
@@ -32,6 +32,10 @@ export function PageSearchInput(props: Props) {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
 
+  useEffect(() => {
+    if (isSearchOpen) inputRef.current?.focus();
+  }, [isSearchOpen]);
+
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
@@ -51,13 +55,14 @@ export function PageSearchInput(props: Props) {
           render={<button type="button" className="my-auto -mr-1 shrink-0" />}
           onClick={() => {
             setIsSearchOpen(true);
-            inputRef.current?.focus();
           }}
           icon={<Icon icon={SearchOutline} />}
           aria-label={t("search")}
         />
       )}
       <div
+        inert={!isSearchOpen}
+        aria-hidden={!isSearchOpen}
         className={cn(
           "flex w-0 items-center justify-start overflow-hidden rounded-md border border-transparent text-placeholder opacity-0 transition-[width] ease-linear",
           {
@@ -70,21 +75,24 @@ export function PageSearchInput(props: Props) {
           ref={inputRef}
           className="ml-2 w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
           placeholder="Search pages"
+          aria-label={t("search")}
           value={searchQuery}
           onChange={(e) => updateSearchQuery(e.target.value)}
           onKeyDown={handleInputKeyDown}
         />
         {isSearchOpen && (
-          <button
+          <IconButton
             type="button"
-            className="grid place-items-center"
+            variant="ghost"
+            size="xs"
+            aria-label={t("close")}
+            showTooltip={false}
             onClick={() => {
               updateSearchQuery("");
               setIsSearchOpen(false);
             }}
-          >
-            <CloseOutline className="h-3 w-3" />
-          </button>
+            icon={<Icon icon={CloseOutline} />}
+          />
         )}
       </div>
     </div>
