@@ -7,6 +7,7 @@
 import React from "react";
 // ui
 import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
 import { CopyOutline } from "@makeplane/propel/icons";
 // components
 import { setToast } from "@plane/blocks/toast";
@@ -34,7 +35,7 @@ export function CopyField(props: Props) {
         variant="secondary"
         size="md"
         stretch="auto"
-        icon={<CopyOutline width={18} height={18} color="#B9B9B9" />}
+        icon={<Icon icon={CopyOutline} />}
         iconPosition="end"
         label={url}
         onClick={() => {
