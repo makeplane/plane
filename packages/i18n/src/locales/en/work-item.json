@@ -333,6 +333,19 @@
     "upgrade_banner": {
       "message": "Change state, priority, and more for several work items at once. Save three minutes on an average per operation.",
       "cta": "Upgrade to One"
+    },
+    "d2m": {
+      "selected": "{count} selected",
+      "clear": "Clear",
+      "state": "Status",
+      "assignees": "Add assignees",
+      "labels": "Add labels",
+      "sprint": "Move to sprint",
+      "move_to_task": "Move to work item",
+      "success": "Updated {count} work items",
+      "partial": "Updated {success} of {total} work items. {failed} failed.",
+      "circular_parent": "The selected parent is one of the selected work items (or nested under one).",
+      "failed": "Could not update the selected work items. Please try again."
     }
   },
   "recurring_work_items": {

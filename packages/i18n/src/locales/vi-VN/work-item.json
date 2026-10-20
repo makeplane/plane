@@ -333,6 +333,19 @@
     "upgrade_banner": {
       "message": "Thay đổi trạng thái, mức ưu tiên và nhiều thứ khác cho nhiều mục công việc cùng lúc. Tiết kiệm trung bình ba phút cho mỗi thao tác.",
       "cta": "Nâng cấp lên One"
+    },
+    "d2m": {
+      "selected": "Đã chọn {count}",
+      "clear": "Bỏ chọn",
+      "state": "Trạng thái",
+      "assignees": "Thêm người phụ trách",
+      "labels": "Thêm nhãn",
+      "sprint": "Chuyển sang sprint",
+      "move_to_task": "Chuyển vào mục công việc",
+      "success": "Đã cập nhật {count} mục công việc",
+      "partial": "Đã cập nhật {success}/{total} mục công việc. {failed} mục lỗi.",
+      "circular_parent": "Mục cha được chọn nằm trong (hoặc là con của) các mục đang chọn.",
+      "failed": "Không thể cập nhật các mục đã chọn. Vui lòng thử lại."
     }
   },
   "recurring_work_items": {

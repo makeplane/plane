@@ -4,4 +4,5 @@
  * See the LICENSE file for details.
  */
 
-export const useBulkOperationStatus = () => false;
+// d2m-plane: bulk operations (multi-select + bulk edit bar) are enabled in this fork
+export const useBulkOperationStatus = () => true;
