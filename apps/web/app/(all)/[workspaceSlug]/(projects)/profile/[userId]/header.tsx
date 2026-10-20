@@ -99,8 +99,11 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
         </div>
         <div className="shrink-0">
           <IconButton
+            id="profile-sidebar-toggle"
             variant="ghost"
             size="md"
+            aria-controls="profile-sidebar"
+            aria-expanded={!profileSidebarCollapsed}
             aria-label={t(
               profileSidebarCollapsed
                 ? "aria_labels.projects_sidebar.expand_sidebar"
