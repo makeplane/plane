@@ -204,7 +204,15 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
                   layout="stacked"
                   disabled={issue.project_id === projectId}
                 >
-                  <div className="absolute left-1 grid w-3.5 flex-shrink-0 place-items-center">
+                  {/* d2m-plane: clicks around the checkbox must not open the peek overview */}
+                  {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
+                  <div
+                    className="absolute left-1 grid w-3.5 flex-shrink-0 place-items-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                    }}
+                  >
                     <MultipleSelectEntityAction
                       className={cn(
                         "pointer-events-none opacity-0 transition-opacity group-hover/list-block:pointer-events-auto group-hover/list-block:opacity-100",
