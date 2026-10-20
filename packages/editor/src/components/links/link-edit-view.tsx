@@ -5,6 +5,7 @@
  */
 
 import type { Node } from "@tiptap/pm/model";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { UnlinkOutline } from "@makeplane/propel/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 // components
@@ -22,12 +23,14 @@ type InputViewProps = {
 
 function InputView({ label, value, placeholder, onChange, autoFocus }: InputViewProps) {
   return (
-    <div className="flex flex-col gap-1">
-      <label className="inline-block text-11 font-semibold text-placeholder">{label}</label>
-      <input
+    <div className="w-[280px]">
+      <InputField
+        size="md"
+        orientation="vertical"
+        label={label}
+        type="text"
         placeholder={placeholder}
         onClick={(e) => e.stopPropagation()}
-        className="w-[280px] rounded-md border border-strong bg-layer-1 p-2 text-13 text-primary outline-none"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         autoFocus={autoFocus}
