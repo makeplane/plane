@@ -10,6 +10,8 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { SearchOutline } from "@makeplane/propel/icons";
 import { setToast } from "@plane/blocks/toast";
 import type { IWorkspaceBulkInviteFormData } from "@plane/types";
@@ -119,16 +121,20 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
             )}
           </h4>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1.5">
-              <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
-              <input
-                className="w-full max-w-[234px] border-none bg-transparent text-body-xs-regular outline-none placeholder:text-placeholder"
-                placeholder={`${t("search")}...`}
-                value={searchQuery}
-                // eslint-disable-next-line jsx-a11y/no-autofocus
-                autoFocus
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+            <div className="w-48">
+              <InputGroup size="md">
+                <Icon icon={SearchOutline} tint="placeholder" />
+                <Input
+                  size="md"
+                  type="text"
+                  aria-label={t("common.search.label")}
+                  placeholder={`${t("search")}...`}
+                  value={searchQuery}
+                  // eslint-disable-next-line jsx-a11y/no-autofocus
+                  autoFocus
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </InputGroup>
             </div>
             <MemberListFiltersDropdown
               appliedFilters={appliedRoleFilters}
