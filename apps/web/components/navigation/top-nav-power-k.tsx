@@ -9,7 +9,10 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // power-k
 import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/core/types";
@@ -22,6 +25,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { useExpandableSearch } from "@/hooks/use-expandable-search";
 
 export const TopNavPowerK = observer(() => {
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   const params = useParams();
@@ -239,9 +243,17 @@ export const TopNavPowerK = observer(() => {
             className="placeholder-text-placeholder min-w-0 flex-1 bg-transparent text-13 text-primary outline-none"
           />
           {searchTerm && (
-            <button type="button" onClick={handleClear} className="ml-2 shrink-0">
-              <CloseOutline className="size-3.5 text-placeholder hover:text-primary" />
-            </button>
+            <div className="ml-2 flex shrink-0">
+              <IconButton
+                type="button"
+                variant="ghost"
+                size="xs"
+                aria-label={t("power_k.search_menu.clear_search")}
+                showTooltip={false}
+                onClick={handleClear}
+                icon={<Icon icon={CloseOutline} />}
+              />
+            </div>
           )}
         </div>
       </div>
