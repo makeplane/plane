@@ -83,15 +83,17 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
     window.addEventListener("resize", handleToggleProfileSidebar);
     handleToggleProfileSidebar();
     return () => window.removeEventListener("resize", handleToggleProfileSidebar);
-  }, []);
+  }, [toggleProfileSidebar]);
 
   return (
     <div
       className={cn(
-        `vertical-scrollbar fixed z-5 scrollbar-md h-full w-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 shadow-raised-200 transition-all md:relative md:w-[300px]`,
+        `vertical-scrollbar fixed z-5 scrollbar-md h-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 shadow-raised-200 transition-all duration-300 ease-in-out md:relative`,
+        profileSidebarCollapsed
+          ? "translate-x-full opacity-0 md:w-0"
+          : "w-full translate-x-0 opacity-100 md:w-[300px]",
         className
       )}
-      style={profileSidebarCollapsed ? { marginLeft: "100vw" } : {}}
     >
       {userProjectsData ? (
         <>
