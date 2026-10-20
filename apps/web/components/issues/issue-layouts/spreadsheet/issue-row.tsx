@@ -25,6 +25,7 @@ import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useHideClosedSubIssues } from "@/hooks/use-hide-closed-sub-issues";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
@@ -79,7 +80,9 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
 
   // derived values
   const issue = issueMap[issueId];
-  const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
+  // d2m-plane: hide Closed sub-work items unless "Show closed" is enabled
+  const hideClosedSubIssues = useHideClosedSubIssues();
+  const subIssues = hideClosedSubIssues(subIssuesStore.subIssuesByIssueId(issueId));
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueId);
   const isIssueActive = selectionHelpers.getIsEntityActive(issueId);
 
