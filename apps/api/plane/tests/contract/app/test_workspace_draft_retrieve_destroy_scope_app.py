@@ -129,5 +129,7 @@ class TestWorkspaceDraftDestroy:
     def test_member_cannot_delete_another_users_draft(self, member_client, workspace, admin_draft):
         response = member_client.delete(draft_url(workspace.slug, admin_draft.id))
 
-        assert response.status_code in (status.HTTP_403_FORBIDDEN, status.HTTP_404_NOT_FOUND)
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
         assert DraftIssue.objects.filter(pk=admin_draft.id).exists()
