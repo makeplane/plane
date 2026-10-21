@@ -5,15 +5,16 @@
  */
 
 import type { Dispatch, MouseEvent, SetStateAction } from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRightOutline } from "@makeplane/propel/icons";
+import { AddOutline, ChevronRightOutline, EditOutline } from "@makeplane/propel/icons";
 // types
 import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { useTranslation } from "@plane/i18n";
 import type { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
@@ -22,6 +23,7 @@ import { Spinner } from "@plane/blocks/spinner";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
+import { LabelSelect } from "@/components/dropdowns/label/label-select";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
@@ -48,6 +50,8 @@ interface IssueBlockProps {
   setIsCurrentBlockDragging: React.Dispatch<React.SetStateAction<boolean>>;
   canDrag: boolean;
   isEpic?: boolean;
+  // d2m-plane: open the inline "add sub-work item" row under this item
+  onQuickAddSubIssue?: () => void;
 }
 
 export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
@@ -68,9 +72,15 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     setIsCurrentBlockDragging,
     canDrag,
     isEpic = false,
+    onQuickAddSubIssue,
   } = props;
   // ref
   const issueRef = useRef<HTMLDivElement | null>(null);
+  // d2m-plane: hover quick actions (add sub-work item, edit labels, rename)
+  const { t } = useTranslation();
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [isLabelSelectOpen, setIsLabelSelectOpen] = useState(false);
+  const renameHandledRef = useRef(false);
   // router
   const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
@@ -103,7 +113,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const issue = issuesMap[issueId];
   const subIssuesCount = issue?.sub_issues_count ?? 0;
   const canEditIssueProperties = canEditProperties(issue?.project_id ?? undefined);
-  const isDraggingAllowed = canDrag && canEditIssueProperties;
+  const isDraggingAllowed = canDrag && canEditIssueProperties && !isRenaming;
 
   const { isMobile } = usePlatformOS();
 
@@ -136,6 +146,26 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const canSelectIssues = canEditIssueProperties && !selectionHelpers.isSelectionDisabled;
 
   const marginLeft = `${spacingLeft}px`;
+
+  // d2m-plane: hover quick actions
+  const canQuickEdit = canEditIssueProperties && !isEpic && !issue.tempId && !issue.archived_at && !!updateIssue;
+  const stopRowClick = (e: React.SyntheticEvent) => {
+    // the row is a link that opens the peek overview — keep quick actions from triggering it
+    e.stopPropagation();
+    e.preventDefault();
+  };
+  const submitRename = async (value: string) => {
+    if (renameHandledRef.current) return;
+    renameHandledRef.current = true;
+    setIsRenaming(false);
+    const newName = value.trim();
+    if (!newName || newName === issue.name || !updateIssue) return;
+    try {
+      await updateIssue(issue.project_id, issue.id, { name: newName });
+    } catch {
+      setToast({ type: "error", title: "Error!", message: t("d2m_quick_actions.rename_failed") });
+    }
+  };
 
   const handleToggleExpand = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -254,9 +284,89 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
               )}
             </div>
 
-            <Tooltip label={issue.name} layout="stacked" align="start" disabled={isCurrentBlockDragging || isMobile}>
-              <p className="cursor-pointer truncate text-body-xs-medium text-primary">{issue.name}</p>
-            </Tooltip>
+            {isRenaming ? (
+              <input
+                // oxlint-disable-next-line jsx_a11y/no-autofocus
+                autoFocus
+                type="text"
+                defaultValue={issue.name}
+                aria-label={t("d2m_quick_actions.rename")}
+                className="w-full min-w-0 rounded-sm border border-strong bg-surface-1 px-1.5 py-0.5 text-body-xs-medium text-primary outline-none"
+                onClick={stopRowClick}
+                onMouseDown={(e) => e.stopPropagation()}
+                onFocus={(e) => e.currentTarget.select()}
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    void submitRename(e.currentTarget.value);
+                  } else if (e.key === "Escape") {
+                    e.preventDefault();
+                    renameHandledRef.current = true;
+                    setIsRenaming(false);
+                  }
+                }}
+                onBlur={(e) => void submitRename(e.currentTarget.value)}
+              />
+            ) : (
+              <Tooltip label={issue.name} layout="stacked" align="start" disabled={isCurrentBlockDragging || isMobile}>
+                <p className="cursor-pointer truncate text-body-xs-medium text-primary">{issue.name}</p>
+              </Tooltip>
+            )}
+
+            {/* d2m-plane: hover quick actions */}
+            {canQuickEdit && !isRenaming && (
+              // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
+              <div
+                className={cn(
+                  "ml-1.5 flex flex-shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover/list-block:opacity-100 focus-within:opacity-100",
+                  { "opacity-100": isLabelSelectOpen }
+                )}
+                onClick={stopRowClick}
+                onFocus={(e) => e.stopPropagation()}
+              >
+                {onQuickAddSubIssue && nestingLevel < 3 && (
+                  <Tooltip label={t("d2m_quick_actions.add_sub_issue")} disabled={isMobile}>
+                    <button
+                      type="button"
+                      aria-label={t("d2m_quick_actions.add_sub_issue")}
+                      className="grid size-6 place-items-center rounded-sm text-tertiary hover:bg-layer-transparent-hover hover:text-primary"
+                      onClick={(e) => {
+                        stopRowClick(e);
+                        onQuickAddSubIssue();
+                      }}
+                    >
+                      <AddOutline className="size-3.5" />
+                    </button>
+                  </Tooltip>
+                )}
+                {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
+                <div onClick={() => setIsLabelSelectOpen(true)}>
+                  <LabelSelect
+                    projectId={issue.project_id}
+                    value={issue.label_ids ?? []}
+                    onChange={(labelIds) => void updateIssue?.(issue.project_id, issue.id, { label_ids: labelIds })}
+                    onClose={() => setIsLabelSelectOpen(false)}
+                    variant="icon-md"
+                    tooltip={{ heading: t("d2m_quick_actions.edit_labels") }}
+                  />
+                </div>
+                <Tooltip label={t("d2m_quick_actions.rename")} disabled={isMobile}>
+                  <button
+                    type="button"
+                    aria-label={t("d2m_quick_actions.rename")}
+                    className="grid size-6 place-items-center rounded-sm text-tertiary hover:bg-layer-transparent-hover hover:text-primary"
+                    onClick={(e) => {
+                      stopRowClick(e);
+                      renameHandledRef.current = false;
+                      setIsRenaming(true);
+                    }}
+                  >
+                    <EditOutline className="size-3.5" />
+                  </button>
+                </Tooltip>
+              </div>
+            )}
           </div>
           {!issue?.tempId && (
             <div

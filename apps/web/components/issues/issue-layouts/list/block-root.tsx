@@ -10,6 +10,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
@@ -27,6 +28,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { HIGHLIGHT_CLASS, getIssueBlockId, isIssueNew } from "../utils";
 import { IssueBlock } from "./block";
+import { QuickAddSubIssue } from "./quick-add-sub-issue";
 import type { TRenderQuickActions } from "./list-view-types";
 
 type Props = {
@@ -73,6 +75,9 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
   const [isExpanded, setExpanded] = useState<boolean>(false);
   const [instruction, setInstruction] = useState<"DRAG_OVER" | "DRAG_BELOW" | undefined>(undefined);
   const [isCurrentBlockDragging, setIsCurrentBlockDragging] = useState(false);
+  // d2m-plane: inline quick add of sub-work items
+  const [isQuickAddingSubIssue, setIsQuickAddingSubIssue] = useState(false);
+  const { workspaceSlug } = useParams();
   // ref
   const issueBlockRef = useRef<HTMLDivElement | null>(null);
   // hooks
@@ -132,6 +137,15 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
 
   if (!issueId || !issuesMap[issueId]?.created_at) return null;
 
+  // d2m-plane: open the inline quick-add row (expanding the parent so the new items show up under it)
+  const handleQuickAddSubIssue = () => {
+    const parentIssue = issuesMap[issueId];
+    if (!isExpanded && workspaceSlug && parentIssue?.project_id)
+      void subIssuesStore.fetchSubIssues(workspaceSlug.toString(), parentIssue.project_id, issueId);
+    setExpanded(true);
+    setIsQuickAddingSubIssue(true);
+  };
+
   const subIssues = hideClosedSubIssues(subIssuesStore.subIssuesByIssueId(issueId));
   return (
     <div className="relative" ref={issueBlockRef} id={getIssueBlockId(issueId, groupId)}>
@@ -162,6 +176,7 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
           isCurrentBlockDragging={isParentIssueBeingDragged || isCurrentBlockDragging}
           setIsCurrentBlockDragging={setIsCurrentBlockDragging}
           isEpic={isEpic}
+          onQuickAddSubIssue={handleQuickAddSubIssue}
         />
       </RenderIfVisible>
 
@@ -187,6 +202,13 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
             shouldRenderByDefault={isExpanded}
           />
         ))}
+      {isQuickAddingSubIssue && !isEpic && issuesMap[issueId] && (
+        <QuickAddSubIssue
+          parentIssue={issuesMap[issueId]}
+          spacingLeft={spacingLeft}
+          onClose={() => setIsQuickAddingSubIssue(false)}
+        />
+      )}
       {isLastChild && <DropIndicator classNames={"absolute z-[2]"} isVisible={instruction === "DRAG_BELOW"} />}
     </div>
   );

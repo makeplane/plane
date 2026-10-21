@@ -348,6 +348,14 @@
       "failed": "Could not update the selected work items. Please try again."
     }
   },
+  "d2m_quick_actions": {
+    "add_sub_issue": "Add sub-work item",
+    "edit_labels": "Edit labels",
+    "rename": "Rename",
+    "sub_issue_placeholder": "Sub-work item name — press Enter to add, Esc to close",
+    "create_failed": "Could not create the sub-work item. Please try again.",
+    "rename_failed": "Could not rename the work item. Please try again."
+  },
   "recurring_work_items": {
     "settings": {
       "heading": "Recurring work items",
