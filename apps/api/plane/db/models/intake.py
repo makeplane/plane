@@ -2,11 +2,15 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Third party imports
+import pytz
+
 # Django imports
 from django.db import models
 
 # Module imports
-from plane.db.models.project import ProjectBaseModel
+from plane.db.mixins import ChangeTrackerMixin
+from plane.db.models.project import Project, ProjectBaseModel
 
 
 class Intake(ProjectBaseModel):
@@ -47,7 +51,9 @@ class IntakeIssueStatus(models.IntegerChoices):
     DUPLICATE = 2
 
 
-class IntakeIssue(ProjectBaseModel):
+class IntakeIssue(ChangeTrackerMixin, ProjectBaseModel):
+    TRACKED_FIELDS = ["snoozed_till"]
+
     intake = models.ForeignKey("db.Intake", related_name="issue_intake", on_delete=models.CASCADE)
     issue = models.ForeignKey("db.Issue", related_name="issue_intake", on_delete=models.CASCADE)
     status = models.IntegerField(
@@ -78,7 +84,27 @@ class IntakeIssue(ProjectBaseModel):
         verbose_name_plural = "IntakeIssues"
         db_table = "intake_issues"
         ordering = ("-created_at",)
+        indexes = [
+            # Small partial index for the unsnooze beat task, which scans for lapsed snoozes every few minutes.
+            models.Index(
+                fields=["snoozed_till"],
+                condition=models.Q(status=IntakeIssueStatus.SNOOZED),
+                name="intake_issue_snoozed_till_idx",
+            ),
+        ]
 
     def __str__(self):
         """Return name of the Issue"""
         return f"{self.issue.name} <{self.intake.name}>"
+
+    def save(self, *args, **kwargs):
+        # A snooze is day-granular whatever time the caller sent: wake at 00:00 of
+        # that day in the project's timezone. Project.save() re-times it if the
+        # project timezone later changes.
+        if self.snoozed_till and (self._state.adding or self.has_changed("snoozed_till")):
+            # Inline import: timezone_converter imports plane.db.models.
+            from plane.utils.timezone_converter import project_day_start
+
+            project_tz = pytz.timezone(Project.objects.values_list("timezone", flat=True).get(id=self.project_id))
+            self.snoozed_till = project_day_start(self.snoozed_till.astimezone(project_tz).date(), project_tz)
+        super().save(*args, **kwargs)
