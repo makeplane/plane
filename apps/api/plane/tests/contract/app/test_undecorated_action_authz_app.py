@@ -2,32 +2,16 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Contract tests for viewset actions whose authorization lives outside a decorator.
+"""Contract tests for authorization on two read actions.
 
-These actions are *defined* on their viewset, so a scan for routes falling
-through to a DRF generic mixin cannot see them, and neither carries an
-``@allow_permission`` decorator. That makes them easy to misread in both
-directions — one of the two turned out to be guarded after all.
+1. ``WorkspaceViewViewSet.retrieve`` (``/workspaces/<slug>/views/<pk>/``)
+   requires workspace membership, matching ``list``; like ``list``, a GUEST
+   sees only views they own.
 
-1. **Fix.** ``WorkspaceViewViewSet.retrieve``
-   (``/workspaces/<slug>/views/<pk>/``) had no check at all, and its queryset
-   supplied none either: it filters on ``workspace__slug`` and then
-   ``Q(owned_by=request.user) | Q(access=1)``. That second clause reads like a
-   visibility predicate but is vacuous — ``access`` sits in the serializer's
-   ``read_only_fields`` so the API never sets it, and the model defaults it to
-   ``1`` (Public), so every row matches. A user with no membership in the
-   workspace could read any global view in it by id. It now requires workspace
-   membership, matching ``list`` — and, like ``list``, restricts a GUEST to
-   views they own, since guests pass the membership check too.
-
-2. **Regression coverage only, no fix.** ``IssueDetailIdentifierEndpoint``
-   (``/workspaces/<slug>/work-items/<PROJ>-<n>/``) resolves a work item by its
-   human-readable sequence number, which makes it an enumeration surface. It was
-   reported as missing the guest restriction. **It is not.** The membership check
-   near the top of ``get`` is followed, after the issue is fetched, by an
-   explicit role-5 / ``guest_view_all_features`` / ``created_by`` check that
-   returns 403. That guard had no test, so the disclosure it prevents was one
-   refactor away from being lost silently. These tests pin it.
+2. ``IssueDetailIdentifierEndpoint``
+   (``/workspaces/<slug>/work-items/<PROJ>-<n>/``) limits a guest without
+   ``guest_view_all_features`` to work items they created. The check is inline
+   in ``get``; these tests pin it.
 """
 
 from uuid import uuid4
@@ -121,14 +105,7 @@ def foreign_issue(db, workspace, project, create_user):
 
 @pytest.mark.contract
 class TestWorkItemByIdentifierGuestScope:
-    """A restricted guest must not resolve work items they did not author.
-
-    Pins an existing guard rather than covering a new fix. This endpoint resolves
-    by sequence number, so losing the guard would let a guest walk
-    ``PROJ-1..PROJ-N`` and read every work item's full detail — including
-    ``description_html`` — plus the project and issue UUIDs that every other
-    endpoint keys on.
-    """
+    """A restricted guest resolves only work items they created."""
 
     @pytest.mark.django_db
     def test_guest_cannot_read_foreign_work_item(self, guest_client, workspace, project, foreign_issue):
