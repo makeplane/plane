@@ -18,6 +18,7 @@ from plane.db.models import Project, ProjectMember, User, WorkspaceMember
 
 PREF_URL = "/api/workspaces/{slug}/projects/{project_id}/preferences/member/{member_id}/"
 MEMBER_URL = "/api/workspaces/{slug}/projects/{project_id}/members/{pk}/"
+PERSONAL_FIELDS = ("preferences", "view_props", "default_props")
 
 
 def _member(workspace, project, *, role):
@@ -124,7 +125,7 @@ class TestMemberPreferenceScope:
 class TestMemberDetailPreferenceScope:
     """The member-detail endpoint only exposes and accepts preferences for the caller's own row."""
 
-    def test_member_detail_omits_other_members_preferences(self, workspace, project, create_user):
+    def test_member_detail_omits_other_members_personal_fields(self, workspace, project, create_user):
         other = _member(workspace, project, role=15)
         owner_member = ProjectMember.objects.get(project=project, member=create_user)
 
@@ -132,7 +133,8 @@ class TestMemberDetailPreferenceScope:
         assert response.status_code == status.HTTP_200_OK, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
-        assert "preferences" not in response.data
+        for field in PERSONAL_FIELDS:
+            assert field not in response.data
 
     def test_member_detail_returns_own_preferences(self, workspace, project):
         member = _member(workspace, project, role=15)
@@ -159,3 +161,19 @@ class TestMemberDetailPreferenceScope:
         )
         member_record.refresh_from_db()
         assert member_record.preferences == original
+
+    def test_member_detail_update_omits_other_members_personal_fields(self, workspace, project, create_user):
+        member = _member(workspace, project, role=15)
+        member_record = ProjectMember.objects.get(project=project, member=member)
+
+        response = _client(create_user).patch(
+            MEMBER_URL.format(slug=workspace.slug, project_id=project.id, pk=member_record.id),
+            {"role": 5},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert response.data["role"] == 5
+        for field in PERSONAL_FIELDS:
+            assert field not in response.data

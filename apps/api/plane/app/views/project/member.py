@@ -23,6 +23,16 @@ from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
 from plane.app.permissions.base import allow_permission, ROLE
 
+# Personal fields of a membership row, only returned to the member who owns it
+PERSONAL_MEMBER_FIELDS = ("preferences", "view_props", "default_props")
+
+
+def _without_personal_fields(data, project_member, user):
+    if project_member.member_id != user.id:
+        for field in PERSONAL_MEMBER_FIELDS:
+            data.pop(field, None)
+    return data
+
 
 class ProjectMemberViewSet(BaseViewSet):
     serializer_class = ProjectMemberAdminSerializer
@@ -200,11 +210,9 @@ class ProjectMemberViewSet(BaseViewSet):
         else:
             serializer = ProjectMemberRoleSerializer(project_member, fields=("id", "member", "role"))
 
-        data = serializer.data
-        # Preferences are personal and only returned to their owner
-        if project_member.member_id != request.user.id:
-            data.pop("preferences", None)
-        return Response(data, status=status.HTTP_200_OK)
+        return Response(
+            _without_personal_fields(serializer.data, project_member, request.user), status=status.HTTP_200_OK
+        )
 
     # Only project admins (or workspace admins in the project) may edit membership rows
     @allow_permission([ROLE.ADMIN])
@@ -296,7 +304,9 @@ class ProjectMemberViewSet(BaseViewSet):
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                _without_personal_fields(serializer.data, project_member, request.user), status=status.HTTP_200_OK
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission([ROLE.ADMIN])
