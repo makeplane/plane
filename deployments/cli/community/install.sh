@@ -113,7 +113,8 @@ function getEnvValue() {
         grep -q "^$key=" "$file"
         if [ $? -eq 0 ]; then
             local value
-            value=$(grep "^$key=" "$file" | cut -d'=' -f2)
+            # Everything after the first "=", so values containing "=" are read whole
+            value=$(grep -m1 "^$key=" "$file" | cut -d'=' -f2-)
             echo "$value"
         else
             echo ""
@@ -137,13 +138,9 @@ function updateEnvFile() {
             echo "$key=$value" >> "$file"
             return
         else 
-            if [ "$OS_NAME" == "Darwin" ]; then
-                value=$(echo "$value" | sed 's/|/\\|/g')
-                sed -i '' "s|^$key=.*|$key=$value|g" "$file"
-            else
-                value=$(echo "$value" | sed 's/\//\\\//g')
-                sed -i "s/^$key=.*/$key=$value/g" "$file"
-            fi
+            # awk reads the value from the environment, so it is written literally (no sed escaping)
+            KEY="$key" VAL="$value" awk 'BEGIN { p = ENVIRON["KEY"] "=" } index($0, p) == 1 { print p ENVIRON["VAL"]; next } { print }' "$file" > "$file.tmp" \
+                && mv "$file.tmp" "$file"
         fi
     else
         echo "File not found: $file"
@@ -176,16 +173,6 @@ function generateSecret() {
     echo "$secret"
 }
 
-function setEnvValueLiteral() {
-    local key=$1
-    local value=$2
-    local file=$3
-
-    # awk reads the value from the environment, so no character is interpreted
-    KEY="$key" VAL="$value" awk 'BEGIN { p = ENVIRON["KEY"] "=" } index($0, p) == 1 { print p ENVIRON["VAL"]; next } { print }' "$file" > "$file.tmp" \
-        && mv "$file.tmp" "$file"
-}
-
 function generateInstallSecrets() {
     local file=$1
     local key value generated=false
@@ -196,7 +183,7 @@ function generateInstallSecrets() {
                 echo "Could not generate a random value for $key. Set it manually in $file" >&2
                 continue
             fi
-            setEnvValueLiteral "$key" "$value" "$file"
+            updateEnvFile "$key" "$value" "$file"
             generated=true
         fi
     done
