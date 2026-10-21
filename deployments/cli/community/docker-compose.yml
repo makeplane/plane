@@ -11,6 +11,8 @@ x-redis-env: &redis-env
   REDIS_HOST: ${REDIS_HOST:-plane-redis}
   REDIS_PORT: ${REDIS_PORT:-6379}
   REDIS_URL: ${REDIS_URL:-redis://plane-redis:6379/}
+  REDIS_SSL_CERT_REQS: ${REDIS_SSL_CERT_REQS:-required}
+  REDIS_SSL_CA_CERTS: ${REDIS_SSL_CA_CERTS:-}
 
 x-minio-env: &minio-env
   MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:-access-key}

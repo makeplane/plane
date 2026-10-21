@@ -100,6 +100,9 @@ Set both to unique, private values, either in `plane.env` (`variables.env`) or a
 
 In v1.4.0 to v1.4.2 a container started without `SECRET_KEY` received a generated key that changed on every recreation. When upgrading such a container, read the current key from the running container's `/app/plane.env` and pass it as `SECRET_KEY`.
 
+- `REDIS_SSL_CERT_REQS`: For a `rediss://` `REDIS_URL`, the Redis server certificate and hostname are verified by default (`required`). Set it to `none` to skip verification.
+- `REDIS_SSL_CA_CERTS`: Path inside the container to a CA bundle, for a Redis server whose certificate is issued by a private CA. Mount the file with `-v`, for example `-v /path/to/redis-ca.pem:/certs/redis-ca.pem:ro -e REDIS_SSL_CA_CERTS=/certs/redis-ca.pem`.
+
 #### File Handling
 
 - `FILE_SIZE_LIMIT`: Maximum file upload size in bytes (default: `5242880` = 5MB)
