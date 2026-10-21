@@ -14,6 +14,7 @@ from django.db import IntegrityError
 from plane.app.views.base import BaseAPIView
 from plane.db.models import UserFavorite, Workspace
 from plane.app.serializers import UserFavoriteSerializer
+from plane.app.serializers.favorite import get_entity_model_and_serializer, get_favorite_entities
 from plane.app.permissions import allow_permission, ROLE
 
 
@@ -56,10 +57,18 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
             # else create a new favorite
             serializer = UserFavoriteSerializer(data=request.data)
             if serializer.is_valid():
+                project_id = request.data.get("project_id", None)
+                entity_type = serializer.validated_data.get("entity_type")
+                entity_model, _ = get_entity_model_and_serializer(entity_type)
+                # An entity favorite must point at an entity in this workspace that the user can see
+                if entity_model:
+                    get_favorite_entities(entity_type, request.user.id, project_id).get(
+                        pk=serializer.validated_data.get("entity_identifier"), workspace=workspace
+                    )
                 serializer.save(
                     user_id=request.user.id,
                     workspace=workspace,
-                    project_id=request.data.get("project_id", None),
+                    project_id=project_id,
                 )
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -69,7 +78,9 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def patch(self, request, slug, favorite_id):
         favorite = UserFavorite.objects.get(user=request.user, workspace__slug=slug, pk=favorite_id)
-        serializer = UserFavoriteSerializer(favorite, data=request.data, partial=True)
+        # Only the name, position and folder can change; the favorited entity stays fixed
+        data = {key: request.data[key] for key in ("name", "sequence", "parent") if key in request.data}
+        serializer = UserFavoriteSerializer(favorite, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

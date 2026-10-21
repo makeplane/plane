@@ -17,7 +17,7 @@ from rest_framework import status
 from .. import BaseViewSet
 from plane.app.serializers import IssueReactionSerializer
 from plane.app.permissions import allow_permission, ROLE
-from plane.db.models import IssueReaction
+from plane.db.models import Issue, IssueReaction
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
 
@@ -44,6 +44,8 @@ class IssueReactionViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, issue_id):
+        # The URL issue must belong to the URL workspace + project (404 otherwise).
+        Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
         serializer = IssueReactionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(issue_id=issue_id, project_id=project_id, actor=request.user)
