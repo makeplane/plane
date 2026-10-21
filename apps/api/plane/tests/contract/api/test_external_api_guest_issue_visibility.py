@@ -1537,3 +1537,58 @@ class TestIntakeIssueGuestScope:
         assert len(response.data["results"]) == 2
         response = api_key_client.get(_intake_issue_detail_url(workspace, project, foreign_issue))
         assert response.status_code == status.HTTP_200_OK
+
+
+def _project_member_client(api_client, workspace, project, workspace_role, project_role):
+    unique_id = uuid4().hex[:8]
+    user = User.objects.create(email=f"member-{unique_id}@plane.so", username=f"member_{unique_id}")
+    WorkspaceMember.objects.create(workspace=workspace, member=user, role=workspace_role)
+    ProjectMember.objects.create(project=project, member=user, workspace=workspace, role=project_role, is_active=True)
+    token = APIToken.objects.create(user=user, label="Member Token")
+    api_client.credentials(HTTP_X_API_KEY=token.token)
+    return api_client
+
+
+@pytest.mark.contract
+class TestIntakeIssueDeleteScope:
+    @pytest.mark.django_db
+    def test_guest_denied_delete_foreign_intake_issue(
+        self, guest_client, workspace, project, foreign_issue, foreign_intake_issue
+    ):
+        response = guest_client.delete(_intake_issue_detail_url(workspace, project, foreign_issue))
+        assert response.status_code == status.HTTP_404_NOT_FOUND, f"Got {response.status_code}: {response.data!r}"
+        assert IntakeIssue.objects.filter(pk=foreign_intake_issue.pk).exists()
+
+    @pytest.mark.django_db
+    def test_guest_allowed_delete_own_intake_issue(self, guest_client, workspace, project, own_issue, own_intake_issue):
+        response = guest_client.delete(_intake_issue_detail_url(workspace, project, own_issue))
+        assert response.status_code == status.HTTP_204_NO_CONTENT, f"Got {response.status_code}: {response.data!r}"
+        assert not IntakeIssue.objects.filter(pk=own_intake_issue.pk).exists()
+
+    @pytest.mark.django_db
+    def test_member_denied_delete_foreign_accepted_intake_issue(
+        self, api_client, workspace, project, foreign_issue, foreign_intake_issue
+    ):
+        foreign_intake_issue.status = 1
+        foreign_intake_issue.save(update_fields=["status"])
+        client = _project_member_client(api_client, workspace, project, workspace_role=15, project_role=15)
+        response = client.delete(_intake_issue_detail_url(workspace, project, foreign_issue))
+        assert response.status_code == status.HTTP_403_FORBIDDEN, f"Got {response.status_code}: {response.data!r}"
+        assert IntakeIssue.objects.filter(pk=foreign_intake_issue.pk).exists()
+
+    @pytest.mark.django_db
+    def test_workspace_admin_allowed_delete_foreign_intake_issue(
+        self, api_client, workspace, project, foreign_issue, foreign_intake_issue
+    ):
+        client = _project_member_client(api_client, workspace, project, workspace_role=20, project_role=15)
+        response = client.delete(_intake_issue_detail_url(workspace, project, foreign_issue))
+        assert response.status_code == status.HTTP_204_NO_CONTENT, f"Got {response.status_code}: {response.data!r}"
+        assert not IntakeIssue.objects.filter(pk=foreign_intake_issue.pk).exists()
+
+    @pytest.mark.django_db
+    def test_admin_allowed_delete_foreign_intake_issue(
+        self, api_key_client, workspace, project, foreign_issue, foreign_intake_issue
+    ):
+        response = api_key_client.delete(_intake_issue_detail_url(workspace, project, foreign_issue))
+        assert response.status_code == status.HTTP_204_NO_CONTENT, f"Got {response.status_code}: {response.data!r}"
+        assert not IntakeIssue.objects.filter(pk=foreign_intake_issue.pk).exists()

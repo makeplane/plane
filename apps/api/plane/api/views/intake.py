@@ -27,7 +27,7 @@ from plane.api.serializers import (
 )
 from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State, StateGroup
+from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State, StateGroup, WorkspaceMember
 from plane.utils.host import base_host
 from plane.utils.serializers import writable_data
 from plane.utils.content_validator import validate_html_content
@@ -490,24 +490,33 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
             project_id=project_id,
             intake_id=intake.id,
         )
+        # Restricted guests only see the intake work items they submitted
+        if intake_issue.created_by_id != request.user.id and is_restricted_guest(request.user.id, project_id, slug):
+            raise IntakeIssue.DoesNotExist()
+
+        # Only the work item's creator, a project admin or a workspace admin can delete it
+        issue = Issue.objects.filter(workspace__slug=slug, project_id=project_id, pk=issue_id).first()
+        if not (
+            (issue is not None and issue.created_by_id == request.user.id)
+            or ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+            or WorkspaceMember.objects.filter(
+                workspace__slug=slug, member=request.user, role=20, is_active=True
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or creator can delete the work item"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # Check the issue status
         if intake_issue.status in [-2, -1, 0, 2]:
             # Delete the issue also
-            issue = Issue.objects.filter(workspace__slug=slug, project_id=project_id, pk=issue_id).first()
-            if issue.created_by_id != request.user.id and (
-                not ProjectMember.objects.filter(
-                    workspace__slug=slug,
-                    member=request.user,
-                    role=20,
-                    project_id=project_id,
-                    is_active=True,
-                ).exists()
-            ):
-                return Response(
-                    {"error": "Only admin or creator can delete the work item"},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
             issue.delete()
 
         intake_issue.delete()
