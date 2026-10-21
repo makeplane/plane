@@ -36,20 +36,15 @@ export function OAuthOptions(props: OAuthOptionsProps) {
     <div className={cn("w-full", containerClassName)}>
       <div
         className={cn(
-          "flex gap-4 overflow-hidden transition-all duration-500 ease-in-out",
+          "flex gap-4 transition-all duration-500 ease-in-out",
           compact ? "flex-row" : "flex-col",
           className
         )}
       >
         {enabledOptions.map((option) => (
-          <OAuthButton
-            key={option.id}
-            text={option.text}
-            icon={option.icon}
-            onClick={option.onClick}
-            compact={compact}
-            className="transition-all duration-300 ease-in-out"
-          />
+          <div key={option.id} className={compact ? "min-w-0 flex-1" : undefined}>
+            <OAuthButton text={option.text} icon={option.icon} onClick={option.onClick} compact={compact} />
+          </div>
         ))}
       </div>
 
