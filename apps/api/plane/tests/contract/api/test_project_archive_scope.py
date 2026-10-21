@@ -5,9 +5,10 @@
 """Contract tests for project archive/unarchive on the external API.
 
 Archiving (POST) or unarchiving (DELETE) a project requires an active
-membership of that project with role ADMIN or MEMBER, or any active
-membership plus workspace ADMIN. A workspace member who is not a member of
-the project gets 403 on both verbs.
+workspace membership and an active membership of that project with role
+ADMIN or MEMBER, or any active project membership plus workspace ADMIN. A
+workspace member who is not a member of the project, or a project member
+whose workspace membership is inactive, gets 403 on both verbs.
 """
 
 from uuid import uuid4
@@ -107,3 +108,20 @@ class TestProjectArchiveScope:
         assert response.status_code == status.HTTP_204_NO_CONTENT, f"got {response.status_code}: {response.data!r}"
         private_project.refresh_from_db()
         assert private_project.archived_at is None
+
+    def test_project_admin_with_inactive_workspace_membership_cannot_archive(self, workspace, private_project):
+        """An active project row does not grant archive or unarchive without an
+        active workspace membership."""
+        user = _make_user("inactive")
+        WorkspaceMember.objects.create(workspace=workspace, member=user, role=20, is_active=False)
+        ProjectMember.objects.create(project=private_project, workspace=workspace, member=user, role=20, is_active=True)
+        client = _client_for(user)
+        url = _archive_url(workspace.slug, private_project.id)
+
+        response = client.post(url)
+        assert response.status_code == status.HTTP_403_FORBIDDEN, f"got {response.status_code}: {response.data!r}"
+        private_project.refresh_from_db()
+        assert private_project.archived_at is None, "the project must not have been archived"
+
+        response = client.delete(url)
+        assert response.status_code == status.HTTP_403_FORBIDDEN, f"got {response.status_code}: {response.data!r}"
