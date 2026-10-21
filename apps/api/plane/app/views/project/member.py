@@ -200,12 +200,23 @@ class ProjectMemberViewSet(BaseViewSet):
         else:
             serializer = ProjectMemberRoleSerializer(project_member, fields=("id", "member", "role"))
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        data = serializer.data
+        # Preferences are personal and only returned to their owner
+        if project_member.member_id != request.user.id:
+            data.pop("preferences", None)
+        return Response(data, status=status.HTTP_200_OK)
 
     # Only project admins (or workspace admins in the project) may edit membership rows
     @allow_permission([ROLE.ADMIN])
     def partial_update(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(pk=pk, workspace__slug=slug, project_id=project_id, is_active=True)
+
+        # Preferences are personal; only their owner may change them
+        if "preferences" in request.data and project_member.member_id != request.user.id:
+            return Response(
+                {"error": "You cannot update another member's preferences"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # Fetch the target's workspace role (used to cap the new project role)
         target_workspace_role = WorkspaceMember.objects.get(
@@ -390,9 +401,7 @@ class ProjectMemberPreferenceEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id, member_id):
-        # Preferences are personal: a member may only read/modify their OWN
-        # preferences. member_id is a URL param, so reject any mismatch to prevent
-        # cross-member IDOR.
+        # Preferences are personal: a member may only modify their own.
         if str(member_id) != str(request.user.id):
             return Response(
                 {"error": "You cannot access another member's preferences."},
@@ -410,8 +419,7 @@ class ProjectMemberPreferenceEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, member_id):
-        # Preferences are personal: a member may only read their OWN preferences.
-        # member_id is a URL param, so reject any mismatch.
+        # Preferences are personal: a member may only read their own.
         if str(member_id) != str(request.user.id):
             return Response(
                 {"error": "You cannot access another member's preferences."},

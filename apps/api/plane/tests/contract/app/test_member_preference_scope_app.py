@@ -2,16 +2,10 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Contract tests for ProjectMemberPreferenceEndpoint ownership scoping.
+"""Contract tests for project member preference ownership.
 
-The endpoint takes a ``member_id``
-URL parameter and loaded the ``ProjectMember`` by ``(project_id, member_id,
-workspace__slug)`` with no check that ``member_id`` is the caller — so any project
-member (including a Guest) could read and modify any other member's per-project
-preferences.
-
-The fix rejects any request where ``member_id != request.user.id`` (403);
-preferences are personal.
+Preferences are personal: only the member who owns them may read or change
+them, through the preferences endpoint or the member-detail endpoint.
 """
 
 from uuid import uuid4
@@ -23,6 +17,7 @@ from rest_framework.test import APIClient
 from plane.db.models import Project, ProjectMember, User, WorkspaceMember
 
 PREF_URL = "/api/workspaces/{slug}/projects/{project_id}/preferences/member/{member_id}/"
+MEMBER_URL = "/api/workspaces/{slug}/projects/{project_id}/members/{pk}/"
 
 
 def _member(workspace, project, *, role):
@@ -56,9 +51,8 @@ class TestMemberPreferenceScope:
     """A member may only read/modify their OWN project preferences."""
 
     def test_member_cannot_read_others_preferences(self, workspace, project, create_user):
-        attacker = _member(workspace, project, role=15)
-        # attacker requests the admin (create_user)'s preferences
-        response = _client(attacker).get(
+        other = _member(workspace, project, role=15)
+        response = _client(other).get(
             PREF_URL.format(slug=workspace.slug, project_id=project.id, member_id=create_user.id)
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
@@ -66,20 +60,20 @@ class TestMemberPreferenceScope:
         )
 
     def test_member_cannot_modify_others_preferences(self, workspace, project, create_user):
-        attacker = _member(workspace, project, role=15)
-        victim_member = ProjectMember.objects.get(project=project, member=create_user)
-        original = victim_member.preferences
+        other = _member(workspace, project, role=15)
+        owner_member = ProjectMember.objects.get(project=project, member=create_user)
+        original = owner_member.preferences
 
-        response = _client(attacker).patch(
+        response = _client(other).patch(
             PREF_URL.format(slug=workspace.slug, project_id=project.id, member_id=create_user.id),
-            {"pinned": ["hacked"]},
+            {"pinned": ["changed"]},
             format="json",
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
-        victim_member.refresh_from_db()
-        assert victim_member.preferences == original, "Another member's preferences were modified"
+        owner_member.refresh_from_db()
+        assert owner_member.preferences == original, "Another member's preferences were modified"
 
     def test_member_can_read_own_preferences(self, workspace, project):
         member = _member(workspace, project, role=15)
@@ -123,3 +117,45 @@ class TestMemberPreferenceScope:
         # must survive. Pins that semantic against a wholesale-replace regression.
         for key, value in original.items():
             assert member_record.preferences[key] == value
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestMemberDetailPreferenceScope:
+    """The member-detail endpoint only exposes and accepts preferences for the caller's own row."""
+
+    def test_member_detail_omits_other_members_preferences(self, workspace, project, create_user):
+        other = _member(workspace, project, role=15)
+        owner_member = ProjectMember.objects.get(project=project, member=create_user)
+
+        response = _client(other).get(MEMBER_URL.format(slug=workspace.slug, project_id=project.id, pk=owner_member.id))
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert "preferences" not in response.data
+
+    def test_member_detail_returns_own_preferences(self, workspace, project):
+        member = _member(workspace, project, role=15)
+        member_record = ProjectMember.objects.get(project=project, member=member)
+
+        response = _client(member).get(
+            MEMBER_URL.format(slug=workspace.slug, project_id=project.id, pk=member_record.id)
+        )
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["preferences"] == member_record.preferences
+
+    def test_admin_cannot_update_other_members_preferences(self, workspace, project, create_user):
+        member = _member(workspace, project, role=15)
+        member_record = ProjectMember.objects.get(project=project, member=member)
+        original = member_record.preferences
+
+        response = _client(create_user).patch(
+            MEMBER_URL.format(slug=workspace.slug, project_id=project.id, pk=member_record.id),
+            {"preferences": {"pinned": ["changed"]}},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        member_record.refresh_from_db()
+        assert member_record.preferences == original
