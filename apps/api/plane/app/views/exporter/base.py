@@ -67,12 +67,7 @@ class ExportIssuesEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
-        # Scoped to the requesting user: an export defaults to the initiator's
-        # own projects (including private ones), and ExporterHistorySerializer
-        # returns a presigned download url (7-day, no-auth-required) plus a
-        # token — without this filter, any workspace member could list and use
-        # another member's export, reading issues from projects they cannot
-        # otherwise access.
+        # Users see only the exports they initiated.
         exporter_history = ExporterHistory.objects.filter(
             workspace__slug=slug, type="issue_exports", initiated_by=request.user
         ).select_related("workspace", "initiated_by")

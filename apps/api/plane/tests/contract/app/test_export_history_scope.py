@@ -2,20 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Regression test for cross-member export-history disclosure.
-
-Root cause: ExportIssuesEndpoint.get filtered ExporterHistory by
-workspace__slug only, with no initiated_by filter — so any workspace
-ADMIN/MEMBER could list every other member's export history.
-ExporterHistorySerializer includes `url` (a presigned S3 link, 7-day expiry,
-no auth required to use) and `token`. Since an export defaults to the
-initiator's own projects (including fully private ones) when no project list
-is supplied, this let any workspace member read another member's private
-project data by listing exports and using the disclosed url — no crafted
-request needed, no revocation possible once disclosed.
-
-Fixed by adding initiated_by=request.user to the queryset filter.
-"""
+"""Export history lists only the exports the requesting user initiated."""
 
 from uuid import uuid4
 
@@ -55,36 +42,40 @@ def other_member(db, workspace):
     return user
 
 
-@pytest.fixture
-def own_export(db, workspace, create_user):
-    """An export initiated by create_user (the workspace admin)."""
+def _make_export(workspace, user):
     return ExporterHistory.objects.create(
         workspace=workspace,
         project=[],
-        initiated_by=create_user,
+        initiated_by=user,
         provider="csv",
         type="issue_exports",
-        url="https://example-bucket.s3.amazonaws.com/secret-export.csv?X-Amz-Signature=forged",
+        url=f"https://example-bucket.s3.amazonaws.com/{uuid4().hex}.csv?X-Amz-Signature=test",
     )
+
+
+def _result_ids(response):
+    return {str(row["id"]) for row in response.data["results"]}
 
 
 @pytest.mark.django_db
 class TestExportHistoryScope:
-    def test_member_cannot_see_another_members_export(self, workspace, own_export, other_member):
-        """other_member did not initiate own_export (create_user's) — must
-        not see it, and therefore must never receive its presigned url."""
+    def test_member_sees_only_own_exports(self, workspace, create_user, other_member):
+        admin_export = _make_export(workspace, create_user)
+        member_export = _make_export(workspace, other_member)
+
         response = _client_for(other_member).get(_export_url(workspace.slug))
 
         assert response.status_code == status.HTTP_200_OK, response.data
-        result_ids = [str(row["id"]) for row in response.data["results"]]
-        assert str(own_export.id) not in result_ids, "a workspace member must not see another member's export history"
+        assert _result_ids(response) == {str(member_export.id)}
+        assert response.data["results"][0]["url"] == member_export.url
+        assert str(admin_export.id) not in _result_ids(response)
 
-    def test_member_can_still_see_their_own_export(self, workspace, create_user, own_export):
-        """Positive control: the initiator must still see their own export."""
+    def test_admin_sees_only_own_exports(self, workspace, create_user, other_member):
+        admin_export = _make_export(workspace, create_user)
+        member_export = _make_export(workspace, other_member)
+
         response = _client_for(create_user).get(_export_url(workspace.slug))
 
         assert response.status_code == status.HTTP_200_OK, response.data
-        result_ids = [str(row["id"]) for row in response.data["results"]]
-        assert str(own_export.id) in result_ids
-        own_row = next(row for row in response.data["results"] if str(row["id"]) == str(own_export.id))
-        assert own_row["url"] == own_export.url
+        assert _result_ids(response) == {str(admin_export.id)}
+        assert str(member_export.id) not in _result_ids(response)
