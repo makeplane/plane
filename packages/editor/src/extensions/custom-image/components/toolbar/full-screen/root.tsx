@@ -7,6 +7,8 @@
 import { FullScreenOutline } from "@makeplane/propel/icons";
 import { useEffect, useState } from "react";
 // plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { ToolbarButton } from "@makeplane/propel/elements/toolbar";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 // local imports
 import { ImageFullScreenModal } from "./modal";
@@ -46,18 +48,19 @@ export function ImageFullScreenActionRoot(props: Props) {
         toggleFullScreenMode={setIsFullScreenEnabled}
       />
       <Tooltip label="View in full screen" disabled={isTouchDevice}>
-        <button
+        <ToolbarButton
           type="button"
+          size="sm"
+          labeled={false}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             setIsFullScreenEnabled(true);
           }}
-          className="grid h-full flex-shrink-0 place-items-center text-on-color/60 transition-colors hover:text-on-color"
           aria-label="View image in full screen"
         >
-          <FullScreenOutline className="size-3" />
-        </button>
+          <Icon icon={FullScreenOutline} />
+        </ToolbarButton>
       </Tooltip>
     </>
   );
