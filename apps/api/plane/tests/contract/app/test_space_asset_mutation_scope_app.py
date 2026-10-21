@@ -2,17 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Contract tests for public Space asset mutation ownership scoping.
+"""Contract tests for public Space asset mutation ownership.
 
-The public Space asset
-delete/restore/bulk (and patch) endpoints require only authentication and scoped
-assets to the deploy board's workspace/project — but not to
-``created_by=request.user``. Any authenticated public-site user who knew the
-anchor and an asset UUID could delete/restore another user's asset, or rebind
-others' comment-description assets to a caller-controlled entity id.
-
-The fix scopes every mutation to ``created_by=request.user`` (a public-site user
-may mutate only assets they created).
+A public-site user may only update, delete, restore or bind assets they created.
 """
 
 from uuid import uuid4
@@ -21,7 +13,7 @@ import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from plane.db.models import DeployBoard, FileAsset, Project, User
+from plane.db.models import DeployBoard, FileAsset, Issue, IssueComment, Project, State, User
 
 DELETE_URL = "/api/public/assets/v2/anchor/{anchor}/{pk}/"
 RESTORE_URL = "/api/public/assets/v2/anchor/{anchor}/restore/{pk}/"
@@ -83,32 +75,45 @@ def _asset(workspace, project, owner, *, is_deleted=False):
 class TestSpaceAssetMutationScope:
     """A public-site user must not mutate another user's assets."""
 
-    def test_attacker_cannot_delete_others_asset(self, workspace, project, board, owner):
+    def test_other_user_cannot_delete_others_asset(self, workspace, project, board, owner):
         asset = _asset(workspace, project, owner)
-        attacker = _user("attacker")
-        response = _client(attacker).delete(DELETE_URL.format(anchor=board.anchor, pk=asset.id))
+        other_user = _user("other")
+        response = _client(other_user).delete(DELETE_URL.format(anchor=board.anchor, pk=asset.id))
         assert response.status_code == status.HTTP_404_NOT_FOUND, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         asset.refresh_from_db()
         assert asset.is_deleted is False, "Another user's asset was deleted"
 
-    def test_attacker_cannot_restore_others_asset(self, workspace, project, board, owner):
+    def test_other_user_cannot_restore_others_asset(self, workspace, project, board, owner):
         asset = _asset(workspace, project, owner, is_deleted=True)
-        attacker = _user("attacker")
-        response = _client(attacker).post(RESTORE_URL.format(anchor=board.anchor, pk=asset.id))
+        other_user = _user("other")
+        response = _client(other_user).post(RESTORE_URL.format(anchor=board.anchor, pk=asset.id))
         assert response.status_code == status.HTTP_404_NOT_FOUND, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         asset.refresh_from_db()
         assert asset.is_deleted is True, "Another user's asset was restored"
 
-    def test_attacker_cannot_rebind_others_asset(self, workspace, project, board, owner):
+    def test_other_user_cannot_bind_others_asset(self, workspace, project, board, owner):
+        board.is_comments_enabled = True
+        board.save(update_fields=["is_comments_enabled"])
+        other_user = _user("other")
+        state = State.objects.create(name="Todo", project=project, workspace=workspace, group="backlog", default=True)
+        issue = Issue.objects.create(name="Issue", workspace=workspace, project=project, state=state)
+        # A valid comment owned by the caller, so only asset ownership decides the result
+        own_comment = IssueComment.objects.create(
+            issue=issue,
+            project=project,
+            workspace=workspace,
+            comment_html="<p>comment</p>",
+            access="EXTERNAL",
+            actor=other_user,
+        )
         asset = _asset(workspace, project, owner)
         original_comment = asset.comment_id
-        attacker = _user("attacker")
-        response = _client(attacker).post(
-            BULK_URL.format(anchor=board.anchor, entity_id=str(uuid4())),
+        response = _client(other_user).post(
+            BULK_URL.format(anchor=board.anchor, entity_id=own_comment.id),
             {"asset_ids": [str(asset.id)]},
             format="json",
         )
@@ -116,15 +121,15 @@ class TestSpaceAssetMutationScope:
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         asset.refresh_from_db()
-        assert asset.comment_id == original_comment, "Another user's asset was rebound"
+        assert asset.comment_id == original_comment, "Another user's asset was bound"
 
-    def test_attacker_cannot_patch_others_asset(self, workspace, project, board, owner):
+    def test_other_user_cannot_patch_others_asset(self, workspace, project, board, owner):
         asset = _asset(workspace, project, owner)
         original_attributes = dict(asset.attributes)
-        attacker = _user("attacker")
-        response = _client(attacker).patch(
+        other_user = _user("other")
+        response = _client(other_user).patch(
             DELETE_URL.format(anchor=board.anchor, pk=asset.id),
-            {"attributes": {"name": "tampered.pdf"}},
+            {"attributes": {"name": "renamed.pdf"}},
             format="json",
         )
         assert response.status_code == status.HTTP_404_NOT_FOUND, (

@@ -181,8 +181,7 @@ class EntityAssetEndpoint(BaseAPIView):
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Public-site users may only mutate assets they created; without this any
-        # authenticated user could touch another's.
+        # A public-site user may only update assets they created.
         asset = FileAsset.objects.filter(
             id=pk,
             workspace=deploy_board.workspace,
