@@ -52,10 +52,8 @@ class ProjectInvitationsViewset(BaseViewSet):
             .select_related("workspace", "workspace__owner")
         )
 
-    # Project invitations expose the invitee email and the raw token, and can be
-    # deleted, so list/retrieve/destroy must be admin-only like create. Without
-    # these decorators they inherit only IsAuthenticated, letting any workspace
-    # user read or delete another project's invitations.
+    # Every invitation action (list/retrieve/destroy, like create) is limited to
+    # project admins.
     @allow_permission([ROLE.ADMIN])
     def list(self, request, slug, project_id):
         return super().list(request)
@@ -221,8 +219,7 @@ class ProjectJoinEndpoint(BaseAPIView):
             )
 
         # Require an authenticated session — the accepting user must be the
-        # person who was invited.  Without this check an attacker who knows the
-        # invitee email and obtains the token can hijack the project membership.
+        # person who was invited.
         if not request.user.is_authenticated:
             return Response(
                 {"error": "Authentication required to accept project invitation"},

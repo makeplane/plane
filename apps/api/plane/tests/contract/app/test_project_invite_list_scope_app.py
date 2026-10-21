@@ -2,18 +2,10 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Contract tests for ``ProjectInvitationsViewset`` authorization.
+"""Contract tests for ``ProjectInvitationsViewset`` authorization (WEB-8291).
 
-Regression coverage for WEB-8291.
-
-The viewset declared no ``permission_classes`` (inheriting ``IsAuthenticated``)
-and only decorated ``create`` with ``@allow_permission([ROLE.ADMIN])``. The
-default ``list`` / ``retrieve`` / ``destroy`` actions were therefore ungated and
-``get_queryset`` was scoped only by URL slug + project_id, so any authenticated
-user could read another project's pending invitations — including invitee
-``email`` and the raw ``token`` — and delete them.
-
-The fix gates every action to project admins (``@allow_permission([ROLE.ADMIN])``).
+Listing, retrieving and deleting project invitations requires the project
+admin role, the same as creating them.
 """
 
 from uuid import uuid4
@@ -56,11 +48,7 @@ def invite(db, workspace, project):
 
 @pytest.fixture
 def outsider_client(db, workspace):
-    """A workspace member who is a member of a *different* project, not ``project``.
-
-    Mirrors the vulnerable scenario: the caller is a legitimate workspace user
-    with project membership elsewhere, but not in the target project.
-    """
+    """A workspace member who belongs to a *different* project, not ``project``."""
     uid = uuid4().hex[:8]
     outsider = User.objects.create(email=f"outsider-{uid}@plane.so", username=f"outsider_{uid}")
     outsider.set_password("test-password")
@@ -74,6 +62,18 @@ def outsider_client(db, workspace):
     )
     client = APIClient()
     client.force_authenticate(user=outsider)
+    return client
+
+
+@pytest.fixture
+def member_client(db, workspace, project):
+    """An active, non-admin member of ``project``."""
+    uid = uuid4().hex[:8]
+    member = User.objects.create(email=f"member-{uid}@plane.so", username=f"member_{uid}")
+    WorkspaceMember.objects.create(workspace=workspace, member=member, role=15)
+    ProjectMember.objects.create(project=project, member=member, workspace=workspace, role=15, is_active=True)
+    client = APIClient()
+    client.force_authenticate(user=member)
     return client
 
 
@@ -99,6 +99,20 @@ class TestProjectInviteListScope:
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
+        assert ProjectMemberInvite.objects.filter(pk=invite.id).exists()
+
+    @pytest.mark.django_db
+    def test_project_member_without_admin_role_is_forbidden(self, member_client, workspace, project, invite):
+        list_url = _invites_url(workspace.slug, project.id)
+        detail_url = _invites_url(workspace.slug, project.id, pk=invite.id)
+        for response in (
+            member_client.get(list_url),
+            member_client.get(detail_url),
+            member_client.delete(detail_url),
+        ):
+            assert response.status_code == status.HTTP_403_FORBIDDEN, (
+                f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+            )
         assert ProjectMemberInvite.objects.filter(pk=invite.id).exists()
 
     @pytest.mark.django_db
