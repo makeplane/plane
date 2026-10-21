@@ -20,11 +20,8 @@ runtime guard on BaseViewSet closes it; this test keeps it closed.
 
 The route list is taken from Django's own resolver rather than by parsing the
 URLconf files, and each verdict comes from calling the real guard rather than
-reimplementing it. Both choices are deliberate. An earlier version of this scan
-parsed `as_view({...})` with a regex matching `\\w+ViewSet` and silently missed
-every class spelled `Viewset` — including three routes on
-ProjectInvitationsViewset that expose invitation tokens. Asking the resolver and
-the guard directly cannot drift from what actually ships.
+reimplementing it, so neither can drift from what actually ships (a regex over
+`as_view({...})` would miss classes spelled `Viewset`, for one).
 """
 
 import pytest
@@ -56,6 +53,10 @@ def _routed_actions():
             if not (isinstance(viewset, type) and issubclass(viewset, BaseViewSet)):
                 continue
             for verb, action in action_map.items():
+                # DRF adds "head" (a copy of "get") to this dict on the first
+                # request, so it appears only after another test has made one.
+                if verb == "head":
+                    continue
                 found[(viewset.__name__, verb, action)] = viewset
 
     walk(get_resolver().url_patterns)
@@ -101,7 +102,6 @@ GUARD_REJECTED_ROUTES = frozenset(
         ("CycleViewSet", "put", "update"),
         ("IntakeViewSet", "get", "retrieve"),
         ("IntakeViewSet", "patch", "partial_update"),
-        ("IssueCommentViewSet", "get", "list"),
         ("IssueCommentViewSet", "get", "retrieve"),
         ("IssueCommentViewSet", "put", "update"),
         ("IssueViewFavoriteViewSet", "get", "list"),
@@ -114,11 +114,7 @@ GUARD_REJECTED_ROUTES = frozenset(
         ("NotificationViewSet", "delete", "destroy"),
         ("NotificationViewSet", "get", "retrieve"),
         ("ProjectFavoritesViewSet", "get", "list"),
-        # These three served ProjectMemberInviteSerializer with fields="__all__"
-        # over a queryset scoped only by slug and project_id, so any
-        # authenticated caller holding a project id could read every pending
-        # invitation's email address and accept token, or delete invitations.
-        # No client calls them in either edition.
+        # No client calls these three in either edition.
         ("ProjectInvitationsViewset", "delete", "destroy"),
         ("ProjectInvitationsViewset", "get", "list"),
         ("ProjectInvitationsViewset", "get", "retrieve"),
@@ -279,6 +275,8 @@ def _other_surface_fall_throughs():
             if viewset.__module__.startswith("plane.app"):
                 continue
             for verb, action in action_map.items():
+                if verb == "head":  # DRF's runtime alias of "get"; see _routed_actions()
+                    continue
                 if _other_surface_route_is_unguarded(viewset, action):
                     found.add((viewset.__module__, viewset.__name__, verb, action))
 
@@ -382,7 +380,6 @@ def test_guard_is_actually_wired_into_request_handling():
         through on."""
 
         def partial_update(self, request, *args, **kwargs):  # pragma: no cover
-
             pass
 
     class Guarded(BaseViewSet):
