@@ -142,8 +142,21 @@ function updateEnvFile() {
             # The result is copied back into the same file to keep its mode and owner; mktemp creates the copy as 0600.
             local tmp
             tmp=$(mktemp "$file.XXXXXX") || exit 1
-            KEY="$key" VAL="$value" awk 'BEGIN { p = ENVIRON["KEY"] "=" } index($0, p) == 1 { print p ENVIRON["VAL"]; next } { print }' "$file" > "$tmp" \
-                && cat "$tmp" > "$file"
+            if ! KEY="$key" VAL="$value" awk 'BEGIN { p = ENVIRON["KEY"] "=" } index($0, p) == 1 { print p ENVIRON["VAL"]; next } { print }' "$file" > "$tmp"; then
+                rm -f "$tmp"
+                echo "Failed to update $key in $file" >&2
+                exit 1
+            fi
+            if ! cat "$tmp" > "$file"; then
+                echo "Failed to write $file" >&2
+                # Repair a partial write from the complete copy; keep the copy if that fails too.
+                if cat "$tmp" > "$file" 2> /dev/null; then
+                    rm -f "$tmp"
+                else
+                    echo "Its complete updated contents are kept at $tmp" >&2
+                fi
+                exit 1
+            fi
             rm -f "$tmp"
         fi
     else
@@ -421,7 +434,19 @@ function download() {
         FRESH_INSTALL=true
     fi
 
-    mv $PLANE_INSTALL_DIR/variables-upgrade.env $DOCKER_ENV_PATH
+    # Written in place, so an existing plane.env keeps its mode and owner; a new one is created as 0600.
+    if ! (umask 077 && cat "$PLANE_INSTALL_DIR/variables-upgrade.env" > "$DOCKER_ENV_PATH"); then
+        echo "Failed to write $DOCKER_ENV_PATH" >&2
+        # Put back the previous state, so that a rerun starts from it.
+        if [ -f "$PLANE_INSTALL_DIR/archive/$TS.env" ]; then
+            cat "$PLANE_INSTALL_DIR/archive/$TS.env" > "$DOCKER_ENV_PATH" \
+                || echo "The previous file is kept at $PLANE_INSTALL_DIR/archive/$TS.env" >&2
+        else
+            rm -f "$DOCKER_ENV_PATH"
+        fi
+        exit 1
+    fi
+    rm -f "$PLANE_INSTALL_DIR/variables-upgrade.env"
 
     syncEnvFile
     generateStorageCredentials
