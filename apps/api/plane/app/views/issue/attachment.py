@@ -20,7 +20,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 # Module imports
 from .. import BaseAPIView
 from plane.app.serializers import IssueAttachmentSerializer
-from plane.db.models import FileAsset, Workspace
+from plane.db.models import FileAsset, Issue, Workspace
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.app.permissions import allow_permission, ROLE
 from plane.settings.storage import S3Storage
@@ -38,6 +38,8 @@ class IssueAttachmentEndpoint(BaseAPIView):
     def post(self, request, slug, project_id, issue_id):
         serializer = IssueAttachmentSerializer(data=request.data)
         workspace = Workspace.objects.get(slug=slug)
+        # The URL issue must belong to the URL workspace + project (404 otherwise).
+        Issue.objects.get(pk=issue_id, workspace=workspace, project_id=project_id)
         if serializer.is_valid():
             serializer.save(
                 project_id=project_id,
@@ -110,6 +112,9 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
+
+        # The URL issue must belong to the URL workspace + project (404 otherwise).
+        Issue.objects.get(pk=issue_id, workspace=workspace, project_id=project_id)
 
         # asset key
         asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"

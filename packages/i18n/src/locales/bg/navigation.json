@@ -1,0 +1,34 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Няма намерени резултати"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "Stickies",
+    "your_work": "Вашата работа",
+    "projects": "Проекти",
+    "pages": "Страници",
+    "new_work_item": "Нов работен елемент",
+    "home": "Начало",
+    "inbox": "Входяща кутия",
+    "workspace": "Работно пространство",
+    "views": "Изгледи",
+    "analytics": "Анализи",
+    "work_items": "Работни елементи",
+    "cycles": "Цикли",
+    "modules": "Модули",
+    "intake": "Intake",
+    "drafts": "Чернови",
+    "favorites": "Любими",
+    "pro": "Pro",
+    "upgrade": "Надграждане",
+    "pi_chat": "Plane AI",
+    "epics": "Епици",
+    "upgrade_plan": "Надграждане на плана",
+    "plane_pro": "Plane Pro",
+    "business": "Business"
+  }
+}
