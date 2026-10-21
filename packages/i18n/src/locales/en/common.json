@@ -285,6 +285,7 @@
   "duplicate_issues_found": "Duplicate work items found",
   "no_matching_results": "No matching results",
   "title_is_required": "Title is required",
+  "title_counter": "{count}/{max} characters",
   "title": "Title",
   "state": "State",
   "transition": "Transition",

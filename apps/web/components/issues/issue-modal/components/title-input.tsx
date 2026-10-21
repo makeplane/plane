@@ -29,6 +29,9 @@ type TIssueTitleInputProps = {
   handleFormChange: () => void;
 };
 
+/** Plane refuses titles longer than this; the counter under the field shows how much is left. */
+const TITLE_MAX_LENGTH = 255;
+
 export const IssueTitleInput = observer(function IssueTitleInput(props: TIssueTitleInputProps) {
   const {
     control,
@@ -57,7 +60,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: TIssueTi
           validate: validateWhitespace,
           required: t("title_is_required"),
           maxLength: {
-            value: 255,
+            value: TITLE_MAX_LENGTH,
             message: t("title_should_be_less_than_255_characters"),
           },
         }}
@@ -83,7 +86,22 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: TIssueTi
           </Field>
         )}
       />
-      <span className="text-caption-sm-medium text-danger-primary">{errors?.name?.message}</span>
+      <div className="flex items-start justify-between gap-2">
+        <span className="text-caption-sm-medium text-danger-primary">{errors?.name?.message}</span>
+        <Controller
+          control={control}
+          name="name"
+          render={({ field: { value } }) => (
+            <span
+              className={`shrink-0 text-caption-sm-medium ${(value?.length ?? 0) > TITLE_MAX_LENGTH ? "text-danger-primary" : "text-tertiary"}`}
+              data-testid="issue-title-counter"
+              aria-live="polite"
+            >
+              {t("title_counter", { count: value?.length ?? 0, max: TITLE_MAX_LENGTH })}
+            </span>
+          )}
+        />
+      </div>
     </div>
   );
 });
