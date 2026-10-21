@@ -23,6 +23,15 @@ jobs:
       - name: Get PR Branch version
         run: echo "PR_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
+      # Dependabot matches pip advisories for "plane" against this version, so it must not drift.
+      - name: Check API version matches package.json
+        run: |
+          API_VERSION=$(python3 -c "import tomllib; print(tomllib.load(open('apps/api/pyproject.toml', 'rb'))['project']['version'])")
+          if [ "$API_VERSION" != "$PR_VERSION" ]; then
+            echo "apps/api/pyproject.toml version ($API_VERSION) must match package.json ($PR_VERSION). Bump it and run 'uv lock'."
+            exit 1
+          fi
+
       - name: Fetch base branch
         run: git fetch origin master:master
 

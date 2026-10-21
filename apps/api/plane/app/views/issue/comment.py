@@ -23,6 +23,11 @@ from plane.db.models import IssueComment, ProjectMember, CommentReaction, Projec
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
 from plane.bgtasks.webhook_task import model_activity
+from .relation import issue_in_project
+
+# Only the content and visibility are client-writable; actor, parent and the
+# other relations are set by the server.
+COMMENT_WRITABLE_FIELDS = ("comment_html", "comment_json", "access")
 
 
 class IssueCommentViewSet(BaseViewSet):
@@ -38,7 +43,7 @@ class IssueCommentViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(issue_id=self.kwargs.get("issue_id"))
+            .filter(issue_id=self.kwargs.get("issue_id"), issue__project_id=self.kwargs.get("project_id"))
             .filter(
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
@@ -61,9 +66,23 @@ class IssueCommentViewSet(BaseViewSet):
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def list(self, request, slug, project_id, issue_id):
+        # Same as the history endpoint: the issue must belong to the URL workspace + project.
+        if not issue_in_project(issue_id, slug, project_id, include_archived=True):
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+        return super().list(request, slug, project_id, issue_id)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, issue_id):
         project = Project.objects.get(pk=project_id)
-        issue = Issue.objects.get(pk=issue_id)
+        # SECURITY: bind the issue to the URL workspace + project. `allow_permission` only
+        # checks that the caller is a member of `project_id`, never that `issue_id` lives in
+        # it, so a bare pk lookup let any project member comment on an issue in another
+        # project/workspace — and read that issue's full `issue_detail` back out of the 201
+        # response.
+        issue = Issue.objects.filter(pk=issue_id, workspace__slug=slug, project_id=project_id).first()
+        if issue is None:
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
         if (
             ProjectMember.objects.filter(
                 workspace__slug=slug,
@@ -79,7 +98,8 @@ class IssueCommentViewSet(BaseViewSet):
                 {"error": "You are not allowed to comment on the issue"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = IssueCommentSerializer(data=request.data)
+        data = {key: request.data[key] for key in COMMENT_WRITABLE_FIELDS if key in request.data}
+        serializer = IssueCommentSerializer(data=data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id, actor=request.user)
             issue_activity.delay(
@@ -97,7 +117,7 @@ class IssueCommentViewSet(BaseViewSet):
             model_activity.delay(
                 model_name="issue_comment",
                 model_id=str(serializer.data["id"]),
-                requested_data=request.data,
+                requested_data=data,
                 current_instance=None,
                 actor_id=request.user.id,
                 slug=slug,
@@ -108,12 +128,15 @@ class IssueCommentViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment)
     def partial_update(self, request, slug, project_id, issue_id, pk):
-        issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
-        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        issue_comment = IssueComment.objects.get(
+            workspace__slug=slug, project_id=project_id, issue_id=issue_id, issue__project_id=project_id, pk=pk
+        )
+        data = {key: request.data[key] for key in COMMENT_WRITABLE_FIELDS if key in request.data}
+        requested_data = json.dumps(data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
-        serializer = IssueCommentSerializer(issue_comment, data=request.data, partial=True)
+        serializer = IssueCommentSerializer(issue_comment, data=data, partial=True)
         if serializer.is_valid():
-            if "comment_html" in request.data and request.data["comment_html"] != issue_comment.comment_html:
+            if "comment_html" in data and data["comment_html"] != issue_comment.comment_html:
                 serializer.save(edited_at=timezone.now())
             else:
                 serializer.save()
@@ -132,7 +155,7 @@ class IssueCommentViewSet(BaseViewSet):
             model_activity.delay(
                 model_name="issue_comment",
                 model_id=str(pk),
-                requested_data=request.data,
+                requested_data=data,
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,
@@ -143,7 +166,9 @@ class IssueCommentViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment)
     def destroy(self, request, slug, project_id, issue_id, pk):
-        issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
+        issue_comment = IssueComment.objects.get(
+            workspace__slug=slug, project_id=project_id, issue_id=issue_id, issue__project_id=project_id, pk=pk
+        )
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
         issue_comment.delete()
         issue_activity.delay(
@@ -183,6 +208,8 @@ class CommentReactionViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, comment_id):
         try:
+            # The URL comment must belong to the URL workspace + project (404 otherwise).
+            IssueComment.objects.get(pk=comment_id, workspace__slug=slug, project_id=project_id)
             serializer = CommentReactionSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(
