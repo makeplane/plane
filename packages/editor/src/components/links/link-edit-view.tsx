@@ -6,6 +6,8 @@
 
 import type { Node } from "@tiptap/pm/model";
 import { InputField } from "@makeplane/propel/components/input-field";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Button } from "@makeplane/propel/elements/button";
 import { UnlinkOutline } from "@makeplane/propel/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 // components
@@ -150,12 +152,19 @@ export function LinkEditView({ viewProps }: LinkEditViewProps) {
       <InputView label="URL" placeholder="Enter or paste URL" value={localUrl} onChange={setLocalUrl} autoFocus />
       <InputView label="Text" placeholder="Enter Text to display" value={localText} onChange={handleTextChange} />
       <div className="bg-strong mb-1 h-[1px] w-full gap-2" />
-      <div className="flex items-center gap-2 text-13 text-secondary">
-        <UnlinkOutline width={14} height={14} className="inline-block" />
-        <button onClick={removeLink} className="cursor-pointer transition-colors hover:text-placeholder">
-          Remove Link
-        </button>
-      </div>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        stretch="auto"
+        onClick={removeLink}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.stopPropagation();
+        }}
+      >
+        <Icon icon={UnlinkOutline} />
+        Remove Link
+      </Button>
     </div>
   );
 }
