@@ -4,31 +4,20 @@
 
 """Contract tests for guest visibility on issue sub-resources.
 
-On a project with
-``guest_view_all_features=False`` the issue-detail endpoint correctly 403s a
-GUEST for issues they did not create, but the issue *sub-resource* endpoints did
-not replicate that restriction:
+On a project with ``guest_view_all_features=False`` a GUEST may only see issues
+they created; issue detail returns 403 for any other issue. The issue
+sub-resource endpoints apply the same rule through ``issue_hidden_from_guest``:
+attachments (v1 and v2), history, comments, comment reactions, issue reactions,
+versions and relations.
 
-* ``IssueAttachmentEndpoint.get``   (v1 ``.../issue-attachments/``)
-* ``IssueAttachmentV2Endpoint.get`` (v2 ``/assets/v2/.../attachments/``)
-* ``IssueActivityEndpoint.get``     (``.../history/``)
-* ``IssueCommentViewSet.list``/``.retrieve`` (``.../comments/``)
-* ``CommentReactionViewSet.create``/``.destroy`` (``.../comments/<id>/reactions/``)
-
-Each is decorated ``@allow_permission([ADMIN, MEMBER, GUEST])`` and queried by
-``issue_id`` only, so a restricted guest who is a legitimate project member could
-list attachment metadata / download URLs and read activity + comments of issues
-they are not allowed to view.
-
-The fix routes each through ``issue_hidden_from_guest`` and returns 403 for a
-restricted guest on an issue they did not author — mirroring the issue-detail
-rule — while leaving admins, members, unrestricted guests, and the guest's own
-issues unaffected.
+Admins, members, unrestricted guests and the guest's own issues (including
+archived ones) are unaffected.
 """
 
 from uuid import uuid4
 
 import pytest
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -49,6 +38,9 @@ COMMENT_LIST_URL = "/api/workspaces/{slug}/projects/{project_id}/issues/{issue_i
 COMMENT_DETAIL_URL = "/api/workspaces/{slug}/projects/{project_id}/issues/{issue_id}/comments/{pk}/"
 REACTION_URL = "/api/workspaces/{slug}/projects/{project_id}/comments/{comment_id}/reactions/"
 REACTION_DETAIL_URL = "/api/workspaces/{slug}/projects/{project_id}/comments/{comment_id}/reactions/{reaction_code}/"
+ISSUE_REACTION_URL = "/api/workspaces/{slug}/projects/{project_id}/issues/{issue_id}/reactions/"
+VERSIONS_URL = "/api/workspaces/{slug}/projects/{project_id}/issues/{issue_id}/versions/"
+RELATION_URL = "/api/workspaces/{slug}/projects/{project_id}/issues/{issue_id}/issue-relation/"
 
 
 def _make_issue(name, project, workspace, author):
@@ -128,6 +120,16 @@ def foreign_issue(db, workspace, project, create_user):
 
 
 @pytest.fixture
+def own_archived_issue(db, workspace, project, guest):
+    """An archived issue authored by the guest, with an attachment."""
+    issue = _make_issue("Guest's archived issue", project, workspace, guest)
+    issue.archived_at = timezone.now()
+    issue.save(update_fields=["archived_at"])
+    _make_attachment(issue, project, workspace)
+    return issue
+
+
+@pytest.fixture
 def own_issue_comment(db, workspace, project, own_issue, guest):
     """A comment on the guest's own issue."""
     return _make_comment(own_issue, project, workspace, guest)
@@ -161,15 +163,14 @@ class TestGuestIssueSubresourceScope:
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
-        # Single-attachment endpoint — the highest-risk path (returns a presigned
-        # download redirect); must also be blocked.
+        # The single-attachment endpoint (download redirect) follows the same rule.
         asset = FileAsset.objects.filter(
             issue_id=foreign_issue.id,
             entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
         ).first()
         response_pk = guest_client.get(f"{base}{asset.id}/")
         assert response_pk.status_code == status.HTTP_403_FORBIDDEN, (
-            f"Single-attachment leak: {response_pk.status_code} {getattr(response_pk, 'data', None)!r}"
+            f"Got {response_pk.status_code} {getattr(response_pk, 'data', None)!r}"
         )
 
     def test_guest_cannot_post_attachment_to_foreign_issue(self, guest_client, workspace, project, foreign_issue):
@@ -177,7 +178,7 @@ class TestGuestIssueSubresourceScope:
         attachment to an issue they are not allowed to view."""
         response = guest_client.post(
             V2_ATTACH_URL.format(slug=workspace.slug, project_id=project.id, issue_id=foreign_issue.id),
-            {"name": "evil.pdf", "type": "application/pdf", "size": 100},
+            {"name": "file.pdf", "type": "application/pdf", "size": 100},
             format="json",
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
@@ -242,7 +243,50 @@ class TestGuestIssueSubresourceScope:
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
 
+    @pytest.mark.parametrize("url", [ISSUE_REACTION_URL, VERSIONS_URL, RELATION_URL])
+    def test_guest_blocked_issue_reads(self, guest_client, workspace, project, foreign_issue, url):
+        response = guest_client.get(url.format(slug=workspace.slug, project_id=project.id, issue_id=foreign_issue.id))
+        assert response.status_code == status.HTTP_403_FORBIDDEN, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    def test_guest_blocked_comment_reaction_list(
+        self, guest_client, workspace, project, foreign_issue, foreign_issue_comment
+    ):
+        response = guest_client.get(
+            REACTION_URL.format(slug=workspace.slug, project_id=project.id, comment_id=foreign_issue_comment.id)
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
     # ---- the guest still sees their OWN issue's sub-resources ----------------
+
+    @pytest.mark.parametrize("url", [ISSUE_REACTION_URL, VERSIONS_URL, RELATION_URL])
+    def test_guest_allowed_own_issue_reads(self, guest_client, workspace, project, own_issue, url):
+        response = guest_client.get(url.format(slug=workspace.slug, project_id=project.id, issue_id=own_issue.id))
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.parametrize("url", [V2_ATTACH_URL, HISTORY_URL, COMMENT_LIST_URL])
+    def test_guest_allowed_own_archived_issue(self, guest_client, workspace, project, own_archived_issue, url):
+        response = guest_client.get(
+            url.format(slug=workspace.slug, project_id=project.id, issue_id=own_archived_issue.id)
+        )
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    def test_guest_allowed_own_issue_comment_reaction_list(
+        self, guest_client, workspace, project, own_issue, own_issue_comment
+    ):
+        response = guest_client.get(
+            REACTION_URL.format(slug=workspace.slug, project_id=project.id, comment_id=own_issue_comment.id)
+        )
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
 
     def test_guest_allowed_own_issue_attachments(self, guest_client, workspace, project, own_issue):
         response = guest_client.get(

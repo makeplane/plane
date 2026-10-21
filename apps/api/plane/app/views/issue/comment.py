@@ -223,17 +223,29 @@ class CommentReactionViewSet(BaseViewSet):
             .distinct()
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    def create(self, request, slug, project_id, comment_id):
-        # A restricted guest may only react to comments on issues they created,
-        # mirroring the issue-detail visibility rule. Comment reactions are
-        # keyed by comment_id, so resolve the parent issue first.
+    def _comment_issue_hidden_from_guest(self, request, slug, project_id, comment_id):
+        # A restricted guest may only see or react to comments on issues they
+        # created, mirroring the issue-detail visibility rule. Comment reactions
+        # are keyed by comment_id, so resolve the parent issue first.
         issue_id = (
             IssueComment.objects.filter(pk=comment_id, workspace__slug=slug, project_id=project_id)
             .values_list("issue_id", flat=True)
             .first()
         )
-        if issue_id and issue_hidden_from_guest(request, slug, project_id, issue_id):
+        return bool(issue_id) and issue_hidden_from_guest(request, slug, project_id, issue_id)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def list(self, request, slug, project_id, comment_id):
+        if self._comment_issue_hidden_from_guest(request, slug, project_id, comment_id):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        return super().list(request, slug, project_id, comment_id)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def create(self, request, slug, project_id, comment_id):
+        if self._comment_issue_hidden_from_guest(request, slug, project_id, comment_id):
             return Response(
                 {"error": "You are not allowed to view this issue"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -269,15 +281,7 @@ class CommentReactionViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def destroy(self, request, slug, project_id, comment_id, reaction_code):
-        # A restricted guest may only react to comments on issues they created,
-        # mirroring the issue-detail visibility rule. Comment reactions are
-        # keyed by comment_id, so resolve the parent issue first.
-        issue_id = (
-            IssueComment.objects.filter(pk=comment_id, workspace__slug=slug, project_id=project_id)
-            .values_list("issue_id", flat=True)
-            .first()
-        )
-        if issue_id and issue_hidden_from_guest(request, slug, project_id, issue_id):
+        if self._comment_issue_hidden_from_guest(request, slug, project_id, comment_id):
             return Response(
                 {"error": "You are not allowed to view this issue"},
                 status=status.HTTP_403_FORBIDDEN,
