@@ -79,6 +79,7 @@ from plane.db.models import (
     ProjectMember,
     CycleIssue,
     Workspace,
+    WorkspaceMember,
 )
 from plane.settings.storage import S3Storage
 from plane.utils.path_validator import sanitize_filename
@@ -181,6 +182,20 @@ def user_has_issue_permission(user_id, project_id, issue=None, allowed_roles=Non
 
 def is_active_project_member(user_id, project_id):
     return ProjectMember.objects.filter(project_id=project_id, member_id=user_id, is_active=True).exists()
+
+
+def is_project_or_workspace_admin(user_id, project_id, slug):
+    """An active project admin, or a workspace admin who is an active project
+    member (the admin rule of the app's `allow_permission`)."""
+    project_member = ProjectMember.objects.filter(
+        workspace__slug=slug, project_id=project_id, member_id=user_id, is_active=True
+    ).first()
+    return project_member is not None and (
+        project_member.role == ROLE.ADMIN.value
+        or WorkspaceMember.objects.filter(
+            workspace__slug=slug, member_id=user_id, role=ROLE.ADMIN.value, is_active=True
+        ).exists()
+    )
 
 
 def is_restricted_guest(user_id, project_id, slug):
@@ -1727,12 +1742,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         if not (
             (issue_comment.created_by_id == request.user.id and is_active_project_member(request.user.id, project_id))
-            or ProjectMember.objects.filter(
-                project_id=project_id,
-                member_id=request.user.id,
-                role=ROLE.ADMIN.value,
-                is_active=True,
-            ).exists()
+            or is_project_or_workspace_admin(request.user.id, project_id, slug)
         ):
             return Response(
                 {"error": "You are not allowed to edit this comment"},
@@ -1813,12 +1823,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         if not (
             (issue_comment.created_by_id == request.user.id and is_active_project_member(request.user.id, project_id))
-            or ProjectMember.objects.filter(
-                project_id=project_id,
-                member_id=request.user.id,
-                role=ROLE.ADMIN.value,
-                is_active=True,
-            ).exists()
+            or is_project_or_workspace_admin(request.user.id, project_id, slug)
         ):
             return Response(
                 {"error": "You are not allowed to delete this comment"},
@@ -2234,18 +2239,13 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         )
 
         # only the attachment's creator (while still an active project member)
-        # or a project admin may delete it
+        # or an admin may delete it
         if not (
             (
                 issue_attachment.created_by_id == request.user.id
                 and is_active_project_member(request.user.id, project_id)
             )
-            or user_has_issue_permission(
-                request.user.id,
-                project_id=project_id,
-                allowed_roles=[ROLE.ADMIN.value],
-                allow_creator=False,
-            )
+            or is_project_or_workspace_admin(request.user.id, project_id, slug)
         ):
             return Response(
                 {"error": "You are not allowed to delete this attachment"},
@@ -2427,7 +2427,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
 
             # Update the attachment
             issue_attachment.is_uploaded = True
-            # do NOT reassign created_by here -- it is also the creator-or-admin delete credential
+            # keep the original created_by: delete permission is based on it
 
         # Get the storage metadata
         if not issue_attachment.storage_metadata:

@@ -4,9 +4,11 @@
 
 """Contract tests: external-API write paths are capped to the caller's role (WEB-9425).
 
-* Comment PATCH/DELETE require the comment's creator or a project admin.
-* Attachment DELETE requires the attachment's creator or a project admin.
-* Project-member role assignment cannot exceed the target's workspace role.
+* Comment PATCH/DELETE require the comment's creator or an admin.
+* Attachment DELETE requires the attachment's creator or an admin.
+* An admin is a project admin, or a workspace admin who is an active project member.
+* Project-member role assignment requires an active workspace membership and
+  cannot exceed the target's workspace role.
 """
 
 from unittest import mock
@@ -15,6 +17,7 @@ from uuid import uuid4
 import pytest
 from rest_framework import status
 
+from plane.api.serializers import ProjectMemberSerializer
 from plane.db.models import (
     APIToken,
     FileAsset,
@@ -156,6 +159,20 @@ class TestCommentEditDelete:
             resp = api_key_client.delete(url)
             assert resp.status_code == status.HTTP_204_NO_CONTENT
 
+    @pytest.mark.parametrize("project_role", [MEMBER, GUEST])
+    def test_workspace_admin_can_edit_and_delete_any_comment(
+        self, client_for, workspace, project, issue, create_user, project_role
+    ):
+        workspace_admin = _make_user(workspace, project, ADMIN, project_role)
+        comment = _comment(workspace, project, issue, create_user)
+        url = _comment_url(workspace, project, issue, comment)
+        client = client_for(workspace_admin)
+        with mock.patch("plane.api.views.issue.issue_activity"), mock.patch("plane.api.views.issue.model_activity"):
+            resp = client.patch(url, {"comment_html": "<p>mod</p>"}, format="json")
+            assert resp.status_code == status.HTTP_200_OK
+            resp = client.delete(url)
+            assert resp.status_code == status.HTTP_204_NO_CONTENT
+
     @pytest.mark.parametrize("fixture_name", ["member_user", "guest_user"])
     def test_creator_with_revoked_membership_denied(self, request, client_for, workspace, project, issue, fixture_name):
         user = request.getfixturevalue(fixture_name)
@@ -216,6 +233,27 @@ class TestAttachmentDelete:
             resp = api_key_client.delete(_attachment_url(workspace, project, issue, asset))
         assert resp.status_code == status.HTTP_204_NO_CONTENT
 
+    @pytest.mark.parametrize("project_role", [MEMBER, GUEST])
+    def test_workspace_admin_can_delete_any_attachment(
+        self, client_for, workspace, project, issue, create_user, project_role
+    ):
+        workspace_admin = _make_user(workspace, project, ADMIN, project_role)
+        asset = _attachment(workspace, project, issue, create_user)
+        with mock.patch("plane.api.views.issue.issue_activity"):
+            resp = client_for(workspace_admin).delete(_attachment_url(workspace, project, issue, asset))
+        assert resp.status_code == status.HTTP_204_NO_CONTENT
+
+    def test_workspace_admin_without_project_membership_denied(
+        self, client_for, workspace, project, issue, create_user
+    ):
+        workspace_admin = _make_user(workspace, project, ADMIN, MEMBER)
+        ProjectMember.objects.filter(project=project, member=workspace_admin).update(is_active=False)
+        asset = _attachment(workspace, project, issue, create_user)
+        resp = client_for(workspace_admin).delete(_attachment_url(workspace, project, issue, asset))
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
+        asset.refresh_from_db()
+        assert asset.is_deleted is False
+
     @pytest.mark.parametrize("fixture_name", ["member_user", "guest_user"])
     def test_creator_with_revoked_membership_denied(self, request, client_for, workspace, project, issue, fixture_name):
         user = request.getfixturevalue(fixture_name)
@@ -227,7 +265,7 @@ class TestAttachmentDelete:
         asset.refresh_from_db()
         assert asset.is_deleted is False
 
-    def test_patch_confirm_preserves_creator_and_blocks_takeover(
+    def test_upload_confirm_keeps_original_creator(
         self, client_for, workspace, project, issue, create_user, member_user
     ):
         asset = _attachment(workspace, project, issue, create_user, is_uploaded=False)
@@ -293,6 +331,30 @@ class TestProjectMemberRoleCap:
         pm.refresh_from_db()
         assert pm.role == role
         assert pm.member_id == holder.id
+
+    def test_cannot_add_inactive_workspace_member(self, api_key_client, workspace, project):
+        target = _make_user(workspace, project, MEMBER, None)
+        WorkspaceMember.objects.filter(workspace=workspace, member=target).update(is_active=False)
+        resp = api_key_client.post(
+            _members_url(workspace, project), {"member": str(target.id), "role": MEMBER}, format="json"
+        )
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+        assert not ProjectMember.objects.filter(project=project, member=target).exists()
+
+    def test_cannot_change_role_of_inactive_workspace_member(self, api_key_client, workspace, project, member_user):
+        WorkspaceMember.objects.filter(workspace=workspace, member=member_user).update(is_active=False)
+        pm = ProjectMember.objects.get(project=project, member=member_user)
+        resp = api_key_client.patch(f"{_members_url(workspace, project)}{pm.id}/", {"role": ADMIN}, format="json")
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+        pm.refresh_from_db()
+        assert pm.role == MEMBER
+
+    def test_role_validation_requires_active_workspace_membership(self, workspace, project, member_user):
+        WorkspaceMember.objects.filter(workspace=workspace, member=member_user).update(is_active=False)
+        pm = ProjectMember.objects.get(project=project, member=member_user)
+        serializer = ProjectMemberSerializer(pm, data={"role": ADMIN}, partial=True, context={"slug": workspace.slug})
+        assert not serializer.is_valid()
+        assert "member" in serializer.errors
 
     def test_can_promote_workspace_member_to_admin(self, api_key_client, workspace, project, member_user):
         pm = ProjectMember.objects.get(project=project, member=member_user)

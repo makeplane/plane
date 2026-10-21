@@ -51,6 +51,8 @@ class ProjectMemberSerializer(BaseSerializer):
                 .values_list("role", flat=True)
                 .first()
             )
+            if workspace_role is None:
+                raise serializers.ValidationError({"member": "Member not found in workspace"}, code="INVALID_MEMBER")
             if workspace_role == ROLE.GUEST.value and role in [ROLE.ADMIN.value, ROLE.MEMBER.value]:
                 raise serializers.ValidationError(
                     "You cannot assign a role higher than the member's workspace role",
