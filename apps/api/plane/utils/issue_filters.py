@@ -7,6 +7,9 @@ import uuid
 from datetime import timedelta
 
 from django.utils import timezone
+from rest_framework.exceptions import ValidationError
+
+from plane.db.models import StateGroup
 
 # The date from pattern
 pattern = re.compile(r"\d+_(weeks|months)$")
@@ -95,12 +98,28 @@ def filter_state(params, issue_filter, method, prefix=""):
 
 def filter_state_group(params, issue_filter, method, prefix=""):
     if method == "GET":
-        state_group = [item for item in params.get("state_group").split(",") if item != "null"]
-        if len(state_group) and "" not in state_group:
-            issue_filter[f"{prefix}state__group__in"] = state_group
+        state_group = [
+            item
+            for item in params.get("state_group").split(",")
+            if item != "null"
+        ]
+
+        if not state_group or state_group == [""]:
+            return issue_filter
     else:
-        if params.get("state_group", None) and len(params.get("state_group")) and params.get("state_group") != "null":
-            issue_filter[f"{prefix}state__group__in"] = params.get("state_group")
+        state_group = params.get("state_group")
+
+        if not state_group or state_group == "null":
+            return issue_filter
+
+    if not isinstance(state_group, list) or any(
+        group not in StateGroup.values for group in state_group
+    ):
+        raise ValidationError({
+            "state_group": ["Select a valid state group."]
+        })
+
+    issue_filter[f"{prefix}state__group__in"] = state_group
     return issue_filter
 
 

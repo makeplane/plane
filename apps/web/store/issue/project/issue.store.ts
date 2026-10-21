@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { action, makeObservable, runInAction } from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 // types
 import type {
   TIssue,
@@ -23,6 +23,7 @@ import type { IIssueRootStore } from "../root.store";
 import type { IProjectIssuesFilter } from "./filter.store";
 
 export interface IProjectIssues extends IBaseIssuesStore {
+  hasFetchError: boolean;
   viewFlags: ViewFlags;
   // action
   fetchIssues: (
@@ -62,10 +63,12 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
 
   // filter store
   issueFilterStore: IProjectIssuesFilter;
+  hasFetchError = false;
 
   constructor(_rootStore: IIssueRootStore, issueFilterStore: IProjectIssuesFilter) {
     super(_rootStore, issueFilterStore);
     makeObservable(this, {
+      hasFetchError: observable,
       fetchIssues: action,
       fetchNextIssues: action,
       fetchIssuesWithExistingPagination: action,
@@ -83,7 +86,9 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
    * @param projectId
    */
   fetchParentStats = async (workspaceSlug: string, projectId?: string) => {
-    projectId && this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
+    if (projectId) {
+      this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
+    }
   };
 
   /** */
@@ -104,27 +109,37 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     options: IssuePaginationOptions,
     isExistingPaginationOptions: boolean = false
   ) => {
+    let signal: AbortSignal | undefined;
+
     try {
-      // set loader and clear store
       runInAction(() => {
+        this.hasFetchError = false;
         this.setLoader(loadType);
-        this.clear(!isExistingPaginationOptions); // clear while fetching from server.
+        this.clear(!isExistingPaginationOptions);
+
+        // Preserve options so the first failed request can be retried.
+        this.paginationOptions = options;
       });
 
-      // get params from pagination options
+      signal = this.controller.signal;
+
       const params = this.issueFilterStore?.getFilterParams(options, projectId, undefined, undefined, undefined);
-      // call the fetch issues API with the params
-      const response = await this.issueService.getIssues(workspaceSlug, projectId, params, {
-        signal: this.controller.signal,
-      });
 
-      // after fetching issues, call the base method to process the response further
+      const response = await this.issueService.getIssues(workspaceSlug, projectId, params, { signal });
+
+      if (signal.aborted) return;
+
       this.onfetchIssues(response, options, workspaceSlug, projectId, undefined, !isExistingPaginationOptions);
+
       return response;
-    } catch (error) {
-      // set loader to undefined if errored out
-      this.setLoader(undefined);
-      throw error;
+    } catch {
+      // Ignore an older request cancelled by a newer fetch.
+      if (signal?.aborted) return;
+
+      runInAction(() => {
+        this.hasFetchError = true;
+        this.setLoader(undefined);
+      });
     }
   };
 
