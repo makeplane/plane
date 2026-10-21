@@ -7,7 +7,14 @@ from django.test import RequestFactory
 from rest_framework.exceptions import ParseError
 from rest_framework.request import Request
 
-from plane.utils.paginator import BasePaginator, Cursor, CursorResult
+from plane.db.models import Issue, Project, State
+from plane.utils.paginator import (
+    BasePaginator,
+    Cursor,
+    CursorResult,
+    GroupedOffsetPaginator,
+    SubGroupedOffsetPaginator,
+)
 
 
 class _StubGroupedPaginator:
@@ -124,7 +131,7 @@ class TestPaginateGroupByValidation:
 
 
 class _ExplodingPaginator:
-    """Fails if constructed — proves the cursor guard rejects BEFORE any paginator runs."""
+    """Fails if constructed: the cursor check runs before any paginator is built."""
 
     def __init__(self, **kwargs):
         raise AssertionError("paginator_cls must not be constructed for an invalid cursor")
@@ -132,13 +139,7 @@ class _ExplodingPaginator:
 
 @pytest.mark.unit
 class TestCursorBounds:
-    """paginate() must reject an out-of-bounds client cursor before it drives slicing.
-
-    The grouped paginators use cursor.value as the per-group page size
-    (stop = offset + (cursor.value or limit) + 1). A negative value slices the queryset
-    with a negative stop -> ValueError('Negative indexing is not supported') -> HTTP 500;
-    a huge value fetches far more than max_per_page rows per group (cap bypass / DoS).
-    cursor.offset must be non-negative."""
+    """paginate() accepts a cursor value in [0, max_per_page] and a non-negative offset."""
 
     @pytest.mark.parametrize("cursor", ["-1:0:0", "1000000:0:0", "20:-1:0"])
     def test_out_of_bounds_cursor_rejected_before_paginator(self, cursor):
@@ -177,21 +178,7 @@ class TestCursorBounds:
 
 @pytest.mark.unit
 class TestGetPerPageNonPositiveRejected:
-    """A non-positive per_page (negative or zero) must be rejected, not just a
-    too-large one.
-
-    OffsetPaginator.get_result() slices the queryset with
-    queryset[offset : offset + limit]; get_per_page() previously only checked
-    per_page against max_per_page (an upper bound), so a negative per_page sailed
-    through untouched, reached the slice as a negative stop, and raised Django's
-    unhandled "Negative indexing is not supported" -> HTTP 500. This is the same
-    crash class TestCursorBounds closes for the cursor-driven grouped paginators,
-    reachable here on every non-grouped paginated endpoint via a plain query
-    param.
-
-    A per_page of exactly 0 has the same failure mode: it reaches
-    OffsetPaginator.get_result() with limit=0, where math.ceil(count / limit)
-    raises an unhandled ZeroDivisionError -> HTTP 500."""
+    """per_page must be a positive integer."""
 
     @pytest.mark.parametrize("per_page", [-1, -50, -1000, 0])
     def test_non_positive_per_page_rejected_by_get_per_page(self, per_page):
@@ -210,3 +197,46 @@ class TestGetPerPageNonPositiveRejected:
                 default_per_page=20,
                 max_per_page=1000,
             )
+
+
+@pytest.mark.unit
+@pytest.mark.django_db
+class TestGroupedPageSize:
+    """Grouped paginators size each group's page by per_page, whatever the cursor value."""
+
+    @pytest.fixture
+    def issues(self, workspace):
+        project = Project.objects.create(name="Paginate", identifier="PAGE", workspace=workspace)
+        state = State.objects.create(name="Todo", project=project, workspace=workspace)
+        for i in range(3):
+            for priority in ("high", "low"):
+                Issue.objects.create(
+                    name=f"{priority}-{i}", priority=priority, state=state, project=project, workspace=workspace
+                )
+        return Issue.issue_objects.filter(project=project)
+
+    @pytest.mark.parametrize(
+        "paginator_cls,extra",
+        [
+            (GroupedOffsetPaginator, {}),
+            (SubGroupedOffsetPaginator, {"sub_group_by_field_name": "state_id", "sub_group_by_fields": []}),
+        ],
+    )
+    def test_cursor_value_does_not_change_page_size(self, issues, paginator_cls, extra):
+        paginator = paginator_cls(
+            queryset=issues,
+            order_by="-created_at",
+            group_by_field_name="priority",
+            group_by_fields=["high", "low"],
+            count_filter=None,
+            **extra,
+        )
+        seen = []
+        for page in range(3):
+            result = paginator.get_result(limit=1, cursor=Cursor(1000, page, False))
+            rows = list(result.results.values("id", "priority"))
+            assert sorted(r["priority"] for r in rows) == ["high", "low"]
+            assert str(result.next) == f"1:{page + 1}:0"
+            seen += [r["id"] for r in rows]
+        assert len(set(seen)) == 6
+        assert not result.next.has_results
