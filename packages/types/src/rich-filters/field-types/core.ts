@@ -12,11 +12,19 @@ import type { TBaseFilterFieldConfig, IFilterOption } from "./shared";
  * Core filter types
  */
 export const CORE_FILTER_FIELD_TYPE = {
+  TEXT: "text",
   DATE: "date",
   DATE_RANGE: "date_range",
   SINGLE_SELECT: "single_select",
   MULTI_SELECT: "multi_select",
 } as const;
+
+/** Free-text filter value, committed on Enter or blur. */
+export type TTextFilterFieldConfig = TBaseFilterFieldConfig & {
+  type: typeof CORE_FILTER_FIELD_TYPE.TEXT;
+  defaultValue?: string;
+  placeholder: string;
+};
 
 // -------- DATE FILTER CONFIGURATIONS --------
 
@@ -79,6 +87,7 @@ export type TMultiSelectFilterFieldConfig<V extends TFilterValue> = TBaseFilterF
  * All core filter configurations
  */
 export type TCoreFilterFieldConfigs<V extends TFilterValue = TFilterValue> =
+  | TTextFilterFieldConfig
   | TDateFilterFieldConfig<V>
   | TDateRangeFilterFieldConfig<V>
   | TSingleSelectFilterFieldConfig<V>
