@@ -1,0 +1,47 @@
+{
+  "aria_labels": {
+    "projects_sidebar": {
+      "workspace_logo": "Лого на работното пространство",
+      "open_workspace_switcher": "Отвори превключвателя на работни пространства",
+      "open_user_menu": "Отвори потребителското меню",
+      "open_command_palette": "Отвори палитрата с команди",
+      "open_extended_sidebar": "Отвори разширената странична лента",
+      "close_extended_sidebar": "Затвори разширената странична лента",
+      "create_favorites_folder": "Създай папка с любими",
+      "open_folder": "Отвори папката",
+      "close_folder": "Затвори папката",
+      "open_favorites_menu": "Отвори менюто с любими",
+      "close_favorites_menu": "Затвори менюто с любими",
+      "enter_folder_name": "Въведете име на папката",
+      "create_new_project": "Създай нов проект",
+      "open_projects_menu": "Отвори менюто с проекти",
+      "close_projects_menu": "Затвори менюто с проекти",
+      "toggle_quick_actions_menu": "Превключи менюто с бързи действия",
+      "open_project_menu": "Отвори менюто на проекта",
+      "close_project_menu": "Затвори менюто на проекта",
+      "collapse_sidebar": "Свий страничната лента",
+      "expand_sidebar": "Разгъни страничната лента",
+      "edition_badge": "Отвори прозореца с платените планове"
+    },
+    "auth_forms": {
+      "clear_email": "Изчисти имейла",
+      "show_password": "Покажи паролата",
+      "hide_password": "Скрий паролата",
+      "close_alert": "Затвори предупреждението",
+      "close_popover": "Затвори изскачащия прозорец"
+    },
+    "breadcrumb": {
+      "trail": "Навигационна пътека",
+      "show_more": "Покажи още от навигационната пътека"
+    },
+    "common": {
+      "more_actions": "Още действия",
+      "remove": "Премахни"
+    },
+    "color_picker": {
+      "open": "Отвори инструмента за избор на цвят",
+      "swatches": "Предварително зададени цветове",
+      "hex_input": "Шестнадесетичен цвят"
+    }
+  }
+}

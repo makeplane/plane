@@ -6,7 +6,7 @@
 from rest_framework import serializers
 
 # Module import
-from plane.db.models import Account, Profile, User, Workspace, WorkspaceMemberInvite
+from plane.db.models import Account, FileAsset, Profile, User, Workspace, WorkspaceMemberInvite
 from plane.utils.url import contains_url
 
 from .base import BaseSerializer
@@ -22,6 +22,20 @@ class UserSerializer(BaseSerializer):
         if contains_url(value):
             raise serializers.ValidationError("Last name cannot contain a URL.")
         return value
+
+    def _validate_own_asset(self, value, entity_type):
+        # Only the user's own asset of the matching entity type (or null) can be linked
+        if value is not None and (
+            self.instance is None or value.user_id != self.instance.id or value.entity_type != entity_type
+        ):
+            raise serializers.ValidationError("Invalid asset.")
+        return value
+
+    def validate_avatar_asset(self, value):
+        return self._validate_own_asset(value, FileAsset.EntityTypeContext.USER_AVATAR)
+
+    def validate_cover_image_asset(self, value):
+        return self._validate_own_asset(value, FileAsset.EntityTypeContext.USER_COVER)
 
     class Meta:
         model = User
