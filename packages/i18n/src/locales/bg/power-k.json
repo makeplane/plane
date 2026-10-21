@@ -1,0 +1,197 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "Групово изтриване на работни елементи"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "Действия с работния елемент",
+        "indicator": "Работен елемент",
+        "change_state": "Промени състоянието",
+        "change_priority": "Промени приоритета",
+        "change_assignees": "Възложи на",
+        "assign_to_me": "Възложи на мен",
+        "unassign_from_me": "Премахни възлагането от мен",
+        "change_estimate": "Промени оценката",
+        "add_to_cycle": "Добави към цикъл",
+        "add_to_modules": "Добави към модули",
+        "add_labels": "Добави етикети",
+        "subscribe": "Абонирай се за известия",
+        "unsubscribe": "Отпиши се от известия",
+        "delete": "Изтрий",
+        "copy_id": "Копирай ID",
+        "copy_id_toast_success": "ID на работния елемент е копиран в клипборда.",
+        "copy_id_toast_error": "Възникна грешка при копирането на ID на работния елемент в клипборда.",
+        "copy_title": "Копирай заглавието",
+        "copy_title_toast_success": "Заглавието на работния елемент е копирано в клипборда.",
+        "copy_title_toast_error": "Възникна грешка при копирането на заглавието на работния елемент в клипборда.",
+        "copy_url": "Копирай URL",
+        "copy_url_toast_success": "URL адресът на работния елемент е копиран в клипборда.",
+        "copy_url_toast_error": "Възникна грешка при копирането на URL адреса на работния елемент в клипборда."
+      },
+      "cycle": {
+        "title": "Действия с цикъла",
+        "indicator": "Цикъл",
+        "add_to_favorites": "Добави към любими",
+        "remove_from_favorites": "Премахни от любими",
+        "copy_url": "Копирай URL",
+        "copy_url_toast_success": "URL адресът на цикъла е копиран в клипборда.",
+        "copy_url_toast_error": "Възникна грешка при копирането на URL адреса на цикъла в клипборда."
+      },
+      "module": {
+        "title": "Действия с модула",
+        "indicator": "Модул",
+        "add_remove_members": "Добави/премахни членове",
+        "change_status": "Промени статуса",
+        "add_to_favorites": "Добави към любими",
+        "remove_from_favorites": "Премахни от любими",
+        "copy_url": "Копирай URL",
+        "copy_url_toast_success": "URL адресът на модула е копиран в клипборда.",
+        "copy_url_toast_error": "Възникна грешка при копирането на URL адреса на модула в клипборда."
+      },
+      "page": {
+        "title": "Действия със страницата",
+        "indicator": "Страница",
+        "lock": "Заключи",
+        "unlock": "Отключи",
+        "make_private": "Направи лична",
+        "make_public": "Направи публична",
+        "archive": "Архивирай",
+        "restore": "Възстанови",
+        "add_to_favorites": "Добави към любими",
+        "remove_from_favorites": "Премахни от любими",
+        "copy_url": "Копирай URL",
+        "copy_url_toast_success": "URL адресът на страницата е копиран в клипборда.",
+        "copy_url_toast_error": "Възникна грешка при копирането на URL адреса на страницата в клипборда."
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "Нов работен елемент",
+      "create_page": "Нова страница",
+      "create_view": "Нов изглед",
+      "create_cycle": "Нов цикъл",
+      "create_module": "Нов модул",
+      "create_project": "Нов проект",
+      "create_workspace": "Ново работно пространство",
+      "create_project_automation": "Нова автоматизация"
+    },
+    "navigation_actions": {
+      "open_workspace": "Отвори работно пространство",
+      "nav_home": "Към началната страница",
+      "nav_inbox": "Към входящата кутия",
+      "nav_your_work": "Към вашата работа",
+      "nav_account_settings": "Към настройките на акаунта",
+      "open_project": "Отвори проект",
+      "nav_projects_list": "Към списъка с проекти",
+      "nav_all_workspace_work_items": "Към всички работни елементи",
+      "nav_assigned_workspace_work_items": "Към възложените работни елементи",
+      "nav_created_workspace_work_items": "Към създадените работни елементи",
+      "nav_subscribed_workspace_work_items": "Към работните елементи с абонамент",
+      "nav_workspace_analytics": "Към анализите на работното пространство",
+      "nav_workspace_drafts": "Към черновите на работното пространство",
+      "nav_workspace_archives": "Към архивите на работното пространство",
+      "open_workspace_setting": "Отвори настройка на работното пространство",
+      "nav_workspace_settings": "Към настройките на работното пространство",
+      "nav_project_work_items": "Към работните елементи",
+      "open_project_cycle": "Отвори цикъл",
+      "nav_project_cycles": "Към циклите",
+      "open_project_module": "Отвори модул",
+      "nav_project_modules": "Към модулите",
+      "open_project_view": "Отвори изглед на проект",
+      "nav_project_views": "Към изгледите на проекта",
+      "nav_project_pages": "Към страниците",
+      "nav_project_intake": "Към Intake",
+      "nav_project_archives": "Към архивите на проекта",
+      "open_project_setting": "Отвори настройка на проекта",
+      "nav_project_settings": "Към настройките на проекта",
+      "nav_workspace_active_cycle": "Към всички активни цикли",
+      "nav_project_overview": "Към прегледа на проекта"
+    },
+    "account_actions": {
+      "sign_out": "Изход",
+      "workspace_invites": "Покани за работни пространства"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "Покажи/скрий страничната лента",
+      "copy_current_page_url": "Копирай URL на текущата страница",
+      "copy_current_page_url_toast_success": "URL адресът на текущата страница е копиран в клипборда.",
+      "copy_current_page_url_toast_error": "Възникна грешка при копирането на URL адреса на текущата страница в клипборда.",
+      "focus_top_nav_search": "Фокус върху полето за търсене"
+    },
+    "preferences_actions": {
+      "update_theme": "Промени темата на интерфейса",
+      "update_timezone": "Промени часовата зона",
+      "update_start_of_week": "Промени първия ден от седмицата",
+      "update_language": "Промени езика на интерфейса",
+      "toast": {
+        "theme": {
+          "success": "Темата е обновена успешно.",
+          "error": "Темата не можа да бъде обновена. Опитайте отново."
+        },
+        "timezone": {
+          "success": "Часовата зона е обновена успешно.",
+          "error": "Часовата зона не можа да бъде обновена. Опитайте отново."
+        },
+        "generic": {
+          "success": "Предпочитанията са обновени успешно.",
+          "error": "Предпочитанията не можаха да бъдат обновени. Опитайте отново."
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "Отвори клавишните комбинации",
+      "open_plane_documentation": "Отвори документацията на Plane",
+      "join_forum": "Присъединете се към форума ни",
+      "report_bug": "Докладвай грешка",
+      "chat_with_us": "Пишете ни в чата"
+    },
+    "page_placeholders": {
+      "default": "Въведете команда или търсете",
+      "open_workspace": "Отвори работно пространство",
+      "open_project": "Отвори проект",
+      "open_workspace_setting": "Отвори настройка на работното пространство",
+      "open_project_cycle": "Отвори цикъл",
+      "open_project_module": "Отвори модул",
+      "open_project_view": "Отвори изглед на проект",
+      "open_project_setting": "Отвори настройка на проекта",
+      "update_work_item_state": "Промени състоянието",
+      "update_work_item_priority": "Промени приоритета",
+      "update_work_item_assignee": "Възложи на",
+      "update_work_item_estimate": "Промени оценката",
+      "update_work_item_cycle": "Добави към цикъл",
+      "update_work_item_module": "Добави към модули",
+      "update_work_item_labels": "Добави етикети",
+      "update_module_member": "Промени членовете",
+      "update_module_status": "Промени статуса",
+      "update_theme": "Промени темата",
+      "update_timezone": "Промени часовата зона",
+      "update_start_of_week": "Промени първия ден от седмицата",
+      "update_language": "Промени езика"
+    },
+    "search_menu": {
+      "no_results": "Няма намерени резултати",
+      "clear_search": "Изчисти търсенето",
+      "go_to_advanced_search": "Към разширеното търсене"
+    },
+    "footer": {
+      "workspace_level": "Ниво работно пространство"
+    },
+    "shortcuts_modal": {
+      "search_placeholder": "Търсене на клавишни комбинации",
+      "no_results": "Няма намерени клавишни комбинации за „{query}“",
+      "sequence_separator": "след това"
+    },
+    "group_titles": {
+      "actions": "Действия",
+      "contextual": "Контекстни",
+      "navigation": "Навигация",
+      "create": "Създаване",
+      "general": "Общи",
+      "settings": "Настройки",
+      "account": "Акаунт",
+      "miscellaneous": "Други",
+      "preferences": "Предпочитания",
+      "help": "Помощ"
+    }
+  }
+}
