@@ -529,6 +529,14 @@ When you want to restore the previously backed-up data, follow the instructions 
 
 ---
 
+### Use a self-managed Garage instead of the bundled MinIO (Docker Compose)
+
+Plane can store files in [Garage](https://garagehq.deuxfleurs.fr), a lightweight S3-compatible store you deploy and maintain yourself. [`deployments/garage/`](../../garage/README.md) has a Compose file and config for Garage, a script that copies your existing files out of the `plane-app_uploads` volume, and the `plane.env` settings that point Plane at it.
+
+Garage is not part of the Plane installation: upgrading, backing it up and monitoring it are your responsibility.
+
+---
+
 ### Restore for Commercial Air-Gapped (Docker Compose)
 
 When you want to restore the previously backed-up data on Plane Commercial Air-Gapped version, follow the instructions below.

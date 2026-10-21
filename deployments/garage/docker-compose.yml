@@ -1,0 +1,36 @@
+# Garage, self-managed, as Plane's object store. Runs as its own compose project and joins the Docker network
+# Plane's containers use, where Plane reaches it as http://garage:3900.
+#
+#   docker compose up -d     # joins plane-app_default; to override, put PLANE_NETWORK=<network> in .env here
+#
+# See README.md in this directory for deploying, migrating from Plane's bundled MinIO, and operating it.
+name: plane-garage
+
+services:
+  garage:
+    image: docker.io/dxflrs/garage:v2.4.1
+    restart: unless-stopped
+    # --single-node applies the cluster layout on first boot; --default-access-key and --default-bucket create the
+    # key and bucket from garage.env. All three are no-ops on later starts.
+    command: ["/garage", "server", "--single-node", "--default-access-key", "--default-bucket"]
+    env_file: ./garage.env
+    environment:
+      GARAGE_CONFIG_FILE: /etc/garage.toml
+    volumes:
+      - ./garage.toml:/etc/garage.toml:ro
+      - ${GARAGE_DATA_DIR:-./data}:/var/lib/garage
+    # The image has no shell, so the check is Garage's own CLI.
+    healthcheck:
+      test: ["CMD", "/garage", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 5s
+    networks:
+      plane:
+        aliases: [garage]
+
+networks:
+  plane:
+    name: ${PLANE_NETWORK:-plane-app_default}
+    external: true
