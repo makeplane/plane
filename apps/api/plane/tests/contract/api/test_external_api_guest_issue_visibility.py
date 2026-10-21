@@ -2,34 +2,20 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Contract tests for external-API guest visibility scoping (WEB-9423).
+"""Contract tests for guest visibility on the external API (WEB-9423).
 
-Split from WEB-9422 (the plane-ee fix). On the external API
-(``apps/api/plane/api/views/issue.py``), a restricted guest -- a project
-member with the GUEST role on a project where ``guest_view_all_features`` is
-disabled -- could self-issue a Personal API Token and then read every work
-item in the project (and its comments, links, activity, attachments,
-relations) via the external API, including work items they did not create.
-The app-side API already enforces ``guest_view_all_features`` in 6+ views
-(see GHSA-32c7-84jc-4w67 / WEB-8074 for a near-identical, already-fixed gap on
-the app API); the external API never did.
+A restricted guest is a project member with the GUEST role on a project where
+``guest_view_all_features`` is disabled. On the external API such a guest only
+sees the work items they created:
 
-The fix adds two small helpers next to the existing
-``user_has_issue_permission`` in ``issue.py`` -- ``is_restricted_guest`` and
-``guest_cannot_view_issue`` -- and uses them to:
+* issue-level reads (list/total_count, external-id lookup, detail, identifier
+  lookup, search, cycle/module issue lists, intake list/detail) only return
+  their own work items;
+* sub-resource requests (links, comments, activities, attachments, relations)
+  on a work item they cannot view return 404;
+* relation lists omit related work items the caller cannot view.
 
-* row-filter issue-level queries (list/total_count, external-id lookup,
-  detail, identifier lookup, search, cycle/module issue lists) to
-  ``created_by=request.user`` for restricted guests;
-* deny whole sub-resource requests (links, comments, activities,
-  attachments, relations) with 404 -- not 403, which would leak that the
-  parent issue exists -- when the restricted guest cannot view the parent
-  issue.
-
-Bundled in the same change: ``IssueAttachmentListCreateAPIEndpoint.get`` had
-no permission check at all (not even project membership) for any
-authenticated user. That endpoint now requires project membership (or
-issue-creator) in addition to the guest scoping above.
+Reading attachments also requires active project membership.
 """
 
 from unittest import mock
@@ -43,6 +29,8 @@ from plane.db.models import (
     Cycle,
     CycleIssue,
     FileAsset,
+    Intake,
+    IntakeIssue,
     Issue,
     IssueActivity,
     IssueComment,
@@ -155,8 +143,7 @@ class TestWorkItemListGuestScope:
     def test_guest_list_total_count_reflects_guest_scope(
         self, guest_client, workspace, project, own_issue, foreign_issue
     ):
-        """The reporter specifically flagged that total_count must reflect
-        the narrowed count, not the project's full issue count."""
+        """total_count reflects the guest-scoped count, not the project's."""
         response = guest_client.get(_list_url(workspace, project))
         assert response.status_code == status.HTTP_200_OK
         assert response.data["total_count"] == 1, response.data
@@ -509,10 +496,8 @@ def own_comment(db, workspace, project, own_issue, guest_user):
 
 @pytest.fixture
 def foreign_comment(db, workspace, project, foreign_issue, create_user):
-    """An INTERNAL comment on the foreign issue -- the ticket specifically
-    calls out INTERNAL comments as in-scope (IssueComment.access is not an
-    ACL anywhere in this codebase; the guest-scoping here is per-issue, not
-    per-comment-access)."""
+    """An INTERNAL comment on the foreign issue; guest scoping is per issue,
+    independent of the comment's access value."""
     return IssueComment.objects.create(
         workspace=workspace,
         project=project,
@@ -564,8 +549,7 @@ class TestWorkItemCommentsGuestScope:
 
     @pytest.mark.django_db
     def test_admin_404s_on_nonexistent_issue_id(self, api_key_client, workspace, project):
-        """Incidental, reviewed behavior change (all roles): a syntactically
-        valid but nonexistent issue_id now 404s instead of 200 + []."""
+        """A nonexistent issue_id returns 404 for every role."""
         bogus_issue_id = uuid4()
         url = f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/issues/{bogus_issue_id}/comments/"
         response = api_key_client.get(url)
@@ -606,8 +590,7 @@ class TestWorkItemCommentDetailGuestScope:
 
     @pytest.mark.django_db
     def test_admin_404s_on_nonexistent_issue_id(self, api_key_client, workspace, project, foreign_comment):
-        """Incidental, reviewed behavior change (all roles): a syntactically
-        valid but nonexistent issue_id now 404s instead of 200 + []."""
+        """A nonexistent issue_id returns 404 for every role."""
         bogus_issue_id = uuid4()
         url = (
             f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/issues/{bogus_issue_id}"
@@ -786,9 +769,7 @@ class TestWorkItemAttachmentsGuestScope:
 
     @pytest.mark.django_db
     def test_non_project_member_denied_attachments_list(self, api_client, db, workspace, project, foreign_issue):
-        """Regression for the standalone finding: this endpoint previously had
-        NO permission check at all -- any authenticated PAT holder, even a
-        total stranger to the project, could list its attachments."""
+        """Listing attachments requires project membership."""
         unique_id = uuid4().hex[:8]
         stranger = User.objects.create(email=f"stranger-{unique_id}@plane.so", username=f"stranger_{unique_id}")
         stranger.set_password("test-password")
@@ -797,6 +778,14 @@ class TestWorkItemAttachmentsGuestScope:
         api_client.credentials(HTTP_X_API_KEY=token.token)
 
         response = api_client.get(_attachments_url(workspace, project, foreign_issue))
+        assert response.status_code == status.HTTP_403_FORBIDDEN, f"Got {response.status_code}: {response.data!r}"
+
+    @pytest.mark.django_db
+    def test_former_member_denied_attachments_on_own_issue(
+        self, guest_client, guest_user, workspace, project, own_issue, own_attachment
+    ):
+        ProjectMember.objects.filter(project=project, member=guest_user).update(is_active=False)
+        response = guest_client.get(_attachments_url(workspace, project, own_issue))
         assert response.status_code == status.HTTP_403_FORBIDDEN, f"Got {response.status_code}: {response.data!r}"
 
 
@@ -834,12 +823,20 @@ class TestWorkItemAttachmentDetailGuestScope:
         assert response.status_code == status.HTTP_302_FOUND, f"Got {response.status_code}: {response.data!r}"
 
     @pytest.mark.django_db
+    def test_former_member_denied_attachment_detail_on_own_issue(
+        self, guest_client, guest_user, workspace, project, own_issue, own_attachment
+    ):
+        ProjectMember.objects.filter(project=project, member=guest_user).update(is_active=False)
+        response = guest_client.get(_attachment_detail_url(workspace, project, own_issue, own_attachment))
+        assert response.status_code == status.HTTP_403_FORBIDDEN, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
     def test_guest_denied_cross_parent_attachment(
         self, guest_client, workspace, project, own_issue, foreign_attachment
     ):
-        """The asset lookup was bound to workspace/project only, not issue_id.
-        A guest could pair their own authorized issue_id with a foreign
-        issue's attachment pk in the same project and still get the download."""
+        """The attachment must belong to the work item in the URL."""
         response = guest_client.get(_attachment_detail_url(workspace, project, own_issue, foreign_attachment))
         assert response.status_code == status.HTTP_404_NOT_FOUND, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
@@ -849,9 +846,7 @@ class TestWorkItemAttachmentDetailGuestScope:
     def test_admin_denied_cross_parent_attachment(
         self, api_key_client, workspace, project, own_issue, foreign_attachment
     ):
-        """Even a non-guest (admin/member) must not be able to download an
-        attachment belonging to a different issue by pairing an authorized
-        issue_id with a foreign attachment pk."""
+        """The attachment must belong to the work item in the URL, for every role."""
         response = api_key_client.get(_attachment_detail_url(workspace, project, own_issue, foreign_attachment))
         assert response.status_code == status.HTTP_404_NOT_FOUND, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
@@ -860,9 +855,8 @@ class TestWorkItemAttachmentDetailGuestScope:
 
 @pytest.mark.contract
 class TestWorkItemAttachmentWriteGuestScope:
-    """delete/patch had the same unbound FileAsset lookup as .get(): no
-    issue_id/entity_type filter. A caller could pair an authorized issue_id
-    with a foreign issue's attachment pk to delete or modify its metadata."""
+    """delete/patch only act on an attachment of the work item in the URL,
+    and respect guest visibility of that work item."""
 
     @pytest.mark.django_db
     def test_guest_denied_cross_parent_delete(self, guest_client, workspace, project, own_issue, foreign_attachment):
@@ -888,8 +882,7 @@ class TestWorkItemAttachmentWriteGuestScope:
     def test_admin_denied_cross_parent_delete(
         self, api_key_client, workspace, project, own_issue, foreign_attachment
     ):
-        """Non-guest callers are affected too -- the unbound lookup was not a
-        guest-only gap."""
+        """The attachment must belong to the work item in the URL, for every role."""
         response = api_key_client.delete(_attachment_detail_url(workspace, project, own_issue, foreign_attachment))
         assert response.status_code == status.HTTP_404_NOT_FOUND, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
@@ -912,7 +905,7 @@ class TestWorkItemAttachmentWriteGuestScope:
     def test_guest_allowed_delete_on_own_issue_own_attachment(
         self, guest_client, workspace, project, own_issue, own_attachment
     ):
-        """Positive control: same-issue delete still works after scoping."""
+        """Positive control: same-issue delete works."""
         response = guest_client.delete(_attachment_detail_url(workspace, project, own_issue, own_attachment))
         assert response.status_code == status.HTTP_204_NO_CONTENT, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
@@ -924,7 +917,7 @@ class TestWorkItemAttachmentWriteGuestScope:
     def test_guest_allowed_patch_on_own_issue_own_attachment(
         self, guest_client, workspace, project, own_issue, own_attachment
     ):
-        """Positive control: same-issue patch still works after scoping."""
+        """Positive control: same-issue patch works."""
         response = guest_client.patch(
             _attachment_detail_url(workspace, project, own_issue, own_attachment),
             data={"is_uploaded": True},
@@ -964,9 +957,7 @@ class TestWorkItemAttachmentWriteGuestScope:
     def test_guest_denied_matching_foreign_parent_delete(
         self, guest_client, workspace, project, foreign_issue, foreign_attachment
     ):
-        """A restricted guest supplying a foreign issue's own, correctly
-        matched issue_id/attachment pair must still be denied -- guest
-        visibility on the parent issue needs checking too."""
+        """A restricted guest cannot delete attachments of a work item they cannot view."""
         response = guest_client.delete(_attachment_detail_url(workspace, project, foreign_issue, foreign_attachment))
         assert response.status_code == status.HTTP_404_NOT_FOUND, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
@@ -991,8 +982,7 @@ class TestWorkItemAttachmentWriteGuestScope:
     def test_guest_with_view_all_allowed_matching_foreign_parent_delete(
         self, guest_client, workspace, project, foreign_issue, foreign_attachment
     ):
-        """Positive control: guest_view_all_features=True lifts the new
-        check, same as everywhere else it's applied."""
+        """Positive control: guest_view_all_features=True lifts the restriction."""
         _enable_guest_view_all(project)
         response = guest_client.delete(_attachment_detail_url(workspace, project, foreign_issue, foreign_attachment))
         assert response.status_code == status.HTTP_204_NO_CONTENT, (
@@ -1020,9 +1010,7 @@ class TestWorkItemAttachmentWriteGuestScope:
 # 12b. Work item attachment create -- IssueAttachmentListCreateAPIEndpoint.post
 # ---------------------------------------------------------------------------
 
-# .post checked user_has_issue_permission (which admits GUEST) but never
-# guest_cannot_view_issue -- a restricted guest could request an upload URL
-# for a foreign issue by UUID.
+# A restricted guest can only create attachments on work items they can view.
 
 
 def _attachment_create_payload():
@@ -1120,10 +1108,29 @@ class TestWorkItemRelationsGuestScope:
 
     @pytest.mark.django_db
     def test_guest_allowed_relations_on_own_issue(
-        self, guest_client, workspace, project, own_issue, issue_relation
+        self, guest_client, workspace, project, own_issue, foreign_issue, issue_relation
     ):
         response = guest_client.get(_relations_url(workspace, project, own_issue))
         assert response.status_code == status.HTTP_200_OK
+        related_ids = {row["issue_id"] for rows in response.data.values() for row in rows}
+        assert str(foreign_issue.id) not in related_ids
+
+    @pytest.mark.django_db
+    def test_guest_with_view_all_sees_related_issues(
+        self, guest_client, workspace, project, own_issue, foreign_issue, issue_relation
+    ):
+        _enable_guest_view_all(project)
+        response = guest_client.get(_relations_url(workspace, project, own_issue))
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["relates_to"] == [{"project_id": str(project.id), "issue_id": str(foreign_issue.id)}]
+
+    @pytest.mark.django_db
+    def test_admin_sees_related_issues(
+        self, api_key_client, workspace, project, own_issue, foreign_issue, issue_relation
+    ):
+        response = api_key_client.get(_relations_url(workspace, project, own_issue))
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["relates_to"] == [{"project_id": str(project.id), "issue_id": str(foreign_issue.id)}]
 
     @pytest.mark.django_db
     def test_guest_with_view_all_allowed_relations_on_foreign_issue(
@@ -1249,9 +1256,7 @@ class TestModuleIssueListGuestScope:
 # 17/18. Work item comment writes -- IssueCommentDetailAPIEndpoint.patch/delete
 # ---------------------------------------------------------------------------
 #
-# ProjectLitePermission lets any active project member -- including a
-# restricted guest -- reach patch/delete, which never checked
-# guest_cannot_view_issue before mutating the comment.
+# A restricted guest can only edit or delete comments on work items they can view.
 
 
 def _comment_patch_payload():
@@ -1333,9 +1338,7 @@ class TestWorkItemCommentWriteGuestScope:
 # 9b. Work item comment create -- IssueCommentListCreateAPIEndpoint.post
 # ---------------------------------------------------------------------------
 
-# .post never called get_queryset (the GET-side guest check) and
-# ProjectLitePermission admits every active guest -- so a restricted guest
-# could create a comment on a foreign issue by UUID.
+# A restricted guest can only comment on work items they can view.
 
 
 def _comment_create_payload():
@@ -1390,9 +1393,7 @@ class TestWorkItemCommentCreateGuestScope:
 # 19. Module issue detail -- ModuleIssueDetailAPIEndpoint.get
 # ---------------------------------------------------------------------------
 #
-# guest_cannot_view_issue was added here defensively, but the URL router
-# for this path only ever exposes http_method_names=["delete"] -- GET is
-# unreachable dead code, so the test below documents the 405 instead.
+# This route only exposes DELETE, so GET returns 405.
 
 
 def _module_issue_detail_url(workspace, project, module, issue):
@@ -1405,8 +1406,7 @@ class TestModuleIssueDetailGuestScope:
     def test_module_issue_detail_get_is_not_routed(
         self, guest_client, workspace, project, module, module_memberships, own_issue, foreign_issue
     ):
-        """GET is not wired to module-issues-detail (only DELETE is), so this
-        guarded method is not reachable and not an exploitable gap here."""
+        """GET is not routed for module-issues-detail (only DELETE is)."""
         own_response = guest_client.get(_module_issue_detail_url(workspace, project, module, own_issue))
         foreign_response = guest_client.get(_module_issue_detail_url(workspace, project, module, foreign_issue))
         assert own_response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED, own_response.data
@@ -1428,8 +1428,6 @@ class TestCycleIssueDetailGuestScope:
     def test_guest_denied_foreign_cycle_issue_detail(
         self, guest_client, workspace, project, cycle, cycle_memberships, foreign_issue
     ):
-        """CycleIssueDetailAPIEndpoint.get had no restricted-guest check at
-        all -- only its list sibling was scoped."""
         response = guest_client.get(_cycle_issue_detail_url(workspace, project, cycle, foreign_issue))
         assert response.status_code == status.HTTP_404_NOT_FOUND, f"Got {response.status_code}: {response.data!r}"
 
@@ -1454,4 +1452,88 @@ class TestCycleIssueDetailGuestScope:
         self, api_key_client, workspace, project, cycle, cycle_memberships, foreign_issue
     ):
         response = api_key_client.get(_cycle_issue_detail_url(workspace, project, cycle, foreign_issue))
+        assert response.status_code == status.HTTP_200_OK
+
+
+# ---------------------------------------------------------------------------
+# 21. Intake work items -- IntakeIssueListCreateAPIEndpoint.get / IntakeIssueDetailAPIEndpoint.get
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture
+def intake(db, workspace, project):
+    project.intake_view = True
+    project.save(update_fields=["intake_view"])
+    return Intake.objects.create(name="Intake", project=project, workspace=workspace, is_default=True)
+
+
+def _make_intake_issue(workspace, project, intake, issue, created_by):
+    intake_issue = IntakeIssue(intake=intake, issue=issue, project=project, workspace=workspace)
+    intake_issue.save(created_by_id=created_by.id)
+    return intake_issue
+
+
+@pytest.fixture
+def own_intake_issue(db, workspace, project, intake, own_issue, guest_user):
+    return _make_intake_issue(workspace, project, intake, own_issue, guest_user)
+
+
+@pytest.fixture
+def foreign_intake_issue(db, workspace, project, intake, foreign_issue, create_user):
+    return _make_intake_issue(workspace, project, intake, foreign_issue, create_user)
+
+
+def _intake_issues_url(workspace, project):
+    return f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/intake-issues/"
+
+
+def _intake_issue_detail_url(workspace, project, issue):
+    return f"{_intake_issues_url(workspace, project)}{issue.id}/"
+
+
+@pytest.mark.contract
+class TestIntakeIssueGuestScope:
+    @pytest.mark.django_db
+    def test_guest_list_excludes_foreign_intake_issue(
+        self, guest_client, workspace, project, own_intake_issue, foreign_intake_issue
+    ):
+        response = guest_client.get(_intake_issues_url(workspace, project))
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        assert {str(row["id"]) for row in response.data["results"]} == {str(own_intake_issue.id)}
+
+    @pytest.mark.django_db
+    def test_guest_denied_foreign_intake_issue_detail(
+        self, guest_client, workspace, project, foreign_issue, foreign_intake_issue
+    ):
+        response = guest_client.get(_intake_issue_detail_url(workspace, project, foreign_issue))
+        assert response.status_code == status.HTTP_404_NOT_FOUND, f"Got {response.status_code}: {response.data!r}"
+
+    @pytest.mark.django_db
+    def test_guest_allowed_own_intake_issue_detail(self, guest_client, workspace, project, own_issue, own_intake_issue):
+        response = guest_client.get(_intake_issue_detail_url(workspace, project, own_issue))
+        assert response.status_code == status.HTTP_200_OK
+        assert str(response.data["id"]) == str(own_intake_issue.id)
+
+    @pytest.mark.django_db
+    def test_guest_with_view_all_sees_every_intake_issue(
+        self, guest_client, workspace, project, foreign_issue, own_intake_issue, foreign_intake_issue
+    ):
+        _enable_guest_view_all(project)
+        response = guest_client.get(_intake_issues_url(workspace, project))
+        assert response.status_code == status.HTTP_200_OK
+        assert {str(row["id"]) for row in response.data["results"]} == {
+            str(own_intake_issue.id),
+            str(foreign_intake_issue.id),
+        }
+        response = guest_client.get(_intake_issue_detail_url(workspace, project, foreign_issue))
+        assert response.status_code == status.HTTP_200_OK
+
+    @pytest.mark.django_db
+    def test_admin_sees_every_intake_issue(
+        self, api_key_client, workspace, project, foreign_issue, own_intake_issue, foreign_intake_issue
+    ):
+        response = api_key_client.get(_intake_issues_url(workspace, project))
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data["results"]) == 2
+        response = api_key_client.get(_intake_issue_detail_url(workspace, project, foreign_issue))
         assert response.status_code == status.HTTP_200_OK

@@ -32,6 +32,7 @@ from plane.utils.host import base_host
 from plane.utils.serializers import writable_data
 from plane.utils.content_validator import validate_html_content
 from .base import BaseAPIView
+from .issue import is_restricted_guest
 from plane.db.models.intake import SourceType
 from plane.utils.openapi import (
     intake_docs,
@@ -73,7 +74,7 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         if intake is None or not project.intake_view:
             return IntakeIssue.objects.none()
 
-        return (
+        queryset = (
             IntakeIssue.objects.filter(
                 Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
                 workspace__slug=self.kwargs.get("slug"),
@@ -83,6 +84,10 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
             .select_related("issue", "workspace", "project")
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
+        # Restricted guests only see the intake work items they submitted
+        if is_restricted_guest(self.request.user.id, self.kwargs.get("project_id"), self.kwargs.get("slug")):
+            queryset = queryset.filter(created_by=self.request.user)
+        return queryset
 
     @intake_docs(
         operation_id="get_intake_work_items_list",
@@ -247,7 +252,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         if intake is None or not project.intake_view:
             return IntakeIssue.objects.none()
 
-        return (
+        queryset = (
             IntakeIssue.objects.filter(
                 Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
                 workspace__slug=self.kwargs.get("slug"),
@@ -257,6 +262,10 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
             .select_related("issue", "workspace", "project")
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
+        # Restricted guests only see the intake work items they submitted
+        if is_restricted_guest(self.request.user.id, self.kwargs.get("project_id"), self.kwargs.get("slug")):
+            queryset = queryset.filter(created_by=self.request.user)
+        return queryset
 
     @intake_docs(
         operation_id="retrieve_intake_work_item",

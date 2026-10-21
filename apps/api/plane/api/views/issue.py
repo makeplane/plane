@@ -195,9 +195,35 @@ def is_restricted_guest(user_id, project_id, slug):
 
 def guest_cannot_view_issue(user_id, issue, slug):
     """True when `issue` exists but a restricted guest did not create it.
-    Callers must deny the whole sub-resource request (404, not 403) rather
-    than serve it -- a 403 would leak that the issue exists."""
+    Callers deny the whole request with 404, the same response as a missing
+    issue."""
     return issue is not None and issue.created_by_id != user_id and is_restricted_guest(user_id, issue.project_id, slug)
+
+
+def visible_issue_q(user):
+    """Issue filter for work items `user` may view, across projects: every
+    issue in a project where they are an active member above GUEST or a GUEST
+    with `guest_view_all_features`, otherwise only the issues they created."""
+    return (
+        Q(
+            project__project_projectmember__member=user,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__role__gt=ROLE.GUEST.value,
+        )
+        | Q(
+            project__project_projectmember__member=user,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__role=ROLE.GUEST.value,
+            project__guest_view_all_features=True,
+        )
+        | Q(
+            project__project_projectmember__member=user,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__role=ROLE.GUEST.value,
+            project__guest_view_all_features=False,
+            created_by=user,
+        )
+    )
 
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
@@ -2114,22 +2140,14 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
 
         List all attachments for an issue.
         """
-        issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-        # This endpoint previously had no permission check at all. Require the
-        # same project membership (or issue-creator) check its sibling
-        # create/delete/upload methods on this model already enforce.
-        if not user_has_issue_permission(
-            request.user.id,
-            project_id=project_id,
-            issue=issue,
-            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
-            allow_creator=True,
-        ):
+        # Reading attachments requires active project membership
+        if not user_has_issue_permission(request.user.id, project_id=project_id, allow_creator=False):
             return Response(
                 {"error": "You are not allowed to view these attachments"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
         if guest_cannot_view_issue(request.user.id, issue, slug):
             raise Issue.DoesNotExist()
 
@@ -2253,20 +2271,20 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
 
         Retrieve details of a specific attachment.
         """
-        issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-        # if the user is part of the project (or the issue's creator) then allow the download
+        # if the user is part of the project then allow the download
         if not user_has_issue_permission(
             request.user.id,
             project_id=project_id,
-            issue=issue,
-            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
-            allow_creator=True,
+            issue=None,
+            allowed_roles=None,
+            allow_creator=False,
         ):
             return Response(
                 {"error": "You are not allowed to download this attachment"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
         if guest_cannot_view_issue(request.user.id, issue, slug):
             raise Issue.DoesNotExist()
 
@@ -2436,28 +2454,7 @@ class IssueSearchEndpoint(BaseAPIView):
         # can span several projects, so this is a per-row EXISTS check
         # mirroring IssueDetailEndpoint.get's tiered membership check.
         visible_issue_subquery = (
-            Issue.issue_objects.filter(id=OuterRef("id"))
-            .filter(
-                Q(
-                    project__project_projectmember__member=self.request.user,
-                    project__project_projectmember__is_active=True,
-                    project__project_projectmember__role__gt=ROLE.GUEST.value,
-                )
-                | Q(
-                    project__project_projectmember__member=self.request.user,
-                    project__project_projectmember__is_active=True,
-                    project__project_projectmember__role=ROLE.GUEST.value,
-                    project__guest_view_all_features=True,
-                )
-                | Q(
-                    project__project_projectmember__member=self.request.user,
-                    project__project_projectmember__is_active=True,
-                    project__project_projectmember__role=ROLE.GUEST.value,
-                    project__guest_view_all_features=False,
-                    created_by=self.request.user,
-                )
-            )
-            .values("id")
+            Issue.issue_objects.filter(id=OuterRef("id")).filter(visible_issue_q(self.request.user)).values("id")
         )
 
         # Filter issues
@@ -2562,8 +2559,11 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
         if guest_cannot_view_issue(request.user.id, issue, slug):
             raise Issue.DoesNotExist()
 
+        # Only list related work items the caller may view.
+        visible_issue_ids = Issue.objects.filter(visible_issue_q(request.user)).values("id")
         relations = IssueRelation.objects.filter(
-            Q(issue_id=issue_id) | Q(related_issue_id=issue_id),
+            Q(issue_id=issue_id, related_issue_id__in=visible_issue_ids)
+            | Q(related_issue_id=issue_id, issue_id__in=visible_issue_ids),
             workspace__slug=slug,
         ).values(
             "relation_type",
