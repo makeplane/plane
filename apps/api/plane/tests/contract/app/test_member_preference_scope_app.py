@@ -123,7 +123,7 @@ class TestMemberPreferenceScope:
 @pytest.mark.contract
 @pytest.mark.django_db
 class TestMemberDetailPreferenceScope:
-    """The member-detail endpoint only exposes and accepts preferences for the caller's own row."""
+    """The member-detail endpoint only exposes and accepts personal fields for the caller's own row."""
 
     def test_member_detail_omits_other_members_personal_fields(self, workspace, project, create_user):
         other = _member(workspace, project, role=15)
@@ -146,21 +146,23 @@ class TestMemberDetailPreferenceScope:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["preferences"] == member_record.preferences
 
-    def test_admin_cannot_update_other_members_preferences(self, workspace, project, create_user):
+    @pytest.mark.parametrize("field", PERSONAL_FIELDS)
+    def test_admin_cannot_update_other_members_personal_fields(self, workspace, project, create_user, field):
         member = _member(workspace, project, role=15)
         member_record = ProjectMember.objects.get(project=project, member=member)
-        original = member_record.preferences
+        original = getattr(member_record, field)
 
         response = _client(create_user).patch(
             MEMBER_URL.format(slug=workspace.slug, project_id=project.id, pk=member_record.id),
-            {"preferences": {"pinned": ["changed"]}},
+            {field: {"pinned": ["changed"]}, "role": 5},
             format="json",
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         member_record.refresh_from_db()
-        assert member_record.preferences == original
+        assert getattr(member_record, field) == original
+        assert member_record.role == 15
 
     def test_member_detail_update_omits_other_members_personal_fields(self, workspace, project, create_user):
         member = _member(workspace, project, role=15)

@@ -219,10 +219,10 @@ class ProjectMemberViewSet(BaseViewSet):
     def partial_update(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(pk=pk, workspace__slug=slug, project_id=project_id, is_active=True)
 
-        # Preferences are personal; only their owner may change them
-        if "preferences" in request.data and project_member.member_id != request.user.id:
+        # Personal fields can only be changed by the member who owns them
+        if project_member.member_id != request.user.id and any(f in request.data for f in PERSONAL_MEMBER_FIELDS):
             return Response(
-                {"error": "You cannot update another member's preferences"},
+                {"error": "You cannot update another member's personal settings"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
