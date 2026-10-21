@@ -151,6 +151,14 @@ REST_FRAMEWORK = {
     "SCHEMA_COERCE_PATH_PK": False,
 }
 
+# Number of reverse proxies in front of the API. DRF throttles use it to pick the
+# client IP from X-Forwarded-For. Unset keeps DRF's default (None).
+_num_proxies_raw = os.environ.get("NUM_PROXIES", "").strip()
+if _num_proxies_raw.isdecimal() and len(_num_proxies_raw) <= 3:
+    REST_FRAMEWORK["NUM_PROXIES"] = int(_num_proxies_raw)
+elif _num_proxies_raw:
+    _logger.warning("NUM_PROXIES: ignoring invalid value %r", _num_proxies_raw)
+
 # API key throttle rate (DRF SimpleRateThrottle format, e.g. "60/minute")
 API_KEY_RATE_LIMIT = os.environ.get("API_KEY_RATE_LIMIT", "60/minute")
 
