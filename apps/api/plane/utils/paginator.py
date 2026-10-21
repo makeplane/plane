@@ -686,8 +686,8 @@ class BasePaginator:
         except ValueError:
             raise ParseError(detail="Invalid cursor parameter.")
 
-        # cursor is "value:offset:is_prev": value is a page size within the per_page bounds,
-        # offset is a non-negative page index.
+        # cursor is "value:offset:is_prev": value is a page size from 0 to the effective
+        # maximum page size, offset is a non-negative page index.
         effective_max_per_page = self._effective_max_per_page(max_per_page, default_per_page)
         if not (0 <= input_cursor.value <= effective_max_per_page) or input_cursor.offset < 0:
             raise ParseError(detail="Invalid cursor parameter.")

@@ -141,7 +141,7 @@ class _ExplodingPaginator:
 class TestCursorBounds:
     """paginate() accepts a cursor value in [0, max_per_page] and a non-negative offset."""
 
-    @pytest.mark.parametrize("cursor", ["-1:0:0", "1000000:0:0", "20:-1:0"])
+    @pytest.mark.parametrize("cursor", ["-1:0:0", "1001:0:0", "20:-1:0"])
     def test_out_of_bounds_cursor_rejected_before_paginator(self, cursor):
         request = _make_request(cursor=cursor)
         with pytest.raises(ParseError):
