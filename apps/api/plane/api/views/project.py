@@ -653,9 +653,8 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
 class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
     """Project Archive and Unarchive Endpoint"""
 
-    # Not ProjectBasePermission: its POST branch is written for project
-    # creation (workspace-role check only, no project_id binding) and archive
-    # is not creation — see ProjectArchiveUnarchivePermission's docstring.
+    # Archive/unarchive act on the URL project; ProjectBasePermission's POST
+    # branch is for project creation.
     permission_classes = [ProjectArchiveUnarchivePermission]
 
     @project_docs(

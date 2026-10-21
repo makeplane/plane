@@ -2,25 +2,12 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Regression test for project-archive authorization bypass on the external API.
+"""Contract tests for project archive/unarchive on the external API.
 
-Root cause: ProjectArchiveUnarchiveAPIEndpoint used ProjectBasePermission,
-whose POST branch is written for project creation — it checks only
-workspace-level role (ADMIN/MEMBER) with no project_id binding at all. Since
-archive is POST but is not creation, any active workspace member could
-archive (and delete every UserFavorite row on) any project in the workspace,
-including a fully private one they have no ProjectMember row on and cannot
-otherwise read.
-
-DELETE (unarchive) was never affected — it falls through to
-ProjectBasePermission's non-POST branch, which does check project membership.
-So this was specifically an asymmetry between the two verbs of the same
-endpoint.
-
-Fixed by giving the endpoint its own ProjectArchiveUnarchivePermission,
-scoped to project_id, mirroring the app-layer twin's gate (active
-ProjectMember with role ADMIN or MEMBER, or any active ProjectMember plus a
-workspace ADMIN role) — applied to both post and delete.
+Archiving (POST) or unarchiving (DELETE) a project requires an active
+membership of that project with role ADMIN or MEMBER, or any active
+membership plus workspace ADMIN. A workspace member who is not a member of
+the project gets 403 on both verbs.
 """
 
 from uuid import uuid4
@@ -65,10 +52,10 @@ def private_project(db, workspace, create_user):
 
 
 @pytest.fixture
-def attacker_member(db, workspace):
+def non_project_member(db, workspace):
     """An active workspace MEMBER (role 15) with no ProjectMember row on
-    private_project — the attacker in this advisory."""
-    user = _make_user("attacker")
+    private_project."""
+    user = _make_user("wsmember")
     WorkspaceMember.objects.create(workspace=workspace, member=user, role=15, is_active=True)
     return user
 
@@ -80,9 +67,9 @@ def _archive_url(slug, project_id):
 @pytest.mark.django_db
 class TestProjectArchiveScope:
     def test_workspace_member_without_project_membership_cannot_archive(
-        self, workspace, private_project, attacker_member
+        self, workspace, private_project, non_project_member
     ):
-        client = _client_for(attacker_member)
+        client = _client_for(non_project_member)
 
         response = client.post(_archive_url(workspace.slug, private_project.id))
 
@@ -91,21 +78,18 @@ class TestProjectArchiveScope:
         assert private_project.archived_at is None, "the project must not have been archived"
 
     def test_workspace_member_without_project_membership_cannot_unarchive(
-        self, workspace, private_project, attacker_member
+        self, workspace, private_project, non_project_member
     ):
-        """Symmetry check: unarchive was already correctly gated before this
-        fix — must still be, now that archive shares the same permission
-        class."""
-        client = _client_for(attacker_member)
+        """Unarchive applies the same project-membership rule as archive."""
+        client = _client_for(non_project_member)
 
         response = client.delete(_archive_url(workspace.slug, private_project.id))
 
         assert response.status_code == status.HTTP_403_FORBIDDEN, f"got {response.status_code}: {response.data!r}"
 
     def test_project_member_can_archive_and_unarchive_their_own_project(self, workspace, private_project):
-        """Positive control: an active project MEMBER (not just admin) must
-        still be able to archive/unarchive — the fix must not overtighten
-        beyond the app-layer twin's ADMIN-or-MEMBER gate."""
+        """An active project MEMBER (not only ADMIN) can archive and unarchive,
+        matching the app endpoint."""
         member_user = _make_user("member")
         WorkspaceMember.objects.create(workspace=workspace, member=member_user, role=15, is_active=True)
         ProjectMember.objects.create(

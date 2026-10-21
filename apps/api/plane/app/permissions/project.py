@@ -54,18 +54,13 @@ class ProjectBasePermission(BasePermission):
 
 
 class ProjectArchiveUnarchivePermission(BasePermission):
-    """Archive/unarchive always target an existing project_id — never project
-    creation — so this must not share ProjectBasePermission's POST branch,
-    which assumes POST means "create a project" and checks only
-    workspace-level role with no project_id binding at all. A workspace
-    ADMIN/MEMBER with no ProjectMember row on the target project could
-    otherwise archive (and delete every UserFavorite row on) a project they
-    cannot even read.
+    """Archive (POST) and unarchive (DELETE) of the URL project.
 
-    Mirrors the app-layer twin's gate (``allow_permission([ROLE.ADMIN,
-    ROLE.MEMBER])``, ``level="PROJECT"`` default) on both post and delete so
-    the two verbs agree — unarchive already got this right by falling
-    through to ProjectBasePermission's non-POST branch; archive didn't.
+    Both verbs act on an existing ``project_id``, so they require an active
+    ProjectMember row on that project with role ADMIN or MEMBER, or any
+    active membership plus workspace ADMIN. This matches the app endpoint's
+    ``allow_permission([ROLE.ADMIN, ROLE.MEMBER])``. ProjectBasePermission's
+    POST branch is for project creation and is not used here.
     """
 
     def has_permission(self, request, view):
