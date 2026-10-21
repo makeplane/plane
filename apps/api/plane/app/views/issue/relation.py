@@ -285,7 +285,7 @@ class IssueRelationViewSet(BaseViewSet):
 
         issue_activity.delay(
             type="issue_relation.activity.created",
-            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+            requested_data=json.dumps({"relation_type": relation_type, "issues": issues}, cls=DjangoJSONEncoder),
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),

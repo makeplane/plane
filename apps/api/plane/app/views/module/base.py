@@ -49,6 +49,7 @@ from plane.app.serializers import (
     ModuleUserPropertiesSerializer,
     ModuleWriteSerializer,
 )
+from plane.app.serializers.favorite import get_favorite_entities
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
@@ -766,6 +767,12 @@ class ModuleLinkViewSet(BaseViewSet):
     serializer_class = ModuleLinkSerializer
 
     def perform_create(self, serializer):
+        # The URL module must belong to the URL workspace + project (404 otherwise).
+        Module.objects.get(
+            pk=self.kwargs.get("module_id"),
+            project_id=self.kwargs.get("project_id"),
+            workspace__slug=self.kwargs.get("slug"),
+        )
         serializer.save(
             project_id=self.kwargs.get("project_id"),
             module_id=self.kwargs.get("module_id"),
@@ -802,6 +809,10 @@ class ModuleFavoriteViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id):
+        # 404 unless the module is in this project and visible to the user
+        get_favorite_entities("module", request.user.id, project_id).get(
+            pk=request.data.get("module"), workspace__slug=slug
+        )
         _ = UserFavorite.objects.create(
             project_id=project_id,
             user=request.user,
