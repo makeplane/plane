@@ -1737,12 +1737,14 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         Validates external ID uniqueness if provided.
         """
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
-        if guest_cannot_view_issue(request.user.id, issue, slug):
+        # admins (including a workspace admin with a project GUEST role) skip the guest visibility gate
+        is_admin = is_project_or_workspace_admin(request.user.id, project_id, slug)
+        if not is_admin and guest_cannot_view_issue(request.user.id, issue, slug):
             raise Issue.DoesNotExist()
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         if not (
             (issue_comment.created_by_id == request.user.id and is_active_project_member(request.user.id, project_id))
-            or is_project_or_workspace_admin(request.user.id, project_id, slug)
+            or is_admin
         ):
             return Response(
                 {"error": "You are not allowed to edit this comment"},
@@ -1818,12 +1820,14 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         Records deletion activity for audit purposes.
         """
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
-        if guest_cannot_view_issue(request.user.id, issue, slug):
+        # admins (including a workspace admin with a project GUEST role) skip the guest visibility gate
+        is_admin = is_project_or_workspace_admin(request.user.id, project_id, slug)
+        if not is_admin and guest_cannot_view_issue(request.user.id, issue, slug):
             raise Issue.DoesNotExist()
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         if not (
             (issue_comment.created_by_id == request.user.id and is_active_project_member(request.user.id, project_id))
-            or is_project_or_workspace_admin(request.user.id, project_id, slug)
+            or is_admin
         ):
             return Response(
                 {"error": "You are not allowed to delete this comment"},
@@ -2227,7 +2231,9 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         Records deletion activity and triggers metadata cleanup.
         """
         issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-        if guest_cannot_view_issue(request.user.id, issue, slug):
+        # admins (including a workspace admin with a project GUEST role) skip the guest visibility gate
+        is_admin = is_project_or_workspace_admin(request.user.id, project_id, slug)
+        if not is_admin and guest_cannot_view_issue(request.user.id, issue, slug):
             raise Issue.DoesNotExist()
 
         issue_attachment = FileAsset.objects.get(
@@ -2245,7 +2251,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
                 issue_attachment.created_by_id == request.user.id
                 and is_active_project_member(request.user.id, project_id)
             )
-            or is_project_or_workspace_admin(request.user.id, project_id, slug)
+            or is_admin
         ):
             return Response(
                 {"error": "You are not allowed to delete this attachment"},

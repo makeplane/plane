@@ -7,6 +7,7 @@
 * Comment PATCH/DELETE require the comment's creator or an admin.
 * Attachment DELETE requires the attachment's creator or an admin.
 * An admin is a project admin, or a workspace admin who is an active project member.
+  Admins skip the guest visibility gate on these paths.
 * Project-member role assignment requires an active workspace membership and
   cannot exceed the target's workspace role.
 """
@@ -173,6 +174,25 @@ class TestCommentEditDelete:
             resp = client.delete(url)
             assert resp.status_code == status.HTTP_204_NO_CONTENT
 
+    @pytest.mark.parametrize("ws_role, allowed", [(ADMIN, True), (MEMBER, False)])
+    def test_project_guest_without_view_all_features(
+        self, client_for, workspace, project, issue, create_user, ws_role, allowed
+    ):
+        """With guest_view_all_features off, a workspace admin holding the project
+        GUEST role can still edit and delete another user's comment on another
+        user's work item; other project guests get 404."""
+        Project.objects.filter(pk=project.pk).update(guest_view_all_features=False)
+        user = _make_user(workspace, project, ws_role, GUEST)
+        comment = _comment(workspace, project, issue, create_user)
+        url = _comment_url(workspace, project, issue, comment)
+        client = client_for(user)
+        with mock.patch("plane.api.views.issue.issue_activity"), mock.patch("plane.api.views.issue.model_activity"):
+            resp = client.patch(url, {"comment_html": "<p>mod</p>"}, format="json")
+            assert resp.status_code == (status.HTTP_200_OK if allowed else status.HTTP_404_NOT_FOUND)
+            resp = client.delete(url)
+            assert resp.status_code == (status.HTTP_204_NO_CONTENT if allowed else status.HTTP_404_NOT_FOUND)
+        assert IssueComment.objects.filter(pk=comment.pk).exists() is not allowed
+
     @pytest.mark.parametrize("fixture_name", ["member_user", "guest_user"])
     def test_creator_with_revoked_membership_denied(self, request, client_for, workspace, project, issue, fixture_name):
         user = request.getfixturevalue(fixture_name)
@@ -242,6 +262,22 @@ class TestAttachmentDelete:
         with mock.patch("plane.api.views.issue.issue_activity"):
             resp = client_for(workspace_admin).delete(_attachment_url(workspace, project, issue, asset))
         assert resp.status_code == status.HTTP_204_NO_CONTENT
+
+    @pytest.mark.parametrize("ws_role, allowed", [(ADMIN, True), (MEMBER, False)])
+    def test_project_guest_without_view_all_features(
+        self, client_for, workspace, project, issue, create_user, ws_role, allowed
+    ):
+        """With guest_view_all_features off, a workspace admin holding the project
+        GUEST role can still delete another user's attachment on another user's
+        work item; other project guests get 404."""
+        Project.objects.filter(pk=project.pk).update(guest_view_all_features=False)
+        user = _make_user(workspace, project, ws_role, GUEST)
+        asset = _attachment(workspace, project, issue, create_user)
+        with mock.patch("plane.api.views.issue.issue_activity"):
+            resp = client_for(user).delete(_attachment_url(workspace, project, issue, asset))
+        assert resp.status_code == (status.HTTP_204_NO_CONTENT if allowed else status.HTTP_404_NOT_FOUND)
+        asset.refresh_from_db()
+        assert asset.is_deleted is allowed
 
     def test_workspace_admin_without_project_membership_denied(
         self, client_for, workspace, project, issue, create_user
