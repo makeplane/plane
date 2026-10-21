@@ -741,15 +741,11 @@ describe("PDF Rendering Integration", () => {
     });
   });
 
-  describe("image node SSRF pre-resolution", () => {
-    // The `image` renderer never fetches its own src or hands the raw URL to
-    // @react-pdf/image at render time — pdf-export.service.ts pre-fetches every
-    // external `image`-node src (through the redirect-safe path) before rendering
-    // starts and hands the result in via metadata.resolvedImageUrls, the same way
-    // it already does for `imageComponent` assets. These tests exercise that
-    // renderer-level contract directly, without going through the fetch pipeline.
+  describe("image sources", () => {
+    // Renderers only pass pre-resolved or inline data:image URIs to <Image>; any other
+    // src renders a placeholder. pdf-export.service.ts resolves sources before rendering.
 
-    it("renders the pre-resolved data URI when metadata carries a resolved entry for the src", async () => {
+    it("renders the pre-resolved data URI for an image node", async () => {
       const src = "https://images.example.com/photo.png";
       const doc: TipTapDocument = {
         type: "doc",
@@ -762,38 +758,18 @@ describe("PDF Rendering Integration", () => {
       expect(buffer.toString("ascii", 0, 5)).toBe(PDF_HEADER);
     });
 
-    it("renders the placeholder, never the raw src, when the src has no pre-resolved entry", async () => {
+    it("renders a placeholder for an image node without a resolved entry", async () => {
       const doc: TipTapDocument = {
         type: "doc",
         content: [{ type: "image", attrs: { src: "https://images.example.com/never-fetched.png" } }],
       };
 
-      // No metadata at all: the renderer must fall back to the placeholder rather
-      // than passing the raw external URL straight to <Image>.
-      const buffer = await renderPlaneDocToPdfBuffer(doc);
-      const text = await extractPdfText(buffer);
+      const text = await extractPdfText(await renderPlaneDocToPdfBuffer(doc, { metadata: { resolvedImageUrls: {} } }));
 
       expect(text).toContain("Image unavailable");
     });
 
-    it("renders the placeholder for a src that failed pre-resolution (e.g. blocked by SSRF checks)", async () => {
-      const src = "http://169.254.169.254/latest/meta-data/";
-      const doc: TipTapDocument = {
-        type: "doc",
-        content: [{ type: "image", attrs: { src } }],
-      };
-      // A failed pre-fetch (unsafe src, unsafe redirect target, or network error)
-      // simply omits the key from resolvedImageUrls — it never carries a fallback
-      // to the raw src.
-      const metadata: PDFExportMetadata = { resolvedImageUrls: {} };
-
-      const buffer = await renderPlaneDocToPdfBuffer(doc, { metadata });
-      const text = await extractPdfText(buffer);
-
-      expect(text).toContain("Image unavailable");
-    });
-
-    it("still renders inline data: URIs directly, with no pre-fetch entry required", async () => {
+    it("renders inline data:image URIs for an image node", async () => {
       const doc: TipTapDocument = {
         type: "doc",
         content: [{ type: "image", attrs: { src: await tinyJpegDataUri() } }],
@@ -803,5 +779,34 @@ describe("PDF Rendering Integration", () => {
 
       expect(buffer.toString("ascii", 0, 5)).toBe(PDF_HEADER);
     });
+
+    it("renders the pre-resolved data URI for an imageComponent with a URL src", async () => {
+      const src = "https://images.example.com/photo.png";
+      const doc: TipTapDocument = {
+        type: "doc",
+        content: [{ type: "imageComponent", attrs: { src } }],
+      };
+      const metadata: PDFExportMetadata = { resolvedImageUrls: { [src]: await tinyJpegDataUri() } };
+
+      const text = await extractPdfText(await renderPlaneDocToPdfBuffer(doc, { metadata }));
+
+      expect(text).not.toContain("[Image:");
+    });
+
+    it.each(["https://images.example.com/never-fetched.png", "asset-id-without-resolution"])(
+      "renders a placeholder for an imageComponent src without a resolved entry (%s)",
+      async (src) => {
+        const doc: TipTapDocument = {
+          type: "doc",
+          content: [{ type: "imageComponent", attrs: { src } }],
+        };
+
+        const text = await extractPdfText(
+          await renderPlaneDocToPdfBuffer(doc, { metadata: { resolvedImageUrls: {} } })
+        );
+
+        expect(text).toContain("[Image:");
+      }
+    );
   });
 });

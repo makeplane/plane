@@ -89,6 +89,16 @@ const getFlexAlignStyle = (textAlign: string | null | undefined): Style => {
   return {};
 };
 
+/**
+ * Returns the data:image URI to render for an image src: the entry pre-resolved by
+ * pdf-export.service.ts, or the src itself when it is already an inline data:image URI.
+ * Anything else returns null, so <Image> never fetches a URL or reads a path itself.
+ */
+const resolveImageDataUri = (src: string, ctx: PDFRenderContext): string | null => {
+  const resolved = ctx.metadata?.resolvedImageUrls?.[src] ?? src;
+  return resolved.startsWith("data:") && isSafeImageSrc(resolved) ? resolved : null;
+};
+
 export const nodeRenderers: NodeRendererRegistry = {
   doc: (_node: TipTapNode, children: ReactElement[], ctx: PDFRenderContext): ReactElement => (
     <View key={ctx.getKey()}>{children}</View>
@@ -273,21 +283,7 @@ export const nodeRenderers: NodeRendererRegistry = {
           ? { alignItems: "flex-end" as const }
           : { alignItems: "flex-start" as const };
 
-    // SSRF guard: `src` comes from page content. It is never handed to @react-pdf/image
-    // directly — that fetch() follows redirects and would never re-consult a src
-    // validator on the redirect target, so a URL on an ordinary public host could
-    // 302 to an internal address and be fetched anyway. Instead, pdf-export.service.ts
-    // pre-fetches every `image`-node src through the redirect-safe path
-    // (fetchImageSrcSafely, see @/lib/url-security) before rendering starts, the same
-    // way `imageComponent` assets are pre-fetched below, so this render pass stays
-    // synchronous and only ever looks up an already-resolved value.
-    let resolvedSrc: string | null = null;
-    if (ctx.metadata?.resolvedImageUrls && ctx.metadata.resolvedImageUrls[src]) {
-      resolvedSrc = ctx.metadata.resolvedImageUrls[src];
-    } else if (src.startsWith("data:") && isSafeImageSrc(src)) {
-      // data: carries its payload inline — nothing to fetch, so no pre-fetch entry exists.
-      resolvedSrc = src;
-    }
+    const resolvedSrc = resolveImageDataUri(src, ctx);
 
     if (!resolvedSrc) {
       return (
@@ -321,10 +317,7 @@ export const nodeRenderers: NodeRendererRegistry = {
       return <View key={ctx.getKey()} />;
     }
 
-    let resolvedSrc = assetId;
-    if (ctx.metadata?.resolvedImageUrls && ctx.metadata.resolvedImageUrls[assetId]) {
-      resolvedSrc = ctx.metadata.resolvedImageUrls[assetId];
-    }
+    const resolvedSrc = resolveImageDataUri(assetId, ctx);
 
     const alignmentStyle =
       alignment === "center"
@@ -333,10 +326,7 @@ export const nodeRenderers: NodeRendererRegistry = {
           ? { alignItems: "flex-end" as const }
           : { alignItems: "flex-start" as const };
 
-    // `resolvedSrc` is normally the pre-fetched `data:image/…` URI, or the raw asset
-    // id if resolution failed. Same guard as the `image` renderer: a
-    // startsWith("http") check would happily pass http://api:8000/.
-    if (!isSafeImageSrc(resolvedSrc)) {
+    if (!resolvedSrc) {
       return (
         <View key={ctx.getKey()} style={[pdfStyles.imagePlaceholder, alignmentStyle]}>
           <Text style={pdfStyles.imagePlaceholderText}>[Image: {assetId.slice(0, 8)}...]</Text>

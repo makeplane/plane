@@ -4,15 +4,19 @@
  * See the LICENSE file for details.
  */
 
+import dns from "node:dns";
+import http from "node:http";
+import https from "node:https";
 import net from "node:net";
+import type { LookupFunction } from "node:net";
 
 /**
- * SSRF guards for URLs the Live service may cause to be fetched.
+ * Validation for image URLs the Live service fetches from page content.
  *
- * The PDF exporter hands TipTap `node.attrs.src` to `@react-pdf/image`, which
- * fetch()es anything with a host — and Live shares a Docker network with the API,
- * database, Redis, RabbitMQ and MinIO. A `startsWith("http")` check is no defence:
- * `http://api:8000/` starts with "http" too. The destination is what must be judged.
+ * Accepted: inline data:image URIs, and http(s) URLs whose host is a public,
+ * multi-label hostname or a public IPv4 literal. Every address a hostname resolves to
+ * must also be outside the private, loopback, link-local and reserved ranges below,
+ * and the connection is made to the address that was checked.
  */
 
 /** Schemes we are willing to hand to the PDF image pipeline. */
@@ -25,13 +29,12 @@ const ALLOWED_SCHEMES = new Set(["http:", "https:", "data:"]);
  */
 const BLOCKED_HOST_SUFFIXES = [".local", ".localhost", ".internal", ".home.arpa", ".lan"];
 
-/** Bare hostnames that need no DNS to be dangerous. */
+/** Hostnames that only resolve inside a private network. */
 const BLOCKED_HOST_EXACT = new Set(["localhost", "metadata", "metadata.google.internal"]);
 
 /**
  * Returns true when an IPv4 literal falls in a range that must never be fetched.
- * Ranges follow IANA special-purpose registries rather than a hand-rolled
- * "private IP" list, so CGNAT and benchmarking space are covered too.
+ * Ranges follow the IANA special-purpose address registry.
  */
 const isBlockedIPv4 = (ip: string): boolean => {
   const parts = ip.split(".").map((p) => Number(p));
@@ -45,15 +48,14 @@ const isBlockedIPv4 = (ip: string): boolean => {
   if (a === 10) return true; // 10.0.0.0/8     private
   if (a === 127) return true; // 127.0.0.0/8    loopback
   if (a === 100 && b >= 64 && b <= 127) return true; // 100.64.0.0/10  CGNAT
-  if (a === 169 && b === 254) return true; // 169.254.0.0/16 link-local (incl. 169.254.169.254 metadata)
+  if (a === 169 && b === 254) return true; // 169.254.0.0/16 link-local
   if (a === 172 && b >= 16 && b <= 31) return true; // 172.16.0.0/12  private
   if (a === 192 && b === 168) return true; // 192.168.0.0/16 private
   if (a === 198 && (b === 18 || b === 19)) return true; // 198.18.0.0/15  benchmarking
   if (a >= 224) return true; // 224.0.0.0/4 multicast, 240.0.0.0/4 reserved, 255.255.255.255
 
   // The remaining special-purpose blocks are /24s inside otherwise-public /16s, so
-  // they must be matched on the third octet — testing only the second would blackhole
-  // real public space (192.0.3.0/24, 198.51.x, 203.0.x) and break legitimate images.
+  // they are matched on the third octet to keep the surrounding public space reachable.
   if (a === 192 && b === 0 && c === 0) return true; // 192.0.0.0/24   IETF protocol assignments
   if (a === 192 && b === 0 && c === 2) return true; // 192.0.2.0/24   TEST-NET-1
   if (a === 198 && b === 51 && c === 100) return true; // 198.51.100.0/24 TEST-NET-2
@@ -63,10 +65,8 @@ const isBlockedIPv4 = (ip: string): boolean => {
 };
 
 /**
- * Expands an IPv6 literal to its eight 16-bit groups, or null if unparseable.
- * Prefix matching alone is not enough: `::ffff:127.0.0.1` and its expanded twin
- * `0:0:0:0:0:ffff:127.0.0.1` denote the same address, so anything comparing raw
- * strings blocks one and fetches the other.
+ * Expands an IPv6 literal to its eight 16-bit groups, or null if unparseable, so
+ * every spelling of an address is judged the same way.
  */
 const expandIPv6 = (addr: string): number[] | null => {
   let head = addr;
@@ -100,8 +100,7 @@ const expandIPv6 = (addr: string): number[] | null => {
 const isBlockedIPv6 = (ip: string): boolean => {
   const addr = ip.toLowerCase().replace(/^\[|\]$/g, "");
 
-  // Judge on the expanded form so alternate spellings cannot slip past the
-  // prefix checks below. Unparseable literals are treated as unsafe.
+  // Judge on the expanded form. Unparseable literals are treated as unsafe.
   const groups = expandIPv6(addr);
   if (!groups) return true;
 
@@ -116,24 +115,21 @@ const isBlockedIPv6 = (ip: string): boolean => {
   if (groups.every((g) => g === 0)) return true; // :: unspecified
   if (firstFiveZero && groups[5] === 0 && groups[6] === 0 && groups[7] === 1) return true; // ::1 loopback
   if ((g0 & 0xffc0) === 0xfe80) return true; // fe80::/10 link-local
-  // fec0::/10 deprecated site-local. Kept in step with the Python guard's
-  // _BLOCKED_NETWORKS (apps/api/plane/utils/ip_address.py) — the two lists must not
-  // drift, or one service will block a range the other happily fetches.
+  // fec0::/10 deprecated site-local. Keep these ranges in step with _BLOCKED_NETWORKS
+  // in apps/api/plane/utils/ip_address.py.
   if ((g0 & 0xffc0) === 0xfec0) return true;
   if ((g0 & 0xfe00) === 0xfc00) return true; // fc00::/7 unique local
   if ((g0 & 0xff00) === 0xff00) return true; // ff00::/8 multicast
   if (g0 === 0x64 && g1 === 0xff9b) return true; // 64:ff9b::/96 + 64:ff9b:1::/48 NAT64
-  if (g0 === 0x2002) return true; // 6to4 — can wrap a private v4
+  if (g0 === 0x2002) return true; // 2002::/16 6to4
   if (g0 === 0x2001 && g1 === 0) return true; // 2001::/32 Teredo
 
   return false;
 };
 
 /**
- * Returns true when `host` is an IP literal we refuse to fetch, or a numeric/
- * obfuscated host form that is not a canonical address at all. Obfuscated encodings
- * (`0x7f000001`, `2130706433`, `127.1`) are rejected outright — some HTTP clients
- * expand them to loopback, and normalising every variant is a losing game.
+ * Returns true when `host` is a blocked IP literal, or a numeric host that is not a
+ * canonical dotted-quad or IPv6 address (hex, decimal or shortened forms).
  */
 export const isBlockedHostLiteral = (host: string): boolean => {
   const bare = host.replace(/^\[|\]$/g, "");
@@ -142,7 +138,7 @@ export const isBlockedHostLiteral = (host: string): boolean => {
   if (ipVersion === 4) return isBlockedIPv4(bare);
   if (ipVersion === 6) return isBlockedIPv6(bare);
 
-  // Hex (0x…), octal-ish, decimal, or short-form dotted numbers — never a real host.
+  // Hex, decimal or short-form dotted numbers are not canonical addresses.
   if (/^0x[0-9a-f]+$/i.test(bare)) return true;
   if (/^[0-9]+$/.test(bare)) return true;
   if (/^[0-9.]+$/.test(bare)) return true;
@@ -151,11 +147,8 @@ export const isBlockedHostLiteral = (host: string): boolean => {
 };
 
 /**
- * Returns true when a hostname is safe enough to hand to the image fetcher.
- *
- * Single-label hostnames are refused: that is exactly the shape of a Docker Compose
- * service name (`api`, `plane-db`, `plane-minio`), the primary escalation path here.
- * Public image hosts always carry a dot.
+ * Returns true when a hostname may be handed to the image fetcher: a multi-label
+ * name outside the local-only suffixes, or a public IPv4 literal.
  */
 const isAllowedHostname = (hostname: string): boolean => {
   const host = hostname.toLowerCase();
@@ -164,27 +157,19 @@ const isAllowedHostname = (hostname: string): boolean => {
   if (BLOCKED_HOST_EXACT.has(host)) return false;
   if (BLOCKED_HOST_SUFFIXES.some((suffix) => host.endsWith(suffix))) return false;
   if (isBlockedHostLiteral(host)) return false;
-  // No dot => single-label => container/service name on the internal network.
+  // Public hosts have at least two labels; a trailing dot does not count as one.
   if (!host.includes(".")) return false;
-  // A trailing dot ("api.") sidesteps the check above without adding a real label.
   if (host.endsWith(".")) return false;
 
   return true;
 };
 
 /**
- * Decides whether a TipTap image `src` may reach the PDF image pipeline. `data:` is
- * allowed because the asset pipeline pre-fetches images server-side and inlines them,
- * so nothing is fetched at render time.
+ * Decides whether a TipTap image `src` may reach the PDF image pipeline: a
+ * data:image URI, or an http(s) URL whose host passes `isAllowedHostname`.
  *
- * This is a hostname/IP check on a single URL, not a complete defence by itself:
- * a host that passes here can still resolve to a blocked address by the time the
- * real fetch happens (DNS-rebinding TOCTOU — the name is looked up once here, and
- * again, independently, whenever the URL is actually fetched). `fetchImageSrcSafely`
- * below re-runs this same check on every redirect hop, which closes the far more
- * easily exploited gap — a plain 3xx response pointed at an internal address — but
- * does not re-resolve DNS between validating and fetching the final, non-redirect
- * response, so the rebinding window still exists on that last hop.
+ * This checks the URL only. Fetch through `fetchImageSrcSafely`, which applies it to
+ * every redirect hop and checks the resolved addresses before connecting.
  */
 export const isSafeImageSrc = (src: string): boolean => {
   if (!src) return false;
@@ -192,8 +177,7 @@ export const isSafeImageSrc = (src: string): boolean => {
   const trimmed = src.trim();
   if (!trimmed) return false;
 
-  // Reject control characters and whitespace, which URL parsers strip and
-  // which have historically been used to smuggle a scheme past naive checks.
+  // Reject control characters and whitespace, which URL parsers would strip.
   // oxlint-disable-next-line no-control-regex -- intentional: these are exactly what we reject
   if (/[\u0000-\u0020\u007F]/.test(trimmed)) return false;
 
@@ -201,8 +185,7 @@ export const isSafeImageSrc = (src: string): boolean => {
   try {
     parsed = new URL(trimmed);
   } catch {
-    // Relative paths and bare filesystem paths land here. `@react-pdf/image`
-    // would hand those to fs.readFile(), so they are refused.
+    // Relative and filesystem paths are not URLs and are refused.
     return false;
   }
 
@@ -211,7 +194,7 @@ export const isSafeImageSrc = (src: string): boolean => {
   // data: carries its payload inline; there is no host to judge.
   if (parsed.protocol === "data:") return trimmed.toLowerCase().startsWith("data:image/");
 
-  // Credentials in an image URL are never legitimate and can confuse host parsing.
+  // Image URLs must not carry credentials.
   if (parsed.username || parsed.password) return false;
 
   return isAllowedHostname(parsed.hostname);
@@ -220,69 +203,84 @@ export const isSafeImageSrc = (src: string): boolean => {
 /** Redirect hops `fetchImageSrcSafely` will follow before giving up on a source. */
 const MAX_IMAGE_FETCH_REDIRECTS = 5;
 
+/** Socket idle timeout for a single image request. */
+const IMAGE_FETCH_TIMEOUT_MS = 15_000;
+
 /**
- * Fetches an http(s) image URL the way `isSafeImageSrc` alone cannot guard: real
- * fetch libraries (`@react-pdf/image`'s `fetchRemoteFile`, plain `fetch()`) follow
- * redirects by default and never re-consult a src validator on the redirect target.
- * That means a URL on an ordinary public host can 302 to an internal address —
- * cloud metadata, a Docker service name, loopback — and sail straight through a
- * check that only ever looked at the URL it was first handed.
- *
- * This fetches with `redirect: "manual"`, and on every 3xx response resolves the
- * `Location` header against the current URL and re-validates it with
- * `isSafeImageSrc` before following it, capped at `MAX_IMAGE_FETCH_REDIRECTS` hops.
- * Any failure — the initial URL, a redirect target, or the hop count failing
- * validation, a network error, or an unreadable body — resolves to `null`, which
- * callers treat exactly like `isSafeImageSrc` returning `false`: render a
- * placeholder, never hand the raw URL to the PDF image pipeline.
- *
- * Returns the fetched body as a `Buffer` on success, so callers can feed it through
- * the same image-processing path used for pre-fetched asset-store images.
+ * DNS lookup for image requests that fails when any resolved address is a blocked
+ * literal. The socket connects to the address returned here, so the address that was
+ * checked is the one used.
  */
-export const fetchImageSrcSafely = async (uri: string): Promise<Buffer | null> => {
+export const lookupPublicAddress: LookupFunction = (hostname, options, callback) => {
+  dns.lookup(hostname, { ...options, all: true }, (err, addresses) => {
+    if (err) return callback(err, "");
+    const first = addresses[0];
+    if (!first || addresses.some((entry) => isBlockedHostLiteral(entry.address))) {
+      return callback(Object.assign(new Error(`${hostname} resolves to a blocked address`), { code: "EBLOCKED" }), "");
+    }
+    if (options.all) return callback(null, addresses);
+    return callback(null, first.address, first.family);
+  });
+};
+
+export type ImageResponse = { status: number; location?: string; body: Buffer };
+
+/** A single GET that does not follow redirects and connects only through `lookupPublicAddress`. */
+const requestImage = (url: string): Promise<ImageResponse> =>
+  new Promise((resolve, reject) => {
+    const client = url.startsWith("https:") ? https : http;
+    const req = client.get(
+      url,
+      { agent: false, lookup: lookupPublicAddress, timeout: IMAGE_FETCH_TIMEOUT_MS },
+      (res) => {
+        const chunks: Buffer[] = [];
+        res.on("data", (chunk: Buffer) => chunks.push(chunk));
+        res.on("error", reject);
+        res.on("end", () =>
+          resolve({ status: res.statusCode ?? 0, location: res.headers.location, body: Buffer.concat(chunks) })
+        );
+      }
+    );
+    req.on("timeout", () => req.destroy(new Error("Image request timed out")));
+    req.on("error", reject);
+  });
+
+/**
+ * Fetches an http(s) image URL, following at most MAX_IMAGE_FETCH_REDIRECTS redirects.
+ * The initial URL and every redirect target must pass `isSafeImageSrc`, and each
+ * connection goes through `lookupPublicAddress`. Returns the body, or null on any
+ * failure, which callers treat like a rejected src.
+ */
+export const fetchImageSrcSafely = async (
+  uri: string,
+  request: (url: string) => Promise<ImageResponse> = requestImage
+): Promise<Buffer | null> => {
   let current = uri;
 
   for (let hop = 0; hop <= MAX_IMAGE_FETCH_REDIRECTS; hop++) {
     if (!isSafeImageSrc(current)) return null;
 
-    let response: Response;
+    let response: ImageResponse;
     try {
-      // Each hop's request target comes from the previous hop's response, so these
-      // fetches cannot be parallelized — they must run one at a time, in order.
+      // Each hop's target comes from the previous response, so the hops run in order.
       // oxlint-disable-next-line no-await-in-loop -- intentional, see above
-      response = await fetch(current, { redirect: "manual" });
+      response = await request(current);
     } catch {
       return null;
     }
 
     if (response.status >= 300 && response.status < 400) {
-      const location = response.headers.get("location");
-      if (!location) return null;
-
-      let next: URL;
+      if (!response.location) return null;
       try {
-        next = new URL(location, current);
+        current = new URL(response.location, current).toString();
       } catch {
-        // Unparseable Location header — nothing safe to follow.
         return null;
       }
-      current = next.toString();
       continue; // Re-validated by isSafeImageSrc at the top of the next iteration.
     }
 
-    if (!response.ok) return null;
-
-    try {
-      // Terminal (non-redirect) response, reached after at most MAX_IMAGE_FETCH_REDIRECTS
-      // sequential hops above — there is nothing left here to run in parallel with.
-      // oxlint-disable-next-line no-await-in-loop -- intentional, see above
-      const arrayBuffer = await response.arrayBuffer();
-      return Buffer.from(arrayBuffer);
-    } catch {
-      return null;
-    }
+    return response.status >= 200 && response.status < 300 ? response.body : null;
   }
 
-  // Exhausted MAX_IMAGE_FETCH_REDIRECTS hops without reaching a terminal response.
   return null;
 };

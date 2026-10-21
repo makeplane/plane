@@ -4,24 +4,16 @@
  * See the LICENSE file for details.
  */
 
+import dns from "node:dns";
+import http from "node:http";
+import type { AddressInfo } from "node:net";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { fetchImageSrcSafely, isBlockedHostLiteral, isSafeImageSrc } from "@/lib/url-security";
+import type { ImageResponse } from "@/lib/url-security";
+import { fetchImageSrcSafely, isBlockedHostLiteral, isSafeImageSrc, lookupPublicAddress } from "@/lib/url-security";
 
 describe("isSafeImageSrc", () => {
-  describe("internal Docker service names", () => {
-    // The escalation path that matters: every one of these starts with "http", which
-    // is why an imageComponent-style startsWith("http") guard does not close it.
-    it.each([
-      "http://api:8000/api/workspaces/",
-      "http://plane-minio:9000/uploads/",
-      "http://plane-db:5432/",
-      "http://plane-redis:6379/",
-      "http://plane-mq:5672/",
-      "http://web:3000/",
-      "http://admin:3000/",
-      "http://space:3000/",
-      "http://live:3000/",
-    ])("rejects %s", (src) => {
+  describe("single-label hosts", () => {
+    it.each(["http://api:8000/", "http://service/", "http://web:3000/a.png"])("rejects %s", (src) => {
       expect(isSafeImageSrc(src)).toBe(false);
     });
 
@@ -29,16 +21,14 @@ describe("isSafeImageSrc", () => {
       expect(isSafeImageSrc("https://api/")).toBe(false);
     });
 
-    it("rejects a trailing-dot host that would otherwise look multi-label", () => {
+    it("rejects a single-label host with a trailing dot", () => {
       expect(isSafeImageSrc("http://api./")).toBe(false);
     });
   });
 
-  describe("cloud metadata and loopback", () => {
+  describe("loopback and link-local", () => {
     it.each([
-      "http://169.254.169.254/latest/meta-data/",
-      "http://metadata.google.internal/computeMetadata/v1/",
-      "http://metadata/computeMetadata/v1/",
+      "http://169.254.0.1/",
       "http://localhost:8000/",
       "http://127.0.0.1:8000/",
       "http://127.1.2.3/",
@@ -55,7 +45,7 @@ describe("isSafeImageSrc", () => {
       "http://172.16.0.1/",
       "http://172.31.255.254/",
       "http://192.168.1.1/",
-      "http://100.64.0.1/", // CGNAT — missed by naive "private IP" lists
+      "http://100.64.0.1/", // shared address space (100.64.0.0/10)
       "http://100.127.255.255/",
       "http://0.0.0.0/",
       "http://224.0.0.1/", // multicast
@@ -65,24 +55,22 @@ describe("isSafeImageSrc", () => {
       "http://[fe80::1]/", // IPv6 link-local
       "http://[ff02::1]/", // IPv6 multicast
       "http://[fec0::1]/", // IPv6 deprecated site-local
-      "http://[2002:7f00:1::]/", // 6to4 wrapping 127.0.0.1
+      "http://[2002:7f00:1::]/", // 6to4
       "http://[2001::1]/", // Teredo
-      "http://[64:ff9b::7f00:1]/", // NAT64 wrapping 127.0.0.1
+      "http://[64:ff9b::7f00:1]/", // NAT64
       "http://[64:ff9b:1::1]/", // NAT64 local-use prefix
     ])("rejects %s", (src) => {
       expect(isSafeImageSrc(src)).toBe(false);
     });
 
     it("allows a public IP just outside a blocked range", () => {
-      // 100.63.x is public; the CGNAT block starts at 100.64.
+      // 100.63.x is public; the shared address space starts at 100.64.
       expect(isSafeImageSrc("http://100.63.0.1/")).toBe(true);
       // 172.32.x is public; the private block ends at 172.31.
       expect(isSafeImageSrc("http://172.32.0.1/")).toBe(true);
     });
 
-    // These /24s sit inside otherwise-public /16s. Blocking the whole /16 would
-    // silently stop legitimate images from rendering, so the boundaries are pinned
-    // in both directions.
+    // These /24s sit inside otherwise-public /16s, so both boundaries are pinned.
     it("blocks the reserved /24s exactly", () => {
       expect(isSafeImageSrc("http://192.0.0.1/")).toBe(false); // 192.0.0.0/24 IETF protocol assignments
       expect(isSafeImageSrc("http://192.0.2.1/")).toBe(false); // 192.0.2.0/24 TEST-NET-1
@@ -100,14 +88,8 @@ describe("isSafeImageSrc", () => {
     });
   });
 
-  describe("obfuscated address encodings", () => {
-    // Not canonical addresses, but several HTTP clients expand them to loopback.
-    it.each([
-      "http://2130706433/", // decimal 127.0.0.1
-      "http://0x7f000001/", // hex 127.0.0.1
-      "http://127.1/", // short-form 127.0.0.1
-      "http://0/", // shorthand for 0.0.0.0
-    ])("rejects %s", (src) => {
+  describe("non-canonical numeric hosts", () => {
+    it.each(["http://2130706433/", "http://0x7f000001/", "http://127.1/", "http://0/"])("rejects %s", (src) => {
       expect(isSafeImageSrc(src)).toBe(false);
     });
   });
@@ -117,57 +99,56 @@ describe("isSafeImageSrc", () => {
       "file:///etc/passwd",
       "ftp://example.com/x.png",
       "gopher://example.com/",
-      "javascript:alert(1)",
-      "vbscript:msgbox(1)",
+      "javascript:void(0)",
+      "vbscript:void",
       "blob:https://example.com/abc",
     ])("rejects %s", (src) => {
       expect(isSafeImageSrc(src)).toBe(false);
     });
 
-    it("rejects bare filesystem paths that would reach fs.readFile", () => {
-      // Secondary local-file-read path: @react-pdf/image would fs.readFile these.
+    it("rejects relative and filesystem paths", () => {
       expect(isSafeImageSrc("/etc/passwd")).toBe(false);
       expect(isSafeImageSrc("./relative.png")).toBe(false);
       expect(isSafeImageSrc("../../etc/hosts")).toBe(false);
     });
 
-    it("allows image data URIs (the asset pipeline's own output)", () => {
+    it("allows image data URIs", () => {
       expect(isSafeImageSrc("data:image/jpeg;base64,/9j/4AAQSkZJRg==")).toBe(true);
       expect(isSafeImageSrc("data:image/png;base64,iVBORw0KGgo=")).toBe(true);
     });
 
     it("rejects non-image data URIs", () => {
-      expect(isSafeImageSrc("data:text/html,<script>alert(1)</script>")).toBe(false);
-      expect(isSafeImageSrc("data:application/javascript,alert(1)")).toBe(false);
+      expect(isSafeImageSrc("data:text/html,<p>hello</p>")).toBe(false);
+      expect(isSafeImageSrc("data:application/javascript,void(0)")).toBe(false);
     });
   });
 
-  describe("whitespace and control-character smuggling", () => {
-    // URL parsers strip these, so a check performed before stripping can be walked
-    // straight past — a well-known class of URL-validation bypass.
+  describe("whitespace and control characters", () => {
     it.each([
-      "\thttp://api:8000/",
-      "\nhttp://api:8000/",
-      "\rhttp://api:8000/",
-      " http://127.0.0.1/",
-      "http://api\t:8000/",
-      "\u0000http://api:8000/",
-      "\u00A0http://api:8000/", // non-breaking space
-      "\uFEFFhttp://api:8000/", // BOM
+      "https://images\t.example.com/a.png",
+      "https://images.example.com/a\n.png",
+      "https://images.example.com/a\r.png",
+      "https://images.example.com/a .png",
+      "\u0000https://images.example.com/a.png",
+      "https://images.example.com/a.png\u007F",
     ])("rejects %j", (src) => {
       expect(isSafeImageSrc(src)).toBe(false);
+    });
+
+    it("judges the URL after trimming surrounding whitespace", () => {
+      expect(isSafeImageSrc("\t http://127.0.0.1/\n")).toBe(false);
+      expect(isSafeImageSrc(" https://images.example.com/a.png ")).toBe(true);
     });
   });
 
   describe("embedded credentials", () => {
     it("rejects URLs carrying credentials", () => {
       expect(isSafeImageSrc("http://user:pass@images.example.com/a.png")).toBe(false);
-      // Credentials can also be used to make the real host hard to read.
       expect(isSafeImageSrc("http://images.example.com@127.0.0.1/a.png")).toBe(false);
     });
   });
 
-  describe("internal-only hostname suffixes", () => {
+  describe("local-only hostname suffixes", () => {
     it.each([
       "http://printer.local/x.png",
       "http://app.localhost/x.png",
@@ -179,7 +160,7 @@ describe("isSafeImageSrc", () => {
     });
   });
 
-  describe("legitimate images still render", () => {
+  describe("public image hosts", () => {
     it.each([
       "https://images.example.com/photo.png",
       "http://cdn.example.org/a/b/c.jpg",
@@ -212,15 +193,14 @@ describe("isBlockedHostLiteral", () => {
     expect(isBlockedHostLiteral("2606:4700:4700::1111")).toBe(false);
   });
 
-  it("blocks alternate spellings of the same IPv6 address", () => {
-    // The address is judged on its expanded form, so a non-canonical spelling
-    // cannot slip past a prefix check. Each of these is ::ffff:127.0.0.1.
+  it("judges every spelling of an IPv6 address the same way", () => {
+    // Each of these is ::ffff:127.0.0.1.
     expect(isBlockedHostLiteral("::ffff:127.0.0.1")).toBe(true);
     expect(isBlockedHostLiteral("::ffff:7f00:1")).toBe(true);
     expect(isBlockedHostLiteral("0:0::ffff:7f00:1")).toBe(true);
     expect(isBlockedHostLiteral("0:0:0:0:0:ffff:127.0.0.1")).toBe(true);
     expect(isBlockedHostLiteral("0000:0000:0000:0000:0000:ffff:7f00:0001")).toBe(true);
-    // ...and of ::1 and the cloud metadata address.
+    // ...and of ::1 and an IPv4-mapped link-local address.
     expect(isBlockedHostLiteral("0:0:0:0:0:0:0:1")).toBe(true);
     expect(isBlockedHostLiteral("0:0:0:0:0:ffff:a9fe:a9fe")).toBe(true);
     // Expanded forms of the range checks must hold too.
@@ -243,138 +223,153 @@ describe("isBlockedHostLiteral", () => {
   });
 });
 
-const redirectTo = (location?: string) =>
-  new Response(null, { status: 302, headers: location ? { Location: location } : undefined });
+const redirectTo = (location?: string): ImageResponse => ({ status: 302, location, body: Buffer.alloc(0) });
 
-const ok = (body = "image-bytes") => new Response(body, { status: 200 });
+const ok = (body = "image-bytes"): ImageResponse => ({ status: 200, body: Buffer.from(body) });
 
 describe("fetchImageSrcSafely", () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
+  it("refuses an invalid initial URL without requesting it", async () => {
+    const request = vi.fn();
+
+    expect(await fetchImageSrcSafely("http://169.254.0.1/a.png", request)).toBeNull();
+    expect(request).not.toHaveBeenCalled();
   });
 
-  it("refuses the initial URL without fetching when it fails isSafeImageSrc", async () => {
-    const fetchMock = vi.fn();
-    vi.stubGlobal("fetch", fetchMock);
+  it.each([
+    ["a link-local address", "http://169.254.0.1/a.png"],
+    ["a loopback address", "http://127.0.0.1:8000/"],
+    ["a private address", "http://10.0.0.5/a.png"],
+    ["a single-label host", "http://api:8000/"],
+  ])("refuses a redirect to %s without requesting it", async (_label, location) => {
+    const request = vi.fn().mockResolvedValueOnce(redirectTo(location));
 
-    const result = await fetchImageSrcSafely("http://169.254.169.254/latest/meta-data/");
-
-    expect(result).toBeNull();
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(await fetchImageSrcSafely("https://images.example.com/a.png", request)).toBeNull();
+    expect(request).toHaveBeenCalledTimes(1);
   });
 
-  it("refuses a safe host that redirects to a blocked address (link-local metadata)", async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(redirectTo("http://169.254.169.254/latest/meta-data/"));
-    vi.stubGlobal("fetch", fetchMock);
-
-    const result = await fetchImageSrcSafely("https://images.example.com/a.png");
-
-    expect(result).toBeNull();
-    // The redirect target fails isSafeImageSrc before it is ever fetched.
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
-
-  it("refuses a safe host that redirects to a loopback address", async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(redirectTo("http://127.0.0.1:8000/"));
-    vi.stubGlobal("fetch", fetchMock);
-
-    expect(await fetchImageSrcSafely("https://images.example.com/a.png")).toBeNull();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
-
-  it("refuses a safe host that redirects to an RFC1918 private address", async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(redirectTo("http://10.0.0.5/internal"));
-    vi.stubGlobal("fetch", fetchMock);
-
-    expect(await fetchImageSrcSafely("https://images.example.com/a.png")).toBeNull();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
-
-  it("refuses a safe host that redirects to a Docker service name", async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(redirectTo("http://api:8000/api/workspaces/"));
-    vi.stubGlobal("fetch", fetchMock);
-
-    expect(await fetchImageSrcSafely("https://images.example.com/a.png")).toBeNull();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
-
-  it("follows a redirect from one safe host to another and returns the fetched body", async () => {
-    const fetchMock = vi
+  it("follows a redirect between public hosts and returns the body", async () => {
+    const request = vi
       .fn()
       .mockResolvedValueOnce(redirectTo("https://cdn.example.org/final.png"))
       .mockResolvedValueOnce(ok("final-bytes"));
-    vi.stubGlobal("fetch", fetchMock);
 
-    const result = await fetchImageSrcSafely("https://images.example.com/a.png");
+    const result = await fetchImageSrcSafely("https://images.example.com/a.png", request);
 
-    expect(result).not.toBeNull();
     expect(result?.toString("utf-8")).toBe("final-bytes");
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(fetchMock).toHaveBeenNthCalledWith(1, "https://images.example.com/a.png", { redirect: "manual" });
-    expect(fetchMock).toHaveBeenNthCalledWith(2, "https://cdn.example.org/final.png", { redirect: "manual" });
+    expect(request).toHaveBeenCalledTimes(2);
+    expect(request).toHaveBeenNthCalledWith(1, "https://images.example.com/a.png");
+    expect(request).toHaveBeenNthCalledWith(2, "https://cdn.example.org/final.png");
   });
 
-  it("resolves a relative Location header against the current URL before re-validating it", async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(redirectTo("/final.png")).mockResolvedValueOnce(ok("final-bytes"));
-    vi.stubGlobal("fetch", fetchMock);
+  it("resolves a relative Location header against the current URL", async () => {
+    const request = vi.fn().mockResolvedValueOnce(redirectTo("/final.png")).mockResolvedValueOnce(ok("final-bytes"));
 
-    const result = await fetchImageSrcSafely("https://images.example.com/a.png");
+    const result = await fetchImageSrcSafely("https://images.example.com/a.png", request);
 
     expect(result?.toString("utf-8")).toBe("final-bytes");
-    expect(fetchMock).toHaveBeenNthCalledWith(2, "https://images.example.com/final.png", { redirect: "manual" });
+    expect(request).toHaveBeenNthCalledWith(2, "https://images.example.com/final.png");
   });
 
   it("refuses a redirect chain that exceeds the cap", async () => {
     let hop = 0;
-    const fetchMock = vi.fn().mockImplementation(() => {
+    const request = vi.fn().mockImplementation(() => {
       hop += 1;
       return Promise.resolve(redirectTo(`https://images.example.com/hop-${hop}`));
     });
-    vi.stubGlobal("fetch", fetchMock);
 
-    const result = await fetchImageSrcSafely("https://images.example.com/a.png");
-
-    expect(result).toBeNull();
-    // 1 initial request plus 5 allowed redirects = 6 requests; the 6th response is
-    // itself a redirect and is never followed.
-    expect(fetchMock).toHaveBeenCalledTimes(6);
+    expect(await fetchImageSrcSafely("https://images.example.com/a.png", request)).toBeNull();
+    // 1 initial request plus 5 allowed redirects; the 6th response is not followed.
+    expect(request).toHaveBeenCalledTimes(6);
   });
 
   it("refuses a redirect with no Location header", async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(redirectTo());
-    vi.stubGlobal("fetch", fetchMock);
+    const request = vi.fn().mockResolvedValueOnce(redirectTo());
 
-    expect(await fetchImageSrcSafely("https://images.example.com/a.png")).toBeNull();
+    expect(await fetchImageSrcSafely("https://images.example.com/a.png", request)).toBeNull();
   });
 
   it("refuses an unparseable Location header", async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(redirectTo("http://[not-a-valid-host"));
-    vi.stubGlobal("fetch", fetchMock);
+    const request = vi.fn().mockResolvedValueOnce(redirectTo("http://[not-a-valid-host"));
 
-    expect(await fetchImageSrcSafely("https://images.example.com/a.png")).toBeNull();
+    expect(await fetchImageSrcSafely("https://images.example.com/a.png", request)).toBeNull();
   });
 
-  it("refuses a non-ok, non-redirect response", async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(new Response(null, { status: 404 }));
-    vi.stubGlobal("fetch", fetchMock);
+  it("refuses a non-2xx, non-redirect response", async () => {
+    const request = vi.fn().mockResolvedValueOnce({ status: 404, body: Buffer.alloc(0) });
 
-    expect(await fetchImageSrcSafely("https://images.example.com/a.png")).toBeNull();
+    expect(await fetchImageSrcSafely("https://images.example.com/a.png", request)).toBeNull();
   });
 
-  it("refuses when the fetch itself throws", async () => {
-    const fetchMock = vi.fn().mockRejectedValueOnce(new Error("network error"));
-    vi.stubGlobal("fetch", fetchMock);
+  it("refuses when the request fails", async () => {
+    const request = vi.fn().mockRejectedValueOnce(new Error("network error"));
 
-    expect(await fetchImageSrcSafely("https://images.example.com/a.png")).toBeNull();
+    expect(await fetchImageSrcSafely("https://images.example.com/a.png", request)).toBeNull();
   });
 
-  it("returns the body untouched on a direct 200 with no redirects", async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(ok("direct-bytes"));
-    vi.stubGlobal("fetch", fetchMock);
+  it("returns the body of a direct 200", async () => {
+    const request = vi.fn().mockResolvedValueOnce(ok("direct-bytes"));
 
-    const result = await fetchImageSrcSafely("https://images.example.com/a.png");
+    const result = await fetchImageSrcSafely("https://images.example.com/a.png", request);
 
     expect(result?.toString("utf-8")).toBe("direct-bytes");
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(request).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("resolved address checks", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const resolveTo = (address: string, family = 4) =>
+    vi
+      .spyOn(dns, "lookup")
+      .mockImplementation(((_host: string, _options: unknown, callback: Function) =>
+        callback(null, [{ address, family }])) as unknown as typeof dns.lookup);
+
+  const lookup = (hostname: string, options: dns.LookupOptions = {}) =>
+    new Promise<{ err: NodeJS.ErrnoException | null; address: unknown }>((resolve) =>
+      lookupPublicAddress(hostname, options, (err, address) => resolve({ err, address }))
+    );
+
+  it.each([
+    ["127.0.0.1", 4],
+    ["10.0.0.5", 4],
+    ["169.254.0.1", 4],
+    ["::1", 6],
+    ["::ffff:127.0.0.1", 6],
+  ])("fails the lookup when the host resolves to %s", async (address, family) => {
+    resolveTo(address, family);
+
+    const { err } = await lookup("images.example.com");
+
+    expect(err?.code).toBe("EBLOCKED");
+  });
+
+  it("returns a public address in the shape the caller asked for", async () => {
+    resolveTo("93.184.216.34");
+
+    expect((await lookup("images.example.com")).address).toBe("93.184.216.34");
+    expect((await lookup("images.example.com", { all: true })).address).toEqual([
+      { address: "93.184.216.34", family: 4 },
+    ]);
+  });
+
+  it("does not connect when a valid URL's host resolves to a blocked address", async () => {
+    let requests = 0;
+    const server = http.createServer((_req, res) => {
+      requests += 1;
+      res.end("image-bytes");
+    });
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    const { port } = server.address() as AddressInfo;
+    resolveTo("127.0.0.1");
+
+    try {
+      expect(await fetchImageSrcSafely(`http://images.example.com:${port}/a.png`)).toBeNull();
+      expect(requests).toBe(0);
+    } finally {
+      await new Promise((resolve) => server.close(resolve));
+    }
   });
 });

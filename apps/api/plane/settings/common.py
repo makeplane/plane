@@ -469,6 +469,18 @@ LIVE_URL = urljoin(LIVE_BASE_URL, LIVE_BASE_PATH) if LIVE_BASE_URL else None
 # Shared secret for server-to-server calls into the Live service. Must match the
 # Live container's LIVE_SERVER_SECRET_KEY.
 LIVE_SERVER_SECRET_KEY = os.environ.get("LIVE_SERVER_SECRET_KEY")
+# Warn (without refusing to start) when the key is the template value or an older shipped default.
+_INSECURE_LIVE_SERVER_SECRET_KEYS = {
+    "change-this-key-on-deployment",
+    "htbqvBJAgpm9bzvf3r4urJer0ENReatceh",
+    "2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW",
+}
+if LIVE_SERVER_SECRET_KEY in _INSECURE_LIVE_SERVER_SECRET_KEYS:
+    _logger.critical(
+        "SECURITY: LIVE_SERVER_SECRET_KEY is set to a placeholder or default value from the env templates. "
+        "Set the same unique value for the API and Live services (the latest CLI setup.sh generates it on "
+        "install and upgrade) and restart both."
+    )
 
 # WEB URL
 WEB_URL = os.environ.get("WEB_URL")

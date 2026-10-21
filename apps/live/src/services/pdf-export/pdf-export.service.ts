@@ -85,20 +85,15 @@ export class PdfExportService extends Effect.Service<PdfExportService>()("PdfExp
     },
 
     /**
-     * Extracts external (http/https) image URLs from raw `image` nodes — arbitrary
-     * URLs pasted into page content, as opposed to Plane's own uploaded assets.
-     * These are not covered by `extractImageAssetIds`: an external URL is exactly
-     * what that function's `!src.startsWith("http")` filter excludes, since it only
-     * collects internal asset ids. Left unresolved, that URL would otherwise reach
-     * `<Image src={src}>` unfetched and be handed straight to `@react-pdf/image` at
-     * render time, which is the redirect-follow SSRF gap `processExternalImages`
-     * closes by pre-fetching these the same way `processImages` pre-fetches assets.
+     * Extracts external (http/https) image URLs from `image` and `imageComponent` nodes,
+     * the sources `extractImageAssetIds` leaves out. `processExternalImages` resolves
+     * them to data URIs, since the renderers only draw resolved data URIs.
      */
     extractExternalImageSrcs: (doc: TipTapNode): string[] => {
       const srcs: string[] = [];
 
       const traverse = (node: TipTapNode) => {
-        if (node.type === "image" && node.attrs?.src) {
+        if ((node.type === "imageComponent" || node.type === "image") && node.attrs?.src) {
           const src = node.attrs.src as string;
           if (src && (src.startsWith("http://") || src.startsWith("https://"))) {
             srcs.push(src);
@@ -294,13 +289,10 @@ export class PdfExportService extends Effect.Service<PdfExportService>()("PdfExp
       }),
 
     /**
-     * Pre-fetches raw `image`-node URLs through the redirect-safe fetch path
-     * (`fetchImageSrcSafely`) and resolves each into a data URI, exactly like
-     * `processImages` does for asset-store images. Keyed by the source URL itself,
-     * so `node-renderers.tsx` can look a src up the same way it looks up an asset id.
-     * Failures (unsafe src, unsafe redirect target, network error) resolve to
-     * nothing for that key — the renderer falls back to its placeholder, it never
-     * sees the raw URL.
+     * Fetches external image URLs with `fetchImageSrcSafely` and converts each into a
+     * data URI, as `processImages` does for asset-store images. Keyed by the source URL,
+     * so the renderers look it up like an asset id. A source that fails validation or
+     * fetching is left out, and the renderer draws its placeholder.
      */
     processExternalImages: (srcs: string[], requestId: string): Effect.Effect<Record<string, string>> =>
       Effect.gen(function* () {
@@ -328,7 +320,7 @@ export class PdfExportService extends Effect.Service<PdfExportService>()("PdfExp
             if (!buffer) {
               return yield* Effect.fail(
                 new PdfImageProcessingError({
-                  message: "External image failed SSRF validation or fetch",
+                  message: "External image failed URL validation or fetch",
                   assetId: src,
                 })
               );
@@ -460,8 +452,7 @@ export const exportToPdf = (
       metadata = { ...metadata, resolvedImageUrls: { ...metadata.resolvedImageUrls, ...resolvedImages } };
     }
 
-    // Pre-fetch raw `image`-node URLs through the redirect-safe fetch path, keyed by
-    // the URL itself, merged into the same map processImages populates above.
+    // Resolve external image URLs into the same map processImages populates above.
     if (!noAssets && externalImageSrcs.length > 0) {
       const resolvedExternalImages = yield* service.processExternalImages(externalImageSrcs, requestId);
       metadata = { ...metadata, resolvedImageUrls: { ...metadata.resolvedImageUrls, ...resolvedExternalImages } };
