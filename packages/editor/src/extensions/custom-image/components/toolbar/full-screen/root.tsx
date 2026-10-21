@@ -5,7 +5,7 @@
  */
 
 import { FullScreenOutline } from "@makeplane/propel/icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // plane imports
 import { Icon } from "@makeplane/propel/components/icon";
 import { ToolbarButton } from "@makeplane/propel/elements/toolbar";
@@ -27,6 +27,7 @@ type Props = {
 
 export function ImageFullScreenActionRoot(props: Props) {
   const { image, isTouchDevice, toggleToolbarViewStatus } = props;
+  const openerRef = useRef<HTMLButtonElement>(null);
   // states
   const [isFullScreenEnabled, setIsFullScreenEnabled] = useState(false);
   // derived values
@@ -39,6 +40,7 @@ export function ImageFullScreenActionRoot(props: Props) {
   return (
     <>
       <ImageFullScreenModal
+        openerRef={openerRef}
         aspectRatio={aspectRatio}
         downloadSrc={downloadSrc}
         isFullScreenEnabled={isFullScreenEnabled}
@@ -49,6 +51,7 @@ export function ImageFullScreenActionRoot(props: Props) {
       />
       <Tooltip label="View in full screen" disabled={isTouchDevice}>
         <ToolbarButton
+          ref={openerRef}
           type="button"
           size="sm"
           labeled={false}
