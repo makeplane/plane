@@ -104,33 +104,18 @@ class FileAsset(BaseModel):
         return None
 
     def is_project_accessible_to(self, user):
-        """Return whether ``user`` clears the project dimension of access to this asset.
+        """Return whether ``user`` is an active member of this asset's project.
 
-        This is the project-membership half of asset authorization and nothing
-        more. Callers are still responsible for establishing that ``user`` may
-        act in this asset's workspace at all -- typically the endpoint's
-        permission class or ``allow_permission(..., level="WORKSPACE")``.
+        Covers the project dimension only; callers still check workspace access
+        (the endpoint's permission class or ``allow_permission(..., level="WORKSPACE")``).
+        Lives on the model so the app and external-API asset views share one rule.
 
-        It exists as a model method rather than a view helper because the
-        workspace-level asset routes are spread across several unrelated
-        ``BaseAPIView`` subclasses in both the app and the external API, and a
-        helper bound to one of those classes is unreachable from the others.
-        That is precisely how the earlier project-scoping fix came to cover
-        three handlers and miss the rest: a route added later has no way to
-        inherit the rule. Keeping it on the model means every surface that can
-        load a ``FileAsset`` can also ask the question.
-
-        Assets with no project (workspace logos, user avatars and covers) carry
-        ``project_id=None`` and are workspace-level by definition, so they clear
-        this check; workspace authorization is the only gate that applies.
+        Assets with no project (workspace logos, user avatars and covers) are
+        workspace-level, so this returns True for them.
         """
         if self.project_id is None:
             return True
-        # Scope the membership lookup to this asset's workspace as well as its
-        # project. A project id alone would let a member of a same-id project in
-        # a different workspace pass, should a row ever be inconsistent
-        # (workspace_id != project.workspace_id) -- a state the external API's
-        # create path could previously produce.
+        # Scope the membership to the asset's workspace as well as its project.
         return ProjectMember.objects.filter(
             member=user,
             workspace_id=self.workspace_id,

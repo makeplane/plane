@@ -437,10 +437,7 @@ class GenericAssetEndpoint(BaseAPIView):
             # Get the asset
             asset = FileAsset.objects.get(id=asset_id, workspace_id=workspace.id, is_deleted=False)
 
-            # WorkspaceUserPermission admits any active member of the workspace,
-            # including a GUEST who belongs to no project. The asset lookup binds
-            # the workspace and nothing else, so the project dimension has to be
-            # enforced here -- as the app surface already does for the same model.
+            # A project-bound asset requires active membership of its project.
             if not asset.is_project_accessible_to(request.user):
                 return Response(
                     {"error": "You don't have access to this asset."},
@@ -547,63 +544,44 @@ class GenericAssetEndpoint(BaseAPIView):
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
 
-        # project_id arrives in the request body and was stored unvalidated, so a
-        # member of one workspace could mint an asset row pointing at a project in
-        # another. Bind it to the URL workspace and to the caller's membership;
-        # rows where workspace_id != project.workspace_id are the inconsistency
-        # is_project_accessible_to has to defend against downstream.
-        if project_id:
-            if not Project.objects.filter(id=project_id, workspace_id=workspace.id).exists():
-                return Response(
-                    {"error": "Project not found.", "status": False},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-            if not ProjectMember.objects.filter(
-                member=request.user,
-                workspace_id=workspace.id,
-                project_id=project_id,
-                is_active=True,
-            ).exists():
-                return Response(
-                    {"error": "You don't have access to this project.", "status": False},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
+        # The asset is an issue attachment: it needs a project in this workspace that the
+        # caller is an active member of. Validated before the dedup lookup, which is scoped
+        # to that project.
+        if not project_id:
+            return Response(
+                {"error": "Project id is required.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not Project.objects.filter(id=project_id, workspace_id=workspace.id).exists():
+            return Response(
+                {"error": "Project not found.", "status": False},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        if not ProjectMember.objects.filter(
+            member=request.user,
+            workspace_id=workspace.id,
+            project_id=project_id,
+            is_active=True,
+        ).exists():
+            return Response(
+                {"error": "You don't have access to this project.", "status": False},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # asset key
         asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
 
-        # Check for existing asset with same external details if provided
+        # Check for existing asset with same external details in this project
         if external_id and external_source:
             existing_asset = FileAsset.objects.filter(
-                workspace__slug=slug,
+                workspace_id=workspace.id,
+                project_id=project_id,
                 external_source=external_source,
                 external_id=external_id,
                 is_deleted=False,
             ).first()
 
             if existing_asset:
-                # The dedup lookup is scoped to the workspace only -- and when the
-                # body omits project_id the validation above is skipped entirely --
-                # so the match may belong to a project the caller cannot see.
-                # Echoing it would hand over that asset's id, and asset_url
-                # additionally embeds the owning project and issue ids. Knowing the
-                # asset UUID is the precondition for every asset-scoped attack on
-                # this surface, so this branch must not supply it.
-                #
-                # 404 rather than 403 on purpose: a 403 would still confirm that
-                # some asset carries this external id pair in this workspace, which
-                # turns the pair into an existence oracle. The elsewhere-consistent
-                # 403 is fine on routes where the caller already named the asset id;
-                # here they named only an external id, so a match is new
-                # information. The cost is that a caller who guesses a pair held by
-                # a project they cannot see cannot create their own asset under it,
-                # which is the right trade -- real integrations mint ids per source
-                # and run as a member of the target project.
-                if not existing_asset.is_project_accessible_to(request.user):
-                    return Response(
-                        {"error": "Asset not found.", "status": False},
-                        status=status.HTTP_404_NOT_FOUND,
-                    )
                 return Response(
                     {
                         "message": "Asset with same external id and source already exists",
@@ -612,19 +590,6 @@ class GenericAssetEndpoint(BaseAPIView):
                     },
                     status=status.HTTP_409_CONFLICT,
                 )
-
-        # This endpoint always creates an ISSUE_ATTACHMENT (below), a
-        # project-scoped entity type. The block above only validates project_id
-        # when one is supplied, so a caller who omits it entirely reaches this
-        # point unchecked -- creating the row here would leave project_id=None,
-        # and is_project_accessible_to() treats project_id=None as
-        # workspace-accessible-by-default, silently bypassing the membership
-        # check above for every caller who just leaves the field out.
-        if not project_id:
-            return Response(
-                {"error": "Project id is required.", "status": False},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         # Create a File Asset
         asset = FileAsset.objects.create(
@@ -682,9 +647,7 @@ class GenericAssetEndpoint(BaseAPIView):
         try:
             asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug, is_deleted=False)
 
-            # is_uploaded gates every download path, so an unscoped write here
-            # lets any workspace member make another project's attachment vanish
-            # for its own members, or mark a never-uploaded asset complete.
+            # A project-bound asset requires active membership of its project.
             if not asset.is_project_accessible_to(request.user):
                 return Response(
                     {"error": "You don't have access to this asset."},

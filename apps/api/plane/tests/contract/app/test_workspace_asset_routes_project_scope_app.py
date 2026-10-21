@@ -4,24 +4,17 @@
 
 """Contract tests for project scoping on the workspace-level asset routes (INFRA-501).
 
-``WorkspaceFileAssetEndpoint`` already required an active ``ProjectMember`` of a
-project-bound asset's project on get/patch/delete. Four sibling routes over the
-same ``FileAsset`` model, behind the same ``level="WORKSPACE"`` authorization,
-never received that check:
+These routes authorize at the workspace level. A project-bound asset also
+requires active membership of its project (``FileAsset.is_project_accessible_to``):
 
-* ``WorkspaceAssetDownloadEndpoint.get``  -- issues a presigned URL, i.e. the file
-* ``DuplicateAssetEndpoint.post``         -- copies the asset into a caller-named project
-* ``AssetRestoreEndpoint.post``           -- reverses a deletion the owner performed
-* ``AssetCheckEndpoint.get``              -- existence oracle
-
-So a workspace member or GUEST who belonged to none of the asset's projects could
-read, copy, undelete and probe another project's uploads. The rule now lives on
-the model as ``FileAsset.is_project_accessible_to`` so a route added later cannot
-silently omit it, which is how this gap arose in the first place.
+* ``WorkspaceAssetDownloadEndpoint.get``
+* ``DuplicateAssetEndpoint.post`` (source asset and destination project)
+* ``AssetRestoreEndpoint.post``
+* ``AssetCheckEndpoint.get`` (reports ``exists: false`` otherwise)
+* ``FileAssetEndpoint.get`` (legacy lookup by asset key)
 
 Workspace-level assets (workspace logo, user avatar/cover) carry
-``project_id=None``, are workspace-scoped by definition, and must stay reachable
-by any workspace member -- covered below so the fix cannot over-reach.
+``project_id=None`` and stay reachable by any workspace member.
 """
 
 from unittest import mock
@@ -72,9 +65,7 @@ def project(db, workspace, create_user):
     project = Project.objects.create(
         name="Owner Project", identifier="OWN", workspace=workspace, created_by=create_user
     )
-    ProjectMember.objects.create(
-        project=project, member=create_user, workspace=workspace, role=20, is_active=True
-    )
+    ProjectMember.objects.create(project=project, member=create_user, workspace=workspace, role=20, is_active=True)
     return project
 
 
@@ -86,9 +77,7 @@ def outsider_user(db):
 @pytest.fixture
 def outsider_client(db, workspace, outsider_user):
     """A workspace GUEST who is a member of no project in the workspace."""
-    WorkspaceMember.objects.create(
-        workspace=workspace, member=outsider_user, role=5, is_active=True
-    )
+    WorkspaceMember.objects.create(workspace=workspace, member=outsider_user, role=5, is_active=True)
     client = APIClient()
     client.force_authenticate(user=outsider_user)
     return client
@@ -96,13 +85,11 @@ def outsider_client(db, workspace, outsider_user):
 
 @pytest.fixture
 def outsider_project(db, workspace, outsider_user):
-    """A project the outsider *does* control -- a duplicate destination."""
+    """A project the outsider is an admin of."""
     project = Project.objects.create(
         name="Outsider Project", identifier="OUT", workspace=workspace, created_by=outsider_user
     )
-    ProjectMember.objects.create(
-        project=project, member=outsider_user, workspace=workspace, role=20, is_active=True
-    )
+    ProjectMember.objects.create(project=project, member=outsider_user, workspace=workspace, role=20, is_active=True)
     return project
 
 
@@ -110,8 +97,8 @@ def outsider_project(db, workspace, outsider_user):
 def project_asset(db, workspace, project, create_user):
     """An uploaded issue attachment belonging to ``project``."""
     return FileAsset.objects.create(
-        attributes={"name": "secret.pdf", "type": "application/pdf", "size": 1024},
-        asset=f"{workspace.id}/secret.pdf",
+        attributes={"name": "report.pdf", "type": "application/pdf", "size": 1024},
+        asset=f"{workspace.id}/report.pdf",
         size=1024,
         workspace=workspace,
         project=project,
@@ -150,10 +137,8 @@ def workspace_logo_asset(db, workspace, create_user):
 class TestWorkspaceAssetDownloadProjectScope:
     @pytest.mark.django_db
     def test_download_denied_for_non_project_member(self, outsider_client, workspace, project_asset):
-        """A non-member must not be handed a presigned URL for the file."""
         with mock.patch(S3_STORAGE_PATH) as mock_storage:
-            # An explicit string, so a regression here fails the assertion rather
-            # than feeding a MagicMock into response rendering.
+            # A real string keeps the response serializable if the check fails.
             mock_storage.return_value.generate_presigned_url.return_value = "https://example.com/s"
             response = outsider_client.get(download_url(workspace.slug, project_asset.id))
 
@@ -173,9 +158,7 @@ class TestWorkspaceAssetDownloadProjectScope:
         )
 
     @pytest.mark.django_db
-    def test_download_workspace_level_asset_still_allowed(
-        self, outsider_client, workspace, workspace_logo_asset
-    ):
+    def test_download_workspace_level_asset_still_allowed(self, outsider_client, workspace, workspace_logo_asset):
         """project_id is NULL, so workspace membership alone must remain sufficient."""
         with mock.patch(S3_STORAGE_PATH) as mock_storage:
             mock_storage.return_value.generate_presigned_url.return_value = "https://example.com/s"
@@ -189,16 +172,11 @@ class TestWorkspaceAssetDownloadProjectScope:
 @pytest.mark.contract
 class TestAssetCheckProjectScope:
     @pytest.mark.django_db
-    def test_check_does_not_disclose_existence_to_non_project_member(
-        self, outsider_client, workspace, project_asset
-    ):
-        """The oracle must answer False rather than confirming a foreign asset."""
+    def test_check_reports_false_for_non_project_member(self, outsider_client, workspace, project_asset):
         response = outsider_client.get(check_url(workspace.slug, project_asset.id))
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.data["exists"] is False, (
-            "existence of another project's asset was disclosed to a non-member"
-        )
+        assert response.data["exists"] is False
 
     @pytest.mark.django_db
     def test_check_reports_existence_to_project_member(self, session_client, workspace, project_asset):
@@ -211,10 +189,7 @@ class TestAssetCheckProjectScope:
 @pytest.mark.contract
 class TestAssetRestoreProjectScope:
     @pytest.mark.django_db
-    def test_restore_denied_for_non_project_member(
-        self, outsider_client, workspace, deleted_project_asset
-    ):
-        """A non-member must not be able to reverse the owner's deletion."""
+    def test_restore_denied_for_non_project_member(self, outsider_client, workspace, deleted_project_asset):
         response = outsider_client.post(restore_url(workspace.slug, deleted_project_asset.id))
 
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
@@ -225,9 +200,7 @@ class TestAssetRestoreProjectScope:
         assert deleted_project_asset.deleted_at is not None
 
     @pytest.mark.django_db
-    def test_restore_allowed_for_project_member(
-        self, session_client, workspace, deleted_project_asset
-    ):
+    def test_restore_allowed_for_project_member(self, session_client, workspace, deleted_project_asset):
         response = session_client.post(restore_url(workspace.slug, deleted_project_asset.id))
 
         assert response.status_code == status.HTTP_204_NO_CONTENT, (
@@ -243,7 +216,6 @@ class TestDuplicateAssetProjectScope:
     def test_duplicate_denied_when_source_not_accessible(
         self, outsider_client, workspace, project_asset, outsider_project
     ):
-        """The worst of the four: a permanent copy into a project the caller owns."""
         before = FileAsset.objects.count()
         with mock.patch(S3_STORAGE_PATH) as mock_storage:
             response = outsider_client.post(
@@ -259,13 +231,13 @@ class TestDuplicateAssetProjectScope:
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         mock_storage.return_value.copy_object.assert_not_called()
-        assert FileAsset.objects.count() == before, "a copy of a foreign asset was created"
+        assert FileAsset.objects.count() == before
 
     @pytest.mark.django_db
     def test_duplicate_denied_when_destination_project_not_joined(
         self, session_client, workspace, project_asset, outsider_project
     ):
-        """Source is reachable, destination is not: the body project_id needs its own check."""
+        """The destination project_id requires membership too."""
         before = FileAsset.objects.count()
         with mock.patch(S3_STORAGE_PATH) as mock_storage:
             response = session_client.post(
@@ -305,13 +277,7 @@ class TestDuplicateAssetProjectScope:
     def test_duplicate_omitted_project_id_inherits_source_project(
         self, session_client, workspace, project, project_asset
     ):
-        """Omitting project_id must not strip the copy's project scoping.
-
-        The caller's access to ``project_asset`` is only established through
-        ``project`` membership; defaulting the copy to project_id=None would
-        make is_project_accessible_to() treat it as workspace-accessible by
-        default, exposing it to every workspace member regardless of role.
-        """
+        """Without project_id the copy stays in the source asset's project."""
         before = FileAsset.objects.count()
         with mock.patch(S3_STORAGE_PATH):
             response = session_client.post(
@@ -325,18 +291,13 @@ class TestDuplicateAssetProjectScope:
         )
         assert FileAsset.objects.count() == before + 1
         duplicated_asset = FileAsset.objects.get(id=response.data["asset_id"])
-        assert duplicated_asset.project_id == project.id, (
-            "the duplicate did not inherit the source asset's project and was "
-            f"created with project_id={duplicated_asset.project_id!r} instead"
-        )
+        assert duplicated_asset.project_id == project.id
 
     @pytest.mark.django_db
     def test_duplicate_null_project_id_still_inherits_source_project(
         self, session_client, workspace, project, project_asset
     ):
-        """An explicit ``project_id: null`` must not override inheritance either --
-        the field isn't meant to be client-settable to "no project" at all when
-        the source asset has one."""
+        """An explicit ``project_id: null`` also keeps the source asset's project."""
         before = FileAsset.objects.count()
         with mock.patch(S3_STORAGE_PATH):
             response = session_client.post(
@@ -356,17 +317,10 @@ class TestDuplicateAssetProjectScope:
         assert duplicated_asset.project_id == project.id
 
     @pytest.mark.django_db
-    def test_duplicate_project_cover_denied_when_entity_id_is_foreign_project(
+    def test_duplicate_project_cover_denied_for_entity_id_project_not_joined(
         self, session_client, workspace, project, project_asset, outsider_project
     ):
-        """PROJECT_COVER's entity_id -- not project_id -- is the real destination.
-
-        get_entity_id_field() turns entity_id into the project_id that actually
-        gets persisted, overriding whatever project_id was supplied. A caller who
-        puts a project they belong to in project_id (clearing the membership
-        check) but a foreign project in entity_id must still be rejected, or the
-        duplicate lands in a project they were never checked against.
-        """
+        """A PROJECT_COVER copy's destination is entity_id, which requires membership."""
         before = FileAsset.objects.count()
         with mock.patch(S3_STORAGE_PATH) as mock_storage:
             response = session_client.post(
@@ -383,17 +337,13 @@ class TestDuplicateAssetProjectScope:
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         mock_storage.return_value.copy_object.assert_not_called()
-        assert FileAsset.objects.count() == before, (
-            "a PROJECT_COVER duplicate was persisted into a project only named "
-            "via entity_id, which was never validated"
-        )
+        assert FileAsset.objects.count() == before
 
     @pytest.mark.django_db
     def test_duplicate_project_cover_allowed_for_own_project_entity_id(
         self, session_client, workspace, project, project_asset
     ):
-        """Sanity check: a legitimate PROJECT_COVER duplicate still works, and the
-        persisted project_id follows entity_id as intended."""
+        """A PROJECT_COVER copy into the caller's own project is stored on entity_id."""
         before = FileAsset.objects.count()
         with mock.patch(S3_STORAGE_PATH):
             response = session_client.post(
@@ -412,3 +362,31 @@ class TestDuplicateAssetProjectScope:
         assert FileAsset.objects.count() == before + 1
         duplicated_asset = FileAsset.objects.get(id=response.data["asset_id"])
         assert duplicated_asset.project_id == project.id
+
+
+def legacy_url(workspace, asset):
+    return f"/api/workspaces/file-assets/{workspace.id}/{asset.asset.name.split('/', 1)[1]}/"
+
+
+@pytest.mark.contract
+class TestLegacyAssetGetProjectScope:
+    @pytest.mark.django_db
+    def test_get_by_key_hidden_from_non_project_member(self, outsider_client, workspace, project_asset):
+        response = outsider_client.get(legacy_url(workspace, project_asset))
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data == {"error": "Asset key does not exist", "status": False}
+
+    @pytest.mark.django_db
+    def test_get_by_key_allowed_for_project_member(self, session_client, workspace, project_asset):
+        response = session_client.get(legacy_url(workspace, project_asset))
+
+        assert response.status_code == status.HTTP_200_OK
+        assert [str(item["id"]) for item in response.data["data"]] == [str(project_asset.id)]
+
+    @pytest.mark.django_db
+    def test_get_by_key_workspace_level_asset_still_allowed(self, outsider_client, workspace, workspace_logo_asset):
+        response = outsider_client.get(legacy_url(workspace, workspace_logo_asset))
+
+        assert response.status_code == status.HTTP_200_OK
+        assert [str(item["id"]) for item in response.data["data"]] == [str(workspace_logo_asset.id)]

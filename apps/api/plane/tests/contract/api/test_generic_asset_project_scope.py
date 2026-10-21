@@ -4,30 +4,17 @@
 
 """Contract tests for project scoping on the external-API ``GenericAssetEndpoint`` (INFRA-501).
 
-The endpoint authorizes with ``WorkspaceUserPermission`` -- any active member of
-the URL workspace, any role, including a GUEST who belongs to no project -- and
-then resolves the asset on the workspace alone. The app surface enforces an
-active ``ProjectMember`` of the asset's project for the same model; this surface
-never did, so:
+``WorkspaceUserPermission`` covers workspace access. On top of that, a
+project-bound asset requires active membership of its project for ``get`` and
+``patch`` (``FileAsset.is_project_accessible_to``), and ``post`` requires a
+``project_id`` in the URL workspace that the caller is an active member of.
+The external-id dedup lookup is scoped to that project.
 
-* ``get``   discloses a project-bound asset's existence and upload state, and
-            (once the presigned stage is reachable) its contents
-* ``patch`` flips ``is_uploaded``, which gates every download path, so an
-            attachment can be made to vanish for the project that owns it
-* ``post``  stored a body-supplied ``project_id`` unvalidated, so a row could be
-            created in one workspace pointing at a project in another
+Workspace-level assets (``project_id=None``) stay readable by any workspace
+member, and a member of the asset's project keeps full access.
 
-Both surfaces now share one rule, ``FileAsset.is_project_accessible_to``.
-
-Workspace-level assets (``project_id=None``) must stay reachable by any
-workspace member, and a member of the asset's project must keep full access --
-both covered here so the fix cannot over-reach.
-
-The ``get``/``post`` positive paths patch ``S3Storage`` with ``autospec=True``
-deliberately: these call sites passed a keyword the constructor does not accept,
-which raised ``TypeError`` and turned the routes into an unconditional 500 for
-every caller. An autospec'd mock validates the call signature, so it fails if
-that regresses; a plain mock would swallow it.
+The positive paths patch ``S3Storage`` with ``autospec=True`` so the
+constructor call is checked against its real signature.
 """
 
 from unittest import mock
@@ -76,21 +63,16 @@ def project_owner(db):
 
 @pytest.fixture
 def foreign_project(db, workspace, project_owner):
-    """A project in the caller's workspace that the caller is NOT a member of.
+    """A project in the caller's workspace that the caller is not a member of.
 
-    ``create_user`` (who holds the API token) is a workspace ADMIN here, which is
-    the point: workspace role does not substitute for project membership, exactly
-    as the app surface already behaves.
+    ``create_user`` (who holds the API token) is a workspace ADMIN; workspace role
+    does not substitute for project membership.
     """
-    WorkspaceMember.objects.create(
-        workspace=workspace, member=project_owner, role=20, is_active=True
-    )
+    WorkspaceMember.objects.create(workspace=workspace, member=project_owner, role=20, is_active=True)
     project = Project.objects.create(
         name="Foreign Project", identifier="FGN", workspace=workspace, created_by=project_owner
     )
-    ProjectMember.objects.create(
-        project=project, member=project_owner, workspace=workspace, role=20, is_active=True
-    )
+    ProjectMember.objects.create(project=project, member=project_owner, workspace=workspace, role=20, is_active=True)
     return project
 
 
@@ -100,9 +82,7 @@ def joined_project(db, workspace, create_user):
     project = Project.objects.create(
         name="Joined Project", identifier="JND", workspace=workspace, created_by=create_user
     )
-    ProjectMember.objects.create(
-        project=project, member=create_user, workspace=workspace, role=20, is_active=True
-    )
+    ProjectMember.objects.create(project=project, member=create_user, workspace=workspace, role=20, is_active=True)
     return project
 
 
@@ -141,18 +121,12 @@ def workspace_level_asset(db, workspace, create_user):
 
 @pytest.fixture
 def other_workspace_project(db):
-    """A project in an unrelated workspace, for the cross-tenant create case."""
+    """A project in another workspace."""
     owner = _user("tenant")
-    other = Workspace.objects.create(
-        name="Other Workspace", owner=owner, slug=f"other-{uuid4().hex[:8]}"
-    )
+    other = Workspace.objects.create(name="Other Workspace", owner=owner, slug=f"other-{uuid4().hex[:8]}")
     WorkspaceMember.objects.create(workspace=other, member=owner, role=20, is_active=True)
-    project = Project.objects.create(
-        name="Other Project", identifier="OTH", workspace=other, created_by=owner
-    )
-    ProjectMember.objects.create(
-        project=project, member=owner, workspace=other, role=20, is_active=True
-    )
+    project = Project.objects.create(name="Other Project", identifier="OTH", workspace=other, created_by=owner)
+    ProjectMember.objects.create(project=project, member=owner, workspace=other, role=20, is_active=True)
     return project
 
 
@@ -161,10 +135,7 @@ class TestGenericAssetGetProjectScope:
     @pytest.mark.django_db
     def test_get_denied_for_non_project_member(self, api_key_client, workspace, foreign_asset):
         with mock.patch(S3_STORAGE_PATH) as mock_storage:
-            # Return a real string, not the default MagicMock: if this guard ever
-            # regresses, the handler puts this value into a DRF Response, and JSON
-            # -encoding a MagicMock recurses until the process is OOM-killed. A
-            # regression must fail this assertion, not take the test runner down.
+            # A real string keeps the response serializable if the check fails.
             mock_storage.return_value.generate_presigned_url.return_value = "https://example.com/s"
             response = api_key_client.get(asset_detail_url(workspace.slug, foreign_asset.id))
 
@@ -174,10 +145,8 @@ class TestGenericAssetGetProjectScope:
         mock_storage.return_value.generate_presigned_url.assert_not_called()
 
     @pytest.mark.django_db
-    def test_get_does_not_leak_upload_state_of_foreign_asset(
-        self, api_key_client, workspace, foreign_asset
-    ):
-        """A not-yet-uploaded foreign asset must 403, not answer 400 'not uploaded'."""
+    def test_get_checks_access_before_upload_state(self, api_key_client, workspace, foreign_asset):
+        """The project check runs before the upload-state check."""
         foreign_asset.is_uploaded = False
         foreign_asset.save(update_fields=["is_uploaded"])
 
@@ -199,9 +168,7 @@ class TestGenericAssetGetProjectScope:
         assert response.data["asset_url"] == "https://example.com/s"
 
     @pytest.mark.django_db
-    def test_get_allowed_for_workspace_level_asset(
-        self, api_key_client, workspace, workspace_level_asset
-    ):
+    def test_get_allowed_for_workspace_level_asset(self, api_key_client, workspace, workspace_level_asset):
         with mock.patch(S3_STORAGE_PATH, autospec=True) as mock_storage:
             mock_storage.return_value.generate_presigned_url.return_value = "https://example.com/s"
             response = api_key_client.get(asset_detail_url(workspace.slug, workspace_level_asset.id))
@@ -215,7 +182,6 @@ class TestGenericAssetGetProjectScope:
 class TestGenericAssetPatchProjectScope:
     @pytest.mark.django_db
     def test_patch_denied_for_non_project_member(self, api_key_client, workspace, foreign_asset):
-        """is_uploaded gates every download path, so this is a takedown primitive."""
         response = api_key_client.patch(
             asset_detail_url(workspace.slug, foreign_asset.id),
             {"is_uploaded": False},
@@ -226,7 +192,7 @@ class TestGenericAssetPatchProjectScope:
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         foreign_asset.refresh_from_db()
-        assert foreign_asset.is_uploaded is True, "a foreign project's attachment was taken down"
+        assert foreign_asset.is_uploaded is True
 
     @pytest.mark.django_db
     def test_patch_allowed_for_project_member(self, api_key_client, workspace, joined_asset):
@@ -247,17 +213,14 @@ class TestGenericAssetPatchProjectScope:
 class TestGenericAssetPostProjectScope:
     def _payload(self, project_id):
         return {
-            "name": "planted.png",
+            "name": "upload.png",
             "type": "image/png",
             "size": 16,
             "project_id": str(project_id),
         }
 
     @pytest.mark.django_db
-    def test_post_denied_for_project_in_another_workspace(
-        self, api_key_client, workspace, other_workspace_project
-    ):
-        """The cross-tenant case: a row in workspace A pointing at a project of B."""
+    def test_post_denied_for_project_in_another_workspace(self, api_key_client, workspace, other_workspace_project):
         before = FileAsset.objects.count()
         response = api_key_client.post(
             asset_list_url(workspace.slug),
@@ -268,14 +231,12 @@ class TestGenericAssetPostProjectScope:
         assert response.status_code == status.HTTP_404_NOT_FOUND, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
-        assert FileAsset.objects.count() == before, "a cross-workspace asset row was created"
+        assert FileAsset.objects.count() == before
 
     @pytest.mark.django_db
     def test_post_denied_for_project_not_joined(self, api_key_client, workspace, foreign_project):
         before = FileAsset.objects.count()
-        response = api_key_client.post(
-            asset_list_url(workspace.slug), self._payload(foreign_project.id), format="json"
-        )
+        response = api_key_client.post(asset_list_url(workspace.slug), self._payload(foreign_project.id), format="json")
 
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
@@ -298,125 +259,62 @@ class TestGenericAssetPostProjectScope:
 
     @pytest.mark.django_db
     def test_post_denied_when_project_id_omitted(self, api_key_client, workspace):
-        """The endpoint only ever creates ISSUE_ATTACHMENT rows, a project-scoped
-        entity type. Omitting project_id must not create a project_id=None row --
-        is_project_accessible_to() treats that as workspace-accessible-by-default,
-        which would hand every workspace member access regardless of role.
-        """
+        """The endpoint creates ISSUE_ATTACHMENT rows, which need a project."""
         before = FileAsset.objects.count()
-        payload = {"name": "planted.png", "type": "image/png", "size": 16}
+        payload = {"name": "upload.png", "type": "image/png", "size": 16}
         response = api_key_client.post(asset_list_url(workspace.slug), payload, format="json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
-        assert FileAsset.objects.count() == before, (
-            "an asset row was created with project_id=None despite the omitted field"
-        )
+        assert FileAsset.objects.count() == before
 
 
 @pytest.mark.contract
-class TestGenericAssetExternalIdDedupDisclosure:
-    """The 409 dedup echo must not hand out a foreign project's asset identifiers.
-
-    The dedup lookup matches on workspace + external_source + external_id, with no
-    project scoping, and the 409 body carries ``asset_id`` and ``asset_url``. That
-    url embeds the owning project and issue ids for an attachment. Since knowing
-    the asset UUID is the precondition for every asset-scoped attack on this
-    surface, echoing a match the caller cannot access supplies exactly what the
-    other guards in this module exist to make useless.
-    """
+class TestGenericAssetExternalIdDedup:
+    """The external-id dedup lookup runs after project_id validation and is scoped to that project."""
 
     EXTERNAL = {"external_id": "EXT-1", "external_source": "jira"}
 
-    def _payload(self, project_id=None):
+    def _tag(self, asset):
+        asset.external_id = self.EXTERNAL["external_id"]
+        asset.external_source = self.EXTERNAL["external_source"]
+        asset.save(update_fields=["external_id", "external_source"])
+
+    def _post(self, client, workspace, project_id=None):
         payload = {"name": "dedup.png", "type": "image/png", "size": 16, **self.EXTERNAL}
         if project_id is not None:
             payload["project_id"] = str(project_id)
-        return payload
-
-    @staticmethod
-    def _assert_discloses_nothing(response, foreign_asset):
-        """The denied response must carry no identifier for the matched asset.
-
-        Asserting the keys are absent as well as the UUIDs: ``asset_url`` is
-        derived from ``entity_type``, and its workspace-level form
-        (``/api/assets/v2/static/<id>/``) carries no project id at all, so a
-        substring check on the project UUID alone would not catch every leak.
-        Absence of the field is the invariant worth pinning.
-        """
-        data = getattr(response, "data", {}) or {}
-        assert "asset_url" not in data, "the foreign asset URL was disclosed"
-        assert "asset_id" not in data, "the foreign asset id was disclosed"
-
-        body = str(data)
-        assert str(foreign_asset.id) not in body, "the foreign asset id leaked into the body"
-        assert str(foreign_asset.project_id) not in body, "the foreign project id leaked into the body"
+        with mock.patch(S3_STORAGE_PATH, autospec=True) as mock_storage:
+            mock_storage.return_value.generate_presigned_post.return_value = {"url": "https://x"}
+            return client.post(asset_list_url(workspace.slug), payload, format="json")
 
     @pytest.mark.django_db
-    def test_dedup_does_not_disclose_foreign_asset_identifiers(
-        self, api_key_client, workspace, foreign_asset, joined_project
-    ):
-        """404, not 403: a 403 would still confirm the external id pair is taken."""
-        foreign_asset.external_id = self.EXTERNAL["external_id"]
-        foreign_asset.external_source = self.EXTERNAL["external_source"]
-        foreign_asset.save(update_fields=["external_id", "external_source"])
+    def test_pair_in_another_project_does_not_match(self, api_key_client, workspace, foreign_asset, joined_project):
+        """A pair held in another project is treated as unused: a new asset is created."""
+        self._tag(foreign_asset)
 
-        response = api_key_client.post(
-            asset_list_url(workspace.slug), self._payload(joined_project.id), format="json"
-        )
+        response = self._post(api_key_client, workspace, joined_project.id)
 
-        assert response.status_code == status.HTTP_404_NOT_FOUND, (
-            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
-        )
-        self._assert_discloses_nothing(response, foreign_asset)
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert set(response.data) == {"upload_data", "asset_id", "asset_url"}
+        assert response.data["asset_id"] != str(foreign_asset.id)
+        assert FileAsset.objects.get(id=response.data["asset_id"]).project_id == joined_project.id
 
     @pytest.mark.django_db
-    def test_dedup_does_not_disclose_when_project_id_is_omitted(
-        self, api_key_client, workspace, foreign_asset
-    ):
-        """Omitting project_id skips the create-path validation, so this branch is the only gate."""
-        foreign_asset.external_id = self.EXTERNAL["external_id"]
-        foreign_asset.external_source = self.EXTERNAL["external_source"]
-        foreign_asset.save(update_fields=["external_id", "external_source"])
+    def test_pair_in_same_project_returns_conflict(self, api_key_client, workspace, joined_asset, joined_project):
+        self._tag(joined_asset)
 
-        response = api_key_client.post(asset_list_url(workspace.slug), self._payload(), format="json")
+        response = self._post(api_key_client, workspace, joined_project.id)
 
-        assert response.status_code == status.HTTP_404_NOT_FOUND, (
-            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
-        )
-        self._assert_discloses_nothing(response, foreign_asset)
-
-    @pytest.mark.django_db
-    def test_dedup_still_echoes_an_accessible_asset(
-        self, api_key_client, workspace, joined_asset, joined_project
-    ):
-        """Dedup must keep working for a caller who is a member of the match's project."""
-        joined_asset.external_id = self.EXTERNAL["external_id"]
-        joined_asset.external_source = self.EXTERNAL["external_source"]
-        joined_asset.save(update_fields=["external_id", "external_source"])
-
-        response = api_key_client.post(
-            asset_list_url(workspace.slug), self._payload(joined_project.id), format="json"
-        )
-
-        assert response.status_code == status.HTTP_409_CONFLICT, (
-            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
-        )
+        assert response.status_code == status.HTTP_409_CONFLICT, response.data
         assert response.data["asset_id"] == str(joined_asset.id)
 
     @pytest.mark.django_db
-    def test_dedup_still_echoes_a_workspace_level_asset(
-        self, api_key_client, workspace, workspace_level_asset
-    ):
-        """project_id is NULL, so there is no project dimension to gate on."""
-        workspace_level_asset.external_id = self.EXTERNAL["external_id"]
-        workspace_level_asset.external_source = self.EXTERNAL["external_source"]
-        workspace_level_asset.save(update_fields=["external_id", "external_source"])
+    def test_project_id_required_before_dedup(self, api_key_client, workspace, workspace_level_asset):
+        self._tag(workspace_level_asset)
 
-        response = api_key_client.post(asset_list_url(workspace.slug), self._payload(), format="json")
+        response = self._post(api_key_client, workspace)
 
-        assert response.status_code == status.HTTP_409_CONFLICT, (
-            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
-        )
-        assert response.data["asset_id"] == str(workspace_level_asset.id)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, response.data
+        assert "asset_id" not in response.data
