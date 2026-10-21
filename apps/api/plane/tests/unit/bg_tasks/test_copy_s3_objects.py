@@ -2,10 +2,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+import uuid
+
 import pytest
 from plane.db.models import Project, ProjectMember, Issue, FileAsset
 from unittest.mock import patch, MagicMock
 from plane.bgtasks.copy_s3_object import (
+    extract_asset_ids,
     copy_s3_objects_of_description_and_assets,
     copy_assets,
 )
@@ -173,3 +176,17 @@ class TestCopyS3Objects:
         # Assert
         assert result == []
         mock_storage_instance.copy_object.assert_not_called()
+
+
+@pytest.mark.unit
+def test_extract_asset_ids_skips_external_urls():
+    """External image srcs used to reach ``FileAsset.objects.filter(id__in=...)`` and
+    raise "is not a valid UUID", aborting the whole asset copy on page duplicate."""
+    asset_id = str(uuid.uuid4())
+    html = (
+        f'<image-component src="{asset_id}"></image-component>'
+        '<image-component src="https://media.docs.plane.so/seed_assets/31.png"></image-component>'
+        "<image-component></image-component>"
+    )
+
+    assert extract_asset_ids(html, "image-component") == [asset_id]

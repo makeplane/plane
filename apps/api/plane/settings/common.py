@@ -8,6 +8,7 @@
 import ipaddress
 import logging
 import os
+from urllib.parse import parse_qs
 from urllib.parse import urlparse
 from urllib.parse import urljoin
 
@@ -150,6 +151,14 @@ REST_FRAMEWORK = {
     "SCHEMA_COERCE_PATH_PK": False,
 }
 
+# Number of reverse proxies in front of the API. DRF throttles use it to pick the
+# client IP from X-Forwarded-For. Unset keeps DRF's default (None).
+_num_proxies_raw = os.environ.get("NUM_PROXIES", "").strip()
+if _num_proxies_raw.isdecimal() and len(_num_proxies_raw) <= 3:
+    REST_FRAMEWORK["NUM_PROXIES"] = int(_num_proxies_raw)
+elif _num_proxies_raw:
+    _logger.warning("NUM_PROXIES: ignoring invalid value %r", _num_proxies_raw)
+
 # API key throttle rate (DRF SimpleRateThrottle format, e.g. "60/minute")
 API_KEY_RATE_LIMIT = os.environ.get("API_KEY_RATE_LIMIT", "60/minute")
 
@@ -184,10 +193,8 @@ cors_origins_raw = os.environ.get("CORS_ALLOWED_ORIGINS", "")
 cors_allowed_origins = [origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()]
 if cors_allowed_origins:
     CORS_ALLOWED_ORIGINS = cors_allowed_origins
-    secure_origins = False if [origin for origin in cors_allowed_origins if "http:" in origin] else True
 else:
     CORS_ALLOW_ALL_ORIGINS = True
-    secure_origins = False
 
 CORS_ALLOW_HEADERS = [*default_headers, "X-API-Key"]
 
@@ -242,6 +249,27 @@ if os.environ.get("ENABLE_READ_REPLICA", "0") == "1":
 REDIS_URL = os.environ.get("REDIS_URL")
 REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
 
+
+def _redis_ssl_kwargs(url=None):
+    """
+    TLS options for rediss:// connections. The server certificate and hostname are
+    verified against the system CA bundle, or REDIS_SSL_CA_CERTS when set.
+    REDIS_SSL_CERT_REQS=none turns verification off.
+
+    Query options in the URL override these kwargs in redis-py, so an ssl_cert_reqs
+    there takes precedence over REDIS_SSL_CERT_REQS. The hostname is checked unless
+    verification is off (none); an explicit ssl_check_hostname in the URL still wins.
+    """
+    url_cert_reqs = parse_qs(urlparse(url or "").query).get("ssl_cert_reqs", [""])[0]
+    cert_reqs = (url_cert_reqs or os.environ.get("REDIS_SSL_CERT_REQS", "")).strip().lower() or "required"
+    kwargs = {"ssl_cert_reqs": cert_reqs, "ssl_check_hostname": cert_reqs != "none"}
+    if os.environ.get("REDIS_SSL_CA_CERTS"):
+        kwargs["ssl_ca_certs"] = os.environ["REDIS_SSL_CA_CERTS"]
+    return kwargs
+
+
+REDIS_SSL_KWARGS = _redis_ssl_kwargs(REDIS_URL)
+
 if REDIS_SSL:
     CACHES = {
         "default": {
@@ -249,7 +277,7 @@ if REDIS_SSL:
             "LOCATION": REDIS_URL,
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                "CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": False},
+                "CONNECTION_POOL_KWARGS": REDIS_SSL_KWARGS,
             },
         }
     }
@@ -302,8 +330,16 @@ USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
 
 STORAGES = {"staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"}}
 STORAGES["default"] = {"BACKEND": "plane.settings.storage.S3Storage"}
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
+# No fallback: when unset, boto3 resolves credentials through its default chain, as S3Storage does.
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+# Warn when the storage credentials are still the template values.
+if USE_MINIO and AWS_SECRET_ACCESS_KEY == "secret-key":
+    _logger.critical(
+        "SECURITY: AWS_SECRET_ACCESS_KEY is set to the placeholder value from the env templates "
+        "while USE_MINIO is on. Set unique object-storage credentials (the latest CLI setup.sh "
+        "generates them on install and upgrade) and restart MinIO and Plane."
+    )
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
 AWS_REGION = os.environ.get("AWS_REGION", "")
 AWS_DEFAULT_ACL = "public-read"
@@ -366,8 +402,24 @@ SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
+
+def _cookies_secure(web_url, cors_allowed_origins, app_base_url=None):
+    """
+    Cookies are Secure when Plane is served over https, or when every configured
+    CORS origin is https. Plain-http installs keep non-Secure cookies.
+
+    The serving URL is WEB_URL, falling back to APP_BASE_URL when WEB_URL is
+    unset or empty, matching the precedence used by base_host().
+    """
+    if (web_url or app_base_url or "").strip().lower().startswith("https://"):
+        return True
+    return bool(cors_allowed_origins) and not any("http:" in origin for origin in cors_allowed_origins)
+
+
 # Cookie Settings
-SESSION_COOKIE_SECURE = secure_origins
+SESSION_COOKIE_SECURE = _cookies_secure(
+    os.environ.get("WEB_URL"), cors_allowed_origins, app_base_url=os.environ.get("APP_BASE_URL")
+)
 SESSION_COOKIE_HTTPONLY = True
 SESSION_ENGINE = "plane.db.models.session"
 SESSION_COOKIE_AGE = int(os.environ.get("SESSION_COOKIE_AGE", 604800))
@@ -380,7 +432,7 @@ ADMIN_SESSION_COOKIE_NAME = "admin-session-id"
 ADMIN_SESSION_COOKIE_AGE = int(os.environ.get("ADMIN_SESSION_COOKIE_AGE", 3600))
 
 # CSRF cookies
-CSRF_COOKIE_SECURE = secure_origins
+CSRF_COOKIE_SECURE = SESSION_COOKIE_SECURE
 CSRF_COOKIE_HTTPONLY = True
 CSRF_TRUSTED_ORIGINS = cors_allowed_origins
 CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
@@ -540,20 +592,9 @@ ATTACHMENT_MIME_TYPES = [
     "text/markdown",
 ]
 
-# MIME types that browsers can execute as scripts when served inline.
-# These must always be served with Content-Disposition: attachment, even if they
-# somehow end up stored (e.g. uploaded before this restriction was added).
-SCRIPT_CAPABLE_MIME_TYPES: frozenset[str] = frozenset(
-    [
-        "image/svg+xml",  # SVG with onload / embedded <script> tags
-        "text/javascript",
-        "application/javascript",
-        "text/html",
-        "application/xhtml+xml",
-        "text/xml",
-        "application/xml",
-    ]
-)
+# The only MIME types ever served inline (S3Storage.generate_presigned_url pins the
+# type on the response). Everything else, including SVG and HTML, downloads.
+INLINE_SAFE_MIME_TYPES: frozenset[str] = frozenset(["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"])
 
 # Seed directory path
 SEED_DIR = os.path.join(BASE_DIR, "seeds")

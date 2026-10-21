@@ -18,6 +18,7 @@ The fix binds every caller-supplied object id to the board's project + workspace
 before writing, and scopes the comment-list read to the board's project.
 """
 
+import json
 from unittest import mock
 from uuid import uuid4
 
@@ -573,3 +574,88 @@ class TestSpacesBoardObjectScopeMutations:
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         assert not IssueReaction.objects.filter(id=board_issue_reaction.id).exists()
+
+
+# --------------------------------------------------------------------------- #
+# IssueCommentPublicViewSet — only the author may edit, and only the comment
+# content is writable; actor, access, issue and parent stay server-controlled
+# --------------------------------------------------------------------------- #
+@pytest.mark.contract
+class TestSpacesBoardCommentWritableFields:
+    @pytest.fixture
+    def other_user(self, db):
+        uid = uuid4().hex[:8]
+        return User.objects.create(email=f"other-{uid}@plane.so", username=f"other_{uid}")
+
+    @pytest.mark.django_db
+    def test_update_only_changes_comment_content(self, session_client, board, victim, other_user, create_user):
+        comment = board["comment"]
+        response = session_client.patch(
+            comment_detail_url(board["anchor"], board["issue"].id, comment.id),
+            {
+                "comment_html": "<p>edited</p>",
+                "actor": str(other_user.id),
+                "access": "INTERNAL",
+                "issue": str(victim["issue"].id),
+                "parent": str(victim["comment"].id),
+            },
+            format="json",
+        )
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        comment.refresh_from_db()
+        assert comment.comment_html == "<p>edited</p>"
+        assert comment.actor_id == create_user.id
+        assert comment.access == "EXTERNAL"
+        assert comment.issue_id == board["issue"].id
+        assert comment.parent_id is None
+
+    @pytest.mark.django_db
+    def test_non_author_cannot_update_comment(self, attacker_client, board):
+        comment = board["comment"]
+        response = attacker_client.patch(
+            comment_detail_url(board["anchor"], board["issue"].id, comment.id),
+            {"comment_html": "<p>not mine</p>"},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        comment.refresh_from_db()
+        assert comment.comment_html == "<p>board external comment</p>"
+
+    @pytest.mark.django_db
+    def test_update_activity_has_previous_content(self, session_client, board):
+        comment = board["comment"]
+        with mock.patch("plane.space.views.issue.issue_activity") as activity:
+            response = session_client.patch(
+                comment_detail_url(board["anchor"], board["issue"].id, comment.id),
+                {"comment_html": "<p>edited</p>"},
+                format="json",
+            )
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        current_instance = json.loads(activity.delay.call_args.kwargs["current_instance"])
+        assert current_instance["comment_html"] == "<p>board external comment</p>"
+
+    @pytest.mark.django_db
+    def test_create_ignores_system_fields(self, session_client, board, victim, other_user, create_user):
+        response = session_client.post(
+            comments_url(board["anchor"], board["issue"].id),
+            {
+                "comment_html": "<p>new</p>",
+                "actor": str(other_user.id),
+                "access": "INTERNAL",
+                "parent": str(victim["comment"].id),
+            },
+            format="json",
+        )
+        assert response.status_code == status.HTTP_201_CREATED, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        comment = IssueComment.objects.get(id=response.data["id"])
+        assert comment.actor_id == create_user.id
+        assert comment.access == "EXTERNAL"
+        assert comment.parent_id is None
