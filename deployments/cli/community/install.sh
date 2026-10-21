@@ -138,9 +138,13 @@ function updateEnvFile() {
             echo "$key=$value" >> "$file"
             return
         else 
-            # awk reads the value from the environment, so it is written literally (no sed escaping)
-            KEY="$key" VAL="$value" awk 'BEGIN { p = ENVIRON["KEY"] "=" } index($0, p) == 1 { print p ENVIRON["VAL"]; next } { print }' "$file" > "$file.tmp" \
-                && mv "$file.tmp" "$file"
+            # awk reads the value from the environment, so it is written literally (no sed escaping).
+            # The result is copied back into the same file to keep its mode and owner; mktemp creates the copy as 0600.
+            local tmp
+            tmp=$(mktemp "$file.XXXXXX") || exit 1
+            KEY="$key" VAL="$value" awk 'BEGIN { p = ENVIRON["KEY"] "=" } index($0, p) == 1 { print p ENVIRON["VAL"]; next } { print }' "$file" > "$tmp" \
+                && cat "$tmp" > "$file"
+            rm -f "$tmp"
         fi
     else
         echo "File not found: $file"
@@ -263,7 +267,7 @@ function syncEnvFile(){
             if [ -n "$value" ]; then
                 updateEnvFile "$key" "$value" "$DOCKER_ENV_PATH"
             fi
-        done < "$DOCKER_ENV_PATH"
+        done <<< "$(cat "$DOCKER_ENV_PATH")" # a snapshot, since updateEnvFile rewrites the file in place
     fi
     echo "Environment variables synced successfully" >&2
 }
