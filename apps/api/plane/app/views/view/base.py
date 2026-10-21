@@ -25,6 +25,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import IssueViewSerializer, ViewIssueListSerializer
+from plane.app.serializers.favorite import get_favorite_entities
 from plane.db.models import (
     Issue,
     FileAsset,
@@ -55,14 +56,8 @@ class WorkspaceViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def create(self, request, slug):
-        # Declared explicitly to put a workspace-membership check in front of
-        # the create. perform_create below resolves the workspace from the URL
-        # slug and saves, but it is a save hook, not an authorization hook: as
-        # an inherited generic create this ran under the bare default permission
-        # class, so any authenticated account could create a view in any
-        # workspace. Workspace slugs are human-readable, so no identifier had to
-        # be guessed. The role set matches list() — the defect is that
-        # non-members could write here at all, not which member roles may.
+        # Creating a workspace view requires active workspace membership, with
+        # the same roles as list(). perform_create is a save hook, not a check.
         return super().create(request, slug=slug)
 
     def perform_create(self, serializer):
@@ -315,13 +310,9 @@ class IssueViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id):
-        # Declared explicitly to put a project-membership check in front of the
-        # create. perform_create below trusts project_id straight from the URL,
-        # and as an inherited generic create it ran under the bare default
-        # permission class — so any authenticated account holding a project
-        # identifier could create a view inside that project. The role set
-        # matches list()/retrieve(); the defect is that non-members could write
-        # here at all, not which member roles may.
+        # Creating a project view requires active project membership, with the
+        # same roles as list()/retrieve(). perform_create is a save hook, not a
+        # check.
         return super().create(request, slug=slug, project_id=project_id)
 
     def perform_create(self, serializer):
@@ -479,6 +470,10 @@ class IssueViewFavoriteViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
+        # 404 unless the view is in this project and visible to the user
+        get_favorite_entities("view", request.user.id, project_id).get(
+            pk=request.data.get("view"), workspace__slug=slug
+        )
         _ = UserFavorite.objects.create(
             user=request.user,
             entity_identifier=request.data.get("view"),

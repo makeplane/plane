@@ -34,7 +34,7 @@ from plane.api.serializers import (
     CycleUpdateSerializer,
     IssueSerializer,
 )
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import ProjectAdminPermission, ProjectEntityPermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Cycle,
@@ -43,7 +43,6 @@ from plane.db.models import (
     Project,
     FileAsset,
     IssueLink,
-    ProjectMember,
     UserFavorite,
 )
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
@@ -621,15 +620,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
         Only admins or the cycle creator can perform this action.
         """
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
-        if cycle.owned_by_id != request.user.id and (
-            not ProjectMember.objects.filter(
-                workspace__slug=slug,
-                member=request.user,
-                role=20,
-                project_id=project_id,
-                is_active=True,
-            ).exists()
-        ):
+        if cycle.created_by_id != request.user.id and not ProjectAdminPermission().has_permission(request, self):
             return Response(
                 {"error": "Only admin or creator can delete the cycle"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -988,8 +979,15 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get all CycleWorkItems already created
-        cycle_issues = list(CycleIssue.objects.filter(~Q(cycle_id=cycle_id), issue_id__in=issues))
+        # Get all CycleWorkItems already created, scoped to the URL workspace + project
+        cycle_issues = list(
+            CycleIssue.objects.filter(
+                ~Q(cycle_id=cycle_id),
+                issue_id__in=issues,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+        )
         existing_issues = [
             str(cycle_issue.issue_id) for cycle_issue in cycle_issues if str(cycle_issue.issue_id) in issues
         ]

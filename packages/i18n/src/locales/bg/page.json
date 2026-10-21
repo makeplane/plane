@@ -1,0 +1,118 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Структура",
+        "empty_state": {
+          "title": "Няма заглавия",
+          "description": "Добавете заглавия в тази страница, за да ги видите тук."
+        }
+      },
+      "info": {
+        "label": "Информация",
+        "document_info": {
+          "words": "Думи",
+          "characters": "Символи",
+          "paragraphs": "Абзаци",
+          "read_time": "Време за четене"
+        },
+        "actors_info": {
+          "edited_by": "Редактирано от",
+          "created_by": "Създадено от"
+        },
+        "version_history": {
+          "label": "История на версиите",
+          "current_version": "Текуща версия",
+          "highlight_changes": "Открояване на промените"
+        }
+      },
+      "assets": {
+        "label": "Ресурси",
+        "download_button": "Изтегли",
+        "empty_state": {
+          "title": "Няма изображения",
+          "description": "Добавете изображения, за да ги видите тук."
+        }
+      },
+      "comments": {
+        "label": "Коментари",
+        "empty_state": {
+          "title": "Няма коментари",
+          "description": "Добавете коментари, за да ги видите тук."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Името на Sticky не може да е по-дълго от 100 символа.",
+        "already_exists": "Вече съществува Sticky без описание"
+      },
+      "created": {
+        "title": "Sticky е създаден",
+        "message": "Sticky беше създаден успешно"
+      },
+      "not_created": {
+        "title": "Sticky не е създаден",
+        "message": "Sticky не можа да бъде създаден"
+      },
+      "updated": {
+        "title": "Sticky е обновен",
+        "message": "Sticky беше обновен успешно"
+      },
+      "not_updated": {
+        "title": "Sticky не е обновен",
+        "message": "Sticky не можа да бъде обновен"
+      },
+      "removed": {
+        "title": "Sticky е премахнат",
+        "message": "Sticky беше премахнат успешно"
+      },
+      "not_removed": {
+        "title": "Sticky не е премахнат",
+        "message": "Sticky не можа да бъде премахнат"
+      }
+    },
+    "open_button": "Отвори навигационния панел",
+    "close_button": "Затвори навигационния панел",
+    "outline_floating_button": "Отвори структурата"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Премести",
+        "loading": "Преместване"
+      },
+      "cannot_move_to_teamspace": "Личните и споделените страници не могат да бъдат премествани в екипно пространство.",
+      "placeholders": {
+        "workspace_to_all": "Търсете проекти и екипни пространства",
+        "workspace_to_project": "Търсете проекти",
+        "project_to_all": "Търсете проекти и екипни пространства",
+        "project_to_project": "Търсете проекти",
+        "project_to_all_with_wiki": "Търсете колекции в уики, проекти и екипни пространства",
+        "project_to_project_with_wiki": "Търсете колекции в уики и проекти"
+      },
+      "toasts": {
+        "success": {
+          "title": "Успех!",
+          "message": "Страницата е преместена успешно."
+        },
+        "error": {
+          "title": "Грешка!",
+          "message": "Страницата не можа да бъде преместена. Опитайте отново по-късно."
+        },
+        "collection_error": {
+          "title": "Преместена в уики",
+          "message": "Страницата беше преместена в уики, но не можа да бъде добавена към избраната колекция. Тя остава в „Общи“."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Премахни от колекцията",
+      "success_message": "Страницата е премахната от колекцията.",
+      "error_message": "Страницата не можа да бъде премахната от колекцията. Опитайте отново."
+    }
+  },
+  "page_content_limit_banner": {
+    "message": "Лимитът за съдържание е достигнат и синхронизирането в реално време е изключено. Създайте нова страница или използвайте вложени страници, за да продължите синхронизирането."
+  }
+}

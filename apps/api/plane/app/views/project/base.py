@@ -22,6 +22,7 @@ from plane.app.serializers import (
     ProjectListSerializer,
     ProjectSerializer,
 )
+from plane.app.serializers.favorite import get_favorite_entities
 from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
@@ -512,6 +513,9 @@ class ProjectFavoritesViewSet(BaseViewSet):
         serializer.save(user=self.request.user)
 
     def create(self, request, slug):
+        project_id = request.data.get("project")
+        # 404 unless the project is in this workspace and visible to the user
+        get_favorite_entities("project", request.user.id, project_id).get(pk=project_id, workspace__slug=slug)
         _ = UserFavorite.objects.create(
             user=request.user,
             entity_type="project",
@@ -561,10 +565,20 @@ class DeployBoardViewSet(BaseViewSet):
             },
         )
 
+        # project_id comes from the URL and was never checked against slug, so a
+        # caller could aim their own workspace at another tenant's project id.
+        # Defence in depth: the permission class now binds both.
+        if not Project.objects.filter(pk=project_id, workspace__slug=slug).exists():
+            return Response({"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        # A board can only publish an intake from its own project.
+        if intake and not Intake.objects.filter(pk=intake, project_id=project_id).exists():
+            return Response({"error": "Intake is not valid"}, status=status.HTTP_400_BAD_REQUEST)
+
         project_deploy_board, _ = DeployBoard.objects.get_or_create(
             entity_name="project", entity_identifier=project_id, project_id=project_id
         )
-        project_deploy_board.intake = intake
+        project_deploy_board.intake_id = intake
         project_deploy_board.view_props = views
         project_deploy_board.is_votes_enabled = votes
         project_deploy_board.is_comments_enabled = comments

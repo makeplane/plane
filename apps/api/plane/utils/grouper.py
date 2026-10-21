@@ -147,17 +147,24 @@ def issue_group_values(
     project_id: Optional[str] = None,
     filters: Dict[str, Any] = {},
     queryset: Optional[QuerySet] = None,
+    user: Optional[Any] = None,
 ) -> List[Union[str, Any]]:
+    if not project_id and user is None:
+        raise ValueError("issue_group_values needs a project_id or a user")
+
+    # Project-scoped keys come from the given project, workspace-wide ones from the user's projects
+    project_ids = (
+        [project_id]
+        if project_id
+        else ProjectMember.objects.filter(workspace__slug=slug, member=user, is_active=True).values("project_id")
+    )
+
     if field == "state_id":
-        queryset = State.objects.filter(is_triage=False, workspace__slug=slug).values_list("id", flat=True)
-        if project_id:
-            return list(queryset.filter(project_id=project_id))
-        return list(queryset)
+        queryset = State.objects.filter(is_triage=False, workspace__slug=slug, project_id__in=project_ids)
+        return list(queryset.values_list("id", flat=True))
 
     if field == "labels__id":
-        queryset = Label.objects.filter(workspace__slug=slug).values_list("id", flat=True)
-        if project_id:
-            return list(queryset.filter(project_id=project_id)) + ["None"]
+        queryset = Label.objects.filter(workspace__slug=slug, project_id__in=project_ids).values_list("id", flat=True)
         return list(queryset) + ["None"]
 
     if field == "assignees__id":
@@ -172,20 +179,15 @@ def issue_group_values(
         )
 
     if field == "issue_module__module_id":
-        queryset = Module.objects.filter(workspace__slug=slug).values_list("id", flat=True)
-        if project_id:
-            return list(queryset.filter(project_id=project_id)) + ["None"]
+        queryset = Module.objects.filter(workspace__slug=slug, project_id__in=project_ids).values_list("id", flat=True)
         return list(queryset) + ["None"]
 
     if field == "cycle_id":
-        queryset = Cycle.objects.filter(workspace__slug=slug).values_list("id", flat=True)
-        if project_id:
-            return list(queryset.filter(project_id=project_id)) + ["None"]
+        queryset = Cycle.objects.filter(workspace__slug=slug, project_id__in=project_ids).values_list("id", flat=True)
         return list(queryset) + ["None"]
 
     if field == "project_id":
-        queryset = Project.objects.filter(workspace__slug=slug).values_list("id", flat=True)
-        return list(queryset)
+        return list(Project.objects.filter(workspace__slug=slug, id__in=project_ids).values_list("id", flat=True))
 
     if field == "priority":
         return ["low", "medium", "high", "urgent", "none"]
