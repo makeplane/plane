@@ -161,10 +161,8 @@ class UserProjectInvitationsViewset(BaseViewSet):
         workspace_role = workspace_member.role
         workspace = workspace_member.workspace
 
-        # Use the workspace-scoped, network-validated project IDs only.
-        # Raw project_ids may contain UUIDs from other workspaces; those are
-        # absent from the `projects` queryset and therefore bypass the SECRET
-        # network check above.
+        # Membership writes use only the project IDs validated above: projects in
+        # this workspace that passed the network check.
         validated_project_ids = [str(p.id) for p in projects]
 
         # If the user was already part of the project, reactivate them with the
