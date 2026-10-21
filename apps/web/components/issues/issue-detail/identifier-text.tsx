@@ -48,6 +48,14 @@ export function IdentifierText(props: TIdentifierTextProps) {
   const textSizeClassName = SIZE_MAP[size];
   const variantClassName = VARIANT_MAP[variant];
 
+  if (!enableClickToCopyIdentifier) {
+    return (
+      <span className={cn("text-12 font-medium whitespace-nowrap text-tertiary", textSizeClassName, variantClassName)}>
+        {identifier}
+      </span>
+    );
+  }
+
   return (
     <Tooltip label="Click to copy" disabled={!enableClickToCopyIdentifier}>
       <button
