@@ -20,7 +20,7 @@ import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from plane.db.models import Project, ProjectMember, User, WorkspaceMember
+from plane.db.models import DeployBoard, Project, ProjectMember, User, Workspace, WorkspaceMember
 
 
 def deploy_board_url(slug, project_id):
@@ -89,3 +89,105 @@ class TestDeployBoardProjectScope:
         assert response.status_code == status.HTTP_200_OK, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
+
+
+@pytest.fixture
+def secret_project(db, workspace, create_user):
+    """A Secret (network=0) project that ``create_user`` administers."""
+    project = Project.objects.create(
+        name="Secret Project",
+        identifier="SEC",
+        workspace=workspace,
+        network=0,
+        created_by=create_user,
+    )
+    ProjectMember.objects.create(
+        project=project, member=create_user, workspace=workspace, role=20
+    )
+    return project
+
+
+@pytest.fixture
+def foreign_project(db, create_user):
+    """A project in a DIFFERENT workspace that nobody here belongs to."""
+    unique_id = uuid4().hex[:8]
+    owner = User.objects.create(
+        email=f"victim-{unique_id}@plane.so", username=f"victim_{unique_id}"
+    )
+    other_ws = Workspace.objects.create(
+        name="Victim Workspace", slug=f"victim-{unique_id}", owner=owner
+    )
+    WorkspaceMember.objects.create(workspace=other_ws, member=owner, role=20)
+    return Project.objects.create(
+        name="Victim Project",
+        identifier="VIC",
+        workspace=other_ws,
+        network=0,
+        created_by=owner,
+    )
+
+
+@pytest.mark.contract
+class TestDeployBoardCreateProjectScope:
+    """POST is the publish action: it returns the public anchor.
+
+    ``ProjectMemberPermission``'s POST branch previously checked workspace
+    membership only, so a workspace member who was not in the project could
+    publish it and receive the anchor — which Space serves to anonymous callers.
+    """
+
+    @pytest.mark.django_db
+    def test_non_project_member_cannot_publish(self, outsider_client, workspace, secret_project):
+        response = outsider_client.post(
+            deploy_board_url(workspace.slug, secret_project.id), {}, format="json"
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
+    def test_denied_publish_leaks_no_anchor_and_creates_no_board(
+        self, outsider_client, workspace, secret_project
+    ):
+        """The response must not carry an anchor, and no board may be created.
+
+        A 403 that still created the DeployBoard would leave the project
+        published even though the API refused the caller.
+        """
+        response = outsider_client.post(
+            deploy_board_url(workspace.slug, secret_project.id), {}, format="json"
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert "anchor" not in str(getattr(response, "data", "")).lower()
+        assert not DeployBoard.objects.filter(
+            entity_name="project", entity_identifier=secret_project.id
+        ).exists(), "a denied publish must not create a DeployBoard"
+
+    @pytest.mark.django_db
+    def test_project_member_can_publish(self, session_client, workspace, secret_project):
+        """Positive control: scoping POST must not break the legitimate publish."""
+        response = session_client.post(
+            deploy_board_url(workspace.slug, secret_project.id), {}, format="json"
+        )
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert DeployBoard.objects.filter(
+            entity_name="project", entity_identifier=secret_project.id
+        ).exists()
+
+    @pytest.mark.django_db
+    def test_cannot_publish_another_workspaces_project(
+        self, session_client, workspace, foreign_project
+    ):
+        """Own slug + a foreign project id must not publish the victim's project."""
+        response = session_client.post(
+            deploy_board_url(workspace.slug, foreign_project.id), {}, format="json"
+        )
+        assert response.status_code in (
+            status.HTTP_403_FORBIDDEN,
+            status.HTTP_404_NOT_FOUND,
+        ), f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        assert not DeployBoard.objects.filter(
+            entity_name="project", entity_identifier=foreign_project.id
+        ).exists(), "a cross-workspace publish must not create a DeployBoard"
