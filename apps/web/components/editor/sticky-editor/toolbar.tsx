@@ -5,6 +5,9 @@
  */
 
 import React, { useEffect, useState, useCallback } from "react";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/elements/icon-button";
+import { ToolbarButton } from "@makeplane/propel/elements/toolbar";
 import { DeleteOutline, PaletteOutline } from "@makeplane/propel/icons";
 // editor
 import type { EditorRefApi } from "@plane/editor";
@@ -63,14 +66,21 @@ export function StickyEditorToolbar(props: Props) {
   useOutsideClickDetector(colorPaletteRef, () => setShowColorPalette(false));
 
   return (
-    <div className="flex h-full w-full justify-between">
-      <div className="my-auto flex gap-4" ref={colorPaletteRef}>
+    <div className="flex h-full w-full items-center justify-between">
+      <div className="my-auto flex items-center gap-4" ref={colorPaletteRef}>
         {/* color palette */}
         {showColorPalette && <ColorPalette handleUpdate={handleColorChange} />}
         <Tooltip label="Background color">
-          <button type="button" onClick={() => setShowColorPalette(!showColorPalette)} className="flex text-primary/50">
-            <PaletteOutline className="my-auto size-4" />
-          </button>
+          <ToolbarButton
+            type="button"
+            size="sm"
+            labeled={false}
+            aria-label="Background color"
+            aria-expanded={showColorPalette}
+            onClick={() => setShowColorPalette(!showColorPalette)}
+          >
+            <Icon icon={PaletteOutline} />
+          </ToolbarButton>
         </Tooltip>
 
         <div className="my-auto flex w-fit items-stretch justify-between gap-4 rounded-sm p-1">
@@ -82,18 +92,17 @@ export function StickyEditorToolbar(props: Props) {
 
                   return (
                     <Tooltip key={item.renderKey} label={item.name} shortcut={item.shortcut?.join(" + ")}>
-                      <button
+                      <ToolbarButton
                         type="button"
+                        size="sm"
+                        labeled={false}
+                        aria-label={item.name}
+                        aria-pressed={!!isItemActive}
+                        data-pressed={isItemActive ? "" : undefined}
                         onClick={() => executeCommand(item)}
-                        className={cn("grid aspect-square place-items-center rounded-xs p-0.5 text-primary/50", {})}
                       >
-                        <item.icon
-                          className={cn("h-3.5 w-3.5", {
-                            "font-heavy": isItemActive,
-                          })}
-                          strokeWidth={2.5}
-                        />
-                      </button>
+                        <Icon icon={<item.icon strokeWidth={2.5} />} />
+                      </ToolbarButton>
                     </Tooltip>
                   );
                 })}
@@ -104,9 +113,9 @@ export function StickyEditorToolbar(props: Props) {
       </div>
       {/* delete action */}
       <Tooltip label="Delete">
-        <button type="button" onClick={handleDelete} className="my-auto text-primary/50">
-          <DeleteOutline className="size-4" />
-        </button>
+        <IconButton type="button" size="sm" variant="ghost" aria-label="Delete" onClick={handleDelete}>
+          <Icon icon={DeleteOutline} />
+        </IconButton>
       </Tooltip>
     </div>
   );
