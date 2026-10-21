@@ -1,0 +1,65 @@
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "Пуснете файлове тук или щракнете, за да качите"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "Файлът е твърде голям.",
+        "description": "Максималният размер на файл е {maxFileSize}MB"
+      },
+      "unsupported_file_type": {
+        "title": "Неподдържан тип файл.",
+        "description": "Вижте поддържаните формати"
+      },
+      "default": {
+        "title": "Качването не бе успешно.",
+        "description": "Нещо се обърка. Опитайте отново."
+      }
+    },
+    "upgrade": {
+      "description": "Надградете плана си, за да видите този прикачен файл."
+    },
+    "aria": {
+      "click_to_upload": "Щракнете, за да качите прикачен файл"
+    }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "Преобразувай във вграждане",
+      "convert_to_link": "Преобразувай във връзка",
+      "convert_to_richcard": "Преобразувай в разширена карта"
+    },
+    "placeholder": {
+      "insert_embed": "Вмъкнете тук връзка за вграждане, например видео от YouTube, дизайн от Figma и др.",
+      "link": "Въведете или поставете връзка"
+    },
+    "input_modal": {
+      "embed": "Вграждане",
+      "works_with_links": "Работи с YouTube, Figma, Google Docs и други"
+    },
+    "error": {
+      "not_valid_link": "Въведете валиден URL."
+    }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "Опишете съдържанието на този блок",
+      "generated_here": "Съдържанието, генерирано от ИИ, ще се появи тук"
+    },
+    "block_types": {
+      "placeholder": "Изберете тип блок",
+      "summarize_page": "Обобщи страницата",
+      "custom_prompt": "Персонализирана подкана"
+    },
+    "actions": {
+      "discard": "Отхвърли",
+      "generate": "Генерирай",
+      "generating": "Генериране",
+      "rewriting": "Пренаписване",
+      "rewrite": "Пренапиши",
+      "use_this": "Използвай това",
+      "refine": "Подобри"
+    }
+  }
+}

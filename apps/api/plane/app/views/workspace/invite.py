@@ -127,6 +127,29 @@ class WorkspaceInvitationsViewset(BaseViewSet):
 
         return Response({"message": "Emails sent successfully"}, status=status.HTTP_200_OK)
 
+    def partial_update(self, request, slug, pk):
+        # SECURITY: only ``role`` is writable, capped at the requester's own role as in create().
+        if not isinstance(request.data, dict) or set(request.data) != {"role"}:
+            return Response(
+                {"error": "Only the role of an invitation can be updated"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        workspace_member_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
+        serializer = WorkSpaceMemberInviteSerializer(workspace_member_invite, data=request.data, partial=True)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        requesting_user = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user, is_active=True)
+        if serializer.validated_data["role"] > requesting_user.role:
+            return Response(
+                {"error": "You cannot invite a user with higher role"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def destroy(self, request, slug, pk):
         workspace_member_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
         workspace_member_invite.delete()
