@@ -16,6 +16,7 @@ from rest_framework import status
 
 # Module imports
 from .. import BaseAPIView
+from .relation import issue_in_project
 from plane.app.serializers import IssueActivitySerializer, IssueCommentSerializer
 from plane.app.permissions import ProjectEntityPermission, allow_permission, issue_hidden_from_guest, ROLE
 from plane.db.models import IssueActivity, IssueComment, CommentReaction, IntakeIssue
@@ -28,6 +29,14 @@ class IssueActivityEndpoint(BaseAPIView):
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, issue_id):
+        filters = {}
+        if request.GET.get("created_at__gt", None) is not None:
+            filters = {"created_at__gt": request.GET.get("created_at__gt")}
+
+        # The issue must belong to the URL workspace + project; the activity and comment
+        # rows below are keyed by it. Archived and intake issues keep their history.
+        if not issue_in_project(issue_id, slug, project_id, include_archived=True):
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
         # A restricted guest may only see the activity/comments of issues they
         # created, mirroring the issue-detail visibility rule.
         if issue_hidden_from_guest(request, slug, project_id, issue_id):
@@ -35,9 +44,6 @@ class IssueActivityEndpoint(BaseAPIView):
                 {"error": "You are not allowed to view this issue"},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        filters = {}
-        if request.GET.get("created_at__gt", None) is not None:
-            filters = {"created_at__gt": request.GET.get("created_at__gt")}
 
         issue_activities = (
             IssueActivity.objects.filter(issue_id=issue_id)
