@@ -223,18 +223,31 @@ export const lookupPublicAddress: LookupFunction = (hostname, options, callback)
   });
 };
 
+/** Largest body accepted for one image, summed over every response in its redirect chain. */
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+
 export type ImageResponse = { status: number; location?: string; body: Buffer };
 
-/** A single GET that does not follow redirects and connects only through `lookupPublicAddress`. */
-const requestImage = (url: string): Promise<ImageResponse> =>
+/**
+ * A single GET that does not follow redirects and connects only through `lookupPublicAddress`.
+ * Rejects, and stops reading, once the body would exceed `maxBytes`.
+ */
+const requestImage = (url: string, maxBytes: number): Promise<ImageResponse> =>
   new Promise((resolve, reject) => {
     const client = url.startsWith("https:") ? https : http;
     const req = client.get(
       url,
       { agent: false, lookup: lookupPublicAddress, timeout: IMAGE_FETCH_TIMEOUT_MS },
       (res) => {
+        const tooLarge = () => req.destroy(new Error("Image response exceeds the size limit"));
+        if (Number(res.headers["content-length"]) > maxBytes) return tooLarge();
         const chunks: Buffer[] = [];
-        res.on("data", (chunk: Buffer) => chunks.push(chunk));
+        let received = 0;
+        res.on("data", (chunk: Buffer) => {
+          received += chunk.length;
+          if (received > maxBytes) return tooLarge();
+          chunks.push(chunk);
+        });
         res.on("error", reject);
         res.on("end", () =>
           resolve({ status: res.statusCode ?? 0, location: res.headers.location, body: Buffer.concat(chunks) })
@@ -248,14 +261,16 @@ const requestImage = (url: string): Promise<ImageResponse> =>
 /**
  * Fetches an http(s) image URL, following at most MAX_IMAGE_FETCH_REDIRECTS redirects.
  * The initial URL and every redirect target must pass `isSafeImageSrc`, and each
- * connection goes through `lookupPublicAddress`. Returns the body, or null on any
- * failure, which callers treat like a rejected src.
+ * connection goes through `lookupPublicAddress`. The response bodies of the whole chain
+ * share one MAX_IMAGE_BYTES budget. Returns the body, or null on any failure, which
+ * callers treat like a rejected src.
  */
 export const fetchImageSrcSafely = async (
   uri: string,
-  request: (url: string) => Promise<ImageResponse> = requestImage
+  request: (url: string, maxBytes: number) => Promise<ImageResponse> = requestImage
 ): Promise<Buffer | null> => {
   let current = uri;
+  let remainingBytes = MAX_IMAGE_BYTES;
 
   for (let hop = 0; hop <= MAX_IMAGE_FETCH_REDIRECTS; hop++) {
     if (!isSafeImageSrc(current)) return null;
@@ -264,10 +279,11 @@ export const fetchImageSrcSafely = async (
     try {
       // Each hop's target comes from the previous response, so the hops run in order.
       // oxlint-disable-next-line no-await-in-loop -- intentional, see above
-      response = await request(current);
+      response = await request(current, remainingBytes);
     } catch {
       return null;
     }
+    remainingBytes -= response.body.length;
 
     if (response.status >= 300 && response.status < 400) {
       if (!response.location) return null;

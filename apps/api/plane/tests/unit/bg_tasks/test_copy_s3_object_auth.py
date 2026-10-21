@@ -12,6 +12,7 @@ rather than firing a request that can only 401. Pure unit tests — no DB, no ne
 
 from unittest.mock import MagicMock, patch
 
+import pytest
 import requests
 from django.test import override_settings
 
@@ -19,6 +20,8 @@ from plane.bgtasks.copy_s3_object import LIVE_REQUEST_TIMEOUT, sync_with_externa
 
 LIVE_URL = "http://live:3000/live/"
 SECRET = "unit-test-live-secret"
+
+pytestmark = pytest.mark.unit
 
 
 @override_settings(LIVE_URL=LIVE_URL, LIVE_SERVER_SECRET_KEY=SECRET)

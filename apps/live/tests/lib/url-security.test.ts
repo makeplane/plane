@@ -257,8 +257,8 @@ describe("fetchImageSrcSafely", () => {
 
     expect(result?.toString("utf-8")).toBe("final-bytes");
     expect(request).toHaveBeenCalledTimes(2);
-    expect(request).toHaveBeenNthCalledWith(1, "https://images.example.com/a.png");
-    expect(request).toHaveBeenNthCalledWith(2, "https://cdn.example.org/final.png");
+    expect(request).toHaveBeenNthCalledWith(1, "https://images.example.com/a.png", expect.any(Number));
+    expect(request).toHaveBeenNthCalledWith(2, "https://cdn.example.org/final.png", expect.any(Number));
   });
 
   it("resolves a relative Location header against the current URL", async () => {
@@ -267,7 +267,7 @@ describe("fetchImageSrcSafely", () => {
     const result = await fetchImageSrcSafely("https://images.example.com/a.png", request);
 
     expect(result?.toString("utf-8")).toBe("final-bytes");
-    expect(request).toHaveBeenNthCalledWith(2, "https://images.example.com/final.png");
+    expect(request).toHaveBeenNthCalledWith(2, "https://images.example.com/final.png", expect.any(Number));
   });
 
   it("refuses a redirect chain that exceeds the cap", async () => {
@@ -304,6 +304,18 @@ describe("fetchImageSrcSafely", () => {
     const request = vi.fn().mockRejectedValueOnce(new Error("network error"));
 
     expect(await fetchImageSrcSafely("https://images.example.com/a.png", request)).toBeNull();
+  });
+
+  it("counts redirect bodies toward the size limit of later hops", async () => {
+    const request = vi
+      .fn()
+      .mockResolvedValueOnce({ ...redirectTo("/final.png"), body: Buffer.alloc(100) })
+      .mockResolvedValueOnce(ok());
+
+    await fetchImageSrcSafely("https://images.example.com/a.png", request);
+
+    const [[, firstLimit], [, secondLimit]] = request.mock.calls as [string, number][];
+    expect(secondLimit).toBe(firstLimit - 100);
   });
 
   it("returns the body of a direct 200", async () => {
@@ -371,5 +383,63 @@ describe("resolved address checks", () => {
     } finally {
       await new Promise((resolve) => server.close(resolve));
     }
+  });
+});
+
+describe("image response size limit", () => {
+  const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+  let server: http.Server | undefined;
+
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    server?.closeAllConnections();
+    await new Promise((resolve) => server?.close(resolve));
+    server = undefined;
+  });
+
+  /** Serves `handler` locally and returns an image URL that connects to it. */
+  const serve = async (handler: http.RequestListener) => {
+    server = http.createServer(handler);
+    await new Promise<void>((resolve) => server!.listen(0, "127.0.0.1", resolve));
+    const { port } = server.address() as AddressInfo;
+    // Route the public test hostname to the local server for these requests only.
+    const realGet = http.get.bind(http);
+    vi.spyOn(http, "get").mockImplementation(((
+      url: string,
+      options: http.RequestOptions,
+      callback: (res: http.IncomingMessage) => void
+    ) => realGet(url, { ...options, hostname: "127.0.0.1" }, callback)) as typeof http.get);
+    return `http://images.example.com:${port}/a.png`;
+  };
+
+  it("returns a body within the limit", async () => {
+    const url = await serve((_req, res) => res.end("image-bytes"));
+
+    expect((await fetchImageSrcSafely(url))?.toString("utf-8")).toBe("image-bytes");
+  });
+
+  it("refuses a response whose Content-Length exceeds the limit without reading the body", async () => {
+    const url = await serve((_req, res) => {
+      res.writeHead(200, { "Content-Length": MAX_IMAGE_BYTES + 1 });
+      res.write("x");
+    });
+
+    expect(await fetchImageSrcSafely(url)).toBeNull();
+  });
+
+  it("aborts a streamed response once it exceeds the limit", async () => {
+    let closed: Promise<void> = new Promise(() => {});
+    const chunk = Buffer.alloc(64 * 1024);
+    const url = await serve((_req, res) => {
+      closed = new Promise((resolve) => res.on("close", () => resolve()));
+      const pump = () => {
+        while (!res.destroyed && res.write(chunk));
+        if (!res.destroyed) res.once("drain", pump);
+      };
+      pump();
+    });
+
+    expect(await fetchImageSrcSafely(url)).toBeNull();
+    await closed;
   });
 });
