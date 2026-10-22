@@ -49,30 +49,32 @@ catalog:
   "@tanstack/virtual-core": "^3.13.12"
   "@testing-library/react": "16.3.3"
   "@testing-library/user-event": "14.6.1"
-  # 2.27.3 backports the mergeAttributes __proto__ fix (GHSA-cp6q-959q-f8rh); the
-  # advisory only lists 3.30.4 as patched, so Dependabot keeps flagging 2.x.
+  # Keep every @tiptap/* entry on one floor. 2.27.3 is the last 2.x and backports the
+  # mergeAttributes __proto__ fix (GHSA-cp6q-959q-f8rh); the advisory only lists
+  # 3.30.4 as patched, so Dependabot keeps flagging 2.x. v3 also needs Hocuspocus v3,
+  # @tiptap/y-tiptap and a tiptap-markdown replacement, so it is a migration, not a bump.
   "@tiptap/core": "^2.27.3"
-  "@tiptap/extension-blockquote": "^2.22.3"
-  "@tiptap/extension-character-count": "^2.22.3"
-  "@tiptap/extension-collaboration": "^2.22.3"
-  "@tiptap/extension-document": "^2.22.3"
-  "@tiptap/extension-emoji": "^2.22.3"
-  "@tiptap/extension-heading": "^2.22.3"
-  "@tiptap/extension-image": "^2.22.3"
-  "@tiptap/extension-list-item": "^2.22.3"
-  "@tiptap/extension-mention": "^2.22.3"
-  "@tiptap/extension-placeholder": "^2.22.3"
-  "@tiptap/extension-task-item": "^2.22.3"
-  "@tiptap/extension-task-list": "^2.22.3"
-  "@tiptap/extension-text": "^2.22.3"
-  "@tiptap/extension-text-align": "^2.22.3"
-  "@tiptap/extension-text-style": "^2.22.3"
-  "@tiptap/extension-underline": "^2.22.3"
-  "@tiptap/html": "^2.22.3"
-  "@tiptap/pm": "^2.22.3"
-  "@tiptap/react": "^2.22.3"
-  "@tiptap/starter-kit": "^2.22.3"
-  "@tiptap/suggestion": "^2.22.3"
+  "@tiptap/extension-blockquote": "^2.27.3"
+  "@tiptap/extension-character-count": "^2.27.3"
+  "@tiptap/extension-collaboration": "^2.27.3"
+  "@tiptap/extension-document": "^2.27.3"
+  "@tiptap/extension-emoji": "^2.27.3"
+  "@tiptap/extension-heading": "^2.27.3"
+  "@tiptap/extension-image": "^2.27.3"
+  "@tiptap/extension-list-item": "^2.27.3"
+  "@tiptap/extension-mention": "^2.27.3"
+  "@tiptap/extension-placeholder": "^2.27.3"
+  "@tiptap/extension-task-item": "^2.27.3"
+  "@tiptap/extension-task-list": "^2.27.3"
+  "@tiptap/extension-text": "^2.27.3"
+  "@tiptap/extension-text-align": "^2.27.3"
+  "@tiptap/extension-text-style": "^2.27.3"
+  "@tiptap/extension-underline": "^2.27.3"
+  "@tiptap/html": "^2.27.3"
+  "@tiptap/pm": "^2.27.3"
+  "@tiptap/react": "^2.27.3"
+  "@tiptap/starter-kit": "^2.27.3"
+  "@tiptap/suggestion": "^2.27.3"
   "@types/chroma-js": "^3.1.2"
   "@types/compression": "1.8.1"
   "@types/cors": "^2.8.17"
@@ -206,6 +208,9 @@ overrides:
   # @makeplane/propel and @plane/blocks must share one Base UI copy: two copies mean
   # two React contexts, so a blocks part rendered inside a propel root cannot see it.
   "@base-ui/react": "catalog:"
+  # @hocuspocus/transformer (apps/live) brings its own starter-kit; hold it on the
+  # catalog so the whole @tiptap/* family stays on one version.
+  "@tiptap/starter-kit": "catalog:"
   express: "catalog:"
   # @react-router/serve v8 needs Express 5 — it mounts with the Express 5 path syntax
   # `app.all("/{*splat}")`, which Express 4 silently fails to match, 404ing every route.
