@@ -18,7 +18,7 @@ from drf_spectacular.utils import OpenApiExample, OpenApiRequest
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.settings.storage import S3Storage
 from plane.utils.path_validator import sanitize_filename
-from plane.db.models import FileAsset, User, Workspace
+from plane.db.models import FileAsset, Project, ProjectMember, User, Workspace
 from plane.app.permissions import WorkspaceUserPermission
 from plane.api.views.base import BaseAPIView
 from plane.api.serializers import (
@@ -335,7 +335,7 @@ class UserServerAssetEndpoint(BaseAPIView):
         )
 
         # Get the presigned URL
-        storage = S3Storage(request=request, is_server=True)
+        storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
         presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
         # Return the presigned URL
@@ -437,6 +437,13 @@ class GenericAssetEndpoint(BaseAPIView):
             # Get the asset
             asset = FileAsset.objects.get(id=asset_id, workspace_id=workspace.id, is_deleted=False)
 
+            # A project-bound asset requires active membership of its project.
+            if not asset.is_project_accessible_to(request.user):
+                return Response(
+                    {"error": "You don't have access to this asset."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             # Check if the asset exists and is uploaded
             if not asset.is_uploaded:
                 return Response(
@@ -446,7 +453,7 @@ class GenericAssetEndpoint(BaseAPIView):
 
             # Generate presigned URL for GET. Inline only for an allow-listed image type, which S3Storage
             # pins as the response Content-Type; any other type downloads.
-            storage = S3Storage(request=request, is_server=True)
+            storage = S3Storage(request=request)
             presigned_url = storage.generate_presigned_url(
                 object_name=asset.asset.name,
                 filename=asset.attributes.get("name"),
@@ -537,13 +544,38 @@ class GenericAssetEndpoint(BaseAPIView):
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
 
+        # The asset is an issue attachment: it needs a project in this workspace that the
+        # caller is an active member of. Validated before the dedup lookup, which is scoped
+        # to that project.
+        if not project_id:
+            return Response(
+                {"error": "Project id is required.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not Project.objects.filter(id=project_id, workspace_id=workspace.id).exists():
+            return Response(
+                {"error": "Project not found.", "status": False},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        if not ProjectMember.objects.filter(
+            member=request.user,
+            workspace_id=workspace.id,
+            project_id=project_id,
+            is_active=True,
+        ).exists():
+            return Response(
+                {"error": "You don't have access to this project.", "status": False},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         # asset key
         asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
 
-        # Check for existing asset with same external details if provided
+        # Check for existing asset with same external details in this project
         if external_id and external_source:
             existing_asset = FileAsset.objects.filter(
-                workspace__slug=slug,
+                workspace_id=workspace.id,
+                project_id=project_id,
                 external_source=external_source,
                 external_id=external_id,
                 is_deleted=False,
@@ -573,7 +605,7 @@ class GenericAssetEndpoint(BaseAPIView):
         )
 
         # Get the presigned URL
-        storage = S3Storage(request=request, is_server=True)
+        storage = S3Storage(request=request)
         presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
 
         return Response(
@@ -614,6 +646,13 @@ class GenericAssetEndpoint(BaseAPIView):
         """
         try:
             asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug, is_deleted=False)
+
+            # A project-bound asset requires active membership of its project.
+            if not asset.is_project_accessible_to(request.user):
+                return Response(
+                    {"error": "You don't have access to this asset."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
             # Update is_uploaded status
             asset.is_uploaded = request.data.get("is_uploaded", asset.is_uploaded)
