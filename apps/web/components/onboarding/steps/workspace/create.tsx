@@ -12,6 +12,7 @@ import { TickCircleOutline } from "@makeplane/propel/icons";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { Button as ButtonElement } from "@makeplane/propel/elements/button";
 import { setToast } from "@plane/blocks/toast";
 import type { IUser, IWorkspace } from "@plane/types";
@@ -135,55 +136,42 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
     >
       <CommonOnboardingHeader title="Create your workspace" description="All your work — unified." />
       <div className="flex flex-col gap-8">
-        <div className="flex flex-col gap-2">
-          <label
-            className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
-            htmlFor="name"
-          >
-            {t("workspace_creation.form.name.label")}
-          </label>
-          <Controller
-            control={control}
-            name="name"
-            rules={{
-              required: t("common.errors.required"),
-              validate: (value) => validateWorkspaceName(value, true),
-              maxLength: {
-                value: 80,
-                message: t("workspace_creation.errors.validation.name_length"),
-              },
-            }}
-            render={({ field: { value, ref, onChange } }) => (
-              <div className="relative flex items-center rounded-md">
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={value}
-                  onChange={(event) => {
-                    onChange(event.target.value);
-                    setValue("name", event.target.value);
-                    setValue("slug", event.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"), {
-                      shouldValidate: true,
-                    });
-                  }}
-                  placeholder="Enter workspace name"
-                  ref={ref}
-                  className={cn(
-                    "w-full rounded-md border border-strong bg-surface-1 px-3 py-2 text-secondary transition-all duration-200 placeholder:text-placeholder focus:border-transparent focus:ring-2 focus:ring-accent-strong focus:outline-none",
-                    {
-                      "border-strong": !errors.name,
-                      "border-danger-strong": errors.name,
-                    }
-                  )}
-                  // eslint-disable-next-line jsx-a11y/no-autofocus
-                  autoFocus
-                />
-              </div>
-            )}
-          />
-          {errors.name && <span className="text-13 text-danger-primary">{errors.name.message}</span>}
-        </div>
+        <Controller
+          control={control}
+          name="name"
+          rules={{
+            required: t("common.errors.required"),
+            validate: (value) => validateWorkspaceName(value, true),
+            maxLength: {
+              value: 80,
+              message: t("workspace_creation.errors.validation.name_length"),
+            },
+          }}
+          render={({ field: { value, ref, onChange } }) => (
+            <InputField
+              id="name"
+              name="name"
+              size="xl"
+              orientation="vertical"
+              label={t("workspace_creation.form.name.label")}
+              required
+              type="text"
+              value={value}
+              onChange={(event) => {
+                onChange(event.target.value);
+                setValue("name", event.target.value);
+                setValue("slug", event.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"), {
+                  shouldValidate: true,
+                });
+              }}
+              placeholder="Enter workspace name"
+              ref={ref}
+              // eslint-disable-next-line jsx-a11y/no-autofocus
+              autoFocus
+              error={errors.name?.message}
+            />
+          )}
+        />
         <div className="flex flex-col gap-2">
           <label
             className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
