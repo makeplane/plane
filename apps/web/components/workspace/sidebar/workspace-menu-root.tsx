@@ -12,11 +12,12 @@ import { ChevronDownOutline, LogOutOutline, MailOutline, PlusCircleOutline } fro
 // plane imports
 import { Icon } from "@makeplane/propel/components/icon";
 import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@makeplane/propel/components/menu";
+import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
 import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
 import type { IWorkspace } from "@plane/types";
 import { Loader } from "@plane/blocks/skeleton";
-import { orderWorkspacesList, cn } from "@plane/utils";
+import { orderWorkspacesList, cn, getFileURL } from "@plane/utils";
 // helpers
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
@@ -25,7 +26,6 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 import { useInstance } from "@/hooks/store/use-instance";
 // components
-import { WorkspaceLogo } from "../logo";
 import SidebarDropdownItem from "./dropdown-item";
 
 type WorkspaceMenuRootProps = {
@@ -90,17 +90,21 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
             render={
               <button
                 type="button"
-                className={cn("flex size-8 w-full items-center justify-center rounded-md", {
-                  "bg-layer-1": isWorkspaceMenuOpen,
-                })}
+                className={cn(
+                  "flex size-8 w-full items-center justify-center rounded-md outline-none focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-inset",
+                  {
+                    "bg-layer-1": isWorkspaceMenuOpen,
+                  }
+                )}
                 aria-label={t("aria_labels.projects_sidebar.open_workspace_switcher")}
               >
                 <AppSidebarItem.Icon
                   icon={
-                    <WorkspaceLogo
-                      logo={activeWorkspace?.logo_url}
-                      name={activeWorkspace?.name}
-                      classNames="size-8 rounded-md border border-subtle"
+                    <WorkspaceAvatar
+                      size="md"
+                      src={getFileURL(activeWorkspace?.logo_url ?? "")}
+                      alt={activeWorkspace?.name}
+                      aria-hidden
                     />
                   }
                 />
@@ -114,7 +118,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
               <button
                 type="button"
                 className={cn(
-                  "group/menu-button flex flex-grow items-center justify-between gap-1 truncate rounded-sm p-1 text-13 font-medium text-secondary hover:bg-layer-1 focus:outline-none",
+                  "group/menu-button flex flex-grow items-center justify-between gap-1 truncate rounded-sm p-1 text-body-xs-medium text-secondary outline-none hover:bg-layer-1 focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-inset",
                   {
                     "bg-layer-1": isWorkspaceMenuOpen,
                   }
@@ -122,12 +126,13 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                 aria-label={t("aria_labels.projects_sidebar.open_workspace_switcher")}
               >
                 <div className="flex flex-grow items-center gap-2 truncate">
-                  <WorkspaceLogo
-                    logo={activeWorkspace?.logo_url}
-                    name={activeWorkspace?.name}
-                    classNames="border border-subtle rounded-md size-7"
+                  <WorkspaceAvatar
+                    size="sm"
+                    src={getFileURL(activeWorkspace?.logo_url ?? "")}
+                    alt={activeWorkspace?.name}
+                    aria-hidden
                   />
-                  <h4 className="truncate text-14 font-medium text-primary">{activeWorkspace?.name ?? t("loading")}</h4>
+                  <h4 className="truncate text-body-sm-medium text-primary">{activeWorkspace?.name ?? t("loading")}</h4>
                 </div>
                 <ChevronDownOutline
                   className={cn("size-4 flex-shrink-0 text-placeholder duration-300", {
@@ -140,7 +145,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
         )}
         <MenuContent side="bottom" align="start">
           <div className="flex w-[19rem] max-w-full flex-col items-start justify-start">
-            <span className="sticky top-0 z-1 w-full flex-shrink-0 truncate bg-layer-2 px-4 pt-3 pb-1 text-left text-13 font-medium text-placeholder">
+            <span className="sticky top-0 z-1 w-full flex-shrink-0 truncate bg-layer-2 px-4 pt-3 pb-1 text-left text-caption-md-regular text-tertiary">
               {currentUser?.email}
             </span>
             {workspacesList ? (
