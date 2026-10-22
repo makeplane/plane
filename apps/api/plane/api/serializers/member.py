@@ -37,6 +37,29 @@ class ProjectMemberSerializer(BaseSerializer):
             raise serializers.ValidationError("Invalid role", code="INVALID_ROLE")
         return value
 
+    def validate(self, attrs):
+        # Mirrors ProjectMemberViewSet.partial_update: a project role cannot
+        # exceed the target's workspace role (workspace guests stay guests).
+        role = attrs.get("role")
+        if role is None and self.instance is not None:
+            role = self.instance.role
+        member = attrs.get("member") or (self.instance.member if self.instance else None)
+        slug = self.context.get("slug")
+        if role is not None and member is not None and slug:
+            workspace_role = (
+                WorkspaceMember.objects.filter(workspace__slug=slug, member=member, is_active=True)
+                .values_list("role", flat=True)
+                .first()
+            )
+            if workspace_role is None:
+                raise serializers.ValidationError({"member": "Member not found in workspace"}, code="INVALID_MEMBER")
+            if workspace_role == ROLE.GUEST.value and role in [ROLE.ADMIN.value, ROLE.MEMBER.value]:
+                raise serializers.ValidationError(
+                    "You cannot assign a role higher than the member's workspace role",
+                    code="INVALID_ROLE",
+                )
+        return attrs
+
     class Meta:
         model = ProjectMember
         fields = ["id", "member", "role"]
