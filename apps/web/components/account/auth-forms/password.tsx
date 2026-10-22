@@ -12,6 +12,7 @@ import { CloseCircleOutline, HideOutline, ShowOutline } from "@makeplane/propel/
 // plane imports
 import { Banner } from "@makeplane/propel/components/banner";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
@@ -178,14 +179,15 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               disabled
             />
             {passwordFormData.email.length > 0 && (
-              <button
+              <IconButton
                 type="button"
-                className="grid size-5 place-items-center"
+                variant="ghost"
+                size="sm"
+                icon={<CloseCircleOutline className="size-4" />}
                 onClick={handleEmailClear}
                 aria-label={t("aria_labels.auth_forms.clear_email")}
-              >
-                <CloseCircleOutline className="size-5 text-placeholder" />
-              </button>
+                showTooltip={false}
+              />
             )}
           </InputGroup>
         </div>
@@ -208,20 +210,17 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               autoComplete="off"
               autoFocus
             />
-            <button
+            <IconButton
               type="button"
+              variant="ghost"
+              size="sm"
+              icon={showPassword?.password ? <HideOutline className="size-4" /> : <ShowOutline className="size-4" />}
               onClick={() => handleShowPassword("password")}
-              className="grid size-5 place-items-center"
               aria-label={t(
                 showPassword?.password ? "aria_labels.auth_forms.hide_password" : "aria_labels.auth_forms.show_password"
               )}
-            >
-              {showPassword?.password ? (
-                <HideOutline className="size-5 text-placeholder" />
-              ) : (
-                <ShowOutline className="size-5 text-placeholder" />
-              )}
-            </button>
+              showTooltip={false}
+            />
           </InputGroup>
           {passwordSupport}
         </div>
@@ -244,22 +243,21 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
                 autoComplete="off"
               />
-              <button
+              <IconButton
                 type="button"
-                className="grid size-5 place-items-center"
+                variant="ghost"
+                size="sm"
+                icon={
+                  showPassword?.retypePassword ? <HideOutline className="size-4" /> : <ShowOutline className="size-4" />
+                }
                 aria-label={t(
                   showPassword?.retypePassword
                     ? "aria_labels.auth_forms.hide_password"
                     : "aria_labels.auth_forms.show_password"
                 )}
                 onClick={() => handleShowPassword("retypePassword")}
-              >
-                {showPassword?.retypePassword ? (
-                  <HideOutline className="size-5 text-placeholder" />
-                ) : (
-                  <ShowOutline className="size-5 text-placeholder" />
-                )}
-              </button>
+                showTooltip={false}
+              />
             </InputGroup>
             {!!passwordFormData.confirm_password &&
               passwordFormData.password !== passwordFormData.confirm_password &&
