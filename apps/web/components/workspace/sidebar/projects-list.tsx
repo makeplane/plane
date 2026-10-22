@@ -16,13 +16,14 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
+import { ListItem, ListItemLabel } from "@makeplane/propel/components/list";
+import { ListItemButton } from "@makeplane/propel/elements/list";
 import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Loader } from "@plane/blocks/skeleton";
 import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project/create-project-modal";
-import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
@@ -176,7 +177,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
             render={<div className="group/projects-section" />}
             open={isAllProjectsListOpen}
             onOpenChange={toggleListDisclosure}
-            trigger={<span className="text-13 font-semibold whitespace-nowrap text-placeholder">{t("projects")}</span>}
+            trigger={<span className="text-body-xs-semibold whitespace-nowrap text-tertiary">{t("projects")}</span>}
             trailing={
               isAuthorizedUser ? (
                 <span className="hidden text-placeholder group-focus-within/projects-section:inline-flex group-hover/projects-section:inline-flex">
@@ -184,6 +185,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                     <IconButton
                       variant="ghost"
                       size="xs"
+                      showTooltip={false}
                       icon={<Icon icon={AddOutline} />}
                       onClick={() => {
                         setIsProjectModalOpen(true);
@@ -195,7 +197,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
               ) : null
             }
           >
-            <div className="flex flex-col gap-0.5">
+            <div className="flex flex-col gap-0.5 p-0.5">
               {loader === "init-loader" && (
                 <Loader className="w-full space-y-1.5">
                   {Array.from({ length: 4 }).map((_, index) => (
@@ -217,11 +219,10 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                 />
               ))}
               {hasMoreProjects && (
-                <SidebarNavItem>
-                  <button
+                <ListItem density="comfortable">
+                  <ListItemButton
                     type="button"
                     onClick={() => toggleExtendedProjectSidebar()}
-                    className="flex flex-grow items-center gap-1.5 text-13 font-medium text-tertiary"
                     id="extended-project-sidebar-toggle"
                     aria-label={t(
                       isExtendedProjectSidebarOpened
@@ -229,25 +230,26 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                         : "aria_labels.app_sidebar.open_extended_sidebar"
                     )}
                   >
-                    <MoreHorizontalOutline className="size-4 flex-shrink-0" />
-                    <span>{isExtendedProjectSidebarOpened ? "Hide" : "More"}</span>
-                  </button>
-                </SidebarNavItem>
+                    <Icon icon={MoreHorizontalOutline} />
+                    <ListItemLabel>{isExtendedProjectSidebarOpened ? "Hide" : "More"}</ListItemLabel>
+                  </ListItemButton>
+                </ListItem>
               )}
             </div>
           </Collapsible>
         </>
 
         {isAuthorizedUser && joinedProjects?.length === 0 && (
-          <button
-            type="button"
-            className="flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-13 leading-5 font-medium text-secondary hover:bg-surface-2"
-            onClick={() => {
-              toggleCreateProjectModal(true);
-            }}
-          >
-            {t("add_project")}
-          </button>
+          <ListItem density="comfortable">
+            <ListItemButton
+              type="button"
+              onClick={() => {
+                toggleCreateProjectModal(true);
+              }}
+            >
+              <ListItemLabel>{t("add_project")}</ListItemLabel>
+            </ListItemButton>
+          </ListItem>
         )}
       </div>
     </>
