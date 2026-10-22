@@ -113,7 +113,8 @@ function getEnvValue() {
         grep -q "^$key=" "$file"
         if [ $? -eq 0 ]; then
             local value
-            value=$(grep "^$key=" "$file" | cut -d'=' -f2)
+            # Everything after the first "=", so values containing "=" are read whole
+            value=$(grep -m1 "^$key=" "$file" | cut -d'=' -f2-)
             echo "$value"
         else
             echo ""
@@ -137,17 +138,119 @@ function updateEnvFile() {
             echo "$key=$value" >> "$file"
             return
         else 
-            if [ "$OS_NAME" == "Darwin" ]; then
-                value=$(echo "$value" | sed 's/|/\\|/g')
-                sed -i '' "s|^$key=.*|$key=$value|g" "$file"
-            else
-                value=$(echo "$value" | sed 's/\//\\\//g')
-                sed -i "s/^$key=.*/$key=$value/g" "$file"
+            # awk reads the value from the environment, so it is written literally (no sed escaping).
+            # The result is copied back into the same file to keep its mode and owner; mktemp creates the copy as 0600.
+            local tmp
+            tmp=$(mktemp "$file.XXXXXX") || exit 1
+            if ! KEY="$key" VAL="$value" awk 'BEGIN { p = ENVIRON["KEY"] "=" } index($0, p) == 1 { print p ENVIRON["VAL"]; next } { print }' "$file" > "$tmp"; then
+                rm -f "$tmp"
+                echo "Failed to update $key in $file" >&2
+                exit 1
             fi
+            if ! cat "$tmp" > "$file"; then
+                echo "Failed to write $file" >&2
+                # Repair a partial write from the complete copy; keep the copy if that fails too.
+                if cat "$tmp" > "$file" 2> /dev/null; then
+                    rm -f "$tmp"
+                else
+                    echo "Its complete updated contents are kept at $tmp" >&2
+                fi
+                exit 1
+            fi
+            rm -f "$tmp"
         fi
     else
         echo "File not found: $file"
         exit 1
+    fi
+}
+
+SECRET_PLACEHOLDER="change-this-key-on-deployment"
+OLD_DEFAULT_SECRET_KEY="60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5"
+OLD_DEFAULT_LIVE_KEYS="htbqvBJAgpm9bzvf3r4urJer0ENReatceh 2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW"
+
+function dockerVolumeAbsent() {
+    local volumes
+    docker info > /dev/null 2>&1 || return 1
+    volumes=$(docker volume ls -q 2> /dev/null) || return 1
+    ! echo "$volumes" | grep -Fxq "$1"
+}
+
+function generateSecret() {
+    local secret=""
+    if command -v openssl > /dev/null 2>&1; then
+        secret=$(openssl rand -hex 32 2> /dev/null)
+    fi
+    if [ ${#secret} -ne 64 ]; then
+        secret=$(head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n')
+    fi
+    if [ ${#secret} -ne 64 ]; then
+        return 1
+    fi
+    echo "$secret"
+}
+
+function generateInstallSecrets() {
+    local file=$1
+    local key value generated=false
+
+    for key in SECRET_KEY LIVE_SERVER_SECRET_KEY; do
+        if [ "$(getEnvValue "$key" "$file")" == "$SECRET_PLACEHOLDER" ]; then
+            if ! value=$(generateSecret); then
+                echo "Could not generate a random value for $key. Set it manually in $file" >&2
+                continue
+            fi
+            updateEnvFile "$key" "$value" "$file"
+            generated=true
+        fi
+    done
+
+    if [ "$generated" == "true" ]; then
+        echo "" >&2
+        echo "Unique SECRET_KEY and LIVE_SERVER_SECRET_KEY values were generated in $file." >&2
+        echo "Back up this file together with your data volumes; it is required to restore your data." >&2
+        echo "" >&2
+    fi
+}
+
+function isTemplateSecret() {
+    local key=$1
+    local value=$2
+    local old
+
+    if [ -z "$value" ] || [ "$value" == "$SECRET_PLACEHOLDER" ]; then
+        return 0
+    fi
+    if [ "$key" == "SECRET_KEY" ] && [ "$value" == "$OLD_DEFAULT_SECRET_KEY" ]; then
+        return 0
+    fi
+    if [ "$key" == "LIVE_SERVER_SECRET_KEY" ]; then
+        for old in $OLD_DEFAULT_LIVE_KEYS; do
+            [ "$value" == "$old" ] && return 0
+        done
+    fi
+    return 1
+}
+
+function warnTemplateSecrets() {
+    local file=$1
+    local key flagged=""
+
+    for key in SECRET_KEY LIVE_SERVER_SECRET_KEY; do
+        if isTemplateSecret "$key" "$(getEnvValue "$key" "$file")"; then
+            flagged="$flagged $key"
+        fi
+    done
+
+    if [ -n "$flagged" ]; then
+        echo "" >&2
+        echo "NOTICE: $file still uses a template or default value for:$flagged" >&2
+        echo "Your installation keeps working. To set a unique value, stop the services," >&2
+        echo "edit $file (for example with: openssl rand -hex 32) and start the services again." >&2
+        echo "Changing SECRET_KEY signs all users out, and saved instance settings (email, OAuth)" >&2
+        echo "must be re-entered in the admin app because they cannot be decrypted with a different key." >&2
+        echo "Changing LIVE_SERVER_SECRET_KEY has no effect on saved data." >&2
+        echo "" >&2
     fi
 }
 
@@ -177,7 +280,7 @@ function syncEnvFile(){
             if [ -n "$value" ]; then
                 updateEnvFile "$key" "$value" "$DOCKER_ENV_PATH"
             fi
-        done < "$DOCKER_ENV_PATH"
+        done <<< "$(cat "$DOCKER_ENV_PATH")" # a snapshot, since updateEnvFile rewrites the file in place
     fi
     echo "Environment variables synced successfully" >&2
 }
@@ -322,16 +425,35 @@ function download() {
         fi
     fi
 
+    local FRESH_INSTALL=false
     if [ -f "$DOCKER_ENV_PATH" ];
     then
         cp "$DOCKER_ENV_PATH" "$PLANE_INSTALL_DIR/archive/$TS.env"
         cp "$DOCKER_ENV_PATH" "$PLANE_INSTALL_DIR/plane.env.bak"
+    elif dockerVolumeAbsent "${SERVICE_FOLDER}_pgdata"; then
+        FRESH_INSTALL=true
     fi
 
-    mv $PLANE_INSTALL_DIR/variables-upgrade.env $DOCKER_ENV_PATH
+    # Written in place, so an existing plane.env keeps its mode and owner; a new one is created as 0600.
+    if ! (umask 077 && cat "$PLANE_INSTALL_DIR/variables-upgrade.env" > "$DOCKER_ENV_PATH"); then
+        echo "Failed to write $DOCKER_ENV_PATH" >&2
+        # Put back the previous state, so that a rerun starts from it.
+        if [ -f "$PLANE_INSTALL_DIR/archive/$TS.env" ]; then
+            cat "$PLANE_INSTALL_DIR/archive/$TS.env" > "$DOCKER_ENV_PATH" \
+                || echo "The previous file is kept at $PLANE_INSTALL_DIR/archive/$TS.env" >&2
+        else
+            rm -f "$DOCKER_ENV_PATH"
+        fi
+        exit 1
+    fi
+    rm -f "$PLANE_INSTALL_DIR/variables-upgrade.env"
 
     syncEnvFile
     generateStorageCredentials
+
+    if [ "$FRESH_INSTALL" == "true" ]; then
+        generateInstallSecrets "$DOCKER_ENV_PATH"
+    fi
 
     if [ "$LOCAL_BUILD" == "true" ]; then
         export DOCKERHUB_USER="myplane"
@@ -364,8 +486,10 @@ function download() {
     echo ""
     echo "In case of 'Upgrade', please check the 'plane.env 'file for any new variables and update them accordingly"
     echo ""
+    warnTemplateSecrets "$DOCKER_ENV_PATH"
 }
 function startServices() {
+    warnTemplateSecrets "$DOCKER_ENV_PATH"
     bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH up -d --pull if_not_present --quiet-pull"
 
     local migrator_container_id=$(docker container ls -aq -f "name=$SERVICE_FOLDER-migrator")
