@@ -345,7 +345,13 @@
       "success": "Updated {count} work items",
       "partial": "Updated {success} of {total} work items. {failed} failed.",
       "circular_parent": "The selected parent is one of the selected work items (or nested under one).",
-      "failed": "Could not update the selected work items. Please try again."
+      "failed": "Could not update the selected work items. Please try again.",
+      "moved_to_sprint": "Moved {count} work items to {name}",
+      "already_in_sprint": "The selected work items are already in {name}",
+      "move_to_sprint_failed": "Could not move the work items to {name}",
+      "removed_from_sprint": "Removed {count} work items from their sprint",
+      "no_sprint_to_remove": "The selected work items are not in any sprint",
+      "remove_from_sprint": "Remove from sprint"
     }
   },
   "d2m_quick_actions": {

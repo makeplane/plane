@@ -372,14 +372,17 @@ export const useMultipleSelect = (props: Props) => {
     if (disabled) return;
     selectedEntityIds.map((entityID) => {
       const isEntityPresent = entitiesList.find((en) => en?.entityID === entityID);
-      if (!isEntityPresent) {
+      // d2m-plane: sub-work items rendered under an expanded parent are not part of the grouped entities list,
+      // but they are selectable — keep them selected while their row is rendered in this container.
+      const isEntityRendered = !!containerRef.current?.querySelector(`[data-entity-id="${CSS.escape(entityID)}"]`);
+      if (!isEntityPresent && !isEntityRendered) {
         const entityDetails = getEntityDetailsFromEntityID(entityID);
         if (entityDetails) {
           handleEntitySelection(entityDetails);
         }
       }
     });
-  }, [disabled, entitiesList, getEntityDetailsFromEntityID, handleEntitySelection, selectedEntityIds]);
+  }, [containerRef, disabled, entitiesList, getEntityDetailsFromEntityID, handleEntitySelection, selectedEntityIds]);
 
   /**
    * @description helper functions for selection

@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -20,6 +20,7 @@ import { MemberSelect } from "@/components/dropdowns/member/member-select";
 import { StateSelect } from "@/components/dropdowns/state/state-select";
 import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
 // hooks
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";
@@ -50,7 +51,7 @@ export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot
   // translation
   const { t } = useTranslation();
   // router
-  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
+  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, cycleId: routerCycleId } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
   const projectId = routerProjectId?.toString();
   // store hooks
@@ -63,6 +64,7 @@ export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot
     subIssues: { fetchSubIssues },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
+  const { getCycleById } = useCycle();
   // states
   const [isUpdating, setIsUpdating] = useState(false);
   const [pendingAssigneeIds, setPendingAssigneeIds] = useState<string[]>([]);
@@ -71,6 +73,9 @@ export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot
   // refs (read the latest pending values when a dropdown closes)
   const pendingAssigneeIdsRef = useRef<string[]>([]);
   const pendingLabelIdsRef = useRef<string[]>([]);
+  // in a sprint view, don't offer the sprint being viewed as a move target (stable reference for the select)
+  const currentCycleId = routerCycleId?.toString();
+  const excludedCycleIds = useMemo(() => (currentCycleId ? [currentCycleId] : undefined), [currentCycleId]);
 
   if (!isSelectionActive || selectionHelpers.isSelectionDisabled) return null;
 
@@ -160,15 +165,66 @@ export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot
 
   // --- sprint (cycle)
   const handleCycle = async (cycleId: string | null) => {
-    if (!cycleId || !workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId) return;
+    // "No sprint" -> remove the selected items from whatever sprint they are in
+    if (!cycleId) {
+      const ids = selectedIds.filter((issueId) => !!getIssueById(issueId)?.cycle_id);
+      if (ids.length === 0) {
+        setToast({ type: "info", title: "Info", message: t("bulk_operations.d2m.no_sprint_to_remove") });
+        return;
+      }
+      setIsUpdating(true);
+      let failed = 0;
+      try {
+        for (let index = 0; index < ids.length; index += BULK_CONCURRENCY) {
+          const results = await Promise.allSettled(
+            ids
+              .slice(index, index + BULK_CONCURRENCY)
+              .map((issueId) => issues.removeCycleFromIssue(workspaceSlug, projectId, issueId))
+          );
+          failed += results.filter((result) => result.status === "rejected").length;
+        }
+      } finally {
+        setIsUpdating(false);
+      }
+      if (failed === 0) {
+        setToast({
+          type: "success",
+          title: "Success!",
+          message: t("bulk_operations.d2m.removed_from_sprint", { count: ids.length }),
+        });
+        if (currentCycleId) selectionHelpers.handleClearSelection();
+      } else notifyResult(ids.length, failed);
+      return;
+    }
+    const cycleName = getCycleById(cycleId)?.name ?? "sprint";
     const ids = selectedIds.filter((issueId) => getIssueById(issueId)?.cycle_id !== cycleId);
-    if (ids.length === 0) return;
+    if (ids.length === 0) {
+      setToast({
+        type: "info",
+        title: "Info",
+        message: t("bulk_operations.d2m.already_in_sprint", { name: cycleName }),
+      });
+      return;
+    }
     setIsUpdating(true);
     try {
-      await issues.addIssueToCycle(workspaceSlug, projectId, cycleId, ids);
-      notifyResult(ids.length, 0);
-    } catch {
-      notifyResult(ids.length, ids.length);
+      // the selected items are already in the store, so skip re-fetching them after the move
+      await issues.addIssueToCycle(workspaceSlug, projectId, cycleId, ids, false);
+      setToast({
+        type: "success",
+        title: "Success!",
+        message: t("bulk_operations.d2m.moved_to_sprint", { count: ids.length, name: cycleName }),
+      });
+      // items moved out of the sprint being viewed leave the list, so don't keep them selected
+      if (currentCycleId && currentCycleId !== cycleId) selectionHelpers.handleClearSelection();
+    } catch (error) {
+      const apiError = (error as { error?: string } | undefined)?.error;
+      setToast({
+        type: "error",
+        title: t("bulk_operations.d2m.move_to_sprint_failed", { name: cycleName }),
+        message: apiError ?? t("bulk_operations.d2m.failed"),
+      });
     } finally {
       setIsUpdating(false);
     }
@@ -249,6 +305,8 @@ export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot
           onChange={handleCycle}
           variant="pill-lg"
           placeholder={t("bulk_operations.d2m.sprint")}
+          clearLabel={t("bulk_operations.d2m.remove_from_sprint")}
+          excludeIds={excludedCycleIds}
           disabled={isDisabled}
         />
         <button

@@ -345,7 +345,13 @@
       "success": "Đã cập nhật {count} mục công việc",
       "partial": "Đã cập nhật {success}/{total} mục công việc. {failed} mục lỗi.",
       "circular_parent": "Mục cha được chọn nằm trong (hoặc là con của) các mục đang chọn.",
-      "failed": "Không thể cập nhật các mục đã chọn. Vui lòng thử lại."
+      "failed": "Không thể cập nhật các mục đã chọn. Vui lòng thử lại.",
+      "moved_to_sprint": "Đã chuyển {count} mục sang {name}",
+      "already_in_sprint": "Các mục đã chọn đã nằm trong {name}",
+      "move_to_sprint_failed": "Không thể chuyển các mục sang {name}",
+      "removed_from_sprint": "Đã gỡ {count} mục khỏi sprint",
+      "no_sprint_to_remove": "Các mục đã chọn không thuộc sprint nào",
+      "remove_from_sprint": "Gỡ khỏi sprint"
     }
   },
   "d2m_quick_actions": {
