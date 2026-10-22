@@ -10,10 +10,11 @@ import { HelpOutline, PagesOutline, UserOutline } from "@makeplane/propel/icons"
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Icon } from "@makeplane/propel/components/icon";
-import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@makeplane/propel/components/menu";
+import { Menu, MenuContent, MenuFooter, MenuItem, MenuSeparator, MenuTrigger } from "@makeplane/propel/components/menu";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { IconButton } from "@makeplane/propel/elements/icon-button";
 // components
 import { ProductUpdatesModal } from "@/components/global";
-import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 import { PlaneVersionNumber } from "@/components/global/version-number";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
@@ -31,27 +32,27 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
       <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} handleClose={() => setProductUpdatesModalOpen(false)} />
 
       <Menu onOpenChange={setIsNeedHelpOpen}>
-        {/* propel: `AppSidebarItem` takes no arbitrary props, so it cannot be the Base UI trigger
-            — the popup would have no element to anchor to. The trigger is a plain button wearing
-            the same chrome, with the item's own icon part inside it. */}
-        <MenuTrigger
-          render={
-            <button
-              type="button"
-              className="group flex flex-col items-center justify-center gap-0.5 text-tertiary"
-              aria-label={t("power_k.group_titles.help")}
-            >
-              <AppSidebarItem.Icon icon={<HelpOutline className="size-5" />} highlight={isNeedHelpOpen} />
-            </button>
-          }
-        />
+        <Tooltip label={t("power_k.group_titles.help")} side="bottom">
+          <MenuTrigger
+            render={
+              <IconButton
+                variant="ghost"
+                size="md"
+                aria-label={t("power_k.group_titles.help")}
+                render={<button type="button" className={isNeedHelpOpen ? "bg-layer-transparent-active" : undefined} />}
+              >
+                <HelpOutline className="size-4.5" />
+              </IconButton>
+            }
+          />
+        </Tooltip>
         <MenuContent
           side="bottom"
           align="end"
           footer={
-            <div className="text-11 text-secondary">
+            <MenuFooter>
               <PlaneVersionNumber />
-            </div>
+            </MenuFooter>
           }
         >
           <MenuItem
