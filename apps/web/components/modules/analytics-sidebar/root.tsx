@@ -17,7 +17,10 @@ import {
   UserAltOutline,
   WorkItemsOutline,
 } from "@makeplane/propel/icons";
+import { Button } from "@makeplane/propel/components/button";
 import { Collapsible } from "@makeplane/propel/components/collapsible";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, EEstimateSystem } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
@@ -87,14 +90,14 @@ const ModuleLinksCollapsible = observer(function ModuleLinksCollapsible(props: T
             <>
               {isEditingAllowed && !isArchived && (
                 <div className="flex w-full items-center justify-end">
-                  <button
-                    type="button"
-                    className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    stretch="auto"
+                    label={t("add_link")}
+                    icon={<Icon icon={AddOutline} />}
                     onClick={() => setModuleLinkModal(true)}
-                  >
-                    <AddOutline className="h-3 w-3" />
-                    {t("add_link")}
-                  </button>
+                  />
                 </div>
               )}
 
@@ -108,20 +111,20 @@ const ModuleLinksCollapsible = observer(function ModuleLinksCollapsible(props: T
               )}
             </>
           ) : (
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <InfoOutline className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
                 <span className="p-0.5 text-11 text-tertiary">{t("common.no_links_added_yet")}</span>
               </div>
               {isEditingAllowed && !isArchived && (
-                <button
-                  type="button"
-                  className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  stretch="auto"
+                  label={t("add_link")}
+                  icon={<Icon icon={AddOutline} />}
                   onClick={() => setModuleLinkModal(true)}
-                >
-                  <AddOutline className="h-3 w-3" />
-                  {t("add_link")}
-                </button>
+                />
               )}
             </div>
           )}
@@ -275,12 +278,13 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
       <>
         <div className={`sticky top-0 z-10 flex items-center justify-between bg-surface-1 pt-5 pb-5`}>
           <div>
-            <button
-              className="flex h-5 w-5 items-center justify-center rounded-full bg-layer-3"
+            <IconButton
+              variant="ghost"
+              size="md"
+              aria-label={t("close")}
+              icon={<Icon icon={ChevronRightOutline} />}
               onClick={() => handleClose()}
-            >
-              <ChevronRightOutline className="h-3 w-3 text-on-color" />
-            </button>
+            />
           </div>
         </div>
 
