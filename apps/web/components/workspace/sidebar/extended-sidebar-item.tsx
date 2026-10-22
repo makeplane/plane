@@ -216,24 +216,24 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
               </div>
             )}
             {isPinned ? (
-              <Tooltip label="Unpin">
+              <Tooltip label={t("unpin")}>
                 <IconButton
                   type="button"
                   variant="ghost"
                   size="xs"
-                  aria-label="Unpin"
+                  aria-label={t("unpin")}
                   showTooltip={false}
                   icon={<Icon icon={UnpinOutline} tint="placeholder" />}
                   onClick={() => unPinNavigationItem(item.key)}
                 />
               </Tooltip>
             ) : (
-              <Tooltip label="Pin">
+              <Tooltip label={t("pin")}>
                 <IconButton
                   type="button"
                   variant="ghost"
                   size="xs"
-                  aria-label="Pin"
+                  aria-label={t("pin")}
                   showTooltip={false}
                   icon={<Icon icon={PinOutline} tint="placeholder" />}
                   onClick={() => pinNavigationItem(item.key)}
