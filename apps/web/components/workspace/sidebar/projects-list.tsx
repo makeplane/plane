@@ -231,7 +231,9 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                     )}
                   >
                     <Icon icon={MoreHorizontalOutline} />
-                    <ListItemLabel>{isExtendedProjectSidebarOpened ? "Hide" : "More"}</ListItemLabel>
+                    <ListItemLabel>
+                      {isExtendedProjectSidebarOpened ? t("sidebar.hide") : t("sidebar.more")}
+                    </ListItemLabel>
                   </ListItemButton>
                 </ListItem>
               )}

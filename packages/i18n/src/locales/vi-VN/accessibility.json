@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Thanh bên chính",
+      "resize_sidebar": "Đổi kích thước thanh bên",
+      "sidebar_peek_view": "Xem trước thanh bên",
       "workspace_logo": "Logo không gian làm việc",
       "open_workspace_switcher": "Mở trình chuyển đổi không gian làm việc",
       "open_user_menu": "Mở menu người dùng",

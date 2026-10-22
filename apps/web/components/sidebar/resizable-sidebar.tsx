@@ -8,6 +8,7 @@ import type { Dispatch, ReactElement, SetStateAction } from "react";
 import React, { useCallback, useEffect, useState, useRef } from "react";
 // helpers
 import { usePlatformOS } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 
 interface ResizableSidebarProps {
@@ -49,6 +50,7 @@ export function ResizableSidebar({
   isAnyExtendedSidebarExpanded = false,
   isAnySidebarDropdownOpen = false,
 }: ResizableSidebarProps) {
+  const { t } = useTranslation();
   // states
   const [isResizing, setIsResizing] = useState(false);
   const [isHoveringTrigger, setIsHoveringTrigger] = useState(false);
@@ -192,7 +194,7 @@ export function ResizableSidebar({
           maxWidth: `${isCollapsed ? 0 : width}px`,
         }}
         role="complementary"
-        aria-label="Main sidebar"
+        aria-label={t("aria_labels.projects_sidebar.main_sidebar")}
         inert={isCollapsed}
         aria-hidden={isCollapsed}
         data-prevent-outside-click={isMobile}
@@ -217,7 +219,7 @@ export function ResizableSidebar({
             onDoubleClick={() => toggleCollapsed()}
             onMouseDown={(e) => startResizing(e)}
             role="separator"
-            aria-label="Resize sidebar"
+            aria-label={t("aria_labels.projects_sidebar.resize_sidebar")}
           />
         </aside>
       </div>
@@ -237,7 +239,7 @@ export function ResizableSidebar({
         onMouseEnter={handlePeekEnter}
         onMouseLeave={handlePeekLeave}
         role="complementary"
-        aria-label="Sidebar peek view"
+        aria-label={t("aria_labels.projects_sidebar.sidebar_peek_view")}
         inert={!(isCollapsed && showPeek)}
         aria-hidden={!(isCollapsed && showPeek)}
       >
@@ -261,7 +263,7 @@ export function ResizableSidebar({
             onDoubleClick={() => toggleCollapsed()}
             onMouseDown={(e) => startResizing(e)}
             role="separator"
-            aria-label="Resize sidebar"
+            aria-label={t("aria_labels.projects_sidebar.resize_sidebar")}
           />
         </aside>
       </div>
