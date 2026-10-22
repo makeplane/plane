@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { CloseOutline, DragDropOutline } from "@makeplane/propel/icons";
@@ -12,6 +12,14 @@ import { CloseOutline, DragDropOutline } from "@makeplane/propel/icons";
 import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Checkbox } from "@makeplane/propel/components/checkbox";
+import {
+  FieldDescription,
+  FieldItem,
+  FieldItemContent,
+  FieldItemControlGroup,
+  FieldLabel,
+} from "@makeplane/propel/elements/field";
+import { Radio, RadioGroup, RadioIndicator } from "@makeplane/propel/elements/radio";
 import {
   Dialog,
   DialogBody,
@@ -63,6 +71,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
 ) {
   const { isOpen, onClose } = props;
   const { t } = useTranslation();
+  const projectModeId = useId();
 
   // router
   const { workspaceSlug } = useParams();
@@ -295,43 +304,70 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                 <div className="rounded-md border border-subtle bg-surface-2 px-2 py-2">
                   <div className="space-y-3">
                     {/* Navigation Mode Radio Buttons */}
-                    <div className="space-y-2">
-                      {/* oxlint-disable-next-line jsx_a11y/label-has-associated-control */}
-                      <label className="flex cursor-pointer gap-2 rounded-md px-2 py-1.5 hover:bg-surface-2">
-                        <input
-                          type="radio"
-                          name="navigation-mode"
-                          value="ACCORDION"
-                          checked={projectPreferences.navigationMode === "ACCORDION"}
-                          onChange={() => updateNavigationMode("ACCORDION")}
-                          className="mt-1 size-4 text-accent-primary focus:ring-accent-strong"
-                        />
-                        <div className="flex-1">
-                          <div className="text-13 text-primary">{t("accordion_navigation_control")}</div>
-                          <div className="text-11 text-secondary">
-                            Feature tabs will appear as nested items under project and acts as accordion.
-                          </div>
-                        </div>
-                      </label>
-
-                      {/* oxlint-disable-next-line jsx_a11y/label-has-associated-control */}
-                      <label className="flex cursor-pointer gap-2 rounded-md px-2 py-1.5 hover:bg-surface-2">
-                        <input
-                          type="radio"
-                          name="navigation-mode"
-                          value="TABBED"
-                          checked={projectPreferences.navigationMode === "TABBED"}
-                          onChange={() => updateNavigationMode("TABBED")}
-                          className="mt-1 size-4 text-accent-primary focus:ring-accent-strong"
-                        />
-                        <div className="flex-1">
-                          <div className="text-13 text-primary">{t("horizontal_navigation_bar")}</div>
-                          <div className="text-11 text-secondary">
-                            Feature tabs will appear as horizontal tabs inside a project.
-                          </div>
-                        </div>
-                      </label>
-                    </div>
+                    <RadioGroup density="comfortable" role="radiogroup" aria-label={t("projects")}>
+                      {[
+                        {
+                          value: "ACCORDION" as const,
+                          label: t("accordion_navigation_control"),
+                          description: "Feature tabs will appear as nested items under project and acts as accordion.",
+                        },
+                        {
+                          value: "TABBED" as const,
+                          label: t("horizontal_navigation_bar"),
+                          description: "Feature tabs will appear as horizontal tabs inside a project.",
+                        },
+                      ].map(({ value, label, description }) => (
+                        <FieldItem
+                          key={value}
+                          render={
+                            <label
+                              htmlFor={`${projectModeId}-${value}`}
+                              aria-labelledby={`${projectModeId}-${value}-label`}
+                            />
+                          }
+                        >
+                          <FieldItemControlGroup>
+                            <span className="relative flex shrink-0 items-center justify-center">
+                              <Radio
+                                data-checked={projectPreferences.navigationMode === value ? "" : undefined}
+                                render={
+                                  <input
+                                    id={`${projectModeId}-${value}`}
+                                    type="radio"
+                                    name="navigation-mode"
+                                    value={value}
+                                    checked={projectPreferences.navigationMode === value}
+                                    onChange={() => updateNavigationMode(value)}
+                                    aria-labelledby={`${projectModeId}-${value}-label`}
+                                    aria-describedby={`${projectModeId}-${value}-description`}
+                                    className="cursor-pointer appearance-none"
+                                  />
+                                }
+                              />
+                              {projectPreferences.navigationMode === value && (
+                                <RadioIndicator
+                                  aria-hidden="true"
+                                  render={<span className="pointer-events-none absolute text-icon-accent-primary" />}
+                                />
+                              )}
+                            </span>
+                          </FieldItemControlGroup>
+                          <FieldItemContent>
+                            <FieldLabel
+                              size="md"
+                              inset={false}
+                              id={`${projectModeId}-${value}-label`}
+                              render={<span />}
+                            >
+                              {label}
+                            </FieldLabel>
+                            <FieldDescription size="md" id={`${projectModeId}-${value}-description`} render={<span />}>
+                              {description}
+                            </FieldDescription>
+                          </FieldItemContent>
+                        </FieldItem>
+                      ))}
+                    </RadioGroup>
 
                     {/* Limited Projects Checkbox */}
                     <div className="space-y-1">
