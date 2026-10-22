@@ -9,6 +9,7 @@ import sharp from "sharp";
 import { getAllDocumentFormatsFromDocumentEditorBinaryData } from "@plane/editor/lib";
 import type { PDFExportMetadata, TipTapDocument } from "@/lib/pdf";
 import { renderPlaneDocToPdfBuffer } from "@/lib/pdf";
+import { fetchImageSrcSafely } from "@/lib/url-security";
 import { getPageService } from "@/services/page/handler";
 import type { TDocumentTypes } from "@/types";
 import {
@@ -30,6 +31,21 @@ type TipTapNode = {
   type: string;
   attrs?: Record<string, unknown>;
   content?: TipTapNode[];
+};
+
+/**
+ * Normalizes a fetched image buffer into the JPEG data URI the PDF renderer expects —
+ * downscaled to IMAGE_MAX_DIMENSION and flattened onto white — the same way for every
+ * image source, whether it came from the asset store or an external URL.
+ */
+const toPdfImageDataUri = async (buffer: Buffer): Promise<string> => {
+  const processed = await sharp(buffer)
+    .rotate()
+    .flatten({ background: { r: 255, g: 255, b: 255 } })
+    .resize(IMAGE_MAX_DIMENSION, IMAGE_MAX_DIMENSION, { fit: "inside", withoutEnlargement: true })
+    .jpeg({ quality: 85 })
+    .toBuffer();
+  return `data:image/jpeg;base64,${processed.toString("base64")}`;
 };
 
 /**
@@ -66,6 +82,32 @@ export class PdfExportService extends Effect.Service<PdfExportService>()("PdfExp
 
       traverse(doc);
       return [...new Set(assetIds)];
+    },
+
+    /**
+     * Extracts external (http/https) image URLs from `image` and `imageComponent` nodes,
+     * the sources `extractImageAssetIds` leaves out. `processExternalImages` resolves
+     * them to data URIs, since the renderers only draw resolved data URIs.
+     */
+    extractExternalImageSrcs: (doc: TipTapNode): string[] => {
+      const srcs: string[] = [];
+
+      const traverse = (node: TipTapNode) => {
+        if ((node.type === "imageComponent" || node.type === "image") && node.attrs?.src) {
+          const src = node.attrs.src as string;
+          if (src && (src.startsWith("http://") || src.startsWith("https://"))) {
+            srcs.push(src);
+          }
+        }
+        if (node.content) {
+          for (const child of node.content) {
+            traverse(child);
+          }
+        }
+      };
+
+      traverse(doc);
+      return [...new Set(srcs)];
     },
 
     /**
@@ -164,12 +206,13 @@ export class PdfExportService extends Effect.Service<PdfExportService>()("PdfExp
         // Resolve URLs first
         const resolvedUrlMap = yield* tryAsync(
           async () => {
-            const urlMap = new Map<string, string>();
-            for (const assetId of assetIds) {
-              const url = await pageService.resolveImageAssetUrl?.(workspaceSlug, assetId, projectId);
-              if (url) urlMap.set(assetId, url);
-            }
-            return urlMap;
+            const entries = await Promise.all(
+              assetIds.map(async (assetId) => {
+                const url = await pageService.resolveImageAssetUrl?.(workspaceSlug, assetId, projectId);
+                return url ? ([assetId, url] as const) : null;
+              })
+            );
+            return new Map(entries.filter((entry): entry is readonly [string, string] => entry !== null));
           },
           () => new Map<string, string>()
         ).pipe(recoverWithDefault(new Map<string, string>()));
@@ -210,14 +253,8 @@ export class PdfExportService extends Effect.Service<PdfExportService>()("PdfExp
                 })
             );
 
-            const processedBuffer = yield* tryAsync(
-              () =>
-                sharp(Buffer.from(arrayBuffer))
-                  .rotate()
-                  .flatten({ background: { r: 255, g: 255, b: 255 } })
-                  .resize(IMAGE_MAX_DIMENSION, IMAGE_MAX_DIMENSION, { fit: "inside", withoutEnlargement: true })
-                  .jpeg({ quality: 85 })
-                  .toBuffer(),
+            const dataUri = yield* tryAsync(
+              () => toPdfImageDataUri(Buffer.from(arrayBuffer)),
               (cause) =>
                 new PdfImageProcessingError({
                   message: "Failed to process image",
@@ -226,8 +263,7 @@ export class PdfExportService extends Effect.Service<PdfExportService>()("PdfExp
                 })
             );
 
-            const base64 = processedBuffer.toString("base64");
-            return [assetId, `data:image/jpeg;base64,${base64}`] as const;
+            return [assetId, dataUri] as const;
           }).pipe(
             withTimeoutAndRetry(`process image ${assetId}`, {
               timeoutMs: IMAGE_TIMEOUT_MS,
@@ -245,6 +281,78 @@ export class PdfExportService extends Effect.Service<PdfExportService>()("PdfExp
 
         const entries = Array.from(resolvedUrlMap.entries());
         const pairs = yield* Effect.forEach(entries, processSingleImage, {
+          concurrency: IMAGE_CONCURRENCY,
+        });
+
+        const filtered = pairs.filter((p): p is readonly [string, string] => p !== null);
+        return Object.fromEntries(filtered);
+      }),
+
+    /**
+     * Fetches external image URLs with `fetchImageSrcSafely` and converts each into a
+     * data URI, as `processImages` does for asset-store images. Keyed by the source URL,
+     * so the renderers look it up like an asset id. A source that fails validation or
+     * fetching is left out, and the renderer draws its placeholder.
+     */
+    processExternalImages: (srcs: string[], requestId: string): Effect.Effect<Record<string, string>> =>
+      Effect.gen(function* () {
+        if (srcs.length === 0) {
+          return {};
+        }
+
+        yield* Effect.logDebug("PDF_EXPORT: Processing external image sources", {
+          requestId,
+          count: srcs.length,
+        });
+
+        const processSingleExternalImage = (src: string) =>
+          Effect.gen(function* () {
+            const buffer = yield* tryAsync(
+              () => fetchImageSrcSafely(src),
+              (cause) =>
+                new PdfImageProcessingError({
+                  message: "Failed to fetch external image",
+                  assetId: src,
+                  cause,
+                })
+            );
+
+            if (!buffer) {
+              return yield* Effect.fail(
+                new PdfImageProcessingError({
+                  message: "External image failed URL validation or fetch",
+                  assetId: src,
+                })
+              );
+            }
+
+            const dataUri = yield* tryAsync(
+              () => toPdfImageDataUri(buffer),
+              (cause) =>
+                new PdfImageProcessingError({
+                  message: "Failed to process external image",
+                  assetId: src,
+                  cause,
+                })
+            );
+
+            return [src, dataUri] as const;
+          }).pipe(
+            withTimeoutAndRetry(`process external image ${src}`, {
+              timeoutMs: IMAGE_TIMEOUT_MS,
+              maxRetries: 1,
+            }),
+            Effect.tapError((error) =>
+              Effect.logWarning("PDF_EXPORT: External image processing failed", {
+                requestId,
+                src,
+                error,
+              })
+            ),
+            Effect.catchAll(() => Effect.succeed(null as readonly [string, string] | null))
+          );
+
+        const pairs = yield* Effect.forEach(srcs, processSingleExternalImage, {
           concurrency: IMAGE_CONCURRENCY,
         });
 
@@ -325,8 +433,9 @@ export const exportToPdf = (
     // Fetch content
     const content = yield* service.fetchPageContent(pageService, pageId, requestId);
 
-    // Extract image asset IDs
+    // Extract image asset IDs and raw external image URLs
     const imageAssetIds = service.extractImageAssetIds(content.contentJSON as TipTapNode);
+    const externalImageSrcs = service.extractExternalImageSrcs(content.contentJSON as TipTapNode);
 
     // Fetch user mentions
     let metadata = yield* service.fetchUserMentions(pageService, pageId, requestId);
@@ -340,7 +449,13 @@ export const exportToPdf = (
         imageAssetIds,
         requestId
       );
-      metadata = { ...metadata, resolvedImageUrls: resolvedImages };
+      metadata = { ...metadata, resolvedImageUrls: { ...metadata.resolvedImageUrls, ...resolvedImages } };
+    }
+
+    // Resolve external image URLs into the same map processImages populates above.
+    if (!noAssets && externalImageSrcs.length > 0) {
+      const resolvedExternalImages = yield* service.processExternalImages(externalImageSrcs, requestId);
+      metadata = { ...metadata, resolvedImageUrls: { ...metadata.resolvedImageUrls, ...resolvedExternalImages } };
     }
 
     yield* Effect.logDebug("PDF_EXPORT: Metadata prepared", {

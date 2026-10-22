@@ -6,10 +6,21 @@
 
 import { describe, it, expect } from "vitest";
 import { PDFParse } from "pdf-parse";
+import sharp from "sharp";
 import { renderPlaneDocToPdfBuffer } from "@/lib/pdf";
 import type { TipTapDocument, PDFExportMetadata } from "@/lib/pdf";
 
 const PDF_HEADER = "%PDF-";
+
+/** A tiny valid JPEG data URI, standing in for a pre-fetched/resolved image src. */
+async function tinyJpegDataUri(): Promise<string> {
+  const buffer = await sharp({
+    create: { width: 2, height: 2, channels: 3, background: { r: 255, g: 0, b: 0 } },
+  })
+    .jpeg()
+    .toBuffer();
+  return `data:image/jpeg;base64,${buffer.toString("base64")}`;
+}
 
 /**
  * Helper to extract text content from a PDF buffer
@@ -728,5 +739,74 @@ describe("PDF Rendering Integration", () => {
 
       expect(text).toContain("Text after image");
     });
+  });
+
+  describe("image sources", () => {
+    // Renderers only pass pre-resolved or inline data:image URIs to <Image>; any other
+    // src renders a placeholder. pdf-export.service.ts resolves sources before rendering.
+
+    it("renders the pre-resolved data URI for an image node", async () => {
+      const src = "https://images.example.com/photo.png";
+      const doc: TipTapDocument = {
+        type: "doc",
+        content: [{ type: "image", attrs: { src } }],
+      };
+      const metadata: PDFExportMetadata = { resolvedImageUrls: { [src]: await tinyJpegDataUri() } };
+
+      const buffer = await renderPlaneDocToPdfBuffer(doc, { metadata });
+
+      expect(buffer.toString("ascii", 0, 5)).toBe(PDF_HEADER);
+    });
+
+    it("renders a placeholder for an image node without a resolved entry", async () => {
+      const doc: TipTapDocument = {
+        type: "doc",
+        content: [{ type: "image", attrs: { src: "https://images.example.com/never-fetched.png" } }],
+      };
+
+      const text = await extractPdfText(await renderPlaneDocToPdfBuffer(doc, { metadata: { resolvedImageUrls: {} } }));
+
+      expect(text).toContain("Image unavailable");
+    });
+
+    it("renders inline data:image URIs for an image node", async () => {
+      const doc: TipTapDocument = {
+        type: "doc",
+        content: [{ type: "image", attrs: { src: await tinyJpegDataUri() } }],
+      };
+
+      const buffer = await renderPlaneDocToPdfBuffer(doc);
+
+      expect(buffer.toString("ascii", 0, 5)).toBe(PDF_HEADER);
+    });
+
+    it("renders the pre-resolved data URI for an imageComponent with a URL src", async () => {
+      const src = "https://images.example.com/photo.png";
+      const doc: TipTapDocument = {
+        type: "doc",
+        content: [{ type: "imageComponent", attrs: { src } }],
+      };
+      const metadata: PDFExportMetadata = { resolvedImageUrls: { [src]: await tinyJpegDataUri() } };
+
+      const text = await extractPdfText(await renderPlaneDocToPdfBuffer(doc, { metadata }));
+
+      expect(text).not.toContain("[Image:");
+    });
+
+    it.each(["https://images.example.com/never-fetched.png", "asset-id-without-resolution"])(
+      "renders a placeholder for an imageComponent src without a resolved entry (%s)",
+      async (src) => {
+        const doc: TipTapDocument = {
+          type: "doc",
+          content: [{ type: "imageComponent", attrs: { src } }],
+        };
+
+        const text = await extractPdfText(
+          await renderPlaneDocToPdfBuffer(doc, { metadata: { resolvedImageUrls: {} } })
+        );
+
+        expect(text).toContain("[Image:");
+      }
+    );
   });
 });

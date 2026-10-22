@@ -8,6 +8,7 @@ import { Image, Link, Text, View } from "@react-pdf/renderer";
 import type { Style } from "@react-pdf/types";
 import type { ReactElement } from "react";
 import { CORE_EXTENSIONS } from "@plane/editor";
+import { isSafeImageSrc } from "@/lib/url-security";
 import { BACKGROUND_COLORS, EDITOR_BACKGROUND_COLORS, resolveColorForPdf, TEXT_COLORS } from "./colors";
 import { CheckIcon, ClipboardIcon, DocumentIcon, GlobeIcon, LightbulbIcon, LinkIcon } from "./icons";
 import { applyMarks } from "./mark-renderers";
@@ -86,6 +87,16 @@ const getFlexAlignStyle = (textAlign: string | null | undefined): Style => {
   if (textAlign === "right") return { alignItems: "flex-end" };
   if (textAlign === "center") return { alignItems: "center" };
   return {};
+};
+
+/**
+ * Returns the data:image URI to render for an image src: the entry pre-resolved by
+ * pdf-export.service.ts, or the src itself when it is already an inline data:image URI.
+ * Anything else returns null, so <Image> never fetches a URL or reads a path itself.
+ */
+const resolveImageDataUri = (src: string, ctx: PDFRenderContext): string | null => {
+  const resolved = ctx.metadata?.resolvedImageUrls?.[src] ?? src;
+  return resolved.startsWith("data:") && isSafeImageSrc(resolved) ? resolved : null;
 };
 
 export const nodeRenderers: NodeRendererRegistry = {
@@ -272,10 +283,20 @@ export const nodeRenderers: NodeRendererRegistry = {
           ? { alignItems: "flex-end" as const }
           : { alignItems: "flex-start" as const };
 
+    const resolvedSrc = resolveImageDataUri(src, ctx);
+
+    if (!resolvedSrc) {
+      return (
+        <View key={ctx.getKey()} style={[pdfStyles.imagePlaceholder, alignmentStyle]}>
+          <Text style={pdfStyles.imagePlaceholderText}>[Image unavailable]</Text>
+        </View>
+      );
+    }
+
     return (
       <View key={ctx.getKey()} style={[{ width: "100%" }, alignmentStyle]}>
         <Image
-          src={src}
+          src={resolvedSrc}
           style={[pdfStyles.image, width ? { width, maxHeight: 500 } : { maxWidth: 400, maxHeight: 500 }]}
         />
       </View>
@@ -296,10 +317,7 @@ export const nodeRenderers: NodeRendererRegistry = {
       return <View key={ctx.getKey()} />;
     }
 
-    let resolvedSrc = assetId;
-    if (ctx.metadata?.resolvedImageUrls && ctx.metadata.resolvedImageUrls[assetId]) {
-      resolvedSrc = ctx.metadata.resolvedImageUrls[assetId];
-    }
+    const resolvedSrc = resolveImageDataUri(assetId, ctx);
 
     const alignmentStyle =
       alignment === "center"
@@ -308,7 +326,7 @@ export const nodeRenderers: NodeRendererRegistry = {
           ? { alignItems: "flex-end" as const }
           : { alignItems: "flex-start" as const };
 
-    if (!resolvedSrc.startsWith("http") && !resolvedSrc.startsWith("data:")) {
+    if (!resolvedSrc) {
       return (
         <View key={ctx.getKey()} style={[pdfStyles.imagePlaceholder, alignmentStyle]}>
           <Text style={pdfStyles.imagePlaceholderText}>[Image: {assetId.slice(0, 8)}...]</Text>

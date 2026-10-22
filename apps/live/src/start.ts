@@ -5,8 +5,23 @@
  */
 
 import { logger } from "@plane/logger";
+import { env } from "@/env";
 import { AppError } from "@/lib/errors";
 import { Server } from "./server";
+
+// Warn (without refusing to start) when the shared key is the template value or an older shipped default.
+const INSECURE_LIVE_SERVER_SECRET_KEYS = new Set([
+  "change-this-key-on-deployment",
+  "htbqvBJAgpm9bzvf3r4urJer0ENReatceh",
+  "2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW",
+]);
+if (INSECURE_LIVE_SERVER_SECRET_KEYS.has(env.LIVE_SERVER_SECRET_KEY)) {
+  logger.error(
+    "SECURITY: LIVE_SERVER_SECRET_KEY is set to a placeholder or default value from the env templates. " +
+      "Set the same unique value for the API and Live services (the latest CLI setup.sh generates it on " +
+      "install and upgrade) and restart both."
+  );
+}
 
 let server: Server;
 

@@ -124,6 +124,24 @@ function generateStorageCredentials(){
     fi
 }
 
+function generateLiveServerSecretKey(){
+    # The API and Live services read this shared key from plane.env and restart together, so replacing it keeps no state.
+    # Rotate the template value, older shipped defaults and empty values; quotes from older templates are ignored.
+    local live_key=$(getEnvValue "LIVE_SERVER_SECRET_KEY" "$DOCKER_ENV_PATH")
+    live_key=${live_key//[\"\']/}
+    case "$live_key" in
+        ""|change-this-key-on-deployment|htbqvBJAgpm9bzvf3r4urJer0ENReatceh|2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW) ;;
+        *) return 0 ;;
+    esac
+
+    updateEnvFile "LIVE_SERVER_SECRET_KEY" "$(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 64)" "$DOCKER_ENV_PATH"
+    if [ -n "$live_key" ]; then
+        echo "NOTICE: The default LIVE_SERVER_SECRET_KEY was rotated; the new value is in plane.env" >&2
+    else
+        echo "Generated LIVE_SERVER_SECRET_KEY in plane.env" >&2
+    fi
+}
+
 function getEnvValue() {
     local key=$1
     local file=$2
@@ -241,6 +259,7 @@ function download() {
 
     syncEnvFile
     generateStorageCredentials
+    generateLiveServerSecretKey
 
     updateEnvFile "APP_RELEASE" "$APP_RELEASE" "$DOCKER_ENV_PATH"
 

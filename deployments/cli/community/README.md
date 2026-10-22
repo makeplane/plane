@@ -291,7 +291,7 @@ If all goes well, you will see the confirmation from docker cli
 
 It is always advised to keep Plane up to date with the latest release.
 
-> Download the latest `setup.sh` (see [Downloading Latest Release](#downloading-latest-release)) before upgrading. The upgrade runs your local copy of the script, and newer versions generate or rotate the object-storage (MinIO) credentials in `plane.env`.
+> Download the latest `setup.sh` (see [Downloading Latest Release](#downloading-latest-release)) before upgrading. The upgrade runs your local copy of the script, and newer versions generate or rotate the object-storage (MinIO) credentials and `LIVE_SERVER_SECRET_KEY` in `plane.env`.
 
 Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `5` to upgrade the release.
 
