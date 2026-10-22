@@ -20,6 +20,10 @@ FROM python:3.12.12-alpine AS runner
 
 WORKDIR /app
 
+# grpcio ships its own roots.pem, which still trusts emSign ECC Root CA - G3 (eMudhra incident);
+# point it at the system bundle, which the OS update below keeps current.
+ENV GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/certs/ca-certificates.crt
+
 # OS security updates. --available forces reinstall from the current repos;
 # bump APK_SECURITY_PATCH to bust buildx's cached layer (keyed on this command
 # string), otherwise a rebuild silently re-ships the old packages.

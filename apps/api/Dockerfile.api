@@ -14,6 +14,9 @@ ENV UV_PROJECT_ENVIRONMENT=/usr/local
 ENV UV_PYTHON_DOWNLOADS=never
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_NO_CACHE=1
+# grpcio ships its own roots.pem, which still trusts emSign ECC Root CA - G3 (eMudhra incident);
+# point it at the system bundle, which the OS update below keeps current.
+ENV GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/certs/ca-certificates.crt
 
 # OS security updates. --available forces reinstall from the current repos;
 # bump APK_SECURITY_PATCH to bust buildx's cached layer (keyed on this command
