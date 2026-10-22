@@ -176,7 +176,9 @@ catalog:
   "unified": "^11.0.5"
   "use-font-face-observer": "^1.3.0"
   "uuid": "14.0.0"
-  "vite": "8.0.16"
+  # No patched 8.0.x for CVE-2026-112942 / GHSA-587h-7wmj-h5pm (bundled launch-editor
+  # command injection); fixed lines are 8.1.6, 8.2.4 and 8.3.3.
+  "vite": "8.2.4"
   "vite-tsconfig-paths": "^5.1.4"
   "vitest": "^4.1.11"
   "winston": "^3.17.0"
