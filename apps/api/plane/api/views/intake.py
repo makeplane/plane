@@ -27,11 +27,12 @@ from plane.api.serializers import (
 )
 from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State, StateGroup
+from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State, StateGroup, WorkspaceMember
 from plane.utils.host import base_host
 from plane.utils.serializers import writable_data
 from plane.utils.content_validator import validate_html_content
 from .base import BaseAPIView
+from .issue import is_restricted_guest
 from plane.db.models.intake import SourceType
 from plane.utils.openapi import (
     intake_docs,
@@ -73,7 +74,7 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         if intake is None or not project.intake_view:
             return IntakeIssue.objects.none()
 
-        return (
+        queryset = (
             IntakeIssue.objects.filter(
                 Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
                 workspace__slug=self.kwargs.get("slug"),
@@ -83,6 +84,10 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
             .select_related("issue", "workspace", "project")
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
+        # Restricted guests only see the intake work items they submitted
+        if is_restricted_guest(self.request.user.id, self.kwargs.get("project_id"), self.kwargs.get("slug")):
+            queryset = queryset.filter(created_by=self.request.user)
+        return queryset
 
     @intake_docs(
         operation_id="get_intake_work_items_list",
@@ -247,7 +252,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         if intake is None or not project.intake_view:
             return IntakeIssue.objects.none()
 
-        return (
+        queryset = (
             IntakeIssue.objects.filter(
                 Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
                 workspace__slug=self.kwargs.get("slug"),
@@ -257,6 +262,10 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
             .select_related("issue", "workspace", "project")
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
+        # Restricted guests only see the intake work items they submitted
+        if is_restricted_guest(self.request.user.id, self.kwargs.get("project_id"), self.kwargs.get("slug")):
+            queryset = queryset.filter(created_by=self.request.user)
+        return queryset
 
     @intake_docs(
         operation_id="retrieve_intake_work_item",
@@ -481,24 +490,33 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
             project_id=project_id,
             intake_id=intake.id,
         )
+        # Restricted guests only see the intake work items they submitted
+        if intake_issue.created_by_id != request.user.id and is_restricted_guest(request.user.id, project_id, slug):
+            raise IntakeIssue.DoesNotExist()
+
+        # Only the work item's creator, a project admin or a workspace admin can delete it
+        issue = Issue.objects.filter(workspace__slug=slug, project_id=project_id, pk=issue_id).first()
+        if not (
+            (issue is not None and issue.created_by_id == request.user.id)
+            or ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+            or WorkspaceMember.objects.filter(
+                workspace__slug=slug, member=request.user, role=20, is_active=True
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or creator can delete the work item"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # Check the issue status
         if intake_issue.status in [-2, -1, 0, 2]:
             # Delete the issue also
-            issue = Issue.objects.filter(workspace__slug=slug, project_id=project_id, pk=issue_id).first()
-            if issue.created_by_id != request.user.id and (
-                not ProjectMember.objects.filter(
-                    workspace__slug=slug,
-                    member=request.user,
-                    role=20,
-                    project_id=project_id,
-                    is_active=True,
-                ).exists()
-            ):
-                return Response(
-                    {"error": "Only admin or creator can delete the work item"},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
             issue.delete()
 
         intake_issue.delete()
