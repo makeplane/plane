@@ -12,13 +12,13 @@ import { LogOutOutline, SettingsOutline } from "@makeplane/propel/icons";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { Icon } from "@makeplane/propel/components/icon";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+import { IconButton } from "@makeplane/propel/elements/icon-button";
 import { GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
 import { getFileURL } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";
-import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
@@ -58,28 +58,21 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
   return (
     <div className="flex items-center">
       <Menu onOpenChange={setIsUserMenuOpen}>
-        {/* propel: `AppSidebarItem` takes no arbitrary props, so it cannot be the Base UI trigger
-            — the popup would have no element to anchor to. The trigger is a plain button wearing
-            the same chrome, with the item's own icon part inside it. */}
         <MenuTrigger
           render={
-            <button
-              type="button"
-              className="group flex flex-col items-center justify-center gap-0.5 text-tertiary"
+            <IconButton
+              variant="ghost"
+              size="md"
               aria-label={t("aria_labels.projects_sidebar.open_user_menu")}
+              render={<button type="button" className={isUserMenuOpen ? "bg-layer-transparent-active" : undefined} />}
             >
-              <AppSidebarItem.Icon
-                icon={
-                  <Avatar
-                    alt={currentUser?.display_name}
-                    fallback={currentUser?.display_name?.[0]?.toUpperCase()}
-                    src={getFileURL(currentUser?.avatar_url ?? "")}
-                    size="xs"
-                  />
-                }
-                highlight={isUserMenuOpen}
+              <Avatar
+                alt={currentUser?.display_name}
+                fallback={currentUser?.display_name?.[0]?.toUpperCase()}
+                src={getFileURL(currentUser?.avatar_url ?? "")}
+                size="xs"
               />
-            </button>
+            </IconButton>
           }
         />
         <MenuContent side="bottom" align="end">
