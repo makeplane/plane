@@ -97,11 +97,11 @@ export function FavoriteFolder(props: Props) {
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="flex gap-1 rounded-sm bg-surface-1 p-1 pr-2 text-13">
+                <div className="flex gap-1 rounded-sm bg-surface-1 p-1 pr-2 text-body-xs-regular">
                   <div className="grid size-5 flex-shrink-0 place-items-center">
                     <FavoriteFolderIcon />
                   </div>
-                  <p className="truncate text-13 font-medium text-secondary">{favorite.name}</p>
+                  <p className="truncate text-body-xs-medium text-secondary">{favorite.name}</p>
                 </div>
               );
               return () => root.unmount();
