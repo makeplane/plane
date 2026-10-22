@@ -169,7 +169,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="flex items-center rounded-sm bg-surface-1 p-1 pr-2 text-13">
+                <div className="flex items-center rounded-sm bg-surface-1 p-1 pr-2 text-body-xs-regular">
                   <div className="grid size-4 flex-shrink-0 place-items-center">
                     {project && <Logo logo={project?.logo_props} />}
                   </div>
