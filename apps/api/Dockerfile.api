@@ -52,6 +52,14 @@ RUN --mount=from=uv,source=/uv,target=/bin/uv \
     && \
     rm -rf /var/cache/apk/*
 
+# pip is build tooling only; uv installed everything above and nothing installs
+# at runtime. The base image's pip (25.0.1) vendors a certifi that still trusts
+# the compromised emSign G3 root (GHSA-6q48-6c7w-9gw2). `python -m ensurepip`
+# restores it if ever needed.
+RUN rm -rf /usr/local/lib/python3.12/site-packages/pip \
+           /usr/local/lib/python3.12/site-packages/pip-*.dist-info \
+           /usr/local/bin/pip /usr/local/bin/pip3 /usr/local/bin/pip3.12
+
 
 # Add in Django deps and generate Django's static files
 COPY manage.py manage.py

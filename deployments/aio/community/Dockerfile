@@ -71,6 +71,13 @@ COPY --from=backend-img /usr/local/lib/python3.12/site-packages/ /usr/local/lib/
 COPY --from=backend-img /usr/local/bin/ /usr/local/bin/
 
 RUN pip install supervisor
+
+# pip is only needed for the install above. The runner base's own pip (25.0.1)
+# vendors a certifi that still trusts the compromised emSign G3 root
+# (GHSA-6q48-6c7w-9gw2), so drop it before the image ships.
+RUN rm -rf /usr/local/lib/python3.12/site-packages/pip \
+           /usr/local/lib/python3.12/site-packages/pip-*.dist-info \
+           /usr/local/bin/pip /usr/local/bin/pip3 /usr/local/bin/pip3.12
 RUN mkdir -p /etc/supervisor/conf.d
 
 COPY start.sh /app/start.sh
