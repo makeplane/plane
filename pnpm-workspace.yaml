@@ -159,7 +159,9 @@ catalog:
   "rehype-remark": "^10.0.1"
   "remark-gfm": "^4.0.1"
   "remark-stringify": "^11.0.0"
-  "sanitize-html": "2.17.7"
+  # 2.18.0 fixes GHSA-cv27-6wvh-8x7j, GHSA-x3q4-9hxx-gx8m and GHSA-374f-7chj-9948 but
+  # adds an iframe-fallback stack overflow (GHSA-c9rx-x947-fp3h) that 2.18.1 fixes.
+  "sanitize-html": "2.18.1"
   "serve": "14.2.5"
   "sharp": "^0.35.5"
   "smooth-scroll-into-view-if-needed": "^2.0.2"
