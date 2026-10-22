@@ -6,6 +6,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
+import { Toggle, ToggleLabel } from "@makeplane/propel/elements/toggle";
 // plane constants
 import { ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
 // plane i18n
@@ -66,26 +67,26 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
       />
       {previewEnabled && (
         <div className="mt-1 flex flex-wrap items-center gap-2">
-          {filteredDisplayProperties.map((displayProperty) => (
-            <>
-              <button
+          {filteredDisplayProperties.map((displayProperty) => {
+            const isSelected = !!displayProperties?.[displayProperty.key];
+
+            return (
+              <Toggle
                 key={displayProperty.key}
                 type="button"
-                className={`rounded-sm border px-2 py-0.5 text-11 transition-all ${
-                  displayProperties?.[displayProperty.key]
-                    ? "border-accent-strong bg-accent-primary text-on-color"
-                    : "border-subtle hover:bg-layer-1"
-                }`}
+                size="sm"
+                aria-pressed={isSelected}
+                data-pressed={isSelected ? "" : undefined}
                 onClick={() =>
                   handleUpdate({
                     [displayProperty.key]: !displayProperties?.[displayProperty.key],
                   })
                 }
               >
-                {t(displayProperty.titleTranslationKey)}
-              </button>
-            </>
-          ))}
+                <ToggleLabel>{t(displayProperty.titleTranslationKey)}</ToggleLabel>
+              </Toggle>
+            );
+          })}
         </div>
       )}
     </>
