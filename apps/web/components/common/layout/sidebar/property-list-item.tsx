@@ -5,6 +5,7 @@
  */
 
 import type { ReactNode } from "react";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 
 type TSidebarPropertyListItemProps = {
@@ -20,12 +21,14 @@ export function SidebarPropertyListItem(props: TSidebarPropertyListItemProps) {
 
   return (
     <div className="flex items-start gap-2">
-      <div className="flex h-7.5 w-30 shrink-0 items-center gap-1.5 text-body-xs-regular text-tertiary">
+      <div className="flex min-h-8 w-30 shrink-0 items-center gap-1.5 text-body-xs-regular text-tertiary">
         <Icon className="size-4 shrink-0" />
-        <span>{label}</span>
+        <Tooltip label={label}>
+          <span className="line-clamp-2 min-w-0 whitespace-normal">{label}</span>
+        </Tooltip>
         {appendElement}
       </div>
-      <div className={cn("flex grow flex-wrap items-center gap-1", childrenClassName)}>{children}</div>
+      <div className={cn("flex min-h-8 min-w-0 grow flex-wrap items-center gap-1", childrenClassName)}>{children}</div>
     </div>
   );
 }
