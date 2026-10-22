@@ -8,13 +8,12 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { Tab, Tabs, TabsList } from "@makeplane/propel/components/tabs";
 import type { TNotificationTab } from "@plane/constants";
 import { NOTIFICATION_TABS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, Header, EHeaderVariant, Row, ERowVariant } from "@plane/blocks/layout";
 import { cn, getNumberCount } from "@plane/utils";
-// components
-import { CountChip } from "@/components/common/count-chip";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -44,8 +43,12 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
   const notificationIds = workspace ? notificationIdsByWorkspaceId(workspace.id) : undefined;
 
   const handleTabClick = useCallback(
-    (tabValue: TNotificationTab) => {
-      if (currentNotificationTab !== tabValue) {
+    (tabValue: TNotificationTab | null) => {
+      if (
+        tabValue !== null &&
+        NOTIFICATION_TABS.some((tab) => tab.value === tabValue) &&
+        currentNotificationTab !== tabValue
+      ) {
         setCurrentNotificationTab(tabValue);
       }
     },
@@ -67,32 +70,29 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
         </Row>
 
         <Header variant={EHeaderVariant.SECONDARY} className="justify-start">
-          {NOTIFICATION_TABS.map((tab) => (
-            // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
-            <div
-              key={tab.value}
-              className="relative h-full cursor-pointer px-3"
-              onClick={() => handleTabClick(tab.value)}
-            >
-              <div
-                className={cn(
-                  "relative flex h-full items-center justify-center gap-1 text-body-xs-medium transition-all",
-                  {
-                    "text-accent-primary": currentNotificationTab === tab.value,
-                    "text-primary hover:text-secondary": currentNotificationTab !== tab.value,
-                  }
-                )}
-              >
-                <div className="font-medium">{t(tab.i18n_label)}</div>
-                {tab.count(unreadNotificationsCount) > 0 && (
-                  <CountChip count={getNumberCount(tab.count(unreadNotificationsCount))} />
-                )}
-              </div>
-              {currentNotificationTab === tab.value && (
-                <div className="absolute right-0 bottom-0 left-0 rounded-t-md border border-accent-strong" />
-              )}
-            </div>
-          ))}
+          <Tabs variant="contained" value={currentNotificationTab} onValueChange={handleTabClick}>
+            <TabsList aria-label={t("notification.label")}>
+              {NOTIFICATION_TABS.map((tab) => {
+                const label = t(tab.i18n_label);
+                const count = tab.count(unreadNotificationsCount);
+                const formattedCount = getNumberCount(count);
+                return (
+                  <Tab
+                    key={tab.value}
+                    value={tab.value}
+                    label=""
+                    aria-label={count > 0 ? `${label} ${formattedCount}` : label}
+                    icon={
+                      <span className="flex items-center gap-2">
+                        <span>{label}</span>
+                        {count > 0 && <span>{formattedCount}</span>}
+                      </span>
+                    }
+                  />
+                );
+              })}
+            </TabsList>
+          </Tabs>
         </Header>
 
         {/* applied filters */}

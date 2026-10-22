@@ -11,13 +11,15 @@ import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { PinOutline, UnpinOutline } from "@makeplane/propel/icons";
+import { DragDropOutline, PinOutline, UnpinOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { DragHandle, DropIndicator } from "@plane/blocks/common";
+import { DropIndicator } from "@plane/blocks/common";
 import { cn } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
@@ -173,19 +175,32 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
       >
         {!disableDrag && (
           <Tooltip label={t("drag_to_rearrange")} align="start" disabled={isDragging}>
-            <button
+            <IconButton
               type="button"
-              className={cn(
-                "absolute top-1/2 -left-3 flex -translate-y-1/2 cursor-grab items-center justify-center rounded text-placeholder opacity-0 group-hover/project-item:opacity-100",
-                {
-                  "cursor-grabbing": isDragging,
-                  "opacity-100": isDragging,
-                }
-              )}
+              variant="ghost"
+              size="xs"
+              aria-label={t("drag_to_rearrange")}
+              showTooltip={false}
               ref={dragHandleRef}
-            >
-              <DragHandle className="bg-transparent" />
-            </button>
+              onContextMenu={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+              }}
+              render={(buttonProps) => (
+                <button
+                  {...buttonProps}
+                  className={cn(
+                    buttonProps.className,
+                    "absolute top-1/2 -left-3 flex -translate-y-1/2 cursor-grab opacity-0 group-hover/project-item:opacity-100",
+                    {
+                      "cursor-grabbing": isDragging,
+                      "opacity-100": isDragging,
+                    }
+                  )}
+                />
+              )}
+              icon={<Icon icon={DragDropOutline} tint="placeholder" />}
+            />
           </Tooltip>
         )}
         <SidebarNavItem isActive={isActive}>
@@ -203,15 +218,25 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
             )}
             {isPinned ? (
               <Tooltip label="Unpin">
-                <UnpinOutline
-                  className="size-3.5 flex-shrink-0 text-placeholder outline-none hover:text-tertiary"
+                <IconButton
+                  type="button"
+                  variant="ghost"
+                  size="xs"
+                  aria-label="Unpin"
+                  showTooltip={false}
+                  icon={<Icon icon={UnpinOutline} tint="placeholder" />}
                   onClick={() => unPinNavigationItem(item.key)}
                 />
               </Tooltip>
             ) : (
               <Tooltip label="Pin">
-                <PinOutline
-                  className="size-3.5 flex-shrink-0 text-placeholder outline-none hover:text-tertiary"
+                <IconButton
+                  type="button"
+                  variant="ghost"
+                  size="xs"
+                  aria-label="Pin"
+                  showTooltip={false}
+                  icon={<Icon icon={PinOutline} tint="placeholder" />}
                   onClick={() => pinNavigationItem(item.key)}
                 />
               </Tooltip>

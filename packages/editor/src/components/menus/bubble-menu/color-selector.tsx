@@ -5,9 +5,12 @@
  */
 
 import type { Editor } from "@tiptap/react";
-import { Ban } from "lucide-react";
-import { TextOutline } from "@makeplane/propel/icons";
+import { DeactivatedOutline, TextOutline } from "@makeplane/propel/icons";
 import { useMemo } from "react";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/elements/icon-button";
+import { PopoverPopup } from "@makeplane/propel/elements/popover";
+import { ToolbarMenuTriggerButton, ToolbarMenuTriggerLabel } from "@makeplane/propel/elements/toolbar";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
@@ -35,12 +38,13 @@ export function BubbleMenuColorSelector(props: Props) {
     <FloatingMenuRoot
       classNames={{
         buttonContainer: "h-full",
-        button:
-          "flex items-center gap-1 h-full whitespace-nowrap px-3 text-13 font-medium text-tertiary hover:bg-layer-1 active:bg-layer-1 rounded-sm transition-colors",
       }}
+      renderButton={(buttonProps) => (
+        <ToolbarMenuTriggerButton {...buttonProps} size="sm" data-popup-open={options.context.open ? "" : undefined} />
+      )}
       menuButton={
         <>
-          <span>Color</span>
+          <ToolbarMenuTriggerLabel>Color</ToolbarMenuTriggerLabel>
           <span
             className={cn("grid size-6 flex-shrink-0 place-items-center rounded-sm border-[0.5px] border-strong", {
               "bg-surface-1": !activeBackgroundColor,
@@ -64,54 +68,68 @@ export function BubbleMenuColorSelector(props: Props) {
       getFloatingProps={getFloatingProps}
       getReferenceProps={getReferenceProps}
     >
-      <section className="mt-1 space-y-2 rounded-md border-[0.5px] border-strong bg-surface-1 p-2 shadow-raised-200">
+      <PopoverPopup variant="rich" render={<section className="mt-1" />}>
         <div className="space-y-1.5">
-          <p className="text-11 font-semibold text-tertiary">Text colors</p>
-          <div className="flex items-center gap-2">
+          <p className="text-body-xs-medium text-secondary">Text colors</p>
+          <div role="group" aria-label="Text colors" className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button
                 key={color.key}
                 type="button"
-                className="size-6 flex-shrink-0 rounded-sm border-[0.5px] border-strong-1 transition-opacity hover:opacity-60"
+                aria-label={`${color.label} text color`}
+                aria-pressed={activeTextColor?.key === color.key}
+                className={cn(
+                  "size-6 shrink-0 cursor-pointer rounded-sm border-xs border-subtle transition-opacity outline-none hover:opacity-60 focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-offset-1",
+                  activeTextColor?.key === color.key && "ring-2 ring-accent-strong ring-offset-1"
+                )}
                 style={{
                   backgroundColor: color.textColor,
                 }}
                 onClick={() => TextColorItem(editor).command({ color: color.key })}
               />
             ))}
-            <button
+            <IconButton
               type="button"
-              className="grid size-6 flex-shrink-0 place-items-center rounded-sm border-[0.5px] border-strong-1 text-tertiary transition-colors hover:bg-layer-1"
+              variant="secondary"
+              size="sm"
+              aria-label="Clear text color"
               onClick={() => TextColorItem(editor).command({ color: undefined })}
             >
-              <Ban className="size-4" />
-            </button>
+              <Icon icon={DeactivatedOutline} />
+            </IconButton>
           </div>
         </div>
         <div className="space-y-1.5">
-          <p className="text-11 font-semibold text-tertiary">Background colors</p>
-          <div className="flex items-center gap-2">
+          <p className="text-body-xs-medium text-secondary">Background colors</p>
+          <div role="group" aria-label="Background colors" className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button
                 key={color.key}
                 type="button"
-                className="size-6 flex-shrink-0 rounded-sm border-[0.5px] border-strong-1 transition-opacity hover:opacity-60"
+                aria-label={`${color.label} background color`}
+                aria-pressed={activeBackgroundColor?.key === color.key}
+                className={cn(
+                  "size-6 shrink-0 cursor-pointer rounded-sm border-xs border-subtle transition-opacity outline-none hover:opacity-60 focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-offset-1",
+                  activeBackgroundColor?.key === color.key && "ring-2 ring-accent-strong ring-offset-1"
+                )}
                 style={{
                   backgroundColor: color.backgroundColor,
                 }}
                 onClick={() => BackgroundColorItem(editor).command({ color: color.key })}
               />
             ))}
-            <button
+            <IconButton
               type="button"
-              className="grid size-6 flex-shrink-0 place-items-center rounded-sm border-[0.5px] border-strong-1 text-tertiary transition-colors hover:bg-layer-1"
+              variant="secondary"
+              size="sm"
+              aria-label="Clear background color"
               onClick={() => BackgroundColorItem(editor).command({ color: undefined })}
             >
-              <Ban className="size-4" />
-            </button>
+              <Icon icon={DeactivatedOutline} />
+            </IconButton>
           </div>
         </div>
-      </section>
+      </PopoverPopup>
     </FloatingMenuRoot>
   );
 }

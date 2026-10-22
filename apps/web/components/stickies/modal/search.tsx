@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -28,6 +28,10 @@ export const StickySearch = observer(function StickySearch() {
   const inputRef = useRef<HTMLInputElement>(null);
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  useEffect(() => {
+    if (isSearchOpen) inputRef.current?.focus();
+  }, [isSearchOpen]);
 
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
@@ -64,11 +68,12 @@ export const StickySearch = observer(function StickySearch() {
           aria-label={t("stickies.search_placeholder")}
           onClick={() => {
             setIsSearchOpen(true);
-            inputRef.current?.focus();
           }}
         />
       )}
       <div
+        inert={!isSearchOpen}
+        aria-hidden={!isSearchOpen}
         className={cn(
           "ml-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent text-placeholder opacity-0 transition-[width] ease-linear",
           {
@@ -80,6 +85,7 @@ export const StickySearch = observer(function StickySearch() {
         <input
           ref={inputRef}
           className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
+          aria-label={t("stickies.search_placeholder")}
           placeholder={t("stickies.search_placeholder")}
           value={searchQuery}
           onChange={(e) => {
@@ -89,17 +95,19 @@ export const StickySearch = observer(function StickySearch() {
           onKeyDown={handleInputKeyDown}
         />
         {isSearchOpen && (
-          <button
+          <IconButton
             type="button"
-            className="grid place-items-center"
+            variant="ghost"
+            size="xs"
+            aria-label={t("close")}
+            showTooltip={false}
+            icon={<Icon icon={CloseOutline} />}
             onClick={() => {
               updateSearchQuery("");
               setIsSearchOpen(false);
               fetchStickies();
             }}
-          >
-            <CloseOutline className="h-3 w-3" />
-          </button>
+          />
         )}
       </div>
     </div>

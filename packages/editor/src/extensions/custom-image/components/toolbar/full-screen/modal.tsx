@@ -4,10 +4,15 @@
  * See the LICENSE file for details.
  */
 
+import { FloatingFocusManager, FloatingOverlay, useFloating } from "@floating-ui/react";
+import type { KeyboardEvent as ReactKeyboardEvent, RefObject } from "react";
 import { AddOutline, CloseOutline, DownloadOutline, MinusOutline, NewTabOutline } from "@makeplane/propel/icons";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 // plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Toolbar, ToolbarButton, ToolbarGroup, ToolbarSeparator } from "@makeplane/propel/elements/toolbar";
 import { cn } from "@plane/utils";
 
 const MIN_ZOOM = 0.5;
@@ -16,6 +21,7 @@ const ZOOM_SPEED = 0.05;
 const ZOOM_STEPS = [0.5, 1, 1.5, 2];
 
 type Props = {
+  openerRef?: RefObject<HTMLButtonElement | null>;
   aspectRatio: number;
   downloadSrc: string;
   isFullScreenEnabled: boolean;
@@ -26,7 +32,17 @@ type Props = {
 };
 
 function ImageFullScreenModalWithoutPortal(props: Props) {
-  const { aspectRatio, isFullScreenEnabled, isTouchDevice, downloadSrc, src, toggleFullScreenMode, width } = props;
+  const { aspectRatio, isFullScreenEnabled, isTouchDevice, downloadSrc, src, toggleFullScreenMode, width, openerRef } =
+    props;
+  const {
+    refs: { setFloating },
+    context,
+  } = useFloating({ open: isFullScreenEnabled });
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const [lockScroll] = useState(() => {
+    const { overflowX, overflowY } = getComputedStyle(document.body);
+    return overflowX !== "hidden" || overflowY !== "hidden";
+  });
   // refs
   const dragStart = useRef({ x: 0, y: 0 });
   const dragOffset = useRef({ x: 0, y: 0 });
@@ -95,7 +111,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
   }, []);
 
   const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
+    (e: KeyboardEvent | ReactKeyboardEvent<HTMLDivElement>) => {
       if (e.key === "Escape" || e.key === "+" || e.key === "=" || e.key === "-") {
         e.preventDefault();
         e.stopPropagation();
@@ -181,124 +197,163 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
   useEffect(() => {
     if (!isFullScreenEnabled) return;
 
-    document.addEventListener("keydown", handleKeyDown);
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
     window.addEventListener("wheel", handleWheel, { passive: false });
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("wheel", handleWheel);
     };
-  }, [isFullScreenEnabled, handleKeyDown, handleMouseMove, handleMouseUp, handleWheel]);
+  }, [isFullScreenEnabled, handleMouseMove, handleMouseUp, handleWheel]);
+
+  const setModalRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      modalRef.current = node;
+      setFloating(node);
+    },
+    [setFloating]
+  );
 
   if (!isFullScreenEnabled) return null;
 
   return (
-    <div
+    <FloatingOverlay
+      // Preserve a scroll lock already owned by the containing UI.
+      lockScroll={lockScroll}
       className={cn("pointer-events-none fixed inset-0 z-50 size-full bg-black/90 opacity-0 transition-opacity", {
         "editor-image-full-screen-modal pointer-events-auto opacity-100": isFullScreenEnabled,
         "cursor-default": !isDragging,
         "cursor-grabbing": isDragging,
       })}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Fullscreen image viewer"
     >
-      <div
-        ref={modalRef}
-        onMouseDown={(e) => e.target === modalRef.current && handleClose()}
-        className="relative grid size-full place-items-center overflow-hidden"
+      <FloatingFocusManager
+        context={context}
+        initialFocus={closeButtonRef}
+        returnFocus={openerRef ?? true}
+        restoreFocus
+        outsideElementsInert
       >
-        <button
-          type="button"
-          onClick={handleClose}
-          className="absolute top-10 right-10 grid size-8 place-items-center"
-          aria-label="Close image viewer"
-        >
-          <CloseOutline className="size-8 text-white/60 transition-colors hover:text-white" />
-        </button>
-        <img
-          ref={setImageRef}
-          src={src}
-          className="read-only-image rounded-lg"
-          style={{
-            width: `${widthInNumber * initialMagnification}px`,
-            maxWidth: "none",
-            maxHeight: "none",
-            aspectRatio,
-            position: "relative",
-            transform: `scale(${magnification})`,
-            transformOrigin: "center",
-            transition: "width 0.2s ease, transform 0.2s ease",
+        <div
+          ref={setModalRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Fullscreen image viewer"
+          onKeyDown={handleKeyDown}
+          onMouseDown={(e) => {
+            if (e.target !== modalRef.current) return;
+            e.preventDefault();
+            handleClose();
           }}
-          onMouseDown={handleMouseDown}
-        />
-        <div className="fixed bottom-10 left-1/2 flex -translate-x-1/2 items-center justify-center gap-1 divide-x divide-subtle-1 rounded-md border border-subtle-1 bg-black py-2">
-          <div className="flex items-center">
-            <button
+          className="relative grid size-full place-items-center overflow-hidden"
+        >
+          <div className="absolute top-10 right-10 z-10">
+            <IconButton
+              ref={closeButtonRef}
               type="button"
-              onClick={(e) => {
-                if (isTouchDevice) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }
-                handleMagnification("decrease");
-              }}
-              className="grid size-6 place-items-center text-white/60 transition-colors duration-200 hover:text-white disabled:text-white/30"
-              disabled={magnification <= MIN_ZOOM}
-              aria-label="Zoom out"
-            >
-              <MinusOutline className="size-4" />
-            </button>
-            <span className="w-12 text-center text-13 text-white">{Math.round(100 * magnification)}%</span>
-            <button
-              type="button"
-              onClick={(e) => {
-                if (isTouchDevice) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }
-                handleMagnification("increase");
-              }}
-              className="grid size-6 place-items-center text-white/60 transition-colors duration-200 hover:text-white disabled:text-white/30"
-              disabled={magnification >= MAX_ZOOM}
-              aria-label="Zoom in"
-            >
-              <AddOutline className="size-4" />
-            </button>
+              variant="secondary"
+              size="md"
+              aria-label="Close image viewer"
+              showTooltip={false}
+              icon={<Icon icon={CloseOutline} />}
+              onClick={handleClose}
+            />
           </div>
-          {!isTouchDevice && (
-            <button
-              type="button"
-              onClick={() => window.open(downloadSrc, "_blank")}
-              className="grid size-8 flex-shrink-0 place-items-center text-white/60 transition-colors duration-200 hover:text-white"
-              aria-label="Download image"
-            >
-              <DownloadOutline className="size-4" />
-            </button>
-          )}
-          {!isTouchDevice && (
-            <button
-              type="button"
-              onClick={() => window.open(src, "_blank")}
-              className="grid size-8 flex-shrink-0 place-items-center text-white/60 transition-colors duration-200 hover:text-white"
-              aria-label="Open image in new tab"
-            >
-              <NewTabOutline className="size-4" />
-            </button>
-          )}
+          <img
+            ref={setImageRef}
+            src={src}
+            alt="Preview"
+            className="read-only-image rounded-lg"
+            style={{
+              width: `${widthInNumber * initialMagnification}px`,
+              maxWidth: "none",
+              maxHeight: "none",
+              aspectRatio,
+              position: "relative",
+              transform: `scale(${magnification})`,
+              transformOrigin: "center",
+              transition: "width 0.2s ease, transform 0.2s ease",
+            }}
+            onMouseDown={handleMouseDown}
+          />
+          <div className="fixed bottom-10 left-1/2 z-10 -translate-x-1/2">
+            <Toolbar size="md" elevation="raised" role="group" aria-label="Image viewer controls">
+              <ToolbarGroup role="group" aria-label="Image zoom">
+                <ToolbarButton
+                  type="button"
+                  size="md"
+                  labeled={false}
+                  onClick={(e) => {
+                    if (isTouchDevice) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }
+                    handleMagnification("decrease");
+                  }}
+                  disabled={magnification <= MIN_ZOOM}
+                  aria-label="Zoom out"
+                >
+                  <Icon icon={MinusOutline} />
+                </ToolbarButton>
+                <span className="w-12 text-center text-body-xs-regular text-secondary tabular-nums">
+                  {Math.round(100 * magnification)}%
+                </span>
+                <ToolbarButton
+                  type="button"
+                  size="md"
+                  labeled={false}
+                  onClick={(e) => {
+                    if (isTouchDevice) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }
+                    handleMagnification("increase");
+                  }}
+                  disabled={magnification >= MAX_ZOOM}
+                  aria-label="Zoom in"
+                >
+                  <Icon icon={AddOutline} />
+                </ToolbarButton>
+              </ToolbarGroup>
+              {!isTouchDevice && <ToolbarSeparator />}
+              {!isTouchDevice && (
+                <ToolbarButton
+                  type="button"
+                  size="md"
+                  labeled={false}
+                  onClick={() => window.open(downloadSrc, "_blank")}
+                  aria-label="Download image"
+                >
+                  <Icon icon={DownloadOutline} />
+                </ToolbarButton>
+              )}
+              {!isTouchDevice && (
+                <ToolbarButton
+                  type="button"
+                  size="md"
+                  labeled={false}
+                  onClick={() => window.open(src, "_blank")}
+                  aria-label="Open image in new tab"
+                >
+                  <Icon icon={NewTabOutline} />
+                </ToolbarButton>
+              )}
+            </Toolbar>
+          </div>
         </div>
-      </div>
-    </div>
+      </FloatingFocusManager>
+    </FloatingOverlay>
   );
 }
 
 export function ImageFullScreenModal(props: Props) {
+  if (!props.isFullScreenEnabled) return null;
+
   let modal = <ImageFullScreenModalWithoutPortal {...props} />;
-  const portal = document.querySelector("#editor-portal");
+  const portal =
+    props.openerRef?.current?.closest('[role="dialog"], [role="alertdialog"]') ??
+    document.querySelector("#editor-portal");
   if (portal) {
     modal = ReactDOM.createPortal(modal, portal);
   } else {

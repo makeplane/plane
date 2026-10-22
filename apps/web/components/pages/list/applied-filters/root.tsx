@@ -4,9 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import { useTranslation } from "@plane/i18n";
+import { Button } from "@makeplane/propel/components/button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import type { TPageFilterProps } from "@plane/types";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 // components
@@ -21,11 +23,11 @@ type Props = {
 };
 
 const MEMBERS_FILTERS = new Set(["created_by"]);
-const DATE_FILTERS = ["created_at"];
+const DATE_FILTERS = new Set(["created_at"]);
 
 /**
- * Chrome shared by each applied-filter group and the "clear all" control. A filter group is a
- * wrapping container of chips plus their remove buttons, not a single chip, so it keeps plain markup.
+ * A filter group is a wrapping container of chips plus their remove buttons, not a single chip,
+ * so it keeps plain markup.
  */
 const FILTER_GROUP_CLASSNAME =
   "my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary";
@@ -40,18 +42,20 @@ export function PageAppliedFiltersList(props: Props) {
   const isEditingAllowed = alwaysAllowEditing;
 
   return (
-    <div className="flex flex-wrap items-stretch gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof TPageFilterProps;
 
         if (!value) return;
         if (Array.isArray(value) && value.length === 0) return;
 
+        const filterLabel = replaceUnderscoreIfSnakeCase(filterKey);
+
         return (
           <div key={filterKey} className={FILTER_GROUP_CLASSNAME}>
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
-              {DATE_FILTERS.includes(filterKey) && (
+              <span className="text-11 text-tertiary">{filterLabel}</span>
+              {DATE_FILTERS.has(filterKey) && (
                 <AppliedDateFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter(filterKey, val)}
@@ -66,25 +70,28 @@ export function PageAppliedFiltersList(props: Props) {
                 />
               )}
               {isEditingAllowed && (
-                <button
+                <IconButton
                   type="button"
-                  className="grid place-items-center text-tertiary hover:text-secondary"
+                  variant="ghost"
+                  size="xs"
+                  aria-label={`${t("aria_labels.common.remove")}: ${filterLabel}`}
                   onClick={() => handleRemoveFilter(filterKey, null)}
-                >
-                  <CloseOutline height={12} width={12} />
-                </button>
+                  icon={<CloseOutline height={12} width={12} />}
+                />
               )}
             </div>
           </div>
         );
       })}
       {isEditingAllowed && (
-        <button type="button" onClick={handleClearAllFilters}>
-          <span className={FILTER_GROUP_CLASSNAME}>
-            {t("common.clear_all")}
-            <CloseOutline height={12} />
-          </span>
-        </button>
+        <Button
+          type="button"
+          variant="secondary"
+          size="md"
+          stretch="auto"
+          label={t("common.clear_all")}
+          onClick={handleClearAllFilters}
+        />
       )}
     </div>
   );

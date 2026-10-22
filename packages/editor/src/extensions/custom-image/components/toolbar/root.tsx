@@ -7,6 +7,7 @@
 import type { Editor } from "@tiptap/core";
 import { useState } from "react";
 // plane imports
+import { Toolbar } from "@makeplane/propel/elements/toolbar";
 import { cn } from "@plane/utils";
 // local imports
 import type { TCustomImageAlignment } from "../../types";
@@ -37,26 +38,28 @@ export function ImageToolbarRoot(props: Props) {
     <>
       <div
         className={cn(
-          "pointer-events-none absolute top-1 right-1 z-20 flex h-7 items-center gap-2 rounded-sm bg-black/80 px-2 opacity-0 transition-opacity group-hover/image-component:pointer-events-auto group-hover/image-component:opacity-100",
+          "pointer-events-none absolute top-1 right-1 z-20 opacity-0 transition-opacity group-hover/image-component:pointer-events-auto group-hover/image-component:opacity-100 focus-within:pointer-events-auto focus-within:opacity-100",
           {
             "pointer-events-auto opacity-100": shouldShowToolbar,
           }
         )}
       >
-        {!isTouchDevice && <ImageDownloadAction src={downloadSrc} />}
-        {isEditable && (
-          <ImageAlignmentAction
-            activeAlignment={alignment}
-            handleChange={handleAlignmentChange}
+        <Toolbar size="sm" elevation="raised" role="group" aria-label="Image controls">
+          {!isTouchDevice && <ImageDownloadAction src={downloadSrc} />}
+          {isEditable && (
+            <ImageAlignmentAction
+              activeAlignment={alignment}
+              handleChange={handleAlignmentChange}
+              isTouchDevice={isTouchDevice}
+              toggleToolbarViewStatus={setShouldShowToolbar}
+            />
+          )}
+          <ImageFullScreenActionRoot
+            image={props}
             isTouchDevice={isTouchDevice}
             toggleToolbarViewStatus={setShouldShowToolbar}
           />
-        )}
-        <ImageFullScreenActionRoot
-          image={props}
-          isTouchDevice={isTouchDevice}
-          toggleToolbarViewStatus={setShouldShowToolbar}
-        />
+        </Toolbar>
       </div>
     </>
   );

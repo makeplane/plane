@@ -7,6 +7,7 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
+import { IconButton as IconButtonElement } from "@makeplane/propel/elements/icon-button";
 import {
   ArrowNarrowRightOutline,
   DragDropOutline,
@@ -129,7 +130,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
     e.stopPropagation();
     e.preventDefault();
     copyUrlToClipboard(workItemLink).then(() => {
-      setToast({
+      return void setToast({
         type: "success",
         title: t("common.link_copied"),
         message: t("common.link_copied_to_clipboard"),
@@ -142,7 +143,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
       const deleteIssue = issueDetails?.archived_at ? removeArchivedIssue : removeIssue;
 
       return deleteIssue(workspaceSlug, projectId, issueId).then(() => {
-        setPeekIssue(undefined);
+        return void setPeekIssue(undefined);
       });
     } catch (_error) {
       setToast({
@@ -168,16 +169,25 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
       }`}
     >
       <div className="flex items-center gap-4">
-        <Tooltip label={t("common.close_peek_view")} disabled={isMobile}>
-          <button onClick={removeRoutePeekId}>
-            <ArrowNarrowRightOutline className="h-4 w-4 text-tertiary hover:text-secondary" />
-          </button>
-        </Tooltip>
+        <IconButton
+          type="button"
+          variant="ghost"
+          size="md"
+          aria-label={t("common.close_peek_view")}
+          showTooltip={!isMobile}
+          onClick={removeRoutePeekId}
+          icon={<Icon icon={ArrowNarrowRightOutline} />}
+        />
 
         <Tooltip label={t("issue.open_in_full_screen")} disabled={isMobile}>
-          <Link href={workItemLink} onClick={() => removeRoutePeekId()}>
-            <DragDropOutline className="h-4 w-4 text-tertiary hover:text-secondary" />
-          </Link>
+          <IconButtonElement
+            variant="ghost"
+            size="md"
+            aria-label={t("issue.open_in_full_screen")}
+            render={<Link href={workItemLink} onClick={() => removeRoutePeekId()} />}
+          >
+            <Icon icon={DragDropOutline} />
+          </IconButtonElement>
         </Tooltip>
         {currentMode && embedIssue === false && (
           <div className="flex flex-shrink-0 items-center gap-2">
@@ -210,6 +220,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
             <IconButton
               variant="secondary"
               size="md"
+              showTooltip={false}
               onClick={handleCopyText}
               icon={<Icon icon={LinkOutline} />}
               aria-label={t("common.actions.copy_link")}

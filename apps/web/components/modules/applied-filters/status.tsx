@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ModuleStatusIcon } from "@plane/blocks/icons";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 // constants
 
@@ -33,13 +34,14 @@ export const AppliedStatusFilters = observer(function AppliedStatusFilters(props
             <ModuleStatusIcon status={statusDetails.value} height="12px" width="12px" />
             {t(statusDetails.i18n_label)}
             {editable && (
-              <button
+              <IconButton
                 type="button"
-                className="grid place-items-center text-tertiary hover:text-secondary"
+                variant="ghost"
+                size="xs"
+                aria-label={`${t("aria_labels.common.remove")}: ${t(statusDetails.i18n_label)}`}
                 onClick={() => handleRemove(status)}
-              >
-                <CloseOutline height={10} width={10} />
-              </button>
+                icon={<CloseOutline height={10} width={10} />}
+              />
             )}
           </div>
         );

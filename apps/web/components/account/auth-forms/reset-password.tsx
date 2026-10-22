@@ -12,6 +12,7 @@ import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // ui
 import { Banner } from "@makeplane/propel/components/banner";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
@@ -154,17 +155,23 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               autoComplete="new-password"
               autoFocus
             />
-            <button
+            <IconButton
               type="button"
+              variant="ghost"
+              size="sm"
+              showTooltip={false}
               onClick={() => handleShowPassword("password")}
-              className="grid size-5 place-items-center"
-            >
-              {showPassword.password ? (
-                <HideOutline className="size-5 text-placeholder" />
-              ) : (
-                <ShowOutline className="size-5 text-placeholder" />
+              aria-label={t(
+                showPassword.password ? "aria_labels.auth_forms.hide_password" : "aria_labels.auth_forms.show_password"
               )}
-            </button>
+              icon={
+                showPassword.password ? (
+                  <HideOutline className="size-5 text-placeholder" />
+                ) : (
+                  <ShowOutline className="size-5 text-placeholder" />
+                )
+              }
+            />
           </InputGroup>
           <PasswordStrengthIndicator password={resetFormData.password} isFocused={isPasswordInputFocused} />
         </div>
@@ -185,17 +192,25 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               onBlur={() => setIsRetryPasswordInputFocused(false)}
               autoComplete="new-password"
             />
-            <button
+            <IconButton
               type="button"
+              variant="ghost"
+              size="sm"
+              showTooltip={false}
               onClick={() => handleShowPassword("retypePassword")}
-              className="grid size-5 place-items-center"
-            >
-              {showPassword.retypePassword ? (
-                <HideOutline className="size-5 text-placeholder" />
-              ) : (
-                <ShowOutline className="size-5 text-placeholder" />
+              aria-label={t(
+                showPassword.retypePassword
+                  ? "aria_labels.auth_forms.hide_password"
+                  : "aria_labels.auth_forms.show_password"
               )}
-            </button>
+              icon={
+                showPassword.retypePassword ? (
+                  <HideOutline className="size-5 text-placeholder" />
+                ) : (
+                  <ShowOutline className="size-5 text-placeholder" />
+                )
+              }
+            />
           </InputGroup>
           {!!resetFormData.confirm_password &&
             resetFormData.password !== resetFormData.confirm_password &&

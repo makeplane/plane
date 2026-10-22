@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useState, useCallback } from "react";
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // editor
@@ -14,6 +14,8 @@ import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { ToolbarButton } from "@makeplane/propel/elements/toolbar";
 import { GlobeOutline, LockOutline } from "@makeplane/propel/icons";
 import type { ISvgIcons } from "@plane/blocks/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
@@ -37,7 +39,7 @@ type Props = {
 };
 
 type TCommentAccessType = {
-  icon: LucideIcon | React.FC<ISvgIcons>;
+  icon: IconGlyph | React.FC<ISvgIcons>;
   key: EIssueCommentAccessSpecifier;
   label: "Private" | "Public";
 };
@@ -103,35 +105,39 @@ export function IssueCommentToolbar(props: Props) {
   const isSubmitButtonDisabled = isCommentEmpty || !isEditorReadyToDiscard;
 
   return (
-    <div className="flex h-9 w-full items-stretch gap-1.5 overflow-x-scroll bg-surface-2">
+    <div className="flex min-h-9 w-full items-stretch gap-1.5 bg-surface-2">
       {showAccessSpecifier && (
-        <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded-sm border-[0.5px] border-subtle p-1">
+        <div className="flex flex-shrink-0 items-center gap-0.5 rounded-sm border-[0.5px] border-subtle p-1">
           {COMMENT_ACCESS_SPECIFIERS.map((access) => {
             const isAccessActive = accessSpecifier === access.key;
 
             return (
               <Tooltip key={access.key} label={access.label} layout="stacked">
-                <button
+                <ToolbarButton
                   type="button"
+                  size="sm"
+                  labeled={false}
+                  aria-label={access.label}
+                  aria-pressed={isAccessActive}
+                  data-pressed={isAccessActive ? "" : undefined}
                   onClick={() => handleAccessChange?.(access.key)}
-                  className={cn("grid aspect-square place-items-center rounded-xs p-1 hover:bg-layer-1", {
-                    "bg-layer-1": isAccessActive,
-                  })}
                 >
-                  <access.icon
-                    className={cn("h-3.5 w-3.5 text-placeholder", {
-                      "text-primary": isAccessActive,
-                    })}
-                    strokeWidth={2}
-                  />
-                </button>
+                  <Icon icon={<access.icon strokeWidth={2} />} />
+                </ToolbarButton>
               </Tooltip>
             );
           })}
         </div>
       )}
-      <div className="flex w-full items-stretch justify-between gap-2 rounded-sm border-[0.5px] border-subtle p-1">
-        <div className="flex items-stretch">
+      <div className="flex min-w-0 flex-1 items-stretch justify-between gap-2 rounded-sm border-[0.5px] border-subtle p-1">
+        <div
+          className="flex min-w-0 flex-1 scroll-px-1 items-stretch overflow-x-auto px-0.5 py-0.5"
+          onFocusCapture={(event) => {
+            if (event.currentTarget.contains(event.target)) {
+              event.target.scrollIntoView({ block: "nearest", inline: "nearest" });
+            }
+          }}
+        >
           {Object.keys(toolbarItems).map((key, index) => (
             <div
               key={key}
@@ -144,23 +150,17 @@ export function IssueCommentToolbar(props: Props) {
 
                 return (
                   <Tooltip key={item.renderKey} label={item.name} shortcut={item.shortcut?.join(" + ")}>
-                    <button
+                    <ToolbarButton
                       type="button"
+                      size="sm"
+                      labeled={false}
+                      aria-label={item.name}
+                      aria-pressed={key === "complex" ? undefined : !!isItemActive}
+                      data-pressed={isItemActive ? "" : undefined}
                       onClick={() => executeCommand(item)}
-                      className={cn(
-                        "grid aspect-square place-items-center rounded-xs p-0.5 text-placeholder hover:bg-layer-1",
-                        {
-                          "bg-layer-1 text-primary": isItemActive,
-                        }
-                      )}
                     >
-                      <item.icon
-                        className={cn("h-3.5 w-3.5", {
-                          "text-primary": isItemActive,
-                        })}
-                        strokeWidth={2.5}
-                      />
-                    </button>
+                      <Icon icon={<item.icon strokeWidth={2.5} />} />
+                    </ToolbarButton>
                   </Tooltip>
                 );
               })}
@@ -168,7 +168,7 @@ export function IssueCommentToolbar(props: Props) {
           ))}
         </div>
         {showSubmitButton && (
-          <div className="sticky right-1">
+          <div className="my-auto shrink-0">
             <Button
               type="submit"
               variant="primary"

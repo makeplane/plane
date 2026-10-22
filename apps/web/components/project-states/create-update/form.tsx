@@ -5,10 +5,9 @@
  */
 
 import { useEffect, useState } from "react";
-import { Field } from "@makeplane/propel/components/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
-import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
+import { TextAreaField } from "@makeplane/propel/components/text-area-field";
 import { Button } from "@makeplane/propel/components/button";
 import { ColorSwatchPicker } from "@plane/blocks/common";
 import { useTranslation } from "@plane/i18n";
@@ -92,38 +91,35 @@ export function StateForm(props: TStateForm) {
 
       <div className="w-full space-y-2">
         {/* title */}
-        <Field name="name" invalid={(errors && Boolean(errors.name)) || false}>
-          <InputGroup size="2xl">
-            <Input
-              size="2xl"
-              id="name"
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={formData?.name}
-              onChange={(e) => handleFormData("name", e.target.value)}
-              maxLength={100}
-              autoFocus
-            />
-          </InputGroup>
-        </Field>
+        <InputField
+          size="2xl"
+          orientation="vertical"
+          id="name"
+          type="text"
+          name="name"
+          aria-label={t("name")}
+          placeholder="Name"
+          value={formData?.name}
+          onChange={(e) => handleFormData("name", e.target.value)}
+          maxLength={100}
+          autoFocus
+          error={errors?.name || undefined}
+        />
 
         {/* description */}
-        <Field name="description" invalid={(errors && Boolean(errors.description)) || false}>
-          <TextAreaGroup resize="none">
-            <TextArea
-              size="lg"
-              surface="field"
-              autoResize
-              maxRows={8}
-              id="description"
-              name="description"
-              placeholder="Describe this state for your members."
-              value={formData?.description ?? ""}
-              onChange={(e) => handleFormData("description", e.target.value)}
-            />
-          </TextAreaGroup>
-        </Field>
+        <TextAreaField
+          size="lg"
+          resize="none"
+          autoResize
+          maxRows={8}
+          id="description"
+          name="description"
+          aria-label={t("description")}
+          placeholder="Describe this state for your members."
+          value={formData?.description ?? ""}
+          onChange={(e) => handleFormData("description", e.target.value)}
+          error={errors?.description || undefined}
+        />
 
         <div className="flex items-center space-x-2">
           <Button

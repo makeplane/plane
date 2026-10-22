@@ -5,9 +5,9 @@
  */
 
 import * as React from "react";
-import { cn } from "@plane/utils";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
 
-export interface OAuthButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface OAuthButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "className" | "style"> {
   text: string;
   icon: React.ReactNode;
   compact?: boolean;
@@ -17,17 +17,17 @@ const OAuthButton = React.forwardRef(function OAuthButton(
   props: OAuthButtonProps,
   ref: React.ForwardedRef<HTMLButtonElement>
 ) {
-  const { text, icon, compact = false, className = "", ...rest } = props;
+  const { text, icon, compact = false, ...rest } = props;
 
   return (
-    <button
+    <ButtonElement
       ref={ref}
+      variant="secondary"
+      size="lg"
+      stretch="full"
       type="button"
-      className={cn(
-        "bg-onboarding-background-200 hover:bg-onboarding-background-300 flex h-9 w-full items-center justify-center gap-2 rounded-md border border-strong px-4 py-2.5 text-body-xs-medium text-primary duration-300",
-        className
-      )}
       {...rest}
+      aria-label={rest["aria-label"] ?? (compact ? text : undefined)}
     >
       <div className="flex flex-shrink-0 items-center justify-center">{icon}</div>
       {!compact && (
@@ -35,7 +35,7 @@ const OAuthButton = React.forwardRef(function OAuthButton(
           {text}
         </span>
       )}
-    </button>
+    </ButtonElement>
   );
 });
 

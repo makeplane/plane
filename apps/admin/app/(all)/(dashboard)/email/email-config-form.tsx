@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 // types
 import { Button } from "@makeplane/propel/components/button";
@@ -35,6 +35,7 @@ const EMAIL_SECURITY_OPTIONS: { [key in TEmailSecurityKeys]: string } = {
 
 export function InstanceEmailForm(props: IInstanceEmailForm) {
   const { config } = props;
+  const emailSecurityLabelId = useId();
   // states
   const [isSendTestEmailModalOpen, setIsSendTestEmailModalOpen] = useState(false);
   // store hooks
@@ -162,13 +163,15 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
             />
           ))}
           <div className="flex flex-col gap-1">
-            <h4 className="text-13 text-tertiary">Email security</h4>
+            <h4 id={emailSecurityLabelId} className="text-13 text-tertiary">
+              Email security
+            </h4>
             <Select
               items={EMAIL_SECURITY_OPTIONS}
               value={emailSecurityKey}
               onValueChange={(value) => handleEmailSecurityChange(value as TEmailSecurityKeys)}
             >
-              <SelectTrigger size="lg" placeholder="Select email security" />
+              <SelectTrigger size="lg" placeholder="Select email security" aria-labelledby={emailSecurityLabelId} />
               <SelectContent>
                 <SelectList>
                   {Object.entries(EMAIL_SECURITY_OPTIONS).map(([key, value]) => (

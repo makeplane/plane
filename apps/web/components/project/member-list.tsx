@@ -10,6 +10,8 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { SearchOutline } from "@makeplane/propel/icons";
 // components
 import { MembersSettingsLoader } from "@/components/ui/loader/settings/members";
@@ -84,15 +86,19 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
       <div className="flex items-center justify-between gap-4 overflow-x-hidden border-b border-subtle py-2">
         <div className="text-14 font-semibold">{t("common.members")}</div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-start gap-1.5 rounded-md border border-subtle bg-surface-1 px-2 py-1">
-            <SearchOutline className="h-3.5 w-3.5" />
-            <input
-              className="w-full max-w-[234px] border-none bg-transparent text-13 placeholder:text-placeholder focus:outline-none"
-              placeholder="Search"
-              value={searchQuery}
-              autoFocus
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+          <div className="w-48">
+            <InputGroup size="md">
+              <Icon icon={SearchOutline} tint="placeholder" />
+              <Input
+                size="md"
+                type="text"
+                aria-label={t("common.search.label")}
+                placeholder="Search"
+                value={searchQuery}
+                autoFocus
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </InputGroup>
           </div>
           <MemberListFiltersDropdown
             appliedFilters={appliedRoleFilters}

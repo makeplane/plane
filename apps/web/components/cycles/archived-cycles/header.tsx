@@ -7,9 +7,12 @@
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 // icons
 import { CloseOutline, FilterOutline, SearchOutline } from "@makeplane/propel/icons";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 // plane helpers
 // types
 import type { TCycleFilters } from "@plane/types";
@@ -19,6 +22,7 @@ import { ArchiveTabsList } from "@/components/archives";
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { CycleFiltersSelection } from "../dropdowns";
 
@@ -30,8 +34,10 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
   // hooks
   const { currentProjectArchivedFilters, archivedCyclesSearchQuery, updateFilters, updateArchivedCyclesSearchQuery } =
     useCycleFilter();
+  const { t } = useTranslation();
+  const { isMobile } = usePlatformOS();
   // states
-  const [isSearchOpen, setIsSearchOpen] = useState(archivedCyclesSearchQuery !== "" ? true : false);
+  const [isSearchOpen, setIsSearchOpen] = useState(archivedCyclesSearchQuery !== "");
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && archivedCyclesSearchQuery.trim() === "") setIsSearchOpen(false);
@@ -77,16 +83,19 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
       {/* filter options */}
       <div className="flex h-full items-center gap-3 self-end px-8">
         {!isSearchOpen && (
-          <button
+          <IconButton
             type="button"
-            className="-mr-5 grid place-items-center rounded-sm p-2 text-placeholder hover:bg-layer-1"
+            variant="ghost"
+            size="md"
+            aria-label={t("common.search.label")}
+            showTooltip={!isMobile}
+            render={<button type="button" className="-mr-5" />}
             onClick={() => {
               setIsSearchOpen(true);
               inputRef.current?.focus();
             }}
-          >
-            <SearchOutline className="h-3.5 w-3.5" />
-          </button>
+            icon={<Icon icon={SearchOutline} />}
+          />
         )}
         <div
           className={cn(
@@ -106,16 +115,18 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
             onKeyDown={handleInputKeyDown}
           />
           {isSearchOpen && (
-            <button
+            <IconButton
               type="button"
-              className="grid place-items-center"
+              variant="ghost"
+              size="xs"
+              aria-label={t("close")}
+              showTooltip={!isMobile}
               onClick={() => {
                 updateArchivedCyclesSearchQuery("");
                 setIsSearchOpen(false);
               }}
-            >
-              <CloseOutline className="h-3 w-3" />
-            </button>
+              icon={<Icon icon={CloseOutline} />}
+            />
           )}
         </div>
         <FiltersDropdown

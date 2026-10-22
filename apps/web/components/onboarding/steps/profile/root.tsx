@@ -11,10 +11,11 @@ import { ImageOutline } from "@makeplane/propel/icons";
 // plane imports
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { Button } from "@makeplane/propel/components/button";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { setToast } from "@plane/blocks/toast";
 import type { IUser } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
-import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
+import { getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
 // components
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // hooks
@@ -196,47 +197,36 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
 
       <div className="flex w-full flex-col gap-6">
         {/* Name Input */}
-        <div className="flex flex-col gap-2">
-          <label
-            className="block text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
-            htmlFor="first_name"
-          >
-            Name
-          </label>
-          <Controller
-            control={control}
-            name="first_name"
-            rules={{
-              required: "Name is required",
-              validate: validatePersonName,
-              maxLength: {
-                value: 50,
-                message: "Name must be within 50 characters.",
-              },
-            }}
-            render={({ field: { value, onChange, ref } }) => (
-              <input
-                ref={ref}
-                id="first_name"
-                name="first_name"
-                type="text"
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                autoFocus
-                className={cn(
-                  "w-full rounded-md border border-strong bg-surface-1 px-3 py-2 text-secondary transition-all duration-200 placeholder:text-placeholder focus:border-transparent focus:ring-2 focus:ring-accent-strong focus:outline-none",
-                  {
-                    "border-strong": !errors.first_name,
-                    "border-danger-strong": errors.first_name,
-                  }
-                )}
-                placeholder="Enter your full name"
-                autoComplete="on"
-              />
-            )}
-          />
-          {errors.first_name && <span className="text-13 text-danger-primary">{errors.first_name.message}</span>}
-        </div>
+        <Controller
+          control={control}
+          name="first_name"
+          rules={{
+            required: "Name is required",
+            validate: validatePersonName,
+            maxLength: {
+              value: 50,
+              message: "Name must be within 50 characters.",
+            },
+          }}
+          render={({ field: { value, onChange, ref } }) => (
+            <InputField
+              ref={ref}
+              id="first_name"
+              name="first_name"
+              size="xl"
+              orientation="vertical"
+              type="text"
+              label="Name"
+              required
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              autoFocus
+              placeholder="Enter your full name"
+              autoComplete="on"
+              error={errors.first_name?.message}
+            />
+          )}
+        />
 
         {/* setting up password for the first time */}
         {!isPasswordAlreadySetup && (

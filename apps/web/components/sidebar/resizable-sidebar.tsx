@@ -193,6 +193,8 @@ export function ResizableSidebar({
         }}
         role="complementary"
         aria-label="Main sidebar"
+        inert={isCollapsed}
+        aria-hidden={isCollapsed}
         data-prevent-outside-click={isMobile}
       >
         <aside
@@ -236,6 +238,8 @@ export function ResizableSidebar({
         onMouseLeave={handlePeekLeave}
         role="complementary"
         aria-label="Sidebar peek view"
+        inert={!(isCollapsed && showPeek)}
+        aria-hidden={!(isCollapsed && showPeek)}
       >
         <aside
           className={cn(

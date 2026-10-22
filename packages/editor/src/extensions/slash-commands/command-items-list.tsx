@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { Smile } from "lucide-react";
 import {
   ChatOutline,
   CodeOutline,
@@ -19,6 +18,7 @@ import {
   MinusSquareOutline,
   NumberedListOutline,
   QuoteOutline,
+  ReactionOutline,
   TableEditorOutline,
   TextOutline,
   ToDoOutline,
@@ -203,7 +203,7 @@ export const getSlashCommandFilteredSections =
             title: "Emoji",
             description: "Insert an emoji",
             searchTerms: ["emoji", "icons", "reaction", "emoticon", "emotags"],
-            icon: <Smile className="size-3.5" />,
+            icon: <ReactionOutline className="size-3.5" />,
             command: ({ editor, range }) => {
               openEmojiPicker(editor, range);
             },

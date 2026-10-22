@@ -5,6 +5,8 @@
  */
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 // hooks
 import { CloseOutline } from "@makeplane/propel/icons";
 import { useLabel } from "@/hooks/store/use-label";
@@ -16,6 +18,7 @@ function LabelIcons({ color }: { color: string }) {
 
 export const InboxIssueAppliedFiltersLabel = observer(function InboxIssueAppliedFiltersLabel() {
   // hooks
+  const { t } = useTranslation();
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   const { getLabelById } = useLabel();
   // derived values
@@ -40,22 +43,30 @@ export const InboxIssueAppliedFiltersLabel = observer(function InboxIssueApplied
               <LabelIcons color={optionDetail.color} />
             </div>
             <div className="truncate text-11">{optionDetail?.name}</div>
-            <div
-              className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
+            <IconButton
+              type="button"
+              variant="ghost"
+              size="xs"
+              aria-label={
+                optionDetail.name
+                  ? `${t("aria_labels.common.remove")}: ${optionDetail.name}`
+                  : t("aria_labels.common.remove")
+              }
               onClick={() => handleInboxIssueFilters("labels", handleFilterValue(value))}
-            >
-              <CloseOutline className={`h-3 w-3`} />
-            </div>
+              icon={<CloseOutline className="h-3 w-3" />}
+            />
           </div>
         );
       })}
 
-      <div
-        className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
+      <IconButton
+        type="button"
+        variant="ghost"
+        size="xs"
+        aria-label={`${t("aria_labels.common.remove")}: Label`}
         onClick={clearFilter}
-      >
-        <CloseOutline className={`h-3 w-3`} />
-      </div>
+        icon={<CloseOutline className="h-3 w-3" />}
+      />
     </div>
   );
 });

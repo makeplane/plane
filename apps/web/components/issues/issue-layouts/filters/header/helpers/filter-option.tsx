@@ -5,6 +5,8 @@
  */
 
 import { TickOutline } from "@makeplane/propel/icons";
+import { Checkbox, CheckboxIndicator } from "@makeplane/propel/elements/checkbox";
+import { Radio, RadioIndicator } from "@makeplane/propel/elements/radio";
 
 type Props = {
   icon?: React.ReactNode;
@@ -22,15 +24,22 @@ export function FilterOption(props: Props) {
     <button
       type="button"
       className="flex w-full items-center gap-2 rounded-sm p-1.5 hover:bg-layer-transparent-hover"
+      aria-pressed={isChecked}
       onClick={onClick}
     >
-      <div
-        className={`grid h-3 w-3 flex-shrink-0 place-items-center border ${
-          isChecked ? "border-accent-strong bg-accent-primary text-on-color" : "border-strong"
-        } ${multiple ? "rounded-xs" : "rounded-full"}`}
-      >
-        {isChecked && <TickOutline width={10} height={10} />}
-      </div>
+      {multiple ? (
+        <Checkbox aria-hidden="true" data-checked={isChecked ? "" : undefined}>
+          {isChecked && (
+            <CheckboxIndicator>
+              <TickOutline aria-hidden="true" />
+            </CheckboxIndicator>
+          )}
+        </Checkbox>
+      ) : (
+        <Radio aria-hidden="true" data-checked={isChecked ? "" : undefined}>
+          {isChecked && <RadioIndicator />}
+        </Radio>
+      )}
       <div className="flex items-center gap-2 truncate">
         {icon && <div className="grid w-5 flex-shrink-0 place-items-center">{icon}</div>}
         <div className="flex-grow truncate text-caption-sm-regular text-secondary">{title}</div>

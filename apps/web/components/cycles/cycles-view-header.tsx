@@ -18,6 +18,7 @@ import { cn, calculateTotalFilters } from "@plane/utils";
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { CycleFiltersSelection } from "./dropdowns";
 
@@ -32,8 +33,9 @@ export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props)
   // hooks
   const { currentProjectFilters, searchQuery, updateFilters, updateSearchQuery } = useCycleFilter();
   const { t } = useTranslation();
+  const { isMobile } = usePlatformOS();
   // states
-  const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "" ? true : false);
+  const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "");
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
@@ -107,16 +109,18 @@ export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props)
             onKeyDown={handleInputKeyDown}
           />
           {isSearchOpen && (
-            <button
+            <IconButton
               type="button"
-              className="grid place-items-center"
+              variant="ghost"
+              size="xs"
+              aria-label={t("close")}
+              showTooltip={!isMobile}
               onClick={() => {
                 updateSearchQuery("");
                 setIsSearchOpen(false);
               }}
-            >
-              <CloseOutline className="h-3 w-3" />
-            </button>
+              icon={<Icon icon={CloseOutline} />}
+            />
           )}
         </div>
       )}

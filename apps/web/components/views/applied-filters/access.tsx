@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 // icons
 import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 // constants
 // helpers
@@ -35,17 +36,20 @@ export const AppliedAccessFilters = observer(function AppliedAccessFilters(props
 
         if (!label) return null;
 
+        const accessLabel = t(label);
+
         return (
           <div key={access} className="flex items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-11">
-            <span className="normal-case">{t(label)}</span>
+            <span className="normal-case">{accessLabel}</span>
             {editable && (
-              <button
+              <IconButton
                 type="button"
-                className="grid place-items-center text-tertiary hover:text-secondary"
+                variant="ghost"
+                size="xs"
+                aria-label={`${t("aria_labels.common.remove")}: ${accessLabel}`}
                 onClick={() => handleRemove(access)}
-              >
-                <CloseOutline height={10} width={10} />
-              </button>
+                icon={<CloseOutline height={10} width={10} />}
+              />
             )}
           </div>
         );

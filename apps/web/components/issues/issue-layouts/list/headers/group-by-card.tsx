@@ -7,8 +7,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { CircleDashed } from "lucide-react";
-import { AddOutline } from "@makeplane/propel/icons";
+import { AddOutline, CircleDashedOutline } from "@makeplane/propel/icons";
 // types
 import { setToast } from "@plane/blocks/toast";
 import type { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
@@ -110,7 +109,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           </div>
         )}
         <div className="grid flex-shrink-0 place-items-center overflow-hidden">
-          {icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
+          {icon ?? <CircleDashedOutline className="size-3.5" />}
         </div>
 
         {/* eslint-disable-next-line jsx_a11y/click-events-have-key-events eslint-disable-next-line jsx_a11y/no-static-element-interactions */}

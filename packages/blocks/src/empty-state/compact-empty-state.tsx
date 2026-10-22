@@ -74,8 +74,7 @@ export function EmptyStateCompact({
                   })}
                 >
                   {actions.map((action) => (
-                    // propel: old `base` (24px) is Propel's `sm`
-                    <EmptyStateActionButton key={action.label} action={action} size="sm" />
+                    <EmptyStateActionButton key={action.label} action={action} size="md" />
                   ))}
                 </div>
               )}

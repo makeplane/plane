@@ -5,6 +5,7 @@
  */
 
 import React from "react";
+import { Radio, RadioIndicator } from "@makeplane/propel/elements/radio";
 // helpers
 import { cn } from "@plane/utils";
 
@@ -64,20 +65,36 @@ export function RadioInput({
               inputFieldClassName
             )}
           >
-            <input
-              id={`${name}_${index}`}
-              name={name}
-              className={cn(
-                `group flex size-5 flex-shrink-0 cursor-pointer items-center justify-center rounded-full border border-strong-1 bg-layer-2`,
-                selected === value ? `border-accent-strong bg-accent-primary/80` : ``,
-                disabled ? `cursor-not-allowed border-subtle bg-layer-1` : ``,
-                inputButtonClassName
+            <span className="relative flex shrink-0 items-center justify-center">
+              <Radio
+                data-checked={selected === value ? "" : undefined}
+                data-disabled={disabled ? "" : undefined}
+                render={
+                  <input
+                    id={`${name}_${index}`}
+                    name={name}
+                    className={cn(
+                      "cursor-pointer appearance-none",
+                      disabled ? "cursor-not-allowed" : "",
+                      inputButtonClassName
+                    )}
+                    type="radio"
+                    value={value}
+                    disabled={disabled}
+                    checked={selected === value}
+                  />
+                }
+              />
+              {selected === value && (
+                <RadioIndicator
+                  aria-hidden="true"
+                  data-disabled={disabled ? "" : undefined}
+                  render={
+                    <span className="pointer-events-none absolute text-icon-accent-primary data-disabled:text-icon-disabled data-disabled:opacity-60" />
+                  }
+                />
               )}
-              type="radio"
-              value={value}
-              disabled={disabled}
-              checked={selected === value}
-            />
+            </span>
             <label htmlFor={`${name}_${index}`} className="w-full cursor-pointer">
               {label}
             </label>

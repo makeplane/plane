@@ -17,6 +17,7 @@ import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import {
   ArchiveOutline,
   ChevronRightOutline,
+  DragDropOutline,
   LinkOutline,
   LogOutOutline,
   MoreHorizontalOutline,
@@ -33,7 +34,7 @@ import { Icon } from "@makeplane/propel/components/icon";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { ControlLink } from "@plane/blocks/layout";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
-import { DropIndicator, DragHandle } from "@plane/blocks/common";
+import { DropIndicator } from "@plane/blocks/common";
 import { cn } from "@plane/utils";
 // components
 import { DEFAULT_TAB_KEY, getTabUrl } from "@/components/navigation/tab-navigation-utils";
@@ -293,6 +294,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
           id={`sidebar-${projectId}-${projectListType}`}
           className={cn("relative", {
             "bg-layer-1 opacity-60": isDragging,
+            "pl-4": !disableDrag && !renderInExtendedSidebar,
           })}
           ref={projectRef}
         >
@@ -313,20 +315,33 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                 align="end"
                 disabled={isDragging || isMobile}
               >
-                <button
+                <IconButton
                   type="button"
-                  className={cn(
-                    "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab items-center justify-center rounded-sm text-placeholder group-hover/project-item:flex",
-                    {
-                      "cursor-not-allowed opacity-60": project.sort_order === null,
-                      "cursor-grabbing": isDragging,
-                      flex: isMenuActive || renderInExtendedSidebar,
-                    }
-                  )}
+                  variant="ghost"
+                  size="xs"
+                  aria-label={t("drag_to_rearrange")}
+                  showTooltip={false}
                   ref={dragHandleRef}
-                >
-                  <DragHandle className="bg-transparent" />
-                </button>
+                  onContextMenu={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }}
+                  render={(buttonProps) => (
+                    <button
+                      {...buttonProps}
+                      className={cn(
+                        buttonProps.className,
+                        "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab group-hover/project-item:flex",
+                        {
+                          "cursor-not-allowed opacity-60": project.sort_order === null,
+                          "cursor-grabbing": isDragging,
+                          flex: isMenuActive || renderInExtendedSidebar,
+                        }
+                      )}
+                    />
+                  )}
+                  icon={<Icon icon={DragDropOutline} tint="placeholder" />}
+                />
               </Tooltip>
             )}
             <>

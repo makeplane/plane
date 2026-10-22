@@ -6,21 +6,24 @@
 
 import { observer } from "mobx-react";
 import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 import type { TInboxIssueFilterDateKeys } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
-type InboxIssueAppliedFiltersDate = {
+type InboxIssueAppliedFiltersDateProps = {
   filterKey: TInboxIssueFilterDateKeys;
   label: string;
 };
 
 export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedFiltersDate(
-  props: InboxIssueAppliedFiltersDate
+  props: InboxIssueAppliedFiltersDateProps
 ) {
   const { filterKey, label } = props;
   // hooks
+  const { t } = useTranslation();
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   // derived values
   const filteredValues = inboxFilters?.[filterKey] || [];
@@ -49,22 +52,30 @@ export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedF
         return (
           <div key={value} className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
             <div className="truncate text-11">{optionDetail?.name}</div>
-            <div
-              className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
+            <IconButton
+              type="button"
+              variant="ghost"
+              size="xs"
+              aria-label={
+                optionDetail.name
+                  ? `${t("aria_labels.common.remove")}: ${optionDetail.name}`
+                  : t("aria_labels.common.remove")
+              }
               onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(optionDetail?.value))}
-            >
-              <CloseOutline className={`h-3 w-3`} />
-            </div>
+              icon={<CloseOutline className="h-3 w-3" />}
+            />
           </div>
         );
       })}
 
-      <div
-        className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
+      <IconButton
+        type="button"
+        variant="ghost"
+        size="xs"
+        aria-label={label ? `${t("aria_labels.common.remove")}: ${label}` : t("aria_labels.common.remove")}
         onClick={clearFilter}
-      >
-        <CloseOutline className={`h-3 w-3`} />
-      </div>
+        icon={<CloseOutline className="h-3 w-3" />}
+      />
     </div>
   );
 });

@@ -9,7 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 import { UsageOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Button } from "@makeplane/propel/components/button";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { Switch } from "@makeplane/propel/components/switch";
 import type { IInstance, IInstanceAdmin } from "@plane/types";
 // components
@@ -70,39 +70,29 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
             required
           />
 
-          <div className="flex flex-col gap-1">
-            <h4 className="text-13 text-tertiary">Email</h4>
-            <div className="w-full">
-              <InputGroup size="lg">
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  size="lg"
-                  value={instanceAdmins[0]?.user_detail?.email ?? ""}
-                  placeholder="Admin email"
-                  autoComplete="on"
-                  disabled
-                />
-              </InputGroup>
-            </div>
-          </div>
+          <InputField
+            id="email"
+            name="email"
+            type="email"
+            size="lg"
+            orientation="vertical"
+            label="Email"
+            value={instanceAdmins[0]?.user_detail?.email ?? ""}
+            placeholder="Admin email"
+            autoComplete="on"
+            disabled
+          />
 
-          <div className="flex flex-col gap-1">
-            <h4 className="text-13 text-tertiary">Instance ID</h4>
-            <div className="w-full">
-              <InputGroup size="lg">
-                <Input
-                  id="instance_id"
-                  name="instance_id"
-                  type="text"
-                  size="lg"
-                  value={instance.instance_id}
-                  disabled
-                />
-              </InputGroup>
-            </div>
-          </div>
+          <InputField
+            id="instance_id"
+            name="instance_id"
+            type="text"
+            size="lg"
+            orientation="vertical"
+            label="Instance ID"
+            value={instance.instance_id}
+            disabled
+          />
         </div>
       </div>
 

@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { Circle } from "lucide-react";
+import { CircleOutline } from "@makeplane/propel/icons";
 // types
 import type { TIssueGroupByOptions } from "@plane/types";
 
@@ -23,7 +23,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     <>
       <div className="relative flex w-full shrink-0 flex-row items-center gap-2 p-1.5">
         <div className="flex size-5 shrink-0 items-center justify-center overflow-hidden rounded-xs">
-          {icon ? icon : <Circle width={14} strokeWidth={2} />}
+          {icon ? icon : <CircleOutline width={14} height={14} />}
         </div>
         <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden">
           <div className="line-clamp-1 inline-block truncate overflow-hidden font-medium text-primary">{title}</div>

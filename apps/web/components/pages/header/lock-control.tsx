@@ -8,7 +8,11 @@ import { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { LockedOutline, UnlockedOutline } from "@makeplane/propel/icons";
 // plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { Badge } from "@makeplane/propel/elements/badge";
+import { Button } from "@makeplane/propel/elements/button";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
 // store
@@ -79,41 +83,34 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
     <>
       {displayState === "neutral" && (
         <Tooltip label="Lock" side="bottom">
-          <button
+          <IconButton
             type="button"
             onClick={toggleLock}
-            className="grid size-6 flex-shrink-0 place-items-center rounded-sm text-secondary transition-colors hover:bg-layer-1 hover:text-primary"
+            variant="ghost"
+            size="md"
+            showTooltip={false}
             aria-label="Lock"
-          >
-            <LockedOutline className="size-3.5" />
-          </button>
+            icon={<Icon icon={LockedOutline} />}
+          />
         </Tooltip>
       )}
 
       {displayState === "locked" && (
-        <button
-          type="button"
-          onClick={toggleLock}
-          className="flex h-6 items-center gap-1 rounded-sm bg-accent-primary/20 px-2 text-accent-primary transition-colors hover:bg-accent-primary/30"
-          aria-label="Locked"
-        >
-          <LockedOutline className="animate-lock-icon size-3.5 flex-shrink-0" />
-          <span className="animate-text-slide-in overflow-hidden text-11 font-medium whitespace-nowrap transition-all duration-500 ease-out">
+        <Button type="button" onClick={toggleLock} variant="secondary" size="md" stretch="auto" aria-label="Locked">
+          <Icon icon={<LockedOutline className="animate-lock-icon" />} />
+          <span className="animate-text-slide-in overflow-hidden whitespace-nowrap transition-all duration-500 ease-out">
             Locked
           </span>
-        </button>
+        </Button>
       )}
 
       {displayState === "unlocked" && (
-        <div
-          className="flex h-6 animate-fade-out items-center gap-1 rounded-sm px-2 text-secondary"
-          aria-label="Unlocked"
-        >
-          <UnlockedOutline className="animate-unlock-icon size-3.5 flex-shrink-0" />
-          <span className="animate-text-slide-in animate-text-fade-out overflow-hidden text-11 font-medium whitespace-nowrap transition-all duration-500 ease-out">
+        <Badge variant="neutral" size="md" render={<div className="animate-fade-out" />} aria-label="Unlocked">
+          <Icon icon={<UnlockedOutline className="animate-unlock-icon" />} />
+          <span className="animate-text-slide-in animate-text-fade-out overflow-hidden whitespace-nowrap transition-all duration-500 ease-out">
             Unlocked
           </span>
-        </div>
+        </Badge>
       )}
     </>
   );

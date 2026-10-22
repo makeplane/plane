@@ -146,7 +146,7 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
         <AlertDialogActions>
           <Button
             variant="secondary"
-            size="sm"
+            size="md"
             stretch="auto"
             label={cancelLabel}
             disabled={isSubmitting}
@@ -154,7 +154,7 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
           />
           <Button
             variant={BUTTON_VARIANTS[variant]}
-            size="sm"
+            size="md"
             stretch="auto"
             tabIndex={0}
             onClick={() => void handleSubmit()}

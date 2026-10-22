@@ -6,7 +6,7 @@
 
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
-import { Triangle } from "lucide-react";
+import { EstimateOutline } from "@makeplane/propel/icons";
 // plane types
 import { useTranslation } from "@plane/i18n";
 import { EEstimateSystem } from "@plane/types";
@@ -41,7 +41,7 @@ export const PowerKWorkItemEstimatesMenu = observer(function PowerKWorkItemEstim
   return (
     <Command.Group>
       <PowerKModalCommandItem
-        icon={Triangle}
+        icon={EstimateOutline}
         label={t("project_settings.estimates.no_estimate")}
         isSelected={workItemDetails.estimate_point === null}
         onSelect={() => handleSelect(null)}
@@ -54,7 +54,7 @@ export const PowerKWorkItemEstimatesMenu = observer(function PowerKWorkItemEstim
           return (
             <PowerKModalCommandItem
               key={estimatePoint.id}
-              icon={Triangle}
+              icon={EstimateOutline}
               label={
                 currentActiveEstimate?.type === EEstimateSystem.TIME
                   ? convertMinutesToHoursMinutesString(Number(estimatePoint.value))
