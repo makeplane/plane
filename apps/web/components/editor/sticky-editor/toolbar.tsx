@@ -67,7 +67,7 @@ export function StickyEditorToolbar(props: Props) {
 
   return (
     <div className="flex h-full w-full items-center justify-between">
-      <div className="my-auto flex items-center gap-4" ref={colorPaletteRef}>
+      <div className="relative my-auto flex items-center gap-4" ref={colorPaletteRef}>
         {/* color palette */}
         {showColorPalette && <ColorPalette handleUpdate={handleColorChange} />}
         <Tooltip label="Background color">
