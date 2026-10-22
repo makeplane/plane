@@ -13,6 +13,7 @@ import { useParams } from "next/navigation";
 import { Menu } from "@base-ui/react/menu";
 import { SettingsOutline, TickOutline, UserPlusOutline } from "@makeplane/propel/icons";
 import { Button } from "@makeplane/propel/elements/button";
+import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
 // plane imports
 import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -50,62 +51,50 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
           handleItemClick();
         }}
         className={cn(
-          "flex items-center justify-between gap-1 rounded-sm p-1 text-13 text-primary outline-none focus-visible:ring-2 focus-visible:ring-accent-strong",
+          "flex items-center justify-between gap-2 rounded-sm p-1 text-body-xs-regular text-primary outline-none focus-visible:ring-2 focus-visible:ring-accent-strong",
           {
             "hover:bg-layer-transparent-hover data-highlighted:bg-layer-transparent-hover": !isActiveWorkspace,
           }
         )}
       >
-        <div className="relative flex w-[80%] items-center justify-start gap-2.5">
-          <span
-            className={`relative flex h-8 w-8 flex-shrink-0 items-center justify-center border-subtle p-2 text-14 font-medium uppercase ${
-              !workspace?.logo_url && "rounded-md bg-[#026292] text-on-color"
-            }`}
-          >
-            {workspace?.logo_url && workspace.logo_url !== "" ? (
-              <img
-                src={getFileURL(workspace.logo_url)}
-                className="absolute top-0 left-0 h-full w-full rounded-sm object-cover"
-                alt={t("workspace_logo")}
-              />
-            ) : (
-              (workspace?.name?.[0] ?? "...")
-            )}
-          </span>
-          <div className="w-[inherit]">
+        <div className="relative flex min-w-0 flex-1 items-center justify-start gap-2">
+          <WorkspaceAvatar size="lg" src={getFileURL(workspace.logo_url ?? "")} alt={workspace.name} aria-hidden />
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
             <div
-              className={`truncate text-left text-13 font-medium text-ellipsis ${workspaceSlug === workspace.slug ? "" : "text-secondary"}`}
+              className={`truncate text-left text-body-xs-regular ${workspaceSlug === workspace.slug ? "" : "text-secondary"}`}
             >
               {workspace.name}
             </div>
-            <div className="flex w-fit gap-2 text-13 text-tertiary capitalize">
-              <span>{getUserRole(workspace.role)?.toLowerCase() || "guest"}</span>
-              <div className="m-auto h-1 w-1 rounded-full bg-layer-1/50" />
-              <span className="capitalize">{t("member", { count: workspace.total_members || 0 })}</span>
+            <div className="flex min-w-0 flex-wrap items-center gap-x-1 gap-y-0.5 text-caption-md-regular text-tertiary capitalize">
+              <span className="min-w-0 truncate">{getUserRole(workspace.role)?.toLowerCase() || "guest"}</span>
+              <span aria-hidden className="size-1 shrink-0 rounded-full bg-(--text-color-placeholder)" />
+              <span className="min-w-0 truncate capitalize">
+                {t("member", { count: workspace.total_members || 0 })}
+              </span>
             </div>
           </div>
         </div>
         {isActiveWorkspace ? (
-          <span className="flex-shrink-0 p-1">
-            <TickOutline className="h-5 w-5 text-primary" />
+          <span className="shrink-0">
+            <TickOutline className="size-4 text-primary" />
           </span>
         ) : null}
       </Menu.Item>
       {isActiveWorkspace && (
-        <div className="mt-2 mb-1 flex gap-2">
+        <div className="mt-2 mb-1 flex flex-wrap gap-2">
           {[EUserPermissions.ADMIN, EUserPermissions.MEMBER].includes(workspace?.role) && (
             <Menu.Item
               render={
                 <Button
                   variant="secondary"
-                  size="lg"
+                  size="sm"
                   stretch="auto"
                   render={<Link href={`/${workspace.slug}/settings`} />}
                 />
               }
               onClick={handleClose}
             >
-              <SettingsOutline className="size-4 shrink-0" />
+              <SettingsOutline className="size-3.5 shrink-0" />
               {t("settings")}
             </Menu.Item>
           )}
@@ -114,14 +103,14 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
               render={
                 <Button
                   variant="secondary"
-                  size="lg"
+                  size="sm"
                   stretch="auto"
                   render={<Link href={`/${workspace.slug}/settings/members`} />}
                 />
               }
               onClick={handleClose}
             >
-              <UserPlusOutline className="size-4 shrink-0" />
+              <UserPlusOutline className="size-3.5 shrink-0" />
               {t("project_settings.members.invite_members.title")}
             </Menu.Item>
           )}
