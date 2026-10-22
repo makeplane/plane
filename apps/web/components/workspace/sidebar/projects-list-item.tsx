@@ -33,6 +33,7 @@ import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { ControlLink } from "@plane/blocks/layout";
+import { ListItem, ListItemLabel, ListItemLink } from "@makeplane/propel/elements/list";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { DropIndicator } from "@plane/blocks/common";
 import { cn } from "@plane/utils";
@@ -299,15 +300,16 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
           ref={projectRef}
         >
           <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
-          <div
-            className={cn(
-              "group/project-item relative flex w-full items-center rounded-md px-2 py-1.5 text-primary hover:bg-layer-transparent-hover",
-              {
-                "bg-surface-2": isMenuActive,
-                "bg-layer-transparent-active": shouldHighlightProject,
-              }
-            )}
-            id={`${project?.id}`}
+          <ListItem
+            density="comfortable"
+            render={
+              <div
+                id={project.id}
+                className={cn("group/project-item", {
+                  "bg-layer-transparent-hover": isMenuActive,
+                })}
+              />
+            }
           >
             {!disableDrag && (
               <Tooltip
@@ -331,7 +333,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                       {...buttonProps}
                       className={cn(
                         buttonProps.className,
-                        "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab group-hover/project-item:flex",
+                        "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab group-focus-within/project-item:flex group-hover/project-item:flex",
                         {
                           "cursor-not-allowed opacity-60": project.sort_order === null,
                           "cursor-grabbing": isDragging,
@@ -345,36 +347,22 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
               </Tooltip>
             )}
             <>
-              <ControlLink href={defaultTabUrl} className="flex flex-grow truncate" onClick={handleItemClick}>
-                {isAccordionMode ? (
-                  <button
-                    type="button"
-                    className="flex w-full flex-grow items-center gap-1.5 text-left select-none"
-                    aria-expanded={isProjectListOpen}
-                    aria-label={
-                      isProjectListOpen
-                        ? t("aria_labels.projects_sidebar.close_project_menu")
-                        : t("aria_labels.projects_sidebar.open_project_menu")
-                    }
-                  >
-                    <div className="grid size-4 flex-shrink-0 place-items-center">
-                      <Logo logo={project.logo_props} size={16} />
-                    </div>
-                    <p className="truncate text-13 font-medium text-secondary">{project.name}</p>
-                  </button>
-                ) : (
-                  <div className="flex w-full flex-grow items-center gap-1.5 text-left select-none">
-                    <div className="grid size-4 flex-shrink-0 place-items-center">
-                      <Logo logo={project.logo_props} size={16} />
-                    </div>
-                    <p className="truncate text-13 font-medium text-secondary">{project.name}</p>
-                  </div>
+              <ListItemLink
+                render={(linkProps) => (
+                  <ControlLink {...linkProps} href={defaultTabUrl} draggable={false} onClick={handleItemClick}>
+                    {linkProps.children}
+                  </ControlLink>
                 )}
-              </ControlLink>
+                aria-current={shouldHighlightProject ? "page" : undefined}
+                aria-expanded={isAccordionMode ? isProjectListOpen : undefined}
+              >
+                <Logo logo={project.logo_props} size={16} />
+                <ListItemLabel>{project.name}</ListItemLabel>
+              </ListItemLink>
               <div className="flex items-center gap-1">
                 <div
                   className={cn(
-                    "pointer-events-none flex-shrink-0 opacity-0 group-hover/project-item:pointer-events-auto group-hover/project-item:opacity-100",
+                    "pointer-events-none flex-shrink-0 opacity-0 group-focus-within/project-item:pointer-events-auto group-focus-within/project-item:opacity-100 group-hover/project-item:pointer-events-auto group-hover/project-item:opacity-100",
                     {
                       "pointer-events-auto opacity-100": isMenuActive,
                     }
@@ -432,9 +420,12 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                 </div>
                 {isAccordionMode && (
                   <span
-                    className={cn("hidden text-placeholder group-hover/project-item:inline-flex", {
-                      "inline-flex": isMenuActive,
-                    })}
+                    className={cn(
+                      "hidden text-placeholder group-focus-within/project-item:inline-flex group-hover/project-item:inline-flex",
+                      {
+                        "inline-flex": isMenuActive,
+                      }
+                    )}
                   >
                     <IconButton
                       variant="ghost"
@@ -458,7 +449,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                 )}
               </div>
             </>
-          </div>
+          </ListItem>
           {isAccordionMode && isProjectListOpen && (
             <div className="relative mt-1 mb-1.5 flex flex-col gap-0.5 pl-6">
               <div className="absolute top-0 bottom-1 left-[15px] w-[1px] bg-layer-3" />
