@@ -232,7 +232,9 @@ overrides:
   webpack: 5.104.1
   lodash-es: "catalog:"
   lodash: 4.18.1
-  markdown-it: 14.3.2
+  # EXACT pin, bump the number. CVE-2026-111758 (DoS via unclosed link reference
+  # definitions) fixed in 14.3.3; 15.x is a major we do not take here.
+  markdown-it: 14.3.3
   rollup: 4.59.0
   "minimatch@3": 3.1.4
   "minimatch@10": 10.2.3
@@ -255,7 +257,8 @@ overrides:
   # only uses parser()/selector(); 7.0.0's sole break is safe insertion during iteration.
   postcss-selector-parser: 7.1.6
   axios: "catalog:"
-  follow-redirects: 1.16.0
+  # EXACT pin, bump the number. CVE-2026-111755 / CVE-2026-111756 fixed in 1.16.1.
+  follow-redirects: 1.16.1
   uuid: "catalog:"
   # EXACT pin: bump the number, never widen -- 4.x breaks ajv's ^3.0.1 (the only
   # consumer here). Floor is 3.1.8, not 3.1.7: it also fixes GHSA-hrr3-gc8f-f4qj,
