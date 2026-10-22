@@ -37,7 +37,7 @@ import { IconButton } from "@makeplane/propel/components/icon-button";
 import { ListItem, ListItemLabel } from "@makeplane/propel/components/list";
 import { ListItemButton } from "@makeplane/propel/elements/list";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
-import { DropIndicator, DragHandle } from "@plane/blocks/common";
+import { DropIndicator } from "@plane/blocks/common";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -201,14 +201,18 @@ export function FavoriteFolder(props: Props) {
                         nesting a second button inside the folder toggle. Clicks bubble to the toggle as before. */}
                   <span
                     className={cn(
-                      "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab items-center justify-center rounded-sm text-placeholder group-hover/project-item:flex",
+                      "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab items-center justify-center rounded-sm p-0.5 text-placeholder group-hover/project-item:flex",
                       {
                         "cursor-not-allowed opacity-60": favorite.sort_order === null,
                         "cursor-grabbing": isDragging,
                       }
                     )}
+                    onContextMenu={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }}
                   >
-                    <DragHandle className="bg-transparent" />
+                    <DragDropOutline className="size-3.5" aria-hidden />
                   </span>
                 </Tooltip>
                 <div className="grid size-5 flex-shrink-0 place-items-center">
