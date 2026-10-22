@@ -33,6 +33,9 @@ import { FavoriteFolderIcon } from "@plane/blocks/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IFavorite, InstructionType } from "@plane/types";
 import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { ListItem, ListItemLabel } from "@makeplane/propel/components/list";
+import { ListItemButton } from "@makeplane/propel/elements/list";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { DropIndicator, DragHandle } from "@plane/blocks/common";
 // helpers
@@ -166,13 +169,15 @@ export function FavoriteFolder(props: Props) {
       >
         {/* draggable drop top indicator */}
         <DropIndicator isVisible={instruction === "reorder-above"} />
-        <div
-          className={cn(
-            "group/project-item relative flex w-full items-center rounded-md px-2 py-1.5 text-primary hover:bg-layer-1-hover",
-            {
-              "bg-surface-2": isMenuActive,
-            }
-          )}
+        <ListItem
+          density="comfortable"
+          render={
+            <div
+              className={cn("group/project-item", {
+                "bg-surface-2": isMenuActive,
+              })}
+            />
+          }
         >
           {/* draggable indicator */}
 
@@ -182,43 +187,40 @@ export function FavoriteFolder(props: Props) {
 
           <>
             <Tooltip label={`${favorite.name}`} layout="stacked" side="right" sideOffset={40} disabled={isMobile}>
-              <div className="flex flex-grow truncate">
-                <button
-                  type="button"
-                  className="flex w-full flex-grow items-center gap-1.5 text-left select-none"
-                  aria-expanded={isOpen}
-                  onClick={() => setIsOpen(!isOpen)}
+              <ListItemButton
+                render={<button className="select-none" />}
+                aria-expanded={isOpen}
+                onClick={() => setIsOpen(!isOpen)}
+              >
+                <Tooltip
+                  label={favorite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
+                  align="end"
+                  disabled={isDragging || isMobile}
                 >
-                  <Tooltip
-                    label={favorite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
-                    align="end"
-                    disabled={isDragging || isMobile}
-                  >
-                    {/* Visual drag affordance only: the whole row is the draggable, and a <span> keeps it from
+                  {/* Visual drag affordance only: the whole row is the draggable, and a <span> keeps it from
                         nesting a second button inside the folder toggle. Clicks bubble to the toggle as before. */}
-                    <span
-                      className={cn(
-                        "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab items-center justify-center rounded-sm text-placeholder group-hover/project-item:flex",
-                        {
-                          "cursor-not-allowed opacity-60": favorite.sort_order === null,
-                          "cursor-grabbing": isDragging,
-                        }
-                      )}
-                    >
-                      <DragHandle className="bg-transparent" />
-                    </span>
-                  </Tooltip>
-                  <div className="grid size-5 flex-shrink-0 place-items-center">
-                    <FavoriteFolderIcon />
-                  </div>
-                  <p className="truncate text-13 font-medium text-secondary">{favorite.name}</p>
-                </button>
-              </div>
+                  <span
+                    className={cn(
+                      "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab items-center justify-center rounded-sm text-placeholder group-hover/project-item:flex",
+                      {
+                        "cursor-not-allowed opacity-60": favorite.sort_order === null,
+                        "cursor-grabbing": isDragging,
+                      }
+                    )}
+                  >
+                    <DragHandle className="bg-transparent" />
+                  </span>
+                </Tooltip>
+                <div className="grid size-5 flex-shrink-0 place-items-center">
+                  <FavoriteFolderIcon />
+                </div>
+                <ListItemLabel>{favorite.name}</ListItemLabel>
+              </ListItemButton>
             </Tooltip>
             <div
               ref={actionSectionRef}
               className={cn(
-                "pointer-events-none flex-shrink-0 opacity-0 group-hover/project-item:pointer-events-auto group-hover/project-item:opacity-100",
+                "pointer-events-none flex-shrink-0 opacity-0 group-focus-within/project-item:pointer-events-auto group-focus-within/project-item:opacity-100 group-hover/project-item:pointer-events-auto group-hover/project-item:opacity-100",
                 {
                   "pointer-events-auto opacity-100": isMenuActive,
                 }
@@ -227,13 +229,13 @@ export function FavoriteFolder(props: Props) {
               <Menu onOpenChange={setIsMenuActive}>
                 <MenuTrigger
                   render={
-                    <button
-                      type="button"
-                      className="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
+                    <IconButton
+                      variant="ghost"
+                      size="xs"
+                      showTooltip={false}
                       aria-label={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
-                    >
-                      <MoreHorizontalOutline className="size-3" />
-                    </button>
+                      icon={<Icon icon={MoreHorizontalOutline} />}
+                    />
                   }
                 />
                 <MenuContent side="bottom" align="start">
@@ -250,25 +252,29 @@ export function FavoriteFolder(props: Props) {
                 </MenuContent>
               </Menu>
             </div>
-            <button
-              type="button"
-              className={cn("hidden rounded-sm p-0.5 group-hover/project-item:inline-block hover:bg-layer-1", {
-                "inline-block": isMenuActive,
+            <span
+              className={cn("hidden group-focus-within/project-item:inline-flex group-hover/project-item:inline-flex", {
+                "inline-flex": isMenuActive,
               })}
-              aria-expanded={isOpen}
-              aria-label={t(
-                isOpen ? "aria_labels.projects_sidebar.close_folder" : "aria_labels.projects_sidebar.open_folder"
-              )}
-              onClick={() => setIsOpen(!isOpen)}
             >
-              <ChevronRightOutline
-                className={cn("size-3 flex-shrink-0 text-placeholder transition-transform", {
-                  "rotate-90": isOpen,
-                })}
+              <IconButton
+                variant="ghost"
+                size="xs"
+                showTooltip={false}
+                aria-expanded={isOpen}
+                aria-label={t(
+                  isOpen ? "aria_labels.projects_sidebar.close_folder" : "aria_labels.projects_sidebar.open_folder"
+                )}
+                onClick={() => setIsOpen(!isOpen)}
+                icon={
+                  <Icon
+                    icon={<ChevronRightOutline className={cn("transition-transform", { "rotate-90": isOpen })} />}
+                  />
+                }
               />
-            </button>
+            </span>
           </>
-        </div>
+        </ListItem>
         {/* Headless UI `Transition` replaced by the propel `fade-in` keyframe (Ruling 36); the
                 close direction unmounts immediately, as there is no exit animation to hang off. */}
         {isOpen && favorite.children && favorite.children.length > 0 && (
