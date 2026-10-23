@@ -32,6 +32,7 @@ type Props = {
   handleEmailClear: () => void;
   handleAuthStep: (step: EAuthSteps) => void;
   nextPath: string | undefined;
+  isSingleScreenLogin?: boolean;
 };
 
 type TPasswordFormValues = {
@@ -48,9 +49,19 @@ const defaultValues: TPasswordFormValues = {
 const authService = new AuthService();
 
 export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props) {
-  const { email, isSMTPConfigured, handleAuthStep, handleEmailClear, mode, nextPath } = props;
+  const {
+    email,
+    isSMTPConfigured,
+    handleAuthStep,
+    handleEmailClear,
+    mode,
+    nextPath,
+    isSingleScreenLogin = false,
+  } = props;
   // plane imports
   const { t } = useTranslation();
+  // in single-screen login, focus the email only when it isn't already filled (e.g. after a failed sign-in)
+  const shouldFocusEmail = isSingleScreenLogin && email.length === 0;
   // ref
   const formRef = useRef<HTMLFormElement>(null);
   // states
@@ -87,7 +98,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
       <div className="w-full">
         {isSMTPConfigured ? (
           <Link
-            href={`/accounts/forgot-password?email=${encodeURIComponent(email)}`}
+            href={`/accounts/forgot-password?email=${encodeURIComponent(passwordFormData.email)}`}
             className="text-11 font-medium text-accent-primary"
           >
             {t("auth.common.forgot_password")}
@@ -160,7 +171,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         }}
       >
         <input type="hidden" name="csrfmiddlewaretoken" />
-        <input type="hidden" value={passwordFormData.email} name="email" />
+        {!isSingleScreenLogin && <input type="hidden" value={passwordFormData.email} name="email" />}
         {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
         <div className="space-y-1">
           <label htmlFor="email" className="text-13 font-medium text-tertiary">
@@ -175,13 +186,16 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               value={passwordFormData.email}
               onChange={(e) => handleFormChange("email", e.target.value)}
               placeholder={t("auth.common.email.placeholder")}
-              disabled
+              disabled={!isSingleScreenLogin}
+              autoComplete="username"
+              autoFocus={shouldFocusEmail}
+              required={isSingleScreenLogin}
             />
             {passwordFormData.email.length > 0 && (
               <button
                 type="button"
                 className="grid size-5 place-items-center"
-                onClick={handleEmailClear}
+                onClick={() => (isSingleScreenLogin ? handleFormChange("email", "") : handleEmailClear())}
                 aria-label={t("aria_labels.auth_forms.clear_email")}
               >
                 <CloseCircleOutline className="size-5 text-placeholder" />
@@ -205,8 +219,8 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               placeholder={t("auth.common.password.placeholder")}
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
-              autoComplete="off"
-              autoFocus
+              autoComplete={mode === EAuthModes.SIGN_IN ? "current-password" : "new-password"}
+              autoFocus={!shouldFocusEmail}
             />
             <button
               type="button"
@@ -281,7 +295,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 loading={isSubmitting}
                 label={isSMTPConfigured ? t("common.continue") : t("common.go_to_workspace")}
               />
-              {isSMTPConfigured && (
+              {isSMTPConfigured && !isSingleScreenLogin && (
                 <Button
                   type="button"
                   onClick={redirectToUniqueCodeSignIn}
