@@ -14,6 +14,14 @@ const getDateInTimeZone = (date: Date, timeZone?: string): Date => {
   return isValid(zonedDate) ? zonedDate : date;
 };
 
+// Preserve the date picker's calendar day when interpreting it in another timezone.
+export const getEndOfSelectedDay = (date: Date, timeZone?: string): Date => {
+  const zonedDate = getDateInTimeZone(new Date(date), timeZone);
+  zonedDate.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
+  zonedDate.setHours(23, 59, 59, 999);
+  return new Date(zonedDate);
+};
+
 // Format Date Helpers
 /**
  * @returns {string | null} formatted date in the desired format or platform default format (MMM dd, yyyy)

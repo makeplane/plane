@@ -27,7 +27,7 @@ import { Select } from "@plane/blocks/select";
 import { setToast } from "@plane/blocks/toast";
 import { useTranslation } from "@plane/i18n";
 import type { IApiToken } from "@plane/types";
-import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import { getEndOfSelectedDay, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
 import { useUser, useUserProfile } from "@/hooks/store/user";
 // helpers
@@ -82,14 +82,6 @@ const getExpiryDate = (val: string): Date | null | undefined => {
   return null;
 };
 
-const getFormattedDate = (date: Date): Date => {
-  const now = new Date();
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
-  const seconds = now.getSeconds();
-  return add(date, { hours, minutes, seconds });
-};
-
 export const CreateApiTokenForm = observer(function CreateApiTokenForm(props: Props) {
   const { data: user } = useUser();
   const { handleClose, neverExpires, toggleNeverExpires, onSubmit } = props;
@@ -126,7 +118,7 @@ export const CreateApiTokenForm = observer(function CreateApiTokenForm(props: Pr
     if (neverExpires) payload.expired_at = null;
     // if never expires is toggled off, and the user has selected a custom date, set expired_at to the custom date
     else if (data.expired_at === "custom") {
-      payload.expired_at = customDate && getFormattedDate(customDate).toISOString();
+      payload.expired_at = customDateFormatted && customDateFormatted.toISOString();
     }
     // if never expires is toggled off, and the user has selected a predefined date, set expired_at to the predefined date
     else {
@@ -144,7 +136,7 @@ export const CreateApiTokenForm = observer(function CreateApiTokenForm(props: Pr
   const tomorrow = add(today, { days: 1 });
   const expiredAt = watch("expired_at");
   const expiryDate = getExpiryDate(expiredAt ?? "");
-  const customDateFormatted = customDate && getFormattedDate(customDate);
+  const customDateFormatted = customDate && getEndOfSelectedDay(customDate, user?.user_timezone);
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="flex min-h-0 flex-1 flex-col">

@@ -5,7 +5,24 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { renderFormattedDate, renderFormattedPayloadDate, renderFormattedTime } from "./datetime";
+import { getEndOfSelectedDay, renderFormattedDate, renderFormattedPayloadDate, renderFormattedTime } from "./datetime";
+
+describe("end of a selected calendar day", () => {
+  it("preserves the selected day and does not mutate the date picker value", () => {
+    const selected = new Date(2026, 9, 24, 14, 30);
+    const before = selected.getTime();
+    expect(getEndOfSelectedDay(selected, "America/Los_Angeles").toISOString()).toBe("2026-10-25T06:59:59.999Z");
+    expect(selected.getTime()).toBe(before);
+  });
+
+  it("uses the browser's selected day for missing or invalid profile timezones", () => {
+    const selected = new Date(2026, 9, 24);
+    const expected = new Date(2026, 9, 24, 23, 59, 59, 999).toISOString();
+    for (const timeZone of [undefined, "invalid"]) {
+      expect(getEndOfSelectedDay(selected, timeZone).toISOString()).toBe(expected);
+    }
+  });
+});
 
 describe("timestamp formatting in a selected timezone", () => {
   it.each([
