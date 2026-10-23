@@ -128,6 +128,10 @@ loopback_users.guest = true
 EOF
 grep -q '^ERL_EPMD_ADDRESS' /etc/rabbitmq/rabbitmq-env.conf 2>/dev/null \
   || echo 'ERL_EPMD_ADDRESS=127.0.0.1' >> /etc/rabbitmq/rabbitmq-env.conf
+# The distribution port is loopback-only, so the node name must resolve to 127.0.0.1
+# (Ubuntu maps the hostname to 127.0.1.1, which rabbitmqctl could not reach)
+grep -q '^NODENAME' /etc/rabbitmq/rabbitmq-env.conf \
+  || echo 'NODENAME=rabbit@localhost' >> /etc/rabbitmq/rabbitmq-env.conf
 systemctl enable rabbitmq-server
 systemctl restart rabbitmq-server
 rabbitmqctl await_startup
