@@ -511,7 +511,7 @@ overrides:
   '@opentelemetry/sdk-trace-base': 2.8.0
   morgan: 1.12.1
   browserslist: '>=4.28.7'
-  toml: '>=4.2.0 <5'
+  toml: '>=5.0.1 <6'
   compression: 1.8.2
   proxy-addr: '>=2.0.8 <3'
   source-map-js: '>=1.2.2 <2'
@@ -7727,8 +7727,8 @@ packages:
     resolution: {integrity: sha512-kh9LVIWH5CnL63Ipf0jhlBIy0UsrMj/NJDfpsy1SqOXlLKEVyXXYrnFxFT1yOOYVGBSApeVnjPw/sBz5BfEjAQ==}
     engines: {node: '>=14.16'}
 
-  toml@4.3.0:
-    resolution: {integrity: sha512-lVb8X9BsPVuH0M4BKeS91tXAmJvCjQ5UIyAbQFaxkKGyUFK2RPkhwaFSQH8vbpl1d23eu/IBH+dwVMHWaq9A5A==}
+  toml@5.0.1:
+    resolution: {integrity: sha512-EqYNA/YvUNndrA2B3O2ojzLQoTQrBxeZ9UIjQwk8t10oe6n7dwclBwd9IdZQTOKwe6vWX+AXtl6IntXRbepdxQ==}
     engines: {node: '>=20'}
 
   tough-cookie@4.1.4:
@@ -11343,7 +11343,7 @@ snapshots:
       kubernetes-types: 1.30.0
       msgpackr: 2.0.2
       multipasta: 0.2.7
-      toml: 4.3.0
+      toml: 5.0.1
       uuid: 14.0.0
       yaml: 2.8.3
 
@@ -14328,7 +14328,7 @@ snapshots:
       '@tokenizer/token': 0.3.0
       ieee754: 1.2.1
 
-  toml@4.3.0: {}
+  toml@5.0.1: {}
 
   tough-cookie@4.1.4:
     dependencies:

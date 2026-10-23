@@ -289,12 +289,13 @@ overrides:
   # (babel/postcss/vite), but the runtime images copy node_modules wholesale, so
   # it lands in the scanned surface.
   browserslist: ">=4.28.7"
-  # CVE-2026-63376 (prototype-pollution -> arbitrary code execution in the TOML
-  # parser, fixed 4.1.2) and CVE-2026-77465 (DoS via uncontrolled recursion,
-  # fixed 4.2.0). toml reaches us only transitively and its parent's range
-  # already allows the fix -- the lockfile simply predates both. Hold below
-  # 5.0.0, which is outside that range.
-  toml: ">=4.2.0 <5"
+  # CVE-2026-114141/114143/114144 (parser CPU DoS) cover every toml <= 5.0.0, so
+  # there is no 4.x fix and the old "<5" cap has to move. toml arrives only via
+  # react-doctor -> effect (declares ^4.1.1), whose sole use is Toml.parse() in
+  # effect/unstable/cli; 5.x keeps that API and only throws on integers beyond
+  # Number.MAX_SAFE_INTEGER instead of silently rounding them. Supersedes the
+  # 4.1.2 / 4.2.0 floors for CVE-2026-63376 and CVE-2026-77465.
+  toml: ">=5.0.1 <6"
   # The lockfile predates the 2026-10-05 advisories below.
   # serve 14.2.5 pins compression 1.8.1 exactly; CVE-2026-87776 fixed in 1.8.2.
   compression: "catalog:"
