@@ -76,6 +76,9 @@ export type TIssueModalContext = {
   handleTemplateChange: (props: THandleTemplateChangeProps) => Promise<void>;
   handleConvert: (workspaceSlug: string, data: Partial<TIssue>) => Promise<void>;
   handleCreateSubWorkItem: (props: TCreateSubWorkItemProps) => Promise<void>;
+  // d2m-plane: names of child work items to create together with the new work item
+  childWorkItemNames: string[];
+  setChildWorkItemNames: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 export const IssueModalContext = createContext<TIssueModalContext | undefined>(undefined);

@@ -74,8 +74,17 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
   const { issues } = useIssues(storeType);
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
-  const { fetchIssue } = useIssueDetail();
-  const { allowedProjectIds, handleCreateUpdatePropertyValues, handleCreateSubWorkItem } = useIssueModal();
+  const {
+    fetchIssue,
+    subIssues: { fetchSubIssues },
+  } = useIssueDetail();
+  const {
+    allowedProjectIds,
+    handleCreateUpdatePropertyValues,
+    handleCreateSubWorkItem,
+    childWorkItemNames,
+    setChildWorkItemNames,
+  } = useIssueModal();
   const { getProjectByIdentifier } = useProject();
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
@@ -159,6 +168,65 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
     handleDuplicateIssueModal(false);
   };
 
+  /**
+   * d2m-plane: creates the child work items typed in the modal under the new parent,
+   * putting them in the same sprint / modules as the parent.
+   */
+  const createChildWorkItems = async (parent: TIssue, payload: Partial<TIssue>) => {
+    const names = childWorkItemNames.map((name) => name.trim()).filter(Boolean);
+    if (!workspaceSlug || !parent.project_id || names.length === 0) return;
+    const projectIdOfParent = parent.project_id;
+
+    const results = await Promise.allSettled(
+      names.map((name) =>
+        projectIssues.createIssue(workspaceSlug.toString(), projectIdOfParent, {
+          name,
+          parent_id: parent.id,
+          project_id: projectIdOfParent,
+        })
+      )
+    );
+    const created = results
+      .filter((result): result is PromiseFulfilledResult<TIssue> => result.status === "fulfilled")
+      .map((result) => result.value);
+
+    try {
+      if (created.length > 0 && payload.cycle_id)
+        await issues.addIssueToCycle(
+          workspaceSlug.toString(),
+          projectIdOfParent,
+          payload.cycle_id,
+          created.map((child) => child.id)
+        );
+      if (created.length > 0 && payload.module_ids && payload.module_ids.length > 0) {
+        const moduleIds = payload.module_ids;
+        await Promise.all(
+          created.map((child) =>
+            issues.changeModulesInIssue(workspaceSlug.toString(), projectIdOfParent, child.id, moduleIds, [])
+          )
+        );
+      }
+      await fetchSubIssues(workspaceSlug.toString(), projectIdOfParent, parent.id);
+    } catch (error) {
+      console.error("d2m-plane: failed to sync child work items", error);
+    }
+
+    setChildWorkItemNames([]);
+    const failed = names.length - created.length;
+    if (failed > 0)
+      setToast({
+        type: "warning",
+        title: t("error"),
+        message: t("d2m_quick_actions.children_failed", { failed, total: names.length }),
+      });
+    else
+      setToast({
+        type: "success",
+        title: t("success"),
+        message: t("d2m_quick_actions.children_created", { count: created.length }),
+      });
+  };
+
   const handleCreateIssue = async (
     payload: Partial<TIssue>,
     is_draft_issue: boolean = false
@@ -233,6 +301,9 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
           projectId: response.project_id,
           parentId: response.id,
         });
+
+        // d2m-plane: create the child work items typed in the "Add child" section
+        if (!is_draft_issue) await createChildWorkItems(response, payload);
       }
 
       setToast({

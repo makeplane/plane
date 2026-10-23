@@ -24,6 +24,7 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
   const { children, allowedProjectIds } = props;
   // states
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
+  const [childWorkItemNames, setChildWorkItemNames] = useState<string[]>([]);
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
   // derived values
@@ -52,6 +53,8 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
         handleTemplateChange: () => Promise.resolve(),
         handleConvert: () => Promise.resolve(),
         handleCreateSubWorkItem: () => Promise.resolve(),
+        childWorkItemNames,
+        setChildWorkItemNames,
       }}
     >
       {children}

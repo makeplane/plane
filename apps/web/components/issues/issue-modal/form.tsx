@@ -43,6 +43,7 @@ import {
   IssueProjectSelect,
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
+import { ChildWorkItemsInput } from "@/components/issues/issue-modal/components/child-work-items";
 // helpers
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
@@ -426,6 +427,8 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                 handleFormChange={handleFormChange}
                 setSelectedParentIssue={setSelectedParentIssue}
               />
+              {/* d2m-plane: quick-add child work items while creating */}
+              {!data?.id && !isDraft && <ChildWorkItemsInput />}
             </div>
           </DialogMain>
           {showActionButtons && (
