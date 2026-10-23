@@ -28,7 +28,7 @@ docker compose -f docker-compose-test.yml up \
   --exit-code-from api-tests
 ```
 
-- `--build` rebuilds the `api-tests` image when `Dockerfile.dev` or `requirements/*.txt` change.
+- `--build` rebuilds the `api-tests` image when `Dockerfile.dev`, `pyproject.toml` or `uv.lock` change.
 - `--abort-on-container-exit` stops the dependency services as soon as `api-tests` exits.
 - `--exit-code-from api-tests` propagates pytest's exit code so this works in CI.
 
@@ -41,11 +41,11 @@ Use `docker compose run` to override the default `pytest` command. Anything you 
 docker compose -f docker-compose-test.yml run --rm --build api-tests pytest -m unit
 
 # A single directory, filtered by name
-docker compose -f docker-compose-test.yml run --rm api-tests \
+docker compose -f docker-compose-test.yml run --rm --build api-tests \
   pytest plane/tests/unit -k "test_workspace"
 
 # Single file with verbose output
-docker compose -f docker-compose-test.yml run --rm api-tests \
+docker compose -f docker-compose-test.yml run --rm --build api-tests \
   pytest plane/tests/unit/models/test_workspace.py -vv
 ```
 
@@ -61,13 +61,13 @@ docker compose -f docker-compose-test.yml down -v
 
 ## How it works
 
-| Service      | Image                                                | Purpose                                       |
-| ------------ | ---------------------------------------------------- | --------------------------------------------- |
-| `test-db`    | `postgres:15.7-alpine`                               | Application database                          |
-| `test-redis` | `valkey/valkey:7.2.11-alpine`                        | Cache / Celery broker                         |
-| `test-mq`    | `rabbitmq:3.13.6-management-alpine`                  | Task queue                                    |
-| `test-minio` | `docker.io/pgsty/minio:RELEASE.2026-08-04T00-00-00Z` | S3-compatible object storage                  |
-| `api-tests`  | built from `apps/api/Dockerfile.dev`                 | Installs `requirements/test.txt`, runs pytest |
+| Service      | Image                                               | Purpose                                 |
+| ------------ | --------------------------------------------------- | --------------------------------------- |
+| `test-db`    | `postgres:15.7-alpine`                              | Application database                    |
+| `test-redis` | `valkey/valkey:7.2.11-alpine`                       | Cache / Celery broker                   |
+| `test-mq`    | `rabbitmq:3.13.6-management-alpine`                 | Task queue                              |
+| `test-minio` | `docker.io/pgsty/silo:RELEASE.2026-09-16T00-00-00Z` | S3-compatible object storage            |
+| `api-tests`  | built from `apps/api/Dockerfile.dev`                | `uv sync`s the locked deps, runs pytest |
 
 All four dependencies expose health checks; `api-tests` waits for `service_healthy` on each via `depends_on`, so pytest only starts once the stack is ready.
 

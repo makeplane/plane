@@ -72,7 +72,7 @@ services:
       retries: 10
 
   test-minio:
-    image: docker.io/pgsty/minio:RELEASE.2026-08-04T00-00-00Z
+    image: docker.io/pgsty/silo:RELEASE.2026-09-16T00-00-00Z
     networks:
       - test_env
     env_file:
@@ -83,7 +83,7 @@ services:
     entrypoint: >
       /bin/sh -c "
       mkdir -p /export/${AWS_S3_BUCKET_NAME:-uploads} &&
-      minio server /export --console-address ':9090' &
+      silo server /export --console-address ':9090' &
       sleep 3 &&
       mc alias set local http://localhost:9000 ${AWS_ACCESS_KEY_ID:-access-key} ${AWS_SECRET_ACCESS_KEY:-secret-key} &&
       mc mb local/${AWS_S3_BUCKET_NAME:-uploads} -p || true &&
@@ -131,14 +131,19 @@ services:
         condition: service_healthy
       test-minio:
         condition: service_healthy
-    # Install test-only requirements (not in local.txt) then exec pytest.
+    # The image already carries the test group; re-sync against the mounted
+    # uv.lock (a no-op unless it changed since the image was built), then exec pytest.
     # Any args passed via `docker compose run api-tests <args>` replace the default command.
     entrypoint:
       - /bin/sh
       - -c
       - |
         set -e
-        pip install --no-cache-dir -r requirements/test.txt
+        if ! command -v uv >/dev/null 2>&1; then
+          echo "api-tests image predates the uv migration; rebuild it: docker compose -f docker-compose-test.yml build api-tests" >&2
+          exit 1
+        fi
+        uv sync --locked --inexact
         # STATIC_ROOT must exist or Django's static middleware emits a
         # UserWarning on every request (~100 of the warnings in test runs).
         mkdir -p plane/static-assets/collected-static
