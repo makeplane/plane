@@ -16,7 +16,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-from plane.db.models import DeployBoard, FileAsset, IssueComment
+from plane.db.models import DeployBoard, FileAsset, IssueComment, ProjectMember
 from plane.settings.storage import S3Storage
 from plane.utils.path_validator import sanitize_filename
 
@@ -33,6 +33,14 @@ def _is_own_board_comment(comment_id, deploy_board, user):
         access="EXTERNAL",
         actor=user,
     ).exists()
+
+
+def _can_manage_board_asset(asset, deploy_board, user):
+    """The asset's uploader, or an active member of the board's project (who could already do it in-app)."""
+    return (
+        asset.created_by_id == user.id
+        or ProjectMember.objects.filter(project_id=deploy_board.project_id, member=user, is_active=True).exists()
+    )
 
 
 class EntityAssetEndpoint(BaseAPIView):
@@ -181,8 +189,13 @@ class EntityAssetEndpoint(BaseAPIView):
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
-        # get the asset id — scope to project to prevent cross-project IDOR
-        asset = FileAsset.objects.get(id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id)
+        # Only the uploader finalises their own asset, in this board's project
+        asset = FileAsset.objects.get(
+            id=pk,
+            workspace=deploy_board.workspace,
+            project_id=deploy_board.project_id,
+            created_by=request.user,
+        )
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
@@ -203,6 +216,11 @@ class EntityAssetEndpoint(BaseAPIView):
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
         # Get the asset
         asset = FileAsset.objects.get(id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id)
+        if not _can_manage_board_asset(asset, deploy_board, request.user):
+            return Response(
+                {"error": "You are not allowed to delete this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # Check deleted assets
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
@@ -223,6 +241,11 @@ class AssetRestoreEndpoint(BaseAPIView):
 
         # Get the asset — scope to project to prevent cross-project IDOR
         asset = FileAsset.all_objects.get(id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id)
+        if not _can_manage_board_asset(asset, deploy_board, request.user):
+            return Response(
+                {"error": "You are not allowed to restore this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         asset.is_deleted = False
         asset.deleted_at = None
         asset.save(update_fields=["is_deleted", "deleted_at"])
