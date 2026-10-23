@@ -257,6 +257,55 @@ class TestSpacesAssetWriteScope:
         board["asset"].refresh_from_db()
         assert board["asset"].is_deleted is True
 
+    @pytest.mark.django_db
+    def test_project_guest_cannot_delete_others_project_file(self, db, workspace, board):
+        # In-app a guest may not delete another's asset; the public route must not widen that
+        guest = make_user(db, "guest")
+        ProjectMember.objects.create(
+            project=board["project"], member=guest, workspace=workspace, role=5, is_active=True
+        )
+        response = make_client(guest).delete(asset_detail_url(board["anchor"], board["asset"].id))
+        assert response.status_code == status.HTTP_403_FORBIDDEN, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        board["asset"].refresh_from_db()
+        assert board["asset"].is_deleted is False
+
+    @pytest.mark.django_db
+    def test_former_member_cannot_delete_own_project_file(self, db, workspace, board):
+        # Only comment images pass on uploader alone; other uploads need active membership, as in-app
+        former = make_user(db, "former")
+        ProjectMember.objects.create(
+            project=board["project"], member=former, workspace=workspace, role=15, is_active=False
+        )
+        asset = make_asset(
+            workspace,
+            board["project"],
+            former,
+            FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+            issue_id=board["issue"].id,
+            is_uploaded=True,
+        )
+        response = make_client(former).delete(asset_detail_url(board["anchor"], asset.id))
+        assert response.status_code == status.HTTP_403_FORBIDDEN, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        asset.refresh_from_db()
+        assert asset.is_deleted is False
+
+    @pytest.mark.django_db
+    def test_project_cover_not_reachable_through_board(self, member_client, workspace, board):
+        # A board only shows description assets; nothing else is reachable through its anchor
+        cover = make_asset(
+            workspace, board["project"], board["asset"].created_by, FileAsset.EntityTypeContext.PROJECT_COVER
+        )
+        response = member_client.delete(asset_detail_url(board["anchor"], cover.id))
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        cover.refresh_from_db()
+        assert cover.is_deleted is False
+
     # ----------------------------------------------------------------------- #
     # AssetRestoreEndpoint.post — uploader or project member only, even though
     # the asset is resolved through all_objects (soft-deleted rows included)
