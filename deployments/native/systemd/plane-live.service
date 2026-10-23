@@ -1,0 +1,21 @@
+[Unit]
+Description=Plane Live (realtime collaboration)
+After=network.target redis-server.service plane-api.service
+PartOf=plane.target
+
+[Service]
+User=plane
+Group=plane
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+Environment=NODE_ENV=production
+EnvironmentFile=/opt/plane/shared/live.env
+WorkingDirectory=/opt/plane/current/apps/live
+ExecStart=/opt/plane/node/bin/node dist/start.mjs
+
+[Install]
+WantedBy=plane.target

@@ -1,0 +1,21 @@
+[Unit]
+Description=Plane Celery beat
+After=network.target postgresql.service redis-server.service rabbitmq-server.service silo.service
+Wants=postgresql.service redis-server.service rabbitmq-server.service silo.service
+PartOf=plane.target
+
+[Service]
+User=plane
+Group=plane
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+EnvironmentFile=/opt/plane/shared/api.env
+WorkingDirectory=/opt/plane/current/apps/api
+ExecStart=/opt/plane/current/apps/api/.venv/bin/celery -A plane beat -l info
+
+[Install]
+WantedBy=plane.target

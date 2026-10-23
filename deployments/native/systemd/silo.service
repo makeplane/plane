@@ -1,0 +1,19 @@
+[Unit]
+Description=Silo S3-compatible object storage (MinIO fork) for Plane uploads
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=silo
+Group=silo
+EnvironmentFile=/etc/default/silo
+ExecStart=/usr/local/bin/silo server $MINIO_OPTS $MINIO_VOLUMES
+Restart=always
+RestartSec=5
+LimitNOFILE=65536
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

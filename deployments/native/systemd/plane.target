@@ -1,0 +1,6 @@
+[Unit]
+Description=Plane (all application services)
+Wants=plane-api.service plane-worker.service plane-beat.service plane-space.service plane-live.service
+
+[Install]
+WantedBy=multi-user.target

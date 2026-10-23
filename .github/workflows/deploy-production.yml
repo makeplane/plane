@@ -1,0 +1,25 @@
+name: Deploy production
+
+on:
+  push:
+    branches: [production]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Never run on forks: the plane-prod runner belongs to this repository only
+    if: github.repository == 'xplicationsrl/plane'
+    runs-on: [self-hosted, plane-prod]
+    timeout-minutes: 60
+    steps:
+      # The deploy script is root-owned on the server and only accepts commits on
+      # origin/production; the runner user has no other privileges.
+      - name: Deploy
+        run: sudo -n -u plane /opt/plane/bin/deploy "$GITHUB_SHA"

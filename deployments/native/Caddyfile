@@ -1,0 +1,63 @@
+# Native Plane reverse proxy. Installed to /etc/caddy/Caddyfile by setup-host.sh.
+# Mirrors apps/proxy/Caddyfile.ce plus the web/admin static-serving Caddyfiles,
+# with every backend on localhost. TLS is terminated upstream (Cloudflare).
+{
+	servers {
+		max_header_size 25MB
+		client_ip_headers X-Forwarded-For X-Real-IP
+		trusted_proxies static private_ranges
+	}
+}
+
+(static_headers) {
+	header {
+		X-Frame-Options "DENY"
+		X-Content-Type-Options "nosniff"
+		X-XSS-Protection "1; mode=block"
+	}
+}
+
+:3356 {
+	request_body {
+		max_size 250MB
+	}
+
+	redir /spaces /spaces/ permanent
+	handle /spaces/* {
+		reverse_proxy 127.0.0.1:3102
+	}
+
+	redir /god-mode /god-mode/ permanent
+	handle_path /god-mode/* {
+		root * /opt/plane/current/apps/admin/build/client
+		import static_headers
+		try_files {path} /index.html
+		file_server
+	}
+
+	handle /live/* {
+		reverse_proxy 127.0.0.1:3100
+	}
+
+	@api path /api/* /auth/* /static/*
+	handle @api {
+		reverse_proxy 127.0.0.1:8100
+	}
+
+	@bucket path /uploads /uploads/*
+	handle @bucket {
+		reverse_proxy 127.0.0.1:9100
+	}
+
+	handle {
+		root * /opt/plane/current/apps/web/build/client
+		import static_headers
+		try_files {path} /index.html
+		file_server
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}

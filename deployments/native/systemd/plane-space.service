@@ -1,0 +1,23 @@
+[Unit]
+Description=Plane Space (public pages, SSR)
+After=network.target plane-api.service
+PartOf=plane.target
+
+[Service]
+User=plane
+Group=plane
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=3102
+Environment=PATH=/opt/plane/node/bin:/usr/bin:/bin
+WorkingDirectory=/opt/plane/current/apps/space
+ExecStart=/opt/plane/current/apps/space/node_modules/.bin/react-router-serve ./build/server/index.js
+
+[Install]
+WantedBy=plane.target
