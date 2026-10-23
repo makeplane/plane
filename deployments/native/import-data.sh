@@ -61,7 +61,7 @@ log "Starting Caddy on :3356"
 systemctl restart caddy
 
 log "Deploying $SHA (migrate, switch, start services)"
-sudo -u plane $ROOT/bin/deploy "$SHA"
+sudo -u plane $ROOT/bin/deploy "$SHA" --initial
 
 systemctl --no-pager --lines=0 status caddy silo postgresql redis-server rabbitmq-server plane.target \
   plane-api plane-worker plane-beat plane-space plane-live | grep -E '^●|Active:'

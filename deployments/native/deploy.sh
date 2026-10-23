@@ -6,6 +6,7 @@
 #
 #   deploy <commit-sha>               build (if needed), migrate, switch, restart
 #   deploy <commit-sha> --build-only  build the release without touching the live site
+#   deploy <commit-sha> --initial     first activation, used only by import-data.sh
 #
 # Only commits reachable from origin/production are accepted. Each release lives in
 # /opt/plane/releases/<sha>; /opt/plane/current points at the active one. If the
@@ -19,7 +20,7 @@ if [[ ! "$SHA" =~ ^[0-9a-f]{40}$ ]]; then
   echo "usage: deploy <40-char commit sha> [--build-only]" >&2
   exit 2
 fi
-if [[ -n "$MODE" && "$MODE" != "--build-only" ]]; then
+if [[ -n "$MODE" && "$MODE" != "--build-only" && "$MODE" != "--initial" ]]; then
   echo "unknown option: $MODE" >&2
   exit 2
 fi
@@ -80,6 +81,13 @@ fi
 if [[ "$MODE" == "--build-only" ]]; then
   log "Build-only: done, live site untouched"
   exit 0
+fi
+
+# Until import-data.sh has restored the old database, a deploy must not migrate the
+# empty native database (that would make the import refuse to run).
+if [[ ! -e "$ROOT/current" && "$MODE" != "--initial" ]]; then
+  echo "refusing: data not imported yet (no $ROOT/current); release $SHA is built, run import-data.sh" >&2
+  exit 1
 fi
 
 manage() {
