@@ -2,7 +2,7 @@
 # Build and activate a Plane release from the `production` branch.
 #
 # Installed root-owned to /opt/plane/bin/deploy by setup-host.sh and run as the
-# `plane` user (the GitHub runner may only invoke it via sudo -u plane):
+# `plane` user (CI reaches it only through ci-deploy, via sudo -u plane):
 #
 #   deploy <commit-sha>               build (if needed), migrate, switch, restart
 #   deploy <commit-sha> --build-only  build the release without touching the live site

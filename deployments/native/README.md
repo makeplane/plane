@@ -30,7 +30,7 @@ Runs Plane directly on an Ubuntu 24.04 host, without Docker, and redeploys on ev
 
 ## Deploys
 
-`.github/workflows/deploy-production.yml` runs on the self-hosted runner (label `plane-prod`, user `gh-runner`) and calls `sudo -u plane /opt/plane/bin/deploy <sha>`. `deploy.sh`:
+`.github/workflows/deploy-production.yml` runs on a GitHub-hosted runner and connects over SSH as `plane-ci`, sending only the commit sha. That key is pinned in `authorized_keys` to `/opt/plane/bin/ci-deploy`, which runs `sudo -u plane /opt/plane/bin/deploy <sha>`. `deploy.sh`:
 
 1. Refuses any commit that isn't on `origin/production`.
 2. Builds the backend (`uv sync`) and frontends (`pnpm turbo build`) into `releases/<sha>`.
@@ -38,7 +38,7 @@ Runs Plane directly on an Ubuntu 24.04 host, without Docker, and redeploys on ev
 4. Switches the `current` link and restarts `plane.target`.
 5. Health-checks the API, web, admin and space, and switches back to the previous release if a check fails. Migrations are not reverted.
 
-The runner user can do nothing else. `plane` may only run `systemctl restart plane.target` as root.
+The CI key can do nothing else. `plane` may only run `systemctl restart plane.target` as root.
 
 **Ship a change:** merge or push into `production`.
 **Re-run or roll back:** run the workflow manually (Actions → Deploy production) on `production`, or on the server run `sudo -u plane /opt/plane/bin/deploy <older-sha-on-production>`.
@@ -48,6 +48,6 @@ Changes to `deploy.sh`, the systemd units or the Caddyfile only take effect afte
 
 ## First-time install
 
-1. `sudo RUNNER_TOKEN=<token> bash deployments/native/setup-host.sh`. Installs packages, services and the runner, and pre-builds the current `production` commit. The live site is untouched.
+1. `sudo bash deployments/native/setup-host.sh`. Installs packages and services, creates the CI deploy key, and pre-builds the current `production` commit. The live site is untouched. It ends by printing the four `DEPLOY_SSH_*` repo secrets to add on GitHub.
 2. `sudo bash deployments/native/import-data.sh`. Cutover: dumps the old Docker database, restores it natively, copies the uploads, starts Caddy and deploys.
 3. If needed, `sudo bash deployments/native/rollback-to-docker.sh`.

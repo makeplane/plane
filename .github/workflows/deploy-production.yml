@@ -1,5 +1,8 @@
 name: Deploy production
 
+# Deploys every push to `production` to the native install over SSH. The server's
+# plane-ci key is pinned to /opt/plane/bin/ci-deploy, so this connection can only
+# trigger a deploy of a commit that is on origin/production.
 on:
   push:
     branches: [production]
@@ -14,12 +17,19 @@ concurrency:
 
 jobs:
   deploy:
-    # Never run on forks: the plane-prod runner belongs to this repository only
     if: github.repository == 'xplicationsrl/plane'
-    runs-on: [self-hosted, plane-prod]
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      # The deploy script is root-owned on the server and only accepts commits on
-      # origin/production; the runner user has no other privileges.
-      - name: Deploy
-        run: sudo -n -u plane /opt/plane/bin/deploy "$GITHUB_SHA"
+      - name: Deploy over SSH
+        env:
+          SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+          SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.DEPLOY_SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy_key -p "${SSH_PORT:-22}" -o StrictHostKeyChecking=yes \
+            -o ServerAliveInterval=30 "plane-ci@$SSH_HOST" "$GITHUB_SHA"

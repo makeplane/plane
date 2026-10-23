@@ -4,12 +4,12 @@
 # enabled but not started; import-data.sh performs the cutover.
 #
 # Usage (as root, from a checkout of the production branch):
-#   sudo RUNNER_TOKEN=<token> bash deployments/native/setup-host.sh [ENV_DIR]
+#   sudo bash deployments/native/setup-host.sh [ENV_DIR]
 #
 # ENV_DIR holds api.env, live.env and silo.env (default /var/www/plane-migration/native-env).
-# RUNNER_TOKEN is a registration token from GitHub → repo Settings → Actions → Runners
-# → New self-hosted runner; omit it to skip runner setup. For a token from the
-# organization's runner page, also pass RUNNER_URL=https://github.com/xplicationsrl.
+# Auto-deploy: GitHub-hosted Actions connect over SSH as `plane-ci`, whose key is
+# pinned to /opt/plane/bin/ci-deploy. The private key is written to
+# /root/plane-ci-deploy-key for the DEPLOY_SSH_KEY repo secret.
 set -euo pipefail
 
 [[ $EUID -eq 0 ]] || { echo "run as root" >&2; exit 1; }
@@ -26,8 +26,6 @@ UV_SHA256=23f02075b652bb1df64178cfae41b5caf160822e720e2663568f3f5d63bc52c0
 SILO_RELEASE=RELEASE.2026-09-16T00-00-00Z
 SILO_TARBALL=silo_20260916000000.0.0_linux_amd64.tar.gz
 SILO_SHA256=381e745510a8fb64323d7bb3207f95984b7f4ed826f4fcad318f97683c420c73
-RUNNER_VERSION=2.338.1
-RUNNER_SHA256=08e9ccb3604d2462c24b5e33604dc30810296ca15cc65f23cffd4317eb144c37
 
 log() { echo; echo "== $*"; }
 for f in api.env live.env silo.env; do
@@ -69,7 +67,8 @@ rm -f /usr/sbin/policy-rc.d
 log "Users and directories"
 id plane >/dev/null 2>&1 || useradd --system --home-dir $ROOT --shell /usr/sbin/nologin plane
 id silo >/dev/null 2>&1 || useradd --system --home-dir /var/lib/silo --shell /usr/sbin/nologin silo
-id gh-runner >/dev/null 2>&1 || useradd --system --create-home --home-dir /opt/actions-runner --shell /bin/bash gh-runner
+# SSH login for CI; its only permitted command is ci-deploy (forced in authorized_keys)
+id plane-ci >/dev/null 2>&1 || useradd --system --create-home --home-dir /opt/plane-ci --shell /bin/bash plane-ci
 install -d -o root -g root -m 755 $ROOT $ROOT/bin
 install -d -o plane -g plane -m 755 $ROOT/releases $ROOT/backups
 install -d -o root -g plane -m 750 $ROOT/shared
@@ -149,10 +148,11 @@ systemctl enable caddy
 
 log "Deploy script and sudo rules"
 install -m 755 -o root -g root "$HERE/deploy.sh" $ROOT/bin/deploy
+install -m 755 -o root -g root "$HERE/ci-deploy.sh" $ROOT/bin/ci-deploy
 cat > "$TMP/sudoers" <<'EOF'
 # Plane native deploy (deployments/native/setup-host.sh)
 plane ALL=(root) NOPASSWD: /usr/bin/systemctl restart plane.target
-gh-runner ALL=(plane) NOPASSWD: /opt/plane/bin/deploy
+plane-ci ALL=(plane) NOPASSWD: /opt/plane/bin/deploy
 EOF
 visudo -cf "$TMP/sudoers"
 install -m 440 "$TMP/sudoers" /etc/sudoers.d/plane
@@ -165,27 +165,29 @@ fi
 sudo -u plane git -C $ROOT/repo.git fetch --quiet origin +refs/heads/production:refs/remotes/origin/production
 SHA=$(sudo -u plane git -C $ROOT/repo.git rev-parse refs/remotes/origin/production)
 
-if [[ -n "${RUNNER_TOKEN:-}" ]]; then
-  log "GitHub Actions runner $RUNNER_VERSION (label: plane-prod)"
-  RUNNER_DIR=/opt/actions-runner
-  if [[ ! -f $RUNNER_DIR/.runner ]]; then
-    fetch_verified "https://github.com/actions/runner/releases/download/v$RUNNER_VERSION/actions-runner-linux-x64-$RUNNER_VERSION.tar.gz" "$RUNNER_SHA256" "$TMP/runner.tgz"
-    tar -xzf "$TMP/runner.tgz" -C $RUNNER_DIR
-    chown -R gh-runner:gh-runner $RUNNER_DIR
-    $RUNNER_DIR/bin/installdependencies.sh
-    sudo -u gh-runner $RUNNER_DIR/config.sh --unattended --replace \
-      --url "${RUNNER_URL:-https://github.com/xplicationsrl/plane}" --token "$RUNNER_TOKEN" \
-      --name "$(hostname)-plane-prod" --labels plane-prod --no-default-labels
-    (cd $RUNNER_DIR && ./svc.sh install gh-runner && ./svc.sh start)
-  else
-    echo "runner already configured, skipping"
-  fi
-else
-  echo; echo "RUNNER_TOKEN not set: skipping GitHub runner setup"
+log "CI deploy key (plane-ci, forced command /opt/plane/bin/ci-deploy)"
+CI_KEY=/root/plane-ci-deploy-key
+install -d -o plane-ci -g plane-ci -m 700 /opt/plane-ci/.ssh
+if [[ ! -f $CI_KEY ]]; then
+  ssh-keygen -q -t ed25519 -N '' -C "plane-ci deploy (github actions)" -f $CI_KEY
 fi
+printf 'restrict,command="/opt/plane/bin/ci-deploy" %s\n' "$(cat $CI_KEY.pub)" > /opt/plane-ci/.ssh/authorized_keys
+chown plane-ci:plane-ci /opt/plane-ci/.ssh/authorized_keys
+chmod 600 /opt/plane-ci/.ssh/authorized_keys $CI_KEY
 
 log "Pre-building release $SHA (live site untouched)"
 sudo -u plane $ROOT/bin/deploy "$SHA" --build-only
 
-echo
-echo "Host ready. Next: sudo bash $HERE/import-data.sh"
+cat <<EOF
+
+Host ready.
+
+GitHub repo secrets for auto-deploy (Settings → Secrets and variables → Actions):
+  DEPLOY_SSH_HOST         this server's public address (same as the freellmapi deploy)
+  DEPLOY_SSH_PORT         SSH port (omit for 22)
+  DEPLOY_SSH_KEY          contents of: sudo cat $CI_KEY
+  DEPLOY_SSH_KNOWN_HOSTS  <DEPLOY_SSH_HOST> $(cut -d' ' -f1,2 /etc/ssh/ssh_host_ed25519_key.pub)
+                          (use [host]:port instead of host if the port isn't 22)
+
+Next: sudo bash $HERE/import-data.sh
+EOF
