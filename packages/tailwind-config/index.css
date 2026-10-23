@@ -239,3 +239,48 @@ body {
     @apply text-placeholder;
   }
 }
+
+/*
+ * Xplication brand palette. Replaces propel's blue `--brand-*` scale, which every
+ * accent token (buttons, links, focus rings, selection) derives from. The steps
+ * keep propel's lightness curve so contrast relationships hold; hue and chroma come
+ * from the Xplication mark: #137290 is the light-mode default (5.5:1 against white),
+ * #2A9ECF the dark-mode one. Must stay below the propel @import so it wins the tie.
+ * Users' custom themes derive their own scale from --custom-brand-base, so they are
+ * excluded here.
+ */
+@layer base {
+  :root:not([data-custom-theme="true"]) {
+    --brand-50: oklch(0.9923 0.0034 226);
+    --brand-100: oklch(0.9847 0.0067 226);
+    --brand-200: oklch(0.9715 0.0134 226);
+    --brand-300: oklch(0.9428 0.0274 226);
+    --brand-400: oklch(0.9008 0.0471 226);
+    --brand-500: oklch(0.8414 0.0761 226);
+    --brand-600: oklch(0.7649 0.1118 226);
+    --brand-700: oklch(0.6766 0.1337 226);
+    --brand-800: oklch(0.5557 0.1087 226);
+    --brand-900: oklch(0.4347 0.0836 226);
+    --brand-1000: oklch(0.3399 0.0629 226);
+    --brand-1100: oklch(0.2626 0.0464 226);
+    --brand-1200: oklch(0.2093 0.0352 226);
+    --brand-default: oklch(0.5153 0.093 225.64);
+
+    @variant dark {
+      --brand-50: oklch(0.1742 0.0247 232);
+      --brand-100: oklch(0.2029 0.029 232);
+      --brand-200: oklch(0.2513 0.0403 232);
+      --brand-300: oklch(0.3208 0.056 232);
+      --brand-400: oklch(0.4088 0.075 232);
+      --brand-500: oklch(0.4511 0.084 232);
+      --brand-600: oklch(0.596 0.0904 232);
+      --brand-700: oklch(0.7008 0.1105 232);
+      --brand-800: oklch(0.7545 0.0919 232);
+      --brand-900: oklch(0.8969 0.0387 232);
+      --brand-1000: oklch(0.9409 0.0221 232);
+      --brand-1100: oklch(0.9704 0.011 232);
+      --brand-1200: oklch(0.9856 0.0048 232);
+      --brand-default: oklch(0.6588 0.1219 231.74);
+    }
+  }
+}
