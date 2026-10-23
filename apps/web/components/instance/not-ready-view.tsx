@@ -6,29 +6,14 @@
 
 import { GOD_MODE_URL } from "@plane/constants";
 // assets
-import GradientLogo from "@/app/assets/auth/gradient-logo.webp?url";
-import GradientBgLogo from "@/app/assets/auth/gradient-bg-logo.webp?url";
 import DefaultLayout from "@/layouts/default-layout";
-import { PlaneLockup } from "@plane/blocks/icons";
+import { PlaneLockup, PlaneLogo } from "@plane/blocks/icons";
 import { Button } from "@makeplane/propel/components/button";
 
 export function InstanceNotReady() {
   return (
     <DefaultLayout>
       <div className="relative z-10 flex h-screen w-screen overflow-hidden">
-        {/* Background decorations */}
-        <img
-          src={GradientBgLogo}
-          className="pointer-events-none absolute -top-24 -left-32 h-56 w-96 opacity-15"
-          alt=""
-          aria-hidden="true"
-        />
-        <img
-          src={GradientBgLogo}
-          className="pointer-events-none absolute -right-20 -bottom-16 h-56 w-96 opacity-15"
-          alt=""
-          aria-hidden="true"
-        />
         {/* Main content */}
         <div className="flex h-full w-full flex-col items-center px-8 pt-6 pb-10">
           <div className="sticky top-0 flex w-full shrink-0 items-center justify-between gap-6">
@@ -36,7 +21,7 @@ export function InstanceNotReady() {
           </div>
           <div className="flex h-full w-full flex-col items-center justify-center gap-7">
             <div className="flex flex-col items-center gap-11">
-              <img src={GradientLogo} className="h-24 w-40 object-contain" alt="Xplication Logo" />
+              <PlaneLogo className="h-24 w-auto" />
               <div className="flex max-w-124 flex-col items-center gap-3">
                 <h1 className="text-h2-semibold text-primary">Welcome to Xplication</h1>
                 <p className="text-center text-body-md-regular text-secondary">
