@@ -7,7 +7,7 @@ dependencies = [
     # django
     "Django==5.2.17",
     # rest framework
-    "djangorestframework==3.17.2",
+    "djangorestframework==3.18.3",
     # postgres (the psycopg implementation comes from a group: psycopg-c in
     # production, psycopg-binary in dev/test)
     "psycopg==3.3.4",
