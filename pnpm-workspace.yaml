@@ -19,12 +19,11 @@ catalog:
   "@fontsource/ibm-plex-mono": "5.2.7"
   "@fontsource/inter": "5.2.8"
   "@fontsource/material-symbols-rounded": "5.2.30"
-  "@hocuspocus/extension-database": "2.15.2"
-  "@hocuspocus/extension-logger": "2.15.2"
-  "@hocuspocus/extension-redis": "2.15.2"
-  "@hocuspocus/provider": "2.15.2"
-  "@hocuspocus/server": "2.15.2"
-  "@hocuspocus/transformer": "2.15.2"
+  "@hocuspocus/extension-database": "3.4.4"
+  "@hocuspocus/extension-logger": "3.4.4"
+  "@hocuspocus/extension-redis": "3.4.4"
+  "@hocuspocus/provider": "3.4.4"
+  "@hocuspocus/server": "3.4.4"
   "@hypermod/utils": "^0.7.1"
   "@makeplane/propel": "0.7.3"
   "@radix-ui/react-scroll-area": "^1.2.3"
@@ -33,6 +32,7 @@ catalog:
   "@react-router/dev": "8.3.0"
   "@react-router/node": "8.3.0"
   "@react-router/serve": "8.3.0"
+  "@sesamecare-oss/redlock": "1.4.0"
   "@storybook/addon-designs": "11.1.3"
   "@storybook/addon-docs": "10.4.6"
   "@storybook/addon-links": "10.4.6"
@@ -49,32 +49,28 @@ catalog:
   "@tanstack/virtual-core": "^3.13.12"
   "@testing-library/react": "16.3.3"
   "@testing-library/user-event": "14.6.1"
-  # Keep every @tiptap/* entry on one floor. 2.27.3 is the last 2.x and backports the
-  # mergeAttributes __proto__ fix (GHSA-cp6q-959q-f8rh); the advisory only lists
-  # 3.30.4 as patched, so Dependabot keeps flagging 2.x. v3 also needs Hocuspocus v3,
-  # @tiptap/y-tiptap and a tiptap-markdown replacement, so it is a migration, not a bump.
-  "@tiptap/core": "^2.27.3"
-  "@tiptap/extension-blockquote": "^2.27.3"
-  "@tiptap/extension-character-count": "^2.27.3"
-  "@tiptap/extension-collaboration": "^2.27.3"
-  "@tiptap/extension-document": "^2.27.3"
-  "@tiptap/extension-emoji": "^2.27.3"
-  "@tiptap/extension-heading": "^2.27.3"
-  "@tiptap/extension-image": "^2.27.3"
-  "@tiptap/extension-list-item": "^2.27.3"
-  "@tiptap/extension-mention": "^2.27.3"
-  "@tiptap/extension-placeholder": "^2.27.3"
-  "@tiptap/extension-task-item": "^2.27.3"
-  "@tiptap/extension-task-list": "^2.27.3"
-  "@tiptap/extension-text": "^2.27.3"
-  "@tiptap/extension-text-align": "^2.27.3"
-  "@tiptap/extension-text-style": "^2.27.3"
-  "@tiptap/extension-underline": "^2.27.3"
-  "@tiptap/html": "^2.27.3"
-  "@tiptap/pm": "^2.27.3"
-  "@tiptap/react": "^2.27.3"
-  "@tiptap/starter-kit": "^2.27.3"
-  "@tiptap/suggestion": "^2.27.3"
+  "@tiptap/core": "3.31.3"
+  "@tiptap/extension-blockquote": "3.31.3"
+  "@tiptap/extension-collaboration": "3.31.3"
+  "@tiptap/extension-document": "3.31.3"
+  "@tiptap/extension-emoji": "3.31.3"
+  "@tiptap/extension-heading": "3.31.3"
+  "@tiptap/extension-image": "3.31.3"
+  "@tiptap/extension-list-item": "3.31.3"
+  "@tiptap/extension-mention": "3.31.3"
+  "@tiptap/extension-task-item": "3.31.3"
+  "@tiptap/extension-task-list": "3.31.3"
+  "@tiptap/extension-text": "3.31.3"
+  "@tiptap/extension-text-align": "3.31.3"
+  "@tiptap/extension-text-style": "3.31.3"
+  "@tiptap/extension-underline": "3.31.3"
+  "@tiptap/extensions": "3.31.3"
+  "@tiptap/html": "3.31.3"
+  "@tiptap/pm": "3.31.3"
+  "@tiptap/react": "3.31.3"
+  "@tiptap/starter-kit": "3.31.3"
+  "@tiptap/suggestion": "3.31.3"
+  "@tiptap/y-tiptap": "3.0.9"
   "@types/chroma-js": "^3.1.2"
   "@types/compression": "1.8.1"
   "@types/cors": "^2.8.17"
@@ -113,6 +109,7 @@ catalog:
   "express-ws": "^5.0.2"
   "file-type": "^21.3.1"
   "frimousse": "^0.3.0"
+  "happy-dom": "20.8.9"
   "hast": "^1.0.0"
   "hast-util-to-mdast": "^10.1.2"
   "helmet": "^7.1.0"
@@ -127,7 +124,7 @@ catalog:
   "jscodeshift": "^17.3.0"
   "jsdom": "23.2.0"
   "jsx-dom-cjs": "^8.0.3"
-  "linkifyjs": "^4.3.2"
+  "linkifyjs": "^4.3.3"
   "lint-staged": "16.2.7"
   "lodash-es": "4.18.1"
   "lowlight": "^3.0.0"
@@ -144,6 +141,7 @@ catalog:
   "postcss-cli": "^11.0.0"
   "postcss-nested": "^6.0.1"
   "prosemirror-codemark": "^0.4.2"
+  "prosemirror-markdown": "1.13.4"
   "react": "19.2.8"
   "react-dom": "19.2.8"
   "react-dropzone": "^14.2.3"
@@ -171,8 +169,7 @@ catalog:
   "swr": "2.4.2"
   "tailwind-merge": "3.4.0"
   "tailwindcss": "4.1.17"
-  "tippy.js": "^6.3.7"
-  "tiptap-markdown": "^0.8.10"
+  "tiptap-markdown": "0.9.0"
   "tsdown": "0.16.0"
   "tsx": "4.20.6"
   "turbo": "2.10.11"
@@ -188,7 +185,6 @@ catalog:
   "winston": "^3.17.0"
   "ws": "8.21.0"
   "y-indexeddb": "^9.0.12"
-  "y-prosemirror": "^1.3.7"
   "y-protocols": "^1.0.6"
   "yjs": "^13.6.20"
   "zod": "^3.25.76"
@@ -208,9 +204,10 @@ overrides:
   # @makeplane/propel and @plane/blocks must share one Base UI copy: two copies mean
   # two React contexts, so a blocks part rendered inside a propel root cannot see it.
   "@base-ui/react": "catalog:"
-  # @hocuspocus/transformer (apps/live) brings its own starter-kit; hold it on the
-  # catalog so the whole @tiptap/* family stays on one version.
-  "@tiptap/starter-kit": "catalog:"
+  # EXACT pin, bump with the @tiptap/* catalog. @tiptap/react's optional menu deps use ^
+  # ranges and would otherwise resolve ahead of @tiptap/core, leaving their peer unmet.
+  "@tiptap/extension-bubble-menu": 3.31.3
+  "@tiptap/extension-floating-menu": 3.31.3
   express: "catalog:"
   # @react-router/serve v8 needs Express 5 — it mounts with the Express 5 path syntax
   # `app.all("/{*splat}")`, which Express 4 silently fails to match, 404ing every route.
@@ -233,6 +230,9 @@ overrides:
   # (two copies break ProseMirror's instanceof checks).
   prosemirror-view: 1.42.6
   prosemirror-model: 1.25.12
+  # All editor consumers must share the same ProseMirror class and plugin identities.
+  prosemirror-state: 1.4.4
+  prosemirror-transform: 1.12.3
   "@types/express": 4.17.23
   typescript: "catalog:"
   vite: "catalog:"
