@@ -318,14 +318,14 @@ export const getGroupedWorkItemIds = (
   }
 
   // Get the default key for the group by key
-  const getDefaultGroupKey = (groupByKey: TIssueGroupByOptions) => {
-    switch (groupByKey) {
+  const getDefaultGroupKey = (key: TIssueGroupByOptions) => {
+    switch (key) {
       case "state_detail.group":
         return "state__group";
       case null:
         return null;
       default:
-        return ISSUE_GROUP_BY_KEY[groupByKey];
+        return ISSUE_GROUP_BY_KEY[key];
     }
   };
 
