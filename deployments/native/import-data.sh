@@ -12,6 +12,7 @@ set -euo pipefail
 
 ROOT=/opt/plane
 OLD_UPLOADS=/volume1/docker/plane/uploads
+OLD_DB_DIR=/volume1/docker/plane/db
 OLD_APP="Plane-PROXY Plane-FRONT Plane-SPACE Plane-ADMIN Plane-LIVE Plane-BACK Plane-WORKER Plane-BEAT Plane-MIGRATOR"
 OLD_INFRA="Plane-DB Plane-MINIO Plane-REDIS Plane-RABBITMQ"
 DUMP=$ROOT/backups/plane-cutover-$(date +%Y%m%d-%H%M%S).dump
@@ -29,18 +30,30 @@ TABLES=$(sudo -u postgres psql -d "$POSTGRES_DB" -Atc "select count(*) from pg_t
 [[ "$TABLES" == 0 ]] || { echo "ERROR: native database '$POSTGRES_DB' already has $TABLES tables, refusing" >&2; exit 1; }
 
 log "Stopping old app containers (downtime starts)"
-docker stop $OLD_APP >/dev/null || true
+for c in $OLD_APP; do docker stop "$c" >/dev/null 2>&1 || true; done
 
 log "Final dump from the old database"
-[[ "$(docker inspect -f '{{.State.Running}}' Plane-DB)" == true ]] || docker start Plane-DB >/dev/null
-until docker exec Plane-DB pg_isready -q -U planeuser -d plane; do sleep 2; done
-docker exec Plane-DB sh -c 'pg_dump -U "$POSTGRES_USER" -Fc "$POSTGRES_DB"' > "$DUMP"
+if docker inspect Plane-DB >/dev/null 2>&1; then
+  DB_CTR=Plane-DB
+  [[ "$(docker inspect -f '{{.State.Running}}' Plane-DB)" == true ]] || docker start Plane-DB >/dev/null
+else
+  # The stack was removed (e.g. stopped in Portainer); its data dir is still on disk
+  echo "Plane-DB container is gone; reading $OLD_DB_DIR with a temporary postgres:18 container"
+  DB_CTR=plane-olddb-export
+  docker rm -f $DB_CTR >/dev/null 2>&1 || true
+  docker run -d --rm --name $DB_CTR -v "$OLD_DB_DIR":/var/lib/postgresql postgres:18 >/dev/null
+fi
+until docker exec $DB_CTR pg_isready -q -U "$POSTGRES_USER" -d "$POSTGRES_DB"; do sleep 2; done
+docker exec $DB_CTR pg_dump -U "$POSTGRES_USER" -Fc "$POSTGRES_DB" > "$DUMP"
+[[ $DB_CTR == plane-olddb-export ]] && docker stop $DB_CTR >/dev/null
 chown plane:plane "$DUMP"
 ls -lh "$DUMP"
 
-log "Stopping old infra and disabling restarts of all old containers"
-docker stop $OLD_INFRA >/dev/null || true
-docker update --restart=no $OLD_APP $OLD_INFRA >/dev/null
+log "Stopping old infra and disabling restarts of any remaining old containers"
+for c in $OLD_INFRA $OLD_APP; do
+  docker stop "$c" >/dev/null 2>&1 || true
+  docker update --restart=no "$c" >/dev/null 2>&1 || true
+done
 
 log "Restoring into native PostgreSQL 18"
 PGPASSWORD="$POSTGRES_PASSWORD" pg_restore -h 127.0.0.1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" --no-owner --exit-on-error "$DUMP"
