@@ -15,6 +15,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
+from plane.app.views.asset.v2 import can_modify_asset
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.db.models import DeployBoard, FileAsset, IssueComment
 from plane.settings.storage import S3Storage
@@ -33,6 +34,20 @@ def _is_own_board_comment(comment_id, deploy_board, user):
         access="EXTERNAL",
         actor=user,
     ).exists()
+
+
+# The only asset types a published board shows, so the only ones its public routes touch
+PUBLIC_ASSET_ENTITY_TYPES = [
+    FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+    FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+]
+
+
+def _can_manage_board_asset(asset, user):
+    """A visitor's own comment image, or whatever the in-app asset rules allow the user."""
+    return (
+        asset.entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION and asset.created_by_id == user.id
+    ) or can_modify_asset(user, asset)
 
 
 class EntityAssetEndpoint(BaseAPIView):
@@ -58,10 +73,7 @@ class EntityAssetEndpoint(BaseAPIView):
             workspace_id=deploy_board.workspace_id,
             project_id=deploy_board.project_id,
             pk=pk,
-            entity_type__in=[
-                FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
-                FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
-            ],
+            entity_type__in=PUBLIC_ASSET_ENTITY_TYPES,
         )
 
         # Check if the asset is uploaded
@@ -181,8 +193,14 @@ class EntityAssetEndpoint(BaseAPIView):
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
-        # get the asset id — scope to project to prevent cross-project IDOR
-        asset = FileAsset.objects.get(id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id)
+        # Only the uploader finalises their own comment image, in this board's project
+        asset = FileAsset.objects.get(
+            id=pk,
+            workspace=deploy_board.workspace,
+            project_id=deploy_board.project_id,
+            entity_type=FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+            created_by=request.user,
+        )
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
@@ -202,7 +220,17 @@ class EntityAssetEndpoint(BaseAPIView):
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
         # Get the asset
-        asset = FileAsset.objects.get(id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id)
+        asset = FileAsset.objects.get(
+            id=pk,
+            workspace=deploy_board.workspace,
+            project_id=deploy_board.project_id,
+            entity_type__in=PUBLIC_ASSET_ENTITY_TYPES,
+        )
+        if not _can_manage_board_asset(asset, request.user):
+            return Response(
+                {"error": "You are not allowed to delete this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # Check deleted assets
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
@@ -222,7 +250,17 @@ class AssetRestoreEndpoint(BaseAPIView):
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
         # Get the asset — scope to project to prevent cross-project IDOR
-        asset = FileAsset.all_objects.get(id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id)
+        asset = FileAsset.all_objects.get(
+            id=pk,
+            workspace=deploy_board.workspace,
+            project_id=deploy_board.project_id,
+            entity_type__in=PUBLIC_ASSET_ENTITY_TYPES,
+        )
+        if not _can_manage_board_asset(asset, request.user):
+            return Response(
+                {"error": "You are not allowed to restore this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         asset.is_deleted = False
         asset.deleted_at = None
         asset.save(update_fields=["is_deleted", "deleted_at"])
