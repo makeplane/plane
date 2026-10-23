@@ -183,6 +183,8 @@ update_env_file(){
     # update database url
     update_env_value "DATABASE_URL" "$DATABASE_URL"
     update_env_value "REDIS_URL" "$REDIS_URL"
+    update_env_value "REDIS_SSL_CERT_REQS" "$REDIS_SSL_CERT_REQS"
+    update_env_value "REDIS_SSL_CA_CERTS" "$REDIS_SSL_CA_CERTS"
     update_env_value "AMQP_URL" "$AMQP_URL"
     
     # update aws credentials

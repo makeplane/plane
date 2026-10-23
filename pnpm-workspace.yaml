@@ -49,30 +49,32 @@ catalog:
   "@tanstack/virtual-core": "^3.13.12"
   "@testing-library/react": "16.3.3"
   "@testing-library/user-event": "14.6.1"
-  # 2.27.3 backports the mergeAttributes __proto__ fix (GHSA-cp6q-959q-f8rh); the
-  # advisory only lists 3.30.4 as patched, so Dependabot keeps flagging 2.x.
+  # Keep every @tiptap/* entry on one floor. 2.27.3 is the last 2.x and backports the
+  # mergeAttributes __proto__ fix (GHSA-cp6q-959q-f8rh); the advisory only lists
+  # 3.30.4 as patched, so Dependabot keeps flagging 2.x. v3 also needs Hocuspocus v3,
+  # @tiptap/y-tiptap and a tiptap-markdown replacement, so it is a migration, not a bump.
   "@tiptap/core": "^2.27.3"
-  "@tiptap/extension-blockquote": "^2.22.3"
-  "@tiptap/extension-character-count": "^2.22.3"
-  "@tiptap/extension-collaboration": "^2.22.3"
-  "@tiptap/extension-document": "^2.22.3"
-  "@tiptap/extension-emoji": "^2.22.3"
-  "@tiptap/extension-heading": "^2.22.3"
-  "@tiptap/extension-image": "^2.22.3"
-  "@tiptap/extension-list-item": "^2.22.3"
-  "@tiptap/extension-mention": "^2.22.3"
-  "@tiptap/extension-placeholder": "^2.22.3"
-  "@tiptap/extension-task-item": "^2.22.3"
-  "@tiptap/extension-task-list": "^2.22.3"
-  "@tiptap/extension-text": "^2.22.3"
-  "@tiptap/extension-text-align": "^2.22.3"
-  "@tiptap/extension-text-style": "^2.22.3"
-  "@tiptap/extension-underline": "^2.22.3"
-  "@tiptap/html": "^2.22.3"
-  "@tiptap/pm": "^2.22.3"
-  "@tiptap/react": "^2.22.3"
-  "@tiptap/starter-kit": "^2.22.3"
-  "@tiptap/suggestion": "^2.22.3"
+  "@tiptap/extension-blockquote": "^2.27.3"
+  "@tiptap/extension-character-count": "^2.27.3"
+  "@tiptap/extension-collaboration": "^2.27.3"
+  "@tiptap/extension-document": "^2.27.3"
+  "@tiptap/extension-emoji": "^2.27.3"
+  "@tiptap/extension-heading": "^2.27.3"
+  "@tiptap/extension-image": "^2.27.3"
+  "@tiptap/extension-list-item": "^2.27.3"
+  "@tiptap/extension-mention": "^2.27.3"
+  "@tiptap/extension-placeholder": "^2.27.3"
+  "@tiptap/extension-task-item": "^2.27.3"
+  "@tiptap/extension-task-list": "^2.27.3"
+  "@tiptap/extension-text": "^2.27.3"
+  "@tiptap/extension-text-align": "^2.27.3"
+  "@tiptap/extension-text-style": "^2.27.3"
+  "@tiptap/extension-underline": "^2.27.3"
+  "@tiptap/html": "^2.27.3"
+  "@tiptap/pm": "^2.27.3"
+  "@tiptap/react": "^2.27.3"
+  "@tiptap/starter-kit": "^2.27.3"
+  "@tiptap/suggestion": "^2.27.3"
   "@types/chroma-js": "^3.1.2"
   "@types/compression": "1.8.1"
   "@types/cors": "^2.8.17"
@@ -159,7 +161,9 @@ catalog:
   "rehype-remark": "^10.0.1"
   "remark-gfm": "^4.0.1"
   "remark-stringify": "^11.0.0"
-  "sanitize-html": "2.17.7"
+  # 2.18.0 fixes GHSA-cv27-6wvh-8x7j, GHSA-x3q4-9hxx-gx8m and GHSA-374f-7chj-9948 but
+  # adds an iframe-fallback stack overflow (GHSA-c9rx-x947-fp3h) that 2.18.1 fixes.
+  "sanitize-html": "2.18.1"
   "serve": "14.2.5"
   "sharp": "^0.35.5"
   "smooth-scroll-into-view-if-needed": "^2.0.2"
@@ -176,7 +180,9 @@ catalog:
   "unified": "^11.0.5"
   "use-font-face-observer": "^1.3.0"
   "uuid": "14.0.0"
-  "vite": "8.0.16"
+  # No patched 8.0.x for CVE-2026-112942 / GHSA-587h-7wmj-h5pm (bundled launch-editor
+  # command injection); fixed lines are 8.1.6, 8.2.4 and 8.3.3.
+  "vite": "8.2.4"
   "vite-tsconfig-paths": "^5.1.4"
   "vitest": "^4.1.11"
   "winston": "^3.17.0"
@@ -202,6 +208,9 @@ overrides:
   # @makeplane/propel and @plane/blocks must share one Base UI copy: two copies mean
   # two React contexts, so a blocks part rendered inside a propel root cannot see it.
   "@base-ui/react": "catalog:"
+  # @hocuspocus/transformer (apps/live) brings its own starter-kit; hold it on the
+  # catalog so the whole @tiptap/* family stays on one version.
+  "@tiptap/starter-kit": "catalog:"
   express: "catalog:"
   # @react-router/serve v8 needs Express 5 — it mounts with the Express 5 path syntax
   # `app.all("/{*splat}")`, which Express 4 silently fails to match, 404ing every route.
@@ -232,7 +241,9 @@ overrides:
   webpack: 5.104.1
   lodash-es: "catalog:"
   lodash: 4.18.1
-  markdown-it: 14.3.2
+  # EXACT pin, bump the number. CVE-2026-111758 (DoS via unclosed link reference
+  # definitions) fixed in 14.3.3; 15.x is a major we do not take here.
+  markdown-it: 14.3.3
   rollup: 4.59.0
   "minimatch@3": 3.1.4
   "minimatch@10": 10.2.3
@@ -255,7 +266,8 @@ overrides:
   # only uses parser()/selector(); 7.0.0's sole break is safe insertion during iteration.
   postcss-selector-parser: 7.1.6
   axios: "catalog:"
-  follow-redirects: 1.16.0
+  # EXACT pin, bump the number. CVE-2026-111755 / CVE-2026-111756 fixed in 1.16.1.
+  follow-redirects: 1.16.1
   uuid: "catalog:"
   # EXACT pin: bump the number, never widen -- 4.x breaks ajv's ^3.0.1 (the only
   # consumer here). Floor is 3.1.8, not 3.1.7: it also fixes GHSA-hrr3-gc8f-f4qj,
