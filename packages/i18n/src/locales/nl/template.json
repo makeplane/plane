@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "Website-URL",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://xplication.ro",
             "validation": {
               "invalid": "Ongeldige URL",
               "maxLength": "URL moet minder dan 800 tekens zijn"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Bedrijfsnaam",
-            "placeholder": "Plane",
+            "placeholder": "Xplication",
             "validation": {
               "required": "Bedrijfsnaam is verplicht",
               "maxLength": "Bedrijfsnaam moet minder dan 255 tekens zijn"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Contact-e-mail",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@xplication.ro",
             "validation": {
               "invalid": "Ongeldig e-mailadres",
               "maxLength": "Contact-e-mail moet minder dan 255 tekens zijn"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Sjablonen",
-        "description": "Met project-, werkitem- en paginasjablonen in Plane hoef je geen project vanaf nul aan te maken of werkitemeigenschappen handmatig in te stellen.",
+        "description": "Met project-, werkitem- en paginasjablonen in Xplication hoef je geen project vanaf nul aan te maken of werkitemeigenschappen handmatig in te stellen.",
         "sub_description": "Krijg 80% van je beheertijd terug wanneer je sjablonen gebruikt."
       },
       "no_templates": {

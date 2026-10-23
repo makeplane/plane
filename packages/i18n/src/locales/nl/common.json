@@ -245,7 +245,7 @@
   "full_changelog": "Volledige changelog",
   "support": "Support",
   "forum": "Forum",
-  "powered_by_plane_pages": "Mogelijk gemaakt door Plane Pages",
+  "powered_by_plane_pages": "Mogelijk gemaakt door Xplication Pages",
   "please_select_at_least_one_invitation": "Selecteer minstens één uitnodiging.",
   "please_select_at_least_one_invitation_description": "Selecteer minstens één uitnodiging om deel te nemen aan de werkruimte.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "We zien dat iemand je heeft uitgenodigd om deel te nemen aan een werkruimte",
@@ -826,7 +826,7 @@
     "edited_by": "Bewerkt door"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane is niet opgestart. Dit kan komen doordat een of meer Plane-services niet konden starten.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Xplication is niet opgestart. Dit kan komen doordat een of meer Xplication-services niet konden starten.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Kies View Logs uit setup.sh en Docker-logs om het zeker te weten."
   },
   "customize_navigation": "Navigatie aanpassen",
@@ -838,7 +838,7 @@
   "pin": "Vastmaken",
   "unpin": "Losmaken",
   "workspace_dashboards": "Dashboards",
-  "pi_chat": "Plane AI",
+  "pi_chat": "Xplication AI",
   "in_app": "In-app",
   "forms": "Formulieren",
   "milestones": "Mijlpalen",

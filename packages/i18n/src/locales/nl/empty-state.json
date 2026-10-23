@@ -14,7 +14,7 @@
     },
     "not_found": {
       "title": "Oeps! Er lijkt iets mis te zijn",
-      "description": "We kunnen je Plane-account momenteel niet ophalen. Dit is mogelijk een netwerkfout.",
+      "description": "We kunnen je Xplication-account momenteel niet ophalen. Dit is mogelijk een netwerkfout.",
       "cta_primary": "Opnieuw laden"
     },
     "server_error": {
@@ -188,7 +188,7 @@
     },
     "wiki": {
       "title": "Schrijf een notitie, een document of een volledige kennisbank.",
-      "description": "Pagina's zijn de ruimte om gedachten vast te leggen in Plane. Noteer vergadernotities, maak ze eenvoudig op, embed werkitems, orden ze met een bibliotheek aan componenten en bewaar ze allemaal in de context van je project.",
+      "description": "Pagina's zijn de ruimte om gedachten vast te leggen in Xplication. Noteer vergadernotities, maak ze eenvoudig op, embed werkitems, orden ze met een bibliotheek aan componenten en bewaar ze allemaal in de context van je project.",
       "cta_primary": "Maak je pagina aan"
     },
     "project_overview_state_sidebar": {

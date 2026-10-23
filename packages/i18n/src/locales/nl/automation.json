@@ -14,7 +14,7 @@
       "sidebar_header": "Triggerconfiguratie",
       "input_label": "Wat is de trigger voor deze automatisering?",
       "input_placeholder": "Kies een optie",
-      "section_plane_events": "Plane-gebeurtenissen",
+      "section_plane_events": "Xplication-gebeurtenissen",
       "section_time_based": "Tijdgebaseerd",
       "fixed_schedule": "Vast schema",
       "schedule": {

@@ -182,18 +182,18 @@
       "description": "Configureer geautomatiseerde acties om je projectbeheerworkflow te stroomlijnen en handmatige taken te verminderen.",
       "auto-archive": {
         "title": "Gesloten werkitems automatisch archiveren",
-        "description": "Plane archiveert automatisch werkitems die zijn voltooid of geannuleerd.",
+        "description": "Xplication archiveert automatisch werkitems die zijn voltooid of geannuleerd.",
         "duration": "Archiveer automatisch werkitems die gesloten zijn gedurende"
       },
       "auto-close": {
         "title": "Werkitems automatisch sluiten",
-        "description": "Plane sluit automatisch werkitems die niet zijn voltooid of geannuleerd.",
+        "description": "Xplication sluit automatisch werkitems die niet zijn voltooid of geannuleerd.",
         "duration": "Sluit automatisch werkitems die inactief zijn gedurende",
         "auto_close_status": "Status bij automatisch sluiten"
       },
       "auto-remind": {
         "title": "Automatische herinneringen",
-        "description": "Plane stuurt automatisch herinneringen via e-mail en in-app meldingen om je team op koers te houden met deadlines.",
+        "description": "Xplication stuurt automatisch herinneringen via e-mail en in-app meldingen om je team op koers te houden met deadlines.",
         "duration": "Stuur herinnering voor"
       }
     },
@@ -371,7 +371,7 @@
         },
         "email": {
           "title": "E-mail",
-          "description": "Verzamel nieuwe werkitems van iedereen die een e-mail stuurt naar een Plane-e-mailadres.",
+          "description": "Verzamel nieuwe werkitems van iedereen die een e-mail stuurt naar een Xplication-e-mailadres.",
           "fieldName": "E-mail-ID"
         },
         "form": {

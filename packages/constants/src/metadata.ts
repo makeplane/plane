@@ -6,8 +6,7 @@
 
 export const SITE_NAME = "Xplication";
 export const SITE_TITLE = "Xplication | Project management";
-export const SITE_DESCRIPTION =
-  "Xplication project management: work items, cycles and roadmaps in one place.";
+export const SITE_DESCRIPTION = "Xplication project management: work items, cycles and roadmaps in one place.";
 export const SITE_KEYWORDS =
   "software development, plan, ship, software, accelerate, code management, release management, project management, work items tracking, agile, scrum, kanban, collaboration";
 export const SITE_URL = "https://plane.xplication.ro/";

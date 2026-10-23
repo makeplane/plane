@@ -12,16 +12,11 @@ SPECTACULAR_SETTINGS = {
     # ========================================================================
     # Basic API Information
     # ========================================================================
-    "TITLE": "The Plane REST API",
-    "DESCRIPTION": (
-        "The Plane REST API\n\n"
-        "Visit our quick start guide and full API documentation at "
-        "[developers.plane.so](https://developers.plane.so/api-reference/introduction)."
-    ),
+    "TITLE": "The Xplication REST API",
+    "DESCRIPTION": "The Xplication REST API",
     "CONTACT": {
-        "name": "Plane",
-        "url": "https://plane.so",
-        "email": "support@plane.so",
+        "name": "Xplication",
+        "url": "https://xplication.ro",
     },
     "VERSION": "0.0.1",
     "LICENSE": {
@@ -45,7 +40,7 @@ SPECTACULAR_SETTINGS = {
     # ========================================================================
     "SERVERS": [
         {"url": "http://localhost:8000", "description": "Local"},
-        {"url": "https://api.plane.so", "description": "Production"},
+        {"url": "https://plane.xplication.ro", "description": "Production"},
     ],
     # ========================================================================
     # API Tag Definitions

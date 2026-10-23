@@ -245,7 +245,7 @@
   "full_changelog": "Пълен дневник на промените",
   "support": "Поддръжка",
   "forum": "Форум",
-  "powered_by_plane_pages": "Създадено с Plane Pages",
+  "powered_by_plane_pages": "Създадено с Xplication Pages",
   "please_select_at_least_one_invitation": "Изберете поне една покана.",
   "please_select_at_least_one_invitation_description": "Изберете поне една покана, за да се присъедините към работното пространство.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "Виждаме, че някой ви е поканил да се присъедините към работно пространство",
@@ -826,7 +826,7 @@
     "edited_by": "Редактирано от"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane не се стартира. Възможно е една или повече услуги на Plane да не са успели да стартират.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Xplication не се стартира. Възможно е една или повече услуги на Xplication да не са успели да стартират.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Изберете View Logs от setup.sh и прегледайте логовете на Docker, за да се уверите."
   },
   "customize_navigation": "Персонализирай навигацията",
@@ -838,7 +838,7 @@
   "pin": "Закачи",
   "unpin": "Откачи",
   "workspace_dashboards": "Табла",
-  "pi_chat": "Plane AI",
+  "pi_chat": "Xplication AI",
   "in_app": "В приложението",
   "forms": "Формуляри",
   "milestones": "Етапи",

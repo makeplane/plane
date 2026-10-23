@@ -14,7 +14,7 @@
       "sidebar_header": "Конфигурация на тригера",
       "input_label": "Какъв е тригерът за тази автоматизация?",
       "input_placeholder": "Изберете опция",
-      "section_plane_events": "Събития в Plane",
+      "section_plane_events": "Събития в Xplication",
       "section_time_based": "По време",
       "fixed_schedule": "Фиксиран график",
       "schedule": {

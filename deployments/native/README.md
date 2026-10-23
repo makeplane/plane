@@ -2,16 +2,16 @@
 
 Runs Plane directly on an Ubuntu 24.04 host, without Docker, and redeploys on every push to `production`.
 
-| Piece | Runs as | Listens on |
-| --- | --- | --- |
-| Caddy (`caddy`) | caddy | `:3356` (behind the TLS terminator) |
-| API, gunicorn (`plane-api`) | plane | `127.0.0.1:8100` |
-| Celery worker / beat (`plane-worker`, `plane-beat`) | plane | – |
-| Space SSR (`plane-space`) | plane | `127.0.0.1:3102` |
-| Live (`plane-live`) | plane | `127.0.0.1:3100` |
-| Web, admin | static files served by Caddy | – |
-| PostgreSQL 18, Redis, RabbitMQ | packages | localhost |
-| Silo, an S3-compatible MinIO fork (`silo`) | silo | `127.0.0.1:9100` (console on `:9101`) |
+| Piece                                               | Runs as                      | Listens on                            |
+| --------------------------------------------------- | ---------------------------- | ------------------------------------- |
+| Caddy (`caddy`)                                     | caddy                        | `:3356` (behind the TLS terminator)   |
+| API, gunicorn (`plane-api`)                         | plane                        | `127.0.0.1:8100`                      |
+| Celery worker / beat (`plane-worker`, `plane-beat`) | plane                        | –                                     |
+| Space SSR (`plane-space`)                           | plane                        | `127.0.0.1:3102`                      |
+| Live (`plane-live`)                                 | plane                        | `127.0.0.1:3100`                      |
+| Web, admin                                          | static files served by Caddy | –                                     |
+| PostgreSQL 18, Redis, RabbitMQ                      | packages                     | localhost                             |
+| Silo, an S3-compatible MinIO fork (`silo`)          | silo                         | `127.0.0.1:9100` (console on `:9101`) |
 
 ## Layout
 

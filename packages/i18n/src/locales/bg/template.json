@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "URL на уебсайта",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://xplication.ro",
             "validation": {
               "invalid": "Невалиден URL",
               "maxLength": "URL адресът трябва да е под 800 знака"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Име на фирмата",
-            "placeholder": "Plane",
+            "placeholder": "Xplication",
             "validation": {
               "required": "Името на фирмата е задължително",
               "maxLength": "Името на фирмата трябва да е под 255 знака"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Имейл за контакт",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@xplication.ro",
             "validation": {
               "invalid": "Невалиден имейл адрес",
               "maxLength": "Имейлът за контакт трябва да е под 255 знака"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Шаблони",
-        "description": "С шаблоните за проекти, работни елементи и страници в Plane не е нужно да създавате проект от нулата или да задавате свойствата на работните елементи ръчно.",
+        "description": "С шаблоните за проекти, работни елементи и страници в Xplication не е нужно да създавате проект от нулата или да задавате свойствата на работните елементи ръчно.",
         "sub_description": "Върнете си 80% от времето за администриране, като използвате шаблони."
       },
       "no_templates": {

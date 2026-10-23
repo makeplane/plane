@@ -32,7 +32,7 @@
     "empty_state": {
       "upgrade": {
         "title": "変更とレビューの混沌をワークフローで制御。",
-        "description": "Planeのワークフローで、作業をどこへ、誰が、いつ移動できるかのルールを設定します。"
+        "description": "Xplicationのワークフローで、作業をどこへ、誰が、いつ移動できるかのルールを設定します。"
       }
     },
     "quick_actions": {

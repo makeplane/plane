@@ -1,7 +1,7 @@
 {
   "workspace_creation": {
     "heading": "Maak je werkruimte aan",
-    "subheading": "Om Plane te gebruiken moet je een werkruimte aanmaken of aan een werkruimte deelnemen.",
+    "subheading": "Om Xplication te gebruiken moet je een werkruimte aanmaken of aan een werkruimte deelnemen.",
     "form": {
       "name": {
         "label": "Geef je werkruimte een naam",
@@ -54,11 +54,11 @@
     "empty_state": {
       "general": {
         "title": "Overzicht van je projecten, activiteit en statistieken",
-        "description": "Welkom bij Plane, we zijn blij dat je er bent. Maak je eerste project aan en volg je werkitems, en deze pagina verandert in een plek die je helpt vooruit te komen. Beheerders zien ook items die hun team helpen vooruit te komen.",
+        "description": "Welkom bij Xplication, we zijn blij dat je er bent. Maak je eerste project aan en volg je werkitems, en deze pagina verandert in een plek die je helpt vooruit te komen. Beheerders zien ook items die hun team helpen vooruit te komen.",
         "primary_button": {
           "text": "Bouw je eerste project",
           "comic": {
-            "title": "Alles begint met een project in Plane",
+            "title": "Alles begint met een project in Xplication",
             "description": "Een project kan een productroadmap zijn, een marketingcampagne of de lancering van een nieuwe auto."
           }
         }
@@ -200,7 +200,7 @@
         "primary_button": {
           "text": "Start je eerste project",
           "comic": {
-            "title": "Alles begint met een project in Plane",
+            "title": "Alles begint met een project in Xplication",
             "description": "Een project kan een productroadmap zijn, een marketingcampagne of de lancering van een nieuwe auto."
           }
         }
@@ -211,7 +211,7 @@
         "primary_button": {
           "text": "Start je eerste project",
           "comic": {
-            "title": "Alles begint met een project in Plane",
+            "title": "Alles begint met een project in Xplication",
             "description": "Een project kan een productroadmap zijn, een marketingcampagne of de lancering van een nieuwe auto."
           }
         }
@@ -289,8 +289,8 @@
   "workspace_pages": {
     "empty_state": {
       "general": {
-        "title": "Schrijf een notitie, een document of een volledige kennisbank. Laat Galileo, de AI-assistent van Plane, je op weg helpen",
-        "description": "Pagina's zijn de plek om je gedachten in Plane vast te leggen. Maak vergadernotities, geef ze eenvoudig opmaak, sluit werkitems in, deel ze in met een bibliotheek aan componenten en houd ze allemaal binnen de context van je project. Roep Galileo, de AI van Plane, aan met een sneltoets of een klik op de knop om elk document snel af te ronden.",
+        "title": "Schrijf een notitie, een document of een volledige kennisbank. Laat Galileo, de AI-assistent van Xplication, je op weg helpen",
+        "description": "Pagina's zijn de plek om je gedachten in Xplication vast te leggen. Maak vergadernotities, geef ze eenvoudig opmaak, sluit werkitems in, deel ze in met een bibliotheek aan componenten en houd ze allemaal binnen de context van je project. Roep Galileo, de AI van Xplication, aan met een sneltoets of een klik op de knop om elk document snel af te ronden.",
         "primary_button": {
           "text": "Maak je eerste pagina aan"
         }

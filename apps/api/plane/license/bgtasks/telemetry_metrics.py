@@ -179,7 +179,7 @@ def _collect_and_push_metrics() -> None:
         # Register observable gauges for instance metrics
         meter.create_observable_gauge(
             name="plane_instance_users_total",
-            description="Total number of users in the Plane instance",
+            description="Total number of users in the instance",
             callbacks=[users_callback],
         )
         meter.create_observable_gauge(

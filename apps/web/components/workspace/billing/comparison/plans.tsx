@@ -1093,7 +1093,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Two-factor authentication and passkeys",
-        description: "Secure your Xplication workspace with device-\ndependent two-factor authentication and passkeys. ",
+        description:
+          "Secure your Xplication workspace with device-\ndependent two-factor authentication and passkeys. ",
         cloud: {
           free: false,
           one: false,
@@ -1115,7 +1116,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "LDAP",
-        description: "Get our official LDAP implementation and secure\nyour Xplication workspace with your LDAP server.",
+        description:
+          "Get our official LDAP implementation and secure\nyour Xplication workspace with your LDAP server.",
         comingSoon: true,
         cloud: {
           free: false,

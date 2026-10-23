@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Eenmaal ingeschakeld kunnen werkitemtypes niet meer worden uitgeschakeld.",
-          "description": "Het Werkitem van Plane wordt het standaard werkitemtype voor dit project en verschijnt met zijn pictogram en achtergrond in dit project.",
+          "description": "Het Werkitem van Xplication wordt het standaard werkitemtype voor dit project en verschijnt met zijn pictogram en achtergrond in dit project.",
           "button": {
             "default": "Inschakelen",
             "loading": "Instellen"

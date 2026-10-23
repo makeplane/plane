@@ -130,7 +130,6 @@ export function InstanceAIForm(props: IInstanceAIForm) {
           loading={isSubmitting}
           label={isSubmitting ? "Saving" : "Save changes"}
         />
-
       </div>
     </div>
   );

@@ -195,8 +195,8 @@
         "primary_button": {
           "text": "Maak je eerste werkitem",
           "comic": {
-            "title": "Werkitems zijn de bouwstenen in Plane.",
-            "description": "De Plane UI opnieuw ontwerpen, het bedrijf een nieuwe merkidentiteit geven of het nieuwe brandstofinjectiesysteem lanceren zijn voorbeelden van werkitems die waarschijnlijk subwerkitems hebben."
+            "title": "Werkitems zijn de bouwstenen in Xplication.",
+            "description": "De Xplication UI opnieuw ontwerpen, het bedrijf een nieuwe merkidentiteit geven of het nieuwe brandstofinjectiesysteem lanceren zijn voorbeelden van werkitems die waarschijnlijk subwerkitems hebben."
           }
         }
       },
@@ -271,8 +271,8 @@
   "project_page": {
     "empty_state": {
       "general": {
-        "title": "Schrijf een notitie, een document of een volledige kennisbank. Laat Galileo, de AI-assistent van Plane, je helpen om te beginnen",
-        "description": "Pagina's zijn de ruimte om je gedachten kwijt te kunnen in Plane. Maak notities van vergaderingen, formatteer ze eenvoudig, embed werkitems, deel ze in met een bibliotheek aan componenten en houd ze allemaal binnen de context van je project. Roep Galileo, de AI van Plane, aan met een sneltoets of een klik op de knop om elk document snel af te ronden.",
+        "title": "Schrijf een notitie, een document of een volledige kennisbank. Laat Galileo, de AI-assistent van Xplication, je helpen om te beginnen",
+        "description": "Pagina's zijn de ruimte om je gedachten kwijt te kunnen in Xplication. Maak notities van vergaderingen, formatteer ze eenvoudig, embed werkitems, deel ze in met een bibliotheek aan componenten en houd ze allemaal binnen de context van je project. Roep Galileo, de AI van Xplication, aan met een sneltoets of een klik op de knop om elk document snel af te ronden.",
         "primary_button": {
           "text": "Maak je eerste pagina"
         }

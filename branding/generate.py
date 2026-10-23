@@ -149,10 +149,6 @@ og.alpha_composite(big, ((1200 - big.width) // 2, (630 - big.height) // 2))
 save(og.convert("RGB"), "apps/web/app/assets/og-image.png")
 
 # --- email logos (served by the API at /static/logos/) --------------------------
-email_light = fit(logo, 120)  # dark text, for light email backgrounds
-on_dark = np.asarray(logo).copy()
-on_dark[~saturated, :3] = 255  # white text, keep the colored X
-email_dark = fit(Image.fromarray(on_dark, "RGBA"), 120)
-save(email_light, "apps/api/plane/static/logos/xplication-logo-on-light.png")
-save(email_dark, "apps/api/plane/static/logos/xplication-logo-on-dark.png")
+# dark text: every email template has a white header
+save(fit(logo, 120), "apps/api/plane/static/logos/xplication-logo-on-light.png")
 save(fit(logo, 368), "apps/api/plane/static/logos/Logo.png")
