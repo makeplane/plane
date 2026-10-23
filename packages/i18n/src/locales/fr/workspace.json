@@ -173,7 +173,7 @@
       "issue_delete": "Échec de la suppression de l’élément de travail"
     },
     "state": {
-      "backlog": "Backlog",
+      "backlog": "En attente",
       "unstarted": "Non commencé",
       "started": "Commencé",
       "completed": "Terminé",
