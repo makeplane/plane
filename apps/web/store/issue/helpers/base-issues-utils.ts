@@ -294,6 +294,15 @@ export const getOrderedWorkItems = (workItems: TIssue[], orderByKey: TIssueOrder
         )
       );
 
+    case "start_date":
+      return getIssueIds(
+        orderBy(
+          workItems,
+          [getSortOrderToFilterEmptyValues.bind(null, "start_date"), "start_date"], //preferring sorting based on empty values to always keep the empty values below
+          ["asc", "asc"]
+        )
+      );
+
     case "-priority": {
       const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
       return getIssueIds(
