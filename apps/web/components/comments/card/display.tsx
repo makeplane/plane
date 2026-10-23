@@ -19,6 +19,8 @@ import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
+// hooks
+import { useUser } from "@/hooks/store/user";
 // local imports
 import { CommentReactions } from "../comment-reaction";
 import { CommentCardEditForm } from "./edit-form";
@@ -61,6 +63,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
   // state
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   // store hooks
+  const { data: user } = useUser();
   const { getUserDetails } = useMember();
   // derived values
   const userDetails = getUserDetails(comment?.actor);
@@ -124,7 +127,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
           <div className="text-caption-sm-regular text-tertiary">
             commented{" "}
             <Tooltip
-              label={`${renderFormattedDate(comment.created_at)} at ${renderFormattedTime(comment.created_at)}`}
+              label={`${renderFormattedDate(comment.created_at, undefined, user?.user_timezone)} at ${renderFormattedTime(comment.created_at, "24-hour", user?.user_timezone)}`}
               side="bottom"
               layout="single"
               delay={200}

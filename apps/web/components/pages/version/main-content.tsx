@@ -15,6 +15,8 @@ import type { TPageVersion } from "@plane/types";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // helpers
 import type { EPageStoreType } from "@/hooks/store";
+// hooks
+import { useUser } from "@/hooks/store/user";
 // local imports
 import type { TVersionEditorProps } from "./editor";
 
@@ -30,6 +32,7 @@ type Props = {
 };
 
 export const PageVersionsMainContent = observer(function PageVersionsMainContent(props: Props) {
+  const { data: user } = useUser();
   const {
     activeVersion,
     editorComponent,
@@ -109,7 +112,7 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
             <div className="flex items-center gap-4">
               <h6 className="text-14 font-medium">
                 {versionDetails
-                  ? `${renderFormattedDate(versionDetails.last_saved_at)} ${renderFormattedTime(versionDetails.last_saved_at)}`
+                  ? `${renderFormattedDate(versionDetails.last_saved_at, undefined, user?.user_timezone)} ${renderFormattedTime(versionDetails.last_saved_at, "24-hour", user?.user_timezone)}`
                   : "Loading version details"}
               </h6>
               <span className="flex flex-shrink-0 items-center gap-1 rounded-sm bg-accent-primary/20 px-1.5 py-1 text-11 font-medium text-accent-primary">

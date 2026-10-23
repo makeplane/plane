@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { observer } from "mobx-react";
 import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
@@ -28,7 +29,7 @@ import { useTranslation } from "@plane/i18n";
 import type { IApiToken } from "@plane/types";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
-import { useUserProfile } from "@/hooks/store/user";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 // helpers
 type Props = {
   handleClose: () => void;
@@ -89,7 +90,8 @@ const getFormattedDate = (date: Date): Date => {
   return add(date, { hours, minutes, seconds });
 };
 
-export function CreateApiTokenForm(props: Props) {
+export const CreateApiTokenForm = observer(function CreateApiTokenForm(props: Props) {
+  const { data: user } = useUser();
   const { handleClose, neverExpires, toggleNeverExpires, onSubmit } = props;
   // states
   const [customDate, setCustomDate] = useState<Date | null>(null);
@@ -245,10 +247,10 @@ export function CreateApiTokenForm(props: Props) {
                 <span className="text-caption-sm-regular text-placeholder">
                   {expiredAt === "custom"
                     ? customDate
-                      ? `Expires ${renderFormattedDate(customDateFormatted ?? "")} at ${renderFormattedTime(customDateFormatted ?? "")}`
+                      ? `Expires ${renderFormattedDate(customDateFormatted ?? "", undefined, user?.user_timezone)} at ${renderFormattedTime(customDateFormatted ?? "", "24-hour", user?.user_timezone)}`
                       : null
                     : expiredAt
-                      ? `Expires ${renderFormattedDate(expiryDate ?? "")} at ${renderFormattedTime(expiryDate ?? "")}`
+                      ? `Expires ${renderFormattedDate(expiryDate ?? "", undefined, user?.user_timezone)} at ${renderFormattedTime(expiryDate ?? "", "24-hour", user?.user_timezone)}`
                       : null}
                 </span>
               )}
@@ -284,4 +286,4 @@ export function CreateApiTokenForm(props: Props) {
       </DialogActions>
     </form>
   );
-}
+});
