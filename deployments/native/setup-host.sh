@@ -73,7 +73,9 @@ install -d -o root -g root -m 755 $ROOT $ROOT/bin
 install -d -o plane -g plane -m 755 $ROOT/releases $ROOT/backups
 install -d -o root -g plane -m 750 $ROOT/shared
 # plane needs a writable HOME for uv/pnpm caches and the deploy lock
-install -d -o plane -g plane -m 755 $ROOT/.cache $ROOT/.local
+install -d -o plane -g plane -m 755 $ROOT/.cache $ROOT/.local $ROOT/.config $ROOT/repo.git
+# /opt/plane stays root-owned; plane flips releases/current, this fixed link points at it
+ln -sfn releases/current $ROOT/current
 touch $ROOT/deploy.lock && chown plane:plane $ROOT/deploy.lock
 
 log "Node $NODE_VERSION (private to Plane; system node is left alone)"
@@ -162,7 +164,7 @@ visudo -cf "$TMP/sudoers"
 install -m 440 "$TMP/sudoers" /etc/sudoers.d/plane
 
 log "Source mirror"
-if [[ ! -d $ROOT/repo.git ]]; then
+if [[ ! -f $ROOT/repo.git/HEAD ]]; then
   sudo -u plane git init --quiet --bare $ROOT/repo.git
   sudo -u plane git -C $ROOT/repo.git remote add origin "$REPO_URL"
 fi

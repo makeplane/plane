@@ -19,7 +19,8 @@ Runs Plane directly on an Ubuntu 24.04 host, without Docker, and redeploys on ev
 /opt/plane/
   repo.git/             bare mirror of origin, fetches only `production`
   releases/<sha>/       one built release per commit (last 5 kept)
-  current -> releases/<sha>
+  releases/current      -> <sha>, switched by each deploy
+  current -> releases/current   (fixed, root-owned; what systemd and Caddy use)
   shared/api.env        backend + celery env      (root:plane 640)
   shared/live.env       live server env
   node/, bin/uv         pinned Node 22 and uv, private to Plane

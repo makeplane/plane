@@ -102,11 +102,14 @@ manage configure_instance
 manage create_bucket
 manage collectstatic --noinput >/dev/null
 
-PREV=$(readlink -f "$ROOT/current" 2>/dev/null || true)
+# /opt/plane/current (root-owned) -> releases/current, which plane switches here
+LINK=$ROOT/releases/current
+PREV=""
+[[ -e "$LINK" ]] && PREV=$(readlink -f "$LINK")
 
 switch_to() {
-  ln -sfn "$1" "$ROOT/current.new"
-  mv -Tf "$ROOT/current.new" "$ROOT/current"
+  ln -sfn "$1" "$LINK.new"
+  mv -Tf "$LINK.new" "$LINK"
   sudo -n /usr/bin/systemctl restart plane.target
 }
 
@@ -137,8 +140,8 @@ fi
 manage clear_cache
 
 log "Pruning old releases (keeping $KEEP_RELEASES)"
-CURRENT=$(readlink -f "$ROOT/current")
-ls -1dt "$ROOT"/releases/*/ | sed 's#/$##' | tail -n +$((KEEP_RELEASES + 1)) | while read -r old; do
+CURRENT=$(readlink -f "$LINK")
+ls -1dt "$ROOT"/releases/*/ | sed 's#/$##' | grep -E '/[0-9a-f]{40}$' | tail -n +$((KEEP_RELEASES + 1)) | while read -r old; do
   [[ "$old" == "$CURRENT" ]] || rm -rf "$old"
 done
 
