@@ -1,0 +1,18 @@
+Log stored value "adminUser" to website
+Log stored value "adminUser" to website
+save "Test Cycle" as "cycleName"
+add a cycle saved value "cycleName" to project stored value "projectName"
+click stored value "cycleName"
+quick add work item "workItem1" with status "Done"
+quick add work item "workItem2" with status "Backlog"
+click "Cycles"
+check that page contains "1/2 work item closed"
+click saved value "cycleName"
+click "workItem2"
+click "Backlog"
+click "Done"
+click "Cycles"
+check that page contains "2/2 work items closed"
+remove cycle saved value "cycleName" from project stored value "projectName"
+delete work item "workItem1" from project stored value "projectName"
+delete work item "workItem2" from project stored value "projectName"
