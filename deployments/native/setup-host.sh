@@ -8,7 +8,8 @@
 #
 # ENV_DIR holds api.env, live.env and silo.env (default /var/www/plane-migration/native-env).
 # RUNNER_TOKEN is a registration token from GitHub → repo Settings → Actions → Runners
-# → New self-hosted runner; omit it to skip runner setup.
+# → New self-hosted runner; omit it to skip runner setup. For a token from the
+# organization's runner page, also pass RUNNER_URL=https://github.com/xplicationsrl.
 set -euo pipefail
 
 [[ $EUID -eq 0 ]] || { echo "run as root" >&2; exit 1; }
@@ -173,7 +174,7 @@ if [[ -n "${RUNNER_TOKEN:-}" ]]; then
     chown -R gh-runner:gh-runner $RUNNER_DIR
     $RUNNER_DIR/bin/installdependencies.sh
     sudo -u gh-runner $RUNNER_DIR/config.sh --unattended --replace \
-      --url https://github.com/xplicationsrl/plane --token "$RUNNER_TOKEN" \
+      --url "${RUNNER_URL:-https://github.com/xplicationsrl/plane}" --token "$RUNNER_TOKEN" \
       --name "$(hostname)-plane-prod" --labels plane-prod --no-default-labels
     (cd $RUNNER_DIR && ./svc.sh install gh-runner && ./svc.sh start)
   else
