@@ -256,7 +256,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 placeholder={t("auth.common.password.confirm_password.placeholder")}
                 onFocus={() => setIsRetryPasswordInputFocused(true)}
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
-                autoComplete="off"
+                autoComplete="new-password"
               />
               <button
                 type="button"
