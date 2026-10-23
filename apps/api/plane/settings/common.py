@@ -8,6 +8,7 @@
 import ipaddress
 import logging
 import os
+from urllib.parse import parse_qs
 from urllib.parse import urlparse
 from urllib.parse import urljoin
 
@@ -150,6 +151,14 @@ REST_FRAMEWORK = {
     "SCHEMA_COERCE_PATH_PK": False,
 }
 
+# Number of reverse proxies in front of the API. DRF throttles use it to pick the
+# client IP from X-Forwarded-For. Unset keeps DRF's default (None).
+_num_proxies_raw = os.environ.get("NUM_PROXIES", "").strip()
+if _num_proxies_raw.isdecimal() and len(_num_proxies_raw) <= 3:
+    REST_FRAMEWORK["NUM_PROXIES"] = int(_num_proxies_raw)
+elif _num_proxies_raw:
+    _logger.warning("NUM_PROXIES: ignoring invalid value %r", _num_proxies_raw)
+
 # API key throttle rate (DRF SimpleRateThrottle format, e.g. "60/minute")
 API_KEY_RATE_LIMIT = os.environ.get("API_KEY_RATE_LIMIT", "60/minute")
 
@@ -240,6 +249,27 @@ if os.environ.get("ENABLE_READ_REPLICA", "0") == "1":
 REDIS_URL = os.environ.get("REDIS_URL")
 REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
 
+
+def _redis_ssl_kwargs(url=None):
+    """
+    TLS options for rediss:// connections. The server certificate and hostname are
+    verified against the system CA bundle, or REDIS_SSL_CA_CERTS when set.
+    REDIS_SSL_CERT_REQS=none turns verification off.
+
+    Query options in the URL override these kwargs in redis-py, so an ssl_cert_reqs
+    there takes precedence over REDIS_SSL_CERT_REQS. The hostname is checked unless
+    verification is off (none); an explicit ssl_check_hostname in the URL still wins.
+    """
+    url_cert_reqs = parse_qs(urlparse(url or "").query).get("ssl_cert_reqs", [""])[0]
+    cert_reqs = (url_cert_reqs or os.environ.get("REDIS_SSL_CERT_REQS", "")).strip().lower() or "required"
+    kwargs = {"ssl_cert_reqs": cert_reqs, "ssl_check_hostname": cert_reqs != "none"}
+    if os.environ.get("REDIS_SSL_CA_CERTS"):
+        kwargs["ssl_ca_certs"] = os.environ["REDIS_SSL_CA_CERTS"]
+    return kwargs
+
+
+REDIS_SSL_KWARGS = _redis_ssl_kwargs(REDIS_URL)
+
 if REDIS_SSL:
     CACHES = {
         "default": {
@@ -247,7 +277,7 @@ if REDIS_SSL:
             "LOCATION": REDIS_URL,
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                "CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": False},
+                "CONNECTION_POOL_KWARGS": REDIS_SSL_KWARGS,
             },
         }
     }
@@ -300,8 +330,16 @@ USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
 
 STORAGES = {"staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"}}
 STORAGES["default"] = {"BACKEND": "plane.settings.storage.S3Storage"}
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
+# No fallback: when unset, boto3 resolves credentials through its default chain, as S3Storage does.
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+# Warn when the storage credentials are still the template values.
+if USE_MINIO and AWS_SECRET_ACCESS_KEY == "secret-key":
+    _logger.critical(
+        "SECURITY: AWS_SECRET_ACCESS_KEY is set to the placeholder value from the env templates "
+        "while USE_MINIO is on. Set unique object-storage credentials (the latest CLI setup.sh "
+        "generates them on install and upgrade) and restart MinIO and Plane."
+    )
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
 AWS_REGION = os.environ.get("AWS_REGION", "")
 AWS_DEFAULT_ACL = "public-read"
