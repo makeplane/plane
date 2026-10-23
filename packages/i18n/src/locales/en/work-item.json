@@ -365,7 +365,11 @@
     "child_placeholder": "Child work item name",
     "remove_child": "Remove",
     "children_created": "Created {count} child work items",
-    "children_failed": "{failed} of {total} child work items could not be created"
+    "children_failed": "{failed} of {total} child work items could not be created",
+    "drop_to_attach": "Drop files to attach",
+    "drop_to_attach_hint": "Files will be added to this work item's attachments",
+    "files_too_large": "Skipped (larger than {size} MB): {names}",
+    "too_many_files": "You can attach up to {max} files at once"
   },
   "recurring_work_items": {
     "settings": {

@@ -108,6 +108,8 @@ export const IssueAttachmentItemList = observer(function IssueAttachmentItemList
     maxSize: maxFileSize,
     multiple: false,
     disabled: isUploading || disabled,
+    // d2m-plane: drops are handled by the work item-wide WorkItemAttachmentDropZone (multi-file)
+    noDrag: true,
   });
 
   return (
