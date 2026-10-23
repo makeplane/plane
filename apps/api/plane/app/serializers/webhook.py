@@ -54,6 +54,30 @@ class WebhookSerializer(DynamicBaseSerializer):
         if any(hostname == domain or hostname.endswith("." + domain) for domain in disallowed_domains):
             raise serializers.ValidationError({"url": "URL domain or its subdomain is not allowed."})
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # secret_key is the HMAC signing secret. It is only revealed on creation
+        # and secret regeneration (opt-in via the show_secret_key context flag),
+        # never on list/retrieve/update.
+        #
+        # This context flag — not the fields= allowlists in views/webhook/base.py —
+        # is the sole enforcement point. Those fields= kwargs are dead
+        # on two independent levels, so do not assume fixing either one re-activates
+        # them:
+        #   1. DynamicBaseSerializer.__init__ pops the caller's fields= and then
+        #      overwrites it with self.expand (serializers/base.py:16-18), so the
+        #      requested allowlist never reaches _filter_fields at all.
+        #   2. _filter_fields never *removes* anything even when it does receive a
+        #      list — it builds `allowed` purely to add expansion serializers for
+        #      names not already present, then returns self.fields unfiltered
+        #      (serializers/base.py:45-119).
+        # A future one-line `fields = fields or self.expand` fix addresses only (1);
+        # (2) still has to be made restrictive before any fields= allowlist can be
+        # relied on for confidentiality.
+        if not self.context.get("show_secret_key"):
+            data.pop("secret_key", None)
+        return data
+
     def create(self, validated_data):
         url = validated_data.get("url", None)
         self._validate_webhook_url(url)
