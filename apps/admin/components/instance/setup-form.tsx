@@ -144,8 +144,8 @@ export function InstanceSetupForm() {
       <div className="mt-10 flex w-full flex-grow flex-col items-center justify-center py-6">
         <div className="relative flex w-full max-w-[22.5rem] flex-col gap-6">
           <FormHeader
-            heading="Setup your Plane Instance"
-            subHeading="Post setup you will be able to manage this Plane instance."
+            heading="Setup your Xplication Instance"
+            subHeading="Post setup you will be able to manage this Xplication instance."
           />
           {errorData.type &&
             errorData?.message &&
@@ -349,21 +349,13 @@ export function InstanceSetupForm() {
               <div>
                 <Checkbox
                   id="is_telemetry_enabled"
-                  aria-label="Allow Plane to anonymously collect usage events"
+                  aria-label="Send anonymous usage metrics"
                   onCheckedChange={(checked) => handleFormChange("is_telemetry_enabled", checked)}
                   checked={formData.is_telemetry_enabled}
                 />
               </div>
               <label className="cursor-pointer text-13 font-medium text-tertiary" htmlFor="is_telemetry_enabled">
-                Allow Plane to anonymously collect usage events.{" "}
-                <a
-                  href="https://developers.plane.so/self-hosting/telemetry"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:text-blue-600 flex-shrink-0 text-13 font-medium"
-                >
-                  See More
-                </a>
+                Send anonymous usage metrics to the collector set in OTLP_ENDPOINT (nothing is sent without one).
               </label>
             </div>
 

@@ -116,18 +116,10 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
               </div>
             </div>
             <div className="grow">
-              <div className="text-13 leading-5 font-medium text-primary">Let Plane collect anonymous usage data</div>
+              <div className="text-13 leading-5 font-medium text-primary">Send anonymous usage metrics</div>
               <div className="text-11 leading-5 font-regular text-tertiary">
-                No PII is collected.This anonymized data is used to understand how you use Plane and build new features
-                in line with{" "}
-                <a
-                  href="https://developers.plane.so/self-hosting/telemetry"
-                  target="_blank"
-                  className="text-accent-primary hover:underline"
-                  rel="noreferrer"
-                >
-                  our Telemetry Policy.
-                </a>
+                No PII is collected. Metrics only go to the OpenTelemetry collector set in OTLP_ENDPOINT; nothing is
+                sent when it is not configured.
               </div>
             </div>
           </div>
@@ -137,7 +129,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
               name="is_telemetry_enabled"
               render={({ field: { value, onChange } }) => (
                 <Switch
-                  aria-label="Let Plane collect anonymous usage data"
+                  aria-label="Send anonymous usage metrics"
                   checked={value ?? false}
                   onCheckedChange={onChange}
                   size="sm"

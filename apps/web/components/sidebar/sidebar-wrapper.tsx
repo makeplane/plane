@@ -17,7 +17,7 @@ import { CustomizeNavigationDialog } from "@/components/navigation/customize-nav
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import useSize from "@/hooks/use-window-size";
 // plane web components
-import { WorkspaceEditionBadge } from "@/components/workspace/edition-badge";
+import { PlaneVersionNumber } from "@/components/global/version-number";
 import { AppSidebarToggleButton } from "./sidebar-toggle-button";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
@@ -82,7 +82,10 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
         </ScrollArea>
         {/* Help Section */}
         <div className="flex h-12 items-center justify-between border-t border-subtle bg-surface-1 p-3">
-          <WorkspaceEditionBadge />
+          {/* Xplication: replaces upstream's "Community" edition badge, which opened a paid-plan upsell */}
+          <span className="text-11 text-tertiary">
+            <PlaneVersionNumber />
+          </span>
           {/* TODO: To be checked if we need this */}
           {/* <div className="flex items-center gap-2">
           {!shouldRenderAppRail && <HelpMenu />}

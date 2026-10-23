@@ -5,11 +5,9 @@
  */
 
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { useTheme } from "next-themes";
 // plane imports
 import { Button } from "@makeplane/propel/components/button";
-import { Button as ButtonElement } from "@makeplane/propel/elements/button";
 // assets
 import ProjectDarkEmptyState from "@/app/assets/empty-state/project-settings/no-projects-dark.png?url";
 import ProjectLightEmptyState from "@/app/assets/empty-state/project-settings/no-projects-light.png?url";
@@ -31,14 +29,6 @@ function ProjectSettingsPage() {
         need to get things done.
       </div>
       <div className="flex gap-2">
-        <ButtonElement
-          variant="secondary"
-          size="sm"
-          stretch="auto"
-          render={<Link href="https://plane.so/" target="_blank" />}
-        >
-          Learn more about projects
-        </ButtonElement>
         <Button
           variant="primary"
           size="sm"

@@ -8,21 +8,11 @@ type Props = {
   isSignUp?: boolean;
 };
 
-export function TermsAndConditions(props: Props) {
-  const { isSignUp = false } = props;
-  return (
-    <span className="flex items-center justify-center py-6">
-      <p className="text-center text-13 whitespace-pre-line text-secondary">
-        {isSignUp ? "By creating an account" : "By signing in"}, you agree to our{" \n"}
-        <a href="https://plane.so/legals/terms-and-conditions" target="_blank" rel="noopener noreferrer">
-          <span className="text-13 font-medium underline hover:cursor-pointer">Terms of Service</span>
-        </a>{" "}
-        and{" "}
-        <a href="https://plane.so/legals/privacy-policy" target="_blank" rel="noopener noreferrer">
-          <span className="text-13 font-medium underline hover:cursor-pointer">Privacy Policy</span>
-        </a>
-        {"."}
-      </p>
-    </span>
-  );
+/**
+ * Xplication: upstream links Plane's own Terms of Service and Privacy Policy here. This
+ * deployment has no legal pages of its own yet, so nothing is rendered; add links here
+ * once it does.
+ */
+export function TermsAndConditions(_props: Props) {
+  return null;
 }
