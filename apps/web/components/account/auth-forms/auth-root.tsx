@@ -55,6 +55,9 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
   const { isOAuthEnabled, oAuthOptions } = useOAuthConfig(oAuthActionText);
   const isEmailBasedAuthEnabled = config?.is_email_password_enabled || config?.is_magic_login_enabled;
+  const isPasswordOnlyConfig =
+    config?.is_email_password_enabled === true && config?.is_magic_login_enabled === false && !isOAuthEnabled;
+  const isPasswordOnlyLogin = authMode === EAuthModes.SIGN_IN && isPasswordOnlyConfig;
   const noAuthMethodsAvailable = !isOAuthEnabled && !isEmailBasedAuthEnabled;
 
   useEffect(() => {
@@ -62,7 +65,8 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   }, [currentAuthMode, authMode]);
 
   useEffect(() => {
-    if (error_code && authMode) {
+    // wait for the instance config, the flow to resume depends on the enabled auth methods
+    if (error_code && authMode && config) {
       const errorhandler = authErrorHandler(error_code?.toString() as EAuthenticationErrorCodes);
       if (errorhandler) {
         // password error handler
@@ -72,7 +76,8 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
         }
         if ([EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN].includes(errorhandler.code)) {
           setAuthMode(EAuthModes.SIGN_IN);
-          setAuthStep(EAuthSteps.PASSWORD);
+          // single-screen login keeps the combined email + password form on the first step
+          setAuthStep(isPasswordOnlyConfig ? EAuthSteps.EMAIL : EAuthSteps.PASSWORD);
         }
         // magic_code error handler
         if (
@@ -101,7 +106,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
         setErrorInfo(errorhandler);
       }
     }
-  }, [error_code, authMode]);
+  }, [error_code, authMode, config, isPasswordOnlyConfig]);
 
   if (!authMode) return <></>;
 
@@ -152,6 +157,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
           setAuthStep={(authStep) => setAuthStep(authStep)}
           setErrorInfo={(errorInfo) => setErrorInfo(errorInfo)}
           currentAuthMode={currentAuthMode}
+          isPasswordOnlyLogin={isPasswordOnlyLogin}
         />
       )}
       <TermsAndConditions authType={authMode} />
