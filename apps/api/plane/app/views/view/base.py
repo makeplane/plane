@@ -112,8 +112,30 @@ class WorkspaceViewViewSet(BaseViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def retrieve(self, request, slug, pk):
+        # Requires workspace membership, matching list() above.
         issue_view = self.get_queryset().filter(pk=pk).first()
+
+        # get_queryset() is scoped to the URL workspace: a view outside it, or
+        # no view at all, is a 404, as the other retrieve endpoints do.
+        if issue_view is None:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # As in list(), a workspace GUEST sees only views they own. 404 rather
+        # than 403, matching the missing-view branch above.
+        if (
+            WorkspaceMember.objects.filter(workspace__slug=slug, member=request.user, role=5, is_active=True).exists()
+            and issue_view.owned_by_id != request.user.id
+        ):
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         serializer = IssueViewSerializer(issue_view)
         recent_visited_task.delay(
             slug=slug,
