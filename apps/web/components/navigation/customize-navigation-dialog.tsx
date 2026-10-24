@@ -204,25 +204,29 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
       }}
     >
       <DialogContent size="md">
-        <DialogCloseGroup>
-          <IconButton
-            variant="ghost"
-            size="xs"
-            aria-label={t("close")}
-            icon={<Icon icon={CloseOutline} />}
-            render={<DialogClose />}
-          />
-        </DialogCloseGroup>
+        <div className="mx-2">
+          <DialogCloseGroup>
+            <IconButton
+              variant="ghost"
+              size="xs"
+              aria-label={t("close")}
+              icon={<Icon icon={CloseOutline} />}
+              render={<DialogClose />}
+            />
+          </DialogCloseGroup>
+        </div>
         <DialogMain>
           {/* Header */}
           <DialogHeader>
-            <DialogHeading>
-              <DialogTitle>{t("customize_navigation")}</DialogTitle>
-              <DialogDescription>
-                Selected items will always stay visible in your sidebar. You can still find the others anytime from the
-                More menu. These changes are personal to you and won&apos;t affect anyone else on your workspace.
-              </DialogDescription>
-            </DialogHeading>
+            <div className="mx-4">
+              <DialogHeading>
+                <DialogTitle>{t("customize_navigation")}</DialogTitle>
+                <DialogDescription>
+                  Selected items will always stay visible in your sidebar. You can still find the others anytime from
+                  the More menu. These changes are personal to you and won&apos;t affect anyone else on your workspace.
+                </DialogDescription>
+              </DialogHeading>
+            </div>
           </DialogHeader>
 
           {/* Content */}
