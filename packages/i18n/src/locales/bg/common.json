@@ -420,6 +420,16 @@
     }
   },
   "common": {
+    "sub_group_by": "Подгрупиране по",
+    "filter_labels": {
+      "subscriber": "Абонат"
+    },
+    "filter_messages": {
+      "all_applied": "Всички филтри са приложени",
+      "configuration_error": "Грешка в конфигурацията на филтъра",
+      "configuration_invalid": "Този филтър не е конфигуриран правилно и не може да бъде приложен"
+    },
+    "project_work_item_count": "Работни елементи в този проект: {count, number}",
     "all": "Всички",
     "no_items_in_this_group": "Няма елементи в тази група",
     "drop_here_to_move": "Пуснете тук, за да преместите",

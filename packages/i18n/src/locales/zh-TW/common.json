@@ -420,6 +420,16 @@
     }
   },
   "common": {
+    "sub_group_by": "子分組方式",
+    "filter_labels": {
+      "subscriber": "訂閱者"
+    },
+    "filter_messages": {
+      "all_applied": "已新增所有篩選條件",
+      "configuration_error": "篩選設定錯誤",
+      "configuration_invalid": "此篩選條件設定有誤，無法套用。"
+    },
+    "project_work_item_count": "此專案共有 {count, number} 個工作事項",
     "all": "全部",
     "no_items_in_this_group": "此群組中沒有項目",
     "drop_here_to_move": "拖放到此處以移動",

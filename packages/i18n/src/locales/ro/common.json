@@ -420,6 +420,16 @@
     }
   },
   "common": {
+    "sub_group_by": "Subgrupează după",
+    "filter_labels": {
+      "subscriber": "Abonat"
+    },
+    "filter_messages": {
+      "all_applied": "Toate filtrele sunt aplicate",
+      "configuration_error": "Eroare de configurare a filtrului",
+      "configuration_invalid": "Acest filtru nu este configurat corect și nu poate fi aplicat"
+    },
+    "project_work_item_count": "Activități în acest proiect: {count, number}",
     "all": "Toate",
     "no_items_in_this_group": "Nu există elemente în acest grup",
     "drop_here_to_move": "Eliberează aici pentru a muta",
