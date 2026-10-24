@@ -10,7 +10,7 @@
  * Only the un-themed :root fallback below is kept: the editor package declares
  * background colors solely under [data-theme*="light"] / [data-theme*="dark"],
  * so without this they are undefined until a theme lands on the element. */
-:root {
+/* :root {
   --editor-colors-gray-background: #d6d6d8;
   --editor-colors-peach-background: #ffd5d7;
   --editor-colors-pink-background: #fdd4e3;
@@ -19,7 +19,7 @@
   --editor-colors-light-blue-background: #c5eff9;
   --editor-colors-dark-blue-background: #c9dafb;
   --editor-colors-purple-background: #e3d8fd;
-}
+} */
 
 .shadow-custom {
   box-shadow: 2px 2px 8px 2px rgba(234, 231, 250, 0.3); /* Convert #EAE7FA4D to rgba */
