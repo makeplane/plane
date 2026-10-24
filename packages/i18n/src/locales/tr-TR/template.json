@@ -20,8 +20,8 @@
       "create_template": {
         "label": "Şablon oluştur",
         "no_permission": {
-          "project": "Şablon oluşturmak için proje admininizle iletişime geçin",
-          "workspace": "Şablon oluşturmak için workspace admininizle iletişime geçin"
+          "project": "Şablon oluşturmak için proje yöneticinizle iletişime geçin",
+          "workspace": "Şablon oluşturmak için çalışma alanı yöneticinizle iletişime geçin"
         }
       },
       "use_template": {
@@ -32,7 +32,7 @@
       },
       "template_source": {
         "workspace": {
-          "info": "Workspace'den türetildi"
+          "info": "Çalışma alanından türetildi"
         },
         "project": {
           "info": "Projeden türetildi"
@@ -260,7 +260,7 @@
       "create": {
         "success": {
           "title": "Şablon oluşturuldu",
-          "message": "{templateType} şablonu olan {templateName}, artık workspace'iniz için kullanılabilir."
+          "message": "{templateType} şablonu olan {templateName}, artık çalışma alanınız için kullanılabilir."
         },
         "error": {
           "title": "Bu sefer o şablonu oluşturamadık.",
@@ -280,7 +280,7 @@
       "delete": {
         "success": {
           "title": "Şablon silindi",
-          "message": "{templateType} şablonu olan {templateName} artık workspace'inizden silindi."
+          "message": "{templateType} şablonu olan {templateName} artık çalışma alanınızdan silindi."
         },
         "error": {
           "title": "O şablonu bu sefer silemedik.",
