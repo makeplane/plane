@@ -8,13 +8,24 @@ import { differenceInDays, format, formatDistanceToNow, isAfter, isEqual, isVali
 import { isNumber } from "lodash-es";
 import { TZDate } from "@date-fns/tz";
 
+/**
+ * Represents an instant in the requested timezone for formatting.
+ * @param date The instant to represent.
+ * @param timeZone IANA timezone; missing or invalid values retain the original date.
+ * @returns A timezone-aware date, or the original date when no valid timezone is supplied.
+ */
 const getDateInTimeZone = (date: Date, timeZone?: string): Date => {
   if (!timeZone) return date;
   const zonedDate = new TZDate(date, timeZone);
   return isValid(zonedDate) ? zonedDate : date;
 };
 
-// Preserve the date picker's calendar day when interpreting it in another timezone.
+/**
+ * Interprets the date picker's calendar day in the requested timezone without mutating its value.
+ * @param date The date picker value whose local year, month, and day are preserved.
+ * @param timeZone IANA timezone; missing or invalid values use the browser timezone.
+ * @returns A new Date at 23:59:59.999 on the selected day in that timezone.
+ */
 export const getEndOfSelectedDay = (date: Date, timeZone?: string): Date => {
   const zonedDate = getDateInTimeZone(new Date(date), timeZone);
   zonedDate.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
