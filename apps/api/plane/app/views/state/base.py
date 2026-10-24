@@ -7,6 +7,7 @@ from itertools import groupby
 from collections import defaultdict
 
 # Django imports
+from django.db.models import Case, Value, When
 from django.db.utils import IntegrityError
 
 # Third party imports
@@ -57,11 +58,12 @@ class StateViewSet(BaseViewSet):
                     {"name": "The state name is already taken"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+            raise
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN])
     def partial_update(self, request, slug, project_id, pk):
         try:
-            state = State.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
+            state = self.get_queryset().get(pk=pk)
             serializer = StateSerializer(state, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -73,6 +75,7 @@ class StateViewSet(BaseViewSet):
                     {"name": "The state name is already taken"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+            raise
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
@@ -104,9 +107,11 @@ class StateViewSet(BaseViewSet):
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def mark_as_default(self, request, slug, project_id, pk):
-        # Select all the states which are marked as default
-        _ = State.objects.filter(workspace__slug=slug, project_id=project_id, default=True).update(default=False)
-        _ = State.objects.filter(workspace__slug=slug, project_id=project_id, pk=pk).update(default=True)
+        state = self.get_queryset().get(pk=pk)
+        # One UPDATE, so concurrent calls can't leave the project with zero or two defaults
+        State.objects.filter(project_id=project_id).update(
+            default=Case(When(pk=state.pk, then=Value(True)), default=Value(False))
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)

@@ -33,6 +33,21 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
                         status=status.HTTP_403_FORBIDDEN,
                     )
 
+                # project-level creator access also requires active membership of the URL project
+                if (
+                    level != "WORKSPACE"
+                    and not ProjectMember.objects.filter(
+                        member=request.user,
+                        workspace__slug=kwargs["slug"],
+                        project_id=kwargs["project_id"],
+                        is_active=True,
+                    ).exists()
+                ):
+                    return Response(
+                        {"error": "You don't have the required permissions."},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
+
                 obj = model.objects.filter(id=kwargs["pk"], created_by=request.user).exists()
                 if obj:
                     return view_func(instance, request, *args, **kwargs)
