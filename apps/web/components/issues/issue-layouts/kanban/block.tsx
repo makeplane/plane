@@ -10,6 +10,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { preload } from "swr";
 // plane helpers
 import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -165,14 +166,33 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // hooks
   const { getProjectIdentifierById } = useProject();
-  const { getIsIssuePeeked } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
+  const {
+    getIsIssuePeeked,
+    issue: { fetchIssue },
+  } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
   const { isMobile } = usePlatformOS();
+  const preloadTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // handlers
   const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
 
   const issue = issuesMap[issueId];
+
+  // Preload the peek overview while the pointer rests on the card: the click comes 200-600 ms later and
+  // the peek overview (same SWR key as in peek-overview/root.tsx) then opens without waiting for the
+  // request. The delay keeps a pointer that only crosses the board from firing requests.
+  const handlePreloadPeek = () => {
+    const projectId = issue?.project_id;
+    if (isMobile || isEpic || !workspaceSlug || !projectId || issue?.tempId) return;
+    preloadTimerRef.current = setTimeout(() => {
+      void preload(["peek-issue", workspaceSlug, projectId, issueId], () =>
+        fetchIssue(workspaceSlug, projectId, issueId).catch(() => undefined)
+      );
+    }, 120);
+  };
+  const cancelPreloadPeek = () => clearTimeout(preloadTimerRef.current);
+  useEffect(() => cancelPreloadPeek, []);
 
   const { setIsDragging: setIsKanbanDragging } = useKanbanView();
 
@@ -247,6 +267,8 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
         id={`issue-${issueId}`}
         // make Z-index higher at the beginning of drag, to have a issue drag image of issue block without any overlaps
         className={cn("group/kanban-block relative mb-2", { "z-[1]": isCurrentBlockDragging })}
+        onMouseEnter={handlePreloadPeek}
+        onMouseLeave={cancelPreloadPeek}
         onDragStart={() => {
           if (isDragAllowed) setIsCurrentBlockDragging(true);
           else {
