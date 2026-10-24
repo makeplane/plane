@@ -16,7 +16,7 @@ from plane.authentication.adapter.error import (
 )
 
 # Module imports
-from plane.authentication.adapter.oauth import OauthAdapter
+from plane.authentication.adapter.oauth import OAUTH_REQUEST_TIMEOUT, OauthAdapter
 from plane.license.utils.instance_value import get_configuration_value
 
 
@@ -109,7 +109,7 @@ class GitHubOAuthProvider(OauthAdapter):
         try:
             # Github does not provide email in user response
             emails_url = "https://api.github.com/user/emails"
-            emails_response = requests.get(emails_url, headers=headers).json()
+            emails_response = requests.get(emails_url, headers=headers, timeout=OAUTH_REQUEST_TIMEOUT).json()
             # Ensure the response is a list before iterating
             if not isinstance(emails_response, list):
                 self.logger.error("Unexpected response format from GitHub emails API")
@@ -141,10 +141,18 @@ class GitHubOAuthProvider(OauthAdapter):
 
     def is_user_in_organization(self, github_username):
         headers = {"Authorization": f"Bearer {self.token_data.get('access_token')}"}
-        response = requests.get(
-            f"{self.org_membership_url}/{self.organization_id}/memberships/{github_username}",
-            headers=headers,
-        )
+        try:
+            response = requests.get(
+                f"{self.org_membership_url}/{self.organization_id}/memberships/{github_username}",
+                headers=headers,
+                timeout=OAUTH_REQUEST_TIMEOUT,
+            )
+        except requests.RequestException:
+            self.logger.warning("Error checking GitHub organization membership")
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
+                error_message="GITHUB_OAUTH_PROVIDER_ERROR",
+            )
         return response.status_code == 200  # 200 means the user is a member
 
     def set_user_data(self):
