@@ -153,6 +153,7 @@ from .issue.sub_issue import SubIssuesEndpoint
 from .issue.subscriber import IssueSubscriberViewSet
 
 from .issue.version import IssueVersionEndpoint, WorkItemDescriptionVersionEndpoint
+from .issue.work_item_page import WorkItemPageListCreateEndpoint, WorkItemPageDetailEndpoint
 
 from .module.base import (
     ModuleViewSet,
@@ -174,6 +175,7 @@ from .page.base import (
     PageDuplicateEndpoint,
 )
 from .page.version import PageVersionEndpoint
+from .page.workspace import WorkspacePageListEndpoint
 
 from .search.base import GlobalSearchEndpoint, SearchEndpoint
 from .search.issue import IssueSearchEndpoint
