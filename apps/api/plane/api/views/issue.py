@@ -959,6 +959,8 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             project_id=str(project_id),
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -1311,6 +1313,8 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
                 actor_id=str(link.created_by_id),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
             )
             serializer = IssueLinkSerializer(link)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -1433,6 +1437,8 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
                 project_id=str(project_id),
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
             )
             serializer = IssueLinkSerializer(issue_link)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -1466,6 +1472,8 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
             project_id=str(project_id),
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
         )
         issue_link.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1621,6 +1629,8 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
                 project_id=str(self.kwargs.get("project_id")),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
             )
 
             # Send the model activity
@@ -1783,6 +1793,8 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
                 project_id=str(project_id),
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
             )
             # Send the model activity
             model_activity.delay(
@@ -1843,6 +1855,8 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
             project_id=str(project_id),
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
