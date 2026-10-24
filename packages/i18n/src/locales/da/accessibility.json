@@ -1,0 +1,47 @@
+{
+  "aria_labels": {
+    "projects_sidebar": {
+      "workspace_logo": "Arbejdsområdets logo",
+      "open_workspace_switcher": "Åbn skifter til arbejdsområde",
+      "open_user_menu": "Åbn brugermenu",
+      "open_command_palette": "Åbn kommandopalette",
+      "open_extended_sidebar": "Åbn udvidet sidebjælke",
+      "close_extended_sidebar": "Luk udvidet sidebjælke",
+      "create_favorites_folder": "Opret favoritmappe",
+      "open_folder": "Åbn mappe",
+      "close_folder": "Luk mappe",
+      "open_favorites_menu": "Åbn favoritmenu",
+      "close_favorites_menu": "Luk favoritmenu",
+      "enter_folder_name": "Indtast mappenavn",
+      "create_new_project": "Opret nyt projekt",
+      "open_projects_menu": "Åbn projektmenu",
+      "close_projects_menu": "Luk projektmenu",
+      "toggle_quick_actions_menu": "Slå menu for hurtige handlinger til/fra",
+      "open_project_menu": "Åbn projektmenu",
+      "close_project_menu": "Luk projektmenu",
+      "collapse_sidebar": "Fold sidebjælke sammen",
+      "expand_sidebar": "Udvid sidebjælke",
+      "edition_badge": "Åbn modal for betalte abonnementer"
+    },
+    "auth_forms": {
+      "clear_email": "Ryd e-mail",
+      "show_password": "Vis adgangskode",
+      "hide_password": "Skjul adgangskode",
+      "close_alert": "Luk advarsel",
+      "close_popover": "Luk popover"
+    },
+    "breadcrumb": {
+      "trail": "Brødkrumme",
+      "show_more": "Vis flere brødkrummer"
+    },
+    "common": {
+      "more_actions": "Flere handlinger",
+      "remove": "Fjern"
+    },
+    "color_picker": {
+      "open": "Åbn farvevælger",
+      "swatches": "Forudindstillede farver",
+      "hex_input": "Hex-farve"
+    }
+  }
+}

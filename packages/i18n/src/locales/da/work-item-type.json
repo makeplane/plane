@@ -1,0 +1,432 @@
+{
+  "issue": {
+    "label": "{count, plural, one {Opgave} other {Opgaver}}",
+    "all": "Alle opgaver",
+    "edit": "Rediger opgave",
+    "title": {
+      "label": "Opgavetitel",
+      "required": "Opgavetitel er påkrævet."
+    },
+    "add": {
+      "press_enter": "Tryk på 'Enter' for at tilføje en opgave mere",
+      "label": "Tilføj opgave",
+      "cycle": {
+        "failed": "Opgaven kunne ikke tilføjes til cyklussen. Prøv venligst igen.",
+        "success": "{count, plural, one {Opgave} other {Opgaver}} blev tilføjet til cyklussen.",
+        "loading": "Tilføjer {count, plural, one {opgave} other {opgaver}} til cyklussen"
+      },
+      "assignee": "Tilføj tildelte personer",
+      "start_date": "Tilføj startdato",
+      "due_date": "Tilføj forfaldsdato",
+      "parent": "Tilføj overordnet opgave",
+      "sub_issue": "Tilføj underopgave",
+      "dependency": "Tilføj afhængighed",
+      "relation": "Tilføj relation",
+      "link": "Tilføj link",
+      "existing": "Tilføj eksisterende opgave"
+    },
+    "remove": {
+      "label": "Fjern opgave",
+      "cycle": {
+        "loading": "Fjerner opgave fra cyklussen",
+        "success": "Opgave blev fjernet fra cyklussen med succes.",
+        "failed": "Opgaven kunne ikke fjernes fra cyklussen. Prøv venligst igen."
+      },
+      "module": {
+        "loading": "Fjerner opgave fra modulet",
+        "success": "Opgave blev fjernet fra modulet med succes.",
+        "failed": "Opgaven kunne ikke fjernes fra modulet. Prøv venligst igen."
+      },
+      "parent": {
+        "label": "Fjern overordnet opgave"
+      }
+    },
+    "new": "Ny opgave",
+    "adding": "Tilføjer opgave",
+    "create": {
+      "success": "Opgave oprettet med succes"
+    },
+    "priority": {
+      "urgent": "Haster",
+      "high": "Høj",
+      "medium": "Medium",
+      "low": "Lav"
+    },
+    "display": {
+      "properties": {
+        "label": "Visningsegenskaber",
+        "id": "ID",
+        "issue_type": "Opgavetype",
+        "sub_issue_count": "Antal underopgaver",
+        "attachment_count": "Antal vedhæftninger",
+        "created_on": "Oprettet den",
+        "sub_issue": "Underopgave",
+        "work_item_count": "Antal opgaver"
+      },
+      "extra": {
+        "show_sub_issues": "Vis underopgaver",
+        "show_empty_groups": "Vis tomme grupper"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "Dette layout er sorteret efter",
+      "list": "Liste",
+      "kanban": "Tavle",
+      "calendar": "Kalender",
+      "spreadsheet": "Tabel",
+      "gantt": "Tidslinje",
+      "title": {
+        "list": "Listelayout",
+        "kanban": "Tavlelayout",
+        "calendar": "Kalenderlayout",
+        "spreadsheet": "Tabellayout",
+        "gantt": "Tidslinjelayout"
+      }
+    },
+    "states": {
+      "active": "Aktiv",
+      "backlog": "Opgaverum (Backlog)"
+    },
+    "comments": {
+      "placeholder": "Tilføj kommentar",
+      "switch": {
+        "private": "Skift til privat kommentar",
+        "public": "Skift til offentlig kommentar"
+      },
+      "create": {
+        "success": "Kommentar oprettet med succes",
+        "error": "Oprettelse af kommentar mislykkedes. Prøv venligst igen senere."
+      },
+      "update": {
+        "success": "Kommentar opdateret med succes",
+        "error": "Opdatering af kommentar mislykkedes. Prøv venligst igen senere."
+      },
+      "remove": {
+        "success": "Kommentar fjernet med succes",
+        "error": "Fjernelse af kommentar mislykkedes. Prøv venligst igen senere."
+      },
+      "upload": {
+        "error": "Upload af fil mislykkedes. Prøv venligst igen senere."
+      },
+      "copy_link": {
+        "success": "Kommentarlink kopieret til udklipsholder",
+        "error": "Fejl ved kopiering af kommentarlink. Prøv venligst igen senere."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Tilføj svar",
+          "placeholder": "Tilføj svar"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "Kunne ikke hente svar"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Svar oprettet med succes"
+            },
+            "error": {
+              "message": "Kunne ikke oprette svar"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Svar opdateret med succes"
+            },
+            "error": {
+              "message": "Kunne ikke opdatere svar"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Svar slettet med succes"
+            },
+            "error": {
+              "message": "Kunne ikke slette svar"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "Opgaven findes ikke",
+        "description": "Opgaven du leder efter findes ikke, er blevet arkiveret eller er blevet slettet.",
+        "primary_button": {
+          "text": "Se andre opgaver"
+        }
+      }
+    },
+    "sibling": {
+      "label": "Relaterede søskende-opgaver"
+    },
+    "archive": {
+      "description": "Kun afsluttede eller annullerede opgaver kan arkiveres",
+      "label": "Arkiver opgave",
+      "confirm_message": "Er du sikker på, at du vil arkivere opgaven? Alle dine arkiverede opgaver kan genskabes senere.",
+      "success": {
+        "label": "Arkivering lykkedes",
+        "message": "Dine arkiver kan findes i projektarkiver."
+      },
+      "failed": {
+        "message": "Opgaven kunne ikke arkiveres. Prøv venligst igen."
+      },
+      "banner_message": "Denne opgave er blevet arkiveret. Besøg arkivsektionen for at genskabe den.",
+      "go_to_archives": "Gå til arkiver"
+    },
+    "restore": {
+      "success": {
+        "title": "Genskabelse lykkedes",
+        "message": "Din opgave kan nu findes i projektopgaver."
+      },
+      "failed": {
+        "message": "Opgaven kunne ikke genskabes. Prøv venligst igen."
+      }
+    },
+    "relation": {
+      "relates_to": "Relaterer til",
+      "duplicate": "Duplikat af",
+      "blocked_by": "Blokeret af",
+      "blocking": "Blokerer",
+      "start_before": "Starter før",
+      "start_after": "Starter efter",
+      "finish_before": "Slutter før",
+      "finish_after": "Slutter efter",
+      "implements": "Implementerer",
+      "implemented_by": "Implementeret af"
+    },
+    "copy_link": "Kopiér opgavelink",
+    "delete": {
+      "label": "Slet opgave",
+      "error": "Fejl ved sletning af opgave"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "Du abonnerer nu på opgaven",
+        "unsubscribed": "Du har afmeldt abonnement på opgaven"
+      }
+    },
+    "select": {
+      "error": "Vælg venligst mindst én opgave",
+      "empty": "Ingen opgaver valgt",
+      "add_selected": "Tilføj valgte opgaver",
+      "select_all": "Vælg alle",
+      "deselect_all": "Fravælg alle"
+    },
+    "open_in_full_screen": "Åbn opgave i fuld skærm",
+    "duplicate": {
+      "modal": {
+        "title": "Opret en kopi i et andet projekt",
+        "description1": "Dette opretter en kopi af opgaven.",
+        "description2": "Alle egenskabsdata vil blive fjernet under duplikeringen.",
+        "placeholder": "Vælg et projekt"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Opgaven blev duplikeret med succes"
+        },
+        "error": {
+          "message": "Kunne ikke duplikere opgaven"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Knyt sider",
+      "show_wiki_pages": "Vis Wiki-sider",
+      "link_pages_to": "Knyt sider til",
+      "linked_pages": "Tilknyttede sider",
+      "no_description": "Dette er en tom side. Skriv noget i den, så det vises her.",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Sider opdateret",
+            "message": "Sider blev opdateret med succes"
+          },
+          "error": {
+            "title": "Opdatering af sider mislykkedes",
+            "message": "Opdatering af sider mislykkedes"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Side fjernet",
+            "message": "Side blev fjernet med succes"
+          },
+          "error": {
+            "title": "Fjernelse af side mislykkedes",
+            "message": "Fjernelse af side mislykkedes"
+          }
+        }
+      }
+    },
+    "vote": {
+      "click_to_upvote": "Klik for at stemme op",
+      "click_to_downvote": "Klik for at stemme ned",
+      "click_to_view_upvotes": "Klik for at se stemmer op",
+      "click_to_view_downvotes": "Klik for at se stemmer ned"
+    }
+  },
+  "sub_work_item": {
+    "update": {
+      "success": "Underopgave blev opdateret med succes",
+      "error": "Fejl ved opdatering af underopgave"
+    },
+    "remove": {
+      "success": "Underopgave blev fjernet med succes",
+      "error": "Fejl ved fjernelse af underopgave"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Du har ingen underopgaver, der matcher de anvendte filtre.",
+        "description": "Ryd alle filtre for at se alle underopgaver.",
+        "action": "Ryd filtre"
+      },
+      "list_filters": {
+        "title": "Du har ingen opgaver, der matcher de anvendte filtre.",
+        "description": "Ryd alle filtre for at se alle opgaver.",
+        "action": "Ryd filtre"
+      }
+    }
+  },
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Ingen matchende opgaver fundet"
+      },
+      "no_issues": {
+        "title": "Ingen opgaver fundet"
+      }
+    }
+  },
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "Ingen kommentarer endnu",
+        "description": "Kommentarer kan bruges som et diskussions- og opfølgningsrum for opgaverne"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "Kunne ikke arkivere opgaver",
+        "message": "Kun opgaver tilhørende statusgrupperne Afsluttet eller Annulleret kan arkiveres."
+      },
+      "invalid_issue_start_date": {
+        "title": "Kunne ikke opdatere opgaver",
+        "message": "Den valgte startdato ligger efter forfaldsdatoen for nogle opgaver. Sørg for, at startdatoen ligger før forfaldsdatoen."
+      },
+      "invalid_issue_target_date": {
+        "title": "Kunne ikke opdatere opgaver",
+        "message": "Den valgte forfaldsdato ligger før startdatoen for nogle opgaver. Sørg for, at forfaldsdatoen ligger efter startdatoen."
+      },
+      "invalid_state_transition": {
+        "title": "Kunne ikke opdatere opgaver",
+        "message": "Statusændring er ikke tilladt for nogle opgaver. Sørg for, at statusændringen er tilladt."
+      }
+    },
+    "upgrade_banner": {
+      "message": "Skift status, prioritet og mere for flere opgaver på én gang. Spar i gennemsnit tre minutter pr. handling.",
+      "cta": "Opgrader til One"
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Tilbagevendende opgaver",
+      "description": "Indstil dit gentagne arbejde én gang, og vi tager os af gentagelserne. Du ser det hele lige her, når det er tid.",
+      "new_recurring_work_item": "Ny tilbagevendende opgave",
+      "update_recurring_work_item": "Opdater tilbagevendende opgave",
+      "form": {
+        "interval": {
+          "title": "Tidsplan",
+          "start_date": {
+            "validation": {
+              "required": "Startdato er påkrævet"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Intervaltype er påkrævet"
+            }
+          }
+        },
+        "button": {
+          "create": "Opret tilbagevendende opgave",
+          "update": "Opdater tilbagevendende opgave"
+        }
+      },
+      "create_button": {
+        "label": "Opret tilbagevendende opgave",
+        "no_permission": "Kontakt din projektadministrator for at oprette tilbagevendende opgaver"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Dit arbejde på autopilot",
+        "description": "Indstil det én gang. Vi henter det frem, når det forfalder. Opgrader til Business for at gøre tilbagevendende arbejde ubesværet."
+      },
+      "no_templates": {
+        "button": "Opret din første tilbagevendende opgave"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Tilbagevendende opgave oprettet",
+          "message": "{name}, den tilbagevendende opgave, er nu tilgængelig for dit arbejdsområde."
+        },
+        "error": {
+          "title": "Vi kunne ikke oprette den tilbagevendende opgave denne gang.",
+          "message": "Prøv at gemme dine oplysninger igen eller kopier dem over til en ny tilbagevendende opgave, gerne i en anden fane."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Tilbagevendende opgave ændret",
+          "message": "{name}, den tilbagevendende opgave, blev ændret."
+        },
+        "error": {
+          "title": "Vi kunne ikke gemme ændringer i denne tilbagevendende opgave.",
+          "message": "Prøv at gemme dine oplysninger igen eller vend tilbage til denne tilbagevendende opgave senere. Hvis der stadig er problemer, så kontakt os."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Tilbagevendende opgave slettet",
+          "message": "{name}, den tilbagevendende opgave, er nu blevet slettet fra dit arbejdsområde."
+        },
+        "error": {
+          "title": "Vi kunne ikke slette den tilbagevendende opgave denne gang.",
+          "message": "Prøv at slette den igen eller vend tilbage til den senere. Hvis du stadig ikke kan slette den, bedes du kontakte os."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Slet tilbagevendende opgave",
+      "description": {
+        "prefix": "Er du sikker på, at du vil slette den tilbagevendende opgave-",
+        "suffix": "? Alle data relateret til den tilbagevendende opgave vil blive permanent fjernet. Denne handling kan ikke fortrydes."
+      }
+    }
+  },
+  "epic": {
+    "new": "Nyt epos",
+    "label": "{count, plural, one {Epos} other {Eposser}}",
+    "adding": "Tilføjer epos",
+    "create": {
+      "success": "Epos oprettet med succes"
+    },
+    "add": {
+      "label": "Tilføj epos",
+      "press_enter": "Tryk på 'Enter' for at tilføje et epos mere"
+    },
+    "title": {
+      "label": "Epos-titel",
+      "required": "Epos-titel er påkrævet."
+    }
+  }
+}
