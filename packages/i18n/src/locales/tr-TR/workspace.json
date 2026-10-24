@@ -97,7 +97,7 @@
     },
     "total": "Toplam {entity}",
     "started_work_items": "Başlatılan {entity}",
-    "backlog_work_items": "Backlog {entity}",
+    "backlog_work_items": "Bekleme listesindeki {entity}",
     "un_started_work_items": "Başlanmamış {entity}",
     "completed_work_items": "Tamamlanmış {entity}",
     "project_insights": "Proje İçgörüleri",
