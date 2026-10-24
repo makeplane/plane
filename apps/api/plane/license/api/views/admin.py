@@ -46,6 +46,7 @@ from plane.utils.path_validator import get_safe_redirect_url
 class InstanceAdminEndpoint(BaseAPIView):
     permission_classes = [InstanceAdminPermission]
 
+    @invalidate_cache(path="/api/instances/admins/", user=False, after_write=True)
     @invalidate_cache(path="/api/instances/", user=False)
     # Create an instance admin
     def post(self, request):
@@ -81,6 +82,7 @@ class InstanceAdminEndpoint(BaseAPIView):
         serializer = InstanceAdminSerializer(instance_admins, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @invalidate_cache(path="/api/instances/admins/", user=False, after_write=True)
     @invalidate_cache(path="/api/instances/", user=False)
     def delete(self, request, pk):
         instance = Instance.objects.first()
