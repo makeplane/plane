@@ -44,7 +44,11 @@ type ModuleSelectWebProps = ModuleSelectWebBaseProps &
       }
   );
 
-const toOption = (module: IModule): ModuleOption => ({ id: module.id, name: module.name });
+const toOption = (module: IModule): ModuleOption => ({
+  id: module.id,
+  name: module.name,
+  logo_props: module.logo_props,
+});
 
 /**
  * Web binding for the `ModuleSelect` block. Pass `multiple` for multi-select (issue sidebar, table

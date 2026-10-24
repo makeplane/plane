@@ -8,10 +8,11 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 // icons
-import { InfoOutline, TickOutline } from "@makeplane/propel/icons";
+import { InfoOutline, ModuleOutline, TickOutline } from "@makeplane/propel/icons";
 // ui
 import { CircularProgress } from "@makeplane/propel/components/circular-progress";
 // components
+import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { generateQueryParams } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 import { ModuleListItemAction, ModuleQuickActions } from "@/components/modules";
@@ -75,28 +76,38 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
       itemLink={`/${workspaceSlug?.toString()}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
       onItemClick={handleItemClick}
       prependTitleElement={
-        <div className="relative size-[30px]">
-          <div className="absolute inset-0 flex scale-150 items-center justify-center">
-            <CircularProgress
-              value={progress}
-              size="md"
-              variant={progress === 100 ? "success" : "brand"}
-              aria-label="Module progress"
-            />
-          </div>
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            {completedModuleCheck ? (
-              progress === 100 ? (
+        <div className="flex items-center gap-4">
+          <div className="relative size-[30px]">
+            <div className="absolute inset-0 flex scale-150 items-center justify-center">
+              <CircularProgress
+                value={progress}
+                size="md"
+                variant={progress === 100 ? "success" : "brand"}
+                aria-label="Module progress"
+              />
+            </div>
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+              {completedModuleCheck ? (
+                progress === 100 ? (
+                  <TickOutline className="h-3 w-3 stroke-[2] text-accent-primary" />
+                ) : (
+                  <span className="text-13 text-accent-primary">{`!`}</span>
+                )
+              ) : progress === 100 ? (
                 <TickOutline className="h-3 w-3 stroke-[2] text-accent-primary" />
               ) : (
-                <span className="text-13 text-accent-primary">{`!`}</span>
-              )
-            ) : progress === 100 ? (
-              <TickOutline className="h-3 w-3 stroke-[2] text-accent-primary" />
-            ) : (
-              <span className="text-9 text-tertiary">{`${progress}%`}</span>
-            )}
+                <span className="text-9 text-tertiary">{`${progress}%`}</span>
+              )}
+            </div>
           </div>
+          {moduleDetails.logo_props?.in_use && (
+            <Logo
+              logo={moduleDetails.logo_props}
+              size={16}
+              type="lucide"
+              fallback={<ModuleOutline className="h-4 w-4 text-tertiary" />}
+            />
+          )}
         </div>
       }
       appendTitleElement={
