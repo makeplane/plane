@@ -12,6 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SingleIntegrationCard } from "@/components/integration/single-integration-card";
+import { TelegramIntegrationSettings } from "@/components/integration/telegram/telegram-settings";
 import { IntegrationsSettingsLoader } from "@/components/ui/loader/settings/integration";
 // constants
 import { APP_INTEGRATIONS } from "@plane/constants";
@@ -47,6 +48,7 @@ function WorkspaceIntegrationsPage() {
           <h3 className="text-18 font-medium">{t("integrations.integrations")}</h3>
         </div>
         <div>
+          {currentWorkspace?.slug && <TelegramIntegrationSettings workspaceSlug={currentWorkspace.slug} />}
           {appIntegrations ? (
             appIntegrations.map((integration) => (
               <SingleIntegrationCard key={integration.id} integration={integration} />
