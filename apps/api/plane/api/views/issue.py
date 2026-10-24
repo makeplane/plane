@@ -116,6 +116,7 @@ from plane.utils.openapi import (
     PROJECT_ID_QUERY_PARAMETER,
     CURSOR_PARAMETER,
     PER_PAGE_PARAMETER,
+    PAGE_PARAMETER,
     EXTERNAL_ID_PARAMETER,
     EXTERNAL_SOURCE_PARAMETER,
     ORDER_BY_PARAMETER,
@@ -365,6 +366,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         parameters=[
             CURSOR_PARAMETER,
             PER_PAGE_PARAMETER,
+            PAGE_PARAMETER,
             EXTERNAL_ID_PARAMETER,
             EXTERNAL_SOURCE_PARAMETER,
             ORDER_BY_PARAMETER,

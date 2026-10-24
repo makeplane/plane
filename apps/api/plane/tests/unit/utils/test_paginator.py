@@ -19,8 +19,11 @@ class _StubGroupedPaginator:
 
     def __init__(self, **kwargs):
         self.kwargs = kwargs
+        self.cursor = None
 
     def get_result(self, limit, cursor):
+        self.cursor = cursor
+        type(self).last_cursor = cursor
         return CursorResult(
             results=[],
             next=Cursor(limit, 1, False, False),
@@ -121,3 +124,31 @@ class TestPaginateGroupByValidation:
             paginator_cls=_StubGroupedPaginator,
         )
         assert response.data["grouped_by"] is None
+
+
+@pytest.mark.unit
+class TestPaginatePageParameter:
+    def test_page_parameter_seeds_zero_based_cursor_offset(self):
+        BasePaginator().paginate(
+            request=_make_request(page="3", per_page="25"),
+            queryset=None,
+            paginator_cls=_StubGroupedPaginator,
+        )
+        assert _StubGroupedPaginator.last_cursor == Cursor(25, 2)
+
+    def test_cursor_takes_precedence_over_page(self):
+        BasePaginator().paginate(
+            request=_make_request(page="invalid", cursor="10:4:0"),
+            queryset=None,
+            paginator_cls=_StubGroupedPaginator,
+        )
+        assert _StubGroupedPaginator.last_cursor == Cursor(10, 4)
+
+    @pytest.mark.parametrize("page", ["invalid", "0", "-1"])
+    def test_invalid_page_raises_parse_error(self, page):
+        with pytest.raises(ParseError, match="Invalid page parameter"):
+            BasePaginator().paginate(
+                request=_make_request(page=page),
+                queryset=None,
+                paginator_cls=_StubGroupedPaginator,
+            )

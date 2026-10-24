@@ -283,6 +283,15 @@ PER_PAGE_PARAMETER = OpenApiParameter(
     ],
 )
 
+PAGE_PARAMETER = OpenApiParameter(
+    name="page",
+    type=OpenApiTypes.INT,
+    location=OpenApiParameter.QUERY,
+    description="One-based page number; ignored when a cursor is provided",
+    required=False,
+    examples=[OpenApiExample(name="Second page", value=2)],
+)
+
 # External Integration Parameters
 EXTERNAL_ID_PARAMETER = OpenApiParameter(
     name="external_id",
