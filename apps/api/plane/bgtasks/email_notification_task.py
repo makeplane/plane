@@ -54,6 +54,7 @@ def stack_email_notification():
     # Convert to unique receivers list
     receivers = list(set([str(notification.get("receiver_id")) for notification in email_notifications]))
     processed_notifications = []
+    emails_to_send = []
     # Loop through all the issues to create the emails
     for receiver_id in receivers:
         # Notification triggered for the receiver
@@ -62,26 +63,32 @@ def stack_email_notification():
         ]
         # create payload for all issues
         payload = {}
-        email_notification_ids = []
+        # log ids per issue, so each email only marks its own logs as sent
+        email_notification_ids = {}
         for receiver_notification in receiver_notifications:
-            payload.setdefault(receiver_notification.get("entity_identifier"), {}).setdefault(
-                str(receiver_notification.get("triggered_by_id")), []
-            ).append(receiver_notification.get("data"))
+            issue_id = receiver_notification.get("entity_identifier")
+            payload.setdefault(issue_id, {}).setdefault(str(receiver_notification.get("triggered_by_id")), []).append(
+                receiver_notification.get("data")
+            )
             # append processed notifications
             processed_notifications.append(receiver_notification.get("id"))
-            email_notification_ids.append(receiver_notification.get("id"))
+            email_notification_ids.setdefault(issue_id, []).append(receiver_notification.get("id"))
 
-        # Create emails for all the issues
         for issue_id, notification_data in payload.items():
-            send_email_notification.delay(
-                issue_id=issue_id,
-                notification_data=notification_data,
-                receiver_id=receiver_id,
-                email_notification_ids=email_notification_ids,
-            )
+            emails_to_send.append((issue_id, notification_data, receiver_id, email_notification_ids[issue_id]))
 
-    # Update the email notification log
+    # Mark the logs processed before dispatching, so this update never races the
+    # send tasks' `sent_at` updates on the same rows
     EmailNotificationLog.objects.filter(pk__in=processed_notifications).update(processed_at=timezone.now())
+
+    # Create emails for all the issues
+    for issue_id, notification_data, receiver_id, ids in emails_to_send:
+        send_email_notification.delay(
+            issue_id=issue_id,
+            notification_data=notification_data,
+            receiver_id=receiver_id,
+            email_notification_ids=ids,
+        )
 
 
 def create_payload(notification_data):
