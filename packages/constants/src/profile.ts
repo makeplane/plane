@@ -57,36 +57,36 @@ export const PREFERENCE_OPTIONS: {
 
 /**
  * @description The options for the start of the week
- * @type {Array<{value: EStartOfTheWeek, label: string}>}
+ * @type {Array<{value: EStartOfTheWeek, i18n_label: string}>}
  * @constant
  */
 export const START_OF_THE_WEEK_OPTIONS = [
   {
     value: EStartOfTheWeek.SUNDAY,
-    label: "Sunday",
+    i18n_label: "account_settings.preferences.first_day_of_week.days.sunday",
   },
   {
     value: EStartOfTheWeek.MONDAY,
-    label: "Monday",
+    i18n_label: "account_settings.preferences.first_day_of_week.days.monday",
   },
   {
     value: EStartOfTheWeek.TUESDAY,
-    label: "Tuesday",
+    i18n_label: "account_settings.preferences.first_day_of_week.days.tuesday",
   },
   {
     value: EStartOfTheWeek.WEDNESDAY,
-    label: "Wednesday",
+    i18n_label: "account_settings.preferences.first_day_of_week.days.wednesday",
   },
   {
     value: EStartOfTheWeek.THURSDAY,
-    label: "Thursday",
+    i18n_label: "account_settings.preferences.first_day_of_week.days.thursday",
   },
   {
     value: EStartOfTheWeek.FRIDAY,
-    label: "Friday",
+    i18n_label: "account_settings.preferences.first_day_of_week.days.friday",
   },
   {
     value: EStartOfTheWeek.SATURDAY,
-    label: "Saturday",
+    i18n_label: "account_settings.preferences.first_day_of_week.days.saturday",
   },
 ];

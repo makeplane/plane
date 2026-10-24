@@ -41,7 +41,20 @@
     },
     "preferences": {
       "heading": "Preferenze",
-      "description": "Personalizza la tua esperienza dell'app al modo in cui lavori"
+      "description": "Personalizza la tua esperienza dell'app al modo in cui lavori",
+      "first_day_of_week": {
+        "title": "Primo giorno della settimana",
+        "description": "Questa impostazione cambierà la visualizzazione di tutti i calendari nell’app.",
+        "days": {
+          "sunday": "Domenica",
+          "monday": "Lunedì",
+          "tuesday": "Martedì",
+          "wednesday": "Mercoledì",
+          "thursday": "Giovedì",
+          "friday": "Venerdì",
+          "saturday": "Sabato"
+        }
+      }
     },
     "notifications": {
       "heading": "Notifiche via email",

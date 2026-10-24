@@ -41,7 +41,20 @@
     },
     "preferences": {
       "heading": "環境設定",
-      "description": "あなたの働き方に合わせてアプリの体験をカスタマイズします"
+      "description": "あなたの働き方に合わせてアプリの体験をカスタマイズします",
+      "first_day_of_week": {
+        "title": "週の最初の曜日",
+        "description": "アプリ内のすべてのカレンダーの表示方法が変わります。",
+        "days": {
+          "sunday": "日曜日",
+          "monday": "月曜日",
+          "tuesday": "火曜日",
+          "wednesday": "水曜日",
+          "thursday": "木曜日",
+          "friday": "金曜日",
+          "saturday": "土曜日"
+        }
+      }
     },
     "notifications": {
       "heading": "メール通知",

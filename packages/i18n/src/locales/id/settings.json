@@ -41,7 +41,20 @@
     },
     "preferences": {
       "heading": "Preferensi",
-      "description": "Sesuaikan pengalaman aplikasi Anda dengan cara kerja Anda"
+      "description": "Sesuaikan pengalaman aplikasi Anda dengan cara kerja Anda",
+      "first_day_of_week": {
+        "title": "Hari pertama dalam seminggu",
+        "description": "Ini akan mengubah tampilan semua kalender di aplikasi Anda.",
+        "days": {
+          "sunday": "Minggu",
+          "monday": "Senin",
+          "tuesday": "Selasa",
+          "wednesday": "Rabu",
+          "thursday": "Kamis",
+          "friday": "Jumat",
+          "saturday": "Sabtu"
+        }
+      }
     },
     "notifications": {
       "heading": "Notifikasi email",
