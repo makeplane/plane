@@ -8,7 +8,7 @@ from collections import defaultdict
 from collections.abc import Sequence
 
 # Django imports
-from django.db.models import Count, F, Window
+from django.db.models import Count, F, QuerySet, Window
 from django.db.models.functions import RowNumber
 
 # Third party imports
@@ -157,7 +157,10 @@ class OffsetPaginator:
         if cursor.value != limit and cursor.is_prev:
             results = results[-(limit + 1) :]
 
-        total_count = self.total_count_queryset.count() if self.total_count_queryset else queryset.count()
+        # QuerySet truthiness fetches every matching row. Only None means that
+        # no count queryset was supplied; an explicit empty queryset counts as 0.
+        count_queryset = self.total_count_queryset if self.total_count_queryset is not None else queryset
+        total_count = count_queryset.count()
 
         # Check if there are more results available after the current page
 
@@ -669,9 +672,16 @@ class BasePaginator:
         sub_group_by_fields=None,
         count_filter=None,
         total_count_queryset=None,
+        count_page_in_database=False,
         **paginator_kwargs,
     ):
-        """Paginate the request"""
+        """Paginate the request.
+
+        Enable count_page_in_database only when callbacks and controllers
+        eagerly build the response without retaining lazy references to the
+        original page. By default, evaluate that page so rendering can reuse
+        its cache, including when it is nested inside another response object.
+        """
         per_page = self.get_per_page(request, default_per_page, max_per_page)
         # Convert the cursor value to integer and float from string
         input_cursor = None
@@ -724,6 +734,25 @@ class BasePaginator:
         else:
             results = results
 
+        # An opted-in callback can evaluate a projection without populating
+        # the original page's cache. Count it instead of fetching its models.
+        # Do not count the transformed output: callbacks and controllers may
+        # change its cardinality. Only optimize SQL-sliced pages: counting an
+        # unsliced DISTINCT/GROUP BY query can discard ordering-dependent
+        # columns. Keep custom lengths, row locks and raw-render cache reuse.
+        if (
+            count_page_in_database
+            and on_results
+            and type(cursor_result) is CursorResult
+            and isinstance(cursor_result.results, QuerySet)
+            and cursor_result.results.query.is_sliced
+            and not cursor_result.results.query.select_for_update
+            and results is not cursor_result.results
+        ):
+            page_count = cursor_result.results.count()
+        else:
+            page_count = len(cursor_result)
+
         # Return the response
         response = Response(
             {
@@ -734,7 +763,7 @@ class BasePaginator:
                 "prev_cursor": str(cursor_result.prev),
                 "next_page_results": cursor_result.next.has_results,
                 "prev_page_results": cursor_result.prev.has_results,
-                "count": cursor_result.__len__(),
+                "count": page_count,
                 "total_pages": cursor_result.max_hits,
                 "total_results": cursor_result.hits,
                 "extra_stats": extra_stats,
