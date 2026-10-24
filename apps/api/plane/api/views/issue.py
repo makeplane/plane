@@ -48,6 +48,7 @@ from plane.api.serializers import (
     IssueCommentSerializer,
     IssueLinkSerializer,
     IssueRelationCreateSerializer,
+    IssueRelationRemoveSerializer,
     IssueRelationResponseSerializer,
     IssueRelationSerializer,
     IssueSerializer,
@@ -2824,3 +2825,79 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
             serializer_class(refetched_relations, many=True).data,
             status=status.HTTP_201_CREATED,
         )
+
+
+class IssueRelationRemoveAPIEndpoint(BaseAPIView):
+    """Issue Relation Remove Endpoint"""
+
+    serializer_class = IssueRelationRemoveSerializer
+    model = IssueRelation
+    permission_classes = [ProjectEntityPermission]
+
+    @work_item_relation_docs(
+        operation_id="remove_work_item_relation",
+        summary="Remove work item relation",
+        description="Remove the relation between the work item in the path and the work item passed as related_issue.",  # noqa: E501
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request=IssueRelationRemoveSerializer,
+            examples=[
+                OpenApiExample(
+                    name="Remove work item relation",
+                    value={
+                        "related_issue": "550e8400-e29b-41d4-a716-446655440000",
+                    },
+                )
+            ],
+        ),
+        responses={
+            204: OpenApiResponse(description="Work item relation removed successfully"),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id, issue_id):
+        """Remove work item relation"""
+        serializer = IssueRelationRemoveSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        related_issue = serializer.validated_data["related_issue"]
+        # The URL issue must belong to the URL project; relation rows stay workspace-scoped.
+        if not Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk=issue_id).exists():
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        relations = (
+            IssueRelation.objects.filter(workspace__slug=slug)
+            .filter(
+                Q(issue_id=related_issue, related_issue_id=issue_id)
+                | Q(issue_id=issue_id, related_issue_id=related_issue)
+            )
+            .select_related("issue__state", "related_issue__state")
+        )
+
+        if not relations.exists():
+            return Response({"error": "Issue relation not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # The delete activity handler reads `related_issue`, so emit one activity per removed relation.
+        for relation in relations:
+            counterpart_id = relation.related_issue_id if relation.issue_id == issue_id else relation.issue_id
+            issue_activity.delay(
+                type="issue_relation.activity.deleted",
+                requested_data=json.dumps(
+                    {"related_issue": str(counterpart_id), "relation_type": relation.relation_type},
+                    cls=DjangoJSONEncoder,
+                ),
+                actor_id=str(request.user.id),
+                issue_id=str(issue_id),
+                project_id=str(project_id),
+                current_instance=json.dumps(IssueRelationSerializer(relation).data, cls=DjangoJSONEncoder),
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
+            )
+
+        relations.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
