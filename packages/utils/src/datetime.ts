@@ -6,6 +6,8 @@
 
 import { differenceInDays, format, formatDistanceToNow, isAfter, isEqual, isValid, parseISO } from "date-fns";
 import { isNumber } from "lodash-es";
+import { DEFAULT_TIME_FORMAT } from "@plane/constants";
+import type { TTimeFormat } from "@plane/types";
 
 // Format Date Helpers
 /**
@@ -82,7 +84,7 @@ export const renderFormattedPayloadDate = (date: Date | string | undefined | nul
  * @example renderFormattedTime("2024-01-01 13:00:00") // 13:00
  * @example renderFormattedTime("2024-01-01 13:00:00", "12-hour") // 01:00 PM
  */
-export const renderFormattedTime = (date: string | Date, timeFormat: "12-hour" | "24-hour" = "24-hour"): string => {
+export const renderFormattedTime = (date: string | Date, timeFormat: TTimeFormat = "24-hour"): string => {
   // Parse the date to check if it is valid
   const parsedDate = new Date(date);
   // return if undefined
@@ -98,6 +100,18 @@ export const renderFormattedTime = (date: string | Date, timeFormat: "12-hour" |
   const formattedTime = format(parsedDate, "HH:mm");
   return formattedTime;
 };
+
+/**
+ * @returns {TTimeFormat} the clock to display times with
+ * @description The user's own choice wins, then the workspace default, then the platform default
+ * @param {TTimeFormat | null | undefined} userTimeFormat
+ * @param {TTimeFormat | null | undefined} workspaceTimeFormat
+ * @example resolveTimeFormat(null, "24-hour") // 24-hour
+ */
+export const resolveTimeFormat = (
+  userTimeFormat: TTimeFormat | null | undefined,
+  workspaceTimeFormat: TTimeFormat | null | undefined
+): TTimeFormat => userTimeFormat ?? workspaceTimeFormat ?? DEFAULT_TIME_FORMAT;
 
 // Date Difference Helpers
 /**
@@ -284,7 +298,7 @@ export const getDate = (date: string | Date | undefined | null): Date | undefine
   try {
     if (!date || date === "") return;
 
-    if (typeof date !== "string" && !(date instanceof String)) return date;
+    if (typeof date !== "string") return date;
 
     const [yearString, monthString, dayString] = date.substring(0, 10).split("-");
     const year = parseInt(yearString);
@@ -400,7 +414,7 @@ export const generateDateArray = (startDate: string | Date, endDate: string | Da
   const dateArray = [];
 
   // Use a while loop to generate dates between the range
-  while (start <= end) {
+  while (start.getTime() <= end.getTime()) {
     // Push the current date (converted to ISO string for consistency)
     dateArray.push({
       date: new Date(start).toISOString().split("T")[0],

@@ -74,6 +74,13 @@
   "select_or_customize_your_interface_color_scheme": "인터페이스 색상 구성표를 선택하거나 사용자 지정하세요.",
   "timezone_setting": "현재 시간대 설정입니다.",
   "language_setting": "사용자 인터페이스에서 사용할 언어를 선택하세요.",
+  "time_format": {
+    "label": "시간 형식",
+    "description": "앱 전체에서 시간이 표시되는 방식을 선택합니다.",
+    "12_hour": "12시간제 (02:43 PM)",
+    "24_hour": "24시간제 (14:43)",
+    "update_success": "시간 형식이 업데이트되었습니다"
+  },
   "settings_moved_to_preferences": "시간대 및 언어 설정이 환경 설정으로 이동되었습니다.",
   "go_to_preferences": "환경 설정으로 이동",
   "select_the_cursor_motion_style_that_feels_right_for_you": "자신에게 맞는 커서 모션 스타일을 선택하세요.",

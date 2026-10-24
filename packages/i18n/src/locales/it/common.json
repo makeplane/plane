@@ -74,6 +74,13 @@
   "select_or_customize_your_interface_color_scheme": "Seleziona o personalizza il tuo schema di colori dell'interfaccia.",
   "timezone_setting": "Impostazione del fuso orario corrente.",
   "language_setting": "Scegli la lingua utilizzata nell'interfaccia utente.",
+  "time_format": {
+    "label": "Formato orario",
+    "description": "Scelga come vengono mostrati gli orari nell’app.",
+    "12_hour": "12 ore (02:43 PM)",
+    "24_hour": "24 ore (14:43)",
+    "update_success": "Formato orario aggiornato correttamente"
+  },
   "settings_moved_to_preferences": "Le impostazioni di fuso orario e lingua sono state spostate nelle preferenze.",
   "go_to_preferences": "Vai alle preferenze",
   "select_the_cursor_motion_style_that_feels_right_for_you": "Seleziona lo stile di movimento del cursore più adatto a te.",

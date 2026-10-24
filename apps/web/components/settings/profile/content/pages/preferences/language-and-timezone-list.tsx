@@ -12,6 +12,7 @@ import { setToast } from "@plane/blocks/toast";
 // components
 import { TimezoneSelect } from "@/components/global";
 import { StartOfWeekPreference } from "@/components/profile/start-of-week-preference";
+import { TimeFormatPreference } from "@/components/profile/time-format-preference";
 import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks
 import { useUser, useUserProfile } from "@/hooks/store/user";
@@ -113,6 +114,7 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
             description: "This will change how all calendars in your app look.",
           }}
         />
+        <TimeFormatPreference />
       </div>
     );
   }

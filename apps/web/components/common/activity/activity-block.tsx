@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { observer } from "mobx-react";
 import type { FC, ReactNode } from "react";
 import { HierarchyOutline } from "@makeplane/propel/icons";
 // types
@@ -11,9 +12,10 @@ import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TWorkspaceBaseActivity } from "@plane/types";
 // ui
 // helpers
-import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
+import { renderFormattedDate, calculateTimeAgo } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useTimeFormat } from "@/hooks/use-time-format";
 // local components
 import { User } from "./user";
 
@@ -25,10 +27,11 @@ type TActivityBlockComponent = {
   customUserName?: string;
 };
 
-export function ActivityBlockComponent(props: TActivityBlockComponent) {
+export const ActivityBlockComponent = observer(function ActivityBlockComponent(props: TActivityBlockComponent) {
   const { icon: Icon, activity, ends, children, customUserName } = props;
   // hooks
   const { isMobile } = usePlatformOS();
+  const { formatTime } = useTimeFormat();
 
   if (!activity) return <></>;
   return (
@@ -46,7 +49,7 @@ export function ActivityBlockComponent(props: TActivityBlockComponent) {
         </div>
         <div className="mt-1">
           <Tooltip
-            label={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
+            label={`${renderFormattedDate(activity.created_at)}, ${formatTime(activity.created_at)}`}
             disabled={isMobile}
           >
             <span className="cursor-help font-medium whitespace-nowrap text-tertiary">
@@ -57,4 +60,4 @@ export function ActivityBlockComponent(props: TActivityBlockComponent) {
       </div>
     </div>
   );
-}
+});

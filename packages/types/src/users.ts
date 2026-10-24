@@ -22,6 +22,11 @@ export enum EStartOfTheWeek {
   SATURDAY = 6,
 }
 
+/**
+ * @description The clock used to display times
+ */
+export type TTimeFormat = "12-hour" | "24-hour";
+
 export interface IUserLite {
   avatar_url: string;
   display_name: string;
@@ -82,6 +87,8 @@ export type TUserProfile = {
   created_at: Date | string;
   updated_at: Date | string;
   start_of_the_week: EStartOfTheWeek;
+  // null follows the workspace default
+  time_format: TTimeFormat | null;
 };
 
 export interface IInstanceAdminStatus {

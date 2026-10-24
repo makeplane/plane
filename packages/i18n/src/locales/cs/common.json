@@ -74,6 +74,13 @@
   "select_or_customize_your_interface_color_scheme": "Vyberte nebo přizpůsobte barevné schéma rozhraní.",
   "timezone_setting": "Aktuální nastavení časového pásma.",
   "language_setting": "Vyberte jazyk používaný v uživatelském rozhraní.",
+  "time_format": {
+    "label": "Formát času",
+    "description": "Zvolte, jak se v aplikaci zobrazuje čas.",
+    "12_hour": "12hodinový (02:43 PM)",
+    "24_hour": "24hodinový (14:43)",
+    "update_success": "Formát času byl úspěšně aktualizován"
+  },
   "settings_moved_to_preferences": "Nastavení časového pásma a jazyka bylo přesunuto do předvoleb.",
   "go_to_preferences": "Přejít do předvoleb",
   "select_the_cursor_motion_style_that_feels_right_for_you": "Vyberte styl pohybu kurzoru, který vám vyhovuje.",

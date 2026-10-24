@@ -14,6 +14,8 @@
         "company_size": "Quy mô công ty",
         "url": "URL không gian làm việc",
         "workspace_timezone": "Múi giờ không gian làm việc",
+        "default_time_format": "Định dạng giờ mặc định",
+        "default_time_format_description": "Dùng cho các thành viên chưa chọn định dạng giờ trong tùy chọn của họ.",
         "update_workspace": "Cập nhật không gian làm việc",
         "delete_workspace": "Xóa không gian làm việc này",
         "delete_workspace_description": "Khi xóa không gian làm việc, tất cả dữ liệu và tài nguyên trong không gian làm việc đó sẽ bị xóa vĩnh viễn và không thể khôi phục.",

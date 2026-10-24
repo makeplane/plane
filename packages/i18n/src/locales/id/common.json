@@ -74,6 +74,13 @@
   "select_or_customize_your_interface_color_scheme": "Pilih atau sesuaikan skema warna antarmuka Anda.",
   "timezone_setting": "Pengaturan zona waktu saat ini.",
   "language_setting": "Pilih bahasa yang digunakan di antarmuka pengguna.",
+  "time_format": {
+    "label": "Format waktu",
+    "description": "Pilih cara waktu ditampilkan di aplikasi.",
+    "12_hour": "12 jam (02:43 PM)",
+    "24_hour": "24 jam (14:43)",
+    "update_success": "Format waktu berhasil diperbarui"
+  },
   "settings_moved_to_preferences": "Pengaturan Zona waktu & Bahasa telah dipindahkan ke preferensi.",
   "go_to_preferences": "Buka preferensi",
   "select_the_cursor_motion_style_that_feels_right_for_you": "Pilih gaya gerakan kursor yang terasa tepat untuk Anda.",

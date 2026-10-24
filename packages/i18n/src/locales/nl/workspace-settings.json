@@ -14,6 +14,8 @@
         "company_size": "Bedrijfsgrootte",
         "url": "URL van werkruimte",
         "workspace_timezone": "Tijdzone van werkruimte",
+        "default_time_format": "Standaard tijdnotatie",
+        "default_time_format_description": "Wordt gebruikt voor leden die in hun voorkeuren geen tijdnotatie hebben gekozen.",
         "update_workspace": "Werkruimte bijwerken",
         "delete_workspace": "Deze werkruimte verwijderen",
         "delete_workspace_description": "Als je een werkruimte verwijdert, worden alle gegevens en bronnen binnen die werkruimte permanent verwijderd en kunnen ze niet worden hersteld.",

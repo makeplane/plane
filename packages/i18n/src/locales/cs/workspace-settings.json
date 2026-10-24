@@ -14,6 +14,8 @@
         "company_size": "Velikost společnosti",
         "url": "URL pracovního prostoru",
         "workspace_timezone": "Časové pásmo pracovního prostoru",
+        "default_time_format": "Výchozí formát času",
+        "default_time_format_description": "Používá se pro členy, kteří si v předvolbách nezvolili formát času.",
         "update_workspace": "Aktualizovat prostor",
         "delete_workspace": "Smazat tento prostor",
         "delete_workspace_description": "Smazáním prostoru odstraníte všechna data a zdroje. Akce je nevratná.",

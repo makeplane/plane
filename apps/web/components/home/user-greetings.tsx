@@ -4,21 +4,24 @@
  * See the LICENSE file for details.
  */
 
+import { observer } from "mobx-react";
 // plane types
 import { useTranslation } from "@plane/i18n";
 import type { IUser } from "@plane/types";
 // plane ui
 // hooks
 import { useCurrentTime } from "@/hooks/use-current-time";
+import { useTimeFormat } from "@/hooks/use-time-format";
 
 export interface IUserGreetingsView {
   user: IUser;
 }
 
-export function UserGreetingsView(props: IUserGreetingsView) {
+export const UserGreetingsView = observer(function UserGreetingsView(props: IUserGreetingsView) {
   const { user } = props;
   // current time hook
   const { currentTime } = useCurrentTime();
+  const { timeFormat } = useTimeFormat();
   // store hooks
   const { t } = useTranslation();
 
@@ -38,7 +41,7 @@ export function UserGreetingsView(props: IUserGreetingsView) {
 
   const timeString = new Intl.DateTimeFormat("en-US", {
     timeZone: user?.user_timezone,
-    hour12: false, // Use 24-hour format
+    hour12: timeFormat === "12-hour",
     hour: "2-digit",
     minute: "2-digit",
   }).format(currentTime);
@@ -58,4 +61,4 @@ export function UserGreetingsView(props: IUserGreetingsView) {
       </h5>
     </div>
   );
-}
+});
