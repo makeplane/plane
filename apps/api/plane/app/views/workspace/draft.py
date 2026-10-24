@@ -220,8 +220,11 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=Issue, level="WORKSPACE")
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def retrieve(self, request, slug, pk=None):
+        # Drafts are private to their creator; the lookup is scoped to the owner
+        # so any ADMIN/MEMBER can open their own draft and gets a 404 for someone
+        # else's. Mirrors partial_update/create_draft_to_issue.
         issue = self.get_queryset().filter(pk=pk, created_by=request.user).first()
 
         if not issue:
@@ -233,9 +236,18 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
         serializer = DraftIssueDetailSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=DraftIssue, level="WORKSPACE")
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def destroy(self, request, slug, pk=None):
-        draft_issue = DraftIssue.objects.get(workspace__slug=slug, pk=pk)
+        # Scope the lookup to the owner so a workspace admin cannot delete another
+        # user's private draft (one they cannot list or open).
+        draft_issue = self.get_queryset().filter(pk=pk, created_by=request.user).first()
+
+        if not draft_issue:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         draft_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
