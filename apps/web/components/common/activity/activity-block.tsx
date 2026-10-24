@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { observer } from "mobx-react";
 import type { FC, ReactNode } from "react";
 import { HierarchyOutline } from "@makeplane/propel/icons";
 // types
@@ -13,6 +14,7 @@ import type { TWorkspaceBaseActivity } from "@plane/types";
 // helpers
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
 // hooks
+import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components
 import { User } from "./user";
@@ -25,7 +27,8 @@ type TActivityBlockComponent = {
   customUserName?: string;
 };
 
-export function ActivityBlockComponent(props: TActivityBlockComponent) {
+export const ActivityBlockComponent = observer(function ActivityBlockComponent(props: TActivityBlockComponent) {
+  const { data: user } = useUser();
   const { icon: Icon, activity, ends, children, customUserName } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -46,7 +49,7 @@ export function ActivityBlockComponent(props: TActivityBlockComponent) {
         </div>
         <div className="mt-1">
           <Tooltip
-            label={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
+            label={`${renderFormattedDate(activity.created_at, undefined, user?.user_timezone)}, ${renderFormattedTime(activity.created_at, "24-hour", user?.user_timezone)}`}
             disabled={isMobile}
           >
             <span className="cursor-help font-medium whitespace-nowrap text-tertiary">
@@ -57,4 +60,4 @@ export function ActivityBlockComponent(props: TActivityBlockComponent) {
       </div>
     </div>
   );
-}
+});

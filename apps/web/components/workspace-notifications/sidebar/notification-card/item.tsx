@@ -12,6 +12,7 @@ import { Avatar } from "@makeplane/propel/components/avatar";
 import { Row } from "@plane/blocks/layout";
 import { cn, calculateTimeAgo, renderFormattedDate, renderFormattedTime, getFileURL } from "@plane/utils";
 // hooks
+import { useUser } from "@/hooks/store/user";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useNotification } from "@/hooks/store/notifications/use-notification";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -26,6 +27,7 @@ type TNotificationItem = {
 };
 
 export const NotificationItem = observer(function NotificationItem(props: TNotificationItem) {
+  const { data: user } = useUser();
   const { workspaceSlug, notificationId } = props;
   // hooks
   const { currentSelectedNotificationId, setCurrentSelectedNotificationId } = useWorkspaceNotifications();
@@ -127,8 +129,9 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
                 <p className="flex flex-shrink-0 items-center justify-end gap-x-1 text-tertiary">
                   <ClockOutline className="h-4 w-4" />
                   <span>
-                    Till {renderFormattedDate(notification.snoozed_till)},&nbsp;
-                    {renderFormattedTime(notification.snoozed_till, "12-hour")}
+                    Till {renderFormattedDate(notification.snoozed_till, undefined, user?.user_timezone)}
+                    ,&nbsp;
+                    {renderFormattedTime(notification.snoozed_till, "12-hour", user?.user_timezone)}
                   </span>
                 </p>
               ) : (

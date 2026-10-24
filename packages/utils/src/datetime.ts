@@ -6,6 +6,32 @@
 
 import { differenceInDays, format, formatDistanceToNow, isAfter, isEqual, isValid, parseISO } from "date-fns";
 import { isNumber } from "lodash-es";
+import { TZDate } from "@date-fns/tz";
+
+/**
+ * Represents an instant in the requested timezone for formatting.
+ * @param date The instant to represent.
+ * @param timeZone IANA timezone; missing or invalid values retain the original date.
+ * @returns A timezone-aware date, or the original date when no valid timezone is supplied.
+ */
+const getDateInTimeZone = (date: Date, timeZone?: string): Date => {
+  if (!timeZone) return date;
+  const zonedDate = new TZDate(date, timeZone);
+  return isValid(zonedDate) ? zonedDate : date;
+};
+
+/**
+ * Interprets the date picker's calendar day in the requested timezone without mutating its value.
+ * @param date The date picker value whose local year, month, and day are preserved.
+ * @param timeZone IANA timezone; missing or invalid values use the browser timezone.
+ * @returns A new Date at 23:59:59.999 on the selected day in that timezone.
+ */
+export const getEndOfSelectedDay = (date: Date, timeZone?: string): Date => {
+  const zonedDate = getDateInTimeZone(new Date(date), timeZone);
+  zonedDate.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
+  zonedDate.setHours(23, 59, 59, 999);
+  return new Date(zonedDate);
+};
 
 // Format Date Helpers
 /**
@@ -13,26 +39,30 @@ import { isNumber } from "lodash-es";
  * @description Returns date in the formatted format
  * @param {Date | string} date
  * @param {string} formatToken (optional) // default MMM dd, yyyy
+ * @param {string} timeZone (optional) // browser timezone by default; date-only strings are never converted
  * @example renderFormattedDate("2024-01-01", "MM-DD-YYYY") // Jan 01, 2024
  * @example renderFormattedDate("2024-01-01") // Jan 01, 2024
  */
 export const renderFormattedDate = (
   date: string | Date | undefined | null,
-  formatToken: string = "MMM dd, yyyy"
+  formatToken: string = "MMM dd, yyyy",
+  timeZone?: string
 ): string | undefined => {
   // Parse the date to check if it is valid
-  const parsedDate = getDate(date);
+  const isDateOnly = typeof date === "string" && isInDateFormat(date);
+  const parsedDate = typeof date === "string" && !isDateOnly ? new Date(date) : getDate(date);
   // return if undefined
   if (!parsedDate) return;
   // Check if the parsed date is valid before formatting
   if (!isValid(parsedDate)) return; // Return null for invalid dates
+  const displayDate = getDateInTimeZone(parsedDate, isDateOnly ? undefined : timeZone);
   let formattedDate;
   try {
     // Format the date in the format provided or default format (MMM dd, yyyy)
-    formattedDate = format(parsedDate, formatToken);
+    formattedDate = format(displayDate, formatToken);
   } catch (_e) {
     // Format the date in format (MMM dd, yyyy) in case of any error
-    formattedDate = format(parsedDate, "MMM dd, yyyy");
+    formattedDate = format(displayDate, "MMM dd, yyyy");
   }
   return formattedDate;
 };
@@ -78,24 +108,30 @@ export const renderFormattedPayloadDate = (date: Date | string | undefined | nul
  * @returns {string} formatted date in the format of hh:mm a or HH:mm
  * @description Returns date in 12 hour format if in12HourFormat is true else 24 hour format
  * @param {string | Date} date
- * @param {boolean} timeFormat (optional) // default 24 hour
+ * @param {string} timeFormat (optional) // default 24 hour
+ * @param {string} timeZone (optional) // browser timezone by default
  * @example renderFormattedTime("2024-01-01 13:00:00") // 13:00
  * @example renderFormattedTime("2024-01-01 13:00:00", "12-hour") // 01:00 PM
  */
-export const renderFormattedTime = (date: string | Date, timeFormat: "12-hour" | "24-hour" = "24-hour"): string => {
+export const renderFormattedTime = (
+  date: string | Date,
+  timeFormat: "12-hour" | "24-hour" = "24-hour",
+  timeZone?: string
+): string => {
   // Parse the date to check if it is valid
   const parsedDate = new Date(date);
   // return if undefined
   if (!parsedDate) return "";
   // Check if the parsed date is valid
   if (!isValid(parsedDate)) return ""; // Return empty string for invalid dates
+  const displayDate = getDateInTimeZone(parsedDate, timeZone);
   // Format the date in 12 hour format if in12HourFormat is true
   if (timeFormat === "12-hour") {
-    const formattedTime = format(parsedDate, "hh:mm a");
+    const formattedTime = format(displayDate, "hh:mm a");
     return formattedTime;
   }
   // Format the date in 24 hour format
-  const formattedTime = format(parsedDate, "HH:mm");
+  const formattedTime = format(displayDate, "HH:mm");
   return formattedTime;
 };
 

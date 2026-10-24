@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { CopyOutline } from "@makeplane/propel/icons";
@@ -22,6 +23,7 @@ import {
 } from "@makeplane/propel/components/dialog";
 import { renderFormattedDate, renderFormattedTime, copyTextToClipboard } from "@plane/utils";
 // hooks
+import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -29,7 +31,8 @@ type Props = {
   tokenDetails: IApiToken;
 };
 
-export function GeneratedTokenDetails(props: Props) {
+export const GeneratedTokenDetails = observer(function GeneratedTokenDetails(props: Props) {
+  const { data: user } = useUser();
   const { handleClose, tokenDetails } = props;
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
@@ -68,11 +71,11 @@ export function GeneratedTokenDetails(props: Props) {
       <DialogActions>
         <DialogInfo>
           {tokenDetails.expired_at
-            ? `Expires ${renderFormattedDate(tokenDetails.expired_at)} at ${renderFormattedTime(tokenDetails.expired_at)}`
+            ? `Expires ${renderFormattedDate(tokenDetails.expired_at, undefined, user?.user_timezone)} at ${renderFormattedTime(tokenDetails.expired_at, "24-hour", user?.user_timezone)}`
             : "Never expires"}
         </DialogInfo>
         <Button variant="secondary" size="sm" stretch="auto" label={t("close")} onClick={handleClose} />
       </DialogActions>
     </>
   );
-}
+});

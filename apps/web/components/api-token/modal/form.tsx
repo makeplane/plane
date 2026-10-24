@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { observer } from "mobx-react";
 import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
@@ -26,9 +27,9 @@ import { Select } from "@plane/blocks/select";
 import { setToast } from "@plane/blocks/toast";
 import { useTranslation } from "@plane/i18n";
 import type { IApiToken } from "@plane/types";
-import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import { getEndOfSelectedDay, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
-import { useUserProfile } from "@/hooks/store/user";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 // helpers
 type Props = {
   handleClose: () => void;
@@ -81,15 +82,8 @@ const getExpiryDate = (val: string): Date | null | undefined => {
   return null;
 };
 
-const getFormattedDate = (date: Date): Date => {
-  const now = new Date();
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
-  const seconds = now.getSeconds();
-  return add(date, { hours, minutes, seconds });
-};
-
-export function CreateApiTokenForm(props: Props) {
+export const CreateApiTokenForm = observer(function CreateApiTokenForm(props: Props) {
+  const { data: user } = useUser();
   const { handleClose, neverExpires, toggleNeverExpires, onSubmit } = props;
   // states
   const [customDate, setCustomDate] = useState<Date | null>(null);
@@ -124,7 +118,7 @@ export function CreateApiTokenForm(props: Props) {
     if (neverExpires) payload.expired_at = null;
     // if never expires is toggled off, and the user has selected a custom date, set expired_at to the custom date
     else if (data.expired_at === "custom") {
-      payload.expired_at = customDate && getFormattedDate(customDate).toISOString();
+      payload.expired_at = customDateFormatted && customDateFormatted.toISOString();
     }
     // if never expires is toggled off, and the user has selected a predefined date, set expired_at to the predefined date
     else {
@@ -142,7 +136,7 @@ export function CreateApiTokenForm(props: Props) {
   const tomorrow = add(today, { days: 1 });
   const expiredAt = watch("expired_at");
   const expiryDate = getExpiryDate(expiredAt ?? "");
-  const customDateFormatted = customDate && getFormattedDate(customDate);
+  const customDateFormatted = customDate && getEndOfSelectedDay(customDate, user?.user_timezone);
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="flex min-h-0 flex-1 flex-col">
@@ -245,10 +239,10 @@ export function CreateApiTokenForm(props: Props) {
                 <span className="text-caption-sm-regular text-placeholder">
                   {expiredAt === "custom"
                     ? customDate
-                      ? `Expires ${renderFormattedDate(customDateFormatted ?? "")} at ${renderFormattedTime(customDateFormatted ?? "")}`
+                      ? `Expires ${renderFormattedDate(customDateFormatted ?? "", undefined, user?.user_timezone)} at ${renderFormattedTime(customDateFormatted ?? "", "24-hour", user?.user_timezone)}`
                       : null
                     : expiredAt
-                      ? `Expires ${renderFormattedDate(expiryDate ?? "")} at ${renderFormattedTime(expiryDate ?? "")}`
+                      ? `Expires ${renderFormattedDate(expiryDate ?? "", undefined, user?.user_timezone)} at ${renderFormattedTime(expiryDate ?? "", "24-hour", user?.user_timezone)}`
                       : null}
                 </span>
               )}
@@ -284,4 +278,4 @@ export function CreateApiTokenForm(props: Props) {
       </DialogActions>
     </form>
   );
-}
+});
