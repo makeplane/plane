@@ -109,6 +109,7 @@ services:
       - ./apps/api/.env
     environment:
       DJANGO_SETTINGS_MODULE: plane.settings.test
+      ENABLE_DRF_SPECTACULAR: "1"
       # Override service hostnames to point at the test-only services above.
       POSTGRES_HOST: test-db
       DATABASE_URL: postgresql://${POSTGRES_USER:-plane}:${POSTGRES_PASSWORD:-plane}@test-db:5432/${POSTGRES_DB:-plane}

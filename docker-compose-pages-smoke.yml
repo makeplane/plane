@@ -1,0 +1,35 @@
+services:
+  api-smoke:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
+    networks: [test_env]
+    env_file: [./apps/api/.env]
+    environment:
+      DJANGO_SETTINGS_MODULE: plane.settings.test
+      POSTGRES_HOST: test-db
+      DATABASE_URL: postgresql://${POSTGRES_USER:-plane}:${POSTGRES_PASSWORD:-plane}@test-db:5432/${POSTGRES_DB:-plane}
+      REDIS_HOST: test-redis
+      REDIS_URL: redis://test-redis:6379/
+      RABBITMQ_HOST: test-mq
+      AWS_S3_ENDPOINT_URL: http://test-minio:9000
+      EMAIL_HOST: test-smtp.invalid
+      SMOKE_API_KEY: ${SMOKE_API_KEY:?SMOKE_API_KEY must be set by the smoke runner}
+    working_dir: /code
+    volumes: [./apps/api:/code]
+    depends_on:
+      test-db: {condition: service_healthy}
+      test-redis: {condition: service_healthy}
+      test-mq: {condition: service_healthy}
+      test-minio: {condition: service_healthy}
+    command:
+      - /bin/sh
+      - -c
+      - >-
+        python manage.py migrate --noinput &&
+        python manage.py seed_public_project_pages_smoke --api-key "$${SMOKE_API_KEY}" &&
+        python manage.py runserver 0.0.0.0:8000
+
+  smoke-curl:
+    image: curlimages/curl:8.16.0
+    networks: [test_env]
