@@ -29,6 +29,8 @@ class LLMProvider:
     name: str = ""
     models: List[str] = []
     default_model: str = ""
+    # OpenAI-compatible endpoint; None keeps the OpenAI client's default
+    base_url: str | None = None
 
     @classmethod
     def get_config(cls) -> Dict[str, str | List[str]]:
@@ -47,23 +49,16 @@ class OpenAIProvider(LLMProvider):
 
 class AnthropicProvider(LLMProvider):
     name = "Anthropic"
-    models = [
-        "claude-3-5-sonnet-20240620",
-        "claude-3-haiku-20240307",
-        "claude-3-opus-20240229",
-        "claude-3-sonnet-20240229",
-        "claude-2.1",
-        "claude-2",
-        "claude-instant-1.2",
-        "claude-instant-1",
-    ]
-    default_model = "claude-3-sonnet-20240229"
+    models = ["claude-fable-5-1", "claude-opus-5-5", "claude-sonnet-5-5"]
+    default_model = "claude-sonnet-5-5"
+    base_url = "https://api.anthropic.com/v1/"
 
 
 class GeminiProvider(LLMProvider):
     name = "Gemini"
-    models = ["gemini-pro", "gemini-1.5-pro-latest", "gemini-pro-vision"]
-    default_model = "gemini-pro"
+    models = ["gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite"]
+    default_model = "gemini-3.8-flash"
+    base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
 
 SUPPORTED_PROVIDERS = {
@@ -124,11 +119,10 @@ def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> T
     """Helper to get LLM completion response"""
     final_text = task + "\n" + prompt
     try:
-        # For Gemini, prepend provider name to model
-        if provider.lower() == "gemini":
-            model = f"gemini/{model}"
-
-        client = OpenAI(api_key=api_key)
+        # Anthropic and Gemini are called through their OpenAI-compatible endpoints, unless
+        # OPENAI_BASE_URL points every provider at a gateway (the OpenAI client reads it itself)
+        base_url = None if os.environ.get("OPENAI_BASE_URL") else SUPPORTED_PROVIDERS[provider.lower()].base_url
+        client = OpenAI(api_key=api_key, base_url=base_url)
         chat_completion = client.chat.completions.create(
             model=model, messages=[{"role": "user", "content": final_text}]
         )
@@ -152,7 +146,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
         if not api_key or not model or not provider:
             return Response(
-                {"error": "LLM provider API key and model are required"},
+                {"error": "LLM provider, API key or model is missing or not supported"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -188,7 +182,7 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
 
         if not api_key or not model or not provider:
             return Response(
-                {"error": "LLM provider API key and model are required"},
+                {"error": "LLM provider, API key or model is missing or not supported"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

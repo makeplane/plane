@@ -226,9 +226,10 @@ llm_config_variables = [
         "category": "AI",
         "is_encrypted": False,
     },
+    # Empty means the configured provider's default model
     {
         "key": "LLM_MODEL",
-        "value": os.environ.get("LLM_MODEL", "gpt-4o-mini"),
+        "value": os.environ.get("LLM_MODEL", ""),
         "category": "AI",
         "is_encrypted": False,
     },
