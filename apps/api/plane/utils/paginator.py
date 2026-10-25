@@ -646,6 +646,13 @@ class BasePaginator:
         except ValueError:
             raise ParseError(detail="Invalid per_page parameter.")
 
+        # A non-positive page size would otherwise reach the paginator as the
+        # SQL limit, where limit=0 raises ZeroDivisionError (count / limit) and
+        # negative values produce an unsupported negative slice — both surfacing
+        # as an opaque HTTP 500. Reject it here as a 400 for every paginated view.
+        if per_page < 1:
+            raise ParseError(detail="Invalid per_page value. Must be a positive integer.")
+
         max_per_page = max(max_per_page, default_per_page)
         if per_page > max_per_page:
             raise ParseError(detail=f"Invalid per_page value. Cannot exceed {max_per_page}.")

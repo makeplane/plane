@@ -1,0 +1,270 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
+# Python imports
+import uuid
+from functools import reduce
+from operator import and_
+
+# Django imports
+from django.db.models import Exists, OuterRef, Q, Subquery
+
+# Third party imports
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import (
+    OpenApiExample,
+    OpenApiParameter,
+    extend_schema,
+)
+from rest_framework import status
+from rest_framework.exceptions import ParseError
+from rest_framework.response import Response
+
+# Module imports
+from plane.api.serializers import PageSearchSerializer
+from plane.app.permissions import ROLE
+from plane.db.models import Page, ProjectPage, Workspace
+from plane.utils.openapi import (
+    BAD_SEARCH_REQUEST_RESPONSE,
+    CURSOR_PARAMETER,
+    FORBIDDEN_RESPONSE,
+    PER_PAGE_PARAMETER,
+    UNAUTHORIZED_RESPONSE,
+    WORKSPACE_SLUG_PARAMETER,
+    create_paginated_response,
+)
+
+from .base import BaseAPIView
+
+# The only columns the search response reads. Pages can hold very large bodies,
+# so loading them for every hit would pull megabytes out of the database just to
+# render a short snippet.
+PAGE_SEARCH_FIELDS = ("id", "name", "parent_id", "updated_at", "description_stripped")
+
+# Page size for search results. Each hit carries a text snippet, so results are
+# heavier than a plain id/name list; a smaller default keeps responses light and
+# matches the advertised PER_PAGE_PARAMETER contract (default 20, max 100).
+PAGE_SEARCH_DEFAULT_PER_PAGE = 20
+PAGE_SEARCH_MAX_PER_PAGE = 100
+
+# Ceiling on distinct keywords in one query. Each keyword adds two ILIKE
+# predicates with a leading wildcard, which no index can serve, so the cost of a
+# search is linear in a number the caller picks for free. Measured on a 200-page
+# workspace with ~3 KB bodies where every keyword matches (no AND short-circuit,
+# the worst case): 4 keywords ~170 ms, 16 ~530 ms, 100 ~2.9 s — roughly 29 ms per
+# keyword, unbounded. 16 sits far above any genuine keyword search (typical
+# queries are three to five words) while holding the WHERE clause to 32
+# predicates. Duplicates are collapsed before this limit applies, since AND is
+# idempotent and repeating one keyword must not multiply the work.
+PAGE_SEARCH_MAX_TOKENS = 16
+
+# Query parameters specific to page search.
+PAGE_SEARCH_QUERY_PARAMETER = OpenApiParameter(
+    name="query",
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.QUERY,
+    description=(
+        "Search query, split on whitespace into keywords. Every keyword must appear "
+        "(case-insensitively) in the page name or the page text content; they need not "
+        "appear together or in order. Repeated keywords are collapsed, and a query with "
+        "more than 16 distinct keywords is rejected."
+    ),
+    required=True,
+    examples=[
+        OpenApiExample(
+            name="Keyword search",
+            value="latency spike rollback",
+            description="Find pages containing all of these keywords, in the name or the body",
+        )
+    ],
+)
+
+PAGE_SEARCH_PROJECTS_PARAMETER = OpenApiParameter(
+    name="projects",
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.QUERY,
+    description="Optional comma-separated list of project IDs to restrict the search to",
+    required=False,
+    examples=[
+        OpenApiExample(
+            name="Two projects",
+            value="550e8400-e29b-41d4-a716-446655440010,550e8400-e29b-41d4-a716-446655440011",
+        )
+    ],
+)
+
+PAGE_SEARCH_ARCHIVED_PARAMETER = OpenApiParameter(
+    name="archived",
+    type=OpenApiTypes.BOOL,
+    location=OpenApiParameter.QUERY,
+    description="Include archived pages in the results. Archived pages are excluded unless this is 'true'.",
+    required=False,
+    examples=[OpenApiExample(name="Include archived", value=True)],
+)
+
+
+class PageSearchEndpoint(BaseAPIView):
+    """Endpoint to search project pages by name and text content."""
+
+    use_read_replica = True
+
+    @extend_schema(
+        operation_id="search_pages",
+        tags=["Pages"],
+        description=(
+            "Search pages across a workspace by name and text content. The query is split on "
+            "whitespace into keywords and a page matches only when every keyword appears in its "
+            "name or its text content, so the keywords may be scattered across the document. "
+            "Only pages in projects the requesting user is a member of are returned; private "
+            "pages are visible only to their owner and archived pages are excluded unless "
+            "``archived=true``."
+        ),
+        parameters=[
+            WORKSPACE_SLUG_PARAMETER,
+            PAGE_SEARCH_QUERY_PARAMETER,
+            PAGE_SEARCH_PROJECTS_PARAMETER,
+            PAGE_SEARCH_ARCHIVED_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+        ],
+        responses={
+            200: create_paginated_response(
+                item_schema=PageSearchSerializer,
+                schema_name="PaginatedPageSearchResponse",
+                description="Paginated page search results",
+                example_name="Page Search Response",
+            ),
+            400: BAD_SEARCH_REQUEST_RESPONSE,
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+        },
+    )
+    def get(self, request, slug):
+        """Search pages
+
+        Perform a case-insensitive search across page names and page text
+        content, scoped to the pages the requesting user is allowed to see.
+        Results are cursor paginated.
+        """
+        # An unknown slug would otherwise match no pages and look like a genuine
+        # empty result. Report it like the other token-API workspace endpoints do.
+        if not Workspace.objects.filter(slug=slug).exists():
+            return Response(
+                {"error": "Provided workspace does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        query = request.query_params.get("query", "").strip()
+        # Collapse repeats before counting: ANDing a keyword with itself changes
+        # nothing but would double the scan, so "latency latency" must cost the
+        # same as "latency". First occurrence wins so query order is preserved,
+        # which is what the snippet anchors on.
+        seen_tokens = set()
+        tokens = []
+        for token in query.split():
+            folded = token.casefold()
+            if folded not in seen_tokens:
+                seen_tokens.add(folded)
+                tokens.append(token)
+
+        if not tokens:
+            return Response(
+                {"error": "The 'query' parameter is required to search pages."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if len(tokens) > PAGE_SEARCH_MAX_TOKENS:
+            return Response(
+                {"error": f"The 'query' parameter accepts at most {PAGE_SEARCH_MAX_TOKENS} keywords."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Parse the optional project filter into a list of validated UUIDs.
+        raw_projects = request.query_params.get("projects", "")
+        try:
+            project_ids = [uuid.UUID(pid.strip()) for pid in raw_projects.split(",") if pid.strip()]
+        except (ValueError, TypeError):
+            return Response(
+                {"error": "The 'projects' parameter must be a comma-separated list of valid project IDs."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        include_archived = request.query_params.get("archived", "false").lower() == "true"
+
+        # Callers send keyword queries, not phrases, so the query is tokenised on
+        # whitespace: every token must appear (AND), and each token may appear in
+        # either the page name or the maintained stripped text content. Matching
+        # the whole query as one literal substring would only find pages carrying
+        # the exact phrase; OR-ing the tokens instead would flood the results with
+        # pages that happen to contain just one common word. A single-token query
+        # reduces to the same condition as before.
+        match_query = reduce(
+            and_,
+            (Q(name__icontains=token) | Q(description_stripped__icontains=token) for token in tokens),
+        )
+
+        # Scoping (security critical) — mirror the internal GlobalSearchEndpoint /
+        # PageViewSet rules using an Exists() subquery so the project membership
+        # join does not fan out (and duplicate) rows:
+        #   * only pages that belong to at least one project where the requesting
+        #     user is an active member and the project is not archived,
+        #   * in a project where the user is only a guest, and that project has not
+        #     opted guests into seeing everything, only their own pages — the same
+        #     rule PageViewSet.list/retrieve enforce,
+        #   * optionally narrowed to the requested projects.
+        #
+        # Every membership predicate stays in this single filter() call so they all
+        # bind to the SAME ProjectMember row; splitting them across filter() calls
+        # would let the role check match a different membership than the user's.
+        #
+        # The subquery is pinned to the same workspace as the outer query so a
+        # ProjectPage row pointing at a project in another workspace could never
+        # let membership over there grant access to a page in this one.
+        accessible_project_pages = ProjectPage.objects.filter(
+            Q(project__project_projectmember__role__gt=ROLE.GUEST.value)
+            | Q(project__guest_view_all_features=True)
+            | Q(page__owned_by=request.user),
+            page_id=OuterRef("pk"),
+            project__workspace__slug=slug,
+            project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
+        )
+        if project_ids:
+            accessible_project_pages = accessible_project_pages.filter(project_id__in=project_ids)
+
+        # A representative accessible project id to report for the page.
+        representative_project = accessible_project_pages.order_by("created_at").values("project_id")[:1]
+
+        pages = (
+            Page.objects.filter(workspace__slug=slug)
+            .filter(match_query)
+            # Private pages are visible only to their owner.
+            .filter(Q(access=Page.PUBLIC_ACCESS) | Q(owned_by=request.user))
+            .annotate(
+                matched_project_id=Subquery(representative_project),
+                has_access=Exists(accessible_project_pages),
+            )
+            .filter(has_access=True)
+            .only(*PAGE_SEARCH_FIELDS)
+        )
+
+        # Archived pages are excluded unless explicitly requested.
+        if not include_archived:
+            pages = pages.filter(archived_at__isnull=True)
+
+        try:
+            return self.paginate(
+                request=request,
+                queryset=pages,
+                on_results=lambda results: PageSearchSerializer(results, many=True, context={"query": query}).data,
+                order_by="-updated_at",
+                default_per_page=PAGE_SEARCH_DEFAULT_PER_PAGE,
+                max_per_page=PAGE_SEARCH_MAX_PER_PAGE,
+            )
+        except ParseError as exc:
+            # The paginator reports bad cursor/per_page values as DRF's
+            # {"detail": ...}; restate them in the {"error": ...} envelope this
+            # endpoint uses for its own validation failures.
+            return Response({"error": str(exc.detail)}, status=status.HTTP_400_BAD_REQUEST)
