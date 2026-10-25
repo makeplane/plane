@@ -10,7 +10,7 @@ come back one hour too far west, because the hours were taken with floor
 division on a negative number of seconds: ``-34200 // 3600 == -10``.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import patch
 
 import pytest
@@ -44,15 +44,17 @@ def _get_timezones(now):
 @pytest.mark.parametrize(
     "now, tz_identifier, expected",
     [
+        # UTC-aware, so astimezone() in the endpoint does not depend on the
+        # timezone of the machine running the tests
         # Negative half-hour offsets
-        (datetime(2026, 1, 15, 12, 0), "Pacific/Marquesas", "-09:30"),
-        (datetime(2026, 1, 15, 12, 0), "America/St_Johns", "-03:30"),
-        (datetime(2026, 7, 15, 12, 0), "America/St_Johns", "-02:30"),
+        (datetime(2026, 1, 15, 12, 0, tzinfo=timezone.utc), "Pacific/Marquesas", "-09:30"),
+        (datetime(2026, 1, 15, 12, 0, tzinfo=timezone.utc), "America/St_Johns", "-03:30"),
+        (datetime(2026, 7, 15, 12, 0, tzinfo=timezone.utc), "America/St_Johns", "-02:30"),
         # Positive and whole-hour offsets keep working
-        (datetime(2026, 1, 15, 12, 0), "Asia/Kolkata", "+05:30"),
-        (datetime(2026, 1, 15, 12, 0), "Asia/Kathmandu", "+05:45"),
-        (datetime(2026, 1, 15, 12, 0), "America/Los_Angeles", "-08:00"),
-        (datetime(2026, 1, 15, 12, 0), "Atlantic/Reykjavik", "+00:00"),
+        (datetime(2026, 1, 15, 12, 0, tzinfo=timezone.utc), "Asia/Kolkata", "+05:30"),
+        (datetime(2026, 1, 15, 12, 0, tzinfo=timezone.utc), "Asia/Kathmandu", "+05:45"),
+        (datetime(2026, 1, 15, 12, 0, tzinfo=timezone.utc), "America/Los_Angeles", "-08:00"),
+        (datetime(2026, 1, 15, 12, 0, tzinfo=timezone.utc), "Atlantic/Reykjavik", "+00:00"),
     ],
 )
 def test_timezone_offset_labels(now, tz_identifier, expected):
