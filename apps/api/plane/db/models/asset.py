@@ -14,6 +14,7 @@ from django.db import models
 from plane.utils.path_validator import sanitize_filename
 
 from .base import BaseModel
+from .project import ProjectMember
 
 
 def get_upload_path(instance, filename):
@@ -101,3 +102,23 @@ class FileAsset(BaseModel):
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/{self.id}/"
 
         return None
+
+    def is_project_accessible_to(self, user):
+        """Return whether ``user`` is an active member of this asset's project.
+
+        Covers the project dimension only; callers still check workspace access
+        (the endpoint's permission class or ``allow_permission(..., level="WORKSPACE")``).
+        Lives on the model so the app and external-API asset views share one rule.
+
+        Assets with no project (workspace logos, user avatars and covers) are
+        workspace-level, so this returns True for them.
+        """
+        if self.project_id is None:
+            return True
+        # Scope the membership to the asset's workspace as well as its project.
+        return ProjectMember.objects.filter(
+            member=user,
+            workspace_id=self.workspace_id,
+            project_id=self.project_id,
+            is_active=True,
+        ).exists()
