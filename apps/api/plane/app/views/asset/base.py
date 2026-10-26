@@ -26,8 +26,9 @@ class FileAssetEndpoint(BaseAPIView):
 
     def get(self, request, workspace_id, asset_key):
         asset_key = str(workspace_id) + "/" + asset_key
-        files = FileAsset.objects.filter(asset=asset_key)
-        if files.exists():
+        # A project-bound asset requires active membership of its project.
+        files = [f for f in FileAsset.objects.filter(asset=asset_key) if f.is_project_accessible_to(request.user)]
+        if files:
             serializer = FileAssetSerializer(files, context={"request": request}, many=True)
             return Response({"data": serializer.data, "status": True}, status=status.HTTP_200_OK)
         else:

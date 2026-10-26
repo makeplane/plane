@@ -121,16 +121,7 @@ export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseY
     const permanentlyStopProvider = () => {
       isDisposedRef.current = true;
 
-      const wsProvider = provider.configuration.websocketProvider;
-      if (wsProvider) {
-        try {
-          wsProvider.shouldConnect = false;
-          wsProvider.disconnect();
-          wsProvider.destroy();
-        } catch (error) {
-          console.error(`Error tearing down websocketProvider:`, error);
-        }
-      }
+      // v3's provider.destroy() also tears down the websocket it created
       try {
         provider.destroy();
       } catch (error) {
