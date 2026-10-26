@@ -128,6 +128,23 @@ export const List = observer(function List(props: IList) {
   } else {
     entities = orderedGroups;
   }
+
+  // d2m-plane: when grouped by state, groups list only parent work items — a sub-work item whose parent is
+  // anywhere in this view is reachable by expanding the parent (and shows its own state there)
+  const isGroupedByState = group_by === "state" || group_by === "state_detail.group";
+  const viewIssueIdSet =
+    isGroupedByState && !is_list && !isSubGrouped(groupedIssueIds)
+      ? new Set(Object.values(groupedIssueIds as Record<string, string[]>).flat())
+      : undefined;
+  const isHiddenSubIssue = (issueId: string) => {
+    const parentId = issuesMap[issueId]?.parent_id;
+    return !!viewIssueIdSet && !!parentId && viewIssueIdSet.has(parentId);
+  };
+  if (viewIssueIdSet)
+    entities = Object.fromEntries(
+      Object.entries(entities).map(([groupId, ids]) => [groupId, ids.filter((id) => !isHiddenSubIssue(id))])
+    );
+
   return (
     <div className="relative flex size-full flex-col">
       {groups && (
@@ -145,7 +162,19 @@ export const List = observer(function List(props: IList) {
                 {groups.map((group: IGroupByColumn) => (
                   <ListGroup
                     key={group.id}
-                    groupIssueIds={groupedIssueIds?.[group.id]}
+                    groupIssueIds={
+                      viewIssueIdSet
+                        ? (groupedIssueIds as Record<string, string[]>)?.[group.id]?.filter(
+                            (id) => !isHiddenSubIssue(id)
+                          )
+                        : groupedIssueIds?.[group.id]
+                    }
+                    hiddenSubIssueCount={
+                      viewIssueIdSet
+                        ? ((groupedIssueIds as Record<string, string[]>)?.[group.id] ?? []).filter(isHiddenSubIssue)
+                            .length
+                        : 0
+                    }
                     issuesMap={issuesMap}
                     group_by={group_by}
                     group={group}

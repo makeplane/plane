@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane imports
 import { DRAG_ALLOWED_GROUPS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -29,6 +30,7 @@ import { cn } from "@plane/utils";
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 import { useWorkFlowFDragNDrop } from "@/components/workflow";
 // hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
@@ -49,6 +51,8 @@ import type { TRenderQuickActions } from "./list-view-types";
 
 interface Props {
   groupIssueIds: string[] | undefined;
+  // d2m-plane: sub-work items left out of this group (grouped by state, parent shown elsewhere in the view)
+  hiddenSubIssueCount?: number;
   group: IGroupByColumn;
   issuesMap: TIssueMap;
   group_by: TIssueGroupByOptions | null;
@@ -76,6 +80,7 @@ interface Props {
 export const ListGroup = observer(function ListGroup(props: Props) {
   const {
     groupIssueIds = [],
+    hiddenSubIssueCount = 0,
     group,
     issuesMap,
     group_by,
@@ -106,6 +111,29 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   const groupRef = useRef<HTMLDivElement | null>(null);
   const { t } = useTranslation();
   const projectState = useProjectState();
+  // d2m-plane: re-parenting by drag & drop
+  const { workspaceSlug } = useParams();
+  const {
+    subIssues: { fetchSubIssues },
+  } = useIssueDetail();
+
+  /** a sub-work item dropped on the list (not onto another row) becomes a top-level work item */
+  const handleMoveToTopLevel = async (issueId: string, previousParentId: string | null) => {
+    const issue = issuesMap[issueId];
+    if (!issue?.project_id || !updateIssue || !workspaceSlug) return;
+    try {
+      await updateIssue(issue.project_id, issueId, { parent_id: null });
+      if (previousParentId) await fetchSubIssues(workspaceSlug.toString(), issue.project_id, previousParentId);
+      setToast({
+        type: "success",
+        title: t("toast.success"),
+        message: t("d2m_quick_actions.moved_to_top_level", { name: issue.name }),
+      });
+    } catch {
+      setToast({ type: "error", title: t("toast.error"), message: t("d2m_quick_actions.reparent_failed") });
+    }
+  };
+  const dropHelpersRef = useRef({ handleMoveToTopLevel, isDragAllowed: true });
 
   const {
     issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
@@ -117,7 +145,9 @@ export const ListGroup = observer(function ListGroup(props: Props) {
     useWorkFlowFDragNDrop(group_by);
   const isWorkflowIssueCreationDisabled = getIsWorkflowWorkItemCreationDisabled(group.id);
 
-  const groupIssueCount = getGroupIssueCount(group.id, undefined, false) ?? 0;
+  const totalGroupIssueCount = getGroupIssueCount(group.id, undefined, false) ?? 0;
+  // d2m-plane: the count shown for the group excludes sub-work items listed under their parent instead
+  const groupIssueCount = Math.max(0, totalGroupIssueCount - hiddenSubIssueCount);
   const nextPageResults = getPaginationData(group.id, undefined)?.nextPageResults;
   const isPaginating = !!getIssueLoader(group.id);
 
@@ -125,7 +155,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
 
   const shouldLoadMore =
     nextPageResults === undefined && groupIssueCount !== undefined && groupIssueIds
-      ? groupIssueIds.length < groupIssueCount
+      ? groupIssueIds.length + hiddenSubIssueCount < totalGroupIssueCount
       : !!nextPageResults;
 
   const loadMore = isPaginating ? (
@@ -212,6 +242,21 @@ export const ListGroup = observer(function ListGroup(props: Props) {
         },
         onDrop: (payload) => {
           setIsDraggingOverColumn(false);
+
+          // d2m-plane: dropped onto the middle of a row -> handled there (make it a sub-work item)
+          if (payload.location?.current?.dropTargets?.some((target) => target?.data?.d2mMakeChild)) return;
+          // d2m-plane: a sub-work item dropped anywhere else in the list -> make it top-level
+          const sourceData = payload.source?.data;
+          if (sourceData?.isSubIssue && typeof sourceData.id === "string") {
+            void dropHelpersRef.current.handleMoveToTopLevel(
+              sourceData.id,
+              (sourceData.parentId as string | null | undefined) ?? null
+            );
+            return;
+          }
+          // d2m-plane: rows are always draggable now, so keep group moves limited to the allowed groupings
+          if (!dropHelpersRef.current.isDragAllowed) return;
+
           const source = getSourceFromDropPayload(payload);
           const destination = getDestinationFromDropPayload(payload);
 
@@ -249,6 +294,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   ]);
 
   const isDragAllowed = group_by ? DRAG_ALLOWED_GROUPS.includes(group_by) : true;
+  dropHelpersRef.current = { handleMoveToTopLevel, isDragAllowed };
   const canOverlayBeVisible = isWorkflowDropDisabled || orderBy !== "sort_order" || !!group.isDropDisabled;
   const isDropDisabled = isWorkflowDropDisabled || !!group.isDropDisabled;
 

@@ -52,6 +52,8 @@ interface IssueBlockProps {
   isEpic?: boolean;
   // d2m-plane: open the inline "add sub-work item" row under this item
   onQuickAddSubIssue?: () => void;
+  // d2m-plane: another work item is being dragged over the middle of this row (drop = make it a child)
+  isChildDropTarget?: boolean;
 }
 
 export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
@@ -73,6 +75,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     canDrag,
     isEpic = false,
     onQuickAddSubIssue,
+    isChildDropTarget = false,
   } = props;
   // ref
   const issueRef = useRef<HTMLDivElement | null>(null);
@@ -126,7 +129,14 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
       draggable({
         element,
         canDrag: () => isDraggingAllowed,
-        getInitialData: () => ({ id: issueId, type: "ISSUE", groupId }),
+        // d2m-plane: isSubIssue / parentId let drop targets re-parent (make child / move to top level)
+        getInitialData: () => ({
+          id: issueId,
+          type: "ISSUE",
+          groupId,
+          isSubIssue: nestingLevel !== 0,
+          parentId: issuesMap[issueId]?.parent_id ?? null,
+        }),
         onDragStart: () => {
           setIsCurrentBlockDragging(true);
         },
@@ -135,7 +145,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
         },
       })
     );
-  }, [isDraggingAllowed, issueId, groupId, setIsCurrentBlockDragging]);
+  }, [isDraggingAllowed, issueId, groupId, nestingLevel, issuesMap, setIsCurrentBlockDragging]);
 
   if (!issue) return null;
 
@@ -208,6 +218,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
             "last:border-b-transparent": !getIsIssuePeeked(issue.id) && !isIssueActive,
             "bg-accent-primary/5 hover:bg-accent-primary/10": isIssueSelected,
             "bg-layer-1": isCurrentBlockDragging,
+            "bg-accent-primary/10 ring-2 ring-inset ring-accent-strong": isChildDropTarget,
             "md:flex-row md:items-center": isSidebarCollapsed,
             "lg:flex-row lg:items-center": !isSidebarCollapsed,
           }
@@ -312,6 +323,22 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
               <Tooltip label={issue.name} layout="stacked" align="start" disabled={isCurrentBlockDragging || isMobile}>
                 <p className="cursor-pointer truncate text-body-xs-medium text-primary">{issue.name}</p>
               </Tooltip>
+            )}
+
+            {/* d2m-plane: number of sub-work items next to the name */}
+            {!isRenaming && !isEpic && subIssuesCount > 0 && (
+              <Tooltip label={`${subIssuesCount} ${t("common.sub_work_items")}`} disabled={isMobile}>
+                <span className="ml-1.5 flex-shrink-0 rounded-sm bg-layer-3 px-1 text-caption-sm-medium text-tertiary">
+                  {subIssuesCount}
+                </span>
+              </Tooltip>
+            )}
+
+            {/* d2m-plane: hint while another work item hovers this row */}
+            {isChildDropTarget && (
+              <span className="pointer-events-none ml-2 flex-shrink-0 rounded-sm bg-accent-primary px-1.5 py-0.5 text-caption-sm-medium text-on-color">
+                {t("d2m_quick_actions.drop_to_make_child")}
+              </span>
             )}
 
             {/* d2m-plane: hover quick actions */}

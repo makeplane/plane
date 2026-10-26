@@ -369,7 +369,11 @@
     "drop_to_attach": "Thả file để đính kèm",
     "drop_to_attach_hint": "File sẽ được thêm vào mục Attachments của work item này",
     "files_too_large": "Bỏ qua (lớn hơn {size} MB): {names}",
-    "too_many_files": "Mỗi lần chỉ đính kèm tối đa {max} file"
+    "too_many_files": "Mỗi lần chỉ đính kèm tối đa {max} file",
+    "drop_to_make_child": "Thả để thành mục con",
+    "made_child": "\"{name}\" đã thành mục con của \"{parent}\"",
+    "moved_to_top_level": "\"{name}\" không còn là mục con nữa",
+    "reparent_failed": "Không thể di chuyển mục công việc. Vui lòng thử lại."
   },
   "recurring_work_items": {
     "settings": {

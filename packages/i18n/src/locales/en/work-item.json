@@ -369,7 +369,11 @@
     "drop_to_attach": "Drop files to attach",
     "drop_to_attach_hint": "Files will be added to this work item's attachments",
     "files_too_large": "Skipped (larger than {size} MB): {names}",
-    "too_many_files": "You can attach up to {max} files at once"
+    "too_many_files": "You can attach up to {max} files at once",
+    "drop_to_make_child": "Drop to make it a sub-work item",
+    "made_child": "\"{name}\" is now a sub-work item of \"{parent}\"",
+    "moved_to_top_level": "\"{name}\" is no longer a sub-work item",
+    "reparent_failed": "Could not move the work item. Please try again."
   },
   "recurring_work_items": {
     "settings": {

@@ -115,12 +115,11 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
 
         {/* eslint-disable-next-line jsx_a11y/click-events-have-key-events eslint-disable-next-line jsx_a11y/no-static-element-interactions */}
         <div
-          className="relative flex w-full cursor-pointer flex-row items-center gap-1 overflow-hidden"
+          className="relative flex min-w-0 cursor-pointer flex-row items-center gap-1 overflow-hidden"
           onClick={() => handleCollapsedGroups(groupID)}
         >
           <div className="line-clamp-1 inline-block truncate font-medium text-primary">{title}</div>
           <div className="pl-2 text-13 font-medium text-tertiary">{count || 0}</div>
-          <div className="px-2.5"></div>
         </div>
 
         {!disableIssueCreation &&
@@ -164,6 +163,10 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
               <AddOutline width={14} />
             </button>
           ))}
+
+        {/* d2m-plane: the (+) sits right next to the title/count; the rest of the header still toggles the group */}
+        {/* eslint-disable-next-line jsx_a11y/click-events-have-key-events eslint-disable-next-line jsx_a11y/no-static-element-interactions */}
+        <div className="h-5 flex-1 cursor-pointer" onClick={() => handleCollapsedGroups(groupID)} />
 
         {isEpic ? (
           <CreateUpdateEpicModal isOpen={isOpen} onClose={() => setIsOpen(false)} data={issuePayload} />

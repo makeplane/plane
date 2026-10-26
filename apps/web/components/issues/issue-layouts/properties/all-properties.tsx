@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { SyntheticEvent } from "react";
+import type { CSSProperties, SyntheticEvent } from "react";
 import { useCallback, useMemo } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
@@ -55,6 +55,25 @@ export interface IIssueProperties {
   activeLayout: string;
   isEpic?: boolean;
 }
+
+/** d2m-plane: "#RRGGBB" -> "rgba(r, g, b, alpha)" (falls back to the input for other formats) */
+const withAlpha = (color: string, alpha: number) => {
+  const match = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(color.trim());
+  if (!match) return color;
+  const [r, g, b] = match.slice(1).map((part) => parseInt(part, 16));
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+/**
+ * d2m-plane: CSS variables for the coloured state pill in list / kanban rows.
+ * "Unstarted" states (Todo) get a plain white pill; every other state gets a tinted background of its colour.
+ */
+const getStatePillStyle = (color: string | undefined, group: string | undefined) => {
+  if (!color) return undefined;
+  if (group === "unstarted")
+    return { "--d2m-state-bg": "#FFFFFF", "--d2m-state-border": withAlpha(color, 0.45) } as CSSProperties;
+  return { "--d2m-state-bg": withAlpha(color, 0.2), "--d2m-state-border": withAlpha(color, 0.55) } as CSSProperties;
+};
 
 export const IssueProperties = observer(function IssueProperties(props: IIssueProperties) {
   const { issue, updateIssue, displayProperties, isReadOnly, className, isEpic = false } = props;
@@ -209,7 +228,16 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       {/* state */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
         {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
-        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+        <div
+          className={cn("h-5", {
+            // d2m-plane: colour the state pill with the state's colour (tinted background + border)
+            "[&_button]:!border-[var(--d2m-state-border)] [&_button]:!bg-[var(--d2m-state-bg)] [&_button]:!text-primary":
+              !!stateDetails,
+          })}
+          style={getStatePillStyle(stateDetails?.color, stateDetails?.group)}
+          onFocus={handleEventPropagation}
+          onClick={handleEventPropagation}
+        >
           <StateSelect
             value={issue.state_id}
             onChange={handleState}
