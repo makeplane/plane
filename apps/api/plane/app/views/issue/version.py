@@ -19,7 +19,7 @@ from plane.app.serializers import (
     IssueVersionDetailSerializer,
     IssueDescriptionVersionDetailSerializer,
 )
-from plane.app.permissions import allow_permission, ROLE
+from plane.app.permissions import allow_permission, issue_hidden_from_guest, ROLE
 from plane.utils.global_paginator import paginate
 from plane.utils.timezone_converter import user_timezone_converter
 
@@ -35,6 +35,13 @@ class IssueVersionEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, issue_id, pk=None):
+        # A restricted guest may only see the versions of issues they created,
+        # mirroring the issue-detail visibility rule.
+        if issue_hidden_from_guest(request, slug, project_id, issue_id):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         if pk:
             issue_version = IssueVersion.objects.get(
                 workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
