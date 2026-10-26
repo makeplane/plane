@@ -7,7 +7,7 @@ dependencies = [
     # django
     "Django==5.2.17",
     # rest framework
-    "djangorestframework==3.17.2",
+    "djangorestframework==3.18.3",
     # postgres (the psycopg implementation comes from a group: psycopg-c in
     # production, psycopg-binary in dev/test)
     "psycopg==3.3.4",
@@ -57,6 +57,9 @@ dependencies = [
     "boto3==1.34.96",
     # http client (pinned to address CVE-2026-44431 and CVE-2026-44432)
     "urllib3>=2.8.0",
+    # certifi arrives transitively via requests/httpx; floor at the bundle that
+    # drops the compromised emSign ECC Root CA - G3 (GHSA-6q48-6c7w-9gw2)
+    "certifi>=2026.10.19",
     # requests — used directly for webhook delivery & link unfurling; pinned to
     # >=2.32 for the get_connection_with_tls_context adapter hook (SSRF IP pinning)
     "requests==2.33.0",
