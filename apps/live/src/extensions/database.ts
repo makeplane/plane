@@ -9,7 +9,7 @@ import { Database as HocuspocusDatabase } from "@hocuspocus/extension-database";
 import {
   getAllDocumentFormatsFromDocumentEditorBinaryData,
   getBinaryDataFromDocumentEditorHTMLString,
-} from "@plane/editor";
+} from "@plane/editor/server";
 import type { TDocumentPayload } from "@plane/types";
 import { logger } from "@plane/logger";
 // lib

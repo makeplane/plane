@@ -67,15 +67,17 @@ declare module "@tiptap/core" {
         target?: string | null;
         rel?: string | null;
         class?: string | null;
+        title?: string | null;
       }) => ReturnType;
       /**
        * Toggle a link mark
        */
-      toggleLink: (attributes: {
+      toggleLink: (attributes?: {
         href: string;
         target?: string | null;
         rel?: string | null;
         class?: string | null;
+        title?: string | null;
       }) => ReturnType;
       /**
        * Unset a link mark
