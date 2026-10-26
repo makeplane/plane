@@ -191,7 +191,8 @@ catalog:
   "y-prosemirror": "^1.3.7"
   "y-protocols": "^1.0.6"
   "yjs": "^13.6.20"
-  "zod": "^3.25.76"
+  # CVE-2023-54404 (unbounded array-issue allocation) is fixed only in 4.6.6; 3.x has no fix.
+  "zod": "^4.6.7"
 
 overrides:
   # Force a single React across the whole graph. With node-linker=isolated,
@@ -250,7 +251,8 @@ overrides:
   serialize-javascript: 7.0.5
   "ajv@6": 6.14.0
   "ajv@8": 8.18.0
-  "undici@7": 7.30.0
+  # EXACT pin, bump the number. CVE-2026-109869 fixed in 7.30.1.
+  "undici@7": 7.30.1
   flatted: 3.4.2
   picomatch: 2.3.2
   "yaml@1": 1.10.3
@@ -275,7 +277,11 @@ overrides:
   fast-uri: 3.1.8
   "js-yaml@4": 4.3.2
   linkify-it: 5.0.2
-  body-parser: 1.20.6
+  # EXACT pin, bump the number. CVE-2026-111181 fixed in 1.20.9.
+  body-parser: 1.20.9
+  # eslint-plugin-react-hooks declares zod ^3.25.0 || ^4.0.0; keep it on the catalog's 4.x
+  # (CVE-2023-54404 has no 3.x fix, and the runtime images copy node_modules wholesale).
+  zod: "catalog:"
   tmp: 0.2.7
   form-data: 4.0.6
   "ws@8": 8.21.0

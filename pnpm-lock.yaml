@@ -444,9 +444,6 @@ catalogs:
     yjs:
       specifier: ^13.6.20
       version: 13.6.27
-    zod:
-      specifier: ^3.25.76
-      version: 3.25.76
 
 overrides:
   react: 19.2.8
@@ -485,7 +482,7 @@ overrides:
   serialize-javascript: 7.0.5
   ajv@6: 6.14.0
   ajv@8: 8.18.0
-  undici@7: 7.30.0
+  undici@7: 7.30.1
   flatted: 3.4.2
   picomatch: 2.3.2
   yaml@1: 1.10.3
@@ -501,7 +498,8 @@ overrides:
   fast-uri: 3.1.8
   js-yaml@4: 4.3.2
   linkify-it: 5.0.2
-  body-parser: 1.20.6
+  body-parser: 1.20.9
+  zod: ^4.6.7
   tmp: 0.2.7
   form-data: 4.0.6
   ws@8: 8.21.0
@@ -766,8 +764,8 @@ importers:
         specifier: 'catalog:'
         version: 13.6.27
       zod:
-        specifier: 'catalog:'
-        version: 3.25.76
+        specifier: ^4.6.7
+        version: 4.6.7
     devDependencies:
       '@plane/typescript-config':
         specifier: workspace:*
@@ -1622,8 +1620,8 @@ importers:
         specifier: 14.0.0
         version: 14.0.0
       zod:
-        specifier: 'catalog:'
-        version: 3.25.76
+        specifier: ^4.6.7
+        version: 4.6.7
     devDependencies:
       '@plane/typescript-config':
         specifier: workspace:*
@@ -4797,8 +4795,8 @@ packages:
   bluebird@3.7.2:
     resolution: {integrity: sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==}
 
-  body-parser@1.20.6:
-    resolution: {integrity: sha512-p5tAzS57i5MV9fZFDj9LeIiTZEufbSe2eDozP+ElheSUq1m74CRq1jI4mYNDdVs9vQztXFLuk/Gd6BWTdwRJ5g==}
+  body-parser@1.20.9:
+    resolution: {integrity: sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw==}
     engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
 
   boolbase@1.0.0:
@@ -7848,8 +7846,8 @@ packages:
   undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
 
-  undici@7.30.0:
-    resolution: {integrity: sha512-dkrQXeHSaoamnItlYbmzG0wFYrM0ZwDxCIg0A7aKjTyyhh9svRzCNFEzV+Vm05/yehjCzjDZ31KXfGEjYSztDQ==}
+  undici@7.30.1:
+    resolution: {integrity: sha512-03KrMbjIFDWQR5RNPrSw3bd1r12JpyFQl9/yxjUbJtqkjmllqC5lFjZh6ujeuJCKr8EOQvRW872Oy/az+nLYxg==}
     engines: {node: '>=20.18.1'}
 
   unicode-properties@1.4.1:
@@ -8234,10 +8232,10 @@ packages:
     resolution: {integrity: sha512-Q6/nZLe6jxuU80qb/4uJ4t5v2VEZ44lzQjPDhYJNztRQ4wyWc6VF3D3Kb/fAuPetZQnhS3hnajCf9CsWesghLQ==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
-      zod: ^3.25.0 || ^4.0.0
+      zod: ^4.6.7
 
-  zod@3.25.76:
-    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+  zod@4.6.7:
+    resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -8630,7 +8628,7 @@ snapshots:
       '@effect/sql': 0.49.0(@effect/experimental@0.58.0(@effect/platform@0.94.1(effect@3.20.0))(effect@3.20.0)(ioredis@5.7.0))(@effect/platform@0.94.1(effect@3.20.0))(effect@3.20.0)
       effect: 3.20.0
       mime: 3.0.0
-      undici: 7.30.0
+      undici: 7.30.1
       ws: 8.21.0
     transitivePeerDependencies:
       - bufferutil
@@ -10837,7 +10835,7 @@ snapshots:
 
   bluebird@3.7.2: {}
 
-  body-parser@1.20.6:
+  body-parser@1.20.9:
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
@@ -11459,8 +11457,8 @@ snapshots:
       '@babel/parser': 7.29.7
       eslint: 10.4.1(jiti@2.7.0)
       hermes-parser: 0.25.1
-      zod: 3.25.76
-      zod-validation-error: 4.0.2(zod@3.25.76)
+      zod: 4.6.7
+      zod-validation-error: 4.0.2(zod@4.6.7)
     transitivePeerDependencies:
       - supports-color
 
@@ -11584,7 +11582,7 @@ snapshots:
     dependencies:
       accepts: 1.3.8
       array-flatten: 1.1.1
-      body-parser: 1.20.6
+      body-parser: 1.20.9
       content-disposition: 0.5.4
       content-type: 1.0.5
       cookie: 0.7.1
@@ -11619,7 +11617,7 @@ snapshots:
   express@5.2.1:
     dependencies:
       accepts: 2.0.0
-      body-parser: 1.20.6
+      body-parser: 1.20.9
       content-disposition: 1.1.0
       content-type: 1.0.5
       cookie: 0.7.1
@@ -14442,7 +14440,7 @@ snapshots:
 
   undici-types@6.20.0: {}
 
-  undici@7.30.0: {}
+  undici@7.30.1: {}
 
   unicode-properties@1.4.1:
     dependencies:
@@ -14781,10 +14779,10 @@ snapshots:
       css-what: 6.2.2
       entities: 5.0.0
 
-  zod-validation-error@4.0.2(zod@3.25.76):
+  zod-validation-error@4.0.2(zod@4.6.7):
     dependencies:
-      zod: 3.25.76
+      zod: 4.6.7
 
-  zod@3.25.76: {}
+  zod@4.6.7: {}
 
   zwitch@2.0.4: {}
