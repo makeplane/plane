@@ -541,6 +541,17 @@ class DeployBoardViewSet(BaseViewSet):
     serializer_class = DeployBoardSerializer
     model = DeployBoard
 
+    def get_queryset(self):
+        # retrieve/partial_update/destroy come from ModelViewSet and resolve the
+        # board through get_object() -> get_queryset(), so limit it to the URL
+        # workspace + project; a board outside that scope returns 404.
+        return DeployBoard.objects.filter(
+            workspace__slug=self.kwargs.get("slug"),
+            entity_name="project",
+            entity_identifier=self.kwargs.get("project_id"),
+            project_id=self.kwargs.get("project_id"),
+        )
+
     def list(self, request, slug, project_id):
         project_deploy_board = DeployBoard.objects.filter(
             entity_name="project", entity_identifier=project_id, workspace__slug=slug
