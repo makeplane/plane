@@ -58,8 +58,9 @@ export function isColorDark(brandColor: string, method: DarknessDetectionMethod 
 }
 
 /**
- * Get contrasting text colors for use on a colored background
- * Returns white text for dark backgrounds, black text for light backgrounds
+ * Get contrasting text and icon colors for use on a colored background
+ * Returns white for dark backgrounds, black for light backgrounds. Icons sit on the same background as the text
+ * (the tick in a checked box, the knob of a switch), so they get the same color: the standard themes make both white.
  *
  * @param brandColor - Brand color in hex format
  * @param method - Detection method to use (default: 'wcag')
@@ -76,10 +77,9 @@ export function getOnColorTextColors(
   const white: OKLCH = { l: 1, c: 0, h: 0 };
   const black: OKLCH = { l: 0, c: 0, h: 0 };
 
-  return {
-    textColor: isDark ? white : black,
-    iconColor: isDark ? black : white,
-  };
+  const onColor = isDark ? white : black;
+
+  return { textColor: onColor, iconColor: onColor };
 }
 
 /**
