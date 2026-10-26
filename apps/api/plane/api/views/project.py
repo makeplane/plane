@@ -49,7 +49,11 @@ from plane.api.serializers import (
     ProjectCreateSerializer,
     ProjectUpdateSerializer,
 )
-from plane.app.permissions import ProjectBasePermission, WorkSpaceAdminPermission
+from plane.app.permissions import (
+    ProjectArchiveUnarchivePermission,
+    ProjectBasePermission,
+    WorkSpaceAdminPermission,
+)
 from plane.utils.openapi import (
     project_docs,
     PROJECT_ID_PARAMETER,
@@ -649,7 +653,9 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
 class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
     """Project Archive and Unarchive Endpoint"""
 
-    permission_classes = [ProjectBasePermission]
+    # Archive/unarchive act on the URL project; ProjectBasePermission's POST
+    # branch is for project creation.
+    permission_classes = [ProjectArchiveUnarchivePermission]
 
     @project_docs(
         operation_id="archive_project",
