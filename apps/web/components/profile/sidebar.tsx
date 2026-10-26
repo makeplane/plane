@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -39,11 +39,13 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
   const { userProjectsData, className = "" } = props;
   // refs
   const ref = useRef<HTMLDivElement>(null);
+  const sidebarHadFocus = useRef(false);
   // router
   const { userId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const { profileSidebarCollapsed, toggleProfileSidebar } = useAppTheme();
+  const profileSidebarCollapsedRef = useRef(profileSidebarCollapsed);
   const { getProjectById } = useProject();
   const { toggleProfileSettingsModal } = useCommandPalette();
   const { isMobile } = usePlatformOS();
@@ -70,12 +72,20 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
     },
   ];
 
+  useLayoutEffect(() => {
+    profileSidebarCollapsedRef.current = profileSidebarCollapsed;
+    if (profileSidebarCollapsed && sidebarHadFocus.current) {
+      document.getElementById("profile-sidebar-toggle")?.focus();
+      sidebarHadFocus.current = false;
+    }
+  }, [profileSidebarCollapsed]);
+
   useEffect(() => {
     const handleToggleProfileSidebar = () => {
       if (window && window.innerWidth < 768) {
         toggleProfileSidebar(true);
       }
-      if (window && profileSidebarCollapsed && window.innerWidth >= 768) {
+      if (window && profileSidebarCollapsedRef.current && window.innerWidth >= 768) {
         toggleProfileSidebar(false);
       }
     };
@@ -83,15 +93,28 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
     window.addEventListener("resize", handleToggleProfileSidebar);
     handleToggleProfileSidebar();
     return () => window.removeEventListener("resize", handleToggleProfileSidebar);
-  }, []);
+  }, [toggleProfileSidebar]);
 
   return (
     <div
+      id="profile-sidebar"
+      inert={profileSidebarCollapsed}
       className={cn(
-        `vertical-scrollbar fixed z-5 scrollbar-md h-full w-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 shadow-raised-200 transition-all md:relative md:w-[300px]`,
+        `vertical-scrollbar fixed z-5 scrollbar-md h-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 shadow-raised-200 transition-all duration-300 ease-in-out md:relative`,
+        profileSidebarCollapsed ? "translate-x-full opacity-0 md:w-0" : "w-full translate-x-0 opacity-100 md:w-[300px]",
         className
       )}
-      style={profileSidebarCollapsed ? { marginLeft: "100vw" } : {}}
+      onFocusCapture={() => {
+        sidebarHadFocus.current = true;
+      }}
+      onBlurCapture={(event) => {
+        if (
+          !profileSidebarCollapsed &&
+          (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget))
+        ) {
+          sidebarHadFocus.current = false;
+        }
+      }}
     >
       {userProjectsData ? (
         <>
