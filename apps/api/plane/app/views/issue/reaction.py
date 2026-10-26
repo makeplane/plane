@@ -16,7 +16,7 @@ from rest_framework import status
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import IssueReactionSerializer
-from plane.app.permissions import allow_permission, ROLE
+from plane.app.permissions import allow_permission, issue_hidden_from_guest, ROLE
 from plane.db.models import Issue, IssueReaction
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
@@ -44,13 +44,14 @@ class IssueReactionViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id, issue_id):
-        # Declared explicitly so the routed GET carries the same project-role
-        # check as create() below. Without it the action is served by DRF's
-        # generic list mixin, which runs under the bare default permission
-        # class: authenticated but not authorized. get_queryset() already scopes
-        # to active project members, so this states that guarantee in the
-        # authorization layer instead of relying on a queryset filter to hold.
-        return super().list(request, slug=slug, project_id=project_id, issue_id=issue_id)
+        # A restricted guest may only see the reactions of issues they created,
+        # mirroring the issue-detail visibility rule.
+        if issue_hidden_from_guest(request, slug, project_id, issue_id):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        return super().list(request, slug, project_id, issue_id)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, issue_id):
