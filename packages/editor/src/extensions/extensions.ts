@@ -6,11 +6,10 @@
 
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Extensions } from "@tiptap/core";
-import { CharacterCount } from "@tiptap/extension-character-count";
-import TaskItem from "@tiptap/extension-task-item";
-import TaskList from "@tiptap/extension-task-list";
-import { TextStyle } from "@tiptap/extension-text-style";
+import { TaskItem } from "@tiptap/extension-task-item";
+import { TaskList } from "@tiptap/extension-task-list";
 import { Underline } from "@tiptap/extension-underline";
+import { CharacterCount } from "@tiptap/extensions";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
@@ -42,6 +41,7 @@ import { CustomImageExtension } from "./custom-image/extension";
 import { EmojiExtension } from "./emoji/extension";
 import { CustomPlaceholderExtension } from "./placeholder";
 import { CustomStarterKitExtension } from "./starter-kit";
+import { CustomTextStyle as TextStyle } from "./text-style";
 import { UniqueID } from "./unique-id/extension";
 
 type TArguments = Pick<
