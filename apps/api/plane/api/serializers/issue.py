@@ -69,7 +69,8 @@ class IssueSerializer(BaseSerializer):
 
     class Meta:
         model = Issue
-        read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at", "completed_at"]
+        # Audit fields: BaseModel.save() sets created_by from the request user on create.
+        read_only_fields = ["id", "workspace", "project", "created_by", "updated_by", "updated_at", "completed_at"]
         exclude = ["description_json", "description_stripped"]
 
     def validate(self, data):
