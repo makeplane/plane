@@ -102,7 +102,6 @@ GUARD_REJECTED_ROUTES = frozenset(
         ("CycleViewSet", "put", "update"),
         ("IntakeViewSet", "get", "retrieve"),
         ("IntakeViewSet", "patch", "partial_update"),
-        ("IssueCommentViewSet", "get", "retrieve"),
         ("IssueCommentViewSet", "put", "update"),
         ("IssueViewFavoriteViewSet", "get", "list"),
         ("IssueViewSet", "put", "update"),
@@ -114,10 +113,6 @@ GUARD_REJECTED_ROUTES = frozenset(
         ("NotificationViewSet", "delete", "destroy"),
         ("NotificationViewSet", "get", "retrieve"),
         ("ProjectFavoritesViewSet", "get", "list"),
-        # No client calls these three in either edition.
-        ("ProjectInvitationsViewset", "delete", "destroy"),
-        ("ProjectInvitationsViewset", "get", "list"),
-        ("ProjectInvitationsViewset", "get", "retrieve"),
         ("ProjectViewSet", "put", "update"),
         ("UserProjectInvitationsViewset", "get", "list"),
         ("WorkspaceStickyViewSet", "get", "retrieve"),
