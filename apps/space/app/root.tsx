@@ -32,7 +32,7 @@ export const links: Route.LinksFunction = () => [
   { rel: "icon", type: "image/png", sizes: "32x32", href: favicon32 },
   { rel: "icon", type: "image/png", sizes: "16x16", href: favicon16 },
   { rel: "shortcut icon", href: faviconIco },
-  { rel: "manifest", href: siteWebmanifest },
+  { rel: "manifest", href: siteWebmanifest, crossOrigin: "use-credentials" },
   { rel: "stylesheet", href: globalStyles },
   {
     rel: "preload",
