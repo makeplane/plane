@@ -129,6 +129,20 @@ export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseY
       }
     };
 
+    const handleStateless = ({ payload }: { payload: string }) => {
+      if (isDisposedRef.current) return;
+
+      try {
+        const message: unknown = JSON.parse(payload);
+        if (typeof message === "object" && message !== null && "type" in message && message.type === "force_close") {
+          // v3 reports document closes as code 1000; preserve the server's forced-close intent.
+          forcedCloseSignalRef.current = true;
+        }
+      } catch {
+        // Legacy stateless action names are not JSON.
+      }
+    };
+
     const handleClose = (closeEvent: { event?: { code?: number; reason?: string } }) => {
       if (isDisposedRef.current) return;
 
@@ -182,6 +196,7 @@ export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseY
       }
     };
 
+    provider.on("stateless", handleStateless);
     provider.on("close", handleClose);
 
     setYjsSession({ provider, ydoc: provider.document });
@@ -245,6 +260,7 @@ export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseY
 
     return () => {
       try {
+        provider.off("stateless", handleStateless);
         provider.off("close", handleClose);
       } catch (error) {
         console.error(`Error unregistering close handler:`, error);
