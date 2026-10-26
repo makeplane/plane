@@ -54,6 +54,12 @@ class WorkspaceViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
     model = IssueView
 
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def create(self, request, slug):
+        # Creating a workspace view requires active workspace membership, with
+        # the same roles as list(). perform_create is a save hook, not a check.
+        return super().create(request, slug=slug)
+
     def perform_create(self, serializer):
         workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
         serializer.save(workspace_id=workspace.id, owned_by=self.request.user)
@@ -263,6 +269,13 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 class IssueViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
     model = IssueView
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def create(self, request, slug, project_id):
+        # Creating a project view requires active project membership, with the
+        # same roles as list()/retrieve(). perform_create is a save hook, not a
+        # check.
+        return super().create(request, slug=slug, project_id=project_id)
 
     def perform_create(self, serializer):
         serializer.save(project_id=self.kwargs.get("project_id"), owned_by=self.request.user)
