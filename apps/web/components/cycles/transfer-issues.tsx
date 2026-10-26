@@ -11,12 +11,14 @@ import { TransferWorkItemOutline, WarningCircleOutline } from "@makeplane/propel
 
 type Props = {
   handleClick: () => void;
+  // d2m-plane: extra action shown next to "Transfer work items" (create the next sprint)
+  extraAction?: React.ReactNode;
   canTransferIssues?: boolean;
   disabled?: boolean;
 };
 
 export function TransferIssues(props: Props) {
-  const { handleClick, canTransferIssues = false, disabled = false } = props;
+  const { handleClick, canTransferIssues = false, disabled = false, extraAction } = props;
   return (
     <div className="-mt-2 mb-4 flex items-center justify-between px-4 pt-6">
       <div className="flex items-center gap-2 text-13 text-secondary">
@@ -24,6 +26,8 @@ export function TransferIssues(props: Props) {
         <span>Completed sprints are not editable.</span>
       </div>
 
+      <div className="flex items-center gap-2">
+        {extraAction}
       {canTransferIssues && (
         <div>
           <Button
@@ -38,6 +42,7 @@ export function TransferIssues(props: Props) {
           />
         </div>
       )}
+      </div>
     </div>
   );
 }

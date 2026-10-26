@@ -13,6 +13,7 @@ import useSWR from "swr";
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
+import { CreateNextSprintButton } from "@/components/cycles/next-sprint";
 import { TransferIssues } from "@/components/cycles/transfer-issues";
 import { TransferIssuesModal } from "@/components/cycles/transfer-issues-modal";
 // hooks
@@ -109,6 +110,7 @@ export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
                   handleClick={() => setTransferIssuesModal(true)}
                   canTransferIssues={canTransferIssues}
                   disabled={!isEmpty(cycleDetails?.progress_snapshot)}
+                  extraAction={<CreateNextSprintButton cycleId={cycleId} />}
                 />
               )}
               {cycleWorkItemsFilter && <WorkItemFiltersRow filter={cycleWorkItemsFilter} />}

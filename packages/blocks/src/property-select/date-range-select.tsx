@@ -9,7 +9,7 @@ import { format } from "date-fns";
 import { Calendar } from "@makeplane/propel/components/calendar";
 import type { DateSelectCommonProps } from "./date-select-shell";
 import { DateSelectShell } from "./date-select-shell";
-import { buildDisabledMatchers, DEFAULT_DATE_FORMAT_TOKEN } from "./date-select.utils";
+import { buildDisabledMatchers, CALENDAR_NAV_FIX_CLASSNAME, DEFAULT_DATE_FORMAT_TOKEN } from "./date-select.utils";
 
 /** Both ends of the picked range. Either end may be unset. */
 export type DateRangeValue = {
@@ -144,6 +144,7 @@ export function DateRangeSelect(props: DateRangeSelectProps) {
       }}
     >
       <Calendar
+        className={CALENDAR_NAV_FIX_CLASSNAME}
         mode="range"
         selected={shown.from ? { from: shown.from, to: shown.to ?? undefined } : undefined}
         defaultMonth={value.from ?? defaultMonth}

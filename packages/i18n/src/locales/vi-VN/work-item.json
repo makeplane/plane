@@ -373,7 +373,10 @@
     "drop_to_make_child": "Thả để thành mục con",
     "made_child": "\"{name}\" đã thành mục con của \"{parent}\"",
     "moved_to_top_level": "\"{name}\" không còn là mục con nữa",
-    "reparent_failed": "Không thể di chuyển mục công việc. Vui lòng thử lại."
+    "reparent_failed": "Không thể di chuyển mục công việc. Vui lòng thử lại.",
+    "create_next_sprint": "Tạo sprint {name}",
+    "next_sprint_created": "Đã tạo sprint {name}. Bấm \"Transfer work items\" để chuyển các mục chưa xong sang.",
+    "next_sprint_failed": "Không tạo được sprint {name} — có thể đã có sprint trùng ngày."
   },
   "recurring_work_items": {
     "settings": {

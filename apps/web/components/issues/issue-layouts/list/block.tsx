@@ -8,6 +8,8 @@ import type { Dispatch, MouseEvent, SetStateAction } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AddOutline, ChevronRightOutline, EditOutline } from "@makeplane/propel/icons";
@@ -137,6 +139,32 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
           isSubIssue: nestingLevel !== 0,
           parentId: issuesMap[issueId]?.parent_id ?? null,
         }),
+        // d2m-plane: render a small, self-contained drag preview (the work item name). Without it the browser
+        // snapshots the row's screen area — Safari includes whatever is painted above it (headers, other rows).
+        onGenerateDragPreview: ({ nativeSetDragImage }) => {
+          setCustomNativeDragPreview({
+            nativeSetDragImage,
+            getOffset: pointerOutsideOfPreview({ x: "12px", y: "8px" }),
+            render: ({ container }) => {
+              const preview = document.createElement("div");
+              preview.textContent = issuesMap[issueId]?.name ?? "";
+              Object.assign(preview.style, {
+                maxWidth: "320px",
+                padding: "6px 10px",
+                borderRadius: "6px",
+                background: "#ffffff",
+                color: "#1f2937",
+                border: "1px solid #3b82f6",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                font: "500 13px/1.4 Inter, system-ui, sans-serif",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              });
+              container.appendChild(preview);
+            },
+          });
+        },
         onDragStart: () => {
           setIsCurrentBlockDragging(true);
         },
@@ -211,7 +239,8 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
       <Row
         ref={issueRef}
         className={cn(
-          "group/list-block relative flex min-h-11 flex-col gap-3 bg-layer-transparent py-3 text-13 transition-colors hover:bg-layer-transparent-hover",
+          // d2m-plane: select-none so grabbing the title starts a row drag instead of a text selection (Safari)
+          "group/list-block relative flex min-h-11 flex-col gap-3 bg-layer-transparent py-3 text-13 transition-colors select-none hover:bg-layer-transparent-hover",
           {
             "border-accent-strong": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
             "border-strong-1": isIssueActive,

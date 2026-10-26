@@ -9,7 +9,7 @@ import { format } from "date-fns";
 import { Calendar } from "@makeplane/propel/components/calendar";
 import type { DateSelectCommonProps } from "./date-select-shell";
 import { DateSelectShell } from "./date-select-shell";
-import { buildDisabledMatchers, DEFAULT_DATE_FORMAT_TOKEN } from "./date-select.utils";
+import { buildDisabledMatchers, CALENDAR_NAV_FIX_CLASSNAME, DEFAULT_DATE_FORMAT_TOKEN } from "./date-select.utils";
 
 export type DateSelectProps = DateSelectCommonProps & {
   /** The picked day, or `null` when nothing is set. */
@@ -62,6 +62,7 @@ export function DateSelect(props: DateSelectProps) {
       }}
     >
       <Calendar
+        className={CALENDAR_NAV_FIX_CLASSNAME}
         mode="single"
         selected={value ?? undefined}
         defaultMonth={value ?? defaultMonth}

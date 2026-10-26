@@ -23,3 +23,10 @@ export function buildDisabledMatchers(
   if (maxDate) matchers.push({ after: maxDate });
   return matchers;
 }
+
+/**
+ * d2m-plane: propel's calendar pins the month navigation with `inset-e-0`, a utility this app's
+ * Tailwind build does not emit — the prev / next chevrons ended up stacked over the month caption and
+ * were unreachable, so a range could not be extended into the next month. Pin the nav to the right.
+ */
+export const CALENDAR_NAV_FIX_CLASSNAME = "[&_nav]:right-0 [&_nav]:left-auto";

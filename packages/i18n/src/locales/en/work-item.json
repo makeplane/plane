@@ -373,7 +373,10 @@
     "drop_to_make_child": "Drop to make it a sub-work item",
     "made_child": "\"{name}\" is now a sub-work item of \"{parent}\"",
     "moved_to_top_level": "\"{name}\" is no longer a sub-work item",
-    "reparent_failed": "Could not move the work item. Please try again."
+    "reparent_failed": "Could not move the work item. Please try again.",
+    "create_next_sprint": "Create sprint {name}",
+    "next_sprint_created": "Sprint {name} created. Use \"Transfer work items\" to move unfinished work items into it.",
+    "next_sprint_failed": "Could not create sprint {name} — a sprint may already exist on those dates."
   },
   "recurring_work_items": {
     "settings": {
