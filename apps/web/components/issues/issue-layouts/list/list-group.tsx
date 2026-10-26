@@ -106,6 +106,8 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   } = props;
 
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
+  // d2m-plane: the dragged item is over the middle of a row (drop = make it a sub-work item) -> hide the group overlay
+  const [isOverChildDropTarget, setIsOverChildDropTarget] = useState(false);
   const [dragColumnOrientation, setDragColumnOrientation] = useState<"justify-start" | "justify-end">("justify-start");
   const isExpanded = !collapsedGroups?.group_by.includes(group.id);
   const groupRef = useRef<HTMLDivElement | null>(null);
@@ -220,11 +222,15 @@ export const ListGroup = observer(function ListGroup(props: Props) {
         },
         onDragLeave: () => {
           setIsDraggingOverColumn(false);
+          setIsOverChildDropTarget(false);
         },
         onDragStart: () => {
           setIsDraggingOverColumn(true);
         },
-        onDrag: ({ source }) => {
+        onDrag: ({ source, location }) => {
+          setIsOverChildDropTarget(
+            !!location?.current?.dropTargets?.some((target) => target?.data?.d2mMakeChild)
+          );
           const sourceGroupId = source?.data?.groupId as string | undefined;
           const currentGroupId = group.id;
 
@@ -242,6 +248,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
         },
         onDrop: (payload) => {
           setIsDraggingOverColumn(false);
+          setIsOverChildDropTarget(false);
 
           // d2m-plane: dropped onto the middle of a row -> handled there (make it a sub-work item)
           if (payload.location?.current?.dropTargets?.some((target) => target?.data?.d2mMakeChild)) return;
@@ -335,7 +342,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
         <div className="relative">
           <GroupDragOverlay
             dragColumnOrientation={dragColumnOrientation}
-            canOverlayBeVisible={canOverlayBeVisible}
+            canOverlayBeVisible={canOverlayBeVisible && !isOverChildDropTarget}
             isDropDisabled={isDropDisabled}
             workflowDisabledSource={workflowDisabledSource}
             dropErrorMessage={group.dropErrorMessage}
