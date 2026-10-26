@@ -41,7 +41,7 @@ type NameProps = {
 
 type TRoleOption = { key: EUserPermissions; label: string };
 
-const ROLE_OPTIONS: TRoleOption[] = Object.entries(ROLE).map(([key, label]) => ({
+const ROLE_OPTIONS: TRoleOption[] = Object.entries(ROLE).filter(([key]) => Number(key) !== 5) /* d2m-plane: Guest role (5) removed */.map(([key, label]) => ({
   key: Number(key) as EUserPermissions,
   label,
 }));

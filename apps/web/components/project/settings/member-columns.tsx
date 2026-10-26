@@ -23,7 +23,7 @@ import { getFileURL } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 
-export interface RowData extends Pick<TProjectMembership, "original_role"> {
+export interface RowData extends Pick<TProjectMembership, "original_role" | "is_manager"> {
   member: IWorkspaceMember;
 }
 
@@ -34,6 +34,8 @@ type NameProps = {
   currentUser: IUser | undefined;
   setRemoveMemberModal: (rowData: RowData) => void;
 };
+
+const MANAGER_OPTION_KEY = "manager";
 
 type TRoleOption = {
   key: string;
@@ -116,14 +118,16 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
     workspace: { getWorkspaceMemberDetails },
   } = useMember();
   const { data: currentUser } = useUser();
-  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
+  const { getProjectRoleByWorkspaceSlugAndProjectId, isProjectManager } = useUserPermissions();
   // form info
   const {
     control,
     formState: { errors },
   } = useForm();
   // derived values
-  const roleLabel = ROLE[rowData.original_role ?? EUserPermissions.GUEST];
+  // d2m-plane: "Manager" = admin role (20) + is_manager
+  const isRowManager = Number(rowData.original_role) === EUserPermissions.ADMIN && !!rowData.is_manager;
+  const roleLabel = isRowManager ? "Manager" : (ROLE[Number(rowData.original_role) as keyof typeof ROLE] ?? "Member");
   const isCurrentUser = currentUser?.id === rowData.member.id;
   const isRowDataWorkspaceAdmin = [EUserPermissions.ADMIN].includes(
     Number(getWorkspaceMemberDetails(rowData.member.id)?.role) ?? EUserPermissions.GUEST
@@ -135,9 +139,9 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
     : false;
   const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
 
-  const isCurrentUserProjectAdmin = currentProjectRole
-    ? ![EUserPermissions.MEMBER, EUserPermissions.GUEST].includes(Number(currentProjectRole) ?? EUserPermissions.GUEST)
-    : false;
+  // d2m-plane: Managers have the admin role but cannot manage members
+  const isCurrentUserProjectAdmin =
+    Number(currentProjectRole) === EUserPermissions.ADMIN && !isProjectManager(workspaceSlug, projectId);
 
   // logic
   // Workspace admin can change his own role
@@ -145,16 +149,13 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
   const isRoleEditable =
     (isCurrentUserWorkspaceAdmin && isCurrentUser) ||
     (isCurrentUserProjectAdmin && !isRowDataWorkspaceAdmin && !isCurrentUser);
-  const checkCurrentOptionWorkspaceRole = (value: string) => {
-    const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role as EUserPermissions | undefined;
-    if (!value || !currentMemberWorkspaceRole) return ROLE;
-
-    const isGuest = [EUserPermissions.GUEST].includes(currentMemberWorkspaceRole);
-
-    return Object.fromEntries(
-      Object.entries(ROLE).filter(([key]) => !isGuest || parseInt(key) === EUserPermissions.GUEST)
-    );
-  };
+  // d2m-plane: project role options — Admin, Manager, Member (Guest removed)
+  const PROJECT_ROLE_OPTIONS: TRoleOption[] = [
+    { key: String(EUserPermissions.ADMIN), label: "Admin" },
+    { key: MANAGER_OPTION_KEY, label: "Manager" },
+    { key: String(EUserPermissions.MEMBER), label: "Member" },
+  ];
+  const currentOptionKey = isRowManager ? MANAGER_OPTION_KEY : String(rowData.original_role);
 
   return (
     <>
@@ -164,21 +165,21 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
           control={control}
           rules={{ required: "Role is required." }}
           render={() => {
-            const roleOptions: TRoleOption[] = Object.entries(checkCurrentOptionWorkspaceRole(rowData.member.id)).map(
-              ([key, label]) => ({ key, label })
-            );
+            const roleOptions: TRoleOption[] = PROJECT_ROLE_OPTIONS;
             return (
               <div className="w-32">
                 <Select<TRoleOption>
                   getValues={() => roleOptions}
-                  value={roleOptions.find((option) => option.key === String(rowData.original_role)) ?? null}
+                  value={roleOptions.find((option) => option.key === currentOptionKey) ?? null}
                   onChange={(value) => {
                     if (!workspaceSlug || !value) return;
+                    const isManagerOption = value === MANAGER_OPTION_KEY;
                     void updateMemberRole(
                       workspaceSlug.toString(),
                       projectId.toString(),
                       rowData.member.id,
-                      Number(value) as EUserProjectRoles
+                      (isManagerOption ? EUserPermissions.ADMIN : Number(value)) as EUserProjectRoles,
+                      isManagerOption
                     ).catch((err) => {
                       console.log(err, "err");
                       const error = err.error;

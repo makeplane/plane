@@ -46,7 +46,7 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
   // derived values
   const currentWorkspaceRole = workspaceInfoBySlug(workspaceSlug.toString())?.role;
   // A member can only invite at or below their own role.
-  const roleOptions: TRoleOption[] = Object.entries(ROLE)
+  const roleOptions: TRoleOption[] = Object.entries(ROLE).filter(([key]) => Number(key) !== 5) /* d2m-plane: Guest role (5) removed */
     .map(([key, label]) => ({ key: parseInt(key), label }))
     .filter((role) => !!currentWorkspaceRole && currentWorkspaceRole >= role.key);
 

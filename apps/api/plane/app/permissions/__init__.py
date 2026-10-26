@@ -18,5 +18,5 @@ from .project import (
     ProjectLitePermission,
     ProjectAdminPermission,
 )
-from .base import allow_permission, ROLE
+from .base import allow_permission, ROLE, is_project_manager, deny_project_manager
 from .page import ProjectPagePermission

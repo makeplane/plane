@@ -113,8 +113,9 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
     return isDateValid;
   };
 
+  // d2m-plane: creating / editing / deleting sprints is for admins & managers only
   const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserPermissions.ADMIN],
     EUserPermissionsLevel.PROJECT
   );
 

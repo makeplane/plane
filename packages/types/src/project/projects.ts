@@ -100,6 +100,8 @@ export interface IProjectMemberLite {
 export type TProjectMembership = {
   member: string;
   role: TUserPermissions | EUserProjectRoles;
+  // d2m-plane: project "Manager" = admin role (20) that cannot manage members or delete the project
+  is_manager?: boolean;
 } & (
   | {
       id: string;

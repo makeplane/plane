@@ -34,7 +34,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
   const {
     project: { projectMemberIds, getFilteredProjectMemberDetails, filters },
   } = useMember();
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, isProjectManager } = useUserPermissions();
 
   const { t } = useTranslation();
 
@@ -53,7 +53,10 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
     projectId ? getFilteredProjectMemberDetails(memberId, projectId.toString()) : null
   );
 
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  // d2m-plane: Managers (admin role) cannot add / invite members
+  const isAdmin =
+    allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT) &&
+    !isProjectManager(workspaceSlug?.toString() ?? "", projectId?.toString());
 
   // Handler for role filter updates
   const handleRoleFilterUpdate = (role: string) => {

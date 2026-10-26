@@ -79,6 +79,22 @@ from plane.utils.openapi import (
 )
 
 
+
+def _deny_unless_project_admin(request, slug, project_id):
+    """d2m-plane: only project admins (incl. Managers) and workspace admins may create / edit / delete sprints."""
+    from plane.db.models import ProjectMember, WorkspaceMember
+
+    if WorkspaceMember.objects.filter(member=request.user, workspace__slug=slug, role=20, is_active=True).exists():
+        return None
+    if ProjectMember.objects.filter(
+        member=request.user, workspace__slug=slug, project_id=project_id, role=20, is_active=True
+    ).exists():
+        return None
+    return Response(
+        {"error": "Only project admins or managers can manage sprints."},
+        status=status.HTTP_403_FORBIDDEN,
+    )
+
 class CycleListCreateAPIEndpoint(BaseAPIView):
     """Cycle List and Create Endpoint"""
 
@@ -304,6 +320,10 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
         Create a new development cycle with specified name, description, and date range.
         Supports external ID tracking for integration purposes.
         """
+        # d2m-plane: sprint management is for project admins / managers only
+        denied = _deny_unless_project_admin(request, slug, project_id)
+        if denied:
+            return denied
         if (request.data.get("start_date", None) is None and request.data.get("end_date", None) is None) or (
             request.data.get("start_date", None) is not None and request.data.get("end_date", None) is not None
         ):
@@ -546,6 +566,10 @@ class CycleDetailAPIEndpoint(BaseAPIView):
         Modify an existing cycle's properties like name, description, or date range.
         Completed cycles can only have their sort order changed.
         """
+        # d2m-plane: sprint management is for project admins / managers only
+        denied = _deny_unless_project_admin(request, slug, project_id)
+        if denied:
+            return denied
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
 
         current_instance = json.dumps(CycleSerializer(cycle).data, cls=DjangoJSONEncoder)
@@ -620,6 +644,10 @@ class CycleDetailAPIEndpoint(BaseAPIView):
         Permanently remove a cycle and all its associated issue relationships.
         Only admins or the cycle creator can perform this action.
         """
+        # d2m-plane: sprint management is for project admins / managers only
+        denied = _deny_unless_project_admin(request, slug, project_id)
+        if denied:
+            return denied
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         if cycle.owned_by_id != request.user.id and (
             not ProjectMember.objects.filter(
@@ -812,6 +840,10 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         Move a completed cycle to archived status for historical tracking.
         Only cycles that have ended can be archived.
         """
+        # d2m-plane: sprint management is for project admins / managers only
+        denied = _deny_unless_project_admin(request, slug, project_id)
+        if denied:
+            return denied
         cycle = Cycle.objects.get(pk=cycle_id, project_id=project_id, workspace__slug=slug)
         if cycle.end_date is None or cycle.end_date >= timezone.now():
             return Response(
@@ -843,6 +875,10 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         Restore an archived cycle to active status, making it available for regular use.
         The cycle will reappear in active cycle lists.
         """
+        # d2m-plane: sprint management is for project admins / managers only
+        denied = _deny_unless_project_admin(request, slug, project_id)
+        if denied:
+            return denied
         cycle = Cycle.objects.get(pk=cycle_id, project_id=project_id, workspace__slug=slug)
         cycle.archived_at = None
         cycle.save()
@@ -1226,6 +1262,10 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
         Move incomplete issues from the current cycle to a new target cycle.
         Captures progress snapshot and transfers only unfinished work items.
         """
+        # d2m-plane: sprint management is for project admins / managers only
+        denied = _deny_unless_project_admin(request, slug, project_id)
+        if denied:
+            return denied
         new_cycle_id = request.data.get("new_cycle_id", False)
 
         if not new_cycle_id:

@@ -59,7 +59,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
         requesting_user = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user, is_active=True)
 
         # Check if any invited user has an higher role
-        if len([email for email in emails if int(email.get("role", 5)) > requesting_user.role]):
+        if len([email for email in emails if int(email.get("role", 15)) > requesting_user.role]):
             return Response(
                 {"error": "You cannot invite a user with higher role"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -97,7 +97,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                             settings.SECRET_KEY,
                             algorithm="HS256",
                         ),
-                        role=email.get("role", 5),
+                        role=email.get("role", 15),
                         created_by=request.user,
                     )
                 )

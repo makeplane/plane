@@ -18,7 +18,10 @@ from plane.db.mixins import AuditModel
 
 from .base import BaseModel
 
-ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
+# d2m-plane: Guest role removed (existing guests migrated to Member). "Manager" is an Admin (20)
+# project membership with ProjectMember.is_manager = True — it can do everything an admin can except
+# managing members (add / change roles / remove / invite) and deleting the project.
+ROLE_CHOICES = ((20, "Admin"), (15, "Member"))
 
 
 class ROLE(Enum):
@@ -205,7 +208,7 @@ class ProjectMemberInvite(ProjectBaseModel):
     token = models.CharField(max_length=255)
     message = models.TextField(null=True)
     responded_at = models.DateTimeField(null=True)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=15)
 
     class Meta:
         verbose_name = "Project Member Invite"
@@ -226,12 +229,14 @@ class ProjectMember(ProjectBaseModel):
         related_name="member_project",
     )
     comment = models.TextField(blank=True, null=True)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=15)
     view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
     preferences = models.JSONField(default=get_default_preferences)
     sort_order = models.FloatField(default=65535)
     is_active = models.BooleanField(default=True)
+    # d2m-plane: project "Manager" role (only meaningful with role = 20 / Admin)
+    is_manager = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if self._state.adding and self.member:

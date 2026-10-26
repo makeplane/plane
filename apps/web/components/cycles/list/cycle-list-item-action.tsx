@@ -98,7 +98,10 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
     ? cycleDetails.total_issues - (cycleDetails.cancelled_issues + cycleDetails.completed_issues)
     : 0;
 
-  const showTransferIssues = routerProjectId && transferableIssuesCount > 0 && cycleStatus === "completed";
+  // d2m-plane: transferring work items between sprints is for admins & managers only
+  const canManageSprints = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const showTransferIssues =
+    canManageSprints && routerProjectId && transferableIssuesCount > 0 && cycleStatus === "completed";
 
   const projectUTCOffset = getProjectUTCOffset();
 

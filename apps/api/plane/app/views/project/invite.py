@@ -23,7 +23,7 @@ from plane.app.serializers import (
     ProjectMemberInviteSerializer,
     ProjectMemberInvitePublicSerializer,
 )
-from plane.app.permissions import allow_permission, ROLE
+from plane.app.permissions import allow_permission, ROLE, deny_project_manager
 from plane.db.models import (
     ProjectMember,
     Workspace,
@@ -53,6 +53,7 @@ class ProjectInvitationsViewset(BaseViewSet):
         )
 
     @allow_permission([ROLE.ADMIN])
+    @deny_project_manager
     def create(self, request, slug, project_id):
         emails = request.data.get("emails", [])
 
@@ -84,7 +85,7 @@ class ProjectInvitationsViewset(BaseViewSet):
                             settings.SECRET_KEY,
                             algorithm="HS256",
                         ),
-                        role=email.get("role", 5),
+                        role=email.get("role", 15),
                         created_by=request.user,
                     )
                 )

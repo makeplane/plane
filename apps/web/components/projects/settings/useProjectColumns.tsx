@@ -17,7 +17,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import type { IMemberFilters } from "@/store/member/utils";
 
-export interface RowData extends Pick<TProjectMembership, "original_role"> {
+export interface RowData extends Pick<TProjectMembership, "original_role" | "is_manager"> {
   member: IWorkspaceMember;
 }
 
@@ -33,19 +33,17 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
 
   // store hooks
   const { data: currentUser } = useUser();
-  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId, isProjectManager } = useUserPermissions();
   const {
     project: {
       filters: { getFilters, updateFilters },
     },
   } = useMember();
   // derived values
-  const isAdmin = allowPermissions(
-    [EUserPermissions.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    projectId.toString()
-  );
+  // d2m-plane: Managers (admin role) cannot remove members
+  const isAdmin =
+    allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug.toString(), projectId.toString()) &&
+    !isProjectManager(workspaceSlug.toString(), projectId.toString());
   const currentProjectRole =
     getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug.toString(), projectId.toString()) ?? EUserPermissions.GUEST;
 

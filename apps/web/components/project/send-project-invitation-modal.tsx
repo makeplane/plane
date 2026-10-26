@@ -56,7 +56,7 @@ type TRoleOption = {
 const defaultValues: FormValues = {
   members: [
     {
-      role: 5,
+      role: 15,
       member_id: "",
     },
   ],
@@ -129,7 +129,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
 
   const appendField = () => {
     append({
-      role: 5,
+      role: 15,
       member_id: "",
     });
   };
@@ -138,7 +138,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
     if (fields.length === 0) {
       append([
         {
-          role: 5,
+          role: 15,
           member_id: "",
         },
       ]);
@@ -159,7 +159,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
   };
 
   const getRoleOptions = (memberId: string): TRoleOption[] =>
-    Object.entries(checkCurrentOptionWorkspaceRole(memberId))
+    Object.entries(checkCurrentOptionWorkspaceRole(memberId)).filter(([key]) => Number(key) !== 5) /* d2m-plane: Guest role (5) removed */
       .filter(([key]) => parseInt(key) <= (currentProjectRole ?? EUserPermissions.GUEST))
       .map(([key, label]) => ({ key: parseInt(key) as EUserPermissions, label }));
 
@@ -167,8 +167,8 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
     onChange(memberId);
     // Update the role to the workspace role when member ID changes
     const workspaceMemberDetails = getWorkspaceMemberDetails(memberId);
-    const workspaceRole = workspaceMemberDetails?.role ?? 5;
-    const newValue = ROLE[workspaceRole].toUpperCase();
+    const workspaceRole = workspaceMemberDetails?.role ?? 15;
+    const newValue = (ROLE[workspaceRole] ?? ROLE[15]).toUpperCase();
     setValue(`members.${index}.role`, EUserPermissions[newValue as keyof typeof EUserPermissions]);
   };
 

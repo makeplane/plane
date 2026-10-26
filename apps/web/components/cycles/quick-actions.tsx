@@ -50,8 +50,9 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
   // derived values
   const cycleDetails = getCycleById(cycleId);
   // auth
+  // d2m-plane: creating / editing / deleting sprints is for admins & managers only
   const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserPermissions.ADMIN],
     EUserPermissionsLevel.PROJECT,
     workspaceSlug,
     projectId

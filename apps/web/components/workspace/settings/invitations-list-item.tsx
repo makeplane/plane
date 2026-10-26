@@ -62,7 +62,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
     EUserPermissionsLevel.WORKSPACE
   );
   // non-admins can only assign roles up to their own
-  const roleOptions: TRoleOption[] = Object.entries(ROLE)
+  const roleOptions: TRoleOption[] = Object.entries(ROLE).filter(([key]) => Number(key) !== 5) /* d2m-plane: Guest role (5) removed */
     .map(([key, label]) => ({ key: parseInt(key, 10), label }))
     .filter(
       (role) =>

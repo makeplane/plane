@@ -21,7 +21,7 @@ from plane.app.permissions import WorkspaceUserPermission
 from plane.db.models import Project, ProjectMember, ProjectUserProperty, WorkspaceMember
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
-from plane.app.permissions.base import allow_permission, ROLE
+from plane.app.permissions.base import allow_permission, ROLE, deny_project_manager, is_project_manager
 
 
 class ProjectMemberViewSet(BaseViewSet):
@@ -44,6 +44,7 @@ class ProjectMemberViewSet(BaseViewSet):
         )
 
     @allow_permission([ROLE.ADMIN])
+    @deny_project_manager
     def create(self, request, slug, project_id):
         # Get the list of members to be added to the project and their roles i.e. the user_id and the role
         members = request.data.get("members", [])
@@ -115,7 +116,7 @@ class ProjectMemberViewSet(BaseViewSet):
             bulk_project_members.append(
                 ProjectMember(
                     member_id=member.get("member_id"),
-                    role=member.get("role", 5),
+                    role=member.get("role", 15),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
                 )
@@ -165,7 +166,7 @@ class ProjectMemberViewSet(BaseViewSet):
             member__member_workspace__is_active=True,
         ).select_related("project", "member", "workspace")
 
-        serializer = ProjectMemberRoleSerializer(project_members, fields=("id", "member", "role"), many=True)
+        serializer = ProjectMemberRoleSerializer(project_members, fields=("id", "member", "role", "is_manager"), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -198,12 +199,20 @@ class ProjectMemberViewSet(BaseViewSet):
         if requesting_project_member.role > ROLE.GUEST.value:
             serializer = ProjectMemberAdminSerializer(project_member)
         else:
-            serializer = ProjectMemberRoleSerializer(project_member, fields=("id", "member", "role"))
+            serializer = ProjectMemberRoleSerializer(project_member, fields=("id", "member", "role", "is_manager"))
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
+        # d2m-plane: managers cannot change roles / status of members; only real admins may set is_manager
+        if any(key in request.data for key in ("role", "is_active", "is_manager")) and is_project_manager(
+            request.user, slug, project_id
+        ):
+            return Response(
+                {"error": "Managers cannot manage project members."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         project_member = ProjectMember.objects.get(pk=pk, workspace__slug=slug, project_id=project_id, is_active=True)
 
         # Fetch the target's workspace role (used to cap the new project role)
@@ -230,7 +239,27 @@ class ProjectMemberViewSet(BaseViewSet):
             is_active=True,
         )
 
-        if "role" in request.data:
+        # d2m-plane: a (non-manager) project admin may promote a member to Manager or demote a Manager —
+        # Manager is an admin role (20) with is_manager = True, so the "equal or higher role" checks below
+        # would otherwise block it for anyone but workspace admins.
+        wants_manager = str(request.data.get("is_manager", "")).lower() in ("true", "1")
+        is_full_project_admin = requested_project_member.role == ROLE.ADMIN.value and not requested_project_member.is_manager
+        manager_change_by_project_admin = is_full_project_admin and (
+            (project_member.role < ROLE.ADMIN.value or project_member.is_manager)
+            and (
+                "role" not in request.data
+                or int(request.data.get("role")) < ROLE.ADMIN.value
+                or wants_manager
+            )
+        )
+
+        if "is_manager" in request.data and not (is_workspace_admin or is_full_project_admin):
+            return Response(
+                {"error": "You do not have permission to change the Manager role"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if "role" in request.data and not manager_change_by_project_admin:
             # Only Admins can modify roles
             if requested_project_member.role < ROLE.ADMIN.value and not is_workspace_admin:
                 return Response(
@@ -283,11 +312,15 @@ class ProjectMemberViewSet(BaseViewSet):
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True)
 
         if serializer.is_valid():
+            # d2m-plane: "Manager" only exists on top of the admin role
+            if serializer.validated_data.get("role", project_member.role) != ROLE.ADMIN.value:
+                serializer.validated_data["is_manager"] = False
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission([ROLE.ADMIN])
+    @deny_project_manager
     def destroy(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(
             workspace__slug=slug,

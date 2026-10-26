@@ -86,3 +86,39 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
         return _wrapped_view
 
     return decorator
+
+
+# d2m-plane: project "Manager" role -----------------------------------------------------------------
+def is_project_manager(user, slug, project_id):
+    """True when the user is a project Manager (admin role flagged is_manager) and not a workspace admin."""
+    if not project_id:
+        return False
+    if WorkspaceMember.objects.filter(
+        member=user, workspace__slug=slug, role=ROLE.ADMIN.value, is_active=True
+    ).exists():
+        return False
+    return ProjectMember.objects.filter(
+        member=user,
+        workspace__slug=slug,
+        project_id=project_id,
+        is_active=True,
+        is_manager=True,
+    ).exists()
+
+
+def deny_project_manager(view_func):
+    """Managers can do everything a project admin can, except what this decorator guards
+    (managing members / invitations and deleting the project)."""
+
+    @wraps(view_func)
+    def _wrapped_view(instance, request, *args, **kwargs):
+        project_id = kwargs.get("project_id") or kwargs.get("pk")
+        if is_project_manager(request.user, kwargs.get("slug"), project_id):
+            return Response(
+                {"error": "Managers cannot manage project members or delete the project."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        return view_func(instance, request, *args, **kwargs)
+
+    return _wrapped_view
+

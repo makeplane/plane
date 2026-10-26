@@ -35,8 +35,9 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
   const { currentProjectDetails, loader } = useProject();
   const { t } = useTranslation();
 
+  // d2m-plane: creating / editing / deleting sprints is for admins & managers only
   const canUserCreateCycle = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserPermissions.ADMIN],
     EUserPermissionsLevel.PROJECT
   );
 

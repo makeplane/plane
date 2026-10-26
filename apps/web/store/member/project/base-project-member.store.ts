@@ -9,8 +9,8 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane imports
 import { EUserPermissions } from "@plane/constants";
+import { EUserProjectRoles } from "@plane/types";
 import type {
-  EUserProjectRoles,
   IProjectBulkAddFormData,
   IProjectUserPropertiesResponse,
   IUserLite,
@@ -79,7 +79,8 @@ export interface IBaseProjectMemberStore {
     workspaceSlug: string,
     projectId: string,
     userId: string,
-    role: EUserProjectRoles
+    role: EUserProjectRoles,
+    isManager?: boolean
   ) => Promise<TProjectMembership>;
   removeMemberFromProject: (workspaceSlug: string, projectId: string, userId: string) => Promise<void>;
 }
@@ -221,6 +222,7 @@ export class BaseProjectMemberStore implements IBaseProjectMemberStore {
       id: projectMember.id,
       role: projectMember.role,
       original_role: projectMember.original_role,
+      is_manager: projectMember.is_manager,
       member: {
         ...userDetails,
         joining_date: projectMember.created_at ?? undefined,
@@ -274,6 +276,7 @@ export class BaseProjectMemberStore implements IBaseProjectMemberStore {
       id: projectMember.id,
       role: projectMember.role,
       original_role: projectMember.original_role,
+      is_manager: projectMember.is_manager,
       member: {
         ...userDetails,
         joining_date: projectMember.created_at ?? undefined,
@@ -346,7 +349,14 @@ export class BaseProjectMemberStore implements IBaseProjectMemberStore {
    * @param userId
    * @param data
    */
-  updateMemberRole = async (workspaceSlug: string, projectId: string, userId: string, role: EUserProjectRoles) => {
+  updateMemberRole = async (
+    workspaceSlug: string,
+    projectId: string,
+    userId: string,
+    role: EUserProjectRoles,
+    // d2m-plane: project "Manager" = admin role + is_manager
+    isManager: boolean = false
+  ) => {
     const memberDetails = this.getProjectMemberDetails(userId, projectId);
     if (!memberDetails || !memberDetails?.id) throw new Error("Member not found");
     // original data to revert back in case of error
@@ -360,6 +370,7 @@ export class BaseProjectMemberStore implements IBaseProjectMemberStore {
       runInAction(() => {
         set(this.projectMemberMap, [projectId, userId, "original_role"], role);
         set(this.projectMemberMap, [projectId, userId, "role"], updatedProjectRole);
+        set(this.projectMemberMap, [projectId, userId, "is_manager"], role === EUserProjectRoles.ADMIN && isManager);
         if (isCurrentUser) {
           set(
             this.rootStore.user.permission.workspaceProjectsPermissions,
@@ -375,6 +386,7 @@ export class BaseProjectMemberStore implements IBaseProjectMemberStore {
         memberDetails?.id,
         {
           role,
+          is_manager: role === EUserProjectRoles.ADMIN && isManager,
         }
       );
       return response;
@@ -383,6 +395,7 @@ export class BaseProjectMemberStore implements IBaseProjectMemberStore {
       runInAction(() => {
         set(this.projectMemberMap, [projectId, userId, "original_role"], membershipBeforeUpdate?.original_role);
         set(this.projectMemberMap, [projectId, userId, "role"], membershipBeforeUpdate?.role);
+        set(this.projectMemberMap, [projectId, userId, "is_manager"], membershipBeforeUpdate?.is_manager);
         if (isCurrentUser) {
           set(
             this.rootStore.user.permission.workspaceProjectsPermissions,

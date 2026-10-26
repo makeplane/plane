@@ -43,6 +43,8 @@ export interface IBaseUserPermissionStore {
     projectId?: string
   ) => EUserPermissions | undefined;
   fetchWorkspaceLevelProjectEntities: (workspaceSlug: string, projectId: string) => void;
+  // d2m-plane: the current user is a project Manager (admin that cannot manage members) — never for workspace admins
+  isProjectManager: (workspaceSlug: string, projectId?: string) => boolean;
   allowPermissions: (
     allowPermissions: ETempUserRole[],
     level: TUserPermissionsLevel,
@@ -126,6 +128,15 @@ export class BaseUserPermissionStore implements IBaseUserPermissionStore {
     const workspaceRole = this.workspaceUserInfo?.[workspaceSlug]?.role;
     if (workspaceRole === EUserWorkspaceRoles.ADMIN) return EUserPermissions.ADMIN;
     else return projectRole;
+  });
+
+  /**
+   * d2m-plane: whether the current user is a project "Manager" (admin role without member management)
+   */
+  isProjectManager = computedFn((workspaceSlug: string, projectId?: string): boolean => {
+    if (!workspaceSlug || !projectId) return false;
+    if (this.workspaceUserInfo?.[workspaceSlug]?.role === EUserWorkspaceRoles.ADMIN) return false;
+    return !!this.projectUserInfo?.[workspaceSlug]?.[projectId]?.is_manager;
   });
 
   /**

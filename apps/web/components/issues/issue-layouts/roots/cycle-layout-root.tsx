@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane constants
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { CreateNextSprintButton } from "@/components/cycles/next-sprint";
@@ -22,6 +22,7 @@ import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
+import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { IssuePeekOverview } from "../../peek-overview";
 import { CycleCalendarLayout } from "../calendar/roots/cycle-root";
@@ -59,6 +60,7 @@ export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
   // store hooks
   const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   const { getCycleById } = useCycle();
+  const { allowPermissions } = useUserPermissions();
   // state
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
   // derived values
@@ -82,7 +84,9 @@ export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
   const transferableIssuesCount = cycleDetails
     ? cycleDetails.backlog_issues + cycleDetails.unstarted_issues + cycleDetails.started_issues
     : 0;
-  const canTransferIssues = isProgressSnapshotEmpty && transferableIssuesCount > 0;
+  // d2m-plane: only admins & managers can transfer work items / create sprints
+  const canManageSprints = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canTransferIssues = canManageSprints && isProgressSnapshotEmpty && transferableIssuesCount > 0;
 
   if (!workspaceSlug || !projectId || !cycleId || !workItemFilters) return <></>;
   return (
@@ -110,7 +114,7 @@ export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
                   handleClick={() => setTransferIssuesModal(true)}
                   canTransferIssues={canTransferIssues}
                   disabled={!isEmpty(cycleDetails?.progress_snapshot)}
-                  extraAction={<CreateNextSprintButton cycleId={cycleId} />}
+                  extraAction={canManageSprints ? <CreateNextSprintButton cycleId={cycleId} /> : undefined}
                 />
               )}
               {cycleWorkItemsFilter && <WorkItemFiltersRow filter={cycleWorkItemsFilter} />}

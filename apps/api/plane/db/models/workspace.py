@@ -16,7 +16,8 @@ from .base import BaseModel
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.utils.color import get_random_color
 
-ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
+# d2m-plane: Guest role removed (existing guests migrated to Member)
+ROLE_CHOICES = ((20, "Admin"), (15, "Member"))
 
 
 def get_default_props():
@@ -202,7 +203,7 @@ class WorkspaceMember(BaseModel):
         on_delete=models.CASCADE,
         related_name="member_workspace",
     )
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=15)
     company_role = models.TextField(null=True, blank=True)
     view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
@@ -238,7 +239,7 @@ class WorkspaceMemberInvite(BaseModel):
     token = models.CharField(max_length=255)
     message = models.TextField(null=True)
     responded_at = models.DateTimeField(null=True)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=15)
 
     class Meta:
         unique_together = ["email", "workspace", "deleted_at"]

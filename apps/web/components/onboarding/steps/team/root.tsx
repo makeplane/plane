@@ -68,7 +68,7 @@ type TRoleOption = { key: EUserPermissions; i18n_title: string; i18n_description
 
 // services
 const workspaceService = new WorkspaceService();
-const roleOptions: TRoleOption[] = Object.entries(ROLE_DETAILS).map(([key, details]) => ({
+const roleOptions: TRoleOption[] = Object.entries(ROLE_DETAILS).filter(([key]) => Number(key) !== 5) /* d2m-plane: Guest role (5) removed */.map(([key, details]) => ({
   key: parseInt(key) as EUserPermissions,
   i18n_title: details.i18n_title,
   i18n_description: details.i18n_description,

@@ -267,7 +267,7 @@ class CycleViewSet(BaseViewSet):
         data = user_timezone_converter(data, datetime_fields, project_timezone)
         return Response(data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN])  # d2m-plane: sprint management is for admins / managers only
     def create(self, request, slug, project_id):
         if (request.data.get("start_date", None) is None and request.data.get("end_date", None) is None) or (
             request.data.get("start_date", None) is not None and request.data.get("end_date", None) is not None
@@ -332,7 +332,7 @@ class CycleViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN])  # d2m-plane: sprint management is for admins / managers only
     def partial_update(self, request, slug, project_id, pk):
         queryset = self.get_queryset().filter(workspace__slug=slug, project_id=project_id, pk=pk)
         cycle = queryset.first()
@@ -474,7 +474,7 @@ class CycleViewSet(BaseViewSet):
         )
         return Response(data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], creator=True, model=Cycle)
+    @allow_permission([ROLE.ADMIN])  # d2m-plane: sprint management is for admins / managers only
     def destroy(self, request, slug, project_id, pk):
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
 
@@ -518,7 +518,7 @@ class CycleViewSet(BaseViewSet):
 
 
 class CycleDateCheckEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN])  # d2m-plane: sprint management is for admins / managers only
     def post(self, request, slug, project_id):
         start_date = request.data.get("start_date", False)
         end_date = request.data.get("end_date", False)
@@ -592,7 +592,7 @@ class CycleFavoriteViewSet(BaseViewSet):
 
 
 class TransferCycleIssueEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN])  # d2m-plane: sprint management is for admins / managers only
     def post(self, request, slug, project_id, cycle_id):
         new_cycle_id = request.data.get("new_cycle_id", False)
 

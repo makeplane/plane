@@ -56,8 +56,9 @@ function ProjectCyclesPage({ params }: Route.ComponentProps) {
   const project = getProjectById(projectId);
   const pageTitle = project?.name ? `${project?.name} - ${t("common.cycles", { count: 2 })}` : undefined;
   const hasAdminLevelPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
+  // d2m-plane: creating / editing / deleting sprints is for admins & managers only
   const hasMemberLevelPermission = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+    [EUserProjectRoles.ADMIN],
     EUserPermissionsLevel.PROJECT
   );
 

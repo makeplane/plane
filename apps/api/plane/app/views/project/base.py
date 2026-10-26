@@ -16,7 +16,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import ROLE, ProjectMemberPermission, allow_permission
+from plane.app.permissions import ROLE, ProjectMemberPermission, allow_permission, deny_project_manager
 from plane.app.serializers import (
     DeployBoardSerializer,
     ProjectListSerializer,
@@ -383,6 +383,7 @@ class ProjectViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @deny_project_manager
     def destroy(self, request, slug, pk):
         if (
             WorkspaceMember.objects.filter(
