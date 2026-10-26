@@ -20,7 +20,7 @@ from rest_framework import status
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import IssueRelationSerializer, RelatedIssueSerializer
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import ProjectEntityPermission, issue_hidden_from_guest
 from plane.db.models import (
     Project,
     IssueRelation,
@@ -70,6 +70,13 @@ class IssueRelationViewSet(BaseViewSet):
         # a legitimate same-project read instead of only closing the cross-project hole.
         if not issue_in_project(issue_id, slug, project_id, include_archived=True):
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+        # A restricted guest may only see the relations of issues they created,
+        # mirroring the issue-detail visibility rule.
+        if issue_hidden_from_guest(request, slug, project_id, issue_id):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         issue_relations = (
             IssueRelation.objects.filter(Q(issue_id=issue_id) | Q(related_issue=issue_id))

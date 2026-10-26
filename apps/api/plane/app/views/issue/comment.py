@@ -18,7 +18,7 @@ from rest_framework import status
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import IssueCommentSerializer, CommentReactionSerializer
-from plane.app.permissions import allow_permission, ROLE
+from plane.app.permissions import allow_permission, issue_hidden_from_guest, ROLE
 from plane.db.models import IssueComment, ProjectMember, CommentReaction, Project, Issue
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
@@ -70,7 +70,25 @@ class IssueCommentViewSet(BaseViewSet):
         # Same as the history endpoint: the issue must belong to the URL workspace + project.
         if not issue_in_project(issue_id, slug, project_id, include_archived=True):
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+        # A restricted guest may only see the comments of issues they created,
+        # mirroring the issue-detail visibility rule.
+        if issue_hidden_from_guest(request, slug, project_id, issue_id):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         return super().list(request, slug, project_id, issue_id)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def retrieve(self, request, slug, project_id, issue_id, pk):
+        # A restricted guest may only see the comments of issues they created,
+        # mirroring the issue-detail visibility rule.
+        if issue_hidden_from_guest(request, slug, project_id, issue_id):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        return super().retrieve(request, slug, project_id, issue_id, pk)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, issue_id):
@@ -205,8 +223,33 @@ class CommentReactionViewSet(BaseViewSet):
             .distinct()
         )
 
+    def _comment_issue_hidden_from_guest(self, request, slug, project_id, comment_id):
+        # A restricted guest may only see or react to comments on issues they
+        # created, mirroring the issue-detail visibility rule. Comment reactions
+        # are keyed by comment_id, so resolve the parent issue first.
+        issue_id = (
+            IssueComment.objects.filter(pk=comment_id, workspace__slug=slug, project_id=project_id)
+            .values_list("issue_id", flat=True)
+            .first()
+        )
+        return bool(issue_id) and issue_hidden_from_guest(request, slug, project_id, issue_id)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def list(self, request, slug, project_id, comment_id):
+        if self._comment_issue_hidden_from_guest(request, slug, project_id, comment_id):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        return super().list(request, slug, project_id, comment_id)
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, comment_id):
+        if self._comment_issue_hidden_from_guest(request, slug, project_id, comment_id):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         try:
             # The URL comment must belong to the URL workspace + project (404 otherwise).
             IssueComment.objects.get(pk=comment_id, workspace__slug=slug, project_id=project_id)
@@ -238,6 +281,11 @@ class CommentReactionViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def destroy(self, request, slug, project_id, comment_id, reaction_code):
+        if self._comment_issue_hidden_from_guest(request, slug, project_id, comment_id):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         comment_reaction = CommentReaction.objects.get(
             workspace__slug=slug,
             project_id=project_id,
