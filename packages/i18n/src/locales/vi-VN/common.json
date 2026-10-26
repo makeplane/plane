@@ -74,6 +74,13 @@
   "select_or_customize_your_interface_color_scheme": "Chọn hoặc tùy chỉnh giao diện màu của bạn.",
   "timezone_setting": "Cài đặt múi giờ hiện tại.",
   "language_setting": "Chọn ngôn ngữ được sử dụng trong giao diện người dùng.",
+  "time_format": {
+    "label": "Định dạng giờ",
+    "description": "Chọn cách hiển thị giờ trong ứng dụng.",
+    "12_hour": "12 giờ (02:43 PM)",
+    "24_hour": "24 giờ (14:43)",
+    "update_success": "Đã cập nhật định dạng giờ thành công"
+  },
   "settings_moved_to_preferences": "Cài đặt Múi giờ và Ngôn ngữ đã được chuyển sang tùy chọn.",
   "go_to_preferences": "Đi đến tùy chọn",
   "select_the_cursor_motion_style_that_feels_right_for_you": "Chọn kiểu chuyển động con trỏ phù hợp với bạn.",

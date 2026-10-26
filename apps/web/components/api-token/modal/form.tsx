@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { observer } from "mobx-react";
 import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
@@ -26,9 +27,10 @@ import { Select } from "@plane/blocks/select";
 import { setToast } from "@plane/blocks/toast";
 import { useTranslation } from "@plane/i18n";
 import type { IApiToken } from "@plane/types";
-import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import { renderFormattedDate } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
+import { useTimeFormat } from "@/hooks/use-time-format";
 // helpers
 type Props = {
   handleClose: () => void;
@@ -89,7 +91,7 @@ const getFormattedDate = (date: Date): Date => {
   return add(date, { hours, minutes, seconds });
 };
 
-export function CreateApiTokenForm(props: Props) {
+export const CreateApiTokenForm = observer(function CreateApiTokenForm(props: Props) {
   const { handleClose, neverExpires, toggleNeverExpires, onSubmit } = props;
   // states
   const [customDate, setCustomDate] = useState<Date | null>(null);
@@ -105,6 +107,7 @@ export function CreateApiTokenForm(props: Props) {
   const { t } = useTranslation();
   // store hooks
   const { data: userProfile } = useUserProfile();
+  const { formatTime } = useTimeFormat();
 
   const handleFormSubmit = async (data: IApiToken) => {
     // if never expires is toggled off, and the user has not selected a custom date or a predefined date, show an error
@@ -135,6 +138,7 @@ export function CreateApiTokenForm(props: Props) {
     await onSubmit(payload).then(() => {
       reset(defaultValues);
       setCustomDate(null);
+      return undefined;
     });
   };
 
@@ -245,10 +249,10 @@ export function CreateApiTokenForm(props: Props) {
                 <span className="text-caption-sm-regular text-placeholder">
                   {expiredAt === "custom"
                     ? customDate
-                      ? `Expires ${renderFormattedDate(customDateFormatted ?? "")} at ${renderFormattedTime(customDateFormatted ?? "")}`
+                      ? `Expires ${renderFormattedDate(customDateFormatted ?? "")} at ${formatTime(customDateFormatted ?? "")}`
                       : null
                     : expiredAt
-                      ? `Expires ${renderFormattedDate(expiryDate ?? "")} at ${renderFormattedTime(expiryDate ?? "")}`
+                      ? `Expires ${renderFormattedDate(expiryDate ?? "")} at ${formatTime(expiryDate ?? "")}`
                       : null}
                 </span>
               )}
@@ -284,4 +288,4 @@ export function CreateApiTokenForm(props: Props) {
       </DialogActions>
     </form>
   );
-}
+});

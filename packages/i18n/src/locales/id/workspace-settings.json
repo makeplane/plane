@@ -14,6 +14,8 @@
         "company_size": "Ukuran perusahaan",
         "url": "URL ruang kerja",
         "workspace_timezone": "Zona waktu ruang kerja",
+        "default_time_format": "Format waktu default",
+        "default_time_format_description": "Digunakan untuk anggota yang belum memilih format waktu di preferensi mereka.",
         "update_workspace": "Perbarui ruang kerja",
         "delete_workspace": "Hapus ruang kerja ini",
         "delete_workspace_description": "Ketika menghapus ruang kerja, semua data dan sumber daya di dalam ruang kerja tersebut akan dihapus secara permanen dan tidak dapat dipulihkan.",

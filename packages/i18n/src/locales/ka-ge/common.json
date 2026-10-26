@@ -74,6 +74,13 @@
   "select_or_customize_your_interface_color_scheme": "აირჩიეთ ან მოარგეთ თქვენი ინტერფეისის ფერთა სქემა.",
   "timezone_setting": "მიმდინარე დროის სარტყელის პარამეტრი.",
   "language_setting": "აირჩიეთ ინტერფეისში გამოყენებული ენა.",
+  "time_format": {
+    "label": "დროის ფორმატი",
+    "description": "აირჩიეთ, როგორ გამოჩნდეს დრო აპლიკაციაში.",
+    "12_hour": "12-საათიანი (02:43 PM)",
+    "24_hour": "24-საათიანი (14:43)",
+    "update_success": "დროის ფორმატი წარმატებით განახლდა"
+  },
   "settings_moved_to_preferences": "დროის სარტყელისა და ენის პარამეტრები გადატანილია პრეფერენციებში.",
   "go_to_preferences": "გადადით პრეფერენციებზე",
   "select_the_cursor_motion_style_that_feels_right_for_you": "Select the cursor motion style that feels right for you.",

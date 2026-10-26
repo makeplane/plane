@@ -14,6 +14,8 @@
         "company_size": "Dimensiunea companiei",
         "url": "URL-ul spațiului de lucru",
         "workspace_timezone": "Fusul orar al spațiului de lucru",
+        "default_time_format": "Formatul implicit al orei",
+        "default_time_format_description": "Folosit pentru membrii care nu au ales un format al orei în preferințe.",
         "update_workspace": "Actualizează spațiul de lucru",
         "delete_workspace": "Șterge acest spațiu de lucru",
         "delete_workspace_description": "La ștergerea spațiului de lucru, toate datele și resursele din cadrul acestuia vor fi eliminate definitiv și nu vor putea fi recuperate.",

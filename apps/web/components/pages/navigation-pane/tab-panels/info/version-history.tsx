@@ -13,12 +13,13 @@ import useSWR from "swr";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { useTranslation } from "@plane/i18n";
 import type { TPageVersion } from "@plane/types";
-import { cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import { cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useQueryParams } from "@/hooks/use-query-params";
+import { useTimeFormat } from "@/hooks/use-time-format";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
@@ -37,6 +38,7 @@ type VersionHistoryItemProps = {
 
 const VersionHistoryItem = observer(function VersionHistoryItem(props: VersionHistoryItemProps) {
   const { getVersionLink, isVersionActive, version } = props;
+  const { formatTime } = useTimeFormat();
   // store hooks
   const { getUserDetails } = useMember();
   // derived values
@@ -58,7 +60,7 @@ const VersionHistoryItem = observer(function VersionHistoryItem(props: VersionHi
         })}
       >
         <p className="text-tertiary">
-          {renderFormattedDate(version.last_saved_at)}, {renderFormattedTime(version.last_saved_at)}
+          {renderFormattedDate(version.last_saved_at)}, {formatTime(version.last_saved_at)}
         </p>
         <p className="mt-1 flex items-center gap-1">
           <Avatar

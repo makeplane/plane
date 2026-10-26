@@ -10,12 +10,18 @@ import { Controller, useForm } from "react-hook-form";
 // Plane Imports
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { ORGANIZATION_SIZE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import {
+  DEFAULT_TIME_FORMAT,
+  ORGANIZATION_SIZE,
+  TIME_FORMAT_OPTIONS,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { EditOutline } from "@makeplane/propel/icons";
 import { setToast } from "@plane/blocks/toast";
-import type { IWorkspace } from "@plane/types";
+import type { IWorkspace, TTimeFormat } from "@plane/types";
 import { Select, SelectContent, SelectItem, SelectList, SelectTrigger } from "@makeplane/propel/components/select";
 import { cn, copyUrlToClipboard, getFileURL, validateWorkspaceName } from "@plane/utils";
 // components
@@ -33,6 +39,7 @@ const defaultValues: Partial<IWorkspace> = {
   organization_size: "2-10",
   logo_url: null,
   timezone: "UTC",
+  time_format: DEFAULT_TIME_FORMAT,
 };
 
 export const WorkspaceDetails = observer(function WorkspaceDetails() {
@@ -66,6 +73,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
       name: formData.name,
       organization_size: formData.organization_size,
       timezone: formData.timezone,
+      time_format: formData.time_format,
     };
 
     try {
@@ -124,6 +132,8 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
   useEffect(() => {
     if (currentWorkspace) reset({ ...currentWorkspace });
   }, [currentWorkspace, reset]);
+
+  const timeFormatItems = TIME_FORMAT_OPTIONS.map((option) => ({ value: option.value, label: t(option.i18n_label) }));
 
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
@@ -286,6 +296,35 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                   </>
                 )}
               />
+            </div>
+            <div className="flex flex-col gap-2">
+              <h4 className="text-body-sm-medium text-tertiary">
+                {t("workspace_settings.settings.general.default_time_format")}
+              </h4>
+              <Controller
+                name="time_format"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <Select<TTimeFormat>
+                    items={timeFormatItems}
+                    value={value || DEFAULT_TIME_FORMAT}
+                    onValueChange={(next) => onChange(next ?? DEFAULT_TIME_FORMAT)}
+                    disabled={!isAdmin}
+                  >
+                    <SelectTrigger size="2xl" />
+                    <SelectContent side="bottom" align="end">
+                      <SelectList>
+                        {timeFormatItems.map((item) => (
+                          <SelectItem key={item.value} value={item.value} size="lg" label={item.label} />
+                        ))}
+                      </SelectList>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <p className="text-caption-sm-regular text-tertiary">
+                {t("workspace_settings.settings.general.default_time_format_description")}
+              </p>
             </div>
           </div>
         </div>

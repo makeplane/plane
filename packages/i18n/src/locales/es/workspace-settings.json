@@ -14,6 +14,8 @@
         "company_size": "Tamaño de la empresa",
         "url": "URL del espacio de trabajo",
         "workspace_timezone": "Zona horaria del espacio de trabajo",
+        "default_time_format": "Formato de hora predeterminado",
+        "default_time_format_description": "Se usa para los miembros que no han elegido un formato de hora en sus preferencias.",
         "update_workspace": "Actualizar espacio de trabajo",
         "delete_workspace": "Eliminar este espacio de trabajo",
         "delete_workspace_description": "Al eliminar un espacio de trabajo, todos los datos y recursos dentro de ese espacio se eliminarán permanentemente y no podrán recuperarse.",

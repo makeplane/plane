@@ -14,6 +14,8 @@
         "company_size": "Unternehmensgröße",
         "url": "URL des Arbeitsbereichs",
         "workspace_timezone": "Zeitzone des Arbeitsbereichs",
+        "default_time_format": "Standard-Zeitformat",
+        "default_time_format_description": "Gilt für Mitglieder, die in ihren Einstellungen kein Zeitformat gewählt haben.",
         "update_workspace": "Arbeitsbereich aktualisieren",
         "delete_workspace": "Diesen Arbeitsbereich löschen",
         "delete_workspace_description": "Das Löschen des Arbeitsbereichs entfernt alle Daten und Ressourcen. Diese Aktion ist nicht umkehrbar.",

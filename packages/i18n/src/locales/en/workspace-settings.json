@@ -14,6 +14,8 @@
         "company_size": "Company size",
         "url": "Workspace URL",
         "workspace_timezone": "Workspace Timezone",
+        "default_time_format": "Default time format",
+        "default_time_format_description": "Used for members who haven't picked a time format in their preferences.",
         "update_workspace": "Update workspace",
         "delete_workspace": "Delete this workspace",
         "delete_workspace_description": "When deleting a workspace, all of the data and resources within that workspace will be permanently removed and cannot be recovered.",
