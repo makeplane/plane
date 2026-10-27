@@ -10,6 +10,9 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 // icons
 import { InfoOutline, TickOutline } from "@makeplane/propel/icons";
 // ui
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { useTranslation } from "@plane/i18n";
 import { CircularProgress } from "@makeplane/propel/components/circular-progress";
 // components
 import { generateQueryParams } from "@plane/utils";
@@ -27,6 +30,7 @@ type Props = {
 
 export const ModuleListItem = observer(function ModuleListItem(props: Props) {
   const { moduleId } = props;
+  const { t } = useTranslation();
   // refs
   const parentRef = useRef(null);
   // router
@@ -99,23 +103,26 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
           </div>
         </div>
       }
-      appendTitleElement={
-        <button
-          onClick={openModuleOverview}
-          className={`z-[5] flex-shrink-0 ${isMobile ? "flex" : "hidden group-hover:flex"}`}
-        >
-          <InfoOutline className="h-4 w-4 text-placeholder" />
-        </button>
-      }
       actionableItems={<ModuleListItemAction moduleId={moduleId} moduleDetails={moduleDetails} parentRef={parentRef} />}
       quickActionElement={
-        <div className="block md:hidden">
-          <ModuleQuickActions
-            parentRef={parentRef}
-            moduleId={moduleId}
-            projectId={projectId.toString()}
-            workspaceSlug={workspaceSlug.toString()}
+        <div className="flex shrink-0 items-center gap-2 p-1">
+          <IconButton
+            type="button"
+            variant="ghost"
+            size="sm"
+            aria-label={t("info")}
+            showTooltip={!isMobile}
+            onClick={openModuleOverview}
+            icon={<Icon icon={InfoOutline} />}
           />
+          <div className="block md:hidden">
+            <ModuleQuickActions
+              parentRef={parentRef}
+              moduleId={moduleId}
+              projectId={projectId.toString()}
+              workspaceSlug={workspaceSlug.toString()}
+            />
+          </div>
         </div>
       }
       isMobile={isMobile}

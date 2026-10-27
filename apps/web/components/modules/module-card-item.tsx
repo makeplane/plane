@@ -13,6 +13,9 @@ import { CalendarOutline, InfoOutline, UserAltOutline, WorkItemsOutline } from "
 // plane package imports
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { useTranslation } from "@plane/i18n";
 import { LinearProgress } from "@makeplane/propel/components/linear-progress";
 import { setPromiseToast, setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
@@ -39,6 +42,7 @@ type Props = {
 
 export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
   const { moduleId } = props;
+  const { t } = useTranslation();
   // refs
   const parentRef = useRef(null);
   // router
@@ -176,89 +180,97 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
 
   return (
     <div className="relative" data-prevent-progress>
-      <Link ref={parentRef} href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
-        <Card>
-          <div>
-            <div className="flex items-center justify-between gap-2">
-              <Tooltip label={moduleDetails.name} layout="stacked" disabled={isMobile}>
-                <span className="truncate text-14 font-medium">{moduleDetails.name}</span>
-              </Tooltip>
-              {/* Ruling 38: guard both halves — the card root is a `Link`. */}
-              <div
-                className="flex items-center gap-2"
-                role="presentation"
-                onClick={handleEventPropagation}
-                onKeyDown={handleTriggerKeyDown}
+      <Card ref={parentRef}>
+        <div>
+          <div className="flex items-center justify-between gap-2">
+            <Tooltip label={moduleDetails.name} layout="stacked" disabled={isMobile}>
+              <Link
+                href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
+                className="min-w-0 text-14 font-medium after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-accent-strong"
               >
-                {moduleStatus && (
-                  <ModuleStatusDropdown
-                    isDisabled={isDisabled}
-                    moduleDetails={moduleDetails}
-                    handleModuleDetailsChange={handleModuleDetailsChange}
-                  />
-                )}
-                <button onClick={openModuleOverview}>
-                  <InfoOutline className="h-4 w-4 text-placeholder" />
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-secondary">
-                <WorkItemsOutline className="h-4 w-4 text-tertiary" />
-                <span className="text-11 text-tertiary">{issueCount ?? "0 Work item"}</span>
-              </div>
-              {moduleLeadDetails ? (
-                <span className="cursor-default">
-                  <ButtonAvatars showTooltip={false} userIds={moduleLeadDetails?.id} />
-                </span>
-              ) : (
-                <Tooltip label="No lead">
-                  <UserAltOutline className="mx-1 h-4 w-4 text-tertiary" />
-                </Tooltip>
-              )}
-            </div>
-            <LinearProgress
-              value={progressValue}
-              size="md"
-              variant="brand"
-              showValue={false}
-              aria-label="Module progress"
-            />
-            {/* Ruling 38: the whole card is a `Link`, so the trigger's click and keyboard
-                activation must not reach it. */}
+                <span className="relative z-[1] block truncate">{moduleDetails.name}</span>
+              </Link>
+            </Tooltip>
+            {/* Keep status and overview activation local to these sibling controls. */}
             <div
-              className="flex items-center justify-between py-0.5"
+              className="relative z-[1] flex items-center gap-2"
               role="presentation"
               onClick={handleEventPropagation}
               onKeyDown={handleTriggerKeyDown}
             >
-              <DateRangeSelect
-                variant="select-ghost-md"
-                className={`h-6 w-full gap-1.5 rounded-sm border-[0.5px] border-strong text-11 text-tertiary ${
-                  isDisabled ? "cursor-not-allowed" : "cursor-pointer"
-                }`}
-                value={{
-                  from: getDate(moduleDetails.start_date) ?? null,
-                  to: getDate(moduleDetails.target_date) ?? null,
-                }}
-                onChange={(range) => {
-                  void handleModuleDetailsChange({
-                    start_date: range.from ? renderFormattedPayloadDate(range.from) : null,
-                    target_date: range.to ? renderFormattedPayloadDate(range.to) : null,
-                  });
-                }}
-                placeholder="Start date - End date"
-                weekStartsOn={userProfile?.start_of_the_week}
-                disabled={isDisabled}
-                icon={renderIcon ? undefined : <CalendarOutline aria-hidden="true" />}
+              {moduleStatus && (
+                <ModuleStatusDropdown
+                  isDisabled={isDisabled}
+                  moduleDetails={moduleDetails}
+                  handleModuleDetailsChange={handleModuleDetailsChange}
+                />
+              )}
+              <IconButton
+                type="button"
+                variant="ghost"
+                size="sm"
+                aria-label={t("info")}
+                showTooltip={!isMobile}
+                onClick={openModuleOverview}
+                icon={<Icon icon={InfoOutline} />}
               />
             </div>
           </div>
-        </Card>
-      </Link>
-      <div className="absolute right-4 bottom-[18px] flex items-center gap-1.5">
+        </div>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-secondary">
+              <WorkItemsOutline className="h-4 w-4 text-tertiary" />
+              <span className="text-11 text-tertiary">{issueCount ?? "0 Work item"}</span>
+            </div>
+            {moduleLeadDetails ? (
+              <span className="cursor-default">
+                <ButtonAvatars showTooltip={false} userIds={moduleLeadDetails?.id} />
+              </span>
+            ) : (
+              <Tooltip label="No lead">
+                <UserAltOutline className="mx-1 h-4 w-4 text-tertiary" />
+              </Tooltip>
+            )}
+          </div>
+          <LinearProgress
+            value={progressValue}
+            size="md"
+            variant="brand"
+            showValue={false}
+            aria-label="Module progress"
+          />
+          {/* Keep date selection independent of the stretched card navigation link. */}
+          <div
+            className="relative z-[1] flex items-center justify-between py-0.5"
+            role="presentation"
+            onClick={handleEventPropagation}
+            onKeyDown={handleTriggerKeyDown}
+          >
+            <DateRangeSelect
+              variant="select-ghost-md"
+              className={`h-6 w-full gap-1.5 rounded-sm border-[0.5px] border-strong text-11 text-tertiary ${
+                isDisabled ? "cursor-not-allowed" : "cursor-pointer"
+              }`}
+              value={{
+                from: getDate(moduleDetails.start_date) ?? null,
+                to: getDate(moduleDetails.target_date) ?? null,
+              }}
+              onChange={(range) => {
+                void handleModuleDetailsChange({
+                  start_date: range.from ? renderFormattedPayloadDate(range.from) : null,
+                  target_date: range.to ? renderFormattedPayloadDate(range.to) : null,
+                });
+              }}
+              placeholder="Start date - End date"
+              weekStartsOn={userProfile?.start_of_the_week}
+              disabled={isDisabled}
+              icon={renderIcon ? undefined : <CalendarOutline aria-hidden="true" />}
+            />
+          </div>
+        </div>
+      </Card>
+      <div className="absolute right-4 bottom-[18px] z-[1] flex items-center gap-1.5">
         {isEditingAllowed && (
           <FavoriteStar
             onClick={(e) => {
