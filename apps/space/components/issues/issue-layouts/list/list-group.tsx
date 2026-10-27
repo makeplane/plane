@@ -98,15 +98,15 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   const loadMore = isPaginating ? (
     <ListLoaderItemRow />
   ) : (
-    <div
+    <button
+      type="button"
       className={
-        "relative flex h-11 cursor-pointer items-center gap-3 border border-transparent border-t-subtle-1 bg-surface-1 p-3 pl-6 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline"
+        "relative flex h-11 w-full cursor-pointer items-center gap-3 border border-transparent border-t-subtle-1 bg-surface-1 p-3 pl-6 text-start text-body-xs-medium text-accent-primary outline-none hover:text-accent-secondary hover:underline focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-inset"
       }
       onClick={() => loadMoreIssues(group.id)}
-      role="button"
     >
       {t("common.load_more")} &darr;
-    </div>
+    </button>
   );
 
   const validateEmptyIssueGroups = (issueCount: number = 0) => {
@@ -128,6 +128,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
           icon={group.icon}
           title={group.name || ""}
           count={groupIssueCount}
+          isExpanded={shouldExpand}
           toggleListGroup={toggleListGroup}
         />
       </div>
