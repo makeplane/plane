@@ -14,7 +14,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { setToast } from "@plane/blocks/toast";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import type { IWebhook } from "@plane/types";
 // ui
 import { csvDownload, copyTextToClipboard } from "@plane/utils";
@@ -122,11 +122,17 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
               {webhookSecretKey && (
                 <div className="flex items-center gap-2">
                   {SECRET_KEY_OPTIONS.map((option) => (
-                    <Tooltip key={option.key} label={option.label} layout="stacked" disabled={isMobile}>
-                      <button type="button" className="grid flex-shrink-0 place-items-center" onClick={option.onClick}>
-                        <option.Icon className="h-3 w-3 text-placeholder" />
-                      </button>
-                    </Tooltip>
+                    <IconButton
+                      key={option.key}
+                      type="button"
+                      variant="ghost"
+                      size="xs"
+                      aria-label={option.label}
+                      aria-pressed={option.key === "eye" ? shouldShowKey : undefined}
+                      showTooltip={!isMobile}
+                      onClick={option.onClick}
+                      icon={<Icon icon={option.Icon} />}
+                    />
                   ))}
                 </div>
               )}

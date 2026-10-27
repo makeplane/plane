@@ -5,6 +5,9 @@
  */
 
 import { useState } from "react";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { CloseOutline, WarningCircleOutline } from "@makeplane/propel/icons";
@@ -40,6 +43,7 @@ type TIssueAttachmentsDetail = {
 };
 
 export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(props: TIssueAttachmentsDetail) {
+  const { t } = useTranslation();
   // props
   const { attachmentId, attachmentHelpers, disabled } = props;
   // store hooks
@@ -101,9 +105,15 @@ export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(p
         </Link>
 
         {!disabled && (
-          <button type="button" onClick={() => setIsDeleteIssueAttachmentModalOpen(true)}>
-            <CloseOutline className="h-4 w-4 text-secondary hover:text-primary" />
-          </button>
+          <IconButton
+            type="button"
+            variant="ghost"
+            size="sm"
+            aria-label={t("attachment.delete")}
+            showTooltip={!isMobile}
+            onClick={() => setIsDeleteIssueAttachmentModalOpen(true)}
+            icon={<Icon icon={CloseOutline} />}
+          />
         )}
       </div>
     </>
