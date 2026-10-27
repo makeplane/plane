@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // Plane Imports
 import { Field } from "@makeplane/propel/components/field";
+import { FieldLabel, FieldError } from "@makeplane/propel/elements/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ORGANIZATION_SIZE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -192,7 +193,9 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
         <div className="flex flex-col gap-7">
           <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">
             <div className="flex flex-col gap-2">
-              <h4 className="text-body-sm-medium text-tertiary">{t("workspace_settings.settings.general.name")}</h4>
+              <FieldLabel size="2xl" inset={false} htmlFor="name">
+                {t("workspace_settings.settings.general.name")}
+              </FieldLabel>
               <Controller
                 control={control}
                 name="name"
@@ -205,6 +208,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                       <Input
                         size="2xl"
                         id="name"
+                        aria-describedby={errors.name ? "workspace-name-error" : undefined}
                         name="name"
                         type="text"
                         value={value}
@@ -217,12 +221,16 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                   </Field>
                 )}
               />
-              {errors.name && <p className="text-caption-sm-regular text-danger-primary">{errors.name.message}</p>}
+              {errors.name && (
+                <FieldError size="lg" id="workspace-name-error">
+                  {errors.name.message}
+                </FieldError>
+              )}
             </div>
             <div className="flex flex-col gap-2">
-              <h4 className="text-body-sm-medium text-tertiary">
+              <FieldLabel size="2xl" inset={false} htmlFor="workspace-company-size">
                 {t("workspace_settings.settings.general.company_size")}
-              </h4>
+              </FieldLabel>
               <Controller
                 name="organization_size"
                 control={control}
@@ -233,6 +241,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                     disabled={!isAdmin}
                   >
                     <SelectTrigger
+                      id="workspace-company-size"
                       size="2xl"
                       placeholder={t("workspace_settings.settings.general.errors.company_size.select_a_range")}
                     />
@@ -248,7 +257,9 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <h4 className="text-body-sm-medium text-tertiary">{t("workspace_settings.settings.general.url")}</h4>
+              <FieldLabel size="2xl" inset={false} htmlFor="url">
+                {t("workspace_settings.settings.general.url")}
+              </FieldLabel>
               <Controller
                 control={control}
                 name="url"
@@ -274,15 +285,18 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <h4 className="text-body-sm-medium text-tertiary">
-                {t("workspace_settings.settings.general.workspace_timezone")}
-              </h4>
               <Controller
                 name="timezone"
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <>
-                    <TimezoneSelect value={value} onChange={onChange} disabled={!isAdmin} />
+                    <TimezoneSelect
+                      fieldLabel={t("workspace_settings.settings.general.workspace_timezone")}
+                      value={value}
+                      onChange={onChange}
+                      disabled={!isAdmin}
+                      label={t("workspace_settings.settings.general.workspace_timezone")}
+                    />
                   </>
                 )}
               />
