@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import type { TQuickAddIssueForm } from "../root";
@@ -21,15 +22,20 @@ export const GanttQuickAddIssueForm = observer(function GanttQuickAddIssueForm(p
       >
         <div className="flex w-full items-center gap-3">
           <div className="text-11 font-medium text-placeholder">{projectDetail?.identifier ?? "..."}</div>
-          <input
-            type="text"
-            autoComplete="off"
-            placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
-            {...register("name", {
-              required: isEpic ? t("epic.title.required") : t("issue.title.required"),
-            })}
-            className="w-full rounded-md bg-transparent px-2 py-3 text-13 leading-5 font-medium text-secondary outline-none"
-          />
+          <InputGroup size="2xl">
+            <Input
+              size="2xl"
+              aria-label={isEpic ? t("epic.title.label") : t("issue.title.label")}
+              aria-invalid={hasError}
+              data-invalid={hasError || undefined}
+              type="text"
+              autoComplete="off"
+              placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
+              {...register("name", {
+                required: isEpic ? t("epic.title.required") : t("issue.title.required"),
+              })}
+            />
+          </InputGroup>
         </div>
       </form>
       <div className="bg-surface-1 px-3 py-2 text-11 text-secondary italic">

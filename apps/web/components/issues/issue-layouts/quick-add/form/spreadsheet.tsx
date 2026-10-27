@@ -5,11 +5,12 @@
  */
 
 import { observer } from "mobx-react";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import type { TQuickAddIssueForm } from "../root";
 
 export const SpreadsheetQuickAddIssueForm = observer(function SpreadsheetQuickAddIssueForm(props: TQuickAddIssueForm) {
-  const { ref, projectDetail, register, onSubmit, isEpic } = props;
+  const { ref, projectDetail, register, onSubmit, isEpic, hasError } = props;
   const { t } = useTranslation();
   return (
     <div className="pb-2">
@@ -19,15 +20,20 @@ export const SpreadsheetQuickAddIssueForm = observer(function SpreadsheetQuickAd
         className="z-10 flex items-center gap-x-5 border-[0.5px] border-t-0 border-subtle bg-surface-1 px-4 shadow-raised-200"
       >
         <h4 className="w-20 text-11 leading-5 text-placeholder">{projectDetail?.identifier ?? "..."}</h4>
-        <input
-          type="text"
-          autoComplete="off"
-          placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
-          {...register("name", {
-            required: isEpic ? t("epic.title.required") : t("issue.title.required"),
-          })}
-          className="w-full rounded-md bg-transparent py-3 text-13 leading-5 text-secondary outline-none"
-        />
+        <InputGroup size="2xl">
+          <Input
+            size="2xl"
+            aria-label={isEpic ? t("epic.title.label") : t("issue.title.label")}
+            aria-invalid={hasError}
+            data-invalid={hasError || undefined}
+            type="text"
+            autoComplete="off"
+            placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
+            {...register("name", {
+              required: isEpic ? t("epic.title.required") : t("issue.title.required"),
+            })}
+          />
+        </InputGroup>
       </form>
       <p className="mt-3 ml-3 text-11 text-secondary italic">
         {isEpic ? t("epic.add.press_enter") : t("issue.add.press_enter")}
