@@ -98,8 +98,8 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
       {/* Header */}
       <CommonOnboardingHeader title="What's your role?" description="Let's set up Plane for how you work." />
       {/* Role Selection */}
-      <div className="flex flex-col gap-3">
-        <p className="text-body-sm-semibold text-placeholder">Select one</p>
+      <fieldset className="flex min-w-0 flex-col gap-3">
+        <legend className="mb-3 text-body-sm-semibold text-placeholder">Select one</legend>
         <Controller
           control={control}
           name="role"
@@ -115,12 +115,14 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
                 return (
                   <button
                     key={role.id}
+                    type="button"
+                    aria-pressed={isSelected}
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
                       onChange(role.id);
                     }}
-                    className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 transition-all duration-200 ${
+                    className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-offset-2 focus-visible:outline-none ${
                       isSelected
                         ? "border-accent-strong bg-accent-subtle text-accent-primary"
                         : "border-subtle text-tertiary hover:border-strong"
@@ -131,13 +133,12 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
                       <span className="text-body-sm-semibold">{role.label}</span>
                     </div>
                     {isSelected && (
-                      <>
-                        <button
-                          className={`border-blue-500 flex size-4 items-center justify-center rounded-sm border-2 bg-accent-primary`}
-                        >
-                          <TickOutline className="h-3 w-3 text-on-color" />
-                        </button>
-                      </>
+                      <span
+                        aria-hidden="true"
+                        className="flex size-4 items-center justify-center rounded-sm border-2 border-accent-strong bg-accent-primary"
+                      >
+                        <TickOutline className="h-3 w-3 text-on-color" />
+                      </span>
                     )}
                   </button>
                 );
@@ -145,8 +146,8 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
             </div>
           )}
         />
-        {errors.role && <span className="text-13 text-danger-primary">{errors.role.message}</span>}
-      </div>
+        {errors.role && <span className="text-body-sm-regular text-danger-primary">{errors.role.message}</span>}
+      </fieldset>
       {/* Action Buttons */}
       <div className="space-y-3">
         <Button variant="primary" type="submit" stretch="full" size="lg" disabled={isButtonDisabled} label="Continue" />

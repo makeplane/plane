@@ -77,26 +77,36 @@ export function WorkspaceJoinInvitesStep(props: Props) {
             const isSelected = invitationsRespond.includes(invitation.id);
             const invitedWorkspace = invitation.workspace;
             return (
-              <div
+              <label
                 key={invitation.id}
-                className={`flex cursor-pointer items-center gap-2 rounded-lg border border-subtle px-3 py-2 hover:bg-surface-2`}
-                onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
+                htmlFor={`workspace-invitation-${invitation.id}`}
+                className="flex cursor-pointer items-center gap-2 rounded-lg border border-subtle px-3 py-2 hover:bg-surface-2 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-strong has-[:focus-visible]:ring-offset-2"
               >
-                <div className="flex-shrink-0">
+                <span aria-hidden="true" className="flex-shrink-0">
                   <WorkspaceLogo
                     logo={invitedWorkspace?.logo_url}
                     name={invitedWorkspace?.name}
                     classNames="size-8 flex-shrink-0 rounded-lg"
                   />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="text-13 font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
-                  <p className="text-11 text-secondary">{ROLE[invitation.role]}</p>
-                </div>
-                <span className="pointer-events-none flex-shrink-0">
-                  <Checkbox checked={isSelected} aria-label={invitedWorkspace?.name ?? "Select workspace invitation"} />
                 </span>
-              </div>
+                <span className="min-w-0 flex-1">
+                  <span id={`workspace-invitation-${invitation.id}-name`} className="sr-only">
+                    {invitedWorkspace?.name ?? "Select workspace invitation"}
+                  </span>
+                  <span aria-hidden="true" className="block text-body-sm-medium">
+                    {truncateText(invitedWorkspace?.name, 30)}
+                  </span>
+                  <span className="block text-caption-xs-regular text-secondary">{ROLE[invitation.role]}</span>
+                </span>
+                <span className="flex-shrink-0">
+                  <Checkbox
+                    id={`workspace-invitation-${invitation.id}`}
+                    checked={isSelected}
+                    onCheckedChange={(checked) => handleInvitation(invitation, checked ? "accepted" : "withdraw")}
+                    aria-labelledby={`workspace-invitation-${invitation.id}-name`}
+                  />
+                </span>
+              </label>
             );
           })}
       </div>

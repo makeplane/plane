@@ -7,17 +7,17 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { TickCircleOutline } from "@makeplane/propel/icons";
 // plane imports
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { InputField } from "@makeplane/propel/components/input-field";
+import { Toggle } from "@makeplane/propel/components/toggle";
 import { Button as ButtonElement } from "@makeplane/propel/elements/button";
 import { setToast } from "@plane/blocks/toast";
 import type { IUser, IWorkspace } from "@plane/types";
 import { Spinner } from "@plane/blocks/spinner";
-import { cn, validateWorkspaceName, validateSlug } from "@plane/utils";
+import { validateWorkspaceName, validateSlug } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -172,74 +172,63 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
             />
           )}
         />
-        <div className="flex flex-col gap-2">
-          <label
-            className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
-            htmlFor="slug"
-          >
-            {t("workspace_creation.form.url.label")}
-          </label>
-          <Controller
-            control={control}
-            name="slug"
-            rules={{
-              required: t("common.errors.required"),
-              maxLength: {
-                value: 48,
-                message: t("workspace_creation.errors.validation.url_length"),
-              },
-            }}
-            render={({ field: { value, ref, onChange } }) => (
-              <div
-                className={cn(
-                  "flex w-full items-center rounded-md border border-strong bg-surface-1 px-3 py-2 text-secondary transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-accent-strong focus:outline-none",
-                  {
-                    "border-strong": !errors.name,
-                    "border-danger-strong": errors.name,
-                  }
-                )}
-              >
-                <span className={cn("rounded-md pr-0 whitespace-nowrap text-secondary")}>
+        <Controller
+          control={control}
+          name="slug"
+          rules={{
+            required: t("common.errors.required"),
+            maxLength: {
+              value: 48,
+              message: t("workspace_creation.errors.validation.url_length"),
+            },
+          }}
+          render={({ field: { value, ref, onChange } }) => (
+            <InputField
+              id="slug"
+              name="slug"
+              size="xl"
+              orientation="vertical"
+              label={t("workspace_creation.form.url.label")}
+              required
+              type="text"
+              value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
+              onChange={(e) => {
+                const validation = validateSlug(e.target.value);
+                if (validation === true) setInvalidSlug(false);
+                else setInvalidSlug(true);
+                onChange(e.target.value.toLowerCase());
+              }}
+              ref={ref}
+              placeholder={t("workspace_creation.form.url.placeholder")}
+              startIcon={
+                <span
+                  className="max-w-1/2 min-w-0 truncate text-body-sm-regular text-secondary"
+                  title={window && window.location.host}
+                >
                   {window && window.location.host}/
                 </span>
-                <input
-                  id="slug"
-                  name="slug"
-                  type="text"
-                  value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
-                  onChange={(e) => {
-                    const validation = validateSlug(e.target.value);
-                    if (validation === true) setInvalidSlug(false);
-                    else setInvalidSlug(true);
-                    onChange(e.target.value.toLowerCase());
-                  }}
-                  ref={ref}
-                  placeholder={t("workspace_creation.form.url.placeholder")}
-                  className={cn(
-                    "ring-none w-full rounded-md border-none bg-surface-1 px-3 py-0 pl-0 text-secondary outline-none placeholder:text-placeholder"
-                  )}
-                />
-              </div>
-            )}
-          />
-          <p className="text-13 text-tertiary">{t("workspace_creation.form.url.edit_slug")}</p>
-          {slugError && (
-            <p className="-mt-3 text-13 text-danger-primary">
-              {t("workspace_creation.errors.validation.url_already_taken")}
-            </p>
+              }
+              hint={t("workspace_creation.form.url.edit_slug")}
+              error={
+                slugError || invalidSlug || errors.slug ? (
+                  <>
+                    {slugError && (
+                      <span className="block">{t("workspace_creation.errors.validation.url_already_taken")}</span>
+                    )}
+                    {invalidSlug && (
+                      <span className="block">{t("workspace_creation.errors.validation.url_alphanumeric")}</span>
+                    )}
+                    {errors.slug && <span className="block">{errors.slug.message}</span>}
+                  </>
+                ) : undefined
+              }
+            />
           )}
-          {invalidSlug && (
-            <p className="text-13 text-danger-primary">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
-          )}
-          {errors.slug && <span className="text-13 text-danger-primary">{errors.slug.message}</span>}
-        </div>
-        <div className="flex flex-col gap-2">
-          <label
-            className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
-            htmlFor="organization_size"
-          >
+        />
+        <fieldset className="flex min-w-0 flex-col gap-2">
+          <legend className="mb-2 text-body-sm-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']">
             {t("workspace_creation.form.organization_size.label")}
-          </label>
+          </legend>
           <div className="w-full">
             <Controller
               name="organization_size"
@@ -247,36 +236,23 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
               rules={{ required: t("common.errors.required") }}
               render={({ field: { value, onChange } }) => (
                 <div className="flex flex-wrap gap-3">
-                  {ORGANIZATION_SIZE.map((size) => {
-                    const isSelected = value === size;
-                    return (
-                      <button
-                        key={size}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          onChange(size);
-                        }}
-                        className={`flex items-center justify-between gap-1 rounded-lg border px-3 py-2 text-13 transition-all duration-200 ${
-                          isSelected
-                            ? "border-subtle bg-layer-1 text-secondary"
-                            : "border-subtle text-tertiary hover:border-strong"
-                        }`}
-                      >
-                        <TickCircleOutline className={cn("size-4 text-placeholder", isSelected && "text-secondary")} />
-
-                        <span className="font-medium">{size}</span>
-                      </button>
-                    );
-                  })}
+                  {ORGANIZATION_SIZE.map((size) => (
+                    <Toggle
+                      key={size}
+                      label={size}
+                      size="md"
+                      pressed={value === size}
+                      onPressedChange={() => onChange(size)}
+                    />
+                  ))}
                 </div>
               )}
             />
             {errors.organization_size && (
-              <span className="text-13 text-danger-primary">{errors.organization_size.message}</span>
+              <span className="text-body-sm-regular text-danger-primary">{errors.organization_size.message}</span>
             )}
           </div>
-        </div>
+        </fieldset>
       </div>
       <div className="flex flex-col gap-4">
         <ButtonElement variant="primary" type="submit" size="lg" stretch="full" disabled={isButtonDisabled}>

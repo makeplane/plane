@@ -86,8 +86,8 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
       <CommonOnboardingHeader title="What brings you to Plane?" description="Tell us your goals and team size." />
 
       {/* Use Case Selection */}
-      <div className="flex flex-col gap-3">
-        <p className="text-body-sm-semibold text-placeholder">Select one or more</p>
+      <fieldset className="flex min-w-0 flex-col gap-3">
+        <legend className="mb-3 text-body-sm-semibold text-placeholder">Select one or more</legend>
 
         <Controller
           control={control}
@@ -103,6 +103,8 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
                 return (
                   <button
                     key={useCase}
+                    type="button"
+                    aria-pressed={isSelected}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -115,13 +117,14 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
                         onChange([...currentValue, useCase]);
                       }
                     }}
-                    className={`flex w-full items-center gap-2 rounded-lg border px-3 py-2 transition-all duration-200 ${
+                    className={`flex w-full items-center gap-2 rounded-lg border px-3 py-2 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-offset-2 focus-visible:outline-none ${
                       isSelected
                         ? "border-accent-strong bg-accent-subtle text-accent-primary"
                         : "border-subtle text-tertiary hover:border-strong"
                     }`}
                   >
                     <span
+                      aria-hidden="true"
                       className={cn(`flex size-4 items-center justify-center rounded-sm border-2`, {
                         "border-accent-strong bg-accent-primary": isSelected,
                         "border-strong": !isSelected,
@@ -142,8 +145,8 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
             </div>
           )}
         />
-        {errors.use_case && <span className="text-13 text-danger-primary">{errors.use_case.message}</span>}
-      </div>
+        {errors.use_case && <span className="text-body-sm-regular text-danger-primary">{errors.use_case.message}</span>}
+      </fieldset>
 
       {/* Action Buttons */}
       <div className="space-y-3">
