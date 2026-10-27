@@ -13,6 +13,7 @@ import { setToast } from "@plane/blocks/toast";
 import type { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
 import { useTranslation } from "@plane/i18n";
 // ui
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
@@ -138,12 +139,14 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
         </div>
 
         {sub_group_by === null && (
-          <button
-            className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover"
+          <IconButton
+            variant="ghost"
+            size="xs"
+            aria-label={title}
+            aria-expanded={!verticalAlignPosition}
+            icon={verticalAlignPosition ? <FullScreenOutline width={14} /> : <ArrowCollapseOutline width={14} />}
             onClick={() => handleCollapsedGroups("group_by", column_id)}
-          >
-            {verticalAlignPosition ? <FullScreenOutline width={14} /> : <ArrowCollapseOutline width={14} />}
-          </button>
+          />
         )}
 
         {!disableIssueCreation &&

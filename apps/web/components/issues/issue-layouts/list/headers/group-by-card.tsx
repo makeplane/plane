@@ -36,6 +36,7 @@ interface IHeaderGroupByCard {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   selectionHelpers: TSelectionHelper;
   handleCollapsedGroups: (value: string) => void;
+  isExpanded: boolean;
   isEpic?: boolean;
 }
 
@@ -51,6 +52,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     addIssuesToView,
     selectionHelpers,
     handleCollapsedGroups,
+    isExpanded,
     isEpic = false,
   } = props;
   // plane hooks
@@ -97,7 +99,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           <div className="absolute left-1 flex w-3.5 flex-shrink-0 items-center">
             <MultipleSelectGroupAction
               className={cn(
-                "pointer-events-none size-3.5 opacity-0 !outline-none group-hover/list-header:pointer-events-auto group-hover/list-header:opacity-100",
+                "pointer-events-none size-3.5 opacity-0 !outline-none group-focus-within/list-header:pointer-events-auto group-focus-within/list-header:opacity-100 group-hover/list-header:pointer-events-auto group-hover/list-header:opacity-100",
                 {
                   "pointer-events-auto opacity-100": !isGroupSelectionEmpty,
                 }
@@ -112,15 +114,17 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           {icon ?? <CircleDashedOutline className="size-3.5" />}
         </div>
 
-        {/* eslint-disable-next-line jsx_a11y/click-events-have-key-events eslint-disable-next-line jsx_a11y/no-static-element-interactions */}
-        <div
-          className="relative flex w-full cursor-pointer flex-row items-center gap-1 overflow-hidden"
+        <button
+          type="button"
+          aria-label={title}
+          aria-expanded={isExpanded}
+          className="relative flex w-full min-w-0 cursor-pointer flex-row items-center gap-1 rounded-xs text-left outline-none focus-visible:ring-2 focus-visible:ring-accent-strong"
           onClick={() => handleCollapsedGroups(groupID)}
         >
-          <div className="line-clamp-1 inline-block truncate font-medium text-primary">{title}</div>
-          <div className="pl-2 text-13 font-medium text-tertiary">{count || 0}</div>
-          <div className="px-2.5"></div>
-        </div>
+          <span className="line-clamp-1 inline-block truncate font-medium text-primary">{title}</span>
+          <span className="pl-2 text-13 font-medium text-tertiary">{count || 0}</span>
+          <span className="px-2.5" />
+        </button>
 
         {!disableIssueCreation &&
           (renderExistingIssueModal ? (

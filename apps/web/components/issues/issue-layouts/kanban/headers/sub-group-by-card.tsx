@@ -23,27 +23,29 @@ interface IHeaderSubGroupByCard {
 export const HeaderSubGroupByCard = observer(function HeaderSubGroupByCard(props: IHeaderSubGroupByCard) {
   const { icon, title, count, column_id, collapsedGroups, handleCollapsedGroups } = props;
   return (
-    // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
-    <div
-      className={`relative flex w-full flex-shrink-0 cursor-pointer flex-row items-center gap-1 rounded-xs py-1.5`}
+    <button
+      type="button"
+      aria-label={title}
+      aria-expanded={!collapsedGroups?.sub_group_by.includes(column_id)}
+      className={`relative flex w-full flex-shrink-0 cursor-pointer flex-row items-center gap-1 rounded-xs py-1.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-accent-strong`}
       onClick={() => handleCollapsedGroups("sub_group_by", column_id)}
     >
-      <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1">
+      <span className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1">
         {collapsedGroups?.sub_group_by.includes(column_id) ? (
           <ChevronDownOutline width={14} />
         ) : (
           <ChevronUpOutline width={14} />
         )}
-      </div>
+      </span>
 
-      <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-xs">
+      <span className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-xs">
         {icon ? icon : <CircleOutline width={14} height={14} />}
-      </div>
+      </span>
 
-      <div className="flex flex-shrink-0 items-center gap-1 text-13">
-        <div className="line-clamp-1 text-primary">{title}</div>
-        <div className="pl-2 text-13 font-medium text-tertiary">{count || 0}</div>
-      </div>
-    </div>
+      <span className="flex flex-shrink-0 items-center gap-1 text-13">
+        <span className="line-clamp-1 text-primary">{title}</span>
+        <span className="pl-2 text-13 font-medium text-tertiary">{count || 0}</span>
+      </span>
+    </button>
   );
 });

@@ -282,6 +282,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
           addIssuesToView={addIssuesToView}
           selectionHelpers={selectionHelpers}
           handleCollapsedGroups={handleCollapsedGroups}
+          isExpanded={isExpanded}
           isEpic={isEpic}
         />
       </Row>
