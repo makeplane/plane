@@ -1,10 +1,17 @@
 # syntax=docker/dockerfile:1.7
-FROM node:22-alpine AS base
+# Node 22.23.4 (Alpine 3.24) pinned by tag + multi-arch index digest: fixes
+# CVE-2026-111497 (Node2Shell, Brotli decoder OOB write). Do not go back to a
+# floating tag -- a cached base layer would silently keep the old runtime.
+FROM node:22.23.4-alpine3.24@sha256:fe4f6d74e20370acb04ad889077d14d0f64a9c8ea6a42bc60cddf1e844699914 AS base
 
 # Setup pnpm package manager with corepack and configure global bin directory for caching
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PNPM_HOME/bin:$PATH"
 RUN corepack enable
+
+# Fail the build unless the base ships a patched Node 22 release (CVE-2026-111497).
+COPY deployments/node-runtime-guard/node-runtime-guard.mjs /opt/plane/node-runtime-guard.mjs
+RUN node /opt/plane/node-runtime-guard.mjs
 
 # *****************************************************************************
 # STAGE 1: Prune the project
@@ -77,6 +84,10 @@ COPY --from=installer /app/apps/live/package.json ./apps/live/package.json
 
 # esbuild and tsgolint are build-only Go binaries; remove from runtime image to eliminate stdlib CVEs
 RUN find /app/node_modules \( -name 'esbuild' -o -name 'tsgolint' \) -type f -delete 2>/dev/null || true
+
+# Re-check the runtime after APK upgrade / COPY / cleanup, plus a native Brotli
+# roundtrip smoke test (no app bootstrap, no credentials, no DB/Redis).
+RUN node /opt/plane/node-runtime-guard.mjs --brotli-roundtrip
 
 ENV TURBO_TELEMETRY_DISABLED=1
 
