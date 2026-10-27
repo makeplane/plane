@@ -79,6 +79,32 @@ export function ResizableSidebar({
     [isResizing, minWidth, maxWidth, setWidth]
   );
 
+  const handleResizeKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) return;
+
+      const step = 10;
+      switch (event.key) {
+        case "ArrowLeft":
+          setWidth((currentWidth) => Math.min(Math.max(currentWidth - step, minWidth), maxWidth));
+          break;
+        case "ArrowRight":
+          setWidth((currentWidth) => Math.min(Math.max(currentWidth + step, minWidth), maxWidth));
+          break;
+        case "Home":
+          setWidth(minWidth);
+          break;
+        case "End":
+          setWidth(maxWidth);
+          break;
+        default:
+          return;
+      }
+      event.preventDefault();
+    },
+    [minWidth, maxWidth, setWidth]
+  );
+
   const startResizing = useCallback(
     (e: React.MouseEvent) => {
       setIsResizing(true);
@@ -210,7 +236,7 @@ export function ResizableSidebar({
           {/* Resize Handle */}
           <div
             className={cn(
-              "absolute z-[20] h-full w-1 cursor-ew-resize transition-all duration-200",
+              "absolute z-[20] h-full w-1 cursor-ew-resize transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-inset",
               !isResizing && "hover:bg-surface-2",
               isResizing && "w-1.5 bg-layer-1",
               "top-0 right-0"
@@ -218,8 +244,14 @@ export function ResizableSidebar({
             // onDoubleClick toggle sidebar
             onDoubleClick={() => toggleCollapsed()}
             onMouseDown={(e) => startResizing(e)}
+            onKeyDown={handleResizeKeyDown}
             role="separator"
+            tabIndex={0}
             aria-label={t("aria_labels.projects_sidebar.resize_sidebar")}
+            aria-orientation="vertical"
+            aria-valuemin={minWidth}
+            aria-valuemax={maxWidth}
+            aria-valuenow={width}
           />
         </aside>
       </div>
@@ -254,7 +286,7 @@ export function ResizableSidebar({
           {/* Resize Handle */}
           <div
             className={cn(
-              "absolute z-[20] h-full w-1 cursor-ew-resize transition-all duration-200",
+              "absolute z-[20] h-full w-1 cursor-ew-resize transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-inset",
               !isResizing && "hover:bg-surface-2",
               isResizing && "bg-layer-1",
               "top-0 right-0"
@@ -262,8 +294,14 @@ export function ResizableSidebar({
             // onDoubleClick toggle sidebar
             onDoubleClick={() => toggleCollapsed()}
             onMouseDown={(e) => startResizing(e)}
+            onKeyDown={handleResizeKeyDown}
             role="separator"
+            tabIndex={0}
             aria-label={t("aria_labels.projects_sidebar.resize_sidebar")}
+            aria-orientation="vertical"
+            aria-valuemin={minWidth}
+            aria-valuemax={maxWidth}
+            aria-valuenow={width}
           />
         </aside>
       </div>
