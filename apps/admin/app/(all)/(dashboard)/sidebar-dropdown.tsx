@@ -17,12 +17,13 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from "@makeplane/propel/components/menu";
+import { IconButton } from "@makeplane/propel/elements/icon-button";
 import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
 import { AccessAndRolesOutline, LogOutOutline, PaletteOutline } from "@makeplane/propel/icons";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
 import { AuthService } from "@plane/services";
-import { getFileURL, cn } from "@plane/utils";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useTheme, useUser } from "@/hooks/store";
 
@@ -86,30 +87,33 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
       >
         <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       </form>
-      <div className="h-full w-full truncate">
+      <div className="h-full w-full min-w-0">
         <div
-          className={`flex flex-grow items-center gap-x-2 truncate rounded-sm ${
+          className={`flex min-w-0 flex-grow items-center gap-x-2 rounded-sm ${
             isSidebarCollapsed ? "justify-center" : ""
           }`}
         >
-          <Menu>
-            <MenuTrigger
-              render={
-                <button
-                  type="button"
-                  aria-label="Instance admin menu"
-                  className={cn("grid flex-shrink-0 place-items-center outline-none", {
-                    "cursor-default": !isSidebarCollapsed,
-                  })}
-                >
-                  <div className="flex size-8 flex-shrink-0 items-center justify-center rounded-sm bg-layer-1">
-                    <AccessAndRolesOutline className="size-5 text-primary" />
-                  </div>
-                </button>
-              }
-            />
-            {isSidebarCollapsed && getSidebarMenuItems()}
-          </Menu>
+          {isSidebarCollapsed ? (
+            <Menu>
+              <MenuTrigger
+                render={
+                  <IconButton variant="ghost" size="lg" type="button" aria-label="Instance admin menu">
+                    <div className="flex size-8 flex-shrink-0 items-center justify-center rounded-sm bg-layer-1">
+                      <AccessAndRolesOutline className="size-5 text-primary" />
+                    </div>
+                  </IconButton>
+                }
+              />
+              {getSidebarMenuItems()}
+            </Menu>
+          ) : (
+            <div
+              className="flex size-8 flex-shrink-0 items-center justify-center rounded-sm bg-layer-1"
+              aria-hidden="true"
+            >
+              <AccessAndRolesOutline className="size-5 text-primary" />
+            </div>
+          )}
 
           {!isSidebarCollapsed && (
             <div className="flex w-full gap-2">
@@ -123,18 +127,14 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
         <Menu>
           <MenuTrigger
             render={
-              <button
-                type="button"
-                aria-label="Account menu"
-                className="grid flex-shrink-0 place-items-center outline-none"
-              >
+              <IconButton variant="ghost" size="lg" type="button" aria-label="Account menu">
                 <WorkspaceAvatar
                   alt={currentUser.display_name ?? "Admin user"}
                   fallback={currentUser.display_name?.[0]?.toUpperCase()}
                   src={getFileURL(currentUser.avatar_url)}
                   size="sm"
                 />
-              </button>
+              </IconButton>
             }
           />
           {getSidebarMenuItems()}

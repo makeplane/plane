@@ -64,7 +64,8 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
           <>
             <a
               href={redirectionLink}
-              className={`relative flex items-center gap-1 rounded-sm bg-layer-1 px-2 py-1 text-body-xs-medium whitespace-nowrap text-secondary`}
+              aria-label="Redirect to Plane"
+              className={`relative flex items-center gap-1 rounded-sm bg-layer-1 px-2 py-1 text-body-xs-medium whitespace-nowrap text-secondary outline-none focus-visible:ring-2 focus-visible:ring-accent-strong`}
             >
               <NewTabOutline width={14} height={14} />
               {!isSidebarCollapsed && "Redirect to Plane"}
@@ -74,7 +75,8 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
           <Tooltip label="Redirect to Plane" side="right">
             <a
               href={redirectionLink}
-              className={`relative flex items-center gap-1 rounded-sm bg-layer-1 px-2 py-1 text-body-xs-medium whitespace-nowrap text-secondary`}
+              aria-label="Redirect to Plane"
+              className={`relative flex items-center gap-1 rounded-sm bg-layer-1 px-2 py-1 text-body-xs-medium whitespace-nowrap text-secondary outline-none focus-visible:ring-2 focus-visible:ring-accent-strong`}
             >
               <NewTabOutline width={14} height={14} />
               {!isSidebarCollapsed && "Redirect to Plane"}
