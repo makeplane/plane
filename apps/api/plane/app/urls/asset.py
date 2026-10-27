@@ -31,7 +31,10 @@ urlpatterns = [
     ),
     path(
         "workspaces/file-assets/<uuid:workspace_id>/<str:asset_key>/",
-        FileAssetEndpoint.as_view(),
+        # `post` belongs to the collection route above and takes `slug`, not
+        # `workspace_id`/`asset_key`. Without this it is advertised here too and
+        # a POST raises TypeError (500) instead of returning 405.
+        FileAssetEndpoint.as_view(http_method_names=["get", "delete"]),
         name="file-assets",
     ),
     path("users/file-assets/", UserAssetsEndpoint.as_view(), name="user-file-assets"),
