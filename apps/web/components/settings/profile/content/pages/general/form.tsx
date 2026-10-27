@@ -10,6 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import { UserOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Field } from "@makeplane/propel/components/field";
+import { FieldLabel, FieldError } from "@makeplane/propel/elements/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
@@ -269,10 +270,10 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
           <div className="flex flex-col gap-2">
             <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 xl:grid-cols-3">
               <div className="flex flex-col gap-1">
-                <h4 className="text-13 font-medium text-secondary">
+                <FieldLabel size="2xl" inset={false} htmlFor="first_name">
                   {t("first_name")}&nbsp;
                   <span className="text-danger-primary">*</span>
-                </h4>
+                </FieldLabel>
                 <Controller
                   control={control}
                   name="first_name"
@@ -286,6 +287,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                         <Input
                           size="2xl"
                           id="first_name"
+                          aria-describedby={errors.first_name ? "profile-first_name-error" : undefined}
                           name="first_name"
                           type="text"
                           value={value}
@@ -299,10 +301,16 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                     </Field>
                   )}
                 />
-                {errors.first_name && <span className="text-11 text-danger-primary">{errors.first_name.message}</span>}
+                {errors.first_name && (
+                  <FieldError size="lg" id="profile-first_name-error">
+                    {errors.first_name.message}
+                  </FieldError>
+                )}
               </div>
               <div className="flex flex-col gap-1">
-                <h4 className="text-13 font-medium text-secondary">{t("last_name")}</h4>
+                <FieldLabel size="2xl" inset={false} htmlFor="last_name">
+                  {t("last_name")}
+                </FieldLabel>
                 <Controller
                   control={control}
                   name="last_name"
@@ -315,6 +323,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                         <Input
                           size="2xl"
                           id="last_name"
+                          aria-describedby={errors.last_name ? "profile-last_name-error" : undefined}
                           name="last_name"
                           type="text"
                           value={value}
@@ -328,13 +337,17 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                     </Field>
                   )}
                 />
-                {errors.last_name && <span className="text-11 text-danger-primary">{errors.last_name.message}</span>}
+                {errors.last_name && (
+                  <FieldError size="lg" id="profile-last_name-error">
+                    {errors.last_name.message}
+                  </FieldError>
+                )}
               </div>
               <div className="flex flex-col gap-1">
-                <h4 className="text-13 font-medium text-secondary">
+                <FieldLabel size="2xl" inset={false} htmlFor="display_name">
                   {t("display_name")}&nbsp;
                   <span className="text-danger-primary">*</span>
-                </h4>
+                </FieldLabel>
                 <Controller
                   control={control}
                   name="display_name"
@@ -348,6 +361,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                         <Input
                           size="2xl"
                           id="display_name"
+                          aria-describedby={errors.display_name ? "profile-display_name-error" : undefined}
                           name="display_name"
                           type="text"
                           value={value}
@@ -361,14 +375,16 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                   )}
                 />
                 {errors?.display_name && (
-                  <span className="text-11 text-danger-primary">{errors?.display_name?.message}</span>
+                  <FieldError size="lg" id="profile-display_name-error">
+                    {errors?.display_name?.message}
+                  </FieldError>
                 )}
               </div>
               <div className="flex flex-col gap-1">
-                <h4 className="text-13 font-medium text-secondary">
+                <FieldLabel size="2xl" inset={false} htmlFor="email">
                   {t("auth.common.email.label")}&nbsp;
                   <span className="text-danger-primary">*</span>
-                </h4>
+                </FieldLabel>
                 <Controller
                   control={control}
                   name="email"
