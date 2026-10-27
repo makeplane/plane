@@ -9,9 +9,12 @@ import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 import type { EditorRefApi } from "@plane/editor";
 import { CloseOutline, TickOutline } from "@makeplane/propel/icons";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { useTranslation } from "@plane/i18n";
 // plane imports
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
-import { cn, isCommentEmpty } from "@plane/utils";
+import { isCommentEmpty } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
 
@@ -37,6 +40,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
     workspaceId,
     workspaceSlug,
   } = props;
+  const { t } = useTranslation();
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // form info
@@ -112,32 +116,28 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
       </div>
       <div className="flex gap-2 self-end">
         {!isEmpty && (
-          <button
+          <IconButton
             type="button"
+            variant="primary"
+            size="md"
+            aria-label={t("save")}
             onClick={handleSubmit(onEnter)}
             disabled={isDisabled}
-            className={cn(
-              "group grid size-7 place-items-center rounded-lg border border-success-subtle bg-success-subtle shadow-raised-100 duration-300",
-              isDisabled ? "" : "hover:bg-success-subtle-1"
-            )}
-          >
-            <TickOutline className="size-4 text-success-primary" />
-          </button>
+            icon={<Icon icon={TickOutline} />}
+          />
         )}
-        <button
+        <IconButton
           type="button"
+          variant="danger-outline"
+          size="md"
+          aria-label={t("cancel")}
           disabled={isSubmitting}
-          className={cn(
-            "group grid size-7 place-items-center rounded-lg border border-danger-subtle bg-danger-subtle shadow-raised-100 duration-300",
-            isSubmitting ? "" : "hover:bg-danger-subtle-hover"
-          )}
           onClick={() => {
             setIsEditing(false);
             editorRef.current?.setEditorValue(comment.comment_html ?? "<p></p>");
           }}
-        >
-          <CloseOutline className="size-4 text-danger-primary" />
-        </button>
+          icon={<Icon icon={CloseOutline} />}
+        />
       </div>
     </form>
   );
