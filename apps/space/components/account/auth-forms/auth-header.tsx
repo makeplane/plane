@@ -50,8 +50,8 @@ export function AuthHeader(props: TAuthHeader) {
   return (
     <>
       <div className="flex flex-col gap-1">
-        <span className="text-20 leading-7 font-semibold text-primary">{header}</span>
-        <span className="text-20 leading-7 font-semibold text-placeholder">{subHeader}</span>
+        <span className="text-h4-semibold text-primary">{header}</span>
+        <span className="text-h4-semibold text-placeholder">{subHeader}</span>
       </div>
     </>
   );

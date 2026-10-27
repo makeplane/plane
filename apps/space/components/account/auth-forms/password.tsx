@@ -10,6 +10,8 @@ import { CloseCircleOutline, HideOutline, ShowOutline } from "@makeplane/propel/
 // plane imports
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Input } from "@makeplane/propel/components/input";
 import { AuthService } from "@plane/services";
 import { PasswordStrengthIndicator } from "@plane/blocks/auth";
@@ -123,7 +125,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
       <input type="hidden" value={passwordFormData.email} name="email" />
       <input type="hidden" value={nextPath} name="next_path" />
       <div className="space-y-1">
-        <label className="text-13 font-medium text-tertiary" htmlFor="email">
+        <label className="text-body-xs-medium text-tertiary" htmlFor="email">
           Email
         </label>
         <div className="relative flex h-10 items-center rounded-md border border-subtle bg-surface-1 px-3 [&_input]:disable-autofill-style">
@@ -152,7 +154,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
       </div>
 
       <div className="space-y-1">
-        <label className="text-13 font-medium text-tertiary" htmlFor="password">
+        <label className="text-body-xs-medium text-tertiary" htmlFor="password">
           {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"}
         </label>
         <div className="relative flex h-10 items-center rounded-md border border-subtle bg-surface-1 pr-12 pl-3 [&_input]:disable-autofill-style">
@@ -170,32 +172,24 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
             // oxlint-disable-next-line jsx-a11y/no-autofocus -- sole primary field of a dedicated auth step; matches standard sign-in flows
             autoFocus
           />
-          {showPassword?.password ? (
-            <button
+          <span className="absolute right-2">
+            <IconButton
               type="button"
-              aria-label="Hide password"
-              className="absolute right-3 hover:cursor-pointer"
+              variant="ghost"
+              size="sm"
+              aria-label={showPassword.password ? "Hide password" : "Show password"}
+              aria-pressed={showPassword.password}
               onClick={() => handleShowPassword("password")}
-            >
-              <HideOutline className="h-5 w-5 text-placeholder" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              aria-label="Show password"
-              className="absolute right-3 hover:cursor-pointer"
-              onClick={() => handleShowPassword("password")}
-            >
-              <ShowOutline className="h-5 w-5 text-placeholder" />
-            </button>
-          )}
+              icon={<Icon icon={showPassword.password ? HideOutline : ShowOutline} />}
+            />
+          </span>
         </div>
         {passwordSupport}
       </div>
 
       {mode === EAuthModes.SIGN_UP && (
         <div className="space-y-1">
-          <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
+          <label className="text-body-xs-medium text-tertiary" htmlFor="confirm_password">
             Confirm password
           </label>
           <div className="relative flex h-10 items-center rounded-md border border-subtle bg-surface-1 pr-12 pl-3 [&_input]:disable-autofill-style">
@@ -211,29 +205,23 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               onBlur={() => setIsRetryPasswordInputFocused(false)}
               autoComplete="off"
             />
-            {showPassword?.retypePassword ? (
-              <button
+            <span className="absolute right-2">
+              <IconButton
                 type="button"
-                aria-label="Hide password"
-                className="absolute right-3 hover:cursor-pointer"
+                variant="ghost"
+                size="sm"
+                aria-label={showPassword.retypePassword ? "Hide password" : "Show password"}
+                aria-pressed={showPassword.retypePassword}
                 onClick={() => handleShowPassword("retypePassword")}
-              >
-                <HideOutline className="h-5 w-5 text-placeholder" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                aria-label="Show password"
-                className="absolute right-3 hover:cursor-pointer"
-                onClick={() => handleShowPassword("retypePassword")}
-              >
-                <ShowOutline className="h-5 w-5 text-placeholder" />
-              </button>
-            )}
+                icon={<Icon icon={showPassword.retypePassword ? HideOutline : ShowOutline} />}
+              />
+            </span>
           </div>
           {!!passwordFormData.confirm_password &&
             passwordFormData.password !== passwordFormData.confirm_password &&
-            renderPasswordMatchError && <span className="text-13 text-danger-primary">Passwords don{"'"}t match</span>}
+            renderPasswordMatchError && (
+              <span className="text-body-xs-regular text-danger-primary">Passwords don{"'"}t match</span>
+            )}
         </div>
       )}
 

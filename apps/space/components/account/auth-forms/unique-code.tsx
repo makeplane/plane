@@ -86,7 +86,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       <input type="hidden" value={uniqueCodeFormData.email} name="email" />
       <input type="hidden" value={nextPath} name="next_path" />
       <div className="space-y-1">
-        <label className="text-13 font-medium text-tertiary" htmlFor="email">
+        <label className="text-body-xs-medium text-tertiary" htmlFor="email">
           Email
         </label>
         <div className="relative flex h-10 items-center rounded-md border border-subtle bg-surface-1 px-3 [&_input]:disable-autofill-style">
@@ -116,7 +116,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       </div>
 
       <div className="space-y-1">
-        <label className="text-13 font-medium text-tertiary" htmlFor="code">
+        <label className="text-body-xs-medium text-tertiary" htmlFor="code">
           Unique code
         </label>
         <div className="relative flex h-10 items-center rounded-md border border-subtle bg-surface-1 pr-12 pl-3 [&_input]:disable-autofill-style">
@@ -132,7 +132,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
             autoFocus
           />
         </div>
-        <div className="flex w-full items-center justify-between px-1 pt-1 text-11">
+        <div className="flex w-full items-center justify-between px-1 pt-1 text-caption-sm-regular">
           <p className="flex items-center gap-1 font-medium text-success-primary">
             <TickCircleOutline height={12} width={12} />
             Paste the code sent to your email
