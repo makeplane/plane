@@ -8,7 +8,7 @@
 import React from "react";
 
 // Common classnames
-const AXIS_TICK_CLASSNAME = "fill-tertiary text-13";
+const AXIS_TICK_CLASSNAME = "fill-tertiary text-body-xs-regular";
 
 export const CustomXAxisTick = React.memo(function CustomXAxisTick({ x, y, payload, getLabel }: any) {
   return (

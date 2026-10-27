@@ -33,7 +33,7 @@ export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
         <div className="vertical-scrollbar scrollbar-sm flex max-h-[40vh] w-[12rem] flex-col overflow-y-scroll" />
       }
     >
-      <p className="w-full flex-shrink-0 truncate border-b border-subtle pb-2 text-11 font-medium text-primary">
+      <p className="w-full flex-shrink-0 truncate border-b border-subtle pb-2 text-caption-sm-medium text-primary">
         {label}
       </p>
       {filteredPayload.map((item) => {
@@ -42,7 +42,7 @@ export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
         return (
           <div
             key={item?.dataKey}
-            className={cn("flex w-full items-center gap-2 text-11 transition-opacity", {
+            className={cn("flex w-full items-center gap-2 text-caption-sm-regular transition-opacity", {
               "opacity-20": activeKey && item.dataKey !== activeKey,
             })}
           >
@@ -57,7 +57,7 @@ export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
               )}
               <span className="truncate text-tertiary">{itemLabels[item?.dataKey]}:</span>
             </div>
-            <span className="flex-shrink-0 font-medium text-secondary">{item?.value}</span>
+            <span className="flex-shrink-0 text-caption-sm-medium text-secondary">{item?.value}</span>
           </div>
         );
       })}
