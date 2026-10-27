@@ -8,7 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { Field } from "@makeplane/propel/components/field";
+import { Field, FieldError } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
@@ -185,15 +185,18 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                           value={value}
                           onChange={onChange}
                           placeholder={t("common.title")}
+                          aria-label={t("common.title")}
                           tabIndex={getIndex("name")}
                           // oxlint-disable-next-line jsx_a11y/no-autofocus
                           autoFocus
                         />
                       </InputGroup>
+                      <FieldError size="2xl" match={Boolean(errors?.name)}>
+                        {errors?.name?.message?.toString()}
+                      </FieldError>
                     </Field>
                   )}
                 />
-                <span className="text-11 text-danger-primary">{errors?.name?.message?.toString()}</span>
               </div>
             </div>
             <div>
@@ -211,6 +214,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                         id="description"
                         name="description"
                         placeholder={t("common.description")}
+                        aria-label={t("common.description")}
                         value={value}
                         onChange={onChange}
                         tabIndex={getIndex("descriptions")}
