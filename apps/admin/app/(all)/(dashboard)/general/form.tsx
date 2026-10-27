@@ -57,7 +57,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <div className="text-16 font-medium text-primary">Instance details</div>
+        <div className="text-body-md-medium text-primary">Instance details</div>
         <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-8 md:grid-cols-2 lg:grid-cols-3">
           <ControllerInput
             key="instance_name"
@@ -97,7 +97,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
       </div>
 
       <div className="space-y-6">
-        <div className="border-b border-subtle pb-1.5 text-16 font-medium text-primary">Telemetry</div>
+        <div className="border-b border-subtle pb-1.5 text-body-md-medium text-primary">Telemetry</div>
         <div className="flex items-center gap-14">
           <div className="flex grow items-center gap-4">
             <div className="shrink-0">
@@ -106,8 +106,8 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
               </div>
             </div>
             <div className="grow">
-              <div className="text-13 leading-5 font-medium text-primary">Let Plane collect anonymous usage data</div>
-              <div className="text-11 leading-5 font-regular text-tertiary">
+              <div className="text-body-sm-medium leading-5 text-primary">Let Plane collect anonymous usage data</div>
+              <div className="text-body-xs-regular leading-5 text-tertiary">
                 No PII is collected.This anonymized data is used to understand how you use Plane and build new features
                 in line with{" "}
                 <a

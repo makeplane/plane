@@ -163,7 +163,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
             />
           ))}
           <div className="flex flex-col gap-1">
-            <h4 id={emailSecurityLabelId} className="text-13 text-tertiary">
+            <h4 id={emailSecurityLabelId} className="text-body-xs-regular text-tertiary">
               Email security
             </h4>
             <Select
@@ -186,8 +186,8 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
           <div className="flex w-full max-w-xl flex-col gap-y-10 px-1">
             <div className="mr-8 flex items-center gap-10 pt-4">
               <div className="grow">
-                <div className="text-13 font-medium text-primary">Authentication</div>
-                <div className="text-11 font-regular text-tertiary">
+                <div className="text-body-xs-medium text-primary">Authentication</div>
+                <div className="text-caption-sm-regular text-tertiary">
                   This is optional, but we recommend setting up a username and a password for your SMTP server.
                 </div>
               </div>
