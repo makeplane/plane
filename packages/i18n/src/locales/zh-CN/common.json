@@ -153,6 +153,7 @@
   "no_favorites_yet": "暂无收藏",
   "create_folder": "创建文件夹",
   "new_folder": "新建文件夹",
+  "rename_folder": "重命名文件夹",
   "favorite_updated_successfully": "收藏更新成功",
   "favorite_created_successfully": "收藏创建成功",
   "folder_already_exists": "文件夹已存在",

@@ -153,6 +153,7 @@
   "no_favorites_yet": "아직 즐겨찾기가 없습니다",
   "create_folder": "폴더 생성",
   "new_folder": "새 폴더",
+  "rename_folder": "폴더 이름 변경",
   "favorite_updated_successfully": "즐겨찾기가 성공적으로 업데이트되었습니다",
   "favorite_created_successfully": "즐겨찾기가 성공적으로 생성되었습니다",
   "folder_already_exists": "폴더가 이미 존재합니다",

@@ -153,6 +153,7 @@
   "no_favorites_yet": "まだお気に入りがありません",
   "create_folder": "フォルダを作成",
   "new_folder": "新規フォルダ",
+  "rename_folder": "フォルダー名を変更",
   "favorite_updated_successfully": "お気に入りが正常に更新されました",
   "favorite_created_successfully": "お気に入りが正常に作成されました",
   "folder_already_exists": "フォルダは既に存在します",

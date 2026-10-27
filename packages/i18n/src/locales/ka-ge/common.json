@@ -153,6 +153,7 @@
   "no_favorites_yet": "ჯერ ფავორიტები არ არის",
   "create_folder": "ფოლდერის შექმნა",
   "new_folder": "ახალი ფოლდერი",
+  "rename_folder": "ფოლდერის გადარქმევა",
   "favorite_updated_successfully": "ფავორიტი წარმატებით განახლდა",
   "favorite_created_successfully": "ფავორიტი წარმატებით შეიქმნა",
   "folder_already_exists": "ფოლდერი უკვე არსებობს",

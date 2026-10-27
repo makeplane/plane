@@ -153,6 +153,7 @@
   "no_favorites_yet": "Нет избранного",
   "create_folder": "Создать папку",
   "new_folder": "Новая папка",
+  "rename_folder": "Переименовать папку",
   "favorite_updated_successfully": "Избранное успешно обновлено",
   "favorite_created_successfully": "Избранное успешно создано",
   "folder_already_exists": "Папка уже существует",

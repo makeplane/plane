@@ -153,6 +153,7 @@
   "no_favorites_yet": "Henüz favori yok",
   "create_folder": "Klasör oluştur",
   "new_folder": "Yeni Klasör",
+  "rename_folder": "Klasörü yeniden adlandır",
   "favorite_updated_successfully": "Favori başarıyla güncellendi",
   "favorite_created_successfully": "Favori başarıyla oluşturuldu",
   "folder_already_exists": "Klasör zaten var",

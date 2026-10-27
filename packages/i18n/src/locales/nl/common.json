@@ -153,6 +153,7 @@
   "no_favorites_yet": "Nog geen favorieten",
   "create_folder": "Map aanmaken",
   "new_folder": "Nieuwe map",
+  "rename_folder": "Map hernoemen",
   "favorite_updated_successfully": "Favoriet is bijgewerkt",
   "favorite_created_successfully": "Favoriet is aangemaakt",
   "folder_already_exists": "Map bestaat al",

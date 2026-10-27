@@ -153,6 +153,7 @@
   "no_favorites_yet": "Pas encore de favoris",
   "create_folder": "Créer un dossier",
   "new_folder": "Nouveau dossier",
+  "rename_folder": "Renommer le dossier",
   "favorite_updated_successfully": "Favori mis à jour avec succès",
   "favorite_created_successfully": "Favori créé avec succès",
   "folder_already_exists": "Le dossier existe déjà",

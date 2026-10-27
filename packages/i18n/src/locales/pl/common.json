@@ -153,6 +153,7 @@
   "no_favorites_yet": "Brak ulubionych",
   "create_folder": "Utwórz folder",
   "new_folder": "Nowy folder",
+  "rename_folder": "Zmień nazwę folderu",
   "favorite_updated_successfully": "Ulubione zaktualizowano pomyślnie",
   "favorite_created_successfully": "Ulubione utworzono pomyślnie",
   "folder_already_exists": "Folder już istnieje",

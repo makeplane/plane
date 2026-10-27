@@ -153,6 +153,7 @@
   "no_favorites_yet": "Все още няма любими",
   "create_folder": "Създай папка",
   "new_folder": "Нова папка",
+  "rename_folder": "Преименувай папка",
   "favorite_updated_successfully": "Любимият елемент е обновен успешно",
   "favorite_created_successfully": "Любимият елемент е създаден успешно",
   "folder_already_exists": "Папката вече съществува",

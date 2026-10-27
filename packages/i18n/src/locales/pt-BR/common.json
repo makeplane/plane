@@ -153,6 +153,7 @@
   "no_favorites_yet": "Nenhum favorito ainda",
   "create_folder": "Criar pasta",
   "new_folder": "Nova pasta",
+  "rename_folder": "Renomear pasta",
   "favorite_updated_successfully": "Favorito atualizado com sucesso",
   "favorite_created_successfully": "Favorito criado com sucesso",
   "folder_already_exists": "A pasta já existe",

@@ -153,6 +153,7 @@
   "no_favorites_yet": "Noch keine Favoriten",
   "create_folder": "Ordner erstellen",
   "new_folder": "Neuer Ordner",
+  "rename_folder": "Ordner umbenennen",
   "favorite_updated_successfully": "Favorit erfolgreich aktualisiert",
   "favorite_created_successfully": "Favorit erfolgreich erstellt",
   "folder_already_exists": "Ordner existiert bereits",

@@ -153,6 +153,7 @@
   "no_favorites_yet": "Aún no hay favoritos",
   "create_folder": "Crear carpeta",
   "new_folder": "Nueva carpeta",
+  "rename_folder": "Renombrar carpeta",
   "favorite_updated_successfully": "Favorito actualizado exitosamente",
   "favorite_created_successfully": "Favorito creado exitosamente",
   "folder_already_exists": "La carpeta ya existe",
