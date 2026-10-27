@@ -7,7 +7,15 @@
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { Field } from "@makeplane/propel/components/field";
+import { Field, FieldError } from "@makeplane/propel/components/field";
+import {
+  DialogActions,
+  DialogBody,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { ETabIndices } from "@plane/constants";
@@ -74,122 +82,129 @@ export function CycleForm(props: Props) {
   }, [data, reset]);
 
   return (
-    <form onSubmit={handleSubmit((formData) => handleFormSubmit(formData))}>
-      <div className="space-y-5 p-5">
-        <div className="flex items-center gap-x-3">
-          {!status && (
-            <Controller
-              control={control}
-              name="project_id"
-              render={({ field: { value, onChange } }) => (
-                <ProjectSelect
-                  value={value}
-                  onChange={(val) => {
-                    if (!val) return;
-                    onChange(val);
-                    setActiveProject(val);
-                  }}
-                  multiple={false}
-                  variant="pill-md"
-                  filterOption={(id) => !!projectsWithCreatePermissions?.[id]}
-                  tabIndex={getIndex("cover_image")}
-                />
-              )}
-            />
-          )}
-          <h3 className="text-18 font-medium text-secondary">
-            {status ? t("project_cycles.update_cycle") : t("project_cycles.create_cycle")}
-          </h3>
-        </div>
-        <div className="space-y-3">
-          <div className="space-y-1">
-            <Controller
-              name="name"
-              control={control}
-              rules={{
-                required: t("title_is_required"),
-                maxLength: {
-                  value: 255,
-                  message: t("title_should_be_less_than_255_characters"),
-                },
-              }}
-              render={({ field: { value, onChange } }) => (
-                <Field name="name" invalid={Boolean(errors?.name)}>
-                  <InputGroup size="2xl">
-                    <Input
-                      size="2xl"
-                      name="name"
-                      type="text"
-                      placeholder={t("title")}
-                      value={value}
-                      onChange={onChange}
-                      tabIndex={getIndex("description")}
-                      autoFocus
-                      aria-label={t("title")}
-                    />
-                  </InputGroup>
-                </Field>
-              )}
-            />
-            <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
+    <form className="flex min-h-0 flex-1 flex-col" onSubmit={handleSubmit((formData) => handleFormSubmit(formData))}>
+      <DialogMain>
+        <DialogHeader>
+          <div className="flex items-center gap-x-3">
+            {!status && (
+              <Controller
+                control={control}
+                name="project_id"
+                render={({ field: { value, onChange } }) => (
+                  <ProjectSelect
+                    value={value}
+                    onChange={(val) => {
+                      if (!val) return;
+                      onChange(val);
+                      setActiveProject(val);
+                    }}
+                    multiple={false}
+                    variant="pill-md"
+                    filterOption={(id) => !!projectsWithCreatePermissions?.[id]}
+                    tabIndex={getIndex("cover_image")}
+                  />
+                )}
+              />
+            )}
+            <DialogHeading>
+              <DialogTitle>{status ? t("project_cycles.update_cycle") : t("project_cycles.create_cycle")}</DialogTitle>
+            </DialogHeading>
           </div>
-          <div>
-            <Controller
-              name="description"
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <Field name="description" invalid={Boolean(errors?.description)}>
-                  <TextAreaGroup resize="none">
-                    <TextArea
-                      size="lg"
-                      surface="field"
-                      autoResize
-                      maxRows={8}
-                      name="description"
-                      placeholder={t("description")}
-                      value={value}
-                      onChange={onChange}
-                      tabIndex={getIndex("description")}
-                    />
-                  </TextAreaGroup>
-                </Field>
-              )}
-            />
+        </DialogHeader>
+        <DialogBody tabIndex={0}>
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <Controller
+                name="name"
+                control={control}
+                rules={{
+                  required: t("title_is_required"),
+                  maxLength: {
+                    value: 255,
+                    message: t("title_should_be_less_than_255_characters"),
+                  },
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <Field name="name" invalid={Boolean(errors?.name)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        name="name"
+                        type="text"
+                        placeholder={t("title")}
+                        value={value}
+                        onChange={onChange}
+                        tabIndex={getIndex("description")}
+                        autoFocus
+                        aria-label={t("title")}
+                      />
+                    </InputGroup>
+                    <FieldError size="2xl" match={Boolean(errors?.name)}>
+                      {errors?.name?.message}
+                    </FieldError>
+                  </Field>
+                )}
+              />
+            </div>
+            <div>
+              <Controller
+                name="description"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <Field name="description" invalid={Boolean(errors?.description)}>
+                    <TextAreaGroup resize="none">
+                      <TextArea
+                        size="lg"
+                        surface="field"
+                        autoResize
+                        maxRows={8}
+                        name="description"
+                        placeholder={t("description")}
+                        aria-label={t("description")}
+                        value={value}
+                        onChange={onChange}
+                        tabIndex={getIndex("description")}
+                      />
+                    </TextAreaGroup>
+                  </Field>
+                )}
+              />
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Controller
+                control={control}
+                name="start_date"
+                render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
+                  <Controller
+                    control={control}
+                    name="end_date"
+                    render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
+                      <DateRangeSelect
+                        variant="pill-md"
+                        className="h-7"
+                        minDate={new Date()}
+                        value={{
+                          from: getDate(startDateValue) ?? null,
+                          to: getDate(endDateValue) ?? null,
+                        }}
+                        onChange={(val) => {
+                          onChangeStartDate(val.from ? renderFormattedPayloadDate(val.from) : null);
+                          onChangeEndDate(val.to ? renderFormattedPayloadDate(val.to) : null);
+                        }}
+                        icon={<CalendarOutline />}
+                        placeholder={`${t("start_date")} - ${t("end_date")}`}
+                        weekStartsOn={userProfile?.start_of_the_week}
+                        tabIndex={getIndex("date_range")}
+                      />
+                    )}
+                  />
+                )}
+              />
+            </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Controller
-              control={control}
-              name="start_date"
-              render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
-                <Controller
-                  control={control}
-                  name="end_date"
-                  render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
-                    <DateRangeSelect
-                      variant="pill-md"
-                      className="h-7"
-                      minDate={new Date()}
-                      value={{
-                        from: getDate(startDateValue) ?? null,
-                        to: getDate(endDateValue) ?? null,
-                      }}
-                      onChange={(val) => {
-                        onChangeStartDate(val.from ? renderFormattedPayloadDate(val.from) : null);
-                        onChangeEndDate(val.to ? renderFormattedPayloadDate(val.to) : null);
-                      }}
-                      icon={<CalendarOutline />}
-                      placeholder={`${t("start_date")} - ${t("end_date")}`}
-                      weekStartsOn={userProfile?.start_of_the_week}
-                      tabIndex={getIndex("date_range")}
-                    />
-                  )}
-                />
-              )}
-            />
-          </div>
-        </div>
-      </div>
-      <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
+        </DialogBody>
+      </DialogMain>
+      <DialogActions>
         <Button
           variant="secondary"
           size="md"
@@ -215,7 +230,7 @@ export function CycleForm(props: Props) {
                 : t("project_cycles.create_cycle")
           }
         />
-      </div>
+      </DialogActions>
     </form>
   );
 }
