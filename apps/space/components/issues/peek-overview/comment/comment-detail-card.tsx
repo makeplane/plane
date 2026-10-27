@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ChatOutline, CloseOutline, MoreVerticalOutline, TickOutline } from "@makeplane/propel/icons";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
@@ -68,28 +69,23 @@ export const CommentCard = observer(function CommentCard(props: Props) {
     showEditorRef.current?.setEditorValue(formData.comment_html);
   };
 
+  const displayName = comment.actor_detail.is_bot
+    ? comment.actor_detail.first_name + " Bot"
+    : comment.actor_detail.display_name;
+
   return (
     <div className="relative flex items-start space-x-3">
       <div className="relative px-1">
-        {comment.actor_detail.avatar_url && comment.actor_detail.avatar_url !== "" ? (
-          <img
-            src={getFileURL(comment.actor_detail.avatar_url)}
-            alt={
-              comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name
-            }
-            height={30}
-            width={30}
-            className="grid size-7 place-items-center rounded-full border-2 border-strong-1"
-          />
-        ) : (
-          <div
-            className={`bg-gray-500 grid size-7 place-items-center rounded-full border-2 border-strong-1 text-on-color`}
-          >
-            {comment.actor_detail.is_bot
+        <Avatar
+          size="md"
+          src={comment.actor_detail.avatar_url ? getFileURL(comment.actor_detail.avatar_url) : undefined}
+          alt={displayName}
+          fallback={
+            comment.actor_detail.is_bot
               ? comment?.actor_detail?.first_name?.charAt(0)
-              : comment?.actor_detail?.display_name?.charAt(0)}
-          </div>
-        )}
+              : comment?.actor_detail?.display_name?.charAt(0)
+          }
+        />
 
         <span className="absolute -right-1 -bottom-0.5 rounded-tl-sm bg-layer-1 px-0.5 py-px">
           <ChatOutline className="size-3 text-secondary" aria-hidden="true" />
@@ -97,10 +93,8 @@ export const CommentCard = observer(function CommentCard(props: Props) {
       </div>
       <div className="min-w-0 flex-1">
         <div>
-          <div className="text-11">
-            {comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name}
-          </div>
-          <p className="mt-0.5 text-11 text-secondary">
+          <div className="text-caption-sm-regular">{displayName}</div>
+          <p className="mt-0.5 text-caption-sm-regular text-secondary">
             <>commented {timeAgo(comment.created_at)}</>
           </p>
         </div>
@@ -138,20 +132,22 @@ export const CommentCard = observer(function CommentCard(props: Props) {
               />
             </div>
             <div className="flex gap-1 self-end">
-              <button
+              <IconButton
                 type="submit"
+                variant="primary"
+                size="sm"
+                aria-label={t("save")}
                 disabled={isSubmitting}
-                className="group shadow-md rounded-sm border border-success-strong bg-success-primary p-2 duration-300 hover:bg-success-primary"
-              >
-                <TickOutline className="h-3 w-3 text-on-color" />
-              </button>
-              <button
+                icon={<Icon icon={<TickOutline />} />}
+              />
+              <IconButton
                 type="button"
-                className="group shadow-md rounded-sm border border-danger-strong bg-danger-primary p-2 duration-300 hover:bg-danger-primary-hover"
+                variant="ghost"
+                size="sm"
+                aria-label={t("cancel")}
                 onClick={() => setIsEditing(false)}
-              >
-                <CloseOutline className="h-3 w-3 text-on-color" />
-              </button>
+                icon={<Icon icon={<CloseOutline />} />}
+              />
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
