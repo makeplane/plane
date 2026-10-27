@@ -7,6 +7,9 @@
 import { useEffect, useState } from "react";
 import { CloseCircleOutline, TickCircleOutline } from "@makeplane/propel/icons";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { TextButton } from "@makeplane/propel/components/text-button";
+import { FieldLabel } from "@makeplane/propel/elements/field";
 import { API_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
@@ -95,9 +98,9 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       <input type="hidden" value={uniqueCodeFormData.email} name="email" />
       {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
       <div className="space-y-1">
-        <label htmlFor="email" className="text-13 font-medium text-tertiary">
+        <FieldLabel htmlFor="email" size="2xl" inset={false}>
           {t("auth.common.email.label")}
-        </label>
+        </FieldLabel>
         <InputGroup size="2xl">
           <Input
             size="2xl"
@@ -111,27 +114,29 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
             disabled
           />
           {uniqueCodeFormData.email.length > 0 && (
-            <button
+            <IconButton
               type="button"
-              className="grid size-5 place-items-center"
+              variant="ghost"
+              size="sm"
               aria-label={t("aria_labels.auth_forms.clear_email")}
+              showTooltip={false}
               onClick={handleEmailClear}
-            >
-              <CloseCircleOutline className="size-5 text-placeholder" />
-            </button>
+              icon={<CloseCircleOutline className="size-5 text-placeholder" />}
+            />
           )}
         </InputGroup>
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="unique-code" className="text-13 font-medium text-tertiary">
+        <FieldLabel htmlFor="unique-code" size="2xl" inset={false}>
           {t("auth.common.unique_code.label")}
-        </label>
+        </FieldLabel>
         <InputGroup size="2xl">
           <Input
             size="2xl"
             name="code"
             id="unique-code"
+            aria-describedby="unique-code-hint"
             value={uniqueCodeFormData.code}
             onChange={(e) => handleFormChange("code", e.target.value)}
             placeholder={t("auth.common.unique_code.placeholder")}
@@ -139,27 +144,25 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
             autoFocus
           />
         </InputGroup>
-        <div className="flex w-full items-center justify-between px-1 pt-1 text-11">
-          <p className="flex items-center gap-1 font-medium text-success-primary">
+        <div className="flex w-full items-center justify-between gap-2 px-1 pt-1 text-caption-sm-regular">
+          <p id="unique-code-hint" className="flex items-center gap-1 font-medium text-success-primary">
             <TickCircleOutline height={12} width={12} />
             {t("auth.common.unique_code.paste_code")}
           </p>
-          <button
+          <TextButton
             type="button"
+            variant="primary"
+            size="md"
             onClick={() => generateNewCode(uniqueCodeFormData.email)}
-            className={
-              isRequestNewCodeDisabled
-                ? "text-placeholder"
-                : "font-medium text-accent-secondary hover:text-accent-secondary"
-            }
             disabled={isRequestNewCodeDisabled}
-          >
-            {resendTimerCode > 0
-              ? t("auth.common.resend_in", { seconds: resendTimerCode })
-              : isRequestingNewCode
-                ? t("auth.common.unique_code.requesting_new_code")
-                : t("common.resend")}
-          </button>
+            label={
+              resendTimerCode > 0
+                ? t("auth.common.resend_in", { seconds: resendTimerCode })
+                : isRequestingNewCode
+                  ? t("auth.common.unique_code.requesting_new_code")
+                  : t("common.resend")
+            }
+          />
         </div>
       </div>
 

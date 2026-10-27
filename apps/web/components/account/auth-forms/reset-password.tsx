@@ -12,6 +12,7 @@ import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // ui
 import { Banner } from "@makeplane/propel/components/banner";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { FieldLabel, FieldError } from "@makeplane/propel/elements/field";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -120,9 +121,9 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
       >
         <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
         <div className="space-y-1">
-          <label className="text-13 font-medium text-tertiary" htmlFor="email">
+          <FieldLabel size="2xl" inset={false} htmlFor="email">
             {t("auth.common.email.label")}
-          </label>
+          </FieldLabel>
           <InputGroup size="2xl">
             <Input
               size="2xl"
@@ -137,15 +138,16 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
           </InputGroup>
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium text-tertiary" htmlFor="password">
+          <FieldLabel size="2xl" inset={false} htmlFor="password">
             {t("auth.common.password.label")}
-          </label>
+          </FieldLabel>
           <InputGroup size="2xl">
             <Input
               size="2xl"
               type={showPassword.password ? "text" : "password"}
               name="password"
               id="password"
+              aria-describedby="reset-password-support"
               value={resetFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
               placeholder={t("auth.common.password.placeholder")}
@@ -173,18 +175,28 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               }
             />
           </InputGroup>
-          <PasswordStrengthIndicator password={resetFormData.password} isFocused={isPasswordInputFocused} />
+          <div id="reset-password-support">
+            <PasswordStrengthIndicator password={resetFormData.password} isFocused={isPasswordInputFocused} />
+          </div>
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
+          <FieldLabel size="2xl" inset={false} htmlFor="confirm_password">
             {t("auth.common.password.confirm_password.label")}
-          </label>
+          </FieldLabel>
           <InputGroup size="2xl">
             <Input
               size="2xl"
               type={showPassword.retypePassword ? "text" : "password"}
               name="confirm_password"
               id="confirm_password"
+              aria-invalid={
+                (!!confirmPassword && password !== confirmPassword && renderPasswordMatchError) || undefined
+              }
+              aria-describedby={
+                !!confirmPassword && password !== confirmPassword && renderPasswordMatchError
+                  ? "reset-password-match-error"
+                  : undefined
+              }
               value={resetFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder={t("auth.common.password.confirm_password.placeholder")}
@@ -215,7 +227,9 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
           {!!resetFormData.confirm_password &&
             resetFormData.password !== resetFormData.confirm_password &&
             renderPasswordMatchError && (
-              <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
+              <FieldError size="lg" id="reset-password-match-error">
+                {t("auth.common.password.errors.match")}
+              </FieldError>
             )}
         </div>
         <Button

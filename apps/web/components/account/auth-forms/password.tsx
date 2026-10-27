@@ -12,6 +12,7 @@ import { CloseCircleOutline, HideOutline, ShowOutline } from "@makeplane/propel/
 // plane imports
 import { Banner } from "@makeplane/propel/components/banner";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { FieldLabel, FieldError } from "@makeplane/propel/elements/field";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -89,7 +90,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         {isSMTPConfigured ? (
           <Link
             href={`/accounts/forgot-password?email=${encodeURIComponent(email)}`}
-            className="text-11 font-medium text-accent-primary"
+            className="text-caption-sm-medium text-accent-primary"
           >
             {t("auth.common.forgot_password")}
           </Link>
@@ -164,9 +165,9 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         <input type="hidden" value={passwordFormData.email} name="email" />
         {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
         <div className="space-y-1">
-          <label htmlFor="email" className="text-13 font-medium text-tertiary">
+          <FieldLabel htmlFor="email" size="2xl" inset={false}>
             {t("auth.common.email.label")}
-          </label>
+          </FieldLabel>
           <InputGroup size="2xl">
             <Input
               size="2xl"
@@ -193,14 +194,15 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="password" className="text-13 font-medium text-tertiary">
+          <FieldLabel htmlFor="password" size="2xl" inset={false}>
             {mode === EAuthModes.SIGN_IN ? t("auth.common.password.label") : t("auth.common.password.set_password")}
-          </label>
+          </FieldLabel>
           <InputGroup size="2xl">
             <Input
               size="2xl"
               type={showPassword?.password ? "text" : "password"}
               id="password"
+              aria-describedby={passwordSupport ? "auth-password-support" : undefined}
               name="password"
               value={passwordFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
@@ -222,19 +224,27 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               showTooltip={false}
             />
           </InputGroup>
-          {passwordSupport}
+          {passwordSupport && <div id="auth-password-support">{passwordSupport}</div>}
         </div>
 
         {mode === EAuthModes.SIGN_UP && (
           <div className="space-y-1">
-            <label htmlFor="confirm-password" className="text-13 font-medium text-tertiary">
+            <FieldLabel htmlFor="confirm-password" size="2xl" inset={false}>
               {t("auth.common.password.confirm_password.label")}
-            </label>
+            </FieldLabel>
             <InputGroup size="2xl">
               <Input
                 size="2xl"
                 type={showPassword?.retypePassword ? "text" : "password"}
                 id="confirm-password"
+                aria-invalid={
+                  (!!confirmPassword && password !== confirmPassword && renderPasswordMatchError) || undefined
+                }
+                aria-describedby={
+                  !!confirmPassword && password !== confirmPassword && renderPasswordMatchError
+                    ? "auth-password-match-error"
+                    : undefined
+                }
                 name="confirm_password"
                 value={passwordFormData.confirm_password}
                 onChange={(e) => handleFormChange("confirm_password", e.target.value)}
@@ -262,7 +272,9 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
             {!!passwordFormData.confirm_password &&
               passwordFormData.password !== passwordFormData.confirm_password &&
               renderPasswordMatchError && (
-                <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
+                <FieldError size="lg" id="auth-password-match-error">
+                  {t("auth.common.password.errors.match")}
+                </FieldError>
               )}
           </div>
         )}
