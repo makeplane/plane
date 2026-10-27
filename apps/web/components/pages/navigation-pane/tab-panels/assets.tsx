@@ -7,6 +7,7 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { AnchorButton } from "@makeplane/propel/elements/anchor-button";
 import { DownloadOutline } from "@makeplane/propel/icons";
 // plane imports
 import { CORE_EXTENSIONS } from "@plane/editor";
@@ -68,32 +69,26 @@ const AssetItem = observer(function AssetItem(props: AssetItemProps) {
 
   if ([CORE_EXTENSIONS.IMAGE, CORE_EXTENSIONS.CUSTOM_IMAGE].includes(asset.type as CORE_EXTENSIONS))
     return (
-      <a
-        href={asset.href}
-        className="group/asset-item relative flex h-12 items-center gap-2 rounded-sm border border-subtle pr-2 transition-colors hover:bg-layer-1"
-      >
-        <div
-          className="h-12 w-11 flex-shrink-0 rounded-l-sm bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url('${assetSrc}')`,
-          }}
-        />
-        <div className="flex-1 space-y-0.5 truncate">
+      <div className="group/asset-item relative flex h-12 items-center gap-2 rounded-sm border border-subtle pr-2 transition-colors hover:bg-layer-1">
+        <a
+          href={asset.href}
+          className="flex h-full min-w-0 flex-1 items-center gap-2 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-offset-1"
+        >
+          <div
+            className="h-12 w-11 flex-shrink-0 rounded-l-sm bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url('${assetSrc}')`,
+            }}
+          />
           <p className="truncate text-13 font-medium">{asset.name}</p>
-          <div className="flex items-end justify-between gap-2">
-            <p className="shrink-0 text-11 text-secondary" />
-            <a
-              href={assetDownloadSrc}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="pointer-events-none flex shrink-0 items-center gap-1 rounded-sm px-1 py-0.5 text-secondary opacity-0 transition-opacity group-hover/asset-item:pointer-events-auto group-hover/asset-item:opacity-100 hover:text-primary"
-            >
-              <DownloadOutline className="size-3 shrink-0" />
-              <span className="text-11 font-medium">{t("page_navigation_pane.tabs.assets.download_button")}</span>
-            </a>
-          </div>
+        </a>
+        <div className="pointer-events-none shrink-0 opacity-0 transition-opacity group-focus-within/asset-item:pointer-events-auto group-focus-within/asset-item:opacity-100 group-hover/asset-item:pointer-events-auto group-hover/asset-item:opacity-100">
+          <AnchorButton href={assetDownloadSrc} target="_blank" rel="noreferrer noopener" variant="secondary" size="xs">
+            <DownloadOutline className="size-3 shrink-0" />
+            <span>{t("page_navigation_pane.tabs.assets.download_button")}</span>
+          </AnchorButton>
         </div>
-      </a>
+      </div>
     );
 
   return null;
