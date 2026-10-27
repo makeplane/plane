@@ -38,27 +38,30 @@ export function RadioInput({
   onChange,
   className,
 }: RadioInputProps) {
+  const labelId = React.useId();
   const wrapperClass = vertical ? "flex flex-col gap-1" : "flex gap-2";
 
   const setSelected = (value: string) => {
     onChange(value);
   };
 
-  let aria = ariaLabel ? ariaLabel.toLowerCase().replace(" ", "-") : "";
-  if (!aria && typeof inputLabel === "string") {
-    aria = inputLabel.toLowerCase().replace(" ", "-");
-  } else {
-    aria = "radio-input";
-  }
-
   return (
     <div className={className}>
-      {inputLabel && <div className={cn(`mb-2`, inputLabelClassName)}>{inputLabel}</div>}
-      <div className={cn(`${wrapperClass}`, inputWrapperClassName)}>
+      {inputLabel && (
+        <div id={labelId} className={cn(`mb-2`, inputLabelClassName)}>
+          {inputLabel}
+        </div>
+      )}
+      <div
+        role="radiogroup"
+        aria-label={ariaLabel}
+        aria-labelledby={!ariaLabel && inputLabel ? labelId : undefined}
+        className={cn(`${wrapperClass}`, inputWrapperClassName)}
+      >
         {options.map(({ value, label, disabled }, index) => (
-          <div
+          <label
             key={index}
-            onClick={() => !disabled && setSelected(value)}
+            htmlFor={`${name}_${index}`}
             className={cn(
               "flex items-center gap-2 text-14",
               disabled ? `cursor-not-allowed border-subtle bg-layer-1` : ``,
@@ -82,6 +85,11 @@ export function RadioInput({
                     value={value}
                     disabled={disabled}
                     checked={selected === value}
+                    onChange={() => setSelected(value)}
+                    onClick={(event) => {
+                      // Keep the existing selected-pointer notification without duplicating a new selection or Space.
+                      if (selected === value && event.detail > 0) setSelected(value);
+                    }}
                   />
                 }
               />
@@ -95,10 +103,8 @@ export function RadioInput({
                 />
               )}
             </span>
-            <label htmlFor={`${name}_${index}`} className="w-full cursor-pointer">
-              {label}
-            </label>
-          </div>
+            <span className="w-full cursor-pointer">{label}</span>
+          </label>
         ))}
       </div>
     </div>
