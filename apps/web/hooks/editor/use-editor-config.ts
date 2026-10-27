@@ -7,7 +7,7 @@
 import { useCallback } from "react";
 // plane imports
 import type { TFileHandler } from "@plane/editor";
-import { getEditorAssetDownloadSrc, getEditorAssetSrc } from "@plane/utils";
+import { getEditorAssetDownloadSrc, getEditorAssetSrc, isEditorV2AssetUrl } from "@plane/utils";
 // hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 // plane web hooks
@@ -85,7 +85,7 @@ export const useEditorConfig = () => {
           }
         },
         restore: async (src: string) => {
-          if (src?.startsWith("http")) {
+          if (src?.startsWith("http") && !isEditorV2AssetUrl(src)) {
             await fileService.restoreOldEditorAsset(workspaceId, src);
           } else {
             await fileService.restoreNewAsset(workspaceSlug, src);
