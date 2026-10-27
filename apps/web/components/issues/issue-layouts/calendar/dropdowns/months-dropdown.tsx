@@ -5,6 +5,9 @@
  */
 
 import { observer } from "mobx-react";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Toggle } from "@makeplane/propel/components/toggle";
+import { useTranslation } from "@plane/i18n";
 import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
 import { ChevronLeftOutline, ChevronRightOutline } from "@makeplane/propel/icons";
 //hooks
@@ -24,6 +27,7 @@ interface Props {
 }
 export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(props: Props) {
   const { issuesFilterStore } = props;
+  const { t } = useTranslation();
 
   const issueCalendarView = useCalendarView();
 
@@ -67,7 +71,10 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
       <PopoverTrigger
         disabled={calendarLayout === "week"}
         render={
-          <button type="button" className="text-18 font-semibold outline-none">
+          <button
+            type="button"
+            className="rounded-xs text-h5-semibold outline-none focus-visible:ring-2 focus-visible:ring-accent-strong"
+          >
             {calendarLayout === "month"
               ? `${MONTHS_LIST[activeMonthDate.getMonth() + 1].title} ${activeMonthDate.getFullYear()}`
               : getWeekLayoutHeader()}
@@ -77,41 +84,41 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
       <PopoverContent variant="rich" side="bottom" align="start" collisionPadding={12}>
         <div className="w-56 divide-y divide-subtle-1">
           <div className="flex items-center justify-between gap-2 pb-3">
-            <button
-              type="button"
-              className="grid place-items-center"
+            <IconButton
+              variant="ghost"
+              size="xs"
+              aria-label={`${t("prev")} ${activeMonthDate.getFullYear() - 1}`}
+              icon={<ChevronLeftOutline height={14} width={14} />}
               onClick={() => {
                 const previousYear = new Date(activeMonthDate.getFullYear() - 1, activeMonthDate.getMonth(), 1);
                 handleDateChange(previousYear);
               }}
-            >
-              <ChevronLeftOutline height={14} width={14} />
-            </button>
-            <span className="text-11">{activeMonthDate.getFullYear()}</span>
-            <button
-              type="button"
-              className="grid place-items-center"
+            />
+            <span className="text-caption-sm-regular">{activeMonthDate.getFullYear()}</span>
+            <IconButton
+              variant="ghost"
+              size="xs"
+              aria-label={`${t("next")} ${activeMonthDate.getFullYear() + 1}`}
+              icon={<ChevronRightOutline height={14} width={14} />}
               onClick={() => {
                 const nextYear = new Date(activeMonthDate.getFullYear() + 1, activeMonthDate.getMonth(), 1);
                 handleDateChange(nextYear);
               }}
-            >
-              <ChevronRightOutline height={14} width={14} />
-            </button>
+            />
           </div>
           <div className="grid grid-cols-4 items-stretch justify-items-stretch gap-4 pt-3">
             {Object.values(MONTHS_LIST).map((month, index) => (
-              <button
+              <Toggle
                 key={month.shortTitle}
-                type="button"
-                className="rounded-sm py-0.5 text-11 hover:bg-layer-1"
+                size="xs"
+                label={month.shortTitle}
+                aria-label={`${month.title} ${activeMonthDate.getFullYear()}`}
+                pressed={activeMonthDate.getMonth() === index}
                 onClick={() => {
                   const newDate = new Date(activeMonthDate.getFullYear(), index, 1);
                   handleDateChange(newDate);
                 }}
-              >
-                {month.shortTitle}
-              </button>
+              />
             ))}
           </div>
         </div>
