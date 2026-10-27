@@ -583,6 +583,8 @@ ATTACHMENT_MIME_TYPES = [
     "application/json",
     "text/xml",
     "text/csv",
+    "application/csv",
+    "text/comma-separated-values",
     "application/xml",
     # SQL
     "application/x-sql",
@@ -590,6 +592,8 @@ ATTACHMENT_MIME_TYPES = [
     "application/x-gzip",
     # Markdown
     "text/markdown",
+    "text/x-markdown",
+    "application/markdown",
 ]
 
 # The only MIME types ever served inline (S3Storage.generate_presigned_url pins the
