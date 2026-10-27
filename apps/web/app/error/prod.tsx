@@ -57,11 +57,11 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
         </div>
         <div className="relative mt-4 flex w-full flex-col gap-4">
           <div className="flex flex-col gap-2.5">
-            <h1 className="text-left text-18 font-semibold text-primary">&#x1F6A7; Looks like something went wrong!</h1>
-            <span className="text-left text-14 font-medium text-secondary">
+            <h1 className="text-left text-h5-semibold text-primary">&#x1F6A7; Looks like something went wrong!</h1>
+            <p className="text-left text-body-sm-medium text-secondary">
               We track these errors automatically and working on getting things back up and running. If the problem
               persists feel free to contact us. In the meantime, try refreshing.
-            </span>
+            </p>
           </div>
 
           <div className="mt-1 flex items-center justify-start gap-6">
@@ -71,7 +71,7 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
                   href={link.value}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-13 text-accent-primary hover:underline"
+                  className="text-body-xs-regular text-accent-primary hover:underline"
                 >
                   {link.label}
                 </a>
