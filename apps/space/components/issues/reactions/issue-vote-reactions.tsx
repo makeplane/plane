@@ -10,7 +10,9 @@ import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // plane imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { cn } from "@plane/utils";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Toggle, ToggleLabel } from "@makeplane/propel/elements/toggle";
+import { useTranslation } from "@plane/i18n";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
@@ -26,6 +28,7 @@ type TIssueVotes = {
 
 export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
   const { anchor, issueIdFromProps, size = "md" } = props;
+  const { t } = useTranslation();
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
   // router
@@ -75,7 +78,6 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
 
   // derived values
   const { queryParam } = queryParamGenerator({ peekId, board, state, priority, labels });
-  const votingDimensions = size === "sm" ? "px-1 h-6 min-w-9" : "px-2 h-7";
 
   return (
     <div className="flex items-center gap-2">
@@ -90,27 +92,22 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             : "No upvotes yet"
         }
       >
-        <button
+        <Toggle
           type="button"
+          size={size === "sm" ? "xs" : "sm"}
+          aria-label={`${t("issue.vote.click_to_upvote")}, ${allUpVotes.length}`}
+          aria-pressed={isUpVotedByUser}
+          data-pressed={isUpVotedByUser ? "" : undefined}
           disabled={isSubmitting}
           onClick={(e) => {
             if (isInIframe) return;
             if (user) handleVote(e, 1);
             else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
-          className={cn(
-            "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border hover:bg-layer-transparent-hover focus:outline-none",
-            votingDimensions,
-            {
-              "border-accent-strong-200 text-accent-secondary": isUpVotedByUser,
-              "border-strong": !isUpVotedByUser,
-              "cursor-default": isInIframe,
-            }
-          )}
         >
-          <TopArrowOutline className="size-3.5 shrink-0" />
-          <span className="text-13 font-regular transition-opacity ease-in-out">{allUpVotes.length}</span>
-        </button>
+          <Icon icon={<TopArrowOutline />} />
+          <ToggleLabel>{allUpVotes.length}</ToggleLabel>
+        </Toggle>
       </Tooltip>
 
       {/* downvote button 👇 */}
@@ -125,27 +122,22 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             : "No downvotes yet"
         }
       >
-        <button
+        <Toggle
           type="button"
+          size={size === "sm" ? "xs" : "sm"}
+          aria-label={`${t("issue.vote.click_to_downvote")}, ${allDownVotes.length}`}
+          aria-pressed={isDownVotedByUser}
+          data-pressed={isDownVotedByUser ? "" : undefined}
           disabled={isSubmitting}
           onClick={(e) => {
             if (isInIframe) return;
             if (user) handleVote(e, -1);
             else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
-          className={cn(
-            "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border hover:bg-layer-transparent-hover focus:outline-none",
-            votingDimensions,
-            {
-              "border-danger-strong text-danger-primary": isDownVotedByUser,
-              "border-strong": !isDownVotedByUser,
-              "cursor-default": isInIframe,
-            }
-          )}
         >
-          <ArrowDownOutline className="size-3.5 shrink-0" />
-          <span className="text-13 font-regular transition-opacity ease-in-out">{allDownVotes.length}</span>
-        </button>
+          <Icon icon={<ArrowDownOutline />} />
+          <ToggleLabel>{allDownVotes.length}</ToggleLabel>
+        </Toggle>
       </Tooltip>
     </div>
   );
