@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { DialogBody, DialogMain } from "@makeplane/propel/components/dialog";
 import { setToast } from "@plane/blocks/toast";
 import { EFileAssetType } from "@plane/types";
 // components
@@ -174,20 +175,28 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
 
   return (
     <FormProvider {...methods}>
-      <ProjectCreateHeader handleClose={handleClose} isMobile={isMobile} />
-
-      <form onSubmit={handleSubmit(onSubmit)} className="px-3">
-        <div className="mt-9 space-y-6 pb-5">
-          <ProjectCommonAttributes
-            setValue={setValue}
-            isMobile={isMobile}
-            shouldAutoSyncIdentifier={shouldAutoSyncIdentifier}
-            setShouldAutoSyncIdentifier={setShouldAutoSyncIdentifier}
-          />
-          <ProjectAttributes isMobile={isMobile} />
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="shrink-0">
+          <ProjectCreateHeader handleClose={handleClose} isMobile={isMobile} />
         </div>
-        <ProjectCreateButtons handleClose={handleClose} />
-      </form>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+          <DialogMain>
+            <DialogBody tabIndex={0}>
+              <div className="mt-5 space-y-6">
+                <ProjectCommonAttributes
+                  setValue={setValue}
+                  isMobile={isMobile}
+                  shouldAutoSyncIdentifier={shouldAutoSyncIdentifier}
+                  setShouldAutoSyncIdentifier={setShouldAutoSyncIdentifier}
+                />
+                <ProjectAttributes isMobile={isMobile} />
+              </div>
+            </DialogBody>
+          </DialogMain>
+          <ProjectCreateButtons handleClose={handleClose} />
+        </form>
+      </div>
     </FormProvider>
   );
 });

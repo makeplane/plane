@@ -7,7 +7,7 @@
 import type { ChangeEvent } from "react";
 import type { UseFormSetValue } from "react-hook-form";
 import { Controller, useFormContext } from "react-hook-form";
-import { Field } from "@makeplane/propel/components/field";
+import { Field, FieldError } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { InfoOutline } from "@makeplane/propel/icons";
@@ -80,13 +80,16 @@ function ProjectCommonAttributes(props: Props) {
                   value={value}
                   onChange={handleNameChange(onChange)}
                   placeholder={t("project_name")}
+                  aria-label={t("project_name")}
                   tabIndex={getIndex("name")}
                 />
               </InputGroup>
+              <FieldError size="2xl" match={Boolean(errors.name)}>
+                {errors?.name?.message}
+              </FieldError>
             </Field>
           )}
         />
-        <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
       </div>
       <div className="relative">
         <Controller
@@ -117,9 +120,13 @@ function ProjectCommonAttributes(props: Props) {
                   value={value}
                   onChange={handleIdentifierChange(onChange)}
                   placeholder={t("project_id")}
+                  aria-label={t("project_id")}
                   tabIndex={getIndex("identifier")}
                 />
               </InputGroup>
+              <FieldError size="2xl" match={Boolean(errors.identifier)}>
+                {errors?.identifier?.message}
+              </FieldError>
             </Field>
           )}
         />
@@ -132,7 +139,6 @@ function ProjectCommonAttributes(props: Props) {
         >
           <InfoOutline className="absolute top-2.5 right-2 h-3 w-3 text-placeholder" />
         </Tooltip>
-        <span className="text-11 text-danger-primary">{errors?.identifier?.message}</span>
       </div>
       <div className="md:col-span-4">
         <Controller
@@ -150,6 +156,7 @@ function ProjectCommonAttributes(props: Props) {
                   name="description"
                   value={value}
                   placeholder={t("description")}
+                  aria-label={t("description")}
                   onChange={(e) => {
                     onChange(e);
                     handleFormOnChange?.();

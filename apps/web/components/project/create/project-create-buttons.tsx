@@ -9,6 +9,7 @@ import { useFormContext } from "react-hook-form";
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
+import { DialogActions } from "@makeplane/propel/components/dialog";
 import type { IProject } from "@plane/types";
 // ui
 // helpers
@@ -29,7 +30,7 @@ function ProjectCreateButtons(props: Props) {
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
 
   return (
-    <div className="flex justify-end gap-2 border-t border-subtle py-4">
+    <DialogActions>
       <Button
         variant="secondary"
         size="md"
@@ -47,7 +48,7 @@ function ProjectCreateButtons(props: Props) {
         loading={isSubmitting}
         tabIndex={getIndex("submit")}
       />
-    </div>
+    </DialogActions>
   );
 }
 
