@@ -35,7 +35,7 @@ export const IssuesNavbarRoot = observer(function IssuesNavbarRoot(props: Props)
             <ProjectsOutline className="size-4" />
           </span>
         )}
-        <div className="line-clamp-1 max-w-[300px] overflow-hidden text-16 font-medium">
+        <div className="line-clamp-1 max-w-[300px] overflow-hidden text-body-md-medium">
           {project_details?.name || `...`}
         </div>
       </div>
