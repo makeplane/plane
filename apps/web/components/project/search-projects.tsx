@@ -17,6 +17,7 @@ import { cn } from "@plane/utils";
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 
 export const ProjectSearch = observer(function ProjectSearch() {
   // i18n
@@ -25,6 +26,7 @@ export const ProjectSearch = observer(function ProjectSearch() {
   const { searchQuery, updateSearchQuery } = useProjectFilter();
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
+  const searchButtonRef = useRef<HTMLButtonElement>(null);
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // outside click detector hook
@@ -35,7 +37,10 @@ export const ProjectSearch = observer(function ProjectSearch() {
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
-      else setIsSearchOpen(false);
+      else {
+        setIsSearchOpen(false);
+        requestAnimationFrame(() => searchButtonRef.current?.focus());
+      }
     }
   };
 
@@ -43,46 +48,53 @@ export const ProjectSearch = observer(function ProjectSearch() {
     <div className="flex items-center">
       {!isSearchOpen && (
         <IconButton
+          ref={searchButtonRef}
           variant="ghost"
           size="md"
           render={<button type="button" className="-mr-1" />}
           onClick={() => {
             setIsSearchOpen(true);
-            inputRef.current?.focus();
+            requestAnimationFrame(() => {
+              if (inputRef.current && !inputRef.current.closest("[inert]")) inputRef.current.focus();
+            });
           }}
           icon={<Icon icon={SearchOutline} />}
           aria-label={t("common.search.label")}
         />
       )}
       <div
-        className={cn(
-          "ml-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent bg-surface-1 text-placeholder opacity-0 transition-[width] ease-linear",
-          {
-            "w-30 border-subtle px-2.5 py-1.5 opacity-100 md:w-64": isSearchOpen,
-          }
-        )}
+        inert={!isSearchOpen}
+        aria-hidden={!isSearchOpen}
+        className={cn("ml-auto w-0 overflow-hidden opacity-0 transition-[width] ease-linear", {
+          "w-30 overflow-visible opacity-100 md:w-64": isSearchOpen,
+        })}
       >
-        <SearchOutline className="h-3.5 w-3.5" />
-        <input
-          ref={inputRef}
-          className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
-          placeholder={t("common.search.label")}
-          value={searchQuery}
-          onChange={(e) => updateSearchQuery(e.target.value)}
-          onKeyDown={handleInputKeyDown}
-        />
-        {isSearchOpen && (
-          <button
-            type="button"
-            className="grid place-items-center"
-            onClick={() => {
-              updateSearchQuery("");
-              setIsSearchOpen(false);
-            }}
-          >
-            <CloseOutline className="h-3 w-3" />
-          </button>
-        )}
+        <InputGroup size="lg">
+          <Icon icon={SearchOutline} tint="placeholder" />
+          <Input
+            size="lg"
+            aria-label={t("common.search.label")}
+            ref={inputRef}
+            placeholder={t("common.search.label")}
+            value={searchQuery}
+            onChange={(e) => updateSearchQuery(e.target.value)}
+            onKeyDown={handleInputKeyDown}
+          />
+          {isSearchOpen && (
+            <IconButton
+              type="button"
+              variant="ghost"
+              size="xs"
+              aria-label={t("close")}
+              onClick={() => {
+                updateSearchQuery("");
+                setIsSearchOpen(false);
+                requestAnimationFrame(() => searchButtonRef.current?.focus());
+              }}
+              icon={<Icon icon={CloseOutline} />}
+            />
+          )}
+        </InputGroup>
       </div>
     </div>
   );

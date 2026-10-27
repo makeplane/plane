@@ -6,6 +6,10 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { useTranslation } from "@plane/i18n";
 
 import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 import type { TViewFilterProps, TViewFilters } from "@plane/types";
@@ -25,6 +29,7 @@ type Props = {
 
 export const ViewFiltersSelection = observer(function ViewFiltersSelection(props: Props) {
   const { filters, handleFiltersUpdate, memberIds } = props;
+  const { t } = useTranslation();
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
   // store
@@ -57,23 +62,29 @@ export const ViewFiltersSelection = observer(function ViewFiltersSelection(props
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
       <div className="bg-surface-1 p-2.5 pb-0">
-        <div className="flex items-center gap-1.5 rounded-sm border-[0.5px] border-subtle bg-surface-2 px-1.5 py-1 text-11">
-          <SearchOutline className="text-placeholder" width={12} height={12} />
-          <input
+        <InputGroup size="md">
+          <Icon icon={SearchOutline} tint="placeholder" />
+          <Input
+            size="md"
+            aria-label={t("common.search.label")}
             type="text"
-            className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
-            placeholder="Search"
+            placeholder={t("common.search.label")}
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
             // oxlint-disable-next-line jsx_a11y/no-autofocus
             autoFocus={!isMobile}
           />
           {filtersSearchQuery !== "" && (
-            <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
-              <CloseOutline className="text-tertiary" height={12} width={12} />
-            </button>
+            <IconButton
+              type="button"
+              variant="ghost"
+              size="xs"
+              aria-label={t("common.clear")}
+              onClick={() => setFiltersSearchQuery("")}
+              icon={<Icon icon={CloseOutline} />}
+            />
           )}
-        </div>
+        </InputGroup>
       </div>
       <div className="vertical-scrollbar scrollbar-sm h-full w-full divide-y divide-subtle-1 overflow-y-auto px-2.5">
         <div className="py-2">

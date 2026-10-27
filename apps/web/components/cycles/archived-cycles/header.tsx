@@ -8,6 +8,7 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Icon } from "@makeplane/propel/components/icon";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 // icons
 import { CloseOutline, FilterOutline, SearchOutline } from "@makeplane/propel/icons";
@@ -31,6 +32,7 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
   const { projectId } = useParams();
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
+  const searchButtonRef = useRef<HTMLButtonElement>(null);
   // hooks
   const { currentProjectArchivedFilters, archivedCyclesSearchQuery, updateFilters, updateArchivedCyclesSearchQuery } =
     useCycleFilter();
@@ -69,6 +71,7 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
       else {
         setIsSearchOpen(false);
         inputRef.current?.blur();
+        requestAnimationFrame(() => searchButtonRef.current?.focus());
       }
     }
   };
@@ -84,6 +87,7 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
       <div className="flex h-full items-center gap-3 self-end px-8">
         {!isSearchOpen && (
           <IconButton
+            ref={searchButtonRef}
             type="button"
             variant="ghost"
             size="md"
@@ -92,42 +96,47 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
             render={<button type="button" className="-mr-5" />}
             onClick={() => {
               setIsSearchOpen(true);
-              inputRef.current?.focus();
+              requestAnimationFrame(() => {
+                if (inputRef.current && !inputRef.current.closest("[inert]")) inputRef.current.focus();
+              });
             }}
             icon={<Icon icon={SearchOutline} />}
           />
         )}
         <div
-          className={cn(
-            "ml-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent bg-surface-1 text-placeholder opacity-0 transition-[width] ease-linear",
-            {
-              "w-64 border-subtle px-2.5 py-1.5 opacity-100": isSearchOpen,
-            }
-          )}
+          inert={!isSearchOpen}
+          aria-hidden={!isSearchOpen}
+          className={cn("ml-auto w-0 overflow-hidden opacity-0 transition-[width] ease-linear", {
+            "w-64 overflow-visible opacity-100": isSearchOpen,
+          })}
         >
-          <SearchOutline className="h-3.5 w-3.5" />
-          <input
-            ref={inputRef}
-            className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
-            placeholder="Search"
-            value={archivedCyclesSearchQuery}
-            onChange={(e) => updateArchivedCyclesSearchQuery(e.target.value)}
-            onKeyDown={handleInputKeyDown}
-          />
-          {isSearchOpen && (
-            <IconButton
-              type="button"
-              variant="ghost"
-              size="xs"
-              aria-label={t("close")}
-              showTooltip={!isMobile}
-              onClick={() => {
-                updateArchivedCyclesSearchQuery("");
-                setIsSearchOpen(false);
-              }}
-              icon={<Icon icon={CloseOutline} />}
+          <InputGroup size="lg">
+            <Icon icon={SearchOutline} tint="placeholder" />
+            <Input
+              size="lg"
+              aria-label={t("common.search.label")}
+              ref={inputRef}
+              placeholder={t("common.search.label")}
+              value={archivedCyclesSearchQuery}
+              onChange={(e) => updateArchivedCyclesSearchQuery(e.target.value)}
+              onKeyDown={handleInputKeyDown}
             />
-          )}
+            {isSearchOpen && (
+              <IconButton
+                type="button"
+                variant="ghost"
+                size="xs"
+                aria-label={t("close")}
+                showTooltip={!isMobile}
+                onClick={() => {
+                  updateArchivedCyclesSearchQuery("");
+                  setIsSearchOpen(false);
+                  requestAnimationFrame(() => searchButtonRef.current?.focus());
+                }}
+                icon={<Icon icon={CloseOutline} />}
+              />
+            )}
+          </InputGroup>
         </div>
         <FiltersDropdown
           icon={<FilterOutline className="h-3 w-3" />}

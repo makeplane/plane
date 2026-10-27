@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
@@ -36,12 +37,13 @@ export const CycleFiltersSelection = observer(function CycleFiltersSelection(pro
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
       <div className="bg-surface-1 p-2.5 pb-0">
-        <div className="flex items-center gap-1.5 rounded-sm border-[0.5px] border-subtle bg-surface-2 px-1.5 py-1 text-11">
-          <SearchOutline className="text-placeholder" width={12} height={12} />
-          <input
+        <InputGroup size="md">
+          <Icon icon={SearchOutline} tint="placeholder" />
+          <Input
+            size="md"
+            aria-label={t("common.search.label")}
             type="text"
-            className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
-            placeholder="Search"
+            placeholder={t("common.search.label")}
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
             // oxlint-disable-next-line jsx-a11y/no-autofocus -- preserve the existing desktop filter-search focus
@@ -58,7 +60,7 @@ export const CycleFiltersSelection = observer(function CycleFiltersSelection(pro
               icon={<Icon icon={CloseOutline} />}
             />
           )}
-        </div>
+        </InputGroup>
       </div>
       <div className="vertical-scrollbar scrollbar-sm h-full w-full divide-y divide-subtle-1 overflow-y-auto px-2.5">
         {/* cycle status */}
