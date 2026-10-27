@@ -83,7 +83,7 @@ const ModuleLinksCollapsible = observer(function ModuleLinksCollapsible(props: T
       <Collapsible
         open={isOpen}
         onOpenChange={setIsOpen}
-        trigger={<span className="text-13 font-medium text-secondary">{t("common.links")}</span>}
+        trigger={<span className="text-body-xs-medium text-secondary">{t("common.links")}</span>}
       >
         <div className="mt-2 flex min-h-72 w-full flex-col space-y-3 overflow-y-auto">
           {isEditingAllowed && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
@@ -114,7 +114,7 @@ const ModuleLinksCollapsible = observer(function ModuleLinksCollapsible(props: T
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <InfoOutline className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
-                <span className="p-0.5 text-11 text-tertiary">{t("common.no_links_added_yet")}</span>
+                <span className="p-0.5 text-caption-sm-regular text-tertiary">{t("common.no_links_added_yet")}</span>
               </div>
               {isEditingAllowed && !isArchived && (
                 <Button
@@ -316,7 +316,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                     }`}
                   >
                     <span
-                      className="flex h-6 w-20 items-center justify-center rounded-xs text-center text-11"
+                      className="flex h-6 w-20 items-center justify-center rounded-xs text-center text-caption-sm-regular"
                       style={{
                         color: moduleStatus ? moduleStatus.color : "#a3a3a2",
                         backgroundColor: moduleStatus ? `${moduleStatus.color}20` : "#a3a3a220",
@@ -329,7 +329,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
               )}
             />
           </div>
-          <h4 className="w-full text-18 font-semibold wrap-break-word text-primary">{moduleDetails.name}</h4>
+          <h4 className="w-full text-body-md-semibold wrap-break-word text-primary">{moduleDetails.name}</h4>
           {moduleDetails.description && (
             <TextArea size="lg" surface="inline" autoResize value={moduleDetails.description} disabled />
           )}
@@ -339,7 +339,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <StartDateOutline className="h-4 w-4" />
-              <span className="text-14">{t("date_range")}</span>
+              <span className="text-body-sm-regular">{t("date_range")}</span>
             </div>
             <div className="h-7">
               <Controller
@@ -378,7 +378,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <UserAltOutline className="h-4 w-4" />
-              <span className="text-14">{t("lead")}</span>
+              <span className="text-body-sm-regular">{t("lead")}</span>
             </div>
             <Controller
               control={control}
@@ -403,7 +403,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <MembersOutline className="h-4 w-4" />
-              <span className="text-14">{t("members")}</span>
+              <span className="text-body-sm-regular">{t("members")}</span>
             </div>
             <Controller
               control={control}
@@ -429,10 +429,10 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <WorkItemsOutline className="h-4 w-4" />
-              <span className="text-14">{t("issues")}</span>
+              <span className="text-body-sm-regular">{t("issues")}</span>
             </div>
             <div className="flex h-7 w-3/5 items-center">
-              <span className="px-1.5 text-13 text-tertiary">{issueCount}</span>
+              <span className="px-1.5 text-body-xs-regular text-tertiary">{issueCount}</span>
             </div>
           </div>
 
@@ -443,10 +443,10 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
             <div className="flex items-center justify-start gap-1">
               <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
                 <WorkItemsOutline className="h-4 w-4" />
-                <span className="text-14">{t("points")}</span>
+                <span className="text-body-sm-regular">{t("points")}</span>
               </div>
               <div className="flex h-7 w-3/5 items-center">
-                <span className="px-1.5 text-13 text-tertiary">{issueEstimatePointCount}</span>
+                <span className="px-1.5 text-body-xs-regular text-tertiary">{issueEstimatePointCount}</span>
               </div>
             </div>
           )}
