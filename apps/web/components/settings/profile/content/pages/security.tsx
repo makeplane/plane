@@ -10,6 +10,8 @@ import { Controller, useForm } from "react-hook-form";
 import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Field } from "@makeplane/propel/components/field";
+import { FieldLabel, FieldError } from "@makeplane/propel/elements/field";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -139,7 +141,9 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
         <div className="flex flex-col gap-y-7">
           {oldPasswordRequired && (
             <div className="flex flex-col gap-y-2">
-              <h4 className="text-13">{t("auth.common.password.current_password.label")}</h4>
+              <FieldLabel size="2xl" inset={false} htmlFor="old_password">
+                {t("auth.common.password.current_password.label")}
+              </FieldLabel>
               <Controller
                 control={control}
                 name="old_password"
@@ -152,36 +156,48 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
                       <Input
                         size="2xl"
                         id="old_password"
+                        aria-describedby={errors.old_password ? "security-old-password-error" : undefined}
                         type={showPassword?.oldPassword ? "text" : "password"}
                         value={value}
                         onChange={onChange}
                         placeholder={t("old_password")}
                         autoComplete="current-password"
                       />
-                      <button
+                      <IconButton
                         type="button"
-                        className="grid size-5 place-items-center"
+                        variant="ghost"
+                        size="sm"
+                        showTooltip={false}
                         onClick={() => handleShowPassword("oldPassword")}
-                        aria-label={showPassword?.oldPassword ? "Hide password" : "Show password"}
-                      >
-                        {showPassword?.oldPassword ? (
-                          <HideOutline className="size-5 text-placeholder" />
-                        ) : (
-                          <ShowOutline className="size-5 text-placeholder" />
+                        aria-label={t(
+                          showPassword?.oldPassword
+                            ? "aria_labels.auth_forms.hide_password"
+                            : "aria_labels.auth_forms.show_password"
                         )}
-                      </button>
+                        icon={
+                          showPassword?.oldPassword ? (
+                            <HideOutline className="size-5 text-placeholder" />
+                          ) : (
+                            <ShowOutline className="size-5 text-placeholder" />
+                          )
+                        }
+                      />
                     </InputGroup>
                   </Field>
                 )}
               />
               {errors.old_password && (
-                <span className="text-11 text-danger-primary">{errors.old_password.message}</span>
+                <FieldError size="lg" id="security-old-password-error">
+                  {errors.old_password.message}
+                </FieldError>
               )}
             </div>
           )}
           <div className="grid gap-x-4 gap-y-7 sm:grid-cols-2">
             <div className="flex flex-col gap-y-2">
-              <h4 className="text-13">{t("auth.common.password.new_password.label")}</h4>
+              <FieldLabel size="2xl" inset={false} htmlFor="new_password">
+                {t("auth.common.password.new_password.label")}
+              </FieldLabel>
               <Controller
                 control={control}
                 name="new_password"
@@ -194,6 +210,22 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
                       <Input
                         size="2xl"
                         id="new_password"
+                        aria-invalid={
+                          Boolean(errors.new_password) ||
+                          (isNewPasswordSameAsOldPassword && !isPasswordInputFocused) ||
+                          undefined
+                        }
+                        aria-describedby={
+                          [
+                            passwordSupport && "security-new-password-support",
+                            errors.new_password && "security-new-password-error",
+                            isNewPasswordSameAsOldPassword &&
+                              !isPasswordInputFocused &&
+                              "security-new-password-same-error",
+                          ]
+                            .filter(Boolean)
+                            .join(" ") || undefined
+                        }
                         type={showPassword?.password ? "text" : "password"}
                         value={value}
                         placeholder={t("auth.common.password.new_password.placeholder")}
@@ -202,34 +234,45 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
                         onBlur={() => setIsPasswordInputFocused(false)}
                         autoComplete="new-password"
                       />
-                      <button
+                      <IconButton
                         type="button"
-                        className="grid size-5 place-items-center"
+                        variant="ghost"
+                        size="sm"
+                        showTooltip={false}
                         onClick={() => handleShowPassword("password")}
-                        aria-label={showPassword?.password ? "Hide password" : "Show password"}
-                      >
-                        {showPassword?.password ? (
-                          <HideOutline className="size-5 text-placeholder" />
-                        ) : (
-                          <ShowOutline className="size-5 text-placeholder" />
+                        aria-label={t(
+                          showPassword?.password
+                            ? "aria_labels.auth_forms.hide_password"
+                            : "aria_labels.auth_forms.show_password"
                         )}
-                      </button>
+                        icon={
+                          showPassword?.password ? (
+                            <HideOutline className="size-5 text-placeholder" />
+                          ) : (
+                            <ShowOutline className="size-5 text-placeholder" />
+                          )
+                        }
+                      />
                     </InputGroup>
                   </Field>
                 )}
               />
-              {passwordSupport}
+              {passwordSupport && <div id="security-new-password-support">{passwordSupport}</div>}
               {errors.new_password && (
-                <span className="text-11 text-danger-primary">{errors.new_password.message}</span>
+                <FieldError size="lg" id="security-new-password-error">
+                  {errors.new_password.message}
+                </FieldError>
               )}
               {isNewPasswordSameAsOldPassword && !isPasswordInputFocused && (
-                <span className="text-11 text-danger-primary">
+                <FieldError size="lg" id="security-new-password-same-error">
                   {t("new_password_must_be_different_from_old_password")}
-                </span>
+                </FieldError>
               )}
             </div>
             <div className="flex flex-col gap-y-2">
-              <h4 className="text-13">{t("auth.common.password.confirm_password.label")}</h4>
+              <FieldLabel size="2xl" inset={false} htmlFor="confirm_password">
+                {t("auth.common.password.confirm_password.label")}
+              </FieldLabel>
               <Controller
                 control={control}
                 name="confirm_password"
@@ -242,6 +285,16 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
                       <Input
                         size="2xl"
                         id="confirm_password"
+                        aria-invalid={
+                          Boolean(errors.confirm_password) ||
+                          (!!confirmPassword && password !== confirmPassword && renderPasswordMatchError) ||
+                          undefined
+                        }
+                        aria-describedby={
+                          !!confirmPassword && password !== confirmPassword && renderPasswordMatchError
+                            ? "security-password-match-error"
+                            : undefined
+                        }
                         type={showPassword?.confirmPassword ? "text" : "password"}
                         placeholder={t("auth.common.password.confirm_password.placeholder")}
                         value={value}
@@ -250,24 +303,33 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
                         onBlur={() => setIsRetryPasswordInputFocused(false)}
                         autoComplete="new-password"
                       />
-                      <button
+                      <IconButton
                         type="button"
-                        className="grid size-5 place-items-center"
+                        variant="ghost"
+                        size="sm"
+                        showTooltip={false}
                         onClick={() => handleShowPassword("confirmPassword")}
-                        aria-label={showPassword?.confirmPassword ? "Hide password" : "Show password"}
-                      >
-                        {showPassword?.confirmPassword ? (
-                          <HideOutline className="size-5 text-placeholder" />
-                        ) : (
-                          <ShowOutline className="size-5 text-placeholder" />
+                        aria-label={t(
+                          showPassword?.confirmPassword
+                            ? "aria_labels.auth_forms.hide_password"
+                            : "aria_labels.auth_forms.show_password"
                         )}
-                      </button>
+                        icon={
+                          showPassword?.confirmPassword ? (
+                            <HideOutline className="size-5 text-placeholder" />
+                          ) : (
+                            <ShowOutline className="size-5 text-placeholder" />
+                          )
+                        }
+                      />
                     </InputGroup>
                   </Field>
                 )}
               />
               {!!confirmPassword && password !== confirmPassword && renderPasswordMatchError && (
-                <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
+                <FieldError size="lg" id="security-password-match-error">
+                  {t("auth.common.password.errors.match")}
+                </FieldError>
               )}
             </div>
           </div>
