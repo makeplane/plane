@@ -30,7 +30,13 @@ const lazyIllustration = (
   exportName: string
 ): LazyIllustration =>
   React.lazy(async () => {
-    const module = await loader();
+    let module: Record<string, IllustrationComponent>;
+    try {
+      module = await loader();
+    } catch (error) {
+      console.error(`[EmptyState] Illustration "${exportName}" failed to load its chunk.`, error);
+      return { default: (() => null) as IllustrationComponent };
+    }
     const Illustration = module?.[exportName];
     // A missing module or export means the illustration chunk resolved to nothing (stale deploy,
     // blocked request). These assets are purely decorative, so degrade to rendering nothing rather
