@@ -12,8 +12,11 @@ import { CloseOutline, DragDropOutline } from "@makeplane/propel/icons";
 import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Checkbox } from "@makeplane/propel/components/checkbox";
+import { Input, InputGroup } from "@makeplane/propel/elements/input";
 import {
+  Field,
   FieldDescription,
+  FieldError,
   FieldItem,
   FieldItemContent,
   FieldItemControlGroup,
@@ -35,7 +38,6 @@ import {
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Sortable } from "@plane/blocks/common";
-import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import {
@@ -72,6 +74,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
   const { isOpen, onClose } = props;
   const { t } = useTranslation();
   const projectModeId = useId();
+  const projectCountId = useId();
 
   // router
   const { workspaceSlug } = useParams();
@@ -382,30 +385,37 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
 
                       {projectPreferences.showLimitedProjects && (
                         <div className="pl-8">
-                          <div className="flex w-full flex-col gap-1">
-                            <div className="flex w-full flex-col gap-2 pb-1.5">
-                              <label className="w-full text-11 text-secondary">{t("enter_number_of_projects")}</label>
-                              <input
+                          <Field size="md">
+                            <FieldLabel htmlFor={projectCountId} size="md" inset={false}>
+                              {t("enter_number_of_projects")}
+                            </FieldLabel>
+                            <InputGroup size="md">
+                              <Input
+                                id={projectCountId}
+                                size="md"
                                 type="number"
                                 min="1"
                                 step="1"
                                 value={projectCountInput}
                                 onKeyDown={handleKeyDown}
                                 onChange={(e) => handleProjectCountChange(e.target.value)}
-                                className={cn(
-                                  "w-full rounded-md px-2 py-1 text-13",
-                                  "border bg-surface-2",
-                                  "text-secondary",
-                                  parseInt(projectCountInput) >= 1
-                                    ? "border-strong focus:border-accent-strong focus:ring-1 focus:ring-accent-strong"
-                                    : "border-danger-strong focus:border-danger-strong focus:ring-1 focus:ring-danger-strong"
-                                )}
+                                aria-invalid={
+                                  parseInt(projectCountInput) < 1 && projectCountInput !== "" ? true : undefined
+                                }
+                                aria-describedby={
+                                  parseInt(projectCountInput) < 1 && projectCountInput !== ""
+                                    ? `${projectCountId}-error`
+                                    : undefined
+                                }
+                                data-invalid={parseInt(projectCountInput) >= 1 ? undefined : ""}
                               />
-                            </div>
+                            </InputGroup>
                             {parseInt(projectCountInput) < 1 && projectCountInput !== "" && (
-                              <span className="pl-0.5 text-11 text-danger-primary">Minimum value is 1</span>
+                              <FieldError id={`${projectCountId}-error`} size="md">
+                                Minimum value is 1
+                              </FieldError>
                             )}
-                          </div>
+                          </Field>
                         </div>
                       )}
                     </div>
