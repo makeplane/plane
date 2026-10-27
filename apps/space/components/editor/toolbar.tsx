@@ -8,6 +8,9 @@ import React, { useEffect, useState, useCallback } from "react";
 // plane imports
 import { TOOLBAR_ITEMS } from "@plane/editor";
 import type { ToolbarMenuItem, EditorRefApi } from "@plane/editor";
+import { Icon } from "@makeplane/propel/components/icon";
+import { ToolbarButton } from "@makeplane/propel/elements/toolbar";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
@@ -25,6 +28,7 @@ const toolbarItems = TOOLBAR_ITEMS.lite;
 
 export function IssueCommentToolbar(props: Props) {
   const { executeCommand, handleSubmit, isCommentEmpty, editorRef, isSubmitting, showSubmitButton } = props;
+  const { t } = useTranslation();
   // states
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
 
@@ -54,9 +58,13 @@ export function IssueCommentToolbar(props: Props) {
   }, [editorRef, updateActiveStates]);
 
   return (
-    <div className="flex h-9 w-full items-stretch gap-1.5 overflow-x-scroll">
-      <div className="flex w-full items-stretch justify-between gap-2 rounded-sm border-[0.5px] border-subtle p-1">
-        <div className="flex items-stretch">
+    <div className="flex min-h-9 w-full items-stretch gap-1.5">
+      <div className="flex min-w-0 flex-1 items-stretch justify-between gap-2 rounded-sm border-[0.5px] border-subtle p-1">
+        <div
+          role="group"
+          aria-label={t("common.comment")}
+          className="flex min-w-0 flex-1 scroll-px-1 items-stretch overflow-x-auto px-0.5 py-0.5"
+        >
           {Object.keys(toolbarItems).map((key, index) => (
             <div
               key={key}
@@ -73,23 +81,17 @@ export function IssueCommentToolbar(props: Props) {
                     label={item.name}
                     shortcut={item.shortcut ? item.shortcut.join(" + ") : undefined}
                   >
-                    <button
+                    <ToolbarButton
                       type="button"
+                      size="sm"
+                      labeled={false}
+                      aria-label={item.name}
+                      aria-pressed={key === "complex" ? undefined : !!isItemActive}
+                      data-pressed={isItemActive ? "" : undefined}
                       onClick={() => executeCommand(item)}
-                      className={cn(
-                        "grid aspect-square place-items-center rounded-xs p-0.5 text-placeholder hover:bg-layer-transparent-hover",
-                        {
-                          "bg-layer-transparent-hover text-primary": isItemActive,
-                        }
-                      )}
                     >
-                      <item.icon
-                        className={cn("h-3.5 w-3.5", {
-                          "text-primary": isItemActive,
-                        })}
-                        strokeWidth={2.5}
-                      />
-                    </button>
+                      <Icon icon={<item.icon strokeWidth={2.5} />} />
+                    </ToolbarButton>
                   </Tooltip>
                 );
               })}
@@ -97,7 +99,7 @@ export function IssueCommentToolbar(props: Props) {
           ))}
         </div>
         {showSubmitButton && (
-          <div className="sticky right-1">
+          <div className="my-auto shrink-0">
             <Button
               type="button"
               variant="primary"
