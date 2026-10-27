@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -58,36 +60,41 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
     <div className={mode === "full" ? "divide-y divide-subtle-1" : ""}>
       {mode === "full" && (
         <div className="flex justify-between gap-2 pb-3">
-          <h6 className="flex items-center gap-2 font-medium">
+          <h6 className="flex items-center gap-2 text-body-xs-medium">
             {project_details?.identifier}-{issueDetails.sequence_id}
           </h6>
           <div className="flex items-center gap-2">
-            <button type="button" onClick={handleCopyLink} className="-rotate-45">
-              <LinkOutline className="size-3.5 shrink-0" />
-            </button>
+            <IconButton
+              type="button"
+              variant="ghost"
+              size="sm"
+              aria-label={t("copy_link")}
+              onClick={handleCopyLink}
+              icon={<Icon icon={<LinkOutline className="-rotate-45" />} />}
+            />
           </div>
         </div>
       )}
       <div className={`space-y-2 ${mode === "full" ? "pt-3" : ""}`}>
-        <div className="flex h-8 items-center gap-3">
-          <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
+        <div className="flex min-h-8 items-center gap-3">
+          <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-body-xs-regular text-tertiary">
             <StateOutline className="size-4 flex-shrink-0" />
             <span>State</span>
           </div>
-          <div className="flex w-3/4 items-center gap-1.5 py-0.5 text-13">
+          <div className="flex w-3/4 items-center gap-1.5 py-0.5 text-body-xs-regular">
             <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} />
             {addSpaceIfCamelCase(state?.name ?? "")}
           </div>
         </div>
 
         <div className="flex h-8 items-center gap-3">
-          <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
+          <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-body-xs-regular text-tertiary">
             <PriorityOutline className="size-4 flex-shrink-0" />
             <span>Priority</span>
           </div>
           <div className="w-3/4">
             <div
-              className={`inline-flex items-center gap-1.5 rounded-sm bg-layer-2 px-2.5 py-0.5 text-left text-13 capitalize ${
+              className={`inline-flex items-center gap-1.5 rounded-sm bg-layer-2 px-2.5 py-0.5 text-left text-body-xs-regular capitalize ${
                 priority?.key === "urgent"
                   ? "border-priority-urgent text-priority-urgent"
                   : priority?.key === "high"
@@ -106,14 +113,14 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
         </div>
 
         <div className="flex h-8 items-center gap-3">
-          <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
+          <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-body-xs-regular text-tertiary">
             <DueDateOutline className="size-4 flex-shrink-0" />
             <span>Due date</span>
           </div>
           <div>
             {issueDetails.target_date ? (
               <div
-                className={cn("flex items-center gap-1.5 rounded-sm py-0.5 text-11 text-primary", {
+                className={cn("flex items-center gap-1.5 rounded-sm py-0.5 text-caption-sm-regular text-primary", {
                   "text-danger-primary": shouldHighlightIssueDueDate(issueDetails.target_date, state?.group),
                 })}
               >
@@ -121,7 +128,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
                 {renderFormattedDate(issueDetails.target_date)}
               </div>
             ) : (
-              <span className="text-13 text-secondary">Empty</span>
+              <span className="text-body-xs-regular text-secondary">Empty</span>
             )}
           </div>
         </div>
