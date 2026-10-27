@@ -70,7 +70,12 @@
         }
       }
 
-      .ProseMirror-widget + * {
+      /* Drag-handle widgets sit before the first block, so that block is no longer
+         :first-child. List the block types here instead of using "+ *": a universal
+         selector after a sibling combinator makes Chromium restyle all following
+         siblings on every DOM insert, which slows down large lists and tables. */
+      .ProseMirror-widget
+        + :is(p, h1, h2, h3, h4, h5, h6, pre, [data-type="horizontalRule"], .editor-callout-component) {
         padding-top: 0 !important;
       }
 
