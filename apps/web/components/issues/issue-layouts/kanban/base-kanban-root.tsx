@@ -92,7 +92,9 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
   const orderBy = displayFilters?.order_by;
 
   useEffect(() => {
-    fetchIssues("init-loader", { canGroup: true, perPageCount: sub_group_by ? 10 : 30 }, viewId);
+    // 100 per group (was 30), as the list layout loads ungrouped: a board with up to 100 cards in a column
+    // loads in one request instead of one more request per long column after the board is shown.
+    fetchIssues("init-loader", { canGroup: true, perPageCount: sub_group_by ? 10 : 100 }, viewId);
   }, [fetchIssues, storeType, group_by, sub_group_by, viewId]);
 
   const fetchMoreIssues = useCallback(
