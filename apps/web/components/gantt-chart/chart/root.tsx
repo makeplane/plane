@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // plane imports
@@ -81,6 +81,9 @@ export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRoo
   // states
   const [itemsContainerWidth, setItemsContainerWidth] = useState(0);
   const [fullScreenMode, setFullScreenMode] = useState(false);
+  // refs
+  // scroll position captured before toggling full screen, since the chart remounts inside/outside the portal
+  const scrollPositionBeforeToggle = useRef<{ left: number; top: number } | null>(null);
   // hooks
   const {
     currentView,
@@ -176,6 +179,25 @@ export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRoo
     scrollContainer.scrollLeft = scrollWidth;
   };
 
+  const toggleFullScreenMode = () => {
+    const scrollContainer = document.querySelector("#gantt-container") as HTMLDivElement;
+    if (scrollContainer)
+      scrollPositionBeforeToggle.current = { left: scrollContainer.scrollLeft, top: scrollContainer.scrollTop };
+    setFullScreenMode((prevData) => !prevData);
+  };
+
+  // restore the scroll position after the chart remounts on full screen toggle
+  useLayoutEffect(() => {
+    const scrollPosition = scrollPositionBeforeToggle.current;
+    if (!scrollPosition) return;
+    scrollPositionBeforeToggle.current = null;
+
+    const scrollContainer = document.querySelector("#gantt-container") as HTMLDivElement;
+    if (!scrollContainer) return;
+    scrollContainer.scrollLeft = scrollPosition.left;
+    scrollContainer.scrollTop = scrollPosition.top;
+  }, [fullScreenMode]);
+
   const portalContainer = document.getElementById("full-screen-portal") as HTMLElement;
 
   const content = (
@@ -188,7 +210,7 @@ export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRoo
       <GanttChartHeader
         blockIds={blockIds}
         fullScreenMode={fullScreenMode}
-        toggleFullScreenMode={() => setFullScreenMode((prevData) => !prevData)}
+        toggleFullScreenMode={toggleFullScreenMode}
         handleChartView={(key) => updateCurrentViewRenderPayload(null, key)}
         handleToday={handleToday}
         loaderTitle={loaderTitle}
