@@ -29,6 +29,8 @@ type TTimezoneSelect = {
   value: string | undefined;
   onChange: (value: string) => void;
   error?: boolean;
+  errorMessage?: string;
+  fieldLabel?: string;
   label?: string;
   size?: FieldSize;
   width?: ComboboxTriggerWidth;
@@ -62,6 +64,8 @@ export const TimezoneSelect = observer(function TimezoneSelect(props: TTimezoneS
     value,
     onChange,
     error = false,
+    errorMessage,
+    fieldLabel,
     label = "Select a timezone",
     size = "lg",
     width,
@@ -83,7 +87,7 @@ export const TimezoneSelect = observer(function TimezoneSelect(props: TTimezoneS
   return (
     <div className={cn("w-full", className)}>
       <ComboboxField<string, TTimezoneOption>
-        aria-label={label}
+        {...(fieldLabel !== undefined ? { label: fieldLabel, "aria-label": label } : { "aria-label": label })}
         size={size}
         width={width}
         items={options}
@@ -98,7 +102,7 @@ export const TimezoneSelect = observer(function TimezoneSelect(props: TTimezoneS
         searchLabel={t("common.search.label")}
         placeholder={label}
         disabled={isSelectDisabled}
-        error={error ? true : undefined}
+        error={errorMessage ?? (error ? true : undefined)}
       />
     </div>
   );

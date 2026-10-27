@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { InfoOutline, LockOutline } from "@makeplane/propel/icons";
 import { Field } from "@makeplane/propel/components/field";
+import { FieldLabel, FieldError } from "@makeplane/propel/elements/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import type { TNetworkChoice } from "@plane/constants";
@@ -276,7 +277,9 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
       </div>
       <div className="mt-8 flex flex-col gap-8">
         <div className="flex flex-col gap-1">
-          <h4 className="text-13">{t("common.project_name")}</h4>
+          <FieldLabel size="2xl" inset={false} htmlFor="name">
+            {t("common.project_name")}
+          </FieldLabel>
           <Controller
             control={control}
             name="name"
@@ -293,6 +296,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                   <Input
                     size="2xl"
                     id="name"
+                    aria-describedby={errors.name ? "project-name-error" : undefined}
                     name="name"
                     type="text"
                     ref={ref}
@@ -305,10 +309,14 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               </Field>
             )}
           />
-          <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
+          <FieldError size="lg" id="project-name-error">
+            {errors?.name?.message}
+          </FieldError>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-13">{t("description")}</h4>
+          <FieldLabel size="2xl" inset={false} htmlFor="description">
+            {t("description")}
+          </FieldLabel>
           <Controller
             name="description"
             control={control}
@@ -333,7 +341,9 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <h4 className="text-13">Project ID</h4>
+            <FieldLabel size="2xl" inset={false} htmlFor="identifier">
+              Project ID
+            </FieldLabel>
             <div className="relative">
               <Controller
                 control={control}
@@ -356,6 +366,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                       <Input
                         size="2xl"
                         id="identifier"
+                        aria-describedby={errors.identifier ? "project-identifier-error" : undefined}
                         name="identifier"
                         type="text"
                         value={value}
@@ -378,12 +389,14 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 <InfoOutline className="absolute top-2.5 right-2 h-4 w-4 text-placeholder" />
               </Tooltip>
             </div>
-            <span className="text-11 text-danger-primary">
-              <>{errors?.identifier?.message}</>
-            </span>
+            <FieldError size="lg" id="project-identifier-error">
+              {errors?.identifier?.message}
+            </FieldError>
           </div>
           <div className="flex flex-col gap-1">
-            <h4 className="text-13">{t("workspace_projects.network.label")}</h4>
+            <FieldLabel size="2xl" inset={false} htmlFor="project-network">
+              {t("workspace_projects.network.label")}
+            </FieldLabel>
             <Controller
               name="network"
               control={control}
@@ -408,6 +421,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                     estimateItemSize={64}
                   >
                     <Select.Trigger<TNetworkChoice>
+                      id="project-network"
                       variant="select-lg"
                       className="font-medium"
                       disabled={!isAdmin}
@@ -429,7 +443,6 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
             />
           </div>
           <div className="col-span-1 flex flex-col gap-1 sm:col-span-2 xl:col-span-1">
-            <h4 className="text-13">{t("common.project_timezone")}</h4>
             <Controller
               name="timezone"
               control={control}
@@ -437,10 +450,13 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               render={({ field: { value, onChange } }) => (
                 <>
                   <TimezoneSelect
+                    fieldLabel={t("common.project_timezone")}
+                    errorMessage={errors.timezone?.message}
                     value={value}
                     onChange={(value: string) => {
                       onChange(value);
                     }}
+                    label={t("common.project_timezone")}
                     error={Boolean(errors.timezone)}
                     buttonClassName="!border-subtle !shadow-none font-medium rounded-md"
                     disabled={!isAdmin}
@@ -448,7 +464,6 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 </>
               )}
             />
-            {errors.timezone && <span className="text-11 text-danger-primary">{errors.timezone.message}</span>}
           </div>
         </div>
         <div className="flex items-center justify-between py-2">
