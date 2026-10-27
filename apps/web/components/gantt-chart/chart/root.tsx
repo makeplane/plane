@@ -81,9 +81,7 @@ export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRoo
   // states
   const [itemsContainerWidth, setItemsContainerWidth] = useState(0);
   const [fullScreenMode, setFullScreenMode] = useState(false);
-  // refs
-  // scroll position captured before toggling full screen, since the chart remounts inside/outside the portal
-  const scrollPositionBeforeToggle = useRef<{ left: number; top: number } | null>(null);
+  const scrollLeftBeforeFullScreenToggle = useRef<number | null>(null);
   // hooks
   const {
     currentView,
@@ -143,11 +141,29 @@ export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRoo
 
   const handleToday = () => updateCurrentViewRenderPayload(null, currentView);
 
+  const toggleFullScreenMode = () => {
+    const scrollContainer = document.querySelector("#gantt-container") as HTMLDivElement | null;
+    scrollLeftBeforeFullScreenToggle.current = scrollContainer?.scrollLeft ?? null;
+
+    setFullScreenMode((prevData) => !prevData);
+  };
+
   // handling the scroll positioning from left and right
   useEffect(() => {
     handleToday();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useLayoutEffect(() => {
+    const scrollLeft = scrollLeftBeforeFullScreenToggle.current;
+    if (scrollLeft === null) return;
+
+    const scrollContainer = document.querySelector("#gantt-container") as HTMLDivElement | null;
+    if (!scrollContainer) return;
+
+    scrollContainer.scrollLeft = scrollLeft;
+    scrollLeftBeforeFullScreenToggle.current = null;
+  }, [fullScreenMode]);
 
   const updateItemsContainerWidth = (width: number) => {
     const scrollContainer = document.querySelector("#gantt-container") as HTMLDivElement;
@@ -178,25 +194,6 @@ export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRoo
 
     scrollContainer.scrollLeft = scrollWidth;
   };
-
-  const toggleFullScreenMode = () => {
-    const scrollContainer = document.querySelector("#gantt-container") as HTMLDivElement;
-    if (scrollContainer)
-      scrollPositionBeforeToggle.current = { left: scrollContainer.scrollLeft, top: scrollContainer.scrollTop };
-    setFullScreenMode((prevData) => !prevData);
-  };
-
-  // restore the scroll position after the chart remounts on full screen toggle
-  useLayoutEffect(() => {
-    const scrollPosition = scrollPositionBeforeToggle.current;
-    if (!scrollPosition) return;
-    scrollPositionBeforeToggle.current = null;
-
-    const scrollContainer = document.querySelector("#gantt-container") as HTMLDivElement;
-    if (!scrollContainer) return;
-    scrollContainer.scrollLeft = scrollPosition.left;
-    scrollContainer.scrollTop = scrollPosition.top;
-  }, [fullScreenMode]);
 
   const portalContainer = document.getElementById("full-screen-portal") as HTMLElement;
 
