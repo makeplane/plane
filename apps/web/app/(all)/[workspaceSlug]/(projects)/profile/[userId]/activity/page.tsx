@@ -43,6 +43,7 @@ function ProfileActivityPage() {
         key={i}
         cursor={`${PER_PAGE}:${i}:0`}
         perPage={PER_PAGE}
+        isFirstPage={i === 0}
         updateResultsCount={updateResultsCount}
         updateTotalPages={updateTotalPages}
       />

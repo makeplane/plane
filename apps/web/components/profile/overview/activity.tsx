@@ -85,7 +85,11 @@ export const ProfileActivity = observer(function ProfileActivity() {
             ))}
           </div>
         ) : (
-          <EmptyStateCompact title={t("no_data_yet")} assetKey="unknown" assetClassName="size-20" />
+          <EmptyStateCompact
+            title={t("activity_empty_state.no_activity")}
+            assetKey="activity"
+            assetClassName="size-20"
+          />
         )}
       </Card>
     </div>

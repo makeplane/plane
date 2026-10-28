@@ -49,18 +49,12 @@ export const ActivityList = observer(function ActivityList(props: Props) {
                         activityItem.new_value === "restore" && (
                           <HistoryOutline className="h-3.5 w-3.5 text-secondary" />
                         )
-                      ) : activityItem.actor_detail.avatar_url && activityItem.actor_detail.avatar_url !== "" ? (
-                        <img
+                      ) : (
+                        <Avatar
+                          size="md"
                           src={getFileURL(activityItem.actor_detail.avatar_url)}
                           alt={activityItem.actor_detail.display_name}
-                          height={30}
-                          width={30}
-                          className="bg-gray-500 grid h-7 w-7 place-items-center rounded-full border-2 border-white text-on-color"
                         />
-                      ) : (
-                        <div className="bg-gray-500 grid h-7 w-7 place-items-center rounded-full border-2 border-white text-on-color capitalize">
-                          {activityItem.actor_detail.display_name?.[0]}
-                        </div>
                       )}
 
                       <span className="flex size-6 items-center justify-center rounded-full bg-layer-1 text-secondary">
