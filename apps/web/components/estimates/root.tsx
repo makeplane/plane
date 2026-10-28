@@ -8,6 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
+import { AnchorButton } from "@makeplane/propel/components/anchor-button";
 import { useTranslation } from "@plane/i18n";
 // components
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
@@ -59,7 +60,7 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
           title={t("project_settings.estimates.heading")}
           description={t("project_settings.estimates.description")}
         />
-        <div className="mt-6">
+        <div className="mt-7">
           {/* current active estimate section */}
           {currentActiveEstimateId ? (
             <>
@@ -96,8 +97,8 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
                   onClick: () => setIsEstimateCreateModalOpen(true),
                 },
               ]}
-              align="start"
-              rootClassName="py-20"
+              align="center"
+              rootClassName="rounded-lg border border-subtle bg-surface-1 py-10"
             />
           )}
           {/* archived estimates section */}
@@ -109,14 +110,14 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
                   <>
                     Estimates have gone through a change, these are the estimates you had in your older versions which
                     were not in use. Read more about them&nbsp;
-                    <a
-                      href={"https://docs.plane.so/core-concepts/projects/run-project#estimate"}
+                    <AnchorButton
+                      variant="primary"
+                      size="sm"
+                      href="https://docs.plane.so/core-concepts/projects/run-project#estimate"
                       target="_blank"
-                      className="text-accent-primary/80 hover:text-accent-primary"
                       rel="noreferrer"
-                    >
-                      here.
-                    </a>
+                      label="here."
+                    />
                   </>
                 }
                 variant="h6"
