@@ -9,7 +9,7 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
-import { CalendarOutline, InfoOutline, UserAltOutline, WorkItemsOutline } from "@makeplane/propel/icons";
+import { CalendarOutline, InfoOutline, LeadOutline, WorkItemsOutline } from "@makeplane/propel/icons";
 // plane package imports
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
@@ -180,58 +180,64 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
 
   return (
     <div className="relative" data-prevent-progress>
-      <Card ref={parentRef}>
-        <div>
-          <div className="flex items-center justify-between gap-2">
-            <Tooltip label={moduleDetails.name} layout="stacked" disabled={isMobile}>
-              <Link
-                href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
-                className="min-w-0 text-body-sm-medium after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-accent-strong"
-              >
-                <span className="relative z-[1] block truncate">{moduleDetails.name}</span>
-              </Link>
-            </Tooltip>
-            {/* Keep status and overview activation local to these sibling controls. */}
-            <div
-              className="relative z-[1] flex items-center gap-2"
-              role="presentation"
-              onClick={handleEventPropagation}
-              onKeyDown={handleTriggerKeyDown}
+      <Card ref={parentRef} spacing="sm">
+        <div className="flex h-6 items-center justify-between gap-2">
+          <Tooltip label={moduleDetails.name} layout="stacked" disabled={isMobile}>
+            <Link
+              href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
+              className="min-w-0 truncate text-body-sm-medium after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-accent-strong"
             >
-              {moduleStatus && (
-                <ModuleStatusDropdown
-                  isDisabled={isDisabled}
-                  moduleDetails={moduleDetails}
-                  handleModuleDetailsChange={handleModuleDetailsChange}
-                />
-              )}
-              <IconButton
-                type="button"
-                variant="ghost"
-                size="sm"
-                aria-label={t("info")}
-                showTooltip={!isMobile}
-                onClick={openModuleOverview}
-                icon={<Icon icon={InfoOutline} />}
+              <span className="relative z-[1] block truncate">{moduleDetails.name}</span>
+            </Link>
+          </Tooltip>
+          {/* Sits above the stretched card link; each control stops its own activation. */}
+          <div className="relative z-[1] flex shrink-0 items-center gap-1.5">
+            <IconButton
+              type="button"
+              variant="ghost"
+              size="sm"
+              aria-label={t("info")}
+              showTooltip={!isMobile}
+              onClick={openModuleOverview}
+              icon={<Icon icon={InfoOutline} />}
+            />
+            {isEditingAllowed && (
+              <FavoriteStar
+                onClick={(e) => {
+                  if (moduleDetails.is_favorite) handleRemoveFromFavorites(e);
+                  else handleAddToFavorites(e);
+                }}
+                selected={!!moduleDetails.is_favorite}
               />
-            </div>
+            )}
+            {workspaceSlug && projectId && (
+              <ModuleQuickActions
+                parentRef={parentRef}
+                moduleId={moduleId}
+                projectId={projectId.toString()}
+                workspaceSlug={workspaceSlug.toString()}
+                size="sm"
+              />
+            )}
           </div>
         </div>
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-secondary">
-              <WorkItemsOutline className="h-4 w-4 text-tertiary" />
+              <WorkItemsOutline className="size-4 text-tertiary" />
               <span className="text-caption-sm-regular text-tertiary">{issueCount ?? "0 Work item"}</span>
             </div>
-            {moduleLeadDetails ? (
-              <span className="cursor-default">
+            <span className="relative z-[1] flex shrink-0 items-center">
+              {moduleLeadDetails ? (
                 <ButtonAvatars showTooltip={false} userIds={moduleLeadDetails?.id} />
-              </span>
-            ) : (
-              <Tooltip label="No lead">
-                <UserAltOutline className="mx-1 h-4 w-4 text-tertiary" />
-              </Tooltip>
-            )}
+              ) : (
+                <Tooltip label="No lead">
+                  <span className="grid size-5 place-items-center text-tertiary">
+                    <LeadOutline className="size-4" />
+                  </span>
+                </Tooltip>
+              )}
+            </span>
           </div>
           <LinearProgress
             value={progressValue}
@@ -240,18 +246,16 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
             showValue={false}
             aria-label="Module progress"
           />
-          {/* Keep date selection independent of the stretched card navigation link. */}
+          {/* Keep date and status selection independent of the stretched card navigation link. */}
           <div
-            className="relative z-[1] flex items-center justify-between py-0.5"
+            className="relative z-[1] flex flex-wrap items-center gap-2"
             role="presentation"
             onClick={handleEventPropagation}
             onKeyDown={handleTriggerKeyDown}
           >
             <DateRangeSelect
-              variant="select-ghost-md"
-              className={`h-6 w-full gap-1.5 rounded-sm border-[0.5px] border-strong text-caption-sm-regular text-tertiary ${
-                isDisabled ? "cursor-not-allowed" : "cursor-pointer"
-              }`}
+              variant="pill-sm"
+              className="max-w-none"
               value={{
                 from: getDate(moduleDetails.start_date) ?? null,
                 to: getDate(moduleDetails.target_date) ?? null,
@@ -262,33 +266,21 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
                   target_date: range.to ? renderFormattedPayloadDate(range.to) : null,
                 });
               }}
-              placeholder="Start date - End date"
+              placeholder={`${t("start_date")} - ${t("end_date")}`}
               weekStartsOn={userProfile?.start_of_the_week}
               disabled={isDisabled}
               icon={renderIcon ? undefined : <CalendarOutline aria-hidden="true" />}
             />
+            {moduleStatus && (
+              <ModuleStatusDropdown
+                isDisabled={isDisabled}
+                moduleDetails={moduleDetails}
+                handleModuleDetailsChange={handleModuleDetailsChange}
+              />
+            )}
           </div>
         </div>
       </Card>
-      <div className="absolute right-4 bottom-[18px] z-[1] flex items-center gap-1.5">
-        {isEditingAllowed && (
-          <FavoriteStar
-            onClick={(e) => {
-              if (moduleDetails.is_favorite) handleRemoveFromFavorites(e);
-              else handleAddToFavorites(e);
-            }}
-            selected={!!moduleDetails.is_favorite}
-          />
-        )}
-        {workspaceSlug && projectId && (
-          <ModuleQuickActions
-            parentRef={parentRef}
-            moduleId={moduleId}
-            projectId={projectId.toString()}
-            workspaceSlug={workspaceSlug.toString()}
-          />
-        )}
-      </div>
     </div>
   );
 });

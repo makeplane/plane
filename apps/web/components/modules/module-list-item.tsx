@@ -81,22 +81,17 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
       prependTitleElement={
         <div className="relative size-[30px]">
           <div className="absolute inset-0 flex scale-150 items-center justify-center">
-            <CircularProgress
-              value={progress}
-              size="md"
-              variant={progress === 100 ? "success" : "brand"}
-              aria-label="Module progress"
-            />
+            <CircularProgress value={progress} size="md" variant="success" aria-label="Module progress" />
           </div>
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             {completedModuleCheck ? (
               progress === 100 ? (
-                <TickOutline className="h-3 w-3 stroke-[2] text-accent-primary" />
+                <TickOutline className="h-3 w-3 text-accent-primary" />
               ) : (
                 <span className="text-body-xs-regular text-accent-primary">{`!`}</span>
               )
             ) : progress === 100 ? (
-              <TickOutline className="h-3 w-3 stroke-[2] text-accent-primary" />
+              <TickOutline className="h-3 w-3 text-accent-primary" />
             ) : (
               <span className="text-caption-2xs-regular text-tertiary">{`${progress}%`}</span>
             )}
@@ -121,6 +116,7 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
               moduleId={moduleId}
               projectId={projectId.toString()}
               workspaceSlug={workspaceSlug.toString()}
+              size="sm"
             />
           </div>
         </div>
