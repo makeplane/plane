@@ -6,6 +6,7 @@
 
 import type { ReactNode } from "react";
 // plane imports
+import { ScrollArea } from "@makeplane/propel/components/scroll-area";
 import { cn } from "@plane/utils";
 
 type TPageWrapperProps = {
@@ -24,7 +25,7 @@ export const PageWrapper = (props: TPageWrapperProps) => {
 
   return (
     <div
-      className={cn("mx-auto h-full w-full space-y-6 py-4", {
+      className={cn("mx-auto flex h-full min-h-0 w-full flex-col gap-6 overflow-hidden py-4", {
         "max-w-[1000px] md:px-4 2xl:max-w-[1200px]": size === "md",
         "px-4 lg:px-12": size === "lg",
       })}
@@ -42,9 +43,9 @@ export const PageWrapper = (props: TPageWrapperProps) => {
           </div>
         )
       )}
-      <div className="vertical-scrollbar scrollbar-sm flex-grow overflow-hidden overflow-y-scroll px-4 pb-4">
-        {children}
-      </div>
+      <ScrollArea orientation="vertical" variant="inset" size="sm">
+        <div className="px-4 pb-4">{children}</div>
+      </ScrollArea>
     </div>
   );
 };
