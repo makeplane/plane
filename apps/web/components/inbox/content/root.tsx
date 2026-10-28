@@ -99,7 +99,7 @@ export const InboxContentRoot = observer(function InboxContentRoot(props: TInbox
             embedRemoveCurrentNotification={embedRemoveCurrentNotification}
           />
         </div>
-        <ContentWrapper className="divide-y-2 divide-subtle-1">
+        <ContentWrapper>
           <InboxIssueMainContent
             workspaceSlug={workspaceSlug}
             projectId={projectId}

@@ -64,17 +64,17 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
       >
         <Row
           className={cn(
-            `relative flex cursor-pointer flex-col gap-2 border border-t-transparent border-r-transparent border-b-subtle-1 border-l-transparent py-4 transition-all hover:bg-accent-primary/5`,
-            { "border border-accent-strong": selectedInboxIssueId === issue.id }
+            `relative flex cursor-pointer flex-col gap-2 border border-t-transparent border-r-transparent border-b-subtle border-l-transparent py-4 transition-all hover:bg-layer-transparent-hover`,
+            { "border border-subtle bg-layer-transparent-selected": selectedInboxIssueId === issue.id }
           )}
         >
-          <div className="space-y-1">
+          <div className="space-y-2">
             <div className="relative flex items-center justify-between gap-2">
               <div className="flex-shrink-0 text-caption-sm-medium text-tertiary">
                 {projectIdentifier}-{issue.sequence_id}
               </div>
               <div className="flex items-center gap-2">
-                {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />}
+                {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} />}
               </div>
             </div>
             <h3 className="w-full truncate text-body-xs-regular">{issue.name}</h3>
