@@ -219,10 +219,10 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
       <KanbanDeleteDropZone onRequestDelete={handleRequestDelete} />
       <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>
         <div
-          className={`horizontal-scrollbar relative scrollbar-lg flex h-full w-full bg-surface-2 ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
+          className={`horizontal-scrollbar relative scrollbar-sm flex h-full w-full ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
           ref={scrollableContainerRef}
         >
-          <div className="relative h-full w-max min-w-full bg-surface-2">
+          <div className="relative h-full w-max min-w-full">
             <div className="h-full w-max">
               <KanBanView
                 issuesMap={issueMap}

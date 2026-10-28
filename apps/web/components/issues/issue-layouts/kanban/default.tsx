@@ -20,6 +20,7 @@ import type {
 } from "@plane/types";
 // constants
 import { ContentWrapper } from "@plane/blocks/layout";
+import { cn } from "@plane/utils";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { KanbanColumnLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
@@ -144,7 +145,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
   const isSubGroup = !!sub_group_id && sub_group_id !== "null";
 
   return (
-    <ContentWrapper className={`relative flex-row gap-4 !pt-2 !pb-0`}>
+    <ContentWrapper className={cn("relative flex-row gap-4", sub_group_by ? "!pt-2 !pb-0" : "!p-4")}>
       {list &&
         list.length > 0 &&
         list.map((subList: IGroupByColumn, groupIndex) => {
@@ -161,12 +162,13 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
           return (
             <div
               key={subList.id}
-              className={`group relative flex flex-shrink-0 flex-col ${
-                groupByVisibilityToggle.showIssues ? `w-[350px]` : ``
-              } `}
+              className={cn("group relative flex flex-shrink-0 flex-col", {
+                "w-[336px]": groupByVisibilityToggle.showIssues,
+                "rounded-lg bg-layer-1 p-2": sub_group_by === null,
+              })}
             >
               {sub_group_by === null && (
-                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-surface-2 py-1">
+                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-layer-1 px-1 py-1.5">
                   <HeaderGroupByCard
                     sub_group_by={sub_group_by}
                     group_by={group_by}
