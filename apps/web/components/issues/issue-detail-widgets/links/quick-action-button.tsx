@@ -4,11 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
+import React, { cloneElement } from "react";
 import { observer } from "mobx-react";
 import { AddOutline } from "@makeplane/propel/icons";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import type { TIssueServiceType } from "@plane/types";
@@ -16,14 +17,17 @@ import type { TIssueServiceType } from "@plane/types";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type Props = {
-  customButton?: React.ReactNode;
+  /** Rendered as the button itself; receives the click handler and `disabled`. */
+  customButton?: React.ReactElement<React.ComponentPropsWithoutRef<"button">>;
+  /** Hover label for `customButton`. */
+  tooltip?: string;
   disabled?: boolean;
   issueServiceType: TIssueServiceType;
 };
 
 export const IssueLinksActionButton = observer(function IssueLinksActionButton(props: Props) {
   const { t } = useTranslation();
-  const { customButton, disabled = false, issueServiceType } = props;
+  const { customButton, tooltip, disabled = false, issueServiceType } = props;
   // store hooks
   const { toggleIssueLinkModal } = useIssueDetail(issueServiceType);
 
@@ -35,11 +39,8 @@ export const IssueLinksActionButton = observer(function IssueLinksActionButton(p
   };
 
   if (customButton) {
-    return (
-      <button type="button" onClick={handleOnClick} disabled={disabled}>
-        {customButton}
-      </button>
-    );
+    const button = cloneElement(customButton, { onClick: handleOnClick, disabled });
+    return tooltip ? <Tooltip label={tooltip}>{button}</Tooltip> : button;
   }
 
   return (

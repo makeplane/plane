@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { CircularProgress } from "@makeplane/propel/components/circular-progress";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { useTranslation } from "@plane/i18n";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
@@ -18,7 +19,8 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const SubIssuesCollapsibleTitle = observer(function SubIssuesCollapsibleTitle(props: Props) {
+/** Completed / total sub-work items as a compact ring + count chip next to the section title. */
+export const SubIssuesProgressChip = observer(function SubIssuesProgressChip(props: Props) {
   const { parentIssueId, issueServiceType = EIssueServiceType.ISSUES } = props;
   // translation
   const { t } = useTranslation();
@@ -30,27 +32,27 @@ export const SubIssuesCollapsibleTitle = observer(function SubIssuesCollapsibleT
   const subIssuesDistribution = stateDistributionByIssueId(parentIssueId);
   const subIssues = subIssuesByIssueId(parentIssueId);
   // if there are no sub-issues, return null
-  if (!subIssues) return null;
+  if (!subIssues?.length) return null;
 
   // calculate percentage of completed sub-issues
   const completedCount = subIssuesDistribution?.completed?.length ?? 0;
   const totalCount = subIssues.length;
   const percentage = completedCount && totalCount ? (completedCount / totalCount) * 100 : 0;
+  const label = `${completedCount}/${totalCount} ${t("common.done")}`;
 
   return (
-    <span className="inline-flex items-center gap-2">
-      {issueServiceType === EIssueServiceType.EPICS ? t("issue.label", { count: 1 }) : t("common.sub_work_items")}
-      <span className="flex items-center gap-1.5 text-body-xs-regular text-tertiary">
+    <Tooltip label={label}>
+      <span className="flex h-5 items-center gap-1 rounded-sm px-1.5 text-secondary hover:bg-layer-1-hover">
         <CircularProgress
           value={percentage}
-          size="md"
+          size="sm"
           variant={percentage === 100 ? "success" : "brand"}
-          aria-label="Sub-work-item progress"
+          aria-label={t("common.progress")}
         />
-        <span>
-          {completedCount}/{totalCount} {t("common.done")}
+        <span className="text-caption-md-medium leading-none">
+          {completedCount}/{totalCount}
         </span>
       </span>
-    </span>
+    </Tooltip>
   );
 });
