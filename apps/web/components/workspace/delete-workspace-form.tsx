@@ -114,16 +114,18 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
               <span className="text-body-xs-semibold break-words">{data?.name}</span>. If you confirm, you will lose
               access to all your work data in this workspace without any way to restore it. Tread very carefully.
             </p>
-            <div className="text-secondary">
-              <p className="text-body-xs-regular break-words">Type in this workspace&apos;s name to continue.</p>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="workspaceName" className="text-body-xs-regular break-words text-secondary">
+                Type in this workspace&apos;s name to continue.
+              </label>
               <Controller
                 control={control}
                 name="workspaceName"
                 render={({ field: { value, onChange, ref } }) => (
                   <Field name="workspaceName" invalid={Boolean(errors.workspaceName)}>
-                    <InputGroup size="2xl">
+                    <InputGroup size="lg">
                       <Input
-                        size="2xl"
+                        size="lg"
                         id="workspaceName"
                         name="workspaceName"
                         type="text"
@@ -138,20 +140,19 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
                 )}
               />
             </div>
-            <div className="text-secondary">
-              <p className="text-body-xs-regular">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="confirmDelete" className="text-body-xs-regular text-secondary">
                 For final confirmation, type{" "}
-                <span className="text-body-xs-medium text-primary">delete my workspace </span>
-                below.
-              </p>
+                <span className="text-body-xs-medium text-primary">delete my workspace</span> below.
+              </label>
               <Controller
                 control={control}
                 name="confirmDelete"
                 render={({ field: { value, onChange, ref } }) => (
                   <Field name="confirmDelete" invalid={Boolean(errors.confirmDelete)}>
-                    <InputGroup size="2xl">
+                    <InputGroup size="lg">
                       <Input
-                        size="2xl"
+                        size="lg"
                         id="confirmDelete"
                         name="confirmDelete"
                         type="text"

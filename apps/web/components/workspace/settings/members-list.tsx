@@ -11,6 +11,7 @@ import useSWR from "swr";
 // plane imports
 import { Collapsible } from "@makeplane/propel/components/collapsible";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
 // components
 import { CountChip } from "@/components/common/count-chip";
 import { MembersSettingsLoader } from "@/components/ui/loader/settings/members";
@@ -70,25 +71,29 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
 
   return (
     <>
-      <div className="divide-y-[0.5px] divide-subtle overflow-scroll">
+      <div className="flex min-h-[50vh] grow flex-col overflow-hidden">
         {searchedMemberIds?.length !== 0 && <WorkspaceMembersListItem memberDetails={memberDetails ?? []} />}
         {searchedInvitationsIds?.length === 0 && searchedMemberIds?.length === 0 && (
-          <h4 className="mt-16 text-center text-body-xs-regular text-placeholder">{t("no_matching_members")}</h4>
+          <EmptyStateCompact
+            assetKey="search-compact"
+            title={t("no_matching_members")}
+            rootClassName="grow rounded-lg border border-subtle py-10"
+          />
         )}
       </div>
       {isAdmin && searchedInvitationsIds && searchedInvitationsIds.length > 0 && (
-        <div className="pt-4">
+        <div className="shrink-0 pt-4">
           <Collapsible
             open={showPendingInvites}
             onOpenChange={setShowPendingInvites}
             trigger={
-              <span className="inline-flex items-center gap-2 py-2">
+              <span className="flex items-center gap-2">
                 <span className="text-h5-medium">{t("workspace_settings.settings.members.pending_invites")}</span>
-                {searchedInvitationsIds && <CountChip count={searchedInvitationsIds.length} className="h-5" />}
+                {searchedInvitationsIds && <CountChip count={searchedInvitationsIds.length} />}
               </span>
             }
           >
-            <div className="ml-auto items-center gap-1.5 rounded-md bg-surface-1 py-1.5">
+            <div className="flex flex-col items-center gap-1.5 rounded-md bg-surface-1 py-1.5">
               {searchedInvitationsIds?.map((invitationId) => (
                 <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
               ))}
