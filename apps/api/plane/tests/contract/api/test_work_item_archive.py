@@ -306,19 +306,34 @@ class TestArchivedWorkItemsList:
         assert fields_resp.status_code == status.HTTP_200_OK
         assert fields_resp.json()["results"] == [{"id": str(archived_issue.id), "name": "Archived"}]
 
-    @pytest.mark.parametrize(
-        "query,expected_unsupported",
-        [
-            ("pql=priority%20%3D%20%22high%22", ["pql"]),
-            ("filters=%7B%22priority%22%3A%22high%22%7D", ["filters"]),
-        ],
-    )
-    def test_list_archived_rejects_pql_and_filters(
-        self, api_key_client, workspace, own_project, query, expected_unsupported
-    ):
-        resp = api_key_client.get(f"{_archived_list_url(workspace, own_project)}?{query}")
+    def test_list_archived_rejects_filters(self, api_key_client, workspace, own_project):
+        resp = api_key_client.get(
+            f"{_archived_list_url(workspace, own_project)}?filters=%7B%22priority%22%3A%22high%22%7D"
+        )
         assert resp.status_code == status.HTTP_400_BAD_REQUEST
-        assert resp.json()["unsupported_parameters"] == expected_unsupported
+        assert resp.json()["unsupported_parameters"] == ["filters"]
+
+    def test_list_archived_applies_pql(self, api_key_client, workspace, own_project, states, create_user):
+        for name, priority in (("Archived High", "high"), ("Archived Low", "low")):
+            issue = Issue(
+                name=name,
+                project=own_project,
+                workspace=workspace,
+                state=states["completed"],
+                priority=priority,
+                archived_at=timezone.now().date(),
+            )
+            issue.save(created_by_id=create_user.id)
+
+        url = _archived_list_url(workspace, own_project)
+        resp = api_key_client.get(url, {"pql": 'priority = "high"'})
+        assert resp.status_code == status.HTTP_200_OK, resp.content
+        assert [item["name"] for item in resp.json()["results"]] == ["Archived High"]
+        assert resp.json()["total_count"] == 1
+
+        bad = api_key_client.get(url, {"pql": "priority ="})
+        assert bad.status_code == status.HTTP_400_BAD_REQUEST
+        assert "pql" in bad.json()
 
     def test_restricted_guest_only_sees_own_archived_work_items(
         self, client_for, workspace, own_project, states, create_user

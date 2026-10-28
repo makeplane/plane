@@ -98,6 +98,7 @@ from plane.utils.order_queryset import (
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
+from plane.utils.pql import apply_pql
 from plane.utils.serializers import writable_data
 from plane.utils.issue_relation_mapper import get_actual_relation, get_inverse_relation
 from plane.app.views.issue.relation import (
@@ -136,6 +137,7 @@ from plane.utils.openapi import (
     WORKSPACE_SEARCH_PARAMETER,
     FIELDS_PARAMETER,
     EXPAND_PARAMETER,
+    PQL_PARAMETER,
     create_paginated_response,
     # Request Examples
     ISSUE_CREATE_EXAMPLE,
@@ -347,9 +349,8 @@ def _unsupported_filter_response(unsupported_filters):
     return Response(
         {
             "pql": (
-                "PQL and structured filters are not supported on this Plane edition. "
-                "Remove the pql/filters parameter and filter results client-side, or use "
-                "a Plane edition that supports work item query filtering."
+                "Structured filters are not supported on this Plane edition. "
+                "Remove the filters parameter and use the pql parameter instead."
             ),
             "unsupported_parameters": unsupported_filters,
         },
@@ -440,6 +441,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             ORDER_BY_PARAMETER,
             FIELDS_PARAMETER,
             EXPAND_PARAMETER,
+            PQL_PARAMETER,
         ],
         responses={
             200: create_paginated_response(
@@ -459,7 +461,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         Supports filtering, ordering, and field selection through query parameters.
         """
 
-        unsupported_filters = [param for param in ("pql", "filters") if request.GET.get(param)]
+        unsupported_filters = [param for param in ("filters",) if request.GET.get(param)]
         if unsupported_filters:
             return _unsupported_filter_response(unsupported_filters)
 
@@ -522,6 +524,13 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         if restricted_guest:
             issue_queryset = issue_queryset.filter(created_by=request.user)
             total_issue_queryset = total_issue_queryset.filter(created_by=request.user)
+
+        issue_queryset = apply_pql(issue_queryset, request, slug, project_id)
+        if isinstance(issue_queryset, Response):
+            return issue_queryset
+        total_issue_queryset = apply_pql(total_issue_queryset, request, slug, project_id)
+        if isinstance(total_issue_queryset, Response):
+            return total_issue_queryset
 
         issue_queryset = _apply_public_issue_ordering(issue_queryset, order_by_param)
 
@@ -2780,8 +2789,6 @@ CUSTOM_RELATION_GROUPS = (
 )
 CUSTOM_RELATION_DB_TYPES = ("relates_to", "duplicate", "implemented_by")
 
-_PROJECT_PQL_RE = re.compile(r'^\s*project\s*=\s*(?:"([^"]+)"|\'([^\']+)\')\s*$')
-
 
 def _create_issue_relations(request, slug, project_id, issue_id, relation_type, target_issue_ids):
     project = Project.objects.get(pk=project_id, workspace__slug=slug)
@@ -3162,7 +3169,7 @@ class IssueArchiveUnarchiveAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, project_id):
         """List archived work items"""
-        unsupported_filters = [param for param in ("pql", "filters") if request.GET.get(param)]
+        unsupported_filters = [param for param in ("filters",) if request.GET.get(param)]
         if unsupported_filters:
             return _unsupported_filter_response(unsupported_filters)
 
@@ -3224,6 +3231,13 @@ class IssueArchiveUnarchiveAPIEndpoint(BaseAPIView):
         if restricted_guest:
             issue_queryset = issue_queryset.filter(created_by=request.user)
             total_issue_queryset = total_issue_queryset.filter(created_by=request.user)
+
+        issue_queryset = apply_pql(issue_queryset, request, slug, project_id)
+        if isinstance(issue_queryset, Response):
+            return issue_queryset
+        total_issue_queryset = apply_pql(total_issue_queryset, request, slug, project_id)
+        if isinstance(total_issue_queryset, Response):
+            return total_issue_queryset
 
         issue_queryset = _apply_public_issue_ordering(issue_queryset, order_by_param)
 
@@ -3396,27 +3410,8 @@ class IssueCountEndpoint(BaseAPIView):
     )
     def get(self, request, slug):
         """Count work items across a workspace"""
-        pql = request.GET.get("pql")
-        filters_param = request.GET.get("filters")
-        scoped_project_id = None
-        unsupported_filters = []
-
-        if pql:
-            match = _PROJECT_PQL_RE.match(pql)
-            if match:
-                raw_project_id = match.group(1) or match.group(2)
-                try:
-                    scoped_project_id = uuid.UUID(raw_project_id)
-                except ValueError:
-                    unsupported_filters.append("pql")
-            else:
-                unsupported_filters.append("pql")
-
-        if filters_param:
-            unsupported_filters.append("filters")
-
-        if unsupported_filters:
-            return _unsupported_filter_response(unsupported_filters)
+        if request.GET.get("filters"):
+            return _unsupported_filter_response(["filters"])
 
         group_by = request.GET.get("group_by") or None
         sub_group_by = request.GET.get("sub_group_by") or None
@@ -3450,8 +3445,9 @@ class IssueCountEndpoint(BaseAPIView):
             workspace__slug=slug,
         ).filter(Exists(visible_issue_subquery))
 
-        if scoped_project_id is not None:
-            issues = issues.filter(project_id=scoped_project_id)
+        issues = apply_pql(issues, request, slug)
+        if isinstance(issues, Response):
+            return issues
 
         total_count = issues.values("id").distinct().count()
         grouped_counts = {}

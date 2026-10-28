@@ -206,19 +206,21 @@ class TestWorkItemCount:
         assert resp.status_code == status.HTTP_200_OK
         assert resp.json()["total_count"] == 1
 
-    @pytest.mark.parametrize(
-        "pql",
-        [
-            'priority = "urgent"',
-            f'(priority = "urgent") AND project = "{uuid4()}"',
-            f'() AND project = "{uuid4()}"',
-            'project = "not-a-uuid"',
-        ],
-    )
-    def test_unsupported_pql_and_filters_return_400(self, api_key_client, workspace, project_a, pql):
+    def test_pql_filters_counts(self, api_key_client, workspace, project_a, project_b, create_user):
+        urgent = Issue(name="Urgent A", project=project_a, workspace=workspace, priority="urgent")
+        urgent.save(created_by_id=create_user.id)
+        other = Issue(name="Low B", project=project_b, workspace=workspace, priority="low")
+        other.save(created_by_id=create_user.id)
+
+        resp = api_key_client.get(_count_url(workspace), {"pql": f'priority = "urgent" AND project = "{project_a.id}"'})
+        assert resp.status_code == status.HTTP_200_OK, resp.content
+        assert resp.json()["total_count"] == 1
+
+    @pytest.mark.parametrize("pql", ['() AND project = "x"', 'project = "not-a-uuid"', "milestone IS NULL"])
+    def test_invalid_pql_and_filters_return_400(self, api_key_client, workspace, project_a, pql):
         resp = api_key_client.get(_count_url(workspace), {"pql": pql})
         assert resp.status_code == status.HTTP_400_BAD_REQUEST
-        assert resp.json()["unsupported_parameters"] == ["pql"]
+        assert "pql" in resp.json()
 
         f_resp = api_key_client.get(_count_url(workspace), {"filters": '{"priority":"urgent"}'})
         assert f_resp.status_code == status.HTTP_400_BAD_REQUEST
