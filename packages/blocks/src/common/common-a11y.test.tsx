@@ -96,6 +96,17 @@ describe("FavoriteStar", () => {
       }
     }
   });
+
+  it("defaults to the compact ghost button and takes caller size and variant", () => {
+    const { rerender } = render(<FavoriteStar selected={false} onClick={vi.fn()} />);
+    const ghostClasses = screen.getByRole("button", { name: "Add to favorites" }).className;
+    expect(ghostClasses).toContain("size-(--control-height-sm)");
+
+    rerender(<FavoriteStar selected={false} onClick={vi.fn()} size="md" variant="secondary" />);
+    const secondaryClasses = screen.getByRole("button", { name: "Add to favorites" }).className;
+    expect(secondaryClasses).toContain("size-(--control-height-md)");
+    expect(secondaryClasses).not.toBe(ghostClasses.replace("size-(--control-height-sm)", "size-(--control-height-md)"));
+  });
 });
 
 describe("DragHandle", () => {
