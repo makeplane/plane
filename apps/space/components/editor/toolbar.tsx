@@ -6,14 +6,19 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 // plane imports
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import {
+  Toolbar,
+  ToolbarButton,
+  ToolbarGroup,
+  ToolbarSeparator,
+  ToolbarToggle,
+} from "@makeplane/propel/components/toolbar";
+import { Tooltip, TooltipProvider } from "@makeplane/propel/components/tooltip";
 import { TOOLBAR_ITEMS } from "@plane/editor";
 import type { ToolbarMenuItem, EditorRefApi } from "@plane/editor";
-import { Icon } from "@makeplane/propel/components/icon";
-import { ToolbarButton } from "@makeplane/propel/elements/toolbar";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@makeplane/propel/components/button";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { cn } from "@plane/utils";
 
 type Props = {
   executeCommand: (item: ToolbarMenuItem) => void;
@@ -25,6 +30,10 @@ type Props = {
 };
 
 const toolbarItems = TOOLBAR_ITEMS.lite;
+
+// keep focus (and the current selection) inside the editor when a toolbar control is pressed, so
+// formatting commands don't run against a lost selection
+const preserveEditorFocus = (e: React.MouseEvent) => e.preventDefault();
 
 export function IssueCommentToolbar(props: Props) {
   const { executeCommand, handleSubmit, isCommentEmpty, editorRef, isSubmitting, showSubmitButton } = props;
@@ -58,61 +67,61 @@ export function IssueCommentToolbar(props: Props) {
   }, [editorRef, updateActiveStates]);
 
   return (
-    <div className="flex min-h-9 w-full items-stretch gap-1.5">
-      <div className="flex min-w-0 flex-1 items-stretch justify-between gap-2 rounded-sm border-[0.5px] border-subtle p-1">
+    <TooltipProvider>
+      <div className="flex w-full items-center justify-between gap-2">
         <div
-          role="group"
-          aria-label={t("common.comment")}
-          className="flex min-w-0 flex-1 scroll-px-1 items-stretch overflow-x-auto px-0.5 py-0.5"
+          className="horizontal-scrollbar scrollbar-sm min-w-0 overflow-x-auto"
+          onFocusCapture={(event) => {
+            if (event.currentTarget.contains(event.target)) {
+              event.target.scrollIntoView({ block: "nearest", inline: "nearest" });
+            }
+          }}
         >
-          {Object.keys(toolbarItems).map((key, index) => (
-            <div
-              key={key}
-              className={cn("flex items-stretch gap-0.5 border-r border-subtle px-2.5", {
-                "pl-0": index === 0,
-              })}
-            >
-              {toolbarItems[key].map((item) => {
-                const isItemActive = activeStates[item.renderKey];
-
-                return (
-                  <Tooltip
-                    key={item.renderKey}
-                    label={item.name}
-                    shortcut={item.shortcut ? item.shortcut.join(" + ") : undefined}
-                  >
-                    <ToolbarButton
-                      type="button"
-                      size="sm"
-                      labeled={false}
-                      aria-label={item.name}
-                      aria-pressed={key === "complex" ? undefined : !!isItemActive}
-                      data-pressed={isItemActive ? "" : undefined}
-                      onClick={() => executeCommand(item)}
-                    >
-                      <Icon icon={<item.icon strokeWidth={2.5} />} />
-                    </ToolbarButton>
-                  </Tooltip>
-                );
-              })}
-            </div>
-          ))}
+          <Toolbar size="sm" elevation="flat" aria-label={t("common.comment")}>
+            {Object.keys(toolbarItems).map((key, index) => (
+              <React.Fragment key={key}>
+                {index > 0 && <ToolbarSeparator />}
+                <ToolbarGroup>
+                  {toolbarItems[key].map((item) => (
+                    <Tooltip key={item.renderKey} label={item.name} shortcut={item.shortcut?.join(" + ")}>
+                      {key === "complex" ? (
+                        <ToolbarButton
+                          aria-label={item.name}
+                          icon={<Icon icon={item.icon} />}
+                          onMouseDown={preserveEditorFocus}
+                          onClick={() => executeCommand(item)}
+                        />
+                      ) : (
+                        <ToolbarToggle
+                          aria-label={item.name}
+                          render={<button className="data-pressed:text-icon-secondary!" />}
+                          icon={<Icon icon={item.icon} />}
+                          pressed={!!activeStates[item.renderKey]}
+                          onMouseDown={preserveEditorFocus}
+                          onPressedChange={() => executeCommand(item)}
+                        />
+                      )}
+                    </Tooltip>
+                  ))}
+                </ToolbarGroup>
+              </React.Fragment>
+            ))}
+          </Toolbar>
         </div>
         {showSubmitButton && (
-          <div className="my-auto shrink-0">
-            <Button
-              type="button"
-              variant="primary"
-              size="sm"
-              stretch="auto"
-              label="Comment"
-              onClick={handleSubmit}
-              disabled={isCommentEmpty}
-              loading={isSubmitting}
-            />
-          </div>
+          <Button
+            type="button"
+            variant="primary"
+            size="sm"
+            stretch="auto"
+            label={t("common.comment")}
+            onMouseDown={preserveEditorFocus}
+            onClick={handleSubmit}
+            disabled={isCommentEmpty}
+            loading={isSubmitting}
+          />
         )}
       </div>
-    </div>
+    </TooltipProvider>
   );
 }
