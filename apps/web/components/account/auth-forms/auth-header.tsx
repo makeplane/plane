@@ -84,7 +84,7 @@ export const AuthHeader = observer(function AuthHeader(props: TAuthHeader) {
         header: (
           <div className="relative inline-flex items-center gap-2">
             {t("common.join")}{" "}
-            <WorkspaceAvatar size="xl" src={getFileURL(workspace?.logo_url ?? "")} alt={workspace?.name} />{" "}
+            <WorkspaceAvatar size="xl" src={getFileURL(workspace?.logo_url ?? "")} alt={workspace?.name} aria-hidden />{" "}
             {workspace.name}
           </div>
         ),

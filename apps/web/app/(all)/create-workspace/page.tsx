@@ -83,7 +83,7 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
               <div className="text-center text-body-md-medium">
                 {t("workspace_creation.errors.creation_disabled.title")}
               </div>
-              <p className="text-center text-body-xs-regular break-words text-tertiary">
+              <p className="text-center text-body-xs-medium break-words text-tertiary">
                 {t("workspace_creation.errors.creation_disabled.description")}
               </p>
               <div className="mt-6 flex gap-4">
@@ -109,7 +109,7 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
           ) : (
             <div className="w-full space-y-7 sm:space-y-10">
               <h4 className="text-h4-semibold">{t("workspace_creation.heading")}</h4>
-              <div className="sm:w-3/4 md:w-2/5">
+              <div className="w-full max-w-[24rem]">
                 <CreateWorkspaceForm
                   onSubmit={onSubmit}
                   defaultValues={defaultValues}

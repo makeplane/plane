@@ -15,15 +15,13 @@ import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@makeplane/propel/components/button";
+import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import { PlaneLogo } from "@plane/blocks/icons";
 import { setToast } from "@plane/blocks/toast";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
-import { truncateText } from "@plane/utils";
-// assets
-import emptyInvitation from "@/app/assets/empty-state/invitation.svg?url";
+import { getFileURL, truncateText } from "@plane/utils";
 // components
-import { EmptyState } from "@/components/common/empty-state";
-import { WorkspaceLogo } from "@/components/workspace/logo";
 import { USER_WORKSPACES_LIST } from "@plane/constants";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -127,7 +125,7 @@ function UserInvitationsPage() {
           invitations.length > 0 ? (
             <div className="relative flex h-full justify-center px-8 pb-8 sm:w-10/12 sm:items-center sm:justify-start sm:p-0 sm:pr-[8.33%] md:w-9/12 lg:w-4/5">
               <div className="w-full space-y-10">
-                <h5 className="text-body-md-regular">{t("we_see_that_someone_has_invited_you_to_join_a_workspace")}</h5>
+                <h5 className="text-h6-regular">{t("we_see_that_someone_has_invited_you_to_join_a_workspace")}</h5>
                 <h4 className="text-h4-semibold">{t("join_a_workspace")}</h4>
                 <div className="max-h-[37vh] space-y-4 overflow-y-auto md:w-3/5">
                   {invitations.map((invitation) => {
@@ -144,17 +142,20 @@ function UserInvitationsPage() {
                         onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                       >
                         <span className="flex-shrink-0">
-                          <WorkspaceLogo
-                            logo={invitation.workspace.logo_url}
-                            name={invitation.workspace.name}
-                            classNames="size-9 flex-shrink-0"
+                          <WorkspaceAvatar
+                            size="xl"
+                            src={getFileURL(invitation.workspace.logo_url ?? "")}
+                            alt={invitation.workspace.name}
+                            aria-hidden
                           />
                         </span>
                         <span className="block min-w-0 flex-1">
                           <span className="block text-body-xs-medium">
                             {truncateText(invitation.workspace.name, 30)}
                           </span>
-                          <span className="block text-caption-sm-regular text-secondary">{ROLE[invitation.role]}</span>
+                          <span className="block text-caption-sm-regular text-secondary capitalize">
+                            {ROLE[invitation.role]}
+                          </span>
                         </span>
                         <span className={`flex-shrink-0 ${isSelected ? "text-accent-primary" : "text-secondary"}`}>
                           <TickCircleOutline className="h-5 w-5" />
@@ -187,14 +188,13 @@ function UserInvitationsPage() {
             </div>
           ) : (
             <div className="fixed top-0 left-0 grid h-full w-full place-items-center">
-              <EmptyState
+              <EmptyStateDetailed
+                align="center"
+                assetKey="inbox"
+                assetClassName="size-40"
                 title={t("no_pending_invites")}
                 description={t("you_can_see_here_if_someone_invites_you_to_a_workspace")}
-                image={emptyInvitation}
-                primaryButton={{
-                  text: t("back_to_home"),
-                  onClick: () => router.push("/"),
-                }}
+                actions={[{ label: t("back_to_home"), variant: "primary", onClick: () => router.push("/") }]}
               />
             </div>
           )
