@@ -28,7 +28,7 @@ export function MarketingConsent({ isChecked, handleChange }: Props) {
           }
         }}
       />
-      <span id={labelId} className="text-13 text-tertiary">
+      <span id={labelId} className="text-body-xs-regular text-tertiary">
         I agree to Plane marketing communications
       </span>
     </div>

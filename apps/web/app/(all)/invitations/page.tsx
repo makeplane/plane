@@ -119,7 +119,7 @@ function UserInvitationsPage() {
           >
             <PlaneLogo className="h-9 w-auto text-primary" />
           </Link>
-          <div className="absolute top-1/4 right-4 -translate-y-1/2 text-13 text-primary sm:fixed sm:top-12 sm:right-16 sm:translate-y-0 sm:py-5">
+          <div className="absolute top-1/4 right-4 -translate-y-1/2 text-body-xs-regular text-primary sm:fixed sm:top-12 sm:right-16 sm:translate-y-0 sm:py-5">
             {currentUser?.email}
           </div>
         </div>
@@ -127,8 +127,8 @@ function UserInvitationsPage() {
           invitations.length > 0 ? (
             <div className="relative flex h-full justify-center px-8 pb-8 sm:w-10/12 sm:items-center sm:justify-start sm:p-0 sm:pr-[8.33%] md:w-9/12 lg:w-4/5">
               <div className="w-full space-y-10">
-                <h5 className="text-16">{t("we_see_that_someone_has_invited_you_to_join_a_workspace")}</h5>
-                <h4 className="text-20 font-semibold">{t("join_a_workspace")}</h4>
+                <h5 className="text-body-md-regular">{t("we_see_that_someone_has_invited_you_to_join_a_workspace")}</h5>
+                <h4 className="text-h4-semibold">{t("join_a_workspace")}</h4>
                 <div className="max-h-[37vh] space-y-4 overflow-y-auto md:w-3/5">
                   {invitations.map((invitation) => {
                     const isSelected = invitationsRespond.includes(invitation.id);
@@ -151,10 +151,10 @@ function UserInvitationsPage() {
                           />
                         </span>
                         <span className="block min-w-0 flex-1">
-                          <span className="block text-13 font-medium">
+                          <span className="block text-body-xs-medium">
                             {truncateText(invitation.workspace.name, 30)}
                           </span>
-                          <span className="block text-11 text-secondary">{ROLE[invitation.role]}</span>
+                          <span className="block text-caption-sm-regular text-secondary">{ROLE[invitation.role]}</span>
                         </span>
                         <span className={`flex-shrink-0 ${isSelected ? "text-accent-primary" : "text-secondary"}`}>
                           <TickCircleOutline className="h-5 w-5" />

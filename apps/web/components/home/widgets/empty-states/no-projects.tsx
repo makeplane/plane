@@ -105,7 +105,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
           </Link>
         ) : (
           <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
-            <span className="relative flex size-4 items-center justify-center rounded-full bg-[#028375] p-4 text-13 text-on-color capitalize">
+            <span className="relative flex size-4 items-center justify-center rounded-full bg-[#028375] p-4 text-body-xs-regular text-on-color capitalize">
               {(currentUser?.email ?? currentUser?.display_name ?? "?")[0]}
             </span>
           </Link>
@@ -158,7 +158,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
                   "bg-accent-primary/10 text-accent-primary": !isStateComplete,
                 })}
               >
-                <span className="my-auto text-24">{item.icon}</span>
+                <span className="my-auto text-h3-regular">{item.icon}</span>
               </div>
               <h3 className="mb-2 text-body-xs-medium text-primary">{t(item.title)}</h3>
               <p className="mb-2 text-caption-md-regular text-tertiary">{t(item.description)}</p>

@@ -242,7 +242,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
             <div className="space-y-4">
               {/* Personal Section */}
               <div className="flex flex-col gap-2">
-                <h3 className="text-13 font-semibold text-placeholder">{t("personal")}</h3>
+                <h3 className="text-body-xs-semibold text-placeholder">{t("personal")}</h3>
                 <div className="rounded-md border border-subtle bg-surface-2 py-2">
                   <Sortable
                     data={personalItems}
@@ -259,7 +259,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                         />
                         <div className="flex flex-1 items-center gap-2">
                           {getSidebarNavigationItemIcon(item.key)}
-                          <label className="flex-1 cursor-pointer text-13 text-primary">
+                          <label className="flex-1 cursor-pointer text-body-xs-regular text-primary">
                             {t(item.labelTranslationKey)}
                           </label>
                         </div>
@@ -271,7 +271,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
 
               {/* Workspace Section */}
               <div className="flex flex-col gap-2">
-                <h3 className="text-13 font-semibold text-placeholder">{t("common.workspace")}</h3>
+                <h3 className="text-body-xs-semibold text-placeholder">{t("common.workspace")}</h3>
                 <div className="rounded-md border border-subtle bg-surface-2 py-2">
                   {/* Pinned Items - Draggable */}
                   <Sortable
@@ -291,7 +291,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                           />
                           <div className="flex flex-1 items-center gap-2">
                             {icon}
-                            <span className="text-13 text-primary">{t(item.labelTranslationKey)}</span>
+                            <span className="text-body-xs-regular text-primary">{t(item.labelTranslationKey)}</span>
                           </div>
                         </div>
                       );
@@ -302,7 +302,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
 
               {/* Projects Section */}
               <div className="flex flex-col gap-2">
-                <h3 className="text-13 font-semibold text-placeholder">{t("projects")}</h3>
+                <h3 className="text-body-xs-semibold text-placeholder">{t("projects")}</h3>
 
                 <div className="rounded-md border border-subtle bg-surface-2 px-2 py-2">
                   <div className="space-y-3">

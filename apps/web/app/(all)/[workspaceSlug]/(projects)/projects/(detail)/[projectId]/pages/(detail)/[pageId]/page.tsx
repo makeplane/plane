@@ -160,8 +160,8 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
   if (pageDetailsError || !canCurrentUserAccessPage)
     return (
       <div className="flex h-full w-full flex-col items-center justify-center">
-        <h3 className="text-center text-16 font-semibold">Page not found</h3>
-        <p className="mt-3 text-center text-13 text-secondary">
+        <h3 className="text-center text-body-md-semibold">Page not found</h3>
+        <p className="mt-3 text-center text-body-xs-regular text-secondary">
           The page you are trying to access doesn{"'"}t exist or you don{"'"}t have permission to view it.
         </p>
         <Button

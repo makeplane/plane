@@ -76,7 +76,7 @@ export function ShortcutBadge({ shortcut }: { shortcut: string | undefined }) {
         <kbd
           // oxlint-disable-next-line react/no-array-index-key -- static list from a constant string, never reordered
           key={index}
-          className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-10 font-medium text-tertiary"
+          className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-caption-xs-medium text-tertiary"
         >
           {label}
         </kbd>
@@ -101,10 +101,10 @@ export function KeySequenceBadge({ sequence, separator }: TKeySequenceBadgeProps
       {chars.map((char, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- static list from a constant string, never reordered
         <React.Fragment key={index}>
-          <kbd className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-10 font-medium text-tertiary">
+          <kbd className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-caption-xs-medium text-tertiary">
             {char.toUpperCase()}
           </kbd>
-          {index < chars.length - 1 && <span className="text-10 text-placeholder">{separator}</span>}
+          {index < chars.length - 1 && <span className="text-caption-xs-regular text-placeholder">{separator}</span>}
         </React.Fragment>
       ))}
     </div>

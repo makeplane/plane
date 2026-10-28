@@ -19,7 +19,7 @@ export function ProductUpdatesFooter() {
           <a
             href="https://go.plane.so/p-docs"
             target="_blank"
-            className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
+            className="text-body-xs-regular text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
             rel="noreferrer"
           >
             {t("docs")}
@@ -30,7 +30,7 @@ export function ProductUpdatesFooter() {
           <a
             href="https://go.plane.so/p-changelog"
             target="_blank"
-            className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
+            className="text-body-xs-regular text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
             rel="noreferrer"
           >
             {t("full_changelog")}
@@ -41,7 +41,7 @@ export function ProductUpdatesFooter() {
           <a
             href="mailto:support@plane.so"
             target="_blank"
-            className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
+            className="text-body-xs-regular text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
             rel="noreferrer"
           >
             {t("support")}
@@ -52,7 +52,7 @@ export function ProductUpdatesFooter() {
           <a
             href="https://forum.plane.so"
             target="_blank"
-            className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
+            className="text-body-xs-regular text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
             rel="noreferrer"
           >
             Forum

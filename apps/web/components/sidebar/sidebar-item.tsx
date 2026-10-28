@@ -58,7 +58,7 @@ const styles = {
   icon: "flex items-center justify-center gap-2 size-8 rounded-md text-tertiary",
   iconActive: "bg-layer-transparent-selected text-secondary !text-icon-primary",
   iconInactive: "group-hover:text-icon-secondary group-hover:bg-layer-transparent-hover !text-icon-tertiary",
-  label: "text-11 font-medium",
+  label: "text-caption-sm-medium",
   labelActive: "text-secondary",
   labelInactive: "group-hover:text-secondary text-tertiary",
 } as const;

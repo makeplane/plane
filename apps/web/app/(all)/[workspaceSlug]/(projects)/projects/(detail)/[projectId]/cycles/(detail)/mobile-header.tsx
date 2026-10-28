@@ -100,7 +100,9 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
       <div className="flex justify-evenly border-b border-subtle bg-surface-1 py-2 md:hidden">
         <Menu>
           <MenuTrigger
-            render={<button type="button" className="flex flex-grow justify-center text-13 text-secondary" />}
+            render={
+              <button type="button" className="flex flex-grow justify-center text-body-xs-regular text-secondary" />
+            }
           >
             {t("common.layout")}
           </MenuTrigger>
@@ -117,12 +119,12 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
             ))}
           </MenuContent>
         </Menu>
-        <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
+        <div className="flex flex-grow items-center justify-center border-l border-subtle text-body-xs-regular text-secondary">
           <FiltersDropdown
             title={t("common.display")}
             placement="bottom-end"
             menuButton={
-              <span className="flex items-center text-13 text-secondary">
+              <span className="flex items-center text-body-xs-regular text-secondary">
                 {t("common.display")}
                 <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" />
               </span>
@@ -146,7 +148,7 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
         <button
           type="button"
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center border-l border-subtle text-13 text-secondary"
+          className="flex flex-grow justify-center border-l border-subtle text-body-xs-regular text-secondary"
         >
           {t("common.analytics")}
         </button>

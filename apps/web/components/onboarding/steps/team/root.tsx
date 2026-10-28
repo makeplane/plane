@@ -189,7 +189,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                   <Select.Trigger<TRoleOption> variant="select-2xl">
                     <span
                       className={cn(
-                        "min-w-0 flex-1 truncate text-left text-13",
+                        "min-w-0 flex-1 truncate text-left text-body-xs-regular",
                         getValues(`emails.${index}.role_active`) ? "text-primary" : "text-placeholder"
                       )}
                     >
@@ -213,8 +213,10 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
       </div>
       {email && !emailRegex.test(email) && (
         <div className="mx-8 my-1">
-          <span className="text-13">🤥</span>{" "}
-          <span className="mt-1 text-11 text-danger-primary">That doesn{"'"}t look like an email address.</span>
+          <span className="text-body-xs-regular">🤥</span>{" "}
+          <span className="mt-1 text-caption-sm-regular text-danger-primary">
+            That doesn{"'"}t look like an email address.
+          </span>
         </div>
       )}
     </div>
@@ -309,10 +311,10 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
         title="Invite your teammates"
         description="Work in plane happens best with your team. Invite them now to use Plane to its potential."
       />
-      <div className="w-full py-4 text-13">
+      <div className="w-full py-4 text-body-xs-regular">
         <div className="group relative mx-8 grid grid-cols-10 gap-4 py-2">
-          <div className="col-span-6 px-1 text-13 font-medium text-secondary">Email</div>
-          <div className="col-span-4 px-1 text-13 font-medium text-secondary">Role</div>
+          <div className="col-span-6 px-1 text-body-xs-medium text-secondary">Email</div>
+          <div className="col-span-4 px-1 text-body-xs-medium text-secondary">Role</div>
         </div>
         <div className="mb-3 space-y-3 sm:space-y-4">
           {fields.map((field, index) => (
@@ -334,7 +336,7 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
         </div>
         <button
           type="button"
-          className="mx-8 flex items-center gap-1.5 bg-transparent text-13 font-medium text-accent-primary outline-accent-strong"
+          className="mx-8 flex items-center gap-1.5 bg-transparent text-body-xs-medium text-accent-primary outline-accent-strong"
           onClick={appendField}
         >
           <AddOutline className="h-4 w-4" />

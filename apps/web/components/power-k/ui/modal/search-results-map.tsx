@@ -37,7 +37,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     icon: CyclesOutline,
     itemName: (cycle: IWorkspaceDefaultSearchResult) => (
       <p>
-        <span className="text-11 text-tertiary">{cycle.project__identifier}</span> {cycle.name}
+        <span className="text-caption-sm-regular text-tertiary">{cycle.project__identifier}</span> {cycle.name}
       </p>
     ),
     path: (cycle: IWorkspaceDefaultSearchResult) =>
@@ -71,7 +71,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     icon: WorkItemsOutline,
     itemName: (view: IWorkspaceDefaultSearchResult) => (
       <p>
-        <span className="text-11 text-tertiary">{view.project__identifier}</span> {view.name}
+        <span className="text-caption-sm-regular text-tertiary">{view.project__identifier}</span> {view.name}
       </p>
     ),
     path: (view: IWorkspaceDefaultSearchResult) =>
@@ -82,7 +82,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     icon: ModuleOutline,
     itemName: (module: IWorkspaceDefaultSearchResult) => (
       <p>
-        <span className="text-11 text-tertiary">{module.project__identifier}</span> {module.name}
+        <span className="text-caption-sm-regular text-tertiary">{module.project__identifier}</span> {module.name}
       </p>
     ),
     path: (module: IWorkspaceDefaultSearchResult) =>
@@ -93,7 +93,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     icon: DocumentationOutline,
     itemName: (page: IWorkspacePageSearchResult) => (
       <p>
-        <span className="text-11 text-tertiary">{page.project__identifiers?.[0]}</span> {page.name}
+        <span className="text-caption-sm-regular text-tertiary">{page.project__identifiers?.[0]}</span> {page.name}
       </p>
     ),
     path: (page: IWorkspacePageSearchResult, projectId: string | undefined) => {

@@ -169,7 +169,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
       />
       <div className="flex items-center gap-4">
         <button
-          className="flex size-12 items-center justify-center rounded-full bg-accent-primary text-18 font-semibold text-on-color"
+          className="flex size-12 items-center justify-center rounded-full bg-accent-primary text-h5-semibold text-on-color"
           type="button"
           onClick={() => setIsImageUploadModalOpen(true)}
         >
@@ -186,12 +186,12 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
         </button>
         <input type="file" className="hidden" id="profile-image-input" />
         <button
-          className="flex items-center gap-1.5 px-2 py-1 text-13 text-tertiary hover:text-secondary"
+          className="flex items-center gap-1.5 px-2 py-1 text-body-xs-regular text-tertiary hover:text-secondary"
           type="button"
           onClick={() => setIsImageUploadModalOpen(true)}
         >
           <ImageOutline className="size-4" />
-          <span className="text-13">{userAvatar ? "Change image" : "Upload image"}</span>
+          <span className="text-body-xs-regular">{userAvatar ? "Change image" : "Upload image"}</span>
         </button>
       </div>
 

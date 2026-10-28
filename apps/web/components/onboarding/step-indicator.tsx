@@ -42,7 +42,7 @@ export function OnboardingStepIndicator({ currentStep, totalSteps }: OnboardingS
 
   return (
     <div className="flex flex-col justify-center">
-      <div className="text-13 font-medium text-tertiary">
+      <div className="text-body-xs-medium text-tertiary">
         {currentStep} of {totalSteps} steps
       </div>
       <div className="mx-1 my-0.5 flex w-40 items-center justify-center lg:w-52">{renderIndicators()}</div>

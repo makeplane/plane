@@ -88,7 +88,12 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
     <div className="flex justify-evenly border-b border-subtle py-2 md:hidden">
       <Menu>
         <MenuTrigger
-          render={<button type="button" className="flex grow items-center justify-center text-13 text-secondary" />}
+          render={
+            <button
+              type="button"
+              className="flex grow items-center justify-center text-body-xs-regular text-secondary"
+            />
+          }
         >
           {t("common.layout")}
           <ChevronDownOutline className="my-auto ml-2 h-4 w-4 text-secondary" />
@@ -109,12 +114,12 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
           })}
         </MenuContent>
       </Menu>
-      <div className="flex grow items-center justify-center border-l border-subtle text-13 text-secondary">
+      <div className="flex grow items-center justify-center border-l border-subtle text-body-xs-regular text-secondary">
         <FiltersDropdown
           title={t("common.display")}
           placement="bottom-end"
           menuButton={
-            <div className="flex-center flex text-13 text-secondary">
+            <div className="flex-center flex text-body-xs-regular text-secondary">
               {t("common.display")}
               <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" />
             </div>

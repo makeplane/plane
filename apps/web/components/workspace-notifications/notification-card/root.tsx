@@ -45,7 +45,7 @@ export const NotificationCardListRoot = observer(function NotificationCardListRo
       {paginationInfo && paginationInfo?.next_page_results && (
         <>
           {loader === ENotificationLoader.PAGINATION_LOADER ? (
-            <div className="flex items-center justify-center py-4 text-13 font-medium">
+            <div className="flex items-center justify-center py-4 text-body-xs-medium">
               <div className="text-accent-secondary">{t("loading")}...</div>
             </div>
           ) : (
