@@ -131,7 +131,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                 className="flex-shrink0 flex items-center justify-center"
                 buttonClassName="flex items-center justify-center"
                 label={
-                  <span className="grid h-9 w-9 place-items-center rounded-md bg-surface-2">
+                  <span className="grid h-9 w-9 place-items-center rounded-md bg-layer-1">
                     <>
                       {logoValue?.in_use ? (
                         <Logo logo={logoValue} size={18} type="lucide" />

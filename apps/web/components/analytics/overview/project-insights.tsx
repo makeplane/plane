@@ -55,7 +55,7 @@ const ProjectInsights = observer(function ProjectInsights() {
     <AnalyticsSectionWrapper
       title={`${t("workspace_analytics.project_insights")}`}
       subtitle={selectedDurationLabel}
-      className="md:col-span-3"
+      className="lg:col-span-3"
     >
       {isLoadingProjectInsight ? (
         <ProjectInsightsLoader />
@@ -67,11 +67,11 @@ const ProjectInsights = observer(function ProjectInsights() {
           title={t("workspace_empty_state.analytics_work_items.title")}
         />
       ) : (
-        <div className="gap-8 lg:flex">
+        <div className="gap-8 xl:flex">
           {projectInsightsData && (
             <Suspense fallback={<ProjectInsightsLoader />}>
               <RadarChart
-                className="h-[350px] w-full text-accent-primary lg:w-3/5"
+                className="h-[350px] w-full text-accent-primary xl:w-3/5"
                 data={projectInsightsData}
                 dataKey="key"
                 radars={[
@@ -95,7 +95,7 @@ const ProjectInsights = observer(function ProjectInsights() {
               />
             </Suspense>
           )}
-          <div className="w-full lg:w-2/5">
+          <div className="w-full xl:w-2/5">
             <div className="text-body-xs-regular text-tertiary">{t("workspace_analytics.summary_of_projects")}</div>
             <div className="mb-3 border-b border-subtle py-2">{t("workspace_analytics.all_projects")}</div>
             <div className="flex flex-col gap-4">

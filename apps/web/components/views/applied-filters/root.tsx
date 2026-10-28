@@ -43,7 +43,7 @@ export function ViewAppliedFiltersList(props: Props) {
   const isEditingAllowed = alwaysAllowEditing;
 
   return (
-    <div className="flex flex-wrap items-center gap-2 bg-surface-1">
+    <div className="flex flex-wrap items-center gap-2">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof TViewFilterProps;
 
@@ -54,38 +54,40 @@ export function ViewAppliedFiltersList(props: Props) {
 
         return (
           <div key={filterKey} className={FILTER_GROUP_CLASSNAME}>
-            <span className="text-caption-sm-regular text-tertiary">{filterLabel}</span>
-            {VIEW_ACCESS_FILTERS.has(filterKey) && (
-              <AppliedAccessFilters
-                editable={isEditingAllowed}
-                handleRemove={(val) => handleRemoveFilter(filterKey, val)}
-                values={Array.isArray(value) ? (value as EViewAccess[]) : []}
-              />
-            )}
-            {DATE_FILTERS.has(filterKey) && (
-              <AppliedDateFilters
-                editable={isEditingAllowed}
-                handleRemove={(val) => handleRemoveFilter(filterKey, val)}
-                values={Array.isArray(value) ? (value as string[]) : []}
-              />
-            )}
-            {MEMBERS_FILTERS.has(filterKey) && (
-              <AppliedMembersFilters
-                editable={isEditingAllowed}
-                handleRemove={(val) => handleRemoveFilter(filterKey, val)}
-                values={Array.isArray(value) ? (value as string[]) : []}
-              />
-            )}
-            {isEditingAllowed && (
-              <IconButton
-                type="button"
-                variant="ghost"
-                size="xs"
-                aria-label={`${t("aria_labels.common.remove")}: ${filterLabel}`}
-                onClick={() => handleRemoveFilter(filterKey, null)}
-                icon={<CloseOutline height={12} width={12} />}
-              />
-            )}
+            <span className="text-caption-sm-regular text-tertiary capitalize">{filterLabel}</span>
+            <div className="flex flex-wrap items-center gap-1">
+              {VIEW_ACCESS_FILTERS.has(filterKey) && (
+                <AppliedAccessFilters
+                  editable={isEditingAllowed}
+                  handleRemove={(val) => handleRemoveFilter(filterKey, val)}
+                  values={Array.isArray(value) ? (value as EViewAccess[]) : []}
+                />
+              )}
+              {DATE_FILTERS.has(filterKey) && (
+                <AppliedDateFilters
+                  editable={isEditingAllowed}
+                  handleRemove={(val) => handleRemoveFilter(filterKey, val)}
+                  values={Array.isArray(value) ? (value as string[]) : []}
+                />
+              )}
+              {MEMBERS_FILTERS.has(filterKey) && (
+                <AppliedMembersFilters
+                  editable={isEditingAllowed}
+                  handleRemove={(val) => handleRemoveFilter(filterKey, val)}
+                  values={Array.isArray(value) ? (value as string[]) : []}
+                />
+              )}
+              {isEditingAllowed && (
+                <IconButton
+                  type="button"
+                  variant="ghost"
+                  size="xs"
+                  aria-label={`${t("aria_labels.common.remove")}: ${filterLabel}`}
+                  onClick={() => handleRemoveFilter(filterKey, null)}
+                  icon={<CloseOutline height={12} width={12} />}
+                />
+              )}
+            </div>
           </div>
         );
       })}

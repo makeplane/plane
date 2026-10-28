@@ -22,7 +22,7 @@ function AnalyticsSectionWrapper(props: Props) {
       <div className={cn("mb-6 flex items-center gap-2 text-nowrap", headerClassName)}>
         {title && (
           <div className="flex items-center gap-2">
-            <h1 className={"text-body-md-medium"}>{title}</h1>
+            <h1 className="text-h6-medium">{title}</h1>
             {/* {subtitle && <p className="text-body-md-regular text-tertiary"> • {subtitle}</p>} */}
           </div>
         )}

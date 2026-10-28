@@ -19,7 +19,7 @@ function AnalyticsWrapper(props: Props) {
   const { i18nTitle, children, className } = props;
   const { t } = useTranslation();
   return (
-    <div className={cn("px-6 py-4", className)}>
+    <div className={cn("px-page-x pt-8 pb-4", className)}>
       <h1 className={"mb-4 text-h4-bold md:mb-6"}>{t(i18nTitle)}</h1>
       {children}
     </div>

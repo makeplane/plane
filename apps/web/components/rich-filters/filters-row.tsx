@@ -82,8 +82,8 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
     <>
       <ElementTransition show={filter.canClearFilters}>
         <Button
-          variant="secondary"
-          size="sm"
+          variant="ghost"
+          size="md"
           stretch="auto"
           label={filter.clearFilterOptions?.label ?? "Clear all"}
           onClick={filter.clearFilters}
@@ -126,7 +126,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   );
 
   const ModalVariant = (
-    <div className="flex min-h-11 w-full flex-wrap items-center gap-2 rounded-lg bg-layer-1 p-2">{mainContent}</div>
+    <div className="flex min-h-11 w-full flex-wrap items-center gap-2 rounded-lg bg-layer-1">{mainContent}</div>
   );
 
   const HeaderVariant = (
