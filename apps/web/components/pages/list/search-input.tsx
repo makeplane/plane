@@ -4,14 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useRef, useState } from "react";
 // plane imports
-import { useOutsideClickDetector } from "@plane/hooks";
+import { ExpandableSearch } from "@makeplane/propel/components/expandable-search";
 import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@makeplane/propel/components/icon-button";
-import { Icon } from "@makeplane/propel/components/icon";
-import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
-import { cn } from "@plane/utils";
 
 type Props = {
   searchQuery: string;
@@ -22,79 +17,15 @@ export function PageSearchInput(props: Props) {
   const { searchQuery, updateSearchQuery } = props;
   // plane hooks
   const { t } = useTranslation();
-  // states
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  // refs
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  // outside click detector hook
-  useOutsideClickDetector(inputRef, () => {
-    if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
-  });
-
-  useEffect(() => {
-    if (isSearchOpen) inputRef.current?.focus();
-  }, [isSearchOpen]);
-
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Escape") {
-      if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
-      else {
-        setIsSearchOpen(false);
-        inputRef.current?.blur();
-      }
-    }
-  };
 
   return (
-    <div className="flex">
-      {!isSearchOpen && (
-        <IconButton
-          variant="ghost"
-          size="md"
-          render={<button type="button" className="my-auto -mr-1 shrink-0" />}
-          onClick={() => {
-            setIsSearchOpen(true);
-          }}
-          icon={<Icon icon={SearchOutline} />}
-          aria-label={t("search")}
-        />
-      )}
-      <div
-        inert={!isSearchOpen}
-        aria-hidden={!isSearchOpen}
-        className={cn(
-          "flex w-0 items-center justify-start overflow-hidden rounded-md border border-transparent text-placeholder opacity-0 transition-[width] ease-linear",
-          {
-            "w-64 border-subtle px-2.5 py-1.5 opacity-100": isSearchOpen,
-          }
-        )}
-      >
-        <SearchOutline className="h-3.5 w-3.5" />
-        <input
-          ref={inputRef}
-          className="ml-2 w-full max-w-[234px] border-none bg-transparent text-body-xs-regular text-primary placeholder:text-placeholder focus:outline-none"
-          placeholder="Search pages"
-          aria-label={t("search")}
-          value={searchQuery}
-          onChange={(e) => updateSearchQuery(e.target.value)}
-          onKeyDown={handleInputKeyDown}
-        />
-        {isSearchOpen && (
-          <IconButton
-            type="button"
-            variant="ghost"
-            size="xs"
-            aria-label={t("close")}
-            showTooltip={false}
-            onClick={() => {
-              updateSearchQuery("");
-              setIsSearchOpen(false);
-            }}
-            icon={<Icon icon={CloseOutline} />}
-          />
-        )}
-      </div>
-    </div>
+    <ExpandableSearch
+      aria-label={t("search")}
+      clearLabel={t("common.clear")}
+      size="md"
+      placeholder="Search pages"
+      value={searchQuery}
+      onValueChange={(value) => updateSearchQuery(value)}
+    />
   );
 }

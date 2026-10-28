@@ -5,9 +5,10 @@
  */
 
 import { observer } from "mobx-react";
-import { GlobeOutline, InfoOutline, LockOutline, MinusOutline } from "@makeplane/propel/icons";
+import { GlobeOutline, InfoOutline, LockOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
+import { Icon } from "@makeplane/propel/components/icon";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { FavoriteStar } from "@plane/blocks/common";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
@@ -41,31 +42,29 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
 
   return (
     <>
+      {/* page access */}
+      <div className="grid size-(--control-height-sm) cursor-default place-items-center text-icon-secondary [--node-size:var(--control-glyph-sm)]">
+        <Tooltip label={access === 0 ? "Public" : "Private"}>
+          <Icon icon={access === 0 ? GlobeOutline : LockOutline} />
+        </Tooltip>
+      </div>
       {/* page details */}
-      <div className="cursor-default">
+      <div className="grid size-6 cursor-default place-items-center">
         <Tooltip label={`Owned by: ${ownerDetails?.display_name ?? ""}`} layout="stacked">
           <Avatar
             alt={ownerDetails?.display_name}
             fallback={ownerDetails?.display_name?.[0]?.toUpperCase()}
             src={getFileURL(ownerDetails?.avatar_url ?? "")}
-            size="xs"
+            size="2xs"
           />
         </Tooltip>
       </div>
-      <div className="cursor-default text-tertiary">
-        <Tooltip label={access === 0 ? "Public" : "Private"}>
-          {access === 0 ? <GlobeOutline className="h-4 w-4" /> : <LockOutline className="h-4 w-4" />}
+      {/* page info */}
+      <div className="grid size-(--control-height-sm) cursor-default place-items-center text-icon-secondary [--node-size:var(--control-glyph-sm)]">
+        <Tooltip label={`Created on ${renderFormattedDate(created_at)}`} layout="stacked">
+          <Icon icon={InfoOutline} />
         </Tooltip>
       </div>
-      {/* vertical divider */}
-      <MinusOutline className="-mx-3 h-5 w-5 rotate-90 text-placeholder" />
-
-      {/* page info */}
-      <Tooltip label={`Created on ${renderFormattedDate(created_at)}`} layout="stacked">
-        <span className="grid h-4 w-4 cursor-default place-items-center">
-          <InfoOutline className="h-4 w-4 text-tertiary" />
-        </span>
-      </Tooltip>
 
       {/* favorite/unfavorite */}
       {canCurrentUserFavoritePage && (

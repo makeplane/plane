@@ -11,8 +11,7 @@ import { LockedOutline, UnlockedOutline } from "@makeplane/propel/icons";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { Badge } from "@makeplane/propel/elements/badge";
-import { Button } from "@makeplane/propel/elements/button";
+import { Button } from "@makeplane/propel/components/button";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
 // store
@@ -96,21 +95,28 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
       )}
 
       {displayState === "locked" && (
-        <Button type="button" onClick={toggleLock} variant="secondary" size="md" stretch="auto" aria-label="Locked">
-          <Icon icon={<LockedOutline className="animate-lock-icon" />} />
-          <span className="animate-text-slide-in overflow-hidden whitespace-nowrap transition-all duration-500 ease-out">
-            Locked
-          </span>
-        </Button>
+        // a click unlocks here, so the tooltip names the action
+        <Tooltip label="Unlock" side="bottom">
+          <Button
+            variant="secondary"
+            size="md"
+            stretch="auto"
+            onClick={toggleLock}
+            icon={<Icon icon={LockedOutline} />}
+            label="Locked"
+          />
+        </Tooltip>
       )}
 
       {displayState === "unlocked" && (
-        <Badge variant="neutral" size="md" render={<div className="animate-fade-out" />} aria-label="Unlocked">
-          <Icon icon={<UnlockedOutline className="animate-unlock-icon" />} />
-          <span className="animate-text-slide-in animate-text-fade-out overflow-hidden whitespace-nowrap transition-all duration-500 ease-out">
-            Unlocked
-          </span>
-        </Badge>
+        <Button
+          variant="ghost"
+          size="md"
+          stretch="auto"
+          disabled
+          icon={<Icon icon={UnlockedOutline} />}
+          label="Unlocked"
+        />
       )}
     </>
   );

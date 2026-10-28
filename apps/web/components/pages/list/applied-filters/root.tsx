@@ -5,6 +5,7 @@
  */
 
 import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 // plane imports
@@ -30,7 +31,7 @@ const DATE_FILTERS = new Set(["created_at"]);
  * so it keeps plain markup.
  */
 const FILTER_GROUP_CLASSNAME =
-  "my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-caption-sm-regular text-tertiary capitalize hover:text-secondary";
+  "my-auto flex min-h-7 flex-wrap items-center gap-1.5 rounded-md border border-subtle-1 bg-layer-2 p-2 py-0.5 text-caption-sm-regular text-tertiary hover:text-secondary";
 
 export function PageAppliedFiltersList(props: Props) {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
@@ -53,8 +54,8 @@ export function PageAppliedFiltersList(props: Props) {
 
         return (
           <div key={filterKey} className={FILTER_GROUP_CLASSNAME}>
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-caption-sm-regular text-tertiary">{filterLabel}</span>
+            <span className="text-caption-sm-regular text-tertiary capitalize">{filterLabel}</span>
+            <div className="flex flex-wrap items-center gap-1">
               {DATE_FILTERS.has(filterKey) && (
                 <AppliedDateFilters
                   editable={isEditingAllowed}
@@ -76,7 +77,7 @@ export function PageAppliedFiltersList(props: Props) {
                   size="xs"
                   aria-label={`${t("aria_labels.common.remove")}: ${filterLabel}`}
                   onClick={() => handleRemoveFilter(filterKey, null)}
-                  icon={<CloseOutline height={12} width={12} />}
+                  icon={<Icon icon={CloseOutline} />}
                 />
               )}
             </div>
