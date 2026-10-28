@@ -171,7 +171,13 @@
             "title": "Erreur !",
             "message": "Le jeton API n’a pas pu être supprimé"
           }
-        }
+        },
+        "columns": {
+          "expires": "Expire le",
+          "last_used": "Dernière utilisation"
+        },
+        "expired": "Expiré",
+        "not_used_yet": "Pas encore utilisé"
       },
       "integrations": {
         "title": "Intégrations",

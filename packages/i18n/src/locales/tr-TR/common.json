@@ -727,6 +727,7 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
+    "status": "Durum",
     "tooltip": {
       "copy_to_clipboard": "Panoya kopyala"
     }

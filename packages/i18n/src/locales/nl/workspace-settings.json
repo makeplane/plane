@@ -171,7 +171,13 @@
             "title": "Fout!",
             "message": "Het token kon niet worden verwijderd"
           }
-        }
+        },
+        "columns": {
+          "expires": "Verloopt",
+          "last_used": "Laatst gebruikt"
+        },
+        "expired": "Verlopen",
+        "not_used_yet": "Nog niet gebruikt"
       },
       "integrations": {
         "title": "Integraties",

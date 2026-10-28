@@ -171,7 +171,13 @@
             "title": "Error!",
             "message": "The token could not be deleted"
           }
-        }
+        },
+        "columns": {
+          "expires": "Expires",
+          "last_used": "Last used"
+        },
+        "expired": "Expired",
+        "not_used_yet": "Not used yet"
       },
       "integrations": {
         "title": "Integrations",

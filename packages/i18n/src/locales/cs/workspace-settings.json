@@ -171,7 +171,13 @@
             "title": "Chyba!",
             "message": "Mazání tokenu selhalo"
           }
-        }
+        },
+        "columns": {
+          "expires": "Vyprší",
+          "last_used": "Naposledy použito"
+        },
+        "expired": "Vypršelo",
+        "not_used_yet": "Zatím nepoužito"
       },
       "integrations": {
         "title": "Integrace",

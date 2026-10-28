@@ -171,7 +171,13 @@
             "title": "오류!",
             "message": "API 토큰을 삭제할 수 없습니다"
           }
-        }
+        },
+        "columns": {
+          "expires": "만료",
+          "last_used": "마지막 사용"
+        },
+        "expired": "만료됨",
+        "not_used_yet": "아직 사용 안 함"
       },
       "integrations": {
         "title": "인테그레이션",

@@ -171,7 +171,13 @@
             "title": "Hata!",
             "message": "API token'ı silinemedi"
           }
-        }
+        },
+        "columns": {
+          "expires": "Bitiş",
+          "last_used": "Son kullanım"
+        },
+        "expired": "Süresi doldu",
+        "not_used_yet": "Henüz kullanılmadı"
       },
       "integrations": {
         "title": "Entegrasyonlar",

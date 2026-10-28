@@ -171,7 +171,13 @@
             "title": "錯誤！",
             "message": "無法刪除 API 權杖"
           }
-        }
+        },
+        "columns": {
+          "expires": "到期時間",
+          "last_used": "上次使用"
+        },
+        "expired": "已過期",
+        "not_used_yet": "尚未使用"
       },
       "integrations": {
         "title": "整合",

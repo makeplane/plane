@@ -171,7 +171,13 @@
             "title": "错误！",
             "message": "无法删除 API 令牌"
           }
-        }
+        },
+        "columns": {
+          "expires": "过期时间",
+          "last_used": "上次使用"
+        },
+        "expired": "已过期",
+        "not_used_yet": "尚未使用"
       },
       "integrations": {
         "title": "集成",

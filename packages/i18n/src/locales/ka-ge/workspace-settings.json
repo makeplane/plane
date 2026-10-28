@@ -171,7 +171,13 @@
             "title": "შეცდომა!",
             "message": "ტოკენის წაშლა ვერ მოხერხდა"
           }
-        }
+        },
+        "columns": {
+          "expires": "იწურება",
+          "last_used": "ბოლოს გამოყენებული"
+        },
+        "expired": "ვადაგასული",
+        "not_used_yet": "ჯერ არ გამოყენებულა"
       },
       "integrations": {
         "title": "Integrations",

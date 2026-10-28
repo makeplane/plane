@@ -727,6 +727,7 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
+    "status": "Trạng thái",
     "tooltip": {
       "copy_to_clipboard": "Sao chép vào bảng tạm"
     }

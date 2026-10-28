@@ -727,6 +727,7 @@
     "work_structure": "Werkstructuur",
     "execution": "Uitvoering",
     "administration": "Beheer",
+    "status": "Status",
     "tooltip": {
       "copy_to_clipboard": "Kopiëren naar klembord"
     }

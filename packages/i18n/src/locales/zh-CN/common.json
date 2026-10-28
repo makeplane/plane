@@ -727,6 +727,7 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
+    "status": "状态",
     "tooltip": {
       "copy_to_clipboard": "复制到剪贴板"
     }

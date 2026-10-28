@@ -727,6 +727,7 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
+    "status": "Статус",
     "tooltip": {
       "copy_to_clipboard": "Копировать в буфер обмена"
     }

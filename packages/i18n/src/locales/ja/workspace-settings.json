@@ -171,7 +171,13 @@
             "title": "エラー！",
             "message": "APIトークンを削除できませんでした"
           }
-        }
+        },
+        "columns": {
+          "expires": "有効期限",
+          "last_used": "最終使用"
+        },
+        "expired": "期限切れ",
+        "not_used_yet": "未使用"
       },
       "integrations": {
         "title": "インテグレーション",

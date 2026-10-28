@@ -171,7 +171,13 @@
             "title": "Erro!",
             "message": "O token de API não pôde ser excluído"
           }
-        }
+        },
+        "columns": {
+          "expires": "Expira",
+          "last_used": "Último uso"
+        },
+        "expired": "Expirado",
+        "not_used_yet": "Ainda não usado"
       },
       "integrations": {
         "title": "Integrações",

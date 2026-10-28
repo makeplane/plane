@@ -171,7 +171,13 @@
             "title": "Eroare!",
             "message": "Cheia secretă API nu a putut fi ștearsă"
           }
-        }
+        },
+        "columns": {
+          "expires": "Expiră",
+          "last_used": "Ultima utilizare"
+        },
+        "expired": "Expirat",
+        "not_used_yet": "Încă neutilizat"
       },
       "integrations": {
         "title": "Integrări",

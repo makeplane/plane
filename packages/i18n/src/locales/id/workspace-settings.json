@@ -171,7 +171,13 @@
             "title": "Kesalahan!",
             "message": "Token API tidak dapat dihapus"
           }
-        }
+        },
+        "columns": {
+          "expires": "Kedaluwarsa",
+          "last_used": "Terakhir digunakan"
+        },
+        "expired": "Kedaluwarsa",
+        "not_used_yet": "Belum digunakan"
       },
       "integrations": {
         "title": "Integrasi",

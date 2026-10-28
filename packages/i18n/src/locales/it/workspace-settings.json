@@ -171,7 +171,13 @@
             "title": "Errore!",
             "message": "Il token API non può essere eliminato"
           }
-        }
+        },
+        "columns": {
+          "expires": "Scade",
+          "last_used": "Ultimo utilizzo"
+        },
+        "expired": "Scaduto",
+        "not_used_yet": "Non ancora usato"
       },
       "integrations": {
         "title": "Integrazioni",

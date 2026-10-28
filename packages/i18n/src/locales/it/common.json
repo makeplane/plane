@@ -727,6 +727,7 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
+    "status": "Stato",
     "tooltip": {
       "copy_to_clipboard": "Copia negli appunti"
     }

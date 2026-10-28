@@ -727,6 +727,7 @@
     "work_structure": "作業構造",
     "execution": "実行",
     "administration": "管理",
+    "status": "ステータス",
     "tooltip": {
       "copy_to_clipboard": "クリップボードにコピー"
     }

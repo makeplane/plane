@@ -171,7 +171,13 @@
             "title": "Błąd!",
             "message": "Usunięcie tokena nie powiodło się"
           }
-        }
+        },
+        "columns": {
+          "expires": "Wygasa",
+          "last_used": "Ostatnie użycie"
+        },
+        "expired": "Wygasł",
+        "not_used_yet": "Jeszcze nieużywany"
       },
       "integrations": {
         "title": "Integracje",

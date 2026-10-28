@@ -727,6 +727,7 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
+    "status": "Stare",
     "tooltip": {
       "copy_to_clipboard": "Copiază în clipboard"
     }

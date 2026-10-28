@@ -727,6 +727,7 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
+    "status": "Statut",
     "tooltip": {
       "copy_to_clipboard": "Copier dans le presse-papiers"
     }

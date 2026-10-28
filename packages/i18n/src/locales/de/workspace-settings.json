@@ -171,7 +171,13 @@
             "title": "Fehler!",
             "message": "Löschen des Tokens fehlgeschlagen"
           }
-        }
+        },
+        "columns": {
+          "expires": "Läuft ab",
+          "last_used": "Zuletzt verwendet"
+        },
+        "expired": "Abgelaufen",
+        "not_used_yet": "Noch nicht verwendet"
       },
       "integrations": {
         "title": "Integrationen",
