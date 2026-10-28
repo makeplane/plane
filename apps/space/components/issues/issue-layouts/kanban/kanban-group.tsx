@@ -45,7 +45,7 @@ const KanbanIssueBlockLoader = forwardRef(function KanbanIssueBlockLoader(
   ref: React.ForwardedRef<HTMLSpanElement>
 ) {
   return (
-    <span ref={ref} className="m-1.5 block h-28 animate-pulse rounded-sm bg-[var(--illustration-fill-quaternary)]" />
+    <span ref={ref} className="block h-28 shrink-0 animate-pulse rounded-lg bg-[var(--illustration-fill-quaternary)]" />
   );
 });
 KanbanIssueBlockLoader.displayName = "KanbanIssueBlockLoader";
@@ -110,7 +110,9 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
   return (
     <div
       id={`${groupId}__${subGroupId}`}
-      className={cn("relative h-full min-h-[120px] transition-all", { "vertical-scrollbar scrollbar-md": !subGroupBy })}
+      className={cn("relative flex h-full min-h-[120px] flex-col gap-2 transition-all", {
+        "vertical-scrollbar scrollbar-md": !subGroupBy,
+      })}
       ref={columnRef}
     >
       <KanbanIssueBlocksList

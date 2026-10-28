@@ -24,7 +24,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
       <button
         type="button"
         aria-expanded={isExpanded}
-        className="group/list-header relative flex w-full shrink-0 items-center gap-2 px-2 py-1 py-1.5 text-start outline-none hover:bg-layer-transparent-hover focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-inset"
+        className="group/list-header relative flex w-full shrink-0 items-center gap-2 px-2 py-1.5 text-start outline-none focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-inset"
         onClick={() => toggleListGroup(groupID)}
       >
         <div className="grid size-3.5 shrink-0 place-items-center overflow-hidden">
@@ -32,7 +32,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
         </div>
 
         <div className="relative flex w-full cursor-pointer items-center gap-1 overflow-hidden">
-          <div className="line-clamp-1 inline-block truncate font-medium text-primary">{title}</div>
+          <div className="line-clamp-1 inline-block truncate text-body-sm-medium text-primary">{title}</div>
           <div className="pl-2 text-body-xs-medium text-tertiary">{count || 0}</div>
         </div>
       </button>

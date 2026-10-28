@@ -18,6 +18,7 @@ import type {
   TPaginationData,
   TLoader,
 } from "@plane/types";
+import { cn } from "@plane/utils";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useLabel } from "@/hooks/store/use-label";
@@ -86,7 +87,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
   };
 
   return (
-    <div className="relative flex size-full gap-2 px-2">
+    <div className="relative flex size-full gap-4 p-4">
       {groupList?.map((subList) => {
         const groupByVisibilityToggle = visibilityGroupBy(subList);
 
@@ -94,12 +95,12 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
         return (
           <div
             key={subList.id}
-            className={`group relative flex shrink-0 flex-col ${
-              groupByVisibilityToggle.showIssues ? `w-[350px]` : ``
-            } `}
+            className={cn("group relative flex shrink-0 flex-col gap-2 overflow-hidden rounded-lg bg-layer-1 p-2", {
+              "w-[350px]": groupByVisibilityToggle.showIssues,
+            })}
           >
             {isNil(subGroupBy) && (
-              <div className="sticky top-0 z-2 w-full shrink-0 py-1">
+              <div className="sticky top-0 z-2 w-full shrink-0 px-1 pb-1.5">
                 <HeaderGroupByCard
                   groupBy={groupBy}
                   icon={subList.icon as any}

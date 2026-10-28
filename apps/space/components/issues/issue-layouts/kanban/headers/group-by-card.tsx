@@ -21,7 +21,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
 
   return (
     <>
-      <div className="relative flex w-full shrink-0 flex-row items-center gap-2 p-1.5">
+      <div className="relative flex w-full shrink-0 flex-row items-center gap-2">
         <div className="flex size-5 shrink-0 items-center justify-center overflow-hidden rounded-xs">
           {icon ? icon : <CircleOutline width={14} height={14} />}
         </div>
