@@ -4,11 +4,13 @@
  * See the LICENSE file for details.
  */
 
-//
+// plane imports
+import { Badge } from "@makeplane/propel/components/badge";
 import { cn } from "@plane/utils";
 
 type TCountChip = {
   count: string | number;
+  /** Placement only (margins, alignment): the badge owns its own size and colours. */
   className?: string;
 };
 
@@ -16,13 +18,8 @@ export function CountChip(props: TCountChip) {
   const { count, className = "" } = props;
 
   return (
-    <div
-      className={cn(
-        "relative flex flex-shrink-0 items-center justify-center rounded-xl bg-accent-primary/20 px-2.5 py-0.5 text-caption-sm-semibold text-accent-primary",
-        className
-      )}
-    >
-      {count}
-    </div>
+    <span className={cn("inline-flex flex-shrink-0 items-center", className)}>
+      <Badge variant="brand" size="xs" label={String(count)} />
+    </span>
   );
 }

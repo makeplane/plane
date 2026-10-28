@@ -18,7 +18,7 @@ export function SpreadsheetIssueRowLoader(props: { columnCount: number }) {
         </Row>
       </td>
       {range(props.columnCount).map((colIndex) => (
-        <td key={colIndex} className="h-11 w-full min-w-[8rem] border-r border-subtle">
+        <td key={colIndex} className="h-11 min-w-36 border-r border-subtle">
           <div className="flex items-center justify-center gap-3 px-3">
             <span className="h-5 w-20 animate-pulse rounded-sm bg-layer-1" />
           </div>
