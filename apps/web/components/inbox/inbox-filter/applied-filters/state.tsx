@@ -8,11 +8,13 @@ import { observer } from "mobx-react";
 import { EIconSize } from "@plane/constants";
 import { StateGroupIcon } from "@plane/blocks/icons";
 import { useTranslation } from "@plane/i18n";
+import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { APPLIED_FILTER_GROUP_CLASSNAME, RemovableChip } from "@/components/common/removable-chip";
 
 export const InboxIssueAppliedFiltersState = observer(function InboxIssueAppliedFiltersState() {
   // hooks
@@ -30,33 +32,20 @@ export const InboxIssueAppliedFiltersState = observer(function InboxIssueApplied
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-caption-sm-regular text-tertiary capitalize hover:text-secondary">
+    <div className={APPLIED_FILTER_GROUP_CLASSNAME}>
       <div className="text-caption-sm-regular text-secondary">State</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
         return (
-          <div
+          <RemovableChip
             key={value}
-            className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-caption-sm-regular"
-          >
-            <div className="relative flex h-3 w-3 flex-shrink-0 items-center justify-center overflow-hidden">
-              <StateGroupIcon color={optionDetail.color} stateGroup={optionDetail.group} size={EIconSize.SM} />
-            </div>
-            <div className="truncate text-caption-sm-regular">{optionDetail?.name}</div>
-            <IconButton
-              type="button"
-              variant="ghost"
-              size="xs"
-              aria-label={
-                optionDetail.name
-                  ? `${t("aria_labels.common.remove")}: ${optionDetail.name}`
-                  : t("aria_labels.common.remove")
-              }
-              onClick={() => handleInboxIssueFilters("state", handleFilterValue(optionDetail?.id))}
-              icon={<CloseOutline className="h-3 w-3" />}
-            />
-          </div>
+            variant="soft"
+            icon={<StateGroupIcon color={optionDetail.color} stateGroup={optionDetail.group} size={EIconSize.SM} />}
+            label={optionDetail.name}
+            ariaLabel={optionDetail.name}
+            onRemove={() => handleInboxIssueFilters("state", handleFilterValue(optionDetail?.id))}
+          />
         );
       })}
 
@@ -66,7 +55,7 @@ export const InboxIssueAppliedFiltersState = observer(function InboxIssueApplied
         size="xs"
         aria-label={`${t("aria_labels.common.remove")}: State`}
         onClick={clearFilter}
-        icon={<CloseOutline className="h-3 w-3" />}
+        icon={<Icon icon={CloseOutline} />}
       />
     </div>
   );

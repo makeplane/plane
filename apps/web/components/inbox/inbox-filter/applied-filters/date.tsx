@@ -7,11 +7,13 @@
 import { observer } from "mobx-react";
 import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 import type { TInboxIssueFilterDateKeys } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
+import { APPLIED_FILTER_GROUP_CLASSNAME, RemovableChip } from "@/components/common/removable-chip";
 
 type InboxIssueAppliedFiltersDateProps = {
   filterKey: TInboxIssueFilterDateKeys;
@@ -44,30 +46,19 @@ export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedF
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-caption-sm-regular text-tertiary capitalize hover:text-secondary">
+    <div className={APPLIED_FILTER_GROUP_CLASSNAME}>
       <div className="text-caption-sm-regular text-secondary">{label}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
         return (
-          <div
+          <RemovableChip
             key={value}
-            className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-caption-sm-regular"
-          >
-            <div className="truncate text-caption-sm-regular">{optionDetail?.name}</div>
-            <IconButton
-              type="button"
-              variant="ghost"
-              size="xs"
-              aria-label={
-                optionDetail.name
-                  ? `${t("aria_labels.common.remove")}: ${optionDetail.name}`
-                  : t("aria_labels.common.remove")
-              }
-              onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(optionDetail?.value))}
-              icon={<CloseOutline className="h-3 w-3" />}
-            />
-          </div>
+            variant="soft"
+            label={optionDetail.name}
+            ariaLabel={optionDetail.name}
+            onRemove={() => handleInboxIssueFilters(filterKey, handleFilterValue(optionDetail?.value))}
+          />
         );
       })}
 
@@ -77,7 +68,7 @@ export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedF
         size="xs"
         aria-label={label ? `${t("aria_labels.common.remove")}: ${label}` : t("aria_labels.common.remove")}
         onClick={clearFilter}
-        icon={<CloseOutline className="h-3 w-3" />}
+        icon={<Icon icon={CloseOutline} />}
       />
     </div>
   );

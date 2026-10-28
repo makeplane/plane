@@ -9,8 +9,7 @@ import { observer } from "mobx-react";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ModuleStatusIcon } from "@plane/blocks/icons";
-import { IconButton } from "@makeplane/propel/components/icon-button";
-import { CloseOutline } from "@makeplane/propel/icons";
+import { RemovableChip } from "@/components/common/removable-chip";
 // constants
 
 type Props = {
@@ -30,20 +29,14 @@ export const AppliedStatusFilters = observer(function AppliedStatusFilters(props
         if (!statusDetails) return null;
 
         return (
-          <div key={status} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-caption-sm-regular">
-            <ModuleStatusIcon status={statusDetails.value} height="12px" width="12px" />
-            {t(statusDetails.i18n_label)}
-            {editable && (
-              <IconButton
-                type="button"
-                variant="ghost"
-                size="xs"
-                aria-label={`${t("aria_labels.common.remove")}: ${t(statusDetails.i18n_label)}`}
-                onClick={() => handleRemove(status)}
-                icon={<CloseOutline height={10} width={10} />}
-              />
-            )}
-          </div>
+          <RemovableChip
+            key={status}
+            variant="soft"
+            icon={<ModuleStatusIcon status={statusDetails.value} height="12px" width="12px" />}
+            label={t(statusDetails.i18n_label)}
+            ariaLabel={t(statusDetails.i18n_label)}
+            onRemove={editable ? () => handleRemove(status) : undefined}
+          />
         );
       })}
     </>

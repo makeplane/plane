@@ -19,6 +19,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { AppliedDateFilters } from "./date";
 import { AppliedStatusFilters } from "./status";
+import { APPLIED_FILTER_GROUP_CLASSNAME } from "@/components/common/removable-chip";
 
 type Props = {
   appliedFilters: TCycleFilters;
@@ -52,10 +53,7 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
         if (Array.isArray(value) && value.length === 0) return;
 
         return (
-          <div
-            key={filterKey}
-            className="my-auto flex min-h-7 flex-wrap items-center gap-1.5 rounded-md border border-subtle-1 bg-layer-2 p-2 py-0.5 text-caption-sm-regular text-tertiary hover:text-secondary"
-          >
+          <div key={filterKey} className={APPLIED_FILTER_GROUP_CLASSNAME}>
             <span className="text-caption-sm-regular text-tertiary capitalize">
               {replaceUnderscoreIfSnakeCase(filterKey)}
             </span>
@@ -81,7 +79,7 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
                   size="xs"
                   aria-label={`${t("aria_labels.common.remove")}: ${replaceUnderscoreIfSnakeCase(filterKey)}`}
                   onClick={() => handleRemoveFilter(filterKey, null)}
-                  icon={<CloseOutline height={12} width={12} />}
+                  icon={<Icon icon={CloseOutline} />}
                 />
               )}
             </div>

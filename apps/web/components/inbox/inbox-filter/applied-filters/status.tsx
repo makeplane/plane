@@ -7,11 +7,10 @@
 import { observer } from "mobx-react";
 import { INBOX_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@makeplane/propel/components/icon-button";
-import { CloseOutline } from "@makeplane/propel/icons";
 import type { TInboxIssueStatus } from "@plane/types";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { InboxStatusIcon } from "../../inbox-status-icon";
+import { APPLIED_FILTER_GROUP_CLASSNAME, RemovableChip } from "@/components/common/removable-chip";
 
 export const InboxIssueAppliedFiltersStatus = observer(function InboxIssueAppliedFiltersStatus() {
   // hooks
@@ -26,31 +25,24 @@ export const InboxIssueAppliedFiltersStatus = observer(function InboxIssueApplie
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-caption-sm-regular text-tertiary capitalize hover:text-secondary">
+    <div className={APPLIED_FILTER_GROUP_CLASSNAME}>
       <div className="text-caption-sm-regular text-secondary">Status</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
         return (
-          <div
+          <RemovableChip
             key={value}
-            className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-caption-sm-regular"
-          >
-            <div className="relative flex h-3 w-3 flex-shrink-0 items-center justify-center overflow-hidden">
-              <InboxStatusIcon type={optionDetail?.status} />
-            </div>
-            <div className="truncate text-caption-sm-regular">{t(optionDetail?.i18n_title)}</div>
-            {handleFilterValue(optionDetail?.status).length >= 1 && (
-              <IconButton
-                type="button"
-                variant="ghost"
-                size="xs"
-                aria-label={`${t("aria_labels.common.remove")}: ${t(optionDetail.i18n_title)}`}
-                onClick={() => handleInboxIssueFilters("status", handleFilterValue(optionDetail?.status))}
-                icon={<CloseOutline className="h-3 w-3" />}
-              />
-            )}
-          </div>
+            variant="soft"
+            icon={<InboxStatusIcon type={optionDetail?.status} className="size-3" />}
+            label={t(optionDetail?.i18n_title)}
+            ariaLabel={t(optionDetail.i18n_title)}
+            onRemove={
+              handleFilterValue(optionDetail?.status).length >= 1
+                ? () => handleInboxIssueFilters("status", handleFilterValue(optionDetail?.status))
+                : undefined
+            }
+          />
         );
       })}
     </div>

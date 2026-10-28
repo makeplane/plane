@@ -7,10 +7,8 @@
 import { observer } from "mobx-react";
 // helpers
 import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@makeplane/propel/components/icon-button";
-import { CloseOutline } from "@makeplane/propel/icons";
 import { renderFormattedDate, capitalizeFirstLetter } from "@plane/utils";
+import { RemovableChip } from "@/components/common/removable-chip";
 // constants
 
 type Props = {
@@ -21,7 +19,6 @@ type Props = {
 
 export const AppliedDateFilters = observer(function AppliedDateFilters(props: Props) {
   const { editable, handleRemove, values } = props;
-  const { t } = useTranslation();
 
   const getDateLabel = (value: string): string => {
     let dateLabel = "";
@@ -48,21 +45,13 @@ export const AppliedDateFilters = observer(function AppliedDateFilters(props: Pr
         const dateLabel = getDateLabel(date);
 
         return (
-          <div key={date} className="flex items-center gap-1 rounded-sm bg-layer-3 px-1.5 py-1 text-caption-sm-regular">
-            <span className="normal-case">{dateLabel}</span>
-            {editable && (
-              <IconButton
-                type="button"
-                variant="ghost"
-                size="xs"
-                aria-label={
-                  dateLabel ? `${t("aria_labels.common.remove")}: ${dateLabel}` : t("aria_labels.common.remove")
-                }
-                onClick={() => handleRemove(date)}
-                icon={<CloseOutline height={10} width={10} />}
-              />
-            )}
-          </div>
+          <RemovableChip
+            key={date}
+            variant="soft"
+            label={dateLabel}
+            ariaLabel={dateLabel}
+            onRemove={editable ? () => handleRemove(date) : undefined}
+          />
         );
       })}
     </>

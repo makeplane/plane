@@ -9,6 +9,7 @@ import { useTranslation } from "@plane/i18n";
 
 // plane types
 import { Avatar } from "@makeplane/propel/components/avatar";
+import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 import type { TInboxIssueFilterMemberKeys } from "@plane/types";
@@ -17,6 +18,7 @@ import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
+import { APPLIED_FILTER_GROUP_CLASSNAME, RemovableChip } from "@/components/common/removable-chip";
 
 type InboxIssueAppliedFiltersMemberProps = {
   filterKey: TInboxIssueFilterMemberKeys;
@@ -42,38 +44,27 @@ export const InboxIssueAppliedFiltersMember = observer(function InboxIssueApplie
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-caption-sm-regular text-tertiary capitalize hover:text-secondary">
+    <div className={APPLIED_FILTER_GROUP_CLASSNAME}>
       <div className="text-caption-sm-regular text-secondary">{label}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
         return (
-          <div
+          <RemovableChip
             key={value}
-            className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-caption-sm-regular"
-          >
-            <div className="relative flex flex-shrink-0 items-center justify-center overflow-hidden">
+            variant="soft"
+            icon={
               <Avatar
                 alt={optionDetail.display_name}
                 fallback={optionDetail.display_name?.[0]?.toUpperCase()}
                 src={getFileURL(optionDetail.avatar_url)}
                 size="2xs"
               />
-            </div>
-            <div className="truncate text-caption-sm-regular">{optionDetail?.display_name}</div>
-            <IconButton
-              type="button"
-              variant="ghost"
-              size="xs"
-              aria-label={
-                optionDetail.display_name
-                  ? `${t("aria_labels.common.remove")}: ${optionDetail.display_name}`
-                  : t("aria_labels.common.remove")
-              }
-              onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(value))}
-              icon={<CloseOutline className="h-3 w-3" />}
-            />
-          </div>
+            }
+            label={optionDetail.display_name}
+            ariaLabel={optionDetail.display_name}
+            onRemove={() => handleInboxIssueFilters(filterKey, handleFilterValue(value))}
+          />
         );
       })}
 
@@ -83,7 +74,7 @@ export const InboxIssueAppliedFiltersMember = observer(function InboxIssueApplie
         size="xs"
         aria-label={label ? `${t("aria_labels.common.remove")}: ${label}` : t("aria_labels.common.remove")}
         onClick={clearFilter}
-        icon={<CloseOutline className="h-3 w-3" />}
+        icon={<Icon icon={CloseOutline} />}
       />
     </div>
   );

@@ -6,6 +6,7 @@
 
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 import type { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
@@ -13,6 +14,7 @@ import type { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/blocks/layout";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 import { AppliedDateFilters, AppliedMembersFilters, AppliedStatusFilters } from "@/components/modules";
+import { APPLIED_FILTER_GROUP_CLASSNAME, RemovableChip } from "@/components/common/removable-chip";
 // helpers
 // types
 
@@ -28,12 +30,6 @@ type Props = {
 
 const MEMBERS_FILTERS = new Set(["lead", "members"]);
 const DATE_FILTERS = new Set(["start_date", "target_date"]);
-
-/**
- * Container chrome for grouped filter chips and their remove actions.
- */
-const FILTER_GROUP_CLASSNAME =
-  "my-auto flex min-h-7 flex-wrap items-center gap-1.5 rounded-md border border-subtle-1 bg-layer-2 p-2 py-0.5 text-caption-sm-regular text-tertiary hover:text-secondary";
 
 export function ModuleAppliedFiltersList(props: Props) {
   const {
@@ -62,7 +58,7 @@ export function ModuleAppliedFiltersList(props: Props) {
           if (Array.isArray(value) && value.length === 0) return;
 
           return (
-            <div key={filterKey} className={FILTER_GROUP_CLASSNAME}>
+            <div key={filterKey} className={APPLIED_FILTER_GROUP_CLASSNAME}>
               <div className="flex flex-wrap items-center gap-1.5">
                 <span className="text-caption-sm-regular text-tertiary capitalize">
                   {replaceUnderscoreIfSnakeCase(filterKey)}
@@ -95,7 +91,7 @@ export function ModuleAppliedFiltersList(props: Props) {
                     size="xs"
                     aria-label={`${t("aria_labels.common.remove")}: ${replaceUnderscoreIfSnakeCase(filterKey)}`}
                     onClick={() => handleRemoveFilter(filterKey, null)}
-                    icon={<CloseOutline height={12} width={12} />}
+                    icon={<Icon icon={CloseOutline} />}
                   />
                 )}
               </div>
@@ -103,27 +99,23 @@ export function ModuleAppliedFiltersList(props: Props) {
           );
         })}
         {!isArchived && isFavoriteFilterApplied && (
-          <div key="module_display_filters" className={FILTER_GROUP_CLASSNAME}>
+          <div key="module_display_filters" className={APPLIED_FILTER_GROUP_CLASSNAME}>
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="text-caption-sm-regular text-tertiary capitalize">Modules</span>
-              <div className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-caption-sm-regular">
-                Favorite
-                {isEditingAllowed && (
-                  <IconButton
-                    type="button"
-                    variant="ghost"
-                    size="xs"
-                    aria-label={`${t("aria_labels.common.remove")}: Favorite`}
-                    onClick={() =>
-                      handleDisplayFiltersUpdate &&
-                      handleDisplayFiltersUpdate({
-                        favorites: !isFavoriteFilterApplied,
-                      })
-                    }
-                    icon={<CloseOutline height={10} width={10} />}
-                  />
-                )}
-              </div>
+              <RemovableChip
+                variant="soft"
+                label="Favorite"
+                ariaLabel="Favorite"
+                onRemove={
+                  isEditingAllowed
+                    ? () =>
+                        handleDisplayFiltersUpdate &&
+                        handleDisplayFiltersUpdate({
+                          favorites: !isFavoriteFilterApplied,
+                        })
+                    : undefined
+                }
+              />
             </div>
           </div>
         )}

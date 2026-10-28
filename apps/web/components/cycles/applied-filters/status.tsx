@@ -8,9 +8,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { CYCLE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@makeplane/propel/components/icon-button";
-import { CloseOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
+import { RemovableChip } from "@/components/common/removable-chip";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -28,28 +27,14 @@ export const AppliedStatusFilters = observer(function AppliedStatusFilters(props
         const statusDetails = CYCLE_STATUS.find((s) => s.value === status);
         const statusLabel = statusDetails ? t(statusDetails.i18n_title) : "";
         return (
-          <div
+          <RemovableChip
             key={status}
-            className={cn(
-              "flex items-center gap-1 rounded-sm px-1.5 py-1 text-caption-sm-regular",
-              statusDetails?.bgColor,
-              statusDetails?.textColor
-            )}
-          >
-            {statusLabel}
-            {editable && (
-              <IconButton
-                type="button"
-                variant="ghost"
-                size="xs"
-                aria-label={
-                  statusLabel ? `${t("aria_labels.common.remove")}: ${statusLabel}` : t("aria_labels.common.remove")
-                }
-                onClick={() => handleRemove(status)}
-                icon={<CloseOutline height={10} width={10} />}
-              />
-            )}
-          </div>
+            variant="soft"
+            label={statusLabel}
+            ariaLabel={statusLabel}
+            className={cn(statusDetails?.bgColor, statusDetails?.textColor)}
+            onRemove={editable ? () => handleRemove(status) : undefined}
+          />
         );
       })}
     </>

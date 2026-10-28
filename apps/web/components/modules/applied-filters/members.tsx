@@ -5,14 +5,12 @@
  */
 
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { IconButton } from "@makeplane/propel/components/icon-button";
-import { CloseOutline } from "@makeplane/propel/icons";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
+import { RemovableChip } from "@/components/common/removable-chip";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -22,7 +20,6 @@ type Props = {
 
 export const AppliedMembersFilters = observer(function AppliedMembersFilters(props: Props) {
   const { handleRemove, values, editable } = props;
-  const { t } = useTranslation();
   // store hooks
   const {
     workspace: { getWorkspaceMemberDetails },
@@ -36,29 +33,21 @@ export const AppliedMembersFilters = observer(function AppliedMembersFilters(pro
         if (!memberDetails) return null;
 
         return (
-          <div key={memberId} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-caption-sm-regular">
-            <Avatar
-              alt={memberDetails.display_name}
-              fallback={memberDetails.display_name?.[0]?.toUpperCase()}
-              src={getFileURL(memberDetails.avatar_url)}
-              size="2xs"
-            />
-            <span className="normal-case">{memberDetails.display_name}</span>
-            {editable && (
-              <IconButton
-                type="button"
-                variant="ghost"
-                size="xs"
-                aria-label={
-                  memberDetails.display_name
-                    ? `${t("aria_labels.common.remove")}: ${memberDetails.display_name}`
-                    : t("aria_labels.common.remove")
-                }
-                onClick={() => handleRemove(memberId)}
-                icon={<CloseOutline height={10} width={10} />}
+          <RemovableChip
+            key={memberId}
+            variant="soft"
+            icon={
+              <Avatar
+                alt={memberDetails.display_name}
+                fallback={memberDetails.display_name?.[0]?.toUpperCase()}
+                src={getFileURL(memberDetails.avatar_url)}
+                size="2xs"
               />
-            )}
-          </div>
+            }
+            label={memberDetails.display_name}
+            ariaLabel={memberDetails.display_name}
+            onRemove={editable ? () => handleRemove(memberId) : undefined}
+          />
         );
       })}
     </>
