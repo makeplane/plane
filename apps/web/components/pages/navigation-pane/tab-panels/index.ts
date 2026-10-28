@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-export type TPageNavigationPaneTab = "outline" | "info" | "assets";
+export type TPageNavigationPaneTab = "outline" | "info" | "assets" | "version_history";
 
 export const PAGE_NAVIGATION_PANE_TABS_LIST: Record<
   TPageNavigationPaneTab,
@@ -25,8 +25,14 @@ export const PAGE_NAVIGATION_PANE_TABS_LIST: Record<
     key: "assets",
     i18n_label: "page_navigation_pane.tabs.assets.label",
   },
+  version_history: {
+    key: "version_history",
+    i18n_label: "page_navigation_pane.tabs.info.version_history.label",
+  },
 };
 
+// Tabs shown in the pane's tab bar. Version history is opened from the page options menu and takes the
+// whole pane instead.
 export const ORDERED_PAGE_NAVIGATION_TABS_LIST: {
   key: TPageNavigationPaneTab;
   i18n_label: string;

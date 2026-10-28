@@ -14,6 +14,7 @@ import { Button } from "@makeplane/propel/components/button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import { setToast } from "@plane/blocks/toast";
+import { useTranslation } from "@plane/i18n";
 import type { TPageVersion } from "@plane/types";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // helpers
@@ -45,6 +46,8 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
   } = props;
   // states
   const [isRestoring, setIsRestoring] = useState(false);
+  // translation
+  const { t } = useTranslation();
   const [isRetrying, setIsRetrying] = useState(false);
 
   const {
@@ -63,14 +66,14 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
       .then(() => {
         setToast({
           type: "success",
-          title: "Page version restored.",
+          title: t("page_navigation_pane.tabs.version_history.restore_success"),
         });
         handleClose();
       })
       .catch(() =>
         setToast({
           type: "error",
-          title: "Failed to restore page version.",
+          title: t("page_navigation_pane.tabs.version_history.restore_failed"),
         })
       )
       .finally(() => setIsRestoring(false));
@@ -90,11 +93,11 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
         <EmptyStateCompact
           assetKey="unknown"
           rootClassName="grow"
-          title="Something went wrong!"
-          description="The version could not be loaded, please try again."
+          title={t("common.something_went_wrong")}
+          description={t("page_navigation_pane.tabs.version_history.load_error_description")}
           actions={[
             {
-              label: "Try again",
+              label: t("page_navigation_pane.tabs.version_history.try_again"),
               variant: "secondary",
               onClick: () => void handleRetry(),
               loading: isRetrying,
@@ -103,21 +106,28 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
         />
       ) : (
         <>
-          <div className="flex min-h-14 items-center justify-between gap-2 border-b border-subtle px-5 py-3">
+          <div className="flex min-h-14 items-center justify-between gap-2 border-y border-subtle px-5 py-3">
             <div className="flex items-center gap-4">
               <h6 className="text-body-sm-medium text-primary">
                 {versionDetails
                   ? `${renderFormattedDate(versionDetails.last_saved_at)} ${renderFormattedTime(versionDetails.last_saved_at)}`
-                  : "Loading version details"}
+                  : t("page_navigation_pane.tabs.version_history.loading_details")}
               </h6>
-              <Badge variant="brand" size="sm" startIcon={<Icon icon={ShowOutline} />} label="View only" />
+              <Badge
+                variant="brand"
+                size="sm"
+                startIcon={<Icon icon={ShowOutline} />}
+                label={t("page_navigation_pane.tabs.version_history.view_only")}
+              />
             </div>
             {restoreEnabled && (
               <Button
                 variant="primary"
                 size="sm"
                 stretch="auto"
-                label={isRestoring ? "Restoring" : "Restore"}
+                label={
+                  isRestoring ? t("page_navigation_pane.tabs.version_history.restoring") : t("common.actions.restore")
+                }
                 onClick={() => void handleRestoreVersion()}
                 loading={isRestoring}
               />

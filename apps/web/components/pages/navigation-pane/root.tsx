@@ -23,6 +23,7 @@ import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import type { TPageRootHandlers } from "../editor/page-root";
 import { PageNavigationPaneTabPanelsRoot } from "./tab-panels/root";
+import { PageNavigationPaneVersionHistoryPanel } from "./tab-panels/version-history";
 import { PageNavigationPaneTabsList } from "./tabs-list";
 import type { INavigationPaneExtension } from "./types/extensions";
 
@@ -55,6 +56,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
     PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM
   ) as TPageNavigationPaneTab | null;
   const activeTab: TPageNavigationPaneTab = navigationPaneQueryParam || "outline";
+  const isVersionHistoryOpen = activeTab === "version_history";
 
   // Check if any extension is currently active based on query parameters
   const ActiveExtension = extensions.find((extension) => {
@@ -76,10 +78,9 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
   const handleTabChange = useCallback(
     (value: string) => {
       const updatedTab = value as TPageNavigationPaneTab;
-      const isUpdatedTabInfo = updatedTab === "info";
       const updatedRoute = updateQueryParams({
         paramsToAdd: { [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM]: updatedTab },
-        paramsToRemove: !isUpdatedTabInfo ? [PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM] : undefined,
+        paramsToRemove: [PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM],
       });
       router.push(updatedRoute);
     },
@@ -94,24 +95,33 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
         marginRight: isNavigationPaneOpen ? "0px" : `-${paneWidth}px`,
       }}
     >
-      <div className="mb-3.5 px-3.5">
-        <IconButton
-          variant="ghost"
-          size="sm"
-          icon={<Icon icon={ArrowNarrowRightOutline} />}
-          onClick={handleClose}
-          aria-label={t("page_navigation_pane.close_button")}
-        />
-      </div>
+      {/* version history renders its own title row with the close control */}
+      {!(isVersionHistoryOpen && showNavigationTabs) && (
+        <div className="mb-3.5 px-3.5">
+          <IconButton
+            variant="ghost"
+            size="sm"
+            icon={<Icon icon={ArrowNarrowRightOutline} />}
+            onClick={handleClose}
+            aria-label={t("page_navigation_pane.close_button")}
+          />
+        </div>
+      )}
 
       <div className="animate-slide-in-right flex flex-1 flex-col overflow-hidden">
         {ActiveExtension ? (
           <ActiveExtension.component page={page} extensionData={ActiveExtension.data} storeType={storeType} />
+        ) : showNavigationTabs && isVersionHistoryOpen ? (
+          <PageNavigationPaneVersionHistoryPanel
+            handleClose={handleClose}
+            page={page}
+            versionHistory={versionHistory}
+          />
         ) : showNavigationTabs ? (
           <Tabs variant="contained" stretch="full" layout="fill" value={activeTab} onValueChange={handleTabChange}>
             <div className="flex h-full w-full flex-col">
               <PageNavigationPaneTabsList />
-              <PageNavigationPaneTabPanelsRoot page={page} versionHistory={versionHistory} />
+              <PageNavigationPaneTabPanelsRoot page={page} />
             </div>
           </Tabs>
         ) : null}
