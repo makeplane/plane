@@ -318,11 +318,14 @@ class TestProjectPagesHappyPath:
         assert child.archived_at is not None
         assert not UserFavorite.objects.filter(entity_identifier=parent.id).exists()
 
-        # Default list excludes archived; ?archived=true includes them
+        # Default list excludes archived; ?archived=true returns only archived pages
+        active_page = _make_page(workspace, own_project, create_user, name="Active")
         list_default = api_key_client.get(_pages_url(workspace.slug, own_project.id))
-        assert list_default.json()["total_count"] == 0
+        assert list_default.json()["total_count"] == 1
+        assert {row["id"] for row in list_default.json()["results"]} == {str(active_page.id)}
         list_archived = api_key_client.get(f"{_pages_url(workspace.slug, own_project.id)}?archived=true")
         assert list_archived.json()["total_count"] == 2
+        assert {row["id"] for row in list_archived.json()["results"]} == {str(parent.id), str(child.id)}
 
         # Unarchiving child while parent is archived detaches child from parent
         unarch_child = api_key_client.delete(_page_archive_url(workspace.slug, own_project.id, child.id))
@@ -426,6 +429,48 @@ class TestProjectPagesValidation:
         assert resp.status_code == status.HTTP_400_BAD_REQUEST
         page.refresh_from_db()
         assert page.access == Page.PUBLIC_ACCESS
+
+    def test_non_owner_put_with_unchanged_access_as_string_succeeds(
+        self, workspace, own_project, create_user, member_user
+    ):
+        page = _make_page(workspace, own_project, create_user, name="Owner Page")
+        member_client = _client_for(member_user)
+        resp = member_client.put(
+            _page_detail_url(workspace.slug, own_project.id, page.id),
+            {"access": str(Page.PUBLIC_ACCESS)},
+            format="json",
+        )
+        assert resp.status_code == status.HTTP_200_OK, resp.content
+        page.refresh_from_db()
+        assert page.access == Page.PUBLIC_ACCESS
+
+    @pytest.mark.parametrize("parent_kind", ["foreign_private", "archived", "other_project"])
+    def test_parent_id_must_be_visible_active_page_of_same_project(
+        self, api_key_client, workspace, own_project, create_user, member_user, sibling_page, parent_kind
+    ):
+        parents = {
+            "foreign_private": _make_page(
+                workspace, own_project, member_user, name="Private", access=Page.PRIVATE_ACCESS
+            ),
+            "archived": _make_page(
+                workspace, own_project, create_user, name="Archived", archived_at=timezone.now().date()
+            ),
+            "other_project": sibling_page,
+        }
+        page_count = Page.objects.count()
+
+        resp = api_key_client.post(
+            _pages_url(workspace.slug, own_project.id),
+            {
+                "name": "Child",
+                "description_html": "<p>x</p>",
+                "parent_id": str(parents[parent_kind].id),
+            },
+            format="json",
+        )
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST, resp.content
+        assert "parent_id" in resp.json()
+        assert Page.objects.count() == page_count
 
     def test_pql_and_filters_rejected_on_list(self, api_key_client, workspace, own_project):
         resp = api_key_client.get(f"{_pages_url(workspace.slug, own_project.id)}?pql=name='x'")
@@ -546,3 +591,39 @@ class TestProjectPagesPermissionsAndScope:
         assert target_page.name == original_name
         assert target_page.archived_at is None
         assert target_page.deleted_at is None
+
+    @pytest.mark.parametrize("caller", ["admin", "member"])
+    def test_private_page_of_another_user_is_hidden_from_non_owners(
+        self, api_key_client, workspace, own_project, member_user, caller
+    ):
+        owner = _make_user(workspace, own_project, MEMBER, MEMBER)
+        private_page = _make_page(workspace, own_project, owner, name="Secret", access=Page.PRIVATE_ACCESS)
+        client = api_key_client if caller == "admin" else _client_for(member_user)
+        detail_url = _page_detail_url(workspace.slug, own_project.id, private_page.id)
+        archive_url = _page_archive_url(workspace.slug, own_project.id, private_page.id)
+        denied = (status.HTTP_403_FORBIDDEN, status.HTTP_404_NOT_FOUND)
+
+        assert client.get(detail_url).status_code in denied
+        assert client.put(detail_url, {"name": "Pwned"}, format="json").status_code in denied
+        assert client.delete(detail_url).status_code in denied
+        assert client.post(archive_url).status_code in denied
+        assert client.delete(archive_url).status_code in denied
+
+        private_page.refresh_from_db()
+        assert private_page.name == "Secret"
+        assert private_page.access == Page.PRIVATE_ACCESS
+        assert private_page.archived_at is None
+        assert private_page.deleted_at is None
+
+        list_resp = client.get(_pages_url(workspace.slug, own_project.id))
+        assert list_resp.status_code == status.HTTP_200_OK
+        assert str(private_page.id) not in {row["id"] for row in list_resp.json()["results"]}
+
+    def test_member_owner_can_unarchive_own_page(self, workspace, own_project, member_user):
+        page = _make_page(workspace, own_project, member_user, name="Mine", archived_at=timezone.now().date())
+        member_client = _client_for(member_user)
+
+        resp = member_client.delete(_page_archive_url(workspace.slug, own_project.id, page.id))
+        assert resp.status_code == status.HTTP_204_NO_CONTENT, resp.content
+        page.refresh_from_db()
+        assert page.archived_at is None

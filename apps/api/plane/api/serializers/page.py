@@ -117,15 +117,15 @@ class PageCreateSerializer(BaseSerializer):
     def validate_parent_id(self, value):
         if value is None:
             return None
-        slug = self.context.get("slug")
-        project_id = self.context.get("project_id")
-        parent_exists = Page.objects.filter(
-            pk=value,
-            workspace__slug=slug,
-            project_pages__project_id=project_id,
-            project_pages__deleted_at__isnull=True,
-        ).exists()
-        if not parent_exists:
+        # Imported lazily: plane.api.views.page imports this module at load time.
+        from plane.api.views.page import _project_pages_queryset
+
+        parent_visible = (
+            _project_pages_queryset(self.context["user"], self.context.get("slug"), self.context.get("project_id"))
+            .filter(pk=value, archived_at__isnull=True)
+            .exists()
+        )
+        if not parent_visible:
             raise serializers.ValidationError("Parent page must belong to the same project.")
         return value
 

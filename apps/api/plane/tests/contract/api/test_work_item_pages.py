@@ -342,6 +342,53 @@ class TestWorkItemPagesPermissionsAndScope:
         admin_detail_url = _link_detail_url(workspace.slug, own_project.id, own_issue.id, admin_create.json()["id"])
         assert api_key_client.delete(admin_detail_url).status_code == status.HTTP_204_NO_CONTENT
 
+    def test_relink_after_unlink_creates_new_link(self, api_key_client, workspace, own_project, own_issue, own_page):
+        url = _links_url(workspace.slug, own_project.id, own_issue.id)
+
+        first = api_key_client.post(url, {"page_id": str(own_page.id)}, format="json")
+        assert first.status_code == status.HTTP_201_CREATED, first.content
+        first_url = _link_detail_url(workspace.slug, own_project.id, own_issue.id, first.json()["id"])
+        assert api_key_client.delete(first_url).status_code == status.HTTP_204_NO_CONTENT
+
+        second = api_key_client.post(url, {"page_id": str(own_page.id)}, format="json")
+        assert second.status_code == status.HTTP_201_CREATED, second.content
+        assert second.json()["id"] != first.json()["id"]
+        assert IssuePage.objects.filter(issue=own_issue, page=own_page).count() == 1
+
+    def test_delete_link_to_another_users_private_page_returns_404_and_keeps_link(
+        self, api_key_client, workspace, own_project, own_issue, member_user
+    ):
+        private_page = _make_page(workspace, own_project, member_user, "Secret Page", access=Page.PRIVATE_ACCESS)
+        link = IssuePage.objects.create(issue=own_issue, page=private_page, project=own_project, workspace=workspace)
+
+        resp = api_key_client.delete(_link_detail_url(workspace.slug, own_project.id, own_issue.id, link.id))
+        assert resp.status_code == status.HTTP_404_NOT_FOUND
+        assert IssuePage.objects.filter(pk=link.id).exists()
+
+    def test_restricted_guest_list_hides_links_to_pages_of_other_users(
+        self, workspace, own_project, own_page, guest_user
+    ):
+        Project.objects.filter(pk=own_project.id).update(guest_view_all_features=False)
+        guest_issue = _make_issue(own_project, guest_user, "Guest Work Item")
+        guest_page = _make_page(workspace, own_project, guest_user, "Guest Page")
+        foreign_link = IssuePage.objects.create(
+            issue=guest_issue, page=own_page, project=own_project, workspace=workspace
+        )
+        own_link = IssuePage.objects.create(
+            issue=guest_issue, page=guest_page, project=own_project, workspace=workspace
+        )
+
+        guest_client = _client_for(guest_user)
+        list_resp = guest_client.get(_links_url(workspace.slug, own_project.id, guest_issue.id))
+        assert list_resp.status_code == status.HTTP_200_OK
+        assert {row["id"] for row in list_resp.json()["results"]} == {str(own_link.id)}
+        assert (
+            guest_client.get(
+                _link_detail_url(workspace.slug, own_project.id, guest_issue.id, foreign_link.id)
+            ).status_code
+            == status.HTTP_404_NOT_FOUND
+        )
+
     def test_restricted_guest_can_only_access_own_work_items(
         self, workspace, own_project, own_issue, own_page, guest_user
     ):
@@ -366,14 +413,13 @@ class TestWorkItemPagesPermissionsAndScope:
             == status.HTTP_404_NOT_FOUND
         )
 
-        # Guest's own work item returns 200 on list and detail
-        assert (
-            guest_client.get(_links_url(workspace.slug, own_project.id, guest_issue.id)).status_code
-            == status.HTTP_200_OK
-        )
+        # Guest's own work item is listable, but a restricted guest only sees links to pages they own
+        list_resp = guest_client.get(_links_url(workspace.slug, own_project.id, guest_issue.id))
+        assert list_resp.status_code == status.HTTP_200_OK
+        assert list_resp.data["total_count"] == 0
         assert (
             guest_client.get(_link_detail_url(workspace.slug, own_project.id, guest_issue.id, own_link.id)).status_code
-            == status.HTTP_200_OK
+            == status.HTTP_404_NOT_FOUND
         )
 
     @pytest.mark.parametrize("bundle_fixture", ["sibling_bundle", "other_tenant_bundle"])

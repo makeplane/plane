@@ -9,6 +9,7 @@ import json
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import IntegrityError, transaction
 from django.db.models import Exists, OuterRef, Q, UUIDField, Value
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -159,6 +160,40 @@ def _project_pages_queryset(user, slug, project_id):
     return queryset
 
 
+def _issue_page_links_queryset(user, slug, project_id, issue_id):
+    issue = Issue.issue_objects.get(
+        workspace__slug=slug,
+        project_id=project_id,
+        pk=issue_id,
+    )
+    if guest_cannot_view_issue(user.id, issue, slug):
+        raise Issue.DoesNotExist()
+    queryset = (
+        IssuePage.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            page__deleted_at__isnull=True,
+        )
+        .filter(
+            Exists(
+                ProjectPage.objects.filter(
+                    page_id=OuterRef("page_id"),
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    deleted_at__isnull=True,
+                )
+            )
+        )
+        .filter(Q(page__owned_by=user) | Q(page__access=Page.PUBLIC_ACCESS))
+        .select_related("page", "issue", "project", "workspace")
+        .order_by("-created_at")
+    )
+    if is_restricted_guest(user.id, project_id, slug):
+        queryset = queryset.filter(page__owned_by=user)
+    return queryset
+
+
 class PageListCreateAPIEndpoint(BaseAPIView):
     """Project Page List and Create Endpoint"""
 
@@ -218,7 +253,9 @@ class PageListCreateAPIEndpoint(BaseAPIView):
             )
 
         queryset = self.get_queryset()
-        if request.GET.get("archived", "false").lower() not in ("true", "1"):
+        if request.GET.get("archived", "false").lower() in ("true", "1"):
+            queryset = queryset.filter(archived_at__isnull=False)
+        else:
             queryset = queryset.filter(archived_at__isnull=True)
 
         external_id = request.GET.get("external_id")
@@ -273,6 +310,7 @@ class PageListCreateAPIEndpoint(BaseAPIView):
                 "slug": slug,
                 "project_id": project_id,
                 "owned_by_id": request.user.id,
+                "user": request.user,
             },
         )
         if serializer.is_valid():
@@ -349,16 +387,6 @@ class PageDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if (
-            "access" in request.data
-            and page.access != request.data.get("access")
-            and page.owned_by_id != request.user.id
-        ):
-            return Response(
-                {"error": "Access cannot be updated since this page is owned by someone else"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         old_description_html = page.description_html
         existing_instance = json.dumps(
             {"description_html": old_description_html},
@@ -367,6 +395,13 @@ class PageDetailAPIEndpoint(BaseAPIView):
 
         serializer = PageUpdateSerializer(page, data=request.data, partial=True)
         if serializer.is_valid():
+            # Compare the validated value: the raw request value may be a string ("0") for the same access level.
+            new_access = serializer.validated_data.get("access")
+            if new_access is not None and new_access != page.access and page.owned_by_id != request.user.id:
+                return Response(
+                    {"error": "Access cannot be updated since this page is owned by someone else"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             html_changed = "description_html" in serializer.validated_data
             page = serializer.save()
             if html_changed:
@@ -596,35 +631,11 @@ class IssuePageListCreateAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
-        slug = self.kwargs.get("slug")
-        project_id = self.kwargs.get("project_id")
-        issue_id = self.kwargs.get("issue_id")
-        issue = Issue.issue_objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            pk=issue_id,
-        )
-        if guest_cannot_view_issue(self.request.user.id, issue, slug):
-            raise Issue.DoesNotExist()
-        return (
-            IssuePage.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                issue_id=issue_id,
-            )
-            .filter(
-                Exists(
-                    ProjectPage.objects.filter(
-                        page_id=OuterRef("page_id"),
-                        project_id=project_id,
-                        workspace__slug=slug,
-                        deleted_at__isnull=True,
-                    )
-                )
-            )
-            .filter(Q(page__owned_by=self.request.user) | Q(page__access=Page.PUBLIC_ACCESS))
-            .select_related("page", "issue", "project", "workspace")
-            .order_by("-created_at")
+        return _issue_page_links_queryset(
+            user=self.request.user,
+            slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
+            issue_id=self.kwargs.get("issue_id"),
         )
 
     @work_item_page_docs(
@@ -734,28 +745,42 @@ class IssuePageListCreateAPIEndpoint(BaseAPIView):
         if page is None:
             raise Page.DoesNotExist()
 
-        existing = (
-            IssuePage.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                issue=issue,
-                page=page,
+        def find_active_link():
+            return (
+                IssuePage.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    issue=issue,
+                    page=page,
+                )
+                .select_related("page", "issue", "project", "workspace")
+                .first()
             )
-            .select_related("page", "issue", "project", "workspace")
-            .first()
-        )
+
+        existing = find_active_link()
         if existing is not None:
             return Response(
                 IssuePageSerializer(existing, fields=self.fields, expand=self.expand).data,
                 status=status.HTTP_200_OK,
             )
 
-        issue_page = IssuePage.objects.create(
-            issue=issue,
-            page=page,
-            project_id=project_id,
-            workspace_id=issue.workspace_id,
-        )
+        try:
+            with transaction.atomic():
+                issue_page = IssuePage.objects.create(
+                    issue=issue,
+                    page=page,
+                    project_id=project_id,
+                    workspace_id=issue.workspace_id,
+                )
+        except IntegrityError:
+            # A concurrent request created the same active link between the check and the insert.
+            existing = find_active_link()
+            if existing is None:
+                raise
+            return Response(
+                IssuePageSerializer(existing, fields=self.fields, expand=self.expand).data,
+                status=status.HTTP_200_OK,
+            )
         issue_page = IssuePage.objects.select_related("page", "issue", "project", "workspace").get(pk=issue_page.id)
         return Response(
             IssuePageSerializer(issue_page, fields=self.fields, expand=self.expand).data,
@@ -772,35 +797,11 @@ class IssuePageDetailAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
-        slug = self.kwargs.get("slug")
-        project_id = self.kwargs.get("project_id")
-        issue_id = self.kwargs.get("issue_id")
-        issue = Issue.issue_objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            pk=issue_id,
-        )
-        if guest_cannot_view_issue(self.request.user.id, issue, slug):
-            raise Issue.DoesNotExist()
-        return (
-            IssuePage.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                issue_id=issue_id,
-            )
-            .filter(
-                Exists(
-                    ProjectPage.objects.filter(
-                        page_id=OuterRef("page_id"),
-                        project_id=project_id,
-                        workspace__slug=slug,
-                        deleted_at__isnull=True,
-                    )
-                )
-            )
-            .filter(Q(page__owned_by=self.request.user) | Q(page__access=Page.PUBLIC_ACCESS))
-            .select_related("page", "issue", "project", "workspace")
-            .order_by("-created_at")
+        return _issue_page_links_queryset(
+            user=self.request.user,
+            slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
+            issue_id=self.kwargs.get("issue_id"),
         )
 
     @work_item_page_docs(
@@ -850,18 +851,6 @@ class IssuePageDetailAPIEndpoint(BaseAPIView):
 
         Remove a page link from a work item.
         """
-        issue = Issue.issue_objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            pk=issue_id,
-        )
-        if guest_cannot_view_issue(request.user.id, issue, slug):
-            raise Issue.DoesNotExist()
-        issue_page = IssuePage.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue_id=issue_id,
-            pk=pk,
-        )
+        issue_page = self.get_queryset().get(pk=pk)
         issue_page.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
