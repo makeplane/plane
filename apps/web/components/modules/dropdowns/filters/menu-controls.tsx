@@ -70,7 +70,7 @@ export function ModuleFilterViewToggle({ label, onClick }: { label: string; onCl
   return menu ? (
     <MenuItem label={label} onClick={onClick} closeOnClick={false} />
   ) : (
-    <button type="button" className="ml-8 text-11 font-medium text-accent-primary" onClick={onClick}>
+    <button type="button" className="ml-8 text-caption-sm-medium text-accent-primary" onClick={onClick}>
       {label}
     </button>
   );

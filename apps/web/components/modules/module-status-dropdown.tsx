@@ -51,7 +51,7 @@ export const ModuleStatusDropdown = observer(function ModuleStatusDropdown(props
         }`}
       >
         <span
-          className="flex h-6 w-20 items-center justify-center rounded-sm text-center text-11"
+          className="flex h-6 w-20 items-center justify-center rounded-sm text-center text-caption-sm-regular"
           style={{
             color: moduleStatus.color,
             backgroundColor: `${moduleStatus.color}20`,

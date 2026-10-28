@@ -30,7 +30,7 @@ export const AppliedStatusFilters = observer(function AppliedStatusFilters(props
         if (!statusDetails) return null;
 
         return (
-          <div key={status} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
+          <div key={status} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-caption-sm-regular">
             <ModuleStatusIcon status={statusDetails.value} height="12px" width="12px" />
             {t(statusDetails.i18n_label)}
             {editable && (

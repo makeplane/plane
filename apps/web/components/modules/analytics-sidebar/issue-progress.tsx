@@ -181,9 +181,9 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
           onOpenChange={setIsOpen}
           trigger={
             <span className="relative flex w-full items-center gap-2">
-              <span className="text-13 font-medium text-secondary">{t("common.progress")}</span>
+              <span className="text-body-xs-medium text-secondary">{t("common.progress")}</span>
               {progressHeaderPercentage > 0 && (
-                <span className="bg-amber-500/20 text-amber-500 flex h-5 w-9 items-center justify-center rounded-sm text-11 font-medium">{`${progressHeaderPercentage}%`}</span>
+                <span className="bg-amber-500/20 text-amber-500 flex h-5 w-9 items-center justify-center rounded-sm text-caption-sm-medium">{`${progressHeaderPercentage}%`}</span>
               )}
             </span>
           }
@@ -212,10 +212,10 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
         </Collapsible>
       ) : (
         <div className="relative flex w-full items-center justify-between gap-2">
-          <div className="text-13 font-medium text-secondary">Progress</div>
+          <div className="text-body-xs-medium text-secondary">Progress</div>
           <div className="flex items-center gap-1">
             <WarningCircleOutline height={14} width={14} className="text-secondary" />
-            <span className="text-11 text-secondary italic">
+            <span className="text-caption-sm-regular text-secondary italic">
               {moduleDetails?.start_date && moduleDetails?.target_date
                 ? t("project_module.empty_state.sidebar.in_active")
                 : t("project_module.empty_state.sidebar.invalid_date")}

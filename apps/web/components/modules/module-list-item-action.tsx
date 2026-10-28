@@ -133,7 +133,7 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
     <>
       <DateRangeSelect
         variant="select-ghost-md"
-        className={`h-6 w-full gap-1.5 rounded-sm border-[0.5px] border-strong text-11 text-tertiary ${
+        className={`h-6 w-full gap-1.5 rounded-sm border-[0.5px] border-strong text-caption-sm-regular text-tertiary ${
           isDisabled ? "cursor-not-allowed" : "cursor-pointer"
         }`}
         value={{

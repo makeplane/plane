@@ -54,9 +54,9 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
         return (
           <div
             key={filterKey}
-            className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary"
+            className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-caption-sm-regular text-tertiary capitalize hover:text-secondary"
           >
-            <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+            <span className="text-caption-sm-regular text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             <div className="flex flex-wrap items-center gap-1">
               {filterKey === "status" && (
                 <AppliedStatusFilters

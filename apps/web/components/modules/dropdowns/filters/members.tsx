@@ -101,7 +101,7 @@ export const FilterMembers = observer(function FilterMembers(props: Props) {
                 )}
               </>
             ) : (
-              <p className="text-11 text-placeholder italic">No matches found</p>
+              <p className="text-caption-sm-regular text-placeholder italic">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

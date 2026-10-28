@@ -140,7 +140,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                           <div className="flex w-full min-w-24 flex-grow items-center gap-1.5 truncate">
                             <IssueIdentifier issueId={issue.id} projectId={projectId} size="xs" variant="secondary" />
                             <Tooltip label={`Title: ${issue.name}`} layout="stacked" align="start">
-                              <span className="truncate text-13 text-primary">{issue.name}</span>
+                              <span className="truncate text-body-xs-regular text-primary">{issue.name}</span>
                             </Tooltip>
                           </div>
                           <PriorityIcon priority={issue.priority} />
@@ -156,9 +156,9 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                             />
                             {issue.target_date && (
                               <Tooltip label={`Target Date: ${renderFormattedDate(issue.target_date) ?? ""}`}>
-                                <div className="flex h-full cursor-pointer items-center gap-1.5 truncate rounded-sm bg-layer-1 px-2 py-0.5 text-11 group-hover:bg-surface-1">
+                                <div className="flex h-full cursor-pointer items-center gap-1.5 truncate rounded-sm bg-layer-1 px-2 py-0.5 text-caption-sm-regular group-hover:bg-surface-1">
                                   <CompletedAtOutline className="h-3 w-3 flex-shrink-0" />
-                                  <span className="truncate text-11">
+                                  <span className="truncate text-caption-sm-regular">
                                     {renderFormattedDateWithoutYear(issue.target_date)}
                                   </span>
                                 </div>
@@ -172,7 +172,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                       <div
                         ref={setIssueLoaderElement}
                         className={
-                          "relative flex h-11 animate-pulse cursor-pointer items-center gap-3 bg-layer-1 p-3 text-13"
+                          "relative flex h-11 animate-pulse cursor-pointer items-center gap-3 bg-layer-1 p-3 text-body-xs-regular"
                         }
                       />
                     )}
@@ -270,7 +270,9 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                             backgroundColor: label.color ?? "#000000",
                           }}
                         />
-                        <span className="truncate text-11 text-ellipsis">{label.label_name ?? "No labels"}</span>
+                        <span className="truncate text-caption-sm-regular text-ellipsis">
+                          {label.label_name ?? "No labels"}
+                        </span>
                       </div>
                     }
                     completed={label.completed_issues}

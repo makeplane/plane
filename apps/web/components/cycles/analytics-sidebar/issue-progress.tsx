@@ -104,7 +104,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
   if (!cycleDetails) return <></>;
 
   const progressTitle = (
-    <span className="text-13 font-medium text-secondary">{t("project_cycles.active_cycle.progress")}</span>
+    <span className="text-body-xs-medium text-secondary">{t("project_cycles.active_cycle.progress")}</span>
   );
 
   const progressBody = (
@@ -137,7 +137,9 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
           )}
         </>
       ) : (
-        <div className="my-2 w-full rounded-md bg-surface-2 px-2 py-2 text-13 text-tertiary">{t("no_data_yet")}</div>
+        <div className="my-2 w-full rounded-md bg-surface-2 px-2 py-2 text-body-xs-regular text-tertiary">
+          {t("no_data_yet")}
+        </div>
       )}
     </div>
   );

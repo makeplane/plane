@@ -93,12 +93,12 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
               progress === 100 ? (
                 <TickOutline className="h-3 w-3 stroke-[2] text-accent-primary" />
               ) : (
-                <span className="text-13 text-accent-primary">{`!`}</span>
+                <span className="text-body-xs-regular text-accent-primary">{`!`}</span>
               )
             ) : progress === 100 ? (
               <TickOutline className="h-3 w-3 stroke-[2] text-accent-primary" />
             ) : (
-              <span className="text-9 text-tertiary">{`${progress}%`}</span>
+              <span className="text-caption-2xs-regular text-tertiary">{`${progress}%`}</span>
             )}
           </div>
         </div>

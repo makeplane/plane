@@ -117,7 +117,7 @@ export const ModuleFiltersSelection = observer(function ModuleFiltersSelection(p
   ) : (
     <div className="flex h-full w-full flex-col overflow-hidden">
       <div className="bg-surface-1 p-2.5 pb-0">
-        <div className="flex items-center gap-1.5 rounded-sm border-[0.5px] border-subtle bg-surface-2 px-1.5 py-1 text-11">
+        <div className="flex items-center gap-1.5 rounded-sm border-[0.5px] border-subtle bg-surface-2 px-1.5 py-1 text-caption-sm-regular">
           <SearchOutline className="text-placeholder" width={12} height={12} />
           <input
             type="text"

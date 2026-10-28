@@ -124,7 +124,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
           <div className="flex items-center gap-2 border-b border-subtle pb-3">
             <SearchOutline className="h-4 w-4 text-secondary" />
             <input
-              className="text-13 outline-none"
+              className="text-body-xs-regular outline-none"
               placeholder="Search for a cycle..."
               onChange={(e) => setQuery(e.target.value)}
               value={query}
@@ -142,7 +142,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                     return (
                       <button
                         key={optionId}
-                        className="flex w-full items-center gap-4 rounded-sm px-4 py-3 text-13 text-secondary hover:bg-surface-2"
+                        className="flex w-full items-center gap-4 rounded-sm px-4 py-3 text-body-xs-regular text-secondary hover:bg-surface-2"
                         onClick={() => {
                           transferIssue({
                             new_cycle_id: optionId,
@@ -163,7 +163,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                     );
                   })
                 ) : (
-                  <div className="flex w-full items-center justify-center gap-4 p-5 text-13">
+                  <div className="flex w-full items-center justify-center gap-4 p-5 text-body-xs-regular">
                     <WarningCircleOutline className="h-3.5 w-3.5 text-secondary" />
                     <span className="text-center text-secondary">
                       You don’t have any current cycle. Please create one to transfer the work items.

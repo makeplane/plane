@@ -188,7 +188,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
       />
       <button
         onClick={openCycleOverview}
-        className={`z-[1] flex flex-shrink-0 gap-1 text-11 text-accent-secondary ${isMobile || (isActive && !searchParams.has("peekCycle")) ? "flex" : "hidden group-hover:flex"}`}
+        className={`z-[1] flex flex-shrink-0 gap-1 text-caption-sm-regular text-accent-secondary ${isMobile || (isActive && !searchParams.has("peekCycle")) ? "flex" : "hidden group-hover:flex"}`}
       >
         <ShowOutline className="my-auto h-4 w-4 text-accent-secondary" />
         <span>{t("project_cycles.more_details")}</span>
@@ -196,7 +196,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
       {showIssueCount && (
         <div className="flex items-center gap-1">
           <WorkItemsOutline className="h-4 w-4 text-tertiary" />
-          <span className="text-11 text-tertiary">{cycleDetails.total_issues}</span>
+          <span className="text-caption-sm-regular text-tertiary">{cycleDetails.total_issues}</span>
         </div>
       )}
       {showTransferIssues && (
@@ -222,13 +222,13 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
               layout="stacked"
               disabled={!isProjectTimeZoneDifferent()}
             >
-              <div className="flex items-center gap-1 text-11 font-medium text-tertiary">
+              <div className="flex items-center gap-1 text-caption-sm-medium text-tertiary">
                 <CalendarOutline className="my-auto h-3 w-3 flex-shrink-0" />
                 <MergedDateDisplay startDate={cycleDetails.start_date} endDate={cycleDetails.end_date} />
               </div>
             </Tooltip>
             {projectUTCOffset && (
-              <span className="cursor-default rounded-md bg-layer-1 px-2 py-1 text-11 text-tertiary">
+              <span className="cursor-default rounded-md bg-layer-1 px-2 py-1 text-caption-sm-regular text-tertiary">
                 {projectUTCOffset}
               </span>
             )}
@@ -241,7 +241,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
           <>
             <DateRangeSelect
               variant="select-ghost-md"
-              className="flex h-6 w-full cursor-auto items-center gap-1.5 rounded-sm p-0 text-11 text-tertiary [&>div]:hover:bg-transparent"
+              className="flex h-6 w-full cursor-auto items-center gap-1.5 rounded-sm p-0 text-caption-sm-regular text-tertiary [&>div]:hover:bg-transparent"
               minDate={new Date()}
               value={{
                 from: getDate(cycleDetails.start_date) ?? null,

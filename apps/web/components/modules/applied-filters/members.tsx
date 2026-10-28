@@ -36,7 +36,7 @@ export const AppliedMembersFilters = observer(function AppliedMembersFilters(pro
         if (!memberDetails) return null;
 
         return (
-          <div key={memberId} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
+          <div key={memberId} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-caption-sm-regular">
             <Avatar
               alt={memberDetails.display_name}
               fallback={memberDetails.display_name?.[0]?.toUpperCase()}

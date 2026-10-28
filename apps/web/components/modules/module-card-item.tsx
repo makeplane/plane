@@ -186,7 +186,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
             <Tooltip label={moduleDetails.name} layout="stacked" disabled={isMobile}>
               <Link
                 href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
-                className="min-w-0 text-14 font-medium after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-accent-strong"
+                className="min-w-0 text-body-sm-medium after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-accent-strong"
               >
                 <span className="relative z-[1] block truncate">{moduleDetails.name}</span>
               </Link>
@@ -221,7 +221,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-secondary">
               <WorkItemsOutline className="h-4 w-4 text-tertiary" />
-              <span className="text-11 text-tertiary">{issueCount ?? "0 Work item"}</span>
+              <span className="text-caption-sm-regular text-tertiary">{issueCount ?? "0 Work item"}</span>
             </div>
             {moduleLeadDetails ? (
               <span className="cursor-default">
@@ -249,7 +249,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
           >
             <DateRangeSelect
               variant="select-ghost-md"
-              className={`h-6 w-full gap-1.5 rounded-sm border-[0.5px] border-strong text-11 text-tertiary ${
+              className={`h-6 w-full gap-1.5 rounded-sm border-[0.5px] border-strong text-caption-sm-regular text-tertiary ${
                 isDisabled ? "cursor-not-allowed" : "cursor-pointer"
               }`}
               value={{

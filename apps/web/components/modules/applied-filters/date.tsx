@@ -49,7 +49,7 @@ export const AppliedDateFilters = observer(function AppliedDateFilters(props: Pr
         const dateLabel = getDateLabel(date);
 
         return (
-          <div key={date} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
+          <div key={date} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-caption-sm-regular">
             <span className="normal-case">{dateLabel}</span>
             {editable && (
               <IconButton

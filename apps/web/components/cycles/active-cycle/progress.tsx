@@ -50,9 +50,9 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
     <div className="flex min-h-[17rem] flex-col gap-5 rounded-lg border border-subtle bg-surface-1 px-3.5 py-4">
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4">
-          <h3 className="text-14 font-semibold text-tertiary">{t("project_cycles.active_cycle.progress")}</h3>
+          <h3 className="text-body-sm-semibold text-tertiary">{t("project_cycles.active_cycle.progress")}</h3>
           {cycle.total_issues > 0 && (
-            <span className="flex gap-1 rounded-xs px-3 py-1 text-13 font-medium whitespace-nowrap text-placeholder">
+            <span className="flex gap-1 rounded-xs px-3 py-1 text-body-xs-medium whitespace-nowrap text-placeholder">
               {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${
                 cycle.completed_issues + cycle.cancelled_issues > 1 ? "Work items" : "Work item"
               } closed`}
@@ -77,7 +77,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
               {groupedIssues[group] > 0 && (
                 <div key={index}>
                   <div
-                    className="flex cursor-pointer items-center justify-between gap-2 text-13"
+                    className="flex cursor-pointer items-center justify-between gap-2 text-body-xs-regular"
                     onClick={() => {
                       handleFiltersUpdate([{ property: "state_group", operator: "in", value: [group] }]);
                     }}
@@ -100,7 +100,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
             </>
           ))}
           {cycle.cancelled_issues > 0 && (
-            <span className="flex items-center gap-2 text-13 text-tertiary">
+            <span className="flex items-center gap-2 text-body-xs-regular text-tertiary">
               <span>
                 {`${cycle.cancelled_issues} cancelled ${
                   cycle.cancelled_issues > 1 ? "work items are" : "work item is"
