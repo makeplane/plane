@@ -189,6 +189,14 @@ class IssueSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError({"type_id": "Work item type is not valid for this project"})
 
+        # An unchanged type may be re-sent on update even if it was deactivated later.
+        if (
+            data.get("type")
+            and not data["type"].is_active
+            and (self.instance is None or self.instance.type_id != data["type"].id)
+        ):
+            raise serializers.ValidationError({"type_id": "Work item type is not active"})
+
         return data
 
     def create(self, validated_data):

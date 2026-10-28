@@ -185,14 +185,13 @@ def test_create_list_retrieve_update_and_sdk_shape(api_key_client, workspace, pr
 
     patch_resp = api_key_client.patch(
         detail_url,
-        {"name": "Defect", "level": 3, "is_active": False, "is_epic": True},
+        {"name": "Defect", "level": 3, "is_active": False},
         format="json",
     )
     assert patch_resp.status_code == status.HTTP_200_OK, patch_resp.content
     assert patch_resp.data["name"] == "Defect"
     assert patch_resp.data["level"] == 3
     assert patch_resp.data["is_active"] is False
-    # is_epic is not updatable
     assert patch_resp.data["is_epic"] is False
     assert ProjectIssueType.objects.get(project=project, issue_type_id=type_id).level == 3
 
@@ -304,3 +303,58 @@ def test_invalid_payloads_return_400(api_key_client, workspace, project):
     assert api_key_client.post(url, {"name": "BadIds", "project_ids": "not-a-list"}, format="json").status_code == (
         status.HTTP_400_BAD_REQUEST
     )
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_issue_serializer_type_id_on_update_and_inactive_types(api_key_client, workspace, project, sibling_project):
+    own_type = IssueType.objects.create(workspace=workspace, name="Story")
+    ProjectIssueType.objects.create(project=project, workspace=workspace, issue_type=own_type)
+    inactive_type = IssueType.objects.create(workspace=workspace, name="Old", is_active=False)
+    ProjectIssueType.objects.create(project=project, workspace=workspace, issue_type=inactive_type)
+    sibling_type = IssueType.objects.create(workspace=workspace, name="SiblingType")
+    ProjectIssueType.objects.create(project=sibling_project, workspace=workspace, issue_type=sibling_type)
+
+    wi_url = f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/work-items/"
+    created = api_key_client.post(wi_url, {"name": "WI"}, format="json")
+    assert created.status_code == status.HTTP_201_CREATED, created.content
+    detail_url = f"{wi_url}{created.data['id']}/"
+
+    assert api_key_client.post(wi_url, {"name": "X", "type_id": str(inactive_type.id)}, format="json").status_code == (
+        status.HTTP_400_BAD_REQUEST
+    )
+    assert api_key_client.patch(detail_url, {"type_id": str(sibling_type.id)}, format="json").status_code == (
+        status.HTTP_400_BAD_REQUEST
+    )
+    assert api_key_client.patch(detail_url, {"type_id": str(inactive_type.id)}, format="json").status_code == (
+        status.HTTP_400_BAD_REQUEST
+    )
+    ok = api_key_client.patch(detail_url, {"type_id": str(own_type.id)}, format="json")
+    assert ok.status_code == status.HTTP_200_OK, ok.content
+    assert Issue.objects.get(pk=created.data["id"]).type_id == own_type.id
+
+    # A type deactivated after assignment can still be echoed back unchanged.
+    IssueType.objects.filter(pk=own_type.id).update(is_active=False)
+    echo = api_key_client.patch(detail_url, {"type_id": str(own_type.id), "name": "WI 2"}, format="json")
+    assert echo.status_code == status.HTTP_200_OK, echo.content
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_epic_types_and_deactivating_default_are_refused(api_key_client, workspace, project):
+    url = _types_url(workspace.slug, project.id)
+    epic = api_key_client.post(url, {"name": "Epic", "is_epic": True}, format="json")
+    assert epic.status_code == status.HTTP_400_BAD_REQUEST, epic.content
+    assert not IssueType.objects.filter(workspace=workspace, name="Epic").exists()
+
+    default_type = IssueType.objects.create(workspace=workspace, name="Task", is_default=True)
+    ProjectIssueType.objects.create(project=project, workspace=workspace, issue_type=default_type, is_default=True)
+    deactivate = api_key_client.patch(f"{url}{default_type.id}/", {"is_active": False}, format="json")
+    assert deactivate.status_code == status.HTTP_400_BAD_REQUEST, deactivate.content
+    default_type.refresh_from_db()
+    assert default_type.is_active is True
+
+    custom = api_key_client.post(url, {"name": "Spike"}, format="json")
+    assert custom.status_code == status.HTTP_201_CREATED, custom.content
+    to_epic = api_key_client.patch(f"{url}{custom.data['id']}/", {"is_epic": True}, format="json")
+    assert to_epic.status_code == status.HTTP_400_BAD_REQUEST, to_epic.content

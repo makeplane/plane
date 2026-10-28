@@ -364,7 +364,6 @@ STATIC_ROLE_SPECS = (
 def _build_workspace_roles(slug, namespace_filter=None):
     namespaces = (namespace_filter,) if namespace_filter else STATIC_ROLE_NAMESPACES
     ws_counts = {}
-    proj_counts = {}
 
     if "workspace" in namespaces:
         ws_counts = dict(
@@ -373,17 +372,9 @@ def _build_workspace_roles(slug, namespace_filter=None):
             .annotate(count=Count("id"))
             .values_list("role", "count")
         )
-    if "project" in namespaces:
-        proj_counts = dict(
-            ProjectMember.objects.filter(workspace__slug=slug, is_active=True)
-            .values("role")
-            .annotate(count=Count("id"))
-            .values_list("role", "count")
-        )
 
     roles = []
     for ns in namespaces:
-        counts = ws_counts if ns == "workspace" else proj_counts
         for name, role_slug, level in STATIC_ROLE_SPECS:
             role_id = uuid.uuid5(ROLE_UUID_NAMESPACE, f"{ns}:{role_slug}")
             roles.append(
@@ -393,7 +384,9 @@ def _build_workspace_roles(slug, namespace_filter=None):
                     "slug": role_slug,
                     "namespace": ns,
                     "level": level,
-                    "member_count": counts.get(level, 0),
+                    # Counting project members across all projects would expose membership of
+                    # projects the caller cannot see, so project roles carry no count.
+                    "member_count": ws_counts.get(level, 0) if ns == "workspace" else None,
                 }
             )
     return roles
@@ -464,16 +457,6 @@ class WorkspaceRoleListAPIEndpoint(BaseAPIView):
     serializer_class = RoleSerializer
     permission_classes = [WorkspaceUserPermission]
     use_read_replica = True
-
-    def check_permissions(self, request):
-        if (
-            request.user
-            and request.user.is_authenticated
-            and self.workspace_slug
-            and not Workspace.objects.filter(slug=self.workspace_slug).exists()
-        ):
-            raise Workspace.DoesNotExist()
-        super().check_permissions(request)
 
     @role_docs(
         operation_id="list_workspace_roles",

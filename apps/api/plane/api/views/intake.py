@@ -542,20 +542,7 @@ class IntakeIssueStatusAPIEndpoint(IntakeIssueDetailAPIEndpoint):
 
     permission_classes = [ProjectAdminPermission]
 
-    def check_permissions(self, request):
-        if (
-            request.user
-            and request.user.is_authenticated
-            and self.workspace_slug
-            and self.project_id
-            and not Project.objects.filter(
-                workspace__slug=self.workspace_slug,
-                pk=self.project_id,
-            ).exists()
-        ):
-            raise Project.DoesNotExist()
-
-        super().check_permissions(request)
+    STATUS_FIELDS = ("status", "snoozed_till", "duplicate_to", "source", "source_email")
 
     @intake_docs(
         operation_id="update_intake_work_item_status",
@@ -584,7 +571,16 @@ class IntakeIssueStatusAPIEndpoint(IntakeIssueDetailAPIEndpoint):
 
         Update the triage status of an intake work item, ignoring any embedded issue payload.
         """
-        Project.objects.get(workspace__slug=slug, pk=project_id)
+        if not isinstance(request.data, dict):
+            return Response({"error": "Request body must be a JSON object"}, status=status.HTTP_400_BAD_REQUEST)
+
+        status_data = {k: v for k, v in request.data.items() if k in self.STATUS_FIELDS}
+        if not status_data:
+            return Response(
+                {"error": f"At least one of {', '.join(self.STATUS_FIELDS)} is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
         if intake is None:
             raise IntakeIssue.DoesNotExist()
@@ -596,7 +592,6 @@ class IntakeIssueStatusAPIEndpoint(IntakeIssueDetailAPIEndpoint):
             intake_id=intake.id,
         )
 
-        status_data = {k: v for k, v in request.data.items() if k != "issue"}
         intake_serializer = IntakeIssueUpdateSerializer(
             intake_issue,
             data=status_data,

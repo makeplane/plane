@@ -161,6 +161,29 @@ def test_patch_project_features_updates_columns_creates_intake_and_fires_activit
     assert project.is_issue_type_enabled is True
     assert Intake.objects.filter(project=project, is_default=True).count() == 1
     _no_side_effects.delay.assert_called_once()
+    # Activity receives the model-field payload, not the SDK-named request body.
+    assert _no_side_effects.delay.call_args.kwargs["requested_data"] == {
+        "module_view": True,
+        "cycle_view": True,
+        "issue_views_view": True,
+        "page_view": False,
+        "intake_view": True,
+        "is_issue_type_enabled": True,
+    }
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_patch_without_intakes_passes_current_intake_view_to_activity(
+    api_key_client, workspace, project, _no_side_effects
+):
+    response = api_key_client.patch(_features_url(workspace.slug, project.id), {"modules": True}, format="json")
+
+    assert response.status_code == status.HTTP_200_OK, response.content
+    assert _no_side_effects.delay.call_args.kwargs["requested_data"] == {
+        "module_view": True,
+        "intake_view": False,
+    }
 
 
 @pytest.mark.contract
@@ -261,18 +284,23 @@ def test_cross_project_and_cross_workspace_ids(
     sibling_project.refresh_from_db()
     assert sibling_project.module_view is False
 
-    # Cross-workspace project id under caller's workspace -> 404
+    # Cross-workspace project id under caller's workspace -> 403 (permission class decides)
     cross_ws_url = _features_url(workspace.slug, other_tenant_project.id)
-    assert api_key_client.get(cross_ws_url).status_code == status.HTTP_404_NOT_FOUND
-    assert api_key_client.patch(cross_ws_url, {"modules": True}, format="json").status_code == status.HTTP_404_NOT_FOUND
+    assert api_key_client.get(cross_ws_url).status_code == status.HTTP_403_FORBIDDEN
+    assert api_key_client.patch(cross_ws_url, {"modules": True}, format="json").status_code == status.HTTP_403_FORBIDDEN
     other_tenant_project.refresh_from_db()
     assert other_tenant_project.module_view is False
 
-    # Own project id under other workspace slug -> 404
+    # Own project id under other workspace slug -> 403
     wrong_slug_url = _features_url(other_tenant_project.workspace.slug, project.id)
-    assert api_key_client.get(wrong_slug_url).status_code == status.HTTP_404_NOT_FOUND
+    assert api_key_client.get(wrong_slug_url).status_code == status.HTTP_403_FORBIDDEN
     assert (
-        api_key_client.patch(wrong_slug_url, {"modules": True}, format="json").status_code == status.HTTP_404_NOT_FOUND
+        api_key_client.patch(wrong_slug_url, {"modules": True}, format="json").status_code == status.HTTP_403_FORBIDDEN
     )
     project.refresh_from_db()
     assert project.module_view is False
+
+    # Nonexistent project id behaves like any other project the caller is not a member of
+    missing_url = _features_url(workspace.slug, uuid4())
+    assert api_key_client.get(missing_url).status_code == status.HTTP_403_FORBIDDEN
+    assert api_key_client.patch(missing_url, {"modules": True}, format="json").status_code == status.HTTP_403_FORBIDDEN

@@ -88,4 +88,5 @@ def test_nonexistent_and_other_workspace_slug(api_key_client):
     WorkspaceMember.objects.create(workspace=other_ws, member=owner, role=ADMIN, is_active=True)
 
     assert api_key_client.get(_url(other_ws.slug)).status_code == status.HTTP_403_FORBIDDEN
-    assert api_key_client.get(_url("nonexistent-workspace-slug")).status_code == status.HTTP_404_NOT_FOUND
+    # Permission class decides: a non-member gets 403 whether or not the workspace exists.
+    assert api_key_client.get(_url("nonexistent-workspace-slug")).status_code == status.HTTP_403_FORBIDDEN

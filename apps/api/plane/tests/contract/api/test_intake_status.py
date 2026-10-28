@@ -4,10 +4,12 @@
 
 """Contract tests for PATCH /api/v1/workspaces/<slug>/projects/<project_id>/intake-issues/<issue_id>/status/."""
 
+from datetime import timedelta
 from unittest import mock
 from uuid import uuid4
 
 import pytest
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -319,3 +321,123 @@ def test_cross_project_and_cross_workspace_issue_id_returns_404(
         assert resp.status_code == status.HTTP_404_NOT_FOUND, resp.content
         foreign_ii.refresh_from_db()
         assert foreign_ii.status == -2
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_duplicate_to_self_is_rejected(api_key_client, workspace, project, intake_issue_record):
+    issue = intake_issue_record.issue
+    url = _status_url(workspace.slug, project.id, issue.id)
+
+    resp = api_key_client.patch(url, {"status": 2, "duplicate_to": str(issue.id)}, format="json")
+
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST, resp.content
+    assert "duplicate_to" in resp.data
+    intake_issue_record.refresh_from_db()
+    assert intake_issue_record.status == -2
+    assert intake_issue_record.duplicate_to_id is None
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_duplicate_to_archived_draft_or_triage_issue_is_rejected(
+    api_key_client, workspace, project, intake_issue_record, triage_state, create_user, _no_side_effects
+):
+    url = _status_url(workspace.slug, project.id, intake_issue_record.issue_id)
+    archived = Issue.objects.create(
+        name="Archived",
+        project=project,
+        workspace=workspace,
+        created_by=create_user,
+        archived_at=timezone.now().date(),
+    )
+    draft = Issue.objects.create(
+        name="Draft", project=project, workspace=workspace, created_by=create_user, is_draft=True
+    )
+    pending = Issue.objects.create(
+        name="Pending", project=project, workspace=workspace, created_by=create_user, state=triage_state
+    )
+
+    for target in (archived, draft, pending):
+        resp = api_key_client.patch(url, {"status": 2, "duplicate_to": str(target.id)}, format="json")
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST, (target.name, resp.content)
+        assert "duplicate_to" in resp.data
+
+    intake_issue_record.refresh_from_db()
+    assert intake_issue_record.status == -2
+    assert intake_issue_record.duplicate_to_id is None
+    _no_side_effects.delay.assert_not_called()
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_stored_duplicate_to_and_snoozed_till_satisfy_status_requirements(
+    api_key_client, workspace, project, intake_issue_record, create_user
+):
+    target = Issue.objects.create(name="Target", project=project, workspace=workspace, created_by=create_user)
+    intake_issue_record.duplicate_to = target
+    intake_issue_record.snoozed_till = timezone.now() + timedelta(days=3)
+    intake_issue_record.save()
+    url = _status_url(workspace.slug, project.id, intake_issue_record.issue_id)
+
+    resp = api_key_client.patch(url, {"status": 2}, format="json")
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+    assert str(resp.data["duplicate_to"]) == str(target.id)
+
+    resp = api_key_client.patch(url, {"status": 0}, format="json")
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+    assert resp.data["snoozed_till"] is not None
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_explicit_null_duplicate_to_does_not_fall_back_to_stored_value(
+    api_key_client, workspace, project, intake_issue_record, create_user
+):
+    target = Issue.objects.create(name="Target", project=project, workspace=workspace, created_by=create_user)
+    intake_issue_record.duplicate_to = target
+    intake_issue_record.save()
+    url = _status_url(workspace.slug, project.id, intake_issue_record.issue_id)
+
+    resp = api_key_client.patch(url, {"status": 2, "duplicate_to": None}, format="json")
+
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST, resp.content
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_list_body_returns_400(api_key_client, workspace, project, intake_issue_record, _no_side_effects):
+    url = _status_url(workspace.slug, project.id, intake_issue_record.issue_id)
+
+    resp = api_key_client.patch(url, [{"status": -1}], format="json")
+
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST, resp.content
+    assert "error" in resp.data
+    intake_issue_record.refresh_from_db()
+    assert intake_issue_record.status == -2
+    _no_side_effects.delay.assert_not_called()
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+@pytest.mark.parametrize("payload", [{}, {"issue": {"name": "Only Issue"}}, {"unknown": 1}])
+def test_body_without_status_fields_returns_400_and_no_activity(
+    api_key_client, workspace, project, intake_issue_record, _no_side_effects, payload
+):
+    url = _status_url(workspace.slug, project.id, intake_issue_record.issue_id)
+
+    resp = api_key_client.patch(url, payload, format="json")
+
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST, resp.content
+    assert "error" in resp.data
+    intake_issue_record.refresh_from_db()
+    assert intake_issue_record.status == -2
+    _no_side_effects.delay.assert_not_called()
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_nonexistent_project_is_decided_by_permission_class(api_key_client, workspace):
+    resp = api_key_client.patch(_status_url(workspace.slug, uuid4(), uuid4()), {"status": -1}, format="json")
+
+    assert resp.status_code == status.HTTP_403_FORBIDDEN, resp.content

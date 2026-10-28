@@ -117,10 +117,15 @@ class IntakeIssueUpdateSerializer(BaseSerializer):
         the project has a default state to transition to.
         """
         status_val = attrs.get("status")
-        if status_val == 0 and not attrs.get("snoozed_till"):
+        # A partial update may omit these fields; the stored values then still satisfy the requirement.
+        stored = self.instance
+        snoozed_till = attrs["snoozed_till"] if "snoozed_till" in attrs else stored and stored.snoozed_till
+        duplicate_to = attrs["duplicate_to"] if "duplicate_to" in attrs else stored and stored.duplicate_to
+
+        if status_val == 0 and not snoozed_till:
             raise serializers.ValidationError({"snoozed_till": "snoozed_till is required when status is snoozed."})
 
-        if status_val == 2 and not attrs.get("duplicate_to"):
+        if status_val == 2 and not duplicate_to:
             raise serializers.ValidationError({"duplicate_to": "duplicate_to is required when status is duplicate."})
 
         duplicate_to = attrs.get("duplicate_to")
@@ -131,6 +136,20 @@ class IntakeIssueUpdateSerializer(BaseSerializer):
             ):
                 raise serializers.ValidationError(
                     {"duplicate_to": "Duplicate work item must belong to the same workspace and project."}
+                )
+
+            if duplicate_to.id == self.instance.issue_id:
+                raise serializers.ValidationError({"duplicate_to": "A work item cannot be a duplicate of itself."})
+
+            if duplicate_to.archived_at is not None:
+                raise serializers.ValidationError({"duplicate_to": "Duplicate work item cannot be archived."})
+
+            if duplicate_to.is_draft:
+                raise serializers.ValidationError({"duplicate_to": "Duplicate work item cannot be a draft."})
+
+            if duplicate_to.state and duplicate_to.state.group == StateGroup.TRIAGE.value:
+                raise serializers.ValidationError(
+                    {"duplicate_to": "Duplicate work item cannot be a pending intake work item."}
                 )
 
         if attrs.get("snoozed_till"):

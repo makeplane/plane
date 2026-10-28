@@ -87,9 +87,9 @@ def test_list_roles_envelope_and_member_counts(api_key_client, workspace, create
     assert by_key[("workspace", "admin")]["member_count"] == 1
     assert by_key[("workspace", "member")]["member_count"] == 1
     assert by_key[("workspace", "guest")]["member_count"] == 1
-    assert by_key[("project", "admin")]["member_count"] == 1
-    assert by_key[("project", "member")]["member_count"] == 2
-    assert by_key[("project", "guest")]["member_count"] == 0
+    # Project role counts would leak membership of projects the caller cannot see.
+    for role_slug in ("admin", "member", "guest"):
+        assert by_key[("project", role_slug)]["member_count"] is None
 
 
 @pytest.mark.contract
@@ -144,6 +144,12 @@ def test_retrieve_role_by_id_and_not_found(api_key_client, workspace):
     missing = api_key_client.get(f"{_roles_url(workspace.slug)}{uuid4()}/")
     assert missing.status_code == status.HTTP_404_NOT_FOUND
 
+    project_admin_id = uuid.uuid5(ROLE_UUID_NAMESPACE, "project:admin")
+    project_role = api_key_client.get(f"{_roles_url(workspace.slug)}{project_admin_id}/")
+    assert project_role.status_code == status.HTTP_200_OK, project_role.content
+    assert project_role.data["namespace"] == "project"
+    assert project_role.data["member_count"] is None
+
 
 @pytest.mark.contract
 @pytest.mark.django_db
@@ -175,4 +181,4 @@ def test_roles_permission_matrix_and_workspace_isolation(workspace, role, expect
         expected_admins = WorkspaceMember.objects.filter(workspace=workspace, role=ADMIN, is_active=True).count()
         assert detail_resp.data["member_count"] == expected_admins
 
-    assert client.get(_roles_url("nonexistent-ws")).status_code == status.HTTP_404_NOT_FOUND
+    assert client.get(_roles_url("nonexistent-ws")).status_code == status.HTTP_403_FORBIDDEN

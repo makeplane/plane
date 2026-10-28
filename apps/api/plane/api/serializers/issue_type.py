@@ -56,11 +56,15 @@ class IssueTypeSerializer(BaseSerializer):
             "deleted_at",
         ]
 
-    def get_fields(self):
-        fields = super().get_fields()
-        if self.instance is not None and "is_epic" in fields:
-            fields["is_epic"].read_only = True
-        return fields
+    def validate(self, attrs):
+        if attrs.get("is_epic") is True:
+            raise serializers.ValidationError({"is_epic": "Epics are not available on this edition"})
+
+        # Deactivating the default type would leave new work items without a valid type.
+        if self.instance is not None and self.instance.is_default and attrs.get("is_active") is False:
+            raise serializers.ValidationError({"is_active": "The default work item type cannot be deactivated"})
+
+        return attrs
 
     def to_representation(self, instance):
         if not hasattr(instance, "project_ids") or instance.project_ids is None:

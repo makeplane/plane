@@ -116,4 +116,4 @@ class RoleSerializer(serializers.Serializer):
     slug = serializers.CharField(read_only=True)
     namespace = serializers.CharField(read_only=True)
     level = serializers.IntegerField(read_only=True)
-    member_count = serializers.IntegerField(read_only=True)
+    member_count = serializers.IntegerField(read_only=True, allow_null=True)

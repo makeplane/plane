@@ -456,10 +456,12 @@ def _apply_project_update(request, slug, workspace, project, update_data):
 
     current_instance = json.dumps(ProjectSerializer(project).data, cls=DjangoJSONEncoder)
     intake_view = update_data.get("intake_view", project.intake_view)
+    # Model-field payload: callers such as the features endpoint receive SDK names in request.data.
+    requested_data = {**update_data, "intake_view": intake_view}
 
     serializer = ProjectUpdateSerializer(
         project,
-        data={**update_data, "intake_view": intake_view},
+        data=requested_data,
         context={"workspace_id": workspace.id},
         partial=True,
     )
@@ -480,7 +482,7 @@ def _apply_project_update(request, slug, workspace, project, update_data):
     model_activity.delay(
         model_name="project",
         model_id=str(project.id),
-        requested_data=request.data,
+        requested_data=requested_data,
         current_instance=current_instance,
         actor_id=request.user.id,
         slug=slug,
@@ -851,25 +853,7 @@ UNSUPPORTED_PROJECT_FEATURES = (
 )
 
 
-class _ProjectBoundMixin:
-    """Ensure (slug, project_id) exists before project-member permission checks."""
-
-    def check_permissions(self, request):
-        if (
-            request.user
-            and request.user.is_authenticated
-            and self.workspace_slug
-            and self.project_id
-            and not Project.objects.filter(
-                workspace__slug=self.workspace_slug,
-                pk=self.project_id,
-            ).exists()
-        ):
-            raise Project.DoesNotExist()
-        super().check_permissions(request)
-
-
-class ProjectFeatureAPIEndpoint(_ProjectBoundMixin, BaseAPIView):
+class ProjectFeatureAPIEndpoint(BaseAPIView):
     """Project Features Get and Update Endpoint"""
 
     serializer_class = ProjectFeatureSerializer
@@ -965,16 +949,6 @@ class WorkspaceFeatureAPIEndpoint(BaseAPIView):
     permission_classes = [WorkspaceUserPermission]
     use_read_replica = True
 
-    def check_permissions(self, request):
-        if (
-            request.user
-            and request.user.is_authenticated
-            and self.workspace_slug
-            and not Workspace.objects.filter(slug=self.workspace_slug).exists()
-        ):
-            raise Workspace.DoesNotExist()
-        super().check_permissions(request)
-
     @workspace_docs(
         operation_id="retrieve_workspace_features",
         summary="Retrieve workspace features",
@@ -1005,7 +979,7 @@ WORK_ITEM_TYPE_ID_PARAMETER = OpenApiParameter(
 )
 
 
-class WorkItemTypeListCreateAPIEndpoint(_ProjectBoundMixin, BaseAPIView):
+class WorkItemTypeListCreateAPIEndpoint(BaseAPIView):
     """Work Item Type List and Create Endpoint"""
 
     serializer_class = IssueTypeSerializer
