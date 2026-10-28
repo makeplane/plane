@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -36,11 +36,14 @@ import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/prop
 import { MemberSelect } from "@/components/dropdowns/member/member-select";
 import { CreateUpdateModuleLinkModal, ModuleAnalyticsProgress, ModuleLinksList } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
+import { ModuleQuickActions } from "@/components/modules/quick-actions";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useModule } from "@/hooks/store/use-module";
 import { useUserPermissions, useUserProfile } from "@/hooks/store/user";
-// plane web constants
+// local imports
+import { ModuleSidebarDescription } from "./description";
+
 const defaultValues: Partial<IModule> = {
   lead_id: "",
   member_ids: [],
@@ -130,6 +133,8 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
   // states
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
+  // refs
+  const headerRef = useRef<HTMLDivElement>(null);
   // router
   const { workspaceSlug, projectId } = useParams();
 
@@ -260,8 +265,8 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
         createLink={handleCreateLink}
         updateLink={handleUpdateLink}
       />
-      <div className="flex items-start gap-3">
-        {/* h-lh keeps the status icon on the title's first line; py-0.5 centres that line on the close button. */}
+      <div ref={headerRef} className="flex items-start gap-3">
+        {/* h-lh keeps the status icon on the title's first line; py-0.5 centres that line on the header actions. */}
         <div className="flex min-w-0 flex-1 items-start gap-1 py-0.5 text-body-md-semibold">
           {moduleStatus && (
             <span className="flex h-lh w-5 shrink-0 items-center justify-center">
@@ -270,26 +275,38 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           )}
           <h4 className="min-w-0 flex-1 wrap-break-word text-primary">{moduleDetails.name}</h4>
         </div>
-        <IconButton
-          variant="ghost"
-          size="md"
-          aria-label={t("close")}
-          icon={<Icon icon={CloseOutline} />}
-          onClick={() => handleClose()}
-        />
+        <div className="flex shrink-0 items-center gap-3">
+          {workspaceSlug && projectId && (
+            <ModuleQuickActions
+              parentRef={headerRef}
+              moduleId={moduleId}
+              projectId={projectId.toString()}
+              workspaceSlug={workspaceSlug.toString()}
+            />
+          )}
+          <IconButton
+            variant="ghost"
+            size="md"
+            aria-label={t("close")}
+            icon={<Icon icon={CloseOutline} />}
+            onClick={() => handleClose()}
+          />
+        </div>
       </div>
 
       <div className="flex flex-col gap-5">
-        {moduleDetails.description && (
-          <p className="w-full text-body-xs-regular wrap-break-word whitespace-pre-wrap text-secondary">
-            {moduleDetails.description}
-          </p>
+        {moduleDetails.description?.trim() && (
+          <>
+            <ModuleSidebarDescription description={moduleDetails.description} />
+            <div className="w-full border-t border-subtle" />
+          </>
         )}
-        {moduleDetails.description && <div className="w-full border-t border-subtle" />}
 
-        <div className="flex flex-col gap-4">
-          <span className="py-1 text-caption-md-semibold text-primary">{t("common.properties")}</span>
-          <div className="flex flex-col gap-2">
+        <Collapsible
+          defaultOpen
+          trigger={<span className="text-caption-md-semibold text-primary">{t("common.properties")}</span>}
+        >
+          <div className="mt-4 flex flex-col gap-2">
             <SidebarPropertyListItem icon={StateOutline} label={t("state")}>
               <Controller
                 control={control}
@@ -389,8 +406,9 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
               </SidebarPropertyListItem>
             )}
           </div>
-        </div>
+        </Collapsible>
 
+        <div className="w-full border-t border-subtle" />
         {workspaceSlug && projectId && moduleDetails?.id && (
           <ModuleAnalyticsProgress
             workspaceSlug={workspaceSlug.toString()}
