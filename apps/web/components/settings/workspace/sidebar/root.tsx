@@ -21,12 +21,12 @@ export function WorkspaceSettingsSidebarRoot(props: Props) {
   return (
     <div
       className={cn(
-        "flex h-full w-[250px] shrink-0 animate-fade-in flex-col overflow-hidden border-r border-r-subtle bg-surface-1",
+        "flex h-full min-h-0 w-[250px] shrink-0 animate-fade-in flex-col overflow-hidden border-r border-r-subtle bg-surface-1",
         className
       )}
     >
-      <ScrollArea orientation="vertical">
-        <WorkspaceSettingsSidebarHeader />
+      <WorkspaceSettingsSidebarHeader />
+      <ScrollArea orientation="vertical" size="sm">
         <WorkspaceSettingsSidebarItemCategories />
       </ScrollArea>
     </div>
