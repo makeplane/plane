@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { Input } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import type { TQuickAddIssueForm } from "../root";
 
@@ -13,33 +13,29 @@ export const ListQuickAddIssueForm = observer(function ListQuickAddIssueForm(pro
   const { ref, projectDetail, register, onSubmit, isEpic, hasError } = props;
   const { t } = useTranslation();
   return (
-    <div className="shadow-raised-200">
-      <form
-        ref={ref}
-        onSubmit={onSubmit}
-        className="flex w-full items-center gap-x-3 border-[0.5px] border-t-0 border-subtle bg-surface-1 px-3"
-      >
-        <div className="flex w-full min-w-0 items-center gap-3 py-1.5">
-          <div className="text-11 font-medium text-placeholder">{projectDetail?.identifier ?? "..."}</div>
-          <InputGroup size="lg">
-            <Input
-              size="lg"
-              type="text"
-              autoComplete="off"
-              aria-label={isEpic ? t("epic.title.label") : t("issue.title.label")}
-              aria-invalid={hasError}
-              data-invalid={hasError || undefined}
-              placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
-              {...register("name", {
-                required: isEpic ? t("epic.title.required") : t("issue.title.required"),
-              })}
-            />
-          </InputGroup>
-        </div>
-      </form>
-      <div className="px-3 py-2 text-11 text-secondary italic">
-        {isEpic ? t("epic.add.press_enter") : t("issue.add.press_enter")}
+    <form
+      ref={ref}
+      onSubmit={onSubmit}
+      className="flex min-h-12 w-full items-center gap-3 border-b border-subtle bg-surface-1 px-page-x py-2"
+    >
+      <div className="flex min-w-0 flex-1 items-center gap-2">
+        <div className="shrink-0 text-caption-sm-medium text-placeholder">{projectDetail?.identifier ?? "..."}</div>
+        <Input
+          size="md"
+          type="text"
+          autoComplete="off"
+          aria-label={isEpic ? t("epic.title.label") : t("issue.title.label")}
+          aria-invalid={hasError}
+          data-invalid={hasError || undefined}
+          placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
+          {...register("name", {
+            required: isEpic ? t("epic.title.required") : t("issue.title.required"),
+          })}
+        />
       </div>
-    </div>
+      <span className="hidden shrink-0 text-caption-sm-regular text-secondary italic md:block">
+        {isEpic ? t("epic.add.press_enter") : t("issue.add.press_enter")}
+      </span>
+    </form>
   );
 });

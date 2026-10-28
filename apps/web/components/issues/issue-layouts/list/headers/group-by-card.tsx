@@ -13,6 +13,8 @@ import { setToast } from "@plane/blocks/toast";
 import type { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
 import { useTranslation } from "@plane/i18n";
 // ui
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 // components
 import { cn } from "@plane/utils";
@@ -121,8 +123,8 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           className="relative flex w-full min-w-0 cursor-pointer flex-row items-center gap-1 rounded-xs text-left outline-none focus-visible:ring-2 focus-visible:ring-accent-strong"
           onClick={() => handleCollapsedGroups(groupID)}
         >
-          <span className="line-clamp-1 inline-block truncate font-medium text-primary">{title}</span>
-          <span className="pl-2 text-13 font-medium text-tertiary">{count || 0}</span>
+          <span className="line-clamp-1 inline-block truncate text-body-sm-medium text-primary">{title}</span>
+          <span className="pl-2 text-body-xs-medium text-tertiary">{count || 0}</span>
           <span className="px-2.5" />
         </button>
 
@@ -131,13 +133,12 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             <Menu>
               <MenuTrigger
                 render={
-                  <button
-                    type="button"
+                  <IconButton
+                    variant="ghost"
+                    size="md"
                     aria-label={t("common.add")}
-                    className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1"
-                  >
-                    <AddOutline className="h-3.5 w-3.5" />
-                  </button>
+                    icon={<Icon icon={AddOutline} />}
+                  />
                 }
               />
               <MenuContent side="bottom" align="start">
@@ -156,16 +157,15 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
               </MenuContent>
             </Menu>
           ) : (
-            <button
-              type="button"
+            <IconButton
+              variant="ghost"
+              size="md"
               aria-label={t("common.add")}
-              className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1"
+              icon={<Icon icon={AddOutline} />}
               onClick={() => {
                 setIsOpen(true);
               }}
-            >
-              <AddOutline width={14} />
-            </button>
+            />
           ))}
 
         {isEpic ? (
