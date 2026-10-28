@@ -120,18 +120,18 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
     >
       {formattedConfig ? (
         <div className="space-y-3">
-          <div className={cn("flex w-full items-center gap-14 rounded-sm")}>
-            <div className="flex grow items-center gap-4">
-              <div className="grow">
+          <div className="flex w-full items-start justify-between gap-4 rounded-lg border border-subtle bg-layer-2 px-4 py-3 md:items-center md:gap-8">
+            <div className="flex min-w-0 grow items-center gap-4">
+              <div className="min-w-0 grow">
                 <div className="pb-1 text-body-sm-medium text-primary">
                   Allow anyone to sign up even without an invite
                 </div>
-                <div className={cn("text-body-xs-regular leading-5 text-tertiary")}>
+                <div className="text-body-xs-regular leading-5 text-tertiary">
                   Toggling this off will only let users sign up when they are invited.
                 </div>
               </div>
             </div>
-            <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
+            <div className={cn("shrink-0", { "opacity-70": isSubmitting })}>
               <div className="flex items-center gap-4">
                 <Switch
                   aria-label="Allow anyone to sign up even without an invite"
@@ -149,7 +149,7 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
               </div>
             </div>
           </div>
-          <div className="pt-6 text-h6-medium text-primary">Available authentication modes</div>
+          <h3 className="pt-3 text-h6-medium text-primary">Available authentication modes</h3>
           {authenticationModes.map((method) => (
             <AuthenticationMethodCard
               key={method.key}

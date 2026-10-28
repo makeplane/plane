@@ -163,15 +163,20 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
             />
           ))}
           <div className="flex flex-col gap-1">
-            <h4 id={emailSecurityLabelId} className="text-body-xs-regular text-tertiary">
+            <span id={emailSecurityLabelId} className="text-body-xs-medium text-primary">
               Email security
-            </h4>
+            </span>
             <Select
               items={EMAIL_SECURITY_OPTIONS}
               value={emailSecurityKey}
               onValueChange={(value) => handleEmailSecurityChange(value as TEmailSecurityKeys)}
             >
-              <SelectTrigger size="lg" placeholder="Select email security" aria-labelledby={emailSecurityLabelId} />
+              <SelectTrigger
+                variant="secondary"
+                size="lg"
+                placeholder="Select email security"
+                aria-labelledby={emailSecurityLabelId}
+              />
               <SelectContent>
                 <SelectList>
                   {Object.entries(EMAIL_SECURITY_OPTIONS).map(([key, value]) => (
