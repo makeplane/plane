@@ -113,7 +113,6 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
         workspaceSlug={workspaceSlug}
         entityId={issueId}
         activityOperations={activityOperations}
-        showToolbarInitially
         projectId={projectId}
       />
     ),
