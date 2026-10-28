@@ -66,7 +66,7 @@ export function HeaderColumn(props: Props) {
       <MenuTrigger
         render={
           <button type="button" tabIndex={-1} className="clickable w-full">
-            <Row className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary">
+            <Row className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-body-xs-regular text-secondary hover:text-primary">
               <div className="flex items-center gap-1.5">
                 {<SpreadSheetPropertyIcon iconKey={propertyDetails.icon} className="h-4 w-4 text-placeholder" />}
                 {property === "sub_issue_count" && isEpic

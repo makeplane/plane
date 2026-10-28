@@ -111,7 +111,10 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
   const displayPropertiesCount = getDisplayPropertiesCount(displayProperties, ignoreFieldsForCounting);
 
   return (
-    <table className="w-full overflow-y-auto bg-surface-1" onKeyDown={handleKeyBoardNavigation}>
+    <table
+      className="w-full border-separate border-spacing-0 overflow-y-auto bg-surface-1"
+      onKeyDown={handleKeyBoardNavigation}
+    >
       <SpreadsheetHeader
         displayProperties={displayProperties}
         displayFilters={displayFilters}

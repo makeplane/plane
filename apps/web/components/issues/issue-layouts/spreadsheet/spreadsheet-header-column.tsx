@@ -36,7 +36,7 @@ export const SpreadsheetHeaderColumn = observer(function SpreadsheetHeaderColumn
       shouldRenderProperty={() => shouldRenderProperty}
     >
       <th
-        className="h-11 min-w-36 items-center border border-t-0 border-b-0 border-subtle bg-layer-1 py-1 text-13 font-medium"
+        className="h-11 min-w-36 items-center border-r-[0.5px] border-b-[0.5px] border-subtle bg-layer-1 py-1 text-body-xs-medium nth-last-2:border-r-0"
         ref={tableHeaderCellRef}
         tabIndex={0}
       >
