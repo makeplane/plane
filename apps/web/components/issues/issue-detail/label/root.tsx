@@ -88,6 +88,8 @@ export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
         className="min-h-8"
         tooltip
         testId="work-item-label-select"
+        // The sidebar row already names the property; selected labels show as soft label pills.
+        showEmptyIcon={false}
       />
     </div>
   );
