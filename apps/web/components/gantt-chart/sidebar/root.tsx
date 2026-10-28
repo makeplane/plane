@@ -63,7 +63,7 @@ export const GanttChartSidebar = observer(function GanttChartSidebar(props: Prop
       variant={ERowVariant.HUGGING}
     >
       <Row
-        className="group/list-header sticky top-0 z-10 box-border flex flex-shrink-0 items-end justify-between gap-2 border-b-[0.5px] border-subtle-1 bg-surface-1 pr-4 pb-2 text-13 font-medium text-tertiary"
+        className="group/list-header sticky top-0 z-10 box-border flex flex-shrink-0 items-end justify-between gap-2 border-b border-subtle-1 bg-surface-1 pr-4 pb-2 text-body-xs-medium text-tertiary"
         style={{
           height: `${HEADER_HEIGHT}px`,
         }}

@@ -38,7 +38,7 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
               {/** Main Quarter Title */}
               <div className="inline-flex h-7 w-full justify-between">
                 <div
-                  className="sticky z-[1] my-1 flex items-center bg-surface-1 px-3 py-1 text-14 font-regular whitespace-nowrap text-secondary capitalize"
+                  className="sticky z-[1] my-1 flex items-center bg-surface-1 px-3 py-1 text-body-sm-regular whitespace-nowrap text-secondary capitalize"
                   style={{
                     left: `${SIDEBAR_WIDTH}px`,
                   }}
@@ -50,7 +50,7 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
                     </span>
                   )}
                 </div>
-                <div className="sticky px-3 py-2 text-11 whitespace-nowrap text-placeholder capitalize">
+                <div className="sticky px-3 py-2 text-caption-sm-regular whitespace-nowrap text-placeholder capitalize">
                   {quarterBlock.shortTitle}
                 </div>
               </div>
@@ -67,7 +67,7 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
                     )}
                     style={{ width: `${currentViewData?.data.dayWidth * monthBlock.days}px` }}
                   >
-                    <div className="flex h-full items-center justify-center space-x-1 text-11 font-medium">
+                    <div className="flex h-full items-center justify-center space-x-1 text-caption-sm-medium">
                       <span
                         className={cn({
                           "rounded-lg bg-accent-primary px-2 text-on-color": monthBlock.today,
