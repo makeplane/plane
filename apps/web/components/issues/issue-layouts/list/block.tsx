@@ -213,7 +213,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
                   layout="stacked"
                   disabled={issue.project_id === projectId}
                 >
-                  <div className="absolute left-1 grid w-3.5 flex-shrink-0 place-items-center">
+                  <div className="absolute left-0.5 grid w-4 flex-shrink-0 place-items-center">
                     <MultipleSelectEntityAction
                       className={cn(
                         "pointer-events-none opacity-0 transition-opacity group-hover/list-block:pointer-events-auto group-hover/list-block:opacity-100",
@@ -287,7 +287,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
           {!issue?.tempId ? (
             <>
               <IssueProperties
-                className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-shrink-0 md:flex-grow" : "lg:flex-shrink-0 lg:flex-grow"} items-center gap-2 whitespace-nowrap`}
+                className={`relative flex min-w-0 flex-wrap ${isSidebarCollapsed ? "md:flex-shrink-0 md:flex-grow" : "lg:flex-shrink-0 lg:flex-grow"} items-center gap-2 whitespace-nowrap`}
                 issue={issue}
                 isReadOnly={!canEditIssueProperties}
                 updateIssue={updateIssue}

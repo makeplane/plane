@@ -84,7 +84,7 @@ export const CalendarIssueBlocks = observer(function CalendarIssueBlocks(props: 
 
       {isPaginating && (
         <div className="p-1 px-2">
-          <div className="flex h-10 w-full animate-pulse items-center justify-between gap-1.5 rounded-sm bg-layer-1 px-4 py-1.5 md:h-8 md:px-1" />
+          <div className="flex h-10 w-full animate-pulse items-center justify-between gap-1.5 rounded-lg bg-layer-2 px-4 py-1.5 md:h-8 md:px-1" />
         </div>
       )}
 

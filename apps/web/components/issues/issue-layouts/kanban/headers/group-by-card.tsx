@@ -144,7 +144,13 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             size="xs"
             aria-label={title}
             aria-expanded={!verticalAlignPosition}
-            icon={verticalAlignPosition ? <FullScreenOutline width={14} /> : <ArrowCollapseOutline width={14} />}
+            icon={
+              verticalAlignPosition ? (
+                <FullScreenOutline className="size-3.5" />
+              ) : (
+                <ArrowCollapseOutline className="size-3.5" />
+              )
+            }
             onClick={() => handleCollapsedGroups("group_by", column_id)}
           />
         )}
@@ -154,13 +160,12 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             <Menu>
               <MenuTrigger
                 render={
-                  <button
-                    type="button"
+                  <IconButton
+                    variant="ghost"
+                    size="xs"
                     aria-label={t("common.add")}
-                    className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover"
-                  >
-                    <AddOutline height={14} width={14} />
-                  </button>
+                    icon={<AddOutline className="size-3.5" />}
+                  />
                 }
               />
               <MenuContent side="bottom" align="end">
@@ -179,16 +184,15 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
               </MenuContent>
             </Menu>
           ) : (
-            <button
-              type="button"
+            <IconButton
+              variant="ghost"
+              size="xs"
               aria-label={t("common.add")}
-              className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover"
+              icon={<AddOutline className="size-3.5" />}
               onClick={() => {
                 setIsOpen(true);
               }}
-            >
-              <AddOutline width={14} />
-            </button>
+            />
           ))}
       </div>
     </>

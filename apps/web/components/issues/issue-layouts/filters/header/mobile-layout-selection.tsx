@@ -37,11 +37,9 @@ export function MobileLayoutSelection({
           }
         >
           {/* `MenuTrigger` supplies the real button, so this is chrome only. */}
-          <ButtonChrome variant="secondary" size="sm" stretch="auto" render={<span />}>
-            {activeLayout && (
-              <IssueLayoutIcon layout={activeLayout} size={14} strokeWidth={2} className="h-3.5 w-3.5" />
-            )}
-            <ChevronDownOutline className="my-auto size-3 text-secondary" />
+          <ButtonChrome variant="secondary" size="md" stretch="auto" render={<span />}>
+            {activeLayout && <IssueLayoutIcon layout={activeLayout} size={16} className="size-4" />}
+            <ChevronDownOutline className="my-auto size-4 text-secondary" />
           </ButtonChrome>
         </MenuTrigger>
         <MenuContent side="bottom" align="start">

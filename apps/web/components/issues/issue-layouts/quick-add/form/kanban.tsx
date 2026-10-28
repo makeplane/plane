@@ -15,7 +15,7 @@ export const KanbanQuickAddIssueForm = observer(function KanbanQuickAddIssueForm
   return (
     <div className="m-1 overflow-hidden rounded-sm bg-layer-2 shadow-raised-200">
       <form ref={ref} onSubmit={onSubmit} className="flex w-full items-center gap-x-3 p-3">
-        <div className="w-full">
+        <div className="flex w-full flex-col gap-1">
           <h4 className="text-caption-sm-medium leading-5 text-tertiary">{projectDetail?.identifier ?? "..."}</h4>
           <InputGroup size="lg">
             <Input

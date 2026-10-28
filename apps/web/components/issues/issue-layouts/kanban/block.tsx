@@ -78,7 +78,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
     <button
       type="button"
       ref={menuActionRef}
-      className={`flex h-full w-full cursor-pointer items-center rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
+      className={`flex h-full w-full cursor-pointer items-center rounded-sm p-1 hover:bg-layer-1 ${
         isMenuActive ? "bg-layer-1 text-primary" : "text-secondary"
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}

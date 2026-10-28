@@ -314,7 +314,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
                   layout="stacked"
                   disabled={issueDetail.project_id === projectId}
                 >
-                  <div className="absolute left-1 mr-1 grid w-3.5 flex-shrink-0 place-items-center">
+                  <div className="absolute left-0.5 mr-1 grid w-4 flex-shrink-0 place-items-center">
                     <MultipleSelectEntityAction
                       className={cn(
                         "pointer-events-none opacity-0 transition-opacity group-hover/list-block:pointer-events-auto group-hover/list-block:opacity-100",

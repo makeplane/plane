@@ -17,14 +17,14 @@ export const SpreadsheetQuickAddIssueForm = observer(function SpreadsheetQuickAd
       <form
         ref={ref}
         onSubmit={onSubmit}
-        className="z-10 flex items-center gap-x-5 border-[0.5px] border-t-0 border-subtle bg-surface-1 px-4 shadow-raised-200"
+        className="z-10 flex min-h-12 items-center gap-x-3 border-[0.5px] border-t-0 border-subtle bg-surface-1 px-4 py-2 shadow-raised-200"
       >
         <h4 className="w-20 text-caption-sm-regular leading-5 text-placeholder">
           {projectDetail?.identifier ?? "..."}
         </h4>
-        <InputGroup size="2xl">
+        <InputGroup size="lg">
           <Input
-            size="2xl"
+            size="lg"
             aria-label={isEpic ? t("epic.title.label") : t("issue.title.label")}
             aria-invalid={hasError}
             data-invalid={hasError || undefined}
@@ -37,7 +37,7 @@ export const SpreadsheetQuickAddIssueForm = observer(function SpreadsheetQuickAd
           />
         </InputGroup>
       </form>
-      <p className="mt-3 ml-3 text-caption-sm-regular text-secondary italic">
+      <p className="px-4 pt-2 text-caption-sm-regular text-secondary italic">
         {isEpic ? t("epic.add.press_enter") : t("issue.add.press_enter")}
       </p>
     </div>
