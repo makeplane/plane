@@ -278,7 +278,12 @@
       "click_to_upvote": "Kliknij, aby zagłosować za",
       "click_to_downvote": "Kliknij, aby zagłosować przeciw",
       "click_to_view_upvotes": "Kliknij, aby zobaczyć głosy za",
-      "click_to_view_downvotes": "Kliknij, aby zobaczyć głosy przeciw"
+      "click_to_view_downvotes": "Kliknij, aby zobaczyć głosy przeciw",
+      "title": "Głosy",
+      "upvotes_count": "{count, plural, one {# głos za} few {# głosy za} many {# głosów za} other {# głosu za}}",
+      "downvotes_count": "{count, plural, one {# głos przeciw} few {# głosy przeciw} many {# głosów przeciw} other {# głosu przeciw}}",
+      "no_upvotes": "Brak głosów za",
+      "no_downvotes": "Brak głosów przeciw"
     }
   },
   "sub_work_item": {

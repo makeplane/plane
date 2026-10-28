@@ -278,7 +278,12 @@
       "click_to_upvote": "クリックして賛成票を投じる",
       "click_to_downvote": "クリックして反対票を投じる",
       "click_to_view_upvotes": "クリックして賛成票を表示",
-      "click_to_view_downvotes": "クリックして反対票を表示"
+      "click_to_view_downvotes": "クリックして反対票を表示",
+      "title": "投票",
+      "upvotes_count": "{count, plural, one {賛成票 #件} other {賛成票 #件}}",
+      "downvotes_count": "{count, plural, one {反対票 #件} other {反対票 #件}}",
+      "no_upvotes": "まだ賛成票はありません",
+      "no_downvotes": "まだ反対票はありません"
     }
   },
   "sub_work_item": {

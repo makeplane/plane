@@ -278,7 +278,12 @@
       "click_to_upvote": "Click to upvote",
       "click_to_downvote": "Click to downvote",
       "click_to_view_upvotes": "Click to view upvotes",
-      "click_to_view_downvotes": "Click to view downvotes"
+      "click_to_view_downvotes": "Click to view downvotes",
+      "title": "Votes",
+      "upvotes_count": "{count, plural, one {# upvote} other {# upvotes}}",
+      "downvotes_count": "{count, plural, one {# downvote} other {# downvotes}}",
+      "no_upvotes": "No upvotes yet",
+      "no_downvotes": "No downvotes yet"
     }
   },
   "sub_work_item": {

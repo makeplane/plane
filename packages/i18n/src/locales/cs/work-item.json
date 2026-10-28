@@ -278,7 +278,12 @@
       "click_to_upvote": "Klikněte pro hlasování nahoru",
       "click_to_downvote": "Klikněte pro hlasování dolů",
       "click_to_view_upvotes": "Klikněte pro zobrazení hlasů nahoru",
-      "click_to_view_downvotes": "Klikněte pro zobrazení hlasů dolů"
+      "click_to_view_downvotes": "Klikněte pro zobrazení hlasů dolů",
+      "title": "Hlasy",
+      "upvotes_count": "{count, plural, one {# hlas nahoru} few {# hlasy nahoru} many {# hlasu nahoru} other {# hlasů nahoru}}",
+      "downvotes_count": "{count, plural, one {# hlas dolů} few {# hlasy dolů} many {# hlasu dolů} other {# hlasů dolů}}",
+      "no_upvotes": "Zatím žádné hlasy nahoru",
+      "no_downvotes": "Zatím žádné hlasy dolů"
     }
   },
   "sub_work_item": {

@@ -278,7 +278,12 @@
       "click_to_upvote": "Klik om omhoog te stemmen",
       "click_to_downvote": "Klik om omlaag te stemmen",
       "click_to_view_upvotes": "Klik om positieve stemmen te bekijken",
-      "click_to_view_downvotes": "Klik om negatieve stemmen te bekijken"
+      "click_to_view_downvotes": "Klik om negatieve stemmen te bekijken",
+      "title": "Stemmen",
+      "upvotes_count": "{count, plural, one {# positieve stem} other {# positieve stemmen}}",
+      "downvotes_count": "{count, plural, one {# negatieve stem} other {# negatieve stemmen}}",
+      "no_upvotes": "Nog geen positieve stemmen",
+      "no_downvotes": "Nog geen negatieve stemmen"
     }
   },
   "sub_work_item": {

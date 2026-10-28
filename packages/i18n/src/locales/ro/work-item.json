@@ -278,7 +278,12 @@
       "click_to_upvote": "Clic pentru a vota pozitiv",
       "click_to_downvote": "Clic pentru a vota negativ",
       "click_to_view_upvotes": "Clic pentru a vedea voturile pozitive",
-      "click_to_view_downvotes": "Clic pentru a vedea voturile negative"
+      "click_to_view_downvotes": "Clic pentru a vedea voturile negative",
+      "title": "Voturi",
+      "upvotes_count": "{count, plural, one {# vot pozitiv} few {# voturi pozitive} other {# de voturi pozitive}}",
+      "downvotes_count": "{count, plural, one {# vot negativ} few {# voturi negative} other {# de voturi negative}}",
+      "no_upvotes": "Încă nu există voturi pozitive",
+      "no_downvotes": "Încă nu există voturi negative"
     }
   },
   "sub_work_item": {

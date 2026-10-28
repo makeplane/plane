@@ -278,7 +278,12 @@
       "click_to_upvote": "Klik untuk memberi suara naik",
       "click_to_downvote": "Klik untuk memberi suara turun",
       "click_to_view_upvotes": "Klik untuk melihat suara naik",
-      "click_to_view_downvotes": "Klik untuk melihat suara turun"
+      "click_to_view_downvotes": "Klik untuk melihat suara turun",
+      "title": "Suara",
+      "upvotes_count": "{count, plural, one {# suara naik} other {# suara naik}}",
+      "downvotes_count": "{count, plural, one {# suara turun} other {# suara turun}}",
+      "no_upvotes": "Belum ada suara naik",
+      "no_downvotes": "Belum ada suara turun"
     }
   },
   "sub_work_item": {

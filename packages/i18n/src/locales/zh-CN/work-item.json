@@ -278,7 +278,12 @@
       "click_to_upvote": "点击赞成",
       "click_to_downvote": "点击反对",
       "click_to_view_upvotes": "点击查看赞成票",
-      "click_to_view_downvotes": "点击查看反对票"
+      "click_to_view_downvotes": "点击查看反对票",
+      "title": "投票",
+      "upvotes_count": "{count, plural, one {# 张赞成票} other {# 张赞成票}}",
+      "downvotes_count": "{count, plural, one {# 张反对票} other {# 张反对票}}",
+      "no_upvotes": "暂无赞成票",
+      "no_downvotes": "暂无反对票"
     }
   },
   "sub_work_item": {

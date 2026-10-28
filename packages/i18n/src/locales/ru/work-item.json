@@ -278,7 +278,12 @@
       "click_to_upvote": "Нажмите, чтобы проголосовать за",
       "click_to_downvote": "Нажмите, чтобы проголосовать против",
       "click_to_view_upvotes": "Нажмите, чтобы посмотреть голоса за",
-      "click_to_view_downvotes": "Нажмите, чтобы посмотреть голоса против"
+      "click_to_view_downvotes": "Нажмите, чтобы посмотреть голоса против",
+      "title": "Голоса",
+      "upvotes_count": "{count, plural, one {# голос за} few {# голоса за} many {# голосов за} other {# голоса за}}",
+      "downvotes_count": "{count, plural, one {# голос против} few {# голоса против} many {# голосов против} other {# голоса против}}",
+      "no_upvotes": "Пока нет голосов за",
+      "no_downvotes": "Пока нет голосов против"
     }
   },
   "sub_work_item": {

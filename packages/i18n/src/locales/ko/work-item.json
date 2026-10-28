@@ -278,7 +278,12 @@
       "click_to_upvote": "클릭하여 추천",
       "click_to_downvote": "클릭하여 비추천",
       "click_to_view_upvotes": "클릭하여 추천 목록 보기",
-      "click_to_view_downvotes": "클릭하여 비추천 목록 보기"
+      "click_to_view_downvotes": "클릭하여 비추천 목록 보기",
+      "title": "투표",
+      "upvotes_count": "{count, plural, one {추천 #개} other {추천 #개}}",
+      "downvotes_count": "{count, plural, one {비추천 #개} other {비추천 #개}}",
+      "no_upvotes": "아직 추천이 없습니다",
+      "no_downvotes": "아직 비추천이 없습니다"
     }
   },
   "sub_work_item": {

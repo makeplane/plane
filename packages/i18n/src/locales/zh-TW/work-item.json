@@ -278,7 +278,12 @@
       "click_to_upvote": "點擊贊成",
       "click_to_downvote": "點擊反對",
       "click_to_view_upvotes": "點擊查看贊成票",
-      "click_to_view_downvotes": "點擊查看反對票"
+      "click_to_view_downvotes": "點擊查看反對票",
+      "title": "投票",
+      "upvotes_count": "{count, plural, one {# 張贊成票} other {# 張贊成票}}",
+      "downvotes_count": "{count, plural, one {# 張反對票} other {# 張反對票}}",
+      "no_upvotes": "尚無贊成票",
+      "no_downvotes": "尚無反對票"
     }
   },
   "sub_work_item": {

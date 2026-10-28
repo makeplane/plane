@@ -278,7 +278,12 @@
       "click_to_upvote": "Olumlu oy vermek için tıklayın",
       "click_to_downvote": "Olumsuz oy vermek için tıklayın",
       "click_to_view_upvotes": "Olumlu oyları görüntülemek için tıklayın",
-      "click_to_view_downvotes": "Olumsuz oyları görüntülemek için tıklayın"
+      "click_to_view_downvotes": "Olumsuz oyları görüntülemek için tıklayın",
+      "title": "Oylar",
+      "upvotes_count": "{count, plural, one {# olumlu oy} other {# olumlu oy}}",
+      "downvotes_count": "{count, plural, one {# olumsuz oy} other {# olumsuz oy}}",
+      "no_upvotes": "Henüz olumlu oy yok",
+      "no_downvotes": "Henüz olumsuz oy yok"
     }
   },
   "sub_work_item": {

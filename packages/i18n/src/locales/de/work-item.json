@@ -278,7 +278,12 @@
       "click_to_upvote": "Klicken zum Hochstimmen",
       "click_to_downvote": "Klicken zum Runterstimmen",
       "click_to_view_upvotes": "Klicken um Hochstimmen anzuzeigen",
-      "click_to_view_downvotes": "Klicken um Runterstimmen anzuzeigen"
+      "click_to_view_downvotes": "Klicken um Runterstimmen anzuzeigen",
+      "title": "Stimmen",
+      "upvotes_count": "{count, plural, one {# Hochstimme} other {# Hochstimmen}}",
+      "downvotes_count": "{count, plural, one {# Runterstimme} other {# Runterstimmen}}",
+      "no_upvotes": "Noch keine Hochstimmen",
+      "no_downvotes": "Noch keine Runterstimmen"
     }
   },
   "sub_work_item": {

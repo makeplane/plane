@@ -278,7 +278,12 @@
       "click_to_upvote": "Kliknite pre hlasovanie hore",
       "click_to_downvote": "Kliknite pre hlasovanie dole",
       "click_to_view_upvotes": "Kliknite pre zobrazenie hlasov hore",
-      "click_to_view_downvotes": "Kliknite pre zobrazenie hlasov dole"
+      "click_to_view_downvotes": "Kliknite pre zobrazenie hlasov dole",
+      "title": "Hlasy",
+      "upvotes_count": "{count, plural, one {# hlas hore} few {# hlasy hore} many {# hlasu hore} other {# hlasov hore}}",
+      "downvotes_count": "{count, plural, one {# hlas dole} few {# hlasy dole} many {# hlasu dole} other {# hlasov dole}}",
+      "no_upvotes": "Zatiaľ žiadne hlasy hore",
+      "no_downvotes": "Zatiaľ žiadne hlasy dole"
     }
   },
   "sub_work_item": {

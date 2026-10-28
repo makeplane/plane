@@ -278,7 +278,12 @@
       "click_to_upvote": "Click to upvote",
       "click_to_downvote": "Click to downvote",
       "click_to_view_upvotes": "Click to view upvotes",
-      "click_to_view_downvotes": "Click to view downvotes"
+      "click_to_view_downvotes": "Click to view downvotes",
+      "title": "ხმები",
+      "upvotes_count": "{count, plural, one {# დადებითი ხმა} other {# დადებითი ხმა}}",
+      "downvotes_count": "{count, plural, one {# უარყოფითი ხმა} other {# უარყოფითი ხმა}}",
+      "no_upvotes": "დადებითი ხმები ჯერ არ არის",
+      "no_downvotes": "უარყოფითი ხმები ჯერ არ არის"
     }
   },
   "sub_work_item": {

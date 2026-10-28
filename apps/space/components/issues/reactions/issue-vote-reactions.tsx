@@ -5,32 +5,40 @@
  */
 
 import { useState } from "react";
-import { ArrowDownOutline, TopArrowOutline } from "@makeplane/propel/icons";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // plane imports
-import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { Icon } from "@makeplane/propel/components/icon";
-import { Toggle, ToggleLabel } from "@makeplane/propel/elements/toggle";
+import { EntityDetailVotes, EntityDetailVotesModal } from "@plane/blocks/entity-detail";
+import type { TEntityDetailVoteType, TEntityDetailVoter } from "@plane/blocks/entity-detail";
 import { useTranslation } from "@plane/i18n";
+import { getFileURL } from "@plane/utils";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import { useUser } from "@/hooks/store/use-user";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
+// types
+import type { IVote } from "@/types/issue";
 
 type TIssueVotes = {
   anchor: string;
   issueIdFromProps?: string;
-  size?: "md" | "sm";
 };
 
+const toVoters = (votes: IVote[]): TEntityDetailVoter[] =>
+  votes.map((vote) => ({
+    id: vote.actor_details?.id ?? "",
+    displayName: vote.actor_details?.display_name ?? "",
+    avatarUrl: getFileURL(vote.actor_details?.avatar_url ?? ""),
+  }));
+
 export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
-  const { anchor, issueIdFromProps, size = "md" } = props;
+  const { anchor, issueIdFromProps } = props;
   const { t } = useTranslation();
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [votersModalTab, setVotersModalTab] = useState<TEntityDetailVoteType | null>(null);
   // router
   const router = useRouter();
   const pathName = usePathname();
@@ -57,7 +65,15 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
   const isUpVotedByUser = allUpVotes.some((vote) => vote.actor_details?.id === user?.id);
   const isDownVotedByUser = allDownVotes.some((vote) => vote.actor_details?.id === user?.id);
 
-  const handleVote = async (e: any, voteValue: 1 | -1) => {
+  // derived values
+  const { queryParam } = queryParamGenerator({ peekId, board, state, priority, labels });
+
+  const handleVote = async (voteValue: 1 | -1) => {
+    if (isInIframe) return;
+    if (!user) {
+      router.push(`/?next_path=${pathName}?${queryParam}`);
+      return;
+    }
     if (!issueId) return;
 
     setIsSubmitting(true);
@@ -74,71 +90,38 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
     setIsSubmitting(false);
   };
 
-  const VOTES_LIMIT = 1000;
-
-  // derived values
-  const { queryParam } = queryParamGenerator({ peekId, board, state, priority, labels });
-
   return (
-    <div className="flex items-center gap-2">
-      {/* upvote button 👇 */}
-      <Tooltip
-        label={
-          allUpVotes.length > 0
-            ? allUpVotes
-                .map((r) => r.actor_details?.display_name)
-                .slice(0, VOTES_LIMIT)
-                .join(", ") + (allUpVotes.length > VOTES_LIMIT ? ` and ${allUpVotes.length - VOTES_LIMIT} more` : "")
-            : "No upvotes yet"
-        }
-      >
-        <Toggle
-          type="button"
-          size={size === "sm" ? "xs" : "sm"}
-          aria-label={`${t("issue.vote.click_to_upvote")}, ${allUpVotes.length}`}
-          aria-pressed={isUpVotedByUser}
-          data-pressed={isUpVotedByUser ? "" : undefined}
-          disabled={isSubmitting}
-          onClick={(e) => {
-            if (isInIframe) return;
-            if (user) handleVote(e, 1);
-            else router.push(`/?next_path=${pathName}?${queryParam}`);
-          }}
-        >
-          <Icon icon={<TopArrowOutline />} />
-          <ToggleLabel>{allUpVotes.length}</ToggleLabel>
-        </Toggle>
-      </Tooltip>
-
-      {/* downvote button 👇 */}
-      <Tooltip
-        label={
-          allDownVotes.length > 0
-            ? allDownVotes
-                .map((r) => r.actor_details.display_name)
-                .slice(0, VOTES_LIMIT)
-                .join(", ") +
-              (allDownVotes.length > VOTES_LIMIT ? ` and ${allDownVotes.length - VOTES_LIMIT} more` : "")
-            : "No downvotes yet"
-        }
-      >
-        <Toggle
-          type="button"
-          size={size === "sm" ? "xs" : "sm"}
-          aria-label={`${t("issue.vote.click_to_downvote")}, ${allDownVotes.length}`}
-          aria-pressed={isDownVotedByUser}
-          data-pressed={isDownVotedByUser ? "" : undefined}
-          disabled={isSubmitting}
-          onClick={(e) => {
-            if (isInIframe) return;
-            if (user) handleVote(e, -1);
-            else router.push(`/?next_path=${pathName}?${queryParam}`);
-          }}
-        >
-          <Icon icon={<ArrowDownOutline />} />
-          <ToggleLabel>{allDownVotes.length}</ToggleLabel>
-        </Toggle>
-      </Tooltip>
-    </div>
+    <>
+      <EntityDetailVotes
+        upVotesCount={allUpVotes.length}
+        downVotesCount={allDownVotes.length}
+        isUpVotedByUser={isUpVotedByUser}
+        isDownVotedByUser={isDownVotedByUser}
+        onUpVote={() => void handleVote(1)}
+        onDownVote={() => void handleVote(-1)}
+        onCountClick={setVotersModalTab}
+        disabled={isSubmitting}
+        upVoteLabel={t("issue.vote.click_to_upvote")}
+        downVoteLabel={t("issue.vote.click_to_downvote")}
+        viewUpVotesLabel={t("issue.vote.click_to_view_upvotes")}
+        viewDownVotesLabel={t("issue.vote.click_to_view_downvotes")}
+      />
+      {/* Mounted only while open, since every board card renders its own votes. */}
+      {votersModalTab !== null && (
+        <EntityDetailVotesModal
+          isOpen
+          onClose={() => setVotersModalTab(null)}
+          initialTab={votersModalTab}
+          upVoters={toVoters(allUpVotes)}
+          downVoters={toVoters(allDownVotes)}
+          title={t("issue.vote.title")}
+          upVotesTabLabel={t("issue.vote.upvotes_count", { count: allUpVotes.length })}
+          downVotesTabLabel={t("issue.vote.downvotes_count", { count: allDownVotes.length })}
+          emptyUpVotesMessage={t("issue.vote.no_upvotes")}
+          emptyDownVotesMessage={t("issue.vote.no_downvotes")}
+          closeLabel={t("close")}
+        />
+      )}
+    </>
   );
 });

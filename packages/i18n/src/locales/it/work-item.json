@@ -278,7 +278,12 @@
       "click_to_upvote": "Clicca per votare a favore",
       "click_to_downvote": "Clicca per votare contro",
       "click_to_view_upvotes": "Clicca per vedere i voti a favore",
-      "click_to_view_downvotes": "Clicca per vedere i voti contro"
+      "click_to_view_downvotes": "Clicca per vedere i voti contro",
+      "title": "Voti",
+      "upvotes_count": "{count, plural, one {# voto a favore} many {# voti a favore} other {# voti a favore}}",
+      "downvotes_count": "{count, plural, one {# voto contro} many {# voti contro} other {# voti contro}}",
+      "no_upvotes": "Ancora nessun voto a favore",
+      "no_downvotes": "Ancora nessun voto contro"
     }
   },
   "sub_work_item": {

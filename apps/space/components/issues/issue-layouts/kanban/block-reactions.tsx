@@ -34,7 +34,7 @@ export const BlockReactions = observer(function BlockReactions(props: Props) {
               "after:ml-1 after:h-6 after:w-[1px] after:bg-layer-3": canReact,
             })}
           >
-            <IssueVotes anchor={anchor.toString()} issueIdFromProps={issueId} size="sm" />
+            <IssueVotes anchor={anchor.toString()} issueIdFromProps={issueId} />
           </div>
         )}
         {canReact && (

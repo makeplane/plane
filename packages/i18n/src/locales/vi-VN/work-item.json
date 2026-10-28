@@ -278,7 +278,12 @@
       "click_to_upvote": "Nhấp để bỏ phiếu thuận",
       "click_to_downvote": "Nhấp để bỏ phiếu chống",
       "click_to_view_upvotes": "Nhấp để xem phiếu thuận",
-      "click_to_view_downvotes": "Nhấp để xem phiếu chống"
+      "click_to_view_downvotes": "Nhấp để xem phiếu chống",
+      "title": "Phiếu bầu",
+      "upvotes_count": "{count, plural, one {# phiếu thuận} other {# phiếu thuận}}",
+      "downvotes_count": "{count, plural, one {# phiếu chống} other {# phiếu chống}}",
+      "no_upvotes": "Chưa có phiếu thuận nào",
+      "no_downvotes": "Chưa có phiếu chống nào"
     }
   },
   "sub_work_item": {
