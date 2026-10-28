@@ -6,3 +6,5 @@
 
 export * from "./widget-section";
 export * from "./widget-toolbar";
+export * from "./votes";
+export * from "./votes-modal";
