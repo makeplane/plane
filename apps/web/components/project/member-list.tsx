@@ -84,7 +84,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
         workspaceSlug={workspaceSlug}
       />
       <div className="flex items-center justify-between gap-4 overflow-x-hidden border-b border-subtle py-2">
-        <div className="text-14 font-semibold">{t("common.members")}</div>
+        <div className="text-body-sm-semibold">{t("common.members")}</div>
         <div className="flex items-center gap-2">
           <div className="w-48">
             <InputGroup size="md">
@@ -130,7 +130,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
             />
           )}
           {searchedProjectMembers.length === 0 && (
-            <h4 className="mt-16 text-center text-13 text-placeholder">{t("no_matching_members")}</h4>
+            <h4 className="mt-16 text-center text-body-xs-regular text-placeholder">{t("no_matching_members")}</h4>
           )}
         </div>
       )}

@@ -145,7 +145,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
             <h4 className="cursor-default text-body-xs-regular">{invitationDetails.email}</h4>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-11">
+        <div className="flex items-center gap-2 text-caption-sm-regular">
           <div className="flex items-center justify-center rounded-sm bg-label-yellow-bg-strong/20 px-2.5 py-1 text-center text-caption-sm-medium text-label-yellow-text">
             <p>{t("common.pending")}</p>
           </div>

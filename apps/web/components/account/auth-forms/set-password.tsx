@@ -115,7 +115,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
       <AuthFormHeader title="Set password" description="Create a new password." />
       <form className="space-y-4" onSubmit={(e) => handleSubmit(e)}>
         <div className="space-y-1">
-          <label className="text-13 font-medium text-tertiary" htmlFor="email">
+          <label className="text-body-xs-medium text-tertiary" htmlFor="email">
             {t("auth.common.email.label")}
           </label>
           <InputGroup size="2xl">
@@ -132,7 +132,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
           </InputGroup>
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium text-tertiary" htmlFor="password">
+          <label className="text-body-xs-medium text-tertiary" htmlFor="password">
             {t("auth.common.password.label")}
           </label>
           <InputGroup size="2xl">
@@ -165,7 +165,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
           <PasswordStrengthIndicator password={passwordFormData.password} isFocused={isPasswordInputFocused} />
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
+          <label className="text-body-xs-medium text-tertiary" htmlFor="confirm_password">
             {t("auth.common.password.confirm_password.label")}
           </label>
           <InputGroup size="2xl">
@@ -196,7 +196,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
           {!!passwordFormData.confirm_password &&
             passwordFormData.password !== passwordFormData.confirm_password &&
             renderPasswordMatchError && (
-              <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
+              <span className="text-body-xs-regular text-danger-primary">{t("auth.common.password.errors.match")}</span>
             )}
         </div>
         <Button

@@ -225,7 +225,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
       {/* Rich Filters */}
       {/* <div className="w-full">
         <div className="flex items-center gap-2 mb-2">
-          <div className="text-13 font-medium text-secondary leading-tight">{t("common.filters")}</div>
+          <div className="text-body-xs-medium text-secondary leading-tight">{t("common.filters")}</div>
           <Tooltip label={t("workspace_settings.settings.exports.filters_info")} layout="stacked">
             <button type="button" className="flex items-center justify-center">
               <Info className="h-3 w-3 text-tertiary" />

@@ -261,10 +261,10 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
           </div>
           <div className="item-center mt-6 flex justify-between">
             <div className="flex flex-col">
-              <div className="item-center flex text-16 font-medium text-secondary">
+              <div className="item-center flex text-body-md-medium text-secondary">
                 <span>{`${watch("first_name")} ${watch("last_name")}`}</span>
               </div>
-              <span className="text-13 tracking-tight text-tertiary">{watch("email")}</span>
+              <span className="text-body-xs-regular tracking-tight text-tertiary">{watch("email")}</span>
             </div>
           </div>
           <div className="flex flex-col gap-2">
@@ -412,7 +412,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                 {isSMTPConfigured && (
                   <button
                     type="button"
-                    className="btn w-fit text-11 text-secondary underline"
+                    className="btn w-fit text-caption-sm-regular text-secondary underline"
                     onClick={() => setIsChangeEmailModalOpen(true)}
                   >
                     {t("account_settings.profile.change_email_modal.title")}

@@ -130,7 +130,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
             <div className="ml-13">
               <div className="flex flex-col rounded-sm border border-subtle bg-surface-2">
                 <div className="flex w-full items-center justify-between gap-2 px-5 py-4">
-                  <div className="w-1/2 text-13 font-medium">
+                  <div className="w-1/2 text-body-xs-medium">
                     {t("project_settings.automations.auto-close.duration")}
                   </div>
                   <div className="w-1/2">
@@ -166,7 +166,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                 </div>
 
                 <div className="ppy flex w-full items-center justify-between gap-2 px-5 py-4 sm:py-10">
-                  <div className="w-1/2 text-13 font-medium">
+                  <div className="w-1/2 text-body-xs-medium">
                     {t("project_settings.automations.auto-close.auto_close_status")}
                   </div>
                   <div className="w-1/2">

@@ -49,7 +49,7 @@ function ActiveProjectItem(props: Props) {
           </span>
         </div>
         <Tooltip label={projectDetails?.name} layout="stacked" align="start">
-          <p className="truncate text-13 font-medium">{projectDetails?.name}</p>
+          <p className="truncate text-body-xs-medium">{projectDetails?.name}</p>
         </Tooltip>
       </div>
       <CompletionPercentage

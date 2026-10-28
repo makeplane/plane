@@ -20,19 +20,19 @@ type Props = {
 
 const sizeConfig = {
   xs: {
-    text: "text-11",
+    text: "text-caption-sm-regular",
     icon: "w-3 h-3",
   },
   sm: {
-    text: "text-13",
+    text: "text-body-xs-regular",
     icon: "w-4 h-4",
   },
   md: {
-    text: "text-14",
+    text: "text-body-sm-regular",
     icon: "w-5 h-5",
   },
   lg: {
-    text: "text-16",
+    text: "text-body-md-regular",
     icon: "w-6 h-6",
   },
 } as const;

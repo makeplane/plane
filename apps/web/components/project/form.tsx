@@ -245,8 +245,8 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               )}
             />
             <div className="flex flex-col gap-1 truncate text-on-color">
-              <span className="truncate text-16 font-semibold">{watch("name")}</span>
-              <span className="flex items-center gap-2 text-13">
+              <span className="truncate text-body-md-semibold">{watch("name")}</span>
+              <span className="flex items-center gap-2 text-body-xs-regular">
                 <span>{watch("identifier")} .</span>
                 <span className="flex items-center gap-1.5">
                   {project.network === 0 && <LockOutline className="h-2.5 w-2.5 text-on-color" />}
@@ -477,7 +477,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               loading={isLoading}
               disabled={!isAdmin}
             />
-            <span className="text-13 text-placeholder italic">
+            <span className="text-body-xs-regular text-placeholder italic">
               {t("common.created_on")} {renderFormattedDate(project?.created_at)}
             </span>
           </>

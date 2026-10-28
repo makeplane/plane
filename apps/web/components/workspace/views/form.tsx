@@ -78,7 +78,7 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5 p-5">
-        <h3 className="text-18 font-medium text-secondary">{data ? t("view.update.label") : t("view.create.label")}</h3>
+        <h3 className="text-h5-medium text-secondary">{data ? t("view.update.label") : t("view.create.label")}</h3>
         <div className="space-y-3">
           <div className="space-y-1">
             <Controller
@@ -108,7 +108,7 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
                 </Field>
               )}
             />
-            <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
+            <span className="text-caption-sm-regular text-danger-primary">{errors?.name?.message}</span>
           </div>
           <div>
             <Controller

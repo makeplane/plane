@@ -161,7 +161,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                   />
                 </div>
               ) : (
-                <div className="relative grid size-14 place-items-center rounded-md bg-accent-primary text-24 text-on-color uppercase">
+                <div className="relative grid size-14 place-items-center rounded-md bg-accent-primary text-h3-regular text-on-color uppercase">
                   {currentWorkspace?.name?.charAt(0) ?? "N"}
                 </div>
               )}

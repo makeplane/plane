@@ -103,14 +103,16 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
       {(data || webhookSecretKey) && (
         <div className="space-y-2">
           {webhookId && (
-            <div className="text-13 font-medium">{t("workspace_settings.settings.webhooks.secret_key.title")}</div>
+            <div className="text-body-xs-medium">{t("workspace_settings.settings.webhooks.secret_key.title")}</div>
           )}
-          <div className="text-11 text-placeholder">{t("workspace_settings.settings.webhooks.secret_key.message")}</div>
+          <div className="text-caption-sm-regular text-placeholder">
+            {t("workspace_settings.settings.webhooks.secret_key.message")}
+          </div>
           <div className="flex flex-col gap-4 md:flex-row md:items-center">
             <div className="flex h-8 max-w-lg flex-grow items-center justify-between self-stretch rounded-sm border border-subtle px-2">
               <div className="overflow-hidden font-medium select-none">
                 {shouldShowKey ? (
-                  <p className="text-11">{webhookSecretKey}</p>
+                  <p className="text-caption-sm-regular">{webhookSecretKey}</p>
                 ) : (
                   <div className="mr-2 flex items-center gap-1.5 overflow-hidden">
                     {range(30).map((index) => (

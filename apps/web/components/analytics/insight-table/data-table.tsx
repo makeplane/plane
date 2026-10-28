@@ -70,7 +70,7 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
       <div className="flex w-full items-center justify-between">
         <div className="relative flex max-w-[300px] items-center gap-4">
           {table.getHeaderGroups()?.[0]?.headers?.[0]?.id && (
-            <div className="flex items-center gap-2 text-13 whitespace-nowrap text-placeholder">
+            <div className="flex items-center gap-2 text-body-xs-regular whitespace-nowrap text-placeholder">
               {searchPlaceholder}
             </div>
           )}
@@ -97,7 +97,7 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
             <SearchOutline className="h-3.5 w-3.5" />
             <input
               ref={inputRef}
-              className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
+              className="w-full max-w-[234px] border-none bg-transparent text-body-xs-regular text-primary placeholder:text-placeholder focus:outline-none"
               placeholder="Search"
               value={table.getColumn(table.getHeaderGroups()?.[0]?.headers?.[0]?.id)?.getFilterValue() as string}
               onChange={(e) => {

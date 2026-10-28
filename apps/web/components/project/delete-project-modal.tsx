@@ -108,13 +108,13 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
             </DialogHeader>
             <DialogBody>
               <div className="flex flex-col gap-6">
-                <p className="text-13 leading-7 text-secondary">
+                <p className="text-body-xs-regular leading-7 text-secondary">
                   Are you sure you want to delete project{" "}
                   <span className="font-semibold break-words">{project?.name}</span>? All of the data related to the
                   project will be permanently removed. This action cannot be undone
                 </p>
                 <div className="text-secondary">
-                  <p className="text-13 break-words">
+                  <p className="text-body-xs-regular break-words">
                     Enter the project name <span className="font-medium text-primary">{project?.name}</span> to
                     continue:
                   </p>
@@ -141,7 +141,7 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
                   />
                 </div>
                 <div className="text-secondary">
-                  <p className="text-13">
+                  <p className="text-body-xs-regular">
                     To confirm, type <span className="font-medium text-primary">delete my project</span> below:
                   </p>
                   <Controller

@@ -238,7 +238,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                       <div className="flex items-center justify-between gap-2 rounded-md border border-strong py-1.5 pr-1 pl-4">
                         <a
                           href={publishLink}
-                          className="truncate text-13 text-secondary"
+                          className="truncate text-body-xs-regular text-secondary"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -256,14 +256,14 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                           </a>
                           <button
                             type="button"
-                            className="h-8 rounded-sm bg-layer-3 px-3 py-2 text-11 font-medium hover:bg-layer-3-hover"
+                            className="h-8 rounded-sm bg-layer-3 px-3 py-2 text-caption-sm-medium hover:bg-layer-3-hover"
                             onClick={() => void handleCopyLink()}
                           >
                             Copy link
                           </button>
                         </div>
                       </div>
-                      <p className="mt-3 flex items-center gap-1 text-13 font-medium text-accent-primary">
+                      <p className="mt-3 flex items-center gap-1 text-body-xs-medium text-accent-primary">
                         <span className="relative grid size-2.5 place-items-center">
                           <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent-primary opacity-75" />
                           <span className="relative inline-flex size-1.5 rounded-full bg-accent-primary" />
@@ -274,7 +274,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                   )}
                   <div className="space-y-4">
                     <div className="relative flex items-center justify-between gap-2">
-                      <div className="text-13">Views</div>
+                      <div className="text-body-xs-regular">Views</div>
                       <Controller
                         control={control}
                         name="view_props"
@@ -313,7 +313,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                       />
                     </div>
                     <div className="relative flex items-center justify-between gap-2">
-                      <div className="text-13">Allow comments</div>
+                      <div className="text-body-xs-regular">Allow comments</div>
                       <Controller
                         control={control}
                         name="is_comments_enabled"
@@ -323,7 +323,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                       />
                     </div>
                     <div className="relative flex items-center justify-between gap-2">
-                      <div className="text-13">Allow reactions</div>
+                      <div className="text-body-xs-regular">Allow reactions</div>
                       <Controller
                         control={control}
                         name="is_reactions_enabled"
@@ -333,7 +333,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                       />
                     </div>
                     <div className="relative flex items-center justify-between gap-2">
-                      <div className="text-13">Allow voting</div>
+                      <div className="text-body-xs-regular">Allow voting</div>
                       <Controller
                         control={control}
                         name="is_votes_enabled"

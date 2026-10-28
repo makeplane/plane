@@ -16,7 +16,7 @@ export function ForgotPasswordPopover() {
   return (
     <Popover>
       <PopoverTrigger
-        render={<button type="button" className="text-11 font-medium text-accent-primary outline-none" />}
+        render={<button type="button" className="text-caption-sm-medium text-accent-primary outline-none" />}
       >
         {t("auth.common.forgot_password")}
       </PopoverTrigger>
@@ -31,7 +31,7 @@ export function ForgotPasswordPopover() {
       >
         <div className="flex items-start gap-3 text-left">
           <span className="flex-shrink-0">🤥</span>
-          <p className="text-11">{t("auth.forgot_password.errors.smtp_not_enabled")}</p>
+          <p className="text-caption-sm-regular">{t("auth.forgot_password.errors.smtp_not_enabled")}</p>
           <PopoverClose
             render={
               <button

@@ -66,7 +66,7 @@ export const SidebarWorkspaceMenu = observer(function SidebarWorkspaceMenu() {
       placement="sidebar"
       open={isWorkspaceMenuOpen}
       onOpenChange={toggleWorkspaceMenu}
-      trigger={<span className="text-13 font-semibold text-placeholder">{t("common.workspace")}</span>}
+      trigger={<span className="text-body-xs-semibold text-placeholder">{t("common.workspace")}</span>}
       trailing={<SidebarWorkspaceMenuHeader />}
     >
       <div className="mt-0.5 flex flex-col gap-px">

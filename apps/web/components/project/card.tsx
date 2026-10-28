@@ -246,7 +246,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
               <div className="flex w-full flex-col justify-between gap-0.5 truncate">
                 <h3 className="truncate font-semibold text-on-color">{project.name}</h3>
                 <span className="flex items-center gap-1.5">
-                  <p className="text-11 font-medium text-on-color">{project.identifier} </p>
+                  <p className="text-caption-sm-medium text-on-color">{project.identifier} </p>
                   {project.network === 0 && <LockOutline className="h-2.5 w-2.5 text-on-color" />}
                 </span>
               </div>
@@ -291,7 +291,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
             "opacity-90": isArchived,
           })}
         >
-          <p className="line-clamp-2 text-13 break-words text-tertiary">
+          <p className="line-clamp-2 text-body-xs-regular break-words text-tertiary">
             {project.description && project.description.trim() !== ""
               ? project.description
               : `Created on ${renderFormattedDate(project.created_at)}`}
@@ -317,10 +317,10 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </AvatarGroup>
                   </div>
                 ) : (
-                  <span className="text-13 text-placeholder italic">No Member Yet</span>
+                  <span className="text-body-xs-regular text-placeholder italic">No Member Yet</span>
                 )}
               </Tooltip>
-              {isArchived && <div className="text-11 font-medium text-placeholder">Archived</div>}
+              {isArchived && <div className="text-caption-sm-medium text-placeholder">Archived</div>}
             </div>
             {isArchived ? (
               hasAdminRole && (
@@ -364,7 +364,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                       <SettingsOutline className="h-3.5 w-3.5" />
                     </Link>
                   ) : (
-                    <span className="flex items-center gap-1 text-13 text-placeholder">
+                    <span className="flex items-center gap-1 text-body-xs-regular text-placeholder">
                       <TickOutline className="h-3.5 w-3.5" />
                       Joined
                     </span>

@@ -113,7 +113,7 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
           autoArchiveStatus && (
             <div className="ml-13">
               <div className="flex w-full items-center justify-between gap-2 rounded-sm border border-subtle bg-surface-2 px-5 py-4">
-                <div className="w-1/2 text-13 font-medium">
+                <div className="w-1/2 text-body-xs-medium">
                   {t("project_settings.automations.auto-archive.duration")}
                 </div>
                 <div className="w-1/2">
@@ -131,7 +131,7 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
                     footer={
                       <button
                         type="button"
-                        className="flex w-full items-center rounded-sm px-1 py-1.5 text-13 text-secondary select-none hover:bg-layer-1"
+                        className="flex w-full items-center rounded-sm px-1 py-1.5 text-body-xs-regular text-secondary select-none hover:bg-layer-1"
                         onClick={() => {
                           setIsSelectOpen(false);
                           setmonthModal(true);

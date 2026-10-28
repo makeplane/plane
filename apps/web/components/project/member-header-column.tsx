@@ -54,7 +54,7 @@ export const MemberHeaderColumn = observer(function MemberHeaderColumn(props: Pr
         render={
           <button
             type="button"
-            className="clickable flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary"
+            className="clickable flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-body-xs-regular text-secondary hover:text-primary"
           />
         }
       >

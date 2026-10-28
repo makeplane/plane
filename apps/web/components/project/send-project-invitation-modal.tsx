@@ -191,7 +191,10 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
             <DialogBody>
               <div className="space-y-4">
                 {fields.map((field, index) => (
-                  <div key={field.id} className="group mb-1 flex w-full items-start justify-between gap-x-4 text-13">
+                  <div
+                    key={field.id}
+                    className="group mb-1 flex w-full items-start justify-between gap-x-4 text-body-xs-regular"
+                  >
                     <div className="flex w-full grow flex-col gap-1">
                       <Controller
                         control={control}
@@ -208,7 +211,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                         )}
                       />
                       {errors.members && errors.members[index]?.member_id && (
-                        <span className="px-1 text-13 text-danger-primary">
+                        <span className="px-1 text-body-xs-regular text-danger-primary">
                           {errors.members[index]?.member_id?.message}
                         </span>
                       )}
@@ -249,7 +252,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                           }}
                         />
                         {errors.members && errors.members[index]?.role && (
-                          <span className="px-1 text-13 text-danger-primary">
+                          <span className="px-1 text-body-xs-regular text-danger-primary">
                             {errors.members[index]?.role?.message}
                           </span>
                         )}
@@ -277,7 +280,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
             <div className="flex w-full items-center justify-between gap-2">
               <button
                 type="button"
-                className="flex items-center gap-2 bg-transparent py-2 pr-3 text-13 font-medium text-accent-primary outline-accent-strong"
+                className="flex items-center gap-2 bg-transparent py-2 pr-3 text-body-xs-medium text-accent-primary outline-accent-strong"
                 onClick={appendField}
               >
                 <AddOutline className="h-4 w-4" />

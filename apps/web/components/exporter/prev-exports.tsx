@@ -89,7 +89,7 @@ export const PrevExports = observer(function PrevExports(props: Props) {
           />
         </div>
         {Array.isArray(exporterServices?.results) && exporterServices.results.length > 0 && (
-          <div className="flex items-center gap-2 text-11">
+          <div className="flex items-center gap-2 text-caption-sm-regular">
             <Button
               variant="secondary"
               size="xs"
