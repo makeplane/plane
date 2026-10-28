@@ -6,7 +6,7 @@
 
 import React from "react";
 // ui
-import { Button } from "@makeplane/propel/components/button";
+import { Button } from "@makeplane/propel/elements/button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { CopyOutline } from "@makeplane/propel/icons";
 // components
@@ -34,10 +34,8 @@ export function CopyField(props: Props) {
       <Button
         variant="secondary"
         size="md"
-        stretch="auto"
-        icon={<Icon icon={CopyOutline} />}
-        iconPosition="end"
-        label={url}
+        stretch="full"
+        type="button"
         onClick={() => {
           navigator.clipboard.writeText(url);
           setToast({
@@ -46,7 +44,12 @@ export function CopyField(props: Props) {
             message: `The ${label} has been successfully copied to your clipboard`,
           });
         }}
-      />
+      >
+        <span className="min-w-0 flex-1 truncate text-left" title={url}>
+          {url}
+        </span>
+        <Icon icon={CopyOutline} />
+      </Button>
       <div className="text-11 text-tertiary">{description}</div>
     </div>
   );
