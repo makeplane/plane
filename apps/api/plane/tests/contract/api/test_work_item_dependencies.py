@@ -357,6 +357,81 @@ class TestWorkItemDependencies:
         assert resp.json() == []
         assert IssueRelation.objects.count() == 0
 
+    def test_target_in_project_caller_is_not_member_of_creates_nothing(
+        self, api_key_client, workspace, own_project, own_issue, sibling_issue
+    ):
+        resp = api_key_client.post(
+            _dep_url(workspace, own_project, own_issue),
+            {"relation_type": "blocked_by", "work_item_ids": [str(sibling_issue.id)]},
+            format="json",
+        )
+        assert resp.status_code == status.HTTP_201_CREATED
+        assert resp.json() == []
+        assert IssueRelation.objects.count() == 0
+
+    def test_self_relation_is_skipped(self, api_key_client, workspace, own_project, own_issue, related_issue):
+        url = _dep_url(workspace, own_project, own_issue)
+
+        only_self = api_key_client.post(
+            url, {"relation_type": "blocked_by", "work_item_ids": [str(own_issue.id)]}, format="json"
+        )
+        assert only_self.status_code == status.HTTP_201_CREATED
+        assert only_self.json() == []
+        assert IssueRelation.objects.count() == 0
+
+        mixed = api_key_client.post(
+            url,
+            {"relation_type": "blocked_by", "work_item_ids": [str(own_issue.id), str(related_issue.id)]},
+            format="json",
+        )
+        assert mixed.status_code == status.HTTP_201_CREATED
+        assert [item["id"] for item in mixed.json()] == [str(related_issue.id)]
+        assert not IssueRelation.objects.filter(issue=own_issue, related_issue=own_issue).exists()
+        assert IssueRelation.objects.count() == 1
+
+    def test_delete_dependency_removes_both_orientations(
+        self, api_key_client, workspace, own_project, own_issue, related_issue, _no_side_effects
+    ):
+        IssueRelation.objects.create(
+            workspace=workspace,
+            project=own_project,
+            issue=own_issue,
+            related_issue=related_issue,
+            relation_type="blocked_by",
+        )
+        IssueRelation.objects.create(
+            workspace=workspace,
+            project=own_project,
+            issue=related_issue,
+            related_issue=own_issue,
+            relation_type="start_before",
+        )
+        resp = api_key_client.delete(_dep_url(workspace, own_project, own_issue, related_issue))
+        assert resp.status_code == status.HTTP_204_NO_CONTENT
+        assert IssueRelation.objects.count() == 0
+
+        deleted_calls = [
+            call.kwargs
+            for call in _no_side_effects.delay.call_args_list
+            if call.kwargs["type"] == "issue_relation.activity.deleted"
+        ]
+        assert sorted(json.loads(kw["requested_data"])["relation_type"] for kw in deleted_calls) == [
+            "blocked_by",
+            "start_after",
+        ]
+
+    def test_legacy_relations_post_with_invisible_target_creates_nothing(
+        self, api_key_client, workspace, own_project, own_issue, sibling_issue
+    ):
+        resp = api_key_client.post(
+            f"/api/v1/workspaces/{workspace.slug}/projects/{own_project.id}/work-items/{own_issue.id}/relations/",
+            {"relation_type": "blocked_by", "issues": [str(sibling_issue.id)]},
+            format="json",
+        )
+        assert resp.status_code == status.HTTP_201_CREATED
+        assert resp.json() == []
+        assert IssueRelation.objects.count() == 0
+
     @pytest.mark.parametrize(
         "ws_role,project_role,get_status,write_status",
         [

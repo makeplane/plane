@@ -2789,13 +2789,18 @@ def _create_issue_relations(request, slug, project_id, issue_id, relation_type, 
     actual_relation = get_actual_relation(relation_type)
     is_reverse = relation_type in ["blocking", "start_after", "finish_after", "implements"]
 
-    # Scope to workspace to prevent cross-tenant IDOR
-    # Relations can cross projects so only workspace scope is enforced
+    # Relations can cross projects, so targets are scoped to the workspace and to
+    # what the caller may view. Others are skipped silently so the response does
+    # not reveal whether they exist.
+    visible_issue_ids = Issue.objects.filter(visible_issue_q(request.user)).values("id")
     issues = list(
         Issue.issue_objects.filter(
             workspace__slug=slug,
             pk__in=target_issue_ids,
-        ).values_list("id", flat=True)
+        )
+        .filter(pk__in=visible_issue_ids)
+        .exclude(pk=issue_id)
+        .values_list("id", flat=True)
     )
 
     IssueRelation.objects.bulk_create(
@@ -2850,41 +2855,42 @@ def _create_issue_relations(request, slug, project_id, issue_id, relation_type, 
 def _delete_issue_relation(request, slug, project_id, issue_id, related_issue_id, allowed_db_types):
     Issue.issue_objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
 
-    relation = (
+    # Both orientations of the pair can exist (the unique constraint is per ordered
+    # pair), so every matching row is removed, not just the first.
+    relations = list(
         IssueRelation.objects.filter(
             workspace__slug=slug,
             relation_type__in=allowed_db_types,
-        )
-        .filter(
+        ).filter(
             Q(issue_id=related_issue_id, related_issue_id=issue_id)
             | Q(issue_id=issue_id, related_issue_id=related_issue_id)
         )
-        .first()
     )
-    if relation is None:
+    if not relations:
         return Response({"error": "Issue relation not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    perspective_relation_type = (
-        relation.relation_type
-        if str(relation.issue_id) == str(issue_id)
-        else get_inverse_relation(relation.relation_type)
-    )
-    current_instance = json.dumps(IssueRelationSerializer(relation).data, cls=DjangoJSONEncoder)
-    relation.delete()
-    issue_activity.delay(
-        type="issue_relation.activity.deleted",
-        requested_data=json.dumps(
-            {"related_issue": str(related_issue_id), "relation_type": perspective_relation_type},
-            cls=DjangoJSONEncoder,
-        ),
-        actor_id=str(request.user.id),
-        issue_id=str(issue_id),
-        project_id=str(project_id),
-        current_instance=current_instance,
-        epoch=int(timezone.now().timestamp()),
-        notification=True,
-        origin=base_host(request=request, is_app=True),
-    )
+    for relation in relations:
+        perspective_relation_type = (
+            relation.relation_type
+            if str(relation.issue_id) == str(issue_id)
+            else get_inverse_relation(relation.relation_type)
+        )
+        current_instance = json.dumps(IssueRelationSerializer(relation).data, cls=DjangoJSONEncoder)
+        relation.delete()
+        issue_activity.delay(
+            type="issue_relation.activity.deleted",
+            requested_data=json.dumps(
+                {"related_issue": str(related_issue_id), "relation_type": perspective_relation_type},
+                cls=DjangoJSONEncoder,
+            ),
+            actor_id=str(request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
+        )
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -2957,7 +2963,7 @@ class WorkItemDependencyListCreateAPIEndpoint(BaseAPIView):
             flat=True,
         )
         items = list(
-            build_related_work_items_queryset(slug)
+            build_related_work_items_queryset(slug, extra_issue_filter=visible_issue_q(request.user))
             .filter(pk__in=related_ids)
             .annotate(relation_type=Value(relation_type, output_field=CharField()))
             .values(*PUBLIC_RELATION_FIELDS)
