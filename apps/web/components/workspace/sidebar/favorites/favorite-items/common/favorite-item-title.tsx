@@ -32,7 +32,7 @@ export const FavoriteItemTitle = observer(function FavoriteItemTitle(props: Prop
   return (
     <Tooltip label={title} layout="stacked" side="right" sideOffset={40} disabled={isMobile}>
       <ListItemLink render={<Link href={href} draggable onClick={handleOnClick} />}>
-        <span className="flex size-5 items-center justify-center">{icon}</span>
+        <span className="flex size-4 items-center justify-center">{icon}</span>
         <ListItemLabel>{title}</ListItemLabel>
       </ListItemLink>
     </Tooltip>

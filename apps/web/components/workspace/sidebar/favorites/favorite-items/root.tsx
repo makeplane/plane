@@ -83,7 +83,7 @@ export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
               const preview = previewRef.current;
               flushSync(() => {
                 root.render(
-                  <div className="flex items-center gap-1 rounded-sm bg-surface-1 p-1 pr-2 text-body-xs-regular">
+                  <div className="flex items-center gap-1.5 rounded-sm bg-surface-1 p-1 pr-2 text-body-xs-regular">
                     <span className="flex size-5 flex-shrink-0 items-center justify-center" aria-hidden="true">
                       {preview.itemIcon}
                     </span>

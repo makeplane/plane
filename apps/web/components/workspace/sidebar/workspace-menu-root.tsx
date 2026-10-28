@@ -8,10 +8,11 @@ import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { ChevronDownOutline, LogOutOutline, MailOutline, PlusCircleOutline } from "@makeplane/propel/icons";
+import { ChevronDownOutline, LogOutOutline, MailsOutline, PlusCircleOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Icon } from "@makeplane/propel/components/icon";
 import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@makeplane/propel/components/menu";
+import { ScrollArea } from "@makeplane/propel/components/scroll-area";
 import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
 import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
@@ -37,7 +38,6 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
   // store hooks
   const { toggleSidebar, toggleAnySidebarDropdown } = useAppTheme();
   const { config } = useInstance();
-  const { data: currentUser } = useUser();
   const { signOut } = useUser();
   const { updateUserProfile } = useUserProfile();
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
@@ -144,12 +144,9 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
           />
         )}
         <MenuContent side="bottom" align="start">
-          <div className="flex w-[19rem] max-w-full flex-col items-start justify-start">
-            <span className="sticky top-0 z-1 w-full flex-shrink-0 truncate bg-layer-2 px-4 pt-3 pb-1 text-left text-caption-md-regular text-tertiary">
-              {currentUser?.email}
-            </span>
-            {workspacesList ? (
-              <div className="flex size-full flex-col items-start justify-start">
+          {workspacesList ? (
+            <ScrollArea orientation="vertical" size="sm" visibility="always">
+              <div className="flex w-[312px] max-w-full flex-col items-start justify-start">
                 {(activeWorkspace
                   ? [activeWorkspace, ...workspacesList.filter((workspace) => workspace.id !== activeWorkspace?.id)]
                   : workspacesList
@@ -164,32 +161,34 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                   />
                 ))}
               </div>
-            ) : (
-              <div className="w-full">
-                <Loader className="space-y-2">
-                  <Loader.Item height="30px" />
-                  <Loader.Item height="30px" />
-                </Loader>
-              </div>
-            )}
-          </div>
+            </ScrollArea>
+          ) : (
+            <div className="w-full">
+              <Loader className="space-y-2">
+                <Loader.Item height="30px" />
+                <Loader.Item height="30px" />
+              </Loader>
+            </div>
+          )}
           <div className="shrink-0">
             <MenuSeparator />
             {!isWorkspaceCreationDisabled && (
               <MenuItem
                 icon={<Icon icon={PlusCircleOutline} />}
                 label={t("create_workspace")}
-                render={<Link href="/create-workspace" />}
+                render={<Link href="/create-workspace" className="min-h-8" />}
               />
             )}
             <MenuItem
-              icon={<Icon icon={MailOutline} />}
+              icon={<Icon icon={MailsOutline} />}
               label={t("workspace_invites")}
-              render={<Link href="/invitations" />}
+              render={<Link href="/invitations" className="min-h-8" />}
               onClick={handleItemClick}
             />
+            <MenuSeparator />
             <MenuItem
               variant="danger"
+              render={<div className="min-h-8" />}
               icon={<Icon icon={LogOutOutline} />}
               label={t("sign_out")}
               onClick={() => void handleSignOut()}

@@ -252,7 +252,7 @@ export function FavoriteFolder(props: Props) {
                 />
                 <MenuContent side="bottom" align="start">
                   <MenuItem
-                    icon={<Icon icon={<StarFilled className="text-yellow-500" />} />}
+                    icon={<Icon icon={<StarFilled className="text-label-yellow-icon-strong" />} />}
                     label={t("remove_from_favorites")}
                     onClick={() => handleRemoveFromFavorites(favorite)}
                   />
