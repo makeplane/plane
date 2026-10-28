@@ -80,7 +80,7 @@ export const StickyNote = observer(function StickyNote(props: TProps) {
         handleClose={() => setIsDeleteModalOpen(false)}
       />
       <div
-        className={cn("group/sticky flex h-fit w-full flex-col overflow-y-scroll rounded-sm", className)}
+        className={cn("group/sticky flex h-fit w-full flex-col overflow-y-scroll rounded-lg", className)}
         style={{
           backgroundColor,
         }}

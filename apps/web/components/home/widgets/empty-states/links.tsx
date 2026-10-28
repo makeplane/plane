@@ -10,7 +10,7 @@ import { EmptyStateCompact } from "@plane/blocks/empty-state";
 export function LinksEmptyState() {
   const { t } = useTranslation();
   return (
-    <div className="flex w-full items-center justify-center rounded-lg bg-layer-1 py-10">
+    <div className="flex w-full items-center justify-center rounded-lg border border-subtle-1 bg-surface-1 py-10">
       <EmptyStateCompact
         assetKey="link"
         assetClassName="w-20 h-20"

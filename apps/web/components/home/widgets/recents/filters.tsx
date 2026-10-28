@@ -26,11 +26,11 @@ export const FiltersDropdown = observer(function FiltersDropdown(props: TFilters
 
   const title = activeFilter ? filters?.find((filter) => filter.name === activeFilter)?.i18n_key : "";
   return (
-    <div className={cn("flex w-fit justify-center text-11 text-secondary", className)}>
+    <div className={cn("flex w-fit justify-center text-secondary", className)}>
       <Menu>
         <MenuTrigger
           render={
-            <Pill size="md" variant="outline" label={t(title || "")} endIcon={<Icon icon={ChevronDownOutline} />} />
+            <Pill size="sm" variant="outline" label={t(title || "")} endIcon={<Icon icon={ChevronDownOutline} />} />
           }
         />
         <MenuContent side="bottom" align="start">

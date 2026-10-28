@@ -35,14 +35,14 @@ export const ProjectLinkList = observer(function ProjectLinkList(props: TProject
   if (links.length === 0) return <LinksEmptyState />;
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <ContentOverflowWrapper
         maxHeight={150}
-        containerClassName="box-border min-h-[30px] flex flex-col"
+        containerClassName="box-border flex min-h-[51px] flex-col"
         fallback={<></>}
         buttonClassName="bg-surface-2/20"
       >
-        <div className="mb-2 flex flex-1 flex-wrap gap-2">
+        <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {links.map((linkId) => (
             <ProjectLinkDetail key={linkId} linkId={linkId} linkOperations={linkOperations} />
           ))}

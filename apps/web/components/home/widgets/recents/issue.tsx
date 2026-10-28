@@ -73,7 +73,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
         <div className="flex flex-shrink-0 items-center gap-2">
           {issueDetails.type ? (
             <IssueIdentifier
-              size="lg"
+              size="xs"
               issueTypeId={issueDetails?.type}
               projectId={issueDetails?.project_id || ""}
               projectIdentifier={issueDetails?.project_identifier || ""}
@@ -81,11 +81,11 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
               variant="tertiary"
             />
           ) : (
-            <div className="flex items-center justify-center gap-2">
-              <div className="grid size-8 flex-shrink-0 place-items-center rounded-sm bg-layer-2">
+            <div className="flex items-center justify-center gap-1.5">
+              <div className="grid size-4 flex-shrink-0 place-items-center">
                 <WorkItemsOutline className="size-4 text-tertiary" />
               </div>
-              <div className="text-13 font-medium whitespace-nowrap text-placeholder">
+              <div className="text-caption-md-regular whitespace-nowrap text-tertiary">
                 {issueDetails?.project_identifier}-{issueDetails?.sequence_id}
               </div>
             </div>
@@ -93,12 +93,12 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
         </div>
       }
       appendTitleElement={
-        <div className="flex-shrink-0 text-11 font-medium text-placeholder">
+        <div className="flex-shrink-0 text-caption-md-regular text-tertiary">
           {calculateTimeAgo(activity.visited_at)}
         </div>
       }
       quickActionElement={
-        <div className="flex gap-4">
+        <div className="flex items-center gap-2">
           <Tooltip label={`State: ${state?.name ?? "State"}`} layout="stacked">
             <div>
               <StateGroupIcon
@@ -130,8 +130,11 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
       }
       parentRef={ref}
       disableLink={false}
-      className="my-auto border-none !px-2 py-3"
-      itemClassName="my-auto"
+      className="!min-h-[38px] !flex-row !gap-0 rounded-md border-none !px-2 !py-2"
+      itemClassName="!gap-2"
+      linkClassName="!gap-2"
+      titleClassName="text-body-sm-medium"
+      leftElementClassName="!gap-2"
       onItemClick={handlePeekOverview}
       preventDefaultProgress
     />

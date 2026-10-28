@@ -89,16 +89,12 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
       {!isWikiApp && <NoProjectsEmptyState />}
 
       {isAnyWidgetEnabled ? (
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-12 pt-3 pb-4">
           {orderedWidgets.map((key) => {
             const WidgetComponent = HOME_WIDGETS_LIST[key]?.component;
             const isEnabled = widgetsMap[key]?.is_enabled;
             if (!WidgetComponent || !isEnabled) return null;
-            return (
-              <div key={key} className="py-4">
-                <WidgetComponent workspaceSlug={workspaceSlug.toString()} />
-              </div>
-            );
+            return <WidgetComponent key={key} workspaceSlug={workspaceSlug.toString()} />;
           })}
         </div>
       ) : (
