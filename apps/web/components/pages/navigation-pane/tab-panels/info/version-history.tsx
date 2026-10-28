@@ -110,9 +110,7 @@ export const PageNavigationPaneInfoTabVersionHistory = observer(function PageNav
 
   return (
     <div>
-      <p className="text-caption-sm-medium text-secondary">
-        {t("page_navigation_pane.tabs.info.version_history.label")}
-      </p>
+      <p className="text-body-xs-medium text-tertiary">{t("page_navigation_pane.tabs.info.version_history.label")}</p>
       <div className="mt-3">
         <ul className="relative">
           {/* timeline line */}

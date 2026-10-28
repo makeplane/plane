@@ -7,9 +7,10 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowCircleRightOutline } from "@makeplane/propel/icons";
+import { ArrowNarrowRightOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Tabs } from "@makeplane/propel/components/tabs";
 // hooks
@@ -97,7 +98,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
         <IconButton
           variant="ghost"
           size="sm"
-          icon={<ArrowCircleRightOutline className="size-3.5" />}
+          icon={<Icon icon={ArrowNarrowRightOutline} />}
           onClick={handleClose}
           aria-label={t("page_navigation_pane.close_button")}
         />

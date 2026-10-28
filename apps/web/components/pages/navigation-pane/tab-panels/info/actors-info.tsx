@@ -36,9 +36,7 @@ export const PageNavigationPaneInfoTabActorsInfo = observer(function PageNavigat
   return (
     <div className="mt-4 space-y-3">
       <div>
-        <p className="text-caption-sm-medium text-tertiary">
-          {t("page_navigation_pane.tabs.info.actors_info.edited_by")}
-        </p>
+        <p className="text-body-xs-medium text-tertiary">{t("page_navigation_pane.tabs.info.actors_info.edited_by")}</p>
         <div className="mt-2 flex items-center justify-between gap-2 text-body-xs-medium">
           <Link href={`/${workspaceSlug?.toString()}/profile/${page.updated_by}`} className="flex items-center gap-1">
             <Avatar
@@ -53,7 +51,7 @@ export const PageNavigationPaneInfoTabActorsInfo = observer(function PageNavigat
         </div>
       </div>
       <div>
-        <p className="text-caption-sm-medium text-tertiary">
+        <p className="text-body-xs-medium text-tertiary">
           {t("page_navigation_pane.tabs.info.actors_info.created_by")}
         </p>
         <div className="mt-2 flex items-center justify-between gap-2 text-body-xs-medium">

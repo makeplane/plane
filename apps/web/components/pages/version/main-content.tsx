@@ -7,9 +7,12 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { ShowOutline, WarningTriangleOutline } from "@makeplane/propel/icons";
+import { ShowOutline } from "@makeplane/propel/icons";
 // plane imports
+import { Badge } from "@makeplane/propel/components/badge";
 import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import { setToast } from "@plane/blocks/toast";
 import type { TPageVersion } from "@plane/types";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
@@ -84,38 +87,30 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
   return (
     <div className="flex flex-grow flex-col overflow-hidden">
       {versionDetailsError ? (
-        <div className="grid flex-grow place-items-center">
-          <div className="flex flex-col items-center gap-4 text-center">
-            <span className="grid size-11 flex-shrink-0 place-items-center text-tertiary">
-              <WarningTriangleOutline className="size-10" />
-            </span>
-            <div>
-              <h6 className="text-body-md-semibold">Something went wrong!</h6>
-              <p className="text-body-xs-regular text-tertiary">The version could not be loaded, please try again.</p>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              stretch="auto"
-              label="Try again"
-              onClick={() => void handleRetry()}
-              loading={isRetrying}
-            />
-          </div>
-        </div>
+        <EmptyStateCompact
+          assetKey="unknown"
+          rootClassName="grow"
+          title="Something went wrong!"
+          description="The version could not be loaded, please try again."
+          actions={[
+            {
+              label: "Try again",
+              variant: "secondary",
+              onClick: () => void handleRetry(),
+              loading: isRetrying,
+            },
+          ]}
+        />
       ) : (
         <>
           <div className="flex min-h-14 items-center justify-between gap-2 border-b border-subtle px-5 py-3">
             <div className="flex items-center gap-4">
-              <h6 className="text-body-sm-medium">
+              <h6 className="text-body-sm-medium text-primary">
                 {versionDetails
                   ? `${renderFormattedDate(versionDetails.last_saved_at)} ${renderFormattedTime(versionDetails.last_saved_at)}`
                   : "Loading version details"}
               </h6>
-              <span className="flex flex-shrink-0 items-center gap-1 rounded-sm bg-accent-primary/20 px-1.5 py-1 text-caption-sm-medium text-accent-primary">
-                <ShowOutline className="size-3 flex-shrink-0" />
-                View only
-              </span>
+              <Badge variant="brand" size="sm" startIcon={<Icon icon={ShowOutline} />} label="View only" />
             </div>
             {restoreEnabled && (
               <Button

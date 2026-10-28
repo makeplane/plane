@@ -15,7 +15,7 @@ export function PageNavigationPaneTabsList() {
   const { t } = useTranslation();
 
   return (
-    <div className="mx-3.5">
+    <div className="w-full px-3.5">
       <TabsList>
         {ORDERED_PAGE_NAVIGATION_TABS_LIST.map((tab) => (
           <Tab key={tab.key} value={tab.key} label={t(tab.i18n_label)} />

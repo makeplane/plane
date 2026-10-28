@@ -7,8 +7,8 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { AnchorButton } from "@makeplane/propel/elements/anchor-button";
 import { DownloadOutline } from "@makeplane/propel/icons";
+import { ScrollArea } from "@makeplane/propel/components/scroll-area";
 // plane imports
 import { CORE_EXTENSIONS } from "@plane/editor";
 import type { TEditorAsset } from "@plane/editor";
@@ -69,13 +69,13 @@ const AssetItem = observer(function AssetItem(props: AssetItemProps) {
 
   if ([CORE_EXTENSIONS.IMAGE, CORE_EXTENSIONS.CUSTOM_IMAGE].includes(asset.type as CORE_EXTENSIONS))
     return (
-      <div className="group/asset-item relative flex h-12 items-center gap-2 rounded-sm border border-subtle pr-2 transition-colors hover:bg-layer-1">
+      <div className="group/asset-item relative flex h-12 items-center gap-2 overflow-hidden rounded-sm border border-subtle pr-2 transition-colors hover:bg-layer-1">
         <a
           href={asset.href}
-          className="flex h-full min-w-0 flex-1 items-center gap-2 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-offset-1"
+          className="flex h-full min-w-0 flex-1 items-center gap-2 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-inset"
         >
           <div
-            className="h-12 w-11 flex-shrink-0 rounded-l-sm bg-cover bg-center bg-no-repeat"
+            className="h-full w-11 shrink-0 border-r border-subtle bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage: `url('${assetSrc}')`,
             }}
@@ -83,10 +83,15 @@ const AssetItem = observer(function AssetItem(props: AssetItemProps) {
           <p className="truncate text-body-xs-medium">{asset.name}</p>
         </a>
         <div className="pointer-events-none shrink-0 opacity-0 transition-opacity group-focus-within/asset-item:pointer-events-auto group-focus-within/asset-item:opacity-100 group-hover/asset-item:pointer-events-auto group-hover/asset-item:opacity-100">
-          <AnchorButton href={assetDownloadSrc} target="_blank" rel="noreferrer noopener" variant="secondary" size="xs">
+          <a
+            href={assetDownloadSrc}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="flex items-center gap-1 rounded-sm px-1 py-0.5 text-secondary outline-none hover:text-primary focus-visible:ring-2 focus-visible:ring-accent-strong"
+          >
             <DownloadOutline className="size-3 shrink-0" />
-            <span>{t("page_navigation_pane.tabs.assets.download_button")}</span>
-          </AnchorButton>
+            <span className="text-caption-sm-medium">{t("page_navigation_pane.tabs.assets.download_button")}</span>
+          </a>
         </div>
       </div>
     );
@@ -104,10 +109,14 @@ export const PageNavigationPaneAssetsTabPanel = observer(function PageNavigation
   if (assetsList.length === 0) return <PageNavigationPaneAssetsTabEmptyState />;
 
   return (
-    <div className="mt-5 space-y-4 px-4">
-      {assetsList?.map((asset) => (
-        <AssetItem key={asset.id} asset={asset} page={page} />
-      ))}
+    <div className="flex size-full flex-col overflow-hidden">
+      <ScrollArea orientation="vertical" visibility="auto" size="sm">
+        <div className="space-y-4 px-4 pt-2">
+          {assetsList?.map((asset) => (
+            <AssetItem key={asset.id} asset={asset} page={page} />
+          ))}
+        </div>
+      </ScrollArea>
     </div>
   );
 });
