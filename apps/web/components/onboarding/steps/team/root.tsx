@@ -17,10 +17,10 @@ import type {
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { AddOutline, CloseCircleOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { Select, SelectContent, SelectItem, SelectList, SelectTrigger } from "@makeplane/propel/components/select";
 import type { EUserPermissions } from "@plane/constants";
-import { ROLE, ROLE_DETAILS } from "@plane/constants";
+import { ROLE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { Icon } from "@makeplane/propel/components/icon";
@@ -28,7 +28,6 @@ import { IconButton } from "@makeplane/propel/components/icon-button";
 import { setToast } from "@plane/blocks/toast";
 import { EOnboardingSteps } from "@plane/types";
 import { cn } from "@plane/utils";
-import { Select, SelectDropdownPlacementContext } from "@plane/blocks/select";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
@@ -73,8 +72,6 @@ const roleOptions: TRoleOption[] = Object.entries(ROLE_DETAILS).map(([key, detai
   i18n_title: details.i18n_title,
   i18n_description: details.i18n_description,
 }));
-// legacy role picker opened at bottom-end (right-column trigger), so align the panel to its end edge
-const ROLE_SELECT_PLACEMENT = { side: "bottom", align: "end" } as const;
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
 const placeholderEmails = [
@@ -131,89 +128,91 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
     }
   };
 
+  const isEmailInvalid = Boolean(errors.emails?.[index]?.email);
+
   return (
     <div>
-      <div className="group flex items-center gap-2">
-        <div className="min-w-0 flex-[6]">
-          <Controller
-            control={control}
-            name={`emails.${index}.email`}
-            rules={{
-              pattern: {
-                value: emailRegex,
-                message: "Invalid Email ID",
-              },
-            }}
-            render={({ field: { value, onChange, ref } }) => (
-              <Field name="input" invalid={Boolean(errors.emails?.[index]?.email)}>
-                <InputGroup size="xl">
-                  <Input
-                    size="xl"
-                    id={`emails.${index}.email`}
-                    name={`emails.${index}.email`}
-                    type="text"
-                    value={value}
-                    onChange={(event) => {
-                      emailOnChange(event);
-                      onChange(event);
-                    }}
-                    ref={ref}
-                    placeholder={placeholderEmails[index % placeholderEmails.length]}
-                    autoComplete="off"
-                  />
-                </InputGroup>
-              </Field>
-            )}
-          />
-        </div>
-        <div className="min-w-0 flex-[4]">
-          <Controller
-            control={control}
-            name={`emails.${index}.role`}
-            rules={{ required: true }}
-            render={({ field: { value, onChange } }) => (
-              <SelectDropdownPlacementContext.Provider value={ROLE_SELECT_PLACEMENT}>
-                <Select<TRoleOption>
-                  value={roleOptions.find((role) => role.key === value) ?? null}
-                  onChange={(val) => {
-                    onChange(Number(val) as EUserPermissions);
-                    setValue(`emails.${index}.role_active`, true);
+      <div className="flex items-center gap-2">
+        {/* One bordered control: a borderless email input and a ghost role select behind a divider. */}
+        <div className="min-w-0 flex-1">
+          <InputGroup size="xl" render={<div className="!pr-px" />}>
+            <Controller
+              control={control}
+              name={`emails.${index}.email`}
+              rules={{
+                pattern: {
+                  value: emailRegex,
+                  message: "Invalid Email ID",
+                },
+              }}
+              render={({ field: { value, onChange, ref } }) => (
+                <Input
+                  size="xl"
+                  id={`emails.${index}.email`}
+                  name={`emails.${index}.email`}
+                  type="text"
+                  value={value}
+                  onChange={(event) => {
+                    emailOnChange(event);
+                    onChange(event);
                   }}
-                  getValues={() => roleOptions}
-                  getOptionValue={(role) => String(role.key)}
-                  getOptionLabel={(role) => t(role.i18n_title)}
-                  getOptionDescription={(role) => t(role.i18n_description)}
-                  showSearch={false}
-                  pinSelected={false}
-                >
-                  <Select.Trigger<TRoleOption> variant="select-xl">
-                    <span
-                      className={cn(
-                        "min-w-0 flex-1 truncate text-left text-body-sm-regular",
-                        getValues(`emails.${index}.role_active`) ? "text-primary" : "text-placeholder"
-                      )}
-                    >
-                      {ROLE[value]}
-                    </span>
-                  </Select.Trigger>
-                </Select>
-              </SelectDropdownPlacementContext.Provider>
-            )}
-          />
-        </div>
-        <div className="flex size-6 shrink-0 items-center justify-center">
-          {fields.length > 1 && (
-            <div className="opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
-              <IconButton
-                variant="ghost"
-                size="sm"
-                aria-label={t("remove")}
-                icon={<Icon icon={CloseCircleOutline} />}
-                onClick={() => remove(index)}
+                  ref={ref}
+                  aria-label={t("email")}
+                  aria-invalid={isEmailInvalid || undefined}
+                  data-invalid={isEmailInvalid || undefined}
+                  placeholder={placeholderEmails[index % placeholderEmails.length]}
+                  autoComplete="off"
+                />
+              )}
+            />
+            <div aria-hidden="true" className="h-4 shrink-0 border-l border-subtle-1" />
+            <div
+              className={cn(
+                "w-26 shrink-0 [&_button]:w-full",
+                !watch(`emails.${index}.role_active`) && "[&_button]:text-placeholder"
+              )}
+            >
+              <Controller
+                control={control}
+                name={`emails.${index}.role`}
+                rules={{ required: true }}
+                render={({ field: { value, onChange } }) => (
+                  <Select<EUserPermissions>
+                    value={value}
+                    items={roleOptions.map((role) => ({ value: role.key, label: t(role.i18n_title) }))}
+                    onValueChange={(role) => {
+                      if (role === null) return;
+                      onChange(role);
+                      setValue(`emails.${index}.role_active`, true);
+                    }}
+                  >
+                    <SelectTrigger size="lg" variant="ghost" width="fit" aria-label={t("role")} />
+                    <SelectContent side="bottom" align="end" sizing="auto">
+                      <SelectList>
+                        {roleOptions.map((role) => (
+                          <SelectItem
+                            key={role.key}
+                            value={role.key}
+                            label={t(role.i18n_title)}
+                            description={t(role.i18n_description)}
+                          />
+                        ))}
+                      </SelectList>
+                    </SelectContent>
+                  </Select>
+                )}
               />
             </div>
-          )}
+          </InputGroup>
         </div>
+        <IconButton
+          variant="ghost"
+          size="sm"
+          aria-label={t("remove")}
+          icon={<Icon icon={CloseCircleOutline} />}
+          disabled={fields.length <= 1}
+          onClick={() => remove(index)}
+        />
       </div>
       {email && !emailRegex.test(email) && (
         <p className="mt-1 text-caption-sm-regular text-danger-primary">That doesn{"'"}t look like an email address.</p>
@@ -225,6 +224,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
 export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
   const { handleStepChange } = props;
 
+  const { t } = useTranslation();
   const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);
 
   const { workspaces } = useWorkspace();
@@ -313,10 +313,14 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
       <div className="flex w-full flex-col gap-6">
         <div className="flex flex-col gap-3">
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-body-sm-medium text-secondary">
-              <div className="min-w-0 flex-[6]">Email</div>
-              <div className="min-w-0 flex-[4]">Role</div>
-              <div aria-hidden="true" className="size-6 shrink-0" />
+            <div aria-hidden="true" className="flex items-center gap-2 text-body-sm-medium text-secondary">
+              {/* mirrors the control below: border, inset, divider and role column */}
+              <div className="flex min-w-0 flex-1 items-center gap-(--control-gap-xl) pr-0.5 pl-[calc(var(--field-inset-xl)+1px)]">
+                <div className="min-w-0 flex-1">{t("email")}</div>
+                <div className="w-px shrink-0" />
+                <div className="w-26 shrink-0 px-(--field-inset-lg)">{t("role")}</div>
+              </div>
+              <div className="size-6 shrink-0" />
             </div>
             <div className="space-y-2">
               {fields.map((field, index) => (
