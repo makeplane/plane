@@ -542,6 +542,7 @@
     "link_copied": "Link copiat!",
     "link_copied_to_clipboard": "Link-ul a fost copiat în memoria temporară",
     "copied_to_clipboard": "Link-ul activității copiat în memoria temporară",
+    "clipboard_copy_failed": "Nu s-a putut copia în clipboard",
     "branch_name_copied_to_clipboard": "Nume de ramură copiat în memoria temporară",
     "is_copied_to_clipboard": "Activitatea a fost copiată în memoria temporară",
     "no_links_added_yet": "Niciun link adăugat încă",
@@ -725,7 +726,10 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "tooltip": {
+      "copy_to_clipboard": "Copiază în clipboard"
+    }
   },
   "chart": {
     "x_axis": "axa-X",

@@ -374,5 +374,11 @@
         }
       }
     }
+  },
+  "instance_workspaces": {
+    "empty_state": {
+      "title": "아직 작업 공간이 없습니다",
+      "description": "이 인스턴스에서 생성된 작업 공간이 여기에 표시됩니다."
+    }
   }
 }

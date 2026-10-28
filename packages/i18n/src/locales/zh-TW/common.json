@@ -542,6 +542,7 @@
     "link_copied": "連結已複製！",
     "link_copied_to_clipboard": "連結已複製到剪貼簿",
     "copied_to_clipboard": "工作事項連結已複製到剪貼簿",
+    "clipboard_copy_failed": "無法複製到剪貼簿",
     "branch_name_copied_to_clipboard": "分支名稱已複製到剪貼簿",
     "is_copied_to_clipboard": "工作事項已複製到剪貼簿",
     "no_links_added_yet": "尚未新增連結",
@@ -725,7 +726,10 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "tooltip": {
+      "copy_to_clipboard": "複製到剪貼簿"
+    }
   },
   "chart": {
     "x_axis": "X 軸",

@@ -542,6 +542,7 @@
     "link_copied": "Връзката е копирана!",
     "link_copied_to_clipboard": "Връзката е копирана в клипборда",
     "copied_to_clipboard": "Връзката към работния елемент е копирана в клипборда",
+    "clipboard_copy_failed": "Неуспешно копиране в клипборда",
     "branch_name_copied_to_clipboard": "Името на клона е копирано в клипборда",
     "is_copied_to_clipboard": "Работният елемент е копиран в клипборда",
     "no_links_added_yet": "Все още няма добавени връзки",
@@ -725,7 +726,10 @@
     "developer": "Разработчик",
     "work_structure": "Структура на работата",
     "execution": "Изпълнение",
-    "administration": "Администриране"
+    "administration": "Администриране",
+    "tooltip": {
+      "copy_to_clipboard": "Копиране в клипборда"
+    }
   },
   "chart": {
     "x_axis": "Ос X",

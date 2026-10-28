@@ -542,6 +542,7 @@
     "link_copied": "Link copied!",
     "link_copied_to_clipboard": "Link copied to clipboard",
     "copied_to_clipboard": "Work item link copied to clipboard",
+    "clipboard_copy_failed": "Couldn't copy to your clipboard",
     "branch_name_copied_to_clipboard": "Branch name copied to clipboard",
     "is_copied_to_clipboard": "Work item is copied to clipboard",
     "no_links_added_yet": "No links added yet",
@@ -725,7 +726,10 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "tooltip": {
+      "copy_to_clipboard": "Copy to clipboard"
+    }
   },
   "chart": {
     "x_axis": "X-axis",

@@ -542,6 +542,7 @@
     "link_copied": "Bağlantı kopyalandı!",
     "link_copied_to_clipboard": "Bağlantı panoya kopyalandı",
     "copied_to_clipboard": "İş öğesi bağlantısı panoya kopyalandı",
+    "clipboard_copy_failed": "Panoya kopyalanamadı",
     "branch_name_copied_to_clipboard": "Dal adı panoya kopyalandı",
     "is_copied_to_clipboard": "İş öğesi panoya kopyalandı",
     "no_links_added_yet": "Henüz bağlantı eklenmedi",
@@ -725,7 +726,10 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "tooltip": {
+      "copy_to_clipboard": "Panoya kopyala"
+    }
   },
   "chart": {
     "x_axis": "X ekseni",

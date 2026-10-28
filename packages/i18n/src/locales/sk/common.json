@@ -542,6 +542,7 @@
     "link_copied": "Odkaz skopírovaný!",
     "link_copied_to_clipboard": "Odkaz skopírovaný do schránky",
     "copied_to_clipboard": "Odkaz na pracovnú položku bol skopírovaný do schránky",
+    "clipboard_copy_failed": "Kopírovanie do schránky zlyhalo",
     "branch_name_copied_to_clipboard": "Názov vetvy skopírovaný do schránky",
     "is_copied_to_clipboard": "Pracovná položka skopírovaná do schránky",
     "no_links_added_yet": "Zatiaľ neboli pridané žiadne odkazy",
@@ -725,7 +726,10 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "tooltip": {
+      "copy_to_clipboard": "Kopírovať do schránky"
+    }
   },
   "chart": {
     "x_axis": "Os X",

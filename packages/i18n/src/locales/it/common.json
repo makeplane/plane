@@ -542,6 +542,7 @@
     "link_copied": "Link copiato!",
     "link_copied_to_clipboard": "Link copiato negli appunti",
     "copied_to_clipboard": "Link dell'elemento di lavoro copiato negli appunti",
+    "clipboard_copy_failed": "Impossibile copiare negli appunti",
     "branch_name_copied_to_clipboard": "Nome del branch copiato negli appunti",
     "is_copied_to_clipboard": "Elemento di lavoro copiato negli appunti",
     "no_links_added_yet": "Nessun link aggiunto ancora",
@@ -725,7 +726,10 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "tooltip": {
+      "copy_to_clipboard": "Copia negli appunti"
+    }
   },
   "chart": {
     "x_axis": "Asse X",

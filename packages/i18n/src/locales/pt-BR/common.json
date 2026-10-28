@@ -542,6 +542,7 @@
     "link_copied": "Link copiado!",
     "link_copied_to_clipboard": "Link copiado para a área de transferência",
     "copied_to_clipboard": "Link do item de trabalho copiado para a área de transferência",
+    "clipboard_copy_failed": "Não foi possível copiar para a área de transferência",
     "branch_name_copied_to_clipboard": "Nome do branch copiado para a área de transferência",
     "is_copied_to_clipboard": "O link do item de trabalho foi copiado para a área de transferência",
     "no_links_added_yet": "Nenhum link adicionado ainda",
@@ -725,7 +726,10 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "tooltip": {
+      "copy_to_clipboard": "Copiar para a área de transferência"
+    }
   },
   "chart": {
     "x_axis": "Eixo X",

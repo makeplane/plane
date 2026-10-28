@@ -542,6 +542,7 @@
     "link_copied": "Lien copié !",
     "link_copied_to_clipboard": "Lien copié dans le presse-papiers",
     "copied_to_clipboard": "Lien de l’élément de travail copié dans le presse-papiers",
+    "clipboard_copy_failed": "Impossible de copier dans le presse-papiers",
     "branch_name_copied_to_clipboard": "Nom de la branche copié dans le presse-papiers",
     "is_copied_to_clipboard": "L’élément de travail est copié dans le presse-papiers",
     "no_links_added_yet": "Aucun lien ajouté pour l’instant",
@@ -725,7 +726,10 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "tooltip": {
+      "copy_to_clipboard": "Copier dans le presse-papiers"
+    }
   },
   "chart": {
     "x_axis": "Axe X",

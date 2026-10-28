@@ -542,6 +542,7 @@
     "link_copied": "Ссылка скопирована!",
     "link_copied_to_clipboard": "Ссылка скопирована в буфер обмена",
     "copied_to_clipboard": "Ссылка на рабочий элемент скопирована",
+    "clipboard_copy_failed": "Не удалось скопировать в буфер обмена",
     "branch_name_copied_to_clipboard": "Название ветки скопировано в буфер обмена",
     "is_copied_to_clipboard": "Рабочий элемент скопирован в буфер обмена",
     "no_links_added_yet": "Нет добавленных ссылок",
@@ -725,7 +726,10 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "tooltip": {
+      "copy_to_clipboard": "Копировать в буфер обмена"
+    }
   },
   "chart": {
     "x_axis": "Ось X",

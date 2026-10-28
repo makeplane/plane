@@ -542,6 +542,7 @@
     "link_copied": "링크 복사됨!",
     "link_copied_to_clipboard": "링크가 클립보드에 복사되었습니다",
     "copied_to_clipboard": "작업 항목 링크가 클립보드에 복사되었습니다",
+    "clipboard_copy_failed": "클립보드에 복사하지 못했습니다",
     "branch_name_copied_to_clipboard": "브랜치 이름이 클립보드에 복사되었습니다",
     "is_copied_to_clipboard": "작업 항목이 클립보드에 복사되었습니다",
     "no_links_added_yet": "아직 추가된 링크 없음",
@@ -725,7 +726,10 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "tooltip": {
+      "copy_to_clipboard": "클립보드에 복사"
+    }
   },
   "chart": {
     "x_axis": "X축",

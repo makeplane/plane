@@ -542,6 +542,7 @@
     "link_copied": "Odkaz zkopírován!",
     "link_copied_to_clipboard": "Odkaz zkopírován do schránky",
     "copied_to_clipboard": "Odkaz na pracovní položku zkopírován do schránky",
+    "clipboard_copy_failed": "Kopírování do schránky se nezdařilo",
     "branch_name_copied_to_clipboard": "Název větve zkopírován do schránky",
     "is_copied_to_clipboard": "Pracovní položka zkopírována do schránky",
     "no_links_added_yet": "Zatím nejsou přidány žádné odkazy",
@@ -725,7 +726,10 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "tooltip": {
+      "copy_to_clipboard": "Kopírovat do schránky"
+    }
   },
   "chart": {
     "x_axis": "Osa X",

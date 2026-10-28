@@ -542,6 +542,7 @@
     "link_copied": "¡Enlace copiado!",
     "link_copied_to_clipboard": "Enlace copiado al portapapeles",
     "copied_to_clipboard": "Enlace del elemento de trabajo copiado al portapapeles",
+    "clipboard_copy_failed": "No se pudo copiar al portapapeles",
     "branch_name_copied_to_clipboard": "Nombre de rama copiado al portapapeles",
     "is_copied_to_clipboard": "El elemento de trabajo está copiado al portapapeles",
     "no_links_added_yet": "Aún no se han agregado enlaces",
@@ -725,7 +726,10 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "tooltip": {
+      "copy_to_clipboard": "Copiar al portapapeles"
+    }
   },
   "chart": {
     "x_axis": "Eje X",

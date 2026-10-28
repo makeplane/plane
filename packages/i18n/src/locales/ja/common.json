@@ -542,6 +542,7 @@
     "link_copied": "リンクをコピーしました！",
     "link_copied_to_clipboard": "リンクをクリップボードにコピーしました",
     "copied_to_clipboard": "作業項目のリンクをクリップボードにコピーしました",
+    "clipboard_copy_failed": "クリップボードにコピーできませんでした",
     "branch_name_copied_to_clipboard": "ブランチ名をクリップボードにコピーしました",
     "is_copied_to_clipboard": "作業項目をクリップボードにコピーしました",
     "no_links_added_yet": "リンクはまだ追加されていません",
@@ -725,7 +726,10 @@
     "developer": "開発者",
     "work_structure": "作業構造",
     "execution": "実行",
-    "administration": "管理"
+    "administration": "管理",
+    "tooltip": {
+      "copy_to_clipboard": "クリップボードにコピー"
+    }
   },
   "chart": {
     "x_axis": "エックス アクシス",

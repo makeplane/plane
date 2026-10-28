@@ -542,6 +542,7 @@
     "link_copied": "Koppeling gekopieerd!",
     "link_copied_to_clipboard": "Koppeling gekopieerd naar klembord",
     "copied_to_clipboard": "Werkitemkoppeling gekopieerd naar klembord",
+    "clipboard_copy_failed": "Kopiëren naar klembord mislukt",
     "branch_name_copied_to_clipboard": "Branchnaam gekopieerd naar klembord",
     "is_copied_to_clipboard": "Werkitem is gekopieerd naar klembord",
     "no_links_added_yet": "Nog geen koppelingen toegevoegd",
@@ -725,7 +726,10 @@
     "developer": "Ontwikkelaar",
     "work_structure": "Werkstructuur",
     "execution": "Uitvoering",
-    "administration": "Beheer"
+    "administration": "Beheer",
+    "tooltip": {
+      "copy_to_clipboard": "Kopiëren naar klembord"
+    }
   },
   "chart": {
     "x_axis": "X-as",

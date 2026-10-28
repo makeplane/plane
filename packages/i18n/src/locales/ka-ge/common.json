@@ -542,6 +542,7 @@
     "link_copied": "ბმული კოპირებულია!",
     "link_copied_to_clipboard": "ბმული კოპირებულია ბუფერში",
     "copied_to_clipboard": "სამუშაო ელემენტის ბმული კოპირებულია ბუფერში",
+    "clipboard_copy_failed": "ბუფერში კოპირება ვერ მოხერხდა",
     "branch_name_copied_to_clipboard": "Branch name copied to clipboard",
     "is_copied_to_clipboard": "სამუშაო ელემენტი კოპირებულია ბუფერში",
     "no_links_added_yet": "ჯერ ბმულები არ არის დამატებული",
@@ -725,7 +726,10 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "tooltip": {
+      "copy_to_clipboard": "ბუფერში კოპირება"
+    }
   },
   "chart": {
     "x_axis": "X-ღერძი",

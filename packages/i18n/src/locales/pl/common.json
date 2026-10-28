@@ -542,6 +542,7 @@
     "link_copied": "Link skopiowano!",
     "link_copied_to_clipboard": "Link skopiowano do schowka",
     "copied_to_clipboard": "Link do elementu pracy skopiowano do schowka",
+    "clipboard_copy_failed": "Nie udało się skopiować do schowka",
     "branch_name_copied_to_clipboard": "Nazwa gałęzi skopiowana do schowka",
     "is_copied_to_clipboard": "Element pracy skopiowany do schowka",
     "no_links_added_yet": "Nie dodano jeszcze żadnych linków",
@@ -725,7 +726,10 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "tooltip": {
+      "copy_to_clipboard": "Kopiuj do schowka"
+    }
   },
   "chart": {
     "x_axis": "Oś X",
