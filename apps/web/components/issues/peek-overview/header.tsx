@@ -9,8 +9,8 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { IconButton as IconButtonElement } from "@makeplane/propel/elements/icon-button";
 import {
+  ArrowExpandOutline,
   ArrowNarrowRightOutline,
-  DragDropOutline,
   FullScreenPeekOutline,
   LinkOutline,
   ModalPeekOutline,
@@ -168,7 +168,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
         currentMode?.key === "full-screen" ? "border-b border-subtle" : ""
       }`}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         <IconButton
           type="button"
           variant="ghost"
@@ -186,24 +186,25 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
             aria-label={t("issue.open_in_full_screen")}
             render={<Link href={workItemLink} onClick={() => removeRoutePeekId()} />}
           >
-            <Icon icon={DragDropOutline} />
+            <Icon icon={ArrowExpandOutline} />
           </IconButtonElement>
         </Tooltip>
         {currentMode && embedIssue === false && (
-          <div className="flex flex-shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <Select<TPeekOption>
               getValues={() => PEEK_OPTIONS}
               value={currentMode}
               onChange={(val) => setPeekMode(val as TPeekModes)}
               getOptionValue={(mode) => mode.key}
               getOptionLabel={(mode) => t(mode.i18n_title)}
-              getOptionIcon={(mode) => <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />}
+              getOptionIcon={(mode) => <mode.icon className="-my-1 size-4 shrink-0" />}
               showSearch={false}
               pinSelected={false}
             >
               <Select.Trigger
-                variant="icon-md"
-                prependIcon={<currentMode.icon className="h-4 w-4 text-tertiary hover:text-secondary" />}
+                variant="icon-lg"
+                className="rounded-md hover:bg-layer-transparent-hover"
+                prependIcon={<currentMode.icon className="size-4" />}
                 tooltip={isMobile ? false : { heading: t("common.toggle_peek_view_layout") }}
               />
             </Select>

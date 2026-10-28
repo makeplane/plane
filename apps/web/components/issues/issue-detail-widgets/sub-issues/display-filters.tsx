@@ -55,7 +55,9 @@ export const SubIssueDisplayFilters = observer(function SubIssueDisplayFilters(p
                 isFilterApplied && "bg-accent-primary/20"
               )}
             >
-              {isFilterApplied && <span className="absolute -top-1 -right-1 rounded-full bg-accent-primary p-1" />}
+              {isFilterApplied && (
+                <span className="absolute -top-0.5 -right-0.5 size-2 rounded-full bg-accent-primary" />
+              )}
               <PreferencesOutline className="h-3.5 w-3.5 text-primary" />
             </div>
           }
