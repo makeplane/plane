@@ -6,7 +6,6 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { Button } from "@makeplane/propel/components/button";
 import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
@@ -49,15 +48,16 @@ export const NotificationCardListRoot = observer(function NotificationCardListRo
               <div className="text-accent-secondary">{t("loading")}...</div>
             </div>
           ) : (
-            <div className="flex items-center justify-center py-4">
-              <Button
+            <div className="flex items-center justify-center py-4 text-body-xs-medium">
+              <button
                 type="button"
-                variant="ghost"
-                size="md"
-                stretch="auto"
-                label={t("load_more")}
-                onClick={getNextNotifications}
-              />
+                className="cursor-pointer text-accent-secondary transition-colors hover:text-accent-primary"
+                onClick={() => {
+                  void getNextNotifications();
+                }}
+              >
+                {t("load_more")}
+              </button>
             </div>
           )}
         </>
