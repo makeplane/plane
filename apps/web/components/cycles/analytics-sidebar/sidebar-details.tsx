@@ -19,6 +19,7 @@ import type { ICycle } from "@plane/types";
 import { getFileURL } from "@plane/utils";
 // components
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
+import { DescriptionOverflow } from "@/components/issues/issue-detail/description-overflow";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useMember } from "@/hooks/store/use-member";
@@ -69,8 +70,13 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
         : `${cycleDetails?.completed_estimate_points}/${cycleDetails?.total_estimate_points}`;
   return (
     <div className="flex w-full flex-col gap-6">
-      {cycleDetails?.description && (
-        <TextArea size="lg" surface="inline" autoResize value={cycleDetails.description} disabled />
+      {cycleDetails?.description?.trim() && (
+        // Long descriptions clip at 140px behind a "Show all" / "Show less" toggle.
+        <DescriptionOverflow maxHeight={140}>
+          <div className="flex w-full">
+            <TextArea size="xl" surface="inline" autoResize value={cycleDetails.description} disabled />
+          </div>
+        </DescriptionOverflow>
       )}
 
       <section className="border-t border-subtle pt-6">
