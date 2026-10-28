@@ -4,23 +4,19 @@
  * See the LICENSE file for details.
  */
 
-// assets
-import SomethingWentWrongImage from "@/app/assets/something-went-wrong.svg?url";
+// plane imports
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 
 function NotFound() {
   return (
-    <div className="grid h-screen w-screen place-items-center bg-surface-1">
-      <div className="text-center">
-        <div className="mx-auto grid size-32 place-items-center rounded-full md:size-52">
-          <div className="grid size-16 place-items-center md:size-32">
-            <img src={SomethingWentWrongImage} alt="Something went wrong" width={128} height={128} />
-          </div>
-        </div>
-        <h1 className="mt-8 text-18 font-semibold md:mt-12 md:text-24">That didn{"'"}t work</h1>
-        <p className="mt-2 text-13 md:mt-4 md:text-14">
-          Check the URL you are entering in the browser{"'"}s address bar and try again.
-        </p>
-      </div>
+    <div className="h-screen w-screen bg-surface-1 p-4">
+      <EmptyStateDetailed
+        align="center"
+        assetKey="error-404"
+        assetClassName="size-40"
+        title="That didn't work"
+        description="Check the URL you are entering in the browser's address bar and try again."
+      />
     </div>
   );
 }
