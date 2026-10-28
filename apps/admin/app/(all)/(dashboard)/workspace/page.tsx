@@ -18,7 +18,7 @@ import type { TInstanceConfigurationKeys } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
-import { Skeleton } from "@/components/common/skeleton";
+import { Skeleton } from "@plane/blocks/skeleton";
 import { WorkspaceListItem } from "@/components/workspace/list-item";
 import { setPromiseToast } from "@plane/blocks/toast";
 // hooks

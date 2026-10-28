@@ -15,7 +15,7 @@ import { cn, resolveGeneralTheme } from "@plane/utils";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
-import { Skeleton } from "@/components/common/skeleton";
+import { Skeleton } from "@plane/blocks/skeleton";
 import { setPromiseToast, setToast } from "@plane/blocks/toast";
 // helpers
 import { canDisableAuthMethod } from "@/helpers/authentication";

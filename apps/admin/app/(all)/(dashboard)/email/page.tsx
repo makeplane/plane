@@ -10,7 +10,7 @@ import useSWR from "swr";
 import { Switch } from "@makeplane/propel/components/switch";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
-import { Skeleton } from "@/components/common/skeleton";
+import { Skeleton } from "@plane/blocks/skeleton";
 import { setToast } from "@plane/blocks/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
