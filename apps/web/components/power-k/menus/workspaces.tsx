@@ -6,9 +6,9 @@
 
 import React from "react";
 // plane imports
+import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
 import type { IWorkspace } from "@plane/types";
-// components
-import { WorkspaceLogo } from "@/components/workspace/logo";
+import { getFileURL } from "@plane/utils";
 // local imports
 import { PowerKMenuBuilder } from "./builder";
 
@@ -23,7 +23,7 @@ export function PowerKWorkspacesMenu({ workspaces, onSelect }: Props) {
       items={workspaces}
       getKey={(workspace) => workspace.id}
       getIconNode={(workspace) => (
-        <WorkspaceLogo logo={workspace.logo_url} name={workspace.name} classNames="shrink-0" />
+        <WorkspaceAvatar size="sm" src={getFileURL(workspace.logo_url ?? "")} alt={workspace.name} />
       )}
       getValue={(workspace) => workspace.name}
       getLabel={(workspace) => workspace.name}
