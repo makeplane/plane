@@ -223,6 +223,11 @@
       "search": {
         "description": "Aucun projet détecté avec les critères correspondants.\nCréez plutôt un nouveau projet"
       }
+    },
+    "card": {
+      "joined": "Rejoint",
+      "archived": "Archivé",
+      "no_lead": "Aucun responsable"
     }
   },
   "workspace_views": {

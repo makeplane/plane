@@ -223,6 +223,11 @@
       "search": {
         "description": "Không phát hiện dự án nào phù hợp với điều kiện tìm kiếm.\nTạo dự án mới"
       }
+    },
+    "card": {
+      "joined": "Đã tham gia",
+      "archived": "Đã lưu trữ",
+      "no_lead": "Không có người phụ trách"
     }
   },
   "workspace_views": {

@@ -223,6 +223,11 @@
       "search": {
         "description": "未检测到符合匹配条件的项目。\n创建一个新项目"
       }
+    },
+    "card": {
+      "joined": "已加入",
+      "archived": "已归档",
+      "no_lead": "无负责人"
     }
   },
   "workspace_views": {

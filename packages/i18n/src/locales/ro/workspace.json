@@ -223,6 +223,11 @@
       "search": {
         "description": "Nu s-au găsit proiecte care să corespundă criteriilor.\nCreează un proiect nou."
       }
+    },
+    "card": {
+      "joined": "Membru",
+      "archived": "Arhivat",
+      "no_lead": "Fără lider"
     }
   },
   "workspace_views": {

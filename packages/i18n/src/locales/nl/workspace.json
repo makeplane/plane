@@ -223,6 +223,11 @@
       "search": {
         "description": "Geen projecten gevonden die aan de criteria voldoen.\nMaak in plaats daarvan een nieuw project aan"
       }
+    },
+    "card": {
+      "joined": "Lid",
+      "archived": "Gearchiveerd",
+      "no_lead": "Geen lead"
     }
   },
   "workspace_views": {

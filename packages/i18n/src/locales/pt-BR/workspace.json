@@ -223,6 +223,11 @@
       "search": {
         "description": "Nenhum projeto detectado com os critérios correspondentes.\nCrie um novo projeto em vez disso"
       }
+    },
+    "card": {
+      "joined": "Participando",
+      "archived": "Arquivado",
+      "no_lead": "Sem líder"
     }
   },
   "workspace_views": {
