@@ -36,7 +36,7 @@ export const PageWrapper = (props: TPageWrapperProps) => {
         header && (
           <div className="mx-4 flex shrink-0 items-center justify-between gap-4 space-y-1 border-b border-subtle py-4">
             <div className={header.actions ? "flex flex-col gap-1" : "space-y-1"}>
-              <div className="text-h5-semibold text-primary">{header.title}</div>
+              <h2 className="text-h5-semibold text-primary">{header.title}</h2>
               <div className="text-body-sm-regular text-secondary">{header.description}</div>
             </div>
             {header.actions && <div className="shrink-0">{header.actions}</div>}
