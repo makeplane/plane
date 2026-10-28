@@ -4,8 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
+import { Menu as BaseMenu } from "@base-ui/react/menu";
+import { MenuGroup, MenuLabel } from "@makeplane/propel/components/menu";
 import { Toggle, ToggleLabel } from "@makeplane/propel/elements/toggle";
 // plane constants
 import { ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
@@ -13,8 +14,6 @@ import { ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { IIssueDisplayProperties } from "@plane/types";
-// components
-import { FilterHeader } from "../helpers/filter-header";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -36,8 +35,6 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
   } = props;
   // hooks
   const { t } = useTranslation();
-  // states
-  const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
   // Filter out "cycle" and "module" keys if cycleViewDisabled or moduleViewDisabled is true
   // Also filter out display properties that should not be rendered
@@ -59,36 +56,26 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
   });
 
   return (
-    <>
-      <FilterHeader
-        title={t("issue.display.properties.label")}
-        isPreviewEnabled={previewEnabled}
-        handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
-      />
-      {previewEnabled && (
-        <div className="mt-1 flex flex-wrap items-center gap-2">
-          {filteredDisplayProperties.map((displayProperty) => {
-            const isSelected = !!displayProperties?.[displayProperty.key];
+    <MenuGroup>
+      <MenuLabel>{t("issue.display.properties.label")}</MenuLabel>
+      {/* The toggle pills wrap, so this section fixes the menu's width instead of following it. */}
+      <div className="flex w-72 flex-wrap items-center gap-2 px-2 pt-0.5 pb-1.5">
+        {filteredDisplayProperties.map((displayProperty) => {
+          const isSelected = !!displayProperties?.[displayProperty.key];
 
-            return (
-              <Toggle
-                key={displayProperty.key}
-                type="button"
-                size="sm"
-                aria-pressed={isSelected}
-                data-pressed={isSelected ? "" : undefined}
-                onClick={() =>
-                  handleUpdate({
-                    [displayProperty.key]: !displayProperties?.[displayProperty.key],
-                  })
-                }
-              >
-                <ToggleLabel>{t(displayProperty.titleTranslationKey)}</ToggleLabel>
-              </Toggle>
-            );
-          })}
-        </div>
-      )}
-    </>
+          return (
+            <BaseMenu.CheckboxItem
+              key={displayProperty.key}
+              checked={isSelected}
+              closeOnClick={false}
+              onCheckedChange={(checked) => handleUpdate({ [displayProperty.key]: checked })}
+              render={<Toggle size="sm" render={<div />} data-pressed={isSelected ? "" : undefined} />}
+            >
+              <ToggleLabel>{t(displayProperty.titleTranslationKey)}</ToggleLabel>
+            </BaseMenu.CheckboxItem>
+          );
+        })}
+      </div>
+    </MenuGroup>
   );
 });

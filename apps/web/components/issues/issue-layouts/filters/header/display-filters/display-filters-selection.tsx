@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
+import { MenuSeparator } from "@makeplane/propel/components/menu";
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -58,88 +58,91 @@ export const DisplayFiltersSelection = observer(function DisplayFiltersSelection
     ignoreGroupedFilters.push("module");
   }
 
+  // the menu has three sections; a separator only shows with a section on both sides of it
+  const showDisplayProperties =
+    !!layoutDisplayFiltersOptions?.display_properties && layoutDisplayFiltersOptions.display_properties.length > 0;
+  const showGroupBy = isDisplayFilterEnabled("group_by");
+  const showSubGroupBy =
+    isDisplayFilterEnabled("sub_group_by") && displayFilters?.group_by !== null && displayFilters?.layout === "kanban";
+  const showOrderBy =
+    isDisplayFilterEnabled("order_by") && !isEmpty(layoutDisplayFiltersOptions?.display_filters?.order_by);
+  const showDisplayFilters = showGroupBy || showSubGroupBy || showOrderBy;
+  const showExtraOptions = !!layoutDisplayFiltersOptions?.extra_options.access;
+
   return (
-    <div className="vertical-scrollbar relative scrollbar-sm h-full w-full divide-y divide-subtle-1 overflow-hidden overflow-y-auto px-2.5">
+    <>
       {/* display properties */}
-      {layoutDisplayFiltersOptions?.display_properties && layoutDisplayFiltersOptions.display_properties.length > 0 && (
-        <div className="py-2">
-          <FilterDisplayProperties
-            displayProperties={displayProperties}
-            displayPropertiesToRender={layoutDisplayFiltersOptions.display_properties}
-            handleUpdate={handleDisplayPropertiesUpdate}
-            cycleViewDisabled={cycleViewDisabled}
-            moduleViewDisabled={moduleViewDisabled}
-            isEpic={isEpic}
-          />
-        </div>
+      {showDisplayProperties && (
+        <FilterDisplayProperties
+          displayProperties={displayProperties}
+          displayPropertiesToRender={layoutDisplayFiltersOptions.display_properties}
+          handleUpdate={handleDisplayPropertiesUpdate}
+          cycleViewDisabled={cycleViewDisabled}
+          moduleViewDisabled={moduleViewDisabled}
+          isEpic={isEpic}
+        />
       )}
 
+      {showDisplayProperties && (showDisplayFilters || showExtraOptions) && <MenuSeparator />}
+
       {/* group by */}
-      {isDisplayFilterEnabled("group_by") && (
-        <div className="py-2">
-          <FilterGroupBy
-            displayFilters={displayFilters}
-            groupByOptions={layoutDisplayFiltersOptions?.display_filters.group_by ?? []}
-            handleUpdate={(val) =>
-              handleDisplayFiltersUpdate({
-                group_by: val,
-              })
-            }
-            ignoreGroupedFilters={[...ignoreGroupedFilters, ...computedIgnoreGroupedFilters]}
-          />
-        </div>
+      {showGroupBy && (
+        <FilterGroupBy
+          displayFilters={displayFilters}
+          groupByOptions={layoutDisplayFiltersOptions?.display_filters.group_by ?? []}
+          handleUpdate={(val) =>
+            handleDisplayFiltersUpdate({
+              group_by: val,
+            })
+          }
+          ignoreGroupedFilters={[...ignoreGroupedFilters, ...computedIgnoreGroupedFilters]}
+        />
       )}
 
       {/* sub-group by */}
-      {isDisplayFilterEnabled("sub_group_by") &&
-        displayFilters?.group_by !== null &&
-        displayFilters?.layout === "kanban" && (
-          <div className="py-2">
-            <FilterSubGroupBy
-              displayFilters={displayFilters}
-              handleUpdate={(val) =>
-                handleDisplayFiltersUpdate({
-                  sub_group_by: val,
-                })
-              }
-              subGroupByOptions={layoutDisplayFiltersOptions?.display_filters.sub_group_by ?? []}
-              ignoreGroupedFilters={[...ignoreGroupedFilters, ...computedIgnoreGroupedFilters]}
-            />
-          </div>
-        )}
+      {showSubGroupBy && (
+        <FilterSubGroupBy
+          displayFilters={displayFilters}
+          handleUpdate={(val) =>
+            handleDisplayFiltersUpdate({
+              sub_group_by: val,
+            })
+          }
+          subGroupByOptions={layoutDisplayFiltersOptions?.display_filters.sub_group_by ?? []}
+          ignoreGroupedFilters={[...ignoreGroupedFilters, ...computedIgnoreGroupedFilters]}
+        />
+      )}
 
       {/* order by */}
-      {isDisplayFilterEnabled("order_by") && !isEmpty(layoutDisplayFiltersOptions?.display_filters?.order_by) && (
-        <div className="py-2">
-          <FilterOrderBy
-            selectedOrderBy={displayFilters?.order_by}
-            handleUpdate={(val) =>
-              handleDisplayFiltersUpdate({
-                order_by: val,
-              })
-            }
-            orderByOptions={layoutDisplayFiltersOptions?.display_filters.order_by ?? []}
-          />
-        </div>
+      {showOrderBy && (
+        <FilterOrderBy
+          selectedOrderBy={displayFilters?.order_by}
+          handleUpdate={(val) =>
+            handleDisplayFiltersUpdate({
+              order_by: val,
+            })
+          }
+          orderByOptions={layoutDisplayFiltersOptions?.display_filters.order_by ?? []}
+        />
       )}
 
+      {showDisplayFilters && showExtraOptions && <MenuSeparator />}
+
       {/* Options */}
-      {layoutDisplayFiltersOptions?.extra_options.access && (
-        <div className="py-2">
-          <FilterExtraOptions
-            selectedExtraOptions={{
-              show_empty_groups: displayFilters?.show_empty_groups ?? true,
-              sub_issue: displayFilters?.sub_issue ?? true,
-            }}
-            handleUpdate={(key, val) =>
-              handleDisplayFiltersUpdate({
-                [key]: val,
-              })
-            }
-            enabledExtraOptions={layoutDisplayFiltersOptions?.extra_options.values}
-          />
-        </div>
+      {showExtraOptions && (
+        <FilterExtraOptions
+          selectedExtraOptions={{
+            show_empty_groups: displayFilters?.show_empty_groups ?? true,
+            sub_issue: displayFilters?.sub_issue ?? true,
+          }}
+          handleUpdate={(key, val) =>
+            handleDisplayFiltersUpdate({
+              [key]: val,
+            })
+          }
+          enabledExtraOptions={layoutDisplayFiltersOptions?.extra_options.values}
+        />
       )}
-    </div>
+    </>
   );
 });
