@@ -44,7 +44,7 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
   const [projectIdentifier, sequence_id] = workItem.split("-");
 
   // fetching issue details
-  const { data, isLoading, error } = useSWR<TIssue, Error>(
+  const { data, isLoading, error } = useSWR<TIssue, Error & { status?: number }>(
     `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}`,
     () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
   );
@@ -84,6 +84,25 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
       router.push(`/${workspaceSlug}/projects/${data.project_id}/intake/?currentTab=open&inboxIssueId=${data?.id}`);
     }
   }, [workspaceSlug, data, router]);
+
+  if (error && !isLoading && error.status === 403) {
+    return (
+      <EmptyStateDetailed
+        align="center"
+        assetKey="no-access"
+        assetClassName="size-40"
+        title={t("issue.empty_state.no_access.title")}
+        description={t("issue.empty_state.no_access.description")}
+        actions={[
+          {
+            label: t("issue.empty_state.issue_detail.primary_button.text"),
+            variant: "primary",
+            onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues/`),
+          },
+        ]}
+      />
+    );
+  }
 
   if (error && !isLoading) {
     return (
