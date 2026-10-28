@@ -63,7 +63,8 @@
             "required": "We hebben een e-mailadres nodig om ze uit te nodigen.",
             "invalid": "E-mailadres is ongeldig"
           }
-        }
+        },
+        "leave_input_label": "Typ de naam van deze werkruimte om door te gaan."
       },
       "billing_and_plans": {
         "heading": "Facturering & plannen",

@@ -6,7 +6,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { Dialog, DialogContent } from "@makeplane/propel/components/dialog";
 import type { IWorkspace } from "@plane/types";
 // components
 import { DeleteWorkspaceForm } from "@/components/workspace/delete-workspace-form";
@@ -20,16 +19,5 @@ type Props = {
 export const DeleteWorkspaceModal = observer(function DeleteWorkspaceModal(props: Props) {
   const { isOpen, data, onClose } = props;
 
-  return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(open) => {
-        if (!open) onClose();
-      }}
-    >
-      <DialogContent size="sm">
-        <DeleteWorkspaceForm data={data} onClose={onClose} />
-      </DialogContent>
-    </Dialog>
-  );
+  return <DeleteWorkspaceForm data={data} isOpen={isOpen} onClose={onClose} />;
 });

@@ -63,7 +63,8 @@
             "required": "We need an email address to invite them.",
             "invalid": "Email is invalid"
           }
-        }
+        },
+        "leave_input_label": "Type in this workspace's name to continue."
       },
       "billing_and_plans": {
         "heading": "Billing & Plans",

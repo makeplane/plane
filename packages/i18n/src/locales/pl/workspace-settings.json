@@ -63,7 +63,8 @@
             "required": "Wymagany jest adres e-mail.",
             "invalid": "E-mail jest nieprawidłowy"
           }
-        }
+        },
+        "leave_input_label": "Wpisz nazwę tego obszaru roboczego, aby kontynuować."
       },
       "billing_and_plans": {
         "heading": "Rozliczenia i plany",

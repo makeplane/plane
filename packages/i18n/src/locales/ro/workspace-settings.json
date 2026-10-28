@@ -63,7 +63,8 @@
             "required": "Avem nevoie de o adresă de email pentru a trimite invitația.",
             "invalid": "Adresa de email este invalidă"
           }
-        }
+        },
+        "leave_input_label": "Introdu numele acestui spațiu de lucru pentru a continua."
       },
       "billing_and_plans": {
         "heading": "Facturare și abonamente",

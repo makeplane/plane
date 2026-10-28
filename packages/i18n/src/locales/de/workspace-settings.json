@@ -63,7 +63,8 @@
             "required": "Eine E-Mail-Adresse ist erforderlich.",
             "invalid": "E-Mail ist ungültig"
           }
-        }
+        },
+        "leave_input_label": "Geben Sie zum Fortfahren den Namen dieses Arbeitsbereichs ein."
       },
       "billing_and_plans": {
         "heading": "Abrechnung und Pläne",

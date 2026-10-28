@@ -63,7 +63,8 @@
             "required": "Precisamos de um endereço de e-mail para convidá-los.",
             "invalid": "E-mail inválido"
           }
-        }
+        },
+        "leave_input_label": "Digite o nome deste espaço de trabalho para continuar."
       },
       "billing_and_plans": {
         "heading": "Faturamento e planos",

@@ -63,7 +63,8 @@
             "required": "Chúng tôi cần một địa chỉ email để mời họ.",
             "invalid": "Email không hợp lệ"
           }
-        }
+        },
+        "leave_input_label": "Nhập tên không gian làm việc này để tiếp tục."
       },
       "billing_and_plans": {
         "heading": "Thanh toán và Kế hoạch",

@@ -63,7 +63,8 @@
             "required": "Kami perlu alamat email untuk mengundang mereka.",
             "invalid": "Email tidak valid"
           }
-        }
+        },
+        "leave_input_label": "Ketik nama ruang kerja ini untuk melanjutkan."
       },
       "billing_and_plans": {
         "heading": "Penagihan & Rencana",

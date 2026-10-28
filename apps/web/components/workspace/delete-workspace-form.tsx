@@ -5,25 +5,11 @@
  */
 
 import { observer } from "mobx-react";
-import { Controller, useForm } from "react-hook-form";
-import { WarningTriangleOutline } from "@makeplane/propel/icons";
 // Plane Imports
-import { Field } from "@makeplane/propel/components/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@makeplane/propel/components/button";
-import {
-  DialogActions,
-  DialogBody,
-  DialogHeader,
-  DialogHeading,
-  DialogMain,
-  DialogTitle,
-} from "@makeplane/propel/components/dialog";
+import { TypeToConfirmDialog } from "@plane/blocks/dialog";
 import { setToast } from "@plane/blocks/toast";
 import type { IWorkspace } from "@plane/types";
-
-import { cn } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserSettings } from "@/hooks/store/user";
@@ -31,16 +17,12 @@ import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   data: IWorkspace | null;
+  isOpen: boolean;
   onClose: () => void;
 };
 
-const defaultValues = {
-  workspaceName: "",
-  confirmDelete: "",
-};
-
 export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: Props) {
-  const { data, onClose } = props;
+  const { data, isOpen, onClose } = props;
   // router
   const router = useAppRouter();
   // store hooks
@@ -48,33 +30,14 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
   const { t } = useTranslation();
   const { getWorkspaceRedirectionUrl } = useWorkspace();
   const { fetchCurrentUserSettings } = useUserSettings();
-  // form info
-  const {
-    control,
-    formState: { errors, isSubmitting },
-    handleSubmit,
-    reset,
-    watch,
-  } = useForm({ defaultValues });
-
-  const canDelete = watch("workspaceName") === data?.name && watch("confirmDelete") === "delete my workspace";
-
-  const handleClose = () => {
-    const timer = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timer);
-    }, 350);
-
-    onClose();
-  };
 
   const onSubmit = async () => {
-    if (!data || !canDelete) return;
+    if (!data) return;
 
     try {
       await deleteWorkspace(data.slug);
       await fetchCurrentUserSettings();
-      handleClose();
+      onClose();
       router.push(getWorkspaceRedirectionUrl());
       setToast({
         type: "success",
@@ -91,97 +54,28 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
-      <DialogMain>
-        <DialogHeader>
-          <div className="flex w-full items-center justify-start gap-4">
-            <span
-              className={cn(
-                "grid size-12 shrink-0 place-items-center rounded-full bg-danger-subtle text-danger-primary sm:size-10"
-              )}
-            >
-              <WarningTriangleOutline className="size-5 text-danger-primary" aria-hidden="true" />
-            </span>
-            <DialogHeading>
-              <DialogTitle>{t("workspace_settings.settings.general.delete_modal.title")}</DialogTitle>
-            </DialogHeading>
-          </div>
-        </DialogHeader>
-        <DialogBody tabIndex={0}>
-          <div className="space-y-4">
-            <p className="text-body-xs-regular text-secondary">
-              You are about to delete the workspace{" "}
-              <span className="text-body-xs-semibold break-words">{data?.name}</span>. If you confirm, you will lose
-              access to all your work data in this workspace without any way to restore it. Tread very carefully.
-            </p>
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="workspaceName" className="text-body-xs-regular break-words text-secondary">
-                Type in this workspace&apos;s name to continue.
-              </label>
-              <Controller
-                control={control}
-                name="workspaceName"
-                render={({ field: { value, onChange, ref } }) => (
-                  <Field name="workspaceName" invalid={Boolean(errors.workspaceName)}>
-                    <InputGroup size="lg">
-                      <Input
-                        size="lg"
-                        id="workspaceName"
-                        name="workspaceName"
-                        type="text"
-                        value={value}
-                        onChange={onChange}
-                        ref={ref}
-                        placeholder={data?.name}
-                        autoComplete="off"
-                      />
-                    </InputGroup>
-                  </Field>
-                )}
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="confirmDelete" className="text-body-xs-regular text-secondary">
-                For final confirmation, type{" "}
-                <span className="text-body-xs-medium text-primary">delete my workspace</span> below.
-              </label>
-              <Controller
-                control={control}
-                name="confirmDelete"
-                render={({ field: { value, onChange, ref } }) => (
-                  <Field name="confirmDelete" invalid={Boolean(errors.confirmDelete)}>
-                    <InputGroup size="lg">
-                      <Input
-                        size="lg"
-                        id="confirmDelete"
-                        name="confirmDelete"
-                        type="text"
-                        value={value}
-                        onChange={onChange}
-                        ref={ref}
-                        placeholder=""
-                        autoComplete="off"
-                      />
-                    </InputGroup>
-                  </Field>
-                )}
-              />
-            </div>
-          </div>
-        </DialogBody>
-      </DialogMain>
-      <DialogActions>
-        <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={handleClose} />
-        <Button
-          variant="danger"
-          size="md"
-          stretch="auto"
-          type="submit"
-          label={isSubmitting ? t("deleting") : t("confirm")}
-          disabled={!canDelete}
-          loading={isSubmitting}
-        />
-      </DialogActions>
-    </form>
+    <TypeToConfirmDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      onConfirm={onSubmit}
+      title={t("workspace_settings.settings.general.delete_modal.title")}
+      description={
+        <>
+          You are about to delete the workspace <span className="text-body-xs-semibold break-words">{data?.name}</span>.
+          If you confirm, you will lose access to all your work data in this workspace without any way to restore it.
+          Tread very carefully.
+        </>
+      }
+      fields={[
+        { name: "workspaceName", label: "Type in this workspace's name to continue.", expectedValue: data?.name ?? "" },
+        {
+          name: "confirmDelete",
+          label: 'For final confirmation, type "delete my workspace" below.',
+          expectedValue: "delete my workspace",
+        },
+      ]}
+      confirmLabel={t("confirm")}
+      loadingLabel={t("deleting")}
+    />
   );
 });

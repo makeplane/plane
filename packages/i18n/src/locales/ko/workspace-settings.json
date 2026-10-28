@@ -63,7 +63,8 @@
             "required": "초대하려면 이메일 주소가 필요합니다.",
             "invalid": "이메일이 유효하지 않습니다"
           }
-        }
+        },
+        "leave_input_label": "계속하려면 이 작업 공간의 이름을 입력하세요."
       },
       "billing_and_plans": {
         "heading": "청구 및 플랜",

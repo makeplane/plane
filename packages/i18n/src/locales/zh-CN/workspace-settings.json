@@ -63,7 +63,8 @@
             "required": "我们需要一个电子邮件地址来邀请他们。",
             "invalid": "电子邮件无效"
           }
-        }
+        },
+        "leave_input_label": "输入此工作区的名称以继续。"
       },
       "billing_and_plans": {
         "heading": "账单与计划",

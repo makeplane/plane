@@ -63,7 +63,8 @@
             "required": "Vyžaduje sa e-mailová adresa.",
             "invalid": "E-mail je neplatný"
           }
-        }
+        },
+        "leave_input_label": "Ak chcete pokračovať, zadajte názov tohto pracovného priestoru."
       },
       "billing_and_plans": {
         "heading": "Fakturácia a plány",

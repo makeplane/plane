@@ -63,7 +63,8 @@
             "required": "我們需要電子郵件地址才能邀請他們。",
             "invalid": "電子郵件無效"
           }
-        }
+        },
+        "leave_input_label": "輸入此工作區的名稱以繼續。"
       },
       "billing_and_plans": {
         "heading": "計費與方案",
