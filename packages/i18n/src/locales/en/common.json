@@ -733,7 +733,8 @@
       "copy_to_clipboard": "Copy to clipboard",
       "created_on_date": "Created on {date}",
       "priority": "Priority: {value}"
-    }
+    },
+    "locked": "Locked"
   },
   "chart": {
     "x_axis": "X-axis",
@@ -884,5 +885,13 @@
       "short_description": "Export as json"
     }
   },
-  "labels_count": "{count, plural, one {# label} other {# labels}}"
+  "labels_count": "{count, plural, one {# label} other {# labels}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Save view options",
+      "update_view": "Update view",
+      "save_as": "Save as",
+      "hide_filters": "Hide filters"
+    }
+  }
 }

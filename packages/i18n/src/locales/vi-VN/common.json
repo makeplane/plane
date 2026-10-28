@@ -733,7 +733,8 @@
       "copy_to_clipboard": "Sao chép vào bảng tạm",
       "created_on_date": "Được tạo vào {date}",
       "priority": "Ưu tiên: {value}"
-    }
+    },
+    "locked": "Đã khóa"
   },
   "chart": {
     "x_axis": "Trục X",
@@ -884,5 +885,13 @@
       "short_description": "Xuất sang JSON"
     }
   },
-  "labels_count": "{count, plural, one {# nhãn} other {# nhãn}}"
+  "labels_count": "{count, plural, one {# nhãn} other {# nhãn}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Tùy chọn lưu chế độ xem",
+      "update_view": "Cập nhật chế độ xem",
+      "save_as": "Lưu thành",
+      "hide_filters": "Ẩn bộ lọc"
+    }
+  }
 }

@@ -733,7 +733,8 @@
       "copy_to_clipboard": "In die Zwischenablage kopieren",
       "created_on_date": "Erstellt am {date}",
       "priority": "Priorität: {value}"
-    }
+    },
+    "locked": "Gesperrt"
   },
   "chart": {
     "x_axis": "X-Achse",
@@ -884,5 +885,13 @@
       "short_description": "Als JSON exportieren"
     }
   },
-  "labels_count": "{count, plural, one {# Label} other {# Labels}}"
+  "labels_count": "{count, plural, one {# Label} other {# Labels}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Optionen zum Speichern der Ansicht",
+      "update_view": "Ansicht aktualisieren",
+      "save_as": "Speichern unter",
+      "hide_filters": "Filter ausblenden"
+    }
+  }
 }

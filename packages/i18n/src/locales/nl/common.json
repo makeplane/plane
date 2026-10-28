@@ -733,7 +733,8 @@
       "copy_to_clipboard": "Kopiëren naar klembord",
       "created_on_date": "Aangemaakt op {date}",
       "priority": "Prioriteit: {value}"
-    }
+    },
+    "locked": "Vergrendeld"
   },
   "chart": {
     "x_axis": "X-as",
@@ -884,5 +885,13 @@
       "short_description": "Exporteren als json"
     }
   },
-  "labels_count": "{count, plural, one {# label} other {# labels}}"
+  "labels_count": "{count, plural, one {# label} other {# labels}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Opties voor weergave opslaan",
+      "update_view": "Weergave bijwerken",
+      "save_as": "Opslaan als",
+      "hide_filters": "Filters verbergen"
+    }
+  }
 }

@@ -733,7 +733,8 @@
       "copy_to_clipboard": "Kopírovat do schránky",
       "created_on_date": "Vytvořeno dne {date}",
       "priority": "Priorita: {value}"
-    }
+    },
+    "locked": "Uzamčeno"
   },
   "chart": {
     "x_axis": "Osa X",
@@ -884,5 +885,13 @@
       "short_description": "Exportovat jako JSON"
     }
   },
-  "labels_count": "{count, plural, one {# štítek} few {# štítky} many {# štítku} other {# štítků}}"
+  "labels_count": "{count, plural, one {# štítek} few {# štítky} many {# štítku} other {# štítků}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Možnosti uložení pohledu",
+      "update_view": "Aktualizovat pohled",
+      "save_as": "Uložit jako",
+      "hide_filters": "Skrýt filtry"
+    }
+  }
 }

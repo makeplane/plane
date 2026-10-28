@@ -733,7 +733,8 @@
       "copy_to_clipboard": "复制到剪贴板",
       "created_on_date": "创建于 {date}",
       "priority": "优先级：{value}"
-    }
+    },
+    "locked": "已锁定"
   },
   "chart": {
     "x_axis": "X轴",
@@ -884,5 +885,13 @@
       "short_description": "导出为 JSON"
     }
   },
-  "labels_count": "{count, plural, one {# 个标签} other {# 个标签}}"
+  "labels_count": "{count, plural, one {# 个标签} other {# 个标签}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "视图保存选项",
+      "update_view": "更新视图",
+      "save_as": "另存为",
+      "hide_filters": "隐藏筛选"
+    }
+  }
 }

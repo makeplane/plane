@@ -733,7 +733,8 @@
       "copy_to_clipboard": "Скопіювати в буфер обміну",
       "created_on_date": "Створено {date}",
       "priority": "Пріоритет: {value}"
-    }
+    },
+    "locked": "Заблоковано"
   },
   "chart": {
     "x_axis": "Вісь X",
@@ -884,5 +885,13 @@
       "short_description": "Експортувати як JSON"
     }
   },
-  "labels_count": "{count, plural, one {# мітка} few {# мітки} many {# міток} other {# мітки}}"
+  "labels_count": "{count, plural, one {# мітка} few {# мітки} many {# міток} other {# мітки}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Параметри збереження подання",
+      "update_view": "Оновити подання",
+      "save_as": "Зберегти як",
+      "hide_filters": "Приховати фільтри"
+    }
+  }
 }

@@ -26,6 +26,16 @@
           "highlight_changes": "Değişiklikleri vurgula"
         }
       },
+      "version_history": {
+        "view_only": "Yalnızca görüntüleme",
+        "loading_details": "Sürüm ayrıntıları yükleniyor",
+        "load_error_description": "Sürüm yüklenemedi. Lütfen tekrar deneyin.",
+        "list_error_description": "Sürüm geçmişi yüklenemedi.",
+        "try_again": "Tekrar dene",
+        "restoring": "Geri yükleniyor",
+        "restore_success": "Sayfa sürümü geri yüklendi.",
+        "restore_failed": "Sayfa sürümü geri yüklenemedi."
+      },
       "assets": {
         "label": "Varlıklar",
         "download_button": "İndir",

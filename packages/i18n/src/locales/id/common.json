@@ -733,7 +733,8 @@
       "copy_to_clipboard": "Salin ke clipboard",
       "created_on_date": "Dibuat pada {date}",
       "priority": "Prioritas: {value}"
-    }
+    },
+    "locked": "Terkunci"
   },
   "chart": {
     "x_axis": "Sumbu-X",
@@ -884,5 +885,13 @@
       "short_description": "Ekspor sebagai json"
     }
   },
-  "labels_count": "{count, plural, one {# label} other {# label}}"
+  "labels_count": "{count, plural, one {# label} other {# label}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Opsi simpan tampilan",
+      "update_view": "Perbarui tampilan",
+      "save_as": "Simpan sebagai",
+      "hide_filters": "Sembunyikan filter"
+    }
+  }
 }

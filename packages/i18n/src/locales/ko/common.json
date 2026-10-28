@@ -733,7 +733,8 @@
       "copy_to_clipboard": "클립보드에 복사",
       "created_on_date": "생성일: {date}",
       "priority": "우선순위: {value}"
-    }
+    },
+    "locked": "잠김"
   },
   "chart": {
     "x_axis": "X축",
@@ -884,5 +885,13 @@
       "short_description": "JSON으로 내보내기"
     }
   },
-  "labels_count": "{count, plural, one {레이블 #개} other {레이블 #개}}"
+  "labels_count": "{count, plural, one {레이블 #개} other {레이블 #개}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "뷰 저장 옵션",
+      "update_view": "뷰 업데이트",
+      "save_as": "다른 이름으로 저장",
+      "hide_filters": "필터 숨기기"
+    }
+  }
 }

@@ -733,7 +733,8 @@
       "copy_to_clipboard": "Копировать в буфер обмена",
       "created_on_date": "Создано {date}",
       "priority": "Приоритет: {value}"
-    }
+    },
+    "locked": "Заблокировано"
   },
   "chart": {
     "x_axis": "Ось X",
@@ -884,5 +885,13 @@
       "short_description": "Экспорт в json"
     }
   },
-  "labels_count": "{count, plural, one {# метка} few {# метки} many {# меток} other {# метки}}"
+  "labels_count": "{count, plural, one {# метка} few {# метки} many {# меток} other {# метки}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Параметры сохранения представления",
+      "update_view": "Обновить представление",
+      "save_as": "Сохранить как",
+      "hide_filters": "Скрыть фильтры"
+    }
+  }
 }

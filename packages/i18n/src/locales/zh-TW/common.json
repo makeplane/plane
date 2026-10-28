@@ -733,7 +733,8 @@
       "copy_to_clipboard": "複製到剪貼簿",
       "created_on_date": "建立於 {date}",
       "priority": "優先順序：{value}"
-    }
+    },
+    "locked": "已鎖定"
   },
   "chart": {
     "x_axis": "X 軸",
@@ -884,5 +885,13 @@
       "short_description": "匯出為 JSON"
     }
   },
-  "labels_count": "{count, plural, one {# 個標籤} other {# 個標籤}}"
+  "labels_count": "{count, plural, one {# 個標籤} other {# 個標籤}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "檢視儲存選項",
+      "update_view": "更新檢視",
+      "save_as": "另存為",
+      "hide_filters": "隱藏篩選器"
+    }
+  }
 }

@@ -733,7 +733,8 @@
       "copy_to_clipboard": "ბუფერში კოპირება",
       "created_on_date": "შექმნილია {date}",
       "priority": "პრიორიტეტი: {value}"
-    }
+    },
+    "locked": "დაბლოკილი"
   },
   "chart": {
     "x_axis": "X-ღერძი",
@@ -884,5 +885,13 @@
       "short_description": "ექსპორტი json-ად"
     }
   },
-  "labels_count": "{count, plural, one {# იარლიყი} other {# იარლიყი}}"
+  "labels_count": "{count, plural, one {# იარლიყი} other {# იარლიყი}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "ხედის შენახვის პარამეტრები",
+      "update_view": "ხედის განახლება",
+      "save_as": "შენახვა როგორც",
+      "hide_filters": "ფილტრების დამალვა"
+    }
+  }
 }

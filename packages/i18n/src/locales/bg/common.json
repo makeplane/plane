@@ -733,7 +733,8 @@
       "copy_to_clipboard": "Копиране в клипборда",
       "created_on_date": "Създадено на {date}",
       "priority": "Приоритет: {value}"
-    }
+    },
+    "locked": "Заключено"
   },
   "chart": {
     "x_axis": "Ос X",
@@ -884,5 +885,13 @@
       "short_description": "Експортирай като JSON"
     }
   },
-  "labels_count": "{count, plural, one {# етикет} other {# етикета}}"
+  "labels_count": "{count, plural, one {# етикет} other {# етикета}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Опции за запазване на изгледа",
+      "update_view": "Обнови изгледа",
+      "save_as": "Запази като",
+      "hide_filters": "Скрий филтрите"
+    }
+  }
 }

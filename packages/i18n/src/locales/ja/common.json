@@ -733,7 +733,8 @@
       "copy_to_clipboard": "クリップボードにコピー",
       "created_on_date": "作成日：{date}",
       "priority": "優先度：{value}"
-    }
+    },
+    "locked": "ロック中"
   },
   "chart": {
     "x_axis": "エックス アクシス",
@@ -884,5 +885,13 @@
       "short_description": "JSONとしてエクスポート"
     }
   },
-  "labels_count": "{count, plural, one {#件のラベル} other {#件のラベル}}"
+  "labels_count": "{count, plural, one {#件のラベル} other {#件のラベル}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "ビューの保存オプション",
+      "update_view": "ビューを更新",
+      "save_as": "名前を付けて保存",
+      "hide_filters": "フィルターを非表示"
+    }
+  }
 }

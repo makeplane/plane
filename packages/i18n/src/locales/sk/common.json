@@ -733,7 +733,8 @@
       "copy_to_clipboard": "Kopírovať do schránky",
       "created_on_date": "Vytvorené dňa {date}",
       "priority": "Priorita: {value}"
-    }
+    },
+    "locked": "Uzamknuté"
   },
   "chart": {
     "x_axis": "Os X",
@@ -884,5 +885,13 @@
       "short_description": "Exportovať ako JSON"
     }
   },
-  "labels_count": "{count, plural, one {# štítok} few {# štítky} many {# štítku} other {# štítkov}}"
+  "labels_count": "{count, plural, one {# štítok} few {# štítky} many {# štítku} other {# štítkov}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Možnosti uloženia pohľadu",
+      "update_view": "Aktualizovať pohľad",
+      "save_as": "Uložiť ako",
+      "hide_filters": "Skryť filtre"
+    }
+  }
 }

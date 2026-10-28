@@ -733,7 +733,8 @@
       "copy_to_clipboard": "Panoya kopyala",
       "created_on_date": "Oluşturulma tarihi: {date}",
       "priority": "Öncelik: {value}"
-    }
+    },
+    "locked": "Kilitli"
   },
   "chart": {
     "x_axis": "X ekseni",
@@ -884,5 +885,13 @@
       "short_description": "JSON olarak aktar"
     }
   },
-  "labels_count": "{count, plural, one {# etiket} other {# etiket}}"
+  "labels_count": "{count, plural, one {# etiket} other {# etiket}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Görünüm kaydetme seçenekleri",
+      "update_view": "Görünümü güncelle",
+      "save_as": "Farklı kaydet",
+      "hide_filters": "Filtreleri gizle"
+    }
+  }
 }

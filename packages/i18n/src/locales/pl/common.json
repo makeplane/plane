@@ -733,7 +733,8 @@
       "copy_to_clipboard": "Kopiuj do schowka",
       "created_on_date": "Utworzono dnia {date}",
       "priority": "Priorytet: {value}"
-    }
+    },
+    "locked": "Zablokowane"
   },
   "chart": {
     "x_axis": "Oś X",
@@ -884,5 +885,13 @@
       "short_description": "Eksportuj jako JSON"
     }
   },
-  "labels_count": "{count, plural, one {# etykieta} few {# etykiety} many {# etykiet} other {# etykiety}}"
+  "labels_count": "{count, plural, one {# etykieta} few {# etykiety} many {# etykiet} other {# etykiety}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Opcje zapisu widoku",
+      "update_view": "Zaktualizuj widok",
+      "save_as": "Zapisz jako",
+      "hide_filters": "Ukryj filtry"
+    }
+  }
 }

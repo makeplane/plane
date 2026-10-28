@@ -733,7 +733,8 @@
       "copy_to_clipboard": "Copiază în clipboard",
       "created_on_date": "Creat la {date}",
       "priority": "Prioritate: {value}"
-    }
+    },
+    "locked": "Blocat"
   },
   "chart": {
     "x_axis": "axa-X",
@@ -884,5 +885,13 @@
       "short_description": "Exportă ca JSON"
     }
   },
-  "labels_count": "{count, plural, one {# etichetă} few {# etichete} other {# de etichete}}"
+  "labels_count": "{count, plural, one {# etichetă} few {# etichete} other {# de etichete}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Opțiuni de salvare a perspectivei",
+      "update_view": "Actualizează perspectiva",
+      "save_as": "Salvează ca",
+      "hide_filters": "Ascunde filtrele"
+    }
+  }
 }
