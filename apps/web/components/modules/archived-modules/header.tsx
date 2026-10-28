@@ -4,20 +4,16 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Icon } from "@makeplane/propel/components/icon";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { IconButton } from "@makeplane/propel/components/icon-button";
+import { ExpandableSearch } from "@makeplane/propel/components/expandable-search";
 // icons
-import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
-import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // plane helpers
 // types
 import type { TModuleFilters } from "@plane/types";
-import { cn, calculateTotalFilters } from "@plane/utils";
+import { calculateTotalFilters } from "@plane/utils";
 // components
 import { ArchiveTabsList } from "@/components/archives";
 import { ModuleOrderByDropdown } from "@/components/modules";
@@ -26,14 +22,10 @@ import { ModuleFiltersDropdown } from "@/components/modules/dropdowns/filters/dr
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
   // router
   const { projectId } = useParams();
-  // refs
-  const inputRef = useRef<HTMLInputElement>(null);
-  const searchButtonRef = useRef<HTMLButtonElement>(null);
   // hooks
   const {
     currentProjectArchivedFilters,
@@ -47,13 +39,6 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
     workspace: { workspaceMemberIds },
   } = useMember();
   const { t } = useTranslation();
-  const { isMobile } = usePlatformOS();
-  // states
-  const [isSearchOpen, setIsSearchOpen] = useState(archivedModulesSearchQuery !== "");
-  // outside click detector hook
-  useOutsideClickDetector(inputRef, () => {
-    if (isSearchOpen && archivedModulesSearchQuery.trim() === "") setIsSearchOpen(false);
-  });
 
   const handleFilters = useCallback(
     (key: keyof TModuleFilters, value: string | string[]) => {
@@ -75,17 +60,6 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
     [currentProjectArchivedFilters, projectId, updateFilters]
   );
 
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Escape") {
-      if (archivedModulesSearchQuery && archivedModulesSearchQuery.trim() !== "") updateArchivedModulesSearchQuery("");
-      else {
-        setIsSearchOpen(false);
-        inputRef.current?.blur();
-        requestAnimationFrame(() => searchButtonRef.current?.focus());
-      }
-    }
-  };
-
   const isFiltersApplied = calculateTotalFilters(currentProjectArchivedFilters ?? {}) !== 0;
 
   return (
@@ -95,59 +69,14 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
       </div>
       {/* filter options */}
       <div className="flex h-full items-center gap-3 self-end px-8">
-        {!isSearchOpen && (
-          <IconButton
-            ref={searchButtonRef}
-            type="button"
-            variant="ghost"
-            size="md"
-            aria-label={t("common.search.label")}
-            showTooltip={!isMobile}
-            render={<button type="button" className="-mr-5" />}
-            onClick={() => {
-              setIsSearchOpen(true);
-              requestAnimationFrame(() => {
-                if (inputRef.current && !inputRef.current.closest("[inert]")) inputRef.current.focus();
-              });
-            }}
-            icon={<Icon icon={SearchOutline} />}
-          />
-        )}
-        <div
-          inert={!isSearchOpen}
-          aria-hidden={!isSearchOpen}
-          className={cn("ml-auto w-0 overflow-hidden opacity-0 transition-[width] ease-linear", {
-            "w-64 overflow-visible opacity-100": isSearchOpen,
-          })}
-        >
-          <InputGroup size="lg">
-            <Icon icon={SearchOutline} tint="placeholder" />
-            <Input
-              size="lg"
-              aria-label={t("common.search.label")}
-              ref={inputRef}
-              placeholder={t("common.search.label")}
-              value={archivedModulesSearchQuery}
-              onChange={(e) => updateArchivedModulesSearchQuery(e.target.value)}
-              onKeyDown={handleInputKeyDown}
-            />
-            {isSearchOpen && (
-              <IconButton
-                type="button"
-                variant="ghost"
-                size="xs"
-                aria-label={t("close")}
-                showTooltip={!isMobile}
-                onClick={() => {
-                  updateArchivedModulesSearchQuery("");
-                  setIsSearchOpen(false);
-                  requestAnimationFrame(() => searchButtonRef.current?.focus());
-                }}
-                icon={<Icon icon={CloseOutline} />}
-              />
-            )}
-          </InputGroup>
-        </div>
+        <ExpandableSearch
+          size="md"
+          aria-label={t("common.search.label")}
+          clearLabel={t("common.clear")}
+          placeholder={t("common.search.label")}
+          value={archivedModulesSearchQuery}
+          onValueChange={(value) => updateArchivedModulesSearchQuery(value)}
+        />
         <ModuleOrderByDropdown
           value={currentProjectDisplayFilters?.order_by}
           onChange={(val) => {
