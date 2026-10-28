@@ -7,21 +7,20 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ChatOutline, CloseOutline, MoreVerticalOutline, TickOutline } from "@makeplane/propel/icons";
+import { CloseOutline, MoreVerticalOutline, TickOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+import { ActivityCommentCard, ActivityCommentHeader, ActivityTimelineTimestamp } from "@plane/blocks/activity";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import type { TIssuePublicComment } from "@plane/types";
-import { getFileURL } from "@plane/utils";
+import { calculateTimeAgo, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text-editor";
 import { CommentReactions } from "@/components/issues/peek-overview/comment/comment-reactions";
-// helpers
-import { timeAgo } from "@/helpers/date-time.helper";
 // hooks
 import { usePublish } from "@/hooks/store/publish";
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
@@ -31,10 +30,12 @@ import useIsInIframe from "@/hooks/use-is-in-iframe";
 type Props = {
   anchor: string;
   comment: TIssuePublicComment;
+  /** Draw the timeline rail down to the next comment. */
+  showConnector?: boolean;
 };
 
 export const CommentCard = observer(function CommentCard(props: Props) {
-  const { anchor, comment } = props;
+  const { anchor, comment, showConnector = true } = props;
   // store hooks
   const { peekId, deleteIssueComment, updateIssueComment, uploadCommentAsset } = useIssueDetails();
   const { data: currentUser } = useUser();
@@ -72,118 +73,123 @@ export const CommentCard = observer(function CommentCard(props: Props) {
   const displayName = comment.actor_detail.is_bot
     ? comment.actor_detail.first_name + " Bot"
     : comment.actor_detail.display_name;
+  const canManageComment = !isInIframe && currentUser?.id === comment?.actor_detail?.id;
 
   return (
-    <div className="relative flex items-start space-x-3">
-      <div className="relative px-1">
+    <ActivityCommentCard
+      id={comment.id}
+      showConnector={showConnector}
+      avatar={
         <Avatar
-          size="md"
+          size="2xs"
           src={comment.actor_detail.avatar_url ? getFileURL(comment.actor_detail.avatar_url) : undefined}
           alt={displayName}
-          fallback={
-            comment.actor_detail.is_bot
-              ? comment?.actor_detail?.first_name?.charAt(0)
-              : comment?.actor_detail?.display_name?.charAt(0)
+          fallback={displayName?.charAt(0)?.toUpperCase()}
+        />
+      }
+      header={
+        <ActivityCommentHeader
+          author={displayName}
+          action="commented"
+          timestamp={
+            <ActivityTimelineTimestamp
+              tooltip={`${renderFormattedDate(comment.created_at)} at ${renderFormattedTime(comment.created_at)}`}
+            >
+              {calculateTimeAgo(comment.created_at)}
+            </ActivityTimelineTimestamp>
+          }
+          actions={
+            canManageComment ? (
+              <Menu>
+                <MenuTrigger
+                  render={
+                    <IconButton
+                      variant="ghost"
+                      size="sm"
+                      aria-label={t("aria_labels.common.more_actions")}
+                      icon={<Icon icon={<MoreVerticalOutline />} />}
+                    />
+                  }
+                />
+                <MenuContent side="bottom" align="end">
+                  <MenuItem label={t("edit")} onClick={() => setIsEditing(true)} />
+                  <MenuItem label={t("delete")} onClick={handleDelete} />
+                </MenuContent>
+              </Menu>
+            ) : undefined
           }
         />
-
-        <span className="absolute -right-1 -bottom-0.5 rounded-tl-sm bg-layer-1 px-0.5 py-px">
-          <ChatOutline className="size-3 text-secondary" aria-hidden="true" />
-        </span>
-      </div>
-      <div className="min-w-0 flex-1">
-        <div>
-          <div className="text-caption-sm-regular">{displayName}</div>
-          <p className="mt-0.5 text-caption-sm-regular text-secondary">
-            <>commented {timeAgo(comment.created_at)}</>
-          </p>
-        </div>
-        <div className="issue-comments-section p-0">
-          <form
-            onSubmit={handleSubmit(handleCommentUpdate)}
-            className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}
-          >
-            <div>
-              <Controller
-                control={control}
-                name="comment_html"
-                render={({ field: { onChange, value } }) => (
-                  <LiteTextEditor
-                    editable
-                    anchor={anchor}
-                    workspaceId={workspaceID?.toString() ?? ""}
-                    onEnterKeyPress={handleSubmit(handleCommentUpdate)}
-                    ref={editorRef}
-                    id={comment.id}
-                    initialValue={value}
-                    value={null}
-                    onChange={(comment_json, comment_html) => onChange(comment_html)}
-                    isSubmitting={isSubmitting}
-                    showSubmitButton={false}
-                    uploadFile={async (blockId, file) => {
-                      const { asset_id } = await uploadCommentAsset(file, anchor, comment.id);
-                      return asset_id;
-                    }}
-                    displayConfig={{
-                      fontSize: "small-font",
-                    }}
-                  />
-                )}
-              />
-            </div>
-            <div className="flex gap-1 self-end">
-              <IconButton
-                type="submit"
-                variant="primary"
-                size="sm"
-                aria-label={t("save")}
-                disabled={isSubmitting}
-                icon={<Icon icon={<TickOutline />} />}
-              />
-              <IconButton
-                type="button"
-                variant="ghost"
-                size="sm"
-                aria-label={t("cancel")}
-                onClick={() => setIsEditing(false)}
-                icon={<Icon icon={<CloseOutline />} />}
-              />
-            </div>
-          </form>
-          <div className={`${isEditing ? "hidden" : ""}`}>
-            <LiteTextEditor
-              editable={false}
-              anchor={anchor}
-              workspaceId={workspaceID?.toString() ?? ""}
-              ref={showEditorRef}
-              id={comment.id}
-              initialValue={comment.comment_html}
-              displayConfig={{
-                fontSize: "small-font",
-              }}
+      }
+      footer={isEditing ? undefined : <CommentReactions anchor={anchor} commentId={comment.id} />}
+    >
+      <div className="issue-comments-section p-0">
+        <form
+          onSubmit={handleSubmit(handleCommentUpdate)}
+          className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}
+        >
+          <div>
+            <Controller
+              control={control}
+              name="comment_html"
+              render={({ field: { onChange, value } }) => (
+                <LiteTextEditor
+                  editable
+                  anchor={anchor}
+                  workspaceId={workspaceID?.toString() ?? ""}
+                  onEnterKeyPress={handleSubmit(handleCommentUpdate)}
+                  ref={editorRef}
+                  id={comment.id}
+                  initialValue={value}
+                  value={null}
+                  onChange={(comment_json, comment_html) => onChange(comment_html)}
+                  isSubmitting={isSubmitting}
+                  showSubmitButton={false}
+                  uploadFile={async (blockId, file) => {
+                    const { asset_id } = await uploadCommentAsset(file, anchor, comment.id);
+                    return asset_id;
+                  }}
+                  displayConfig={{
+                    fontSize: "small-font",
+                  }}
+                />
+              )}
             />
-            <CommentReactions anchor={anchor} commentId={comment.id} />
           </div>
+          <div className="flex gap-1 self-end">
+            <IconButton
+              type="submit"
+              variant="primary"
+              size="sm"
+              aria-label={t("save")}
+              disabled={isSubmitting}
+              icon={<Icon icon={<TickOutline />} />}
+            />
+            <IconButton
+              type="button"
+              variant="ghost"
+              size="sm"
+              aria-label={t("cancel")}
+              onClick={() => setIsEditing(false)}
+              icon={<Icon icon={<CloseOutline />} />}
+            />
+          </div>
+        </form>
+        <div className={isEditing ? "hidden" : ""}>
+          <LiteTextEditor
+            editable={false}
+            anchor={anchor}
+            workspaceId={workspaceID?.toString() ?? ""}
+            ref={showEditorRef}
+            id={comment.id}
+            initialValue={comment.comment_html}
+            parentClassName="border-none p-0"
+            containerClassName="p-0!"
+            displayConfig={{
+              fontSize: "small-font",
+            }}
+          />
         </div>
       </div>
-      {!isInIframe && currentUser?.id === comment?.actor_detail?.id && (
-        <Menu>
-          <MenuTrigger
-            render={
-              <IconButton
-                variant="ghost"
-                size="sm"
-                aria-label={t("aria_labels.common.more_actions")}
-                icon={<Icon icon={<MoreVerticalOutline />} />}
-              />
-            }
-          />
-          <MenuContent side="bottom" align="end">
-            <MenuItem label={t("edit")} onClick={() => setIsEditing(true)} />
-            <MenuItem label={t("delete")} onClick={handleDelete} />
-          </MenuContent>
-        </Menu>
-      )}
-    </div>
+    </ActivityCommentCard>
   );
 });

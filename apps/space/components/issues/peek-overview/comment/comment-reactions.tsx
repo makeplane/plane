@@ -123,7 +123,7 @@ export const CommentReactions = observer(function CommentReactions(props: Props)
   };
 
   return (
-    <div className="mt-2">
+    <div>
       <EmojiReactionGroup
         disabled={isInIframe}
         reactions={propelReactions}

@@ -50,9 +50,9 @@ export const IssueBlockDate = observer(function IssueBlockDate(props: Props) {
       icon={isDueDate ? <DueDateOutline /> : <StartDateOutline />}
       placeholder={placeholder}
       className={cn(
-        "disabled:pointer-events-none",
-        DUE_DATE_TONE_CLASSNAME[dueDateClassName] ?? "disabled:text-secondary!",
-        className
+        "disabled:pointer-events-none disabled:text-secondary!",
+        className,
+        DUE_DATE_TONE_CLASSNAME[dueDateClassName]
       )}
       showTooltip
       tooltipHeading={heading}
