@@ -53,7 +53,15 @@
       "5_days": "5 jours",
       "1_week": "1 semaine",
       "2_weeks": "2 semaines",
-      "custom": "Personnalisé"
+      "custom": "Personnalisé",
+      "modal": {
+        "title": "Personnaliser l'heure du report",
+        "pick_a_date": "Choisissez une date",
+        "pick_a_time": "Choisissez une heure",
+        "select_date": "Sélectionner une date",
+        "select_time": "Sélectionner une heure",
+        "no_available_time": "Aucune heure disponible pour cette date"
+      }
     }
   }
 }

@@ -53,7 +53,15 @@
       "5_days": "5 天",
       "1_week": "1 週",
       "2_weeks": "2 週",
-      "custom": "自訂"
+      "custom": "自訂",
+      "modal": {
+        "title": "自訂延後時間",
+        "pick_a_date": "選擇日期",
+        "pick_a_time": "選擇時間",
+        "select_date": "選擇日期",
+        "select_time": "選擇時間",
+        "no_available_time": "此日期沒有可用的時間"
+      }
     }
   }
 }
