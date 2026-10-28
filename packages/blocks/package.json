@@ -9,6 +9,7 @@
     "**/*.css"
   ],
   "exports": {
+    "./activity": "./dist/activity/index.js",
     "./auth": "./dist/auth/index.js",
     "./breadcrumb": "./dist/breadcrumb/index.js",
     "./card": "./dist/card/index.js",
@@ -18,6 +19,7 @@
     "./charts/pie-chart": "./dist/charts/pie-chart/index.js",
     "./charts/radar-chart": "./dist/charts/radar-chart/index.js",
     "./charts/tree-map": "./dist/charts/tree-map/index.js",
+    "./comment-box": "./dist/comment-box/index.js",
     "./common": "./dist/common/index.js",
     "./context-menu": "./dist/context-menu/index.js",
     "./dialog": "./dist/dialog/index.js",
@@ -25,6 +27,7 @@
     "./emoji-icon-picker/data": "./dist/emoji-icon-picker/data.js",
     "./emoji-reaction": "./dist/emoji-reaction/index.js",
     "./empty-state": "./dist/empty-state/index.js",
+    "./entity-detail": "./dist/entity-detail/index.js",
     "./icons": "./dist/icons/index.js",
     "./layout": "./dist/layout/index.js",
     "./pill-button": "./dist/pill-button/index.js",
