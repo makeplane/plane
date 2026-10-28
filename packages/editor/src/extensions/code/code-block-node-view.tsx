@@ -54,7 +54,7 @@ export function CodeBlockComponent({ node }: Props) {
       </div>
 
       <pre className="my-2 rounded-lg bg-layer-3 p-4 text-primary">
-        <NodeViewContent as="code" className="whitespace-pre-wrap" />
+        <NodeViewContent<"code"> as="code" className="whitespace-pre-wrap" />
       </pre>
     </NodeViewWrapper>
   );

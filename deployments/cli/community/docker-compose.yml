@@ -11,7 +11,11 @@ x-redis-env: &redis-env
   REDIS_HOST: ${REDIS_HOST:-plane-redis}
   REDIS_PORT: ${REDIS_PORT:-6379}
   REDIS_URL: ${REDIS_URL:-redis://plane-redis:6379/}
+  REDIS_SSL_CERT_REQS: ${REDIS_SSL_CERT_REQS:-required}
+  REDIS_SSL_CA_CERTS: ${REDIS_SSL_CA_CERTS:-}
 
+# setup.sh generates these keys. The placeholder fallbacks keep older installs starting (MinIO and the
+# API must agree), and the API logs a critical warning while the placeholder secret is in use.
 x-minio-env: &minio-env
   MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:-access-key}
   MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:-secret-key}
@@ -33,6 +37,7 @@ x-proxy-env: &proxy-env
   LISTEN_HTTPS_PORT: ${LISTEN_HTTPS_PORT:-443}
   BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
   SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+  TRUSTED_PROXIES: ${TRUSTED_PROXIES:-0.0.0.0/0}
 
 x-mq-env: &mq-env # RabbitMQ Settings
   RABBITMQ_HOST: ${RABBITMQ_HOST:-plane-mq}
@@ -56,6 +61,7 @@ x-app-env: &app-env
   SECRET_KEY: ${SECRET_KEY}
   AMQP_URL: ${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
   API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
+  NUM_PROXIES: ${NUM_PROXIES:-}
   MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
   LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY}
   WEBHOOK_ALLOWED_IPS: ${WEBHOOK_ALLOWED_IPS:-}
@@ -94,6 +100,7 @@ services:
       - web
 
   live:
+    stop_grace_period: 30s
     image: makeplane/plane-live:${APP_RELEASE:-stable}
     environment:
       <<: [*live-env, *redis-env]

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 BRANCH=${BRANCH:-master}
 SCRIPT_DIR=$PWD
@@ -182,6 +182,34 @@ function syncEnvFile(){
     echo "Environment variables synced successfully" >&2
 }
 
+function generateStorageCredentials(){
+    # Only the bundled MinIO takes its root login from plane.env; external S3 settings stay untouched.
+    local use_minio=$(getEnvValue "USE_MINIO" "$DOCKER_ENV_PATH")
+    local endpoint=$(getEnvValue "AWS_S3_ENDPOINT_URL" "$DOCKER_ENV_PATH")
+    if [ "${use_minio:-1}" != "1" ] || [ "${endpoint:-http://plane-minio:9000}" != "http://plane-minio:9000" ]; then
+        return 0
+    fi
+
+    # Empty values fall back to the access-key/secret-key placeholders in docker-compose.yml.
+    # Older templates quoted the values, so quotes are ignored when comparing.
+    local access_key=$(getEnvValue "AWS_ACCESS_KEY_ID" "$DOCKER_ENV_PATH")
+    local secret_key=$(getEnvValue "AWS_SECRET_ACCESS_KEY" "$DOCKER_ENV_PATH")
+    access_key=${access_key//[\"\']/}
+    secret_key=${secret_key//[\"\']/}
+    # The secret is what protects MinIO, so keep the pair only when the secret is not the template one.
+    if [ "${secret_key:-secret-key}" != "secret-key" ]; then
+        return 0
+    fi
+
+    updateEnvFile "AWS_ACCESS_KEY_ID" "$(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 20)" "$DOCKER_ENV_PATH"
+    updateEnvFile "AWS_SECRET_ACCESS_KEY" "$(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 40)" "$DOCKER_ENV_PATH"
+    if [ -n "$access_key$secret_key" ]; then
+        echo "NOTICE: Default object-storage credentials were rotated; the new AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY are in plane.env" >&2
+    else
+        echo "Generated object-storage credentials (AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY) in plane.env" >&2
+    fi
+}
+
 function buildYourOwnImage(){
     echo "Building images locally..."
 
@@ -201,7 +229,7 @@ function buildYourOwnImage(){
 
     cd "$PLANE_TEMP_CODE_DIR" || exit
 
-    /bin/bash -c "$COMPOSE_CMD -f build.yml build --no-cache"  >&2
+    bash -c "$COMPOSE_CMD -f build.yml build --no-cache"  >&2
     if [ $? -ne 0 ]; then
         echo "Build failed. Exiting..."
         exit 1
@@ -303,6 +331,7 @@ function download() {
     mv $PLANE_INSTALL_DIR/variables-upgrade.env $DOCKER_ENV_PATH
 
     syncEnvFile
+    generateStorageCredentials
 
     if [ "$LOCAL_BUILD" == "true" ]; then
         export DOCKERHUB_USER="myplane"
@@ -321,7 +350,7 @@ function download() {
     else
         CUSTOM_BUILD="false"
         updateCustomVariables
-        /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH pull --policy always"
+        bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH pull --policy always"
 
         if [ $? -ne 0 ]; then
             echo ""
@@ -337,7 +366,7 @@ function download() {
     echo ""
 }
 function startServices() {
-    /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH up -d --pull if_not_present --quiet-pull"
+    bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH up -d --pull if_not_present --quiet-pull"
 
     local migrator_container_id=$(docker container ls -aq -f "name=$SERVICE_FOLDER-migrator")
     if [ -n "$migrator_container_id" ]; then
@@ -419,7 +448,7 @@ function startServices() {
 
 }
 function stopServices() {
-    /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH down"
+    bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH down"
 }
 function restartServices() {
     stopServices
@@ -467,13 +496,13 @@ function upgrade() {
 function viewSpecificLogs(){
     local SERVICE_NAME=$1
 
-    if /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH ps | grep -q '$SERVICE_NAME'"; then
+    if bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH ps | grep -q '$SERVICE_NAME'"; then
         echo "Service '$SERVICE_NAME' is running."
     else
         echo "Service '$SERVICE_NAME' is not running."
     fi
 
-    /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH logs -f $SERVICE_NAME"
+    bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH logs -f $SERVICE_NAME"
 }
 function viewLogs(){
     
@@ -551,7 +580,7 @@ function backup_container_dir() {
     local SERVICE_FOLDER=$4
 
     echo "Backing up $CONTAINER_NAME data..."
-    local CONTAINER_ID=$(/bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH ps -q $CONTAINER_NAME")
+    local CONTAINER_ID=$(bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH ps -q $CONTAINER_NAME")
     if [ -z "$CONTAINER_ID" ]; then
         echo "Error: $CONTAINER_NAME container not found. Make sure the services are running."
         return 1
