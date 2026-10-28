@@ -7,11 +7,12 @@
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
-import { LogOutOutline, SettingsOutline } from "@makeplane/propel/icons";
+import { LogOutOutline, PreferencesOutline, SettingsOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { Icon } from "@makeplane/propel/components/icon";
-import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@makeplane/propel/components/menu";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { IconButton } from "@makeplane/propel/elements/icon-button";
 import { GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -64,7 +65,7 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
               variant="ghost"
               size="md"
               aria-label={t("aria_labels.projects_sidebar.open_user_menu")}
-              render={<button type="button" className={isUserMenuOpen ? "bg-layer-transparent-active" : undefined} />}
+              render={<button type="button" className="data-popup-open:bg-layer-transparent-active" />}
             >
               <Avatar
                 alt={currentUser?.display_name}
@@ -76,35 +77,31 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
           }
         />
         <MenuContent side="bottom" align="end">
-          <div className="flex w-72 max-w-full flex-col gap-y-3 p-2">
-            <div className="relative h-29 w-full rounded-lg">
+          <div className="flex w-70 max-w-full flex-col p-1">
+            <div className="relative flex flex-col items-center gap-2 overflow-hidden rounded-lg px-2 py-4">
               <CoverImage
                 src={currentUser?.cover_image_url ?? undefined}
-                alt={currentUser?.display_name}
-                className="h-29 w-full rounded-lg"
+                alt=""
+                className="absolute inset-0 size-full"
                 showDefaultWhenEmpty
               />
-              <div className="absolute inset-0 bg-layer-1/50" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <div className="flex flex-col items-center gap-y-2">
-                  <div>
-                    <Avatar
-                      alt={currentUser?.display_name}
-                      fallback={currentUser?.display_name?.[0]?.toUpperCase()}
-                      src={getFileURL(currentUser?.avatar_url ?? "")}
-                      size="xl"
-                    />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-body-sm-medium">
-                      {currentUser?.first_name} {currentUser?.last_name}
-                    </p>
-                    <p className="text-caption-md-regular">{currentUser?.email}</p>
-                  </div>
-                </div>
+              <div className="absolute inset-0 bg-black/50" />
+              <Avatar
+                alt={currentUser?.display_name}
+                fallback={currentUser?.display_name?.[0]?.toUpperCase()}
+                src={getFileURL(currentUser?.avatar_url ?? "")}
+                size="xl"
+              />
+              <div className="relative w-full min-w-0 text-center text-on-color">
+                <p className="truncate text-body-sm-medium">
+                  {currentUser?.first_name} {currentUser?.last_name}
+                </p>
+                <Tooltip label={currentUser?.email ?? ""}>
+                  <p className="truncate text-caption-md-regular">{currentUser?.email}</p>
+                </Tooltip>
               </div>
             </div>
-            <div>
+            <div className="mt-1">
               <MenuItem
                 icon={<Icon icon={SettingsOutline} />}
                 label={t("settings")}
@@ -116,7 +113,7 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
                 }
               />
               <MenuItem
-                icon={<Icon icon={SettingsOutline} />}
+                icon={<Icon icon={PreferencesOutline} />}
                 label={t("preferences")}
                 onClick={() =>
                   toggleProfileSettingsModal({
@@ -125,13 +122,17 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
                   })
                 }
               />
-            </div>
-            <div>
-              <MenuItem icon={<Icon icon={LogOutOutline} />} label={t("sign_out")} onClick={handleSignOut} />
               {isUserInstanceAdmin && (
                 <MenuItem variant="accent" label={t("enter_god_mode")} onClick={() => router.push(GOD_MODE_URL)} />
               )}
             </div>
+            <MenuSeparator />
+            <MenuItem
+              variant="danger"
+              icon={<Icon icon={LogOutOutline} />}
+              label={t("sign_out")}
+              onClick={handleSignOut}
+            />
           </div>
         </MenuContent>
       </Menu>

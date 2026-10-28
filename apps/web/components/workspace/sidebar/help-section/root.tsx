@@ -24,14 +24,13 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
   const { t } = useTranslation();
   const { toggleShortcutsListModal } = usePowerK();
   // states
-  const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   const [isProductUpdatesModalOpen, setProductUpdatesModalOpen] = useState(false);
 
   return (
     <>
       <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} handleClose={() => setProductUpdatesModalOpen(false)} />
 
-      <Menu onOpenChange={setIsNeedHelpOpen}>
+      <Menu>
         <Tooltip label={t("power_k.group_titles.help")} side="bottom">
           <MenuTrigger
             render={
@@ -39,7 +38,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
                 variant="ghost"
                 size="md"
                 aria-label={t("power_k.group_titles.help")}
-                render={<button type="button" className={isNeedHelpOpen ? "bg-layer-transparent-active" : undefined} />}
+                render={<button type="button" className="data-popup-open:bg-layer-transparent-active" />}
               >
                 <HelpOutline className="size-4.5" />
               </IconButton>
