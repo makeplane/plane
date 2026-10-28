@@ -4,16 +4,20 @@
  * See the LICENSE file for details.
  */
 
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import { AttachOutline, LinkOutline, ViewsOutline } from "@makeplane/propel/icons";
+import { AttachOutline, LinkOutline, SubWorkItemsOutline } from "@makeplane/propel/icons";
 // plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { Pill, PillLabel } from "@makeplane/propel/elements/pill";
+import { useTranslation } from "@plane/i18n";
 import type { IIssueDisplayProperties } from "@plane/types";
 // components
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with-display-properties-HOC";
-// helpers
-import { getDate } from "@/helpers/date-time.helper";
-//// hooks
+// types
 import type { IIssue } from "@/types/issue";
+// local imports
 import { IssueBlockCycle } from "./cycle";
 import { IssueBlockDate } from "./due-date";
 import { IssueBlockLabels } from "./labels";
@@ -21,7 +25,6 @@ import { IssueBlockMembers } from "./member";
 import { IssueBlockModules } from "./modules";
 import { IssueBlockPriority } from "./priority";
 import { IssueBlockState } from "./state";
-import { ReadOnlyProperty } from "./read-only-property";
 
 export interface IIssueProperties {
   issue: IIssue;
@@ -29,16 +32,38 @@ export interface IIssueProperties {
   className: string;
 }
 
+type CountPillProps = {
+  icon: ReactNode;
+  count: number;
+  tooltip: string;
+};
+
+/** A display-only outlined count chip (sub-work items, attachments, links). */
+function CountPill({ icon, count, tooltip }: CountPillProps) {
+  return (
+    <Tooltip label={tooltip}>
+      <Pill
+        size="sm"
+        variant="outline"
+        aria-label={tooltip}
+        render={(pillProps) => {
+          const { type: _buttonType, ...spanProps } = pillProps as typeof pillProps & { type?: string };
+          return <span {...spanProps} role="img" className={`${spanProps.className ?? ""} cursor-[inherit]`} />;
+        }}
+      >
+        <Icon icon={icon} />
+        <PillLabel>{count}</PillLabel>
+      </Pill>
+    </Tooltip>
+  );
+}
+
 export const IssueProperties = observer(function IssueProperties(props: IIssueProperties) {
   const { issue, displayProperties, className } = props;
+  // i18n
+  const { t } = useTranslation();
 
   if (!displayProperties || !issue.project_id) return null;
-
-  const minDate = getDate(issue.start_date);
-  minDate?.setDate(minDate.getDate());
-
-  const maxDate = getDate(issue.target_date);
-  maxDate?.setDate(maxDate.getDate());
 
   return (
     <div className={className}>
@@ -70,11 +95,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       {issue?.start_date && (
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
           <div className="h-6">
-            <IssueBlockDate
-              due_date={issue?.start_date}
-              stateId={issue?.state_id ?? undefined}
-              shouldHighLight={false}
-            />
+            <IssueBlockDate date={issue?.start_date} stateId={issue?.state_id ?? undefined} type="start" />
           </div>
         </WithDisplayPropertiesHOC>
       )}
@@ -83,7 +104,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       {issue?.target_date && (
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
           <div className="h-6">
-            <IssueBlockDate due_date={issue?.target_date} stateId={issue?.state_id ?? undefined} />
+            <IssueBlockDate date={issue?.target_date} stateId={issue?.state_id ?? undefined} />
           </div>
         </WithDisplayPropertiesHOC>
       )}
@@ -113,22 +134,6 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         </WithDisplayPropertiesHOC>
       )}
 
-      {/* estimates */}
-      {/* {projectId && areEstimateEnabledByProjectId(projectId?.toString()) && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
-          <div className="h-5">
-            <EstimateDropdown
-              value={issue.estimate_point ?? undefined}
-              onChange={handleEstimate}
-              projectId={issue.project_id}
-              disabled={isReadOnly}
-              buttonVariant="border-with-text"
-              showTooltip
-            />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )} */}
-
       {/* extra render properties */}
       {/* sub-issues */}
       <WithDisplayPropertiesHOC
@@ -136,10 +141,10 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         displayPropertyKey="sub_issue_count"
         shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!issue.sub_issues_count}
       >
-        <ReadOnlyProperty
-          icon={ViewsOutline}
-          label={String(issue.sub_issues_count)}
-          tooltip={`Sub-work items: ${issue.sub_issues_count}`}
+        <CountPill
+          icon={<SubWorkItemsOutline />}
+          count={issue.sub_issues_count}
+          tooltip={`${t("common.sub_work_items")}: ${issue.sub_issues_count}`}
         />
       </WithDisplayPropertiesHOC>
 
@@ -149,10 +154,10 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         displayPropertyKey="attachment_count"
         shouldRenderProperty={(properties) => !!properties.attachment_count && !!issue.attachment_count}
       >
-        <ReadOnlyProperty
-          icon={AttachOutline}
-          label={String(issue.attachment_count)}
-          tooltip={`Attachments: ${issue.attachment_count}`}
+        <CountPill
+          icon={<AttachOutline />}
+          count={issue.attachment_count}
+          tooltip={`${t("common.attachments")}: ${issue.attachment_count}`}
         />
       </WithDisplayPropertiesHOC>
 
@@ -162,7 +167,11 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         displayPropertyKey="link"
         shouldRenderProperty={(properties) => !!properties.link && !!issue.link_count}
       >
-        <ReadOnlyProperty icon={LinkOutline} label={String(issue.link_count)} tooltip={`Links: ${issue.link_count}`} />
+        <CountPill
+          icon={<LinkOutline />}
+          count={issue.link_count}
+          tooltip={`${t("common.links")}: ${issue.link_count}`}
+        />
       </WithDisplayPropertiesHOC>
     </div>
   );

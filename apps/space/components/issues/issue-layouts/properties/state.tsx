@@ -5,41 +5,45 @@
  */
 
 import { observer } from "mobx-react";
-// plane ui
-import { StateGroupIcon } from "@plane/blocks/icons";
-import type { TStateGroups } from "@plane/types";
-//hooks
+// plane imports
+import { StateSelect } from "@plane/blocks/property-select";
+import type { StateOption } from "@plane/blocks/property-select";
+import type { SelectVariant } from "@plane/blocks/select";
+import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
+// helpers
+import { READ_ONLY_SELECT_CLASSNAME, toSinglePage } from "@/helpers/select.helper";
+// hooks
 import { useStates } from "@/hooks/store/use-state";
-import { ReadOnlyProperty } from "./read-only-property";
 
 type Props = {
-  shouldShowBorder?: boolean;
-} & (
-  | {
-      stateDetails: {
-        name: string;
-        group: TStateGroups;
-      };
-    }
-  | {
-      stateId: string;
-    }
-);
+  stateId: string | undefined;
+  variant?: SelectVariant;
+  className?: string;
+};
 
+/** The work item state as a read-only `StateSelect` chip. */
 export const IssueBlockState = observer(function IssueBlockState(props: Props) {
-  const { shouldShowBorder = true } = props;
+  const { stateId, variant = "pill-md", className } = props;
+  // i18n
+  const { t } = useTranslation();
   // store hooks
-  const { getStateById } = useStates();
+  const { sortedStates, getStateById } = useStates();
   // derived values
-  const state = "stateId" in props ? getStateById(props.stateId) : props.stateDetails;
+  const state = getStateById(stateId);
   if (!state) return null;
 
+  const value: StateOption = { id: state.id, name: state.name, color: state.color, group: state.group };
+
   return (
-    <ReadOnlyProperty
-      icon={<StateGroupIcon stateGroup={state.group} />}
-      label={state.name}
-      tooltip={`State: ${state.name}`}
-      shouldShowBorder={shouldShowBorder}
+    <StateSelect
+      getValues={() => toSinglePage(sortedStates)}
+      value={value}
+      onChange={() => {}}
+      variant={variant}
+      className={cn(READ_ONLY_SELECT_CLASSNAME, className)}
+      tooltip={{ heading: t("common.state") }}
+      disabled
     />
   );
 });

@@ -4,33 +4,36 @@
  * See the LICENSE file for details.
  */
 
+// plane imports
+import { PrioritySelect } from "@plane/blocks/property-select";
+import type { SelectVariant } from "@plane/blocks/select";
 import { useTranslation } from "@plane/i18n";
-// types
-import { PriorityIcon } from "@plane/blocks/icons";
 import type { TIssuePriorities } from "@plane/types";
-// constants
-import { getIssuePriorityFilters } from "@plane/utils";
-import { ReadOnlyProperty } from "./read-only-property";
+import { cn } from "@plane/utils";
+// helpers
+import { READ_ONLY_SELECT_CLASSNAME } from "@/helpers/select.helper";
 
-export function IssueBlockPriority({
-  priority,
-  shouldShowName = false,
-}: {
+type Props = {
   priority: TIssuePriorities | null;
-  shouldShowName?: boolean;
-}) {
-  // hooks
-  const { t } = useTranslation();
-  const priority_detail = priority != null ? getIssuePriorityFilters(priority) : null;
+  variant?: SelectVariant;
+  className?: string;
+};
 
-  if (!priority_detail) return null;
-  const priorityLabel = t(priority_detail.titleTranslationKey);
+/** The work item priority as a read-only `PrioritySelect` chip. */
+export function IssueBlockPriority(props: Props) {
+  const { priority, variant = "pill-md", className } = props;
+  // i18n
+  const { t } = useTranslation();
 
   return (
-    <ReadOnlyProperty
-      icon={<PriorityIcon priority={priority} />}
-      label={shouldShowName ? priorityLabel : undefined}
-      tooltip={`Priority: ${priorityLabel}`}
+    <PrioritySelect
+      value={priority ?? "none"}
+      onChange={() => {}}
+      variant={variant}
+      placeholder={t("common.priority")}
+      className={cn(READ_ONLY_SELECT_CLASSNAME, className)}
+      tooltip={{ heading: t("common.priority"), emptyContent: t("common.none") }}
+      disabled
     />
   );
 }
