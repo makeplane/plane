@@ -46,6 +46,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
     watch,
     setValue,
     control,
+    reset,
     formState: { errors, isValid, isDirty, isSubmitting },
   } = useForm<EmailFormValues>({
     defaultValues: {
@@ -110,15 +111,18 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
   const onSubmit = async (formData: EmailFormValues) => {
     const payload: Partial<EmailFormValues> = { ...formData, ENABLE_SMTP: "1" };
 
-    await updateInstanceConfigurations(payload)
-      .then(() =>
-        setToast({
-          type: "success",
-          title: "Success",
-          message: "Email Settings updated successfully",
-        })
-      )
-      .catch((err) => console.error(err));
+    try {
+      await updateInstanceConfigurations(payload);
+      // the saved values become the new baseline, so Save disables again until the next edit
+      reset(payload);
+      setToast({
+        type: "success",
+        title: "Success",
+        message: "Email Settings updated successfully",
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const useTLSValue = watch("EMAIL_USE_TLS");
@@ -131,16 +135,16 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
 
   const handleEmailSecurityChange = (key: TEmailSecurityKeys) => {
     if (key === "EMAIL_USE_SSL") {
-      setValue("EMAIL_USE_TLS", "0");
-      setValue("EMAIL_USE_SSL", "1");
+      setValue("EMAIL_USE_TLS", "0", { shouldDirty: true });
+      setValue("EMAIL_USE_SSL", "1", { shouldDirty: true });
     }
     if (key === "EMAIL_USE_TLS") {
-      setValue("EMAIL_USE_TLS", "1");
-      setValue("EMAIL_USE_SSL", "0");
+      setValue("EMAIL_USE_TLS", "1", { shouldDirty: true });
+      setValue("EMAIL_USE_SSL", "0", { shouldDirty: true });
     }
     if (key === "NONE") {
-      setValue("EMAIL_USE_TLS", "0");
-      setValue("EMAIL_USE_SSL", "0");
+      setValue("EMAIL_USE_TLS", "0", { shouldDirty: true });
+      setValue("EMAIL_USE_SSL", "0", { shouldDirty: true });
     }
   };
 

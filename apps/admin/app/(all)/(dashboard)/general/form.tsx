@@ -32,7 +32,8 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
   const {
     handleSubmit,
     control,
-    formState: { errors, isSubmitting },
+    reset,
+    formState: { errors, isDirty, isSubmitting },
   } = useForm<Partial<IInstance>>({
     defaultValues: {
       instance_name: instance?.instance_name,
@@ -43,15 +44,18 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
   const onSubmit = async (formData: Partial<IInstance>) => {
     const payload: Partial<IInstance> = { ...formData };
 
-    await updateInstanceInfo(payload)
-      .then(() =>
-        setToast({
-          type: "success",
-          title: "Success",
-          message: "Settings updated successfully",
-        })
-      )
-      .catch((err) => console.error(err));
+    try {
+      await updateInstanceInfo(payload);
+      // the saved values become the new baseline, so Save disables again until the next edit
+      reset(formData);
+      setToast({
+        type: "success",
+        title: "Success",
+        message: "Settings updated successfully",
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -148,6 +152,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
             void handleSubmit(onSubmit)();
           }}
           loading={isSubmitting}
+          disabled={!isDirty}
           label={isSubmitting ? "Saving" : "Save changes"}
         />
       </div>
