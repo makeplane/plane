@@ -62,7 +62,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
     return (
       <div className="py-6">
         <EmptyStateCompact
-          assetKey={isCommentsOnly ? "note" : "update"}
+          assetKey={isCommentsOnly ? "comment" : "activity"}
           title={t(isCommentsOnly ? "activity_empty_state.no_comments" : "activity_empty_state.no_activity")}
         />
       </div>
