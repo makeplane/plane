@@ -26,6 +26,7 @@ export const InvalidFilterItem = observer(function InvalidFilterItem<
       conditionValue={condition.value}
       showTransition={showTransition}
       variant="error"
+      label="Invalid filter"
       tooltipContent="This filter condition is no longer valid. The property may have been deleted or your access to it may have changed."
     >
       {/* Property section */}
