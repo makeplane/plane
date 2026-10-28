@@ -304,7 +304,6 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
           id={`sidebar-${projectId}-${projectListType}`}
           className={cn("relative", {
             "bg-layer-1 opacity-60": isDragging,
-            "pl-4": !disableDrag && !renderInExtendedSidebar,
           })}
           ref={projectRef}
         >
@@ -460,7 +459,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
             </>
           </ListItem>
           {isAccordionMode && isProjectListOpen && (
-            <div className="relative mt-1 mb-1.5 flex flex-col gap-0.5 pl-6">
+            <div className="relative mt-1 mb-1.5 flex flex-col gap-px pl-6">
               <div className="absolute top-0 bottom-1 left-[15px] w-[1px] bg-layer-3" />
               <ProjectNavigation workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
             </div>

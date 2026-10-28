@@ -291,7 +291,7 @@ export function FavoriteFolder(props: Props) {
                 close direction unmounts immediately, as there is no exit animation to hang off. */}
         {isOpen && favorite.children && favorite.children.length > 0 && (
           <div className="animate-fade-in">
-            <div className="mt-1 flex flex-col gap-0.5 px-2">
+            <div className="flex flex-col gap-px px-2 pt-1">
               {orderBy(favorite.children, "sequence", "desc").map((child, index) => (
                 <FavoriteRoot
                   key={child.id}

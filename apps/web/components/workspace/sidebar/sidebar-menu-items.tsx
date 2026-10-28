@@ -95,7 +95,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
 
   return (
     <>
-      <div className="flex flex-col gap-0.5">
+      <div className="flex w-full flex-col gap-px">
         {filteredStaticNavigationItems.map((item, _index) => (
           // oxlint-disable-next-line react/no-array-index-key
           <SidebarItemBase key={`static_${_index}`} item={item} />
@@ -107,7 +107,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
         onOpenChange={toggleListDisclosure}
         trigger={<span className="text-body-xs-semibold whitespace-nowrap text-tertiary">{t("common.workspace")}</span>}
       >
-        <div className="flex flex-col gap-0.5 p-0.5">
+        <div className="flex w-full flex-col gap-px">
           {WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS.map((item, _index) => (
             // oxlint-disable-next-line react/no-array-index-key
             <SidebarItemBase key={`static_${_index}`} item={item} />

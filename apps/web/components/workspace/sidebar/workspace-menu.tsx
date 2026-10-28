@@ -69,7 +69,7 @@ export const SidebarWorkspaceMenu = observer(function SidebarWorkspaceMenu() {
       trigger={<span className="text-13 font-semibold text-placeholder">{t("common.workspace")}</span>}
       trailing={<SidebarWorkspaceMenuHeader />}
     >
-      <div className="mt-0.5 flex flex-col gap-0.5">
+      <div className="mt-0.5 flex flex-col gap-px">
         {SIDEBAR_WORKSPACE_MENU_ITEMS.map((item) => (
           <SidebarWorkspaceMenuItem key={item.key} item={item} />
         ))}

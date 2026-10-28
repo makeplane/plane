@@ -173,8 +173,12 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
         <>
           <Collapsible
             placement="sidebar"
-            // the group marker lives on the root: CollapsibleHeader takes no className
-            render={<div className="group/projects-section" />}
+            // the group marker lives on the root: CollapsibleHeader takes no className. The root extends into
+            // the left gutter so absolutely positioned drag handles stay visible while the header and rows
+            // keep the same start as other sidebar sections.
+            render={
+              <div className="group/projects-section -ml-3 w-[calc(100%+0.75rem)]! [&>div:first-child]:ml-3 [&>div:first-child]:w-[calc(100%-0.75rem)]!" />
+            }
             open={isAllProjectsListOpen}
             onOpenChange={toggleListDisclosure}
             trigger={<span className="text-body-xs-semibold whitespace-nowrap text-tertiary">{t("projects")}</span>}
@@ -197,46 +201,48 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
               ) : null
             }
           >
-            <div className="flex flex-col gap-0.5 p-0.5">
-              {loader === "init-loader" && (
-                <Loader className="w-full space-y-1.5">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    // oxlint-disable-next-line react/no-array-index-key
-                    <Loader.Item key={index} height="28px" />
-                  ))}
-                </Loader>
-              )}
-              {displayedProjects.map((projectId, index) => (
-                <SidebarProjectsListItem
-                  key={projectId}
-                  projectId={projectId}
-                  handleCopyText={() => handleCopyText(projectId)}
-                  projectListType={"JOINED"}
-                  disableDrag={false}
-                  disableDrop={false}
-                  isLastChild={index === displayedProjects.length - 1}
-                  handleOnProjectDrop={handleOnProjectDrop}
-                />
-              ))}
-              {hasMoreProjects && (
-                <ListItem density="comfortable">
-                  <ListItemButton
-                    type="button"
-                    onClick={() => toggleExtendedProjectSidebar()}
-                    id="extended-project-sidebar-toggle"
-                    aria-label={t(
-                      isExtendedProjectSidebarOpened
-                        ? "aria_labels.projects_sidebar.close_extended_sidebar"
-                        : "aria_labels.projects_sidebar.open_extended_sidebar"
-                    )}
-                  >
-                    <Icon icon={MoreHorizontalOutline} />
-                    <ListItemLabel>
-                      {isExtendedProjectSidebarOpened ? t("sidebar.hide") : t("sidebar.more")}
-                    </ListItemLabel>
-                  </ListItemButton>
-                </ListItem>
-              )}
+            <div className="pl-3">
+              <div className="flex w-full flex-col gap-px">
+                {loader === "init-loader" && (
+                  <Loader className="w-full space-y-1.5">
+                    {Array.from({ length: 4 }).map((_, index) => (
+                      // oxlint-disable-next-line react/no-array-index-key
+                      <Loader.Item key={index} height="28px" />
+                    ))}
+                  </Loader>
+                )}
+                {displayedProjects.map((projectId, index) => (
+                  <SidebarProjectsListItem
+                    key={projectId}
+                    projectId={projectId}
+                    handleCopyText={() => handleCopyText(projectId)}
+                    projectListType={"JOINED"}
+                    disableDrag={false}
+                    disableDrop={false}
+                    isLastChild={index === displayedProjects.length - 1}
+                    handleOnProjectDrop={handleOnProjectDrop}
+                  />
+                ))}
+                {hasMoreProjects && (
+                  <ListItem density="comfortable">
+                    <ListItemButton
+                      type="button"
+                      onClick={() => toggleExtendedProjectSidebar()}
+                      id="extended-project-sidebar-toggle"
+                      aria-label={t(
+                        isExtendedProjectSidebarOpened
+                          ? "aria_labels.projects_sidebar.close_extended_sidebar"
+                          : "aria_labels.projects_sidebar.open_extended_sidebar"
+                      )}
+                    >
+                      <Icon icon={MoreHorizontalOutline} />
+                      <ListItemLabel>
+                        {isExtendedProjectSidebarOpened ? t("sidebar.hide") : t("sidebar.more")}
+                      </ListItemLabel>
+                    </ListItemButton>
+                  </ListItem>
+                )}
+              </div>
             </div>
           </Collapsible>
         </>
