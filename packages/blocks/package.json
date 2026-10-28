@@ -32,6 +32,7 @@
     "./layout": "./dist/layout/index.js",
     "./pill-button": "./dist/pill-button/index.js",
     "./portal": "./dist/portal/index.js",
+    "./progress": "./dist/progress/index.js",
     "./property-select": "./dist/property-select/index.js",
     "./select": "./dist/select/index.js",
     "./skeleton": "./dist/skeleton/index.js",
