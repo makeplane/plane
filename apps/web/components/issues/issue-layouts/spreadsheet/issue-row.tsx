@@ -98,7 +98,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
             style={{ height: "calc(2.75rem - 1px)" }}
           />
         }
-        classNames={cn("bg-surface-1 transition-[background-color]", {
+        classNames={cn("group/spreadsheet-row bg-surface-1 transition-[background-color]", {
           "group selected-issue-row": isIssueSelected,
           "border-[0.5px] border-strong-1": isIssueActive,
         })}
@@ -217,12 +217,13 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
     <button
       type="button"
       ref={menuActionRef}
-      className={`flex h-full w-full cursor-pointer items-center rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
-        isMenuActive ? "bg-layer-1 text-primary" : "text-secondary"
-      }`}
+      className={cn(
+        "grid size-7 cursor-pointer place-items-center rounded-md text-secondary outline-none hover:bg-layer-transparent-hover focus-visible:ring-1 focus-visible:ring-accent-strong",
+        { "bg-layer-transparent-active text-primary": isMenuActive }
+      )}
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
-      <MoreHorizontalOutline className="h-3.5 w-3.5" />
+      <MoreHorizontalOutline className="size-4" />
     </button>
   );
   if (!issueDetail) return null;
@@ -264,7 +265,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
         id={`issue-${issueId}`}
         ref={cellRef}
         tabIndex={0}
-        className="group/list-block relative left-0 z-10 max-w-lg overflow-y-clip bg-surface-1 md:sticky"
+        className="group/list-block relative left-0 z-10 max-w-lg overflow-y-clip bg-surface-1 md:sticky nth-last-2:[&_.clickable]:border-r-0"
       >
         <ControlLink
           href={workItemLink}
@@ -364,17 +365,6 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
                     </Tooltip>
                   </div>
                 </div>
-                <div
-                  className={`opacity-0 transition-opacity group-hover:opacity-100 ${isMenuActive ? "!opacity-100" : ""}`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {quickActions({
-                    issue: issueDetail,
-                    parentRef: cellRef,
-                    customActionButton,
-                    portalElement: portalElement.current,
-                  })}
-                </div>
               </div>
             </div>
           </Row>
@@ -392,6 +382,26 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
           isEstimateEnabled={isEstimateEnabled}
         />
       ))}
+      {/* Config column cell, pinned to the right edge: holds the row's quick actions */}
+      <td className="right-0 z-10 w-12 min-w-12 border-b-[0.5px] border-l-[0.5px] border-subtle bg-surface-1 shadow-direction-left md:sticky">
+        <div className="flex items-center justify-center">
+          {/* Revealed on row hover, while focused from the keyboard, and while its menu is open. */}
+          <div
+            className={cn(
+              "opacity-0 transition-opacity group-hover/spreadsheet-row:opacity-100 focus-within:opacity-100 has-[[aria-expanded=true]]:opacity-100",
+              { "opacity-100": isMenuActive }
+            )}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {quickActions({
+              issue: issueDetail,
+              parentRef: cellRef,
+              customActionButton,
+              portalElement: portalElement.current,
+            })}
+          </div>
+        </div>
+      </td>
     </>
   );
 });

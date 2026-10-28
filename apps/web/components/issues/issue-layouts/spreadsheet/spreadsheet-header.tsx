@@ -13,6 +13,7 @@ import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane
 // components
 import { cn } from "@plane/utils";
 import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
+import { SpreadsheetColumnsToggle } from "@/components/issues/spreadsheet-columns-toggle";
 // hooks
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { SpreadsheetHeaderColumn } from "./spreadsheet-header-column";
@@ -21,6 +22,7 @@ interface Props {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
+  handleDisplayPropertiesUpdate?: (data: Partial<IIssueDisplayProperties>) => void;
   canEditProperties: (projectId: string | undefined) => boolean;
   isEstimateEnabled: boolean;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
@@ -33,6 +35,7 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
     displayProperties,
     displayFilters,
     handleDisplayFilterUpdate,
+    handleDisplayPropertiesUpdate,
     canEditProperties,
     isEstimateEnabled,
     spreadsheetColumnsList,
@@ -51,7 +54,7 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
       <tr>
         {/* Single header column containing both identifier and workitem */}
         <th
-          className="group/list-header relative left-0 z-[15] h-11 min-w-60 border-r-[0.5px] border-b-[0.5px] border-subtle bg-layer-1 text-body-xs-medium md:sticky"
+          className="group/list-header relative left-0 z-[15] h-11 min-w-60 border-r-[0.5px] border-b-[0.5px] border-subtle bg-layer-1 text-body-xs-medium nth-last-2:border-r-0 md:sticky"
           tabIndex={-1}
         >
           <div className="flex h-full w-full items-center gap-2 px-page-x">
@@ -87,6 +90,21 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
             isEpic={isEpic}
           />
         ))}
+
+        {/* Config column header, pinned to the right edge */}
+        <th className="right-0 z-15 h-11 w-12 min-w-12 border-b-[0.5px] border-l-[0.5px] border-subtle bg-layer-1 shadow-direction-left md:sticky">
+          <div className="flex size-full items-center justify-center">
+            {handleDisplayPropertiesUpdate && (
+              <SpreadsheetColumnsToggle
+                columns={spreadsheetColumnsList}
+                displayProperties={displayProperties}
+                handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
+                isEstimateEnabled={isEstimateEnabled}
+                isEpic={isEpic}
+              />
+            )}
+          </div>
+        </th>
       </tr>
     </thead>
   );
