@@ -17,7 +17,14 @@ from plane.api.views import (
     IssueAttachmentDetailAPIEndpoint,
     WorkspaceIssueAPIEndpoint,
     IssueSearchEndpoint,
+    IssueCountEndpoint,
     IssueRelationListCreateAPIEndpoint,
+    WorkItemDependencyListCreateAPIEndpoint,
+    WorkItemDependencyDetailAPIEndpoint,
+    WorkItemCustomRelationListAPIEndpoint,
+    WorkItemCustomRelationDetailAPIEndpoint,
+    WorkItemRelationDefinitionListAPIEndpoint,
+    IssueArchiveUnarchiveAPIEndpoint,
 )
 
 # Deprecated url patterns
@@ -92,6 +99,16 @@ new_url_patterns = [
         name="work-item-search",
     ),
     path(
+        "workspaces/<str:slug>/work-items/count/",
+        IssueCountEndpoint.as_view(http_method_names=["get"]),
+        name="work-item-count",
+    ),
+    path(
+        "workspaces/<str:slug>/work-item-relation-definitions/",
+        WorkItemRelationDefinitionListAPIEndpoint.as_view(http_method_names=["get"]),
+        name="work-item-relation-definition-list",
+    ),
+    path(
         "workspaces/<str:slug>/work-items/<str:project_identifier>-<str:issue_identifier>/",
         WorkspaceIssueAPIEndpoint.as_view(http_method_names=["get"]),
         name="work-item-by-identifier",
@@ -102,9 +119,24 @@ new_url_patterns = [
         name="work-item-list",
     ),
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-work-items/",
+        IssueArchiveUnarchiveAPIEndpoint.as_view(http_method_names=["get"]),
+        name="work-item-archived-list",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:pk>/",
         IssueDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="work-item-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:pk>/archive/",
+        IssueArchiveUnarchiveAPIEndpoint.as_view(http_method_names=["post"]),
+        name="work-item-archive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:pk>/unarchive/",
+        IssueArchiveUnarchiveAPIEndpoint.as_view(http_method_names=["delete"]),
+        name="work-item-unarchive",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/links/",
@@ -150,6 +182,26 @@ new_url_patterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/relations/",
         IssueRelationListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="work-item-relation-list",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/dependencies/",
+        WorkItemDependencyListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="work-item-dependency-list",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/dependencies/<uuid:related_issue_id>/",
+        WorkItemDependencyDetailAPIEndpoint.as_view(http_method_names=["delete"]),
+        name="work-item-dependency-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/work-item-relations/",
+        WorkItemCustomRelationListAPIEndpoint.as_view(http_method_names=["get"]),
+        name="work-item-custom-relation-list",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/work-item-relations/<uuid:related_issue_id>/",
+        WorkItemCustomRelationDetailAPIEndpoint.as_view(http_method_names=["delete"]),
+        name="work-item-custom-relation-detail",
     ),
 ]
 

@@ -53,6 +53,170 @@ def issue_in_project(issue_id, slug, project_id, *, include_archived=False):
     return manager.filter(pk=issue_id, workspace__slug=slug, project_id=project_id).exists()
 
 
+INTERNAL_RELATION_FIELDS = [
+    "id",
+    "name",
+    "state_id",
+    "sort_order",
+    "priority",
+    "sequence_id",
+    "project_id",
+    "label_ids",
+    "assignee_ids",
+    "created_at",
+    "updated_at",
+    "created_by",
+    "updated_by",
+    "relation_type",
+]
+
+PUBLIC_RELATION_FIELDS = [
+    "id",
+    "name",
+    "sequence_id",
+    "project_id",
+    "state_id",
+    "priority",
+    "type_id",
+    "is_epic",
+    "label_ids",
+    "assignee_ids",
+    "sort_order",
+    "created_at",
+    "updated_at",
+    "created_by",
+    "updated_by",
+    "relation_type",
+]
+
+INTERNAL_RELATION_GROUPS = (
+    "blocking",
+    "blocked_by",
+    "duplicate",
+    "relates_to",
+    "start_after",
+    "start_before",
+    "finish_after",
+    "finish_before",
+)
+
+
+def build_related_work_items_queryset(slug, extra_issue_filter=None):
+    queryset = Issue.issue_objects.filter(workspace__slug=slug)
+    if extra_issue_filter is not None:
+        visible_issue_ids = Issue.objects.filter(extra_issue_filter).values("id")
+        queryset = queryset.filter(pk__in=visible_issue_ids)
+
+    return (
+        queryset.select_related("workspace", "project", "state", "parent")
+        .prefetch_related("assignees", "labels", "issue_module__module")
+        .annotate(
+            cycle_id=Subquery(
+                CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+            )
+        )
+        .annotate(
+            link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        )
+        .annotate(
+            attachment_count=FileAsset.objects.filter(
+                issue_id=OuterRef("id"),
+                entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            )
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        )
+        .annotate(
+            sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        )
+        .annotate(
+            is_epic=F("type__is_epic"),
+            label_ids=Coalesce(
+                ArrayAgg(
+                    "labels__id",
+                    distinct=True,
+                    filter=Q(~Q(labels__id__isnull=True) & (Q(label_issue__deleted_at__isnull=True))),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            assignee_ids=Coalesce(
+                ArrayAgg(
+                    "assignees__id",
+                    distinct=True,
+                    filter=Q(
+                        ~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(issue_assignee__deleted_at__isnull=True)
+                    ),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+        )
+        .distinct()
+    )
+
+
+def group_issue_relations(slug, issue_id, groups, extra_issue_filter=None, fields=INTERNAL_RELATION_FIELDS):
+    issue_relations = (
+        IssueRelation.objects.filter(Q(issue_id=issue_id) | Q(related_issue=issue_id))
+        .filter(workspace__slug=slug)
+        .select_related("project")
+        .select_related("workspace")
+        .select_related("issue")
+        .order_by("-created_at")
+        .distinct()
+    )
+    queryset = build_related_work_items_queryset(slug, extra_issue_filter=extra_issue_filter)
+
+    directional_map = {
+        "blocking": ("blocked_by", "related_issue_id", "issue_id"),
+        "blocked_by": ("blocked_by", "issue_id", "related_issue_id"),
+        "start_after": ("start_before", "related_issue_id", "issue_id"),
+        "start_before": ("start_before", "issue_id", "related_issue_id"),
+        "finish_after": ("finish_before", "related_issue_id", "issue_id"),
+        "finish_before": ("finish_before", "issue_id", "related_issue_id"),
+        "implements": ("implemented_by", "related_issue_id", "issue_id"),
+        "implemented_by": ("implemented_by", "issue_id", "related_issue_id"),
+    }
+    symmetric_types = {"duplicate", "relates_to"}
+
+    response_data = {}
+    for group in groups:
+        if group in directional_map:
+            db_type, match_field, target_field = directional_map[group]
+            target_ids = issue_relations.filter(relation_type=db_type, **{match_field: issue_id}).values_list(
+                target_field, flat=True
+            )
+            response_data[group] = list(
+                queryset.filter(pk__in=target_ids)
+                .annotate(relation_type=Value(group, output_field=CharField()))
+                .values(*fields)
+            )
+        elif group in symmetric_types:
+            forward_ids = issue_relations.filter(relation_type=group, issue_id=issue_id).values_list(
+                "related_issue_id", flat=True
+            )
+            reverse_ids = issue_relations.filter(relation_type=group, related_issue_id=issue_id).values_list(
+                "issue_id", flat=True
+            )
+            response_data[group] = list(
+                queryset.filter(pk__in=forward_ids)
+                .annotate(relation_type=Value(group, output_field=CharField()))
+                .values(*fields)
+                | queryset.filter(pk__in=reverse_ids)
+                .annotate(relation_type=Value(group, output_field=CharField()))
+                .values(*fields)
+            )
+    return response_data
+
+
 class IssueRelationViewSet(BaseViewSet):
     serializer_class = IssueRelationSerializer
     model = IssueRelation
@@ -78,170 +242,12 @@ class IssueRelationViewSet(BaseViewSet):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        issue_relations = (
-            IssueRelation.objects.filter(Q(issue_id=issue_id) | Q(related_issue=issue_id))
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("issue")
-            .order_by("-created_at")
-            .distinct()
+        response_data = group_issue_relations(
+            slug=slug,
+            issue_id=issue_id,
+            groups=INTERNAL_RELATION_GROUPS,
+            fields=INTERNAL_RELATION_FIELDS,
         )
-        # get all blocking issues
-        blocking_issues = issue_relations.filter(relation_type="blocked_by", related_issue_id=issue_id).values_list(
-            "issue_id", flat=True
-        )
-
-        # get all blocked by issues
-        blocked_by_issues = issue_relations.filter(relation_type="blocked_by", issue_id=issue_id).values_list(
-            "related_issue_id", flat=True
-        )
-
-        # get all duplicate issues
-        duplicate_issues = issue_relations.filter(issue_id=issue_id, relation_type="duplicate").values_list(
-            "related_issue_id", flat=True
-        )
-
-        # get all relates to issues
-        duplicate_issues_related = issue_relations.filter(
-            related_issue_id=issue_id, relation_type="duplicate"
-        ).values_list("issue_id", flat=True)
-
-        # get all relates to issues
-        relates_to_issues = issue_relations.filter(issue_id=issue_id, relation_type="relates_to").values_list(
-            "related_issue_id", flat=True
-        )
-
-        # get all relates to issues
-        relates_to_issues_related = issue_relations.filter(
-            related_issue_id=issue_id, relation_type="relates_to"
-        ).values_list("issue_id", flat=True)
-
-        # get all start after issues
-        start_after_issues = issue_relations.filter(
-            relation_type="start_before", related_issue_id=issue_id
-        ).values_list("issue_id", flat=True)
-
-        # get all start_before issues
-        start_before_issues = issue_relations.filter(relation_type="start_before", issue_id=issue_id).values_list(
-            "related_issue_id", flat=True
-        )
-
-        # get all finish after issues
-        finish_after_issues = issue_relations.filter(
-            relation_type="finish_before", related_issue_id=issue_id
-        ).values_list("issue_id", flat=True)
-
-        # get all finish before issues
-        finish_before_issues = issue_relations.filter(relation_type="finish_before", issue_id=issue_id).values_list(
-            "related_issue_id", flat=True
-        )
-
-        queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(
-                cycle_id=Subquery(
-                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
-                )
-            )
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=FileAsset.objects.filter(
-                    issue_id=OuterRef("id"),
-                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=Q(~Q(labels__id__isnull=True) & (Q(label_issue__deleted_at__isnull=True))),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(assignees__id__isnull=True)
-                            & Q(assignees__member_project__is_active=True)
-                            & Q(issue_assignee__deleted_at__isnull=True)
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
-        ).distinct()
-
-        # Fields
-        fields = [
-            "id",
-            "name",
-            "state_id",
-            "sort_order",
-            "priority",
-            "sequence_id",
-            "project_id",
-            "label_ids",
-            "assignee_ids",
-            "created_at",
-            "updated_at",
-            "created_by",
-            "updated_by",
-            "relation_type",
-        ]
-
-        response_data = {
-            "blocking": queryset.filter(pk__in=blocking_issues)
-            .annotate(relation_type=Value("blocking", output_field=CharField()))
-            .values(*fields),
-            "blocked_by": queryset.filter(pk__in=blocked_by_issues)
-            .annotate(relation_type=Value("blocked_by", output_field=CharField()))
-            .values(*fields),
-            "duplicate": queryset.filter(pk__in=duplicate_issues)
-            .annotate(relation_type=Value("duplicate", output_field=CharField()))
-            .values(*fields)
-            | queryset.filter(pk__in=duplicate_issues_related)
-            .annotate(relation_type=Value("duplicate", output_field=CharField()))
-            .values(*fields),
-            "relates_to": queryset.filter(pk__in=relates_to_issues)
-            .annotate(relation_type=Value("relates_to", output_field=CharField()))
-            .values(*fields)
-            | queryset.filter(pk__in=relates_to_issues_related)
-            .annotate(relation_type=Value("relates_to", output_field=CharField()))
-            .values(*fields),
-            "start_after": queryset.filter(pk__in=start_after_issues)
-            .annotate(relation_type=Value("start_after", output_field=CharField()))
-            .values(*fields),
-            "start_before": queryset.filter(pk__in=start_before_issues)
-            .annotate(relation_type=Value("start_before", output_field=CharField()))
-            .values(*fields),
-            "finish_after": queryset.filter(pk__in=finish_after_issues)
-            .annotate(relation_type=Value("finish_after", output_field=CharField()))
-            .values(*fields),
-            "finish_before": queryset.filter(pk__in=finish_before_issues)
-            .annotate(relation_type=Value("finish_before", output_field=CharField()))
-            .values(*fields),
-        }
-
         return Response(response_data, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id, issue_id):

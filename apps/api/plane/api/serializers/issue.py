@@ -142,9 +142,9 @@ class IssueSerializer(BaseSerializer):
         # Validate labels are from project
         if data.get("labels", []):
             valid_label_ids = set(
-                Label.objects.filter(
-                    project_id=self.context.get("project_id"), id__in=data["labels"]
-                ).values_list("id", flat=True)
+                Label.objects.filter(project_id=self.context.get("project_id"), id__in=data["labels"]).values_list(
+                    "id", flat=True
+                )
             )
             invalid_label_ids = set(data["labels"]) - valid_label_ids
             if invalid_label_ids:
@@ -598,6 +598,31 @@ class IssueRelationCreateSerializer(serializers.Serializer):
         if not value:
             raise serializers.ValidationError("At least one issue ID is required.")
         return value
+
+
+class WorkItemDependencyCreateSerializer(serializers.Serializer):
+    """Serializer for creating work item dependency relations."""
+
+    DEPENDENCY_TYPE_CHOICES = [
+        ("blocking", "Blocking"),
+        ("blocked_by", "Blocked By"),
+        ("start_before", "Start Before"),
+        ("start_after", "Start After"),
+        ("finish_before", "Finish Before"),
+        ("finish_after", "Finish After"),
+    ]
+
+    relation_type = serializers.ChoiceField(
+        choices=DEPENDENCY_TYPE_CHOICES,
+        required=True,
+        help_text="Dependency direction from the perspective of this work item",
+    )
+    work_item_ids = serializers.ListField(
+        child=serializers.UUIDField(),
+        required=True,
+        min_length=1,
+        help_text="Array of work item IDs to create dependencies with",
+    )
 
 
 class IssueRelationRemoveSerializer(serializers.Serializer):
