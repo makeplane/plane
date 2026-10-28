@@ -173,7 +173,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
   );
 
   return (
-    <div className="space-y-4 border-t border-subtle px-3 py-4">
+    <div className="border-t border-subtle pt-5">
       {/* progress bar header */}
       {isModuleDateValid ? (
         <Collapsible
@@ -181,9 +181,9 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
           onOpenChange={setIsOpen}
           trigger={
             <span className="relative flex w-full items-center gap-2">
-              <span className="text-body-xs-medium text-secondary">{t("common.progress")}</span>
+              <span className="text-caption-md-semibold text-primary">{t("common.progress")}</span>
               {progressHeaderPercentage > 0 && (
-                <span className="bg-amber-500/20 text-amber-500 flex h-5 w-9 items-center justify-center rounded-sm text-caption-sm-medium">{`${progressHeaderPercentage}%`}</span>
+                <span className="text-caption-md-regular text-placeholder">{`${progressHeaderPercentage}%`}</span>
               )}
             </span>
           }
@@ -212,7 +212,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
         </Collapsible>
       ) : (
         <div className="relative flex w-full items-center justify-between gap-2">
-          <div className="text-body-xs-medium text-secondary">Progress</div>
+          <div className="text-caption-md-semibold text-primary">{t("common.progress")}</div>
           <div className="flex items-center gap-1">
             <WarningCircleOutline height={14} width={14} className="text-secondary" />
             <span className="text-caption-sm-regular text-secondary italic">

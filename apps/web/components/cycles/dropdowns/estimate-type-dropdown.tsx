@@ -40,7 +40,7 @@ export const EstimateTypeDropdown = observer(function EstimateTypeDropdown(props
         pinSelected={false}
         placeholder="None"
       >
-        <Select.Trigger variant="select-md" className="rounded-sm border-none bg-surface-2 text-body-xs-medium">
+        <Select.Trigger variant="select-ghost-md" appendIcon={null}>
           <Select.Value />
         </Select.Trigger>
       </Select>

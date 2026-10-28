@@ -104,7 +104,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
   if (!cycleDetails) return <></>;
 
   const progressTitle = (
-    <span className="text-body-xs-medium text-secondary">{t("project_cycles.active_cycle.progress")}</span>
+    <span className="text-body-sm-medium text-primary">{t("project_cycles.active_cycle.progress")}</span>
   );
 
   const progressBody = (
@@ -145,7 +145,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
   );
 
   return (
-    <div className="space-y-4 border-t border-subtle py-5">
+    <div className="border-t border-subtle py-6">
       {/* progress bar header */}
       {isCycleDateValid ? (
         <Collapsible.Root defaultOpen className="flex flex-col">

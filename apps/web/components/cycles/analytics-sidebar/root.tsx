@@ -34,22 +34,22 @@ export const CycleDetailsSidebar = observer(function CycleDetailsSidebar(props: 
 
   if (!cycleDetails)
     return (
-      <Loader className="px-5">
-        <div className="space-y-2">
-          <Loader.Item height="15px" width="50%" />
-          <Loader.Item height="15px" width="30%" />
+      <Loader className="flex flex-col gap-6 py-6">
+        <div className="flex flex-col gap-3">
+          <Loader.Item height="20px" width="70%" />
+          <Loader.Item height="24px" width="55%" />
         </div>
-        <div className="mt-8 space-y-3">
-          <Loader.Item height="30px" />
-          <Loader.Item height="30px" />
-          <Loader.Item height="30px" />
+        <div className="flex flex-col gap-3">
+          <Loader.Item height="28px" />
+          <Loader.Item height="28px" />
+          <Loader.Item height="28px" />
         </div>
       </Loader>
     );
 
   return (
     <div className="relative pb-2">
-      <div className="flex w-full flex-col gap-5">
+      <div className="flex w-full flex-col gap-6 pb-6">
         <CycleSidebarHeader
           workspaceSlug={workspaceSlug}
           projectId={projectId}
