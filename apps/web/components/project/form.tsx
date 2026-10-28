@@ -7,10 +7,9 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { InfoOutline, LockOutline } from "@makeplane/propel/icons";
-import { Field } from "@makeplane/propel/components/field";
-import { FieldLabel, FieldError } from "@makeplane/propel/elements/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
+import { FieldLabel } from "@makeplane/propel/elements/field";
+import { InputField } from "@makeplane/propel/components/input-field";
+import { TextAreaField } from "@makeplane/propel/components/text-area-field";
 import type { TNetworkChoice } from "@plane/constants";
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -206,7 +205,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="relative h-44 w-full">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+        <div className="absolute inset-0 rounded-md bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
         <CoverImage src={coverImage} alt="Project cover image" className="h-44 w-full rounded-md" />
         <div className="absolute bottom-4 z-5 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
@@ -220,7 +219,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                   isOpen={isOpen}
                   handleToggle={(val: boolean) => setIsOpen(val)}
                   className="flex items-center justify-center"
-                  buttonClassName="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-white/10"
+                  buttonClassName="flex size-[52px] shrink-0 items-center justify-center rounded-lg bg-layer-3/50"
                   label={<Logo logo={value} size={28} />}
                   // TODO: fix types
                   onChange={(val: any) => {
@@ -276,125 +275,103 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         </div>
       </div>
       <div className="mt-8 flex flex-col gap-8">
-        <div className="flex flex-col gap-1">
-          <FieldLabel size="2xl" inset={false} htmlFor="name">
-            {t("common.project_name")}
-          </FieldLabel>
-          <Controller
-            control={control}
-            name="name"
-            rules={{
-              required: t("name_is_required"),
-              maxLength: {
-                value: 255,
-                message: "Project name should be less than 255 characters",
-              },
-            }}
-            render={({ field: { value, onChange, ref } }) => (
-              <Field name="name" invalid={Boolean(errors.name)}>
-                <InputGroup size="2xl">
-                  <Input
-                    size="2xl"
-                    id="name"
-                    aria-describedby={errors.name ? "project-name-error" : undefined}
-                    name="name"
-                    type="text"
-                    ref={ref}
-                    value={value}
-                    onChange={onChange}
-                    placeholder={t("common.project_name")}
-                    disabled={!isAdmin}
-                  />
-                </InputGroup>
-              </Field>
-            )}
-          />
-          <FieldError size="lg" id="project-name-error">
-            {errors?.name?.message}
-          </FieldError>
-        </div>
-        <div className="flex flex-col gap-1">
-          <FieldLabel size="2xl" inset={false} htmlFor="description">
-            {t("description")}
-          </FieldLabel>
-          <Controller
-            name="description"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <Field name="description" invalid={Boolean(errors?.description)} disabled={!isAdmin}>
-                <TextAreaGroup resize="none">
-                  <TextArea
-                    size="lg"
-                    surface="field"
-                    autoResize
-                    maxRows={8}
-                    id="description"
-                    name="description"
-                    value={value}
-                    placeholder={t("project_description_placeholder")}
-                    onChange={onChange}
-                  />
-                </TextAreaGroup>
-              </Field>
-            )}
-          />
-        </div>
+        <Controller
+          control={control}
+          name="name"
+          rules={{
+            required: t("name_is_required"),
+            maxLength: {
+              value: 255,
+              message: "Project name should be less than 255 characters",
+            },
+          }}
+          render={({ field: { value, onChange, ref } }) => (
+            <InputField
+              size="lg"
+              orientation="vertical"
+              id="name"
+              name="name"
+              type="text"
+              label={t("common.project_name")}
+              ref={ref}
+              value={value}
+              onChange={onChange}
+              error={errors?.name?.message}
+              placeholder={t("common.project_name")}
+              disabled={!isAdmin}
+            />
+          )}
+        />
+        <Controller
+          name="description"
+          control={control}
+          render={({ field: { value, onChange } }) => (
+            <TextAreaField
+              size="lg"
+              resize="none"
+              autoResize
+              maxRows={8}
+              id="description"
+              name="description"
+              label={t("description")}
+              value={value}
+              placeholder={t("project_description_placeholder")}
+              onChange={onChange}
+              error={errors?.description?.message}
+              disabled={!isAdmin}
+            />
+          )}
+        />
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div className="flex flex-col gap-1">
-            <FieldLabel size="2xl" inset={false} htmlFor="identifier">
-              Project ID
-            </FieldLabel>
-            <div className="relative">
-              <Controller
-                control={control}
-                name="identifier"
-                rules={{
-                  required: t("project_id_is_required"),
-                  validate: (value) => /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) || t("project_id_allowed_char"),
-                  minLength: {
-                    value: 1,
-                    message: t("project_id_min_char"),
-                  },
-                  maxLength: {
-                    value: 10,
-                    message: t("project_id_max_char"),
-                  },
-                }}
-                render={({ field: { value, ref } }) => (
-                  <Field name="identifier" invalid={Boolean(errors.identifier)}>
-                    <InputGroup size="2xl">
-                      <Input
-                        size="2xl"
-                        id="identifier"
-                        aria-describedby={errors.identifier ? "project-identifier-error" : undefined}
-                        name="identifier"
-                        type="text"
-                        value={value}
-                        onChange={handleIdentifierChange}
-                        ref={ref}
-                        placeholder={t("project_settings.general.enter_project_id")}
-                        disabled={!isAdmin}
-                      />
-                    </InputGroup>
-                  </Field>
-                )}
-              />
-              <Tooltip
-                label={t("project_id_tooltip_content")}
-                layout="stacked"
-                side="right"
-                align="start"
-                disabled={isMobile}
-              >
-                <InfoOutline className="absolute top-2.5 right-2 h-4 w-4 text-placeholder" />
-              </Tooltip>
-            </div>
-            <FieldError size="lg" id="project-identifier-error">
-              {errors?.identifier?.message}
-            </FieldError>
+          <div>
+            <Controller
+              control={control}
+              name="identifier"
+              rules={{
+                required: t("project_id_is_required"),
+                validate: (value) => /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) || t("project_id_allowed_char"),
+                minLength: {
+                  value: 1,
+                  message: t("project_id_min_char"),
+                },
+                maxLength: {
+                  value: 10,
+                  message: t("project_id_max_char"),
+                },
+              }}
+              render={({ field: { value, ref } }) => (
+                <InputField
+                  size="lg"
+                  orientation="vertical"
+                  id="identifier"
+                  name="identifier"
+                  type="text"
+                  label="Project ID"
+                  value={value}
+                  onChange={handleIdentifierChange}
+                  ref={ref}
+                  error={errors?.identifier?.message}
+                  placeholder={t("project_settings.general.enter_project_id")}
+                  disabled={!isAdmin}
+                  endIcon={
+                    <Tooltip
+                      label={t("project_id_tooltip_content")}
+                      layout="stacked"
+                      side="right"
+                      align="start"
+                      disabled={isMobile}
+                    >
+                      <span className="flex cursor-pointer items-center">
+                        <InfoOutline className="size-4 text-placeholder" />
+                      </span>
+                    </Tooltip>
+                  }
+                />
+              )}
+            />
           </div>
-          <div className="flex flex-col gap-1">
-            <FieldLabel size="2xl" inset={false} htmlFor="project-network">
+          <div className="flex flex-col gap-1.5">
+            <FieldLabel size="lg" inset={false} htmlFor="project-network">
               {t("workspace_projects.network.label")}
             </FieldLabel>
             <Controller
@@ -442,7 +419,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               }}
             />
           </div>
-          <div className="col-span-1 flex flex-col gap-1 sm:col-span-2 xl:col-span-1">
+          <div className="col-span-1 flex flex-col gap-1.5 sm:col-span-2 xl:col-span-1">
             <Controller
               name="timezone"
               control={control}

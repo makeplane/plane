@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
@@ -56,29 +57,17 @@ export function NameColumn(props: NameProps) {
   return (
     <div className="group relative">
       <div className="flex w-72 items-center gap-2">
-        <div className="flex flex-1 items-center gap-x-2 gap-y-2">
-          {avatar_url && avatar_url.trim() !== "" ? (
-            <Link href={`/${workspaceSlug}/profile/${id}`}>
-              <span className="relative flex size-6 items-center justify-center rounded-full text-on-color capitalize">
-                <img
-                  src={getFileURL(avatar_url)}
-                  className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
-                  alt={display_name || email}
-                />
-              </span>
-            </Link>
-          ) : (
-            <Link href={`/${workspaceSlug}/profile/${id}`}>
-              <span className="relative flex size-6 items-center justify-center rounded-full bg-layer-3 text-caption-sm-regular text-on-color capitalize">
-                {(email ?? display_name ?? "?")[0]}
-              </span>
-            </Link>
-          )}
-          {first_name} {last_name}
+        <div className="flex min-w-0 flex-1 items-center gap-x-2 gap-y-2 overflow-hidden">
+          <Link href={`/${workspaceSlug}/profile/${id}`} className="flex shrink-0">
+            <Avatar size="sm" src={getFileURL(avatar_url ?? "")} alt={display_name || email} />
+          </Link>
+          <span className="truncate">
+            {first_name} {last_name}
+          </span>
         </div>
         {(isAdmin || id === currentUser?.id) && (
           <Menu>
-            <div className="opacity-0 transition-opacity group-hover:opacity-100">
+            <div className="opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 has-[[data-popup-open]]:opacity-100">
               <MenuTrigger
                 render={
                   <IconButton

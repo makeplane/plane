@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import { Button } from "@makeplane/propel/components/button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
@@ -83,9 +84,9 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
         projectId={projectId}
         workspaceSlug={workspaceSlug}
       />
-      <div className="flex items-center justify-between gap-4 overflow-x-hidden border-b border-subtle py-2">
-        <div className="text-body-sm-semibold">{t("common.members")}</div>
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-4 overflow-x-hidden pt-1 pb-3">
+        <div className="text-body-md-semibold">{t("common.members")}</div>
+        <div className="flex items-center gap-3">
           <div className="w-48">
             <InputGroup size="md">
               <Icon icon={SearchOutline} tint="placeholder" />
@@ -108,7 +109,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
           {isAdmin && (
             <Button
               variant="primary"
-              size="sm"
+              size="md"
               stretch="auto"
               label={t("add_member")}
               onClick={() => {
@@ -121,16 +122,22 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
       {!projectMemberIds ? (
         <MembersSettingsLoader />
       ) : (
-        <div className="divide-y divide-subtle overflow-scroll">
+        <div>
           {searchedProjectMembers.length !== 0 && (
-            <ProjectMemberListItem
-              memberDetails={memberDetails ?? []}
-              projectId={projectId}
-              workspaceSlug={workspaceSlug}
-            />
+            <div className="flex max-h-[60vh] flex-col">
+              <ProjectMemberListItem
+                memberDetails={memberDetails ?? []}
+                projectId={projectId}
+                workspaceSlug={workspaceSlug}
+              />
+            </div>
           )}
           {searchedProjectMembers.length === 0 && (
-            <h4 className="mt-16 text-center text-body-xs-regular text-placeholder">{t("no_matching_members")}</h4>
+            <EmptyStateCompact
+              assetKey="search-compact"
+              title={t("no_matching_members")}
+              rootClassName="rounded-lg border border-subtle py-10"
+            />
           )}
         </div>
       )}
