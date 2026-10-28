@@ -26,6 +26,8 @@ export type IssueTitleInputProps = {
   projectId: string;
   issueId: string;
   containerClassName?: string;
+  /** Type style for the read-only title, so it matches the editable title on the same surface. */
+  readOnlyClassName?: string;
 };
 
 export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTitleInputProps) {
@@ -39,6 +41,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
     issueOperations,
     projectId,
     containerClassName,
+    readOnlyClassName = "text-h4-medium",
   } = props;
   const { t } = useTranslation();
   // states
@@ -140,7 +143,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
     [setIsSubmitting]
   );
 
-  if (disabled) return <div className="text-h4-medium whitespace-pre-line">{title}</div>;
+  if (disabled) return <div className={cn("whitespace-pre-line", readOnlyClassName)}>{title}</div>;
 
   return (
     <div className="flex flex-col gap-1.5">

@@ -113,6 +113,7 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
         disabled={disabled || isArchived}
         value={issue.name}
         containerClassName="-ml-3 [&_textarea]:block [&_textarea]:px-3 [&_textarea]:text-h4-semibold"
+        readOnlyClassName="text-h4-semibold"
       />
 
       <IssueDetailMetaRow

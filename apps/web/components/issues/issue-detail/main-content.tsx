@@ -114,6 +114,7 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
             disabled={isArchived || !isEditable}
             value={issue.name}
             containerClassName="-ml-3 [&_textarea]:block [&_textarea]:px-3 [&_textarea]:text-h3-semibold"
+            readOnlyClassName="text-h3-semibold"
           />
         </div>
 

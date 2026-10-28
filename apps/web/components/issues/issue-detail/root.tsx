@@ -250,7 +250,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
             />
           </div>
           <div
-            className="fixed right-0 z-[5] h-full w-full min-w-[300px] border-l border-subtle bg-surface-1 sm:w-1/2 md:relative md:w-1/4 lg:min-w-80 xl:min-w-96"
+            className="fixed right-0 z-[5] h-full w-full min-w-[300px] shrink-0 border-l border-subtle bg-surface-1 sm:w-1/2 md:relative md:w-80"
             style={issueDetailSidebarCollapsed ? { right: "-100vw" } : {}}
           >
             <IssueDetailsSidebar
