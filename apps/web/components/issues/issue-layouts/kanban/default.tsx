@@ -34,6 +34,11 @@ import type { TRenderQuickActions } from "../list/list-view-types";
 import type { GroupDropLocation } from "../utils";
 import { getGroupByColumns, isWorkspaceLevel, getApproximateCardHeight } from "../utils";
 // components
+import {
+  KANBAN_COLLAPSED_COLUMN_WIDTH,
+  KANBAN_SWIMLANE_COLLAPSED_COLUMN_WIDTH,
+  KanbanCollapsedColumnTrigger,
+} from "./collapsed-column-trigger";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
 
@@ -128,6 +133,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
       if (!showEmptyGroup) {
         groupVisibility.showGroup = (getGroupIssueCount(_list.id, undefined, false) ?? 0) > 0;
       }
+      if (collapsedGroups?.group_by.includes(_list.id)) groupVisibility.showIssues = false;
       return groupVisibility;
     } else {
       const groupVisibility = {
@@ -162,6 +168,52 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
           const issueLength = issueIds?.length;
           const groupHeight = issueLength * approximateCardHeight;
 
+          const groupHeaderCard = (
+            <HeaderGroupByCard
+              sub_group_by={sub_group_by}
+              group_by={group_by}
+              column_id={subList.id}
+              icon={subList.icon}
+              title={subList.name}
+              count={getGroupIssueCount(subList.id, undefined, false) ?? 0}
+              issuePayload={subList.payload}
+              disableIssueCreation={
+                disableIssueCreation ||
+                isGroupByCreatedBy ||
+                getIsWorkflowWorkItemCreationDisabled(subList.id, sub_group_id)
+              }
+              addIssuesToView={addIssuesToView}
+              collapsedGroups={collapsedGroups}
+              handleCollapsedGroups={handleCollapsedGroups}
+              isEpic={isEpic}
+            />
+          );
+
+          // A collapsed column is one expand button. On the flat board it carries the vertical header; a swimlane
+          // band cell is an empty extra target whose hover is shared with the column's other pieces.
+          if (!groupByVisibilityToggle.showIssues)
+            return (
+              <div
+                key={subList.id}
+                className={cn("relative flex flex-shrink-0 flex-col bg-layer-1", {
+                  [`${KANBAN_COLLAPSED_COLUMN_WIDTH} rounded-lg`]: !sub_group_by,
+                  [`${KANBAN_SWIMLANE_COLLAPSED_COLUMN_WIDTH} min-h-30`]: !!sub_group_by,
+                  "rounded-b-lg": !!sub_group_by && isLastSubGroup,
+                })}
+              >
+                <KanbanCollapsedColumnTrigger
+                  columnId={subList.id}
+                  title={subList.name}
+                  count={getGroupIssueCount(subList.id, sub_group_by ? sub_group_id : undefined, false) ?? 0}
+                  onExpand={() => handleCollapsedGroups("group_by", subList.id)}
+                  focusable={!sub_group_by}
+                  className="flex flex-1 flex-col items-center rounded-[inherit] px-1 py-1.5"
+                >
+                  {!sub_group_by && groupHeaderCard}
+                </KanbanCollapsedColumnTrigger>
+              </div>
+            );
+
           return (
             <div
               key={subList.id}
@@ -173,26 +225,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
               })}
             >
               {sub_group_by === null && (
-                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-layer-1 px-1 py-1.5">
-                  <HeaderGroupByCard
-                    sub_group_by={sub_group_by}
-                    group_by={group_by}
-                    column_id={subList.id}
-                    icon={subList.icon}
-                    title={subList.name}
-                    count={getGroupIssueCount(subList.id, undefined, false) ?? 0}
-                    issuePayload={subList.payload}
-                    disableIssueCreation={
-                      disableIssueCreation ||
-                      isGroupByCreatedBy ||
-                      getIsWorkflowWorkItemCreationDisabled(subList.id, sub_group_id)
-                    }
-                    addIssuesToView={addIssuesToView}
-                    collapsedGroups={collapsedGroups}
-                    handleCollapsedGroups={handleCollapsedGroups}
-                    isEpic={isEpic}
-                  />
-                </div>
+                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-layer-1 px-1 py-1.5">{groupHeaderCard}</div>
               )}
 
               {groupByVisibilityToggle.showIssues && (

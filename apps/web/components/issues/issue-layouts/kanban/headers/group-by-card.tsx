@@ -8,10 +8,11 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { AddOutline, ArrowCollapseOutline, CircleOutline, FullScreenOutline } from "@makeplane/propel/icons";
+import { AddOutline, ArrowCollapseOutline, ArrowExpandOutline, CircleOutline } from "@makeplane/propel/icons";
 import { setToast } from "@plane/blocks/toast";
 import type { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
 import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
 // ui
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
@@ -53,7 +54,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
   } = props;
   // plane hooks
   const { t } = useTranslation();
-  const verticalAlignPosition = sub_group_by ? false : collapsedGroups?.group_by.includes(column_id);
+  const isCollapsed = !!collapsedGroups?.group_by.includes(column_id);
   // states
   const [isOpen, setIsOpen] = React.useState(false);
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
@@ -87,6 +88,24 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     }
   };
 
+  // Collapsed: visuals only, inside the column's expand button (KanbanCollapsedColumnTrigger). The flat board
+  // stacks the icon, a vertical name and the count; a swimlane header cell only fits the icon and the glyph.
+  if (isCollapsed)
+    return (
+      <span className={cn("flex shrink-0 items-center gap-1", !sub_group_by && "flex-col")}>
+        <span className="flex size-5 shrink-0 items-center justify-center overflow-hidden rounded-xs">
+          {icon ? icon : <CircleOutline width={16} height={16} />}
+        </span>
+        {!sub_group_by && (
+          <>
+            <span className="max-h-100 vertical-lr truncate text-body-sm-medium text-primary">{title}</span>
+            <span className="pr-0.5 text-body-xs-medium text-tertiary">{count || 0}</span>
+          </>
+        )}
+        <ArrowExpandOutline className="size-3 shrink-0 text-secondary" />
+      </span>
+    );
+
   return (
     <>
       {isEpic ? (
@@ -110,50 +129,26 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           handleOnSubmit={handleAddIssuesToView}
         />
       )}
-      <div
-        className={`relative flex flex-shrink-0 gap-1 ${
-          verticalAlignPosition ? `w-[44px] flex-col items-center` : `w-full flex-row items-center`
-        }`}
-      >
+      <div className="relative flex w-full flex-shrink-0 flex-row items-center gap-1">
         <div className="flex size-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-xs">
-          {icon ? icon : <CircleOutline width={14} height={14} />}
+          {icon ? icon : <CircleOutline width={16} height={16} />}
         </div>
 
-        <div
-          className={`relative flex gap-1 ${
-            verticalAlignPosition ? `flex-col items-center` : `w-full flex-row items-baseline overflow-hidden`
-          }`}
-        >
-          <div
-            className={`line-clamp-1 inline-block truncate overflow-hidden text-body-sm-medium text-primary ${
-              verticalAlignPosition ? `max-h-[400px] vertical-lr` : ``
-            }`}
-          >
+        <div className="relative flex w-full flex-row items-baseline gap-1 overflow-hidden">
+          <div className="line-clamp-1 inline-block truncate overflow-hidden text-body-sm-medium text-primary">
             {title}
           </div>
-          <div
-            className={`flex-shrink-0 text-body-xs-medium text-tertiary ${verticalAlignPosition ? `pr-0.5` : `pl-2`}`}
-          >
-            {count || 0}
-          </div>
+          <div className="flex-shrink-0 pl-2 text-body-xs-medium text-tertiary">{count || 0}</div>
         </div>
 
-        {sub_group_by === null && (
-          <IconButton
-            variant="ghost"
-            size="xs"
-            aria-label={title}
-            aria-expanded={!verticalAlignPosition}
-            icon={
-              verticalAlignPosition ? (
-                <FullScreenOutline className="size-3.5" />
-              ) : (
-                <ArrowCollapseOutline className="size-3.5" />
-              )
-            }
-            onClick={() => handleCollapsedGroups("group_by", column_id)}
-          />
-        )}
+        <IconButton
+          variant="ghost"
+          size="xs"
+          aria-label={t("aria_labels.project_board.collapse_group")}
+          aria-expanded
+          icon={<ArrowCollapseOutline className="size-3.5" />}
+          onClick={() => handleCollapsedGroups("group_by", column_id)}
+        />
 
         {!disableIssueCreation &&
           (renderExistingIssueModal ? (
