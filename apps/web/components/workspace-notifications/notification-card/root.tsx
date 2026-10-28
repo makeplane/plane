@@ -36,7 +36,7 @@ export const NotificationCardListRoot = observer(function NotificationCardListRo
 
   if (!workspaceSlug || !workspaceId || !notificationIds) return <></>;
   return (
-    <div>
+    <>
       {notificationIds.map((notificationId: string) => (
         <NotificationItem key={notificationId} workspaceSlug={workspaceSlug} notificationId={notificationId} />
       ))}
@@ -62,6 +62,6 @@ export const NotificationCardListRoot = observer(function NotificationCardListRo
           )}
         </>
       )}
-    </div>
+    </>
   );
 });

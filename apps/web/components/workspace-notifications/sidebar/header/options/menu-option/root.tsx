@@ -66,19 +66,31 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
     },
   ];
 
+  const activeOptionsCount = menuOptions.filter((option) => option.checked).length;
+
   return (
     // Toggle rows: checkbox items keep the menu open, as the legacy popover did.
     <Menu>
-      <MenuTrigger
-        render={
-          <IconButton
-            size="sm"
-            variant="ghost"
-            icon={<Icon icon={MoreVerticalOutline} />}
-            aria-label="Notification options"
-          />
-        }
-      />
+      <div className="relative inline-flex">
+        <MenuTrigger
+          render={
+            <IconButton
+              size="sm"
+              variant="secondary"
+              icon={<Icon icon={MoreVerticalOutline} />}
+              aria-label="Notification options"
+            />
+          }
+        />
+        {activeOptionsCount > 0 && (
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full bg-accent-primary text-[10px] font-medium text-on-color"
+          >
+            {activeOptionsCount}
+          </span>
+        )}
+      </div>
       <MenuContent side="bottom" align="end">
         {menuOptions.map((option) => (
           <MenuCheckboxItem

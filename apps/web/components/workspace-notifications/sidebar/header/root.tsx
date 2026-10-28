@@ -6,14 +6,14 @@
 
 import { observer } from "mobx-react";
 // plane imports
+import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { InboxOutline } from "@makeplane/propel/icons";
-import { Breadcrumbs } from "@plane/blocks/breadcrumb";
-import { Header } from "@plane/blocks/layout";
-// components
-import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-// local imports
-import { NotificationSidebarHeaderOptions } from "./options";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { MarkAllReadOutline, RefreshOutline } from "@makeplane/propel/icons";
+// hooks
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TNotificationSidebarHeader = {
   workspaceSlug: string;
@@ -23,27 +23,61 @@ export const NotificationSidebarHeader = observer(function NotificationSidebarHe
   props: TNotificationSidebarHeader
 ) {
   const { workspaceSlug } = props;
+  // hooks
   const { t } = useTranslation();
+  const { isMobile } = usePlatformOS();
+  const { loader, getNotifications, markAllNotificationsAsRead } = useWorkspaceNotifications();
+
+  const refreshNotifications = async () => {
+    if (loader) return;
+    try {
+      await getNotifications(workspaceSlug, ENotificationLoader.MUTATION_LOADER, ENotificationQueryParamType.CURRENT);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleMarkAllNotificationsAsRead = async () => {
+    // NOTE: We are using loader to prevent continues request when we are making all the notification to read
+    if (loader) return;
+    try {
+      await markAllNotificationsAsRead(workspaceSlug);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   if (!workspaceSlug) return <></>;
   return (
-    <Header className="my-auto bg-surface-1">
-      <Header.LeftItem>
-        <Breadcrumbs>
-          <Breadcrumbs.Item
-            component={
-              <BreadcrumbLink
-                label={t("notification.label")}
-                icon={<InboxOutline className="h-4 w-4 text-primary" />}
-                disableTooltip
-              />
-            }
-          />
-        </Breadcrumbs>
-      </Header.LeftItem>
-      <Header.RightItem>
-        <NotificationSidebarHeaderOptions workspaceSlug={workspaceSlug} />
-      </Header.RightItem>
-    </Header>
+    <div className="flex items-center justify-between px-5 py-3">
+      <h2 className="text-h5-semibold text-primary">{t("notification.label")}</h2>
+      <div className="flex items-center gap-1">
+        {/* mark all notifications as read*/}
+        <IconButton
+          size="sm"
+          variant="ghost"
+          icon={<Icon icon={MarkAllReadOutline} />}
+          loading={loader === ENotificationLoader.MARK_ALL_AS_READY}
+          aria-label={t("notification.options.mark_all_as_read")}
+          showTooltip={!isMobile}
+          onClick={() => {
+            void handleMarkAllNotificationsAsRead();
+          }}
+        />
+
+        {/* refetch current notifications */}
+        <IconButton
+          size="sm"
+          variant="ghost"
+          icon={<Icon icon={RefreshOutline} />}
+          loading={loader === ENotificationLoader.MUTATION_LOADER}
+          aria-label={t("notification.options.refresh")}
+          showTooltip={!isMobile}
+          onClick={() => {
+            void refreshNotifications();
+          }}
+        />
+      </div>
+    </div>
   );
 });

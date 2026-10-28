@@ -30,7 +30,7 @@ export const NotificationEmptyState = observer(function NotificationEmptyState({
             ? t("workspace_empty_state.inbox_sidebar_all.title")
             : t("workspace_empty_state.inbox_sidebar_mentions.title")
         }
-        className="max-w-56"
+        className="max-w-none px-5"
       />
     </>
   );
