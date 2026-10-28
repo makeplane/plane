@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Work item} other {Work items}}",
     "all": "All Work items",
     "edit": "Edit work item",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# more property} other {# more properties}}",
+      "label_overflow_indicator": "{count, plural, one {+# label} other {+# labels}}"
+    },
     "title": {
       "label": "Work item title",
       "required": "Work item title is required."

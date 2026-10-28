@@ -3,6 +3,10 @@
     "label": "{count, plural, one {სამუშაო ელემენტი} other {სამუშაო ელემენტები}}",
     "all": "ყველა სამუშაო ელემენტი",
     "edit": "სამუშაო ელემენტის რედაქტირება",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {კიდევ # თვისება} other {კიდევ # თვისება}}",
+      "label_overflow_indicator": "{count, plural, one {+# იარლიყი} other {+# იარლიყი}}"
+    },
     "title": {
       "label": "სამუშაო ელემენტის სათაური",
       "required": "სამუშაო ელემენტის სათაური სავალდებულოა."

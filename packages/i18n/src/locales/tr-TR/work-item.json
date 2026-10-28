@@ -3,6 +3,10 @@
     "label": "{count, plural, one {İş öğesi} other {İş öğeleri}}",
     "all": "Tüm İş Öğeleri",
     "edit": "İş öğesini düzenle",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# özellik daha} other {# özellik daha}}",
+      "label_overflow_indicator": "{count, plural, one {+# etiket} other {+# etiket}}"
+    },
     "title": {
       "label": "İş öğesi başlığı",
       "required": "İş öğesi başlığı gereklidir."

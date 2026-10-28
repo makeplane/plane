@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Pracovní položka} few {Pracovní položky} other {Pracovních položek}}",
     "all": "Všechny pracovní položky",
     "edit": "Upravit pracovní položku",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# další vlastnost} few {# další vlastnosti} many {# další vlastnosti} other {# dalších vlastností}}",
+      "label_overflow_indicator": "{count, plural, one {+# štítek} few {+# štítky} many {+# štítku} other {+# štítků}}"
+    },
     "title": {
       "label": "Název pracovní položky",
       "required": "Název pracovní položky je povinný."

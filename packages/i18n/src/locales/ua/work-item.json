@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Робоча одиниця} few {Робочі одиниці} other {Робочих одиниць}}",
     "all": "Усі робочі одиниці",
     "edit": "Редагувати робочу одиницю",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {ще # властивість} few {ще # властивості} many {ще # властивостей} other {ще # властивості}}",
+      "label_overflow_indicator": "{count, plural, one {+# мітка} few {+# мітки} many {+# міток} other {+# мітки}}"
+    },
     "title": {
       "label": "Назва робочої одиниці",
       "required": "Назва робочої одиниці є обов'язковою."

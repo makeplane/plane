@@ -3,6 +3,10 @@
     "label": "{count, plural, one {작업 항목} other {작업 항목}}",
     "all": "모든 작업 항목",
     "edit": "작업 항목 편집",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {속성 #개 더 보기} other {속성 #개 더 보기}}",
+      "label_overflow_indicator": "{count, plural, one {레이블 +#개} other {레이블 +#개}}"
+    },
     "title": {
       "label": "작업 항목 제목",
       "required": "작업 항목 제목이 필요합니다."

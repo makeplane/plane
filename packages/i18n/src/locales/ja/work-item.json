@@ -3,6 +3,10 @@
     "label": "{count, plural, one {作業項目} other {作業項目}}",
     "all": "すべての作業項目",
     "edit": "作業項目を編集",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {他 # 件のプロパティ} other {他 # 件のプロパティ}}",
+      "label_overflow_indicator": "{count, plural, one {+#件のラベル} other {+#件のラベル}}"
+    },
     "title": {
       "label": "作業項目のタイトル",
       "required": "作業項目のタイトルは必須です。"

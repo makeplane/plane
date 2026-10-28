@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Activitate} other {Activități}}",
     "all": "Toate activitățile",
     "edit": "Editează activitatea",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {încă # proprietate} few {încă # proprietăți} other {încă # de proprietăți}}",
+      "label_overflow_indicator": "{count, plural, one {+# etichetă} few {+# etichete} other {+# de etichete}}"
+    },
     "title": {
       "label": "Titlul activității",
       "required": "Titlul activității este obligatoriu."

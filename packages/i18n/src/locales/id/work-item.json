@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Item Kerja} other {Item Kerja}}",
     "all": "Semua Item Kerja",
     "edit": "Edit item kerja",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# properti lainnya} other {# properti lainnya}}",
+      "label_overflow_indicator": "{count, plural, one {+# label} other {+# label}}"
+    },
     "title": {
       "label": "Judul item kerja",
       "required": "Judul item kerja diperlukan."

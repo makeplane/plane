@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Elemento di lavoro} other {Elementi di lavoro}}",
     "all": "Tutti gli elementi di lavoro",
     "edit": "Modifica elemento di lavoro",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# altra proprietà} many {altre # proprietà} other {altre # proprietà}}",
+      "label_overflow_indicator": "{count, plural, one {+# etichetta} many {+# etichette} other {+# etichette}}"
+    },
     "title": {
       "label": "Titolo dell'elemento di lavoro",
       "required": "Il titolo dell'elemento di lavoro è obbligatorio."

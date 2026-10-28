@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Arbeitselement} few {Arbeitselemente} other {Arbeitselemente}}",
     "all": "Alle Arbeitselemente",
     "edit": "Arbeitselement bearbeiten",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# weitere Eigenschaft} other {# weitere Eigenschaften}}",
+      "label_overflow_indicator": "{count, plural, one {+# Label} other {+# Labels}}"
+    },
     "title": {
       "label": "Titel des Arbeitselements",
       "required": "Ein Titel für das Arbeitselement ist erforderlich."

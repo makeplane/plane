@@ -3,6 +3,10 @@
     "label": "{count, plural, one {工作项} other {工作项}}",
     "all": "所有工作项",
     "edit": "编辑工作项",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {另外 # 个属性} other {另外 # 个属性}}",
+      "label_overflow_indicator": "{count, plural, one {+# 个标签} other {+# 个标签}}"
+    },
     "title": {
       "label": "工作项标题",
       "required": "工作项标题为必填项"

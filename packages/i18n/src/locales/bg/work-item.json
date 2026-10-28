@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Работен елемент} other {Работни елементи}}",
     "all": "Всички работни елементи",
     "edit": "Редактирай работния елемент",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {още # свойство} other {още # свойства}}",
+      "label_overflow_indicator": "{count, plural, one {+# етикет} other {+# етикета}}"
+    },
     "title": {
       "label": "Заглавие на работния елемент",
       "required": "Заглавието на работния елемент е задължително."

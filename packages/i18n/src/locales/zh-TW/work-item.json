@@ -3,6 +3,10 @@
     "label": "{count, plural, one {工作事項} other {工作事項}}",
     "all": "所有工作事項",
     "edit": "編輯工作事項",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {另外 # 個屬性} other {另外 # 個屬性}}",
+      "label_overflow_indicator": "{count, plural, one {+# 個標籤} other {+# 個標籤}}"
+    },
     "title": {
       "label": "工作事項標題",
       "required": "工作事項標題為必填。"

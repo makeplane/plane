@@ -3,6 +3,10 @@
     "label": "{count, plural, one {mục công việc} other {mục công việc}}",
     "all": "Tất cả mục công việc",
     "edit": "Chỉnh sửa mục công việc",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {thêm # thuộc tính} other {thêm # thuộc tính}}",
+      "label_overflow_indicator": "{count, plural, one {+# nhãn} other {+# nhãn}}"
+    },
     "title": {
       "label": "Tiêu đề mục công việc",
       "required": "Tiêu đề mục công việc là bắt buộc"
