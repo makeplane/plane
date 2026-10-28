@@ -12,12 +12,14 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import type { TChartData } from "@plane/types";
+import { cn } from "@plane/utils";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 // services
 import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
+import { ANALYTICS_CHART_HEIGHT_CLASSNAME } from "../constants";
 import { ProjectInsightsLoader } from "../loaders";
 
 const RadarChart = lazy(function RadarChart() {
@@ -71,7 +73,7 @@ const ProjectInsights = observer(function ProjectInsights() {
           {projectInsightsData && (
             <Suspense fallback={<ProjectInsightsLoader />}>
               <RadarChart
-                className="h-[350px] w-full text-accent-primary xl:w-3/5"
+                className={cn(ANALYTICS_CHART_HEIGHT_CLASSNAME, "w-full text-accent-primary xl:w-3/5")}
                 data={projectInsightsData}
                 dataKey="key"
                 radars={[

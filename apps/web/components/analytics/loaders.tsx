@@ -5,10 +5,13 @@
  */
 
 import { Loader } from "@plane/blocks/skeleton";
+import { cn } from "@plane/utils";
+// local imports
+import { ANALYTICS_CHART_HEIGHT_CLASSNAME } from "./constants";
 
 export function ProjectInsightsLoader() {
   return (
-    <div className="h-[350px] gap-8 xl:flex">
+    <div className={cn(ANALYTICS_CHART_HEIGHT_CLASSNAME, "gap-8 xl:flex")}>
       <Loader className="h-full w-full xl:w-3/5">
         <Loader.Item height="100%" width="100%" />
       </Loader>
@@ -29,7 +32,7 @@ export function ProjectInsightsLoader() {
 
 export function ChartLoader() {
   return (
-    <Loader className="h-[350px] w-full">
+    <Loader className={cn(ANALYTICS_CHART_HEIGHT_CLASSNAME, "w-full")}>
       <Loader.Item height="100%" width="100%" />
     </Loader>
   );
