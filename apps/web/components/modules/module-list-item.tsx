@@ -13,7 +13,7 @@ import { InfoOutline, TickOutline } from "@makeplane/propel/icons";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { useTranslation } from "@plane/i18n";
-import { CircularProgress } from "@makeplane/propel/components/circular-progress";
+import { ProgressRing } from "@plane/blocks/progress";
 // components
 import { generateQueryParams } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
@@ -79,24 +79,19 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
       itemLink={`/${workspaceSlug?.toString()}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
       onItemClick={handleItemClick}
       prependTitleElement={
-        <div className="relative size-[30px]">
-          <div className="absolute inset-0 flex scale-150 items-center justify-center">
-            <CircularProgress value={progress} size="md" variant="success" aria-label="Module progress" />
-          </div>
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            {completedModuleCheck ? (
-              progress === 100 ? (
-                <TickOutline className="h-3 w-3 text-accent-primary" />
-              ) : (
-                <span className="text-body-xs-regular text-accent-primary">{`!`}</span>
-              )
-            ) : progress === 100 ? (
+        <ProgressRing value={progress} size={30} strokeWidth={3} aria-label={t("common.progress")}>
+          {completedModuleCheck ? (
+            progress === 100 ? (
               <TickOutline className="h-3 w-3 text-accent-primary" />
             ) : (
-              <span className="text-caption-2xs-regular text-tertiary">{`${progress}%`}</span>
-            )}
-          </div>
-        </div>
+              <span className="text-body-xs-regular text-accent-primary">{`!`}</span>
+            )
+          ) : progress === 100 ? (
+            <TickOutline className="h-3 w-3 text-accent-primary" />
+          ) : (
+            <span className="text-caption-2xs-regular text-tertiary">{`${progress}%`}</span>
+          )}
+        </ProgressRing>
       }
       actionableItems={<ModuleListItemAction moduleId={moduleId} moduleDetails={moduleDetails} parentRef={parentRef} />}
       quickActionElement={

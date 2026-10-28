@@ -11,17 +11,23 @@ import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { CalendarOutline, InfoOutline, LeadOutline, WorkItemsOutline } from "@makeplane/propel/icons";
 // plane package imports
-import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
+import {
+  MODULE_STATUS,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  IS_FAVORITE_MENU_OPEN,
+  PROGRESS_STATE_GROUPS_DETAILS,
+} from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { useTranslation } from "@plane/i18n";
-import { LinearProgress } from "@makeplane/propel/components/linear-progress";
 import { setPromiseToast, setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IModule } from "@plane/types";
 import { Card } from "@plane/blocks/card";
 import { FavoriteStar } from "@plane/blocks/common";
+import { SegmentedProgress } from "@plane/blocks/progress";
 import { DateRangeSelect } from "@plane/blocks/property-select";
 import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@plane/utils";
 // components
@@ -176,7 +182,13 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
     : `0 work items`;
 
   const moduleLeadDetails = moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
-  const progressValue = moduleTotalIssues > 0 ? (moduleCompletedIssues / moduleTotalIssues) * 100 : 0;
+  // One segment per state group; the bar normalises the counts, so an empty module shows only the track.
+  const progressSegments = PROGRESS_STATE_GROUPS_DETAILS.map((group) => ({
+    id: group.key,
+    name: t(`workspace_projects.state.${group.key.replace("_issues", "")}`),
+    value: (moduleDetails[group.key as keyof IModule] as number | undefined) ?? 0,
+    color: group.color,
+  }));
 
   return (
     <div className="relative" data-prevent-progress>
@@ -239,13 +251,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
               )}
             </span>
           </div>
-          <LinearProgress
-            value={progressValue}
-            size="md"
-            variant="brand"
-            showValue={false}
-            aria-label="Module progress"
-          />
+          <SegmentedProgress size="lg" data={progressSegments} className="relative z-[1]" />
           {/* Keep date and status selection independent of the stretched card navigation link. */}
           <div
             className="relative z-[1] flex flex-wrap items-center gap-2"

@@ -10,8 +10,8 @@ import { useTheme } from "next-themes";
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
-import { LinearProgress } from "@makeplane/propel/components/linear-progress";
 import type { ICycle } from "@plane/types";
+import { SegmentedProgress } from "@plane/blocks/progress";
 import { Loader } from "@plane/blocks/skeleton";
 // assets
 import darkProgressAsset from "@/app/assets/empty-state/active-cycle/progress-dark.webp?url";
@@ -33,9 +33,12 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
   // plane hooks
   const { t } = useTranslation();
   // derived values
-  const closedIssues = cycle ? cycle.completed_issues + cycle.cancelled_issues : 0;
-  const closableIssues = cycle ? cycle.total_issues - cycle.cancelled_issues : 0;
-  const progressValue = closableIssues > 0 ? (closedIssues / closableIssues) * 100 : 0;
+  const progressSegments = PROGRESS_STATE_GROUPS_DETAILS.map((group) => ({
+    id: group.key,
+    name: t(`workspace_projects.state.${group.key.replace("_issues", "")}`),
+    value: cycle ? ((cycle[group.key as keyof ICycle] as number | undefined) ?? 0) : 0,
+    color: group.color,
+  }));
   const groupedIssues: any = cycle
     ? {
         completed: cycle?.completed_issues,
@@ -60,13 +63,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
           )}
         </div>
         {cycle.total_issues > 0 && (
-          <LinearProgress
-            value={progressValue}
-            size="md"
-            variant="brand"
-            showValue={false}
-            aria-label="Cycle progress"
-          />
+          <SegmentedProgress size="lg" data={progressSegments} aria-label={t("project_cycles.active_cycle.progress")} />
         )}
       </div>
 
