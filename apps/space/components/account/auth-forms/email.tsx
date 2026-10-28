@@ -90,7 +90,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
               }}
               tabIndex={-1}
             >
-              <CloseCircleOutline className="h-10 w-11 px-3 text-11 text-placeholder hover:cursor-pointer" />
+              <CloseCircleOutline className="h-10 w-11 px-3 text-caption-sm-regular text-placeholder hover:cursor-pointer" />
             </button>
           )}
         </div>

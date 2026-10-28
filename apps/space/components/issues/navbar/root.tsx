@@ -28,7 +28,7 @@ export const IssuesNavbarRoot = observer(function IssuesNavbarRoot(props: Props)
       <div className="flex shrink-0 items-center gap-2">
         {project_details ? (
           <span className="grid size-7 shrink-0 place-items-center">
-            <ProjectLogo logo={project_details.logo_props} className="text-16" />
+            <ProjectLogo logo={project_details.logo_props} className="text-body-md-regular" />
           </span>
         ) : (
           <span className="grid size-7 shrink-0 place-items-center rounded-sm uppercase">

@@ -24,8 +24,8 @@ export function InstanceFailureView() {
       <div className="relative w-auto max-w-2xl space-y-8 py-10">
         <div className="relative flex flex-col items-center justify-center space-y-4">
           <img src={instanceImage} alt="Plane instance failure image" />
-          <h3 className="text-20 font-medium text-on-color">Unable to fetch instance details.</h3>
-          <p className="text-center text-14 font-medium">
+          <h3 className="text-h4-medium text-on-color">Unable to fetch instance details.</h3>
+          <p className="text-center text-body-sm-medium">
             We were unable to fetch the details of the instance. <br />
             Fret not, it might just be a connectivity work items.
           </p>

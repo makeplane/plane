@@ -79,18 +79,6 @@ export const FilterSelection = observer(function FilterSelection(props: Props) {
             />
           </div>
         )}
-
-        {/* labels */}
-        {/* {isFilterEnabled("labels") && (
-          <div className="py-2">
-            <FilterLabels
-              appliedFilters={filters.labels ?? null}
-              handleUpdate={(val) => handleFilters("labels", val)}
-              labels={labels}
-              searchQuery={filtersSearchQuery}
-            />
-          </div>
-        )} */}
       </div>
     </div>
   );
