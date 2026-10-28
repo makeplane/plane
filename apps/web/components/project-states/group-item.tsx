@@ -59,10 +59,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
   const isCreateDisabled = !isEditable || createState;
 
   return (
-    <div
-      className={cn("rounded-sm border border-subtle bg-surface-2 transition-all", groupItemClassName)}
-      ref={dropElementRef}
-    >
+    <div className={cn("rounded-lg border border-subtle bg-layer-1", groupItemClassName)} ref={dropElementRef}>
       <Collapsible
         open={currentStateExpanded}
         onOpenChange={(open) => (open ? handleExpand(groupKey) : handleGroupCollapse(groupKey))}
@@ -71,7 +68,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
           <Icon
             icon={
               <ChevronDownOutline
-                className={cn("transition-transform", {
+                className={cn("size-4 shrink-0 transition-transform", {
                   "rotate-0": currentStateExpanded,
                   "-rotate-90": !currentStateExpanded,
                 })}
@@ -81,8 +78,8 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
         }
         trigger={
           <span className="flex w-full items-center gap-1">
-            <StateGroupIcon stateGroup={groupKey} size={EIconSize.XL} className="shrink-0" />
-            <span className="px-1 text-body-sm-medium text-secondary capitalize">{groupKey}</span>
+            <StateGroupIcon stateGroup={groupKey} size={EIconSize.LG} className="shrink-0" />
+            <span className="text-body-sm-medium text-primary capitalize">{groupKey}</span>
           </span>
         }
         trailing={
@@ -98,11 +95,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
                 setCreateState(true);
               }
             }}
-            icon={
-              <Icon
-                icon={<AddOutline className={isCreateDisabled ? "text-placeholder" : "text-accent-primary/80"} />}
-              />
-            }
+            icon={<Icon icon={AddOutline} />}
           />
         }
       >
@@ -113,7 +106,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
           </div>
         )}
 
-        <div id="group-droppable-container">
+        <div id="group-droppable-container" className="space-y-1.5">
           <StateList
             groupKey={groupKey}
             groupedStates={groupedStates}
@@ -128,7 +121,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
       {/* Rendered outside the collapsible panel (as in legacy) so the create form, and whatever the user typed
           into it, survives collapsing the group — the panel unmounts its children when closed. */}
       {isEditable && createState && (
-        <div className="mt-1">
+        <div className="my-2">
           <StateCreate
             groupKey={groupKey}
             handleClose={() => setCreateState(false)}
