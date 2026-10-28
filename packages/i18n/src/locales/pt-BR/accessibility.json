@@ -45,6 +45,9 @@
       "open": "Abrir seletor de cor",
       "swatches": "Cores predefinidas",
       "hex_input": "Cor hexadecimal"
+    },
+    "project_board": {
+      "collapse_group": "Recolher grupo"
     }
   }
 }

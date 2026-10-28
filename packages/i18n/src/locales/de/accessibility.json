@@ -45,6 +45,9 @@
       "open": "Farbwähler öffnen",
       "swatches": "Voreingestellte Farben",
       "hex_input": "Hex-Farbe"
+    },
+    "project_board": {
+      "collapse_group": "Gruppe einklappen"
     }
   }
 }

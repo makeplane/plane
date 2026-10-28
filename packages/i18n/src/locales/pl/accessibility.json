@@ -45,6 +45,9 @@
       "open": "Otwórz próbnik kolorów",
       "swatches": "Kolory predefiniowane",
       "hex_input": "Kolor szesnastkowy"
+    },
+    "project_board": {
+      "collapse_group": "Zwiń grupę"
     }
   }
 }

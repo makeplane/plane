@@ -45,6 +45,9 @@
       "open": "打开颜色选择器",
       "swatches": "预设颜色",
       "hex_input": "十六进制颜色"
+    },
+    "project_board": {
+      "collapse_group": "折叠分组"
     }
   }
 }

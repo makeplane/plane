@@ -45,6 +45,9 @@
       "open": "Otevřít výběr barvy",
       "swatches": "Přednastavené barvy",
       "hex_input": "Hexadecimální barva"
+    },
+    "project_board": {
+      "collapse_group": "Sbalit skupinu"
     }
   }
 }

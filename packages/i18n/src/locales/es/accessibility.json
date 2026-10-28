@@ -45,6 +45,9 @@
       "open": "Abrir selector de color",
       "swatches": "Colores predefinidos",
       "hex_input": "Color hexadecimal"
+    },
+    "project_board": {
+      "collapse_group": "Contraer grupo"
     }
   }
 }

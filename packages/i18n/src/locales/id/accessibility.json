@@ -45,6 +45,9 @@
       "open": "Buka pemilih warna",
       "swatches": "Warna preset",
       "hex_input": "Warna heksadesimal"
+    },
+    "project_board": {
+      "collapse_group": "Ciutkan grup"
     }
   }
 }

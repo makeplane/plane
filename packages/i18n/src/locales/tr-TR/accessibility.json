@@ -45,6 +45,9 @@
       "open": "Renk seçiciyi aç",
       "swatches": "Hazır renkler",
       "hex_input": "Hex renk"
+    },
+    "project_board": {
+      "collapse_group": "Grubu daralt"
     }
   }
 }

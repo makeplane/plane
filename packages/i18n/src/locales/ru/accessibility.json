@@ -45,6 +45,9 @@
       "open": "Открыть выбор цвета",
       "swatches": "Готовые цвета",
       "hex_input": "Цвет в HEX"
+    },
+    "project_board": {
+      "collapse_group": "Свернуть группу"
     }
   }
 }

@@ -2,6 +2,13 @@
   "module": {
     "label": "{count, plural, one {Modül} other {Modüller}}",
     "no_module": "Modül yok",
-    "select": "Modül ekle"
+    "select": "Modül ekle",
+    "details_drawer": {
+      "progress": {
+        "done": "{scope, plural, one {# iş öğesinden} other {# iş öğesinden}} {completed} tanesi tamamlandı",
+        "points_done": "{scope, plural, one {# puandan} other {# puandan}} {completed} puan tamamlandı",
+        "empty": "İlerlemeyi takip etmek için modüle iş öğeleri ekleyin."
+      }
+    }
   }
 }

@@ -45,6 +45,9 @@
       "open": "開啟色彩選擇器",
       "swatches": "預設色彩",
       "hex_input": "十六進位色彩"
+    },
+    "project_board": {
+      "collapse_group": "收合群組"
     }
   }
 }

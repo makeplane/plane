@@ -45,6 +45,9 @@
       "open": "カラーピッカーを開く",
       "swatches": "プリセットカラー",
       "hex_input": "16 進数カラー"
+    },
+    "project_board": {
+      "collapse_group": "グループを折りたたむ"
     }
   }
 }

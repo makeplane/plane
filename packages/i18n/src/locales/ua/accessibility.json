@@ -45,6 +45,9 @@
       "open": "Відкрити вибір кольору",
       "swatches": "Готові кольори",
       "hex_input": "Колір у HEX"
+    },
+    "project_board": {
+      "collapse_group": "Згорнути групу"
     }
   }
 }

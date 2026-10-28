@@ -45,6 +45,9 @@
       "open": "Kleurkiezer openen",
       "swatches": "Vooraf ingestelde kleuren",
       "hex_input": "Hexkleur"
+    },
+    "project_board": {
+      "collapse_group": "Groep samenvouwen"
     }
   }
 }

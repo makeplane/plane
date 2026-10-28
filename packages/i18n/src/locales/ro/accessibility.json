@@ -45,6 +45,9 @@
       "open": "Deschide selectorul de culoare",
       "swatches": "Culori predefinite",
       "hex_input": "Culoare hexazecimală"
+    },
+    "project_board": {
+      "collapse_group": "Restrângeți grupul"
     }
   }
 }

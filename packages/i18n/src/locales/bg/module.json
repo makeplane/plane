@@ -2,6 +2,13 @@
   "module": {
     "label": "{count, plural, one {Модул} other {Модули}}",
     "no_module": "Без модул",
-    "select": "Добави модули"
+    "select": "Добави модули",
+    "details_drawer": {
+      "progress": {
+        "done": "Завършени {completed} от {scope, plural, one {# работен елемент} other {# работни елемента}}",
+        "points_done": "Завършени {completed} от {scope, plural, one {# точка} other {# точки}}",
+        "empty": "Добавете работни елементи към модула, за да следите напредъка."
+      }
+    }
   }
 }

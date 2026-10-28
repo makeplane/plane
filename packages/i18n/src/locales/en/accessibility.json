@@ -45,6 +45,9 @@
       "open": "Open color picker",
       "swatches": "Preset colors",
       "hex_input": "Hex color"
+    },
+    "project_board": {
+      "collapse_group": "Collapse group"
     }
   }
 }

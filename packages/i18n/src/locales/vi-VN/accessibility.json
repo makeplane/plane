@@ -45,6 +45,9 @@
       "open": "Mở bộ chọn màu",
       "swatches": "Màu có sẵn",
       "hex_input": "Màu hệ hex"
+    },
+    "project_board": {
+      "collapse_group": "Thu gọn nhóm"
     }
   }
 }
