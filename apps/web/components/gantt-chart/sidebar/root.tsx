@@ -56,7 +56,7 @@ export const GanttChartSidebar = observer(function GanttChartSidebar(props: Prop
     <Row
       // DO NOT REMOVE THE ID
       id="gantt-sidebar"
-      className="sticky left-0 z-10 h-max min-h-full flex-shrink-0 border-r-[0.5px] border-subtle-1 bg-surface-1"
+      className="sticky left-0 z-10 h-max min-h-full flex-shrink-0 border-r border-subtle-1 bg-surface-1"
       style={{
         width: `${SIDEBAR_WIDTH}px`,
       }}
@@ -70,7 +70,7 @@ export const GanttChartSidebar = observer(function GanttChartSidebar(props: Prop
       >
         <div className={cn("flex items-center gap-2")}>
           {enableSelection && (
-            <div className="absolute left-1 flex w-3.5 flex-shrink-0 items-center">
+            <div className="absolute left-0.5 flex w-4 flex-shrink-0 items-center">
               <MultipleSelectGroupAction
                 className={cn(
                   "pointer-events-none size-3.5 opacity-0 !outline-none group-hover/list-header:pointer-events-auto group-hover/list-header:opacity-100",

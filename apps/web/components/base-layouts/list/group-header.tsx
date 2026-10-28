@@ -14,7 +14,7 @@ export function GroupHeader({ group, itemCount, onToggleGroup }: IGroupHeaderPro
     >
       {group.icon}
       <span>{group.name}</span>
-      <span className="text-caption-sm-regular text-tertiary">{itemCount}</span>
+      <span className="text-caption-sm-medium text-tertiary">{itemCount}</span>
     </button>
   );
 }

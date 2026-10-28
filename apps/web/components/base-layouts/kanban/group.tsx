@@ -49,7 +49,7 @@ export const BaseKanbanGroup = observer(function BaseKanbanGroup<T extends IBase
       )}
     >
       {/* Group Header */}
-      <div className="sticky top-0 z-[2] w-full flex-shrink-0 cursor-pointer px-1 py-2">
+      <div className="sticky top-0 z-[2] w-full flex-shrink-0 cursor-pointer bg-layer-1 px-1 py-1">
         {renderGroupHeader ? (
           renderGroupHeader({ group, itemCount: itemIds.length, isCollapsed, onToggleGroup })
         ) : (
