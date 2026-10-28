@@ -296,7 +296,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
           {!issue?.tempId ? (
             <>
               <IssueProperties
-                className={`relative flex min-w-0 flex-wrap ${isSidebarCollapsed ? "md:flex-shrink-0 md:flex-grow md:flex-nowrap md:overflow-hidden" : "lg:flex-shrink-0 lg:flex-grow lg:flex-nowrap lg:overflow-hidden"} items-center gap-2 whitespace-nowrap`}
+                className={`relative flex min-w-0 flex-wrap ${isSidebarCollapsed ? "md:-m-0.5 md:flex-shrink-0 md:flex-grow md:flex-nowrap md:overflow-hidden md:p-0.5" : "lg:-m-0.5 lg:flex-shrink-0 lg:flex-grow lg:flex-nowrap lg:overflow-hidden lg:p-0.5"} items-center gap-2 whitespace-nowrap`}
                 issue={issue}
                 isReadOnly={!canEditIssueProperties}
                 updateIssue={updateIssue}
