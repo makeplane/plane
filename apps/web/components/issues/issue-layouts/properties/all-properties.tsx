@@ -10,24 +10,23 @@ import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { AttachOutline, DueDateOutline, LinkOutline, StartDateOutline, ViewsOutline } from "@makeplane/propel/icons";
+import {
+  AttachOutline,
+  DueDateOutline,
+  LinkOutline,
+  StartDateOutline,
+  SubWorkItemsOutline,
+} from "@makeplane/propel/icons";
 // i18n
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Icon } from "@makeplane/propel/components/icon";
 import { Pill } from "@makeplane/propel/components/pill";
-import { Pill as PillElement, PillLabel } from "@makeplane/propel/elements/pill";
 import type { DateRangeValue } from "@plane/blocks/property-select";
 import { DateRangeSelect, DateSelect } from "@plane/blocks/property-select";
 import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
-import {
-  cn,
-  getDate,
-  renderFormattedPayloadDate,
-  generateWorkItemLink,
-  shouldHighlightIssueDueDate,
-} from "@plane/utils";
+import { getDate, renderFormattedPayloadDate, generateWorkItemLink, getIssueDueDateClassName } from "@plane/utils";
 // components
 import { CycleSelect } from "@/components/dropdowns/cycle/cycle-select";
 import { EstimateSelect } from "@/components/dropdowns/estimate/estimate-select";
@@ -255,9 +254,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             icon={<StartDateOutline />}
             clearable
             mergeDates
-            className={cn({
-              "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
-            })}
+            className={getIssueDueDateClassName(issue.target_date, stateDetails?.group)}
             disabled={isReadOnly}
             showTooltip
             tooltipHeading={t("project_cycles.date_range")}
@@ -305,9 +302,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             minDate={minDate}
             placeholder={t("common.order_by.due_date")}
             icon={<DueDateOutline />}
-            className={cn({
-              "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
-            })}
+            className={getIssueDueDateClassName(issue.target_date, stateDetails?.group)}
             clearable
             disabled={isReadOnly}
             showTooltip
@@ -405,7 +400,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
               size="sm"
               aria-label={`${t("common.sub_work_items")}: ${subIssueCount}`}
               label={`${subIssueCount}`}
-              startIcon={<Icon icon={ViewsOutline} />}
+              startIcon={<Icon icon={SubWorkItemsOutline} />}
               onFocus={handleEventPropagation}
               onClick={(e) => {
                 e.stopPropagation();
@@ -424,13 +419,18 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         shouldRenderProperty={(properties) => !!properties.attachment_count && !!issue.attachment_count}
       >
         <Tooltip label={`${t("common.attachments")}: ${issue.attachment_count}`} disabled={isMobile}>
-          {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
-          <div onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-            <PillElement size="sm" variant="outline" render={<span />}>
-              <Icon icon={AttachOutline} />
-              <PillLabel>{issue.attachment_count}</PillLabel>
-            </PillElement>
-          </div>
+          <Pill
+            size="sm"
+            aria-label={`${t("common.attachments")}: ${issue.attachment_count}`}
+            label={`${issue.attachment_count}`}
+            startIcon={<Icon icon={AttachOutline} />}
+            onFocus={handleEventPropagation}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              router.push(workItemLink);
+            }}
+          />
         </Tooltip>
       </WithDisplayPropertiesHOC>
 
@@ -441,13 +441,18 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         shouldRenderProperty={(properties) => !!properties.link && !!issue.link_count}
       >
         <Tooltip label={`${t("common.links")}: ${issue.link_count}`} disabled={isMobile}>
-          {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
-          <div onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-            <PillElement size="sm" variant="outline" render={<span />}>
-              <Icon icon={LinkOutline} />
-              <PillLabel>{issue.link_count}</PillLabel>
-            </PillElement>
-          </div>
+          <Pill
+            size="sm"
+            aria-label={`${t("common.links")}: ${issue.link_count}`}
+            label={`${issue.link_count}`}
+            startIcon={<Icon icon={LinkOutline} />}
+            onFocus={handleEventPropagation}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              router.push(workItemLink);
+            }}
+          />
         </Tooltip>
       </WithDisplayPropertiesHOC>
 

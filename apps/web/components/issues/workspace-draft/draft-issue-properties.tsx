@@ -14,7 +14,7 @@ import { DateSelect } from "@plane/blocks/property-select";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { TIssuePriorities, TWorkspaceDraftIssue } from "@plane/types";
-import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
+import { getDate, getIssueDueDateClassName, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { CycleSelect } from "@/components/dropdowns/cycle/cycle-select";
 import { EstimateSelect } from "@/components/dropdowns/estimate/estimate-select";
@@ -152,14 +152,14 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
           value={issue.state_id}
           onChange={handleState}
           projectId={issue.project_id}
-          variant="pill-sm"
+          variant="pill-md"
           tooltip
         />
       </div>
 
       {/* priority */}
       <div role="presentation" onClick={handleEventPropagation}>
-        <PrioritySelect value={issue?.priority} onChange={handlePriority} variant="pill-sm" tooltip />
+        <PrioritySelect value={issue?.priority} onChange={handlePriority} variant="pill-md" tooltip />
       </div>
 
       {/* label */}
@@ -185,7 +185,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
           showTooltip
           tooltipHeading={t("common.order_by.start_date")}
           weekStartsOn={userProfile?.start_of_the_week}
-          variant="pill-sm"
+          variant="pill-md"
         />
       </div>
 
@@ -197,14 +197,12 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
           minDate={minDate}
           placeholder={t("common.order_by.due_date")}
           icon={<DueDateOutline />}
-          className={cn({
-            "text-danger-primary": shouldHighlightIssueDueDate(issue?.target_date || null, stateDetails?.group),
-          })}
+          className={getIssueDueDateClassName(issue?.target_date || null, stateDetails?.group)}
           clearable
           showTooltip
           tooltipHeading={t("common.order_by.due_date")}
           weekStartsOn={userProfile?.start_of_the_week}
-          variant="pill-sm"
+          variant="pill-md"
         />
       </div>
 
@@ -215,7 +213,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
           value={issue?.assignee_ids ?? []}
           onChange={handleAssignee}
           multiple
-          variant={issue.assignee_ids?.length ? "avatar-group-sm" : "pill-sm"}
+          variant={issue.assignee_ids?.length ? "avatar-group-md" : "pill-md"}
           placeholder={t("common.assignees")}
           tooltip={{ heading: t("common.assignees") }}
         />
@@ -229,7 +227,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
             projectId={issue?.project_id}
             value={issue?.module_ids ?? []}
             onChange={handleModule}
-            variant="pill-sm"
+            variant="pill-md"
             tooltip
           />
         </div>
@@ -242,7 +240,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
             projectId={issue?.project_id}
             value={issue?.cycle_id || null}
             onChange={handleCycle}
-            variant="pill-sm"
+            variant="pill-md"
             tooltip
           />
         </div>
@@ -255,7 +253,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
             value={issue.estimate_point ?? undefined}
             onChange={handleEstimate}
             projectId={issue.project_id}
-            variant="pill-sm"
+            variant="pill-md"
             tooltip
           />
         </div>

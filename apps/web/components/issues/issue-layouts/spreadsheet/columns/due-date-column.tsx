@@ -11,7 +11,7 @@ import { DateSelect } from "@plane/blocks/property-select";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { TIssue } from "@plane/types";
-import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
+import { cn, getDate, renderFormattedPayloadDate, getIssueDueDateClassName } from "@plane/utils";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserProfile } from "@/hooks/store/user";
@@ -54,9 +54,7 @@ export const SpreadsheetDueDateColumn = observer(function SpreadsheetDueDateColu
         icon={<DueDateOutline />}
         clearable
         // `.clickable` is what the table's keyboard navigation clicks on Enter / Space in a focused cell.
-        className={cn("clickable h-full", {
-          "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
-        })}
+        className={cn("clickable h-full", getIssueDueDateClassName(issue.target_date, stateDetails?.group))}
         weekStartsOn={userProfile?.start_of_the_week}
         onClose={onClose}
         variant="table-cell"

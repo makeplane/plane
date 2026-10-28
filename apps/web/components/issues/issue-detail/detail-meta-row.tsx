@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { DueDateOutline, StartDateOutline } from "@makeplane/propel/icons";
 import { DateSelect } from "@plane/blocks/property-select";
 import { useTranslation } from "@plane/i18n";
-import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
+import { getDate, getIssueDueDateClassName, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { MemberSelect } from "@/components/dropdowns/member/member-select";
 import { PrioritySelect } from "@/components/dropdowns/priority/priority-select";
@@ -138,9 +138,7 @@ export const IssueDetailMetaRow = observer(function IssueDetailMetaRow(props: Pr
             minDate={minDate}
             disabled={disabled}
             clearable
-            className={cn({
-              "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
-            })}
+            className={getIssueDueDateClassName(issue.target_date, stateDetails?.group)}
             icon={<DueDateOutline />}
             weekStartsOn={userProfile?.start_of_the_week}
             variant="select-ghost-lg"

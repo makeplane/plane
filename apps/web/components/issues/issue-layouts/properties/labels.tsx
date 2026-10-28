@@ -72,7 +72,7 @@ export const IssuePropertyLabels = observer(function IssuePropertyLabels(props: 
   return (
     <div
       role="presentation"
-      className={cn(fullHeight ? "h-full" : "h-5", { "w-full": fullWidth }, className)}
+      className={cn(fullHeight ? "h-full" : "h-6", { "w-full": fullWidth }, className)}
       onClick={swallowEvent}
     >
       <LabelSelect
@@ -82,7 +82,7 @@ export const IssuePropertyLabels = observer(function IssuePropertyLabels(props: 
         disabled={disabled}
         placeholder={placeholderText}
         onClose={onClose}
-        variant={isTableCell ? "table-cell" : "pill-sm"}
+        variant={isTableCell ? "table-cell" : "pill-md"}
         // `.clickable` is what the spreadsheet's keyboard navigation clicks on Enter / Space in a focused cell.
         className={isTableCell ? "clickable" : undefined}
         tooltip
