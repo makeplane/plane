@@ -92,7 +92,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
   );
 
   return cycleId ? (
-    <div className="col-span-1 flex min-h-[17rem] flex-col gap-4 overflow-hidden rounded-lg border border-subtle bg-surface-1 p-4 lg:col-span-2 xl:col-span-1">
+    <div className="col-span-1 flex min-h-68 flex-col gap-4 overflow-hidden rounded-lg border border-subtle bg-surface-1 p-4 lg:col-span-2 xl:col-span-1">
       <Tabs
         variant="contained"
         stretch="full"
@@ -122,7 +122,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                       return (
                         <div
                           key={issue.id}
-                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-md p-1 hover:bg-surface-2"
+                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-md p-1 hover:bg-layer-1"
                           onClick={() => {
                             if (issue.id) {
                               setPeekIssue({
@@ -156,7 +156,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                             />
                             {issue.target_date && (
                               <Tooltip label={`Target Date: ${renderFormattedDate(issue.target_date) ?? ""}`}>
-                                <div className="flex h-full cursor-pointer items-center gap-1.5 truncate rounded-sm bg-layer-1 px-2 py-0.5 text-caption-sm-regular group-hover:bg-surface-1">
+                                <div className="flex h-full cursor-pointer items-center gap-1.5 truncate rounded-sm bg-layer-1 px-2 py-0.5 text-caption-md-regular group-hover:bg-layer-1-hover">
                                   <CompletedAtOutline className="h-3 w-3 flex-shrink-0" />
                                   <span className="truncate text-caption-sm-regular">
                                     {renderFormattedDateWithoutYear(issue.target_date)}
@@ -301,7 +301,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
       </Tabs>
     </div>
   ) : (
-    <Loader className="col-span-1 flex min-h-[17rem] flex-col gap-4 overflow-hidden bg-surface-1 lg:col-span-2 xl:col-span-1">
+    <Loader className="col-span-1 flex min-h-68 flex-col gap-4 overflow-hidden bg-surface-1 lg:col-span-2 xl:col-span-1">
       <Loader.Item width="100%" height="17rem" />
     </Loader>
   );
