@@ -10,10 +10,10 @@ import type { TIdentifierTextProps, TIdentifierTextVariant, TIssueIdentifierSize
 import { cn } from "@plane/utils";
 
 const SIZE_MAP: Record<TIssueIdentifierSize, string> = {
-  xs: "text-caption-sm-regular",
-  sm: "text-caption-sm-medium",
+  xs: "text-caption-md-medium",
+  sm: "text-caption-md-medium",
   md: "text-caption-md-medium",
-  lg: "text-caption-lg-medium",
+  lg: "text-caption-md-medium",
 };
 
 const VARIANT_MAP: Record<TIdentifierTextVariant, string> = {

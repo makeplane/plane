@@ -110,8 +110,9 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
         {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
         <div
           className={cn("absolute -top-1 right-0", {
-            "hidden group-hover/kanban-block:block": !isMobile,
-            "!block": isMenuActive,
+            "invisible group-focus-within/kanban-block:visible group-hover/kanban-block:visible has-[[data-popup-open]]:visible":
+              !isMobile,
+            "!visible": isMenuActive,
           })}
           onClick={handleEventPropagation}
         >
