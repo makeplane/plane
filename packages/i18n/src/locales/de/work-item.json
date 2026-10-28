@@ -195,6 +195,7 @@
     },
     "archived_banner": "Dieses Arbeitselement ist archiviert. Zum Bearbeiten muss es wiederhergestellt werden.",
     "updated_time_ago": "Aktualisiert {time}",
+    "assignee_count": "{count, plural, one {# zugewiesene Person} other {# zugewiesene Personen}}",
     "relation": {
       "relates_to": "Steht in Beziehung zu",
       "duplicate": "Duplikat",

@@ -131,4 +131,32 @@ describe("MemberSelect suspended members", () => {
     expect(avatarRow?.parentElement).toBe(button);
     expect(button.classList.contains("inline-flex")).toBe(true);
   });
+
+  it("uses the caller's label for a multi-member selection and keeps names for a single member", () => {
+    const multipleLabel = (count: number) => `${count} assignees`;
+    const { rerender } = render(
+      <MemberSelect
+        multiple
+        getValues={getValues}
+        value={[ADA, CY]}
+        onChange={vi.fn()}
+        variant="select-ghost-lg"
+        multipleLabel={multipleLabel}
+      />
+    );
+    expect(screen.getByText("2 assignees")).toBeTruthy();
+
+    rerender(
+      <MemberSelect
+        multiple
+        getValues={getValues}
+        value={[ADA]}
+        onChange={vi.fn()}
+        variant="select-ghost-lg"
+        multipleLabel={multipleLabel}
+      />
+    );
+    expect(screen.queryByText("1 assignees")).toBeNull();
+    expect(screen.getByText("Ada")).toBeTruthy();
+  });
 });

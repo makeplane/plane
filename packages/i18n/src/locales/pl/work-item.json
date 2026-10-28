@@ -195,6 +195,7 @@
     },
     "archived_banner": "Ten element pracy jest zarchiwizowany. Aby wprowadzić zmiany, należy go przywrócić.",
     "updated_time_ago": "Zaktualizowano {time}",
+    "assignee_count": "{count, plural, one {# przypisana osoba} few {# przypisane osoby} many {# przypisanych osób} other {# przypisanej osoby}}",
     "relation": {
       "relates_to": "Powiązany z",
       "duplicate": "Duplikat",

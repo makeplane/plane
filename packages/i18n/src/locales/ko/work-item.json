@@ -195,6 +195,7 @@
     },
     "archived_banner": "이 작업 항목은 보관되었습니다. 변경하려면 복원하세요.",
     "updated_time_ago": "{time} 업데이트됨",
+    "assignee_count": "{count, plural, one {담당자 #명} other {담당자 #명}}",
     "relation": {
       "relates_to": "관련 있음",
       "duplicate": "중복",

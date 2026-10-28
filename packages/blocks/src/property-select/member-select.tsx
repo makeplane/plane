@@ -116,6 +116,8 @@ type MemberSelectCommonProps = {
   filterOption?: (member: MemberOption) => boolean;
   /** Badge text on a {@link MemberOption.suspended} row. Defaults to "Suspended". */
   suspendedLabel?: string;
+  /** Trigger text when more than one member is selected (e.g. "3 assignees"), in place of the default summary. */
+  multipleLabel?: (count: number) => string;
 };
 
 export type MemberSelectProps = MemberSelectCommonProps &
@@ -130,9 +132,15 @@ export type MemberSelectProps = MemberSelectCommonProps &
       }
   );
 
-function triggerLabel(selected: MemberOption[], showCountOnMultiple: boolean, placeholder?: string): string {
+function triggerLabel(
+  selected: MemberOption[],
+  showCountOnMultiple: boolean,
+  placeholder?: string,
+  multipleLabel?: (count: number) => string
+): string {
   if (selected.length === 0) return placeholder ?? "";
   if (selected.length === 1) return selected[0]?.display_name ?? "";
+  if (multipleLabel) return multipleLabel(selected.length);
   if (showCountOnMultiple) return `${selected.length} members`;
   // Join-names variant: only the first few selected are resolved (the rest are count-only stubs), so list
   // those names and summarise the remainder rather than rendering blanks for the unresolved ids.
@@ -167,6 +175,7 @@ export function MemberSelect(props: MemberSelectProps) {
     testId,
     tabIndex,
     suspendedLabel = "Suspended",
+    multipleLabel,
   } = props;
   const clearable = !props.multiple && !!props.clearable;
 
@@ -266,7 +275,7 @@ export function MemberSelect(props: MemberSelectProps) {
       prependIcon={(members) =>
         members.length === 0 ? props.multiple ? <AssigneeOutline /> : <UserAltOutline /> : undefined
       }
-      label={(members) => triggerLabel(members, showCountOnMultiple, placeholder)}
+      label={(members) => triggerLabel(members, showCountOnMultiple, placeholder, multipleLabel)}
       tooltip={tooltip}
     >
       {(members) => (
@@ -286,7 +295,7 @@ export function MemberSelect(props: MemberSelectProps) {
           )}
           {showLabel && (members.length > 0 || !!placeholder) && (
             <span className="min-w-0 grow truncate text-left">
-              {triggerLabel(members, showCountOnMultiple, placeholder)}
+              {triggerLabel(members, showCountOnMultiple, placeholder, multipleLabel)}
             </span>
           )}
         </>

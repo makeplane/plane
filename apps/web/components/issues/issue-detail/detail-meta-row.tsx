@@ -95,7 +95,7 @@ export const IssueDetailMetaRow = observer(function IssueDetailMetaRow(props: Pr
             placeholder={t("issue.add.assignee")}
             multiple
             variant="select-ghost-lg"
-            showLabel={(issue.assignee_ids?.length ?? 0) <= 1}
+            multipleLabel={(count) => t("issue.assignee_count", { count })}
             tooltip={{ heading: t("common.assignees") }}
           />
         </div>

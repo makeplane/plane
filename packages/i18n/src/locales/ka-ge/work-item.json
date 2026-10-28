@@ -195,6 +195,7 @@
     },
     "archived_banner": "ეს სამუშაო ელემენტი დაარქივებულია. ცვლილებების შესატანად აღადგინეთ იგი.",
     "updated_time_ago": "განახლდა {time}",
+    "assignee_count": "{count, plural, one {# მინიჭებული} other {# მინიჭებული}}",
     "relation": {
       "relates_to": "დაკავშირებულია",
       "duplicate": "დუბლიკატია",

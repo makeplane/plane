@@ -195,6 +195,7 @@
     },
     "archived_banner": "Bu iş öğesi arşivlendi. Değişiklik yapmak için geri yükleyin.",
     "updated_time_ago": "{time} güncellendi",
+    "assignee_count": "{count, plural, one {# atanan} other {# atanan}}",
     "relation": {
       "relates_to": "İlişkili",
       "duplicate": "Kopyası",

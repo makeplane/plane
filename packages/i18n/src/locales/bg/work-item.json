@@ -195,6 +195,7 @@
     },
     "archived_banner": "Този работен елемент е архивиран. Възстановете го, за да правите промени.",
     "updated_time_ago": "Обновено {time}",
+    "assignee_count": "{count, plural, one {# изпълнител} other {# изпълнителя}}",
     "relation": {
       "relates_to": "Свързан с",
       "duplicate": "Дубликат на",

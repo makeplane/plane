@@ -195,6 +195,7 @@
     },
     "archived_banner": "Cet élément de travail est archivé. Restaurez-le pour le modifier.",
     "updated_time_ago": "Mis à jour {time}",
+    "assignee_count": "{count, plural, one {# acteur} many {# acteurs} other {# acteurs}}",
     "relation": {
       "relates_to": "En relation avec",
       "duplicate": "Doublon de",

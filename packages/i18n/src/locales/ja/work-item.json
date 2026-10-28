@@ -195,6 +195,7 @@
     },
     "archived_banner": "この作業項目はアーカイブされています。変更するには復元してください。",
     "updated_time_ago": "{time}に更新",
+    "assignee_count": "{count, plural, one {担当者 #人} other {担当者 #人}}",
     "relation": {
       "relates_to": "関連する",
       "duplicate": "重複する",

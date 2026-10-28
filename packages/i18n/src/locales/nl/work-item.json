@@ -195,6 +195,7 @@
     },
     "archived_banner": "Dit werkitem is gearchiveerd. Herstel het om wijzigingen aan te brengen.",
     "updated_time_ago": "Bijgewerkt {time}",
+    "assignee_count": "{count, plural, one {# toegewezene} other {# toegewezenen}}",
     "relation": {
       "relates_to": "Gerelateerd aan",
       "duplicate": "Duplicaat van",
