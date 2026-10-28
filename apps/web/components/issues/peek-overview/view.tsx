@@ -174,28 +174,28 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
               {/* content */}
               <div className="vertical-scrollbar relative scrollbar-md h-full w-full overflow-hidden overflow-y-auto">
                 {["side-peek", "modal"].includes(peekMode) ? (
-                  <div className="relative flex flex-col gap-3 space-y-3 px-8 py-5">
-                    <PeekOverviewIssueDetails
-                      editorRef={editorRef}
-                      workspaceSlug={workspaceSlug}
-                      projectId={projectId}
-                      issueId={issueId}
-                      issueOperations={issueOperations}
-                      disabled={disabled}
-                      isArchived={is_archived}
-                      isSubmitting={isSubmitting}
-                      setIsSubmitting={(value) => setIsSubmitting(value)}
-                    />
-
-                    <div className="py-2">
-                      <IssueDetailWidgets
+                  <div className="relative flex flex-col px-8 py-5">
+                    <div className="pb-6">
+                      <PeekOverviewIssueDetails
+                        editorRef={editorRef}
                         workspaceSlug={workspaceSlug}
                         projectId={projectId}
                         issueId={issueId}
-                        disabled={disabled || is_archived}
-                        issueServiceType={EIssueServiceType.ISSUES}
+                        issueOperations={issueOperations}
+                        disabled={disabled}
+                        isArchived={is_archived}
+                        isSubmitting={isSubmitting}
+                        setIsSubmitting={(value) => setIsSubmitting(value)}
                       />
                     </div>
+
+                    <IssueDetailWidgets
+                      workspaceSlug={workspaceSlug}
+                      projectId={projectId}
+                      issueId={issueId}
+                      disabled={disabled || is_archived}
+                      issueServiceType={EIssueServiceType.ISSUES}
+                    />
 
                     <PeekOverviewProperties
                       workspaceSlug={workspaceSlug}
@@ -213,8 +213,8 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                     />
                   </div>
                 ) : (
-                  <div className="vertical-scrollbar flex h-full w-full overflow-auto">
-                    <div className="relative h-full w-full space-y-6 overflow-auto p-4 py-5">
+                  <div className="vertical-scrollbar scrollbar-sm flex h-full w-full overflow-auto">
+                    <div className="relative h-full min-w-0 flex-1 space-y-6 overflow-auto p-4 py-5">
                       <div className="space-y-3">
                         <PeekOverviewIssueDetails
                           editorRef={editorRef}
@@ -247,9 +247,10 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                       </div>
                     </div>
                     <div
-                      className={`vertical-scrollbar scrollbar-sm h-full !w-[400px] flex-shrink-0 overflow-hidden border-l border-subtle p-4 py-5 ${
-                        is_archived ? "pointer-events-none" : ""
-                      }`}
+                      className={cn(
+                        "vertical-scrollbar scrollbar-sm h-full w-[400px] shrink-0 overflow-y-auto border-l border-subtle p-4 py-5",
+                        { "pointer-events-none": is_archived }
+                      )}
                     >
                       <PeekOverviewProperties
                         workspaceSlug={workspaceSlug}
