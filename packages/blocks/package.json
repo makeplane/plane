@@ -1,6 +1,6 @@
 {
   "name": "@plane/blocks",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "private": true,
   "description": "Composite components and Plane-specific building blocks, built on top of @makeplane/propel primitives",
   "license": "AGPL-3.0",
