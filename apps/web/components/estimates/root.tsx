@@ -12,6 +12,7 @@ import { AnchorButton } from "@makeplane/propel/components/anchor-button";
 import { useTranslation } from "@plane/i18n";
 // components
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
+import { SETTINGS_DOCS_URLS } from "@plane/constants";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { EmptyStateCompact } from "@plane/blocks/empty-state";
@@ -59,6 +60,7 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
         <SettingsHeading
           title={t("project_settings.estimates.heading")}
           description={t("project_settings.estimates.description")}
+          docHref={SETTINGS_DOCS_URLS.estimates}
         />
         <div className="mt-7">
           {/* current active estimate section */}
