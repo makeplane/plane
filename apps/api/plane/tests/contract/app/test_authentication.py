@@ -485,12 +485,12 @@ class TestMagicSignInVerifyAttempts:
     @pytest.fixture(autouse=True)
     def _clear_state(self):
         """Reset throttle cache and magic-link redis state between tests in this class."""
-        cache.clear()
+        _clear_auth_throttle_keys()
         ri = redis_instance()
         ri.delete(f"magic_{self.EMAIL}")
         ri.delete(f"magic_{self.EMAIL}:verify_attempts")
         yield
-        cache.clear()
+        _clear_auth_throttle_keys()
         ri.delete(f"magic_{self.EMAIL}")
         ri.delete(f"magic_{self.EMAIL}:verify_attempts")
 
@@ -588,12 +588,12 @@ class TestMagicSignUpVerifyAttempts:
 
     @pytest.fixture(autouse=True)
     def _clear_state(self):
-        cache.clear()
+        _clear_auth_throttle_keys()
         ri = redis_instance()
         ri.delete(f"magic_{self.EMAIL}")
         ri.delete(f"magic_{self.EMAIL}:verify_attempts")
         yield
-        cache.clear()
+        _clear_auth_throttle_keys()
         ri.delete(f"magic_{self.EMAIL}")
         ri.delete(f"magic_{self.EMAIL}:verify_attempts")
 
@@ -619,13 +619,13 @@ class TestMagicSignUpVerifyAttempts:
 
 @pytest.mark.contract
 class TestAuthenticationThrottle:
-    """Per-IP throttle on the redirect-flow magic-link endpoints."""
+    """Per-IP throttle on the redirect-flow magic-link and password endpoints."""
 
     @pytest.fixture(autouse=True)
     def _clear_state(self):
-        cache.clear()
+        _clear_auth_throttle_keys()
         yield
-        cache.clear()
+        _clear_auth_throttle_keys()
 
     @pytest.mark.django_db
     def test_magic_sign_in_throttled(self, django_client, setup_instance):
@@ -654,6 +654,56 @@ class TestAuthenticationThrottle:
             response = django_client.post(url, {"email": "throttle-up@plane.so", "code": "000000"}, follow=False)
             assert "RATE_LIMIT_EXCEEDED" in response.url
 
+    @pytest.mark.django_db
+    def test_password_sign_in_throttled(self, django_client, setup_instance):
+        """The password sign-in endpoint is throttled per IP on the same scope."""
+        url = reverse("sign-in")
+        with patch.object(AuthenticationThrottle, "rate", "2/minute"):
+            for _ in range(2):
+                response = django_client.post(
+                    url, {"email": "throttle@plane.so", "password": "secret123"}, follow=False
+                )
+                assert response.status_code == 302
+                assert "RATE_LIMIT_EXCEEDED" not in response.url
+
+            # The 3rd request from the same IP within the window trips the throttle.
+            response = django_client.post(url, {"email": "throttle@plane.so", "password": "secret123"}, follow=False)
+            assert response.status_code == 302
+            assert "RATE_LIMIT_EXCEEDED" in response.url
+
+    @pytest.mark.django_db
+    def test_password_sign_up_throttled(self, django_client, setup_instance):
+        """The password sign-up endpoint trips on the same per-IP budget."""
+        url = reverse("sign-up")
+        with patch.object(AuthenticationThrottle, "rate", "1/minute"):
+            response = django_client.post(url, {"email": "throttle-up@plane.so", "password": "secret123"}, follow=False)
+            assert "RATE_LIMIT_EXCEEDED" not in response.url
+
+            response = django_client.post(url, {"email": "throttle-up@plane.so", "password": "secret123"}, follow=False)
+            assert "RATE_LIMIT_EXCEEDED" in response.url
+
+    @pytest.mark.django_db
+    def test_space_password_sign_in_throttled(self, django_client, setup_instance):
+        """The spaces password sign-in endpoint is throttled per IP."""
+        url = reverse("space-sign-in")
+        with patch.object(AuthenticationThrottle, "rate", "1/minute"):
+            response = django_client.post(url, {"email": "throttle@plane.so", "password": "secret123"}, follow=False)
+            assert "RATE_LIMIT_EXCEEDED" not in response.url
+
+            response = django_client.post(url, {"email": "throttle@plane.so", "password": "secret123"}, follow=False)
+            assert "RATE_LIMIT_EXCEEDED" in response.url
+
+    @pytest.mark.django_db
+    def test_space_password_sign_up_throttled(self, django_client, setup_instance):
+        """The spaces password sign-up endpoint trips on the same per-IP budget."""
+        url = reverse("space-sign-up")
+        with patch.object(AuthenticationThrottle, "rate", "1/minute"):
+            response = django_client.post(url, {"email": "throttle-up@plane.so", "password": "secret123"}, follow=False)
+            assert "RATE_LIMIT_EXCEEDED" not in response.url
+
+            response = django_client.post(url, {"email": "throttle-up@plane.so", "password": "secret123"}, follow=False)
+            assert "RATE_LIMIT_EXCEEDED" in response.url
+
 
 @pytest.mark.contract
 class TestBotUserLoginBlocked:
@@ -673,12 +723,12 @@ class TestBotUserLoginBlocked:
     @pytest.fixture(autouse=True)
     def _clear_state(self):
         """Reset throttle cache and the bot's magic-link redis state around each test."""
-        cache.clear()
+        _clear_auth_throttle_keys()
         ri = redis_instance()
         ri.delete(f"magic_{self.BOT_EMAIL}")
         ri.delete(f"magic_{self.BOT_EMAIL}:verify_attempts")
         yield
-        cache.clear()
+        _clear_auth_throttle_keys()
         ri.delete(f"magic_{self.BOT_EMAIL}")
         ri.delete(f"magic_{self.BOT_EMAIL}:verify_attempts")
 
@@ -757,9 +807,9 @@ class TestBotUserAdminSignInBlocked:
 
     @pytest.fixture(autouse=True)
     def _clear_state(self):
-        cache.clear()
+        _clear_auth_throttle_keys()
         yield
-        cache.clear()
+        _clear_auth_throttle_keys()
 
     @pytest.fixture
     def bot_user(self, db):
