@@ -50,7 +50,7 @@ type Props = {
 export function TourSidebar({ step, setStep }: Props) {
   return (
     <div className="col-span-3 hidden bg-surface-2 p-8 lg:block">
-      <h3 className="text-body-md-medium">
+      <h3 className="text-h6-medium">
         Let{"'"}s get started!
         <br />
         Get more out of Plane.

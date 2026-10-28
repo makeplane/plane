@@ -10,7 +10,9 @@ import { Controller, useForm } from "react-hook-form";
 import { ImageOutline } from "@makeplane/propel/icons";
 // plane imports
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
 import { InputField } from "@makeplane/propel/components/input-field";
 import { setToast } from "@plane/blocks/toast";
 import type { IUser } from "@plane/types";
@@ -167,77 +169,77 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
           />
         )}
       />
-      <div className="flex items-center gap-4">
-        <button
-          className="flex size-12 items-center justify-center rounded-full bg-accent-primary text-h5-semibold text-on-color"
-          type="button"
-          onClick={() => setIsImageUploadModalOpen(true)}
-        >
-          {userAvatar ? (
-            <img
-              src={getFileURL(userAvatar ?? "")}
-              onClick={() => setIsImageUploadModalOpen(true)}
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center gap-3">
+          <button
+            className="flex rounded-full"
+            type="button"
+            onClick={() => setIsImageUploadModalOpen(true)}
+            aria-label={userAvatar ? "Change image" : "Upload image"}
+          >
+            <Avatar
+              size="2xl"
+              src={userAvatar ? getFileURL(userAvatar) : undefined}
               alt={user?.display_name}
-              className="h-full w-full rounded-full object-cover"
+              fallback={watch("first_name")?.[0]?.toUpperCase() || undefined}
             />
-          ) : (
-            <>{watch("first_name")[0] ?? "R"}</>
-          )}
-        </button>
-        <input type="file" className="hidden" id="profile-image-input" />
-        <button
-          className="flex items-center gap-1.5 px-2 py-1 text-body-xs-regular text-tertiary hover:text-secondary"
-          type="button"
-          onClick={() => setIsImageUploadModalOpen(true)}
-        >
-          <ImageOutline className="size-4" />
-          <span className="text-body-xs-regular">{userAvatar ? "Change image" : "Upload image"}</span>
-        </button>
-      </div>
-
-      <div className="flex w-full flex-col gap-6">
-        {/* Name Input */}
-        <Controller
-          control={control}
-          name="first_name"
-          rules={{
-            required: "Name is required",
-            validate: validatePersonName,
-            maxLength: {
-              value: 50,
-              message: "Name must be within 50 characters.",
-            },
-          }}
-          render={({ field: { value, onChange, ref } }) => (
-            <InputField
-              ref={ref}
-              id="first_name"
-              name="first_name"
-              size="xl"
-              orientation="vertical"
-              type="text"
-              label="Name"
-              required
-              value={value}
-              onChange={(e) => onChange(e.target.value)}
-              autoFocus
-              placeholder="Enter your full name"
-              autoComplete="on"
-              error={errors.first_name?.message}
-            />
-          )}
-        />
-
-        {/* setting up password for the first time */}
-        {!isPasswordAlreadySetup && (
-          <SetPasswordRoot
-            onPasswordChange={(password) => setValue("password", password)}
-            onConfirmPasswordChange={(confirm_password) => setValue("confirm_password", confirm_password)}
+          </button>
+          <input type="file" className="hidden" id="profile-image-input" />
+          <Button
+            type="button"
+            variant="ghost"
+            size="lg"
+            stretch="auto"
+            onClick={() => setIsImageUploadModalOpen(true)}
+            icon={<Icon icon={ImageOutline} />}
+            iconPosition="start"
+            label={userAvatar ? "Change image" : "Upload image"}
           />
-        )}
+        </div>
+        <div className="flex w-full flex-col gap-6">
+          {/* Name Input */}
+          <Controller
+            control={control}
+            name="first_name"
+            rules={{
+              required: "Name is required",
+              validate: validatePersonName,
+              maxLength: {
+                value: 50,
+                message: "Name must be within 50 characters.",
+              },
+            }}
+            render={({ field: { value, onChange, ref } }) => (
+              <InputField
+                ref={ref}
+                id="first_name"
+                name="first_name"
+                size="xl"
+                orientation="vertical"
+                type="text"
+                label="Name"
+                required
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                autoFocus
+                placeholder="Enter your full name"
+                autoComplete="on"
+                error={errors.first_name?.message}
+              />
+            )}
+          />
+
+          {/* setting up password for the first time */}
+          {!isPasswordAlreadySetup && (
+            <SetPasswordRoot
+              onPasswordChange={(password) => setValue("password", password)}
+              onConfirmPasswordChange={(confirm_password) => setValue("confirm_password", confirm_password)}
+            />
+          )}
+        </div>
+        {/* Continue Button */}
+        <Button variant="primary" type="submit" stretch="full" size="lg" disabled={isButtonDisabled} label="Continue" />
       </div>
-      {/* Continue Button */}
-      <Button variant="primary" type="submit" stretch="full" size="lg" disabled={isButtonDisabled} label="Continue" />
 
       {/* Marketing Consent */}
       {!instanceConfig?.is_self_managed && (

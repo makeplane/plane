@@ -23,12 +23,12 @@ import type { EUserPermissions } from "@plane/constants";
 import { ROLE, ROLE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { Button as ButtonElement } from "@makeplane/propel/elements/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { setToast } from "@plane/blocks/toast";
 import { EOnboardingSteps } from "@plane/types";
 import { cn } from "@plane/utils";
 import { Select, SelectDropdownPlacementContext } from "@plane/blocks/select";
-import { Spinner } from "@plane/blocks/spinner";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
@@ -133,8 +133,8 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
 
   return (
     <div>
-      <div className="group relative grid grid-cols-10 gap-4">
-        <div className="col-span-6">
+      <div className="group flex items-center gap-2">
+        <div className="min-w-0 flex-[6]">
           <Controller
             control={control}
             name={`emails.${index}.email`}
@@ -146,9 +146,9 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
             }}
             render={({ field: { value, onChange, ref } }) => (
               <Field name="input" invalid={Boolean(errors.emails?.[index]?.email)}>
-                <InputGroup size="2xl">
+                <InputGroup size="xl">
                   <Input
-                    size="2xl"
+                    size="xl"
                     id={`emails.${index}.email`}
                     name={`emails.${index}.email`}
                     type="text"
@@ -166,7 +166,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
             )}
           />
         </div>
-        <div className="col-span-4 mr-8">
+        <div className="min-w-0 flex-[4]">
           <Controller
             control={control}
             name={`emails.${index}.role`}
@@ -186,10 +186,10 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                   showSearch={false}
                   pinSelected={false}
                 >
-                  <Select.Trigger<TRoleOption> variant="select-2xl">
+                  <Select.Trigger<TRoleOption> variant="select-xl">
                     <span
                       className={cn(
-                        "min-w-0 flex-1 truncate text-left text-body-xs-regular",
+                        "min-w-0 flex-1 truncate text-left text-body-sm-regular",
                         getValues(`emails.${index}.role_active`) ? "text-primary" : "text-placeholder"
                       )}
                     >
@@ -201,23 +201,22 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
             )}
           />
         </div>
-        {fields.length > 1 && (
-          <button
-            type="button"
-            className="absolute right-0 hidden place-items-center self-center rounded-sm group-hover:grid"
-            onClick={() => remove(index)}
-          >
-            <CloseCircleOutline className="h-5 w-5 pl-0.5 text-placeholder" />
-          </button>
-        )}
+        <div className="flex size-6 shrink-0 items-center justify-center">
+          {fields.length > 1 && (
+            <div className="opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+              <IconButton
+                variant="ghost"
+                size="sm"
+                aria-label={t("remove")}
+                icon={<Icon icon={CloseCircleOutline} />}
+                onClick={() => remove(index)}
+              />
+            </div>
+          )}
+        </div>
       </div>
       {email && !emailRegex.test(email) && (
-        <div className="mx-8 my-1">
-          <span className="text-body-xs-regular">🤥</span>{" "}
-          <span className="mt-1 text-caption-sm-regular text-danger-primary">
-            That doesn{"'"}t look like an email address.
-          </span>
-        </div>
+        <p className="mt-1 text-caption-sm-regular text-danger-primary">That doesn{"'"}t look like an email address.</p>
       )}
     </div>
   );
@@ -301,7 +300,7 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
 
   return (
     <form
-      className="flex flex-col gap-10"
+      className="flex flex-col gap-11"
       onSubmit={handleSubmit(onSubmit)}
       onKeyDown={(e) => {
         if (e.code === "Enter") e.preventDefault();
@@ -311,49 +310,58 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
         title="Invite your teammates"
         description="Work in plane happens best with your team. Invite them now to use Plane to its potential."
       />
-      <div className="w-full py-4 text-body-xs-regular">
-        <div className="group relative mx-8 grid grid-cols-10 gap-4 py-2">
-          <div className="col-span-6 px-1 text-body-xs-medium text-secondary">Email</div>
-          <div className="col-span-4 px-1 text-body-xs-medium text-secondary">Role</div>
-        </div>
-        <div className="mb-3 space-y-3 sm:space-y-4">
-          {fields.map((field, index) => (
-            <InviteMemberInput
-              watch={watch}
-              getValues={getValues}
-              setValue={setValue}
-              isInvitationDisabled={isInvitationDisabled}
-              setIsInvitationDisabled={(value: boolean) => setIsInvitationDisabled(value)}
-              control={control}
-              errors={errors}
-              field={field}
-              fields={fields}
-              index={index}
-              remove={remove}
-              key={field.id}
+      <div className="flex w-full flex-col gap-6">
+        <div className="flex flex-col gap-3">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-body-sm-medium text-secondary">
+              <div className="min-w-0 flex-[6]">Email</div>
+              <div className="min-w-0 flex-[4]">Role</div>
+              <div aria-hidden="true" className="size-6 shrink-0" />
+            </div>
+            <div className="space-y-2">
+              {fields.map((field, index) => (
+                <InviteMemberInput
+                  watch={watch}
+                  getValues={getValues}
+                  setValue={setValue}
+                  isInvitationDisabled={isInvitationDisabled}
+                  setIsInvitationDisabled={(value: boolean) => setIsInvitationDisabled(value)}
+                  control={control}
+                  errors={errors}
+                  field={field}
+                  fields={fields}
+                  index={index}
+                  remove={remove}
+                  key={field.id}
+                />
+              ))}
+            </div>
+          </div>
+          <div>
+            <Button
+              type="button"
+              variant="tertiary"
+              size="md"
+              stretch="auto"
+              onClick={appendField}
+              icon={<Icon icon={AddOutline} />}
+              iconPosition="start"
+              label="Add another"
             />
-          ))}
+          </div>
         </div>
-        <button
-          type="button"
-          className="mx-8 flex items-center gap-1.5 bg-transparent text-body-xs-medium text-accent-primary outline-accent-strong"
-          onClick={appendField}
-        >
-          <AddOutline className="h-4 w-4" />
-          Add another
-        </button>
-      </div>
-      <div className="mx-auto flex w-full flex-col items-center justify-center gap-4 px-8 sm:px-2">
-        <ButtonElement
-          variant="primary"
-          type="submit"
-          size="lg"
-          stretch="full"
-          disabled={isInvitationDisabled || !isValid || isSubmitting}
-        >
-          {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
-        </ButtonElement>
-        <Button variant="ghost" size="lg" stretch="full" onClick={nextStep} label="I’ll do it later" />
+        <div className="flex w-full flex-col items-center justify-center gap-4">
+          <Button
+            variant="primary"
+            type="submit"
+            size="lg"
+            stretch="full"
+            disabled={isInvitationDisabled || !isValid || isSubmitting}
+            loading={isSubmitting}
+            label="Continue"
+          />
+          <Button variant="ghost" size="lg" stretch="full" onClick={nextStep} label="I’ll do it later" />
+        </div>
       </div>
     </form>
   );

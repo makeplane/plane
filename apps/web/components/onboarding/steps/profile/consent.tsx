@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { useId } from "react";
 import { Checkbox } from "@makeplane/propel/components/checkbox";
 
 type Props = {
@@ -13,12 +12,10 @@ type Props = {
 };
 
 export function MarketingConsent({ isChecked, handleChange }: Props) {
-  const labelId = useId();
-
   return (
-    <div className="flex items-center justify-center gap-1.5">
+    <div className="flex w-full justify-center">
       <Checkbox
-        aria-labelledby={labelId}
+        label="I agree to Plane marketing communications"
         checked={isChecked}
         onCheckedChange={(checked) => handleChange(checked)}
         onKeyDown={(event) => {
@@ -28,9 +25,6 @@ export function MarketingConsent({ isChecked, handleChange }: Props) {
           }
         }}
       />
-      <span id={labelId} className="text-body-xs-regular text-tertiary">
-        I agree to Plane marketing communications
-      </span>
     </div>
   );
 }

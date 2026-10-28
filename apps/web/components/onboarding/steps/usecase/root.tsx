@@ -117,35 +117,42 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
                         onChange([...currentValue, useCase]);
                       }
                     }}
-                    className={`flex w-full items-center gap-2 rounded-lg border px-3 py-2 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-offset-2 focus-visible:outline-none ${
+                    className={cn(
+                      "flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left transition-colors focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-offset-2 focus-visible:outline-none",
                       isSelected
-                        ? "border-accent-strong bg-accent-subtle text-accent-primary"
-                        : "border-subtle text-tertiary hover:border-strong"
-                    }`}
+                        ? "border-accent-strong bg-accent-subtle"
+                        : "border-subtle bg-layer-2 hover:bg-layer-2-hover"
+                    )}
                   >
                     <span
                       aria-hidden="true"
-                      className={cn(`flex size-4 items-center justify-center rounded-sm border-2`, {
+                      className={cn("flex size-4 shrink-0 items-center justify-center rounded-sm border", {
                         "border-accent-strong bg-accent-primary": isSelected,
-                        "border-strong": !isSelected,
+                        "border-strong bg-layer-1": !isSelected,
                       })}
                     >
                       <TickOutline
-                        className={cn("h-3 w-3 text-on-color", {
+                        className={cn("size-3 text-on-color", {
                           "opacity-100": isSelected,
                           "opacity-0": !isSelected,
                         })}
                       />
                     </span>
-
-                    <span className="text-body-sm-regular">{useCase}</span>
+                    <span
+                      className={cn("min-w-0 flex-1 truncate text-body-sm-medium", {
+                        "text-accent-primary": isSelected,
+                        "text-primary": !isSelected,
+                      })}
+                    >
+                      {useCase}
+                    </span>
                   </button>
                 );
               })}
             </div>
           )}
         />
-        {errors.use_case && <span className="text-body-sm-regular text-danger-primary">{errors.use_case.message}</span>}
+        {errors.use_case && <span className="text-body-xs-regular text-danger-primary">{errors.use_case.message}</span>}
       </fieldset>
 
       {/* Action Buttons */}

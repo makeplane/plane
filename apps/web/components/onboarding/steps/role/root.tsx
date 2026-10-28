@@ -19,6 +19,7 @@ import {
 import { Button } from "@makeplane/propel/components/button";
 import { setToast } from "@plane/blocks/toast";
 import type { TUserProfile } from "@plane/types";
+import { cn } from "@plane/utils";
 import { EOnboardingSteps } from "@plane/types";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
@@ -107,7 +108,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
             required: "This field is required",
           }}
           render={({ field: { value, onChange } }) => (
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               {ROLES.map((role) => {
                 const Icon = role.icon;
                 const isSelected = value === role.id;
@@ -122,31 +123,43 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
                       e.preventDefault();
                       onChange(role.id);
                     }}
-                    className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-offset-2 focus-visible:outline-none ${
+                    className={cn(
+                      "flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left transition-colors focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-offset-2 focus-visible:outline-none",
                       isSelected
-                        ? "border-accent-strong bg-accent-subtle text-accent-primary"
-                        : "border-subtle text-tertiary hover:border-strong"
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <Icon className="size-3.5" />
-                      <span className="text-body-sm-semibold">{role.label}</span>
-                    </div>
-                    {isSelected && (
-                      <span
-                        aria-hidden="true"
-                        className="flex size-4 items-center justify-center rounded-sm border-2 border-accent-strong bg-accent-primary"
-                      >
-                        <TickOutline className="h-3 w-3 text-on-color" />
-                      </span>
+                        ? "border-accent-strong bg-accent-subtle"
+                        : "border-subtle bg-layer-2 hover:bg-layer-2-hover"
                     )}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={cn("flex size-4 shrink-0 items-center justify-center rounded-sm border", {
+                        "border-accent-strong bg-accent-primary": isSelected,
+                        "border-strong bg-layer-1": !isSelected,
+                      })}
+                    >
+                      <TickOutline
+                        className={cn("size-3 text-on-color", {
+                          "opacity-100": isSelected,
+                          "opacity-0": !isSelected,
+                        })}
+                      />
+                    </span>
+                    <Icon className={cn("size-4 shrink-0", { "text-icon-accent-primary": isSelected })} />
+                    <span
+                      className={cn("min-w-0 flex-1 truncate text-body-sm-medium", {
+                        "text-accent-primary": isSelected,
+                        "text-primary": !isSelected,
+                      })}
+                    >
+                      {role.label}
+                    </span>
                   </button>
                 );
               })}
             </div>
           )}
         />
-        {errors.role && <span className="text-body-sm-regular text-danger-primary">{errors.role.message}</span>}
+        {errors.role && <span className="text-body-xs-regular text-danger-primary">{errors.role.message}</span>}
       </fieldset>
       {/* Action Buttons */}
       <div className="space-y-3">
@@ -156,7 +169,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
           onClick={handleSkip}
           stretch="full"
           size="lg"
-          render={<button type="button" className="text-tertiary" />}
+          render={<button type="button" />}
           label="Skip"
         />
       </div>

@@ -12,11 +12,11 @@ import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { InputField } from "@makeplane/propel/components/input-field";
+import { Icon } from "@makeplane/propel/components/icon";
 import { Toggle } from "@makeplane/propel/components/toggle";
-import { Button as ButtonElement } from "@makeplane/propel/elements/button";
+import { TickCircleOutline } from "@makeplane/propel/icons";
 import { setToast } from "@plane/blocks/toast";
 import type { IUser, IWorkspace } from "@plane/types";
-import { Spinner } from "@plane/blocks/spinner";
 import { validateWorkspaceName, validateSlug } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
@@ -226,7 +226,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
           )}
         />
         <fieldset className="flex min-w-0 flex-col gap-2">
-          <legend className="mb-2 text-body-sm-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']">
+          <legend className="mb-2 text-body-sm-medium text-primary after:ml-0.5 after:text-danger-primary after:content-['*']">
             {t("workspace_creation.form.organization_size.label")}
           </legend>
           <div className="w-full">
@@ -241,6 +241,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                       key={size}
                       label={size}
                       size="md"
+                      startIcon={<Icon icon={TickCircleOutline} />}
                       pressed={value === size}
                       onPressedChange={() => onChange(size)}
                     />
@@ -249,15 +250,21 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
               )}
             />
             {errors.organization_size && (
-              <span className="text-body-sm-regular text-danger-primary">{errors.organization_size.message}</span>
+              <span className="text-body-xs-regular text-danger-primary">{errors.organization_size.message}</span>
             )}
           </div>
         </fieldset>
       </div>
       <div className="flex flex-col gap-4">
-        <ButtonElement variant="primary" type="submit" size="lg" stretch="full" disabled={isButtonDisabled}>
-          {isSubmitting ? <Spinner height="20px" width="20px" /> : t("workspace_creation.button.default")}
-        </ButtonElement>
+        <Button
+          variant="primary"
+          type="submit"
+          size="lg"
+          stretch="full"
+          disabled={isButtonDisabled}
+          loading={isSubmitting}
+          label={t("workspace_creation.button.default")}
+        />
         {hasInvitations && (
           <Button
             variant="ghost"
