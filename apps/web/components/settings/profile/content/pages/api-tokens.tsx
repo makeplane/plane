@@ -35,7 +35,7 @@ export const APITokensProfileSettings = observer(function APITokensProfileSettin
   }
 
   return (
-    <div className="size-full">
+    <div className="flex size-full flex-col gap-4">
       <CreateApiTokenModal isOpen={isCreateTokenModalOpen} onClose={() => setIsCreateTokenModalOpen(false)} />
       <ProfileSettingsHeading
         title={t("account_settings.api_tokens.title")}
@@ -50,15 +50,13 @@ export const APITokensProfileSettings = observer(function APITokensProfileSettin
           />
         }
       />
-      <div className="mt-7">
+      <div>
         {tokens.length > 0 ? (
-          <>
-            <div>
-              {tokens.map((token) => (
-                <ApiTokenListItem key={token.id} token={token} />
-              ))}
-            </div>
-          </>
+          <div className="divide-y divide-subtle overflow-hidden rounded-lg border border-subtle bg-surface-1">
+            {tokens.map((token) => (
+              <ApiTokenListItem key={token.id} token={token} />
+            ))}
+          </div>
         ) : (
           <EmptyStateCompact
             assetKey="token"
@@ -73,8 +71,8 @@ export const APITokensProfileSettings = observer(function APITokensProfileSettin
                 },
               },
             ]}
-            align="start"
-            rootClassName="py-20"
+            align="center"
+            rootClassName="rounded-lg border border-subtle bg-surface-1 py-10"
           />
         )}
       </div>

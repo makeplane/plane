@@ -7,6 +7,9 @@
 import { useState } from "react";
 import { CloseCircleOutline } from "@makeplane/propel/icons";
 // plane imports
+import { Badge } from "@makeplane/propel/components/badge";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IApiToken } from "@plane/types";
 import { renderFormattedDate, calculateTimeAgo, renderFormattedTime } from "@plane/utils";
@@ -29,24 +32,25 @@ export function ApiTokenListItem(props: Props) {
   return (
     <>
       <DeleteApiTokenModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} tokenId={token.id} />
-      <div className="group relative flex flex-col justify-center border-b border-subtle py-3">
-        <Tooltip label="Delete token" disabled={isMobile}>
-          <button
-            onClick={() => setDeleteModalOpen(true)}
-            className="absolute right-4 hidden place-items-center group-hover:grid"
-          >
-            <CloseCircleOutline className="h-4 w-4 text-danger-primary" />
-          </button>
-        </Tooltip>
-        <div className="flex w-4/5 items-center">
-          <h5 className="truncate text-body-xs-medium">{token.label}</h5>
-          <span
-            className={`${
-              token.is_active ? "bg-success-subtle text-success-primary" : "bg-layer-1 text-placeholder"
-            } ml-2 flex h-4 max-h-fit items-center rounded-xs px-2 text-caption-sm-medium`}
-          >
-            {token.is_active ? "Active" : "Expired"}
-          </span>
+      <div className="group relative flex flex-col justify-center px-4 py-3">
+        <div className="absolute top-1/2 right-4 -translate-y-1/2 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+          <Tooltip label="Delete token" disabled={isMobile}>
+            <IconButton
+              variant="ghost"
+              size="sm"
+              aria-label="Delete token"
+              icon={<Icon icon={CloseCircleOutline} />}
+              onClick={() => setDeleteModalOpen(true)}
+            />
+          </Tooltip>
+        </div>
+        <div className="flex w-4/5 items-center gap-2">
+          <h5 className="truncate text-body-sm-medium">{token.label}</h5>
+          <Badge
+            variant={token.is_active ? "success" : "neutral"}
+            size="sm"
+            label={token.is_active ? "Active" : "Expired"}
+          />
         </div>
         <div className="mt-1 flex w-full flex-col justify-center">
           {token.description.trim() !== "" && (
