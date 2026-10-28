@@ -27,7 +27,7 @@ type Props = {
 /** The retired `Tag` chrome: a bordered container for one filter's label, its chips and its
  *  remove button. Not a `Pill`: that takes a label string and cannot hold nested interactive children. */
 const FILTER_GROUP_CLASSNAME =
-  "my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary";
+  "my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-caption-sm-regular text-tertiary capitalize hover:text-secondary";
 
 const MEMBERS_FILTERS = new Set(["owned_by"]);
 const DATE_FILTERS = new Set(["created_at"]);
@@ -54,7 +54,7 @@ export function ViewAppliedFiltersList(props: Props) {
 
         return (
           <div key={filterKey} className={FILTER_GROUP_CLASSNAME}>
-            <span className="text-11 text-tertiary">{filterLabel}</span>
+            <span className="text-caption-sm-regular text-tertiary">{filterLabel}</span>
             {VIEW_ACCESS_FILTERS.has(filterKey) && (
               <AppliedAccessFilters
                 editable={isEditingAllowed}

@@ -100,7 +100,7 @@ export const FilterMember = observer(function FilterMember(props: Props) {
                 {sortedOptions.length > 5 && (
                   <button
                     type="button"
-                    className="ml-8 text-11 font-medium text-accent-primary"
+                    className="ml-8 text-caption-sm-medium text-accent-primary"
                     onClick={handleViewToggle}
                   >
                     {itemsToRender === sortedOptions.length ? "View less" : "View all"}
@@ -108,7 +108,7 @@ export const FilterMember = observer(function FilterMember(props: Props) {
                 )}
               </>
             ) : (
-              <p className="text-11 text-placeholder italic">No matches found</p>
+              <p className="text-caption-sm-regular text-placeholder italic">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

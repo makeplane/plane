@@ -27,7 +27,7 @@ export function LabelName(props: ILabelName) {
           }}
         />
       )}
-      <h6 className="text-13">{name}</h6>
+      <h6 className="text-body-xs-regular">{name}</h6>
     </div>
   );
 }

@@ -35,7 +35,7 @@ export const RelationsCollapsibleTitle = observer(function RelationsCollapsibleT
     <span className="inline-flex items-center gap-2">
       {t("common.relations")}
       <span className="flex items-center justify-center">
-        <p className="text-14 leading-3! text-tertiary">{relationsCount}</p>
+        <p className="text-body-sm-regular leading-3! text-tertiary">{relationsCount}</p>
       </span>
     </span>
   );

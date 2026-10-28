@@ -171,7 +171,7 @@ export const CreateUpdateLabelInline = observer(
                       <button
                         type="button"
                         aria-label={t("aria_labels.color_picker.open")}
-                        className="group inline-flex items-center text-14 font-medium text-secondary focus:outline-none data-popup-open:text-primary"
+                        className="group inline-flex items-center text-body-sm-medium text-secondary focus:outline-none data-popup-open:text-primary"
                       >
                         <span
                           className="h-4 w-4 rounded-full"
@@ -234,7 +234,9 @@ export const CreateUpdateLabelInline = observer(
             label={isUpdating ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}
           />
         </div>
-        {errors.name?.message && <p className="p-0.5 pl-8 text-13 text-danger-primary">{errors.name?.message}</p>}
+        {errors.name?.message && (
+          <p className="p-0.5 pl-8 text-body-xs-regular text-danger-primary">{errors.name?.message}</p>
+        )}
       </>
     );
   })

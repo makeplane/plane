@@ -32,17 +32,20 @@ export const InboxIssueAppliedFiltersLabel = observer(function InboxIssueApplied
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary">
-      <div className="text-11 text-secondary">Label</div>
+    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-caption-sm-regular text-tertiary capitalize hover:text-secondary">
+      <div className="text-caption-sm-regular text-secondary">Label</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
         return (
-          <div key={value} className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
+          <div
+            key={value}
+            className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-caption-sm-regular"
+          >
             <div className="relative flex h-3 w-3 flex-shrink-0 items-center justify-center overflow-hidden">
               <LabelIcons color={optionDetail.color} />
             </div>
-            <div className="truncate text-11">{optionDetail?.name}</div>
+            <div className="truncate text-caption-sm-regular">{optionDetail?.name}</div>
             <IconButton
               type="button"
               variant="ghost"

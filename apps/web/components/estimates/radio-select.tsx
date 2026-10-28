@@ -63,7 +63,7 @@ export function RadioInput({
             key={index}
             htmlFor={`${name}_${index}`}
             className={cn(
-              "flex items-center gap-2 text-14",
+              "flex items-center gap-2 text-body-sm-regular",
               disabled ? `cursor-not-allowed border-subtle bg-layer-1` : ``,
               inputFieldClassName
             )}

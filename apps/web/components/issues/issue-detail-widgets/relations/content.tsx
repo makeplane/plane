@@ -146,7 +146,7 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
                   </span>
                 ) : undefined
               }
-              trigger={<span className="text-13 leading-5 font-medium">{relation.label}</span>}
+              trigger={<span className="text-body-xs-medium leading-5">{relation.label}</span>}
             >
               {/* Cancels this nested Collapsible's own panel inset so rows realign under
                   the outer Relations collapsible's single inset instead of stacking two. */}

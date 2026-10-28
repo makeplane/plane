@@ -67,7 +67,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
               layout="stacked"
               disabled={isMobile}
             >
-              <span className="truncate text-11">
+              <span className="truncate text-caption-sm-regular">
                 {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
               </span>
             </Tooltip>
@@ -110,7 +110,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
         </div>
 
         <div className="px-5">
-          <p className="mt-0.5 stroke-[1.5] text-11 text-tertiary">
+          <p className="mt-0.5 stroke-[1.5] text-caption-sm-regular text-tertiary">
             Added {calculateTimeAgo(linkDetail.created_at)}
             <br />
             {createdByDetails && (

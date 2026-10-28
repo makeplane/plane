@@ -16,7 +16,7 @@ export const KanbanQuickAddIssueForm = observer(function KanbanQuickAddIssueForm
     <div className="m-1 overflow-hidden rounded-sm bg-layer-2 shadow-raised-200">
       <form ref={ref} onSubmit={onSubmit} className="flex w-full items-center gap-x-3 p-3">
         <div className="w-full">
-          <h4 className="text-11 leading-5 font-medium text-tertiary">{projectDetail?.identifier ?? "..."}</h4>
+          <h4 className="text-caption-sm-medium leading-5 text-tertiary">{projectDetail?.identifier ?? "..."}</h4>
           <InputGroup size="lg">
             <Input
               size="lg"
@@ -32,7 +32,7 @@ export const KanbanQuickAddIssueForm = observer(function KanbanQuickAddIssueForm
           </InputGroup>
         </div>
       </form>
-      <div className="bg-layer-3 px-3 py-2 text-11 text-tertiary italic">
+      <div className="bg-layer-3 px-3 py-2 text-caption-sm-regular text-tertiary italic">
         {isEpic ? t("epic.add.press_enter") : t("issue.add.press_enter")}
       </div>
     </div>

@@ -87,7 +87,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
   const issueList =
     filteredIssues.length > 0 ? (
       <div>
-        {query === "" && <h2 className="mb-2 text-11 font-semibold text-primary">Select work item</h2>}
+        {query === "" && <h2 className="mb-2 text-caption-sm-semibold text-primary">Select work item</h2>}
         <ComboboxList aria-label={t("inbox_issue.actions.mark_as_duplicate")}>
           {filteredIssues.map((issue) => (
             <ComboboxItem
@@ -102,7 +102,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
                       backgroundColor: issue.state__color || "",
                     }}
                   />
-                  <span className="flex-shrink-0 text-11 text-secondary">
+                  <span className="flex-shrink-0 text-caption-sm-regular text-secondary">
                     {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
                   </span>
                 </span>

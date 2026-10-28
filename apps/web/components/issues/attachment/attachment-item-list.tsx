@@ -136,7 +136,7 @@ export const IssueAttachmentItemList = observer(function IssueAttachmentItemList
                 <div className="flex items-center justify-center rounded-md bg-surface-1 p-1">
                   <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-strong px-5 py-6">
                     <UploadOutline className="size-7" />
-                    <span className="text-13 text-tertiary">{t("attachment.drag_and_drop")}</span>
+                    <span className="text-body-xs-regular text-tertiary">{t("attachment.drag_and_drop")}</span>
                   </div>
                 </div>
               </div>

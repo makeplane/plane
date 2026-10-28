@@ -102,7 +102,7 @@ export const WorkspaceDraftIssuesRoot = observer(function WorkspaceDraftIssuesRo
             <button
               type="button"
               className={cn(
-                "h-11 w-full border-b border-subtle bg-surface-1 p-3 pl-6 text-left text-13 font-medium transition-all",
+                "h-11 w-full border-b border-subtle bg-surface-1 p-3 pl-6 text-left text-body-xs-medium transition-all",
                 {
                   "cursor-pointer text-accent-primary underline-offset-2 hover:text-accent-secondary hover:underline":
                     paginationInfo?.next_page_results,

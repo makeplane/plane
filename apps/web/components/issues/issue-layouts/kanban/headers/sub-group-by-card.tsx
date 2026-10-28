@@ -42,9 +42,9 @@ export const HeaderSubGroupByCard = observer(function HeaderSubGroupByCard(props
         {icon ? icon : <CircleOutline width={14} height={14} />}
       </span>
 
-      <span className="flex flex-shrink-0 items-center gap-1 text-13">
+      <span className="flex flex-shrink-0 items-center gap-1 text-body-xs-regular">
         <span className="line-clamp-1 text-primary">{title}</span>
-        <span className="pl-2 text-13 font-medium text-tertiary">{count || 0}</span>
+        <span className="pl-2 text-body-xs-medium text-tertiary">{count || 0}</span>
       </span>
     </button>
   );

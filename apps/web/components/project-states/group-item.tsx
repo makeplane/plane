@@ -82,7 +82,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
         trigger={
           <span className="flex w-full items-center gap-1">
             <StateGroupIcon stateGroup={groupKey} size={EIconSize.XL} className="shrink-0" />
-            <span className="px-1 text-14 font-medium text-secondary capitalize">{groupKey}</span>
+            <span className="px-1 text-body-sm-medium text-secondary capitalize">{groupKey}</span>
           </span>
         }
         trailing={
@@ -107,7 +107,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
         }
       >
         {shouldShowEmptyState && (
-          <div className="flex h-full flex-col items-center justify-center py-4 text-13 text-tertiary">
+          <div className="flex h-full flex-col items-center justify-center py-4 text-body-xs-regular text-tertiary">
             <div>{t("project_settings.states.empty_state.title", { groupKey })}</div>
             {isEditable && <div>{t("project_settings.states.empty_state.description")}</div>}
           </div>

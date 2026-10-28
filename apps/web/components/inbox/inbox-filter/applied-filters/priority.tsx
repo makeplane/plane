@@ -30,17 +30,20 @@ export const InboxIssueAppliedFiltersPriority = observer(function InboxIssueAppl
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary">
-      <div className="text-11 text-secondary">{t("common.priority")}</div>
+    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-caption-sm-regular text-tertiary capitalize hover:text-secondary">
+      <div className="text-caption-sm-regular text-secondary">{t("common.priority")}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
         return (
-          <div key={value} className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
+          <div
+            key={value}
+            className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-caption-sm-regular"
+          >
             <div className="relative flex h-3 w-3 flex-shrink-0 items-center justify-center overflow-hidden">
               <PriorityIcon priority={optionDetail.key} className="h-3 w-3" />
             </div>
-            <div className="truncate text-11">{optionDetail?.title}</div>
+            <div className="truncate text-caption-sm-regular">{optionDetail?.title}</div>
             <IconButton
               type="button"
               variant="ghost"

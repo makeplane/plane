@@ -166,7 +166,7 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
   };
 
   return (
-    <form onSubmit={handleCreate} className="relative flex items-center gap-2 pr-2.5 text-14">
+    <form onSubmit={handleCreate} className="relative flex items-center gap-2 pr-2.5 text-body-sm-regular">
       <div
         className={cn(
           "relative my-1 flex w-full items-center rounded-sm border",

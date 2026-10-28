@@ -50,11 +50,11 @@ export const WorkItemPreviewCard = observer(function WorkItemPreviewCard(props: 
         />
         <div className="flex shrink-0 items-center gap-1">
           <StateGroupIcon stateGroup={stateGroup} className="size-3 shrink-0" />
-          <p className="text-11 font-medium">{stateName}</p>
+          <p className="text-caption-sm-medium">{stateName}</p>
         </div>
       </div>
       <div>
-        <h6 className="text-13 wrap-break-word">{workItem.name}</h6>
+        <h6 className="text-body-xs-regular wrap-break-word">{workItem.name}</h6>
       </div>
       <div className="flex h-5 items-center gap-1">
         <PriorityIcon priority={workItem.priority} />

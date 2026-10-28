@@ -39,7 +39,10 @@ export const AppliedAccessFilters = observer(function AppliedAccessFilters(props
         const accessLabel = t(label);
 
         return (
-          <div key={access} className="flex items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-11">
+          <div
+            key={access}
+            className="flex items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-caption-sm-regular"
+          >
             <span className="normal-case">{accessLabel}</span>
             {editable && (
               <IconButton

@@ -71,7 +71,7 @@ export const FilterStartDate = observer(function FilterStartDate(props: Props) {
               <FilterOption isChecked={isCustomDateSelected()} onClick={handleCustomDate} title="Custom" multiple />
             </>
           ) : (
-            <p className="text-11 text-placeholder italic">No matches found</p>
+            <p className="text-caption-sm-regular text-placeholder italic">No matches found</p>
           )}
         </div>
       )}

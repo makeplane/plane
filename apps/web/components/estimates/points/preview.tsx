@@ -66,11 +66,11 @@ export const EstimatePointItemPreview = observer(function EstimatePointItemPrevi
   return (
     <div>
       {!estimatePointEditToggle && !estimatePointDeleteToggle && (
-        <div className="relative my-1 flex items-center gap-2 rounded-sm border border-subtle px-1 text-14">
+        <div className="relative my-1 flex items-center gap-2 rounded-sm border border-subtle px-1 text-body-sm-regular">
           <div className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs transition-colors hover:bg-layer-1">
             <DragDropOutline width={14} height={14} className="text-secondary" />
           </div>
-          <div ref={EstimatePointValueRef} className="w-full py-2 text-13">
+          <div ref={EstimatePointValueRef} className="w-full py-2 text-body-xs-regular">
             {estimatePoint?.value ? (
               `${estimateType === EEstimateSystem.TIME ? convertMinutesToHoursMinutesString(Number(estimatePoint?.value)) : estimatePoint?.value}`
             ) : (

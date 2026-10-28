@@ -174,12 +174,12 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                 </div>
               </WithDisplayPropertiesHOC>
               <Tooltip label={issue.name} layout="stacked" disabled={isMobile}>
-                <span className="w-0 flex-1 truncate text-13 text-primary">{issue.name}</span>
+                <span className="w-0 flex-1 truncate text-body-xs-regular text-primary">{issue.name}</span>
               </Tooltip>
             </div>
 
             <div
-              className="flex-shrink-0 text-13"
+              className="flex-shrink-0 text-body-xs-regular"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -200,7 +200,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                 activation must not reach it. */}
             <div
               role="presentation"
-              className="flex-shrink-0 text-13"
+              className="flex-shrink-0 text-body-xs-regular"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();

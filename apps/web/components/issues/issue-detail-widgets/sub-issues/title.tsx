@@ -40,7 +40,7 @@ export const SubIssuesCollapsibleTitle = observer(function SubIssuesCollapsibleT
   return (
     <span className="inline-flex items-center gap-2">
       {issueServiceType === EIssueServiceType.EPICS ? t("issue.label", { count: 1 }) : t("common.sub_work_items")}
-      <span className="flex items-center gap-1.5 text-13 text-tertiary">
+      <span className="flex items-center gap-1.5 text-body-xs-regular text-tertiary">
         <CircularProgress
           value={percentage}
           size="md"

@@ -35,7 +35,7 @@ export const IssueLinksCollapsibleTitle = observer(function IssueLinksCollapsibl
     <span className="inline-flex items-center gap-2">
       {t("common.links")}
       <span className="flex items-center justify-center">
-        <p className="text-14 leading-3! text-tertiary">{linksCount}</p>
+        <p className="text-body-sm-regular leading-3! text-tertiary">{linksCount}</p>
       </span>
     </span>
   );

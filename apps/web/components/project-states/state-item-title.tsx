@@ -60,15 +60,15 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
           <StateGroupIcon stateGroup={state.group} color={state.color} size={EIconSize.XL} percentage={percentage} />
         </div>
         {/* state title and description */}
-        <div className="min-h-5 px-2 text-13">
-          <h6 className="text-13 font-medium">{state.name}</h6>
-          {shouldShowDescription && <p className="text-11 text-secondary">{state.description}</p>}
+        <div className="min-h-5 px-2 text-body-xs-regular">
+          <h6 className="text-body-xs-medium">{state.name}</h6>
+          {shouldShowDescription && <p className="text-caption-sm-regular text-secondary">{state.description}</p>}
         </div>
       </div>
       {!disabled && (
         <div className="hidden items-center gap-2 group-hover:flex">
           {/* state mark as default option */}
-          <div className="flex-shrink-0 text-11 transition-all">
+          <div className="flex-shrink-0 text-caption-sm-regular transition-all">
             <StateMarksAsDefault
               stateId={state.id}
               isDefault={state.default ? true : false}

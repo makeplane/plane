@@ -64,7 +64,7 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
         }}
       >
         <div className="group flex h-11 items-center justify-between gap-3 px-3 hover:bg-surface-2">
-          <div className="flex items-center gap-3 truncate text-13">
+          <div className="flex items-center gap-3 truncate text-body-xs-regular">
             <div className="flex items-center gap-3">{fileIcon}</div>
             <Tooltip label={`${fileName}.${fileExtension}`} layout="stacked" disabled={isMobile}>
               <p className="truncate font-medium text-secondary">{`${fileName}.${fileExtension}`}</p>

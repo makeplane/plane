@@ -34,7 +34,10 @@ export const AppliedCycleFilters = observer(function AppliedCycleFilters(props: 
         const cycleStatus = (cycleDetails?.status ? cycleDetails?.status.toLocaleLowerCase() : "draft") as TCycleGroups;
 
         return (
-          <div key={cycleId} className="flex items-center gap-1 truncate rounded-sm bg-layer-1 p-1 text-11">
+          <div
+            key={cycleId}
+            className="flex items-center gap-1 truncate rounded-sm bg-layer-1 p-1 text-caption-sm-regular"
+          >
             <CycleGroupIcon cycleGroup={cycleStatus} className="h-3 w-3 flex-shrink-0" />
             <span className="truncate normal-case">{cycleDetails.name}</span>
             {editable && (

@@ -108,7 +108,7 @@ export const CalendarIssueBlock = observer(
               id={`issue-${issue.id}`}
               href={workItemLink}
               onClick={() => handleIssuePeekOverview(issue)}
-              className="block w-full rounded-sm border-b border-subtle text-13 text-primary hover:border-subtle-1 md:border-[1px]"
+              className="block w-full rounded-sm border-b border-subtle text-body-xs-regular text-primary hover:border-subtle-1 md:border-[1px]"
               disabled={!!issue?.tempId || isMobile}
               ref={ref}
             >
@@ -144,7 +144,7 @@ export const CalendarIssueBlock = observer(
                         displayProperties={issuesFilter?.issueFilters?.displayProperties}
                       />
                     )}
-                    <div className="truncate text-13 font-medium md:text-11 md:font-regular">{issue.name}</div>
+                    <div className="truncate text-body-xs-medium md:text-caption-sm-regular">{issue.name}</div>
                   </div>
                   {/* Wrapper exists only to stop clicks reaching the ControlLink; the
                       quick-action menu inside carries its own interactive semantics. */}

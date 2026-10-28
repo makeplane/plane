@@ -32,17 +32,17 @@ export const IssueAttachmentsUploadDetails = observer(function IssueAttachmentsU
   const { isMobile } = usePlatformOS();
 
   return (
-    <div className="pointer-events-none flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-subtle bg-surface-2 px-4 py-2 text-13">
+    <div className="pointer-events-none flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-subtle bg-surface-2 px-4 py-2 text-body-xs-regular">
       <div className="flex flex-shrink-0 items-center gap-3">
         <div className="h-7 w-7">{fileIcon}</div>
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <Tooltip label={fileName} layout="stacked" disabled={isMobile}>
-              <span className="text-13">{truncateText(`${fileName}`, 10)}</span>
+              <span className="text-body-xs-regular">{truncateText(`${fileName}`, 10)}</span>
             </Tooltip>
           </div>
 
-          <div className="flex items-center gap-3 text-11 text-secondary">
+          <div className="flex items-center gap-3 text-caption-sm-regular text-secondary">
             <span>{fileExtension.toUpperCase()}</span>
           </div>
         </div>
@@ -51,7 +51,7 @@ export const IssueAttachmentsUploadDetails = observer(function IssueAttachmentsU
         <span className="flex-shrink-0">
           <CircularProgress value={uploadStatus.progress} size="md" variant="brand" aria-label="Upload progress" />
         </span>
-        <div className="flex-shrink-0 text-13 font-medium">{uploadStatus.progress}% done</div>
+        <div className="flex-shrink-0 text-body-xs-medium">{uploadStatus.progress}% done</div>
       </div>
     </div>
   );

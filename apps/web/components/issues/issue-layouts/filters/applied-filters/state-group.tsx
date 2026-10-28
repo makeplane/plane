@@ -23,7 +23,7 @@ export const AppliedStateGroupFilters = observer(function AppliedStateGroupFilte
   return (
     <>
       {values.map((stateGroup) => (
-        <div key={stateGroup} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
+        <div key={stateGroup} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-caption-sm-regular">
           <StateGroupIcon stateGroup={stateGroup as TStateGroups} size={EIconSize.SM} />
           {stateGroup}
           <button

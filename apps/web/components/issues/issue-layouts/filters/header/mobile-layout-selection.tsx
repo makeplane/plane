@@ -27,12 +27,14 @@ export function MobileLayoutSelection({
   const allowedLayouts = new Set(layouts);
   return (
     // Propel's `Menu` renders no element of its own; this host keeps the legacy menu root's grow-and-center slot.
-    <div className="flex flex-grow justify-center text-13 text-secondary">
+    <div className="flex flex-grow justify-center text-body-xs-regular text-secondary">
       <Menu>
         {/* The trigger fills the grown cell (legacy `customButtonClassName`) so the whole cell opens the menu. */}
         <MenuTrigger
           aria-label={t("common.layout")}
-          render={<button type="button" className="flex flex-grow justify-center text-13 text-secondary" />}
+          render={
+            <button type="button" className="flex flex-grow justify-center text-body-xs-regular text-secondary" />
+          }
         >
           {/* `MenuTrigger` supplies the real button, so this is chrome only. */}
           <ButtonChrome variant="secondary" size="sm" stretch="auto" render={<span />}>

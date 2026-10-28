@@ -85,8 +85,8 @@ export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TS
       }
       trigger={
         <>
-          <span className="text-13 font-medium text-primary">{group.name}</span>
-          <span className="text-13 text-placeholder">{workItemIds.length}</span>
+          <span className="text-body-xs-medium text-primary">{group.name}</span>
+          <span className="text-body-xs-regular text-placeholder">{workItemIds.length}</span>
         </>
       }
     >

@@ -29,7 +29,7 @@ export const AppliedLabelsFilters = observer(function AppliedLabelsFilters(props
         if (!labelDetails) return null;
 
         return (
-          <div key={labelId} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
+          <div key={labelId} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-caption-sm-regular">
             <span
               className="h-1.5 w-1.5 rounded-full"
               style={{

@@ -135,7 +135,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
               {isOpen && (
                 <div className="ml-6">
                   {labelChildren.map((child, index) => (
-                    <div key={child.id} className={`group flex w-full items-center text-13`}>
+                    <div key={child.id} className={`group flex w-full items-center text-body-xs-regular`}>
                       <div className="w-full">
                         <ProjectSettingLabelItem
                           label={child}

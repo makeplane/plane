@@ -132,7 +132,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
         <Row
           ref={issueRef}
           className={cn(
-            "group/list-block relative flex min-h-11 flex-col gap-3 bg-layer-transparent py-3 text-13 transition-colors hover:bg-layer-transparent-hover",
+            "group/list-block relative flex min-h-11 flex-col gap-3 bg-layer-transparent py-3 text-body-xs-regular transition-colors hover:bg-layer-transparent-hover",
             {
               "md:flex-row md:items-center": isSidebarCollapsed,
               "lg:flex-row lg:items-center": !isSidebarCollapsed,
@@ -160,7 +160,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
               </div>
 
               <Tooltip label={issue.name} layout="stacked" align="start">
-                <p className="w-full cursor-pointer truncate text-13 text-primary">{issue.name}</p>
+                <p className="w-full cursor-pointer truncate text-body-xs-regular text-primary">{issue.name}</p>
               </Tooltip>
             </div>
 

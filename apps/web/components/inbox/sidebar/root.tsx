@@ -109,7 +109,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
                       icon={
                         option.key === EInboxIssueCurrentTab.OPEN && currentTab === option.key ? (
                           // Propel has no trailing slot; keep the active-only count after the label.
-                          <span className="order-1 rounded-full bg-accent-primary/20 px-1.5 py-0.5 text-11 font-semibold text-accent-primary">
+                          <span className="order-1 rounded-full bg-accent-primary/20 px-1.5 py-0.5 text-caption-sm-semibold text-accent-primary">
                             {inboxIssuePaginationInfo?.total_results || 0}
                           </span>
                         ) : undefined
