@@ -146,7 +146,7 @@ export function LabelSelect(props: LabelSelectProps) {
                 {labels.map((label) => (
                   <span
                     key={label.id}
-                    className="flex h-6 shrink-0 items-center gap-1 rounded-md bg-label-grey-bg px-2 text-body-xs-medium text-label-grey-text"
+                    className="flex h-6 max-w-full min-w-0 shrink-0 items-center gap-1 rounded-md bg-label-grey-bg px-2 text-body-xs-medium text-label-grey-text"
                   >
                     <span
                       className="h-2 w-2 shrink-0 rounded-full"
