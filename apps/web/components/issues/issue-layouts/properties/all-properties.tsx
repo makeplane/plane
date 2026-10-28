@@ -43,13 +43,14 @@ import {
 } from "@plane/utils";
 // components
 import { CycleSelect } from "@/components/dropdowns/cycle/cycle-select";
-import { EstimateSelect } from "@/components/dropdowns/estimate/estimate-select";
+import { EstimateSelect, getEstimatePointDisplayValue } from "@/components/dropdowns/estimate/estimate-select";
 import { MemberSelect } from "@/components/dropdowns/member/member-select";
 import { ModuleSelect } from "@/components/dropdowns/module/module-select";
 import { PrioritySelect } from "@/components/dropdowns/priority/priority-select";
 import { StateSelect } from "@/components/dropdowns/state/state-select";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useEstimate } from "@/hooks/store/estimates/use-estimate";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useLabel } from "@/hooks/store/use-label";
@@ -110,7 +111,10 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
   const {
     issues: { addCycleToIssue, removeCycleFromIssue },
   } = useIssues(storeType);
-  const { areEstimateEnabledByProjectId } = useProjectEstimates();
+  const { areEstimateEnabledByProjectId, currentActiveEstimateIdByProjectId } = useProjectEstimates();
+  const activeEstimate = useEstimate(
+    issue.project_id ? currentActiveEstimateIdByProjectId(issue.project_id) : undefined
+  );
   const { getCycleNameById } = useCycle();
   const { getStateById } = useProjectState();
   const { data: userProfile } = useUserProfile();
@@ -523,7 +527,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       menuRow: {
         icon: <Icon icon={EstimateOutline} />,
         label: t("common.estimate"),
-        preview: issue.estimate_point ? undefined : none,
+        preview: (issue.estimate_point && getEstimatePointDisplayValue(activeEstimate, issue.estimate_point)) || none,
         disabled: isReadOnly,
         editor: ({ onEditorClose }) => renderEstimate(getPropertyEditorProps(onEditorClose)),
       },
