@@ -6,11 +6,9 @@
 
 import { observer } from "mobx-react";
 // plane imports
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import { cn } from "@plane/utils";
-// assets
-import emptyCycle from "@/app/assets/empty-state/cycle.svg?url";
 // components
-import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
 import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
 import { CycleDetailsSidebar } from "@/components/cycles/analytics-sidebar";
@@ -54,14 +52,19 @@ function CycleDetailPage({ params }: Route.ComponentProps) {
     <>
       <PageHead title={pageTitle} />
       {!cycle && !loader ? (
-        <EmptyState
-          image={emptyCycle}
+        <EmptyStateDetailed
+          align="center"
+          assetKey="cycle"
+          assetClassName="size-40"
           title="Cycle does not exist"
           description="The cycle you are looking for does not exist or has been deleted."
-          primaryButton={{
-            text: "View other cycles",
-            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/cycles`),
-          }}
+          actions={[
+            {
+              label: "View other cycles",
+              variant: "primary",
+              onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/cycles`),
+            },
+          ]}
         />
       ) : (
         <>

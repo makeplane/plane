@@ -6,10 +6,9 @@
 
 import { observer } from "mobx-react";
 import useSWR from "swr";
-// assets
-import emptyView from "@/app/assets/empty-state/view.svg?url";
+// plane imports
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 // components
-import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
 import { ProjectViewLayoutRoot } from "@/components/issues/issue-layouts/roots/project-view-layout-root";
 // hooks
@@ -34,14 +33,19 @@ function ProjectViewIssuesPage({ params }: Route.ComponentProps) {
 
   if (error) {
     return (
-      <EmptyState
-        image={emptyView}
+      <EmptyStateDetailed
+        align="center"
+        assetKey="view"
+        assetClassName="size-40"
         title="View does not exist"
         description="The view you are looking for does not exist or you don't have permission to view it."
-        primaryButton={{
-          text: "View other views",
-          onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/views`),
-        }}
+        actions={[
+          {
+            label: "View other views",
+            variant: "primary",
+            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/views`),
+          },
+        ]}
       />
     );
   }
