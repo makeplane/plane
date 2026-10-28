@@ -369,6 +369,7 @@
   "member": "{count, plural, one{# członek} few{# członkowie} other{# członków}}",
   "new_password_must_be_different_from_old_password": "Nowe hasło musi być innym niż stare hasło",
   "edited": "Edytowano",
+  "entity_detail_toolbar": "Akcje",
   "bot": "Bot",
   "settings_description": "Zarządzaj preferencjami konta, przestrzeni roboczej i projektu w jednym miejscu. Przełączaj się między zakładkami, aby łatwo je skonfigurować.",
   "back_to_workspace": "Wróć do przestrzeni roboczej",

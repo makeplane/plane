@@ -189,6 +189,8 @@
         "message": "Wiederherstellung des Arbeitselements fehlgeschlagen. Bitte versuchen Sie es erneut."
       }
     },
+    "archived_banner": "Dieses Arbeitselement ist archiviert. Zum Bearbeiten muss es wiederhergestellt werden.",
+    "updated_time_ago": "Aktualisiert {time}",
     "relation": {
       "relates_to": "Steht in Beziehung zu",
       "duplicate": "Duplikat",

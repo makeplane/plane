@@ -369,6 +369,7 @@
   "member": "{count, plural, one{# miembro} other{# miembros}}",
   "new_password_must_be_different_from_old_password": "La nueva contraseña debe ser diferente a la contraseña anterior",
   "edited": "Modificado",
+  "entity_detail_toolbar": "Acciones",
   "bot": "Bot",
   "settings_description": "Administra las preferencias de tu cuenta, espacio de trabajo y proyecto en un solo lugar. Cambia entre pestañas para configurar fácilmente.",
   "back_to_workspace": "Volver al espacio de trabajo",

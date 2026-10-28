@@ -189,6 +189,8 @@
         "message": "No se pudo restaurar el elemento de trabajo. Por favor, inténtalo de nuevo."
       }
     },
+    "archived_banner": "Este elemento de trabajo está archivado. Restáurelo para hacer cambios.",
+    "updated_time_ago": "Actualizado {time}",
     "relation": {
       "relates_to": "Se relaciona con",
       "duplicate": "Duplicado de",

@@ -369,6 +369,7 @@
   "member": "{count, plural, one{# člen} few{# členovia} other{# členov}}",
   "new_password_must_be_different_from_old_password": "Nové heslo musí byť odlišné od starého hesla",
   "edited": "Upravené",
+  "entity_detail_toolbar": "Akcie",
   "bot": "Bot",
   "settings_description": "Spravujte predvoľby svojho účtu, pracovného priestoru a projektu na jednom mieste. Prepínajte medzi kartami a jednoducho konfigurujte.",
   "back_to_workspace": "Späť do pracovného priestoru",

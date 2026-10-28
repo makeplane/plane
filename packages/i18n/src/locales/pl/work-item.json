@@ -189,6 +189,8 @@
         "message": "Nie udało się przywrócić elementu pracy. Spróbuj ponownie."
       }
     },
+    "archived_banner": "Ten element pracy jest zarchiwizowany. Aby wprowadzić zmiany, należy go przywrócić.",
+    "updated_time_ago": "Zaktualizowano {time}",
     "relation": {
       "relates_to": "Powiązany z",
       "duplicate": "Duplikat",

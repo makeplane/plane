@@ -189,6 +189,8 @@
         "message": "作業項目を復元できませんでした。もう一度お試しください。"
       }
     },
+    "archived_banner": "この作業項目はアーカイブされています。変更するには復元してください。",
+    "updated_time_ago": "{time}に更新",
     "relation": {
       "relates_to": "関連する",
       "duplicate": "重複する",

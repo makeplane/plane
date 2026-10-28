@@ -369,6 +369,7 @@
   "member": "{count, plural, one{# Mitglied} few{# Mitglieder} other{# Mitglieder}}",
   "new_password_must_be_different_from_old_password": "Das neue Passwort muss von dem alten Passwort abweichen",
   "edited": "Bearbeitet",
+  "entity_detail_toolbar": "Aktionen",
   "bot": "Bot",
   "settings_description": "Verwalten Sie Ihre Konto-, Arbeitsbereichs- und Projekteinstellungen an einem Ort. Wechseln Sie zwischen den Tabs, um sie einfach zu konfigurieren.",
   "back_to_workspace": "Zurück zum Arbeitsbereich",

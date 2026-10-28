@@ -369,6 +369,7 @@
   "member": "{count, plural, other{# メンバー}}",
   "new_password_must_be_different_from_old_password": "新しいパスワードは古いパスワードと異なる必要があります",
   "edited": "編集済み",
+  "entity_detail_toolbar": "アクション",
   "bot": "ボット",
   "settings_description": "アカウント、ワークスペース、プロジェクトの環境設定を一か所で管理できます。タブを切り替えて簡単に設定してください。",
   "back_to_workspace": "ワークスペースに戻る",

@@ -189,6 +189,8 @@
         "message": "Impossibile ripristinare l'elemento di lavoro. Per favore, riprova."
       }
     },
+    "archived_banner": "Questo elemento di lavoro è archiviato. Lo ripristini per apportare modifiche.",
+    "updated_time_ago": "Aggiornato {time}",
     "relation": {
       "relates_to": "Collegato a",
       "duplicate": "Duplicato di",

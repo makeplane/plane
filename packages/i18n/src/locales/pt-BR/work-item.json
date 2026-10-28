@@ -189,6 +189,8 @@
         "message": "Não foi possível restaurar o item de trabalho. Por favor, tente novamente."
       }
     },
+    "archived_banner": "Este item de trabalho está arquivado. Restaure-o para fazer alterações.",
+    "updated_time_ago": "Atualizado {time}",
     "relation": {
       "relates_to": "Relacionado a",
       "duplicate": "Duplicado de",

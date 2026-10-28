@@ -189,6 +189,8 @@
         "message": "L’élément de travail n’a pas pu être restauré. Veuillez réessayer."
       }
     },
+    "archived_banner": "Cet élément de travail est archivé. Restaurez-le pour le modifier.",
+    "updated_time_ago": "Mis à jour {time}",
     "relation": {
       "relates_to": "En relation avec",
       "duplicate": "Doublon de",

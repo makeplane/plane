@@ -189,6 +189,8 @@
         "message": "작업 항목을 복원할 수 없습니다. 다시 시도해주세요."
       }
     },
+    "archived_banner": "이 작업 항목은 보관되었습니다. 변경하려면 복원하세요.",
+    "updated_time_ago": "{time} 업데이트됨",
     "relation": {
       "relates_to": "관련 있음",
       "duplicate": "중복",

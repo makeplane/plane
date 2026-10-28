@@ -189,6 +189,8 @@
         "message": "Work item could not be restored. Please try again."
       }
     },
+    "archived_banner": "This work item is archived. Restore it to make changes.",
+    "updated_time_ago": "Updated {time}",
     "relation": {
       "relates_to": "Relates to",
       "duplicate": "Duplicate of",

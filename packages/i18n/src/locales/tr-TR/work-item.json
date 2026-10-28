@@ -189,6 +189,8 @@
         "message": "İş öğesi geri yüklenemedi. Lütfen tekrar deneyin."
       }
     },
+    "archived_banner": "Bu iş öğesi arşivlendi. Değişiklik yapmak için geri yükleyin.",
+    "updated_time_ago": "{time} güncellendi",
     "relation": {
       "relates_to": "İlişkili",
       "duplicate": "Kopyası",

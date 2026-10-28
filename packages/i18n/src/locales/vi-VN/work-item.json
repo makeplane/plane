@@ -189,6 +189,8 @@
         "message": "Không thể khôi phục mục công việc. Vui lòng thử lại."
       }
     },
+    "archived_banner": "Mục công việc này đã được lưu trữ. Hãy khôi phục để thực hiện thay đổi.",
+    "updated_time_ago": "Đã cập nhật {time}",
     "relation": {
       "relates_to": "Liên quan đến",
       "duplicate": "Trùng lặp với",

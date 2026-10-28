@@ -189,6 +189,8 @@
         "message": "無法還原工作事項。請再試一次。"
       }
     },
+    "archived_banner": "此工作事項已封存。請還原後再進行變更。",
+    "updated_time_ago": "更新於 {time}",
     "relation": {
       "relates_to": "與此相關",
       "duplicate": "此項重複",

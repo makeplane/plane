@@ -189,6 +189,8 @@
         "message": "Werkitem kon niet worden hersteld. Probeer het opnieuw."
       }
     },
+    "archived_banner": "Dit werkitem is gearchiveerd. Herstel het om wijzigingen aan te brengen.",
+    "updated_time_ago": "Bijgewerkt {time}",
     "relation": {
       "relates_to": "Gerelateerd aan",
       "duplicate": "Duplicaat van",

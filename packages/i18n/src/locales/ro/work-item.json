@@ -189,6 +189,8 @@
         "message": "Activitatea nu a putut fi restaurată. Te rugăm să încerci din nou."
       }
     },
+    "archived_banner": "Această activitate este arhivată. Restaurați-o pentru a face modificări.",
+    "updated_time_ago": "Actualizat {time}",
     "relation": {
       "relates_to": "Este legată de",
       "duplicate": "Duplicată a",

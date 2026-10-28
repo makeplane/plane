@@ -189,6 +189,8 @@
         "message": "Obnovenie pracovnej položky zlyhalo. Skúste to prosím znova."
       }
     },
+    "archived_banner": "Táto pracovná položka je archivovaná. Ak chcete vykonať zmeny, obnovte ju.",
+    "updated_time_ago": "Aktualizované {time}",
     "relation": {
       "relates_to": "Súvisiace s",
       "duplicate": "Duplikát",

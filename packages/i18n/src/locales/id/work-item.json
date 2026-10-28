@@ -189,6 +189,8 @@
         "message": "Item kerja tidak dapat dipulihkan. Silakan coba lagi."
       }
     },
+    "archived_banner": "Item kerja ini diarsipkan. Pulihkan untuk melakukan perubahan.",
+    "updated_time_ago": "Diperbarui {time}",
     "relation": {
       "relates_to": "Berhubungan dengan",
       "duplicate": "Duplikat dari",

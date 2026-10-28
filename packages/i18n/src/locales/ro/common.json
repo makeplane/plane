@@ -369,6 +369,7 @@
   "member": "{count, plural, one{# membru} other{# membri}}",
   "new_password_must_be_different_from_old_password": "Parola nouă trebuie să fie diferită de parola veche",
   "edited": "editat",
+  "entity_detail_toolbar": "Acțiuni",
   "bot": "Bot",
   "settings_description": "Gestionează preferințele contului, spațiului de lucru și proiectelor tale într-un singur loc. Comută între file pentru a configura cu ușurință.",
   "back_to_workspace": "Înapoi la spațiul de lucru",

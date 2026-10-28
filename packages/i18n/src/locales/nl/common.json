@@ -369,6 +369,7 @@
   "member": "{count, plural, one{# lid} other{# leden}}",
   "new_password_must_be_different_from_old_password": "Nieuw wachtwoord moet verschillen van oud wachtwoord",
   "edited": "bewerkt",
+  "entity_detail_toolbar": "Acties",
   "bot": "Bot",
   "settings_description": "Beheer je account-, werkruimte- en projectvoorkeuren allemaal op één plek. Wissel tussen tabbladen om eenvoudig te configureren.",
   "back_to_workspace": "Terug naar werkruimte",

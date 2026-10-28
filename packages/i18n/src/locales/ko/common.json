@@ -369,6 +369,7 @@
   "member": "{count, plural, one{# 멤버} other{# 멤버}}",
   "new_password_must_be_different_from_old_password": "새 비밀번호는 이전 비밀번호와 다르게 설정해야 합니다",
   "edited": "수정됨",
+  "entity_detail_toolbar": "작업",
   "bot": "봇",
   "settings_description": "계정, 작업 공간 및 프로젝트 환경 설정을 한 곳에서 관리하세요. 탭 사이를 전환하여 손쉽게 구성할 수 있습니다.",
   "back_to_workspace": "작업 공간으로 돌아가기",

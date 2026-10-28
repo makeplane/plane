@@ -189,6 +189,8 @@
         "message": "Obnovení pracovní položky se nezdařilo. Zkuste to prosím znovu."
       }
     },
+    "archived_banner": "Tato pracovní položka je archivovaná. Pro provedení změn ji obnovte.",
+    "updated_time_ago": "Aktualizováno {time}",
     "relation": {
       "relates_to": "Související s",
       "duplicate": "Duplikát",
