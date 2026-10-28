@@ -5,6 +5,7 @@
  */
 
 import type { ReactNode } from "react";
+import { useRef, useState } from "react";
 // plane imports
 import { ScrollArea } from "@makeplane/propel/components/scroll-area";
 import { cn } from "@plane/utils";
@@ -22,6 +23,10 @@ type TPageWrapperProps = {
 
 export const PageWrapper = (props: TPageWrapperProps) => {
   const { children, header, customHeader, size = "md" } = props;
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const [isViewportFocusVisible, setIsViewportFocusVisible] = useState(false);
+  const updateViewportFocusVisible = (target: EventTarget) =>
+    setIsViewportFocusVisible(target === viewportRef.current && viewportRef.current.matches(":focus-visible"));
 
   return (
     <div
@@ -43,9 +48,19 @@ export const PageWrapper = (props: TPageWrapperProps) => {
           </div>
         )
       )}
-      <ScrollArea orientation="vertical" variant="inset" size="sm">
-        <div className="px-4 pb-4">{children}</div>
-      </ScrollArea>
+      <div
+        className={cn("flex min-h-0 flex-1", {
+          "outline-2 -outline-offset-2 outline-accent-strong outline-solid": isViewportFocusVisible,
+        })}
+        onFocusCapture={(event) => updateViewportFocusVisible(event.target)}
+        onKeyDownCapture={(event) => updateViewportFocusVisible(event.target)}
+        onPointerDownCapture={(event) => updateViewportFocusVisible(event.target)}
+        onBlurCapture={() => setIsViewportFocusVisible(false)}
+      >
+        <ScrollArea orientation="vertical" variant="inset" size="sm" viewportRef={viewportRef}>
+          <div className="px-4 pb-4">{children}</div>
+        </ScrollArea>
+      </div>
     </div>
   );
 };
