@@ -11,7 +11,7 @@ import type { TActivityEntityData, TProjectEntityData } from "@plane/types";
 import { calculateTimeAgo } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
-import { MemberSelect } from "@/components/dropdowns/member/member-select";
+import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // helpers
 
 type BlockProps = {
@@ -51,16 +51,7 @@ export function RecentProject(props: BlockProps) {
       quickActionElement={
         <div className="flex items-center gap-2">
           {projectDetails?.project_members?.length > 0 && (
-            <div className="h-5">
-              <MemberSelect
-                projectId={projectDetails?.id}
-                value={projectDetails?.project_members}
-                onChange={() => {}}
-                disabled
-                multiple
-                variant="avatar-group-sm"
-              />
-            </div>
+            <ButtonAvatars showTooltip={false} userIds={projectDetails.project_members} size="xs" max={3} />
           )}
         </div>
       }

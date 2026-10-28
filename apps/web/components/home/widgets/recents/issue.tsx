@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 // plane types
 import { PriorityIcon, StateGroupIcon } from "@plane/blocks/icons";
+import { Icon } from "@makeplane/propel/components/icon";
 import { WorkItemsOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TActivityEntityData, TIssueEntityData } from "@plane/types";
@@ -15,7 +16,7 @@ import { EIssueServiceType } from "@plane/types";
 import { calculateTimeAgo, generateWorkItemLink } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
-import { MemberSelect } from "@/components/dropdowns/member/member-select";
+import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -99,32 +100,19 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
       }
       quickActionElement={
         <div className="flex items-center gap-2">
-          <Tooltip label={`State: ${state?.name ?? "State"}`} layout="stacked">
-            <div>
-              <StateGroupIcon
-                stateGroup={state?.group ?? "backlog"}
-                color={state?.color}
-                className="my-auto h-4 w-4"
-                percentage={state?.order}
-              />
-            </div>
+          <Tooltip label={state?.name ?? "State"}>
+            <Icon
+              size="md"
+              icon={
+                <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} percentage={state?.order} />
+              }
+            />
           </Tooltip>
-          <Tooltip label={`Priority: ${issueDetails?.priority ?? "Priority"}`}>
-            <div>
-              <PriorityIcon priority={issueDetails?.priority} className="size-4" />
-            </div>
+          <Tooltip label={issueDetails?.priority ?? "Priority"}>
+            <Icon size="md" icon={<PriorityIcon priority={issueDetails?.priority} />} />
           </Tooltip>
           {issueDetails?.assignees?.length > 0 && (
-            <div className="h-5">
-              <MemberSelect
-                projectId={issueDetails?.project_id}
-                value={issueDetails?.assignees}
-                onChange={() => {}}
-                disabled
-                multiple
-                variant="avatar-group-sm"
-              />
-            </div>
+            <ButtonAvatars showTooltip={false} userIds={issueDetails.assignees} size="xs" max={3} />
           )}
         </div>
       }

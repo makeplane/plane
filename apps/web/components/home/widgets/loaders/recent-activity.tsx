@@ -10,15 +10,11 @@ import { Loader } from "@plane/blocks/skeleton";
 
 export function RecentActivityWidgetLoader() {
   return (
-    <Loader className="space-y-6 rounded-xl px-2">
-      {range(5).map((index) => (
-        <div key={index} className="flex items-start gap-3.5">
-          <div className="flex-shrink-0">
-            <Loader.Item height="32px" width="32px" />
-          </div>
-          <div className="my-auto w-full flex-shrink-0 space-y-3">
-            <Loader.Item height="15px" width="70%" />
-          </div>
+    <Loader className="space-y-0 rounded-md">
+      {range(6).map((index) => (
+        <div key={index} className="flex h-[38px] items-center gap-2 px-2">
+          <Loader.Item height="16px" width="16px" />
+          <Loader.Item height="14px" width="70%" />
         </div>
       ))}
     </Loader>
