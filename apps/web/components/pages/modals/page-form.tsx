@@ -157,7 +157,7 @@ export function PageForm(props: Props) {
               accessSpecifiers={PAGE_ACCESS_SPECIFIERS}
               isMobile={isMobile}
             />
-            <h6 className="text-11 font-medium">{t(i18n_access_label || "")}</h6>
+            <h6 className="text-caption-sm-medium">{t(i18n_access_label || "")}</h6>
           </div>
         </DialogInfo>
         <Button

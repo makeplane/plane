@@ -80,7 +80,7 @@ const AssetItem = observer(function AssetItem(props: AssetItemProps) {
               backgroundImage: `url('${assetSrc}')`,
             }}
           />
-          <p className="truncate text-13 font-medium">{asset.name}</p>
+          <p className="truncate text-body-xs-medium">{asset.name}</p>
         </a>
         <div className="pointer-events-none shrink-0 opacity-0 transition-opacity group-focus-within/asset-item:pointer-events-auto group-focus-within/asset-item:opacity-100 group-hover/asset-item:pointer-events-auto group-hover/asset-item:opacity-100">
           <AnchorButton href={assetDownloadSrc} target="_blank" rel="noreferrer noopener" variant="secondary" size="xs">

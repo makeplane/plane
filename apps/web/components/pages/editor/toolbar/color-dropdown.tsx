@@ -62,7 +62,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
       </PopoverTrigger>
       <PopoverContent variant="rich" side="bottom" align="start">
         <div className="space-y-1.5">
-          <p className="text-11 font-semibold text-tertiary">Text colors</p>
+          <p className="text-caption-sm-semibold text-tertiary">Text colors</p>
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button
@@ -87,7 +87,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
           </div>
         </div>
         <div className="space-y-1.5">
-          <p className="text-11 font-semibold text-tertiary">Background colors</p>
+          <p className="text-caption-sm-semibold text-tertiary">Background colors</p>
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button

@@ -45,7 +45,7 @@ const VersionHistoryItem = observer(function VersionHistoryItem(props: VersionHi
   const { t } = useTranslation();
 
   return (
-    <li className="relative flex items-center gap-x-4 text-11 font-medium">
+    <li className="relative flex items-center gap-x-4 text-caption-sm-medium">
       {/* timeline icon */}
       <div className="relative grid size-6 flex-none place-items-center">
         <div className="size-2 rounded-full bg-layer-3" />
@@ -110,7 +110,9 @@ export const PageNavigationPaneInfoTabVersionHistory = observer(function PageNav
 
   return (
     <div>
-      <p className="text-11 font-medium text-secondary">{t("page_navigation_pane.tabs.info.version_history.label")}</p>
+      <p className="text-caption-sm-medium text-secondary">
+        {t("page_navigation_pane.tabs.info.version_history.label")}
+      </p>
       <div className="mt-3">
         <ul className="relative">
           {/* timeline line */}
@@ -118,7 +120,7 @@ export const PageNavigationPaneInfoTabVersionHistory = observer(function PageNav
             <div className="w-px bg-layer-3" />
           </div>
           {/* end timeline line */}
-          <li className="relative flex items-center gap-x-4 text-11 font-medium">
+          <li className="relative flex items-center gap-x-4 text-caption-sm-medium">
             {/* timeline icon */}
             <div className="relative grid size-6 flex-none place-items-center rounded-full bg-accent-primary/20">
               <div className="size-2.5 rounded-full bg-accent-primary/40" />

@@ -232,7 +232,7 @@ export function ExportPageModal(props: Props) {
           <DialogBody>
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-2">
-                <h6 className="flex-shrink-0 text-13 text-secondary">Export format</h6>
+                <h6 className="flex-shrink-0 text-body-xs-regular text-secondary">Export format</h6>
                 <Controller
                   control={control}
                   name="export_format"
@@ -246,7 +246,7 @@ export function ExportPageModal(props: Props) {
                 />
               </div>
               <div className="flex items-center justify-between gap-2">
-                <h6 className="flex-shrink-0 text-13 text-secondary">Include content</h6>
+                <h6 className="flex-shrink-0 text-body-xs-regular text-secondary">Include content</h6>
                 <Controller
                   control={control}
                   name="content_variety"
@@ -261,7 +261,7 @@ export function ExportPageModal(props: Props) {
               </div>
               {isPDFSelected && (
                 <div className="flex items-center justify-between gap-2">
-                  <h6 className="flex-shrink-0 text-13 text-secondary">Page format</h6>
+                  <h6 className="flex-shrink-0 text-body-xs-regular text-secondary">Page format</h6>
                   <Controller
                     control={control}
                     name="page_format"

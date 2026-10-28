@@ -84,7 +84,7 @@ export const StickySearch = observer(function StickySearch() {
         <SearchOutline className="size-3.5 shrink-0" />
         <input
           ref={inputRef}
-          className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
+          className="w-full max-w-[234px] border-none bg-transparent text-body-xs-regular text-primary placeholder:text-placeholder focus:outline-none"
           aria-label={t("stickies.search_placeholder")}
           placeholder={t("stickies.search_placeholder")}
           value={searchQuery}

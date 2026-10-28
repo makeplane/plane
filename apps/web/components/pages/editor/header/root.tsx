@@ -47,7 +47,7 @@ export const PageEditorHeaderRoot = observer(function PageEditorHeaderRoot(props
                 <button
                   type="button"
                   className={cn(
-                    "flex items-center gap-1 rounded-sm p-1 text-13 font-medium text-tertiary transition-colors outline-none hover:bg-layer-1",
+                    "flex items-center gap-1 rounded-sm p-1 text-body-xs-medium text-tertiary transition-colors outline-none hover:bg-layer-1",
                     {
                       "bg-layer-1": isLogoPickerOpen,
                     }

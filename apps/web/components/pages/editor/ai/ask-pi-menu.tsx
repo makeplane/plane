@@ -59,7 +59,7 @@ export function AskPiMenu(props: Props) {
             <div className="mt-3 flex items-center gap-4">
               <button
                 type="button"
-                className="rounded-sm p-1 text-13 font-medium text-tertiary outline-none hover:bg-layer-1"
+                className="rounded-sm p-1 text-body-xs-medium text-tertiary outline-none hover:bg-layer-1"
                 onClick={() => handleInsertText(false)}
               >
                 Replace selection
@@ -94,7 +94,7 @@ export function AskPiMenu(props: Props) {
             </div>
           </div>
         ) : (
-          <p className="text-13 text-secondary">AI is answering...</p>
+          <p className="text-body-xs-regular text-secondary">AI is answering...</p>
         )}
       </div>
       <div className="px-4 py-3">
@@ -104,7 +104,7 @@ export function AskPiMenu(props: Props) {
           </span>
           <input
             type="text"
-            className="w-full border-none bg-transparent text-13 outline-none placeholder:text-placeholder"
+            className="w-full border-none bg-transparent text-body-xs-regular outline-none placeholder:text-placeholder"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Tell AI what to do..."

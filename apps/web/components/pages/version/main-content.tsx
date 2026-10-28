@@ -90,8 +90,8 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               <WarningTriangleOutline className="size-10" />
             </span>
             <div>
-              <h6 className="text-16 font-semibold">Something went wrong!</h6>
-              <p className="text-13 text-tertiary">The version could not be loaded, please try again.</p>
+              <h6 className="text-body-md-semibold">Something went wrong!</h6>
+              <p className="text-body-xs-regular text-tertiary">The version could not be loaded, please try again.</p>
             </div>
             <Button
               variant="ghost"
@@ -107,12 +107,12 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
         <>
           <div className="flex min-h-14 items-center justify-between gap-2 border-b border-subtle px-5 py-3">
             <div className="flex items-center gap-4">
-              <h6 className="text-14 font-medium">
+              <h6 className="text-body-sm-medium">
                 {versionDetails
                   ? `${renderFormattedDate(versionDetails.last_saved_at)} ${renderFormattedTime(versionDetails.last_saved_at)}`
                   : "Loading version details"}
               </h6>
-              <span className="flex flex-shrink-0 items-center gap-1 rounded-sm bg-accent-primary/20 px-1.5 py-1 text-11 font-medium text-accent-primary">
+              <span className="flex flex-shrink-0 items-center gap-1 rounded-sm bg-accent-primary/20 px-1.5 py-1 text-caption-sm-medium text-accent-primary">
                 <ShowOutline className="size-3 flex-shrink-0" />
                 View only
               </span>
