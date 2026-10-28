@@ -276,7 +276,9 @@ function ImagePickerPopoverComponent<TFieldValues extends FieldValues = FieldVal
                                     ))}
                                   </div>
                                 ) : (
-                                  <p className="pt-7 text-center text-11 text-secondary">No images found.</p>
+                                  <p className="pt-7 text-center text-caption-sm-regular text-secondary">
+                                    No images found.
+                                  </p>
                                 )
                               ) : (
                                 <Loader className="grid grid-cols-4 gap-4">
@@ -326,7 +328,7 @@ function ImagePickerPopoverComponent<TFieldValues extends FieldValues = FieldVal
                             >
                               <button
                                 type="button"
-                                className="absolute top-0 right-0 z-40 -translate-y-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-11 font-medium text-secondary"
+                                className="absolute top-0 right-0 z-40 -translate-y-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-caption-sm-medium text-secondary"
                               >
                                 Edit
                               </button>
@@ -340,7 +342,7 @@ function ImagePickerPopoverComponent<TFieldValues extends FieldValues = FieldVal
                                 </>
                               ) : (
                                 <div>
-                                  <span className="mt-2 block text-13 font-medium text-secondary">
+                                  <span className="mt-2 block text-body-xs-medium text-secondary">
                                     {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
                                   </span>
                                 </div>
@@ -350,14 +352,16 @@ function ImagePickerPopoverComponent<TFieldValues extends FieldValues = FieldVal
                             </div>
                           </div>
                           {fileRejections.length > 0 && (
-                            <p className="text-13 text-danger-primary">
+                            <p className="text-body-xs-regular text-danger-primary">
                               {fileRejections[0].errors[0].code === "file-too-large"
                                 ? "The image size cannot exceed 5 MB."
                                 : "Please upload a file in a valid format."}
                             </p>
                           )}
 
-                          <p className="text-13 text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
+                          <p className="text-body-xs-regular text-secondary">
+                            File formats supported- .jpeg, .jpg, .png, .webp
+                          </p>
 
                           <div className="flex h-12 items-start justify-end gap-2">
                             <Button

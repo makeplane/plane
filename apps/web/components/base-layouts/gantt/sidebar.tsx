@@ -122,7 +122,7 @@ export const BaseGanttSidebar = observer(function BaseGanttSidebar<T extends IBa
                           <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
                             <div className="flex-grow truncate">{renderItem(item)}</div>
                             {duration && (
-                              <div className="flex-shrink-0 text-13 text-secondary">
+                              <div className="flex-shrink-0 text-body-xs-regular text-secondary">
                                 <span>
                                   {duration} day{duration > 1 ? "s" : ""}
                                 </span>

@@ -323,7 +323,7 @@ const activityDetails: {
         return (
           <span className="overflow-hidden">
             added a new label{" "}
-            <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-11">
+            <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-caption-sm-regular">
               <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="line-clamp-1 flex-shrink font-medium break-all text-primary">{activity.new_value}</span>
             </span>
@@ -339,7 +339,7 @@ const activityDetails: {
         return (
           <>
             removed the label{" "}
-            <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-11">
+            <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-caption-sm-regular">
               <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="line-clamp-1 flex-shrink font-medium break-all text-primary">{activity.old_value}</span>
             </span>

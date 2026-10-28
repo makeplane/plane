@@ -85,7 +85,7 @@ export const AddFilterDropdown = observer(function AddFilterDropdown<
         <BaseCombobox.Trigger
           aria-label={triggerAriaLabel}
           className={cn(
-            "flex w-full items-center justify-between gap-1 text-11 outline-none",
+            "flex w-full items-center justify-between gap-1 text-caption-sm-regular outline-none",
             isDisabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover",
             className
           )}

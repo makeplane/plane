@@ -45,7 +45,7 @@ export const DescriptionVersionsDropdown = observer(function DescriptionVersions
           <button
             type="button"
             className={cn(
-              "flex items-center justify-between gap-1 rounded-md px-2.5 py-1 text-11 whitespace-nowrap text-secondary duration-300 data-[popup-open]:text-primary",
+              "flex items-center justify-between gap-1 rounded-md px-2.5 py-1 text-caption-sm-regular whitespace-nowrap text-secondary duration-300 data-[popup-open]:text-primary",
               disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-layer-transparent-hover"
             )}
           />
@@ -55,7 +55,7 @@ export const DescriptionVersionsDropdown = observer(function DescriptionVersions
           <span className="grid size-4 flex-shrink-0 place-items-center">
             <HistoryOutline className="size-3.5" />
           </span>
-          <p className="text-11">
+          <p className="text-caption-sm-regular">
             {t("description_versions.last_edited_by")}{" "}
             <span className="font-medium">{lastUpdatedByUserDisplayName ?? t("common.deactivated_user")}</span>{" "}
             {calculateTimeAgo(lastUpdatedAt)}

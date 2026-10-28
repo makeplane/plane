@@ -185,13 +185,13 @@ export function ExistingIssuesListModal(props: Props) {
             tabIndex={baseTabIndex}
           />
           <DialogMain>
-            <div className="flex flex-shrink-0 flex-col-reverse gap-4 text-13 text-secondary sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-shrink-0 flex-col-reverse gap-4 text-body-xs-regular text-secondary sm:flex-row sm:items-center sm:justify-between">
               {selectedIssues.length > 0 ? (
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   {selectedIssues.map((issue) => (
                     <div
                       key={issue.id}
-                      className="flex items-center gap-1 rounded-md border border-subtle bg-layer-1 py-1 pl-2 text-11 whitespace-nowrap text-primary"
+                      className="flex items-center gap-1 rounded-md border border-subtle bg-layer-1 py-1 pl-2 text-caption-sm-regular whitespace-nowrap text-primary"
                     >
                       <IssueIdentifier
                         projectId={issue.project_id}
@@ -212,14 +212,14 @@ export function ExistingIssuesListModal(props: Props) {
                   ))}
                 </div>
               ) : (
-                <div className="w-min rounded-md border border-subtle bg-layer-1 p-2 text-11 whitespace-nowrap">
+                <div className="w-min rounded-md border border-subtle bg-layer-1 p-2 text-caption-sm-regular whitespace-nowrap">
                   {t("issue.select.empty")}
                 </div>
               )}
               {workspaceLevelToggle && (
                 <Tooltip label="Toggle workspace level search" disabled={isMobile}>
                   <div
-                    className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-11 ${
+                    className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-caption-sm-regular ${
                       isWorkspaceLevel ? "text-primary" : "text-secondary"
                     }`}
                   >
@@ -244,7 +244,7 @@ export function ExistingIssuesListModal(props: Props) {
             <div className="vertical-scrollbar scrollbar-md max-h-80 min-h-0 scroll-py-2 overflow-x-hidden overflow-y-auto overscroll-contain">
               {/* TODO: Translate here */}
               {searchTerm !== "" && (
-                <h5 className="text-13 text-secondary">
+                <h5 className="text-body-xs-regular text-secondary">
                   Search results for{" "}
                   <span className="text-primary">
                     {'"'}

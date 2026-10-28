@@ -14,7 +14,7 @@ export function CycleModuleBoardLayoutLoader() {
           {range(5).map((i) => (
             <div
               key={i}
-              className="flex h-44 w-full flex-col justify-between rounded-sm border border-subtle bg-surface-1 p-4 text-13"
+              className="flex h-44 w-full flex-col justify-between rounded-sm border border-subtle bg-surface-1 p-4 text-body-xs-regular"
             >
               <div className="flex items-center justify-between">
                 <span className="h-6 w-24 rounded-sm bg-layer-1" />

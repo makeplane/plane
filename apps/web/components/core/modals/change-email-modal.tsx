@@ -162,7 +162,7 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
               <div className="space-y-4">
                 <div className="flex flex-col gap-1">
                   {secondStep && (
-                    <h4 className="text-13 font-medium text-secondary">{changeEmailT("form.email.label")}</h4>
+                    <h4 className="text-body-xs-medium text-secondary">{changeEmailT("form.email.label")}</h4>
                   )}
                   <Controller
                     control={control}
@@ -193,12 +193,14 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
                       </Field>
                     )}
                   />
-                  {errors?.email && <span className="text-11 text-danger-primary">{errors?.email?.message}</span>}
+                  {errors?.email && (
+                    <span className="text-caption-sm-regular text-danger-primary">{errors?.email?.message}</span>
+                  )}
                 </div>
 
                 {secondStep && (
                   <div className="flex flex-col gap-1">
-                    <h4 className="text-13 font-medium text-secondary">{changeEmailT("form.code.label")}</h4>
+                    <h4 className="text-body-xs-medium text-secondary">{changeEmailT("form.code.label")}</h4>
                     <Controller
                       control={control}
                       name="code"
@@ -220,9 +222,11 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
                       )}
                     />
                     {errors?.code ? (
-                      <span className="text-11 text-danger-primary">{errors?.code?.message}</span>
+                      <span className="text-caption-sm-regular text-danger-primary">{errors?.code?.message}</span>
                     ) : (
-                      <span className="text-11 text-success-primary">{changeEmailT("form.code.helper_text")}</span>
+                      <span className="text-caption-sm-regular text-success-primary">
+                        {changeEmailT("form.code.helper_text")}
+                      </span>
                     )}
                   </div>
                 )}
