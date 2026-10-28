@@ -16,7 +16,7 @@ import {
 } from "@makeplane/propel/components/menu";
 import { useTranslation } from "@plane/i18n";
 
-export type TFilterSubmenuOption<V extends string = string> = {
+export type TFilterSubmenuOption<V extends string | number = string> = {
   value: V;
   label: string;
   icon?: ReactNode;
@@ -26,7 +26,7 @@ export type TFilterSubmenuOption<V extends string = string> = {
   searchText?: string;
 };
 
-type Props<V extends string> = {
+type Props<V extends string | number> = {
   /** The filter property, shown on the row that opens the submenu. */
   label: string;
   options: TFilterSubmenuOption<V>[];
@@ -49,14 +49,14 @@ export function FilterSubmenuCount({ count }: { count: number }) {
  * One property of a filters menu: a row carrying the applied count that opens a submenu of
  * checkable values.
  */
-export function FilterSubmenu<V extends string = string>(props: Props<V>) {
+export function FilterSubmenu<V extends string | number = string>(props: Props<V>) {
   const { label, options, appliedFilters, onToggle, searchable = false, children, onOpenChange } = props;
   // plane hooks
   const { t } = useTranslation();
   // states
   const [searchQuery, setSearchQuery] = useState("");
   // derived values
-  const appliedValues = new Set<string>(appliedFilters ?? []);
+  const appliedValues = new Set<V>(appliedFilters ?? []);
   const query = searchQuery.trim().toLowerCase();
   const visibleOptions = query
     ? options.filter((option) => `${option.label} ${option.searchText ?? ""}`.toLowerCase().includes(query))
@@ -81,7 +81,7 @@ export function FilterSubmenu<V extends string = string>(props: Props<V>) {
         {visibleOptions.length > 0 ? (
           visibleOptions.map((option) => (
             <MenuCheckboxItem
-              key={option.value}
+              key={String(option.value)}
               label={option.label}
               icon={option.icon}
               trailing={option.trailing}
