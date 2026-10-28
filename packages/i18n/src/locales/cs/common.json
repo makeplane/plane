@@ -729,7 +729,9 @@
     "administration": "Administration",
     "status": "Stav",
     "tooltip": {
-      "copy_to_clipboard": "Kopírovat do schránky"
+      "copy_to_clipboard": "Kopírovat do schránky",
+      "created_on_date": "Vytvořeno dne {date}",
+      "priority": "Priorita: {value}"
     }
   },
   "chart": {

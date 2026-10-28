@@ -729,7 +729,9 @@
     "administration": "Administration",
     "status": "Trạng thái",
     "tooltip": {
-      "copy_to_clipboard": "Sao chép vào bảng tạm"
+      "copy_to_clipboard": "Sao chép vào bảng tạm",
+      "created_on_date": "Được tạo vào {date}",
+      "priority": "Ưu tiên: {value}"
     }
   },
   "chart": {

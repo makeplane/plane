@@ -61,5 +61,8 @@
       "use_this": "Użyj tego",
       "refine": "Udoskonal"
     }
+  },
+  "formatting_toolbar": {
+    "label": "Formatowanie"
   }
 }

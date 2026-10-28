@@ -729,7 +729,9 @@
     "administration": "Administration",
     "status": "Статус",
     "tooltip": {
-      "copy_to_clipboard": "Копировать в буфер обмена"
+      "copy_to_clipboard": "Копировать в буфер обмена",
+      "created_on_date": "Создано {date}",
+      "priority": "Приоритет: {value}"
     }
   },
   "chart": {

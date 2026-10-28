@@ -729,7 +729,9 @@
     "administration": "Beheer",
     "status": "Status",
     "tooltip": {
-      "copy_to_clipboard": "Kopiëren naar klembord"
+      "copy_to_clipboard": "Kopiëren naar klembord",
+      "created_on_date": "Aangemaakt op {date}",
+      "priority": "Prioriteit: {value}"
     }
   },
   "chart": {

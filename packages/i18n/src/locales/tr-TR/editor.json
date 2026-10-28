@@ -61,5 +61,8 @@
       "use_this": "Bunu kullan",
       "refine": "İyileştir"
     }
+  },
+  "formatting_toolbar": {
+    "label": "Biçimlendirme"
   }
 }

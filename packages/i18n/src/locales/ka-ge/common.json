@@ -729,7 +729,9 @@
     "administration": "Administration",
     "status": "სტატუსი",
     "tooltip": {
-      "copy_to_clipboard": "ბუფერში კოპირება"
+      "copy_to_clipboard": "ბუფერში კოპირება",
+      "created_on_date": "შექმნილია {date}",
+      "priority": "პრიორიტეტი: {value}"
     }
   },
   "chart": {

@@ -729,7 +729,9 @@
     "administration": "Administration",
     "status": "Stato",
     "tooltip": {
-      "copy_to_clipboard": "Copia negli appunti"
+      "copy_to_clipboard": "Copia negli appunti",
+      "created_on_date": "Creato il {date}",
+      "priority": "Priorità: {value}"
     }
   },
   "chart": {

@@ -61,5 +61,8 @@
       "use_this": "Използвай това",
       "refine": "Подобри"
     }
+  },
+  "formatting_toolbar": {
+    "label": "Форматиране"
   }
 }

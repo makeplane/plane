@@ -729,7 +729,9 @@
     "administration": "Administration",
     "status": "Statut",
     "tooltip": {
-      "copy_to_clipboard": "Copier dans le presse-papiers"
+      "copy_to_clipboard": "Copier dans le presse-papiers",
+      "created_on_date": "Créé le {date}",
+      "priority": "Priorité : {value}"
     }
   },
   "chart": {

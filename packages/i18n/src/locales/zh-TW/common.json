@@ -729,7 +729,9 @@
     "administration": "Administration",
     "status": "狀態",
     "tooltip": {
-      "copy_to_clipboard": "複製到剪貼簿"
+      "copy_to_clipboard": "複製到剪貼簿",
+      "created_on_date": "建立於 {date}",
+      "priority": "優先順序：{value}"
     }
   },
   "chart": {

@@ -729,7 +729,9 @@
     "administration": "Administration",
     "status": "Stare",
     "tooltip": {
-      "copy_to_clipboard": "Copiază în clipboard"
+      "copy_to_clipboard": "Copiază în clipboard",
+      "created_on_date": "Creat la {date}",
+      "priority": "Prioritate: {value}"
     }
   },
   "chart": {

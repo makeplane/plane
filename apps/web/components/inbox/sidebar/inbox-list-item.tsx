@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
+import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/blocks/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Row } from "@plane/blocks/layout";
@@ -34,6 +35,8 @@ type InboxIssueListItemProps = {
 
 export const InboxIssueListItem = observer(function InboxIssueListItem(props: InboxIssueListItemProps) {
   const { workspaceSlug, projectId, inboxIssueId, projectIdentifier, setIsMobileSidebar } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // router
   const searchParams = useSearchParams();
   const selectedInboxIssueId = searchParams.get("inboxIssueId");
@@ -53,6 +56,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
   if (!issue) return <></>;
 
   const createdByDetails = issue?.created_by ? getUserDetails(issue?.created_by) : undefined;
+  const createdOn = renderFormattedDate(issue.created_at ?? "");
 
   return (
     <>
@@ -82,16 +86,18 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
 
           <div className="flex items-center justify-between">
             <div className="flex flex-wrap items-center gap-2">
-              <Tooltip label={`Created on: ${renderFormattedDate(issue.created_at ?? "") ?? ""}`} disabled={isMobile}>
-                <div className="text-caption-sm-regular text-secondary">
-                  {renderFormattedDate(issue.created_at ?? "")}
-                </div>
+              <Tooltip label={t("common.tooltip.created_on_date", { date: createdOn ?? "" })} disabled={isMobile}>
+                <div className="text-caption-sm-regular text-secondary">{createdOn}</div>
               </Tooltip>
 
               <div className="rounded-full border-2 border-strong-1" />
 
               {issue.priority && (
-                <Tooltip label={`Priority: ${issue.priority ?? "None"}`}>
+                <Tooltip
+                  label={t("common.tooltip.priority", {
+                    value: issue.priority === "none" ? t("common.none") : t(`issue.priority.${issue.priority}`),
+                  })}
+                >
                   <PriorityIcon priority={issue.priority} />
                 </Tooltip>
               )}

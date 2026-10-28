@@ -61,5 +61,8 @@
       "use_this": "これを使用",
       "refine": "改良"
     }
+  },
+  "formatting_toolbar": {
+    "label": "書式"
   }
 }

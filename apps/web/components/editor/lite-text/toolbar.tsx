@@ -124,7 +124,7 @@ export function IssueCommentToolbar(props: Props) {
             }
           }}
         >
-          <Toolbar size="sm" elevation="flat" aria-label="Formatting toolbar">
+          <Toolbar size="sm" elevation="flat" aria-label={t("formatting_toolbar.label")}>
             {showAccessSpecifier && (
               <>
                 <ToolbarGroup>

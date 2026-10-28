@@ -729,7 +729,9 @@
     "administration": "Администриране",
     "status": "Статус",
     "tooltip": {
-      "copy_to_clipboard": "Копиране в клипборда"
+      "copy_to_clipboard": "Копиране в клипборда",
+      "created_on_date": "Създадено на {date}",
+      "priority": "Приоритет: {value}"
     }
   },
   "chart": {

@@ -729,7 +729,9 @@
     "administration": "Verwaltung",
     "status": "Status",
     "tooltip": {
-      "copy_to_clipboard": "In die Zwischenablage kopieren"
+      "copy_to_clipboard": "In die Zwischenablage kopieren",
+      "created_on_date": "Erstellt am {date}",
+      "priority": "Priorität: {value}"
     }
   },
   "chart": {
