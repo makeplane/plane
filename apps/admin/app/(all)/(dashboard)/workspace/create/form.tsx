@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { WEB_BASE_URL, ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { InputField } from "@makeplane/propel/components/input-field";
 import { Select, SelectContent, SelectItem, SelectList, SelectTrigger } from "@makeplane/propel/components/select";
@@ -24,6 +25,8 @@ import { useWorkspace } from "@/hooks/store";
 const instanceWorkspaceService = new InstanceWorkspaceService();
 
 export function WorkspaceCreateForm() {
+  // plane hooks
+  const { t } = useTranslation();
   const organizationSizeLabelId = useId();
   const organizationSizeErrorId = useId();
   // router
@@ -109,7 +112,8 @@ export function WorkspaceCreateForm() {
             <InputField
               size="lg"
               orientation="vertical"
-              label="Name your workspace"
+              label={t("workspace_creation.form.name.label")}
+              required
               id="workspaceName"
               type="text"
               value={value}
@@ -122,9 +126,7 @@ export function WorkspaceCreateForm() {
               }}
               ref={ref}
               placeholder="Something familiar and recognizable is always best."
-              error={
-                errors.name ? <span className="text-11 text-danger-primary">{errors.name.message}</span> : undefined
-              }
+              error={errors.name?.message}
             />
           )}
         />
@@ -140,8 +142,11 @@ export function WorkspaceCreateForm() {
               type="text"
               size="lg"
               orientation="vertical"
-              label="Set your workspace's URL"
-              startIcon={<span className="text-13 whitespace-nowrap text-secondary">{workspaceBaseURL}</span>}
+              label={t("workspace_creation.form.url.label")}
+              required
+              startIcon={
+                <span className="text-body-xs-regular whitespace-nowrap text-secondary">{workspaceBaseURL}</span>
+              }
               value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
               onChange={(e) => {
                 if (/^[a-zA-Z0-9_-]+$/.test(e.target.value)) setInvalidSlug(false);
@@ -151,23 +156,22 @@ export function WorkspaceCreateForm() {
               ref={ref}
               placeholder="workspace-name"
               error={
-                slugError || invalidSlug || errors.slug ? (
-                  <>
-                    {slugError && <p className="text-13 text-danger-primary">This URL is taken. Try something else.</p>}
-                    {invalidSlug && (
-                      <p className="text-13 text-danger-primary">{`URLs can contain only ( - ), ( _ ) and alphanumeric characters.`}</p>
-                    )}
-                    {errors.slug && <span className="text-11 text-danger-primary">{errors.slug.message}</span>}
-                  </>
-                ) : undefined
+                slugError
+                  ? "This URL is taken. Try something else."
+                  : invalidSlug
+                    ? "URLs can contain only ( - ), ( _ ) and alphanumeric characters."
+                    : errors.slug?.message
               }
             />
           )}
         />
-        <div className="flex flex-col gap-1">
-          <h4 id={organizationSizeLabelId} className="text-13 text-tertiary">
-            How many people will use this workspace?
-          </h4>
+        <div className="flex flex-col gap-2">
+          <span id={organizationSizeLabelId} className="text-body-xs-medium text-primary">
+            {t("workspace_creation.form.organization_size.label")}
+            <span className="ml-0.5 text-danger-primary" aria-hidden="true">
+              *
+            </span>
+          </span>
           <div className="w-full">
             <Controller
               name="organization_size"
@@ -176,8 +180,10 @@ export function WorkspaceCreateForm() {
               render={({ field: { value, onChange } }) => (
                 <Select value={value} onValueChange={onChange}>
                   <SelectTrigger
+                    variant="secondary"
                     size="lg"
-                    placeholder="Select a range"
+                    placeholder={t("workspace_creation.form.organization_size.placeholder")}
+                    aria-required="true"
                     aria-labelledby={organizationSizeLabelId}
                     aria-describedby={errors.organization_size ? organizationSizeErrorId : undefined}
                     aria-invalid={Boolean(errors.organization_size)}
@@ -193,7 +199,7 @@ export function WorkspaceCreateForm() {
               )}
             />
             {errors.organization_size && (
-              <span id={organizationSizeErrorId} className="text-13 text-danger-primary">
+              <span id={organizationSizeErrorId} className="text-body-xs-regular text-danger-primary">
                 {errors.organization_size.message}
               </span>
             )}

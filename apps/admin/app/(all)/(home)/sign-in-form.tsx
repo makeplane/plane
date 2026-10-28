@@ -14,9 +14,8 @@ import { Button } from "@makeplane/propel/components/button";
 import { InputField } from "@makeplane/propel/components/input-field";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Banner } from "@makeplane/propel/components/banner";
 import { AuthService } from "@plane/services";
-// components
-import { Banner } from "@/components/common/banner";
 // local components
 import { FormHeader } from "@/components/instance/form-header";
 import { AuthBanner } from "./auth-banner";
@@ -127,7 +126,7 @@ export function InstanceSignInForm() {
             onError={() => setIsSubmitting(false)}
           >
             {errorData.type && errorData?.message ? (
-              <Banner type="error" message={errorData?.message} />
+              <Banner placement="inline" variant="danger" description={errorData?.message} />
             ) : (
               <>{errorInfo && <AuthBanner bannerData={errorInfo} handleBannerData={setErrorInfo} />}</>
             )}

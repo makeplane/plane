@@ -15,12 +15,12 @@ import { Checkbox } from "@makeplane/propel/components/checkbox";
 import { InputField } from "@makeplane/propel/components/input-field";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
+import { PasswordStrengthIndicator } from "@plane/blocks/auth";
+import { Banner } from "@makeplane/propel/components/banner";
 import { AuthService } from "@plane/services";
 import { getPasswordStrength, validatePersonName, validateCompanyName } from "@plane/utils";
 // components
 import { AuthHeader } from "@/app/(all)/(home)/auth-header";
-import { PasswordStrengthIndicator } from "@/components/common/password-strength-indicator";
-import { Banner } from "../common/banner";
 import { FormHeader } from "./form-header";
 
 // service initialization
@@ -152,7 +152,7 @@ export function InstanceSetupForm() {
           {errorData.type &&
             errorData?.message &&
             ![EErrorCodes.INVALID_EMAIL, EErrorCodes.INVALID_PASSWORD].includes(errorData.type) && (
-              <Banner type="error" message={errorData?.message} />
+              <Banner placement="inline" variant="danger" description={errorData?.message} />
             )}
           <form
             className="space-y-4"
@@ -167,7 +167,7 @@ export function InstanceSetupForm() {
             <div className="flex flex-col items-center gap-4 sm:flex-row">
               <div className="w-full">
                 <InputField
-                  size="lg"
+                  size="xl"
                   id="first_name"
                   name="first_name"
                   type="text"
@@ -189,7 +189,7 @@ export function InstanceSetupForm() {
               </div>
               <div className="w-full">
                 <InputField
-                  size="lg"
+                  size="xl"
                   id="last_name"
                   name="last_name"
                   type="text"
@@ -211,7 +211,7 @@ export function InstanceSetupForm() {
             </div>
 
             <InputField
-              size="lg"
+              size="xl"
               id="email"
               name="email"
               type="email"
@@ -227,7 +227,7 @@ export function InstanceSetupForm() {
             />
 
             <InputField
-              size="lg"
+              size="xl"
               id="company_name"
               name="company_name"
               type="text"
@@ -247,7 +247,7 @@ export function InstanceSetupForm() {
 
             <div className="w-full space-y-1">
               <InputField
-                size="lg"
+                size="xl"
                 id="password"
                 name="password"
                 type={showPassword.password ? "text" : "password"}
@@ -281,7 +281,7 @@ export function InstanceSetupForm() {
 
             <div className="w-full space-y-1">
               <InputField
-                size="lg"
+                size="xl"
                 type={showPassword.retypePassword ? "text" : "password"}
                 id="confirm_password"
                 name="confirm_password"
