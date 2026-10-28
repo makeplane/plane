@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
@@ -13,6 +13,7 @@ import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
+import { flushSync } from "react-dom";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import {
   ArchiveOutline,
@@ -104,6 +105,11 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   const router = useRouter();
   // derived values
   const project = getPartialProjectById(projectId);
+  const previewProjectRef = useRef(project);
+
+  useLayoutEffect(() => {
+    previewProjectRef.current = project;
+  }, [project, project?.name, project?.logo_props]);
 
   // Get available navigation items for this project
   const navigationItems = useNavigationItems({
@@ -168,14 +174,17 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
             getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
             render: ({ container }) => {
               const root = createRoot(container);
-              root.render(
-                <div className="flex items-center rounded-sm bg-surface-1 p-1 pr-2 text-body-xs-regular">
-                  <div className="grid size-4 flex-shrink-0 place-items-center">
-                    {project && <Logo logo={project?.logo_props} />}
+              const previewProject = previewProjectRef.current;
+              flushSync(() => {
+                root.render(
+                  <div className="flex items-center rounded-sm bg-surface-1 p-1 pr-2 text-body-xs-regular">
+                    <div className="grid size-4 flex-shrink-0 place-items-center">
+                      {previewProject && <Logo logo={previewProject.logo_props} />}
+                    </div>
+                    <p className="truncate text-secondary">{previewProject?.name}</p>
                   </div>
-                  <p className="truncate text-secondary">{project?.name}</p>
-                </div>
-              );
+                );
+              });
               return () => root.unmount();
             },
             nativeSetDragImage,

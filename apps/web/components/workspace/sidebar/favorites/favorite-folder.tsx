@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
   DragLocationHistory,
@@ -19,6 +19,7 @@ import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree
 import { orderBy } from "lodash-es";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
+import { flushSync } from "react-dom";
 import {
   ChevronRightOutline,
   DraftsOutline,
@@ -71,6 +72,11 @@ export function FavoriteFolder(props: Props) {
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const elementRef = useRef<HTMLDivElement | null>(null);
+  const previewNameRef = useRef(favorite.name);
+
+  useLayoutEffect(() => {
+    previewNameRef.current = favorite.name;
+  }, [favorite.name]);
   // translation
   const { t } = useTranslation();
 
@@ -96,14 +102,16 @@ export function FavoriteFolder(props: Props) {
             getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
             render: ({ container }) => {
               const root = createRoot(container);
-              root.render(
-                <div className="flex gap-1 rounded-sm bg-surface-1 p-1 pr-2 text-body-xs-regular">
-                  <div className="grid size-5 flex-shrink-0 place-items-center">
-                    <FavoriteFolderIcon />
+              flushSync(() => {
+                root.render(
+                  <div className="flex gap-1 rounded-sm bg-surface-1 p-1 pr-2 text-body-xs-regular">
+                    <div className="grid size-5 flex-shrink-0 place-items-center">
+                      <FavoriteFolderIcon />
+                    </div>
+                    <p className="truncate text-body-xs-medium text-secondary">{previewNameRef.current}</p>
                   </div>
-                  <p className="truncate text-body-xs-medium text-secondary">{favorite.name}</p>
-                </div>
-              );
+                );
+              });
               return () => root.unmount();
             },
             nativeSetDragImage,

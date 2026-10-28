@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
   DropTargetRecord,
@@ -50,6 +50,11 @@ export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
   //ref
   const elementRef = useRef<HTMLDivElement>(null);
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  const previewRef = useRef({ itemIcon, itemTitle });
+
+  useLayoutEffect(() => {
+    previewRef.current = { itemIcon, itemTitle };
+  }, [itemIcon, itemTitle]);
 
   const handleQuickAction = (value: boolean) => setIsMenuActive(value);
 
@@ -75,13 +80,14 @@ export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
             getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
             render: ({ container }) => {
               const root = createRoot(container);
+              const preview = previewRef.current;
               flushSync(() => {
                 root.render(
                   <div className="flex items-center gap-1 rounded-sm bg-surface-1 p-1 pr-2 text-body-xs-regular">
                     <span className="flex size-5 flex-shrink-0 items-center justify-center" aria-hidden="true">
-                      {itemIcon}
+                      {preview.itemIcon}
                     </span>
-                    <p className="truncate text-body-xs-medium text-secondary">{itemTitle}</p>
+                    <p className="truncate text-body-xs-medium text-secondary">{preview.itemTitle}</p>
                   </div>
                 );
               });
