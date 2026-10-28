@@ -130,9 +130,9 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
       onBlur={() => isFullVariant && !showToolbarInitially && setIsFocused(false)}
     >
       {/* Wrapper for lite toolbar layout */}
-      <div className={cn(isLiteVariant && editable ? "flex items-end gap-1" : "")}>
+      <div className={cn(isLiteVariant && editable ? "flex items-end gap-1.5" : "")}>
         {/* Main Editor - always rendered once */}
-        <div className={cn(isLiteVariant && editable ? "min-w-0 flex-1" : "")}>
+        <div className={cn(isLiteVariant && editable ? "flex min-h-6 min-w-0 flex-1 items-center" : "")}>
           <LiteTextEditorWithRef
             ref={ref}
             disabledExtensions={[...liteTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
