@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useState } from "react";
 import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
@@ -22,6 +23,17 @@ import { calculateTimeAgo, copyTextToClipboard } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import type { TLinkOperationsModal } from "./create-update-link-modal";
+
+/** The link's favicon from its metadata, falling back to the link glyph when it's missing or fails to load. */
+function LinkFavicon(props: { faviconUrl: string | undefined }) {
+  const { faviconUrl } = props;
+  const [failedUrl, setFailedUrl] = useState<string | undefined>(undefined);
+
+  if (!faviconUrl || failedUrl === faviconUrl)
+    return <LinkOutline aria-hidden className="size-4 flex-shrink-0 text-secondary group-hover:text-primary" />;
+
+  return <img src={faviconUrl} alt="" className="size-4 flex-shrink-0" onError={() => setFailedUrl(faviconUrl)} />;
+}
 
 type TIssueLinkItem = {
   linkId: string;
@@ -59,11 +71,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
         className="group 3xl:col-span-2 col-span-12 flex h-10 flex-shrink-0 items-center justify-between gap-3 rounded-lg border-[0.5px] border-subtle bg-surface-2 px-3 hover:bg-layer-1 lg:col-span-6 xl:col-span-4 2xl:col-span-3"
       >
         <div className="flex min-w-0 flex-1 items-center gap-2.5">
-          {faviconUrl ? (
-            <img src={faviconUrl} alt="favicon" className="size-4 flex-shrink-0" />
-          ) : (
-            <LinkOutline className="size-4 flex-shrink-0 text-secondary group-hover:text-primary" />
-          )}
+          <LinkFavicon faviconUrl={faviconUrl} />
           <Tooltip label={linkDetail.url} layout="stacked" disabled={isMobile}>
             <a
               href={linkDetail.url}
