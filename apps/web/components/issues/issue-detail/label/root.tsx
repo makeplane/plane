@@ -74,7 +74,7 @@ export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
   const labelIds = issue?.label_ids || EMPTY_LABEL_IDS;
 
   return (
-    <div className="relative flex min-h-7.5 w-full flex-wrap items-center">
+    <div className="relative flex min-h-8 w-full flex-wrap items-center">
       {/* The binding lists the project's labels and lets project admins create one from an unmatched search. */}
       <LabelSelect
         projectId={projectId}
@@ -85,6 +85,7 @@ export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
         disabled={disabled}
         variant="select-ghost-md"
         placeholder={t("label.select")}
+        className="min-h-8"
         tooltip
         testId="work-item-label-select"
       />

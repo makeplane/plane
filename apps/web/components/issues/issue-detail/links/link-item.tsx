@@ -56,13 +56,13 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
     <>
       <div
         key={linkId}
-        className="group 3xl:col-span-2 col-span-12 flex h-10 flex-shrink-0 items-center justify-between gap-3 rounded-sm border-[0.5px] border-subtle bg-surface-2 px-3 hover:bg-layer-1 lg:col-span-6 xl:col-span-4 2xl:col-span-3"
+        className="group 3xl:col-span-2 col-span-12 flex h-10 flex-shrink-0 items-center justify-between gap-3 rounded-lg border-[0.5px] border-subtle bg-surface-2 px-3 hover:bg-layer-1 lg:col-span-6 xl:col-span-4 2xl:col-span-3"
       >
         <div className="flex min-w-0 flex-1 items-center gap-2.5">
           {faviconUrl ? (
             <img src={faviconUrl} alt="favicon" className="size-4 flex-shrink-0" />
           ) : (
-            <LinkOutline className="size-4 flex-shrink-0 text-tertiary group-hover:text-primary" />
+            <LinkOutline className="size-4 flex-shrink-0 text-secondary group-hover:text-primary" />
           )}
           <Tooltip label={linkDetail.url} layout="stacked" disabled={isMobile}>
             <a
@@ -84,9 +84,11 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
           <p className="group-hover-text-secondary p-1 align-bottom text-caption-sm-regular leading-5 text-placeholder">
             {calculateTimeAgo(linkDetail.created_at)}
           </p>
-          <button
-            type="button"
+          <IconButton
+            variant="ghost"
+            size="sm"
             aria-label={t("common.actions.copy_link")}
+            icon={<Icon icon={CopyOutline} />}
             onClick={() => {
               void copyTextToClipboard(linkDetail.url);
               setToast({
@@ -95,10 +97,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
                 message: t("common.link_copied_to_clipboard"),
               });
             }}
-            className="relative grid cursor-pointer place-items-center rounded-sm p-1 text-placeholder outline-none group-hover:text-secondary hover:bg-layer-1"
-          >
-            <CopyOutline className="h-3.5 w-3.5 stroke-[1.5]" />
-          </button>
+          />
           <Menu>
             {/* Icon-only trigger, so it needs an explicit accessible name. */}
             <MenuTrigger

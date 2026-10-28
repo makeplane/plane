@@ -80,8 +80,9 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
       />
       <div
         className={cn(
-          "group flex items-center justify-between gap-2 rounded-sm",
+          "group flex h-8 w-full min-w-0 items-center justify-between gap-2 rounded-md",
           {
+            "px-2": !!(issue.parent_id && parentIssue),
             "hover:bg-layer-transparent-hover": !disabled,
             "bg-layer-transparent-selected": isParentIssueModalOpen,
           },
@@ -90,7 +91,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
       >
         {issue.parent_id && parentIssue ? (
           <>
-            <div className="flex min-w-0 items-center gap-1.5 px-2">
+            <div className="flex h-full min-w-0 flex-1 items-center gap-1.5">
               <Tooltip label={`Title: ${parentIssue.name}`} layout="stacked" disabled={isMobile}>
                 <Link
                   href={workItemLink}
@@ -154,7 +155,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
             onClick={() => toggleParentIssueModal(issue.id)}
             disabled={disabled}
           >
-            <span className="grow text-left text-body-xs-medium text-placeholder">{t("issue.add.parent")}</span>
+            <span className="grow text-left text-body-xs-regular text-placeholder">{t("issue.add.parent")}</span>
             {!disabled && (
               <span className="shrink-0 opacity-0 group-focus-within:opacity-100 group-hover:opacity-100">
                 <Icon icon={EditOutline} />

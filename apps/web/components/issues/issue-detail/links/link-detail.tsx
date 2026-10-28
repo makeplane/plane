@@ -84,7 +84,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                   toggleIssueLinkModal(true);
                 }}
               >
-                <EditOutline className="h-3 w-3 stroke-[1.5] text-secondary" />
+                <EditOutline className="h-3 w-3 text-secondary" />
               </button>
               <a
                 href={linkDetail.url}
@@ -92,7 +92,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center p-1 hover:bg-layer-1"
               >
-                <NewTabOutline className="h-3 w-3 stroke-[1.5] text-secondary" />
+                <NewTabOutline className="h-3 w-3 text-secondary" />
               </a>
               <button
                 type="button"
