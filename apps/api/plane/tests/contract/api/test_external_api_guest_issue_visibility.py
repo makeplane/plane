@@ -1599,3 +1599,56 @@ class TestIntakeIssueDeleteScope:
         response = api_key_client.delete(_intake_issue_detail_url(workspace, project, foreign_issue))
         assert response.status_code == status.HTTP_204_NO_CONTENT, f"Got {response.status_code}: {response.data!r}"
         assert not IntakeIssue.objects.filter(pk=foreign_intake_issue.pk).exists()
+
+
+@pytest.mark.contract
+class TestWorkspaceAdminWithProjectGuestRoleScope:
+    @pytest.fixture
+    def workspace_admin_guest_user(self, db, workspace, project):
+        unique_id = uuid4().hex[:8]
+        user = User.objects.create(
+            email=f"ws-admin-guest-{unique_id}@plane.so",
+            username=f"ws_admin_guest_{unique_id}",
+        )
+        WorkspaceMember.objects.create(workspace=workspace, member=user, role=20, is_active=True)
+        ProjectMember.objects.create(project=project, member=user, workspace=workspace, role=5, is_active=True)
+        return user
+
+    @pytest.fixture
+    def ws_admin_guest_client(self, api_client, workspace_admin_guest_user):
+        token = APIToken.objects.create(user=workspace_admin_guest_user, label="WS Admin Guest Token")
+        api_client.credentials(HTTP_X_API_KEY=token.token)
+        return api_client
+
+    @pytest.mark.django_db
+    def test_workspace_admin_with_project_guest_role_is_not_restricted_guest(
+        self, workspace_admin_guest_user, project, workspace
+    ):
+        from plane.api.views.issue import is_restricted_guest
+
+        assert not is_restricted_guest(workspace_admin_guest_user.id, project.id, workspace.slug)
+
+    @pytest.mark.django_db
+    def test_workspace_admin_with_project_guest_role_allowed_foreign_issue_detail(
+        self, ws_admin_guest_client, workspace, project, foreign_issue
+    ):
+        response = ws_admin_guest_client.get(_detail_url(workspace, project, foreign_issue))
+        assert response.status_code == status.HTTP_200_OK
+        assert str(response.data["id"]) == str(foreign_issue.id)
+
+    @pytest.mark.django_db
+    def test_workspace_admin_with_project_guest_role_allowed_delete_foreign_intake_issue(
+        self, ws_admin_guest_client, workspace, project, foreign_issue, foreign_intake_issue
+    ):
+        response = ws_admin_guest_client.delete(_intake_issue_detail_url(workspace, project, foreign_issue))
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not IntakeIssue.objects.filter(pk=foreign_intake_issue.pk).exists()
+
+    @pytest.mark.django_db
+    def test_workspace_admin_with_project_guest_role_sees_all_in_issue_list(
+        self, ws_admin_guest_client, workspace, project, own_issue, foreign_issue
+    ):
+        response = ws_admin_guest_client.get(_list_url(workspace, project))
+        assert response.status_code == status.HTTP_200_OK
+        ids = {str(row["id"]) for row in response.data["results"]}
+        assert {str(own_issue.id), str(foreign_issue.id)} <= ids

@@ -121,6 +121,15 @@ def issue_hidden_from_guest(request, slug, project_id, issue_id):
     """
     from plane.db.models import Issue
 
+    # Workspace admins are never restricted from viewing issues or sub-resources
+    if WorkspaceMember.objects.filter(
+        workspace__slug=slug,
+        member=request.user,
+        role=ROLE.ADMIN.value,
+        is_active=True,
+    ).exists():
+        return False
+
     is_restricted_guest = ProjectMember.objects.filter(
         workspace__slug=slug,
         project_id=project_id,

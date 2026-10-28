@@ -201,7 +201,15 @@ def is_project_or_workspace_admin(user_id, project_id, slug):
 def is_restricted_guest(user_id, project_id, slug):
     """A "restricted guest" holds the GUEST role on a project that has not
     enabled `guest_view_all_features`, and may only see work items they
-    created (mirrors `IssueViewSet.list`/`.retrieve` in app/views/issue)."""
+    created (mirrors `IssueViewSet.list`/`.retrieve` in app/views/issue).
+    Admins (project or workspace admin) are never restricted guests."""
+    if (
+        is_project_or_workspace_admin(user_id, project_id, slug)
+        or WorkspaceMember.objects.filter(
+            workspace__slug=slug, member_id=user_id, role=ROLE.ADMIN.value, is_active=True
+        ).exists()
+    ):
+        return False
     return ProjectMember.objects.filter(
         workspace__slug=slug,
         project_id=project_id,
@@ -222,7 +230,8 @@ def guest_cannot_view_issue(user_id, issue, slug):
 def visible_issue_q(user):
     """Issue filter for work items `user` may view, across projects: every
     issue in a project where they are an active member above GUEST or a GUEST
-    with `guest_view_all_features`, otherwise only the issues they created."""
+    with `guest_view_all_features`, or where they are an active workspace admin,
+    otherwise only the issues they created."""
     return (
         Q(
             project__project_projectmember__member=user,
@@ -234,6 +243,14 @@ def visible_issue_q(user):
             project__project_projectmember__is_active=True,
             project__project_projectmember__role=ROLE.GUEST.value,
             project__guest_view_all_features=True,
+        )
+        | Q(
+            project__project_projectmember__member=user,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__role=ROLE.GUEST.value,
+            project__workspace__workspace_member__member=user,
+            project__workspace__workspace_member__role=ROLE.ADMIN.value,
+            project__workspace__workspace_member__is_active=True,
         )
         | Q(
             project__project_projectmember__member=user,
