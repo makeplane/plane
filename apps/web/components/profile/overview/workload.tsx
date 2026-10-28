@@ -29,7 +29,7 @@ export function ProfileWorkload({ stateDistribution }: Props) {
             direction="column"
             spacing="sm"
             variant="without-shadow"
-            className="min-w-0 rounded-xl"
+            className="min-w-0 rounded-xl border border-subtle-1 bg-layer-2 p-3"
           >
             <div className="flex min-w-0 flex-col gap-1">
               <div className="flex min-w-0 items-center gap-1.5">

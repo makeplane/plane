@@ -56,7 +56,11 @@ export function ProfileStats({ userProfile }: Props) {
               href={`/${workspaceSlug}/profile/${userId}/${card.route}`}
               className="min-w-0 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-accent-strong"
             >
-              <Card direction="column" spacing="sm" className="h-full min-w-0 rounded-xl">
+              <Card
+                direction="column"
+                spacing="sm"
+                className="h-full min-w-0 rounded-xl border border-subtle-1 bg-layer-2 p-3"
+              >
                 <div className="flex min-w-0 flex-col gap-1">
                   <div className="flex min-w-0 items-center gap-1.5">
                     <card.icon className="size-4 shrink-0 text-tertiary" aria-hidden />
@@ -72,9 +76,9 @@ export function ProfileStats({ userProfile }: Props) {
         </div>
       ) : (
         <Loader className="grid grid-cols-1 gap-3 @[40rem]:grid-cols-3">
-          <Loader.Item height="80px" />
-          <Loader.Item height="80px" />
-          <Loader.Item height="80px" />
+          <Loader.Item height="72px" />
+          <Loader.Item height="72px" />
+          <Loader.Item height="72px" />
         </Loader>
       )}
     </div>

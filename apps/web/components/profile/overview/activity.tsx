@@ -45,7 +45,7 @@ export const ProfileActivity = observer(function ProfileActivity() {
   return (
     <div className="space-y-2">
       <h3 className="text-h6-medium">{t("profile.stats.recent_activity.title")}</h3>
-      <Card className="rounded-xl">
+      <Card className="rounded-xl border border-subtle-1 bg-layer-2">
         {!userProfileActivity ? (
           <Loader className="space-y-5">
             <Loader.Item height="40px" />
