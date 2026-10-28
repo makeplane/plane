@@ -64,7 +64,8 @@
             "invalid": "E-mail inválido"
           }
         },
-        "leave_input_label": "Digite o nome deste espaço de trabalho para continuar."
+        "leave_input_label": "Digite o nome deste espaço de trabalho para continuar.",
+        "description": "Gerencie o acesso a este espaço de trabalho."
       },
       "billing_and_plans": {
         "heading": "Faturamento e planos",

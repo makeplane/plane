@@ -64,7 +64,8 @@
             "invalid": "E-Mail ist ungültig"
           }
         },
-        "leave_input_label": "Geben Sie zum Fortfahren den Namen dieses Arbeitsbereichs ein."
+        "leave_input_label": "Geben Sie zum Fortfahren den Namen dieses Arbeitsbereichs ein.",
+        "description": "Verwalten Sie den Zugriff auf diesen Arbeitsbereich."
       },
       "billing_and_plans": {
         "heading": "Abrechnung und Pläne",

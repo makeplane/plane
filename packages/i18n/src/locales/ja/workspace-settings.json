@@ -64,7 +64,8 @@
             "invalid": "メールアドレスが無効です"
           }
         },
-        "leave_input_label": "続行するには、このワークスペースの名前を入力してください。"
+        "leave_input_label": "続行するには、このワークスペースの名前を入力してください。",
+        "description": "このワークスペースへのアクセスを管理します。"
       },
       "billing_and_plans": {
         "heading": "請求とプラン",

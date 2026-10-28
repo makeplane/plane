@@ -64,7 +64,8 @@
             "invalid": "Email tidak valid"
           }
         },
-        "leave_input_label": "Ketik nama ruang kerja ini untuk melanjutkan."
+        "leave_input_label": "Ketik nama ruang kerja ini untuk melanjutkan.",
+        "description": "Kelola akses ke ruang kerja ini."
       },
       "billing_and_plans": {
         "heading": "Penagihan & Rencana",

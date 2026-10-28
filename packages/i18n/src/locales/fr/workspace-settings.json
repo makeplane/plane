@@ -64,7 +64,8 @@
             "invalid": "L’e-mail est invalide"
           }
         },
-        "leave_input_label": "Saisissez le nom de cet espace de travail pour continuer."
+        "leave_input_label": "Saisissez le nom de cet espace de travail pour continuer.",
+        "description": "Gérez l’accès à cet espace de travail."
       },
       "billing_and_plans": {
         "heading": "Facturation & Plans",

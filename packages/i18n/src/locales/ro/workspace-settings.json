@@ -64,7 +64,8 @@
             "invalid": "Adresa de email este invalidă"
           }
         },
-        "leave_input_label": "Introdu numele acestui spațiu de lucru pentru a continua."
+        "leave_input_label": "Introdu numele acestui spațiu de lucru pentru a continua.",
+        "description": "Gestionează accesul la acest spațiu de lucru."
       },
       "billing_and_plans": {
         "heading": "Facturare și abonamente",

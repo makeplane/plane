@@ -64,7 +64,8 @@
             "invalid": "E-mail je neplatný"
           }
         },
-        "leave_input_label": "Pro pokračování zadejte název tohoto pracovního prostoru."
+        "leave_input_label": "Pro pokračování zadejte název tohoto pracovního prostoru.",
+        "description": "Spravujte přístup k tomuto pracovnímu prostoru."
       },
       "billing_and_plans": {
         "heading": "Fakturace a plány",

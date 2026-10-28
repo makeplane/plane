@@ -64,7 +64,8 @@
             "invalid": "电子邮件无效"
           }
         },
-        "leave_input_label": "输入此工作区的名称以继续。"
+        "leave_input_label": "输入此工作区的名称以继续。",
+        "description": "管理对此工作区的访问权限。"
       },
       "billing_and_plans": {
         "heading": "账单与计划",

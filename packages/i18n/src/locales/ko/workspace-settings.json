@@ -64,7 +64,8 @@
             "invalid": "이메일이 유효하지 않습니다"
           }
         },
-        "leave_input_label": "계속하려면 이 작업 공간의 이름을 입력하세요."
+        "leave_input_label": "계속하려면 이 작업 공간의 이름을 입력하세요.",
+        "description": "이 작업 공간에 대한 접근을 관리합니다."
       },
       "billing_and_plans": {
         "heading": "청구 및 플랜",

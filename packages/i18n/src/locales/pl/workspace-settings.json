@@ -64,7 +64,8 @@
             "invalid": "E-mail jest nieprawidłowy"
           }
         },
-        "leave_input_label": "Wpisz nazwę tego obszaru roboczego, aby kontynuować."
+        "leave_input_label": "Wpisz nazwę tego obszaru roboczego, aby kontynuować.",
+        "description": "Zarządzaj dostępem do tego obszaru roboczego."
       },
       "billing_and_plans": {
         "heading": "Rozliczenia i plany",

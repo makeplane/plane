@@ -64,7 +64,8 @@
             "invalid": "Email không hợp lệ"
           }
         },
-        "leave_input_label": "Nhập tên không gian làm việc này để tiếp tục."
+        "leave_input_label": "Nhập tên không gian làm việc này để tiếp tục.",
+        "description": "Quản lý quyền truy cập vào không gian làm việc này."
       },
       "billing_and_plans": {
         "heading": "Thanh toán và Kế hoạch",

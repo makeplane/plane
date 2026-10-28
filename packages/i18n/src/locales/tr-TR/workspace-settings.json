@@ -64,7 +64,8 @@
             "invalid": "E-posta geçersiz"
           }
         },
-        "leave_input_label": "Devam etmek için bu çalışma alanının adını yazın."
+        "leave_input_label": "Devam etmek için bu çalışma alanının adını yazın.",
+        "description": "Bu çalışma alanına erişimi yönetin."
       },
       "billing_and_plans": {
         "heading": "Faturalandırma ve Planlar",

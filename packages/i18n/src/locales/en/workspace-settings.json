@@ -64,7 +64,8 @@
             "invalid": "Email is invalid"
           }
         },
-        "leave_input_label": "Type in this workspace's name to continue."
+        "leave_input_label": "Type in this workspace's name to continue.",
+        "description": "Manage access to this workspace."
       },
       "billing_and_plans": {
         "heading": "Billing & Plans",

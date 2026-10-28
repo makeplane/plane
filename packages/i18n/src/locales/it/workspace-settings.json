@@ -64,7 +64,8 @@
             "invalid": "L'email non è valida"
           }
         },
-        "leave_input_label": "Digita il nome di questo spazio di lavoro per continuare."
+        "leave_input_label": "Digita il nome di questo spazio di lavoro per continuare.",
+        "description": "Gestisci l'accesso a questo spazio di lavoro."
       },
       "billing_and_plans": {
         "heading": "Fatturazione e piani",

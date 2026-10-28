@@ -64,7 +64,8 @@
             "invalid": "E-mailadres is ongeldig"
           }
         },
-        "leave_input_label": "Typ de naam van deze werkruimte om door te gaan."
+        "leave_input_label": "Typ de naam van deze werkruimte om door te gaan.",
+        "description": "Beheer de toegang tot deze werkruimte."
       },
       "billing_and_plans": {
         "heading": "Facturering & plannen",

@@ -64,7 +64,8 @@
             "invalid": "電子郵件無效"
           }
         },
-        "leave_input_label": "輸入此工作區的名稱以繼續。"
+        "leave_input_label": "輸入此工作區的名稱以繼續。",
+        "description": "管理此工作區的存取權限。"
       },
       "billing_and_plans": {
         "heading": "計費與方案",
