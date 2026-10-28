@@ -7,6 +7,7 @@ from django.urls import path
 from plane.api.views import (
     IntakeIssueListCreateAPIEndpoint,
     IntakeIssueDetailAPIEndpoint,
+    IntakeIssueStatusAPIEndpoint,
 )
 
 
@@ -20,5 +21,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/intake-issues/<uuid:issue_id>/",
         IntakeIssueDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="intake-issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-issues/<uuid:issue_id>/status/",
+        IntakeIssueStatusAPIEndpoint.as_view(http_method_names=["patch"]),
+        name="intake-issue-status",
     ),
 ]

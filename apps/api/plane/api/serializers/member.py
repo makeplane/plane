@@ -106,3 +106,14 @@ class ProjectMemberLiteAPISerializer(BaseMemberLiteAPISerializer):
 
     class Meta(BaseMemberLiteAPISerializer.Meta):
         model = ProjectMember
+
+
+class RoleSerializer(serializers.Serializer):
+    """Serializer for static workspace and project role definitions."""
+
+    id = serializers.UUIDField(read_only=True)
+    name = serializers.CharField(read_only=True)
+    slug = serializers.CharField(read_only=True)
+    namespace = serializers.CharField(read_only=True)
+    level = serializers.IntegerField(read_only=True)
+    member_count = serializers.IntegerField(read_only=True)

@@ -2,11 +2,20 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Python imports
+import math
+import uuid
+
+# Django imports
+from django.db.models import Count
+
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import (
     extend_schema,
+    OpenApiParameter,
     OpenApiResponse,
     OpenApiRequest,
 )
@@ -18,16 +27,21 @@ from plane.api.serializers import (
     ProjectMemberSerializer,
     WorkspaceMemberLiteAPISerializer,
     ProjectMemberLiteAPISerializer,
+    RoleSerializer,
 )
 from plane.db.models import User, Workspace, WorkspaceMember, Project, ProjectMember
+from plane.app.permissions import WorkspaceUserPermission
+from plane.utils.paginator import BadPaginationError, Cursor, CursorResult
 from plane.utils.permissions import ProjectMemberPermission, WorkSpaceAdminPermission, ProjectAdminPermission
 from plane.utils.openapi import (
+    role_docs,
     WORKSPACE_SLUG_PARAMETER,
     PROJECT_ID_PARAMETER,
     CURSOR_PARAMETER,
     PER_PAGE_PARAMETER,
     UNAUTHORIZED_RESPONSE,
     FORBIDDEN_RESPONSE,
+    INVALID_REQUEST_RESPONSE,
     WORKSPACE_NOT_FOUND_RESPONSE,
     PROJECT_NOT_FOUND_RESPONSE,
     WORKSPACE_MEMBER_EXAMPLE,
@@ -335,3 +349,200 @@ class ProjectMemberLiteAPIEndpoint(BaseAPIView):
             queryset=project_members,
             on_results=lambda members: ProjectMemberLiteAPISerializer(members, many=True).data,
         )
+
+
+ROLE_UUID_NAMESPACE = uuid.UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+
+STATIC_ROLE_NAMESPACES = ("workspace", "project")
+STATIC_ROLE_SPECS = (
+    ("Admin", "admin", 20),
+    ("Member", "member", 15),
+    ("Guest", "guest", 5),
+)
+
+
+def _build_workspace_roles(slug, namespace_filter=None):
+    namespaces = (namespace_filter,) if namespace_filter else STATIC_ROLE_NAMESPACES
+    ws_counts = {}
+    proj_counts = {}
+
+    if "workspace" in namespaces:
+        ws_counts = dict(
+            WorkspaceMember.objects.filter(workspace__slug=slug, is_active=True)
+            .values("role")
+            .annotate(count=Count("id"))
+            .values_list("role", "count")
+        )
+    if "project" in namespaces:
+        proj_counts = dict(
+            ProjectMember.objects.filter(workspace__slug=slug, is_active=True)
+            .values("role")
+            .annotate(count=Count("id"))
+            .values_list("role", "count")
+        )
+
+    roles = []
+    for ns in namespaces:
+        counts = ws_counts if ns == "workspace" else proj_counts
+        for name, role_slug, level in STATIC_ROLE_SPECS:
+            role_id = uuid.uuid5(ROLE_UUID_NAMESPACE, f"{ns}:{role_slug}")
+            roles.append(
+                {
+                    "id": str(role_id),
+                    "name": name,
+                    "slug": role_slug,
+                    "namespace": ns,
+                    "level": level,
+                    "member_count": counts.get(level, 0),
+                }
+            )
+    return roles
+
+
+class _ListOffsetPaginator:
+    """List-backed paginator compatible with BasePaginator.paginate."""
+
+    def __init__(self, queryset, max_limit=1000, on_results=None, **kwargs):
+        self.queryset = list(queryset)
+        self.max_limit = max_limit
+        self.on_results = on_results
+
+    def get_result(self, limit=1000, cursor=None):
+        if cursor is None:
+            cursor = Cursor(0, 0, 0)
+
+        limit = min(limit, self.max_limit)
+        page = cursor.offset
+        offset = page * limit
+        stop = offset + limit + 1
+
+        if offset < 0:
+            raise BadPaginationError("Pagination offset cannot be negative")
+
+        sliced = self.queryset[offset:stop]
+        if cursor.value != limit and cursor.is_prev:
+            sliced = sliced[-(limit + 1) :]
+
+        total_count = len(self.queryset)
+        next_cursor = Cursor(limit, page + 1, False, len(sliced) > limit)
+        prev_cursor = Cursor(limit, page - 1, True, page > 0)
+        results = sliced[:limit]
+        if self.on_results:
+            results = self.on_results(results)
+
+        max_hits = math.ceil(total_count / limit) if limit else 0
+        return CursorResult(
+            results=results,
+            next=next_cursor,
+            prev=prev_cursor,
+            hits=total_count,
+            max_hits=max_hits,
+        )
+
+
+ROLE_NAMESPACE_PARAMETER = OpenApiParameter(
+    name="namespace",
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.QUERY,
+    required=False,
+    enum=["workspace", "project"],
+    description="Optional role namespace filter ('workspace' or 'project').",
+)
+
+ROLE_ID_PARAMETER = OpenApiParameter(
+    name="role_id",
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+    required=True,
+    description="Role UUID",
+)
+
+
+class WorkspaceRoleListAPIEndpoint(BaseAPIView):
+    """Workspace and Project Role Definitions List Endpoint"""
+
+    serializer_class = RoleSerializer
+    permission_classes = [WorkspaceUserPermission]
+    use_read_replica = True
+
+    def check_permissions(self, request):
+        if (
+            request.user
+            and request.user.is_authenticated
+            and self.workspace_slug
+            and not Workspace.objects.filter(slug=self.workspace_slug).exists()
+        ):
+            raise Workspace.DoesNotExist()
+        super().check_permissions(request)
+
+    @role_docs(
+        operation_id="list_workspace_roles",
+        summary="List workspace and project roles",
+        description="Retrieve paginated static role definitions for the workspace and its projects.",
+        parameters=[ROLE_NAMESPACE_PARAMETER, CURSOR_PARAMETER, PER_PAGE_PARAMETER],
+        responses={
+            200: create_paginated_response(
+                RoleSerializer,
+                "PaginatedRoleResponse",
+                "Paginated list of role definitions",
+                "Paginated Roles",
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: WORKSPACE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug):
+        """List workspace and project roles
+
+        Retrieve paginated static role definitions with active member counts.
+        """
+        Workspace.objects.get(slug=slug)
+        namespace = request.GET.get("namespace")
+        if namespace is not None and namespace != "":
+            if namespace not in STATIC_ROLE_NAMESPACES:
+                return Response(
+                    {"error": "Invalid namespace. Must be 'workspace' or 'project'."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        else:
+            namespace = None
+
+        roles = _build_workspace_roles(slug, namespace_filter=namespace)
+        return self.paginate(
+            request=request,
+            queryset=roles,
+            paginator_cls=_ListOffsetPaginator,
+        )
+
+
+class WorkspaceRoleDetailAPIEndpoint(WorkspaceRoleListAPIEndpoint):
+    """Workspace or Project Role Definition Retrieve Endpoint"""
+
+    @role_docs(
+        operation_id="retrieve_workspace_role",
+        summary="Retrieve role definition",
+        description="Retrieve a single workspace or project role definition by UUID.",
+        parameters=[ROLE_ID_PARAMETER],
+        responses={
+            200: OpenApiResponse(
+                description="Role definition",
+                response=RoleSerializer,
+            ),
+            404: WORKSPACE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug, role_id):
+        """Retrieve role definition
+
+        Retrieve a single static role definition and its active member count in the workspace.
+        """
+        Workspace.objects.get(slug=slug)
+        target_id = str(role_id)
+        for ns in STATIC_ROLE_NAMESPACES:
+            for _, role_slug, _ in STATIC_ROLE_SPECS:
+                if str(uuid.uuid5(ROLE_UUID_NAMESPACE, f"{ns}:{role_slug}")) == target_id:
+                    roles = _build_workspace_roles(slug, namespace_filter=ns)
+                    match = next(r for r in roles if r["id"] == target_id)
+                    return Response(match, status=status.HTTP_200_OK)
+
+        return Response({"error": "Role not found"}, status=status.HTTP_404_NOT_FOUND)

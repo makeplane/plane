@@ -27,6 +27,7 @@ from plane.db.models import (
     User,
     EstimatePoint,
 )
+from plane.db.models.issue_type import ProjectIssueType
 from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
@@ -142,9 +143,9 @@ class IssueSerializer(BaseSerializer):
         # Validate labels are from project
         if data.get("labels", []):
             valid_label_ids = set(
-                Label.objects.filter(
-                    project_id=self.context.get("project_id"), id__in=data["labels"]
-                ).values_list("id", flat=True)
+                Label.objects.filter(project_id=self.context.get("project_id"), id__in=data["labels"]).values_list(
+                    "id", flat=True
+                )
             )
             invalid_label_ids = set(data["labels"]) - valid_label_ids
             if invalid_label_ids:
@@ -179,6 +180,15 @@ class IssueSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Estimate point is not valid please pass a valid estimate_point_id")
 
+        if (
+            data.get("type")
+            and not ProjectIssueType.objects.filter(
+                project_id=self.context.get("project_id"),
+                issue_type_id=data.get("type").id,
+            ).exists()
+        ):
+            raise serializers.ValidationError({"type_id": "Work item type is not valid for this project"})
+
         return data
 
     def create(self, validated_data):
@@ -193,7 +203,11 @@ class IssueSerializer(BaseSerializer):
 
         if not issue_type:
             # Get default issue type
-            issue_type = IssueType.objects.filter(project_issue_types__project_id=project_id, is_default=True).first()
+            issue_type = IssueType.objects.filter(
+                project_issue_types__project_id=project_id,
+                project_issue_types__deleted_at__isnull=True,
+                is_default=True,
+            ).first()
             issue_type = issue_type
 
         issue = Issue.objects.create(**validated_data, project_id=project_id, type=issue_type)

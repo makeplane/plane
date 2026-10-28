@@ -116,6 +116,22 @@ class IntakeIssueUpdateSerializer(BaseSerializer):
         Validate that if status is being changed to accepted (1),
         the project has a default state to transition to.
         """
+        status_val = attrs.get("status")
+        if status_val == 0 and not attrs.get("snoozed_till"):
+            raise serializers.ValidationError({"snoozed_till": "snoozed_till is required when status is snoozed."})
+
+        if status_val == 2 and not attrs.get("duplicate_to"):
+            raise serializers.ValidationError({"duplicate_to": "duplicate_to is required when status is duplicate."})
+
+        duplicate_to = attrs.get("duplicate_to")
+        if duplicate_to is not None and self.instance is not None:
+            if (
+                duplicate_to.workspace_id != self.instance.workspace_id
+                or duplicate_to.project_id != self.instance.project_id
+            ):
+                raise serializers.ValidationError(
+                    {"duplicate_to": "Duplicate work item must belong to the same workspace and project."}
+                )
 
         if attrs.get("snoozed_till"):
             attrs["snoozed_till"] = (

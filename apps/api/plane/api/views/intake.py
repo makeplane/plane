@@ -25,7 +25,7 @@ from plane.api.serializers import (
     IntakeIssueCreateSerializer,
     IntakeIssueUpdateSerializer,
 )
-from plane.app.permissions import ProjectLitePermission
+from plane.app.permissions import ProjectAdminPermission, ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State, StateGroup, WorkspaceMember
 from plane.utils.host import base_host
@@ -293,6 +293,24 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         intake_issue_data = IntakeIssueSerializer(intake_issue_queryset, fields=self.fields, expand=self.expand).data
         return Response(intake_issue_data, status=status.HTTP_200_OK)
 
+    def _save_intake_status(self, request, project_id, issue_id, intake_issue, intake_serializer, requested_data):
+        current_instance = json.dumps(IntakeIssueSerializer(intake_issue).data, cls=DjangoJSONEncoder)
+        intake_serializer.save()
+
+        issue_activity.delay(
+            type="intake.activity.created",
+            requested_data=json.dumps(requested_data, cls=DjangoJSONEncoder),
+            actor_id=str(request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=False,
+            origin=base_host(request=request, is_app=True),
+            intake=str(intake_issue.id),
+        )
+        return Response(IntakeIssueSerializer(intake_issue).data, status=status.HTTP_200_OK)
+
     @intake_docs(
         operation_id="update_intake_work_item",
         summary="Update intake work item",
@@ -331,6 +349,9 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
                 {"error": "Intake is not enabled for this project enable it through the project's api"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        if intake is None:
+            raise IntakeIssue.DoesNotExist()
 
         # Get the intake issue
         intake_issue = IntakeIssue.objects.get(
@@ -404,7 +425,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
             if not issue_serializer.is_valid():
                 return Response(issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Only project admins and members can edit intake issue attributes
+        # Only project admins can edit intake issue status attributes
         if project_member.role > 15:
             intake_serializer = IntakeIssueUpdateSerializer(intake_issue, data=request.data, partial=True)
 
@@ -433,25 +454,15 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
 
         # Save intake issue (state transition happens in serializer's update method)
         if intake_serializer:
-            current_instance = json.dumps(IntakeIssueSerializer(intake_issue).data, cls=DjangoJSONEncoder)
-            intake_serializer.save()
-
-            # create a activity for status change
-            issue_activity.delay(
-                type="intake.activity.created",
-                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
-                actor_id=str(request.user.id),
-                issue_id=str(issue_id),
-                project_id=str(project_id),
-                current_instance=current_instance,
-                epoch=int(timezone.now().timestamp()),
-                notification=False,
-                origin=base_host(request=request, is_app=True),
-                intake=str(intake_issue.id),
+            return self._save_intake_status(
+                request,
+                project_id,
+                issue_id,
+                intake_issue,
+                intake_serializer,
+                request.data,
             )
-            return Response(IntakeIssueSerializer(intake_issue).data, status=status.HTTP_200_OK)
-        else:
-            return Response(IntakeIssueSerializer(intake_issue).data, status=status.HTTP_200_OK)
+        return Response(IntakeIssueSerializer(intake_issue).data, status=status.HTTP_200_OK)
 
     @intake_docs(
         operation_id="delete_intake_work_item",
@@ -482,6 +493,9 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
                 {"error": "Intake is not enabled for this project enable it through the project's api"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        if intake is None:
+            raise IntakeIssue.DoesNotExist()
 
         # Get the intake issue
         intake_issue = IntakeIssue.objects.get(
@@ -521,3 +535,81 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
 
         intake_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class IntakeIssueStatusAPIEndpoint(IntakeIssueDetailAPIEndpoint):
+    """Intake Work Item Status Update Endpoint"""
+
+    permission_classes = [ProjectAdminPermission]
+
+    def check_permissions(self, request):
+        if (
+            request.user
+            and request.user.is_authenticated
+            and self.workspace_slug
+            and self.project_id
+            and not Project.objects.filter(
+                workspace__slug=self.workspace_slug,
+                pk=self.project_id,
+            ).exists()
+        ):
+            raise Project.DoesNotExist()
+
+        super().check_permissions(request)
+
+    @intake_docs(
+        operation_id="update_intake_work_item_status",
+        summary="Update intake work item status",
+        description="Update the triage status of an intake work item (accept, reject, snooze, or mark as duplicate).",
+        parameters=[
+            WORKSPACE_SLUG_PARAMETER,
+            PROJECT_ID_PARAMETER,
+            ISSUE_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request=IntakeIssueUpdateSerializer,
+            examples=[INTAKE_ISSUE_UPDATE_EXAMPLE],
+        ),
+        responses={
+            200: OpenApiResponse(
+                description="Intake work item status updated",
+                response=IntakeIssueSerializer,
+                examples=[INTAKE_ISSUE_EXAMPLE],
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+        },
+    )
+    def patch(self, request, slug, project_id, issue_id):
+        """Update intake work item status
+
+        Update the triage status of an intake work item, ignoring any embedded issue payload.
+        """
+        Project.objects.get(workspace__slug=slug, pk=project_id)
+        intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
+        if intake is None:
+            raise IntakeIssue.DoesNotExist()
+
+        intake_issue = IntakeIssue.objects.get(
+            issue_id=issue_id,
+            workspace__slug=slug,
+            project_id=project_id,
+            intake_id=intake.id,
+        )
+
+        status_data = {k: v for k, v in request.data.items() if k != "issue"}
+        intake_serializer = IntakeIssueUpdateSerializer(
+            intake_issue,
+            data=status_data,
+            partial=True,
+        )
+        if not intake_serializer.is_valid():
+            return Response(intake_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return self._save_intake_status(
+            request,
+            project_id,
+            issue_id,
+            intake_issue,
+            intake_serializer,
+            status_data,
+        )
