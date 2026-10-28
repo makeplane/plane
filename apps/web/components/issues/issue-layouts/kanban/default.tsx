@@ -67,6 +67,8 @@ export interface IKanBan {
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   showEmptyGroup?: boolean;
   subGroupIndex?: number;
+  /** In swimlanes, the last visible band closes the column panels with rounded bottom corners. */
+  isLastSubGroup?: boolean;
   isEpic?: boolean;
 }
 
@@ -96,6 +98,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     isDropDisabled,
     dropErrorMessage,
     subGroupIndex = 0,
+    isLastSubGroup = false,
     isEpic = false,
   } = props;
   // i18n
@@ -145,7 +148,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
   const isSubGroup = !!sub_group_id && sub_group_id !== "null";
 
   return (
-    <ContentWrapper className={cn("relative flex-row gap-4", sub_group_by ? "!pt-2 !pb-0" : "!p-4")}>
+    <ContentWrapper className={cn("relative flex-row gap-4", sub_group_by ? "!py-0" : "!p-4")}>
       {list &&
         list.length > 0 &&
         list.map((subList: IGroupByColumn, groupIndex) => {
@@ -165,6 +168,8 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
               className={cn("group relative flex flex-shrink-0 flex-col", {
                 "w-[336px]": groupByVisibilityToggle.showIssues,
                 "rounded-lg bg-layer-1 p-2": sub_group_by === null,
+                "bg-layer-1 px-2 pt-1 pb-2": !!sub_group_by,
+                "rounded-b-lg": !!sub_group_by && isLastSubGroup,
               })}
             >
               {sub_group_by === null && (
