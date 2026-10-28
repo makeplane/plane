@@ -17,9 +17,9 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from "@makeplane/propel/components/menu";
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { IconButton } from "@makeplane/propel/elements/icon-button";
-import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
-import { AccessAndRolesOutline, LogOutOutline, PaletteOutline } from "@makeplane/propel/icons";
+import { LogOutOutline, PaletteOutline, UserCogOutline } from "@makeplane/propel/icons";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
 import { AuthService } from "@plane/services";
@@ -52,18 +52,18 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
   const handleSignOut = () => signOut();
 
   const getSidebarMenuItems = () => (
-    <MenuContent side="bottom" align="start">
+    <MenuContent side={isSidebarCollapsed ? "right" : "bottom"} align={isSidebarCollapsed ? "start" : "end"}>
       <MenuGroup>
         <MenuLabel>{currentUser?.email}</MenuLabel>
+        <MenuItem
+          icon={<Icon icon={PaletteOutline} />}
+          label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
+          onClick={handleThemeSwitch}
+        />
       </MenuGroup>
       <MenuSeparator />
       <MenuItem
-        icon={<Icon icon={PaletteOutline} />}
-        label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
-        onClick={handleThemeSwitch}
-      />
-      <MenuSeparator />
-      <MenuItem
+        variant="danger"
         icon={<Icon icon={LogOutOutline} />}
         label="Sign out"
         onClick={() => signOutFormRef.current?.requestSubmit()}
@@ -77,7 +77,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
   }, [csrfToken]);
 
   return (
-    <div className="flex max-h-header items-center gap-x-5 gap-y-2 border-b border-subtle px-4 py-2.5">
+    <div className="flex h-header shrink-0 items-center gap-2 border-b border-subtle px-3">
       <form
         ref={signOutFormRef}
         className="hidden"
@@ -87,58 +87,43 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
       >
         <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       </form>
-      <div className="h-full w-full min-w-0">
-        <div
-          className={`flex min-w-0 flex-grow items-center gap-x-2 rounded-sm ${
-            isSidebarCollapsed ? "justify-center" : ""
-          }`}
-        >
-          {isSidebarCollapsed ? (
+      {isSidebarCollapsed ? (
+        <div className="flex w-full justify-center">
+          <Menu>
+            <MenuTrigger
+              render={
+                <IconButton variant="ghost" size="lg" type="button" aria-label="Instance admin menu">
+                  <Icon icon={UserCogOutline} />
+                </IconButton>
+              }
+            />
+            {getSidebarMenuItems()}
+          </Menu>
+        </div>
+      ) : (
+        <>
+          <div className="grid size-8 shrink-0 place-items-center rounded-md bg-layer-1" aria-hidden="true">
+            <UserCogOutline className="size-5 text-primary" />
+          </div>
+          <h4 className="min-w-0 flex-1 truncate text-body-md-medium text-primary">Instance admin</h4>
+          {currentUser && (
             <Menu>
               <MenuTrigger
                 render={
-                  <IconButton variant="ghost" size="lg" type="button" aria-label="Instance admin menu">
-                    <div className="flex size-8 flex-shrink-0 items-center justify-center rounded-sm bg-layer-1">
-                      <AccessAndRolesOutline className="size-5 text-primary" />
-                    </div>
+                  <IconButton variant="ghost" size="lg" type="button" aria-label="Account menu">
+                    <Avatar
+                      alt={currentUser.display_name ?? "Admin user"}
+                      fallback={currentUser.display_name?.[0]?.toUpperCase()}
+                      src={getFileURL(currentUser.avatar_url)}
+                      size="sm"
+                    />
                   </IconButton>
                 }
               />
               {getSidebarMenuItems()}
             </Menu>
-          ) : (
-            <div
-              className="flex size-8 flex-shrink-0 items-center justify-center rounded-sm bg-layer-1"
-              aria-hidden="true"
-            >
-              <AccessAndRolesOutline className="size-5 text-primary" />
-            </div>
           )}
-
-          {!isSidebarCollapsed && (
-            <div className="flex w-full gap-2">
-              <h4 className="grow truncate text-body-md-medium text-primary">Instance admin</h4>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {!isSidebarCollapsed && currentUser && (
-        <Menu>
-          <MenuTrigger
-            render={
-              <IconButton variant="ghost" size="lg" type="button" aria-label="Account menu">
-                <WorkspaceAvatar
-                  alt={currentUser.display_name ?? "Admin user"}
-                  fallback={currentUser.display_name?.[0]?.toUpperCase()}
-                  src={getFileURL(currentUser.avatar_url)}
-                  size="sm"
-                />
-              </IconButton>
-            }
-          />
-          {getSidebarMenuItems()}
-        </Menu>
+        </>
       )}
     </div>
   );

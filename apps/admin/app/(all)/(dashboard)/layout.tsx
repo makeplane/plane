@@ -38,7 +38,7 @@ function AdminLayout(_props: Route.ComponentProps) {
 
   if (isUserLoggedIn) {
     return (
-      <div className="relative flex h-screen w-screen overflow-hidden">
+      <div className="relative flex h-dvh w-full overflow-hidden">
         <AdminSidebar />
         <main className="relative flex h-full min-w-0 flex-1 flex-col overflow-hidden bg-surface-1">
           <AdminHeader />
