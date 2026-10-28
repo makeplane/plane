@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, SETTINGS_DOCS_URLS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // components
@@ -51,6 +51,7 @@ function ExportsPage() {
         <SettingsHeading
           title={t("workspace_settings.settings.exports.heading")}
           description={t("workspace_settings.settings.exports.description")}
+          docHref={SETTINGS_DOCS_URLS.exports}
         />
         <ExportGuide />
       </div>

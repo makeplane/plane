@@ -8,7 +8,7 @@ import { useMemo, useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, SETTINGS_DOCS_URLS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { Icon } from "@makeplane/propel/components/icon";
@@ -95,6 +95,7 @@ export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelLi
       <SettingsHeading
         title={t("project_settings.labels.heading")}
         description={t("project_settings.labels.description")}
+        docHref={SETTINGS_DOCS_URLS.labels}
       />
       <div className="sticky top-0 z-10 flex flex-col gap-3 bg-surface-1 pt-6 pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="w-full sm:w-72">

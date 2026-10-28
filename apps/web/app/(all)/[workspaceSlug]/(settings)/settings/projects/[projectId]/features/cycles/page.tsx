@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // components
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, SETTINGS_DOCS_URLS } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { ProjectSettingsFeatureControlItem } from "@/components/settings/project/content/feature-control-item";
@@ -45,6 +45,7 @@ function FeaturesCyclesSettingsPage({ params }: Route.ComponentProps) {
         <SettingsHeading
           title={t("project_settings.features.cycles.title")}
           description={t("project_settings.features.cycles.description")}
+          docHref={SETTINGS_DOCS_URLS.cycles}
         />
         <div className="mt-7">
           <ProjectSettingsFeatureControlItem
