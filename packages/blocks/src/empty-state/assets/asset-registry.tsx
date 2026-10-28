@@ -50,6 +50,9 @@ const lazyIllustration = (
 
 // Horizontal Stack Asset Registry
 export const HORIZONTAL_STACK_ASSETS: Record<HorizontalStackAssetType, LazyIllustration> = {
+  activity: lazyIllustration(() => import("./horizontal-stack/activity"), "ActivityHorizontalStackIllustration"),
+  archive: lazyIllustration(() => import("./horizontal-stack/archive"), "ArchiveHorizontalStackIllustration"),
+  comment: lazyIllustration(() => import("./horizontal-stack/comment"), "CommentHorizontalStackIllustration"),
   customer: lazyIllustration(() => import("./horizontal-stack/customer"), "CustomerHorizontalStackIllustration"),
   epic: lazyIllustration(() => import("./horizontal-stack/epic"), "EpicHorizontalStackIllustration"),
   estimate: lazyIllustration(() => import("./horizontal-stack/estimate"), "EstimateHorizontalStackIllustration"),
@@ -97,10 +100,12 @@ export const HORIZONTAL_STACK_ASSETS: Record<HorizontalStackAssetType, LazyIllus
   "ai-skills": lazyIllustration(() => import("./horizontal-stack/ai-skills"), "AiSkillsHorizontalStackIllustration"),
   "ai-agents": lazyIllustration(() => import("./horizontal-stack/ai-agents"), "AiAgentsHorizontalStackIllustration"),
   memory: lazyIllustration(() => import("./horizontal-stack/memory"), "MemoryHorizontalStackIllustration"),
+  widget: lazyIllustration(() => import("./horizontal-stack/widget"), "WidgetHorizontalStackIllustration"),
 };
 
 // Vertical Stack Asset Registry
 export const VERTICAL_STACK_ASSETS: Record<VerticalStackAssetType, LazyIllustration> = {
+  archive: lazyIllustration(() => import("./vertical-stack/archive"), "ArchiveVerticalStackIllustration"),
   "archived-cycle": lazyIllustration(
     () => import("./vertical-stack/archived-cycle"),
     "ArchivedCycleVerticalStackIllustration"
