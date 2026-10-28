@@ -195,6 +195,7 @@
     },
     "archived_banner": "此工作事項已封存。請還原後再進行變更。",
     "updated_time_ago": "更新於 {time}",
+    "description_load_failed": "無法載入描述。",
     "assignee_count": "{count, plural, one {# 位指派對象} other {# 位指派對象}}",
     "relation": {
       "relates_to": "與此相關",

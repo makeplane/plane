@@ -8,7 +8,10 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { Button } from "@makeplane/propel/components/button";
+import { Loader } from "@plane/blocks/skeleton";
 import type { EditorRefApi } from "@plane/editor";
+import { useTranslation } from "@plane/i18n";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType, EIssueServiceType } from "@plane/types";
 // components
@@ -52,12 +55,14 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
   const editorRef = useRef<EditorRefApi>(null);
   // states
   const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("saved");
+  const [descriptionRetryState, setDescriptionRetryState] = useState<"idle" | "retrying" | "retried">("idle");
   // hooks
+  const { t } = useTranslation();
   const windowSize = useSize();
   const { data: currentUser } = useUser();
   const { getUserDetails } = useMember();
   const {
-    issue: { getIssueById },
+    issue: { getIssueById, getIsFetchingIssueDetails },
     peekIssue,
   } = useIssueDetail();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
@@ -76,6 +81,23 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
   if (!issue || !issue.project_id) return <></>;
 
   const isPeekModeActive = Boolean(peekIssue);
+
+  // `description_html` only arrives with the work item details, so its absence means they are still
+  // loading or failed to load. The editor reads `initialValue` once, so it mounts only once it's here.
+  // The store keeps its fetching flag after a failed fetch, so it is trusted only until a retry.
+  const isDescriptionLoading =
+    descriptionRetryState === "retrying" || (descriptionRetryState === "idle" && getIsFetchingIssueDetails(issueId));
+  const descriptionState: "loading" | "error" | "loaded" =
+    issue.description_html !== undefined ? "loaded" : isDescriptionLoading ? "loading" : "error";
+
+  const handleDescriptionRetry = async () => {
+    setDescriptionRetryState("retrying");
+    try {
+      await issueOperations.fetch(workspaceSlug, projectId, issueId);
+    } finally {
+      setDescriptionRetryState("retried");
+    }
+  };
 
   return (
     <>
@@ -126,28 +148,46 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
           disabled={isArchived || !isEditable}
         />
 
-        <DescriptionOverflow>
-          <DescriptionInput
-            issueSequenceId={issue.sequence_id}
-            containerClassName="-ml-6 border-none p-0! pl-6!"
-            disabled={isArchived || !isEditable}
-            editorRef={editorRef}
-            entityId={issue.id}
-            fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
-            initialValue={issue.description_html}
-            key={issue.id}
-            onSubmit={async (value, isMigrationUpdate) => {
-              if (!issue.id || !issue.project_id) return;
-              await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
-                description_html: value.description_html,
-                ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
-              });
-            }}
-            projectId={issue.project_id}
-            setIsSubmitting={(value) => setIsSubmitting(value)}
-            workspaceSlug={workspaceSlug}
-          />
-        </DescriptionOverflow>
+        {descriptionState === "loading" ? (
+          <Loader className="space-y-2">
+            <Loader.Item width="100%" height="14px" />
+            <Loader.Item width="50%" height="14px" />
+          </Loader>
+        ) : descriptionState === "error" ? (
+          <div className="flex items-center gap-2 py-2 text-body-xs-regular text-tertiary">
+            <span>{t("issue.description_load_failed")}</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              stretch="auto"
+              label={t("common.retry")}
+              onClick={() => void handleDescriptionRetry()}
+            />
+          </div>
+        ) : (
+          <DescriptionOverflow>
+            <DescriptionInput
+              issueSequenceId={issue.sequence_id}
+              containerClassName="-ml-6 border-none p-0! pl-6!"
+              disabled={isArchived || !isEditable}
+              editorRef={editorRef}
+              entityId={issue.id}
+              fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
+              initialValue={issue.description_html}
+              key={issue.id}
+              onSubmit={async (value, isMigrationUpdate) => {
+                if (!issue.id || !issue.project_id) return;
+                await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
+                  description_html: value.description_html,
+                  ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
+                });
+              }}
+              projectId={issue.project_id}
+              setIsSubmitting={(value) => setIsSubmitting(value)}
+              workspaceSlug={workspaceSlug}
+            />
+          </DescriptionOverflow>
+        )}
 
         <div className="flex items-center justify-between gap-2">
           {currentUser && (

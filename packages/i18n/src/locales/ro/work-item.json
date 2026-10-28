@@ -195,6 +195,7 @@
     },
     "archived_banner": "Această activitate este arhivată. Restaurați-o pentru a face modificări.",
     "updated_time_ago": "Actualizat {time}",
+    "description_load_failed": "Descrierea nu a putut fi încărcată.",
     "assignee_count": "{count, plural, one {# responsabil} few {# responsabili} other {# de responsabili}}",
     "relation": {
       "relates_to": "Este legată de",

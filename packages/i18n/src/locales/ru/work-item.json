@@ -195,6 +195,7 @@
     },
     "archived_banner": "Этот рабочий элемент архивирован. Восстановите его, чтобы внести изменения.",
     "updated_time_ago": "Обновлено {time}",
+    "description_load_failed": "Не удалось загрузить описание.",
     "assignee_count": "{count, plural, one {# назначенный} few {# назначенных} many {# назначенных} other {# назначенного}}",
     "relation": {
       "relates_to": "Связан с",

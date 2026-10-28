@@ -195,6 +195,7 @@
     },
     "archived_banner": "Tato pracovní položka je archivovaná. Pro provedení změn ji obnovte.",
     "updated_time_ago": "Aktualizováno {time}",
+    "description_load_failed": "Popis se nepodařilo načíst.",
     "assignee_count": "{count, plural, one {# přiřazený} few {# přiřazení} many {# přiřazeného} other {# přiřazených}}",
     "relation": {
       "relates_to": "Související s",

@@ -195,6 +195,7 @@
     },
     "archived_banner": "Mục công việc này đã được lưu trữ. Hãy khôi phục để thực hiện thay đổi.",
     "updated_time_ago": "Đã cập nhật {time}",
+    "description_load_failed": "Không thể tải mô tả.",
     "assignee_count": "{count, plural, one {# người phụ trách} other {# người phụ trách}}",
     "relation": {
       "relates_to": "Liên quan đến",

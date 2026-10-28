@@ -195,6 +195,7 @@
     },
     "archived_banner": "Dieses Arbeitselement ist archiviert. Zum Bearbeiten muss es wiederhergestellt werden.",
     "updated_time_ago": "Aktualisiert {time}",
+    "description_load_failed": "Die Beschreibung konnte nicht geladen werden.",
     "assignee_count": "{count, plural, one {# zugewiesene Person} other {# zugewiesene Personen}}",
     "relation": {
       "relates_to": "Steht in Beziehung zu",

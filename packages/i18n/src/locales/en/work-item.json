@@ -195,6 +195,7 @@
     },
     "archived_banner": "This work item is archived. Restore it to make changes.",
     "updated_time_ago": "Updated {time}",
+    "description_load_failed": "Couldn't load the description.",
     "assignee_count": "{count, plural, one {# assignee} other {# assignees}}",
     "relation": {
       "relates_to": "Relates to",

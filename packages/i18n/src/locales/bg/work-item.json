@@ -195,6 +195,7 @@
     },
     "archived_banner": "Този работен елемент е архивиран. Възстановете го, за да правите промени.",
     "updated_time_ago": "Обновено {time}",
+    "description_load_failed": "Описанието не можа да се зареди.",
     "assignee_count": "{count, plural, one {# изпълнител} other {# изпълнителя}}",
     "relation": {
       "relates_to": "Свързан с",

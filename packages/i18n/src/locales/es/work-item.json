@@ -195,6 +195,7 @@
     },
     "archived_banner": "Este elemento de trabajo está archivado. Restáurelo para hacer cambios.",
     "updated_time_ago": "Actualizado {time}",
+    "description_load_failed": "No se pudo cargar la descripción.",
     "assignee_count": "{count, plural, one {# asignado} other {# asignados}}",
     "relation": {
       "relates_to": "Se relaciona con",

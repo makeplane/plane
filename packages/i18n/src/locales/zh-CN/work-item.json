@@ -195,6 +195,7 @@
     },
     "archived_banner": "此工作项已归档。请恢复后再进行更改。",
     "updated_time_ago": "更新于 {time}",
+    "description_load_failed": "无法加载描述。",
     "assignee_count": "{count, plural, one {# 位负责人} other {# 位负责人}}",
     "relation": {
       "relates_to": "关联到",

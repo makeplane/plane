@@ -195,6 +195,7 @@
     },
     "archived_banner": "Цю робочу одиницю заархівовано. Відновіть її, щоб унести зміни.",
     "updated_time_ago": "Оновлено {time}",
+    "description_load_failed": "Не вдалося завантажити опис.",
     "assignee_count": "{count, plural, one {# призначений} few {# призначені} many {# призначених} other {# призначеного}}",
     "relation": {
       "relates_to": "Пов'язана з",
