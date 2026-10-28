@@ -18,11 +18,13 @@ import { getTabIndex } from "@plane/utils";
 type Props = {
   handleClose: () => void;
   isMobile?: boolean;
+  /** Id of the form to submit when the action row is rendered outside it. */
+  formId?: string;
 };
 
 function ProjectCreateButtons(props: Props) {
   const { t } = useTranslation();
-  const { handleClose, isMobile = false } = props;
+  const { handleClose, isMobile = false, formId } = props;
   const {
     formState: { isSubmitting },
   } = useFormContext<IProject>();
@@ -44,6 +46,7 @@ function ProjectCreateButtons(props: Props) {
         size="md"
         stretch="auto"
         type="submit"
+        form={formId}
         label={isSubmitting ? t("creating") : t("create_project")}
         loading={isSubmitting}
         tabIndex={getIndex("submit")}

@@ -128,7 +128,7 @@ export function PageForm(props: Props) {
               <InputField
                 id="name"
                 type="text"
-                size="2xl"
+                size="xl"
                 orientation="vertical"
                 value={formData.name}
                 onChange={(e) => handleFormData("name", e.target.value)}

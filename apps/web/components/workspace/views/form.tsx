@@ -7,9 +7,8 @@
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { Field } from "@makeplane/propel/components/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
+import { InputField } from "@makeplane/propel/components/input-field";
+import { TextAreaField } from "@makeplane/propel/components/text-area-field";
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
@@ -92,44 +91,39 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
                 },
               }}
               render={({ field: { value, onChange, ref } }) => (
-                <Field name="name" invalid={Boolean(errors.name)}>
-                  <InputGroup size="2xl">
-                    <Input
-                      size="2xl"
-                      id="name"
-                      name="name"
-                      type="name"
-                      value={value}
-                      onChange={onChange}
-                      ref={ref}
-                      placeholder={t("common.title")}
-                    />
-                  </InputGroup>
-                </Field>
+                <InputField
+                  size="lg"
+                  orientation="vertical"
+                  error={errors?.name?.message}
+                  id="name"
+                  name="name"
+                  type="name"
+                  value={value}
+                  onChange={onChange}
+                  ref={ref}
+                  placeholder={t("common.title")}
+                  aria-label={t("common.title")}
+                />
               )}
             />
-            <span className="text-caption-sm-regular text-danger-primary">{errors?.name?.message}</span>
           </div>
           <div>
             <Controller
               name="description"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <Field name="description" invalid={Boolean(errors?.description)}>
-                  <TextAreaGroup resize="none">
-                    <TextArea
-                      size="lg"
-                      surface="field"
-                      autoResize
-                      maxRows={8}
-                      id="description"
-                      name="description"
-                      value={value}
-                      placeholder={t("common.description")}
-                      onChange={onChange}
-                    />
-                  </TextAreaGroup>
-                </Field>
+                <TextAreaField
+                  size="lg"
+                  autoResize
+                  maxRows={8}
+                  error={errors?.description?.message}
+                  id="description"
+                  name="description"
+                  value={value}
+                  placeholder={t("common.description")}
+                  aria-label={t("common.description")}
+                  onChange={onChange}
+                />
               )}
             />
           </div>
