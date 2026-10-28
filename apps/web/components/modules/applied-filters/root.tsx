@@ -33,7 +33,7 @@ const DATE_FILTERS = new Set(["start_date", "target_date"]);
  * Container chrome for grouped filter chips and their remove actions.
  */
 const FILTER_GROUP_CLASSNAME =
-  "my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-caption-sm-regular text-tertiary capitalize hover:text-secondary";
+  "my-auto flex min-h-7 flex-wrap items-center gap-1.5 rounded-md border border-subtle-1 bg-layer-2 p-2 py-0.5 text-caption-sm-regular text-tertiary hover:text-secondary";
 
 export function ModuleAppliedFiltersList(props: Props) {
   const {
@@ -64,7 +64,9 @@ export function ModuleAppliedFiltersList(props: Props) {
           return (
             <div key={filterKey} className={FILTER_GROUP_CLASSNAME}>
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-caption-sm-regular text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+                <span className="text-caption-sm-regular text-tertiary capitalize">
+                  {replaceUnderscoreIfSnakeCase(filterKey)}
+                </span>
                 {filterKey === "status" && (
                   <AppliedStatusFilters
                     editable={isEditingAllowed}
@@ -101,12 +103,9 @@ export function ModuleAppliedFiltersList(props: Props) {
           );
         })}
         {!isArchived && isFavoriteFilterApplied && (
-          <div
-            key="module_display_filters"
-            className="flex flex-wrap items-center gap-2 rounded-md border border-subtle px-2 py-1 capitalize"
-          >
+          <div key="module_display_filters" className={FILTER_GROUP_CLASSNAME}>
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-caption-sm-regular text-tertiary">Modules</span>
+              <span className="text-caption-sm-regular text-tertiary capitalize">Modules</span>
               <div className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-caption-sm-regular">
                 Favorite
                 {isEditingAllowed && (

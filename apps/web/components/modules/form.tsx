@@ -110,7 +110,7 @@ export function ModuleForm(props: Props) {
                       setActiveProject(val);
                     }}
                     multiple={false}
-                    variant="pill-md"
+                    variant="pill-sm"
                     filterOption={(id) => !!projectsWithCreatePermissions?.[id]}
                     tabIndex={getIndex("cover_image")}
                   />
@@ -195,7 +195,8 @@ export function ModuleForm(props: Props) {
                     name="target_date"
                     render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
                       <DateRangeSelect
-                        variant="pill-md"
+                        variant="pill-sm"
+                        className="max-w-none"
                         value={{
                           from: getDate(startDateValue) ?? null,
                           to: getDate(endDateValue) ?? null,
@@ -213,9 +214,7 @@ export function ModuleForm(props: Props) {
                   />
                 )}
               />
-              <div className="h-7">
-                <ModuleStatusSelect control={control} error={errors.status} tabIndex={getIndex("status")} />
-              </div>
+              <ModuleStatusSelect control={control} error={errors.status} tabIndex={getIndex("status")} />
               <Controller
                 control={control}
                 name="lead_id"
@@ -226,7 +225,7 @@ export function ModuleForm(props: Props) {
                     projectId={projectId}
                     multiple={false}
                     placeholder={t("lead")}
-                    variant="pill-md"
+                    variant="pill-sm"
                     tabIndex={getIndex("lead")}
                   />
                 )}
@@ -241,7 +240,7 @@ export function ModuleForm(props: Props) {
                     projectId={projectId}
                     multiple
                     placeholder={t("members")}
-                    variant={value?.length ? "avatar-group-md" : "pill-md"}
+                    variant={value?.length ? "avatar-group-sm" : "pill-sm"}
                     tabIndex={getIndex("member_ids")}
                   />
                 )}

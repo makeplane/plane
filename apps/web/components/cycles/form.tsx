@@ -99,7 +99,7 @@ export function CycleForm(props: Props) {
                       setActiveProject(val);
                     }}
                     multiple={false}
-                    variant="pill-md"
+                    variant="pill-sm"
                     filterOption={(id) => !!projectsWithCreatePermissions?.[id]}
                     tabIndex={getIndex("cover_image")}
                   />
@@ -180,8 +180,8 @@ export function CycleForm(props: Props) {
                     name="end_date"
                     render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
                       <DateRangeSelect
-                        variant="pill-md"
-                        className="h-7"
+                        variant="pill-sm"
+                        className="max-w-none"
                         minDate={new Date()}
                         value={{
                           from: getDate(startDateValue) ?? null,
