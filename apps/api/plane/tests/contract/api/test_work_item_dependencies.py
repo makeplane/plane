@@ -389,6 +389,29 @@ class TestWorkItemDependencies:
         assert not IssueRelation.objects.filter(issue=own_issue, related_issue=own_issue).exists()
         assert IssueRelation.objects.count() == 1
 
+    def test_create_dependency_rejects_oversized_batch(self, api_key_client, workspace, own_project, own_issue):
+        resp = api_key_client.post(
+            _dep_url(workspace, own_project, own_issue),
+            {"relation_type": "blocked_by", "work_item_ids": [str(uuid4()) for _ in range(101)]},
+            format="json",
+        )
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+        assert IssueRelation.objects.count() == 0
+
+    def test_delete_dependency_to_invisible_target_returns_404(
+        self, api_key_client, workspace, own_project, own_issue, sibling_issue
+    ):
+        IssueRelation.objects.create(
+            workspace=workspace,
+            project=own_project,
+            issue=own_issue,
+            related_issue=sibling_issue,
+            relation_type="blocked_by",
+        )
+        resp = api_key_client.delete(_dep_url(workspace, own_project, own_issue, sibling_issue))
+        assert resp.status_code == status.HTTP_404_NOT_FOUND
+        assert IssueRelation.objects.count() == 1
+
     def test_delete_dependency_removes_both_orientations(
         self, api_key_client, workspace, own_project, own_issue, related_issue, _no_side_effects
     ):

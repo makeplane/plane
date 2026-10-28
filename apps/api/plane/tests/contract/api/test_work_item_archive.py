@@ -178,6 +178,24 @@ class TestWorkItemArchiveUnarchive:
         assert unarchive_call["type"] == "issue.activity.updated"
         assert json.loads(unarchive_call["requested_data"]) == {"archived_at": None}
 
+    def test_archive_and_unarchive_write_only_archived_at(
+        self, api_key_client, workspace, own_project, states, create_user
+    ):
+        issue = Issue(name="Done Issue", project=own_project, workspace=workspace, state=states["completed"])
+        issue.save(created_by_id=create_user.id)
+
+        original_save = Issue.save
+        with mock.patch.object(Issue, "save", autospec=True, side_effect=original_save) as save_mock:
+            archive_resp = api_key_client.post(_archive_url(workspace, own_project, issue), {}, format="json")
+            unarchive_resp = api_key_client.delete(_unarchive_url(workspace, own_project, issue))
+
+        assert archive_resp.status_code == status.HTTP_200_OK
+        assert unarchive_resp.status_code == status.HTTP_204_NO_CONTENT
+        assert [call.kwargs.get("update_fields") for call in save_mock.call_args_list] == [
+            ["archived_at"],
+            ["archived_at"],
+        ]
+
     @pytest.mark.parametrize("state_group", ["backlog", "unstarted", "started"])
     def test_archive_rejects_non_completed_or_cancelled_state_group(
         self, api_key_client, workspace, own_project, states, create_user, state_group

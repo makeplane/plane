@@ -10,7 +10,7 @@ import re
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponseRedirect
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.db.models import (
     Case,
     CharField,
@@ -38,10 +38,12 @@ from rest_framework.response import Response
 # drf-spectacular imports
 from drf_spectacular.utils import (
     extend_schema,
+    OpenApiParameter,
     OpenApiResponse,
     OpenApiExample,
     OpenApiRequest,
 )
+from drf_spectacular.types import OpenApiTypes
 
 # Module imports
 from plane.api.serializers import (
@@ -2854,6 +2856,10 @@ def _create_issue_relations(request, slug, project_id, issue_id, relation_type, 
 
 def _delete_issue_relation(request, slug, project_id, issue_id, related_issue_id, allowed_db_types):
     Issue.issue_objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+    # Same visibility rule as creation, so deleting cannot probe relations to work
+    # items the caller cannot see.
+    if not Issue.objects.filter(visible_issue_q(request.user), workspace__slug=slug, pk=related_issue_id).exists():
+        return Response({"error": "Issue relation not found"}, status=status.HTTP_404_NOT_FOUND)
 
     # Both orientations of the pair can exist (the unique constraint is per ordered
     # pair), so every matching row is removed, not just the first.
@@ -2869,14 +2875,20 @@ def _delete_issue_relation(request, slug, project_id, issue_id, related_issue_id
     if not relations:
         return Response({"error": "Issue relation not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    for relation in relations:
-        perspective_relation_type = (
-            relation.relation_type
-            if str(relation.issue_id) == str(issue_id)
-            else get_inverse_relation(relation.relation_type)
-        )
-        current_instance = json.dumps(IssueRelationSerializer(relation).data, cls=DjangoJSONEncoder)
-        relation.delete()
+    deleted = []
+    # All-or-nothing: a failure on one row must not leave the other orientation behind.
+    with transaction.atomic():
+        for relation in relations:
+            perspective_relation_type = (
+                relation.relation_type
+                if str(relation.issue_id) == str(issue_id)
+                else get_inverse_relation(relation.relation_type)
+            )
+            current_instance = json.dumps(IssueRelationSerializer(relation).data, cls=DjangoJSONEncoder)
+            relation.delete()
+            deleted.append((perspective_relation_type, current_instance))
+
+    for perspective_relation_type, current_instance in deleted:
         issue_activity.delay(
             type="issue_relation.activity.deleted",
             requested_data=json.dumps(
@@ -3235,30 +3247,38 @@ class IssueArchiveUnarchiveAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id, pk):
         """Archive work item"""
-        issue = Issue.issue_objects.select_related("state").get(
-            workspace__slug=slug,
-            project_id=project_id,
-            pk=pk,
-        )
-        if not issue.state or issue.state.group not in ["completed", "cancelled"]:
-            return Response(
-                {"error": "Can only archive completed or cancelled state group issue"},
-                status=status.HTTP_400_BAD_REQUEST,
+        # The lock keeps the state-group check valid until archived_at is written, and
+        # update_fields keeps a concurrent edit from being overwritten with stale values.
+        with transaction.atomic():
+            issue = (
+                Issue.issue_objects.select_related("state")
+                .select_for_update(of=("self",))
+                .get(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    pk=pk,
+                )
             )
-        archived_at = timezone.now().date()
+            if not issue.state or issue.state.group not in ["completed", "cancelled"]:
+                return Response(
+                    {"error": "Can only archive completed or cancelled state group issue"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            archived_at = timezone.now().date()
+            current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
+            issue.archived_at = archived_at
+            issue.save(update_fields=["archived_at"])
         issue_activity.delay(
             type="issue.activity.updated",
             requested_data=json.dumps({"archived_at": str(archived_at), "automation": False}),
             actor_id=str(request.user.id),
             issue_id=str(issue.id),
             project_id=str(project_id),
-            current_instance=json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder),
+            current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=base_host(request=request, is_app=True),
         )
-        issue.archived_at = archived_at
-        issue.save()
         return Response({"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK)
 
     @work_item_docs(
@@ -3273,25 +3293,27 @@ class IssueArchiveUnarchiveAPIEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, project_id, pk):
         """Unarchive work item"""
-        issue = Issue.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            archived_at__isnull=False,
-            pk=pk,
-        )
+        with transaction.atomic():
+            issue = Issue.objects.select_for_update(of=("self",)).get(
+                workspace__slug=slug,
+                project_id=project_id,
+                archived_at__isnull=False,
+                pk=pk,
+            )
+            current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
+            issue.archived_at = None
+            issue.save(update_fields=["archived_at"])
         issue_activity.delay(
             type="issue.activity.updated",
             requested_data=json.dumps({"archived_at": None}),
             actor_id=str(request.user.id),
             issue_id=str(issue.id),
             project_id=str(project_id),
-            current_instance=json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder),
+            current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=base_host(request=request, is_app=True),
         )
-        issue.archived_at = None
-        issue.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -3343,6 +3365,27 @@ class IssueCountEndpoint(BaseAPIView):
         tags=["Work Items"],
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
+            OpenApiParameter(
+                name="pql",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Only a project scope is supported on this edition, e.g. project = "<project id>".',
+            ),
+            OpenApiParameter(
+                name="group_by",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description="Field used to group the counts.",
+            ),
+            OpenApiParameter(
+                name="sub_group_by",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description="Field used to sub-group the counts. Requires group_by.",
+            ),
         ],
         responses={
             200: OpenApiResponse(description="Work item count results"),

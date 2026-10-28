@@ -621,7 +621,8 @@ class WorkItemDependencyCreateSerializer(serializers.Serializer):
         child=serializers.UUIDField(),
         required=True,
         min_length=1,
-        help_text="Array of work item IDs to create dependencies with",
+        max_length=100,
+        help_text="Array of work item IDs to create dependencies with (1 to 100)",
     )
 
 
