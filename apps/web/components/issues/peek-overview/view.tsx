@@ -8,7 +8,12 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // plane imports
+import { Banner } from "@makeplane/propel/components/banner";
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { ArchiveOutline } from "@makeplane/propel/icons";
 import type { EditorRefApi } from "@plane/editor";
+import { useTranslation } from "@plane/i18n";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -53,6 +58,8 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
     embedRemoveCurrentNotification,
     issueOperations,
   } = props;
+  // translation
+  const { t } = useTranslation();
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("saved");
@@ -171,8 +178,35 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                 disabled={disabled}
                 embedIssue={embedIssue}
               />
+              {is_archived && (
+                <Banner
+                  variant="warning"
+                  placement="page"
+                  icon={<Icon icon={ArchiveOutline} />}
+                  title={t("issue.archived_banner")}
+                  actions={
+                    !disabled && issueOperations.restore ? (
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="xs"
+                        stretch="auto"
+                        label={t("restore")}
+                        onClick={() => void handleRestore()}
+                      />
+                    ) : undefined
+                  }
+                />
+              )}
               {/* content */}
-              <div className="vertical-scrollbar relative scrollbar-md h-full w-full overflow-hidden overflow-y-auto">
+              <div
+                className={cn(
+                  "vertical-scrollbar relative scrollbar-md h-full w-full overflow-hidden overflow-y-auto",
+                  {
+                    "opacity-75": is_archived,
+                  }
+                )}
+              >
                 {["side-peek", "modal"].includes(peekMode) ? (
                   <div className="relative flex flex-col px-8 py-5">
                     <div className="pb-6">

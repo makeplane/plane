@@ -28,6 +28,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
         issueId={issueId}
         issueOperations={issueOperations}
         disabled={!isEditable}
+        showUpdatedMeta
       />
     </div>
   );

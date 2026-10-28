@@ -7,18 +7,18 @@
 import { observer } from "mobx-react";
 // plane imports
 import {
-  CalendarOutline,
-  CheckDoneOutline,
+  CompletedAtOutline,
+  CreatedAtOutline,
   CyclesOutline,
   EstimateOutline,
-  HistoryOutline,
   LabelsOutline,
   ModuleOutline,
   ParentOutline,
+  UpdatedAtOutline,
   UserOutline,
 } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { cn, renderFormattedDate } from "@plane/utils";
+import { calculateTimeAgo, cn, renderFormattedDate } from "@plane/utils";
 // components
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 import { EstimateSelect } from "@/components/dropdowns/estimate/estimate-select";
@@ -41,6 +41,8 @@ type Props = {
   issueId: string;
   issueOperations: TIssueOperations;
   disabled: boolean;
+  /** Show "Updated <time ago>" beside the Properties title (detail page). */
+  showUpdatedMeta?: boolean;
 };
 
 const AUDIT_DATE_FORMAT = "MMM d, yyyy h:mma";
@@ -53,7 +55,7 @@ const formatAuditDate = (date: string | null | undefined) =>
  * collapsible "Details" and "Project structure" sections, followed by created/updated metadata.
  */
 export const IssueDetailSidebarSections = observer(function IssueDetailSidebarSections(props: Props) {
-  const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, disabled, showUpdatedMeta = false } = props;
   // hooks
   const { t } = useTranslation();
   const { getProjectById } = useProject();
@@ -76,21 +78,21 @@ export const IssueDetailSidebarSections = observer(function IssueDetailSidebarSe
     formatAuditDate(issue.created_at)
       ? {
           key: "created_on",
-          icon: CalendarOutline,
+          icon: CreatedAtOutline,
           text: `${t("common.created_on")} ${formatAuditDate(issue.created_at)}`,
         }
       : null,
     formatAuditDate(issue.updated_at)
       ? {
           key: "updated_on",
-          icon: HistoryOutline,
+          icon: UpdatedAtOutline,
           text: `${t("common.updated_on")} ${formatAuditDate(issue.updated_at)}`,
         }
       : null,
     formatAuditDate(issue.completed_at)
       ? {
           key: "completed_on",
-          icon: CheckDoneOutline,
+          icon: CompletedAtOutline,
           text: `${t("common.completed_on")} ${formatAuditDate(issue.completed_at)}`,
         }
       : null,
@@ -98,7 +100,14 @@ export const IssueDetailSidebarSections = observer(function IssueDetailSidebarSe
 
   return (
     <div className="flex w-full flex-col gap-5">
-      <h5 className="text-body-sm-semibold text-primary">{t("common.properties")}</h5>
+      <div className="flex w-full items-center justify-between gap-2">
+        <h5 className="text-body-sm-semibold text-primary">{t("common.properties")}</h5>
+        {showUpdatedMeta && issue.updated_at && (
+          <span className="truncate text-caption-sm-regular text-tertiary">
+            {t("issue.updated_time_ago", { time: calculateTimeAgo(issue.updated_at) })}
+          </span>
+        )}
+      </div>
 
       <div className={cn("flex flex-col gap-5", { "opacity-60": disabled })}>
         <IssueDetailSidebarGroup label={t("common.details")}>
