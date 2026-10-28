@@ -1,6 +1,6 @@
 [project]
 name = "Plane"
-version = "1.4.2"
+version = "1.5.0"
 description = "Open-source project management that unlocks customer value"
 requires-python = ">=3.12,<3.13"
 dependencies = [
