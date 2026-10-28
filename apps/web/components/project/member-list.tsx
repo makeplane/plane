@@ -11,9 +11,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import { Button } from "@makeplane/propel/components/button";
-import { Icon } from "@makeplane/propel/components/icon";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { SearchOutline } from "@makeplane/propel/icons";
+import { ExpandableSearch } from "@makeplane/propel/components/expandable-search";
 // components
 import { MembersSettingsLoader } from "@/components/ui/loader/settings/members";
 // hooks
@@ -87,20 +85,14 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
       <div className="flex items-center justify-between gap-4 overflow-x-hidden pt-1 pb-3">
         <div className="text-body-md-semibold">{t("common.members")}</div>
         <div className="flex items-center gap-3">
-          <div className="w-48">
-            <InputGroup size="md">
-              <Icon icon={SearchOutline} tint="placeholder" />
-              <Input
-                size="md"
-                type="text"
-                aria-label={t("common.search.label")}
-                placeholder="Search"
-                value={searchQuery}
-                autoFocus
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </InputGroup>
-          </div>
+          <ExpandableSearch
+            size="md"
+            aria-label={t("common.search.label")}
+            clearLabel={t("common.clear")}
+            placeholder={`${t("search")}...`}
+            value={searchQuery}
+            onValueChange={(value) => setSearchQuery(value)}
+          />
           <MemberListFiltersDropdown
             appliedFilters={appliedRoleFilters}
             handleUpdate={handleRoleFilterUpdate}
