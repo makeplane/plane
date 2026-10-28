@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { Button } from "@makeplane/propel/components/button";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Tab, Tabs, TabsList } from "@makeplane/propel/components/tabs";
-import { ArrowCollapseOutline, FullScreenOutline } from "@makeplane/propel/icons";
+import { ArrowCollapseOutline, ArrowExpandOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // plane
 import type { TGanttViews } from "@plane/types";
@@ -82,7 +82,7 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
         aria-label={t("common.full_screen")}
         aria-pressed={fullScreenMode}
         onClick={toggleFullScreenMode}
-        icon={fullScreenMode ? <ArrowCollapseOutline /> : <FullScreenOutline />}
+        icon={fullScreenMode ? <ArrowCollapseOutline /> : <ArrowExpandOutline />}
       />
     </Row>
   );
