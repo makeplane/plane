@@ -248,8 +248,8 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
       <div id="page-content-container" className="relative w-full flex-shrink-0">
         {/* table of content */}
         {!isNavigationPaneOpen && (
-          <div className="page-summary-container absolute top-[64px] right-0 z-[5] h-full">
-            <div className="sticky top-[72px]">
+          <div className="page-summary-container pointer-events-none absolute top-[64px] right-0 z-[5] h-full">
+            <div className="pointer-events-auto sticky top-[72px]">
               <div className="group/page-toc relative px-page-x">
                 {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events */}
                 <div

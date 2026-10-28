@@ -39,7 +39,7 @@ export function AskPiMenu(props: Props) {
           "items-start": response,
         })}
       >
-        <span className="grid size-7 flex-shrink-0 place-items-center rounded-full border border-subtle text-secondary">
+        <span className="grid size-7 flex-shrink-0 place-items-center rounded-full border border-subtle-1 text-secondary">
           <AiStar1Outline className="size-3" />
         </span>
         {response ? (
@@ -98,7 +98,7 @@ export function AskPiMenu(props: Props) {
         )}
       </div>
       <div className="px-4 py-3">
-        <div className="flex items-center gap-2 rounded-md border border-subtle p-2">
+        <div className="flex items-center gap-2 rounded-md border border-subtle-1 p-2">
           <span className="grid size-3 flex-shrink-0 place-items-center">
             <AiStar1Outline className="size-3 text-secondary" />
           </span>

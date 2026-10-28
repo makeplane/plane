@@ -213,7 +213,7 @@ export function EditorAIMenu(props: Props) {
                   "items-start": response,
                 })}
               >
-                <span className="grid size-7 flex-shrink-0 place-items-center rounded-full border border-subtle text-secondary">
+                <span className="grid size-7 flex-shrink-0 place-items-center rounded-full border border-subtle-1 text-secondary">
                   <AiStar1Outline className="size-3" />
                 </span>
                 {response ? (
