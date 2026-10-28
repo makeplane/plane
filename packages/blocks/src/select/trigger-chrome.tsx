@@ -139,7 +139,7 @@ function PillTriggerChrome({
         <button
           type="button"
           {...props}
-          className={cn(props.className, "max-w-40", className)}
+          className={cn(props.className, className)}
           style={{ ...props.style, ...style }}
         />
       )}
@@ -153,7 +153,7 @@ function PillTriggerChrome({
         <button
           type="button"
           {...props}
-          className={cn(props.className, "max-w-40", className)}
+          className={cn(props.className, className)}
           style={{ ...props.style, ...style }}
         />
       )}

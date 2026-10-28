@@ -1432,6 +1432,8 @@ describe("Select on Propel combobox", () => {
       expect(button.getAttribute("data-tour")).toBe("property");
       expect(button.classList.contains("max-w-24")).toBe(true);
       expect(button.classList.contains("max-w-40")).toBe(false);
+      // the outline pill keeps its border width when merged with the caller's classes
+      expect(button.classList.contains("border-sm")).toBe(true);
       expect(button.style.maxWidth).toBe("6rem");
       act(() => {
         buttonRef.current?.focus();
