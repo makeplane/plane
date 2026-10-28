@@ -33,7 +33,7 @@ export const FilterSelection = observer(function FilterSelection(props: Props) {
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
-      <div className="p-2.5 pb-0">
+      <div className="pb-2">
         <InputGroup size="md">
           <Icon icon={SearchOutline} size="md" tint="placeholder" />
           <Input
@@ -57,7 +57,7 @@ export const FilterSelection = observer(function FilterSelection(props: Props) {
           )}
         </InputGroup>
       </div>
-      <div className="h-full w-full divide-y divide-subtle-1 overflow-y-auto px-2.5">
+      <div className="h-full w-full divide-y divide-subtle-1 overflow-y-auto [&>*:last-child]:pb-0">
         {/* priority */}
         {isFilterEnabled("priority") && (
           <div className="py-2">

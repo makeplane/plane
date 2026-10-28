@@ -18,8 +18,8 @@ interface IFilterHeader {
 
 export function FilterHeader({ title, isPreviewEnabled, handleIsPreviewEnabled }: IFilterHeader) {
   return (
-    <div className="sticky top-0 flex items-center justify-between gap-2">
-      <div className="grow truncate text-caption-sm-medium text-tertiary">{title}</div>
+    <div className="sticky top-0 flex items-center justify-between gap-2 bg-layer-2">
+      <div className="grow truncate text-caption-sm-medium text-placeholder">{title}</div>
       <IconButton
         variant="ghost"
         size="xs"
