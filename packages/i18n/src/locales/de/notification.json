@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Wählen Sie ein Element, um Details anzuzeigen."
+        "title": "Keine Benachrichtigung ausgewählt",
+        "description": "Wählen Sie eine Benachrichtigung aus, um die Details anzuzeigen."
       },
       "all": {
         "title": "Keine zugewiesenen Elemente",

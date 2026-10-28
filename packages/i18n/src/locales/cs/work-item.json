@@ -157,6 +157,10 @@
         "primary_button": {
           "text": "Zobrazit další pracovní položky"
         }
+      },
+      "no_access": {
+        "title": "K této pracovní položce nemáte přístup",
+        "description": "Požádejte o přístup administrátora projektu."
       }
     },
     "sibling": {

@@ -157,6 +157,10 @@
         "primary_button": {
           "text": "Weitere Arbeitselemente anzeigen"
         }
+      },
+      "no_access": {
+        "title": "Sie haben keinen Zugriff auf dieses Arbeitselement",
+        "description": "Wenden Sie sich an einen Projektadministrator, um Zugriff anzufordern."
       }
     },
     "sibling": {

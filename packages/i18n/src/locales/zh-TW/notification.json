@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "選擇以檢視詳細資訊。"
+        "title": "未選擇通知",
+        "description": "選擇一則通知以檢視詳細資訊。"
       },
       "all": {
         "title": "沒有指派的工作事項",

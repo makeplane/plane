@@ -157,6 +157,10 @@
         "primary_button": {
           "text": "다른 작업 항목 보기"
         }
+      },
+      "no_access": {
+        "title": "이 작업 항목에 접근할 수 없습니다",
+        "description": "접근 권한을 요청하려면 프로젝트 관리자에게 문의하세요."
       }
     },
     "sibling": {

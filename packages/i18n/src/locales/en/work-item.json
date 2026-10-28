@@ -157,6 +157,10 @@
         "primary_button": {
           "text": "View other work items"
         }
+      },
+      "no_access": {
+        "title": "You don't have access to this work item",
+        "description": "Contact a project admin to request access."
       }
     },
     "sibling": {

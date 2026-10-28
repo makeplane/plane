@@ -157,6 +157,10 @@
         "primary_button": {
           "text": "檢視其他工作事項"
         }
+      },
+      "no_access": {
+        "title": "您無權存取此工作事項",
+        "description": "請聯絡專案管理員以申請存取權。"
       }
     },
     "sibling": {

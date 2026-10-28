@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Chọn để xem chi tiết."
+        "title": "Chưa chọn thông báo nào",
+        "description": "Chọn một thông báo để xem chi tiết."
       },
       "all": {
         "title": "Không có mục công việc được giao",

@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Seleziona per visualizzare i dettagli."
+        "title": "Nessuna notifica selezionata",
+        "description": "Seleziona una notifica per visualizzarne i dettagli."
       },
       "all": {
         "title": "Nessun elemento di lavoro assegnato",

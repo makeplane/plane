@@ -157,6 +157,10 @@
         "primary_button": {
           "text": "Lihat item kerja lainnya"
         }
+      },
+      "no_access": {
+        "title": "Anda tidak memiliki akses ke item kerja ini",
+        "description": "Hubungi admin proyek untuk meminta akses."
       }
     },
     "sibling": {

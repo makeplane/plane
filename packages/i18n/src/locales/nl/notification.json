@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Selecteer om details te bekijken."
+        "title": "Geen melding geselecteerd",
+        "description": "Selecteer een melding om de details te bekijken."
       },
       "all": {
         "title": "Geen meldingen",

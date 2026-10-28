@@ -157,6 +157,10 @@
         "primary_button": {
           "text": "Diğer iş öğelerini görüntüle"
         }
+      },
+      "no_access": {
+        "title": "Bu iş öğesine erişiminiz yok",
+        "description": "Erişim istemek için bir proje yöneticisiyle iletişime geçin."
       }
     },
     "sibling": {

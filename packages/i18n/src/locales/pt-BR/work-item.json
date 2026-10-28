@@ -157,6 +157,10 @@
         "primary_button": {
           "text": "Visualizar outros itens de trabalho"
         }
+      },
+      "no_access": {
+        "title": "Você não tem acesso a este item de trabalho",
+        "description": "Entre em contato com um administrador do projeto para solicitar acesso."
       }
     },
     "sibling": {

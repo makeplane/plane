@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Wybierz, aby zobaczyć szczegóły."
+        "title": "Nie wybrano powiadomienia",
+        "description": "Wybierz powiadomienie, aby zobaczyć jego szczegóły."
       },
       "all": {
         "title": "Brak przypisanych elementów",

@@ -157,6 +157,10 @@
         "primary_button": {
           "text": "Vezi alte activități"
         }
+      },
+      "no_access": {
+        "title": "Nu ai acces la această activitate",
+        "description": "Contactează un administrator al proiectului pentru a solicita acces."
       }
     },
     "sibling": {

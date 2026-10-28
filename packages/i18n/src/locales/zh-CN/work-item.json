@@ -157,6 +157,10 @@
         "primary_button": {
           "text": "查看其他工作项"
         }
+      },
+      "no_access": {
+        "title": "您无权访问此工作项",
+        "description": "请联系项目管理员申请访问权限。"
       }
     },
     "sibling": {

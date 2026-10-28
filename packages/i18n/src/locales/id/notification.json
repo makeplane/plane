@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Pilih untuk melihat detail."
+        "title": "Tidak ada notifikasi yang dipilih",
+        "description": "Pilih notifikasi untuk melihat detailnya."
       },
       "all": {
         "title": "Tidak ada item kerja yang ditugaskan",

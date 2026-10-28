@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Select to view details."
+        "title": "No notification selected",
+        "description": "Select a notification to view its details."
       },
       "all": {
         "title": "No work items assigned",

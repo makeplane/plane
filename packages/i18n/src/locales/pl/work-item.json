@@ -157,6 +157,10 @@
         "primary_button": {
           "text": "Pokaż inne elementy pracy"
         }
+      },
+      "no_access": {
+        "title": "Nie masz dostępu do tego elementu pracy",
+        "description": "Skontaktuj się z administratorem projektu, aby poprosić o dostęp."
       }
     },
     "sibling": {

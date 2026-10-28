@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Detayları görüntülemek için seçin."
+        "title": "Seçili bildirim yok",
+        "description": "Ayrıntılarını görüntülemek için bir bildirim seçin."
       },
       "all": {
         "title": "Atanan iş öğesi yok",

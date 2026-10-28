@@ -157,6 +157,10 @@
         "primary_button": {
           "text": "Andere werkitems bekijken"
         }
+      },
+      "no_access": {
+        "title": "Je hebt geen toegang tot dit werkitem",
+        "description": "Neem contact op met een projectbeheerder om toegang aan te vragen."
       }
     },
     "sibling": {

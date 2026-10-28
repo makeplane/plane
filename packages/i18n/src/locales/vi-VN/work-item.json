@@ -157,6 +157,10 @@
         "primary_button": {
           "text": "Xem các mục công việc khác"
         }
+      },
+      "no_access": {
+        "title": "Bạn không có quyền truy cập vào mục công việc này",
+        "description": "Liên hệ với quản trị viên dự án để yêu cầu quyền truy cập."
       }
     },
     "sibling": {
