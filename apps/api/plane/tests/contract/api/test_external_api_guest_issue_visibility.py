@@ -1652,3 +1652,12 @@ class TestWorkspaceAdminWithProjectGuestRoleScope:
         assert response.status_code == status.HTTP_200_OK
         ids = {str(row["id"]) for row in response.data["results"]}
         assert {str(own_issue.id), str(foreign_issue.id)} <= ids
+
+    @pytest.mark.django_db
+    def test_workspace_admin_with_project_guest_role_search_includes_foreign(
+        self, ws_admin_guest_client, workspace, project, own_issue, foreign_issue
+    ):
+        response = ws_admin_guest_client.get(_search_url(workspace, "issue"))
+        assert response.status_code == status.HTTP_200_OK
+        ids = {str(row["id"]) for row in response.data["issues"]}
+        assert {str(own_issue.id), str(foreign_issue.id)} <= ids

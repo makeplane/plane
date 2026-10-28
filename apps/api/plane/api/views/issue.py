@@ -201,8 +201,7 @@ def is_project_or_workspace_admin(user_id, project_id, slug):
 def is_restricted_guest(user_id, project_id, slug):
     """A "restricted guest" holds the GUEST role on a project that has not
     enabled `guest_view_all_features`, and may only see work items they
-    created (mirrors `IssueViewSet.list`/`.retrieve` in app/views/issue).
-    Admins (project or workspace admin) are never restricted guests."""
+    created. Admins (project or workspace admin) are never restricted guests."""
     if (
         is_project_or_workspace_admin(user_id, project_id, slug)
         or WorkspaceMember.objects.filter(
