@@ -10,8 +10,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SITES_ISSUE_LAYOUTS } from "@plane/constants";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
-import { Icon } from "@makeplane/propel/components/icon";
-import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { cn } from "@plane/utils";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
@@ -54,18 +54,31 @@ export const IssuesLayoutSelection = observer(function IssuesLayoutSelection(pro
     return null;
 
   return (
-    <div role="group" aria-label={t("common.layout")} className="flex items-center gap-0.5 rounded-lg bg-layer-3 p-0.5">
-      {visibleLayouts.map((layout) => (
-        <IconButton
-          key={layout.key}
-          size="sm"
-          variant={activeLayout === layout.key ? "secondary" : "ghost"}
-          aria-label={t(layout.titleTranslationKey)}
-          aria-pressed={activeLayout === layout.key}
-          icon={<Icon icon={<IssueLayoutIcon layout={layout.key} />} />}
-          onClick={() => handleCurrentBoardView(layout.key)}
-        />
-      ))}
+    <div
+      role="group"
+      aria-label={t("common.layout")}
+      className="flex items-center gap-0.25 rounded-lg bg-layer-3 p-0.5"
+    >
+      {visibleLayouts.map((layout) => {
+        const isSelected = activeLayout === layout.key;
+        return (
+          <Tooltip key={layout.key} label={t(layout.titleTranslationKey)}>
+            <button
+              type="button"
+              aria-label={t(layout.titleTranslationKey)}
+              aria-pressed={isSelected}
+              className={cn(
+                "flex h-6 w-7 items-center justify-center overflow-hidden rounded-md border border-transparent text-secondary transition-all outline-none hover:bg-layer-transparent-hover hover:text-primary focus-visible:ring-2 focus-visible:ring-accent-strong",
+                isSelected &&
+                  "border-subtle-1 bg-layer-2 text-primary shadow-raised-200 hover:bg-layer-2 hover:text-primary"
+              )}
+              onClick={() => handleCurrentBoardView(layout.key)}
+            >
+              <IssueLayoutIcon layout={layout.key} className="size-4" />
+            </button>
+          </Tooltip>
+        );
+      })}
     </div>
   );
 });
