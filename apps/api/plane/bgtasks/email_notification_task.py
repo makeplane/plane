@@ -45,15 +45,30 @@ def release_lock(lock_id):
 
 @shared_task
 def stack_email_notification():
-    # get all email notifications
-    email_notifications = EmailNotificationLog.objects.filter(processed_at__isnull=True).order_by("receiver").values()
+    # Claim unprocessed records inside an atomic transaction using SELECT FOR UPDATE SKIP LOCKED.
+    # This prevents concurrent Celery workers (e.g., overlapping Beat runs on multi-pod deployments)
+    # from reading the same rows and dispatching duplicate emails.
+    from django.db import transaction as db_transaction
+    with db_transaction.atomic():
+        email_notifications = list(
+            EmailNotificationLog.objects.filter(processed_at__isnull=True)
+            .select_for_update(skip_locked=True)
+            .order_by("receiver")
+            .values()
+        )
+
+        if not email_notifications:
+            return
+
+        # Mark the claimed rows as processed immediately so other workers skip them.
+        claimed_ids = [n.get("id") for n in email_notifications]
+        EmailNotificationLog.objects.filter(pk__in=claimed_ids).update(processed_at=timezone.now())
 
     # Create the below format for each of the issues
     # {"issue_id" : { "actor_id1": [ { data }, { data } ], "actor_id2": [ { data }, { data } ] }}
 
     # Convert to unique receivers list
     receivers = list(set([str(notification.get("receiver_id")) for notification in email_notifications]))
-    processed_notifications = []
     # Loop through all the issues to create the emails
     for receiver_id in receivers:
         # Notification triggered for the receiver
@@ -67,8 +82,6 @@ def stack_email_notification():
             payload.setdefault(receiver_notification.get("entity_identifier"), {}).setdefault(
                 str(receiver_notification.get("triggered_by_id")), []
             ).append(receiver_notification.get("data"))
-            # append processed notifications
-            processed_notifications.append(receiver_notification.get("id"))
             email_notification_ids.append(receiver_notification.get("id"))
 
         # Create emails for all the issues
@@ -79,9 +92,6 @@ def stack_email_notification():
                 receiver_id=receiver_id,
                 email_notification_ids=email_notification_ids,
             )
-
-    # Update the email notification log
-    EmailNotificationLog.objects.filter(pk__in=processed_notifications).update(processed_at=timezone.now())
 
 
 def create_payload(notification_data):
