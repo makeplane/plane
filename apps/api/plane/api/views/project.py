@@ -6,14 +6,17 @@
 import json
 
 # Django imports
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
 from django.db import IntegrityError, transaction
-from django.db.models import Exists, F, Func, OuterRef, Prefetch, Q, Subquery, Count
+from django.db.models import Exists, F, Func, OuterRef, Prefetch, Q, Subquery, Count, UUIDField, Value
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
 from rest_framework import status
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from drf_spectacular.utils import OpenApiResponse, OpenApiRequest, OpenApiParameter
@@ -34,10 +37,12 @@ from plane.db.models import (
     UserFavorite,
     Label,
     Issue,
+    IssueType,
     StateGroup,
     IntakeIssue,
     ProjectPage,
 )
+from plane.db.models.issue_type import ProjectIssueType
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.utils.exception_logger import log_exception
 from .base import BaseAPIView
@@ -48,14 +53,23 @@ from plane.api.serializers import (
     ProjectLiteSerializer,
     ProjectCreateSerializer,
     ProjectUpdateSerializer,
+    ProjectFeatureSerializer,
+    WorkspaceFeatureSerializer,
+    IssueTypeSerializer,
 )
 from plane.app.permissions import (
+    ProjectAdminPermission,
     ProjectArchiveUnarchivePermission,
     ProjectBasePermission,
+    ProjectEntityPermission,
+    ProjectLitePermission,
     WorkSpaceAdminPermission,
+    WorkspaceUserPermission,
 )
 from plane.utils.openapi import (
     project_docs,
+    workspace_docs,
+    work_item_type_docs,
     PROJECT_ID_PARAMETER,
     PROJECT_PK_PARAMETER,
     CURSOR_PARAMETER,
@@ -72,6 +86,7 @@ from plane.utils.openapi import (
     PROJECT_NOT_FOUND_RESPONSE,
     WORKSPACE_NOT_FOUND_RESPONSE,
     PROJECT_NAME_TAKEN_RESPONSE,
+    INVALID_REQUEST_RESPONSE,
     DELETED_RESPONSE,
     ARCHIVED_RESPONSE,
     UNARCHIVED_RESPONSE,
@@ -431,6 +446,55 @@ class ProjectListLiteAPIEndpoint(BaseAPIView):
         )
 
 
+def _apply_project_update(request, slug, workspace, project, update_data):
+    """Shared project update path: archive check, serializer save, default intake, model_activity."""
+    if project.archived_at:
+        return Response(
+            {"error": "Archived project cannot be updated"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # The row is locked so a concurrent update cannot be overwritten by the intake_view read below, and the
+    # default intake is created atomically with the project save.
+    with transaction.atomic():
+        project = Project.objects.select_for_update().get(pk=project.pk)
+        current_instance = json.dumps(ProjectSerializer(project).data, cls=DjangoJSONEncoder)
+        intake_view = update_data.get("intake_view", project.intake_view)
+        # Model-field payload: callers such as the features endpoint receive SDK names in request.data.
+        requested_data = {**update_data, "intake_view": intake_view}
+
+        serializer = ProjectUpdateSerializer(
+            project,
+            data=requested_data,
+            context={"workspace_id": workspace.id},
+            partial=True,
+        )
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+        if serializer.data["intake_view"]:
+            intake = Intake.objects.filter(project=project, is_default=True).first()
+            if not intake:
+                Intake.objects.create(
+                    name=f"{project.name} Intake",
+                    project=project,
+                    is_default=True,
+                )
+
+    model_activity.delay(
+        model_name="project",
+        model_id=str(project.id),
+        requested_data=requested_data,
+        current_instance=current_instance,
+        actor_id=request.user.id,
+        slug=slug,
+        origin=base_host(request=request, is_app=True),
+    )
+    return None
+
+
 class ProjectDetailAPIEndpoint(BaseAPIView):
     """Project Endpoints to  update, retrieve and delete endpoint"""
 
@@ -555,50 +619,14 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
         """
         try:
             workspace = Workspace.objects.get(slug=slug)
-            project = Project.objects.get(pk=pk)
-            current_instance = json.dumps(ProjectSerializer(project).data, cls=DjangoJSONEncoder)
+            project = Project.objects.get(pk=pk, workspace__slug=slug)
+            error_response = _apply_project_update(request, slug, workspace, project, request.data)
+            if error_response is not None:
+                return error_response
 
-            intake_view = request.data.get("intake_view", project.intake_view)
-
-            if project.archived_at:
-                return Response(
-                    {"error": "Archived project cannot be updated"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            serializer = ProjectUpdateSerializer(
-                project,
-                data={**request.data, "intake_view": intake_view},
-                context={"workspace_id": workspace.id},
-                partial=True,
-            )
-
-            if serializer.is_valid():
-                serializer.save()
-                if serializer.data["intake_view"]:
-                    intake = Intake.objects.filter(project=project, is_default=True).first()
-                    if not intake:
-                        Intake.objects.create(
-                            name=f"{project.name} Intake",
-                            project=project,
-                            is_default=True,
-                        )
-
-                project = self.get_queryset().filter(pk=serializer.instance.id).first()
-
-                model_activity.delay(
-                    model_name="project",
-                    model_id=str(project.id),
-                    requested_data=request.data,
-                    current_instance=current_instance,
-                    actor_id=request.user.id,
-                    slug=slug,
-                    origin=base_host(request=request, is_app=True),
-                )
-
-                serializer = ProjectSerializer(project)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            project = self.get_queryset().filter(pk=project.id).first()
+            serializer = ProjectSerializer(project)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
@@ -819,3 +847,338 @@ class ProjectSummaryAPIEndpoint(BaseAPIView):
             return {field: 0 for field in requested_fields}
         # Return the result as a dictionary
         return {field: query_result[_annotation_name(field)] for field in requested_fields}
+
+
+UNSUPPORTED_PROJECT_FEATURES = (
+    "epics",
+    "workflows",
+    "parallel_cycles",
+    "project_updates",
+)
+
+
+class ProjectFeatureAPIEndpoint(BaseAPIView):
+    """Project Features Get and Update Endpoint"""
+
+    serializer_class = ProjectFeatureSerializer
+    model = Project
+    webhook_event = "project"
+    permission_classes = [ProjectLitePermission]
+    use_read_replica = True
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [ProjectLitePermission()]
+        return [ProjectAdminPermission()]
+
+    @project_docs(
+        operation_id="retrieve_project_features",
+        summary="Retrieve project features",
+        description="Retrieve feature flags for a project.",
+        parameters=[PROJECT_ID_PARAMETER],
+        responses={
+            200: OpenApiResponse(
+                description="Project features",
+                response=ProjectFeatureSerializer,
+            ),
+            404: PROJECT_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug, project_id):
+        """Retrieve project features
+
+        Retrieve the enabled/disabled state of features on a project.
+        """
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        return Response(ProjectFeatureSerializer(project).data, status=status.HTTP_200_OK)
+
+    @project_docs(
+        operation_id="update_project_features",
+        summary="Update project features",
+        description="Partially update feature flags for a project.",
+        parameters=[PROJECT_ID_PARAMETER],
+        request=OpenApiRequest(request=ProjectFeatureSerializer),
+        responses={
+            200: OpenApiResponse(
+                description="Project features updated",
+                response=ProjectFeatureSerializer,
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: PROJECT_NOT_FOUND_RESPONSE,
+        },
+    )
+    def patch(self, request, slug, project_id):
+        """Update project features
+
+        Partially update feature flags for a project, creating the default intake
+        if intakes is enabled and recording project activity.
+        """
+        workspace = Workspace.objects.get(slug=slug)
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+
+        if project.archived_at:
+            return Response(
+                {"error": "Archived project cannot be updated"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        feature_serializer = ProjectFeatureSerializer(data=request.data, partial=True)
+        if not feature_serializer.is_valid():
+            return Response(feature_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        for feature in UNSUPPORTED_PROJECT_FEATURES:
+            if feature_serializer.validated_data.get(feature) is True:
+                return Response(
+                    {"error": f"{feature} is not available on this edition"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        update_data = {
+            k: v for k, v in feature_serializer.validated_data.items() if k not in UNSUPPORTED_PROJECT_FEATURES
+        }
+
+        error_response = _apply_project_update(request, slug, workspace, project, update_data)
+        if error_response is not None:
+            return error_response
+
+        project.refresh_from_db()
+        return Response(ProjectFeatureSerializer(project).data, status=status.HTTP_200_OK)
+
+
+class WorkspaceFeatureAPIEndpoint(BaseAPIView):
+    """Workspace Features Retrieve Endpoint"""
+
+    serializer_class = WorkspaceFeatureSerializer
+    model = Workspace
+    permission_classes = [WorkspaceUserPermission]
+    use_read_replica = True
+
+    @workspace_docs(
+        operation_id="retrieve_workspace_features",
+        summary="Retrieve workspace features",
+        description="Retrieve workspace-level feature flags.",
+        responses={
+            200: OpenApiResponse(
+                description="Workspace features",
+                response=WorkspaceFeatureSerializer,
+            ),
+            404: WORKSPACE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug):
+        """Retrieve workspace features
+
+        Retrieve workspace-level feature flags on Community Edition.
+        """
+        workspace = Workspace.objects.get(slug=slug)
+        return Response(WorkspaceFeatureSerializer(workspace).data, status=status.HTTP_200_OK)
+
+
+WORK_ITEM_TYPE_ID_PARAMETER = OpenApiParameter(
+    name="pk",
+    description="Work Item Type ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+)
+
+
+class WorkItemTypeListCreateAPIEndpoint(BaseAPIView):
+    """Work Item Type List and Create Endpoint"""
+
+    serializer_class = IssueTypeSerializer
+    model = IssueType
+    permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
+
+    def get_permissions(self):
+        if self.request.method in SAFE_METHODS:
+            return [ProjectEntityPermission()]
+        return [ProjectAdminPermission()]
+
+    def get_queryset(self):
+        return (
+            IssueType.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(
+                Exists(
+                    ProjectIssueType.objects.filter(
+                        issue_type_id=OuterRef("pk"),
+                        project_id=self.kwargs.get("project_id"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                )
+            )
+            .annotate(
+                project_ids=Coalesce(
+                    ArrayAgg(
+                        "project_issue_types__project_id",
+                        distinct=True,
+                        filter=Q(project_issue_types__deleted_at__isnull=True)
+                        & ~Q(project_issue_types__project_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
+            .order_by("created_at")
+        )
+
+    @work_item_type_docs(
+        operation_id="list_work_item_types",
+        summary="List work item types",
+        description="Retrieve all work item types linked to a project as an unpaginated array.",
+        parameters=[FIELDS_PARAMETER, EXPAND_PARAMETER],
+        responses={
+            200: OpenApiResponse(
+                description="List of work item types",
+                response=IssueTypeSerializer(many=True),
+            ),
+        },
+    )
+    def get(self, request, slug, project_id):
+        """List work item types
+
+        Retrieve all work item types linked to the specified project.
+        """
+        Project.objects.get(pk=project_id, workspace__slug=slug)
+        serializer = IssueTypeSerializer(
+            self.get_queryset(),
+            many=True,
+            fields=self.fields,
+            expand=self.expand,
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @work_item_type_docs(
+        operation_id="create_work_item_type",
+        summary="Create work item type",
+        description="Create a new work item type in the project when work item types are enabled.",
+        request=OpenApiRequest(request=IssueTypeSerializer),
+        responses={
+            201: OpenApiResponse(
+                description="Work item type created",
+                response=IssueTypeSerializer,
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id):
+        """Create work item type
+
+        Create a new work item type and link it to the project.
+        """
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        if not project.is_issue_type_enabled:
+            return Response(
+                {"error": "Work item types are not enabled for this project"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = IssueTypeSerializer(
+            data=request.data,
+            context={"project": project, "project_id": project_id},
+        )
+        if serializer.is_valid():
+            with transaction.atomic():
+                issue_type = serializer.save()
+            return Response(IssueTypeSerializer(issue_type).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class WorkItemTypeDetailAPIEndpoint(WorkItemTypeListCreateAPIEndpoint):
+    """Work Item Type Retrieve, Update and Delete Endpoint"""
+
+    @work_item_type_docs(
+        operation_id="retrieve_work_item_type",
+        summary="Retrieve work item type",
+        description="Retrieve details of a specific work item type in the project.",
+        parameters=[WORK_ITEM_TYPE_ID_PARAMETER, FIELDS_PARAMETER, EXPAND_PARAMETER],
+        responses={
+            200: OpenApiResponse(
+                description="Work item type details",
+                response=IssueTypeSerializer,
+            ),
+        },
+    )
+    def get(self, request, slug, project_id, pk):
+        """Retrieve work item type
+
+        Retrieve details of a specific work item type linked to the project.
+        """
+        issue_type = self.get_queryset().get(pk=pk)
+        serializer = IssueTypeSerializer(
+            issue_type,
+            fields=self.fields,
+            expand=self.expand,
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @work_item_type_docs(
+        operation_id="update_work_item_type",
+        summary="Update work item type",
+        description="Partially update a work item type in the project.",
+        parameters=[WORK_ITEM_TYPE_ID_PARAMETER],
+        request=OpenApiRequest(request=IssueTypeSerializer),
+        responses={
+            200: OpenApiResponse(
+                description="Work item type updated",
+                response=IssueTypeSerializer,
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+        },
+    )
+    def patch(self, request, slug, project_id, pk):
+        """Update work item type
+
+        Partially update a work item type linked to the project.
+        """
+        issue_type = self.get_queryset().get(pk=pk)
+        serializer = IssueTypeSerializer(
+            issue_type,
+            data=request.data,
+            partial=True,
+            context={"project_id": project_id},
+        )
+        if serializer.is_valid():
+            issue_type = serializer.save()
+            return Response(IssueTypeSerializer(issue_type).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @work_item_type_docs(
+        operation_id="delete_work_item_type",
+        summary="Delete work item type",
+        description="Soft-delete the work item type from the project and clear it from work items.",
+        parameters=[WORK_ITEM_TYPE_ID_PARAMETER],
+        responses={
+            204: DELETED_RESPONSE,
+            400: INVALID_REQUEST_RESPONSE,
+        },
+    )
+    def delete(self, request, slug, project_id, pk):
+        """Delete work item type
+
+        Remove a non-default work item type from the project, soft-deleting the
+        type itself if no other project links remain.
+        """
+        project_issue_type = ProjectIssueType.objects.select_related("issue_type").get(
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_type_id=pk,
+        )
+        issue_type = project_issue_type.issue_type
+        if project_issue_type.is_default or issue_type.is_default:
+            return Response(
+                {"error": "Default work item type cannot be deleted"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        with transaction.atomic():
+            Issue.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                type_id=pk,
+            ).update(type=None)
+            project_issue_type.delete()
+            if not ProjectIssueType.objects.filter(issue_type_id=pk).exists():
+                issue_type.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

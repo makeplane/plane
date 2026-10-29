@@ -81,6 +81,14 @@ class IntakeIssueSerializer(BaseSerializer):
         ]
 
 
+class IntakeIssueStatusUpdateSerializer(BaseSerializer):
+    """Request schema for the intake status route, which ignores any nested issue payload."""
+
+    class Meta:
+        model = IntakeIssue
+        fields = ["status", "snoozed_till", "duplicate_to", "source", "source_email"]
+
+
 class IntakeIssueUpdateSerializer(BaseSerializer):
     """
     Serializer for updating intake work items and their associated issues.
@@ -116,6 +124,42 @@ class IntakeIssueUpdateSerializer(BaseSerializer):
         Validate that if status is being changed to accepted (1),
         the project has a default state to transition to.
         """
+        stored = self.instance
+        # Without `status` the stored status applies, so clearing its required field must still fail.
+        status_val = attrs["status"] if "status" in attrs else stored and stored.status
+        # A partial update may omit these fields; the stored values then still satisfy the requirement.
+        snoozed_till = attrs["snoozed_till"] if "snoozed_till" in attrs else stored and stored.snoozed_till
+        duplicate_to = attrs["duplicate_to"] if "duplicate_to" in attrs else stored and stored.duplicate_to
+
+        if status_val == 0 and not snoozed_till and ("status" in attrs or "snoozed_till" in attrs):
+            raise serializers.ValidationError({"snoozed_till": "snoozed_till is required when status is snoozed."})
+
+        if status_val == 2 and not duplicate_to and ("status" in attrs or "duplicate_to" in attrs):
+            raise serializers.ValidationError({"duplicate_to": "duplicate_to is required when status is duplicate."})
+
+        duplicate_to = attrs.get("duplicate_to")
+        if duplicate_to is not None and self.instance is not None:
+            if (
+                duplicate_to.workspace_id != self.instance.workspace_id
+                or duplicate_to.project_id != self.instance.project_id
+            ):
+                raise serializers.ValidationError(
+                    {"duplicate_to": "Duplicate work item must belong to the same workspace and project."}
+                )
+
+            if duplicate_to.id == self.instance.issue_id:
+                raise serializers.ValidationError({"duplicate_to": "A work item cannot be a duplicate of itself."})
+
+            if duplicate_to.archived_at is not None:
+                raise serializers.ValidationError({"duplicate_to": "Duplicate work item cannot be archived."})
+
+            if duplicate_to.is_draft:
+                raise serializers.ValidationError({"duplicate_to": "Duplicate work item cannot be a draft."})
+
+            if duplicate_to.state and duplicate_to.state.group == StateGroup.TRIAGE.value:
+                raise serializers.ValidationError(
+                    {"duplicate_to": "Duplicate work item cannot be a pending intake work item."}
+                )
 
         if attrs.get("snoozed_till"):
             attrs["snoozed_till"] = (
