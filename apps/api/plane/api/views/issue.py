@@ -469,12 +469,16 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         external_source = request.GET.get("external_source")
 
         if external_id and external_source:
-            issue = Issue.objects.get(
+            lookup = Issue.objects.filter(
                 external_id=external_id,
                 external_source=external_source,
                 workspace__slug=slug,
                 project_id=project_id,
             )
+            lookup = apply_pql(lookup, request, slug, project_id)
+            if isinstance(lookup, Response):
+                return lookup
+            issue = lookup.get()
             if guest_cannot_view_issue(request.user.id, issue, slug):
                 raise Issue.DoesNotExist()
             return Response(
@@ -3155,6 +3159,7 @@ class IssueArchiveUnarchiveAPIEndpoint(BaseAPIView):
             ORDER_BY_PARAMETER,
             FIELDS_PARAMETER,
             EXPAND_PARAMETER,
+            PQL_PARAMETER,
         ],
         responses={
             200: create_paginated_response(
@@ -3384,7 +3389,7 @@ class IssueCountEndpoint(BaseAPIView):
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.QUERY,
                 required=False,
-                description='Only a project scope is supported on this edition, e.g. project = "<project id>".',
+                description="Plane Query Language (PQL) expression to filter the counted work items.",
             ),
             OpenApiParameter(
                 name="group_by",
