@@ -60,7 +60,9 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         serializer = EstimateReadSerializer(estimates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @invalidate_cache(path="/api/workspaces/:slug/estimates/", url_params=True, user=False)
+    @invalidate_cache(
+        path="/api/workspaces/:slug/estimates/", url_params=True, user=False, multiple=True, after_write=True
+    )
     def create(self, request, slug, project_id):
         estimate = request.data.get("estimate")
         estimate_name = estimate.get("name", generate_random_name())
@@ -105,7 +107,9 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         serializer = EstimateReadSerializer(estimate)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @invalidate_cache(path="/api/workspaces/:slug/estimates/", url_params=True, user=False)
+    @invalidate_cache(
+        path="/api/workspaces/:slug/estimates/", url_params=True, user=False, multiple=True, after_write=True
+    )
     def partial_update(self, request, slug, project_id, estimate_id):
         if not len(request.data.get("estimate_points", [])):
             return Response(
@@ -143,7 +147,9 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         estimate_serializer = EstimateReadSerializer(estimate)
         return Response(estimate_serializer.data, status=status.HTTP_200_OK)
 
-    @invalidate_cache(path="/api/workspaces/:slug/estimates/", url_params=True, user=False)
+    @invalidate_cache(
+        path="/api/workspaces/:slug/estimates/", url_params=True, user=False, multiple=True, after_write=True
+    )
     def destroy(self, request, slug, project_id, estimate_id):
         estimate = Estimate.objects.get(pk=estimate_id, workspace__slug=slug, project_id=project_id)
         estimate.delete()
@@ -151,6 +157,9 @@ class BulkEstimatePointEndpoint(BaseViewSet):
 
 
 class EstimatePointEndpoint(BaseViewSet):
+    @invalidate_cache(
+        path="/api/workspaces/:slug/estimates/", url_params=True, user=False, multiple=True, after_write=True
+    )
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id, estimate_id):
         #  TODO: add a key validation if the same key already exists
@@ -178,6 +187,9 @@ class EstimatePointEndpoint(BaseViewSet):
         serializer = EstimatePointSerializer(estimate_point).data
         return Response(serializer, status=status.HTTP_200_OK)
 
+    @invalidate_cache(
+        path="/api/workspaces/:slug/estimates/", url_params=True, user=False, multiple=True, after_write=True
+    )
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def partial_update(self, request, slug, project_id, estimate_id, estimate_point_id):
         #  TODO: add a key validation if the same key already exists
@@ -193,6 +205,9 @@ class EstimatePointEndpoint(BaseViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @invalidate_cache(
+        path="/api/workspaces/:slug/estimates/", url_params=True, user=False, multiple=True, after_write=True
+    )
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, estimate_id, estimate_point_id):
         new_estimate_id = request.data.get("new_estimate_id", None)
