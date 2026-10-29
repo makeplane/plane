@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Django imports
+from django.db import transaction
+
 # Third party imports
 from rest_framework import serializers
 
@@ -141,19 +144,20 @@ class PageCreateSerializer(BaseSerializer):
         owned_by_id = self.context["owned_by_id"]
 
         project = Project.objects.get(pk=project_id, workspace__slug=self.context["slug"])
-        page = Page.objects.create(
-            **validated_data,
-            parent_id=parent_id,
-            owned_by_id=owned_by_id,
-            workspace_id=project.workspace_id,
-        )
-        ProjectPage.objects.create(
-            workspace_id=page.workspace_id,
-            project_id=project.id,
-            page_id=page.id,
-            created_by_id=page.created_by_id,
-            updated_by_id=page.updated_by_id,
-        )
+        with transaction.atomic():
+            page = Page.objects.create(
+                **validated_data,
+                parent_id=parent_id,
+                owned_by_id=owned_by_id,
+                workspace_id=project.workspace_id,
+            )
+            ProjectPage.objects.create(
+                workspace_id=page.workspace_id,
+                project_id=project.id,
+                page_id=page.id,
+                created_by_id=page.created_by_id,
+                updated_by_id=page.updated_by_id,
+            )
         return page
 
 

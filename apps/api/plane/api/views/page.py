@@ -15,7 +15,8 @@ from django.db.models.functions import Coalesce
 from django.utils import timezone
 
 # Third party imports
-from drf_spectacular.utils import OpenApiRequest, OpenApiResponse
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, OpenApiRequest, OpenApiResponse
 from rest_framework import status
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
@@ -149,7 +150,11 @@ def _project_pages_queryset(user, slug, project_id):
                 ArrayAgg(
                     "project_pages__project_id",
                     distinct=True,
-                    filter=Q(project_pages__deleted_at__isnull=True),
+                    filter=Q(
+                        project_pages__deleted_at__isnull=True,
+                        project_pages__project__project_projectmember__member=user,
+                        project_pages__project__project_projectmember__is_active=True,
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             )
@@ -221,6 +226,13 @@ class PageListCreateAPIEndpoint(BaseAPIView):
             EXPAND_PARAMETER,
             EXTERNAL_ID_PARAMETER,
             EXTERNAL_SOURCE_PARAMETER,
+            OpenApiParameter(
+                name="archived",
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                description="Return archived pages instead of active ones",
+                required=False,
+            ),
         ],
         responses={
             200: create_paginated_response(
@@ -575,7 +587,7 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
         ).delete()
 
         archived_at = timezone.now().date()
-        unarchive_archive_page_and_descendants(pk, archived_at)
+        unarchive_archive_page_and_descendants(pk, archived_at, project_id=project_id)
 
         return Response({"archived_at": str(archived_at)}, status=status.HTTP_200_OK)
 
@@ -617,7 +629,7 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
             page.parent = None
             page.save(update_fields=["parent"])
 
-        unarchive_archive_page_and_descendants(pk, None)
+        unarchive_archive_page_and_descendants(pk, None, project_id=project_id)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

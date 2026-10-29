@@ -627,3 +627,49 @@ class TestProjectPagesPermissionsAndScope:
         assert resp.status_code == status.HTTP_204_NO_CONTENT, resp.content
         page.refresh_from_db()
         assert page.archived_at is None
+
+    def test_archive_cascade_does_not_reach_children_in_other_projects(
+        self, api_key_client, workspace, own_project, create_user, sibling_page
+    ):
+        parent = _make_page(workspace, own_project, create_user, name="Parent")
+        own_child = _make_page(workspace, own_project, create_user, name="Own child", parent=parent)
+        # A child linked only to another project, reparented under our page.
+        foreign_child = Page.objects.get(pk=sibling_page.pk)
+        foreign_child.parent = parent
+        foreign_child.save()
+
+        resp = api_key_client.post(_page_archive_url(workspace.slug, own_project.id, parent.id))
+        assert resp.status_code == status.HTTP_200_OK, resp.content
+
+        parent.refresh_from_db()
+        own_child.refresh_from_db()
+        foreign_child.refresh_from_db()
+        assert parent.archived_at is not None
+        assert own_child.archived_at is not None
+        assert foreign_child.archived_at is None
+
+    def test_projects_only_lists_projects_the_caller_belongs_to(
+        self, api_key_client, workspace, own_project, create_user, sibling_page
+    ):
+        page = _make_page(workspace, own_project, create_user, name="Shared")
+        ProjectPage.objects.create(workspace=workspace, project=sibling_page.projects.first(), page=page)
+
+        resp = api_key_client.get(_page_detail_url(workspace.slug, own_project.id, page.id))
+        assert resp.status_code == status.HTTP_200_OK, resp.content
+        assert resp.json()["projects"] == [str(own_project.id)]
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestPageCreateAtomicity:
+    def test_failed_project_link_does_not_leave_orphan_page(self, api_key_client, workspace, own_project):
+        page_count = Page.objects.count()
+        with mock.patch.object(ProjectPage.objects, "create", side_effect=RuntimeError("db down")):
+            api_key_client.raise_request_exception = False
+            resp = api_key_client.post(
+                _pages_url(workspace.slug, own_project.id),
+                {"name": "Orphan?", "description_html": "<p>x</p>"},
+                format="json",
+            )
+        assert resp.status_code >= 500
+        assert Page.objects.count() == page_count
