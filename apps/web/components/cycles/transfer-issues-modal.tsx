@@ -42,6 +42,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
   const { isOpen, handleClose, cycleId } = props;
   // states
   const [query, setQuery] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // plane hooks
   const { t } = useTranslation();
 
@@ -54,24 +55,28 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
   const { workspaceSlug, projectId } = useParams();
 
   const transferIssue = async (payload: { new_cycle_id: string }) => {
-    if (!workspaceSlug || !projectId || !cycleId) return;
+    if (!workspaceSlug || !projectId || !cycleId || isSubmitting) return;
 
-    await transferIssuesFromCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), payload)
-      .then(async () => {
-        setToast({
-          type: "success",
-          title: "Success!",
-          message: "Work items have been transferred successfully",
-        });
-        await getCycleDetails(payload.new_cycle_id);
-      })
-      .catch(() => {
-        setToast({
-          type: "error",
-          title: "Error!",
-          message: "Unable to transfer work items. Please try again.",
-        });
+    setIsSubmitting(true);
+    try {
+      await transferIssuesFromCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), payload);
+      setToast({
+        type: "success",
+        title: "Success!",
+        message: "Work items have been transferred successfully",
       });
+      handleClose();
+      await getCycleDetails(payload.new_cycle_id);
+    } catch {
+      // keep the modal open so the user can retry
+      setToast({
+        type: "error",
+        title: "Error!",
+        message: "Unable to transfer work items. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   /**To update issue counts in target cycle and current cycle */
@@ -99,7 +104,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
     <Dialog
       open={isOpen}
       onOpenChange={(open) => {
-        if (!open) handleClose();
+        if (!open && !isSubmitting) handleClose();
       }}
     >
       <DialogContent size="sm">
@@ -110,6 +115,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
             aria-label={t("close")}
             icon={<CloseOutline />}
             render={<DialogClose />}
+            disabled={isSubmitting}
           />
         </DialogCloseGroup>
         <DialogMain>
@@ -131,7 +137,8 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
             />
           </div>
           <DialogBody tabIndex={0}>
-            <div className="flex w-full flex-col items-start gap-2">
+            <div className="flex w-full flex-col items-start gap-2" aria-busy={isSubmitting}>
+              {isSubmitting && <p className="text-13 text-secondary">Transferring work items...</p>}
               {filteredOptions ? (
                 filteredOptions.length > 0 ? (
                   filteredOptions.map((optionId) => {
@@ -142,13 +149,10 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                     return (
                       <button
                         key={optionId}
-                        className="flex w-full items-center gap-4 rounded-sm px-4 py-3 text-13 text-secondary hover:bg-surface-2"
-                        onClick={() => {
-                          transferIssue({
-                            new_cycle_id: optionId,
-                          });
-                          handleClose();
-                        }}
+                        type="button"
+                        className="flex w-full items-center gap-4 rounded-sm px-4 py-3 text-13 text-secondary hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-60"
+                        disabled={isSubmitting}
+                        onClick={() => void transferIssue({ new_cycle_id: optionId })}
                       >
                         <CyclesOutline className="h-5 w-5" />
                         <div className="flex w-full justify-between truncate">
