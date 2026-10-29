@@ -571,6 +571,26 @@ class TestScopeAndVisibility:
         assert api_key_client.get(url, {**params, "pql": 'priority = "high"'}).status_code == status.HTTP_404_NOT_FOUND
         assert_pql_error(api_key_client.get(url, {**params, "pql": "priority ="}))
 
+    def test_archived_external_id_lookup_applies_pql(self, api_key_client, workspace, project, make_issue):
+        make_issue(
+            "ext", priority="low", external_id="e1", external_source="src", archived_at=datetime.date(2025, 1, 1)
+        )
+        url = f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/archived-work-items/"
+        params = {"external_id": "e1", "external_source": "src"}
+        assert api_key_client.get(url, {**params, "pql": 'priority = "low"'}).status_code == status.HTTP_200_OK
+        assert api_key_client.get(url, {**params, "pql": 'priority = "high"'}).status_code == status.HTTP_404_NOT_FOUND
+        assert_pql_error(api_key_client.get(url, {**params, "pql": "priority ="}))
+
+    def test_id_prefix_with_digits_matches_longer_sequence_numbers(self, query, make_issue):
+        issues = {}
+        for n in range(1, 11):
+            issues[n] = make_issue(f"i{n}")
+        assert [i.sequence_id for i in issues.values()] == list(range(1, 11))
+        assert names(query('id ~ "PQL-1"')) == ["i1", "i10"]
+        assert names(query('id ~ "pql-1"')) == ["i1", "i10"]
+        assert names(query('id ~ "PQL-2"')) == ["i2"]
+        assert names(query('id ~ "ZZZ-1"')) == []
+
     def test_non_member_cannot_list(self, api_client, workspace, project):
         outsider = User.objects.create(email=f"x-{uuid4().hex[:6]}@plane.so", username=uuid4().hex[:8])
         token = APIToken.objects.create(user=outsider, label="out")

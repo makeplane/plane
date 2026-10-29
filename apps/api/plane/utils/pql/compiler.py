@@ -11,7 +11,9 @@ import uuid
 import zoneinfo
 from typing import Any
 
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import CharField, Exists, OuterRef, Q
+from django.db.models.functions import Cast
+from django.db.models.lookups import StartsWith
 from django.utils import timezone
 
 from .ast import (
@@ -523,7 +525,11 @@ class _Compiler:
                 if tail == "":
                     return Q(project__identifier__iexact=head)
                 if tail.isdecimal():
-                    return Q(project__identifier__iexact=head, sequence_id=int(tail))
+                    # A digit tail is still a prefix: "PQL-1" must also match PQL-10 and PQL-100.
+                    return Q(
+                        StartsWith(Cast("sequence_id", CharField()), str(int(tail))),
+                        project__identifier__iexact=head,
+                    )
             return Q(project__identifier__istartswith=prefix)
         raise PqlError(f"Operator {op!r} is not supported for field 'id'", position=pos)
 
