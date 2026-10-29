@@ -31,12 +31,23 @@ type TAuthFormRoot = {
   setAuthStep: (authStep: EAuthSteps) => void;
   setErrorInfo: (errorInfo: TAuthErrorInfo | undefined) => void;
   currentAuthMode: EAuthModes;
+  isPasswordOnlyLogin?: boolean;
 };
 
 const authService = new AuthService();
 
 export const AuthFormRoot = observer(function AuthFormRoot(props: TAuthFormRoot) {
-  const { authStep, authMode, email, setEmail, setAuthMode, setAuthStep, setErrorInfo, currentAuthMode } = props;
+  const {
+    authStep,
+    authMode,
+    email,
+    setEmail,
+    setAuthMode,
+    setAuthStep,
+    setErrorInfo,
+    currentAuthMode,
+    isPasswordOnlyLogin = false,
+  } = props;
   // router
   const router = useAppRouter();
   // query params
@@ -104,6 +115,20 @@ export const AuthFormRoot = observer(function AuthFormRoot(props: TAuthFormRoot)
   };
 
   if (authStep === EAuthSteps.EMAIL) {
+    // password is the only enabled method: skip the email-check request and show email + password together
+    if (isPasswordOnlyLogin) {
+      return (
+        <AuthPasswordForm
+          mode={authMode}
+          isSMTPConfigured={isSMTPConfigured}
+          email={email}
+          handleEmailClear={handleEmailClear}
+          handleAuthStep={setAuthStep}
+          nextPath={nextPath || undefined}
+          isSingleScreenLogin
+        />
+      );
+    }
     return <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />;
   }
   if (authStep === EAuthSteps.UNIQUE_CODE) {
