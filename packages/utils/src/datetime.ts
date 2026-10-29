@@ -7,6 +7,35 @@
 import { differenceInDays, format, formatDistanceToNow, isAfter, isEqual, isValid, parseISO } from "date-fns";
 import { isNumber } from "lodash-es";
 
+/**
+ * This method returns a date from string of type yyyy-mm-dd
+ * This method is recommended to use instead of new Date() as this does not introduce any timezone offsets
+ * @param date
+ * @returns date or undefined
+ */
+export const getDate = (date: string | Date | undefined | null): Date | undefined => {
+  try {
+    if (!date || date === "") return;
+
+    if (typeof date !== "string" && !(date instanceof String)) return date;
+
+    const [yearString, monthString, dayString] = date.substring(0, 10).split("-");
+    const year = parseInt(yearString);
+    const month = parseInt(monthString);
+    const day = parseInt(dayString);
+    if (!isNumber(year) || !isNumber(month) || !isNumber(day)) return;
+
+    return new Date(year, month - 1, day);
+  } catch (_e) {
+    return undefined;
+  }
+};
+
+export const isInDateFormat = (date: string) => {
+  const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+  return datePattern.test(date);
+};
+
 // Format Date Helpers
 /**
  * @returns {string | null} formatted date in the desired format or platform default format (MMM dd, yyyy)
@@ -20,8 +49,11 @@ export const renderFormattedDate = (
   date: string | Date | undefined | null,
   formatToken: string = "MMM dd, yyyy"
 ): string | undefined => {
+  if (!date || date === "") return;
   // Parse the date to check if it is valid
-  const parsedDate = getDate(date);
+  // Date-only strings (yyyy-mm-dd) use getDate() to avoid timezone offsets.
+  // Full timestamps (e.g. ISO strings with time) are parsed with new Date() so the date matches the user's local timezone.
+  const parsedDate = typeof date === "string" && !isInDateFormat(date) ? new Date(date) : getDate(date);
   // return if undefined
   if (!parsedDate) return;
   // Check if the parsed date is valid before formatting
@@ -44,8 +76,9 @@ export const renderFormattedDate = (
  * @example renderShortDateFormat("2024-01-01") // Jan 01
  */
 export const renderFormattedDateWithoutYear = (date: string | Date): string => {
+  if (!date || date === "") return "";
   // Parse the date to check if it is valid
-  const parsedDate = getDate(date);
+  const parsedDate = typeof date === "string" && !isInDateFormat(date) ? new Date(date) : getDate(date);
   // return if undefined
   if (!parsedDate) return "";
   // Check if the parsed date is valid before formatting
@@ -272,35 +305,6 @@ export const checkIfDatesAreEqual = (
   if (!parsedDate1 || !parsedDate2) return false;
 
   return isEqual(parsedDate1, parsedDate2);
-};
-
-/**
- * This method returns a date from string of type yyyy-mm-dd
- * This method is recommended to use instead of new Date() as this does not introduce any timezone offsets
- * @param date
- * @returns date or undefined
- */
-export const getDate = (date: string | Date | undefined | null): Date | undefined => {
-  try {
-    if (!date || date === "") return;
-
-    if (typeof date !== "string" && !(date instanceof String)) return date;
-
-    const [yearString, monthString, dayString] = date.substring(0, 10).split("-");
-    const year = parseInt(yearString);
-    const month = parseInt(monthString);
-    const day = parseInt(dayString);
-    if (!isNumber(year) || !isNumber(month) || !isNumber(day)) return;
-
-    return new Date(year, month - 1, day);
-  } catch (_e) {
-    return undefined;
-  }
-};
-
-export const isInDateFormat = (date: string) => {
-  const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-  return datePattern.test(date);
 };
 
 /**
