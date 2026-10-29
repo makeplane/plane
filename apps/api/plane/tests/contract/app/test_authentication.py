@@ -220,6 +220,27 @@ class TestSignInEndpoint:
         assert "_auth_user_id" in django_client.session
 
     @pytest.mark.django_db
+    @pytest.mark.parametrize(
+        ("user_agent", "expected_user_agent"),
+        [(None, ""), ("", ""), ("PlaneAuthTest/1.0", "PlaneAuthTest/1.0")],
+        ids=["missing-header", "empty-header", "supplied-header"],
+    )
+    def test_sign_in_with_optional_user_agent(self, setup_user, setup_instance, user_agent, expected_user_agent):
+        headers = {} if user_agent is None else {"HTTP_USER_AGENT": user_agent}
+        client = Client(raise_request_exception=False, **headers)
+
+        response = client.post(
+            reverse("sign-in"),
+            {"email": setup_user.email, "password": "user@123"},
+        )
+
+        assert response.status_code == status.HTTP_302_FOUND
+        assert "error_code" not in response.url
+        assert client.session["_auth_user_id"] == str(setup_user.id)
+        setup_user.refresh_from_db()
+        assert setup_user.last_login_uagent == expected_user_agent
+
+    @pytest.mark.django_db
     def test_next_path_redirection(self, django_client, setup_user, setup_instance):
         """Test sign-in with next_path parameter"""
         url = reverse("sign-in")
@@ -520,8 +541,8 @@ class TestMagicSignInVerifyAttempts:
         # First (MAX-1) wrong attempts: each redirects with INVALID_MAGIC_CODE_SIGN_IN.
         for i in range(MagicCodeProvider.MAX_VERIFY_ATTEMPTS - 1):
             response = django_client.post(url, {"email": self.EMAIL, "code": "000000"}, follow=False)
-            assert response.status_code == 302, f"attempt {i+1} unexpected status"
-            assert "INVALID_MAGIC_CODE_SIGN_IN" in response.url, f"attempt {i+1} did not return INVALID"
+            assert response.status_code == 302, f"attempt {i + 1} unexpected status"
+            assert "INVALID_MAGIC_CODE_SIGN_IN" in response.url, f"attempt {i + 1} did not return INVALID"
 
         # Token and counter both still live, with counter at MAX-1.
         assert ri.exists(f"magic_{self.EMAIL}")
@@ -580,9 +601,7 @@ class TestMagicSignInVerifyAttempts:
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.magic_link_code_task.magic_link.delay")
-    def test_issued_code_limit_persists(
-        self, mock_magic_link, django_client, api_client, setup_user, setup_instance
-    ):
+    def test_issued_code_limit_persists(self, mock_magic_link, django_client, api_client, setup_user, setup_instance):
         """Codes issued per email stay capped per window when earlier codes hit the verify cap."""
         url = reverse("magic-sign-in")
         gen_url = reverse("magic-generate")
@@ -886,9 +905,7 @@ class TestBotUserLoginBlocked:
         """Password sign-in with a bot's *correct* credentials is still rejected:
         the block happens after credential verification, so no session is created."""
         url = reverse("sign-in")
-        response = django_client.post(
-            url, {"email": self.BOT_EMAIL, "password": self.PASSWORD}, follow=False
-        )
+        response = django_client.post(url, {"email": self.BOT_EMAIL, "password": self.PASSWORD}, follow=False)
         assert response.status_code == 302
         assert "BOT_USER_LOGIN_FORBIDDEN" in response.url
         # The block must prevent authentication.
@@ -896,9 +913,7 @@ class TestBotUserLoginBlocked:
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.magic_link_code_task.magic_link.delay")
-    def test_bot_magic_sign_in_blocked(
-        self, mock_magic_link, django_client, api_client, bot_user, setup_instance
-    ):
+    def test_bot_magic_sign_in_blocked(self, mock_magic_link, django_client, api_client, bot_user, setup_instance):
         """The same block applies via a second provider (magic code), proving the
         guard sits at the shared chokepoint rather than in one provider."""
         token = _generate_magic_token(api_client, self.BOT_EMAIL)
@@ -913,9 +928,7 @@ class TestBotUserLoginBlocked:
         """Control: a normal user with the identical setup still signs in — the
         guard is scoped strictly to is_bot and does not regress human logins."""
         url = reverse("sign-in")
-        response = django_client.post(
-            url, {"email": self.HUMAN_EMAIL, "password": self.PASSWORD}, follow=False
-        )
+        response = django_client.post(url, {"email": self.HUMAN_EMAIL, "password": self.PASSWORD}, follow=False)
         assert response.status_code == 302
         assert "BOT_USER_LOGIN_FORBIDDEN" not in response.url
         assert "error_code" not in response.url
