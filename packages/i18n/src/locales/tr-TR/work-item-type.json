@@ -189,7 +189,7 @@
           "field_label": "Formül alanı",
           "tooltip": "'{'Alan Adı'}' sözdizimini kullanarak bir formül girin. +, -, *, / ve & operatörlerini destekler.",
           "placeholder": "Formülü yazın",
-          "test_button": "Test",
+          "test_button": "Test et",
           "validating": "Doğrulanıyor",
           "validation_success": "Formül geçerli! {resultType} döndürür",
           "validation_success_with_refs": "Formül geçerli! {resultType} döndürür ({count} alan referans verildi)",
