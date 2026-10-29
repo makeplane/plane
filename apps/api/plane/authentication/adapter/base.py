@@ -100,9 +100,9 @@ class Adapter:
         """Check if sign up is enabled or not and raise exception if not enabled"""
 
         # Get configuration value
-        (ENABLE_SIGNUP,) = get_configuration_value([
-            {"key": "ENABLE_SIGNUP", "default": os.environ.get("ENABLE_SIGNUP", "1")}
-        ])
+        (ENABLE_SIGNUP,) = get_configuration_value(
+            [{"key": "ENABLE_SIGNUP", "default": os.environ.get("ENABLE_SIGNUP", "1")}]
+        )
 
         # Check if sign up is disabled and invite is present or not
         if ENABLE_SIGNUP == "0" and not WorkspaceMemberInvite.objects.filter(email=email).exists():
@@ -234,7 +234,7 @@ class Adapter:
         user.last_active = timezone.now()
         user.last_login_time = timezone.now()
         user.last_login_ip = get_client_ip(request=self.request)
-        user.last_login_uagent = self.request.META.get("HTTP_USER_AGENT")
+        user.last_login_uagent = self.request.META.get("HTTP_USER_AGENT", "")
         user.token_updated_at = timezone.now()
         # Activate provisioned accounts that have never been deactivated.
         # Explicitly-deactivated accounts are rejected earlier in
