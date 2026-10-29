@@ -3182,13 +3182,17 @@ class IssueArchiveUnarchiveAPIEndpoint(BaseAPIView):
         external_source = request.GET.get("external_source")
 
         if external_id and external_source:
-            issue = Issue.objects.get(
+            lookup = Issue.objects.filter(
                 external_id=external_id,
                 external_source=external_source,
                 workspace__slug=slug,
                 project_id=project_id,
                 archived_at__isnull=False,
             )
+            lookup = apply_pql(lookup, request, slug, project_id)
+            if isinstance(lookup, Response):
+                return lookup
+            issue = lookup.get()
             if guest_cannot_view_issue(request.user.id, issue, slug):
                 raise Issue.DoesNotExist()
             return Response(
