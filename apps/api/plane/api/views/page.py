@@ -625,11 +625,14 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if page.parent_id and page.parent.archived_at:
-            page.parent = None
-            page.save(update_fields=["parent"])
+        # Detaching from an archived parent and restoring must commit together, otherwise a
+        # failure in the cascade leaves the page detached while still archived.
+        with transaction.atomic():
+            if page.parent_id and page.parent.archived_at:
+                page.parent = None
+                page.save(update_fields=["parent"])
 
-        unarchive_archive_page_and_descendants(pk, None, project_id=project_id)
+            unarchive_archive_page_and_descendants(pk, None, project_id=project_id)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

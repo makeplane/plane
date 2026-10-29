@@ -628,6 +628,25 @@ class TestProjectPagesPermissionsAndScope:
         page.refresh_from_db()
         assert page.archived_at is None
 
+    def test_unarchive_rolls_back_parent_detach_when_cascade_fails(
+        self, api_key_client, workspace, own_project, create_user
+    ):
+        archived_at = timezone.now().date()
+        parent = _make_page(workspace, own_project, create_user, name="Parent", archived_at=archived_at)
+        child = _make_page(workspace, own_project, create_user, name="Child", parent=parent, archived_at=archived_at)
+
+        with mock.patch(
+            "plane.api.views.page.unarchive_archive_page_and_descendants", side_effect=RuntimeError("boom")
+        ):
+            try:
+                api_key_client.delete(_page_archive_url(workspace.slug, own_project.id, child.id))
+            except RuntimeError:
+                pass
+
+        child.refresh_from_db()
+        assert child.parent_id == parent.id
+        assert child.archived_at is not None
+
     def test_archive_cascade_does_not_reach_children_in_other_projects(
         self, api_key_client, workspace, own_project, create_user, sibling_page
     ):
