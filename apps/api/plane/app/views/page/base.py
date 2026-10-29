@@ -58,20 +58,30 @@ from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_asse
 from plane.app.permissions import ProjectPagePermission
 
 
-def unarchive_archive_page_and_descendants(page_id, archived_at):
-    # Your SQL query
-    sql = """
+def unarchive_archive_page_and_descendants(page_id, archived_at, project_id=None):
+    # With project_id, the cascade only follows descendants linked to that project,
+    # so a child attached to a page of another project is left untouched.
+    project_filter = ""
+    params = [page_id]
+    if project_id is not None:
+        project_filter = """
+          AND EXISTS (
+            SELECT 1 FROM project_pages pp
+            WHERE pp.page_id = pages.id AND pp.project_id = %s AND pp.deleted_at IS NULL
+          )"""
+        params.append(project_id)
+    sql = f"""
     WITH RECURSIVE descendants AS (
         SELECT id FROM pages WHERE id = %s
         UNION ALL
-        SELECT pages.id FROM pages, descendants WHERE pages.parent_id = descendants.id
+        SELECT pages.id FROM pages, descendants WHERE pages.parent_id = descendants.id{project_filter}
     )
     UPDATE pages SET archived_at = %s WHERE id IN (SELECT id FROM descendants);
     """
+    params.append(archived_at)
 
-    # Execute the SQL query
     with connection.cursor() as cursor:
-        cursor.execute(sql, [page_id, archived_at])
+        cursor.execute(sql, params)
 
 
 class PageViewSet(BaseViewSet):
