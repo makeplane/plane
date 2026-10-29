@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+import { DeactivatedOutline } from "@makeplane/propel/icons";
+import { COLORS_LIST } from "@plane/editor";
 import type { TSticky } from "@plane/types";
 
 export const STICKY_COLORS_LIST: {
@@ -55,18 +57,46 @@ export const STICKY_COLORS_LIST: {
 
 type TProps = {
   handleUpdate: (data: Partial<TSticky>) => Promise<void>;
+  handleTextColorSelect: (color: string | undefined) => void;
 };
 
 export function ColorPalette(props: TProps) {
-  const { handleUpdate } = props;
+  const { handleUpdate, handleTextColorSelect } = props;
   return (
     <div className="shadow absolute bottom-5 left-0 z-10 mb-2 w-56 rounded-md bg-surface-1 p-2">
+      <div className="mb-2 text-13 font-semibold text-placeholder">Text colors</div>
+      <div className="mb-3 flex flex-wrap gap-2">
+        {COLORS_LIST.map((color) => (
+          <button
+            key={color.key}
+            type="button"
+            aria-label={color.label}
+            // keep the editor's text selection while picking a color
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => handleTextColorSelect(color.key)}
+            className="h-6 w-6 rounded-md transition-all hover:ring-2 hover:ring-accent-strong focus:ring-2 focus:ring-accent-strong focus:outline-none"
+            style={{
+              backgroundColor: color.textColor,
+            }}
+          />
+        ))}
+        <button
+          type="button"
+          aria-label="Remove text color"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => handleTextColorSelect(undefined)}
+          className="grid h-6 w-6 place-items-center rounded-md border-[0.5px] border-strong text-tertiary transition-all hover:ring-2 hover:ring-accent-strong focus:ring-2 focus:ring-accent-strong focus:outline-none"
+        >
+          <DeactivatedOutline className="size-4" />
+        </button>
+      </div>
       <div className="mb-2 text-13 font-semibold text-placeholder">Background colors</div>
       <div className="flex flex-wrap gap-2">
         {STICKY_COLORS_LIST.map((color) => (
           <button
             key={color.key}
             type="button"
+            aria-label={color.label}
             onClick={() => {
               handleUpdate({
                 background_color: color.key,
