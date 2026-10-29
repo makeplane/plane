@@ -10,12 +10,14 @@ import re
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponseRedirect
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.db.models import (
     Case,
     CharField,
+    Count,
     Exists,
     F,
+    FilteredRelation,
     Func,
     Max,
     OuterRef,
@@ -36,10 +38,12 @@ from rest_framework.response import Response
 # drf-spectacular imports
 from drf_spectacular.utils import (
     extend_schema,
+    OpenApiParameter,
     OpenApiResponse,
     OpenApiExample,
     OpenApiRequest,
 )
+from drf_spectacular.types import OpenApiTypes
 
 # Module imports
 from plane.api.serializers import (
@@ -59,12 +63,14 @@ from plane.api.serializers import (
     IssueLinkUpdateSerializer,
     LabelCreateUpdateSerializer,
     RelatedIssueSerializer,
+    WorkItemDependencyCreateSerializer,
 )
 from plane.app.permissions import (
     ProjectAdminPermission,
     ProjectEntityPermission,
     ProjectLitePermission,
     ProjectMemberPermission,
+    WorkspaceUserPermission,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
@@ -85,14 +91,21 @@ from plane.settings.storage import S3Storage
 from plane.utils.path_validator import sanitize_filename
 from plane.utils.order_queryset import (
     ACTIVITY_ORDER_BY_ALLOWLIST,
+    ISSUE_GROUP_BY_ALLOWLIST,
     ISSUE_ORDER_BY_ALLOWLIST,
     sanitize_order_by,
 )
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
+from plane.utils.pql import apply_pql
 from plane.utils.serializers import writable_data
-from plane.utils.issue_relation_mapper import get_actual_relation
+from plane.utils.issue_relation_mapper import get_actual_relation, get_inverse_relation
+from plane.app.views.issue.relation import (
+    PUBLIC_RELATION_FIELDS,
+    build_related_work_items_queryset,
+    group_issue_relations,
+)
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
 from plane.utils.openapi import (
@@ -124,6 +137,7 @@ from plane.utils.openapi import (
     WORKSPACE_SEARCH_PARAMETER,
     FIELDS_PARAMETER,
     EXPAND_PARAMETER,
+    PQL_PARAMETER,
     create_paginated_response,
     # Request Examples
     ISSUE_CREATE_EXAMPLE,
@@ -150,6 +164,9 @@ from plane.utils.openapi import (
     PROJECT_NOT_FOUND_RESPONSE,
     EXTERNAL_ID_EXISTS_RESPONSE,
     DELETED_RESPONSE,
+    ARCHIVED_RESPONSE,
+    UNARCHIVED_RESPONSE,
+    CANNOT_ARCHIVE_RESPONSE,
     ADMIN_ONLY_RESPONSE,
     LABEL_NOT_FOUND_RESPONSE,
     LABEL_NAME_EXISTS_RESPONSE,
@@ -328,6 +345,60 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             )
 
 
+def _unsupported_filter_response(unsupported_filters):
+    return Response(
+        {
+            "pql": (
+                "Structured filters are not supported on this Plane edition. "
+                "Remove the filters parameter and use the pql parameter instead."
+            ),
+            "unsupported_parameters": unsupported_filters,
+        },
+        status=status.HTTP_400_BAD_REQUEST,
+    )
+
+
+def _apply_public_issue_ordering(issue_queryset, order_by_param):
+    priority_order = ["urgent", "high", "medium", "low", "none"]
+    state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+
+    if order_by_param == "priority" or order_by_param == "-priority":
+        priority_order = priority_order if order_by_param == "priority" else priority_order[::-1]
+        return issue_queryset.annotate(
+            priority_order=Case(
+                *[When(priority=p, then=Value(i)) for i, p in enumerate(priority_order)],
+                output_field=CharField(),
+            )
+        ).order_by("priority_order")
+
+    if order_by_param in [
+        "state__name",
+        "state__group",
+        "-state__name",
+        "-state__group",
+    ]:
+        state_order = state_order if order_by_param in ["state__name", "state__group"] else state_order[::-1]
+        return issue_queryset.annotate(
+            state_order=Case(
+                *[When(state__group=state_group, then=Value(i)) for i, state_group in enumerate(state_order)],
+                default=Value(len(state_order)),
+                output_field=CharField(),
+            )
+        ).order_by("state_order")
+
+    if order_by_param in [
+        "labels__name",
+        "-labels__name",
+        "assignees__first_name",
+        "-assignees__first_name",
+    ]:
+        return issue_queryset.annotate(
+            max_values=Max(order_by_param[1::] if order_by_param.startswith("-") else order_by_param)
+        ).order_by("-max_values" if order_by_param.startswith("-") else "max_values")
+
+    return issue_queryset.order_by(order_by_param)
+
+
 class IssueListCreateAPIEndpoint(BaseAPIView):
     """
     This viewset provides `list` and `create` on issue level
@@ -370,6 +441,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             ORDER_BY_PARAMETER,
             FIELDS_PARAMETER,
             EXPAND_PARAMETER,
+            PQL_PARAMETER,
         ],
         responses={
             200: create_paginated_response(
@@ -389,30 +461,24 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         Supports filtering, ordering, and field selection through query parameters.
         """
 
-        unsupported_filters = [param for param in ("pql", "filters") if request.GET.get(param)]
+        unsupported_filters = [param for param in ("filters",) if request.GET.get(param)]
         if unsupported_filters:
-            return Response(
-                {
-                    "pql": (
-                        "PQL and structured filters are not supported on this Plane edition. "
-                        "Remove the pql/filters parameter and filter results client-side, or use "
-                        "a Plane edition that supports work item query filtering."
-                    ),
-                    "unsupported_parameters": unsupported_filters,
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return _unsupported_filter_response(unsupported_filters)
 
         external_id = request.GET.get("external_id")
         external_source = request.GET.get("external_source")
 
         if external_id and external_source:
-            issue = Issue.objects.get(
+            lookup = Issue.objects.filter(
                 external_id=external_id,
                 external_source=external_source,
                 workspace__slug=slug,
                 project_id=project_id,
             )
+            lookup = apply_pql(lookup, request, slug, project_id)
+            if isinstance(lookup, Response):
+                return lookup
+            issue = lookup.get()
             if guest_cannot_view_issue(request.user.id, issue, slug):
                 raise Issue.DoesNotExist()
             return Response(
@@ -423,10 +489,6 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         # Restricted guests (GUEST role, guest_view_all_features disabled) may
         # only see work items they created -- mirrors IssueViewSet.list.
         restricted_guest = is_restricted_guest(request.user.id, project_id, slug)
-
-        # Custom ordering for priority and state
-        priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
         # Reject any field not in the allowlist before it reaches .order_by().
         # An unrecognised value is replaced with the safe default, preventing
@@ -467,43 +529,14 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             issue_queryset = issue_queryset.filter(created_by=request.user)
             total_issue_queryset = total_issue_queryset.filter(created_by=request.user)
 
-        # Priority Ordering
-        if order_by_param == "priority" or order_by_param == "-priority":
-            priority_order = priority_order if order_by_param == "priority" else priority_order[::-1]
-            issue_queryset = issue_queryset.annotate(
-                priority_order=Case(
-                    *[When(priority=p, then=Value(i)) for i, p in enumerate(priority_order)],
-                    output_field=CharField(),
-                )
-            ).order_by("priority_order")
+        issue_queryset = apply_pql(issue_queryset, request, slug, project_id)
+        if isinstance(issue_queryset, Response):
+            return issue_queryset
+        total_issue_queryset = apply_pql(total_issue_queryset, request, slug, project_id)
+        if isinstance(total_issue_queryset, Response):
+            return total_issue_queryset
 
-        # State Ordering
-        elif order_by_param in [
-            "state__name",
-            "state__group",
-            "-state__name",
-            "-state__group",
-        ]:
-            state_order = state_order if order_by_param in ["state__name", "state__group"] else state_order[::-1]
-            issue_queryset = issue_queryset.annotate(
-                state_order=Case(
-                    *[When(state__group=state_group, then=Value(i)) for i, state_group in enumerate(state_order)],
-                    default=Value(len(state_order)),
-                    output_field=CharField(),
-                )
-            ).order_by("state_order")
-        # assignee and label ordering
-        elif order_by_param in [
-            "labels__name",
-            "-labels__name",
-            "assignees__first_name",
-            "-assignees__first_name",
-        ]:
-            issue_queryset = issue_queryset.annotate(
-                max_values=Max(order_by_param[1::] if order_by_param.startswith("-") else order_by_param)
-            ).order_by("-max_values" if order_by_param.startswith("-") else "max_values")
-        else:
-            issue_queryset = issue_queryset.order_by(order_by_param)
+        issue_queryset = _apply_public_issue_ordering(issue_queryset, order_by_param)
 
         return self.paginate(
             request=request,
@@ -2718,78 +2751,19 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
         Create relationships between work items with specified relation type.
         Automatically tracks relation creation activity.
         """
-        # Validate request data using serializer
         serializer = IssueRelationCreateSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        relation_type = serializer.validated_data["relation_type"]
-        issues = serializer.validated_data["issues"]
-        project = Project.objects.get(pk=project_id, workspace__slug=slug)
-        # The URL issue is one side of every relation; bind it to the URL project too.
-        Issue.issue_objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
-
-        actual_relation = get_actual_relation(relation_type)
-        is_reverse = relation_type in ["blocking", "start_after", "finish_after"]
-
-        # Scope to workspace to prevent cross-tenant IDOR
-        # Relations can cross projects so only workspace scope is enforced
-        issues = list(
-            Issue.issue_objects.filter(
-                workspace__slug=slug,
-                pk__in=issues,
-            ).values_list("id", flat=True)
+        refetched_relations, is_reverse = _create_issue_relations(
+            request=request,
+            slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            relation_type=serializer.validated_data["relation_type"],
+            target_issue_ids=serializer.validated_data["issues"],
         )
-
-        IssueRelation.objects.bulk_create(
-            [
-                IssueRelation(
-                    issue_id=(issue if is_reverse else issue_id),
-                    related_issue_id=(issue_id if is_reverse else issue),
-                    relation_type=actual_relation,
-                    project_id=project_id,
-                    workspace_id=project.workspace_id,
-                    created_by=request.user,
-                    updated_by=request.user,
-                )
-                for issue in issues
-            ],
-            batch_size=10,
-            ignore_conflicts=True,
-        )
-
-        issue_activity.delay(
-            type="issue_relation.activity.created",
-            requested_data=json.dumps({"relation_type": relation_type, "issues": issues}, cls=DjangoJSONEncoder),
-            actor_id=str(request.user.id),
-            issue_id=str(issue_id),
-            project_id=str(project_id),
-            current_instance=None,
-            epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=base_host(request=request, is_app=True),
-        )
-
-        # Re-fetch with select_related to avoid N+1 queries in serializers.
-        # bulk_create with ignore_conflicts=True may not return PKs,
-        # so query by the issue/related_issue pairs and relation type.
-        if is_reverse:
-            refetch_filter = Q(
-                issue_id__in=issues,
-                related_issue_id=issue_id,
-                relation_type=actual_relation,
-            )
-        else:
-            refetch_filter = Q(
-                issue_id=issue_id,
-                related_issue_id__in=issues,
-                relation_type=actual_relation,
-            )
-
-        refetched_relations = IssueRelation.objects.filter(
-            refetch_filter,
-            workspace__slug=slug,
-        ).select_related(
+        refetched_relations = refetched_relations.select_related(
             "issue__state",
             "related_issue__state",
         )
@@ -2798,4 +2772,729 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
         return Response(
             serializer_class(refetched_relations, many=True).data,
             status=status.HTTP_201_CREATED,
+        )
+
+
+DEPENDENCY_GROUPS = (
+    "blocking",
+    "blocked_by",
+    "start_before",
+    "start_after",
+    "finish_before",
+    "finish_after",
+)
+DEPENDENCY_DB_TYPES = ("blocked_by", "start_before", "finish_before")
+
+CUSTOM_RELATION_GROUPS = (
+    "relates_to",
+    "duplicate",
+    "implemented_by",
+    "implements",
+)
+CUSTOM_RELATION_DB_TYPES = ("relates_to", "duplicate", "implemented_by")
+
+
+def _create_issue_relations(request, slug, project_id, issue_id, relation_type, target_issue_ids):
+    project = Project.objects.get(pk=project_id, workspace__slug=slug)
+    # The URL issue is one side of every relation; bind it to the URL project too.
+    Issue.issue_objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+
+    actual_relation = get_actual_relation(relation_type)
+    is_reverse = relation_type in ["blocking", "start_after", "finish_after", "implements"]
+
+    # Relations can cross projects, so targets are scoped to the workspace and to
+    # what the caller may view. Others are skipped silently so the response does
+    # not reveal whether they exist.
+    visible_issue_ids = Issue.objects.filter(visible_issue_q(request.user)).values("id")
+    issues = list(
+        Issue.issue_objects.filter(
+            workspace__slug=slug,
+            pk__in=target_issue_ids,
+        )
+        .filter(pk__in=visible_issue_ids)
+        .exclude(pk=issue_id)
+        .values_list("id", flat=True)
+    )
+
+    IssueRelation.objects.bulk_create(
+        [
+            IssueRelation(
+                issue_id=(issue if is_reverse else issue_id),
+                related_issue_id=(issue_id if is_reverse else issue),
+                relation_type=actual_relation,
+                project_id=project_id,
+                workspace_id=project.workspace_id,
+                created_by=request.user,
+                updated_by=request.user,
+            )
+            for issue in issues
+        ],
+        batch_size=10,
+        ignore_conflicts=True,
+    )
+
+    issue_activity.delay(
+        type="issue_relation.activity.created",
+        requested_data=json.dumps({"relation_type": relation_type, "issues": issues}, cls=DjangoJSONEncoder),
+        actor_id=str(request.user.id),
+        issue_id=str(issue_id),
+        project_id=str(project_id),
+        current_instance=None,
+        epoch=int(timezone.now().timestamp()),
+        notification=True,
+        origin=base_host(request=request, is_app=True),
+    )
+
+    if is_reverse:
+        refetch_filter = Q(
+            issue_id__in=issues,
+            related_issue_id=issue_id,
+            relation_type=actual_relation,
+        )
+    else:
+        refetch_filter = Q(
+            issue_id=issue_id,
+            related_issue_id__in=issues,
+            relation_type=actual_relation,
+        )
+
+    refetched_relations = IssueRelation.objects.filter(
+        refetch_filter,
+        workspace__slug=slug,
+    )
+    return refetched_relations, is_reverse
+
+
+def _delete_issue_relation(request, slug, project_id, issue_id, related_issue_id, allowed_db_types):
+    Issue.issue_objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+    # Same visibility rule as creation, so deleting cannot probe relations to work
+    # items the caller cannot see.
+    if not Issue.objects.filter(visible_issue_q(request.user), workspace__slug=slug, pk=related_issue_id).exists():
+        return Response({"error": "Issue relation not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Both orientations of the pair can exist (the unique constraint is per ordered
+    # pair), so every matching row is removed, not just the first.
+    relations = list(
+        IssueRelation.objects.filter(
+            workspace__slug=slug,
+            relation_type__in=allowed_db_types,
+        ).filter(
+            Q(issue_id=related_issue_id, related_issue_id=issue_id)
+            | Q(issue_id=issue_id, related_issue_id=related_issue_id)
+        )
+    )
+    if not relations:
+        return Response({"error": "Issue relation not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    deleted = []
+    # All-or-nothing: a failure on one row must not leave the other orientation behind.
+    with transaction.atomic():
+        for relation in relations:
+            perspective_relation_type = (
+                relation.relation_type
+                if str(relation.issue_id) == str(issue_id)
+                else get_inverse_relation(relation.relation_type)
+            )
+            current_instance = json.dumps(IssueRelationSerializer(relation).data, cls=DjangoJSONEncoder)
+            relation.delete()
+            deleted.append((perspective_relation_type, current_instance))
+
+    for perspective_relation_type, current_instance in deleted:
+        issue_activity.delay(
+            type="issue_relation.activity.deleted",
+            requested_data=json.dumps(
+                {"related_issue": str(related_issue_id), "relation_type": perspective_relation_type},
+                cls=DjangoJSONEncoder,
+            ),
+            actor_id=str(request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
+        )
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WorkItemDependencyListCreateAPIEndpoint(BaseAPIView):
+    """Work Item Dependency List and Create Endpoint"""
+
+    serializer_class = IssueRelationSerializer
+    model = IssueRelation
+    permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
+
+    @work_item_relation_docs(
+        operation_id="list_work_item_dependencies",
+        summary="List work item dependencies",
+        description="Retrieve dependency relations for a work item grouped by blocking, blocked_by, start_before, start_after, finish_before, and finish_after.",  # noqa: E501
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        responses={
+            200: OpenApiResponse(description="Work item dependencies grouped by relation type"),
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug, project_id, issue_id):
+        """List work item dependencies"""
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+        if guest_cannot_view_issue(request.user.id, issue, slug):
+            raise Issue.DoesNotExist()
+
+        response_data = group_issue_relations(
+            slug=slug,
+            issue_id=issue_id,
+            groups=DEPENDENCY_GROUPS,
+            extra_issue_filter=visible_issue_q(request.user),
+            fields=PUBLIC_RELATION_FIELDS,
+        )
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    @work_item_relation_docs(
+        operation_id="create_work_item_dependency",
+        summary="Create work item dependency",
+        description="Create one or more dependency relations for a work item.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(request=WorkItemDependencyCreateSerializer),
+        responses={
+            201: OpenApiResponse(description="Work item dependencies created successfully"),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id, issue_id):
+        """Create work item dependency"""
+        serializer = WorkItemDependencyCreateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        relation_type = serializer.validated_data["relation_type"]
+        refetched_relations, is_reverse = _create_issue_relations(
+            request=request,
+            slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            relation_type=relation_type,
+            target_issue_ids=serializer.validated_data["work_item_ids"],
+        )
+        related_ids = refetched_relations.values_list(
+            "issue_id" if is_reverse else "related_issue_id",
+            flat=True,
+        )
+        items = list(
+            build_related_work_items_queryset(slug, extra_issue_filter=visible_issue_q(request.user))
+            .filter(pk__in=related_ids)
+            .annotate(relation_type=Value(relation_type, output_field=CharField()))
+            .values(*PUBLIC_RELATION_FIELDS)
+        )
+        return Response(items, status=status.HTTP_201_CREATED)
+
+
+class WorkItemDependencyDetailAPIEndpoint(BaseAPIView):
+    """Work Item Dependency Delete Endpoint"""
+
+    model = IssueRelation
+    permission_classes = [ProjectEntityPermission]
+
+    @work_item_relation_docs(
+        operation_id="delete_work_item_dependency",
+        summary="Delete work item dependency",
+        description="Remove a dependency relation between a work item and a related work item.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        responses={
+            204: DELETED_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def delete(self, request, slug, project_id, issue_id, related_issue_id):
+        """Delete work item dependency"""
+        return _delete_issue_relation(
+            request=request,
+            slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            related_issue_id=related_issue_id,
+            allowed_db_types=DEPENDENCY_DB_TYPES,
+        )
+
+
+class WorkItemCustomRelationListAPIEndpoint(BaseAPIView):
+    """Work Item Non-Dependency Relation List Endpoint"""
+
+    model = IssueRelation
+    permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
+
+    @work_item_relation_docs(
+        operation_id="list_work_item_custom_relations",
+        summary="List work item non-dependency relations",
+        description="Retrieve non-dependency relations (relates_to, duplicate, implemented_by, implements) for a work item.",  # noqa: E501
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        responses={
+            200: OpenApiResponse(description="Work item non-dependency relations grouped by label"),
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug, project_id, issue_id):
+        """List work item non-dependency relations"""
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+        if guest_cannot_view_issue(request.user.id, issue, slug):
+            raise Issue.DoesNotExist()
+
+        response_data = group_issue_relations(
+            slug=slug,
+            issue_id=issue_id,
+            groups=CUSTOM_RELATION_GROUPS,
+            extra_issue_filter=visible_issue_q(request.user),
+            fields=PUBLIC_RELATION_FIELDS,
+        )
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
+class WorkItemCustomRelationDetailAPIEndpoint(BaseAPIView):
+    """Work Item Non-Dependency Relation Delete Endpoint"""
+
+    model = IssueRelation
+    permission_classes = [ProjectEntityPermission]
+
+    @work_item_relation_docs(
+        operation_id="delete_work_item_custom_relation",
+        summary="Delete work item non-dependency relation",
+        description="Remove a non-dependency relation between a work item and a related work item.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        responses={
+            204: DELETED_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def delete(self, request, slug, project_id, issue_id, related_issue_id):
+        """Delete work item non-dependency relation"""
+        return _delete_issue_relation(
+            request=request,
+            slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            related_issue_id=related_issue_id,
+            allowed_db_types=CUSTOM_RELATION_DB_TYPES,
+        )
+
+
+class WorkItemRelationDefinitionListAPIEndpoint(BaseAPIView):
+    """Workspace Work Item Relation Definition List Endpoint"""
+
+    permission_classes = [WorkspaceUserPermission]
+    use_read_replica = True
+
+    @extend_schema(
+        operation_id="list_work_item_relation_definitions",
+        summary="List work item relation definitions",
+        description="Return a paginated list of custom work item relation definitions in the workspace.",
+        tags=["Work Item Relations"],
+        parameters=[
+            WORKSPACE_SLUG_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+        ],
+        responses={
+            200: OpenApiResponse(description="Paginated list of work item relation definitions"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+        },
+    )
+    def get(self, request, slug):
+        """List work item relation definitions"""
+        return self.paginate(
+            request=request,
+            queryset=IssueRelation.objects.none(),
+            on_results=lambda rows: [],
+        )
+
+
+class IssueArchiveUnarchiveAPIEndpoint(BaseAPIView):
+    """Work Item Archive, Unarchive and Archived List Endpoint"""
+
+    model = Issue
+    serializer_class = IssueSerializer
+    permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
+
+    def get_queryset(self):
+        return (
+            Issue.objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .filter(
+                project_id=self.kwargs.get("project_id"),
+                workspace__slug=self.kwargs.get("slug"),
+                archived_at__isnull=False,
+            )
+            .select_related("project", "workspace", "state", "parent")
+            .prefetch_related("assignees", "labels")
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+            .distinct()
+        )
+
+    @work_item_docs(
+        operation_id="list_archived_work_items",
+        summary="List archived work items",
+        description="Retrieve a paginated list of archived work items in a project.",
+        parameters=[
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            EXTERNAL_ID_PARAMETER,
+            EXTERNAL_SOURCE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+            PQL_PARAMETER,
+        ],
+        responses={
+            200: create_paginated_response(
+                IssueSerializer,
+                "PaginatedArchivedWorkItemResponse",
+                "Paginated list of archived work items",
+                "Paginated Archived Work Items",
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: PROJECT_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug, project_id):
+        """List archived work items"""
+        unsupported_filters = [param for param in ("filters",) if request.GET.get(param)]
+        if unsupported_filters:
+            return _unsupported_filter_response(unsupported_filters)
+
+        external_id = request.GET.get("external_id")
+        external_source = request.GET.get("external_source")
+
+        if external_id and external_source:
+            lookup = Issue.objects.filter(
+                external_id=external_id,
+                external_source=external_source,
+                workspace__slug=slug,
+                project_id=project_id,
+                archived_at__isnull=False,
+            )
+            lookup = apply_pql(lookup, request, slug, project_id)
+            if isinstance(lookup, Response):
+                return lookup
+            issue = lookup.get()
+            if guest_cannot_view_issue(request.user.id, issue, slug):
+                raise Issue.DoesNotExist()
+            return Response(
+                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+                status=status.HTTP_200_OK,
+            )
+
+        restricted_guest = is_restricted_guest(request.user.id, project_id, slug)
+        order_by_param = sanitize_order_by(
+            request.GET.get("order_by", "-created_at"),
+            ISSUE_ORDER_BY_ALLOWLIST,
+            default="-created_at",
+        )
+
+        issue_queryset = (
+            self.get_queryset()
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        )
+
+        total_issue_queryset = Issue.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            archived_at__isnull=False,
+        )
+
+        if restricted_guest:
+            issue_queryset = issue_queryset.filter(created_by=request.user)
+            total_issue_queryset = total_issue_queryset.filter(created_by=request.user)
+
+        issue_queryset = apply_pql(issue_queryset, request, slug, project_id)
+        if isinstance(issue_queryset, Response):
+            return issue_queryset
+        total_issue_queryset = apply_pql(total_issue_queryset, request, slug, project_id)
+        if isinstance(total_issue_queryset, Response):
+            return total_issue_queryset
+
+        issue_queryset = _apply_public_issue_ordering(issue_queryset, order_by_param)
+
+        return self.paginate(
+            request=request,
+            queryset=issue_queryset,
+            total_count_queryset=total_issue_queryset,
+            on_results=lambda issues: IssueSerializer(issues, many=True, fields=self.fields, expand=self.expand).data,
+        )
+
+    @work_item_docs(
+        operation_id="archive_work_item",
+        summary="Archive work item",
+        description="Archive a completed or cancelled work item.",
+        request={},
+        responses={
+            200: ARCHIVED_RESPONSE,
+            400: CANNOT_ARCHIVE_RESPONSE,
+            404: WORK_ITEM_NOT_FOUND_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id, pk):
+        """Archive work item"""
+        # The lock keeps the state-group check valid until archived_at is written, and
+        # update_fields keeps a concurrent edit from being overwritten with stale values.
+        with transaction.atomic():
+            issue = (
+                Issue.issue_objects.select_related("state")
+                .select_for_update(of=("self",))
+                .get(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    pk=pk,
+                )
+            )
+            if not issue.state or issue.state.group not in ["completed", "cancelled"]:
+                return Response(
+                    {"error": "Can only archive completed or cancelled state group issue"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            archived_at = timezone.now().date()
+            current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
+            issue.archived_at = archived_at
+            issue.save(update_fields=["archived_at"])
+        issue_activity.delay(
+            type="issue.activity.updated",
+            requested_data=json.dumps({"archived_at": str(archived_at), "automation": False}),
+            actor_id=str(request.user.id),
+            issue_id=str(issue.id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
+        )
+        return Response({"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK)
+
+    @work_item_docs(
+        operation_id="unarchive_work_item",
+        summary="Unarchive work item",
+        description="Restore an archived work item to active status.",
+        request={},
+        responses={
+            204: UNARCHIVED_RESPONSE,
+            404: WORK_ITEM_NOT_FOUND_RESPONSE,
+        },
+    )
+    def delete(self, request, slug, project_id, pk):
+        """Unarchive work item"""
+        with transaction.atomic():
+            issue = Issue.objects.select_for_update(of=("self",)).get(
+                workspace__slug=slug,
+                project_id=project_id,
+                archived_at__isnull=False,
+                pk=pk,
+            )
+            current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
+            issue.archived_at = None
+            issue.save(update_fields=["archived_at"])
+        issue_activity.delay(
+            type="issue.activity.updated",
+            requested_data=json.dumps({"archived_at": None}),
+            actor_id=str(request.user.id),
+            issue_id=str(issue.id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+_COUNT_M2M_RELATIONS = {
+    "labels__id": (
+        "active_label_issue",
+        FilteredRelation("label_issue", condition=Q(label_issue__deleted_at__isnull=True)),
+        "active_label_issue__label_id",
+    ),
+    "assignees__id": (
+        "active_issue_assignee",
+        FilteredRelation("issue_assignee", condition=Q(issue_assignee__deleted_at__isnull=True)),
+        "active_issue_assignee__assignee_id",
+    ),
+    "issue_module__module_id": (
+        "active_issue_module",
+        FilteredRelation("issue_module", condition=Q(issue_module__deleted_at__isnull=True)),
+        "active_issue_module__module_id",
+    ),
+}
+
+
+def _prepare_count_group_field(queryset, field_name):
+    if field_name in _COUNT_M2M_RELATIONS:
+        alias, relation, orm_field = _COUNT_M2M_RELATIONS[field_name]
+        return queryset.annotate(**{alias: relation}), orm_field
+    if field_name == "cycle_id":
+        return (
+            queryset.annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+                )
+            ),
+            "cycle_id",
+        )
+    return queryset, field_name
+
+
+class IssueCountEndpoint(BaseAPIView):
+    """Workspace Work Item Count Endpoint"""
+
+    permission_classes = [WorkspaceUserPermission]
+    use_read_replica = True
+
+    @extend_schema(
+        operation_id="count_work_items",
+        summary="Count work items",
+        description="Return the count of visible work items across the workspace with optional grouping.",
+        tags=["Work Items"],
+        parameters=[
+            WORKSPACE_SLUG_PARAMETER,
+            OpenApiParameter(
+                name="pql",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description="Plane Query Language (PQL) expression to filter the counted work items.",
+            ),
+            OpenApiParameter(
+                name="group_by",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description="Field used to group the counts.",
+            ),
+            OpenApiParameter(
+                name="sub_group_by",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description="Field used to sub-group the counts. Requires group_by.",
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(description="Work item count results"),
+            400: INVALID_REQUEST_RESPONSE,
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+        },
+    )
+    def get(self, request, slug):
+        """Count work items across a workspace"""
+        if request.GET.get("filters"):
+            return _unsupported_filter_response(["filters"])
+
+        group_by = request.GET.get("group_by") or None
+        sub_group_by = request.GET.get("sub_group_by") or None
+
+        if sub_group_by and not group_by:
+            return Response(
+                {"error": "sub_group_by can only be used when group_by is also provided"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if group_by and group_by not in ISSUE_GROUP_BY_ALLOWLIST:
+            return Response(
+                {"error": f"Invalid group_by field: {group_by}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if sub_group_by and sub_group_by not in ISSUE_GROUP_BY_ALLOWLIST:
+            return Response(
+                {"error": f"Invalid sub_group_by field: {sub_group_by}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if group_by and sub_group_by and group_by == sub_group_by:
+            return Response(
+                {"error": "Group by and sub group by cannot have same parameters"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        visible_issue_subquery = (
+            Issue.issue_objects.filter(id=OuterRef("id")).filter(visible_issue_q(request.user)).values("id")
+        )
+        issues = Issue.issue_objects.filter(
+            project__archived_at__isnull=True,
+            workspace__slug=slug,
+        ).filter(Exists(visible_issue_subquery))
+
+        issues = apply_pql(issues, request, slug)
+        if isinstance(issues, Response):
+            return issues
+
+        total_count = issues.values("id").distinct().count()
+        grouped_counts = {}
+
+        if group_by:
+            grouped_qs, group_orm_field = _prepare_count_group_field(issues, group_by)
+            group_rows = grouped_qs.order_by().values(group_orm_field).annotate(count=Count("id", distinct=True))
+
+            if sub_group_by:
+                sub_grouped_qs, sub_group_orm_field = _prepare_count_group_field(grouped_qs, sub_group_by)
+                sub_rows = (
+                    sub_grouped_qs.order_by()
+                    .values(group_orm_field, sub_group_orm_field)
+                    .annotate(count=Count("id", distinct=True))
+                )
+                for row in group_rows:
+                    g_key = "None" if row[group_orm_field] is None else str(row[group_orm_field])
+                    grouped_counts[g_key] = {
+                        "count": row["count"],
+                        "sub_grouped_counts": {},
+                    }
+                for row in sub_rows:
+                    g_key = "None" if row[group_orm_field] is None else str(row[group_orm_field])
+                    sg_key = "None" if row[sub_group_orm_field] is None else str(row[sub_group_orm_field])
+                    if g_key not in grouped_counts:
+                        grouped_counts[g_key] = {"count": 0, "sub_grouped_counts": {}}
+                    grouped_counts[g_key]["sub_grouped_counts"][sg_key] = {"count": row["count"]}
+            else:
+                for row in group_rows:
+                    g_key = "None" if row[group_orm_field] is None else str(row[group_orm_field])
+                    grouped_counts[g_key] = {"count": row["count"]}
+
+        return Response(
+            {
+                "grouped_by": group_by,
+                "sub_grouped_by": sub_group_by,
+                "total_count": total_count,
+                "grouped_counts": grouped_counts,
+            },
+            status=status.HTTP_200_OK,
         )

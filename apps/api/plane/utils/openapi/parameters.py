@@ -518,3 +518,23 @@ ESTIMATE_ID_PARAMETER = OpenApiParameter(
     type=OpenApiTypes.UUID,
     location=OpenApiParameter.PATH,
 )
+
+PQL_PARAMETER = OpenApiParameter(
+    name="pql",
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.QUERY,
+    description="Plane Query Language (PQL) expression to filter work items",
+    required=False,
+    examples=[
+        OpenApiExample(
+            name="High priority open work items",
+            value="priority IN ('urgent', 'high') AND stateGroup IN openStates()",
+            description="Filter work items by priority and open state groups",
+        ),
+        OpenApiExample(
+            name="Assigned to current user",
+            value="assignee = currentUser()",
+            description="Filter work items assigned to the authenticated user",
+        ),
+    ],
+)
