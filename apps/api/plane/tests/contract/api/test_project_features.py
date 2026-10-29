@@ -304,3 +304,17 @@ def test_cross_project_and_cross_workspace_ids(
     missing_url = _features_url(workspace.slug, uuid4())
     assert api_key_client.get(missing_url).status_code == status.HTTP_403_FORBIDDEN
     assert api_key_client.patch(missing_url, {"modules": True}, format="json").status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_failed_default_intake_creation_rolls_back_the_project_update(api_key_client, workspace, project):
+    with mock.patch("plane.api.views.project.Intake.objects.create", side_effect=RuntimeError("boom")):
+        try:
+            api_key_client.patch(_features_url(workspace.slug, project.id), {"intakes": True}, format="json")
+        except RuntimeError:
+            pass
+
+    project.refresh_from_db()
+    assert project.intake_view is False
+    assert not Intake.objects.filter(project=project).exists()

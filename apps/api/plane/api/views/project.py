@@ -454,30 +454,34 @@ def _apply_project_update(request, slug, workspace, project, update_data):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    current_instance = json.dumps(ProjectSerializer(project).data, cls=DjangoJSONEncoder)
-    intake_view = update_data.get("intake_view", project.intake_view)
-    # Model-field payload: callers such as the features endpoint receive SDK names in request.data.
-    requested_data = {**update_data, "intake_view": intake_view}
+    # The row is locked so a concurrent update cannot be overwritten by the intake_view read below, and the
+    # default intake is created atomically with the project save.
+    with transaction.atomic():
+        project = Project.objects.select_for_update().get(pk=project.pk)
+        current_instance = json.dumps(ProjectSerializer(project).data, cls=DjangoJSONEncoder)
+        intake_view = update_data.get("intake_view", project.intake_view)
+        # Model-field payload: callers such as the features endpoint receive SDK names in request.data.
+        requested_data = {**update_data, "intake_view": intake_view}
 
-    serializer = ProjectUpdateSerializer(
-        project,
-        data=requested_data,
-        context={"workspace_id": workspace.id},
-        partial=True,
-    )
+        serializer = ProjectUpdateSerializer(
+            project,
+            data=requested_data,
+            context={"workspace_id": workspace.id},
+            partial=True,
+        )
 
-    if not serializer.is_valid():
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    serializer.save()
-    if serializer.data["intake_view"]:
-        intake = Intake.objects.filter(project=project, is_default=True).first()
-        if not intake:
-            Intake.objects.create(
-                name=f"{project.name} Intake",
-                project=project,
-                is_default=True,
-            )
+        serializer.save()
+        if serializer.data["intake_view"]:
+            intake = Intake.objects.filter(project=project, is_default=True).first()
+            if not intake:
+                Intake.objects.create(
+                    name=f"{project.name} Intake",
+                    project=project,
+                    is_default=True,
+                )
 
     model_activity.delay(
         model_name="project",

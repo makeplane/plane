@@ -441,3 +441,23 @@ def test_nonexistent_project_is_decided_by_permission_class(api_key_client, work
     resp = api_key_client.patch(_status_url(workspace.slug, uuid4(), uuid4()), {"status": -1}, format="json")
 
     assert resp.status_code == status.HTTP_403_FORBIDDEN, resp.content
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_clearing_required_field_without_status_is_rejected_for_stored_status(
+    api_key_client, workspace, project, intake_issue_record, create_user
+):
+    target = Issue.objects.create(name="Target", project=project, workspace=workspace, created_by=create_user)
+    url = _status_url(workspace.slug, project.id, intake_issue_record.issue_id)
+
+    IntakeIssue.objects.filter(pk=intake_issue_record.pk).update(status=0, snoozed_till=timezone.now())
+    resp = api_key_client.patch(url, {"snoozed_till": None}, format="json")
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST, resp.content
+
+    IntakeIssue.objects.filter(pk=intake_issue_record.pk).update(status=2, duplicate_to=target)
+    resp = api_key_client.patch(url, {"duplicate_to": None}, format="json")
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST, resp.content
+
+    intake_issue_record.refresh_from_db()
+    assert intake_issue_record.duplicate_to_id == target.id

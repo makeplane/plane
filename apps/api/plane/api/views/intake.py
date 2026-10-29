@@ -24,6 +24,7 @@ from plane.api.serializers import (
     IssueSerializer,
     IntakeIssueCreateSerializer,
     IntakeIssueUpdateSerializer,
+    IntakeIssueStatusUpdateSerializer,
 )
 from plane.app.permissions import ProjectAdminPermission, ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -554,7 +555,7 @@ class IntakeIssueStatusAPIEndpoint(IntakeIssueDetailAPIEndpoint):
             ISSUE_ID_PARAMETER,
         ],
         request=OpenApiRequest(
-            request=IntakeIssueUpdateSerializer,
+            request=IntakeIssueStatusUpdateSerializer,
             examples=[INTAKE_ISSUE_UPDATE_EXAMPLE],
         ),
         responses={

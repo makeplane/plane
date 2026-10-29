@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 # Third party imports
+from django.db import transaction
 from rest_framework import serializers
 
 # Module imports
@@ -15,7 +16,7 @@ class IssueTypeSerializer(BaseSerializer):
     """Serializer for project-scoped work item types."""
 
     # IssueType.level is FloatField in DB while the SDK contract requires int.
-    level = serializers.IntegerField(required=False, min_value=0, default=0)
+    level = serializers.IntegerField(required=False, min_value=0, max_value=2147483647, default=0)
     # Body project_ids other than the URL project are ignored on create/update
     # because CE work item types are project-scoped.
     project_ids = serializers.ListField(
@@ -102,12 +103,13 @@ class IssueTypeSerializer(BaseSerializer):
         validated_data.pop("project_ids", None)
         if "level" in validated_data and validated_data["level"] is not None:
             validated_data["level"] = int(validated_data["level"])
-        instance = super().update(instance, validated_data)
-        if "level" in validated_data and validated_data["level"] is not None and self.context.get("project_id"):
-            ProjectIssueType.objects.filter(
-                project_id=self.context["project_id"],
-                issue_type=instance,
-            ).update(level=int(validated_data["level"]))
+        with transaction.atomic():
+            instance = super().update(instance, validated_data)
+            if "level" in validated_data and validated_data["level"] is not None and self.context.get("project_id"):
+                ProjectIssueType.objects.filter(
+                    project_id=self.context["project_id"],
+                    issue_type=instance,
+                ).update(level=int(validated_data["level"]))
         return instance
 
 

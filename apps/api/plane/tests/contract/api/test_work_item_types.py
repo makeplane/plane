@@ -358,3 +358,14 @@ def test_epic_types_and_deactivating_default_are_refused(api_key_client, workspa
     assert custom.status_code == status.HTTP_201_CREATED, custom.content
     to_epic = api_key_client.patch(f"{url}{custom.data['id']}/", {"is_epic": True}, format="json")
     assert to_epic.status_code == status.HTTP_400_BAD_REQUEST, to_epic.content
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_level_above_integer_column_range_returns_400(api_key_client, workspace, project):
+    response = api_key_client.post(
+        _types_url(workspace.slug, project.id), {"name": "Huge", "level": 2147483648}, format="json"
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.content
+    assert IssueType.objects.count() == 0
