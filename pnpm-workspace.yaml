@@ -5,6 +5,7 @@ packages:
   - "!apps/proxy"
 
 catalog:
+  "@date-fns/tz": "1.4.1"
   "@atlaskit/pragmatic-drag-and-drop": "1.7.4"
   "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "1.4.0"
   "@atlaskit/pragmatic-drag-and-drop-hitbox": "1.1.0"

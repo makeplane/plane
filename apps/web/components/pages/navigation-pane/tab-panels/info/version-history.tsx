@@ -17,6 +17,7 @@ import { cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane
 // components
 import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // hooks
+import { useUser } from "@/hooks/store/user";
 import { useMember } from "@/hooks/store/use-member";
 import { useQueryParams } from "@/hooks/use-query-params";
 // store
@@ -39,6 +40,7 @@ const VersionHistoryItem = observer(function VersionHistoryItem(props: VersionHi
   const { getVersionLink, isVersionActive, version } = props;
   // store hooks
   const { getUserDetails } = useMember();
+  const { data: user } = useUser();
   // derived values
   const versionCreator = getUserDetails(version.owned_by);
   // translation
@@ -58,7 +60,8 @@ const VersionHistoryItem = observer(function VersionHistoryItem(props: VersionHi
         })}
       >
         <p className="text-tertiary">
-          {renderFormattedDate(version.last_saved_at)}, {renderFormattedTime(version.last_saved_at)}
+          {renderFormattedDate(version.last_saved_at, undefined, user?.user_timezone)},{" "}
+          {renderFormattedTime(version.last_saved_at, "24-hour", user?.user_timezone)}
         </p>
         <p className="mt-1 flex items-center gap-1">
           <Avatar

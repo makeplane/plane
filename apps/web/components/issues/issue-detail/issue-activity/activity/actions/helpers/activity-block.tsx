@@ -4,12 +4,14 @@
  * See the LICENSE file for details.
  */
 
+import { observer } from "mobx-react";
 import type { ReactNode } from "react";
 import { HierarchyOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { IssueUser } from "../";
@@ -23,7 +25,10 @@ type TIssueActivityBlockComponent = {
   customUserName?: string;
 };
 
-export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent) {
+export const IssueActivityBlockComponent = observer(function IssueActivityBlockComponent(
+  props: TIssueActivityBlockComponent
+) {
+  const { data: user } = useUser();
   const { icon, activityId, ends, children, customUserName } = props;
   // hooks
   const {
@@ -52,7 +57,7 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
         <span> {children} </span>
         <span>
           <Tooltip
-            label={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
+            label={`${renderFormattedDate(activity.created_at, undefined, user?.user_timezone)}, ${renderFormattedTime(activity.created_at, "24-hour", user?.user_timezone)}`}
             disabled={isMobile}
           >
             <span className="whitespace-nowrap text-tertiary"> {calculateTimeAgo(activity.created_at)}</span>
@@ -61,4 +66,4 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
       </div>
     </div>
   );
-}
+});
