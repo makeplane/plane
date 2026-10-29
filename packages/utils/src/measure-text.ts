@@ -31,10 +31,19 @@ function getMeasureContext(): TMeasureContext | null {
   return measureContext;
 }
 
-/** Font size in px from a CSS `font` shorthand, e.g. `"500 13px Inter"` → 13. */
+/**
+ * Font size in px from a CSS `font` shorthand, e.g. `"500 13px Inter"` or `"13px/1.5 Inter"` → 13.
+ * Scans whitespace-separated tokens rather than running a regex over the whole string, so the cost
+ * stays linear in the input.
+ */
 const fontSizeOf = (font: string) => {
-  const match = /(\d+(?:\.\d+)?)px/.exec(font);
-  return match ? Number(match[1]) : 12;
+  for (const token of font.split(" ")) {
+    const size = token.split("/")[0];
+    if (!size.endsWith("px")) continue;
+    const value = Number(size.slice(0, -2));
+    if (Number.isFinite(value) && value > 0) return value;
+  }
+  return 12;
 };
 
 /**
