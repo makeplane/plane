@@ -349,6 +349,64 @@ class TestCycleDetailAPIEndpoint:
         assert "same external id" in response.data["error"]
 
     @pytest.mark.django_db
+    def test_update_completed_cycle_rejected(self, api_key_client, workspace, project, create_user):
+        """A completed cycle (end_date in the past) cannot be edited at all."""
+        completed_cycle = Cycle.objects.create(
+            name="Completed Cycle",
+            description="A cycle that has ended",
+            start_date=timezone.now() - timedelta(days=14),
+            end_date=timezone.now() - timedelta(days=7),
+            project=project,
+            workspace=workspace,
+            owned_by=create_user,
+        )
+        url = self.get_cycle_detail_url(workspace.slug, project.id, completed_cycle.id)
+
+        response = api_key_client.patch(url, {"name": "Renamed"}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+        completed_cycle.refresh_from_db()
+        assert completed_cycle.name == "Completed Cycle"
+
+    @pytest.mark.django_db
+    def test_update_completed_cycle_only_changes_sort_order(
+        self, api_key_client, workspace, project, create_user
+    ):
+        """Sending sort_order alongside other fields must not edit a completed cycle.
+
+        Regression test for a bug where the sanitized payload (sort_order only)
+        was built but the original request body was still handed to the
+        serializer, letting name/description leak through on completed cycles.
+        """
+        completed_cycle = Cycle.objects.create(
+            name="Completed Cycle",
+            description="A cycle that has ended",
+            start_date=timezone.now() - timedelta(days=14),
+            end_date=timezone.now() - timedelta(days=7),
+            project=project,
+            workspace=workspace,
+            owned_by=create_user,
+        )
+        url = self.get_cycle_detail_url(workspace.slug, project.id, completed_cycle.id)
+
+        update_data = {
+            "sort_order": 99999.0,
+            "name": "Renamed Completed Cycle",
+            "description": "Rewritten history",
+        }
+
+        response = api_key_client.patch(url, update_data, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+
+        completed_cycle.refresh_from_db()
+        # Only sort_order is applied; name and description remain untouched.
+        assert completed_cycle.sort_order == 99999.0
+        assert completed_cycle.name == "Completed Cycle"
+        assert completed_cycle.description == "A cycle that has ended"
+
+    @pytest.mark.django_db
     def test_delete_cycle_success(self, api_key_client, workspace, project, create_cycle):
         """Test successful cycle deletion"""
         url = self.get_cycle_detail_url(workspace.slug, project.id, create_cycle.id)
