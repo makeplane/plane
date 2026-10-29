@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PropertiesOverflowMenu } from "./properties-overflow-menu";
 import type { WorkItemPropertyEntry } from "./types";
 import { getChipMeasureId, usePropertiesOverflow } from "./use-properties-overflow";
@@ -60,13 +60,9 @@ export function PropertiesOverflowRow(props: PropertiesOverflowRowProps) {
   const hiddenEntries = layout.hiddenKeys.flatMap((key) => entryByKey.get(key) ?? []);
   const hasHiddenEntries = hiddenEntries.length > 0;
 
-  useEffect(() => {
-    if (forceCloseMenu) setIsMenuOpen(false);
-  }, [forceCloseMenu]);
-  // Edits elsewhere can leave nothing collapsed while the menu is open.
-  useEffect(() => {
-    if (!hasHiddenEntries) setIsMenuOpen(false);
-  }, [hasHiddenEntries]);
+  // Close the menu while rendering (not in an effect) when the parent forces it shut, or when edits
+  // elsewhere leave nothing collapsed, so it never paints open for a frame.
+  if (isMenuOpen && (forceCloseMenu || !hasHiddenEntries)) setIsMenuOpen(false);
 
   if (entries.length === 0) return null;
 

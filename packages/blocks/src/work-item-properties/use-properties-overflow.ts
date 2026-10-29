@@ -78,7 +78,11 @@ export function usePropertiesOverflow(args: UsePropertiesOverflowArgs) {
   const [layout, setLayout] = useState<PropertiesOverflowLayout>(() => showEverything(entries));
   const layoutRef = useRef(layout);
   const inputsRef = useRef(args);
-  inputsRef.current = args;
+  // Kept current after each commit (not during render). Declared before the refit effects below so
+  // they always read this render's inputs.
+  useLayoutEffect(() => {
+    inputsRef.current = args;
+  });
 
   const widthCache = useRef(new Map<string, number>());
   const triggerWidthCache = useRef(new Map<number, number>());
@@ -230,18 +234,17 @@ export function usePropertiesOverflow(args: UsePropertiesOverflowArgs) {
    * Watches the row for a chip dropdown opening or closing, so a split held for an open chip is
    * released (and re-fitted) as soon as it closes.
    */
-  const mutationObserverRef = useRef<MutationObserver | null>(null);
   const containerRef = useCallback(
     (node: HTMLElement | null) => {
-      mutationObserverRef.current?.disconnect();
-      mutationObserverRef.current = null;
-      if (!node || typeof MutationObserver === "undefined") return;
-      mutationObserverRef.current = new MutationObserver(scheduleRefit);
-      mutationObserverRef.current.observe(node, {
+      if (!node || typeof MutationObserver === "undefined") return undefined;
+      const observer = new MutationObserver(scheduleRefit);
+      observer.observe(node, {
         subtree: true,
         attributes: true,
         attributeFilter: ["aria-expanded", "data-popup-open"],
       });
+      // React 19 ref cleanup: runs when the node detaches or the callback changes.
+      return () => observer.disconnect();
     },
     [scheduleRefit]
   );
@@ -292,7 +295,6 @@ export function usePropertiesOverflow(args: UsePropertiesOverflowArgs) {
   useEffect(
     () => () => {
       observerRef.current?.disconnect();
-      mutationObserverRef.current?.disconnect();
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
     },
     []

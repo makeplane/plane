@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type * as React from "react";
 // plane imports
 import {
@@ -77,11 +77,6 @@ export function TypeToConfirmDialog(props: TypeToConfirmDialogProps) {
     (field) => field.expectedValue.length > 0 && (values[field.name] ?? "").trim() === field.expectedValue
   );
 
-  // Clear on open rather than on close, so the typed text doesn't vanish while the dialog fades out.
-  useEffect(() => {
-    if (isOpen) setValues({});
-  }, [isOpen]);
-
   const handleConfirm = async () => {
     if (!canConfirm || isSubmitting) return;
     setIsSubmitting(true);
@@ -98,6 +93,11 @@ export function TypeToConfirmDialog(props: TypeToConfirmDialogProps) {
       onOpenChange={(open) => {
         if (open || isSubmitting) return;
         onClose();
+      }}
+      // Clear once the close animation has finished, so the typed text doesn't vanish while the
+      // dialog fades out and the next open starts empty.
+      onOpenChangeComplete={(open) => {
+        if (!open) setValues({});
       }}
     >
       <AlertDialogContent data-prevent-outside-click>
