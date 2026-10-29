@@ -9,7 +9,7 @@ import pytz
 import requests
 
 # Module imports
-from plane.authentication.adapter.oauth import OauthAdapter
+from plane.authentication.adapter.oauth import OAUTH_REQUEST_TIMEOUT, OauthAdapter
 from plane.license.utils.instance_value import get_configuration_value
 from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
@@ -117,7 +117,7 @@ class GiteaOAuthProvider(OauthAdapter):
         try:
             # Gitea may not provide email in user response, so fetch it separately
             emails_url = f"{self.userinfo_url}/emails"
-            response = requests.get(emails_url, headers=headers)
+            response = requests.get(emails_url, headers=headers, timeout=OAUTH_REQUEST_TIMEOUT)
             if not response.ok:
                 raise AuthenticationException(
                     error_code=AUTHENTICATION_ERROR_CODES["GITEA_OAUTH_PROVIDER_ERROR"],
