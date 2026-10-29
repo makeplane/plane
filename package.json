@@ -10,6 +10,7 @@
     "dev": "turbo run dev --concurrency=18",
     "start": "turbo run start",
     "clean": "turbo run clean && rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
+    "fix:i18n-locales": "node ./packages/i18n/scripts/fix-locales-link.mjs",
     "fix": "turbo run fix",
     "fix:format": "turbo run fix:format",
     "fix:lint": "turbo run fix:lint",
