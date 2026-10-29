@@ -834,8 +834,15 @@ class _Compiler:
         if fn == "isEpic":
             return Q(type__is_epic=True)
         if fn == "hasChildren":
+            # Imported lazily: plane.api.views.issue imports this package.
+            from plane.api.views.issue import visible_issue_q
+
             issue_cls = _get_model("Issue")
-            return Q(Exists(issue_cls.objects.filter(parent_id=OuterRef("pk"), deleted_at__isnull=True)))
+            children = issue_cls.objects.filter(parent_id=OuterRef("pk"), deleted_at__isnull=True)
+            if self.user is not None:
+                # Children the user cannot view must not make a parent match.
+                children = children.filter(visible_issue_q(self.user))
+            return Q(Exists(children))
         if fn == "hasStartAndDueDates":
             return Q(start_date__isnull=False, target_date__isnull=False)
         if fn == "isDraft":

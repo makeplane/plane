@@ -545,6 +545,32 @@ class TestScopeAndVisibility:
         assert names(api_client.get(url, {"pql": 'title = "foreign" OR title ~ "own"'})) == ["own"]
         assert_pql_error(api_client.get(url, {"pql": f'childOf("{foreign.id}")'}), "not found")
 
+    def test_restricted_guest_has_children_ignores_hidden_children(
+        self, api_client, workspace, project, states, create_user
+    ):
+        guest = User.objects.create(email=f"g-{uuid4().hex[:6]}@plane.so", username=uuid4().hex[:8])
+        WorkspaceMember.objects.create(workspace=workspace, member=guest, role=5)
+        ProjectMember.objects.create(project=project, member=guest, workspace=workspace, role=5, is_active=True)
+        token = APIToken.objects.create(user=guest, label="guest")
+        api_client.credentials(HTTP_X_API_KEY=token.token)
+
+        parent = Issue(name="parent", project=project, workspace=workspace, state=states["started"])
+        parent.save(created_by_id=guest.id)
+        child = Issue(name="child", project=project, workspace=workspace, state=states["started"], parent=parent)
+        child.save(created_by_id=create_user.id)
+
+        url = _list_url(workspace, project)
+        assert names(api_client.get(url, {"pql": "hasChildren()"})) == []
+        assert names(api_client.get(url, {"pql": "NOT hasChildren()"})) == ["parent"]
+
+    def test_external_id_lookup_applies_pql(self, api_key_client, workspace, project, make_issue):
+        make_issue("ext", priority="low", external_id="e1", external_source="src")
+        url = _list_url(workspace, project)
+        params = {"external_id": "e1", "external_source": "src"}
+        assert api_key_client.get(url, {**params, "pql": 'priority = "low"'}).status_code == status.HTTP_200_OK
+        assert api_key_client.get(url, {**params, "pql": 'priority = "high"'}).status_code == status.HTTP_404_NOT_FOUND
+        assert_pql_error(api_key_client.get(url, {**params, "pql": "priority ="}))
+
     def test_non_member_cannot_list(self, api_client, workspace, project):
         outsider = User.objects.create(email=f"x-{uuid4().hex[:6]}@plane.so", username=uuid4().hex[:8])
         token = APIToken.objects.create(user=outsider, label="out")
