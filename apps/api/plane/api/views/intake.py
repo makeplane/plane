@@ -48,6 +48,7 @@ from plane.utils.openapi import (
     # Request Examples
     INTAKE_ISSUE_CREATE_EXAMPLE,
     INTAKE_ISSUE_UPDATE_EXAMPLE,
+    INTAKE_ISSUE_STATUS_UPDATE_EXAMPLE,
     # Response Examples
     INTAKE_ISSUE_EXAMPLE,
     INVALID_REQUEST_RESPONSE,
@@ -556,7 +557,7 @@ class IntakeIssueStatusAPIEndpoint(IntakeIssueDetailAPIEndpoint):
         ],
         request=OpenApiRequest(
             request=IntakeIssueStatusUpdateSerializer,
-            examples=[INTAKE_ISSUE_UPDATE_EXAMPLE],
+            examples=[INTAKE_ISSUE_STATUS_UPDATE_EXAMPLE],
         ),
         responses={
             200: OpenApiResponse(

@@ -461,3 +461,11 @@ def test_clearing_required_field_without_status_is_rejected_for_stored_status(
 
     intake_issue_record.refresh_from_db()
     assert intake_issue_record.duplicate_to_id == target.id
+
+
+@pytest.mark.contract
+def test_status_route_documents_a_status_only_example():
+    from plane.api.views.intake import IntakeIssueStatusAPIEndpoint
+    from plane.utils.openapi import INTAKE_ISSUE_STATUS_UPDATE_EXAMPLE
+
+    assert set(INTAKE_ISSUE_STATUS_UPDATE_EXAMPLE.value) <= set(IntakeIssueStatusAPIEndpoint.STATUS_FIELDS)
