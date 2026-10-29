@@ -16,10 +16,11 @@ from .base import BaseAPIView
 from plane.api.serializers import (
     UserLiteSerializer,
     ProjectMemberSerializer,
+    ProjectMemberUserLiteSerializer,
     WorkspaceMemberLiteAPISerializer,
     ProjectMemberLiteAPISerializer,
 )
-from plane.db.models import User, Workspace, WorkspaceMember, Project, ProjectMember
+from plane.db.models import Workspace, WorkspaceMember, Project, ProjectMember
 from plane.utils.permissions import ProjectMemberPermission, WorkSpaceAdminPermission, ProjectAdminPermission
 from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
@@ -116,8 +117,8 @@ class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
         parameters=[WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
         responses={
             200: OpenApiResponse(
-                description="List of project members with their roles",
-                response=UserLiteSerializer,
+                description="List of project members with their user and membership IDs",
+                response=ProjectMemberUserLiteSerializer(many=True),
                 examples=[PROJECT_MEMBER_EXAMPLE],
             ),
             401: UNAUTHORIZED_RESPONSE,
@@ -139,13 +140,17 @@ class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the workspace members that are present inside the workspace
-        project_members = ProjectMember.objects.filter(project_id=project_id, workspace__slug=slug).values_list(
-            "member_id", flat=True
+        project_members = (
+            ProjectMember.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                member__isnull=False,
+            )
+            .select_related("member")
+            .order_by("-member__created_at")
         )
 
-        # Get all the users that are present inside the workspace
-        users = UserLiteSerializer(User.objects.filter(id__in=project_members), many=True).data
+        users = ProjectMemberUserLiteSerializer(project_members, many=True).data
         return Response(users, status=status.HTTP_200_OK)
 
     @extend_schema(
@@ -173,7 +178,10 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
         tags=["Members"],
         parameters=[WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
         responses={
-            200: OpenApiResponse(description="Project member", response=ProjectMemberSerializer),
+            200: OpenApiResponse(
+                description="Project member",
+                response=ProjectMemberUserLiteSerializer,
+            ),
             401: UNAUTHORIZED_RESPONSE,
             403: FORBIDDEN_RESPONSE,
             404: PROJECT_NOT_FOUND_RESPONSE,
@@ -194,10 +202,13 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
             )
 
         # Get the workspace members that are present inside the workspace
-        project_members = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
-        user = User.objects.get(id=project_members.member_id)
-        user = UserLiteSerializer(user).data
-        return Response(user, status=status.HTTP_200_OK)
+        project_member = ProjectMember.objects.get(
+            project_id=project_id,
+            workspace__slug=slug,
+            pk=pk,
+        )
+        user_data = ProjectMemberUserLiteSerializer(project_member).data
+        return Response(user_data, status=status.HTTP_200_OK)
 
     @extend_schema(
         operation_id="update_project_member",
