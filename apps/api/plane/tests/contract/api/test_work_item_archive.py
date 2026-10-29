@@ -192,9 +192,25 @@ class TestWorkItemArchiveUnarchive:
         assert archive_resp.status_code == status.HTTP_200_OK
         assert unarchive_resp.status_code == status.HTTP_204_NO_CONTENT
         assert [call.kwargs.get("update_fields") for call in save_mock.call_args_list] == [
-            ["archived_at"],
-            ["archived_at"],
+            ["archived_at", "updated_at"],
+            ["archived_at", "updated_at"],
         ]
+
+    def test_archive_and_unarchive_advance_updated_at(
+        self, api_key_client, workspace, own_project, states, create_user
+    ):
+        issue = Issue(name="Done Issue", project=own_project, workspace=workspace, state=states["completed"])
+        issue.save(created_by_id=create_user.id)
+        seen = issue.updated_at
+
+        assert api_key_client.post(_archive_url(workspace, own_project, issue), {}, format="json").status_code == 200
+        issue.refresh_from_db()
+        assert issue.updated_at > seen
+        seen = issue.updated_at
+
+        assert api_key_client.delete(_unarchive_url(workspace, own_project, issue)).status_code == 204
+        issue.refresh_from_db()
+        assert issue.updated_at > seen
 
     @pytest.mark.parametrize("state_group", ["backlog", "unstarted", "started"])
     def test_archive_rejects_non_completed_or_cancelled_state_group(

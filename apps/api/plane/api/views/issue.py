@@ -3249,6 +3249,8 @@ class IssueArchiveUnarchiveAPIEndpoint(BaseAPIView):
         """Archive work item"""
         # The lock keeps the state-group check valid until archived_at is written, and
         # update_fields keeps a concurrent edit from being overwritten with stale values.
+        # updated_at is listed because auto_now fields are skipped when absent from update_fields,
+        # and incremental sync filters on it.
         with transaction.atomic():
             issue = (
                 Issue.issue_objects.select_related("state")
@@ -3267,7 +3269,7 @@ class IssueArchiveUnarchiveAPIEndpoint(BaseAPIView):
             archived_at = timezone.now().date()
             current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
             issue.archived_at = archived_at
-            issue.save(update_fields=["archived_at"])
+            issue.save(update_fields=["archived_at", "updated_at"])
         issue_activity.delay(
             type="issue.activity.updated",
             requested_data=json.dumps({"archived_at": str(archived_at), "automation": False}),
@@ -3302,7 +3304,7 @@ class IssueArchiveUnarchiveAPIEndpoint(BaseAPIView):
             )
             current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
             issue.archived_at = None
-            issue.save(update_fields=["archived_at"])
+            issue.save(update_fields=["archived_at", "updated_at"])
         issue_activity.delay(
             type="issue.activity.updated",
             requested_data=json.dumps({"archived_at": None}),
