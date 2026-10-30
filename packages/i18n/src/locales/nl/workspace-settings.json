@@ -26,7 +26,8 @@
           "success_title": "Werkruimte verwijderd.",
           "success_message": "Je gaat zo naar je profielpagina.",
           "error_title": "Dat werkte niet.",
-          "error_message": "Probeer het opnieuw."
+          "error_message": "Probeer het opnieuw.",
+          "confirm_description": "Je staat op het punt de werkruimte {workspaceName} te verwijderen. Je verliest de toegang tot alle werkgegevens in deze werkruimte en ze kunnen niet worden hersteld."
         },
         "errors": {
           "name": {
@@ -65,7 +66,8 @@
           }
         },
         "leave_input_label": "Typ de naam van deze werkruimte om door te gaan.",
-        "description": "Beheer de toegang tot deze werkruimte."
+        "description": "Beheer de toegang tot deze werkruimte.",
+        "leave_title": "Werkruimte verlaten?"
       },
       "billing_and_plans": {
         "heading": "Facturering & plannen",

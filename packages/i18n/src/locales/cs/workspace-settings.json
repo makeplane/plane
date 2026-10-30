@@ -26,7 +26,8 @@
           "success_title": "Prostor smazán.",
           "success_message": "Budete přesměrováni na profil.",
           "error_title": "Nepodařilo se.",
-          "error_message": "Zkuste to prosím znovu."
+          "error_message": "Zkuste to prosím znovu.",
+          "confirm_description": "Chystáte se smazat pracovní prostor {workspaceName}. Ztratíte přístup ke všem pracovním datům v tomto prostoru a nelze je obnovit."
         },
         "errors": {
           "name": {
@@ -65,7 +66,8 @@
           }
         },
         "leave_input_label": "Pro pokračování zadejte název tohoto pracovního prostoru.",
-        "description": "Spravujte přístup k tomuto pracovnímu prostoru."
+        "description": "Spravujte přístup k tomuto pracovnímu prostoru.",
+        "leave_title": "Opustit pracovní prostor?"
       },
       "billing_and_plans": {
         "heading": "Fakturace a plány",

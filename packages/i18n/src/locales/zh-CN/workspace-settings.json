@@ -26,7 +26,8 @@
           "success_title": "工作区已删除。",
           "success_message": "即将跳转到您的个人资料页面。",
           "error_title": "操作失败。",
-          "error_message": "请重试。"
+          "error_message": "请重试。",
+          "confirm_description": "您即将删除工作区 {workspaceName}。您将无法再访问此工作区中的所有工作数据，且无法恢复。"
         },
         "errors": {
           "name": {
@@ -65,7 +66,8 @@
           }
         },
         "leave_input_label": "输入此工作区的名称以继续。",
-        "description": "管理对此工作区的访问权限。"
+        "description": "管理对此工作区的访问权限。",
+        "leave_title": "离开工作区？"
       },
       "billing_and_plans": {
         "heading": "账单与计划",

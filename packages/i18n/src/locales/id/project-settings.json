@@ -11,11 +11,17 @@
       "delete_project": {
         "title": "Hapus proyek",
         "description": "Ketika menghapus proyek, semua data dan sumber daya di dalam proyek tersebut akan dihapus secara permanen dan tidak dapat dipulihkan.",
-        "button": "Hapus proyek saya"
+        "button": "Hapus proyek saya",
+        "confirm_description": "Apakah Anda yakin ingin menghapus proyek {projectName}? Semua data dalam proyek ini akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.",
+        "success_message": "Proyek berhasil dihapus."
       },
       "toast": {
         "success": "Proyek berhasil diperbarui",
         "error": "Proyek tidak dapat diperbarui. Silakan coba lagi."
+      },
+      "confirm_project_name_label": "Ketik nama proyek untuk melanjutkan.",
+      "leave_project": {
+        "confirm_description": "Apakah Anda yakin ingin meninggalkan proyek {projectName}? Item kerja yang terkait dengan Anda tidak akan dapat diakses lagi."
       }
     },
     "members": {

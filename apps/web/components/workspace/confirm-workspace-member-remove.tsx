@@ -58,7 +58,7 @@ export const ConfirmWorkspaceMemberRemove = observer(function ConfirmWorkspaceMe
         isOpen={isOpen}
         onClose={handleClose}
         onConfirm={handleDeletion}
-        title="Leave workspace?"
+        title={t("workspace_settings.settings.members.leave_title")}
         description={t("workspace_settings.settings.members.leave_confirmation")}
         fields={[
           {

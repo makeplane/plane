@@ -59,19 +59,14 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
       onClose={onClose}
       onConfirm={onSubmit}
       title={t("workspace_settings.settings.general.delete_modal.title")}
-      description={
-        <>
-          You are about to delete the workspace <span className="text-body-xs-semibold break-words">{data?.name}</span>.
-          If you confirm, you will lose access to all your work data in this workspace without any way to restore it.
-          Tread very carefully.
-        </>
-      }
+      description={t("workspace_settings.settings.general.delete_modal.confirm_description", {
+        workspaceName: data?.name ?? "",
+      })}
       fields={[
-        { name: "workspaceName", label: "Type in this workspace's name to continue.", expectedValue: data?.name ?? "" },
         {
-          name: "confirmDelete",
-          label: 'For final confirmation, type "delete my workspace" below.',
-          expectedValue: "delete my workspace",
+          name: "workspaceName",
+          label: t("workspace_settings.settings.members.leave_input_label"),
+          expectedValue: data?.name ?? "",
         },
       ]}
       confirmLabel={t("confirm")}

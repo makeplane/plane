@@ -26,7 +26,8 @@
           "success_title": "Espacio de trabajo eliminado.",
           "success_message": "Pronto irá a su página de perfil.",
           "error_title": "Eso no funcionó.",
-          "error_message": "Por favor, inténtelo de nuevo."
+          "error_message": "Por favor, inténtelo de nuevo.",
+          "confirm_description": "Estás a punto de eliminar el espacio de trabajo {workspaceName}. Perderás el acceso a todos los datos de trabajo de este espacio y no se podrán restaurar."
         },
         "errors": {
           "name": {
@@ -65,7 +66,8 @@
           }
         },
         "leave_input_label": "Escribe el nombre de este espacio de trabajo para continuar.",
-        "description": "Gestiona el acceso a este espacio de trabajo."
+        "description": "Gestiona el acceso a este espacio de trabajo.",
+        "leave_title": "¿Abandonar el espacio de trabajo?"
       },
       "billing_and_plans": {
         "heading": "Facturación y Planes",

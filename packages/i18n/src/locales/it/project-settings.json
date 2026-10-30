@@ -11,11 +11,17 @@
       "delete_project": {
         "title": "Elimina progetto",
         "description": "Eliminando un progetto, tutti i dati e le risorse all'interno di esso verranno rimossi definitivamente e non potranno essere recuperati.",
-        "button": "Elimina il mio progetto"
+        "button": "Elimina il mio progetto",
+        "confirm_description": "Sei sicuro di voler eliminare il progetto {projectName}? Tutti i dati di questo progetto verranno rimossi definitivamente. Questa azione non può essere annullata.",
+        "success_message": "Progetto eliminato correttamente."
       },
       "toast": {
         "success": "Progetto aggiornato con successo",
         "error": "Impossibile aggiornare il progetto. Per favore, riprova."
+      },
+      "confirm_project_name_label": "Digita il nome del progetto per continuare.",
+      "leave_project": {
+        "confirm_description": "Sei sicuro di voler lasciare il progetto {projectName}? Gli elementi di lavoro associati a te non saranno più accessibili."
       }
     },
     "members": {

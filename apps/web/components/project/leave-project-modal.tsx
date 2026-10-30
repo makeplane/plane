@@ -9,6 +9,7 @@ import { useParams } from "next/navigation";
 // Plane imports
 import { TypeToConfirmDialog } from "@plane/blocks/dialog";
 import { setToast } from "@plane/blocks/toast";
+import { useTranslation } from "@plane/i18n";
 import type { IProject } from "@plane/types";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
@@ -25,21 +26,24 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
   // router
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { leaveProject } = useUserPermissions();
 
   const onSubmit = async () => {
     if (!workspaceSlug) return;
 
-    router.push(`/${workspaceSlug}/projects`);
     try {
       await leaveProject(workspaceSlug.toString(), project.id);
       onClose();
+      // Navigate only once the leave succeeded; a failure keeps the user here with the dialog open.
+      router.push(`/${workspaceSlug}/projects`);
     } catch (_err) {
       setToast({
         type: "error",
-        title: "Error!",
-        message: "Something went wrong please try again later.",
+        title: t("toast.error"),
+        message: t("something_went_wrong_please_try_again"),
       });
     }
   };
@@ -49,20 +53,19 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={onSubmit}
-      title="Leave Project"
-      description={
-        <>
-          Are you sure you want to leave the project -
-          <span className="font-medium text-primary">{` "${project?.name}" `}</span>? All of the work items associated
-          with you will become inaccessible.
-        </>
-      }
+      title={t("leave_project")}
+      description={t("project_settings.general.leave_project.confirm_description", {
+        projectName: project?.name ?? "",
+      })}
       fields={[
-        { name: "projectName", label: "Enter the project name to continue:", expectedValue: project?.name ?? "" },
-        { name: "confirmLeave", label: 'To confirm, type "Leave Project" below:', expectedValue: "Leave Project" },
+        {
+          name: "projectName",
+          label: t("project_settings.general.confirm_project_name_label"),
+          expectedValue: project?.name ?? "",
+        },
       ]}
-      confirmLabel="Leave Project"
-      loadingLabel="Leaving..."
+      confirmLabel={t("leave_project")}
+      loadingLabel={t("leaving")}
     />
   );
 });

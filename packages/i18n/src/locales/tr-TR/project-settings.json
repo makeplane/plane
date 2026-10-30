@@ -11,11 +11,17 @@
       "delete_project": {
         "title": "Projeyi sil",
         "description": "Bir proje silindiğinde, içindeki tüm veri ve kaynaklar kalıcı olarak kaldırılır ve kurtarılamaz.",
-        "button": "Projemi sil"
+        "button": "Projemi sil",
+        "confirm_description": "{projectName} projesini silmek istediğinizden emin misiniz? Bu projedeki tüm veriler kalıcı olarak kaldırılacak. Bu işlem geri alınamaz.",
+        "success_message": "Proje başarıyla silindi."
       },
       "toast": {
         "success": "Proje başarıyla güncellendi",
         "error": "Proje güncellenemedi. Lütfen tekrar deneyin."
+      },
+      "confirm_project_name_label": "Devam etmek için proje adını yazın.",
+      "leave_project": {
+        "confirm_description": "{projectName} projesinden ayrılmak istediğinizden emin misiniz? Sizinle ilişkili iş öğelerine artık erişilemeyecek."
       }
     },
     "members": {

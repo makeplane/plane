@@ -26,7 +26,8 @@
           "success_title": "Đã xóa không gian làm việc.",
           "success_message": "Sắp chuyển hướng đến trang hồ sơ của bạn.",
           "error_title": "Thao tác thất bại.",
-          "error_message": "Vui lòng thử lại."
+          "error_message": "Vui lòng thử lại.",
+          "confirm_description": "Bạn sắp xóa không gian làm việc {workspaceName}. Bạn sẽ mất quyền truy cập vào toàn bộ dữ liệu công việc trong không gian này và không thể khôi phục."
         },
         "errors": {
           "name": {
@@ -65,7 +66,8 @@
           }
         },
         "leave_input_label": "Nhập tên không gian làm việc này để tiếp tục.",
-        "description": "Quản lý quyền truy cập vào không gian làm việc này."
+        "description": "Quản lý quyền truy cập vào không gian làm việc này.",
+        "leave_title": "Rời khỏi không gian làm việc?"
       },
       "billing_and_plans": {
         "heading": "Thanh toán và Kế hoạch",

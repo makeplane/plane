@@ -11,11 +11,17 @@
       "delete_project": {
         "title": "刪除專案",
         "description": "刪除專案時，該專案內的所有資料和資源都將被永久移除且無法復原。",
-        "button": "刪除我的專案"
+        "button": "刪除我的專案",
+        "confirm_description": "您確定要刪除專案 {projectName} 嗎？此專案中的所有資料都將被永久刪除。此操作無法復原。",
+        "success_message": "專案已成功刪除。"
       },
       "toast": {
         "success": "專案更新成功",
         "error": "無法更新專案。請再試一次。"
+      },
+      "confirm_project_name_label": "輸入專案名稱以繼續。",
+      "leave_project": {
+        "confirm_description": "您確定要離開專案 {projectName} 嗎？與您關聯的工作事項將無法再存取。"
       }
     },
     "members": {

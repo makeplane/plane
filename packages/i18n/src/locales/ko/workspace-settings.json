@@ -26,7 +26,8 @@
           "success_title": "작업 공간 삭제됨.",
           "success_message": "곧 프로필 페이지로 이동합니다.",
           "error_title": "작업이 실패했습니다.",
-          "error_message": "다시 시도해주세요."
+          "error_message": "다시 시도해주세요.",
+          "confirm_description": "작업 공간 {workspaceName}을(를) 삭제하려고 합니다. 이 작업 공간의 모든 작업 데이터에 접근할 수 없게 되며 복원할 수 없습니다."
         },
         "errors": {
           "name": {
@@ -65,7 +66,8 @@
           }
         },
         "leave_input_label": "계속하려면 이 작업 공간의 이름을 입력하세요.",
-        "description": "이 작업 공간에 대한 접근을 관리합니다."
+        "description": "이 작업 공간에 대한 접근을 관리합니다.",
+        "leave_title": "작업 공간을 떠나시겠습니까?"
       },
       "billing_and_plans": {
         "heading": "청구 및 플랜",
