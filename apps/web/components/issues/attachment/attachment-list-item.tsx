@@ -77,9 +77,10 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
             {attachment?.created_by && (
               <>
                 <Tooltip
-                  label={`${
-                    getUserDetails(attachment?.created_by)?.display_name ?? ""
-                  } uploaded on ${renderFormattedDate(attachment.updated_at)}`}
+                  label={t("web_ui.dynamic_value0_uploaded_on_value1", {
+                    value0: getUserDetails(attachment?.created_by)?.display_name ?? "",
+                    value1: renderFormattedDate(attachment.updated_at),
+                  })}
                   layout="stacked"
                   disabled={isMobile}
                 >

@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { AlignLeftOutline } from "@makeplane/propel/icons";
 // hooks
@@ -14,6 +15,8 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 type TIssueDescriptionActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
 export const IssueDescriptionActivity = observer(function IssueDescriptionActivity(props: TIssueDescriptionActivity) {
+  const { t } = useTranslation();
+
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {
@@ -30,8 +33,7 @@ export const IssueDescriptionActivity = observer(function IssueDescriptionActivi
       ends={ends}
     >
       <>
-        updated the description
-        {showIssue ? ` of ` : ``}
+        {t("web_ui.updated_the_description")} {showIssue ? t("web_ui.of") : ``}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>
     </IssueActivityBlockComponent>

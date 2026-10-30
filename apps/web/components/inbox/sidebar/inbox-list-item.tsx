@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import type { MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -33,6 +34,8 @@ type InboxIssueListItemProps = {
 };
 
 export const InboxIssueListItem = observer(function InboxIssueListItem(props: InboxIssueListItemProps) {
+  const { t } = useTranslation();
+
   const { workspaceSlug, projectId, inboxIssueId, projectIdentifier, setIsMobileSidebar } = props;
   // router
   const searchParams = useSearchParams();
@@ -82,14 +85,19 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
 
           <div className="flex items-center justify-between">
             <div className="flex flex-wrap items-center gap-2">
-              <Tooltip label={`Created on: ${renderFormattedDate(issue.created_at ?? "") ?? ""}`} disabled={isMobile}>
+              <Tooltip
+                label={t("web_ui.dynamic_created_on_value0", {
+                  value0: renderFormattedDate(issue.created_at ?? "") ?? "",
+                })}
+                disabled={isMobile}
+              >
                 <div className="text-11 text-secondary">{renderFormattedDate(issue.created_at ?? "")}</div>
               </Tooltip>
 
               <div className="rounded-full border-2 border-strong-1" />
 
               {issue.priority && (
-                <Tooltip label={`Priority: ${issue.priority ?? "None"}`}>
+                <Tooltip label={t("web_ui.dynamic_priority_value0", { value0: issue.priority ?? t("none") })}>
                   <PriorityIcon priority={issue.priority} />
                 </Tooltip>
               )}
@@ -97,7 +105,9 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
               {issue.label_ids && issue.label_ids.length > 3 ? (
                 <div className="relative flex !h-[17.5px] items-center gap-1 rounded-sm border border-strong px-1 text-11">
                   <span className="bg-orange-400 h-2 w-2 rounded-full" />
-                  <span className="max-w-28 truncate normal-case">{`${issue.label_ids.length} labels`}</span>
+                  <span className="max-w-28 truncate normal-case">
+                    {t("web_ui.dynamic_value0_labels", { value0: issue.label_ids.length })}
+                  </span>
                 </div>
               ) : (
                 <>

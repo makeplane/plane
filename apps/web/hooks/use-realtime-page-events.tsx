@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useCallback, useMemo } from "react";
 // plane imports
 import type { EventToPayloadMap } from "@plane/editor";
@@ -47,6 +48,8 @@ export const useRealtimePageEvents = ({
   customRealtimeEventHandlers,
   handlers,
 }: UsePageEventsProps) => {
+  const { t } = useTranslation();
+
   const router = useAppRouter();
   const { removePage, getPageById } = usePageStore(storeType);
 
@@ -58,12 +61,12 @@ export const useRealtimePageEvents = ({
       if (!userId) return "";
       try {
         const userDetails = getUserDetails(userId);
-        return userDetails?.display_name ? ` by ${userDetails.display_name}` : "";
+        return userDetails?.display_name ? t("web_ui.by_user", { name: userDetails.display_name }) : "";
       } catch {
         return "";
       }
     },
-    [getUserDetails]
+    [getUserDetails, t]
   );
 
   const ACTION_HANDLERS = useMemo(
@@ -119,8 +122,8 @@ export const useRealtimePageEvents = ({
               if (page.id === pageId && data?.user_id !== currentUser?.id) {
                 setToast({
                   type: "error",
-                  title: "Page deleted",
-                  message: `Page deleted${getUserDisplayText(data.user_id)}`,
+                  title: t("web_ui.page_deleted"),
+                  message: t("web_ui.dynamic_page_deleted_value0", { value0: getUserDisplayText(data.user_id) }),
                 });
                 router.push(handlers.getRedirectionLink());
               } else if (page.id === pageId) {
@@ -173,7 +176,7 @@ export const useRealtimePageEvents = ({
         ...customRealtimeEventHandlers,
       };
     },
-    [getPageById, removePage, page, currentUser, getUserDisplayText, router, handlers, customRealtimeEventHandlers]
+    [t, getPageById, removePage, page, currentUser, getUserDisplayText, router, handlers, customRealtimeEventHandlers]
   );
 
   // The main function that will be returned from this hook

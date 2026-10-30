@@ -43,7 +43,7 @@ export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSetting
           aria-label={t("back_to_workspace")}
           onClick={() => router.push(`/${currentWorkspace?.slug}/`)}
         />
-        <p>Workspace settings</p>
+        <p>{t("workspace_settings.label")}</p>
       </div>
       <div className="mt-1.5 flex items-center justify-between gap-2 px-5 py-0.5">
         <div className="flex items-center gap-2 truncate">

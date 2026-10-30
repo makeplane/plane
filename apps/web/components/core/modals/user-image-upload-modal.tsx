@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
@@ -38,6 +39,8 @@ type Props = {
 };
 
 export const UserImageUploadModal = observer(function UserImageUploadModal(props: Props) {
+  const { t } = useTranslation();
+
   const { handleRemove, isOpen, onClose, onSuccess, value } = props;
   // states
   const [image, setImage] = useState<File | null>(null);
@@ -76,7 +79,7 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
     } catch (error) {
       setToast({
         type: "error",
-        title: "Error!",
+        title: t("error"),
         message: error?.toString() ?? "Something went wrong. Please try again.",
       });
       throw new Error("Error in uploading file.", { cause: error });
@@ -114,7 +117,7 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
         <DialogMain>
           <DialogHeader>
             <DialogHeading>
-              <DialogTitle>Upload Image</DialogTitle>
+              <DialogTitle>{t("web_ui.upload_image")}</DialogTitle>
             </DialogHeading>
           </DialogHeader>
           <DialogBody tabIndex={0}>
@@ -135,11 +138,11 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
                           type="button"
                           className="absolute top-0 right-0 z-40 translate-x-1/2 -translate-y-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-11 font-medium text-secondary"
                         >
-                          Edit
+                          {t("edit")}{" "}
                         </button>
                         <img
                           src={image ? URL.createObjectURL(image) : value ? getFileURL(value) : ""}
-                          alt="image"
+                          alt={t("web_ui.image")}
                           className="absolute top-0 left-0 h-full w-full rounded-md object-cover"
                         />
                       </>
@@ -147,7 +150,7 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
                       <div>
                         <UserOutline className="mx-auto h-16 w-16 text-secondary" />
                         <span className="mt-2 block text-13 font-medium text-secondary">
-                          {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
+                          {isDragActive ? t("web_ui.drop_image_here_to_upload") : "Drag & drop image here"}
                         </span>
                       </div>
                     )}
@@ -159,11 +162,11 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
                   <p className="text-13 text-danger-primary">
                     {fileRejections[0].errors[0].code === "file-too-large"
                       ? "The image size cannot exceed 5 MB."
-                      : "Please upload a file in a valid format."}
+                      : t("web_ui.please_upload_a_file_in_a_valid_format")}
                   </p>
                 )}
               </div>
-              <p className="text-13 text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
+              <p className="text-13 text-secondary">{t("web_ui.file_formats_supported_jpeg_jpg_png_webp")}</p>
             </div>
           </DialogBody>
         </DialogMain>
@@ -173,17 +176,21 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
               variant="danger"
               size="md"
               stretch="auto"
-              label={isRemoving ? "Removing" : "Remove"}
+              label={isRemoving ? t("removing") : t("remove")}
               onClick={handleImageRemove}
               disabled={!value}
             />
           </DialogInfo>
-          <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+          <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={handleClose} />
           <Button
             variant="primary"
             size="md"
             stretch="auto"
-            label={isImageUploading ? "Uploading" : "Upload & Save"}
+            label={
+              isImageUploading
+                ? t("project.members_import.progress.uploading")
+                : t("workspace_settings.settings.applications.upload_and_save")
+            }
             onClick={handleSubmit}
             disabled={!image}
             loading={isImageUploading}

@@ -5,42 +5,11 @@
  */
 
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { CyclesOutline, ModuleOutline, PagesOutline, ViewsOutline, WorkItemsOutline } from "@makeplane/propel/icons";
 import type { ISvgIcons } from "@plane/blocks/icons";
 // types
 import type { TTourSteps } from "./root";
-
-const sidebarOptions: {
-  key: TTourSteps;
-  label: string;
-  Icon: React.FC<ISvgIcons>;
-}[] = [
-  {
-    key: "work-items",
-    label: "Work items",
-    Icon: WorkItemsOutline,
-  },
-  {
-    key: "cycles",
-    label: "Cycles",
-    Icon: CyclesOutline,
-  },
-  {
-    key: "modules",
-    label: "Modules",
-    Icon: ModuleOutline,
-  },
-  {
-    key: "views",
-    label: "Views",
-    Icon: ViewsOutline,
-  },
-  {
-    key: "pages",
-    label: "Pages",
-    Icon: PagesOutline,
-  },
-];
 
 type Props = {
   step: TTourSteps;
@@ -48,12 +17,45 @@ type Props = {
 };
 
 export function TourSidebar({ step, setStep }: Props) {
+  const { t } = useTranslation();
+  const sidebarOptions: {
+    key: TTourSteps;
+    label: string;
+    Icon: React.FC<ISvgIcons>;
+  }[] = [
+    {
+      key: "work-items",
+      label: t("issues"),
+      Icon: WorkItemsOutline,
+    },
+    {
+      key: "cycles",
+      label: t("cycles"),
+      Icon: CyclesOutline,
+    },
+    {
+      key: "modules",
+      label: t("modules"),
+      Icon: ModuleOutline,
+    },
+    {
+      key: "views",
+      label: t("views"),
+      Icon: ViewsOutline,
+    },
+    {
+      key: "pages",
+      label: t("pages"),
+      Icon: PagesOutline,
+    },
+  ];
+
   return (
     <div className="col-span-3 hidden bg-surface-2 p-8 lg:block">
       <h3 className="text-16 font-medium">
-        Let{"'"}s get started!
+        {t("web_ui.lets_get_started")}
         <br />
-        Get more out of Plane.
+        {t("web_ui.get_more_out_of_plane")}{" "}
       </h3>
       <div className="mt-8 space-y-5">
         {sidebarOptions.map((option) => (

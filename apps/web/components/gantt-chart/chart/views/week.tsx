@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // plane utils
 import { cn } from "@plane/utils";
@@ -14,13 +15,16 @@ import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../../constants";
 import type { IWeekBlock } from "../../views";
 
 export const WeekChartView = observer(function WeekChartView(_props: any) {
+  const { t, currentLocale } = useTranslation();
+  const monthLabel = (year: number, month: number) =>
+    new Intl.DateTimeFormat(currentLocale, { month: "short", year: "numeric" }).format(new Date(year, month, 1));
   const { currentViewData, renderView } = useTimeLineChartStore();
   const weekBlocks: IWeekBlock[] = renderView;
 
   return (
     <div className={`absolute top-0 left-0 flex h-max min-h-full w-max`}>
       {currentViewData &&
-        weekBlocks?.map((block, rootIndex) => (
+        weekBlocks?.map((block) => (
           <div
             key={`month-${block?.startDate.toString()}-${block?.endDate.toString()}`}
             className="relative flex flex-col outline-[0.25px] outline-subtle-1"
@@ -40,17 +44,19 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
                     left: `${SIDEBAR_WIDTH}px`,
                   }}
                 >
-                  {block?.title}
+                  {block.startMonth === block.endMonth
+                    ? monthLabel(block.startYear, block.startMonth)
+                    : `${monthLabel(block.startYear, block.startMonth)} - ${monthLabel(block.endYear, block.endMonth)}`}
                 </div>
                 <div className="sticky px-3 py-2 text-11 whitespace-nowrap text-placeholder capitalize">
-                  {block?.weekData?.title}
+                  {t("web_ui.week_number", { count: block.weekNumber })}
                 </div>
               </div>
               {/** Days Sub title */}
               <div className="flex h-5 w-full">
-                {block?.children?.map((weekDay, index) => (
+                {block?.children?.map((weekDay) => (
                   <div
-                    key={`sub-title-${rootIndex}-${index}`}
+                    key={`sub-title-${weekDay.date.toISOString()}`}
                     className={cn(
                       "flex flex-shrink-0 justify-between p-1 text-center capitalize outline-[0.25px] outline-subtle-1",
                       {
@@ -59,7 +65,9 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
                     )}
                     style={{ width: `${currentViewData?.data.dayWidth}px` }}
                   >
-                    <div className="space-x-1 text-11 font-medium text-placeholder">{weekDay.dayData.abbreviation}</div>
+                    <div className="space-x-1 text-11 font-medium text-placeholder">
+                      {new Intl.DateTimeFormat(currentLocale, { weekday: "short" }).format(weekDay.date)}
+                    </div>
                     <div className="space-x-1 text-11 font-medium">
                       <span
                         className={cn({
@@ -75,9 +83,9 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
             </div>
             {/** Day Columns */}
             <div className="flex h-full w-full flex-grow bg-surface-1">
-              {block?.children?.map((weekDay, index) => (
+              {block?.children?.map((weekDay) => (
                 <div
-                  key={`column-${rootIndex}-${index}`}
+                  key={`column-${weekDay.date.toISOString()}`}
                   className={cn("h-full overflow-hidden outline-[0.25px] outline-subtle", {
                     "bg-accent-primary/20": weekDay.today,
                   })}

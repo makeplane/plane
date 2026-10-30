@@ -98,8 +98,8 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
     } else {
       setToast({
         type: "error",
-        title: "Error!",
-        message: "Editor is still processing changes. Please wait before proceeding.",
+        title: t("error"),
+        message: t("web_ui.editor_is_still_processing_changes_please_wait_before_proceeding"),
       });
       event.preventDefault(); // Prevent default action if editor is not ready to discard
     }
@@ -128,11 +128,14 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
         if (res.response === "")
           setToast({
             type: "error",
-            title: "Error!",
-            message:
-              "Work item title isn't informative enough to generate the description. Please try with a different title.",
+            title: t("error"),
+            message: t(
+              "web_ui.work_item_title_isn_t_informative_enough_to_generate_the_description_please_try_with_a_dif"
+            ),
           });
         else handleAiAssistance(res.response_html);
+
+        return undefined;
       })
       .catch((err) => {
         const error = err?.data?.error;
@@ -140,13 +143,13 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
         if (err.status === 429)
           setToast({
             type: "error",
-            title: "Error!",
+            title: t("error"),
             message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
           setToast({
             type: "error",
-            title: "Error!",
+            title: t("error"),
             message: error || "Some error occurred. Please try again.",
           });
       })
@@ -255,10 +258,11 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
                 tabIndex={getIndex("feeling_lucky")}
               >
                 {iAmFeelingLucky ? (
-                  "Generating response"
+                  t("web_ui.generating_response")
                 ) : (
                   <>
-                    <AiStar1Outline className="h-3.5 w-3.5" />I{"'"}m feeling lucky
+                    <AiStar1Outline className="h-3.5 w-3.5" />
+                    {t("web_ui.feeling_lucky")}
                   </>
                 )}
               </button>

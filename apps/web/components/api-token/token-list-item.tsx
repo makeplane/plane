@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState } from "react";
 import { CloseCircleOutline } from "@makeplane/propel/icons";
 // plane imports
@@ -20,6 +21,8 @@ type Props = {
 };
 
 export function ApiTokenListItem(props: Props) {
+  const { t } = useTranslation();
+
   const { token } = props;
   // states
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -30,7 +33,7 @@ export function ApiTokenListItem(props: Props) {
     <>
       <DeleteApiTokenModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} tokenId={token.id} />
       <div className="group relative flex flex-col justify-center border-b border-subtle py-3">
-        <Tooltip label="Delete token" disabled={isMobile}>
+        <Tooltip label={t("web_ui.delete_token")} disabled={isMobile}>
           <button
             onClick={() => setDeleteModalOpen(true)}
             className="absolute right-4 hidden place-items-center group-hover:grid"
@@ -45,7 +48,7 @@ export function ApiTokenListItem(props: Props) {
               token.is_active ? "bg-success-subtle text-success-primary" : "bg-layer-1 text-placeholder"
             } ml-2 flex h-4 max-h-fit items-center rounded-xs px-2 text-11 font-medium`}
           >
-            {token.is_active ? "Active" : "Expired"}
+            {token.is_active ? t("common.active") : t("web_ui.expired")}
           </span>
         </div>
         <div className="mt-1 flex w-full flex-col justify-center">
@@ -56,7 +59,7 @@ export function ApiTokenListItem(props: Props) {
             {token.is_active
               ? token.expired_at
                 ? `Expires ${renderFormattedDate(token.expired_at)} at ${renderFormattedTime(token.expired_at)}`
-                : "Never expires"
+                : t("workspace_settings.settings.api_tokens.never_expires")
               : `Expired ${calculateTimeAgo(token.expired_at)}`}
           </p>
         </div>

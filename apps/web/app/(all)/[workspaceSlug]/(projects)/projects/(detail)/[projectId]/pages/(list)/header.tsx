@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -27,6 +28,8 @@ import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb
 import { EPageStoreType, usePageStore } from "@/hooks/store";
 
 export const PagesListHeader = observer(function PagesListHeader() {
+  const { t } = useTranslation();
+
   // states
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   // router
@@ -55,7 +58,7 @@ export const PagesListHeader = observer(function PagesListHeader() {
       .catch((err) => {
         setToast({
           type: "error",
-          title: "Error!",
+          title: t("error"),
           message: err?.data?.error || "Page could not be created. Please try again.",
         });
       })
@@ -74,7 +77,7 @@ export const PagesListHeader = observer(function PagesListHeader() {
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
-                label="Pages"
+                label={t("pages")}
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/`}
                 icon={<PagesOutline className="h-4 w-4 text-tertiary" />}
                 isLast
@@ -90,7 +93,7 @@ export const PagesListHeader = observer(function PagesListHeader() {
             variant="primary"
             size="md"
             stretch="auto"
-            label={isCreatingPage ? "Adding" : "Add page"}
+            label={isCreatingPage ? t("adding") : t("wiki_collections.header.add_page")}
             onClick={handleCreatePage}
             loading={isCreatingPage}
           />

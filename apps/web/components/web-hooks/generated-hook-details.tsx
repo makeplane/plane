@@ -31,7 +31,7 @@ export function GeneratedHookDetails(props: Props) {
         <WebhookSecretKey data={webhookDetails} />
       </div>
       <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-        <Button variant="secondary" size="md" stretch="auto" label="Close" onClick={handleClose} />
+        <Button variant="secondary" size="md" stretch="auto" label={t("close")} onClick={handleClose} />
       </div>
     </>
   );

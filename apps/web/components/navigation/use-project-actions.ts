@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useCallback, useState } from "react";
 import { setToast } from "@plane/blocks/toast";
 import { copyUrlToClipboard } from "@plane/utils";
@@ -16,6 +17,8 @@ type UseProjectActionsProps = {
 };
 
 export const useProjectActions = ({ workspaceSlug, projectId, activeItem }: UseProjectActionsProps) => {
+  const { t } = useTranslation();
+
   const [publishModalOpen, setPublishModalOpen] = useState(false);
   const [leaveProjectModalOpen, setLeaveProjectModalOpen] = useState(false);
 
@@ -30,17 +33,17 @@ export const useProjectActions = ({ workspaceSlug, projectId, activeItem }: UseP
       await copyUrlToClipboard(pathToCopy);
       setToast({
         type: "info",
-        title: "Link copied!",
-        message: "Project link copied to clipboard.",
+        title: t("link_copied"),
+        message: t("project_link_copied_to_clipboard"),
       });
     } catch (_error) {
       setToast({
         type: "error",
-        title: "Copy failed",
-        message: "We couldn't copy the link. Please try again.",
+        title: t("web_ui.copy_failed"),
+        message: t("web_ui.we_couldn_t_copy_the_link_please_try_again"),
       });
     }
-  }, [activeItem, projectId, workspaceSlug]);
+  }, [t, activeItem, projectId, workspaceSlug]);
 
   const handlePublishModal = useCallback((open: boolean) => {
     setPublishModalOpen(open);

@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // icons
 import { ChevronDownOutline, FilterOutline } from "@makeplane/propel/icons";
@@ -17,6 +18,8 @@ import { useMember } from "@/hooks/store/use-member";
 import { useProjectView } from "@/hooks/store/use-project-view";
 
 export const ViewMobileHeader = observer(function ViewMobileHeader() {
+  const { t } = useTranslation();
+
   // store hooks
   const { filters, updateFilters } = useProjectView();
   const {
@@ -40,13 +43,12 @@ export const ViewMobileHeader = observer(function ViewMobileHeader() {
         <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
           <FiltersDropdown
             icon={<FilterOutline className="h-3 w-3" />}
-            title="Filters"
+            title={t("common.filters")}
             placement="bottom-end"
             isFiltersApplied={false}
             menuButton={
               <Row className="flex items-center text-13 text-secondary">
-                Filters
-                <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" />
+                {t("common.filters")} <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" />
               </Row>
             }
           >

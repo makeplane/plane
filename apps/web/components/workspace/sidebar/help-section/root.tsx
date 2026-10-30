@@ -68,7 +68,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
           <MenuItem label={t("keyboard_shortcuts")} onClick={() => toggleShortcutsListModal(true)} />
           <MenuItem label={t("whats_new")} onClick={() => setProductUpdatesModalOpen(true)} />
           <MenuItem
-            label="Forum"
+            label={t("forum")}
             onClick={() => window.open("https://forum.plane.so", "_blank", "noopener,noreferrer")}
           />
         </MenuContent>

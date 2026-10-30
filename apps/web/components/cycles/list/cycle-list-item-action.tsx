@@ -265,7 +265,11 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
       {/* created by */}
       {createdByDetails && !isActive && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
       {!isActive && (
-        <Tooltip label={`${cycleDetails.assignee_ids?.length} Members`} layout="stacked" disabled={isMobile}>
+        <Tooltip
+          label={t("web_ui.dynamic_value0_members", { value0: cycleDetails.assignee_ids?.length })}
+          layout="stacked"
+          disabled={isMobile}
+        >
           <div className="flex w-min cursor-default items-center justify-center">
             {cycleDetails.assignee_ids && cycleDetails.assignee_ids?.length > 0 ? (
               <AvatarGroup size="xs" max={2}>

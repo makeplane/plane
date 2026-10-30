@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -12,29 +13,31 @@ import type { IProject } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
-const ARCHIVES_TAB_LIST: {
-  key: string;
-  label: string;
-  shouldRender: (projectDetails: IProject) => boolean;
-}[] = [
-  {
-    key: "issues",
-    label: "Work items",
-    shouldRender: () => true,
-  },
-  {
-    key: "cycles",
-    label: "Cycles",
-    shouldRender: (projectDetails) => projectDetails.cycle_view,
-  },
-  {
-    key: "modules",
-    label: "Modules",
-    shouldRender: (projectDetails) => projectDetails.module_view,
-  },
-];
-
 export const ArchiveTabsList = observer(function ArchiveTabsList() {
+  const { t } = useTranslation();
+
+  const ARCHIVES_TAB_LIST: {
+    key: string;
+    label: string;
+    shouldRender: (projectDetails: IProject) => boolean;
+  }[] = [
+    {
+      key: "issues",
+      label: t("issues"),
+      shouldRender: () => true,
+    },
+    {
+      key: "cycles",
+      label: t("cycles"),
+      shouldRender: (projectDetails) => projectDetails.cycle_view,
+    },
+    {
+      key: "modules",
+      label: t("modules"),
+      shouldRender: (projectDetails) => projectDetails.module_view,
+    },
+  ];
+
   // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();

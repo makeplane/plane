@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
+import { Fragment } from "react";
 import { useTranslation } from "@plane/i18n";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import { LinearProgress } from "@makeplane/propel/components/linear-progress";
@@ -53,9 +54,11 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
           <h3 className="text-14 font-semibold text-tertiary">{t("project_cycles.active_cycle.progress")}</h3>
           {cycle.total_issues > 0 && (
             <span className="flex gap-1 rounded-xs px-3 py-1 text-13 font-medium whitespace-nowrap text-placeholder">
-              {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${
-                cycle.completed_issues + cycle.cancelled_issues > 1 ? "Work items" : "Work item"
-              } closed`}
+              {t("web_ui.dynamic_value0_value1_value2_closed", {
+                value0: cycle.completed_issues + cycle.cancelled_issues,
+                value1: cycle.total_issues - cycle.cancelled_issues,
+                value2: cycle.completed_issues + cycle.cancelled_issues > 1 ? t("work_items") : t("common.work_item"),
+              })}
             </span>
           )}
         </div>
@@ -65,7 +68,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
             size="md"
             variant="brand"
             showValue={false}
-            aria-label="Cycle progress"
+            aria-label={t("web_ui.cycle_progress")}
           />
         )}
       </div>
@@ -73,11 +76,12 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
       {cycle.total_issues > 0 ? (
         <div className="flex flex-col gap-5">
           {Object.keys(groupedIssues).map((group, index) => (
-            <>
+            <Fragment key={group}>
               {groupedIssues[group] > 0 && (
-                <div key={index}>
-                  <div
-                    className="flex cursor-pointer items-center justify-between gap-2 text-13"
+                <div>
+                  <button
+                    type="button"
+                    className="flex w-full cursor-pointer items-center justify-between gap-2 text-left text-13"
                     onClick={() => {
                       handleFiltersUpdate([{ property: "state_group", operator: "in", value: [group] }]);
                     }}
@@ -91,20 +95,24 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
                       />
                       <span className="w-16 font-medium text-tertiary capitalize">{group}</span>
                     </div>
-                    <span className="text-tertiary">{`${groupedIssues[group]} ${
-                      groupedIssues[group] > 1 ? "Work items" : "Work item"
-                    }`}</span>
-                  </div>
+                    <span className="text-tertiary">
+                      {t("web_ui.dynamic_value0_value1", {
+                        value0: groupedIssues[group],
+                        value1: groupedIssues[group] > 1 ? t("work_items") : t("common.work_item"),
+                      })}
+                    </span>
+                  </button>
                 </div>
               )}
-            </>
+            </Fragment>
           ))}
           {cycle.cancelled_issues > 0 && (
             <span className="flex items-center gap-2 text-13 text-tertiary">
               <span>
-                {`${cycle.cancelled_issues} cancelled ${
-                  cycle.cancelled_issues > 1 ? "work items are" : "work item is"
-                } excluded from this report.`}{" "}
+                {t("web_ui.dynamic_value0_cancelled_value1_excluded_from_this_report", {
+                  value0: cycle.cancelled_issues,
+                  value1: cycle.cancelled_issues > 1 ? t("work_items") : t("common.work_item"),
+                })}{" "}
               </span>
             </span>
           )}

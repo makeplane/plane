@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
@@ -33,6 +34,8 @@ type TDeleteEstimateModal = {
 };
 
 export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: TDeleteEstimateModal) {
+  const { t } = useTranslation();
+
   // props
   const { workspaceSlug, projectId, estimateId, isOpen, handleClose } = props;
   // hooks
@@ -53,16 +56,16 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
       setButtonLoader(false);
       setToast({
         type: "success",
-        title: "Estimate deleted",
-        message: "Estimate has been removed from your project.",
+        title: t("web_ui.estimate_deleted"),
+        message: t("web_ui.estimate_has_been_removed_from_your_project"),
       });
       handleClose();
     } catch (_error) {
       setButtonLoader(false);
       setToast({
         type: "error",
-        title: "Estimate creation failed",
-        message: "We were unable to delete the estimate, please try again.",
+        title: t("project_settings.estimates.toasts.created.error.title"),
+        message: t("web_ui.we_were_unable_to_delete_the_estimate_please_try_again"),
       });
     }
   };
@@ -83,16 +86,17 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
           {/* heading */}
           <DialogHeader>
             <DialogHeading>
-              <DialogTitle>Delete Estimate System</DialogTitle>
+              <DialogTitle>{t("web_ui.delete_estimate_system")}</DialogTitle>
             </DialogHeading>
           </DialogHeader>
 
           {/* estimate steps */}
           <DialogBody tabIndex={0}>
             <div className="text-14 text-secondary">
-              Deleting the estimate <span className="font-bold text-primary">{estimate?.name}</span>
-              &nbsp;system will remove it from all work items permanently. This action cannot be undone. If you add
-              estimates again, you will need to update all the work items.
+              {t("web_ui.deleting_the_estimate")} <span className="font-bold text-primary">{estimate?.name}</span>
+              {t(
+                "web_ui.nbsp_system_will_remove_it_from_all_work_items_permanently_this_action_cannot_be_undone_if"
+              )}{" "}
             </div>
           </DialogBody>
         </DialogMain>
@@ -104,7 +108,7 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
             onClick={handleClose}
             disabled={buttonLoader}
             stretch="auto"
-            label="Cancel"
+            label={t("cancel")}
           />
           <Button
             variant="danger"
@@ -112,7 +116,7 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
             onClick={handleDeleteEstimate}
             disabled={buttonLoader}
             stretch="auto"
-            label={buttonLoader ? "Deleting" : "Delete Estimate"}
+            label={buttonLoader ? t("deleting") : t("web_ui.delete_estimate")}
           />
         </DialogActions>
       </DialogContent>

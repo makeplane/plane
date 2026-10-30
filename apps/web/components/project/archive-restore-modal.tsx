@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState } from "react";
 // ui
 import { Button } from "@makeplane/propel/components/button";
@@ -32,6 +33,8 @@ type Props = {
 };
 
 export function ArchiveRestoreProjectModal(props: Props) {
+  const { t } = useTranslation();
+
   const { workspaceSlug, projectId, isOpen, onClose, archive } = props;
   // router
   const router = useAppRouter();
@@ -54,8 +57,8 @@ export function ArchiveRestoreProjectModal(props: Props) {
       .then(() => {
         setToast({
           type: "success",
-          title: "Archive success",
-          message: `${projectDetails.name} has been archived successfully`,
+          title: t("issue.archive.success.label"),
+          message: t("web_ui.dynamic_value0_has_been_archived_successfully", { value0: projectDetails.name }),
         });
         onClose();
         router.push(`/${workspaceSlug}/projects/`);
@@ -64,8 +67,8 @@ export function ArchiveRestoreProjectModal(props: Props) {
       .catch(() =>
         setToast({
           type: "error",
-          title: "Error!",
-          message: "Project could not be archived. Please try again.",
+          title: t("error"),
+          message: t("web_ui.project_could_not_be_archived_please_try_again"),
         })
       )
       .finally(() => setIsLoading(false));
@@ -77,8 +80,8 @@ export function ArchiveRestoreProjectModal(props: Props) {
       .then(() => {
         setToast({
           type: "success",
-          title: "Restore success",
-          message: `You can find ${projectDetails.name} in your projects.`,
+          title: t("issue.restore.success.title"),
+          message: t("web_ui.dynamic_you_can_find_value0_in_your_projects", { value0: projectDetails.name }),
         });
         onClose();
         router.push(`/${workspaceSlug}/projects/`);
@@ -87,8 +90,8 @@ export function ArchiveRestoreProjectModal(props: Props) {
       .catch(() =>
         setToast({
           type: "error",
-          title: "Error!",
-          message: "Project could not be restored. Please try again.",
+          title: t("error"),
+          message: t("web_ui.project_could_not_be_restored_please_try_again"),
         })
       )
       .finally(() => setIsLoading(false));
@@ -106,7 +109,7 @@ export function ArchiveRestoreProjectModal(props: Props) {
           <DialogHeader>
             <DialogHeading>
               <DialogTitle>
-                {archive ? "Archive" : "Restore"} {projectDetails.name}
+                {archive ? t("archive") : t("restore")} {projectDetails.name}
               </DialogTitle>
             </DialogHeading>
           </DialogHeader>
@@ -114,17 +117,27 @@ export function ArchiveRestoreProjectModal(props: Props) {
             <p className="text-13 text-secondary">
               {archive
                 ? "This project and its work items, cycles, modules, and pages will be archived. Its work items won't appear in search. Only project admins can restore the project."
-                : "Restoring a project will activate it and make it visible to all members of the project. Are you sure you want to continue?"}
+                : t(
+                    "web_ui.restoring_a_project_will_activate_it_and_make_it_visible_to_all_members_of_the_project_are"
+                  )}
             </p>
           </DialogBody>
         </DialogMain>
         <DialogActions>
-          <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={onClose} />
+          <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={onClose} />
           <Button
             variant="primary"
             size="md"
             stretch="auto"
-            label={archive ? (isLoading ? "Archiving" : "Archive") : isLoading ? "Restoring" : "Restore"}
+            label={
+              archive
+                ? isLoading
+                  ? t("common.archiving")
+                  : t("archive")
+                : isLoading
+                  ? t("web_ui.restoring")
+                  : t("restore")
+            }
             onClick={archive ? handleArchiveProject : handleRestoreProject}
             loading={isLoading}
           />

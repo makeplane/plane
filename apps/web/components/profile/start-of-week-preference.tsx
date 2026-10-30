@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // plane imports
 import { START_OF_THE_WEEK_OPTIONS } from "@plane/constants";
@@ -26,15 +27,21 @@ const DROPDOWN_PLACEMENT = { side: "bottom", align: "end" } as const;
 export const StartOfWeekPreference = observer(function StartOfWeekPreference(props: {
   option: { title: string; description: string };
 }) {
+  const { t } = useTranslation();
+
   // hooks
   const { data: userProfile, updateUserProfile } = useUserProfile();
 
   const handleStartOfWeekChange = async (val: number) => {
     try {
       await updateUserProfile({ start_of_the_week: val });
-      setToast({ type: "success", title: "Success", message: "First day of the week updated successfully" });
+      setToast({
+        type: "success",
+        title: t("success"),
+        message: t("web_ui.first_day_of_the_week_updated_successfully"),
+      });
     } catch (_error) {
-      setToast({ type: "error", title: "Update failed", message: "Please try again later." });
+      setToast({ type: "error", title: t("web_ui.update_failed"), message: t("web_ui.please_try_again_later") });
     }
   };
 

@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -18,6 +19,8 @@ type Props = {
 };
 
 export const PowerKLabelsMenu = observer(function PowerKLabelsMenu({ labels, onSelect, value }: Props) {
+  const { t } = useTranslation();
+
   return (
     <PowerKMenuBuilder
       items={labels}
@@ -31,7 +34,7 @@ export const PowerKLabelsMenu = observer(function PowerKLabelsMenu({ labels, onS
       getLabel={(label) => label.name}
       isSelected={(label) => !!value?.includes(label.id)}
       onSelect={onSelect}
-      emptyText="No labels found"
+      emptyText={t("web_ui.no_labels_found")}
     />
   );
 });

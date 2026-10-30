@@ -139,7 +139,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink
-                    label="Cycles"
+                    label={t("cycles")}
                     href={`/${workspaceSlug}/projects/${projectId}/cycles/`}
                     icon={<CyclesOutline className="h-4 w-4 text-tertiary" />}
                   />
@@ -164,7 +164,10 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
             </Breadcrumbs>
             {workItemsCount && workItemsCount > 0 ? (
               <Tooltip
-                label={`There are ${workItemsCount} ${workItemsCount > 1 ? "work items" : "work item"} in this cycle`}
+                label={t("web_ui.dynamic_there_are_value0_value1_in_this_cycle", {
+                  value0: workItemsCount,
+                  value1: workItemsCount > 1 ? t("work_items") : t("common.work_item"),
+                })}
                 layout="stacked"
                 side="bottom"
                 disabled={isMobile}
@@ -231,7 +234,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                     variant="secondary"
                     size="md"
                     stretch="auto"
-                    label="Analytics"
+                    label={t("analytics")}
                     onClick={() => setAnalyticsModal(true)}
                   />
                 </span>
@@ -240,7 +243,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                     variant="secondary"
                     size="md"
                     icon={<Icon icon={BarOutline} />}
-                    aria-label="Analytics"
+                    aria-label={t("analytics")}
                     onClick={() => setAnalyticsModal(true)}
                   />
                 </span>
@@ -262,7 +265,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
               variant={isSidebarCollapsed ? "ghost" : "tertiary"}
               size="md"
               icon={<Icon icon={RightSidePaneOutline} />}
-              aria-label="Toggle sidebar"
+              aria-label={t("web_ui.toggle_sidebar")}
               aria-pressed={!isSidebarCollapsed}
               onClick={toggleSidebar}
             />

@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // icons
 import { MembersOutline } from "@makeplane/propel/icons";
@@ -15,6 +16,8 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 type TIssueAssigneeActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
 export const IssueAssigneeActivity = observer(function IssueAssigneeActivity(props: TIssueAssigneeActivity) {
+  const { t } = useTranslation();
+
   const { activityId, ends, showIssue = true } = props;
   // hooks
   const {
@@ -31,7 +34,7 @@ export const IssueAssigneeActivity = observer(function IssueAssigneeActivity(pro
       ends={ends}
     >
       <>
-        {activity.old_value === "" ? `added a new assignee ` : `removed the assignee `}
+        {activity.old_value === "" ? t("web_ui.added_a_new_assignee") : t("web_ui.removed_the_assignee")}
         <a
           href={`/${activity.workspace_detail?.slug}/profile/${activity.new_identifier ?? activity.old_identifier}`}
           target="_blank"

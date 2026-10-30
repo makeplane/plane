@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { DownloadOutline } from "@makeplane/propel/icons";
 import type { IExportData } from "@plane/types";
 import { getDate, getFileURL, renderFormattedDate } from "@plane/utils";
@@ -17,6 +18,8 @@ const checkExpiry = (inputDateString: string) => {
   return expiryDate > currentDate;
 };
 export const useExportColumns = () => {
+  const { t } = useTranslation();
+
   const columns = [
     {
       key: "Exported By",
@@ -54,7 +57,11 @@ export const useExportColumns = () => {
     {
       key: "Exported projects",
       content: "Exported projects",
-      tdRender: (rowData: RowData) => <div className="text-13">{rowData.project.length} project(s)</div>,
+      tdRender: (rowData: RowData) => (
+        <div className="text-13">
+          {rowData.project.length} {t("web_ui.project_s")}
+        </div>
+      ),
     },
     {
       key: "Format",
@@ -66,7 +73,7 @@ export const useExportColumns = () => {
             : rowData.provider === "xlsx"
               ? "Excel"
               : rowData.provider === "json"
-                ? "JSON"
+                ? t("exporter.json.title")
                 : ""}
         </span>
       ),
@@ -102,7 +109,7 @@ export const useExportColumns = () => {
               <a target="_blank" href={rowData?.url} rel="noopener noreferrer">
                 <button className="flex w-full items-center gap-1 font-medium text-accent-primary">
                   <DownloadOutline className="h-4 w-4" />
-                  <div>Download</div>
+                  <div>{t("page_navigation_pane.tabs.assets.download_button")}</div>
                 </button>
               </a>
             ) : (
@@ -110,7 +117,7 @@ export const useExportColumns = () => {
             )}
           </>
         ) : (
-          <div className="text-11 text-danger-primary">Expired</div>
+          <div className="text-11 text-danger-primary">{t("web_ui.expired")}</div>
         ),
     },
   ];

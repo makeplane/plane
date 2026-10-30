@@ -113,7 +113,7 @@ export function FavoriteFolder(props: Props) {
       dropTargetForElements({
         element,
         canDrop: ({ source }) => getCanDrop(source, favorite, false),
-        getData: ({ input, element }) => {
+        getData: ({ input, element: nextElement }) => {
           const blockedStates: InstructionType[] = [];
           if (!isLastChild) {
             blockedStates.push("reorder-below");
@@ -121,7 +121,7 @@ export function FavoriteFolder(props: Props) {
 
           return attachInstruction(initialData, {
             input,
-            element,
+            element: nextElement,
             currentLevel: 0,
             indentPerLevel: 0,
             mode: isLastChild ? "last-in-group" : "standard",
@@ -129,8 +129,8 @@ export function FavoriteFolder(props: Props) {
           });
         },
         onDrag: ({ source, self, location }) => {
-          const instruction = getInstructionFromPayload(self, source, location);
-          setInstruction(instruction);
+          const nextInstruction = getInstructionFromPayload(self, source, location);
+          setInstruction(nextInstruction);
         },
         onDragLeave: () => {
           setInstruction(undefined);
@@ -190,7 +190,7 @@ export function FavoriteFolder(props: Props) {
                   onClick={() => setIsOpen(!isOpen)}
                 >
                   <Tooltip
-                    label={favorite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
+                    label={favorite.sort_order === null ? t("join_the_project_to_rearrange") : t("drag_to_rearrange")}
                     align="end"
                     disabled={isDragging || isMobile}
                   >
@@ -244,7 +244,7 @@ export function FavoriteFolder(props: Props) {
                   />
                   <MenuItem
                     icon={<Icon icon={DraftsOutline} tint="tertiary" />}
-                    label="Rename Folder"
+                    label={t("web_ui.rename_folder")}
                     onClick={() => setFolderToRename(favorite.id)}
                   />
                 </MenuContent>

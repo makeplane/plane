@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import type { FC } from "react";
 import { Logo } from "@plane/blocks/emoji-icon-picker";
 import type { ISvgIcons } from "@plane/blocks/icons";
@@ -19,6 +20,8 @@ type TSwitcherIconProps = {
 };
 
 export function SwitcherIcon({ logo_props, logo_url, LabelIcon, size = 12, type = "lucide" }: TSwitcherIconProps) {
+  const { t } = useTranslation();
+
   if (logo_props?.in_use) {
     return <Logo logo={logo_props} size={size} type={type} />;
   }
@@ -27,7 +30,7 @@ export function SwitcherIcon({ logo_props, logo_url, LabelIcon, size = 12, type 
     return (
       <img
         src={getFileURL(logo_url)}
-        alt="logo"
+        alt={t("web_ui.logo")}
         className="rounded-xs object-cover"
         style={{ height: size, width: size }}
       />

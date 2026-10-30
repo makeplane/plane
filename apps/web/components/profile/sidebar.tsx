@@ -70,13 +70,16 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
     },
   ];
 
+  const initialSidebarState = useRef({ toggleProfileSidebar, profileSidebarCollapsed });
   useEffect(() => {
+    const { toggleProfileSidebar: toggleSidebar, profileSidebarCollapsed: initiallyCollapsed } =
+      initialSidebarState.current;
     const handleToggleProfileSidebar = () => {
       if (window && window.innerWidth < 768) {
-        toggleProfileSidebar(true);
+        toggleSidebar(true);
       }
-      if (window && profileSidebarCollapsed && window.innerWidth >= 768) {
-        toggleProfileSidebar(false);
+      if (window && initiallyCollapsed && window.innerWidth >= 768) {
+        toggleSidebar(false);
       }
     };
 
@@ -172,7 +175,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                       trigger={<span className="truncate text-13 font-medium break-words">{projectDetails.name}</span>}
                       trailing={
                         project.assigned_issues > 0 ? (
-                          <Tooltip label="Completion percentage" side="left" disabled={isMobile}>
+                          <Tooltip label={t("web_ui.completion_percentage")} side="left" disabled={isMobile}>
                             <div
                               className={`rounded-sm px-1 py-0.5 text-11 font-medium ${
                                 completedIssuePercentage <= 35
@@ -225,7 +228,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
                               <div className="h-2.5 w-2.5 rounded-xs bg-[#203b80]" />
-                              Created
+                              {t("created")}{" "}
                             </div>
                             <div className="font-medium">
                               {project.created_issues} {t("issues")}
@@ -234,7 +237,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
                               <div className="h-2.5 w-2.5 rounded-xs bg-[#3f76ff]" />
-                              Assigned
+                              {t("assigned")}{" "}
                             </div>
                             <div className="font-medium">
                               {project.assigned_issues} {t("issues")}
@@ -243,7 +246,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
                               <div className="h-2.5 w-2.5 rounded-xs bg-[#f59e0b]" />
-                              Due
+                              {t("web_ui.due")}{" "}
                             </div>
                             <div className="font-medium">
                               {project.pending_issues} {t("issues")}
@@ -252,7 +255,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
                               <div className="h-2.5 w-2.5 rounded-xs bg-[#16a34a]" />
-                              Completed
+                              {t("common.completed")}{" "}
                             </div>
                             <div className="font-medium">
                               {project.completed_issues} {t("issues")}

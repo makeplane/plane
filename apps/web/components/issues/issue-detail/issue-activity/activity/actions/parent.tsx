@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { ParentOutline } from "@makeplane/propel/icons";
 // hooks
@@ -14,6 +15,8 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 type TIssueParentActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
 export const IssueParentActivity = observer(function IssueParentActivity(props: TIssueParentActivity) {
+  const { t } = useTranslation();
+
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {
@@ -30,7 +33,7 @@ export const IssueParentActivity = observer(function IssueParentActivity(props: 
       ends={ends}
     >
       <>
-        {activity.new_value ? `set the parent to ` : `removed the parent `}
+        {activity.new_value ? t("web_ui.set_the_parent_to") : t("web_ui.removed_the_parent")}
         {activity.new_value ? (
           <span className="font-medium text-primary">{activity.new_value}</span>
         ) : (

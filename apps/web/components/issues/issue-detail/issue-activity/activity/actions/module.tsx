@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // hooks
 import { ModuleOutline } from "@makeplane/propel/icons";
@@ -15,6 +16,8 @@ import { IssueActivityBlockComponent } from "./";
 type TIssueModuleActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
 export const IssueModuleActivity = observer(function IssueModuleActivity(props: TIssueModuleActivity) {
+  const { t } = useTranslation();
+
   const { activityId, ends } = props;
   // hooks
   const {
@@ -33,7 +36,7 @@ export const IssueModuleActivity = observer(function IssueModuleActivity(props: 
       <>
         {activity.verb === "created" ? (
           <>
-            <span>added this work item to the module </span>
+            <span>{t("web_ui.added_this_work_item_to_the_module")} </span>
             <a
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
@@ -45,7 +48,7 @@ export const IssueModuleActivity = observer(function IssueModuleActivity(props: 
           </>
         ) : activity.verb === "updated" ? (
           <>
-            <span>set the module to </span>
+            <span>{t("web_ui.set_the_module_to")} </span>
             <a
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
@@ -57,7 +60,7 @@ export const IssueModuleActivity = observer(function IssueModuleActivity(props: 
           </>
         ) : (
           <>
-            <span>removed the work item from the module </span>
+            <span>{t("web_ui.removed_the_work_item_from_the_module")} </span>
             <a
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"

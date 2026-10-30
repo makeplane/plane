@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState, useEffect } from "react";
 import { CloudOff, Dot } from "lucide-react";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
@@ -13,19 +14,22 @@ type Props = {
   syncStatus: "syncing" | "synced" | "error";
 };
 
-const BADGE_CONTENT = {
-  syncing: {
-    label: "Syncing...",
-    tooltipLabel: "Syncing... Your changes are being synced with the server. You can continue making changes.",
-  },
-  error: {
-    label: "Connection lost",
-    tooltipLabel:
-      "Connection lost. We're having trouble connecting to the websocket server. Your changes will be synced and saved every 10 seconds.",
-  },
-};
-
 export function PageSyncingBadge({ syncStatus }: Props) {
+  const { t } = useTranslation();
+
+  const BADGE_CONTENT = {
+    syncing: {
+      label: t("syncing"),
+      tooltipLabel: t("web_ui.syncing_your_changes_are_being_synced_with_the_server_you_can_continue_making_changes"),
+    },
+    error: {
+      label: t("web_ui.connection_lost"),
+      tooltipLabel: t(
+        "web_ui.connection_lost_we_re_having_trouble_connecting_to_the_websocket_server_your_changes_will_"
+      ),
+    },
+  };
+
   const [isVisible, setIsVisible] = useState(syncStatus !== "synced");
 
   // Runs once per status change. The pending hide is cancelled if the status moves on (or the badge

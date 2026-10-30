@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -30,6 +31,8 @@ type Props = {
 };
 
 export const PageVersionsMainContent = observer(function PageVersionsMainContent(props: Props) {
+  const { t } = useTranslation();
+
   const {
     activeVersion,
     editorComponent,
@@ -60,14 +63,16 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
       .then(() => {
         setToast({
           type: "success",
-          title: "Page version restored.",
+          title: t("web_ui.page_version_restored"),
         });
         handleClose();
+
+        return undefined;
       })
       .catch(() =>
         setToast({
           type: "error",
-          title: "Failed to restore page version.",
+          title: t("web_ui.failed_to_restore_page_version"),
         })
       )
       .finally(() => setIsRestoring(false));
@@ -90,14 +95,14 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               <WarningTriangleOutline className="size-10" />
             </span>
             <div>
-              <h6 className="text-16 font-semibold">Something went wrong!</h6>
-              <p className="text-13 text-tertiary">The version could not be loaded, please try again.</p>
+              <h6 className="text-16 font-semibold">{t("something_went_wrong")}</h6>
+              <p className="text-13 text-tertiary">{t("web_ui.the_version_could_not_be_loaded_please_try_again")}</p>
             </div>
             <Button
               variant="ghost"
               size="sm"
               stretch="auto"
-              label="Try again"
+              label={t("project.members_import.buttons.try_again")}
               onClick={() => void handleRetry()}
               loading={isRetrying}
             />
@@ -110,11 +115,11 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               <h6 className="text-14 font-medium">
                 {versionDetails
                   ? `${renderFormattedDate(versionDetails.last_saved_at)} ${renderFormattedTime(versionDetails.last_saved_at)}`
-                  : "Loading version details"}
+                  : t("web_ui.loading_version_details")}
               </h6>
               <span className="flex flex-shrink-0 items-center gap-1 rounded-sm bg-accent-primary/20 px-1.5 py-1 text-11 font-medium text-accent-primary">
                 <ShowOutline className="size-3 flex-shrink-0" />
-                View only
+                {t("web_ui.view_only")}{" "}
               </span>
             </div>
             {restoreEnabled && (
@@ -122,7 +127,7 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
                 variant="primary"
                 size="sm"
                 stretch="auto"
-                label={isRestoring ? "Restoring" : "Restore"}
+                label={isRestoring ? t("web_ui.restoring") : t("restore")}
                 onClick={() => void handleRestoreVersion()}
                 loading={isRestoring}
               />

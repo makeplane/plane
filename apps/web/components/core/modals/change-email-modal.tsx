@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
@@ -44,6 +44,12 @@ const defaultValues: TUniqueCodeValuesForm = { email: "", code: "" };
 const authService = new AuthService();
 
 export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props) {
+  // Focus this field when its input/group mounts, without refocusing on ordinary rerenders.
+  const focusInputOnMount = useCallback((element: HTMLElement | null) => {
+    const input = element instanceof HTMLInputElement ? element : element?.querySelector("input");
+    input?.focus();
+  }, []);
+
   const { isOpen, onClose } = props;
   // states
   const [currentStep, setCurrentStep] = useState<TModalStep>("EMAIL");
@@ -129,7 +135,7 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
       const errorCode = err?.error_code?.toString();
 
       // Use authErrorHandler to get user-friendly error message
-      const errorInfo = errorCode ? authErrorHandler(errorCode as EAuthenticationErrorCodes) : undefined;
+      const errorInfo = errorCode ? authErrorHandler(t, errorCode as EAuthenticationErrorCodes) : undefined;
 
       // Get error message from handler or fallback
       const errorMessage = errorInfo
@@ -204,7 +210,7 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
                       name="code"
                       rules={{ required: changeEmailT("form.code.errors.required") }}
                       render={({ field: { value, onChange, ref } }) => (
-                        <InputGroup size="2xl">
+                        <InputGroup ref={focusInputOnMount} size="2xl">
                           <Input
                             size="2xl"
                             id="code"
@@ -214,7 +220,6 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
                             ref={ref}
                             placeholder={changeEmailT("form.code.placeholder")}
                             autoComplete="off"
-                            autoFocus
                           />
                         </InputGroup>
                       )}

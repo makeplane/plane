@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -25,6 +26,8 @@ import { AllStickiesModal } from "./modal";
 import { StickyNote } from "./sticky";
 
 export const StickyActionBar = observer(function StickyActionBar() {
+  const { t } = useTranslation();
+
   // states
   const [isExpanded, setIsExpanded] = useState(false);
   const [newSticky, setNewSticky] = useState(false);
@@ -71,7 +74,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
       <div
         className={`flex origin-bottom flex-col gap-2 transition-all duration-300 ease-in-out ${isExpanded ? "mb-2 scale-y-100 opacity-100 " : "h-0 scale-y-0 opacity-0"}`}
       >
-        <Tooltip label="All stickies" side="left">
+        <Tooltip label={t("stickies.all")} side="left">
           <button
             className="btn btn--icon shadow-sm flex h-10 w-10 items-center justify-center rounded-full bg-surface-1"
             onClick={() => toggleAllStickiesModal(true)}
@@ -102,7 +105,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
               </PreviewCardContent>
             </PreviewCard>
           ))}
-        <Tooltip label="Add sticky" side="left">
+        <Tooltip label={t("stickies.add")} side="left">
           <button
             className="btn btn--icon shadow-sm flex h-10 w-10 items-center justify-center rounded-full bg-surface-1"
             onClick={() => {

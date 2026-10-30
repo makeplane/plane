@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React from "react";
 // plane imports
 import type { IWorkspace } from "@plane/types";
@@ -18,6 +19,8 @@ type Props = {
 };
 
 export function PowerKWorkspacesMenu({ workspaces, onSelect }: Props) {
+  const { t } = useTranslation();
+
   return (
     <PowerKMenuBuilder
       items={workspaces}
@@ -28,7 +31,7 @@ export function PowerKWorkspacesMenu({ workspaces, onSelect }: Props) {
       getValue={(workspace) => workspace.name}
       getLabel={(workspace) => workspace.name}
       onSelect={onSelect}
-      emptyText="No workspaces found"
+      emptyText={t("web_ui.no_workspaces_found")}
     />
   );
 }

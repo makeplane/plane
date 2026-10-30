@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { setToast } from "@plane/blocks/toast";
@@ -18,6 +19,8 @@ type TStateUpdate = {
 };
 
 export const StateUpdate = observer(function StateUpdate(props: TStateUpdate) {
+  const { t } = useTranslation();
+
   const { state, updateStateCallback, handleClose } = props;
   // states
   const [loader, setLoader] = useState(false);
@@ -34,8 +37,8 @@ export const StateUpdate = observer(function StateUpdate(props: TStateUpdate) {
       await updateStateCallback(state.id, formData);
       setToast({
         type: "success",
-        title: "Success!",
-        message: "State updated successfully.",
+        title: t("success"),
+        message: t("web_ui.state_updated_successfully"),
       });
       handleClose();
       return { status: "success" };
@@ -44,15 +47,15 @@ export const StateUpdate = observer(function StateUpdate(props: TStateUpdate) {
       if (errorStatus?.status === 400) {
         setToast({
           type: "error",
-          title: "Error!",
-          message: "Another state exists with the same name. Please try again with another name.",
+          title: t("error"),
+          message: t("web_ui.another_state_exists_with_the_same_name_please_try_again_with_another_name"),
         });
         return { status: "already_exists" };
       } else {
         setToast({
           type: "error",
-          title: "Error!",
-          message: "State could not be updated. Please try again.",
+          title: t("error"),
+          message: t("web_ui.state_could_not_be_updated_please_try_again"),
         });
         return { status: "error" };
       }

@@ -5,6 +5,7 @@
  */
 
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { API_BASE_URL } from "@plane/constants";
@@ -19,6 +20,8 @@ import googleLogo from "@/app/assets/logos/google-logo.svg?url";
 import { useInstance } from "@/hooks/store/use-instance";
 
 export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
+  const { t } = useTranslation();
+
   //router
   const searchParams = useSearchParams();
   // query params
@@ -38,8 +41,8 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
   const oAuthOptions: TOAuthOption[] = [
     {
       id: "google",
-      text: `${oauthActionText} with Google`,
-      icon: <img src={googleLogo} height={18} width={18} alt="Google Logo" />,
+      text: t("web_ui.oauth_action", { action: oauthActionText, provider: "Google" }),
+      icon: <img src={googleLogo} height={18} width={18} alt={t("web_ui.google_logo")} />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/google/${next_path ? `?next_path=${next_path}` : ``}`);
       },
@@ -47,13 +50,13 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
     },
     {
       id: "github",
-      text: `${oauthActionText} with GitHub`,
+      text: t("web_ui.oauth_action", { action: oauthActionText, provider: "GitHub" }),
       icon: (
         <img
           src={resolvedTheme === "dark" ? GithubDarkLogo : GithubLightLogo}
           height={18}
           width={18}
-          alt="GitHub Logo"
+          alt={t("web_ui.github_logo")}
         />
       ),
       onClick: () => {
@@ -63,8 +66,8 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
     },
     {
       id: "gitlab",
-      text: `${oauthActionText} with GitLab`,
-      icon: <img src={gitlabLogo} height={18} width={18} alt="GitLab Logo" />,
+      text: t("web_ui.oauth_action", { action: oauthActionText, provider: "GitLab" }),
+      icon: <img src={gitlabLogo} height={18} width={18} alt={t("web_ui.gitlab_logo")} />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
       },
@@ -72,8 +75,8 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
     },
     {
       id: "gitea",
-      text: `${oauthActionText} with Gitea`,
-      icon: <img src={giteaLogo} height={18} width={18} alt="Gitea Logo" />,
+      text: t("web_ui.oauth_action", { action: oauthActionText, provider: "Gitea" }),
+      icon: <img src={giteaLogo} height={18} width={18} alt={t("web_ui.gitea_logo")} />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/gitea/${next_path ? `?next_path=${next_path}` : ``}`);
       },

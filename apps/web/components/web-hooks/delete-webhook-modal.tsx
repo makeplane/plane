@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState } from "react";
 import { useParams } from "next/navigation";
 // ui
@@ -19,6 +20,8 @@ interface IDeleteWebhook {
 }
 
 export function DeleteWebhookModal(props: IDeleteWebhook) {
+  const { t } = useTranslation();
+
   const { isOpen, onClose } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
@@ -41,14 +44,14 @@ export function DeleteWebhookModal(props: IDeleteWebhook) {
       router.replace(`/${workspaceSlug}/settings/webhooks/`);
       setToast({
         type: "success",
-        title: "Success!",
-        message: "Webhook deleted successfully.",
+        title: t("success"),
+        message: t("web_ui.webhook_deleted_successfully"),
       });
     } catch (_error) {
       setToast({
         type: "error",
-        title: "Error!",
-        message: "Webhook could not be deleted. Please try again.",
+        title: t("error"),
+        message: t("web_ui.webhook_could_not_be_deleted_please_try_again"),
       });
     }
     setIsDeleting(false);
@@ -60,12 +63,9 @@ export function DeleteWebhookModal(props: IDeleteWebhook) {
       handleSubmit={handleDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title="Delete webhook"
+      title={t("web_ui.delete_webhook")}
       content={
-        <>
-          Are you sure you want to delete this webhook? Future events will not be delivered to this webhook. This action
-          cannot be undone.
-        </>
+        <>{t("web_ui.are_you_sure_you_want_to_delete_this_webhook_future_events_will_not_be_delivered_to_this_w")} </>
       }
     />
   );

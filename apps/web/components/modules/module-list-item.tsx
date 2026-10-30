@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
@@ -26,6 +27,8 @@ type Props = {
 };
 
 export const ModuleListItem = observer(function ModuleListItem(props: Props) {
+  const { t } = useTranslation();
+
   const { moduleId } = props;
   // refs
   const parentRef = useRef(null);
@@ -81,7 +84,7 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
               value={progress}
               size="md"
               variant={progress === 100 ? "success" : "brand"}
-              aria-label="Module progress"
+              aria-label={t("product_tour.module.step_four.title")}
             />
           </div>
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">

@@ -118,6 +118,8 @@ export function NameColumn(props: NameProps) {
 }
 
 export const AccountTypeColumn = observer(function AccountTypeColumn(props: AccountTypeProps) {
+  const { t } = useTranslation();
+
   const { rowData, workspaceSlug } = props;
   // form info
   const { control } = useForm();
@@ -139,7 +141,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
     <>
       {isSuspended ? (
         <div className="flex w-32">
-          <Badge variant="neutral" size="sm" label="Suspended" />
+          <Badge variant="neutral" size="sm" label={t("web_ui.suspended")} />
         </div>
       ) : isRoleNonEditable ? (
         <div className="flex w-32">
@@ -149,7 +151,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
         <Controller
           name="role"
           control={control}
-          rules={{ required: "Role is required." }}
+          rules={{ required: t("web_ui.role_is_required") }}
           render={() => (
             <div className="w-32">
               <Select<TRoleOption>
@@ -164,7 +166,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
 
                     setToast({
                       type: "error",
-                      title: "Error!",
+                      title: t("error"),
                       message: errorString ?? "An error occurred while updating member role. Please try again.",
                     });
                   });

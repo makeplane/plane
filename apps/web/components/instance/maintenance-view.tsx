@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useTheme } from "next-themes";
 // assets
 import maintenanceModeDarkModeImage from "@/app/assets/instance/maintenance-mode-dark.svg?url";
@@ -14,6 +15,8 @@ import DefaultLayout from "@/layouts/default-layout";
 import { MaintenanceMessage } from "./maintenance-message";
 
 export function MaintenanceView() {
+  const { t } = useTranslation();
+
   // hooks
   const { resolvedTheme } = useTheme();
   // derived values
@@ -26,7 +29,7 @@ export function MaintenanceView() {
             src={maintenanceModeImage}
             height="176"
             width="288"
-            alt="ProjectSettingImg"
+            alt={t("web_ui.projectsettingimg")}
             className="h-full w-full object-fill object-center"
           />
         </div>

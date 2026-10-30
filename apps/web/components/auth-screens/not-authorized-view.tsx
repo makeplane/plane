@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React from "react";
 import { observer } from "mobx-react";
 // assets
@@ -22,6 +23,8 @@ type Props = {
 };
 
 export const NotAuthorizedView = observer(function NotAuthorizedView(props: Props) {
+  const { t } = useTranslation();
+
   const { actionButton, section = "general", isProjectView = false, className } = props;
 
   // assets
@@ -32,9 +35,11 @@ export const NotAuthorizedView = observer(function NotAuthorizedView(props: Prop
     <DefaultLayout className={cn("bg-surface-1", className)}>
       <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 text-center">
         <div className="h-44 w-72">
-          <img src={asset} className="h-[176px] w-[288px] object-contain" alt="ProjectSettingImg" />
+          <img src={asset} className="h-[176px] w-[288px] object-contain" alt={t("web_ui.projectsettingimg")} />
         </div>
-        <h1 className="text-18 font-medium text-primary">Oops! You are not authorized to view this page</h1>
+        <h1 className="text-18 font-medium text-primary">
+          {t("web_ui.oops_you_are_not_authorized_to_view_this_page")}
+        </h1>
         {actionButton}
       </div>
     </DefaultLayout>

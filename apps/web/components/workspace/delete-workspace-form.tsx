@@ -110,12 +110,16 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
         <DialogBody tabIndex={0}>
           <div className="space-y-4">
             <p className="text-body-xs-regular text-secondary">
-              You are about to delete the workspace{" "}
-              <span className="text-body-xs-semibold break-words">{data?.name}</span>. If you confirm, you will lose
-              access to all your work data in this workspace without any way to restore it. Tread very carefully.
+              {t("web_ui.you_are_about_to_delete_the_workspace")}{" "}
+              <span className="text-body-xs-semibold break-words">{data?.name}</span>
+              {t(
+                "web_ui.if_you_confirm_you_will_lose_access_to_all_your_work_data_in_this_workspace_without_any_wa"
+              )}{" "}
             </p>
             <div className="text-secondary">
-              <p className="text-body-xs-regular break-words">Type in this workspace&apos;s name to continue.</p>
+              <p className="text-body-xs-regular break-words">
+                {t("web_ui.type_in_this_workspace_apos_s_name_to_continue")}
+              </p>
               <Controller
                 control={control}
                 name="workspaceName"
@@ -140,9 +144,9 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
             </div>
             <div className="text-secondary">
               <p className="text-body-xs-regular">
-                For final confirmation, type{" "}
+                {t("web_ui.for_final_confirmation_type")}{" "}
                 <span className="text-body-xs-medium text-primary">delete my workspace </span>
-                below.
+                {t("web_ui.below")}{" "}
               </p>
               <Controller
                 control={control}

@@ -35,14 +35,14 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
       try {
         await updateCurrentUser({ user_timezone: value });
         setToast({
-          title: "Success!",
-          message: "Timezone updated successfully",
+          title: t("success"),
+          message: t("power_k.preferences_actions.toast.timezone.success"),
           type: "success",
         });
       } catch (_error) {
         setToast({
-          title: "Error!",
-          message: "Failed to update timezone",
+          title: t("error"),
+          message: t("web_ui.failed_to_update_timezone"),
           type: "error",
         });
       }
@@ -52,14 +52,14 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
       try {
         await updateUserProfile({ language: value });
         setToast({
-          title: "Success!",
-          message: "Language updated successfully",
+          title: t("success"),
+          message: t("web_ui.language_updated_successfully"),
           type: "success",
         });
       } catch (_error) {
         setToast({
-          title: "Error!",
-          message: "Failed to update language",
+          title: t("error"),
+          message: t("web_ui.failed_to_update_language"),
           type: "error",
         });
       }
@@ -94,14 +94,14 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
               onChange={(value) => void handleLanguageChange(value)}
               getOptionValue={(option) => option.value}
               getOptionLabel={(option) => option.label}
-              placeholder="Select a language"
+              placeholder={t("web_ui.select_a_language")}
               showSearch={false}
               pinSelected={false}
               contentSizing="anchor"
             >
               <Select.Trigger<LanguageOption> variant="select-md" className="w-42 max-w-full">
                 <span className="min-w-0 grow truncate text-left">
-                  {profile?.language ? getLanguageLabel(profile.language) : "Select a language"}
+                  {profile?.language ? getLanguageLabel(profile.language) : t("web_ui.select_a_language")}
                 </span>
               </Select.Trigger>
             </Select>
@@ -109,8 +109,8 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
         />
         <StartOfWeekPreference
           option={{
-            title: "First day of the week",
-            description: "This will change how all calendars in your app look.",
+            title: t("web_ui.first_day_of_the_week"),
+            description: t("web_ui.this_will_change_how_all_calendars_in_your_app_look"),
           }}
         />
       </div>

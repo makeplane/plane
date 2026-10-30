@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // Plane imports
@@ -17,6 +18,8 @@ interface IWebhookListItem {
 }
 
 export function WebhooksListItem(props: IWebhookListItem) {
+  const { t } = useTranslation();
+
   const { webhook } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -50,7 +53,7 @@ export function WebhooksListItem(props: IWebhookListItem) {
             onCheckedChange={() => {
               void handleToggle();
             }}
-            aria-label="Toggle webhook"
+            aria-label={t("web_ui.toggle_webhook")}
           />
         </div>
       </Link>

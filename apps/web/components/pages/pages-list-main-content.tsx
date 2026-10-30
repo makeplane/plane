@@ -62,11 +62,13 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
       .then((res) => {
         const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
         router.push(pageId);
+
+        return undefined;
       })
       .catch((err) => {
         setToast({
           type: "error",
-          title: "Error!",
+          title: t("error"),
           message: err?.data?.error || "Page could not be created. Please try again.",
         });
       })

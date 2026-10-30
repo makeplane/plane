@@ -62,10 +62,10 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
     } catch {
       setToast({
         type: "error",
-        title: "Some error occurred",
+        title: t("web_ui.some_error_occurred"),
       });
     }
-  }, [addToFavorites, removePageFromFavorites, isFavorite]);
+  }, [t, addToFavorites, removePageFromFavorites, isFavorite]);
 
   const copyPageUrlToClipboard = useCallback(() => {
     const url = new URL(window.location.href);
@@ -75,6 +75,8 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
           type: "success",
           title: t("power_k.contextual_actions.page.copy_url_toast_success"),
         });
+
+        return undefined;
       })
       .catch(() => {
         setToast({
@@ -83,7 +85,7 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
         });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [t]);
 
   return [
     {

@@ -35,7 +35,7 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
   const [isDeleteModal, setIsDeleteModal] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   // derived values
-  const isDeleteDisabled = state.default ? true : totalStates === 1 ? true : false;
+  const isDeleteDisabled = state.default ? true : Boolean(totalStates === 1);
 
   const handleDeleteState = async () => {
     if (isDeleteDisabled) return;
@@ -50,15 +50,16 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
       if (errorStatus.status === 400) {
         setToast({
           type: "error",
-          title: "Error!",
-          message:
-            "This state contains some work items within it, please move them to some other state to delete this state.",
+          title: t("error"),
+          message: t(
+            "web_ui.this_state_contains_some_work_items_within_it_please_move_them_to_some_other_state_to_dele"
+          ),
         });
       } else {
         setToast({
           type: "error",
-          title: "Error!",
-          message: "State could not be deleted. Please try again.",
+          title: t("error"),
+          message: t("web_ui.state_could_not_be_deleted_please_try_again"),
         });
       }
       setIsDelete(false);
@@ -72,18 +73,25 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
         handleSubmit={handleDeleteState}
         isSubmitting={isDelete}
         isOpen={isDeleteModal}
-        title="Delete State"
+        title={t("web_ui.delete_state")}
         content={
           <>
-            Are you sure you want to delete state- <span className="font-medium text-primary">{state?.name}</span>? All
-            of the data related to the state will be permanently removed. This action cannot be undone.
+            {t("web_ui.are_you_sure_you_want_to_delete_state")}{" "}
+            <span className="font-medium text-primary">{state?.name}</span>
+            {t(
+              "web_ui.all_of_the_data_related_to_the_state_will_be_permanently_removed_this_action_cannot_be_und"
+            )}{" "}
           </>
         }
       />
 
       <Tooltip
         label={
-          state.default ? "Cannot delete the default state." : totalStates === 1 ? `Cannot have an empty group.` : ``
+          state.default
+            ? t("web_ui.cannot_delete_the_default_state")
+            : totalStates === 1
+              ? t("web_ui.cannot_have_an_empty_group")
+              : ``
         }
         layout="stacked"
         disabled={!isDeleteDisabled || isMobile}

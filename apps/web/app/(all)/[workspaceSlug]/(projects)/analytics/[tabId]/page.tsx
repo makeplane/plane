@@ -109,7 +109,7 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
               description={t("workspace_projects.empty_state.no_projects.description")}
               actions={[
                 {
-                  label: "Create a project",
+                  label: t("home.empty.create_project.title"),
                   onClick: () => {
                     toggleCreateProjectModal(true);
                   },

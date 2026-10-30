@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { memo } from "react";
 import { ChevronDown } from "lucide-react";
 import { DeactivatedOutline, TextOutline } from "@makeplane/propel/icons";
@@ -29,6 +30,8 @@ type Props = {
 };
 
 export const ColorDropdown = memo(function ColorDropdown(props: Props) {
+  const { t } = useTranslation();
+
   const { handleColorSelect, isColorActive } = props;
 
   const activeTextColor = COLORS_LIST.find((c) => isColorActive("text-color", c.key));
@@ -37,8 +40,8 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
   return (
     <Popover>
       {/* Propel's ToolbarMenuTrigger only wraps a Menu; this is its Popover twin until Propel ships one */}
-      <PopoverTrigger render={<ToolbarMenuTriggerButton aria-label="Color" />}>
-        <ToolbarMenuTriggerLabel>Color</ToolbarMenuTriggerLabel>
+      <PopoverTrigger render={<ToolbarMenuTriggerButton aria-label={t("web_ui.color")} />}>
+        <ToolbarMenuTriggerLabel>{t("web_ui.color")}</ToolbarMenuTriggerLabel>
         {/* active text + background colour preview */}
         <span
           className={cn("grid size-5 shrink-0 place-items-center rounded-sm border-[0.5px] border-strong", {
@@ -63,7 +66,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
       </PopoverTrigger>
       <PopoverContent variant="rich" side="bottom" align="start">
         <div className="space-y-1.5">
-          <p className="text-11 font-semibold text-tertiary">Text colors</p>
+          <p className="text-11 font-semibold text-tertiary">{t("web_ui.text_colors")}</p>
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button
@@ -81,14 +84,14 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
             <IconButton
               variant="secondary"
               size="sm"
-              aria-label="Remove text color"
+              aria-label={t("web_ui.remove_text_color")}
               icon={<Icon icon={DeactivatedOutline} />}
               onClick={() => handleColorSelect("text-color", undefined)}
             />
           </div>
         </div>
         <div className="space-y-1.5">
-          <p className="text-11 font-semibold text-tertiary">Background colors</p>
+          <p className="text-11 font-semibold text-tertiary">{t("web_ui.background_colors")}</p>
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button
@@ -106,7 +109,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
             <IconButton
               variant="secondary"
               size="sm"
-              aria-label="Remove background color"
+              aria-label={t("web_ui.remove_background_color")}
               icon={<Icon icon={DeactivatedOutline} />}
               onClick={() => handleColorSelect("background-color", undefined)}
             />

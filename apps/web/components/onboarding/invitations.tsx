@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState } from "react";
 // plane imports
 import { ROLE } from "@plane/constants";
@@ -32,6 +33,8 @@ type Props = {
 const workspaceService = new WorkspaceService();
 
 export function Invitations(props: Props) {
+  const { t } = useTranslation();
+
   const { invitations, handleNextStep, handleCurrentViewChange } = props;
   // states
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
@@ -49,7 +52,7 @@ export function Invitations(props: Props) {
   };
 
   const submitInvitations = async () => {
-    const invitation = invitations?.find((invitation) => invitation.id === invitationsRespond[0]);
+    const invitation = invitations?.find((nextInvitation) => nextInvitation.id === invitationsRespond[0]);
     if (invitationsRespond.length <= 0 && !invitation?.role) return;
     setIsJoiningWorkspaces(true);
     try {
@@ -66,8 +69,8 @@ export function Invitations(props: Props) {
   return invitations && invitations.length > 0 ? (
     <div className="space-y-4">
       <div className="mx-auto space-y-1 py-4 text-center">
-        <h3 className="text-24 font-bold text-primary">You are invited!</h3>
-        <p className="font-medium text-placeholder">Accept the invites to collaborate with your team.</p>
+        <h3 className="text-24 font-bold text-primary">{t("web_ui.you_are_invited")}</h3>
+        <p className="font-medium text-placeholder">{t("web_ui.accept_the_invites_to_collaborate_with_your_team")}</p>
       </div>
       <div>
         {invitations &&
@@ -77,6 +80,7 @@ export function Invitations(props: Props) {
             const invitedWorkspace = invitation.workspace;
             return (
               <div
+                role="presentation"
                 key={invitation.id}
                 className={`flex cursor-pointer items-center gap-2 rounded-sm border border-subtle p-3.5 hover:bg-surface-2`}
                 onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
@@ -107,11 +111,11 @@ export function Invitations(props: Props) {
         onClick={submitInvitations}
         disabled={isJoiningWorkspaces || !invitationsRespond.length}
       >
-        {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue to workspace"}
+        {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : t("web_ui.continue_to_workspace")}
       </ButtonElement>
       <div className="mx-auto mt-4 flex items-center sm:w-96">
         <hr className="w-full border-strong" />
-        <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder">or</p>
+        <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder">{t("common.or")}</p>
         <hr className="w-full border-strong" />
       </div>
       <Button
@@ -121,10 +125,10 @@ export function Invitations(props: Props) {
         render={<button type="button" className="bg-surface-2 text-14" />}
         onClick={handleCurrentViewChange}
         disabled={isJoiningWorkspaces}
-        label="Create your own workspace"
+        label={t("web_ui.create_your_own_workspace")}
       />
     </div>
   ) : (
-    <div>No Invitations found</div>
+    <div>{t("web_ui.no_invitations_found")}</div>
   );
 }

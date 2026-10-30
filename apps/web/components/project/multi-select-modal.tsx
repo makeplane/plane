@@ -117,7 +117,10 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
             setSearchTerm(next);
           }}
         >
-          <ComboboxSearch placeholder="Search for projects" aria-label={t("common.projects")} />
+          <ComboboxSearch
+            placeholder={t("page_actions.move_page.placeholders.project_to_project")}
+            aria-label={t("common.projects")}
+          />
           <DialogMain>
             {selectedProjectIds.length > 0 && (
               <div className="flex flex-wrap gap-2">

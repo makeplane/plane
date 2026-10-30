@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React from "react";
 
 type TSingleProgressStatsProps = {
@@ -15,9 +16,14 @@ type TSingleProgressStatsProps = {
 };
 
 export function SingleProgressStats({ title, completed, total, onClick, selected = false }: TSingleProgressStatsProps) {
+  const { t } = useTranslation();
+
+  const Container = onClick ? "button" : "div";
+
   return (
-    <div
-      className={`flex w-full items-center justify-between gap-4 rounded-xs p-1 text-11 ${
+    <Container
+      type={onClick ? "button" : undefined}
+      className={`flex w-full items-center justify-between gap-4 rounded-xs p-1 text-left text-11 ${
         onClick ? "cursor-pointer hover:bg-surface-2" : ""
       } ${selected ? "bg-layer-1" : ""}`}
       onClick={onClick}
@@ -29,8 +35,10 @@ export function SingleProgressStats({ title, completed, total, onClick, selected
             {isNaN(Math.round((completed / total) * 100)) ? "0" : Math.round((completed / total) * 100)}%
           </span>
         </div>
-        <span>of {total}</span>
+        <span>
+          {t("web_ui.of")} {total}
+        </span>
       </div>
-    </div>
+    </Container>
   );
 }

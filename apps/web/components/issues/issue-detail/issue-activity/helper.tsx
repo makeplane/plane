@@ -61,6 +61,8 @@ export const useWorkItemCommentOperations = (
               type: "success",
               message: t("issue.comments.copy_link.success"),
             });
+
+            return undefined;
           });
         } catch (error) {
           console.error("Error in copying comment link:", error);
@@ -162,15 +164,15 @@ export const useWorkItemCommentOperations = (
           if (!workspaceSlug || !projectId || !commentId) throw new Error("Missing fields");
           await createCommentReaction(workspaceSlug, projectId, commentId, reaction);
           setToast({
-            title: "Success!",
+            title: t("success"),
             type: "success",
-            message: "Reaction created successfully",
+            message: t("web_ui.reaction_created_successfully"),
           });
         } catch {
           setToast({
-            title: "Error!",
+            title: t("error"),
             type: "error",
-            message: "Reaction creation failed",
+            message: t("web_ui.reaction_creation_failed"),
           });
         }
       },
@@ -179,15 +181,15 @@ export const useWorkItemCommentOperations = (
           if (!workspaceSlug || !projectId || !commentId || !currentUser?.id) throw new Error("Missing fields");
           removeCommentReaction(workspaceSlug, projectId, commentId, reaction, currentUser.id);
           setToast({
-            title: "Success!",
+            title: t("success"),
             type: "success",
-            message: "Reaction removed successfully",
+            message: t("web_ui.reaction_removed_successfully"),
           });
         } catch {
           setToast({
-            title: "Error!",
+            title: t("error"),
             type: "error",
-            message: "Reaction remove failed",
+            message: t("web_ui.reaction_remove_failed"),
           });
         }
       },
@@ -210,7 +212,26 @@ export const useWorkItemCommentOperations = (
       },
     };
     return ops;
-  }, [workspaceSlug, projectId, issueId, createComment, updateComment, uploadEditorAsset, removeComment]);
+  }, [
+    t,
+    workspaceSlug,
+    projectId,
+    issueId,
+    createComment,
+    updateComment,
+    uploadEditorAsset,
+    removeComment,
+    getUserDetails,
+    issueDetails,
+    removeCommentReaction,
+    projectDetails?.identifier,
+    getCommentReactionById,
+    createCommentReaction,
+    commentReactionsByUser,
+    currentUser,
+    getCommentReactionsByCommentId,
+    duplicateEditorAsset,
+  ]);
 
   return operations;
 };

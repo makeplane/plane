@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React, { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
@@ -24,6 +25,8 @@ type Props = {
 };
 
 export const FilterCycle = observer(function FilterCycle(props: Props) {
+  const { t } = useTranslation();
+
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   // hooks
@@ -35,7 +38,7 @@ export const FilterCycle = observer(function FilterCycle(props: Props) {
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
   const cycleIds = projectId ? getProjectCycleIds(projectId.toString()) : undefined;
-  const cycles = cycleIds?.map((projectId) => getCycleById(projectId)!) ?? null;
+  const cycles = cycleIds?.map((nextProjectId) => getCycleById(nextProjectId)!) ?? null;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
   const sortedOptions = useMemo(() => {
@@ -63,7 +66,7 @@ export const FilterCycle = observer(function FilterCycle(props: Props) {
   return (
     <>
       <FilterHeader
-        title={`Cycle ${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={t("web_ui.dynamic_cycle_value0", { value0: appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : "" })}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -75,13 +78,13 @@ export const FilterCycle = observer(function FilterCycle(props: Props) {
                 {sortedOptions.slice(0, itemsToRender).map((cycle) => (
                   <FilterOption
                     key={cycle.id}
-                    isChecked={appliedFilters?.includes(cycle.id) ? true : false}
+                    isChecked={Boolean(appliedFilters?.includes(cycle.id))}
                     onClick={() => handleUpdate(cycle.id)}
                     icon={
                       <CycleGroupIcon cycleGroup={cycleStatus(cycle?.status)} className="h-3.5 w-3.5 flex-shrink-0" />
                     }
                     title={cycle.name}
-                    activePulse={cycleStatus(cycle?.status) === "current" ? true : false}
+                    activePulse={Boolean(cycleStatus(cycle?.status) === "current")}
                   />
                 ))}
                 {sortedOptions.length > 5 && (
@@ -90,12 +93,12 @@ export const FilterCycle = observer(function FilterCycle(props: Props) {
                     className="ml-8 text-11 font-medium text-accent-primary"
                     onClick={handleViewToggle}
                   >
-                    {itemsToRender === sortedOptions.length ? "View less" : "View all"}
+                    {itemsToRender === sortedOptions.length ? t("web_ui.view_less") : t("web_ui.view_all")}
                   </button>
                 )}
               </>
             ) : (
-              <p className="text-11 text-placeholder italic">No matches found</p>
+              <p className="text-11 text-placeholder italic">{t("common.search.no_matches_found")}</p>
             )
           ) : (
             <Loader className="space-y-2">

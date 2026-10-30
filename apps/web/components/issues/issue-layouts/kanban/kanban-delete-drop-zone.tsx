@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -19,6 +20,8 @@ type Props = {
 
 // Isolated from BaseKanBanRoot so a drag start/end re-renders only this banner, not the whole board.
 export const KanbanDeleteDropZone = observer(function KanbanDeleteDropZone({ onRequestDelete }: Props) {
+  const { t } = useTranslation();
+
   // refs
   const deleteAreaRef = useRef<HTMLDivElement | null>(null);
   // states
@@ -60,7 +63,7 @@ export const KanbanDeleteDropZone = observer(function KanbanDeleteDropZone({ onR
           isDragOverDelete ? "bg-danger-primary blur-2xl" : ""
         } transition duration-300`}
       >
-        Drop here to delete the work item.
+        {t("web_ui.drop_here_to_delete_the_work_item")}{" "}
       </div>
     </div>
   );

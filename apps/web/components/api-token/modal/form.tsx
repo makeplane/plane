@@ -40,33 +40,28 @@ type Props = {
 const EXPIRY_DATE_OPTIONS = [
   {
     key: "1_week",
-    label: "1 week",
+    label: "notification.snooze.1_week",
     value: { weeks: 1 },
   },
   {
     key: "1_month",
-    label: "1 month",
+    label: "web_ui.1_month",
     value: { months: 1 },
   },
   {
     key: "3_months",
-    label: "3 months",
+    label: "web_ui.3_months",
     value: { months: 3 },
   },
   {
     key: "1_year",
-    label: "1 year",
+    label: "web_ui.1_year",
     value: { years: 1 },
   },
 ];
 
 /** The expiry picker's rows: the presets plus the "Custom" row that reveals the date picker. */
 type TExpiryOption = { key: string; label: string };
-
-const EXPIRY_SELECT_OPTIONS: TExpiryOption[] = [
-  ...EXPIRY_DATE_OPTIONS.map(({ key, label }) => ({ key, label })),
-  { key: "custom", label: "Custom" },
-];
 
 const defaultValues: Partial<IApiToken> = {
   label: "",
@@ -103,6 +98,11 @@ export function CreateApiTokenForm(props: Props) {
   } = useForm<IApiToken>({ defaultValues });
   // hooks
   const { t } = useTranslation();
+  const EXPIRY_SELECT_OPTIONS: TExpiryOption[] = [
+    ...EXPIRY_DATE_OPTIONS.map(({ key, label }) => ({ key, label: t(label) })),
+    { key: "custom", label: t("notification.snooze.custom") },
+  ];
+
   // store hooks
   const { data: userProfile } = useUserProfile();
 
@@ -111,8 +111,8 @@ export function CreateApiTokenForm(props: Props) {
     if (!neverExpires && (!data.expired_at || (data.expired_at === "custom" && !customDate)))
       return setToast({
         type: "error",
-        title: "Error!",
-        message: "Please select an expiration date.",
+        title: t("error"),
+        message: t("web_ui.please_select_an_expiration_date"),
       });
 
     const payload: Partial<IApiToken> = {
@@ -135,6 +135,8 @@ export function CreateApiTokenForm(props: Props) {
     await onSubmit(payload).then(() => {
       reset(defaultValues);
       setCustomDate(null);
+
+      return undefined;
     });
   };
 
@@ -217,10 +219,12 @@ export function CreateApiTokenForm(props: Props) {
                       >
                         {/* `select-md` rather than the pill chrome the old button matched in height:
                           `SelectTriggerChrome` clamps every pill trigger to `max-w-40`, which clips
-                          the longest label here ("Set expiration date"). */}
+                          the longest label here (t("web_ui.set_expiration_date")). */}
                         <Select.Trigger variant="select-md" className="w-auto" prependIcon={<CalendarOutline />}>
                           <span className="min-w-0 grow truncate text-left">
-                            {value === "custom" ? "Custom date" : (selectedOption?.label ?? "Set expiration date")}
+                            {value === "custom"
+                              ? t("web_ui.custom_date")
+                              : (selectedOption?.label ?? "Set expiration date")}
                           </span>
                         </Select.Trigger>
                       </Select>
@@ -233,7 +237,7 @@ export function CreateApiTokenForm(props: Props) {
                     onChange={(date) => setCustomDate(date)}
                     minDate={tomorrow}
                     icon={<CalendarOutline />}
-                    placeholder="Set date"
+                    placeholder={t("web_ui.set_date")}
                     disabled={neverExpires}
                     clearable
                     weekStartsOn={userProfile?.start_of_the_week}

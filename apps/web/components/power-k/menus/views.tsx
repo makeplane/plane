@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React from "react";
 import { observer } from "mobx-react";
 import { WorkItemsOutline } from "@makeplane/propel/icons";
@@ -18,6 +19,8 @@ type Props = {
 };
 
 export const PowerKViewsMenu = observer(function PowerKViewsMenu({ views, onSelect }: Props) {
+  const { t } = useTranslation();
+
   return (
     <PowerKMenuBuilder
       items={views}
@@ -26,7 +29,7 @@ export const PowerKViewsMenu = observer(function PowerKViewsMenu({ views, onSele
       getValue={(view) => view.name}
       getLabel={(view) => view.name}
       onSelect={onSelect}
-      emptyText="No views found"
+      emptyText={t("web_ui.no_views_found")}
     />
   );
 });

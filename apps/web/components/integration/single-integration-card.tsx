@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -50,6 +51,8 @@ const integrationDetails: { [key: string]: any } = {
 const integrationService = new IntegrationService();
 
 export const SingleIntegrationCard = observer(function SingleIntegrationCard({ integration }: Props) {
+  const { t } = useTranslation();
+
   // states
   const [deletingIntegration, setDeletingIntegration] = useState(false);
   // router
@@ -91,17 +94,21 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
 
         setToast({
           type: "success",
-          title: "Deleted successfully!",
-          message: `${integration.title} integration deleted successfully.`,
+          title: t("web_ui.deleted_successfully"),
+          message: t("web_ui.dynamic_value0_integration_deleted_successfully", { value0: integration.title }),
         });
+
+        return undefined;
       })
       .catch(() => {
         setDeletingIntegration(false);
 
         setToast({
           type: "error",
-          title: "Error!",
-          message: `${integration.title} integration could not be deleted. Please try again.`,
+          title: t("error"),
+          message: t("web_ui.dynamic_value0_integration_could_not_be_deleted_please_try_again", {
+            value0: integration.title,
+          }),
         });
       });
   };
@@ -117,7 +124,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
           <img
             src={integrationDetails[integration.provider].logo}
             className="h-full w-full object-cover"
-            alt={`${integration.title} Logo`}
+            alt={t("web_ui.dynamic_value0_logo", { value0: integration.title })}
           />
         </div>
         <div>
@@ -132,7 +139,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
               ? isInstalled
                 ? integrationDetails[integration.provider].installed
                 : integrationDetails[integration.provider].notInstalled
-              : "Loading..."}
+              : t("loading")}
           </p>
         </div>
       </div>
@@ -155,7 +162,11 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
               }}
               disabled={!isUserAdmin}
               loading={deletingIntegration}
-              label={deletingIntegration ? "Uninstalling..." : "Uninstall"}
+              label={
+                deletingIntegration
+                  ? t("oauth_bridge_integration.uninstalling")
+                  : t("oauth_bridge_integration.uninstall")
+              }
             />
           </Tooltip>
         ) : (
@@ -174,7 +185,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
                 startAuth();
               }}
               loading={isInstalling}
-              label={isInstalling ? "Installing..." : "Install"}
+              label={isInstalling ? t("common.installing") : t("common.install")}
             />
           </Tooltip>
         )

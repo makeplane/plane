@@ -1,3 +1,4 @@
+import { useTranslation } from "@plane/i18n";
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -5,10 +6,12 @@
  */
 
 export function MaintenanceMessage() {
+  const { t } = useTranslation();
+
   const linkMap = [
     {
       key: "mail_to",
-      label: "Contact Support",
+      label: t("web_ui.contact_support"),
       value: "mailto:support@plane.so",
     },
   ];
@@ -17,11 +20,10 @@ export function MaintenanceMessage() {
     <>
       <div className="flex flex-col gap-2.5">
         <h1 className="text-left text-18 font-semibold text-primary">
-          &#x1F6A7; Looks like Plane didn&apos;t start up correctly!
+          {t("web_ui.x1f6a7_looks_like_plane_didn_apos_t_start_up_correctly")}{" "}
         </h1>
         <span className="text-left text-14 font-medium text-secondary">
-          Some services might have failed to start. Please check your container logs to identify and resolve the issue.
-          If you&apos;re stuck, reach out to our support team for more help.
+          {t("web_ui.some_services_might_have_failed_to_start_please_check_your_container_logs_to_identify_and_")}{" "}
         </span>
       </div>
       <div className="mt-1 flex items-center justify-start gap-6">

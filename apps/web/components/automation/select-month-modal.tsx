@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useParams } from "next/navigation";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
@@ -31,6 +32,8 @@ type Props = {
 };
 
 export function SelectMonthModal({ type, initialValues, isOpen, handleClose, handleChange }: Props) {
+  const { t } = useTranslation();
+
   const { workspaceSlug, projectId } = useParams();
 
   const {
@@ -58,7 +61,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
       control={control}
       name={name}
       rules={{
-        required: "Select a month between 1 and 12.",
+        required: t("web_ui.select_a_month_between_1_and_12"),
         min: 1,
         max: 12,
       }}
@@ -72,10 +75,10 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
           ref={ref}
           size="2xl"
           orientation="vertical"
-          placeholder="Enter Months"
+          placeholder={t("web_ui.enter_months")}
           min={1}
           max={12}
-          endIcon={<span className="text-13 text-secondary">Months</span>}
+          endIcon={<span className="text-13 text-secondary">{t("web_ui.months")}</span>}
           error={errors[name] ? "Select a month between 1 and 12." : undefined}
         />
       )}
@@ -94,7 +97,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
           <DialogMain>
             <DialogHeader>
               <DialogHeading>
-                <DialogTitle>Customize time range</DialogTitle>
+                <DialogTitle>{t("common.customize_time_range")}</DialogTitle>
               </DialogHeading>
             </DialogHeader>
             <DialogBody>
@@ -104,13 +107,13 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
             </DialogBody>
           </DialogMain>
           <DialogActions>
-            <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={onClose} />
+            <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={onClose} />
             <Button
               variant="primary"
               size="md"
               stretch="auto"
               type="submit"
-              label={isSubmitting ? "Submitting..." : "Submit"}
+              label={isSubmitting ? t("web_ui.submitting") : t("submit")}
               loading={isSubmitting}
             />
           </DialogActions>

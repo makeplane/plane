@@ -4,11 +4,11 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 
 export const EstimateSearch = observer(function EstimateSearch() {
-  // hooks
-  const {} = {};
+  const { t } = useTranslation();
 
-  return <div>Estimate Search</div>;
+  return <div>{t("web_ui.estimate_search")}</div>;
 });

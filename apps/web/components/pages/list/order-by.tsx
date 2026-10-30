@@ -18,19 +18,18 @@ type Props = {
   sortKey: TPageFiltersSortKey;
 };
 
-const PAGE_SORTING_KEY_OPTIONS: {
-  key: TPageFiltersSortKey;
-  label: string;
-}[] = [
-  { key: "name", label: "Name" },
-  { key: "created_at", label: "Date created" },
-  { key: "updated_at", label: "Date modified" },
-];
-
 export function PageOrderByDropdown(props: Props) {
   const { onChange, sortBy, sortKey } = props;
   // plane hooks
   const { t } = useTranslation();
+  const PAGE_SORTING_KEY_OPTIONS: {
+    key: TPageFiltersSortKey;
+    label: string;
+  }[] = [
+    { key: "name", label: t("name") },
+    { key: "created_at", label: t("web_ui.date_created") },
+    { key: "updated_at", label: t("web_ui.date_modified") },
+  ];
 
   const orderByDetails = PAGE_SORTING_KEY_OPTIONS.find((option) => sortKey === option.key);
   const isDescending = sortBy === "desc";

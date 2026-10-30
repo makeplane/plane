@@ -158,7 +158,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
   const moduleDetails = getModuleById(moduleId);
   const areEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId.toString());
   const estimateType = areEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
-  const isEstimatePointValid = estimateType && estimateType?.type == EEstimateSystem.POINTS ? true : false;
+  const isEstimatePointValid = Boolean(estimateType && estimateType?.type == EEstimateSystem.POINTS);
 
   const { reset, control } = useForm({
     defaultValues,
@@ -188,18 +188,18 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
         await deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId);
         setToast({
           type: "success",
-          title: "Success!",
-          message: "Module link deleted successfully.",
+          title: t("success"),
+          message: t("web_ui.module_link_deleted_successfully"),
         });
       } catch (_error) {
         setToast({
           type: "error",
-          title: "Error!",
-          message: "Some error occurred",
+          title: t("error"),
+          message: t("web_ui.some_error_occurred"),
         });
       }
     },
-    [workspaceSlug, projectId, moduleId, deleteModuleLink]
+    [t, workspaceSlug, projectId, moduleId, deleteModuleLink]
   );
 
   const handleDateChange = async (startDate: Date | undefined, targetDate: Date | undefined) => {
@@ -209,8 +209,8 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
     });
     setToast({
       type: "success",
-      title: "Success!",
-      message: "Module updated successfully.",
+      title: t("success"),
+      message: t("web_ui.module_updated_successfully"),
     });
   };
 

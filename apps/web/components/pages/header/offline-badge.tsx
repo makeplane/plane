@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // plane imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
@@ -17,6 +18,8 @@ type Props = {
 };
 
 export const PageOfflineBadge = observer(function PageOfflineBadge({ page }: Props) {
+  const { t } = useTranslation();
+
   // use online status
   const { isOnline } = useOnlineStatus();
 
@@ -24,12 +27,12 @@ export const PageOfflineBadge = observer(function PageOfflineBadge({ page }: Pro
 
   return (
     <Tooltip
-      label="You are offline. You can continue making changes. They will be synced when you are back online."
+      label={t("web_ui.you_are_offline_you_can_continue_making_changes_they_will_be_synced_when_you_are_back_onli")}
       layout="stacked"
     >
       <div className="flex h-7 flex-shrink-0 items-center gap-2 rounded-full bg-layer-1 px-3 py-0.5 text-11 font-medium text-tertiary">
         <span className="size-1.5 flex-shrink-0 rounded-full bg-layer-1" />
-        <span>Offline</span>
+        <span>{t("web_ui.offline")}</span>
       </div>
     </Tooltip>
   );

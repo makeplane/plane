@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useParams } from "next/navigation";
 import { setToast } from "@plane/blocks/toast";
 import type { SetToastProps } from "@plane/blocks/toast";
@@ -34,6 +35,8 @@ export const useGroupIssuesDragNDrop = (
   groupBy: TIssueGroupByOptions | undefined,
   subGroupBy?: TIssueGroupByOptions
 ) => {
+  const { t } = useTranslation();
+
   const { workspaceSlug } = useParams();
 
   const {
@@ -64,8 +67,8 @@ export const useGroupIssuesDragNDrop = (
   ) => {
     const errorToastProps: SetToastProps = {
       type: "error",
-      title: "Error!",
-      message: "Error while updating work item",
+      title: t("error"),
+      message: t("web_ui.error_while_updating_work_item"),
     };
     const moduleKey = ISSUE_FILTER_DEFAULT_DATA["module"];
     const cycleKey = ISSUE_FILTER_DEFAULT_DATA["cycle"];
@@ -95,7 +98,7 @@ export const useGroupIssuesDragNDrop = (
       delete data[moduleKey];
     }
 
-    updateIssue && updateIssue(projectId, issueId, data).catch(() => setToast(errorToastProps));
+    if (updateIssue) updateIssue(projectId, issueId, data).catch(() => setToast(errorToastProps));
   };
 
   const handleOnDrop = async (source: GroupDropLocation, destination: GroupDropLocation) => {
@@ -118,7 +121,7 @@ export const useGroupIssuesDragNDrop = (
       orderBy !== "sort_order"
     ).catch((err) => {
       setToast({
-        title: "Error!",
+        title: t("error"),
         type: "error",
         message: err?.detail ?? "Failed to perform this action",
       });

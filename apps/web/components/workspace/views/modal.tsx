@@ -55,16 +55,16 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
       const res = await createGlobalView(workspaceSlug, payloadData);
       setToast({
         type: "success",
-        title: "Success!",
-        message: "View created successfully.",
+        title: t("success"),
+        message: t("web_ui.view_created_successfully"),
       });
       router.push(`/${workspaceSlug}/workspace-views/${res.id}`);
       handleClose();
     } catch (_error) {
       setToast({
         type: "error",
-        title: "Error!",
-        message: "View could not be created. Please try again.",
+        title: t("error"),
+        message: t("web_ui.view_could_not_be_created_please_try_again"),
       });
     }
   };
@@ -84,16 +84,16 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
         resetExpression(EIssuesStoreType.GLOBAL, data.id, res.rich_filters);
         setToast({
           type: "success",
-          title: "Success!",
-          message: "View updated successfully.",
+          title: t("success"),
+          message: t("web_ui.view_updated_successfully"),
         });
         handleClose();
       }
     } catch (_error) {
       setToast({
         type: "error",
-        title: "Error!",
-        message: "View could not be updated. Please try again.",
+        title: t("error"),
+        message: t("web_ui.view_could_not_be_updated_please_try_again"),
       });
     }
   };

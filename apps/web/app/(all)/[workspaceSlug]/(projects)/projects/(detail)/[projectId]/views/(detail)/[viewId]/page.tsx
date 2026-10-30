@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // assets
@@ -19,6 +20,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import type { Route } from "./+types/page";
 
 function ProjectViewIssuesPage({ params }: Route.ComponentProps) {
+  const { t } = useTranslation();
+
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId, viewId } = params;
@@ -36,8 +39,8 @@ function ProjectViewIssuesPage({ params }: Route.ComponentProps) {
     return (
       <EmptyState
         image={emptyView}
-        title="View does not exist"
-        description="The view you are looking for does not exist or you don't have permission to view it."
+        title={t("web_ui.view_does_not_exist")}
+        description={t("web_ui.the_view_you_are_looking_for_does_not_exist_or_you_don_t_have_permission_to_view_it")}
         primaryButton={{
           text: "View other views",
           onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/views`),

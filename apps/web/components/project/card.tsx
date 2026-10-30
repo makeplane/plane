@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -52,6 +53,8 @@ type Props = {
 };
 
 export const ProjectCard = observer(function ProjectCard(props: Props) {
+  const { t } = useTranslation();
+
   const { project } = props;
   // states
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
@@ -94,10 +97,10 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
 
     const addToFavoritePromise = addProjectToFavorites(workspaceSlug.toString(), project.id);
     setPromiseToast(addToFavoritePromise, {
-      loading: "Adding project to favorites...",
+      loading: t("adding_project_to_favorites"),
       success: {
-        title: "Success!",
-        message: () => "Project added to favorites.",
+        title: t("success"),
+        message: () => t("project_added_to_favorites"),
         // propel: the callback exists for its side effect; a toast action is data, and there is
         // none here, so it returns an empty list rather than an empty fragment.
         actionItems: () => {
@@ -106,8 +109,8 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
         },
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't add the project to favorites. Please try again.",
+        title: t("error"),
+        message: () => t("couldnt_add_the_project_to_favorites"),
       },
     });
   };
@@ -117,14 +120,14 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
 
     const removeFromFavoritePromise = removeProjectFromFavorites(workspaceSlug.toString(), project.id);
     setPromiseToast(removeFromFavoritePromise, {
-      loading: "Removing project from favorites...",
+      loading: t("removing_project_from_favorites"),
       success: {
-        title: "Success!",
-        message: () => "Project removed from favorites.",
+        title: t("success"),
+        message: () => t("project_removed_from_favorites"),
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't remove the project from favorites. Please try again.",
+        title: t("error"),
+        message: () => t("failed_to_remove_project_from_favorites"),
       },
     });
   };
@@ -134,8 +137,8 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
     copyUrlToClipboard(projectLink).then(() =>
       setToast({
         type: "info",
-        title: "Link Copied!",
-        message: "Project link copied to clipboard.",
+        title: t("link_copied"),
+        message: t("project_link_copied_to_clipboard"),
       })
     );
   const handleOpenInNewTab = () => window.open(`/${projectLink}`, "_blank");
@@ -144,42 +147,42 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
     {
       key: "settings",
       action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`),
-      title: "Settings",
+      title: t("settings"),
       icon: SettingsOutline,
       shouldRender: !isArchived && (hasAdminRole || hasMemberRole),
     },
     {
       key: "join",
       action: () => setJoinProjectModal(true),
-      title: "Join",
+      title: t("common.join"),
       icon: UserPlusOutline,
       shouldRender: !isMemberOfProject && !isArchived,
     },
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
-      title: "Open in new tab",
+      title: t("open_in_new_tab"),
       icon: NewTabOutline,
       shouldRender: !isMemberOfProject && !isArchived,
     },
     {
       key: "copy-link",
       action: () => void handleCopyText(),
-      title: "Copy link",
+      title: t("copy_link"),
       icon: LinkOutline,
       shouldRender: !isArchived,
     },
     {
       key: "restore",
       action: () => setRestoreProject(true),
-      title: "Restore",
+      title: t("restore"),
       icon: RestoreOutline,
       shouldRender: isArchived && hasAdminRole,
     },
     {
       key: "delete",
       action: () => setDeleteProjectModal(true),
-      title: "Delete",
+      title: t("delete"),
       icon: DeleteOutline,
       shouldRender: isArchived && hasAdminRole,
     },
@@ -256,7 +259,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
               <div data-prevent-progress className="flex h-full flex-shrink-0 items-center gap-2">
                 <button
                   type="button"
-                  aria-label="Copy link"
+                  aria-label={t("copy_link")}
                   className="flex h-6 w-6 items-center justify-center rounded-sm bg-white/10"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -299,7 +302,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
           <div className="item-center flex justify-between">
             <div className="flex items-center justify-center gap-2">
               <Tooltip
-                label={project.members?.length ? `Members: ${project.members.length}` : "No members"}
+                label={project.members?.length ? `Members: ${project.members.length}` : t("web_ui.no_members")}
                 layout="stacked"
                 disabled={isMobile}
               >
@@ -317,10 +320,12 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </AvatarGroup>
                   </div>
                 ) : (
-                  <span className="text-13 text-placeholder italic">No Member Yet</span>
+                  <span className="text-13 text-placeholder italic">{t("web_ui.no_member_yet")}</span>
                 )}
               </Tooltip>
-              {isArchived && <div className="text-11 font-medium text-placeholder">Archived</div>}
+              {isArchived && (
+                <div className="text-11 font-medium text-placeholder">{t("wiki_collections.predefined.archived")}</div>
+              )}
             </div>
             {isArchived ? (
               hasAdminRole && (
@@ -329,7 +334,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     variant="ghost"
                     size="xs"
                     stretch="auto"
-                    label="Restore"
+                    label={t("restore")}
                     icon={<Icon icon={RestoreOutline} />}
                     onClick={(e) => {
                       e.preventDefault();
@@ -340,7 +345,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                   <IconButton
                     variant="ghost"
                     size="xs"
-                    aria-label="Delete"
+                    aria-label={t("delete")}
                     icon={<Icon icon={DeleteOutline} />}
                     onClick={(e) => {
                       e.preventDefault();
@@ -366,7 +371,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                   ) : (
                     <span className="flex items-center gap-1 text-13 text-placeholder">
                       <TickOutline className="h-3.5 w-3.5" />
-                      Joined
+                      {t("web_ui.joined")}{" "}
                     </span>
                   ))}
                 {!isMemberOfProject && (
@@ -375,7 +380,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                       variant="ghost"
                       size="sm"
                       stretch="auto"
-                      label="Join"
+                      label={t("common.join")}
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();

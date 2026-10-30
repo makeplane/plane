@@ -39,26 +39,26 @@ type Props = {
 type TCommentAccessType = {
   icon: LucideIcon | React.FC<ISvgIcons>;
   key: EIssueCommentAccessSpecifier;
-  label: "Private" | "Public";
+  label: string;
 };
-
-const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
-  {
-    icon: LockOutline,
-    key: EIssueCommentAccessSpecifier.INTERNAL,
-    label: "Private",
-  },
-  {
-    icon: GlobeOutline,
-    key: EIssueCommentAccessSpecifier.EXTERNAL,
-    label: "Public",
-  },
-];
 
 const toolbarItems = TOOLBAR_ITEMS.lite;
 
 export function IssueCommentToolbar(props: Props) {
   const { t } = useTranslation();
+  const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
+    {
+      icon: LockOutline,
+      key: EIssueCommentAccessSpecifier.INTERNAL,
+      label: t("private"),
+    },
+    {
+      icon: GlobeOutline,
+      key: EIssueCommentAccessSpecifier.EXTERNAL,
+      label: t("public"),
+    },
+  ];
+
   const {
     accessSpecifier,
     executeCommand,

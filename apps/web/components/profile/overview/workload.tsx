@@ -25,7 +25,7 @@ export function ProfileWorkload({ stateDistribution }: Props) {
       <div className="grid grid-cols-1 justify-stretch gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {stateDistribution.map((group) => (
           <div key={group.state_group}>
-            <a>
+            <div>
               <Card direction="row" spacing="sm">
                 <div
                   className="my-2 h-3 w-3 rounded-xs"
@@ -36,15 +36,15 @@ export function ProfileWorkload({ stateDistribution }: Props) {
                 <div className="flex-col space-y-1">
                   <span className="text-13 text-placeholder">
                     {group.state_group === "unstarted"
-                      ? "Not started"
+                      ? t("web_ui.not_started")
                       : group.state_group === "started"
-                        ? "Working on"
+                        ? t("web_ui.working_on")
                         : STATE_GROUPS[group.state_group].label}
                   </span>
                   <p className="text-18 font-semibold">{group.state_count}</p>
                 </div>
               </Card>
-            </a>
+            </div>
           </div>
         ))}
       </div>

@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { LabelsOutline } from "@makeplane/propel/icons";
 // hooks
@@ -15,6 +16,8 @@ import { IssueActivityBlockComponent, IssueLink, LabelActivityChip } from "./";
 type TIssueLabelActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
 export const IssueLabelActivity = observer(function IssueLabelActivity(props: TIssueLabelActivity) {
+  const { t } = useTranslation();
+
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {
@@ -34,7 +37,7 @@ export const IssueLabelActivity = observer(function IssueLabelActivity(props: TI
       ends={ends}
     >
       <>
-        {activity.old_value === "" ? `added a new label ` : `removed the label `}
+        {activity.old_value === "" ? t("web_ui.added_a_new_label") : t("web_ui.removed_the_label")}
         <LabelActivityChip
           name={activity.old_value === "" ? activity.new_value : activity.old_value}
           color={activity.old_value === "" ? newLabelColor : oldLabelColor}

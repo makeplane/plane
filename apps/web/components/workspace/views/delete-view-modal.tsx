@@ -41,8 +41,8 @@ export const DeleteGlobalViewModal = observer(function DeleteGlobalViewModal(pro
     } catch (_error) {
       setToast({
         type: "error",
-        title: "Error!",
-        message: "Failed to delete the view. Please try again.",
+        title: t("error"),
+        message: t("web_ui.failed_to_delete_the_view_please_try_again"),
       });
     }
 

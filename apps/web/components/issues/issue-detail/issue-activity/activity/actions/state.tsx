@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // hooks
 import { StateOutline } from "@makeplane/propel/icons";
@@ -15,6 +16,8 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 type TIssueStateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
 export const IssueStateActivity = observer(function IssueStateActivity(props: TIssueStateActivity) {
+  const { t } = useTranslation();
+
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {
@@ -31,8 +34,8 @@ export const IssueStateActivity = observer(function IssueStateActivity(props: TI
       ends={ends}
     >
       <>
-        set the state to <span className="font-medium text-primary">{activity.new_value}</span>
-        {showIssue ? ` for ` : ``}
+        {t("web_ui.set_the_state_to")} <span className="font-medium text-primary">{activity.new_value}</span>
+        {showIssue ? t("web_ui.for") : ``}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>
     </IssueActivityBlockComponent>

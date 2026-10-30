@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane package imports
@@ -29,6 +30,8 @@ type Props = {
 };
 
 export const ProjectSelect = observer(function ProjectSelect(props: Props) {
+  const { t } = useTranslation();
+
   const { value, onChange, projectIds } = props;
   const { getProjectById } = useProject();
 
@@ -85,7 +88,7 @@ export const ProjectSelect = observer(function ProjectSelect(props: Props) {
               ? `3+ projects`
               : selectedOptions.length > 0
                 ? selectedOptions.map((option) => option.name).join(", ")
-                : "All projects"}
+                : t("workspace_analytics.all_projects")}
           </span>
         )}
       </Select.Trigger>

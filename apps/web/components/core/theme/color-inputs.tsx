@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
@@ -11,36 +12,39 @@ import { Controller } from "react-hook-form";
 import type { IUserTheme } from "@plane/types";
 import { InputColorPicker } from "./input-color-picker";
 
+const handleValueChange = (val: string | undefined, onChange: (...args: unknown[]) => void) => {
+  let hex = val;
+  // prepend a hashtag if it doesn't exist
+  if (val && val[0] !== "#") hex = `#${val}`;
+  onChange(hex);
+};
+
 type Props = {
   control: Control<IUserTheme>;
 };
 
 export const CustomThemeColorInputs = observer(function CustomThemeColorInputs(props: Props) {
-  const { control } = props;
+  const { t } = useTranslation();
 
-  const handleValueChange = (val: string | undefined, onChange: (...args: unknown[]) => void) => {
-    let hex = val;
-    // prepend a hashtag if it doesn't exist
-    if (val && val[0] !== "#") hex = `#${val}`;
-    onChange(hex);
-  };
+  const { control } = props;
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       {/* Neutral Color */}
       <div className="flex flex-col gap-2">
         <h3 className="text-body-sm-medium">
-          Neutral color<span className="text-danger-primary">*</span>
+          {t("web_ui.neutral_color")}
+          <span className="text-danger-primary">*</span>
         </h3>
         <div className="w-full">
           <Controller
             control={control}
             name="background"
             rules={{
-              required: "Neutral color is required",
+              required: t("web_ui.neutral_color_is_required"),
               pattern: {
                 value: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
-                message: "Enter a valid hex code",
+                message: t("web_ui.enter_a_valid_hex_code"),
               },
             }}
             render={({ field: { value, onChange } }) => (
@@ -63,17 +67,18 @@ export const CustomThemeColorInputs = observer(function CustomThemeColorInputs(p
       {/* Brand Color */}
       <div className="flex flex-col gap-2">
         <h3 className="text-body-sm-medium">
-          Brand color<span className="text-danger-primary">*</span>
+          {t("web_ui.brand_color")}
+          <span className="text-danger-primary">*</span>
         </h3>
         <div className="w-full">
           <Controller
             control={control}
             name="primary"
             rules={{
-              required: "Brand color is required",
+              required: t("web_ui.brand_color_is_required"),
               pattern: {
                 value: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
-                message: "Enter a valid hex code",
+                message: t("web_ui.enter_a_valid_hex_code"),
               },
             }}
             render={({ field: { value, onChange } }) => (

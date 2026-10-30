@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { WarningTriangleOutline } from "@makeplane/propel/icons";
@@ -39,6 +40,8 @@ const defaultValues = {
 };
 
 export function DeleteProjectModal(props: DeleteProjectModal) {
+  const { t } = useTranslation();
+
   const { isOpen, project, onClose } = props;
   // store hooks
   const { deleteProject } = useProject();
@@ -74,14 +77,14 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
       handleClose();
       setToast({
         type: "success",
-        title: "Success!",
-        message: "Project deleted successfully.",
+        title: t("success"),
+        message: t("web_ui.project_deleted_successfully"),
       });
     } catch (_error) {
       setToast({
         type: "error",
-        title: "Error!",
-        message: "Something went wrong. Please try again later.",
+        title: t("error"),
+        message: t("web_ui.something_went_wrong_please_try_again_later"),
       });
     }
   };
@@ -102,21 +105,24 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
                   <WarningTriangleOutline className="h-6 w-6 text-danger-primary" aria-hidden="true" />
                 </span>
                 <DialogHeading>
-                  <DialogTitle>Delete project</DialogTitle>
+                  <DialogTitle>{t("project_settings.general.delete_project.title")}</DialogTitle>
                 </DialogHeading>
               </div>
             </DialogHeader>
             <DialogBody>
               <div className="flex flex-col gap-6">
                 <p className="text-13 leading-7 text-secondary">
-                  Are you sure you want to delete project{" "}
-                  <span className="font-semibold break-words">{project?.name}</span>? All of the data related to the
-                  project will be permanently removed. This action cannot be undone
+                  {t("web_ui.are_you_sure_you_want_to_delete_project")}{" "}
+                  <span className="font-semibold break-words">{project?.name}</span>
+                  {t(
+                    "web_ui.all_of_the_data_related_to_the_project_will_be_permanently_removed_this_action_cannot_be_u"
+                  )}{" "}
                 </p>
                 <div className="text-secondary">
                   <p className="text-13 break-words">
-                    Enter the project name <span className="font-medium text-primary">{project?.name}</span> to
-                    continue:
+                    {t("web_ui.enter_the_project_name")}{" "}
+                    <span className="font-medium text-primary">{project?.name}</span>{" "}
+                    {t("work_item_types.settings.linked_properties.unlink_confirmation.input_label_suffix")}{" "}
                   </p>
                   <Controller
                     control={control}
@@ -132,7 +138,7 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
                             value={value}
                             onChange={onChange}
                             ref={ref}
-                            placeholder="Project name"
+                            placeholder={t("project_name")}
                             autoComplete="off"
                           />
                         </InputGroup>
@@ -142,7 +148,11 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
                 </div>
                 <div className="text-secondary">
                   <p className="text-13">
-                    To confirm, type <span className="font-medium text-primary">delete my project</span> below:
+                    {t("web_ui.to_confirm_type")}{" "}
+                    <span className="font-medium text-primary">
+                      {t("project_settings.general.delete_project.button")}
+                    </span>{" "}
+                    {t("web_ui.below")}{" "}
                   </p>
                   <Controller
                     control={control}
@@ -158,7 +168,7 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
                             value={value}
                             onChange={onChange}
                             ref={ref}
-                            placeholder="Enter 'delete my project'"
+                            placeholder={t("web_ui.enter_delete_my_project")}
                             autoComplete="off"
                           />
                         </InputGroup>
@@ -170,13 +180,13 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
             </DialogBody>
           </DialogMain>
           <DialogActions>
-            <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+            <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={handleClose} />
             <Button
               variant="danger"
               size="md"
               stretch="auto"
               type="submit"
-              label={isSubmitting ? "Deleting" : "Delete project"}
+              label={isSubmitting ? t("deleting") : t("project_settings.general.delete_project.title")}
               disabled={!canDelete}
               loading={isSubmitting}
             />

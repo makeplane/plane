@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import type { RefObject } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -32,6 +33,8 @@ type Props<T extends IBaseLayoutsBaseItem> = {
 };
 
 export const BaseGanttSidebar = observer(function BaseGanttSidebar<T extends IBaseLayoutsBaseItem>(props: Props<T>) {
+  const { t } = useTranslation();
+
   const {
     blockUpdateHandler,
     blockIds,
@@ -95,9 +98,11 @@ export const BaseGanttSidebar = observer(function BaseGanttSidebar<T extends IBa
                   onDrop={handleOnDrop}
                 >
                   {(isDragging: boolean) => {
-                    const block = getBlockById(blockId);
-                    const isBlockComplete = !!block?.start_date && !!block?.target_date;
-                    const duration = isBlockComplete ? getNumberOfDaysFromPosition(block?.position?.width) : undefined;
+                    const nextBlock = getBlockById(blockId);
+                    const isBlockComplete = !!nextBlock?.start_date && !!nextBlock?.target_date;
+                    const duration = isBlockComplete
+                      ? getNumberOfDaysFromPosition(nextBlock?.position?.width)
+                      : undefined;
                     const isBlockHoveredOn = isBlockActive(blockId);
 
                     return (
@@ -124,7 +129,8 @@ export const BaseGanttSidebar = observer(function BaseGanttSidebar<T extends IBa
                             {duration && (
                               <div className="flex-shrink-0 text-13 text-secondary">
                                 <span>
-                                  {duration} day{duration > 1 ? "s" : ""}
+                                  {duration} {t("web_ui.day")}
+                                  {duration > 1 ? "s" : ""}
                                 </span>
                               </div>
                             )}

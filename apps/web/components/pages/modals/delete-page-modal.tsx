@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
@@ -27,6 +28,8 @@ type TConfirmPageDeletionProps = {
 };
 
 export const DeletePageModal = observer(function DeletePageModal(props: TConfirmPageDeletionProps) {
+  const { t } = useTranslation();
+
   const { isOpen, onClose, page, storeType } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
@@ -52,8 +55,8 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
       handleClose();
       setToast({
         type: "success",
-        title: "Success!",
-        message: "Page deleted successfully.",
+        title: t("success"),
+        message: t("web_ui.page_deleted_successfully"),
       });
 
       if (routePageId) {
@@ -62,8 +65,8 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
     } catch {
       setToast({
         type: "error",
-        title: "Error!",
-        message: "Page could not be deleted. Please try again.",
+        title: t("error"),
+        message: t("web_ui.page_could_not_be_deleted_please_try_again"),
       });
     } finally {
       setIsDeleting(false);
@@ -78,12 +81,12 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
       handleSubmit={handleDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title="Delete page"
+      title={t("web_ui.delete_page")}
       content={
         <>
-          Are you sure you want to delete page-{" "}
-          <span className="font-medium break-words break-all text-primary">{getPageName(name)}</span> ? The Page will be
-          deleted permanently. This action cannot be undone.
+          {t("web_ui.are_you_sure_you_want_to_delete_page")}{" "}
+          <span className="font-medium break-words break-all text-primary">{getPageName(name)}</span>{" "}
+          {t("web_ui.the_page_will_be_deleted_permanently_this_action_cannot_be_undone")}{" "}
         </>
       }
     />

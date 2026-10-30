@@ -75,6 +75,8 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
         title: t("link_copied"),
         message: t("project_link_copied_to_clipboard"),
       });
+
+      return undefined;
     });
   };
 
@@ -230,7 +232,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                     )}
                   >
                     <MoreHorizontalOutline className="size-4 flex-shrink-0" />
-                    <span>{isExtendedProjectSidebarOpened ? "Hide" : "More"}</span>
+                    <span>{isExtendedProjectSidebarOpened ? t("web_ui.hide") : t("web_ui.more")}</span>
                   </button>
                 </SidebarNavItem>
               )}

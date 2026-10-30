@@ -83,7 +83,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
         projectId={projectId}
         value={data?.assignee_ids || []}
         onChange={(assigneeIds) => handleData("assignee_ids", assigneeIds)}
-        placeholder="Assignees"
+        placeholder={t("assignees")}
         multiple
         variant={(data?.assignee_ids || []).length ? "avatar-group-md" : "pill-md"}
         tabIndex={getIndex("assignee_ids")}
@@ -105,7 +105,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
           value={getDate(data?.start_date) ?? null}
           onChange={(date) => handleData("start_date", date ? renderFormattedPayloadDate(date) : "")}
           minDate={minDate ?? undefined}
-          placeholder="Start date"
+          placeholder={t("start_date")}
           icon={<CalendarOutline />}
           weekStartsOn={userProfile?.start_of_the_week}
           clearable
@@ -120,7 +120,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
         value={getDate(data?.target_date) ?? null}
         onChange={(date) => handleData("target_date", date ? renderFormattedPayloadDate(date) : "")}
         minDate={minDate ?? undefined}
-        placeholder="Due date"
+        placeholder={t("due_date")}
         icon={<CalendarOutline />}
         weekStartsOn={userProfile?.start_of_the_week}
         clearable
@@ -135,7 +135,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
           value={data?.cycle_id || null}
           onChange={(cycleId) => handleData("cycle_id", cycleId)}
           projectId={projectId}
-          placeholder="Cycle"
+          placeholder={t("common.cycle")}
           variant="pill-md"
           tabIndex={getIndex("cycle_id")}
         />
@@ -148,7 +148,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
           projectId={projectId}
           value={data?.module_ids || []}
           onChange={(moduleIds) => handleData("module_ids", moduleIds)}
-          placeholder="Modules"
+          placeholder={t("modules")}
           variant="pill-md"
           tabIndex={getIndex("module_ids")}
         />
@@ -161,7 +161,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
           onChange={(estimatePoint) => handleData("estimate_point", estimatePoint)}
           projectId={projectId}
           variant="pill-md"
-          placeholder="Estimate"
+          placeholder={t("estimate")}
           tabIndex={getIndex("estimate_point")}
         />
       )}
@@ -187,9 +187,9 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
                   }
                 />
                 <MenuContent side="bottom" align="start">
-                  <MenuItem label="Change parent work item" onClick={() => setParentIssueModalOpen(true)} />
+                  <MenuItem label={t("change_parent_issue")} onClick={() => setParentIssueModalOpen(true)} />
                   <MenuItem
-                    label="Remove parent work item"
+                    label={t("remove_parent_issue")}
                     onClick={() => {
                       handleData("parent_id", "");
                       setSelectedParentIssue(undefined);
@@ -205,7 +205,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
               onClick={() => setParentIssueModalOpen(true)}
             >
               <ParentOutline className="h-3 w-3 flex-shrink-0" />
-              <span className="whitespace-nowrap">Add parent</span>
+              <span className="whitespace-nowrap">{t("add_parent")}</span>
             </button>
           )}
 

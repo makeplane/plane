@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // plane types
 import { PriorityIcon, StateGroupIcon } from "@plane/blocks/icons";
@@ -28,6 +29,8 @@ type BlockProps = {
   workspaceSlug: string;
 };
 export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
+  const { t } = useTranslation();
+
   const { activity, ref, workspaceSlug } = props;
   // hooks
   const { getStateById } = useProjectState();
@@ -99,7 +102,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
       }
       quickActionElement={
         <div className="flex gap-4">
-          <Tooltip label={`State: ${state?.name ?? "State"}`} layout="stacked">
+          <Tooltip label={t("web_ui.dynamic_state_value0", { value0: state?.name ?? t("state") })} layout="stacked">
             <div>
               <StateGroupIcon
                 stateGroup={state?.group ?? "backlog"}
@@ -109,7 +112,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
               />
             </div>
           </Tooltip>
-          <Tooltip label={`Priority: ${issueDetails?.priority ?? "Priority"}`}>
+          <Tooltip label={t("web_ui.dynamic_priority_value0", { value0: issueDetails?.priority ?? t("priority") })}>
             <div>
               <PriorityIcon priority={issueDetails?.priority} className="size-4" />
             </div>

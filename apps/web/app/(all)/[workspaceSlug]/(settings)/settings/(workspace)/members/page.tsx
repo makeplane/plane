@@ -59,7 +59,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
 
       setToast({
         type: "success",
-        title: "Success!",
+        title: t("success"),
         message: t("workspace_settings.settings.members.invitations_sent_successfully"),
       });
     } catch (error: unknown) {
@@ -70,7 +70,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
       }
       setToast({
         type: "error",
-        title: "Error!",
+        title: t("error"),
         message: `${message ?? t("something_went_wrong_please_try_again")}`,
       });
 

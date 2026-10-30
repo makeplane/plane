@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo, useState } from "react";
+import { useTranslation } from "@plane/i18n";
+import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ImageOutline } from "@makeplane/propel/icons";
@@ -54,6 +55,14 @@ const defaultValues: Partial<TProfileSetupFormValues> = {
 };
 
 export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepChange }: Props) {
+  // Focus this field when its input/group mounts, without refocusing on ordinary rerenders.
+  const focusInputOnMount = useCallback((element: HTMLElement | null) => {
+    const input = element instanceof HTMLInputElement ? element : element?.querySelector("input");
+    input?.focus();
+  }, []);
+
+  const { t } = useTranslation();
+
   // states
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
@@ -99,8 +108,8 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
     } catch {
       setToast({
         type: "error",
-        title: "Error",
-        message: "User details update failed. Please try again!",
+        title: t("error"),
+        message: t("web_ui.user_details_update_failed_please_try_again"),
       });
     }
   };
@@ -141,13 +150,15 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
 
   // Check for all available fields validation and if password field is available, then checks for password validation (strength + confirmation).
   // Also handles the condition for optional password i.e if password field is optional it only checks for above validation if it's not empty.
-  const isButtonDisabled =
-    !isSubmitting && isValid ? (isPasswordAlreadySetup ? false : isValidPassword ? false : true) : true;
+  const isButtonDisabled = !isSubmitting && isValid ? (isPasswordAlreadySetup ? false : !isValidPassword) : true;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">
       {/* Header */}
-      <CommonOnboardingHeader title="Create your profile." description="This is how you will appear in Plane." />
+      <CommonOnboardingHeader
+        title={t("web_ui.create_your_profile")}
+        description={t("web_ui.this_is_how_you_will_appear_in_plane")}
+      />
 
       {/* Profile Picture Section */}
       <Controller
@@ -175,7 +186,6 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
           {userAvatar ? (
             <img
               src={getFileURL(userAvatar ?? "")}
-              onClick={() => setIsImageUploadModalOpen(true)}
               alt={user?.display_name}
               className="h-full w-full rounded-full object-cover"
             />
@@ -190,28 +200,28 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
           onClick={() => setIsImageUploadModalOpen(true)}
         >
           <ImageOutline className="size-4" />
-          <span className="text-13">{userAvatar ? "Change image" : "Upload image"}</span>
+          <span className="text-13">{userAvatar ? t("web_ui.change_image") : t("web_ui.upload_image")}</span>
         </button>
       </div>
 
       <div className="flex w-full flex-col gap-6">
         {/* Name Input */}
-        <div className="flex flex-col gap-2">
+        <div ref={focusInputOnMount} className="flex flex-col gap-2">
           <label
             className="block text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
             htmlFor="first_name"
           >
-            Name
+            {t("name")}{" "}
           </label>
           <Controller
             control={control}
             name="first_name"
             rules={{
-              required: "Name is required",
+              required: t("name_is_required"),
               validate: validatePersonName,
               maxLength: {
                 value: 50,
-                message: "Name must be within 50 characters.",
+                message: t("web_ui.name_must_be_within_50_characters"),
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
@@ -222,7 +232,6 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
                 type="text"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                autoFocus
                 className={cn(
                   "w-full rounded-md border border-strong bg-surface-1 px-3 py-2 text-secondary transition-all duration-200 placeholder:text-placeholder focus:border-transparent focus:ring-2 focus:ring-accent-strong focus:outline-none",
                   {
@@ -230,7 +239,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
                     "border-danger-strong": errors.first_name,
                   }
                 )}
-                placeholder="Enter your full name"
+                placeholder={t("web_ui.enter_your_full_name")}
                 autoComplete="on"
               />
             )}
@@ -247,7 +256,14 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
         )}
       </div>
       {/* Continue Button */}
-      <Button variant="primary" type="submit" stretch="full" size="lg" disabled={isButtonDisabled} label="Continue" />
+      <Button
+        variant="primary"
+        type="submit"
+        stretch="full"
+        size="lg"
+        disabled={isButtonDisabled}
+        label={t("common.continue")}
+      />
 
       {/* Marketing Consent */}
       {!instanceConfig?.is_self_managed && (

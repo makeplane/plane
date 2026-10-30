@@ -31,24 +31,23 @@ type Props = {
   memberType: "project" | "workspace";
 };
 
-const PROJECT_ROLE_OPTIONS: IRoleOption[] = [
-  { value: String(EUserProjectRoles.ADMIN), label: "Admin" },
-  { value: String(EUserProjectRoles.MEMBER), label: "Member" },
-  { value: String(EUserProjectRoles.GUEST), label: "Guest" },
-];
-
-const WORKSPACE_ROLE_OPTIONS: IRoleOption[] = [
-  { value: String(EUserWorkspaceRoles.ADMIN), label: "Admin" },
-  { value: String(EUserWorkspaceRoles.MEMBER), label: "Member" },
-  { value: String(EUserWorkspaceRoles.GUEST), label: "Guest" },
-  { value: "suspended", label: "Suspended" },
-];
-
 // Dropdown component for member list filters
 export const MemberListFiltersDropdown = observer(function MemberListFiltersDropdown(props: Props) {
   const { appliedFilters, handleUpdate, memberType } = props;
   // plane hooks
   const { t } = useTranslation();
+  const PROJECT_ROLE_OPTIONS: IRoleOption[] = [
+    { value: String(EUserProjectRoles.ADMIN), label: t("role_details.admin.title") },
+    { value: String(EUserProjectRoles.MEMBER), label: t("common.member") },
+    { value: String(EUserProjectRoles.GUEST), label: t("role_details.guest.title") },
+  ];
+  const WORKSPACE_ROLE_OPTIONS: IRoleOption[] = [
+    { value: String(EUserWorkspaceRoles.ADMIN), label: t("role_details.admin.title") },
+    { value: String(EUserWorkspaceRoles.MEMBER), label: t("common.member") },
+    { value: String(EUserWorkspaceRoles.GUEST), label: t("role_details.guest.title") },
+    { value: "suspended", label: t("web_ui.suspended") },
+  ];
+
   // derived values
   const roleOptions = memberType === "project" ? PROJECT_ROLE_OPTIONS : WORKSPACE_ROLE_OPTIONS;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
@@ -73,7 +72,9 @@ export const MemberListFiltersDropdown = observer(function MemberListFiltersDrop
       </div>
       <MenuContent side="bottom" align="start">
         <MenuGroup>
-          <MenuLabel meta={appliedFiltersCount > 0 ? String(appliedFiltersCount) : undefined}>Roles</MenuLabel>
+          <MenuLabel meta={appliedFiltersCount > 0 ? String(appliedFiltersCount) : undefined}>
+            {t("web_ui.roles")}
+          </MenuLabel>
           {roleOptions.map((role) => (
             <MenuCheckboxItem
               key={`role-${role.value}`}

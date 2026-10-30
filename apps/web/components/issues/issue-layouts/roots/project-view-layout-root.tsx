@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -43,6 +44,8 @@ function ProjectViewIssueLayout(props: { activeLayout: EIssueLayoutTypes | undef
 }
 
 export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
+  const { t } = useTranslation();
+
   // router
   const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, viewId: routerViewId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug?.toString() : undefined;
@@ -88,7 +91,7 @@ export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
       <ProjectLevelWorkItemFiltersHOC
         enableSaveView
         saveViewOptions={{
-          label: "Save as",
+          label: t("web_ui.save_as"),
         }}
         enableUpdateView
         entityId={viewId}

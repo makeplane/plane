@@ -80,7 +80,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector() {
       setToast({
         type: "success",
         title: t("success"),
-        message: "Reloading to apply changes...",
+        message: t("web_ui.reloading_to_apply_changes"),
       });
       // reload the page after showing the toast
       setTimeout(() => {
@@ -121,7 +121,9 @@ export const CustomThemeSelector = observer(function CustomThemeSelector() {
           size="md"
           stretch="auto"
           type="submit"
-          label={isSubmitting ? t("common.saving") : isLoadingPalette ? "Generating" : t("set_theme")}
+          label={
+            isSubmitting ? t("common.saving") : isLoadingPalette ? t("ai_block.actions.generating") : t("set_theme")
+          }
           loading={isSubmitting || isLoadingPalette}
         />
         {/* Import/Export Section */}

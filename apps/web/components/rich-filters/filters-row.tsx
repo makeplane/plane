@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { AddFilterOutline } from "@makeplane/propel/icons";
@@ -30,6 +31,8 @@ export type TFiltersRowProps<K extends TFilterProperty, E extends TExternalFilte
 export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty, E extends TExternalFilter>(
   props: TFiltersRowProps<K, E>
 ) {
+  const { t } = useTranslation();
+
   const { buttonConfig, disabledAllOperations: disabledAllOperationsProp = false, filter, variant = "header" } = props;
   // states
   const [isUpdating, setIsUpdating] = useState(false);
@@ -103,7 +106,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
           variant="secondary"
           size="sm"
           stretch="auto"
-          label={isUpdating ? "Confirming" : (filter.updateViewOptions?.label ?? "Update view")}
+          label={isUpdating ? t("confirming") : (filter.updateViewOptions?.label ?? "Update view")}
           onClick={handleUpdate}
           loading={isUpdating}
           disabled={isUpdating}

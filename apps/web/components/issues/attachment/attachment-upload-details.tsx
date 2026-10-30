@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { CircularProgress } from "@makeplane/propel/components/circular-progress";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
@@ -22,6 +23,8 @@ type Props = {
 };
 
 export const IssueAttachmentsUploadDetails = observer(function IssueAttachmentsUploadDetails(props: Props) {
+  const { t } = useTranslation();
+
   // props
   const { uploadStatus } = props;
   // derived values
@@ -49,9 +52,17 @@ export const IssueAttachmentsUploadDetails = observer(function IssueAttachmentsU
       </div>
       <div className="flex flex-shrink-0 items-center gap-2">
         <span className="flex-shrink-0">
-          <CircularProgress value={uploadStatus.progress} size="md" variant="brand" aria-label="Upload progress" />
+          <CircularProgress
+            value={uploadStatus.progress}
+            size="md"
+            variant="brand"
+            aria-label={t("web_ui.upload_progress")}
+          />
         </span>
-        <div className="flex-shrink-0 text-13 font-medium">{uploadStatus.progress}% done</div>
+        <div className="flex-shrink-0 text-13 font-medium">
+          {uploadStatus.progress}
+          {t("web_ui.done")}
+        </div>
       </div>
     </div>
   );

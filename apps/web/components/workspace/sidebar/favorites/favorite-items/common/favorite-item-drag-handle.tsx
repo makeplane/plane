@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React from "react";
 import { observer } from "mobx-react";
 // ui
@@ -20,13 +21,15 @@ type Props = {
 };
 
 export const FavoriteItemDragHandle = observer(function FavoriteItemDragHandle(props: Props) {
+  const { t } = useTranslation();
+
   const { sort_order, isDragging } = props;
   // store hooks
   const { isMobile } = usePlatformOS();
 
   return (
     <Tooltip
-      label={sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
+      label={sort_order === null ? t("join_the_project_to_rearrange") : t("drag_to_rearrange")}
       align="end"
       disabled={isDragging || isMobile}
     >

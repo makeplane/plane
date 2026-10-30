@@ -28,6 +28,12 @@ import type { TProject } from "@plane/types";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 
 export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar() {
+  // Focus this field when its input/group mounts, without refocusing on ordinary rerenders.
+  const focusInputOnMount = useCallback((element: HTMLElement | null) => {
+    const input = element instanceof HTMLInputElement ? element : element?.querySelector("input");
+    input?.focus();
+  }, []);
+
   // refs
   const extendedProjectSidebarRef = useRef<HTMLDivElement | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -93,6 +99,8 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
         title: t("link_copied"),
         message: t("project_link_copied_to_clipboard"),
       });
+
+      return undefined;
     });
   };
   return (
@@ -114,7 +122,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
       >
         <div className="sticky top-4 flex w-full flex-col gap-1 px-4">
           <div className="flex items-center justify-between">
-            <span className="py-1.5 text-13 font-semibold text-tertiary">Projects</span>
+            <span className="py-1.5 text-13 font-semibold text-tertiary">{t("projects")}</span>
             {isAuthorizedUser && (
               <Tooltip label={t("create_project")}>
                 <button
@@ -138,7 +146,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
                 type="text"
                 placeholder={t("search")}
                 value={searchQuery}
-                autoFocus
+                ref={focusInputOnMount}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </InputGroup>

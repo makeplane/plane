@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -46,6 +47,8 @@ interface IWorkspaceAuthWrapper {
 }
 
 export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props: IWorkspaceAuthWrapper) {
+  const { t } = useTranslation();
+
   const { children, isLoading: isParentLoading = false } = props;
   // router params
   const { workspaceSlug } = useParams();
@@ -130,8 +133,8 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     await signOut().catch(() =>
       setToast({
         type: "error",
-        title: "Error!",
-        message: "Failed to sign out. Please try again.",
+        title: t("error"),
+        message: t("auth.sign_out.toast.error.message"),
       })
     );
   };
@@ -158,10 +161,10 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             </div>
             <div className="relative flex items-center gap-2">
               <div className="text-13 font-medium">{currentUser?.email}</div>
-              <Tooltip label="Sign out" alignOffset={8} disabled={isMobile}>
+              <Tooltip label={t("sign_out")} alignOffset={8} disabled={isMobile}>
                 <button
                   type="button"
-                  aria-label="Sign out"
+                  aria-label={t("sign_out")}
                   className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm hover:bg-layer-1"
                   onClick={() => void handleSignOut()}
                 >
@@ -172,16 +175,20 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
           </div>
           <div className="relative flex h-full w-full flex-grow flex-col items-center justify-center space-y-3">
             <div className="relative flex-shrink-0">
-              <img src={WorkSpaceNotAvailable} className="h-[220px] object-contain object-center" alt="Plane logo" />
+              <img
+                src={WorkSpaceNotAvailable}
+                className="h-[220px] object-contain object-center"
+                alt={t("web_ui.plane_logo")}
+              />
             </div>
-            <h3 className="text-center text-16 font-semibold">Workspace not found</h3>
+            <h3 className="text-center text-16 font-semibold">{t("web_ui.workspace_not_found")}</h3>
             <p className="text-center text-13 text-secondary">
-              No workspace found with the URL. It may not exist or you lack authorization to view it.
+              {t("web_ui.no_workspace_found_with_the_url_it_may_not_exist_or_you_lack_authorization_to_view_it")}{" "}
             </p>
             <div className="flex items-center justify-center gap-2 pt-4">
               {allWorkspaces && allWorkspaces.length > 0 && (
                 <ButtonElement variant="primary" size="sm" stretch="auto" render={<Link href="/" />}>
-                  Go Home
+                  {t("go_home")}{" "}
                 </ButtonElement>
               )}
               {allWorkspaces?.length > 0 && (
@@ -191,12 +198,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
                   stretch="auto"
                   render={<Link href="/settings/profile/general/" />}
                 >
-                  Visit Profile
+                  {t("web_ui.visit_profile")}{" "}
                 </ButtonElement>
               )}
               {allWorkspaces && allWorkspaces.length === 0 && (
                 <ButtonElement variant="secondary" size="sm" stretch="auto" render={<Link href="/create-workspace/" />}>
-                  Create new workspace
+                  {t("web_ui.create_new_workspace")}{" "}
                 </ButtonElement>
               )}
             </div>
@@ -215,18 +222,15 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
         <div className="grid h-full place-items-center p-4">
           <div className="space-y-8 text-center">
             <div className="space-y-2">
-              <h3 className="text-16 font-semibold">Not Authorized!</h3>
-              <p className="mx-auto w-1/2 text-13 text-secondary">
-                You{"'"}re not a member of this workspace. Please contact the workspace admin to get an invitation or
-                check your pending invitations.
-              </p>
+              <h3 className="text-16 font-semibold">{t("web_ui.not_authorized")}</h3>
+              <p className="mx-auto w-1/2 text-13 text-secondary">{t("web_ui.not_a_member")}</p>
             </div>
             <div className="flex items-center justify-center gap-2">
               <ButtonElement variant="secondary" size="sm" stretch="auto" render={<Link href="/invitations" />}>
-                Check pending invites
+                {t("web_ui.check_pending_invites")}{" "}
               </ButtonElement>
               <ButtonElement variant="primary" size="sm" stretch="auto" render={<Link href="/create-workspace" />}>
-                Create new workspace
+                {t("web_ui.create_new_workspace")}{" "}
               </ButtonElement>
             </div>
           </div>

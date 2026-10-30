@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useMemo } from "react";
 import { setToast } from "@plane/blocks/toast";
 import { useMember } from "@/hooks/store/use-member";
@@ -28,6 +29,8 @@ export type TTabPreferencesHook = {
  * @returns Tab preferences state and handlers
  */
 export const useTabPreferences = (workspaceSlug: string, projectId: string): TTabPreferencesHook => {
+  const { t } = useTranslation();
+
   const {
     project: { getProjectUserProperties, updateProjectUserProperties },
   } = useMember();
@@ -41,13 +44,13 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
   // Get preferences from store
   const storePreferences = getProjectUserProperties(projectId);
   const defaultTab = storePreferences?.preferences?.navigation?.default_tab || DEFAULT_TAB_KEY;
-  const hideInMoreMenu = storePreferences?.preferences?.navigation?.hide_in_more_menu || [];
+  const hideInMoreMenu = storePreferences?.preferences?.navigation?.hide_in_more_menu;
 
   // Convert store preferences to component format
   const tabPreferences: TTabPreferences = useMemo(() => {
     return {
       defaultTab,
-      hiddenTabs: hideInMoreMenu,
+      hiddenTabs: hideInMoreMenu || [],
     };
   }, [defaultTab, hideInMoreMenu]);
 
@@ -79,16 +82,16 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
       .then(() => {
         setToast({
           type: "success",
-          title: "Success!",
-          message: "Default tab updated successfully.",
+          title: t("success"),
+          message: t("web_ui.default_tab_updated_successfully"),
         });
         return;
       })
       .catch(() => {
         setToast({
           type: "error",
-          title: "Error!",
-          message: "Failed to update default tab. Please try again later.",
+          title: t("error"),
+          message: t("web_ui.failed_to_update_default_tab_please_try_again_later"),
         });
       });
   };
@@ -107,8 +110,8 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
       console.error("Error hiding tab:", error);
       setToast({
         type: "error",
-        title: "Error!",
-        message: "Failed to hide tab. Please try again later.",
+        title: t("error"),
+        message: t("web_ui.failed_to_hide_tab_please_try_again_later"),
       });
     }
   };
@@ -127,8 +130,8 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
       console.error("Error showing tab:", error);
       setToast({
         type: "error",
-        title: "Error!",
-        message: "Something went wrong. Please try again later.",
+        title: t("error"),
+        message: t("web_ui.something_went_wrong_please_try_again_later"),
       });
     }
   };

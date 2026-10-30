@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useTheme } from "next-themes";
 // plane imports
 import { Button } from "@makeplane/propel/components/button";
@@ -13,30 +14,31 @@ import maintenanceModeLightModeImage from "@/app/assets/instance/maintenance-mod
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 
-const linkMap = [
-  {
-    key: "mail_to",
-    label: "Contact Support",
-    value: "mailto:support@plane.so",
-  },
-  {
-    key: "status",
-    label: "Status Page",
-    value: "https://status.plane.so/",
-  },
-  {
-    key: "twitter_handle",
-    label: "@planepowers",
-    value: "https://x.com/planepowers",
-  },
-];
-
 // Production Error Component
 interface ProdErrorComponentProps {
   onGoHome: () => void;
 }
 
 export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
+  const { t } = useTranslation();
+  const linkMap = [
+    {
+      key: "mail_to",
+      label: t("web_ui.contact_support"),
+      value: "mailto:support@plane.so",
+    },
+    {
+      key: "status",
+      label: t("cloud_maintenance_message.status_page"),
+      value: "https://status.plane.so/",
+    },
+    {
+      key: "twitter_handle",
+      label: "@planepowers",
+      value: "https://x.com/planepowers",
+    },
+  ];
+
   // hooks
   const { resolvedTheme } = useTheme();
 
@@ -51,16 +53,19 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
             src={maintenanceModeImage}
             height="176"
             width="288"
-            alt="ProjectSettingImg"
+            alt={t("web_ui.projectsettingimg")}
             className="h-full w-full object-fill object-center"
           />
         </div>
         <div className="relative mt-4 flex w-full flex-col gap-4">
           <div className="flex flex-col gap-2.5">
-            <h1 className="text-left text-18 font-semibold text-primary">&#x1F6A7; Looks like something went wrong!</h1>
+            <h1 className="text-left text-18 font-semibold text-primary">
+              {t("web_ui.x1f6a7_looks_like_something_went_wrong")}
+            </h1>
             <span className="text-left text-14 font-medium text-secondary">
-              We track these errors automatically and working on getting things back up and running. If the problem
-              persists feel free to contact us. In the meantime, try refreshing.
+              {t(
+                "web_ui.we_track_these_errors_automatically_and_working_on_getting_things_back_up_and_running_if_t"
+              )}{" "}
             </span>
           </div>
 
@@ -80,7 +85,13 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
           </div>
 
           <div className="flex items-center justify-start gap-6">
-            <Button variant="primary" size="md" stretch="auto" label="Go to home" onClick={onGoHome} />
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              label={t("power_k.navigation_actions.nav_home")}
+              onClick={onGoHome}
+            />
           </div>
         </div>
       </div>

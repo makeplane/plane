@@ -5,7 +5,7 @@
  */
 
 import type { FormEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // icons
@@ -43,6 +43,12 @@ const defaultValues: TResetPasswordFormValues = {
 const authService = new AuthService();
 
 export const SetPasswordForm = observer(function SetPasswordForm() {
+  // Focus this field when its input/group mounts, without refocusing on ordinary rerenders.
+  const focusInputOnMount = useCallback((element: HTMLElement | null) => {
+    const input = element instanceof HTMLInputElement ? element : element?.querySelector("input");
+    input?.focus();
+  }, []);
+
   // router
   const router = useAppRouter();
   // search params
@@ -78,11 +84,11 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
 
   const isButtonDisabled = useMemo(
     () =>
-      !!passwordFormData.password &&
-      getPasswordStrength(passwordFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
-      passwordFormData.password === passwordFormData.confirm_password
-        ? false
-        : true,
+      !(
+        !!passwordFormData.password &&
+        getPasswordStrength(passwordFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
+        passwordFormData.password === passwordFormData.confirm_password
+      ),
     [passwordFormData]
   );
 
@@ -112,7 +118,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
 
   return (
     <FormContainer>
-      <AuthFormHeader title="Set password" description="Create a new password." />
+      <AuthFormHeader title={t("auth.common.password.submit")} description={t("web_ui.create_a_new_password")} />
       <form className="space-y-4" onSubmit={(e) => handleSubmit(e)}>
         <div className="space-y-1">
           <label className="text-13 font-medium text-tertiary" htmlFor="email">
@@ -148,7 +154,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
               autoComplete="new-password"
-              autoFocus
+              ref={focusInputOnMount}
             />
             <button
               type="button"

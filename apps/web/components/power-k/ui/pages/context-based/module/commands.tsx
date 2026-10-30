@@ -47,13 +47,13 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
         () => {
           setToast({
             type: "error",
-            title: "Error!",
-            message: "Module could not be updated. Please try again.",
+            title: t("error"),
+            message: t("web_ui.module_could_not_be_updated_please_try_again"),
           });
         }
       );
     },
-    [moduleDetails, projectId, updateModuleDetails, workspaceSlug]
+    [t, moduleDetails, projectId, updateModuleDetails, workspaceSlug]
   );
 
   const handleUpdateMember = useCallback(
@@ -77,10 +77,10 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
     } catch {
       setToast({
         type: "error",
-        title: "Some error occurred",
+        title: t("web_ui.some_error_occurred"),
       });
     }
-  }, [addModuleToFavorites, removeModuleFromFavorites, workspaceSlug, moduleDetails, isFavorite]);
+  }, [t, addModuleToFavorites, removeModuleFromFavorites, workspaceSlug, moduleDetails, isFavorite]);
 
   const copyModuleUrlToClipboard = useCallback(() => {
     const url = new URL(window.location.href);
@@ -90,6 +90,8 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
           type: "success",
           title: t("power_k.contextual_actions.module.copy_url_toast_success"),
         });
+
+        return undefined;
       })
       .catch(() => {
         setToast({
@@ -98,7 +100,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
         });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [t]);
 
   return [
     {

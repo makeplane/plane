@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import type { MouseEvent } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
@@ -35,6 +36,8 @@ type TCyclesListItem = {
 };
 
 export const CyclesListItem = observer(function CyclesListItem(props: TCyclesListItem) {
+  const { t } = useTranslation();
+
   const { cycleId, workspaceSlug, projectId, className = "" } = props;
   // refs
   const parentRef = useRef(null);
@@ -92,7 +95,7 @@ export const CyclesListItem = observer(function CyclesListItem(props: TCyclesLis
               value={progress}
               size="md"
               variant={progress === 100 ? "success" : "brand"}
-              aria-label="Cycle progress"
+              aria-label={t("web_ui.cycle_progress")}
             />
           </div>
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">

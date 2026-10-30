@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import type { Dispatch, ReactElement, SetStateAction } from "react";
 import React, { useCallback, useEffect, useState, useRef } from "react";
 // helpers
@@ -49,6 +50,8 @@ export function ResizableSidebar({
   isAnyExtendedSidebarExpanded = false,
   isAnySidebarDropdownOpen = false,
 }: ResizableSidebarProps) {
+  const { t } = useTranslation();
+
   // states
   const [isResizing, setIsResizing] = useState(false);
   const [isHoveringTrigger, setIsHoveringTrigger] = useState(false);
@@ -142,15 +145,22 @@ export function ResizableSidebar({
     []
   );
 
+  const peekStateRef = useRef({ isCollapsed, isHoveringTrigger, handlePeekLeave });
   useEffect(() => {
-    if (!isAnySidebarDropdownOpen && isCollapsed && isHoveringTrigger) {
-      handlePeekLeave();
+    peekStateRef.current = { isCollapsed, isHoveringTrigger, handlePeekLeave };
+  }, [isCollapsed, isHoveringTrigger, handlePeekLeave]);
+
+  useEffect(() => {
+    const { isCollapsed: collapsed, isHoveringTrigger: hovering, handlePeekLeave: leavePeek } = peekStateRef.current;
+    if (!isAnySidebarDropdownOpen && collapsed && hovering) {
+      leavePeek();
     }
   }, [isAnySidebarDropdownOpen]);
 
   useEffect(() => {
-    if (!isAnyExtendedSidebarExpanded && isCollapsed && isHoveringTrigger) {
-      handlePeekLeave();
+    const { isCollapsed: collapsed, isHoveringTrigger: hovering, handlePeekLeave: leavePeek } = peekStateRef.current;
+    if (!isAnyExtendedSidebarExpanded && collapsed && hovering) {
+      leavePeek();
     }
   }, [isAnyExtendedSidebarExpanded]);
 
@@ -192,7 +202,7 @@ export function ResizableSidebar({
           maxWidth: `${isCollapsed ? 0 : width}px`,
         }}
         role="complementary"
-        aria-label="Main sidebar"
+        aria-label={t("web_ui.main_sidebar")}
         data-prevent-outside-click={isMobile}
       >
         <aside
@@ -215,7 +225,7 @@ export function ResizableSidebar({
             onDoubleClick={() => toggleCollapsed()}
             onMouseDown={(e) => startResizing(e)}
             role="separator"
-            aria-label="Resize sidebar"
+            aria-label={t("web_ui.resize_sidebar")}
           />
         </aside>
       </div>
@@ -235,7 +245,7 @@ export function ResizableSidebar({
         onMouseEnter={handlePeekEnter}
         onMouseLeave={handlePeekLeave}
         role="complementary"
-        aria-label="Sidebar peek view"
+        aria-label={t("web_ui.sidebar_peek_view")}
       >
         <aside
           className={cn(
@@ -257,13 +267,13 @@ export function ResizableSidebar({
             onDoubleClick={() => toggleCollapsed()}
             onMouseDown={(e) => startResizing(e)}
             role="separator"
-            aria-label="Resize sidebar"
+            aria-label={t("web_ui.resize_sidebar")}
           />
         </aside>
       </div>
 
       {/* Extended Sidebar */}
-      {extendedSidebar && extendedSidebar}
+      {extendedSidebar}
     </>
   );
 }

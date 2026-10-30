@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useTranslation } from "@plane/i18n";
+import { useRef, useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import type { TModuleStatus } from "@plane/blocks/icons";
 // plane imports
@@ -26,6 +27,8 @@ type Props = {
 };
 
 export const ModuleFiltersSelection = observer(function ModuleFiltersSelection(props: Props) {
+  const { t } = useTranslation();
+
   const {
     displayFilters,
     filters,
@@ -38,6 +41,18 @@ export const ModuleFiltersSelection = observer(function ModuleFiltersSelection(p
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
   // store
   const { isMobile } = usePlatformOS();
+  const initialFocusTarget = useRef<HTMLElement | null>(null);
+  // Focus each newly mounted field once; viewport/prop changes must not steal focus.
+  const focusInputOnMount = useCallback(
+    (element: HTMLElement | null) => {
+      if (!element || initialFocusTarget.current === element) return;
+      initialFocusTarget.current = element;
+      if (isMobile) return;
+      const input = element instanceof HTMLInputElement ? element : element?.querySelector("input");
+      input?.focus();
+    },
+    [isMobile]
+  );
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
@@ -47,10 +62,10 @@ export const ModuleFiltersSelection = observer(function ModuleFiltersSelection(p
           <input
             type="text"
             className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
-            placeholder="Search"
+            placeholder={t("search")}
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
-            autoFocus={!isMobile}
+            ref={focusInputOnMount}
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
@@ -69,7 +84,7 @@ export const ModuleFiltersSelection = observer(function ModuleFiltersSelection(p
                   favorites: !displayFilters.favorites,
                 })
               }
-              title="Favorites"
+              title={t("favorites")}
             />
           </div>
         )}

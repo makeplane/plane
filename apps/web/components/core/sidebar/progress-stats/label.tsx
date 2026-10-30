@@ -33,7 +33,7 @@ export const LabelStatComponent = observer(function LabelStatComponent(props: TL
   return (
     <div>
       {distribution && distribution.length > 0 ? (
-        distribution.map((label, index) => {
+        distribution.map((label) => {
           if (label.id) {
             return (
               <SingleProgressStats
@@ -60,7 +60,7 @@ export const LabelStatComponent = observer(function LabelStatComponent(props: TL
           } else {
             return (
               <SingleProgressStats
-                key={`no-label-${index}`}
+                key="no-label"
                 title={
                   <div className="flex items-center gap-2">
                     <span
@@ -81,7 +81,7 @@ export const LabelStatComponent = observer(function LabelStatComponent(props: TL
       ) : (
         <div className="flex h-full flex-col items-center justify-center gap-2">
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-layer-1">
-            <img src={emptyLabel} className="h-12 w-12 object-contain" alt="empty label" />
+            <img src={emptyLabel} className="h-12 w-12 object-contain" alt={t("web_ui.empty_label")} />
           </div>
           <h6 className="text-14 text-tertiary">{t("no_labels_yet")}</h6>
         </div>

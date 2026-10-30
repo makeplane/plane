@@ -61,7 +61,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
   const selectedStateGroups = moduleFilter?.findFirstConditionByPropertyAndOperator("state_group", "in");
   const moduleDetails = getModuleById(moduleId);
   const plotType: TModulePlotType = getPlotTypeByModuleId(moduleId);
-  const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
+  const isCurrentProjectEstimateEnabled = Boolean(projectId && areEstimateEnabledByProjectId(projectId));
   const estimateDetails =
     isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
   const isCurrentEstimateTypeIsPoints = estimateDetails && estimateDetails?.type === EEstimateSystem.POINTS;
@@ -74,7 +74,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
       ? completedEstimatePoints != 0 && totalEstimatePoints != 0
         ? Math.round((completedEstimatePoints / totalEstimatePoints) * 100)
         : 0
-      : completedIssues != 0 && completedIssues != 0
+      : completedIssues != 0
         ? Math.round((completedIssues / totalIssues) * 100)
         : 0
     : 0;
@@ -133,13 +133,13 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
               <ProgressChart
                 distribution={completionChartDistributionData}
                 totalIssues={totalEstimatePoints}
-                plotTitle={"points"}
+                plotTitle={t("points")}
               />
             ) : (
               <ProgressChart
                 distribution={completionChartDistributionData}
                 totalIssues={totalIssues}
-                plotTitle={"work items"}
+                plotTitle={t("work_items")}
               />
             )}
           </Fragment>
@@ -212,7 +212,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
         </Collapsible>
       ) : (
         <div className="relative flex w-full items-center justify-between gap-2">
-          <div className="text-13 font-medium text-secondary">Progress</div>
+          <div className="text-13 font-medium text-secondary">{t("common.progress")}</div>
           <div className="flex items-center gap-1">
             <WarningCircleOutline height={14} width={14} className="text-secondary" />
             <span className="text-11 text-secondary italic">

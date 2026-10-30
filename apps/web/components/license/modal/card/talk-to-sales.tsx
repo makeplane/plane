@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // types
 // plane imports
@@ -36,6 +37,8 @@ const renderPriceContent = (price: TSubscriptionPrice) => (
 );
 
 export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSalesCardProps) {
+  const { t } = useTranslation();
+
   const {
     planVariant,
     href,
@@ -60,10 +63,10 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
               <Loader.Item height="36px" width="4rem" />
             </Loader>
           ) : (
-            <>Quote on request</>
+            <>{t("web_ui.quote_on_request")}</>
           )}
         </div>
-        <div className="text-caption-md-medium text-tertiary">per user per month</div>
+        <div className="text-caption-md-medium text-tertiary">{t("web_ui.per_user_per_month")}</div>
       </div>
       {isLoading ? (
         <Loader className="flex flex-col items-center justify-center">
@@ -79,10 +82,10 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
               nativeButton={false}
               render={
                 <a href={href} target="_blank" rel="noreferrer">
-                  Talk to Sales
+                  {t("common.upgrade_cta.talk_to_sales")}{" "}
                 </a>
               }
-              label="Talk to Sales"
+              label={t("common.upgrade_cta.talk_to_sales")}
             />
           </div>
           {isTrialAllowed && !isSelfHosted && (

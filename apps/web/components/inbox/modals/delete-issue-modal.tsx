@@ -52,6 +52,8 @@ export const DeleteInboxIssueModal = observer(function DeleteInboxIssueModal({
           title: `${t("success")}`,
           message: `${t("inbox_issue.modals.delete.success")}`,
         });
+
+        return undefined;
       })
       .catch((errors) => {
         const isPermissionError = errors?.error === "Only admin or creator can delete the work item";
@@ -77,11 +79,12 @@ export const DeleteInboxIssueModal = observer(function DeleteInboxIssueModal({
       // TODO: Need to translate the confirmation message
       content={
         <>
-          Are you sure you want to delete work item{" "}
+          {t("web_ui.are_you_sure_you_want_to_delete_work_item")}{" "}
           <span className="font-medium break-words text-primary">
             {projectDetails?.identifier}-{data?.sequence_id}
           </span>
-          {""}? The work item will only be deleted from the intake and this action cannot be undone.
+          {""}
+          {t("web_ui.the_work_item_will_only_be_deleted_from_the_intake_and_this_action_cannot_be_undone")}{" "}
         </>
       }
     />

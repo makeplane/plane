@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React, { useEffect, useState, useCallback } from "react";
 import type { EditorRefApi } from "@plane/editor";
 // plane imports
@@ -64,6 +65,8 @@ ToolbarItem.displayName = "ToolbarItem";
 const toolbarItems = TOOLBAR_ITEMS.document;
 
 export function PageToolbar(props: Props) {
+  const { t } = useTranslation();
+
   const { editorRef } = props;
   // states
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>(() => {
@@ -111,7 +114,7 @@ export function PageToolbar(props: Props) {
   return (
     <TooltipProvider>
       <div className="animate-in fade-in flex items-center overflow-x-auto duration-200">
-        <Toolbar size="md" elevation="flat" aria-label="Formatting toolbar">
+        <Toolbar size="md" elevation="flat" aria-label={t("web_ui.formatting_toolbar")}>
           <Menu>
             <ToolbarMenuTrigger label={activeTypography?.name || "Text"} />
             <MenuContent side="bottom" align="start">

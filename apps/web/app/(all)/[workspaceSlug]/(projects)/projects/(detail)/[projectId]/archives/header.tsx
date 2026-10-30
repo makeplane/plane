@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveOutline, CyclesOutline, ModuleOutline, WorkItemsOutline } from "@makeplane/propel/icons";
@@ -26,31 +27,32 @@ type TProps = {
   activeTab: "issues" | "cycles" | "modules";
 };
 
-const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
-  [key: string]: {
-    label: string;
-    href: string;
-    icon: React.FC<React.SVGAttributes<SVGElement> & { className?: string }>;
-  };
-} = {
-  issues: {
-    label: "Work items",
-    href: "/issues",
-    icon: WorkItemsOutline,
-  },
-  cycles: {
-    label: "Cycles",
-    href: "/cycles",
-    icon: CyclesOutline,
-  },
-  modules: {
-    label: "Modules",
-    href: "/modules",
-    icon: ModuleOutline,
-  },
-};
-
 export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(props: TProps) {
+  const { t } = useTranslation();
+  const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
+    [key: string]: {
+      label: string;
+      href: string;
+      icon: React.FC<React.SVGAttributes<SVGElement> & { className?: string }>;
+    };
+  } = {
+    issues: {
+      label: t("issues"),
+      href: "/issues",
+      icon: WorkItemsOutline,
+    },
+    cycles: {
+      label: t("cycles"),
+      href: "/cycles",
+      icon: CyclesOutline,
+    },
+    modules: {
+      label: t("modules"),
+      href: "/modules",
+      icon: ModuleOutline,
+    },
+  };
+
   const { activeTab } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -82,7 +84,7 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
               component={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
-                  label="Archives"
+                  label={t("archives")}
                   icon={<ArchiveOutline className="h-4 w-4 text-tertiary" />}
                 />
               }
@@ -100,7 +102,10 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
           </Breadcrumbs>
           {activeTab === "issues" && issueCount && issueCount > 0 ? (
             <Tooltip
-              label={`There are ${issueCount} ${issueCount > 1 ? "work items" : "work item"} in project's archived`}
+              label={t("web_ui.dynamic_there_are_value0_value1_in_project_s_archived", {
+                value0: issueCount,
+                value1: issueCount > 1 ? t("work_items") : t("common.work_item"),
+              })}
               layout="stacked"
               side="bottom"
               disabled={isMobile}

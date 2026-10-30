@@ -145,7 +145,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
             rules={{
               pattern: {
                 value: emailRegex,
-                message: "Invalid Email ID",
+                message: t("web_ui.invalid_email_id"),
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
@@ -218,7 +218,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
       {email && !emailRegex.test(email) && (
         <div className="mx-8 my-1">
           <span className="text-13">🤥</span>{" "}
-          <span className="mt-1 text-11 text-danger-primary">That doesn{"'"}t look like an email address.</span>
+          <span className="mt-1 text-11 text-danger-primary">{t("web_ui.invalid_email_hint")}</span>
         </div>
       )}
     </div>
@@ -226,6 +226,8 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
 });
 
 export function InviteMembers(props: Props) {
+  const { t } = useTranslation();
+
   const { finishOnboarding, workspace } = props;
 
   const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);
@@ -264,15 +266,17 @@ export function InviteMembers(props: Props) {
       .then(async () => {
         setToast({
           type: "success",
-          title: "Success!",
-          message: "Invitations sent successfully.",
+          title: t("success"),
+          message: t("workspace_settings.settings.members.invitations_sent_successfully"),
         });
         await nextStep();
+
+        return undefined;
       })
       .catch((err) => {
         setToast({
           type: "error",
-          title: "Error!",
+          title: t("error"),
           message: err?.error,
         });
       });
@@ -302,9 +306,9 @@ export function InviteMembers(props: Props) {
       <div className="h-full w-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
         <div className="mx-auto mt-6 flex w-full flex-col items-center justify-center p-8 md:w-4/5">
           <div className="mx-auto w-4/5 space-y-1 py-4 text-center">
-            <h3 className="text-24 font-bold text-primary">Invite your teammates</h3>
+            <h3 className="text-24 font-bold text-primary">{t("web_ui.invite_your_teammates")}</h3>
             <p className="font-medium text-placeholder">
-              Work in plane happens best with your team. Invite them now to use Plane to its potential.
+              {t("web_ui.work_in_plane_happens_best_with_your_team_invite_them_now_to_use_plane_to_its_potential")}{" "}
             </p>
           </div>
           <form
@@ -316,8 +320,8 @@ export function InviteMembers(props: Props) {
           >
             <div className="w-full py-4 text-13">
               <div className="group relative mx-8 grid grid-cols-10 gap-4 py-2">
-                <div className="col-span-6 px-1 text-13 font-medium text-secondary">Email</div>
-                <div className="col-span-4 px-1 text-13 font-medium text-secondary">Role</div>
+                <div className="col-span-6 px-1 text-13 font-medium text-secondary">{t("email")}</div>
+                <div className="col-span-4 px-1 text-13 font-medium text-secondary">{t("role")}</div>
               </div>
               <div className="mb-3 space-y-3 sm:space-y-4">
                 {fields.map((field, index) => (
@@ -343,7 +347,7 @@ export function InviteMembers(props: Props) {
                 onClick={appendField}
               >
                 <AddOutline className="h-4 w-4" />
-                Add another
+                {t("web_ui.add_another")}{" "}
               </button>
             </div>
             <div className="mx-auto flex w-full max-w-96 flex-col items-center justify-center gap-4 px-8 sm:px-2">
@@ -354,9 +358,15 @@ export function InviteMembers(props: Props) {
                 stretch="full"
                 disabled={isInvitationDisabled || !isValid || isSubmitting}
               >
-                {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
+                {isSubmitting ? <Spinner height="20px" width="20px" /> : t("common.continue")}
               </ButtonElement>
-              <Button variant="ghost" size="lg" stretch="full" onClick={nextStep} label="I’ll do it later" />
+              <Button
+                variant="ghost"
+                size="lg"
+                stretch="full"
+                onClick={nextStep}
+                label={t("web_ui.i_ll_do_it_later")}
+              />
             </div>
           </form>
         </div>

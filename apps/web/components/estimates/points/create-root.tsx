@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import type { Dispatch, SetStateAction } from "react";
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
@@ -36,6 +37,8 @@ type TEstimatePointCreateRoot = {
 };
 
 export const EstimatePointCreateRoot = observer(function EstimatePointCreateRoot(props: TEstimatePointCreateRoot) {
+  const { t } = useTranslation();
+
   // props
   const {
     workspaceSlug,
@@ -170,7 +173,7 @@ export const EstimatePointCreateRoot = observer(function EstimatePointCreateRoot
           variant="ghost"
           size="sm"
           stretch="auto"
-          label={`Add ${estimateType}`}
+          label={t("web_ui.dynamic_add_value0", { value0: estimateType })}
           icon={<Icon icon={AddOutline} />}
           iconPosition="start"
           onClick={handleCreate}

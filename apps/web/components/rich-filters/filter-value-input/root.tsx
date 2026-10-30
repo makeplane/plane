@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React from "react";
 
 import { observer } from "mobx-react";
@@ -86,10 +87,12 @@ export const AdditionalFilterValueInput = observer(function AdditionalFilterValu
   P extends TFilterProperty,
   V extends TFilterValue,
 >(_props: TFilterValueInputProps<P, V>) {
+  const { t } = useTranslation();
+
   return (
     // Fallback
     <div className="flex h-full cursor-not-allowed items-center px-4 text-11 text-placeholder transition-opacity duration-200">
-      Filter type not supported
+      {t("web_ui.filter_type_not_supported")}{" "}
     </div>
   );
 });

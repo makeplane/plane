@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
@@ -34,6 +35,8 @@ import { WorkspaceService } from "@/services/workspace.service";
 const workspaceService = new WorkspaceService();
 
 function WorkspaceInvitationPage() {
+  const { t } = useTranslation();
+
   // router
   const router = useAppRouter();
   // query params
@@ -64,6 +67,8 @@ function WorkspaceInvitationPage() {
         } else {
           router.push("/");
         }
+
+        return undefined;
       })
       .catch((err: unknown) => console.error(err));
   };
@@ -77,6 +82,8 @@ function WorkspaceInvitationPage() {
       })
       .then(() => {
         router.push("/");
+
+        return undefined;
       })
       .catch((err: unknown) => console.error(err));
   };
@@ -87,40 +94,52 @@ function WorkspaceInvitationPage() {
         {invitationDetail && !invitationDetail.responded_at ? (
           error ? (
             <div className="shadow-2xl flex w-full flex-col space-y-4 rounded-sm border border-subtle bg-surface-1 px-4 py-8 text-center md:w-1/3">
-              <h2 className="text-18 uppercase">INVITATION NOT FOUND</h2>
+              <h2 className="text-18 uppercase">{t("web_ui.invitation_not_found")}</h2>
             </div>
           ) : (
             <EmptySpace
-              title={`You have been invited to ${invitationDetail.workspace.name}`}
-              description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account."
+              title={t("web_ui.dynamic_you_have_been_invited_to_value0", { value0: invitationDetail.workspace.name })}
+              description={t(
+                "web_ui.your_workspace_is_where_you_ll_create_projects_collaborate_on_your_work_items_and_organize"
+              )}
             >
-              <EmptySpaceItem Icon={TickOutline} title="Accept" action={handleAccept} />
-              <EmptySpaceItem Icon={CloseOutline} title="Ignore" action={handleReject} />
+              <EmptySpaceItem Icon={TickOutline} title={t("inbox_issue.actions.accept")} action={handleAccept} />
+              <EmptySpaceItem Icon={CloseOutline} title={t("web_ui.ignore")} action={handleReject} />
             </EmptySpace>
           )
         ) : error || invitationDetail?.responded_at ? (
           invitationDetail?.accepted ? (
             <EmptySpace
-              title={`You are already a member of ${invitationDetail.workspace.name}`}
-              description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account."
+              title={t("web_ui.dynamic_you_are_already_a_member_of_value0", {
+                value0: invitationDetail.workspace.name,
+              })}
+              description={t(
+                "web_ui.your_workspace_is_where_you_ll_create_projects_collaborate_on_your_work_items_and_organize"
+              )}
             >
-              <EmptySpaceItem Icon={BoxesOutline} title="Continue to home" href="/" />
+              <EmptySpaceItem Icon={BoxesOutline} title={t("web_ui.continue_to_home")} href="/" />
             </EmptySpace>
           ) : (
             <EmptySpace
-              title="This invitation link is not active anymore."
-              description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account."
+              title={t("web_ui.this_invitation_link_is_not_active_anymore")}
+              description={t(
+                "web_ui.your_workspace_is_where_you_ll_create_projects_collaborate_on_your_work_items_and_organize"
+              )}
               link={{ text: "Or start from an empty project", href: "/" }}
             >
               {!currentUser ? (
-                <EmptySpaceItem Icon={UserOutline} title="Sign in to continue" href="/" />
+                <EmptySpaceItem Icon={UserOutline} title={t("web_ui.sign_in_to_continue")} href="/" />
               ) : (
-                <EmptySpaceItem Icon={BoxesOutline} title="Continue to home" href="/" />
+                <EmptySpaceItem Icon={BoxesOutline} title={t("web_ui.continue_to_home")} href="/" />
               )}
-              <EmptySpaceItem Icon={StarOutline} title="Star us on GitHub" href="https://github.com/makeplane" />
+              <EmptySpaceItem
+                Icon={StarOutline}
+                title={t("home.star_us_on_github")}
+                href="https://github.com/makeplane"
+              />
               <EmptySpaceItem
                 Icon={ShareAltOutline}
-                title="Join our community of active creators"
+                title={t("web_ui.join_our_community_of_active_creators")}
                 href="https://forum.plane.so"
               />
             </EmptySpace>

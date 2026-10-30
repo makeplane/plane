@@ -26,7 +26,7 @@ export function StarUsOnGitHubLink() {
       target="_blank"
       rel="noopener noreferrer"
     >
-      <img src={imageSrc} className="h-4 w-4 object-contain" alt="GitHub Logo" aria-hidden="true" />
+      <img src={imageSrc} className="h-4 w-4 object-contain" alt={t("web_ui.github_logo")} aria-hidden="true" />
       <span className="hidden text-11 font-medium sm:hidden md:block">{t("home.star_us_on_github")}</span>
     </a>
   );

@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useTranslation } from "@plane/i18n";
+import { useRef, useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 // hooks
@@ -19,8 +20,23 @@ import { FilterPriority } from "./priority";
 import { FilterStatus } from "./status";
 
 export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelection() {
+  const { t } = useTranslation();
+
   // hooks
   const { isMobile } = usePlatformOS();
+  const initialFocusTarget = useRef<HTMLElement | null>(null);
+  // Focus each newly mounted field once; viewport/prop changes must not steal focus.
+  const focusInputOnMount = useCallback(
+    (element: HTMLElement | null) => {
+      if (!element || initialFocusTarget.current === element) return;
+      initialFocusTarget.current = element;
+      if (isMobile) return;
+      const input = element instanceof HTMLInputElement ? element : element?.querySelector("input");
+      input?.focus();
+    },
+    [isMobile]
+  );
+
   const {
     project: { projectMemberIds },
   } = useMember();
@@ -36,10 +52,10 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
           <input
             type="text"
             className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
-            placeholder="Search"
+            placeholder={t("search")}
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
-            autoFocus={!isMobile}
+            ref={focusInputOnMount}
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
@@ -62,7 +78,7 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
         <div className="py-2">
           <FilterMember
             filterKey="assignees"
-            label="Assignees"
+            label={t("assignees")}
             searchQuery={filtersSearchQuery}
             memberIds={projectMemberIds ?? []}
           />
@@ -71,7 +87,7 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
         <div className="py-2">
           <FilterMember
             filterKey="created_by"
-            label="Created By"
+            label={t("common.created_by")}
             searchQuery={filtersSearchQuery}
             memberIds={projectMemberIds ?? []}
           />
@@ -82,11 +98,15 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
         </div>
         {/* Created at */}
         <div className="py-2">
-          <FilterDate filterKey="created_at" label="Created date" searchQuery={filtersSearchQuery} />
+          <FilterDate
+            filterKey="created_at"
+            label={t("workspace_projects.sort.created_at")}
+            searchQuery={filtersSearchQuery}
+          />
         </div>
         {/* Updated at */}
         <div className="py-2">
-          <FilterDate filterKey="updated_at" label="Last updated date" searchQuery={filtersSearchQuery} />
+          <FilterDate filterKey="updated_at" label={t("web_ui.last_updated_date")} searchQuery={filtersSearchQuery} />
         </div>
       </div>
     </div>

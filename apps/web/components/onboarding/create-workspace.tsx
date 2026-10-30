@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // constants
@@ -37,6 +37,12 @@ type Props = {
 const workspaceService = new WorkspaceService();
 
 export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
+  // Focus this field when its input/group mounts, without refocusing on ordinary rerenders.
+  const focusInputOnMount = useCallback((element: HTMLElement | null) => {
+    const input = element instanceof HTMLInputElement ? element : element?.querySelector("input");
+    input?.focus();
+  }, []);
+
   const { stepChange, user, invitedWorkspaces, handleCurrentViewChange } = props;
   // states
   const [slugError, setSlugError] = useState(false);
@@ -114,14 +120,14 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
             onClick={handleCurrentViewChange}
             render={<button type="button" className="flex items-center gap-2 bg-surface-2 text-14" />}
           >
-            I want to join invited workspaces{" "}
+            {t("web_ui.i_want_to_join_invited_workspaces")}{" "}
             <span className="flex h-4 w-4 items-center justify-center rounded-xs bg-accent-primary/80 text-11 font-medium text-on-color">
               {invitedWorkspaces}
             </span>
           </Button>
           <div className="mx-auto mt-4 flex items-center sm:w-96">
             <hr className="w-full border-strong" />
-            <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder">or</p>
+            <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder">{t("common.or")}</p>
             <hr className="w-full border-strong" />
           </div>
         </>
@@ -152,7 +158,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
             render={({ field: { value, ref, onChange } }) => (
               <div className="relative flex items-center rounded-md">
                 <Field name="name" invalid={Boolean(errors.name)}>
-                  <InputGroup size="2xl">
+                  <InputGroup ref={focusInputOnMount} size="2xl">
                     <Input
                       size="2xl"
                       id="name"
@@ -168,7 +174,6 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
                       }}
                       placeholder={t("workspace_creation.form.name.placeholder")}
                       ref={ref}
-                      autoFocus
                     />
                   </InputGroup>
                 </Field>

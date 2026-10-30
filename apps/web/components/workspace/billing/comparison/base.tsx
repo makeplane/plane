@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { ArrowDownOutline, TopArrowOutline } from "@makeplane/propel/icons";
 // plane imports
@@ -12,7 +13,7 @@ import { Icon } from "@makeplane/propel/components/icon";
 import { cn } from "@plane/utils";
 // constants
 import type { TPlanePlans } from "@/components/workspace/billing/comparison/plans";
-import { ComingSoonBadge, PLANE_PLANS, PLANS_LIST } from "@/components/workspace/billing/comparison/plans";
+import { ComingSoonBadge, usePlanePlans, PLANS_LIST } from "@/components/workspace/billing/comparison/plans";
 // local imports
 import { PlanFeatureDetail } from "./feature-detail";
 
@@ -32,9 +33,11 @@ export const shouldRenderPlanDetail = (planKey: TPlanePlans) => {
 };
 
 export const PlansComparisonBase = observer(function PlansComparisonBase(props: TPlansComparisonBaseProps) {
+  const { t } = useTranslation();
+
   const { planeDetails, isSelfManaged, isCompareAllFeaturesSectionOpen, setIsCompareAllFeaturesSectionOpen } = props;
   // plan details
-  const { planDetails, planHighlights, planComparison } = PLANE_PLANS;
+  const { planDetails, planHighlights, planComparison } = usePlanePlans();
   const numberOfPlansToRender = Object.keys(planDetails).filter((planKey) =>
     shouldRenderPlanDetail(planKey as TPlanePlans)
   ).length;
@@ -61,14 +64,14 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
               className="text-caption-md grid gap-3 rounded-xs py-1 text-secondary even:bg-surface-2"
               style={{ gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))` }}
             >
-              <div className="col-span-1 p-3 text-body-sm-medium">Highlights</div>
+              <div className="col-span-1 p-3 text-body-sm-medium">{t("web_ui.highlights")}</div>
               {Object.entries(planHighlights).map(
                 ([planKey, highlights]) =>
                   shouldRenderPlanDetail(planKey as TPlanePlans) && (
                     <div key={planKey} className="col-span-1 p-3">
                       <ul className="list-disc space-y-1 text-body-xs-regular">
-                        {highlights.map((highlight, index) => (
-                          <li key={index}>{highlight}</li>
+                        {highlights.map((highlight) => (
+                          <li key={highlight}>{highlight}</li>
                         ))}
                       </ul>
                     </div>
@@ -80,15 +83,15 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
           {/* Feature Comparison */}
           {isCompareAllFeaturesSectionOpen && (
             <>
-              {planComparison.map((section, sectionIdx) => (
-                <section key={sectionIdx} className="flex-shrink-0">
+              {planComparison.map((section) => (
+                <section key={section.id} className="flex-shrink-0">
                   <h2 className="mb-2 flex items-start gap-2 pl-2 text-h5-semibold text-secondary">
                     {section.title} {section.comingSoon && <ComingSoonBadge />}
                   </h2>
                   <div className="border-t border-subtle">
-                    {section.features.map((feature, featureIdx) => (
+                    {section.features.map((feature) => (
                       <div
-                        key={featureIdx}
+                        key={feature.id}
                         className="text-caption-md grid gap-3 rounded-xs bg-layer-transparent text-secondary even:bg-layer-1"
                         style={{ gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))` }}
                       >
@@ -130,7 +133,7 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
             variant="ghost"
             size="sm"
             stretch="auto"
-            label={isCompareAllFeaturesSectionOpen ? "Collapse comparison" : "Compare all features"}
+            label={isCompareAllFeaturesSectionOpen ? t("web_ui.collapse_comparison") : t("web_ui.compare_all_features")}
             onClick={() => {
               setIsCompareAllFeaturesSectionOpen(!isCompareAllFeaturesSectionOpen);
             }}

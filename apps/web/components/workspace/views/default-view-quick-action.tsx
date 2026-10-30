@@ -38,8 +38,8 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
       await copyUrlToClipboard(viewLink);
       setToast({
         type: "success",
-        title: "Link Copied!",
-        message: "View link copied to clipboard.",
+        title: t("link_copied"),
+        message: t("view_link_copied_to_clipboard"),
       });
     } catch (error) {
       console.error("Failed to copy the view link:", error);

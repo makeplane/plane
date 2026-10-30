@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { PenTool } from "lucide-react";
@@ -30,21 +31,22 @@ type Props = {
   handleStepChange: (step: EOnboardingSteps, skipInvites?: boolean) => void;
 };
 
-const ROLES = [
-  { id: "product-manager", label: "Product Manager", icon: CubeOutline },
-  { id: "engineering-manager", label: "Engineering Manager", icon: ViewsOutline },
-  { id: "designer", label: "Designer", icon: PenTool },
-  { id: "developer", label: "Developer", icon: MonitorOutline },
-  { id: "founder-executive", label: "Founder/Executive", icon: RocketOutline },
-  { id: "operations-manager", label: "Operations Manager", icon: RefreshOutline },
-  { id: "others", label: "Others", icon: CubeOutline },
-];
-
 const defaultValues = {
   role: "",
 };
 
 export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange }: Props) {
+  const { t } = useTranslation();
+  const ROLES = [
+    { id: "product-manager", label: t("web_ui.product_manager"), icon: CubeOutline },
+    { id: "engineering-manager", label: t("web_ui.engineering_manager"), icon: ViewsOutline },
+    { id: "designer", label: t("web_ui.designer"), icon: PenTool },
+    { id: "developer", label: t("common.developer"), icon: MonitorOutline },
+    { id: "founder-executive", label: t("web_ui.founder_executive"), icon: RocketOutline },
+    { id: "operations-manager", label: t("web_ui.operations_manager"), icon: RefreshOutline },
+    { id: "others", label: t("web_ui.others"), icon: CubeOutline },
+  ];
+
   // store hooks
   const { data: profile, updateUserProfile } = useUserProfile();
   // form info
@@ -66,17 +68,17 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
       role: formData.role,
     };
     try {
-      [await updateUserProfile(profileUpdatePayload)];
+      await updateUserProfile(profileUpdatePayload);
       setToast({
         type: "success",
-        title: "Success",
-        message: "Profile setup completed!",
+        title: t("success"),
+        message: t("web_ui.profile_setup_completed"),
       });
     } catch {
       setToast({
         type: "error",
-        title: "Error",
-        message: "Profile setup failed. Please try again!",
+        title: t("error"),
+        message: t("web_ui.profile_setup_failed_please_try_again"),
       });
     }
   };
@@ -91,20 +93,23 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
     handleStepChange(EOnboardingSteps.ROLE_SETUP);
   };
 
-  const isButtonDisabled = !isSubmitting && isValid ? false : true;
+  const isButtonDisabled = !(!isSubmitting && isValid);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">
       {/* Header */}
-      <CommonOnboardingHeader title="What's your role?" description="Let's set up Plane for how you work." />
+      <CommonOnboardingHeader
+        title={t("web_ui.what_s_your_role")}
+        description={t("web_ui.let_s_set_up_plane_for_how_you_work")}
+      />
       {/* Role Selection */}
       <div className="flex flex-col gap-3">
-        <p className="text-body-sm-semibold text-placeholder">Select one</p>
+        <p className="text-body-sm-semibold text-placeholder">{t("web_ui.select_one")}</p>
         <Controller
           control={control}
           name="role"
           rules={{
-            required: "This field is required",
+            required: t("common.errors.required"),
           }}
           render={({ field: { value, onChange } }) => (
             <div className="flex flex-col gap-3">
@@ -149,14 +154,21 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
       </div>
       {/* Action Buttons */}
       <div className="space-y-3">
-        <Button variant="primary" type="submit" stretch="full" size="lg" disabled={isButtonDisabled} label="Continue" />
+        <Button
+          variant="primary"
+          type="submit"
+          stretch="full"
+          size="lg"
+          disabled={isButtonDisabled}
+          label={t("common.continue")}
+        />
         <Button
           variant="ghost"
           onClick={handleSkip}
           stretch="full"
           size="lg"
           render={<button type="button" className="text-tertiary" />}
-          label="Skip"
+          label={t("web_ui.skip")}
         />
       </div>
     </form>

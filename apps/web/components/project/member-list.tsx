@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -27,6 +27,12 @@ type TProjectMemberListProps = {
 };
 
 export const ProjectMemberList = observer(function ProjectMemberList(props: TProjectMemberListProps) {
+  // Focus this field when its input/group mounts, without refocusing on ordinary rerenders.
+  const focusInputOnMount = useCallback((element: HTMLElement | null) => {
+    const input = element instanceof HTMLInputElement ? element : element?.querySelector("input");
+    input?.focus();
+  }, []);
+
   const { projectId, workspaceSlug } = props;
   // states
   const [inviteModal, setInviteModal] = useState(false);
@@ -88,9 +94,9 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
             <SearchOutline className="h-3.5 w-3.5" />
             <input
               className="w-full max-w-[234px] border-none bg-transparent text-13 placeholder:text-placeholder focus:outline-none"
-              placeholder="Search"
+              placeholder={t("search")}
               value={searchQuery}
-              autoFocus
+              ref={focusInputOnMount}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>

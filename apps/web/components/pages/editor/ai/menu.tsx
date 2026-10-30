@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React, { useEffect, useRef, useState } from "react";
 import {
   AiStar1Outline,
@@ -35,40 +36,40 @@ type Props = {
   workspaceSlug: string;
 };
 
-const MENU_ITEMS: {
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  key: AI_EDITOR_TASKS;
-  label: string;
-}[] = [
-  {
-    key: AI_EDITOR_TASKS.ASK_ANYTHING,
-    icon: AiStar1Outline,
-    label: "Ask Pi",
-  },
-];
-
-const TONES_LIST = [
-  {
-    key: "default",
-    label: "Default",
-    casual_score: 5,
-    formal_score: 5,
-  },
-  {
-    key: "professional",
-    label: "💼 Professional",
-    casual_score: 0,
-    formal_score: 10,
-  },
-  {
-    key: "casual",
-    label: "😃 Casual",
-    casual_score: 10,
-    formal_score: 0,
-  },
-];
-
 export function EditorAIMenu(props: Props) {
+  const { t } = useTranslation();
+  const MENU_ITEMS: {
+    icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    key: AI_EDITOR_TASKS;
+    label: string;
+  }[] = [
+    {
+      key: AI_EDITOR_TASKS.ASK_ANYTHING,
+      icon: AiStar1Outline,
+      label: t("web_ui.ask_pi"),
+    },
+  ];
+  const TONES_LIST = [
+    {
+      key: "default",
+      label: t("common.default"),
+      casual_score: 5,
+      formal_score: 5,
+    },
+    {
+      key: "professional",
+      label: t("web_ui.professional"),
+      casual_score: 0,
+      formal_score: 10,
+    },
+    {
+      key: "casual",
+      label: t("web_ui.casual"),
+      casual_score: 10,
+      formal_score: 0,
+    },
+  ];
+
   const { editorRef, isOpen, onClose, workspaceId, workspaceSlug } = props;
   // states
   const [activeTask, setActiveTask] = useState<AI_EDITOR_TASKS | null>(null);
@@ -113,7 +114,7 @@ export function EditorAIMenu(props: Props) {
   };
   // handle re-generate response
   const handleToneChange = async (key: string) => {
-    const selectedTone = TONES_LIST.find((t) => t.key === key);
+    const selectedTone = TONES_LIST.find((title) => title.key === key);
     const selection = editorRef?.getSelectedText();
     if (!selectedTone || !selection || !activeTask) return;
     setResponse(undefined);
@@ -236,9 +237,9 @@ export function EditorAIMenu(props: Props) {
                         className="rounded-sm p-1 text-13 font-medium text-tertiary outline-none hover:bg-layer-1"
                         onClick={() => handleInsertText(false)}
                       >
-                        Replace selection
+                        {t("web_ui.replace_selection")}{" "}
                       </button>
-                      <Tooltip label="Add to next line">
+                      <Tooltip label={t("web_ui.add_to_next_line")}>
                         <button
                           type="button"
                           className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
@@ -247,7 +248,7 @@ export function EditorAIMenu(props: Props) {
                           <CornerRightDownOutline className="size-4 text-tertiary" />
                         </button>
                       </Tooltip>
-                      <Tooltip label="Re-generate response">
+                      <Tooltip label={t("web_ui.re_generate_response")}>
                         <button
                           type="button"
                           className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
@@ -269,7 +270,7 @@ export function EditorAIMenu(props: Props) {
                   </div>
                 ) : (
                   <p className="text-13 text-secondary">
-                    {activeTask ? LOADING_TEXTS[activeTask] : "Pi is writing"}...
+                    {activeTask ? LOADING_TEXTS[activeTask] : t("web_ui.pi_is_writing")}...
                   </p>
                 )}
               </div>
@@ -304,7 +305,7 @@ export function EditorAIMenu(props: Props) {
             <WarningTriangleOutline className="size-3" />
           </span>
           <p className="flex-shrink-0 text-11 font-medium">
-            By using this feature, you consent to sharing the message with a 3rd party service.
+            {t("web_ui.by_using_this_feature_you_consent_to_sharing_the_message_with_a_3rd_party_service")}{" "}
           </p>
         </div>
       )}

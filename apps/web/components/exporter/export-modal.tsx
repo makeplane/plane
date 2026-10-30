@@ -109,7 +109,13 @@ export const Exporter = observer(function Exporter(props: Props) {
             <DialogHeading>
               <DialogTitle>
                 {t("workspace_settings.settings.exports.modal.title")}{" "}
-                {provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : ""}
+                {provider === "csv"
+                  ? "CSV"
+                  : provider === "xlsx"
+                    ? "Excel"
+                    : provider === "json"
+                      ? t("exporter.json.title")
+                      : ""}
               </DialogTitle>
             </DialogHeading>
           </DialogHeader>
@@ -133,7 +139,7 @@ export const Exporter = observer(function Exporter(props: Props) {
                     logo_props: project.logo_props,
                   };
                 }}
-                placeholder="All projects"
+                placeholder={t("workspace_analytics.all_projects")}
                 className="w-full"
               />
               <Checkbox

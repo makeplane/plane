@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -40,6 +41,8 @@ type TIssueAttachmentsDetail = {
 };
 
 export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(props: TIssueAttachmentsDetail) {
+  const { t } = useTranslation();
+
   // props
   const { attachmentId, attachmentHelpers, disabled } = props;
   // store hooks
@@ -80,9 +83,10 @@ export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(p
                   <span className="text-13">{truncateText(`${fileName}`, 10)}</span>
                 </Tooltip>
                 <Tooltip
-                  label={`${
-                    getUserDetails(attachment.updated_by)?.display_name ?? ""
-                  } uploaded on ${renderFormattedDate(attachment.updated_at)}`}
+                  label={t("web_ui.dynamic_value0_uploaded_on_value1", {
+                    value0: getUserDetails(attachment.updated_by)?.display_name ?? "",
+                    value1: renderFormattedDate(attachment.updated_at),
+                  })}
                   layout="stacked"
                   disabled={isMobile}
                 >

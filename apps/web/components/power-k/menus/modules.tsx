@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -19,6 +20,8 @@ type Props = {
 };
 
 export const PowerKModulesMenu = observer(function PowerKModulesMenu({ modules, onSelect, value }: Props) {
+  const { t } = useTranslation();
+
   return (
     <PowerKMenuBuilder
       items={modules}
@@ -28,7 +31,7 @@ export const PowerKModulesMenu = observer(function PowerKModulesMenu({ modules, 
       getLabel={(module) => module.name}
       isSelected={(module) => !!value?.includes(module.id)}
       onSelect={onSelect}
-      emptyText="No modules found"
+      emptyText={t("web_ui.no_modules_found")}
     />
   );
 });

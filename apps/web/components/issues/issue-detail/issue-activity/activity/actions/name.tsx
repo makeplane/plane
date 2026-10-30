@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { TextOutline } from "@makeplane/propel/icons";
 // hooks
@@ -14,6 +15,8 @@ import { IssueActivityBlockComponent } from "./";
 type TIssueNameActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
 export const IssueNameActivity = observer(function IssueNameActivity(props: TIssueNameActivity) {
+  const { t } = useTranslation();
+
   const { activityId, ends } = props;
   // hooks
   const {
@@ -29,7 +32,9 @@ export const IssueNameActivity = observer(function IssueNameActivity(props: TIss
       activityId={activityId}
       ends={ends}
     >
-      <>set the name to {activity.new_value}.</>
+      <>
+        {t("web_ui.set_the_name_to")} {activity.new_value}.
+      </>
     </IssueActivityBlockComponent>
   );
 });

@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import React, { forwardRef, useEffect } from "react";
+import React, { useCallback, forwardRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import type { SubmitHandler } from "react-hook-form";
 import { Controller, useForm } from "react-hook-form";
@@ -48,6 +48,12 @@ export const CreateUpdateLabelInline = observer(
     props: TCreateUpdateLabelInlineProps,
     ref: React.ForwardedRef<HTMLDivElement>
   ) {
+    // Focus this field when its input/group mounts, without refocusing on ordinary rerenders.
+    const focusInputOnMount = useCallback((element: HTMLElement | null) => {
+      const input = element instanceof HTMLInputElement ? element : element?.querySelector("input");
+      input?.focus();
+    }, []);
+
     const { labelForm, setLabelForm, isUpdating, labelOperationsCallbacks, labelToUpdate, onClose } = props;
     // form info
     const {
@@ -97,7 +103,7 @@ export const CreateUpdateLabelInline = observer(
       } catch (error) {
         const errorMessage = getErrorMessage(error, "create");
         setToast({
-          title: "Error!",
+          title: t("error"),
           type: "error",
           message: errorMessage,
         });
@@ -115,7 +121,7 @@ export const CreateUpdateLabelInline = observer(
       } catch (error) {
         const errorMessage = getErrorMessage(error, "update");
         setToast({
-          title: "Oops!",
+          title: t("web_ui.oops"),
           type: "error",
           message: errorMessage,
         });
@@ -202,18 +208,17 @@ export const CreateUpdateLabelInline = observer(
                   message: t("project_settings.labels.label_max_char"),
                 },
               }}
-              render={({ field: { value, onChange, ref } }) => (
+              render={({ field: { value, onChange, ref: nextRef } }) => (
                 <Field name="name" invalid={Boolean(errors.name)}>
-                  <InputGroup size="2xl">
+                  <InputGroup ref={focusInputOnMount} size="2xl">
                     <Input
                       size="2xl"
                       id="labelName"
                       name="name"
                       type="text"
-                      autoFocus
                       value={value}
                       onChange={onChange}
-                      ref={ref}
+                      ref={nextRef}
                       placeholder={t("project_settings.labels.label_title")}
                     />
                   </InputGroup>

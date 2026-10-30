@@ -30,12 +30,12 @@ export const WorkspaceEditionBadge = observer(function WorkspaceEditionBadge() {
         isOpen={isPaidPlanPurchaseModalOpen}
         handleClose={() => setIsPaidPlanPurchaseModalOpen(false)}
       />
-      <Tooltip label={`Version: v${packageJson.version}`} disabled={isMobile}>
+      <Tooltip label={t("web_ui.dynamic_version_v_value0", { value0: packageJson.version })} disabled={isMobile}>
         <Button
           variant="tertiary"
           size="md"
           stretch="auto"
-          label="Community"
+          label={t("web_ui.community")}
           onClick={() => setIsPaidPlanPurchaseModalOpen(true)}
           aria-haspopup="dialog"
           aria-label={t("aria_labels.projects_sidebar.edition_badge")}

@@ -110,7 +110,7 @@ export const WorkspaceDraftIssuesRoot = observer(function WorkspaceDraftIssuesRo
               )}
               onClick={handleNextIssues}
             >
-              Load More &darr;
+              {t("web_ui.load_more_darr")}{" "}
             </button>
           )}
         </Fragment>

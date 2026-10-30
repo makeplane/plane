@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import type { SyntheticEvent } from "react";
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
@@ -33,11 +34,18 @@ import { useUserPermissions, useUserProfile } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
+const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
+  e.stopPropagation();
+  e.preventDefault();
+};
+
 type Props = {
   moduleId: string;
 };
 
 export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
+  const { t } = useTranslation();
+
   const { moduleId } = props;
   // refs
   const parentRef = useRef(null);
@@ -71,18 +79,20 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
     const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
       () => {
         if (!storedValue) toggleFavoriteMenu(true);
+
+        return undefined;
       }
     );
 
     setPromiseToast(addToFavoritePromise, {
-      loading: "Adding module to favorites...",
+      loading: t("web_ui.adding_module_to_favorites"),
       success: {
-        title: "Success!",
-        message: () => "Module added to favorites.",
+        title: t("success"),
+        message: () => t("web_ui.module_added_to_favorites"),
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't add the module to favorites. Please try again.",
+        title: t("error"),
+        message: () => t("web_ui.couldn_t_add_the_module_to_favorites_please_try_again"),
       },
     });
   };
@@ -99,21 +109,16 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
     );
 
     setPromiseToast(removeFromFavoritePromise, {
-      loading: "Removing module from favorites...",
+      loading: t("web_ui.removing_module_from_favorites"),
       success: {
-        title: "Success!",
-        message: () => "Module removed from favorites.",
+        title: t("success"),
+        message: () => t("web_ui.module_removed_from_favorites"),
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't remove the module from favorites. Please try again.",
+        title: t("error"),
+        message: () => t("web_ui.couldn_t_remove_the_module_from_favorites_please_try_again"),
       },
     });
-  };
-
-  const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
   };
 
   const handleModuleDetailsChange = async (payload: Partial<IModule>) => {
@@ -123,14 +128,16 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
       .then(() => {
         setToast({
           type: "success",
-          title: "Success!",
-          message: "Module updated successfully.",
+          title: t("success"),
+          message: t("web_ui.module_updated_successfully"),
         });
+
+        return undefined;
       })
       .catch((err) => {
         setToast({
           type: "error",
-          title: "Error!",
+          title: t("error"),
           message: err?.detail ?? "Module could not be updated. Please try again.",
         });
       });
@@ -214,7 +221,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
                   <ButtonAvatars showTooltip={false} userIds={moduleLeadDetails?.id} />
                 </span>
               ) : (
-                <Tooltip label="No lead">
+                <Tooltip label={t("web_ui.no_lead")}>
                   <UserAltOutline className="mx-1 h-4 w-4 text-tertiary" />
                 </Tooltip>
               )}
@@ -224,7 +231,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
               size="md"
               variant="brand"
               showValue={false}
-              aria-label="Module progress"
+              aria-label={t("product_tour.module.step_four.title")}
             />
             {/* Ruling 38: the whole card is a `Link`, so the trigger's click and keyboard
                 activation must not reach it. */}
@@ -249,7 +256,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
                     target_date: range.to ? renderFormattedPayloadDate(range.to) : null,
                   });
                 }}
-                placeholder="Start date - End date"
+                placeholder={t("web_ui.start_date_end_date")}
                 weekStartsOn={userProfile?.start_of_the_week}
                 disabled={isDisabled}
                 icon={renderIcon ? undefined : <CalendarOutline aria-hidden="true" />}

@@ -5,6 +5,7 @@
  */
 
 "use client";
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { SettingsOutline } from "@makeplane/propel/icons";
@@ -25,6 +26,8 @@ import { useAppRailVisibility } from "@/lib/app-rail/context";
 import { AppSidebarItemsRoot } from "./items-root";
 
 export const AppRailRoot = observer(() => {
+  const { t } = useTranslation();
+
   // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
@@ -57,7 +60,7 @@ export const AppRailRoot = observer(() => {
               <div className="mx-2 border-t border-strong" />
               <AppSidebarItem
                 item={{
-                  label: "Settings",
+                  label: t("settings"),
                   icon: <SettingsOutline className="size-5" />,
                   href: `/${workspaceSlug}/settings`,
                   isActive: isWorkspaceSettingsPath,
@@ -70,16 +73,19 @@ export const AppRailRoot = observer(() => {
         <ContextMenuContent>
           <ContextMenuItem
             onClick={() => updateDisplayMode("icon_only")}
-            label="Icon only"
+            label={t("web_ui.icon_only")}
             selected={preferences.displayMode === "icon_only"}
           />
           <ContextMenuItem
             onClick={() => updateDisplayMode("icon_with_label")}
-            label="Icon with name"
+            label={t("web_ui.icon_with_name")}
             selected={preferences.displayMode === "icon_with_label"}
           />
           <ContextMenuSeparator />
-          <ContextMenuItem onClick={toggleAppRail} label={isCollapsed ? "Dock App Rail" : "Undock App Rail"} />
+          <ContextMenuItem
+            onClick={toggleAppRail}
+            label={isCollapsed ? t("web_ui.dock_app_rail") : t("web_ui.undock_app_rail")}
+          />
         </ContextMenuContent>
       </ContextMenu>
     </div>

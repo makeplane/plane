@@ -61,7 +61,7 @@ export const EstimateDisableSwitch = observer(function EstimateDisableSwitch(pro
         void disableEstimate();
       }}
       disabled={!isAdmin}
-      aria-label="Toggle estimates"
+      aria-label={t("web_ui.toggle_estimates")}
     />
   );
 });

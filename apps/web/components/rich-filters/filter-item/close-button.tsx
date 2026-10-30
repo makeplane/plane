@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -20,6 +21,8 @@ export const FilterItemCloseButton = observer(function FilterItemCloseButton<
   P extends TFilterProperty,
   E extends TExternalFilter,
 >(props: FilterItemCloseButtonProps<P, E>) {
+  const { t } = useTranslation();
+
   const { conditionId, filter } = props;
 
   const handleRemoveFilter = () => {
@@ -31,7 +34,7 @@ export const FilterItemCloseButton = observer(function FilterItemCloseButton<
       onClick={handleRemoveFilter}
       className="bg-layer-transparent px-1.5 text-placeholder hover:bg-layer-transparent-hover hover:text-tertiary focus:outline-none"
       type="button"
-      aria-label="Remove filter"
+      aria-label={t("web_ui.remove_filter")}
     >
       <CloseOutline className="size-3.5" />
     </button>

@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React, { useRef, useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
@@ -32,6 +33,8 @@ type Props = {
 };
 
 export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
+  const { t } = useTranslation();
+
   // props
   const { workspaceSlug, issueId } = props;
   // states
@@ -62,7 +65,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "edit",
-      title: "edit",
+      title: t("edit"),
       icon: EditOutline,
       action: () => {
         setIssueToEdit(issue);
@@ -89,7 +92,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
     },
     {
       key: "delete",
-      title: "delete",
+      title: t("delete"),
       icon: DeleteOutline,
       action: () => {
         setDeleteIssueModal(true);
@@ -179,8 +182,8 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
             <DraftIssueProperties
               className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-shrink-0 md:flex-grow" : "lg:flex-shrink-0 lg:flex-grow"} items-center gap-2 whitespace-nowrap`}
               issue={issue}
-              updateIssue={async (projectId, issueId, data) => {
-                await updateIssue(workspaceSlug, issueId, data);
+              updateIssue={async (projectId, nextIssueId, data) => {
+                await updateIssue(workspaceSlug, nextIssueId, data);
               }}
             />
             <div

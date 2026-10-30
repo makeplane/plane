@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { GOD_MODE_URL } from "@plane/constants";
 // assets
 import GradientLogo from "@/app/assets/auth/gradient-logo.webp?url";
@@ -13,6 +14,8 @@ import { PlaneLockup } from "@plane/blocks/icons";
 import { Button } from "@makeplane/propel/components/button";
 
 export function InstanceNotReady() {
+  const { t } = useTranslation();
+
   return (
     <DefaultLayout>
       <div className="relative z-10 flex h-screen w-screen overflow-hidden">
@@ -36,11 +39,13 @@ export function InstanceNotReady() {
           </div>
           <div className="flex h-full w-full flex-col items-center justify-center gap-7">
             <div className="flex flex-col items-center gap-11">
-              <img src={GradientLogo} className="h-24 w-40 object-contain" alt="Plane Logo" />
+              <img src={GradientLogo} className="h-24 w-40 object-contain" alt={t("web_ui.plane_logo")} />
               <div className="flex max-w-124 flex-col items-center gap-3">
-                <h1 className="text-h2-semibold text-primary">Welcome to Plane</h1>
+                <h1 className="text-h2-semibold text-primary">{t("web_ui.welcome_to_plane")}</h1>
                 <p className="text-center text-body-md-regular text-secondary">
-                  Set up your instance and create your first workspace to begin managing projects and work.
+                  {t(
+                    "web_ui.set_up_your_instance_and_create_your_first_workspace_to_begin_managing_projects_and_work"
+                  )}{" "}
                 </p>
               </div>
             </div>
@@ -50,8 +55,8 @@ export function InstanceNotReady() {
                 size="lg"
                 stretch="full"
                 nativeButton={false}
-                render={<a href={GOD_MODE_URL}>Get started</a>}
-                label="Get started"
+                render={<a href={GOD_MODE_URL}>{t("common.get_started")}</a>}
+                label={t("common.get_started")}
               />
             </div>
           </div>

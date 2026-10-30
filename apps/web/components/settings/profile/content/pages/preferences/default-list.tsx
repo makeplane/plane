@@ -4,17 +4,20 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // components
 import { ThemeSwitcher } from "@/components/appearance";
 
 export const ProfileSettingsDefaultPreferencesList = observer(function ProfileSettingsDefaultPreferencesList() {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col gap-y-1">
       <ThemeSwitcher
         option={{
           id: "theme",
-          title: "theme",
+          title: t("theme"),
           description: "select_or_customize_your_interface_color_scheme",
         }}
       />

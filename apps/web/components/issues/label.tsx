@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React from "react";
 // components
 import { Tooltip } from "@makeplane/propel/components/tooltip";
@@ -14,6 +15,8 @@ type Props = {
 };
 
 export function ViewIssueLabel({ labelDetails, maxRender = 1 }: Props) {
+  const { t } = useTranslation();
+
   const { isMobile } = usePlatformOS();
   return (
     <>
@@ -25,7 +28,11 @@ export function ViewIssueLabel({ labelDetails, maxRender = 1 }: Props) {
                 key={label.id}
                 className="shadow-sm flex flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11"
               >
-                <Tooltip label={`Label: ${label.name}`} layout="stacked" disabled={isMobile}>
+                <Tooltip
+                  label={t("web_ui.dynamic_label_value0_e34498", { value0: label.name })}
+                  layout="stacked"
+                  disabled={isMobile}
+                >
                   <div className="flex items-center gap-1.5 text-secondary">
                     <span
                       className="h-2 w-2 flex-shrink-0 rounded-full"
@@ -42,13 +49,13 @@ export function ViewIssueLabel({ labelDetails, maxRender = 1 }: Props) {
         ) : (
           <div className="shadow-sm flex flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11">
             <Tooltip
-              label={`Labels: ${labelDetails.map((l) => l.name).join(", ")}`}
+              label={t("web_ui.dynamic_labels_value0", { value0: labelDetails.map((l) => l.name).join(", ") })}
               layout="stacked"
               disabled={isMobile}
             >
               <div className="flex items-center gap-1.5 text-secondary">
                 <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
-                {`${labelDetails.length} Labels`}
+                {t("web_ui.dynamic_value0_labels_292e1a", { value0: labelDetails.length })}
               </div>
             </Tooltip>
           </div>

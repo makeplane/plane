@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
 import { ChevronLeftOutline, ChevronRightOutline } from "@makeplane/propel/icons";
@@ -23,6 +24,7 @@ interface Props {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
 }
 export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(props: Props) {
+  const { currentLocale, t } = useTranslation();
   const { issuesFilterStore } = props;
 
   const issueCalendarView = useCalendarView();
@@ -31,29 +33,29 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
 
   const { activeMonthDate } = issueCalendarView.calendarFilters;
 
+  const monthName = (date: Date, short = false) =>
+    new Intl.DateTimeFormat(currentLocale, { month: short ? "short" : "long" }).format(date);
   const getWeekLayoutHeader = (): string => {
     const allDaysOfActiveWeek = issueCalendarView.allDaysOfActiveWeek;
 
-    if (!allDaysOfActiveWeek) return "Week view";
+    if (!allDaysOfActiveWeek) return t("web_ui.week_view");
 
     const daysList = Object.keys(allDaysOfActiveWeek);
 
     const firstDay = getDate(daysList[0]);
     const lastDay = getDate(daysList[daysList.length - 1]);
 
-    if (!firstDay || !lastDay) return "Week view";
+    if (!firstDay || !lastDay) return t("web_ui.week_view");
 
     if (firstDay.getMonth() === lastDay.getMonth() && firstDay.getFullYear() === lastDay.getFullYear())
-      return `${MONTHS_LIST[firstDay.getMonth() + 1].title} ${firstDay.getFullYear()}`;
+      return `${monthName(firstDay, false)} ${firstDay.getFullYear()}`;
 
     if (firstDay.getFullYear() !== lastDay.getFullYear()) {
-      return `${MONTHS_LIST[firstDay.getMonth() + 1].shortTitle} ${firstDay.getFullYear()} - ${
-        MONTHS_LIST[lastDay.getMonth() + 1].shortTitle
-      } ${lastDay.getFullYear()}`;
-    } else
-      return `${MONTHS_LIST[firstDay.getMonth() + 1].shortTitle} - ${
-        MONTHS_LIST[lastDay.getMonth() + 1].shortTitle
-      } ${lastDay.getFullYear()}`;
+      return `${monthName(firstDay, true)} ${firstDay.getFullYear()} - ${monthName(
+        lastDay,
+        true
+      )} ${lastDay.getFullYear()}`;
+    } else return `${monthName(firstDay, true)} - ${monthName(lastDay, true)} ${lastDay.getFullYear()}`;
   };
 
   const handleDateChange = (date: Date) => {
@@ -69,7 +71,7 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
         render={
           <button type="button" className="text-18 font-semibold outline-none">
             {calendarLayout === "month"
-              ? `${MONTHS_LIST[activeMonthDate.getMonth() + 1].title} ${activeMonthDate.getFullYear()}`
+              ? `${monthName(activeMonthDate, false)} ${activeMonthDate.getFullYear()}`
               : getWeekLayoutHeader()}
           </button>
         }

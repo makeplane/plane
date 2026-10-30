@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { Checkbox } from "@makeplane/propel/components/checkbox";
 import { cn } from "@plane/utils";
@@ -19,6 +20,8 @@ type Props = {
 };
 
 export const MultipleSelectEntityAction = observer(function MultipleSelectEntityAction(props: Props) {
+  const { t } = useTranslation();
+
   const { className, disabled = false, groupId, id, selectionHelpers } = props;
   // derived values
   const isSelected = selectionHelpers.getIsEntitySelected(id);
@@ -30,7 +33,7 @@ export const MultipleSelectEntityAction = observer(function MultipleSelectEntity
       <Checkbox
         checked={isSelected}
         disabled={disabled}
-        aria-label="Select work item"
+        aria-label={t("web_ui.select_work_item")}
         onClick={(e) => {
           e.stopPropagation();
           selectionHelpers.handleEntityClick(e, id, groupId);

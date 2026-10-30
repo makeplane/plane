@@ -66,14 +66,14 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
   return (
     <div className="flex w-full flex-col divide-y-2 divide-subtle-1">
       <div className="w-full overflow-y-auto">
-        <h5 className="mb-2 text-body-sm-medium">Properties</h5>
+        <h5 className="mb-2 text-body-sm-medium">{t("common.properties")}</h5>
         <div className={`divide-y-2 divide-subtle-1 ${!isEditable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
             {/* Intake State */}
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <StateOutline className="h-4 w-4 flex-shrink-0" />
-                <span>State</span>
+                <span>{t("state")}</span>
               </div>
               {issue?.state_id && (
                 <div className="w-3/5 flex-grow">
@@ -102,7 +102,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <MembersOutline className="h-4 w-4 flex-shrink-0" />
-                <span>Assignees</span>
+                <span>{t("assignees")}</span>
               </div>
               <div className="w-3/5 flex-grow">
                 <MemberSelect
@@ -113,7 +113,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                   }}
                   disabled={!isEditable}
                   projectId={projectId?.toString() ?? ""}
-                  placeholder="Add assignees"
+                  placeholder={t("issue.add.assignee")}
                   multiple
                   variant="select-ghost-md"
                   showLabel={(issue?.assignee_ids ?? []).length <= 1}
@@ -124,7 +124,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <PriorityOutline className="h-4 w-4 flex-shrink-0" />
-                <span>Priority</span>
+                <span>{t("priority")}</span>
               </div>
               <div className="w-3/5 flex-grow">
                 <PrioritySelect
@@ -146,11 +146,11 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <DueDateOutline className="h-4 w-4 flex-shrink-0" />
-                <span>Due date</span>
+                <span>{t("due_date")}</span>
               </div>
               <div className="w-3/5 flex-grow">
                 <DateSelect
-                  placeholder="Add due date"
+                  placeholder={t("issue.add.due_date")}
                   value={getDate(issue.target_date) ?? null}
                   onChange={(val) => {
                     if (!issue?.id) return;
@@ -171,7 +171,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
             <div className="flex min-h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <LabelsOutline className="h-4 w-4 flex-shrink-0" />
-                <span>Labels</span>
+                <span>{t("labels")}</span>
               </div>
               <div className="h-full min-h-8 w-3/5 flex-grow pt-1">
                 {issue?.id && (
@@ -194,7 +194,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
               <div className="flex min-h-8 gap-2">
                 <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-13 text-tertiary">
                   <DuplicateOfOutline className="h-4 w-4 flex-shrink-0" />
-                  <span>Duplicate of</span>
+                  <span>{t("issue.relation.duplicate")}</span>
                 </div>
 
                 <ControlLink

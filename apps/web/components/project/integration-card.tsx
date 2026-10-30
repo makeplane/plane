@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { setToast } from "@plane/blocks/toast";
@@ -23,21 +24,22 @@ type Props = {
   integration: IWorkspaceIntegration;
 };
 
-const integrationDetails: { [key: string]: any } = {
-  github: {
-    logo: GithubLogo,
-    description: "Select GitHub repository to enable sync.",
-  },
-  slack: {
-    logo: SlackLogo,
-    description: "Get regular updates and control which notification you want to receive.",
-  },
-};
-
 // services
 const projectService = new ProjectService();
 
 export function IntegrationCard({ integration }: Props) {
+  const { t } = useTranslation();
+  const integrationDetails: { [key: string]: any } = {
+    github: {
+      logo: GithubLogo,
+      description: t("web_ui.select_github_repository_to_enable_sync"),
+    },
+    slack: {
+      logo: SlackLogo,
+      description: t("web_ui.get_regular_updates_and_control_which_notification_you_want_to_receive"),
+    },
+  };
+
   const { workspaceSlug, projectId } = useParams();
 
   const { data: syncedGithubRepository } = useSWR(projectId ? PROJECT_GITHUB_REPOSITORY(projectId) : null, () =>
@@ -68,16 +70,21 @@ export function IntegrationCard({ integration }: Props) {
 
         setToast({
           type: "success",
-          title: "Success!",
-          message: `${login}/${name} repository synced with the project successfully.`,
+          title: t("success"),
+          message: t("web_ui.dynamic_value0_value1_repository_synced_with_the_project_successfully", {
+            value0: login,
+            value1: name,
+          }),
         });
+
+        return undefined;
       })
       .catch((err) => {
         console.error(err);
         setToast({
           type: "error",
-          title: "Error!",
-          message: "Repository could not be synced with the project. Please try again.",
+          title: t("error"),
+          message: t("web_ui.repository_could_not_be_synced_with_the_project_please_try_again"),
         });
       });
   };
@@ -91,7 +98,7 @@ export function IntegrationCard({ integration }: Props) {
               <img
                 src={integrationDetails[integration.integration_detail.provider].logo}
                 className="h-full w-full object-cover"
-                alt={`${integration.integration_detail.title} Logo`}
+                alt={t("web_ui.dynamic_value0_logo", { value0: integration.integration_detail.title })}
               />
             </div>
             <div>
@@ -112,7 +119,7 @@ export function IntegrationCard({ integration }: Props) {
               label={
                 syncedGithubRepository && syncedGithubRepository.length > 0
                   ? `${syncedGithubRepository[0].repo_detail.owner}/${syncedGithubRepository[0].repo_detail.name}`
-                  : "Select Repository"
+                  : t("web_ui.select_repository")
               }
               onChange={handleChange}
             />

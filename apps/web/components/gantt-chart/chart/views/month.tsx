@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // components
 import { cn } from "@plane/utils";
@@ -16,6 +17,8 @@ import type { IMonthView } from "../../views";
 import { getNumberOfDaysBetweenTwoDates } from "../../views/helpers";
 
 export const MonthChartView = observer(function MonthChartView(_props: any) {
+  const { t, currentLocale } = useTranslation();
+
   // chart hook
   const { currentViewData, renderView } = useTimeLineChartStore();
   const monthView: IMonthView = renderView;
@@ -54,10 +57,12 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                       left: `${SIDEBAR_WIDTH}px`,
                     }}
                   >
-                    {monthBlock?.title}
+                    {new Intl.DateTimeFormat(currentLocale, { month: "long", year: "numeric" }).format(
+                      new Date(monthBlock.year, monthBlock.month, 1)
+                    )}
                     {monthBlock.today && (
                       <span className={cn("ml-2 rounded-sm bg-accent-primary px-1 text-9 font-medium text-on-color")}>
-                        Current
+                        {t("current")}{" "}
                       </span>
                     )}
                   </div>
@@ -86,7 +91,9 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                       {weekBlock.startDate.getDate()}-{weekBlock.endDate.getDate()}
                     </span>
                   </div>
-                  <div className="space-x-1 text-11 font-medium">{weekBlock.weekData.shortTitle}</div>
+                  <div className="space-x-1 text-11 font-medium">
+                    {t("web_ui.week_number", { count: weekBlock.weekNumber })}
+                  </div>
                 </div>
               ))}
             </div>

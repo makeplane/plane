@@ -75,14 +75,14 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
 
       setToast({
         type: "success",
-        title: "Success!",
-        message: "Work items added to the cycle successfully.",
+        title: t("success"),
+        message: t("web_ui.work_items_added_to_the_cycle_successfully"),
       });
     } catch (_error) {
       setToast({
         type: "error",
-        title: "Error!",
-        message: "Selected work items could not be added to the cycle. Please try again.",
+        title: t("error"),
+        message: t("web_ui.selected_work_items_could_not_be_added_to_the_cycle_please_try_again"),
       });
     }
   };
@@ -163,13 +163,13 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
               />
               <MenuContent side="bottom" align="end">
                 <MenuItem
-                  label="Create work item"
+                  label={t("create_work_item")}
                   onClick={() => {
                     setIsOpen(true);
                   }}
                 />
                 <MenuItem
-                  label="Add an existing work item"
+                  label={t("project_module.empty_state.no_issues.secondary_button.text")}
                   onClick={() => {
                     setOpenExistingIssueListModal(true);
                   }}

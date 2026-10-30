@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { ArrowNarrowRightOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Loader } from "@plane/blocks/skeleton";
@@ -15,6 +16,8 @@ type TIssuePeekOverviewLoader = {
 };
 
 export function IssuePeekOverviewLoader(props: TIssuePeekOverviewLoader) {
+  const { t } = useTranslation();
+
   const { removeRoutePeekId } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -23,7 +26,7 @@ export function IssuePeekOverviewLoader(props: TIssuePeekOverviewLoader) {
     <Loader className="h-screen w-full space-y-6 overflow-hidden p-5">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Tooltip label="Close the peek view" disabled={isMobile}>
+          <Tooltip label={t("common.close_peek_view")} disabled={isMobile}>
             <button onClick={removeRoutePeekId}>
               <ArrowNarrowRightOutline className="h-4 w-4 text-tertiary hover:text-secondary" />
             </button>

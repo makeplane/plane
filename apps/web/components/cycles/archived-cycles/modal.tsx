@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState } from "react";
 // ui
 import { ConfirmDialog } from "@plane/blocks/dialog";
@@ -22,6 +23,8 @@ type Props = {
 };
 
 export function ArchiveCycleModal(props: Props) {
+  const { t } = useTranslation();
+
   const { workspaceSlug, projectId, cycleId, isOpen, handleClose } = props;
   // router
   const router = useAppRouter();
@@ -43,8 +46,8 @@ export function ArchiveCycleModal(props: Props) {
       .then(() => {
         setToast({
           type: "success",
-          title: "Archive success",
-          message: "Your archives can be found in project archives.",
+          title: t("issue.archive.success.label"),
+          message: t("issue.archive.success.message"),
         });
         onClose();
         router.push(`/${workspaceSlug}/projects/${projectId}/cycles`);
@@ -53,8 +56,8 @@ export function ArchiveCycleModal(props: Props) {
       .catch(() => {
         setToast({
           type: "error",
-          title: "Error!",
-          message: "Cycle could not be archived. Please try again.",
+          title: t("error"),
+          message: t("web_ui.cycle_could_not_be_archived_please_try_again"),
         });
       })
       .finally(() => setIsArchiving(false));
@@ -67,10 +70,10 @@ export function ArchiveCycleModal(props: Props) {
       handleSubmit={handleArchiveCycle}
       isSubmitting={isArchiving}
       variant="primary"
-      title={`Archive cycle ${cycleName ?? ""}`}
-      content="Are you sure you want to archive the cycle? All your archives can be restored later."
-      primaryButtonText={{ loading: "Archiving", default: "Archive" }}
-      secondaryButtonText="Cancel"
+      title={t("web_ui.dynamic_archive_cycle_value0", { value0: cycleName ?? "" })}
+      content={t("web_ui.are_you_sure_you_want_to_archive_the_cycle_all_your_archives_can_be_restored_later")}
+      primaryButtonText={{ loading: t("common.archiving"), default: t("archive") }}
+      secondaryButtonText={t("cancel")}
     />
   );
 }

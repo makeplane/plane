@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 
 import type { TProjectActivity } from "@plane/types";
@@ -17,6 +18,7 @@ type TActivityItem = {
 };
 
 export const ActivityItem = observer(function ActivityItem(props: TActivityItem) {
+  const { t } = useTranslation();
   const { activity, ends } = props;
 
   if (!activity) return null;
@@ -24,7 +26,7 @@ export const ActivityItem = observer(function ActivityItem(props: TActivityItem)
   const activityType = activity.field;
   if (!activityType) return null;
 
-  const { message, customUserName } = messages(activity);
+  const { message, customUserName } = messages(activity, t);
   const icon = iconsMap[activityType] || iconsMap.default;
 
   return (

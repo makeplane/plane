@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React from "react";
 import { observer } from "mobx-react";
 import { RefreshOutline } from "@makeplane/propel/icons";
@@ -15,6 +16,8 @@ type Props = {
 };
 
 export const NameDescriptionUpdateStatus = observer(function NameDescriptionUpdateStatus(props: Props) {
+  const { t } = useTranslation();
+
   const { isSubmitting } = props;
 
   return (
@@ -27,7 +30,7 @@ export const NameDescriptionUpdateStatus = observer(function NameDescriptionUpda
         {isSubmitting !== "submitted" && isSubmitting !== "saved" && (
           <RefreshOutline className="size-3.5 animate-spin text-tertiary" />
         )}
-        <span className="text-13 text-tertiary">{isSubmitting === "submitting" ? "Saving..." : "Saved"}</span>
+        <span className="text-13 text-tertiary">{isSubmitting === "submitting" ? t("saving") : t("web_ui.saved")}</span>
       </div>
     </>
   );

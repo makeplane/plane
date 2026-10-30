@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
@@ -34,6 +34,12 @@ function PopoverButton({ color }: { color?: string }) {
 }
 
 export function StateForm(props: TStateForm) {
+  // Focus this field when its input/group mounts, without refocusing on ordinary rerenders.
+  const focusInputOnMount = useCallback((element: HTMLElement | null) => {
+    const input = element instanceof HTMLInputElement ? element : element?.querySelector("input");
+    input?.focus();
+  }, []);
+
   const { data, onSubmit, onCancel, buttonDisabled, buttonTitle } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -99,11 +105,11 @@ export function StateForm(props: TStateForm) {
               id="name"
               type="text"
               name="name"
-              placeholder="Name"
+              placeholder={t("name")}
               value={formData?.name}
               onChange={(e) => handleFormData("name", e.target.value)}
               maxLength={100}
-              autoFocus
+              ref={focusInputOnMount}
             />
           </InputGroup>
         </Field>
@@ -118,7 +124,7 @@ export function StateForm(props: TStateForm) {
               maxRows={8}
               id="description"
               name="description"
-              placeholder="Describe this state for your members."
+              placeholder={t("project_settings.states.describe_this_state_for_your_members")}
               value={formData?.description ?? ""}
               onChange={(e) => handleFormData("description", e.target.value)}
             />
@@ -139,7 +145,7 @@ export function StateForm(props: TStateForm) {
             variant="secondary"
             size="md"
             stretch="auto"
-            label="Cancel"
+            label={t("cancel")}
             disabled={buttonDisabled}
             onClick={onCancel}
           />

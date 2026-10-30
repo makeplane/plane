@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { ArrowNarrowRightOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 // assets
@@ -18,6 +19,8 @@ type TIssuePeekOverviewError = {
 };
 
 export function IssuePeekOverviewError(props: TIssuePeekOverviewError) {
+  const { t } = useTranslation();
+
   const { removeRoutePeekId } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -25,7 +28,7 @@ export function IssuePeekOverviewError(props: TIssuePeekOverviewError) {
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <div className="flex flex-shrink-0 justify-start">
-        <Tooltip label="Close the peek view" disabled={isMobile}>
+        <Tooltip label={t("common.close_peek_view")} disabled={isMobile}>
           <button onClick={removeRoutePeekId} className="m-5 h-5 w-5">
             <ArrowNarrowRightOutline className="h-4 w-4 text-tertiary hover:text-secondary" />
           </button>
@@ -35,8 +38,8 @@ export function IssuePeekOverviewError(props: TIssuePeekOverviewError) {
       <div className="h-full w-full">
         <EmptyState
           image={emptyIssue ?? undefined}
-          title="Work item does not exist"
-          description="The work item you are looking for does not exist, has been archived, or has been deleted."
+          title={t("issue.empty_state.issue_detail.title")}
+          description={t("issue.empty_state.issue_detail.description")}
         />
       </div>
     </div>

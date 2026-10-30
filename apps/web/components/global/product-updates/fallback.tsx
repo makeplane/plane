@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 
 type TProductUpdatesFallbackProps = {
@@ -12,6 +13,8 @@ type TProductUpdatesFallbackProps = {
 };
 
 export function ProductUpdatesFallback(props: TProductUpdatesFallbackProps) {
+  const { t } = useTranslation();
+
   const { description, variant } = props;
   // derived values
   const changelogUrl =
@@ -27,7 +30,7 @@ export function ProductUpdatesFallback(props: TProductUpdatesFallbackProps) {
         align="center"
         actions={[
           {
-            label: "Go to changelog",
+            label: t("web_ui.go_to_changelog"),
             variant: "primary",
             onClick: () => window.open(changelogUrl, "_blank"),
           },

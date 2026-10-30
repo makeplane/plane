@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // Plane
 import { Row } from "@plane/blocks/layout";
@@ -21,6 +22,8 @@ type Props = {
 };
 
 export const ModulesSidebarBlock = observer(function ModulesSidebarBlock(props: Props) {
+  const { t } = useTranslation();
+
   const { blockId, isDragging } = props;
   // store hooks
   const { getBlockById, updateActiveBlockId, isBlockActive, getNumberOfDaysFromPosition } = useTimeLineChartStore();
@@ -57,7 +60,8 @@ export const ModulesSidebarBlock = observer(function ModulesSidebarBlock(props: 
           </div>
           {duration !== undefined && (
             <div className="flex-shrink-0 text-13 text-secondary">
-              {duration} day{duration > 1 ? "s" : ""}
+              {duration} {t("web_ui.day")}
+              {duration > 1 ? "s" : ""}
             </div>
           )}
         </div>

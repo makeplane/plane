@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
@@ -36,6 +37,8 @@ const defaultValues: ModuleLink = {
 };
 
 export function CreateUpdateModuleLinkModal(props: Props) {
+  const { t } = useTranslation();
+
   const { isOpen, handleClose, createLink, updateLink, data } = props;
   // form info
   const {
@@ -63,22 +66,22 @@ export function CreateUpdateModuleLinkModal(props: Props) {
         await createLink(payload);
         setToast({
           type: "success",
-          title: "Success!",
-          message: "Module link created successfully.",
+          title: t("success"),
+          message: t("web_ui.module_link_created_successfully"),
         });
       } else {
         await updateLink(payload, data.id);
         setToast({
           type: "success",
-          title: "Success!",
-          message: "Module link updated successfully.",
+          title: t("success"),
+          message: t("web_ui.module_link_updated_successfully"),
         });
       }
       onClose();
     } catch (error: any) {
       setToast({
         type: "error",
-        title: "Error!",
+        title: t("error"),
         message: error?.data?.error ?? "Some error occurred. Please try again.",
       });
     }
@@ -103,7 +106,9 @@ export function CreateUpdateModuleLinkModal(props: Props) {
           <DialogMain>
             <DialogHeader>
               <DialogHeading>
-                <DialogTitle>{data ? "Update" : "Add"} link</DialogTitle>
+                <DialogTitle>
+                  {data ? t("update") : t("add")} {t("common.link")}
+                </DialogTitle>
               </DialogHeading>
             </DialogHeader>
             <DialogBody tabIndex={0}>
@@ -112,7 +117,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
                   control={control}
                   name="url"
                   rules={{
-                    required: "URL is required",
+                    required: t("workspace_settings.settings.webhooks.modal.error"),
                   }}
                   render={({ field: { value, onChange, ref } }) => (
                     <InputField
@@ -125,7 +130,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
                       onChange={onChange}
                       ref={ref}
                       error={errors.url?.message}
-                      placeholder="Type or paste a URL"
+                      placeholder={t("common.type_or_paste_a_url")}
                     />
                   )}
                 />
@@ -138,13 +143,13 @@ export function CreateUpdateModuleLinkModal(props: Props) {
                       type="text"
                       size="xl"
                       orientation="vertical"
-                      label="Display title"
-                      description="Optional"
+                      label={t("common.display_title")}
+                      description={t("optional")}
                       value={value}
                       onChange={onChange}
                       ref={ref}
                       error={errors.title?.message}
-                      placeholder="What you'd like to see this link as"
+                      placeholder={t("common.link_title_placeholder")}
                     />
                   )}
                 />
@@ -152,7 +157,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
             </DialogBody>
           </DialogMain>
           <DialogActions>
-            <Button variant="secondary" size="md" stretch="auto" onClick={onClose} label="Cancel" />
+            <Button variant="secondary" size="md" stretch="auto" onClick={onClose} label={t("cancel")} />
             <Button
               variant="primary"
               size="md"
@@ -160,7 +165,13 @@ export function CreateUpdateModuleLinkModal(props: Props) {
               type="submit"
               loading={isSubmitting}
               label={
-                data ? (isSubmitting ? "Updating link" : "Update link") : isSubmitting ? "Adding link" : "Add link"
+                data
+                  ? isSubmitting
+                    ? t("web_ui.updating_link")
+                    : t("common.update_link")
+                  : isSubmitting
+                    ? t("web_ui.adding_link")
+                    : t("add_link")
               }
             />
           </DialogActions>

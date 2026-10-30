@@ -119,7 +119,13 @@ export function ProjectAppliedFiltersList(props: Props) {
         )}
       </Header.LeftItem>
       <Header.RightItem>
-        <Tooltip label={`${filteredProjects} of ${totalProjects} projects match the applied filters.`} layout="stacked">
+        <Tooltip
+          label={t("web_ui.dynamic_value0_of_value1_projects_match_the_applied_filters", {
+            value0: filteredProjects,
+            value1: totalProjects,
+          })}
+          layout="stacked"
+        >
           <span className="rounded-full bg-layer-1 px-2.5 py-1 text-13 font-medium">
             {filteredProjects}/{totalProjects}
           </span>

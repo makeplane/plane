@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // plane imports
 import type { IGanttBlock } from "@plane/types";
@@ -28,6 +29,8 @@ type Props = {
 };
 
 export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Props) {
+  const { t } = useTranslation();
+
   const { block, enableSelection, isDragging, selectionHelpers, isEpic = false } = props;
   // store hooks
   const { updateActiveBlockId, isBlockActive, getNumberOfDaysFromPosition } = useTimeLineChartStore();
@@ -87,7 +90,8 @@ export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Pr
           {duration && (
             <div className="flex-shrink-0 text-13 text-secondary">
               <span>
-                {duration} day{duration > 1 ? "s" : ""}
+                {duration} {t("web_ui.day")}
+                {duration > 1 ? "s" : ""}
               </span>
             </div>
           )}

@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -27,6 +28,8 @@ import { IssueService } from "@/services/issue";
 const issueService = new IssueService();
 
 export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchivedIssueDetailsHeader() {
+  const { t } = useTranslation();
+
   // router
   const { workspaceSlug, projectId, archivedIssueId } = useParams();
   const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
@@ -53,7 +56,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
             component={
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
-                label="Archives"
+                label={t("archives")}
                 icon={<ArchiveOutline className="h-4 w-4 text-tertiary" />}
               />
             }
@@ -62,7 +65,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
             component={
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
-                label="Work items"
+                label={t("issues")}
                 icon={<WorkItemsOutline className="h-4 w-4 text-tertiary" />}
               />
             }

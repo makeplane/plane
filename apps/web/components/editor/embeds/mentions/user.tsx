@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Link } from "react-router";
@@ -21,6 +22,8 @@ type Props = {
 };
 
 export const EditorUserMention = observer(function EditorUserMention(props: Props) {
+  const { t } = useTranslation();
+
   const { id } = props;
   // router
   const { projectId } = useParams();
@@ -40,7 +43,7 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
   if (!userDetails) {
     return (
       <div className="not-prose inline rounded-sm bg-layer-1 px-1 py-0.5 text-tertiary no-underline">
-        @suspended user
+        {t("web_ui.suspended_user")}{" "}
       </div>
     );
   }

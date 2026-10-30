@@ -118,11 +118,16 @@ export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props)
       content={
         <>
           {/* TODO: Translate here */}
-          {`Are you sure you want to delete ${isEpic ? "epic" : "work item"} `}
+          {t("web_ui.dynamic_are_you_sure_you_want_to_delete_value0", {
+            value0: isEpic ? t("epic.label") : t("common.work_item"),
+          })}
           <span className="font-medium break-words text-primary">
             {projectDetails?.identifier}-{issue?.sequence_id}
           </span>
-          {` ? All of the data related to the ${isEpic ? "epic" : "work item"} will be permanently removed. This action cannot be undone.`}
+          {t(
+            "web_ui.dynamic_all_of_the_data_related_to_the_value0_will_be_permanently_removed_this_action_cannot_be_undone",
+            { value0: isEpic ? t("epic.label") : t("common.work_item") }
+          )}
         </>
       }
     />
