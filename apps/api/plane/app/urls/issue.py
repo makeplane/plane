@@ -29,6 +29,8 @@ from plane.app.views import (
     IssueBulkUpdateDateEndpoint,
     IssueVersionEndpoint,
     WorkItemDescriptionVersionEndpoint,
+    WorkItemPageListCreateEndpoint,
+    WorkItemPageDetailEndpoint,
     IssueMetaEndpoint,
     IssueDetailIdentifierEndpoint,
 )
@@ -272,6 +274,16 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:work_item_id>/description-versions/<uuid:pk>/",
         WorkItemDescriptionVersionEndpoint.as_view(),
         name="work-item-versions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/pages/",
+        WorkItemPageListCreateEndpoint.as_view(http_method_names=["get", "post"]),
+        name="work-item-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/pages/<uuid:pk>/",
+        WorkItemPageDetailEndpoint.as_view(http_method_names=["get", "delete"]),
+        name="work-item-page-detail",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/meta/",

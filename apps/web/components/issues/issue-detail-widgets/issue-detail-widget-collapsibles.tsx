@@ -16,6 +16,7 @@ import { AttachmentsCollapsible } from "./attachments";
 import { LinksCollapsible } from "./links";
 import { RelationsCollapsible } from "./relations";
 import { SubIssuesCollapsible } from "./sub-issues";
+import { IssuePagesCollapsible } from "./pages";
 
 type Props = {
   workspaceSlug: string;
@@ -49,6 +50,7 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
   const shouldRenderAttachments =
     attachmentsCount > 0 ||
     (!!attachmentUploads && attachmentUploads.length > 0 && !hideWidgets?.includes("attachments"));
+  const shouldRenderPages = !hideWidgets?.includes("pages");
 
   return (
     <div className="flex flex-col">
@@ -80,6 +82,15 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
       )}
       {shouldRenderAttachments && (
         <AttachmentsCollapsible
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          disabled={disabled}
+          issueServiceType={issueServiceType}
+        />
+      )}
+      {shouldRenderPages && (
+        <IssuePagesCollapsible
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}
