@@ -20,7 +20,7 @@ from rest_framework import status
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import IssueRelationSerializer, RelatedIssueSerializer
-from plane.app.permissions import ProjectEntityPermission, issue_hidden_from_guest
+from plane.app.permissions import ProjectEntityPermission, issue_hidden_from_guest, visible_issue_q
 from plane.db.models import (
     Project,
     IssueRelation,
@@ -139,6 +139,7 @@ class IssueRelationViewSet(BaseViewSet):
 
         queryset = (
             Issue.issue_objects.filter(workspace__slug=slug)
+            .filter(visible_issue_q(request.user))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(

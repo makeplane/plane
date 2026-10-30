@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+from django.db.models import Q
 from plane.db.models import WorkspaceMember, ProjectMember
 from functools import wraps
 from rest_framework.response import Response
@@ -139,3 +140,30 @@ def issue_hidden_from_guest(request, slug, project_id, issue_id):
         created_by=request.user,
     ).exists()
     return not owns_issue
+
+
+def visible_issue_q(user):
+    """Issue filter for work items `user` may view across projects:
+    every issue in a project where they are an active member above GUEST or a GUEST
+    with `guest_view_all_features`, otherwise only the issues they created.
+    """
+    return (
+        Q(
+            project__project_projectmember__member=user,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__role__gt=ROLE.GUEST.value,
+        )
+        | Q(
+            project__project_projectmember__member=user,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__role=ROLE.GUEST.value,
+            project__guest_view_all_features=True,
+        )
+        | Q(
+            project__project_projectmember__member=user,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__role=ROLE.GUEST.value,
+            project__guest_view_all_features=False,
+            created_by=user,
+        )
+    )
