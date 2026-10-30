@@ -420,6 +420,16 @@
     }
   },
   "common": {
+    "sub_group_by": "Subgroeperen op",
+    "filter_labels": {
+      "subscriber": "Abonnee"
+    },
+    "filter_messages": {
+      "all_applied": "Alle filters toegepast",
+      "configuration_error": "Fout in filterconfiguratie",
+      "configuration_invalid": "Dit filter is niet correct geconfigureerd en kan niet worden toegepast"
+    },
+    "project_work_item_count": "Werkitems in dit project: {count, number}",
     "all": "Alle",
     "no_items_in_this_group": "Geen items in deze groep",
     "drop_here_to_move": "Sleep hierheen om te verplaatsen",

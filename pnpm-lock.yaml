@@ -1126,6 +1126,12 @@ importers:
       '@tailwindcss/typography':
         specifier: 'catalog:'
         version: 0.5.19
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.2)
       '@types/lodash-es':
         specifier: 'catalog:'
         version: 4.17.12
@@ -1141,6 +1147,18 @@ importers:
       dotenv:
         specifier: 'catalog:'
         version: 16.4.7
+      i18next:
+        specifier: 'catalog:'
+        version: 25.10.9(typescript@5.8.3)
+      i18next-icu:
+        specifier: 'catalog:'
+        version: 2.4.3(intl-messageformat@10.7.16)
+      jsdom:
+        specifier: 'catalog:'
+        version: 23.2.0
+      react-i18next:
+        specifier: 'catalog:'
+        version: 16.6.6(i18next@25.10.9(typescript@5.8.3))(react@19.2.8)(typescript@5.8.3)
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -1150,6 +1168,9 @@ importers:
       vite-tsconfig-paths:
         specifier: 'catalog:'
         version: 5.1.4(typescript@5.8.3)(vite@8.2.4(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@22.12.0)(@vitest/coverage-v8@4.1.11)(jsdom@23.2.0)(vite@8.2.4(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
 
   packages/blocks:
     dependencies:

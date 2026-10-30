@@ -167,6 +167,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
     if (!inboxIssue || !currentInboxIssueId) return;
     await deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).then(() => {
       if (!isNotificationEmbed) router.push(`/${workspaceSlug}/projects/${projectId}/intake`);
+      return undefined;
     });
   };
 
