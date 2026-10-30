@@ -97,7 +97,7 @@
     },
     "total": "{entity}总数",
     "started_work_items": "已开始的{entity}",
-    "backlog_work_items": "待办的{entity}",
+    "backlog_work_items": "待规划的{entity}",
     "un_started_work_items": "未开始的{entity}",
     "completed_work_items": "已完成的{entity}",
     "project_insights": "项目洞察",
@@ -173,7 +173,7 @@
       "issue_delete": "删除工作项失败"
     },
     "state": {
-      "backlog": "待办",
+      "backlog": "待规划",
       "unstarted": "未开始",
       "started": "进行中",
       "completed": "已完成",

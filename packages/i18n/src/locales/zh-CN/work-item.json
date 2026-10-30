@@ -85,7 +85,7 @@
     },
     "states": {
       "active": "活动",
-      "backlog": "待办"
+      "backlog": "待规划"
     },
     "comments": {
       "placeholder": "添加评论",

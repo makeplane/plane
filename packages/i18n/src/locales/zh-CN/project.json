@@ -338,7 +338,7 @@
   },
   "project_modules": {
     "status": {
-      "backlog": "待办",
+      "backlog": "待规划",
       "planned": "已计划",
       "in_progress": "进行中",
       "paused": "已暂停",
