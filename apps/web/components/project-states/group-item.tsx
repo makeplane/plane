@@ -50,6 +50,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
   const dropElementRef = useRef<HTMLDivElement | null>(null);
   // plane hooks
   const { t } = useTranslation();
+  const groupLabel = t(`workspace_projects.state.${groupKey}`);
   // state
   const [createState, setCreateState] = useState(false);
   // derived values
@@ -82,7 +83,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
         trigger={
           <span className="flex w-full items-center gap-1">
             <StateGroupIcon stateGroup={groupKey} size={EIconSize.XL} className="shrink-0" />
-            <span className="px-1 text-14 font-medium text-secondary capitalize">{groupKey}</span>
+            <span className="px-1 text-14 font-medium text-secondary">{groupLabel}</span>
           </span>
         }
         trailing={
@@ -108,7 +109,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
       >
         {shouldShowEmptyState && (
           <div className="flex h-full flex-col items-center justify-center py-4 text-13 text-tertiary">
-            <div>{t("project_settings.states.empty_state.title", { groupKey })}</div>
+            <div>{t("project_settings.states.empty_state.title", { groupKey: groupLabel })}</div>
             {isEditable && <div>{t("project_settings.states.empty_state.description")}</div>}
           </div>
         )}
