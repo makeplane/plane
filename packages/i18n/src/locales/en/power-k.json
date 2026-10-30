@@ -1,5 +1,6 @@
 {
   "power_k": {
+    "search_commands_placeholder": "Search commands...",
     "actions_commands": {
       "bulk_delete_work_items": "Bulk delete work items"
     },

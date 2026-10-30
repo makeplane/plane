@@ -1,5 +1,6 @@
 {
   "power_k": {
+    "search_commands_placeholder": "搜索命令...",
     "actions_commands": {
       "bulk_delete_work_items": "批量删除工作项"
     },

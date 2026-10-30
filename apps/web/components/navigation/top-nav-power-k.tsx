@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
 import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // power-k
 import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/core/types";
@@ -22,6 +23,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { useExpandableSearch } from "@/hooks/use-expandable-search";
 
 export const TopNavPowerK = observer(() => {
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   const params = useParams();
@@ -101,7 +103,7 @@ export const TopNavPowerK = observer(() => {
     return () => {
       setTopNavInputRef(null);
     };
-  }, [setTopNavInputRef]);
+  }, [setTopNavInputRef, inputRef]);
 
   const handleClear = () => {
     setSearchTerm("");
@@ -203,7 +205,7 @@ export const TopNavPowerK = observer(() => {
         return;
       }
     },
-    [searchTerm, activePage, context, shouldShowContextBasedActions, setActivePage, closePanel]
+    [searchTerm, activePage, context, shouldShowContextBasedActions, setActivePage, closePanel, isOpen, containerRef]
   );
 
   return (
@@ -220,24 +222,25 @@ export const TopNavPowerK = observer(() => {
               "bg-layer-1": isOpen,
             }
           )}
-          onClick={() => inputRef.current?.focus()}
-          role="button"
         >
-          <SearchOutline className="mr-2 size-3.5 shrink-0 text-placeholder" />
-          <input
-            ref={inputRef}
-            type="text"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              if (!isOpen) openPanel();
-            }}
-            onMouseDown={handleMouseDown}
-            onFocus={handleFocus}
-            onKeyDown={handleKeyDown}
-            placeholder="Search commands..."
-            className="placeholder-text-placeholder min-w-0 flex-1 bg-transparent text-13 text-primary outline-none"
-          />
+          <label className="flex min-w-0 flex-1 cursor-text items-center">
+            <span className="sr-only">{t("power_k.search_commands_placeholder")}</span>
+            <SearchOutline className="mr-2 size-3.5 shrink-0 text-placeholder" />
+            <input
+              ref={inputRef}
+              type="text"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                if (!isOpen) openPanel();
+              }}
+              onMouseDown={handleMouseDown}
+              onFocus={handleFocus}
+              onKeyDown={handleKeyDown}
+              placeholder={t("power_k.search_commands_placeholder")}
+              className="placeholder-text-placeholder min-w-0 flex-1 bg-transparent text-13 text-primary outline-none"
+            />
+          </label>
           {searchTerm && (
             <button type="button" onClick={handleClear} className="ml-2 shrink-0">
               <CloseOutline className="size-3.5 text-placeholder hover:text-primary" />
