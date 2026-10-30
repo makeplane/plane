@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { FloatingOverlay } from "@floating-ui/react";
 import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
@@ -31,6 +32,8 @@ export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
   props: EmojisListDropdownProps,
   ref: React.ForwardedRef<EmojiListRef>
 ) {
+  const { t } = useTranslation();
+
   const { items, command, query, onClose, forceOpen = false } = props;
   // states
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -128,6 +131,7 @@ export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
         lockScroll
       />
       <div
+        role="presentation"
         ref={dropdownContainerRef}
         className={cn(
           "invisible relative max-h-80 w-[14rem] space-y-2 overflow-y-auto rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 opacity-0 shadow-raised-200 transition-opacity",
@@ -172,7 +176,7 @@ export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
             );
           })
         ) : (
-          <div className="py-2 text-center text-13 text-placeholder">No emojis found</div>
+          <div className="py-2 text-center text-13 text-placeholder">{t("web_ui.no_emojis_found")}</div>
         )}
       </div>
     </>

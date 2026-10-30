@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import type { Node } from "@tiptap/pm/model";
 import { UnlinkOutline } from "@makeplane/propel/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -17,10 +18,23 @@ type InputViewProps = {
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
-  autoFocus?: boolean;
+  focusOnMount?: boolean;
 };
 
-function InputView({ label, value, placeholder, onChange, autoFocus }: InputViewProps) {
+function InputView({ label, value, placeholder, onChange, focusOnMount }: InputViewProps) {
+  const initialFocusTarget = useRef<HTMLElement | null>(null);
+  // Focus each newly mounted field once; viewport/prop changes must not steal focus.
+  const focusInputOnMount = useCallback(
+    (element: HTMLElement | null) => {
+      if (!element || initialFocusTarget.current === element) return;
+      initialFocusTarget.current = element;
+      if (!focusOnMount) return;
+      const input = element instanceof HTMLInputElement ? element : element?.querySelector("input");
+      input?.focus();
+    },
+    [focusOnMount]
+  );
+
   return (
     <div className="flex flex-col gap-1">
       <label className="inline-block text-11 font-semibold text-placeholder">{label}</label>
@@ -30,7 +44,7 @@ function InputView({ label, value, placeholder, onChange, autoFocus }: InputView
         className="w-[280px] rounded-md border border-strong bg-layer-1 p-2 text-13 text-primary outline-none"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        autoFocus={autoFocus}
+        ref={focusInputOnMount}
       />
     </div>
   );
@@ -42,6 +56,8 @@ type LinkEditViewProps = {
 };
 
 export function LinkEditView({ viewProps }: LinkEditViewProps) {
+  const { t } = useTranslation();
+
   const { editor, from, to, url: initialUrl, text: initialText, closeLinkView } = viewProps;
 
   // State
@@ -137,6 +153,7 @@ export function LinkEditView({ viewProps }: LinkEditViewProps) {
 
   return (
     <div
+      role="dialog"
       onKeyDown={handleKeyDown}
       className="shadow-md animate-in fade-in flex translate-y-1 flex-col gap-3 rounded-sm border-2 border-subtle bg-layer-1 p-2"
       style={{
@@ -144,13 +161,24 @@ export function LinkEditView({ viewProps }: LinkEditViewProps) {
       }}
       tabIndex={0}
     >
-      <InputView label="URL" placeholder="Enter or paste URL" value={localUrl} onChange={setLocalUrl} autoFocus />
-      <InputView label="Text" placeholder="Enter Text to display" value={localText} onChange={handleTextChange} />
+      <InputView
+        label="URL"
+        placeholder={t("web_ui.enter_or_paste_url")}
+        value={localUrl}
+        onChange={setLocalUrl}
+        focusOnMount
+      />
+      <InputView
+        label={t("work_item_types.settings.properties.property_type.text.label")}
+        placeholder={t("web_ui.enter_text_to_display")}
+        value={localText}
+        onChange={handleTextChange}
+      />
       <div className="bg-strong mb-1 h-[1px] w-full gap-2" />
       <div className="flex items-center gap-2 text-13 text-secondary">
         <UnlinkOutline width={14} height={14} className="inline-block" />
         <button onClick={removeLink} className="cursor-pointer transition-colors hover:text-placeholder">
-          Remove Link
+          {t("web_ui.remove_link")}{" "}
         </button>
       </div>
     </div>

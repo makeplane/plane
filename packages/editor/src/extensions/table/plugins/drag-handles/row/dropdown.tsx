@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+import { useEditorLabel } from "@/hooks/use-editor-label";
+import { useTranslation } from "@plane/i18n";
 import type { Editor } from "@tiptap/core";
 import { TableMap } from "@tiptap/pm/tables";
 import {
@@ -74,6 +76,10 @@ type Props = {
 };
 
 export function RowOptionsDropdown(props: Props) {
+  const editorLabel = useEditorLabel();
+
+  const { t } = useTranslation();
+
   const { editor, onClose } = props;
 
   return (
@@ -88,7 +94,7 @@ export function RowOptionsDropdown(props: Props) {
           onClose();
         }}
       >
-        <div className="flex-grow truncate">Header row</div>
+        <div className="flex-grow truncate">{t("web_ui.header_row")}</div>
         <ToggleFilled className="size-3 shrink-0" />
       </button>
       <hr className="my-2 border-subtle" />
@@ -106,7 +112,7 @@ export function RowOptionsDropdown(props: Props) {
           }}
         >
           <item.icon className="size-3 shrink-0" />
-          <div className="flex-grow truncate">{item.label}</div>
+          <div className="flex-grow truncate">{editorLabel(item.label)}</div>
         </button>
       ))}
     </>

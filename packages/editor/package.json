@@ -40,6 +40,7 @@
     "@plane/blocks": "workspace:*",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
+    "@plane/i18n": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/utils": "workspace:*",
     "@tiptap/core": "catalog:",

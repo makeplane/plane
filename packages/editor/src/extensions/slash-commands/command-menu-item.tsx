@@ -5,6 +5,7 @@
  */
 
 // plane utils
+import { useEditorLabel } from "@/hooks/use-editor-label";
 import { cn } from "@plane/utils";
 // types
 import type { ISlashCommandItem } from "@/types";
@@ -47,6 +48,8 @@ const highlightMatch = (text: string, query: string): React.ReactNode => {
 };
 
 export function CommandMenuItem(props: Props) {
+  const editorLabel = useEditorLabel();
+
   const { isSelected, item, itemIndex, onClick, onMouseEnter, sectionIndex, query } = props;
 
   return (
@@ -65,7 +68,9 @@ export function CommandMenuItem(props: Props) {
       <span className="grid size-5 flex-shrink-0 place-items-center" style={item.iconContainerStyle}>
         {item.icon}
       </span>
-      <p className="flex-grow truncate text-12">{query ? highlightMatch(item.title, query) : item.title}</p>
+      <p className="flex-grow truncate text-12">
+        {query ? highlightMatch(editorLabel(item.title), query) : editorLabel(item.title)}
+      </p>
       {item.badge}
     </button>
   );

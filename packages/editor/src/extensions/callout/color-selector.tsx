@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { Ban } from "lucide-react";
 import { ChevronDownOutline } from "@makeplane/propel/icons";
 // plane utils
@@ -19,6 +20,8 @@ type Props = {
 };
 
 export function CalloutBlockColorSelector(props: Props) {
+  const { t } = useTranslation();
+
   const { disabled, isOpen, onSelect, toggleDropdown } = props;
 
   const handleColorSelect = (val: string | null) => {
@@ -49,7 +52,7 @@ export function CalloutBlockColorSelector(props: Props) {
           )}
           disabled={disabled}
         >
-          <span className="text-12">Color</span>
+          <span className="text-12">{t("web_ui.color")}</span>
           <ChevronDownOutline className="size-3 flex-shrink-0" />
         </button>
         {isOpen && (

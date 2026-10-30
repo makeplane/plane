@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { ImageOutline, RefreshOutline } from "@makeplane/propel/icons";
 import type { ChangeEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -30,6 +31,8 @@ type CustomImageUploaderProps = CustomImageNodeViewProps & {
 };
 
 export function CustomImageUploader(props: CustomImageUploaderProps) {
+  const { t } = useTranslation();
+
   const {
     editor,
     extension,
@@ -210,6 +213,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
 
   return (
     <div
+      role="presentation"
       className={cn(
         "image-upload-component flex cursor-default items-center justify-start gap-2 rounded-lg border border-dashed bg-layer-3 px-2 py-3 text-tertiary transition-all duration-200 ease-in-out",
         {
@@ -236,7 +240,13 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
       }}
     >
       <ImageOutline className="size-4" />
-      <div className="flex-1 text-14 font-medium">{getDisplayMessage()}</div>
+      <button
+        type="button"
+        disabled={failedToLoadImage || !editor.isEditable || hasDuplicationFailed}
+        className="flex-1 text-left text-14 font-medium"
+      >
+        {getDisplayMessage()}
+      </button>
       {hasDuplicationFailed && editor.isEditable && (
         <button
           type="button"
@@ -247,10 +257,10 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
               "hover:bg-danger-subtle-hover": selected,
             }
           )}
-          title="Retry duplication"
+          title={t("web_ui.retry_duplication")}
         >
           <RefreshOutline className="size-3" />
-          <span className="text-11">Retry</span>
+          <span className="text-11">{t("common.retry")}</span>
         </button>
       )}
       <input

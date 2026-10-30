@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+import { useEditorLabel } from "@/hooks/use-editor-label";
+import { useTranslation } from "@plane/i18n";
 import {
   useFloating,
   autoUpdate,
@@ -41,6 +43,10 @@ export type BlockMenuOption = {
 };
 
 export function BlockMenu(props: Props) {
+  const editorLabel = useEditorLabel();
+
+  const { t } = useTranslation();
+
   const { editor } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
@@ -151,7 +157,7 @@ export function BlockMenu(props: Props) {
     {
       icon: DeleteOutline,
       key: "delete",
-      label: "Delete",
+      label: t("delete"),
       onClick: (_e) => {
         // Execute the delete action
         editor.chain().deleteSelection().focus().run();
@@ -160,7 +166,7 @@ export function BlockMenu(props: Props) {
     {
       icon: CopyOutline,
       key: "duplicate",
-      label: "Duplicate",
+      label: t("web_ui.duplicate_action"),
       isDisabled:
         editor.state.selection.content().content.firstChild?.type.name === CORE_EXTENSIONS.IMAGE ||
         editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE),
@@ -244,7 +250,7 @@ export function BlockMenu(props: Props) {
               disabled={item.isDisabled}
             >
               <item.icon className="h-3 w-3" />
-              {item.label}
+              {editorLabel(item.label)}
             </button>
           );
         })}
