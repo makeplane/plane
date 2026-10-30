@@ -13,7 +13,7 @@ import useSWR from "swr";
 // plane package imports
 import { DownloadOutline } from "@makeplane/propel/icons";
 import type { ChartXAxisDateGrouping } from "@plane/constants";
-import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES, CHART_COLOR_PALETTES, EChartModels } from "@plane/constants";
+import { CHART_COLOR_PALETTES, EChartModels } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { Icon } from "@makeplane/propel/components/icon";
@@ -26,6 +26,7 @@ import { generateExtendedColors, parseChartData } from "@/components/chart/utils
 import { useAnalytics } from "@/hooks/store/use-analytics";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { AnalyticsService } from "@/services/analytics.service";
+import { analyticsLabel, localizeAnalyticsChart } from "../labels";
 import { exportCSV } from "../export";
 import { DataTable } from "../insight-table/data-table";
 import { ChartLoader } from "../loaders";
@@ -81,8 +82,14 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
   );
   const parsedData = useMemo(
     () =>
-      priorityChartData && parseChartData(priorityChartData, props.x_axis, props.group_by, props.x_axis_date_grouping),
-    [priorityChartData, props.x_axis, props.group_by, props.x_axis_date_grouping]
+      priorityChartData &&
+      localizeAnalyticsChart(
+        parseChartData(priorityChartData, props.x_axis, props.group_by, props.x_axis_date_grouping),
+        x_axis,
+        group_by,
+        t
+      ),
+    [priorityChartData, props.x_axis, props.group_by, props.x_axis_date_grouping, x_axis, group_by, t]
   );
   const chart_model = props.group_by ? EChartModels.STACKED : EChartModels.BASIC;
 
@@ -140,14 +147,8 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
     return parsedBars;
   }, [t, chart_model, group_by, parsedData, resolvedTheme, workspaceStates, x_axis, y_axis]);
 
-  const yAxisLabel = useMemo(
-    () => ANALYTICS_Y_AXIS_VALUES.find((item) => item.value === props.y_axis)?.label ?? props.y_axis,
-    [props.y_axis]
-  );
-  const xAxisLabel = useMemo(
-    () => ANALYTICS_X_AXIS_VALUES.find((item) => item.value === props.x_axis)?.label ?? props.x_axis,
-    [props.x_axis]
-  );
+  const yAxisLabel = useMemo(() => analyticsLabel(props.y_axis, t), [props.y_axis, t]);
+  const xAxisLabel = useMemo(() => analyticsLabel(props.x_axis, t), [props.x_axis, t]);
 
   const defaultColumns: ColumnDef<TChartDatum>[] = useMemo(
     () => [

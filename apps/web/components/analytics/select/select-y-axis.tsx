@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -25,6 +26,7 @@ type Props = {
 };
 
 export const SelectYAxis = observer(function SelectYAxis({ value, onChange, hiddenOptions, options }: Props) {
+  const { t } = useTranslation();
   // hooks
   const { projectId } = useParams();
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
@@ -67,7 +69,7 @@ export const SelectYAxis = observer(function SelectYAxis({ value, onChange, hidd
       <Select.Trigger variant="select-md" className="w-auto">
         <div className="flex items-center gap-2">
           <ProjectsOutline className="h-3 w-3" />
-          <span>{selected?.label ?? "Add Metric"}</span>
+          <span>{selected?.label ?? t("workspace_analytics.chart.add_metric")}</span>
         </div>
       </Select.Trigger>
     </Select>

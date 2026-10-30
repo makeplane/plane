@@ -10,6 +10,7 @@ import { CalendarOutline } from "@makeplane/propel/icons";
 // plane package imports
 import { ANALYTICS_DURATION_FILTER_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { analyticsLabel } from "../labels";
 import { Select } from "@plane/blocks/select";
 
 type TDurationOption = (typeof ANALYTICS_DURATION_FILTER_OPTIONS)[number];
@@ -23,8 +24,8 @@ type Props = {
 const getDurationOption = (value: string | null) =>
   ANALYTICS_DURATION_FILTER_OPTIONS.find((option) => option.value === value) ?? null;
 
-function DurationDropdown({ placeholder = "Duration", onChange, value }: Props) {
-  useTranslation();
+function DurationDropdown({ placeholder, onChange, value }: Props) {
+  const { t } = useTranslation();
 
   // derived values
   const selectedOption = getDurationOption(value);
@@ -38,11 +39,15 @@ function DurationDropdown({ placeholder = "Duration", onChange, value }: Props) 
         if (option) onChange(option.value);
       }}
       getOptionValue={(option) => option.value}
-      getOptionLabel={(option) => option.name}
+      getOptionLabel={(option) => analyticsLabel(option.value, t)}
       pinSelected={false}
     >
       <Select.Trigger<TDurationOption> variant="select-md" prependIcon={<CalendarOutline aria-hidden="true" />}>
-        {(selected) => <span className="truncate">{selected[0]?.name ?? placeholder}</span>}
+        {(selected) => (
+          <span className="truncate">
+            {selected[0] ? analyticsLabel(selected[0].value, t) : (placeholder ?? t("common.duration"))}
+          </span>
+        )}
       </Select.Trigger>
     </Select>
   );
