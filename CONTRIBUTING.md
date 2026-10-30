@@ -81,6 +81,58 @@ pnpm dev
 
 That’s it! You’re all set to begin coding. Remember to refresh your browser if changes don’t auto-reload. Happy contributing! 🎉
 
+### Configuration for the root Docker Compose source build
+
+The root `docker-compose.yml` builds the services from source and runs them behind
+one proxy. It uses different configuration from the development stack started by
+`setup.sh` and `docker-compose-local.yml`, and from the installer in
+`deployments/cli/community`.
+
+For a fresh source-build checkout, prepare the two runtime environment files:
+
+```bash
+cp .env.example .env
+cp apps/api/.env.example apps/api/.env
+```
+
+Keep existing environment files when upgrading. Before starting the stack:
+
+- In `.env`, configure `SITE_ADDRESS`, the listening ports, and any certificate
+  settings for the proxy. `CERT_EMAIL` uses Caddy syntax, for example
+  `CERT_EMAIL="email admin@example.com"`. `TRUSTED_PROXIES` accepts **space-separated**
+  CIDRs, not commas; set it to the reverse proxies you actually trust.
+- In `apps/api/.env`, add a unique `SECRET_KEY` and replace the example
+  `LIVE_SERVER_SECRET_KEY`. Generate a separate value for each with
+  `openssl rand -hex 32`. `SECRET_KEY` is Django's signing key;
+  `LIVE_SERVER_SECRET_KEY` authenticates requests between the API and live service.
+  Both services read the same file, so the live secret only needs to be set once.
+- Set public URLs and `CORS_ALLOWED_ORIGINS` in `apps/api/.env` to the deployment's
+  public origin rather than the development `localhost` ports. Keep the base paths
+  aligned with the proxy (`/god-mode`, `/spaces`, and `/live`). Review database,
+  Redis, mail, and object-storage settings for the deployment, keeping credentials
+  consistent with `.env` where both files define them.
+
+The live service inherits the API's Redis, CORS, and shared-secret configuration.
+Compose sets its internal `API_BASE_URL` to `http://api:8000` and its `PORT` to
+`3000`, matching the proxy's upstream; it does not read `apps/live/.env`.
+The API's internal `PORT` is also fixed to `8000` to match both live and the
+proxy. These service-specific values override any `PORT` in `apps/api/.env`.
+To change externally published ports, set `LISTEN_HTTP_PORT` and
+`LISTEN_HTTPS_PORT` in the root `.env` instead.
+
+Validate the Compose configuration without printing its resolved secrets:
+
+```bash
+docker compose -f docker-compose.yml config --quiet
+```
+
+Configuration regression tests use temporary example files and do not start
+containers or require a running Docker daemon:
+
+```bash
+python3 -m unittest discover -s deployments/tests -v
+```
+
 ## Missing a Feature?
 
 If a feature is missing, you can directly _request_ a new one [here](https://github.com/makeplane/plane/issues/new?assignees=&labels=feature&template=feature_request.yml&title=%F0%9F%9A%80+Feature%3A+). You also can do the same by choosing "🚀 Feature" when raising a [New Issue](https://github.com/makeplane/plane/issues/new/choose) on our GitHub Repository.
