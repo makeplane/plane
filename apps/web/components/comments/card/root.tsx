@@ -11,7 +11,6 @@ import type { EditorRefApi } from "@plane/editor";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
 // local imports
 import { CommentQuickActions } from "../quick-actions";
-import { CommentBlock } from "../comment-block";
 import { CommentCardDisplay } from "./display";
 
 type TCommentCard = {
@@ -49,29 +48,28 @@ export const CommentCard = observer(function CommentCard(props: TCommentCard) {
   if (!comment || !workspaceId) return null;
 
   return (
-    <CommentBlock comment={comment} ends={ends}>
-      <CommentCardDisplay
-        activityOperations={activityOperations}
-        entityId={entityId}
-        comment={comment}
-        disabled={disabled}
-        projectId={projectId}
-        readOnlyEditorRef={readOnlyEditorRef}
-        showAccessSpecifier={showAccessSpecifier}
-        workspaceId={workspaceId}
-        workspaceSlug={workspaceSlug}
-        isEditing={isEditing}
-        setIsEditing={setIsEditing}
-        renderQuickActions={() => (
-          <CommentQuickActions
-            activityOperations={activityOperations}
-            comment={comment}
-            setEditMode={() => setIsEditing(true)}
-            showAccessSpecifier={showAccessSpecifier}
-            showCopyLinkOption={showCopyLinkOption}
-          />
-        )}
-      />
-    </CommentBlock>
+    <CommentCardDisplay
+      activityOperations={activityOperations}
+      entityId={entityId}
+      comment={comment}
+      disabled={disabled}
+      projectId={projectId}
+      readOnlyEditorRef={readOnlyEditorRef}
+      showAccessSpecifier={showAccessSpecifier}
+      workspaceId={workspaceId}
+      workspaceSlug={workspaceSlug}
+      isEditing={isEditing}
+      setIsEditing={setIsEditing}
+      showConnector={ends !== "bottom"}
+      renderQuickActions={() => (
+        <CommentQuickActions
+          activityOperations={activityOperations}
+          comment={comment}
+          setEditMode={() => setIsEditing(true)}
+          showAccessSpecifier={showAccessSpecifier}
+          showCopyLinkOption={showCopyLinkOption}
+        />
+      )}
+    />
   );
 });

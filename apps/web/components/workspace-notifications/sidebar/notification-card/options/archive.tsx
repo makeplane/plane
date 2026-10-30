@@ -48,9 +48,9 @@ export const NotificationItemArchiveOption = observer(function NotificationItemA
       callBack={handleNotificationUpdate}
     >
       {data.archived_at ? (
-        <RestoreOutline className="h-3 w-3 text-tertiary" />
+        <RestoreOutline className="size-4 text-icon-secondary" />
       ) : (
-        <ArchiveOutline className="h-3 w-3 text-tertiary" />
+        <ArchiveOutline className="size-4 text-icon-secondary" />
       )}
     </NotificationItemOptionButton>
   );

@@ -29,32 +29,25 @@ export function LayoutSwitcher(props: Props) {
   };
 
   return (
-    <div className="flex items-center gap-1 rounded-md bg-layer-3 p-1">
+    <div className="flex items-center gap-0.25 rounded-lg bg-layer-3 p-0.5">
       {BASE_LAYOUTS.map((layout) => {
         if (layouts && !layouts.includes(layout.key)) return null;
         const Icon = layout.icon;
+        const isSelected = selectedLayout === layout.key;
         return (
           <Tooltip key={layout.key} label={t(layout.label)} disabled={isMobile}>
             <button
               type="button"
               aria-label={t(layout.label)}
+              aria-pressed={isSelected}
               className={cn(
-                "group grid h-5.5 w-7 place-items-center overflow-hidden rounded-sm transition-all hover:bg-layer-transparent-hover",
-                {
-                  "bg-layer-transparent-active hover:bg-layer-transparent-active": selectedLayout === layout.key,
-                }
+                "flex h-6 w-7 items-center justify-center overflow-hidden rounded-md border border-transparent text-secondary transition-all hover:bg-layer-transparent-hover hover:text-primary",
+                isSelected &&
+                  "border-subtle-1 bg-layer-2 text-primary shadow-raised-200 hover:bg-layer-2 hover:text-primary"
               )}
               onClick={() => handleOnChange(layout.key)}
             >
-              <Icon
-                width={14}
-                height={14}
-                strokeWidth={2}
-                className={cn("size-3.5", {
-                  "text-primary": selectedLayout === layout.key,
-                  "text-secondary": selectedLayout !== layout.key,
-                })}
-              />
+              <Icon className="size-4" />
             </button>
           </Tooltip>
         );

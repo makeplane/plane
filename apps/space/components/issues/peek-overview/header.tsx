@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import type { ComponentType } from "react";
 import { observer } from "mobx-react";
 import {
@@ -78,14 +80,14 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           {peekMode === "side" && (
-            <button
+            <IconButton
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={handleClose}
-              className="text-tertiary hover:text-secondary"
               aria-label={t("close")}
-            >
-              <ArrowNarrowRightOutline className="size-4" />
-            </button>
+              icon={<Icon icon={ArrowNarrowRightOutline} />}
+            />
           )}
           <Select<TPeekModeOption>
             getValues={() => PEEK_MODES}
@@ -108,14 +110,14 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
           </Select>
         </div>
         {isClipboardWriteAllowed && (peekMode === "side" || peekMode === "modal") && (
-          <button
+          <IconButton
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={handleCopyLink}
-            className="shrink-0 text-tertiary hover:text-secondary focus:outline-none"
             aria-label={t("copy_link")}
-          >
-            <LinkOutline className="h-4 w-4 -rotate-45" />
-          </button>
+            icon={<Icon icon={<LinkOutline className="-rotate-45" />} />}
+          />
         )}
       </div>
     </>

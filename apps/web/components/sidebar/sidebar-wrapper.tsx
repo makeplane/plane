@@ -54,16 +54,16 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
   return (
     <>
       <CustomizeNavigationDialog isOpen={isCustomizeNavDialogOpen} onClose={() => setIsCustomizeNavDialogOpen(false)} />
-      <div ref={ref} className="flex h-full w-full animate-fade-in flex-col">
+      <div ref={ref} className="relative flex h-full w-full animate-fade-in flex-col pt-2.5">
         <div className="flex flex-col gap-3 px-3">
           {/* Workspace switcher and settings */}
 
-          <div className="flex items-center justify-between gap-2 px-2">
-            <span className="pt-1 text-16 font-medium text-primary">{title}</span>
+          <div className="flex items-center justify-between gap-2 px-1">
+            <span className="text-body-md-medium text-primary">{title}</span>
             <div className="flex items-center gap-2">
               {title === "Projects" && (
                 <IconButton
-                  size="sm"
+                  size="md"
                   variant="ghost"
                   icon={<Icon icon={PreferencesOutline} />}
                   aria-label={t("customize_navigation")}
@@ -77,9 +77,11 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
           {quickActions}
         </div>
 
-        <ScrollArea orientation="vertical">
-          <div className="flex flex-col gap-3 overflow-x-hidden px-3 pt-3 pb-0.5">{children}</div>
-        </ScrollArea>
+        <div className="flex min-h-0 flex-1 flex-col">
+          <ScrollArea orientation="vertical" visibility="auto" size="sm">
+            <div className="flex min-h-full w-full flex-col gap-3 overflow-x-hidden px-3 pt-3 pb-3">{children}</div>
+          </ScrollArea>
+        </div>
         {/* Help Section */}
         <div className="flex h-12 items-center justify-between border-t border-subtle bg-surface-1 p-3">
           <WorkspaceEditionBadge />

@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 import { LockOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Button } from "@makeplane/propel/components/button";
+import { useTranslation } from "@plane/i18n";
 // components
 import { AddComment } from "@/components/issues/peek-overview/comment/add-comment";
 import { CommentCard } from "@/components/issues/peek-overview/comment/comment-detail-card";
@@ -28,6 +29,8 @@ type Props = {
 
 export const PeekOverviewIssueActivity = observer(function PeekOverviewIssueActivity(props: Props) {
   const { anchor } = props;
+  // i18n
+  const { t } = useTranslation();
   // router
   const pathname = usePathname();
   // store hooks
@@ -35,30 +38,27 @@ export const PeekOverviewIssueActivity = observer(function PeekOverviewIssueActi
   const { data: currentUser } = useUser();
   const { canComment } = usePublish(anchor);
   // derived values
-  const comments = details[peekId || ""]?.comments || [];
+  // newest first, with the composer above the thread
+  const storedComments = details[peekId || ""]?.comments ?? [];
+  const comments = storedComments.map((_, index) => storedComments[storedComments.length - 1 - index]);
   const isInIframe = useIsInIframe();
 
   return (
     <div className="pb-10">
-      <h4 className="font-medium">Comments</h4>
+      <h4 className="text-body-sm-medium">{t("common.comments")}</h4>
       <div className="mt-4">
-        <div className="space-y-4">
-          {comments.map((comment) => (
-            <CommentCard key={comment.id} anchor={anchor} comment={comment} />
-          ))}
-        </div>
         {!isInIframe &&
           (currentUser ? (
             <>
               {canComment && (
-                <div className="mt-4">
+                <div className="mb-4">
                   <AddComment anchor={anchor} disabled={!currentUser} />
                 </div>
               )}
             </>
           ) : (
-            <div className="mt-4 flex items-center justify-between gap-2 rounded-sm border border-strong bg-layer-2 px-2 py-2.5">
-              <p className="flex items-center gap-2 overflow-hidden text-13 break-words text-secondary">
+            <div className="mb-4 flex items-center justify-between gap-2 rounded-sm border border-strong bg-layer-2 px-2 py-2.5">
+              <p className="flex items-center gap-2 overflow-hidden text-body-xs-regular break-words text-secondary">
                 <LockOutline className="size-3 shrink-0" />
                 Sign in to add your comment
               </p>
@@ -72,6 +72,16 @@ export const PeekOverviewIssueActivity = observer(function PeekOverviewIssueActi
               />
             </div>
           ))}
+        <div>
+          {comments.map((comment, index) => (
+            <CommentCard
+              key={comment.id}
+              anchor={anchor}
+              comment={comment}
+              showConnector={index !== comments.length - 1}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

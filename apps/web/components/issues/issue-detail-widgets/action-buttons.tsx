@@ -5,16 +5,23 @@
  */
 
 import React from "react";
-import { AttachOutline, LinkOutline, RelationsOutline, ViewsOutline } from "@makeplane/propel/icons";
-import { useTranslation } from "@plane/i18n";
+import { TooltipProvider } from "@makeplane/propel/components/tooltip";
+import { AttachOutline, LinkOutline, RelationsOutline, SubWorkItemsOutline } from "@makeplane/propel/icons";
 // plane imports
+import {
+  EntityDetailWidgetToolbar,
+  EntityDetailWidgetToolbarGroup,
+  EntityDetailWidgetToolbarIconButton,
+  EntityDetailWidgetToolbarMenuButton,
+  EntityDetailWidgetToolbarTextButton,
+} from "@plane/blocks/entity-detail";
+import { useTranslation } from "@plane/i18n";
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // local imports
 import { IssueAttachmentActionButton } from "./attachments";
 import { IssueLinksActionButton } from "./links";
 import { RelationActionButton } from "./relations";
 import { SubIssuesActionButton } from "./sub-issues";
-import { IssueDetailWidgetButton } from "./widget-button";
 
 type Props = {
   workspaceSlug: string;
@@ -29,66 +36,79 @@ export function IssueDetailWidgetActionButtons(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled, issueServiceType, hideWidgets } = props;
   // translation
   const { t } = useTranslation();
+  // derived values
+  const showLinks = !hideWidgets?.includes("links");
+  const showAttachments = !hideWidgets?.includes("attachments");
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      {!hideWidgets?.includes("sub-work-items") && (
-        <SubIssuesActionButton
-          issueId={issueId}
-          customButton={
-            <IssueDetailWidgetButton
-              title={t("issue.add.sub_issue")}
-              icon={<ViewsOutline className="h-3.5 w-3.5 flex-shrink-0" />}
+    <TooltipProvider>
+      <EntityDetailWidgetToolbar aria-label={t("entity_detail_toolbar")}>
+        {!hideWidgets?.includes("sub-work-items") && (
+          <EntityDetailWidgetToolbarGroup>
+            <SubIssuesActionButton
+              issueId={issueId}
+              customButton={
+                <EntityDetailWidgetToolbarTextButton
+                  icon={<SubWorkItemsOutline className="size-3.5 shrink-0" />}
+                  label={t("issue.add.sub_issue")}
+                  disabled={disabled}
+                />
+              }
               disabled={disabled}
+              issueServiceType={issueServiceType}
             />
-          }
-          disabled={disabled}
-          issueServiceType={issueServiceType}
-        />
-      )}
-      {!hideWidgets?.includes("relations") && (
-        <RelationActionButton
-          issueId={issueId}
-          customButton={
-            <IssueDetailWidgetButton
-              title={t("issue.add.relation")}
-              icon={<RelationsOutline className="h-3.5 w-3.5 flex-shrink-0" />}
+          </EntityDetailWidgetToolbarGroup>
+        )}
+        {!hideWidgets?.includes("relations") && (
+          <EntityDetailWidgetToolbarGroup>
+            <RelationActionButton
+              issueId={issueId}
+              customButton={
+                <EntityDetailWidgetToolbarMenuButton
+                  icon={<RelationsOutline className="size-3.5 shrink-0" />}
+                  aria-label={t("issue.add.relation")}
+                  disabled={disabled}
+                />
+              }
               disabled={disabled}
+              issueServiceType={issueServiceType}
             />
-          }
-          disabled={disabled}
-          issueServiceType={issueServiceType}
-        />
-      )}
-      {!hideWidgets?.includes("links") && (
-        <IssueLinksActionButton
-          customButton={
-            <IssueDetailWidgetButton
-              title={t("issue.add.link")}
-              icon={<LinkOutline className="h-3.5 w-3.5 flex-shrink-0" />}
-              disabled={disabled}
-            />
-          }
-          disabled={disabled}
-          issueServiceType={issueServiceType}
-        />
-      )}
-      {!hideWidgets?.includes("attachments") && (
-        <IssueAttachmentActionButton
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          customButton={
-            <IssueDetailWidgetButton
-              title={t("common.attach")}
-              icon={<AttachOutline className="h-3.5 w-3.5 flex-shrink-0" />}
-              disabled={disabled}
-            />
-          }
-          disabled={disabled}
-          issueServiceType={issueServiceType}
-        />
-      )}
-    </div>
+          </EntityDetailWidgetToolbarGroup>
+        )}
+        {(showLinks || showAttachments) && (
+          <EntityDetailWidgetToolbarGroup>
+            {showLinks && (
+              <IssueLinksActionButton
+                tooltip={t("issue.add.link")}
+                customButton={
+                  <EntityDetailWidgetToolbarIconButton
+                    icon={<LinkOutline className="size-3.5 shrink-0" />}
+                    aria-label={t("issue.add.link")}
+                  />
+                }
+                disabled={disabled}
+                issueServiceType={issueServiceType}
+              />
+            )}
+            {showAttachments && (
+              <IssueAttachmentActionButton
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                tooltip={t("common.attach")}
+                customButton={
+                  <EntityDetailWidgetToolbarIconButton
+                    icon={<AttachOutline className="size-3.5 shrink-0" />}
+                    aria-label={t("common.attach")}
+                  />
+                }
+                disabled={disabled}
+                issueServiceType={issueServiceType}
+              />
+            )}
+          </EntityDetailWidgetToolbarGroup>
+        )}
+      </EntityDetailWidgetToolbar>
+    </TooltipProvider>
   );
 }

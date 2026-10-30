@@ -6,11 +6,11 @@
 
 import { observer } from "mobx-react";
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { CloseOutline } from "@makeplane/propel/icons";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
+import { RemovableChip } from "@/components/common/removable-chip";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -33,24 +33,21 @@ export const AppliedMembersFilters = observer(function AppliedMembersFilters(pro
         if (!memberDetails) return null;
 
         return (
-          <div key={memberId} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
-            <Avatar
-              alt={memberDetails.display_name}
-              fallback={memberDetails.display_name?.[0]?.toUpperCase()}
-              src={getFileURL(memberDetails.avatar_url)}
-              size="2xs"
-            />
-            <span className="normal-case">{memberDetails.display_name}</span>
-            {editable && (
-              <button
-                type="button"
-                className="grid place-items-center text-tertiary hover:text-secondary"
-                onClick={() => handleRemove(memberId)}
-              >
-                <CloseOutline height={10} width={10} />
-              </button>
-            )}
-          </div>
+          <RemovableChip
+            key={memberId}
+            variant="soft"
+            icon={
+              <Avatar
+                alt={memberDetails.display_name}
+                fallback={memberDetails.display_name?.[0]?.toUpperCase()}
+                src={getFileURL(memberDetails.avatar_url)}
+                size="2xs"
+              />
+            }
+            label={memberDetails.display_name}
+            ariaLabel={memberDetails.display_name}
+            onRemove={editable ? () => handleRemove(memberId) : undefined}
+          />
         );
       })}
     </>

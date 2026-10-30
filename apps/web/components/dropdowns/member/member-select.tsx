@@ -33,6 +33,8 @@ type MemberSelectWebCommonProps = {
   variant: MemberSelectVariant;
   /** Override the variant's default text-label visibility (avatars stay regardless). */
   showLabel?: boolean;
+  /** Trigger text when more than one member is selected (e.g. "3 assignees"). Multi-select only. */
+  multipleLabel?: (count: number) => string;
   /** Pins a "clear" row to the top of the list. Single-select only. */
   clearable?: boolean;
   /** Label shown for the "clear" row. Defaults to the placeholder or "No assignee". Single-select only. */
@@ -71,6 +73,7 @@ export const MemberSelect = observer(function MemberSelect(props: MemberSelectWe
     excludeIds,
     variant,
     showLabel,
+    multipleLabel,
     clearable,
     clearLabel,
     disabled,
@@ -167,6 +170,7 @@ export const MemberSelect = observer(function MemberSelect(props: MemberSelectWe
         onChange={props.onChange}
         variant={variant}
         showLabel={showLabel}
+        multipleLabel={multipleLabel}
         disabled={disabled}
         placeholder={placeholder}
         onClose={onClose}

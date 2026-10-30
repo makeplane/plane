@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChatOutline, HistoryOutline } from "@makeplane/propel/icons";
+import { Avatar } from "@makeplane/propel/components/avatar";
 // plane imports
 import type { IUserActivityResponse } from "@plane/types";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
@@ -41,39 +42,33 @@ export const ActivityList = observer(function ActivityList(props: Props) {
           {activity.results.map((activityItem) => {
             if (activityItem.field === "comment")
               return (
-                <div key={activityItem.id} className="mt-2">
+                <li key={activityItem.id} className="mt-2">
                   <div className="relative flex items-start space-x-3">
                     <div className="relative px-1">
                       {activityItem.field ? (
                         activityItem.new_value === "restore" && (
                           <HistoryOutline className="h-3.5 w-3.5 text-secondary" />
                         )
-                      ) : activityItem.actor_detail.avatar_url && activityItem.actor_detail.avatar_url !== "" ? (
-                        <img
+                      ) : (
+                        <Avatar
+                          size="md"
                           src={getFileURL(activityItem.actor_detail.avatar_url)}
                           alt={activityItem.actor_detail.display_name}
-                          height={30}
-                          width={30}
-                          className="bg-gray-500 grid h-7 w-7 place-items-center rounded-full border-2 border-white text-on-color"
                         />
-                      ) : (
-                        <div className="bg-gray-500 grid h-7 w-7 place-items-center rounded-full border-2 border-white text-on-color capitalize">
-                          {activityItem.actor_detail.display_name?.[0]}
-                        </div>
                       )}
 
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-layer-1 text-secondary ring-6 ring-white">
-                        <ChatOutline className="h-6 w-6 !text-20 text-secondary" aria-hidden="true" />
+                      <span className="flex size-6 items-center justify-center rounded-full bg-layer-1 text-secondary">
+                        <ChatOutline className="size-4" aria-hidden="true" />
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
                       <div>
-                        <div className="text-11">
+                        <div className="text-caption-sm-regular">
                           {activityItem.actor_detail.is_bot
                             ? activityItem.actor_detail.first_name + " Bot"
                             : activityItem.actor_detail.display_name}
                         </div>
-                        <p className="mt-0.5 text-11 text-secondary">
+                        <p className="mt-0.5 text-caption-sm-regular text-secondary">
                           Commented {calculateTimeAgo(activityItem.created_at)}
                         </p>
                       </div>
@@ -86,7 +81,7 @@ export const ActivityList = observer(function ActivityList(props: Props) {
                               ? (activityItem.new_value?.toString() as string)
                               : (activityItem.old_value?.toString() as string)
                           }
-                          containerClassName="text-11 bg-surface-1"
+                          containerClassName="text-caption-sm-regular bg-surface-1"
                           workspaceId={workspaceId}
                           workspaceSlug={workspaceSlug?.toString() ?? ""}
                           projectId={activityItem.project}
@@ -94,7 +89,7 @@ export const ActivityList = observer(function ActivityList(props: Props) {
                       </div>
                     </div>
                   </div>
-                </div>
+                </li>
               );
 
             const message =
@@ -117,8 +112,8 @@ export const ActivityList = observer(function ActivityList(props: Props) {
                     <div className="relative flex items-start space-x-2">
                       <>
                         <div>
-                          <div className="relative mt-4 px-1.5">
-                            <div className="mt-1.5">
+                          <div className="relative px-1.5">
+                            <div className="mt-3.5">
                               <div className="flex h-6 w-6 items-center justify-center">
                                 {activityItem.field ? (
                                   activityItem.new_value === "restore" ? (
@@ -126,36 +121,31 @@ export const ActivityList = observer(function ActivityList(props: Props) {
                                   ) : (
                                     <ActivityIcon activity={activityItem} />
                                   )
-                                ) : activityItem.actor_detail.avatar_url &&
-                                  activityItem.actor_detail.avatar_url !== "" ? (
-                                  <img
+                                ) : (
+                                  <Avatar
+                                    size="sm"
                                     src={getFileURL(activityItem.actor_detail.avatar_url)}
                                     alt={activityItem.actor_detail.display_name}
-                                    height={24}
-                                    width={24}
-                                    className="h-full w-full rounded-full object-cover"
                                   />
-                                ) : (
-                                  <div className="bg-gray-700 grid h-6 w-6 place-items-center rounded-full border-2 border-white text-11 text-on-color capitalize">
-                                    {activityItem.actor_detail.display_name?.[0]}
-                                  </div>
                                 )}
                               </div>
                             </div>
                           </div>
                         </div>
                         <div className="min-w-0 flex-1 border-b border-subtle py-4">
-                          <div className="text-13 break-words text-secondary">
+                          <div className="text-body-xs-regular break-words text-secondary">
                             {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
-                              <span className="text-gray font-medium">Plane</span>
+                              <span className="font-medium text-primary">Plane</span>
                             ) : activityItem.actor_detail.is_bot ? (
-                              <span className="text-gray font-medium">{activityItem.actor_detail.first_name} Bot</span>
+                              <span className="font-medium text-primary">
+                                {activityItem.actor_detail.first_name} Bot
+                              </span>
                             ) : (
                               <Link
                                 href={`/${activityItem.workspace_detail?.slug}/profile/${activityItem.actor_detail.id}`}
-                                className="inline"
+                                className="inline rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-accent-strong"
                               >
-                                <span className="text-gray font-medium">
+                                <span className="font-medium text-primary">
                                   {currentUser?.id === activityItem.actor_detail.id
                                     ? "You"
                                     : activityItem.actor_detail.display_name}

@@ -7,13 +7,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import {
-  CloseOutline,
-  CyclesOutline,
-  SearchOutline,
-  TransferWorkItemOutline,
-  WarningCircleOutline,
-} from "@makeplane/propel/icons";
+import { CloseOutline, CyclesOutline, SearchOutline, WarningCircleOutline } from "@makeplane/propel/icons";
 import {
   Dialog,
   DialogBody,
@@ -114,24 +108,21 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
         </DialogCloseGroup>
         <DialogMain>
           <DialogHeader>
-            <div className="flex items-center gap-1">
-              <TransferWorkItemOutline className="w-5 fill-primary" />
-              <DialogHeading>
-                <DialogTitle>Transfer work items</DialogTitle>
-              </DialogHeading>
-            </div>
+            <DialogHeading>
+              <DialogTitle>Transfer work items</DialogTitle>
+            </DialogHeading>
           </DialogHeader>
           <div className="flex items-center gap-2 border-b border-subtle pb-3">
-            <SearchOutline className="h-4 w-4 text-secondary" />
+            <SearchOutline className="size-4 shrink-0 text-placeholder" />
             <input
-              className="text-13 outline-none"
+              className="w-full bg-transparent text-body-xs-regular outline-none placeholder:text-placeholder"
               placeholder="Search for a cycle..."
               onChange={(e) => setQuery(e.target.value)}
               value={query}
             />
           </div>
           <DialogBody tabIndex={0}>
-            <div className="flex w-full flex-col items-start gap-2">
+            <div className="flex w-full flex-col items-start gap-0.5">
               {filteredOptions ? (
                 filteredOptions.length > 0 ? (
                   filteredOptions.map((optionId) => {
@@ -142,7 +133,8 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                     return (
                       <button
                         key={optionId}
-                        className="flex w-full items-center gap-4 rounded-sm px-4 py-3 text-13 text-secondary hover:bg-surface-2"
+                        type="button"
+                        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-body-xs-regular text-secondary hover:bg-layer-transparent-hover"
                         onClick={() => {
                           transferIssue({
                             new_cycle_id: optionId,
@@ -150,11 +142,11 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                           handleClose();
                         }}
                       >
-                        <CyclesOutline className="h-5 w-5" />
-                        <div className="flex w-full justify-between truncate">
+                        <CyclesOutline className="size-4 shrink-0 text-tertiary" />
+                        <div className="flex w-full items-center justify-between gap-2 truncate">
                           <span className="truncate">{cycleDetails?.name}</span>
                           {cycleDetails.status && (
-                            <span className="flex flex-shrink-0 items-center rounded-full bg-layer-1 px-2 capitalize">
+                            <span className="flex shrink-0 items-center rounded-sm bg-layer-1 px-1.5 text-caption-sm-regular text-tertiary capitalize">
                               {cycleDetails.status.toLocaleLowerCase()}
                             </span>
                           )}
@@ -163,8 +155,8 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                     );
                   })
                 ) : (
-                  <div className="flex w-full items-center justify-center gap-4 p-5 text-13">
-                    <WarningCircleOutline className="h-3.5 w-3.5 text-secondary" />
+                  <div className="flex w-full items-center justify-center gap-2 p-5 text-body-xs-regular">
+                    <WarningCircleOutline className="size-4 shrink-0 text-secondary" />
                     <span className="text-center text-secondary">
                       You don’t have any current cycle. Please create one to transfer the work items.
                     </span>

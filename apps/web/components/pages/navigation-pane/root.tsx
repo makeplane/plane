@@ -7,11 +7,12 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowRightCircle } from "lucide-react";
+import { ArrowNarrowRightOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Tabs } from "@makeplane/propel/components/tabs";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web components
@@ -22,6 +23,7 @@ import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import type { TPageRootHandlers } from "../editor/page-root";
 import { PageNavigationPaneTabPanelsRoot } from "./tab-panels/root";
+import { PageNavigationPaneVersionHistoryPanel } from "./tab-panels/version-history";
 import { PageNavigationPaneTabsList } from "./tabs-list";
 import type { INavigationPaneExtension } from "./types/extensions";
 
@@ -54,6 +56,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
     PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM
   ) as TPageNavigationPaneTab | null;
   const activeTab: TPageNavigationPaneTab = navigationPaneQueryParam || "outline";
+  const isVersionHistoryOpen = activeTab === "version_history";
 
   // Check if any extension is currently active based on query parameters
   const ActiveExtension = extensions.find((extension) => {
@@ -75,10 +78,9 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
   const handleTabChange = useCallback(
     (value: string) => {
       const updatedTab = value as TPageNavigationPaneTab;
-      const isUpdatedTabInfo = updatedTab === "info";
       const updatedRoute = updateQueryParams({
         paramsToAdd: { [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM]: updatedTab },
-        paramsToRemove: !isUpdatedTabInfo ? [PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM] : undefined,
+        paramsToRemove: [PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM],
       });
       router.push(updatedRoute);
     },
@@ -93,33 +95,35 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
         marginRight: isNavigationPaneOpen ? "0px" : `-${paneWidth}px`,
       }}
     >
-      <div className="mb-3.5 px-3.5">
-        <Tooltip label={t("page_navigation_pane.close_button")}>
-          <button
-            type="button"
-            className="grid size-3.5 place-items-center text-secondary transition-colors hover:text-primary"
+      {/* version history renders its own title row with the close control */}
+      {!(isVersionHistoryOpen && showNavigationTabs) && (
+        <div className="mb-3.5 px-3.5">
+          <IconButton
+            variant="ghost"
+            size="sm"
+            icon={<Icon icon={ArrowNarrowRightOutline} />}
             onClick={handleClose}
             aria-label={t("page_navigation_pane.close_button")}
-          >
-            <ArrowRightCircle className="size-3.5" />
-          </button>
-        </Tooltip>
-      </div>
+          />
+        </div>
+      )}
 
       <div className="animate-slide-in-right flex flex-1 flex-col overflow-hidden">
         {ActiveExtension ? (
           <ActiveExtension.component page={page} extensionData={ActiveExtension.data} storeType={storeType} />
+        ) : showNavigationTabs && isVersionHistoryOpen ? (
+          <PageNavigationPaneVersionHistoryPanel
+            handleClose={handleClose}
+            page={page}
+            versionHistory={versionHistory}
+          />
         ) : showNavigationTabs ? (
-          // Row wrapper: Propel's Tabs root omits className, so it takes its full height by
-          // stretching as a flex item.
-          <div className="flex h-full w-full">
-            <Tabs variant="contained" stretch="full" value={activeTab} onValueChange={handleTabChange}>
-              <div className="flex h-full w-full flex-col">
-                <PageNavigationPaneTabsList />
-                <PageNavigationPaneTabPanelsRoot page={page} versionHistory={versionHistory} />
-              </div>
-            </Tabs>
-          </div>
+          <Tabs variant="contained" stretch="full" layout="fill" value={activeTab} onValueChange={handleTabChange}>
+            <div className="flex h-full w-full flex-col">
+              <PageNavigationPaneTabsList />
+              <PageNavigationPaneTabPanelsRoot page={page} />
+            </div>
+          </Tabs>
         ) : null}
       </div>
     </aside>

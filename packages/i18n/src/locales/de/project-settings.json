@@ -11,11 +11,17 @@
       "delete_project": {
         "title": "Projekt löschen",
         "description": "Durch das Löschen des Projekts werden alle zugehörigen Daten entfernt. Diese Aktion ist nicht umkehrbar.",
-        "button": "Projekt löschen"
+        "button": "Projekt löschen",
+        "confirm_description": "Möchten Sie das Projekt {projectName} wirklich löschen? Alle Daten in diesem Projekt werden dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+        "success_message": "Projekt erfolgreich gelöscht."
       },
       "toast": {
         "success": "Projekt aktualisiert",
         "error": "Aktualisierung fehlgeschlagen. Bitte versuchen Sie es erneut."
+      },
+      "confirm_project_name_label": "Geben Sie zum Fortfahren den Projektnamen ein.",
+      "leave_project": {
+        "confirm_description": "Möchten Sie das Projekt {projectName} wirklich verlassen? Arbeitselemente, die Ihnen zugeordnet sind, sind dann nicht mehr zugänglich."
       }
     },
     "members": {

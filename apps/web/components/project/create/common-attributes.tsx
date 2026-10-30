@@ -7,9 +7,10 @@
 import type { ChangeEvent } from "react";
 import type { UseFormSetValue } from "react-hook-form";
 import { Controller, useFormContext } from "react-hook-form";
-import { Field } from "@makeplane/propel/components/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { InputField } from "@makeplane/propel/components/input-field";
+import { TextAreaField } from "@makeplane/propel/components/text-area-field";
 import { InfoOutline } from "@makeplane/propel/icons";
 // plane imports
 import { ETabIndices } from "@plane/constants";
@@ -70,25 +71,23 @@ function ProjectCommonAttributes(props: Props) {
             },
           }}
           render={({ field: { value, onChange } }) => (
-            <Field name="name" invalid={Boolean(errors.name)}>
-              <InputGroup size="2xl">
-                <Input
-                  size="2xl"
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={value}
-                  onChange={handleNameChange(onChange)}
-                  placeholder={t("project_name")}
-                  tabIndex={getIndex("name")}
-                />
-              </InputGroup>
-            </Field>
+            <InputField
+              size="lg"
+              orientation="vertical"
+              error={errors?.name?.message}
+              id="name"
+              name="name"
+              type="text"
+              value={value}
+              onChange={handleNameChange(onChange)}
+              placeholder={t("project_name")}
+              aria-label={t("project_name")}
+              tabIndex={getIndex("name")}
+            />
           )}
         />
-        <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
       </div>
-      <div className="relative">
+      <div>
         <Controller
           control={control}
           name="identifier"
@@ -107,57 +106,60 @@ function ProjectCommonAttributes(props: Props) {
             },
           }}
           render={({ field: { value, onChange } }) => (
-            <Field name="identifier" invalid={Boolean(errors.identifier)}>
-              <InputGroup size="2xl">
-                <Input
-                  size="2xl"
-                  id="identifier"
-                  name="identifier"
-                  type="text"
-                  value={value}
-                  onChange={handleIdentifierChange(onChange)}
-                  placeholder={t("project_id")}
-                  tabIndex={getIndex("identifier")}
-                />
-              </InputGroup>
-            </Field>
+            <InputField
+              size="lg"
+              orientation="vertical"
+              error={errors?.identifier?.message}
+              id="identifier"
+              name="identifier"
+              type="text"
+              value={value}
+              onChange={handleIdentifierChange(onChange)}
+              placeholder={t("project_id")}
+              aria-label={t("project_id")}
+              tabIndex={getIndex("identifier")}
+              endIcon={
+                <Tooltip
+                  label={t("project_id_tooltip_content")}
+                  layout="stacked"
+                  side="right"
+                  align="start"
+                  disabled={isMobile}
+                >
+                  <IconButton
+                    variant="ghost"
+                    size="xs"
+                    icon={<Icon icon={InfoOutline} size="sm" tint="placeholder" />}
+                    aria-label={t("project_id_tooltip_content")}
+                    showTooltip={false}
+                  />
+                </Tooltip>
+              }
+            />
           )}
         />
-        <Tooltip
-          label={t("project_id_tooltip_content")}
-          layout="stacked"
-          side="right"
-          align="start"
-          disabled={isMobile}
-        >
-          <InfoOutline className="absolute top-2.5 right-2 h-3 w-3 text-placeholder" />
-        </Tooltip>
-        <span className="text-11 text-danger-primary">{errors?.identifier?.message}</span>
       </div>
       <div className="md:col-span-4">
         <Controller
           name="description"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <Field name="description" invalid={Boolean(errors?.description)}>
-              <TextAreaGroup resize="none">
-                <TextArea
-                  size="lg"
-                  surface="field"
-                  autoResize
-                  maxRows={8}
-                  id="description"
-                  name="description"
-                  value={value}
-                  placeholder={t("description")}
-                  onChange={(e) => {
-                    onChange(e);
-                    handleFormOnChange?.();
-                  }}
-                  tabIndex={getIndex("description")}
-                />
-              </TextAreaGroup>
-            </Field>
+            <TextAreaField
+              size="lg"
+              autoResize
+              maxRows={8}
+              error={errors?.description?.message}
+              id="description"
+              name="description"
+              value={value}
+              placeholder={t("description")}
+              aria-label={t("description")}
+              onChange={(e) => {
+                onChange(e);
+                handleFormOnChange?.();
+              }}
+              tabIndex={getIndex("description")}
+            />
           )}
         />
       </div>

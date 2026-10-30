@@ -6,6 +6,7 @@
     "status_page": "Страница за състоянието"
   },
   "submit": "Изпрати",
+  "submitting": "Изпращане",
   "cancel": "Отказ",
   "loading": "Зареждане",
   "searching": "Търсене...",
@@ -153,6 +154,7 @@
   "no_favorites_yet": "Все още няма любими",
   "create_folder": "Създай папка",
   "new_folder": "Нова папка",
+  "rename_folder": "Преименувай папка",
   "favorite_updated_successfully": "Любимият елемент е обновен успешно",
   "favorite_created_successfully": "Любимият елемент е създаден успешно",
   "folder_already_exists": "Папката вече съществува",
@@ -368,6 +370,7 @@
   "member": "{count, plural, one{# член} other{# члена}}",
   "new_password_must_be_different_from_old_password": "Новата парола трябва да е различна от старата",
   "edited": "редактирано",
+  "entity_detail_toolbar": "Действия",
   "bot": "Бот",
   "settings_description": "Управлявайте предпочитанията за акаунта, работното пространство и проектите си на едно място. Превключвайте между разделите за лесна настройка.",
   "back_to_workspace": "Обратно към работното пространство",
@@ -540,6 +543,7 @@
     "link_copied": "Връзката е копирана!",
     "link_copied_to_clipboard": "Връзката е копирана в клипборда",
     "copied_to_clipboard": "Връзката към работния елемент е копирана в клипборда",
+    "clipboard_copy_failed": "Неуспешно копиране в клипборда",
     "branch_name_copied_to_clipboard": "Името на клона е копирано в клипборда",
     "is_copied_to_clipboard": "Работният елемент е копиран в клипборда",
     "no_links_added_yet": "Все още няма добавени връзки",
@@ -723,7 +727,14 @@
     "developer": "Разработчик",
     "work_structure": "Структура на работата",
     "execution": "Изпълнение",
-    "administration": "Администриране"
+    "administration": "Администриране",
+    "status": "Статус",
+    "tooltip": {
+      "copy_to_clipboard": "Копиране в клипборда",
+      "created_on_date": "Създадено на {date}",
+      "priority": "Приоритет: {value}"
+    },
+    "locked": "Заключено"
   },
   "chart": {
     "x_axis": "Ос X",
@@ -874,5 +885,13 @@
       "short_description": "Експортирай като JSON"
     }
   },
-  "labels_count": "{count, plural, one {# етикет} other {# етикета}}"
+  "labels_count": "{count, plural, one {# етикет} other {# етикета}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Опции за запазване на изгледа",
+      "update_view": "Обнови изгледа",
+      "save_as": "Запази като",
+      "hide_filters": "Скрий филтрите"
+    }
+  }
 }

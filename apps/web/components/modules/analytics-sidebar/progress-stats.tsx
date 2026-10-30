@@ -17,46 +17,37 @@ import type { TLabelData } from "@/components/core/sidebar/progress-stats/label"
 import { LabelStatComponent } from "@/components/core/sidebar/progress-stats/label";
 import type { TSelectedFilterProgressStats } from "@/components/core/sidebar/progress-stats/shared";
 import { createFilterUpdateHandler, PROGRESS_STATS } from "@/components/core/sidebar/progress-stats/shared";
-import type { TStateGroupData } from "@/components/core/sidebar/progress-stats/state_group";
-import { StateGroupStatComponent } from "@/components/core/sidebar/progress-stats/state_group";
 // hooks
 import useLocalStorage from "@/hooks/use-local-storage";
 
 type TModuleProgressStats = {
   distribution: TModuleDistribution | TModuleEstimateDistribution | undefined;
-  groupedIssues: Record<string, number>;
   handleFiltersUpdate: (condition: TWorkItemFilterCondition) => void;
   isEditable?: boolean;
   moduleId: string;
   plotType: TModulePlotType;
-  selectedFilters: TSelectedFilterProgressStats;
-  totalIssuesCount: number;
+  selectedFilters: Pick<TSelectedFilterProgressStats, "assignees" | "labels">;
 };
 
+// State groups are summarised (and filtered) by the progress tiles above, so only assignees and labels get a tab.
+const MODULE_PROGRESS_STATS = PROGRESS_STATS.filter((stat) => stat.key !== "stat-states");
+const DEFAULT_TAB = "stat-assignees";
+
 export const ModuleProgressStats = observer(function ModuleProgressStats(props: TModuleProgressStats) {
-  const {
-    distribution,
-    groupedIssues,
-    handleFiltersUpdate,
-    isEditable = false,
-    moduleId,
-    plotType,
-    selectedFilters,
-    totalIssuesCount,
-  } = props;
+  const { distribution, handleFiltersUpdate, isEditable = false, moduleId, plotType, selectedFilters } = props;
   // plane imports
   const { t } = useTranslation();
   // hooks
   const { storedValue: currentTab, setValue: setModuleTab } = useLocalStorage(
     `module-analytics-tab-${moduleId}`,
-    "stat-assignees"
+    DEFAULT_TAB
   );
   // derived values
   const currentDistribution = distribution as TModuleDistribution;
   const currentEstimateDistribution = distribution as TModuleEstimateDistribution;
   const selectedAssigneeIds = toFilterArray(selectedFilters?.assignees?.value || []) as string[];
   const selectedLabelIds = toFilterArray(selectedFilters?.labels?.value || []) as string[];
-  const selectedStateGroups = toFilterArray(selectedFilters?.stateGroups?.value || []) as string[];
+  const activeTab = MODULE_PROGRESS_STATS.some((stat) => stat.key === currentTab) ? currentTab : DEFAULT_TAB;
 
   const distributionAssigneeData: TAssigneeData =
     plotType === "burndown"
@@ -92,34 +83,23 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
           total: label.total_estimates,
         }));
 
-  const distributionStateData: TStateGroupData = Object.keys(groupedIssues || {}).map((state) => ({
-    state: state,
-    completed: groupedIssues?.[state] || 0,
-    total: totalIssuesCount || 0,
-  }));
-
   const handleAssigneeFiltersUpdate = createFilterUpdateHandler(
     "assignee_id",
     selectedAssigneeIds,
     handleFiltersUpdate
   );
   const handleLabelFiltersUpdate = createFilterUpdateHandler("label_id", selectedLabelIds, handleFiltersUpdate);
-  const handleStateGroupFiltersUpdate = createFilterUpdateHandler(
-    "state_group",
-    selectedStateGroups,
-    handleFiltersUpdate
-  );
 
   return (
     <div>
       <Tabs
         variant="contained"
         stretch="full"
-        defaultValue={currentTab ?? "stat-assignees"}
+        defaultValue={activeTab ?? DEFAULT_TAB}
         onValueChange={(value) => setModuleTab(value)}
       >
         <TabsList>
-          {PROGRESS_STATS.map((stat) => (
+          {MODULE_PROGRESS_STATS.map((stat) => (
             <Tab key={stat.key} value={stat.key} label={t(stat.i18n_title)} />
           ))}
         </TabsList>
@@ -138,15 +118,6 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
               handleLabelFiltersUpdate={handleLabelFiltersUpdate}
               isEditable={isEditable}
               selectedLabelIds={selectedLabelIds}
-            />
-          </TabsPanel>
-          <TabsPanel value="stat-states">
-            <StateGroupStatComponent
-              distribution={distributionStateData}
-              handleStateGroupFiltersUpdate={handleStateGroupFiltersUpdate}
-              isEditable={isEditable}
-              selectedStateGroups={selectedStateGroups}
-              totalIssuesCount={totalIssuesCount}
             />
           </TabsPanel>
         </div>

@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Bara laterală principală",
+      "resize_sidebar": "Redimensionează bara laterală",
+      "sidebar_peek_view": "Previzualizarea barei laterale",
       "workspace_logo": "Logo spațiu de lucru",
       "open_workspace_switcher": "Deschide comutator spațiu de lucru",
       "open_user_menu": "Deschide meniul utilizatorului",
@@ -42,6 +45,9 @@
       "open": "Deschide selectorul de culoare",
       "swatches": "Culori predefinite",
       "hex_input": "Culoare hexazecimală"
+    },
+    "project_board": {
+      "collapse_group": "Restrângeți grupul"
     }
   }
 }

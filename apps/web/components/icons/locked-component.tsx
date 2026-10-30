@@ -10,7 +10,7 @@ import { Tooltip } from "@makeplane/propel/components/tooltip";
 export function LockedComponent(props: { toolTipContent?: string }) {
   const { toolTipContent } = props;
   const lockedComponent = (
-    <div className="flex h-7 flex-shrink-0 items-center gap-2 rounded-full bg-layer-1 px-3 py-0.5 text-11 font-medium text-tertiary">
+    <div className="flex h-7 flex-shrink-0 items-center gap-2 rounded-full bg-layer-1 px-3 py-0.5 text-caption-sm-medium text-tertiary">
       <LockOutline className="h-3 w-3" />
       <span>Locked</span>
     </div>

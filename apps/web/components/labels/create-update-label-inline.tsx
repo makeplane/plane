@@ -9,8 +9,9 @@ import { observer } from "mobx-react";
 import type { SubmitHandler } from "react-hook-form";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { Field } from "@makeplane/propel/components/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { InputField } from "@makeplane/propel/components/input-field";
+import { LabelsFilled } from "@makeplane/propel/icons";
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
@@ -158,9 +159,9 @@ export const CreateUpdateLabelInline = observer(
       <>
         <div
           ref={ref}
-          className={`flex w-full scroll-m-8 items-center gap-2 bg-surface-1 ${labelForm ? "" : "hidden"}`}
+          className={`flex w-full scroll-m-8 items-center gap-2 bg-transparent ${labelForm ? "" : "hidden"}`}
         >
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <Controller
               name="color"
               control={control}
@@ -168,18 +169,12 @@ export const CreateUpdateLabelInline = observer(
                 <Popover>
                   <PopoverTrigger
                     render={
-                      <button
-                        type="button"
+                      <IconButton
+                        variant="secondary"
+                        size="lg"
                         aria-label={t("aria_labels.color_picker.open")}
-                        className="group inline-flex items-center text-14 font-medium text-secondary focus:outline-none data-popup-open:text-primary"
-                      >
-                        <span
-                          className="h-4 w-4 rounded-full"
-                          style={{
-                            backgroundColor: watch("color"),
-                          }}
-                        />
-                      </button>
+                        icon={<LabelsFilled width={16} height={16} color={watch("color")} />}
+                      />
                     }
                   />
                   <PopoverContent variant="rich" side="bottom" align="start">
@@ -203,28 +198,27 @@ export const CreateUpdateLabelInline = observer(
                 },
               }}
               render={({ field: { value, onChange, ref } }) => (
-                <Field name="name" invalid={Boolean(errors.name)}>
-                  <InputGroup size="2xl">
-                    <Input
-                      size="2xl"
-                      id="labelName"
-                      name="name"
-                      type="text"
-                      autoFocus
-                      value={value}
-                      onChange={onChange}
-                      ref={ref}
-                      placeholder={t("project_settings.labels.label_title")}
-                    />
-                  </InputGroup>
-                </Field>
+                <InputField
+                  size="lg"
+                  orientation="vertical"
+                  id="labelName"
+                  name="name"
+                  type="text"
+                  autoFocus
+                  value={value}
+                  onChange={onChange}
+                  ref={ref}
+                  aria-label={t("project_settings.labels.label_title")}
+                  placeholder={t("project_settings.labels.label_title")}
+                  error={errors.name?.message}
+                />
               )}
             />
           </div>
-          <Button variant="secondary" size="sm" stretch="auto" onClick={() => handleClose()} label={t("cancel")} />
+          <Button variant="ghost" size="lg" stretch="auto" onClick={() => handleClose()} label={t("cancel")} />
           <Button
-            variant="primary"
-            size="sm"
+            variant="secondary"
+            size="lg"
             stretch="auto"
             onClick={(e) => {
               e.preventDefault();
@@ -234,7 +228,6 @@ export const CreateUpdateLabelInline = observer(
             label={isUpdating ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}
           />
         </div>
-        {errors.name?.message && <p className="p-0.5 pl-8 text-13 text-danger-primary">{errors.name?.message}</p>}
       </>
     );
   })

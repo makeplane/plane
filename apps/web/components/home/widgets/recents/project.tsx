@@ -11,7 +11,7 @@ import type { TActivityEntityData, TProjectEntityData } from "@plane/types";
 import { calculateTimeAgo } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
-import { MemberSelect } from "@/components/dropdowns/member/member-select";
+import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // helpers
 
 type BlockProps = {
@@ -36,38 +36,32 @@ export function RecentProject(props: BlockProps) {
       itemLink={projectLink}
       title={projectDetails?.name}
       prependTitleElement={
-        <div className="flex flex-shrink-0 items-center gap-2">
-          <div className="grid size-8 flex-shrink-0 place-items-center rounded-sm bg-layer-2">
+        <div className="flex flex-shrink-0 items-center gap-1.5">
+          <div className="grid size-4 flex-shrink-0 place-items-center">
             <Logo logo={projectDetails?.logo_props} size={16} />
           </div>
-          <div className="text-13 font-medium whitespace-nowrap text-placeholder">{projectDetails?.identifier}</div>
+          <div className="text-caption-md-regular whitespace-nowrap text-tertiary">{projectDetails?.identifier}</div>
         </div>
       }
       appendTitleElement={
-        <div className="flex-shrink-0 text-11 font-medium text-placeholder">
+        <div className="flex-shrink-0 text-caption-md-regular text-tertiary">
           {calculateTimeAgo(activity.visited_at)}
         </div>
       }
       quickActionElement={
-        <div className="flex gap-4">
+        <div className="flex items-center gap-2">
           {projectDetails?.project_members?.length > 0 && (
-            <div className="h-5">
-              <MemberSelect
-                projectId={projectDetails?.id}
-                value={projectDetails?.project_members}
-                onChange={() => {}}
-                disabled
-                multiple
-                variant="avatar-group-sm"
-              />
-            </div>
+            <ButtonAvatars showTooltip={false} userIds={projectDetails.project_members} size="xs" max={3} />
           )}
         </div>
       }
       parentRef={ref}
       disableLink={false}
-      className="my-auto border-none !px-2 py-3"
-      itemClassName="my-auto"
+      className="!min-h-[38px] !flex-row !gap-0 rounded-md border-none !px-2 !py-2"
+      itemClassName="!gap-2"
+      linkClassName="!gap-2"
+      titleClassName="text-body-sm-medium"
+      leftElementClassName="!gap-2"
       onItemClick={(e) => {
         e.preventDefault();
         e.stopPropagation();

@@ -11,11 +11,17 @@
       "delete_project": {
         "title": "Excluir projeto",
         "description": "Ao excluir um projeto, todos os dados e recursos dentro desse projeto serão removidos permanentemente e não poderão ser recuperados.",
-        "button": "Excluir meu projeto"
+        "button": "Excluir meu projeto",
+        "confirm_description": "Tem certeza de que deseja excluir o projeto {projectName}? Todos os dados deste projeto serão removidos permanentemente. Esta ação não pode ser desfeita.",
+        "success_message": "Projeto excluído com sucesso."
       },
       "toast": {
         "success": "Projeto atualizado com sucesso",
         "error": "Não foi possível atualizar o projeto. Por favor, tente novamente."
+      },
+      "confirm_project_name_label": "Digite o nome do projeto para continuar.",
+      "leave_project": {
+        "confirm_description": "Tem certeza de que deseja sair do projeto {projectName}? Os itens de trabalho associados a você ficarão inacessíveis."
       }
     },
     "members": {

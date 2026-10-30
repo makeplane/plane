@@ -13,7 +13,7 @@ import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 // local imports
-import { COMMON_FILTER_ITEM_BORDER_CLASSNAME, EMPTY_FILTER_PLACEHOLDER_TEXT } from "../../shared";
+import { EMPTY_FILTER_PLACEHOLDER_TEXT } from "../../shared";
 
 type TSingleDateFilterValueInputProps<P extends TFilterProperty> = {
   config: TDateFilterFieldConfig<string>;
@@ -38,11 +38,8 @@ export const SingleDateFilterValueInput = observer(function SingleDateFilterValu
         const formattedDate = value ? renderFormattedPayloadDate(value) : null;
         onChange(formattedDate);
       }}
-      // A flat segment of the filter chip, like the property and operator segments beside it.
-      className={cn("h-full max-w-none rounded-none border-0 bg-transparent text-body-xs-regular", {
-        [COMMON_FILTER_ITEM_BORDER_CLASSNAME]: !isDisabled,
-        "text-placeholder": !conditionValue,
-      })}
+      // A pill segment of the condition, like the property and operator segments beside it.
+      className={cn("max-w-none text-body-xs-regular", { "text-placeholder": !conditionValue })}
       minDate={config.min}
       maxDate={config.max}
       placeholder={EMPTY_FILTER_PLACEHOLDER_TEXT}

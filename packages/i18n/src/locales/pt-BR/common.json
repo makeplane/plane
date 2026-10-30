@@ -6,6 +6,7 @@
     "status_page": "página de status"
   },
   "submit": "Enviar",
+  "submitting": "Enviando",
   "cancel": "Cancelar",
   "loading": "Carregando",
   "searching": "Pesquisando...",
@@ -153,6 +154,7 @@
   "no_favorites_yet": "Nenhum favorito ainda",
   "create_folder": "Criar pasta",
   "new_folder": "Nova pasta",
+  "rename_folder": "Renomear pasta",
   "favorite_updated_successfully": "Favorito atualizado com sucesso",
   "favorite_created_successfully": "Favorito criado com sucesso",
   "folder_already_exists": "A pasta já existe",
@@ -368,6 +370,7 @@
   "member": "{count, plural, one{# membro} other{# membros}}",
   "new_password_must_be_different_from_old_password": "Nova senha deve ser diferente da senha antiga",
   "edited": "editado",
+  "entity_detail_toolbar": "Ações",
   "bot": "robô",
   "settings_description": "Gerencie suas preferências de conta, espaço de trabalho e projeto em um só lugar. Alterne entre as abas para configurar facilmente.",
   "back_to_workspace": "Voltar ao espaço de trabalho",
@@ -540,6 +543,7 @@
     "link_copied": "Link copiado!",
     "link_copied_to_clipboard": "Link copiado para a área de transferência",
     "copied_to_clipboard": "Link do item de trabalho copiado para a área de transferência",
+    "clipboard_copy_failed": "Não foi possível copiar para a área de transferência",
     "branch_name_copied_to_clipboard": "Nome do branch copiado para a área de transferência",
     "is_copied_to_clipboard": "O link do item de trabalho foi copiado para a área de transferência",
     "no_links_added_yet": "Nenhum link adicionado ainda",
@@ -723,7 +727,14 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "status": "Status",
+    "tooltip": {
+      "copy_to_clipboard": "Copiar para a área de transferência",
+      "created_on_date": "Criado em {date}",
+      "priority": "Prioridade: {value}"
+    },
+    "locked": "Bloqueado"
   },
   "chart": {
     "x_axis": "Eixo X",
@@ -874,5 +885,13 @@
       "short_description": "Exportar como JSON"
     }
   },
-  "labels_count": "{count, plural, one {# etiqueta} many {# etiquetas} other {# etiquetas}}"
+  "labels_count": "{count, plural, one {# etiqueta} many {# etiquetas} other {# etiquetas}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Opções para salvar a visualização",
+      "update_view": "Atualizar visualização",
+      "save_as": "Salvar como",
+      "hide_filters": "Ocultar filtros"
+    }
+  }
 }

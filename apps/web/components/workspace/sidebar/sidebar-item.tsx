@@ -14,7 +14,8 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { joinUrlPath } from "@plane/utils";
 // components
-import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
+import { ListItem, ListItemLabel } from "@makeplane/propel/components/list";
+import { ListItemLink } from "@makeplane/propel/elements/list";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
@@ -68,14 +69,17 @@ export const SidebarItemBase = observer(function SidebarItemBase({
   const icon = getSidebarNavigationItemIcon(item.key);
 
   return (
-    <Link href={itemHref} onClick={handleLinkClick}>
-      <SidebarNavItem isActive={item.highlight(pathname, itemHref)}>
-        <div className="flex items-center gap-1.5 py-[1px]">
-          {icon}
-          <p className="text-13 leading-5 font-medium">{t(item.labelTranslationKey)}</p>
-        </div>
+    <ListItem density="comfortable">
+      <ListItemLink
+        href={itemHref}
+        render={<Link href={itemHref} />}
+        onClick={handleLinkClick}
+        aria-current={item.highlight(pathname, itemHref) ? "page" : undefined}
+      >
+        {icon}
+        <ListItemLabel>{t(item.labelTranslationKey)}</ListItemLabel>
         {additionalRender?.(item.key, slug)}
-      </SidebarNavItem>
-    </Link>
+      </ListItemLink>
+    </ListItem>
   );
 });

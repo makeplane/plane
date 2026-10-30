@@ -196,196 +196,191 @@ function ImagePickerPopoverComponent<TFieldValues extends FieldValues = FieldVal
         </PopoverTrigger>
         <PopoverContent variant="rich" side="bottom" align="end" sideOffset={8} data-prevent-outside-click>
           <PopoverBody tabIndex={0}>
-            <div ref={imagePickerRef} className="flex h-96 w-80 flex-col overflow-hidden md:h-[36rem] md:w-[36rem]">
-              {/* Row wrapper: published Tabs omits className, so fill height comes from stretch. The
-                  popup supplies the panel padding. */}
-              <div className="flex h-full min-h-0 w-full">
-                <Tabs variant="contained" defaultValue={enabledTabs[0]?.key || "images"}>
-                  <div className="flex h-full min-h-0 w-full flex-col">
-                    {/* Published TabsList is inline-flex; stretch it to the previous full-width bar. */}
-                    <div className="w-full min-w-0 [&_[role=tab]]:min-w-0 [&_[role=tab]]:flex-1 [&_[role=tablist]]:flex [&_[role=tablist]]:w-full">
-                      <TabsList>
-                        {enabledTabs.map((tab) => (
-                          <Tab key={tab.key} value={tab.key} label={tab.title} />
-                        ))}
-                      </TabsList>
-                    </div>
-                    {/* Grid wrapper: published TabsPanel omits className, so fill height comes from a one-row grid. */}
-                    <div className="vertical-scrollbar mt-3 scrollbar-sm grid min-h-0 w-full flex-1 grid-rows-1 overflow-x-hidden overflow-y-auto p-3">
-                      <TabsPanel value="unsplash">
-                        <div className="space-y-4">
-                          {(unsplashImages || !unsplashError) && (
-                            <>
-                              <div className="flex items-center gap-x-2">
-                                <Controller
-                                  control={control}
-                                  name={"search" as FieldPath<TFieldValues>}
-                                  render={({ field: { value, ref } }) => (
-                                    <InputGroup size="2xl">
-                                      <Input
-                                        size="2xl"
-                                        id="search"
-                                        name="search"
-                                        type="text"
-                                        onKeyDown={(e) => {
-                                          if (e.key === "Enter") {
-                                            e.preventDefault();
-                                            setSearchParams(formData.search);
-                                          }
-                                        }}
-                                        value={value}
-                                        onChange={(e) => setFormData({ ...formData, search: e.target.value })}
-                                        ref={ref}
-                                        placeholder="Search for images"
-                                      />
-                                    </InputGroup>
-                                  )}
-                                />
-                                <Button
-                                  variant="primary"
-                                  size="lg"
-                                  stretch="auto"
-                                  label="Search"
-                                  onClick={() => setSearchParams(formData.search)}
-                                />
-                              </div>
-                              {unsplashImages ? (
-                                unsplashImages.length > 0 ? (
-                                  <div className="grid grid-cols-4 gap-4">
-                                    {unsplashImages.map((image) => (
-                                      <button
-                                        type="button"
-                                        key={image.id}
-                                        className="relative col-span-2 aspect-video md:col-span-1"
-                                        aria-label={
-                                          image.alt_description
-                                            ? `Select image: ${image.alt_description}`
-                                            : "Select image"
+            <div
+              ref={imagePickerRef}
+              className="flex h-96 w-80 max-w-full flex-col overflow-auto md:h-[36rem] md:w-[36rem]"
+            >
+              <Tabs variant="contained" stretch="full" layout="fill" defaultValue={enabledTabs[0]?.key || "images"}>
+                <TabsList>
+                  {enabledTabs.map((tab) => (
+                    <Tab key={tab.key} value={tab.key} label={tab.title} />
+                  ))}
+                </TabsList>
+                <div className="vertical-scrollbar mt-4 scrollbar-sm flex min-h-0 w-full flex-1 flex-col overflow-auto">
+                  <TabsPanel value="unsplash">
+                    <div className="flex h-full min-h-0 w-full flex-col">
+                      {(unsplashImages || !unsplashError) && (
+                        <>
+                          <div className="mb-4 flex flex-shrink-0 items-center gap-x-3">
+                            <div className="min-w-0 flex-1">
+                              <Controller
+                                control={control}
+                                name={"search" as FieldPath<TFieldValues>}
+                                render={({ field: { value, ref } }) => (
+                                  <InputGroup size="lg">
+                                    <Input
+                                      size="lg"
+                                      id="search"
+                                      name="search"
+                                      type="text"
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                          e.preventDefault();
+                                          setSearchParams(formData.search);
                                         }
-                                        onClick={() => {
-                                          setIsOpen(false);
-                                          onChange(image.urls.regular);
-                                        }}
-                                      >
-                                        <img
-                                          src={image.urls.small}
-                                          alt={image.alt_description}
-                                          className="absolute top-0 left-0 h-full w-full cursor-pointer rounded-sm object-cover"
-                                        />
-                                      </button>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  <p className="pt-7 text-center text-11 text-secondary">No images found.</p>
-                                )
-                              ) : (
-                                <Loader className="grid grid-cols-4 gap-4">
-                                  <Loader.Item height="80px" width="100%" />
-                                  <Loader.Item height="80px" width="100%" />
-                                  <Loader.Item height="80px" width="100%" />
-                                  <Loader.Item height="80px" width="100%" />
-                                  <Loader.Item height="80px" width="100%" />
-                                  <Loader.Item height="80px" width="100%" />
-                                  <Loader.Item height="80px" width="100%" />
-                                  <Loader.Item height="80px" width="100%" />
-                                </Loader>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      </TabsPanel>
-                      <TabsPanel value="images">
-                        <div className="grid grid-cols-4 gap-4">
-                          {Object.values(STATIC_COVER_IMAGES).map((imageUrl, index) => (
-                            <button
-                              type="button"
-                              key={imageUrl}
-                              className="relative col-span-2 aspect-video md:col-span-1"
-                              aria-label={`Select cover image ${index + 1}`}
-                              onClick={() => handleStaticImageSelect(imageUrl)}
-                            >
-                              <img
-                                src={imageUrl}
-                                alt={`Cover image ${index + 1}`}
-                                className="absolute top-0 left-0 h-full w-full cursor-pointer rounded-sm object-cover transition-opacity hover:opacity-80"
+                                      }}
+                                      value={value}
+                                      onChange={(e) => setFormData({ ...formData, search: e.target.value })}
+                                      ref={ref}
+                                      placeholder="Search for images"
+                                    />
+                                  </InputGroup>
+                                )}
                               />
-                            </button>
-                          ))}
-                        </div>
-                      </TabsPanel>
-                      <TabsPanel value="upload">
-                        <div className="flex h-full w-full flex-col gap-y-2">
-                          <div className="flex w-full flex-1 items-center gap-3">
-                            <div
-                              {...getRootProps()}
-                              className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 focus:outline-none ${
-                                (image === null && isDragActive) || !value
-                                  ? "border-2 border-dashed border-subtle hover:bg-surface-2"
-                                  : ""
-                              }`}
-                            >
-                              <button
-                                type="button"
-                                className="absolute top-0 right-0 z-40 -translate-y-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-11 font-medium text-secondary"
-                              >
-                                Edit
-                              </button>
-                              {image !== null || (value && value !== "") ? (
-                                <>
-                                  <img
-                                    src={image ? URL.createObjectURL(image) : getCoverImageDisplayURL(value, "")}
-                                    alt="image"
-                                    className="h-full w-full rounded-lg object-cover"
-                                  />
-                                </>
-                              ) : (
-                                <div>
-                                  <span className="mt-2 block text-13 font-medium text-secondary">
-                                    {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
-                                  </span>
-                                </div>
-                              )}
-
-                              <input {...getInputProps()} />
                             </div>
-                          </div>
-                          {fileRejections.length > 0 && (
-                            <p className="text-13 text-danger-primary">
-                              {fileRejections[0].errors[0].code === "file-too-large"
-                                ? "The image size cannot exceed 5 MB."
-                                : "Please upload a file in a valid format."}
-                            </p>
-                          )}
-
-                          <p className="text-13 text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
-
-                          <div className="flex h-12 items-start justify-end gap-2">
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              stretch="auto"
-                              label="Cancel"
-                              onClick={() => {
-                                setIsOpen(false);
-                                setImage(null);
-                              }}
-                            />
                             <Button
                               variant="primary"
-                              size="sm"
-                              stretch="full"
-                              label={isImageUploading ? "Uploading" : "Upload & Save"}
-                              onClick={handleSubmit}
-                              disabled={!image}
-                              loading={isImageUploading}
+                              size="lg"
+                              stretch="auto"
+                              label="Search"
+                              onClick={() => setSearchParams(formData.search)}
                             />
                           </div>
-                        </div>
-                      </TabsPanel>
+                          {unsplashImages ? (
+                            unsplashImages.length > 0 ? (
+                              <div className="grid grid-cols-4 gap-4">
+                                {unsplashImages.map((image) => (
+                                  <button
+                                    type="button"
+                                    key={image.id}
+                                    className="relative col-span-2 aspect-video md:col-span-1"
+                                    aria-label={
+                                      image.alt_description ? `Select image: ${image.alt_description}` : "Select image"
+                                    }
+                                    onClick={() => {
+                                      setIsOpen(false);
+                                      onChange(image.urls.regular);
+                                    }}
+                                  >
+                                    <img
+                                      src={image.urls.small}
+                                      alt={image.alt_description}
+                                      className="absolute top-0 left-0 h-full w-full cursor-pointer rounded-sm object-cover transition-opacity hover:opacity-80"
+                                    />
+                                  </button>
+                                ))}
+                              </div>
+                            ) : (
+                              <div className="flex min-h-0 flex-1 items-center justify-center">
+                                <p className="text-center text-caption-md-regular text-tertiary">No images found.</p>
+                              </div>
+                            )
+                          ) : (
+                            <Loader className="grid grid-cols-4 gap-4">
+                              <Loader.Item height="80px" width="100%" />
+                              <Loader.Item height="80px" width="100%" />
+                              <Loader.Item height="80px" width="100%" />
+                              <Loader.Item height="80px" width="100%" />
+                              <Loader.Item height="80px" width="100%" />
+                              <Loader.Item height="80px" width="100%" />
+                              <Loader.Item height="80px" width="100%" />
+                              <Loader.Item height="80px" width="100%" />
+                            </Loader>
+                          )}
+                        </>
+                      )}
                     </div>
-                  </div>
-                </Tabs>
-              </div>
+                  </TabsPanel>
+                  <TabsPanel value="images">
+                    <div className="grid grid-cols-4 gap-4">
+                      {Object.values(STATIC_COVER_IMAGES).map((imageUrl, index) => (
+                        <button
+                          type="button"
+                          key={imageUrl}
+                          className="relative col-span-2 aspect-video md:col-span-1"
+                          aria-label={`Select cover image ${index + 1}`}
+                          onClick={() => handleStaticImageSelect(imageUrl)}
+                        >
+                          <img
+                            src={imageUrl}
+                            alt={`Cover image ${index + 1}`}
+                            className="absolute top-0 left-0 h-full w-full cursor-pointer rounded-sm object-cover transition-opacity hover:opacity-80"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </TabsPanel>
+                  <TabsPanel value="upload">
+                    <div className="flex h-full w-full flex-col gap-y-2">
+                      <div className="flex w-full flex-1 items-center gap-3">
+                        <div
+                          {...getRootProps()}
+                          className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 focus:outline-none ${
+                            (image === null && isDragActive) || !value
+                              ? "border-2 border-dashed border-subtle hover:bg-surface-2"
+                              : ""
+                          }`}
+                        >
+                          <div className="absolute top-0 right-1 z-40">
+                            <Button type="button" variant="tertiary" size="xs" stretch="auto" label="Edit" />
+                          </div>
+                          {image !== null || (value && value !== "") ? (
+                            <>
+                              <img
+                                src={image ? URL.createObjectURL(image) : getCoverImageDisplayURL(value, "")}
+                                alt="image"
+                                className="h-full w-full rounded-lg object-cover"
+                              />
+                            </>
+                          ) : (
+                            <div>
+                              <span className="mt-2 block text-body-xs-medium text-secondary">
+                                {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
+                              </span>
+                            </div>
+                          )}
+
+                          <input {...getInputProps()} />
+                        </div>
+                      </div>
+                      {fileRejections.length > 0 && (
+                        <p className="text-body-xs-regular text-danger-primary">
+                          {fileRejections[0].errors[0].code === "file-too-large"
+                            ? "The image size cannot exceed 5 MB."
+                            : "Please upload a file in a valid format."}
+                        </p>
+                      )}
+
+                      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-1">
+                        <p className="min-w-0 truncate text-body-xs-regular text-secondary">
+                          File formats supported- .jpeg, .jpg, .png, .webp
+                        </p>
+                        <div className="flex flex-shrink-0 items-center gap-2">
+                          <Button
+                            variant="secondary"
+                            size="md"
+                            stretch="auto"
+                            label="Cancel"
+                            onClick={() => {
+                              setIsOpen(false);
+                              setImage(null);
+                            }}
+                          />
+                          <Button
+                            variant="primary"
+                            size="md"
+                            stretch="auto"
+                            label={isImageUploading ? "Uploading" : "Upload & Save"}
+                            onClick={handleSubmit}
+                            disabled={!image}
+                            loading={isImageUploading}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </TabsPanel>
+                </div>
+              </Tabs>
             </div>
           </PopoverBody>
         </PopoverContent>

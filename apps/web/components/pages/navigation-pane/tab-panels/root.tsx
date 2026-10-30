@@ -6,8 +6,6 @@
 
 // plane imports
 import { TabsPanel } from "@makeplane/propel/components/tabs";
-// components
-import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
@@ -18,11 +16,10 @@ import { ORDERED_PAGE_NAVIGATION_TABS_LIST } from ".";
 
 type Props = {
   page: TPageInstance;
-  versionHistory: Pick<TPageRootHandlers, "fetchAllVersions" | "fetchVersionDetails">;
 };
 
 export function PageNavigationPaneTabPanelsRoot(props: Props) {
-  const { page, versionHistory } = props;
+  const { page } = props;
 
   return (
     // Grid wrapper: Propel's TabsPanel omits className, so the single mounted panel gets its
@@ -31,7 +28,7 @@ export function PageNavigationPaneTabPanelsRoot(props: Props) {
       {ORDERED_PAGE_NAVIGATION_TABS_LIST.map((tab) => (
         <TabsPanel key={tab.key} value={tab.key}>
           {tab.key === "outline" && <PageNavigationPaneOutlineTabPanel page={page} />}
-          {tab.key === "info" && <PageNavigationPaneInfoTabPanel page={page} versionHistory={versionHistory} />}
+          {tab.key === "info" && <PageNavigationPaneInfoTabPanel page={page} />}
           {tab.key === "assets" && <PageNavigationPaneAssetsTabPanel page={page} />}
         </TabsPanel>
       ))}

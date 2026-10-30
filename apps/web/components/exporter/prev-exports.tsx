@@ -76,7 +76,7 @@ export const PrevExports = observer(function PrevExports(props: Props) {
 
   return (
     <div>
-      <div className="flex items-center justify-between border-b border-subtle pb-3.5">
+      <div className="flex items-center justify-between pb-3">
         <div className="flex items-center gap-2">
           <h3 className="text-h6-medium text-primary">{t("workspace_settings.settings.exports.previous_exports")}</h3>
           <Button
@@ -84,12 +84,12 @@ export const PrevExports = observer(function PrevExports(props: Props) {
             size="sm"
             stretch="auto"
             onClick={() => void handleRefresh()}
-            icon={<Icon icon={<RefreshOutline className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />} />}
+            icon={<Icon icon={<RefreshOutline className={refreshing ? "animate-spin" : ""} />} />}
             label={refreshing ? t("refreshing") : t("refresh_status")}
           />
         </div>
         {Array.isArray(exporterServices?.results) && exporterServices.results.length > 0 && (
-          <div className="flex items-center gap-2 text-11">
+          <div className="flex items-center gap-2 text-caption-sm-regular">
             <Button
               variant="secondary"
               size="xs"
@@ -132,8 +132,8 @@ export const PrevExports = observer(function PrevExports(props: Props) {
               assetKey="export"
               title={t("settings_empty_state.exports.title")}
               description={t("settings_empty_state.exports.description")}
-              align="start"
-              rootClassName="py-20"
+              align="center"
+              rootClassName="rounded-lg border border-subtle bg-surface-1 py-10"
             />
           </div>
         )}

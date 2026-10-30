@@ -92,7 +92,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
   );
 
   return cycleId ? (
-    <div className="col-span-1 flex min-h-[17rem] flex-col gap-4 overflow-hidden rounded-lg border border-subtle bg-surface-1 p-4 lg:col-span-2 xl:col-span-1">
+    <div className="col-span-1 flex min-h-68 flex-col gap-4 overflow-hidden rounded-lg border border-subtle bg-surface-1 p-4 lg:col-span-2 xl:col-span-1">
       <Tabs
         variant="contained"
         stretch="full"
@@ -122,7 +122,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                       return (
                         <div
                           key={issue.id}
-                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-md p-1 hover:bg-surface-2"
+                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-md p-1 hover:bg-layer-1"
                           onClick={() => {
                             if (issue.id) {
                               setPeekIssue({
@@ -140,7 +140,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                           <div className="flex w-full min-w-24 flex-grow items-center gap-1.5 truncate">
                             <IssueIdentifier issueId={issue.id} projectId={projectId} size="xs" variant="secondary" />
                             <Tooltip label={`Title: ${issue.name}`} layout="stacked" align="start">
-                              <span className="truncate text-13 text-primary">{issue.name}</span>
+                              <span className="truncate text-body-xs-regular text-primary">{issue.name}</span>
                             </Tooltip>
                           </div>
                           <PriorityIcon priority={issue.priority} />
@@ -156,9 +156,9 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                             />
                             {issue.target_date && (
                               <Tooltip label={`Target Date: ${renderFormattedDate(issue.target_date) ?? ""}`}>
-                                <div className="flex h-full cursor-pointer items-center gap-1.5 truncate rounded-sm bg-layer-1 px-2 py-0.5 text-11 group-hover:bg-surface-1">
+                                <div className="flex h-full cursor-pointer items-center gap-1.5 truncate rounded-sm bg-layer-1 px-2 py-0.5 text-caption-md-regular group-hover:bg-layer-1-hover">
                                   <CompletedAtOutline className="h-3 w-3 flex-shrink-0" />
-                                  <span className="truncate text-11">
+                                  <span className="truncate text-caption-sm-regular">
                                     {renderFormattedDateWithoutYear(issue.target_date)}
                                   </span>
                                 </div>
@@ -172,7 +172,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                       <div
                         ref={setIssueLoaderElement}
                         className={
-                          "relative flex h-11 animate-pulse cursor-pointer items-center gap-3 bg-layer-1 p-3 text-13"
+                          "relative flex h-11 animate-pulse cursor-pointer items-center gap-3 bg-layer-1 p-3 text-body-xs-regular"
                         }
                       />
                     )}
@@ -270,7 +270,9 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                             backgroundColor: label.color ?? "#000000",
                           }}
                         />
-                        <span className="truncate text-11 text-ellipsis">{label.label_name ?? "No labels"}</span>
+                        <span className="truncate text-caption-sm-regular text-ellipsis">
+                          {label.label_name ?? "No labels"}
+                        </span>
                       </div>
                     }
                     completed={label.completed_issues}
@@ -299,7 +301,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
       </Tabs>
     </div>
   ) : (
-    <Loader className="col-span-1 flex min-h-[17rem] flex-col gap-4 overflow-hidden bg-surface-1 lg:col-span-2 xl:col-span-1">
+    <Loader className="col-span-1 flex min-h-68 flex-col gap-4 overflow-hidden bg-surface-1 lg:col-span-2 xl:col-span-1">
       <Loader.Item width="100%" height="17rem" />
     </Loader>
   );

@@ -4,25 +4,34 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
+import { Badge } from "@makeplane/propel/components/badge";
+import type { BadgeVariant } from "@makeplane/propel/components/badge";
+import { Icon } from "@makeplane/propel/components/icon";
 // constants
-// helpers
 import { INBOX_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { cn, findHowManyDaysLeft } from "@plane/utils";
+import type { TInboxIssueStatus } from "@plane/types";
+import { EInboxIssueStatus } from "@plane/types";
+import { findHowManyDaysLeft } from "@plane/utils";
 // store
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
-import { ICON_PROPERTIES, InboxStatusIcon } from "./inbox-status-icon";
+import { ICON_PROPERTIES } from "./inbox-status-icon";
+
+const STATUS_BADGE_VARIANT: Record<TInboxIssueStatus, BadgeVariant> = {
+  [EInboxIssueStatus.PENDING]: "warning",
+  [EInboxIssueStatus.DECLINED]: "danger",
+  [EInboxIssueStatus.SNOOZED]: "neutral",
+  [EInboxIssueStatus.ACCEPTED]: "success",
+  [EInboxIssueStatus.DUPLICATE]: "neutral",
+};
 
 type Props = {
   inboxIssue: IInboxIssueStore;
-  iconSize?: number;
-  showDescription?: boolean;
 };
 
 export const InboxIssueStatus = observer(function InboxIssueStatus(props: Props) {
-  const { inboxIssue, iconSize = 16, showDescription = false } = props;
+  const { inboxIssue } = props;
   //hooks
   const { t } = useTranslation();
   // derived values
@@ -34,23 +43,14 @@ export const InboxIssueStatus = observer(function InboxIssueStatus(props: Props)
   const description = t(inboxIssueStatusDetail.i18n_description(), {
     days: findHowManyDaysLeft(new Date(inboxIssue.snoozed_till ?? "")),
   });
-  const statusIcon = ICON_PROPERTIES[inboxIssue?.status];
+  const statusIcon = ICON_PROPERTIES[inboxIssue.status];
 
   return (
-    <div
-      className={cn(
-        `relative flex flex-col gap-1 rounded-sm p-1.5 py-0.5 ${statusIcon.textColor(
-          isSnoozedDatePassed
-        )} ${statusIcon.bgColor(isSnoozedDatePassed)}`
-      )}
-    >
-      <div className={`flex items-center gap-1`}>
-        <InboxStatusIcon type={inboxIssue?.status} size={iconSize} className="flex-shrink-0" renderColor={false} />
-        <div className="text-11 font-medium whitespace-nowrap">
-          {inboxIssue?.status === 0 && inboxIssue?.snoozed_till ? description : t(inboxIssueStatusDetail.i18n_title)}
-        </div>
-      </div>
-      {showDescription && <div className="text-13 whitespace-nowrap">{description}</div>}
-    </div>
+    <Badge
+      variant={STATUS_BADGE_VARIANT[inboxIssue.status]}
+      size="sm"
+      startIcon={<Icon icon={statusIcon.icon} />}
+      label={inboxIssue.status === 0 && inboxIssue.snoozed_till ? description : t(inboxIssueStatusDetail.i18n_title)}
+    />
   );
 });

@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "세부 정보를 보려면 선택하세요."
+        "title": "선택된 알림이 없습니다",
+        "description": "알림을 선택하면 세부 정보를 볼 수 있습니다."
       },
       "all": {
         "title": "할당된 작업 항목 없음",
@@ -52,7 +53,15 @@
       "5_days": "5일",
       "1_week": "1주",
       "2_weeks": "2주",
-      "custom": "사용자 정의"
+      "custom": "사용자 정의",
+      "modal": {
+        "title": "미루기 시간 사용자 지정",
+        "pick_a_date": "날짜 선택",
+        "pick_a_time": "시간 선택",
+        "select_date": "날짜 선택",
+        "select_time": "시간 선택",
+        "no_available_time": "이 날짜에 사용 가능한 시간이 없습니다"
+      }
     }
   }
 }

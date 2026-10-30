@@ -5,9 +5,9 @@
  */
 
 import { observer } from "mobx-react";
-// assets
-import AllFiltersImage from "@/app/assets/empty-state/cycle/all-filters.svg?url";
-import NameFilterImage from "@/app/assets/empty-state/cycle/name-filter.svg?url";
+// plane imports
+import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
 // components
 import { CyclesList } from "@/components/cycles/list";
 // ui
@@ -26,6 +26,7 @@ export const ArchivedCyclesView = observer(function ArchivedCyclesView(props: IA
   // store hooks
   const { getFilteredArchivedCycleIds, loader } = useCycle();
   const { archivedCyclesSearchQuery } = useCycleFilter();
+  const { t } = useTranslation();
   // derived values
   const filteredArchivedCycleIds = getFilteredArchivedCycleIds(projectId);
 
@@ -33,20 +34,17 @@ export const ArchivedCyclesView = observer(function ArchivedCyclesView(props: IA
 
   if (filteredArchivedCycleIds.length === 0)
     return (
-      <div className="grid h-full w-full place-items-center">
-        <div className="text-center">
-          <img
-            src={archivedCyclesSearchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
-            className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
-            alt="No matching cycles"
-          />
-          <h5 className="mt-7 mb-1 text-18 font-medium">No matching cycles</h5>
-          <p className="text-14 text-placeholder">
-            {archivedCyclesSearchQuery.trim() === ""
-              ? "Remove the filters to see all cycles"
-              : "Remove the search criteria to see all cycles"}
-          </p>
-        </div>
+      <div className="vertical-scrollbar scrollbar-lg grid h-full w-full place-items-center overflow-y-auto">
+        <EmptyStateCompact
+          assetKey="search-compact"
+          title={t("project_cycles.no_matching_cycles")}
+          description={
+            archivedCyclesSearchQuery.trim() === ""
+              ? t("project_cycles.remove_filters_to_see_all_cycles")
+              : t("project_cycles.remove_search_criteria_to_see_all_cycles")
+          }
+          rootClassName="h-auto py-10"
+        />
       </div>
     );
 

@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from "react";
 import { CloseCircleOutline, TickCircleOutline } from "@makeplane/propel/icons";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { API_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
@@ -94,64 +94,55 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       <input type="hidden" value={uniqueCodeFormData.email} name="email" />
       {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
-      <div className="space-y-1">
-        <label htmlFor="email" className="text-13 font-medium text-tertiary">
-          {t("auth.common.email.label")}
-        </label>
-        <InputGroup size="2xl">
-          <Input
-            size="2xl"
-            id="email"
-            name="email"
-            type="email"
-            value={uniqueCodeFormData.email}
-            onChange={(e) => handleFormChange("email", e.target.value)}
-            placeholder={t("auth.common.email.placeholder")}
-            autoComplete="off"
-            disabled
-          />
-          {uniqueCodeFormData.email.length > 0 && (
+      <InputField
+        size="xl"
+        orientation="vertical"
+        label={t("auth.common.email.label")}
+        id="email"
+        name="email"
+        type="email"
+        value={uniqueCodeFormData.email}
+        onChange={(e) => handleFormChange("email", e.target.value)}
+        placeholder={t("auth.common.email.placeholder")}
+        autoComplete="off"
+        disabled
+        endIcon={
+          uniqueCodeFormData.email.length > 0 && (
             <button
               type="button"
-              className="grid size-5 place-items-center"
-              aria-label={t("aria_labels.auth_forms.clear_email")}
               onClick={handleEmailClear}
+              className="grid size-5 shrink-0 place-items-center"
+              aria-label={t("aria_labels.auth_forms.clear_email")}
             >
               <CloseCircleOutline className="size-5 text-placeholder" />
             </button>
-          )}
-        </InputGroup>
-      </div>
+          )
+        }
+      />
 
       <div className="space-y-1">
-        <label htmlFor="unique-code" className="text-13 font-medium text-tertiary">
-          {t("auth.common.unique_code.label")}
-        </label>
-        <InputGroup size="2xl">
-          <Input
-            size="2xl"
-            name="code"
-            id="unique-code"
-            value={uniqueCodeFormData.code}
-            onChange={(e) => handleFormChange("code", e.target.value)}
-            placeholder={t("auth.common.unique_code.placeholder")}
-            autoComplete="off"
-            autoFocus
-          />
-        </InputGroup>
-        <div className="flex w-full items-center justify-between px-1 pt-1 text-11">
-          <p className="flex items-center gap-1 font-medium text-success-primary">
+        <InputField
+          size="xl"
+          orientation="vertical"
+          label={t("auth.common.unique_code.label")}
+          name="code"
+          id="unique-code"
+          aria-describedby="unique-code-hint"
+          value={uniqueCodeFormData.code}
+          onChange={(e) => handleFormChange("code", e.target.value)}
+          placeholder={t("auth.common.unique_code.placeholder")}
+          autoComplete="off"
+          autoFocus
+        />
+        <div className="flex w-full items-center justify-between gap-2 px-1 pt-1 text-caption-sm-regular">
+          <p id="unique-code-hint" className="flex items-center gap-1 font-medium text-success-primary">
             <TickCircleOutline height={12} width={12} />
             {t("auth.common.unique_code.paste_code")}
           </p>
           <button
             type="button"
             onClick={() => generateNewCode(uniqueCodeFormData.email)}
-            className={
-              isRequestNewCodeDisabled
-                ? "text-placeholder"
-                : "font-medium text-accent-secondary hover:text-accent-secondary"
-            }
+            className={isRequestNewCodeDisabled ? "text-placeholder" : "font-medium text-accent-secondary"}
             disabled={isRequestNewCodeDisabled}
           >
             {resendTimerCode > 0

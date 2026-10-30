@@ -6,6 +6,7 @@
     "status_page": "stránku stavu"
   },
   "submit": "Odoslať",
+  "submitting": "Odosielanie",
   "cancel": "Zrušiť",
   "loading": "Načítavanie",
   "searching": "Vyhľadávanie...",
@@ -153,6 +154,7 @@
   "no_favorites_yet": "Zatiaľ žiadne obľúbené",
   "create_folder": "Vytvoriť priečinok",
   "new_folder": "Nový priečinok",
+  "rename_folder": "Premenovať priečinok",
   "favorite_updated_successfully": "Obľúbené bolo úspešne aktualizované",
   "favorite_created_successfully": "Obľúbené bolo úspešne vytvorené",
   "folder_already_exists": "Priečinok už existuje",
@@ -368,6 +370,7 @@
   "member": "{count, plural, one{# člen} few{# členovia} other{# členov}}",
   "new_password_must_be_different_from_old_password": "Nové heslo musí byť odlišné od starého hesla",
   "edited": "Upravené",
+  "entity_detail_toolbar": "Akcie",
   "bot": "Bot",
   "settings_description": "Spravujte predvoľby svojho účtu, pracovného priestoru a projektu na jednom mieste. Prepínajte medzi kartami a jednoducho konfigurujte.",
   "back_to_workspace": "Späť do pracovného priestoru",
@@ -540,6 +543,7 @@
     "link_copied": "Odkaz skopírovaný!",
     "link_copied_to_clipboard": "Odkaz skopírovaný do schránky",
     "copied_to_clipboard": "Odkaz na pracovnú položku bol skopírovaný do schránky",
+    "clipboard_copy_failed": "Kopírovanie do schránky zlyhalo",
     "branch_name_copied_to_clipboard": "Názov vetvy skopírovaný do schránky",
     "is_copied_to_clipboard": "Pracovná položka skopírovaná do schránky",
     "no_links_added_yet": "Zatiaľ neboli pridané žiadne odkazy",
@@ -723,7 +727,14 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "status": "Stav",
+    "tooltip": {
+      "copy_to_clipboard": "Kopírovať do schránky",
+      "created_on_date": "Vytvorené dňa {date}",
+      "priority": "Priorita: {value}"
+    },
+    "locked": "Uzamknuté"
   },
   "chart": {
     "x_axis": "Os X",
@@ -874,5 +885,13 @@
       "short_description": "Exportovať ako JSON"
     }
   },
-  "labels_count": "{count, plural, one {# štítok} few {# štítky} many {# štítku} other {# štítkov}}"
+  "labels_count": "{count, plural, one {# štítok} few {# štítky} many {# štítku} other {# štítkov}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Možnosti uloženia pohľadu",
+      "update_view": "Aktualizovať pohľad",
+      "save_as": "Uložiť ako",
+      "hide_filters": "Skryť filtre"
+    }
+  }
 }

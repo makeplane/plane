@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Основна бічна панель",
+      "resize_sidebar": "Змінити розмір бічної панелі",
+      "sidebar_peek_view": "Попередній перегляд бічної панелі",
       "workspace_logo": "Логотип робочого простору",
       "open_workspace_switcher": "Відкрити перемикач робочого простору",
       "open_user_menu": "Відкрити меню користувача",
@@ -42,6 +45,9 @@
       "open": "Відкрити вибір кольору",
       "swatches": "Готові кольори",
       "hex_input": "Колір у HEX"
+    },
+    "project_board": {
+      "collapse_group": "Згорнути групу"
     }
   }
 }

@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
+import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/blocks/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Row } from "@plane/blocks/layout";
@@ -34,6 +35,8 @@ type InboxIssueListItemProps = {
 
 export const InboxIssueListItem = observer(function InboxIssueListItem(props: InboxIssueListItemProps) {
   const { workspaceSlug, projectId, inboxIssueId, projectIdentifier, setIsMobileSidebar } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // router
   const searchParams = useSearchParams();
   const selectedInboxIssueId = searchParams.get("inboxIssueId");
@@ -53,6 +56,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
   if (!issue) return <></>;
 
   const createdByDetails = issue?.created_by ? getUserDetails(issue?.created_by) : undefined;
+  const createdOn = renderFormattedDate(issue.created_at ?? "");
 
   return (
     <>
@@ -64,38 +68,42 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
       >
         <Row
           className={cn(
-            `relative flex cursor-pointer flex-col gap-2 border border-t-transparent border-r-transparent border-b-subtle-1 border-l-transparent py-4 transition-all hover:bg-accent-primary/5`,
-            { "border border-accent-strong": selectedInboxIssueId === issue.id }
+            `relative flex cursor-pointer flex-col gap-2 border border-t-transparent border-r-transparent border-b-subtle border-l-transparent py-4 transition-all hover:bg-layer-transparent-hover`,
+            { "border border-subtle bg-layer-transparent-selected": selectedInboxIssueId === issue.id }
           )}
         >
-          <div className="space-y-1">
+          <div className="space-y-2">
             <div className="relative flex items-center justify-between gap-2">
-              <div className="flex-shrink-0 text-11 font-medium text-tertiary">
+              <div className="flex-shrink-0 text-caption-sm-medium text-tertiary">
                 {projectIdentifier}-{issue.sequence_id}
               </div>
               <div className="flex items-center gap-2">
-                {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />}
+                {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} />}
               </div>
             </div>
-            <h3 className="w-full truncate text-13">{issue.name}</h3>
+            <h3 className="w-full truncate text-body-xs-regular">{issue.name}</h3>
           </div>
 
           <div className="flex items-center justify-between">
             <div className="flex flex-wrap items-center gap-2">
-              <Tooltip label={`Created on: ${renderFormattedDate(issue.created_at ?? "") ?? ""}`} disabled={isMobile}>
-                <div className="text-11 text-secondary">{renderFormattedDate(issue.created_at ?? "")}</div>
+              <Tooltip label={t("common.tooltip.created_on_date", { date: createdOn ?? "" })} disabled={isMobile}>
+                <div className="text-caption-sm-regular text-secondary">{createdOn}</div>
               </Tooltip>
 
               <div className="rounded-full border-2 border-strong-1" />
 
               {issue.priority && (
-                <Tooltip label={`Priority: ${issue.priority ?? "None"}`}>
+                <Tooltip
+                  label={t("common.tooltip.priority", {
+                    value: issue.priority === "none" ? t("common.none") : t(`issue.priority.${issue.priority}`),
+                  })}
+                >
                   <PriorityIcon priority={issue.priority} />
                 </Tooltip>
               )}
 
               {issue.label_ids && issue.label_ids.length > 3 ? (
-                <div className="relative flex !h-[17.5px] items-center gap-1 rounded-sm border border-strong px-1 text-11">
+                <div className="relative flex !h-[17.5px] items-center gap-1 rounded-sm border border-strong px-1 text-caption-sm-regular">
                   <span className="bg-orange-400 h-2 w-2 rounded-full" />
                   <span className="max-w-28 truncate normal-case">{`${issue.label_ids.length} labels`}</span>
                 </div>
@@ -107,7 +115,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                     return (
                       <div
                         key={labelId}
-                        className="relative flex !h-[17.5px] items-center gap-1 rounded-sm border border-strong px-1 text-11"
+                        className="relative flex !h-[17.5px] items-center gap-1 rounded-sm border border-strong px-1 text-caption-sm-regular"
                       >
                         <span
                           className="h-2 w-2 rounded-full"

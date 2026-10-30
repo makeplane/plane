@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Pilih untuk melihat detail."
+        "title": "Tidak ada notifikasi yang dipilih",
+        "description": "Pilih notifikasi untuk melihat detailnya."
       },
       "all": {
         "title": "Tidak ada item kerja yang ditugaskan",
@@ -52,7 +53,15 @@
       "5_days": "5 hari",
       "1_week": "1 minggu",
       "2_weeks": "2 minggu",
-      "custom": "Kustom"
+      "custom": "Kustom",
+      "modal": {
+        "title": "Sesuaikan waktu tunda",
+        "pick_a_date": "Pilih tanggal",
+        "pick_a_time": "Pilih waktu",
+        "select_date": "Pilih tanggal",
+        "select_time": "Pilih waktu",
+        "no_available_time": "Tidak ada waktu yang tersedia untuk tanggal ini"
+      }
     }
   }
 }

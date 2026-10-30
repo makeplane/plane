@@ -7,6 +7,14 @@
 import { FloatingOverlay } from "@floating-ui/react";
 import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
+// propel imports
+import {
+  SuggestionMenu,
+  SuggestionMenuGroup,
+  SuggestionMenuItem,
+  SuggestionMenuItemIcon,
+  SuggestionMenuItemTitle,
+} from "@makeplane/propel/elements/suggestion-menu";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { cn } from "@plane/utils";
@@ -127,54 +135,55 @@ export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
         }}
         lockScroll
       />
-      <div
-        ref={dropdownContainerRef}
-        className={cn(
-          "invisible relative max-h-80 w-[14rem] space-y-2 overflow-y-auto rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 opacity-0 shadow-raised-200 transition-opacity",
-          {
-            "visible opacity-100": isVisible,
-          }
-        )}
-        style={{
-          zIndex: 100,
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-        onMouseDown={(e) => {
-          e.stopPropagation();
-        }}
+      <SuggestionMenu
+        width="fit"
+        render={
+          <div
+            ref={dropdownContainerRef}
+            className={cn("invisible relative opacity-0 transition-opacity", {
+              "visible opacity-100": isVisible,
+            })}
+            style={{ zIndex: 100 }}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            onMouseDown={(e) => {
+              e.stopPropagation();
+            }}
+          />
+        }
       >
         {items.length ? (
-          items.map((item, index) => {
-            const isSelected = index === selectedIndex;
-            const emojiKey = item.shortcodes.join(" - ");
+          <SuggestionMenuGroup>
+            {items.map((item, index) => {
+              const isSelected = index === selectedIndex;
+              const emojiKey = item.shortcodes.join(" - ");
 
-            return (
-              <button
-                key={emojiKey}
-                id={`emoji-item-${index}`}
-                type="button"
-                className={cn(
-                  "flex w-full items-center gap-2 truncate rounded-sm px-2 py-1.5 text-left text-13 text-secondary transition-colors duration-150 hover:bg-layer-1-hover",
-                  {
-                    "bg-layer-1-hover": isSelected,
+              return (
+                <SuggestionMenuItem
+                  key={emojiKey}
+                  data-highlighted={isSelected ? "" : undefined}
+                  render={
+                    <button
+                      id={`emoji-item-${index}`}
+                      type="button"
+                      className="focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-inset"
+                      style={{ textAlign: "start" }}
+                      onClick={() => selectItem(index)}
+                      onMouseEnter={() => setSelectedIndex(index)}
+                    />
                   }
-                )}
-                onClick={() => selectItem(index)}
-                onMouseEnter={() => setSelectedIndex(index)}
-              >
-                <span className="grid size-5 flex-shrink-0 place-items-center text-14">{item.emoji}</span>
-                <span className="flex-grow truncate">
-                  <span className="font-medium">:{item.name}:</span>
-                </span>
-              </button>
-            );
-          })
+                >
+                  <SuggestionMenuItemIcon>{item.emoji}</SuggestionMenuItemIcon>
+                  <SuggestionMenuItemTitle>:{item.name}:</SuggestionMenuItemTitle>
+                </SuggestionMenuItem>
+              );
+            })}
+          </SuggestionMenuGroup>
         ) : (
-          <div className="py-2 text-center text-13 text-placeholder">No emojis found</div>
+          <div className="p-2 text-center text-body-sm-regular text-placeholder">No emojis found</div>
         )}
-      </div>
+      </SuggestionMenu>
     </>
   );
 });

@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Wybierz, aby zobaczyć szczegóły."
+        "title": "Nie wybrano powiadomienia",
+        "description": "Wybierz powiadomienie, aby zobaczyć jego szczegóły."
       },
       "all": {
         "title": "Brak przypisanych elementów",
@@ -52,7 +53,15 @@
       "5_days": "5 dni",
       "1_week": "1 tydzień",
       "2_weeks": "2 tygodnie",
-      "custom": "Niestandardowe"
+      "custom": "Niestandardowe",
+      "modal": {
+        "title": "Dostosuj czas odłożenia",
+        "pick_a_date": "Wybierz datę",
+        "pick_a_time": "Wybierz godzinę",
+        "select_date": "Wybierz datę",
+        "select_time": "Wybierz godzinę",
+        "no_available_time": "Brak dostępnych godzin dla tej daty"
+      }
     }
   }
 }

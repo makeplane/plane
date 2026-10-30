@@ -61,5 +61,8 @@
       "use_this": "Utiliser ceci",
       "refine": "Affiner"
     }
+  },
+  "formatting_toolbar": {
+    "label": "Mise en forme"
   }
 }

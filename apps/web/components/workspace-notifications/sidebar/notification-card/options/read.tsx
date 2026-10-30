@@ -45,7 +45,7 @@ export const NotificationItemReadOption = observer(function NotificationItemRead
       tooltipContent={data.read_at ? t("notification.options.mark_unread") : t("notification.options.mark_read")}
       callBack={handleNotificationUpdate}
     >
-      <ChatOutline className="h-3 w-3 text-tertiary" />
+      <ChatOutline className="size-4 text-icon-secondary" />
     </NotificationItemOptionButton>
   );
 });

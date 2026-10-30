@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // components
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, SETTINGS_DOCS_URLS } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
@@ -45,6 +45,7 @@ function FeaturesModulesSettingsPage({ params }: Route.ComponentProps) {
         <SettingsHeading
           title={t("project_settings.features.modules.title")}
           description={t("project_settings.features.modules.description")}
+          docHref={SETTINGS_DOCS_URLS.modules}
         />
         <div className="mt-7">
           <ProjectSettingsFeatureControlItem

@@ -4,72 +4,32 @@
  * See the LICENSE file for details.
  */
 
-import React, { useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
 import { STATE_GROUPS } from "@plane/constants";
 import { StateGroupIcon } from "@plane/blocks/icons";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
+import { FilterSubmenu } from "@/components/common/filters/filter-submenu";
 
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
-  searchQuery: string;
 };
 
+const STATE_GROUP_OPTIONS = Object.values(STATE_GROUPS).map((stateGroup) => ({
+  value: stateGroup.key,
+  label: stateGroup.label,
+  icon: <StateGroupIcon stateGroup={stateGroup.key} />,
+}));
+
 export const FilterStateGroup = observer(function FilterStateGroup(props: Props) {
-  const { appliedFilters, handleUpdate, searchQuery } = props;
-
-  const [itemsToRender, setItemsToRender] = useState(5);
-  const [previewEnabled, setPreviewEnabled] = useState(true);
-
-  const appliedFiltersCount = appliedFilters?.length ?? 0;
-
-  const filteredOptions = Object.values(STATE_GROUPS).filter((s) => s.key.includes(searchQuery.toLowerCase()));
-
-  const handleViewToggle = () => {
-    if (!filteredOptions) return;
-
-    if (itemsToRender === filteredOptions.length) setItemsToRender(5);
-    else setItemsToRender(filteredOptions.length);
-  };
+  const { appliedFilters, handleUpdate } = props;
 
   return (
-    <>
-      <FilterHeader
-        title={`State group${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
-        isPreviewEnabled={previewEnabled}
-        handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
-      />
-      {previewEnabled && (
-        <div>
-          {filteredOptions.length > 0 ? (
-            <>
-              {filteredOptions.slice(0, itemsToRender).map((stateGroup) => (
-                <FilterOption
-                  key={stateGroup.key}
-                  isChecked={appliedFilters?.includes(stateGroup.key) ? true : false}
-                  onClick={() => handleUpdate(stateGroup.key)}
-                  icon={<StateGroupIcon stateGroup={stateGroup.key} />}
-                  title={stateGroup.label}
-                />
-              ))}
-              {filteredOptions.length > 5 && (
-                <button
-                  type="button"
-                  className="ml-8 text-11 font-medium text-accent-primary"
-                  onClick={handleViewToggle}
-                >
-                  {itemsToRender === filteredOptions.length ? "View less" : "View all"}
-                </button>
-              )}
-            </>
-          ) : (
-            <p className="text-11 text-placeholder italic">No matches found</p>
-          )}
-        </div>
-      )}
-    </>
+    <FilterSubmenu
+      label="State group"
+      options={STATE_GROUP_OPTIONS}
+      appliedFilters={appliedFilters}
+      onToggle={handleUpdate}
+    />
   );
 });

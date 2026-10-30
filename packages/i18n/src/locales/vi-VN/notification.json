@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Chọn để xem chi tiết."
+        "title": "Chưa chọn thông báo nào",
+        "description": "Chọn một thông báo để xem chi tiết."
       },
       "all": {
         "title": "Không có mục công việc được giao",
@@ -52,7 +53,15 @@
       "5_days": "5 ngày",
       "1_week": "1 tuần",
       "2_weeks": "2 tuần",
-      "custom": "Tùy chỉnh"
+      "custom": "Tùy chỉnh",
+      "modal": {
+        "title": "Tùy chỉnh thời gian tạm hoãn",
+        "pick_a_date": "Chọn ngày",
+        "pick_a_time": "Chọn giờ",
+        "select_date": "Chọn ngày",
+        "select_time": "Chọn giờ",
+        "no_available_time": "Không có giờ khả dụng cho ngày này"
+      }
     }
   }
 }

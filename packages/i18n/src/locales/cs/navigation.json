@@ -7,6 +7,8 @@
     }
   },
   "sidebar": {
+    "more": "Více",
+    "hide": "Skrýt",
     "stickies": "Poznámky",
     "your_work": "Vaše práce",
     "projects": "Projekty",

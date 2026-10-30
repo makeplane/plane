@@ -5,7 +5,10 @@
  */
 
 import { PriorityIcon } from "@plane/blocks/icons";
+import { useTranslation } from "@plane/i18n";
 import { CloseOutline } from "@makeplane/propel/icons";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import type { TIssuePriorities } from "@plane/blocks/icons";
 
 type Props = {
@@ -15,20 +18,22 @@ type Props = {
 
 export function AppliedPriorityFilters(props: Props) {
   const { handleRemove, values } = props;
+  const { t } = useTranslation();
 
   return (
     <>
       {values?.map((priority) => (
-        <div key={priority} className="flex items-center gap-1 rounded-sm bg-layer-3 p-1 text-11">
+        <div key={priority} className="flex items-center gap-1 rounded-sm bg-layer-3 p-1 text-caption-sm-regular">
           <PriorityIcon priority={priority} className={`h-3 w-3`} />
           {priority}
-          <button
-            type="button"
-            className="grid place-items-center text-tertiary hover:text-secondary"
+          <IconButton
+            variant="ghost"
+            size="xs"
+            aria-label={`${t("common.remove")} ${priority}`}
+            showTooltip={false}
+            icon={<Icon icon={CloseOutline} />}
             onClick={() => handleRemove(priority)}
-          >
-            <CloseOutline height={10} width={10} />
-          </button>
+          />
         </div>
       ))}
     </>

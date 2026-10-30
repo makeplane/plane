@@ -6,6 +6,7 @@
     "status_page": "状态页面"
   },
   "submit": "提交",
+  "submitting": "提交中",
   "cancel": "取消",
   "loading": "加载中",
   "searching": "搜索中…",
@@ -153,6 +154,7 @@
   "no_favorites_yet": "暂无收藏",
   "create_folder": "创建文件夹",
   "new_folder": "新建文件夹",
+  "rename_folder": "重命名文件夹",
   "favorite_updated_successfully": "收藏更新成功",
   "favorite_created_successfully": "收藏创建成功",
   "folder_already_exists": "文件夹已存在",
@@ -368,6 +370,7 @@
   "member": "{count, plural, other{# 成员}}",
   "new_password_must_be_different_from_old_password": "新密码必须不同于旧密码",
   "edited": "已编辑",
+  "entity_detail_toolbar": "操作",
   "bot": "机器人",
   "settings_description": "一站式管理您的账户、工作区和项目偏好设置。在各个标签页之间切换，轻松进行配置。",
   "back_to_workspace": "返回工作区",
@@ -540,6 +543,7 @@
     "link_copied": "链接已复制！",
     "link_copied_to_clipboard": "链接已复制到剪贴板",
     "copied_to_clipboard": "工作项链接已复制到剪贴板",
+    "clipboard_copy_failed": "无法复制到剪贴板",
     "branch_name_copied_to_clipboard": "分支名称已复制到剪贴板",
     "is_copied_to_clipboard": "工作项已复制到剪贴板",
     "no_links_added_yet": "暂无添加的链接",
@@ -723,7 +727,14 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "status": "状态",
+    "tooltip": {
+      "copy_to_clipboard": "复制到剪贴板",
+      "created_on_date": "创建于 {date}",
+      "priority": "优先级：{value}"
+    },
+    "locked": "已锁定"
   },
   "chart": {
     "x_axis": "X轴",
@@ -874,5 +885,13 @@
       "short_description": "导出为 JSON"
     }
   },
-  "labels_count": "{count, plural, one {# 个标签} other {# 个标签}}"
+  "labels_count": "{count, plural, one {# 个标签} other {# 个标签}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "视图保存选项",
+      "update_view": "更新视图",
+      "save_as": "另存为",
+      "hide_filters": "隐藏筛选"
+    }
+  }
 }

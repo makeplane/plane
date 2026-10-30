@@ -5,25 +5,31 @@
  */
 
 import { useTranslation } from "@plane/i18n";
+import { InputField } from "@makeplane/propel/components/input-field";
 type TEstimateTextInputProps = {
   value?: string;
+  size?: "lg" | "xl";
   handleEstimateInputValue: (value: string) => void;
 };
 
 export function EstimateTextInput(props: TEstimateTextInputProps) {
-  const { value, handleEstimateInputValue } = props;
+  const { value, handleEstimateInputValue, size = "xl" } = props;
 
   // i18n
   const { t } = useTranslation();
 
   return (
-    <input
-      value={value}
-      onChange={(e) => handleEstimateInputValue(e.target.value)}
-      className="w-full border-none bg-transparent px-3 py-2 text-13 focus:border-0 focus:ring-0 focus:outline-none"
-      placeholder={t("project_settings.estimates.create.enter_estimate_point")}
-      autoFocus
-      type="text"
-    />
+    <div className="w-full">
+      <InputField
+        size={size}
+        orientation="vertical"
+        value={value}
+        onChange={(e) => handleEstimateInputValue(e.target.value)}
+        placeholder={t("project_settings.estimates.create.enter_estimate_point")}
+        aria-label={t("project_settings.estimates.create.enter_estimate_point")}
+        autoFocus
+        type="text"
+      />
+    </div>
   );
 }

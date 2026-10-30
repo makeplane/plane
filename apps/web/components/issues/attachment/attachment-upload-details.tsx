@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { CircularProgress } from "@makeplane/propel/components/circular-progress";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { getFileExtension, truncateText } from "@plane/utils";
+import { getFileExtension } from "@plane/utils";
 // ui
 // icons
 import { getFileIcon } from "@/components/icons";
@@ -32,27 +32,21 @@ export const IssueAttachmentsUploadDetails = observer(function IssueAttachmentsU
   const { isMobile } = usePlatformOS();
 
   return (
-    <div className="pointer-events-none flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-subtle bg-surface-2 px-4 py-2 text-13">
-      <div className="flex flex-shrink-0 items-center gap-3">
-        <div className="h-7 w-7">{fileIcon}</div>
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <Tooltip label={fileName} layout="stacked" disabled={isMobile}>
-              <span className="text-13">{truncateText(`${fileName}`, 10)}</span>
-            </Tooltip>
-          </div>
-
-          <div className="flex items-center gap-3 text-11 text-secondary">
-            <span>{fileExtension.toUpperCase()}</span>
-          </div>
+    <div className="pointer-events-none flex h-[60px] items-center gap-3 rounded-lg border border-subtle-1 px-4 py-2">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
+        <div className="grid size-7 shrink-0 place-items-center">{fileIcon}</div>
+        <div className="flex min-w-0 flex-col">
+          <Tooltip label={fileName} layout="stacked" disabled={isMobile}>
+            <span className="truncate text-body-xs-medium text-primary">{fileName}</span>
+          </Tooltip>
+          <span className="text-caption-sm-regular text-tertiary">
+            {fileExtension.toUpperCase()} · {uploadStatus.progress}% done
+          </span>
         </div>
       </div>
-      <div className="flex flex-shrink-0 items-center gap-2">
-        <span className="flex-shrink-0">
-          <CircularProgress value={uploadStatus.progress} size="md" variant="brand" aria-label="Upload progress" />
-        </span>
-        <div className="flex-shrink-0 text-13 font-medium">{uploadStatus.progress}% done</div>
-      </div>
+      <span className="shrink-0">
+        <CircularProgress value={uploadStatus.progress} size="md" variant="brand" aria-label="Upload progress" />
+      </span>
     </div>
   );
 });

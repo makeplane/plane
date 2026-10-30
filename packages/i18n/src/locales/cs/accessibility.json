@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Hlavní postranní panel",
+      "resize_sidebar": "Změnit velikost postranního panelu",
+      "sidebar_peek_view": "Náhled postranního panelu",
       "workspace_logo": "Logo pracovního prostoru",
       "open_workspace_switcher": "Otevřít přepínač pracovního prostoru",
       "open_user_menu": "Otevřít uživatelské menu",
@@ -42,6 +45,9 @@
       "open": "Otevřít výběr barvy",
       "swatches": "Přednastavené barvy",
       "hex_input": "Hexadecimální barva"
+    },
+    "project_board": {
+      "collapse_group": "Sbalit skupinu"
     }
   }
 }

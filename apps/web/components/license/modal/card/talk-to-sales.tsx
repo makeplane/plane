@@ -54,7 +54,7 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
   const renderActionButton = (price: TSubscriptionPrice) => (
     <>
       <div className="pb-4 text-center">
-        <div className="flex h-9 items-center justify-center text-20 font-semibold">
+        <div className="flex h-9 items-center justify-center text-h4-semibold">
           {isLoading ? (
             <Loader className="flex flex-col items-center justify-center">
               <Loader.Item height="36px" width="4rem" />

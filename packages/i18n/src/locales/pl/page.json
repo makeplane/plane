@@ -26,6 +26,16 @@
           "highlight_changes": "Podświetl zmiany"
         }
       },
+      "version_history": {
+        "view_only": "Tylko do odczytu",
+        "loading_details": "Wczytywanie szczegółów wersji",
+        "load_error_description": "Nie udało się wczytać wersji. Spróbuj ponownie.",
+        "list_error_description": "Nie udało się wczytać historii wersji.",
+        "try_again": "Spróbuj ponownie",
+        "restoring": "Przywracanie",
+        "restore_success": "Przywrócono wersję strony.",
+        "restore_failed": "Nie udało się przywrócić wersji strony."
+      },
       "assets": {
         "label": "Zasoby",
         "download_button": "Pobierz",

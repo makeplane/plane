@@ -4,15 +4,16 @@
  * See the LICENSE file for details.
  */
 
+import type { ComponentPropsWithoutRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { Pill } from "@makeplane/propel/components/pill";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { cn } from "@plane/utils";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty, TSupportedOperators } from "@plane/types";
 // local imports
 import { AddFilterDropdown } from "../add-filters/dropdown";
-import { COMMON_FILTER_ITEM_BORDER_CLASSNAME } from "../shared";
 
 interface IFilterItemPropertyProps<P extends TFilterProperty, E extends TExternalFilter> {
   conditionId: string;
@@ -39,36 +40,39 @@ export const FilterItemProperty = observer(function FilterItemProperty<
 
   return (
     <AddFilterDropdown
-      {...props}
+      filter={filter}
       handleFilterSelect={handleFilterSelect}
-      customButton={<PropertyButton {...props} />}
+      // the property segment is the trigger itself, so the pill group sees it as a direct child
+      triggerRender={<PropertyButton {...props} />}
     />
   );
 });
 
-type TPropertyButtonProps<P extends TFilterProperty, E extends TExternalFilter> = IFilterItemPropertyProps<P, E> & {
-  className?: string;
-};
+type TPropertyButtonProps<P extends TFilterProperty, E extends TExternalFilter> = IFilterItemPropertyProps<P, E> &
+  ComponentPropsWithoutRef<"button">;
 
 function PropertyButton<P extends TFilterProperty, E extends TExternalFilter>(props: TPropertyButtonProps<P, E>) {
-  const { icon: Icon, label, tooltipContent, className } = props;
+  // Whatever is not named here comes from the combobox trigger cloning this element, so it is
+  // forwarded to the pill.
+  const {
+    conditionId: _conditionId,
+    filter: _filter,
+    icon: PropertyIcon,
+    isDisabled,
+    label,
+    tooltipContent,
+    ...triggerProps
+  } = props;
 
   return (
     <Tooltip label={tooltipContent ?? ""} layout="stacked" side="bottom" align="start" disabled={!tooltipContent}>
-      <div
-        className={cn(
-          "flex h-full min-w-0 items-center gap-1 px-2 py-[5px] text-11 text-tertiary",
-          COMMON_FILTER_ITEM_BORDER_CLASSNAME,
-          className
-        )}
-      >
-        {Icon && (
-          <div className="flex-shrink-0 transition-transform duration-200 ease-in-out">
-            <Icon className="size-3.5" />
-          </div>
-        )}
-        <span className="truncate">{label}</span>
-      </div>
+      <Pill
+        // a disabled pill stays a button so the group's seams still line up with the next segment
+        disabled={isDisabled}
+        startIcon={PropertyIcon ? <Icon icon={PropertyIcon} tint="tertiary" /> : undefined}
+        label={label}
+        {...triggerProps}
+      />
     </Tooltip>
   );
 }

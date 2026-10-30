@@ -9,8 +9,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
 // plane ui
-import { Field } from "@makeplane/propel/components/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import type { TLinkEditableFields } from "@plane/types";
@@ -96,61 +95,49 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
               </DialogHeading>
             </DialogHeader>
             <DialogBody tabIndex={0}>
-              <div className="space-y-3">
-                <div>
-                  <label htmlFor="url" className="mb-2 text-14 font-medium text-secondary">
-                    {t("link.modal.url.text")}
-                    <span className="block text-10">{t("required")}</span>
-                  </label>
-                  <Controller
-                    control={control}
-                    name="url"
-                    rules={{
-                      required: t("link.modal.url.required"),
-                    }}
-                    render={({ field: { value, onChange, ref } }) => (
-                      <Field name="url" invalid={Boolean(errors.url)}>
-                        <InputGroup size="2xl">
-                          <Input
-                            size="2xl"
-                            id="url"
-                            type="text"
-                            value={value}
-                            onChange={onChange}
-                            ref={ref}
-                            placeholder={t("link.modal.url.placeholder")}
-                          />
-                        </InputGroup>
-                      </Field>
-                    )}
-                  />
-                  {errors.url && <span className="text-11 text-danger-primary">{t("link.modal.url.required")}</span>}
-                </div>
-                <div>
-                  <label htmlFor="title" className="mb-2 text-14 font-medium text-secondary">
-                    {t("link.modal.title.text")}
-                    <span className="block text-10">{t("optional")}</span>
-                  </label>
-                  <Controller
-                    control={control}
-                    name="title"
-                    render={({ field: { value, onChange, ref } }) => (
-                      <Field name="title" invalid={Boolean(errors.title)}>
-                        <InputGroup size="2xl">
-                          <Input
-                            size="2xl"
-                            id="title"
-                            type="text"
-                            value={value}
-                            onChange={onChange}
-                            ref={ref}
-                            placeholder={t("link.modal.title.placeholder")}
-                          />
-                        </InputGroup>
-                      </Field>
-                    )}
-                  />
-                </div>
+              <div className="space-y-5">
+                <Controller
+                  control={control}
+                  name="url"
+                  rules={{
+                    required: t("link.modal.url.required"),
+                  }}
+                  render={({ field: { value, onChange, ref } }) => (
+                    <InputField
+                      size="lg"
+                      orientation="vertical"
+                      name="url"
+                      label={t("link.modal.url.text")}
+                      required
+                      error={errors.url ? t("link.modal.url.required") : undefined}
+                      id="url"
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      placeholder={t("link.modal.url.placeholder")}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="title"
+                  render={({ field: { value, onChange, ref } }) => (
+                    <InputField
+                      size="lg"
+                      orientation="vertical"
+                      name="title"
+                      label={t("link.modal.title.text")}
+                      description={t("optional")}
+                      id="title"
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      placeholder={t("link.modal.title.placeholder")}
+                    />
+                  )}
+                />
               </div>
             </DialogBody>
           </DialogMain>

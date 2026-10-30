@@ -11,11 +11,17 @@
       "delete_project": {
         "title": "Șterge proiectul",
         "description": "La ștergerea unui proiect, toate datele și resursele din cadrul proiectului vor fi eliminate definitiv și nu vor putea fi recuperate.",
-        "button": "Șterge proiectul meu"
+        "button": "Șterge proiectul meu",
+        "confirm_description": "Ești sigur că vrei să ștergi proiectul {projectName}? Toate datele din acest proiect vor fi eliminate definitiv. Această acțiune nu poate fi anulată.",
+        "success_message": "Proiectul a fost șters cu succes."
       },
       "toast": {
         "success": "Proiect actualizat cu succes",
         "error": "Proiectul nu a putut fi actualizat. Te rugăm să încerci din nou."
+      },
+      "confirm_project_name_label": "Introdu numele proiectului pentru a continua.",
+      "leave_project": {
+        "confirm_description": "Ești sigur că vrei să părăsești proiectul {projectName}? Activitățile asociate cu tine nu vor mai fi accesibile."
       }
     },
     "members": {

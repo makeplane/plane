@@ -16,14 +16,18 @@ import {
   EUserPermissionsLevel,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Badge } from "@makeplane/propel/components/badge";
 import { Button } from "@makeplane/propel/components/button";
-import { LockOutline, ViewsOutline } from "@makeplane/propel/icons";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton as IconButtonElement } from "@makeplane/propel/elements/icon-button";
+import { LockOutline, PreferencesOutline, ViewsOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EViewAccess, EIssueLayoutTypes } from "@plane/types";
 import type { BreadcrumbNavigationItem } from "@plane/blocks/breadcrumb";
 import { Breadcrumbs, BreadcrumbNavigationSelect } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
+import { getPublishViewLink } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
@@ -53,6 +57,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
   const { t } = useTranslation();
   // store hooks
   const {
+    issues: { getGroupIssueCount },
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { toggleCreateIssueModal } = useCommandPalette();
@@ -106,6 +111,8 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
   );
 
   const viewDetails = viewId ? getViewById(viewId.toString()) : null;
+  const workItemsCount = getGroupIssueCount(undefined, undefined, false);
+  const publishLink = getPublishViewLink(viewDetails?.anchor);
 
   const canUserCreateIssue = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -157,6 +164,13 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
                 placeholder={t("views")}
                 searchPlaceholder={t("common.search.label")}
                 emptyMessage={t("common.search.no_matches_found")}
+                suffix={
+                  workItemsCount && workItemsCount > 0 ? (
+                    <Tooltip label={`${workItemsCount} ${t("issue.label", { count: workItemsCount })}`} side="bottom">
+                      <Badge variant="brand" size="xs" label={String(workItemsCount)} />
+                    </Tooltip>
+                  ) : null
+                }
                 isLast
               />
             }
@@ -173,8 +187,21 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
         ) : (
           <></>
         )}
+        {viewDetails.is_locked && (
+          <Badge variant="neutral" size="sm" startIcon={<Icon icon={LockOutline} />} label={t("common.locked")} />
+        )}
       </Header.LeftItem>
       <Header.RightItem className="items-center">
+        {viewDetails.anchor && publishLink && (
+          <a href={publishLink} target="_blank" rel="noopener noreferrer" className="inline-flex shrink-0 items-center">
+            <Badge
+              variant="success"
+              size="sm"
+              startIcon={<span className="size-1.5 shrink-0 rounded-full bg-success-primary" />}
+              label={t("common.live")}
+            />
+          </a>
+        )}
         <>
           {!viewDetails.is_locked && (
             <LayoutSelection
@@ -191,7 +218,15 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
           )}
           {viewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.PROJECT_VIEW} entityId={viewId} />}
           {!viewDetails.is_locked && (
-            <FiltersDropdown title="Display" placement="bottom-end">
+            <FiltersDropdown
+              title={t("common.display")}
+              placement="bottom-end"
+              menuButton={
+                <IconButtonElement variant="secondary" size="md" render={<span />}>
+                  <PreferencesOutline className="size-4" />
+                </IconButtonElement>
+              }
+            >
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[activeLayout] : undefined

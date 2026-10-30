@@ -9,9 +9,16 @@ import { Link } from "react-router";
 import { DefaultTabOutline, MoreHorizontalOutline, PinOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { cn } from "@plane/utils";
+import {
+  Menu,
+  MenuContent,
+  MenuItem,
+  MenuSubmenu,
+  MenuSubmenuContent,
+  MenuSubmenuTrigger,
+  MenuTrigger,
+} from "@makeplane/propel/components/menu";
+import { Icon } from "@makeplane/propel/components/icon";
 // local imports
 import type { TNavigationItem } from "./tab-navigation-root";
 import type { TTabPreferences } from "./tab-navigation-utils";
@@ -26,8 +33,8 @@ type Props = {
 
 /**
  * Overflow menu for tab navigation items
- * Displays items that don't fit in the visible area, with action icons
- * Shows "Eye" icon for user-hidden items, "Set as default" icon for all items
+ * Keeps direct navigation separate from each tab's preference actions.
+ * User-hidden tabs can be shown; every tab can be set or cleared as the default.
  */
 export function TabNavigationOverflowMenu({ overflowItems, isActive, tabPreferences, onToggleDefault, onShow }: Props) {
   const { t } = useTranslation();
@@ -53,48 +60,26 @@ export function TabNavigationOverflowMenu({ overflowItems, isActive, tabPreferen
           const isDefault = item.key === tabPreferences.defaultTab;
 
           return (
-            <MenuItem
-              key={`${item.key}-overflow-${itemIsActive ? "active" : "inactive"}`}
-              render={<Link to={item.href} className="group/menu-item" />}
-              label={t(item.i18n_key)}
-              trailing={
-                <div className="flex items-center">
-                  {/* Show Eye icon ONLY for user-hidden items */}
+            <React.Fragment key={`${item.key}-overflow-${itemIsActive ? "active" : "inactive"}`}>
+              <MenuItem
+                render={<Link to={item.href} />}
+                label={t(item.i18n_key)}
+                trailing={isDefault ? <Icon icon={DefaultTabOutline} size="sm" /> : undefined}
+              />
+              <MenuSubmenu>
+                <MenuSubmenuTrigger label={`${t(item.i18n_key)} — ${t("aria_labels.common.more_actions")}`} />
+                <MenuSubmenuContent>
                   {isHidden && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        onShow(item.key);
-                      }}
-                      className="invisible rounded-sm p-1 text-tertiary transition-colors group-hover/menu-item:visible hover:text-primary"
-                      title="Show"
-                    >
-                      <PinOutline className="size-3" />
-                    </button>
+                    <MenuItem icon={<Icon icon={PinOutline} />} label="Show" onClick={() => onShow(item.key)} />
                   )}
-                  <Tooltip label={isDefault ? "Clear default" : "Set as default"}>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        onToggleDefault(item.key);
-                      }}
-                      className={cn(
-                        "invisible rounded-sm p-1 text-tertiary transition-colors group-hover/menu-item:visible hover:text-primary",
-                        {
-                          visible: isDefault,
-                        }
-                      )}
-                      title={isDefault ? "Clear default" : "Set as default"}
-                    >
-                      <DefaultTabOutline className="size-3" />
-                    </button>
-                  </Tooltip>
-                </div>
-              }
-            />
+                  <MenuItem
+                    icon={<Icon icon={DefaultTabOutline} />}
+                    label={isDefault ? "Clear default" : "Set as default"}
+                    onClick={() => onToggleDefault(item.key)}
+                  />
+                </MenuSubmenuContent>
+              </MenuSubmenu>
+            </React.Fragment>
           );
         })}
       </MenuContent>

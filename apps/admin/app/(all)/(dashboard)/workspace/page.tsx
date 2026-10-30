@@ -12,11 +12,13 @@ import { LoadingOutline as LoaderIcon } from "@makeplane/propel/icons";
 // types
 import { Button } from "@makeplane/propel/components/button";
 import { Switch } from "@makeplane/propel/components/switch";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
+import { useTranslation } from "@plane/i18n";
 import type { TInstanceConfigurationKeys } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
-import { Skeleton } from "@/components/common/skeleton";
+import { Skeleton } from "@plane/blocks/skeleton";
 import { WorkspaceListItem } from "@/components/workspace/list-item";
 import { setPromiseToast } from "@plane/blocks/toast";
 // hooks
@@ -25,6 +27,8 @@ import { useInstance, useWorkspace } from "@/hooks/store";
 import type { Route } from "./+types/page";
 
 const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props: Route.ComponentProps) {
+  // plane hooks
+  const { t } = useTranslation();
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // store
@@ -84,16 +88,18 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
     >
       <div className="space-y-3">
         {formattedConfig ? (
-          <div className={cn("flex w-full items-center gap-14 rounded-sm")}>
-            <div className="flex grow items-center gap-4">
-              <div className="grow">
-                <div className="pb-1 text-16 font-medium">Prevent anyone else from creating a workspace.</div>
-                <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
+          <div className="flex w-full items-start justify-between gap-4 rounded-lg border border-subtle bg-layer-2 px-4 py-3 md:items-center md:gap-8">
+            <div className="flex min-w-0 grow items-center gap-4">
+              <div className="min-w-0 grow">
+                <div className="pb-1 text-body-sm-medium text-primary">
+                  Prevent anyone else from creating a workspace.
+                </div>
+                <div className="text-body-xs-regular leading-5 text-tertiary">
                   Toggling this on will let only you create workspaces. You will have to invite users to new workspaces.
                 </div>
               </div>
             </div>
-            <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
+            <div className={cn("shrink-0", { "opacity-70": isSubmitting })}>
               <div className="flex items-center gap-4">
                 <Switch
                   checked={Boolean(parseInt(disableWorkspaceCreation))}
@@ -118,15 +124,15 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
         )}
         {workspaceLoader !== "init-loader" ? (
           <>
-            <div className="flex items-center justify-between gap-2 pt-6">
+            <div className="flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-col items-start gap-x-2">
-                <div className="flex items-center gap-2 text-16 font-medium">
+                <div className="flex items-center gap-2 text-body-md-medium">
                   All workspaces on this instance <span className="text-tertiary">• {workspaceIds.length}</span>
                   {workspaceLoader && ["mutation", "pagination"].includes(workspaceLoader) && (
                     <LoaderIcon className="h-4 w-4 animate-spin" />
                   )}
                 </div>
-                <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
+                <div className="text-body-xs-regular leading-5 text-tertiary">
                   You can&apos;t yet delete workspaces and you can only go to the workspace if you are an Admin or a
                   Member.
                 </div>
@@ -143,9 +149,16 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
               </div>
             </div>
             <div className="flex flex-col gap-4 py-2">
-              {workspaceIds.map((workspaceId) => (
-                <WorkspaceListItem key={workspaceId} workspaceId={workspaceId} />
-              ))}
+              {workspaceIds.length > 0 ? (
+                workspaceIds.map((workspaceId) => <WorkspaceListItem key={workspaceId} workspaceId={workspaceId} />)
+              ) : paginationInfo ? (
+                <EmptyStateCompact
+                  assetKey="project"
+                  title={t("instance_workspaces.empty_state.title")}
+                  description={t("instance_workspaces.empty_state.description")}
+                  rootClassName="rounded-lg border border-subtle py-10"
+                />
+              ) : null}
             </div>
             {hasNextPage && (
               <div className="flex justify-center">

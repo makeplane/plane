@@ -30,7 +30,7 @@ export function PowerKModalNoSearchResultsCommand(props: TPowerKModalNoSearchRes
         label={
           <p className="flex items-center gap-2">
             {t("power_k.search_menu.no_results")}{" "}
-            <span className="shrink-0 text-13 text-tertiary">{t("power_k.search_menu.clear_search")}</span>
+            <span className="shrink-0 text-body-xs-regular text-tertiary">{t("power_k.search_menu.clear_search")}</span>
           </p>
         }
         onSelect={() => updateSearchTerm("")}

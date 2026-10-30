@@ -11,20 +11,25 @@ import { useTranslation } from "@plane/i18n";
 import type { TModuleStatus } from "@plane/blocks/icons";
 import { ModuleStatusIcon } from "@plane/blocks/icons";
 import { Select } from "@plane/blocks/select";
+import type { SelectVariant } from "@plane/blocks/select";
 import type { IModule } from "@plane/types";
 
 type ModuleStatusOption = (typeof MODULE_STATUS)[number];
 
 type Props = {
   isDisabled: boolean;
+  variant?: SelectVariant;
   moduleDetails: IModule;
   handleModuleDetailsChange: (payload: Partial<IModule>) => Promise<void>;
 };
 
 export const ModuleStatusDropdown = observer(function ModuleStatusDropdown(props: Props) {
-  const { isDisabled, moduleDetails, handleModuleDetailsChange } = props;
+  const { isDisabled, variant = "pill-sm", moduleDetails, handleModuleDetailsChange } = props;
   const { t } = useTranslation();
-  const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
+  // fall back to backlog so a module without a status can still have one set
+  const moduleStatus =
+    MODULE_STATUS.find((status) => status.value === moduleDetails.status) ??
+    MODULE_STATUS.find((status) => status.value === "backlog");
 
   if (!moduleStatus) return <></>;
 
@@ -42,23 +47,17 @@ export const ModuleStatusDropdown = observer(function ModuleStatusDropdown(props
       showSearch={false}
       pinSelected={false}
     >
-      {/* The chip carries the status colour (a runtime hex), so the trigger chrome is neutralised
-          and the coloured surface stays on the inner span — as it was under `customButton`. */}
       <Select.Trigger
-        variant="pill-md"
-        className={`h-6 border-none bg-transparent p-0 hover:bg-transparent active:bg-transparent ${
-          isDisabled ? "cursor-not-allowed" : "cursor-pointer"
-        }`}
+        disabled={isDisabled}
+        variant={variant}
+        prependIcon={() => <ModuleStatusIcon status={moduleStatus.value} />}
+        label={(statuses: ModuleStatusOption[]) => (statuses[0] ? t(statuses[0].i18n_label) : "")}
+        tooltip
       >
-        <span
-          className="flex h-6 w-20 items-center justify-center rounded-sm text-center text-11"
-          style={{
-            color: moduleStatus.color,
-            backgroundColor: `${moduleStatus.color}20`,
-          }}
-        >
-          {t(moduleStatus.i18n_label)}
-        </span>
+        {(statuses: ModuleStatusOption[]) => {
+          const status = statuses[0];
+          return !!status && <span className="min-w-0 grow truncate text-left">{t(status.i18n_label)}</span>;
+        }}
       </Select.Trigger>
     </Select>
   );

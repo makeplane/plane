@@ -39,6 +39,7 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
   // derived values
   const projectId = notification?.project || undefined;
   const issueId = notification?.data?.issue?.id || undefined;
+  const isUnread = notification.read_at === null;
   const workspace = getWorkspaceBySlug(workspaceSlug);
 
   const notificationField = notification?.data?.issue_activity.field || undefined;
@@ -75,12 +76,11 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
         "group relative flex cursor-pointer items-center gap-2 border-b border-subtle py-4 transition-all",
         {
           "bg-layer-1/30": currentSelectedNotificationId === notification?.id,
-          "bg-accent-primary/5": notification.read_at === null,
         }
       )}
       onClick={handleNotificationIssuePeekOverview}
     >
-      {notification.read_at === null && (
+      {isUnread && (
         <div className="absolute top-[50%] left-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent-primary" />
       )}
 
@@ -97,14 +97,20 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
           )}
         </div>
 
-        <div className="-mt-2 w-full space-y-1">
+        <div className="w-full space-y-1">
           <div className="relative flex h-8 items-center gap-3">
-            <div className="line-clamp-1 w-full truncate overflow-hidden text-body-xs-medium break-all whitespace-normal text-primary">
+            <div
+              className={cn(
+                "-mt-2 line-clamp-1 w-full truncate overflow-hidden break-all whitespace-normal",
+                isUnread ? "text-body-xs-semibold text-primary" : "text-body-xs-regular text-secondary"
+              )}
+            >
               <NotificationContent
                 notification={notification}
                 workspaceId={workspace.id}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
+                isUnread={isUnread}
               />
             </div>
             <NotificationOption

@@ -12,12 +12,14 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import type { TChartData } from "@plane/types";
+import { cn } from "@plane/utils";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 // services
 import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
+import { ANALYTICS_CHART_HEIGHT_CLASSNAME } from "../constants";
 import { ProjectInsightsLoader } from "../loaders";
 
 const RadarChart = lazy(function RadarChart() {
@@ -55,7 +57,7 @@ const ProjectInsights = observer(function ProjectInsights() {
     <AnalyticsSectionWrapper
       title={`${t("workspace_analytics.project_insights")}`}
       subtitle={selectedDurationLabel}
-      className="md:col-span-3"
+      className="lg:col-span-3"
     >
       {isLoadingProjectInsight ? (
         <ProjectInsightsLoader />
@@ -67,11 +69,11 @@ const ProjectInsights = observer(function ProjectInsights() {
           title={t("workspace_empty_state.analytics_work_items.title")}
         />
       ) : (
-        <div className="gap-8 lg:flex">
+        <div className="gap-8 xl:flex">
           {projectInsightsData && (
             <Suspense fallback={<ProjectInsightsLoader />}>
               <RadarChart
-                className="h-[350px] w-full text-accent-primary lg:w-3/5"
+                className={cn(ANALYTICS_CHART_HEIGHT_CLASSNAME, "w-full text-accent-primary xl:w-3/5")}
                 data={projectInsightsData}
                 dataKey="key"
                 radars={[
@@ -95,16 +97,16 @@ const ProjectInsights = observer(function ProjectInsights() {
               />
             </Suspense>
           )}
-          <div className="w-full lg:w-2/5">
-            <div className="text-13 text-tertiary">{t("workspace_analytics.summary_of_projects")}</div>
+          <div className="w-full xl:w-2/5">
+            <div className="text-body-xs-regular text-tertiary">{t("workspace_analytics.summary_of_projects")}</div>
             <div className="mb-3 border-b border-subtle py-2">{t("workspace_analytics.all_projects")}</div>
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between text-13 text-tertiary">
+              <div className="flex items-center justify-between text-body-xs-regular text-tertiary">
                 <div>{t("workspace_analytics.trend_on_charts")}</div>
                 <div>{t("common.work_items")}</div>
               </div>
               {projectInsightsData?.map((item) => (
-                <div key={item.key} className="flex items-center justify-between text-13 text-primary">
+                <div key={item.key} className="flex items-center justify-between text-body-xs-regular text-primary">
                   <div>{item.name}</div>
                   <div className="flex items-center gap-1">
                     {/* <TrendPiece key={item.key} size='xs' /> */}

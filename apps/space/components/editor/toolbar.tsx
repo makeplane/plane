@@ -6,11 +6,19 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 // plane imports
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import {
+  Toolbar,
+  ToolbarButton,
+  ToolbarGroup,
+  ToolbarSeparator,
+  ToolbarToggle,
+} from "@makeplane/propel/components/toolbar";
+import { Tooltip, TooltipProvider } from "@makeplane/propel/components/tooltip";
 import { TOOLBAR_ITEMS } from "@plane/editor";
 import type { ToolbarMenuItem, EditorRefApi } from "@plane/editor";
-import { Button } from "@makeplane/propel/components/button";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { cn } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   executeCommand: (item: ToolbarMenuItem) => void;
@@ -23,8 +31,13 @@ type Props = {
 
 const toolbarItems = TOOLBAR_ITEMS.lite;
 
+// keep focus (and the current selection) inside the editor when a toolbar control is pressed, so
+// formatting commands don't run against a lost selection
+const preserveEditorFocus = (e: React.MouseEvent) => e.preventDefault();
+
 export function IssueCommentToolbar(props: Props) {
   const { executeCommand, handleSubmit, isCommentEmpty, editorRef, isSubmitting, showSubmitButton } = props;
+  const { t } = useTranslation();
   // states
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
 
@@ -54,63 +67,61 @@ export function IssueCommentToolbar(props: Props) {
   }, [editorRef, updateActiveStates]);
 
   return (
-    <div className="flex h-9 w-full items-stretch gap-1.5 overflow-x-scroll">
-      <div className="flex w-full items-stretch justify-between gap-2 rounded-sm border-[0.5px] border-subtle p-1">
-        <div className="flex items-stretch">
-          {Object.keys(toolbarItems).map((key, index) => (
-            <div
-              key={key}
-              className={cn("flex items-stretch gap-0.5 border-r border-subtle px-2.5", {
-                "pl-0": index === 0,
-              })}
-            >
-              {toolbarItems[key].map((item) => {
-                const isItemActive = activeStates[item.renderKey];
-
-                return (
-                  <Tooltip
-                    key={item.renderKey}
-                    label={item.name}
-                    shortcut={item.shortcut ? item.shortcut.join(" + ") : undefined}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => executeCommand(item)}
-                      className={cn(
-                        "grid aspect-square place-items-center rounded-xs p-0.5 text-placeholder hover:bg-layer-transparent-hover",
-                        {
-                          "bg-layer-transparent-hover text-primary": isItemActive,
-                        }
+    <TooltipProvider>
+      <div className="flex w-full items-center justify-between gap-2">
+        <div
+          className="horizontal-scrollbar scrollbar-sm min-w-0 overflow-x-auto"
+          onFocusCapture={(event) => {
+            if (event.currentTarget.contains(event.target)) {
+              event.target.scrollIntoView({ block: "nearest", inline: "nearest" });
+            }
+          }}
+        >
+          <Toolbar size="sm" elevation="flat" aria-label={t("common.comment")}>
+            {Object.keys(toolbarItems).map((key, index) => (
+              <React.Fragment key={key}>
+                {index > 0 && <ToolbarSeparator />}
+                <ToolbarGroup>
+                  {toolbarItems[key].map((item) => (
+                    <Tooltip key={item.renderKey} label={item.name} shortcut={item.shortcut?.join(" + ")}>
+                      {key === "complex" ? (
+                        <ToolbarButton
+                          aria-label={item.name}
+                          icon={<Icon icon={item.icon} />}
+                          onMouseDown={preserveEditorFocus}
+                          onClick={() => executeCommand(item)}
+                        />
+                      ) : (
+                        <ToolbarToggle
+                          aria-label={item.name}
+                          render={<button className="data-pressed:text-icon-secondary!" />}
+                          icon={<Icon icon={item.icon} />}
+                          pressed={!!activeStates[item.renderKey]}
+                          onMouseDown={preserveEditorFocus}
+                          onPressedChange={() => executeCommand(item)}
+                        />
                       )}
-                    >
-                      <item.icon
-                        className={cn("h-3.5 w-3.5", {
-                          "text-primary": isItemActive,
-                        })}
-                        strokeWidth={2.5}
-                      />
-                    </button>
-                  </Tooltip>
-                );
-              })}
-            </div>
-          ))}
+                    </Tooltip>
+                  ))}
+                </ToolbarGroup>
+              </React.Fragment>
+            ))}
+          </Toolbar>
         </div>
         {showSubmitButton && (
-          <div className="sticky right-1">
-            <Button
-              type="button"
-              variant="primary"
-              size="sm"
-              stretch="auto"
-              label="Comment"
-              onClick={handleSubmit}
-              disabled={isCommentEmpty}
-              loading={isSubmitting}
-            />
-          </div>
+          <Button
+            type="button"
+            variant="primary"
+            size="sm"
+            stretch="auto"
+            label={t("common.comment")}
+            onMouseDown={preserveEditorFocus}
+            onClick={handleSubmit}
+            disabled={isCommentEmpty}
+            loading={isSubmitting}
+          />
         )}
       </div>
-    </div>
+    </TooltipProvider>
   );
 }

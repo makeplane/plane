@@ -2,6 +2,13 @@
   "module": {
     "label": "{count, plural, one {模組} other {模組}}",
     "no_module": "無模組",
-    "select": "新增模組"
+    "select": "新增模組",
+    "details_drawer": {
+      "progress": {
+        "done": "已完成 {completed}/{scope, plural, one {# 個工作事項} other {# 個工作事項}}",
+        "points_done": "已完成 {completed}/{scope, plural, one {# 點} other {# 點}}",
+        "empty": "將工作事項加入模組以追蹤進度。"
+      }
+    }
   }
 }

@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Główny panel boczny",
+      "resize_sidebar": "Zmień rozmiar panelu bocznego",
+      "sidebar_peek_view": "Podgląd panelu bocznego",
       "workspace_logo": "Logo obszaru roboczego",
       "open_workspace_switcher": "Otwórz przełącznik obszaru roboczego",
       "open_user_menu": "Otwórz menu użytkownika",
@@ -42,6 +45,9 @@
       "open": "Otwórz próbnik kolorów",
       "swatches": "Kolory predefiniowane",
       "hex_input": "Kolor szesnastkowy"
+    },
+    "project_board": {
+      "collapse_group": "Zwiń grupę"
     }
   }
 }

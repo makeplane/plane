@@ -12,12 +12,11 @@ import useSWR from "swr";
 // ui
 import { LogOutOutline } from "@makeplane/propel/icons";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { Button as ButtonElement } from "@makeplane/propel/elements/button";
+import { Button } from "@makeplane/propel/components/button";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import { PlaneLogo } from "@plane/blocks/icons";
 import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-// assets
-import WorkSpaceNotAvailable from "@/app/assets/workspace/workspace-not-available.png?url";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // constants
@@ -157,7 +156,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
               <PlaneLogo className="h-9 w-auto text-primary" />
             </div>
             <div className="relative flex items-center gap-2">
-              <div className="text-13 font-medium">{currentUser?.email}</div>
+              <div className="text-body-xs-medium">{currentUser?.email}</div>
               <Tooltip label="Sign out" alignOffset={8} disabled={isMobile}>
                 <button
                   type="button"
@@ -170,36 +169,47 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
               </Tooltip>
             </div>
           </div>
-          <div className="relative flex h-full w-full flex-grow flex-col items-center justify-center space-y-3">
-            <div className="relative flex-shrink-0">
-              <img src={WorkSpaceNotAvailable} className="h-[220px] object-contain object-center" alt="Plane logo" />
-            </div>
-            <h3 className="text-center text-16 font-semibold">Workspace not found</h3>
-            <p className="text-center text-13 text-secondary">
-              No workspace found with the URL. It may not exist or you lack authorization to view it.
-            </p>
-            <div className="flex items-center justify-center gap-2 pt-4">
-              {allWorkspaces && allWorkspaces.length > 0 && (
-                <ButtonElement variant="primary" size="sm" stretch="auto" render={<Link href="/" />}>
-                  Go Home
-                </ButtonElement>
-              )}
-              {allWorkspaces?.length > 0 && (
-                <ButtonElement
-                  variant="secondary"
-                  size="sm"
-                  stretch="auto"
-                  render={<Link href="/settings/profile/general/" />}
-                >
-                  Visit Profile
-                </ButtonElement>
-              )}
-              {allWorkspaces && allWorkspaces.length === 0 && (
-                <ButtonElement variant="secondary" size="sm" stretch="auto" render={<Link href="/create-workspace/" />}>
-                  Create new workspace
-                </ButtonElement>
-              )}
-            </div>
+          <div className="relative flex h-full w-full flex-grow flex-col items-center justify-center">
+            <EmptyStateDetailed
+              align="center"
+              assetKey="invalid-link"
+              assetClassName="size-40"
+              title="Workspace not found"
+              description="No workspace found with the URL. It may not exist or you lack authorization to view it."
+              customButton={
+                <div className="flex flex-col gap-4 sm:flex-row">
+                  {allWorkspaces.length > 0 ? (
+                    <>
+                      <Button
+                        variant="primary"
+                        size="lg"
+                        stretch="auto"
+                        label="Go Home"
+                        nativeButton={false}
+                        render={<Link href="/" />}
+                      />
+                      <Button
+                        variant="secondary"
+                        size="lg"
+                        stretch="auto"
+                        label="Visit Profile"
+                        nativeButton={false}
+                        render={<Link href="/settings/profile/general/" />}
+                      />
+                    </>
+                  ) : (
+                    <Button
+                      variant="secondary"
+                      size="lg"
+                      stretch="auto"
+                      label="Create new workspace"
+                      nativeButton={false}
+                      render={<Link href="/create-workspace/" />}
+                    />
+                  )}
+                </div>
+              }
+            />
           </div>
 
           <div className="absolute top-0 bottom-0 left-4 w-0 bg-layer-1 md:w-0.5" />
@@ -215,19 +225,29 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
         <div className="grid h-full place-items-center p-4">
           <div className="space-y-8 text-center">
             <div className="space-y-2">
-              <h3 className="text-16 font-semibold">Not Authorized!</h3>
-              <p className="mx-auto w-1/2 text-13 text-secondary">
+              <h3 className="text-h6-semibold">Not Authorized!</h3>
+              <p className="mx-auto w-1/2 text-body-xs-regular text-secondary">
                 You{"'"}re not a member of this workspace. Please contact the workspace admin to get an invitation or
                 check your pending invitations.
               </p>
             </div>
             <div className="flex items-center justify-center gap-2">
-              <ButtonElement variant="secondary" size="sm" stretch="auto" render={<Link href="/invitations" />}>
-                Check pending invites
-              </ButtonElement>
-              <ButtonElement variant="primary" size="sm" stretch="auto" render={<Link href="/create-workspace" />}>
-                Create new workspace
-              </ButtonElement>
+              <Button
+                variant="secondary"
+                size="sm"
+                stretch="auto"
+                label="Check pending invites"
+                nativeButton={false}
+                render={<Link href="/invitations" />}
+              />
+              <Button
+                variant="primary"
+                size="sm"
+                stretch="auto"
+                label="Create new workspace"
+                nativeButton={false}
+                render={<Link href="/create-workspace" />}
+              />
             </div>
           </div>
         </div>

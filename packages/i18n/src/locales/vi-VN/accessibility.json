@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Thanh bên chính",
+      "resize_sidebar": "Đổi kích thước thanh bên",
+      "sidebar_peek_view": "Xem trước thanh bên",
       "workspace_logo": "Logo không gian làm việc",
       "open_workspace_switcher": "Mở trình chuyển đổi không gian làm việc",
       "open_user_menu": "Mở menu người dùng",
@@ -42,6 +45,9 @@
       "open": "Mở bộ chọn màu",
       "swatches": "Màu có sẵn",
       "hex_input": "Màu hệ hex"
+    },
+    "project_board": {
+      "collapse_group": "Thu gọn nhóm"
     }
   }
 }

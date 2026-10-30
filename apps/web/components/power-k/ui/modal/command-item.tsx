@@ -8,6 +8,7 @@ import React from "react";
 import { Command } from "cmdk";
 
 import { TickOutline } from "@makeplane/propel/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // plane imports
 import { cn } from "@plane/utils";
 // local imports
@@ -25,6 +26,8 @@ type Props = {
   onSelect: () => void;
   shortcut?: string;
   value?: string;
+  /** Full text shown in a tooltip when the label is truncated. */
+  tooltipContent?: string;
 };
 
 export function PowerKModalCommandItem(props: Props) {
@@ -39,18 +42,25 @@ export function PowerKModalCommandItem(props: Props) {
     onSelect,
     shortcut,
     value,
+    tooltipContent,
   } = props;
 
   return (
     <Command.Item value={value} onSelect={onSelect} className="focus:outline-none" disabled={isDisabled}>
       <div
-        className={cn("flex items-center gap-2 text-secondary", {
+        className={cn("flex min-w-0 flex-1 items-center gap-2 text-secondary", {
           "opacity-70": isDisabled,
         })}
       >
         {Icon && <Icon className="size-3.5 shrink-0" />}
-        {iconNode}
-        {label}
+        {iconNode && <div className="flex shrink-0">{iconNode}</div>}
+        {tooltipContent ? (
+          <Tooltip label={tooltipContent} side="bottom" align="start">
+            <div className="min-w-0 truncate">{label}</div>
+          </Tooltip>
+        ) : (
+          <div className="min-w-0 truncate">{label}</div>
+        )}
       </div>
       <div className="flex shrink-0 items-center gap-2">
         {isSelected && <TickOutline className="size-3 shrink-0 text-secondary" />}

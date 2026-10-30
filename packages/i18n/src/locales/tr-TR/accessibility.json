@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Ana kenar çubuğu",
+      "resize_sidebar": "Kenar çubuğunu yeniden boyutlandır",
+      "sidebar_peek_view": "Kenar çubuğu önizlemesi",
       "workspace_logo": "Çalışma alanı logosu",
       "open_workspace_switcher": "Çalışma alanı değiştiricisini aç",
       "open_user_menu": "Kullanıcı menüsünü aç",
@@ -42,6 +45,9 @@
       "open": "Renk seçiciyi aç",
       "swatches": "Hazır renkler",
       "hex_input": "Hex renk"
+    },
+    "project_board": {
+      "collapse_group": "Grubu daralt"
     }
   }
 }

@@ -11,7 +11,9 @@ import { GlobeOutline, LockOutline } from "@makeplane/propel/icons";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { Badge } from "@makeplane/propel/components/badge";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { useTranslation } from "@plane/i18n";
 import type { IProjectView } from "@plane/types";
 import { EViewAccess } from "@plane/types";
 import { FavoriteStar } from "@plane/blocks/common";
@@ -33,6 +35,7 @@ type Props = {
 
 export const ViewListItemAction = observer(function ViewListItemAction(props: Props) {
   const { parentRef, view } = props;
+  const { t } = useTranslation();
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
@@ -90,20 +93,20 @@ export const ViewListItemAction = observer(function ViewListItemAction(props: Pr
       )}
       <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
       <div className="cursor-default text-tertiary">
-        <Tooltip label={access === EViewAccess.PUBLIC ? "Public" : "Private"}>
+        <Tooltip label={access === EViewAccess.PUBLIC ? t("common.access.public") : t("common.access.private")}>
           {access === EViewAccess.PUBLIC ? <GlobeOutline className="h-4 w-4" /> : <LockOutline className="h-4 w-4" />}
         </Tooltip>
       </div>
 
       {view?.anchor && publishLink ? (
-        // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
-        <div
-          className="flex cursor-pointer items-center gap-1.5 rounded-sm bg-success-subtle px-3 py-1.5 text-11 font-medium text-success-primary"
-          onClick={() => setPublishModalOpen(true)}
-        >
-          <span className="size-1.5 flex-shrink-0 rounded-full bg-success-primary" />
-          Live
-        </div>
+        <button type="button" className="flex-shrink-0 cursor-pointer" onClick={() => setPublishModalOpen(true)}>
+          <Badge
+            variant="success"
+            size="sm"
+            startIcon={<span className="size-1.5 flex-shrink-0 rounded-full bg-success-primary" />}
+            label={t("common.live")}
+          />
+        </button>
       ) : (
         <></>
       )}

@@ -9,8 +9,8 @@ import { observer } from "mobx-react";
 // icons
 import { EIconSize } from "@plane/constants";
 import { StateGroupIcon } from "@plane/blocks/icons";
-import { CloseOutline } from "@makeplane/propel/icons";
 import type { TStateGroups } from "@plane/types";
+import { RemovableChip } from "@/components/common/removable-chip";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -23,17 +23,14 @@ export const AppliedStateGroupFilters = observer(function AppliedStateGroupFilte
   return (
     <>
       {values.map((stateGroup) => (
-        <div key={stateGroup} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
-          <StateGroupIcon stateGroup={stateGroup as TStateGroups} size={EIconSize.SM} />
-          {stateGroup}
-          <button
-            type="button"
-            className="grid place-items-center text-tertiary hover:text-secondary"
-            onClick={() => handleRemove(stateGroup)}
-          >
-            <CloseOutline height={10} width={10} />
-          </button>
-        </div>
+        <RemovableChip
+          key={stateGroup}
+          variant="soft"
+          icon={<StateGroupIcon stateGroup={stateGroup as TStateGroups} size={EIconSize.SM} />}
+          label={stateGroup}
+          ariaLabel={stateGroup}
+          onRemove={() => handleRemove(stateGroup)}
+        />
       ))}
     </>
   );

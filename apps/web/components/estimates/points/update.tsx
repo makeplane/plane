@@ -7,13 +7,13 @@
 import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { CloseOutline, InfoOutline, TickOutline } from "@makeplane/propel/icons";
+import { InfoOutline } from "@makeplane/propel/icons";
+import { Button } from "@makeplane/propel/components/button";
 import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
-import { Spinner } from "@plane/blocks/spinner";
 import { cn, isEstimatePointValuesRepeated } from "@plane/utils";
 import { EstimateInputRoot } from "@/components/estimates/inputs/root";
 // helpers
@@ -171,14 +171,17 @@ export const EstimatePointUpdate = observer(function EstimatePointUpdate(props: 
   };
 
   return (
-    <form onSubmit={handleUpdate} className="relative flex items-center gap-2 pr-2.5 text-14">
+    <form
+      onSubmit={handleUpdate}
+      className="my-1 flex w-full scroll-m-8 items-center gap-2 rounded-lg border border-subtle-1 bg-layer-2 px-3 py-2 text-primary"
+    >
       <div
-        className={cn(
-          "relative my-1 flex w-full items-center rounded-sm border",
-          estimatePointError?.message ? `border-danger-strong` : `border-subtle`
-        )}
+        className={cn("relative flex min-w-0 flex-1 items-center gap-2 rounded-md", {
+          "border border-danger-strong": estimatePointError?.message,
+        })}
       >
         <EstimateInputRoot
+          size="lg"
           estimateType={estimateType}
           handleEstimateInputValue={handleEstimateInputValue}
           value={estimateInputValue}
@@ -194,7 +197,7 @@ export const EstimatePointUpdate = observer(function EstimatePointUpdate(props: 
               layout="stacked"
               side="bottom"
             >
-              <div className="relative mr-3 flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center overflow-hidden text-danger-primary">
+              <div className="relative mr-3 flex size-3.5 shrink-0 items-center justify-center overflow-hidden text-danger-primary">
                 <InfoOutline width={14} height={14} />
               </div>
             </Tooltip>
@@ -202,23 +205,24 @@ export const EstimatePointUpdate = observer(function EstimatePointUpdate(props: 
         )}
       </div>
 
-      {estimateInputValue && estimateInputValue.length > 0 && (
-        <button
-          type="submit"
-          className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs text-success-primary transition-colors hover:bg-layer-1"
-          disabled={loader}
-        >
-          {loader ? <Spinner className="h-4 w-4" /> : <TickOutline width={14} height={14} />}
-        </button>
-      )}
-      <button
+      <Button
         type="button"
-        className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs transition-colors hover:bg-layer-1"
+        variant="ghost"
+        size="lg"
+        stretch="auto"
         onClick={handleClose}
         disabled={loader}
-      >
-        <CloseOutline height={14} width={14} className="text-secondary" />
-      </button>
+        label={t("cancel")}
+      />
+      <Button
+        type="submit"
+        variant="secondary"
+        size="lg"
+        stretch="auto"
+        loading={loader}
+        disabled={!estimateInputValue}
+        label={loader ? t("updating") : t("update")}
+      />
     </form>
   );
 });

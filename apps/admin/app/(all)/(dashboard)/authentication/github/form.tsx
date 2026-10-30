@@ -195,9 +195,9 @@ export function InstanceGithubConfigForm(props: Props) {
         handleClose={() => setIsDiscardChangesModalOpen(false)}
       />
       <div className="flex flex-col gap-8">
-        <div className="grid w-full grid-cols-2 gap-x-12 gap-y-8">
+        <div className="grid w-full grid-cols-2 gap-x-8 gap-y-8">
           <div className="col-span-2 flex flex-col gap-y-4 pt-1 md:col-span-1">
-            <div className="pt-2.5 text-18 font-medium">GitHub-provided details for Plane</div>
+            <div className="text-h6-medium text-primary">GitHub-provided details for Plane</div>
             {GITHUB_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -213,7 +213,7 @@ export function InstanceGithubConfigForm(props: Props) {
             ))}
             <ControllerSwitch control={control} field={GITHUB_FORM_SWITCH_FIELD} />
             <div className="flex flex-col gap-1 pt-4">
-              <div className="flex items-center gap-4">
+              <div className="flex flex-wrap items-center gap-2">
                 <Button
                   variant="primary"
                   size="md"
@@ -235,7 +235,7 @@ export function InstanceGithubConfigForm(props: Props) {
             </div>
           </div>
           <div className="col-span-2 flex flex-col gap-y-6 md:col-span-1">
-            <div className="pt-2 text-18 font-medium">Plane-provided details for GitHub</div>
+            <div className="text-h6-medium text-primary">Plane-provided details for GitHub</div>
 
             <div className="flex flex-col gap-y-4">
               {/* common service details */}
@@ -247,8 +247,8 @@ export function InstanceGithubConfigForm(props: Props) {
 
               {/* web service details */}
               <div className="flex flex-col overflow-hidden rounded-lg">
-                <div className="flex items-center gap-x-3 bg-layer-3 px-6 py-3 text-11 font-medium text-secondary uppercase">
-                  <MonitorOutline className="h-3 w-3" />
+                <div className="flex items-center gap-x-2 bg-layer-3 px-6 py-3 text-caption-sm-medium text-secondary uppercase">
+                  <MonitorOutline className="size-3.5" />
                   Web
                 </div>
                 <div className="flex flex-col gap-y-4 bg-layer-1 px-6 py-4">

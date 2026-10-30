@@ -4,11 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 
 export type TSidebarMenuItem = {
-  Icon: LucideIcon | React.ComponentType<{ className?: string }>;
+  Icon: IconGlyph;
   name: string;
+  /** Shown as the row's tooltip; the sidebar renders names only. */
   description: string;
   href: string;
 };

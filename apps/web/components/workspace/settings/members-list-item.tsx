@@ -93,7 +93,7 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
   return (
     // propel: a bounded flex column so the Table frame shrinks to the settings page's height and
     // scrolls in its own viewport (the sticky header sticks to that viewport).
-    <div className="flex min-h-0 grow flex-col">
+    <div className="flex min-h-0 grow flex-col [&_tr[data-suspended]]:opacity-60">
       {removeMemberModal && (
         <ConfirmWorkspaceMemberRemove
           isOpen={removeMemberModal.member.id.length > 0}
@@ -111,6 +111,7 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
           (memberDetails?.filter((member): member is IWorkspaceMember => member !== null) ?? []) as unknown as RowData[]
         }
         keyExtractor={(rowData) => rowData?.member.id ?? ""}
+        getRowProps={(rowData) => ({ "data-suspended": rowData.is_active === false ? "" : undefined })}
       />
     </div>
   );

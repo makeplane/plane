@@ -6,6 +6,7 @@
     "status_page": "durum sayfamızı ziyaret edin"
   },
   "submit": "Gönder",
+  "submitting": "Gönderiliyor",
   "cancel": "İptal",
   "loading": "Yükleniyor",
   "searching": "Aranıyor...",
@@ -153,6 +154,7 @@
   "no_favorites_yet": "Henüz favori yok",
   "create_folder": "Klasör oluştur",
   "new_folder": "Yeni Klasör",
+  "rename_folder": "Klasörü yeniden adlandır",
   "favorite_updated_successfully": "Favori başarıyla güncellendi",
   "favorite_created_successfully": "Favori başarıyla oluşturuldu",
   "folder_already_exists": "Klasör zaten var",
@@ -368,6 +370,7 @@
   "member": "{count, plural, one{# üye} other{# üye}}",
   "new_password_must_be_different_from_old_password": "Yeni şifre eski şifreden farklı olmalı",
   "edited": "düzenlendi",
+  "entity_detail_toolbar": "İşlemler",
   "bot": "Bot",
   "settings_description": "Hesap, çalışma alanı ve proje tercihlerinizi tek yerden yönetin. Kolayca yapılandırmak için sekmeler arasında geçiş yapın.",
   "back_to_workspace": "Çalışma alanına dön",
@@ -540,6 +543,7 @@
     "link_copied": "Bağlantı kopyalandı!",
     "link_copied_to_clipboard": "Bağlantı panoya kopyalandı",
     "copied_to_clipboard": "İş öğesi bağlantısı panoya kopyalandı",
+    "clipboard_copy_failed": "Panoya kopyalanamadı",
     "branch_name_copied_to_clipboard": "Dal adı panoya kopyalandı",
     "is_copied_to_clipboard": "İş öğesi panoya kopyalandı",
     "no_links_added_yet": "Henüz bağlantı eklenmedi",
@@ -723,7 +727,14 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "status": "Durum",
+    "tooltip": {
+      "copy_to_clipboard": "Panoya kopyala",
+      "created_on_date": "Oluşturulma tarihi: {date}",
+      "priority": "Öncelik: {value}"
+    },
+    "locked": "Kilitli"
   },
   "chart": {
     "x_axis": "X ekseni",
@@ -874,5 +885,13 @@
       "short_description": "JSON olarak aktar"
     }
   },
-  "labels_count": "{count, plural, one {# etiket} other {# etiket}}"
+  "labels_count": "{count, plural, one {# etiket} other {# etiket}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Görünüm kaydetme seçenekleri",
+      "update_view": "Görünümü güncelle",
+      "save_as": "Farklı kaydet",
+      "hide_filters": "Filtreleri gizle"
+    }
+  }
 }

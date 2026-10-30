@@ -35,7 +35,7 @@ export const NotificationCardListRoot = observer(function NotificationCardListRo
 
   if (!workspaceSlug || !workspaceId || !notificationIds) return <></>;
   return (
-    <div>
+    <>
       {notificationIds.map((notificationId: string) => (
         <NotificationItem key={notificationId} workspaceSlug={workspaceSlug} notificationId={notificationId} />
       ))}
@@ -44,19 +44,24 @@ export const NotificationCardListRoot = observer(function NotificationCardListRo
       {paginationInfo && paginationInfo?.next_page_results && (
         <>
           {loader === ENotificationLoader.PAGINATION_LOADER ? (
-            <div className="flex items-center justify-center py-4 text-13 font-medium">
+            <div className="flex items-center justify-center py-4 text-body-xs-medium">
               <div className="text-accent-secondary">{t("loading")}...</div>
             </div>
           ) : (
-            // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
-            <div className="flex items-center justify-center py-4 text-13 font-medium" onClick={getNextNotifications}>
-              <div className="cursor-pointer text-accent-secondary transition-all hover:text-accent-primary">
+            <div className="flex items-center justify-center py-4 text-body-xs-medium">
+              <button
+                type="button"
+                className="cursor-pointer text-accent-secondary transition-colors hover:text-accent-primary"
+                onClick={() => {
+                  void getNextNotifications();
+                }}
+              >
                 {t("load_more")}
-              </div>
+              </button>
             </div>
           )}
         </>
       )}
-    </div>
+    </>
   );
 });

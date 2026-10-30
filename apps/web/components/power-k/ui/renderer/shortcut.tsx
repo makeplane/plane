@@ -92,12 +92,14 @@ export function ShortcutRenderer(props: Props) {
       {!isShortcutsEmpty ? (
         groupedCommands.map((group) => (
           <div key={group.key}>
-            <h5 className="pt-1 pb-2 text-left text-13 font-medium">{group.title}</h5>
+            <h5 className="pt-1 pb-2 text-left text-body-xs-medium">{group.title}</h5>
             <div className="space-y-3 px-1">
               {group.commands.map((command) => (
                 <div key={command.id} className="mt-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-left text-11 text-secondary">{t(command.i18n_title)}</h4>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h4 className="shrink-0 text-left text-caption-sm-regular text-secondary">
+                      {t(command.i18n_title)}
+                    </h4>
                     <div className="flex items-center gap-x-1.5">
                       {command.keySequence && (
                         <KeySequenceBadge sequence={command.keySequence} separator={keySequenceSeparator} />
@@ -113,7 +115,7 @@ export function ShortcutRenderer(props: Props) {
           </div>
         ))
       ) : (
-        <p className="text-center text-13 text-secondary">
+        <p className="text-center text-body-xs-regular text-secondary">
           {noResultsBefore}
           <span className="font-semibold italic">{searchQuery}</span>
           {noResultsAfter}

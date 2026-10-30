@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "主側邊欄",
+      "resize_sidebar": "調整側邊欄大小",
+      "sidebar_peek_view": "側邊欄預覽",
       "workspace_logo": "工作空間標誌",
       "open_workspace_switcher": "打開工作空間切換器",
       "open_user_menu": "打開用戶選單",
@@ -42,6 +45,9 @@
       "open": "開啟色彩選擇器",
       "swatches": "預設色彩",
       "hex_input": "十六進位色彩"
+    },
+    "project_board": {
+      "collapse_group": "收合群組"
     }
   }
 }

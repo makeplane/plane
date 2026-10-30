@@ -26,7 +26,8 @@
           "success_title": "Espace de travail supprimé.",
           "success_message": "Vous serez bientôt redirigé vers votre page de profil.",
           "error_title": "Cela n’a pas fonctionné.",
-          "error_message": "Veuillez réessayer."
+          "error_message": "Veuillez réessayer.",
+          "confirm_description": "Vous êtes sur le point de supprimer l’espace de travail {workspaceName}. Vous perdrez l’accès à toutes les données de travail de cet espace, sans possibilité de les restaurer."
         },
         "errors": {
           "name": {
@@ -63,7 +64,10 @@
             "required": "Nous avons besoin d’une adresse e-mail pour les inviter.",
             "invalid": "L’e-mail est invalide"
           }
-        }
+        },
+        "leave_input_label": "Saisissez le nom de cet espace de travail pour continuer.",
+        "description": "Gérez l’accès à cet espace de travail.",
+        "leave_title": "Quitter l’espace de travail ?"
       },
       "billing_and_plans": {
         "heading": "Facturation & Plans",
@@ -170,7 +174,13 @@
             "title": "Erreur !",
             "message": "Le jeton API n’a pas pu être supprimé"
           }
-        }
+        },
+        "columns": {
+          "expires": "Expire le",
+          "last_used": "Dernière utilisation"
+        },
+        "expired": "Expiré",
+        "not_used_yet": "Pas encore utilisé"
       },
       "integrations": {
         "title": "Intégrations",

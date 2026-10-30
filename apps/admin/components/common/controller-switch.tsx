@@ -28,11 +28,11 @@ export function ControllerSwitch<T extends FieldValues>(props: Props<T>) {
   const labelId = useId();
 
   return (
-    <div className="flex items-center justify-between gap-1">
-      <h4 id={labelId} className="text-sm text-custom-text-300">
+    <div className="flex items-center justify-between gap-4 py-1">
+      <span id={labelId} className="min-w-0 text-body-sm-medium text-primary">
         Refresh user attributes from {label} during sign in
-      </h4>
-      <div className="relative">
+      </span>
+      <div className="shrink-0">
         <Controller
           control={control}
           name={name as FieldPath<T>}

@@ -8,7 +8,7 @@ import { range } from "lodash-es";
 import { Row } from "@plane/blocks/layout";
 import { getRandomLength } from "../utils";
 
-export function SpreadsheetIssueRowLoader(props: { columnCount: number }) {
+export function SpreadsheetIssueRowLoader(props: { columnCount: number; withConfigColumn?: boolean }) {
   return (
     <tr className="border-b border-subtle bg-surface-1">
       <td className="sticky left-0 z-[10] flex h-11 min-w-[28rem] items-center border-r-[0.5px] border-subtle bg-surface-1">
@@ -18,12 +18,16 @@ export function SpreadsheetIssueRowLoader(props: { columnCount: number }) {
         </Row>
       </td>
       {range(props.columnCount).map((colIndex) => (
-        <td key={colIndex} className="h-11 w-full min-w-[8rem] border-r border-subtle">
+        <td key={colIndex} className="h-11 min-w-36 border-r border-subtle">
           <div className="flex items-center justify-center gap-3 px-3">
             <span className="h-5 w-20 animate-pulse rounded-sm bg-layer-1" />
           </div>
         </td>
       ))}
+      {/* Mirrors the table's sticky config column */}
+      {props.withConfigColumn && (
+        <td className="right-0 z-[10] h-11 w-12 min-w-12 border-l-[0.5px] border-subtle bg-surface-1 shadow-direction-left md:sticky" />
+      )}
     </tr>
   );
 }
@@ -38,11 +42,12 @@ export function SpreadsheetLayoutLoader() {
             {range(10).map((index) => (
               <th key={index} className="h-11 w-full min-w-[8rem] animate-pulse border-r border-subtle bg-surface-2" />
             ))}
+            <th className="right-0 z-[10] h-11 w-12 min-w-12 animate-pulse border-l-[0.5px] border-subtle bg-surface-2 shadow-direction-left md:sticky" />
           </tr>
         </thead>
         <tbody>
           {range(16).map((rowIndex) => (
-            <SpreadsheetIssueRowLoader key={rowIndex} columnCount={10} />
+            <SpreadsheetIssueRowLoader key={rowIndex} columnCount={10} withConfigColumn />
           ))}
         </tbody>
       </table>

@@ -6,6 +6,7 @@
     "status_page": "сторінку статусу"
   },
   "submit": "Надіслати",
+  "submitting": "Надсилання",
   "cancel": "Скасувати",
   "loading": "Завантаження",
   "searching": "Пошук...",
@@ -153,6 +154,7 @@
   "no_favorites_yet": "Поки немає вибраного",
   "create_folder": "Створити папку",
   "new_folder": "Нова папка",
+  "rename_folder": "Перейменувати папку",
   "favorite_updated_successfully": "Вибране успішно оновлено",
   "favorite_created_successfully": "Вибране успішно створено",
   "folder_already_exists": "Папка вже існує",
@@ -368,6 +370,7 @@
   "member": "{count, plural, one{# учасник} few{# учасники} other{# учасників}}",
   "new_password_must_be_different_from_old_password": "Новий пароль повинен бути відмінним від старого пароля",
   "edited": "Редагувано",
+  "entity_detail_toolbar": "Дії",
   "bot": "Бот",
   "settings_description": "Керуйте налаштуваннями облікового запису, робочого простору та проєкту в одному місці. Перемикайтеся між вкладками для зручного налаштування.",
   "back_to_workspace": "Повернутися до робочого простору",
@@ -540,6 +543,7 @@
     "link_copied": "Посилання скопійовано!",
     "link_copied_to_clipboard": "Посилання скопійовано до буфера обміну",
     "copied_to_clipboard": "Посилання на робочу одиницю скопійовано до буфера",
+    "clipboard_copy_failed": "Не вдалося скопіювати в буфер обміну",
     "branch_name_copied_to_clipboard": "Назву гілки скопійовано до буфера",
     "is_copied_to_clipboard": "Робочу одиницю скопійовано до буфера",
     "no_links_added_yet": "Поки що немає доданих посилань",
@@ -723,7 +727,14 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "status": "Статус",
+    "tooltip": {
+      "copy_to_clipboard": "Скопіювати в буфер обміну",
+      "created_on_date": "Створено {date}",
+      "priority": "Пріоритет: {value}"
+    },
+    "locked": "Заблоковано"
   },
   "chart": {
     "x_axis": "Вісь X",
@@ -874,5 +885,13 @@
       "short_description": "Експортувати як JSON"
     }
   },
-  "labels_count": "{count, plural, one {# мітка} few {# мітки} many {# міток} other {# мітки}}"
+  "labels_count": "{count, plural, one {# мітка} few {# мітки} many {# міток} other {# мітки}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Параметри збереження подання",
+      "update_view": "Оновити подання",
+      "save_as": "Зберегти як",
+      "hide_filters": "Приховати фільтри"
+    }
+  }
 }

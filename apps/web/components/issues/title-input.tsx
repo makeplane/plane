@@ -26,6 +26,8 @@ export type IssueTitleInputProps = {
   projectId: string;
   issueId: string;
   containerClassName?: string;
+  /** Type style for the read-only title, so it matches the editable title on the same surface. */
+  readOnlyClassName?: string;
 };
 
 export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTitleInputProps) {
@@ -39,6 +41,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
     issueOperations,
     projectId,
     containerClassName,
+    readOnlyClassName = "text-h4-medium",
   } = props;
   const { t } = useTranslation();
   // states
@@ -140,7 +143,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
     [setIsSubmitting]
   );
 
-  if (disabled) return <div className="text-20 font-medium whitespace-pre-line">{title}</div>;
+  if (disabled) return <div className={cn("whitespace-pre-line", readOnlyClassName)}>{title}</div>;
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -165,7 +168,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
         </Field>
         <div
           className={cn(
-            "pointer-events-none absolute right-1 bottom-1 z-2 rounded-sm bg-surface-1 p-0.5 text-11 text-secondary opacity-0 transition-opacity",
+            "pointer-events-none absolute right-1 bottom-1 z-2 rounded-sm bg-surface-1 p-0.5 text-caption-sm-regular text-secondary opacity-0 transition-opacity",
             {
               "opacity-100": isLengthVisible,
             }
@@ -178,7 +181,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
         </div>
       </div>
       {title?.length === 0 && (
-        <span className="text-13 font-medium text-danger-primary">{t("form.title.required")}</span>
+        <span className="text-body-xs-medium text-danger-primary">{t("form.title.required")}</span>
       )}
     </div>
   );

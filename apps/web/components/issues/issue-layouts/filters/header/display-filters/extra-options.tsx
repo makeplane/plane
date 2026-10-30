@@ -4,12 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
+import { MenuCheckboxItem } from "@makeplane/propel/components/menu";
 import { useTranslation } from "@plane/i18n";
 import type { IIssueDisplayFilterOptions, TIssueExtraOptions } from "@plane/types";
-// components
-import { FilterOption } from "@/components/issues/issue-layouts/filters";
 
 // constants
 const ISSUE_EXTRA_OPTIONS: {
@@ -42,19 +40,19 @@ export const FilterExtraOptions = observer(function FilterExtraOptions(props: Pr
   const isExtraOptionEnabled = (option: TIssueExtraOptions) => enabledExtraOptions.includes(option);
 
   return (
-    <div>
+    <>
       {ISSUE_EXTRA_OPTIONS.map((option) => {
         if (!isExtraOptionEnabled(option.key)) return null;
 
         return (
-          <FilterOption
+          <MenuCheckboxItem
             key={option.key}
-            isChecked={selectedExtraOptions?.[option.key] ? true : false}
-            onClick={() => handleUpdate(option.key, !selectedExtraOptions?.[option.key])}
-            title={t(option.titleTranslationKey)}
+            label={t(option.titleTranslationKey)}
+            checked={!!selectedExtraOptions?.[option.key]}
+            onCheckedChange={(checked) => handleUpdate(option.key, checked)}
           />
         );
       })}
-    </div>
+    </>
   );
 });

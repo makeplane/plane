@@ -9,6 +9,7 @@ import { useFormContext } from "react-hook-form";
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
+import { DialogActions } from "@makeplane/propel/components/dialog";
 import type { IProject } from "@plane/types";
 // ui
 // helpers
@@ -17,11 +18,13 @@ import { getTabIndex } from "@plane/utils";
 type Props = {
   handleClose: () => void;
   isMobile?: boolean;
+  /** Id of the form to submit when the action row is rendered outside it. */
+  formId?: string;
 };
 
 function ProjectCreateButtons(props: Props) {
   const { t } = useTranslation();
-  const { handleClose, isMobile = false } = props;
+  const { handleClose, isMobile = false, formId } = props;
   const {
     formState: { isSubmitting },
   } = useFormContext<IProject>();
@@ -29,7 +32,7 @@ function ProjectCreateButtons(props: Props) {
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
 
   return (
-    <div className="flex justify-end gap-2 border-t border-subtle py-4">
+    <DialogActions>
       <Button
         variant="secondary"
         size="md"
@@ -43,11 +46,12 @@ function ProjectCreateButtons(props: Props) {
         size="md"
         stretch="auto"
         type="submit"
+        form={formId}
         label={isSubmitting ? t("creating") : t("create_project")}
         loading={isSubmitting}
         tabIndex={getIndex("submit")}
       />
-    </div>
+    </DialogActions>
   );
 }
 

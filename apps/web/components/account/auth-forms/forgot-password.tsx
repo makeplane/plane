@@ -11,11 +11,10 @@ import { Controller, useForm } from "react-hook-form";
 // icons
 import { TickCircleOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Field } from "@makeplane/propel/components/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { AnchorButton } from "@makeplane/propel/components/anchor-button";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { setToast } from "@plane/blocks/toast";
 
 import { checkEmailValidity } from "@plane/utils";
@@ -86,9 +85,6 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
       <AuthFormHeader title="Reset password" description="Regain access to your account." />
       <form onSubmit={handleSubmit(handleForgotPassword)} className="space-y-4">
         <div className="space-y-1">
-          <label className="text-13 font-medium text-tertiary" htmlFor="email">
-            {t("auth.common.email.label")}
-          </label>
           <Controller
             control={control}
             name="email"
@@ -97,26 +93,25 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
               validate: (value) => checkEmailValidity(value) || t("auth.common.email.errors.invalid"),
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <Field name="email" invalid={Boolean(errors.email)}>
-                <InputGroup size="2xl">
-                  <Input
-                    size="2xl"
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    placeholder={t("auth.common.email.placeholder")}
-                    autoComplete="off"
-                    disabled={resendTimerCode > 0}
-                  />
-                </InputGroup>
-              </Field>
+              <InputField
+                size="xl"
+                orientation="vertical"
+                label={t("auth.common.email.label")}
+                error={errors.email?.message}
+                id="email"
+                name="email"
+                type="email"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                placeholder={t("auth.common.email.placeholder")}
+                autoComplete="off"
+                disabled={resendTimerCode > 0}
+              />
             )}
           />
           {resendTimerCode > 0 && (
-            <p className="flex w-full items-start gap-1 px-1 text-11 font-medium text-success-primary">
+            <p className="flex w-full items-start gap-1 px-1 text-caption-sm-medium text-success-primary">
               <TickCircleOutline height={12} width={12} className="mt-0.5" />
               {t("auth.forgot_password.email_sent")}
             </p>
@@ -135,10 +130,10 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
           disabled={!isValid}
           loading={isSubmitting || resendTimerCode > 0}
         />
-        <div className="flex h-7 items-center justify-center">
+        <div className="flex justify-center">
           <AnchorButton
             variant="primary"
-            size="md"
+            size="lg"
             render={<Link href="/" />}
             label={t("auth.common.back_to_sign_in")}
           />

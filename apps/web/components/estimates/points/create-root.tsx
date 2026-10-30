@@ -110,8 +110,8 @@ export const EstimatePointCreateRoot = observer(function EstimatePointCreateRoot
 
   if (!workspaceSlug || !projectId) return <></>;
   return (
-    <div className="space-y-1">
-      <div className="text-13 font-medium text-secondary capitalize">{estimateType}</div>
+    <div className="flex flex-col gap-2 px-1">
+      <div className="text-body-xs-medium text-secondary capitalize">{estimateType}</div>
 
       <div>
         <Sortable
@@ -166,15 +166,17 @@ export const EstimatePointCreateRoot = observer(function EstimatePointCreateRoot
           />
         ))}
       {estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= estimateCount.max - 1 && (
-        <Button
-          variant="ghost"
-          size="sm"
-          stretch="auto"
-          label={`Add ${estimateType}`}
-          icon={<Icon icon={AddOutline} />}
-          iconPosition="start"
-          onClick={handleCreate}
-        />
+        <div className="self-start">
+          <Button
+            variant="ghost"
+            size="sm"
+            stretch="auto"
+            label={`Add ${estimateType}`}
+            icon={<Icon icon={AddOutline} />}
+            iconPosition="start"
+            onClick={handleCreate}
+          />
+        </div>
       )}
     </div>
   );

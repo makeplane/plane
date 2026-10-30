@@ -5,14 +5,14 @@
  */
 
 import { useEffect, useState } from "react";
-import { Field } from "@makeplane/propel/components/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
-import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
+import { TextAreaField } from "@makeplane/propel/components/text-area-field";
 import { Button } from "@makeplane/propel/components/button";
 import { ColorSwatchPicker } from "@plane/blocks/common";
 import { useTranslation } from "@plane/i18n";
-import type { IState } from "@plane/types";
+import { StateGroupIcon } from "@plane/blocks/icons";
+import type { IState, TStateGroups } from "@plane/types";
 
 type TStateForm = {
   data: Partial<IState>;
@@ -22,14 +22,15 @@ type TStateForm = {
   buttonTitle: string;
 };
 
-function PopoverButton({ color }: { color?: string }) {
+function PopoverButton({ color, group }: { color?: string; group?: TStateGroups }) {
   return (
-    <span
-      className="group inline-flex h-5 w-5 items-center rounded-sm text-14 font-medium transition-all"
-      style={{
-        backgroundColor: color ?? "black",
-      }}
-    />
+    <span className="grid size-8 shrink-0 place-items-center rounded-md border border-subtle-1">
+      {group ? (
+        <StateGroupIcon stateGroup={group} color={color ?? "black"} size="lg" />
+      ) : (
+        <span className="size-4 rounded-sm transition-colors" style={{ backgroundColor: color ?? "black" }} />
+      )}
+    </span>
   );
 }
 
@@ -69,81 +70,80 @@ export function StateForm(props: TStateForm) {
   };
 
   return (
-    <div className="relative flex space-x-2 rounded-sm bg-surface-1 p-3">
-      {/* color */}
-      <div className="mt-2 h-full flex-shrink-0">
-        <Popover>
-          <PopoverTrigger
-            render={
-              <button
-                type="button"
-                className="flex items-center justify-center rounded-sm focus:outline-none"
-                aria-label={t("aria_labels.color_picker.open")}
-              >
-                <PopoverButton color={formData?.color} />
-              </button>
-            }
-          />
-          <PopoverContent variant="rich" side="bottom" align="start">
-            <ColorSwatchPicker value={formData?.color} onChange={(hex) => handleFormData("color", hex)} />
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      <div className="w-full space-y-2">
-        {/* title */}
-        <Field name="name" invalid={(errors && Boolean(errors.name)) || false}>
-          <InputGroup size="2xl">
-            <Input
-              size="2xl"
+    <div className="relative rounded-lg border border-subtle bg-layer-2">
+      <div className="space-y-3 p-4">
+        <div className="flex items-center gap-2.5">
+          {/* color */}
+          <div className="shrink-0">
+            <Popover>
+              <PopoverTrigger
+                render={
+                  <button
+                    type="button"
+                    className="flex items-center justify-center rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-strong"
+                    aria-label={t("aria_labels.color_picker.open")}
+                  >
+                    <PopoverButton color={formData?.color} group={data?.group} />
+                  </button>
+                }
+              />
+              <PopoverContent variant="rich" side="bottom" align="start">
+                <ColorSwatchPicker value={formData?.color} onChange={(hex) => handleFormData("color", hex)} />
+              </PopoverContent>
+            </Popover>
+          </div>
+          {/* title */}
+          <div className="min-w-0 flex-1">
+            <InputField
+              size="lg"
+              orientation="vertical"
               id="name"
               type="text"
               name="name"
+              aria-label={t("name")}
               placeholder="Name"
               value={formData?.name}
               onChange={(e) => handleFormData("name", e.target.value)}
               maxLength={100}
               autoFocus
+              error={errors?.name || undefined}
             />
-          </InputGroup>
-        </Field>
+          </div>
+        </div>
 
         {/* description */}
-        <Field name="description" invalid={(errors && Boolean(errors.description)) || false}>
-          <TextAreaGroup resize="none">
-            <TextArea
-              size="lg"
-              surface="field"
-              autoResize
-              maxRows={8}
-              id="description"
-              name="description"
-              placeholder="Describe this state for your members."
-              value={formData?.description ?? ""}
-              onChange={(e) => handleFormData("description", e.target.value)}
-            />
-          </TextAreaGroup>
-        </Field>
-
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="primary"
-            size="md"
-            stretch="auto"
-            label={buttonTitle}
-            onClick={formSubmit}
-            disabled={buttonDisabled}
-          />
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            stretch="auto"
-            label="Cancel"
-            disabled={buttonDisabled}
-            onClick={onCancel}
-          />
-        </div>
+        <TextAreaField
+          size="lg"
+          resize="none"
+          autoResize
+          maxRows={8}
+          id="description"
+          name="description"
+          aria-label={t("description")}
+          placeholder="Describe this state for your members."
+          value={formData?.description ?? ""}
+          onChange={(e) => handleFormData("description", e.target.value)}
+          error={errors?.description || undefined}
+        />
+      </div>
+      <div className="flex items-center justify-end gap-3 border-t border-subtle-1 px-4 py-3">
+        <Button
+          type="button"
+          variant="secondary"
+          size="md"
+          stretch="auto"
+          label="Cancel"
+          disabled={buttonDisabled}
+          onClick={onCancel}
+        />
+        <Button
+          variant="primary"
+          size="md"
+          stretch="auto"
+          label={buttonTitle}
+          onClick={formSubmit}
+          disabled={buttonDisabled}
+        />
       </div>
     </div>
   );

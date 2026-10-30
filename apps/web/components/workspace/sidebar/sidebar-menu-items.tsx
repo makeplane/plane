@@ -17,7 +17,8 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
-import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
+import { ListItem, ListItemLabel } from "@makeplane/propel/components/list";
+import { ListItemButton } from "@makeplane/propel/elements/list";
 // store hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -94,7 +95,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
 
   return (
     <>
-      <div className="flex flex-col gap-0.5">
+      <div className="flex w-full flex-col gap-px">
         {filteredStaticNavigationItems.map((item, _index) => (
           // oxlint-disable-next-line react/no-array-index-key
           <SidebarItemBase key={`static_${_index}`} item={item} />
@@ -104,11 +105,9 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
         placement="sidebar"
         open={!!isWorkspaceMenuOpen}
         onOpenChange={toggleListDisclosure}
-        trigger={
-          <span className="text-13 font-semibold whitespace-nowrap text-placeholder">{t("common.workspace")}</span>
-        }
+        trigger={<span className="text-body-xs-semibold whitespace-nowrap text-tertiary">{t("common.workspace")}</span>}
       >
-        <div className="flex flex-col gap-0.5">
+        <div className="flex w-full flex-col gap-px">
           {WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS.map((item, _index) => (
             // oxlint-disable-next-line react/no-array-index-key
             <SidebarItemBase key={`static_${_index}`} item={item} />
@@ -117,22 +116,21 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
             // oxlint-disable-next-line react/no-array-index-key
             <SidebarItemBase key={`dynamic_${_index}`} item={item} />
           ))}
-          <SidebarNavItem>
-            <button
+          <ListItem density="comfortable">
+            <ListItemButton
               type="button"
               onClick={() => toggleExtendedSidebar()}
-              className="flex flex-grow items-center gap-1.5 text-13 font-medium text-tertiary"
               id="extended-sidebar-toggle"
               aria-label={t(
                 isExtendedSidebarOpened
-                  ? "aria_labels.app_sidebar.close_extended_sidebar"
-                  : "aria_labels.app_sidebar.open_extended_sidebar"
+                  ? "aria_labels.projects_sidebar.close_extended_sidebar"
+                  : "aria_labels.projects_sidebar.open_extended_sidebar"
               )}
             >
               <MoreHorizontalOutline className="size-4 flex-shrink-0" />
-              <span>{isExtendedSidebarOpened ? "Hide" : "More"}</span>
-            </button>
-          </SidebarNavItem>
+              <ListItemLabel>{isExtendedSidebarOpened ? t("sidebar.hide") : t("sidebar.more")}</ListItemLabel>
+            </ListItemButton>
+          </ListItem>
         </div>
       </Collapsible>
     </>

@@ -67,7 +67,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
               layout="stacked"
               disabled={isMobile}
             >
-              <span className="truncate text-11">
+              <span className="truncate text-caption-sm-regular">
                 {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
               </span>
             </Tooltip>
@@ -84,7 +84,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                   toggleIssueLinkModal(true);
                 }}
               >
-                <EditOutline className="h-3 w-3 stroke-[1.5] text-secondary" />
+                <EditOutline className="h-3 w-3 text-secondary" />
               </button>
               <a
                 href={linkDetail.url}
@@ -92,7 +92,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center p-1 hover:bg-layer-1"
               >
-                <NewTabOutline className="h-3 w-3 stroke-[1.5] text-secondary" />
+                <NewTabOutline className="h-3 w-3 text-secondary" />
               </a>
               <button
                 type="button"
@@ -110,7 +110,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
         </div>
 
         <div className="px-5">
-          <p className="mt-0.5 stroke-[1.5] text-11 text-tertiary">
+          <p className="mt-0.5 stroke-[1.5] text-caption-sm-regular text-tertiary">
             Added {calculateTimeAgo(linkDetail.created_at)}
             <br />
             {createdByDetails && (

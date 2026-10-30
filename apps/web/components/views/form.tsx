@@ -8,9 +8,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { Field } from "@makeplane/propel/components/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
+import { InputField } from "@makeplane/propel/components/input-field";
+import { TextAreaField } from "@makeplane/propel/components/text-area-field";
 import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
@@ -131,7 +130,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                 className="flex-shrink0 flex items-center justify-center"
                 buttonClassName="flex items-center justify-center"
                 label={
-                  <span className="grid h-9 w-9 place-items-center rounded-md bg-surface-2">
+                  <span className="grid size-(--control-height-lg) place-items-center rounded-md bg-layer-1">
                     <>
                       {logoValue?.in_use ? (
                         <Logo logo={logoValue} size={18} type="lucide" />
@@ -175,25 +174,23 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                     },
                   }}
                   render={({ field: { value, onChange } }) => (
-                    <Field name="name" invalid={Boolean(errors.name)}>
-                      <InputGroup size="2xl">
-                        <Input
-                          size="2xl"
-                          id="name"
-                          type="name"
-                          name="name"
-                          value={value}
-                          onChange={onChange}
-                          placeholder={t("common.title")}
-                          tabIndex={getIndex("name")}
-                          // oxlint-disable-next-line jsx_a11y/no-autofocus
-                          autoFocus
-                        />
-                      </InputGroup>
-                    </Field>
+                    <InputField
+                      size="lg"
+                      orientation="vertical"
+                      error={errors?.name?.message?.toString()}
+                      id="name"
+                      type="name"
+                      name="name"
+                      value={value}
+                      onChange={onChange}
+                      placeholder={t("common.title")}
+                      aria-label={t("common.title")}
+                      tabIndex={getIndex("name")}
+                      // oxlint-disable-next-line jsx_a11y/no-autofocus
+                      autoFocus
+                    />
                   )}
                 />
-                <span className="text-11 text-danger-primary">{errors?.name?.message?.toString()}</span>
               </div>
             </div>
             <div>
@@ -201,22 +198,19 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                 name="description"
                 control={control}
                 render={({ field: { value, onChange } }) => (
-                  <Field name="description" invalid={Boolean(errors?.description)}>
-                    <TextAreaGroup resize="none">
-                      <TextArea
-                        size="lg"
-                        surface="field"
-                        autoResize
-                        maxRows={8}
-                        id="description"
-                        name="description"
-                        placeholder={t("common.description")}
-                        value={value}
-                        onChange={onChange}
-                        tabIndex={getIndex("descriptions")}
-                      />
-                    </TextAreaGroup>
-                  </Field>
+                  <TextAreaField
+                    size="xl"
+                    autoResize
+                    maxRows={8}
+                    error={errors?.description?.message?.toString()}
+                    id="description"
+                    name="description"
+                    placeholder={t("common.description")}
+                    aria-label={t("common.description")}
+                    value={value}
+                    onChange={onChange}
+                    tabIndex={getIndex("descriptions")}
+                  />
                 )}
               />
             </div>

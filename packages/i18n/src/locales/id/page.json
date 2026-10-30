@@ -26,6 +26,16 @@
           "highlight_changes": "Sorot perubahan"
         }
       },
+      "version_history": {
+        "view_only": "Hanya lihat",
+        "loading_details": "Memuat detail versi",
+        "load_error_description": "Versi tidak dapat dimuat. Silakan coba lagi.",
+        "list_error_description": "Riwayat versi tidak dapat dimuat.",
+        "try_again": "Coba lagi",
+        "restoring": "Memulihkan",
+        "restore_success": "Versi halaman dipulihkan.",
+        "restore_failed": "Gagal memulihkan versi halaman."
+      },
       "assets": {
         "label": "Aset",
         "download_button": "Unduh",

@@ -12,22 +12,14 @@ import type {
 import type { ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import Masonry from "react-masonry-component";
 
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { AddOutline } from "@makeplane/propel/icons";
+import { EmptyStateCompact, EmptyStateDetailed } from "@plane/blocks/empty-state";
 import { EUserWorkspaceRoles } from "@plane/types";
-// assets
-import darkStickiesAsset from "@/app/assets/empty-state/stickies/stickies-dark.webp?url";
-import lightStickiesAsset from "@/app/assets/empty-state/stickies/stickies-light.webp?url";
-import darkStickiesSearchAsset from "@/app/assets/empty-state/stickies/stickies-search-dark.webp?url";
-import lightStickiesSearchAsset from "@/app/assets/empty-state/stickies/stickies-search-light.webp?url";
 // components
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { StickiesEmptyState } from "@/components/home/widgets/empty-states/stickies";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
@@ -51,8 +43,6 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
   const { workspaceSlug, intersectionElement, columnCount } = props;
   // navigation
   const pathname = usePathname();
-  // theme hook
-  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -69,8 +59,6 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     EUserPermissionsLevel.WORKSPACE
   );
-  const stickiesResolvedPath = resolvedTheme === "light" ? lightStickiesAsset : darkStickiesAsset;
-  const stickiesSearchResolvedPath = resolvedTheme === "light" ? lightStickiesSearchAsset : darkStickiesSearchAsset;
   const masonryRef = useRef<any>(null);
 
   const handleLayout = () => {
@@ -114,29 +102,33 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
 
   if (loader === "loaded" && workspaceStickyIds.length === 0) {
     return (
-      <div className="grid size-full place-items-center">
+      <div className="grid size-full place-items-center px-2">
         {isStickiesPage ? (
           <>
             {searchQuery ? (
-              <SimpleEmptyState
+              <EmptyStateCompact
+                align="center"
+                assetKey="search-compact"
+                assetClassName="size-20"
                 title={t("stickies.empty_state.search.title")}
                 description={t("stickies.empty_state.search.description")}
-                assetPath={stickiesSearchResolvedPath}
               />
             ) : (
-              <DetailedEmptyState
+              <EmptyStateDetailed
+                assetKey="stickies"
                 title={t("stickies.empty_state.general.title")}
                 description={t("stickies.empty_state.general.description")}
-                assetPath={stickiesResolvedPath}
-                primaryButton={{
-                  prependIcon: <AddOutline className="size-4" />,
-                  text: t("stickies.empty_state.general.primary_button.text"),
-                  onClick: () => {
-                    toggleShowNewSticky(true);
-                    stickyOperations.create();
+                actions={[
+                  {
+                    label: t("stickies.empty_state.general.primary_button.text"),
+                    variant: "primary",
+                    onClick: () => {
+                      toggleShowNewSticky(true);
+                      stickyOperations.create();
+                    },
+                    disabled: !hasGuestLevelPermissions,
                   },
-                  disabled: !hasGuestLevelPermissions,
-                }}
+                ]}
               />
             )}
           </>

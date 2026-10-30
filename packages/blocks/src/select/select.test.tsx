@@ -5,12 +5,14 @@
  */
 
 import type { ComponentProps } from "react";
-import { useState } from "react";
+import { createRef, useState } from "react";
+import { Combobox as BaseCombobox } from "@base-ui/react/combobox";
 import { act, cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { TPaginatedResponse } from "@plane/types";
 import { Select } from "./select";
+import { SelectTriggerChrome } from "./trigger-chrome";
 import type { SelectPaginationParams } from "./types";
 
 type Option = { id: string; name: string };
@@ -1333,6 +1335,114 @@ describe("Select on Propel combobox", () => {
     // `outline-none` kills the UA ring, so the keyboard indicator is the chrome's own.
     expect(trigger().className).toContain("focus-visible:ring-2");
   });
+
+  it.each(["pill-sm", "select-md", "select-ghost-md"])(
+    "opens %s from the keyboard and returns focus after Escape",
+    async (variant) => {
+      const user = userEvent.setup();
+      renderSelect({}, { variant });
+
+      await user.tab();
+      expect(document.activeElement).toBe(trigger());
+      await user.keyboard("{Enter}");
+      await popup().findByRole("combobox", { name: /search options/i });
+      await user.keyboard("{Escape}");
+      await waitFor(() => expect(document.activeElement).toBe(trigger()));
+      expect(trigger().getAttribute("aria-expanded")).toBe("false");
+    }
+  );
+
+  it.each(["pill-sm", "select-md", "select-ghost-md"])(
+    "keeps a disabled %s out of the tab order before and after engine mount",
+    async (variant) => {
+      const user = userEvent.setup();
+      const { onChange } = renderSelect({ disabled: true }, { variant });
+      const resting = trigger();
+      expect(resting.hasAttribute("disabled")).toBe(true);
+      await user.tab();
+      expect(document.activeElement).not.toBe(resting);
+      await user.click(resting);
+      expect(popup().queryByRole("combobox", { name: /search options/i })).toBeNull();
+      expect(onChange).not.toHaveBeenCalled();
+
+      cleanup();
+      renderSelect({ disabled: true, lazyMount: false }, { variant });
+      const mounted = trigger();
+      expect(mounted.hasAttribute("disabled")).toBe(true);
+      await user.click(mounted);
+      expect(popup().queryByRole("combobox", { name: /search options/i })).toBeNull();
+    }
+  );
+
+  it.each(["pill-sm", "table-cell", "select-md"])(
+    "preserves a composite leading icon's layout classes in %s",
+    (variant) => {
+      renderSelect(
+        {},
+        {
+          variant,
+          prependIcon: (
+            <span data-testid="project-logos" className="flex items-center gap-1">
+              <svg aria-hidden="true" />
+              <svg aria-hidden="true" />
+            </span>
+          ),
+        }
+      );
+
+      const logos = within(trigger()).getByTestId("project-logos");
+      expect(logos.classList.contains("flex")).toBe(true);
+      expect(logos.classList.contains("gap-1")).toBe(true);
+      expect(logos.querySelectorAll("svg")).toHaveLength(2);
+    }
+  );
+
+  it.each(["Property", null])(
+    "forwards a composed pill trigger's native button contract with content %s",
+    (content) => {
+      const buttonRef = createRef<HTMLButtonElement>();
+      const onClick = vi.fn();
+      render(
+        <BaseCombobox.Root items={[]}>
+          <BaseCombobox.Trigger
+            ref={buttonRef}
+            aria-label="Property"
+            id="property-picker"
+            data-tour="property"
+            onClick={onClick}
+            render={
+              <SelectTriggerChrome
+                variant="pill-sm"
+                className="max-w-24"
+                style={{ maxWidth: "6rem" }}
+                prependIcon={<svg aria-hidden="true" />}
+              >
+                {content}
+              </SelectTriggerChrome>
+            }
+          />
+        </BaseCombobox.Root>
+      );
+
+      const button = screen.getByRole("combobox", { name: "Property" });
+      expect(buttonRef.current).toBe(button);
+      expect(button.tagName).toBe("BUTTON");
+      expect(button.getAttribute("type")).toBe("button");
+      expect(button.id).toBe("property-picker");
+      expect(button.getAttribute("data-tour")).toBe("property");
+      expect(button.classList.contains("max-w-24")).toBe(true);
+      expect(button.classList.contains("max-w-40")).toBe(false);
+      // the outline pill keeps its border width when merged with the caller's classes
+      expect(button.classList.contains("border-sm")).toBe(true);
+      expect(button.style.maxWidth).toBe("6rem");
+      act(() => {
+        buttonRef.current?.focus();
+        buttonRef.current?.click();
+      });
+      expect(document.activeElement).toBe(button);
+      expect(onClick).toHaveBeenCalledOnce();
+    }
+  );
 
   it("forwards the trigger id and data attributes for the label to point at", async () => {
     const user = userEvent.setup();

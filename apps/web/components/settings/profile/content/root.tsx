@@ -16,16 +16,18 @@ import { PROFILE_SETTINGS_PAGES_MAP } from "./pages";
 type Props = {
   activeTab: TProfileSettingsTabs;
   className?: string;
+  /** Gutter inside the scrolled pane; defaults to the full-page spacing. */
+  contentClassName?: string;
 };
 
 export const ProfileSettingsContent = observer(function ProfileSettingsContent(props: Props) {
-  const { activeTab, className } = props;
+  const { activeTab, className, contentClassName } = props;
   const PageComponent = PROFILE_SETTINGS_PAGES_MAP[activeTab];
 
   return (
-    <div className={cn("flex shrink-0 flex-col overflow-hidden bg-surface-1", className)}>
+    <div className={cn("flex min-h-0 min-w-0 flex-col overflow-hidden bg-surface-1", className)}>
       <ScrollArea orientation="vertical">
-        <div className="px-8 py-9">
+        <div className={cn("px-4 py-6 sm:px-8 sm:py-9", contentClassName)}>
           <Suspense>
             <PageComponent />
           </Suspense>

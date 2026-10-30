@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 // plane ui
 import { useTranslation } from "@plane/i18n";
 import type { ISvgIcons } from "@plane/blocks/icons";
@@ -18,7 +18,7 @@ type Props = {
   accessSpecifiers: {
     key: number;
     i18n_label: string;
-    icon: LucideIcon | React.FC<ISvgIcons>;
+    icon: IconGlyph | React.FC<ISvgIcons>;
   }[];
   isMobile?: boolean;
 };

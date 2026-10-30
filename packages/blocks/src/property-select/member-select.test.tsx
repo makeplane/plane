@@ -106,4 +106,57 @@ describe("MemberSelect suspended members", () => {
     await user.click(row);
     expect(onChange).toHaveBeenCalledWith([]);
   });
+
+  it("uses a 16px face for a single-member pill without shrinking multi-member stacks", () => {
+    const { rerender } = render(
+      <MemberSelect getValues={getValues} value={ADA} onChange={vi.fn()} variant="pill-sm" />
+    );
+    const singleFace = screen.getByRole("button", { name: /Ada/ }).querySelector(".rounded-full");
+    expect(singleFace?.classList.contains("size-4")).toBe(true);
+
+    rerender(<MemberSelect multiple getValues={getValues} value={[ADA, CY]} onChange={vi.fn()} variant="pill-sm" />);
+    const multipleFaces = screen.getByRole("button", { name: /Ada, Cy/ }).querySelectorAll(".rounded-full");
+    expect(multipleFaces.length).toBeGreaterThan(0);
+    for (const face of multipleFaces) expect(face.classList.contains("size-5")).toBe(true);
+  });
+
+  it("keeps the selected avatar and label as sibling flex items in a property pill", () => {
+    render(<MemberSelect getValues={getValues} value={ADA} onChange={vi.fn()} variant="pill-sm" />);
+    const button = screen.getByRole("button", { name: /Ada/ });
+    const label = within(button).getByText("Ada");
+    const face = button.querySelector(".rounded-full");
+    const avatarRow = face?.parentElement?.parentElement;
+
+    expect(label.parentElement).toBe(button);
+    expect(avatarRow?.parentElement).toBe(button);
+    expect(button.classList.contains("inline-flex")).toBe(true);
+  });
+
+  it("uses the caller's label for a multi-member selection and keeps names for a single member", () => {
+    const multipleLabel = (count: number) => `${count} assignees`;
+    const { rerender } = render(
+      <MemberSelect
+        multiple
+        getValues={getValues}
+        value={[ADA, CY]}
+        onChange={vi.fn()}
+        variant="select-ghost-lg"
+        multipleLabel={multipleLabel}
+      />
+    );
+    expect(screen.getByText("2 assignees")).toBeTruthy();
+
+    rerender(
+      <MemberSelect
+        multiple
+        getValues={getValues}
+        value={[ADA]}
+        onChange={vi.fn()}
+        variant="select-ghost-lg"
+        multipleLabel={multipleLabel}
+      />
+    );
+    expect(screen.queryByText("1 assignees")).toBeNull();
+    expect(screen.getByText("Ada")).toBeTruthy();
+  });
 });

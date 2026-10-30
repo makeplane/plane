@@ -4,21 +4,21 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { ExpandableSearch } from "@makeplane/propel/components/expandable-search";
 // icons
-import { CloseOutline, FilterOutline, SearchOutline } from "@makeplane/propel/icons";
-import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 // plane helpers
 // types
 import type { TModuleFilters } from "@plane/types";
-import { cn, calculateTotalFilters } from "@plane/utils";
+import { calculateTotalFilters } from "@plane/utils";
 // components
 import { ArchiveTabsList } from "@/components/archives";
-import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
-import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules";
+import { ModuleOrderByDropdown } from "@/components/modules";
 // helpers
+import { ModuleFiltersDropdown } from "@/components/modules/dropdowns/filters/dropdown";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
@@ -26,8 +26,6 @@ import { useModuleFilter } from "@/hooks/store/use-module-filter";
 export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
   // router
   const { projectId } = useParams();
-  // refs
-  const inputRef = useRef<HTMLInputElement>(null);
   // hooks
   const {
     currentProjectArchivedFilters,
@@ -40,12 +38,7 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
-  // states
-  const [isSearchOpen, setIsSearchOpen] = useState(archivedModulesSearchQuery !== "" ? true : false);
-  // outside click detector hook
-  useOutsideClickDetector(inputRef, () => {
-    if (isSearchOpen && archivedModulesSearchQuery.trim() === "") setIsSearchOpen(false);
-  });
+  const { t } = useTranslation();
 
   const handleFilters = useCallback(
     (key: keyof TModuleFilters, value: string | string[]) => {
@@ -67,16 +60,6 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
     [currentProjectArchivedFilters, projectId, updateFilters]
   );
 
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Escape") {
-      if (archivedModulesSearchQuery && archivedModulesSearchQuery.trim() !== "") updateArchivedModulesSearchQuery("");
-      else {
-        setIsSearchOpen(false);
-        inputRef.current?.blur();
-      }
-    }
-  };
-
   const isFiltersApplied = calculateTotalFilters(currentProjectArchivedFilters ?? {}) !== 0;
 
   return (
@@ -86,48 +69,14 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
       </div>
       {/* filter options */}
       <div className="flex h-full items-center gap-3 self-end px-8">
-        {!isSearchOpen && (
-          <button
-            type="button"
-            className="-mr-5 grid place-items-center rounded-sm p-2 text-placeholder hover:bg-layer-1"
-            onClick={() => {
-              setIsSearchOpen(true);
-              inputRef.current?.focus();
-            }}
-          >
-            <SearchOutline className="h-3.5 w-3.5" />
-          </button>
-        )}
-        <div
-          className={cn(
-            "ml-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent bg-surface-1 text-placeholder opacity-0 transition-[width] ease-linear",
-            {
-              "w-64 border-subtle px-2.5 py-1.5 opacity-100": isSearchOpen,
-            }
-          )}
-        >
-          <SearchOutline className="h-3.5 w-3.5" />
-          <input
-            ref={inputRef}
-            className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
-            placeholder="Search"
-            value={archivedModulesSearchQuery}
-            onChange={(e) => updateArchivedModulesSearchQuery(e.target.value)}
-            onKeyDown={handleInputKeyDown}
-          />
-          {isSearchOpen && (
-            <button
-              type="button"
-              className="grid place-items-center"
-              onClick={() => {
-                updateArchivedModulesSearchQuery("");
-                setIsSearchOpen(false);
-              }}
-            >
-              <CloseOutline className="h-3 w-3" />
-            </button>
-          )}
-        </div>
+        <ExpandableSearch
+          size="md"
+          aria-label={t("common.search.label")}
+          clearLabel={t("common.clear")}
+          placeholder={t("common.search.label")}
+          value={archivedModulesSearchQuery}
+          onValueChange={(value) => updateArchivedModulesSearchQuery(value)}
+        />
         <ModuleOrderByDropdown
           value={currentProjectDisplayFilters?.order_by}
           onChange={(val) => {
@@ -137,24 +86,18 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
             });
           }}
         />
-        <FiltersDropdown
-          icon={<FilterOutline className="h-3 w-3" />}
-          title="Filters"
-          placement="bottom-end"
+        <ModuleFiltersDropdown
           isFiltersApplied={isFiltersApplied}
-        >
-          <ModuleFiltersSelection
-            displayFilters={currentProjectDisplayFilters ?? {}}
-            filters={currentProjectArchivedFilters ?? {}}
-            handleDisplayFiltersUpdate={(val) => {
-              if (!projectId) return;
-              updateDisplayFilters(projectId.toString(), val);
-            }}
-            handleFiltersUpdate={handleFilters}
-            memberIds={workspaceMemberIds ?? undefined}
-            isArchived
-          />
-        </FiltersDropdown>
+          displayFilters={currentProjectDisplayFilters ?? {}}
+          filters={currentProjectArchivedFilters ?? {}}
+          handleDisplayFiltersUpdate={(val) => {
+            if (!projectId) return;
+            updateDisplayFilters(projectId.toString(), val);
+          }}
+          handleFiltersUpdate={handleFilters}
+          memberIds={workspaceMemberIds ?? undefined}
+          isArchived
+        />
       </div>
     </div>
   );

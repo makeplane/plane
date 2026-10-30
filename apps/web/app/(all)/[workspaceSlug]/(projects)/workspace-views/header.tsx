@@ -10,8 +10,11 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Badge } from "@makeplane/propel/components/badge";
 import { Button } from "@makeplane/propel/components/button";
-import { ViewsOutline } from "@makeplane/propel/icons";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { LockOutline, ViewsOutline } from "@makeplane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import type { BreadcrumbNavigationItem } from "@plane/blocks/breadcrumb";
@@ -39,6 +42,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   const globalViewId = routerGlobalViewId ? routerGlobalViewId.toString() : undefined;
   // store hooks
   const {
+    issues: { getGroupIssueCount },
     issuesFilter: { filters, updateFilters },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { getViewDetailsById, currentWorkspaceViews } = useGlobalView();
@@ -72,6 +76,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   );
 
   const isLocked = viewDetails?.is_locked;
+  const workItemsCount = getGroupIssueCount(undefined, undefined, false);
 
   const isDefaultView = DEFAULT_GLOBAL_VIEWS_LIST.find((view) => view.key === globalViewId);
 
@@ -125,12 +130,22 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
                   placeholder={t("views")}
                   searchPlaceholder={t("common.search.label")}
                   emptyMessage={t("common.search.no_matches_found")}
+                  suffix={
+                    workItemsCount && workItemsCount > 0 ? (
+                      <Tooltip label={`${workItemsCount} ${t("issue.label", { count: workItemsCount })}`} side="bottom">
+                        <Badge variant="brand" size="xs" label={String(workItemsCount)} />
+                      </Tooltip>
+                    ) : null
+                  }
                   isLast
                 />
               }
               isLast
             />
           </Breadcrumbs>
+          {isLocked && (
+            <Badge variant="neutral" size="sm" startIcon={<Icon icon={LockOutline} />} label={t("common.locked")} />
+          )}
         </Header.LeftItem>
 
         <Header.RightItem className="items-center">

@@ -26,7 +26,8 @@
           "success_title": "Priestor zmazaný.",
           "success_message": "Budete presmerovaný na profil.",
           "error_title": "Nepodarilo sa.",
-          "error_message": "Skúste to prosím znova."
+          "error_message": "Skúste to prosím znova.",
+          "confirm_description": "Chystáte sa zmazať pracovný priestor {workspaceName}. Stratíte prístup ku všetkým pracovným údajom v tomto priestore a nebude možné ich obnoviť."
         },
         "errors": {
           "name": {
@@ -63,7 +64,10 @@
             "required": "Vyžaduje sa e-mailová adresa.",
             "invalid": "E-mail je neplatný"
           }
-        }
+        },
+        "leave_input_label": "Ak chcete pokračovať, zadajte názov tohto pracovného priestoru.",
+        "description": "Spravujte prístup k tomuto pracovnému priestoru.",
+        "leave_title": "Opustiť pracovný priestor?"
       },
       "billing_and_plans": {
         "heading": "Fakturácia a plány",
@@ -170,7 +174,13 @@
             "title": "Chyba!",
             "message": "Mazanie tokenu zlyhalo"
           }
-        }
+        },
+        "columns": {
+          "expires": "Vyprší",
+          "last_used": "Naposledy použité"
+        },
+        "expired": "Vypršané",
+        "not_used_yet": "Zatiaľ nepoužité"
       },
       "integrations": {
         "title": "Integrácie",

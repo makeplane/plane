@@ -27,7 +27,9 @@ export const NameDescriptionUpdateStatus = observer(function NameDescriptionUpda
         {isSubmitting !== "submitted" && isSubmitting !== "saved" && (
           <RefreshOutline className="size-3.5 animate-spin text-tertiary" />
         )}
-        <span className="text-13 text-tertiary">{isSubmitting === "submitting" ? "Saving..." : "Saved"}</span>
+        <span className="text-body-xs-regular text-tertiary">
+          {isSubmitting === "submitting" ? "Saving..." : "Saved"}
+        </span>
       </div>
     </>
   );

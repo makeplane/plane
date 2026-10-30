@@ -4,36 +4,33 @@
  * See the LICENSE file for details.
  */
 
-import { Field } from "@makeplane/propel/components/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { useTranslation } from "@plane/i18n";
 
 type Props = {
   value: string;
   onChange: (value: string) => void;
   hasError: boolean;
+  errorMessage?: string;
 };
 export function WebhookInput(props: Props) {
-  const { value, onChange, hasError } = props;
+  const { value, onChange, hasError, errorMessage } = props;
   const { t } = useTranslation();
 
   return (
-    <>
-      <h6 className="text-13 font-medium">{t("workspace_settings.settings.webhooks.modal.payload")}</h6>
-      <Field name="payload" invalid={hasError}>
-        <InputGroup size="2xl">
-          <Input
-            size="2xl"
-            type="url"
-            onChange={(e) => onChange(e.target.value)}
-            value={value}
-            autoComplete="off"
-            placeholder="https://example.com/post"
-            autoFocus
-            aria-label={t("workspace_settings.settings.webhooks.modal.payload")}
-          />
-        </InputGroup>
-      </Field>
-    </>
+    <InputField
+      size="lg"
+      orientation="vertical"
+      name="payload"
+      label={t("workspace_settings.settings.webhooks.modal.payload")}
+      required
+      type="url"
+      onChange={(e) => onChange(e.target.value)}
+      value={value}
+      autoComplete="off"
+      placeholder="https://example.com/post"
+      autoFocus
+      error={hasError ? errorMessage : undefined}
+    />
   );
 }

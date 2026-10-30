@@ -26,6 +26,8 @@ import { IssueTypeSwitcher } from "@/components/issues/issue-type-switcher";
 import { WorkItemVersionService } from "@/services/issue";
 // local components
 import type { TIssueOperations } from "../issue-detail";
+import { DescriptionOverflow } from "../issue-detail/description-overflow";
+import { IssueDetailMetaRow } from "../issue-detail/detail-meta-row";
 import { IssueParentDetail } from "../issue-detail/parent";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
@@ -81,18 +83,25 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
       : undefined;
 
   return (
-    <div className="space-y-2">
-      {issue.parent_id && (
-        <IssueParentDetail
-          workspaceSlug={workspaceSlug}
-          projectId={issue.project_id}
-          issueId={issueId}
-          issue={issue}
-          issueOperations={issueOperations}
-        />
-      )}
-      <div className="flex items-center justify-between gap-2">
-        <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
+    <div className="space-y-4">
+      <div className="flex min-h-7 items-center justify-between gap-2">
+        <div className="flex min-h-6 min-w-0 flex-1 items-center gap-1.5 text-body-xs-medium">
+          {issue.parent_id && (
+            <>
+              <IssueParentDetail
+                workspaceSlug={workspaceSlug}
+                projectId={issue.project_id}
+                issueId={issueId}
+                issue={issue}
+                issueOperations={issueOperations}
+              />
+              <span className="text-tertiary" aria-hidden>
+                /
+              </span>
+            </>
+          )}
+          <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
+        </div>
       </div>
       <IssueTitleInput
         workspaceSlug={workspaceSlug}
@@ -103,28 +112,40 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
         issueOperations={issueOperations}
         disabled={disabled || isArchived}
         value={issue.name}
+        containerClassName="-ml-3 [&_textarea]:block [&_textarea]:px-3 [&_textarea]:text-h4-semibold"
+        readOnlyClassName="text-h4-semibold"
       />
 
-      <DescriptionInput
-        issueSequenceId={issue.sequence_id}
-        containerClassName="-ml-3 border-none"
-        disabled={disabled || isArchived}
-        editorRef={editorRef}
-        entityId={issue.id}
-        fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
-        initialValue={issueDescription}
-        key={issue.id}
-        onSubmit={async (value, isMigrationUpdate) => {
-          if (!issue.id || !issue.project_id) return;
-          await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
-            description_html: value.description_html,
-            ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
-          });
-        }}
-        setIsSubmitting={(value) => setIsSubmitting(value)}
-        projectId={issue.project_id}
+      <IssueDetailMetaRow
         workspaceSlug={workspaceSlug}
+        projectId={issue.project_id}
+        issueId={issueId}
+        issueOperations={issueOperations}
+        disabled={disabled || isArchived}
       />
+
+      <DescriptionOverflow>
+        <DescriptionInput
+          issueSequenceId={issue.sequence_id}
+          containerClassName="-ml-3 border-none"
+          disabled={disabled || isArchived}
+          editorRef={editorRef}
+          entityId={issue.id}
+          fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
+          initialValue={issueDescription}
+          key={issue.id}
+          onSubmit={async (value, isMigrationUpdate) => {
+            if (!issue.id || !issue.project_id) return;
+            await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
+              description_html: value.description_html,
+              ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
+            });
+          }}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
+          projectId={issue.project_id}
+          workspaceSlug={workspaceSlug}
+        />
+      </DescriptionOverflow>
 
       <div className="flex items-center justify-between gap-2">
         {currentUser && (
@@ -134,11 +155,12 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
             issueId={issueId}
             currentUser={currentUser}
             disabled={isArchived}
+            className="mt-0 shrink-0"
           />
         )}
         {!disabled && (
           <DescriptionVersionsRoot
-            className="flex-shrink-0"
+            className="shrink-0"
             entityInformation={{
               createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
               createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",

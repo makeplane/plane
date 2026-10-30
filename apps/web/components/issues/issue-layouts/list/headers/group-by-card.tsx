@@ -7,13 +7,14 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { CircleDashed } from "lucide-react";
-import { AddOutline } from "@makeplane/propel/icons";
+import { AddOutline, CircleDashedOutline } from "@makeplane/propel/icons";
 // types
 import { setToast } from "@plane/blocks/toast";
 import type { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
 import { useTranslation } from "@plane/i18n";
 // ui
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 // components
 import { cn } from "@plane/utils";
@@ -37,6 +38,7 @@ interface IHeaderGroupByCard {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   selectionHelpers: TSelectionHelper;
   handleCollapsedGroups: (value: string) => void;
+  isExpanded: boolean;
   isEpic?: boolean;
 }
 
@@ -52,6 +54,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     addIssuesToView,
     selectionHelpers,
     handleCollapsedGroups,
+    isExpanded,
     isEpic = false,
   } = props;
   // plane hooks
@@ -95,10 +98,10 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     <>
       <div className="group/list-header flex w-full flex-shrink-0 items-center gap-2 py-1.5">
         {canSelectIssues && (
-          <div className="absolute left-1 flex w-3.5 flex-shrink-0 items-center">
+          <div className="absolute left-0.5 flex w-4 flex-shrink-0 items-center">
             <MultipleSelectGroupAction
               className={cn(
-                "pointer-events-none size-3.5 opacity-0 !outline-none group-hover/list-header:pointer-events-auto group-hover/list-header:opacity-100",
+                "pointer-events-none size-3.5 opacity-0 !outline-none group-focus-within/list-header:pointer-events-auto group-focus-within/list-header:opacity-100 group-hover/list-header:pointer-events-auto group-hover/list-header:opacity-100",
                 {
                   "pointer-events-auto opacity-100": !isGroupSelectionEmpty,
                 }
@@ -110,31 +113,32 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           </div>
         )}
         <div className="grid flex-shrink-0 place-items-center overflow-hidden">
-          {icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
+          {icon ?? <CircleDashedOutline className="size-3.5" />}
         </div>
 
-        {/* eslint-disable-next-line jsx_a11y/click-events-have-key-events eslint-disable-next-line jsx_a11y/no-static-element-interactions */}
-        <div
-          className="relative flex w-full cursor-pointer flex-row items-center gap-1 overflow-hidden"
+        <button
+          type="button"
+          aria-label={title}
+          aria-expanded={isExpanded}
+          className="relative flex w-full min-w-0 cursor-pointer flex-row items-center gap-1 rounded-xs text-left outline-none focus-visible:ring-2 focus-visible:ring-accent-strong"
           onClick={() => handleCollapsedGroups(groupID)}
         >
-          <div className="line-clamp-1 inline-block truncate font-medium text-primary">{title}</div>
-          <div className="pl-2 text-13 font-medium text-tertiary">{count || 0}</div>
-          <div className="px-2.5"></div>
-        </div>
+          <span className="line-clamp-1 inline-block truncate text-body-sm-medium text-primary">{title}</span>
+          <span className="pl-2 text-body-xs-medium text-tertiary">{count || 0}</span>
+          <span className="px-2.5" />
+        </button>
 
         {!disableIssueCreation &&
           (renderExistingIssueModal ? (
             <Menu>
               <MenuTrigger
                 render={
-                  <button
-                    type="button"
+                  <IconButton
+                    variant="ghost"
+                    size="md"
                     aria-label={t("common.add")}
-                    className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1"
-                  >
-                    <AddOutline className="h-3.5 w-3.5" />
-                  </button>
+                    icon={<Icon icon={AddOutline} />}
+                  />
                 }
               />
               <MenuContent side="bottom" align="start">
@@ -153,16 +157,15 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
               </MenuContent>
             </Menu>
           ) : (
-            <button
-              type="button"
+            <IconButton
+              variant="ghost"
+              size="md"
               aria-label={t("common.add")}
-              className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1"
+              icon={<Icon icon={AddOutline} />}
               onClick={() => {
                 setIsOpen(true);
               }}
-            >
-              <AddOutline width={14} />
-            </button>
+            />
           ))}
 
         {isEpic ? (

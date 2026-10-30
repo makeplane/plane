@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Vyberte pro podrobnosti."
+        "title": "Není vybráno žádné oznámení",
+        "description": "Vyberte oznámení a zobrazte jeho podrobnosti."
       },
       "all": {
         "title": "Žádné přiřazené položky",
@@ -52,7 +53,15 @@
       "5_days": "5 dní",
       "1_week": "1 týden",
       "2_weeks": "2 týdny",
-      "custom": "Vlastní"
+      "custom": "Vlastní",
+      "modal": {
+        "title": "Přizpůsobit čas odložení",
+        "pick_a_date": "Vyberte datum",
+        "pick_a_time": "Vyberte čas",
+        "select_date": "Vyberte datum",
+        "select_time": "Vyberte čas",
+        "no_available_time": "Pro toto datum není k dispozici žádný čas"
+      }
     }
   }
 }

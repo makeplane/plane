@@ -64,7 +64,7 @@ export const SidebarWorkspaceMenuItem = observer(function SidebarWorkspaceMenuIt
               "rotate-180": item.key === "active_cycles",
             })}
           />
-          <p className="text-13 leading-5 font-medium">{t(item.labelTranslationKey)}</p>
+          <p className="text-body-xs-medium leading-5">{t(item.labelTranslationKey)}</p>
         </div>
         <div className="flex-shrink-0">
           <UpgradeBadge />

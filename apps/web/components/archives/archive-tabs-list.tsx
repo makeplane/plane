@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { Tab, Tabs, TabsList } from "@makeplane/propel/components/tabs";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // types
@@ -46,24 +47,27 @@ export const ArchiveTabsList = observer(function ArchiveTabsList() {
   const projectDetails = getProjectById(projectId?.toString());
   if (!projectDetails) return null;
 
+  const activeTab = ARCHIVES_TAB_LIST.find((tab) => pathname.includes(`/archives/${tab.key}`))?.key;
+
   return (
-    <>
-      {ARCHIVES_TAB_LIST.map(
-        (tab) =>
-          tab.shouldRender(projectDetails) && (
-            <Link key={tab.key} href={`/${workspaceSlug}/projects/${projectId}/archives/${tab.key}`}>
-              <span
-                className={`flex min-w-min flex-shrink-0 border-b-2 px-4 py-4 text-13 font-medium whitespace-nowrap outline-none ${
-                  pathname.includes(tab.key)
-                    ? "border-accent-strong text-accent-primary"
-                    : "border-transparent text-tertiary hover:border-subtle hover:text-placeholder"
-                }`}
-              >
-                {tab.label}
-              </span>
-            </Link>
-          )
-      )}
-    </>
+    <Tabs variant="underline" value={activeTab}>
+      {/* Bottom-aligned so the active bar sits on the header's bottom rule. */}
+      <div className="flex self-stretch pt-2.5">
+        <TabsList>
+          {ARCHIVES_TAB_LIST.map(
+            (tab) =>
+              tab.shouldRender(projectDetails) && (
+                <Tab
+                  key={tab.key}
+                  value={tab.key}
+                  label={tab.label}
+                  nativeButton={false}
+                  render={<Link href={`/${workspaceSlug}/projects/${projectId}/archives/${tab.key}`} />}
+                />
+              )
+          )}
+        </TabsList>
+      </div>
+    </Tabs>
   );
 });

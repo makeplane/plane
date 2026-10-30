@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@makeplane/propel/components/button";
 import { AddOutline } from "@makeplane/propel/icons";
 import type { THomeWidgetProps } from "@plane/types";
 import { useHome } from "@/hooks/store/use-home";
@@ -46,17 +47,20 @@ export const DashboardQuickLinks = observer(function DashboardQuickLinks(props: 
         linkOperations={linkOperations}
         preloadedData={linkData}
       />
-      <div className="mb-2">
-        <div className="mb-4 flex items-center justify-between">
-          <div className="text-14 font-semibold text-tertiary">{t("home.quick_links.title_plural")}</div>
-          <button
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="text-body-sm-semibold text-tertiary">{t("home.quick_links.title_plural")}</div>
+          <Button
+            variant="secondary"
+            size="sm"
+            stretch="auto"
+            type="button"
+            icon={<AddOutline />}
+            label={t("home.quick_links.add")}
             onClick={handleCreateLinkModal}
-            className="my-auto flex gap-1 text-13 font-medium text-accent-primary"
-          >
-            <AddOutline className="my-auto size-4" /> <span>{t("home.quick_links.add")}</span>
-          </button>
+          />
         </div>
-        <div className="flex w-full flex-wrap">
+        <div className="w-full">
           {/* rendering links */}
           <ProjectLinkList workspaceSlug={workspaceSlug} linkOperations={linkOperations} />
         </div>

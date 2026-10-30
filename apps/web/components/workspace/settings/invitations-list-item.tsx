@@ -11,6 +11,8 @@ import { useParams } from "next/navigation";
 import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronDownOutline, DeleteOutline, LinkOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
+import { Avatar } from "@makeplane/propel/components/avatar";
+import { Badge } from "@makeplane/propel/components/badge";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
@@ -136,19 +138,19 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
         }}
         onSubmit={handleRemoveInvitation}
       />
-      <div className="group flex h-full w-full items-center justify-between px-3 py-4 hover:bg-layer-transparent-hover">
+      <div className="group flex h-full w-full items-center justify-between rounded px-3 py-4 hover:bg-layer-transparent-hover">
         <div className="flex items-center gap-x-4 gap-y-2">
-          <span className="relative flex h-10 w-10 items-center justify-center rounded-sm bg-layer-3 p-4 text-tertiary capitalize">
-            {(invitationDetails.email ?? "?")[0]}
-          </span>
+          <Avatar
+            size="lg"
+            alt={invitationDetails.email}
+            fallback={(invitationDetails.email ?? "?")[0]?.toUpperCase()}
+          />
           <div>
             <h4 className="cursor-default text-body-xs-regular">{invitationDetails.email}</h4>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-11">
-          <div className="flex items-center justify-center rounded-sm bg-label-yellow-bg-strong/20 px-2.5 py-1 text-center text-caption-sm-medium text-label-yellow-text">
-            <p>{t("common.pending")}</p>
-          </div>
+        <div className="flex items-center gap-2 text-caption-sm-regular">
+          <Badge variant="warning" size="sm" label={t("common.pending")} />
           <SelectDropdownPlacementContext.Provider value={ROLE_DROPDOWN_PLACEMENT}>
             <Select<TRoleOption>
               value={roleOptions.find((role) => role.key === invitationDetails.role) ?? null}

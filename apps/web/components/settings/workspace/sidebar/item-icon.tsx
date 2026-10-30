@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 import {
   BillingsOutline,
   BuildingOutline,
@@ -16,7 +16,7 @@ import {
 import type { ISvgIcons } from "@plane/blocks/icons";
 import type { TWorkspaceSettingsTabs } from "@plane/types";
 
-export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon | React.FC<ISvgIcons>> = {
+export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, IconGlyph | React.FC<ISvgIcons>> = {
   general: BuildingOutline,
   members: MembersOutline,
   export: ExportOutline,

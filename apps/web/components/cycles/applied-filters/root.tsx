@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Pill } from "@makeplane/propel/components/pill";
 import { CloseOutline } from "@makeplane/propel/icons";
 import type { TCycleFilters } from "@plane/types";
@@ -18,6 +19,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { AppliedDateFilters } from "./date";
 import { AppliedStatusFilters } from "./status";
+import { APPLIED_FILTER_GROUP_CLASSNAME } from "@/components/common/removable-chip";
 
 type Props = {
   appliedFilters: TCycleFilters;
@@ -43,7 +45,7 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
     allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
 
   return (
-    <div className="flex flex-wrap items-stretch gap-2 bg-surface-1">
+    <div className="flex flex-wrap items-center gap-2 bg-surface-1">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof TCycleFilters;
 
@@ -51,11 +53,10 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
         if (Array.isArray(value) && value.length === 0) return;
 
         return (
-          <div
-            key={filterKey}
-            className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary"
-          >
-            <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+          <div key={filterKey} className={APPLIED_FILTER_GROUP_CLASSNAME}>
+            <span className="text-caption-sm-regular text-tertiary capitalize">
+              {replaceUnderscoreIfSnakeCase(filterKey)}
+            </span>
             <div className="flex flex-wrap items-center gap-1">
               {filterKey === "status" && (
                 <AppliedStatusFilters
@@ -72,13 +73,14 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
                 />
               )}
               {isEditingAllowed && (
-                <button
+                <IconButton
                   type="button"
-                  className="grid place-items-center text-tertiary hover:text-secondary"
+                  variant="ghost"
+                  size="xs"
+                  aria-label={`${t("aria_labels.common.remove")}: ${replaceUnderscoreIfSnakeCase(filterKey)}`}
                   onClick={() => handleRemoveFilter(filterKey, null)}
-                >
-                  <CloseOutline height={12} width={12} />
-                </button>
+                  icon={<Icon icon={CloseOutline} />}
+                />
               )}
             </div>
           </div>

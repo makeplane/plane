@@ -10,10 +10,10 @@ import type { TIdentifierTextProps, TIdentifierTextVariant, TIssueIdentifierSize
 import { cn } from "@plane/utils";
 
 const SIZE_MAP: Record<TIssueIdentifierSize, string> = {
-  xs: "text-caption-sm-regular",
-  sm: "text-caption-sm-medium",
+  xs: "text-caption-md-medium",
+  sm: "text-caption-md-medium",
   md: "text-caption-md-medium",
-  lg: "text-caption-lg-medium",
+  lg: "text-caption-md-medium",
 };
 
 const VARIANT_MAP: Record<TIdentifierTextVariant, string> = {
@@ -48,11 +48,21 @@ export function IdentifierText(props: TIdentifierTextProps) {
   const textSizeClassName = SIZE_MAP[size];
   const variantClassName = VARIANT_MAP[variant];
 
+  if (!enableClickToCopyIdentifier) {
+    return (
+      <span
+        className={cn("text-caption-md-medium whitespace-nowrap text-tertiary", textSizeClassName, variantClassName)}
+      >
+        {identifier}
+      </span>
+    );
+  }
+
   return (
     <Tooltip label="Click to copy" disabled={!enableClickToCopyIdentifier}>
       <button
         type="button"
-        className={cn("text-12 font-medium whitespace-nowrap text-tertiary", textSizeClassName, variantClassName, {
+        className={cn("text-caption-md-medium whitespace-nowrap text-tertiary", textSizeClassName, variantClassName, {
           "cursor-pointer": enableClickToCopyIdentifier,
         })}
         onClick={handleCopyIssueIdentifier}

@@ -5,24 +5,11 @@
  */
 
 import { useParams } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
-import { WarningTriangleOutline } from "@makeplane/propel/icons";
 // Plane imports
-import { Field } from "@makeplane/propel/components/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { Button } from "@makeplane/propel/components/button";
+import { TypeToConfirmDialog } from "@plane/blocks/dialog";
 import { setToast } from "@plane/blocks/toast";
+import { useTranslation } from "@plane/i18n";
 import type { IProject } from "@plane/types";
-import {
-  Dialog,
-  DialogActions,
-  DialogBody,
-  DialogContent,
-  DialogHeader,
-  DialogHeading,
-  DialogMain,
-  DialogTitle,
-} from "@makeplane/propel/components/dialog";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -33,156 +20,55 @@ type DeleteProjectModal = {
   onClose: () => void;
 };
 
-const defaultValues = {
-  projectName: "",
-  confirmDelete: "",
-};
-
 export function DeleteProjectModal(props: DeleteProjectModal) {
   const { isOpen, project, onClose } = props;
   // store hooks
   const { deleteProject } = useProject();
+  // plane hooks
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
-  // form info
-  const {
-    control,
-    formState: { errors, isSubmitting },
-    handleSubmit,
-    reset,
-    watch,
-  } = useForm({ defaultValues });
-
-  const canDelete = watch("projectName") === project?.name && watch("confirmDelete") === "delete my project";
-
-  const handleClose = () => {
-    const timer = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timer);
-    }, 350);
-
-    onClose();
-  };
 
   const onSubmit = async () => {
-    if (!workspaceSlug || !canDelete) return;
+    if (!workspaceSlug) return;
 
     try {
       await deleteProject(workspaceSlug.toString(), project.id);
       if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
-      handleClose();
+      onClose();
       setToast({
         type: "success",
-        title: "Success!",
-        message: "Project deleted successfully.",
+        title: t("toast.success"),
+        message: t("project_settings.general.delete_project.success_message"),
       });
     } catch (_error) {
       setToast({
         type: "error",
-        title: "Error!",
-        message: "Something went wrong. Please try again later.",
+        title: t("toast.error"),
+        message: t("something_went_wrong_please_try_again"),
       });
     }
   };
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(open) => {
-        if (!open) handleClose();
-      }}
-    >
-      <DialogContent size="md">
-        <form onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
-          <DialogMain>
-            <DialogHeader>
-              <div className="flex w-full items-center justify-start gap-6">
-                <span className="place-items-center rounded-full bg-danger-subtle p-4">
-                  <WarningTriangleOutline className="h-6 w-6 text-danger-primary" aria-hidden="true" />
-                </span>
-                <DialogHeading>
-                  <DialogTitle>Delete project</DialogTitle>
-                </DialogHeading>
-              </div>
-            </DialogHeader>
-            <DialogBody>
-              <div className="flex flex-col gap-6">
-                <p className="text-13 leading-7 text-secondary">
-                  Are you sure you want to delete project{" "}
-                  <span className="font-semibold break-words">{project?.name}</span>? All of the data related to the
-                  project will be permanently removed. This action cannot be undone
-                </p>
-                <div className="text-secondary">
-                  <p className="text-13 break-words">
-                    Enter the project name <span className="font-medium text-primary">{project?.name}</span> to
-                    continue:
-                  </p>
-                  <Controller
-                    control={control}
-                    name="projectName"
-                    render={({ field: { value, onChange, ref } }) => (
-                      <Field name="projectName" invalid={Boolean(errors.projectName)}>
-                        <InputGroup size="2xl">
-                          <Input
-                            size="2xl"
-                            id="projectName"
-                            name="projectName"
-                            type="text"
-                            value={value}
-                            onChange={onChange}
-                            ref={ref}
-                            placeholder="Project name"
-                            autoComplete="off"
-                          />
-                        </InputGroup>
-                      </Field>
-                    )}
-                  />
-                </div>
-                <div className="text-secondary">
-                  <p className="text-13">
-                    To confirm, type <span className="font-medium text-primary">delete my project</span> below:
-                  </p>
-                  <Controller
-                    control={control}
-                    name="confirmDelete"
-                    render={({ field: { value, onChange, ref } }) => (
-                      <Field name="confirmDelete" invalid={Boolean(errors.confirmDelete)}>
-                        <InputGroup size="2xl">
-                          <Input
-                            size="2xl"
-                            id="confirmDelete"
-                            name="confirmDelete"
-                            type="text"
-                            value={value}
-                            onChange={onChange}
-                            ref={ref}
-                            placeholder="Enter 'delete my project'"
-                            autoComplete="off"
-                          />
-                        </InputGroup>
-                      </Field>
-                    )}
-                  />
-                </div>
-              </div>
-            </DialogBody>
-          </DialogMain>
-          <DialogActions>
-            <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
-            <Button
-              variant="danger"
-              size="md"
-              stretch="auto"
-              type="submit"
-              label={isSubmitting ? "Deleting" : "Delete project"}
-              disabled={!canDelete}
-              loading={isSubmitting}
-            />
-          </DialogActions>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <TypeToConfirmDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      onConfirm={onSubmit}
+      title={t("project_settings.general.delete_project.title")}
+      description={t("project_settings.general.delete_project.confirm_description", {
+        projectName: project?.name ?? "",
+      })}
+      fields={[
+        {
+          name: "projectName",
+          label: t("project_settings.general.confirm_project_name_label"),
+          expectedValue: project?.name ?? "",
+        },
+      ]}
+      confirmLabel={t("project_settings.general.delete_project.title")}
+      loadingLabel={t("deleting")}
+    />
   );
 }

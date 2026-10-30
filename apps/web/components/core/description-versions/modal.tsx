@@ -102,7 +102,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
         </div>
         <DialogToolbar>
           <div className="flex items-center justify-between gap-2">
-            <div className="flex flex-shrink-0 items-center gap-2 text-13">
+            <div className="flex flex-shrink-0 items-center gap-2 text-body-xs-regular">
               <p className="flex items-center gap-1">
                 {t("description_versions.edited_by")}
                 <span className="flex-shrink-0">

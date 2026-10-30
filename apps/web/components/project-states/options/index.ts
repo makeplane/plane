@@ -4,5 +4,4 @@
  * See the LICENSE file for details.
  */
 
-export * from "./mark-as-default";
-export * from "./delete";
+export * from "./quick-actions";

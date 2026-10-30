@@ -136,7 +136,7 @@ function IssuesLayout(props: Route.ComponentProps) {
         <div className="relative flex h-[60px] shrink-0 items-center border-b border-subtle-1 bg-surface-1 select-none">
           <IssuesNavbarRoot publishSettings={publishSettings} />
         </div>
-        <div className="relative size-full overflow-hidden bg-surface-2">
+        <div className="relative size-full overflow-hidden bg-surface-1">
           <Outlet />
         </div>
       </div>

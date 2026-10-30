@@ -95,8 +95,8 @@ export function IntegrationCard({ integration }: Props) {
               />
             </div>
             <div>
-              <h3 className="flex items-center gap-4 text-13 font-medium">{integration.integration_detail.title}</h3>
-              <p className="text-13 tracking-tight text-secondary">
+              <h3 className="flex items-center gap-4 text-body-xs-medium">{integration.integration_detail.title}</h3>
+              <p className="text-body-xs-regular tracking-tight text-secondary">
                 {integrationDetails[integration.integration_detail.provider].description}
               </p>
             </div>

@@ -7,7 +7,9 @@
 import { useMemo } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
+import { MenuSeparator } from "@makeplane/propel/components/menu";
 import { PreferencesOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 // plane imports
 import type { IIssueDisplayFilterOptions, ILayoutDisplayFiltersOptions, IIssueDisplayProperties } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -37,6 +39,8 @@ export const SubIssueDisplayFilters = observer(function SubIssueDisplayFilters(p
     handleDisplayFiltersUpdate,
     displayFilters,
   } = props;
+  // plane hooks
+  const { t } = useTranslation();
 
   const isFilterApplied = useMemo(
     () => isDisplayFiltersApplied({ displayProperties, displayFilters }),
@@ -47,6 +51,7 @@ export const SubIssueDisplayFilters = observer(function SubIssueDisplayFilters(p
     <>
       {layoutDisplayFiltersOptions?.display_filters && layoutDisplayFiltersOptions?.display_properties.length > 0 && (
         <FiltersDropdown
+          title={t("common.display")}
           placement="bottom-end"
           menuButton={
             <div
@@ -55,51 +60,47 @@ export const SubIssueDisplayFilters = observer(function SubIssueDisplayFilters(p
                 isFilterApplied && "bg-accent-primary/20"
               )}
             >
-              {isFilterApplied && <span className="absolute -top-1 -right-1 rounded-full bg-accent-primary p-1" />}
+              {isFilterApplied && (
+                <span className="absolute -top-0.5 -right-0.5 size-2 rounded-full bg-accent-primary" />
+              )}
               <PreferencesOutline className="h-3.5 w-3.5 text-primary" />
             </div>
           }
         >
-          <div className="vertical-scrollbar relative scrollbar-sm h-full max-h-[25rem] w-full divide-y divide-subtle-1 overflow-hidden overflow-y-auto px-2.5 text-left">
-            {/* display properties */}
-            <div className="py-2">
-              <FilterDisplayProperties
-                displayProperties={displayProperties}
-                displayPropertiesToRender={layoutDisplayFiltersOptions.display_properties}
-                handleUpdate={handleDisplayPropertiesUpdate}
-                isEpic={isEpic}
-              />
-            </div>
+          {/* display properties */}
+          <FilterDisplayProperties
+            displayProperties={displayProperties}
+            displayPropertiesToRender={layoutDisplayFiltersOptions.display_properties}
+            handleUpdate={handleDisplayPropertiesUpdate}
+            isEpic={isEpic}
+          />
 
-            {/* group by */}
-            <div className="py-2">
-              <FilterGroupBy
-                displayFilters={displayFilters}
-                groupByOptions={layoutDisplayFiltersOptions?.display_filters.group_by ?? []}
-                handleUpdate={(val) =>
-                  handleDisplayFiltersUpdate({
-                    group_by: val,
-                  })
-                }
-                ignoreGroupedFilters={[]}
-              />
-            </div>
+          <MenuSeparator />
 
-            {/* order by */}
-            {!isEmpty(layoutDisplayFiltersOptions?.display_filters?.order_by) && (
-              <div className="py-2">
-                <FilterOrderBy
-                  selectedOrderBy={displayFilters?.order_by}
-                  handleUpdate={(val) =>
-                    handleDisplayFiltersUpdate({
-                      order_by: val,
-                    })
-                  }
-                  orderByOptions={layoutDisplayFiltersOptions?.display_filters.order_by ?? []}
-                />
-              </div>
-            )}
-          </div>
+          {/* group by */}
+          <FilterGroupBy
+            displayFilters={displayFilters}
+            groupByOptions={layoutDisplayFiltersOptions?.display_filters.group_by ?? []}
+            handleUpdate={(val) =>
+              handleDisplayFiltersUpdate({
+                group_by: val,
+              })
+            }
+            ignoreGroupedFilters={[]}
+          />
+
+          {/* order by */}
+          {!isEmpty(layoutDisplayFiltersOptions?.display_filters?.order_by) && (
+            <FilterOrderBy
+              selectedOrderBy={displayFilters?.order_by}
+              handleUpdate={(val) =>
+                handleDisplayFiltersUpdate({
+                  order_by: val,
+                })
+              }
+              orderByOptions={layoutDisplayFiltersOptions?.display_filters.order_by ?? []}
+            />
+          )}
         </FiltersDropdown>
       )}
     </>

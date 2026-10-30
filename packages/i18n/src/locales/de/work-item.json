@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Arbeitselement} few {Arbeitselemente} other {Arbeitselemente}}",
     "all": "Alle Arbeitselemente",
     "edit": "Arbeitselement bearbeiten",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# weitere Eigenschaft} other {# weitere Eigenschaften}}",
+      "label_overflow_indicator": "{count, plural, one {+# Label} other {+# Labels}}"
+    },
     "title": {
       "label": "Titel des Arbeitselements",
       "required": "Ein Titel für das Arbeitselement ist erforderlich."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "Weitere Arbeitselemente anzeigen"
         }
+      },
+      "no_access": {
+        "title": "Sie haben keinen Zugriff auf dieses Arbeitselement",
+        "description": "Wenden Sie sich an einen Projektadministrator, um Zugriff anzufordern."
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "Wiederherstellung des Arbeitselements fehlgeschlagen. Bitte versuchen Sie es erneut."
       }
     },
+    "archived_banner": "Dieses Arbeitselement ist archiviert. Zum Bearbeiten muss es wiederhergestellt werden.",
+    "updated_time_ago": "Aktualisiert {time}",
+    "description_load_failed": "Die Beschreibung konnte nicht geladen werden.",
+    "assignee_count": "{count, plural, one {# zugewiesene Person} other {# zugewiesene Personen}}",
     "relation": {
       "relates_to": "Steht in Beziehung zu",
       "duplicate": "Duplikat",
@@ -267,7 +279,12 @@
       "click_to_upvote": "Klicken zum Hochstimmen",
       "click_to_downvote": "Klicken zum Runterstimmen",
       "click_to_view_upvotes": "Klicken um Hochstimmen anzuzeigen",
-      "click_to_view_downvotes": "Klicken um Runterstimmen anzuzeigen"
+      "click_to_view_downvotes": "Klicken um Runterstimmen anzuzeigen",
+      "title": "Stimmen",
+      "upvotes_count": "{count, plural, one {# Hochstimme} other {# Hochstimmen}}",
+      "downvotes_count": "{count, plural, one {# Runterstimme} other {# Runterstimmen}}",
+      "no_upvotes": "Noch keine Hochstimmen",
+      "no_downvotes": "Noch keine Runterstimmen"
     }
   },
   "sub_work_item": {

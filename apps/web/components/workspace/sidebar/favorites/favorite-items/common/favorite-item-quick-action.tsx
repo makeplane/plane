@@ -6,6 +6,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { MoreHorizontalOutline, StarFilled } from "@makeplane/propel/icons";
@@ -32,7 +33,7 @@ export const FavoriteItemQuickAction = observer(function FavoriteItemQuickAction
     <div
       ref={ref}
       className={cn(
-        "pointer-events-none flex-shrink-0 opacity-0 group-hover/project-item:pointer-events-auto group-hover/project-item:opacity-100",
+        "pointer-events-none flex-shrink-0 opacity-0 group-focus-within/project-item:pointer-events-auto group-focus-within/project-item:opacity-100 group-hover/project-item:pointer-events-auto group-hover/project-item:opacity-100",
         {
           "pointer-events-auto opacity-100": isMenuActive,
         }
@@ -41,18 +42,18 @@ export const FavoriteItemQuickAction = observer(function FavoriteItemQuickAction
       <Menu onOpenChange={onChange}>
         <MenuTrigger
           render={
-            <button
-              type="button"
-              className="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
+            <IconButton
+              variant="ghost"
+              size="xs"
+              showTooltip={false}
               aria-label={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
-            >
-              <MoreHorizontalOutline className="size-4" />
-            </button>
+              icon={<Icon icon={MoreHorizontalOutline} />}
+            />
           }
         />
         <MenuContent side="bottom" align="start">
           <MenuItem
-            icon={<Icon icon={<StarFilled className="text-yellow-500" />} />}
+            icon={<Icon icon={<StarFilled className="text-label-yellow-icon-strong" />} />}
             label={t("remove_from_favorites")}
             onClick={() => handleRemoveFromFavorites(favorite)}
           />

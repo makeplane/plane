@@ -6,9 +6,12 @@
 
 import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { AddFilterOutline } from "@makeplane/propel/icons";
+import { AddFilterOutline, ArrowCollapseOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { useTranslation } from "@plane/i18n";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty } from "@plane/types";
 import { EHeaderVariant, Header } from "@plane/blocks/layout";
@@ -19,6 +22,7 @@ import type { TAddFilterButtonProps } from "./add-filters/button";
 import { AddFilterButton } from "./add-filters/button";
 import { FilterItem } from "./filter-item/root";
 import { ElementTransition, RowTransition } from "./transition-components";
+import { RichFiltersViewControls } from "./view-controls";
 
 export type TFiltersRowProps<K extends TFilterProperty, E extends TExternalFilter> = {
   buttonConfig?: TAddFilterButtonProps<K, E>["buttonConfig"];
@@ -33,11 +37,14 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   const { buttonConfig, disabledAllOperations: disabledAllOperationsProp = false, filter, variant = "header" } = props;
   // states
   const [isUpdating, setIsUpdating] = useState(false);
+  // plane hooks
+  const { t } = useTranslation();
   // derived values
   const disabledAllOperations = disabledAllOperationsProp || !filter.configManager.areConfigsReady;
   const hasAnyConditions = filter.allConditionsForDisplay.length > 0;
+  const showMinimize = !disabledAllOperations && variant === "header";
   const hasAvailableOperations =
-    !disabledAllOperations && (filter.canClearFilters || filter.canSaveView || filter.canUpdateView);
+    !disabledAllOperations && (filter.canClearFilters || filter.canSaveView || filter.canUpdateView || showMinimize);
 
   const headerButtonConfig: Partial<TAddFilterButtonProps<K, E>["buttonConfig"]> = {
     label: null,
@@ -82,33 +89,31 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
     <>
       <ElementTransition show={filter.canClearFilters}>
         <Button
-          variant="secondary"
-          size="sm"
+          variant="ghost"
+          size="md"
           stretch="auto"
           label={filter.clearFilterOptions?.label ?? "Clear all"}
           onClick={filter.clearFilters}
         />
       </ElementTransition>
-      <ElementTransition show={filter.canSaveView}>
-        <Button
-          variant="secondary"
-          size="sm"
-          stretch="auto"
-          label={filter.saveViewOptions?.label ?? "Save view"}
-          onClick={filter.saveView}
+      <RichFiltersViewControls
+        save={{ enabled: filter.canSaveView, label: filter.saveViewOptions?.label, onClick: filter.saveView }}
+        update={{
+          enabled: filter.canUpdateView,
+          isUpdating,
+          label: filter.updateViewOptions?.label,
+          onClick: handleUpdate,
+        }}
+      />
+      {showMinimize && (
+        <IconButton
+          variant="ghost"
+          size="md"
+          icon={<Icon icon={ArrowCollapseOutline} />}
+          onClick={() => filter.toggleVisibility(false)}
+          aria-label={t("rich_filters.view_controls.hide_filters")}
         />
-      </ElementTransition>
-      <ElementTransition show={filter.canUpdateView}>
-        <Button
-          variant="secondary"
-          size="sm"
-          stretch="auto"
-          label={isUpdating ? "Confirming" : (filter.updateViewOptions?.label ?? "Update view")}
-          onClick={handleUpdate}
-          loading={isUpdating}
-          disabled={isUpdating}
-        />
-      </ElementTransition>
+      )}
     </>
   );
 
@@ -126,7 +131,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   );
 
   const ModalVariant = (
-    <div className="flex min-h-11 w-full flex-wrap items-center gap-2 rounded-lg bg-layer-1 p-2">{mainContent}</div>
+    <div className="flex min-h-11 w-full flex-wrap items-center gap-2 rounded-lg bg-layer-1">{mainContent}</div>
   );
 
   const HeaderVariant = (

@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Работен елемент} other {Работни елементи}}",
     "all": "Всички работни елементи",
     "edit": "Редактирай работния елемент",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {още # свойство} other {още # свойства}}",
+      "label_overflow_indicator": "{count, plural, one {+# етикет} other {+# етикета}}"
+    },
     "title": {
       "label": "Заглавие на работния елемент",
       "required": "Заглавието на работния елемент е задължително."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "Виж други работни елементи"
         }
+      },
+      "no_access": {
+        "title": "Нямате достъп до този работен елемент",
+        "description": "Свържете се с администратор на проекта, за да заявите достъп."
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "Работният елемент не можа да бъде възстановен. Опитайте отново."
       }
     },
+    "archived_banner": "Този работен елемент е архивиран. Възстановете го, за да правите промени.",
+    "updated_time_ago": "Обновено {time}",
+    "description_load_failed": "Описанието не можа да се зареди.",
+    "assignee_count": "{count, plural, one {# изпълнител} other {# изпълнителя}}",
     "relation": {
       "relates_to": "Свързан с",
       "duplicate": "Дубликат на",
@@ -267,7 +279,12 @@
       "click_to_upvote": "Щракнете, за да гласувате „за“",
       "click_to_downvote": "Щракнете, за да гласувате „против“",
       "click_to_view_upvotes": "Щракнете, за да видите гласовете „за“",
-      "click_to_view_downvotes": "Щракнете, за да видите гласовете „против“"
+      "click_to_view_downvotes": "Щракнете, за да видите гласовете „против“",
+      "title": "Гласове",
+      "upvotes_count": "{count, plural, one {# глас „за“} other {# гласа „за“}}",
+      "downvotes_count": "{count, plural, one {# глас „против“} other {# гласа „против“}}",
+      "no_upvotes": "Все още няма гласове „за“",
+      "no_downvotes": "Все още няма гласове „против“"
     }
   },
   "sub_work_item": {

@@ -4,12 +4,16 @@
  * See the LICENSE file for details.
  */
 
+import type { MouseEvent } from "react";
 import React from "react";
-import Link from "next/link";
+import { useLinkClickHandler } from "react-router";
 // plane imports
-import { cn } from "@plane/utils";
-import type { LucideIcon } from "lucide-react";
+import { Icon } from "@makeplane/propel/components/icon";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
+import { ListItem, ListItemButton, ListItemLink } from "@makeplane/propel/components/list";
 import type { ISvgIcons } from "@plane/blocks/icons";
+// helpers
+import { ensureTrailingSlash } from "@/app/compat/next/helper";
 
 type Props = {
   isActive: boolean;
@@ -17,44 +21,45 @@ type Props = {
 } & ({ as: "button"; onClick: () => void } | { as: "link"; href: string }) &
   (
     | {
-        icon: LucideIcon | React.FC<ISvgIcons>;
+        icon: IconGlyph | React.FC<ISvgIcons>;
       }
     | { iconNode: React.ReactElement }
   );
 
-export function SettingsSidebarItem(props: Props) {
-  const { as, isActive, label } = props;
-  // common class
-  const className = cn(
-    "flex items-center gap-2 rounded-lg px-2 py-1.5 text-left text-body-sm-medium text-secondary transition-colors",
-    {
-      "bg-layer-transparent-selected text-primary": isActive,
-      "hover:bg-layer-transparent-hover": !isActive,
-    }
-  );
-  // common content
-  const content = (
-    <>
-      {"icon" in props ? (
-        <span className="grid size-4 shrink-0 place-items-center">{<props.icon className="size-3.5" />}</span>
-      ) : (
-        props.iconNode
-      )}
-      <span className="truncate">{label}</span>
-    </>
-  );
-
-  if (as === "button") {
-    return (
-      <button type="button" className={className} onClick={props.onClick}>
-        {content}
-      </button>
-    );
-  }
+/** A roving list link that routes client-side, so the row stays a real `<a>` for new-tab clicks. */
+function SettingsSidebarLink(props: { href: string; label: string; startIcon: React.ReactNode; isActive: boolean }) {
+  const { href, label, startIcon, isActive } = props;
+  const to = ensureTrailingSlash(href);
+  const handleClick = useLinkClickHandler<HTMLAnchorElement>(to);
 
   return (
-    <Link className={className} href={props.href}>
-      {content}
-    </Link>
+    <ListItemLink
+      href={to}
+      label={label}
+      startIcon={startIcon}
+      aria-current={isActive ? "page" : undefined}
+      onClick={(e) => handleClick(e as MouseEvent<HTMLAnchorElement>)}
+    />
+  );
+}
+
+/** One settings sidebar row; render inside a `List` so arrow keys move between rows. */
+export function SettingsSidebarItem(props: Props) {
+  const { as, isActive, label } = props;
+  const startIcon = "icon" in props ? <Icon icon={<props.icon />} size="md" /> : props.iconNode;
+
+  return (
+    <ListItem density="comfortable">
+      {as === "button" ? (
+        <ListItemButton
+          label={label}
+          startIcon={startIcon}
+          aria-current={isActive ? "page" : undefined}
+          onClick={props.onClick}
+        />
+      ) : (
+        <SettingsSidebarLink href={props.href} label={label} startIcon={startIcon} isActive={isActive} />
+      )}
+    </ListItem>
   );
 }

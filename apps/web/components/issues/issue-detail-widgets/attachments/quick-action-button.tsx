@@ -4,10 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import React, { useCallback, useState } from "react";
+import React, { cloneElement, useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import type { FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { AddOutline } from "@makeplane/propel/icons";
 // plane imports
 import { setToast } from "@plane/blocks/toast";
@@ -23,13 +24,16 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  customButton?: React.ReactNode;
+  /** Rendered as the button itself; clicking it opens the file picker. */
+  customButton?: React.ReactElement<React.ComponentPropsWithoutRef<"button">>;
+  /** Hover label for `customButton`. */
+  tooltip?: string;
   disabled?: boolean;
   issueServiceType: TIssueServiceType;
 };
 
 export const IssueAttachmentActionButton = observer(function IssueAttachmentActionButton(props: Props) {
-  const { workspaceSlug, projectId, issueId, customButton, disabled = false, issueServiceType } = props;
+  const { workspaceSlug, projectId, issueId, customButton, tooltip, disabled = false, issueServiceType } = props;
   // state
   const [isLoading, setIsLoading] = useState(false);
   // store hooks
@@ -87,12 +91,26 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
     [attachmentOperations, maxFileSize, workspaceSlug, handleFetchPropertyActivities, setLastWidgetAction]
   );
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, open } = useDropzone({
     onDrop,
     maxSize: maxFileSize,
     multiple: false,
     disabled: isLoading || disabled,
+    // A custom button opens the picker itself, so the drop zone around it stays out of the tab order.
+    noClick: !!customButton,
+    noKeyboard: !!customButton,
   });
+
+  if (customButton) {
+    const button = cloneElement(customButton, { onClick: open, disabled: isLoading || disabled });
+    return (
+      // the wrapper keeps files dropped on the button working
+      <span {...getRootProps({ className: "inline-flex", onClick: (e) => e.stopPropagation() })}>
+        <input {...getInputProps()} />
+        {tooltip ? <Tooltip label={tooltip}>{button}</Tooltip> : button}
+      </span>
+    );
+  }
 
   return (
     <div
@@ -103,7 +121,7 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
     >
       <button {...getRootProps()} type="button" disabled={disabled}>
         <input {...getInputProps()} />
-        {customButton ? customButton : <AddOutline className="h-4 w-4" />}
+        <AddOutline className="size-3.5" />
       </button>
     </div>
   );

@@ -11,10 +11,11 @@ import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 import type { EAdminAuthErrorCodes, TAdminAuthErrorInfo } from "@plane/constants";
 import { API_BASE_URL } from "@plane/constants";
 import { Button } from "@makeplane/propel/components/button";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { InputField } from "@makeplane/propel/components/input-field";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Banner } from "@makeplane/propel/components/banner";
 import { AuthService } from "@plane/services";
-// components
-import { Banner } from "@/components/common/banner";
 // local components
 import { FormHeader } from "@/components/instance/form-header";
 import { AuthBanner } from "./auth-banner";
@@ -125,67 +126,51 @@ export function InstanceSignInForm() {
             onError={() => setIsSubmitting(false)}
           >
             {errorData.type && errorData?.message ? (
-              <Banner type="error" message={errorData?.message} />
+              <Banner placement="inline" variant="danger" description={errorData?.message} />
             ) : (
               <>{errorInfo && <AuthBanner bannerData={errorInfo} handleBannerData={setErrorInfo} />}</>
             )}
             <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
 
-            <div className="w-full space-y-1">
-              <label className="text-13 font-medium text-tertiary" htmlFor="email">
-                Email <span className="text-danger-primary">*</span>
-              </label>
-              <InputGroup size="lg">
-                <Input
-                  size="lg"
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="name@company.com"
-                  value={formData.email}
-                  onChange={(e) => handleFormChange("email", e.target.value)}
-                  autoComplete="off"
-                  autoFocus
-                />
-              </InputGroup>
-            </div>
+            <InputField
+              size="lg"
+              id="email"
+              name="email"
+              type="email"
+              placeholder="name@company.com"
+              value={formData.email}
+              onChange={(e) => handleFormChange("email", e.target.value)}
+              autoComplete="off"
+              autoFocus
+              orientation="vertical"
+              label="Email"
+              required
+            />
 
-            <div className="w-full space-y-1">
-              <label className="text-13 font-medium text-tertiary" htmlFor="password">
-                Password <span className="text-danger-primary">*</span>
-              </label>
-              <InputGroup size="lg">
-                <Input
-                  size="lg"
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={(e) => handleFormChange("password", e.target.value)}
-                  autoComplete="off"
+            <InputField
+              size="lg"
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={(e) => handleFormChange("password", e.target.value)}
+              autoComplete="off"
+              orientation="vertical"
+              label="Password"
+              required
+              endIcon={
+                <IconButton
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-pressed={showPassword}
+                  icon={<Icon icon={showPassword ? HideOutline : ShowOutline} />}
+                  onClick={() => setShowPassword((visible) => !visible)}
                 />
-                {showPassword ? (
-                  <button
-                    type="button"
-                    aria-label="Hide password"
-                    className="flex items-center justify-center text-placeholder"
-                    onClick={() => setShowPassword(false)}
-                  >
-                    <HideOutline className="h-4 w-4" />
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    aria-label="Show password"
-                    className="flex items-center justify-center text-placeholder"
-                    onClick={() => setShowPassword(true)}
-                  >
-                    <ShowOutline className="h-4 w-4" />
-                  </button>
-                )}
-              </InputGroup>
-            </div>
+              }
+            />
             <div className="py-2">
               <Button
                 type="submit"

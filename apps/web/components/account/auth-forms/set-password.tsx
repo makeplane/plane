@@ -11,7 +11,7 @@ import { useSearchParams } from "next/navigation";
 // icons
 import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
@@ -114,77 +114,78 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
     <FormContainer>
       <AuthFormHeader title="Set password" description="Create a new password." />
       <form className="space-y-4" onSubmit={(e) => handleSubmit(e)}>
+        <InputField
+          size="xl"
+          orientation="vertical"
+          label={t("auth.common.email.label")}
+          id="email"
+          name="email"
+          type="email"
+          value={user?.email}
+          placeholder={t("auth.common.email.placeholder")}
+          autoComplete="off"
+          disabled
+        />
         <div className="space-y-1">
-          <label className="text-13 font-medium text-tertiary" htmlFor="email">
-            {t("auth.common.email.label")}
-          </label>
-          <InputGroup size="2xl">
-            <Input
-              size="2xl"
-              id="email"
-              name="email"
-              type="email"
-              value={user?.email}
-              placeholder={t("auth.common.email.placeholder")}
-              autoComplete="off"
-              disabled
-            />
-          </InputGroup>
-        </div>
-        <div className="space-y-1">
-          <label className="text-13 font-medium text-tertiary" htmlFor="password">
-            {t("auth.common.password.label")}
-          </label>
-          <InputGroup size="2xl">
-            <Input
-              size="2xl"
-              type={showPassword.password ? "text" : "password"}
-              name="password"
-              id="password"
-              value={passwordFormData.password}
-              onChange={(e) => handleFormChange("password", e.target.value)}
-              placeholder={t("auth.common.password.placeholder")}
-              minLength={8}
-              onFocus={() => setIsPasswordInputFocused(true)}
-              onBlur={() => setIsPasswordInputFocused(false)}
-              autoComplete="new-password"
-              autoFocus
-            />
-            <button
-              type="button"
-              onClick={() => handleShowPassword("password")}
-              className="grid size-5 place-items-center"
-            >
-              {showPassword.password ? (
-                <HideOutline className="size-5 text-placeholder" />
-              ) : (
-                <ShowOutline className="size-5 text-placeholder" />
-              )}
-            </button>
-          </InputGroup>
+          <InputField
+            size="xl"
+            orientation="vertical"
+            label={t("auth.common.password.label")}
+            type={showPassword.password ? "text" : "password"}
+            name="password"
+            id="password"
+            value={passwordFormData.password}
+            onChange={(e) => handleFormChange("password", e.target.value)}
+            placeholder={t("auth.common.password.placeholder")}
+            minLength={8}
+            onFocus={() => setIsPasswordInputFocused(true)}
+            onBlur={() => setIsPasswordInputFocused(false)}
+            autoComplete="new-password"
+            autoFocus
+            endIcon={
+              <button
+                type="button"
+                onClick={() => handleShowPassword("password")}
+                className="grid size-5 shrink-0 place-items-center"
+                aria-label={t(
+                  showPassword.password
+                    ? "aria_labels.auth_forms.hide_password"
+                    : "aria_labels.auth_forms.show_password"
+                )}
+              >
+                {showPassword.password ? (
+                  <HideOutline className="size-5 text-placeholder" />
+                ) : (
+                  <ShowOutline className="size-5 text-placeholder" />
+                )}
+              </button>
+            }
+          />
           <PasswordStrengthIndicator password={passwordFormData.password} isFocused={isPasswordInputFocused} />
         </div>
-        <div className="space-y-1">
-          <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
-            {t("auth.common.password.confirm_password.label")}
-          </label>
-          <InputGroup size="2xl">
-            <Input
-              size="2xl"
-              type={showPassword.retypePassword ? "text" : "password"}
-              name="confirm_password"
-              id="confirm_password"
-              value={passwordFormData.confirm_password}
-              onChange={(e) => handleFormChange("confirm_password", e.target.value)}
-              placeholder={t("auth.common.password.confirm_password.placeholder")}
-              onFocus={() => setIsRetryPasswordInputFocused(true)}
-              onBlur={() => setIsRetryPasswordInputFocused(false)}
-              autoComplete="new-password"
-            />
+        <InputField
+          size="xl"
+          orientation="vertical"
+          label={t("auth.common.password.confirm_password.label")}
+          type={showPassword.retypePassword ? "text" : "password"}
+          name="confirm_password"
+          id="confirm_password"
+          value={passwordFormData.confirm_password}
+          onChange={(e) => handleFormChange("confirm_password", e.target.value)}
+          placeholder={t("auth.common.password.confirm_password.placeholder")}
+          onFocus={() => setIsRetryPasswordInputFocused(true)}
+          onBlur={() => setIsRetryPasswordInputFocused(false)}
+          autoComplete="new-password"
+          endIcon={
             <button
               type="button"
               onClick={() => handleShowPassword("retypePassword")}
-              className="grid size-5 place-items-center"
+              className="grid size-5 shrink-0 place-items-center"
+              aria-label={t(
+                showPassword.retypePassword
+                  ? "aria_labels.auth_forms.hide_password"
+                  : "aria_labels.auth_forms.show_password"
+              )}
             >
               {showPassword.retypePassword ? (
                 <HideOutline className="size-5 text-placeholder" />
@@ -192,13 +193,15 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
                 <ShowOutline className="size-5 text-placeholder" />
               )}
             </button>
-          </InputGroup>
-          {!!passwordFormData.confirm_password &&
+          }
+          error={
+            !!passwordFormData.confirm_password &&
             passwordFormData.password !== passwordFormData.confirm_password &&
-            renderPasswordMatchError && (
-              <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
-            )}
-        </div>
+            renderPasswordMatchError
+              ? t("auth.common.password.errors.match")
+              : undefined
+          }
+        />
         <Button
           type="submit"
           variant="primary"

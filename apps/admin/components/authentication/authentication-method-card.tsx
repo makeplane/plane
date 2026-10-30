@@ -22,38 +22,39 @@ export function AuthenticationMethodCard(props: Props) {
 
   return (
     <div
-      className={cn("flex w-full items-center gap-14 rounded-lg bg-layer-2", {
-        "border border-subtle px-4 py-3": withBorder,
-      })}
+      className={cn(
+        "flex w-full min-w-0 flex-col items-start gap-4 rounded-lg md:flex-row md:items-center md:justify-between md:gap-8",
+        {
+          "border border-subtle bg-layer-2 px-4 py-3": withBorder,
+        }
+      )}
     >
       <div
-        className={cn("flex grow items-center gap-4", {
+        className={cn("flex min-w-0 grow items-start gap-3 md:items-center", {
           "opacity-50": unavailable,
         })}
       >
-        <div className="shrink-0">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-layer-1">{icon}</div>
-        </div>
-        <div className="grow">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-layer-1 p-1.5">{icon}</div>
+        <div className="min-w-0 grow space-y-1">
           <div
-            className={cn("leading-5 font-medium text-primary", {
-              "text-13": withBorder,
-              "text-18": !withBorder,
+            className={cn("text-primary", {
+              "text-body-sm-medium": withBorder,
+              "text-h5-semibold": !withBorder,
             })}
           >
             {name}
           </div>
           <div
-            className={cn("leading-5 font-regular text-tertiary", {
-              "text-11": withBorder,
-              "text-13": !withBorder,
+            className={cn("text-tertiary", {
+              "text-body-xs-regular": withBorder,
+              "text-body-sm-regular": !withBorder,
             })}
           >
             {description}
           </div>
         </div>
       </div>
-      <div className={`shrink-0 ${disabled && "opacity-70"}`}>{config}</div>
+      <div className={cn("shrink-0", { "opacity-70": disabled })}>{config}</div>
     </div>
   );
 }
