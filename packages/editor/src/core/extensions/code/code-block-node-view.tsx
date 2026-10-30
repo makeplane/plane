@@ -4,12 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import type { NodeViewProps } from "@tiptap/react";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
 import ts from "highlight.js/lib/languages/typescript";
 import { common, createLowlight } from "lowlight";
 import { CheckIcon } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CopyIcon } from "@plane/propel/icons";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
@@ -23,14 +23,27 @@ import { ECodeBlockAttributeNames } from "./types";
 const lowlight = createLowlight(common);
 lowlight.register("ts", ts);
 
-type Props = {
-  node: ProseMirrorNode;
-};
-
-export function CodeBlockComponent({ node }: Props) {
+export function CodeBlockComponent(props: NodeViewProps) {
+  const { node, editor, updateAttributes } = props;
   const [copied, setCopied] = useState(false);
   // derived values
   const attrs = node.attrs as TCodeBlockAttributes;
+  const currentLanguage = attrs[ECodeBlockAttributeNames.LANGUAGE] ?? "";
+
+  // languages supported by the registered lowlight grammars
+  const languageOptions = useMemo(() => {
+    const options = lowlight.listLanguages().toSorted((a, b) => a.localeCompare(b));
+    // keep an explicitly set but unregistered language selectable instead of blanking the picker
+    if (currentLanguage && !options.includes(currentLanguage)) {
+      options.push(currentLanguage);
+    }
+    return options;
+  }, [currentLanguage]);
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const language = e.target.value;
+    updateAttributes({ [ECodeBlockAttributeNames.LANGUAGE]: language === "" ? null : language });
+  };
 
   const copyToClipboard = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     try {
@@ -46,6 +59,28 @@ export function CodeBlockComponent({ node }: Props) {
 
   return (
     <NodeViewWrapper key={attrs[ECodeBlockAttributeNames.ID]} className="code-block group/code relative">
+      {editor.isEditable && (
+        <div
+          contentEditable={false}
+          role="presentation"
+          className="absolute top-2 left-2 z-10"
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <select
+            value={currentLanguage}
+            onChange={handleLanguageChange}
+            aria-label="Code language"
+            className="h-8 cursor-pointer rounded-md border border-subtle bg-layer-1 px-2 text-11 text-secondary backdrop-blur-sm outline-none hover:text-primary"
+          >
+            <option value="">Plain text</option>
+            {languageOptions.map((language) => (
+              <option key={language} value={language}>
+                {language}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <Tooltip tooltipContent="Copy code">
         <button
           type="button"
@@ -65,7 +100,7 @@ export function CodeBlockComponent({ node }: Props) {
         </button>
       </Tooltip>
 
-      <pre className="my-2 rounded-lg bg-layer-3 p-4 text-primary">
+      <pre className={cn("my-2 rounded-lg bg-layer-3 p-4 text-primary", { "pt-10": editor.isEditable })}>
         <NodeViewContent as="code" className="whitespace-pre-wrap" />
       </pre>
     </NodeViewWrapper>
