@@ -95,6 +95,14 @@ class RootComposeEnvironmentTests(unittest.TestCase):
         self.assertEqual(live.get("API_BASE_URL"), "http://api:8000")
         self.assertEqual(live.get("PORT"), "3000")
 
+    def test_shared_port_override_does_not_break_internal_routing(self):
+        services = self.render(api_overrides="PORT=9000\n")
+        api = services["api"]["environment"]
+        live = services["live"]["environment"]
+        self.assertEqual(api["PORT"], "8000")
+        self.assertEqual(live["API_BASE_URL"], f"http://api:{api['PORT']}")
+        self.assertEqual(live["PORT"], "3000")
+
 
 if __name__ == "__main__":
     unittest.main()

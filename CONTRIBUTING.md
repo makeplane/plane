@@ -115,6 +115,10 @@ Keep existing environment files when upgrading. Before starting the stack:
 The live service inherits the API's Redis, CORS, and shared-secret configuration.
 Compose sets its internal `API_BASE_URL` to `http://api:8000` and its `PORT` to
 `3000`, matching the proxy's upstream; it does not read `apps/live/.env`.
+The API's internal `PORT` is also fixed to `8000` to match both live and the
+proxy. These service-specific values override any `PORT` in `apps/api/.env`.
+To change externally published ports, set `LISTEN_HTTP_PORT` and
+`LISTEN_HTTPS_PORT` in the root `.env` instead.
 
 Validate the Compose configuration without printing its resolved secrets:
 
