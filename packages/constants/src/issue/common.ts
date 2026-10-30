@@ -33,6 +33,7 @@ export enum EIssueGroupByToServerOptions {
   "cycle" = "cycle_id",
   "module" = "issue_module__module_id",
   "target_date" = "target_date",
+  // oxlint-disable-next-line typescript/no-duplicate-enum-values -- "project" and "team_project" intentionally share the server value
   "project" = "project_id",
   "created_by" = "created_by",
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
@@ -193,6 +194,10 @@ export const ISSUE_DISPLAY_PROPERTIES: {
     titleTranslationKey: "common.priority",
   },
   { key: "state", titleTranslationKey: "common.state" },
+  {
+    key: "issue_type",
+    titleTranslationKey: "issue.display.properties.issue_type",
+  },
   {
     key: "sub_issue_count",
     titleTranslationKey: "issue.display.properties.sub_issue_count",
