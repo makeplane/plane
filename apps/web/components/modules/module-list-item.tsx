@@ -47,10 +47,10 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
 
   if (!moduleDetails) return null;
 
-  const completionPercentage =
-    ((moduleDetails.completed_issues + moduleDetails.cancelled_issues) / moduleDetails.total_issues) * 100;
-
-  const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
+  // Same rule as the module sidebar: cancelled work items are left out of the scope, not counted as done.
+  const progressScope = Math.max(moduleDetails.total_issues - moduleDetails.cancelled_issues, 0);
+  const progress =
+    progressScope > 0 ? Math.floor((Math.min(moduleDetails.completed_issues, progressScope) * 100) / progressScope) : 0;
 
   const completedModuleCheck = moduleDetails.status === "completed";
 
