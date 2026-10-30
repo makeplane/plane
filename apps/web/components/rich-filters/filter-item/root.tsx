@@ -6,6 +6,8 @@
 
 import React from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
+import { getFilterPropertyLabel } from "../property-label";
 // plane imports
 import type { IFilterInstance } from "@plane/shared-state";
 import type {
@@ -38,6 +40,7 @@ export const FilterItem = observer(function FilterItem<P extends TFilterProperty
   props: IFilterItemProps<P, E>
 ) {
   const { condition, filter, isDisabled = false, showTransition = true } = props;
+  const { t } = useTranslation();
   // derived values
   const filterConfig = condition?.property ? filter.configManager.getConfigByProperty(condition.property) : undefined;
   const operatorOptions =
@@ -81,6 +84,8 @@ export const FilterItem = observer(function FilterItem<P extends TFilterProperty
     );
   }
 
+  const propertyLabel = getFilterPropertyLabel(filterConfig.id, filterConfig.label, t);
+
   return (
     <FilterItemContainer conditionValue={condition.value} showTransition={showTransition}>
       {/* Property section */}
@@ -89,7 +94,7 @@ export const FilterItem = observer(function FilterItem<P extends TFilterProperty
         filter={filter}
         icon={filterConfig.icon}
         isDisabled={isDisabled}
-        label={filterConfig.label}
+        label={propertyLabel}
         tooltipContent={typeof filterConfig.tooltipContent === "string" ? filterConfig.tooltipContent : undefined}
       />
 
@@ -103,7 +108,7 @@ export const FilterItem = observer(function FilterItem<P extends TFilterProperty
           getOptionValue={(option) => option.value}
           getOptionLabel={(option) => option.label}
           pinSelected={false}
-          placeholder={filterConfig.label}
+          placeholder={propertyLabel}
         >
           {/* A flat segment of the filter chip: no chevron and no own radius, so it sits flush between
               the property and value segments like the legacy custom button did. */}
