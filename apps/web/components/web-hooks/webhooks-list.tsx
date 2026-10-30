@@ -20,6 +20,7 @@ import { Badge } from "@makeplane/propel/components/badge";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@makeplane/propel/components/menu";
+import { setToast } from "@plane/blocks/toast";
 import { useTranslation } from "@plane/i18n";
 import type { IWebhook } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
@@ -43,6 +44,19 @@ const WebhookQuickActions = observer(function WebhookQuickActions(props: { works
   const router = useAppRouter();
   // store hooks
   const { updateWebhook } = useWebhook();
+
+  const handleToggleActive = async () => {
+    try {
+      await updateWebhook(workspaceSlug, webhook.id, { is_active: !webhook.is_active });
+    } catch (error) {
+      console.error(error);
+      setToast({
+        type: "error",
+        title: t("workspace_settings.settings.webhooks.toasts.not_updated.title"),
+        message: t("workspace_settings.settings.webhooks.toasts.not_updated.message"),
+      });
+    }
+  };
 
   return (
     <>
@@ -71,7 +85,7 @@ const WebhookQuickActions = observer(function WebhookQuickActions(props: { works
           <MenuItem
             icon={<Icon icon={webhook.is_active ? ToggleOffOutline : ToggleOnOutline} />}
             label={webhook.is_active ? t("common.actions.disable") : t("common.actions.enable")}
-            onClick={() => void updateWebhook(workspaceSlug, webhook.id, { is_active: !webhook.is_active })}
+            onClick={() => void handleToggleActive()}
           />
           <MenuSeparator />
           <MenuItem
