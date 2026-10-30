@@ -5,6 +5,17 @@
 # Python imports
 import os
 
+from plane.utils.language import normalize_default_language
+
+general_config_variables = [
+    {
+        "key": "DEFAULT_LANGUAGE",
+        "value": normalize_default_language(os.environ.get("DEFAULT_LANGUAGE", "en")),
+        "category": "GENERAL",
+        "is_encrypted": False,
+    },
+]
+
 authentication_config_variables = [
     {
         "key": "ENABLE_SIGNUP",
@@ -251,6 +262,7 @@ unsplash_config_variables = [
 ]
 
 core_config_variables = [
+    *general_config_variables,
     *authentication_config_variables,
     *workspace_management_config_variables,
     *google_config_variables,

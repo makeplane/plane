@@ -29,6 +29,7 @@ from plane.license.api.serializers import (
     InstanceAdminSerializer,
 )
 from plane.license.models import Instance, InstanceAdmin
+from plane.license.utils.instance_value import get_default_language
 from plane.db.models import User, Profile
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.authentication.utils.login import user_login
@@ -242,7 +243,7 @@ class InstanceAdminSignUpEndpoint(View):
                     password=make_password(password),
                     is_password_autoset=False,
                 )
-                _ = Profile.objects.create(user=user, company_name=company_name)
+                _ = Profile.objects.create(user=user, company_name=company_name, language=get_default_language())
                 # settings last active for the user
                 user.is_active = True
                 user.last_active = timezone.now()
