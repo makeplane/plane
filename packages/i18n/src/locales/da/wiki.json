@@ -1,0 +1,113 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "Generelt",
+      "private": "Privat",
+      "shared": "Delt",
+      "archived": "Arkiveret"
+    },
+    "fallback_name": "Samling",
+    "form": {
+      "name_required": "Samlingstitel er påkrævet",
+      "name_max_length": "Samlingsnavn skal være kortere end 255 tegn",
+      "name_placeholder_create": "Giv samlingen en titel",
+      "name_placeholder_edit": "Samlingsnavn"
+    },
+    "create_modal": {
+      "title": "Opret en samling",
+      "submit": "Opret samling"
+    },
+    "edit_modal": {
+      "title": "Rediger samling"
+    },
+    "delete_modal": {
+      "title": "Slet samling",
+      "page_count": "Denne samling har {pageCount} {pageCount, plural, one {side} other {sider}}. Vælg, hvad der skal ske med dem.",
+      "transfer_title": "Overfør sider og slet samling",
+      "transfer_description": "Flyt alle sider til en anden samling før sletning. Siderne og deres rettigheder bevares.",
+      "transfer_warning": "Flyttede sider vil arve rettighederne fra den valgte samling.",
+      "transfer_target_label": "Flyt sider til",
+      "transfer_target_placeholder": "Vælg en samling",
+      "delete_with_pages_title": "Slet samling med sider",
+      "delete_with_pages_description": "Slet samlingen og alle dens sider permanent. Denne handling kan ikke fortrydes.",
+      "submit": "Slet samling"
+    },
+    "header": {
+      "add_page": "Tilføj side"
+    },
+    "menu": {
+      "create_new_page": "Opret ny side",
+      "add_existing_page": "Tilføj eksisterende side",
+      "edit_collection": "Rediger samling",
+      "collection_options": "Samlingsindstillinger"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "Søg efter sider",
+      "success_message": "{count} {count, plural, one {side} other {sider}} tilføjet til samlingen.",
+      "error_message": "Sider kunne ikke flyttes. Prøv venligst igen.",
+      "no_pages_found": "Ingen sider fundet, der matcher din søgning",
+      "no_pages_available": "Ingen tilgængelige sider at flytte",
+      "submit": "Flyt"
+    },
+    "list": {
+      "invite_only": "Kun ifølge invitation",
+      "remove_error": "Kunne ikke fjerne side fra samling.",
+      "no_matching_pages": "Ingen matchende sider",
+      "remove_search_criteria": "Fjern søgekriterierne for at se alle sider",
+      "remove_filters": "Fjern filtrene for at se alle sider",
+      "no_pages_title": "Ingen sider endnu",
+      "no_pages_description": "Denne samling har ingen sider lige nu.",
+      "untitled": "Uden titel",
+      "restricted_access": "Begrænset adgang",
+      "collapse_page": "Fold side sammen",
+      "expand_page": "Udvid side",
+      "page_actions": "Sidehandlinger",
+      "page_link_copied": "Sidelink kopieret til udklipsholder.",
+      "columns": {
+        "page_name": "Sidenavn",
+        "owner": "Ejer",
+        "nested_pages": "Underliggende sider",
+        "last_activity": "Seneste aktivitet",
+        "actions": "Handlinger"
+      }
+    },
+    "toasts": {
+      "created": "Samling oprettet med succes.",
+      "create_error": "Samlingen kunne ikke oprettes. Prøv venligst igen.",
+      "renamed": "Samling omdøbt med succes.",
+      "rename_error": "Samlingen kunne ikke opdateres. Prøv venligst igen.",
+      "transferred_deleted": "Sider overført og samling slettet.",
+      "deleted_with_pages": "Samling og dens sider slettet.",
+      "delete_error": "Samlingen kunne ikke slettes. Prøv venligst igen.",
+      "target_required": "Vælg venligst en samling at flytte siderne til.",
+      "create_page_error": "Siden kunne ikke oprettes. Prøv venligst igen.",
+      "create_page_in_collection_error": "Siden kunne ikke oprettes eller tilføjes til samlingen. Prøv venligst igen.",
+      "collection_link_copied": "Samlingslink kopieret til udklipsholder."
+    }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "Opgrader for at låse op for Wiki",
+      "description": "Lås op for offentlige sider, versionshistorik, delte sider, realtidssamarbejde og arbejdsområdesider til wikier, virksomhedsdokumenter og videnbaser med Plane Pro.",
+      "upgrade_button": {
+        "text": "Opgrader"
+      },
+      "learn_more_button": {
+        "text": "Læs mere"
+      },
+      "download_button": {
+        "text": "Download data",
+        "loading": "Downloader"
+      },
+      "tabs": {
+        "nested_pages": "Underliggende sider",
+        "add_embeds": "Tilføj indlejringer",
+        "publish_pages": "Offentliggør sider",
+        "comments": "Kommentarer"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "Underliggende sider kræver et betalt abonnement. Opgrader for at låse op."
+    }
+  }
+}

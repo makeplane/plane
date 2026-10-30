@@ -1,0 +1,270 @@
+{
+  "common_empty_state": {
+    "progress": {
+      "title": "Der er ingen fremdriftsmålinger at vise endnu.",
+      "description": "Begynd at angive egenskabsværdier i opgaver for at se fremdriftsmålinger her."
+    },
+    "updates": {
+      "title": "Ingen opdateringer endnu.",
+      "description": "Når projektmedlemmer tilføjer opdateringer, vil de blive vist her"
+    },
+    "search": {
+      "title": "Ingen matchende resultater.",
+      "description": "Ingen resultater fundet. Prøv at tilpasse dine søgeord."
+    },
+    "not_found": {
+      "title": "Ups! Noget ser ud til at være galt",
+      "description": "Vi kan ikke hente din Plane-konto i øjeblikket. Dette kan skyldes en netværksfejl.",
+      "cta_primary": "Prøv at genindlæse"
+    },
+    "server_error": {
+      "title": "Serverfejl",
+      "description": "Vi kan ikke forbinde og hente data fra vores server. Bare rolig, vi arbejder på det.",
+      "cta_primary": "Prøv at genindlæse"
+    }
+  },
+  "project_empty_state": {
+    "no_access": {
+      "title": "Det ser ud til, at du ikke har adgang til dette projekt",
+      "restricted_description": "Kontakt administratoren for at anmode om adgang, så du kan fortsætte her.",
+      "join_description": "Klik på knappen nedenfor for at deltage i det.",
+      "cta_primary": "Deltag i projekt",
+      "cta_loading": "Deltager i projekt"
+    },
+    "invalid_project": {
+      "title": "Projekt ikke fundet",
+      "description": "Projektet, du leder efter, findes ikke."
+    },
+    "work_items": {
+      "title": "Start med din første opgave.",
+      "description": "Opgaver er byggeklodserne i dit projekt — tildel ejere, angiv prioriteter, og spor nemt fremdrift.",
+      "cta_primary": "Opret din første opgave"
+    },
+    "cycles": {
+      "title": "Grupper og tidsafgræns dit arbejde i cyklusser.",
+      "description": "Opdel arbejdet i tidsafgrænsede bidder, arbejd baglæns fra din projektdeadline for at sætte datoer, og skab håndgribelige fremskridt som et team.",
+      "cta_primary": "Opret din første cyklus"
+    },
+    "cycle_work_items": {
+      "title": "Ingen opgaver at vise i denne cyklus",
+      "description": "Opret opgaver for at begynde at overvåge dit teams fremdrift i denne cyklus og nå dine mål til tiden.",
+      "cta_primary": "Opret opgave",
+      "cta_secondary": "Tilføj eksisterende opgave"
+    },
+    "modules": {
+      "title": "Kortlæg dine projektmål til moduler, og spor dem nemt.",
+      "description": "Moduler består af indbyrdes forbundne opgaver. De hjælper med at overvåge fremdrift gennem projektfaser, hver med specifikke deadliner og analyser, der viser, hvor tæt du er på at opnå disse faser.",
+      "cta_primary": "Opret dit første modul"
+    },
+    "module_work_items": {
+      "title": "Ingen opgaver at vise i dette modul",
+      "description": "Opret opgaver for at begynde at overvåge dette modul.",
+      "cta_primary": "Opret opgave",
+      "cta_secondary": "Tilføj eksisterende opgave"
+    },
+    "views": {
+      "title": "Gem tilpassede visninger for dit projekt",
+      "description": "Visninger er gemte filtre, der hjælper dig med hurtigt at få adgang til de oplysninger, du bruger mest. Samarbejd uden besvær, når holdkammerater deler og tilpasser visninger til deres specifikke behov.",
+      "cta_primary": "Opret visning"
+    },
+    "no_work_items_in_project": {
+      "title": "Ingen opgaver i projektet endnu",
+      "description": "Tilføj opgaver til dit projekt, og opdel dit arbejde i sporbare enheder med visninger.",
+      "cta_primary": "Tilføj opgave"
+    },
+    "work_item_filter": {
+      "title": "Ingen opgaver fundet",
+      "description": "Dit nuværende filter gav ingen resultater. Prøv at ændre filtrene.",
+      "cta_primary": "Tilføj opgave"
+    },
+    "pages": {
+      "title": "Dokumenter alt — fra noter til kravspecifikationer",
+      "description": "Sider lader dig fange og organisere oplysninger ét sted. Skriv mødenoter, projektdokumentation og kravspecifikationer, indlejre opgaver, og strukturer dem med færdige komponenter.",
+      "cta_primary": "Opret din første side"
+    },
+    "archive_pages": {
+      "title": "Ingen arkiverede sider endnu",
+      "description": "Arkiver sider, der ikke er i dit fokus i øjeblikket. Få adgang til dem her efter behov."
+    },
+    "intake_sidebar": {
+      "title": "Registrer indbakkeanmodninger",
+      "description": "Indsend nye anmodninger, der skal gennemgås, prioriteres og spores i dit projekts arbejdsflow.",
+      "cta_primary": "Opret indbakkeanmodning"
+    },
+    "intake_main": {
+      "title": "Vælg en indbakkeopgave for at se dens detaljer"
+    },
+    "epics": {
+      "title": "Gør komplekse projekter til strukturerede eposser.",
+      "description": "Et epos hjælper dig med at organisere store mål i mindre, sporbare opgaver.",
+      "cta_primary": "Opret et epos",
+      "cta_secondary": "Dokumentation"
+    },
+    "epic_work_items": {
+      "title": "Du har ikke tilføjet opgaver til dette epos endnu.",
+      "description": "Start med at tilføje nogle opgaver til dette epos og spor dem her.",
+      "cta_secondary": "Tilføj opgaver"
+    }
+  },
+  "workspace_empty_state": {
+    "archive_epics": {
+      "title": "Ingen arkiverede eposser endnu",
+      "description": "Du kan arkivere eposser, der er færdiggjorte eller annullerede. Find dem her, når de er arkiveret."
+    },
+    "archive_work_items": {
+      "title": "Ingen arkiverede opgaver endnu",
+      "description": "Manuelt eller via automatisering kan du arkivere opgaver, der er færdiggjorte eller annullerede. Find dem her, når de er arkiveret.",
+      "cta_primary": "Indstil automatisering"
+    },
+    "archive_cycles": {
+      "title": "Ingen arkiverede cyklusser endnu",
+      "description": "For at rydde op i dit projekt kan du arkivere færdiggjorte cyklusser. Find dem her, når de er arkiveret."
+    },
+    "archive_modules": {
+      "title": "Ingen arkiverede moduler endnu",
+      "description": "For at rydde op i dit projekt kan du arkivere færdiggjorte eller annullerede moduler. Find dem her, når de er arkiveret."
+    },
+    "home_widget_quick_links": {
+      "title": "Hav vigtige referencer, ressourcer eller dokumenter ved hånden til dit arbejde"
+    },
+    "inbox_sidebar_all": {
+      "title": "Opdateringer for opgaver, du abonnerer på, vises her"
+    },
+    "inbox_sidebar_mentions": {
+      "title": "Omtaler af dine opgaver vises her"
+    },
+    "your_work_by_priority": {
+      "title": "Ingen opgaver tildelt endnu"
+    },
+    "your_work_by_state": {
+      "title": "Ingen opgaver tildelt endnu"
+    },
+    "views": {
+      "title": "Ingen visninger endnu",
+      "description": "Tilføj opgaver til dit projekt, og brug visninger til at filtrere, sortere og overvåge fremdrift uden besvær.",
+      "cta_primary": "Tilføj opgave"
+    },
+    "drafts": {
+      "title": "Halvfærdige opgaver",
+      "description": "For at prøve dette af kan du begynde at tilføje en opgave og forlade den midtvejs eller oprette din første kladde nedenfor. 😉",
+      "cta_primary": "Opret kladdeopgave"
+    },
+    "projects_archived": {
+      "title": "Ingen projekter arkiveret",
+      "description": "Det ser ud til, at alle dine projekter stadig er aktive — godt gået!"
+    },
+    "analytics_projects": {
+      "title": "Opret projekter for at visualisere projektmålinger her."
+    },
+    "analytics_work_items": {
+      "title": "Opret projekter med opgaver og tildelte personer for at begynde at spore ydeevne, fremdrift og teameffekt her."
+    },
+    "analytics_no_cycle": {
+      "title": "Opret cyklusser for at organisere arbejde i tidsafgrænsede faser og spore fremdrift på tværs af sprints."
+    },
+    "analytics_no_module": {
+      "title": "Opret moduler for at organisere dit arbejde og spore fremdrift på tværs af forskellige faser."
+    },
+    "analytics_no_intake": {
+      "title": "Opsæt indbakke for at håndtere indkommende anmodninger og spore, hvordan de accepteres og afvises"
+    },
+    "home_widget_stickies": {
+      "title": "Skriv en idé ned, fange en aha-oplevelse eller optag en tanke. Tilføj en sticky note for at komme i gang."
+    },
+    "stickies": {
+      "title": "Fang idéer med det samme",
+      "description": "Opret sticky notes til hurtige noter og huskelister, og tag dem med dig overalt.",
+      "cta_primary": "Opret første sticky note",
+      "cta_secondary": "Dokumentation"
+    },
+    "active_cycles": {
+      "title": "Ingen aktive cyklusser",
+      "description": "Du har ingen igangværende cyklusser lige nu. Aktive cyklusser vises her, når de inkluderer dags dato."
+    },
+    "dashboard": {
+      "title": "Visualiser din fremdrift med dashboards",
+      "description": "Byg tilpassede dashboards til at spore målinger, måle resultater og præsentere indsigter effektivt.",
+      "cta_primary": "Opret nyt dashboard"
+    },
+    "wiki": {
+      "title": "Skriv en note, et dokument eller en hel videnbase.",
+      "description": "Sider er et ide- og tankerum i Plane. Tag mødenoter, formater dem nemt, indlejre opgaver, placer dem ved hjælp af et bibliotek af komponenter, og hold dem alle i dit projekts kontekst.",
+      "cta_primary": "Opret din side"
+    },
+    "project_overview_state_sidebar": {
+      "title": "Aktivér projektstatusser",
+      "description": "Aktivér projektstatusser for at se og administrere egenskaber som status, prioritet, forfaldsdatoer og mere."
+    }
+  },
+  "settings_empty_state": {
+    "estimates": {
+      "title": "Ingen estimater endnu",
+      "description": "Definer, hvordan dit team måler indsats, og spor det konsekvent på tværs af alle opgaver.",
+      "cta_primary": "Tilføj estimatsystem"
+    },
+    "labels": {
+      "title": "Ingen etiketter endnu",
+      "description": "Opret personlige etiketter for effektivt at kategorisere og administrere dine opgaver.",
+      "cta_primary": "Opret din første etiket"
+    },
+    "exports": {
+      "title": "Ingen eksporter endnu",
+      "description": "Du har ingen eksportregistreringer lige nu. Når du eksporterer data, vil alle registreringer blive vist her."
+    },
+    "tokens": {
+      "title": "Ingen personlige tokens endnu",
+      "description": "Generer sikre API-tokens for at forbinde dit arbejdsområde med eksterne systemer og applikationer.",
+      "cta_primary": "Tilføj adgangstoken"
+    },
+    "workspace_tokens": {
+      "title": "Ingen adgangstokens endnu",
+      "description": "Generer sikre API-tokens for at forbinde dit arbejdsområde med eksterne systemer og applikationer.",
+      "cta_primary": "Tilføj adgangstoken"
+    },
+    "webhooks": {
+      "title": "Ingen webhooks tilføjet endnu",
+      "description": "Automatisér notifikationer til eksterne tjenester, når der sker projekthændelser.",
+      "cta_primary": "Tilføj webhook"
+    },
+    "work_item_types": {
+      "title": "Opret og tilpas opgavetyper",
+      "description": "Definer unikke opgavetyper for dit projekt. Hver type kan have sine egne egenskaber, arbejdsflows og felter — skræddersyet til dit projekt og dit teams behov.",
+      "cta_primary": "Aktivér"
+    },
+    "work_item_type_properties": {
+      "title": "Definer den egenskab og de detaljer, du vil fange for denne opgavetype. Tilpas den til at matche dit projekts arbejdsflow.",
+      "cta_secondary": "Tilføj egenskab"
+    },
+    "templates": {
+      "title": "Ingen skabeloner endnu",
+      "description": "Reducer opsætningstiden ved at oprette skabeloner til opgaver og sider — og start nyt arbejde på få sekunder.",
+      "cta_primary": "Opret din første skabelon"
+    },
+    "recurring_work_items": {
+      "title": "Ingen tilbagevendende opgave endnu",
+      "description": "Opsæt tilbagevendende opgaver for at automatisere gentagne opgaver og holde tidsplanen uden besvær.",
+      "cta_primary": "Opret tilbagevendende opgave"
+    },
+    "worklogs": {
+      "title": "Spor timeregistreringer for alle medlemmer",
+      "description": "Registrer tid på opgaver for at se detaljerede timesedler for ethvert teammedlem på tværs af projekter."
+    },
+    "group_syncing": {
+      "title": "Ingen gruppekortlægninger endnu"
+    },
+    "template_setting": {
+      "title": "Ingen skabeloner endnu",
+      "description": "Reducer opsætningstiden ved at oprette skabeloner til projekter, opgaver og sider — og start nyt arbejde på få sekunder.",
+      "cta_primary": "Opret skabelon"
+    },
+    "workflows": {
+      "title": "Ingen arbejdsflows endnu",
+      "description": "Opret arbejdsflows for at styre fremdriften af dine opgaver.",
+      "cta_primary": "Tilføj nyt arbejdsflow",
+      "states": {
+        "title": "Tilføj statusser",
+        "description": "Vælg de statusser, som opgaven bevæger sig igennem."
+      }
+    }
+  }
+}
