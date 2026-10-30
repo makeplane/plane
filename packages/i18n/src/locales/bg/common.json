@@ -530,7 +530,9 @@
       "asc": "Възходящо",
       "desc": "Низходящо",
       "created_on": "Създадено на",
-      "updated_on": "Обновено на"
+      "updated_on": "Обновено на",
+      "date_created": "Date created",
+      "date_modified": "Date modified"
     },
     "comments": "Коментари",
     "updates": "Актуализации",
@@ -723,7 +725,13 @@
     "developer": "Разработчик",
     "work_structure": "Структура на работата",
     "execution": "Изпълнение",
-    "administration": "Администриране"
+    "administration": "Администриране",
+    "date_filter": {
+      "created_date": "Created date",
+      "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
+      "custom": "Custom"
+    }
   },
   "chart": {
     "x_axis": "Ос X",

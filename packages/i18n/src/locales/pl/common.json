@@ -530,7 +530,9 @@
       "asc": "Rosnąco",
       "desc": "Malejąco",
       "created_on": "Utworzono dnia",
-      "updated_on": "Zaktualizowano dnia"
+      "updated_on": "Zaktualizowano dnia",
+      "date_created": "Date created",
+      "date_modified": "Date modified"
     },
     "comments": "Komentarze",
     "updates": "Aktualizacje",
@@ -723,7 +725,13 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "date_filter": {
+      "created_date": "Created date",
+      "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
+      "custom": "Custom"
+    }
   },
   "chart": {
     "x_axis": "Oś X",

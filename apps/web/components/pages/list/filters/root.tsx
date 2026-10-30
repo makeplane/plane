@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
@@ -21,6 +22,7 @@ type Props = {
 };
 
 export const PageFiltersSelection = observer(function PageFiltersSelection(props: Props) {
+  const { t } = useTranslation();
   const { filters, handleFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
@@ -65,7 +67,7 @@ export const PageFiltersSelection = observer(function PageFiltersSelection(props
             ref={inputRef}
             type="text"
             className="w-full outline-none placeholder:text-placeholder"
-            placeholder="Search"
+            placeholder={t("search")}
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
           />
@@ -86,7 +88,7 @@ export const PageFiltersSelection = observer(function PageFiltersSelection(props
                 favorites: !filters.filters?.favorites,
               })
             }
-            title="Favorites"
+            title={t("favorites")}
           />
         </div>
 

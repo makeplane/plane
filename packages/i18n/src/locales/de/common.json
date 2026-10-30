@@ -530,7 +530,9 @@
       "asc": "Aufsteigend",
       "desc": "Absteigend",
       "created_on": "Erstellt am",
-      "updated_on": "Aktualisiert am"
+      "updated_on": "Aktualisiert am",
+      "date_created": "Date created",
+      "date_modified": "Date modified"
     },
     "comments": "Kommentare",
     "updates": "Aktualisierungen",
@@ -723,7 +725,13 @@
     "developer": "Entwickler",
     "work_structure": "Arbeitsstruktur",
     "execution": "Ausführung",
-    "administration": "Verwaltung"
+    "administration": "Verwaltung",
+    "date_filter": {
+      "created_date": "Created date",
+      "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
+      "custom": "Custom"
+    }
   },
   "chart": {
     "x_axis": "X-Achse",
