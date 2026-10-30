@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "@makeplane/propel/components/button";
 import { Select } from "@plane/blocks/select";
@@ -23,14 +24,21 @@ export function DefaultLanguageForm({
   readOnly?: boolean;
 }) {
   const { updateInstanceConfigurations } = useInstance();
+  const defaultLanguage = config.DEFAULT_LANGUAGE || FALLBACK_LANGUAGE;
   const {
     control,
     handleSubmit,
     reset,
     formState: { isSubmitting, isDirty },
   } = useForm<LanguageFormValues>({
-    defaultValues: { DEFAULT_LANGUAGE: config.DEFAULT_LANGUAGE || FALLBACK_LANGUAGE },
+    defaultValues: { DEFAULT_LANGUAGE: defaultLanguage },
   });
+
+  useEffect(() => {
+    // Refresh idle forms without replacing an administrator's unsaved choice.
+    // Once managed by the environment, always display the effective read-only value.
+    if (!isDirty || readOnly) reset({ DEFAULT_LANGUAGE: defaultLanguage });
+  }, [defaultLanguage, isDirty, readOnly, reset]);
 
   const onSubmit = async (values: LanguageFormValues) => {
     try {

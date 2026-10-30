@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+import importlib
 import uuid
 from io import StringIO
 from unittest.mock import patch
@@ -223,14 +224,32 @@ def test_database_mode_reports_editable_value(configuration, admin_client):
     assert language["is_read_only"] is False
 
 
-def test_configure_instance_seeds_language_and_preserves_admin_choice(monkeypatch):
-    monkeypatch.setenv("SECRET_KEY", "language-test-only")
-    call_command("configure_instance", stdout=StringIO())
-    configuration = InstanceConfiguration.objects.get(key="DEFAULT_LANGUAGE")
-    assert configuration.value == "en"
-    assert configuration.category == "GENERAL"
-    configuration.value = "es"
-    configuration.save()
-    call_command("configure_instance", stdout=StringIO())
-    configuration.refresh_from_db()
-    assert configuration.value == "es"
+def reload_seed_configuration():
+    # The command holds the package's combined list, which is built from core at import time.
+    for module in (
+        "plane.utils.instance_config_variables.core",
+        "plane.utils.instance_config_variables",
+        "plane.license.management.commands.configure_instance",
+    ):
+        importlib.reload(importlib.import_module(module))
+
+
+@pytest.mark.parametrize("language", ["en", "es"])
+def test_configure_instance_seeds_language_and_preserves_admin_choice(monkeypatch, language):
+    try:
+        with monkeypatch.context() as environment:
+            environment.setenv("SECRET_KEY", "language-test-only")
+            environment.setenv("DEFAULT_LANGUAGE", language)
+            reload_seed_configuration()
+            call_command("configure_instance", stdout=StringIO())
+            configuration = InstanceConfiguration.objects.get(key="DEFAULT_LANGUAGE")
+            assert configuration.value == language
+            assert configuration.category == "GENERAL"
+            configuration.value = "fr"
+            configuration.save()
+            call_command("configure_instance", stdout=StringIO())
+            configuration.refresh_from_db()
+            assert configuration.value == "fr"
+    finally:
+        # Restore import-time values after the temporary environment has been restored.
+        reload_seed_configuration()
