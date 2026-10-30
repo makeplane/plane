@@ -530,7 +530,9 @@
       "asc": "昇順",
       "desc": "降順",
       "created_on": "作成日",
-      "updated_on": "更新日"
+      "updated_on": "更新日",
+      "date_created": "Date created",
+      "date_modified": "Date modified"
     },
     "comments": "コメント",
     "updates": "更新",
@@ -723,7 +725,13 @@
     "developer": "開発者",
     "work_structure": "作業構造",
     "execution": "実行",
-    "administration": "管理"
+    "administration": "管理",
+    "date_filter": {
+      "created_date": "Created date",
+      "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
+      "custom": "Custom"
+    }
   },
   "chart": {
     "x_axis": "エックス アクシス",

@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -26,7 +27,11 @@ import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
 import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 import { EPageStoreType, usePageStore } from "@/hooks/store";
 
+/**
+ * Render project breadcrumbs and a localized create-page action when the user has permission.
+ */
 export const PagesListHeader = observer(function PagesListHeader() {
+  const { t } = useTranslation();
   // states
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   // router
@@ -39,6 +44,9 @@ export const PagesListHeader = observer(function PagesListHeader() {
   const { currentProjectDetails, loader } = useProject();
   const { canCurrentUserCreatePage, createPage } = usePageStore(EPageStoreType.PROJECT);
   // handle page create
+  /**
+   * Create a page with the active tab's visibility and navigate to it, reporting creation failures.
+   */
   const handleCreatePage = async () => {
     setIsCreatingPage(true);
 
@@ -90,7 +98,7 @@ export const PagesListHeader = observer(function PagesListHeader() {
             variant="primary"
             size="md"
             stretch="auto"
-            label={isCreatingPage ? "Adding" : "Add page"}
+            label={isCreatingPage ? t("adding") : t("wiki_collections.header.add_page")}
             onClick={handleCreatePage}
             loading={isCreatingPage}
           />

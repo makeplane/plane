@@ -530,7 +530,9 @@
       "asc": "По возрастанию",
       "desc": "По убыванию",
       "created_on": "Дата создания",
-      "updated_on": "Дата обновления"
+      "updated_on": "Дата обновления",
+      "date_created": "Date created",
+      "date_modified": "Date modified"
     },
     "comments": "Комментарии",
     "updates": "Обновления",
@@ -723,7 +725,13 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "date_filter": {
+      "created_date": "Created date",
+      "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
+      "custom": "Custom"
+    }
   },
   "chart": {
     "x_axis": "Ось X",

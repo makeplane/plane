@@ -530,7 +530,9 @@
       "asc": "升序",
       "desc": "降序",
       "created_on": "创建时间",
-      "updated_on": "更新时间"
+      "updated_on": "更新时间",
+      "date_created": "创建日期",
+      "date_modified": "修改日期"
     },
     "comments": "评论",
     "updates": "更新",
@@ -723,7 +725,13 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "date_filter": {
+      "created_date": "创建日期",
+      "weeks_ago": "{count} 周前",
+      "months_ago": "{count} 个月前",
+      "custom": "自定义"
+    }
   },
   "chart": {
     "x_axis": "X轴",

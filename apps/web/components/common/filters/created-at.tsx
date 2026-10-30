@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -19,7 +20,11 @@ type Props = {
   searchQuery: string;
 };
 
+/**
+ * Render searchable, localized creation-date presets and a custom-date picker while preserving filter values.
+ */
 export const FilterCreatedDate = observer(function FilterCreatedDate(props: Props) {
+  const { t } = useTranslation();
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -27,14 +32,24 @@ export const FilterCreatedDate = observer(function FilterCreatedDate(props: Prop
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = DATE_BEFORE_FILTER_OPTIONS.filter((d) =>
-    d.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredOptions = DATE_BEFORE_FILTER_OPTIONS.map((option) => {
+    const [amount, unit] = option.value.split(";")[0].split("_");
+    return {
+      value: option.value,
+      name: t(`common.date_filter.${unit}_ago`, { count: Number(amount) }),
+    };
+  }).filter((option) => option.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
+  /**
+   * Return whether an applied filter contains an explicit date rather than a relative-date preset.
+   */
   const isCustomDateSelected = () => {
     const isValidDateSelected = appliedFilters?.filter((f) => isInDateFormat(f.split(";")[0])) || [];
-    return isValidDateSelected.length > 0 ? true : false;
+    return isValidDateSelected.length > 0;
   };
+  /**
+   * Toggle applied custom-date values through the parent handler, or open the picker when none are selected.
+   */
   const handleCustomDate = () => {
     if (isCustomDateSelected()) {
       const updateAppliedFilters = appliedFilters?.filter((f) => f.includes("-")) || [];
@@ -49,11 +64,11 @@ export const FilterCreatedDate = observer(function FilterCreatedDate(props: Prop
           handleClose={() => setIsDateFilterModalOpen(false)}
           isOpen={isDateFilterModalOpen}
           onSelect={(val) => handleUpdate(val)}
-          title="Created date"
+          title={t("common.date_filter.created_date")}
         />
       )}
       <FilterHeader
-        title={`Created date${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("common.date_filter.created_date")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -64,13 +79,18 @@ export const FilterCreatedDate = observer(function FilterCreatedDate(props: Prop
               {filteredOptions.map((option) => (
                 <FilterOption
                   key={option.value}
-                  isChecked={appliedFilters?.includes(option.value) ? true : false}
+                  isChecked={appliedFilters?.includes(option.value) ?? false}
                   onClick={() => handleUpdate(option.value)}
                   title={option.name}
                   multiple
                 />
               ))}
-              <FilterOption isChecked={isCustomDateSelected()} onClick={handleCustomDate} title="Custom" multiple />
+              <FilterOption
+                isChecked={isCustomDateSelected()}
+                onClick={handleCustomDate}
+                title={t("common.date_filter.custom")}
+                multiple
+              />
             </>
           ) : (
             <p className="text-11 text-placeholder italic">No matches found</p>

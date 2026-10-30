@@ -530,7 +530,9 @@
       "asc": "遞增",
       "desc": "遞減",
       "created_on": "建立於",
-      "updated_on": "更新於"
+      "updated_on": "更新於",
+      "date_created": "建立日期",
+      "date_modified": "修改日期"
     },
     "comments": "留言",
     "updates": "更新",
@@ -723,7 +725,13 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "date_filter": {
+      "created_date": "建立日期",
+      "weeks_ago": "{count} 週前",
+      "months_ago": "{count} 個月前",
+      "custom": "自訂"
+    }
   },
   "chart": {
     "x_axis": "X 軸",
