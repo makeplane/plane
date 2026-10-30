@@ -13,6 +13,7 @@ import { AddOutline, ArrowCollapseOutline, FullScreenOutline } from "@makeplane/
 import { setToast } from "@plane/blocks/toast";
 import type { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
 import { useTranslation } from "@plane/i18n";
+import { ALL_ISSUES } from "@plane/constants";
 // ui
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 // components
@@ -53,6 +54,8 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
   } = props;
   // plane hooks
   const { t } = useTranslation();
+  const displayTitle =
+    column_id === ALL_ISSUES ? t("entity.all", { entity: t(isEpic ? "common.epics" : "common.work_items") }) : title;
   const verticalAlignPosition = sub_group_by ? false : collapsedGroups?.group_by.includes(column_id);
   // states
   const [isOpen, setIsOpen] = React.useState(false);
@@ -129,7 +132,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
               verticalAlignPosition ? `max-h-[400px] vertical-lr` : ``
             }`}
           >
-            {title}
+            {displayTitle}
           </div>
           <div
             className={`flex-shrink-0 text-13 font-medium text-tertiary ${verticalAlignPosition ? `pr-0.5` : `pl-2`}`}

@@ -13,6 +13,7 @@ import { AddOutline } from "@makeplane/propel/icons";
 import { setToast } from "@plane/blocks/toast";
 import type { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
 import { useTranslation } from "@plane/i18n";
+import { ALL_ISSUES } from "@plane/constants";
 // ui
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 // components
@@ -56,6 +57,8 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
   } = props;
   // plane hooks
   const { t } = useTranslation();
+  const displayTitle =
+    groupID === ALL_ISSUES ? t("entity.all", { entity: t(isEpic ? "common.epics" : "common.work_items") }) : title;
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = useState(false);
@@ -118,7 +121,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           className="relative flex w-full cursor-pointer flex-row items-center gap-1 overflow-hidden"
           onClick={() => handleCollapsedGroups(groupID)}
         >
-          <div className="line-clamp-1 inline-block truncate font-medium text-primary">{title}</div>
+          <div className="line-clamp-1 inline-block truncate font-medium text-primary">{displayTitle}</div>
           <div className="pl-2 text-13 font-medium text-tertiary">{count || 0}</div>
           <div className="px-2.5"></div>
         </div>
