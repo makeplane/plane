@@ -20,6 +20,9 @@ type Props = {
   searchQuery: string;
 };
 
+/**
+ * Render searchable, localized creation-date presets and a custom-date picker while preserving filter values.
+ */
 export const FilterCreatedDate = observer(function FilterCreatedDate(props: Props) {
   const { t } = useTranslation();
   const { appliedFilters, handleUpdate, searchQuery } = props;
@@ -37,10 +40,16 @@ export const FilterCreatedDate = observer(function FilterCreatedDate(props: Prop
     };
   }).filter((option) => option.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
+  /**
+   * Return whether an applied filter contains an explicit date rather than a relative-date preset.
+   */
   const isCustomDateSelected = () => {
     const isValidDateSelected = appliedFilters?.filter((f) => isInDateFormat(f.split(";")[0])) || [];
     return isValidDateSelected.length > 0;
   };
+  /**
+   * Toggle applied custom-date values through the parent handler, or open the picker when none are selected.
+   */
   const handleCustomDate = () => {
     if (isCustomDateSelected()) {
       const updateAppliedFilters = appliedFilters?.filter((f) => f.includes("-")) || [];

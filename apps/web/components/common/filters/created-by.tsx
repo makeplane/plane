@@ -26,6 +26,9 @@ type Props = {
   searchQuery: string;
 };
 
+/**
+ * Render a searchable creator filter with a localized heading, prioritizing selected members and the current user.
+ */
 export const FilterCreatedBy = observer(function FilterCreatedBy(props: Props) {
   const { t } = useTranslation();
   const { appliedFilters, handleUpdate, memberIds, searchQuery } = props;
@@ -51,6 +54,9 @@ export const FilterCreatedBy = observer(function FilterCreatedBy(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
+  /**
+   * Toggle the creator list between its first five matches and all matching members.
+   */
   const handleViewToggle = () => {
     if (!sortedOptions) return;
 

@@ -27,6 +27,9 @@ const PAGE_SORTING_KEY_OPTIONS: {
   { key: "updated_at", label: "common.sort.date_modified" },
 ];
 
+/**
+ * Render localized page sort keys and direction controls, emitting only the changed sort property.
+ */
 export function PageOrderByDropdown(props: Props) {
   const { onChange, sortBy, sortKey } = props;
   // plane hooks

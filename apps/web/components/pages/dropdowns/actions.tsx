@@ -63,6 +63,9 @@ type Props = {
   storeType: EPageStoreType;
 };
 
+/**
+ * Render localized page actions in dropdown and context menus, respecting page state, permissions, and caller ordering.
+ */
 export const PageActions = observer(function PageActions(props: Props) {
   const { extraOptions, optionsOrder, page, parentRef, storeType } = props;
   // plane hooks
@@ -94,6 +97,9 @@ export const PageActions = observer(function PageActions(props: Props) {
   } = page;
   // menu items
   const MENU_ITEMS = useMemo(
+    /**
+     * Build translated action descriptors with state-dependent labels and visibility, then append caller-provided actions.
+     */
     function MENU_ITEMS() {
       const menuItems: (TContextMenuItem & { key: TPageActions })[] = [
         {

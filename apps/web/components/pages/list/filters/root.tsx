@@ -21,6 +21,9 @@ type Props = {
   memberIds?: string[] | undefined;
 };
 
+/**
+ * Render localized page filters for favorites, creation dates, and creators using the parent filter state.
+ */
 export const PageFiltersSelection = observer(function PageFiltersSelection(props: Props) {
   const { t } = useTranslation();
   const { filters, handleFiltersUpdate, memberIds } = props;
@@ -35,6 +38,9 @@ export const PageFiltersSelection = observer(function PageFiltersSelection(props
     }
   }, [isMobile]);
 
+  /**
+   * Toggle one or more array filter values and notify the parent; boolean favorites are handled separately.
+   */
   const handleFilters = (key: keyof TPageFilterProps, value: boolean | string | string[]) => {
     const newValues = filters.filters?.[key] ?? [];
 

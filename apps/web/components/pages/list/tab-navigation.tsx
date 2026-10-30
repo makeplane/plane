@@ -33,10 +33,16 @@ const pageTabs: { key: TPageNavigationTabs; label: string }[] = [
   },
 ];
 
+/**
+ * Render localized public, private, and archived page tabs while retaining stable route query values.
+ */
 export function PageTabNavigation(props: TPageTabNavigation) {
   const { t } = useTranslation();
   const { workspaceSlug, projectId, pageType } = props;
 
+  /**
+   * Prevent redundant navigation when the user clicks the currently active page tab.
+   */
   const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, tabKey: TPageNavigationTabs) => {
     if (tabKey === pageType) e.preventDefault();
   };

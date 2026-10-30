@@ -27,6 +27,9 @@ import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
 import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 import { EPageStoreType, usePageStore } from "@/hooks/store";
 
+/**
+ * Render project breadcrumbs and a localized create-page action when the user has permission.
+ */
 export const PagesListHeader = observer(function PagesListHeader() {
   const { t } = useTranslation();
   // states
@@ -41,6 +44,9 @@ export const PagesListHeader = observer(function PagesListHeader() {
   const { currentProjectDetails, loader } = useProject();
   const { canCurrentUserCreatePage, createPage } = usePageStore(EPageStoreType.PROJECT);
   // handle page create
+  /**
+   * Create a page with the active tab's visibility and navigate to it, reporting creation failures.
+   */
   const handleCreatePage = async () => {
     setIsCreatingPage(true);
 
