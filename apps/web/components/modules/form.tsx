@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { Field } from "@makeplane/propel/components/field";
@@ -12,9 +12,10 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmojiPicker, Logo } from "@plane/blocks/emoji-icon-picker";
 import { DateRangeSelect } from "@plane/blocks/property-select";
 import { Button } from "@makeplane/propel/components/button";
-import { CalendarOutline } from "@makeplane/propel/icons";
+import { CalendarOutline, ModuleOutline } from "@makeplane/propel/icons";
 import type { IModule } from "@plane/types";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
@@ -45,6 +46,8 @@ const defaultValues: Partial<IModule> = {
 
 export function ModuleForm(props: Props) {
   const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data, isMobile = false } = props;
+  // states
+  const [isLogoPickerOpen, setIsLogoPickerOpen] = useState(false);
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
   const { data: userProfile } = useUserProfile();
@@ -54,6 +57,8 @@ export function ModuleForm(props: Props) {
     handleSubmit,
     control,
     reset,
+    setValue,
+    watch,
   } = useForm<IModule>({
     defaultValues: {
       project_id: projectId,
@@ -62,8 +67,11 @@ export function ModuleForm(props: Props) {
       status: data?.status || "backlog",
       lead_id: data?.lead_id || null,
       member_ids: data?.member_ids || [],
+      logo_props: data?.logo_props,
     },
   });
+  // derived values
+  const logoValue = watch("logo_props");
 
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_MODULE, isMobile);
 
@@ -113,36 +121,76 @@ export function ModuleForm(props: Props) {
           </h3>
         </div>
         <div className="space-y-3">
-          <div className="space-y-1">
-            <Controller
-              control={control}
-              name="name"
-              rules={{
-                required: t("title_is_required"),
-                maxLength: {
-                  value: 255,
-                  message: t("title_should_be_less_than_255_characters"),
-                },
-              }}
-              render={({ field: { value, onChange } }) => (
-                <Field name="name" invalid={Boolean(errors?.name)}>
-                  <InputGroup size="2xl">
-                    <Input
-                      size="2xl"
-                      id="name"
-                      name="name"
-                      type="text"
-                      value={value}
-                      onChange={onChange}
-                      placeholder={t("title")}
-                      tabIndex={getIndex("name")}
-                      autoFocus
+          <div className="flex w-full items-start gap-2">
+            <EmojiPicker
+              iconType="lucide"
+              isOpen={isLogoPickerOpen}
+              handleToggle={(val: boolean) => setIsLogoPickerOpen(val)}
+              className="flex flex-shrink-0 items-center justify-center"
+              buttonClassName="flex items-center justify-center"
+              label={
+                <span className="grid h-9 w-9 place-items-center rounded-md bg-surface-2">
+                  {logoValue?.in_use ? (
+                    <Logo
+                      logo={logoValue}
+                      size={18}
+                      type="lucide"
+                      fallback={<ModuleOutline className="h-4 w-4 text-tertiary" />}
                     />
-                  </InputGroup>
-                </Field>
-              )}
+                  ) : (
+                    <ModuleOutline className="h-4 w-4 text-tertiary" />
+                  )}
+                </span>
+              }
+              onChange={(val) => {
+                setValue(
+                  "logo_props",
+                  val.type === "emoji"
+                    ? { in_use: "emoji", emoji: { value: val.value } }
+                    : { in_use: "icon", icon: val.value },
+                  { shouldDirty: true }
+                );
+                setIsLogoPickerOpen(false);
+              }}
+              onImageChange={({ url }) => {
+                setValue("logo_props", { in_use: "image", image: { url } }, { shouldDirty: true });
+                setIsLogoPickerOpen(false);
+              }}
+              defaultIconColor={logoValue?.in_use === "icon" ? logoValue.icon?.color : undefined}
+              defaultImageUrl={logoValue?.in_use === "image" ? logoValue.image?.url : undefined}
+              defaultOpen={logoValue?.in_use ?? "icon"}
             />
-            <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
+            <div className="w-full space-y-1">
+              <Controller
+                control={control}
+                name="name"
+                rules={{
+                  required: t("title_is_required"),
+                  maxLength: {
+                    value: 255,
+                    message: t("title_should_be_less_than_255_characters"),
+                  },
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <Field name="name" invalid={Boolean(errors?.name)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="name"
+                        name="name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        placeholder={t("title")}
+                        tabIndex={getIndex("name")}
+                        autoFocus
+                      />
+                    </InputGroup>
+                  </Field>
+                )}
+              />
+              <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
+            </div>
           </div>
           <div>
             <Controller

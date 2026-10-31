@@ -17,7 +17,7 @@ export type TPaginationInfo = {
 };
 
 export type TLogoProps = {
-  in_use: "emoji" | "icon";
+  in_use: "emoji" | "icon" | "image";
   emoji?: {
     value?: string;
     url?: string;
@@ -26,6 +26,10 @@ export type TLogoProps = {
     name?: string;
     color?: string;
     background_color?: string;
+  };
+  /** Image logo; `url` is an `http(s):` URL or a Plane asset path (`/api/assets/...`). */
+  image?: {
+    url?: string;
   };
 };
 
