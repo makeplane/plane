@@ -852,6 +852,7 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
+        """Return cycle work item bridge query set."""
         return (
             CycleIssue.objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("issue_id"))

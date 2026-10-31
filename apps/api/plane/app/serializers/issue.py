@@ -851,6 +851,7 @@ class IssueListDetailSerializer(serializers.Serializer):
         return [assignee.assignee_id for assignee in obj.issue_assignee.all()]
 
     def to_representation(self, instance):
+        """Serialize work item details with computed count annotations."""
         data = {
             # Basic fields
             "id": instance.id,

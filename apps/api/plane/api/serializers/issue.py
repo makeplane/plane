@@ -71,7 +71,11 @@ class IssueSerializer(BaseSerializer):
     attachment_count = serializers.SerializerMethodField()
 
     def get_comment_count(self, obj) -> int:
-        """Return the number of comments on the work item."""
+        """Return the number of active comments on the work item.
+
+        Soft-deleted comments (deleted_at is not null) are automatically excluded
+        via IssueComment's SoftDeletionManager.
+        """
         return getattr(obj, "comment_count", 0) or 0
 
     def get_link_count(self, obj) -> int:

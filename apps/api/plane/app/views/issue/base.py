@@ -85,6 +85,7 @@ class IssueListEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
+        """List work items in project with filter, pagination, and count metadata."""
         issue_ids = request.GET.get("issues", False)
 
         if not issue_ids:
@@ -204,6 +205,7 @@ class IssueListEndpoint(BaseAPIView):
                 "updated_by",
                 "attachment_count",
                 "link_count",
+                "comment_count",
                 "is_draft",
                 "archived_at",
                 "deleted_at",
@@ -232,6 +234,7 @@ class IssueViewSet(BaseViewSet):
         return issues
 
     def apply_annotations(self, issues):
+        """Apply relation counts and related IDs to work item query set."""
         issues = (
             issues.annotate(
                 cycle_id=Subquery(
@@ -261,6 +264,14 @@ class IssueViewSet(BaseViewSet):
                 sub_issues_count=Subquery(
                     Issue.issue_objects.filter(parent=OuterRef("id"))
                     .values("parent")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                )
+            )
+            .annotate(
+                comment_count=Subquery(
+                    IssueComment.objects.filter(issue=OuterRef("id"))
+                    .values("issue")
                     .annotate(count=Count("id"))
                     .values("count")
                 )
@@ -986,6 +997,7 @@ class IssueDetailEndpoint(BaseAPIView):
     filterset_class = IssueFilterSet
 
     def apply_annotations(self, issues):
+        """Apply relation counts and prefetch related entities for work item detail."""
         return (
             issues.annotate(
                 cycle_id=Subquery(
@@ -1009,6 +1021,12 @@ class IssueDetailEndpoint(BaseAPIView):
             )
             .annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                comment_count=IssueComment.objects.filter(issue=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -1262,6 +1280,12 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             )
             .annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                comment_count=IssueComment.objects.filter(issue=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")

@@ -813,6 +813,7 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):
+        """Return module work item bridge query set."""
         return (
             ModuleIssue.objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("issue"))
