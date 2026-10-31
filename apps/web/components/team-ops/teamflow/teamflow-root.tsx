@@ -165,7 +165,7 @@ const dateFormat = new Intl.DateTimeFormat("en-US", {
 });
 
 /** Documents and hand-offs between teams, with who has opened them. */
-export const TeamflowRoot = observer(function TeamflowRoot({ workspaceSlug }: Props) {
+export const HandoffsView = observer(function HandoffsView({ workspaceSlug }: Props) {
   // states
   const [status, setStatus] = useState<string>(ALL);
   const [teamId, setTeamId] = useState<string>(ALL);
@@ -198,7 +198,6 @@ export const TeamflowRoot = observer(function TeamflowRoot({ workspaceSlug }: Pr
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-6">
       <div>
-        <h1 className="text-h4-medium text-primary">Teamflow</h1>
         <p className="text-body-sm-regular text-secondary">
           Work and documents handed from one team to another. A hand-off is delivered once someone in the receiving team
           has opened it in the Hub.

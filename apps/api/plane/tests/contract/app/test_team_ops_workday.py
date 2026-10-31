@@ -100,7 +100,11 @@ def channel_of(workspace, **target):
 
 def run_timer(workspace, user, issue, minutes=30):
     return ActiveTimer.objects.create(
-        workspace=workspace, user=user, issue=issue, started_at=timezone.now() - timedelta(minutes=minutes)
+        workspace=workspace,
+        user=user,
+        issue=issue,
+        started_at=timezone.now() - timedelta(minutes=minutes),
+        last_confirmed_at=timezone.now(),
     )
 
 
@@ -216,7 +220,7 @@ class TestHubChannels:
         self, member_client, workspace, member, project, dev_team, qa_team, outsider_client
     ):
         names = {c["name"] for c in member_client.get(url(workspace, "hub/channels/")).data["results"]}
-        assert names == {"Dev", "WD"}  # not QA: the person is not in it
+        assert names == {"Dev", "WD", "General", "News"}  # not QA: the person is not in it
         assert outsider_client.get(url(workspace, "hub/channels/")).status_code == status.HTTP_403_FORBIDDEN
 
     def test_guests_have_no_hub(self, guest_client, workspace):
@@ -243,7 +247,7 @@ class TestHubChannels:
 
     def test_leaving_the_project_closes_the_channel(self, member_client, workspace, member, project):
         channels = member_client.get(url(workspace, "hub/channels/")).data["results"]
-        channel_id = channels[0]["id"]
+        channel_id = next(row["id"] for row in channels if row["kind"] == "PROJECT")
         project.project_projectmember.filter(member=member).update(is_active=False)
         assert member_client.get(url(workspace, f"hub/channels/{channel_id}/messages/")).status_code == 404
 

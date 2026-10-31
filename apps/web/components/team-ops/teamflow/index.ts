@@ -4,4 +4,4 @@
  * See the LICENSE file for details.
  */
 
-export * from "./teamflow-root";
+export * from "./teamflow-page";

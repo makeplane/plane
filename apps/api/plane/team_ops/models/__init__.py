@@ -13,7 +13,10 @@ from .calendar import (
 from .calendar_entry import WORKING_MODES, CalendarEntry, CalendarTemplate, LeaveType, WorkMode
 from .team import OpsTeam, OpsTeamMember
 from .hub import HubAttachment, HubChannel, HubMention, HubMessage, HubReadState, WorkSession
+from .flow import Flow, FlowStage, FlowStageMember
+from .hub_content import HubDoc, HubSecret, HubSecretAccess, HubSecretLog
 from .leave_request import LeaveRequest
+from .workday import OpsNotification, WorkDay, WorkInterruption
 from .work_report import WorkReport
 from .time_entry import ActiveTimer, TimeEntry, MAX_ENTRY_SECONDS
 
@@ -32,7 +35,17 @@ __all__ = [
     "HubMention",
     "HubChannel",
     "HubAttachment",
+    "Flow",
+    "FlowStage",
+    "FlowStageMember",
+    "HubDoc",
+    "HubSecret",
+    "HubSecretAccess",
+    "HubSecretLog",
     "LeaveRequest",
+    "OpsNotification",
+    "WorkDay",
+    "WorkInterruption",
     "LeaveType",
     "MAX_ENTRY_SECONDS",
     "OpsTeam",

@@ -11,9 +11,9 @@ from django.db import transaction
 from rest_framework.exceptions import ParseError
 
 # Module imports
-from plane.team_ops.models import HubMessage, OpsTeam, OpsTeamMember, WorkSession
+from plane.team_ops.models import HubMessage, OpsTeam, OpsTeamMember, WorkInterruption, WorkSession
 from plane.team_ops.services.hub import channel_for_project, channel_for_team, post_message
-from plane.team_ops.services.timer import stop_active_timer
+from plane.team_ops.services.timer import stop_timer
 from plane.team_ops.services.weekly_plan import today_in_timezone
 from plane.team_ops.services.work_reports import DAILY, save_report
 
@@ -52,10 +52,10 @@ def finish_work(*, workspace, user, summary, document_text, no_document, attenti
         raise ParseError(detail="Say what needs attention.")
 
     with transaction.atomic():
-        stopped = stop_active_timer(workspace, user)
+        stopped = stop_timer(workspace, user)
         if stopped is None:
             raise ParseError(detail="No timer is running.")
-        entry, capped = stopped
+        entry, capped = stopped.entry, stopped.capped
         if entry.issue_id is None:
             raise ParseError(detail="Start work on a work item first.")
         session = WorkSession.objects.create(
@@ -70,9 +70,15 @@ def finish_work(*, workspace, user, summary, document_text, no_document, attenti
             summary=summary,
             document_text=document_text,
             no_document=no_document and not document_text,
+            location=stopped.location,
+            break_seconds=stopped.break_seconds,
+            frozen_seconds=stopped.frozen_seconds,
             needs_attention=bool(attention),
             attention_message=(attention or {}).get("message", "").strip(),
         )
+        WorkInterruption.objects.filter(
+            workspace=workspace, user=user, session__isnull=True, started_at__gte=entry.started_at
+        ).update(session=session)
         key = f"{entry.issue.project.identifier}-{entry.issue.sequence_id}"
         _add_to_day_report(workspace=workspace, user=user, session=session, work_item_key=key)
         if attention:
@@ -100,15 +106,32 @@ def _hand_over(workspace, user, session, attention):
         kind=HubMessage.Kind.ATTENTION,
         session=session,
     )
+    reached = set(in_project)
     for team in OpsTeam.objects.filter(workspace=workspace, pk__in=team_ids):
         channel = channel_for_team(workspace, team)
         members = set(OpsTeamMember.objects.filter(team=team).values_list("user_id", flat=True))
+        reached |= members & channel_member_ids(channel)
         post_message(
             channel=channel,
             author=user,
             body=text,
             user_ids=user_ids & members & channel_member_ids(channel),
             team_ids=[team.id],
+            kind=HubMessage.Kind.ATTENTION,
+            session=session,
+        )
+    # People tagged one by one who are in neither the project nor a chosen team get it as a private message.
+    from plane.db.models import User
+    from plane.team_ops.services.hub import dm_channel
+
+    for user_id in user_ids - reached - {user.id}:
+        other = User.objects.filter(pk=user_id).first()
+        if other is None:
+            raise ParseError(detail="Unknown person.")
+        post_message(
+            channel=dm_channel(workspace, user, other),
+            author=user,
+            body=text,
             kind=HubMessage.Kind.ATTENTION,
             session=session,
         )

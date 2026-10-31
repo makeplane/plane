@@ -23,3 +23,7 @@ class TeamOpsConfig(AppConfig):
             "task": "plane.team_ops.tasks.extend_weekly_plans_task",
             "schedule": crontab(hour=0, minute=30),  # UTC 00:30
         }
+        app.conf.beat_schedule["team-ops-freeze-unanswered-timers"] = {
+            "task": "plane.team_ops.tasks.freeze_unanswered_timers_task",
+            "schedule": crontab(minute="*/5"),
+        }

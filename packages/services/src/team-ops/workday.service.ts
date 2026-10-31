@@ -8,10 +8,16 @@ import { API_BASE_URL } from "@plane/constants";
 import type {
   TFinishWorkPayload,
   TFinishWorkResponse,
+  THeatmap,
+  TOpsNotification,
+  TTeamStatusRow,
   TTeamflow,
   TTeamflowParams,
+  TDayMode,
+  TWorkPlace,
   TWorkSession,
   TWorkTasks,
+  TWorkdayState,
 } from "@plane/types";
 // services
 import { APIService } from "../api.service";
@@ -27,6 +33,7 @@ export const buildFinishForm = (payload: TFinishWorkPayload): FormData => {
   if (payload.attention_message.trim()) {
     form.append("attention_message", payload.attention_message);
     payload.attention_teams.forEach((team) => form.append("attention_teams", team));
+    payload.attention_users.forEach((user) => form.append("attention_users", user));
   }
   payload.files.forEach((file) => form.append("files", file));
   return form;
@@ -73,6 +80,85 @@ export class WorkdayService extends APIService {
   async getTeamflow(workspaceSlug: string, params: TTeamflowParams): Promise<TTeamflow> {
     return this.get(`${this.base(workspaceSlug)}/teamflow/`, { params })
       .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /** Work per day over the last year, for the contribution graph. */
+  async getHeatmap(workspaceSlug: string, user?: string): Promise<THeatmap> {
+    return this.get(`${this.base(workspaceSlug)}/work-sessions/heatmap/`, { params: user ? { user } : {} })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /** How the caller works today, the running task and the day so far. */
+  async getState(workspaceSlug: string): Promise<TWorkdayState> {
+    return this.get(`${this.base(workspaceSlug)}/workday/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /** Answers "how are you working today?". */
+  async setDayMode(workspaceSlug: string, mode: TDayMode): Promise<TWorkdayState> {
+    return this.post(`${this.base(workspaceSlug)}/workday/day/`, { mode })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /** Starts the timer on a work item; on a hybrid day `location` says where. */
+  async startWork(workspaceSlug: string, issue: string, location?: TWorkPlace): Promise<TWorkdayState> {
+    return this.post(`${this.base(workspaceSlug)}/workday/start/`, { issue, location })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async setBreak(workspaceSlug: string, action: "start" | "end"): Promise<TWorkdayState> {
+    return this.post(`${this.base(workspaceSlug)}/workday/break/`, { action })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /** "Yes, I am still working." Also ends a freeze. */
+  async checkIn(workspaceSlug: string): Promise<TWorkdayState> {
+    return this.post(`${this.base(workspaceSlug)}/workday/check-in/`, {})
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /** Who is doing what right now, for managers. */
+  async getTeamStatus(workspaceSlug: string): Promise<TTeamStatusRow[]> {
+    return this.get(`${this.base(workspaceSlug)}/workday/team/`)
+      .then((response) => response?.data?.results)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async listNotifications(workspaceSlug: string): Promise<{ unread: number; results: TOpsNotification[] }> {
+    return this.get(`${this.base(workspaceSlug)}/notifications/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /** Marks one notification, or all of them, as read. */
+  async markNotificationsRead(workspaceSlug: string, id?: string): Promise<void> {
+    return this.post(`${this.base(workspaceSlug)}/notifications/`, id ? { id } : {})
+      .then(() => undefined)
       .catch((error) => {
         throw error?.response?.data;
       });

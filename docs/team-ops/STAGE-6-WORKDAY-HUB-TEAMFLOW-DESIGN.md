@@ -69,3 +69,68 @@ API (all under `/api/workspaces/<slug>/team-ops/`): `work-sessions/finish/` (POS
 - **File upload and download against the real storage.** There is no MinIO on the development machine, so the tests use a fake storage. The first thing to do on staging: attach a PDF in the Hub and in the Finish form, open it from the message and from Teamflow, and confirm the link stops working after a few minutes. The server's bucket and credentials are the ones Plane already uses for its own uploads.
 - Two people chatting at the same time in two browsers (the API is tested; the 8-second refresh was seen working for one person).
 - Very large channels: the first page is the latest 100 messages; an older-messages button is not built yet (the API supports it with `before`).
+
+## Update: Workday as one page (second round of the owner's requests)
+
+The tabs are gone. **Workday is one page and the main page**: the first time the workspace is opened in a browser session the app lands on it (Home stays one click away in the sidebar). From top to bottom it shows:
+
+1. **How are you working today?** The first question of every day: *Onsite*, *Remote* or *Hybrid*. Nothing else works until it is answered; the answer can be changed later the same day.
+2. **Now**: project, then task, then (on a hybrid day only) **where you work on this task** (onsite or remote), then Start.
+3. While working: the clock, **Rest pause** (the time stops counting; *Back to work* resumes it), and **Finish work**.
+4. **Check-in every 30 minutes**: "Are you still working?" with 5 minutes to answer. If it is answered the time carries on. If not, the timer is **frozen from the moment the question fell due**: that time is not counted, it is written down as a *Frozen* interval in the day's detail and in the finished work, and the **admins and the leads of the person's teams get a notification**. "I am back" ends the freeze. This runs on the server (a job every 5 minutes), so it works with the browser closed. Set `TEAM_OPS_CHECK_IN_MINUTES` and `TEAM_OPS_CHECK_IN_GRACE_MINUTES` to change the 30 and 5.
+5. **Numbers and the day's story**: worked, onsite and remote hours, rest pauses, frozen time, this week, needs attention; time by task; each finished piece of work with the breaks and freezes between.
+6. **Team now** (only for people who may see the team): each person's state (working, on a break, frozen, finished, not working), task, how they work today, time worked and time frozen. Links to the team calendar, report board and calendar settings.
+7. **My plan** (calendar) and **My reports** as sections that open in place. The "New for you" box shows notifications (a missed check-in, tags, attention requests).
+
+Hours rules: worked time = elapsed time minus rest pauses minus freezes. Existing timers started on the old Time tracking page follow the same check-in rule.
+
+New data (migration `team_ops.0007_workday_modes_breaks_notifications`): `tops_work_day`, `tops_work_interruption`, `tops_notification`, and new columns on `tops_timer` and `tops_work_session`. New API: `workday/` (state), `workday/day/`, `workday/start/`, `workday/break/`, `workday/check-in/`, `workday/team/`, `notifications/`.
+
+## Update: Hub sections and Teamflow flows (third round)
+
+### Hub
+
+Left column, top to bottom: **Mentions**; **Everyone** (News, General); **Teams** and **Projects** (one channel each, so admins create them by creating teams in Teamspaces and projects); **Private** (a private conversation with any colleague, admins included, started from the list); **Library**: Doc Hub, Files, Secrets.
+
+- **News**: everyone reads, only admins write; every post notifies everyone. **General**: everyone writes.
+- **Private messages**: only the two people can read them (a third person gets "not found"); the other person is notified.
+- **Doc Hub**: written documents with tags (`#ops`), search, and an optional project. A document tied to a project is visible to that project's members and admins; a document without a project is open to the workspace. Only the author or an admin changes or deletes it.
+- **Files**: files shared with the whole workspace, plus the files of every channel the person can read, with the same upload rules and 5-minute signed links as before.
+- **Secrets**: see below.
+- **Notifications**: tags, attention requests, news, private messages, missed check-ins and shared secrets all land in the "New for you" box on Workday (and tags also in Hub, Mentions).
+
+### How Secrets are protected
+
+| Risk | What is done |
+|---|---|
+| Reading the database | The value is encrypted (Fernet, AES-128-CBC with HMAC) before it is stored. The key is `TEAM_OPS_SECRET_KEY` if set, otherwise derived from Django's `SECRET_KEY`. **Set `TEAM_OPS_SECRET_KEY` on the server and back it up separately; without the key a secret cannot be read, and with the wrong key it is refused, not shown wrongly.** |
+| Values in lists or logs | Lists, search and logs never contain the value. Only a separate "Reveal" call returns it, with `Cache-Control: no-store`, and the page hides it again after 20 seconds. |
+| Who may read | Only the publisher and the people the publisher picks. **Workspace admins get no special access**; a secret they were not given does not appear for them and answers "not found". People outside the workspace, guests and other workspaces cannot name or probe a secret (the same answer for "missing" and "not yours"). |
+| Passing it on | Only the publisher can change the value, change who may read it, or delete it. A reader cannot share it further. |
+| Accountability | Every reveal, change, grant and revoke is written to a log the publisher can read (who, what, when, never the value). People who are given access are notified. |
+| Taking access back | Removing a person ends their access at once; a bug where a revoked grant still counted was found and fixed while writing the tests. |
+
+Not done: secrets are not rotated or expired automatically, there is no second confirmation (password or code) before a reveal, and anyone who has read a value can of course copy it.
+
+### Teamflow flows
+
+An admin draws a flow for a project: a name, then 1 to 12 **stages** (for example Build, QA, Ship), each with the project's people; one person can be in one stage. The chart shows the stages left to right with arrows. In each person's box: the percentage of **their tasks in that project that are completed** and "x of y tasks done"; "no tasks" when none are assigned. A stage shows the combined percentage. A stage whose predecessor is not finished at 100% shows **Pending**, and so do its people. People see the flows of the projects they belong to; admins see all and are the only ones who create, edit or delete them. The earlier hand-off view stays as the second tab, "Hand-offs between teams".
+
+How the percentage is worked out is a choice (tasks assigned to the person in the project, completed state group); if you meant tasks *created by* the earlier stage, it is a small change in `services/flows.py`.
+
+### Data and API (migration `team_ops.0008_hub_sections_secrets_flows`)
+
+New tables: `tops_hub_doc`, `tops_hub_secret`, `tops_hub_secret_access`, `tops_hub_secret_log`, `tops_flow`, `tops_flow_stage`, `tops_flow_stage_member`; new columns on `tops_hub_channel` (private pairs, General and News kinds) and `tops_hub_attachment` (library files). API under `team-ops/`: `hub/people/`, `hub/direct/`, `hub/docs/`, `hub/library/`, `hub/secrets/` (with `/reveal/` and `/access/`), `teamflow/flows/` (with `/members/`).
+
+### Verification
+
+409 Team Ops backend tests (new: 38 for the sections, secrets and flows), 143 unit tests in `@plane/services`, `tsc` and `oxlint` clean. Migrations `0006` to `0008` applied to a copy of the real server data (16 new tables, nothing else changed except Django's metadata), rolled back to `0005` and applied again. In a real browser: the Hub with its sections, Secrets, and a three-stage flow with a Pending chain. Not tested here: file upload and download against the real storage (no MinIO on this machine).
+
+## Update: week plan, automatic hybrid, graph and weekly chart (fourth round)
+
+- **Hybrid is worked out, not chosen.** The day starts with *Onsite* or *Remote*. Every task has a place, pre-set to that answer; starting a task in the other place makes the day *Hybrid* by itself. Onsite and remote hours are counted separately.
+- **Week plan, Saturday to Friday, required.** The page shows the week with a choice per day (Onsite, Remote, Off). Until every working day from today to Friday has a plan (any entry counts: a day off, leave, or a day written by the weekly plan), **starting a timer is refused**. It can be done on any day of the week, not only on Saturday, and it is the same data as the calendar, so admins see it in the Team calendar. Weekends and holidays of the workspace need no plan. Past days are not asked for.
+- **Contribution graph**: one square per day for the last year, weeks as columns starting on Saturday, in steps of blue; switch between *Tasks* (1, 2, 3-4, 5+ different tasks finished that day) and *Hours* (under 1, 3, 5, more). Hover shows the tasks and hours of the day. API: `work-sessions/heatmap/` (the caller, or a person the caller may see).
+- **Weekly chart**: hours per day, Saturday to Friday, with filters for the place (all, onsite, remote) and for the hours of the day (from, to; a shortcut sets 09–18). A session counts in proportion to the part that falls inside the hours chosen.
+- **Report tags**: besides teams, people can be tagged one by one. Someone who reads the project channel or a chosen team's channel is tagged there; anyone else gets the report as a private message.
+- Verification: 419 Team Ops backend tests, 150 unit tests in `@plane/services`, `tsc` and `oxlint` clean; seen in a browser (week plan, chart, graph with a year of seeded work). No new migration.

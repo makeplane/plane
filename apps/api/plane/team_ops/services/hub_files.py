@@ -88,7 +88,7 @@ def validate_upload(upload):
     return name, extension
 
 
-def store_attachment(*, workspace, user, upload, message=None, session=None):
+def store_attachment(*, workspace, user, upload, message=None, session=None, library=False):
     """Validate and upload one file, and record it."""
     name, extension = validate_upload(upload)
     key = f"team-ops/{workspace.id}/{uuid.uuid4().hex}/{uuid.uuid4().hex}.{extension}"
@@ -100,6 +100,7 @@ def store_attachment(*, workspace, user, upload, message=None, session=None):
         uploaded_by=user,
         message=message,
         session=session,
+        library=library,
         storage_key=key,
         name=name,
         content_type=content_type,

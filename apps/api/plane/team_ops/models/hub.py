@@ -32,6 +32,9 @@ class WorkSession(BaseModel):
     no_document = models.BooleanField(default=False)
     needs_attention = models.BooleanField(default=False)
     attention_message = models.TextField(blank=True, default="")
+    location = models.CharField(max_length=10, blank=True, default="")
+    break_seconds = models.PositiveIntegerField(default=0)
+    frozen_seconds = models.PositiveIntegerField(default=0)
 
     class Meta:
         verbose_name = "Work Session"
@@ -53,9 +56,19 @@ class HubChannel(BaseModel):
     class Kind(models.TextChoices):
         TEAM = "TEAM", "Team"
         PROJECT = "PROJECT", "Project"
+        GENERAL = "GENERAL", "General"
+        NEWS = "NEWS", "News"
+        DM = "DM", "Private"
 
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="team_ops_hub_channels")
     kind = models.CharField(max_length=10, choices=Kind.choices)
+    # The two people of a private conversation, stored with the smaller id first.
+    dm_a = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name="+"
+    )
+    dm_b = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name="+"
+    )
     team = models.ForeignKey(
         "team_ops.OpsTeam", on_delete=models.CASCADE, null=True, blank=True, related_name="hub_channels"
     )
@@ -76,9 +89,21 @@ class HubChannel(BaseModel):
                 condition=Q(deleted_at__isnull=True, project__isnull=False),
                 name="tops_hub_one_per_project",
             ),
+            models.UniqueConstraint(
+                fields=["workspace", "kind"],
+                condition=Q(deleted_at__isnull=True, kind__in=["GENERAL", "NEWS"]),
+                name="tops_hub_one_general_news",
+            ),
+            models.UniqueConstraint(
+                fields=["workspace", "dm_a", "dm_b"],
+                condition=Q(deleted_at__isnull=True, kind="DM"),
+                name="tops_hub_one_dm_per_pair",
+            ),
             models.CheckConstraint(
                 condition=(Q(kind="TEAM", team__isnull=False, project__isnull=True))
-                | (Q(kind="PROJECT", project__isnull=False, team__isnull=True)),
+                | (Q(kind="PROJECT", project__isnull=False, team__isnull=True))
+                | (Q(kind__in=["GENERAL", "NEWS"], team__isnull=True, project__isnull=True))
+                | (Q(kind="DM", dm_a__isnull=False, dm_b__isnull=False)),
                 name="tops_hub_channel_target_matches_kind",
             ),
         ]
@@ -151,6 +176,8 @@ class HubAttachment(BaseModel):
     name = models.CharField(max_length=255)
     content_type = models.CharField(max_length=100)
     size = models.PositiveIntegerField()
+    # A file shared with everyone in the workspace from the Files section.
+    library = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Hub Attachment"
@@ -158,7 +185,8 @@ class HubAttachment(BaseModel):
         db_table = "tops_hub_attachment"
         constraints = [
             models.CheckConstraint(
-                condition=Q(message__isnull=False) | Q(session__isnull=False), name="tops_hub_attachment_has_owner"
+                condition=Q(message__isnull=False) | Q(session__isnull=False) | Q(library=True),
+                name="tops_hub_attachment_has_owner",
             )
         ]
 

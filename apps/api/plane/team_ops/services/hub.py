@@ -27,12 +27,17 @@ from plane.team_ops.models import (
     OpsTeamMember,
 )
 from plane.team_ops.services.access import calendar_user_ids
+from plane.team_ops.services.notifications import notify
 
 MAX_BODY = 5000
 
 
 def channel_member_ids(channel):
     """The people who can read and write in a channel (guests and people who left are never in it)."""
+    if channel.kind in (HubChannel.Kind.GENERAL, HubChannel.Kind.NEWS):
+        return set(calendar_user_ids(channel.workspace))
+    if channel.kind == HubChannel.Kind.DM:
+        return {channel.dm_a_id, channel.dm_b_id} & calendar_user_ids(channel.workspace)
     if channel.kind == HubChannel.Kind.TEAM:
         ids = set(OpsTeamMember.objects.filter(team_id=channel.team_id).values_list("user_id", flat=True))
     else:
@@ -50,7 +55,11 @@ def is_member(channel, user):
 
 def get_channel(workspace, channel_id, user):
     """The channel if the person may use it. A channel they may not use looks like one that does not exist."""
-    channel = HubChannel.objects.filter(workspace=workspace, pk=channel_id).select_related("team", "project").first()
+    channel = (
+        HubChannel.objects.filter(workspace=workspace, pk=channel_id)
+        .select_related("team", "project", "dm_a", "dm_b")
+        .first()
+    )
     if channel is None or not is_member(channel, user):
         raise NotFound("Channel not found.")
     return channel
@@ -66,8 +75,44 @@ def channel_for_project(workspace, project):
     return channel
 
 
+def channel_for_kind(workspace, kind):
+    """The workspace-wide channel of this kind (GENERAL or NEWS), created the first time it is needed."""
+    channel, _ = HubChannel.objects.get_or_create(workspace=workspace, kind=kind)
+    return channel
+
+
+def dm_channel(workspace, user, other):
+    """The private conversation between two people, created the first time they talk."""
+    if other.id == user.id or other.id not in calendar_user_ids(workspace):
+        raise ParseError(detail="Choose a colleague.")
+    first, second = sorted([user.id, other.id], key=str)
+    channel, _ = HubChannel.objects.get_or_create(
+        workspace=workspace, kind=HubChannel.Kind.DM, dm_a_id=first, dm_b_id=second
+    )
+    return channel
+
+
+def channel_name(channel, viewer):
+    """What the channel is called for this viewer."""
+    if channel.kind == HubChannel.Kind.TEAM:
+        return channel.team.name
+    if channel.kind == HubChannel.Kind.PROJECT:
+        return channel.project.name
+    if channel.kind == HubChannel.Kind.DM:
+        other = channel.dm_b if channel.dm_a_id == viewer.id else channel.dm_a
+        return other.display_name
+    return "News" if channel.kind == HubChannel.Kind.NEWS else "General"
+
+
+def can_post(channel, user, is_admin):
+    """Only admins write news; everyone in a channel may write in the others."""
+    return is_admin if channel.kind == HubChannel.Kind.NEWS else True
+
+
 def channels_of(workspace, user):
     """The channels of the teams and projects the person belongs to, created the first time they are needed."""
+    channel_for_kind(workspace, HubChannel.Kind.GENERAL)
+    channel_for_kind(workspace, HubChannel.Kind.NEWS)
     for team in OpsTeam.objects.filter(workspace=workspace, members__user=user):
         channel_for_team(workspace, team)
     for member in ProjectMember.objects.filter(workspace=workspace, member=user, is_active=True).select_related(
@@ -78,8 +123,14 @@ def channels_of(workspace, user):
     project_ids = ProjectMember.objects.filter(workspace=workspace, member=user, is_active=True).values("project_id")
     return (
         HubChannel.objects.filter(workspace=workspace)
-        .filter(Q(team_id__in=team_ids) | Q(project_id__in=project_ids))
-        .select_related("team", "project")
+        .filter(
+            Q(team_id__in=team_ids)
+            | Q(project_id__in=project_ids)
+            | Q(kind__in=[HubChannel.Kind.GENERAL, HubChannel.Kind.NEWS])
+            | Q(kind=HubChannel.Kind.DM, dm_a=user)
+            | Q(kind=HubChannel.Kind.DM, dm_b=user)
+        )
+        .select_related("team", "project", "dm_a", "dm_b")
     )
 
 
@@ -138,6 +189,39 @@ def post_message(
         )
         HubMention.objects.bulk_create(
             [HubMention(message=message, user_id=user_id, via_team_id=team_id) for user_id, team_id in tagged.items()]
+        )
+    link = f"team-ops/hub?channel={channel.id}"
+    if channel.kind == HubChannel.Kind.NEWS:
+        notify(
+            channel.workspace,
+            channel_member_ids(channel),
+            "NEWS",
+            f"News: {body[:80]}",
+            body[:300],
+            link=link,
+            actor=author,
+        )
+    elif channel.kind == HubChannel.Kind.DM:
+        notify(
+            channel.workspace,
+            channel_member_ids(channel),
+            "DIRECT",
+            f"{author.display_name} sent you a message",
+            body[:300],
+            link=link,
+            actor=author,
+        )
+    if tagged:
+        name = channel_name(channel, author)
+        attention = kind == HubMessage.Kind.ATTENTION
+        notify(
+            channel.workspace,
+            tagged,
+            "ATTENTION" if attention else "MENTION",
+            f"{author.display_name} {'needs your attention' if attention else 'tagged you'} in {name}",
+            body[:300],
+            link=f"team-ops/hub?channel={channel.id}",
+            actor=author,
         )
     return message
 

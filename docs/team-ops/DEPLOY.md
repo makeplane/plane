@@ -1,15 +1,17 @@
 # Deploying the Team Ops modules
 
-Covers Workday (which merges Time Tracking, Work Calendar and Work Reports), Hub, Teamflow, Dashboard, Leave and Teamspaces (migrations `team_ops.0001` to `0006`, plus Plane's own `db.0122` to `0125` which the server is missing).
+Covers Workday (which merges Time Tracking, Work Calendar and Work Reports), Hub, Teamflow, Dashboard, Leave and Teamspaces (migrations `team_ops.0001` to `0008`, plus Plane's own `db.0122` to `0125` which the server is missing).
 
 **Nothing here has been run on the server.** The images were not built on this machine (no Docker); the code, migrations and frontend build were verified locally.
 
 ## What changes on the server
 
 - Only the `api`, `worker`, `beat-worker`, `migrator` and `web` images. `admin`, `space`, `live`, Postgres, Redis, RabbitMQ and MinIO stay as they are.
-- Database: 17 new `tops_*` tables, plus Plane's own migrations `db.0122`–`0125` (`0123` drops two columns of `api_tokens`; the server has one token with a custom `allowed_rate_limit` that will be lost; `0125` touches only project deploy boards, none on the server).
+- Database: 27 new `tops_*` tables, plus Plane's own migrations `db.0122`–`0125` (`0123` drops two columns of `api_tokens`; the server has one token with a custom `allowed_rate_limit` that will be lost; `0125` touches only project deploy boards, none on the server).
 - The Hub stores files in Plane's existing private object storage (the same bucket and credentials as Plane's own uploads, under the prefix `team-ops/`). The storage service must be running and reachable from the `api` container. Optional: `TEAM_OPS_MAX_UPLOAD_BYTES` (default 20 MB) on the `api` container.
-- No new environment variable is required. `TEAM_OPS_ENABLED` defaults to on; set `TEAM_OPS_ENABLED=0` on the api, worker and beat containers to switch the API and the daily job off.
+- The 30-minute "still working?" check-in is enforced by a Celery beat job every 5 minutes (`team-ops-freeze-unanswered-timers`), so **`beat-worker` and `worker` must be running**. Optional: `TEAM_OPS_CHECK_IN_MINUTES` (30) and `TEAM_OPS_CHECK_IN_GRACE_MINUTES` (5).
+- **Secrets need their own key.** Generate one with `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`, set it as `TEAM_OPS_SECRET_KEY` on the `api` container, and keep a copy somewhere other than the server. Without it, a key derived from Django's `SECRET_KEY` is used, and changing `SECRET_KEY` later would make every secret unreadable.
+- No other new environment variable is required. `TEAM_OPS_ENABLED` defaults to on; set `TEAM_OPS_ENABLED=0` on the api, worker and beat containers to switch the API and the daily job off.
 
 ## Steps
 
@@ -25,7 +27,7 @@ Covers Workday (which merges Time Tracking, Work Calendar and Work Reports), Hub
 | Check | Result |
 |---|---|
 | All migrations from zero on an empty database | applied |
-| All migrations on a restore of the real server backup (22 users, 479 work items) | applied; 110 original tables unchanged except Django's own metadata tables; 17 new tables, none dropped (0006 re-checked on its own on top of 0001–0005, then rolled back and re-applied) |
+| All migrations on a restore of the real server backup (22 users, 479 work items) | applied; 110 original tables unchanged except Django's own metadata tables; 27 new tables, none dropped (0006 to 0008 re-checked on its own on top of 0001–0005, then rolled back and re-applied) |
 | `migrate team_ops zero` then migrate again on that restore | worked, original data intact |
 | Team Ops backend tests | all pass (see the stage documents for counts) |
 | Full backend suite against a clean checkout | no new failures (see the last section of the stage documents) |

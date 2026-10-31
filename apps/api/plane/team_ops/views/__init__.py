@@ -26,7 +26,37 @@ from .hub import (
     HubMessageDetailEndpoint,
     HubMessageListEndpoint,
 )
-from .workday import TeamflowEndpoint, WorkSessionFinishEndpoint, WorkSessionListEndpoint, WorkTasksEndpoint
+from .hub_extra import (
+    FlowDetailEndpoint,
+    FlowListEndpoint,
+    FlowProjectMembersEndpoint,
+    HubDirectEndpoint,
+    HubDocDetailEndpoint,
+    HubDocListEndpoint,
+    HubFileLibraryDetailEndpoint,
+    HubFileLibraryEndpoint,
+    HubPeopleEndpoint,
+    HubSecretAccessEndpoint,
+    HubSecretDetailEndpoint,
+    HubSecretListEndpoint,
+    HubSecretRevealEndpoint,
+)
+from .workday_day import (
+    NotificationEndpoint,
+    WorkdayBreakEndpoint,
+    WorkdayCheckInEndpoint,
+    WorkdayDayEndpoint,
+    WorkdayStartEndpoint,
+    WorkdayStateEndpoint,
+    WorkdayTeamEndpoint,
+)
+from .workday import (
+    TeamflowEndpoint,
+    WorkHeatmapEndpoint,
+    WorkSessionFinishEndpoint,
+    WorkSessionListEndpoint,
+    WorkTasksEndpoint,
+)
 from .leave_requests import LeaveRequestDetailEndpoint, LeaveRequestEndpoint
 from .team import TeamDetailEndpoint, TeamEndpoint
 from .time_entry import (
@@ -61,7 +91,28 @@ __all__ = [
     "HubMentionEndpoint",
     "HubMessageDetailEndpoint",
     "HubMessageListEndpoint",
+    "NotificationEndpoint",
+    "WorkdayBreakEndpoint",
+    "WorkdayCheckInEndpoint",
+    "WorkdayDayEndpoint",
+    "WorkdayStartEndpoint",
+    "WorkdayStateEndpoint",
+    "WorkdayTeamEndpoint",
+    "FlowDetailEndpoint",
+    "FlowListEndpoint",
+    "FlowProjectMembersEndpoint",
+    "HubDirectEndpoint",
+    "HubDocDetailEndpoint",
+    "HubDocListEndpoint",
+    "HubFileLibraryDetailEndpoint",
+    "HubFileLibraryEndpoint",
+    "HubPeopleEndpoint",
+    "HubSecretAccessEndpoint",
+    "HubSecretDetailEndpoint",
+    "HubSecretListEndpoint",
+    "HubSecretRevealEndpoint",
     "TeamflowEndpoint",
+    "WorkHeatmapEndpoint",
     "WorkSessionFinishEndpoint",
     "WorkSessionListEndpoint",
     "WorkTasksEndpoint",

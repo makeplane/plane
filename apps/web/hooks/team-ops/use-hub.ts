@@ -7,7 +7,7 @@
 import { useCallback } from "react";
 import useSWR from "swr";
 // plane imports
-import { HubService } from "@plane/services";
+import { FlowService, HubExtraService, HubService } from "@plane/services";
 import type { THubMessagePayload } from "@plane/types";
 
 const hubService = new HubService();
@@ -108,3 +108,42 @@ export const useHubMentions = (workspaceSlug: string, enabled: boolean) => {
 };
 
 export { hubService };
+
+const hubExtraService = new HubExtraService();
+const flowService = new FlowService();
+
+/** Colleagues the caller can write to privately. */
+export const useHubPeople = (workspaceSlug: string) => {
+  const { data } = useSWR(`TEAM_OPS_HUB_PEOPLE_${workspaceSlug}`, () => hubExtraService.listPeople(workspaceSlug));
+  return { people: data };
+};
+
+export const useHubDocs = (workspaceSlug: string, params: { q?: string; tag?: string; project?: string }) => {
+  const key = `TEAM_OPS_HUB_DOCS_${workspaceSlug}_${JSON.stringify(params)}`;
+  const { data, mutate } = useSWR(key, () => hubExtraService.listDocs(workspaceSlug, params));
+  return { docs: data?.results, tags: data?.tags ?? [], refresh: mutate };
+};
+
+export const useHubFiles = (workspaceSlug: string) => {
+  const { data, mutate } = useSWR(`TEAM_OPS_HUB_LIBRARY_${workspaceSlug}`, () =>
+    hubExtraService.listFiles(workspaceSlug)
+  );
+  return { files: data, refresh: mutate };
+};
+
+export const useHubSecrets = (workspaceSlug: string) => {
+  const { data, mutate } = useSWR(`TEAM_OPS_HUB_SECRETS_${workspaceSlug}`, () =>
+    hubExtraService.listSecrets(workspaceSlug)
+  );
+  return { secrets: data, refresh: mutate };
+};
+
+/** The flows the caller may see, with everyone's progress, refreshed every 30 seconds. */
+export const useFlows = (workspaceSlug: string) => {
+  const { data, error, mutate } = useSWR(`TEAM_OPS_FLOWS_${workspaceSlug}`, () => flowService.list(workspaceSlug), {
+    refreshInterval: 30_000,
+  });
+  return { flows: data?.results, canManage: data?.can_manage ?? false, error, refresh: mutate };
+};
+
+export { hubExtraService, flowService };

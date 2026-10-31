@@ -14,9 +14,9 @@ from rest_framework.response import Response
 from plane.app.permissions import allow_permission
 from plane.app.views.base import BaseAPIView
 from plane.db.models import User, Workspace
-from plane.team_ops.models import HubAttachment, HubChannel, HubMention, HubMessage
+from plane.team_ops.models import HubAttachment, HubMention, HubMessage
 from plane.team_ops.services import hub, hub_files
-from plane.team_ops.services.access import CALENDAR_ROLES, CalendarAccess
+from plane.team_ops.services.access import CALENDAR_ROLES, CalendarAccess, calendar_user_ids
 from plane.team_ops.services.time_entry import parse_uuid
 
 PAGE_SIZE = 100
@@ -59,14 +59,15 @@ def _message_payload(message, viewer):
     }
 
 
-def _channel_payload(channel, unread):
+def _channel_payload(channel, unread, viewer, is_admin):
     return {
         "id": channel.id,
         "kind": channel.kind,
-        "name": channel.team.name if channel.kind == HubChannel.Kind.TEAM else channel.project.name,
+        "name": hub.channel_name(channel, viewer),
         "team": channel.team_id,
         "project": channel.project_id,
         "unread": unread,
+        "can_post": hub.can_post(channel, viewer, is_admin),
     }
 
 
@@ -83,7 +84,8 @@ class HubChannelListEndpoint(BaseAPIView):
             return _forbidden()
         channels = list(hub.channels_of(workspace, request.user))
         unread = hub.unread_counts(request.user, channels)
-        results = [_channel_payload(channel, unread[channel.id]) for channel in channels]
+        is_admin = CalendarAccess(request.user, workspace).is_admin
+        results = [_channel_payload(channel, unread[channel.id], request.user, is_admin) for channel in channels]
         results.sort(key=lambda row: (row["kind"], row["name"].lower()))
         mentions = HubMention.objects.filter(
             user=request.user, read_at__isnull=True, message__channel__workspace=workspace
@@ -98,7 +100,7 @@ class HubChannelDetailEndpoint(BaseAPIView):
         workspace = Workspace.objects.get(slug=slug)
         channel = hub.get_channel(workspace, pk, request.user)
         members = User.objects.filter(pk__in=hub.channel_member_ids(channel)).order_by("display_name")
-        payload = _channel_payload(channel, 0)
+        payload = _channel_payload(channel, 0, request.user, CalendarAccess(request.user, workspace).is_admin)
         payload["members"] = [person(member) for member in members]
         return Response(payload)
 
@@ -138,6 +140,8 @@ class HubMessageListEndpoint(BaseAPIView):
         """Write a message. Send JSON, or multipart when files come with it."""
         workspace = Workspace.objects.get(slug=slug)
         channel = hub.get_channel(workspace, pk, request.user)
+        if not hub.can_post(channel, request.user, CalendarAccess(request.user, workspace).is_admin):
+            return _forbidden()
         files = request.FILES.getlist("files")
         body = request.data.get("body", "")
         if not isinstance(body, str):
@@ -205,7 +209,10 @@ class HubAttachmentDownloadEndpoint(BaseAPIView):
         )
         if attachment is None:
             raise NotFound("File not found.")
-        if attachment.message_id:
+        if attachment.library:
+            if request.user.id not in calendar_user_ids(workspace):
+                raise NotFound("File not found.")
+        elif attachment.message_id:
             if attachment.message.is_deleted:
                 raise NotFound("File not found.")
             hub.get_channel(workspace, attachment.message.channel_id, request.user)

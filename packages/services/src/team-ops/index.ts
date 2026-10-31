@@ -18,3 +18,4 @@ export * from "./leave-requests.service";
 export * from "./workday.service";
 export * from "./hub.service";
 export * from "./workday-rules";
+export * from "./hub-extra.service";

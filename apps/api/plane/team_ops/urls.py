@@ -29,7 +29,28 @@ from plane.team_ops.views import (
     HubMentionEndpoint,
     HubMessageDetailEndpoint,
     HubMessageListEndpoint,
+    NotificationEndpoint,
+    FlowDetailEndpoint,
+    FlowListEndpoint,
+    FlowProjectMembersEndpoint,
+    HubDirectEndpoint,
+    HubDocDetailEndpoint,
+    HubDocListEndpoint,
+    HubFileLibraryDetailEndpoint,
+    HubFileLibraryEndpoint,
+    HubPeopleEndpoint,
+    HubSecretAccessEndpoint,
+    HubSecretDetailEndpoint,
+    HubSecretListEndpoint,
+    HubSecretRevealEndpoint,
     TeamflowEndpoint,
+    WorkHeatmapEndpoint,
+    WorkdayBreakEndpoint,
+    WorkdayCheckInEndpoint,
+    WorkdayDayEndpoint,
+    WorkdayStartEndpoint,
+    WorkdayStateEndpoint,
+    WorkdayTeamEndpoint,
     WorkSessionFinishEndpoint,
     WorkSessionListEndpoint,
     WorkTasksEndpoint,
@@ -164,6 +185,61 @@ urlpatterns = [
         "workspaces/<str:slug>/team-ops/work-sessions/finish/",
         WorkSessionFinishEndpoint.as_view(),
         name="team-ops-work-session-finish",
+    ),
+    path("workspaces/<str:slug>/team-ops/workday/", WorkdayStateEndpoint.as_view(), name="team-ops-workday"),
+    path("workspaces/<str:slug>/team-ops/workday/day/", WorkdayDayEndpoint.as_view(), name="team-ops-workday-day"),
+    path(
+        "workspaces/<str:slug>/team-ops/workday/start/", WorkdayStartEndpoint.as_view(), name="team-ops-workday-start"
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/workday/break/", WorkdayBreakEndpoint.as_view(), name="team-ops-workday-break"
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/workday/check-in/",
+        WorkdayCheckInEndpoint.as_view(),
+        name="team-ops-workday-check-in",
+    ),
+    path("workspaces/<str:slug>/team-ops/workday/team/", WorkdayTeamEndpoint.as_view(), name="team-ops-workday-team"),
+    path(
+        "workspaces/<str:slug>/team-ops/notifications/", NotificationEndpoint.as_view(), name="team-ops-notifications"
+    ),
+    path("workspaces/<str:slug>/team-ops/hub/people/", HubPeopleEndpoint.as_view(), name="team-ops-hub-people"),
+    path("workspaces/<str:slug>/team-ops/hub/direct/", HubDirectEndpoint.as_view(), name="team-ops-hub-direct"),
+    path("workspaces/<str:slug>/team-ops/hub/docs/", HubDocListEndpoint.as_view(), name="team-ops-hub-docs"),
+    path("workspaces/<str:slug>/team-ops/hub/docs/<uuid:pk>/", HubDocDetailEndpoint.as_view(), name="team-ops-hub-doc"),
+    path("workspaces/<str:slug>/team-ops/hub/library/", HubFileLibraryEndpoint.as_view(), name="team-ops-hub-library"),
+    path(
+        "workspaces/<str:slug>/team-ops/hub/library/<uuid:pk>/",
+        HubFileLibraryDetailEndpoint.as_view(),
+        name="team-ops-hub-library-file",
+    ),
+    path("workspaces/<str:slug>/team-ops/hub/secrets/", HubSecretListEndpoint.as_view(), name="team-ops-hub-secrets"),
+    path(
+        "workspaces/<str:slug>/team-ops/hub/secrets/<uuid:pk>/",
+        HubSecretDetailEndpoint.as_view(),
+        name="team-ops-hub-secret",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/hub/secrets/<uuid:pk>/reveal/",
+        HubSecretRevealEndpoint.as_view(),
+        name="team-ops-hub-secret-reveal",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/hub/secrets/<uuid:pk>/access/",
+        HubSecretAccessEndpoint.as_view(),
+        name="team-ops-hub-secret-access",
+    ),
+    path("workspaces/<str:slug>/team-ops/teamflow/flows/", FlowListEndpoint.as_view(), name="team-ops-flows"),
+    path(
+        "workspaces/<str:slug>/team-ops/teamflow/flows/members/",
+        FlowProjectMembersEndpoint.as_view(),
+        name="team-ops-flow-members",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/teamflow/flows/<uuid:pk>/", FlowDetailEndpoint.as_view(), name="team-ops-flow"
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/work-sessions/heatmap/", WorkHeatmapEndpoint.as_view(), name="team-ops-heatmap"
     ),
     path("workspaces/<str:slug>/team-ops/work-tasks/", WorkTasksEndpoint.as_view(), name="team-ops-work-tasks"),
     path("workspaces/<str:slug>/team-ops/teamflow/", TeamflowEndpoint.as_view(), name="team-ops-teamflow"),

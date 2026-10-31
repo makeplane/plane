@@ -83,6 +83,17 @@ class ActiveTimer(BaseModel):
     )
     started_at = models.DateTimeField()
     note = models.TextField(blank=True, default="")
+    # Where the person works on this task: REMOTE or ONSITE.
+    location = models.CharField(max_length=10, blank=True, default="")
+    # RUNNING counts time; BREAK is a rest pause the person started; FROZEN means a check-in was missed.
+    state = models.CharField(max_length=10, default="RUNNING")
+    # When the current break or freeze began (null while running). A freeze begins when the check-in fell due.
+    paused_at = models.DateTimeField(null=True, blank=True)
+    # Totals of the breaks and freezes already closed, excluded from the worked time.
+    break_seconds = models.PositiveIntegerField(default=0)
+    frozen_seconds = models.PositiveIntegerField(default=0)
+    # The person last said "still working" (or started or resumed) at this time.
+    last_confirmed_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Active Timer"

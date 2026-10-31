@@ -21,6 +21,14 @@ import { useOpsTeams } from "@/hooks/team-ops/use-work-calendar";
 // local imports
 import { getErrorMessage } from "../calendar/error-message";
 
+const KIND_LABEL: Record<THubChannel["kind"], string> = {
+  TEAM: "Team",
+  PROJECT: "Project",
+  GENERAL: "General",
+  NEWS: "News",
+  DM: "Private",
+};
+
 const timeFormat = new Intl.DateTimeFormat("en-US", {
   day: "numeric",
   month: "short",
@@ -229,7 +237,7 @@ export const ChannelView = observer(function ChannelView({ workspaceSlug, channe
     <div className="flex h-full min-h-0 flex-col">
       <header className="border-b border-subtle px-4 py-3">
         <h2 className="text-body-md-medium text-primary">
-          {channel.kind === "TEAM" ? "Team" : "Project"} · {channel.name}
+          {KIND_LABEL[channel.kind]} · {channel.name}
         </h2>
         <p className="text-caption-sm-regular text-tertiary">
           {hub.channel ? `${hub.channel.members.length} people can read this channel` : "Loading..."}
@@ -254,131 +262,137 @@ export const ChannelView = observer(function ChannelView({ workspaceSlug, channe
         <div ref={bottom} />
       </div>
 
-      <footer className="flex flex-col gap-2 border-t border-subtle p-3">
-        {replyTo ? (
-          <p className="flex items-center justify-between gap-2 rounded-md bg-layer-1 px-3 py-1.5 text-body-xs-regular text-secondary">
-            <span className="truncate">Replying to {replyTo.author.display_name}</span>
-            <button type="button" className="text-accent-primary hover:underline" onClick={() => setReplyTo(null)}>
-              Cancel
-            </button>
-          </p>
-        ) : null}
-        <TextAreaField
-          size="lg"
-          label="Message"
-          value={body}
-          rows={2}
-          maxLength={5000}
-          placeholder="Write a message. Use the lists below to tag people or a whole team."
-          onChange={(event) => setBody(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
-              event.preventDefault();
-              void send();
-            }
-          }}
-        />
-        <div className="flex flex-wrap items-end gap-2">
-          <div className="w-44 [&_button]:min-w-0">
-            <SelectField
-              size="lg"
-              label="Tag a person"
-              options={personOptions}
-              value={undefined}
-              onValueChange={(value) => {
-                const person = people.find((item) => item.id === value);
-                if (person) setTagged((current) => [...current, person]);
-              }}
-            />
-          </div>
-          <div className="w-44 [&_button]:min-w-0">
-            <SelectField
-              size="lg"
-              label="Tag a team"
-              options={teamOptions}
-              value={undefined}
-              onValueChange={(value) => {
-                const team = (teams ?? []).find((item) => item.id === value);
-                if (team) setTaggedTeams((current) => [...current, { id: team.id, name: team.name }]);
-              }}
-            />
-          </div>
-          <input
-            ref={input}
-            id="hub-files"
-            type="file"
-            multiple
-            accept={FILE_ACCEPT}
-            className="sr-only"
-            onChange={(event) => addFiles(event.target.files)}
-          />
-          <label
-            htmlFor="hub-files"
-            className="cursor-pointer rounded-md border border-subtle px-3 py-2 text-body-xs-medium text-secondary hover:bg-layer-1"
-          >
-            Attach files
-          </label>
-          <div className="ml-auto">
-            <Button
-              variant="primary"
-              size="md"
-              stretch="auto"
-              label="Send"
-              loading={isSending}
-              disabled={!body.trim() && files.length === 0}
-              onClick={send}
-            />
-          </div>
-        </div>
-        {tagged.length > 0 || taggedTeams.length > 0 || files.length > 0 ? (
-          <ul className="flex flex-wrap gap-1.5">
-            {tagged.map((person) => (
-              <li key={person.id}>
-                <button
-                  type="button"
-                  className="rounded-full bg-accent-subtle px-2.5 py-0.5 text-caption-sm-regular text-accent-primary"
-                  onClick={() => setTagged((current) => current.filter((item) => item.id !== person.id))}
-                  aria-label={`Remove tag ${person.display_name}`}
-                >
-                  @{person.display_name} ×
-                </button>
-              </li>
-            ))}
-            {taggedTeams.map((team) => (
-              <li key={team.id}>
-                <button
-                  type="button"
-                  className="rounded-full bg-accent-subtle px-2.5 py-0.5 text-caption-sm-regular text-accent-primary"
-                  onClick={() => setTaggedTeams((current) => current.filter((item) => item.id !== team.id))}
-                  aria-label={`Remove tag ${team.name}`}
-                >
-                  @{team.name} (team) ×
-                </button>
-              </li>
-            ))}
-            {files.map((file, index) => (
-              <li key={`${file.name}-${index}`}>
-                <button
-                  type="button"
-                  className="rounded-full bg-layer-1 px-2.5 py-0.5 text-caption-sm-regular text-secondary"
-                  onClick={() => setFiles((current) => current.filter((_, i) => i !== index))}
-                  aria-label={`Remove file ${file.name}`}
-                >
-                  {file.name} ×
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : null}
-        {fileError ? (
-          <p role="alert" className="text-body-xs-regular text-danger-primary">
-            {fileError}
-          </p>
-        ) : null}
-        <p className="text-caption-sm-regular text-tertiary">
-          Ctrl+Enter sends. Files are stored privately and open through a link that works for 5 minutes.
+      {!channel.can_post ? (
+        <p className="border-t border-subtle p-3 text-body-xs-regular text-tertiary">
+          Only admins can write here. Everyone can read.
         </p>
-      </footer>
+      ) : (
+        <footer className="flex flex-col gap-2 border-t border-subtle p-3">
+          {replyTo ? (
+            <p className="flex items-center justify-between gap-2 rounded-md bg-layer-1 px-3 py-1.5 text-body-xs-regular text-secondary">
+              <span className="truncate">Replying to {replyTo.author.display_name}</span>
+              <button type="button" className="text-accent-primary hover:underline" onClick={() => setReplyTo(null)}>
+                Cancel
+              </button>
+            </p>
+          ) : null}
+          <TextAreaField
+            size="lg"
+            label="Message"
+            value={body}
+            rows={2}
+            maxLength={5000}
+            placeholder="Write a message. Use the lists below to tag people or a whole team."
+            onChange={(event) => setBody(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+                event.preventDefault();
+                void send();
+              }
+            }}
+          />
+          <div className="flex flex-wrap items-end gap-2">
+            <div className="w-44 [&_button]:min-w-0">
+              <SelectField
+                size="lg"
+                label="Tag a person"
+                options={personOptions}
+                value={undefined}
+                onValueChange={(value) => {
+                  const person = people.find((item) => item.id === value);
+                  if (person) setTagged((current) => [...current, person]);
+                }}
+              />
+            </div>
+            <div className="w-44 [&_button]:min-w-0">
+              <SelectField
+                size="lg"
+                label="Tag a team"
+                options={teamOptions}
+                value={undefined}
+                onValueChange={(value) => {
+                  const team = (teams ?? []).find((item) => item.id === value);
+                  if (team) setTaggedTeams((current) => [...current, { id: team.id, name: team.name }]);
+                }}
+              />
+            </div>
+            <input
+              ref={input}
+              id="hub-files"
+              type="file"
+              multiple
+              accept={FILE_ACCEPT}
+              className="sr-only"
+              onChange={(event) => addFiles(event.target.files)}
+            />
+            <label
+              htmlFor="hub-files"
+              className="cursor-pointer rounded-md border border-subtle px-3 py-2 text-body-xs-medium text-secondary hover:bg-layer-1"
+            >
+              Attach files
+            </label>
+            <div className="ml-auto">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label="Send"
+                loading={isSending}
+                disabled={!body.trim() && files.length === 0}
+                onClick={send}
+              />
+            </div>
+          </div>
+          {tagged.length > 0 || taggedTeams.length > 0 || files.length > 0 ? (
+            <ul className="flex flex-wrap gap-1.5">
+              {tagged.map((person) => (
+                <li key={person.id}>
+                  <button
+                    type="button"
+                    className="rounded-full bg-accent-subtle px-2.5 py-0.5 text-caption-sm-regular text-accent-primary"
+                    onClick={() => setTagged((current) => current.filter((item) => item.id !== person.id))}
+                    aria-label={`Remove tag ${person.display_name}`}
+                  >
+                    @{person.display_name} ×
+                  </button>
+                </li>
+              ))}
+              {taggedTeams.map((team) => (
+                <li key={team.id}>
+                  <button
+                    type="button"
+                    className="rounded-full bg-accent-subtle px-2.5 py-0.5 text-caption-sm-regular text-accent-primary"
+                    onClick={() => setTaggedTeams((current) => current.filter((item) => item.id !== team.id))}
+                    aria-label={`Remove tag ${team.name}`}
+                  >
+                    @{team.name} (team) ×
+                  </button>
+                </li>
+              ))}
+              {files.map((file, index) => (
+                <li key={`${file.name}-${index}`}>
+                  <button
+                    type="button"
+                    className="rounded-full bg-layer-1 px-2.5 py-0.5 text-caption-sm-regular text-secondary"
+                    onClick={() => setFiles((current) => current.filter((_, i) => i !== index))}
+                    aria-label={`Remove file ${file.name}`}
+                  >
+                    {file.name} ×
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {fileError ? (
+            <p role="alert" className="text-body-xs-regular text-danger-primary">
+              {fileError}
+            </p>
+          ) : null}
+          <p className="text-caption-sm-regular text-tertiary">
+            Ctrl+Enter sends. Files are stored privately and open through a link that works for 5 minutes.
+          </p>
+        </footer>
+      )}
     </div>
   );
 });

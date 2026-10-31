@@ -16,6 +16,7 @@ const payload = (overrides: Partial<TFinishWorkPayload> = {}): TFinishWorkPayloa
   no_document: false,
   attention_message: "",
   attention_teams: [],
+  attention_users: [],
   files: [],
   ...overrides,
 });
@@ -36,6 +37,7 @@ describe("buildFinishForm", () => {
       payload({
         attention_message: "Please test",
         attention_teams: ["t1", "t2"],
+        attention_users: ["u9"],
         files: [file],
         document_text: "notes",
       })
@@ -43,6 +45,7 @@ describe("buildFinishForm", () => {
 
     expect(form.get("attention_message")).toBe("Please test");
     expect(form.getAll("attention_teams")).toEqual(["t1", "t2"]);
+    expect(form.getAll("attention_users")).toEqual(["u9"]);
     expect(form.getAll("files")).toHaveLength(1);
     expect(form.get("document_text")).toBe("notes");
     expect(form.get("no_document")).toBe("false");

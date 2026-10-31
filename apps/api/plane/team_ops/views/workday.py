@@ -15,7 +15,7 @@ from plane.app.permissions import allow_permission
 from plane.app.views.base import BaseAPIView
 from plane.db.models import User, Workspace
 from plane.team_ops.models import OpsTeam, OpsTeamMember, WorkSession
-from plane.team_ops.services import hub_files, teamflow, work_sessions
+from plane.team_ops.services import hub_files, teamflow, work_sessions, workday
 from plane.team_ops.services.access import CALENDAR_ROLES, CalendarAccess, calendar_user_ids
 from plane.team_ops.services.date_params import parse_day_range
 from plane.team_ops.services.time_entry import parse_uuid
@@ -46,6 +46,9 @@ def _session_payload(session):
         "no_document": session.no_document,
         "needs_attention": session.needs_attention,
         "attention_message": session.attention_message,
+        "location": session.location,
+        "break_seconds": session.break_seconds,
+        "frozen_seconds": session.frozen_seconds,
         "files": [
             {"id": a.id, "name": a.name, "content_type": a.content_type, "size": a.size}
             for a in session.attachments.all()
@@ -123,6 +126,20 @@ class WorkSessionListEndpoint(BaseAPIView):
             .order_by("-finished_at")
         )
         return Response({"results": [_session_payload(s) for s in sessions]})
+
+
+class WorkHeatmapEndpoint(BaseAPIView):
+    @allow_permission(CALENDAR_ROLES, level="WORKSPACE")
+    def get(self, request, slug):
+        """Work per day over the last year for one person (the caller by default): finished work, tasks, seconds."""
+        workspace = Workspace.objects.get(slug=slug)
+        access = CalendarAccess(request.user, workspace)
+        target_id = (
+            parse_uuid(request.query_params["user"], "user") if request.query_params.get("user") else request.user.id
+        )
+        if not access.can_view_user(target_id):
+            return _forbidden()
+        return Response(workday.heatmap(workspace, User.objects.get(pk=target_id)))
 
 
 class WorkTasksEndpoint(BaseAPIView):

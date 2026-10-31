@@ -492,7 +492,7 @@ class TestTimer:
     @pytest.mark.django_db
     def test_stop_creates_entry_and_removes_timer(self, member_client, workspace, member, issue):
         member_client.post(url(workspace, "timer/"), {"issue": str(issue.id), "note": "n"}, format="json")
-        ActiveTimer.objects.update(started_at=timezone.now() - timedelta(minutes=90))
+        ActiveTimer.objects.update(started_at=timezone.now() - timedelta(minutes=90), last_confirmed_at=timezone.now())
 
         response = member_client.delete(url(workspace, "timer/"))
 
@@ -507,7 +507,7 @@ class TestTimer:
     @pytest.mark.django_db
     def test_stop_caps_a_forgotten_timer(self, member_client, workspace):
         member_client.post(url(workspace, "timer/"), {}, format="json")
-        ActiveTimer.objects.update(started_at=timezone.now() - timedelta(days=3))
+        ActiveTimer.objects.update(started_at=timezone.now() - timedelta(days=3), last_confirmed_at=timezone.now())
 
         response = member_client.delete(url(workspace, "timer/"))
 

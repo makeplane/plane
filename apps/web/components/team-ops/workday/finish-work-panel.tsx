@@ -9,19 +9,21 @@ import { Button } from "@makeplane/propel/components/button";
 import { CheckboxField } from "@makeplane/propel/components/checkbox-field";
 import { TextAreaField } from "@makeplane/propel/components/text-area-field";
 import { FILE_ACCEPT, MAX_FILES, MAX_FILE_MB, fileLimitError, finishBlocker } from "@plane/services";
-import type { TFinishWorkPayload, TOpsTeam } from "@plane/types";
+import type { TFinishWorkPayload, THubPerson, TOpsTeam } from "@plane/types";
 
 type Props = {
   /** What is being finished, e.g. `WD-1 Fix login`, and how long it took. */
   title: string;
   elapsedLabel: string;
   teams: TOpsTeam[];
+  /** Colleagues who can be tagged one by one. */
+  people: THubPerson[];
   onFinish: (payload: TFinishWorkPayload) => Promise<void>;
   onCancel: () => void;
 };
 
 /** The report that closes a piece of work: what was done, the document (or its absence) and hand-offs. */
-export function FinishWorkPanel({ title, elapsedLabel, teams, onFinish, onCancel }: Props) {
+export function FinishWorkPanel({ title, elapsedLabel, teams, people, onFinish, onCancel }: Props) {
   // states
   const [summary, setSummary] = useState("");
   const [documentText, setDocumentText] = useState("");
@@ -30,6 +32,7 @@ export function FinishWorkPanel({ title, elapsedLabel, teams, onFinish, onCancel
   const [needsAttention, setNeedsAttention] = useState(false);
   const [attentionMessage, setAttentionMessage] = useState("");
   const [teamIds, setTeamIds] = useState<string[]>([]);
+  const [userIds, setUserIds] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [fileError, setFileError] = useState("");
   const input = useRef<HTMLInputElement>(null);
@@ -64,6 +67,7 @@ export function FinishWorkPanel({ title, elapsedLabel, teams, onFinish, onCancel
         no_document: noDocument && !hasDocument,
         attention_message: needsAttention ? attentionMessage : "",
         attention_teams: needsAttention ? teamIds : [],
+        attention_users: needsAttention ? userIds : [],
         files,
       });
     } finally {
@@ -189,6 +193,24 @@ export function FinishWorkPanel({ title, elapsedLabel, teams, onFinish, onCancel
                     label={team.name}
                     checked={teamIds.includes(team.id)}
                     onCheckedChange={() => toggleTeam(team.id)}
+                  />
+                ))}
+              </fieldset>
+            ) : null}
+            {people.length > 0 ? (
+              <fieldset className="flex flex-wrap gap-x-4 gap-y-1">
+                <legend className="mb-1 text-body-xs-medium text-secondary">Tell these people</legend>
+                {people.map((person) => (
+                  <CheckboxField
+                    key={person.id}
+                    size="lg"
+                    label={person.display_name}
+                    checked={userIds.includes(person.id)}
+                    onCheckedChange={() =>
+                      setUserIds((current) =>
+                        current.includes(person.id) ? current.filter((id) => id !== person.id) : [...current, person.id]
+                      )
+                    }
                   />
                 ))}
               </fieldset>
