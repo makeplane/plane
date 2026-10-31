@@ -106,7 +106,9 @@ def channel_name(channel, viewer):
 
 def can_post(channel, user, is_admin):
     """Only admins write news; everyone in a channel may write in the others."""
-    return is_admin if channel.kind == HubChannel.Kind.NEWS else True
+    if channel.kind == HubChannel.Kind.NEWS or channel.is_locked:
+        return is_admin
+    return True
 
 
 def channels_of(workspace, user):

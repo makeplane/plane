@@ -41,6 +41,14 @@ from .hub_extra import (
     HubSecretListEndpoint,
     HubSecretRevealEndpoint,
 )
+from .control import (
+    ControlFlowsEndpoint,
+    ControlHubChannelEndpoint,
+    ControlHubEndpoint,
+    ControlHubMessageEndpoint,
+    ControlInterruptionsEndpoint,
+    ControlTeamEndpoint,
+)
 from .workday_day import (
     NotificationEndpoint,
     WorkdayBreakEndpoint,
@@ -111,6 +119,12 @@ __all__ = [
     "HubSecretDetailEndpoint",
     "HubSecretListEndpoint",
     "HubSecretRevealEndpoint",
+    "ControlFlowsEndpoint",
+    "ControlHubChannelEndpoint",
+    "ControlHubEndpoint",
+    "ControlHubMessageEndpoint",
+    "ControlInterruptionsEndpoint",
+    "ControlTeamEndpoint",
     "TeamflowEndpoint",
     "WorkHeatmapEndpoint",
     "WorkSessionFinishEndpoint",

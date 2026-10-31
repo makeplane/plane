@@ -159,3 +159,23 @@ export const weeklyChart = (
     return { date: keyOf(new Date(y, m - 1, d + index)), seconds: Math.round(seconds) };
   });
 };
+
+export type TControlPreset = "today" | "week" | "7" | "30" | "90";
+
+const shiftKey = (key: string, days: number) => {
+  const [y, m, d] = key.split("-").map(Number);
+  return keyOf(new Date(y, m - 1, d + days));
+};
+
+/** The Saturday that starts the week of a day (`YYYY-MM-DD`). */
+export const saturdayOf = (key: string): string => {
+  const [y, m, d] = key.split("-").map(Number);
+  return shiftKey(key, -((new Date(y, m - 1, d).getDay() - SATURDAY + 7) % 7));
+};
+
+/** The `from` and `to` of a period shown in Control. Never longer than the 92 days the server allows. */
+export const controlRange = (preset: TControlPreset, today: string): { from: string; to: string } => {
+  if (preset === "today") return { from: today, to: today };
+  if (preset === "week") return { from: saturdayOf(today), to: today };
+  return { from: shiftKey(today, -(Number(preset) - 1)), to: today };
+};

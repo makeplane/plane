@@ -43,6 +43,12 @@ from plane.team_ops.views import (
     HubSecretDetailEndpoint,
     HubSecretListEndpoint,
     HubSecretRevealEndpoint,
+    ControlFlowsEndpoint,
+    ControlHubChannelEndpoint,
+    ControlHubEndpoint,
+    ControlHubMessageEndpoint,
+    ControlInterruptionsEndpoint,
+    ControlTeamEndpoint,
     TeamflowEndpoint,
     WorkHeatmapEndpoint,
     WorkdayBreakEndpoint,
@@ -240,6 +246,26 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/team-ops/work-sessions/heatmap/", WorkHeatmapEndpoint.as_view(), name="team-ops-heatmap"
+    ),
+    path("workspaces/<str:slug>/team-ops/control/team/", ControlTeamEndpoint.as_view(), name="team-ops-control-team"),
+    path(
+        "workspaces/<str:slug>/team-ops/control/interruptions/",
+        ControlInterruptionsEndpoint.as_view(),
+        name="team-ops-control-interruptions",
+    ),
+    path("workspaces/<str:slug>/team-ops/control/hub/", ControlHubEndpoint.as_view(), name="team-ops-control-hub"),
+    path(
+        "workspaces/<str:slug>/team-ops/control/hub/channels/<uuid:pk>/",
+        ControlHubChannelEndpoint.as_view(),
+        name="team-ops-control-hub-channel",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/control/hub/messages/<uuid:pk>/",
+        ControlHubMessageEndpoint.as_view(),
+        name="team-ops-control-hub-message",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/control/flows/", ControlFlowsEndpoint.as_view(), name="team-ops-control-flows"
     ),
     path("workspaces/<str:slug>/team-ops/work-tasks/", WorkTasksEndpoint.as_view(), name="team-ops-work-tasks"),
     path("workspaces/<str:slug>/team-ops/teamflow/", TeamflowEndpoint.as_view(), name="team-ops-teamflow"),

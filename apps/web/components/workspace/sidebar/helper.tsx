@@ -15,6 +15,7 @@ import {
   HomeOutline,
   InboxOutline,
   MembersOutline,
+  MonitorOutline,
   MultipleStickyOutline,
   ProjectsOutline,
   ViewsOutline,
@@ -47,6 +48,8 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
       return <ClockOutline className={cn("size-4 flex-shrink-0", className)} />;
     case "hub":
       return <ChatOutline className={cn("size-4 flex-shrink-0", className)} />;
+    case "team_control":
+      return <MonitorOutline className={cn("size-4 flex-shrink-0", className)} />;
     case "teamflow":
       return <WorkflowsOutline className={cn("size-4 flex-shrink-0", className)} />;
     case "team_leave":

@@ -305,6 +305,13 @@ export const TEAM_OPS_SIDEBAR_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigatio
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   {
+    key: "team_control",
+    labelTranslationKey: "Control",
+    href: `/team-ops/control/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
+  {
     key: "team_leave",
     labelTranslationKey: "Leave",
     href: `/team-ops/leave/`,

@@ -10,3 +10,4 @@ export * from "./work-reports";
 export * from "./dashboard";
 export * from "./leave-requests";
 export * from "./workday";
+export * from "./control";

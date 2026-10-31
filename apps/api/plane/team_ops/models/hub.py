@@ -62,6 +62,8 @@ class HubChannel(BaseModel):
 
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="team_ops_hub_channels")
     kind = models.CharField(max_length=10, choices=Kind.choices)
+    # A locked channel can be read by its members, but only admins write in it.
+    is_locked = models.BooleanField(default=False)
     # The two people of a private conversation, stored with the smaller id first.
     dm_a = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name="+"

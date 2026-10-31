@@ -8,11 +8,13 @@ import { describe, expect, it } from "vitest";
 import {
   MAX_FILES,
   buildHeatGrid,
+  controlRange,
   checkInPhase,
   fileLimitError,
   finishBlocker,
   formatHm,
   heatLevel,
+  saturdayOf,
   weeklyChart,
 } from "./workday-rules";
 
@@ -161,5 +163,20 @@ describe("weeklyChart", () => {
     const working = weeklyChart(sessions, "2027-01-02", { fromHour: 9, toHour: 17 });
     expect(working.map((day) => day.seconds)).toEqual([10800, 0, 3600, 0, 0, 0, 0]);
     expect(weeklyChart(sessions, "2027-01-02", { fromHour: 10, toHour: 12 })[0].seconds).toBe(3600);
+  });
+});
+
+describe("controlRange", () => {
+  // 2027-01-06 is a Wednesday; its week began on Saturday 2027-01-02.
+  it("covers a day, the week so far, or the last N days", () => {
+    expect(controlRange("today", "2027-01-06")).toEqual({ from: "2027-01-06", to: "2027-01-06" });
+    expect(controlRange("week", "2027-01-06")).toEqual({ from: "2027-01-02", to: "2027-01-06" });
+    expect(controlRange("7", "2027-01-06")).toEqual({ from: "2026-12-31", to: "2027-01-06" });
+    expect(controlRange("90", "2027-01-06").from).toBe("2026-10-09");
+  });
+
+  it("starts the week on the day itself when it is a Saturday", () => {
+    expect(saturdayOf("2027-01-02")).toBe("2027-01-02");
+    expect(saturdayOf("2027-01-08")).toBe("2027-01-02");
   });
 });
