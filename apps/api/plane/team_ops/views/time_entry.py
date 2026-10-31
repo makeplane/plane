@@ -2,9 +2,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-# Python imports
-from datetime import timedelta
-
 # Django imports
 from django.db import IntegrityError, transaction
 from django.db.models import Sum
@@ -19,7 +16,7 @@ from rest_framework.response import Response
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Workspace
-from plane.team_ops.models import MAX_ENTRY_SECONDS, ActiveTimer, TimeEntry
+from plane.team_ops.models import ActiveTimer, TimeEntry
 from plane.team_ops.serializers import (
     ActiveTimerSerializer,
     TimeEntrySerializer,
@@ -28,6 +25,7 @@ from plane.team_ops.serializers import (
     resolve_issue,
 )
 from plane.team_ops.services.time_entry import is_workspace_admin, parse_range, parse_uuid
+from plane.team_ops.services.timer import stop_active_timer
 
 # Guests never see time tracking; everyone else sees their own data, admins see all.
 TIME_ROLES = [ROLE.ADMIN, ROLE.MEMBER]
@@ -260,34 +258,10 @@ class TimerEndpoint(BaseAPIView):
     @allow_permission(TIME_ROLES, level="WORKSPACE")
     def delete(self, request, slug):
         """Stop the running timer and turn it into a time entry."""
-        with transaction.atomic():
-            timer = (
-                ActiveTimer.objects.select_for_update(of=("self",))
-                .filter(workspace__slug=slug, user=request.user)
-                .select_related("workspace", "issue", "issue__project")
-                .first()
-            )
-            if timer is None:
-                return Response({"error": "No timer is running."}, status=status.HTTP_404_NOT_FOUND)
-
-            now = timezone.now()
-            elapsed = max(0, int((now - timer.started_at).total_seconds()))
-            # A timer left running for days must not log days of work.
-            capped = elapsed > MAX_ENTRY_SECONDS
-            duration = min(elapsed, MAX_ENTRY_SECONDS)
-
-            entry = TimeEntry.objects.create(
-                workspace=timer.workspace,
-                project=timer.issue.project if timer.issue else None,
-                issue=timer.issue,
-                user=request.user,
-                started_at=timer.started_at,
-                ended_at=timer.started_at + timedelta(seconds=duration),
-                duration_seconds=duration,
-                note=timer.note,
-                source=TimeEntry.Source.TIMER,
-            )
-            timer.delete(soft=False)
+        stopped = stop_active_timer(Workspace.objects.get(slug=slug), request.user)
+        if stopped is None:
+            return Response({"error": "No timer is running."}, status=status.HTTP_404_NOT_FOUND)
+        entry, capped = stopped
 
         entry = _entries(slug).get(pk=entry.pk)
         return Response({"entry": TimeEntrySerializer(entry).data, "capped": capped}, status=status.HTTP_201_CREATED)

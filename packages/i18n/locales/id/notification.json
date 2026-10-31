@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "Kotak Masuk",
+    "page_label": "{workspace} - Kotak Masuk",
+    "options": {
+      "mark_all_as_read": "Tandai semua sebagai dibaca",
+      "mark_read": "Tandai sebagai dibaca",
+      "mark_unread": "Tandai sebagai tidak dibaca",
+      "refresh": "Segarkan",
+      "filters": "Filter Kotak Masuk",
+      "show_unread": "Tampilkan yang belum dibaca",
+      "show_snoozed": "Tampilkan yang ditunda",
+      "show_archived": "Tampilkan yang diarsipkan",
+      "mark_archive": "Arsipkan",
+      "mark_unarchive": "Hapus arsip",
+      "mark_snooze": "Tunda",
+      "mark_unsnooze": "Hapus tunda"
+    },
+    "toasts": {
+      "read": "Notifikasi ditandai sebagai dibaca",
+      "unread": "Notifikasi ditandai sebagai tidak dibaca",
+      "archived": "Notifikasi ditandai sebagai diarsipkan",
+      "unarchived": "Notifikasi ditandai sebagai dihapus arsip",
+      "snoozed": "Notifikasi ditunda",
+      "unsnoozed": "Notifikasi dihapus tunda"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Pilih untuk melihat detail."
+      },
+      "all": {
+        "title": "Tidak ada item kerja yang ditugaskan",
+        "description": "Pembaruan untuk item kerja yang ditugaskan kepada Anda dapat dilihat di sini"
+      },
+      "mentions": {
+        "title": "Tidak ada item kerja yang ditugaskan",
+        "description": "Pembaruan untuk item kerja yang ditugaskan kepada Anda dapat dilihat di sini"
+      }
+    },
+    "tabs": {
+      "all": "Semua",
+      "mentions": "Sebut"
+    },
+    "filter": {
+      "assigned": "Ditugaskan untuk saya",
+      "created": "Dibuat oleh saya",
+      "subscribed": "Disubscribe oleh saya"
+    },
+    "snooze": {
+      "1_day": "1 hari",
+      "3_days": "3 hari",
+      "5_days": "5 hari",
+      "1_week": "1 minggu",
+      "2_weeks": "2 minggu",
+      "custom": "Kustom"
+    }
+  }
+}

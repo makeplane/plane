@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Menunggu",
+        "description": "Menunggu"
+      },
+      "declined": {
+        "title": "Ditolak",
+        "description": "Ditolak"
+      },
+      "snoozed": {
+        "title": "Ditunda",
+        "description": "{days, plural, one{# hari} other{# hari}} tersisa"
+      },
+      "accepted": {
+        "title": "Diterima",
+        "description": "Diterima"
+      },
+      "duplicate": {
+        "title": "Duplikat",
+        "description": "Duplikat"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "Tolak item kerja",
+        "content": "Apakah Anda yakin ingin menolak item kerja {value}?"
+      },
+      "delete": {
+        "title": "Hapus item kerja",
+        "content": "Apakah Anda yakin ingin menghapus item kerja {value}?",
+        "success": "Item kerja berhasil dihapus"
+      }
+    },
+    "errors": {
+      "snooze_permission": "Hanya admin proyek yang bisa menunda/menghapus penundaan item kerja",
+      "accept_permission": "Hanya admin proyek yang bisa menerima item kerja",
+      "decline_permission": "Hanya admin proyek yang bisa menolak item kerja"
+    },
+    "actions": {
+      "accept": "Terima",
+      "decline": "Tolak",
+      "snooze": "Tunda",
+      "unsnooze": "Hapus penundaan",
+      "copy": "Salin tautan item kerja",
+      "delete": "Hapus",
+      "open": "Buka item kerja",
+      "mark_as_duplicate": "Tandai sebagai duplikat",
+      "move": "Pindahkan {value} ke item kerja proyek"
+    },
+    "source": {
+      "in-app": "dalam aplikasi"
+    },
+    "order_by": {
+      "created_at": "Dibuat pada",
+      "updated_at": "Diperbarui pada",
+      "id": "ID"
+    },
+    "label": "Pendapat",
+    "page_label": "{workspace} - Pendapat",
+    "modal": {
+      "title": "Buat item kerja pendapat"
+    },
+    "tabs": {
+      "open": "Terbuka",
+      "closed": "Tutup"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "Tidak ada item kerja terbuka",
+        "description": "Temukan item kerja terbuka di sini. Buat item kerja baru."
+      },
+      "sidebar_closed_tab": {
+        "title": "Tidak ada item kerja tertutup",
+        "description": "Semua item kerja yang diterima atau ditolak dapat ditemukan di sini."
+      },
+      "sidebar_filter": {
+        "title": "Tidak ada item kerja yang cocok",
+        "description": "Tidak ada item kerja yang cocok dengan filter yang diterapkan dalam pendapat. Buat item kerja baru."
+      },
+      "detail": {
+        "title": "Pilih item kerja untuk melihat detailnya."
+      }
+    }
+  }
+}

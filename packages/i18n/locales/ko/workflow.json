@@ -1,0 +1,100 @@
+{
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "새 워크 아이템 허용",
+      "work_item_creation_disable_tooltip": "이 스테이트에서는 워크 아이템 생성이 비활성화되어 있습니다",
+      "default_state": "기본 스테이트는 모든 멤버가 새 워크 아이템을 생성할 수 있도록 합니다. 이는 변경할 수 없습니다",
+      "state_change_count": "{count, plural, one {1개의 허용된 스테이트 변경} other {{count}개의 허용된 스테이트 변경}}",
+      "movers_count": "{count, plural, one {1명의 리스트된 리뷰어} other {{count}명의 리스트된 리뷰어}}",
+      "state_changes": {
+        "label": {
+          "default": "허용된 스테이트 변경 추가",
+          "loading": "허용된 스테이트 변경 추가 중"
+        },
+        "move_to": "스테이트 변경",
+        "movers": {
+          "label": "리뷰 담당자",
+          "tooltip": "리뷰어는 워크 아이템을 한 스테이트에서 다른 스테이트로 이동할 수 있는 권한이 있는 사람입니다.",
+          "add": "리뷰어 추가"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "이 워크 아이템을 여기로 이동할 수 없습니다."
+    },
+    "workflow_enabled": {
+      "label": "스테이트 변경"
+    },
+    "workflow_tree": {
+      "label": "다음에 있는 워크 아이템의 경우",
+      "state_change_label": "다음으로 이동할 수 있습니다"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "워크플로우로 변경 및 리뷰의 혼란을 제어하세요.",
+        "description": "플레인의 워크플로우로 작업이 이동하는 위치, 누가, 언제 이동하는지에 대한 규칙을 설정하세요."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "변경 내역 보기",
+      "reset_workflow": "워크플로우 리셋"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "이 워크플로우를 리셋하시겠습니까?",
+        "description": "이 워크플로우를 리셋하면 모든 스테이트 변경 규칙이 삭제되며 이 프로젝트에서 실행하려면 다시 생성해야 합니다."
+      },
+      "delete_state_change": {
+        "title": "이 스테이트 변경 규칙을 삭제하시겠습니까?",
+        "description": "삭제하면 이 변경을 취소할 수 없으며 이 프로젝트에서 실행하려면 규칙을 다시 설정해야 합니다."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "워크플로우 {action} 중",
+        "success": {
+          "title": "성공",
+          "message": "워크플로우가 성공적으로 {action}되었습니다"
+        },
+        "error": {
+          "title": "오류",
+          "message": "워크플로우를 {action}할 수 없습니다. 다시 시도하세요."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "성공",
+          "message": "워크플로우가 성공적으로 리셋되었습니다"
+        },
+        "error": {
+          "title": "워크플로우 리셋 오류",
+          "message": "워크플로우를 리셋할 수 없습니다. 다시 시도하세요."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "스테이트 변경 규칙 추가 오류",
+          "message": "스테이트 변경 규칙을 추가할 수 없습니다. 다시 시도하세요."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "스테이트 변경 규칙 수정 오류",
+          "message": "스테이트 변경 규칙을 수정할 수 없습니다. 다시 시도하세요."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "스테이트 변경 규칙 제거 오류",
+          "message": "스테이트 변경 규칙을 제거할 수 없습니다. 다시 시도하세요."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "스테이트 변경 규칙 리뷰어 수정 오류",
+          "message": "스테이트 변경 규칙 리뷰어를 수정할 수 없습니다. 다시 시도하세요."
+        }
+      }
+    }
+  }
+}

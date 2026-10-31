@@ -1,0 +1,100 @@
+{
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "允許新工作項目",
+      "work_item_creation_disable_tooltip": "此狀態已禁用工作項目創建",
+      "default_state": "默認狀態允許所有成員創建新工作項目。這無法更改",
+      "state_change_count": "{count, plural, one {1個允許的狀態變更} other {{count}個允許的狀態變更}}",
+      "movers_count": "{count, plural, one {1個列出的審核者} other {{count}個列出的審核者}}",
+      "state_changes": {
+        "label": {
+          "default": "添加允許的狀態變更",
+          "loading": "添加允許的狀態變更中"
+        },
+        "move_to": "變更狀態為",
+        "movers": {
+          "label": "當審核者為",
+          "tooltip": "審核者是被允許將工作項目從一個狀態移動到另一個狀態的人。",
+          "add": "添加審核者"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "您不能將此工作項目移動到這裡。"
+    },
+    "workflow_enabled": {
+      "label": "狀態變更"
+    },
+    "workflow_tree": {
+      "label": "對於工作項目在",
+      "state_change_label": "可以將其移動到"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "使用工作流程控制變更和審核的混亂。",
+        "description": "在Plane中使用工作流程設置工作移動、由誰移動以及何時移動的規則。"
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "查看變更歷史",
+      "reset_workflow": "重置工作流程"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "您確定要重置此工作流程嗎？",
+        "description": "如果您重置此工作流程，所有狀態變更規則都將被刪除，您將需要重新創建它們才能在此專案中運行。"
+      },
+      "delete_state_change": {
+        "title": "您確定要刪除此狀態變更規則嗎？",
+        "description": "一旦刪除，您將無法撤消此更改，如果您希望此規則在此專案中運行，您將需要重新設置。"
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action}工作流程",
+        "success": {
+          "title": "成功",
+          "message": "工作流程已成功{action}"
+        },
+        "error": {
+          "title": "錯誤",
+          "message": "工作流程無法{action}。請再試一次。"
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "成功",
+          "message": "工作流程已成功重置"
+        },
+        "error": {
+          "title": "重置工作流程時出錯",
+          "message": "工作流程無法重置。請再試一次。"
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "添加狀態變更規則時出錯",
+          "message": "無法添加狀態變更規則。請再試一次。"
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "修改狀態變更規則時出錯",
+          "message": "無法修改狀態變更規則。請再試一次。"
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "移除狀態變更規則時出錯",
+          "message": "無法移除狀態變更規則。請再試一次。"
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "修改狀態變更規則審核者時出錯",
+          "message": "無法修改狀態變更規則審核者。請再試一次。"
+        }
+      }
+    }
+  }
+}

@@ -5,10 +5,40 @@
 from django.urls import path
 
 from plane.team_ops.views import (
+    CalendarAuditEndpoint,
+    CalendarEntryBulkEndpoint,
+    CalendarEntryDetailEndpoint,
+    CalendarEntryEndpoint,
+    CalendarTemplateEndpoint,
+    CalendarHolidayDetailEndpoint,
+    CalendarHolidayEndpoint,
+    CalendarPlanSummaryReportEndpoint,
+    CalendarPlannedVsLoggedReportEndpoint,
+    CalendarSettingsEndpoint,
+    CalendarTeamDayEndpoint,
+    CalendarTeamEndpoint,
+    TeamDetailEndpoint,
+    TeamEndpoint,
     TimeEntryDetailEndpoint,
     TimeEntryEndpoint,
     TimeEntrySummaryEndpoint,
+    DashboardEndpoint,
+    HubAttachmentDownloadEndpoint,
+    HubChannelDetailEndpoint,
+    HubChannelListEndpoint,
+    HubMentionEndpoint,
+    HubMessageDetailEndpoint,
+    HubMessageListEndpoint,
+    TeamflowEndpoint,
+    WorkSessionFinishEndpoint,
+    WorkSessionListEndpoint,
+    WorkTasksEndpoint,
+    LeaveRequestDetailEndpoint,
+    LeaveRequestEndpoint,
     TimerEndpoint,
+    WorkReportBoardEndpoint,
+    WorkReportDetailEndpoint,
+    WorkReportListEndpoint,
 )
 
 urlpatterns = [
@@ -32,4 +62,133 @@ urlpatterns = [
         TimerEndpoint.as_view(),
         name="team-ops-timer",
     ),
+    path(
+        "workspaces/<str:slug>/team-ops/teams/",
+        TeamEndpoint.as_view(),
+        name="team-ops-teams",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/teams/<uuid:pk>/",
+        TeamDetailEndpoint.as_view(),
+        name="team-ops-team-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/calendar/settings/",
+        CalendarSettingsEndpoint.as_view(),
+        name="team-ops-calendar-settings",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/calendar/entries/",
+        CalendarEntryEndpoint.as_view(),
+        name="team-ops-calendar-entries",
+    ),
+    # Before the date route, so "bulk" is not read as a date.
+    path(
+        "workspaces/<str:slug>/team-ops/calendar/entries/bulk/",
+        CalendarEntryBulkEndpoint.as_view(),
+        name="team-ops-calendar-entries-bulk",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/calendar/entries/<str:day>/",
+        CalendarEntryDetailEndpoint.as_view(),
+        name="team-ops-calendar-entry-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/calendar/template/",
+        CalendarTemplateEndpoint.as_view(),
+        name="team-ops-calendar-template",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/calendar/team/",
+        CalendarTeamEndpoint.as_view(),
+        name="team-ops-calendar-team",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/calendar/team/day/<str:day>/",
+        CalendarTeamDayEndpoint.as_view(),
+        name="team-ops-calendar-team-day",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/calendar/reports/plan-summary/",
+        CalendarPlanSummaryReportEndpoint.as_view(),
+        name="team-ops-calendar-report-plan-summary",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/calendar/reports/planned-vs-logged/",
+        CalendarPlannedVsLoggedReportEndpoint.as_view(),
+        name="team-ops-calendar-report-planned-vs-logged",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/calendar/holidays/",
+        CalendarHolidayEndpoint.as_view(),
+        name="team-ops-calendar-holidays",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/calendar/holidays/<uuid:pk>/",
+        CalendarHolidayDetailEndpoint.as_view(),
+        name="team-ops-calendar-holiday-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/calendar/audit/",
+        CalendarAuditEndpoint.as_view(),
+        name="team-ops-calendar-audit",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/work-reports/", WorkReportListEndpoint.as_view(), name="team-ops-work-reports"
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/work-reports/board/",
+        WorkReportBoardEndpoint.as_view(),
+        name="team-ops-work-reports-board",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/work-reports/<str:kind>/<str:day>/",
+        WorkReportDetailEndpoint.as_view(),
+        name="team-ops-work-report-detail",
+    ),
+    path("workspaces/<str:slug>/team-ops/dashboard/", DashboardEndpoint.as_view(), name="team-ops-dashboard"),
+    path(
+        "workspaces/<str:slug>/team-ops/leave-requests/", LeaveRequestEndpoint.as_view(), name="team-ops-leave-requests"
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/leave-requests/<uuid:pk>/",
+        LeaveRequestDetailEndpoint.as_view(),
+        name="team-ops-leave-request-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/work-sessions/",
+        WorkSessionListEndpoint.as_view(),
+        name="team-ops-work-sessions",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/work-sessions/finish/",
+        WorkSessionFinishEndpoint.as_view(),
+        name="team-ops-work-session-finish",
+    ),
+    path("workspaces/<str:slug>/team-ops/work-tasks/", WorkTasksEndpoint.as_view(), name="team-ops-work-tasks"),
+    path("workspaces/<str:slug>/team-ops/teamflow/", TeamflowEndpoint.as_view(), name="team-ops-teamflow"),
+    path(
+        "workspaces/<str:slug>/team-ops/hub/channels/", HubChannelListEndpoint.as_view(), name="team-ops-hub-channels"
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/hub/channels/<uuid:pk>/",
+        HubChannelDetailEndpoint.as_view(),
+        name="team-ops-hub-channel-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/hub/channels/<uuid:pk>/messages/",
+        HubMessageListEndpoint.as_view(),
+        name="team-ops-hub-messages",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/hub/messages/<uuid:pk>/",
+        HubMessageDetailEndpoint.as_view(),
+        name="team-ops-hub-message-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/team-ops/hub/files/<uuid:pk>/",
+        HubAttachmentDownloadEndpoint.as_view(),
+        name="team-ops-hub-file",
+    ),
+    path("workspaces/<str:slug>/team-ops/hub/mentions/", HubMentionEndpoint.as_view(), name="team-ops-hub-mentions"),
 ]

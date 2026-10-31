@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "Skrzynka",
+    "page_label": "{workspace} - Skrzynka",
+    "options": {
+      "mark_all_as_read": "Oznacz wszystko jako przeczytane",
+      "mark_read": "Oznacz jako przeczytane",
+      "mark_unread": "Oznacz jako nieprzeczytane",
+      "refresh": "Odśwież",
+      "filters": "Filtry skrzynki",
+      "show_unread": "Pokaż nieprzeczytane",
+      "show_snoozed": "Pokaż odłożone",
+      "show_archived": "Pokaż zarchiwizowane",
+      "mark_archive": "Archiwizuj",
+      "mark_unarchive": "Przywróć z archiwum",
+      "mark_snooze": "Odłóż",
+      "mark_unsnooze": "Anuluj odłożenie"
+    },
+    "toasts": {
+      "read": "Powiadomienie oznaczono jako przeczytane",
+      "unread": "Oznaczono jako nieprzeczytane",
+      "archived": "Zarchiwizowano",
+      "unarchived": "Przywrócono z archiwum",
+      "snoozed": "Odłożono",
+      "unsnoozed": "Anulowano odłożenie"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Wybierz, aby zobaczyć szczegóły."
+      },
+      "all": {
+        "title": "Brak przypisanych elementów",
+        "description": "Aktualizacje przypisanych elementów pojawią się tutaj."
+      },
+      "mentions": {
+        "title": "Brak wzmianek",
+        "description": "Twoje wzmianki pojawią się tutaj."
+      }
+    },
+    "tabs": {
+      "all": "Wszystko",
+      "mentions": "Wzmianki"
+    },
+    "filter": {
+      "assigned": "Przypisano mnie",
+      "created": "Utworzyłem(am)",
+      "subscribed": "Subskrybuję"
+    },
+    "snooze": {
+      "1_day": "1 dzień",
+      "3_days": "3 dni",
+      "5_days": "5 dni",
+      "1_week": "1 tydzień",
+      "2_weeks": "2 tygodnie",
+      "custom": "Niestandardowe"
+    }
+  }
+}

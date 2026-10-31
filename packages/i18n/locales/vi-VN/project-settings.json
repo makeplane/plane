@@ -1,0 +1,526 @@
+{
+  "project_settings": {
+    "general": {
+      "enter_project_id": "Nhập ID dự án",
+      "please_select_a_timezone": "Vui lòng chọn múi giờ",
+      "archive_project": {
+        "title": "Lưu trữ dự án",
+        "description": "Lưu trữ dự án sẽ hủy liệt kê dự án của bạn khỏi thanh điều hướng bên, nhưng bạn vẫn có thể truy cập nó từ trang dự án. Bạn có thể khôi phục hoặc xóa dự án bất cứ lúc nào.",
+        "button": "Lưu trữ dự án"
+      },
+      "delete_project": {
+        "title": "Xóa dự án",
+        "description": "Khi xóa dự án, tất cả dữ liệu và tài nguyên trong dự án đó sẽ bị xóa vĩnh viễn và không thể khôi phục.",
+        "button": "Xóa dự án của tôi"
+      },
+      "toast": {
+        "success": "Dự án đã được cập nhật thành công",
+        "error": "Không thể cập nhật dự án. Vui lòng thử lại."
+      }
+    },
+    "members": {
+      "label": "Thành viên",
+      "project_lead": "Người phụ trách dự án",
+      "project_lead_description": "Chọn trưởng dự án cho dự án.",
+      "default_assignee": "Người nhận mặc định",
+      "default_assignee_description": "Chọn người được giao mặc định cho dự án.",
+      "project_subscribers": "Người theo dõi dự án",
+      "project_subscribers_description": "Chọn các thành viên sẽ nhận thông báo cho dự án này.",
+      "guest_super_permissions": {
+        "title": "Cấp quyền cho người dùng khách xem tất cả mục công việc:",
+        "sub_heading": "Điều này sẽ cho phép khách xem tất cả mục công việc của dự án."
+      },
+      "invite_members": {
+        "title": "Mời thành viên",
+        "sub_heading": "Mời thành viên tham gia dự án của bạn.",
+        "select_co_worker": "Chọn đồng nghiệp"
+      }
+    },
+    "states": {
+      "heading": "Trạng thái",
+      "description": "Xác định và tùy chỉnh trạng thái quy trình làm việc để theo dõi tiến độ các mục công việc của bạn.",
+      "describe_this_state_for_your_members": "Mô tả trạng thái này cho thành viên của bạn.",
+      "empty_state": {
+        "title": "Không có trạng thái trong nhóm {groupKey}",
+        "description": "Vui lòng tạo một trạng thái mới"
+      }
+    },
+    "labels": {
+      "heading": "Nhãn",
+      "description": "Tạo nhãn tùy chỉnh để phân loại và tổ chức các mục công việc của bạn",
+      "label_title": "Tiêu đề nhãn",
+      "label_title_is_required": "Tiêu đề nhãn là bắt buộc",
+      "label_max_char": "Tên nhãn không nên vượt quá 255 ký tự",
+      "toast": {
+        "error": "Đã xảy ra lỗi khi cập nhật nhãn"
+      }
+    },
+    "estimates": {
+      "heading": "Ước tính",
+      "description": "Thiết lập hệ thống ước tính để theo dõi và truyền đạt nỗ lực cần thiết cho mỗi mục công việc.",
+      "label": "Ước tính",
+      "title": "Bật ước tính cho dự án của tôi",
+      "enable_description": "Chúng giúp bạn truyền đạt độ phức tạp và khối lượng công việc của nhóm.",
+      "no_estimate": "Không có ước tính",
+      "new": "Hệ thống ước tính mới",
+      "create": {
+        "custom": "Tùy chỉnh",
+        "start_from_scratch": "Bắt đầu từ đầu",
+        "choose_template": "Chọn mẫu",
+        "choose_estimate_system": "Chọn hệ thống ước tính",
+        "enter_estimate_point": "Nhập điểm ước tính",
+        "step": "Bước {step} của {total}",
+        "label": "Tạo ước tính"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Đã tạo điểm ước tính",
+            "message": "Điểm ước tính đã được tạo thành công"
+          },
+          "error": {
+            "title": "Không thể tạo điểm ước tính",
+            "message": "Không thể tạo điểm ước tính mới, vui lòng thử lại"
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Đã cập nhật ước tính",
+            "message": "Điểm ước tính đã được cập nhật trong dự án của bạn"
+          },
+          "error": {
+            "title": "Không thể cập nhật ước tính",
+            "message": "Không thể cập nhật ước tính, vui lòng thử lại"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Thành công!",
+            "message": "Đã bật ước tính"
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Thành công!",
+            "message": "Đã tắt ước tính"
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể tắt ước tính. Vui lòng thử lại"
+          }
+        },
+        "reorder": {
+          "success": {
+            "title": "Đã sắp xếp lại ước tính",
+            "message": "Ước tính đã được sắp xếp lại trong dự án của bạn."
+          },
+          "error": {
+            "title": "Sắp xếp lại ước tính thất bại",
+            "message": "Chúng tôi không thể sắp xếp lại ước tính, vui lòng thử lại"
+          }
+        },
+        "switch": {
+          "success": {
+            "title": "Đã tạo hệ thống ước tính",
+            "message": "Đã tạo và bật thành công"
+          },
+          "error": {
+            "title": "Lỗi",
+            "message": "Đã xảy ra lỗi"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Điểm ước tính phải lớn hơn 0",
+        "unable_to_process": "Không thể xử lý yêu cầu của bạn, vui lòng thử lại",
+        "numeric": "Điểm ước tính phải là số",
+        "character": "Điểm ước tính phải là ký tự",
+        "empty": "Giá trị ước tính không được để trống",
+        "already_exists": "Giá trị ước tính này đã tồn tại",
+        "unsaved_changes": "Bạn có thay đổi chưa lưu. Vui lòng lưu trước khi nhấn 'xong'",
+        "remove_empty": "Ước tính không thể để trống. Hãy nhập giá trị vào mỗi trường hoặc xóa những trường bạn không có giá trị.",
+        "fill": "Vui lòng điền vào trường ước tính này",
+        "repeat": "Giá trị ước tính không thể lặp lại"
+      },
+      "systems": {
+        "points": {
+          "label": "Điểm",
+          "fibonacci": "Fibonacci",
+          "linear": "Tuyến tính",
+          "squares": "Bình phương",
+          "custom": "Tùy chỉnh"
+        },
+        "categories": {
+          "label": "Danh mục",
+          "t_shirt_sizes": "Kích cỡ áo",
+          "easy_to_hard": "Dễ đến khó",
+          "custom": "Tùy chỉnh"
+        },
+        "time": {
+          "label": "Thời gian",
+          "hours": "Giờ"
+        }
+      },
+      "edit": {
+        "title": "Chỉnh sửa hệ thống ước tính",
+        "add_or_update": {
+          "title": "Thêm, cập nhật hoặc xóa ước tính",
+          "description": "Quản lý hệ thống hiện tại bằng cách thêm, cập nhật hoặc xóa điểm hoặc danh mục."
+        },
+        "switch": {
+          "title": "Thay đổi loại ước tính",
+          "description": "Chuyển đổi hệ thống điểm của bạn thành hệ thống danh mục và ngược lại."
+        }
+      },
+      "switch": "Chuyển đổi hệ thống ước tính",
+      "current": "Hệ thống ước tính hiện tại",
+      "select": "Chọn hệ thống ước tính"
+    },
+    "automations": {
+      "label": "Tự động hóa",
+      "heading": "Tự động hóa",
+      "description": "Cấu hình các hành động tự động để tinh giản quy trình quản lý dự án và giảm công việc thủ công.",
+      "auto-archive": {
+        "title": "Tự động lưu trữ mục công việc đã đóng",
+        "description": "Plane sẽ tự động lưu trữ các mục công việc đã hoàn thành hoặc đã hủy.",
+        "duration": "Tự động lưu trữ đã đóng"
+      },
+      "auto-close": {
+        "title": "Tự động đóng mục công việc",
+        "description": "Plane sẽ tự động đóng các mục công việc chưa hoàn thành hoặc hủy.",
+        "duration": "Tự động đóng không hoạt động",
+        "auto_close_status": "Trạng thái tự động đóng"
+      },
+      "auto-remind": {
+        "title": "Nhắc nhở tự động",
+        "description": "Plane sẽ tự động gửi nhắc nhở qua email và thông báo trong ứng dụng để giữ cho nhóm của bạn trên đường đến các hạn chót.",
+        "duration": "Gửi nhắc nhở trước"
+      }
+    },
+    "empty_state": {
+      "labels": {
+        "title": "Chưa có nhãn",
+        "description": "Tạo nhãn để giúp tổ chức và lọc mục công việc trong dự án của bạn."
+      },
+      "estimates": {
+        "title": "Chưa có hệ thống ước tính",
+        "description": "Tạo một tập hợp ước tính để truyền đạt khối lượng công việc cho mỗi mục công việc.",
+        "primary_button": "Thêm hệ thống ước tính"
+      },
+      "integrations": {
+        "title": "Không có tích hợp nào được cấu hình",
+        "description": "Cấu hình GitHub và các tích hợp khác để đồng bộ hóa các mục công việc dự án của bạn."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "Bật quy trình làm việc",
+        "description": "Thiết lập quy trình làm việc để kiểm soát việc di chuyển mục công việc",
+        "no_states_tooltip": "Chưa có trạng thái nào được thêm vào quy trình làm việc.",
+        "no_work_item_types_tooltip": "Chưa có loại mục công việc nào được thêm vào quy trình làm việc.",
+        "no_states_or_work_item_types_tooltip": "Chưa có trạng thái hoặc loại mục công việc nào được thêm vào quy trình làm việc.",
+        "toast": {
+          "loading": {
+            "enabling": "Đang bật quy trình làm việc",
+            "disabling": "Đang tắt quy trình làm việc"
+          },
+          "success": {
+            "title": "Thành công!",
+            "message": "Đã bật quy trình làm việc thành công."
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể bật quy trình làm việc. Vui lòng thử lại."
+          }
+        }
+      },
+      "heading": "Quy trình làm việc",
+      "description": "Tự động hóa việc chuyển đổi mục công việc và đặt quy tắc để kiểm soát cách các nhiệm vụ di chuyển qua luồng dự án của bạn.",
+      "add_button": "Thêm quy trình làm việc mới",
+      "search": "Tìm kiếm quy trình làm việc",
+      "detail": {
+        "define": "Xác định quy trình làm việc",
+        "add_states": "Thêm trạng thái",
+        "unmapped_states": {
+          "title": "Đã phát hiện trạng thái chưa ánh xạ",
+          "description": "Một số mục công việc của các loại đã chọn hiện đang ở trạng thái không tồn tại trong quy trình làm việc này.",
+          "note": "Nếu bạn bật quy trình làm việc này, các mục này sẽ tự động chuyển sang trạng thái ban đầu của quy trình làm việc.",
+          "label": "Trạng thái bị thiếu",
+          "tooltip": "Một số mục công việc đang ở trạng thái không được ánh xạ đến quy trình làm việc này. Mở quy trình làm việc để xem xét."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Tất cả trạng thái đang được sử dụng",
+          "description": "Tất cả trạng thái đã xác định cho dự án này đã có trong quy trình làm việc hiện tại của bạn."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Quy trình làm việc này áp dụng cho bất kỳ loại mục công việc nào không được gán cho một quy trình làm việc."
+      },
+      "create": {
+        "heading": "Tạo quy trình làm việc mới",
+        "name": {
+          "placeholder": "Thêm tên duy nhất",
+          "validation": {
+            "max_length": "Tên phải ít hơn 255 ký tự",
+            "required": "Tên là bắt buộc",
+            "invalid": "Tên chỉ có thể chứa chữ cái, số, khoảng trắng, dấu gạch nối và dấu nháy đơn"
+          }
+        },
+        "description": {
+          "placeholder": "Thêm mô tả ngắn",
+          "validation": {
+            "invalid": "Mô tả chỉ có thể chứa chữ cái, số, khoảng trắng, dấu gạch nối và dấu nháy đơn"
+          }
+        },
+        "work_item_type": {
+          "label": "Loại mục công việc"
+        },
+        "success": {
+          "title": "Thành công!",
+          "message": "Đã tạo quy trình làm việc thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Không thể tạo quy trình làm việc. Vui lòng thử lại."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Thành công!",
+          "message": "Đã cập nhật quy trình làm việc thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Không thể cập nhật quy trình làm việc. Vui lòng thử lại."
+        }
+      },
+      "delete": {
+        "loading": "Đang xóa quy trình làm việc",
+        "success": {
+          "title": "Thành công!",
+          "message": "Đã xóa quy trình làm việc thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Không thể xóa quy trình làm việc. Vui lòng thử lại."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Thành công!",
+          "message": "Đã thêm trạng thái thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Không thể thêm trạng thái. Vui lòng thử lại."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Loại mục công việc",
+      "description": "Tạo và tùy chỉnh các loại mục công việc khác nhau với các thuộc tính riêng"
+    },
+    "features": {
+      "cycles": {
+        "title": "Chu kỳ",
+        "short_title": "Chu kỳ",
+        "description": "Lên lịch công việc trong các khoảng thời gian linh hoạt thích ứng với nhịp điệu và tốc độ độc đáo của dự án này.",
+        "toggle_title": "Bật chu kỳ",
+        "toggle_description": "Lập kế hoạch công việc trong khung thời gian tập trung."
+      },
+      "modules": {
+        "title": "Mô-đun",
+        "short_title": "Mô-đun",
+        "description": "Tổ chức công việc thành các dự án phụ với người dẫn đầu và người được phân công chuyên trách.",
+        "toggle_title": "Bật mô-đun",
+        "toggle_description": "Thành viên dự án sẽ có thể tạo và chỉnh sửa mô-đun."
+      },
+      "views": {
+        "title": "Chế độ xem",
+        "short_title": "Chế độ xem",
+        "description": "Lưu các tùy chọn sắp xếp, bộ lọc và hiển thị tùy chỉnh hoặc chia sẻ chúng với nhóm của bạn.",
+        "toggle_title": "Bật chế độ xem",
+        "toggle_description": "Thành viên dự án sẽ có thể tạo và chỉnh sửa chế độ xem."
+      },
+      "pages": {
+        "title": "Trang",
+        "short_title": "Trang",
+        "description": "Tạo và chỉnh sửa nội dung tự do: ghi chú, tài liệu, bất cứ thứ gì.",
+        "toggle_title": "Bật trang",
+        "toggle_description": "Thành viên dự án sẽ có thể tạo và chỉnh sửa trang."
+      },
+      "intake": {
+        "intake_responsibility": "Trách nhiệm tiếp nhận",
+        "intake_sources": "Nguồn tiếp nhận",
+        "title": "Tiếp nhận",
+        "short_title": "Tiếp nhận",
+        "description": "Cho phép những người không phải thành viên chia sẻ lỗi, phản hồi và đề xuất; mà không làm gián đoạn quy trình làm việc của bạn.",
+        "toggle_title": "Bật tiếp nhận",
+        "toggle_description": "Cho phép thành viên dự án tạo yêu cầu tiếp nhận trong ứng dụng.",
+        "toggle_tooltip_on": "Yêu cầu Quản trị viên Dự án bật tính năng này.",
+        "toggle_tooltip_off": "Yêu cầu Quản trị viên Dự án tắt tính năng này.",
+        "notify_assignee": {
+          "title": "Thông báo người được chỉ định",
+          "description": "Đối với yêu cầu tiếp nhận mới, người được chỉ định mặc định sẽ được cảnh báo qua thông báo"
+        },
+        "in_app": {
+          "title": "Trong ứng dụng",
+          "description": "Nhận mục công việc mới từ Thành viên và Khách trong không gian làm việc mà không ảnh hưởng đến mục hiện có."
+        },
+        "email": {
+          "title": "Email",
+          "description": "Thu thập mục công việc mới từ bất kỳ ai gửi email đến địa chỉ email Plane.",
+          "fieldName": "ID email"
+        },
+        "form": {
+          "title": "Biểu mẫu",
+          "description": "Cho phép người ngoài không gian làm việc tạo mục công việc mới tiềm năng cho bạn qua biểu mẫu chuyên dụng và an toàn.",
+          "fieldName": "URL biểu mẫu mặc định",
+          "create_forms": "Tạo biểu mẫu bằng loại mục công việc",
+          "manage_forms": "Quản lý biểu mẫu",
+          "manage_forms_tooltip": "Yêu cầu Quản trị viên Không gian làm việc quản lý.",
+          "create_form": "Tạo biểu mẫu",
+          "edit_form": "Chỉnh sửa chi tiết biểu mẫu",
+          "form_title": "Tiêu đề biểu mẫu",
+          "form_title_required": "Tiêu đề biểu mẫu là bắt buộc",
+          "work_item_type": "Loại mục công việc",
+          "remove_property": "Xóa thuộc tính",
+          "select_properties": "Chọn thuộc tính",
+          "search_placeholder": "Tìm thuộc tính",
+          "toasts": {
+            "success_create": "Đã tạo biểu mẫu tiếp nhận thành công",
+            "success_update": "Đã cập nhật biểu mẫu tiếp nhận thành công",
+            "error_create": "Không thể tạo biểu mẫu tiếp nhận",
+            "error_update": "Không thể cập nhật biểu mẫu tiếp nhận"
+          }
+        },
+        "toasts": {
+          "set": {
+            "loading": "Đang đặt người được chỉ định...",
+            "success": {
+              "title": "Thành công!",
+              "message": "Người được chỉ định đã được đặt thành công."
+            },
+            "error": {
+              "title": "Lỗi!",
+              "message": "Đã xảy ra lỗi khi đặt người được chỉ định. Vui lòng thử lại."
+            }
+          }
+        }
+      },
+      "time_tracking": {
+        "title": "Theo dõi thời gian",
+        "short_title": "Theo dõi thời gian",
+        "description": "Ghi lại thời gian dành cho các mục công việc và dự án.",
+        "toggle_title": "Bật theo dõi thời gian",
+        "toggle_description": "Thành viên dự án sẽ có thể ghi lại thời gian làm việc."
+      },
+      "milestones": {
+        "title": "Cột mốc",
+        "short_title": "Cột mốc",
+        "description": "Cột mốc cung cấp một lớp để điều chỉnh các mục công việc theo các ngày hoàn thành chung.",
+        "toggle_title": "Bật cột mốc",
+        "toggle_description": "Tổ chức các mục công việc theo thời hạn cột mốc."
+      },
+      "toasts": {
+        "loading": "Đang cập nhật tính năng dự án...",
+        "success": "Đã cập nhật tính năng dự án thành công.",
+        "error": "Đã xảy ra lỗi khi cập nhật tính năng dự án. Vui lòng thử lại."
+      }
+    },
+    "project_updates": {
+      "heading": "Cập nhật dự án",
+      "description": "Theo dõi và giám sát tiến độ được hợp nhất cho dự án này"
+    },
+    "templates": {
+      "heading": "Mẫu",
+      "description": "Tiết kiệm 80% thời gian dành cho việc tạo dự án, mục công việc và trang khi bạn sử dụng mẫu."
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "Tự động lên lịch chu kỳ",
+        "description": "Duy trì chu kỳ hoạt động mà không cần thiết lập thủ công.",
+        "tooltip": "Tự động tạo chu kỳ mới dựa trên lịch trình bạn chọn.",
+        "edit_button": "Chỉnh sửa",
+        "form": {
+          "cycle_title": {
+            "label": "Tiêu đề chu kỳ",
+            "placeholder": "Tiêu đề",
+            "tooltip": "Tiêu đề sẽ được thêm số cho các chu kỳ tiếp theo. Ví dụ: Thiết kế - 1/2/3",
+            "validation": {
+              "required": "Tiêu đề chu kỳ là bắt buộc",
+              "max_length": "Tiêu đề không được vượt quá 255 ký tự"
+            }
+          },
+          "cycle_duration": {
+            "label": "Thời lượng chu kỳ",
+            "unit": "Tuần",
+            "validation": {
+              "required": "Thời lượng chu kỳ là bắt buộc",
+              "min": "Thời lượng chu kỳ phải ít nhất 1 tuần",
+              "max": "Thời lượng chu kỳ không được vượt quá 30 tuần",
+              "positive": "Thời lượng chu kỳ phải là số dương"
+            }
+          },
+          "cooldown_period": {
+            "label": "Thời gian nghỉ",
+            "unit": "ngày",
+            "tooltip": "Khoảng nghỉ giữa các chu kỳ trước khi bắt đầu chu kỳ tiếp theo.",
+            "validation": {
+              "required": "Thời gian nghỉ là bắt buộc",
+              "negative": "Thời gian nghỉ không thể là số âm"
+            }
+          },
+          "start_date": {
+            "label": "Ngày bắt đầu chu kỳ",
+            "validation": {
+              "required": "Ngày bắt đầu là bắt buộc",
+              "past": "Ngày bắt đầu không thể ở quá khứ"
+            }
+          },
+          "number_of_cycles": {
+            "label": "Số chu kỳ tương lai",
+            "validation": {
+              "required": "Số chu kỳ là bắt buộc",
+              "min": "Cần ít nhất 1 chu kỳ",
+              "max": "Không thể lên lịch nhiều hơn 3 chu kỳ"
+            }
+          },
+          "auto_rollover": {
+            "label": "Tự động chuyển các mục công việc",
+            "tooltip": "Vào ngày hoàn thành chu kỳ, chuyển tất cả các mục công việc chưa hoàn thành sang chu kỳ tiếp theo."
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "Đang bật tự động lên lịch chu kỳ",
+            "loading_disable": "Đang tắt tự động lên lịch chu kỳ",
+            "success": {
+              "title": "Thành công!",
+              "message": "Đã chuyển đổi tự động lên lịch chu kỳ thành công."
+            },
+            "error": {
+              "title": "Lỗi!",
+              "message": "Không thể chuyển đổi tự động lên lịch chu kỳ."
+            }
+          },
+          "save": {
+            "loading": "Đang lưu cấu hình tự động lên lịch chu kỳ",
+            "success": {
+              "title": "Thành công!",
+              "message_create": "Đã lưu cấu hình tự động lên lịch chu kỳ thành công.",
+              "message_update": "Đã cập nhật cấu hình tự động lên lịch chu kỳ thành công."
+            },
+            "error": {
+              "title": "Lỗi!",
+              "message_create": "Không thể lưu cấu hình tự động lên lịch chu kỳ.",
+              "message_update": "Không thể cập nhật cấu hình tự động lên lịch chu kỳ."
+            }
+          }
+        }
+      }
+    }
+  }
+}

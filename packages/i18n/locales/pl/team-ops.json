@@ -1,0 +1,62 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "Śledzenie czasu",
+      "work_calendar": "Work calendar"
+    },
+    "time": {
+      "title": "Śledzenie czasu"
+    },
+    "timer": {
+      "title": "Stoper",
+      "running": "Trwa",
+      "idle": "Żaden stoper nie jest uruchomiony.",
+      "note_placeholder": "Czego dotyczy ta praca?",
+      "start": "Uruchom stoper",
+      "stop": "Zatrzymaj stoper",
+      "capped": "Stoper działał dłużej niż 24 godziny, dlatego zapisano tylko 24 godziny."
+    },
+    "work_item": {
+      "placeholder": "Powiąż element pracy (opcjonalnie)",
+      "clear": "Usuń element pracy",
+      "searching": "Wyszukiwanie...",
+      "no_results": "Nie znaleziono elementów pracy"
+    },
+    "summary": {
+      "total": "Łącznie",
+      "billable": "Rozliczalny",
+      "this_week": "Ten tydzień",
+      "previous_week": "Poprzedni tydzień",
+      "next_week": "Następny tydzień"
+    },
+    "entries": {
+      "title": "Wpisy czasu",
+      "add": "Dodaj czas",
+      "empty": "W tym tygodniu nie zapisano czasu.",
+      "edit": "Edytuj wpis czasu",
+      "delete": "Usuń wpis czasu",
+      "delete_title": "Usuń wpis czasu",
+      "delete_confirmation": "Czy na pewno usunąć ten wpis czasu? Tej operacji nie można cofnąć.",
+      "source_timer": "Stoper",
+      "source_manual": "Ręcznie"
+    },
+    "form": {
+      "title_create": "Dodaj czas",
+      "title_edit": "Edytuj wpis czasu",
+      "date": "Data",
+      "start_time": "Godzina rozpoczęcia",
+      "hours": "Godziny",
+      "minutes": "Minuty",
+      "note": "Notatka",
+      "billable": "Rozliczalny",
+      "save": "Zapisz",
+      "date_invalid": "Należy podać prawidłową datę i godzinę.",
+      "duration_invalid": "Należy podać czas trwania od 1 minuty do 24 godzin."
+    },
+    "toasts": {
+      "error_title": "Coś poszło nie tak",
+      "saved": "Zapisano wpis czasu",
+      "deleted": "Usunięto wpis czasu"
+    }
+  }
+}

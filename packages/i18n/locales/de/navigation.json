@@ -1,0 +1,34 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Keine Ergebnisse gefunden"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "Notizen",
+    "your_work": "Ihre Arbeit",
+    "projects": "Projekte",
+    "pages": "Seiten",
+    "new_work_item": "Neues Arbeitselement",
+    "home": "Startseite",
+    "inbox": "Posteingang",
+    "workspace": "Arbeitsbereich",
+    "views": "Ansichten",
+    "analytics": "Analysen",
+    "work_items": "Arbeitselemente",
+    "cycles": "Zyklen",
+    "modules": "Module",
+    "intake": "Eingang",
+    "drafts": "Entwürfe",
+    "favorites": "Favoriten",
+    "pro": "Pro",
+    "upgrade": "Upgrade",
+    "pi_chat": "Plane AI",
+    "epics": "Epics",
+    "upgrade_plan": "Plan upgraden",
+    "plane_pro": "Plane Pro",
+    "business": "Business"
+  }
+}

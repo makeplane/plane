@@ -1,0 +1,62 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "時間トラッキング",
+      "work_calendar": "Work calendar"
+    },
+    "time": {
+      "title": "時間トラッキング"
+    },
+    "timer": {
+      "title": "タイマー",
+      "running": "実行中",
+      "idle": "実行中のタイマーはありません。",
+      "note_placeholder": "何に取り組んでいますか？",
+      "start": "タイマーを開始",
+      "stop": "タイマーを停止",
+      "capped": "タイマーが24時間を超えて動作したため、24時間分のみ記録されました。"
+    },
+    "work_item": {
+      "placeholder": "作業項目をリンク（任意）",
+      "clear": "作業項目を削除",
+      "searching": "検索中...",
+      "no_results": "作業項目が見つかりません"
+    },
+    "summary": {
+      "total": "合計",
+      "billable": "請求可能",
+      "this_week": "今週",
+      "previous_week": "前の週",
+      "next_week": "次の週"
+    },
+    "entries": {
+      "title": "時間エントリー",
+      "add": "時間を追加",
+      "empty": "今週記録された時間はありません。",
+      "edit": "時間エントリーを編集",
+      "delete": "時間エントリーを削除",
+      "delete_title": "時間エントリーを削除",
+      "delete_confirmation": "この時間エントリーを削除してもよろしいですか？この操作は元に戻せません。",
+      "source_timer": "タイマー",
+      "source_manual": "手動"
+    },
+    "form": {
+      "title_create": "時間を追加",
+      "title_edit": "時間エントリーを編集",
+      "date": "日付",
+      "start_time": "開始時刻",
+      "hours": "時間",
+      "minutes": "分",
+      "note": "メモ",
+      "billable": "請求可能",
+      "save": "保存",
+      "date_invalid": "有効な日付と時刻を入力してください。",
+      "duration_invalid": "1分から24時間までの時間を入力してください。"
+    },
+    "toasts": {
+      "error_title": "問題が発生しました",
+      "saved": "時間エントリーを保存しました",
+      "deleted": "時間エントリーを削除しました"
+    }
+  }
+}

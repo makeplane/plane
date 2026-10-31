@@ -1,0 +1,526 @@
+{
+  "project_settings": {
+    "general": {
+      "enter_project_id": "プロジェクトIDを入力",
+      "please_select_a_timezone": "タイムゾーンを選択してください",
+      "archive_project": {
+        "title": "プロジェクトをアーカイブ",
+        "description": "プロジェクトをアーカイブすると、サイドナビゲーションから非表示になりますが、プロジェクトページからアクセスすることはできます。プロジェクトを復元または削除することもできます。",
+        "button": "プロジェクトをアーカイブ"
+      },
+      "delete_project": {
+        "title": "プロジェクトを削除",
+        "description": "プロジェクトを削除すると、そのプロジェクト内のすべてのデータとリソースが永久に削除され、復元できなくなります。",
+        "button": "プロジェクトを削除"
+      },
+      "toast": {
+        "success": "プロジェクトが正常に更新されました",
+        "error": "プロジェクトを更新できませんでした。もう一度お試しください。"
+      }
+    },
+    "members": {
+      "label": "メンバー",
+      "project_lead": "プロジェクトリーダー",
+      "project_lead_description": "プロジェクトのプロジェクトリーダーを選択してください。",
+      "default_assignee": "デフォルトの担当者",
+      "default_assignee_description": "プロジェクトのデフォルトの担当者を選択してください。",
+      "project_subscribers": "プロジェクトの購読者",
+      "project_subscribers_description": "このプロジェクトの通知を受け取るメンバーを選択してください。",
+      "guest_super_permissions": {
+        "title": "ゲストユーザーにすべての作業項目の閲覧権限を付与:",
+        "sub_heading": "これにより、ゲストはプロジェクトのすべての作業項目を閲覧できるようになります。"
+      },
+      "invite_members": {
+        "title": "メンバーを招待",
+        "sub_heading": "プロジェクトに参加するメンバーを招待します。",
+        "select_co_worker": "共同作業者を選択"
+      }
+    },
+    "states": {
+      "heading": "ステータス",
+      "description": "作業項目の進捗を追跡するためのワークフローのステータスを定義してカスタマイズします。",
+      "describe_this_state_for_your_members": "このステータスについてメンバーに説明してください。",
+      "empty_state": {
+        "title": "{groupKey}グループのステータスがありません",
+        "description": "新しいステータスを作成してください"
+      }
+    },
+    "labels": {
+      "heading": "ラベル",
+      "description": "作業項目を分類・整理するためのカスタムラベルを作成します",
+      "label_title": "ラベルタイトル",
+      "label_title_is_required": "ラベルタイトルは必須です",
+      "label_max_char": "ラベル名は255文字を超えることはできません",
+      "toast": {
+        "error": "ラベルの更新中にエラーが発生しました"
+      }
+    },
+    "estimates": {
+      "heading": "見積もり",
+      "description": "チームの複雑さと作業負荷を伝えるのに役立ちます。",
+      "label": "見積もり",
+      "title": "プロジェクトの見積もりを有効にする",
+      "enable_description": "チームの複雑さと作業負荷を伝えるのに役立ちます。",
+      "no_estimate": "見積もりなし",
+      "new": "新しい見積もりシステム",
+      "create": {
+        "custom": "カスタム",
+        "start_from_scratch": "最初から開始",
+        "choose_template": "テンプレートを選択",
+        "choose_estimate_system": "見積もりシステムを選択",
+        "enter_estimate_point": "見積もりを入力",
+        "step": "ステップ {step} の {total}",
+        "label": "見積もりを作成"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "見積もりを作成",
+            "message": "見積もりが正常に作成されました"
+          },
+          "error": {
+            "title": "見積もり作成に失敗",
+            "message": "新しい見積もりを作成できませんでした。もう一度お試しください。"
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "見積もりを更新",
+            "message": "プロジェクトの見積もりが更新されました。"
+          },
+          "error": {
+            "title": "見積もり更新に失敗",
+            "message": "見積もりを更新できませんでした。もう一度お試しください"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "成功！",
+            "message": "見積もりが有効になりました。"
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "成功！",
+            "message": "見積もりが無効になりました。"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "見積もりを無効にできませんでした。もう一度お試しください"
+          }
+        },
+        "reorder": {
+          "success": {
+            "title": "見積もりを並べ替えました",
+            "message": "プロジェクトの見積もりが並べ替えられました。"
+          },
+          "error": {
+            "title": "見積もりの並べ替えに失敗",
+            "message": "見積もりを並べ替えできませんでした。もう一度お試しください。"
+          }
+        },
+        "switch": {
+          "success": {
+            "title": "見積もりシステムが作成されました",
+            "message": "正常に作成され有効化されました"
+          },
+          "error": {
+            "title": "エラー",
+            "message": "問題が発生しました"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "見積もりは0より大きい必要があります。",
+        "unable_to_process": "リクエストを処理できません。もう一度お試しください。",
+        "numeric": "見積もりは数値である必要があります。",
+        "character": "見積もりは文字値である必要があります。",
+        "empty": "見積もり値は空にできません。",
+        "already_exists": "見積もり値は既に存在します。",
+        "unsaved_changes": "未保存の変更があります。完了をクリックする前に保存してください",
+        "remove_empty": "見積もりは空にできません。各フィールドに値を入力するか、値がないフィールドを削除してください。",
+        "fill": "この見積もりフィールドを入力してください",
+        "repeat": "見積もり値を重複させることはできません"
+      },
+      "systems": {
+        "points": {
+          "label": "ポイント",
+          "fibonacci": "フィボナッチ",
+          "linear": "リニア",
+          "squares": "二乗",
+          "custom": "カスタム"
+        },
+        "categories": {
+          "label": "カテゴリー",
+          "t_shirt_sizes": "Tシャツサイズ",
+          "easy_to_hard": "簡単から難しい",
+          "custom": "カスタム"
+        },
+        "time": {
+          "label": "時間",
+          "hours": "時間"
+        }
+      },
+      "edit": {
+        "title": "見積もりシステムを編集",
+        "add_or_update": {
+          "title": "見積もりの追加、更新、削除",
+          "description": "ポイントまたはカテゴリーを追加、更新、削除して現在のシステムを管理します。"
+        },
+        "switch": {
+          "title": "見積もりタイプの変更",
+          "description": "ポイントシステムをカテゴリーシステムに変換、またはその逆を行います。"
+        }
+      },
+      "switch": "見積もりシステムの切り替え",
+      "current": "現在の見積もりシステム",
+      "select": "見積もりシステムを選択"
+    },
+    "automations": {
+      "label": "自動化",
+      "heading": "自動化",
+      "description": "プロジェクト管理ワークフローを効率化し、手動タスクを削減するために自動化アクションを設定します。",
+      "auto-archive": {
+        "title": "完了した作業項目を自動的にアーカイブ",
+        "description": "Planeは完了またはキャンセルされた作業項目を自動的にアーカイブします。",
+        "duration": "閉じられた作業項目を自動的にアーカイブ"
+      },
+      "auto-close": {
+        "title": "作業項目を自動的に閉じる",
+        "description": "Planeは完了またはキャンセルされていない作業項目を自動的に閉じます。",
+        "duration": "非アクティブな作業項目を自動的に閉じる",
+        "auto_close_status": "自動クローズステータス"
+      },
+      "auto-remind": {
+        "title": "自動リマインダー",
+        "description": "Planeはメールとアプリ内通知を通じて、チームが期限に沿って進めるように自動的にリマインダーを送信します。",
+        "duration": "リマインダーを送信する前"
+      }
+    },
+    "empty_state": {
+      "labels": {
+        "title": "ラベルがまだありません",
+        "description": "プロジェクトの作業項目を整理してフィルタリングするためのラベルを作成します。"
+      },
+      "estimates": {
+        "title": "見積もりシステムがまだありません",
+        "description": "作業項目ごとの作業量を伝えるための見積もりセットを作成します。",
+        "primary_button": "見積もりシステムを追加"
+      },
+      "integrations": {
+        "title": "設定された統合がありません",
+        "description": "GitHubやその他の統合を設定して、プロジェクトの作業項目を同期します。"
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "ワークフローを有効にする",
+        "description": "作業項目の移動を制御するワークフローを設定します",
+        "no_states_tooltip": "ワークフローにステータスが追加されていません。",
+        "no_work_item_types_tooltip": "ワークフローに作業項目タイプが追加されていません。",
+        "no_states_or_work_item_types_tooltip": "ワークフローにステータスまたは作業項目タイプが追加されていません。",
+        "toast": {
+          "loading": {
+            "enabling": "ワークフローを有効化中",
+            "disabling": "ワークフローを無効化中"
+          },
+          "success": {
+            "title": "成功！",
+            "message": "ワークフローが正常に有効化されました。"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "ワークフローの有効化に失敗しました。もう一度お試しください。"
+          }
+        }
+      },
+      "heading": "ワークフロー",
+      "description": "作業項目のトランジションを自動化し、タスクがプロジェクトのパイプラインを移動する方法を制御するルールを設定します。",
+      "add_button": "新しいワークフローを追加",
+      "search": "ワークフローを検索",
+      "detail": {
+        "define": "ワークフローを定義",
+        "add_states": "ステータスを追加",
+        "unmapped_states": {
+          "title": "マップされていないステータスを検出しました",
+          "description": "選択したタイプの一部の作業項目は、このワークフローに存在しないステータスにあります。",
+          "note": "このワークフローを有効化すると、これらの項目はこのワークフローの初期ステータスに自動的に移動します。",
+          "label": "不足しているステータス",
+          "tooltip": "一部の作業項目がこのワークフローにマップされていないステータスにあります。ワークフローを開いて確認してください。"
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "すべてのステータスが使用中です",
+          "description": "このプロジェクトに定義されたすべてのステータスは、現在のワークフローにすでに含まれています。"
+        }
+      },
+      "default_footer": {
+        "fallback_message": "このワークフローは、ワークフローに割り当てられていない作業項目タイプに適用されます。"
+      },
+      "create": {
+        "heading": "新しいワークフローを作成",
+        "name": {
+          "placeholder": "一意の名前を追加",
+          "validation": {
+            "max_length": "名前は255文字未満である必要があります",
+            "required": "名前は必須です",
+            "invalid": "名前には文字、数字、スペース、ハイフン、アポストロフィのみ使用できます"
+          }
+        },
+        "description": {
+          "placeholder": "短い説明を追加",
+          "validation": {
+            "invalid": "説明には文字、数字、スペース、ハイフン、アポストロフィのみ使用できます"
+          }
+        },
+        "work_item_type": {
+          "label": "作業項目タイプ"
+        },
+        "success": {
+          "title": "成功！",
+          "message": "ワークフローを正常に作成しました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "ワークフローの作成に失敗しました。もう一度お試しください。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "ワークフローを正常に更新しました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "ワークフローの更新に失敗しました。もう一度お試しください。"
+        }
+      },
+      "delete": {
+        "loading": "ワークフローを削除中",
+        "success": {
+          "title": "成功！",
+          "message": "ワークフローを正常に削除しました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "ワークフローの削除に失敗しました。もう一度お試しください。"
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "成功！",
+          "message": "ステータスを正常に追加しました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "ステータスの追加に失敗しました。もう一度お試しください。"
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "作業項目タイプ",
+      "description": "独自のプロパティを持つさまざまな種類の作業項目を作成・カスタマイズします"
+    },
+    "features": {
+      "cycles": {
+        "title": "サイクル",
+        "short_title": "サイクル",
+        "description": "このプロジェクト独自のリズムとペースに適応する柔軟な期間で作業をスケジュールします。",
+        "toggle_title": "サイクルを有効にする",
+        "toggle_description": "集中的な期間で作業を計画します。"
+      },
+      "modules": {
+        "title": "モジュール",
+        "short_title": "モジュール",
+        "description": "専任のリーダーと担当者を持つサブプロジェクトに作業を整理します。",
+        "toggle_title": "モジュールを有効にする",
+        "toggle_description": "プロジェクトメンバーはモジュールを作成および編集できるようになります。"
+      },
+      "views": {
+        "title": "ビュー",
+        "short_title": "ビュー",
+        "description": "カスタムソート、フィルター、表示オプションを保存したり、チームと共有したりします。",
+        "toggle_title": "ビューを有効にする",
+        "toggle_description": "プロジェクトメンバーはビューを作成および編集できるようになります。"
+      },
+      "pages": {
+        "title": "ページ",
+        "short_title": "ページ",
+        "description": "自由形式のコンテンツを作成および編集します：メモ、ドキュメント、何でも。",
+        "toggle_title": "ページを有効にする",
+        "toggle_description": "プロジェクトメンバーはページを作成および編集できるようになります。"
+      },
+      "intake": {
+        "intake_responsibility": "受付責任",
+        "intake_sources": "受付ソース",
+        "title": "受付",
+        "short_title": "受付",
+        "description": "ワークフローを中断することなく、非メンバーがバグ、フィードバック、提案を共有できるようにします。",
+        "toggle_title": "受付を有効にする",
+        "toggle_description": "プロジェクトメンバーがアプリ内で受付リクエストを作成できるようにします。",
+        "toggle_tooltip_on": "プロジェクト管理者に有効化を依頼してください。",
+        "toggle_tooltip_off": "プロジェクト管理者に無効化を依頼してください。",
+        "notify_assignee": {
+          "title": "担当者に通知",
+          "description": "新しい受付リクエストの場合、デフォルトの担当者が通知を通じてアラートを受け取ります"
+        },
+        "in_app": {
+          "title": "アプリ内",
+          "description": "既存の作業項目を妨げることなく、ワークスペースのメンバーとゲストから新しい作業項目を受け取ります。"
+        },
+        "email": {
+          "title": "メール",
+          "description": "Planeのメールアドレスにメールを送信した誰からでも新しい作業項目を収集します。",
+          "fieldName": "メールID"
+        },
+        "form": {
+          "title": "フォーム",
+          "description": "専用の安全なフォームを通じて、ワークスペース外の方が潜在的な新しい作業項目を作成できるようにします。",
+          "fieldName": "デフォルトフォームURL",
+          "create_forms": "作業項目タイプを使用してフォームを作成",
+          "manage_forms": "フォームを管理",
+          "manage_forms_tooltip": "ワークスペース管理者に管理を依頼してください。",
+          "create_form": "フォームを作成",
+          "edit_form": "フォームの詳細を編集",
+          "form_title": "フォームタイトル",
+          "form_title_required": "フォームタイトルは必須です",
+          "work_item_type": "作業項目タイプ",
+          "remove_property": "プロパティを削除",
+          "select_properties": "プロパティを選択",
+          "search_placeholder": "プロパティを検索",
+          "toasts": {
+            "success_create": "受付フォームが正常に作成されました",
+            "success_update": "受付フォームが正常に更新されました",
+            "error_create": "受付フォームの作成に失敗しました",
+            "error_update": "受付フォームの更新に失敗しました"
+          }
+        },
+        "toasts": {
+          "set": {
+            "loading": "担当者を設定中...",
+            "success": {
+              "title": "成功！",
+              "message": "担当者が正常に設定されました。"
+            },
+            "error": {
+              "title": "エラー！",
+              "message": "担当者の設定中に問題が発生しました。もう一度お試しください。"
+            }
+          }
+        }
+      },
+      "time_tracking": {
+        "title": "時間追跡",
+        "short_title": "時間追跡",
+        "description": "作業項目やプロジェクトに費やした時間を記録します。",
+        "toggle_title": "時間追跡を有効にする",
+        "toggle_description": "プロジェクトメンバーは作業時間を記録できるようになります。"
+      },
+      "milestones": {
+        "title": "マイルストーン",
+        "short_title": "マイルストーン",
+        "description": "マイルストーンは、作業項目を共有の完了日に向けて調整するレイヤーを提供します。",
+        "toggle_title": "マイルストーンを有効にする",
+        "toggle_description": "マイルストーンの期限ごとに作業項目を整理します。"
+      },
+      "toasts": {
+        "loading": "プロジェクト機能を更新中...",
+        "success": "プロジェクト機能が正常に更新されました。",
+        "error": "プロジェクト機能の更新中に問題が発生しました。もう一度お試しください。"
+      }
+    },
+    "project_updates": {
+      "heading": "プロジェクトの更新",
+      "description": "このプロジェクトの統合された追跡と進捗監視"
+    },
+    "templates": {
+      "heading": "テンプレート",
+      "description": "テンプレートを使用すると、プロジェクト、作業項目、ページの作成にかかる時間を80%短縮できます。"
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "サイクルの自動スケジュール",
+        "description": "手動設定なしでサイクルを維持します。",
+        "tooltip": "選択したスケジュールに基づいて新しいサイクルを自動的に作成します。",
+        "edit_button": "編集",
+        "form": {
+          "cycle_title": {
+            "label": "サイクルタイトル",
+            "placeholder": "タイトル",
+            "tooltip": "タイトルは後続のサイクルに番号が追加されます。例：デザイン - 1/2/3",
+            "validation": {
+              "required": "サイクルタイトルは必須です",
+              "max_length": "タイトルは255文字を超えてはいけません"
+            }
+          },
+          "cycle_duration": {
+            "label": "サイクル期間",
+            "unit": "週",
+            "validation": {
+              "required": "サイクル期間は必須です",
+              "min": "サイクル期間は少なくとも1週間である必要があります",
+              "max": "サイクル期間は30週を超えてはいけません",
+              "positive": "サイクル期間は正の値である必要があります"
+            }
+          },
+          "cooldown_period": {
+            "label": "クールダウン期間",
+            "unit": "日",
+            "tooltip": "次のサイクルが始まる前のサイクル間の休止期間。",
+            "validation": {
+              "required": "クールダウン期間は必須です",
+              "negative": "クールダウン期間は負の値にはできません"
+            }
+          },
+          "start_date": {
+            "label": "サイクル開始日",
+            "validation": {
+              "required": "開始日は必須です",
+              "past": "開始日を過去の日付にすることはできません"
+            }
+          },
+          "number_of_cycles": {
+            "label": "将来のサイクル数",
+            "validation": {
+              "required": "サイクル数は必須です",
+              "min": "少なくとも1つのサイクルが必要です",
+              "max": "3つを超えるサイクルをスケジュールすることはできません"
+            }
+          },
+          "auto_rollover": {
+            "label": "作業項目の自動繰り越し",
+            "tooltip": "サイクルが完了した日に、未完了のすべての作業項目を次のサイクルに移動します。"
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "サイクルの自動スケジュールを有効化中",
+            "loading_disable": "サイクルの自動スケジュールを無効化中",
+            "success": {
+              "title": "成功！",
+              "message": "サイクルの自動スケジュールが正常に切り替えられました。"
+            },
+            "error": {
+              "title": "エラー！",
+              "message": "サイクルの自動スケジュールの切り替えに失敗しました。"
+            }
+          },
+          "save": {
+            "loading": "サイクルの自動スケジュール設定を保存中",
+            "success": {
+              "title": "成功！",
+              "message_create": "サイクルの自動スケジュール設定が正常に保存されました。",
+              "message_update": "サイクルの自動スケジュール設定が正常に更新されました。"
+            },
+            "error": {
+              "title": "エラー！",
+              "message_create": "サイクルの自動スケジュール設定の保存に失敗しました。",
+              "message_update": "サイクルの自動スケジュール設定の更新に失敗しました。"
+            }
+          }
+        }
+      }
+    }
+  }
+}

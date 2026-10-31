@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "Postvak IN",
+    "page_label": "{workspace} - Postvak IN",
+    "options": {
+      "mark_all_as_read": "Alles markeren als gelezen",
+      "mark_read": "Markeren als gelezen",
+      "mark_unread": "Markeren als ongelezen",
+      "refresh": "Vernieuwen",
+      "filters": "Filters postvak IN",
+      "show_unread": "Ongelezen tonen",
+      "show_snoozed": "Uitgesteld tonen",
+      "show_archived": "Gearchiveerd tonen",
+      "mark_archive": "Archiveren",
+      "mark_unarchive": "Dearchiveren",
+      "mark_snooze": "Uitstellen",
+      "mark_unsnooze": "Uitstel opheffen"
+    },
+    "toasts": {
+      "read": "Melding gemarkeerd als gelezen",
+      "unread": "Melding gemarkeerd als ongelezen",
+      "archived": "Melding gemarkeerd als gearchiveerd",
+      "unarchived": "Melding gemarkeerd als gedearchiveerd",
+      "snoozed": "Melding uitgesteld",
+      "unsnoozed": "Uitstel van melding opgeheven"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Selecteer om details te bekijken."
+      },
+      "all": {
+        "title": "Geen meldingen",
+        "description": "Updates over je werk\nverschijnen hier"
+      },
+      "mentions": {
+        "title": "Geen vermeldingen",
+        "description": "Wanneer iemand je vermeldt,\nzie je dat hier"
+      }
+    },
+    "tabs": {
+      "all": "Alle",
+      "mentions": "Vermeldingen"
+    },
+    "filter": {
+      "assigned": "Aan mij toegewezen",
+      "created": "Door mij aangemaakt",
+      "subscribed": "Door mij geabonneerd"
+    },
+    "snooze": {
+      "1_day": "1 dag",
+      "3_days": "3 dagen",
+      "5_days": "5 dagen",
+      "1_week": "1 week",
+      "2_weeks": "2 weken",
+      "custom": "Aangepast"
+    }
+  }
+}

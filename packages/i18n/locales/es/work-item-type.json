@@ -1,0 +1,477 @@
+{
+  "work_item_types": {
+    "label": "Tipos de elementos de trabajo",
+    "label_lowercase": "tipos de elementos de trabajo",
+    "settings": {
+      "description": "Personaliza y agrega tus propias propiedades para adaptarlo a las necesidades de tu equipo.",
+      "cant_delete_default_message": "No se puede eliminar este tipo de elemento de trabajo porque está establecido como el tipo predeterminado para este proyecto.",
+      "set_as_default": "Establecer como predeterminado",
+      "cant_set_default_inactive_message": "Activa este tipo antes de establecerlo como predeterminado",
+      "set_default_confirmation": {
+        "title": "Establecer como tipo de elemento de trabajo predeterminado",
+        "description": "Al establecer {name} como predeterminado, se importará a todos los proyectos de este espacio de trabajo. Todos los nuevos elementos de trabajo usarán este tipo de forma predeterminada.",
+        "confirm_button": "Establecer como predeterminado"
+      },
+      "properties": {
+        "title": "Propiedades personalizadas del elemento de trabajo",
+        "description": "Crea y personaliza propiedades.",
+        "tooltip": "Cada tipo de elemento de trabajo viene con un conjunto predeterminado de propiedades como Título, Descripción, Asignado, Estado, Prioridad, Fecha de inicio, Fecha de vencimiento, Module, Cycle, etc. También puedes personalizar y agregar tus propias propiedades para adaptarlo a las necesidades de tu equipo.",
+        "add_button": "Agregar nueva propiedad",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Importar desde el espacio de trabajo"
+          }
+        },
+        "dropdown": {
+          "label": "Tipo de propiedad",
+          "placeholder": "Seleccionar tipo"
+        },
+        "property_type": {
+          "text": {
+            "label": "Texto"
+          },
+          "number": {
+            "label": "Número"
+          },
+          "dropdown": {
+            "label": "Desplegable"
+          },
+          "boolean": {
+            "label": "Booleano"
+          },
+          "date": {
+            "label": "Fecha"
+          },
+          "member_picker": {
+            "label": "Selector de miembros"
+          },
+          "formula": {
+            "label": "Fórmula"
+          }
+        },
+        "attributes": {
+          "label": "Atributos",
+          "text": {
+            "single_line": {
+              "label": "Línea única"
+            },
+            "multi_line": {
+              "label": "Párrafo"
+            },
+            "readonly": {
+              "label": "Solo lectura",
+              "header": "Datos de solo lectura"
+            },
+            "invalid_text_format": {
+              "label": "Formato de texto inválido"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Agregar número"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Selección única"
+            },
+            "multi_select": {
+              "label": "Selección múltiple"
+            },
+            "no_default_value": {
+              "label": "Sin valor predeterminado"
+            }
+          },
+          "boolean": {
+            "label": "Verdadero | Falso",
+            "no_default": "Sin valor predeterminado"
+          },
+          "option": {
+            "create_update": {
+              "label": "Opciones",
+              "form": {
+                "placeholder": "Agregar opción",
+                "errors": {
+                  "name": {
+                    "required": "El nombre de la opción es obligatorio.",
+                    "integrity": "Ya existe una opción con el mismo nombre."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Seleccionar opción",
+                "multi": {
+                  "default": "Seleccionar opciones",
+                  "variable": "{count} opciones seleccionadas"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "¡Éxito!",
+              "message": "Propiedad {name} creada exitosamente."
+            },
+            "error": {
+              "title": "¡Error!",
+              "message": "Error al crear la propiedad. ¡Por favor intente nuevamente!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "¡Éxito!",
+              "message": "Propiedad {name} actualizada exitosamente."
+            },
+            "error": {
+              "title": "¡Error!",
+              "message": "Error al actualizar la propiedad. ¡Por favor intente nuevamente!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "¡Éxito!",
+              "message": "Propiedad {name} eliminada exitosamente."
+            },
+            "error": {
+              "title": "¡Error!",
+              "message": "Error al eliminar la propiedad. ¡Por favor intente nuevamente!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} propiedad {name}",
+            "success": {
+              "title": "¡Éxito!",
+              "message": "Propiedad {name} {action} exitosamente."
+            },
+            "error": {
+              "title": "¡Error!",
+              "message": "Error al {action} la propiedad. ¡Por favor intente nuevamente!"
+            }
+          }
+        },
+        "create_update": {
+          "title": {
+            "create": "Crear nueva propiedad personalizada",
+            "update": "Actualizar propiedad personalizada"
+          },
+          "form": {
+            "display_name": {
+              "placeholder": "Título"
+            },
+            "description": {
+              "placeholder": "Descripción"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Debes nombrar tu propiedad.",
+              "max_length": "El nombre de la propiedad no debe exceder los 255 caracteres."
+            },
+            "property_type": {
+              "required": "Debes seleccionar un tipo de propiedad."
+            },
+            "options": {
+              "required": "Debes agregar al menos una opción."
+            },
+            "formula": {
+              "required": "La expresión de fórmula es obligatoria.",
+              "invalid": "Fórmula no válida: {error}",
+              "circular_reference": "Referencia circular detectada. Una fórmula no puede hacer referencia a sí misma directa o indirectamente.",
+              "invalid_reference": "La fórmula hace referencia a una propiedad inexistente."
+            }
+          }
+        },
+        "formula": {
+          "field_label": "Campo de fórmula",
+          "tooltip": "Ingrese una fórmula usando la sintaxis '{'Nombre del campo'}'. Admite operadores +, -, *, / y &.",
+          "placeholder": "Escribir la fórmula",
+          "test_button": "Probar",
+          "validating": "Validando",
+          "validation_success": "¡La fórmula es válida! Devuelve {resultType}",
+          "validation_success_with_refs": "¡La fórmula es válida! Devuelve {resultType} ({count} campo(s) referenciado(s))",
+          "error": {
+            "empty": "Por favor ingrese una fórmula",
+            "missing_context": "Falta el contexto de espacio de trabajo, proyecto o tipo de elemento de trabajo",
+            "validation_failed": "La validación falló"
+          },
+          "picker": {
+            "no_match": "No hay propiedades coincidentes",
+            "no_available": "No hay propiedades disponibles"
+          }
+        },
+        "enable_disable": {
+          "label": "Activo",
+          "tooltip": {
+            "disabled": "Clic para deshabilitar",
+            "enabled": "Clic para habilitar"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Eliminar esta propiedad",
+          "description": "La eliminación de propiedades puede llevar a la pérdida de datos existentes.",
+          "secondary_description": "¿Deseas deshabilitar la propiedad en su lugar?",
+          "primary_button": "{action}, eliminarla",
+          "secondary_button": "Sí, deshabilitarla"
+        },
+        "mandate_confirmation": {
+          "label": "Propiedad obligatoria",
+          "content": "Parece que hay una opción predeterminada para esta propiedad. Hacer la propiedad obligatoria eliminará el valor predeterminado y los usuarios deberán agregar un valor de su elección.",
+          "tooltip": {
+            "disabled": "Este tipo de propiedad no puede ser obligatorio",
+            "enabled": "Desmarca para hacer el campo opcional",
+            "checked": "Marca para hacer el campo obligatorio"
+          }
+        },
+        "empty_state": {
+          "title": "Agregar propiedades personalizadas",
+          "description": "Las nuevas propiedades que agregues para este tipo de elemento de trabajo aparecerán aquí."
+        }
+      },
+      "types": {
+        "title": "Tipos",
+        "description": "Crea y personaliza tipos de elementos de trabajo con propiedades.",
+        "sort_options": {
+          "project_count": "Número de proyectos que forma parte"
+        },
+        "filter_options": {
+          "show_active": "Mostrar activos",
+          "show_inactive": "Mostrar inactivos"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Crear nuevo",
+            "import_from_workspace": "Importar desde el espacio de trabajo"
+          },
+          "banner": {
+            "with_access": "Habilita los tipos de elementos de trabajo para importar tipos desde el nivel del espacio de trabajo",
+            "without_access": "Los tipos de elementos de trabajo están deshabilitados. Contacta al administrador del espacio de trabajo para habilitarlos en la configuración del espacio de trabajo."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Propiedades personalizadas",
+        "add_button": "Agregar propiedades",
+        "modal": {
+          "title": "Agregar propiedades",
+          "empty": {
+            "title": "No hay propiedades disponibles",
+            "description": "Todas las propiedades ya han sido vinculadas a este tipo."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Desvincular propiedad",
+          "description": "Al desvincular esta propiedad se eliminarán permanentemente todos sus valores en cada elemento de trabajo que use este tipo. Esta acción no se puede deshacer.",
+          "input_label": "Escribe",
+          "input_label_suffix": "para continuar:",
+          "confirm": "Desvincular propiedad",
+          "loading": "Desvinculando"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Eliminar este tipo",
+        "description": "La eliminación de tipos puede provocar la pérdida de datos existentes.",
+        "can_disable_warning": "¿Desea desactivar el tipo en su lugar?",
+        "primary_button": "Sí, eliminarlo",
+        "toast": {
+          "success": {
+            "title": "¡Éxito!",
+            "message": "Tipo de elemento de trabajo eliminado con éxito."
+          },
+          "error": {
+            "title": "¡Error!",
+            "message": "No se pudo eliminar el tipo de elemento de trabajo. ¡Inténtalo de nuevo!"
+          }
+        },
+        "errors": {
+          "cannot_delete_default_work_item_type": "No se puede eliminar el tipo de elemento de trabajo predeterminado",
+          "cannot_delete_work_item_type_with_associated_work_items": "No se puede eliminar el tipo de elemento de trabajo con elementos de trabajo asociados"
+        }
+      }
+    },
+    "create": {
+      "title": "Crear tipo de elemento de trabajo",
+      "button": "Agregar tipo de elemento de trabajo",
+      "toast": {
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Tipo de elemento de trabajo creado exitosamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": {
+            "default": "Error al crear el tipo de elemento de trabajo. ¡Por favor intente nuevamente!",
+            "conflict": "El tipo {name} ya existe. Elige un nombre diferente."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "Actualizar tipo de elemento de trabajo",
+      "button": "Actualizar tipo de elemento de trabajo",
+      "toast": {
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Tipo de elemento de trabajo {name} actualizado exitosamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": {
+            "default": "Error al actualizar el tipo de elemento de trabajo. ¡Por favor intente nuevamente!",
+            "conflict": "El tipo {name} ya existe. Elige un nombre diferente."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Dale a este tipo de elemento de trabajo un nombre único"
+        },
+        "description": {
+          "placeholder": "Describe para qué está destinado este tipo de elemento de trabajo y cuándo debe usarse."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} tipo de elemento de trabajo {name}",
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Tipo de elemento de trabajo {name} {action} exitosamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "Error al {action} el tipo de elemento de trabajo. ¡Por favor intente nuevamente!"
+        }
+      },
+      "tooltip": "Clic para {action}"
+    },
+    "change_confirmation": {
+      "title": "¿Cambiar tipo de elemento de trabajo?",
+      "description": "Cambiar el tipo de elemento de trabajo puede resultar en la pérdida de valores de propiedades personalizadas que son específicas del tipo actual. Esta acción no se puede deshacer.",
+      "button": {
+        "loading": "Cambiando",
+        "default": "Cambiar tipo"
+      }
+    },
+    "empty_state": {
+      "enable": {
+        "title": "Habilitar tipos de elementos de trabajo",
+        "description": "Da forma a los elementos de trabajo con tipos de elementos de trabajo. Personaliza con iconos, fondos y propiedades y configúralos para este proyecto.",
+        "primary_button": {
+          "text": "Habilitar"
+        },
+        "confirmation": {
+          "title": "Una vez habilitados, los tipos de elementos de trabajo no se pueden deshabilitar.",
+          "description": "El elemento de trabajo de Plane se convertirá en el tipo de elemento de trabajo predeterminado para este proyecto y aparecerá con su icono y fondo en este proyecto.",
+          "button": {
+            "default": "Habilitar",
+            "loading": "Configurando"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "Obtén Pro para habilitar tipos de elementos de trabajo.",
+        "description": "Da forma a los elementos de trabajo con tipos de elementos de trabajo. Personaliza con iconos, fondos y propiedades y configúralos para este proyecto.",
+        "primary_button": {
+          "text": "Obtener Pro"
+        }
+      },
+      "upgrade": {
+        "title": "Actualiza para habilitar tipos de elementos de trabajo.",
+        "description": "Da forma a los elementos de trabajo con tipos de elementos de trabajo. Personaliza con iconos, fondos y propiedades y configúralos para este proyecto.",
+        "primary_button": {
+          "text": "Actualizar"
+        }
+      }
+    }
+  },
+  "work_item_type_hierarchy": {
+    "settings": {
+      "title": "Jerarquía",
+      "tab_label": "Jerarquía",
+      "description": "Configura niveles de jerarquía para organizar tu trabajo. Cada nivel define una relación de padre con el elemento directamente encima y una relación de hijo con el elemento directamente debajo. ",
+      "sidebar_label": "Jerarquía",
+      "enable_control": {
+        "title": "Habilitar jerarquía",
+        "description": "Crea relaciones padre-hijo entre diferentes tipos de elementos de trabajo.",
+        "tooltip": "No puedes deshabilitar la jerarquía una vez que está habilitada."
+      },
+      "workspace_work_item_types_disabled_banner": {
+        "content": "Define primero los tipos de elementos de trabajo para crear una nueva jerarquía.",
+        "cta": "Configuración de tipos de elementos de trabajo"
+      }
+    },
+    "levels": {
+      "max_level_placeholder": "Arrastra y suelta un tipo para añadir un nuevo nivel de jerarquía",
+      "empty_level_placeholder": "Arrastra y suelta un tipo de elemento de trabajo al nivel {level}",
+      "drag_tooltip": "Arrastrar para cambiar de nivel",
+      "quick_actions": {
+        "set_as_default": {
+          "label": "Establecer como predeterminado",
+          "toast": {
+            "loading": "Estableciendo como predeterminado...",
+            "success": {
+              "title": "¡Éxito!",
+              "message": "El nivel de jerarquía {level} se ha establecido como predeterminado correctamente."
+            },
+            "error": {
+              "title": "¡Error!",
+              "message": "No se pudo establecer el nivel de jerarquía {level} como predeterminado. Por favor, inténtelo de nuevo."
+            }
+          }
+        }
+      },
+      "update_level_toast": {
+        "loading": "Moviendo {workItemTypeName} al nivel {level}...",
+        "success": {
+          "title": "¡Éxito!",
+          "message": "{workItemTypeName} se movió al nivel {level} correctamente."
+        }
+      }
+    },
+    "break_hierarchy_modal": {
+      "title": "Guardar romperá los enlaces existentes",
+      "content": {
+        "intro": "El tipo de elemento de trabajo {workItemTypeName} tiene:",
+        "parent_items": "{count, plural, one {Se eliminará # enlace principal} other {Se eliminarán # enlaces principales}}.",
+        "child_items": "{count, plural, one {subelemento de trabajo} other {subelementos de trabajo}}",
+        "parent_line_suffix_when_also_children": ", y ",
+        "footer": "Este cambio eliminará las relaciones padre-hijo de los elementos de trabajo existentes del tipo {workItemTypeName}."
+      },
+      "confirm_input": {
+        "label": "Escribe «confirmar» para continuar.",
+        "placeholder": "confirmar"
+      },
+      "error_toast": {
+        "title": "¡Error!",
+        "message": "No se pudieron desvincular los enlaces ni guardar. Inténtelo de nuevo."
+      },
+      "confirm_button": {
+        "loading": "Guardando",
+        "default": "Guardar de todos modos"
+      }
+    },
+    "work_item_modal": {
+      "invalid_work_item_type_create_toast": {
+        "title": "¡Error!",
+        "message": "El tipo de elemento de trabajo seleccionado no se puede usar para crear un nuevo elemento de trabajo ya que rompe las reglas de jerarquía."
+      },
+      "invalid_work_item_type_update_toast": {
+        "title": "¡Error!",
+        "message": "El tipo de elemento de trabajo no se puede actualizar ya que rompe las reglas de jerarquía."
+      }
+    },
+    "work_item_type_modal": {
+      "level": "Nivel de jerarquía",
+      "invalid_level_toast": {
+        "title": "¡Error!",
+        "message": "El tipo de elemento de trabajo no se puede actualizar ya que rompe las reglas de jerarquía."
+      }
+    }
+  }
+}

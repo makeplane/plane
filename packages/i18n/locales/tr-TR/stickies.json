@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "Yapışkan Notlarınız",
+    "placeholder": "buraya yazmak için tıkla",
+    "all": "Tüm yapışkan notlar",
+    "no-data": "Bir fikir yazın, bir aydınlanma anını yakalayın veya bir beyin fırtınasını kaydedin. Başlamak için bir yapışkan not ekleyin.",
+    "add": "Yapışkan not ekle",
+    "search_placeholder": "Başlığa göre ara",
+    "delete": "Yapışkan notu sil",
+    "delete_confirmation": "Bu yapışkan notu silmek istediğinizden emin misiniz?",
+    "empty_state": {
+      "simple": "Bir fikir yazın, bir aydınlanma anını yakalayın veya bir beyin fırtınasını kaydedin. Başlamak için bir yapışkan not ekleyin.",
+      "general": {
+        "title": "Yapışkan notlar anlık notlar ve yapılacaklardır.",
+        "description": "Düşünce ve fikirlerinizi her zaman ve her yerden erişebileceğiniz yapışkan notlar oluşturarak zahmetsizce yakalayın.",
+        "primary_button": {
+          "text": "Yapışkan not ekle"
+        }
+      },
+      "search": {
+        "title": "Hiçbir yapışkan not eşleşmiyor.",
+        "description": "Farklı bir terim deneyin veya aramanızın doğru olduğundan eminseniz bize bildirin. ",
+        "primary_button": {
+          "text": "Yapışkan not ekle"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Yapışkan not adı 100 karakteri geçemez.",
+        "already_exists": "Açıklamasız bir yapışkan not zaten var"
+      },
+      "created": {
+        "title": "Yapışkan not oluşturuldu",
+        "message": "Yapışkan not başarıyla oluşturuldu"
+      },
+      "not_created": {
+        "title": "Yapışkan not oluşturulamadı",
+        "message": "Yapışkan not oluşturulamadı"
+      },
+      "updated": {
+        "title": "Yapışkan not güncellendi",
+        "message": "Yapışkan not başarıyla güncellendi"
+      },
+      "not_updated": {
+        "title": "Yapışkan not güncellenemedi",
+        "message": "Yapışkan not güncellenemedi"
+      },
+      "removed": {
+        "title": "Yapışkan not kaldırıldı",
+        "message": "Yapışkan not başarıyla kaldırıldı"
+      },
+      "not_removed": {
+        "title": "Yapışkan not kaldırılamadı",
+        "message": "Yapışkan not kaldırılamadı"
+      }
+    }
+  }
+}

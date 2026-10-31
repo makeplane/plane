@@ -1,0 +1,41 @@
+{
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "Ajoutez des éléments de travail au cycle pour voir sa progression"
+      },
+      "chart": {
+        "title": "Ajoutez des éléments de travail au cycle pour voir le graphique d’avancement."
+      },
+      "priority_issue": {
+        "title": "Visualisez en un coup d’œil les éléments de travail prioritaires traités dans le cycle."
+      },
+      "assignee": {
+        "title": "Ajoutez des acteurs aux éléments de travail pour voir une répartition du travail par acteur."
+      },
+      "label": {
+        "title": "Ajoutez des étiquettes aux éléments de travail pour voir la répartition du travail par étiquette."
+      }
+    }
+  },
+  "cycle": {
+    "label": "{count, plural, one {Cycle} other {Cycles}}",
+    "no_cycle": "Pas de cycle"
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Ajoutez des éléments de travail au Cycle pour voir sa\n progression"
+      },
+      "priority": {
+        "title": "Observez les éléments de travail hautement prioritaires traités dans\n le Cycle en un coup d'œil."
+      },
+      "assignee": {
+        "title": "Ajoutez des assignés aux éléments de travail pour voir une\n répartition du travail par assigné."
+      },
+      "label": {
+        "title": "Ajoutez des étiquettes aux éléments de travail pour voir la\n répartition du travail par étiquettes."
+      }
+    }
+  }
+}

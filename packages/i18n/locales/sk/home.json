@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "Váš sprievodca rýchlym štartom",
+      "not_right_now": "Teraz nie",
+      "create_project": {
+        "title": "Vytvoriť projekt",
+        "description": "Väčšina vecí začína projektom v Plane.",
+        "cta": "Začať"
+      },
+      "invite_team": {
+        "title": "Pozvať tím",
+        "description": "Spolupracujte s kolegami na tvorbe, dodávkach a správe.",
+        "cta": "Pozvať ich"
+      },
+      "configure_workspace": {
+        "title": "Nastavte si svoj pracovný priestor.",
+        "description": "Aktivujte alebo deaktivujte funkcie alebo choďte ďalej.",
+        "cta": "Konfigurovať tento priestor"
+      },
+      "personalize_account": {
+        "title": "Prispôsobte si Plane.",
+        "description": "Vyberte si obrázok, farby a ďalšie.",
+        "cta": "Prispôsobiť teraz"
+      },
+      "widgets": {
+        "title": "Je ticho bez widgetov, zapnite ich",
+        "description": "Vyzerá to, že všetky vaše widgety sú vypnuté. Zapnite ich\npre lepší zážitok!",
+        "primary_button": {
+          "text": "Spravovať widgety"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "Uložte si odkazy na dôležité veci, ktoré chcete mať po ruke.",
+      "add": "Pridať rýchly odkaz",
+      "title": "Rýchly odkaz",
+      "title_plural": "Rýchle odkazy"
+    },
+    "recents": {
+      "title": "Nedávne",
+      "empty": {
+        "project": "Vaše nedávne projekty sa zobrazia po návšteve.",
+        "page": "Vaše nedávne stránky sa zobrazia po návšteve.",
+        "issue": "Vaše nedávne pracovné položky sa zobrazia po návšteve.",
+        "default": "Zatiaľ nemáte žiadne nedávne položky."
+      },
+      "filters": {
+        "all": "Všetko",
+        "projects": "Projekty",
+        "pages": "Stránky",
+        "issues": "Pracovné položky"
+      }
+    },
+    "new_at_plane": {
+      "title": "Novinky v Plane"
+    },
+    "quick_tutorial": {
+      "title": "Rýchly tutoriál"
+    },
+    "widget": {
+      "reordered_successfully": "Widget bol úspešne presunutý.",
+      "reordering_failed": "Pri presúvaní widgetu došlo k chybe."
+    },
+    "manage_widgets": "Spravovať widgety",
+    "title": "Domov",
+    "star_us_on_github": "Ohodnoťte nás na GitHube",
+    "business_trial_banner": {
+      "title": "Vaša 14-dňová skúšobná verzia plánu Business je aktívna!",
+      "description": "Preskúmajte všetky funkcie Business. Keď budete pripravení, vyberte si predplatné. Nebudete automaticky účtovaní.",
+      "trial_ends_today": "Skúšobná verzia končí dnes",
+      "trial_ends_in_days": "Skúšobná verzia končí za {days, plural, one {# deň} few {# dni} other {# dní}}",
+      "start_subscription": "Začať predplatné",
+      "explore_business_features": "Preskúmať funkcie Business"
+    }
+  }
+}

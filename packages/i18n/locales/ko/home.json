@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "빠른 시작 가이드",
+      "not_right_now": "지금은 안 함",
+      "create_project": {
+        "title": "프로젝트 생성",
+        "description": "Plane에서 대부분의 작업은 프로젝트로 시작됩니다.",
+        "cta": "시작하기"
+      },
+      "invite_team": {
+        "title": "팀 초대",
+        "description": "동료와 함께 빌드, 배포 및 관리하세요.",
+        "cta": "초대하기"
+      },
+      "configure_workspace": {
+        "title": "작업 공간 설정",
+        "description": "기능을 켜거나 끄거나 그 이상을 수행하세요.",
+        "cta": "이 작업 공간 설정"
+      },
+      "personalize_account": {
+        "title": "Plane을 개인화하세요.",
+        "description": "사진, 색상 등을 선택하세요.",
+        "cta": "지금 개인화"
+      },
+      "widgets": {
+        "title": "위젯이 없으면 조용합니다. 켜세요",
+        "description": "모든 위젯이 꺼져 있는 것 같습니다. 지금 활성화하여 경험을 향상시키세요!",
+        "primary_button": {
+          "text": "위젯 관리"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "작업과 관련된 링크를 저장하세요.",
+      "add": "빠른 링크 추가",
+      "title": "빠른 링크",
+      "title_plural": "빠른 링크"
+    },
+    "recents": {
+      "title": "최근 항목",
+      "empty": {
+        "project": "최근 방문한 프로젝트가 여기에 표시됩니다.",
+        "page": "최근 방문한 페이지가 여기에 표시됩니다.",
+        "issue": "최근 방문한 작업 항목이 여기에 표시됩니다.",
+        "default": "아직 최근 항목이 없습니다."
+      },
+      "filters": {
+        "all": "모든",
+        "projects": "프로젝트",
+        "pages": "페이지",
+        "issues": "작업 항목"
+      }
+    },
+    "new_at_plane": {
+      "title": "Plane의 새로운 기능"
+    },
+    "quick_tutorial": {
+      "title": "빠른 튜토리얼"
+    },
+    "widget": {
+      "reordered_successfully": "위젯이 성공적으로 재정렬되었습니다.",
+      "reordering_failed": "위젯 재정렬 중 오류가 발생했습니다."
+    },
+    "manage_widgets": "위젯 관리",
+    "title": "홈",
+    "star_us_on_github": "GitHub에서 별표",
+    "business_trial_banner": {
+      "title": "14일 Business 플랜 체험판이 활성화되었습니다!",
+      "description": "모든 Business 기능을 살펴보세요. 준비가 되면 구독을 선택하세요. 자동으로 청구되지 않습니다.",
+      "trial_ends_today": "체험판이 오늘 종료됩니다",
+      "trial_ends_in_days": "체험판 종료까지 {days}일 남음",
+      "start_subscription": "구독 시작",
+      "explore_business_features": "Business 기능 살펴보기"
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "Zeiterfassung",
+      "work_calendar": "Work calendar"
+    },
+    "time": {
+      "title": "Zeiterfassung"
+    },
+    "timer": {
+      "title": "Timer",
+      "running": "Läuft",
+      "idle": "Es läuft kein Timer.",
+      "note_placeholder": "Woran arbeiten Sie?",
+      "start": "Timer starten",
+      "stop": "Timer stoppen",
+      "capped": "Der Timer lief länger als 24 Stunden, daher wurden nur 24 Stunden erfasst."
+    },
+    "work_item": {
+      "placeholder": "Arbeitselement verknüpfen (optional)",
+      "clear": "Arbeitselement entfernen",
+      "searching": "Suche läuft...",
+      "no_results": "Keine Arbeitselemente gefunden"
+    },
+    "summary": {
+      "total": "Gesamt",
+      "billable": "Abrechenbar",
+      "this_week": "Diese Woche",
+      "previous_week": "Vorherige Woche",
+      "next_week": "Nächste Woche"
+    },
+    "entries": {
+      "title": "Zeiteinträge",
+      "add": "Zeit hinzufügen",
+      "empty": "Diese Woche wurde keine Zeit erfasst.",
+      "edit": "Zeiteintrag bearbeiten",
+      "delete": "Zeiteintrag löschen",
+      "delete_title": "Zeiteintrag löschen",
+      "delete_confirmation": "Möchten Sie diesen Zeiteintrag wirklich löschen? Dies kann nicht rückgängig gemacht werden.",
+      "source_timer": "Timer",
+      "source_manual": "Manuell"
+    },
+    "form": {
+      "title_create": "Zeit hinzufügen",
+      "title_edit": "Zeiteintrag bearbeiten",
+      "date": "Datum",
+      "start_time": "Startzeit",
+      "hours": "Stunden",
+      "minutes": "Minuten",
+      "note": "Notiz",
+      "billable": "Abrechenbar",
+      "save": "Speichern",
+      "date_invalid": "Geben Sie ein gültiges Datum und eine gültige Uhrzeit ein.",
+      "duration_invalid": "Geben Sie eine Dauer zwischen 1 Minute und 24 Stunden ein."
+    },
+    "toasts": {
+      "error_title": "Etwas ist schiefgelaufen",
+      "saved": "Zeiteintrag gespeichert",
+      "deleted": "Zeiteintrag gelöscht"
+    }
+  }
+}

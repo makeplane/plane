@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "나의 스티키",
+    "placeholder": "여기에 입력하려면 클릭하세요",
+    "all": "모든 스티키",
+    "no-data": "아이디어를 적어두거나, 유레카를 기록하거나, 영감을 기록하세요. 스티키를 추가하여 시작하세요.",
+    "add": "스티키 추가",
+    "search_placeholder": "제목으로 검색",
+    "delete": "스티키 삭제",
+    "delete_confirmation": "이 스티키를 삭제하시겠습니까?",
+    "empty_state": {
+      "simple": "아이디어를 적어두거나, 유레카를 기록하거나, 영감을 기록하세요. 스티키를 추가하여 시작하세요.",
+      "general": {
+        "title": "스티키는 즉석에서 작성하는 빠른 메모와 할 일입니다.",
+        "description": "스티키를 생성하여 생각과 아이디어를 쉽게 캡처하고 언제 어디서나 접근할 수 있습니다.",
+        "primary_button": {
+          "text": "스티키 추가"
+        }
+      },
+      "search": {
+        "title": "일치하는 스티키가 없습니다.",
+        "description": "다른 용어를 시도하거나 검색이 올바른지 확신하는 경우 알려주세요.",
+        "primary_button": {
+          "text": "스티키 추가"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "스티키 이름은 100자를 초과할 수 없습니다.",
+        "already_exists": "설명이 없는 스티키가 이미 존재합니다"
+      },
+      "created": {
+        "title": "스티키 생성됨",
+        "message": "스티키가 성공적으로 생성되었습니다"
+      },
+      "not_created": {
+        "title": "스티키 생성되지 않음",
+        "message": "스티키를 생성할 수 없습니다"
+      },
+      "updated": {
+        "title": "스티키 업데이트됨",
+        "message": "스티키가 성공적으로 업데이트되었습니다"
+      },
+      "not_updated": {
+        "title": "스티키 업데이트되지 않음",
+        "message": "스티키를 업데이트할 수 없습니다"
+      },
+      "removed": {
+        "title": "스티키 제거됨",
+        "message": "스티키가 성공적으로 제거되었습니다"
+      },
+      "not_removed": {
+        "title": "스티키 제거되지 않음",
+        "message": "스티키를 제거할 수 없습니다"
+      }
+    }
+  }
+}

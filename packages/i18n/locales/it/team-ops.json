@@ -1,0 +1,62 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "Tracciamento del tempo",
+      "work_calendar": "Work calendar"
+    },
+    "time": {
+      "title": "Tracciamento del tempo"
+    },
+    "timer": {
+      "title": "Timer",
+      "running": "In corso",
+      "idle": "Nessun timer in esecuzione.",
+      "note_placeholder": "Su cosa sta lavorando?",
+      "start": "Avvia timer",
+      "stop": "Interrompi timer",
+      "capped": "Il timer è rimasto attivo per più di 24 ore, quindi sono state registrate solo 24 ore."
+    },
+    "work_item": {
+      "placeholder": "Collega un elemento di lavoro (facoltativo)",
+      "clear": "Rimuovi elemento di lavoro",
+      "searching": "Ricerca in corso...",
+      "no_results": "Nessun elemento di lavoro trovato"
+    },
+    "summary": {
+      "total": "Totale",
+      "billable": "Fatturabile",
+      "this_week": "Questa settimana",
+      "previous_week": "Settimana precedente",
+      "next_week": "Settimana successiva"
+    },
+    "entries": {
+      "title": "Registrazioni di tempo",
+      "add": "Aggiungi tempo",
+      "empty": "Nessun tempo registrato questa settimana.",
+      "edit": "Modifica registrazione di tempo",
+      "delete": "Elimina registrazione di tempo",
+      "delete_title": "Elimina registrazione di tempo",
+      "delete_confirmation": "Eliminare questa registrazione di tempo? L'operazione non può essere annullata.",
+      "source_timer": "Timer",
+      "source_manual": "Manuale"
+    },
+    "form": {
+      "title_create": "Aggiungi tempo",
+      "title_edit": "Modifica registrazione di tempo",
+      "date": "Data",
+      "start_time": "Ora di inizio",
+      "hours": "Ore",
+      "minutes": "Minuti",
+      "note": "Nota",
+      "billable": "Fatturabile",
+      "save": "Salva",
+      "date_invalid": "Inserisca una data e un'ora valide.",
+      "duration_invalid": "Inserisca una durata compresa tra 1 minuto e 24 ore."
+    },
+    "toasts": {
+      "error_title": "Qualcosa è andato storto",
+      "saved": "Registrazione di tempo salvata",
+      "deleted": "Registrazione di tempo eliminata"
+    }
+  }
+}

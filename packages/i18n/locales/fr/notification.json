@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "Boîte de réception",
+    "page_label": "{workspace} - Boîte de réception",
+    "options": {
+      "mark_all_as_read": "Tout marquer comme lu",
+      "mark_read": "Marquer comme lu",
+      "mark_unread": "Marquer comme non lu",
+      "refresh": "Actualiser",
+      "filters": "Filtres de la boîte de réception",
+      "show_unread": "Afficher les non lus",
+      "show_snoozed": "Afficher les reportés",
+      "show_archived": "Afficher les archivés",
+      "mark_archive": "Archiver",
+      "mark_unarchive": "Désarchiver",
+      "mark_snooze": "Reporter",
+      "mark_unsnooze": "Annuler le report"
+    },
+    "toasts": {
+      "read": "Notification marquée comme lue",
+      "unread": "Notification marquée comme non lue",
+      "archived": "Notification marquée comme archivée",
+      "unarchived": "Notification marquée comme non archivée",
+      "snoozed": "Notification reportée",
+      "unsnoozed": "Report de la notification annulé"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Sélectionnez pour voir les détails."
+      },
+      "all": {
+        "title": "Aucun élément de travail assigné",
+        "description": "Les mises à jour des éléments de travail qui vous sont assignés peuvent être\n vues ici"
+      },
+      "mentions": {
+        "title": "Aucun élément de travail assigné",
+        "description": "Les mises à jour des éléments de travail qui vous sont assignés peuvent être\n vues ici"
+      }
+    },
+    "tabs": {
+      "all": "Tout",
+      "mentions": "Mentions"
+    },
+    "filter": {
+      "assigned": "Assigné à moi",
+      "created": "Créé par moi",
+      "subscribed": "Suivi par moi"
+    },
+    "snooze": {
+      "1_day": "1 jour",
+      "3_days": "3 jours",
+      "5_days": "5 jours",
+      "1_week": "1 semaine",
+      "2_weeks": "2 semaines",
+      "custom": "Personnalisé"
+    }
+  }
+}

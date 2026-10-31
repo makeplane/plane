@@ -24,7 +24,7 @@ type Props = {
 };
 
 /** Seconds on a running timer, counted from the server's elapsed value so a wrong client clock cannot skew it. */
-const useElapsedSeconds = (timer: TActiveTimer | null) => {
+export const useElapsedSeconds = (timer: TActiveTimer | null) => {
   const loadedAt = useRef(Date.now());
   const [now, setNow] = useState(Date.now());
 

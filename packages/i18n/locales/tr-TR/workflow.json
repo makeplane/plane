@@ -1,0 +1,100 @@
+{
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Yeni iş öğelerine izin ver",
+      "work_item_creation_disable_tooltip": "Bu durum için iş öğesi oluşturma devre dışı",
+      "default_state": "Varsayılan durum tüm üyelerin yeni iş öğeleri oluşturmasına izin verir. Bu değiştirilemez",
+      "state_change_count": "{count, plural, one {1 izin verilen durum değişikliği} other {{count} izin verilen durum değişikliği}}",
+      "movers_count": "{count, plural, one {1 listelenmiş inceleyici} other {{count} listelenmiş inceleyici}}",
+      "state_changes": {
+        "label": {
+          "default": "İzin verilen durum değişikliği ekle",
+          "loading": "İzin verilen durum değişikliği ekleniyor"
+        },
+        "move_to": "Durumu şuna değiştir",
+        "movers": {
+          "label": "İncelendiğinde",
+          "tooltip": "İnceleyiciler, iş öğelerini bir durumdan diğerine taşıma izni olan kişilerdir.",
+          "add": "İnceleyici ekle"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Bu iş öğesini buraya taşıyamazsınız."
+    },
+    "workflow_enabled": {
+      "label": "Durum değişikliği"
+    },
+    "workflow_tree": {
+      "label": "Şuradaki iş öğeleri için",
+      "state_change_label": "şuraya taşıyabilir"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Değişikliklerin ve incelemelerin kargaşasını İş Akışları ile kontrol edin.",
+        "description": "Plane'deki İş Akışları ile işinizin nereye, kim tarafından ve ne zaman taşınacağına dair kurallar belirleyin."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Değişiklik geçmişini görüntüle",
+      "reset_workflow": "İş akışını sıfırla"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Bu iş akışını sıfırlamak istediğinizden emin misiniz?",
+        "description": "Bu iş akışını sıfırlarsanız, tüm durum değişikliği kurallarınız silinecek ve bunları bu projede çalıştırmak için yeniden oluşturmanız gerekecektir."
+      },
+      "delete_state_change": {
+        "title": "Bu durum değişikliği kuralını silmek istediğinizden emin misiniz?",
+        "description": "Silindikten sonra, bu değişikliği geri alamazsınız ve bu kuralı bu proje için çalıştırmak istiyorsanız tekrar ayarlamanız gerekecektir."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "İş akışı {action}",
+        "success": {
+          "title": "Başarılı",
+          "message": "İş akışı başarıyla {action}"
+        },
+        "error": {
+          "title": "Hata",
+          "message": "İş akışı {action} olamadı. Lütfen tekrar deneyin."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Başarılı",
+          "message": "İş akışı başarıyla sıfırlandı"
+        },
+        "error": {
+          "title": "İş akışı sıfırlama hatası",
+          "message": "İş akışı sıfırlanamadı. Lütfen tekrar deneyin."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Durum değişikliği kuralı ekleme hatası",
+          "message": "Durum değişikliği kuralı eklenemedi. Lütfen tekrar deneyin."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Durum değişikliği kuralı değiştirme hatası",
+          "message": "Durum değişikliği kuralı değiştirilemedi. Lütfen tekrar deneyin."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Durum değişikliği kuralı kaldırma hatası",
+          "message": "Durum değişikliği kuralı kaldırılamadı. Lütfen tekrar deneyin."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Durum değişikliği kuralı inceleyicileri değiştirme hatası",
+          "message": "Durum değişikliği kuralı inceleyicileri değiştirilemedi. Lütfen tekrar deneyin."
+        }
+      }
+    }
+  }
+}

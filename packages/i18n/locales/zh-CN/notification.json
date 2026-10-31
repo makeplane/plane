@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "收件箱",
+    "page_label": "{workspace} - 收件箱",
+    "options": {
+      "mark_all_as_read": "全部标记为已读",
+      "mark_read": "标记为已读",
+      "mark_unread": "标记为未读",
+      "refresh": "刷新",
+      "filters": "收件箱筛选",
+      "show_unread": "显示未读",
+      "show_snoozed": "显示已暂停",
+      "show_archived": "显示已归档",
+      "mark_archive": "归档",
+      "mark_unarchive": "取消归档",
+      "mark_snooze": "暂停",
+      "mark_unsnooze": "取消暂停"
+    },
+    "toasts": {
+      "read": "通知已标记为已读",
+      "unread": "通知已标记为未读",
+      "archived": "通知已标记为已归档",
+      "unarchived": "通知已标记为未归档",
+      "snoozed": "通知已暂停",
+      "unsnoozed": "通知已取消暂停"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "选择以查看详情。"
+      },
+      "all": {
+        "title": "没有分配的工作项",
+        "description": "在这里可以看到分配给您的工作项的更新"
+      },
+      "mentions": {
+        "title": "没有分配的工作项",
+        "description": "在这里可以看到分配给您的工作项的更新"
+      }
+    },
+    "tabs": {
+      "all": "全部",
+      "mentions": "提及"
+    },
+    "filter": {
+      "assigned": "分配给我",
+      "created": "由我创建",
+      "subscribed": "由我订阅"
+    },
+    "snooze": {
+      "1_day": "1 天",
+      "3_days": "3 天",
+      "5_days": "5 天",
+      "1_week": "1 周",
+      "2_weeks": "2 周",
+      "custom": "自定义"
+    }
+  }
+}

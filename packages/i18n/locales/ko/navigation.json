@@ -1,0 +1,34 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "결과 없음"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "스티키",
+    "your_work": "나의 작업",
+    "projects": "프로젝트",
+    "pages": "페이지",
+    "new_work_item": "새 작업 항목",
+    "home": "홈",
+    "inbox": "받은 편지함",
+    "workspace": "작업 공간",
+    "views": "보기",
+    "analytics": "분석",
+    "work_items": "작업 항목",
+    "cycles": "주기",
+    "modules": "모듈",
+    "intake": "접수",
+    "drafts": "초안",
+    "favorites": "즐겨찾기",
+    "pro": "프로",
+    "upgrade": "업그레이드",
+    "pi_chat": "인공지능 챗",
+    "epics": "에픽스",
+    "upgrade_plan": "업그레이드 플랜",
+    "plane_pro": "플레인 프로",
+    "business": "비즈니스"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "Guía de inicio rápido",
+      "not_right_now": "Ahora no",
+      "create_project": {
+        "title": "Crear un proyecto",
+        "description": "La mayoría de las cosas comienzan con un proyecto en Plane.",
+        "cta": "Comenzar"
+      },
+      "invite_team": {
+        "title": "Invita a tu equipo",
+        "description": "Construye, implementa y gestiona con compañeros de trabajo.",
+        "cta": "Hazlos entrar"
+      },
+      "configure_workspace": {
+        "title": "Configura tu espacio de trabajo.",
+        "description": "Activa o desactiva funciones o ve más allá.",
+        "cta": "Configurar este espacio de trabajo"
+      },
+      "personalize_account": {
+        "title": "Haz Plane tuyo.",
+        "description": "Elige tu foto, colores y más.",
+        "cta": "Personalizar ahora"
+      },
+      "widgets": {
+        "title": "Está Silencioso Sin Widgets, Actívalos",
+        "description": "Parece que todos tus widgets están desactivados. ¡Actívalos\nahora para mejorar tu experiencia!",
+        "primary_button": {
+          "text": "Gestionar widgets"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "Guarda enlaces a cosas de trabajo que te gustaría tener a mano.",
+      "add": "Agregar enlace rápido",
+      "title": "Enlace rápido",
+      "title_plural": "Enlaces rápidos"
+    },
+    "recents": {
+      "title": "Recientes",
+      "empty": {
+        "project": "Tus proyectos recientes aparecerán aquí una vez que visites uno.",
+        "page": "Tus páginas recientes aparecerán aquí una vez que visites una.",
+        "issue": "Tus elementos de trabajo recientes aparecerán aquí una vez que visites uno.",
+        "default": "Aún no tienes elementos recientes."
+      },
+      "filters": {
+        "all": "Todos",
+        "projects": "Proyectos",
+        "pages": "Páginas",
+        "issues": "Elementos de trabajo"
+      }
+    },
+    "new_at_plane": {
+      "title": "Nuevo en Plane"
+    },
+    "quick_tutorial": {
+      "title": "Tutorial rápido"
+    },
+    "widget": {
+      "reordered_successfully": "Widget reordenado correctamente.",
+      "reordering_failed": "Ocurrió un error al reordenar el widget."
+    },
+    "manage_widgets": "Gestionar widgets",
+    "title": "Inicio",
+    "star_us_on_github": "Danos una estrella en GitHub",
+    "business_trial_banner": {
+      "title": "¡Tu prueba de 14 días del plan Business está activa!",
+      "description": "Explora todas las funciones Business. Cuando estés listo, elige suscribirte. No se te cobrará automáticamente.",
+      "trial_ends_today": "La prueba termina hoy",
+      "trial_ends_in_days": "La prueba termina en {days, plural, one {# día} other {# días}}",
+      "start_subscription": "Iniciar suscripción",
+      "explore_business_features": "Explorar funciones Business"
+    }
+  }
+}

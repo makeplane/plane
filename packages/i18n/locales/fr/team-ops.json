@@ -1,0 +1,62 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "Suivi du temps",
+      "work_calendar": "Work calendar"
+    },
+    "time": {
+      "title": "Suivi du temps"
+    },
+    "timer": {
+      "title": "Chronomètre",
+      "running": "En cours",
+      "idle": "Aucun chronomètre n'est en cours.",
+      "note_placeholder": "Sur quoi travaillez-vous ?",
+      "start": "Démarrer le chronomètre",
+      "stop": "Arrêter le chronomètre",
+      "capped": "Le chronomètre a fonctionné plus de 24 heures, seules 24 heures ont donc été enregistrées."
+    },
+    "work_item": {
+      "placeholder": "Lier un élément de travail (facultatif)",
+      "clear": "Retirer l'élément de travail",
+      "searching": "Recherche en cours...",
+      "no_results": "Aucun élément de travail trouvé"
+    },
+    "summary": {
+      "total": "Total",
+      "billable": "Facturable",
+      "this_week": "Cette semaine",
+      "previous_week": "Semaine précédente",
+      "next_week": "Semaine suivante"
+    },
+    "entries": {
+      "title": "Entrées de temps",
+      "add": "Ajouter du temps",
+      "empty": "Aucun temps enregistré cette semaine.",
+      "edit": "Modifier l'entrée de temps",
+      "delete": "Supprimer l'entrée de temps",
+      "delete_title": "Supprimer l'entrée de temps",
+      "delete_confirmation": "Voulez-vous vraiment supprimer cette entrée de temps ? Cette action est irréversible.",
+      "source_timer": "Chronomètre",
+      "source_manual": "Manuelle"
+    },
+    "form": {
+      "title_create": "Ajouter du temps",
+      "title_edit": "Modifier l'entrée de temps",
+      "date": "Date",
+      "start_time": "Heure de début",
+      "hours": "Heures",
+      "minutes": "Minutes",
+      "note": "Note",
+      "billable": "Facturable",
+      "save": "Enregistrer",
+      "date_invalid": "Saisissez une date et une heure valides.",
+      "duration_invalid": "Saisissez une durée comprise entre 1 minute et 24 heures."
+    },
+    "toasts": {
+      "error_title": "Une erreur s'est produite",
+      "saved": "Entrée de temps enregistrée",
+      "deleted": "Entrée de temps supprimée"
+    }
+  }
+}

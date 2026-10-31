@@ -1,0 +1,526 @@
+{
+  "project_settings": {
+    "general": {
+      "enter_project_id": "Zadajte ID projektu",
+      "please_select_a_timezone": "Vyberte časové pásmo",
+      "archive_project": {
+        "title": "Archivovať projekt",
+        "description": "Archivácia skryje projekt z menu. Prístup zostane cez stránku projektov.",
+        "button": "Archivovať projekt"
+      },
+      "delete_project": {
+        "title": "Zmazať projekt",
+        "description": "Zmazaním projektu odstránite všetky dáta. Akcia je nevratná.",
+        "button": "Zmazať projekt"
+      },
+      "toast": {
+        "success": "Projekt aktualizovaný",
+        "error": "Aktualizácia zlyhala. Skúste to znova."
+      }
+    },
+    "members": {
+      "label": "Členovia",
+      "project_lead": "Vedúci projektu",
+      "project_lead_description": "Vyberte vedúceho projektu.",
+      "default_assignee": "Predvolené priradenie",
+      "default_assignee_description": "Vyberte predvoleného priradeného pre projekt.",
+      "project_subscribers": "Odberatelia projektu",
+      "project_subscribers_description": "Vyberte členov, ktorí budú dostávať upozornenia pre tento projekt.",
+      "guest_super_permissions": {
+        "title": "Udeľovať hosťom prístup ku všetkým položkám:",
+        "sub_heading": "Hostia uvidia všetky položky v projekte."
+      },
+      "invite_members": {
+        "title": "Pozvať členov",
+        "sub_heading": "Pozvite členov do projektu.",
+        "select_co_worker": "Vybrať spolupracovníka"
+      }
+    },
+    "states": {
+      "heading": "Stavy",
+      "description": "Definujte a prispôsobte stavy pracovného postupu na sledovanie priebehu vašich pracovných položiek.",
+      "describe_this_state_for_your_members": "Opíšte tento stav členom.",
+      "empty_state": {
+        "title": "Žiadne stavy pre skupinu {groupKey}",
+        "description": "Vytvorte nový stav"
+      }
+    },
+    "labels": {
+      "heading": "Štítky",
+      "description": "Vytvorte vlastné štítky na kategorizáciu a organizáciu pracovných položiek",
+      "label_title": "Názov štítka",
+      "label_title_is_required": "Názov štítka je povinný",
+      "label_max_char": "Názov štítka nesmie presiahnuť 255 znakov",
+      "toast": {
+        "error": "Chyba pri aktualizácii štítka"
+      }
+    },
+    "estimates": {
+      "heading": "Odhady",
+      "description": "Pomáhajú vám komunikovať zložitosť a pracovné zaťaženie tímu.",
+      "label": "Odhady",
+      "title": "Povoliť odhady pre môj projekt",
+      "enable_description": "Pomáhajú vám komunikovať zložitosť a vyťaženie tímu.",
+      "no_estimate": "Bez odhadu",
+      "new": "Nový systém odhadov",
+      "create": {
+        "custom": "Vlastné",
+        "start_from_scratch": "Začať od nuly",
+        "choose_template": "Vybrať šablónu",
+        "choose_estimate_system": "Vybrať systém odhadov",
+        "enter_estimate_point": "Zadať bod odhadu",
+        "step": "Krok {step} z {total}",
+        "label": "Vytvoriť odhad"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Bod odhadu vytvorený",
+            "message": "Bod odhadu bol úspešne vytvorený"
+          },
+          "error": {
+            "title": "Vytvorenie bodu odhadu zlyhalo",
+            "message": "Nepodarilo sa vytvoriť nový bod odhadu, skúste to prosím znova."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Odhad upravený",
+            "message": "Bod odhadu bol aktualizovaný vo vašom projekte."
+          },
+          "error": {
+            "title": "Úprava odhadu zlyhala",
+            "message": "Nepodarilo sa upraviť odhad, skúste to prosím znova"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Úspech!",
+            "message": "Odhady boli povolené."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Úspech!",
+            "message": "Odhady boli zakázané."
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Odhad sa nepodarilo zakázať. Skúste to prosím znova"
+          }
+        },
+        "reorder": {
+          "success": {
+            "title": "Odhady boli preusporiadané",
+            "message": "Odhady boli preusporiadané vo vašom projekte."
+          },
+          "error": {
+            "title": "Preusporiadanie odhadov zlyhalo",
+            "message": "Nepodarilo sa preusporiadať odhady, skúste to prosím znova"
+          }
+        },
+        "switch": {
+          "success": {
+            "title": "Systém odhadov bol vytvorený",
+            "message": "Úspešne vytvorené a povolené"
+          },
+          "error": {
+            "title": "Chyba",
+            "message": "Niečo sa pokazilo"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Bod odhadu musí byť väčší ako 0.",
+        "unable_to_process": "Nemôžeme spracovať vašu požiadavku, skúste to prosím znova.",
+        "numeric": "Bod odhadu musí byť číselná hodnota.",
+        "character": "Bod odhadu musí byť znakovou hodnotou.",
+        "empty": "Hodnota odhadu nemôže byť prázdna.",
+        "already_exists": "Hodnota odhadu už existuje.",
+        "unsaved_changes": "Máte neuložené zmeny. Prosím, uložte ich pred kliknutím na hotovo",
+        "remove_empty": "Odhad nemôže byť prázdny. Zadajte hodnotu do každého poľa alebo odstráňte prázdne polia.",
+        "fill": "Prosím vyplňte toto pole odhadu",
+        "repeat": "Hodnota odhadu sa nemôže opakovať"
+      },
+      "systems": {
+        "points": {
+          "label": "Body",
+          "fibonacci": "Fibonacci",
+          "linear": "Lineárne",
+          "squares": "Štvorce",
+          "custom": "Vlastné"
+        },
+        "categories": {
+          "label": "Kategórie",
+          "t_shirt_sizes": "Veľkosti tričiek",
+          "easy_to_hard": "Od jednoduchého po náročné",
+          "custom": "Vlastné"
+        },
+        "time": {
+          "label": "Čas",
+          "hours": "Hodiny"
+        }
+      },
+      "edit": {
+        "title": "Upraviť systém odhadov",
+        "add_or_update": {
+          "title": "Pridať, aktualizovať alebo odstrániť odhady",
+          "description": "Spravujte aktuálny systém pridávaním, aktualizáciou alebo odstraňovaním bodov alebo kategórií."
+        },
+        "switch": {
+          "title": "Zmeniť typ odhadu",
+          "description": "Konvertujte váš bodový systém na systém kategórií a naopak."
+        }
+      },
+      "switch": "Prepnúť systém odhadov",
+      "current": "Aktuálny systém odhadov",
+      "select": "Vyberte systém odhadov"
+    },
+    "automations": {
+      "label": "Automatizácie",
+      "heading": "Automatizácie",
+      "description": "Nakonfigurujte automatizované akcie na zefektívnenie riadenia projektu a zníženie manuálnej práce.",
+      "auto-archive": {
+        "title": "Automaticky archivovať uzavreté položky",
+        "description": "Plane bude archivovať dokončené alebo zrušené položky.",
+        "duration": "Archivovať položky uzavreté dlhšie ako"
+      },
+      "auto-close": {
+        "title": "Automaticky uzatvárať položky",
+        "description": "Plane uzavrie neaktívne položky.",
+        "duration": "Uzatvoriť položky neaktívne dlhšie ako",
+        "auto_close_status": "Stav pre automatické uzatvorenie"
+      },
+      "auto-remind": {
+        "title": "Automatické upozornenia",
+        "description": "Plane automaticky bude poslať upozornenia cez email a notifikácie v aplikácii, aby vaša ekipa zostala na ceste s termínmi.",
+        "duration": "Poslať upozornenie pred"
+      }
+    },
+    "empty_state": {
+      "labels": {
+        "title": "Žiadne štítky",
+        "description": "Vytvárajte štítky na organizáciu položiek."
+      },
+      "estimates": {
+        "title": "Žiadne systémy odhadov",
+        "description": "Vytvorte systém odhadov na komunikáciu vyťaženia.",
+        "primary_button": "Pridať systém odhadov"
+      },
+      "integrations": {
+        "title": "Žiadne nakonfigurované integrácie",
+        "description": "Nakonfigurujte GitHub a ďalšie integrácie na synchronizáciu vašich projektových pracovných položiek."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "Povoliť pracovné postupy",
+        "description": "Nastavte pracovné postupy na riadenie pohybu pracovných položiek",
+        "no_states_tooltip": "Do pracovného postupu nie sú pridané žiadne stavy.",
+        "no_work_item_types_tooltip": "Do pracovného postupu nie sú pridané žiadne typy pracovných položiek.",
+        "no_states_or_work_item_types_tooltip": "Do pracovného postupu nie sú pridané žiadne stavy ani typy pracovných položiek.",
+        "toast": {
+          "loading": {
+            "enabling": "Povoľovanie pracovných postupov",
+            "disabling": "Zakazovanie pracovných postupov"
+          },
+          "success": {
+            "title": "Úspech!",
+            "message": "Pracovné postupy boli úspešne povolené."
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Povolenie pracovných postupov zlyhalo. Skúste to prosím znova."
+          }
+        }
+      },
+      "heading": "Pracovné postupy",
+      "description": "Automatizujte prechody pracovných položiek a nastavte pravidlá, ktorými sa bude riadiť pohyb úloh vaším projektom.",
+      "add_button": "Pridať nový pracovný postup",
+      "search": "Hľadať pracovné postupy",
+      "detail": {
+        "define": "Definovať pracovný postup",
+        "add_states": "Pridať stavy",
+        "unmapped_states": {
+          "title": "Zistené nenamapované stavy",
+          "description": "Niektoré pracovné položky vybraných typov sa aktuálne nachádzajú v stavoch, ktoré v tomto pracovnom postupe neexistujú.",
+          "note": "Ak tento pracovný postup povolíte, tieto položky sa automaticky presunú do počiatočného stavu tohto pracovného postupu.",
+          "label": "Chýbajúce stavy",
+          "tooltip": "Niektoré pracovné položky sú v stavoch, ktoré nie sú namapované na tento pracovný postup. Otvorte pracovný postup a skontrolujte."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Všetky stavy sa už používajú",
+          "description": "Všetky definované stavy tohto projektu sú už vo vašom aktuálnom pracovnom postupe."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Tento pracovný postup platí pre všetky typy pracovných položiek, ktoré nie sú priradené k pracovnému postupu."
+      },
+      "create": {
+        "heading": "Vytvoriť nový pracovný postup",
+        "name": {
+          "placeholder": "Pridajte jedinečný názov",
+          "validation": {
+            "max_length": "Názov musí mať menej ako 255 znakov",
+            "required": "Názov je povinný",
+            "invalid": "Názov môže obsahovať len písmená, čísla, medzery, pomlčky a apostrofy"
+          }
+        },
+        "description": {
+          "placeholder": "Pridajte krátky popis",
+          "validation": {
+            "invalid": "Popis môže obsahovať len písmená, čísla, medzery, pomlčky a apostrofy"
+          }
+        },
+        "work_item_type": {
+          "label": "Typ pracovnej položky"
+        },
+        "success": {
+          "title": "Úspech!",
+          "message": "Pracovný postup bol úspešne vytvorený."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Vytvorenie pracovného postupu zlyhalo. Skúste to prosím znova."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Úspech!",
+          "message": "Pracovný postup bol úspešne aktualizovaný."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Aktualizácia pracovného postupu zlyhala. Skúste to prosím znova."
+        }
+      },
+      "delete": {
+        "loading": "Mazanie pracovného postupu",
+        "success": {
+          "title": "Úspech!",
+          "message": "Pracovný postup bol úspešne odstránený."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Odstránenie pracovného postupu zlyhalo. Skúste to prosím znova."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Úspech!",
+          "message": "Stavy boli úspešne pridané."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Pridanie stavov zlyhalo. Skúste to prosím znova."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Typy pracovných položiek",
+      "description": "Vytvárajte a prispôsobujte rôzne typy pracovných položiek s jedinečnými vlastnosťami"
+    },
+    "features": {
+      "cycles": {
+        "title": "Cykly",
+        "short_title": "Cykly",
+        "description": "Naplánujte prácu v flexibilných obdobiach, ktoré sa prispôsobia jedinečnému rytmu a tempu tohto projektu.",
+        "toggle_title": "Povoliť cykly",
+        "toggle_description": "Naplánujte prácu v sústredenej časovej osi."
+      },
+      "modules": {
+        "title": "Moduly",
+        "short_title": "Moduly",
+        "description": "Organizujte prácu do podprojektov s vyčlenenými vedúcimi a priradenými osobami.",
+        "toggle_title": "Povoliť moduly",
+        "toggle_description": "Členovia projektu budú môcť vytvárať a upravovať moduly."
+      },
+      "views": {
+        "title": "Zobrazenia",
+        "short_title": "Zobrazenia",
+        "description": "Uložte vlastné triedenia, filtre a možnosti zobrazenia alebo ich zdieľajte so svojím tímom.",
+        "toggle_title": "Povoliť zobrazenia",
+        "toggle_description": "Členovia projektu budú môcť vytvárať a upravovať zobrazenia."
+      },
+      "pages": {
+        "title": "Stránky",
+        "short_title": "Stránky",
+        "description": "Vytvárajte a upravujte voľný obsah: poznámky, dokumenty, čokoľvek.",
+        "toggle_title": "Povoliť stránky",
+        "toggle_description": "Členovia projektu budú môcť vytvárať a upravovať stránky."
+      },
+      "intake": {
+        "intake_responsibility": "Zodpovednosť za príjem",
+        "intake_sources": "Zdroje príjmu",
+        "title": "Príjem",
+        "short_title": "Príjem",
+        "description": "Umožnite nečlenom zdieľať chyby, spätnú väzbu a návrhy; bez narušenia vášho pracovného postupu.",
+        "toggle_title": "Povoliť príjem",
+        "toggle_description": "Povoliť členom projektu vytvárať žiadosti o príjem v aplikácii.",
+        "toggle_tooltip_on": "Požiadajte správcu projektu, aby toto zapol.",
+        "toggle_tooltip_off": "Požiadajte správcu projektu, aby toto vypol.",
+        "notify_assignee": {
+          "title": "Upozorniť priradených",
+          "description": "Pre novú žiadosť o príjem budú predvolení priradení upozornení prostredníctvom oznámení"
+        },
+        "in_app": {
+          "title": "V aplikácii",
+          "description": "Získajte nové pracovné položky od členov a hostí vo vašom pracovnom priestore bez narušenia existujúcich pracovných položiek."
+        },
+        "email": {
+          "title": "E-mail",
+          "description": "Zhromažďujte nové pracovné položky od každého, kto pošle e-mail na Plane e-mailovú adresu.",
+          "fieldName": "ID e-mailu"
+        },
+        "form": {
+          "title": "Formuláre",
+          "description": "Umožnite ľuďom mimo pracovného priestoru vytvárať pre vás potenciálne nové pracovné položky prostredníctvom vyhradeného a bezpečného formulára.",
+          "fieldName": "Predvolená URL formulára",
+          "create_forms": "Vytvárať formuláre pomocou typov pracovných položiek",
+          "manage_forms": "Spravovať formuláre",
+          "manage_forms_tooltip": "Požiadajte správcu pracovného priestoru, aby toto spravoval.",
+          "create_form": "Vytvoriť formulár",
+          "edit_form": "Upraviť detaily formulára",
+          "form_title": "Názov formulára",
+          "form_title_required": "Názov formulára je povinný",
+          "work_item_type": "Typ pracovnej položky",
+          "remove_property": "Odstrániť vlastnosť",
+          "select_properties": "Vybrať vlastnosti",
+          "search_placeholder": "Hľadať vlastnosti",
+          "toasts": {
+            "success_create": "Formulár príjmu bol úspešne vytvorený",
+            "success_update": "Formulár príjmu bol úspešne aktualizovaný",
+            "error_create": "Vytvorenie formulára príjmu zlyhalo",
+            "error_update": "Aktualizácia formulára príjmu zlyhala"
+          }
+        },
+        "toasts": {
+          "set": {
+            "loading": "Nastavovanie priradených...",
+            "success": {
+              "title": "Úspech!",
+              "message": "Priradení úspešne nastavení."
+            },
+            "error": {
+              "title": "Chyba!",
+              "message": "Pri nastavovaní priradených sa niečo pokazilo. Skúste to prosím znova."
+            }
+          }
+        }
+      },
+      "time_tracking": {
+        "title": "Sledovanie času",
+        "short_title": "Sledovanie času",
+        "description": "Zaznamenávajte čas strávený na pracovných položkách a projektoch.",
+        "toggle_title": "Povoliť sledovanie času",
+        "toggle_description": "Členovia projektu budú môcť zaznamenávať odpracovaný čas."
+      },
+      "milestones": {
+        "title": "Míľniky",
+        "short_title": "Míľniky",
+        "description": "Míľniky poskytujú vrstvu na zladenie pracovných položiek smerom k spoločným termínom dokončenia.",
+        "toggle_title": "Povoliť míľniky",
+        "toggle_description": "Organizujte pracovné položky podľa termínov míľnikov."
+      },
+      "toasts": {
+        "loading": "Aktualizácia funkcie projektu...",
+        "success": "Funkcia projektu bola úspešne aktualizovaná.",
+        "error": "Pri aktualizácii funkcie projektu sa niečo pokazilo. Skúste to prosím znova."
+      }
+    },
+    "project_updates": {
+      "heading": "Aktualizácie projektu",
+      "description": "Konsolidované sledovanie a monitorovanie priebehu pre tento projekt"
+    },
+    "templates": {
+      "heading": "Šablóny",
+      "description": "Ušetrite 80 % času stráveného vytváraním projektov, pracovných položiek a stránok pomocou šablón."
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "Automatické plánovanie cyklov",
+        "description": "Udržiavajte cykly v pohybe bez manuálneho nastavenia.",
+        "tooltip": "Automaticky vytvárajte nové cykly na základe zvoleného rozvrhu.",
+        "edit_button": "Upraviť",
+        "form": {
+          "cycle_title": {
+            "label": "Názov cyklu",
+            "placeholder": "Názov",
+            "tooltip": "K názvu budú pridané čísla pre následné cykly. Napríklad: Dizajn - 1/2/3",
+            "validation": {
+              "required": "Názov cyklu je povinný",
+              "max_length": "Názov nesmie presiahnuť 255 znakov"
+            }
+          },
+          "cycle_duration": {
+            "label": "Trvanie cyklu",
+            "unit": "Týždne",
+            "validation": {
+              "required": "Trvanie cyklu je povinné",
+              "min": "Trvanie cyklu musí byť aspoň 1 týždeň",
+              "max": "Trvanie cyklu nemôže presiahnuť 30 týždňov",
+              "positive": "Trvanie cyklu musí byť kladné"
+            }
+          },
+          "cooldown_period": {
+            "label": "Obdobie chladenia",
+            "unit": "dni",
+            "tooltip": "Prestávka medzi cyklami pred začiatkom ďalšieho.",
+            "validation": {
+              "required": "Obdobie chladenia je povinné",
+              "negative": "Obdobie chladenia nemôže byť záporné"
+            }
+          },
+          "start_date": {
+            "label": "Deň začiatku cyklu",
+            "validation": {
+              "required": "Dátum začiatku je povinný",
+              "past": "Dátum začiatku nemôže byť v minulosti"
+            }
+          },
+          "number_of_cycles": {
+            "label": "Počet budúcich cyklov",
+            "validation": {
+              "required": "Počet cyklov je povinný",
+              "min": "Je vyžadovaný aspoň 1 cyklus",
+              "max": "Nie je možné naplánovať viac ako 3 cykly"
+            }
+          },
+          "auto_rollover": {
+            "label": "Automatický prevod pracovných položiek",
+            "tooltip": "V deň dokončenia cyklu presunúť všetky nedokončené pracovné položky do ďalšieho cyklu."
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "Povoľovanie automatického plánovania cyklov",
+            "loading_disable": "Zakazovanie automatického plánovania cyklov",
+            "success": {
+              "title": "Úspech!",
+              "message": "Automatické plánovanie cyklov bolo úspešne prepnuté."
+            },
+            "error": {
+              "title": "Chyba!",
+              "message": "Nepodarilo sa prepnúť automatické plánovanie cyklov."
+            }
+          },
+          "save": {
+            "loading": "Ukladanie konfigurácie automatického plánovania cyklov",
+            "success": {
+              "title": "Úspech!",
+              "message_create": "Konfigurácia automatického plánovania cyklov bola úspešne uložená.",
+              "message_update": "Konfigurácia automatického plánovania cyklov bola úspešne aktualizovaná."
+            },
+            "error": {
+              "title": "Chyba!",
+              "message_create": "Nepodarilo sa uložiť konfiguráciu automatického plánovania cyklov.",
+              "message_update": "Nepodarilo sa aktualizovať konfiguráciu automatického plánovania cyklov."
+            }
+          }
+        }
+      }
+    }
+  }
+}

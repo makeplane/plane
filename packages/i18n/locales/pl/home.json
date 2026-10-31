@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "Twój przewodnik szybkiego startu",
+      "not_right_now": "Nie teraz",
+      "create_project": {
+        "title": "Utwórz projekt",
+        "description": "Większość rzeczy zaczyna się od projektu w Plane.",
+        "cta": "Zacznij"
+      },
+      "invite_team": {
+        "title": "Zaproś zespół",
+        "description": "Współpracuj z kolegami, twórz, dostarczaj i zarządzaj.",
+        "cta": "Zaproś ich"
+      },
+      "configure_workspace": {
+        "title": "Skonfiguruj swoją przestrzeń roboczą.",
+        "description": "Włącz lub wyłącz funkcje albo idź dalej.",
+        "cta": "Skonfiguruj tę przestrzeń"
+      },
+      "personalize_account": {
+        "title": "Spersonalizuj Plane.",
+        "description": "Wybierz zdjęcie, kolory i inne.",
+        "cta": "Dostosuj teraz"
+      },
+      "widgets": {
+        "title": "Jest tu pusto bez widżetów, włącz je",
+        "description": "Wygląda na to, że wszystkie Twoje widżety są wyłączone. Włącz je\ndla lepszego doświadczenia!",
+        "primary_button": {
+          "text": "Zarządzaj widżetami"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "Zapisz linki do ważnych rzeczy, które chcesz mieć pod ręką.",
+      "add": "Dodaj szybki link",
+      "title": "Szybki link",
+      "title_plural": "Szybkie linki"
+    },
+    "recents": {
+      "title": "Ostatnie",
+      "empty": {
+        "project": "Twoje ostatnio odwiedzone projekty pojawią się tutaj.",
+        "page": "Twoje ostatnio odwiedzone strony pojawią się tutaj.",
+        "issue": "Twoje ostatnio odwiedzone elementy pracy pojawią się tutaj.",
+        "default": "Nie masz jeszcze żadnych ostatnich pozycji."
+      },
+      "filters": {
+        "all": "Wszystkie",
+        "projects": "Projekty",
+        "pages": "Strony",
+        "issues": "Elementy pracy"
+      }
+    },
+    "new_at_plane": {
+      "title": "Co nowego w Plane"
+    },
+    "quick_tutorial": {
+      "title": "Szybki samouczek"
+    },
+    "widget": {
+      "reordered_successfully": "Widżet pomyślnie przeniesiono.",
+      "reordering_failed": "Wystąpił błąd podczas przenoszenia widżetu."
+    },
+    "manage_widgets": "Zarządzaj widżetami",
+    "title": "Strona główna",
+    "star_us_on_github": "Oceń nas na GitHubie",
+    "business_trial_banner": {
+      "title": "Twój 14-dniowy okres próbny planu Business jest aktywny!",
+      "description": "Poznaj wszystkie funkcje Business. Gdy będziesz gotowy, wybierz subskrypcję. Nie zostaniesz automatycznie obciążony.",
+      "trial_ends_today": "Okres próbny kończy się dzisiaj",
+      "trial_ends_in_days": "Okres próbny kończy się za {days, plural, one {# dzień} few {# dni} other {# dni}}",
+      "start_subscription": "Rozpocznij subskrypcję",
+      "explore_business_features": "Poznaj funkcje Business"
+    }
+  }
+}

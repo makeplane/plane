@@ -284,9 +284,44 @@ export const WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS: IWorkspaceS
 /** Team Ops entries shown under the pinned workspace items. Keys must be listed as static in the sidebar item. */
 export const TEAM_OPS_SIDEBAR_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
   {
-    key: "time_tracking",
-    labelTranslationKey: "team_ops.nav.time_tracking",
-    href: `/team-ops/time/`,
+    key: "workday",
+    labelTranslationKey: "Workday",
+    href: `/team-ops/workday/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
+  {
+    key: "hub",
+    labelTranslationKey: "Hub",
+    href: `/team-ops/hub/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
+  {
+    key: "teamflow",
+    labelTranslationKey: "Teamflow",
+    href: `/team-ops/teamflow/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
+  {
+    key: "team_leave",
+    labelTranslationKey: "Leave",
+    href: `/team-ops/leave/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
+  {
+    key: "teamspaces",
+    labelTranslationKey: "Teamspaces",
+    href: `/team-ops/teamspaces/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
+  {
+    key: "team_dashboard",
+    labelTranslationKey: "Dashboard",
+    href: `/team-ops/dashboard/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },

@@ -1,0 +1,477 @@
+{
+  "work_item_types": {
+    "label": "Loại mục công việc",
+    "label_lowercase": "loại mục công việc",
+    "settings": {
+      "description": "Tùy chỉnh và thêm thuộc tính riêng của bạn để điều chỉnh theo nhu cầu của nhóm.",
+      "cant_delete_default_message": "Không thể xóa loại hạng mục công việc này vì nó đang được liên kết với các hạng mục công việc hiện có.",
+      "set_as_default": "Đặt làm mặc định",
+      "cant_set_default_inactive_message": "Kích hoạt loại này trước khi đặt làm mặc định",
+      "set_default_confirmation": {
+        "title": "Đặt làm loại hạng mục công việc mặc định",
+        "description": "Đặt {name} làm mặc định sẽ nhập nó vào tất cả các dự án trong không gian làm việc này. Tất cả hạng mục công việc mới sẽ sử dụng loại này theo mặc định.",
+        "confirm_button": "Đặt làm mặc định"
+      },
+      "properties": {
+        "title": "Thuộc tính",
+        "description": "Tạo và tùy chỉnh thuộc tính.",
+        "tooltip": "Mỗi loại mục công việc đi kèm với một bộ thuộc tính mặc định như Tiêu đề, Mô tả, Người được giao, Trạng thái, Ưu tiên, Ngày bắt đầu, Ngày đến hạn, Module, Chu kỳ, v.v. Bạn cũng có thể tùy chỉnh và thêm thuộc tính riêng của mình để phù hợp với nhu cầu của nhóm bạn.",
+        "add_button": "Thêm thuộc tính mới",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Nhập từ không gian làm việc"
+          }
+        },
+        "dropdown": {
+          "label": "Loại thuộc tính",
+          "placeholder": "Chọn loại"
+        },
+        "property_type": {
+          "text": {
+            "label": "Văn bản"
+          },
+          "number": {
+            "label": "Số"
+          },
+          "dropdown": {
+            "label": "Dropdown"
+          },
+          "boolean": {
+            "label": "Boolean"
+          },
+          "date": {
+            "label": "Ngày"
+          },
+          "member_picker": {
+            "label": "Chọn thành viên"
+          },
+          "formula": {
+            "label": "Công thức"
+          }
+        },
+        "attributes": {
+          "label": "Thuộc tính",
+          "text": {
+            "single_line": {
+              "label": "Một dòng"
+            },
+            "multi_line": {
+              "label": "Đoạn văn"
+            },
+            "readonly": {
+              "label": "Chỉ đọc",
+              "header": "Dữ liệu chỉ đọc"
+            },
+            "invalid_text_format": {
+              "label": "Định dạng văn bản không hợp lệ"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Thêm số"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Chọn một"
+            },
+            "multi_select": {
+              "label": "Chọn nhiều"
+            },
+            "no_default_value": {
+              "label": "Không có giá trị mặc định"
+            }
+          },
+          "boolean": {
+            "label": "Đúng | Sai",
+            "no_default": "Không có giá trị mặc định"
+          },
+          "option": {
+            "create_update": {
+              "label": "Tùy chọn",
+              "form": {
+                "placeholder": "Thêm tùy chọn",
+                "errors": {
+                  "name": {
+                    "required": "Tên tùy chọn là bắt buộc.",
+                    "integrity": "Tùy chọn với cùng tên đã tồn tại."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Chọn tùy chọn",
+                "multi": {
+                  "default": "Chọn tùy chọn",
+                  "variable": "{count} tùy chọn đã chọn"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "Thành công!",
+              "message": "Thuộc tính {name} đã được tạo thành công."
+            },
+            "error": {
+              "title": "Lỗi!",
+              "message": "Không thể tạo thuộc tính. Vui lòng thử lại!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "Thành công!",
+              "message": "Thuộc tính {name} đã được cập nhật thành công."
+            },
+            "error": {
+              "title": "Lỗi!",
+              "message": "Không thể cập nhật thuộc tính. Vui lòng thử lại!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "Thành công!",
+              "message": "Thuộc tính {name} đã được xóa thành công."
+            },
+            "error": {
+              "title": "Lỗi!",
+              "message": "Không thể xóa thuộc tính. Vui lòng thử lại!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} thuộc tính {name}",
+            "success": {
+              "title": "Thành công!",
+              "message": "Thuộc tính {name} đã được {action} thành công."
+            },
+            "error": {
+              "title": "Lỗi!",
+              "message": "Không thể {action} thuộc tính. Vui lòng thử lại!"
+            }
+          }
+        },
+        "create_update": {
+          "title": {
+            "create": "Tạo thuộc tính tùy chỉnh mới",
+            "update": "Cập nhật thuộc tính tùy chỉnh"
+          },
+          "form": {
+            "display_name": {
+              "placeholder": "Tiêu đề"
+            },
+            "description": {
+              "placeholder": "Mô tả"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Bạn phải đặt tên cho thuộc tính của mình.",
+              "max_length": "Tên thuộc tính không được vượt quá 255 ký tự."
+            },
+            "property_type": {
+              "required": "Bạn phải chọn một loại thuộc tính."
+            },
+            "options": {
+              "required": "Bạn phải thêm ít nhất một tùy chọn."
+            },
+            "formula": {
+              "required": "Biểu thức công thức là bắt buộc.",
+              "invalid": "Công thức không hợp lệ: {error}",
+              "circular_reference": "Phát hiện tham chiếu vòng. Công thức không thể tham chiếu chính nó trực tiếp hoặc gián tiếp.",
+              "invalid_reference": "Công thức tham chiếu đến thuộc tính không tồn tại."
+            }
+          }
+        },
+        "formula": {
+          "field_label": "Trường công thức",
+          "tooltip": "Nhập công thức sử dụng cú pháp '{'Tên trường'}'. Hỗ trợ các toán tử +, -, *, / và &.",
+          "placeholder": "Viết công thức",
+          "test_button": "Kiểm tra",
+          "validating": "Đang xác thực",
+          "validation_success": "Công thức hợp lệ! Trả về {resultType}",
+          "validation_success_with_refs": "Công thức hợp lệ! Trả về {resultType} ({count} trường được tham chiếu)",
+          "error": {
+            "empty": "Vui lòng nhập công thức",
+            "missing_context": "Thiếu ngữ cảnh không gian làm việc, dự án hoặc loại mục công việc",
+            "validation_failed": "Xác thực thất bại"
+          },
+          "picker": {
+            "no_match": "Không có thuộc tính phù hợp",
+            "no_available": "Không có thuộc tính khả dụng"
+          }
+        },
+        "enable_disable": {
+          "label": "Đang hoạt động",
+          "tooltip": {
+            "disabled": "Nhấp để vô hiệu hóa",
+            "enabled": "Nhấp để kích hoạt"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Xóa thuộc tính này",
+          "description": "Việc xóa thuộc tính có thể dẫn đến mất dữ liệu hiện có.",
+          "secondary_description": "Bạn có muốn vô hiệu hóa thuộc tính thay thế?",
+          "primary_button": "{action}, xóa nó",
+          "secondary_button": "Có, vô hiệu hóa nó"
+        },
+        "mandate_confirmation": {
+          "label": "Thuộc tính bắt buộc",
+          "content": "Có vẻ như có một tùy chọn mặc định cho thuộc tính này. Việc làm cho thuộc tính trở thành bắt buộc sẽ xóa giá trị mặc định và người dùng sẽ phải thêm một giá trị theo lựa chọn của họ.",
+          "tooltip": {
+            "disabled": "Loại thuộc tính này không thể được làm thành bắt buộc",
+            "enabled": "Bỏ chọn để đánh dấu trường là tùy chọn",
+            "checked": "Chọn để đánh dấu trường là bắt buộc"
+          }
+        },
+        "empty_state": {
+          "title": "Thêm thuộc tính tùy chỉnh",
+          "description": "Các thuộc tính mới bạn thêm cho loại mục công việc này sẽ hiển thị ở đây."
+        }
+      },
+      "types": {
+        "title": "Loại",
+        "description": "Tạo và tùy chỉnh loại mục công việc với các thuộc tính.",
+        "sort_options": {
+          "project_count": "Số lượng dự án sử dụng"
+        },
+        "filter_options": {
+          "show_active": "Hiển thị đang hoạt động",
+          "show_inactive": "Hiển thị không hoạt động"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Tạo mới",
+            "import_from_workspace": "Nhập từ không gian làm việc"
+          },
+          "banner": {
+            "with_access": "Bật loại mục công việc để nhập các loại từ cấp không gian làm việc",
+            "without_access": "Loại mục công việc đã bị tắt. Liên hệ quản trị viên không gian làm việc để bật trong cài đặt không gian làm việc."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Thuộc tính tùy chỉnh",
+        "add_button": "Thêm thuộc tính",
+        "modal": {
+          "title": "Thêm thuộc tính",
+          "empty": {
+            "title": "Không có thuộc tính nào khả dụng",
+            "description": "Tất cả thuộc tính đã được liên kết với loại này."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Hủy liên kết thuộc tính",
+          "description": "Việc hủy liên kết thuộc tính này sẽ xóa vĩnh viễn tất cả các giá trị của nó trên mỗi mục công việc sử dụng loại này. Hành động này không thể hoàn tác.",
+          "input_label": "Nhập",
+          "input_label_suffix": "để tiếp tục:",
+          "confirm": "Hủy liên kết thuộc tính",
+          "loading": "Đang hủy liên kết"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Xóa loại này",
+        "description": "Việc xóa các loại có thể dẫn đến mất dữ liệu hiện có.",
+        "can_disable_warning": "Bạn có muốn tắt loại này thay thế không?",
+        "primary_button": "Vâng, xóa nó",
+        "toast": {
+          "success": {
+            "title": "Thành công!",
+            "message": "Đã xóa thành công loại mục công việc."
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể xóa loại mục công việc. Vui lòng thử lại!"
+          }
+        },
+        "errors": {
+          "cannot_delete_default_work_item_type": "Không thể xóa loại mục công việc mặc định",
+          "cannot_delete_work_item_type_with_associated_work_items": "Không thể xóa loại mục công việc có mục công việc liên quan"
+        }
+      }
+    },
+    "create": {
+      "title": "Tạo loại mục công việc",
+      "button": "Thêm loại mục công việc",
+      "toast": {
+        "success": {
+          "title": "Thành công!",
+          "message": "Loại mục công việc đã được tạo thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": {
+            "default": "Không thể tạo loại mục công việc. Vui lòng thử lại!",
+            "conflict": "Loại {name} đã tồn tại. Hãy chọn một tên khác."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "Cập nhật loại mục công việc",
+      "button": "Cập nhật loại mục công việc",
+      "toast": {
+        "success": {
+          "title": "Thành công!",
+          "message": "Loại mục công việc {name} đã được cập nhật thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": {
+            "default": "Không thể cập nhật loại mục công việc. Vui lòng thử lại!",
+            "conflict": "Loại {name} đã tồn tại. Hãy chọn một tên khác."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Đặt cho loại mục công việc này một tên duy nhất"
+        },
+        "description": {
+          "placeholder": "Mô tả loại mục công việc này dùng để làm gì và khi nào nên sử dụng nó."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} loại mục công việc {name}",
+        "success": {
+          "title": "Thành công!",
+          "message": "Loại mục công việc {name} đã được {action} thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Không thể {action} loại mục công việc. Vui lòng thử lại!"
+        }
+      },
+      "tooltip": "Nhấp để {action}"
+    },
+    "change_confirmation": {
+      "title": "Thay đổi loại mục công việc?",
+      "description": "Thay đổi loại mục công việc có thể dẫn đến mất các giá trị thuộc tính tùy chỉnh cụ thể cho loại hiện tại. Hành động này không thể hoàn tác.",
+      "button": {
+        "loading": "Đang thay đổi",
+        "default": "Thay đổi loại"
+      }
+    },
+    "empty_state": {
+      "enable": {
+        "title": "Kích hoạt Loại mục công việc",
+        "description": "Định hình mục công việc theo công việc của bạn với Loại mục công việc. Tùy chỉnh với biểu tượng, nền và thuộc tính và cấu hình chúng cho dự án này.",
+        "primary_button": {
+          "text": "Kích hoạt"
+        },
+        "confirmation": {
+          "title": "Khi đã kích hoạt, Loại mục công việc không thể bị vô hiệu hóa.",
+          "description": "Mục công việc của Plane sẽ trở thành loại mục công việc mặc định cho dự án này và sẽ hiển thị với biểu tượng và nền của nó trong dự án này.",
+          "button": {
+            "default": "Kích hoạt",
+            "loading": "Đang thiết lập"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "Nâng cấp lên Pro để kích hoạt Loại mục công việc.",
+        "description": "Định hình mục công việc theo công việc của bạn với Loại mục công việc. Tùy chỉnh với biểu tượng, nền và thuộc tính và cấu hình chúng cho dự án này.",
+        "primary_button": {
+          "text": "Nâng cấp lên Pro"
+        }
+      },
+      "upgrade": {
+        "title": "Nâng cấp để kích hoạt Loại mục công việc.",
+        "description": "Định hình mục công việc theo công việc của bạn với Loại mục công việc. Tùy chỉnh với biểu tượng, nền và thuộc tính và cấu hình chúng cho dự án này.",
+        "primary_button": {
+          "text": "Nâng cấp"
+        }
+      }
+    }
+  },
+  "work_item_type_hierarchy": {
+    "settings": {
+      "title": "Phân cấp",
+      "tab_label": "Phân cấp",
+      "description": "Thiết lập các cấp độ phân cấp để tổ chức công việc của bạn. Mỗi cấp độ xác định mối quan hệ cha với mục ngay phía trên và mối quan hệ con với mục ngay phía dưới. ",
+      "sidebar_label": "Phân cấp",
+      "enable_control": {
+        "title": "Bật phân cấp",
+        "description": "Tạo mối quan hệ cha-con giữa các loại mục công việc khác nhau.",
+        "tooltip": "Bạn không thể tắt phân cấp sau khi đã bật."
+      },
+      "workspace_work_item_types_disabled_banner": {
+        "content": "Trước tiên hãy xác định các Loại Mục Công Việc để tạo phân cấp mới.",
+        "cta": "Cài đặt loại mục công việc"
+      }
+    },
+    "levels": {
+      "max_level_placeholder": "Kéo và thả loại để thêm cấp phân cấp mới",
+      "empty_level_placeholder": "Kéo và thả loại mục công việc vào cấp độ {level}",
+      "drag_tooltip": "Kéo để thay đổi cấp độ",
+      "quick_actions": {
+        "set_as_default": {
+          "label": "Đặt làm mặc định",
+          "toast": {
+            "loading": "Đang đặt làm mặc định...",
+            "success": {
+              "title": "Thành công!",
+              "message": "Cấp độ phân cấp {level} đã được đặt làm mặc định thành công."
+            },
+            "error": {
+              "title": "Lỗi!",
+              "message": "Không thể đặt cấp độ phân cấp {level} làm mặc định. Vui lòng thử lại."
+            }
+          }
+        }
+      },
+      "update_level_toast": {
+        "loading": "Đang chuyển {workItemTypeName} sang cấp độ {level}...",
+        "success": {
+          "title": "Thành công!",
+          "message": "{workItemTypeName} đã được chuyển sang cấp độ {level} thành công."
+        }
+      }
+    },
+    "break_hierarchy_modal": {
+      "title": "Lưu sẽ gỡ các liên kết hiện có",
+      "content": {
+        "intro": "Loại mục công việc {workItemTypeName} có:",
+        "parent_items": "{count, plural, other {Sẽ xóa # liên kết cấp cha}}.",
+        "child_items": "{count, plural, other {mục công việc con}}",
+        "parent_line_suffix_when_also_children": ", và ",
+        "footer": "Thay đổi này sẽ gỡ bỏ quan hệ cha-con khỏi các mục công việc hiện có thuộc loại {workItemTypeName}."
+      },
+      "confirm_input": {
+        "label": "Nhập \"xác nhận\" để tiếp tục.",
+        "placeholder": "xác nhận"
+      },
+      "error_toast": {
+        "title": "Lỗi!",
+        "message": "Không thể gỡ liên kết và lưu. Vui lòng thử lại."
+      },
+      "confirm_button": {
+        "loading": "Đang lưu",
+        "default": "Vẫn lưu"
+      }
+    },
+    "work_item_modal": {
+      "invalid_work_item_type_create_toast": {
+        "title": "Lỗi!",
+        "message": "Loại mục công việc được chọn không thể dùng để tạo mục công việc mới vì vi phạm quy tắc phân cấp."
+      },
+      "invalid_work_item_type_update_toast": {
+        "title": "Lỗi!",
+        "message": "Loại mục công việc không thể cập nhật vì vi phạm quy tắc phân cấp."
+      }
+    },
+    "work_item_type_modal": {
+      "level": "Cấp độ phân cấp",
+      "invalid_level_toast": {
+        "title": "Lỗi!",
+        "message": "Không thể cập nhật loại mục công việc vì vi phạm quy tắc phân cấp."
+      }
+    }
+  }
+}

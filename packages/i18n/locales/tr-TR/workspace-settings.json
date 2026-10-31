@@ -1,0 +1,508 @@
+{
+  "workspace_settings": {
+    "label": "Çalışma Alanı Ayarları",
+    "page_label": "{workspace} - Genel ayarlar",
+    "key_created": "Anahtar oluşturuldu",
+    "copy_key": "Bu gizli anahtarı Plane Pages'e kopyalayıp kaydedin. Kapat düğmesine bastıktan sonra bu anahtarı göremezsiniz. Anahtar içeren bir CSV dosyası indirildi.",
+    "token_copied": "Token panoya kopyalandı.",
+    "settings": {
+      "general": {
+        "title": "Genel",
+        "upload_logo": "Logo yükle",
+        "edit_logo": "Logoyu düzenle",
+        "name": "Çalışma Alanı Adı",
+        "company_size": "Şirket Büyüklüğü",
+        "url": "Çalışma Alanı URL'si",
+        "workspace_timezone": "Çalışma Alanı Saat Dilimi",
+        "update_workspace": "Çalışma Alanını Güncelle",
+        "delete_workspace": "Bu çalışma alanını sil",
+        "delete_workspace_description": "Bir çalışma alanı silindiğinde, içindeki tüm veri ve kaynaklar kalıcı olarak kaldırılır ve kurtarılamaz.",
+        "delete_btn": "Bu çalışma alanını sil",
+        "delete_modal": {
+          "title": "Bu çalışma alanını silmek istediğinizden emin misiniz?",
+          "description": "Ücretli planlarımızdan birine aktif bir deneme sürümünüz var. Devam etmek için önce iptal edin.",
+          "dismiss": "Kapat",
+          "cancel": "Denemeyi iptal et",
+          "success_title": "Çalışma alanı silindi.",
+          "success_message": "Kısa süre sonra profil sayfanıza yönlendirileceksiniz.",
+          "error_title": "Bu işe yaramadı.",
+          "error_message": "Lütfen tekrar deneyin."
+        },
+        "errors": {
+          "name": {
+            "required": "Ad gereklidir",
+            "max_length": "Çalışma alanı adı 80 karakteri geçmemeli"
+          },
+          "company_size": {
+            "required": "Şirket büyüklüğü gereklidir",
+            "select_a_range": "Kuruluş büyüklüğünü seçin"
+          }
+        }
+      },
+      "members": {
+        "title": "Üyeler",
+        "add_member": "Üye ekle",
+        "pending_invites": "Bekleyen davetler",
+        "invitations_sent_successfully": "Davetler başarıyla gönderildi",
+        "leave_confirmation": "Çalışma alanından ayrılmak istediğinizden emin misiniz? Artık bu çalışma alanına erişiminiz olmayacak. Bu işlem geri alınamaz.",
+        "details": {
+          "full_name": "Tam ad",
+          "display_name": "Görünen ad",
+          "email_address": "E-posta adresi",
+          "account_type": "Hesap türü",
+          "authentication": "Kimlik Doğrulama",
+          "joining_date": "Katılma tarihi"
+        },
+        "modal": {
+          "title": "İşbirliği yapmaları için kişileri davet edin",
+          "description": "Kişileri çalışma alanınızda işbirliği yapmaları için davet edin.",
+          "button": "Davetleri gönder",
+          "button_loading": "Davetler gönderiliyor",
+          "placeholder": "isim@firma.com",
+          "errors": {
+            "required": "Davet etmek için bir e-posta adresine ihtiyacımız var.",
+            "invalid": "E-posta geçersiz"
+          }
+        }
+      },
+      "billing_and_plans": {
+        "heading": "Faturalandırma ve Planlar",
+        "description": "Planınızı seçin, abonelikleri yönetin ve ihtiyaçlarınız arttıkça kolayca yükseltin.",
+        "title": "Faturalandırma ve Planlar",
+        "current_plan": "Mevcut plan",
+        "free_plan": "Şu anda ücretsiz planı kullanıyorsunuz",
+        "view_plans": "Planları görüntüle"
+      },
+      "exports": {
+        "heading": "Dışa Aktarımlar",
+        "description": "Proje verilerinizi çeşitli formatlarda dışa aktarın ve indirme bağlantılarıyla dışa aktarma geçmişinize erişin.",
+        "title": "Dışa Aktarımlar",
+        "exporting": "Dışa aktarılıyor",
+        "previous_exports": "Önceki dışa aktarımlar",
+        "export_separate_files": "Verileri ayrı dosyalara aktar",
+        "exporting_projects": "Proje dışa aktarılıyor",
+        "format": "Format",
+        "filters_info": "Kriterlerinize göre belirli iş öğelerini dışa aktarmak için filtreler uygulayın.",
+        "modal": {
+          "title": "Şuraya aktar",
+          "toasts": {
+            "success": {
+              "title": "Dışa aktarma başarılı",
+              "message": "{entity} önceki dışa aktarmadan indirilebilir."
+            },
+            "error": {
+              "title": "Dışa aktarma başarısız",
+              "message": "Dışa aktarma başarısız oldu. Lütfen tekrar deneyin."
+            }
+          }
+        }
+      },
+      "webhooks": {
+        "heading": "Webhook'lar",
+        "description": "Proje olayları gerçekleştiğinde harici hizmetlere bildirimleri otomatikleştirin.",
+        "title": "Webhook'lar",
+        "add_webhook": "Webhook ekle",
+        "modal": {
+          "title": "Webhook oluştur",
+          "details": "Webhook detayları",
+          "payload": "Payload URL",
+          "question": "Bu webhook'u hangi olaylar tetiklesin?",
+          "error": "URL gereklidir"
+        },
+        "secret_key": {
+          "title": "Gizli anahtar",
+          "message": "Webhook payload'ında oturum açmak için bir token oluşturun"
+        },
+        "options": {
+          "all": "Her şeyi gönder",
+          "individual": "Tek tek olayları seç"
+        },
+        "toasts": {
+          "created": {
+            "title": "Webhook oluşturuldu",
+            "message": "Webhook başarıyla oluşturuldu"
+          },
+          "not_created": {
+            "title": "Webhook oluşturulamadı",
+            "message": "Webhook oluşturulamadı"
+          },
+          "updated": {
+            "title": "Webhook güncellendi",
+            "message": "Webhook başarıyla güncellendi"
+          },
+          "not_updated": {
+            "title": "Webhook güncellenemedi",
+            "message": "Webhook güncellenemedi"
+          },
+          "removed": {
+            "title": "Webhook kaldırıldı",
+            "message": "Webhook başarıyla kaldırıldı"
+          },
+          "not_removed": {
+            "title": "Webhook kaldırılamadı",
+            "message": "Webhook kaldırılamadı"
+          },
+          "secret_key_copied": {
+            "message": "Gizli anahtar panoya kopyalandı."
+          },
+          "secret_key_not_copied": {
+            "message": "Gizli anahtar kopyalanırken hata oluştu."
+          }
+        }
+      },
+      "api_tokens": {
+        "heading": "API Token'ları",
+        "description": "Verilerinizi harici sistemler ve uygulamalarla entegre etmek için güvenli API token'ları oluşturun.",
+        "title": "API Token'ları",
+        "add_token": "Erişim token'ı ekle",
+        "create_token": "Token oluştur",
+        "never_expires": "Süresi dolmaz",
+        "generate_token": "Token oluştur",
+        "generating": "Oluşturuluyor",
+        "delete": {
+          "title": "API Token'ını sil",
+          "description": "Bu token'ı kullanan uygulamalar artık Plane verilerine erişemeyecek. Bu işlem geri alınamaz.",
+          "success": {
+            "title": "Başarılı!",
+            "message": "API token'ı başarıyla silindi"
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "API token'ı silinemedi"
+          }
+        }
+      },
+      "integrations": {
+        "title": "Entegrasyonlar",
+        "heading": "Entegrasyonlar",
+        "description": "Tüm iş akışı ekosisteminizde işinizi senkronize etmek için popüler araçlar ve hizmetlerle bağlantı kurun.",
+        "page_title": "Plane verilerinizi mevcut uygulamalarda veya kendi uygulamalarınızda kullanın.",
+        "page_description": "Bu çalışma alanı veya sizin tarafınızdan kullanılan tüm entegrasyonları görüntüleyin."
+      },
+      "imports": {
+        "title": "İmportlar",
+        "heading": "İmportlar",
+        "description": "İş akışı entegrasyonunuzu kolaylaştırmak için mevcut proje yönetim araçlarınızdan verileri bağlayın ve içe aktarın."
+      },
+      "worklogs": {
+        "title": "Workloglar",
+        "heading": "Workloglar",
+        "description": "Herhangi bir projedeki herkes için çalışma günlüklerini (zaman çizelgelerini) indirin."
+      },
+      "group_syncing": {
+        "title": "Grup senkronizasyonu",
+        "heading": "Grup senkronizasyonu",
+        "description": "Kimlik sağlayıcı gruplarını projelere ve rollere bağlayın. IdP'nizde grup üyeliği değiştiğinde kullanıcı erişimi otomatik olarak güncellenir; işe alıştırma ve işten çıkarma süreçlerini basitleştirir.",
+        "enable": {
+          "title": "Grup senkronizasyonunu etkinleştir",
+          "description": "Kimlik sağlayıcı gruplarına göre kullanıcıları projelere otomatik olarak ekleyin."
+        },
+        "config": {
+          "title": "Grup senkronizasyonunu yapılandır",
+          "description": "Kimlik sağlayıcı gruplarının projelere ve rollere nasıl eşlendiğini ayarlayın.",
+          "sync_on_login": {
+            "title": "Girişte senkronize et",
+            "description": "Kullanıcı giriş yaptığında grup üyeliğini ve proje erişimini güncelleyin."
+          },
+          "sync_offline": {
+            "title": "Çevrimdışı senkronizasyon",
+            "description": "Kullanıcıların giriş yapmasını beklemeden her altı saatte bir otomatik olarak senkronizasyon çalıştırır."
+          },
+          "auto_remove": {
+            "title": "Otomatik kaldırma",
+            "description": "Artık gruba uymayan kullanıcıları projelerden otomatik olarak kaldırın."
+          },
+          "group_attribute_key": {
+            "title": "Grup öznitelik anahtarı",
+            "description": "Kullanıcı gruplarını tanımlamak ve senkronize etmek için kullanılan kimlik sağlayıcı özniteliği.",
+            "placeholder": "Gruplar"
+          }
+        },
+        "group_mapping": {
+          "title": "Grup eşlemesi",
+          "description": "Kimlik sağlayıcı gruplarını projelere ve rollere bağlayın.",
+          "button_text": "Yeni grup senkronizasyonu ekle"
+        },
+        "toast": {
+          "updating": "Grup senkronizasyonu özelliği güncelleniyor",
+          "success": "Grup senkronizasyonu özelliği başarıyla güncellendi.",
+          "error": "Grup senkronizasyonu özelliği güncellenemedi!"
+        },
+        "delete_modal": {
+          "title": "Grup senkronizasyonunu sil",
+          "content": "Bu kimlik grubundan yeni kullanıcılar artık projeye eklenmeyecek. Zaten eklenen kullanıcılar mevcut rollerini koruyacaktır."
+        },
+        "modal": {
+          "idp_group_name": {
+            "text": "Kullanıcı grubu",
+            "required": "Kullanıcı grubu zorunludur",
+            "placeholder": "IdP grup adlarını girin"
+          },
+          "project": {
+            "text": "Proje",
+            "required": "Proje zorunludur",
+            "placeholder": "Proje seçin"
+          },
+          "default_role": {
+            "text": "Proje rolü",
+            "required": "Proje rolü zorunludur",
+            "placeholder": "Proje rolü seçin"
+          }
+        }
+      },
+      "identity": {
+        "title": "Kimlik",
+        "heading": "Kimlik",
+        "description": "Alan adınızı yapılandırın ve Tek oturum açmayı etkinleştirin"
+      },
+      "project_states": {
+        "title": "Proje durumları",
+        "heading": "Tüm projeler için ilerleme özetini görün.",
+        "description": "Proje Durumları, herhangi bir proje özelliğine göre tüm projelerinizin ilerlemesini takip etmek için Plane'e özgü bir özelliktir.",
+        "go_to_settings": "Ayarlara git"
+      },
+      "projects": {
+        "title": "Projeler",
+        "description": "Proje durumlarını yönetin, proje etiketlerini etkinleştirin ve diğer yapılandırmaları düzenleyin.",
+        "tabs": {
+          "states": "Proje durumları",
+          "labels": "Proje etiketleri"
+        }
+      },
+      "templates": {
+        "title": "Şablonlar",
+        "heading": "Şablonlar",
+        "description": "Şablonları kullandığınızda projeler, iş öğeleri ve sayfalar oluşturmaya harcanan zamanın %80'ini tasarruf edin."
+      },
+      "relations": {
+        "title": "İlişkiler",
+        "heading": "İlişkiler",
+        "description": "Çalışma alanınızdaki iş öğelerini birbirine bağlayan ilişki türlerini oluşturun ve yönetin."
+      },
+      "cancel_trial": {
+        "title": "Önce deneme sürenizi iptal edin.",
+        "description": "Ücretli planlarımızdan birine ait aktif deneme süreniz var. Lütfen devam etmek için önce bunu iptal edin.",
+        "dismiss": "Kapat",
+        "cancel": "Denemeyi iptal et",
+        "cancel_success_title": "Deneme iptal edildi.",
+        "cancel_success_message": "Artık workspeysi silebilirsiniz.",
+        "cancel_error_title": "Bu işlem başarısız oldu.",
+        "cancel_error_message": "Lütfen tekrar deneyin."
+      },
+      "applications": {
+        "internal": "Dahili",
+        "title": "Aplikasyonlar",
+        "applicationId_copied": "Aplikasyon ID panoya kopyalandı",
+        "clientId_copied": "Klayınt ID panoya kopyalandı",
+        "clientSecret_copied": "Klayınt Sikrıt panoya kopyalandı",
+        "third_party_apps": "Üçüncü parti aplikasyonlar",
+        "your_apps": "Aplikasyonlarınız",
+        "connect": "Bağlan",
+        "connected": "Bağlandı",
+        "disconnect": "Bağlantıyı kes",
+        "install": "Yükle",
+        "installed": "Yüklendi",
+        "configure": "Yapılandır",
+        "app_available": "Bu aplikasyonu bir Pleyn workspeysi ile kullanılabilir hale getirdiniz",
+        "app_credentials_regenrated": {
+          "title": "Uygulama kimlik bilgileri başarıyla yeniden oluşturuldu",
+          "description": "İstemci sırrını kullanıldığı her yerde değiştirin. Önceki sır artık geçerli değil."
+        },
+        "app_created": {
+          "title": "Uygulama başarıyla oluşturuldu",
+          "description": "Uygulamayı bir Plane çalışma alanına yüklemek için kimlik bilgilerini kullanın"
+        },
+        "installed_apps": "Yüklü uygulamalar",
+        "all_apps": "Tüm uygulamalar",
+        "internal_apps": "Dahili uygulamalar",
+        "app_name_title": "Bu aplikasyonu ne olarak adlandıracaksınız",
+        "app_description_title": {
+          "label": "Uzun açıklama",
+          "placeholder": "Pazar yeri için uzun bir açıklama yazın. Komutlar için '/' tuşuna basın."
+        },
+        "authorization_grant_type": {
+          "title": "Bağlantı türü",
+          "description": "Uygulamanızın çalışma alanı için bir kez mi kurulması gerektiğini yoksa her kullanıcının kendi hesabını bağlamasına mı izin verileceğini seçin"
+        },
+        "website": {
+          "title": "Web sitesi",
+          "description": "Uygulamanızın web sitesine bağlantı.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Uygulama Yapıcı",
+          "description": "Uygulamayı oluşturan kişi veya kuruluş."
+        },
+        "app_maker_error": "Aplikasyon meykır gerekli",
+        "setup_url": {
+          "label": "Kurulum URL'si",
+          "description": "Kullanıcılar uygulamayı yüklediklerinde bu URL'ye yönlendirilecektir.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL'si",
+          "description": "Uygulamanızın yüklü olduğu çalışma alanlarından webhook olaylarını ve güncellemelerini buraya göndereceğiz.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Webhook Gizli Anahtarı",
+          "description": "Gelen webhook isteklerini doğrulamak için kullanılan gizli anahtar.",
+          "placeholder": "Rastgele bir gizli anahtar girin"
+        },
+        "redirect_uris": {
+          "label": "Yönlendirme URI'leri (boşluk ile ayrılmış)",
+          "description": "Kullanıcılar Plane ile kimlik doğrulaması yaptıktan sonra bu yola yönlendirilecektir.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_available_description": "Kullanmaya başlamak için bir Pleyn workspeysi bağlayın",
+        "client_id_and_secret": "Klayınt ID ve Sikrıt",
+        "client_id_and_secret_description": "Bu sikrıt anahtarı Peycislere kopyalayıp kaydedin. Kapat'a bastıktan sonra bu anahtarı tekrar göremezsiniz.",
+        "client_id_and_secret_download": "Anahtarı buradan CSV olarak indirebilirsiniz.",
+        "application_id": "Aplikasyon ID",
+        "client_id": "Klayınt ID",
+        "client_secret": "Klayınt Sikrıt",
+        "export_as_csv": "CSV olarak dışa aktar",
+        "slug_already_exists": "Slag zaten mevcut",
+        "failed_to_create_application": "Aplikasyon oluşturulamadı",
+        "upload_logo": "Logo yükle",
+        "app_name_error": "Aplikasyon adı gerekli",
+        "app_short_description_title": "Bu aplikasyona kısa bir açıklama verin",
+        "app_short_description_error": "Aplikasyon kısa açıklaması gerekli",
+        "app_description_error": "Aplikasyon açıklaması gerekli",
+        "app_slug_title": "Aplikasyon slag",
+        "app_slug_error": "Aplikasyon slag gerekli",
+        "invalid_website_error": "Geçersiz web sitesi",
+        "webhook_url_title": "Webhuk URL",
+        "webhook_url_error": "Webhuk URL gerekli",
+        "invalid_webhook_url_error": "Geçersiz webhuk URL",
+        "redirect_uris_title": "Ridayrekt URIları",
+        "redirect_uris_error": "Ridayrekt URIları gerekli",
+        "invalid_redirect_uris_error": "Geçersiz ridayrekt URIları",
+        "redirect_uris_description": "Aplikasyonun kullanıcıdan sonra yönlendirileceği boşlukla ayrılmış URIları girin örn. https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Yetkilendirilmiş Cavaskrip Orijinleri",
+        "authorized_javascript_origins_error": "Yetkilendirilmiş Cavaskrip Orijinleri gerekli",
+        "invalid_authorized_javascript_origins_error": "Geçersiz yetkilendirilmiş Cavaskrip Orijinleri",
+        "authorized_javascript_origins_description": "Aplikasyonun istek yapmasına izin verilecek boşlukla ayrılmış orijinleri girin örn. app.com example.com",
+        "create_app": "Aplikasyon oluştur",
+        "update_app": "Aplikasyonu güncelle",
+        "build_your_own_app": "Kendi uygulamanızı oluşturun",
+        "edit_app_details": "Uygulama ayrıntılarını düzenle",
+        "regenerate_client_secret_description": "Klayınt sikrıtı yeniden oluştur. Sikrıtı yeniden oluşturursanız, anahtarı kopyalayabilir veya hemen sonra bir CSV dosyasına indirebilirsiniz.",
+        "regenerate_client_secret": "Klayınt sikrıtı yeniden oluştur",
+        "regenerate_client_secret_confirm_title": "Klayınt sikrıtı yeniden oluşturmak istediğinizden emin misiniz?",
+        "regenerate_client_secret_confirm_description": "Bu sikrıtı kullanan aplikasyon çalışmayı durduracak. Sikrıtı aplikasyonda güncellemeniz gerekecek.",
+        "regenerate_client_secret_confirm_cancel": "İptal",
+        "regenerate_client_secret_confirm_regenerate": "Yeniden oluştur",
+        "read_only_access_to_workspace": "Workspeysinize salt okunur erişim",
+        "write_access_to_workspace": "Workspeysinize yazma erişimi",
+        "read_only_access_to_user_profile": "Kullanıcı profilinize salt okunur erişim",
+        "write_access_to_user_profile": "Kullanıcı profilinize yazma erişimi",
+        "connect_app_to_workspace": "{app} aplikasyonunu {workspace} workspeysinize bağlayın",
+        "user_permissions": "Kullanıcı permişınları",
+        "user_permissions_description": "Kullanıcı permişınları, kullanıcının profiline erişim vermek için kullanılır.",
+        "workspace_permissions": "Workspeysı permişınları",
+        "workspace_permissions_description": "Workspeysı permişınları, workspeyse erişim vermek için kullanılır.",
+        "with_the_permissions": "permişınlarla birlikte",
+        "app_consent_title": "{app} Pleyn workspeysinize ve profilinize erişim talep ediyor.",
+        "choose_workspace_to_connect_app_with": "Aplikasyonu bağlamak için bir workspeysı seçin",
+        "app_consent_workspace_permissions_title": "{app} şunları yapmak istiyor",
+        "app_consent_user_permissions_title": "{app} ayrıca bir kullanıcının aşağıdaki kaynaklara erişim permişınını talep edebilir. Bu permişınlar yalnızca bir kullanıcı tarafından talep edilecek ve yetkilendirilecektir.",
+        "app_consent_accept_title": "Kabul ederek",
+        "app_consent_accept_1": "Aplikasyona Pleyn içinde veya dışında kullanabileceğiniz her yerde Pleyn verilerinize erişim izni verirsiniz",
+        "app_consent_accept_2": "{app}'in Gizlilik Politikası ve Kullanım Koşullarını kabul edersiniz",
+        "accepting": "Kabul ediliyor...",
+        "accept": "Kabul et",
+        "categories": "Kategoriler",
+        "select_app_categories": "Aplikasyon kategorilerini seçin",
+        "categories_title": "Kategoriler",
+        "categories_error": "Kategoriler gerekli",
+        "invalid_categories_error": "Geçersiz kategoriler",
+        "categories_description": "En iyi açıklamayı veren kategorileri seçin",
+        "supported_plans": "Desteklenen Planlar",
+        "supported_plans_description": "Bu uygulamayı yükleyebilecek çalışma alanı planlarını seçin. Tüm planlara izin vermek için boş bırakın.",
+        "select_plans": "Planları Seç",
+        "privacy_policy_url_title": "Gizlilik Politikası URL",
+        "privacy_policy_url_error": "Gizlilik Politikası URL gerekli",
+        "invalid_privacy_policy_url_error": "Geçersiz gizlilik politikası URL",
+        "terms_of_service_url_title": "Hizmet Şartları URL",
+        "terms_of_service_url_error": "Hizmet Şartları URL gerekli",
+        "invalid_terms_of_service_url_error": "Geçersiz hizmet şartları URL",
+        "support_url_title": "Destek URL",
+        "support_url_error": "Destek URL gerekli",
+        "invalid_support_url_error": "Geçersiz destek URL",
+        "video_url_title": "Video URL",
+        "video_url_error": "Video URL gerekli",
+        "invalid_video_url_error": "Geçersiz video URL",
+        "setup_url_error": "Kurulum URL gerekli",
+        "invalid_setup_url_error": "Geçersiz kurulum URL",
+        "configuration_url_title": "Yapılandırma URL",
+        "configuration_url_error": "Yapılandırma URL gerekli",
+        "invalid_configuration_url_error": "Geçersiz yapılandırma URL",
+        "contact_email_title": "İletişim Email",
+        "contact_email_error": "İletişim Email gerekli",
+        "invalid_contact_email_error": "Geçersiz iletişim email",
+        "upload_attachments": "Ekleri yükle",
+        "uploading_images": "{count, plural, one {Yükleniyor {count} görsel} other {Yükleniyor {count} görsel}}",
+        "drop_images_here": "Görselleri buraya bırakın",
+        "click_to_upload_images": "Görselleri yüklemek için tıklayın",
+        "invalid_file_or_exceeds_size_limit": "Geçersiz dosya veya boyut sınırını aşıyor ({size} MB)",
+        "uploading": "Yükleniyor...",
+        "upload_and_save": "Yükle ve kaydet",
+        "app_consent_no_access_title": "Yükleme talebi",
+        "app_consent_no_access_description": "Bu uygulama yalnızca bir workspace yöneticisi tarafından kurulduktan sonra yüklenebilir. Devam etmek için workspace yöneticinizle iletişime geçin.",
+        "app_consent_unapproved_title": "Bu uygulama henüz Plane tarafından incelenmedi veya onaylanmadı.",
+        "app_consent_unapproved_description": "Bu uygulamayı çalışma alanınıza bağlamadan önce güvendiğinizden emin olun.",
+        "go_to_app": "Uygulamaya git",
+        "enable_app_mentions": "Uygulama bahsini etkinleştir",
+        "enable_app_mentions_tooltip": "Bu etkinleştirildiğinde, kullanıcılar Çalışma Öğelerini bu uygulamaya atayabilir veya bahsedebilir.",
+        "scopes": "Kapsamlar",
+        "select_scopes": "Kapsamları seçin",
+        "read_access_to": "Salt okunur erişim",
+        "write_access_to": "Yazma erişimi",
+        "global_permission_expiration": "Genel kapsamlar yakında sona erecek. Bunun yerine ayrıntılı kapsamlar kullanın. Örneğin, genel okuma yerine project:read kullanın.",
+        "selected_scopes": "{count} seçildi",
+        "scopes_and_permissions": "Kapsamlar ve izinler",
+        "read": "Okuma",
+        "write": "Yazma",
+        "scope_description": {
+          "projects": "Projelere ve projeyle ilgili tüm varlıklara erişim",
+          "wiki": "Wiki'ye ve wiki ile ilgili tüm varlıklara erişim",
+          "workspaces": "Çalışma alanlarına ve ilgili tüm varlıklara erişim",
+          "stickies": "Yapışkanlara ve ilgili tüm varlıklara erişim",
+          "profile": "Kullanıcı profil bilgilerine erişim",
+          "agents": "Ajanlara ve tüm ajana bağlı varlıklara erişim",
+          "assets": "Varlıklara ve tüm varlıkla ilgili öğelere erişim"
+        }
+      },
+      "plane-intelligence": {
+        "title": "Plane AI",
+        "heading": "Plane AI",
+        "description": "İşinizi daha akıllı ve daha hızlı hale getirmek için doğal olarak işinize ve bilgi tabanınıza bağlı olan AI kullanın."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Komut Dosyaları",
+        "new_script": "Yeni Komut Dosyası",
+        "description": "İş akışlarınızı özel komut dosyaları ve otomasyon kurallarıyla otomatikleştirin."
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "API token'ı oluşturulmadı",
+        "description": "Plane API'lerini harici sistemlere entegre etmek için bir token oluşturun."
+      },
+      "webhooks": {
+        "title": "Webhook eklenmedi",
+        "description": "Gerçek zamanlı güncellemeler almak ve otomatik eylemler gerçekleştirmek için webhook'lar oluşturun."
+      },
+      "exports": {
+        "title": "Henüz dışa aktarma yok",
+        "description": "Dışa aktardığınızda, referans için burada bir kopya bulunur."
+      },
+      "imports": {
+        "title": "Henüz içe aktarma yok",
+        "description": "Tüm önceki içe aktarmalarınızı burada bulabilir ve indirebilirsiniz."
+      }
+    }
+  }
+}

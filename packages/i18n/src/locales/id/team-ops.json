@@ -1,7 +1,8 @@
 {
   "team_ops": {
     "nav": {
-      "time_tracking": "Pelacakan waktu"
+      "time_tracking": "Pelacakan waktu",
+      "work_calendar": "Work calendar"
     },
     "time": {
       "title": "Pelacakan waktu"

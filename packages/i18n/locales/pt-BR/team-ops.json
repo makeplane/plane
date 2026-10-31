@@ -1,0 +1,62 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "Controle de tempo",
+      "work_calendar": "Work calendar"
+    },
+    "time": {
+      "title": "Controle de tempo"
+    },
+    "timer": {
+      "title": "Cronômetro",
+      "running": "Em andamento",
+      "idle": "Nenhum cronômetro em andamento.",
+      "note_placeholder": "No que você está trabalhando?",
+      "start": "Iniciar cronômetro",
+      "stop": "Parar cronômetro",
+      "capped": "O cronômetro ficou ativo por mais de 24 horas, então apenas 24 horas foram registradas."
+    },
+    "work_item": {
+      "placeholder": "Vincular um item de trabalho (opcional)",
+      "clear": "Remover item de trabalho",
+      "searching": "Pesquisando...",
+      "no_results": "Nenhum item de trabalho encontrado"
+    },
+    "summary": {
+      "total": "Total",
+      "billable": "Faturável",
+      "this_week": "Esta semana",
+      "previous_week": "Semana anterior",
+      "next_week": "Próxima semana"
+    },
+    "entries": {
+      "title": "Registros de tempo",
+      "add": "Adicionar tempo",
+      "empty": "Nenhum tempo registrado nesta semana.",
+      "edit": "Editar registro de tempo",
+      "delete": "Excluir registro de tempo",
+      "delete_title": "Excluir registro de tempo",
+      "delete_confirmation": "Tem certeza de que deseja excluir este registro de tempo? Esta ação não pode ser desfeita.",
+      "source_timer": "Cronômetro",
+      "source_manual": "Manual"
+    },
+    "form": {
+      "title_create": "Adicionar tempo",
+      "title_edit": "Editar registro de tempo",
+      "date": "Data",
+      "start_time": "Hora de início",
+      "hours": "Horas",
+      "minutes": "Minutos",
+      "note": "Nota",
+      "billable": "Faturável",
+      "save": "Salvar",
+      "date_invalid": "Informe uma data e uma hora válidas.",
+      "duration_invalid": "Informe uma duração entre 1 minuto e 24 horas."
+    },
+    "toasts": {
+      "error_title": "Algo deu errado",
+      "saved": "Registro de tempo salvo",
+      "deleted": "Registro de tempo excluído"
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "待处理",
+        "description": "待处理"
+      },
+      "declined": {
+        "title": "已拒绝",
+        "description": "已拒绝"
+      },
+      "snoozed": {
+        "title": "已暂停",
+        "description": "还剩{days, plural, one{# 天} other{# 天}}"
+      },
+      "accepted": {
+        "title": "已接受",
+        "description": "已接受"
+      },
+      "duplicate": {
+        "title": "重复",
+        "description": "重复"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "拒绝工作项",
+        "content": "您确定要拒绝工作项 {value} 吗？"
+      },
+      "delete": {
+        "title": "删除工作项",
+        "content": "您确定要删除工作项 {value} 吗？",
+        "success": "工作项删除成功"
+      }
+    },
+    "errors": {
+      "snooze_permission": "只有项目管理员可以暂停/取消暂停工作项",
+      "accept_permission": "只有项目管理员可以接受工作项",
+      "decline_permission": "只有项目管理员可以拒绝工作项"
+    },
+    "actions": {
+      "accept": "接受",
+      "decline": "拒绝",
+      "snooze": "暂停",
+      "unsnooze": "取消暂停",
+      "copy": "复制工作项链接",
+      "delete": "删除",
+      "open": "打开工作项",
+      "mark_as_duplicate": "标记为重复",
+      "move": "将 {value} 移至项目工作项"
+    },
+    "source": {
+      "in-app": "应用内"
+    },
+    "order_by": {
+      "created_at": "创建时间",
+      "updated_at": "更新时间",
+      "id": "ID"
+    },
+    "label": "收集",
+    "page_label": "{workspace} - 收集",
+    "modal": {
+      "title": "创建收集工作项"
+    },
+    "tabs": {
+      "open": "未处理",
+      "closed": "已处理"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "没有未处理的工作项",
+        "description": "在此处查找未处理的工作项。创建新工作项。"
+      },
+      "sidebar_closed_tab": {
+        "title": "没有已处理的工作项",
+        "description": "所有已接受或已拒绝的工作项都可以在这里找到。"
+      },
+      "sidebar_filter": {
+        "title": "没有匹配的工作项",
+        "description": "收集中没有符合筛选条件的工作项。创建新工作项。"
+      },
+      "detail": {
+        "title": "选择一个工作项以查看其详细信息。"
+      }
+    }
+  }
+}

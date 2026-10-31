@@ -1,7 +1,8 @@
 {
   "team_ops": {
     "nav": {
-      "time_tracking": "Seguimiento de tiempo"
+      "time_tracking": "Seguimiento de tiempo",
+      "work_calendar": "Work calendar"
     },
     "time": {
       "title": "Seguimiento de tiempo"

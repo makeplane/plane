@@ -1,0 +1,62 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "Urmărirea timpului",
+      "work_calendar": "Work calendar"
+    },
+    "time": {
+      "title": "Urmărirea timpului"
+    },
+    "timer": {
+      "title": "Cronometru",
+      "running": "În desfășurare",
+      "idle": "Niciun cronometru nu rulează.",
+      "note_placeholder": "La ce lucrați?",
+      "start": "Pornește cronometrul",
+      "stop": "Oprește cronometrul",
+      "capped": "Cronometrul a rulat mai mult de 24 de ore, așa că au fost înregistrate doar 24 de ore."
+    },
+    "work_item": {
+      "placeholder": "Asociați o activitate (opțional)",
+      "clear": "Elimină activitatea",
+      "searching": "Se caută...",
+      "no_results": "Nu a fost găsită nicio activitate"
+    },
+    "summary": {
+      "total": "Total",
+      "billable": "Facturabil",
+      "this_week": "Săptămâna aceasta",
+      "previous_week": "Săptămâna precedentă",
+      "next_week": "Săptămâna următoare"
+    },
+    "entries": {
+      "title": "Intrări de timp",
+      "add": "Adaugă timp",
+      "empty": "Nu a fost înregistrat timp săptămâna aceasta.",
+      "edit": "Editează intrarea de timp",
+      "delete": "Șterge intrarea de timp",
+      "delete_title": "Șterge intrarea de timp",
+      "delete_confirmation": "Sigur doriți să ștergeți această intrare de timp? Acțiunea nu poate fi anulată.",
+      "source_timer": "Cronometru",
+      "source_manual": "Manual"
+    },
+    "form": {
+      "title_create": "Adaugă timp",
+      "title_edit": "Editează intrarea de timp",
+      "date": "Dată",
+      "start_time": "Ora de început",
+      "hours": "Ore",
+      "minutes": "Minute",
+      "note": "Notă",
+      "billable": "Facturabil",
+      "save": "Salvează",
+      "date_invalid": "Introduceți o dată și o oră valide.",
+      "duration_invalid": "Introduceți o durată între 1 minut și 24 de ore."
+    },
+    "toasts": {
+      "error_title": "Ceva nu a funcționat",
+      "saved": "Intrarea de timp a fost salvată",
+      "deleted": "Intrarea de timp a fost ștearsă"
+    }
+  }
+}

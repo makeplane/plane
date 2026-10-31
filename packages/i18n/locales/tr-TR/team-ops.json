@@ -1,0 +1,62 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "Zaman takibi",
+      "work_calendar": "Work calendar"
+    },
+    "time": {
+      "title": "Zaman takibi"
+    },
+    "timer": {
+      "title": "Zamanlayıcı",
+      "running": "Çalışıyor",
+      "idle": "Çalışan bir zamanlayıcı yok.",
+      "note_placeholder": "Üzerinde ne çalışıyorsunuz?",
+      "start": "Zamanlayıcıyı başlat",
+      "stop": "Zamanlayıcıyı durdur",
+      "capped": "Zamanlayıcı 24 saatten uzun süre çalıştığı için yalnızca 24 saat kaydedildi."
+    },
+    "work_item": {
+      "placeholder": "Bir iş öğesi bağlayın (isteğe bağlı)",
+      "clear": "İş öğesini kaldır",
+      "searching": "Aranıyor...",
+      "no_results": "İş öğesi bulunamadı"
+    },
+    "summary": {
+      "total": "Toplam",
+      "billable": "Faturalandırılabilir",
+      "this_week": "Bu hafta",
+      "previous_week": "Önceki hafta",
+      "next_week": "Sonraki hafta"
+    },
+    "entries": {
+      "title": "Zaman kayıtları",
+      "add": "Zaman ekle",
+      "empty": "Bu hafta kayıtlı zaman yok.",
+      "edit": "Zaman kaydını düzenle",
+      "delete": "Zaman kaydını sil",
+      "delete_title": "Zaman kaydını sil",
+      "delete_confirmation": "Bu zaman kaydını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+      "source_timer": "Zamanlayıcı",
+      "source_manual": "Manuel"
+    },
+    "form": {
+      "title_create": "Zaman ekle",
+      "title_edit": "Zaman kaydını düzenle",
+      "date": "Tarih",
+      "start_time": "Başlangıç saati",
+      "hours": "Saat",
+      "minutes": "Dakika",
+      "note": "Not",
+      "billable": "Faturalandırılabilir",
+      "save": "Kaydet",
+      "date_invalid": "Geçerli bir tarih ve saat girin.",
+      "duration_invalid": "1 dakika ile 24 saat arasında bir süre girin."
+    },
+    "toasts": {
+      "error_title": "Bir şeyler ters gitti",
+      "saved": "Zaman kaydı kaydedildi",
+      "deleted": "Zaman kaydı silindi"
+    }
+  }
+}

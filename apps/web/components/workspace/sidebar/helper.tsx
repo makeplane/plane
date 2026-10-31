@@ -7,14 +7,18 @@
 import {
   AnalyticsOutline,
   ArchiveOutline,
+  CalendarOutline,
+  ChatOutline,
   ClockOutline,
   CyclesOutline,
   DraftsOutline,
   HomeOutline,
   InboxOutline,
+  MembersOutline,
   MultipleStickyOutline,
   ProjectsOutline,
   ViewsOutline,
+  WorkflowsOutline,
   YourWorkOutline,
 } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
@@ -39,8 +43,18 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
       return <DraftsOutline className={cn("size-4 flex-shrink-0", className)} />;
     case "archives":
       return <ArchiveOutline className={cn("size-4 flex-shrink-0", className)} />;
-    case "time_tracking":
+    case "workday":
       return <ClockOutline className={cn("size-4 flex-shrink-0", className)} />;
+    case "hub":
+      return <ChatOutline className={cn("size-4 flex-shrink-0", className)} />;
+    case "teamflow":
+      return <WorkflowsOutline className={cn("size-4 flex-shrink-0", className)} />;
+    case "team_leave":
+      return <CalendarOutline className={cn("size-4 flex-shrink-0", className)} />;
+    case "teamspaces":
+      return <MembersOutline className={cn("size-4 flex-shrink-0", className)} />;
+    case "team_dashboard":
+      return <AnalyticsOutline className={cn("size-4 flex-shrink-0", className)} />;
     case "stickies":
       return <MultipleStickyOutline className={cn("size-4 flex-shrink-0", className)} />;
   }

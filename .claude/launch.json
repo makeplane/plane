@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dev",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "-e",
+        "const path = require('path'); const web = path.resolve('apps/web'); const bin = path.join(web, 'node_modules/@react-router/dev/bin.cjs'); process.chdir(web); process.env.VITE_API_BASE_URL = 'http://localhost:8000'; process.argv = [process.argv[0], bin, 'dev', '--port', '3000']; require(bin)"
+      ],
+      "port": 3000
+    }
+  ]
+}

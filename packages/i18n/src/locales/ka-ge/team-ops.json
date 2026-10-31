@@ -1,7 +1,8 @@
 {
   "team_ops": {
     "nav": {
-      "time_tracking": "დროის თვალყურის დევნება"
+      "time_tracking": "დროის თვალყურის დევნება",
+      "work_calendar": "Work calendar"
     },
     "time": {
       "title": "დროის თვალყურის დევნება"

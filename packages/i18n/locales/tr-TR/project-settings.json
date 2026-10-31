@@ -1,0 +1,526 @@
+{
+  "project_settings": {
+    "general": {
+      "enter_project_id": "Proje ID girin",
+      "please_select_a_timezone": "Lütfen bir saat dilimi seçin",
+      "archive_project": {
+        "title": "Projeyi arşivle",
+        "description": "Bir projeyi arşivlemek, projenizi yan gezintiden kaldırır ancak yine de projeler sayfasından erişebilirsiniz. Projeyi istediğiniz zaman geri yükleyebilir veya silebilirsiniz.",
+        "button": "Projeyi arşivle"
+      },
+      "delete_project": {
+        "title": "Projeyi sil",
+        "description": "Bir proje silindiğinde, içindeki tüm veri ve kaynaklar kalıcı olarak kaldırılır ve kurtarılamaz.",
+        "button": "Projemi sil"
+      },
+      "toast": {
+        "success": "Proje başarıyla güncellendi",
+        "error": "Proje güncellenemedi. Lütfen tekrar deneyin."
+      }
+    },
+    "members": {
+      "label": "Üyeler",
+      "project_lead": "Proje lideri",
+      "project_lead_description": "Proje için proje liderini seçin.",
+      "default_assignee": "Varsayılan atanan",
+      "default_assignee_description": "Proje için varsayılan atanacak kişiyi seçin.",
+      "project_subscribers": "Proje aboneleri",
+      "project_subscribers_description": "Bu proje için bildirim alacak üyeleri seçin.",
+      "guest_super_permissions": {
+        "title": "Misafir kullanıcılara tüm iş öğelerini görüntüleme izni ver:",
+        "sub_heading": "Bu, misafirlerin tüm proje iş öğelerini görüntülemesine izin verecektir."
+      },
+      "invite_members": {
+        "title": "Üyeleri davet et",
+        "sub_heading": "Projenizde çalışmaları için üyeleri davet edin.",
+        "select_co_worker": "İş arkadaşı seç"
+      }
+    },
+    "states": {
+      "heading": "Durumlar",
+      "description": "İş öğelerinizin ilerlemesini izlemek için iş akışı durumlarını tanımlayın ve özelleştirin.",
+      "describe_this_state_for_your_members": "Bu durumu üyeleriniz için açıklayın.",
+      "empty_state": {
+        "title": "{groupKey} grubu için durum yok",
+        "description": "Lütfen yeni bir durum oluşturun"
+      }
+    },
+    "labels": {
+      "heading": "Etiketler",
+      "description": "İş öğelerinizi kategorize etmek ve düzenlemek için özel etiketler oluşturun",
+      "label_title": "Etiket başlığı",
+      "label_title_is_required": "Etiket başlığı gereklidir",
+      "label_max_char": "Etiket adı 255 karakteri geçmemeli",
+      "toast": {
+        "error": "Etiket güncellenirken hata oluştu"
+      }
+    },
+    "estimates": {
+      "heading": "Tahminler",
+      "description": "Takımınızın karmaşıklık ve iş yükünü iletişim kurmanıza yardımcı olurlar.",
+      "label": "Tahminler",
+      "title": "Projem için tahminleri etkinleştir",
+      "enable_description": "Takımın karmaşıklığını ve iş yükünü iletmenize yardımcı olurlar.",
+      "no_estimate": "Tahmin yok",
+      "new": "Yeni tahmin sistemi",
+      "create": {
+        "custom": "Özel",
+        "start_from_scratch": "Sıfırdan başla",
+        "choose_template": "Şablon seç",
+        "choose_estimate_system": "Tahmin sistemi seç",
+        "enter_estimate_point": "Tahmin puanı girin",
+        "step": "Adım {step} / {total}",
+        "label": "Tahmin oluştur"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Tahmin puanı oluşturuldu",
+            "message": "Tahmin puanı başarıyla oluşturuldu"
+          },
+          "error": {
+            "title": "Tahmin puanı oluşturulamadı",
+            "message": "Yeni tahmin puanı oluşturulamadı, lütfen tekrar deneyin."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Tahmin değiştirildi",
+            "message": "Tahmin puanı projenizde güncellendi."
+          },
+          "error": {
+            "title": "Tahmin değiştirilemedi",
+            "message": "Tahmin değiştirilemedi, lütfen tekrar deneyin"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Başarılı!",
+            "message": "Tahminler etkinleştirildi."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Başarılı!",
+            "message": "Tahminler devre dışı bırakıldı."
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "Tahmin devre dışı bırakılamadı. Lütfen tekrar deneyin"
+          }
+        },
+        "reorder": {
+          "success": {
+            "title": "Estimasyonlar yeniden sıralandı",
+            "message": "Projenizdeki estimasyonlar yeniden sıralandı."
+          },
+          "error": {
+            "title": "Estimasyonları yeniden sıralama başarısız",
+            "message": "Estimasyonlar yeniden sıralanamadı, lütfen tekrar deneyin"
+          }
+        },
+        "switch": {
+          "success": {
+            "title": "Estimeyt sistemi oluşturuldu",
+            "message": "Başarıyla oluşturuldu ve aktif edildi"
+          },
+          "error": {
+            "title": "Erır",
+            "message": "Bir şeyler yanlış gitti"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Tahmin puanı 0'dan büyük olmalı.",
+        "unable_to_process": "İsteğiniz işlenemedi, lütfen tekrar deneyin.",
+        "numeric": "Tahmin puanı sayısal bir değer olmalı.",
+        "character": "Tahmin puanı karakter değeri olmalı.",
+        "empty": "Tahmin değeri boş olamaz.",
+        "already_exists": "Tahmin değeri zaten var.",
+        "unsaved_changes": "Kaydedilmemiş değişiklikleriniz var, bitirmeden önce lütfen kaydedin",
+        "remove_empty": "Tahmin boş olamaz. Her alana bir değer girin veya değeri olmayanları kaldırın.",
+        "fill": "Lütfen bu estimasyon alanını doldurun",
+        "repeat": "Estimasyon değeri tekrar edemez"
+      },
+      "systems": {
+        "points": {
+          "label": "Puanlar",
+          "fibonacci": "Fibonacci",
+          "linear": "Doğrusal",
+          "squares": "Kareler",
+          "custom": "Özel"
+        },
+        "categories": {
+          "label": "Kategoriler",
+          "t_shirt_sizes": "Tişört Boyutları",
+          "easy_to_hard": "Kolaydan zora",
+          "custom": "Özel"
+        },
+        "time": {
+          "label": "Zaman",
+          "hours": "Saat"
+        }
+      },
+      "edit": {
+        "title": "Estimasyon sistemini düzenle",
+        "add_or_update": {
+          "title": "Estimasyonları ekle, güncelle veya sil",
+          "description": "Mevcut sistemi puanlar veya kategoriler ekleyerek, güncelleyerek veya silerek yönetin."
+        },
+        "switch": {
+          "title": "Estimasyon tipini değiştir",
+          "description": "Puan sisteminizi kategori sistemine veya tam tersine dönüştürün."
+        }
+      },
+      "switch": "Estimasyon sistemini değiştir",
+      "current": "Mevcut estimasyon sistemi",
+      "select": "Estimasyon sistemi seç"
+    },
+    "automations": {
+      "label": "Otomasyonlar",
+      "heading": "Otomasyonlar",
+      "description": "Proje yönetimi iş akışınızı kolaylaştırmak ve manuel görevleri azaltmak için otomatik eylemleri yapılandırın.",
+      "auto-archive": {
+        "title": "Tamamlanan iş öğelerini otomatik arşivle",
+        "description": "Plane, tamamlanan veya iptal edilen iş öğelerini otomatik arşivleyecek.",
+        "duration": "Şu süre kapalı kalan iş öğelerini otomatik arşivle"
+      },
+      "auto-close": {
+        "title": "İş öğelerini otomatik kapat",
+        "description": "Plane, tamamlanmamış veya iptal edilmemiş iş öğelerini otomatik kapatacak.",
+        "duration": "Şu süre etkin olmayan iş öğelerini otomatik kapat",
+        "auto_close_status": "Otomatik kapatma durumu"
+      },
+      "auto-remind": {
+        "title": "Otomatik hatırlatmalar",
+        "description": "Plane, e-posta ve uygulama bildirimleri aracılığıyla otomatik olarak takımınızı zamanlama yolunda tutacaktır.",
+        "duration": "Hatırlatma gönderimi öncesi"
+      }
+    },
+    "empty_state": {
+      "labels": {
+        "title": "Henüz etiket yok",
+        "description": "Projenizdeki iş öğelerini düzenlemek ve filtrelemek için etiketler oluşturun."
+      },
+      "estimates": {
+        "title": "Henüz tahmin sistemi yok",
+        "description": "İş öğesi başına çalışma miktarını iletişim kurmak için bir tahmin seti oluşturun.",
+        "primary_button": "Tahmin sistemi ekle"
+      },
+      "integrations": {
+        "title": "Konfigüre edilmiş entegrasyon yok",
+        "description": "Proje iş öğelerinizi senkronize etmek için GitHub ve diğer entegrasyonları konfigüre edin."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "İş akışlarını etkinleştir",
+        "description": "İş öğesi hareketini kontrol etmek için iş akışları ayarlayın",
+        "no_states_tooltip": "İş akışına durum eklenmemiş.",
+        "no_work_item_types_tooltip": "İş akışına iş öğesi türü eklenmemiş.",
+        "no_states_or_work_item_types_tooltip": "İş akışına durum veya iş öğesi türü eklenmemiş.",
+        "toast": {
+          "loading": {
+            "enabling": "İş akışları etkinleştiriliyor",
+            "disabling": "İş akışları devre dışı bırakılıyor"
+          },
+          "success": {
+            "title": "Başarılı!",
+            "message": "İş akışları başarıyla etkinleştirildi."
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "İş akışları etkinleştirilemedi. Lütfen tekrar deneyin."
+          }
+        }
+      },
+      "heading": "İş Akışları",
+      "description": "İş öğesi geçişlerini otomatikleştirin ve görevlerin proje süreciniz boyunca nasıl hareket ettiğini kontrol etmek için kurallar belirleyin.",
+      "add_button": "Yeni iş akışı ekle",
+      "search": "İş akışlarında ara",
+      "detail": {
+        "define": "İş akışı tanımla",
+        "add_states": "Durum ekle",
+        "unmapped_states": {
+          "title": "Eşlenmemiş durumlar tespit edildi",
+          "description": "Seçili türlerdeki bazı iş öğeleri şu anda bu iş akışında bulunmayan durumlarda.",
+          "note": "Bu iş akışını etkinleştirirseniz, bu öğeler otomatik olarak bu iş akışının başlangıç durumuna taşınır.",
+          "label": "Eksik durumlar",
+          "tooltip": "Bazı iş öğeleri bu iş akışına eşlenmemiş durumlarda. İncelemek için iş akışını açın."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Tüm durumlar kullanımda",
+          "description": "Bu proje için tanımlanan tüm durumlar zaten mevcut iş akışınızda mevcut."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Bu iş akışı, bir iş akışına atanmamış herhangi bir iş öğesi türüne uygulanır."
+      },
+      "create": {
+        "heading": "Yeni iş akışı oluştur",
+        "name": {
+          "placeholder": "Benzersiz bir ad ekleyin",
+          "validation": {
+            "max_length": "Ad 255 karakterden az olmalıdır",
+            "required": "Ad gereklidir",
+            "invalid": "Ad yalnızca harfler, rakamlar, boşluklar, tireler ve kesme işaretleri içerebilir"
+          }
+        },
+        "description": {
+          "placeholder": "Kısa bir açıklama ekleyin",
+          "validation": {
+            "invalid": "Açıklama yalnızca harfler, rakamlar, boşluklar, tireler ve kesme işaretleri içerebilir"
+          }
+        },
+        "work_item_type": {
+          "label": "İş öğesi türü"
+        },
+        "success": {
+          "title": "Başarılı!",
+          "message": "İş akışı başarıyla oluşturuldu."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "İş akışı oluşturulamadı. Lütfen tekrar deneyin."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Başarılı!",
+          "message": "İş akışı başarıyla güncellendi."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "İş akışı güncellenemedi. Lütfen tekrar deneyin."
+        }
+      },
+      "delete": {
+        "loading": "İş akışı siliniyor",
+        "success": {
+          "title": "Başarılı!",
+          "message": "İş akışı başarıyla silindi."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "İş akışı silinemedi. Lütfen tekrar deneyin."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Başarılı!",
+          "message": "Durumlar başarıyla eklendi."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "Durumlar eklenemedi. Lütfen tekrar deneyin."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "İş öğesi Türleri",
+      "description": "Benzersiz özelliklere sahip farklı iş öğesi türleri oluşturun ve özelleştirin"
+    },
+    "features": {
+      "cycles": {
+        "title": "Döngüler",
+        "short_title": "Döngüler",
+        "description": "Bu projenin benzersiz ritmine ve hızına uyum sağlayan esnek dönemlerde iş planlayın.",
+        "toggle_title": "Döngüleri etkinleştir",
+        "toggle_description": "Odaklanmış zaman dilimlerinde iş planlayın."
+      },
+      "modules": {
+        "title": "Modüller",
+        "short_title": "Modüller",
+        "description": "İşi özel liderler ve atananlarla alt projelere organize edin.",
+        "toggle_title": "Modülleri etkinleştir",
+        "toggle_description": "Proje üyeleri modüller oluşturabilir ve düzenleyebilir."
+      },
+      "views": {
+        "title": "Görünümler",
+        "short_title": "Görünümler",
+        "description": "Özel sıralamalar, filtreler ve görüntüleme seçeneklerini kaydedin veya ekibinizle paylaşın.",
+        "toggle_title": "Görünümleri etkinleştir",
+        "toggle_description": "Proje üyeleri görünümler oluşturabilir ve düzenleyebilir."
+      },
+      "pages": {
+        "title": "Sayfalar",
+        "short_title": "Sayfalar",
+        "description": "Serbest biçimli içerik oluşturun ve düzenleyin: notlar, belgeler, herhangi bir şey.",
+        "toggle_title": "Sayfaları etkinleştir",
+        "toggle_description": "Proje üyeleri sayfalar oluşturabilir ve düzenleyebilir."
+      },
+      "intake": {
+        "intake_responsibility": "Alım sorumluluğu",
+        "intake_sources": "Alım kaynakları",
+        "title": "Alım",
+        "short_title": "Alım",
+        "description": "Üye olmayanların hataları, geri bildirimleri ve önerileri paylaşmasına izin verin; iş akışınızı aksatmadan.",
+        "toggle_title": "Alımı etkinleştir",
+        "toggle_description": "Proje üyelerinin uygulama içinde alım talepleri oluşturmasına izin verin.",
+        "toggle_tooltip_on": "Proje Yöneticinizden bunu açmasını isteyin.",
+        "toggle_tooltip_off": "Proje Yöneticinizden bunu kapatmasını isteyin.",
+        "notify_assignee": {
+          "title": "Atanan kişileri bildir",
+          "description": "Yeni bir alım talebi için varsayılan atanan kişiler bildirimler aracılığıyla uyarılacaktır"
+        },
+        "in_app": {
+          "title": "Uygulama içi",
+          "description": "Mevcut iş öğelerinizi bozmadan çalışma alanınızdaki Üyeler ve Konuklardan yeni iş öğeleri alın."
+        },
+        "email": {
+          "title": "E-posta",
+          "description": "Plane e-posta adresine e-posta gönderen herkesten yeni iş öğeleri toplayın.",
+          "fieldName": "E-posta ID"
+        },
+        "form": {
+          "title": "Formlar",
+          "description": "Çalışma alanınızın dışındaki kişilerin özel ve güvenli bir form aracılığıyla sizin için potansiyel yeni iş öğeleri oluşturmasına izin verin.",
+          "fieldName": "Varsayılan form URL'si",
+          "create_forms": "İş öğesi türlerini kullanarak form oluşturun",
+          "manage_forms": "Formları yönet",
+          "manage_forms_tooltip": "Çalışma Alanı Yöneticinizden bunu yönetmesini isteyin.",
+          "create_form": "Form oluştur",
+          "edit_form": "Form ayrıntılarını düzenle",
+          "form_title": "Form başlığı",
+          "form_title_required": "Form başlığı zorunludur",
+          "work_item_type": "İş öğesi türü",
+          "remove_property": "Özelliği kaldır",
+          "select_properties": "Özellikleri seç",
+          "search_placeholder": "Özelliklerde ara",
+          "toasts": {
+            "success_create": "Alım formu başarıyla oluşturuldu",
+            "success_update": "Alım formu başarıyla güncellendi",
+            "error_create": "Alım formu oluşturulamadı",
+            "error_update": "Alım formu güncellenemedi"
+          }
+        },
+        "toasts": {
+          "set": {
+            "loading": "Atanan kişiler ayarlanıyor...",
+            "success": {
+              "title": "Başarılı!",
+              "message": "Atanan kişiler başarıyla ayarlandı."
+            },
+            "error": {
+              "title": "Hata!",
+              "message": "Atanan kişileri ayarlarken bir şeyler yanlış gitti. Lütfen tekrar deneyin."
+            }
+          }
+        }
+      },
+      "time_tracking": {
+        "title": "Zaman takibi",
+        "short_title": "Zaman takibi",
+        "description": "İş öğelerine ve projelere harcanan zamanı kaydedin.",
+        "toggle_title": "Zaman takibini etkinleştir",
+        "toggle_description": "Proje üyeleri çalışılan zamanı kaydedebilecektir."
+      },
+      "milestones": {
+        "title": "Kilometre taşları",
+        "short_title": "Kilometre taşları",
+        "description": "Kilometre taşları, iş öğelerini ortak tamamlanma tarihlerine doğru hizalamak için bir katman sağlar.",
+        "toggle_title": "Kilometre taşlarını etkinleştir",
+        "toggle_description": "İş öğelerini kilometre taşı son tarihleri ile organize edin."
+      },
+      "toasts": {
+        "loading": "Proje özelliği güncelleniyor...",
+        "success": "Proje özelliği başarıyla güncellendi.",
+        "error": "Proje özelliği güncellenirken bir şeyler yanlış gitti. Lütfen tekrar deneyin."
+      }
+    },
+    "project_updates": {
+      "heading": "Proje Güncellemeleri",
+      "description": "Bu proje için birleştirilmiş takip ve ilerleme izleme"
+    },
+    "templates": {
+      "heading": "Şablonlar",
+      "description": "Şablonları kullandığınızda projeler, iş öğeleri ve sayfalar oluşturmaya harcanan zamanın %80'ini tasarruf edin."
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "Otomatik döngü planlaması",
+        "description": "Döngüleri manuel kurulum olmadan devam ettirin.",
+        "tooltip": "Seçtiğiniz programa göre otomatik olarak yeni döngüler oluşturun.",
+        "edit_button": "Düzenle",
+        "form": {
+          "cycle_title": {
+            "label": "Döngü başlığı",
+            "placeholder": "Başlık",
+            "tooltip": "Başlık, sonraki döngüler için numaralarla tamamlanacaktır. Örneğin: Tasarım - 1/2/3",
+            "validation": {
+              "required": "Döngü başlığı zorunludur",
+              "max_length": "Başlık 255 karakteri aşmamalıdır"
+            }
+          },
+          "cycle_duration": {
+            "label": "Döngü süresi",
+            "unit": "Hafta",
+            "validation": {
+              "required": "Döngü süresi zorunludur",
+              "min": "Döngü süresi en az 1 hafta olmalıdır",
+              "max": "Döngü süresi 30 haftayı aşamaz",
+              "positive": "Döngü süresi pozitif olmalıdır"
+            }
+          },
+          "cooldown_period": {
+            "label": "Soğuma süresi",
+            "unit": "gün",
+            "tooltip": "Bir sonraki döngü başlamadan önce döngüler arası duraklatma.",
+            "validation": {
+              "required": "Soğuma süresi zorunludur",
+              "negative": "Soğuma süresi negatif olamaz"
+            }
+          },
+          "start_date": {
+            "label": "Döngü başlangıç günü",
+            "validation": {
+              "required": "Başlangıç tarihi zorunludur",
+              "past": "Başlangıç tarihi geçmişte olamaz"
+            }
+          },
+          "number_of_cycles": {
+            "label": "Gelecekteki döngü sayısı",
+            "validation": {
+              "required": "Döngü sayısı zorunludur",
+              "min": "En az 1 döngü gereklidir",
+              "max": "3'ten fazla döngü planlanamaz"
+            }
+          },
+          "auto_rollover": {
+            "label": "İş öğelerini otomatik devret",
+            "tooltip": "Bir döngünün tamamlandığı gün, tüm bitmemiş iş öğelerini bir sonraki döngüye taşıyın."
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "Otomatik döngü planlaması etkinleştiriliyor",
+            "loading_disable": "Otomatik döngü planlaması devre dışı bırakılıyor",
+            "success": {
+              "title": "Başarılı!",
+              "message": "Otomatik döngü planlaması başarıyla değiştirildi."
+            },
+            "error": {
+              "title": "Hata!",
+              "message": "Otomatik döngü planlaması değiştirilemedi."
+            }
+          },
+          "save": {
+            "loading": "Otomatik döngü planlaması yapılandırması kaydediliyor",
+            "success": {
+              "title": "Başarılı!",
+              "message_create": "Otomatik döngü planlaması yapılandırması başarıyla kaydedildi.",
+              "message_update": "Otomatik döngü planlaması yapılandırması başarıyla güncellendi."
+            },
+            "error": {
+              "title": "Hata!",
+              "message_create": "Otomatik döngü planlaması yapılandırması kaydedilemedi.",
+              "message_update": "Otomatik döngü planlaması yapılandırması güncellenemedi."
+            }
+          }
+        }
+      }
+    }
+  }
+}

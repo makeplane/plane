@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "Notițele tale",
+    "placeholder": "click pentru a scrie aici",
+    "all": "Toate notițele",
+    "no-data": "Notează o idee, surprinde un moment de inspirație sau înregistrează o idee. Adaugă o notiță pentru a începe.",
+    "add": "Adaugă notiță",
+    "search_placeholder": "Caută după titlu",
+    "delete": "Șterge notița",
+    "delete_confirmation": "Ești sigur că vrei să ștergi această notiță?",
+    "empty_state": {
+      "simple": "Notează o idee, surprinde un moment de inspirație sau înregistrează o idee. Adaugă o notiță pentru a începe.",
+      "general": {
+        "title": "Notițele sunt observații rapide și lucruri de făcut pe care le notezi din mers.",
+        "description": "Surprinde-ți gândurile și ideile fără efort, creând notițe la care poți avea acces oricând și de oriunde.",
+        "primary_button": {
+          "text": "Adaugă notiță"
+        }
+      },
+      "search": {
+        "title": "Nu se potrivește cu nicio notiță existentă.",
+        "description": "Încearcă un alt termen sau anunță-ne\n dacă ești sigur că ai căutat corect.",
+        "primary_button": {
+          "text": "Adaugă notiță"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Numele notiței nu poate depăși 100 de caractere.",
+        "already_exists": "Există deja o notiță fără descriere"
+      },
+      "created": {
+        "title": "Notiță creată",
+        "message": "Notița a fost creată cu succes"
+      },
+      "not_created": {
+        "title": "Notiță necreată",
+        "message": "Notița nu a putut fi creată"
+      },
+      "updated": {
+        "title": "Notiță actualizată",
+        "message": "Notița a fost actualizată cu succes"
+      },
+      "not_updated": {
+        "title": "Notiță neactualizată",
+        "message": "Notița nu a putut fi actualizată"
+      },
+      "removed": {
+        "title": "Notiță ștearsă",
+        "message": "Notița a fost ștearsă cu succes"
+      },
+      "not_removed": {
+        "title": "Notiță neștearsă",
+        "message": "Notița nu a putut fi ștearsă"
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "Căsuță de mesaje",
+    "page_label": "{workspace} - Căsuță de mesaje",
+    "options": {
+      "mark_all_as_read": "Marchează toate ca citite",
+      "mark_read": "Marchează ca citit",
+      "mark_unread": "Marchează ca necitit",
+      "refresh": "Reîmprospătează",
+      "filters": "Filtre Căsuță de mesaje",
+      "show_unread": "Afișează necitite",
+      "show_snoozed": "Afișează amânate",
+      "show_archived": "Afișează arhivate",
+      "mark_archive": "Arhivează",
+      "mark_unarchive": "Dezarhivează",
+      "mark_snooze": "Amână",
+      "mark_unsnooze": "Dezactivează amânarea"
+    },
+    "toasts": {
+      "read": "Notificare marcată ca citită",
+      "unread": "Notificare marcată ca necitită",
+      "archived": "Notificare arhivată",
+      "unarchived": "Notificare dezarhivată",
+      "snoozed": "Notificare amânată",
+      "unsnoozed": "Notificare reactivată"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Selectează pentru a vedea detalii."
+      },
+      "all": {
+        "title": "Nicio activitate atribuită",
+        "description": "Actualizările pentru activitățile atribuite ție pot fi\nvăzute aici"
+      },
+      "mentions": {
+        "title": "Nicio activitate atribuită",
+        "description": "Actualizările pentru activitățile atribuite ție pot fi\nvăzute aici"
+      }
+    },
+    "tabs": {
+      "all": "Toate",
+      "mentions": "Mențiuni"
+    },
+    "filter": {
+      "assigned": "Atribuite mie",
+      "created": "Create de mine",
+      "subscribed": "Urmărite de mine"
+    },
+    "snooze": {
+      "1_day": "1 zi",
+      "3_days": "3 zile",
+      "5_days": "5 zile",
+      "1_week": "1 săptămână",
+      "2_weeks": "2 săptămâni",
+      "custom": "Personalizat"
+    }
+  }
+}

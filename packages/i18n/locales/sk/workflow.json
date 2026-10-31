@@ -1,0 +1,100 @@
+{
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Povoliť nové pracovné položky",
+      "work_item_creation_disable_tooltip": "Vytváranie pracovných položiek je pre tento stav zakázané",
+      "default_state": "Predvolený stav umožňuje všetkým členom vytvárať nové pracovné položky. Toto sa nedá zmeniť",
+      "state_change_count": "{count, plural, one {1 povolená zmena stavu} few {{count} povolené zmeny stavu} other {{count} povolených zmien stavu}}",
+      "movers_count": "{count, plural, one {1 uvedený recenzent} few {{count} uvedení recenzenti} other {{count} uvedených recenzentov}}",
+      "state_changes": {
+        "label": {
+          "default": "Pridať povolenú zmenu stavu",
+          "loading": "Pridáva sa povolená zmena stavu"
+        },
+        "move_to": "Zmeniť stav na",
+        "movers": {
+          "label": "Po kontrole používateľom",
+          "tooltip": "Recenzenti sú ľudia, ktorí majú povolenie presúvať pracovné položky z jedného stavu do druhého.",
+          "add": "Pridať recenzentov"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Túto pracovnú položku sem nemôžete presunúť."
+    },
+    "workflow_enabled": {
+      "label": "Zmena stavu"
+    },
+    "workflow_tree": {
+      "label": "Pre pracovné položky v",
+      "state_change_label": "môže ho presunúť do"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Ovládajte chaos zmien a recenzií s Vorkflou.",
+        "description": "Nastavte pravidlá pre to, kam sa vaša práca presúva, kým a kedy s Vorkflou v Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Zobraziť históriu zmien",
+      "reset_workflow": "Resetovať vorkflou"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Ste si istí, že chcete resetovať túto vorkflou?",
+        "description": "Ak resetujete túto vorkflou, všetky vaše pravidlá zmien stavu budú odstránené a budete ich musieť vytvoriť znova, aby fungovali v tomto projekte."
+      },
+      "delete_state_change": {
+        "title": "Ste si istí, že chcete odstrániť toto pravidlo zmeny stavu?",
+        "description": "Po odstránení nemôžete túto zmenu vrátiť späť a budete musieť nastaviť pravidlo znova, ak chcete, aby fungovalo pre tento projekt."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} vorkflou",
+        "success": {
+          "title": "Úspech",
+          "message": "Vorkflou bola úspešne {action}"
+        },
+        "error": {
+          "title": "Chyba",
+          "message": "Vorkflou nemohla byť {action}. Skúste to znova."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Úspech",
+          "message": "Vorkflou bola úspešne resetovaná"
+        },
+        "error": {
+          "title": "Chyba pri resetovaní vorkflou",
+          "message": "Vorkflou nemohla byť resetovaná. Skúste to znova."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Chyba pri pridávaní pravidla zmeny stavu",
+          "message": "Pravidlo zmeny stavu nemohlo byť pridané. Skúste to znova."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Chyba pri úprave pravidla zmeny stavu",
+          "message": "Pravidlo zmeny stavu nemohlo byť upravené. Skúste to znova."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Chyba pri odstránení pravidla zmeny stavu",
+          "message": "Pravidlo zmeny stavu nemohlo byť odstránené. Skúste to znova."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Chyba pri úprave recenzentov pravidla zmeny stavu",
+          "message": "Recenzenti pravidla zmeny stavu nemohli byť upravení. Skúste to znova."
+        }
+      }
+    }
+  }
+}
