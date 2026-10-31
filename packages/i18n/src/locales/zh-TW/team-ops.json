@@ -1,0 +1,61 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "時間追蹤"
+    },
+    "time": {
+      "title": "時間追蹤"
+    },
+    "timer": {
+      "title": "計時器",
+      "running": "執行中",
+      "idle": "目前沒有執行中的計時器。",
+      "note_placeholder": "您正在處理什麼？",
+      "start": "啟動計時器",
+      "stop": "停止計時器",
+      "capped": "計時器執行超過 24 小時，因此僅記錄了 24 小時。"
+    },
+    "work_item": {
+      "placeholder": "連結工作事項（選填）",
+      "clear": "移除工作事項",
+      "searching": "搜尋中...",
+      "no_results": "找不到工作事項"
+    },
+    "summary": {
+      "total": "總計",
+      "billable": "可計費",
+      "this_week": "本週",
+      "previous_week": "上週",
+      "next_week": "下週"
+    },
+    "entries": {
+      "title": "時間記錄",
+      "add": "新增時間",
+      "empty": "本週沒有記錄時間。",
+      "edit": "編輯時間記錄",
+      "delete": "刪除時間記錄",
+      "delete_title": "刪除時間記錄",
+      "delete_confirmation": "您確定要刪除此時間記錄嗎？此操作無法復原。",
+      "source_timer": "計時器",
+      "source_manual": "手動"
+    },
+    "form": {
+      "title_create": "新增時間",
+      "title_edit": "編輯時間記錄",
+      "date": "日期",
+      "start_time": "開始時間",
+      "hours": "小時",
+      "minutes": "分鐘",
+      "note": "備註",
+      "billable": "可計費",
+      "save": "儲存",
+      "date_invalid": "請輸入有效的日期和時間。",
+      "duration_invalid": "請輸入 1 分鐘到 24 小時之間的時長。"
+    },
+    "toasts": {
+      "error_title": "發生錯誤",
+      "saved": "時間記錄已儲存",
+      "deleted": "時間記錄已刪除"
+    }
+  }
+}

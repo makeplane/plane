@@ -1,0 +1,61 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "Theo dõi thời gian"
+    },
+    "time": {
+      "title": "Theo dõi thời gian"
+    },
+    "timer": {
+      "title": "Hẹn giờ",
+      "running": "Đang chạy",
+      "idle": "Không có bộ hẹn giờ nào đang chạy.",
+      "note_placeholder": "Bạn đang làm gì?",
+      "start": "Bắt đầu hẹn giờ",
+      "stop": "Dừng hẹn giờ",
+      "capped": "Bộ hẹn giờ đã chạy hơn 24 giờ nên chỉ 24 giờ được ghi lại."
+    },
+    "work_item": {
+      "placeholder": "Liên kết một mục công việc (tùy chọn)",
+      "clear": "Xóa mục công việc",
+      "searching": "Đang tìm kiếm...",
+      "no_results": "Không tìm thấy mục công việc nào"
+    },
+    "summary": {
+      "total": "Tổng",
+      "billable": "Có thể tính phí",
+      "this_week": "Tuần này",
+      "previous_week": "Tuần trước",
+      "next_week": "Tuần sau"
+    },
+    "entries": {
+      "title": "Bản ghi thời gian",
+      "add": "Thêm thời gian",
+      "empty": "Chưa ghi nhận thời gian nào trong tuần này.",
+      "edit": "Chỉnh sửa bản ghi thời gian",
+      "delete": "Xóa bản ghi thời gian",
+      "delete_title": "Xóa bản ghi thời gian",
+      "delete_confirmation": "Bạn có chắc muốn xóa bản ghi thời gian này không? Hành động này không thể hoàn tác.",
+      "source_timer": "Hẹn giờ",
+      "source_manual": "Thủ công"
+    },
+    "form": {
+      "title_create": "Thêm thời gian",
+      "title_edit": "Chỉnh sửa bản ghi thời gian",
+      "date": "Ngày",
+      "start_time": "Giờ bắt đầu",
+      "hours": "Giờ",
+      "minutes": "Phút",
+      "note": "Ghi chú",
+      "billable": "Có thể tính phí",
+      "save": "Lưu",
+      "date_invalid": "Vui lòng nhập ngày và giờ hợp lệ.",
+      "duration_invalid": "Vui lòng nhập thời lượng từ 1 phút đến 24 giờ."
+    },
+    "toasts": {
+      "error_title": "Đã xảy ra lỗi",
+      "saved": "Đã lưu bản ghi thời gian",
+      "deleted": "Đã xóa bản ghi thời gian"
+    }
+  }
+}

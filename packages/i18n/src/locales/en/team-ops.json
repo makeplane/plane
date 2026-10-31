@@ -1,0 +1,61 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "Time tracking"
+    },
+    "time": {
+      "title": "Time tracking"
+    },
+    "timer": {
+      "title": "Timer",
+      "running": "Running",
+      "idle": "No timer is running.",
+      "note_placeholder": "What are you working on?",
+      "start": "Start timer",
+      "stop": "Stop timer",
+      "capped": "The timer ran for more than 24 hours, so only 24 hours were logged."
+    },
+    "work_item": {
+      "placeholder": "Link a work item (optional)",
+      "clear": "Remove work item",
+      "searching": "Searching...",
+      "no_results": "No work items found"
+    },
+    "summary": {
+      "total": "Total",
+      "billable": "Billable",
+      "this_week": "This week",
+      "previous_week": "Previous week",
+      "next_week": "Next week"
+    },
+    "entries": {
+      "title": "Time entries",
+      "add": "Add time",
+      "empty": "No time logged this week.",
+      "edit": "Edit time entry",
+      "delete": "Delete time entry",
+      "delete_title": "Delete time entry",
+      "delete_confirmation": "Are you sure you want to delete this time entry? This cannot be undone.",
+      "source_timer": "Timer",
+      "source_manual": "Manual"
+    },
+    "form": {
+      "title_create": "Add time",
+      "title_edit": "Edit time entry",
+      "date": "Date",
+      "start_time": "Start time",
+      "hours": "Hours",
+      "minutes": "Minutes",
+      "note": "Note",
+      "billable": "Billable",
+      "save": "Save",
+      "date_invalid": "Enter a valid date and time.",
+      "duration_invalid": "Enter a duration between 1 minute and 24 hours."
+    },
+    "toasts": {
+      "error_title": "Something went wrong",
+      "saved": "Time entry saved",
+      "deleted": "Time entry deleted"
+    }
+  }
+}

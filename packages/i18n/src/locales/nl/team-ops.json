@@ -1,0 +1,61 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "Tijdregistratie"
+    },
+    "time": {
+      "title": "Tijdregistratie"
+    },
+    "timer": {
+      "title": "Timer",
+      "running": "Actief",
+      "idle": "Er is geen timer actief.",
+      "note_placeholder": "Waaraan werkt u?",
+      "start": "Timer starten",
+      "stop": "Timer stoppen",
+      "capped": "De timer liep langer dan 24 uur, dus er zijn slechts 24 uur geregistreerd."
+    },
+    "work_item": {
+      "placeholder": "Werkitem koppelen (optioneel)",
+      "clear": "Werkitem verwijderen",
+      "searching": "Zoeken...",
+      "no_results": "Geen werkitems gevonden"
+    },
+    "summary": {
+      "total": "Totaal",
+      "billable": "Factureerbaar",
+      "this_week": "Deze week",
+      "previous_week": "Vorige week",
+      "next_week": "Volgende week"
+    },
+    "entries": {
+      "title": "Tijdregistraties",
+      "add": "Tijd toevoegen",
+      "empty": "Deze week is geen tijd geregistreerd.",
+      "edit": "Tijdregistratie bewerken",
+      "delete": "Tijdregistratie verwijderen",
+      "delete_title": "Tijdregistratie verwijderen",
+      "delete_confirmation": "Weet u zeker dat u deze tijdregistratie wilt verwijderen? Dit kan niet ongedaan worden gemaakt.",
+      "source_timer": "Timer",
+      "source_manual": "Handmatig"
+    },
+    "form": {
+      "title_create": "Tijd toevoegen",
+      "title_edit": "Tijdregistratie bewerken",
+      "date": "Datum",
+      "start_time": "Starttijd",
+      "hours": "Uren",
+      "minutes": "Minuten",
+      "note": "Notitie",
+      "billable": "Factureerbaar",
+      "save": "Opslaan",
+      "date_invalid": "Voer een geldige datum en tijd in.",
+      "duration_invalid": "Voer een duur in van 1 minuut tot 24 uur."
+    },
+    "toasts": {
+      "error_title": "Er is iets misgegaan",
+      "saved": "Tijdregistratie opgeslagen",
+      "deleted": "Tijdregistratie verwijderd"
+    }
+  }
+}

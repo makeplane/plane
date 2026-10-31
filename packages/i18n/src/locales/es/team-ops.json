@@ -1,0 +1,61 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "Seguimiento de tiempo"
+    },
+    "time": {
+      "title": "Seguimiento de tiempo"
+    },
+    "timer": {
+      "title": "Temporizador",
+      "running": "En curso",
+      "idle": "No hay ningún temporizador en curso.",
+      "note_placeholder": "¿En qué está trabajando?",
+      "start": "Iniciar temporizador",
+      "stop": "Detener temporizador",
+      "capped": "El temporizador estuvo activo más de 24 horas, por lo que solo se registraron 24 horas."
+    },
+    "work_item": {
+      "placeholder": "Vincular un elemento de trabajo (opcional)",
+      "clear": "Quitar elemento de trabajo",
+      "searching": "Buscando...",
+      "no_results": "No se encontraron elementos de trabajo"
+    },
+    "summary": {
+      "total": "Total",
+      "billable": "Facturable",
+      "this_week": "Esta semana",
+      "previous_week": "Semana anterior",
+      "next_week": "Semana siguiente"
+    },
+    "entries": {
+      "title": "Registros de tiempo",
+      "add": "Añadir tiempo",
+      "empty": "No se registró tiempo esta semana.",
+      "edit": "Editar registro de tiempo",
+      "delete": "Eliminar registro de tiempo",
+      "delete_title": "Eliminar registro de tiempo",
+      "delete_confirmation": "¿Está seguro de que desea eliminar este registro de tiempo? Esta acción no se puede deshacer.",
+      "source_timer": "Temporizador",
+      "source_manual": "Manual"
+    },
+    "form": {
+      "title_create": "Añadir tiempo",
+      "title_edit": "Editar registro de tiempo",
+      "date": "Fecha",
+      "start_time": "Hora de inicio",
+      "hours": "Horas",
+      "minutes": "Minutos",
+      "note": "Nota",
+      "billable": "Facturable",
+      "save": "Guardar",
+      "date_invalid": "Introduzca una fecha y una hora válidas.",
+      "duration_invalid": "Introduzca una duración entre 1 minuto y 24 horas."
+    },
+    "toasts": {
+      "error_title": "Algo salió mal",
+      "saved": "Registro de tiempo guardado",
+      "deleted": "Registro de tiempo eliminado"
+    }
+  }
+}

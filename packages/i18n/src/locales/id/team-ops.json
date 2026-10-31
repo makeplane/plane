@@ -1,0 +1,61 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "Pelacakan waktu"
+    },
+    "time": {
+      "title": "Pelacakan waktu"
+    },
+    "timer": {
+      "title": "Pengatur waktu",
+      "running": "Berjalan",
+      "idle": "Tidak ada pengatur waktu yang berjalan.",
+      "note_placeholder": "Apa yang sedang Anda kerjakan?",
+      "start": "Mulai pengatur waktu",
+      "stop": "Hentikan pengatur waktu",
+      "capped": "Pengatur waktu berjalan lebih dari 24 jam, sehingga hanya 24 jam yang dicatat."
+    },
+    "work_item": {
+      "placeholder": "Tautkan item kerja (opsional)",
+      "clear": "Hapus item kerja",
+      "searching": "Mencari...",
+      "no_results": "Item kerja tidak ditemukan"
+    },
+    "summary": {
+      "total": "Total",
+      "billable": "Dapat ditagih",
+      "this_week": "Minggu ini",
+      "previous_week": "Minggu lalu",
+      "next_week": "Minggu depan"
+    },
+    "entries": {
+      "title": "Catatan waktu",
+      "add": "Tambah waktu",
+      "empty": "Tidak ada waktu yang dicatat minggu ini.",
+      "edit": "Edit catatan waktu",
+      "delete": "Hapus catatan waktu",
+      "delete_title": "Hapus catatan waktu",
+      "delete_confirmation": "Apakah Anda yakin ingin menghapus catatan waktu ini? Tindakan ini tidak dapat dibatalkan.",
+      "source_timer": "Pengatur waktu",
+      "source_manual": "Manual"
+    },
+    "form": {
+      "title_create": "Tambah waktu",
+      "title_edit": "Edit catatan waktu",
+      "date": "Tanggal",
+      "start_time": "Waktu mulai",
+      "hours": "Jam",
+      "minutes": "Menit",
+      "note": "Catatan",
+      "billable": "Dapat ditagih",
+      "save": "Simpan",
+      "date_invalid": "Masukkan tanggal dan waktu yang valid.",
+      "duration_invalid": "Masukkan durasi antara 1 menit dan 24 jam."
+    },
+    "toasts": {
+      "error_title": "Terjadi kesalahan",
+      "saved": "Catatan waktu disimpan",
+      "deleted": "Catatan waktu dihapus"
+    }
+  }
+}

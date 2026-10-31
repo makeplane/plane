@@ -1,0 +1,61 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "시간 추적"
+    },
+    "time": {
+      "title": "시간 추적"
+    },
+    "timer": {
+      "title": "타이머",
+      "running": "실행 중",
+      "idle": "실행 중인 타이머가 없습니다.",
+      "note_placeholder": "어떤 작업을 하고 계신가요?",
+      "start": "타이머 시작",
+      "stop": "타이머 중지",
+      "capped": "타이머가 24시간 넘게 실행되어 24시간만 기록되었습니다."
+    },
+    "work_item": {
+      "placeholder": "작업 항목 연결(선택 사항)",
+      "clear": "작업 항목 제거",
+      "searching": "검색 중...",
+      "no_results": "작업 항목을 찾을 수 없습니다"
+    },
+    "summary": {
+      "total": "합계",
+      "billable": "청구 가능",
+      "this_week": "이번 주",
+      "previous_week": "지난주",
+      "next_week": "다음 주"
+    },
+    "entries": {
+      "title": "시간 기록",
+      "add": "시간 추가",
+      "empty": "이번 주에 기록된 시간이 없습니다.",
+      "edit": "시간 기록 편집",
+      "delete": "시간 기록 삭제",
+      "delete_title": "시간 기록 삭제",
+      "delete_confirmation": "이 시간 기록을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+      "source_timer": "타이머",
+      "source_manual": "수동"
+    },
+    "form": {
+      "title_create": "시간 추가",
+      "title_edit": "시간 기록 편집",
+      "date": "날짜",
+      "start_time": "시작 시간",
+      "hours": "시간",
+      "minutes": "분",
+      "note": "메모",
+      "billable": "청구 가능",
+      "save": "저장",
+      "date_invalid": "올바른 날짜와 시간을 입력해 주세요.",
+      "duration_invalid": "1분에서 24시간 사이의 시간을 입력해 주세요."
+    },
+    "toasts": {
+      "error_title": "문제가 발생했습니다",
+      "saved": "시간 기록이 저장되었습니다",
+      "deleted": "시간 기록이 삭제되었습니다"
+    }
+  }
+}

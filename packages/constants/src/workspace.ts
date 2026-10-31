@@ -281,6 +281,17 @@ export const WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS: IWorkspaceS
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["projects"],
 ];
 
+/** Team Ops entries shown under the pinned workspace items. Keys must be listed as static in the sidebar item. */
+export const TEAM_OPS_SIDEBAR_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
+  {
+    key: "time_tracking",
+    labelTranslationKey: "team_ops.nav.time_tracking",
+    href: `/team-ops/time/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
+];
+
 export const IS_FAVORITE_MENU_OPEN = "is_favorite_menu_open";
 export const WORKSPACE_DEFAULT_SEARCH_RESULT: IWorkspaceSearchResults = {
   results: {

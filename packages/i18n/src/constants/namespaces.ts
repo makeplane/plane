@@ -24,6 +24,7 @@ export const NAMESPACES = [
   "project-settings",
   "settings",
   "stickies",
+  "team-ops",
   "template",
   "tour",
   "update",

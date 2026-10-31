@@ -24,6 +24,9 @@ urlpatterns = [
     path("", include("plane.web.urls")),
 ]
 
+if settings.TEAM_OPS_ENABLED:
+    urlpatterns.insert(1, path("api/", include("plane.team_ops.urls")))
+
 if settings.ENABLE_DRF_SPECTACULAR:
     urlpatterns += [
         path("api/schema/", SpectacularAPIView.as_view(), name="schema"),

@@ -112,6 +112,7 @@ INSTALLED_APPS = [
     "plane.license",
     "plane.api",
     "plane.authentication",
+    "plane.team_ops",
     # Third-party things
     "rest_framework",
     "corsheaders",
@@ -598,6 +599,10 @@ INLINE_SAFE_MIME_TYPES: frozenset[str] = frozenset(["image/jpeg", "image/jpg", "
 
 # Seed directory path
 SEED_DIR = os.path.join(BASE_DIR, "seeds")
+
+# Team Ops (time tracking, reports, ...). The app and its tables are always installed;
+# this only switches its API routes off.
+TEAM_OPS_ENABLED = os.environ.get("TEAM_OPS_ENABLED", "1") == "1"
 
 ENABLE_DRF_SPECTACULAR = os.environ.get("ENABLE_DRF_SPECTACULAR", "0") == "1"
 

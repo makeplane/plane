@@ -14,6 +14,7 @@ import {
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS,
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS,
   WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS,
+  TEAM_OPS_SIDEBAR_NAVIGATION_ITEMS_LINKS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
@@ -112,6 +113,9 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
           {WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS.map((item, _index) => (
             // oxlint-disable-next-line react/no-array-index-key
             <SidebarItemBase key={`static_${_index}`} item={item} />
+          ))}
+          {TEAM_OPS_SIDEBAR_NAVIGATION_ITEMS_LINKS.map((item) => (
+            <SidebarItemBase key={`team_ops_${item.key}`} item={item} additionalStaticItems={["time_tracking"]} />
           ))}
           {sortedNavigationItems.map((item, _index) => (
             // oxlint-disable-next-line react/no-array-index-key

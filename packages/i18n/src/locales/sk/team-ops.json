@@ -1,0 +1,61 @@
+{
+  "team_ops": {
+    "nav": {
+      "time_tracking": "Sledovanie času"
+    },
+    "time": {
+      "title": "Sledovanie času"
+    },
+    "timer": {
+      "title": "Časovač",
+      "running": "Beží",
+      "idle": "Žiadny časovač nebeží.",
+      "note_placeholder": "Na čom pracujete?",
+      "start": "Spustiť časovač",
+      "stop": "Zastaviť časovač",
+      "capped": "Časovač bežal dlhšie ako 24 hodín, preto sa zaznamenalo iba 24 hodín."
+    },
+    "work_item": {
+      "placeholder": "Prepojiť pracovnú položku (voliteľné)",
+      "clear": "Odstrániť pracovnú položku",
+      "searching": "Vyhľadávanie...",
+      "no_results": "Nenašli sa žiadne pracovné položky"
+    },
+    "summary": {
+      "total": "Spolu",
+      "billable": "Fakturovateľné",
+      "this_week": "Tento týždeň",
+      "previous_week": "Predchádzajúci týždeň",
+      "next_week": "Nasledujúci týždeň"
+    },
+    "entries": {
+      "title": "Záznamy času",
+      "add": "Pridať čas",
+      "empty": "Tento týždeň sa nezaznamenal žiadny čas.",
+      "edit": "Upraviť záznam času",
+      "delete": "Zmazať záznam času",
+      "delete_title": "Zmazať záznam času",
+      "delete_confirmation": "Naozaj chcete zmazať tento záznam času? Túto akciu nemožno vrátiť späť.",
+      "source_timer": "Časovač",
+      "source_manual": "Ručne"
+    },
+    "form": {
+      "title_create": "Pridať čas",
+      "title_edit": "Upraviť záznam času",
+      "date": "Dátum",
+      "start_time": "Čas začiatku",
+      "hours": "Hodiny",
+      "minutes": "Minúty",
+      "note": "Poznámka",
+      "billable": "Fakturovateľné",
+      "save": "Uložiť",
+      "date_invalid": "Zadajte platný dátum a čas.",
+      "duration_invalid": "Zadajte trvanie od 1 minúty do 24 hodín."
+    },
+    "toasts": {
+      "error_title": "Niečo sa pokazilo",
+      "saved": "Záznam času bol uložený",
+      "deleted": "Záznam času bol zmazaný"
+    }
+  }
+}
