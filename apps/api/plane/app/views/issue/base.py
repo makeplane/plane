@@ -50,6 +50,7 @@ from plane.db.models import (
     IntakeIssue,
     Issue,
     IssueAssignee,
+    IssueComment,
     IssueLabel,
     IssueLink,
     IssueReaction,
@@ -144,6 +145,12 @@ class IssueListEndpoint(BaseAPIView):
             )
             .annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                comment_count=IssueComment.objects.filter(issue=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")

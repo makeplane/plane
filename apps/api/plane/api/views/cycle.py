@@ -43,6 +43,7 @@ from plane.db.models import (
     Project,
     FileAsset,
     IssueLink,
+    IssueComment,
     UserFavorite,
 )
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
@@ -926,6 +927,12 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
                     issue_id=OuterRef("id"),
                     entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                comment_count=IssueComment.objects.filter(issue=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")

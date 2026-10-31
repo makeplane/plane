@@ -66,6 +66,21 @@ class IssueSerializer(BaseSerializer):
     type_id = serializers.PrimaryKeyRelatedField(
         source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
     )
+    comment_count = serializers.SerializerMethodField()
+    link_count = serializers.SerializerMethodField()
+    attachment_count = serializers.SerializerMethodField()
+
+    def get_comment_count(self, obj) -> int:
+        """Return the number of comments on the work item."""
+        return getattr(obj, "comment_count", 0) or 0
+
+    def get_link_count(self, obj) -> int:
+        """Return the number of links on the work item."""
+        return getattr(obj, "link_count", 0) or 0
+
+    def get_attachment_count(self, obj) -> int:
+        """Return the number of file attachments on the work item."""
+        return getattr(obj, "attachment_count", 0) or 0
 
     class Meta:
         model = Issue
