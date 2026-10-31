@@ -20,6 +20,11 @@ PAGE_VERSION_TASK_TIMEOUT = 600
 
 @shared_task
 def track_page_version(page_id, existing_instance, user_id):
+    """Track and persist version snapshots of a page.
+
+    Creates a new PageVersion or updates an existing version in place if
+    edited by the same user within PAGE_VERSION_TASK_TIMEOUT.
+    """
     try:
         # Get the page
         page = Page.objects.get(id=page_id)
@@ -42,7 +47,7 @@ def track_page_version(page_id, existing_instance, user_id):
             ):
                 page_version.description_html = page.description_html
                 page_version.description_binary = page.description_binary
-                page_version.description_json = page.description
+                page_version.description_json = page.description_json
                 page_version.description_stripped = page.description_stripped
                 page_version.sub_pages_data = sub_pages
                 page_version.save(
@@ -60,7 +65,7 @@ def track_page_version(page_id, existing_instance, user_id):
                 PageVersion.objects.create(
                     page_id=page_id,
                     workspace_id=page.workspace_id,
-                    description_json=page.description,
+                    description_json=page.description_json,
                     description_html=page.description_html,
                     description_binary=page.description_binary,
                     description_stripped=page.description_stripped,
