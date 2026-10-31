@@ -26,6 +26,11 @@ from .integration import (
     GithubRepositorySync,
     Integration,
     SlackProjectSync,
+    TelegramIntegration,
+    TelegramProjectChat,
+    TelegramUserLink,
+    TelegramLinkToken,
+    TelegramProcessedUpdate,
     WorkspaceIntegration,
 )
 from .issue import (
