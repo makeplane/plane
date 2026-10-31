@@ -134,3 +134,15 @@ New tables: `tops_hub_doc`, `tops_hub_secret`, `tops_hub_secret_access`, `tops_h
 - **Weekly chart**: hours per day, Saturday to Friday, with filters for the place (all, onsite, remote) and for the hours of the day (from, to; a shortcut sets 09–18). A session counts in proportion to the part that falls inside the hours chosen.
 - **Report tags**: besides teams, people can be tagged one by one. Someone who reads the project channel or a chosen team's channel is tagged there; anyone else gets the report as a private message.
 - Verification: 419 Team Ops backend tests, 150 unit tests in `@plane/services`, `tsc` and `oxlint` clean; seen in a browser (week plan, chart, graph with a year of seeded work). No new migration.
+
+## Update: Control (fifth round)
+
+Sidebar item **Control**, one page with three tabs. Admins see all three; team leads (and anyone the team-view policy allows) see **Team control**; everyone else is told it is for admins and leads.
+
+- **Team control**: filters for the period (today, this week, last 7, 30, 90 days), team and name; CSV export. Tiles: working now, worked, onsite, remote, frozen, people whose week is not planned. A table with one row per person: state now and task, worked, onsite / remote, tasks and finished work, rest pauses, frozen time and count, and whether the week plan is complete. Click a person for their year graph, time by task, finished work, and their pauses and freezes. Below: every missed check-in in the period. Refreshes every 20 seconds.
+- **Hub control** (admins): every team, project, General and News channel with people, messages, messages in the last 24 hours, last message, and who may write. An admin can **lock** a channel (only admins write) and **review and remove** messages. Totals for documents, files (and their size), private conversations and secrets (counts only). **Private messages and secret values cannot be reached from here**: those endpoints answer "not found" for them, and tests check it.
+- **Teamflow control** (admins): each flow with its progress, the stage that holds it, pending stages, people with no tasks, and hand-offs not opened for 48 hours.
+
+API: `control/team/` (`export=csv`), `control/interruptions/`, `control/hub/` with `channels/<id>/` (lock, review) and `messages/<id>/` (remove), `control/flows/`. Migration `team_ops.0009_hub_channel_lock` adds the lock column.
+
+Verification: 436 Team Ops backend tests (17 for Control, including rights, other workspaces, private messages and secrets out of reach), 157 unit tests in `@plane/services`, `tsc`, `oxlint` and the production build clean; migrations `0006` to `0009` applied, rolled back to `0005` and applied again on a copy of the real data (16 new tables, nothing else changed except Django's metadata); all three tabs seen in a browser.

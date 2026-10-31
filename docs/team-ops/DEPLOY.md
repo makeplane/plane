@@ -1,6 +1,6 @@
 # Deploying the Team Ops modules
 
-Covers Workday (which merges Time Tracking, Work Calendar and Work Reports), Hub, Teamflow, Dashboard, Leave and Teamspaces (migrations `team_ops.0001` to `0008`, plus Plane's own `db.0122` to `0125` which the server is missing).
+Covers Workday (which merges Time Tracking, Work Calendar and Work Reports), Hub, Teamflow, Dashboard, Leave and Teamspaces (migrations `team_ops.0001` to `0009`, plus Plane's own `db.0122` to `0125` which the server is missing).
 
 **Nothing here has been run on the server.** The images were not built on this machine (no Docker); the code, migrations and frontend build were verified locally.
 
