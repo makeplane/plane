@@ -187,7 +187,7 @@ export const analyzeCoverImageChange = (
   const imageType = getCoverImageType(newImage);
 
   return {
-    needsUpload: imageType === "local_static" || imageType === "unsplash",
+    needsUpload: imageType === "unsplash",
     imageType,
     shouldUpdate: hasChanged,
   };
@@ -275,6 +275,11 @@ export const handleCoverImageChange = async (
     const assetUrl = await uploadCoverImage(newImage, uploadConfig);
     // cover_image requires an absolute URL; cover_image_url is relative (matches GET /api/users/me/ format)
     return { cover_image: getFileURL(assetUrl) || assetUrl, cover_image_url: assetUrl };
+  }
+
+  // Local static bundled images are served directly from assets and do not need asset records
+  if (analysis.imageType === "local_static") {
+    return { cover_image: newImage, cover_image_url: newImage, cover_image_asset: null };
   }
 
   // cover_image requires an absolute URL; getFileURL converts relative paths from the Upload tab
