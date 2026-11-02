@@ -7,7 +7,7 @@
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
-import { LogOut, Settings, Settings2 } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 // plane imports
 import { GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -119,18 +119,6 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
         >
           <Settings className="size-3.5 shrink-0" />
           {t("settings")}
-        </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem
-          onClick={() =>
-            toggleProfileSettingsModal({
-              activeTab: "preferences",
-              isOpen: true,
-            })
-          }
-          className="flex items-center gap-2"
-        >
-          <Settings2 className="size-3.5 shrink-0" />
-          {t("preferences")}
         </CustomMenu.MenuItem>
       </div>
       <CustomMenu.MenuItem onClick={handleSignOut} className="flex items-center gap-2">
