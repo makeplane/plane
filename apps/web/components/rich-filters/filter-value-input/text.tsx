@@ -6,7 +6,6 @@
 
 import { useState } from "react";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { COMMON_FILTER_ITEM_BORDER_CLASSNAME } from "../shared";
 
 type TTextFilterValueInputProps = {
   value: string;
@@ -31,10 +30,8 @@ function TextFilterInput({ value, placeholder, isDisabled, onChange }: TTextFilt
   const [draft, setDraft] = useState<string | null>(null);
 
   return (
-    <InputGroup
-      size="md"
-      render={<div className={`h-full w-48 rounded-none border-0 ${COMMON_FILTER_ITEM_BORDER_CLASSNAME}`} />}
-    >
+    // A segment of the condition's pill group, which joins its border with the segments beside it.
+    <InputGroup size="md" render={<div className="w-48" />}>
       <Input
         aria-label="Filter value"
         placeholder={placeholder}
