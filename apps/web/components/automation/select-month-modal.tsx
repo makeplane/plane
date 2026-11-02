@@ -75,7 +75,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
           placeholder="Enter Months"
           min={1}
           max={12}
-          endIcon={<span className="text-13 text-secondary">Months</span>}
+          endIcon={<span className="text-body-xs-regular text-secondary">Months</span>}
           error={errors[name] ? "Select a month between 1 and 12." : undefined}
         />
       )}

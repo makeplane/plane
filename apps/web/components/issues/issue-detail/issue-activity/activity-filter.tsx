@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { FilterOutline } from "@makeplane/propel/icons";
+import { FilterOutline, SelectedFilterOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { TActivityFilters, TActivityFilterOption } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -23,16 +23,18 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
 
   // hooks
   const { t } = useTranslation();
+  // derived values
+  const isFiltersApplied = selectedFilters.length < filterOptions.length;
 
   return (
-    <div className="relative">
+    <div className="flex items-center">
       <Menu>
         <MenuTrigger
           render={
             <IconButton
               variant="tertiary"
-              size="sm"
-              icon={<Icon icon={FilterOutline} />}
+              size="md"
+              icon={<Icon icon={isFiltersApplied ? SelectedFilterOutline : FilterOutline} />}
               aria-label={t("common.filters")}
             />
           }
@@ -48,9 +50,6 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
           ))}
         </MenuContent>
       </Menu>
-      {selectedFilters.length < filterOptions.length && (
-        <span className="pointer-events-none absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-accent-primary" />
-      )}
     </div>
   );
 });

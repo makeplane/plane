@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Hlavný bočný panel",
+      "resize_sidebar": "Zmeniť veľkosť bočného panela",
+      "sidebar_peek_view": "Náhľad bočného panela",
       "workspace_logo": "Logo pracovného priestoru",
       "open_workspace_switcher": "Otvoriť prepínač pracovného priestoru",
       "open_user_menu": "Otvoriť používateľské menu",
@@ -42,6 +45,9 @@
       "open": "Otvoriť výber farby",
       "swatches": "Prednastavené farby",
       "hex_input": "Hexadecimálna farba"
+    },
+    "project_board": {
+      "collapse_group": "Zbaliť skupinu"
     }
   }
 }

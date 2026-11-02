@@ -47,23 +47,23 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
   const { project_details } = usePublish(anchor.toString());
 
   return (
-    <div className="space-y-2 px-3 py-2">
+    <div className="flex flex-col gap-3">
       <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
         <div className="relative">
-          <div className="line-clamp-1 text-11 text-tertiary">
+          <div className="text-caption-sm-regular text-tertiary">
             {project_details?.identifier}-{issue.sequence_id}
           </div>
         </div>
       </WithDisplayPropertiesHOC>
 
-      <div className="mb-1.5 line-clamp-1 w-full text-13 text-primary">
+      <div className="w-full text-body-sm-medium break-words text-primary">
         <Tooltip label={issue.name}>
           <span>{issue.name}</span>
         </Tooltip>
       </div>
 
       <IssueProperties
-        className="flex flex-wrap items-center gap-2 pt-1.5 whitespace-nowrap text-tertiary"
+        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-tertiary"
         issue={issue}
         displayProperties={displayProperties}
       />
@@ -90,10 +90,10 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
   if (!issue) return null;
 
   return (
-    <div className={cn("group/kanban-block relative p-1.5")}>
+    <div className="group/kanban-block relative">
       <div
         className={cn(
-          "relative block w-full rounded-lg border border-subtle bg-layer-2 text-13 transition-all hover:bg-layer-2-hover",
+          "relative block w-full rounded-lg border border-subtle-1 bg-layer-2 text-body-xs-regular transition-all hover:border-strong hover:shadow-raised-200",
           {
             "border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id),
           }
@@ -101,7 +101,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
       >
         <Link
           id={getIssueBlockId(issueId, groupId, subGroupId)}
-          className="w-full"
+          className="block w-full p-3"
           to={`?${queryParam}`}
           onClick={handleIssuePeekOverview}
         >

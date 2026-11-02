@@ -5,6 +5,7 @@
  */
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "@plane/i18n";
 import { Dialog, DialogContent } from "@makeplane/propel/components/dialog";
 import { getAssetIdFromUrl, checkURLValidity } from "@plane/utils";
 // plane ui
@@ -33,6 +34,7 @@ enum EProjectCreationSteps {
 }
 
 export function CreateProjectModal(props: Props) {
+  const { t } = useTranslation();
   const { isOpen, onClose, setToFavorite = false, workspaceSlug, data, templateId } = props;
   // states
   const [currentStep, setCurrentStep] = useState<EProjectCreationSteps>(EProjectCreationSteps.CREATE_PROJECT);
@@ -67,11 +69,9 @@ export function CreateProjectModal(props: Props) {
         if (!open) onClose();
       }}
     >
-      <DialogContent size="lg">
+      <DialogContent size="lg" aria-label={t("create_project")}>
         {currentStep === EProjectCreationSteps.CREATE_PROJECT && (
-          // CreateProjectForm has no DialogBody scroller of its own yet, so this wrapper keeps the
-          // whole form (including the submit footer) reachable on short viewports.
-          <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
             <CreateProjectForm
               setToFavorite={setToFavorite}
               workspaceSlug={workspaceSlug}

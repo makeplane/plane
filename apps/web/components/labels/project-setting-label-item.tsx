@@ -10,6 +10,7 @@ import { useParams } from "next/navigation";
 import { CloseOutline, EditOutline } from "@makeplane/propel/icons";
 // types
 import type { IIssueLabel } from "@plane/types";
+import { cn } from "@plane/utils";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 // components
@@ -87,12 +88,14 @@ export function ProjectSettingLabelItem(props: Props) {
     <LabelDndHOC label={label} isGroup={false} isChild={isChild} isLastChild={isLastChild} onDrop={onDrop}>
       {(isDragging, isDroppingInLabel, dragHandleRef) => (
         <div
-          className={`rounded-sm ${isDroppingInLabel ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
+          className={cn(
+            "group relative overflow-hidden rounded-md border bg-surface-1",
+            isDroppingInLabel ? "border-accent-strong ring-1 ring-accent-strong" : "border-subtle-1",
+            (isDragging || isParentDragging) && "bg-layer-1"
+          )}
         >
           <div
-            className={`group relative flex items-center justify-between gap-2 space-y-3 rounded-sm px-1 py-3 ${
-              isDroppingInLabel ? "" : "border-[0.5px] border-subtle"
-            } ${isDragging || isParentDragging ? "bg-layer-1" : "bg-surface-1"}`}
+            className={cn("flex min-h-10 items-center justify-between gap-2 py-2.5 pr-3", isEditLabelForm && "pl-3")}
           >
             {isEditLabelForm ? (
               <CreateUpdateLabelInline

@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Bilah sisi utama",
+      "resize_sidebar": "Ubah ukuran bilah sisi",
+      "sidebar_peek_view": "Pratinjau bilah sisi",
       "workspace_logo": "Logo ruang kerja",
       "open_workspace_switcher": "Buka penukar ruang kerja",
       "open_user_menu": "Buka menu pengguna",
@@ -42,6 +45,9 @@
       "open": "Buka pemilih warna",
       "swatches": "Warna preset",
       "hex_input": "Warna heksadesimal"
+    },
+    "project_board": {
+      "collapse_group": "Ciutkan grup"
     }
   }
 }

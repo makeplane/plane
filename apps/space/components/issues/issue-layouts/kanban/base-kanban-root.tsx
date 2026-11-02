@@ -9,6 +9,7 @@ import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 // types
 import type { IIssueDisplayProperties } from "@plane/types";
+import { getComputedDisplayProperties } from "@plane/utils";
 // components
 import { IssueLayoutHOC } from "@/components/issues/issue-layouts/issue-layout-HOC";
 // hooks
@@ -24,16 +25,7 @@ export const IssueKanbanLayoutRoot = observer(function IssueKanbanLayoutRoot(pro
   // store hooks
   const { groupedIssueIds, getIssueLoader, fetchNextPublicIssues, getGroupIssueCount, getPaginationData } = useIssue();
 
-  const displayProperties: IIssueDisplayProperties = useMemo(
-    () => ({
-      key: true,
-      state: true,
-      labels: true,
-      priority: true,
-      due_date: true,
-    }),
-    []
-  );
+  const displayProperties: IIssueDisplayProperties = useMemo(() => getComputedDisplayProperties(), []);
 
   const fetchMoreIssues = useCallback(
     (groupId?: string, subgroupId?: string) => {

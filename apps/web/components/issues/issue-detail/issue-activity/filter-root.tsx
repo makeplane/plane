@@ -15,12 +15,18 @@ export type TActivityFilterRoot = {
   toggleFilter: (filter: TActivityFilters) => void;
   projectId: string;
   isIntakeIssue?: boolean;
+  /** Restricts the options to these filters (e.g. the ones the active activity tab covers). */
+  filterKeys?: TActivityFilters[];
 };
 
 export function ActivityFilterRoot(props: TActivityFilterRoot) {
-  const { selectedFilters, toggleFilter } = props;
+  const { selectedFilters, toggleFilter, filterKeys } = props;
 
-  const filters: TActivityFilterOption[] = Object.entries(ACTIVITY_FILTER_TYPE_OPTIONS).map(([key, value]) => {
+  const filterEntries = Object.entries(ACTIVITY_FILTER_TYPE_OPTIONS).filter(
+    ([key]) => !filterKeys || filterKeys.includes(key as TActivityFilters)
+  );
+
+  const filters: TActivityFilterOption[] = filterEntries.map(([key, value]) => {
     const filterKey = key as TActivityFilters;
     return {
       key: filterKey,

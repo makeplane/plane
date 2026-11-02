@@ -10,7 +10,11 @@ import { Controller, useForm } from "react-hook-form";
 // Plane Imports
 import { CYCLE_STATUS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronRightOutline } from "@makeplane/propel/icons";
+import { Badge } from "@makeplane/propel/components/badge";
+import type { BadgeProps } from "@makeplane/propel/components/badge";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { ArrowNarrowRightOutline } from "@makeplane/propel/icons";
 import { DateRangeSelect } from "@plane/blocks/property-select";
 import { setToast } from "@plane/blocks/toast";
 import type { ICycle } from "@plane/types";
@@ -36,6 +40,13 @@ const defaultValues: Partial<ICycle> = {
 };
 
 const cycleService = new CycleService();
+
+const CYCLE_STATUS_BADGE_VARIANTS: Record<string, BadgeProps["variant"]> = {
+  current: "warning",
+  upcoming: "info",
+  completed: "success",
+  draft: "grey",
+};
 
 export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Props) {
   const { workspaceSlug, projectId, cycleDetails, handleClose, isArchived = false } = props;
@@ -120,82 +131,73 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
 
   return (
     <>
-      <div className="sticky top-0 z-10 flex items-center justify-between bg-surface-1 pt-2">
-        <div className="flex size-5 items-center justify-center">
-          <button
-            className="flex size-6 flex-shrink-0 items-center justify-center rounded-full bg-layer-3 hover:bg-layer-3-hover"
-            onClick={() => handleClose()}
-          >
-            <ChevronRightOutline className="size-4 text-secondary" />
-          </button>
-        </div>
+      <div className="sticky top-0 z-10 flex items-center justify-between bg-surface-1 pt-4">
+        <IconButton
+          variant="ghost"
+          size="sm"
+          aria-label={t("close")}
+          onClick={() => handleClose()}
+          icon={<Icon icon={ArrowNarrowRightOutline} />}
+        />
       </div>
-      <div className="flex w-full flex-col gap-2">
-        <div className="flex items-start justify-between gap-3 pt-2">
-          <h4 className="w-full text-18 font-semibold break-words text-primary">{cycleDetails.name}</h4>
-          {currentCycle && (
-            <span
-              className="flex h-6 min-w-20 items-center justify-center truncate rounded-sm px-3 text-center text-11 font-medium whitespace-nowrap"
-              style={{
-                color: currentCycle.color,
-                backgroundColor: `${currentCycle.color}20`,
-              }}
-            >
-              {t(currentCycle.i18n_title)}
-            </span>
-          )}
-        </div>
-
-        <Controller
-          control={control}
-          name="start_date"
-          render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
-            <div className="flex items-center gap-2">
+      <div className="flex w-full flex-col gap-3 pt-5">
+        <h4 className="text-h5-semibold break-words text-primary">{cycleDetails.name}</h4>
+        <div className="flex flex-wrap items-center gap-2">
+          <Controller
+            control={control}
+            name="start_date"
+            render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
               <Controller
                 control={control}
                 name="end_date"
                 render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
-                  <div className="h-7">
-                    <DateRangeSelect
-                      variant="pill-sm"
-                      minDate={new Date()}
-                      value={{
-                        from: getDate(startDateValue) ?? null,
-                        to: getDate(endDateValue) ?? null,
-                      }}
-                      onChange={(range) => {
-                        void (async () => {
-                          const from = range.from ?? undefined;
-                          const to = range.to ?? undefined;
-                          const isDateValid = await handleDateChange(from, to);
-                          if (isDateValid) {
-                            onChangeStartDate(from ? renderFormattedPayloadDate(from) : null);
-                            onChangeEndDate(to ? renderFormattedPayloadDate(to) : null);
-                          }
-                        })();
-                      }}
-                      placeholder={`${t("project_cycles.start_date")} - ${t("project_cycles.end_date")}`}
-                      tooltipHeading={t("project_cycles.in_your_timezone")}
-                      tooltipContent={`${renderFormattedDateInUserTimezone(
-                        cycleDetails.start_date ?? ""
-                      )} → ${renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}`}
-                      mergeDates
-                      // show tooltip only if both start and end date are present
-                      showTooltip={!!cycleDetails.start_date && !!cycleDetails.end_date}
-                      disabled={!isEditingAllowed || isArchived || isCompleted}
-                      weekStartsOn={userProfile?.start_of_the_week}
-                    />
-                  </div>
+                  <DateRangeSelect
+                    variant="pill-sm"
+                    className="max-w-none"
+                    minDate={new Date()}
+                    value={{
+                      from: getDate(startDateValue) ?? null,
+                      to: getDate(endDateValue) ?? null,
+                    }}
+                    onChange={(range) => {
+                      void (async () => {
+                        const from = range.from ?? undefined;
+                        const to = range.to ?? undefined;
+                        const isDateValid = await handleDateChange(from, to);
+                        if (isDateValid) {
+                          onChangeStartDate(from ? renderFormattedPayloadDate(from) : null);
+                          onChangeEndDate(to ? renderFormattedPayloadDate(to) : null);
+                        }
+                      })();
+                    }}
+                    placeholder={`${t("project_cycles.start_date")} - ${t("project_cycles.end_date")}`}
+                    tooltipHeading={t("project_cycles.in_your_timezone")}
+                    tooltipContent={`${renderFormattedDateInUserTimezone(
+                      cycleDetails.start_date ?? ""
+                    )} → ${renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}`}
+                    mergeDates
+                    // show tooltip only if both start and end date are present
+                    showTooltip={!!cycleDetails.start_date && !!cycleDetails.end_date}
+                    disabled={!isEditingAllowed || isArchived || isCompleted}
+                    weekStartsOn={userProfile?.start_of_the_week}
+                  />
                 )}
               />
-              {projectUTCOffset && (
-                <span className="cursor-default rounded-md bg-layer-1 px-2 py-1 text-11 text-tertiary">
-                  {projectUTCOffset}
-                </span>
-              )}
-            </div>
+            )}
+          />
+          {projectUTCOffset && (
+            <span className="cursor-default rounded-md bg-layer-1 px-2 py-1 text-caption-sm-regular text-tertiary">
+              {projectUTCOffset}
+            </span>
           )}
-        />
+          {currentCycle && (
+            <Badge
+              size="sm"
+              variant={CYCLE_STATUS_BADGE_VARIANTS[currentCycle.value]}
+              label={t(currentCycle.i18n_title)}
+            />
+          )}
+        </div>
       </div>
     </>
   );

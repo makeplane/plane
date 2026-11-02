@@ -13,8 +13,20 @@ import type { CompleteOrEmpty } from "@plane/types";
 export const getSupportEmail = (defaultEmail: string = ""): string => defaultEmail;
 
 // Matches custom typography classes: text-h1-semibold, text-body-md-regular, text-caption-xs-medium, etc.
+// Note the inversion: this returns false for a typography token.
 const isCustomTypography = (value: string) =>
-  !/^(h[1-6]|body-(xs|sm|md)|caption-(xs|sm|md))-(regular|medium|semibold|bold)$/.test(value);
+  !/^(h[1-6]|body-(2xs|xs|sm|md)|caption-(3xs|2xs|xs|sm|md))-(regular|medium|semibold|bold)$/.test(value);
+
+// Propel's named border and outline widths (`--border-width-sm`, `--outline-width-md`, ...). tailwind-merge
+// would otherwise treat `border-sm` as a border colour, so a following `border-subtle-1` dropped the width.
+const BORDER_WIDTH_STEPS = ["xs", "sm", "md", "lg", "xl"];
+// Extends tailwind-merge's own width groups so the steps also conflict with `border` / `border-2`.
+const borderWidthGroups = Object.fromEntries(
+  (["", "-x", "-y", "-s", "-e", "-t", "-r", "-b", "-l"] as const).map((side) => [
+    `border-w${side}`,
+    [{ [`border${side}`]: BORDER_WIDTH_STEPS }],
+  ])
+);
 
 // Matches custom font size classes: text-9, text-10, text-11, text-12, text-13, text-14, text-16, text-18, text-20, text-24, text-28, text-32, text-40
 const isCustomFontSize = (value: string) => /^(9|10|11|12|13|14|16|18|20|24|28|32|40)$/.test(value);
@@ -43,7 +55,7 @@ const CUSTOM_TEXT_COLORS = [
 ];
 const isCustomTextColor = (value: string) => CUSTOM_TEXT_COLORS.includes(value);
 
-const twMerge = extendTailwindMerge<"custom-typography" | "custom-text-color">({
+const twMerge = extendTailwindMerge<string>({
   override: {
     classGroups: {
       // Override font-size to include custom numeric sizes and exclude custom typography/colors
@@ -62,6 +74,8 @@ const twMerge = extendTailwindMerge<"custom-typography" | "custom-text-color">({
       "custom-typography": [{ text: [isCustomTypography] }],
       // Custom text colors in their own group (won't conflict with font sizes)
       "custom-text-color": [{ text: [isCustomTextColor] }],
+      ...borderWidthGroups,
+      "outline-w": [{ outline: BORDER_WIDTH_STEPS }],
     },
   },
 });

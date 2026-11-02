@@ -10,10 +10,9 @@ import { observer } from "mobx-react";
 // icons
 import { CloseCircleOutline, WarningCircleOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Field } from "@makeplane/propel/components/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
+import { InputField } from "@makeplane/propel/components/input-field";
 import type { IEmailCheckData } from "@plane/types";
 import { checkEmailValidity } from "@plane/utils";
 // helpers
@@ -51,55 +50,46 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
 
   return (
     <form onSubmit={handleFormSubmit} className="space-y-4">
-      <div className="space-y-1">
-        <label htmlFor="email" className="text-13 font-medium text-tertiary">
-          {t("auth.common.email.label")}
-        </label>
-        <Field name="email" invalid={!isFocused && Boolean(emailError?.email)}>
-          <InputGroup
-            size="2xl"
-            onFocus={() => {
-              setIsFocused(true);
-            }}
-            onBlur={() => {
-              setIsFocused(false);
-            }}
-          >
-            <Input
-              size="2xl"
-              id="email"
-              name="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder={t("auth.common.email.placeholder")}
-              autoComplete="off"
-              autoFocus
-              ref={inputRef}
-            />
-            {email.length > 0 && (
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail("");
-                  inputRef.current?.focus();
-                }}
-                className="grid size-5 place-items-center"
-                aria-label={t("aria_labels.auth_forms.clear_email")}
-                tabIndex={-1}
-              >
-                <CloseCircleOutline className="size-5 text-placeholder" />
-              </button>
-            )}
-          </InputGroup>
-        </Field>
-        {emailError?.email && !isFocused && (
-          <p className="flex items-center gap-1 px-0.5 text-11 text-danger-primary">
-            <WarningCircleOutline height={12} width={12} />
-            {t(emailError.email)}
-          </p>
-        )}
-      </div>
+      <InputField
+        size="xl"
+        orientation="vertical"
+        label={t("auth.common.email.label")}
+        id="email"
+        name="email"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        placeholder={t("auth.common.email.placeholder")}
+        autoComplete="off"
+        autoFocus
+        ref={inputRef}
+        endIcon={
+          email.length > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                setEmail("");
+                inputRef.current?.focus();
+              }}
+              className="grid size-5 shrink-0 place-items-center"
+              aria-label={t("aria_labels.auth_forms.clear_email")}
+              tabIndex={-1}
+            >
+              <CloseCircleOutline className="size-5 text-placeholder" />
+            </button>
+          )
+        }
+        error={
+          emailError?.email && !isFocused ? (
+            <span className="flex items-center gap-1">
+              <WarningCircleOutline height={12} width={12} />
+              {t(emailError.email)}
+            </span>
+          ) : undefined
+        }
+      />
       <Button
         type="submit"
         variant="primary"

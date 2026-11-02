@@ -20,7 +20,7 @@ export const AppSidebarToggleButton = observer(function AppSidebarToggleButton()
 
   return (
     <IconButton
-      size="sm"
+      size="md"
       variant="ghost"
       icon={<Icon icon={LeftSidePaneOutline} />}
       aria-label={t(

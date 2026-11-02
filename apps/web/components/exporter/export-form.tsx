@@ -17,6 +17,16 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 import { setToast } from "@plane/blocks/toast";
 // import { Tooltip } from "@makeplane/propel/components/tooltip";
 // import { EIssuesStoreType } from "@plane/types";
@@ -30,10 +40,10 @@ import { ProjectSelect } from "@/components/dropdowns/project/project-select";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { ProjectExportService } from "@/services/project/project-export.service";
-// local imports
-import { SettingsBoxedControlItem } from "../settings/boxed-control-item";
 
 type Props = {
+  isOpen: boolean;
+  onClose: () => void;
   workspaceSlug: string;
   provider: string | null;
   mutateServices: () => void;
@@ -59,7 +69,7 @@ const projectExportService = new ProjectExportService();
 
 export const ExportForm = observer(function ExportForm(props: Props) {
   // props
-  const { workspaceSlug, mutateServices } = props;
+  const { isOpen, onClose, workspaceSlug, mutateServices } = props;
   // states
   const [exportLoading, setExportLoading] = useState(false);
 
@@ -69,7 +79,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
   const { workspaceProjectIds, getProjectById } = useProject();
   const { t } = useTranslation();
   // form
-  const { handleSubmit, control } = useForm<FormData>({
+  const { handleSubmit, control, reset } = useForm<FormData>({
     defaultValues: {
       provider: EXPORTERS_LIST[0],
       project: [],
@@ -91,6 +101,12 @@ export const ExportForm = observer(function ExportForm(props: Props) {
   }));
 
   // handlers
+  const handleClose = () => {
+    if (exportLoading) return;
+    onClose();
+    reset();
+  };
+
   async function ExportCSVToMail(formData: FormData) {
     setExportLoading(true);
     if (workspaceSlug && user) {
@@ -104,6 +120,8 @@ export const ExportForm = observer(function ExportForm(props: Props) {
         await projectExportService.csvExport(workspaceSlug, payload);
         mutateServices();
         setExportLoading(false);
+        onClose();
+        reset();
         setToast({
           type: "success",
           title: t("workspace_settings.settings.exports.modal.toasts.success.title"),
@@ -132,129 +150,158 @@ export const ExportForm = observer(function ExportForm(props: Props) {
   }
 
   return (
-    <form
-      onSubmit={(e) => {
-        void handleSubmit(ExportCSVToMail)(e);
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
       }}
-      className="flex flex-col gap-5"
     >
-      <div className="rounded-lg border border-subtle bg-layer-2">
-        {/* Project Selector */}
-        <SettingsBoxedControlItem
-          className="rounded-none border-0 border-b"
-          title={t("workspace_settings.settings.exports.exporting_projects")}
-          control={
-            <div className="w-72 max-w-full">
-              <Controller
-                control={control}
-                name="project"
-                disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
-                render={({ field: { value, onChange, disabled } }) => (
-                  <ProjectSelect
-                    multiple
-                    projectList="all"
-                    value={value ?? []}
-                    onChange={onChange}
-                    variant="select-md"
-                    disabled={disabled}
-                    filterOption={(projectId) => wsProjectIdsWithCreatePermissionsSet.has(projectId)}
-                    // Preserve selected ids even if their project is unloaded or removed from the available options.
-                    resolveProject={(projectId) => {
-                      const project = getProjectById(projectId);
-                      if (!project) return { id: projectId, name: projectId };
-                      return {
-                        id: project.id,
-                        name: project.name,
-                        identifier: project.identifier,
-                        logo_props: project.logo_props,
-                      };
-                    }}
-                    placeholder="All projects"
-                    className="w-full"
-                  />
-                )}
-              />
-            </div>
-          }
-        />
-        {/* Format Selector */}
-        <SettingsBoxedControlItem
-          className="rounded-none border-0 border-b"
-          title={t("workspace_settings.settings.exports.format")}
-          control={
-            <Controller
-              control={control}
-              name="provider"
-              disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
-              render={({ field: { value, onChange, disabled } }) => (
-                <div className="w-72 max-w-full">
-                  <Select<string>
-                    items={exporterOptions}
-                    value={value.provider}
-                    onValueChange={(provider) => {
-                      const service = EXPORTERS_LIST.find((item) => item.provider === provider);
-                      if (service) onChange(service);
-                    }}
-                    disabled={disabled}
-                  >
-                    <SelectTrigger size="md" placeholder={t("workspace_settings.settings.exports.format")} />
-                    <SelectContent side="bottom" align="end">
-                      <SelectList>
-                        {exporterOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value} size="md" label={option.label} />
-                        ))}
-                      </SelectList>
-                    </SelectContent>
-                  </Select>
+      <DialogContent size="md">
+        <form
+          onSubmit={(e) => {
+            void handleSubmit(ExportCSVToMail)(e);
+          }}
+          className="flex min-h-0 flex-1 flex-col"
+        >
+          <DialogMain>
+            <DialogHeader>
+              <DialogHeading>
+                <DialogTitle>{t("export")}</DialogTitle>
+              </DialogHeading>
+            </DialogHeader>
+            <DialogBody>
+              <div className="flex flex-col gap-3">
+                {/* Project selector */}
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-body-sm-medium text-primary">
+                    {t("workspace_settings.settings.exports.exporting_projects")}
+                  </span>
+                  <div className="w-72 max-w-[60%]">
+                    <Controller
+                      control={control}
+                      name="project"
+                      disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
+                      render={({ field: { value, onChange, disabled } }) => (
+                        <ProjectSelect
+                          multiple
+                          projectList="all"
+                          value={value ?? []}
+                          onChange={onChange}
+                          variant="select-ghost-md"
+                          disabled={disabled}
+                          filterOption={(projectId) => wsProjectIdsWithCreatePermissionsSet.has(projectId)}
+                          // Preserve selected ids even if their project is unloaded or removed from the available options.
+                          resolveProject={(projectId) => {
+                            const project = getProjectById(projectId);
+                            if (!project) return { id: projectId, name: projectId };
+                            return {
+                              id: project.id,
+                              name: project.name,
+                              identifier: project.identifier,
+                              logo_props: project.logo_props,
+                            };
+                          }}
+                          placeholder="All projects"
+                          className="w-full"
+                        />
+                      )}
+                    />
+                  </div>
                 </div>
-              )}
+                {/* Format selector */}
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-body-sm-medium text-primary">
+                    {t("workspace_settings.settings.exports.format")}
+                  </span>
+                  <Controller
+                    control={control}
+                    name="provider"
+                    disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
+                    render={({ field: { value, onChange, disabled } }) => (
+                      <div className="w-72 max-w-[60%]">
+                        <Select<string>
+                          items={exporterOptions}
+                          value={value.provider}
+                          onValueChange={(provider) => {
+                            const service = EXPORTERS_LIST.find((item) => item.provider === provider);
+                            if (service) onChange(service);
+                          }}
+                          disabled={disabled}
+                        >
+                          <SelectTrigger
+                            size="md"
+                            variant="ghost"
+                            placeholder={t("workspace_settings.settings.exports.format")}
+                          />
+                          <SelectContent side="bottom" align="end">
+                            <SelectList>
+                              {exporterOptions.map((option) => (
+                                <SelectItem key={option.value} value={option.value} size="md" label={option.label} />
+                              ))}
+                            </SelectList>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                  />
+                </div>
+              </div>
+              {/* Rich Filters */}
+              {/* <div className="w-full">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="text-body-xs-medium text-secondary leading-tight">{t("common.filters")}</div>
+                  <Tooltip label={t("workspace_settings.settings.exports.filters_info")} layout="stacked">
+                    <button type="button" className="flex items-center justify-center">
+                      <Info className="h-3 w-3 text-tertiary" />
+                    </button>
+                  </Tooltip>
+                </div>
+                <Controller
+                  control={control}
+                  name="filters"
+                  render={({ field: { onChange } }) => (
+                    <WorkspaceLevelWorkItemFiltersHOC
+                      entityId={workspaceSlug}
+                      entityType={EIssuesStoreType.GLOBAL}
+                      filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.filters}
+                      initialWorkItemFilters={initialWorkItemFilters}
+                      isTemporary
+                      updateFilters={(updatedFilters) => onChange(updatedFilters)}
+                      showOnMount
+                      workspaceSlug={workspaceSlug}
+                    >
+                      {({ filter: workspaceExportWorkItemsFilter }) =>
+                        workspaceExportWorkItemsFilter && (
+                          <WorkItemFiltersRow filter={workspaceExportWorkItemsFilter} variant="modal" />
+                        )
+                      }
+                    </WorkspaceLevelWorkItemFiltersHOC>
+                  )}
+                />
+              </div> */}
+            </DialogBody>
+          </DialogMain>
+          <DialogActions>
+            <Button
+              variant="ghost"
+              size="md"
+              stretch="auto"
+              type="button"
+              disabled={exportLoading}
+              onClick={handleClose}
+              label={t("cancel")}
             />
-          }
-        />
-        <div className="px-4 py-3">
-          <Button
-            variant="primary"
-            size="md"
-            stretch="auto"
-            type="submit"
-            loading={exportLoading}
-            label={exportLoading ? `${t("workspace_settings.settings.exports.exporting")}...` : t("export")}
-          />
-        </div>
-      </div>
-      {/* Rich Filters */}
-      {/* <div className="w-full">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="text-13 font-medium text-secondary leading-tight">{t("common.filters")}</div>
-          <Tooltip label={t("workspace_settings.settings.exports.filters_info")} layout="stacked">
-            <button type="button" className="flex items-center justify-center">
-              <Info className="h-3 w-3 text-tertiary" />
-            </button>
-          </Tooltip>
-        </div>
-        <Controller
-          control={control}
-          name="filters"
-          render={({ field: { onChange } }) => (
-            <WorkspaceLevelWorkItemFiltersHOC
-              entityId={workspaceSlug}
-              entityType={EIssuesStoreType.GLOBAL}
-              filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.filters}
-              initialWorkItemFilters={initialWorkItemFilters}
-              isTemporary
-              updateFilters={(updatedFilters) => onChange(updatedFilters)}
-              showOnMount
-              workspaceSlug={workspaceSlug}
-            >
-              {({ filter: workspaceExportWorkItemsFilter }) =>
-                workspaceExportWorkItemsFilter && (
-                  <WorkItemFiltersRow filter={workspaceExportWorkItemsFilter} variant="modal" />
-                )
-              }
-            </WorkspaceLevelWorkItemFiltersHOC>
-          )}
-        />
-      </div> */}
-    </form>
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              type="submit"
+              loading={exportLoading}
+              label={exportLoading ? `${t("workspace_settings.settings.exports.exporting")}...` : t("export")}
+            />
+          </DialogActions>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 });

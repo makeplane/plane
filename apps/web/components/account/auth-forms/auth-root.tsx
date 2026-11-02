@@ -121,7 +121,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
       {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
         <Banner
           placement="inline"
-          variant="accent"
+          variant="info"
           role="alert"
           description={errorInfo.message}
           dismissLabel={t("close")}

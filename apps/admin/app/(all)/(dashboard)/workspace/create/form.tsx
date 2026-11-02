@@ -4,14 +4,15 @@
  * See the LICENSE file for details.
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { WEB_BASE_URL, ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { Select, SelectContent, SelectItem, SelectList, SelectTrigger } from "@makeplane/propel/components/select";
 import { InstanceWorkspaceService } from "@plane/services";
 import type { IWorkspace } from "@plane/types";
@@ -24,6 +25,10 @@ import { useWorkspace } from "@/hooks/store";
 const instanceWorkspaceService = new InstanceWorkspaceService();
 
 export function WorkspaceCreateForm() {
+  // plane hooks
+  const { t } = useTranslation();
+  const organizationSizeLabelId = useId();
+  const organizationSizeErrorId = useId();
   // router
   const router = useRouter();
   // states
@@ -97,77 +102,76 @@ export function WorkspaceCreateForm() {
   return (
     <div className="space-y-8">
       <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-start justify-between gap-x-10 gap-y-6 lg:grid-cols-2">
-        <div className="flex flex-col gap-1">
-          <h4 className="text-13 text-tertiary">Name your workspace</h4>
-          <div className="flex flex-col gap-1">
-            <Controller
-              control={control}
-              name="name"
-              rules={{
-                validate: (value) => validateWorkspaceName(value, true),
+        <Controller
+          control={control}
+          name="name"
+          rules={{
+            validate: (value) => validateWorkspaceName(value, true),
+          }}
+          render={({ field: { value, ref, onChange } }) => (
+            <InputField
+              size="lg"
+              orientation="vertical"
+              label={t("workspace_creation.form.name.label")}
+              required
+              id="workspaceName"
+              type="text"
+              value={value}
+              onChange={(e) => {
+                onChange(e.target.value);
+                setValue("name", e.target.value);
+                setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"), {
+                  shouldValidate: true,
+                });
               }}
-              render={({ field: { value, ref, onChange } }) => (
-                <InputGroup size="lg">
-                  <Input
-                    size="lg"
-                    id="workspaceName"
-                    type="text"
-                    value={value}
-                    onChange={(e) => {
-                      onChange(e.target.value);
-                      setValue("name", e.target.value);
-                      setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"), {
-                        shouldValidate: true,
-                      });
-                    }}
-                    ref={ref}
-                    aria-invalid={Boolean(errors.name)}
-                    data-invalid={errors.name ? true : undefined}
-                    placeholder="Something familiar and recognizable is always best."
-                  />
-                </InputGroup>
-              )}
+              ref={ref}
+              placeholder="Something familiar and recognizable is always best."
+              error={errors.name?.message}
             />
-            <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
-          </div>
-        </div>
-        <div className="flex flex-col gap-1">
-          <h4 className="text-13 text-tertiary">Set your workspace&apos;s URL</h4>
-          <Controller
-            control={control}
-            name="slug"
-            rules={{
-              validate: (value) => validateSlug(value),
-            }}
-            render={({ field: { onChange, value, ref } }) => (
-              <InputGroup size="lg">
-                <span className="text-13 whitespace-nowrap text-secondary">{workspaceBaseURL}</span>
-                <Input
-                  id="workspaceUrl"
-                  type="text"
-                  size="lg"
-                  value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
-                  onChange={(e) => {
-                    if (/^[a-zA-Z0-9_-]+$/.test(e.target.value)) setInvalidSlug(false);
-                    else setInvalidSlug(true);
-                    onChange(e.target.value.toLowerCase());
-                  }}
-                  ref={ref}
-                  aria-invalid={Boolean(errors.slug)}
-                  data-invalid={errors.slug ? true : undefined}
-                  placeholder="workspace-name"
-                />
-              </InputGroup>
-            )}
-          />
-          {slugError && <p className="text-13 text-danger-primary">This URL is taken. Try something else.</p>}
-          {invalidSlug && (
-            <p className="text-13 text-danger-primary">{`URLs can contain only ( - ), ( _ ) and alphanumeric characters.`}</p>
           )}
-          {errors.slug && <span className="text-11 text-danger-primary">{errors.slug.message}</span>}
-        </div>
-        <div className="flex flex-col gap-1">
-          <h4 className="text-13 text-tertiary">How many people will use this workspace?</h4>
+        />
+        <Controller
+          control={control}
+          name="slug"
+          rules={{
+            validate: (value) => validateSlug(value),
+          }}
+          render={({ field: { onChange, value, ref } }) => (
+            <InputField
+              id="workspaceUrl"
+              type="text"
+              size="lg"
+              orientation="vertical"
+              label={t("workspace_creation.form.url.label")}
+              required
+              startIcon={
+                <span className="text-body-xs-regular whitespace-nowrap text-secondary">{workspaceBaseURL}</span>
+              }
+              value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
+              onChange={(e) => {
+                if (/^[a-zA-Z0-9_-]+$/.test(e.target.value)) setInvalidSlug(false);
+                else setInvalidSlug(true);
+                onChange(e.target.value.toLowerCase());
+              }}
+              ref={ref}
+              placeholder="workspace-name"
+              error={
+                slugError
+                  ? "This URL is taken. Try something else."
+                  : invalidSlug
+                    ? "URLs can contain only ( - ), ( _ ) and alphanumeric characters."
+                    : errors.slug?.message
+              }
+            />
+          )}
+        />
+        <div className="flex flex-col gap-2">
+          <span id={organizationSizeLabelId} className="text-body-xs-medium text-primary">
+            {t("workspace_creation.form.organization_size.label")}
+            <span className="ml-0.5 text-danger-primary" aria-hidden="true">
+              *
+            </span>
+          </span>
           <div className="w-full">
             <Controller
               name="organization_size"
@@ -175,7 +179,15 @@ export function WorkspaceCreateForm() {
               rules={{ required: "This is a required field." }}
               render={({ field: { value, onChange } }) => (
                 <Select value={value} onValueChange={onChange}>
-                  <SelectTrigger size="lg" placeholder="Select a range" />
+                  <SelectTrigger
+                    variant="secondary"
+                    size="lg"
+                    placeholder={t("workspace_creation.form.organization_size.placeholder")}
+                    aria-required="true"
+                    aria-labelledby={organizationSizeLabelId}
+                    aria-describedby={errors.organization_size ? organizationSizeErrorId : undefined}
+                    aria-invalid={Boolean(errors.organization_size)}
+                  />
                   <SelectContent>
                     <SelectList>
                       {ORGANIZATION_SIZE.map((item) => (
@@ -187,7 +199,9 @@ export function WorkspaceCreateForm() {
               )}
             />
             {errors.organization_size && (
-              <span className="text-13 text-danger-primary">{errors.organization_size.message}</span>
+              <span id={organizationSizeErrorId} className="text-body-xs-regular text-danger-primary">
+                {errors.organization_size.message}
+              </span>
             )}
           </div>
         </div>

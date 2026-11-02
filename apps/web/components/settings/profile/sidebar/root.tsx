@@ -24,11 +24,11 @@ export function ProfileSettingsSidebarRoot(props: Props) {
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-col overflow-hidden border-r border-r-subtle bg-surface-2 px-3 py-4",
+        "flex min-h-0 shrink-0 flex-col overflow-hidden border-r border-r-subtle bg-surface-1 px-3 py-4",
         className
       )}
     >
-      <ScrollArea orientation="vertical">
+      <ScrollArea orientation="vertical" size="sm">
         <ProfileSettingsSidebarHeader />
         <ProfileSettingsSidebarItemCategories activeTab={activeTab} updateActiveTab={updateActiveTab} />
       </ScrollArea>

@@ -7,6 +7,8 @@
     }
   },
   "sidebar": {
+    "more": "Altro",
+    "hide": "Nascondi",
     "stickies": "Stickies",
     "your_work": "Il tuo lavoro",
     "projects": "Progetti",

@@ -53,7 +53,13 @@ const ToolbarItem = React.memo(function ToolbarItem(props: ToolbarItemProps) {
       {isInsertAction ? (
         <ToolbarButton aria-label={item.name} icon={icon} onClick={handleClick} />
       ) : (
-        <ToolbarToggle aria-label={item.name} icon={icon} pressed={!!isActive} onPressedChange={handleClick} />
+        <ToolbarToggle
+          aria-label={item.name}
+          render={<button className="data-pressed:text-icon-secondary!" />}
+          icon={icon}
+          pressed={!!isActive}
+          onPressedChange={handleClick}
+        />
       )}
     </Tooltip>
   );
@@ -110,7 +116,7 @@ export function PageToolbar(props: Props) {
 
   return (
     <TooltipProvider>
-      <div className="animate-in fade-in flex items-center overflow-x-auto duration-200">
+      <div className="animate-in fade-in relative -top-px flex h-header items-center overflow-x-auto duration-200">
         <Toolbar size="md" elevation="flat" aria-label="Formatting toolbar">
           <Menu>
             <ToolbarMenuTrigger label={activeTypography?.name || "Text"} />

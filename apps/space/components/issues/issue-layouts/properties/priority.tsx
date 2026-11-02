@@ -4,61 +4,36 @@
  * See the LICENSE file for details.
  */
 
-import { SignalHigh } from "lucide-react";
+// plane imports
+import { PrioritySelect } from "@plane/blocks/property-select";
+import type { SelectVariant } from "@plane/blocks/select";
 import { useTranslation } from "@plane/i18n";
-// types
-import { PriorityIcon } from "@plane/blocks/icons";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssuePriorities } from "@plane/types";
-// constants
-import { cn, getIssuePriorityFilters } from "@plane/utils";
+import { cn } from "@plane/utils";
+// helpers
+import { READ_ONLY_SELECT_CLASSNAME } from "@/helpers/select.helper";
 
-export function IssueBlockPriority({
-  priority,
-  shouldShowName = false,
-}: {
+type Props = {
   priority: TIssuePriorities | null;
-  shouldShowName?: boolean;
-}) {
-  // hooks
+  variant?: SelectVariant;
+  className?: string;
+};
+
+/** The work item priority as a read-only `PrioritySelect` chip. */
+export function IssueBlockPriority(props: Props) {
+  const { priority, variant = "pill-md", className } = props;
+  // i18n
   const { t } = useTranslation();
-  const priority_detail = priority != null ? getIssuePriorityFilters(priority) : null;
-
-  const priorityClasses = {
-    urgent: "bg-layer-2 text-priority-urgent border-priority-urgent px-1",
-    high: "bg-layer-2 text-priority-high border-priority-high",
-    medium: "bg-layer-2 text-priority-medium border-priority-medium",
-    low: "bg-layer-2 text-priority-low border-priority-low",
-    none: "bg-layer-2 text-priority-none border-priority-none",
-  };
-
-  if (priority_detail === null) return <></>;
 
   return (
-    <Tooltip label={`Priority: ${t(priority_detail?.titleTranslationKey || "")}`}>
-      <div
-        className={cn(
-          "flex h-full items-center gap-1.5 rounded-sm border-[0.5px] px-2 py-0.5 text-11",
-          priorityClasses[priority ?? "none"],
-          {
-            // compact the icons if text is hidden
-            "px-0.5": !shouldShowName,
-            // highlight the whole button if text is hidden and priority is urgent
-            "border-priority-urgent": priority === "urgent" && shouldShowName,
-          }
-        )}
-      >
-        {priority ? (
-          <PriorityIcon
-            priority={priority}
-            // increase the icon size if text is hidden
-            className={cn("size-3", { "size-3.5": !shouldShowName })}
-          />
-        ) : (
-          <SignalHigh className="size-3" />
-        )}
-        {shouldShowName && <span className="pl-2 text-13">{t(priority_detail?.titleTranslationKey || "")}</span>}
-      </div>
-    </Tooltip>
+    <PrioritySelect
+      value={priority ?? "none"}
+      onChange={() => {}}
+      variant={variant}
+      placeholder={t("common.priority")}
+      className={cn(READ_ONLY_SELECT_CLASSNAME, className)}
+      tooltip={{ heading: t("common.priority"), emptyContent: t("common.none") }}
+      disabled
+    />
   );
 }

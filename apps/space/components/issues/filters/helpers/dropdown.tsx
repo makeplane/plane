@@ -23,7 +23,7 @@ export function FiltersDropdown(props: Props) {
 
   return (
     <Popover>
-      <PopoverTrigger render={<Button variant="secondary" size="sm" stretch="auto" label={title} />} />
+      <PopoverTrigger render={<Button variant="secondary" size="md" stretch="auto" label={title} />} />
       {/* `rich` is the only panel variant that takes arbitrary children; it adds its own padding and a
           320px floor where the legacy panel was a flush 300px. */}
       <PopoverContent variant="rich" side={side} align={align} aria-label={title}>

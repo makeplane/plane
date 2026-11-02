@@ -3,6 +3,10 @@
     "label": "{count, plural, one {工作事項} other {工作事項}}",
     "all": "所有工作事項",
     "edit": "編輯工作事項",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {另外 # 個屬性} other {另外 # 個屬性}}",
+      "label_overflow_indicator": "{count, plural, one {+# 個標籤} other {+# 個標籤}}"
+    },
     "title": {
       "label": "工作事項標題",
       "required": "工作事項標題為必填。"
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "檢視其他工作事項"
         }
+      },
+      "no_access": {
+        "title": "您無權存取此工作事項",
+        "description": "請聯絡專案管理員以申請存取權。"
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "無法還原工作事項。請再試一次。"
       }
     },
+    "archived_banner": "此工作事項已封存。請還原後再進行變更。",
+    "updated_time_ago": "更新於 {time}",
+    "description_load_failed": "無法載入描述。",
+    "assignee_count": "{count, plural, one {# 位指派對象} other {# 位指派對象}}",
     "relation": {
       "relates_to": "與此相關",
       "duplicate": "此項重複",
@@ -267,7 +279,12 @@
       "click_to_upvote": "點擊贊成",
       "click_to_downvote": "點擊反對",
       "click_to_view_upvotes": "點擊查看贊成票",
-      "click_to_view_downvotes": "點擊查看反對票"
+      "click_to_view_downvotes": "點擊查看反對票",
+      "title": "投票",
+      "upvotes_count": "{count, plural, one {# 張贊成票} other {# 張贊成票}}",
+      "downvotes_count": "{count, plural, one {# 張反對票} other {# 張反對票}}",
+      "no_upvotes": "尚無贊成票",
+      "no_downvotes": "尚無反對票"
     }
   },
   "sub_work_item": {

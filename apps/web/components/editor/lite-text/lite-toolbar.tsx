@@ -4,11 +4,14 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
+import type React from "react";
+// plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { AttachOutline, TopArrowOutline } from "@makeplane/propel/icons";
-// constants
 import type { ToolbarMenuItem } from "@plane/editor";
 import { IMAGE_ITEM } from "@plane/editor";
+import { useTranslation } from "@plane/i18n";
 
 type LiteToolbarProps = {
   onSubmit: (e: React.KeyboardEvent<HTMLDivElement> | React.MouseEvent<HTMLButtonElement>) => void;
@@ -18,23 +21,29 @@ type LiteToolbarProps = {
 };
 
 export function LiteToolbar({ onSubmit, isSubmitting, isEmpty, executeCommand }: LiteToolbarProps) {
+  // plane hooks
+  const { t } = useTranslation();
+
   return (
-    <div className="flex items-center gap-2 pb-1">
-      <button
+    <div className="flex h-6 items-center gap-1.5">
+      <span className="h-4 shrink-0 border-l border-subtle-1" />
+      <IconButton
+        type="button"
+        variant="ghost"
+        size="xs"
+        icon={<Icon icon={AttachOutline} />}
+        aria-label={t("attach")}
         onClick={() => executeCommand(IMAGE_ITEM)}
+      />
+      <IconButton
         type="button"
-        className="p-1 text-tertiary transition-colors hover:text-secondary"
-      >
-        <AttachOutline className="size-3" />
-      </button>
-      <button
-        type="button"
+        variant="primary"
+        size="xs"
+        icon={<Icon icon={TopArrowOutline} />}
+        aria-label={t("submit")}
         onClick={(e) => onSubmit(e)}
         disabled={isEmpty || isSubmitting}
-        className="rounded-sm bg-accent-primary p-1 text-primary transition-colors hover:bg-accent-primary/80 disabled:bg-layer-1 disabled:text-secondary"
-      >
-        <TopArrowOutline className="size-3" />
-      </button>
+      />
     </div>
   );
 }

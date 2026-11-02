@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { GroupOutline } from "@makeplane/propel/icons";
+import { GroupOutline, LabelsFilled } from "@makeplane/propel/icons";
 
 interface ILabelName {
   name: string;
@@ -16,18 +16,13 @@ export function LabelName(props: ILabelName) {
   const { name, color, isGroup } = props;
 
   return (
-    <div className="flex items-center gap-3 pr-20">
+    <div className="flex min-w-0 items-center gap-2">
       {isGroup ? (
-        <GroupOutline className="h-3.5 w-3.5" color={color} />
+        <GroupOutline className="size-4 shrink-0" color={color} />
       ) : (
-        <span
-          className="h-3.5 w-3.5 flex-shrink-0 rounded-full"
-          style={{
-            backgroundColor: color && color !== "" ? color : "#000",
-          }}
-        />
+        <LabelsFilled className="size-4 shrink-0" color={color && color !== "" ? color : "#000"} />
       )}
-      <h6 className="text-13">{name}</h6>
+      <h6 className="truncate text-body-sm-medium">{name}</h6>
     </div>
   );
 }

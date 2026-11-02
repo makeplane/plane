@@ -9,8 +9,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import { Button } from "@makeplane/propel/components/button";
-import { SearchOutline } from "@makeplane/propel/icons";
+import { ExpandableSearch } from "@makeplane/propel/components/expandable-search";
 // components
 import { MembersSettingsLoader } from "@/components/ui/loader/settings/members";
 // hooks
@@ -81,19 +82,17 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
         projectId={projectId}
         workspaceSlug={workspaceSlug}
       />
-      <div className="flex items-center justify-between gap-4 overflow-x-hidden border-b border-subtle py-2">
-        <div className="text-14 font-semibold">{t("common.members")}</div>
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-start gap-1.5 rounded-md border border-subtle bg-surface-1 px-2 py-1">
-            <SearchOutline className="h-3.5 w-3.5" />
-            <input
-              className="w-full max-w-[234px] border-none bg-transparent text-13 placeholder:text-placeholder focus:outline-none"
-              placeholder="Search"
-              value={searchQuery}
-              autoFocus
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+      <div className="flex items-center justify-between gap-4 overflow-x-hidden pt-1 pb-3">
+        <div className="text-body-md-semibold">{t("common.members")}</div>
+        <div className="flex items-center gap-3">
+          <ExpandableSearch
+            size="md"
+            aria-label={t("common.search.label")}
+            clearLabel={t("common.clear")}
+            placeholder={`${t("search")}...`}
+            value={searchQuery}
+            onValueChange={(value) => setSearchQuery(value)}
+          />
           <MemberListFiltersDropdown
             appliedFilters={appliedRoleFilters}
             handleUpdate={handleRoleFilterUpdate}
@@ -102,7 +101,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
           {isAdmin && (
             <Button
               variant="primary"
-              size="sm"
+              size="md"
               stretch="auto"
               label={t("add_member")}
               onClick={() => {
@@ -115,16 +114,22 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
       {!projectMemberIds ? (
         <MembersSettingsLoader />
       ) : (
-        <div className="divide-y divide-subtle overflow-scroll">
+        <div>
           {searchedProjectMembers.length !== 0 && (
-            <ProjectMemberListItem
-              memberDetails={memberDetails ?? []}
-              projectId={projectId}
-              workspaceSlug={workspaceSlug}
-            />
+            <div className="flex max-h-[60vh] flex-col">
+              <ProjectMemberListItem
+                memberDetails={memberDetails ?? []}
+                projectId={projectId}
+                workspaceSlug={workspaceSlug}
+              />
+            </div>
           )}
           {searchedProjectMembers.length === 0 && (
-            <h4 className="mt-16 text-center text-13 text-placeholder">{t("no_matching_members")}</h4>
+            <EmptyStateCompact
+              assetKey="search-compact"
+              title={t("no_matching_members")}
+              rootClassName="rounded-lg border border-subtle py-10"
+            />
           )}
         </div>
       )}

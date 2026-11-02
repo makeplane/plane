@@ -7,6 +7,8 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { CloseOutline } from "@makeplane/propel/icons";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 // types
 import type { TFilters } from "@/types/issue";
 // components
@@ -38,7 +40,7 @@ export const AppliedFiltersList = observer(function AppliedFiltersList(props: Pr
             key={filterKey}
             className="flex flex-wrap items-center gap-2 rounded-md border border-subtle px-2 py-1 capitalize"
           >
-            <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+            <span className="text-caption-sm-regular text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             <div className="flex flex-wrap items-center gap-1">
               {filterKey === "priority" && (
                 <AppliedPriorityFilters
@@ -54,13 +56,14 @@ export const AppliedFiltersList = observer(function AppliedFiltersList(props: Pr
                 />
               )}
 
-              <button
-                type="button"
-                className="grid place-items-center text-tertiary hover:text-secondary"
+              <IconButton
+                variant="ghost"
+                size="xs"
+                aria-label={`${t("common.remove")} ${replaceUnderscoreIfSnakeCase(filterKey)}`}
+                showTooltip={false}
+                icon={<Icon icon={CloseOutline} />}
                 onClick={() => handleRemoveFilter(filterKey, null)}
-              >
-                <CloseOutline height={12} width={12} />
-              </button>
+              />
             </div>
           </div>
         );
@@ -68,7 +71,7 @@ export const AppliedFiltersList = observer(function AppliedFiltersList(props: Pr
       <button
         type="button"
         onClick={handleRemoveAllFilters}
-        className="flex items-center gap-2 rounded-md border border-subtle px-2 py-1 text-11 text-tertiary hover:text-secondary"
+        className="flex items-center gap-2 rounded-md border border-subtle px-2 py-1 text-caption-sm-regular text-tertiary hover:text-secondary"
       >
         {t("common.clear_all")}
         <CloseOutline height={12} width={12} />

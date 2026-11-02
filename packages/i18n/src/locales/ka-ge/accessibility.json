@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "მთავარი გვერდითი პანელი",
+      "resize_sidebar": "გვერდითი პანელის ზომის შეცვლა",
+      "sidebar_peek_view": "გვერდითი პანელის წინასწარი ხედი",
       "workspace_logo": "სამუშაო სივრცის ლოგო",
       "open_workspace_switcher": "სამუშაო სივრცის გადამრთველის გახსნა",
       "open_user_menu": "მომხმარებლის მენიუს გახსნა",
@@ -42,6 +45,9 @@
       "open": "ფერის ამომრჩევის გახსნა",
       "swatches": "წინასწარ განსაზღვრული ფერები",
       "hex_input": "HEX ფერი"
+    },
+    "project_board": {
+      "collapse_group": "ჯგუფის ჩაკეცვა"
     }
   }
 }

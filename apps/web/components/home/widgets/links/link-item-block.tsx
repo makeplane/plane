@@ -30,20 +30,20 @@ export function LinkItemBlock(props: TLinkItemBlockProps) {
   // icons
   const Icon = getIconForLink(url);
   return (
-    <div className="group flex h-[56px] w-[230px] items-center gap-4 rounded-md border-[0.5px] border-subtle bg-surface-1 pr-4">
+    <div className="group flex h-[51px] min-w-0 items-center gap-4 rounded-lg border-xs border-subtle-1 bg-layer-2 p-2">
       {/* the card body is its own button so the menu trigger is not nested inside a clickable ancestor */}
       <button
         type="button"
         onClick={onClick}
-        className="flex h-full min-w-0 flex-1 cursor-pointer items-center gap-4 pl-4 text-left"
+        className="flex h-full min-w-0 flex-1 cursor-pointer items-center gap-4 text-left"
       >
-        <span className="grid size-8 flex-shrink-0 place-items-center rounded-sm bg-surface-2 p-2">
-          <Icon className="size-4 stroke-2 text-tertiary group-hover:text-primary" />
+        <span className="grid size-8 flex-shrink-0 place-items-center rounded-sm bg-layer-1 p-2">
+          <Icon className="size-4 text-tertiary group-hover:text-primary" />
         </span>
-        <span className="block flex-1 truncate">
-          <span className="block truncate text-13 font-medium">{title}</span>
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="truncate text-body-xs-regular text-primary">{title}</span>
           {createdAt && (
-            <span className="block text-11 font-medium text-placeholder">{calculateTimeAgo(createdAt)}</span>
+            <span className="truncate text-caption-md-regular text-tertiary">{calculateTimeAgo(createdAt)}</span>
           )}
         </span>
       </button>

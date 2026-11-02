@@ -5,9 +5,10 @@
  */
 
 import { useState, useEffect } from "react";
-import { CloudOff, Dot } from "lucide-react";
+import { CloudOffOutline, DotFilled } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Badge } from "@makeplane/propel/components/badge";
+import { Icon } from "@makeplane/propel/components/icon";
 
 type Props = {
   syncStatus: "syncing" | "synced" | "error";
@@ -53,7 +54,7 @@ export function PageSyncingBadge({ syncStatus }: Props) {
         <Badge
           variant={syncStatus === "syncing" ? "brand" : "danger"}
           size="sm"
-          startIcon={syncStatus === "syncing" ? <Dot className="size-4" /> : <CloudOff className="size-4" />}
+          startIcon={<Icon icon={syncStatus === "syncing" ? DotFilled : CloudOffOutline} size="md" />}
           label={content.label}
         />
       </span>

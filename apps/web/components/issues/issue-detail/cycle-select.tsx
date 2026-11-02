@@ -69,6 +69,7 @@ export const IssueCycleSelect = observer(function IssueCycleSelect(props: TIssue
         onChange={handleIssueCycleChange}
         disabled={disableSelect}
         variant="select-ghost-md"
+        className="h-8"
         placeholder={t("cycle.no_cycle")}
         tooltip
         clearable={clearable}

@@ -6,6 +6,7 @@
     "status_page": "Statuspagina"
   },
   "submit": "Verzenden",
+  "submitting": "Bezig met verzenden",
   "cancel": "Annuleren",
   "loading": "Laden",
   "searching": "Zoeken...",
@@ -153,6 +154,7 @@
   "no_favorites_yet": "Nog geen favorieten",
   "create_folder": "Map aanmaken",
   "new_folder": "Nieuwe map",
+  "rename_folder": "Map hernoemen",
   "favorite_updated_successfully": "Favoriet is bijgewerkt",
   "favorite_created_successfully": "Favoriet is aangemaakt",
   "folder_already_exists": "Map bestaat al",
@@ -368,6 +370,7 @@
   "member": "{count, plural, one{# lid} other{# leden}}",
   "new_password_must_be_different_from_old_password": "Nieuw wachtwoord moet verschillen van oud wachtwoord",
   "edited": "bewerkt",
+  "entity_detail_toolbar": "Acties",
   "bot": "Bot",
   "settings_description": "Beheer je account-, werkruimte- en projectvoorkeuren allemaal op één plek. Wissel tussen tabbladen om eenvoudig te configureren.",
   "back_to_workspace": "Terug naar werkruimte",
@@ -540,6 +543,7 @@
     "link_copied": "Koppeling gekopieerd!",
     "link_copied_to_clipboard": "Koppeling gekopieerd naar klembord",
     "copied_to_clipboard": "Werkitemkoppeling gekopieerd naar klembord",
+    "clipboard_copy_failed": "Kopiëren naar klembord mislukt",
     "branch_name_copied_to_clipboard": "Branchnaam gekopieerd naar klembord",
     "is_copied_to_clipboard": "Werkitem is gekopieerd naar klembord",
     "no_links_added_yet": "Nog geen koppelingen toegevoegd",
@@ -723,7 +727,14 @@
     "developer": "Ontwikkelaar",
     "work_structure": "Werkstructuur",
     "execution": "Uitvoering",
-    "administration": "Beheer"
+    "administration": "Beheer",
+    "status": "Status",
+    "tooltip": {
+      "copy_to_clipboard": "Kopiëren naar klembord",
+      "created_on_date": "Aangemaakt op {date}",
+      "priority": "Prioriteit: {value}"
+    },
+    "locked": "Vergrendeld"
   },
   "chart": {
     "x_axis": "X-as",
@@ -874,5 +885,13 @@
       "short_description": "Exporteren als json"
     }
   },
-  "labels_count": "{count, plural, one {# label} other {# labels}}"
+  "labels_count": "{count, plural, one {# label} other {# labels}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Opties voor weergave opslaan",
+      "update_view": "Weergave bijwerken",
+      "save_as": "Opslaan als",
+      "hide_filters": "Filters verbergen"
+    }
+  }
 }

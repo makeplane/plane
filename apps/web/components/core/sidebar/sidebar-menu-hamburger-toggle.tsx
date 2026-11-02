@@ -21,10 +21,10 @@ export const SidebarHamburgerToggle = observer(function SidebarHamburgerToggle()
   return (
     <button
       type="button"
-      className="group grid size-7 flex-shrink-0 place-items-center rounded-sm bg-surface-2 transition-all hover:bg-layer-1"
+      className="group grid size-7 flex-shrink-0 place-items-center rounded-sm bg-surface-2 transition-colors hover:bg-layer-1"
       onClick={handleClick}
     >
-      <RightSidePaneOutline className="size-3.5 text-secondary transition-all group-hover:text-primary" />
+      <RightSidePaneOutline className="size-3.5 text-secondary transition-colors group-hover:text-primary" />
     </button>
   );
 });

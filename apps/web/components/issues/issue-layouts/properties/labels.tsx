@@ -22,7 +22,7 @@ export interface IIssuePropertyLabels {
   /** @deprecated The pill and table-cell triggers carry no dropdown arrow. */
   hideDropdownArrow?: boolean;
   className?: string;
-  /** @deprecated Trigger chrome comes from the Select variant. */
+  /** Extra classes for the picker's trigger, e.g. to lay it invisibly over label pills. */
   buttonClassName?: string;
   /** @deprecated The Select popup sizes itself. */
   optionsClassName?: string;
@@ -37,6 +37,8 @@ export interface IIssuePropertyLabels {
   renderByDefault?: boolean;
   fullWidth?: boolean;
   fullHeight?: boolean;
+  /** @default true */
+  showTooltip?: boolean;
 }
 
 /**
@@ -65,6 +67,8 @@ export const IssuePropertyLabels = observer(function IssuePropertyLabels(props: 
     placeholderText,
     fullWidth = false,
     fullHeight = false,
+    buttonClassName,
+    showTooltip = true,
   } = props;
 
   const isTableCell = fullWidth && noLabelBorder;
@@ -72,7 +76,7 @@ export const IssuePropertyLabels = observer(function IssuePropertyLabels(props: 
   return (
     <div
       role="presentation"
-      className={cn(fullHeight ? "h-full" : "h-5", { "w-full": fullWidth }, className)}
+      className={cn(fullHeight ? "h-full" : "h-6", { "w-full": fullWidth }, className)}
       onClick={swallowEvent}
     >
       <LabelSelect
@@ -82,10 +86,10 @@ export const IssuePropertyLabels = observer(function IssuePropertyLabels(props: 
         disabled={disabled}
         placeholder={placeholderText}
         onClose={onClose}
-        variant={isTableCell ? "table-cell" : "pill-sm"}
+        variant={isTableCell ? "table-cell" : "pill-md"}
         // `.clickable` is what the spreadsheet's keyboard navigation clicks on Enter / Space in a focused cell.
-        className={isTableCell ? "clickable" : undefined}
-        tooltip
+        className={cn({ clickable: isTableCell }, buttonClassName)}
+        tooltip={showTooltip}
       />
     </div>
   );

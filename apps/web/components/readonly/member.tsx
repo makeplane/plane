@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
@@ -16,7 +16,7 @@ import { useMember } from "@/hooks/store/use-member";
 
 export type TReadonlyMemberProps = {
   className?: string;
-  icon?: LucideIcon;
+  icon?: IconGlyph;
   hideIcon?: boolean;
   value: string | string[];
   placeholder?: string;
@@ -57,7 +57,7 @@ export const ReadonlyMember = observer(function ReadonlyMember(props: TReadonlyM
       {!hideIcon && Icon && <Icon className="size-4 flex-shrink-0" />}
       <div className="flex items-center gap-2">
         <div className="flex size-4 items-center justify-center rounded-full bg-layer-1">
-          <span className="text-13 font-medium">
+          <span className="text-body-xs-medium">
             {member?.display_name?.charAt(0) ?? member?.email?.charAt(0) ?? "?"}
           </span>
         </div>

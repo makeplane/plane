@@ -11,6 +11,7 @@ import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@makeplane/propel/components/icon-button";
+import type { IconButtonSize } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { setToast } from "@plane/blocks/toast";
@@ -31,10 +32,11 @@ type Props = {
   projectId: string;
   workspaceSlug: string;
   customClassName?: string;
+  size?: IconButtonSize;
 };
 
 export const ModuleQuickActions = observer(function ModuleQuickActions(props: Props) {
-  const { parentRef, moduleId, projectId, workspaceSlug, customClassName } = props;
+  const { parentRef, moduleId, projectId, workspaceSlug, customClassName, size = "md" } = props;
   // router
   const router = useAppRouter();
   // plane hooks
@@ -146,8 +148,8 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
           <MenuTrigger
             render={
               <IconButton
-                variant="tertiary"
-                size="md"
+                variant="ghost"
+                size={size}
                 icon={<Icon icon={MoreHorizontalOutline} />}
                 aria-label={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
               />

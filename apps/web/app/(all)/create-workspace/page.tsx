@@ -68,22 +68,22 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
           >
             <PlaneLogo className="h-9 w-auto text-primary" />
           </Link>
-          <div className="absolute top-1/4 right-4 -translate-y-1/2 text-13 text-primary sm:fixed sm:top-12 sm:right-16 sm:translate-y-0 sm:py-5">
+          <div className="absolute top-1/4 right-4 -translate-y-1/2 text-body-xs-regular text-primary sm:fixed sm:top-12 sm:right-16 sm:translate-y-0 sm:py-5">
             {currentUser?.email}
           </div>
         </div>
         <div className="relative flex h-full justify-center px-8 pb-8 sm:w-10/12 sm:items-center sm:justify-start sm:p-0 sm:pr-[8.33%] md:w-9/12 lg:w-4/5">
           {isWorkspaceCreationDisabled ? (
-            <div className="flex h-full w-4/5 flex-col items-center justify-center gap-1 text-16 font-medium">
+            <div className="flex h-full w-4/5 flex-col items-center justify-center gap-1 text-body-md-medium">
               <img
                 src={WorkspaceCreationDisabled}
                 className="mb-4 h-full w-full object-contain"
                 alt="Workspace creation disabled"
               />
-              <div className="text-center text-16 font-medium">
+              <div className="text-center text-body-md-medium">
                 {t("workspace_creation.errors.creation_disabled.title")}
               </div>
-              <p className="text-center text-13 break-words text-tertiary">
+              <p className="text-center text-body-xs-medium break-words text-tertiary">
                 {t("workspace_creation.errors.creation_disabled.description")}
               </p>
               <div className="mt-6 flex gap-4">
@@ -108,8 +108,8 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
             </div>
           ) : (
             <div className="w-full space-y-7 sm:space-y-10">
-              <h4 className="text-20 font-semibold">{t("workspace_creation.heading")}</h4>
-              <div className="sm:w-3/4 md:w-2/5">
+              <h4 className="text-h4-semibold">{t("workspace_creation.heading")}</h4>
+              <div className="w-full max-w-[24rem]">
                 <CreateWorkspaceForm
                   onSubmit={onSubmit}
                   defaultValues={defaultValues}

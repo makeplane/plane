@@ -6,9 +6,9 @@
 
 import { observer } from "mobx-react";
 import { Logo } from "@plane/blocks/emoji-icon-picker";
-import { CloseOutline } from "@makeplane/propel/icons";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+import { RemovableChip } from "@/components/common/removable-chip";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -29,21 +29,14 @@ export const AppliedProjectFilters = observer(function AppliedProjectFilters(pro
         if (!projectDetails) return null;
 
         return (
-          <div key={projectId} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
-            <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-              <Logo logo={projectDetails.logo_props} size={12} />
-            </span>
-            <span className="normal-case">{projectDetails.name}</span>
-            {editable && (
-              <button
-                type="button"
-                className="grid place-items-center text-tertiary hover:text-secondary"
-                onClick={() => handleRemove(projectId)}
-              >
-                <CloseOutline height={10} width={10} />
-              </button>
-            )}
-          </div>
+          <RemovableChip
+            key={projectId}
+            variant="soft"
+            icon={<Logo logo={projectDetails.logo_props} size={12} />}
+            label={projectDetails.name}
+            ariaLabel={projectDetails.name}
+            onRemove={editable ? () => handleRemove(projectId) : undefined}
+          />
         );
       })}
     </>

@@ -8,8 +8,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { CYCLE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CloseOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
+import { RemovableChip } from "@/components/common/removable-chip";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -25,26 +25,16 @@ export const AppliedStatusFilters = observer(function AppliedStatusFilters(props
     <>
       {values.map((status) => {
         const statusDetails = CYCLE_STATUS.find((s) => s.value === status);
+        const statusLabel = statusDetails ? t(statusDetails.i18n_title) : "";
         return (
-          <div
+          <RemovableChip
             key={status}
-            className={cn(
-              "flex items-center gap-1 rounded-sm px-1.5 py-1 text-11",
-              statusDetails?.bgColor,
-              statusDetails?.textColor
-            )}
-          >
-            {statusDetails && t(statusDetails?.i18n_title)}
-            {editable && (
-              <button
-                type="button"
-                className="grid place-items-center text-tertiary hover:text-secondary"
-                onClick={() => handleRemove(status)}
-              >
-                <CloseOutline height={10} width={10} />
-              </button>
-            )}
-          </div>
+            variant="soft"
+            label={statusLabel}
+            ariaLabel={statusLabel}
+            className={cn(statusDetails?.bgColor, statusDetails?.textColor)}
+            onRemove={editable ? () => handleRemove(status) : undefined}
+          />
         );
       })}
     </>

@@ -26,6 +26,16 @@
           "highlight_changes": "Wijzigingen markeren"
         }
       },
+      "version_history": {
+        "view_only": "Alleen bekijken",
+        "loading_details": "Versiegegevens laden",
+        "load_error_description": "De versie kon niet worden geladen. Probeer het opnieuw.",
+        "list_error_description": "De versiegeschiedenis kon niet worden geladen.",
+        "try_again": "Opnieuw proberen",
+        "restoring": "Herstellen",
+        "restore_success": "Paginaversie hersteld.",
+        "restore_failed": "Paginaversie kon niet worden hersteld."
+      },
       "assets": {
         "label": "Assets",
         "download_button": "Downloaden",

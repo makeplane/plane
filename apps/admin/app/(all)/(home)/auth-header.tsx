@@ -5,7 +5,7 @@
  */
 
 import Link from "next/link";
-import { PlaneLockup } from "@/components/common/plane-lockup";
+import { PlaneLockup } from "@plane/blocks/icons";
 
 export function AuthHeader() {
   return (

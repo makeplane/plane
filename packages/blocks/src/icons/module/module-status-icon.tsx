@@ -4,14 +4,14 @@
  * See the LICENSE file for details.
  */
 
-import * as React from "react";
-
-import { ModuleBacklogIcon } from "./backlog";
-import { ModuleCancelledIcon } from "./cancelled";
-import { ModuleCompletedIcon } from "./completed";
-import { ModuleInProgressIcon } from "./in-progress";
-import { ModulePausedIcon } from "./paused";
-import { ModulePlannedIcon } from "./planned";
+import {
+  ModuleBacklog,
+  ModuleCancelled,
+  ModuleCompleted,
+  ModuleInProgress,
+  ModulePaused,
+  ModulePlanned,
+} from "@makeplane/propel/icons";
 
 export type ModuleStatus = "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled";
 
@@ -26,11 +26,10 @@ export type ModuleStatusIconProps = {
 };
 
 export function ModuleStatusIcon({ status, className, height = "12px", width = "12px" }: ModuleStatusIconProps) {
-  if (status === "backlog") return <ModuleBacklogIcon className={className} height={height} width={width} />;
-  else if (status === "cancelled") return <ModuleCancelledIcon className={className} height={height} width={width} />;
-  else if (status === "completed") return <ModuleCompletedIcon className={className} height={height} width={width} />;
-  else if (status === "in-progress")
-    return <ModuleInProgressIcon className={className} height={height} width={width} />;
-  else if (status === "paused") return <ModulePausedIcon className={className} height={height} width={width} />;
-  else return <ModulePlannedIcon className={className} height={height} width={width} />;
+  if (status === "backlog") return <ModuleBacklog className={className} height={height} width={width} />;
+  else if (status === "cancelled") return <ModuleCancelled className={className} height={height} width={width} />;
+  else if (status === "completed") return <ModuleCompleted className={className} height={height} width={width} />;
+  else if (status === "in-progress") return <ModuleInProgress className={className} height={height} width={width} />;
+  else if (status === "paused") return <ModulePaused className={className} height={height} width={width} />;
+  else return <ModulePlanned className={className} height={height} width={width} />;
 }

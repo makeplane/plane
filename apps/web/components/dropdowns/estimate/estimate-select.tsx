@@ -40,6 +40,13 @@ function formatEstimatePointValue(estimate: IEstimate | undefined, rawValue: str
   return estimate?.type === EEstimateSystem.TIME ? convertMinutesToHoursMinutesString(Number(rawValue)) : rawValue;
 }
 
+/** Display value of one of an estimate's points, or `undefined` when the point isn't loaded. */
+export function getEstimatePointDisplayValue(estimate: IEstimate | undefined, pointId: string): string | undefined {
+  // CE's `useEstimate` returns an empty object while no estimate is active, so the lookup is optional-called.
+  const point = estimate?.estimatePointById?.(pointId);
+  return point ? formatEstimatePointValue(estimate, point.value ?? "") : undefined;
+}
+
 /** Maps an estimate's points to dropdown options, optionally filtered by a case-insensitive search term. */
 function toEstimateOptions(estimate: IEstimate | undefined, search: string | undefined): EstimateOption[] {
   const points = estimate?.estimatePointIds ?? [];
@@ -97,11 +104,8 @@ export const EstimateSelect = observer(function EstimateSelect(props: Props) {
     [projectId, areEstimateEnabledByProjectId, resolveActiveEstimate]
   );
 
-  // CE change: CE's `useEstimate` returns an empty object (not `undefined`) while no estimate is
-  // active, so the point lookup is optional-called.
-  const point = value ? estimate?.estimatePointById?.(value) : undefined;
-  const selected: EstimateOption | null =
-    value && point ? { id: value, displayValue: formatEstimatePointValue(estimate, point.value ?? "") } : null;
+  const displayValue = value ? getEstimatePointDisplayValue(estimate, value) : undefined;
+  const selected: EstimateOption | null = value && displayValue !== undefined ? { id: value, displayValue } : null;
 
   return (
     <EstimateSelectBlock

@@ -7,18 +7,9 @@
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxItem,
-  ComboboxList,
-  ComboboxSearch,
-  ComboboxTrigger,
-  useFilter,
-} from "@makeplane/propel/components/combobox";
-import type { ComboboxSize } from "@makeplane/propel/components/combobox";
-import { Field } from "@makeplane/propel/components/field";
+import { useFilter } from "@makeplane/propel/components/combobox";
+import { ComboboxField } from "@makeplane/propel/components/combobox-field";
+import type { ComboboxTriggerWidth, FieldSize } from "@makeplane/propel/components/combobox-field";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // hooks
@@ -29,15 +20,20 @@ type TTimezoneOption = {
   value: string;
   label: string;
   query: string;
-  content: ReactNode;
 };
+
+const getTimezoneValue = (option: TTimezoneOption) => option.value;
+const getOptionLabel = (option: TTimezoneOption) => option.label;
 
 type TTimezoneSelect = {
   value: string | undefined;
   onChange: (value: string) => void;
   error?: boolean;
+  errorMessage?: string;
+  fieldLabel?: string;
   label?: string;
-  size?: ComboboxSize;
+  size?: FieldSize;
+  width?: ComboboxTriggerWidth;
   className?: string;
   /** @deprecated No effect: the Propel trigger owns its chrome. Kept until call sites drop it. */
   buttonClassName?: string;
@@ -68,8 +64,11 @@ export const TimezoneSelect = observer(function TimezoneSelect(props: TTimezoneS
     value,
     onChange,
     error = false,
+    errorMessage,
+    fieldLabel,
     label = "Select a timezone",
     size = "lg",
+    width,
     className = "",
     disabled = false,
   } = props;
@@ -83,38 +82,28 @@ export const TimezoneSelect = observer(function TimezoneSelect(props: TTimezoneS
     value: option.value,
     label: getTimezoneLabel(option),
     query: option.query,
-    content: option.content,
   }));
-  const selectedOption = options.find((option) => option.value === value) ?? null;
 
   return (
     <div className={cn("w-full", className)}>
-      <Field size={size} invalid={error} disabled={isSelectDisabled}>
-        <Combobox<TTimezoneOption, false>
-          items={options}
-          value={selectedOption}
-          onValueChange={(nextValue) => {
-            if (nextValue) onChange(nextValue.value);
-          }}
-          itemToStringLabel={(option) => option.label}
-          itemToStringValue={(option) => option.value}
-          isItemEqualToValue={(option, selected) => option.value === selected.value}
-          filter={(option, query) => contains(option.query, query)}
-          disabled={isSelectDisabled}
-        >
-          <ComboboxTrigger size={size} placeholder={label} />
-          <ComboboxContent
-            aria-label={label}
-            sizing="anchor"
-            search={<ComboboxSearch placeholder={t("common.search.label")} aria-label={t("common.search.label")} />}
-          >
-            <ComboboxEmpty>{t("common.search.no_matches_found")}</ComboboxEmpty>
-            <ComboboxList aria-label={label}>
-              {(option: TTimezoneOption) => <ComboboxItem key={option.value} value={option} label={option.label} />}
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
-      </Field>
+      <ComboboxField<string, TTimezoneOption>
+        {...(fieldLabel !== undefined ? { label: fieldLabel, "aria-label": label } : { "aria-label": label })}
+        size={size}
+        width={width}
+        items={options}
+        value={value ?? null}
+        onValueChange={(nextValue) => {
+          if (nextValue !== null) onChange(nextValue);
+        }}
+        getItemValue={getTimezoneValue}
+        getItemLabel={getOptionLabel}
+        filter={(option, query) => contains(option.query, query)}
+        empty={t("common.search.no_matches_found")}
+        searchLabel={t("common.search.label")}
+        placeholder={label}
+        disabled={isSelectDisabled}
+        error={errorMessage ?? (error ? true : undefined)}
+      />
     </div>
   );
 });

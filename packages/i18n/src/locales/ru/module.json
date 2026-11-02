@@ -2,6 +2,13 @@
   "module": {
     "label": "{count, plural, one {Модуль} other {Модули}}",
     "no_module": "Нет модуля",
-    "select": "Добавить модули"
+    "select": "Добавить модули",
+    "details_drawer": {
+      "progress": {
+        "done": "Выполнено {completed} из {scope, plural, one {# рабочего элемента} few {# рабочих элементов} many {# рабочих элементов} other {# рабочего элемента}}",
+        "points_done": "Выполнено {completed} из {scope, plural, one {# очка} few {# очков} many {# очков} other {# очка}}",
+        "empty": "Добавьте рабочие элементы в модуль, чтобы отслеживать прогресс."
+      }
+    }
   }
 }

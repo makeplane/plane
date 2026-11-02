@@ -50,7 +50,7 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
   return (
     <>
       <div className="pb-4 text-center">
-        <div className="h-9 text-20 font-semibold">
+        <div className="h-9 text-h4-semibold">
           {isLoading ? (
             <Loader className="flex flex-col items-center justify-center">
               <Loader.Item height="36px" width="4rem" />

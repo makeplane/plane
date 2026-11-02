@@ -22,7 +22,7 @@ export function AddLink(props: TProps) {
       <div className="my-auto h-8 w-8 rounded-sm bg-layer-1/40 p-2">
         <AddOutline className="h-4 w-4 text-tertiary" />
       </div>
-      <div className="my-auto text-13 font-medium">{t("home.quick_links.add")}</div>
+      <div className="my-auto text-body-xs-medium">{t("home.quick_links.add")}</div>
     </button>
   );
 }

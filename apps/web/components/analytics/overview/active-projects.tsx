@@ -11,11 +11,13 @@ import useSWR from "swr";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/blocks/skeleton";
+import { cn } from "@plane/utils";
 // plane web hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
+import { ANALYTICS_CHART_HEIGHT_CLASSNAME } from "../constants";
 import ActiveProjectItem from "./active-project-item";
 
 const ActiveProjects = observer(function ActiveProjects() {
@@ -36,9 +38,14 @@ const ActiveProjects = observer(function ActiveProjects() {
     <AnalyticsSectionWrapper
       title={`${t("workspace_analytics.active_projects")}`}
       subtitle={selectedDurationLabel}
-      className="md:col-span-2"
+      className="lg:col-span-2"
     >
-      <div className="flex h-[350px] flex-col gap-4 overflow-auto">
+      <div
+        className={cn(
+          ANALYTICS_CHART_HEIGHT_CLASSNAME,
+          "vertical-scrollbar scrollbar-sm flex flex-col gap-4 overflow-y-auto"
+        )}
+      >
         {isProjectAnalyticsCountLoading &&
           Array.from({ length: 5 }).map((_, index) => <Loader.Item key={index} height="40px" width="100%" />)}
         {!isProjectAnalyticsCountLoading &&

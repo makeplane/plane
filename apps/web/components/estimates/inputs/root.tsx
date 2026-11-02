@@ -15,21 +15,23 @@ type TEstimateInputRootProps = {
   estimateType: TEstimateSystemKeys;
   handleEstimateInputValue: (value: string) => void;
   value?: string;
+  size?: "lg" | "xl";
 };
 
 export function EstimateInputRoot(props: TEstimateInputRootProps) {
-  const { estimateType, handleEstimateInputValue, value } = props;
+  const { estimateType, handleEstimateInputValue, value, size } = props;
 
   switch (estimateType) {
     case EEstimateSystem.POINTS:
       return (
         <EstimateNumberInput
+          size={size}
           value={value ? parseFloat(value) : undefined}
           handleEstimateInputValue={handleEstimateInputValue}
         />
       );
     case EEstimateSystem.CATEGORIES:
-      return <EstimateTextInput value={value} handleEstimateInputValue={handleEstimateInputValue} />;
+      return <EstimateTextInput size={size} value={value} handleEstimateInputValue={handleEstimateInputValue} />;
     case EEstimateSystem.TIME:
       return <></>;
     default:

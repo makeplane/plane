@@ -118,7 +118,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
       }}
     >
       <div className="space-y-6 sm:space-y-7">
-        <div className="flex flex-col gap-2 text-13">
+        <div className="flex flex-col gap-2 text-body-xs-regular">
           <label htmlFor="workspaceName">
             {t("workspace_creation.form.name.label")}
             <span className="ml-0.5 text-danger-primary">*</span>
@@ -157,10 +157,10 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
                 </Field>
               )}
             />
-            <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
+            <span className="text-caption-sm-regular text-danger-primary">{errors?.name?.message}</span>
           </div>
         </div>
-        <div className="flex flex-col gap-2 text-13">
+        <div className="flex flex-col gap-2 text-body-xs-regular">
           <label htmlFor="workspaceUrl">
             {t("workspace_creation.form.url.label")}
             <span className="ml-0.5 text-danger-primary">*</span>
@@ -178,7 +178,9 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
             render={({ field: { onChange, value, ref } }) => (
               <Field name="workspaceUrl" invalid={invalidSlug || Boolean(errors.slug)}>
                 <InputGroup size="2xl">
-                  <span className="text-12 whitespace-nowrap text-secondary">{window && window.location.host}/</span>
+                  <span className="text-caption-md-regular whitespace-nowrap text-secondary">
+                    {window && window.location.host}/
+                  </span>
                   <Input
                     size="2xl"
                     id="workspaceUrl"
@@ -198,16 +200,18 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
             )}
           />
           {slugError && (
-            <p className="-mt-3 text-13 text-danger-primary">
+            <p className="-mt-3 text-body-xs-regular text-danger-primary">
               {t("workspace_creation.errors.validation.url_already_taken")}
             </p>
           )}
           {invalidSlug && (
-            <p className="text-13 text-danger-primary">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
+            <p className="text-body-xs-regular text-danger-primary">
+              {t("workspace_creation.errors.validation.url_alphanumeric")}
+            </p>
           )}
-          {errors.slug && <span className="text-11 text-danger-primary">{errors.slug.message}</span>}
+          {errors.slug && <span className="text-caption-sm-regular text-danger-primary">{errors.slug.message}</span>}
         </div>
-        <div className="flex flex-col gap-2 text-13">
+        <div className="flex flex-col gap-2 text-body-xs-regular">
           <span>
             {t("workspace_creation.form.organization_size.label")}
             <span className="ml-0.5 text-danger-primary">*</span>
@@ -239,7 +243,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
               )}
             />
             {errors.organization_size && (
-              <span className="text-13 text-danger-primary">{errors.organization_size.message}</span>
+              <span className="text-body-xs-regular text-danger-primary">{errors.organization_size.message}</span>
             )}
           </div>
         </div>

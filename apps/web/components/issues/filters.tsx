@@ -6,11 +6,13 @@
 
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { BarOutline, PreferencesOutline } from "@makeplane/propel/icons";
+import { AnalyticsOutline, PreferencesOutline } from "@makeplane/propel/icons";
 // plane imports
 import { EIssueFilterType, ISSUE_STORE_TO_FILTERS_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@makeplane/propel/elements/button";
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
 // hooks
@@ -126,21 +128,27 @@ export const HeaderFilters = observer(function HeaderFilters(props: Props) {
         />
       </FiltersDropdown>
       {canUserCreateIssue ? (
-        <div className="hidden md:flex">
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            stretch="auto"
-            aria-label={t("common.analytics")}
-            onClick={() => setAnalyticsModal(true)}
-          >
-            <span className="hidden @4xl:flex">{t("common.analytics")}</span>
-            <span className="flex @4xl:hidden">
-              <BarOutline className="size-3.5" />
-            </span>
-          </Button>
-        </div>
+        <>
+          {/* icon-only below the header's @4xl container breakpoint, labelled at and above it */}
+          <div className="hidden md:flex @4xl:hidden">
+            <IconButton
+              variant="secondary"
+              size="md"
+              icon={<Icon icon={AnalyticsOutline} />}
+              aria-label={t("common.analytics")}
+              onClick={() => setAnalyticsModal(true)}
+            />
+          </div>
+          <div className="hidden @4xl:flex">
+            <Button
+              variant="secondary"
+              size="md"
+              stretch="auto"
+              label={t("common.analytics")}
+              onClick={() => setAnalyticsModal(true)}
+            />
+          </div>
+        </>
       ) : (
         <></>
       )}

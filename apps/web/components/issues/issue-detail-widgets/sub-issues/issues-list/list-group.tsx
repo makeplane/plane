@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { CircleDashed } from "lucide-react";
+import { CircleDashedOutline } from "@makeplane/propel/icons";
 import { Collapsible } from "@makeplane/propel/components/collapsible";
 import { ALL_ISSUES } from "@plane/constants";
 import type { IGroupByColumn, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
@@ -80,20 +80,17 @@ export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TS
       onOpenChange={setIsCollapsibleOpen}
       icon={
         <div className="grid shrink-0 place-items-center overflow-hidden">
-          {group.icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
+          {group.icon ?? <CircleDashedOutline className="size-3.5" />}
         </div>
       }
       trigger={
         <>
-          <span className="text-13 font-medium text-primary">{group.name}</span>
-          <span className="text-13 text-placeholder">{workItemIds.length}</span>
+          <span className="text-body-xs-medium text-primary">{group.name}</span>
+          <span className="text-body-xs-regular text-placeholder">{workItemIds.length}</span>
         </>
       }
     >
-      {/* Cancels this nested Collapsible's own panel inset — the outer sub-work-items
-          Collapsible (root.tsx) already contributes one; without this, grouped rows
-          would sit inset twice. */}
-      <div className="-mx-3">{items}</div>
+      {items}
     </Collapsible>
   );
 });

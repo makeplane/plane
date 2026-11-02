@@ -10,11 +10,14 @@ import { Controller, useForm } from "react-hook-form";
 import { ImageOutline } from "@makeplane/propel/icons";
 // plane imports
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { setToast } from "@plane/blocks/toast";
 import type { IUser } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
-import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
+import { getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
 // components
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // hooks
@@ -166,43 +169,35 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
           />
         )}
       />
-      <div className="flex items-center gap-4">
-        <button
-          className="flex size-12 items-center justify-center rounded-full bg-accent-primary text-18 font-semibold text-on-color"
-          type="button"
-          onClick={() => setIsImageUploadModalOpen(true)}
-        >
-          {userAvatar ? (
-            <img
-              src={getFileURL(userAvatar ?? "")}
-              onClick={() => setIsImageUploadModalOpen(true)}
-              alt={user?.display_name}
-              className="h-full w-full rounded-full object-cover"
-            />
-          ) : (
-            <>{watch("first_name")[0] ?? "R"}</>
-          )}
-        </button>
-        <input type="file" className="hidden" id="profile-image-input" />
-        <button
-          className="flex items-center gap-1.5 px-2 py-1 text-13 text-tertiary hover:text-secondary"
-          type="button"
-          onClick={() => setIsImageUploadModalOpen(true)}
-        >
-          <ImageOutline className="size-4" />
-          <span className="text-13">{userAvatar ? "Change image" : "Upload image"}</span>
-        </button>
-      </div>
-
-      <div className="flex w-full flex-col gap-6">
-        {/* Name Input */}
-        <div className="flex flex-col gap-2">
-          <label
-            className="block text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
-            htmlFor="first_name"
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center gap-3">
+          <button
+            className="flex rounded-full"
+            type="button"
+            onClick={() => setIsImageUploadModalOpen(true)}
+            aria-label={userAvatar ? "Change image" : "Upload image"}
           >
-            Name
-          </label>
+            <Avatar
+              size="2xl"
+              src={userAvatar ? getFileURL(userAvatar) : undefined}
+              alt={user?.display_name}
+              fallback={watch("first_name")?.[0]?.toUpperCase() || undefined}
+            />
+          </button>
+          <input type="file" className="hidden" id="profile-image-input" />
+          <Button
+            type="button"
+            variant="ghost"
+            size="lg"
+            stretch="auto"
+            onClick={() => setIsImageUploadModalOpen(true)}
+            icon={<Icon icon={ImageOutline} />}
+            iconPosition="start"
+            label={userAvatar ? "Change image" : "Upload image"}
+          />
+        </div>
+        <div className="flex w-full flex-col gap-6">
+          {/* Name Input */}
           <Controller
             control={control}
             name="first_name"
@@ -215,39 +210,36 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <input
+              <InputField
                 ref={ref}
                 id="first_name"
                 name="first_name"
+                size="xl"
+                orientation="vertical"
                 type="text"
+                label="Name"
+                required
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 autoFocus
-                className={cn(
-                  "w-full rounded-md border border-strong bg-surface-1 px-3 py-2 text-secondary transition-all duration-200 placeholder:text-placeholder focus:border-transparent focus:ring-2 focus:ring-accent-strong focus:outline-none",
-                  {
-                    "border-strong": !errors.first_name,
-                    "border-danger-strong": errors.first_name,
-                  }
-                )}
                 placeholder="Enter your full name"
                 autoComplete="on"
+                error={errors.first_name?.message}
               />
             )}
           />
-          {errors.first_name && <span className="text-13 text-danger-primary">{errors.first_name.message}</span>}
-        </div>
 
-        {/* setting up password for the first time */}
-        {!isPasswordAlreadySetup && (
-          <SetPasswordRoot
-            onPasswordChange={(password) => setValue("password", password)}
-            onConfirmPasswordChange={(confirm_password) => setValue("confirm_password", confirm_password)}
-          />
-        )}
+          {/* setting up password for the first time */}
+          {!isPasswordAlreadySetup && (
+            <SetPasswordRoot
+              onPasswordChange={(password) => setValue("password", password)}
+              onConfirmPasswordChange={(confirm_password) => setValue("confirm_password", confirm_password)}
+            />
+          )}
+        </div>
+        {/* Continue Button */}
+        <Button variant="primary" type="submit" stretch="full" size="lg" disabled={isButtonDisabled} label="Continue" />
       </div>
-      {/* Continue Button */}
-      <Button variant="primary" type="submit" stretch="full" size="lg" disabled={isButtonDisabled} label="Continue" />
 
       {/* Marketing Consent */}
       {!instanceConfig?.is_self_managed && (

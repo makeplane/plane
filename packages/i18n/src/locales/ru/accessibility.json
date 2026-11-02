@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Основная боковая панель",
+      "resize_sidebar": "Изменить размер боковой панели",
+      "sidebar_peek_view": "Предпросмотр боковой панели",
       "workspace_logo": "Логотип рабочей области",
       "open_workspace_switcher": "Открыть переключатель рабочей области",
       "open_user_menu": "Открыть пользовательское меню",
@@ -42,6 +45,9 @@
       "open": "Открыть выбор цвета",
       "swatches": "Готовые цвета",
       "hex_input": "Цвет в HEX"
+    },
+    "project_board": {
+      "collapse_group": "Свернуть группу"
     }
   }
 }

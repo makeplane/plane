@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "メインサイドバー",
+      "resize_sidebar": "サイドバーのサイズを変更",
+      "sidebar_peek_view": "サイドバーのプレビュー",
       "workspace_logo": "ワークスペースロゴ",
       "open_workspace_switcher": "ワークスペーススイッチャーを開く",
       "open_user_menu": "ユーザーメニューを開く",
@@ -42,6 +45,9 @@
       "open": "カラーピッカーを開く",
       "swatches": "プリセットカラー",
       "hex_input": "16 進数カラー"
+    },
+    "project_board": {
+      "collapse_group": "グループを折りたたむ"
     }
   }
 }

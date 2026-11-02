@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Hauptseitenleiste",
+      "resize_sidebar": "Größe der Seitenleiste ändern",
+      "sidebar_peek_view": "Seitenleistenvorschau",
       "workspace_logo": "Arbeitsbereich-Logo",
       "open_workspace_switcher": "Arbeitsbereich-Umschalter öffnen",
       "open_user_menu": "Benutzermenü öffnen",
@@ -42,6 +45,9 @@
       "open": "Farbwähler öffnen",
       "swatches": "Voreingestellte Farben",
       "hex_input": "Hex-Farbe"
+    },
+    "project_board": {
+      "collapse_group": "Gruppe einklappen"
     }
   }
 }

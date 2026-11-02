@@ -4,18 +4,16 @@
  * See the LICENSE file for details.
  */
 
-import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 // plane package imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/blocks/empty-state";
-import { Tab, Tabs, TabsList, TabsPanel } from "@makeplane/propel/components/tabs";
+import { Tabs, TabsList, TabsPanel } from "@makeplane/propel/components/tabs";
 // components
-import { cn } from "@plane/utils";
 import AnalyticsFilterActions from "@/components/analytics/analytics-filter-actions";
 import { PageHead } from "@/components/core/page-title";
+import { UnderlineTabLink } from "@/components/navigation/underline-tab-link";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
@@ -26,9 +24,6 @@ import type { Route } from "./+types/page";
 
 function AnalyticsPage({ params }: Route.ComponentProps) {
   const { tabId } = params;
-
-  // hooks
-  const router = useRouter();
 
   // plane imports
   const { t } = useTranslation();
@@ -52,19 +47,8 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
   const workspaceSlug = params.workspaceSlug;
   const ANALYTICS_TABS = useAnalyticsTabs(workspaceSlug.toString());
 
-  const [selectedTab, setSelectedTab] = useState(tabId || ANALYTICS_TABS[0]?.key);
-
-  useEffect(() => {
-    if (tabId) {
-      setSelectedTab(tabId);
-    }
-  }, [tabId]);
-
-  // Handle tab change
-  const handleTabChange = (value: string) => {
-    setSelectedTab(value);
-    router.push(`/${currentWorkspace?.slug}/analytics/${value}`);
-  };
+  // the route owns the selected tab; each tab is a link to its route
+  const selectedTab = tabId || ANALYTICS_TABS[0]?.key;
 
   return (
     <>
@@ -73,26 +57,31 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
         <>
           {workspaceProjectIds.length > 0 || loader === "init-loader" ? (
             <div className="flex h-full overflow-hidden">
-              <Tabs variant="contained" value={selectedTab} onValueChange={handleTabChange}>
-                <div className={"flex h-full w-full flex-col"}>
-                  <div
-                    className={cn(
-                      "flex w-full items-center justify-between gap-4 overflow-hidden border-b border-subtle bg-surface-1 px-6 py-2"
-                    )}
-                  >
-                    <TabsList>
-                      {ANALYTICS_TABS.map((tab) => (
-                        <Tab key={tab.key} value={tab.key} disabled={tab.isDisabled} label={tab.label} />
-                      ))}
-                    </TabsList>
+              <Tabs variant="underline" layout="fill" value={selectedTab}>
+                <div className="flex h-full w-full flex-col">
+                  <div className="flex w-full items-center justify-between gap-4 overflow-hidden border-b border-subtle-1 bg-surface-1 px-page-x py-2">
+                    {/* pulls the underline onto the header's bottom border */}
+                    <div className="-mb-2">
+                      <TabsList>
+                        {ANALYTICS_TABS.map((tab) => (
+                          <UnderlineTabLink
+                            key={tab.key}
+                            value={tab.key}
+                            disabled={tab.isDisabled}
+                            label={tab.label}
+                            to={`/${workspaceSlug}/analytics/${tab.key}`}
+                          />
+                        ))}
+                      </TabsList>
+                    </div>
 
-                    <div className="flex-shrink-0">
+                    <div className="shrink-0">
                       <AnalyticsFilterActions />
                     </div>
                   </div>
                   {/* Grid wrapper: Propel's TabsPanel omits className, so the single mounted panel
                       gets its fill height from a one-row grid instead. */}
-                  <div className="grid min-h-0 w-full flex-1 grid-rows-1 overflow-x-hidden overflow-y-auto px-2">
+                  <div className="grid min-h-0 w-full flex-1 grid-rows-1 overflow-x-hidden overflow-y-auto">
                     {ANALYTICS_TABS.map((tab) => (
                       <TabsPanel key={tab.key} value={tab.key}>
                         <tab.content />
@@ -109,7 +98,7 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
               description={t("workspace_projects.empty_state.no_projects.description")}
               actions={[
                 {
-                  label: "Create a project",
+                  label: t("create_project"),
                   onClick: () => {
                     toggleCreateProjectModal(true);
                   },

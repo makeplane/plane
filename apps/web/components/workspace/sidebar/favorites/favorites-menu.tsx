@@ -189,7 +189,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
         trigger={
           <span
             ref={elementRef}
-            className={cn("text-13 font-semibold whitespace-nowrap text-placeholder", {
+            className={cn("text-body-xs-semibold whitespace-nowrap text-tertiary", {
               "bg-layer-1 opacity-60": isDragging,
             })}
           >
@@ -197,11 +197,12 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
           </span>
         }
         trailing={
-          <span className="pointer-events-none flex items-center opacity-0 group-hover/favorites-button:pointer-events-auto group-hover/favorites-button:opacity-100">
+          <span className="pointer-events-none flex items-center opacity-0 group-focus-within/favorites-button:pointer-events-auto group-focus-within/favorites-button:opacity-100 group-hover/favorites-button:pointer-events-auto group-hover/favorites-button:opacity-100">
             <Tooltip label={t("create_folder")}>
               <IconButton
                 variant="ghost"
                 size="xs"
+                showTooltip={false}
                 onClick={() => {
                   setCreateNewFolder(true);
                   if (!isFavoriteMenuOpen) toggleFavoriteMenu(!isFavoriteMenuOpen);
@@ -213,11 +214,11 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
           </span>
         }
       >
-        <div className="mt-0.5 flex flex-col gap-0.5">
+        <div className="mt-0.5 flex flex-col gap-px">
           {createNewFolder && <NewFavoriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
           {Object.keys(groupedFavorites).length === 0 ? (
             <>
-              <span className="px-8 py-1.5 text-11 font-medium text-placeholder">{t("no_favorites_yet")}</span>
+              <span className="px-8 py-1.5 text-caption-sm-medium text-placeholder">{t("no_favorites_yet")}</span>
             </>
           ) : (
             orderBy(Object.values(groupedFavorites), "sequence", "desc")

@@ -27,6 +27,8 @@ import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifi
 
 export type TPowerKSearchResultGroupDetails = {
   icon?: React.ComponentType<{ className?: string }>;
+  /** Rendered before the name and kept out of its truncation, e.g. a work item identifier. */
+  iconNode?: (item: any) => React.ReactNode;
   itemName: (item: any) => React.ReactNode;
   path: (item: any, projectId: string | undefined) => string;
   title: string;
@@ -36,8 +38,9 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
   cycle: {
     icon: CyclesOutline,
     itemName: (cycle: IWorkspaceDefaultSearchResult) => (
-      <p>
-        <span className="text-11 text-tertiary">{cycle.project__identifier}</span> {cycle.name}
+      <p className="flex min-w-0 items-center gap-1">
+        <span className="shrink-0 text-caption-sm-regular text-tertiary">{cycle.project__identifier}</span>
+        <span className="truncate">{cycle.name}</span>
       </p>
     ),
     path: (cycle: IWorkspaceDefaultSearchResult) =>
@@ -45,18 +48,16 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     title: "Cycles",
   },
   issue: {
-    itemName: (workItem: IWorkspaceIssueSearchResult) => (
-      <div className="flex gap-2">
-        <IssueIdentifier
-          projectId={workItem.project_id}
-          issueTypeId={workItem.type_id}
-          projectIdentifier={workItem.project__identifier}
-          issueSequenceId={workItem.sequence_id}
-          size="xs"
-        />{" "}
-        {workItem.name}
-      </div>
+    iconNode: (workItem: IWorkspaceIssueSearchResult) => (
+      <IssueIdentifier
+        projectId={workItem.project_id}
+        issueTypeId={workItem.type_id}
+        projectIdentifier={workItem.project__identifier}
+        issueSequenceId={workItem.sequence_id}
+        size="xs"
+      />
     ),
+    itemName: (workItem: IWorkspaceIssueSearchResult) => workItem.name,
     path: (workItem: IWorkspaceIssueSearchResult) =>
       generateWorkItemLink({
         workspaceSlug: workItem?.workspace__slug,
@@ -70,8 +71,9 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
   issue_view: {
     icon: WorkItemsOutline,
     itemName: (view: IWorkspaceDefaultSearchResult) => (
-      <p>
-        <span className="text-11 text-tertiary">{view.project__identifier}</span> {view.name}
+      <p className="flex min-w-0 items-center gap-1">
+        <span className="shrink-0 text-caption-sm-regular text-tertiary">{view.project__identifier}</span>
+        <span className="truncate">{view.name}</span>
       </p>
     ),
     path: (view: IWorkspaceDefaultSearchResult) =>
@@ -81,8 +83,9 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
   module: {
     icon: ModuleOutline,
     itemName: (module: IWorkspaceDefaultSearchResult) => (
-      <p>
-        <span className="text-11 text-tertiary">{module.project__identifier}</span> {module.name}
+      <p className="flex min-w-0 items-center gap-1">
+        <span className="shrink-0 text-caption-sm-regular text-tertiary">{module.project__identifier}</span>
+        <span className="truncate">{module.name}</span>
       </p>
     ),
     path: (module: IWorkspaceDefaultSearchResult) =>
@@ -92,8 +95,9 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
   page: {
     icon: DocumentationOutline,
     itemName: (page: IWorkspacePageSearchResult) => (
-      <p>
-        <span className="text-11 text-tertiary">{page.project__identifiers?.[0]}</span> {page.name}
+      <p className="flex min-w-0 items-center gap-1">
+        <span className="shrink-0 text-caption-sm-regular text-tertiary">{page.project__identifiers?.[0]}</span>
+        <span className="truncate">{page.name}</span>
       </p>
     ),
     path: (page: IWorkspacePageSearchResult, projectId: string | undefined) => {

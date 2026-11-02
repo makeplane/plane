@@ -7,6 +7,8 @@
     }
   },
   "sidebar": {
+    "more": "Още",
+    "hide": "Скриване",
     "stickies": "Stickies",
     "your_work": "Вашата работа",
     "projects": "Проекти",

@@ -81,17 +81,22 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
     <LabelDndHOC label={label} isGroup isChild={false} isLastChild={isLastChild} onDrop={onDrop}>
       {(isDragging, isDroppingInLabel, dragHandleRef) => (
         <div
-          className={`rounded-sm ${isDroppingInLabel ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
+          className={cn(
+            "overflow-hidden rounded-md border bg-surface-1 text-primary",
+            isDroppingInLabel ? "border-accent-strong ring-1 ring-accent-strong" : "border-subtle-1",
+            isDragging && "bg-layer-1"
+          )}
         >
           {/* propel: the ready-made `Collapsible` puts the label inside the trigger button, and this header
               already carries a menu button, so the disclosure is hand-rolled instead. */}
-          <div
-            className={`rounded-sm text-primary ${
-              !isDroppingInLabel ? "border-[0.5px] border-subtle" : ""
-            } ${isDragging ? "bg-layer-1" : "bg-surface-1"}`}
-          >
-            <div className={`py-3 pr-3 pl-1 ${!isUpdating && "max-h-full overflow-y-hidden"}`}>
-              <div className="relative flex cursor-pointer items-center justify-between gap-2">
+          <div>
+            <div className={cn(!isUpdating && "max-h-full overflow-y-hidden")}>
+              <div
+                className={cn(
+                  "relative flex min-h-10 cursor-pointer items-center justify-between gap-2 py-2.5 pr-3",
+                  isEditLabelForm && "pl-3"
+                )}
+              >
                 {isEditLabelForm ? (
                   <CreateUpdateLabelInline
                     labelForm={isEditLabelForm}
@@ -125,7 +130,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
                     <Icon
                       icon={
                         <ChevronDownOutline
-                          className={cn("h-4 w-4 text-placeholder transition-transform", !isOpen && "rotate-90")}
+                          className={cn("size-4 text-placeholder transition-transform", !isOpen && "-rotate-90")}
                         />
                       }
                     />
@@ -133,9 +138,9 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
                 />
               </div>
               {isOpen && (
-                <div className="ml-6">
+                <div className="space-y-2 border-t border-subtle bg-layer-2 px-3 py-3">
                   {labelChildren.map((child, index) => (
-                    <div key={child.id} className={`group flex w-full items-center text-13`}>
+                    <div key={child.id} className="group flex w-full items-center text-body-xs-regular">
                       <div className="w-full">
                         <ProjectSettingLabelItem
                           label={child}

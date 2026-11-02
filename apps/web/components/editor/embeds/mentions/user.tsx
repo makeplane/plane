@@ -74,11 +74,11 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
             <div className="min-w-0 flex-1">
               <Link
                 to={profileLink}
-                className="not-prose block truncate text-13 font-medium text-primary hover:underline"
+                className="not-prose block truncate text-body-xs-medium text-primary hover:underline"
               >
                 {userDetails?.first_name} {userDetails?.last_name}
               </Link>
-              {roleDetails && <p className="truncate text-11 text-secondary">{ROLE[roleDetails]}</p>}
+              {roleDetails && <p className="truncate text-caption-sm-regular text-secondary">{ROLE[roleDetails]}</p>}
             </div>
           </div>
         </PopoverContent>

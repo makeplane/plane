@@ -6,6 +6,7 @@
     "status_page": "trang trạng thái của chúng tôi"
   },
   "submit": "Gửi",
+  "submitting": "Đang gửi",
   "cancel": "Hủy",
   "loading": "Đang tải",
   "searching": "Đang tìm kiếm...",
@@ -153,6 +154,7 @@
   "no_favorites_yet": "Chưa có mục yêu thích",
   "create_folder": "Tạo thư mục",
   "new_folder": "Thư mục mới",
+  "rename_folder": "Đổi tên thư mục",
   "favorite_updated_successfully": "Đã cập nhật mục yêu thích thành công",
   "favorite_created_successfully": "Đã tạo mục yêu thích thành công",
   "folder_already_exists": "Thư mục đã tồn tại",
@@ -368,6 +370,7 @@
   "member": "{count, plural, other{# thành viên}}",
   "new_password_must_be_different_from_old_password": "Mật khẩu mới phải khác mật khẩu cũ",
   "edited": "đã chỉnh sửa",
+  "entity_detail_toolbar": "Hành động",
   "bot": "bot",
   "settings_description": "Quản lý tài khoản, không gian làm việc và các tùy chọn dự án của bạn tại một nơi. Chuyển đổi giữa các tab để dễ dàng cấu hình.",
   "back_to_workspace": "Quay lại không gian làm việc",
@@ -540,6 +543,7 @@
     "link_copied": "Đã sao chép liên kết!",
     "link_copied_to_clipboard": "Đã sao chép liên kết vào bảng tạm",
     "copied_to_clipboard": "Đã sao chép liên kết mục công việc vào bảng tạm",
+    "clipboard_copy_failed": "Không thể sao chép vào bảng tạm",
     "branch_name_copied_to_clipboard": "Tên nhánh đã được sao chép vào bảng tạm",
     "is_copied_to_clipboard": "Mục công việc đã được sao chép vào bảng tạm",
     "no_links_added_yet": "Chưa có liên kết nào được thêm",
@@ -723,7 +727,14 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "status": "Trạng thái",
+    "tooltip": {
+      "copy_to_clipboard": "Sao chép vào bảng tạm",
+      "created_on_date": "Được tạo vào {date}",
+      "priority": "Ưu tiên: {value}"
+    },
+    "locked": "Đã khóa"
   },
   "chart": {
     "x_axis": "Trục X",
@@ -874,5 +885,13 @@
       "short_description": "Xuất sang JSON"
     }
   },
-  "labels_count": "{count, plural, one {# nhãn} other {# nhãn}}"
+  "labels_count": "{count, plural, one {# nhãn} other {# nhãn}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Tùy chọn lưu chế độ xem",
+      "update_view": "Cập nhật chế độ xem",
+      "save_as": "Lưu thành",
+      "hide_filters": "Ẩn bộ lọc"
+    }
+  }
 }

@@ -27,7 +27,7 @@ export const FreePlanCard = observer(function FreePlanCard(props: FreePlanCardPr
         </div>
       )}
       <div className="px-4 py-2 font-semibold">
-        <div className="text-20">Free</div>
+        <div className="text-h4-regular">Free</div>
         <div className="text-caption-md text-tertiary">$0 per user per month</div>
       </div>
       <div className="px-2 pt-2 pb-3">
