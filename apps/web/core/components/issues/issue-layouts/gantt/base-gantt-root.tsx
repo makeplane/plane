@@ -5,6 +5,7 @@
  */
 
 import React, { useCallback, useEffect, useState } from "react";
+import { isAxiosError } from "axios";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -17,22 +18,28 @@ import { renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { AutoScheduleModal, scheduleSuccessors } from "@/components/gantt-chart/dependencies";
 import type { TScheduleUpdate, TScheduleWarning } from "@/components/gantt-chart/dependencies";
+import { schedulePreviewFromResponse } from "@/components/gantt-chart/dependencies/schedule-api";
+import type { TScheduleResponse } from "@/components/gantt-chart/dependencies/schedule-api";
 import { TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { GanttChartRoot } from "@/components/gantt-chart/root";
 import { IssueGanttSidebar } from "@/components/gantt-chart/sidebar/issues/sidebar";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 import { useBulkOperationStatus } from "@/hooks/use-bulk-operation-status";
+import { IssueService } from "@/services/issue";
 // local imports
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { GanttQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
 import { IssueGanttBlock } from "./blocks";
 import { useGanttDependencies } from "./use-gantt-dependencies";
+
+const issueService = new IssueService();
 
 interface IBaseGanttRoot {
   viewId?: string | undefined;
@@ -56,13 +63,14 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
 
   const storeType = useIssueStoreType() as GanttStoreType;
   const { issues, issuesFilter, issueMap } = useIssues(storeType);
+  const { rootIssueStore } = useIssueDetail();
   const { getProjectIdentifierById } = useProject();
   const { fetchIssues, fetchNextIssues, updateIssue, quickAddIssue } = useIssuesActions(storeType);
   const { initGantt, autoSchedule } = useTimeLineChart(GANTT_TIMELINE_TYPE.ISSUE);
   const [schedulePreview, setSchedulePreview] = useState<{
     updates: TScheduleUpdate[];
     warnings: TScheduleWarning[];
-    save: (includeSuccessors: boolean) => Promise<void>;
+    save: (includeSuccessors: boolean) => Promise<void | boolean>;
   } | null>(null);
 
   useEffect(() => setSchedulePreview(null), [workspaceSlug, projectId]);
@@ -148,25 +156,59 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
         await saveDates(updates);
         return;
       }
-      setSchedulePreview({
-        updates: result.updates,
-        warnings: result.warnings,
-        save: (includeSuccessors) =>
-          saveDates(
-            includeSuccessors
-              ? [
-                  drag,
-                  ...result.updates.map(({ id, newStart, newEnd }) => ({
-                    id,
-                    start_date: newStart ?? undefined,
-                    target_date: newEnd ?? undefined,
-                  })),
-                ]
-              : updates
-          ),
-      });
+      const showPreview = (preview: { updates: TScheduleUpdate[]; warnings: TScheduleWarning[] }) =>
+        setSchedulePreview({
+          ...preview,
+          save: async (includeSuccessors) => {
+            if (!includeSuccessors) return saveDates(updates);
+            let scheduled = false;
+            try {
+              const response = await issueService.scheduleIssue(workspaceSlug.toString(), projectId.toString(), {
+                change: drag,
+                include_successors: true,
+                expected: preview.updates.map(({ id, newStart, newEnd }) => ({
+                  id,
+                  start_date: newStart,
+                  target_date: newEnd,
+                })),
+              });
+              scheduled = true;
+              rootIssueStore.issues.updateIssue(drag.id, drag);
+              response.updates.forEach(({ id, new_start, new_end }) =>
+                rootIssueStore.issues.updateIssue(id, { start_date: new_start, target_date: new_end })
+              );
+              await deps.refresh();
+            } catch (error) {
+              if (!scheduled && isAxiosError<TScheduleResponse>(error)) {
+                if (error.response?.status === 404) {
+                  await saveDates([
+                    drag,
+                    ...preview.updates.map(({ id, newStart, newEnd }) => ({
+                      id,
+                      start_date: newStart ?? undefined,
+                      target_date: newEnd ?? undefined,
+                    })),
+                  ]);
+                  return;
+                }
+                if (error.response?.status === 409) {
+                  setToast({ type: TOAST_TYPE.WARNING, title: "Lịch đã thay đổi — xem lại" });
+                  const nextPreview = schedulePreviewFromResponse(error.response.data);
+                  if (nextPreview) showPreview(nextPreview);
+                  return false;
+                }
+              }
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: t("toast.error"),
+                message: "Error while updating work item dates, Please try again Later",
+              });
+            }
+          },
+        });
+      showPreview(result);
     },
-    [autoSchedule, deps, hasDependencyActions, issueMap, issues, projectId, workspaceSlug, t]
+    [autoSchedule, deps, hasDependencyActions, issueMap, issues, projectId, rootIssueStore, workspaceSlug, t]
   );
 
   const quickAdd =

@@ -7,6 +7,7 @@ import json
 
 # Django imports
 from django.utils import timezone
+from django.db import transaction
 from django.db.models import Q, OuterRef, F, Func, UUIDField, Value, CharField, Subquery
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models.functions import Coalesce
@@ -28,10 +29,12 @@ from plane.db.models import (
     FileAsset,
     IssueLink,
     CycleIssue,
+    Workspace,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_relation_mapper import get_actual_relation
 from plane.utils.host import base_host
+from plane.utils.gantt_schedule import find_cycle_through
 
 
 class IssueRelationViewSet(BaseViewSet):
@@ -206,6 +209,7 @@ class IssueRelationViewSet(BaseViewSet):
 
         return Response(response_data, status=status.HTTP_200_OK)
 
+    @transaction.atomic
     def create(self, request, slug, project_id, issue_id):
         relation_type = request.data.get("relation_type", None)
         if relation_type is None:
@@ -217,6 +221,10 @@ class IssueRelationViewSet(BaseViewSet):
         issues = request.data.get("issues", [])
         project = Project.objects.get(pk=project_id)
 
+        if relation_type in ["blocked_by", "blocking"]:
+            # Serialize dependency creation across projects in the same workspace.
+            Workspace.objects.select_for_update().get(pk=project.workspace_id)
+
         # Scope to workspace to prevent cross-tenant IDOR
         # Relations can cross projects so only workspace scope is enforced
         issues = list(
@@ -225,6 +233,32 @@ class IssueRelationViewSet(BaseViewSet):
                 pk__in=issues,
             ).values_list("id", flat=True)
         )
+
+        if relation_type in ["blocked_by", "blocking"]:
+            dependencies = [
+                (str(predecessor), str(successor))
+                for predecessor, successor in IssueRelation.objects.filter(
+                    workspace_id=project.workspace_id,
+                    relation_type="blocked_by",
+                    deleted_at__isnull=True,
+                ).values_list("related_issue_id", "issue_id")
+            ]
+            for issue in issues:
+                if str(issue) == str(issue_id):
+                    return Response(
+                        {"message": "An issue cannot block itself"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                predecessor, successor = (
+                    (str(issue_id), str(issue)) if relation_type == "blocking" else (str(issue), str(issue_id))
+                )
+                cycle = find_cycle_through(dependencies, predecessor, successor)
+                if cycle:
+                    return Response(
+                        {"message": "Circular dependency", "cycle": cycle},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                dependencies.append((predecessor, successor))
 
         issue_relation = IssueRelation.objects.bulk_create(
             [
@@ -268,8 +302,10 @@ class IssueRelationViewSet(BaseViewSet):
                 status=status.HTTP_201_CREATED,
             )
 
+    @transaction.atomic
     def remove_relation(self, request, slug, project_id, issue_id):
         related_issue = request.data.get("related_issue", None)
+        Workspace.objects.select_for_update().get(slug=slug)
 
         issue_relations = IssueRelation.objects.filter(
             workspace__slug=slug,
@@ -277,6 +313,8 @@ class IssueRelationViewSet(BaseViewSet):
             Q(issue_id=related_issue, related_issue_id=issue_id) | Q(issue_id=issue_id, related_issue_id=related_issue)
         )
         issue_relations = issue_relations.first()
+        if issue_relations is None:
+            return Response({"message": "Relation not found"}, status=status.HTTP_404_NOT_FOUND)
         current_instance = json.dumps(IssueRelationSerializer(issue_relations).data, cls=DjangoJSONEncoder)
         issue_relations.delete()
         issue_activity.delay(

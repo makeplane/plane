@@ -5,11 +5,15 @@
 # Python imports
 import copy
 import json
+from datetime import date
+from functools import partial
+from uuid import UUID
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import transaction
 from django.db.models import (
     Count,
     Exists,
@@ -60,8 +64,10 @@ from plane.db.models import (
     Project,
     ProjectMember,
     UserRecentVisit,
+    Workspace,
 )
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
+from plane.utils.gantt_schedule import schedule_successors
 from plane.utils.global_paginator import paginate
 from plane.utils.grouper import (
     issue_group_values,
@@ -1108,16 +1114,16 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
         """
         Validate that start date is before target date.
         """
-        from datetime import datetime
-
         start = new_start or current_start
         target = new_target or current_target
 
-        # Convert string dates to datetime objects if they're strings
-        if isinstance(start, str):
-            start = datetime.strptime(start, "%Y-%m-%d").date()
-        if isinstance(target, str):
-            target = datetime.strptime(target, "%Y-%m-%d").date()
+        try:
+            if isinstance(start, str):
+                start = date.fromisoformat(start)
+            if isinstance(target, str):
+                target = date.fromisoformat(target)
+        except (TypeError, ValueError):
+            return False
 
         if start and target and start > target:
             return False
@@ -1125,62 +1131,212 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
+        if not isinstance(request.data, dict):
+            return Response({"message": "Invalid updates"}, status=status.HTTP_400_BAD_REQUEST)
         updates = request.data.get("updates", [])
-
-        issue_ids = [update["id"] for update in updates]
+        try:
+            if not isinstance(updates, list):
+                raise ValueError
+            issue_ids = [str(UUID(update["id"])) for update in updates]
+            for update in updates:
+                for field in ("start_date", "target_date"):
+                    value = update.get(field)
+                    if value is not None and value != "" and (
+                        not isinstance(value, str) or date.fromisoformat(value).isoformat() != value
+                    ):
+                        raise ValueError
+        except (AttributeError, KeyError, TypeError, ValueError):
+            return Response({"message": "Invalid updates"}, status=status.HTTP_400_BAD_REQUEST)
         epoch = int(timezone.now().timestamp())
-
-        # Fetch all relevant issues in a single query
-        issues = list(Issue.objects.filter(id__in=issue_ids, workspace__slug=slug, project_id=project_id))
-        issues_dict = {str(issue.id): issue for issue in issues}
-        issues_to_update = []
-
-        for update in updates:
-            issue_id = update["id"]
-            issue = issues_dict.get(issue_id)
-
-            if not issue:
-                continue
-
-            start_date = update.get("start_date")
-            target_date = update.get("target_date")
-            validate_dates = self.validate_dates(issue.start_date, issue.target_date, start_date, target_date)
-            if not validate_dates:
-                return Response(
-                    {"message": "Start date cannot exceed target date"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            if start_date:
-                issue_activity.delay(
-                    type="issue.activity.updated",
-                    requested_data=json.dumps({"start_date": update.get("start_date")}),
-                    current_instance=json.dumps({"start_date": str(issue.start_date)}),
-                    issue_id=str(issue_id),
-                    actor_id=str(request.user.id),
-                    project_id=str(project_id),
-                    epoch=epoch,
-                )
-                issue.start_date = start_date
-                issues_to_update.append(issue)
-
-            if target_date:
-                issue_activity.delay(
-                    type="issue.activity.updated",
-                    requested_data=json.dumps({"target_date": update.get("target_date")}),
-                    current_instance=json.dumps({"target_date": str(issue.target_date)}),
-                    issue_id=str(issue_id),
-                    actor_id=str(request.user.id),
-                    project_id=str(project_id),
-                    epoch=epoch,
-                )
-                issue.target_date = target_date
-                issues_to_update.append(issue)
-
-        # Bulk update issues
-        Issue.objects.bulk_update(issues_to_update, ["start_date", "target_date"])
+        with transaction.atomic():
+            issues = Issue.objects.filter(
+                id__in=issue_ids, workspace__slug=slug, project_id=project_id
+            ).order_by("id").select_for_update(of=("self",))
+            issues_dict = {str(issue.id): issue for issue in issues}
+            issues_to_update = {}
+            activities = []
+            for issue_id, update in zip(issue_ids, updates):
+                issue = issues_dict.get(issue_id)
+                if not issue:
+                    continue
+                if not self.validate_dates(
+                    issue.start_date, issue.target_date, update.get("start_date"), update.get("target_date")
+                ):
+                    return Response(
+                        {"message": "Start date cannot exceed target date"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                for field in ("start_date", "target_date"):
+                    if update.get(field):
+                        activities.append({
+                            "type": "issue.activity.updated",
+                            "requested_data": json.dumps({field: update[field]}),
+                            "current_instance": json.dumps({field: str(getattr(issue, field))}),
+                            "issue_id": issue_id,
+                            "actor_id": str(request.user.id),
+                            "project_id": str(project_id),
+                            "epoch": epoch,
+                        })
+                        setattr(issue, field, date.fromisoformat(update[field]))
+                        issues_to_update[issue_id] = issue
+            Issue.objects.bulk_update(list(issues_to_update.values()), ["start_date", "target_date"])
+            for activity in activities:
+                transaction.on_commit(partial(issue_activity.delay, **activity))
 
         return Response({"message": "Issues updated successfully"}, status=status.HTTP_200_OK)
+
+
+class IssueScheduleEndpoint(BaseAPIView):
+    @staticmethod
+    def parse_dates(value):
+        if not isinstance(value, dict) or not isinstance(value.get("id"), str):
+            raise ValueError("Invalid issue")
+        parsed = {"id": str(UUID(value["id"]))}
+        for field in ("start_date", "target_date"):
+            if field in value:
+                raw = value[field]
+                if raw is None:
+                    parsed[field] = None
+                elif isinstance(raw, str) and date.fromisoformat(raw).isoformat() == raw:
+                    parsed[field] = date.fromisoformat(raw)
+                else:
+                    raise ValueError("Invalid date")
+        if parsed.get("start_date") and parsed.get("target_date") and parsed["start_date"] > parsed["target_date"]:
+            raise ValueError("Start date cannot exceed target date")
+        return parsed
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def post(self, request, slug, project_id):
+        try:
+            body = request.data
+            if not isinstance(body, dict):
+                raise ValueError("Invalid schedule")
+            change = self.parse_dates(body.get("change"))
+            include_successors = body.get("include_successors", True)
+            dry_run = body.get("dry_run", False)
+            if not isinstance(include_successors, bool) or not isinstance(dry_run, bool):
+                raise ValueError("Invalid schedule options")
+            expected = None
+            if "expected" in body:
+                if not isinstance(body["expected"], list):
+                    raise ValueError("Invalid expected updates")
+                expected = {}
+                for item in body["expected"]:
+                    parsed = self.parse_dates(item)
+                    if not all(field in parsed for field in ("start_date", "target_date")) or parsed["id"] in expected:
+                        raise ValueError("Invalid expected updates")
+                    expected[parsed["id"]] = (parsed["start_date"], parsed["target_date"])
+        except (TypeError, ValueError) as exc:
+            return Response({"message": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+
+        with transaction.atomic():
+            # Keep the graph stable while concurrent dependency creation waits.
+            Workspace.objects.select_for_update().get(slug=slug)
+            project_issues = Issue.objects.filter(workspace__slug=slug, project_id=project_id)
+            if not project_issues.filter(id=change["id"]).exists():
+                return Response({"message": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+            dependencies = [
+                (str(predecessor), str(successor))
+                for predecessor, successor in IssueRelation.objects.filter(
+                    workspace__slug=slug,
+                    relation_type="blocked_by",
+                    deleted_at__isnull=True,
+                    issue__project_id=project_id,
+                    related_issue__project_id=project_id,
+                    issue__deleted_at__isnull=True,
+                    related_issue__deleted_at__isnull=True,
+                ).order_by("id").values_list("related_issue_id", "issue_id")
+            ]
+            outgoing = {}
+            for predecessor, successor in dependencies:
+                outgoing.setdefault(predecessor, set()).add(successor)
+            downstream = {change["id"]}
+            pending = [change["id"]]
+            while pending:
+                for successor in outgoing.get(pending.pop(), ()):
+                    if successor not in downstream:
+                        downstream.add(successor)
+                        pending.append(successor)
+                        if len(downstream) > 2001:
+                            return Response({"message": "Too many downstream issues"}, status=status.HTTP_400_BAD_REQUEST)
+            locked = {
+                str(issue.id): issue
+                for issue in project_issues.filter(id__in=downstream).order_by("id").select_for_update(of=("self",))
+            }
+            edited = locked.get(change["id"])
+            if edited is None:
+                return Response({"message": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+            start = change.get("start_date", edited.start_date)
+            end = change.get("target_date", edited.target_date)
+            if start and end and start > end:
+                return Response({"message": "Start date cannot exceed target date"}, status=status.HTTP_400_BAD_REQUEST)
+            tasks = [
+                {"id": issue_id, "start": issue.start_date, "end": issue.target_date}
+                for issue_id, issue in locked.items()
+            ]
+            predecessors = {pred for pred, successor in dependencies if successor in downstream} - downstream
+            tasks.extend(
+                {"id": str(issue_id), "start": task_start, "end": task_end}
+                for issue_id, task_start, task_end in project_issues.filter(id__in=predecessors).values_list(
+                    "id", "start_date", "target_date"
+                )
+            )
+            try:
+                result = schedule_successors(tasks, dependencies, {"id": change["id"], "start": start, "end": end})
+            except (OverflowError, ValueError):
+                return Response({"message": "Schedule exceeds date range"}, status=status.HTTP_400_BAD_REQUEST)
+            if result["cycle"]:
+                return Response(
+                    {"message": "Circular dependency", "cycle": result["cycle"]}, status=status.HTTP_409_CONFLICT
+                )
+            updates = result["updates"]
+            response_data = json.loads(json.dumps(
+                {"updates": updates, "warnings": result["warnings"]}, cls=DjangoJSONEncoder
+            ))
+            if dry_run:
+                return Response(response_data, status=status.HTTP_200_OK)
+            if include_successors and expected is not None and expected != {
+                update["id"]: (update["new_start"], update["new_end"]) for update in updates
+            }:
+                return Response({"message": "Schedule changed", **response_data}, status=status.HTTP_409_CONFLICT)
+
+            planned = {change["id"]: {field: change[field] for field in ("start_date", "target_date") if field in change}}
+            if include_successors:
+                planned.update({
+                    update["id"]: {"start_date": update["new_start"], "target_date": update["new_end"]}
+                    for update in updates
+                })
+            changed = []
+            activities = []
+            epoch = int(timezone.now().timestamp())
+            for issue_id, values in planned.items():
+                issue = locked[issue_id]
+                new_start = values.get("start_date", issue.start_date)
+                new_end = values.get("target_date", issue.target_date)
+                if new_start and new_end and new_start > new_end:
+                    return Response({"message": "Start date cannot exceed target date"}, status=status.HTTP_400_BAD_REQUEST)
+                issue_changed = False
+                for field, value in values.items():
+                    previous = getattr(issue, field)
+                    if value != previous:
+                        activities.append({
+                            "type": "issue.activity.updated",
+                            "requested_data": json.dumps({field: value}, cls=DjangoJSONEncoder),
+                            "current_instance": json.dumps({field: str(previous)}),
+                            "issue_id": issue_id,
+                            "actor_id": str(request.user.id),
+                            "project_id": str(project_id),
+                            "epoch": epoch,
+                        })
+                        setattr(issue, field, value)
+                        issue_changed = True
+                if issue_changed:
+                    changed.append(issue)
+            if changed:
+                Issue.objects.bulk_update(changed, ["start_date", "target_date"])
+            for activity in activities:
+                transaction.on_commit(partial(issue_activity.delay, **activity))
+            return Response(response_data, status=status.HTTP_200_OK)
 
 
 class IssueMetaEndpoint(BaseAPIView):

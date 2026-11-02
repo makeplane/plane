@@ -16,7 +16,7 @@ type Props = {
   warnings: TScheduleWarning[];
   issueDates: Record<string, { name: string; sequence_id: number }>;
   projectIdentifier?: string;
-  onSave: (includeSuccessors: boolean) => Promise<void>;
+  onSave: (includeSuccessors: boolean) => Promise<void | boolean>;
   onClose: () => void;
 };
 
@@ -35,9 +35,10 @@ export function AutoScheduleModal(props: Props) {
     saving.current = true;
     setIsSaving(true);
     try {
-      await onSave(includeSuccessors);
+      if ((await onSave(includeSuccessors)) !== false) onClose();
     } finally {
-      onClose();
+      saving.current = false;
+      setIsSaving(false);
     }
   };
 

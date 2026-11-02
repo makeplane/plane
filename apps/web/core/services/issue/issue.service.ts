@@ -20,6 +20,7 @@ import type {
 } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
+import type { TScheduleIssueBody, TScheduleResponse } from "@/components/gantt-chart/dependencies/schedule-api";
 
 export class IssueService extends APIService {
   private serviceType: TIssueServiceType;
@@ -249,6 +250,11 @@ export class IssueService extends APIService {
       .catch((error) => {
         throw error?.response?.data;
       });
+  }
+
+  async scheduleIssue(workspaceSlug: string, projectId: string, body: TScheduleIssueBody): Promise<TScheduleResponse> {
+    const response = await this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-schedule/`, body);
+    return response.data;
   }
 
   async subIssues(

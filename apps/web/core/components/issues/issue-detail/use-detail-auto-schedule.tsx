@@ -6,9 +6,12 @@
 
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
+import { isAxiosError } from "axios";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AutoScheduleModal, scheduleSuccessors } from "@/components/gantt-chart/dependencies";
 import type { TScheduleUpdate, TScheduleWarning } from "@/components/gantt-chart/dependencies";
+import { schedulePreviewFromResponse } from "@/components/gantt-chart/dependencies/schedule-api";
+import type { TScheduleResponse } from "@/components/gantt-chart/dependencies/schedule-api";
 import { useGanttDependencies } from "@/components/issues/issue-layouts/gantt/use-gantt-dependencies";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
@@ -39,12 +42,13 @@ export function useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issue
   const deps = useGanttDependencies(workspaceSlug, projectId, isAutoScheduleEnabled());
   const {
     issue: { getIssueById },
+    rootIssueStore,
   } = useIssueDetail();
   const { getProjectIdentifierById } = useProject();
   const [schedulePreview, setSchedulePreview] = useState<{
     updates: TScheduleUpdate[];
     warnings: TScheduleWarning[];
-    save: (includeSuccessors: boolean) => Promise<void>;
+    save: (includeSuccessors: boolean) => Promise<void | boolean>;
   } | null>(null);
 
   useEffect(() => setSchedulePreview(null), [workspaceSlug, projectId, issueId]);
@@ -66,30 +70,64 @@ export function useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issue
         if (result.cycle) {
           setToast({ type: TOAST_TYPE.WARNING, title: "Có vòng lặp phụ thuộc — chỉ đổi việc này" });
         } else if (result.updates.length > 0) {
-          setSchedulePreview({
-            updates: result.updates,
-            warnings: result.warnings,
-            save: async (includeSuccessors) => {
-              try {
-                await saveDate();
-                if (includeSuccessors) {
+          const showPreview = (preview: { updates: TScheduleUpdate[]; warnings: TScheduleWarning[] }) =>
+            setSchedulePreview({
+              ...preview,
+              save: async (includeSuccessors) => {
+                try {
+                  if (!includeSuccessors) {
+                    await saveDate();
+                    return;
+                  }
+                  let scheduled = false;
+                  try {
+                    const response = await issueService.scheduleIssue(workspaceSlug, projectId, {
+                      change: { id: issueId, [field]: value },
+                      include_successors: true,
+                      expected: preview.updates.map(({ id, newStart, newEnd }) => ({
+                        id,
+                        start_date: newStart,
+                        target_date: newEnd,
+                      })),
+                    });
+                    scheduled = true;
+                    rootIssueStore.issues.updateIssue(issueId, { [field]: value });
+                    response.updates.forEach(({ id, new_start, new_end }) =>
+                      rootIssueStore.issues.updateIssue(id, { start_date: new_start, target_date: new_end })
+                    );
+                    await deps.refresh();
+                    return;
+                  } catch (error) {
+                    if (!scheduled && isAxiosError<TScheduleResponse>(error)) {
+                      if (error.response?.status === 409) {
+                        setToast({ type: TOAST_TYPE.WARNING, title: "Lịch đã thay đổi — xem lại" });
+                        const nextPreview = schedulePreviewFromResponse(error.response.data);
+                        if (nextPreview) showPreview(nextPreview);
+                        return false;
+                      }
+                      if (error.response?.status !== 404) throw error;
+                    } else {
+                      throw error;
+                    }
+                  }
+                  await saveDate();
                   await issueService.updateIssueDates(
                     workspaceSlug,
                     projectId,
-                    result.updates.map(({ id, newStart, newEnd }) => ({
+                    preview.updates.map(({ id, newStart, newEnd }) => ({
                       id,
                       start_date: newStart ?? undefined,
                       target_date: newEnd ?? undefined,
                     }))
                   );
                   await deps.refresh();
+                } catch (error) {
+                  setToast({ type: TOAST_TYPE.ERROR, title: "Không lưu được lịch các việc sau" });
+                  console.error("Failed to save detail auto-schedule", error);
                 }
-              } catch (error) {
-                setToast({ type: TOAST_TYPE.ERROR, title: "Không lưu được lịch các việc sau" });
-                console.error("Failed to save detail auto-schedule", error);
-              }
-            },
-          });
+              },
+            });
+          showPreview(result);
           return;
         }
       } catch (error) {
