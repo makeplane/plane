@@ -107,8 +107,8 @@ function WebhooksListPage({ params }: Route.ComponentProps) {
                     },
                   },
                 ]}
-                align="start"
-                rootClassName="py-20"
+                align="center"
+                rootClassName="rounded-lg border border-subtle bg-surface-1 py-10"
               />
             </div>
           </div>
