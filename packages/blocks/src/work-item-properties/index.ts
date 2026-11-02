@@ -15,8 +15,12 @@ export type {
   PropertyPartitionOptions,
   WorkItemPropertyHideKey,
 } from "./partition";
+export { WorkItemPropertyCountChip } from "./count-chip";
+export type { WorkItemPropertyCountChipProps } from "./count-chip";
 export { PropertiesOverflowMenu } from "./properties-overflow-menu";
 export type { PropertiesOverflowMenuProps } from "./properties-overflow-menu";
+export { WorkItemPropertiesList } from "./properties-list";
+export type { WorkItemPropertiesListProps } from "./properties-list";
 export { PropertiesOverflowRow } from "./properties-overflow-row";
 export type { PropertiesOverflowRowProps } from "./properties-overflow-row";
 export type { WorkItemPropertyEntry, WorkItemPropertyMenuRow, WorkItemPropertyVariant } from "./types";
