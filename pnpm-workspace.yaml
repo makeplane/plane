@@ -109,7 +109,8 @@ catalog:
   "express-ws": "^5.0.2"
   "file-type": "^21.3.1"
   "frimousse": "^0.3.0"
-  "happy-dom": "20.8.9"
+  # EXACT pin. CVE-2026-115895 covers every 17.x-21.0.3, so there is no 20.x fix.
+  "happy-dom": "21.0.4"
   "hast": "^1.0.0"
   "hast-util-to-mdast": "^10.1.2"
   "helmet": "^7.1.0"
