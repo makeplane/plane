@@ -142,6 +142,10 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
 
   const content = (
     <div className="w-full text-body-sm-regular">
+      {/* Modal mode dims the page behind the peek; a press on it closes the peek like any outside click. */}
+      {issueId && !embedIssue && peekMode === "modal" && (
+        <div aria-hidden className="absolute inset-0 z-[25] bg-backdrop transition-opacity duration-300" />
+      )}
       {issueId && (
         <div
           ref={issuePeekOverviewRef}
