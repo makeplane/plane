@@ -42,6 +42,7 @@ import { IssueCycleSelect } from "./cycle-select";
 import { IssueLabel } from "./label";
 import { IssueModuleSelect } from "./module-select";
 import type { TIssueOperations } from "./root";
+import { useDetailAutoSchedule } from "./use-detail-auto-schedule";
 
 type Props = {
   workspaceSlug: string;
@@ -62,6 +63,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   } = useIssueDetail();
   const { getUserDetails } = useMember();
   const { getStateById } = useProjectState();
+  const { onDateChange, modal } = useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issueOperations });
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
 
@@ -141,11 +143,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               <DateDropdown
                 placeholder={t("issue.add.start_date")}
                 value={issue.start_date}
-                onChange={(val) =>
-                  issueOperations.update(workspaceSlug, projectId, issueId, {
-                    start_date: val ? renderFormattedPayloadDate(val) : null,
-                  })
-                }
+                onChange={(val) => onDateChange("start_date", val ? (renderFormattedPayloadDate(val) ?? null) : null)}
                 maxDate={maxDate ?? undefined}
                 disabled={!isEditable}
                 buttonVariant="transparent-with-text"
@@ -163,9 +161,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   placeholder={t("issue.add.due_date")}
                   value={issue.target_date}
                   onChange={(val) =>
-                    issueOperations.update(workspaceSlug, projectId, issueId, {
-                      target_date: val ? renderFormattedPayloadDate(val) : null,
-                    })
+                    onDateChange("target_date", val ? (renderFormattedPayloadDate(val) ?? null) : null)
                   }
                   minDate={minDate ?? undefined}
                   disabled={!isEditable}
@@ -251,6 +247,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
           </div>
         </div>
       </div>
+      {modal}
     </>
   );
 });
