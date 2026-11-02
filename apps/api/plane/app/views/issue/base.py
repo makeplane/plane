@@ -69,6 +69,7 @@ from plane.utils.grouper import (
     issue_queryset_grouper,
 )
 from plane.utils.host import base_host
+from plane.utils.issue_events import broadcast_issue_event
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
@@ -790,6 +791,14 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
 
         # Finally, delete the issues themselves
         issues.delete()
+
+        # Broadcast the bulk deletion to connected clients via the live server
+        broadcast_issue_event(
+            project_id=project_id,
+            issue_id=issue_ids[0],
+            type="issue.deleted_bulk",
+            actor_id=str(request.user.id),
+        )
 
         return Response(
             {"message": f"{total_issues} issues were deleted"},

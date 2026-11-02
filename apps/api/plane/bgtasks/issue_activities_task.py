@@ -34,6 +34,7 @@ from plane.db.models import (
 )
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
+from plane.utils.issue_events import broadcast_issue_event
 from plane.utils.issue_relation_mapper import get_inverse_relation
 from plane.utils.uuid import is_valid_uuid
 
@@ -1523,6 +1524,14 @@ def issue_activity(
 
         project = Project.objects.get(pk=project_id)
         workspace_id = project.workspace_id
+
+        # Broadcast the change to connected clients via the live server
+        broadcast_issue_event(
+            project_id=project_id,
+            issue_id=issue_id,
+            type=type,
+            actor_id=actor_id,
+        )
 
         if issue_id is not None:
             if origin:

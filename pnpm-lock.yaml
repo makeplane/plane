@@ -1043,6 +1043,9 @@ importers:
       '@headlessui/react':
         specifier: 'catalog:'
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@hocuspocus/provider':
+        specifier: 'catalog:'
+        version: 2.15.2(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
       '@plane/constants':
         specifier: workspace:*
         version: link:../../packages/constants

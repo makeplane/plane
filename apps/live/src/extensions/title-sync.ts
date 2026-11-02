@@ -28,6 +28,8 @@ import { TitleUpdateManager } from "./title-update/title-update-manager";
  * Hocuspocus extension for synchronizing document titles
  */
 export class TitleSyncExtension implements Extension {
+  // Documents under this prefix are ephemeral broadcast channels without titles
+  private readonly ISSUE_EVENTS_DOCUMENT_PREFIX = "issue-events:";
   // Maps document names to their observers and update managers
   private titleObservers: Map<string, (events: Y.YEvent<any>[]) => void> = new Map();
   private titleUpdateManagers: Map<string, TitleUpdateManager> = new Map();
@@ -46,6 +48,7 @@ export class TitleSyncExtension implements Extension {
    * Handle document loading - migrate old titles if needed
    */
   async onLoadDocument({ context, document, documentName }: OnLoadDocumentPayloadWithContext) {
+    if (documentName.startsWith(this.ISSUE_EVENTS_DOCUMENT_PREFIX)) return;
     try {
       // initially for on demand migration of old titles to a new title field
       // in the yjs binary
@@ -79,6 +82,7 @@ export class TitleSyncExtension implements Extension {
     context: HocusPocusServerContext;
     instance: Hocuspocus;
   }) {
+    if (documentName.startsWith(this.ISSUE_EVENTS_DOCUMENT_PREFIX)) return;
     // Create a title update manager for this document
     const updateManager = new TitleUpdateManager(documentName, context);
 
