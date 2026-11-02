@@ -1207,6 +1207,8 @@ class IssueScheduleEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
+        from plane.app.views.issue.bih_schedule import workspace_calendar
+
         try:
             body = request.data
             if not isinstance(body, dict):
@@ -1215,6 +1217,10 @@ class IssueScheduleEndpoint(BaseAPIView):
             include_successors = body.get("include_successors", True)
             dry_run = body.get("dry_run", False)
             if not isinstance(include_successors, bool) or not isinstance(dry_run, bool):
+                raise ValueError("Invalid schedule options")
+            mode = body.get("mode", "calendar")
+            pull_earlier = body.get("pull_earlier", False)
+            if mode not in ("calendar", "working") or not isinstance(pull_earlier, bool):
                 raise ValueError("Invalid schedule options")
             expected = None
             if "expected" in body:
@@ -1231,24 +1237,25 @@ class IssueScheduleEndpoint(BaseAPIView):
 
         with transaction.atomic():
             # Keep the graph stable while concurrent dependency creation waits.
-            Workspace.objects.select_for_update().get(slug=slug)
+            workspace = Workspace.objects.select_for_update().get(slug=slug)
             project_issues = Issue.objects.filter(workspace__slug=slug, project_id=project_id)
             if not project_issues.filter(id=change["id"]).exists():
                 return Response({"message": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
             dependencies = [
-                (str(predecessor), str(successor))
-                for predecessor, successor in IssueRelation.objects.filter(
+                (str(predecessor), str(successor), lag)
+                for predecessor, successor, lag in IssueRelation.objects.filter(
                     workspace__slug=slug,
+                    project_id=project_id,
                     relation_type="blocked_by",
                     deleted_at__isnull=True,
                     issue__project_id=project_id,
                     related_issue__project_id=project_id,
                     issue__deleted_at__isnull=True,
                     related_issue__deleted_at__isnull=True,
-                ).order_by("id").values_list("related_issue_id", "issue_id")
+                ).order_by("id").values_list("related_issue_id", "issue_id", "lag_days")
             ]
             outgoing = {}
-            for predecessor, successor in dependencies:
+            for predecessor, successor, _ in dependencies:
                 outgoing.setdefault(predecessor, set()).add(successor)
             downstream = {change["id"]}
             pending = [change["id"]]
@@ -1274,7 +1281,7 @@ class IssueScheduleEndpoint(BaseAPIView):
                 {"id": issue_id, "start": issue.start_date, "end": issue.target_date}
                 for issue_id, issue in locked.items()
             ]
-            predecessors = {pred for pred, successor in dependencies if successor in downstream} - downstream
+            predecessors = {pred for pred, successor, _ in dependencies if successor in downstream} - downstream
             tasks.extend(
                 {"id": str(issue_id), "start": task_start, "end": task_end}
                 for issue_id, task_start, task_end in project_issues.filter(id__in=predecessors).values_list(
@@ -1282,7 +1289,11 @@ class IssueScheduleEndpoint(BaseAPIView):
                 )
             )
             try:
-                result = schedule_successors(tasks, dependencies, {"id": change["id"], "start": start, "end": end})
+                result = schedule_successors(
+                    tasks, dependencies, {"id": change["id"], "start": start, "end": end},
+                    calendar=workspace_calendar(workspace) if mode == "working" else None,
+                    pull_earlier=pull_earlier,
+                )
             except (OverflowError, ValueError):
                 return Response({"message": "Schedule exceeds date range"}, status=status.HTTP_400_BAD_REQUEST)
             if result["cycle"]:

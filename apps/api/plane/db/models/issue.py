@@ -301,6 +301,8 @@ class IssueRelation(ProjectBaseModel):
         verbose_name="Issue Relation Type",
         default=IssueRelationChoices.BLOCKED_BY,
     )
+    # BIH: delay in days for blocked_by rows (may be negative); ignored for other types
+    lag_days = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ["issue", "related_issue", "deleted_at"]

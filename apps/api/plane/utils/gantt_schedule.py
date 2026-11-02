@@ -2,11 +2,66 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Calendar-day Finish-to-Start scheduling without framework dependencies."""
+"""Finish-to-Start scheduling without framework dependencies."""
 
 from collections import deque
 from datetime import date, timedelta
 from heapq import heapify, heappop, heappush
+
+
+def build_calendar(weekdays, holidays):
+    try:
+        weekdays = list(weekdays)
+        holidays = list(holidays)
+    except TypeError as exc:
+        raise ValueError("Invalid calendar") from exc
+    if not weekdays:
+        raise ValueError("No working days")
+    if any(type(value) is not int or not 1 <= value <= 7 for value in weekdays):
+        raise ValueError("Invalid weekdays")
+    if any(type(value) is not date for value in holidays):
+        raise ValueError("Invalid holidays")
+    return {"weekdays": set(weekdays), "holidays": set(holidays)}
+
+
+def is_working_day(d, calendar):
+    if not calendar["weekdays"]:
+        raise ValueError("No working days")
+    return d.isoweekday() in calendar["weekdays"] and d not in calendar["holidays"]
+
+
+def add_working_days(d, n, calendar):
+    if not calendar["weekdays"]:
+        raise ValueError("No working days")
+    remaining = abs(n)
+    for _ in range(3650):
+        if remaining == 0:
+            return d
+        d += timedelta(days=1 if n > 0 else -1)
+        if is_working_day(d, calendar):
+            remaining -= 1
+    if remaining == 0:
+        return d
+    raise ValueError("No working days")
+
+
+def next_working_day(d, calendar):
+    return add_working_days(d, 1, calendar)
+
+
+def on_or_after_working(d, calendar):
+    return d if is_working_day(d, calendar) else next_working_day(d, calendar)
+
+
+def working_steps(a, b, calendar):
+    if not calendar["weekdays"]:
+        raise ValueError("No working days")
+    if b < a:
+        raise ValueError("Invalid date range")
+    steps = (b - a).days
+    if steps > 3650:
+        raise ValueError("No working days")
+    return sum(is_working_day(a + timedelta(days=i), calendar) for i in range(1, steps + 1))
 
 
 def find_cycle_through(dependencies, predecessor_id, successor_id):
@@ -35,8 +90,10 @@ def find_cycle_through(dependencies, predecessor_id, successor_id):
     return None
 
 
-def schedule_successors(tasks, dependencies, change):
-    """Push reachable successors later, preserving duration and missing dates."""
+def schedule_successors(tasks, dependencies, change, calendar=None, pull_earlier=False):
+    """Move reachable successors, preserving duration and missing dates."""
+    if calendar is not None and not calendar["weekdays"]:
+        raise ValueError("No working days")
     current = {}
     for task in [*tasks, change]:
         current[task["id"]] = {
@@ -46,9 +103,11 @@ def schedule_successors(tasks, dependencies, change):
 
     outgoing = {}
     incoming = {}
-    for predecessor, successor in dependencies:
+    for dependency in dependencies:
+        predecessor, successor = dependency[:2]
+        lag = dependency[2] if len(dependency) == 3 else 0
         outgoing.setdefault(predecessor, {})[successor] = None
-        incoming.setdefault(successor, {})[predecessor] = None
+        incoming.setdefault(successor, {})[predecessor] = lag
 
     visited = set()
     path = [change["id"]]
@@ -87,22 +146,34 @@ def schedule_successors(tasks, dependencies, change):
             else:
                 earliest = None
                 missing_end = False
-                for predecessor in predecessors:
+                for predecessor, lag in predecessors.items():
                     end = current.get(predecessor, {}).get("end")
                     if end is None:
                         missing_end = True
                         continue
-                    next_day = end + timedelta(days=1)
+                    next_day = (
+                        add_working_days(next_working_day(end, calendar), lag, calendar)
+                        if calendar is not None else end + timedelta(days=1 + lag)
+                    )
                     if earliest is None or next_day > earliest:
                         earliest = next_day
                 if missing_end:
                     warnings.append({"id": issue_id, "reason": "missing_predecessor_end"})
                 old_date = task["start"] or task["end"]
-                if earliest is not None and old_date < earliest:
+                if earliest is not None and (
+                    old_date < earliest or (pull_earlier and not missing_end and old_date != earliest)
+                ):
                     new_start = earliest if task["start"] is not None else None
                     new_end = None
                     if task["end"] is not None:
-                        new_end = task["end"] + (earliest - task["start"]) if task["start"] is not None else earliest
+                        if task["start"] is None:
+                            new_end = earliest
+                        elif calendar is not None:
+                            new_end = add_working_days(
+                                earliest, working_steps(task["start"], task["end"], calendar), calendar
+                            )
+                        else:
+                            new_end = task["end"] + (earliest - task["start"])
                     updates.append({
                         "id": issue_id,
                         "old_start": task["start"],

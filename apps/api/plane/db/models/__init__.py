@@ -77,6 +77,7 @@ from .workspace import (
     WorkspaceUserPreference,
 )
 
+from .bih_schedule import WorkspaceScheduleSetting, WorkspaceHoliday
 from .favorite import UserFavorite
 
 from .issue_type import IssueType

@@ -6,6 +6,9 @@ from django.urls import path
 
 
 from plane.app.views import (
+    WorkspaceScheduleSettingsEndpoint,
+    WorkspaceScheduleHolidaysEndpoint,
+
     UserWorkspaceInvitationsViewSet,
     WorkSpaceViewSet,
     WorkspaceJoinEndpoint,
@@ -40,6 +43,21 @@ from plane.app.views import (
 
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/schedule-settings/",
+        WorkspaceScheduleSettingsEndpoint.as_view(),
+        name="workspace-schedule-settings",
+    ),
+    path(
+        "workspaces/<str:slug>/schedule-settings/holidays/",
+        WorkspaceScheduleHolidaysEndpoint.as_view(),
+        name="workspace-schedule-holidays",
+    ),
+    path(
+        "workspaces/<str:slug>/schedule-settings/holidays/<uuid:holiday_id>/",
+        WorkspaceScheduleHolidaysEndpoint.as_view(),
+        name="workspace-schedule-holiday",
+    ),
     path(
         "workspace-slug-check/",
         WorkSpaceAvailabilityCheckEndpoint.as_view(),

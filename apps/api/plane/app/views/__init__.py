@@ -129,6 +129,12 @@ from .issue.base import (
     IssueDetailIdentifierEndpoint,
 )
 
+from .issue.bih_schedule import (
+    WorkspaceScheduleSettingsEndpoint,
+    WorkspaceScheduleHolidaysEndpoint,
+    ProjectIssueLagsEndpoint,
+)
+
 from .issue.activity import IssueActivityEndpoint
 
 from .issue.archive import IssueArchiveViewSet, BulkArchiveIssuesEndpoint
