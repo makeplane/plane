@@ -4,21 +4,27 @@
  * See the LICENSE file for details.
  */
 
+import { observer } from "mobx-react";
 // hooks
 import { useCurrentTime } from "@/hooks/use-current-time";
+import { useDisplayTimezone } from "@/hooks/use-display-timezone";
 
 type Props = {
   timeZone: string | undefined;
 };
 
-export function ProfileSidebarTime(props: Props) {
+export const ProfileSidebarTime = observer(function ProfileSidebarTime(props: Props) {
   const { timeZone } = props;
   // current time hook
   const { currentTime } = useCurrentTime();
+  // resolved display timezone: user preference (UTC treated as unset) -> workspace timezone -> browser local
+  const resolvedTimeZone = useDisplayTimezone(timeZone);
+  // when both are unset the browser's local timezone is used; resolve its name for display
+  const displayTimeZone = resolvedTimeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   // Create a date object for the current time in the specified timezone
   const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: timeZone,
+    timeZone: displayTimeZone,
     hour12: false, // Use 24-hour format
     hour: "2-digit",
     minute: "2-digit",
@@ -27,7 +33,7 @@ export function ProfileSidebarTime(props: Props) {
 
   return (
     <span>
-      {timeString} <span className="text-secondary">{timeZone}</span>
+      {timeString} <span className="text-secondary">{displayTimeZone}</span>
     </span>
   );
-}
+});
