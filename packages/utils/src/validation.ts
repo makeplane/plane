@@ -86,6 +86,10 @@ export const validatePersonName = (name: string): boolean | string => {
     return "Names can only contain letters, spaces, hyphens, apostrophes, and periods";
   }
 
+  if (!HAS_ALPHANUMERIC_REGEX.test(name)) {
+    return "Names must contain at least one letter";
+  }
+
   return true;
 };
 
