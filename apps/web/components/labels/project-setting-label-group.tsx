@@ -82,7 +82,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
       {(isDragging, isDroppingInLabel, dragHandleRef) => (
         <div
           className={cn(
-            "overflow-hidden rounded-md border bg-surface-1 text-primary",
+            "overflow-hidden rounded-md border bg-layer-2 text-primary",
             isDroppingInLabel ? "border-accent-strong ring-1 ring-accent-strong" : "border-subtle-1",
             isDragging && "bg-layer-1"
           )}
@@ -138,7 +138,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
                 />
               </div>
               {isOpen && (
-                <div className="space-y-2 border-t border-subtle bg-layer-2 px-3 py-3">
+                <div className="space-y-2 border-t border-subtle bg-layer-1 px-3 py-3">
                   {labelChildren.map((child, index) => (
                     <div key={child.id} className="group flex w-full items-center text-body-xs-regular">
                       <div className="w-full">

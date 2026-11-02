@@ -165,9 +165,10 @@ export const LabelDndHOC = observer(function LabelDndHOC(props: Props) {
 
   return (
     <div ref={labelRef}>
-      <DropIndicator classNames="my-1" isVisible={instruction === "reorder-above"} />
+      {/* indicators take space only while a drop is targeted, so the list's own gap spaces the rows */}
+      {instruction === "reorder-above" && <DropIndicator classNames="my-1" isVisible />}
       {children(isDragging, isMakeChild, dragHandleRef)}
-      {isLastChild && <DropIndicator classNames="my-1" isVisible={instruction === "reorder-below"} />}
+      {isLastChild && instruction === "reorder-below" && <DropIndicator classNames="my-1" isVisible />}
     </div>
   );
 });

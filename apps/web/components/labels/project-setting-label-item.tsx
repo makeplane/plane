@@ -89,7 +89,7 @@ export function ProjectSettingLabelItem(props: Props) {
       {(isDragging, isDroppingInLabel, dragHandleRef) => (
         <div
           className={cn(
-            "group relative overflow-hidden rounded-md border bg-surface-1",
+            "group relative overflow-hidden rounded-md border bg-layer-2",
             isDroppingInLabel ? "border-accent-strong ring-1 ring-accent-strong" : "border-subtle-1",
             (isDragging || isParentDragging) && "bg-layer-1"
           )}
