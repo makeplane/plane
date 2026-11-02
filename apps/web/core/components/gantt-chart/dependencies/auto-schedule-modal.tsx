@@ -54,7 +54,11 @@ export function AutoScheduleModal(props: Props) {
       <div className="px-5 py-4">
         <div className="flex items-center justify-between gap-2">
           <Dialog.Title as="h3" className="text-18 font-medium">
-            {movesEarlier ? "Cập nhật lịch các việc sau" : "Tự lùi lịch các việc sau"}
+            {updates.length === 0
+              ? "Không dời được việc sau"
+              : movesEarlier
+                ? "Cập nhật lịch các việc sau"
+                : "Tự lùi lịch các việc sau"}
           </Dialog.Title>
           <button
             type="button"
@@ -66,33 +70,35 @@ export function AutoScheduleModal(props: Props) {
             <X className="h-4 w-4" />
           </button>
         </div>
-        <div className="mt-3 max-h-80 overflow-auto">
-          <table className="w-full text-left text-13">
-            <thead className="text-tertiary">
-              <tr>
-                <th className="p-2">Công việc</th>
-                <th className="p-2">Bắt đầu</th>
-                <th className="p-2">Kết thúc</th>
-              </tr>
-            </thead>
-            <tbody>
-              {updates.map((update) => (
-                <tr key={update.id} className="border-t border-subtle">
-                  <td className="p-2">
-                    <span className="text-tertiary">{code(update.id)}</span>{" "}
-                    {labels?.[update.id]?.name ?? issueDates[update.id]?.name}
-                  </td>
-                  <td className="p-2 whitespace-nowrap">
-                    {formatDate(update.oldStart)} → {formatDate(update.newStart)}
-                  </td>
-                  <td className="p-2 whitespace-nowrap">
-                    {formatDate(update.oldEnd)} → {formatDate(update.newEnd)}
-                  </td>
+        {updates.length > 0 && (
+          <div className="mt-3 max-h-80 overflow-auto">
+            <table className="w-full text-left text-13">
+              <thead className="text-tertiary">
+                <tr>
+                  <th className="p-2">Công việc</th>
+                  <th className="p-2">Bắt đầu</th>
+                  <th className="p-2">Kết thúc</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {updates.map((update) => (
+                  <tr key={update.id} className="border-t border-subtle">
+                    <td className="p-2">
+                      <span className="text-tertiary">{code(update.id)}</span>{" "}
+                      {labels?.[update.id]?.name ?? issueDates[update.id]?.name}
+                    </td>
+                    <td className="p-2 whitespace-nowrap">
+                      {formatDate(update.oldStart)} → {formatDate(update.newStart)}
+                    </td>
+                    <td className="p-2 whitespace-nowrap">
+                      {formatDate(update.oldEnd)} → {formatDate(update.newEnd)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
         {warnings.length > 0 && (
           <ul className="mt-3 text-11 text-tertiary">
             {warnings.map(({ id, reason }) => (
@@ -110,11 +116,13 @@ export function AutoScheduleModal(props: Props) {
         )}
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="secondary" disabled={isSaving} onClick={() => void save(false)}>
-            Chỉ đổi việc này
+            {updates.length === 0 ? "Lưu việc này" : "Chỉ đổi việc này"}
           </Button>
-          <Button variant="primary" disabled={isSaving} loading={isSaving} onClick={() => void save(true)}>
-            {movesEarlier ? "Cập nhật" : "Lùi"} {updates.length} việc sau
-          </Button>
+          {updates.length > 0 && (
+            <Button variant="primary" disabled={isSaving} loading={isSaving} onClick={() => void save(true)}>
+              {movesEarlier ? "Cập nhật" : "Lùi"} {updates.length} việc sau
+            </Button>
+          )}
         </div>
       </div>
     </ModalCore>

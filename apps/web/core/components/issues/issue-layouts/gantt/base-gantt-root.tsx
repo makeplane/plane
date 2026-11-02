@@ -199,7 +199,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
       if (result.cycle) {
         setToast({ type: TOAST_TYPE.WARNING, title: "Có vòng lặp phụ thuộc — chỉ đổi việc này" });
       }
-      if (result.updates.length === 0 && result.warnings.length === 0) {
+      if (result.updates.length === 0 && !result.warnings.some(({ reason }) => reason === "no_permission")) {
         await saveDates(updates);
         return;
       }

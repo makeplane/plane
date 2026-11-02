@@ -106,7 +106,7 @@ export function useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issue
         }
         if (result.cycle) {
           setToast({ type: TOAST_TYPE.WARNING, title: "Có vòng lặp phụ thuộc — chỉ đổi việc này" });
-        } else if (result.updates.length > 0 || result.warnings.length > 0) {
+        } else if (result.updates.length > 0 || result.warnings.some(({ reason }) => reason === "no_permission")) {
           const showPreview = (preview: {
             updates: TScheduleUpdate[];
             warnings: TScheduleWarning[];
