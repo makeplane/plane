@@ -656,6 +656,19 @@ describe("Select on Propel combobox", () => {
     expect(slot?.className).toContain("ms-auto");
   });
 
+  it("wears the placeholder treatment while nothing is selected", () => {
+    renderSelect();
+    expect(trigger().hasAttribute("data-placeholder")).toBe(true);
+    expect(trigger().querySelector("span.contents")?.className).toContain("text-placeholder");
+  });
+
+  it("drops the placeholder treatment when the caller marks an empty selection as a value", () => {
+    renderSelect({}, { isEmpty: false });
+    expect(trigger().hasAttribute("data-placeholder")).toBe(false);
+    // The chrome's own placeholder tint (on its `contents` wrapper) is dropped too.
+    expect(trigger().querySelector("span.contents")?.className).not.toContain("text-placeholder");
+  });
+
   it("opens on mount with defaultOpen", async () => {
     renderSelect({ defaultOpen: true });
     expect(await popup().findByRole("combobox", { name: /search options/i })).toBeDefined();

@@ -33,6 +33,11 @@ type ProjectSelectBaseProps = {
   selectedDescription?: ReactNode;
   /** Tab order of the trigger, for forms that sequence focus explicitly (e.g. the work item create modal). */
   tabIndex?: number;
+  /**
+   * Shows the placeholder in the value's own colour, for pickers where an empty selection is itself
+   * a choice (an export's "All projects").
+   */
+  emptyIsValue?: boolean;
 };
 
 export type ProjectSelectProps =
@@ -124,6 +129,7 @@ export function ProjectSelect(props: ProjectSelectProps) {
       tooltip,
       selectedDescription,
       tabIndex,
+      emptyIsValue,
     } = props;
 
     return (
@@ -144,6 +150,7 @@ export function ProjectSelect(props: ProjectSelectProps) {
           disabled={disabled}
           variant={variant}
           tabIndex={tabIndex}
+          isEmpty={emptyIsValue ? false : undefined}
           className={cn(selectClassName, selectedDescription && "h-auto gap-2 rounded-lg px-2 py-1", className)}
           appendIcon={selectedDescription ? null : undefined}
           label={(projects) => projects[0]?.name ?? placeholder}
@@ -201,6 +208,7 @@ export function ProjectSelect(props: ProjectSelectProps) {
     className,
     tooltip,
     tabIndex,
+    emptyIsValue,
   } = props;
 
   return (
@@ -222,6 +230,7 @@ export function ProjectSelect(props: ProjectSelectProps) {
         disabled={disabled}
         variant={variant}
         tabIndex={tabIndex}
+        isEmpty={emptyIsValue ? false : undefined}
         className={cn(selectClassName, className)}
         tooltip={tooltip}
       >
