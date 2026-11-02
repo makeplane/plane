@@ -88,6 +88,12 @@ export const validatePersonName = (name: string): boolean | string => {
     return "Names can only contain letters, spaces, periods, hyphens, and apostrophes";
   }
 
+  // The regex alone accepts punctuation-only input like "." or "-"; digits are already rejected above,
+  // so requiring an alphanumeric character here means requiring a letter.
+  if (!HAS_ALPHANUMERIC_REGEX.test(name)) {
+    return "Name must contain at least one letter";
+  }
+
   return true;
 };
 

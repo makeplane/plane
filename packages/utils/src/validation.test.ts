@@ -46,4 +46,8 @@ describe("validatePersonName", () => {
       );
     }
   );
+
+  it.each([".", "-", "...", ". -", "-.-"])("rejects punctuation-only names like %j", (name) => {
+    expect(validatePersonName(name)).toBe("Name must contain at least one letter");
+  });
 });
