@@ -5,7 +5,7 @@
  */
 
 import type { ReactNode, SyntheticEvent } from "react";
-import { Fragment, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -23,14 +23,17 @@ import {
 } from "@makeplane/propel/icons";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Icon } from "@makeplane/propel/components/icon";
-import { Pill } from "@makeplane/propel/components/pill";
 import { LabelPropertyIcon, PriorityIcon, StateGroupIcon } from "@plane/blocks/icons";
 import type { DateRangeValue } from "@plane/blocks/property-select";
 import { DateRangeSelect, DateSelect } from "@plane/blocks/property-select";
 import type { WorkItemPropertyEntry } from "@plane/blocks/work-item-properties";
-import { getWorkItemPropertyHidePriority, PropertiesOverflowRow } from "@plane/blocks/work-item-properties";
+import {
+  getWorkItemPropertyHidePriority,
+  PropertiesOverflowRow,
+  WorkItemPropertiesList,
+  WorkItemPropertyCountChip,
+} from "@plane/blocks/work-item-properties";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
@@ -542,20 +545,18 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       hidePriority: getWorkItemPropertyHidePriority("sub_issue_count"),
       measureKey: `${subIssueCount}`,
       chip: (
-        <Tooltip label={`${t("common.sub_work_items")}: ${subIssueCount}`} disabled={isMobile}>
-          <Pill
-            size="sm"
-            aria-label={`${t("common.sub_work_items")}: ${subIssueCount}`}
-            label={`${subIssueCount}`}
-            startIcon={<Icon icon={SubWorkItemsOutline} />}
-            onFocus={handleEventPropagation}
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              if (subIssueCount) redirectToIssueDetail();
-            }}
-          />
-        </Tooltip>
+        <WorkItemPropertyCountChip
+          icon={SubWorkItemsOutline}
+          count={subIssueCount}
+          label={t("common.sub_work_items")}
+          tooltipDisabled={isMobile}
+          onFocus={handleEventPropagation}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            if (subIssueCount) redirectToIssueDetail();
+          }}
+        />
       ),
       menuRow: {
         icon: <Icon icon={SubWorkItemsOutline} />,
@@ -573,20 +574,18 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       hidePriority: getWorkItemPropertyHidePriority("attachment_count"),
       measureKey: `${issue.attachment_count}`,
       chip: (
-        <Tooltip label={`${t("common.attachments")}: ${issue.attachment_count}`} disabled={isMobile}>
-          <Pill
-            size="sm"
-            aria-label={`${t("common.attachments")}: ${issue.attachment_count}`}
-            label={`${issue.attachment_count}`}
-            startIcon={<Icon icon={AttachOutline} />}
-            onFocus={handleEventPropagation}
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              router.push(workItemLink);
-            }}
-          />
-        </Tooltip>
+        <WorkItemPropertyCountChip
+          icon={AttachOutline}
+          count={issue.attachment_count}
+          label={t("common.attachments")}
+          tooltipDisabled={isMobile}
+          onFocus={handleEventPropagation}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            router.push(workItemLink);
+          }}
+        />
       ),
       menuRow: {
         icon: <Icon icon={AttachOutline} />,
@@ -604,20 +603,18 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       hidePriority: getWorkItemPropertyHidePriority("link"),
       measureKey: `${issue.link_count}`,
       chip: (
-        <Tooltip label={`${t("common.links")}: ${issue.link_count}`} disabled={isMobile}>
-          <Pill
-            size="sm"
-            aria-label={`${t("common.links")}: ${issue.link_count}`}
-            label={`${issue.link_count}`}
-            startIcon={<Icon icon={LinkOutline} />}
-            onFocus={handleEventPropagation}
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              router.push(workItemLink);
-            }}
-          />
-        </Tooltip>
+        <WorkItemPropertyCountChip
+          icon={LinkOutline}
+          count={issue.link_count}
+          label={t("common.links")}
+          tooltipDisabled={isMobile}
+          onFocus={handleEventPropagation}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            router.push(workItemLink);
+          }}
+        />
       ),
       menuRow: {
         icon: <Icon icon={LinkOutline} />,
@@ -692,11 +689,5 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
     );
   }
 
-  return (
-    <div className={className}>
-      {entries.map((entry) => (
-        <Fragment key={entry.key}>{entry.chip}</Fragment>
-      ))}
-    </div>
-  );
+  return <WorkItemPropertiesList className={className} entries={entries} />;
 });
