@@ -101,6 +101,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
     control,
     watch,
     setValue,
+    trigger,
     formState: { errors, isSubmitting, isValid },
   } = useForm<TProfileSetupFormValues>({
     defaultValues: {
@@ -111,6 +112,13 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
     },
     mode: "onChange",
   });
+  // Immediately surface validation errors for pre-filled values (e.g. a GitLab SSO name)
+  // instead of leaving the user stuck on a disabled Continue with no visible error.
+  useEffect(() => {
+    if (user) {
+      void trigger(["first_name", "last_name"]);
+    }
+  }, [trigger, user?.first_name, user?.last_name]);
   // derived values
   const userAvatar = watch("avatar_url");
 
