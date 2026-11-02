@@ -8,7 +8,7 @@ Fork Plane CE v1.4.2 của BIH (AGPL-3.0, source công khai tại https://github
 
 Chỉ áp cho Gantt work item của project (không áp cho epic). Hai nút trên thanh Gantt, nhớ trong localStorage:
 
-- **Phụ thuộc** (`bih-gantt-show-dependencies`): vẽ mũi tên Finish-to-Start từ quan hệ `blocked_by`/`blocking` cùng project. Mũi tên đỏ khi việc sau bắt đầu không muộn hơn ngày kết thúc việc trước.
+- **Phụ thuộc** (`bih-gantt-show-dependencies`): vẽ mũi tên Finish-to-Start từ quan hệ `blocked_by`/`blocking` cùng project. Mũi tên đỏ khi việc sau bắt đầu không muộn hơn ngày kết thúc việc trước. Quan hệ tới việc **ở project khác** (chỉ project người dùng là thành viên) hiện thành mũi tên cụt nét đứt ở mép thanh, kèm nhãn mã việc (`PRJ-12`; nhiều việc cùng phía nối bằng ` · `), rê chuột xem tên. Mũi tên cụt chỉ để xem: không chọn/xoá/kéo-nối được.
 - **Tự lùi lịch** (`bih-gantt-auto-schedule`, mặc định TẮT): khi bật, đổi ngày một việc sẽ tính việc sau phải lùi bao nhiêu, hiện hộp xem trước (ngày cũ → mới), người dùng chọn "Lùi N việc sau" hoặc "Chỉ đổi việc này".
 
 Thao tác (cần quyền ADMIN/MEMBER của project):
@@ -35,7 +35,8 @@ Lõi lịch có hai bản cùng quy tắc, cùng bộ ca test: TypeScript (`apps
 - **Mới** `POST workspaces/<slug>/projects/<id>/issue-schedule/` (`IssueScheduleEndpoint`): máy chủ tự tính lại cascade, lưu atomic trong một transaction, chỉ trong project, quyền ADMIN/MEMBER. Body: `change`, `include_successors`, `dry_run`, `expected`. `expected` khác kết quả tính ⇒ 409 (có người sửa trước, kèm bản mới để xem lại). Vòng ⇒ 409. Tối đa 2000 việc phía sau.
 - `issue-dates` (có sẵn): kiểm tra hết trước khi ghi, không còn để lại activity khi trả 400.
 - Đợt 5b: `issue-schedule` nhận thêm `mode` (`calendar`|`working`) và `pull_earlier`; lịch làm việc theo **workspace**: `GET/PATCH workspaces/<slug>/schedule-settings/` (thành viên đọc, ADMIN sửa ngày làm việc ISO 1=T2..7=CN), `POST …/schedule-settings/holidays/` (thêm 1 ngày lễ hoặc `{preset:"vn_fixed", year}`: 1/1, 30/4, 1/5, 1/9, 2/9; Tết và Giỗ Tổ nhập tay), `DELETE …/holidays/<id>/`; lag: `GET/POST projects/<id>/issue-lags/` (chỉ lag ≠ 0). Engine Python/TS cùng quy tắc, cùng bộ ca test.
-- Frontend gọi `issue-schedule`; gặp 404 (backend gốc) tự quay về `issue-dates` như đợt 3, nên rollback image backend vẫn chạy.
+- Đợt 6 (khác project): **mới** `POST workspaces/<slug>/issue-schedule/` (`WorkspaceIssueScheduleEndpoint`, `bih_schedule.py`), cùng body/đáp ứng, việc cần đổi xác định theo `change.id`. Quy tắc quyền: chỉ project mà người dùng là thành viên **đang hoạt động** tham gia (project khác vô hình: không thấy, không tính, không báo). Ghi chỉ vào project role ≥ MEMBER; việc đổi ở project guest ⇒ 403, ở project không thành viên ⇒ 404. Việc ở project **guest** là cố định: không bao giờ bị dời, cạnh vào nó bị bỏ khỏi engine (không lan tiếp qua nó), nhưng ngày của nó vẫn ràng buộc việc sau nó; khi tiền bối thực sự dời, trả cảnh báo `{"id","reason":"no_permission"}`. Đáp ứng thêm `issues` = `{id: {name, sequence_id, project_id, project_identifier}}` cho mọi id trong `updates`/`warnings` để web ghi nhãn `PRJ-12`. Khoá: hàng workspace trước, rồi các việc ghi được `ORDER BY id FOR UPDATE` trong một truy vấn (không deadlock giữa project). Giữ 2000 việc phía sau, tính chung toàn workspace. Endpoint project cũ giữ nguyên. Không migration.
+- Frontend gọi `issue-schedule` cấp workspace trước; 404 không kèm `message` (route thiếu, backend cũ) ⇒ nhớ và dùng endpoint project; 404 rồi vẫn thì quay về `issue-dates`. Frontend (đợt 3) gặp 404 (backend gốc) tự quay về `issue-dates` như đợt 3, nên rollback image backend vẫn chạy.
 
 ## Build image
 
@@ -89,10 +90,14 @@ Engine Python thuần chạy được không cần Django: `python -m unittest d
 
 - Chỉ Finish-to-Start. Lịch làm việc + ngày lễ sửa trong hộp "Cài đặt lập lịch" trên thanh Gantt (không có trang riêng ở cài đặt workspace). Ngày lễ trùng cuối tuần không tự bù; preset VN không có Tết/Giỗ Tổ và ngày liền kề Quốc khánh chỉ ước lượng (1/9) — admin chỉnh tay. Lag/ngày lễ chỉ có ở Gantt và màn chi tiết việc, chưa có ở list.
 - Phần sửa lịch workspace (quyền ADMIN) mới được test bằng test backend, chưa bấm thử trên trình duyệt.
-- Chỉ trong cùng project; không vẽ, không lùi lịch qua project khác. Relation khác project do Plane gốc cho tạo vẫn không kiểm quyền project bên kia.
+- Khác project (đợt 6): lùi lịch và mũi tên cụt có kiểm quyền như trên, nhưng **tạo/xoá phụ thuộc khác project** vẫn chưa làm trên Gantt (chỉ qua màn chi tiết việc của Plane gốc, vốn không kiểm quyền project bên kia). Lag của relation khác project luôn 0 (endpoint `issue-lags` chỉ trong project). Mũi tên cụt không tô đỏ khi vi phạm (relation serializer không trả ngày việc bên kia). Việc ở project người dùng không thuộc vô hình, nên việc sau nó không được dời và không có cảnh báo. `expected` bị bỏ qua khi `include_successors=false` (giống endpoint project). Khi tải 100 việc đầu, việc ngoài hàng đang hiển thị không có mũi tên cụt.
 - Đã đo local với 606 việc + 300 phụ thuộc (Chrome): cuộn ~11 ms/bước, đổi zoom <1,6 s, heap ~75 MB; mọi thanh đều nằm trong DOM (Plane gốc không ảo hoá hàng). Gantt việc không có nhóm thu gọn. Tải tối đa 10.000 việc để vẽ mũi tên.
 - Màn hẹp (375px): thanh công cụ cuộn ngang để thấy nút "Phụ thuộc"/"Tự lùi lịch".
 - Nếu tạo relation ở màn chi tiết việc với backend gốc, vẫn có thể tạo vòng; lõi lịch phát hiện và dừng.
 - `issueOperations.update` của Plane tự nuốt lỗi: ở đường quay về `issue-dates`, việc sau có thể được lưu dù lưu việc đang sửa thất bại.
 - Tạo/xoá phụ thuộc khoá workspace trong thời gian ngắn.
-- Chưa có test dựng mũi tên/kéo-nối bằng trình duyệt, chưa có test khác project.
+- Chưa có test dựng mũi tên/kéo-nối tự động bằng trình duyệt; test khác project có 9 ca ở `plane/tests/contract/app/test_gantt_cross_project.py`. Đã thử tay local (2 project member + 1 guest + 1 không thành viên): xem trước, lưu, cảnh báo guest, rollback backend cũ; chưa thử chế độ sáng.
+
+## Rollback đợt 6
+
+Đổi lại tag: web `bih.3`, backend `bih.2` (hoặc xoá hai dòng `PLANE_*_IMAGE` trong `plane.env` rồi `up -d --no-deps` các service). Không có migration đợt 6 nên không cần đảo DB. Web mới + backend cũ: lỗi 404 ⇒ tự dùng endpoint project, mũi tên cụt vẫn vẽ (dữ liệu từ expand của Plane).

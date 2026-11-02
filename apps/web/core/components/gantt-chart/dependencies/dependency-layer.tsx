@@ -11,6 +11,8 @@ import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import { BLOCK_HEIGHT } from "../constants";
+import { ExternalStubs } from "./external-stubs";
+import type { TResolvedExternalLink } from "./external-links";
 import type { TGanttDependency, TGanttDependencyActions } from "./dependency-utils";
 import {
   dependencyValidationMessages,
@@ -22,6 +24,7 @@ import {
 
 type Props = {
   blockIds: string[];
+  externalLinks?: TResolvedExternalLink[];
   dependencies: TGanttDependency[];
   dependencyActions?: TGanttDependencyActions;
   ganttContainerRef: RefObject<HTMLDivElement>;
@@ -30,7 +33,7 @@ type Props = {
 };
 
 export const GanttDependencyLayer = observer(function GanttDependencyLayer(props: Props) {
-  const { blockIds, dependencies, dependencyActions, ganttContainerRef, showAllBlocks, width } = props;
+  const { blockIds, dependencies, externalLinks, dependencyActions, ganttContainerRef, showAllBlocks, width } = props;
   const { getBlockById, dependencyDraftFromId, dependencyDraftSide, endDependencyDraft } = useTimeLineChartStore();
   const svgRef = useRef<SVGSVGElement>(null);
   const [selected, setSelected] = useState<TGanttDependency | null>(null);
@@ -186,6 +189,12 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
             </marker>
           ))}
         </defs>
+        <ExternalStubs
+          links={externalLinks ?? []}
+          rows={rows}
+          normalMarkerId={normalMarkerId}
+          violatedMarkerId={violatedMarkerId}
+        />
         {dependencies.map(({ predecessorId, successorId, lagDays }) => {
           const pred = rows.get(predecessorId);
           const succ = rows.get(successorId);

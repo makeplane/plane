@@ -7,6 +7,9 @@
 import { createElement, useEffect, useRef, useState } from "react";
 import type { TIssue, TIssuesResponse } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { useProject } from "@/hooks/store/use-project";
+import { extractExternalLinks } from "@/components/gantt-chart/dependencies/external-links";
+import type { TExternalLink } from "@/components/gantt-chart/dependencies/external-links";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import type { TGanttDependency } from "@/components/gantt-chart/dependencies/dependency-utils";
 import {
@@ -20,6 +23,7 @@ import { IssueService } from "@/services/issue";
 const issueService = new IssueService();
 
 type GanttRelations = ReturnType<typeof extractGanttRelations> & {
+  externalLinks: TExternalLink[];
   lagsSupported: boolean;
   issueDates: Record<string, Pick<TIssue, "start_date" | "target_date" | "name" | "sequence_id">>;
 };
@@ -30,6 +34,7 @@ export function useGanttDependencies(
   enabled: boolean
 ) {
   const { relation } = useIssueDetail();
+  const { getProjectById } = useProject();
   const [relations, setRelations] = useState<GanttRelations>();
   const relationsRef = useRef(relations);
   const generation = useRef(0);
@@ -86,6 +91,7 @@ export function useGanttDependencies(
           projectIssueIds.current = new Set(issues.map((issue) => issue.id));
           updateRelations({
             ...extracted,
+            externalLinks: extractExternalLinks(issues, projectId),
             lagsSupported: lags !== null,
             dependencies: extracted.dependencies.map((dep) => ({
               predecessorId: dep.predecessorId,
@@ -219,6 +225,17 @@ export function useGanttDependencies(
     ? undefined
     : {
         ...relations,
+        externalLinks: relations.externalLinks.flatMap((link) => {
+          const project = getProjectById(link.projectId);
+          return project?.member_role
+            ? [
+                {
+                  ...link,
+                  code: link.sequenceId === undefined ? undefined : `${project.identifier}-${link.sequenceId}`,
+                },
+              ]
+            : [];
+        }),
         refresh: () => refreshRef.current(),
         setLag,
         createDependency: (pred: string, succ: string) => mutateDependency(pred, succ, false),

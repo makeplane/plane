@@ -21,7 +21,7 @@ import { useWorkspaceCalendar } from "@/components/bih-schedule/use-workspace-ca
 import { AutoScheduleModal, scheduleSuccessors } from "@/components/gantt-chart/dependencies";
 import type { TScheduleUpdate, TScheduleWarning } from "@/components/gantt-chart/dependencies";
 import { schedulePreviewFromResponse } from "@/components/gantt-chart/dependencies/schedule-api";
-import type { TScheduleResponse } from "@/components/gantt-chart/dependencies/schedule-api";
+import type { TScheduleLabels, TScheduleResponse } from "@/components/gantt-chart/dependencies/schedule-api";
 import { TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { GanttChartRoot } from "@/components/gantt-chart/root";
 import { IssueGanttSidebar } from "@/components/gantt-chart/sidebar/issues/sidebar";
@@ -76,6 +76,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
   const [schedulePreview, setSchedulePreview] = useState<{
     updates: TScheduleUpdate[];
     warnings: TScheduleWarning[];
+    labels?: TScheduleLabels;
     save: (includeSuccessors: boolean) => Promise<void | boolean>;
   } | null>(null);
 
@@ -161,7 +162,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
       });
       const drag = updates[0];
       const current = tasks.find((task) => task.id === drag.id);
-      let result = scheduleSuccessors(
+      let result: ReturnType<typeof scheduleSuccessors> & { labels?: TScheduleLabels } = scheduleSuccessors(
         tasks,
         deps.dependencies,
         {
@@ -184,7 +185,13 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
           if (preview) result = { ...preview, cycle: null };
         } catch (error) {
           if (!isAxiosError(error) || error.response?.status !== 404) {
-            setToast({ type: TOAST_TYPE.ERROR, title: "Không xem trước được lịch các việc sau" });
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title:
+                isAxiosError(error) && error.response?.status === 403
+                  ? "Bạn không có quyền sửa việc này"
+                  : "Không xem trước được lịch các việc sau",
+            });
             return;
           }
         }
@@ -192,11 +199,15 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
       if (result.cycle) {
         setToast({ type: TOAST_TYPE.WARNING, title: "Có vòng lặp phụ thuộc — chỉ đổi việc này" });
       }
-      if (result.updates.length === 0) {
+      if (result.updates.length === 0 && result.warnings.length === 0) {
         await saveDates(updates);
         return;
       }
-      const showPreview = (preview: { updates: TScheduleUpdate[]; warnings: TScheduleWarning[] }) =>
+      const showPreview = (preview: {
+        updates: TScheduleUpdate[];
+        warnings: TScheduleWarning[];
+        labels?: TScheduleLabels;
+      }) =>
         setSchedulePreview({
           ...preview,
           save: async (includeSuccessors) => {
@@ -215,8 +226,10 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
               });
               scheduled = true;
               rootIssueStore.issues.updateIssue(drag.id, drag);
-              response.updates.forEach(({ id, new_start, new_end }) =>
-                rootIssueStore.issues.updateIssue(id, { start_date: new_start, target_date: new_end })
+              response.updates.forEach(
+                ({ id, new_start, new_end }) =>
+                  rootIssueStore.issues.issuesMap[id] &&
+                  rootIssueStore.issues.updateIssue(id, { start_date: new_start, target_date: new_end })
               );
               await deps.refresh();
             } catch (error) {
@@ -242,7 +255,10 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: t("toast.error"),
-                message: "Error while updating work item dates, Please try again Later",
+                message:
+                  isAxiosError(error) && error.response?.status === 403
+                    ? "Bạn không có quyền sửa việc này"
+                    : "Error while updating work item dates, Please try again Later",
               });
             }
           },
@@ -287,6 +303,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
             <AutoScheduleModal
               updates={schedulePreview.updates}
               warnings={schedulePreview.warnings}
+              labels={schedulePreview.labels}
               issueDates={deps.issueDates}
               projectIdentifier={getProjectIdentifierById(projectId.toString())}
               onSave={schedulePreview.save}
@@ -295,6 +312,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
           )}
           <GanttChartRoot
             dependencies={deps?.dependencies}
+            externalLinks={deps?.externalLinks}
             dependencyActions={dependencyActions}
             border={false}
             title={isEpic ? t("epic.label", { count: 2 }) : t("issue.label", { count: 2 })}

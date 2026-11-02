@@ -2,10 +2,14 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+import json
 from datetime import date
+from functools import partial
 from uuid import UUID
 
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
+from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
@@ -13,8 +17,16 @@ from rest_framework.response import Response
 
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.views.base import BaseAPIView
-from plane.db.models import IssueRelation, Workspace, WorkspaceHoliday, WorkspaceScheduleSetting
-from plane.utils.gantt_schedule import build_calendar
+from plane.bgtasks.issue_activities_task import issue_activity
+from plane.db.models import (
+    Issue,
+    IssueRelation,
+    ProjectMember,
+    Workspace,
+    WorkspaceHoliday,
+    WorkspaceScheduleSetting,
+)
+from plane.utils.gantt_schedule import build_calendar, schedule_successors
 
 
 def workspace_calendar(workspace):
@@ -153,3 +165,173 @@ class ProjectIssueLagsEndpoint(BaseAPIView):
             relation.lag_days = lag
             relation.save(update_fields=["lag_days", "updated_at"])
         return Response({"predecessor": predecessor, "successor": successor, "lag_days": lag})
+
+
+class WorkspaceIssueScheduleEndpoint(BaseAPIView):
+    """Cross-project twin of IssueScheduleEndpoint.
+
+    Only projects where the user is an active member take part. Issues in projects where the user
+    is a guest are read-only: they are never moved and get a "no_permission" warning when a
+    predecessor moves. Issues in other projects are invisible and ignored.
+    """
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def post(self, request, slug):
+        from plane.app.views.issue.base import IssueScheduleEndpoint
+
+        try:
+            change, include_successors, dry_run, mode, pull_earlier, expected = IssueScheduleEndpoint.parse_body(
+                request.data
+            )
+        except (TypeError, ValueError) as exc:
+            return Response({"message": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+
+        with transaction.atomic():
+            # Same workspace lock as relation creation keeps the graph stable across projects.
+            workspace = Workspace.objects.select_for_update().get(slug=slug)
+            roles = {
+                str(project_id): role
+                for project_id, role in ProjectMember.objects.filter(
+                    workspace__slug=slug, member=request.user, is_active=True, project__deleted_at__isnull=True
+                ).values_list("project_id", "role")
+            }
+            writable = {project_id for project_id, role in roles.items() if role >= ROLE.MEMBER.value}
+            visible_issues = Issue.objects.filter(workspace__slug=slug, project_id__in=roles)
+            change_project = visible_issues.filter(id=change["id"]).values_list("project_id", flat=True).first()
+            if change_project is None:
+                return Response({"message": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+            if str(change_project) not in writable:
+                return Response({"message": "No permission"}, status=status.HTTP_403_FORBIDDEN)
+
+            relations = [
+                (str(predecessor), str(successor), lag, str(successor_project))
+                for predecessor, successor, lag, successor_project in IssueRelation.objects.filter(
+                    workspace__slug=slug,
+                    relation_type="blocked_by",
+                    deleted_at__isnull=True,
+                    issue__project_id__in=roles,
+                    related_issue__project_id__in=roles,
+                    issue__deleted_at__isnull=True,
+                    related_issue__deleted_at__isnull=True,
+                ).order_by("id").values_list("related_issue_id", "issue_id", "lag_days", "issue__project_id")
+            ]
+            # Edges into read-only issues are dropped so the engine never moves them.
+            dependencies = [(pred, succ, lag) for pred, succ, lag, project in relations if project in writable]
+            outgoing = {}
+            for predecessor, successor, _ in dependencies:
+                outgoing.setdefault(predecessor, set()).add(successor)
+            downstream = {change["id"]}
+            pending = [change["id"]]
+            while pending:
+                for successor in outgoing.get(pending.pop(), ()):
+                    if successor not in downstream:
+                        downstream.add(successor)
+                        pending.append(successor)
+                        if len(downstream) > 2001:
+                            return Response({"message": "Too many downstream issues"}, status=status.HTTP_400_BAD_REQUEST)
+            locked = {
+                str(issue.id): issue
+                for issue in visible_issues.filter(id__in=downstream, project_id__in=writable)
+                .order_by("id")
+                .select_for_update(of=("self",))
+            }
+            edited = locked.get(change["id"])
+            if edited is None:
+                return Response({"message": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+            start = change.get("start_date", edited.start_date)
+            end = change.get("target_date", edited.target_date)
+            if start and end and start > end:
+                return Response({"message": "Start date cannot exceed target date"}, status=status.HTTP_400_BAD_REQUEST)
+            tasks = [
+                {"id": issue_id, "start": issue.start_date, "end": issue.target_date}
+                for issue_id, issue in locked.items()
+            ]
+            predecessors = {pred for pred, successor, _ in dependencies if successor in downstream} - downstream
+            tasks.extend(
+                {"id": str(issue_id), "start": task_start, "end": task_end}
+                for issue_id, task_start, task_end in visible_issues.filter(id__in=predecessors).values_list(
+                    "id", "start_date", "target_date"
+                )
+            )
+            try:
+                result = schedule_successors(
+                    tasks, dependencies, {"id": change["id"], "start": start, "end": end},
+                    calendar=workspace_calendar(workspace) if mode == "working" else None,
+                    pull_earlier=pull_earlier,
+                )
+            except (OverflowError, ValueError):
+                return Response({"message": "Schedule exceeds date range"}, status=status.HTTP_400_BAD_REQUEST)
+            if result["cycle"]:
+                return Response(
+                    {"message": "Circular dependency", "cycle": result["cycle"]}, status=status.HTTP_409_CONFLICT
+                )
+            updates = result["updates"]
+            moved = {update["id"] for update in updates} if include_successors else set()
+            if (start, end) != (edited.start_date, edited.target_date):
+                moved.add(change["id"])
+            warnings = list(result["warnings"])
+            warned = set()
+            for pred, succ, _, project in relations:
+                if project not in writable and pred in moved and succ not in warned:
+                    warned.add(succ)
+                    warnings.append({"id": succ, "reason": "no_permission"})
+            # Names and codes let the web app label issues that are not in the open Gantt.
+            labelled = {item["id"] for item in [*updates, *warnings]}
+            issues_info = {
+                str(row["id"]): {
+                    "name": row["name"],
+                    "sequence_id": row["sequence_id"],
+                    "project_id": str(row["project_id"]),
+                    "project_identifier": row["project__identifier"],
+                }
+                for row in visible_issues.filter(id__in=labelled).values(
+                    "id", "name", "sequence_id", "project_id", "project__identifier"
+                )
+            }
+            response_data = json.loads(json.dumps(
+                {"updates": updates, "warnings": warnings, "issues": issues_info}, cls=DjangoJSONEncoder
+            ))
+            if dry_run:
+                return Response(response_data, status=status.HTTP_200_OK)
+            if include_successors and expected is not None and expected != {
+                update["id"]: (update["new_start"], update["new_end"]) for update in updates
+            }:
+                return Response({"message": "Schedule changed", **response_data}, status=status.HTTP_409_CONFLICT)
+
+            planned = {change["id"]: {field: change[field] for field in ("start_date", "target_date") if field in change}}
+            if include_successors:
+                planned.update({
+                    update["id"]: {"start_date": update["new_start"], "target_date": update["new_end"]}
+                    for update in updates
+                })
+            changed = []
+            activities = []
+            epoch = int(timezone.now().timestamp())
+            for issue_id, values in planned.items():
+                issue = locked[issue_id]
+                new_start = values.get("start_date", issue.start_date)
+                new_end = values.get("target_date", issue.target_date)
+                if new_start and new_end and new_start > new_end:
+                    return Response({"message": "Start date cannot exceed target date"}, status=status.HTTP_400_BAD_REQUEST)
+                issue_changed = False
+                for field, value in values.items():
+                    previous = getattr(issue, field)
+                    if value != previous:
+                        activities.append({
+                            "type": "issue.activity.updated",
+                            "requested_data": json.dumps({field: value}, cls=DjangoJSONEncoder),
+                            "current_instance": json.dumps({field: str(previous)}),
+                            "issue_id": issue_id,
+                            "actor_id": str(request.user.id),
+                            "project_id": str(issue.project_id),
+                            "epoch": epoch,
+                        })
+                        setattr(issue, field, value)
+                        issue_changed = True
+                if issue_changed:
+                    changed.append(issue)
+            if changed:
+                Issue.objects.bulk_update(changed, ["start_date", "target_date"])
+            for activity in activities:
+                transaction.on_commit(partial(issue_activity.delay, **activity))
+            return Response(response_data, status=status.HTTP_200_OK)

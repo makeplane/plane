@@ -9,11 +9,13 @@ import { Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import type { TScheduleLabels } from "./schedule-api";
 import type { TScheduleUpdate, TScheduleWarning } from "./scheduling";
 
 type Props = {
   updates: TScheduleUpdate[];
   warnings: TScheduleWarning[];
+  labels?: TScheduleLabels;
   issueDates: Record<string, { name: string; sequence_id: number }>;
   projectIdentifier?: string;
   onSave: (includeSuccessors: boolean) => Promise<void | boolean>;
@@ -23,7 +25,7 @@ type Props = {
 const formatDate = (date: string | null) => (date ? `${date.slice(8, 10)}/${date.slice(5, 7)}` : "—");
 
 export function AutoScheduleModal(props: Props) {
-  const { updates, warnings, issueDates, projectIdentifier, onSave, onClose } = props;
+  const { updates, warnings, labels, issueDates, projectIdentifier, onSave, onClose } = props;
   const movesEarlier = updates.some(
     ({ oldStart, oldEnd, newStart, newEnd }) =>
       (oldStart && newStart && newStart < oldStart) || (oldEnd && newEnd && newEnd < oldEnd)
@@ -31,6 +33,7 @@ export function AutoScheduleModal(props: Props) {
   const saving = useRef(false);
   const [isSaving, setIsSaving] = useState(false);
   const code = (id: string) => {
+    if (labels?.[id]) return `${labels[id].project_identifier}-${labels[id].sequence_id}`;
     const sequenceId = issueDates[id]?.sequence_id ?? id;
     return projectIdentifier ? `${projectIdentifier}-${sequenceId}` : String(sequenceId);
   };
@@ -76,7 +79,8 @@ export function AutoScheduleModal(props: Props) {
               {updates.map((update) => (
                 <tr key={update.id} className="border-t border-subtle">
                   <td className="p-2">
-                    <span className="text-tertiary">{code(update.id)}</span> {issueDates[update.id]?.name}
+                    <span className="text-tertiary">{code(update.id)}</span>{" "}
+                    {labels?.[update.id]?.name ?? issueDates[update.id]?.name}
                   </td>
                   <td className="p-2 whitespace-nowrap">
                     {formatDate(update.oldStart)} → {formatDate(update.newStart)}
@@ -93,8 +97,13 @@ export function AutoScheduleModal(props: Props) {
           <ul className="mt-3 text-11 text-tertiary">
             {warnings.map(({ id, reason }) => (
               <li key={`${id}-${reason}`}>
-                {code(id)}:{" "}
-                {reason === "missing_dates" ? "chưa có ngày, không tự lùi" : "việc trước chưa có ngày kết thúc"}
+                {code(id)}
+                {labels?.[id] ? ` ${labels[id].name}` : ""}:{" "}
+                {reason === "no_permission"
+                  ? "Không có quyền ở project của việc này — giữ nguyên"
+                  : reason === "missing_dates"
+                    ? "chưa có ngày, không tự lùi"
+                    : "việc trước chưa có ngày kết thúc"}
               </li>
             ))}
           </ul>

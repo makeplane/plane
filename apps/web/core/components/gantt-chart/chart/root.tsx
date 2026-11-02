@@ -19,11 +19,13 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { SIDEBAR_WIDTH } from "../constants";
 import { currentViewDataWithView } from "../data";
+import type { TResolvedExternalLink } from "../dependencies/external-links";
 import type { TGanttDependency, TGanttDependencyActions } from "../dependencies";
 import type { IMonthBlock, IMonthView, IWeekBlock } from "../views";
 import { getNumberOfDaysBetweenTwoDates, monthView, quarterView, weekView } from "../views";
 
 type ChartViewRootProps = {
+  externalLinks?: TResolvedExternalLink[];
   dependencies?: TGanttDependency[];
   dependencyActions?: TGanttDependencyActions;
   border: boolean;
@@ -58,6 +60,7 @@ const timelineViewHelpers = {
 
 export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRootProps) {
   const {
+    externalLinks,
     dependencies,
     dependencyActions,
     border,
@@ -203,6 +206,7 @@ export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRoo
       />
       <GanttChartMainContent
         dependencies={dependencies}
+        externalLinks={externalLinks}
         dependencyActions={dependencyActions}
         blockIds={blockIds}
         loadMoreBlocks={loadMoreBlocks}

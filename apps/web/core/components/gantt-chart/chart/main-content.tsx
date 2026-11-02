@@ -28,12 +28,14 @@ import { IssueBulkOperationsRoot } from "@/components/issues/bulk-operations";
 import { useBulkOperationStatus } from "@/hooks/use-bulk-operation-status";
 // local imports
 import { DEFAULT_BLOCK_WIDTH, GANTT_SELECT_GROUP, HEADER_HEIGHT } from "../constants";
+import type { TResolvedExternalLink } from "../dependencies/external-links";
 import type { TGanttDependency, TGanttDependencyActions } from "../dependencies";
 import { GanttDependencyLayer } from "../dependencies";
 import { getItemPositionWidth } from "../views";
 import { TimelineDragHelper } from "./timeline-drag-helper";
 
 type Props = {
+  externalLinks?: TResolvedExternalLink[];
   dependencies?: TGanttDependency[];
   dependencyActions?: TGanttDependencyActions;
   blockIds: string[];
@@ -65,6 +67,7 @@ type Props = {
 
 export const GanttChartMainContent = observer(function GanttChartMainContent(props: Props) {
   const {
+    externalLinks,
     dependencies,
     dependencyActions,
     blockIds,
@@ -235,10 +238,11 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
                       showAllBlocks={showAllBlocks}
                       updateBlockDates={updateBlockDates}
                     />
-                    {showDependencies && (!!dependencies?.length || !!dependencyActions) && (
+                    {showDependencies && (!!dependencies?.length || !!externalLinks?.length || !!dependencyActions) && (
                       <GanttDependencyLayer
                         blockIds={blockIds}
                         dependencies={dependencies ?? []}
+                        externalLinks={externalLinks}
                         dependencyActions={dependencyActions}
                         ganttContainerRef={ganttContainerRef}
                         showAllBlocks={showAllBlocks}

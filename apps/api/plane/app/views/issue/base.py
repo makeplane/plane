@@ -1205,33 +1205,37 @@ class IssueScheduleEndpoint(BaseAPIView):
             raise ValueError("Start date cannot exceed target date")
         return parsed
 
+    @classmethod
+    def parse_body(cls, body):
+        if not isinstance(body, dict):
+            raise ValueError("Invalid schedule")
+        change = cls.parse_dates(body.get("change"))
+        include_successors = body.get("include_successors", True)
+        dry_run = body.get("dry_run", False)
+        if not isinstance(include_successors, bool) or not isinstance(dry_run, bool):
+            raise ValueError("Invalid schedule options")
+        mode = body.get("mode", "calendar")
+        pull_earlier = body.get("pull_earlier", False)
+        if mode not in ("calendar", "working") or not isinstance(pull_earlier, bool):
+            raise ValueError("Invalid schedule options")
+        expected = None
+        if "expected" in body:
+            if not isinstance(body["expected"], list):
+                raise ValueError("Invalid expected updates")
+            expected = {}
+            for item in body["expected"]:
+                parsed = cls.parse_dates(item)
+                if not all(field in parsed for field in ("start_date", "target_date")) or parsed["id"] in expected:
+                    raise ValueError("Invalid expected updates")
+                expected[parsed["id"]] = (parsed["start_date"], parsed["target_date"])
+        return change, include_successors, dry_run, mode, pull_earlier, expected
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         from plane.app.views.issue.bih_schedule import workspace_calendar
 
         try:
-            body = request.data
-            if not isinstance(body, dict):
-                raise ValueError("Invalid schedule")
-            change = self.parse_dates(body.get("change"))
-            include_successors = body.get("include_successors", True)
-            dry_run = body.get("dry_run", False)
-            if not isinstance(include_successors, bool) or not isinstance(dry_run, bool):
-                raise ValueError("Invalid schedule options")
-            mode = body.get("mode", "calendar")
-            pull_earlier = body.get("pull_earlier", False)
-            if mode not in ("calendar", "working") or not isinstance(pull_earlier, bool):
-                raise ValueError("Invalid schedule options")
-            expected = None
-            if "expected" in body:
-                if not isinstance(body["expected"], list):
-                    raise ValueError("Invalid expected updates")
-                expected = {}
-                for item in body["expected"]:
-                    parsed = self.parse_dates(item)
-                    if not all(field in parsed for field in ("start_date", "target_date")) or parsed["id"] in expected:
-                        raise ValueError("Invalid expected updates")
-                    expected[parsed["id"]] = (parsed["start_date"], parsed["target_date"])
+            change, include_successors, dry_run, mode, pull_earlier, expected = self.parse_body(request.data)
         except (TypeError, ValueError) as exc:
             return Response({"message": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 

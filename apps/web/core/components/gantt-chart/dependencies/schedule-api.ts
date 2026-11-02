@@ -17,7 +17,13 @@ export type TScheduleIssueBody = {
   expected?: TIssueDates[];
 };
 
+export type TScheduleLabels = Record<
+  string,
+  { name: string; sequence_id: number; project_id: string; project_identifier: string }
+>;
+
 export type TScheduleResponse = {
+  issues?: TScheduleLabels;
   updates: {
     id: string;
     old_start: string | null;
@@ -31,6 +37,7 @@ export type TScheduleResponse = {
 export function schedulePreviewFromResponse(data: Partial<TScheduleResponse> | undefined): {
   updates: TScheduleUpdate[];
   warnings: TScheduleWarning[];
+  labels: TScheduleLabels;
 } | null {
   if (!data?.updates || !data.warnings) return null;
   return {
@@ -42,5 +49,6 @@ export function schedulePreviewFromResponse(data: Partial<TScheduleResponse> | u
       newEnd: new_end,
     })),
     warnings: data.warnings,
+    labels: data.issues ?? {},
   };
 }

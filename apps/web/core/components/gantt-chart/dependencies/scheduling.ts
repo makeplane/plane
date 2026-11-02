@@ -15,7 +15,7 @@ export type TScheduleUpdate = {
   newStart: string | null;
   newEnd: string | null;
 };
-export type TScheduleWarning = { id: string; reason: "missing_dates" | "missing_predecessor_end" };
+export type TScheduleWarning = { id: string; reason: "missing_dates" | "missing_predecessor_end" | "no_permission" };
 
 const dayMs = 86_400_000;
 const utc = (date: string) => {

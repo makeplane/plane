@@ -13,7 +13,7 @@ import { useWorkspaceCalendar } from "@/components/bih-schedule/use-workspace-ca
 import { AutoScheduleModal, scheduleSuccessors } from "@/components/gantt-chart/dependencies";
 import type { TScheduleUpdate, TScheduleWarning } from "@/components/gantt-chart/dependencies";
 import { schedulePreviewFromResponse } from "@/components/gantt-chart/dependencies/schedule-api";
-import type { TScheduleResponse } from "@/components/gantt-chart/dependencies/schedule-api";
+import type { TScheduleLabels, TScheduleResponse } from "@/components/gantt-chart/dependencies/schedule-api";
 import { useGanttDependencies } from "@/components/issues/issue-layouts/gantt/use-gantt-dependencies";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
@@ -55,6 +55,7 @@ export function useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issue
   const [schedulePreview, setSchedulePreview] = useState<{
     updates: TScheduleUpdate[];
     warnings: TScheduleWarning[];
+    labels?: TScheduleLabels;
     save: (includeSuccessors: boolean) => Promise<void | boolean>;
   } | null>(null);
 
@@ -70,7 +71,7 @@ export function useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issue
           return { id, start: current.start_date ?? null, end: current.target_date ?? null };
         });
         const current = tasks.find((task) => task.id === issueId)!;
-        let result = scheduleSuccessors(
+        let result: ReturnType<typeof scheduleSuccessors> & { labels?: TScheduleLabels } = scheduleSuccessors(
           tasks,
           deps.dependencies,
           {
@@ -92,15 +93,25 @@ export function useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issue
             if (preview) result = { ...preview, cycle: null };
           } catch (error) {
             if (!isAxiosError(error) || error.response?.status !== 404) {
-              setToast({ type: TOAST_TYPE.ERROR, title: "Không xem trước được lịch các việc sau" });
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title:
+                  isAxiosError(error) && error.response?.status === 403
+                    ? "Bạn không có quyền sửa việc này"
+                    : "Không xem trước được lịch các việc sau",
+              });
               return;
             }
           }
         }
         if (result.cycle) {
           setToast({ type: TOAST_TYPE.WARNING, title: "Có vòng lặp phụ thuộc — chỉ đổi việc này" });
-        } else if (result.updates.length > 0) {
-          const showPreview = (preview: { updates: TScheduleUpdate[]; warnings: TScheduleWarning[] }) =>
+        } else if (result.updates.length > 0 || result.warnings.length > 0) {
+          const showPreview = (preview: {
+            updates: TScheduleUpdate[];
+            warnings: TScheduleWarning[];
+            labels?: TScheduleLabels;
+          }) =>
             setSchedulePreview({
               ...preview,
               save: async (includeSuccessors) => {
@@ -123,8 +134,10 @@ export function useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issue
                     });
                     scheduled = true;
                     rootIssueStore.issues.updateIssue(issueId, { [field]: value });
-                    response.updates.forEach(({ id, new_start, new_end }) =>
-                      rootIssueStore.issues.updateIssue(id, { start_date: new_start, target_date: new_end })
+                    response.updates.forEach(
+                      ({ id, new_start, new_end }) =>
+                        rootIssueStore.issues.issuesMap[id] &&
+                        rootIssueStore.issues.updateIssue(id, { start_date: new_start, target_date: new_end })
                     );
                     await deps.refresh();
                     return;
@@ -153,7 +166,13 @@ export function useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issue
                   );
                   await deps.refresh();
                 } catch (error) {
-                  setToast({ type: TOAST_TYPE.ERROR, title: "Không lưu được lịch các việc sau" });
+                  setToast({
+                    type: TOAST_TYPE.ERROR,
+                    title:
+                      isAxiosError(error) && error.response?.status === 403
+                        ? "Bạn không có quyền sửa việc này"
+                        : "Không lưu được lịch các việc sau",
+                  });
                   console.error("Failed to save detail auto-schedule", error);
                 }
               },
@@ -175,6 +194,7 @@ export function useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issue
         <AutoScheduleModal
           updates={schedulePreview.updates}
           warnings={schedulePreview.warnings}
+          labels={schedulePreview.labels}
           issueDates={deps.issueDates}
           projectIdentifier={getProjectIdentifierById(projectId)}
           onSave={schedulePreview.save}

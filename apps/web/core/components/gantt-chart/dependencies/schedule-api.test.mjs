@@ -17,10 +17,21 @@ test("maps a server conflict preview including nullable dates and warnings", () 
     {
       updates: [{ id: "B", oldStart: null, oldEnd: "2026-11-04", newStart: null, newEnd: "2026-11-06" }],
       warnings: [{ id: "C", reason: "missing_dates" }],
+      labels: {},
     }
   );
 });
 
 test("a cycle conflict without a new preview is not treated as a schedule mismatch", () => {
   assert.equal(schedulePreviewFromResponse({ message: "Circular dependency", cycle: ["A", "B", "A"] }), null);
+});
+
+test("preserves cross-project labels and no-permission warnings", () => {
+  const issues = { B: { name: "External task", sequence_id: 12, project_id: "other", project_identifier: "PRJ" } };
+  const warnings = [{ id: "B", reason: "no_permission" }];
+  assert.deepEqual(schedulePreviewFromResponse({ updates: [], warnings, issues }), {
+    updates: [],
+    warnings,
+    labels: issues,
+  });
 });

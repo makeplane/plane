@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+import { isAxiosError } from "axios";
+
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
 import { EIssueServiceType } from "@plane/types";
@@ -21,6 +23,8 @@ import type {
 // services
 import { APIService } from "@/services/api.service";
 import type { TScheduleIssueBody, TScheduleResponse } from "@/components/gantt-chart/dependencies/schedule-api";
+
+let workspaceScheduleUnsupported = false;
 
 export class IssueService extends APIService {
   private serviceType: TIssueServiceType;
@@ -253,6 +257,16 @@ export class IssueService extends APIService {
   }
 
   async scheduleIssue(workspaceSlug: string, projectId: string, body: TScheduleIssueBody): Promise<TScheduleResponse> {
+    if (!workspaceScheduleUnsupported) {
+      try {
+        const response = await this.post(`/api/workspaces/${workspaceSlug}/issue-schedule/`, body);
+        return response.data;
+      } catch (error) {
+        if (!isAxiosError(error) || error.response?.status !== 404 || error.response.data?.message !== undefined)
+          throw error;
+        workspaceScheduleUnsupported = true;
+      }
+    }
     const response = await this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-schedule/`, body);
     return response.data;
   }
