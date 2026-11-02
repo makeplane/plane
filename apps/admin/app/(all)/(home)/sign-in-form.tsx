@@ -58,7 +58,7 @@ export function InstanceSignInForm() {
   const errorMessage = searchParams.get("error_message") || undefined;
   // state
   const [showPassword, setShowPassword] = useState(false);
-  const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
+  const [csrfToken, setCsrfToken] = useState("");
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorInfo, setErrorInfo] = useState<TAdminAuthErrorInfo | undefined>(undefined);
@@ -67,8 +67,7 @@ export function InstanceSignInForm() {
     setFormData((prev) => ({ ...prev, [key]: value }));
 
   useEffect(() => {
-    if (csrfToken === undefined)
-      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
+    if (!csrfToken) authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
   }, [csrfToken]);
 
   useEffect(() => {
@@ -96,7 +95,7 @@ export function InstanceSignInForm() {
   }, [errorCode, errorMessage]);
 
   const isButtonDisabled = useMemo(
-    () => (!isSubmitting && formData.email && formData.password ? false : true),
+    () => isSubmitting || !formData.email || !formData.password,
     [formData.email, formData.password, isSubmitting]
   );
 
@@ -141,6 +140,7 @@ export function InstanceSignInForm() {
               value={formData.email}
               onChange={(e) => handleFormChange("email", e.target.value)}
               autoComplete="off"
+              // oxlint-disable-next-line jsx-a11y/no-autofocus -- sole primary field of a dedicated sign-in page
               autoFocus
               orientation="vertical"
               label="Email"
