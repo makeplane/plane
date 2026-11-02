@@ -48,6 +48,12 @@
     },
     "project_board": {
       "collapse_group": "收合群組"
+    },
+    "pagination": {
+      "root": "分頁",
+      "previous_page": "前往上一頁",
+      "next_page": "前往下一頁",
+      "go_to_page": "前往第 {page} 頁"
     }
   }
 }

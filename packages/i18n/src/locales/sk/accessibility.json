@@ -48,6 +48,12 @@
     },
     "project_board": {
       "collapse_group": "Zbaliť skupinu"
+    },
+    "pagination": {
+      "root": "Stránkovanie",
+      "previous_page": "Prejsť na predchádzajúcu stránku",
+      "next_page": "Prejsť na ďalšiu stránku",
+      "go_to_page": "Prejsť na stránku {page}"
     }
   }
 }

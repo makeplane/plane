@@ -48,6 +48,12 @@
     },
     "project_board": {
       "collapse_group": "Zwiń grupę"
+    },
+    "pagination": {
+      "root": "Paginacja",
+      "previous_page": "Przejdź do poprzedniej strony",
+      "next_page": "Przejdź do następnej strony",
+      "go_to_page": "Przejdź do strony {page}"
     }
   }
 }

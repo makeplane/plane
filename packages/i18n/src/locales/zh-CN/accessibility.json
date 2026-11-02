@@ -48,6 +48,12 @@
     },
     "project_board": {
       "collapse_group": "折叠分组"
+    },
+    "pagination": {
+      "root": "分页",
+      "previous_page": "转到上一页",
+      "next_page": "转到下一页",
+      "go_to_page": "转到第 {page} 页"
     }
   }
 }

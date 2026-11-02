@@ -48,6 +48,12 @@
     },
     "project_board": {
       "collapse_group": "Collapse group"
+    },
+    "pagination": {
+      "root": "Pagination",
+      "previous_page": "Go to previous page",
+      "next_page": "Go to next page",
+      "go_to_page": "Go to page {page}"
     }
   }
 }

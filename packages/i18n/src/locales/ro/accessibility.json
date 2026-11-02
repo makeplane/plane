@@ -48,6 +48,12 @@
     },
     "project_board": {
       "collapse_group": "Restrângeți grupul"
+    },
+    "pagination": {
+      "root": "Paginare",
+      "previous_page": "Mergeți la pagina anterioară",
+      "next_page": "Mergeți la pagina următoare",
+      "go_to_page": "Mergeți la pagina {page}"
     }
   }
 }
