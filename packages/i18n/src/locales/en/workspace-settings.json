@@ -1,6 +1,12 @@
 {
   "workspace_settings": {
     "label": "Workspace settings",
+    "toasts": {
+      "updated": "Workspace updated successfully",
+      "picture_removed": "Workspace picture removed successfully.",
+      "picture_remove_failed": "There was some error in deleting your profile picture. Please try again.",
+      "url_copied": "Workspace URL copied to the clipboard."
+    },
     "page_label": "{workspace} - General settings",
     "key_created": "Key created",
     "copy_key": "Copy and save this secret key in Plane Pages. You can't see this key after you hit Close. A CSV file containing the key has been downloaded.",

@@ -37,11 +37,44 @@
         "states": {
           "sending": "Se trimite…"
         }
+      },
+      "general": {
+        "form": {
+          "first_name_placeholder": "Enter your first name",
+          "last_name_placeholder": "Enter your last name",
+          "display_name_placeholder": "Enter your display name",
+          "email_placeholder": "Enter your email",
+          "errors": {
+            "first_name_required": "Please enter first name",
+            "display_name_required": "Display name is required.",
+            "email_required": "Email is required."
+          }
+        },
+        "toasts": {
+          "picture_deleted": "Profile picture deleted successfully.",
+          "picture_delete_failed": "There was some error in deleting your profile picture. Please try again.",
+          "updating": "Updating...",
+          "updated": "Profile updated successfully.",
+          "update_failed": "There was some error in updating your profile. Please try again."
+        }
       }
     },
     "preferences": {
       "heading": "Preferințe",
-      "description": "Personalizează experiența aplicației așa cum lucrezi"
+      "description": "Personalizează experiența aplicației așa cum lucrezi",
+      "select_a_language": "Select a language",
+      "start_of_week": {
+        "title": "First day of the week",
+        "description": "This will change how all calendars in your app look."
+      },
+      "toasts": {
+        "timezone_updated": "Timezone updated successfully",
+        "timezone_update_failed": "Failed to update timezone",
+        "language_updated": "Language updated successfully",
+        "language_update_failed": "Failed to update language",
+        "start_of_week_updated": "First day of the week updated successfully",
+        "start_of_week_update_failed": "Please try again later."
+      }
     },
     "notifications": {
       "heading": "Notificări prin e-mail",

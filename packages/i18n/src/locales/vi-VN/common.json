@@ -867,5 +867,14 @@
       "description": "Xuất mục công việc thành tệp JSON.",
       "short_description": "Xuất sang JSON"
     }
-  }
+  },
+  "reactions": {
+    "toasts": {
+      "created": "Reaction created successfully",
+      "creation_failed": "Reaction creation failed",
+      "removed": "Reaction removed successfully",
+      "remove_failed": "Reaction remove failed"
+    }
+  },
+  "please_select_at_least_one_work_item": "Please select at least one work item."
 }

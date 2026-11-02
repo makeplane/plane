@@ -32,14 +32,14 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
       try {
         await updateCurrentUser({ user_timezone: value });
         setToast({
-          title: "Success!",
-          message: "Timezone updated successfully",
+          title: t("toast.success"),
+          message: t("account_settings.preferences.toasts.timezone_updated"),
           type: TOAST_TYPE.SUCCESS,
         });
       } catch (_error) {
         setToast({
-          title: "Error!",
-          message: "Failed to update timezone",
+          title: t("toast.error"),
+          message: t("account_settings.preferences.toasts.timezone_update_failed"),
           type: TOAST_TYPE.ERROR,
         });
       }
@@ -49,14 +49,14 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
       try {
         await updateUserProfile({ language: value });
         setToast({
-          title: "Success!",
-          message: "Language updated successfully",
+          title: t("toast.success"),
+          message: t("account_settings.preferences.toasts.language_updated"),
           type: TOAST_TYPE.SUCCESS,
         });
       } catch (_error) {
         setToast({
-          title: "Error!",
-          message: "Failed to update language",
+          title: t("toast.error"),
+          message: t("account_settings.preferences.toasts.language_update_failed"),
           type: TOAST_TYPE.ERROR,
         });
       }
@@ -81,7 +81,11 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
           control={
             <CustomSelect
               value={profile?.language}
-              label={profile?.language ? getLanguageLabel(profile?.language) : "Select a language"}
+              label={
+                profile?.language
+                  ? getLanguageLabel(profile?.language)
+                  : t("account_settings.preferences.select_a_language")
+              }
               onChange={handleLanguageChange}
               buttonClassName="border border-subtle-1"
               className="rounded-md"
@@ -98,8 +102,8 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
         />
         <StartOfWeekPreference
           option={{
-            title: "First day of the week",
-            description: "This will change how all calendars in your app look.",
+            title: t("account_settings.preferences.start_of_week.title"),
+            description: t("account_settings.preferences.start_of_week.description"),
           }}
         />
       </div>

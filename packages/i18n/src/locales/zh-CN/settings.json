@@ -37,11 +37,44 @@
         "states": {
           "sending": "发送中…"
         }
+      },
+      "general": {
+        "form": {
+          "first_name_placeholder": "请输入名字",
+          "last_name_placeholder": "请输入姓氏",
+          "display_name_placeholder": "请输入显示名称",
+          "email_placeholder": "请输入邮箱",
+          "errors": {
+            "first_name_required": "请输入名字",
+            "display_name_required": "显示名称为必填项。",
+            "email_required": "邮箱为必填项。"
+          }
+        },
+        "toasts": {
+          "picture_deleted": "个人头像删除成功。",
+          "picture_delete_failed": "删除个人头像时出错，请重试。",
+          "updating": "更新中…",
+          "updated": "个人资料更新成功。",
+          "update_failed": "更新个人资料时出错，请重试。"
+        }
       }
     },
     "preferences": {
       "heading": "偏好设置",
-      "description": "按照您的工作方式自定义您的应用体验"
+      "description": "按照您的工作方式自定义您的应用体验",
+      "select_a_language": "选择语言",
+      "start_of_week": {
+        "title": "每周第一天",
+        "description": "这将改变应用中所有日历的显示方式。"
+      },
+      "toasts": {
+        "timezone_updated": "时区更新成功",
+        "timezone_update_failed": "时区更新失败",
+        "language_updated": "语言更新成功",
+        "language_update_failed": "语言更新失败",
+        "start_of_week_updated": "每周第一天设置更新成功",
+        "start_of_week_update_failed": "更新失败，请稍后重试。"
+      }
     },
     "notifications": {
       "heading": "邮件通知",

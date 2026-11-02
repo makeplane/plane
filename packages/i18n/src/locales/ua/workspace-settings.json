@@ -503,6 +503,12 @@
         "title": "Немає імпортів",
         "description": "Історія імпортів з'явиться тут."
       }
+    },
+    "toasts": {
+      "updated": "Workspace updated successfully",
+      "picture_removed": "Workspace picture removed successfully.",
+      "picture_remove_failed": "There was some error in deleting your profile picture. Please try again.",
+      "url_copied": "Workspace URL copied to the clipboard."
     }
   }
 }

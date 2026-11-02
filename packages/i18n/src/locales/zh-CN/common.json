@@ -374,6 +374,15 @@
     "success": "成功！",
     "error": "错误！"
   },
+  "reactions": {
+    "toasts": {
+      "created": "表情回应创建成功",
+      "creation_failed": "表情回应创建失败",
+      "removed": "表情回应移除成功",
+      "remove_failed": "表情回应移除失败"
+    }
+  },
+  "please_select_at_least_one_work_item": "请至少选择一个工作项。",
   "links": {
     "toasts": {
       "created": {

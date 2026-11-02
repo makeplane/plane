@@ -1,5 +1,11 @@
 {
   "project_settings": {
+    "label": "项目设置",
+    "feature_toasts": {
+      "updating": "正在更新项目功能…",
+      "updated": "项目功能更新成功。",
+      "update_failed": "更新项目功能时出错，请重试。"
+    },
     "general": {
       "enter_project_id": "输入项目 ID",
       "please_select_a_timezone": "请选择时区",
