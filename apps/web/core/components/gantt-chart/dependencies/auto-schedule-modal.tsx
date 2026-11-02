@@ -24,6 +24,10 @@ const formatDate = (date: string | null) => (date ? `${date.slice(8, 10)}/${date
 
 export function AutoScheduleModal(props: Props) {
   const { updates, warnings, issueDates, projectIdentifier, onSave, onClose } = props;
+  const movesEarlier = updates.some(
+    ({ oldStart, oldEnd, newStart, newEnd }) =>
+      (oldStart && newStart && newStart < oldStart) || (oldEnd && newEnd && newEnd < oldEnd)
+  );
   const saving = useRef(false);
   const [isSaving, setIsSaving] = useState(false);
   const code = (id: string) => {
@@ -47,7 +51,7 @@ export function AutoScheduleModal(props: Props) {
       <div className="px-5 py-4">
         <div className="flex items-center justify-between gap-2">
           <Dialog.Title as="h3" className="text-18 font-medium">
-            Tự lùi lịch các việc sau
+            {movesEarlier ? "Cập nhật lịch các việc sau" : "Tự lùi lịch các việc sau"}
           </Dialog.Title>
           <button
             type="button"
@@ -100,7 +104,7 @@ export function AutoScheduleModal(props: Props) {
             Chỉ đổi việc này
           </Button>
           <Button variant="primary" disabled={isSaving} loading={isSaving} onClick={() => void save(true)}>
-            Lùi {updates.length} việc sau
+            {movesEarlier ? "Cập nhật" : "Lùi"} {updates.length} việc sau
           </Button>
         </div>
       </div>

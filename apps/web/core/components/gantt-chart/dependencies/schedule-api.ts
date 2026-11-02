@@ -12,6 +12,8 @@ export type TScheduleIssueBody = {
   change: TIssueDates;
   include_successors: boolean;
   dry_run?: boolean;
+  mode?: "calendar" | "working";
+  pull_earlier?: boolean;
   expected?: TIssueDates[];
 };
 

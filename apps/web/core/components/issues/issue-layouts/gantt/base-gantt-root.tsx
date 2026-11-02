@@ -16,6 +16,8 @@ import type { EIssuesStoreType, IBlockUpdateData, TIssue } from "@plane/types";
 import { EIssueLayoutTypes, GANTT_TIMELINE_TYPE } from "@plane/types";
 import { renderFormattedPayloadDate } from "@plane/utils";
 // components
+import { useSchedulePrefs } from "@/components/bih-schedule/schedule-prefs";
+import { useWorkspaceCalendar } from "@/components/bih-schedule/use-workspace-calendar";
 import { AutoScheduleModal, scheduleSuccessors } from "@/components/gantt-chart/dependencies";
 import type { TScheduleUpdate, TScheduleWarning } from "@/components/gantt-chart/dependencies";
 import { schedulePreviewFromResponse } from "@/components/gantt-chart/dependencies/schedule-api";
@@ -59,6 +61,10 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
   const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId } = useParams();
+  const schedulePrefs = useSchedulePrefs();
+  const { calendar: workspaceCalendar, supported: scheduleSupported } = useWorkspaceCalendar(workspaceSlug?.toString());
+  const calendar = schedulePrefs.mode === "working" ? (workspaceCalendar ?? undefined) : undefined;
+  const pullEarlier = scheduleSupported && schedulePrefs.pullEarlier;
   const deps = useGanttDependencies(workspaceSlug?.toString(), projectId?.toString(), !isEpic);
 
   const storeType = useIssueStoreType() as GanttStoreType;
@@ -113,11 +119,22 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
   const isAllowed = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
   const dependencyActions =
     isAllowed && !isEpic && deps
-      ? { otherPairs: deps.otherPairs, create: deps.createDependency, remove: deps.removeDependency }
+      ? {
+          otherPairs: deps.otherPairs,
+          create: deps.createDependency,
+          remove: deps.removeDependency,
+          setLag: deps.setLag,
+          lagsSupported: deps.lagsSupported,
+        }
       : undefined;
   const hasDependencyActions = !!dependencyActions;
   const updateBlockDates = useCallback(
     async (updates: { id: string; start_date?: string; target_date?: string }[]) => {
+      const scheduleOptions = {
+        mode: calendar ? ("working" as const) : ("calendar" as const),
+        pull_earlier: pullEarlier,
+      };
+
       const saveDates = async (payload: typeof updates) => {
         try {
           await issues.updateIssueDates(workspaceSlug.toString(), payload, projectId.toString());
@@ -144,11 +161,34 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
       });
       const drag = updates[0];
       const current = tasks.find((task) => task.id === drag.id);
-      const result = scheduleSuccessors(tasks, deps.dependencies, {
-        id: drag.id,
-        start: drag.start_date ?? current?.start ?? null,
-        end: drag.target_date ?? current?.end ?? null,
-      });
+      let result = scheduleSuccessors(
+        tasks,
+        deps.dependencies,
+        {
+          id: drag.id,
+          start: drag.start_date ?? current?.start ?? null,
+          end: drag.target_date ?? current?.end ?? null,
+        },
+        calendar,
+        pullEarlier
+      );
+      if (!result.cycle) {
+        try {
+          const response = await issueService.scheduleIssue(workspaceSlug.toString(), projectId.toString(), {
+            ...scheduleOptions,
+            change: drag,
+            include_successors: true,
+            dry_run: true,
+          });
+          const preview = schedulePreviewFromResponse(response);
+          if (preview) result = { ...preview, cycle: null };
+        } catch (error) {
+          if (!isAxiosError(error) || error.response?.status !== 404) {
+            setToast({ type: TOAST_TYPE.ERROR, title: "Không xem trước được lịch các việc sau" });
+            return;
+          }
+        }
+      }
       if (result.cycle) {
         setToast({ type: TOAST_TYPE.WARNING, title: "Có vòng lặp phụ thuộc — chỉ đổi việc này" });
       }
@@ -164,6 +204,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
             let scheduled = false;
             try {
               const response = await issueService.scheduleIssue(workspaceSlug.toString(), projectId.toString(), {
+                ...scheduleOptions,
                 change: drag,
                 include_successors: true,
                 expected: preview.updates.map(({ id, newStart, newEnd }) => ({
@@ -208,7 +249,19 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
         });
       showPreview(result);
     },
-    [autoSchedule, deps, hasDependencyActions, issueMap, issues, projectId, rootIssueStore, workspaceSlug, t]
+    [
+      autoSchedule,
+      deps,
+      hasDependencyActions,
+      issueMap,
+      issues,
+      projectId,
+      rootIssueStore,
+      workspaceSlug,
+      t,
+      calendar,
+      pullEarlier,
+    ]
   );
 
   const quickAdd =

@@ -186,7 +186,7 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
             </marker>
           ))}
         </defs>
-        {dependencies.map(({ predecessorId, successorId }) => {
+        {dependencies.map(({ predecessorId, successorId, lagDays }) => {
           const pred = rows.get(predecessorId);
           const succ = rows.get(successorId);
           if (!pred?.block.position || !succ?.block.position) return null;
@@ -215,6 +215,16 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
                 }
                 markerEnd={`url(#${isSelected ? selectedMarkerId : violated ? violatedMarkerId : normalMarkerId})`}
               />
+              {!!lagDays && (
+                <text
+                  x={pred.block.position.marginLeft + pred.block.position.width + 5}
+                  y={pred.y - 5}
+                  className="fill-current text-10 text-tertiary"
+                >
+                  {lagDays > 0 ? "+" : ""}
+                  {lagDays}d
+                </text>
+              )}
               {dependencyActions && (
                 <path
                   data-gantt-dependency-control
@@ -311,9 +321,42 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
       {dependencyActions && selectedDependency && selectedPred?.block.position && selectedSucc?.block.position && (
         <div
           data-gantt-dependency-control
-          className="pointer-events-auto absolute z-[8] -translate-x-1/2 -translate-y-1/2"
+          className="pointer-events-auto absolute z-[8] flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded border border-subtle bg-layer-1 p-1"
           style={{ left: deleteX, top: selectedSucc.y }}
         >
+          {dependencyActions.lagsSupported && dependencyActions.setLag && (
+            <label className="flex items-center gap-1 text-11 text-tertiary">
+              Trễ (ngày)
+              <input
+                key={`${selectedDependency.predecessorId}-${selectedDependency.successorId}-${selectedDependency.lagDays ?? 0}`}
+                type="number"
+                min={-365}
+                max={365}
+                step={1}
+                defaultValue={selectedDependency.lagDays ?? 0}
+                className="w-16 rounded border border-subtle bg-layer-1 px-1 text-primary"
+                onKeyDown={(event) => {
+                  event.stopPropagation();
+                  if (event.key === "Enter") event.currentTarget.blur();
+                }}
+                onBlur={(event) => {
+                  const value = Number(event.currentTarget.value);
+                  const valid = event.currentTarget.validity.valid;
+                  event.currentTarget.value = String(selectedDependency.lagDays ?? 0);
+                  if (!valid || !Number.isInteger(value)) {
+                    setToast({ type: TOAST_TYPE.ERROR, title: "Độ trễ phải là số nguyên từ -365 đến 365" });
+                    return;
+                  }
+                  if (value !== (selectedDependency.lagDays ?? 0))
+                    void dependencyActions.setLag?.(
+                      selectedDependency.predecessorId,
+                      selectedDependency.successorId,
+                      value
+                    );
+                }}
+              />
+            </label>
+          )}
           <button
             type="button"
             aria-label="Xoá phụ thuộc"

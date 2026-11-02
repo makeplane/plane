@@ -13,6 +13,7 @@ import { Row } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { VIEWS_LIST } from "@/components/gantt-chart/data";
+import { ScheduleSettingsButton } from "@/components/bih-schedule/schedule-settings-modal";
 // helpers
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
@@ -108,6 +109,8 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
           Tự lùi lịch
         </button>
       )}
+
+      {props.showAutoScheduleToggle && <ScheduleSettingsButton />}
 
       <button
         type="button"

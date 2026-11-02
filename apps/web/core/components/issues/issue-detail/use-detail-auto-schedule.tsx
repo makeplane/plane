@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { isAxiosError } from "axios";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { useSchedulePrefs } from "@/components/bih-schedule/schedule-prefs";
+import { useWorkspaceCalendar } from "@/components/bih-schedule/use-workspace-calendar";
 import { AutoScheduleModal, scheduleSuccessors } from "@/components/gantt-chart/dependencies";
 import type { TScheduleUpdate, TScheduleWarning } from "@/components/gantt-chart/dependencies";
 import { schedulePreviewFromResponse } from "@/components/gantt-chart/dependencies/schedule-api";
@@ -39,6 +41,11 @@ export function useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issue
   onDateChange: (field: "start_date" | "target_date", value: string | null) => Promise<void>;
   modal: ReactNode;
 } {
+  const schedulePrefs = useSchedulePrefs();
+  const { calendar: workspaceCalendar, supported: scheduleSupported } = useWorkspaceCalendar(workspaceSlug?.toString());
+  const calendar = schedulePrefs.mode === "working" ? (workspaceCalendar ?? undefined) : undefined;
+  const pullEarlier = scheduleSupported && schedulePrefs.pullEarlier;
+  const scheduleOptions = { mode: calendar ? ("working" as const) : ("calendar" as const), pull_earlier: pullEarlier };
   const deps = useGanttDependencies(workspaceSlug, projectId, isAutoScheduleEnabled());
   const {
     issue: { getIssueById },
@@ -63,10 +70,33 @@ export function useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issue
           return { id, start: current.start_date ?? null, end: current.target_date ?? null };
         });
         const current = tasks.find((task) => task.id === issueId)!;
-        const result = scheduleSuccessors(tasks, deps.dependencies, {
-          ...current,
-          ...(field === "start_date" ? { start: value } : { end: value }),
-        });
+        let result = scheduleSuccessors(
+          tasks,
+          deps.dependencies,
+          {
+            ...current,
+            ...(field === "start_date" ? { start: value } : { end: value }),
+          },
+          calendar,
+          pullEarlier
+        );
+        if (!result.cycle) {
+          try {
+            const response = await issueService.scheduleIssue(workspaceSlug, projectId, {
+              ...scheduleOptions,
+              change: { id: issueId, [field]: value },
+              include_successors: true,
+              dry_run: true,
+            });
+            const preview = schedulePreviewFromResponse(response);
+            if (preview) result = { ...preview, cycle: null };
+          } catch (error) {
+            if (!isAxiosError(error) || error.response?.status !== 404) {
+              setToast({ type: TOAST_TYPE.ERROR, title: "Không xem trước được lịch các việc sau" });
+              return;
+            }
+          }
+        }
         if (result.cycle) {
           setToast({ type: TOAST_TYPE.WARNING, title: "Có vòng lặp phụ thuộc — chỉ đổi việc này" });
         } else if (result.updates.length > 0) {
@@ -82,6 +112,7 @@ export function useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issue
                   let scheduled = false;
                   try {
                     const response = await issueService.scheduleIssue(workspaceSlug, projectId, {
+                      ...scheduleOptions,
                       change: { id: issueId, [field]: value },
                       include_successors: true,
                       expected: preview.updates.map(({ id, newStart, newEnd }) => ({

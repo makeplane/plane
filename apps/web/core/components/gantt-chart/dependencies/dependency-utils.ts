@@ -4,10 +4,12 @@
  * See the LICENSE file for details.
  */
 
-export type TGanttDependency = { predecessorId: string; successorId: string };
+export type TGanttDependency = { predecessorId: string; successorId: string; lagDays?: number };
 
 export type TGanttDependencyActions = {
   otherPairs: string[];
+  setLag?: (predecessorId: string, successorId: string, lagDays: number) => Promise<void>;
+  lagsSupported?: boolean;
   create: (predecessorId: string, successorId: string) => Promise<void>;
   remove: (predecessorId: string, successorId: string) => Promise<void>;
 };

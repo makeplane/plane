@@ -2,7 +2,7 @@
 
 ## Đây là gì
 
-Fork Plane CE v1.4.2 của BIH (AGPL-3.0, source công khai tại https://github.com/ethanbih/plane), thêm **phụ thuộc giữa các việc + tự lùi lịch** trên Gantt. Nhánh `bih/v1.4.2`. Không đổi schema DB, không migration.
+Fork Plane CE v1.4.2 của BIH (AGPL-3.0, source công khai tại https://github.com/ethanbih/plane), thêm **phụ thuộc giữa các việc + tự lùi lịch** trên Gantt. Nhánh `bih/v1.4.2`. Từ đợt 5b có **1 migration** (`0123_bih_schedule_lag_holidays`, chỉ thêm cột/bảng).
 
 ## Tính năng
 
@@ -18,8 +18,10 @@ Thao tác (cần quyền ADMIN/MEMBER của project):
 
 ## Cách lập lịch hoạt động
 
-- Chỉ Finish-to-Start, độ trễ 0, tính theo **ngày lịch** (không có ngày làm việc/lễ). Ngày là chuỗi `YYYY-MM-DD`, tính bằng UTC, không đụng múi giờ.
-- Việc sau bắt đầu sớm nhất ở ngày kế tiếp ngày kết thúc **muộn nhất** của mọi việc trước. Chỉ **đẩy về sau**, không bao giờ kéo sớm lại, không dời việc trước. Giữ nguyên thời lượng. Việc chỉ có ngày kết thúc (mốc) thì dời ngày kết thúc.
+- Chỉ Finish-to-Start. Ngày là chuỗi `YYYY-MM-DD`, tính bằng UTC, không đụng múi giờ.
+- Việc sau bắt đầu sớm nhất = ngày kết thúc **muộn nhất** của mọi việc trước + 1 + **lag** (lag theo từng relation `blocked_by`, có thể âm, -365..365). Không bao giờ dời việc trước. Giữ nguyên thời lượng. Việc chỉ có ngày kết thúc (mốc) thì dời ngày kết thúc.
+- **Chế độ tính** (mỗi người chọn, nhớ trong localStorage `bih-gantt-schedule-mode`): "Ngày lịch" (mặc định, như cũ) hoặc "Ngày làm việc": bỏ ngày không làm việc và ngày lễ của workspace; ngày bắt đầu nhích tới ngày làm việc kế tiếp, lag và thời lượng đếm theo ngày làm việc.
+- **Tự kéo việc sau sớm lại** (`bih-gantt-pull-earlier`, mặc định TẮT): khi bật, việc sau được đưa về sớm nhất cho phép (kể cả sớm hơn hiện tại); khi tắt chỉ đẩy về sau. Không kéo sớm nếu có việc trước thiếu ngày kết thúc.
 - Lan truyền theo thứ tự topo qua toàn chuỗi. Việc không có ngày: bỏ qua và cảnh báo. Việc trước không có ngày kết thúc: cảnh báo.
 - Có vòng lặp: không lập lịch, chỉ lưu việc đang sửa.
 - Ví dụ: A 1–3/11, B 4–6/11, C 7–9/11, A kết thúc dời thành 5/11 ⇒ B 6–8/11, C 9–11/11.
@@ -32,6 +34,7 @@ Lõi lịch có hai bản cùng quy tắc, cùng bộ ca test: TypeScript (`apps
 - `POST …/remove-relation/`: không có quan hệ ⇒ 404 (trước là 500).
 - **Mới** `POST workspaces/<slug>/projects/<id>/issue-schedule/` (`IssueScheduleEndpoint`): máy chủ tự tính lại cascade, lưu atomic trong một transaction, chỉ trong project, quyền ADMIN/MEMBER. Body: `change`, `include_successors`, `dry_run`, `expected`. `expected` khác kết quả tính ⇒ 409 (có người sửa trước, kèm bản mới để xem lại). Vòng ⇒ 409. Tối đa 2000 việc phía sau.
 - `issue-dates` (có sẵn): kiểm tra hết trước khi ghi, không còn để lại activity khi trả 400.
+- Đợt 5b: `issue-schedule` nhận thêm `mode` (`calendar`|`working`) và `pull_earlier`; lịch làm việc theo **workspace**: `GET/PATCH workspaces/<slug>/schedule-settings/` (thành viên đọc, ADMIN sửa ngày làm việc ISO 1=T2..7=CN), `POST …/schedule-settings/holidays/` (thêm 1 ngày lễ hoặc `{preset:"vn_fixed", year}`: 1/1, 30/4, 1/5, 1/9, 2/9; Tết và Giỗ Tổ nhập tay), `DELETE …/holidays/<id>/`; lag: `GET/POST projects/<id>/issue-lags/` (chỉ lag ≠ 0). Engine Python/TS cùng quy tắc, cùng bộ ca test.
 - Frontend gọi `issue-schedule`; gặp 404 (backend gốc) tự quay về `issue-dates` như đợt 3, nên rollback image backend vẫn chạy.
 
 ## Build image
@@ -53,7 +56,8 @@ Các image còn lại giữ `makeplane/*:v1.4.2`. Xoá `.pnpm-store/` ở gốc 
 ## Dùng trong BIH-OPS
 
 - Web: đặt `PLANE_FRONTEND_IMAGE=bih/plane-frontend:v1.4.2-bih.<N>` trong env Plane rồi `docker compose … up -d --no-deps plane-web`. Rollback: bỏ biến này, chạy lại lệnh.
-- Backend: compose của BIH-OPS **chưa có** biến `PLANE_BACKEND_IMAGE` (thư mục `docker/plane/` là 🔴 LÕI, cần duyệt riêng). Khi thêm, đổi cả 4 service backend cùng lúc, không có migration nên migrator không thay đổi schema.
+- Backend: biến `PLANE_BACKEND_IMAGE` (đã có trong compose BIH-OPS), đổi cả 4 service backend cùng lúc. **Từ backend `bih.2` có migration 0123**: sao lưu DB trước, chạy `plane-migrator` (phải thấy "Applying db.0123…"), rồi mới đổi api/worker/beat.
+- Rollback: backend cũ chạy được với DB đã migrate (chỉ thêm cột/bảng, cột `lag_days` có default). Web mới + backend cũ: các endpoint mới 404 ⇒ tự dùng ngày lịch, lag 0, ẩn mục lịch workspace. Web cũ + backend mới: chạy như đợt 4.
 - Luôn dùng `--no-deps` khi đổi image một service để không khởi động lại db/api.
 - Bản web mới có thể chạy với backend gốc (tự lùi dùng `issue-dates`, không có chặn vòng ở máy chủ). Backend mới chạy được với web gốc.
 
@@ -61,7 +65,7 @@ Các image còn lại giữ `makeplane/*:v1.4.2`. Xoá `.pnpm-store/` ở gốc 
 
 `git fetch upstream --tags`, tạo nhánh `bih/<tag-mới>` từ tag mới. Rebase: `git rebase --onto <tag-mới> v1.4.2 bih/v1.4.2`. Sửa conflict, kiểm tra, build lại **cả** web **và** backend cùng phiên bản nền, rồi mới đổi `APP_RELEASE`. Chạy `packages/i18n` build: file `tsdown.config.ts` của i18n đã sửa để đóng gói kèm `src/locales` (thiếu thì bản build mất bản dịch).
 
-File upstream bị sửa (dễ conflict khi nâng): web — `gantt-chart/{root,chart/root,chart/main-content,chart/header,helpers/draggable}.tsx`, `issue-layouts/gantt/base-gantt-root.tsx`, `issue-detail/sidebar.tsx`, `store/timeline/base-timeline.store.ts`, `services/issue/issue.service.ts`, `packages/i18n/tsdown.config.ts`; api — `app/views/issue/{base,relation}.py`, `app/views/__init__.py`, `app/urls/issue.py`. Code mới nằm ở file riêng: `gantt-chart/dependencies/`, `issue-layouts/gantt/use-gantt-dependencies.ts`, `issue-detail/use-detail-auto-schedule.tsx`, `plane/utils/gantt_schedule.py`.
+File upstream bị sửa (dễ conflict khi nâng): web — `gantt-chart/{root,chart/root,chart/main-content,chart/header,helpers/draggable}.tsx`, `issue-layouts/gantt/use-gantt-dependencies.ts`, `issue-layouts/gantt/base-gantt-root.tsx`, `issue-detail/sidebar.tsx`, `store/timeline/base-timeline.store.ts`, `services/issue/issue.service.ts`, `packages/i18n/tsdown.config.ts`; api — `app/views/issue/{base,relation}.py`, `app/views/__init__.py`, `app/urls/{issue,workspace}.py`, `db/models/{__init__,issue}.py`. Code mới nằm ở file riêng: `gantt-chart/dependencies/`, `issue-layouts/gantt/use-gantt-dependencies.ts`, `issue-detail/use-detail-auto-schedule.tsx`, `plane/utils/gantt_schedule.py`, `components/bih-schedule/`, `app/views/issue/bih_schedule.py`, `db/models/bih_schedule.py`, migration `0123`.
 
 ## Kiểm tra
 
@@ -83,7 +87,8 @@ Engine Python thuần chạy được không cần Django: `python -m unittest d
 
 ## Giới hạn đã biết
 
-- Chỉ Finish-to-Start, lag 0, ngày lịch. Chưa có ngày làm việc/ngày lễ, lag, tuỳ chọn tự kéo sớm, màn cài đặt gom tuỳ chọn.
+- Chỉ Finish-to-Start. Lịch làm việc + ngày lễ sửa trong hộp "Cài đặt lập lịch" trên thanh Gantt (không có trang riêng ở cài đặt workspace). Ngày lễ trùng cuối tuần không tự bù; preset VN không có Tết/Giỗ Tổ và ngày liền kề Quốc khánh chỉ ước lượng (1/9) — admin chỉnh tay. Lag/ngày lễ chỉ có ở Gantt và màn chi tiết việc, chưa có ở list.
+- Phần sửa lịch workspace (quyền ADMIN) mới được test bằng test backend, chưa bấm thử trên trình duyệt.
 - Chỉ trong cùng project; không vẽ, không lùi lịch qua project khác. Relation khác project do Plane gốc cho tạo vẫn không kiểm quyền project bên kia.
 - Đã đo local với 606 việc + 300 phụ thuộc (Chrome): cuộn ~11 ms/bước, đổi zoom <1,6 s, heap ~75 MB; mọi thanh đều nằm trong DOM (Plane gốc không ảo hoá hàng). Gantt việc không có nhóm thu gọn. Tải tối đa 10.000 việc để vẽ mũi tên.
 - Màn hẹp (375px): thanh công cụ cuộn ngang để thấy nút "Phụ thuộc"/"Tự lùi lịch".

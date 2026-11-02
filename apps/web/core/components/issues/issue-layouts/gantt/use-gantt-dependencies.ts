@@ -14,11 +14,13 @@ import {
   extractGanttRelations,
   validateNewDependency,
 } from "@/components/gantt-chart/dependencies/dependency-utils";
+import { scheduleService } from "@/components/bih-schedule/schedule-service";
 import { IssueService } from "@/services/issue";
 
 const issueService = new IssueService();
 
 type GanttRelations = ReturnType<typeof extractGanttRelations> & {
+  lagsSupported: boolean;
   issueDates: Record<string, Pick<TIssue, "start_date" | "target_date" | "name" | "sequence_id">>;
 };
 
@@ -75,10 +77,21 @@ export function useGanttDependencies(
           issues.push(...results);
           if (Array.isArray(response) || !response.next_page_results) break;
         }
+        const lags = await scheduleService.getLags(workspaceSlug, projectId).catch(() => null);
         if (request === requestCounter.current) {
+          const extracted = extractGanttRelations(issues, projectId);
+          const lagMap = new Map(
+            lags?.map(({ predecessor, successor, lag_days }) => [`${predecessor}|${successor}`, lag_days])
+          );
           projectIssueIds.current = new Set(issues.map((issue) => issue.id));
           updateRelations({
-            ...extractGanttRelations(issues, projectId),
+            ...extracted,
+            lagsSupported: lags !== null,
+            dependencies: extracted.dependencies.map((dep) => ({
+              predecessorId: dep.predecessorId,
+              successorId: dep.successorId,
+              lagDays: lagMap.get(`${dep.predecessorId}|${dep.successorId}`) ?? 0,
+            })),
             issueDates: Object.fromEntries(
               issues.map(({ id, start_date, target_date, name, sequence_id }) => [
                 id,
@@ -170,11 +183,44 @@ export function useGanttDependencies(
     }
   };
 
+  const setLag = async (predecessorId: string, successorId: string, lagDays: number) => {
+    const current = relationsRef.current;
+    if (!enabled || !workspaceSlug || !projectId || !current?.lagsSupported || saving.current) return;
+    if (!Number.isInteger(lagDays) || lagDays < -365 || lagDays > 365) {
+      setToast({ type: TOAST_TYPE.ERROR, title: "Độ trễ phải là số nguyên từ -365 đến 365" });
+      return;
+    }
+    if (!current.dependencies.some((dep) => dep.predecessorId === predecessorId && dep.successorId === successorId))
+      return;
+    const scope = generation.current;
+    saving.current = true;
+    requestCounter.current++;
+    try {
+      await scheduleService.setLag(workspaceSlug, projectId, predecessorId, successorId, lagDays);
+      if (scope !== generation.current) return;
+      updateRelations({
+        ...current,
+        dependencies: current.dependencies.map((dep) =>
+          dep.predecessorId === predecessorId && dep.successorId === successorId
+            ? { predecessorId, successorId, lagDays }
+            : dep
+        ),
+      });
+    } catch (error) {
+      if (scope !== generation.current) return;
+      setToast({ type: TOAST_TYPE.ERROR, title: "Không lưu được độ trễ" });
+      console.error("Failed to save Gantt lag", error);
+    } finally {
+      if (scope === generation.current) saving.current = false;
+    }
+  };
+
   return !enabled || !workspaceSlug || !projectId || !relations
     ? undefined
     : {
         ...relations,
         refresh: () => refreshRef.current(),
+        setLag,
         createDependency: (pred: string, succ: string) => mutateDependency(pred, succ, false),
         removeDependency: (pred: string, succ: string) => mutateDependency(pred, succ, true),
       };
