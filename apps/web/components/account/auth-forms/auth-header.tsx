@@ -6,11 +6,12 @@
 
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
 import { useTranslation } from "@plane/i18n";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
+import { getFileURL } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
-import { WorkspaceLogo } from "@/components/workspace/logo";
 // helpers
 import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";
 // services
@@ -83,7 +84,7 @@ export const AuthHeader = observer(function AuthHeader(props: TAuthHeader) {
         header: (
           <div className="relative inline-flex items-center gap-2">
             {t("common.join")}{" "}
-            <WorkspaceLogo logo={workspace?.logo_url} name={workspace?.name} classNames="size-9 flex-shrink-0" />{" "}
+            <WorkspaceAvatar size="xl" src={getFileURL(workspace?.logo_url ?? "")} alt={workspace?.name} aria-hidden />{" "}
             {workspace.name}
           </div>
         ),

@@ -11,8 +11,8 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import {
   CalendarOutline,
+  InfoOutline,
   MembersOutline,
-  ShowOutline,
   TransferWorkItemOutline,
   WorkItemsOutline,
 } from "@makeplane/propel/icons";
@@ -21,6 +21,8 @@ import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@makeplane/propel/components/avatar";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Pill } from "@makeplane/propel/components/pill";
 import { AvatarGroup } from "@makeplane/propel/components/avatar-group";
 import { setPromiseToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
@@ -187,29 +189,28 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
         cycleId={cycleId.toString()}
       />
       <button
+        type="button"
         onClick={openCycleOverview}
-        className={`z-[1] flex flex-shrink-0 gap-1 text-11 text-accent-secondary ${isMobile || (isActive && !searchParams.has("peekCycle")) ? "flex" : "hidden group-hover:flex"}`}
+        aria-label={t("project_cycles.more_details")}
+        className={`z-[1] shrink-0 items-center ${isMobile || (isActive && !searchParams.has("peekCycle")) ? "flex" : "hidden group-focus-within:flex group-hover:flex"}`}
       >
-        <ShowOutline className="my-auto h-4 w-4 text-accent-secondary" />
-        <span>{t("project_cycles.more_details")}</span>
+        <InfoOutline className="size-4 text-placeholder" />
       </button>
       {showIssueCount && (
         <div className="flex items-center gap-1">
-          <WorkItemsOutline className="h-4 w-4 text-tertiary" />
-          <span className="text-11 text-tertiary">{cycleDetails.total_issues}</span>
+          <WorkItemsOutline className="size-4 shrink-0 text-tertiary" />
+          <span className="text-caption-sm-regular text-tertiary">{cycleDetails.total_issues}</span>
         </div>
       )}
       {showTransferIssues && (
-        // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
-        <div
-          className="flex h-6 cursor-pointer items-center gap-1 px-2 text-accent-secondary"
-          onClick={() => {
-            setTransferIssuesModal(true);
-          }}
-        >
-          <TransferWorkItemOutline className="w-4 fill-accent-primary" />
-          <span>{t("project_cycles.transfer_work_items", { count: transferableIssuesCount })}</span>
-        </div>
+        <Pill
+          variant="ghost"
+          size="sm"
+          startIcon={<Icon icon={<TransferWorkItemOutline className="fill-accent-primary" />} />}
+          label={t("project_cycles.transfer_work_items", { count: transferableIssuesCount })}
+          onClick={() => setTransferIssuesModal(true)}
+          render={<button type="button" className="max-w-none" />}
+        />
       )}
       {isActive ? (
         <>
@@ -222,13 +223,13 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
               layout="stacked"
               disabled={!isProjectTimeZoneDifferent()}
             >
-              <div className="flex items-center gap-1 text-11 font-medium text-tertiary">
+              <div className="flex items-center gap-1 text-caption-sm-medium text-tertiary">
                 <CalendarOutline className="my-auto h-3 w-3 flex-shrink-0" />
                 <MergedDateDisplay startDate={cycleDetails.start_date} endDate={cycleDetails.end_date} />
               </div>
             </Tooltip>
             {projectUTCOffset && (
-              <span className="cursor-default rounded-md bg-layer-1 px-2 py-1 text-11 text-tertiary">
+              <span className="cursor-default rounded-md bg-layer-1 px-2 py-1 text-caption-sm-regular text-tertiary">
                 {projectUTCOffset}
               </span>
             )}
@@ -240,8 +241,8 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
         cycleDetails.start_date && (
           <>
             <DateRangeSelect
-              variant="select-ghost-md"
-              className="flex h-6 w-full cursor-auto items-center gap-1.5 rounded-sm p-0 text-11 text-tertiary [&>div]:hover:bg-transparent"
+              variant="pill-sm"
+              className="max-w-none"
               minDate={new Date()}
               value={{
                 from: getDate(cycleDetails.start_date) ?? null,
@@ -277,7 +278,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
                 })}
               </AvatarGroup>
             ) : (
-              <MembersOutline className="h-4 w-4 text-tertiary" />
+              <MembersOutline className="size-4 shrink-0 text-tertiary" />
             )}
           </div>
         </Tooltip>
@@ -299,6 +300,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
           cycleId={cycleId}
           projectId={projectId}
           workspaceSlug={workspaceSlug}
+          size="sm"
         />
       </div>
     </>

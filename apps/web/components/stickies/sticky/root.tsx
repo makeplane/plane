@@ -7,7 +7,8 @@
 import { useCallback, useState } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
-import { ArrowCollapseOutline } from "@makeplane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 // plane types
 import type { TSticky } from "@plane/types";
 // plane utils
@@ -36,6 +37,8 @@ export const StickyNote = observer(function StickyNote(props: TProps) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // store hooks
   const { stickies } = useSticky();
+  // plane hooks
+  const { t } = useTranslation();
   // sticky operations
   const { stickyOperations } = useStickyOperations({ workspaceSlug });
   // derived values
@@ -80,19 +83,19 @@ export const StickyNote = observer(function StickyNote(props: TProps) {
         handleClose={() => setIsDeleteModalOpen(false)}
       />
       <div
-        className={cn("group/sticky flex h-fit w-full flex-col overflow-y-scroll rounded-sm", className)}
+        className={cn("group/sticky flex h-fit w-full flex-col overflow-y-scroll rounded-lg", className)}
         style={{
           backgroundColor,
         }}
       >
         {/* {isStickiesPage && <StickyItemDragHandle isDragging={false} />}{" "} */}
         {onClose && (
-          <button type="button" className="flex flex-shrink-0 justify-end p-2.5" onClick={onClose}>
-            <ArrowCollapseOutline className="size-4" />
+          <button type="button" className="flex shrink-0 justify-end p-2.5" onClick={onClose} aria-label={t("close")}>
+            <CloseOutline className="size-4" />
           </button>
         )}
         {/* inputs */}
-        <div className="-mt-2">
+        <div className={cn({ "-mt-2": !!onClose })}>
           <StickyInput
             stickyData={stickyData}
             workspaceSlug={workspaceSlug}

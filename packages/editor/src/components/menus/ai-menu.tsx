@@ -4,9 +4,8 @@
  * See the LICENSE file for details.
  */
 
+import { autoUpdate, computePosition, flip, shift } from "@floating-ui/dom";
 import { useCallback, useEffect, useRef, useState } from "react";
-import tippy from "tippy.js";
-import type { Instance } from "tippy.js";
 // plane utils
 import { cn } from "@plane/utils";
 // types
@@ -19,41 +18,31 @@ type Props = {
 export function AIFeaturesMenu(props: Props) {
   const { menu } = props;
   // states
-  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   // refs
   const menuRef = useRef<HTMLDivElement>(null);
-  const popup = useRef<Instance | null>(null);
+  const isPopupVisible = !!anchor;
 
+  const hidePopup = useCallback(() => setAnchor(null), []);
+
+  // keep the menu below the AI handle while it is open
   useEffect(() => {
-    if (!menuRef.current) return;
+    const menuElement = menuRef.current;
+    if (!anchor || !menuElement) return;
 
-    menuRef.current.remove();
-    menuRef.current.style.visibility = "visible";
-
-    // @ts-expect-error - Tippy types are incorrect
-    popup.current = tippy(document.body, {
-      getReferenceClientRect: null,
-      content: menuRef.current,
-      appendTo: () => document.querySelector(".frame-renderer"),
-      trigger: "manual",
-      interactive: true,
-      arrow: false,
-      placement: "bottom-start",
-      animation: "shift-away",
-      hideOnClick: true,
-      onShown: () => menuRef.current?.focus(),
+    const cleanup = autoUpdate(anchor, menuElement, () => {
+      computePosition(anchor, menuElement, {
+        placement: "bottom-start",
+        strategy: "fixed",
+        middleware: [flip(), shift()],
+      })
+        .then(({ x, y }) => Object.assign(menuElement.style, { left: `${x}px`, top: `${y}px` }))
+        .catch((error) => console.error("An error occurred while positioning the AI menu:", error));
     });
+    menuElement.focus();
 
-    return () => {
-      popup.current?.destroy();
-      popup.current = null;
-    };
-  }, []);
-
-  const hidePopup = useCallback(() => {
-    popup.current?.hide();
-    setIsPopupVisible(false);
-  }, []);
+    return cleanup;
+  }, [anchor]);
 
   useEffect(() => {
     const handleClickAIHandle = (e: MouseEvent) => {
@@ -61,13 +50,7 @@ export function AIFeaturesMenu(props: Props) {
       if (target.matches("#ai-handle") || menuRef.current?.contains(e.target as Node)) {
         e.preventDefault();
 
-        if (!isPopupVisible) {
-          popup.current?.setProps({
-            getReferenceClientRect: () => target.getBoundingClientRect(),
-          });
-          popup.current?.show();
-          setIsPopupVisible(true);
-        }
+        if (!isPopupVisible) setAnchor(target);
         return;
       }
 
@@ -92,7 +75,7 @@ export function AIFeaturesMenu(props: Props) {
         "pointer-events-auto opacity-100": isPopupVisible,
       })}
     >
-      <div ref={menuRef} className="z-10">
+      <div ref={menuRef} tabIndex={-1} className="fixed z-10 w-max outline-none">
         {menu?.({
           isOpen: isPopupVisible,
           onClose: hidePopup,

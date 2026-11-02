@@ -5,6 +5,7 @@
  */
 
 import { useState } from "react";
+import { addDays } from "date-fns";
 // ui
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
@@ -14,39 +15,59 @@ import { Dialog, DialogActions, DialogBody, DialogContent, DialogMain } from "@m
 export type InboxIssueSnoozeModalProps = {
   isOpen: boolean;
   value: Date | undefined;
+  projectTimezone: string | undefined;
   onConfirm: (value: Date) => void;
   handleClose: () => void;
 };
 
+// `date`'s calendar day in `timeZone` (browser zone if unset), as a local-midnight Date (what the calendar compares against).
+const getDayInTimezone = (date: Date, timeZone: string | undefined) => {
+  const parts = new Intl.DateTimeFormat("en-CA", { timeZone }).formatToParts(date);
+  const part = (type: Intl.DateTimeFormatPartTypes) => Number(parts.find((p) => p.type === type)?.value);
+  return new Date(part("year"), part("month") - 1, part("day"));
+};
+
 export function InboxIssueSnoozeModal(props: InboxIssueSnoozeModalProps) {
-  const { isOpen, handleClose, value, onConfirm } = props;
+  const { isOpen, handleClose, value, projectTimezone, onConfirm } = props;
   // states
-  const [date, setDate] = useState(value || new Date());
+  const [pickedDate, setPickedDate] = useState<Date | undefined>();
   //hooks
   const { t } = useTranslation();
+  // derived values
+  // A snooze ends at 00:00 of the picked day in the project timezone, so any day that has already
+  // started there would lapse at once. The pick is cleared on close because this modal stays
+  // mounted across intake items.
+  const tomorrow = addDays(getDayInTimezone(new Date(), projectTimezone), 1);
+  const snoozedDay = value ? getDayInTimezone(new Date(value), projectTimezone) : undefined;
+  const date = pickedDate ?? (snoozedDay && snoozedDay >= tomorrow ? snoozedDay : tomorrow);
+
+  const onClose = () => {
+    setPickedDate(undefined);
+    handleClose();
+  };
 
   return (
     <Dialog
       open={isOpen}
       onOpenChange={(open) => {
-        if (!open) handleClose();
+        if (!open) onClose();
       }}
     >
       <DialogContent size="xs" aria-label={t("inbox_issue.actions.snooze")}>
         <DialogMain>
           <DialogBody>
             <Calendar
-              selected={date ? new Date(date) : undefined}
-              defaultMonth={date ? new Date(date) : undefined}
-              onSelect={(date: Date | undefined) => {
-                if (!date) return;
-                setDate(date);
+              selected={date}
+              defaultMonth={date}
+              onSelect={(selected: Date | undefined) => {
+                if (!selected) return;
+                setPickedDate(selected);
               }}
               mode="single"
               showOutsideDays
               disabled={[
                 {
-                  before: new Date(),
+                  before: tomorrow,
                 },
               ]}
             />
@@ -58,7 +79,7 @@ export function InboxIssueSnoozeModal(props: InboxIssueSnoozeModalProps) {
             size="sm"
             stretch="auto"
             onClick={() => {
-              handleClose();
+              onClose();
               onConfirm(date);
             }}
             label={t("inbox_issue.actions.snooze")}

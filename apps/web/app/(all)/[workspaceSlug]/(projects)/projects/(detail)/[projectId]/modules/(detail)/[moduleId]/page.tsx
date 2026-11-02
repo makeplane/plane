@@ -7,11 +7,9 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import { cn } from "@plane/utils";
-// assets
-import emptyModule from "@/app/assets/empty-state/module.svg?url";
 // components
-import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
 import { ModuleLayoutRoot } from "@/components/issues/issue-layouts/roots/module-layout-root";
 import { ModuleAnalyticsSidebar } from "@/components/modules";
@@ -51,14 +49,19 @@ function ModuleIssuesPage({ params }: Route.ComponentProps) {
     <>
       <PageHead title={pageTitle} />
       {error ? (
-        <EmptyState
-          image={emptyModule}
+        <EmptyStateDetailed
+          align="center"
+          assetKey="module"
+          assetClassName="size-40"
           title="Module does not exist"
           description="The module you are looking for does not exist or has been deleted."
-          primaryButton={{
-            text: "View other modules",
-            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/modules`),
-          }}
+          actions={[
+            {
+              label: "View other modules",
+              variant: "primary",
+              onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/modules`),
+            },
+          ]}
         />
       ) : (
         <div className="flex h-full w-full">
@@ -68,7 +71,7 @@ function ModuleIssuesPage({ params }: Route.ComponentProps) {
           {!isSidebarCollapsed && (
             <div
               className={cn(
-                "vertical-scrollbar absolute right-0 z-13 scrollbar-sm flex h-full w-[24rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-subtle bg-surface-1 px-6 shadow-raised-200 duration-300"
+                "vertical-scrollbar absolute right-0 z-13 scrollbar-sm flex h-full w-[24rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-subtle bg-surface-1 px-4 shadow-raised-200"
               )}
             >
               <ModuleAnalyticsSidebar moduleId={moduleId} handleClose={toggleSidebar} />

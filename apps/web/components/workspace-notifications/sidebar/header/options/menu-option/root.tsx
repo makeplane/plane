@@ -4,9 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import { ArchiveOutline, ClockOutline, MoreVerticalOutline, TickCircleOutline } from "@makeplane/propel/icons";
+import { PreferencesOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import type { TNotificationFilter } from "@plane/types";
@@ -19,7 +18,6 @@ import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 type TNotificationMenuOption = {
   key: string;
   label: string;
-  icon: ReactNode;
   checked: boolean;
   onChange: () => void;
 };
@@ -38,14 +36,12 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
     {
       key: "menu-unread",
       label: t("notification.options.show_unread"),
-      icon: <Icon icon={TickCircleOutline} />,
       checked: !!filters?.read,
       onChange: () => handleFilterChange("read", !filters?.read),
     },
     {
       key: "menu-archived",
       label: t("notification.options.show_archived"),
-      icon: <Icon icon={ArchiveOutline} />,
       checked: !!filters?.archived,
       onChange: () =>
         handleBulkFilterChange({
@@ -56,7 +52,6 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
     {
       key: "menu-snoozed",
       label: t("notification.options.show_snoozed"),
-      icon: <Icon icon={ClockOutline} />,
       checked: !!filters?.snoozed,
       onChange: () =>
         handleBulkFilterChange({
@@ -66,24 +61,35 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
     },
   ];
 
+  const activeOptionsCount = menuOptions.filter((option) => option.checked).length;
+
   return (
     // Toggle rows: checkbox items keep the menu open, as the legacy popover did.
     <Menu>
-      <MenuTrigger
-        render={
-          <IconButton
-            size="sm"
-            variant="ghost"
-            icon={<Icon icon={MoreVerticalOutline} />}
-            aria-label="Notification options"
-          />
-        }
-      />
+      <div className="relative inline-flex">
+        <MenuTrigger
+          render={
+            <IconButton
+              size="sm"
+              variant="secondary"
+              icon={<Icon icon={PreferencesOutline} />}
+              aria-label={t("common.display")}
+            />
+          }
+        />
+        {activeOptionsCount > 0 && (
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full bg-accent-primary text-[10px] font-medium text-on-color"
+          >
+            {activeOptionsCount}
+          </span>
+        )}
+      </div>
       <MenuContent side="bottom" align="end">
         {menuOptions.map((option) => (
           <MenuCheckboxItem
             key={option.key}
-            icon={option.icon}
             label={option.label}
             checked={option.checked}
             onCheckedChange={option.onChange}

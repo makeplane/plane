@@ -6,8 +6,9 @@
 
 // hocuspocus
 import type { Extension, Hocuspocus, Document } from "@hocuspocus/server";
-import { TiptapTransformer } from "@hocuspocus/transformer";
-import type { AnyExtension, JSONContent } from "@tiptap/core";
+import { getSchema } from "@tiptap/core";
+import type { JSONContent } from "@tiptap/core";
+import { prosemirrorJSONToYDoc } from "@tiptap/y-tiptap";
 import type * as Y from "yjs";
 // editor extensions
 import {
@@ -15,7 +16,7 @@ import {
   createRealtimeEvent,
   extractTextFromHTML,
   generateTitleProsemirrorJson,
-} from "@plane/editor";
+} from "@plane/editor/server";
 import { logger } from "@plane/logger";
 import { AppError } from "@/lib/errors";
 // helpers
@@ -23,6 +24,8 @@ import { getPageService } from "@/services/page/handler";
 import type { HocusPocusServerContext, OnLoadDocumentPayloadWithContext } from "@/types";
 import { broadcastMessageToPage } from "@/utils/broadcast-message";
 import { TitleUpdateManager } from "./title-update/title-update-manager";
+
+const titleSchema = getSchema(TITLE_EDITOR_EXTENSIONS);
 
 /**
  * Hocuspocus extension for synchronizing document titles
@@ -55,7 +58,7 @@ export class TitleSyncExtension implements Extension {
         const title = pageDetails.name;
         if (title == null) return;
         const titleJson = (generateTitleProsemirrorJson as (text: string) => JSONContent)(title);
-        const titleField = TiptapTransformer.toYdoc(titleJson, "title", TITLE_EDITOR_EXTENSIONS as AnyExtension[]);
+        const titleField = prosemirrorJSONToYDoc(titleSchema, titleJson, "title");
         document.merge(titleField);
       }
     } catch (error) {

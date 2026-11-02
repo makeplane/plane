@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "主侧边栏",
+      "resize_sidebar": "调整侧边栏大小",
+      "sidebar_peek_view": "侧边栏预览",
       "workspace_logo": "工作空间徽标",
       "open_workspace_switcher": "打开工作空间切换器",
       "open_user_menu": "打开用户菜单",
@@ -42,6 +45,9 @@
       "open": "打开颜色选择器",
       "swatches": "预设颜色",
       "hex_input": "十六进制颜色"
+    },
+    "project_board": {
+      "collapse_group": "折叠分组"
     }
   }
 }

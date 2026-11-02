@@ -3,6 +3,10 @@
     "label": "{count, plural, one {工作项} other {工作项}}",
     "all": "所有工作项",
     "edit": "编辑工作项",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {另外 # 个属性} other {另外 # 个属性}}",
+      "label_overflow_indicator": "{count, plural, one {+# 个标签} other {+# 个标签}}"
+    },
     "title": {
       "label": "工作项标题",
       "required": "工作项标题为必填项"
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "查看其他工作项"
         }
+      },
+      "no_access": {
+        "title": "您无权访问此工作项",
+        "description": "请联系项目管理员申请访问权限。"
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "无法恢复工作项。请重试。"
       }
     },
+    "archived_banner": "此工作项已归档。请恢复后再进行更改。",
+    "updated_time_ago": "更新于 {time}",
+    "description_load_failed": "无法加载描述。",
+    "assignee_count": "{count, plural, one {# 位负责人} other {# 位负责人}}",
     "relation": {
       "relates_to": "关联到",
       "duplicate": "重复于",
@@ -267,7 +279,12 @@
       "click_to_upvote": "点击赞成",
       "click_to_downvote": "点击反对",
       "click_to_view_upvotes": "点击查看赞成票",
-      "click_to_view_downvotes": "点击查看反对票"
+      "click_to_view_downvotes": "点击查看反对票",
+      "title": "投票",
+      "upvotes_count": "{count, plural, one {# 张赞成票} other {# 张赞成票}}",
+      "downvotes_count": "{count, plural, one {# 张反对票} other {# 张反对票}}",
+      "no_upvotes": "暂无赞成票",
+      "no_downvotes": "暂无反对票"
     }
   },
   "sub_work_item": {

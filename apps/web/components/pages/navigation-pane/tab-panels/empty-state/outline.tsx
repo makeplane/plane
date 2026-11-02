@@ -24,8 +24,8 @@ export function PageNavigationPaneOutlineTabEmptyState() {
       <div className="flex flex-col items-center gap-y-6 text-center">
         <img src={resolvedPath} className="size-40 object-contain" alt="depicts the outline of a page" />
         <div className="space-y-2.5">
-          <h4 className="text-14 font-medium">{t("page_navigation_pane.tabs.outline.empty_state.title")}</h4>
-          <p className="text-13 font-medium text-secondary">
+          <h4 className="text-body-sm-medium">{t("page_navigation_pane.tabs.outline.empty_state.title")}</h4>
+          <p className="text-body-xs-medium text-secondary">
             {t("page_navigation_pane.tabs.outline.empty_state.description")}
           </p>
         </div>

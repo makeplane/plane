@@ -10,7 +10,7 @@ import { useParams, usePathname } from "next/navigation";
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Header, EHeaderVariant } from "@plane/blocks/layout";
-import { cn } from "@plane/utils";
+import { Tabs, TabsList, Tab } from "@makeplane/propel/components/tabs";
 
 type Props = {
   isAuthorized: boolean;
@@ -23,25 +23,29 @@ export function ProfileNavbar(props: Props) {
   const pathname = usePathname();
 
   const tabsList = isAuthorized ? [...PROFILE_VIEWER_TAB, ...PROFILE_ADMINS_TAB] : PROFILE_VIEWER_TAB;
+  const activeTab = tabsList.find((tab) => pathname === `/${workspaceSlug}/profile/${userId}${tab.selected}`)?.key;
 
   return (
-    <Header variant={EHeaderVariant.SECONDARY} showOnMobile={false}>
-      <div className="flex items-center overflow-x-scroll">
-        {tabsList.map((tab) => (
-          <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>
-            <span
-              className={cn(
-                `flex border-b-2 p-4 text-13 font-medium whitespace-nowrap text-tertiary outline-none hover:text-primary ${
-                  pathname === `/${workspaceSlug}/profile/${userId}${tab.selected}`
-                    ? "border-accent-strong text-accent-primary hover:text-accent-primary"
-                    : "border-transparent"
-                }`
-              )}
-            >
-              {t(tab.i18n_label)}
-            </span>
-          </Link>
-        ))}
+    <Header variant={EHeaderVariant.SECONDARY} showOnMobile={false} setHeight={false} className="h-12 shrink-0">
+      <div className="flex h-full min-w-0 flex-1 items-end">
+        <Tabs variant="underline" value={activeTab ?? null}>
+          <TabsList aria-label={t("profile.page_label")}>
+            {tabsList.map((tab) => (
+              <Tab
+                key={tab.key}
+                value={tab.key}
+                label={t(tab.i18n_label)}
+                nativeButton={false}
+                render={
+                  <Link
+                    href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}
+                    aria-current={activeTab === tab.key ? "page" : undefined}
+                  />
+                }
+              />
+            ))}
+          </TabsList>
+        </Tabs>
       </div>
     </Header>
   );

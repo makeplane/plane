@@ -10,13 +10,13 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { ActivityCommentCard, ActivityCommentHeader, ActivityTimelineTimestamp } from "@plane/blocks/activity";
 import type { EditorRefApi } from "@plane/editor";
 import { useHashScroll } from "@plane/hooks";
 import { GlobeOutline, LockOutline } from "@makeplane/propel/icons";
 import { EIssueCommentAccessSpecifier } from "@plane/types";
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
-import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import { calculateTimeAgo, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
 // local imports
@@ -39,6 +39,8 @@ export type TCommentCardDisplayProps = {
   setIsEditing?: (isEditing: boolean) => void;
   renderFooter?: (ReactionsComponent: ReactNode | null) => ReactNode;
   renderQuickActions?: () => ReactNode;
+  /** Draw the timeline rail down to the next entry. */
+  showConnector?: boolean;
 };
 
 export const CommentCardDisplay = observer(function CommentCardDisplay(props: TCommentCardDisplayProps) {
@@ -55,9 +57,10 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
     setIsEditing,
     renderFooter,
     renderQuickActions,
+    showConnector = true,
   } = props;
   // states
-  const [highlightClassName, setHighlightClassName] = useState("");
+  const [isHighlighted, setIsHighlighted] = useState(false);
   // state
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   // store hooks
@@ -87,9 +90,9 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
 
   useEffect(() => {
     if (!isHashMatch) return;
-    setHighlightClassName("border-accent-strong");
+    setIsHighlighted(true);
     const timeout = setTimeout(() => {
-      setHighlightClassName("");
+      setIsHighlighted(false);
     }, 8000);
 
     return () => clearTimeout(timeout);
@@ -106,63 +109,71 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
 
   const shouldRenderReactions = hasReactions && !disabled;
 
+  const reactions = shouldRenderReactions ? (
+    <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
+  ) : null;
+
   return (
-    <div id={commentBlockId} className="relative flex flex-col gap-2">
-      {showAccessSpecifier && (
-        <div className="absolute top-2.5 right-2.5 z-[1] text-tertiary">
-          {comment.access === EIssueCommentAccessSpecifier.INTERNAL ? (
-            <LockOutline className="size-3" />
-          ) : (
-            <GlobeOutline className="size-3" />
-          )}
-        </div>
-      )}
-      <div className="relative mb-3 flex w-full items-center gap-2">
+    <ActivityCommentCard
+      id={comment.id}
+      showConnector={showConnector}
+      highlighted={isHighlighted}
+      avatar={
         <Avatar alt={displayName} fallback={displayName?.[0]?.toUpperCase()} size="2xs" src={getFileURL(avatarUrl)} />
-        <div className="flex flex-1 flex-wrap items-center gap-1">
-          <div className="text-caption-sm-medium">{displayName}</div>
-          <div className="text-caption-sm-regular text-tertiary">
-            commented{" "}
-            <Tooltip
-              label={`${renderFormattedDate(comment.created_at)} at ${renderFormattedTime(comment.created_at)}`}
-              side="bottom"
-              layout="single"
-              delay={200}
+      }
+      header={
+        <ActivityCommentHeader
+          author={displayName}
+          action="commented"
+          visibilityIcon={
+            showAccessSpecifier ? (
+              comment.access === EIssueCommentAccessSpecifier.INTERNAL ? (
+                <LockOutline className="size-3" />
+              ) : (
+                <GlobeOutline className="size-3" />
+              )
+            ) : undefined
+          }
+          timestamp={
+            <ActivityTimelineTimestamp
+              tooltip={`${renderFormattedDate(comment.created_at)} at ${renderFormattedTime(comment.created_at)}`}
             >
-              <span className="text-tertiary">
-                {calculateTimeAgo(comment.created_at)}
-                {comment.edited_at && " (edited)"}
-              </span>
-            </Tooltip>
-          </div>
-        </div>
-        {!disabled && (
-          <div className="flex shrink-0 items-center gap-1">
-            <EmojiReactionPicker
-              isOpen={isPickerOpen}
-              handleToggle={setIsPickerOpen}
-              onChange={handleEmojiSelect}
-              disabled={disabled}
-              label={<EmojiReactionButton onAddReaction={() => setIsPickerOpen(true)} />}
-              placement="bottom-start"
-            />
-            {renderQuickActions ? renderQuickActions() : null}
-          </div>
-        )}
-      </div>
-      {isEditing && setIsEditing ? (
-        <CommentCardEditForm
-          activityOperations={activityOperations}
-          comment={comment}
-          isEditing={isEditing}
-          readOnlyEditorRef={readOnlyEditorRef.current}
-          setIsEditing={setIsEditing}
-          projectId={projectId}
-          workspaceId={workspaceId}
-          workspaceSlug={workspaceSlug}
+              {calculateTimeAgo(comment.created_at)}
+              {comment.edited_at && " (edited)"}
+            </ActivityTimelineTimestamp>
+          }
+          actions={
+            !disabled ? (
+              <>
+                <EmojiReactionPicker
+                  isOpen={isPickerOpen}
+                  handleToggle={setIsPickerOpen}
+                  onChange={handleEmojiSelect}
+                  disabled={disabled}
+                  render={<EmojiReactionButton />}
+                  placement="bottom-start"
+                />
+                {renderQuickActions ? renderQuickActions() : null}
+              </>
+            ) : undefined
+          }
         />
-      ) : (
-        <>
+      }
+      footer={!isEditing && reactions ? (renderFooter ? renderFooter(reactions) : reactions) : undefined}
+    >
+      <div id={commentBlockId}>
+        {isEditing && setIsEditing ? (
+          <CommentCardEditForm
+            activityOperations={activityOperations}
+            comment={comment}
+            isEditing={isEditing}
+            readOnlyEditorRef={readOnlyEditorRef.current}
+            setIsEditing={setIsEditing}
+            projectId={projectId}
+            workspaceId={workspaceId}
+            workspaceSlug={workspaceSlug}
+          />
+        ) : (
           <LiteTextEditor
             editable={false}
             ref={readOnlyEditorRef}
@@ -170,23 +181,15 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
             initialValue={comment.comment_html ?? ""}
             workspaceId={workspaceId}
             workspaceSlug={workspaceSlug}
-            containerClassName={cn("!py-1 transition-[border-color] duration-500", highlightClassName)}
+            containerClassName="p-0!"
             projectId={projectId?.toString()}
             displayConfig={{
               fontSize: "small-font",
             }}
             parentClassName="border-none"
           />
-          {shouldRenderReactions &&
-            (renderFooter ? (
-              renderFooter(
-                <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
-              )
-            ) : (
-              <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
-            ))}
-        </>
-      )}
-    </div>
+        )}
+      </div>
+    </ActivityCommentCard>
   );
 });

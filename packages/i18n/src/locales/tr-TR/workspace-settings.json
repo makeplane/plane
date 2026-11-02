@@ -26,7 +26,8 @@
           "success_title": "Çalışma alanı silindi.",
           "success_message": "Kısa süre sonra profil sayfanıza yönlendirileceksiniz.",
           "error_title": "Bu işe yaramadı.",
-          "error_message": "Lütfen tekrar deneyin."
+          "error_message": "Lütfen tekrar deneyin.",
+          "confirm_description": "{workspaceName} çalışma alanını silmek üzeresiniz. Bu çalışma alanındaki tüm iş verilerine erişiminizi kaybedeceksiniz ve bunlar geri yüklenemeyecek."
         },
         "errors": {
           "name": {
@@ -63,7 +64,10 @@
             "required": "Davet etmek için bir e-posta adresine ihtiyacımız var.",
             "invalid": "E-posta geçersiz"
           }
-        }
+        },
+        "leave_input_label": "Devam etmek için bu çalışma alanının adını yazın.",
+        "description": "Bu çalışma alanına erişimi yönetin.",
+        "leave_title": "Çalışma alanından ayrılmak istiyor musunuz?"
       },
       "billing_and_plans": {
         "heading": "Faturalandırma ve Planlar",
@@ -170,7 +174,13 @@
             "title": "Hata!",
             "message": "API token'ı silinemedi"
           }
-        }
+        },
+        "columns": {
+          "expires": "Bitiş",
+          "last_used": "Son kullanım"
+        },
+        "expired": "Süresi doldu",
+        "not_used_yet": "Henüz kullanılmadı"
       },
       "integrations": {
         "title": "Entegrasyonlar",

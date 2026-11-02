@@ -7,12 +7,13 @@ from django.db import IntegrityError
 
 # Third party imports
 from rest_framework import status
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 
 # Module imports
 from plane.api.serializers import StateSerializer
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import ProjectAdminPermission, ProjectEntityPermission
 from plane.db.models import Issue, State
 from .base import BaseAPIView
 from plane.utils.openapi import (
@@ -43,6 +44,11 @@ class StateListCreateAPIEndpoint(BaseAPIView):
     model = State
     permission_classes = [ProjectEntityPermission]
     use_read_replica = True
+
+    def get_permissions(self):
+        if self.request.method in SAFE_METHODS:
+            return [ProjectEntityPermission()]
+        return [ProjectAdminPermission()]
 
     def get_queryset(self):
         return (
@@ -84,7 +90,7 @@ class StateListCreateAPIEndpoint(BaseAPIView):
         Supports external ID tracking for integration purposes.
         """
         try:
-            serializer = StateSerializer(data=request.data, context={"project_id": project_id})
+            serializer = StateSerializer(data=request.data)
             if serializer.is_valid():
                 if (
                     request.data.get("external_id")
@@ -166,6 +172,11 @@ class StateDetailAPIEndpoint(BaseAPIView):
     model = State
     permission_classes = [ProjectEntityPermission]
     use_read_replica = True
+
+    def get_permissions(self):
+        if self.request.method in SAFE_METHODS:
+            return [ProjectEntityPermission()]
+        return [ProjectAdminPermission()]
 
     def get_queryset(self):
         return (

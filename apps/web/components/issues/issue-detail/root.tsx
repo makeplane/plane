@@ -238,8 +238,8 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           }}
         />
       ) : (
-        <div className="flex h-full w-full overflow-hidden">
-          <div className="h-full w-full space-y-6 overflow-y-auto px-9 py-5">
+        <div className="relative flex h-full w-full overflow-hidden">
+          <div className="h-full min-w-0 flex-1 overflow-y-auto px-8 py-6">
             <IssueMainContent
               workspaceSlug={workspaceSlug}
               projectId={projectId}
@@ -250,7 +250,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
             />
           </div>
           <div
-            className="fixed right-0 z-[5] h-full w-full min-w-[300px] border-l border-subtle bg-surface-1 sm:w-1/2 md:relative md:w-1/4 lg:min-w-80 xl:min-w-96"
+            className="fixed right-0 z-[5] h-full w-full min-w-[300px] shrink-0 border-l border-subtle bg-surface-1 sm:w-1/2 md:relative md:w-80"
             style={issueDetailSidebarCollapsed ? { right: "-100vw" } : {}}
           >
             <IssueDetailsSidebar

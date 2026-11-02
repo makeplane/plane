@@ -7,20 +7,22 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { RestoreOutline } from "@makeplane/propel/icons";
 // plane imports
 import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IProject } from "@plane/types";
+import { cn } from "@plane/utils";
 import { Switch } from "@makeplane/propel/components/switch";
 import { Select } from "@plane/blocks/select";
 import { Loader } from "@plane/blocks/skeleton";
 // component
 import { SelectMonthModal } from "@/components/automation";
-import { SettingsControlItem } from "@/components/settings/control-item";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { AutomationPanel, AutomationPanelRow } from "./automation-panel";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -90,67 +92,56 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
         handleClose={() => setmonthModal(false)}
         handleChange={handleChange}
       />
-      <div className="flex flex-col gap-4 border-b border-subtle py-2">
-        <div className="flex items-center gap-3">
-          <div className="grid size-10 shrink-0 place-items-center rounded-sm bg-layer-2">
-            <RestoreOutline className="size-4 shrink-0 text-primary" />
-          </div>
-          <SettingsControlItem
-            title={t("project_settings.automations.auto-archive.title")}
-            description={t("project_settings.automations.auto-archive.description")}
-            control={
-              <Switch
-                size="sm"
-                checked={autoArchiveStatus}
-                onCheckedChange={handleToggleArchive}
-                disabled={!isAdmin}
-                aria-label={t("project_settings.automations.auto-archive.title")}
-              />
-            }
-          />
-        </div>
+      <div>
+        <SettingsBoxedControlItem
+          title={t("project_settings.automations.auto-archive.title")}
+          description={t("project_settings.automations.auto-archive.description")}
+          className={cn({ "rounded-b-none": autoArchiveStatus })}
+          control={
+            <Switch
+              size="md"
+              checked={autoArchiveStatus}
+              onCheckedChange={handleToggleArchive}
+              disabled={!isAdmin}
+              aria-label={t("project_settings.automations.auto-archive.title")}
+            />
+          }
+        />
         {currentProjectDetails ? (
-          autoArchiveStatus && (
-            <div className="ml-13">
-              <div className="flex w-full items-center justify-between gap-2 rounded-sm border border-subtle bg-surface-2 px-5 py-4">
-                <div className="w-1/2 text-13 font-medium">
-                  {t("project_settings.automations.auto-archive.duration")}
-                </div>
-                <div className="w-1/2">
-                  <Select<TAutomationMonthOption>
-                    getValues={() => monthOptions}
-                    value={selectedMonthOption}
-                    onChange={(id) => void handleChange({ archive_in: Number(id) })}
-                    getOptionValue={(option) => option.id}
-                    getOptionLabel={(option) => option.label}
-                    showSearch={false}
-                    pinSelected={false}
-                    disabled={!isAdmin}
-                    open={isSelectOpen}
-                    onOpenChange={setIsSelectOpen}
-                    footer={
-                      <button
-                        type="button"
-                        className="flex w-full items-center rounded-sm px-1 py-1.5 text-13 text-secondary select-none hover:bg-layer-1"
-                        onClick={() => {
-                          setIsSelectOpen(false);
-                          setmonthModal(true);
-                        }}
-                      >
-                        {t("common.customize_time_range")}
-                      </button>
-                    }
+          <AutomationPanel isOpen={autoArchiveStatus}>
+            <AutomationPanelRow label={t("project_settings.automations.auto-archive.duration")}>
+              <Select<TAutomationMonthOption>
+                getValues={() => monthOptions}
+                value={selectedMonthOption}
+                onChange={(id) => void handleChange({ archive_in: Number(id) })}
+                getOptionValue={(option) => option.id}
+                getOptionLabel={(option) => option.label}
+                showSearch={false}
+                pinSelected={false}
+                disabled={!isAdmin}
+                open={isSelectOpen}
+                onOpenChange={setIsSelectOpen}
+                footer={
+                  <button
+                    type="button"
+                    className="flex w-full items-center rounded-sm px-1 py-1.5 text-body-xs-regular text-secondary select-none hover:bg-layer-1"
+                    onClick={() => {
+                      setIsSelectOpen(false);
+                      setmonthModal(true);
+                    }}
                   >
-                    <Select.Trigger variant="select-md" disabled={!isAdmin}>
-                      <Select.Value />
-                    </Select.Trigger>
-                  </Select>
-                </div>
-              </div>
-            </div>
-          )
+                    {t("common.customize_time_range")}
+                  </button>
+                }
+              >
+                <Select.Trigger variant="select-md" disabled={!isAdmin}>
+                  <Select.Value />
+                </Select.Trigger>
+              </Select>
+            </AutomationPanelRow>
+          </AutomationPanel>
         ) : (
-          <Loader className="ml-13">
+          <Loader className="mt-2">
             <Loader.Item height="50px" />
           </Loader>
         )}

@@ -8,10 +8,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { Collapsible } from "@makeplane/propel/components/collapsible";
+import { Pill, PillLabel } from "@makeplane/propel/elements/pill";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue, TIssueServiceType, TIssueRelationTypes } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-import { cn } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 import { useTimeLineRelationOptions } from "@/components/relations";
@@ -134,35 +134,31 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
 
   return (
     <>
-      <div className="gap- flex flex-col">
+      <div className="flex flex-col gap-1">
         {filteredRelationsArray.map((relation) => (
-          <div key={relation.relationKey}>
-            <Collapsible
-              defaultOpen
-              icon={
-                relation.icon ? (
-                  <span className={cn("flex items-center justify-center rounded p-0.5", relation.className)}>
-                    {relation.icon(14)}
-                  </span>
-                ) : undefined
-              }
-              trigger={<span className="text-13 leading-5 font-medium">{relation.label}</span>}
-            >
-              {/* Cancels this nested Collapsible's own panel inset so rows realign under
-                  the outer Relations collapsible's single inset instead of stacking two. */}
-              <div className="-mx-3">
-                <RelationIssueList
-                  workspaceSlug={workspaceSlug}
-                  issueId={issueId}
-                  relationKey={relation.relationKey}
-                  issueIds={relation.issueIds}
-                  disabled={disabled}
-                  handleIssueCrudState={handleIssueCrudState}
-                  issueServiceType={issueServiceType}
-                />
-              </div>
-            </Collapsible>
-          </div>
+          <Collapsible
+            key={relation.relationKey}
+            defaultOpen
+            hug
+            // flush with the section edge: drop the trigger's own horizontal inset
+            render={<div className="[&>div:first-child>button]:px-0" />}
+            trigger={
+              <Pill render={<span />} size="xs" variant="soft">
+                {relation.icon?.(14)}
+                <PillLabel>{relation.label}</PillLabel>
+              </Pill>
+            }
+          >
+            <RelationIssueList
+              workspaceSlug={workspaceSlug}
+              issueId={issueId}
+              relationKey={relation.relationKey}
+              issueIds={relation.issueIds}
+              disabled={disabled}
+              handleIssueCrudState={handleIssueCrudState}
+              issueServiceType={issueServiceType}
+            />
+          </Collapsible>
         ))}
       </div>
 

@@ -36,6 +36,7 @@ from plane.app.serializers import (
     PageDetailSerializer,
     PageBinaryUpdateSerializer,
 )
+from plane.app.serializers.favorite import get_favorite_entities
 from plane.db.models import (
     Page,
     PageLog,
@@ -216,30 +217,9 @@ class PageViewSet(BaseViewSet):
 
     def retrieve(self, request, slug, project_id, page_id=None):
         page = self.get_queryset().filter(pk=page_id).first()
-        project = Project.objects.get(pk=project_id)
         track_visit = request.query_params.get("track_visit", "true").lower() == "true"
 
-        """
-        if the role is guest and guest_view_all_features is false and owned by is not
-        the requesting user then dont show the page
-        """
-
-        if (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                member=request.user,
-                role=5,
-                is_active=True,
-            ).exists()
-            and not project.guest_view_all_features
-            and not page.owned_by == request.user
-        ):
-            return Response(
-                {"error": "You are not allowed to view this page"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
+        # Guest access (guest_view_all_features) is enforced by ProjectPagePermission.
         if page is None:
             return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
         else:
@@ -489,6 +469,8 @@ class PageFavoriteViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id, page_id):
+        # 404 unless the page is in this project and visible to the user
+        get_favorite_entities("page", request.user.id, project_id).get(pk=page_id, workspace__slug=slug)
         _ = UserFavorite.objects.create(
             project_id=project_id,
             entity_identifier=page_id,

@@ -5,13 +5,15 @@
  */
 
 import { observer } from "mobx-react";
-import { ArrowCollapseOutline, FullScreenOutline } from "@makeplane/propel/icons";
+import { Button } from "@makeplane/propel/components/button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Tab, Tabs, TabsList } from "@makeplane/propel/components/tabs";
+import { ArrowCollapseOutline, ArrowExpandOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // plane
 import type { TGanttViews } from "@plane/types";
 import { Row } from "@plane/blocks/layout";
 // components
-import { cn } from "@plane/utils";
 import { VIEWS_LIST } from "@/components/gantt-chart/data";
 // helpers
 // hooks
@@ -42,49 +44,46 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
       style={{ height: `${GANTT_BREADCRUMBS_HEIGHT}px` }}
     >
       <div className="ml-auto">
-        <div className="ml-auto text-11 font-medium text-tertiary">
+        <div className="ml-auto text-caption-sm-medium text-tertiary">
           {blockIds ? `${blockIds.length} ${loaderTitle}` : t("common.loading")}
         </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        {VIEWS_LIST.map((chartView: any) => (
-          <button
-            type="button"
-            key={chartView?.key}
-            className={cn(
-              "cursor-pointer rounded-md bg-layer-transparent p-1 px-2 text-11 hover:bg-layer-transparent-hover",
-              {
-                "bg-layer-transparent-selected": currentView === chartView?.key,
-              }
-            )}
-            aria-pressed={currentView === chartView?.key}
-            onClick={() => handleChartView(chartView?.key)}
-          >
-            {t(chartView?.i18n_title)}
-          </button>
-        ))}
+        <Tabs value={currentView} variant="contained" stretch="auto">
+          <TabsList aria-label={t("common.view")}>
+            {VIEWS_LIST.map((chartView) => (
+              <Tab
+                key={chartView.key}
+                value={chartView.key}
+                label={t(chartView.i18n_title)}
+                onClick={() => handleChartView(chartView.key as TGanttViews)}
+              />
+            ))}
+          </TabsList>
+        </Tabs>
       </div>
 
       {showToday && (
-        <button
+        <Button
           type="button"
-          className="rounded-md bg-layer-transparent p-1 px-2 text-11 hover:bg-layer-transparent-hover"
+          variant="secondary"
+          size="md"
+          stretch="auto"
+          label={t("common.today")}
           onClick={handleToday}
-        >
-          {t("common.today")}
-        </button>
+        />
       )}
 
-      <button
+      <IconButton
         type="button"
-        className="flex items-center justify-center rounded-md border border-subtle bg-layer-transparent p-1 transition-all hover:bg-layer-transparent-hover"
+        variant="secondary"
+        size="md"
         aria-label={t("common.full_screen")}
         aria-pressed={fullScreenMode}
         onClick={toggleFullScreenMode}
-      >
-        {fullScreenMode ? <ArrowCollapseOutline className="h-4 w-4" /> : <FullScreenOutline className="h-4 w-4" />}
-      </button>
+        icon={fullScreenMode ? <ArrowCollapseOutline /> : <ArrowExpandOutline />}
+      />
     </Row>
   );
 });

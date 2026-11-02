@@ -8,6 +8,9 @@ import { observer } from "mobx-react";
 
 import { CopyOutline, DeleteOutline, EditOutline } from "@makeplane/propel/icons";
 // plane types
+import { Icon as PropelIcon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ILinkDetails } from "@plane/types";
@@ -28,6 +31,8 @@ type Props = {
 
 export const ModulesLinksListItem = observer(function ModulesLinksListItem(props: Props) {
   const { handleDeleteLink, handleEditLink, isEditingAllowed, link } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { getUserDetails } = useMember();
   // derived values
@@ -47,63 +52,66 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
     );
   };
 
-  return (
-    <div className="relative flex flex-col rounded-md bg-layer-3 p-2.5">
-      <div className="flex w-full items-start justify-between gap-2">
-        <div className="flex items-start gap-2 truncate">
-          <span className="py-1">
-            <Icon className="size-3 shrink-0 stroke-2 text-tertiary group-hover:text-primary" />
-          </span>
-          <Tooltip label={link.title && link.title !== "" ? link.title : link.url} layout="stacked" disabled={isMobile}>
-            <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer truncate text-11">
-              {link.title && link.title !== "" ? link.title : link.url}
-            </a>
-          </Tooltip>
-        </div>
+  const linkLabel = link.title && link.title !== "" ? link.title : link.url;
 
-        <div className="z-1 flex shrink-0 items-center">
-          {isEditingAllowed && (
-            <button
-              type="button"
-              className="grid place-items-center rounded-sm p-1 text-secondary hover:bg-layer-transparent-hover"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleEditLink();
-              }}
-            >
-              <EditOutline className="size-3 stroke-[1.5]" />
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={() => copyToClipboard(link.url)}
-            className="grid place-items-center rounded-sm p-1 text-secondary hover:bg-layer-transparent-hover"
+  return (
+    <div className="group/link flex w-full min-w-0 items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-layer-1-hover">
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-md border-[0.5px] border-subtle bg-layer-2">
+        <Icon className="size-4 text-secondary" />
+      </span>
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <Tooltip label={linkLabel} layout="stacked" disabled={isMobile}>
+          <a
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="max-w-full min-w-0 self-start truncate text-body-xs-medium text-primary"
           >
-            <CopyOutline className="size-3 stroke-[1.5]" />
-          </button>
-          {isEditingAllowed && (
-            <button
-              type="button"
-              className="grid place-items-center rounded-sm p-1 text-secondary hover:bg-layer-transparent-hover"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleDeleteLink();
-              }}
-            >
-              <DeleteOutline className="size-3 stroke-[1.5]" />
-            </button>
-          )}
-        </div>
-      </div>
-      <div className="px-5">
-        <p className="mt-0.5 flex items-center gap-1.5 stroke-[1.5] text-11 text-tertiary">
+            {linkLabel}
+          </a>
+        </Tooltip>
+        <p className="truncate text-caption-md-regular text-placeholder">
           Added {calculateTimeAgo(link.created_at)}{" "}
           {createdByDetails && (
             <>by {createdByDetails?.is_bot ? createdByDetails?.first_name + " Bot" : createdByDetails?.display_name}</>
           )}
         </p>
+      </div>
+      {/* Revealed on hover or focus; always shown on touch screens, which have no hover. */}
+      <div className="flex shrink-0 items-center gap-1 opacity-0 group-focus-within/link:opacity-100 group-hover/link:opacity-100 [@media(hover:none)]:opacity-100">
+        {isEditingAllowed && (
+          <IconButton
+            variant="ghost"
+            size="xs"
+            aria-label={t("edit")}
+            icon={<PropelIcon icon={EditOutline} />}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleEditLink();
+            }}
+          />
+        )}
+        <IconButton
+          variant="ghost"
+          size="xs"
+          aria-label={t("copy_link")}
+          icon={<PropelIcon icon={CopyOutline} />}
+          onClick={() => copyToClipboard(link.url)}
+        />
+        {isEditingAllowed && (
+          <IconButton
+            variant="ghost"
+            size="xs"
+            aria-label={t("delete")}
+            icon={<PropelIcon icon={DeleteOutline} />}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleDeleteLink();
+            }}
+          />
+        )}
       </div>
     </div>
   );

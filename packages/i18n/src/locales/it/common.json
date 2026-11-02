@@ -6,6 +6,7 @@
     "status_page": "pagina di stato"
   },
   "submit": "Conferma",
+  "submitting": "Invio in corso",
   "cancel": "Annulla",
   "loading": "Caricamento",
   "searching": "Ricerca in corso...",
@@ -153,6 +154,7 @@
   "no_favorites_yet": "Nessun preferito ancora",
   "create_folder": "Crea cartella",
   "new_folder": "Nuova cartella",
+  "rename_folder": "Rinomina cartella",
   "favorite_updated_successfully": "Preferito aggiornato con successo",
   "favorite_created_successfully": "Preferito creato con successo",
   "folder_already_exists": "La cartella esiste già",
@@ -368,6 +370,7 @@
   "member": "{count, plural, one {# membro} other {# membri}}",
   "new_password_must_be_different_from_old_password": "La nuova password deve essere diversa dalla password precedente",
   "edited": "Modificato",
+  "entity_detail_toolbar": "Azioni",
   "bot": "Bot",
   "settings_description": "Gestisci le tue preferenze di account, spazio di lavoro e progetto in un unico posto. Passa da una scheda all'altra per configurare facilmente.",
   "back_to_workspace": "Torna allo spazio di lavoro",
@@ -540,6 +543,7 @@
     "link_copied": "Link copiato!",
     "link_copied_to_clipboard": "Link copiato negli appunti",
     "copied_to_clipboard": "Link dell'elemento di lavoro copiato negli appunti",
+    "clipboard_copy_failed": "Impossibile copiare negli appunti",
     "branch_name_copied_to_clipboard": "Nome del branch copiato negli appunti",
     "is_copied_to_clipboard": "Elemento di lavoro copiato negli appunti",
     "no_links_added_yet": "Nessun link aggiunto ancora",
@@ -723,7 +727,14 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "status": "Stato",
+    "tooltip": {
+      "copy_to_clipboard": "Copia negli appunti",
+      "created_on_date": "Creato il {date}",
+      "priority": "Priorità: {value}"
+    },
+    "locked": "Bloccato"
   },
   "chart": {
     "x_axis": "Asse X",
@@ -874,5 +885,13 @@
       "short_description": "Esporta come JSON"
     }
   },
-  "labels_count": "{count, plural, one {# etichetta} many {# etichette} other {# etichette}}"
+  "labels_count": "{count, plural, one {# etichetta} many {# etichette} other {# etichette}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Opzioni di salvataggio della visualizzazione",
+      "update_view": "Aggiorna visualizzazione",
+      "save_as": "Salva come",
+      "hide_filters": "Nascondi filtri"
+    }
+  }
 }

@@ -58,7 +58,7 @@ export function DateFilterSelect({ title, value, onChange }: Props) {
       placeholder={formatOptionLabel(title, "")}
     >
       <Select.Trigger variant="select-md">
-        <span className="flex items-center gap-2 text-11">
+        <span className="flex items-center gap-2 text-caption-sm-regular">
           {selected?.icon}
           <span>{formatOptionLabel(title, selected?.name ?? "")}</span>
         </span>

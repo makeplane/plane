@@ -2,8 +2,12 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+import re
+import time
+
 import pytest
 
+from plane.utils import email as email_utils
 from plane.utils.email import generate_plain_text_from_html
 
 
@@ -58,3 +62,31 @@ class TestGeneratePlainTextFromHtml:
         assert "\n\n\n" not in text_content.strip()
         assert text_content.startswith("\n\n")
         assert text_content.endswith("\n\n")
+
+    @pytest.mark.parametrize(
+        "html_content",
+        [
+            "<style>a{}</style><p>Hi</p>",
+            "<STYLE type='text/css'>\na{}\n</Style><p>Hi</p><style>b{}</style>tail",
+            "<style>a{}</style><style>unclosed <p>Hi</p>",
+            "<style><style>a{}</style></style>",
+            "<style</style>x</style>",
+            "<styles>a{}</style><style",
+            "<p>Hi</p>" + "<style" * 50,
+        ],
+    )
+    def test_style_block_removal_matches_reference_regex(self, html_content):
+        """Linear style stripping keeps the result of the original non-greedy regex."""
+        expected = re.sub(r"<style[^>]*>.*?</style>", "", html_content, flags=re.DOTALL | re.IGNORECASE)
+
+        assert email_utils._remove_style_blocks(html_content) == expected
+
+    def test_style_removal_scales_linearly(self):
+        """Style removal runs in linear time on large input."""
+        html_content = "<p>" + "<style-x>" * 11000 + "</p>"
+
+        start = time.perf_counter()
+        text_content = generate_plain_text_from_html(html_content)
+
+        assert time.perf_counter() - start < 1
+        assert text_content == "\n\n\n\n"

@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "기본 사이드바",
+      "resize_sidebar": "사이드바 크기 조절",
+      "sidebar_peek_view": "사이드바 미리보기",
       "workspace_logo": "워크스페이스 로고",
       "open_workspace_switcher": "워크스페이스 전환기 열기",
       "open_user_menu": "사용자 메뉴 열기",
@@ -42,6 +45,9 @@
       "open": "색상 선택기 열기",
       "swatches": "기본 색상",
       "hex_input": "16진수 색상"
+    },
+    "project_board": {
+      "collapse_group": "그룹 접기"
     }
   }
 }

@@ -23,12 +23,13 @@ import {
 } from "@makeplane/propel/components/dialog";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Tab, Tabs, TabsList } from "@makeplane/propel/components/tabs";
 import { CloseOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { DateSelect } from "@plane/blocks/property-select";
 import { Select } from "@plane/blocks/select";
 // components
-import { getDate, cn } from "@plane/utils";
+import { getDate } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 
@@ -130,9 +131,8 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
     dateTime?.setHours(hours);
     dateTime?.setMinutes(minutes);
 
-    await handleSubmitSnooze(dateTime).then(() => {
-      handleClose();
-    });
+    await handleSubmitSnooze(dateTime);
+    handleClose();
   };
 
   return (
@@ -157,13 +157,15 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
           <DialogMain>
             <DialogHeader>
               <DialogHeading>
-                <DialogTitle>Customize Snooze Time</DialogTitle>
+                <DialogTitle>{t("notification.snooze.modal.title")}</DialogTitle>
               </DialogHeading>
             </DialogHeader>
             <DialogBody tabIndex={0}>
-              <div className="flex flex-col gap-3 md:!flex-row md:items-center">
-                <div className="flex-1 pb-3 md:pb-0">
-                  <h6 className="mb-2 block text-body-xs-medium text-placeholder">Pick a date</h6>
+              <div className="flex flex-col gap-4">
+                <div className="flex-1">
+                  <h6 className="mb-2 block text-body-xs-medium text-placeholder">
+                    {t("notification.snooze.modal.pick_a_date")}
+                  </h6>
                   <Controller
                     name="date"
                     control={control}
@@ -171,7 +173,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                     render={({ field: { value, onChange } }) => (
                       <DateSelect
                         value={value ?? null}
-                        placeholder="Select date"
+                        placeholder={t("notification.snooze.modal.select_date")}
                         onChange={(val) => {
                           setValue("time", undefined);
                           onChange(val ?? undefined);
@@ -185,7 +187,9 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                   />
                 </div>
                 <div className="flex-1">
-                  <h6 className="mb-2 block text-body-xs-medium text-placeholder">Pick a time</h6>
+                  <h6 className="mb-2 block text-body-xs-medium text-placeholder">
+                    {t("notification.snooze.modal.pick_a_time")}
+                  </h6>
                   <Controller
                     control={control}
                     name="time"
@@ -199,50 +203,36 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                         getOptionLabel={(option) => option.label}
                         showSearch={false}
                         pinSelected={false}
-                        emptyMessage="No available time for this date."
+                        emptyMessage={t("notification.snooze.modal.no_available_time")}
                         header={
-                          <div className="mb-2 flex h-9 w-full overflow-hidden rounded-xs">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setValue("period", "AM");
-                              }}
-                              className={cn(
-                                "flex h-full w-1/2 cursor-pointer items-center justify-center text-center",
-                                {
-                                  "bg-accent-primary/90 text-on-color": watch("period") === "AM",
-                                  "bg-layer-1": watch("period") !== "AM",
-                                }
-                              )}
-                            >
-                              AM
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setValue("period", "PM");
-                              }}
-                              className={cn(
-                                "flex h-full w-1/2 cursor-pointer items-center justify-center text-center",
-                                {
-                                  "bg-accent-primary/90 text-on-color": watch("period") === "PM",
-                                  "bg-layer-1": watch("period") !== "PM",
-                                }
-                              )}
-                            >
-                              PM
-                            </button>
-                          </div>
+                          <Tabs
+                            variant="contained"
+                            stretch="full"
+                            value={watch("period")}
+                            onValueChange={(period: unknown) => {
+                              if (period === "AM" || period === "PM") setValue("period", period);
+                            }}
+                          >
+                            <TabsList>
+                              <Tab value="AM" label={t("automations.trigger.schedule.am")} />
+                              <Tab value="PM" label={t("automations.trigger.schedule.pm")} />
+                            </TabsList>
+                          </Tabs>
                         }
                       >
                         <Select.Trigger<TTimeOption> variant="select-lg">
                           <span className="min-w-0 grow truncate text-left">
                             {value ? (
                               <span>
-                                {value} {watch("period").toLowerCase()}
+                                {value}{" "}
+                                {watch("period") === "AM"
+                                  ? t("automations.trigger.schedule.am")
+                                  : t("automations.trigger.schedule.pm")}
                               </span>
                             ) : (
-                              <span className="text-body-xs-medium text-placeholder">Select a time</span>
+                              <span className="text-body-xs-medium text-placeholder">
+                                {t("notification.snooze.modal.select_time")}
+                              </span>
                             )}
                           </span>
                         </Select.Trigger>
@@ -254,13 +244,13 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
             </DialogBody>
           </DialogMain>
           <DialogActions>
-            <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+            <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={handleClose} />
             <Button
               variant="primary"
               size="md"
               stretch="auto"
               type="submit"
-              label={isSubmitting ? "Submitting..." : "Submit"}
+              label={isSubmitting ? t("submitting") : t("submit")}
               loading={isSubmitting}
             />
           </DialogActions>

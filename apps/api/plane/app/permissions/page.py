@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from plane.db.models import ProjectMember, Page
+from plane.db.models import ProjectMember, Page, Project
 from plane.app.permissions import ROLE
 
 
@@ -57,6 +57,11 @@ class ProjectPagePermission(BasePermission):
             # Allow access if the user is the owner of the page
             if page.owned_by_id == user_id:
                 return True
+
+            # Guests can only access pages they own unless the project enables
+            # guest_view_all_features.
+            if role == GUEST and not Project.objects.filter(pk=project_id, guest_view_all_features=True).exists():
+                return False
 
             # Handle private page access
             if page.access == Page.PRIVATE_ACCESS:

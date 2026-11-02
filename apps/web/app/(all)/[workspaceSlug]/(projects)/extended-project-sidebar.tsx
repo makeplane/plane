@@ -16,6 +16,8 @@ import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Icon } from "@makeplane/propel/components/icon";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { List } from "@makeplane/propel/components/list";
+import { ScrollArea } from "@makeplane/propel/components/scroll-area";
 import { copyUrlToClipboard, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project/create-project-modal";
@@ -114,7 +116,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
       >
         <div className="sticky top-4 flex w-full flex-col gap-1 px-4">
           <div className="flex items-center justify-between">
-            <span className="py-1.5 text-13 font-semibold text-tertiary">Projects</span>
+            <span className="py-1.5 text-body-xs-semibold text-tertiary">{t("projects")}</span>
             {isAuthorizedUser && (
               <Tooltip label={t("create_project")}>
                 <button
@@ -149,26 +151,32 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
             <EmptyStateCompact
               title={t("common_empty_state.search.title")}
               description={t("common_empty_state.search.description")}
-              assetKey="search"
+              assetKey="search-compact"
               assetClassName="size-20"
               align="center"
             />
           </div>
         ) : (
-          <div className="vertical-scrollbar mt-4 scrollbar-sm flex flex-grow flex-col gap-0.5 overflow-x-hidden overflow-y-auto pr-2 pl-9">
-            {filteredProjects.map((projectId, index) => (
-              <SidebarProjectsListItem
-                key={projectId}
-                projectId={projectId}
-                handleCopyText={() => handleCopyText(projectId)}
-                projectListType={"JOINED"}
-                disableDrag={false}
-                disableDrop={false}
-                isLastChild={index === filteredProjects.length - 1}
-                handleOnProjectDrop={handleOnProjectDrop}
-                renderInExtendedSidebar
-              />
-            ))}
+          <div className="mt-4 flex min-h-0 flex-grow flex-col">
+            <ScrollArea orientation="vertical" variant="inset" size="sm">
+              <div className="px-4">
+                <List gap="px" role="toolbar" aria-label={t("projects")}>
+                  {filteredProjects.map((projectId, index) => (
+                    <SidebarProjectsListItem
+                      key={projectId}
+                      projectId={projectId}
+                      handleCopyText={() => handleCopyText(projectId)}
+                      projectListType={"JOINED"}
+                      disableDrag={false}
+                      disableDrop={false}
+                      isLastChild={index === filteredProjects.length - 1}
+                      handleOnProjectDrop={handleOnProjectDrop}
+                      renderInExtendedSidebar
+                    />
+                  ))}
+                </List>
+              </div>
+            </ScrollArea>
           </div>
         )}
       </ExtendedSidebarWrapper>

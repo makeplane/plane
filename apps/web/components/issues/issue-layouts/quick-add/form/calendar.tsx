@@ -5,10 +5,14 @@
  */
 
 import { observer } from "mobx-react";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { useTranslation } from "@plane/i18n";
 import type { TQuickAddIssueForm } from "../root";
 
 export const CalendarQuickAddIssueForm = observer(function CalendarQuickAddIssueForm(props: TQuickAddIssueForm) {
-  const { ref, isOpen, projectDetail, register, onSubmit, isEpic } = props;
+  const { ref, isOpen, projectDetail, register, onSubmit, isEpic, hasError } = props;
+
+  const { t } = useTranslation();
 
   return (
     <div
@@ -19,18 +23,25 @@ export const CalendarQuickAddIssueForm = observer(function CalendarQuickAddIssue
       <form
         ref={ref}
         onSubmit={onSubmit}
-        className="z-50 flex w-full items-center gap-x-2 rounded-sm border-subtle bg-surface-1 px-2 transition-opacity md:border-[0.5px] md:shadow-raised-100"
+        className="z-50 flex min-h-10 w-full items-center gap-x-2 rounded-sm border-subtle bg-surface-1 px-3 py-2 transition-opacity md:border-[0.5px] md:shadow-raised-100"
       >
-        <h4 className="text-13 leading-5 text-placeholder md:text-11">{projectDetail?.identifier ?? "..."}</h4>
-        <input
-          type="text"
-          autoComplete="off"
-          placeholder={isEpic ? "Epic Title" : "Work item Title"}
-          {...register("name", {
-            required: `${isEpic ? "Epic" : "Work item"} title is required.`,
-          })}
-          className="w-full rounded-md bg-transparent py-1.5 pr-2 text-13 leading-5 font-medium text-secondary outline-none md:text-11"
-        />
+        <h4 className="text-body-xs-regular leading-5 text-placeholder md:text-caption-sm-regular">
+          {projectDetail?.identifier ?? "..."}
+        </h4>
+        <InputGroup size="lg">
+          <Input
+            size="lg"
+            aria-label={isEpic ? t("epic.title.label") : t("issue.title.label")}
+            aria-invalid={hasError}
+            data-invalid={hasError || undefined}
+            type="text"
+            autoComplete="off"
+            placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
+            {...register("name", {
+              required: isEpic ? t("epic.title.required") : t("issue.title.required"),
+            })}
+          />
+        </InputGroup>
       </form>
     </div>
   );

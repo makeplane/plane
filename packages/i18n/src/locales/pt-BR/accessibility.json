@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Barra lateral principal",
+      "resize_sidebar": "Redimensionar barra lateral",
+      "sidebar_peek_view": "Prévia da barra lateral",
       "workspace_logo": "Logo do espaço de trabalho",
       "open_workspace_switcher": "Abrir seletor de espaço de trabalho",
       "open_user_menu": "Abrir menu do usuário",
@@ -42,6 +45,9 @@
       "open": "Abrir seletor de cor",
       "swatches": "Cores predefinidas",
       "hex_input": "Cor hexadecimal"
+    },
+    "project_board": {
+      "collapse_group": "Recolher grupo"
     }
   }
 }

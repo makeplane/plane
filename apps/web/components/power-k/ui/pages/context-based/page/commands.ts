@@ -6,7 +6,6 @@
 
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
-import { StarOff } from "lucide-react";
 import {
   ArchiveOutline,
   GlobeOutline,
@@ -14,6 +13,7 @@ import {
   LockOutline,
   LockedOutline,
   RestoreOutline,
+  StarOffOutline,
   StarOutline,
   UnlockedOutline,
 } from "@makeplane/propel/icons";
@@ -162,7 +162,7 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
       i18n_title: isFavorite
         ? "power_k.contextual_actions.page.remove_from_favorites"
         : "power_k.contextual_actions.page.add_to_favorites",
-      icon: isFavorite ? StarOff : StarOutline,
+      icon: isFavorite ? StarOffOutline : StarOutline,
       group: "contextual",
       contextType: "page",
       type: "action",

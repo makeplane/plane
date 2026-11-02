@@ -5,71 +5,66 @@
  */
 
 import { observer } from "mobx-react";
-import { LabelsOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { LabelPill, LabelSelect } from "@plane/blocks/property-select";
+import type { SelectVariant } from "@plane/blocks/select";
+import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
+// helpers
+import { READ_ONLY_SELECT_CLASSNAME, toSinglePage } from "@/helpers/select.helper";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 
+/** Up to this many labels are shown as individual pills; more collapse into one "N labels" chip. */
+const MAX_INDIVIDUAL_LABEL_PILLS = 2;
+
 type Props = {
   labelIds: string[];
-  shouldShowLabel?: boolean;
+  variant?: SelectVariant;
+  placeholder?: string;
+  className?: string;
 };
 
-export const IssueBlockLabels = observer(function IssueBlockLabels({ labelIds, shouldShowLabel = false }: Props) {
-  const { getLabelsByIds } = useLabel();
+/** The work item labels as read-only pills, or a read-only `LabelSelect` summary chip. */
+export const IssueBlockLabels = observer(function IssueBlockLabels(props: Props) {
+  const { labelIds, variant = "pill-md", placeholder, className } = props;
+  // i18n
+  const { t } = useTranslation();
+  // store hooks
+  const { labels, getLabelsByIds } = useLabel();
+  // derived values
+  const selectedLabels = getLabelsByIds(labelIds ?? []).map((label) => ({
+    id: label.id,
+    name: label.name,
+    color: label.color ?? "",
+  }));
+  const isPillVariant = variant.startsWith("pill-");
 
-  const labels = getLabelsByIds(labelIds);
-
-  const labelsString = labels.length > 0 ? labels.map((label) => label.name).join(", ") : "No Labels";
-
-  if (labels.length <= 0)
+  if (isPillVariant && selectedLabels.length > 1 && selectedLabels.length <= MAX_INDIVIDUAL_LABEL_PILLS) {
     return (
-      <Tooltip side="top" label="Labels: None">
-        <div
-          className={`flex h-full items-center justify-center gap-2 rounded-sm border-[0.5px] border-strong px-2.5 py-1 text-11`}
-        >
-          <LabelsOutline className="h-3.5 w-3.5" />
-          {shouldShowLabel && <span>No Labels</span>}
+      <Tooltip label={`${t("common.labels")}: ${selectedLabels.map((label) => label.name).join(", ")}`}>
+        <div className="flex max-w-full min-w-0 items-center gap-1 overflow-hidden">
+          {selectedLabels.map((label) => (
+            <LabelPill key={label.id} label={label} variant="outline" />
+          ))}
         </div>
       </Tooltip>
     );
+  }
 
   return (
-    <div className="flex h-5 w-full flex-wrap items-center gap-2 overflow-hidden">
-      {labels.length <= 2 ? (
-        <>
-          {labels.map((label) => (
-            <Tooltip key={label.id} side="top" label={`Labels: ${label?.name ?? ""}`}>
-              <div
-                key={label?.id}
-                className={`flex h-full max-w-full flex-shrink-0 items-center overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1 text-11`}
-              >
-                <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-secondary">
-                  <span
-                    className="h-2 w-2 flex-shrink-0 rounded-full"
-                    style={{
-                      backgroundColor: label?.color ?? "#000000",
-                    }}
-                  />
-                  <div className="line-clamp-1 inline-block w-auto max-w-[100px] truncate">{label?.name}</div>
-                </div>
-              </div>
-            </Tooltip>
-          ))}
-        </>
-      ) : (
-        <div
-          className={`cursor-not-allowed" flex h-full flex-shrink-0 items-center rounded-sm border-[0.5px] border-strong px-2.5 py-1 text-11`}
-        >
-          <Tooltip side="top" label={`Labels: ${labelsString}`}>
-            <div className="flex h-full items-center gap-1.5 text-secondary">
-              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
-              {`${labels.length} Labels`}
-            </div>
-          </Tooltip>
-        </div>
-      )}
-    </div>
+    <LabelSelect
+      getValues={() =>
+        toSinglePage(labels?.map((label) => ({ id: label.id, name: label.name, color: label.color ?? "" })))
+      }
+      value={selectedLabels}
+      onChange={() => {}}
+      variant={variant}
+      placeholder={placeholder}
+      className={cn(READ_ONLY_SELECT_CLASSNAME, className)}
+      tooltip={{ heading: t("common.labels"), emptyContent: t("common.none") }}
+      disabled
+    />
   );
 });

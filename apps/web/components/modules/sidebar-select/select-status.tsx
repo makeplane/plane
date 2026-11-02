@@ -31,7 +31,7 @@ export function SidebarStatusSelect({ control, submitChanges, watch }: Props) {
   const { t } = useTranslation();
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-13 sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-body-xs-regular sm:basis-1/2">
         <StateOutline className="h-4 w-4 flex-shrink-0" />
         <p>Status</p>
       </div>

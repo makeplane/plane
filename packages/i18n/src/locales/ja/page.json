@@ -26,6 +26,16 @@
           "highlight_changes": "変更を強調表示"
         }
       },
+      "version_history": {
+        "view_only": "閲覧のみ",
+        "loading_details": "バージョンの詳細を読み込んでいます",
+        "load_error_description": "バージョンを読み込めませんでした。もう一度お試しください。",
+        "list_error_description": "バージョン履歴を読み込めませんでした。",
+        "try_again": "再試行",
+        "restoring": "復元中",
+        "restore_success": "ページのバージョンを復元しました。",
+        "restore_failed": "ページのバージョンを復元できませんでした。"
+      },
       "assets": {
         "label": "アセット",
         "download_button": "ダウンロード",

@@ -9,7 +9,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // store hooks
 // icons
-import { TriangleIcon, SignalMediumIcon } from "lucide-react";
 import {
   ArchiveOutline,
   AttachOutline,
@@ -18,12 +17,14 @@ import {
   CyclesOutline,
   DuplicateOfOutline,
   EpicOutline,
+  EstimateOutline,
   GridOutline,
   IntakeOutline,
   LabelsOutline,
   LinkOutline,
   MembersOutline,
   ModuleOutline,
+  PriorityMedium,
   RelatesToOutline,
   WorkItemsOutline,
 } from "@makeplane/propel/icons";
@@ -268,7 +269,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <TriangleIcon size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <EstimateOutline width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   issue: {
     message: (activity) => {
@@ -322,7 +323,7 @@ const activityDetails: {
         return (
           <span className="overflow-hidden">
             added a new label{" "}
-            <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-11">
+            <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-caption-sm-regular">
               <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="line-clamp-1 flex-shrink font-medium break-all text-primary">{activity.new_value}</span>
             </span>
@@ -338,7 +339,7 @@ const activityDetails: {
         return (
           <>
             removed the label{" "}
-            <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-11">
+            <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-caption-sm-regular">
               <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="line-clamp-1 flex-shrink font-medium break-all text-primary">{activity.old_value}</span>
             </span>
@@ -573,7 +574,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <SignalMediumIcon size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <PriorityMedium width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   relates_to: {
     message: (activity, showIssue) => {

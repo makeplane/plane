@@ -21,7 +21,8 @@ import {
 import type { EUserProjectRoles } from "@plane/types";
 // plane ui
 // components
-import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
+import { ListItem, ListItemLabel, ListItemCounter } from "@makeplane/propel/components/list";
+import { ListItemLink } from "@makeplane/propel/elements/list";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -191,19 +192,18 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         const shouldShowCount = item.key === "intake" && (project.intake_count ?? 0) > 0;
 
         return (
-          <Link key={item.key} href={item.href} onClick={handleProjectClick}>
-            <SidebarNavItem isActive={!!isActive(item)}>
-              <div className="flex w-full items-center justify-between gap-1.5 py-[1px]">
-                <div className="flex items-center gap-1.5">
-                  <item.icon
-                    className={`size-4 flex-shrink-0 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
-                  />
-                  <span className="text-11 font-medium">{t(item.i18n_key)}</span>
-                </div>
-                {shouldShowCount && <span className="text-11 font-medium text-tertiary">{project.intake_count}</span>}
-              </div>
-            </SidebarNavItem>
-          </Link>
+          <ListItem key={item.key} density="compact">
+            <ListItemLink
+              href={item.href}
+              render={<Link href={item.href} />}
+              onClick={handleProjectClick}
+              aria-current={isActive(item) ? "page" : undefined}
+            >
+              <item.icon className={`size-4 flex-shrink-0 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`} />
+              <ListItemLabel>{t(item.i18n_key)}</ListItemLabel>
+              {shouldShowCount && <ListItemCounter>{project.intake_count}</ListItemCounter>}
+            </ListItemLink>
+          </ListItem>
         );
       })}
     </>

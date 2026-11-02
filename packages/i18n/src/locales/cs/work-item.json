@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Pracovní položka} few {Pracovní položky} other {Pracovních položek}}",
     "all": "Všechny pracovní položky",
     "edit": "Upravit pracovní položku",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# další vlastnost} few {# další vlastnosti} many {# další vlastnosti} other {# dalších vlastností}}",
+      "label_overflow_indicator": "{count, plural, one {+# štítek} few {+# štítky} many {+# štítku} other {+# štítků}}"
+    },
     "title": {
       "label": "Název pracovní položky",
       "required": "Název pracovní položky je povinný."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "Zobrazit další pracovní položky"
         }
+      },
+      "no_access": {
+        "title": "K této pracovní položce nemáte přístup",
+        "description": "Požádejte o přístup administrátora projektu."
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "Obnovení pracovní položky se nezdařilo. Zkuste to prosím znovu."
       }
     },
+    "archived_banner": "Tato pracovní položka je archivovaná. Pro provedení změn ji obnovte.",
+    "updated_time_ago": "Aktualizováno {time}",
+    "description_load_failed": "Popis se nepodařilo načíst.",
+    "assignee_count": "{count, plural, one {# přiřazený} few {# přiřazení} many {# přiřazeného} other {# přiřazených}}",
     "relation": {
       "relates_to": "Související s",
       "duplicate": "Duplikát",
@@ -267,7 +279,12 @@
       "click_to_upvote": "Klikněte pro hlasování nahoru",
       "click_to_downvote": "Klikněte pro hlasování dolů",
       "click_to_view_upvotes": "Klikněte pro zobrazení hlasů nahoru",
-      "click_to_view_downvotes": "Klikněte pro zobrazení hlasů dolů"
+      "click_to_view_downvotes": "Klikněte pro zobrazení hlasů dolů",
+      "title": "Hlasy",
+      "upvotes_count": "{count, plural, one {# hlas nahoru} few {# hlasy nahoru} many {# hlasu nahoru} other {# hlasů nahoru}}",
+      "downvotes_count": "{count, plural, one {# hlas dolů} few {# hlasy dolů} many {# hlasu dolů} other {# hlasů dolů}}",
+      "no_upvotes": "Zatím žádné hlasy nahoru",
+      "no_downvotes": "Zatím žádné hlasy dolů"
     }
   },
   "sub_work_item": {

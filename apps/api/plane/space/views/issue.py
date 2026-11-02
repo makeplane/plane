@@ -97,6 +97,12 @@ def _comment_in_board_scope(comment_id, project_deploy_board):
     ).exists()
 
 
+def _public_comment_content(data):
+    """Only a comment's content is writable from a public board; actor, access,
+    parent and the other system fields stay server-controlled."""
+    return {key: data[key] for key in ("comment_html", "comment_json") if key in data}
+
+
 class ProjectIssuesPublicEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
 
@@ -295,7 +301,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
         if not _issue_in_board_scope(issue_id, project_deploy_board):
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = IssueCommentSerializer(data=request.data)
+        serializer = IssueCommentSerializer(data=_public_comment_content(request.data))
         if serializer.is_valid():
             serializer.save(
                 project_id=project_deploy_board.project_id,
@@ -342,16 +348,18 @@ class IssueCommentPublicViewSet(BaseViewSet):
             access="EXTERNAL",
             actor=request.user,
         )
-        serializer = IssueCommentSerializer(comment, data=request.data, partial=True)
+        data = _public_comment_content(request.data)
+        current_instance = json.dumps(IssueCommentSerializer(comment).data, cls=DjangoJSONEncoder)
+        serializer = IssueCommentSerializer(comment, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             issue_activity.delay(
                 type="comment.activity.updated",
-                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                requested_data=json.dumps(data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 issue_id=str(issue_id),
                 project_id=str(project_deploy_board.project_id),
-                current_instance=json.dumps(IssueCommentSerializer(comment).data, cls=DjangoJSONEncoder),
+                current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
             )
             return Response(serializer.data, status=status.HTTP_200_OK)

@@ -4,8 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { MinusCircle } from "lucide-react";
-import { MinusOutline, TickCircleOutline } from "@makeplane/propel/icons";
+import { DeactivatedOutline, MinusOutline, TickCircleOutline } from "@makeplane/propel/icons";
 import type { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
 // constants
@@ -26,7 +25,7 @@ export function PlanFeatureDetail(props: TPlanFeatureDetailProps) {
     return <TickCircleOutline className="size-4 text-accent-primary" />;
   }
   if (data === false) {
-    return <MinusCircle className="size-4 text-placeholder" />;
+    return <DeactivatedOutline className="size-4 text-placeholder" />;
   }
   return <>{data}</>;
 }

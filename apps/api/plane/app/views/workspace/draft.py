@@ -36,11 +36,32 @@ from plane.db.models import (
     DraftIssueCycle,
     Workspace,
     FileAsset,
+    ProjectMember,
+    WorkspaceMember,
 )
 from .. import BaseViewSet
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 from plane.utils.host import base_host
+
+
+def can_write_project(user, slug, project_id):
+    # Same rule IssueViewSet.create enforces (allow_permission): an active
+    # ADMIN/MEMBER of the project, which must belong to the URL workspace, or a
+    # workspace ADMIN who is an active member of the project at any role.
+    role = (
+        ProjectMember.objects.filter(member=user, workspace__slug=slug, project_id=project_id, is_active=True)
+        .values_list("role", flat=True)
+        .first()
+    )
+    if role is None:
+        return False
+    return (
+        role in (ROLE.ADMIN.value, ROLE.MEMBER.value)
+        or WorkspaceMember.objects.filter(
+            member=user, workspace__slug=slug, role=ROLE.ADMIN.value, is_active=True
+        ).exists()
+    )
 
 
 class WorkspaceDraftIssueViewSet(BaseViewSet):
@@ -111,12 +132,19 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
+        project_id = request.data.get("project_id", None)
+
+        if project_id and not can_write_project(request.user, slug, project_id):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         serializer = DraftIssueCreateSerializer(
             data=request.data,
             context={
                 "workspace_id": workspace.id,
-                "project_id": request.data.get("project_id", None),
+                "project_id": project_id,
             },
         )
         if serializer.is_valid():
@@ -167,12 +195,21 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
 
         project_id = request.data.get("project_id", issue.project_id)
 
+        # The draft stays in its own project; any other supplied project is checked too.
+        project_ids = {str(pid) for pid in (issue.project_id, project_id) if pid}
+        if any(not can_write_project(request.user, slug, pid) for pid in project_ids):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         serializer = DraftIssueCreateSerializer(
             issue,
             data=request.data,
             partial=True,
             context={
-                "project_id": project_id,
+                # Validate related objects against the draft's own project, which a PATCH cannot change.
+                "project_id": issue.project_id,
                 "cycle_id": request.data.get("cycle_id", "not_provided"),
             },
         )
@@ -220,6 +257,20 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 {"error": "Project is required to create an issue."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        if not can_write_project(request.user, slug, draft_issue.project_id):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # The cycle and modules must belong to the draft's project (400 otherwise).
+        DraftIssueCreateSerializer.check_cycle_and_modules(
+            request.data.get("cycle_id"),
+            request.data.get("module_ids"),
+            draft_issue.project_id,
+            draft_issue.workspace_id,
+        )
 
         serializer = IssueCreateSerializer(
             data=request.data,

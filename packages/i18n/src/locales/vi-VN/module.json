@@ -2,6 +2,13 @@
   "module": {
     "label": "{count, plural, one {mô-đun} other {mô-đun}}",
     "no_module": "Không có mô-đun",
-    "select": "Thêm mô-đun"
+    "select": "Thêm mô-đun",
+    "details_drawer": {
+      "progress": {
+        "done": "Đã hoàn thành {completed}/{scope, plural, one {# mục công việc} other {# mục công việc}}",
+        "points_done": "Đã hoàn thành {completed}/{scope, plural, one {# điểm} other {# điểm}}",
+        "empty": "Thêm mục công việc vào mô-đun để theo dõi tiến độ."
+      }
+    }
   }
 }

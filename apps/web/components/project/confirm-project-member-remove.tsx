@@ -83,7 +83,7 @@ export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMember
             </div>
           </DialogHeader>
           <DialogBody>
-            <p className="text-13 text-secondary">
+            <p className="text-body-xs-regular text-secondary">
               {isCurrentUser ? (
                 <>
                   Are you sure you want to leave the <span className="font-bold">{currentProjectDetails?.name}</span>{" "}

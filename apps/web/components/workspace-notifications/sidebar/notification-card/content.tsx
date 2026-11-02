@@ -8,6 +8,7 @@ import type { ReactNode } from "react";
 // plane imports
 import type { TNotification } from "@plane/types";
 import {
+  cn,
   convertMinutesToHoursMinutesString,
   renderFormattedDate,
   sanitizeCommentForNotification,
@@ -152,14 +153,17 @@ export function NotificationContent({
   workspaceSlug,
   projectId,
   renderCommentBox = false,
+  isUnread = false,
 }: {
   notification: TNotification;
   workspaceId: string;
   workspaceSlug: string;
   projectId: string;
   renderCommentBox?: boolean;
+  isUnread?: boolean;
 }) {
   const { data, triggered_by_details: triggeredBy } = notification;
+  const emphasisClassName = isUnread ? "font-semibold" : "font-medium";
   const notificationField = data?.issue_activity.field;
   const newValue = data?.issue_activity.new_value;
   const oldValue = data?.issue_activity.old_value;
@@ -173,7 +177,7 @@ export function NotificationContent({
   };
 
   const renderTriggerName = () => (
-    <span className="font-medium text-primary">
+    <span className={cn("text-primary", emphasisClassName)}>
       {triggeredBy?.is_bot ? triggeredBy.first_name : triggeredBy?.display_name}{" "}
     </span>
   );
@@ -210,7 +214,7 @@ export function NotificationContent({
       {verb !== "deleted" && (
         <>
           {showConnector && <span className="text-tertiary">to </span>}
-          <span className="font-medium text-primary">{renderValue()}</span>
+          <span className={cn("text-primary", emphasisClassName)}>{renderValue()}</span>
           {notificationField === "comment" && renderCommentBox && (
             <div className="origin-left scale-75">
               <LiteTextEditor

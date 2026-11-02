@@ -6,7 +6,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { DeleteOutline, DragDropOutline, EditOutline } from "@makeplane/propel/icons";
+import { DeleteOutline, DragDropOutline, EditOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 // plane imports
 import { EEstimateSystem, estimateCount } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -66,37 +69,51 @@ export const EstimatePointItemPreview = observer(function EstimatePointItemPrevi
   return (
     <div>
       {!estimatePointEditToggle && !estimatePointDeleteToggle && (
-        <div className="relative my-1 flex items-center gap-2 rounded-sm border border-subtle px-1 text-14">
-          <div className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs transition-colors hover:bg-layer-1">
-            <DragDropOutline width={14} height={14} className="text-secondary" />
-          </div>
-          <div ref={EstimatePointValueRef} className="w-full py-2 text-13">
+        <div className="group relative my-1 flex min-w-0 items-center justify-between gap-2 rounded-lg border border-subtle-1 bg-layer-2 px-3 py-2 text-primary hover:bg-layer-2-hover">
+          <span
+            aria-hidden="true"
+            className="absolute top-1/2 -left-1.5 z-10 hidden -translate-y-1/2 cursor-grab items-center justify-center rounded border border-subtle-1 bg-layer-2 py-0.5 text-secondary transition-colors group-focus-within:flex group-hover:flex hover:bg-layer-2-hover hover:text-primary"
+          >
+            <DragDropOutline className="size-3" />
+          </span>
+          <div ref={EstimatePointValueRef} className="min-w-0 flex-1 truncate text-body-sm-medium">
             {estimatePoint?.value ? (
               `${estimateType === EEstimateSystem.TIME ? convertMinutesToHoursMinutesString(Number(estimatePoint?.value)) : estimatePoint?.value}`
             ) : (
               <span className="text-placeholder">{t("project_settings.estimates.create.enter_estimate_point")}</span>
             )}
           </div>
-          {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
-          <div
-            className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs transition-colors hover:bg-layer-1"
-            onClick={() => setEstimatePointEditToggle(true)}
-          >
-            <EditOutline width={14} height={14} className="text-secondary" />
-          </div>
-          {estimatePoints.length > estimateCount.min && (
-            // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
-            <div
-              className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs transition-colors hover:bg-layer-1"
-              onClick={() =>
-                estimateId && estimatePointId
-                  ? setEstimatePointDeleteToggle(true)
-                  : handleEstimatePointValueRemove && handleEstimatePointValueRemove()
+          <Menu>
+            <MenuTrigger
+              render={
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  aria-label={t("aria_labels.common.more_actions")}
+                  icon={<Icon icon={MoreHorizontalOutline} />}
+                />
               }
-            >
-              <DeleteOutline width={14} height={14} className="text-secondary" />
-            </div>
-          )}
+            />
+            <MenuContent side="bottom" align="end">
+              <MenuItem
+                icon={<Icon icon={EditOutline} />}
+                label={t("edit")}
+                onClick={() => setEstimatePointEditToggle(true)}
+              />
+              {estimatePoints.length > estimateCount.min && (
+                <MenuItem
+                  variant="danger"
+                  icon={<Icon icon={DeleteOutline} />}
+                  label={t("delete")}
+                  onClick={() =>
+                    estimateId && estimatePointId
+                      ? setEstimatePointDeleteToggle(true)
+                      : handleEstimatePointValueRemove && handleEstimatePointValueRemove()
+                  }
+                />
+              )}
+            </MenuContent>
+          </Menu>
         </div>
       )}
 

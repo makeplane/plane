@@ -6,6 +6,7 @@
     "status_page": "ステータスページ"
   },
   "submit": "送信",
+  "submitting": "送信中",
   "cancel": "キャンセル",
   "loading": "読み込み中",
   "searching": "検索中…",
@@ -153,6 +154,7 @@
   "no_favorites_yet": "まだお気に入りがありません",
   "create_folder": "フォルダを作成",
   "new_folder": "新規フォルダ",
+  "rename_folder": "フォルダー名を変更",
   "favorite_updated_successfully": "お気に入りが正常に更新されました",
   "favorite_created_successfully": "お気に入りが正常に作成されました",
   "folder_already_exists": "フォルダは既に存在します",
@@ -368,6 +370,7 @@
   "member": "{count, plural, other{# メンバー}}",
   "new_password_must_be_different_from_old_password": "新しいパスワードは古いパスワードと異なる必要があります",
   "edited": "編集済み",
+  "entity_detail_toolbar": "アクション",
   "bot": "ボット",
   "settings_description": "アカウント、ワークスペース、プロジェクトの環境設定を一か所で管理できます。タブを切り替えて簡単に設定してください。",
   "back_to_workspace": "ワークスペースに戻る",
@@ -540,6 +543,7 @@
     "link_copied": "リンクをコピーしました！",
     "link_copied_to_clipboard": "リンクをクリップボードにコピーしました",
     "copied_to_clipboard": "作業項目のリンクをクリップボードにコピーしました",
+    "clipboard_copy_failed": "クリップボードにコピーできませんでした",
     "branch_name_copied_to_clipboard": "ブランチ名をクリップボードにコピーしました",
     "is_copied_to_clipboard": "作業項目をクリップボードにコピーしました",
     "no_links_added_yet": "リンクはまだ追加されていません",
@@ -723,7 +727,14 @@
     "developer": "開発者",
     "work_structure": "作業構造",
     "execution": "実行",
-    "administration": "管理"
+    "administration": "管理",
+    "status": "ステータス",
+    "tooltip": {
+      "copy_to_clipboard": "クリップボードにコピー",
+      "created_on_date": "作成日：{date}",
+      "priority": "優先度：{value}"
+    },
+    "locked": "ロック中"
   },
   "chart": {
     "x_axis": "エックス アクシス",
@@ -874,5 +885,13 @@
       "short_description": "JSONとしてエクスポート"
     }
   },
-  "labels_count": "{count, plural, one {#件のラベル} other {#件のラベル}}"
+  "labels_count": "{count, plural, one {#件のラベル} other {#件のラベル}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "ビューの保存オプション",
+      "update_view": "ビューを更新",
+      "save_as": "名前を付けて保存",
+      "hide_filters": "フィルターを非表示"
+    }
+  }
 }

@@ -6,8 +6,7 @@
 
 import { useCallback } from "react";
 import { useTheme } from "next-themes";
-import { Languages } from "lucide-react";
-import { CalendarOutline, GlobeOutline, PaletteOutline } from "@makeplane/propel/icons";
+import { CalendarOutline, GlobeOutline, PaletteOutline, TranslateOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
@@ -155,7 +154,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       page: "update-language",
       type: "change-page",
       i18n_title: "power_k.preferences_actions.update_language",
-      icon: Languages,
+      icon: TranslateOutline,
       onSelect: (data) => {
         const language = data as string;
         handleUpdateUserProfile({ language });

@@ -11,7 +11,8 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.db.models import Issue, ProjectMember, IssueRelation
+from plane.app.permissions import ROLE
+from plane.db.models import Issue, IssueRelation
 from plane.utils.issue_search import search_issues
 
 
@@ -107,10 +108,15 @@ class IssueSearchEndpoint(BaseAPIView):
         target_date = request.query_params.get("target_date", True)
         issue_id = request.query_params.get("issue_id", False)
 
+        # Guests only see issues they created unless guest_view_all_features
         issues = Issue.issue_objects.filter(
+            Q(project__project_projectmember__role__gt=ROLE.GUEST.value)
+            | Q(project__guest_view_all_features=True)
+            | Q(created_by=self.request.user),
             workspace__slug=slug,
             project__project_projectmember__member=self.request.user,
             project__project_projectmember__is_active=True,
+            project__project_projectmember__deleted_at__isnull=True,
             project__archived_at__isnull=True,
         )
 
@@ -137,11 +143,6 @@ class IssueSearchEndpoint(BaseAPIView):
 
         if target_date == "none":
             issues = self.filter_issues_without_target_date(issues)
-
-        if ProjectMember.objects.filter(
-            project_id=project_id, member=self.request.user, is_active=True, role=5
-        ).exists():
-            issues = issues.filter(created_by=self.request.user)
 
         return Response(
             issues.values(

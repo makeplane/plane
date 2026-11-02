@@ -26,6 +26,16 @@
           "highlight_changes": "Evidențiază modificările"
         }
       },
+      "version_history": {
+        "view_only": "Doar vizualizare",
+        "loading_details": "Se încarcă detaliile versiunii",
+        "load_error_description": "Versiunea nu a putut fi încărcată. Te rugăm să încerci din nou.",
+        "list_error_description": "Istoricul versiunilor nu a putut fi încărcat.",
+        "try_again": "Încearcă din nou",
+        "restoring": "Se restaurează",
+        "restore_success": "Versiunea paginii a fost restaurată.",
+        "restore_failed": "Restaurarea versiunii paginii a eșuat."
+      },
       "assets": {
         "label": "Resurse",
         "download_button": "Descarcă",

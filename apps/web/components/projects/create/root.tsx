@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
@@ -48,6 +48,8 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
   });
   const { handleSubmit, reset, setValue } = methods;
   const { isMobile } = usePlatformOS();
+  // ties the pinned action row (outside the form) to the form
+  const formId = useId();
   const handleAddToFavorites = (projectId: string) => {
     if (!workspaceSlug) return;
 
@@ -174,20 +176,24 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
 
   return (
     <FormProvider {...methods}>
-      <ProjectCreateHeader handleClose={handleClose} isMobile={isMobile} />
-
-      <form onSubmit={handleSubmit(onSubmit)} className="px-3">
-        <div className="mt-9 space-y-6 pb-5">
-          <ProjectCommonAttributes
-            setValue={setValue}
-            isMobile={isMobile}
-            shouldAutoSyncIdentifier={shouldAutoSyncIdentifier}
-            setShouldAutoSyncIdentifier={setShouldAutoSyncIdentifier}
-          />
-          <ProjectAttributes isMobile={isMobile} />
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 flex-col p-3">
+          <ProjectCreateHeader handleClose={handleClose} isMobile={isMobile} />
+          <form id={formId} onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col px-3">
+            {/* the fields scroll under the cover so the action row stays pinned */}
+            <div className="-mx-0.5 mt-8.5 min-h-0 flex-1 space-y-6 overflow-y-auto px-0.5 pt-0.5 pb-5">
+              <ProjectCommonAttributes
+                setValue={setValue}
+                isMobile={isMobile}
+                shouldAutoSyncIdentifier={shouldAutoSyncIdentifier}
+                setShouldAutoSyncIdentifier={setShouldAutoSyncIdentifier}
+              />
+              <ProjectAttributes isMobile={isMobile} />
+            </div>
+          </form>
         </div>
-        <ProjectCreateButtons handleClose={handleClose} />
-      </form>
+        <ProjectCreateButtons handleClose={handleClose} formId={formId} />
+      </div>
     </FormProvider>
   );
 });

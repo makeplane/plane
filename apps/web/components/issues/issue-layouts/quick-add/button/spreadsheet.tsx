@@ -21,7 +21,7 @@ export const SpreadsheetAddIssueButton = observer(function SpreadsheetAddIssueBu
         onClick={onClick}
       >
         <AddOutline className="h-3.5 w-3.5" />
-        <span className="text-13 font-medium">{isEpic ? t("epic.add.label") : t("issue.add.label")}</span>
+        <span className="text-body-xs-medium">{isEpic ? t("epic.add.label") : t("issue.add.label")}</span>
       </button>
     </div>
   );

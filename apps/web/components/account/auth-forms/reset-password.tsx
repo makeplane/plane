@@ -11,7 +11,7 @@ import { useSearchParams } from "next/navigation";
 import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // ui
 import { Banner } from "@makeplane/propel/components/banner";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
@@ -105,7 +105,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
       {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
         <Banner
           placement="inline"
-          variant="accent"
+          variant="info"
           role="alert"
           description={errorInfo.message}
           dismissLabel={t("close")}
@@ -118,77 +118,81 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
         action={`${API_BASE_URL}/auth/reset-password/${uidb64?.toString()}/${token?.toString()}/`}
       >
         <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
+        <InputField
+          size="xl"
+          orientation="vertical"
+          label={t("auth.common.email.label")}
+          id="email"
+          name="email"
+          type="email"
+          value={resetFormData.email}
+          placeholder={t("auth.common.email.placeholder")}
+          autoComplete="off"
+          disabled
+        />
         <div className="space-y-1">
-          <label className="text-13 font-medium text-tertiary" htmlFor="email">
-            {t("auth.common.email.label")}
-          </label>
-          <InputGroup size="2xl">
-            <Input
-              size="2xl"
-              id="email"
-              name="email"
-              type="email"
-              value={resetFormData.email}
-              placeholder={t("auth.common.email.placeholder")}
-              autoComplete="off"
-              disabled
-            />
-          </InputGroup>
+          <InputField
+            size="xl"
+            orientation="vertical"
+            label={t("auth.common.password.label")}
+            type={showPassword.password ? "text" : "password"}
+            name="password"
+            id="password"
+            aria-describedby="reset-password-support"
+            value={resetFormData.password}
+            onChange={(e) => handleFormChange("password", e.target.value)}
+            placeholder={t("auth.common.password.placeholder")}
+            minLength={8}
+            onFocus={() => setIsPasswordInputFocused(true)}
+            onBlur={() => setIsPasswordInputFocused(false)}
+            autoComplete="new-password"
+            autoFocus
+            endIcon={
+              <button
+                type="button"
+                onClick={() => handleShowPassword("password")}
+                className="grid size-5 shrink-0 place-items-center"
+                aria-label={t(
+                  showPassword.password
+                    ? "aria_labels.auth_forms.hide_password"
+                    : "aria_labels.auth_forms.show_password"
+                )}
+              >
+                {showPassword.password ? (
+                  <HideOutline className="size-5 text-placeholder" />
+                ) : (
+                  <ShowOutline className="size-5 text-placeholder" />
+                )}
+              </button>
+            }
+          />
+          <div id="reset-password-support">
+            <PasswordStrengthIndicator password={resetFormData.password} isFocused={isPasswordInputFocused} />
+          </div>
         </div>
-        <div className="space-y-1">
-          <label className="text-13 font-medium text-tertiary" htmlFor="password">
-            {t("auth.common.password.label")}
-          </label>
-          <InputGroup size="2xl">
-            <Input
-              size="2xl"
-              type={showPassword.password ? "text" : "password"}
-              name="password"
-              id="password"
-              value={resetFormData.password}
-              onChange={(e) => handleFormChange("password", e.target.value)}
-              placeholder={t("auth.common.password.placeholder")}
-              minLength={8}
-              onFocus={() => setIsPasswordInputFocused(true)}
-              onBlur={() => setIsPasswordInputFocused(false)}
-              autoComplete="new-password"
-              autoFocus
-            />
-            <button
-              type="button"
-              onClick={() => handleShowPassword("password")}
-              className="grid size-5 place-items-center"
-            >
-              {showPassword.password ? (
-                <HideOutline className="size-5 text-placeholder" />
-              ) : (
-                <ShowOutline className="size-5 text-placeholder" />
-              )}
-            </button>
-          </InputGroup>
-          <PasswordStrengthIndicator password={resetFormData.password} isFocused={isPasswordInputFocused} />
-        </div>
-        <div className="space-y-1">
-          <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
-            {t("auth.common.password.confirm_password.label")}
-          </label>
-          <InputGroup size="2xl">
-            <Input
-              size="2xl"
-              type={showPassword.retypePassword ? "text" : "password"}
-              name="confirm_password"
-              id="confirm_password"
-              value={resetFormData.confirm_password}
-              onChange={(e) => handleFormChange("confirm_password", e.target.value)}
-              placeholder={t("auth.common.password.confirm_password.placeholder")}
-              onFocus={() => setIsRetryPasswordInputFocused(true)}
-              onBlur={() => setIsRetryPasswordInputFocused(false)}
-              autoComplete="new-password"
-            />
+        <InputField
+          size="xl"
+          orientation="vertical"
+          label={t("auth.common.password.confirm_password.label")}
+          type={showPassword.retypePassword ? "text" : "password"}
+          name="confirm_password"
+          id="confirm_password"
+          value={resetFormData.confirm_password}
+          onChange={(e) => handleFormChange("confirm_password", e.target.value)}
+          placeholder={t("auth.common.password.confirm_password.placeholder")}
+          onFocus={() => setIsRetryPasswordInputFocused(true)}
+          onBlur={() => setIsRetryPasswordInputFocused(false)}
+          autoComplete="new-password"
+          endIcon={
             <button
               type="button"
               onClick={() => handleShowPassword("retypePassword")}
-              className="grid size-5 place-items-center"
+              className="grid size-5 shrink-0 place-items-center"
+              aria-label={t(
+                showPassword.retypePassword
+                  ? "aria_labels.auth_forms.hide_password"
+                  : "aria_labels.auth_forms.show_password"
+              )}
             >
               {showPassword.retypePassword ? (
                 <HideOutline className="size-5 text-placeholder" />
@@ -196,13 +200,13 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
                 <ShowOutline className="size-5 text-placeholder" />
               )}
             </button>
-          </InputGroup>
-          {!!resetFormData.confirm_password &&
-            resetFormData.password !== resetFormData.confirm_password &&
-            renderPasswordMatchError && (
-              <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
-            )}
-        </div>
+          }
+          error={
+            !!confirmPassword && password !== confirmPassword && renderPasswordMatchError
+              ? t("auth.common.password.errors.match")
+              : undefined
+          }
+        />
         <Button
           type="submit"
           variant="primary"

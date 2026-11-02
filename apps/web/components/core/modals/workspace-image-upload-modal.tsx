@@ -144,12 +144,9 @@ export const WorkspaceImageUploadModal = observer(function WorkspaceImageUploadM
                   >
                     {image !== null || (value && value !== "") ? (
                       <>
-                        <button
-                          type="button"
-                          className="absolute top-0 right-0 z-40 translate-x-1/2 -translate-y-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-11 font-medium text-secondary"
-                        >
-                          Edit
-                        </button>
+                        <div className="absolute top-2 right-2 z-40">
+                          <Button type="button" variant="secondary" size="xs" stretch="auto" label="Edit" />
+                        </div>
                         <img
                           src={image ? URL.createObjectURL(image) : value ? getFileURL(value) : ""}
                           alt="image"
@@ -159,7 +156,7 @@ export const WorkspaceImageUploadModal = observer(function WorkspaceImageUploadM
                     ) : (
                       <div>
                         <UserOutline className="mx-auto h-16 w-16 text-secondary" />
-                        <span className="mt-2 block text-13 font-medium text-secondary">
+                        <span className="mt-2 block text-body-xs-medium text-secondary">
                           {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
                         </span>
                       </div>
@@ -169,14 +166,14 @@ export const WorkspaceImageUploadModal = observer(function WorkspaceImageUploadM
                   </div>
                 </div>
                 {fileRejections.length > 0 && (
-                  <p className="text-13 text-danger-primary">
+                  <p className="text-body-xs-regular text-danger-primary">
                     {fileRejections[0].errors[0].code === "file-too-large"
                       ? "The image size cannot exceed 5 MB."
                       : "Please upload a file in a valid format."}
                   </p>
                 )}
               </div>
-              <p className="text-13 text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
+              <p className="text-body-xs-regular text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
             </div>
           </DialogBody>
         </DialogMain>

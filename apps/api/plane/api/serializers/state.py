@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Django imports
+from django.db import transaction
+
 # Module imports
 from .base import BaseSerializer
 from plane.db.models import State, StateGroup
@@ -17,13 +20,17 @@ class StateSerializer(BaseSerializer):
     """
 
     def validate(self, data):
-        # If the default is being provided then make all other states default False
-        if data.get("default", False):
-            State.objects.filter(project_id=self.context.get("project_id")).update(default=False)
-
         if data.get("group", None) == StateGroup.TRIAGE.value:
             raise serializers.ValidationError("Cannot create triage state")
         return data
+
+    def save(self, **kwargs):
+        # Clear the old default only once the new one is saved, so a failed save keeps it
+        with transaction.atomic():
+            state = super().save(**kwargs)
+            if self.validated_data.get("default"):
+                State.objects.filter(project_id=state.project_id).exclude(pk=state.pk).update(default=False)
+        return state
 
     class Meta:
         model = State

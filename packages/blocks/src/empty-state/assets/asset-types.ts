@@ -6,6 +6,9 @@
 
 // Horizontal Stack Asset Types
 export type HorizontalStackAssetType =
+  | "activity"
+  | "archive"
+  | "comment"
   | "customer"
   | "custom-properties"
   | "epic"
@@ -37,10 +40,12 @@ export type HorizontalStackAssetType =
   | "workflow"
   | "ai-skills"
   | "ai-agents"
-  | "memory";
+  | "memory"
+  | "widget";
 
 // Vertical Stack Asset Types
 export type VerticalStackAssetType =
+  | "archive"
   | "archived-cycle"
   | "archived-module"
   | "archived-work-item"

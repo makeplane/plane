@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Hoofdzijbalk",
+      "resize_sidebar": "Formaat zijbalk wijzigen",
+      "sidebar_peek_view": "Zijbalkvoorbeeld",
       "workspace_logo": "Logo van werkruimte",
       "open_workspace_switcher": "Werkruimtewisselaar openen",
       "open_user_menu": "Gebruikersmenu openen",
@@ -42,6 +45,9 @@
       "open": "Kleurkiezer openen",
       "swatches": "Vooraf ingestelde kleuren",
       "hex_input": "Hexkleur"
+    },
+    "project_board": {
+      "collapse_group": "Groep samenvouwen"
     }
   }
 }

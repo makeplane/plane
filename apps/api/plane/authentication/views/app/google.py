@@ -13,6 +13,7 @@ from django.views import View
 # Module imports
 from plane.authentication.provider.oauth.google import GoogleOAuthProvider
 from plane.authentication.utils.login import user_login
+from plane.authentication.utils.oauth_state import validate_oauth_state
 from plane.authentication.utils.redirection_path import get_redirection_path
 from plane.authentication.utils.user_auth_workflow import post_user_auth_workflow
 from plane.license.models import Instance
@@ -64,7 +65,7 @@ class GoogleCallbackEndpoint(View):
         state = request.GET.get("state")
         next_path = request.session.get("next_path")
 
-        if state != request.session.get("state", ""):
+        if not validate_oauth_state(request=request, state=state):
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GOOGLE_OAUTH_PROVIDER_ERROR"],
                 error_message="GOOGLE_OAUTH_PROVIDER_ERROR",

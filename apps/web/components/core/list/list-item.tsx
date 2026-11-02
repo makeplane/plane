@@ -32,6 +32,8 @@ interface IListItemProps {
   preventDefaultProgress?: boolean;
   leftElementClassName?: string;
   rightElementClassName?: string;
+  linkClassName?: string;
+  titleClassName?: string;
 }
 
 export function ListItem(props: IListItemProps) {
@@ -54,6 +56,8 @@ export function ListItem(props: IListItemProps) {
     preventDefaultProgress = false,
     leftElementClassName = "",
     rightElementClassName = "",
+    linkClassName = "",
+    titleClassName = "",
   } = props;
 
   // router
@@ -69,7 +73,7 @@ export function ListItem(props: IListItemProps) {
     <div ref={parentRef} className="relative">
       <Row
         className={cn(
-          "group flex min-h-[52px] w-full flex-col items-center justify-between gap-3 border-b border-subtle bg-layer-transparent py-4 text-13 hover:bg-layer-transparent-hover",
+          "group flex min-h-[52px] w-full flex-col items-center justify-between gap-3 border-b border-subtle bg-layer-transparent py-4 text-body-xs-regular hover:bg-layer-transparent-hover",
           { "xl:flex-row xl:gap-5 xl:py-0": isSidebarOpen, "lg:flex-row lg:gap-5 lg:py-0": !isSidebarOpen },
           className
         )}
@@ -77,7 +81,7 @@ export function ListItem(props: IListItemProps) {
         <div className={cn("relative flex w-full items-center justify-between gap-3 truncate", itemClassName)}>
           <ControlLink
             id={id}
-            className="relative flex w-full items-center gap-3 overflow-hidden"
+            className={cn("relative flex w-full items-center gap-3 overflow-hidden", linkClassName)}
             href={itemLink}
             target="_self"
             onClick={handleControlLinkClick}
@@ -87,7 +91,7 @@ export function ListItem(props: IListItemProps) {
             <div className={cn("flex items-center gap-4 truncate", leftElementClassName)}>
               {prependTitleElement && <span className="flex flex-shrink-0 items-center">{prependTitleElement}</span>}
               <Tooltip label={title} layout="stacked" disabled={isMobile}>
-                <span className="truncate text-13">{title}</span>
+                <span className={cn("truncate text-body-xs-medium", titleClassName)}>{title}</span>
               </Tooltip>
             </div>
             {appendTitleElement && (
@@ -99,7 +103,7 @@ export function ListItem(props: IListItemProps) {
         {actionableItems && (
           <div
             className={cn(
-              "relative flex w-full flex-shrink-0 flex-wrap items-center justify-start gap-4",
+              "relative flex w-full flex-shrink-0 flex-wrap items-center justify-start gap-2",
               {
                 "xl:w-auto xl:flex-shrink-0 xl:flex-nowrap": isSidebarOpen,
                 "lg:w-auto lg:flex-shrink-0 lg:flex-nowrap": !isSidebarOpen,

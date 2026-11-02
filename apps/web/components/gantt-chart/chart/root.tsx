@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // plane imports
@@ -81,6 +81,7 @@ export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRoo
   // states
   const [itemsContainerWidth, setItemsContainerWidth] = useState(0);
   const [fullScreenMode, setFullScreenMode] = useState(false);
+  const scrollLeftBeforeFullScreenToggle = useRef<number | null>(null);
   // hooks
   const {
     currentView,
@@ -140,11 +141,29 @@ export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRoo
 
   const handleToday = () => updateCurrentViewRenderPayload(null, currentView);
 
+  const toggleFullScreenMode = () => {
+    const scrollContainer = document.querySelector("#gantt-container") as HTMLDivElement | null;
+    scrollLeftBeforeFullScreenToggle.current = scrollContainer?.scrollLeft ?? null;
+
+    setFullScreenMode((prevData) => !prevData);
+  };
+
   // handling the scroll positioning from left and right
   useEffect(() => {
     handleToday();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useLayoutEffect(() => {
+    const scrollLeft = scrollLeftBeforeFullScreenToggle.current;
+    if (scrollLeft === null) return;
+
+    const scrollContainer = document.querySelector("#gantt-container") as HTMLDivElement | null;
+    if (!scrollContainer) return;
+
+    scrollContainer.scrollLeft = scrollLeft;
+    scrollLeftBeforeFullScreenToggle.current = null;
+  }, [fullScreenMode]);
 
   const updateItemsContainerWidth = (width: number) => {
     const scrollContainer = document.querySelector("#gantt-container") as HTMLDivElement;
@@ -188,7 +207,7 @@ export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRoo
       <GanttChartHeader
         blockIds={blockIds}
         fullScreenMode={fullScreenMode}
-        toggleFullScreenMode={() => setFullScreenMode((prevData) => !prevData)}
+        toggleFullScreenMode={toggleFullScreenMode}
         handleChartView={(key) => updateCurrentViewRenderPayload(null, key)}
         handleToday={handleToday}
         loaderTitle={loaderTitle}

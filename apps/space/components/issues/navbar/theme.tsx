@@ -8,33 +8,31 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { AppearanceOutline, MoonOutline } from "@makeplane/propel/icons";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 
 export const NavbarTheme = observer(function NavbarTheme() {
   // states
   const [appTheme, setAppTheme] = useState("light");
   // theme
-  const { setTheme, theme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
 
   const handleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
+    setTheme(appTheme === "light" ? "dark" : "light");
   };
 
   useEffect(() => {
-    if (!theme) return;
-    setAppTheme(theme);
-  }, [theme]);
+    if (!resolvedTheme) return;
+    setAppTheme(resolvedTheme);
+  }, [resolvedTheme]);
 
   return (
-    <button
-      type="button"
+    <IconButton
+      size="md"
+      variant="ghost"
+      aria-label={appTheme === "light" ? "Switch to dark theme" : "Switch to light theme"}
       onClick={handleTheme}
-      className="relative grid size-7 place-items-center rounded-sm bg-layer-transparent text-primary hover:bg-layer-transparent-hover"
-    >
-      {appTheme === "light" ? (
-        <MoonOutline className="size-3.5 shrink-0" />
-      ) : (
-        <AppearanceOutline className="size-3.5 shrink-0" />
-      )}
-    </button>
+      icon={<Icon icon={appTheme === "light" ? MoonOutline : AppearanceOutline} />}
+    />
   );
 });

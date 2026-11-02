@@ -10,7 +10,10 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 // icons
 import { InfoOutline, TickOutline } from "@makeplane/propel/icons";
 // ui
-import { CircularProgress } from "@makeplane/propel/components/circular-progress";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { useTranslation } from "@plane/i18n";
+import { ProgressRing } from "@plane/blocks/progress";
 // components
 import { generateQueryParams } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
@@ -27,6 +30,7 @@ type Props = {
 
 export const ModuleListItem = observer(function ModuleListItem(props: Props) {
   const { moduleId } = props;
+  const { t } = useTranslation();
   // refs
   const parentRef = useRef(null);
   // router
@@ -43,10 +47,10 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
 
   if (!moduleDetails) return null;
 
-  const completionPercentage =
-    ((moduleDetails.completed_issues + moduleDetails.cancelled_issues) / moduleDetails.total_issues) * 100;
-
-  const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
+  // Same rule as the module sidebar: cancelled work items are left out of the scope, not counted as done.
+  const progressScope = Math.max(moduleDetails.total_issues - moduleDetails.cancelled_issues, 0);
+  const progress =
+    progressScope > 0 ? Math.floor((Math.min(moduleDetails.completed_issues, progressScope) * 100) / progressScope) : 0;
 
   const completedModuleCheck = moduleDetails.status === "completed";
 
@@ -75,47 +79,41 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
       itemLink={`/${workspaceSlug?.toString()}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
       onItemClick={handleItemClick}
       prependTitleElement={
-        <div className="relative size-[30px]">
-          <div className="absolute inset-0 flex scale-150 items-center justify-center">
-            <CircularProgress
-              value={progress}
-              size="md"
-              variant={progress === 100 ? "success" : "brand"}
-              aria-label="Module progress"
-            />
-          </div>
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            {completedModuleCheck ? (
-              progress === 100 ? (
-                <TickOutline className="h-3 w-3 stroke-[2] text-accent-primary" />
-              ) : (
-                <span className="text-13 text-accent-primary">{`!`}</span>
-              )
-            ) : progress === 100 ? (
-              <TickOutline className="h-3 w-3 stroke-[2] text-accent-primary" />
+        <ProgressRing value={progress} size={30} strokeWidth={3} aria-label={t("common.progress")}>
+          {completedModuleCheck ? (
+            progress === 100 ? (
+              <TickOutline className="h-3 w-3 text-accent-primary" />
             ) : (
-              <span className="text-9 text-tertiary">{`${progress}%`}</span>
-            )}
-          </div>
-        </div>
-      }
-      appendTitleElement={
-        <button
-          onClick={openModuleOverview}
-          className={`z-[5] flex-shrink-0 ${isMobile ? "flex" : "hidden group-hover:flex"}`}
-        >
-          <InfoOutline className="h-4 w-4 text-placeholder" />
-        </button>
+              <span className="text-body-xs-regular text-accent-primary">{`!`}</span>
+            )
+          ) : progress === 100 ? (
+            <TickOutline className="h-3 w-3 text-accent-primary" />
+          ) : (
+            <span className="text-caption-2xs-regular text-tertiary">{`${progress}%`}</span>
+          )}
+        </ProgressRing>
       }
       actionableItems={<ModuleListItemAction moduleId={moduleId} moduleDetails={moduleDetails} parentRef={parentRef} />}
       quickActionElement={
-        <div className="block md:hidden">
-          <ModuleQuickActions
-            parentRef={parentRef}
-            moduleId={moduleId}
-            projectId={projectId.toString()}
-            workspaceSlug={workspaceSlug.toString()}
+        <div className="flex shrink-0 items-center gap-2 p-1">
+          <IconButton
+            type="button"
+            variant="ghost"
+            size="sm"
+            aria-label={t("info")}
+            showTooltip={!isMobile}
+            onClick={openModuleOverview}
+            icon={<Icon icon={InfoOutline} />}
           />
+          <div className="block md:hidden">
+            <ModuleQuickActions
+              parentRef={parentRef}
+              moduleId={moduleId}
+              projectId={projectId.toString()}
+              workspaceSlug={workspaceSlug.toString()}
+              size="sm"
+            />
+          </div>
         </div>
       }
       isMobile={isMobile}

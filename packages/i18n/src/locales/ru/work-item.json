@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Рабочий элемент} other {Рабочие элементы}}",
     "all": "Все рабочие элементы",
     "edit": "Редактировать рабочий элемент",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {ещё # свойство} few {ещё # свойства} many {ещё # свойств} other {ещё # свойства}}",
+      "label_overflow_indicator": "{count, plural, one {+# метка} few {+# метки} many {+# меток} other {+# метки}}"
+    },
     "title": {
       "label": "Название рабочего элемента",
       "required": "Название рабочего элемента обязательно."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "Посмотреть другие рабочие элементы"
         }
+      },
+      "no_access": {
+        "title": "У вас нет доступа к этому рабочему элементу",
+        "description": "Обратитесь к администратору проекта, чтобы запросить доступ."
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "Ошибка восстановления рабочего элемента. Попробуйте позже."
       }
     },
+    "archived_banner": "Этот рабочий элемент архивирован. Восстановите его, чтобы внести изменения.",
+    "updated_time_ago": "Обновлено {time}",
+    "description_load_failed": "Не удалось загрузить описание.",
+    "assignee_count": "{count, plural, one {# назначенный} few {# назначенных} many {# назначенных} other {# назначенного}}",
     "relation": {
       "relates_to": "Связан с",
       "duplicate": "Дубликат",
@@ -267,7 +279,12 @@
       "click_to_upvote": "Нажмите, чтобы проголосовать за",
       "click_to_downvote": "Нажмите, чтобы проголосовать против",
       "click_to_view_upvotes": "Нажмите, чтобы посмотреть голоса за",
-      "click_to_view_downvotes": "Нажмите, чтобы посмотреть голоса против"
+      "click_to_view_downvotes": "Нажмите, чтобы посмотреть голоса против",
+      "title": "Голоса",
+      "upvotes_count": "{count, plural, one {# голос за} few {# голоса за} many {# голосов за} other {# голоса за}}",
+      "downvotes_count": "{count, plural, one {# голос против} few {# голоса против} many {# голосов против} other {# голоса против}}",
+      "no_upvotes": "Пока нет голосов за",
+      "no_downvotes": "Пока нет голосов против"
     }
   },
   "sub_work_item": {

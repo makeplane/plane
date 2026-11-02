@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Selectează pentru a vedea detalii."
+        "title": "Nicio notificare selectată",
+        "description": "Selectează o notificare pentru a vedea detaliile."
       },
       "all": {
         "title": "Nicio activitate atribuită",
@@ -52,7 +53,15 @@
       "5_days": "5 zile",
       "1_week": "1 săptămână",
       "2_weeks": "2 săptămâni",
-      "custom": "Personalizat"
+      "custom": "Personalizat",
+      "modal": {
+        "title": "Personalizați ora amânării",
+        "pick_a_date": "Alegeți o dată",
+        "pick_a_time": "Alegeți o oră",
+        "select_date": "Selectați data",
+        "select_time": "Selectați ora",
+        "no_available_time": "Nicio oră disponibilă pentru această dată"
+      }
     }
   }
 }

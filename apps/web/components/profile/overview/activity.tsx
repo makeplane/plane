@@ -44,8 +44,8 @@ export const ProfileActivity = observer(function ProfileActivity() {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-16 font-medium">{t("profile.stats.recent_activity.title")}</h3>
-      <Card>
+      <h3 className="text-h6-medium">{t("profile.stats.recent_activity.title")}</h3>
+      <Card className="rounded-xl border border-subtle-1 bg-layer-2">
         {!userProfileActivity ? (
           <Loader className="space-y-5">
             <Loader.Item height="40px" />
@@ -64,8 +64,8 @@ export const ProfileActivity = observer(function ProfileActivity() {
                   src={getFileURL(activity.actor_detail?.avatar_url)}
                   size="sm"
                 />
-                <div className="-mt-1 w-4/5 break-words">
-                  <p className="inline text-13 text-secondary">
+                <div className="flex min-h-6 min-w-0 flex-1 items-center break-words">
+                  <p className="text-body-xs-regular text-secondary">
                     <span className="font-medium text-primary">
                       {currentUser?.id === activity.actor_detail?.id ? "You" : activity.actor_detail?.display_name}{" "}
                     </span>
@@ -75,15 +75,21 @@ export const ProfileActivity = observer(function ProfileActivity() {
                       <span>
                         created <IssueLink activity={activity} />
                       </span>
-                    )}
+                    )}{" "}
+                    <span className="text-caption-sm-regular whitespace-nowrap text-secondary">
+                      {calculateTimeAgo(activity.created_at)}
+                    </span>
                   </p>
-                  <p className="text-11 whitespace-nowrap text-secondary">{calculateTimeAgo(activity.created_at)}</p>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <EmptyStateCompact title={t("no_data_yet")} assetKey="unknown" assetClassName="size-20" />
+          <EmptyStateCompact
+            title={t("activity_empty_state.no_activity")}
+            assetKey="activity"
+            assetClassName="size-20"
+          />
         )}
       </Card>
     </div>

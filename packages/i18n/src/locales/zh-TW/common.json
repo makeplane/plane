@@ -6,6 +6,7 @@
     "status_page": "狀態頁面"
   },
   "submit": "送出",
+  "submitting": "送出中",
   "cancel": "取消",
   "loading": "載入中",
   "searching": "搜尋中…",
@@ -153,6 +154,7 @@
   "no_favorites_yet": "尚無我的最愛",
   "create_folder": "建立資料夾",
   "new_folder": "新資料夾",
+  "rename_folder": "重新命名資料夾",
   "favorite_updated_successfully": "我的最愛更新成功",
   "favorite_created_successfully": "我的最愛建立成功",
   "folder_already_exists": "資料夾已存在",
@@ -368,6 +370,7 @@
   "member": "{count, plural, one{# 位成員} other{# 位成員}}",
   "new_password_must_be_different_from_old_password": "新密碼必須與舊密碼不同",
   "edited": "已編輯",
+  "entity_detail_toolbar": "操作",
   "bot": "機器人",
   "settings_description": "在一個地方管理您的帳號、工作區和專案偏好設定。在各個分頁間切換以輕鬆設定。",
   "back_to_workspace": "返回工作區",
@@ -540,6 +543,7 @@
     "link_copied": "連結已複製！",
     "link_copied_to_clipboard": "連結已複製到剪貼簿",
     "copied_to_clipboard": "工作事項連結已複製到剪貼簿",
+    "clipboard_copy_failed": "無法複製到剪貼簿",
     "branch_name_copied_to_clipboard": "分支名稱已複製到剪貼簿",
     "is_copied_to_clipboard": "工作事項已複製到剪貼簿",
     "no_links_added_yet": "尚未新增連結",
@@ -723,7 +727,14 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "status": "狀態",
+    "tooltip": {
+      "copy_to_clipboard": "複製到剪貼簿",
+      "created_on_date": "建立於 {date}",
+      "priority": "優先順序：{value}"
+    },
+    "locked": "已鎖定"
   },
   "chart": {
     "x_axis": "X 軸",
@@ -874,5 +885,13 @@
       "short_description": "匯出為 JSON"
     }
   },
-  "labels_count": "{count, plural, one {# 個標籤} other {# 個標籤}}"
+  "labels_count": "{count, plural, one {# 個標籤} other {# 個標籤}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "檢視儲存選項",
+      "update_view": "更新檢視",
+      "save_as": "另存為",
+      "hide_filters": "隱藏篩選器"
+    }
+  }
 }

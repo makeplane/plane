@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Activitate} other {Activități}}",
     "all": "Toate activitățile",
     "edit": "Editează activitatea",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {încă # proprietate} few {încă # proprietăți} other {încă # de proprietăți}}",
+      "label_overflow_indicator": "{count, plural, one {+# etichetă} few {+# etichete} other {+# de etichete}}"
+    },
     "title": {
       "label": "Titlul activității",
       "required": "Titlul activității este obligatoriu."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "Vezi alte activități"
         }
+      },
+      "no_access": {
+        "title": "Nu ai acces la această activitate",
+        "description": "Contactează un administrator al proiectului pentru a solicita acces."
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "Activitatea nu a putut fi restaurată. Te rugăm să încerci din nou."
       }
     },
+    "archived_banner": "Această activitate este arhivată. Restaurați-o pentru a face modificări.",
+    "updated_time_ago": "Actualizat {time}",
+    "description_load_failed": "Descrierea nu a putut fi încărcată.",
+    "assignee_count": "{count, plural, one {# responsabil} few {# responsabili} other {# de responsabili}}",
     "relation": {
       "relates_to": "Este legată de",
       "duplicate": "Duplicată a",
@@ -267,7 +279,12 @@
       "click_to_upvote": "Clic pentru a vota pozitiv",
       "click_to_downvote": "Clic pentru a vota negativ",
       "click_to_view_upvotes": "Clic pentru a vedea voturile pozitive",
-      "click_to_view_downvotes": "Clic pentru a vedea voturile negative"
+      "click_to_view_downvotes": "Clic pentru a vedea voturile negative",
+      "title": "Voturi",
+      "upvotes_count": "{count, plural, one {# vot pozitiv} few {# voturi pozitive} other {# de voturi pozitive}}",
+      "downvotes_count": "{count, plural, one {# vot negativ} few {# voturi negative} other {# de voturi negative}}",
+      "no_upvotes": "Încă nu există voturi pozitive",
+      "no_downvotes": "Încă nu există voturi negative"
     }
   },
   "sub_work_item": {

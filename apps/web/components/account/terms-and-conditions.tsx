@@ -27,7 +27,7 @@ const MESSAGES = {
 function LegalLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <Link href={href} className="text-secondary" target="_blank" rel="noopener noreferrer">
-      <span className="text-13 font-medium underline hover:cursor-pointer">{children}</span>
+      <span className="text-body-xs-medium underline hover:cursor-pointer">{children}</span>
     </Link>
   );
 }
@@ -35,7 +35,7 @@ function LegalLink({ href, children }: { href: string; children: React.ReactNode
 export function TermsAndConditions({ authType = EAuthModes.SIGN_IN }: TermsAndConditionsProps) {
   return (
     <div className="flex items-center justify-center">
-      <p className="text-center text-13 whitespace-pre-line text-tertiary">
+      <p className="text-center text-body-xs-regular whitespace-pre-line text-tertiary">
         {`${MESSAGES[authType]}, you understand and agree to \n our `}
         <LegalLink href={LEGAL_LINKS.termsOfService}>Terms of Service</LegalLink> and{" "}
         <LegalLink href={LEGAL_LINKS.privacyPolicy}>Privacy Policy</LegalLink>.

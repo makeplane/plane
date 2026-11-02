@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Seleziona per visualizzare i dettagli."
+        "title": "Nessuna notifica selezionata",
+        "description": "Seleziona una notifica per visualizzarne i dettagli."
       },
       "all": {
         "title": "Nessun elemento di lavoro assegnato",
@@ -52,7 +53,15 @@
       "5_days": "5 giorni",
       "1_week": "1 settimana",
       "2_weeks": "2 settimane",
-      "custom": "Personalizzato"
+      "custom": "Personalizzato",
+      "modal": {
+        "title": "Personalizza l'orario di posticipo",
+        "pick_a_date": "Scegli una data",
+        "pick_a_time": "Scegli un orario",
+        "select_date": "Seleziona data",
+        "select_time": "Seleziona orario",
+        "no_available_time": "Nessun orario disponibile per questa data"
+      }
     }
   }
 }

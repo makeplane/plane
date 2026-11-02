@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Main sidebar",
+      "resize_sidebar": "Resize sidebar",
+      "sidebar_peek_view": "Sidebar peek view",
       "workspace_logo": "Workspace logo",
       "open_workspace_switcher": "Open workspace switcher",
       "open_user_menu": "Open user menu",
@@ -42,6 +45,9 @@
       "open": "Open color picker",
       "swatches": "Preset colors",
       "hex_input": "Hex color"
+    },
+    "project_board": {
+      "collapse_group": "Collapse group"
     }
   }
 }

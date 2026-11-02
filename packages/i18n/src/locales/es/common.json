@@ -6,6 +6,7 @@
     "status_page": "página de estado"
   },
   "submit": "Enviar",
+  "submitting": "Enviando",
   "cancel": "Cancelar",
   "loading": "Cargando",
   "searching": "Buscando...",
@@ -153,6 +154,7 @@
   "no_favorites_yet": "Aún no hay favoritos",
   "create_folder": "Crear carpeta",
   "new_folder": "Nueva carpeta",
+  "rename_folder": "Renombrar carpeta",
   "favorite_updated_successfully": "Favorito actualizado exitosamente",
   "favorite_created_successfully": "Favorito creado exitosamente",
   "folder_already_exists": "La carpeta ya existe",
@@ -368,6 +370,7 @@
   "member": "{count, plural, one{# miembro} other{# miembros}}",
   "new_password_must_be_different_from_old_password": "La nueva contraseña debe ser diferente a la contraseña anterior",
   "edited": "Modificado",
+  "entity_detail_toolbar": "Acciones",
   "bot": "Bot",
   "settings_description": "Administra las preferencias de tu cuenta, espacio de trabajo y proyecto en un solo lugar. Cambia entre pestañas para configurar fácilmente.",
   "back_to_workspace": "Volver al espacio de trabajo",
@@ -540,6 +543,7 @@
     "link_copied": "¡Enlace copiado!",
     "link_copied_to_clipboard": "Enlace copiado al portapapeles",
     "copied_to_clipboard": "Enlace del elemento de trabajo copiado al portapapeles",
+    "clipboard_copy_failed": "No se pudo copiar al portapapeles",
     "branch_name_copied_to_clipboard": "Nombre de rama copiado al portapapeles",
     "is_copied_to_clipboard": "El elemento de trabajo está copiado al portapapeles",
     "no_links_added_yet": "Aún no se han agregado enlaces",
@@ -723,7 +727,14 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "status": "Estado",
+    "tooltip": {
+      "copy_to_clipboard": "Copiar al portapapeles",
+      "created_on_date": "Creado el {date}",
+      "priority": "Prioridad: {value}"
+    },
+    "locked": "Bloqueado"
   },
   "chart": {
     "x_axis": "Eje X",
@@ -874,5 +885,13 @@
       "short_description": "Exportar como json"
     }
   },
-  "labels_count": "{count, plural, one {# etiqueta} other {# etiquetas}}"
+  "labels_count": "{count, plural, one {# etiqueta} other {# etiquetas}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Opciones para guardar la vista",
+      "update_view": "Actualizar vista",
+      "save_as": "Guardar como",
+      "hide_filters": "Ocultar filtros"
+    }
+  }
 }

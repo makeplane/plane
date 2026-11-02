@@ -7,7 +7,14 @@ from django.test import RequestFactory
 from rest_framework.exceptions import ParseError
 from rest_framework.request import Request
 
-from plane.utils.paginator import BasePaginator, Cursor, CursorResult
+from plane.db.models import Issue, Project, State
+from plane.utils.paginator import (
+    BasePaginator,
+    Cursor,
+    CursorResult,
+    GroupedOffsetPaginator,
+    SubGroupedOffsetPaginator,
+)
 
 
 class _StubGroupedPaginator:
@@ -121,3 +128,115 @@ class TestPaginateGroupByValidation:
             paginator_cls=_StubGroupedPaginator,
         )
         assert response.data["grouped_by"] is None
+
+
+class _ExplodingPaginator:
+    """Fails if constructed: the cursor check runs before any paginator is built."""
+
+    def __init__(self, **kwargs):
+        raise AssertionError("paginator_cls must not be constructed for an invalid cursor")
+
+
+@pytest.mark.unit
+class TestCursorBounds:
+    """paginate() accepts a cursor value in [0, max_per_page] and a non-negative offset."""
+
+    @pytest.mark.parametrize("cursor", ["-1:0:0", "1001:0:0", "20:-1:0"])
+    def test_out_of_bounds_cursor_rejected_before_paginator(self, cursor):
+        request = _make_request(cursor=cursor)
+        with pytest.raises(ParseError):
+            BasePaginator().paginate(
+                request=request,
+                queryset=None,
+                paginator_cls=_ExplodingPaginator,
+                default_per_page=20,
+                max_per_page=1000,
+            )
+
+    def test_valid_cursor_passes_the_guard(self):
+        request = _make_request(cursor="20:0:0")
+        response = BasePaginator().paginate(
+            request=request,
+            queryset=None,
+            paginator_cls=_StubGroupedPaginator,
+            default_per_page=20,
+            max_per_page=1000,
+        )
+        assert response.data["results"] == []
+
+    def test_cursor_value_at_max_is_allowed(self):
+        request = _make_request(cursor="1000:0:0")
+        response = BasePaginator().paginate(
+            request=request,
+            queryset=None,
+            paginator_cls=_StubGroupedPaginator,
+            default_per_page=20,
+            max_per_page=1000,
+        )
+        assert response.data["results"] == []
+
+
+@pytest.mark.unit
+class TestGetPerPageNonPositiveRejected:
+    """per_page must be a positive integer."""
+
+    @pytest.mark.parametrize("per_page", [-1, -50, -1000, 0])
+    def test_non_positive_per_page_rejected_by_get_per_page(self, per_page):
+        request = _make_request(per_page=str(per_page))
+        with pytest.raises(ParseError):
+            BasePaginator().get_per_page(request, default_per_page=20, max_per_page=1000)
+
+    @pytest.mark.parametrize("per_page", ["-1", "0"])
+    def test_non_positive_per_page_rejected_before_paginator_runs(self, per_page):
+        request = _make_request(per_page=per_page)
+        with pytest.raises(ParseError):
+            BasePaginator().paginate(
+                request=request,
+                queryset=None,
+                paginator_cls=_ExplodingPaginator,
+                default_per_page=20,
+                max_per_page=1000,
+            )
+
+
+@pytest.mark.unit
+@pytest.mark.django_db
+class TestGroupedPageSize:
+    """Grouped paginators size each group's page by per_page, whatever the cursor value."""
+
+    @pytest.fixture
+    def issues(self, workspace):
+        project = Project.objects.create(name="Paginate", identifier="PAGE", workspace=workspace)
+        state = State.objects.create(name="Todo", project=project, workspace=workspace)
+        for i in range(3):
+            for priority in ("high", "low"):
+                Issue.objects.create(
+                    name=f"{priority}-{i}", priority=priority, state=state, project=project, workspace=workspace
+                )
+        return Issue.issue_objects.filter(project=project)
+
+    @pytest.mark.parametrize(
+        "paginator_cls,extra",
+        [
+            (GroupedOffsetPaginator, {}),
+            (SubGroupedOffsetPaginator, {"sub_group_by_field_name": "state_id", "sub_group_by_fields": []}),
+        ],
+    )
+    def test_cursor_value_does_not_change_page_size(self, issues, paginator_cls, extra):
+        paginator = paginator_cls(
+            queryset=issues,
+            order_by="-created_at",
+            group_by_field_name="priority",
+            group_by_fields=["high", "low"],
+            count_filter=None,
+            **extra,
+        )
+        seen = []
+        for page in range(3):
+            result = paginator.get_result(limit=1, cursor=Cursor(1000, page, False))
+            rows = list(result.results.values("id", "priority"))
+            assert sorted(r["priority"] for r in rows) == ["high", "low"]
+            assert str(result.next) == f"1:{page + 1}:0"
+            seen += [r["id"] for r in rows]
+        assert len(set(seen)) == 6
+        assert not result.next.has_results

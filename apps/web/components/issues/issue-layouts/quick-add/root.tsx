@@ -163,7 +163,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
               onClick={() => handleIsOpen(true)}
             >
               <AddOutline className="h-3.5 w-3.5" />
-              <span className="text-13 font-medium">{t(`${isEpic ? "epic.new" : "issue.new"}`)}</span>
+              <span className="text-body-xs-medium">{t(`${isEpic ? "epic.new" : "issue.new"}`)}</span>
             </button>
           )}
         </>

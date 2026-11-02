@@ -3,6 +3,10 @@
     "label": "{count, plural, one {სამუშაო ელემენტი} other {სამუშაო ელემენტები}}",
     "all": "ყველა სამუშაო ელემენტი",
     "edit": "სამუშაო ელემენტის რედაქტირება",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {კიდევ # თვისება} other {კიდევ # თვისება}}",
+      "label_overflow_indicator": "{count, plural, one {+# იარლიყი} other {+# იარლიყი}}"
+    },
     "title": {
       "label": "სამუშაო ელემენტის სათაური",
       "required": "სამუშაო ელემენტის სათაური სავალდებულოა."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "ნახეთ სხვა სამუშაო ელემენტები"
         }
+      },
+      "no_access": {
+        "title": "თქვენ არ გაქვთ წვდომა ამ სამუშაო ელემენტზე",
+        "description": "წვდომის მოსათხოვნად დაუკავშირდით პროექტის ადმინისტრატორს."
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "სამუშაო ელემენტის აღდგენა ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა."
       }
     },
+    "archived_banner": "ეს სამუშაო ელემენტი დაარქივებულია. ცვლილებების შესატანად აღადგინეთ იგი.",
+    "updated_time_ago": "განახლდა {time}",
+    "description_load_failed": "აღწერის ჩატვირთვა ვერ მოხერხდა.",
+    "assignee_count": "{count, plural, one {# მინიჭებული} other {# მინიჭებული}}",
     "relation": {
       "relates_to": "დაკავშირებულია",
       "duplicate": "დუბლიკატია",
@@ -267,7 +279,12 @@
       "click_to_upvote": "Click to upvote",
       "click_to_downvote": "Click to downvote",
       "click_to_view_upvotes": "Click to view upvotes",
-      "click_to_view_downvotes": "Click to view downvotes"
+      "click_to_view_downvotes": "Click to view downvotes",
+      "title": "ხმები",
+      "upvotes_count": "{count, plural, one {# დადებითი ხმა} other {# დადებითი ხმა}}",
+      "downvotes_count": "{count, plural, one {# უარყოფითი ხმა} other {# უარყოფითი ხმა}}",
+      "no_upvotes": "დადებითი ხმები ჯერ არ არის",
+      "no_downvotes": "უარყოფითი ხმები ჯერ არ არის"
     }
   },
   "sub_work_item": {

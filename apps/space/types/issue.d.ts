@@ -59,7 +59,7 @@ export interface IIssue extends Pick<
 > {
   comments: TIssuePublicComment[];
   reaction_items: IIssueReaction[];
-  vote_items: IVote[];
+  vote_items: IVote[] | null;
 }
 
 export type IPeekMode = "side" | "modal" | "full";

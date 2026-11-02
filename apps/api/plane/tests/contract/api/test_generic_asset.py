@@ -18,6 +18,7 @@ import pytest
 from rest_framework import status
 
 from plane.db.models import FileAsset, User, Workspace, WorkspaceMember
+from plane.settings.storage import S3Storage
 
 
 @pytest.fixture
@@ -141,3 +142,42 @@ class TestGenericAssetCrossWorkspaceIDOR:
         assert response.status_code == status.HTTP_204_NO_CONTENT, f"Got {response.status_code}: {response.data!r}"
         asset.refresh_from_db()
         assert asset.is_uploaded is True
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "claimed_type, expected_disposition, expected_type",
+    [
+        ("image/png", "inline", "image/png"),
+        ("image/svg+xml", "attachment", None),
+    ],
+)
+def test_get_asset_disposition_follows_allow_list(
+    api_key_client, workspace, create_user, claimed_type, expected_disposition, expected_type
+):
+    """GET serves inline only for an allow-listed image type and pins that type."""
+    asset = FileAsset.objects.create(
+        attributes={"name": "a.png", "type": claimed_type, "size": 10},
+        asset=f"{workspace.id}/a.png",
+        size=10,
+        workspace=workspace,
+        created_by=create_user,
+        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+        is_uploaded=True,
+    )
+
+    # Only the storage constructor is replaced; generate_presigned_url runs for real.
+    with (
+        mock.patch("plane.settings.storage.boto3") as mock_boto3,
+        mock.patch("plane.api.views.asset.S3Storage") as mock_storage,
+    ):
+        mock_storage.return_value = S3Storage()
+        s3_client = mock_boto3.client.return_value
+        s3_client.generate_presigned_url.return_value = "https://signed.example/download"
+        response = api_key_client.get(f"/api/v1/workspaces/{workspace.slug}/assets/{asset.id}/")
+
+    assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+    params = s3_client.generate_presigned_url.call_args.kwargs["Params"]
+    assert params["ResponseContentDisposition"].split(";")[0] == expected_disposition
+    assert params.get("ResponseContentType") == expected_type

@@ -40,21 +40,21 @@ class ApiTokenEndpoint(BaseAPIView):
 
     def get(self, request: Request, pk: Optional[str] = None) -> Response:
         if pk is None:
-            api_tokens = APIToken.objects.filter(user=request.user, is_service=False)
+            api_tokens = APIToken.objects.filter(user=request.user)
             serializer = APITokenReadSerializer(api_tokens, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            api_tokens = APIToken.objects.get(user=request.user, pk=pk, is_service=False)
+            api_tokens = APIToken.objects.get(user=request.user, pk=pk)
             serializer = APITokenReadSerializer(api_tokens)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request: Request, pk: str) -> Response:
-        api_token = APIToken.objects.get(user=request.user, pk=pk, is_service=False)
+        api_token = APIToken.objects.get(user=request.user, pk=pk)
         api_token.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request: Request, pk: str) -> Response:
-        api_token = APIToken.objects.get(user=request.user, pk=pk, is_service=False)
+        api_token = APIToken.objects.get(user=request.user, pk=pk)
         serializer = APITokenSerializer(api_token, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

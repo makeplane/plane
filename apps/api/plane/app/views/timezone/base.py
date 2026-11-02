@@ -16,14 +16,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
-# Module imports
-from plane.authentication.rate_limit import AuthenticationThrottle
-
 
 class TimezoneEndpoint(APIView):
     permission_classes = [AllowAny]
-
-    throttle_classes = [AuthenticationThrottle]
 
     @method_decorator(cache_page(60 * 60 * 2))
     def get(self, request):

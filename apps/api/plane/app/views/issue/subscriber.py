@@ -5,12 +5,13 @@
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import IssueSubscriberSerializer, ProjectMemberLiteSerializer
 from plane.app.permissions import ProjectEntityPermission, ProjectLitePermission
-from plane.db.models import IssueSubscriber, ProjectMember
+from plane.db.models import Issue, IssueSubscriber, ProjectMember
 
 
 class IssueSubscriberViewSet(BaseViewSet):
@@ -28,6 +29,20 @@ class IssueSubscriberViewSet(BaseViewSet):
         return super(IssueSubscriberViewSet, self).get_permissions()
 
     def perform_create(self, serializer):
+        # The URL issue must belong to the URL workspace + project (404 otherwise).
+        Issue.objects.get(
+            pk=self.kwargs.get("issue_id"),
+            workspace__slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
+        )
+        # The subscriber must be an active member of the URL project.
+        if not ProjectMember.objects.filter(
+            workspace__slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
+            member=serializer.validated_data["subscriber"],
+            is_active=True,
+        ).exists():
+            raise ValidationError({"error": "Subscriber must be a member of the project."})
         serializer.save(
             project_id=self.kwargs.get("project_id"),
             issue_id=self.kwargs.get("issue_id"),
@@ -67,6 +82,7 @@ class IssueSubscriberViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def subscribe(self, request, slug, project_id, issue_id):
+        Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
         if IssueSubscriber.objects.filter(
             issue_id=issue_id,
             subscriber=request.user,

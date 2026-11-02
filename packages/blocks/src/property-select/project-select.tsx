@@ -85,8 +85,7 @@ function triggerLabel(selected: ProjectOption[], showCountOnMultiple: boolean, p
 }
 
 /**
- * Render logos inside trigger *children*, not `prependIcon`.
- * `PillButtonContent` cloneElement-overwrites prepend className → kills flex → logos stack vertical.
+ * Keep the multi-project logo stack beside the trigger label as one flex item.
  */
 function TriggerLogos({ selected }: { selected: ProjectOption[] }) {
   if (selected.length === 0) return <ProjectsOutline className="size-3.5 shrink-0" />;

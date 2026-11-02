@@ -107,7 +107,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
               </DialogHeading>
             </DialogHeader>
             <DialogBody tabIndex={0}>
-              <div className="space-y-3">
+              <div className="flex flex-col gap-4">
                 <Controller
                   control={control}
                   name="url"
@@ -118,7 +118,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
                     <InputField
                       id="url"
                       type="text"
-                      size="xl"
+                      size="lg"
                       orientation="vertical"
                       label="URL"
                       value={value}
@@ -136,7 +136,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
                     <InputField
                       id="title"
                       type="text"
-                      size="xl"
+                      size="lg"
                       orientation="vertical"
                       label="Display title"
                       description="Optional"

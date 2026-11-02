@@ -20,7 +20,9 @@ export type EmojiReactionPickerProps = {
   closeOnSelect?: boolean;
   disabled?: boolean;
   dropdownClassName?: string;
-  label: React.ReactNode;
+  label?: React.ReactNode;
+  /** Attach the popover to an existing button rather than wrapping it in another button. */
+  render?: React.ReactElement;
   onChange: (emoji: string) => void;
   placement?: Placement;
   searchDisabled?: boolean;
@@ -38,6 +40,7 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
     disabled = false,
     dropdownClassName,
     label,
+    render,
     onChange,
     placement = "bottom-start",
     searchDisabled = false,
@@ -84,7 +87,7 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger
         disabled={disabled}
-        render={<button type="button" className={cn("outline-none", buttonClassName)} disabled={disabled} />}
+        render={render ?? <button type="button" className={cn("outline-none", buttonClassName)} disabled={disabled} />}
       >
         {label}
       </PopoverTrigger>
