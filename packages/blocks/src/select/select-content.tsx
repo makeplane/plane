@@ -46,8 +46,14 @@ export function SelectContent(props: SelectContentProps) {
       {prependIcon && <Icon icon={prependIcon} size={size} />}
       {children}
       {appendIcon && (
+        // A flex box, not an inline span: an inline wrapper sets the glyph on the text baseline and
+        // leaves the descender gap under it, lifting the chevron above the trigger's centre. `ms-auto`
+        // keeps it at the far end of a trigger wider than its value.
         <span
-          className={cn(isGhost && "invisible group-hover:visible group-focus-visible:visible group-active:visible")}
+          className={cn(
+            "ms-auto flex shrink-0 items-center",
+            isGhost && "invisible group-hover:visible group-focus-visible:visible group-active:visible"
+          )}
         >
           <Icon icon={appendIcon} size={size} />
         </span>

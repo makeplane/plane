@@ -647,6 +647,15 @@ describe("Select on Propel combobox", () => {
     expect(trigger().querySelectorAll("svg").length).toBeGreaterThan(0);
   });
 
+  it("sets the chevron in a flex box at the trigger's far end", () => {
+    renderSelect();
+    const slot = trigger().querySelector("svg")?.closest("span[aria-hidden]")?.parentElement;
+    // An inline wrapper would sit the glyph on the text baseline, above the trigger's centre.
+    expect(slot?.className).toContain("flex");
+    expect(slot?.className).toContain("items-center");
+    expect(slot?.className).toContain("ms-auto");
+  });
+
   it("opens on mount with defaultOpen", async () => {
     renderSelect({ defaultOpen: true });
     expect(await popup().findByRole("combobox", { name: /search options/i })).toBeDefined();
