@@ -62,18 +62,32 @@ export const ChartDraggable = observer(function ChartDraggable(props: Props) {
       {(typeof enableDependency === "function" ? enableDependency(block.id) : enableDependency) &&
         canEditDependencies &&
         showDependencies && (
-          <button
-            type="button"
-            aria-label="Kéo để nối phụ thuộc"
-            className="absolute top-1/2 -right-3 z-[7] h-2.5 w-2.5 -translate-y-1/2 cursor-crosshair rounded-full border border-strong bg-layer-1 opacity-0 group-hover:opacity-100 focus:opacity-100"
-            onClick={(e) => e.stopPropagation()}
-            onMouseDown={(e) => {
-              if (e.button !== 0) return;
-              e.stopPropagation();
-              e.preventDefault();
-              startDependencyDraft(block.id);
-            }}
-          />
+          <>
+            <button
+              type="button"
+              aria-label="Kéo để nối phụ thuộc (việc này làm sau)"
+              className="absolute top-1/2 -left-3 z-[7] h-2.5 w-2.5 -translate-y-1/2 cursor-crosshair rounded-full border border-strong bg-layer-1 opacity-0 group-hover:opacity-100 focus:opacity-100"
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => {
+                if (e.button !== 0) return;
+                e.stopPropagation();
+                e.preventDefault();
+                startDependencyDraft(block.id, "left");
+              }}
+            />
+            <button
+              type="button"
+              aria-label="Kéo để nối phụ thuộc (việc này làm trước)"
+              className="absolute top-1/2 -right-3 z-[7] h-2.5 w-2.5 -translate-y-1/2 cursor-crosshair rounded-full border border-strong bg-layer-1 opacity-0 group-hover:opacity-100 focus:opacity-100"
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => {
+                if (e.button !== 0) return;
+                e.stopPropagation();
+                e.preventDefault();
+                startDependencyDraft(block.id, "right");
+              }}
+            />
+          </>
         )}
       {/* right resize drag handle */}
       <RightResizable

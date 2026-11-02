@@ -41,16 +41,16 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
 
   return (
     <Row
-      className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 bg-surface-1 py-2 whitespace-nowrap"
+      className="relative flex w-full flex-shrink-0 flex-nowrap items-center gap-2 overflow-x-auto bg-surface-1 py-2 whitespace-nowrap"
       style={{ height: `${GANTT_BREADCRUMBS_HEIGHT}px` }}
     >
-      <div className="ml-auto">
+      <div className="ml-auto flex-shrink-0">
         <div className="ml-auto text-11 font-medium text-tertiary">
           {blockIds ? `${blockIds.length} ${loaderTitle}` : t("common.loading")}
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-shrink-0 items-center gap-2">
         {VIEWS_LIST.map((chartView: any) => (
           <div
             key={chartView?.key}
@@ -70,7 +70,7 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
       {showToday && (
         <button
           type="button"
-          className="rounded-md bg-layer-transparent p-1 px-2 text-11 hover:bg-layer-transparent-hover"
+          className="flex-shrink-0 rounded-md bg-layer-transparent p-1 px-2 text-11 hover:bg-layer-transparent-hover"
           onClick={handleToday}
         >
           {t("common.today")}
@@ -80,9 +80,12 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
       {props.showDependencyToggle && (
         <button
           type="button"
-          className={cn("rounded-md bg-layer-transparent p-1 px-2 text-11 hover:bg-layer-transparent-hover", {
-            "bg-layer-transparent-selected": showDependencies,
-          })}
+          className={cn(
+            "flex-shrink-0 rounded-md bg-layer-transparent p-1 px-2 text-11 hover:bg-layer-transparent-hover",
+            {
+              "bg-layer-transparent-selected": showDependencies,
+            }
+          )}
           aria-pressed={showDependencies}
           onClick={toggleShowDependencies}
         >
@@ -93,9 +96,12 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
       {props.showAutoScheduleToggle && (
         <button
           type="button"
-          className={cn("rounded-md bg-layer-transparent p-1 px-2 text-11 hover:bg-layer-transparent-hover", {
-            "bg-layer-transparent-selected": autoSchedule,
-          })}
+          className={cn(
+            "flex-shrink-0 rounded-md bg-layer-transparent p-1 px-2 text-11 hover:bg-layer-transparent-hover",
+            {
+              "bg-layer-transparent-selected": autoSchedule,
+            }
+          )}
           aria-pressed={autoSchedule}
           onClick={toggleAutoSchedule}
         >
@@ -105,7 +111,7 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
 
       <button
         type="button"
-        className="flex items-center justify-center rounded-md border border-subtle bg-layer-transparent p-1 transition-all hover:bg-layer-transparent-hover"
+        className="flex flex-shrink-0 items-center justify-center rounded-md border border-subtle bg-layer-transparent p-1 transition-all hover:bg-layer-transparent-hover"
         onClick={toggleFullScreenMode}
       >
         {fullScreenMode ? <Shrink className="h-4 w-4" /> : <Expand className="h-4 w-4" />}

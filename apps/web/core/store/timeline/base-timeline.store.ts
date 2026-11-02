@@ -49,8 +49,9 @@ export interface IBaseTimelineStore {
   toggleAutoSchedule: () => void;
   canEditDependencies: boolean;
   dependencyDraftFromId: string | null;
+  dependencyDraftSide: "right" | "left";
   setCanEditDependencies: (value: boolean) => void;
-  startDependencyDraft: (blockId: string) => void;
+  startDependencyDraft: (blockId: string, side?: "right" | "left") => void;
   endDependencyDraft: () => void;
   //
   setBlockIds: (ids: string[]) => void;
@@ -93,6 +94,7 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
 
   canEditDependencies = false;
   dependencyDraftFromId: string | null = null;
+  dependencyDraftSide: "right" | "left" = "right";
   isDependencyEnabled = false;
   showDependencies = (() => {
     try {
@@ -125,6 +127,7 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
       toggleAutoSchedule: action.bound,
       canEditDependencies: observable,
       dependencyDraftFromId: observable,
+      dependencyDraftSide: observable,
       setCanEditDependencies: action.bound,
       startDependencyDraft: action.bound,
       endDependencyDraft: action.bound,
@@ -157,12 +160,16 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
     if (!value) this.endDependencyDraft();
   };
 
-  startDependencyDraft = (blockId: string) => {
-    if (this.canEditDependencies && this.showDependencies) this.dependencyDraftFromId = blockId;
+  startDependencyDraft = (blockId: string, side: "right" | "left" = "right") => {
+    if (this.canEditDependencies && this.showDependencies) {
+      this.dependencyDraftFromId = blockId;
+      this.dependencyDraftSide = side;
+    }
   };
 
   endDependencyDraft = () => {
     this.dependencyDraftFromId = null;
+    this.dependencyDraftSide = "right";
   };
 
   toggleAutoSchedule = () => {

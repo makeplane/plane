@@ -5,7 +5,8 @@
  */
 
 import type { RefObject } from "react";
-import { Fragment, useEffect, useId, useRef, useState } from "react";
+import { Fragment, useEffect, useId, useMemo, useRef, useState } from "react";
+import { computed } from "mobx";
 import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
@@ -14,6 +15,7 @@ import type { TGanttDependency, TGanttDependencyActions } from "./dependency-uti
 import {
   dependencyValidationMessages,
   getDependencyPath,
+  getDependencyDraftStates,
   isDependencyViolated,
   validateNewDependency,
 } from "./dependency-utils";
@@ -29,7 +31,7 @@ type Props = {
 
 export const GanttDependencyLayer = observer(function GanttDependencyLayer(props: Props) {
   const { blockIds, dependencies, dependencyActions, ganttContainerRef, showAllBlocks, width } = props;
-  const { getBlockById, dependencyDraftFromId, endDependencyDraft } = useTimeLineChartStore();
+  const { getBlockById, dependencyDraftFromId, dependencyDraftSide, endDependencyDraft } = useTimeLineChartStore();
   const svgRef = useRef<SVGSVGElement>(null);
   const [selected, setSelected] = useState<TGanttDependency | null>(null);
   const [draft, setDraft] = useState<{ x: number; y: number; targetId: string | null } | null>(null);
@@ -37,11 +39,28 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
   const normalMarkerId = `${id}-dependency`;
   const violatedMarkerId = `${id}-dependency-violated`;
   const selectedMarkerId = `${id}-dependency-selected`;
-  const visibleBlocks = blockIds
-    .map((blockId) => getBlockById(blockId))
-    .filter((block) => block && block.data && (showAllBlocks || block.start_date || block.target_date));
-  const rows = new Map(
-    visibleBlocks.map((block, index) => [block.id, { block, y: index * BLOCK_HEIGHT + BLOCK_HEIGHT / 2 }])
+  const rowData = useMemo(
+    () =>
+      computed(() => {
+        const visibleBlocks = blockIds
+          .map((blockId) => getBlockById(blockId))
+          .filter((block) => block && block.data && (showAllBlocks || block.start_date || block.target_date));
+        return new Map(
+          visibleBlocks.map((block, index) => [block.id, { block, y: index * BLOCK_HEIGHT + BLOCK_HEIGHT / 2 }])
+        );
+      }),
+    [blockIds, getBlockById, showAllBlocks]
+  );
+  const rows = rowData.get();
+  const otherPairs = dependencyActions?.otherPairs;
+  const draftStates = useMemo(
+    () =>
+      dependencyDraftFromId && otherPairs
+        ? getDependencyDraftStates(dependencies, otherPairs, dependencyDraftFromId, dependencyDraftSide, [
+            ...rows.keys(),
+          ])
+        : {},
+    [dependencyDraftFromId, dependencyDraftSide, dependencies, otherPairs, rows]
   );
   const latest = useRef({ rows, dependencies, dependencyActions });
   latest.current = { rows, dependencies, dependencyActions };
@@ -96,11 +115,13 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
       const target = readPointer(event)?.targetId;
       const { rows: currentRows, dependencies: currentDependencies, dependencyActions: actions } = latest.current;
       if (target && currentRows.has(target) && actions) {
-        const error = validateNewDependency(currentDependencies, actions.otherPairs, dependencyDraftFromId, target);
+        const [predecessorId, successorId] =
+          dependencyDraftSide === "right" ? [dependencyDraftFromId, target] : [target, dependencyDraftFromId];
+        const error = validateNewDependency(currentDependencies, actions.otherPairs, predecessorId, successorId);
         if (error) {
           setToast({ type: TOAST_TYPE.ERROR, title: "Không nối được", message: dependencyValidationMessages[error] });
         } else {
-          void actions.create(dependencyDraftFromId, target);
+          void actions.create(predecessorId, successorId);
         }
       }
       endDependencyDraft();
@@ -123,14 +144,11 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
       window.removeEventListener("blur", cancelOnBlur);
       endDependencyDraft();
     };
-  }, [dependencyDraftFromId, canEditDependencies, ganttContainerRef, endDependencyDraft]);
+  }, [dependencyDraftFromId, dependencyDraftSide, canEditDependencies, ganttContainerRef, endDependencyDraft]);
 
   const source = dependencyDraftFromId ? rows.get(dependencyDraftFromId) : undefined;
   const target = draft?.targetId ? rows.get(draft.targetId) : undefined;
-  const targetError =
-    dependencyDraftFromId && draft?.targetId && dependencyActions
-      ? validateNewDependency(dependencies, dependencyActions.otherPairs, dependencyDraftFromId, draft.targetId)
-      : null;
+  const targetError = draft?.targetId ? draftStates[draft.targetId] : null;
   const selectedPred = selectedDependency ? rows.get(selectedDependency.predecessorId) : undefined;
   const selectedSucc = selectedDependency ? rows.get(selectedDependency.successorId) : undefined;
   const fromX = selectedPred?.block.position
@@ -140,21 +158,18 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
   const deleteX = toX - fromX >= 16 ? (fromX + 8 + toX) / 2 : toX - 4;
 
   return (
-    <div
-      className="pointer-events-none absolute top-0 left-0"
-      style={{ width, height: visibleBlocks.length * BLOCK_HEIGHT }}
-    >
+    <div className="pointer-events-none absolute top-0 left-0" style={{ width, height: rows.size * BLOCK_HEIGHT }}>
       <svg
         ref={svgRef}
         className="pointer-events-none absolute top-0 left-0 z-[4] overflow-visible"
         width={width}
-        height={visibleBlocks.length * BLOCK_HEIGHT}
+        height={rows.size * BLOCK_HEIGHT}
         aria-hidden={dependencyActions ? undefined : true}
       >
         <defs>
           {[
             [normalMarkerId, "text-tertiary"],
-            [violatedMarkerId, "text-danger-primary"],
+            [violatedMarkerId, "text-danger-primary dark:text-[oklch(0.65_0.24_25)]"],
             [selectedMarkerId, "text-accent-primary"],
           ].map(([markerId, className]) => (
             <marker
@@ -190,8 +205,14 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
                 d={path}
                 fill="none"
                 stroke="currentColor"
-                strokeWidth={isSelected ? 2 : 1.5}
-                className={isSelected ? "text-accent-primary" : violated ? "text-danger-primary" : "text-tertiary"}
+                strokeWidth={isSelected || violated ? 2 : 1.5}
+                className={
+                  isSelected
+                    ? "text-accent-primary"
+                    : violated
+                      ? "text-danger-primary dark:text-[oklch(0.65_0.24_25)]"
+                      : "text-tertiary"
+                }
                 markerEnd={`url(#${isSelected ? selectedMarkerId : violated ? violatedMarkerId : normalMarkerId})`}
               />
               {dependencyActions && (
@@ -225,7 +246,7 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
         })}
         {dependencyDraftFromId && source?.block.position && draft && (
           <path
-            d={`M ${source.block.position.marginLeft + source.block.position.width} ${source.y} L ${draft.x} ${draft.y}`}
+            d={`M ${source.block.position.marginLeft + (dependencyDraftSide === "right" ? source.block.position.width : 0)} ${source.y} L ${draft.x} ${draft.y}`}
             fill="none"
             stroke="currentColor"
             strokeWidth={2}
@@ -233,20 +254,60 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
             className="text-accent-primary"
           />
         )}
-        {dependencyDraftFromId && target?.block.position && (
-          <rect
-            x={target.block.position.marginLeft}
-            y={target.y - 16}
-            width={target.block.position.width}
-            height={32}
-            rx={3}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            className={targetError ? "text-danger-primary" : "text-success-primary"}
-          />
-        )}
       </svg>
+      {dependencyDraftFromId && (
+        <svg
+          className="pointer-events-none absolute top-0 left-0 z-[6] overflow-visible"
+          width={width}
+          height={rows.size * BLOCK_HEIGHT}
+          aria-hidden="true"
+        >
+          {[...rows].map(([blockId, { block, y }]) => {
+            if (blockId === dependencyDraftFromId || !block.position) return null;
+            const invalid = !!draftStates[blockId];
+            return (
+              <rect
+                key={blockId}
+                x={block.position.marginLeft}
+                y={y - 16}
+                width={block.position.width}
+                height={32}
+                rx={3}
+                fill={invalid ? "currentColor" : "none"}
+                stroke={invalid ? "none" : "currentColor"}
+                strokeWidth={1.5}
+                opacity={invalid ? 0.25 : 0.6}
+                className={invalid ? "text-tertiary" : "text-success-primary"}
+              />
+            );
+          })}
+          {target?.block.position && target.block.id !== dependencyDraftFromId && (
+            <rect
+              x={target.block.position.marginLeft}
+              y={target.y - 16}
+              width={target.block.position.width}
+              height={32}
+              rx={3}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              className={targetError ? "text-danger-primary" : "text-success-primary"}
+            />
+          )}
+        </svg>
+      )}
+      {dependencyDraftFromId && draft && (
+        <div
+          className={`pointer-events-none absolute z-[8] max-w-[240px] rounded-sm border border-strong bg-layer-1 px-2 py-1 text-11 whitespace-normal ${targetError ? "text-danger-primary" : "text-primary"}`}
+          style={{ left: draft.x + 12, top: draft.y + 12 }}
+        >
+          {targetError
+            ? dependencyValidationMessages[targetError]
+            : target?.block.position
+              ? "Thả để nối"
+              : "Thả lên một thanh việc khác để nối"}
+        </div>
+      )}
       {dependencyActions && selectedDependency && selectedPred?.block.position && selectedSucc?.block.position && (
         <div
           data-gantt-dependency-control

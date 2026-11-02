@@ -13,7 +13,7 @@ Chỉ áp cho Gantt work item của project (không áp cho epic). Hai nút trê
 
 Thao tác (cần quyền ADMIN/MEMBER của project):
 
-- Kéo nắm ở **mép phải** thanh việc sang thanh khác để nối; bấm mũi tên rồi × / Delete để xoá (toast "Hoàn tác").
+- Kéo nắm ở **mép phải** (việc này làm trước) hoặc **mép trái** (việc này làm sau) sang thanh khác để nối. Khi kéo, mọi thanh hợp lệ được viền xanh, thanh không hợp lệ bị mờ, và một nhãn cạnh con trỏ giải thích (tự nối, đã nối, quan hệ khác, vòng lặp). Bấm mũi tên rồi × / Delete để xoá (toast "Hoàn tác"). Chỉ dùng chuột: màn cảm ứng xem được mũi tên nhưng chưa kéo-nối được.
 - Tự lùi lịch chạy khi kéo/resize thanh trên Gantt **và** khi đổi Start/Due date ở sidebar màn chi tiết việc.
 
 ## Cách lập lịch hoạt động
@@ -85,7 +85,8 @@ Engine Python thuần chạy được không cần Django: `python -m unittest d
 
 - Chỉ Finish-to-Start, lag 0, ngày lịch. Chưa có ngày làm việc/ngày lễ, lag, tuỳ chọn tự kéo sớm, màn cài đặt gom tuỳ chọn.
 - Chỉ trong cùng project; không vẽ, không lùi lịch qua project khác. Relation khác project do Plane gốc cho tạo vẫn không kiểm quyền project bên kia.
-- Chỉ kéo-nối từ mép phải; chưa kiểm cuộn/zoom/nhóm thu gọn với 500+ việc trên trình duyệt. Tải tối đa 10.000 việc để vẽ mũi tên.
+- Đã đo local với 606 việc + 300 phụ thuộc (Chrome): cuộn ~11 ms/bước, đổi zoom <1,6 s, heap ~75 MB; mọi thanh đều nằm trong DOM (Plane gốc không ảo hoá hàng). Gantt việc không có nhóm thu gọn. Tải tối đa 10.000 việc để vẽ mũi tên.
+- Màn hẹp (375px): thanh công cụ cuộn ngang để thấy nút "Phụ thuộc"/"Tự lùi lịch".
 - Nếu tạo relation ở màn chi tiết việc với backend gốc, vẫn có thể tạo vòng; lõi lịch phát hiện và dừng.
 - `issueOperations.update` của Plane tự nuốt lỗi: ở đường quay về `issue-dates`, việc sau có thể được lưu dù lưu việc đang sửa thất bại.
 - Tạo/xoá phụ thuộc khoá workspace trong thời gian ngắn.

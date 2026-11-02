@@ -10,6 +10,7 @@ import {
   extractBlockedByDependencies,
   extractGanttRelations,
   validateNewDependency,
+  getDependencyDraftStates,
   getDependencyPath,
   isDependencyViolated,
 } from "./dependency-utils.ts";
@@ -118,4 +119,55 @@ test("extracts unique occupied pairs in either direction, excluding other projec
 
 test("cycle traversal terminates even if existing data already contains a cycle", () => {
   assert.equal(validateNewDependency([...chain, { predecessorId: "C", successorId: "A" }], [], "D", "A"), null);
+});
+
+for (const side of ["right", "left"]) {
+  test(`draft states match validation across a diamond and occupied pairs (${side})`, () => {
+    const dependencies = [
+      { predecessorId: "A", successorId: "B" },
+      { predecessorId: "A", successorId: "C" },
+      { predecessorId: "B", successorId: "D" },
+      { predecessorId: "C", successorId: "D" },
+    ];
+    const candidates = ["A", "B", "C", "D", "E", "F"];
+    const otherPairs = ["A|A", "A|B", "A|D", "B|E", "D|E"];
+    for (const sourceId of candidates) {
+      const states = getDependencyDraftStates(dependencies, otherPairs, sourceId, side, candidates);
+      assert.deepEqual(Object.keys(states), candidates);
+      for (const candidateId of candidates) {
+        const [pred, succ] = side === "right" ? [sourceId, candidateId] : [candidateId, sourceId];
+        assert.equal(states[candidateId], validateNewDependency(dependencies, otherPairs, pred, succ));
+      }
+    }
+    assert.deepEqual(getDependencyDraftStates(dependencies, [], "D", "right", candidates), {
+      A: "cycle",
+      B: "cycle",
+      C: "cycle",
+      D: "self",
+      E: null,
+      F: null,
+    });
+    assert.deepEqual(getDependencyDraftStates(dependencies, [], "A", "left", candidates), {
+      A: "self",
+      B: "cycle",
+      C: "cycle",
+      D: "cycle",
+      E: null,
+      F: null,
+    });
+  });
+}
+
+test("draft traversal handles 10,000 candidates and existing cycles", () => {
+  const candidates = Array.from({ length: 10_000 }, (_, index) => String(index));
+  const dependencies = candidates.slice(1).map((id, index) => ({
+    predecessorId: String(index),
+    successorId: id,
+  }));
+  dependencies.push({ predecessorId: "2", successorId: "0" });
+  const states = getDependencyDraftStates(dependencies, [], "0", "left", candidates);
+  assert.equal(Object.keys(states).length, 10_000);
+  assert.equal(states["0"], "self");
+  assert.equal(states["2"], "duplicate");
+  assert.equal(states["9999"], "cycle");
 });

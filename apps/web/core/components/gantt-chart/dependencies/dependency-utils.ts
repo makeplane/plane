@@ -62,6 +62,47 @@ export function validateNewDependency(
   return null;
 }
 
+export function getDependencyDraftStates(
+  dependencies: TGanttDependency[],
+  otherPairs: string[],
+  sourceId: string,
+  side: "right" | "left",
+  candidateIds: string[]
+): Record<string, keyof typeof dependencyValidationMessages | null> {
+  const adjacent = new Map<string, string[]>();
+  const duplicates = new Set<string>();
+  for (const { predecessorId, successorId } of dependencies) {
+    const [from, to] = side === "right" ? [successorId, predecessorId] : [predecessorId, successorId];
+    const neighbors = adjacent.get(from) ?? [];
+    neighbors.push(to);
+    adjacent.set(from, neighbors);
+    if (to === sourceId) duplicates.add(from);
+  }
+  const reachable = new Set<string>();
+  const pending = [sourceId];
+  while (pending.length) {
+    const id = pending.pop()!;
+    if (reachable.has(id)) continue;
+    reachable.add(id);
+    for (const neighbor of adjacent.get(id) ?? []) pending.push(neighbor);
+  }
+  const occupied = new Set(otherPairs);
+  return Object.fromEntries(
+    candidateIds.map((id) => [
+      id,
+      id === sourceId
+        ? "self"
+        : duplicates.has(id)
+          ? "duplicate"
+          : occupied.has([sourceId, id].sort().join("|"))
+            ? "occupied"
+            : reachable.has(id)
+              ? "cycle"
+              : null,
+    ])
+  );
+}
+
 export function extractBlockedByDependencies(
   issues: { id: string; issue_relation?: { id: string; project_id: string; relation_type: string }[] }[],
   projectId: string
