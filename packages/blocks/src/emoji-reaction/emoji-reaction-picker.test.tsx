@@ -78,6 +78,20 @@ describe("EmojiReactionPicker popover", () => {
     expect(document.querySelector("[data-prevent-outside-click]")).not.toBeNull();
   });
 
+  it("lets the picker panel shrink inside the height-capped popup", async () => {
+    const user = userEvent.setup();
+    render(<ControlledPicker />);
+    await user.click(screen.getByRole("button", { name: "Add reaction" }));
+    await screen.findByTestId("emoji-grid");
+    const panel = document.querySelector('[data-slot="emoji-reaction-picker-panel"]');
+    if (!(panel instanceof HTMLElement)) throw new Error("picker panel not rendered");
+    // The popup caps itself at --available-height; a 320px panel without min-h-0 would overflow it on short
+    // viewports instead of letting the emoji list scroll.
+    expect(panel.parentElement?.hasAttribute("data-prevent-outside-click")).toBe(true);
+    expect(panel.className).toContain("min-h-0");
+    expect(panel.className).toContain("flex-col");
+  });
+
   it("retains the label-only trigger contract", async () => {
     const user = userEvent.setup();
     const handleToggle = vi.fn();

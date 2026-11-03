@@ -99,8 +99,12 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
         data-prevent-outside-click="true"
       >
         {/* Not PopoverBody: its x-clip wrapper is narrower than its parent and would clip the 9 × 32px emoji grid,
-            so the picker takes a fixed width of exactly nine cells. */}
-        <div className={cn("flex h-80 w-72 flex-col", dropdownClassName)}>
+            so the picker takes a fixed width of exactly nine cells. `min-h-0` lets it shrink below 320px when the
+            popup is capped at --available-height (short viewports); the emoji list inside scrolls instead. */}
+        <div
+          data-slot="emoji-reaction-picker-panel"
+          className={cn("flex h-80 min-h-0 w-72 flex-col", dropdownClassName)}
+        >
           <EmojiRoot
             onChange={handleEmojiChange}
             searchPlaceholder={resolvedSearchPlaceholder}
