@@ -1,6 +1,7 @@
 .oxlintrc.json   @sriramveeraghanta
 .oxfmtrc.json   @sriramveeraghanta
 apps/api/           @dheeru0198 @pablohashescobar
+apps/api/plane/*/migrations/ @dheeru0198 @sriramveeraghanta @pablohashescobar
 apps/web/           @sriramveeraghanta
 apps/space/         @sriramveeraghanta
 apps/admin/         @sriramveeraghanta
