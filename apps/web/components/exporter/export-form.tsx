@@ -202,7 +202,9 @@ export const ExportForm = observer(function ExportForm(props: Props) {
                             };
                           }}
                           placeholder="All projects"
-                          className="w-full"
+                          // An empty selection exports every project, so it reads as a value.
+                          emptyIsValue
+                          className="w-fit"
                         />
                       )}
                     />

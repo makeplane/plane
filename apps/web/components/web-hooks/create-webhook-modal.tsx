@@ -114,13 +114,13 @@ export function CreateWebhookModal(props: ICreateWebhookModal) {
           generatedWebhook ? t("workspace_settings.key_created") : t("workspace_settings.settings.webhooks.modal.title")
         }
       >
-        <div className="min-h-0 flex-1 overflow-y-auto p-4 pb-0">
-          {!generatedWebhook ? (
+        {generatedWebhook ? (
+          <GeneratedHookDetails webhookDetails={generatedWebhook} handleClose={handleClose} />
+        ) : (
+          <div className="min-h-0 flex-1 overflow-y-auto p-4 pb-0">
             <WebhookForm onSubmit={handleCreateWebhook} handleClose={handleClose} />
-          ) : (
-            <GeneratedHookDetails webhookDetails={generatedWebhook} handleClose={handleClose} />
-          )}
-        </div>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -135,6 +135,8 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
           issueOperations={issueOperations}
           disabled={!isEditable}
           value={issue.name}
+          containerClassName="-ml-3 [&_textarea]:block [&_textarea]:px-3 [&_textarea]:text-h3-semibold"
+          readOnlyClassName="text-h3-semibold"
         />
 
         {loader === "issue-loading" || issue.description_html === undefined ? (

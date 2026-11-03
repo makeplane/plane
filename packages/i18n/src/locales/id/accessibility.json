@@ -48,6 +48,12 @@
     },
     "project_board": {
       "collapse_group": "Ciutkan grup"
+    },
+    "pagination": {
+      "root": "Paginasi",
+      "previous_page": "Buka halaman sebelumnya",
+      "next_page": "Buka halaman berikutnya",
+      "go_to_page": "Buka halaman {page}"
     }
   }
 }

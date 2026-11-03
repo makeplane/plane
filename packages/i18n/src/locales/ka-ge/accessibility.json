@@ -48,6 +48,12 @@
     },
     "project_board": {
       "collapse_group": "ჯგუფის ჩაკეცვა"
+    },
+    "pagination": {
+      "root": "გვერდების ნავიგაცია",
+      "previous_page": "წინა გვერდზე გადასვლა",
+      "next_page": "შემდეგ გვერდზე გადასვლა",
+      "go_to_page": "{page} გვერდზე გადასვლა"
     }
   }
 }

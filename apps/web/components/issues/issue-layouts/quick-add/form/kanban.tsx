@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { Input } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import type { TQuickAddIssueForm } from "../root";
 
@@ -17,19 +17,17 @@ export const KanbanQuickAddIssueForm = observer(function KanbanQuickAddIssueForm
       <form ref={ref} onSubmit={onSubmit} className="flex w-full items-center gap-x-3 p-3">
         <div className="flex w-full flex-col gap-1">
           <h4 className="text-caption-sm-medium leading-5 text-tertiary">{projectDetail?.identifier ?? "..."}</h4>
-          <InputGroup size="lg">
-            <Input
-              size="lg"
-              aria-label={isEpic ? t("epic.title.label") : t("issue.title.label")}
-              aria-invalid={hasError}
-              data-invalid={hasError || undefined}
-              autoComplete="off"
-              placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
-              {...register("name", {
-                required: isEpic ? t("epic.title.required") : t("issue.title.required"),
-              })}
-            />
-          </InputGroup>
+          <Input
+            size="lg"
+            aria-label={isEpic ? t("epic.title.label") : t("issue.title.label")}
+            aria-invalid={hasError}
+            data-invalid={hasError || undefined}
+            autoComplete="off"
+            placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
+            {...register("name", {
+              required: isEpic ? t("epic.title.required") : t("issue.title.required"),
+            })}
+          />
         </div>
       </form>
       <div className="bg-layer-3 px-3 py-2 text-caption-sm-regular text-tertiary italic">

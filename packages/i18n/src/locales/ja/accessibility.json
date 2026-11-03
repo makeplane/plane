@@ -48,6 +48,12 @@
     },
     "project_board": {
       "collapse_group": "グループを折りたたむ"
+    },
+    "pagination": {
+      "root": "ページネーション",
+      "previous_page": "前のページへ移動",
+      "next_page": "次のページへ移動",
+      "go_to_page": "{page}ページへ移動"
     }
   }
 }

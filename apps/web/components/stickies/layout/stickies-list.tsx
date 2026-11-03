@@ -17,7 +17,7 @@ import Masonry from "react-masonry-component";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateCompact, EmptyStateDetailed } from "@plane/blocks/empty-state";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { StickiesEmptyState } from "@/components/home/widgets/empty-states/stickies";
@@ -106,10 +106,8 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
         {isStickiesPage ? (
           <>
             {searchQuery ? (
-              <EmptyStateCompact
-                align="center"
-                assetKey="search-compact"
-                assetClassName="size-20"
+              <EmptyStateDetailed
+                assetKey="search"
                 title={t("stickies.empty_state.search.title")}
                 description={t("stickies.empty_state.search.description")}
               />

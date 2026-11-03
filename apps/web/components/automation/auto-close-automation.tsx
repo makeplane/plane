@@ -30,6 +30,8 @@ type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
 };
 
+const CUSTOMIZE_TIME_RANGE = "customize-time-range";
+
 type TAutomationMonthOption = {
   id: string;
   label: string;
@@ -41,7 +43,6 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
   const { workspaceSlug } = useParams();
   // states
   const [monthModal, setmonthModal] = useState(false);
-  const [isMonthSelectOpen, setIsMonthSelectOpen] = useState(false);
   // store hooks
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
@@ -69,10 +70,14 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
     const months = PROJECT_AUTOMATION_MONTHS.map((month) => month.value);
     if (closeIn !== undefined && !months.includes(closeIn)) months.push(closeIn);
     months.sort((a, b) => a - b);
-    return months.map((month) => ({
-      id: String(month),
-      label: t("workspace_projects.common.months_count", { months: month }),
-    }));
+    return [
+      ...months.map((month) => ({
+        id: String(month),
+        label: t("workspace_projects.common.months_count", { months: month }),
+      })),
+      // The last row opens the custom range modal instead of setting a value.
+      { id: CUSTOMIZE_TIME_RANGE, label: t("common.customize_time_range") },
+    ];
   }, [t, closeIn]);
   const selectedMonthOption = monthOptions.find((option) => option.id === String(closeIn)) ?? null;
 
@@ -129,26 +134,18 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
               <Select<TAutomationMonthOption>
                 getValues={() => monthOptions}
                 value={selectedMonthOption}
-                onChange={(id) => void handleChange({ close_in: Number(id) })}
+                onChange={(id) => {
+                  if (id === CUSTOMIZE_TIME_RANGE) {
+                    setmonthModal(true);
+                    return;
+                  }
+                  void handleChange({ close_in: Number(id) });
+                }}
                 getOptionValue={(option) => option.id}
                 getOptionLabel={(option) => option.label}
                 showSearch={false}
                 pinSelected={false}
                 disabled={!isAdmin}
-                open={isMonthSelectOpen}
-                onOpenChange={setIsMonthSelectOpen}
-                footer={
-                  <button
-                    type="button"
-                    className="flex w-full items-center rounded-sm px-1 py-1.5 text-secondary select-none hover:bg-layer-1"
-                    onClick={() => {
-                      setIsMonthSelectOpen(false);
-                      setmonthModal(true);
-                    }}
-                  >
-                    {t("common.customize_time_range")}
-                  </button>
-                }
               >
                 <Select.Trigger variant="select-md" disabled={!isAdmin}>
                   <Select.Value />
