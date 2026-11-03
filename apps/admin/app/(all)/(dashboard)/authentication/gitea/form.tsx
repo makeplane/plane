@@ -5,6 +5,7 @@
  */
 
 import { isEmpty } from "lodash-es";
+import { useWatch } from "react-hook-form";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
 import type { IFormattedInstanceConfiguration, TInstanceGiteaAuthenticationConfigurationKeys } from "@plane/types";
@@ -41,6 +42,8 @@ export function InstanceGiteaConfigForm(props: Props) {
     GITEA_CLIENT_SECRET: config["GITEA_CLIENT_SECRET"],
     ENABLE_GITEA_SYNC: config["ENABLE_GITEA_SYNC"] || "0",
   });
+  // subscribed so the settings link follows host edits
+  const giteaHost = useWatch({ control, name: "GITEA_HOST" });
 
   const originURL = !isEmpty(API_BASE_URL) ? API_BASE_URL : typeof window !== "undefined" ? window.location.origin : "";
 
@@ -110,7 +113,7 @@ export function InstanceGiteaConfigForm(props: Props) {
           We will auto-generate this. Paste this into your <CodeBlock darkerShade>Authorized Callback URI</CodeBlock>{" "}
           field{" "}
           <a
-            href={`${control._formValues.GITEA_HOST || "https://gitea.com"}/user/settings/applications`}
+            href={`${giteaHost || "https://gitea.com"}/user/settings/applications`}
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"

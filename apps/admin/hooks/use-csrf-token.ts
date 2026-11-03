@@ -10,12 +10,19 @@ import { AuthService } from "@plane/services";
 // service initialization
 const authService = new AuthService();
 
-const MAX_ATTEMPTS = 3;
-const RETRY_DELAY_MS = 2000;
+const BASE_RETRY_DELAY_MS = 2000;
+const MAX_RETRY_DELAY_MS = 30000;
+// log once when the token is still missing after this many attempts, instead of on every retry
+const LOG_AFTER_ATTEMPTS = 3;
+
+// 0 for the first attempt, then 2s, 4s, 8s, 16s, capped at 30s
+const getRetryDelay = (attempt: number) =>
+  attempt === 1 ? 0 : Math.min(BASE_RETRY_DELAY_MS * 2 ** (attempt - 2), MAX_RETRY_DELAY_MS);
 
 /**
  * Fetches the CSRF token for the admin auth forms, which post natively to the API.
  * Returns "" until a token is available, so forms can keep submit disabled until then.
+ * Keeps retrying with backoff, so the forms recover on their own after an API outage.
  */
 export function useCsrfToken(): string {
   const [csrfToken, setCsrfToken] = useState("");
@@ -32,12 +39,12 @@ export function useCsrfToken(): string {
         if (!isCancelled) setCsrfToken(data.csrf_token);
       } catch (error) {
         if (isCancelled) return;
-        if (attempt < MAX_ATTEMPTS) setAttempt((prev) => prev + 1);
-        else console.error("Failed to fetch CSRF token", error);
+        if (attempt === LOG_AFTER_ATTEMPTS) console.error("Failed to fetch CSRF token, still retrying", error);
+        setAttempt((prev) => prev + 1);
       }
     };
 
-    const timeout = setTimeout(() => void fetchToken(), attempt === 1 ? 0 : RETRY_DELAY_MS);
+    const timeout = setTimeout(() => void fetchToken(), getRetryDelay(attempt));
 
     return () => {
       isCancelled = true;
