@@ -294,6 +294,15 @@ export const getOrderedWorkItems = (workItems: TIssue[], orderByKey: TIssueOrder
         )
       );
 
+    case "start_date":
+      return getIssueIds(
+        orderBy(
+          workItems,
+          [getSortOrderToFilterEmptyValues.bind(null, "start_date"), "start_date"], //preferring sorting based on empty values to always keep the empty values below
+          ["asc", "asc"]
+        )
+      );
+
     case "-priority": {
       const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
       return getIssueIds(
@@ -318,14 +327,14 @@ export const getGroupedWorkItemIds = (
   }
 
   // Get the default key for the group by key
-  const getDefaultGroupKey = (groupByKey: TIssueGroupByOptions) => {
-    switch (groupByKey) {
+  const getDefaultGroupKey = (key: TIssueGroupByOptions) => {
+    switch (key) {
       case "state_detail.group":
         return "state__group";
       case null:
         return null;
       default:
-        return ISSUE_GROUP_BY_KEY[groupByKey];
+        return ISSUE_GROUP_BY_KEY[key];
     }
   };
 
