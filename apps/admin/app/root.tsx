@@ -30,7 +30,7 @@ export const links: LinksFunction = () => [
   { rel: "icon", type: "image/png", sizes: "32x32", href: favicon32 },
   { rel: "icon", type: "image/png", sizes: "16x16", href: favicon16 },
   { rel: "shortcut icon", href: faviconIco },
-  { rel: "manifest", href: `/site.webmanifest.json` },
+  { rel: "manifest", href: `/site.webmanifest.json`, crossOrigin: "use-credentials" },
   { rel: "stylesheet", href: globalStyles },
   {
     rel: "preload",
