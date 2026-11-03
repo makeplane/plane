@@ -162,23 +162,21 @@ export function useGanttDependencies(
         if (!created.some((issue) => issue.id === predecessorId)) throw new Error("Dependency was not created");
       }
       if (scope !== generation.current) return;
-      if (remove) {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Đã xoá phụ thuộc",
-          actionItems: createElement(
-            "button",
-            {
-              type: "button",
-              className: "text-accent-primary",
-              onClick: () => {
-                if (scope === generation.current) void mutateDependency(predecessorId, successorId, false);
-              },
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: remove ? "Đã xoá phụ thuộc" : "Đã nối phụ thuộc",
+        actionItems: createElement(
+          "button",
+          {
+            type: "button",
+            className: "text-accent-primary",
+            onClick: () => {
+              if (scope === generation.current) void mutateDependency(predecessorId, successorId, !remove);
             },
-            "Hoàn tác"
-          ),
-        });
-      }
+          },
+          "Hoàn tác"
+        ),
+      });
     } catch (error) {
       if (scope !== generation.current) return;
       updateRelations(current);
@@ -232,6 +230,7 @@ export function useGanttDependencies(
       setToast({ type: TOAST_TYPE.WARNING, title: "Đang lưu phụ thuộc" });
       return;
     }
+    const slug = workspaceSlug;
     const scope = generation.current;
     const [predecessorId, successorId, successorProjectId] =
       side === "right" ? [localId, externalIssueId, externalProjectId] : [externalIssueId, localId, projectId];
@@ -248,7 +247,38 @@ export function useGanttDependencies(
     } finally {
       if (scope === generation.current) saving.current = false;
     }
-    if (scope === generation.current) await refreshRef.current();
+    if (scope !== generation.current) return;
+    await refreshRef.current();
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: "Đã nối phụ thuộc",
+      actionItems: createElement(
+        "button",
+        { type: "button", className: "text-accent-primary", onClick: () => void undoCreateExternal() },
+        "Hoàn tác"
+      ),
+    });
+
+    async function undoCreateExternal() {
+      // Same guard as removing: the user must still be able to write in both projects.
+      if (scope !== generation.current || saving.current) return;
+      if (
+        (getProjectById(externalProjectId)?.member_role ?? 0) < 15 ||
+        (getProjectById(projectId)?.member_role ?? 0) < 15
+      )
+        return;
+      saving.current = true;
+      requestCounter.current++;
+      try {
+        await relation.removeRelation(slug, successorProjectId, successorId, "blocked_by", predecessorId);
+      } catch (error) {
+        if (scope === generation.current) setToast({ type: TOAST_TYPE.ERROR, title: externalError(error) });
+        return;
+      } finally {
+        if (scope === generation.current) saving.current = false;
+      }
+      if (scope === generation.current) await refreshRef.current();
+    }
   };
 
   const removeExternal = async (link: TExternalLink) => {
