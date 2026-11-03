@@ -5,10 +5,8 @@
  */
 
 import { isEmpty } from "lodash-es";
-import { useForm } from "react-hook-form";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
-import { setToast } from "@plane/blocks/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGiteaAuthenticationConfigurationKeys } from "@plane/types";
 // components
 import { CodeBlock } from "@/components/common/code-block";
@@ -17,7 +15,7 @@ import type { TControllerSwitchFormField } from "@/components/common/controller-
 import type { TCopyField } from "@/components/common/copy-field";
 import { OAuthProviderForm } from "@/components/authentication/oauth-provider-form";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useOAuthProviderConfigForm } from "@/hooks/use-oauth-provider-config-form";
 
 type Props = {
   config: IFormattedInstanceConfiguration;
@@ -32,21 +30,16 @@ const GITEA_FORM_SWITCH_FIELD: TControllerSwitchFormField<GiteaConfigFormValues>
 
 export function InstanceGiteaConfigForm(props: Props) {
   const { config } = props;
-  // store hooks
-  const { updateInstanceConfigurations } = useInstance();
   // form data
   const {
-    handleSubmit,
     control,
-    reset,
-    formState: { errors, isDirty, isSubmitting },
-  } = useForm<GiteaConfigFormValues>({
-    defaultValues: {
-      GITEA_HOST: config["GITEA_HOST"] || "https://gitea.com",
-      GITEA_CLIENT_ID: config["GITEA_CLIENT_ID"],
-      GITEA_CLIENT_SECRET: config["GITEA_CLIENT_SECRET"],
-      ENABLE_GITEA_SYNC: config["ENABLE_GITEA_SYNC"] || "0",
-    },
+    formState: { errors },
+    onSave,
+  } = useOAuthProviderConfigForm<GiteaConfigFormValues>("Gitea", {
+    GITEA_HOST: config["GITEA_HOST"] || "https://gitea.com",
+    GITEA_CLIENT_ID: config["GITEA_CLIENT_ID"],
+    GITEA_CLIENT_SECRET: config["GITEA_CLIENT_SECRET"],
+    ENABLE_GITEA_SYNC: config["ENABLE_GITEA_SYNC"] || "0",
   });
 
   const originURL = !isEmpty(API_BASE_URL) ? API_BASE_URL : typeof window !== "undefined" ? window.location.origin : "";
@@ -130,36 +123,13 @@ export function InstanceGiteaConfigForm(props: Props) {
     },
   ];
 
-  const onSubmit = async (formData: GiteaConfigFormValues) => {
-    const payload: Partial<GiteaConfigFormValues> = { ...formData };
-
-    try {
-      const response = await updateInstanceConfigurations(payload);
-      setToast({
-        type: "success",
-        title: "Done!",
-        message: "Your Gitea authentication is configured. You should test it now.",
-      });
-      reset({
-        GITEA_HOST: response.find((item) => item.key === "GITEA_HOST")?.value,
-        GITEA_CLIENT_ID: response.find((item) => item.key === "GITEA_CLIENT_ID")?.value,
-        GITEA_CLIENT_SECRET: response.find((item) => item.key === "GITEA_CLIENT_SECRET")?.value,
-        ENABLE_GITEA_SYNC: response.find((item) => item.key === "ENABLE_GITEA_SYNC")?.value,
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   return (
     <OAuthProviderForm
       providerName="Gitea"
       control={control}
       formFields={GITEA_FORM_FIELDS}
       switchField={GITEA_FORM_SWITCH_FIELD}
-      isDirty={isDirty}
-      isSubmitting={isSubmitting}
-      onSave={handleSubmit(onSubmit)}
+      onSave={onSave}
       serviceDetails={GITEA_SERVICE_FIELD}
     />
   );

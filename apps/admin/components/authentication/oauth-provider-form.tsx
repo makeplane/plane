@@ -7,6 +7,7 @@
 import { useState } from "react";
 import type { BaseSyntheticEvent } from "react";
 import Link from "next/link";
+import { useFormState } from "react-hook-form";
 import type { Control, FieldValues } from "react-hook-form";
 import { MonitorOutline } from "@makeplane/propel/icons";
 // plane internal packages
@@ -25,8 +26,6 @@ type Props<T extends FieldValues> = {
   control: Control<T>;
   formFields: TControllerInputFormField<T>[];
   switchField: TControllerSwitchFormField<T>;
-  isDirty: boolean;
-  isSubmitting: boolean;
   onSave: (e?: BaseSyntheticEvent) => Promise<void>;
   serviceDetails: TCopyField[];
   // providers with web-only callback URLs list them separately under a "Web" heading
@@ -34,17 +33,9 @@ type Props<T extends FieldValues> = {
 };
 
 export function OAuthProviderForm<T extends FieldValues>(props: Props<T>) {
-  const {
-    providerName,
-    control,
-    formFields,
-    switchField,
-    isDirty,
-    isSubmitting,
-    onSave,
-    serviceDetails,
-    webServiceDetails,
-  } = props;
+  const { providerName, control, formFields, switchField, onSave, serviceDetails, webServiceDetails } = props;
+  // form state
+  const { isDirty, isSubmitting } = useFormState({ control });
   // states
   const [isDiscardChangesModalOpen, setIsDiscardChangesModalOpen] = useState(false);
 

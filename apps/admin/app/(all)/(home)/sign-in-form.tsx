@@ -15,15 +15,13 @@ import { InputField } from "@makeplane/propel/components/input-field";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Banner } from "@makeplane/propel/components/banner";
-import { AuthService } from "@plane/services";
 // local components
 import { FormHeader } from "@/components/instance/form-header";
+// hooks
+import { useCsrfToken } from "@/hooks/use-csrf-token";
 import { AuthBanner } from "./auth-banner";
 import { AuthHeader } from "./auth-header";
 import { authErrorHandler } from "./auth-helpers";
-
-// service initialization
-const authService = new AuthService();
 
 // error codes
 enum EErrorCodes {
@@ -58,17 +56,13 @@ export function InstanceSignInForm() {
   const errorMessage = searchParams.get("error_message") || undefined;
   // state
   const [showPassword, setShowPassword] = useState(false);
-  const [csrfToken, setCsrfToken] = useState("");
+  const csrfToken = useCsrfToken();
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorInfo, setErrorInfo] = useState<TAdminAuthErrorInfo | undefined>(undefined);
 
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
-
-  useEffect(() => {
-    if (!csrfToken) authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
-  }, [csrfToken]);
 
   useEffect(() => {
     if (emailParam) setFormData((prev) => ({ ...prev, email: emailParam }));
@@ -95,8 +89,8 @@ export function InstanceSignInForm() {
   }, [errorCode, errorMessage]);
 
   const isButtonDisabled = useMemo(
-    () => isSubmitting || !formData.email || !formData.password,
-    [formData.email, formData.password, isSubmitting]
+    () => isSubmitting || !csrfToken || !formData.email || !formData.password,
+    [csrfToken, formData.email, formData.password, isSubmitting]
   );
 
   useEffect(() => {

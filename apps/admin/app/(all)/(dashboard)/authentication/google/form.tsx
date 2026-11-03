@@ -5,10 +5,8 @@
  */
 
 import { isEmpty } from "lodash-es";
-import { useForm } from "react-hook-form";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
-import { setToast } from "@plane/blocks/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGoogleAuthenticationConfigurationKeys } from "@plane/types";
 // components
 import { CodeBlock } from "@/components/common/code-block";
@@ -17,7 +15,7 @@ import type { TControllerSwitchFormField } from "@/components/common/controller-
 import type { TCopyField } from "@/components/common/copy-field";
 import { OAuthProviderForm } from "@/components/authentication/oauth-provider-form";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useOAuthProviderConfigForm } from "@/hooks/use-oauth-provider-config-form";
 
 type Props = {
   config: IFormattedInstanceConfiguration;
@@ -32,20 +30,15 @@ const GOOGLE_FORM_SWITCH_FIELD: TControllerSwitchFormField<GoogleConfigFormValue
 
 export function InstanceGoogleConfigForm(props: Props) {
   const { config } = props;
-  // store hooks
-  const { updateInstanceConfigurations } = useInstance();
   // form data
   const {
-    handleSubmit,
     control,
-    reset,
-    formState: { errors, isDirty, isSubmitting },
-  } = useForm<GoogleConfigFormValues>({
-    defaultValues: {
-      GOOGLE_CLIENT_ID: config["GOOGLE_CLIENT_ID"],
-      GOOGLE_CLIENT_SECRET: config["GOOGLE_CLIENT_SECRET"],
-      ENABLE_GOOGLE_SYNC: config["ENABLE_GOOGLE_SYNC"] || "0",
-    },
+    formState: { errors },
+    onSave,
+  } = useOAuthProviderConfigForm<GoogleConfigFormValues>("Google", {
+    GOOGLE_CLIENT_ID: config["GOOGLE_CLIENT_ID"],
+    GOOGLE_CLIENT_SECRET: config["GOOGLE_CLIENT_SECRET"],
+    ENABLE_GOOGLE_SYNC: config["ENABLE_GOOGLE_SYNC"] || "0",
   });
 
   const originURL = !isEmpty(API_BASE_URL) ? API_BASE_URL : typeof window !== "undefined" ? window.location.origin : "";
@@ -143,35 +136,13 @@ export function InstanceGoogleConfigForm(props: Props) {
     },
   ];
 
-  const onSubmit = async (formData: GoogleConfigFormValues) => {
-    const payload: Partial<GoogleConfigFormValues> = { ...formData };
-
-    try {
-      const response = await updateInstanceConfigurations(payload);
-      setToast({
-        type: "success",
-        title: "Done!",
-        message: "Your Google authentication is configured. You should test it now.",
-      });
-      reset({
-        GOOGLE_CLIENT_ID: response.find((item) => item.key === "GOOGLE_CLIENT_ID")?.value,
-        GOOGLE_CLIENT_SECRET: response.find((item) => item.key === "GOOGLE_CLIENT_SECRET")?.value,
-        ENABLE_GOOGLE_SYNC: response.find((item) => item.key === "ENABLE_GOOGLE_SYNC")?.value,
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   return (
     <OAuthProviderForm
       providerName="Google"
       control={control}
       formFields={GOOGLE_FORM_FIELDS}
       switchField={GOOGLE_FORM_SWITCH_FIELD}
-      isDirty={isDirty}
-      isSubmitting={isSubmitting}
-      onSave={handleSubmit(onSubmit)}
+      onSave={onSave}
       serviceDetails={GOOGLE_COMMON_SERVICE_DETAILS}
       webServiceDetails={GOOGLE_SERVICE_DETAILS}
     />

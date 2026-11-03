@@ -5,10 +5,8 @@
  */
 
 import { isEmpty } from "lodash-es";
-import { useForm } from "react-hook-form";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
-import { setToast } from "@plane/blocks/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGithubAuthenticationConfigurationKeys } from "@plane/types";
 // components
 import { CodeBlock } from "@/components/common/code-block";
@@ -17,7 +15,7 @@ import type { TControllerSwitchFormField } from "@/components/common/controller-
 import type { TCopyField } from "@/components/common/copy-field";
 import { OAuthProviderForm } from "@/components/authentication/oauth-provider-form";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useOAuthProviderConfigForm } from "@/hooks/use-oauth-provider-config-form";
 
 type Props = {
   config: IFormattedInstanceConfiguration;
@@ -32,21 +30,16 @@ const GITHUB_FORM_SWITCH_FIELD: TControllerSwitchFormField<GithubConfigFormValue
 
 export function InstanceGithubConfigForm(props: Props) {
   const { config } = props;
-  // store hooks
-  const { updateInstanceConfigurations } = useInstance();
   // form data
   const {
-    handleSubmit,
     control,
-    reset,
-    formState: { errors, isDirty, isSubmitting },
-  } = useForm<GithubConfigFormValues>({
-    defaultValues: {
-      GITHUB_CLIENT_ID: config["GITHUB_CLIENT_ID"],
-      GITHUB_CLIENT_SECRET: config["GITHUB_CLIENT_SECRET"],
-      GITHUB_ORGANIZATION_ID: config["GITHUB_ORGANIZATION_ID"],
-      ENABLE_GITHUB_SYNC: config["ENABLE_GITHUB_SYNC"] || "0",
-    },
+    formState: { errors },
+    onSave,
+  } = useOAuthProviderConfigForm<GithubConfigFormValues>("GitHub", {
+    GITHUB_CLIENT_ID: config["GITHUB_CLIENT_ID"],
+    GITHUB_CLIENT_SECRET: config["GITHUB_CLIENT_SECRET"],
+    GITHUB_ORGANIZATION_ID: config["GITHUB_ORGANIZATION_ID"],
+    ENABLE_GITHUB_SYNC: config["ENABLE_GITHUB_SYNC"] || "0",
   });
 
   const originURL = !isEmpty(API_BASE_URL) ? API_BASE_URL : typeof window !== "undefined" ? window.location.origin : "";
@@ -150,36 +143,13 @@ export function InstanceGithubConfigForm(props: Props) {
     },
   ];
 
-  const onSubmit = async (formData: GithubConfigFormValues) => {
-    const payload: Partial<GithubConfigFormValues> = { ...formData };
-
-    try {
-      const response = await updateInstanceConfigurations(payload);
-      setToast({
-        type: "success",
-        title: "Done!",
-        message: "Your GitHub authentication is configured. You should test it now.",
-      });
-      reset({
-        GITHUB_CLIENT_ID: response.find((item) => item.key === "GITHUB_CLIENT_ID")?.value,
-        GITHUB_CLIENT_SECRET: response.find((item) => item.key === "GITHUB_CLIENT_SECRET")?.value,
-        GITHUB_ORGANIZATION_ID: response.find((item) => item.key === "GITHUB_ORGANIZATION_ID")?.value,
-        ENABLE_GITHUB_SYNC: response.find((item) => item.key === "ENABLE_GITHUB_SYNC")?.value,
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   return (
     <OAuthProviderForm
       providerName="GitHub"
       control={control}
       formFields={GITHUB_FORM_FIELDS}
       switchField={GITHUB_FORM_SWITCH_FIELD}
-      isDirty={isDirty}
-      isSubmitting={isSubmitting}
-      onSave={handleSubmit(onSubmit)}
+      onSave={onSave}
       serviceDetails={GITHUB_COMMON_SERVICE_DETAILS}
       webServiceDetails={GITHUB_SERVICE_DETAILS}
     />

@@ -17,14 +17,12 @@ import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { PasswordStrengthIndicator } from "@plane/blocks/auth";
 import { Banner } from "@makeplane/propel/components/banner";
-import { AuthService } from "@plane/services";
 import { getPasswordStrength, validatePersonName, validateCompanyName } from "@plane/utils";
 // components
 import { AuthHeader } from "@/app/(all)/(home)/auth-header";
 import { FormHeader } from "./form-header";
-
-// service initialization
-const authService = new AuthService();
+// hooks
+import { useCsrfToken } from "@/hooks/use-csrf-token";
 
 // error codes
 enum EErrorCodes {
@@ -68,7 +66,9 @@ export function InstanceSetupForm() {
   const lastNameParam = searchParams?.get("last_name") || undefined;
   const companyParam = searchParams?.get("company") || undefined;
   const emailParam = searchParams?.get("email") || undefined;
-  const isTelemetryEnabledParam = searchParams?.get("is_telemetry_enabled") === "True" || true;
+  // only set when the API redirects back after a failed setup; otherwise the default (enabled) applies
+  const telemetryParam = searchParams?.get("is_telemetry_enabled");
+  const isTelemetryEnabledParam = telemetryParam ? telemetryParam === "True" : undefined;
   const errorCode = searchParams?.get("error_code") || undefined;
   const errorMessage = searchParams?.get("error_message") || undefined;
   // state
@@ -76,7 +76,7 @@ export function InstanceSetupForm() {
     password: false,
     retypePassword: false,
   });
-  const [csrfToken, setCsrfToken] = useState("");
+  const csrfToken = useCsrfToken();
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -89,15 +89,12 @@ export function InstanceSetupForm() {
     setFormData((prev) => ({ ...prev, [key]: value }));
 
   useEffect(() => {
-    if (!csrfToken) authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
-  }, [csrfToken]);
-
-  useEffect(() => {
     if (firstNameParam) setFormData((prev) => ({ ...prev, first_name: firstNameParam }));
     if (lastNameParam) setFormData((prev) => ({ ...prev, last_name: lastNameParam }));
     if (companyParam) setFormData((prev) => ({ ...prev, company_name: companyParam }));
     if (emailParam) setFormData((prev) => ({ ...prev, email: emailParam }));
-    if (isTelemetryEnabledParam) setFormData((prev) => ({ ...prev, is_telemetry_enabled: isTelemetryEnabledParam }));
+    if (isTelemetryEnabledParam !== undefined)
+      setFormData((prev) => ({ ...prev, is_telemetry_enabled: isTelemetryEnabledParam }));
   }, [firstNameParam, lastNameParam, companyParam, emailParam, isTelemetryEnabledParam]);
 
   // derived values
@@ -125,12 +122,13 @@ export function InstanceSetupForm() {
   const isButtonDisabled = useMemo(
     () =>
       isSubmitting ||
+      !csrfToken ||
       !formData.first_name ||
       !formData.email ||
       !formData.password ||
       getPasswordStrength(formData.password) !== E_PASSWORD_STRENGTH.STRENGTH_VALID ||
       formData.password !== formData.confirm_password,
-    [formData.confirm_password, formData.email, formData.first_name, formData.password, isSubmitting]
+    [csrfToken, formData.confirm_password, formData.email, formData.first_name, formData.password, isSubmitting]
   );
 
   const password = formData?.password ?? "";
