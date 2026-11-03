@@ -163,3 +163,9 @@ test("a dependency to a row that is not shown becomes a labelled stub, not an ar
   const both = render({ blocks: ok, dependencies: dep, externalLinks: [peer] });
   assert.doesNotMatch(both, /AAA-1/);
 });
+
+test("external stub label shows the lag of a cross-project dependency", () => {
+  const link = { localId: "a", direction: "succ", externalId: "x", projectId: "p2", code: "HID-3", lagDays: 2 };
+  assert.match(render({ blocks: ok, externalLinks: [link] }), /HID-3 \+2d/);
+  assert.doesNotMatch(render({ blocks: ok, externalLinks: [{ ...link, lagDays: 0 }] }), /\dd</);
+});

@@ -65,6 +65,30 @@ test("arrows omit absent bars and positions and preserve routing and lag", () =>
   ]);
 });
 
+test("predecessors ending at the same x get separate bend lanes; one predecessor shares its lane", () => {
+  const rows = new Map([
+    ["A", row(20, 10, null, null)],
+    ["B", row(60, 10, null, null)],
+    ["C", row(100, 60, null, null)],
+    ["D", row(140, 60, null, null)],
+  ]);
+  const paths = buildArrows(rows, [edge("A", "C"), edge("B", "C"), edge("A", "D")], 40).map((arrow) => arrow.path);
+  assert.equal(paths[0], "M 30 20 H 38 V 100 H 60");
+  assert.equal(paths[1], "M 30 60 H 41 V 100 H 60");
+  assert.equal(paths[2], "M 30 20 H 38 V 140 H 60");
+  assert.equal(new Set(paths.slice(0, 2).map((path) => path.split(" ")[4])).size, 2);
+});
+
+test("overlapping bars routed back keep their middle runs on different lines", () => {
+  const rows = new Map([
+    ["A", row(20, 10, null, null)],
+    ["B", row(20 + 40, 10, null, null)],
+    ["C", row(100, 15, null, null)],
+  ]);
+  const [first, second] = buildArrows(rows, [edge("A", "C"), edge("B", "C")], 40).map((arrow) => arrow.path);
+  assert.notEqual(first.split(" V ")[1].split(" ")[0], second.split(" V ")[1].split(" ")[0]);
+});
+
 test("arrows flag equal or earlier starts but allow later or missing dates", () => {
   for (const [start, violated] of [["2026-11-02", true], ["2026-11-03", true], ["2026-11-04", false], [null, false]]) {
     const rows = new Map([["A", row(20, 10, null, "2026-11-03")], ["B", row(60, 60, start, null)]]);

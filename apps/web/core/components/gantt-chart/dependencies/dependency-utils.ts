@@ -17,6 +17,7 @@ export type TGanttDependencyActions = {
     externalIssueId: string,
     externalProjectId: string
   ) => Promise<void>;
+  setExternalLag?: (link: TExternalLink, lagDays: number) => Promise<void>;
   setLag?: (predecessorId: string, successorId: string, lagDays: number) => Promise<void>;
   lagsSupported?: boolean;
   create: (predecessorId: string, successorId: string) => Promise<void>;
@@ -142,16 +143,20 @@ export function isDependencyViolated(
 
 const round = (value: number) => Math.round(value * 10) / 10;
 
+// lane > 0 moves the bends sideways/vertically so arrows that would share a segment stay apart.
+const MIDY_LANE_OFFSETS = [0, 3, -3];
 export function getDependencyPath(
   from: { x: number; y: number },
   to: { x: number; y: number },
-  rowHeight: number
+  rowHeight: number,
+  lane = 0
 ): string {
   const start = `M ${round(from.x)} ${round(from.y)}`;
+  const shift = lane * 3;
   if (to.x - from.x >= 16) {
     if (from.y === to.y) return `${start} H ${round(to.x)}`;
-    return `${start} H ${round(from.x + 8)} V ${round(to.y)} H ${round(to.x)}`;
+    return `${start} H ${round(from.x + 8 + shift)} V ${round(to.y)} H ${round(to.x)}`;
   }
-  const midY = to.y > from.y ? to.y - rowHeight / 2 : to.y + rowHeight / 2;
-  return `${start} H ${round(from.x + 8)} V ${round(midY)} H ${round(to.x - 8)} V ${round(to.y)} H ${round(to.x)}`;
+  const midY = (to.y > from.y ? to.y - rowHeight / 2 : to.y + rowHeight / 2) + (MIDY_LANE_OFFSETS[lane] ?? 0);
+  return `${start} H ${round(from.x + 8 + shift)} V ${round(midY)} H ${round(to.x - 8 - shift)} V ${round(to.y)} H ${round(to.x)}`;
 }

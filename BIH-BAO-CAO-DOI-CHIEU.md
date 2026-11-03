@@ -1,8 +1,8 @@
 # Báo cáo đối chiếu: Gantt phụ thuộc + tự dời lịch (Plane BIH) so với `Task Plane.txt`
 
-Ngày: 2026-11-03 · Nhánh `bih/v1.4.2` (đã push, commit cuối `9d9cb6508`) · Prod: web `bih.6`, backend `bih.5`.
+Ngày: 2026-11-03 · Nhánh `bih/v1.4.2` (đã push, commit đợt 10 chưa push) · Prod: web `bih.6`, backend `bih.5` (đợt 10 mới chạy local, web `bih.13`).
 
-**Kết luận: toàn bộ yêu cầu bắt buộc đã làm xong và đã deploy. Chưa "xong tuyệt đối": thiếu test tương tác con trỏ cho kéo-thả, và một vài mục hoàn thiện (xem cuối).**
+**Kết luận: toàn bộ yêu cầu bắt buộc đã làm xong. Đợt 10 (chưa push/deploy) bù nốt hai mục còn thiếu so với đề: test con trỏ thật (jsdom) và đường nối tránh đè khi thanh chồng nhau. Còn lại chỉ là mục không bắt buộc (xem cuối).**
 
 ## Phase 1: Khảo sát
 | Yêu cầu | Trạng thái |
@@ -20,7 +20,7 @@ Ngày: 2026-11-03 · Nhánh `bih/v1.4.2` (đã push, commit cuối `9d9cb6508`) 
 | Hoàn tác | Xong | Đợt 8: nút "Hoàn tác" sau khi nối (cùng và khác project) |
 | Mũi tên, cập nhật khi cuộn/zoom/kéo, nhóm thu gọn, việc ngoài màn hình | Xong | Đợt 8: hàng chưa tải hoặc bị lọc hiện "mũi tên cụt" có mã việc, chỉ đọc |
 | SVG overlay, tránh render thừa | Xong | Test 2000 việc dưới 500 ms |
-| Thanh chồng nhau | **Một phần** | Hiển thị được, chưa tránh đường đè lên nhau |
+| Thanh chồng nhau | Xong (đợt 10) | Predecessor khác nhau cùng điểm cuối được tách thành các làn riêng; cùng một predecessor tỏa ra nhiều việc sau vẫn chung làn. Đường quay lại giữa hai hàng lệch tối đa ±3 px |
 | Trạng thái: thường, đỏ khi vi phạm, đang chọn, lý do khi không hợp lệ | Xong | |
 
 ## Phase 3: Tự dời lịch
@@ -50,16 +50,16 @@ Ngày: 2026-11-03 · Nhánh `bih/v1.4.2` (đã push, commit cuối `9d9cb6508`) 
 |---|---|---|
 | 1 | Tạo/xoá phụ thuộc | Có (pytest contract) |
 | 2 | Vẽ mũi tên | Có (render test, `dependency-layer.render.test.mjs`) |
-| 3 | Tương tác kéo-thả | **Thiếu phần con trỏ.** Có test logic (`drag-logic.test.mjs`), chưa có test sự kiện con trỏ thật; cần jsdom/Playwright (thêm dependency, phải hỏi Huy). Đã thử tay. |
+| 3 | Tương tác kéo-thả | Có (đợt 10): `dependency-layer.pointer.test.mjs` chạy `GanttDependencyLayer` thật trong jsdom với sự kiện mouse/pointer/Escape (thả lên thanh, tay trái, chạm, thả ra ngoài, tự nối, Escape, pointercancel). Cộng test logic `drag-logic.test.mjs`; đã thử tay. |
 | 4 | Chặn vòng | Có |
 | 5 | Nhiều việc trước | Có |
 | 6 | Dời dây chuyền | Có |
 | 7 | Cuối tuần, ngày lễ | Có |
-| 8 | Cập nhật đồng thời | Có (`test_gantt_concurrency.py`: 2 người cùng dời, `expected` cũ → 409, không deadlock, vòng đồng thời bị từ chối). Chưa có test UI hai trình duyệt. |
+| 8 | Cập nhật đồng thời | Có (`test_gantt_concurrency.py`: 2 người cùng dời, `expected` cũ → 409, không deadlock, vòng đồng thời bị từ chối). Đợt 10: đã thử tay UI hai tab local — tab cũ bấm lưu sau khi tab kia đã lưu ⇒ toast "Lịch đã thay đổi — xem lại" và hộp xem trước tự làm mới. Chưa có test tự động UI. |
 | 9 | Quyền khác project | Có |
 | 10 | 500+ việc | Có (backend và frontend, chuỗi 500, nạp 2000) |
 
-Kết quả gần nhất: Node 66 pass, pytest 150 pass, types 0 lỗi, lint 0 lỗi, `makemigrations --check` không đổi.
+Kết quả gần nhất (đợt 10): Node 76 pass (+ test con trỏ jsdom), types 0 lỗi, lint 0 lỗi; pytest 150 (đợt 8, backend không đổi); pytest 150 pass, types 0 lỗi, lint 0 lỗi, `makemigrations --check` không đổi.
 
 ## Phase 6 và sản phẩm bàn giao
 | Hạng mục | Trạng thái |
@@ -71,10 +71,10 @@ Kết quả gần nhất: Node 66 pass, pytest 150 pass, types 0 lỗi, lint 0 l
 | Không phá tính năng cũ; giữ endpoint cũ để rollback | Xong |
 
 ## Còn thiếu hoặc còn mở
-1. Test kéo-thả bằng con trỏ thật (cần duyệt dependency).
-2. Thanh chồng nhau: chưa tránh đường đè.
-3. Ô nhập lag cho mũi tên cụt khác project (endpoint `issue-lags` có, chưa có UI).
-4. Một `PATCH` lạ trước `POST issue-schedule` ở sidebar, chưa tìm ra nguồn (cần bắt mạng).
+1. ~~Test kéo-thả bằng con trỏ thật~~ Xong đợt 10 (jsdom, devDependency `apps/web`).
+2. ~~Thanh chồng nhau~~ Xong đợt 10 (làn riêng trong `buildArrows`/`getDependencyPath`).
+3. ~~Ô nhập lag cho mũi tên cụt khác project~~ Xong đợt 10: chọn mũi tên cụt ⇒ ô "Trễ (ngày)", nhãn hiện `+Nd`; ghi qua `workspaces/<slug>/issue-lags/`, cần Member ở project của việc sau.
+4. `PATCH` lạ trước `POST issue-schedule` ở sidebar: bắt mạng local 2 lần không tái hiện (chỉ thấy `POST` xem trước). Lần đầu có `PATCH` lưu ngày trước khi hiện hộp xem trước (activity ghi 1 lần). Nghi bấm ngày lúc `deps` chưa tải xong ⇒ rơi vào lưu thẳng. Chưa kết luận, cần thêm mẫu.
 5. Chỉ hỗ trợ FS; SS/FF/SF cần migration (đề chỉ yêu cầu FS trước).
 6. Ngày Tết/Giỗ Tổ tính từ bảng âm lịch, cần đối chiếu thông báo nghỉ chính thức từng năm.
-7. Test UI đồng thời hai trình duyệt chưa làm.
+7. Test UI đồng thời hai trình duyệt: đã thử tay (xem Phase 5 mục 8), chưa tự động.

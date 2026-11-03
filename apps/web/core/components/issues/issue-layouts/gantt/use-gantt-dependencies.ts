@@ -84,6 +84,14 @@ export function useGanttDependencies(
           if (Array.isArray(response) || !response.next_page_results) break;
         }
         const lags = await scheduleService.getLags(workspaceSlug, projectId).catch(() => null);
+        const externalLinks = extractExternalLinks(issues, projectId);
+        // Lags of cross-project dependencies come from the workspace endpoint; skip it when there are none.
+        const externalLags = externalLinks.length
+          ? await scheduleService.getWorkspaceLags(workspaceSlug).catch(() => [])
+          : [];
+        const externalLagMap = new Map(
+          externalLags.map(({ predecessor, successor, lag_days }) => [`${predecessor}|${successor}`, lag_days])
+        );
         if (request === requestCounter.current) {
           const extracted = extractGanttRelations(issues, projectId);
           const lagMap = new Map(
@@ -92,7 +100,15 @@ export function useGanttDependencies(
           projectIssueIds.current = new Set(issues.map((issue) => issue.id));
           updateRelations({
             ...extracted,
-            externalLinks: extractExternalLinks(issues, projectId),
+            externalLinks: externalLinks.map((link) => ({
+              ...link,
+              lagDays:
+                externalLagMap.get(
+                  link.direction === "pred"
+                    ? `${link.externalId}|${link.localId}`
+                    : `${link.localId}|${link.externalId}`
+                ) ?? 0,
+            })),
             lagsSupported: lags !== null,
             dependencies: extracted.dependencies.map((dep) => ({
               predecessorId: dep.predecessorId,
@@ -334,6 +350,37 @@ export function useGanttDependencies(
     }
   };
 
+  const setExternalLag = async (link: TExternalLink, lagDays: number) => {
+    const current = relationsRef.current;
+    if (!enabled || !workspaceSlug || !current || saving.current) return;
+    if (!Number.isInteger(lagDays) || lagDays < -365 || lagDays > 365) {
+      setToast({ type: TOAST_TYPE.ERROR, title: "Độ trễ phải là số nguyên từ -365 đến 365" });
+      return;
+    }
+    const matches = (item: TExternalLink) =>
+      item.localId === link.localId && item.direction === link.direction && item.externalId === link.externalId;
+    if (!current.externalLinks.some(matches)) return;
+    const [predecessorId, successorId] =
+      link.direction === "pred" ? [link.externalId, link.localId] : [link.localId, link.externalId];
+    const scope = generation.current;
+    saving.current = true;
+    requestCounter.current++;
+    try {
+      await scheduleService.setWorkspaceLag(workspaceSlug, predecessorId, successorId, lagDays);
+      if (scope !== generation.current) return;
+      updateRelations({
+        ...current,
+        externalLinks: current.externalLinks.map((item) => (matches(item) ? { ...item, lagDays } : item)),
+      });
+    } catch (error) {
+      if (scope !== generation.current) return;
+      setToast({ type: TOAST_TYPE.ERROR, title: "Không lưu được độ trễ (cần quyền Member ở project của việc sau)" });
+      console.error("Failed to save external Gantt lag", error);
+    } finally {
+      if (scope === generation.current) saving.current = false;
+    }
+  };
+
   const setLag = async (predecessorId: string, successorId: string, lagDays: number) => {
     const current = relationsRef.current;
     if (!enabled || !workspaceSlug || !projectId || !current?.lagsSupported || saving.current) return;
@@ -386,6 +433,7 @@ export function useGanttDependencies(
         }),
         refresh: () => refreshRef.current(),
         setLag,
+        setExternalLag,
         createExternal,
         removeExternal,
         createDependency: (pred: string, succ: string) => mutateDependency(pred, succ, false),

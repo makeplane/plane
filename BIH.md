@@ -108,7 +108,19 @@ Engine Python thuần chạy được không cần Django: `python -m unittest d
 - `expected` kèm `include_successors=false` ⇒ 400. Nghỉ bù ngày lễ (Python + TS, cùng ca test, tuyến tính). Preset lễ VN có Tết + Giỗ Tổ 2026–2030 (bảng âm lịch `LUNAR_HOLIDAYS` trong `bih_schedule.py`).
 - **Mới** `GET/POST workspaces/<slug>/issue-lags/` (`WorkspaceIssueLagsEndpoint`): lag relation khác project; đọc/ghi cần đọc được cả hai đầu, ghi cần Member/Admin ở project của **việc sau** (lấy từ `relation.issue.project_id`, không tin `relation.project`).
 - Web: hoàn tác sau khi nối (cùng/khác project); mũi tên cụt có mã việc cho phụ thuộc tới hàng chưa tải/đang lọc (chỉ đọc); test render thật `dependency-layer.render.test.mjs` (bundle `.tsx` bằng esbuild có sẵn trong cây pnpm + `react-dom/server`, không thêm dependency; chưa test tương tác con trỏ).
-- Chưa làm: hướng đi riêng khi thanh chồng nhau, ô nhập lag cho mũi tên cụt khác project, SS/FF/SF, test 2 trình duyệt. Một `PATCH` lạ trước `POST issue-schedule` ở sidebar chưa tìm ra nguồn (cần bắt mạng trên trình duyệt).
+- Chưa làm: SS/FF/SF. (Thanh chồng nhau, ô nhập lag khác project, test con trỏ: xem Đợt 10.)
+
+## Đợt 10 (không migration, chỉ web)
+
+- **Test con trỏ thật**: `dependency-layer.pointer.test.mjs` chạy `GanttDependencyLayer` trong jsdom (devDependency mới `jsdom` ở `apps/web`, Huy đã duyệt) với sự kiện mouse/pointer/keyboard.
+- **Thanh chồng nhau**: `buildArrows` gán "làn" (0–2) theo từng predecessor cùng điểm cuối; `getDependencyPath(from, to, rowHeight, lane)` dịch chỗ gấp khúc 3 px mỗi làn (làn 0 giữ nguyên đường cũ). Cùng predecessor tỏa nhiều việc sau thì chung làn.
+- **Lag khác project**: chọn mũi tên cụt (có quyền sửa) ⇒ menu có ô "Trễ (ngày)"; nhãn mũi tên cụt hiện `+Nd`. Web đọc `GET workspaces/<slug>/issue-lags/` khi có mũi tên cụt, ghi `POST` cùng URL (403 ⇒ toast cần Member ở project của việc sau). Hook `useGanttDependencies` có `setExternalLag`.
+- `PATCH` lạ ở sidebar: chưa tái hiện sau 2 lần bắt mạng local; xem báo cáo đối chiếu.
+- Thử tay local (web `bih.13`): đặt/đọc lag `OTHR-1 +3d` (đã xác nhận trong DB, đã trả về 0); hai tab sửa đồng thời ⇒ 409 "Lịch đã thay đổi — xem lại".
+
+## Rollback đợt 10
+
+Web `bih.12` (đợt 10 chỉ đổi web, không đổi backend/migration).
 
 ## Rollback đợt 8
 

@@ -9,6 +9,7 @@ import { createPortal } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 import { useProject } from "@/hooks/store/use-project";
 import { observer } from "mobx-react";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TResolvedExternalLink } from "./external-links";
 import type { TGanttDependencyActions } from "./dependency-utils";
 import { isDependencyViolated } from "./dependency-utils";
@@ -105,7 +106,9 @@ export const ExternalStubs = observer(function ExternalStubs({
         ? isDependencyViolated(row.block.target_date, item.startDate)
         : isDependencyViolated(item.targetDate, row.block.start_date)
     );
-    const label = group.map((item) => item.code ?? "dự án khác").join(" · ");
+    const lagText = (item: TResolvedExternalLink) =>
+      item.lagDays ? ` ${item.lagDays > 0 ? "+" : ""}${item.lagDays}d` : "";
+    const label = group.map((item) => `${item.code ?? "dự án khác"}${lagText(item)}`).join(" · ");
     const tooltip = group
       .map(
         (item) =>
@@ -190,6 +193,34 @@ export const ExternalStubs = observer(function ExternalStubs({
                     >
                       ×
                     </button>
+                  )}
+                  {editable(item) && dependencyActions?.setExternalLag && (
+                    <label className="flex items-center gap-1 text-tertiary">
+                      Trễ (ngày)
+                      <input
+                        key={`${item.externalId}-${item.lagDays ?? 0}`}
+                        type="number"
+                        min={-365}
+                        max={365}
+                        step={1}
+                        defaultValue={item.lagDays ?? 0}
+                        className="w-14 rounded border border-subtle bg-layer-1 px-1 text-primary"
+                        onKeyDown={(event) => {
+                          event.stopPropagation();
+                          if (event.key === "Enter") event.currentTarget.blur();
+                        }}
+                        onBlur={(event) => {
+                          const value = Number(event.currentTarget.value);
+                          const valid = event.currentTarget.validity.valid;
+                          event.currentTarget.value = String(item.lagDays ?? 0);
+                          if (!valid || !Number.isInteger(value)) {
+                            setToast({ type: TOAST_TYPE.ERROR, title: "Độ trễ phải là số nguyên từ -365 đến 365" });
+                            return;
+                          }
+                          if (value !== (item.lagDays ?? 0)) void dependencyActions.setExternalLag?.(item, value);
+                        }}
+                      />
+                    </label>
                   )}
                 </div>
               ))}

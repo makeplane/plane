@@ -46,18 +46,26 @@ type Row = {
 
 export function buildArrows(rows: Map<string, Row>, dependencies: TGanttDependency[], blockHeight: number) {
   const arrows: (TGanttDependency & { path: string; violated: boolean })[] = [];
+  // Different predecessors ending at the same x would draw their first bend on top of each other:
+  // give each its own lane (same predecessor fanning out to several successors shares one on purpose).
+  const lanes = new Map<number, Map<string, number>>();
   for (const { predecessorId, successorId, lagDays } of dependencies) {
     const pred = rows.get(predecessorId);
     const succ = rows.get(successorId);
     if (!pred?.block.position || !succ?.block.position) continue;
+    const fromX = pred.block.position.marginLeft + pred.block.position.width;
+    const byPred = lanes.get(fromX) ?? new Map<string, number>();
+    lanes.set(fromX, byPred);
+    if (!byPred.has(predecessorId)) byPred.set(predecessorId, byPred.size);
     arrows.push({
       predecessorId,
       successorId,
       lagDays,
       path: getDependencyPath(
-        { x: pred.block.position.marginLeft + pred.block.position.width, y: pred.y },
+        { x: fromX, y: pred.y },
         { x: succ.block.position.marginLeft, y: succ.y },
-        blockHeight
+        blockHeight,
+        Math.min(byPred.get(predecessorId)!, 2)
       ),
       violated: isDependencyViolated(pred.block.target_date, succ.block.start_date),
     });

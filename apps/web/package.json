@@ -84,6 +84,7 @@
     "@types/react-color": "catalog:",
     "@types/react-dom": "catalog:",
     "dotenv": "catalog:",
+    "jsdom": "^30.1.3",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-tsconfig-paths": "catalog:"

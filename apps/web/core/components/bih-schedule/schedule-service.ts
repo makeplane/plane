@@ -43,6 +43,21 @@ class ScheduleService extends APIService {
     return (await this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-lags/`)).data;
   }
 
+  async getWorkspaceLags(workspaceSlug: string): Promise<TIssueLag[]> {
+    return (await this.get(`/api/workspaces/${workspaceSlug}/issue-lags/`)).data;
+  }
+
+  async setWorkspaceLag(
+    workspaceSlug: string,
+    predecessor: string,
+    successor: string,
+    lagDays: number
+  ): Promise<TIssueLag> {
+    return (
+      await this.post(`/api/workspaces/${workspaceSlug}/issue-lags/`, { predecessor, successor, lag_days: lagDays })
+    ).data;
+  }
+
   async setLag(
     workspaceSlug: string,
     projectId: string,

@@ -110,13 +110,13 @@ ul{margin:6px 0 0;padding-left:20px}
     <tr><td>P2</td><td>Kéo-thả nối, đường tạm, tô mục tiêu, chặn tự nối/trùng/vòng, xoá, hoàn tác</td><td><span class="tag t-ok">Xong</span></td></tr>
     <tr><td>P2</td><td>Mũi tên, cuộn/zoom, nhóm thu gọn, việc ngoài màn hình (mũi tên cụt có mã việc)</td><td><span class="tag t-ok">Xong</span></td></tr>
     <tr><td>P2</td><td>Trạng thái đường nối: thường, đỏ khi vi phạm, đang chọn, lý do khi không hợp lệ</td><td><span class="tag t-ok">Xong</span></td></tr>
-    <tr><td>P2</td><td>Thanh chồng nhau</td><td><span class="tag t-w">Một phần</span></td></tr>
+    <tr><td>P2</td><td>Thanh chồng nhau (đợt 10: làn riêng cho đường nối trùng điểm cuối)</td><td><span class="tag t-ok">Xong</span></td></tr>
     <tr><td>P3</td><td>FS, nhiều việc trước, lag, lịch làm việc, nghỉ bù, Tết/Giỗ Tổ 2026–2030, bỏ vòng</td><td><span class="tag t-ok">Xong</span></td></tr>
     <tr><td>P3</td><td>Cài đặt (tự động, ngày làm việc/lịch, dời sớm, hiện đường) và xem trước</td><td><span class="tag t-ok">Xong</span></td></tr>
     <tr><td>P4</td><td>Service backend, atomic, chống đua, phân quyền, khác project, không migration thừa</td><td><span class="tag t-ok">Xong</span></td></tr>
     <tr><td>P4+</td><td>Không lộ tên việc cho người không có quyền đọc (thêm so với đề)</td><td><span class="tag t-ok">Xong</span></td></tr>
     <tr><td>P5</td><td>Test: tạo/xoá, vẽ mũi tên, vòng, nhiều việc trước, dây chuyền, ngày lễ, đồng thời, quyền khác project, 500+ việc</td><td><span class="tag t-ok">Có</span></td></tr>
-    <tr><td>P5</td><td>Test kéo-thả bằng sự kiện con trỏ thật (đã thử tay, có test logic)</td><td><span class="tag t-b">Thiếu</span></td></tr>
+    <tr><td>P5</td><td>Test kéo-thả bằng sự kiện con trỏ thật (đợt 10, jsdom) + test logic + thử tay</td><td><span class="tag t-ok">Có</span></td></tr>
     <tr><td>P6</td><td>Danh sách file, API mới, hướng dẫn deploy/rollback, tài liệu, giới hạn</td><td><span class="tag t-ok">Xong</span></td></tr>
   </table>
 </div>
@@ -124,10 +124,10 @@ ul{margin:6px 0 0;padding-left:20px}
 <div class="card">
   <h2>Còn thiếu / còn mở</h2>
   <ul>
-    <li><b>Thiếu so với đề:</b> test kéo-thả bằng con trỏ (cần thêm jsdom/Playwright, chờ duyệt); thanh chồng nhau chưa tránh đường đè.</li>
-    <li><b>Không bắt buộc:</b> ô nhập lag cho mũi tên khác project (endpoint đã có); một <code>PATCH</code> lạ ở sidebar chưa rõ nguồn; SS/FF/SF (cần migration); đối chiếu ngày Tết với thông báo nghỉ chính thức; test hai trình duyệt đồng thời trên giao diện.</li>
+    <li><b>Thiếu so với đề:</b> không còn (đợt 10 bù test con trỏ jsdom và đường nối tránh đè).</li>
+    <li><b>Không bắt buộc:</b> một <code>PATCH</code> lạ ở sidebar chưa tái hiện được (2 lần bắt mạng); SS/FF/SF (cần migration); đối chiếu ngày Tết với thông báo nghỉ chính thức; test tự động hai trình duyệt (đã thử tay). Ô nhập lag cho mũi tên khác project đã xong đợt 10.</li>
   </ul>
-  <div class="cap">Số test lấy từ lần chạy cuối của đợt 8. Chi tiết: BIH.md (mục "Đợt 8", "Rollback đợt 8").</div>
+  <div class="cap">Đợt 10 chưa push/deploy. Node 76 pass, types/lint 0 lỗi. Chi tiết: BIH.md (mục "Đợt 10").</div>
 </div>
 </main>
 </body>

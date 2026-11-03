@@ -13,6 +13,7 @@ export type TExternalLink = {
   name?: string;
   startDate?: string | null;
   targetDate?: string | null;
+  lagDays?: number;
   // Same-project dependency whose other end has no row in the chart (not loaded yet or filtered out).
   peer?: boolean;
 };
