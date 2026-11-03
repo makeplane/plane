@@ -277,29 +277,54 @@ export const getFilteredWorkItems = (workItems: TIssue[], filters: IIssueFilterO
  * @param orderByKey - The key to order the issues by.
  * @returns The ordered array of work items.
  */
-export const getOrderedWorkItems = (workItems: TIssue[], orderByKey: TIssueOrderByOptions): string[] => {
+export const getOrderedWorkItems = (
+    workItems: TIssue[],
+    orderByKey: TIssueOrderByOptions
+): string[] => {
   switch (orderByKey) {
     case "-updated_at":
-      return getIssueIds(orderBy(workItems, (item) => convertToISODateString(item["updated_at"]), ["desc"]));
+      return getIssueIds(
+          orderBy(workItems, (item) => convertToISODateString(item["updated_at"]), ["desc"])
+      );
 
     case "-created_at":
-      return getIssueIds(orderBy(workItems, (item) => convertToISODateString(item["created_at"]), ["desc"]));
+      return getIssueIds(
+          orderBy(workItems, (item) => convertToISODateString(item["created_at"]), ["desc"])
+      );
 
     case "-start_date":
+    case "start_date":
       return getIssueIds(
-        orderBy(
-          workItems,
-          [getSortOrderToFilterEmptyValues.bind(null, "start_date"), "start_date"], //preferring sorting based on empty values to always keep the empty values below
-          ["asc", "desc"]
-        )
+          orderBy(
+              workItems,
+              [getSortOrderToFilterEmptyValues.bind(null, "start_date"), "start_date"],
+              ["asc", orderByKey === "-start_date" ? "desc" : "asc"]
+          )
       );
 
-    case "-priority": {
-      const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
+    case "-target_date":
+    case "target_date":
       return getIssueIds(
-        orderBy(workItems, (currentIssue: TIssue) => indexOf(sortArray, currentIssue?.priority), ["asc"])
+          orderBy(
+              workItems,
+              [getSortOrderToFilterEmptyValues.bind(null, "target_date"), "target_date"],
+              ["asc", orderByKey === "-target_date" ? "desc" : "asc"]
+          )
+      );
+
+    case "-priority":
+    case "priority": {
+      const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
+
+      return getIssueIds(
+          orderBy(
+              workItems,
+              (currentIssue: TIssue) => indexOf(sortArray, currentIssue?.priority),
+              [orderByKey === "-priority" ? "asc" : "desc"]
+          )
       );
     }
+
     default:
       return getIssueIds(workItems);
   }

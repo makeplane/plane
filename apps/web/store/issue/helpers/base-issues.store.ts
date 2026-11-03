@@ -56,7 +56,7 @@ export enum EIssueGroupedAction {
 export interface IBaseIssuesStore {
   // observable
   loader: Record<string, TLoader>;
-
+  setGroupSort: (groupId: string, key: TIssueOrderByOptions) => void;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | undefined; // object to store Issue Ids based on group or subgroup
   groupedIssueCount: TGroupedIssueCount; // map of groupId/subgroup and issue count of that particular group/subgroup
   issuePaginationData: TIssuePaginationData; // map of groupId/subgroup and pagination Data of that particular group/subgroup
@@ -180,6 +180,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
   groupedIssueCount: TGroupedIssueCount = {};
   //
+  groupSortMap: Record<string, TIssueOrderByOptions> = {};
   paginationOptions: IssuePaginationOptions | undefined = undefined;
 
   isArchived: boolean;
@@ -207,6 +208,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       groupedIssueIds: observable,
       issuePaginationData: observable,
       groupedIssueCount: observable,
+      groupSortMap: observable,
 
       paginationOptions: observable,
       // computed
@@ -230,6 +232,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
       createIssue: action,
       issueUpdate: action,
+      setGroupSort: action,
       updateIssueDates: action,
       issueQuickAdd: action.bound,
       removeIssue: action.bound,
@@ -305,27 +308,32 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     return displayFilters?.layout === "kanban" ? displayFilters?.sub_group_by : undefined;
   }
 
+  setGroupSort = (groupId: string, key: TIssueOrderByOptions) => {
+    this.groupSortMap[groupId] = key;
+  };
+
   getIssueIds = (groupId?: string, subGroupId?: string) => {
     const groupedIssueIds = this.groupedIssueIds;
 
     if (!groupedIssueIds) return undefined;
 
     const allIssues = groupedIssueIds[ALL_ISSUES] ?? [];
-    if (!this.groupBy && !this.subGroupBy && allIssues && Array.isArray(allIssues)) {
+
+    if (!this.groupBy && !this.subGroupBy && Array.isArray(allIssues)) {
       return allIssues;
     }
 
-    if (this.groupBy && groupId && groupedIssueIds?.[groupId] && Array.isArray(groupedIssueIds[groupId])) {
-      return groupedIssueIds[groupId] ?? [];
+    let issueIds: string[] | undefined;
+
+    if (this.groupBy && groupId && Array.isArray(groupedIssueIds[groupId])) {
+      issueIds = groupedIssueIds[groupId];
+    } else if (this.groupBy && this.subGroupBy && groupId && subGroupId) {
+      issueIds = (groupedIssueIds as TSubGroupedIssues)[groupId]?.[subGroupId] ?? [];
     }
 
-    if (this.groupBy && this.subGroupBy && groupId && subGroupId) {
-      return (groupedIssueIds as TSubGroupedIssues)[groupId]?.[subGroupId] ?? [];
-    }
-
-    return undefined;
+    if (!issueIds) return undefined;
+    return this.issuesSortWithOrderBy(issueIds, this.groupSortMap[groupId ?? ""]);
   };
-
   // The Issue Property corresponding to the order by value
   get orderByKey() {
     // oxlint-disable-next-line no-shadow

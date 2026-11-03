@@ -81,7 +81,6 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     sub_group_by,
     issuesMap,
     displayProperties,
-    groupedIssueIds,
     isDropDisabled,
     dropErrorMessage,
     updateIssue,
@@ -101,7 +100,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
   const projectState = useProjectState();
 
   const {
-    issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
+    issues: { getGroupIssueCount, getPaginationData, getIssueLoader, getIssueIds },
   } = useIssuesStore();
 
   const [intersectionElement, setIntersectionElement] = useState<HTMLSpanElement | null>(null);
@@ -250,9 +249,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
 
   const isSubGroup = !!sub_group_id && sub_group_id !== "null";
 
-  const issueIds = isSubGroup
-    ? ((groupedIssueIds as TSubGroupedIssues)?.[groupId]?.[sub_group_id] ?? [])
-    : ((groupedIssueIds as TGroupedIssues)?.[groupId] ?? []);
+  const issueIds = getIssueIds(groupId, isSubGroup ? sub_group_id : undefined) ?? [];
 
   const groupIssueCount = getGroupIssueCount(groupId, sub_group_id, false) ?? 0;
 

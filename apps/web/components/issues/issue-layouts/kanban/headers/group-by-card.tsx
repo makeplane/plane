@@ -18,9 +18,14 @@ import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/comp
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import  GroupSortDropdown  from "./group-sort-dropdown";
 // constants
-import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
+import { useIssueStoreType, useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { CreateUpdateEpicModal } from "@/components/epic-modal";
+
+import type {
+  TIssueOrderByOptions,
+} from "@plane/types";
 
 interface IHeaderGroupByCard {
   sub_group_by: TIssueGroupByOptions | undefined;
@@ -59,6 +64,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
   // hooks
   const storeType = useIssueStoreType();
+  const issuesStore = useIssuesStore();
   // router
   const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
 
@@ -121,7 +127,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
 
         <div
           className={`relative flex gap-1 ${
-            verticalAlignPosition ? `flex-col items-center` : `w-full flex-row items-baseline overflow-hidden`
+            verticalAlignPosition ? `flex-col items-center` : `w-full flex-row items-baseline`
           }`}
         >
           <div
@@ -136,6 +142,35 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           >
             {count || 0}
           </div>
+
+          <GroupSortDropdown
+              onSortChange={(sortBy, direction) => {
+                const sortKey = `${direction === "desc" ? "-" : ""}${sortBy}`;
+
+                console.log("HEADER CALLBACK:", {
+                  column_id,
+                  sortBy,
+                  direction,
+                  sortKey,
+                });
+
+                console.log(
+                    "SORT MAP BEFORE:",
+                    issuesStore.issues.groupSortMap
+                );
+
+                issuesStore.issues.setGroupSort(
+                    column_id,
+                    sortKey as TIssueOrderByOptions
+                );
+
+                console.log(
+                    "SORT MAP AFTER:",
+                    issuesStore.issues.groupSortMap
+                );
+              }}
+          />
+
         </div>
 
         {sub_group_by === null && (
