@@ -19,30 +19,31 @@ const RETRY_DELAY_MS = 2000;
  */
 export function useCsrfToken(): string {
   const [csrfToken, setCsrfToken] = useState("");
+  const [attempt, setAttempt] = useState(1);
 
+  // each attempt is one effect run; a failed attempt schedules the next by bumping `attempt`
   useEffect(() => {
     let isCancelled = false;
-    let retryTimeout: ReturnType<typeof setTimeout> | undefined;
 
-    const fetchToken = async (attempt: number) => {
+    const fetchToken = async () => {
       try {
         const data = await authService.requestCSRFToken();
         if (!data?.csrf_token) throw new Error("CSRF token not found");
         if (!isCancelled) setCsrfToken(data.csrf_token);
       } catch (error) {
         if (isCancelled) return;
-        if (attempt < MAX_ATTEMPTS) retryTimeout = setTimeout(() => void fetchToken(attempt + 1), RETRY_DELAY_MS);
+        if (attempt < MAX_ATTEMPTS) setAttempt((prev) => prev + 1);
         else console.error("Failed to fetch CSRF token", error);
       }
     };
 
-    void fetchToken(1);
+    const timeout = setTimeout(() => void fetchToken(), attempt === 1 ? 0 : RETRY_DELAY_MS);
 
     return () => {
       isCancelled = true;
-      clearTimeout(retryTimeout);
+      clearTimeout(timeout);
     };
-  }, []);
+  }, [attempt]);
 
   return csrfToken;
 }
