@@ -11,11 +11,38 @@ import type { TFileMetaDataLite, TFileSignedURLResponse } from "@plane/types";
 import { DANGEROUS_EXTENSIONS } from "@plane/constants";
 
 /**
+ * Common text and signature-less formats mapped by file extension.
+ * Used when magic byte inspection cannot determine MIME type (plain text formats have no binary headers).
+ */
+export const EXTENSION_TO_MIME_TYPE_MAP: Record<string, string> = {
+  txt: "text/plain",
+  text: "text/plain",
+  log: "text/plain",
+  md: "text/markdown",
+  markdown: "text/markdown",
+  csv: "text/csv",
+  tsv: "text/tab-separated-values",
+  json: "application/json",
+  xml: "application/xml",
+  yaml: "text/yaml",
+  yml: "text/yaml",
+  rtf: "application/rtf",
+  svg: "image/svg+xml",
+  sql: "application/x-sql",
+  css: "text/css",
+  js: "text/javascript",
+  mjs: "text/javascript",
+  cjs: "text/javascript",
+  conf: "text/plain",
+  ini: "text/plain",
+};
+
+/**
  * @description Filename validation - checks for double extensions and dangerous patterns
  * @param {string} filename
  * @returns {string | null} Error message if invalid, null if valid
  */
-const validateFilename = (filename: string): string | null => {
+export const validateFilename = (filename: string): string | null => {
   if (!filename || filename.trim().length === 0) {
     return "Filename cannot be empty";
   }
@@ -82,16 +109,20 @@ const detectMimeTypeFromSignature = async (file: File): Promise<string> => {
 };
 
 /**
- * @description Validate and detect the MIME type of a file using signature detection
+ * @description Validate and detect the MIME type of a file using signature detection,
+ * falling back to browser-reported file.type or file extension for signature-less formats (e.g. text/markdown/csv).
  * Also performs basic security checks on filename
  * @param {File} file
  * @returns {Promise<string>} validated and detected MIME type
  */
-const validateAndDetectFileType = async (file: File): Promise<string> => {
+export const validateAndDetectFileType = async (file: File): Promise<string> => {
   // Basic filename validation
   const filenameError = validateFilename(file.name);
   if (filenameError) {
     console.warn(`File validation warning: ${filenameError}`);
+    if (filenameError.includes("not allowed") || filenameError.includes("suspicious")) {
+      return "";
+    }
   }
 
   try {
@@ -103,8 +134,21 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
     console.warn("Error detecting file type from signature:", _error);
   }
 
-  // fallback for unknown files
-  return "";
+  // Fallback for signature-less text and structured formats:
+  // 1. Browser-provided MIME type (if present and not generic octet-stream)
+  if (file.type && file.type !== "application/octet-stream") {
+    return file.type;
+  }
+
+  // 2. Lookup by file extension for common signature-less text formats (e.g. .txt, .md, .csv, .log, .json)
+  const parts = file.name.split(".");
+  const extension = parts.length > 1 ? parts[parts.length - 1]?.toLowerCase() || "" : "";
+  if (extension && EXTENSION_TO_MIME_TYPE_MAP[extension]) {
+    return EXTENSION_TO_MIME_TYPE_MAP[extension];
+  }
+
+  // 3. Fallback for unknown files
+  return file.type || "";
 };
 
 /**
