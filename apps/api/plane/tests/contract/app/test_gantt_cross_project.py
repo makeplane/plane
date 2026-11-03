@@ -185,3 +185,73 @@ class TestWorkspaceSchedule:
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()["updates"]) == 1
         assert _dates(first, second) == [(date(2026, 11, 1), date(2026, 11, 3)), (date(2026, 11, 4), date(2026, 11, 6))]
+
+
+def _rel_url(project, issue, action="issue-relation"):
+    return f"/api/workspaces/{project.workspace.slug}/projects/{project.id}/issues/{issue.id}/{action}/"
+
+
+@pytest.fixture
+def relation_activity():
+    with (
+        patch("plane.app.views.issue.relation.issue_activity.delay") as activity,
+        patch("plane.db.mixins.soft_delete_related_objects.delay"),
+    ):
+        yield activity
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestCrossProjectRelationPermission:
+    @pytest.mark.parametrize("role,allowed", [(15, True), (20, True), (5, False), (None, False)])
+    def test_create_needs_write_role_in_other_project(
+        self, session_client, workspace, create_user, relation_activity, role, allowed
+    ):
+        a, b = _project(workspace, create_user, "AAA", 15), _project(workspace, create_user, "BBB", role)
+        first, second = _issue(a, 1, 3), _issue(b, 4, 6)
+
+        response = session_client.post(
+            _rel_url(a, first),
+            {"relation_type": "blocking", "issues": [str(second.id)]},
+            format="json",
+        )
+
+        assert response.status_code == (status.HTTP_201_CREATED if allowed else status.HTTP_403_FORBIDDEN)
+        assert IssueRelation.objects.filter(issue=second, related_issue=first).exists() is allowed
+
+    def test_remove_needs_write_role_in_other_project(self, session_client, workspace, create_user, relation_activity):
+        a, b = _project(workspace, create_user, "AAA", 15), _project(workspace, create_user, "BBB", 5)
+        first, second = _issue(a, 1, 3), _issue(b, 4, 6)
+        _link(first, second)
+
+        response = session_client.post(
+            _rel_url(a, first, "remove-relation"), {"related_issue": str(second.id)}, format="json"
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert IssueRelation.objects.filter(issue=second, related_issue=first).exists()
+
+    def test_remove_in_writable_projects(self, session_client, workspace, create_user, relation_activity):
+        a, b = _project(workspace, create_user, "AAA", 15), _project(workspace, create_user, "BBB", 15)
+        first, second = _issue(a, 1, 3), _issue(b, 4, 6)
+        _link(first, second)
+
+        response = session_client.post(
+            _rel_url(a, first, "remove-relation"), {"related_issue": str(second.id)}, format="json"
+        )
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+    def test_relation_response_carries_dates(self, session_client, workspace, create_user, relation_activity):
+        a, b = _project(workspace, create_user, "AAA", 15), _project(workspace, create_user, "BBB", 15)
+        first, second = _issue(a, 1, 3), _issue(b, 4, 6)
+
+        response = session_client.post(
+            _rel_url(a, second),
+            {"relation_type": "blocked_by", "issues": [str(first.id)]},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.json()[0]["start_date"] == "2026-11-01"
+        assert response.json()[0]["target_date"] == "2026-11-03"

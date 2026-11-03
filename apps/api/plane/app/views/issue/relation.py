@@ -21,7 +21,7 @@ from rest_framework import status
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import IssueRelationSerializer, RelatedIssueSerializer
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import ProjectEntityPermission, ROLE
 from plane.db.models import (
     Project,
     IssueRelation,
@@ -30,11 +30,35 @@ from plane.db.models import (
     IssueLink,
     CycleIssue,
     Workspace,
+    ProjectMember,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_relation_mapper import get_actual_relation
 from plane.utils.host import base_host
 from plane.utils.gantt_schedule import find_cycle_through
+
+
+def forbidden_projects(user, slug, project_id, issue_ids):
+    """Projects of `issue_ids` (other than `project_id`) where `user` is not an active ADMIN/MEMBER.
+
+    BIH: Plane only checks the project in the URL, so a relation could reach into a project the caller cannot write to.
+    """
+    projects = set(
+        str(pid)
+        for pid in Issue.objects.filter(workspace__slug=slug, pk__in=issue_ids).values_list("project_id", flat=True)
+    ) - {str(project_id)}
+    writable = set(
+        str(pid)
+        for pid in ProjectMember.objects.filter(
+            workspace__slug=slug,
+            member=user,
+            is_active=True,
+            role__gte=ROLE.MEMBER.value,
+            project_id__in=projects,
+            project__deleted_at__isnull=True,
+        ).values_list("project_id", flat=True)
+    )
+    return projects - writable
 
 
 class IssueRelationViewSet(BaseViewSet):
@@ -234,6 +258,12 @@ class IssueRelationViewSet(BaseViewSet):
             ).values_list("id", flat=True)
         )
 
+        if forbidden_projects(request.user, slug, project_id, [*issues, issue_id]):
+            return Response(
+                {"message": "No permission in the other project"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         if relation_type in ["blocked_by", "blocking"]:
             dependencies = [
                 (str(predecessor), str(successor))
@@ -306,6 +336,11 @@ class IssueRelationViewSet(BaseViewSet):
     def remove_relation(self, request, slug, project_id, issue_id):
         related_issue = request.data.get("related_issue", None)
         Workspace.objects.select_for_update().get(slug=slug)
+        if forbidden_projects(request.user, slug, project_id, [issue_id, related_issue]):
+            return Response(
+                {"message": "No permission in the other project"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         issue_relations = IssueRelation.objects.filter(
             workspace__slug=slug,

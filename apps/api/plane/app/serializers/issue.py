@@ -404,6 +404,8 @@ class IssueRelationSerializer(BaseSerializer):
     project_id = serializers.PrimaryKeyRelatedField(source="related_issue.project_id", read_only=True)
     sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
     name = serializers.CharField(source="related_issue.name", read_only=True)
+    start_date = serializers.DateField(source="related_issue.start_date", read_only=True)
+    target_date = serializers.DateField(source="related_issue.target_date", read_only=True)
     relation_type = serializers.CharField(read_only=True)
     state_id = serializers.UUIDField(source="related_issue.state.id", read_only=True)
     priority = serializers.CharField(source="related_issue.priority", read_only=True)
@@ -421,6 +423,8 @@ class IssueRelationSerializer(BaseSerializer):
             "sequence_id",
             "relation_type",
             "name",
+            "start_date",
+            "target_date",
             "state_id",
             "priority",
             "assignee_ids",
@@ -444,6 +448,8 @@ class RelatedIssueSerializer(BaseSerializer):
     project_id = serializers.PrimaryKeyRelatedField(source="issue.project_id", read_only=True)
     sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
     name = serializers.CharField(source="issue.name", read_only=True)
+    start_date = serializers.DateField(source="issue.start_date", read_only=True)
+    target_date = serializers.DateField(source="issue.target_date", read_only=True)
     relation_type = serializers.CharField(read_only=True)
     state_id = serializers.UUIDField(source="issue.state.id", read_only=True)
     priority = serializers.CharField(source="issue.priority", read_only=True)
@@ -461,6 +467,8 @@ class RelatedIssueSerializer(BaseSerializer):
             "sequence_id",
             "relation_type",
             "name",
+            "start_date",
+            "target_date",
             "state_id",
             "priority",
             "assignee_ids",
