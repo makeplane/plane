@@ -47,7 +47,9 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
   });
 
   useEffect(() => {
-    if (windowSize[0] < 768 && !sidebarCollapsed) toggleSidebar();
+    // Set (not toggle) so a stale-closure re-run of this effect can't flip
+    // the sidebar back open on narrow viewports.
+    if (windowSize[0] < 768 && !sidebarCollapsed) toggleSidebar(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windowSize]);
 
