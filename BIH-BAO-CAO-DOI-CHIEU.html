@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Báo cáo Gantt phụ thuộc Plane BIH</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1c2430;--mut:#667085;--line:#e4e7ec;--ok:#12a150;--warn:#d97706;--bad:#d92d20;--pri:#2563eb;--bar:#dbe3f0}
+@media (prefers-color-scheme:dark){:root{--bg:#10141b;--card:#181e28;--ink:#e8ecf3;--mut:#98a2b3;--line:#2a3342;--bar:#2a3550}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,"Segoe UI",sans-serif}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:24px;margin:0 0 4px}h2{font-size:18px;margin:0 0 12px}
+.sub{color:var(--mut);margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.kpi b{display:block;font-size:26px}.kpi span{color:var(--mut);font-size:13px}
+.row{display:grid;grid-template-columns:150px 1fr 70px;gap:10px;align-items:center;margin:8px 0;font-size:14px}
+.track{background:var(--bar);border-radius:6px;height:14px;overflow:hidden}
+.fill{height:100%;background:var(--ok)}.fill.w{background:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mut);font-weight:600}
+.tag{display:inline-block;padding:1px 8px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+.t-ok{background:#12a15022;color:var(--ok)}.t-w{background:#d9770622;color:var(--warn)}.t-b{background:#d92d2022;color:var(--bad)}
+svg{width:100%;height:auto;display:block}
+.cap{color:var(--mut);font-size:13px;margin-top:6px}
+ul{margin:6px 0 0;padding-left:20px}
+@media (max-width:560px){.row{grid-template-columns:100px 1fr 54px}}
+</style>
+</head>
+<body>
+<main>
+<h1>Gantt phụ thuộc + tự dời lịch (Plane BIH)</h1>
+<div class="sub">Đối chiếu với yêu cầu ban đầu · 03/11/2026 · nhánh <code>bih/v1.4.2</code> · prod: web <code>bih.6</code>, backend <code>bih.5</code></div>
+
+<div class="kpis">
+  <div class="kpi"><b style="color:var(--ok)">Đã deploy</b><span>yêu cầu bắt buộc đã làm xong</span></div>
+  <div class="kpi"><b>66</b><span>test Node pass</span></div>
+  <div class="kpi"><b>150</b><span>test pytest pass</span></div>
+  <div class="kpi"><b>0</b><span>lỗi types / lint</span></div>
+  <div class="kpi"><b style="color:var(--warn)">2</b><span>mục còn thiếu so với đề</span></div>
+</div>
+
+<div class="card">
+  <h2>Tiến độ theo phase</h2>
+  <div class="row"><span>P1 Khảo sát</span><div class="track"><div class="fill" style="width:100%"></div></div><span>1/1</span></div>
+  <div class="row"><span>P2 Tạo &amp; hiển thị</span><div class="track"><div class="fill" style="width:90%"></div></div><span>9/10</span></div>
+  <div class="row"><span>P3 Tự dời lịch</span><div class="track"><div class="fill" style="width:100%"></div></div><span>8/8</span></div>
+  <div class="row"><span>P4 Backend</span><div class="track"><div class="fill" style="width:100%"></div></div><span>6/6</span></div>
+  <div class="row"><span>P5 Test</span><div class="track"><div class="fill w" style="width:90%"></div></div><span>9/10</span></div>
+  <div class="row"><span>P6 Bàn giao</span><div class="track"><div class="fill" style="width:100%"></div></div><span>5/5</span></div>
+  <div class="cap">Đếm theo số hạng mục trong bảng đối chiếu; phần màu cam là mục còn thiếu một phần.</div>
+</div>
+
+<div class="card">
+  <h2>Ví dụ trong đề: dời A thì B, C tự dời theo</h2>
+  <svg viewBox="0 0 720 300" role="img" aria-label="Sơ đồ Gantt trước và sau khi dời Task A">
+    <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#667085"/></marker></defs>
+    <g font-size="11" fill="#667085" text-anchor="middle">
+      <text x="20" y="14" text-anchor="start" font-size="12" font-weight="700" fill="currentColor">Trước (A: 1–3, B: 4–6, C: 7–9/11)</text>
+      <!-- day grid: x = 70 + (d-1)*54 -->
+      <text x="97" y="34">1</text><text x="151" y="34">2</text><text x="205" y="34">3</text><text x="259" y="34">4</text><text x="313" y="34">5</text><text x="367" y="34">6</text><text x="421" y="34">7</text><text x="475" y="34">8</text><text x="529" y="34">9</text><text x="583" y="34">10</text><text x="637" y="34">11</text>
+    </g>
+    <g font-size="12" fill="#fff" font-weight="600">
+      <rect x="70" y="42" width="162" height="22" rx="4" fill="#2563eb"/><text x="80" y="58">A</text>
+      <rect x="232" y="72" width="162" height="22" rx="4" fill="#2563eb"/><text x="242" y="88">B</text>
+      <rect x="394" y="102" width="162" height="22" rx="4" fill="#2563eb"/><text x="404" y="118">C</text>
+    </g>
+    <g stroke="#667085" stroke-width="1.5" fill="none" marker-end="url(#ar)">
+      <path d="M232 64 V83 H230"/><path d="M394 94 V113 H392"/>
+    </g>
+    <line x1="20" y1="150" x2="700" y2="150" stroke="#e4e7ec"/>
+    <text x="20" y="172" font-size="12" font-weight="700" fill="currentColor">Sau khi A kết thúc ngày 5</text>
+    <g font-size="12" fill="#fff" font-weight="600">
+      <rect x="70" y="186" width="270" height="22" rx="4" fill="#d97706"/><text x="80" y="202">A (kéo dài đến 5)</text>
+      <rect x="340" y="216" width="162" height="22" rx="4" fill="#12a150"/><text x="350" y="232">B 6–8</text>
+      <rect x="502" y="246" width="162" height="22" rx="4" fill="#12a150"/><text x="512" y="262">C 9–11</text>
+    </g>
+    <g stroke="#667085" stroke-width="1.5" fill="none" marker-end="url(#ar)">
+      <path d="M340 208 V227 H338"/><path d="M502 238 V257 H500"/>
+    </g>
+  </svg>
+  <div class="cap">Giữ nguyên độ dài mỗi việc, chỉ dời tiến lên, có bản xem trước ngày cũ/mới trước khi áp dụng. Ví dụ dùng ngày lịch; chế độ ngày làm việc bỏ cuối tuần, ngày lễ và có nghỉ bù.</div>
+</div>
+
+<div class="card">
+  <h2>Luồng bảo vệ dữ liệu khi nối hoặc dời</h2>
+  <svg viewBox="0 0 720 110" role="img" aria-label="Luồng kiểm tra">
+    <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#667085"/></marker></defs>
+    <g font-size="12" text-anchor="middle" fill="currentColor">
+      <rect x="6" y="30" width="120" height="48" rx="8" fill="none" stroke="#2563eb"/><text x="66" y="52">Kéo-thả nối</text><text x="66" y="68" fill="#667085">frontend</text>
+      <rect x="156" y="30" width="130" height="48" rx="8" fill="none" stroke="#2563eb"/><text x="221" y="52">Chặn tự nối,</text><text x="221" y="68">trùng, vòng</text>
+      <rect x="316" y="30" width="130" height="48" rx="8" fill="none" stroke="#12a150"/><text x="381" y="52">Backend kiểm lại</text><text x="381" y="68" fill="#667085">quyền, khoá dòng</text>
+      <rect x="476" y="30" width="110" height="48" rx="8" fill="none" stroke="#12a150"/><text x="531" y="52">Xem trước</text><text x="531" y="68" fill="#667085">cũ → mới</text>
+      <rect x="616" y="30" width="98" height="48" rx="8" fill="none" stroke="#12a150"/><text x="665" y="52">Lưu atomic</text><text x="665" y="68" fill="#667085">+ Hoàn tác</text>
+    </g>
+    <g stroke="#667085" stroke-width="1.5" marker-end="url(#a2)">
+      <line x1="126" y1="54" x2="154" y2="54"/><line x1="286" y1="54" x2="314" y2="54"/><line x1="446" y1="54" x2="474" y2="54"/><line x1="586" y1="54" x2="614" y2="54"/>
+    </g>
+  </svg>
+  <div class="cap">Dữ liệu đã đổi bởi người khác (<code>expected</code> cũ) trả 409, không ghi đè.</div>
+</div>
+
+<div class="card">
+  <h2>Đối chiếu chi tiết</h2>
+  <table>
+    <tr><th>Phase</th><th>Yêu cầu</th><th>Trạng thái</th></tr>
+    <tr><td>P2</td><td>Kéo-thả nối, đường tạm, tô mục tiêu, chặn tự nối/trùng/vòng, xoá, hoàn tác</td><td><span class="tag t-ok">Xong</span></td></tr>
+    <tr><td>P2</td><td>Mũi tên, cuộn/zoom, nhóm thu gọn, việc ngoài màn hình (mũi tên cụt có mã việc)</td><td><span class="tag t-ok">Xong</span></td></tr>
+    <tr><td>P2</td><td>Trạng thái đường nối: thường, đỏ khi vi phạm, đang chọn, lý do khi không hợp lệ</td><td><span class="tag t-ok">Xong</span></td></tr>
+    <tr><td>P2</td><td>Thanh chồng nhau</td><td><span class="tag t-w">Một phần</span></td></tr>
+    <tr><td>P3</td><td>FS, nhiều việc trước, lag, lịch làm việc, nghỉ bù, Tết/Giỗ Tổ 2026–2030, bỏ vòng</td><td><span class="tag t-ok">Xong</span></td></tr>
+    <tr><td>P3</td><td>Cài đặt (tự động, ngày làm việc/lịch, dời sớm, hiện đường) và xem trước</td><td><span class="tag t-ok">Xong</span></td></tr>
+    <tr><td>P4</td><td>Service backend, atomic, chống đua, phân quyền, khác project, không migration thừa</td><td><span class="tag t-ok">Xong</span></td></tr>
+    <tr><td>P4+</td><td>Không lộ tên việc cho người không có quyền đọc (thêm so với đề)</td><td><span class="tag t-ok">Xong</span></td></tr>
+    <tr><td>P5</td><td>Test: tạo/xoá, vẽ mũi tên, vòng, nhiều việc trước, dây chuyền, ngày lễ, đồng thời, quyền khác project, 500+ việc</td><td><span class="tag t-ok">Có</span></td></tr>
+    <tr><td>P5</td><td>Test kéo-thả bằng sự kiện con trỏ thật (đã thử tay, có test logic)</td><td><span class="tag t-b">Thiếu</span></td></tr>
+    <tr><td>P6</td><td>Danh sách file, API mới, hướng dẫn deploy/rollback, tài liệu, giới hạn</td><td><span class="tag t-ok">Xong</span></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Còn thiếu / còn mở</h2>
+  <ul>
+    <li><b>Thiếu so với đề:</b> test kéo-thả bằng con trỏ (cần thêm jsdom/Playwright, chờ duyệt); thanh chồng nhau chưa tránh đường đè.</li>
+    <li><b>Không bắt buộc:</b> ô nhập lag cho mũi tên khác project (endpoint đã có); một <code>PATCH</code> lạ ở sidebar chưa rõ nguồn; SS/FF/SF (cần migration); đối chiếu ngày Tết với thông báo nghỉ chính thức; test hai trình duyệt đồng thời trên giao diện.</li>
+  </ul>
+  <div class="cap">Số test lấy từ lần chạy cuối của đợt 8. Chi tiết: BIH.md (mục "Đợt 8", "Rollback đợt 8").</div>
+</div>
+</main>
+</body>
+</html>
