@@ -25,6 +25,7 @@ from plane.db.models import (
     FileAsset,
     Issue,
     IssueComment,
+    IssueRelation,
     Project,
     ProjectMember,
     User,
@@ -52,9 +53,7 @@ def _make_issue(name, project, workspace, author):
 
 
 def _make_comment(issue, project, workspace, actor):
-    return IssueComment.objects.create(
-        issue=issue, project=project, actor=actor, comment_html="<p>secret comment</p>"
-    )
+    return IssueComment.objects.create(issue=issue, project=project, actor=actor, comment_html="<p>secret comment</p>")
 
 
 def _make_attachment(issue, project, workspace):
@@ -365,9 +364,7 @@ class TestGuestIssueSubresourceScope:
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 1
 
-    def test_unrestricted_guest_reads_foreign_issue_attachments(
-        self, guest_client, workspace, project, foreign_issue
-    ):
+    def test_unrestricted_guest_reads_foreign_issue_attachments(self, guest_client, workspace, project, foreign_issue):
         """When guest_view_all_features is enabled, the guest sees all attachments."""
         project.guest_view_all_features = True
         project.save(update_fields=["guest_view_all_features"])
@@ -377,3 +374,91 @@ class TestGuestIssueSubresourceScope:
         )
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 1
+
+    def test_guest_relation_list_enforces_project_and_guest_visibility(
+        self, guest_client, session_client, workspace, project, own_issue, foreign_issue, create_user, guest
+    ):
+        """When listing relations of an allowed issue (own_issue):
+        - Related issues created by the guest in the same project are returned.
+        - Related issues created by others in the project (where guest_view_all_features=False) are excluded.
+        - Related issues from sibling projects where the guest is NOT a member are excluded.
+        - Full project members / admins can see all related issues.
+        - When guest_view_all_features=True, the in-project foreign issue becomes visible, while
+          the unauthorized sibling project issue remains excluded.
+        """
+        # 1. An issue created by the guest in the same project
+        own_related_issue = _make_issue("Guest's own related issue", project, workspace, guest)
+        IssueRelation.objects.create(
+            issue=own_issue,
+            related_issue=own_related_issue,
+            relation_type="relates_to",
+            project=project,
+            workspace=workspace,
+        )
+
+        # 2. A foreign issue in the same project (where guest_view_all_features is False)
+        IssueRelation.objects.create(
+            issue=own_issue,
+            related_issue=foreign_issue,
+            relation_type="duplicate",
+            project=project,
+            workspace=workspace,
+        )
+
+        # 3. An issue in a sibling project where the guest is NOT a member
+        sibling_project = Project.objects.create(
+            name="Unjoined Sibling Project", identifier="USP", workspace=workspace, created_by=create_user
+        )
+        ProjectMember.objects.create(project=sibling_project, member=create_user, workspace=workspace, role=20)
+        sibling_issue = _make_issue("Sibling project issue", sibling_project, workspace, create_user)
+        IssueRelation.objects.create(
+            issue=sibling_issue,
+            related_issue=own_issue,
+            relation_type="blocked_by",
+            project=project,
+            workspace=workspace,
+        )
+
+        # Restricted guest request:
+        url = RELATION_URL.format(slug=workspace.slug, project_id=project.id, issue_id=own_issue.id)
+        response = guest_client.get(url)
+        assert response.status_code == status.HTTP_200_OK
+
+        relates_to_ids = {str(item["id"]) for item in response.data.get("relates_to", [])}
+        duplicate_ids = {str(item["id"]) for item in response.data.get("duplicate", [])}
+        blocking_ids = {str(item["id"]) for item in response.data.get("blocking", [])}
+
+        # Guest's own related issue is visible
+        assert str(own_related_issue.id) in relates_to_ids
+        # Foreign issue in restricted project is excluded
+        assert str(foreign_issue.id) not in duplicate_ids
+        assert len(duplicate_ids) == 0
+        # Sibling project issue (no membership) is excluded
+        assert str(sibling_issue.id) not in blocking_ids
+        assert len(blocking_ids) == 0
+
+        # Full project member / admin sees all related issues
+        admin_response = session_client.get(url)
+        assert admin_response.status_code == status.HTTP_200_OK
+        admin_relates_to = {str(item["id"]) for item in admin_response.data.get("relates_to", [])}
+        admin_duplicate = {str(item["id"]) for item in admin_response.data.get("duplicate", [])}
+        admin_blocking = {str(item["id"]) for item in admin_response.data.get("blocking", [])}
+        assert str(own_related_issue.id) in admin_relates_to
+        assert str(foreign_issue.id) in admin_duplicate
+        assert str(sibling_issue.id) in admin_blocking
+
+        # When guest_view_all_features is enabled:
+        project.guest_view_all_features = True
+        project.save(update_fields=["guest_view_all_features"])
+
+        unrestricted_response = guest_client.get(url)
+        assert unrestricted_response.status_code == status.HTTP_200_OK
+        unrestricted_relates_to = {str(item["id"]) for item in unrestricted_response.data.get("relates_to", [])}
+        unrestricted_duplicate = {str(item["id"]) for item in unrestricted_response.data.get("duplicate", [])}
+        unrestricted_blocking = {str(item["id"]) for item in unrestricted_response.data.get("blocking", [])}
+        # In-project foreign issue is now visible
+        assert str(foreign_issue.id) in unrestricted_duplicate
+        assert str(own_related_issue.id) in unrestricted_relates_to
+        # Sibling project issue (still not a member) remains excluded
+        assert str(sibling_issue.id) not in unrestricted_blocking
+        assert len(unrestricted_blocking) == 0

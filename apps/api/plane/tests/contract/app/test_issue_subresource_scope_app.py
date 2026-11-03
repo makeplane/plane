@@ -497,6 +497,26 @@ class TestIssueRelationListScope:
         )
         assert "Second own issue" in str(response.data), "In-project relation went missing"
 
+    @pytest.mark.django_db
+    def test_relation_list_excludes_related_issues_from_unjoined_projects(
+        self, attacker_client, attacker_workspace, attacker_project, attacker_issue, sibling_project_issue
+    ):
+        """Related issues in projects where the caller is not a member are excluded from the list response."""
+        IssueRelation.objects.create(
+            issue=sibling_project_issue,
+            related_issue=attacker_issue,
+            relation_type="blocked_by",
+            project=attacker_project,
+            workspace=attacker_workspace,
+        )
+
+        url = relation_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)
+        response = attacker_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        blocking = response.data.get("blocking", [])
+        assert len(blocking) == 0, f"Expected 0 blocking issues, got: {blocking!r}"
+
 
 @pytest.mark.contract
 class TestIssueManagerBoundary:
