@@ -43,6 +43,9 @@ export function clickHandler(_options: ClickHandlerOptions): Plugin {
             return false;
           }
 
+          // Stop the native anchor navigation, otherwise read-only (non-editable)
+          // views open the link twice: once here and once via the <a target="_blank">.
+          event.preventDefault();
           // the target attribute is stored content: only _self is honoured, anything else opens a new tab
           window.open(href, link.target === "_self" ? "_self" : "_blank", "noopener,noreferrer");
 
