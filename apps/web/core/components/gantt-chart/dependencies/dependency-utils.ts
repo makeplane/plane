@@ -4,10 +4,19 @@
  * See the LICENSE file for details.
  */
 
+import type { TExternalLink } from "./external-links";
+
 export type TGanttDependency = { predecessorId: string; successorId: string; lagDays?: number };
 
 export type TGanttDependencyActions = {
   otherPairs: string[];
+  removeExternal?: (link: TExternalLink) => Promise<void>;
+  createExternal?: (
+    localId: string,
+    side: "left" | "right",
+    externalIssueId: string,
+    externalProjectId: string
+  ) => Promise<void>;
   setLag?: (predecessorId: string, successorId: string, lagDays: number) => Promise<void>;
   lagsSupported?: boolean;
   create: (predecessorId: string, successorId: string) => Promise<void>;

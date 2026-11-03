@@ -4,8 +4,13 @@
  * See the LICENSE file for details.
  */
 
+import type { RefObject } from "react";
+import { createPortal } from "react-dom";
+import { useEffect, useRef, useState } from "react";
+import { useProject } from "@/hooks/store/use-project";
 import { observer } from "mobx-react";
 import type { TResolvedExternalLink } from "./external-links";
+import type { TGanttDependencyActions } from "./dependency-utils";
 import { isDependencyViolated } from "./dependency-utils";
 
 type Row = {
@@ -19,12 +24,68 @@ type Row = {
 
 type Props = {
   links: TResolvedExternalLink[];
+  dependencyActions?: TGanttDependencyActions;
+  drafting: boolean;
+  overlayRef: RefObject<HTMLDivElement>;
+  onSelect: () => void;
   rows: Map<string, Row>;
   normalMarkerId: string;
   violatedMarkerId: string;
 };
 
-export const ExternalStubs = observer(function ExternalStubs({ links, rows, normalMarkerId, violatedMarkerId }: Props) {
+export const ExternalStubs = observer(function ExternalStubs({
+  links,
+  rows,
+  normalMarkerId,
+  violatedMarkerId,
+  dependencyActions,
+  drafting,
+  onSelect,
+  overlayRef,
+}: Props) {
+  const { getProjectById } = useProject();
+  const [selected, setSelected] = useState<string | null>(null);
+  const selectedRef = useRef<SVGGElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const editable = (link: TResolvedExternalLink) =>
+    !!dependencyActions?.removeExternal && (getProjectById(link.projectId)?.member_role ?? 0) >= 15;
+  const selectedLinks = links.filter((link) => `${link.localId}|${link.direction}` === selected && editable(link));
+  useEffect(() => {
+    if (drafting || !selectedLinks.length) setSelected(null);
+  }, [drafting, selectedLinks.length]);
+  useEffect(() => {
+    if (!selectedLinks.length) return;
+    const deselect = (event: MouseEvent) => {
+      if (
+        !(event.target instanceof Node) ||
+        (!selectedRef.current?.contains(event.target) && !menuRef.current?.contains(event.target))
+      )
+        setSelected(null);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.target instanceof Element && event.target.closest("input, textarea, [contenteditable=true]")) return;
+      if (event.key === "Escape") {
+        event.stopPropagation();
+        setSelected(null);
+      } else if (event.key === "Delete" || event.key === "Backspace") {
+        event.preventDefault();
+        event.stopPropagation();
+        const externalId =
+          event.target instanceof Element
+            ? event.target.closest("[data-external-id]")?.getAttribute("data-external-id")
+            : null;
+        void dependencyActions?.removeExternal?.(
+          selectedLinks.find((link) => link.externalId === externalId) ?? selectedLinks[0]
+        );
+      }
+    };
+    document.addEventListener("mousedown", deselect);
+    document.addEventListener("keydown", onKeyDown, true);
+    return () => {
+      document.removeEventListener("mousedown", deselect);
+      document.removeEventListener("keydown", onKeyDown, true);
+    };
+  }, [selectedLinks, dependencyActions]);
   // One stub per bar and side: several external links share it and join their codes in one label.
   const groups = new Map<string, TResolvedExternalLink[]>();
   for (const link of links) {
@@ -45,9 +106,18 @@ export const ExternalStubs = observer(function ExternalStubs({ links, rows, norm
         : isDependencyViolated(item.targetDate, row.block.start_date)
     );
     const label = group.map((item) => item.code ?? "dự án khác").join(" · ");
-    const tooltip = group.map((item) => `${item.code ?? "dự án khác"} ${item.name ?? ""}`).join(", ");
+    const tooltip = group
+      .map((item) => `${item.code ?? "dự án khác"} ${item.name ?? ""}${editable(item) ? "" : " — không đủ quyền sửa"}`)
+      .join(", ");
+    const key = `${link.localId}|${link.direction}`;
+    const canEdit = group.some(editable);
+    const isSelected = selected === key && canEdit && !drafting;
+    const select = () => {
+      setSelected(key);
+      onSelect();
+    };
     return (
-      <g key={`${link.localId}-${link.direction}`}>
+      <g key={`${link.localId}-${link.direction}`} ref={isSelected ? selectedRef : undefined}>
         <path
           d={`M ${from} ${row.y} H ${to}`}
           fill="none"
@@ -58,6 +128,71 @@ export const ExternalStubs = observer(function ExternalStubs({ links, rows, norm
           markerEnd={`url(#${violatedAny ? violatedMarkerId : normalMarkerId})`}
           pointerEvents="none"
         />
+        {canEdit && (
+          <path
+            data-gantt-dependency-control
+            d={`M ${from} ${row.y} H ${to}`}
+            fill="none"
+            stroke="transparent"
+            strokeWidth={10}
+            style={{ pointerEvents: drafting ? "none" : "stroke", cursor: "pointer" }}
+            // oxlint-disable-next-line jsx_a11y/prefer-tag-over-role -- SVG paths cannot be HTML buttons.
+            role="button"
+            tabIndex={drafting ? -1 : 0}
+            aria-label="Chọn phụ thuộc khác project"
+            aria-pressed={isSelected}
+            onMouseDown={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation();
+              select();
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                event.stopPropagation();
+                select();
+              }
+            }}
+          >
+            <title>{tooltip}</title>
+          </path>
+        )}
+        {isSelected &&
+          overlayRef.current &&
+          createPortal(
+            <div
+              ref={menuRef}
+              data-gantt-dependency-control
+              className="pointer-events-auto absolute z-[8] w-fit rounded border border-subtle bg-layer-1 p-1 text-11 text-primary"
+              style={{ left: Math.max(0, successor ? to : from - 120), top: row.y + 4 }}
+            >
+              {group.map((item) => (
+                <div
+                  key={item.externalId}
+                  className="flex items-center justify-between gap-2 px-1 py-0.5"
+                  title={editable(item) ? item.name : "không đủ quyền sửa"}
+                >
+                  {group.length > 1 && <span>{item.code ?? "dự án khác"}</span>}
+                  {editable(item) && (
+                    <button
+                      type="button"
+                      data-external-id={item.externalId}
+                      aria-label={`Xoá phụ thuộc ${item.code ?? "dự án khác"}`}
+                      className="flex h-5 w-5 items-center justify-center rounded-full border border-strong text-danger-primary"
+                      onMouseDown={(event) => event.stopPropagation()}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        void dependencyActions?.removeExternal?.(item);
+                      }}
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>,
+            overlayRef.current
+          )}
         <text
           x={successor ? to + 4 : from - 4}
           y={row.y - 5}

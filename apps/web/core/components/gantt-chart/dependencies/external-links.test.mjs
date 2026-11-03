@@ -7,6 +7,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { extractExternalLinks } from "./external-links.ts";
+import { isDependencyViolated } from "./dependency-utils.ts";
 
 const relation = {
   id: "external",
@@ -27,6 +28,8 @@ test("extracts external predecessors and inverse successors with available label
         projectId: "other",
         sequenceId: 12,
         name: "External task",
+        startDate: undefined,
+        targetDate: undefined,
       },
       {
         localId: "local",
@@ -35,6 +38,8 @@ test("extracts external predecessors and inverse successors with available label
         projectId: "other",
         sequenceId: 12,
         name: "External task",
+        startDate: undefined,
+        targetDate: undefined,
       },
     ]
   );
@@ -59,4 +64,42 @@ test("ignores same-project and non-blocking relations and deduplicates each dire
   assert.deepEqual(extractExternalLinks([{ id: "empty" }], "project"), []);
   assert.equal(links[0].startDate, undefined);
   assert.equal(links[0].targetDate, undefined);
+});
+
+test("preserves external dates in both directions and null dates", () => {
+  const dated = { ...relation, start_date: "2026-11-01", target_date: "2026-11-03" };
+  const links = extractExternalLinks([{ id: "local", issue_relation: [dated], issue_related: [dated] }], "project");
+  assert.deepEqual(
+    links.map(({ startDate, targetDate }) => [startDate, targetDate]),
+    [
+      ["2026-11-01", "2026-11-03"],
+      ["2026-11-01", "2026-11-03"],
+    ]
+  );
+  const [undated] = extractExternalLinks(
+    [{ id: "local", issue_relation: [{ ...relation, start_date: null, target_date: null }] }],
+    "project"
+  );
+  assert.equal(undated.startDate, null);
+  assert.equal(undated.targetDate, null);
+});
+
+test("external predecessor and successor violations use the correct endpoint dates", () => {
+  const [pred, succ] = extractExternalLinks(
+    [
+      {
+        id: "local",
+        issue_relation: [{ ...relation, start_date: "2026-10-01", target_date: "2026-11-03" }],
+        issue_related: [{ ...relation, start_date: "2026-11-10", target_date: "2026-12-01" }],
+      },
+    ],
+    "project"
+  );
+  assert.equal(isDependencyViolated(pred.targetDate, "2026-11-03"), true);
+  assert.equal(isDependencyViolated(pred.targetDate, "2026-11-04"), false);
+  assert.equal(isDependencyViolated("2026-11-10", succ.startDate), true);
+  assert.equal(isDependencyViolated("2026-11-09", succ.startDate), false);
+  const [legacy] = extractExternalLinks([{ id: "local", issue_relation: [relation] }], "project");
+  assert.equal(isDependencyViolated(legacy.targetDate, "2026-11-03"), false);
+  assert.equal(isDependencyViolated("2026-11-10", legacy.startDate), false);
 });

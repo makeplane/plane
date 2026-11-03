@@ -189,6 +189,112 @@ export function useGanttDependencies(
     }
   };
 
+  const externalError = (error: unknown) => {
+    const response = error as {
+      status?: number;
+      response?: { status?: number; data?: { message?: string; detail?: string } };
+      message?: string;
+      detail?: string;
+    };
+    const status = response?.response?.status ?? response?.status;
+    const message =
+      response?.response?.data?.message ??
+      response?.response?.data?.detail ??
+      response?.message ??
+      response?.detail ??
+      "";
+    // The relation service throws the response body, so also recognize DRF permission messages.
+    return status === 403 || /permission|forbidden|not allowed/i.test(message)
+      ? "Không đủ quyền ở project bên kia"
+      : message === "Circular dependency"
+        ? "Nối như vậy sẽ tạo vòng lặp phụ thuộc"
+        : "Không lưu được phụ thuộc";
+  };
+
+  const createExternal = async (
+    localId: string,
+    side: "left" | "right",
+    externalIssueId: string,
+    externalProjectId: string
+  ) => {
+    if (!enabled || !workspaceSlug || !projectId || !relationsRef.current || !projectIssueIds.current.has(localId))
+      return;
+    if (externalProjectId === projectId || (getProjectById(externalProjectId)?.member_role ?? 0) < 15) return;
+    if (saving.current) {
+      setToast({ type: TOAST_TYPE.WARNING, title: "Đang lưu phụ thuộc" });
+      return;
+    }
+    const scope = generation.current;
+    const [predecessorId, successorId, successorProjectId] =
+      side === "right" ? [localId, externalIssueId, externalProjectId] : [externalIssueId, localId, projectId];
+    saving.current = true;
+    requestCounter.current++;
+    try {
+      const created = await relation.createRelation(workspaceSlug, successorProjectId, successorId, "blocked_by", [
+        predecessorId,
+      ]);
+      if (!created.some((issue) => issue.id === predecessorId)) throw new Error("Dependency was not created");
+    } catch (error) {
+      if (scope === generation.current) setToast({ type: TOAST_TYPE.ERROR, title: externalError(error) });
+      return;
+    } finally {
+      if (scope === generation.current) saving.current = false;
+    }
+    if (scope === generation.current) await refreshRef.current();
+  };
+
+  const removeExternal = async (link: TExternalLink) => {
+    const current = relationsRef.current;
+    if (!enabled || !workspaceSlug || !projectId || !current || !projectIssueIds.current.has(link.localId)) return;
+    if ((getProjectById(link.projectId)?.member_role ?? 0) < 15) return;
+    if (saving.current) {
+      setToast({ type: TOAST_TYPE.WARNING, title: "Đang lưu phụ thuộc" });
+      return;
+    }
+    const matches = (item: TExternalLink) =>
+      item.localId === link.localId && item.direction === link.direction && item.externalId === link.externalId;
+    if (!current.externalLinks.some(matches)) return;
+    const scope = generation.current;
+    const [predecessorId, successorId, successorProjectId] =
+      link.direction === "pred"
+        ? [link.externalId, link.localId, projectId]
+        : [link.localId, link.externalId, link.projectId];
+    saving.current = true;
+    requestCounter.current++;
+    updateRelations({ ...current, externalLinks: current.externalLinks.filter((item) => !matches(item)) });
+    try {
+      await relation.removeRelation(workspaceSlug, successorProjectId, successorId, "blocked_by", predecessorId);
+      if (scope !== generation.current) return;
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Đã xoá phụ thuộc",
+        actionItems: createElement(
+          "button",
+          {
+            type: "button",
+            className: "text-accent-primary",
+            onClick: () => {
+              if (scope === generation.current)
+                void createExternal(
+                  link.localId,
+                  link.direction === "pred" ? "left" : "right",
+                  link.externalId,
+                  link.projectId
+                );
+            },
+          },
+          "Hoàn tác"
+        ),
+      });
+    } catch (error) {
+      if (scope !== generation.current) return;
+      updateRelations(current);
+      setToast({ type: TOAST_TYPE.ERROR, title: externalError(error) });
+    } finally {
+      if (scope === generation.current) saving.current = false;
+    }
+  };
+
   const setLag = async (predecessorId: string, successorId: string, lagDays: number) => {
     const current = relationsRef.current;
     if (!enabled || !workspaceSlug || !projectId || !current?.lagsSupported || saving.current) return;
@@ -238,6 +344,8 @@ export function useGanttDependencies(
         }),
         refresh: () => refreshRef.current(),
         setLag,
+        createExternal,
+        removeExternal,
         createDependency: (pred: string, succ: string) => mutateDependency(pred, succ, false),
         removeDependency: (pred: string, succ: string) => mutateDependency(pred, succ, true),
       };

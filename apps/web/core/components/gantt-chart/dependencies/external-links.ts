@@ -17,7 +17,15 @@ export type TExternalLink = {
 
 export type TResolvedExternalLink = TExternalLink & { code?: string };
 
-type Relation = { id: string; project_id: string; relation_type: string; sequence_id?: number; name?: string };
+type Relation = {
+  id: string;
+  project_id: string;
+  relation_type: string;
+  sequence_id?: number;
+  name?: string;
+  start_date?: string | null;
+  target_date?: string | null;
+};
 type Issue = { id: string; issue_relation?: Relation[]; issue_related?: Relation[] };
 
 export function extractExternalLinks(issues: Issue[], projectId: string): TExternalLink[] {
@@ -38,6 +46,8 @@ export function extractExternalLinks(issues: Issue[], projectId: string): TExter
           projectId: relation.project_id,
           sequenceId: relation.sequence_id,
           name: relation.name,
+          startDate: relation.start_date,
+          targetDate: relation.target_date,
         });
       }
     }

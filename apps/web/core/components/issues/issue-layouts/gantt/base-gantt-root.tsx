@@ -124,6 +124,8 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
           otherPairs: deps.otherPairs,
           create: deps.createDependency,
           remove: deps.removeDependency,
+          removeExternal: deps.removeExternal,
+          createExternal: deps.createExternal,
           setLag: deps.setLag,
           lagsSupported: deps.lagsSupported,
         }

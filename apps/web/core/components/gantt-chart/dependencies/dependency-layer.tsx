@@ -11,6 +11,7 @@ import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import { BLOCK_HEIGHT } from "../constants";
+import { ExternalPicker } from "./external-picker";
 import { ExternalStubs } from "./external-stubs";
 import type { TResolvedExternalLink } from "./external-links";
 import type { TGanttDependency, TGanttDependencyActions } from "./dependency-utils";
@@ -36,8 +37,15 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
   const { blockIds, dependencies, externalLinks, dependencyActions, ganttContainerRef, showAllBlocks, width } = props;
   const { getBlockById, dependencyDraftFromId, dependencyDraftSide, endDependencyDraft } = useTimeLineChartStore();
   const svgRef = useRef<SVGSVGElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const [selected, setSelected] = useState<TGanttDependency | null>(null);
   const [draft, setDraft] = useState<{ x: number; y: number; targetId: string | null } | null>(null);
+  const [externalPicker, setExternalPicker] = useState<{
+    x: number;
+    y: number;
+    sourceId: string;
+    side: "left" | "right";
+  } | null>(null);
   const id = useId();
   const normalMarkerId = `${id}-dependency`;
   const violatedMarkerId = `${id}-dependency-violated`;
@@ -103,6 +111,7 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
   useEffect(() => {
     if (!dependencyDraftFromId || !canEditDependencies) return;
     setSelected(null);
+    setExternalPicker(null);
     setDraft(null);
     const readPointer = (event: MouseEvent) => {
       const rect = svgRef.current?.getBoundingClientRect();
@@ -115,7 +124,8 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
     };
     const onMouseMove = (event: MouseEvent) => setDraft(readPointer(event));
     const onMouseUp = (event: MouseEvent) => {
-      const target = readPointer(event)?.targetId;
+      const pointer = readPointer(event);
+      const target = pointer?.targetId;
       const { rows: currentRows, dependencies: currentDependencies, dependencyActions: actions } = latest.current;
       if (target && currentRows.has(target) && actions) {
         const [predecessorId, successorId] =
@@ -125,6 +135,24 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
           setToast({ type: TOAST_TYPE.ERROR, title: "Không nối được", message: dependencyValidationMessages[error] });
         } else {
           void actions.create(predecessorId, successorId);
+        }
+      } else if (!target && pointer && actions?.createExternal) {
+        const element = document.elementFromPoint(event.clientX, event.clientY);
+        if (
+          element &&
+          ganttContainerRef.current?.contains(element) &&
+          overlayRef.current?.parentElement?.parentElement?.contains(element) &&
+          !element.closest("[data-gantt-dependency-control], button, input, textarea, a") &&
+          pointer.x >= 0 &&
+          pointer.x <= width &&
+          pointer.y >= 0
+        ) {
+          setExternalPicker({
+            x: Math.max(0, Math.min(pointer.x + 8, width - 320)),
+            y: pointer.y + 8,
+            sourceId: dependencyDraftFromId,
+            side: dependencyDraftSide,
+          });
         }
       }
       endDependencyDraft();
@@ -147,7 +175,7 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
       window.removeEventListener("blur", cancelOnBlur);
       endDependencyDraft();
     };
-  }, [dependencyDraftFromId, dependencyDraftSide, canEditDependencies, ganttContainerRef, endDependencyDraft]);
+  }, [dependencyDraftFromId, dependencyDraftSide, canEditDependencies, ganttContainerRef, endDependencyDraft, width]);
 
   const source = dependencyDraftFromId ? rows.get(dependencyDraftFromId) : undefined;
   const target = draft?.targetId ? rows.get(draft.targetId) : undefined;
@@ -161,7 +189,11 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
   const deleteX = toX - fromX >= 16 ? (fromX + 8 + toX) / 2 : toX - 4;
 
   return (
-    <div className="pointer-events-none absolute top-0 left-0" style={{ width, height: rows.size * BLOCK_HEIGHT }}>
+    <div
+      ref={overlayRef}
+      className="pointer-events-none absolute top-0 left-0"
+      style={{ width, height: rows.size * BLOCK_HEIGHT }}
+    >
       <svg
         ref={svgRef}
         className="pointer-events-none absolute top-0 left-0 z-[4] overflow-visible"
@@ -191,6 +223,10 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
         </defs>
         <ExternalStubs
           links={externalLinks ?? []}
+          dependencyActions={dependencyActions}
+          overlayRef={overlayRef}
+          drafting={!!dependencyDraftFromId}
+          onSelect={() => setSelected(null)}
           rows={rows}
           normalMarkerId={normalMarkerId}
           violatedMarkerId={violatedMarkerId}
@@ -324,8 +360,21 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
             ? dependencyValidationMessages[targetError]
             : target?.block.position
               ? "Thả để nối"
-              : "Thả lên một thanh việc khác để nối"}
+              : dependencyActions?.createExternal
+                ? "Thả lên thanh việc hoặc chỗ trống để nối"
+                : "Thả lên một thanh việc khác để nối"}
         </div>
+      )}
+      {externalPicker && dependencyActions?.createExternal && (
+        <ExternalPicker
+          x={externalPicker.x}
+          y={externalPicker.y}
+          onClose={() => setExternalPicker(null)}
+          onSelect={(issueId, projectId) => {
+            void dependencyActions.createExternal?.(externalPicker.sourceId, externalPicker.side, issueId, projectId);
+            setExternalPicker(null);
+          }}
+        />
       )}
       {dependencyActions && selectedDependency && selectedPred?.block.position && selectedSucc?.block.position && (
         <div
