@@ -29,7 +29,9 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
   // derived values
   const hasAnyConditions = (filter?.allConditionsForDisplay.length ?? 0) > 0;
   const isFilterRowVisible = filter?.isVisible ?? false;
-  const hasUpdates = filter?.canUpdateView === true && filter?.hasChanges === true;
+  const hasUpdates =
+    filter?.canUpdateView === true &&
+    (filter?.hasChanges === true || !!filter?.updateViewOptions?.hasAdditionalChanges);
   const showFilterRowChangesPill = hasUpdates || hasAnyConditions === true;
   const showAddFilterButton = !hasAnyConditions && !isFilterRowVisible && !hasUpdates;
 
