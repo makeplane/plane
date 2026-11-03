@@ -15,13 +15,8 @@ import { ExternalPicker } from "./external-picker";
 import { ExternalStubs } from "./external-stubs";
 import type { TResolvedExternalLink } from "./external-links";
 import type { TGanttDependency, TGanttDependencyActions } from "./dependency-utils";
-import {
-  dependencyValidationMessages,
-  getDependencyPath,
-  getDependencyDraftStates,
-  isDependencyViolated,
-  validateNewDependency,
-} from "./dependency-utils";
+import { dependencyValidationMessages, getDependencyDraftStates } from "./dependency-utils";
+import { buildArrows, resolveDrop } from "./drag-logic";
 
 type Props = {
   blockIds: string[];
@@ -123,22 +118,23 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
       return { x: event.clientX - rect.left, y: event.clientY - rect.top, targetId };
     };
     const onMouseMove = (event: MouseEvent) => setDraft(readPointer(event));
+    let finished = false;
     const onMouseUp = (event: MouseEvent) => {
+      if (finished) return;
+      finished = true;
       const pointer = readPointer(event);
-      const target = pointer?.targetId;
       const { rows: currentRows, dependencies: currentDependencies, dependencyActions: actions } = latest.current;
-      if (target && currentRows.has(target) && actions) {
-        const [predecessorId, successorId] =
-          dependencyDraftSide === "right" ? [dependencyDraftFromId, target] : [target, dependencyDraftFromId];
-        const error = validateNewDependency(currentDependencies, actions.otherPairs, predecessorId, successorId);
-        if (error) {
-          setToast({ type: TOAST_TYPE.ERROR, title: "Không nối được", message: dependencyValidationMessages[error] });
-        } else {
-          void actions.create(predecessorId, successorId);
-        }
-      } else if (!target && pointer && actions?.createExternal) {
-        const element = document.elementFromPoint(event.clientX, event.clientY);
-        if (
+      const element = document.elementFromPoint(event.clientX, event.clientY);
+      const result = resolveDrop({
+        side: dependencyDraftSide,
+        fromId: dependencyDraftFromId,
+        targetId: pointer?.targetId ?? null,
+        rowIds: new Set(currentRows.keys()),
+        dependencies: currentDependencies,
+        otherPairs: actions?.otherPairs ?? [],
+        canCreateExternal: !!actions?.createExternal,
+        overEmptyArea: !!(
+          pointer &&
           element &&
           ganttContainerRef.current?.contains(element) &&
           overlayRef.current?.parentElement?.parentElement?.contains(element) &&
@@ -146,31 +142,58 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
           pointer.x >= 0 &&
           pointer.x <= width &&
           pointer.y >= 0
-        ) {
-          setExternalPicker({
-            x: Math.max(0, Math.min(pointer.x + 8, width - 320)),
-            y: pointer.y + 8,
-            sourceId: dependencyDraftFromId,
-            side: dependencyDraftSide,
-          });
-        }
+        ),
+      });
+      if (result.kind === "error") {
+        setToast({ type: TOAST_TYPE.ERROR, title: "Không nối được", message: dependencyValidationMessages[result.error] });
+      } else if (result.kind === "create") {
+        void actions?.create(result.predecessorId, result.successorId);
+      } else if (result.kind === "external-picker" && pointer) {
+        setExternalPicker({
+          x: Math.max(0, Math.min(pointer.x + 8, width - 320)),
+          y: pointer.y + 8,
+          sourceId: dependencyDraftFromId,
+          side: dependencyDraftSide,
+        });
       }
       endDependencyDraft();
     };
+    const onPointerMove = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") onMouseMove(event);
+    };
+    const onPointerUp = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") onMouseUp(event);
+    };
+    const cancelDraft = () => {
+      finished = true;
+      endDependencyDraft();
+    };
+    const onPointerCancel = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") cancelDraft();
+    };
+    const preventTouchScroll = (event: TouchEvent) => event.preventDefault();
     const cancel = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
       event.preventDefault();
       event.stopPropagation();
-      endDependencyDraft();
+      cancelDraft();
     };
-    const cancelOnBlur = () => endDependencyDraft();
+    const cancelOnBlur = cancelDraft;
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
+    document.addEventListener("pointermove", onPointerMove);
+    document.addEventListener("pointerup", onPointerUp);
+    document.addEventListener("pointercancel", onPointerCancel);
+    document.addEventListener("touchmove", preventTouchScroll, { passive: false });
     document.addEventListener("keydown", cancel, true);
     window.addEventListener("blur", cancelOnBlur);
     return () => {
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseup", onMouseUp);
+      document.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("pointerup", onPointerUp);
+      document.removeEventListener("pointercancel", onPointerCancel);
+      document.removeEventListener("touchmove", preventTouchScroll);
       document.removeEventListener("keydown", cancel, true);
       window.removeEventListener("blur", cancelOnBlur);
       endDependencyDraft();
@@ -191,7 +214,7 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
   return (
     <div
       ref={overlayRef}
-      className="pointer-events-none absolute top-0 left-0"
+      className="pointer-events-none absolute top-0 left-0 [@media(pointer:coarse)]:[&_button[data-external-id]]:h-8 [@media(pointer:coarse)]:[&_button[data-external-id]]:w-8"
       style={{ width, height: rows.size * BLOCK_HEIGHT }}
     >
       <svg
@@ -231,18 +254,10 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
           normalMarkerId={normalMarkerId}
           violatedMarkerId={violatedMarkerId}
         />
-        {dependencies.map(({ predecessorId, successorId, lagDays }) => {
-          const pred = rows.get(predecessorId);
-          const succ = rows.get(successorId);
-          if (!pred?.block.position || !succ?.block.position) return null;
-          const violated = isDependencyViolated(pred.block.target_date, succ.block.start_date);
+        {buildArrows(rows, dependencies, BLOCK_HEIGHT).map(({ predecessorId, successorId, lagDays, path, violated }) => {
+          const pred = rows.get(predecessorId)!;
           const isSelected =
             selectedDependency?.predecessorId === predecessorId && selectedDependency?.successorId === successorId;
-          const path = getDependencyPath(
-            { x: pred.block.position.marginLeft + pred.block.position.width, y: pred.y },
-            { x: succ.block.position.marginLeft, y: succ.y },
-            BLOCK_HEIGHT
-          );
           const select = () => setSelected({ predecessorId, successorId });
           return (
             <Fragment key={`${predecessorId}-${successorId}`}>
@@ -262,7 +277,7 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
               />
               {!!lagDays && (
                 <text
-                  x={pred.block.position.marginLeft + pred.block.position.width + 5}
+                  x={pred.block.position!.marginLeft + pred.block.position!.width + 5}
                   y={pred.y - 5}
                   className="fill-current text-10 text-tertiary"
                 >
@@ -418,7 +433,7 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
           <button
             type="button"
             aria-label="Xoá phụ thuộc"
-            className="flex h-5 w-5 items-center justify-center rounded-full border border-strong bg-layer-1 text-danger-primary"
+            className="flex h-5 w-5 items-center justify-center rounded-full border border-strong bg-layer-1 text-danger-primary [@media(pointer:coarse)]:h-8 [@media(pointer:coarse)]:w-8"
             onMouseDown={(event) => event.stopPropagation()}
             onClick={(event) => {
               event.stopPropagation();
