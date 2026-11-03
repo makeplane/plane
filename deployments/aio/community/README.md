@@ -90,6 +90,7 @@ docker run --name myaio --rm -it \
 #### Network & Protocol
 
 - `SITE_ADDRESS`: Server bind address (default: `:80`)
+- `TRUSTED_PROXIES`: Proxies whose `X-Forwarded-For` header the bundled proxy trusts; the client IP from it is used for rate limiting (default: `private_ranges`). Behind a load balancer or CDN on public addresses, add its ranges, space-separated (e.g. `-e TRUSTED_PROXIES="private_ranges 203.0.113.0/24"`). Do not set it to `0.0.0.0/0`: any client could then forge its IP and bypass the sign-in rate limit.
 
 #### Security & Secrets
 
