@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 // plane imports
 import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -28,7 +28,6 @@ export const NotificationSidebarHeader = observer(function NotificationSidebarHe
   const { t } = useTranslation();
   const { isMobile } = usePlatformOS();
   const navigate = useNavigate();
-  const location = useLocation();
   const { loader, getNotifications, markAllNotificationsAsRead } = useWorkspaceNotifications();
 
   const refreshNotifications = async () => {
@@ -50,10 +49,12 @@ export const NotificationSidebarHeader = observer(function NotificationSidebarHe
     }
   };
 
-  // Return to the page the inbox was opened from; with no in-app history (direct visit, reload)
-  // the router's first entry is keyed "default", so fall back to the workspace home.
+  // Return to the page the inbox was opened from. React Router stores its history index in
+  // `history.state.idx`; at 0 there is no earlier in-app entry (direct visit, reload, or a redirect that
+  // replaced the first entry), so fall back to the workspace home instead of leaving Plane.
   const handleBack = () => {
-    if (location.key !== "default") void navigate(-1);
+    const historyIndex = (window.history.state as { idx?: number } | null)?.idx ?? 0;
+    if (historyIndex > 0) void navigate(-1);
     else void navigate(`/${workspaceSlug}/`);
   };
 
