@@ -10,8 +10,14 @@ import type {
   TDateRangeFilterFieldConfig,
   TSingleSelectFilterFieldConfig,
   TMultiSelectFilterFieldConfig,
+  TTextFilterFieldConfig,
 } from "../field-types";
-import type { CORE_COLLECTION_OPERATOR, CORE_COMPARISON_OPERATOR, CORE_EQUALITY_OPERATOR } from "../operators";
+import type {
+  CORE_COLLECTION_OPERATOR,
+  CORE_COMPARISON_OPERATOR,
+  CORE_EQUALITY_OPERATOR,
+  CORE_TEXT_OPERATOR,
+} from "../operators";
 
 // ----------------------------- EXACT Operator -----------------------------
 export type TCoreExactOperatorConfigs =
@@ -26,6 +32,7 @@ export type TCoreRangeOperatorConfigs = TDateRangeFilterFieldConfig<TFilterValue
 
 // ----------------------------- Core Operator Specific Configs -----------------------------
 export type TCoreOperatorSpecificConfigs = {
+  [CORE_TEXT_OPERATOR.ICONTAINS]: TTextFilterFieldConfig;
   [CORE_EQUALITY_OPERATOR.EXACT]: TCoreExactOperatorConfigs;
   [CORE_COLLECTION_OPERATOR.IN]: TCoreInOperatorConfigs;
   [CORE_COMPARISON_OPERATOR.RANGE]: TCoreRangeOperatorConfigs;

@@ -5,12 +5,18 @@
  */
 
 import type { TCoreSupportedOperators, TCoreSupportedDateFilterOperators } from "@plane/types";
-import { CORE_EQUALITY_OPERATOR, CORE_COLLECTION_OPERATOR, CORE_COMPARISON_OPERATOR } from "@plane/types";
+import {
+  CORE_EQUALITY_OPERATOR,
+  CORE_COLLECTION_OPERATOR,
+  CORE_COMPARISON_OPERATOR,
+  CORE_TEXT_OPERATOR,
+} from "@plane/types";
 
 /**
  * Core operator labels
  */
 export const CORE_OPERATOR_LABELS_MAP: Record<TCoreSupportedOperators, string> = {
+  [CORE_TEXT_OPERATOR.ICONTAINS]: "contains",
   [CORE_EQUALITY_OPERATOR.EXACT]: "is",
   [CORE_COLLECTION_OPERATOR.IN]: "is any of",
   [CORE_COMPARISON_OPERATOR.RANGE]: "between",
