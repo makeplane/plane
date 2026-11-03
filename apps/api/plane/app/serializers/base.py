@@ -119,6 +119,20 @@ class DynamicBaseSerializer(BaseSerializer):
 
         return self.fields
 
+    def _hide_unreadable_relations(self, instance, expand, response):
+        # BIH: a related issue the requester cannot read is reduced to its id, project and relation type.
+        from .bih_relation_visibility import can_see_issue, current_visibility, sparse_relation
+
+        access, user_id = current_visibility()
+        issue_attr = "related_issue" if expand == "issue_relation" else "issue"
+        issues = {str(getattr(row, issue_attr).id): getattr(row, issue_attr) for row in getattr(instance, expand).all()}
+        response[expand] = [
+            item
+            if can_see_issue(access, user_id, issues[str(item["id"])])
+            else sparse_relation(issues[str(item["id"])], item["relation_type"])
+            for item in response[expand]
+        ]
+
     def to_representation(self, instance):
         response = super().to_representation(instance)
 
@@ -176,6 +190,8 @@ class DynamicBaseSerializer(BaseSerializer):
                         else:
                             exp_serializer = expansion[expand](getattr(instance, expand))
                         response[expand] = exp_serializer.data
+                        if expand in ("issue_relation", "issue_related"):
+                            self._hide_unreadable_relations(instance, expand, response)
                     else:
                         # You might need to handle this case differently
                         response[expand] = getattr(instance, f"{expand}_id", None)

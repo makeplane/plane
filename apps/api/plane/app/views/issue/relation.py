@@ -21,6 +21,7 @@ from rest_framework import status
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import IssueRelationSerializer, RelatedIssueSerializer
+from plane.app.serializers.bih_relation_visibility import current_visibility, readable_issues_q
 from plane.app.permissions import ProjectEntityPermission, ROLE
 from plane.db.models import (
     Project,
@@ -182,6 +183,8 @@ class IssueRelationViewSet(BaseViewSet):
                 ),
             )
         ).distinct()
+        # BIH: related issues the requester cannot read are left out, not just blanked.
+        queryset = queryset.filter(readable_issues_q(*current_visibility()))
 
         # Fields
         fields = [

@@ -1108,9 +1108,6 @@ class IssueDetailEndpoint(BaseAPIView):
                 many=True,
                 fields=self.fields,
                 expand=self.expand,
-                member_project_ids=ProjectMember.objects.filter(
-                    workspace__slug=slug, member=request.user, is_active=True
-                ).values_list("project_id", flat=True),
             ).data,
         )
 

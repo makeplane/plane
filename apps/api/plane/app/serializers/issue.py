@@ -13,6 +13,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
+from .bih_relation_visibility import can_see_issue, current_visibility, sparse_relation
 from .user import UserLiteSerializer
 from .state import StateLiteSerializer
 from .project import ProjectLiteSerializer
@@ -827,8 +828,8 @@ class IssueListDetailSerializer(serializers.Serializer):
         self.expand = kwargs.pop("expand", []) or []
         # Extract fields parameter and store it as instance variable
         self.fields = kwargs.pop("fields", []) or []
-        # BIH: dates of a related issue are shown only for projects the requester belongs to.
-        self.member_project_ids = {str(pid) for pid in kwargs.pop("member_project_ids", None) or []}
+        # BIH: a related issue is shown in full only when the requester may read it.
+        self.access, self.user_id = current_visibility()
         super().__init__(*args, **kwargs)
 
     def get_module_ids(self, obj):
@@ -840,10 +841,25 @@ class IssueListDetailSerializer(serializers.Serializer):
     def get_assignee_ids(self, obj):
         return [assignee.assignee_id for assignee in obj.issue_assignee.all()]
 
-    def relation_dates(self, issue):
-        if str(issue.project_id) not in self.member_project_ids:
-            return {}
-        return {"start_date": issue.start_date, "target_date": issue.target_date}
+    def relation_item(self, issue, relation_type):
+        # BIH: an issue the requester cannot read is only an id, never its name, code or dates.
+        if not can_see_issue(self.access, self.user_id, issue):
+            return sparse_relation(issue, relation_type)
+        return {
+            "id": issue.id,
+            "project_id": issue.project_id,
+            "sequence_id": issue.sequence_id,
+            "name": issue.name,
+            "start_date": issue.start_date,
+            "target_date": issue.target_date,
+            "relation_type": relation_type,
+            "state_id": issue.state_id,
+            "priority": issue.priority,
+            "created_by": issue.created_by_id,
+            "created_at": issue.created_at,
+            "updated_at": issue.updated_at,
+            "updated_by": issue.updated_by_id,
+        }
 
     def to_representation(self, instance):
         data = {
@@ -885,23 +901,7 @@ class IssueListDetailSerializer(serializers.Serializer):
                     # If the related issue is deleted, skip it
                     if not related_issue:
                         continue
-                    # Add the related issue to the relations list
-                    relations.append(
-                        {
-                            "id": related_issue.id,
-                            "project_id": related_issue.project_id,
-                            "sequence_id": related_issue.sequence_id,
-                            "name": related_issue.name,
-                            **self.relation_dates(related_issue),
-                            "relation_type": relation.relation_type,
-                            "state_id": related_issue.state_id,
-                            "priority": related_issue.priority,
-                            "created_by": related_issue.created_by_id,
-                            "created_at": related_issue.created_at,
-                            "updated_at": related_issue.updated_at,
-                            "updated_by": related_issue.updated_by_id,
-                        }
-                    )
+                    relations.append(self.relation_item(related_issue, relation.relation_type))
                 data["issue_relation"] = relations
 
             if "issue_related" in self.expand:
@@ -911,23 +911,7 @@ class IssueListDetailSerializer(serializers.Serializer):
                     # If the related issue is deleted, skip it
                     if not issue:
                         continue
-                    # Add the related issue to the related list
-                    related.append(
-                        {
-                            "id": issue.id,
-                            "project_id": issue.project_id,
-                            "sequence_id": issue.sequence_id,
-                            "name": issue.name,
-                            **self.relation_dates(issue),
-                            "relation_type": relation.relation_type,
-                            "state_id": issue.state_id,
-                            "priority": issue.priority,
-                            "created_by": issue.created_by_id,
-                            "created_at": issue.created_at,
-                            "updated_at": issue.updated_at,
-                            "updated_by": issue.updated_by_id,
-                        }
-                    )
+                    related.append(self.relation_item(issue, relation.relation_type))
                 data["issue_related"] = related
 
         return data

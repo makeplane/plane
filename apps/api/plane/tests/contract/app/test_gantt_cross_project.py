@@ -289,6 +289,8 @@ def test_issues_detail_hides_dates_of_non_member_project(session_client, workspa
     row = next(item for item in response.json()["results"] if item["id"] == str(first.id))
     assert row["issue_relation"][0]["id"] == str(second.id)
     assert "start_date" not in row["issue_relation"][0]
+    # Only ids: no name, code, state or creator of an issue from a project the user cannot see.
+    assert set(row["issue_relation"][0]) == {"id", "project_id", "relation_type"}
 
 
 @pytest.mark.contract
