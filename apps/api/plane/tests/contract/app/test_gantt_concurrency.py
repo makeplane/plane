@@ -219,6 +219,32 @@ def test_stale_expected_is_409_after_concurrent_write(workspace, members, scope)
     ]
 
 
+@pytest.mark.parametrize("scope", ["project", "workspace"])
+def test_retry_with_conflict_preview_applies_after_409(workspace, members, scope):
+    project = _project(workspace, members, "RETRY")
+    a, b, c = _chain(project)
+    url = _schedule_url(project, scope)
+    body = {**_move(a, 20, 22), "pull_earlier": False}
+    first, second = APIClient(), APIClient()
+    first.force_authenticate(user=members[0])
+    second.force_authenticate(user=members[1])
+
+    def expected_of(updates):
+        return [{"id": u["id"], "start_date": u["new_start"], "target_date": u["new_end"]} for u in updates]
+
+    preview = first.post(url, {**body, "dry_run": True}, format="json").json()
+    assert second.post(url, {**_move(b, 25, 27), "pull_earlier": False}, format="json").status_code == 200
+
+    stale = first.post(url, {**body, "expected": expected_of(preview["updates"])}, format="json")
+    assert stale.status_code == 409
+    assert _dates(a, b, c)[0] == (date(2026, 11, 15), date(2026, 11, 17))  # nothing applied by the stale save
+
+    # The web app shows the 409 body as the new preview; confirming it must now succeed.
+    retry = first.post(url, {**body, "expected": expected_of(stale.json()["updates"])}, format="json")
+    assert retry.status_code == 200
+    assert _dates(a)[0] == (date(2026, 11, 20), date(2026, 11, 22))
+
+
 def test_opposite_cross_project_links_do_not_deadlock(workspace, members):
     p = _project(workspace, members, "CROSSP")
     q = _project(workspace, members, "CROSSQ")
