@@ -99,11 +99,12 @@ export function EmojiRoot(props: EmojiRootProps) {
                 data-slot="emoji-picker-list-row"
                 className="scroll-my-1.5 justify-between"
                 {...props}
-                // A fixed grid of 32px cells spread across the row, so all columns fit and line up row to row.
+                // A grid of cells up to 32px spread across the row, so the columns line up row to row and
+                // still all fit when an always-visible scrollbar takes some of the width.
                 style={{
                   ...style,
                   display: "grid",
-                  gridTemplateColumns: "repeat(var(--frimousse-list-columns), 2rem)",
+                  gridTemplateColumns: "repeat(var(--frimousse-list-columns), minmax(0, 2rem))",
                 }}
               >
                 {children}
@@ -114,7 +115,7 @@ export function EmojiRoot(props: EmojiRootProps) {
                 type="button"
                 aria-label={emoji?.label ?? emoji?.emoji}
                 data-slot="emoji-picker-list-emoji"
-                className="data-active:bg-accent flex size-8 items-center justify-center rounded-md text-body-md-regular"
+                className="data-active:bg-accent flex h-8 w-full max-w-8 items-center justify-center rounded-md text-body-md-regular"
                 {...props}
               >
                 {emoji.emoji}
