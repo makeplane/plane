@@ -13,6 +13,9 @@ from django.db.models.fields.related import OneToOneRel
 # Third party imports
 from celery import shared_task
 
+# Module imports
+from plane.utils.exception_logger import log_exception
+
 
 @shared_task
 def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
@@ -95,8 +98,8 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
                                     using,
                                 )
             except Exception as e:
-                # Log the error or handle as needed
-                print(f"Error handling relation {related_name}: {str(e)}")
+                # Log the error and continue with the remaining relations
+                log_exception(e)
                 continue
 
     # Finally, soft delete the instance itself if it hasn't been deleted yet
