@@ -259,6 +259,15 @@ class WorkingScheduleTests(unittest.TestCase):
                     update("D", "2026-11-06", None, start, None),
                 ])
 
+    def test_holiday_on_weekend_moves_a_day_off_to_next_working_day(self):
+        # Sat 7 and Sun 8 are holidays: Mon 9 and Tue 10 are off; a Friday holiday needs no compensation.
+        cases = [(["2026-11-07"], ["2026-11-09"]), (["2026-11-07", "2026-11-08"], ["2026-11-09", "2026-11-10"]),
+                 (["2026-11-07", "2026-11-09"], ["2026-11-10"]), (["2026-11-06"], [])]
+        for holidays, extra in cases:
+            with self.subTest(holidays=holidays):
+                off = engine.build_calendar(range(1, 6), [day(h) for h in holidays])["holidays"]
+                self.assertEqual(off, {day(h) for h in holidays + extra})
+
     def test_lags_and_multiple_predecessors(self):
         c = engine.build_calendar(range(1, 6), [day("2026-11-09")])
         tasks = [task("A", None, "2026-11-06"), task("B", "2026-11-01", "2026-11-02")]

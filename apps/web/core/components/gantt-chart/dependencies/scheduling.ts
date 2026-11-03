@@ -46,7 +46,24 @@ export function buildCalendar(weekdays: Iterable<number>, holidays: Iterable<str
   if (days.some((day) => !Number.isInteger(day) || day < 1 || day > 7)) throw new Error("Invalid weekdays");
   if (dates.some((date) => typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date) || addDays(date, 0) !== date))
     throw new Error("Invalid holidays");
-  return { weekdays: new Set(days), holidays: new Set(dates) };
+  return { weekdays: new Set(days), holidays: withCompensation(new Set(days), new Set(dates)) };
+}
+
+// A holiday on a non-working weekday moves one day off to the next working day (nghỉ bù).
+function withCompensation(weekdays: Set<number>, holidays: Set<string>): Set<string> {
+  const off = new Set(holidays);
+  for (const holiday of [...holidays].sort()) {
+    if (weekdays.has(new Date(utc(holiday)).getUTCDay() || 7)) continue;
+    let day = holiday;
+    for (let i = 0; i < 366; i++) {
+      day = addDays(day, 1);
+      if (weekdays.has(new Date(utc(day)).getUTCDay() || 7) && !off.has(day)) {
+        off.add(day);
+        break;
+      }
+    }
+  }
+  return off;
 }
 
 export function isWorkingDay(date: string, calendar: TWorkingCalendar): boolean {

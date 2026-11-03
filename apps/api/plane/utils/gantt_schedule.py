@@ -21,7 +21,22 @@ def build_calendar(weekdays, holidays):
         raise ValueError("Invalid weekdays")
     if any(type(value) is not date for value in holidays):
         raise ValueError("Invalid holidays")
-    return {"weekdays": set(weekdays), "holidays": set(holidays)}
+    return {"weekdays": set(weekdays), "holidays": with_compensation(weekdays, holidays)}
+
+
+def with_compensation(weekdays, holidays):
+    """A holiday on a non-working weekday moves one day off to the next working day (nghỉ bù)."""
+    off = set(holidays)
+    for holiday in sorted(off.copy()):
+        if holiday.isoweekday() in weekdays:
+            continue
+        day = holiday
+        for _ in range(366):
+            day += timedelta(days=1)
+            if day.isoweekday() in weekdays and day not in off:
+                off.add(day)
+                break
+    return off
 
 
 def is_working_day(d, calendar):

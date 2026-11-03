@@ -273,6 +273,17 @@ test("weekends, holidays, durations and partial dates match the server", () => {
   }
 });
 
+test("a holiday on a weekend moves a day off to the next working day, like the server", () => {
+  for (const [holidays, extra] of [
+    [["2026-11-07"], ["2026-11-09"]],
+    [["2026-11-07", "2026-11-08"], ["2026-11-09", "2026-11-10"]],
+    [["2026-11-07", "2026-11-09"], ["2026-11-10"]],
+    [["2026-11-06"], []],
+  ]) {
+    assert.deepEqual([...buildCalendar([1, 2, 3, 4, 5], holidays).holidays].sort(), [...holidays, ...extra].sort());
+  }
+});
+
 test("lags and multiple predecessors match the server", () => {
   const c = buildCalendar([1, 2, 3, 4, 5], ["2026-11-09"]);
   const items = [task("A", null, "2026-11-06"), task("B", "2026-11-01", "2026-11-02")];
