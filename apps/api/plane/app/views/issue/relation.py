@@ -39,15 +39,18 @@ from plane.utils.gantt_schedule import find_cycle_through
 
 
 def forbidden_projects(user, slug, project_id, issue_ids):
-    """Projects of `issue_ids` (other than `project_id`) where `user` is not an active ADMIN/MEMBER.
+    """Projects touched by `issue_ids` (plus `project_id`) where `user` is not an active ADMIN/MEMBER.
 
     BIH: Plane only checks the project in the URL, so a relation could reach into a project the caller cannot write to.
+    Soft-deleted issues still count: their relations stay alive until the cascade task runs.
     """
-    projects = set(
+    projects = {str(project_id)} | {
         str(pid)
-        for pid in Issue.objects.filter(workspace__slug=slug, pk__in=issue_ids).values_list("project_id", flat=True)
-    ) - {str(project_id)}
-    writable = set(
+        for pid in Issue.all_objects.filter(workspace__slug=slug, pk__in=issue_ids).values_list(
+            "project_id", flat=True
+        )
+    }
+    writable = {
         str(pid)
         for pid in ProjectMember.objects.filter(
             workspace__slug=slug,
@@ -57,7 +60,7 @@ def forbidden_projects(user, slug, project_id, issue_ids):
             project_id__in=projects,
             project__deleted_at__isnull=True,
         ).values_list("project_id", flat=True)
-    )
+    }
     return projects - writable
 
 
@@ -258,6 +261,9 @@ class IssueRelationViewSet(BaseViewSet):
             ).values_list("id", flat=True)
         )
 
+        # The URL issue must be a live issue of the URL project, otherwise it could point into another workspace.
+        if not Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk=issue_id).exists():
+            return Response({"message": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
         if forbidden_projects(request.user, slug, project_id, [*issues, issue_id]):
             return Response(
                 {"message": "No permission in the other project"},

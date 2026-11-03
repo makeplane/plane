@@ -404,8 +404,6 @@ class IssueRelationSerializer(BaseSerializer):
     project_id = serializers.PrimaryKeyRelatedField(source="related_issue.project_id", read_only=True)
     sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
     name = serializers.CharField(source="related_issue.name", read_only=True)
-    start_date = serializers.DateField(source="related_issue.start_date", read_only=True)
-    target_date = serializers.DateField(source="related_issue.target_date", read_only=True)
     relation_type = serializers.CharField(read_only=True)
     state_id = serializers.UUIDField(source="related_issue.state.id", read_only=True)
     priority = serializers.CharField(source="related_issue.priority", read_only=True)
@@ -423,8 +421,6 @@ class IssueRelationSerializer(BaseSerializer):
             "sequence_id",
             "relation_type",
             "name",
-            "start_date",
-            "target_date",
             "state_id",
             "priority",
             "assignee_ids",
@@ -448,8 +444,6 @@ class RelatedIssueSerializer(BaseSerializer):
     project_id = serializers.PrimaryKeyRelatedField(source="issue.project_id", read_only=True)
     sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
     name = serializers.CharField(source="issue.name", read_only=True)
-    start_date = serializers.DateField(source="issue.start_date", read_only=True)
-    target_date = serializers.DateField(source="issue.target_date", read_only=True)
     relation_type = serializers.CharField(read_only=True)
     state_id = serializers.UUIDField(source="issue.state.id", read_only=True)
     priority = serializers.CharField(source="issue.priority", read_only=True)
@@ -467,8 +461,6 @@ class RelatedIssueSerializer(BaseSerializer):
             "sequence_id",
             "relation_type",
             "name",
-            "start_date",
-            "target_date",
             "state_id",
             "priority",
             "assignee_ids",
@@ -835,6 +827,8 @@ class IssueListDetailSerializer(serializers.Serializer):
         self.expand = kwargs.pop("expand", []) or []
         # Extract fields parameter and store it as instance variable
         self.fields = kwargs.pop("fields", []) or []
+        # BIH: dates of a related issue are shown only for projects the requester belongs to.
+        self.member_project_ids = {str(pid) for pid in kwargs.pop("member_project_ids", None) or []}
         super().__init__(*args, **kwargs)
 
     def get_module_ids(self, obj):
@@ -845,6 +839,11 @@ class IssueListDetailSerializer(serializers.Serializer):
 
     def get_assignee_ids(self, obj):
         return [assignee.assignee_id for assignee in obj.issue_assignee.all()]
+
+    def relation_dates(self, issue):
+        if str(issue.project_id) not in self.member_project_ids:
+            return {}
+        return {"start_date": issue.start_date, "target_date": issue.target_date}
 
     def to_representation(self, instance):
         data = {
@@ -893,6 +892,7 @@ class IssueListDetailSerializer(serializers.Serializer):
                             "project_id": related_issue.project_id,
                             "sequence_id": related_issue.sequence_id,
                             "name": related_issue.name,
+                            **self.relation_dates(related_issue),
                             "relation_type": relation.relation_type,
                             "state_id": related_issue.state_id,
                             "priority": related_issue.priority,
@@ -918,6 +918,7 @@ class IssueListDetailSerializer(serializers.Serializer):
                             "project_id": issue.project_id,
                             "sequence_id": issue.sequence_id,
                             "name": issue.name,
+                            **self.relation_dates(issue),
                             "relation_type": relation.relation_type,
                             "state_id": issue.state_id,
                             "priority": issue.priority,

@@ -1104,7 +1104,13 @@ class IssueDetailEndpoint(BaseAPIView):
             queryset=issue,
             total_count_queryset=total_issue_queryset,
             on_results=lambda issue: IssueListDetailSerializer(
-                issue, many=True, fields=self.fields, expand=self.expand
+                issue,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+                member_project_ids=ProjectMember.objects.filter(
+                    workspace__slug=slug, member=request.user, is_active=True
+                ).values_list("project_id", flat=True),
             ).data,
         )
 

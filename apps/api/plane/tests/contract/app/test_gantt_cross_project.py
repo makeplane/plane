@@ -242,16 +242,50 @@ class TestCrossProjectRelationPermission:
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
-    def test_relation_response_carries_dates(self, session_client, workspace, create_user, relation_activity):
+    def test_url_issue_must_belong_to_url_project(self, session_client, workspace, create_user, relation_activity):
         a, b = _project(workspace, create_user, "AAA", 15), _project(workspace, create_user, "BBB", 15)
         first, second = _issue(a, 1, 3), _issue(b, 4, 6)
 
         response = session_client.post(
-            _rel_url(a, second),
-            {"relation_type": "blocked_by", "issues": [str(first.id)]},
+            _rel_url(b, first),
+            {"relation_type": "blocking", "issues": [str(second.id)]},
             format="json",
         )
 
-        assert response.status_code == status.HTTP_201_CREATED
-        assert response.json()[0]["start_date"] == "2026-11-01"
-        assert response.json()[0]["target_date"] == "2026-11-03"
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert not IssueRelation.objects.exists()
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_issues_detail_expand_carries_relation_dates(session_client, workspace, create_user):
+    a, b = _project(workspace, create_user, "AAA", 15), _project(workspace, create_user, "BBB", 15)
+    first, second = _issue(a, 1, 3), _issue(b, 4, 6)
+    _link(first, second)
+
+    response = session_client.get(
+        f"/api/workspaces/{workspace.slug}/projects/{b.id}/issues-detail/",
+        {"expand": "issue_relation,issue_related"},
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    row = next(item for item in response.json()["results"] if item["id"] == str(second.id))
+    assert row["issue_relation"][0]["start_date"] == "2026-11-01"
+    assert row["issue_relation"][0]["target_date"] == "2026-11-03"
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_issues_detail_hides_dates_of_non_member_project(session_client, workspace, create_user):
+    a, hidden = _project(workspace, create_user, "AAA", 15), _project(workspace, create_user, "HID", None)
+    first, second = _issue(a, 1, 3), _issue(hidden, 4, 6)
+    _link(second, first)
+
+    response = session_client.get(
+        f"/api/workspaces/{workspace.slug}/projects/{a.id}/issues-detail/",
+        {"expand": "issue_relation,issue_related"},
+    )
+
+    row = next(item for item in response.json()["results"] if item["id"] == str(first.id))
+    assert row["issue_relation"][0]["id"] == str(second.id)
+    assert "start_date" not in row["issue_relation"][0]
