@@ -321,3 +321,32 @@ class ProjectLiteSerializer(BaseSerializer):
             "archived_at",
         ]
         read_only_fields = fields
+
+
+class ProjectFeatureSerializer(serializers.Serializer):
+    """Serializer for project feature flags exposed on the public API."""
+
+    epics = serializers.BooleanField(required=False)
+    modules = serializers.BooleanField(source="module_view", required=False)
+    cycles = serializers.BooleanField(source="cycle_view", required=False)
+    views = serializers.BooleanField(source="issue_views_view", required=False)
+    pages = serializers.BooleanField(source="page_view", required=False)
+    intakes = serializers.BooleanField(source="intake_view", required=False)
+    work_item_types = serializers.BooleanField(source="is_issue_type_enabled", required=False)
+    workflows = serializers.BooleanField(required=False)
+    parallel_cycles = serializers.BooleanField(required=False)
+    project_updates = serializers.BooleanField(required=False)
+
+    def to_representation(self, instance):
+        return {
+            "epics": False,
+            "modules": bool(instance.module_view),
+            "cycles": bool(instance.cycle_view),
+            "views": bool(instance.issue_views_view),
+            "pages": bool(instance.page_view),
+            "intakes": bool(instance.intake_view),
+            "work_item_types": bool(instance.is_issue_type_enabled),
+            "workflows": False,
+            "parallel_cycles": False,
+            "project_updates": False,
+        }
