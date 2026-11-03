@@ -50,6 +50,9 @@ export function clickHandler(options: ClickHandlerOptions): Plugin {
             return false;
           }
 
+          // Stop the native anchor navigation, otherwise read-only (non-editable)
+          // views open the link twice: once here and once via the <a target="_blank">.
+          event.preventDefault();
           window.open(href, target);
 
           return true;
