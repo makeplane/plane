@@ -178,7 +178,6 @@ export const useMultipleSelect = (props: Props) => {
 
       if (forceAction) {
         if (forceAction === "force-add") {
-          console.log("force adding");
           updateSelectedEntityDetails(entityDetails, "add");
           handleActiveEntityChange(entityDetails, shouldScroll);
         }
