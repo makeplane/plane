@@ -17,6 +17,7 @@ from rest_framework import status
 # Module imports
 from .. import BaseAPIView
 from plane.app.serializers import IssueActivitySerializer, IssueCommentSerializer
+from plane.app.serializers.bih_relation_visibility import hide_unreadable_activity
 from plane.app.permissions import ProjectEntityPermission, allow_permission, ROLE
 from plane.db.models import IssueActivity, IssueComment, CommentReaction, IntakeIssue
 
@@ -71,7 +72,7 @@ class IssueActivityEndpoint(BaseAPIView):
                     to_attr="source_data",
                 )
             )
-            issue_activities = IssueActivitySerializer(issue_activities, many=True).data
+            issue_activities = hide_unreadable_activity(IssueActivitySerializer(issue_activities, many=True).data)
             return Response(issue_activities, status=status.HTTP_200_OK)
 
         if request.GET.get("activity_type", None) == "issue-comment":

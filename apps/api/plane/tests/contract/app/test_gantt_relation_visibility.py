@@ -126,3 +126,37 @@ class TestRelationVisibility:
         assert response.status_code == status.HTTP_200_OK
         assert "SECRET" not in str(response.json())
         assert response.json()["blocked_by"] == []
+
+    def test_issue_detail_expand_hides_unreadable_and_keeps_readable(self, session_client, workspace, create_user):
+        a, b = _project(workspace, create_user, "AAA", 15), _project(workspace, create_user, "BBB", 15)
+        hidden = _project(workspace, create_user, "HID", None)
+        mine, shown, secret = _issue(a, "mine"), _issue(b, "visible-name"), _issue(hidden, "SECRET-DETAIL")
+        _link(shown, mine)
+        _link(secret, mine)
+
+        response = session_client.get(f"{_base(a)}/issues/{mine.id}/", {"expand": "issue_relation"})
+
+        assert response.status_code == status.HTTP_200_OK
+        by_id = {item["id"]: item for item in response.json()["issue_relation"]}
+        assert by_id[str(shown.id)]["name"] == "visible-name"
+        assert set(by_id[str(secret.id)]) == SPARSE
+        assert "SECRET" not in str(response.json())
+
+    def test_history_blanks_code_of_unreadable_issue(self, session_client, workspace, create_user):
+        from plane.db.models import IssueActivity
+
+        a = _project(workspace, create_user, "AAA", 15)
+        hidden = _project(workspace, create_user, "HID", None)
+        mine, secret = _issue(a, "mine"), _issue(hidden, "other")
+        shown = _issue(a, "shown")
+        for other, code in ((secret, "HID-77"), (shown, "AAA-5")):
+            IssueActivity.objects.create(
+                issue=mine, project=a, workspace=workspace, verb="updated", field="blocked_by",
+                new_value=code, old_identifier=other.id, comment="added blocked_by relation",
+            )
+
+        response = session_client.get(f"{_base(a)}/issues/{mine.id}/history/", {"activity_type": "issue-property"})
+
+        assert response.status_code == status.HTTP_200_OK
+        values = sorted(row["new_value"] for row in response.json())
+        assert values == ["", "AAA-5"]
