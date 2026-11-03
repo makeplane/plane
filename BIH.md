@@ -119,9 +119,16 @@ Engine Python thuần chạy được không cần Django: `python -m unittest d
 - **Thanh chồng nhau**: `buildArrows` gán "làn" (0–2) theo từng predecessor cùng điểm cuối; `getDependencyPath(from, to, rowHeight, lane)` dịch chỗ gấp khúc 3 px mỗi làn (làn 0 giữ nguyên đường cũ). Cùng predecessor tỏa nhiều việc sau thì chung làn.
 - **Lag khác project**: chọn mũi tên cụt (có quyền sửa) ⇒ menu có ô "Trễ (ngày)"; nhãn mũi tên cụt hiện `+Nd`. Web đọc `GET workspaces/<slug>/issue-lags/` khi có mũi tên cụt, ghi `POST` cùng URL (403 ⇒ toast cần Member ở project của việc sau). Hook `useGanttDependencies` có `setExternalLag`.
 - **SS/FF/SF (có migration 0124)**: `IssueRelation.dep_type` (CharField 2, default và `db_default` "FS" nên backend cũ vẫn ghi được khi rollback). Ràng buộc: FS = bắt đầu việc sau ≥ ngày sau kết thúc việc trước + lag; SS = bắt đầu sau ≥ bắt đầu trước + lag; FF = kết thúc sau ≥ kết thúc trước + lag; SF = kết thúc sau ≥ bắt đầu trước + lag (FF/SF quy về ngày bắt đầu bằng cách giữ độ dài; thiếu ngày kết thúc của việc sau thì cảnh báo `missing_dates`, thiếu ngày bắt đầu của việc trước (SS/SF) thì `missing_predecessor_start`). Engine Python (`utils/gantt_schedule.py`, bộ ba/bộ tư `(pred, succ, lag, type)`) và TS (`scheduling.ts`) giống nhau; Codex fuzz 6000 ca khớp. `GET/POST issue-lags` (project và workspace) trả/nhận `dep_type` (POST không gửi `dep_type` thì giữ nguyên); hàng lag 0 nhưng khác FS vẫn được liệt kê. Web: chọn mũi tên ⇒ ô "Loại" (FS/SS/FF/SF) cạnh "Trễ"; mũi tên nối đúng mép thanh (SS trái-trái, FF phải-phải, SF trái→phải), nhãn loại cạnh thanh trước; kiểm vi phạm theo loại (không tính lag). Mũi tên cụt giữ loại (từ `issue-lags`).
-- Giới hạn SS/FF/SF: loại chỉ chọn được trong cùng project (chưa có ô chọn loại cho mũi tên cụt khác project, dù backend nhận); tạo bằng kéo-thả luôn là FS rồi đổi loại; vi phạm chỉ so thứ tự ngày, không tính lag.
+- Giới hạn SS/FF/SF: loại chọn được cả ở mũi tên cụt khác project từ đợt 11; tạo bằng kéo-thả luôn là FS rồi đổi loại; vi phạm chỉ so thứ tự ngày, không tính lag.
 - `PATCH` lạ ở sidebar: chưa tái hiện sau 2 lần bắt mạng local; xem báo cáo đối chiếu.
 - Thử tay local (web `bih.13`): đặt/đọc lag `OTHR-1 +3d` (đã xác nhận trong DB, đã trả về 0); hai tab sửa đồng thời ⇒ 409 "Lịch đã thay đổi — xem lại".
+
+## Đợt 11 (commit local, chưa deploy)
+
+- **Ngày lễ**: đối chiếu `LUNAR_HOLIDAYS` với báo chí: 2026 (Tết 17/2, Giỗ Tổ 26/4) và 2027 (Tết 6/2, Giỗ Tổ 16/4) khớp. 2028–2030 chưa có thông báo chính thức, chưa xác minh. Không sửa.
+- **Test 409**: `test_retry_with_conflict_preview_applies_after_409` (project + workspace): sau 409, gửi lại với `expected` lấy từ thân 409 thì lưu được. Pytest Gantt 169 pass.
+- **Loại phụ thuộc cho mũi tên cụt**: menu có ô "Loại" (chỉ mục sửa được), lưu qua `POST workspaces/<slug>/issue-lags/` kèm `dep_type`; đổi lag giữ nguyên loại. Hook có `setExternalDepType`. Đã thử local (web `bih.15`): đổi SS ⇒ DB `SS`, đổi lag ⇒ vẫn `SS`.
+- **`PATCH` lạ ở sidebar**: nguyên nhân nghi vấn (chưa tái hiện): `useDetailAutoSchedule` lưu thẳng ngày khi `deps` chưa tải xong. Chỉ thêm toast cảnh báo, không chặn lưu; chưa thử toast trong trình duyệt.
 
 ## Rollback đợt 10
 
