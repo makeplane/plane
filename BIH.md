@@ -8,7 +8,7 @@ Fork Plane CE v1.4.2 của BIH (AGPL-3.0, source công khai tại https://github
 
 Chỉ áp cho Gantt work item của project (không áp cho epic). Hai nút trên thanh Gantt, nhớ trong localStorage:
 
-- **Phụ thuộc** (`bih-gantt-show-dependencies`): vẽ mũi tên Finish-to-Start từ quan hệ `blocked_by`/`blocking` cùng project. Mũi tên đỏ khi việc sau bắt đầu không muộn hơn ngày kết thúc việc trước. Quan hệ tới việc **ở project khác** (chỉ project người dùng là thành viên) hiện thành mũi tên cụt nét đứt ở mép thanh, kèm nhãn mã việc (`PRJ-12`; nhiều việc cùng phía nối bằng ` · `), rê chuột xem tên. Mũi tên cụt chỉ để xem: không chọn/xoá/kéo-nối được.
+- **Phụ thuộc** (`bih-gantt-show-dependencies`): vẽ mũi tên Finish-to-Start từ quan hệ `blocked_by`/`blocking` cùng project. Mũi tên đỏ khi việc sau bắt đầu không muộn hơn ngày kết thúc việc trước. Quan hệ tới việc **ở project khác** (chỉ project người dùng là thành viên) hiện thành mũi tên cụt nét đứt ở mép thanh, kèm nhãn mã việc (`PRJ-12`; nhiều việc cùng phía nối bằng ` · `), rê chuột xem tên. Đợt 7: mũi tên cụt **tô đỏ khi vi phạm** (ngày việc bên kia lấy từ `issues-detail`, chỉ cho project người dùng là thành viên), **bấm chọn rồi xoá** (× hoặc Delete, có Hoàn tác; chỉ khi role ≥ MEMBER ở project bên kia), và **tạo mới**: kéo tay nắm mép thả vào chỗ trống ⇒ hộp tìm việc (`search-issues`, chỉ hiện việc của project role ≥ MEMBER khác project hiện tại). Kéo-nối chạy cả bằng cảm ứng (pointer events; tay nắm luôn hiện và vùng chạm lớn ở thiết bị `pointer: coarse`).
 - **Tự lùi lịch** (`bih-gantt-auto-schedule`, mặc định TẮT): khi bật, đổi ngày một việc sẽ tính việc sau phải lùi bao nhiêu, hiện hộp xem trước (ngày cũ → mới), người dùng chọn "Lùi N việc sau" hoặc "Chỉ đổi việc này".
 
 Thao tác (cần quyền ADMIN/MEMBER của project):
@@ -86,17 +86,25 @@ python -m pytest plane/tests/contract/app/test_gantt_dependencies.py plane/tests
 
 Engine Python thuần chạy được không cần Django: `python -m unittest discover -s plane/tests/unit/utils -p "test_gantt_schedule.py"` (từ `apps/api`; lệnh theo đường dẫn module lỗi vì `plane/__init__.py` import Celery).
 
+- Đợt 7 (relation khác project, `relation.py`): `forbidden_projects` — tạo/xoá relation cần role ADMIN/MEMBER đang hoạt động ở **mọi** project có việc liên quan (kể cả project URL, kiểm lại sau khoá workspace; việc đã xoá mềm vẫn tính); sai ⇒ 403. Việc ở URL phải là việc sống của project URL, không thì 404. `issues-detail` (expand `issue_relation`/`issue_related`) thêm `start_date`/`target_date` của việc bên kia **chỉ khi** người dùng là thành viên project đó (`IssueListDetailSerializer(member_project_ids=…)`). Không migration. Hành vi mới: Guest/không thành viên ở project bên kia không nối được, cả từ màn chi tiết việc Plane gốc.
+
 ## Giới hạn đã biết
+
+- Đợt 7 còn lại: `remove-relation` (Plane gốc) bỏ qua `relation_type` — nếu giữa hai việc có cả `blocked_by` và `relates_to` thì có thể xoá nhầm loại; tạo relation bị `ignore_conflicts` nuốt (đã có quan hệ khác chiều) vẫn trả 201, Gantt chỉ phát hiện sau khi tải lại; `issue_relation` expand của các endpoint khác (`issues/list/`) vẫn lộ `name`/`sequence_id` việc project không thuộc (có sẵn từ Plane gốc, ngày thì đã chặn). Hoàn tác xoá phụ thuộc khác project vẫn gửi request nếu mất quyền project hiện tại giữa chừng (backend trả 403). Hộp xoá của mũi tên cụt sát mép phải màn hình bị cắt. Cảm ứng chưa thử trên thiết bị thật (chỉ giả lập 375px).
 
 - Chỉ Finish-to-Start. Lịch làm việc + ngày lễ sửa trong hộp "Cài đặt lập lịch" trên thanh Gantt (không có trang riêng ở cài đặt workspace). Ngày lễ trùng cuối tuần không tự bù; preset VN không có Tết/Giỗ Tổ và ngày liền kề Quốc khánh chỉ ước lượng (1/9) — admin chỉnh tay. Lag/ngày lễ chỉ có ở Gantt và màn chi tiết việc, chưa có ở list.
 - Phần sửa lịch workspace (quyền ADMIN) mới được test bằng test backend, chưa bấm thử trên trình duyệt.
-- Khác project (đợt 6): lùi lịch và mũi tên cụt có kiểm quyền như trên, nhưng **tạo/xoá phụ thuộc khác project** vẫn chưa làm trên Gantt (chỉ qua màn chi tiết việc của Plane gốc, vốn không kiểm quyền project bên kia). Lag của relation khác project luôn 0 (endpoint `issue-lags` chỉ trong project). Mũi tên cụt không tô đỏ khi vi phạm (relation serializer không trả ngày việc bên kia). Việc ở project người dùng không thuộc vô hình, nên việc sau nó không được dời và không có cảnh báo. `expected` bị bỏ qua khi `include_successors=false` (giống endpoint project). Khi tải 100 việc đầu, việc ngoài hàng đang hiển thị không có mũi tên cụt.
+- Khác project (đợt 6): lùi lịch và mũi tên cụt có kiểm quyền như trên, nhưng tạo/xoá phụ thuộc khác project đã làm ở đợt 7 (xem Backend đợt 7). Lag của relation khác project luôn 0 (endpoint `issue-lags` chỉ trong project). Việc ở project người dùng không thuộc vô hình, nên việc sau nó không được dời và không có cảnh báo. `expected` bị bỏ qua khi `include_successors=false` (giống endpoint project). Khi tải 100 việc đầu, việc ngoài hàng đang hiển thị không có mũi tên cụt.
 - Đã đo local với 606 việc + 300 phụ thuộc (Chrome): cuộn ~11 ms/bước, đổi zoom <1,6 s, heap ~75 MB; mọi thanh đều nằm trong DOM (Plane gốc không ảo hoá hàng). Gantt việc không có nhóm thu gọn. Tải tối đa 10.000 việc để vẽ mũi tên.
 - Màn hẹp (375px): thanh công cụ cuộn ngang để thấy nút "Phụ thuộc"/"Tự lùi lịch".
 - Nếu tạo relation ở màn chi tiết việc với backend gốc, vẫn có thể tạo vòng; lõi lịch phát hiện và dừng.
 - `issueOperations.update` của Plane tự nuốt lỗi: ở đường quay về `issue-dates`, việc sau có thể được lưu dù lưu việc đang sửa thất bại.
 - Tạo/xoá phụ thuộc khoá workspace trong thời gian ngắn.
-- Chưa có test dựng mũi tên/kéo-nối tự động bằng trình duyệt; test khác project có 9 ca ở `plane/tests/contract/app/test_gantt_cross_project.py`. Đã thử tay local (2 project member + 1 guest + 1 không thành viên): xem trước, lưu, cảnh báo guest, rollback backend cũ; chưa thử chế độ sáng.
+- Test tự động (đợt 7): logic thả/dựng mũi tên + hiệu năng 2000 việc ở `dependencies/drag-logic.test.mjs` (Node thuần, không dựng DOM; không có test trình duyệt tự động vì không thêm dependency); quyền khác project ở `test_gantt_cross_project.py`; sửa đồng thời 2 người dùng ở `test_gantt_concurrency.py` (PostgreSQL thật, nhiều luồng). Đã thử tay local (2 project member + 1 guest + 1 không thành viên): xem trước, lưu, cảnh báo guest, rollback backend cũ; chưa thử chế độ sáng.
+
+## Rollback đợt 7
+
+Web `bih.4`/backend `bih.3` trước đợt 7 (hoặc xoá hai dòng `PLANE_*_IMAGE`). Không migration. Web mới + backend cũ: mũi tên cụt không đỏ (thiếu ngày), tạo khác project không bị kiểm quyền.
 
 ## Rollback đợt 6
 
