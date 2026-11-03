@@ -73,7 +73,7 @@ export function HeaderColumn(props: Props) {
                   ? t("issue.label", { count: 2 })
                   : t(propertyDetails.i18n_title)}
               </div>
-              <div className="ml-3 flex">
+              <div className="ml-3 flex items-center">
                 {activeSortingProperty === property && (
                   <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full">
                     {propertyDetails.ascendingOrderKey === displayFilters.order_by ? (
