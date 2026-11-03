@@ -112,6 +112,9 @@ Engine Python thuần chạy được không cần Django: `python -m unittest d
 
 ## Đợt 10 (migration 0124: cột `dep_type`)
 
+Đã deploy prod 2026-11-03: web `bih.7`, backend `bih.6`, migration 0124 áp dụng OK (backup `plane-<ngày>-d10.sql` trên VM). Rollback: web `bih.6`/backend `bih.5`.
+
+
 - **Test con trỏ thật**: `dependency-layer.pointer.test.mjs` chạy `GanttDependencyLayer` trong jsdom (devDependency mới `jsdom` ở `apps/web`, Huy đã duyệt) với sự kiện mouse/pointer/keyboard.
 - **Thanh chồng nhau**: `buildArrows` gán "làn" (0–2) theo từng predecessor cùng điểm cuối; `getDependencyPath(from, to, rowHeight, lane)` dịch chỗ gấp khúc 3 px mỗi làn (làn 0 giữ nguyên đường cũ). Cùng predecessor tỏa nhiều việc sau thì chung làn.
 - **Lag khác project**: chọn mũi tên cụt (có quyền sửa) ⇒ menu có ô "Trễ (ngày)"; nhãn mũi tên cụt hiện `+Nd`. Web đọc `GET workspaces/<slug>/issue-lags/` khi có mũi tên cụt, ghi `POST` cùng URL (403 ⇒ toast cần Member ở project của việc sau). Hook `useGanttDependencies` có `setExternalLag`.

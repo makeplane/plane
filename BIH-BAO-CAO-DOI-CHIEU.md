@@ -1,6 +1,6 @@
 # Báo cáo đối chiếu: Gantt phụ thuộc + tự dời lịch (Plane BIH) so với `Task Plane.txt`
 
-Ngày: 2026-11-03 · Nhánh `bih/v1.4.2` (đã push, commit đợt 10 chưa push) · Prod: web `bih.6`, backend `bih.5` (đợt 10 mới chạy local, web `bih.13`).
+Ngày: 2026-11-03 · Nhánh `bih/v1.4.2` (đã push, commit đợt 10 đã push, `21ee8e0d9`) · Prod: web `bih.7`, backend `bih.6` (đợt 10, migration 0124).
 
 **Kết luận: toàn bộ yêu cầu bắt buộc đã làm xong. Đợt 10 (chưa push/deploy) bù nốt hai mục còn thiếu so với đề: test con trỏ thật (jsdom) và đường nối tránh đè khi thanh chồng nhau. Còn lại chỉ là mục không bắt buộc (xem cuối).**
 
