@@ -13,6 +13,8 @@ export type TExternalLink = {
   name?: string;
   startDate?: string | null;
   targetDate?: string | null;
+  // Same-project dependency whose other end has no row in the chart (not loaded yet or filtered out).
+  peer?: boolean;
 };
 
 export type TResolvedExternalLink = TExternalLink & { code?: string };
@@ -54,3 +56,35 @@ export function extractExternalLinks(issues: Issue[], projectId: string): TExter
   }
   return links;
 }
+
+type PeerIssue = { name?: string; sequence_id?: number; start_date?: string | null; target_date?: string | null };
+
+// One stub candidate per end of every same-project dependency; the chart keeps the ones whose other end has no row.
+export function peerLinksFromDependencies(
+  dependencies: { predecessorId: string; successorId: string }[],
+  issues: Record<string, PeerIssue | undefined>,
+  projectId: string
+): TExternalLink[] {
+  const link = (localId: string, direction: "pred" | "succ", externalId: string): TExternalLink => {
+    const other = issues[externalId];
+    return {
+      localId,
+      direction,
+      externalId,
+      projectId,
+      sequenceId: other?.sequence_id,
+      name: other?.name,
+      startDate: other?.start_date,
+      targetDate: other?.target_date,
+      peer: true,
+    };
+  };
+  return dependencies.flatMap(({ predecessorId, successorId }) => [
+    link(successorId, "pred", predecessorId),
+    link(predecessorId, "succ", successorId),
+  ]);
+}
+
+// Peer stubs are shown only on the loaded end of a dependency whose other end has no row.
+export const visibleLinks = <T extends TExternalLink>(links: T[], rowIds: { has(id: string): boolean }): T[] =>
+  links.filter((item) => !item.peer || (rowIds.has(item.localId) && !rowIds.has(item.externalId)));

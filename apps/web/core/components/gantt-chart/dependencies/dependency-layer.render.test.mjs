@@ -144,3 +144,22 @@ test("external stub of an unreadable issue shows no name or code", () => {
   assert.match(html, /dự án khác/);
   assert.match(html, /stroke-dasharray="5 4"[^>]*class="text-tertiary"/);
 });
+
+test("a dependency to a row that is not shown becomes a labelled stub, not an arrow", () => {
+  const peer = {
+    localId: "b",
+    direction: "pred",
+    externalId: "a",
+    projectId: "p",
+    code: "AAA-1",
+    targetDate: "2026-11-09",
+    peer: true,
+  };
+  const html = render({ blocks: ok, dependencies: dep, externalLinks: [peer], blockIds: ["b"] });
+  assert.match(html, /AAA-1/);
+  assert.match(html, /stroke-dasharray="5 4"[^>]*class="text-danger-primary/);
+  assert.doesNotMatch(html, /data-gantt-dependency-control/);
+  // Both rows shown: the real arrow replaces the stub.
+  const both = render({ blocks: ok, dependencies: dep, externalLinks: [peer] });
+  assert.doesNotMatch(both, /AAA-1/);
+});

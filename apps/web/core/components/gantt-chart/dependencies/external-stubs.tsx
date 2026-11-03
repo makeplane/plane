@@ -48,7 +48,7 @@ export const ExternalStubs = observer(function ExternalStubs({
   const selectedRef = useRef<SVGGElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const editable = (link: TResolvedExternalLink) =>
-    !!dependencyActions?.removeExternal && (getProjectById(link.projectId)?.member_role ?? 0) >= 15;
+    !link.peer && !!dependencyActions?.removeExternal && (getProjectById(link.projectId)?.member_role ?? 0) >= 15;
   const selectedLinks = links.filter((link) => `${link.localId}|${link.direction}` === selected && editable(link));
   useEffect(() => {
     if (drafting || !selectedLinks.length) setSelected(null);
@@ -107,7 +107,10 @@ export const ExternalStubs = observer(function ExternalStubs({
     );
     const label = group.map((item) => item.code ?? "dự án khác").join(" · ");
     const tooltip = group
-      .map((item) => `${item.code ?? "dự án khác"} ${item.name ?? ""}${editable(item) ? "" : " — không đủ quyền sửa"}`)
+      .map(
+        (item) =>
+          `${item.code ?? "dự án khác"} ${item.name ?? ""}${editable(item) ? "" : item.peer ? " — chưa có hàng trong bảng" : " — không đủ quyền sửa"}`
+      )
       .join(", ");
     const key = `${link.localId}|${link.direction}`;
     const canEdit = group.some(editable);
@@ -170,7 +173,7 @@ export const ExternalStubs = observer(function ExternalStubs({
                 <div
                   key={item.externalId}
                   className="flex items-center justify-between gap-2 px-1 py-0.5"
-                  title={editable(item) ? item.name : "không đủ quyền sửa"}
+                  title={editable(item) ? item.name : item.peer ? "chưa có hàng trong bảng" : "không đủ quyền sửa"}
                 >
                   {group.length > 1 && <span>{item.code ?? "dự án khác"}</span>}
                   {editable(item) && (

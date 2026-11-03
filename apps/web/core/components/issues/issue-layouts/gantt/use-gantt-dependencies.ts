@@ -10,6 +10,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useProject } from "@/hooks/store/use-project";
 import { extractExternalLinks } from "@/components/gantt-chart/dependencies/external-links";
 import type { TExternalLink } from "@/components/gantt-chart/dependencies/external-links";
+import { peerLinksFromDependencies } from "@/components/gantt-chart/dependencies/external-links";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import type { TGanttDependency } from "@/components/gantt-chart/dependencies/dependency-utils";
 import {
@@ -369,7 +370,10 @@ export function useGanttDependencies(
     ? undefined
     : {
         ...relations,
-        externalLinks: relations.externalLinks.flatMap((link) => {
+        externalLinks: [
+          ...relations.externalLinks,
+          ...peerLinksFromDependencies(relations.dependencies, relations.issueDates, projectId),
+        ].flatMap((link) => {
           const project = getProjectById(link.projectId);
           return project?.member_role
             ? [

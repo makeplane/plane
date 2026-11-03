@@ -14,6 +14,7 @@ import { BLOCK_HEIGHT } from "../constants";
 import { ExternalPicker } from "./external-picker";
 import { ExternalStubs } from "./external-stubs";
 import type { TResolvedExternalLink } from "./external-links";
+import { visibleLinks } from "./external-links";
 import type { TGanttDependency, TGanttDependencyActions } from "./dependency-utils";
 import { dependencyValidationMessages, getDependencyDraftStates } from "./dependency-utils";
 import { buildArrows, resolveDrop } from "./drag-logic";
@@ -145,7 +146,11 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
         ),
       });
       if (result.kind === "error") {
-        setToast({ type: TOAST_TYPE.ERROR, title: "Không nối được", message: dependencyValidationMessages[result.error] });
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Không nối được",
+          message: dependencyValidationMessages[result.error],
+        });
       } else if (result.kind === "create") {
         void actions?.create(result.predecessorId, result.successorId);
       } else if (result.kind === "external-picker" && pointer) {
@@ -245,7 +250,7 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
           ))}
         </defs>
         <ExternalStubs
-          links={externalLinks ?? []}
+          links={visibleLinks(externalLinks ?? [], rows)}
           dependencyActions={dependencyActions}
           overlayRef={overlayRef}
           drafting={!!dependencyDraftFromId}
@@ -254,66 +259,68 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
           normalMarkerId={normalMarkerId}
           violatedMarkerId={violatedMarkerId}
         />
-        {buildArrows(rows, dependencies, BLOCK_HEIGHT).map(({ predecessorId, successorId, lagDays, path, violated }) => {
-          const pred = rows.get(predecessorId)!;
-          const isSelected =
-            selectedDependency?.predecessorId === predecessorId && selectedDependency?.successorId === successorId;
-          const select = () => setSelected({ predecessorId, successorId });
-          return (
-            <Fragment key={`${predecessorId}-${successorId}`}>
-              <path
-                d={path}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={isSelected || violated ? 2 : 1.5}
-                className={
-                  isSelected
-                    ? "text-accent-primary"
-                    : violated
-                      ? "text-danger-primary dark:text-[oklch(0.65_0.24_25)]"
-                      : "text-tertiary"
-                }
-                markerEnd={`url(#${isSelected ? selectedMarkerId : violated ? violatedMarkerId : normalMarkerId})`}
-              />
-              {!!lagDays && (
-                <text
-                  x={pred.block.position!.marginLeft + pred.block.position!.width + 5}
-                  y={pred.y - 5}
-                  className="fill-current text-10 text-tertiary"
-                >
-                  {lagDays > 0 ? "+" : ""}
-                  {lagDays}d
-                </text>
-              )}
-              {dependencyActions && (
+        {buildArrows(rows, dependencies, BLOCK_HEIGHT).map(
+          ({ predecessorId, successorId, lagDays, path, violated }) => {
+            const pred = rows.get(predecessorId)!;
+            const isSelected =
+              selectedDependency?.predecessorId === predecessorId && selectedDependency?.successorId === successorId;
+            const select = () => setSelected({ predecessorId, successorId });
+            return (
+              <Fragment key={`${predecessorId}-${successorId}`}>
                 <path
-                  data-gantt-dependency-control
                   d={path}
                   fill="none"
-                  stroke="transparent"
-                  strokeWidth={10}
-                  style={{ pointerEvents: dependencyDraftFromId ? "none" : "stroke", cursor: "pointer" }}
-                  // oxlint-disable-next-line jsx_a11y/prefer-tag-over-role -- SVG paths cannot be HTML buttons.
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Chọn phụ thuộc"
-                  onMouseDown={(event) => event.stopPropagation()}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    select();
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" || event.key === " ") {
-                      event.preventDefault();
+                  stroke="currentColor"
+                  strokeWidth={isSelected || violated ? 2 : 1.5}
+                  className={
+                    isSelected
+                      ? "text-accent-primary"
+                      : violated
+                        ? "text-danger-primary dark:text-[oklch(0.65_0.24_25)]"
+                        : "text-tertiary"
+                  }
+                  markerEnd={`url(#${isSelected ? selectedMarkerId : violated ? violatedMarkerId : normalMarkerId})`}
+                />
+                {!!lagDays && (
+                  <text
+                    x={pred.block.position!.marginLeft + pred.block.position!.width + 5}
+                    y={pred.y - 5}
+                    className="fill-current text-10 text-tertiary"
+                  >
+                    {lagDays > 0 ? "+" : ""}
+                    {lagDays}d
+                  </text>
+                )}
+                {dependencyActions && (
+                  <path
+                    data-gantt-dependency-control
+                    d={path}
+                    fill="none"
+                    stroke="transparent"
+                    strokeWidth={10}
+                    style={{ pointerEvents: dependencyDraftFromId ? "none" : "stroke", cursor: "pointer" }}
+                    // oxlint-disable-next-line jsx_a11y/prefer-tag-over-role -- SVG paths cannot be HTML buttons.
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Chọn phụ thuộc"
+                    onMouseDown={(event) => event.stopPropagation()}
+                    onClick={(event) => {
                       event.stopPropagation();
                       select();
-                    }
-                  }}
-                />
-              )}
-            </Fragment>
-          );
-        })}
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        select();
+                      }
+                    }}
+                  />
+                )}
+              </Fragment>
+            );
+          }
+        )}
         {dependencyDraftFromId && source?.block.position && draft && (
           <path
             d={`M ${source.block.position.marginLeft + (dependencyDraftSide === "right" ? source.block.position.width : 0)} ${source.y} L ${draft.x} ${draft.y}`}

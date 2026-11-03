@@ -103,3 +103,34 @@ test("external predecessor and successor violations use the correct endpoint dat
   assert.equal(isDependencyViolated(legacy.targetDate, "2026-11-03"), false);
   assert.equal(isDependencyViolated("2026-11-10", legacy.startDate), false);
 });
+
+test("peer links stub a same-project dependency whose other end has no row", async () => {
+  const { peerLinksFromDependencies, visibleLinks } = await import("./external-links.ts");
+  const issues = {
+    a: { name: "Alpha", sequence_id: 1, target_date: "2026-11-05" },
+    b: { name: "Beta", sequence_id: 2, start_date: "2026-11-03" },
+  };
+  const links = peerLinksFromDependencies([{ predecessorId: "a", successorId: "b" }], issues, "p");
+  assert.deepEqual(
+    links.map(({ localId, direction, externalId, projectId, peer }) => [
+      localId,
+      direction,
+      externalId,
+      projectId,
+      peer,
+    ]),
+    [
+      ["b", "pred", "a", "p", true],
+      ["a", "succ", "b", "p", true],
+    ]
+  );
+  assert.equal(links[0].sequenceId, 1);
+  assert.equal(links[0].targetDate, "2026-11-05");
+  // Only "b" has a row: its stub shows, the one on the row-less "a" does not; with both rows there is a real arrow.
+  assert.deepEqual(
+    visibleLinks(links, new Set(["b"])).map(({ localId }) => localId),
+    ["b"]
+  );
+  assert.deepEqual(visibleLinks(links, new Set(["a", "b"])), []);
+  assert.equal(visibleLinks([{ ...links[0], peer: undefined }], new Set()).length, 1);
+});
