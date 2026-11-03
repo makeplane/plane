@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from datetime import date
+from datetime import date, timedelta
 import importlib.util
 from pathlib import Path
 from time import perf_counter
@@ -267,6 +267,11 @@ class WorkingScheduleTests(unittest.TestCase):
             with self.subTest(holidays=holidays):
                 off = engine.build_calendar(range(1, 6), [day(h) for h in holidays])["holidays"]
                 self.assertEqual(off, {day(h) for h in holidays + extra})
+
+    def test_compensation_search_is_not_capped(self):
+        mondays = [day("2026-11-09") + timedelta(weeks=i) for i in range(60)]
+        off = engine.build_calendar([1], [day("2026-11-07")] + mondays)["holidays"]
+        self.assertIn(day("2026-11-09") + timedelta(weeks=60), off)
 
     def test_lags_and_multiple_predecessors(self):
         c = engine.build_calendar(range(1, 6), [day("2026-11-09")])

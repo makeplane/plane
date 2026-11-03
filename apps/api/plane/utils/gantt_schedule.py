@@ -27,14 +27,16 @@ def build_calendar(weekdays, holidays):
 def with_compensation(weekdays, holidays):
     """A holiday on a non-working weekday moves one day off to the next working day (nghỉ bù)."""
     off = set(holidays)
+    cursor = None  # last compensation day: no free working day lies before it, so later searches start there
     for holiday in sorted(off.copy()):
         if holiday.isoweekday() in weekdays:
             continue
-        day = holiday
-        for _ in range(366):
+        day = holiday if cursor is None or cursor < holiday else cursor
+        while True:
             day += timedelta(days=1)
             if day.isoweekday() in weekdays and day not in off:
                 off.add(day)
+                cursor = day
                 break
     return off
 

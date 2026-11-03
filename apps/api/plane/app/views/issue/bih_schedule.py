@@ -228,9 +228,12 @@ class WorkspaceIssueLagsEndpoint(BaseAPIView):
         with transaction.atomic():
             get_object_or_404(Workspace.objects.select_for_update(), slug=slug)
             relations, access = self.relations(slug)
-            relation = get_object_or_404(relations, issue_id=successor, related_issue_id=predecessor)
+            relation = get_object_or_404(
+                relations.select_related("issue"), issue_id=successor, related_issue_id=predecessor
+            )
             # Same rule as moving the successor: only a Member or Admin of the successor's project may change it.
-            role = access.get(str(relation.project_id), (0, False))[0]
+            # relation.project is not reliable: creating from the "blocking" side stores the predecessor's project.
+            role = access.get(str(relation.issue.project_id), (0, False))[0]
             if role < ROLE.MEMBER.value:
                 return Response({"message": "No permission"}, status=status.HTTP_403_FORBIDDEN)
             relation.lag_days = lag

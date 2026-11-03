@@ -284,6 +284,15 @@ test("a holiday on a weekend moves a day off to the next working day, like the s
   }
 });
 
+test("the compensation search is not capped and stays fast", () => {
+  const mondays = Array.from({ length: 60 }, (_, i) => addDays("2026-11-09", 7 * i));
+  assert.ok(buildCalendar([1], ["2026-11-07", ...mondays]).holidays.has(addDays("2026-11-09", 7 * 60)));
+  const days = Array.from({ length: 3651 }, (_, i) => addDays("2026-01-01", i));
+  const started = Date.now();
+  buildCalendar([1], days);
+  assert.ok(Date.now() - started < 500);
+});
+
 test("lags and multiple predecessors match the server", () => {
   const c = buildCalendar([1, 2, 3, 4, 5], ["2026-11-09"]);
   const items = [task("A", null, "2026-11-06"), task("B", "2026-11-01", "2026-11-02")];

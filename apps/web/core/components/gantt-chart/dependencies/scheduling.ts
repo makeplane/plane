@@ -52,13 +52,16 @@ export function buildCalendar(weekdays: Iterable<number>, holidays: Iterable<str
 // A holiday on a non-working weekday moves one day off to the next working day (nghỉ bù).
 function withCompensation(weekdays: Set<number>, holidays: Set<string>): Set<string> {
   const off = new Set(holidays);
+  // Last compensation day: no free working day lies before it, so later searches start there.
+  let cursor = "";
   for (const holiday of [...holidays].sort()) {
     if (weekdays.has(new Date(utc(holiday)).getUTCDay() || 7)) continue;
-    let day = holiday;
-    for (let i = 0; i < 366; i++) {
+    let day = cursor > holiday ? cursor : holiday;
+    for (;;) {
       day = addDays(day, 1);
       if (weekdays.has(new Date(utc(day)).getUTCDay() || 7) && !off.has(day)) {
         off.add(day);
+        cursor = day;
         break;
       }
     }

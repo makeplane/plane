@@ -19,8 +19,10 @@ def activity_task():
         yield activity
 
 
-def _project(workspace, user, identifier, role):
-    project = Project.objects.create(name=identifier, identifier=identifier, workspace=workspace, created_by=user)
+def _project(workspace, user, identifier, role, guest_view_all=False):
+    project = Project.objects.create(
+        name=identifier, identifier=identifier, workspace=workspace, created_by=user, guest_view_all_features=guest_view_all
+    )
     if role is not None:
         ProjectMember.objects.create(project=project, workspace=workspace, member=user, role=role, is_active=True)
     State.objects.create(name="Todo", project=project, workspace=workspace, group="backlog", default=True)
@@ -379,6 +381,22 @@ class TestWorkspaceLags:
         assert session_client.post(self._url(workspace), self._body(first, second, 2), format="json").status_code == 404
         assert session_client.get(self._url(workspace)).json() == []
         assert IssueRelation.objects.get().lag_days == 3
+
+    @pytest.mark.parametrize("pred_role, succ_role, expected", [(15, 5, (403, 404)), (5, 15, (200,))])
+    def test_permission_follows_successor_project_even_if_relation_stores_predecessor_project(
+        self, session_client, workspace, create_user, pred_role, succ_role, expected
+    ):
+        # Creating from the "blocking" side stores the predecessor's project on the relation row.
+        a, b = _project(workspace, create_user, "AAA", pred_role, guest_view_all=True), _project(
+            workspace, create_user, "BBB", succ_role, guest_view_all=True
+        )
+        first, second = _issue(a, 1, 3), _issue(b, 4, 6)
+        relation = _link(first, second)
+        IssueRelation.objects.filter(id=relation.id).update(project=a)
+
+        response = session_client.post(self._url(workspace), self._body(first, second, 2), format="json")
+
+        assert response.status_code in expected
 
     @pytest.mark.parametrize("lag", [366, -366, True, "1", None])
     def test_invalid_lag_is_400(self, session_client, workspace, create_user, lag):
