@@ -45,6 +45,7 @@ from .issue import guest_cannot_view_issue, is_restricted_guest
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.host import base_host
 from plane.utils.order_queryset import ISSUE_ORDER_BY_ALLOWLIST, MODULE_ORDER_BY_ALLOWLIST, sanitize_order_by
+from plane.utils.pql import apply_pql
 from plane.utils.openapi import (
     module_docs,
     module_issue_docs,
@@ -56,6 +57,7 @@ from plane.utils.openapi import (
     ORDER_BY_PARAMETER,
     FIELDS_PARAMETER,
     EXPAND_PARAMETER,
+    PQL_PARAMETER,
     create_paginated_response,
     # Request Examples
     MODULE_CREATE_EXAMPLE,
@@ -630,6 +632,7 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
             ORDER_BY_PARAMETER,
             FIELDS_PARAMETER,
             EXPAND_PARAMETER,
+            PQL_PARAMETER,
         ],
         request={},
         responses={
@@ -639,6 +642,7 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
                 "Paginated list of module work items",
                 "Paginated Module Work Items",
             ),
+            400: INVALID_REQUEST_RESPONSE,
             404: OpenApiResponse(description="Module not found"),
         },
     )
@@ -688,6 +692,10 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
         # only see work items they created -- mirrors IssueDetailEndpoint.get.
         if is_restricted_guest(request.user.id, project_id, slug):
             issues = issues.filter(created_by=request.user)
+
+        issues = apply_pql(issues, request, slug, project_id)
+        if isinstance(issues, Response):
+            return issues
 
         return self.paginate(
             request=request,
