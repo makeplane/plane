@@ -3,7 +3,7 @@
 # See the LICENSE file for details.
 
 import json
-from datetime import date
+from datetime import date, timedelta
 from functools import partial
 from uuid import UUID
 
@@ -27,6 +27,33 @@ from plane.db.models import (
     WorkspaceScheduleSetting,
 )
 from plane.utils.gantt_schedule import build_calendar, schedule_successors
+
+
+# Solar dates of Tết (mùng 1) and Giỗ Tổ (10/3 âm), computed from the lunar calendar and checked against 2026
+# (17/2 and 26/4). The government fixes the real days off each year, so the admin can still edit holidays.
+LUNAR_HOLIDAYS = {
+    2026: (date(2026, 2, 17), date(2026, 4, 26)),
+    2027: (date(2027, 2, 6), date(2027, 4, 16)),
+    2028: (date(2028, 1, 26), date(2028, 4, 4)),
+    2029: (date(2029, 2, 13), date(2029, 4, 23)),
+    2030: (date(2030, 2, 3), date(2030, 4, 12)),
+}
+
+
+def vietnamese_holidays(year):
+    holidays = [
+        (date(year, 1, 1), "Tết Dương lịch"),
+        (date(year, 4, 30), "Giải phóng miền Nam"),
+        (date(year, 5, 1), "Quốc tế Lao động"),
+        (date(year, 9, 1), "Quốc khánh (liền kề)"),
+        (date(year, 9, 2), "Quốc khánh"),
+    ]
+    if year in LUNAR_HOLIDAYS:
+        tet, gio_to = LUNAR_HOLIDAYS[year]
+        holidays += [(tet - timedelta(days=1), "Giao thừa")]
+        holidays += [(tet + timedelta(days=i), f"Tết Nguyên đán (mùng {i + 1})") for i in range(4)]
+        holidays += [(gio_to, "Giỗ Tổ Hùng Vương")]
+    return holidays
 
 
 def workspace_calendar(workspace):
@@ -80,13 +107,7 @@ class WorkspaceScheduleHolidaysEndpoint(BaseAPIView):
             year = body.get("year")
             if body["preset"] != "vn_fixed" or type(year) is not int or not 2000 <= year <= 2100:
                 raise ValidationError({"message": "Invalid preset or year"})
-            holidays = [
-                (date(year, 1, 1), "Tết Dương lịch"),
-                (date(year, 4, 30), "Giải phóng miền Nam"),
-                (date(year, 5, 1), "Quốc tế Lao động"),
-                (date(year, 9, 1), "Quốc khánh (liền kề)"),
-                (date(year, 9, 2), "Quốc khánh"),
-            ]
+            holidays = vietnamese_holidays(year)
         else:
             try:
                 raw = body.get("date")

@@ -202,7 +202,7 @@ export const ScheduleSettingsModal = observer(function ScheduleSettingsModal({ o
                   }}
                 >
                   <Button type="submit" variant="secondary" disabled={busy}>
-                    Thêm lễ cố định VN năm
+                    Thêm lễ VN (Tết, Giỗ Tổ có sẵn 2026–2030) năm
                   </Button>
                   <input
                     aria-label="Năm thêm lễ cố định VN"

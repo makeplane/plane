@@ -623,7 +623,10 @@ class TestGanttCalendarAPI:
             response = session_client.post(url, {"preset": "vn_fixed", "year": 2026}, format="json")
             assert response.status_code == 200
             holidays = response.json()["holidays"]
-            assert [item["date"] for item in holidays] == ["2026-01-01", "2026-04-30", "2026-05-01", "2026-09-01", "2026-09-02"]
+            assert [item["date"] for item in holidays] == [
+                "2026-01-01", "2026-02-16", "2026-02-17", "2026-02-18", "2026-02-19", "2026-02-20",
+                "2026-04-26", "2026-04-30", "2026-05-01", "2026-09-01", "2026-09-02",
+            ]
             assert holidays[0]["name"] == "Updated"
         assert session_client.get(root).json() == response.json()
         other = Workspace.objects.create(name="Other", slug="other-calendar", owner=create_user)
@@ -634,6 +637,13 @@ class TestGanttCalendarAPI:
         response = session_client.post(url, {"date": "2026-01-01"}, format="json")
         assert response.status_code == 201
         assert response.json()["name"] == ""
+
+    def test_preset_without_lunar_table_adds_only_fixed_days(self, session_client, workspace):
+        url = f"/api/workspaces/{workspace.slug}/schedule-settings/holidays/"
+        response = session_client.post(url, {"preset": "vn_fixed", "year": 2031}, format="json")
+        assert [item["date"] for item in response.json()["holidays"]] == [
+            "2031-01-01", "2031-04-30", "2031-05-01", "2031-09-01", "2031-09-02"
+        ]
 
     @pytest.mark.parametrize("body", [{"date": "2026-02-30"}, {"date": "20260101"},
                                       {"date": "2026-01-01", "name": "x" * 256},
