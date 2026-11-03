@@ -395,7 +395,10 @@ const renderNodeWithContext = (node: TipTapNode, context: InternalRenderContext)
     childNestingLevel = nestingLevel + 1;
   }
 
-  let currentListItemIndex = 0;
+  // An ordered list can start at any number (typing "3. " in the editor sets start: 3)
+  const listStart = node.attrs?.start;
+  let currentListItemIndex =
+    node.type === CORE_EXTENSIONS.ORDERED_LIST && Number.isInteger(listStart) ? (listStart as number) - 1 : 0;
   const children: ReactElement[] =
     node.content?.map((child) => {
       const childContext: InternalRenderContext = {
