@@ -128,6 +128,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
           createExternal: deps.createExternal,
           setLag: deps.setLag,
           setExternalLag: deps.setExternalLag,
+          setExternalDepType: deps.setExternalDepType,
           setDepType: deps.setDepType,
           lagsSupported: deps.lagsSupported,
         }

@@ -363,7 +363,7 @@ export function useGanttDependencies(
     saving.current = true;
     requestCounter.current++;
     try {
-      await scheduleService.setWorkspaceLag(workspaceSlug, predecessorId, successorId, lagDays);
+      await scheduleService.setWorkspaceLag(workspaceSlug, predecessorId, successorId, lagDays, link.depType);
       if (scope !== generation.current) return;
       updateRelations({
         ...current,
@@ -373,6 +373,37 @@ export function useGanttDependencies(
       if (scope !== generation.current) return;
       setToast({ type: TOAST_TYPE.ERROR, title: "Không lưu được độ trễ (cần quyền Member ở project của việc sau)" });
       console.error("Failed to save external Gantt lag", error);
+    } finally {
+      if (scope === generation.current) saving.current = false;
+    }
+  };
+
+  const setExternalDepType = async (link: TExternalLink, depType: TDependencyType) => {
+    const current = relationsRef.current;
+    if (!enabled || !workspaceSlug || !current || saving.current) return;
+    if ((link.depType ?? "FS") === depType) return;
+    const matches = (item: TExternalLink) =>
+      item.localId === link.localId && item.direction === link.direction && item.externalId === link.externalId;
+    if (!current.externalLinks.some(matches)) return;
+    const [predecessorId, successorId] =
+      link.direction === "pred" ? [link.externalId, link.localId] : [link.localId, link.externalId];
+    const scope = generation.current;
+    saving.current = true;
+    requestCounter.current++;
+    try {
+      await scheduleService.setWorkspaceLag(workspaceSlug, predecessorId, successorId, link.lagDays ?? 0, depType);
+      if (scope !== generation.current) return;
+      updateRelations({
+        ...current,
+        externalLinks: current.externalLinks.map((item) => (matches(item) ? { ...item, depType } : item)),
+      });
+    } catch (error) {
+      if (scope !== generation.current) return;
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Không lưu được loại phụ thuộc (cần quyền Member ở project của việc sau)",
+      });
+      console.error("Failed to save external Gantt dependency type", error);
     } finally {
       if (scope === generation.current) saving.current = false;
     }
@@ -463,6 +494,7 @@ export function useGanttDependencies(
         setLag,
         setDepType,
         setExternalLag,
+        setExternalDepType,
         createExternal,
         removeExternal,
         createDependency: (pred: string, succ: string) => mutateDependency(pred, succ, false),

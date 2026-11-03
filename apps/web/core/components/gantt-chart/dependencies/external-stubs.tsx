@@ -11,8 +11,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TResolvedExternalLink } from "./external-links";
-import type { TGanttDependencyActions } from "./dependency-utils";
-import { isTypedDependencyViolated } from "./dependency-utils";
+import type { TDependencyType, TGanttDependencyActions } from "./dependency-utils";
+import { DEPENDENCY_TYPES, dependencyTypeLabels, isTypedDependencyViolated } from "./dependency-utils";
 
 type Row = {
   y: number;
@@ -195,6 +195,29 @@ export const ExternalStubs = observer(function ExternalStubs({
                     >
                       ×
                     </button>
+                  )}
+                  {editable(item) && dependencyActions?.setExternalDepType && (
+                    <label className="flex items-center gap-1 text-tertiary">
+                      Loại
+                      <select
+                        aria-label="Loại phụ thuộc"
+                        value={item.depType ?? "FS"}
+                        className="rounded border border-subtle bg-layer-1 px-1 text-primary"
+                        onKeyDown={(event) => event.stopPropagation()}
+                        onChange={(event) =>
+                          void dependencyActions.setExternalDepType?.(
+                            item,
+                            event.currentTarget.value as TDependencyType
+                          )
+                        }
+                      >
+                        {DEPENDENCY_TYPES.map((type) => (
+                          <option key={type} value={type}>
+                            {dependencyTypeLabels[type]}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
                   )}
                   {editable(item) && dependencyActions?.setExternalLag && (
                     <label className="flex items-center gap-1 text-tertiary">

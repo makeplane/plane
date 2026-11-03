@@ -186,6 +186,10 @@ export function useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issue
         console.error("Failed to preview detail auto-schedule", error);
       }
     }
+    // deps is undefined until the relations load: a date saved now skips the successor preview.
+    if (isAutoScheduleEnabled() && value !== null && !deps) {
+      setToast({ type: TOAST_TYPE.WARNING, title: "Phụ thuộc chưa tải xong — các việc sau chưa được cập nhật" });
+    }
     await saveDate();
   };
 

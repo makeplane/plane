@@ -52,10 +52,16 @@ class ScheduleService extends APIService {
     workspaceSlug: string,
     predecessor: string,
     successor: string,
-    lagDays: number
+    lagDays: number,
+    depType?: TDependencyType
   ): Promise<TIssueLag> {
     return (
-      await this.post(`/api/workspaces/${workspaceSlug}/issue-lags/`, { predecessor, successor, lag_days: lagDays })
+      await this.post(`/api/workspaces/${workspaceSlug}/issue-lags/`, {
+        predecessor,
+        successor,
+        lag_days: lagDays,
+        ...(depType ? { dep_type: depType } : {}),
+      })
     ).data;
   }
 

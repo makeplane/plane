@@ -32,6 +32,7 @@ export type TGanttDependencyActions = {
     externalProjectId: string
   ) => Promise<void>;
   setExternalLag?: (link: TExternalLink, lagDays: number) => Promise<void>;
+  setExternalDepType?: (link: TExternalLink, depType: TDependencyType) => Promise<void>;
   setLag?: (predecessorId: string, successorId: string, lagDays: number) => Promise<void>;
   setDepType?: (predecessorId: string, successorId: string, depType: TDependencyType) => Promise<void>;
   lagsSupported?: boolean;
