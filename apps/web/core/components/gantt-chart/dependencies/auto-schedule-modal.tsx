@@ -109,7 +109,9 @@ export function AutoScheduleModal(props: Props) {
                   ? "Không có quyền ở project của việc này — giữ nguyên"
                   : reason === "missing_dates"
                     ? "chưa có ngày, không tự lùi"
-                    : "việc trước chưa có ngày kết thúc"}
+                    : reason === "missing_predecessor_start"
+                      ? "việc trước chưa có ngày bắt đầu"
+                      : "việc trước chưa có ngày kết thúc"}
               </li>
             ))}
           </ul>

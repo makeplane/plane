@@ -12,7 +12,7 @@ import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TResolvedExternalLink } from "./external-links";
 import type { TGanttDependencyActions } from "./dependency-utils";
-import { isDependencyViolated } from "./dependency-utils";
+import { isTypedDependencyViolated } from "./dependency-utils";
 
 type Row = {
   y: number;
@@ -101,13 +101,15 @@ export const ExternalStubs = observer(function ExternalStubs({
     const edge = row.block.position.marginLeft + (successor ? row.block.position.width : 0);
     const from = successor ? edge : edge - 28;
     const to = successor ? edge + 28 : edge;
-    const violatedAny = group.some((item) =>
-      successor
-        ? isDependencyViolated(row.block.target_date, item.startDate)
-        : isDependencyViolated(item.targetDate, row.block.start_date)
-    );
+    const local = { start: row.block.start_date, end: row.block.target_date };
+    const violatedAny = group.some((item) => {
+      const other = { start: item.startDate, end: item.targetDate };
+      return successor
+        ? isTypedDependencyViolated(item.depType, local, other)
+        : isTypedDependencyViolated(item.depType, other, local);
+    });
     const lagText = (item: TResolvedExternalLink) =>
-      item.lagDays ? ` ${item.lagDays > 0 ? "+" : ""}${item.lagDays}d` : "";
+      `${item.depType && item.depType !== "FS" ? ` ${item.depType}` : ""}${item.lagDays ? ` ${item.lagDays > 0 ? "+" : ""}${item.lagDays}d` : ""}`;
     const label = group.map((item) => `${item.code ?? "dự án khác"}${lagText(item)}`).join(" · ");
     const tooltip = group
       .map(

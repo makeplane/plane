@@ -169,3 +169,34 @@ test("external stub label shows the lag of a cross-project dependency", () => {
   assert.match(render({ blocks: ok, externalLinks: [link] }), /HID-3 \+2d/);
   assert.doesNotMatch(render({ blocks: ok, externalLinks: [{ ...link, lagDays: 0 }] }), /\dd</);
 });
+
+test("typed dependencies anchor on the matching edges and show their type", () => {
+  const typedDep = (depType) => [{ predecessorId: "a", successorId: "b", lagDays: 0, depType }];
+  // a: x 0-100, b: x 200-300. SS leaves a's left edge (x=0), FF enters b's right edge (x=300).
+  assert.match(render({ blocks: ok, dependencies: typedDep("SS") }), /d="M 0 22 H -8 V 66 H 200"/);
+  assert.match(render({ blocks: ok, dependencies: typedDep("FF") }), /d="M 100 22 H 308 V 66 H 300"/);
+  assert.match(render({ blocks: ok, dependencies: typedDep("SS") }), />SS</);
+  assert.doesNotMatch(render({ blocks: ok, dependencies: typedDep("FS") }), />FS</);
+});
+
+test("a filtered-out typed dependency keeps its type in the stub colour and label", () => {
+  const peer = {
+    localId: "b",
+    direction: "pred",
+    externalId: "a",
+    projectId: "p",
+    code: "AAA-1",
+    startDate: "2026-11-02",
+    targetDate: "2026-11-09",
+    depType: "SS",
+    peer: true,
+  };
+  // b starts 11-05 after a starts 11-02: fine for SS even though a ends 11-09 (red under FS).
+  const html = render({ blocks: ok, externalLinks: [peer], blockIds: ["b"] });
+  assert.match(html, /AAA-1 SS/);
+  assert.match(html, /stroke-dasharray="5 4"[^>]*class="text-tertiary"/);
+  assert.match(
+    render({ blocks: ok, externalLinks: [{ ...peer, depType: "FS" }], blockIds: ["b"] }),
+    /class="text-danger-primary/
+  );
+});

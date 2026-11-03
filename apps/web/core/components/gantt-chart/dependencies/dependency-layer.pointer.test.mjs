@@ -88,7 +88,7 @@ async function startDrag({ fromId = "a", side = "right", hover }) {
     dependencyDraftSide: side,
     endDependencyDraft: () => ended++,
   };
-  document.elementFromPoint = () => ({ b: barB, none: container }[hover] ?? null);
+  document.elementFromPoint = () => ({ b: barB, none: container })[hover] ?? null;
   const root = createRoot(mount);
   await React.act(async () => {
     root.render(

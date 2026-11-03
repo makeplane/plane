@@ -669,13 +669,49 @@ class TestGanttCalendarAPI:
         body = {"predecessor": str(a.id), "successor": str(b.id), "lag_days": lag}
         response = session_client.post(url, body, format="json")
         assert response.status_code == 200
-        assert response.json() == body
-        assert session_client.get(url).json() == [body]
+        assert response.json() == {**body, "dep_type": "FS"}
+        assert session_client.get(url).json() == [{**body, "dep_type": "FS"}]
         relation.refresh_from_db()
         assert relation.lag_days == lag
         activity_task.assert_not_called()
         assert session_client.post(url, {**body, "lag_days": 0}, format="json").status_code == 200
         assert session_client.get(url).json() == []
+
+    @pytest.mark.parametrize("dep_type", ["SS", "FF", "SF"])
+    def test_dep_type_set_listed_and_used_by_schedule(self, session_client, gantt_project, gantt_issues, dep_type):
+        a, b = gantt_issues["A"], gantt_issues["B"]
+        relation = _link(a, b)
+        url = _project_url(gantt_project, "issue-lags")
+        body = {"predecessor": str(a.id), "successor": str(b.id), "lag_days": 0, "dep_type": dep_type}
+        assert session_client.post(url, body, format="json").status_code == 200
+        relation.refresh_from_db()
+        assert relation.dep_type == dep_type
+        # lag 0 but a non-FS type must still be listed
+        assert session_client.get(url).json() == [body]
+        # Omitting dep_type keeps it.
+        assert session_client.post(url, {**body, "lag_days": 1}, format="json").json()["dep_type"] == dep_type
+        assert session_client.post(url, {**body, "lag_days": 0, "dep_type": "FS"}, format="json").status_code == 200
+        assert session_client.get(url).json() == []
+
+    def test_dep_type_changes_the_schedule(self, session_client, gantt_project, gantt_issues):
+        a, b = gantt_issues["A"], gantt_issues["B"]
+        relation = _link(a, b)
+        IssueRelation.objects.filter(id=relation.id).update(dep_type="SS")
+        response = session_client.post(_project_url(gantt_project, "issue-schedule"), {
+            "change": _change(a, start_date="2026-11-10", target_date="2026-11-12"),
+        }, format="json")
+        assert response.status_code == 200
+        # SS keeps B's start on or after A's new start (the duration is preserved).
+        assert _dates(gantt_issues)["B"][0] == date(2026, 11, 10)
+
+    @pytest.mark.parametrize("dep_type", ["XX", "", 1, "fs", ["SS"]])
+    def test_invalid_dep_type(self, session_client, gantt_project, gantt_issues, dep_type):
+        a, b = gantt_issues["A"], gantt_issues["B"]
+        _link(a, b)
+        response = session_client.post(_project_url(gantt_project, "issue-lags"), {
+            "predecessor": str(a.id), "successor": str(b.id), "lag_days": 1, "dep_type": dep_type,
+        }, format="json")
+        assert response.status_code == 400
 
     @pytest.mark.parametrize("lag", [-366, 366, True, 1.0, "2", None])
     def test_invalid_lag(self, session_client, gantt_project, gantt_issues, lag):

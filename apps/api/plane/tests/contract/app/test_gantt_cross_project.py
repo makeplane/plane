@@ -352,7 +352,7 @@ class TestWorkspaceLags:
 
         assert response.status_code == status.HTTP_200_OK
         assert session_client.get(self._url(workspace)).json() == [
-            {"predecessor": str(first.id), "successor": str(second.id), "lag_days": 2}
+            {"predecessor": str(first.id), "successor": str(second.id), "lag_days": 2, "dep_type": "FS"}
         ]
         preview = session_client.post(
             _url(workspace),

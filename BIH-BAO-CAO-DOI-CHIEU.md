@@ -59,7 +59,7 @@ Ngày: 2026-11-03 · Nhánh `bih/v1.4.2` (đã push, commit đợt 10 chưa push
 | 9 | Quyền khác project | Có |
 | 10 | 500+ việc | Có (backend và frontend, chuỗi 500, nạp 2000) |
 
-Kết quả gần nhất (đợt 10): Node 76 pass (+ test con trỏ jsdom), types 0 lỗi, lint 0 lỗi; pytest 150 (đợt 8, backend không đổi); pytest 150 pass, types 0 lỗi, lint 0 lỗi, `makemigrations --check` không đổi.
+Kết quả gần nhất (đợt 10): Node 87 pass (+ test con trỏ jsdom), pytest 167 pass, types 0 lỗi, lint 0 lỗi, `makemigrations --check` không đổi; pytest 150 pass, types 0 lỗi, lint 0 lỗi, `makemigrations --check` không đổi.
 
 ## Phase 6 và sản phẩm bàn giao
 | Hạng mục | Trạng thái |
@@ -75,6 +75,6 @@ Kết quả gần nhất (đợt 10): Node 76 pass (+ test con trỏ jsdom), typ
 2. ~~Thanh chồng nhau~~ Xong đợt 10 (làn riêng trong `buildArrows`/`getDependencyPath`).
 3. ~~Ô nhập lag cho mũi tên cụt khác project~~ Xong đợt 10: chọn mũi tên cụt ⇒ ô "Trễ (ngày)", nhãn hiện `+Nd`; ghi qua `workspaces/<slug>/issue-lags/`, cần Member ở project của việc sau.
 4. `PATCH` lạ trước `POST issue-schedule` ở sidebar: bắt mạng local 2 lần không tái hiện (chỉ thấy `POST` xem trước). Lần đầu có `PATCH` lưu ngày trước khi hiện hộp xem trước (activity ghi 1 lần). Nghi bấm ngày lúc `deps` chưa tải xong ⇒ rơi vào lưu thẳng. Chưa kết luận, cần thêm mẫu.
-5. Chỉ hỗ trợ FS; SS/FF/SF cần migration (đề chỉ yêu cầu FS trước).
+5. ~~SS/FF/SF~~ Xong đợt 10 (migration 0124, engine Python/TS, chọn loại trên mũi tên). Chưa có ô chọn loại cho mũi tên cụt khác project.
 6. Ngày Tết/Giỗ Tổ tính từ bảng âm lịch, cần đối chiếu thông báo nghỉ chính thức từng năm.
 7. Test UI đồng thời hai trình duyệt: đã thử tay (xem Phase 5 mục 8), chưa tự động.

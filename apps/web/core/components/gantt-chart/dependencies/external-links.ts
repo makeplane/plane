@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+import type { TDependencyType } from "./dependency-utils";
+
 export type TExternalLink = {
   localId: string;
   direction: "pred" | "succ";
@@ -14,6 +16,7 @@ export type TExternalLink = {
   startDate?: string | null;
   targetDate?: string | null;
   lagDays?: number;
+  depType?: TDependencyType;
   // Same-project dependency whose other end has no row in the chart (not loaded yet or filtered out).
   peer?: boolean;
 };
@@ -62,11 +65,16 @@ type PeerIssue = { name?: string; sequence_id?: number; start_date?: string | nu
 
 // One stub candidate per end of every same-project dependency; the chart keeps the ones whose other end has no row.
 export function peerLinksFromDependencies(
-  dependencies: { predecessorId: string; successorId: string }[],
+  dependencies: { predecessorId: string; successorId: string; depType?: TDependencyType }[],
   issues: Record<string, PeerIssue | undefined>,
   projectId: string
 ): TExternalLink[] {
-  const link = (localId: string, direction: "pred" | "succ", externalId: string): TExternalLink => {
+  const link = (
+    localId: string,
+    direction: "pred" | "succ",
+    externalId: string,
+    depType?: TDependencyType
+  ): TExternalLink => {
     const other = issues[externalId];
     return {
       localId,
@@ -77,12 +85,13 @@ export function peerLinksFromDependencies(
       name: other?.name,
       startDate: other?.start_date,
       targetDate: other?.target_date,
+      ...(depType ? { depType } : {}),
       peer: true,
     };
   };
-  return dependencies.flatMap(({ predecessorId, successorId }) => [
-    link(successorId, "pred", predecessorId),
-    link(predecessorId, "succ", successorId),
+  return dependencies.flatMap(({ predecessorId, successorId, depType }) => [
+    link(successorId, "pred", predecessorId, depType),
+    link(predecessorId, "succ", successorId, depType),
   ]);
 }
 

@@ -12,7 +12,7 @@ import { extractExternalLinks } from "@/components/gantt-chart/dependencies/exte
 import type { TExternalLink } from "@/components/gantt-chart/dependencies/external-links";
 import { peerLinksFromDependencies } from "@/components/gantt-chart/dependencies/external-links";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import type { TGanttDependency } from "@/components/gantt-chart/dependencies/dependency-utils";
+import type { TDependencyType, TGanttDependency } from "@/components/gantt-chart/dependencies/dependency-utils";
 import {
   dependencyValidationMessages,
   extractGanttRelations,
@@ -89,32 +89,29 @@ export function useGanttDependencies(
         const externalLags = externalLinks.length
           ? await scheduleService.getWorkspaceLags(workspaceSlug).catch(() => [])
           : [];
-        const externalLagMap = new Map(
-          externalLags.map(({ predecessor, successor, lag_days }) => [`${predecessor}|${successor}`, lag_days])
-        );
+        const externalLagMap = new Map(externalLags.map((lag) => [`${lag.predecessor}|${lag.successor}`, lag]));
         if (request === requestCounter.current) {
           const extracted = extractGanttRelations(issues, projectId);
-          const lagMap = new Map(
-            lags?.map(({ predecessor, successor, lag_days }) => [`${predecessor}|${successor}`, lag_days])
-          );
+          const lagMap = new Map(lags?.map((lag) => [`${lag.predecessor}|${lag.successor}`, lag]));
           projectIssueIds.current = new Set(issues.map((issue) => issue.id));
           updateRelations({
             ...extracted,
-            externalLinks: externalLinks.map((link) => ({
-              ...link,
-              lagDays:
-                externalLagMap.get(
-                  link.direction === "pred"
-                    ? `${link.externalId}|${link.localId}`
-                    : `${link.localId}|${link.externalId}`
-                ) ?? 0,
-            })),
+            externalLinks: externalLinks.map((link) => {
+              const saved = externalLagMap.get(
+                link.direction === "pred" ? `${link.externalId}|${link.localId}` : `${link.localId}|${link.externalId}`
+              );
+              return { ...link, lagDays: saved?.lag_days ?? 0, depType: saved?.dep_type ?? "FS" };
+            }),
             lagsSupported: lags !== null,
-            dependencies: extracted.dependencies.map((dep) => ({
-              predecessorId: dep.predecessorId,
-              successorId: dep.successorId,
-              lagDays: lagMap.get(`${dep.predecessorId}|${dep.successorId}`) ?? 0,
-            })),
+            dependencies: extracted.dependencies.map((dep) => {
+              const saved = lagMap.get(`${dep.predecessorId}|${dep.successorId}`);
+              return {
+                predecessorId: dep.predecessorId,
+                successorId: dep.successorId,
+                lagDays: saved?.lag_days ?? 0,
+                depType: saved?.dep_type ?? "FS",
+              };
+            }),
             issueDates: Object.fromEntries(
               issues.map(({ id, start_date, target_date, name, sequence_id }) => [
                 id,
@@ -381,6 +378,39 @@ export function useGanttDependencies(
     }
   };
 
+  const setDepType = async (predecessorId: string, successorId: string, depType: TDependencyType) => {
+    const current = relationsRef.current;
+    if (!enabled || !workspaceSlug || !projectId || !current?.lagsSupported || saving.current) return;
+    const existing = current.dependencies.find(
+      (dep) => dep.predecessorId === predecessorId && dep.successorId === successorId
+    );
+    if (!existing || (existing.depType ?? "FS") === depType) return;
+    const scope = generation.current;
+    saving.current = true;
+    requestCounter.current++;
+    try {
+      await scheduleService.setLag(
+        workspaceSlug,
+        projectId,
+        predecessorId,
+        successorId,
+        existing.lagDays ?? 0,
+        depType
+      );
+      if (scope !== generation.current) return;
+      updateRelations({
+        ...current,
+        dependencies: current.dependencies.map((dep) => (dep === existing ? { ...dep, depType } : dep)),
+      });
+    } catch (error) {
+      if (scope !== generation.current) return;
+      setToast({ type: TOAST_TYPE.ERROR, title: "Không lưu được loại phụ thuộc" });
+      console.error("Failed to save Gantt dependency type", error);
+    } finally {
+      if (scope === generation.current) saving.current = false;
+    }
+  };
+
   const setLag = async (predecessorId: string, successorId: string, lagDays: number) => {
     const current = relationsRef.current;
     if (!enabled || !workspaceSlug || !projectId || !current?.lagsSupported || saving.current) return;
@@ -399,9 +429,7 @@ export function useGanttDependencies(
       updateRelations({
         ...current,
         dependencies: current.dependencies.map((dep) =>
-          dep.predecessorId === predecessorId && dep.successorId === successorId
-            ? { predecessorId, successorId, lagDays }
-            : dep
+          dep.predecessorId === predecessorId && dep.successorId === successorId ? { ...dep, lagDays } : dep
         ),
       });
     } catch (error) {
@@ -433,6 +461,7 @@ export function useGanttDependencies(
         }),
         refresh: () => refreshRef.current(),
         setLag,
+        setDepType,
         setExternalLag,
         createExternal,
         removeExternal,

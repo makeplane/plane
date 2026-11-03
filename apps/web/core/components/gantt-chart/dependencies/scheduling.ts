@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TGanttDependency } from "./dependency-utils";
+import type { TDependencyType, TGanttDependency } from "./dependency-utils";
 
 export type TScheduleTask = { id: string; start: string | null; end: string | null };
 export type TScheduleChange = TScheduleTask;
@@ -15,7 +15,10 @@ export type TScheduleUpdate = {
   newStart: string | null;
   newEnd: string | null;
 };
-export type TScheduleWarning = { id: string; reason: "missing_dates" | "missing_predecessor_end" | "no_permission" };
+export type TScheduleWarning = {
+  id: string;
+  reason: "missing_dates" | "missing_predecessor_end" | "missing_predecessor_start" | "no_permission";
+};
 
 const dayMs = 86_400_000;
 const utc = (date: string) => {
@@ -140,12 +143,12 @@ export function scheduleSuccessors(
   const current = new Map(tasks.map((task) => [task.id, { ...task }]));
   current.set(change.id, { ...change });
   const outgoing = new Map<string, Set<string>>();
-  const incoming = new Map<string, Map<string, number>>();
-  for (const { predecessorId, successorId, lagDays = 0 } of dependencies) {
+  const incoming = new Map<string, Map<string, { lag: number; type: TDependencyType }>>();
+  for (const { predecessorId, successorId, lagDays = 0, depType = "FS" } of dependencies) {
     if (!outgoing.has(predecessorId)) outgoing.set(predecessorId, new Set());
     if (!incoming.has(successorId)) incoming.set(successorId, new Map());
     outgoing.get(predecessorId)!.add(successorId);
-    incoming.get(successorId)!.set(predecessorId, lagDays);
+    incoming.get(successorId)!.set(predecessorId, { lag: lagDays, type: depType });
   }
 
   const visited = new Set<string>();
@@ -185,18 +188,42 @@ export function scheduleSuccessors(
       } else {
         let earliest: string | null = null;
         let missingEnd = false;
-        for (const [pred, lag] of incoming.get(id) ?? []) {
-          const end = current.get(pred)?.end;
-          if (!end) {
-            missingEnd = true;
+        let missingStart = false;
+        let skipped = false;
+        for (const [pred, { lag, type }] of incoming.get(id) ?? []) {
+          // FS/FF follow the predecessor's end, SS/SF its start.
+          const anchor = type === "FS" || type === "FF" ? current.get(pred)?.end : current.get(pred)?.start;
+          if (!anchor) {
+            if (type === "FS" || type === "FF") missingEnd = true;
+            else missingStart = true;
             continue;
           }
-          const nextDay = calendar
-            ? addWorkingDays(nextWorkingDay(end, calendar), lag, calendar)
-            : addDays(end, 1 + lag);
-          if (!earliest || nextDay > earliest) earliest = nextDay;
+          let candidate =
+            type === "FS"
+              ? calendar
+                ? addWorkingDays(nextWorkingDay(anchor, calendar), lag, calendar)
+                : addDays(anchor, 1 + lag)
+              : calendar
+                ? addWorkingDays(onOrAfterWorking(anchor, calendar), lag, calendar)
+                : addDays(anchor, lag);
+          if (type === "FF" || type === "SF") {
+            // The constraint is on the successor's end: convert it to a start by keeping the duration.
+            if (!task.end) {
+              skipped = true;
+              continue;
+            }
+            if (!pullEarlier && task.end >= candidate) continue; // already satisfied
+            if (task.start)
+              candidate = calendar
+                ? addWorkingDays(candidate, -workingSteps(task.start, task.end, calendar), calendar)
+                : addDays(candidate, -diffDays(task.start, task.end));
+          }
+          if (!earliest || candidate > earliest) earliest = candidate;
         }
         if (missingEnd) warnings.push({ id, reason: "missing_predecessor_end" });
+        if (missingStart) warnings.push({ id, reason: "missing_predecessor_start" });
+        if (skipped) warnings.push({ id, reason: "missing_dates" });
+        missingEnd = missingEnd || missingStart || skipped;
         const date = task.start ?? task.end;
         if (earliest && date && (date < earliest || (pullEarlier && !missingEnd && date !== earliest))) {
           const newStart = task.start ? earliest : null;

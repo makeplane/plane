@@ -6,10 +6,11 @@
 
 import { API_BASE_URL } from "@plane/constants";
 import { APIService } from "@/services/api.service";
+import type { TDependencyType } from "@/components/gantt-chart/dependencies/dependency-utils";
 
 export type TScheduleHoliday = { id: string; date: string; name: string };
 export type TScheduleSettings = { working_weekdays: number[]; holidays: TScheduleHoliday[] };
-export type TIssueLag = { predecessor: string; successor: string; lag_days: number };
+export type TIssueLag = { predecessor: string; successor: string; lag_days: number; dep_type?: TDependencyType };
 
 class ScheduleService extends APIService {
   constructor() {
@@ -63,13 +64,15 @@ class ScheduleService extends APIService {
     projectId: string,
     predecessor: string,
     successor: string,
-    lagDays: number
+    lagDays: number,
+    depType?: TDependencyType
   ): Promise<TIssueLag> {
     return (
       await this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-lags/`, {
         predecessor,
         successor,
         lag_days: lagDays,
+        ...(depType ? { dep_type: depType } : {}),
       })
     ).data;
   }

@@ -16,7 +16,12 @@ import { ExternalStubs } from "./external-stubs";
 import type { TResolvedExternalLink } from "./external-links";
 import { visibleLinks } from "./external-links";
 import type { TGanttDependency, TGanttDependencyActions } from "./dependency-utils";
-import { dependencyValidationMessages, getDependencyDraftStates } from "./dependency-utils";
+import {
+  DEPENDENCY_TYPES,
+  dependencyTypeLabels,
+  dependencyValidationMessages,
+  getDependencyDraftStates,
+} from "./dependency-utils";
 import { buildArrows, resolveDrop } from "./drag-logic";
 
 type Props = {
@@ -208,12 +213,18 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
   const source = dependencyDraftFromId ? rows.get(dependencyDraftFromId) : undefined;
   const target = draft?.targetId ? rows.get(draft.targetId) : undefined;
   const targetError = draft?.targetId ? draftStates[draft.targetId] : null;
+  const arrows = buildArrows(rows, dependencies, BLOCK_HEIGHT);
   const selectedPred = selectedDependency ? rows.get(selectedDependency.predecessorId) : undefined;
   const selectedSucc = selectedDependency ? rows.get(selectedDependency.successorId) : undefined;
-  const fromX = selectedPred?.block.position
-    ? selectedPred.block.position.marginLeft + selectedPred.block.position.width
-    : 0;
-  const toX = selectedSucc?.block.position?.marginLeft ?? 0;
+  const selectedArrow = selectedDependency
+    ? arrows.find(
+        (arrow) =>
+          arrow.predecessorId === selectedDependency.predecessorId &&
+          arrow.successorId === selectedDependency.successorId
+      )
+    : undefined;
+  const fromX = selectedArrow?.fromX ?? 0;
+  const toX = selectedArrow?.toX ?? 0;
   const deleteX = toX - fromX >= 16 ? (fromX + 8 + toX) / 2 : toX - 4;
 
   return (
@@ -259,68 +270,71 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
           normalMarkerId={normalMarkerId}
           violatedMarkerId={violatedMarkerId}
         />
-        {buildArrows(rows, dependencies, BLOCK_HEIGHT).map(
-          ({ predecessorId, successorId, lagDays, path, violated }) => {
-            const pred = rows.get(predecessorId)!;
-            const isSelected =
-              selectedDependency?.predecessorId === predecessorId && selectedDependency?.successorId === successorId;
-            const select = () => setSelected({ predecessorId, successorId });
-            return (
-              <Fragment key={`${predecessorId}-${successorId}`}>
+        {arrows.map(({ predecessorId, successorId, lagDays, depType, fromX: arrowFromX, path, violated }) => {
+          const pred = rows.get(predecessorId)!;
+          const isSelected =
+            selectedDependency?.predecessorId === predecessorId && selectedDependency?.successorId === successorId;
+          const select = () => setSelected({ predecessorId, successorId });
+          return (
+            <Fragment key={`${predecessorId}-${successorId}`}>
+              <path
+                d={path}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={isSelected || violated ? 2 : 1.5}
+                className={
+                  isSelected
+                    ? "text-accent-primary"
+                    : violated
+                      ? "text-danger-primary dark:text-[oklch(0.65_0.24_25)]"
+                      : "text-tertiary"
+                }
+                markerEnd={`url(#${isSelected ? selectedMarkerId : violated ? violatedMarkerId : normalMarkerId})`}
+              />
+              {!!lagDays && (
+                <text x={arrowFromX + 5} y={pred.y - 5} className="fill-current text-10 text-tertiary">
+                  {lagDays > 0 ? "+" : ""}
+                  {lagDays}d
+                </text>
+              )}
+              {!!depType && depType !== "FS" && (
+                <text
+                  x={arrowFromX + (depType === "SS" || depType === "SF" ? -22 : 5)}
+                  y={pred.y + 12}
+                  className="fill-current text-10 text-tertiary"
+                >
+                  {depType}
+                </text>
+              )}
+              {dependencyActions && (
                 <path
+                  data-gantt-dependency-control
                   d={path}
                   fill="none"
-                  stroke="currentColor"
-                  strokeWidth={isSelected || violated ? 2 : 1.5}
-                  className={
-                    isSelected
-                      ? "text-accent-primary"
-                      : violated
-                        ? "text-danger-primary dark:text-[oklch(0.65_0.24_25)]"
-                        : "text-tertiary"
-                  }
-                  markerEnd={`url(#${isSelected ? selectedMarkerId : violated ? violatedMarkerId : normalMarkerId})`}
-                />
-                {!!lagDays && (
-                  <text
-                    x={pred.block.position!.marginLeft + pred.block.position!.width + 5}
-                    y={pred.y - 5}
-                    className="fill-current text-10 text-tertiary"
-                  >
-                    {lagDays > 0 ? "+" : ""}
-                    {lagDays}d
-                  </text>
-                )}
-                {dependencyActions && (
-                  <path
-                    data-gantt-dependency-control
-                    d={path}
-                    fill="none"
-                    stroke="transparent"
-                    strokeWidth={10}
-                    style={{ pointerEvents: dependencyDraftFromId ? "none" : "stroke", cursor: "pointer" }}
-                    // oxlint-disable-next-line jsx_a11y/prefer-tag-over-role -- SVG paths cannot be HTML buttons.
-                    role="button"
-                    tabIndex={0}
-                    aria-label="Chọn phụ thuộc"
-                    onMouseDown={(event) => event.stopPropagation()}
-                    onClick={(event) => {
+                  stroke="transparent"
+                  strokeWidth={10}
+                  style={{ pointerEvents: dependencyDraftFromId ? "none" : "stroke", cursor: "pointer" }}
+                  // oxlint-disable-next-line jsx_a11y/prefer-tag-over-role -- SVG paths cannot be HTML buttons.
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Chọn phụ thuộc"
+                  onMouseDown={(event) => event.stopPropagation()}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    select();
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
                       event.stopPropagation();
                       select();
-                    }}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        select();
-                      }
-                    }}
-                  />
-                )}
-              </Fragment>
-            );
-          }
-        )}
+                    }
+                  }}
+                />
+              )}
+            </Fragment>
+          );
+        })}
         {dependencyDraftFromId && source?.block.position && draft && (
           <path
             d={`M ${source.block.position.marginLeft + (dependencyDraftSide === "right" ? source.block.position.width : 0)} ${source.y} L ${draft.x} ${draft.y}`}
@@ -404,6 +418,29 @@ export const GanttDependencyLayer = observer(function GanttDependencyLayer(props
           className="pointer-events-auto absolute z-[8] flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded border border-subtle bg-layer-1 p-1"
           style={{ left: deleteX, top: selectedSucc.y }}
         >
+          {dependencyActions.lagsSupported && dependencyActions.setDepType && (
+            <label className="flex items-center gap-1 text-11 text-tertiary">
+              Loại
+              <select
+                aria-label="Loại phụ thuộc"
+                value={selectedDependency.depType ?? "FS"}
+                className="rounded border border-subtle bg-layer-1 px-1 text-primary"
+                onChange={(event) =>
+                  void dependencyActions.setDepType?.(
+                    selectedDependency.predecessorId,
+                    selectedDependency.successorId,
+                    event.currentTarget.value as (typeof DEPENDENCY_TYPES)[number]
+                  )
+                }
+              >
+                {DEPENDENCY_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {dependencyTypeLabels[type]}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           {dependencyActions.lagsSupported && dependencyActions.setLag && (
             <label className="flex items-center gap-1 text-11 text-tertiary">
               Trễ (ngày)

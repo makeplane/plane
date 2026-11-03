@@ -303,6 +303,8 @@ class IssueRelation(ProjectBaseModel):
     )
     # BIH: delay in days for blocked_by rows (may be negative); ignored for other types
     lag_days = models.IntegerField(default=0)
+    # BIH: dependency type for blocked_by rows: FS (default), SS, FF or SF; ignored for other types
+    dep_type = models.CharField(max_length=2, default="FS", db_default="FS")
 
     class Meta:
         unique_together = ["issue", "related_issue", "deleted_at"]

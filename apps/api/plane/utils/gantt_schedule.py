@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Finish-to-Start scheduling without framework dependencies."""
+"""Dependency scheduling (FS, SS, FF, SF) without framework dependencies."""
 
 from collections import deque
 from datetime import date, timedelta
@@ -107,6 +107,9 @@ def find_cycle_through(dependencies, predecessor_id, successor_id):
     return None
 
 
+DEP_TYPES = ("FS", "SS", "FF", "SF")
+
+
 def schedule_successors(tasks, dependencies, change, calendar=None, pull_earlier=False):
     """Move reachable successors, preserving duration and missing dates."""
     if calendar is not None and not calendar["weekdays"]:
@@ -122,9 +125,12 @@ def schedule_successors(tasks, dependencies, change, calendar=None, pull_earlier
     incoming = {}
     for dependency in dependencies:
         predecessor, successor = dependency[:2]
-        lag = dependency[2] if len(dependency) == 3 else 0
+        lag = dependency[2] if len(dependency) > 2 else 0
+        dep_type = dependency[3] if len(dependency) > 3 else "FS"
+        if dep_type not in DEP_TYPES:
+            raise ValueError("Invalid dependency type")
         outgoing.setdefault(predecessor, {})[successor] = None
-        incoming.setdefault(successor, {})[predecessor] = lag
+        incoming.setdefault(successor, {})[predecessor] = (lag, dep_type)
 
     visited = set()
     path = [change["id"]]
@@ -163,19 +169,51 @@ def schedule_successors(tasks, dependencies, change, calendar=None, pull_earlier
             else:
                 earliest = None
                 missing_end = False
-                for predecessor, lag in predecessors.items():
-                    end = current.get(predecessor, {}).get("end")
-                    if end is None:
-                        missing_end = True
+                missing_start = False
+                skipped = False
+                for predecessor, (lag, dep_type) in predecessors.items():
+                    source = current.get(predecessor, {})
+                    # FS/FF follow the predecessor's end, SS/SF its start.
+                    anchor = source.get("end") if dep_type in ("FS", "FF") else source.get("start")
+                    if anchor is None:
+                        if dep_type in ("FS", "FF"):
+                            missing_end = True
+                        else:
+                            missing_start = True
                         continue
-                    next_day = (
-                        add_working_days(next_working_day(end, calendar), lag, calendar)
-                        if calendar is not None else end + timedelta(days=1 + lag)
-                    )
-                    if earliest is None or next_day > earliest:
-                        earliest = next_day
+                    if dep_type == "FS":
+                        candidate = (
+                            add_working_days(next_working_day(anchor, calendar), lag, calendar)
+                            if calendar is not None else anchor + timedelta(days=1 + lag)
+                        )
+                    else:
+                        candidate = (
+                            add_working_days(on_or_after_working(anchor, calendar), lag, calendar)
+                            if calendar is not None else anchor + timedelta(days=lag)
+                        )
+                    if dep_type in ("FF", "SF"):
+                        # The constraint is on the successor's end: convert it to a start by keeping the duration.
+                        if task["end"] is None:
+                            skipped = True
+                            continue
+                        if not pull_earlier and task["end"] >= candidate:
+                            continue  # already satisfied; also avoids measuring a huge duration for nothing
+                        if task["start"] is not None:
+                            candidate = (
+                                add_working_days(
+                                    candidate, -working_steps(task["start"], task["end"], calendar), calendar
+                                )
+                                if calendar is not None else candidate - (task["end"] - task["start"])
+                            )
+                    if earliest is None or candidate > earliest:
+                        earliest = candidate
                 if missing_end:
                     warnings.append({"id": issue_id, "reason": "missing_predecessor_end"})
+                if missing_start:
+                    warnings.append({"id": issue_id, "reason": "missing_predecessor_start"})
+                if skipped:
+                    warnings.append({"id": issue_id, "reason": "missing_dates"})
+                missing_end = missing_end or missing_start or skipped
                 old_date = task["start"] or task["end"]
                 if earliest is not None and (
                     old_date < earliest or (pull_earlier and not missing_end and old_date != earliest)

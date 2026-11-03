@@ -335,5 +335,65 @@ class FindCycleThroughTests(unittest.TestCase):
         self.assertIsNone(find_cycle_through(edges, "C", "D"))
 
 
+class DependencyTypeTests(unittest.TestCase):
+    def run_one(self, dep_type, change, successor, lag=0, calendar=None):
+        return schedule_successors(
+            [change, successor], [("A", "B", lag, dep_type)], change, calendar
+        )
+
+    def test_start_to_start_follows_the_predecessor_start(self):
+        b = task("B", "2026-11-04", "2026-11-06")
+        result = self.run_one("SS", task("A", "2026-11-06", "2026-11-08"), b)
+        self.assertEqual(result["updates"], [update("B", "2026-11-04", "2026-11-06", "2026-11-06", "2026-11-08")])
+        result = self.run_one("SS", task("A", "2026-11-06", "2026-11-08"), b, lag=2)
+        self.assertEqual(result["updates"][0]["new_start"], day("2026-11-08"))
+        self.assertEqual(self.run_one("SS", task("A", "2026-11-01", "2026-11-09"), b)["updates"], [])
+
+    def test_finish_to_finish_follows_the_predecessor_end_and_keeps_duration(self):
+        b = task("B", "2026-11-04", "2026-11-06")
+        result = self.run_one("FF", task("A", "2026-11-01", "2026-11-08"), b)
+        self.assertEqual(result["updates"], [update("B", "2026-11-04", "2026-11-06", "2026-11-06", "2026-11-08")])
+        self.assertEqual(self.run_one("FF", task("A", "2026-11-01", "2026-11-05"), b)["updates"], [])
+
+    def test_start_to_finish_ends_the_successor_no_earlier_than_the_predecessor_start(self):
+        b = task("B", "2026-11-04", "2026-11-06")
+        result = self.run_one("SF", task("A", "2026-11-10", "2026-11-12"), b)
+        self.assertEqual(result["updates"], [update("B", "2026-11-04", "2026-11-06", "2026-11-08", "2026-11-10")])
+
+    def test_explicit_fs_matches_the_default(self):
+        change = task("A", "2026-11-01", "2026-11-05")
+        b = task("B", "2026-11-04", "2026-11-06")
+        self.assertEqual(
+            self.run_one("FS", change, b), schedule_successors([change, b], [("A", "B")], change)
+        )
+
+    def test_missing_dates_warn_instead_of_moving(self):
+        b = task("B", "2026-11-04", "2026-11-06")
+        result = self.run_one("SS", task("A", None, "2026-11-08"), b)
+        self.assertEqual(result["updates"], [])
+        self.assertEqual(result["warnings"], [{"id": "B", "reason": "missing_predecessor_start"}])
+        result = self.run_one("FF", task("A", "2026-11-01", "2026-11-08"), task("B", "2026-11-04", None))
+        self.assertEqual(result["updates"], [])
+        self.assertEqual(result["warnings"], [{"id": "B", "reason": "missing_dates"}])
+
+    def test_working_calendar_counts_working_days_for_the_end_constraint(self):
+        calendar = engine.build_calendar([1, 2, 3, 4, 5], [])
+        result = self.run_one(
+            "FF", task("A", "2026-11-02", "2026-11-09"), task("B", "2026-11-04", "2026-11-05"), calendar=calendar
+        )
+        self.assertEqual(result["updates"], [update("B", "2026-11-04", "2026-11-05", "2026-11-06", "2026-11-09")])
+
+    def test_satisfied_end_constraint_never_measures_the_duration(self):
+        calendar = engine.build_calendar([1, 2, 3, 4, 5], [])
+        huge = task("B", "2027-01-01", "2038-01-01")
+        for dep_type in ("FF", "SF"):
+            result = self.run_one(dep_type, task("A", "2026-11-02", "2026-11-03"), huge, calendar=calendar)
+            self.assertEqual(result["updates"], [])
+
+    def test_unknown_type_is_rejected(self):
+        with self.assertRaises(ValueError):
+            self.run_one("XX", task("A", "2026-11-01", "2026-11-05"), task("B", "2026-11-04", "2026-11-06"))
+
+
 if __name__ == "__main__":
     unittest.main()

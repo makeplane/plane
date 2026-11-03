@@ -27,7 +27,7 @@ from plane.db.models import (
     WorkspaceHoliday,
     WorkspaceScheduleSetting,
 )
-from plane.utils.gantt_schedule import build_calendar, schedule_successors
+from plane.utils.gantt_schedule import DEP_TYPES, build_calendar, schedule_successors
 
 
 # Solar dates of Tết (mùng 1) and Giỗ Tổ (10/3 âm), computed from the lunar calendar and checked against 2026
@@ -161,9 +161,10 @@ class ProjectIssueLagsEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         return Response([
-            {"predecessor": str(pred), "successor": str(succ), "lag_days": lag}
-            for pred, succ, lag in self.relations(slug, project_id).exclude(lag_days=0)
-            .order_by("related_issue_id", "issue_id").values_list("related_issue_id", "issue_id", "lag_days")
+            {"predecessor": str(pred), "successor": str(succ), "lag_days": lag, "dep_type": dep_type}
+            for pred, succ, lag, dep_type in self.relations(slug, project_id).exclude(lag_days=0, dep_type="FS")
+            .order_by("related_issue_id", "issue_id")
+            .values_list("related_issue_id", "issue_id", "lag_days", "dep_type")
         ])
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -175,6 +176,9 @@ class ProjectIssueLagsEndpoint(BaseAPIView):
             lag = body.get("lag_days")
             if type(lag) is not int or not -365 <= lag <= 365:
                 raise ValueError("Invalid lag_days")
+            dep_type = body.get("dep_type")
+            if dep_type is not None and dep_type not in DEP_TYPES:
+                raise ValueError("Invalid dep_type")
             predecessor = str(UUID(body.get("predecessor", "")))
             successor = str(UUID(body.get("successor", "")))
         except (AttributeError, TypeError, ValueError):
@@ -185,8 +189,12 @@ class ProjectIssueLagsEndpoint(BaseAPIView):
                 self.relations(slug, project_id), issue_id=successor, related_issue_id=predecessor
             )
             relation.lag_days = lag
-            relation.save(update_fields=["lag_days", "updated_at"])
-        return Response({"predecessor": predecessor, "successor": successor, "lag_days": lag})
+            if dep_type is not None:
+                relation.dep_type = dep_type
+            relation.save(update_fields=["lag_days", "dep_type", "updated_at"])
+        return Response(
+            {"predecessor": predecessor, "successor": successor, "lag_days": lag, "dep_type": relation.dep_type}
+        )
 
 
 class WorkspaceIssueLagsEndpoint(BaseAPIView):
@@ -207,9 +215,10 @@ class WorkspaceIssueLagsEndpoint(BaseAPIView):
     def get(self, request, slug):
         relations, _ = self.relations(slug)
         return Response([
-            {"predecessor": str(pred), "successor": str(succ), "lag_days": lag}
-            for pred, succ, lag in relations.exclude(lag_days=0)
-            .order_by("related_issue_id", "issue_id").values_list("related_issue_id", "issue_id", "lag_days")
+            {"predecessor": str(pred), "successor": str(succ), "lag_days": lag, "dep_type": dep_type}
+            for pred, succ, lag, dep_type in relations.exclude(lag_days=0, dep_type="FS")
+            .order_by("related_issue_id", "issue_id")
+            .values_list("related_issue_id", "issue_id", "lag_days", "dep_type")
         ])
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
@@ -221,6 +230,9 @@ class WorkspaceIssueLagsEndpoint(BaseAPIView):
             lag = body.get("lag_days")
             if type(lag) is not int or not -365 <= lag <= 365:
                 raise ValueError("Invalid lag_days")
+            dep_type = body.get("dep_type")
+            if dep_type is not None and dep_type not in DEP_TYPES:
+                raise ValueError("Invalid dep_type")
             predecessor = str(UUID(body.get("predecessor", "")))
             successor = str(UUID(body.get("successor", "")))
         except (AttributeError, TypeError, ValueError):
@@ -237,8 +249,12 @@ class WorkspaceIssueLagsEndpoint(BaseAPIView):
             if role < ROLE.MEMBER.value:
                 return Response({"message": "No permission"}, status=status.HTTP_403_FORBIDDEN)
             relation.lag_days = lag
-            relation.save(update_fields=["lag_days", "updated_at"])
-        return Response({"predecessor": predecessor, "successor": successor, "lag_days": lag})
+            if dep_type is not None:
+                relation.dep_type = dep_type
+            relation.save(update_fields=["lag_days", "dep_type", "updated_at"])
+        return Response(
+            {"predecessor": predecessor, "successor": successor, "lag_days": lag, "dep_type": relation.dep_type}
+        )
 
 
 class WorkspaceIssueScheduleEndpoint(BaseAPIView):
@@ -278,8 +294,8 @@ class WorkspaceIssueScheduleEndpoint(BaseAPIView):
                 return Response({"message": "No permission"}, status=status.HTTP_403_FORBIDDEN)
 
             relations = [
-                (str(predecessor), str(successor), lag, str(successor_project))
-                for predecessor, successor, lag, successor_project in IssueRelation.objects.filter(
+                (str(predecessor), str(successor), lag, dep_type, str(successor_project))
+                for predecessor, successor, lag, dep_type, successor_project in IssueRelation.objects.filter(
                     workspace__slug=slug,
                     relation_type="blocked_by",
                     deleted_at__isnull=True,
@@ -287,12 +303,12 @@ class WorkspaceIssueScheduleEndpoint(BaseAPIView):
                     related_issue__project_id__in=roles,
                     issue__deleted_at__isnull=True,
                     related_issue__deleted_at__isnull=True,
-                ).order_by("id").values_list("related_issue_id", "issue_id", "lag_days", "issue__project_id")
+                ).order_by("id").values_list("related_issue_id", "issue_id", "lag_days", "dep_type", "issue__project_id")
             ]
             # Edges into read-only issues are dropped so the engine never moves them.
-            dependencies = [(pred, succ, lag) for pred, succ, lag, project in relations if project in writable]
+            dependencies = [(pred, succ, lag, dep_type) for pred, succ, lag, dep_type, project in relations if project in writable]
             outgoing = {}
-            for predecessor, successor, _ in dependencies:
+            for predecessor, successor, *_ in dependencies:
                 outgoing.setdefault(predecessor, set()).add(successor)
             downstream = {change["id"]}
             pending = [change["id"]]
@@ -320,7 +336,7 @@ class WorkspaceIssueScheduleEndpoint(BaseAPIView):
                 {"id": issue_id, "start": issue.start_date, "end": issue.target_date}
                 for issue_id, issue in locked.items()
             ]
-            predecessors = {pred for pred, successor, _ in dependencies if successor in downstream} - downstream
+            predecessors = {pred for pred, successor, *_ in dependencies if successor in downstream} - downstream
             tasks.extend(
                 {"id": str(issue_id), "start": task_start, "end": task_end}
                 for issue_id, task_start, task_end in visible_issues.filter(id__in=predecessors).values_list(
@@ -345,7 +361,7 @@ class WorkspaceIssueScheduleEndpoint(BaseAPIView):
                 moved.add(change["id"])
             warnings = list(result["warnings"])
             warned = set()
-            for pred, succ, _, project in relations:
+            for pred, succ, _, _, project in relations:
                 if project not in writable and pred in moved and succ not in warned:
                     warned.add(succ)
                     warnings.append({"id": succ, "reason": "no_permission"})

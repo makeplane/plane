@@ -92,7 +92,7 @@ Engine Python thuần chạy được không cần Django: `python -m unittest d
 
 - Đợt 8 còn lại: lịch sử hoạt động của việc (`history/`) chỉ được ẩn mã việc relation khi việc bên kia không đọc được (khuyết điểm cũ của Plane gốc cho tên trong comment/activity khác chưa rà hết). Hoàn tác xoá phụ thuộc khác project giờ kiểm quyền cả hai project trước khi gửi.
 
-- Chỉ Finish-to-Start. Lịch làm việc + ngày lễ sửa trong hộp "Cài đặt lập lịch" trên thanh Gantt (không có trang riêng ở cài đặt workspace). Ngày lễ trùng ngày không làm việc tự nghỉ bù sang ngày làm việc kế (đợt 8). Preset VN có Tết (giao thừa + mùng 1–4) và Giỗ Tổ cho 2026–2030; ngày nghỉ thật do nhà nước công bố từng năm nên admin vẫn phải đối chiếu và sửa tay.
+- Loại phụ thuộc FS (mặc định), SS, FF, SF (đợt 10). Lịch làm việc + ngày lễ sửa trong hộp "Cài đặt lập lịch" trên thanh Gantt (không có trang riêng ở cài đặt workspace). Ngày lễ trùng ngày không làm việc tự nghỉ bù sang ngày làm việc kế (đợt 8). Preset VN có Tết (giao thừa + mùng 1–4) và Giỗ Tổ cho 2026–2030; ngày nghỉ thật do nhà nước công bố từng năm nên admin vẫn phải đối chiếu và sửa tay.
 - Phần sửa lịch workspace (quyền ADMIN) mới được test bằng test backend, chưa bấm thử trên trình duyệt.
 - Khác project (đợt 6): lùi lịch và mũi tên cụt có kiểm quyền như trên, nhưng tạo/xoá phụ thuộc khác project đã làm ở đợt 7 (xem Backend đợt 7). Lag của relation khác project: đã có endpoint `POST/GET workspaces/<slug>/issue-lags/` (đợt 8) nhưng chưa có ô nhập trên mũi tên cụt (endpoint `issue-lags` chỉ trong project). Việc ở project người dùng không thuộc vô hình, nên việc sau nó không được dời và không có cảnh báo. `expected` bị bỏ qua khi `include_successors=false` (giống endpoint project). Khi tải 100 việc đầu, việc ngoài hàng đang hiển thị không có mũi tên cụt.
 - Đã đo local với 606 việc + 300 phụ thuộc (Chrome): cuộn ~11 ms/bước, đổi zoom <1,6 s, heap ~75 MB; mọi thanh đều nằm trong DOM (Plane gốc không ảo hoá hàng). Gantt việc không có nhóm thu gọn. Tải tối đa 10.000 việc để vẽ mũi tên.
@@ -108,19 +108,21 @@ Engine Python thuần chạy được không cần Django: `python -m unittest d
 - `expected` kèm `include_successors=false` ⇒ 400. Nghỉ bù ngày lễ (Python + TS, cùng ca test, tuyến tính). Preset lễ VN có Tết + Giỗ Tổ 2026–2030 (bảng âm lịch `LUNAR_HOLIDAYS` trong `bih_schedule.py`).
 - **Mới** `GET/POST workspaces/<slug>/issue-lags/` (`WorkspaceIssueLagsEndpoint`): lag relation khác project; đọc/ghi cần đọc được cả hai đầu, ghi cần Member/Admin ở project của **việc sau** (lấy từ `relation.issue.project_id`, không tin `relation.project`).
 - Web: hoàn tác sau khi nối (cùng/khác project); mũi tên cụt có mã việc cho phụ thuộc tới hàng chưa tải/đang lọc (chỉ đọc); test render thật `dependency-layer.render.test.mjs` (bundle `.tsx` bằng esbuild có sẵn trong cây pnpm + `react-dom/server`, không thêm dependency; chưa test tương tác con trỏ).
-- Chưa làm: SS/FF/SF. (Thanh chồng nhau, ô nhập lag khác project, test con trỏ: xem Đợt 10.)
+- Đợt 10 đã làm thêm SS/FF/SF, thanh chồng nhau, ô nhập lag khác project, test con trỏ.
 
-## Đợt 10 (không migration, chỉ web)
+## Đợt 10 (migration 0124: cột `dep_type`)
 
 - **Test con trỏ thật**: `dependency-layer.pointer.test.mjs` chạy `GanttDependencyLayer` trong jsdom (devDependency mới `jsdom` ở `apps/web`, Huy đã duyệt) với sự kiện mouse/pointer/keyboard.
 - **Thanh chồng nhau**: `buildArrows` gán "làn" (0–2) theo từng predecessor cùng điểm cuối; `getDependencyPath(from, to, rowHeight, lane)` dịch chỗ gấp khúc 3 px mỗi làn (làn 0 giữ nguyên đường cũ). Cùng predecessor tỏa nhiều việc sau thì chung làn.
 - **Lag khác project**: chọn mũi tên cụt (có quyền sửa) ⇒ menu có ô "Trễ (ngày)"; nhãn mũi tên cụt hiện `+Nd`. Web đọc `GET workspaces/<slug>/issue-lags/` khi có mũi tên cụt, ghi `POST` cùng URL (403 ⇒ toast cần Member ở project của việc sau). Hook `useGanttDependencies` có `setExternalLag`.
+- **SS/FF/SF (có migration 0124)**: `IssueRelation.dep_type` (CharField 2, default và `db_default` "FS" nên backend cũ vẫn ghi được khi rollback). Ràng buộc: FS = bắt đầu việc sau ≥ ngày sau kết thúc việc trước + lag; SS = bắt đầu sau ≥ bắt đầu trước + lag; FF = kết thúc sau ≥ kết thúc trước + lag; SF = kết thúc sau ≥ bắt đầu trước + lag (FF/SF quy về ngày bắt đầu bằng cách giữ độ dài; thiếu ngày kết thúc của việc sau thì cảnh báo `missing_dates`, thiếu ngày bắt đầu của việc trước (SS/SF) thì `missing_predecessor_start`). Engine Python (`utils/gantt_schedule.py`, bộ ba/bộ tư `(pred, succ, lag, type)`) và TS (`scheduling.ts`) giống nhau; Codex fuzz 6000 ca khớp. `GET/POST issue-lags` (project và workspace) trả/nhận `dep_type` (POST không gửi `dep_type` thì giữ nguyên); hàng lag 0 nhưng khác FS vẫn được liệt kê. Web: chọn mũi tên ⇒ ô "Loại" (FS/SS/FF/SF) cạnh "Trễ"; mũi tên nối đúng mép thanh (SS trái-trái, FF phải-phải, SF trái→phải), nhãn loại cạnh thanh trước; kiểm vi phạm theo loại (không tính lag). Mũi tên cụt giữ loại (từ `issue-lags`).
+- Giới hạn SS/FF/SF: loại chỉ chọn được trong cùng project (chưa có ô chọn loại cho mũi tên cụt khác project, dù backend nhận); tạo bằng kéo-thả luôn là FS rồi đổi loại; vi phạm chỉ so thứ tự ngày, không tính lag.
 - `PATCH` lạ ở sidebar: chưa tái hiện sau 2 lần bắt mạng local; xem báo cáo đối chiếu.
 - Thử tay local (web `bih.13`): đặt/đọc lag `OTHR-1 +3d` (đã xác nhận trong DB, đã trả về 0); hai tab sửa đồng thời ⇒ 409 "Lịch đã thay đổi — xem lại".
 
 ## Rollback đợt 10
 
-Web `bih.12` (đợt 10 chỉ đổi web, không đổi backend/migration).
+Web `bih.12`, backend `bih.5`. Migration 0124 chỉ thêm cột `dep_type` có default ở DB nên backend cũ chạy bình thường; không cần đảo migration (cột thừa vô hại). Web cũ + backend mới: chạy như FS (bỏ qua `dep_type`).
 
 ## Rollback đợt 8
 

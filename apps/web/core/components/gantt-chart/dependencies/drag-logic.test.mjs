@@ -12,19 +12,23 @@ import { extractExternalLinks } from "./external-links.ts";
 import { addDays, scheduleSuccessors } from "./scheduling.ts";
 
 const edge = (predecessorId, successorId, lagDays) => ({ predecessorId, successorId, lagDays });
-const drop = (overrides = {}) => resolveDrop({
-  side: "right",
-  fromId: "A",
-  targetId: "B",
-  rowIds: new Set(["A", "B", "C"]),
-  dependencies: [],
-  otherPairs: [],
-  canCreateExternal: false,
-  overEmptyArea: false,
-  ...overrides,
-});
+const drop = (overrides = {}) =>
+  resolveDrop({
+    side: "right",
+    fromId: "A",
+    targetId: "B",
+    rowIds: new Set(["A", "B", "C"]),
+    dependencies: [],
+    otherPairs: [],
+    canCreateExternal: false,
+    overEmptyArea: false,
+    ...overrides,
+  });
 
-for (const [side, predecessorId, successorId] of [["right", "A", "B"], ["left", "B", "A"]]) {
+for (const [side, predecessorId, successorId] of [
+  ["right", "A", "B"],
+  ["left", "B", "A"],
+]) {
   test(`drop on ${side} creates the correct direction`, () => {
     assert.deepEqual(drop({ side }), { kind: "create", predecessorId, successorId });
   });
@@ -61,7 +65,15 @@ test("arrows omit absent bars and positions and preserve routing and lag", () =>
     ["C", { y: 100, block: {} }],
   ]);
   assert.deepEqual(buildArrows(rows, [edge("A", "B", -2), edge("A", "C"), edge("missing", "B")], 40), [
-    { predecessorId: "A", successorId: "B", path: "M 30 20 H 38 V 40 H 12 V 60 H 20", violated: true, lagDays: -2 },
+    {
+      predecessorId: "A",
+      successorId: "B",
+      path: "M 30 20 H 38 V 40 H 12 V 60 H 20",
+      violated: true,
+      lagDays: -2,
+      fromX: 30,
+      toX: 20,
+    },
   ]);
 });
 
@@ -90,10 +102,26 @@ test("overlapping bars routed back keep their middle runs on different lines", (
 });
 
 test("arrows flag equal or earlier starts but allow later or missing dates", () => {
-  for (const [start, violated] of [["2026-11-02", true], ["2026-11-03", true], ["2026-11-04", false], [null, false]]) {
-    const rows = new Map([["A", row(20, 10, null, "2026-11-03")], ["B", row(60, 60, start, null)]]);
+  for (const [start, violated] of [
+    ["2026-11-02", true],
+    ["2026-11-03", true],
+    ["2026-11-04", false],
+    [null, false],
+  ]) {
+    const rows = new Map([
+      ["A", row(20, 10, null, "2026-11-03")],
+      ["B", row(60, 60, start, null)],
+    ]);
     assert.deepEqual(buildArrows(rows, [edge("A", "B", 3)], 40), [
-      { predecessorId: "A", successorId: "B", path: "M 30 20 H 38 V 60 H 60", violated, lagDays: 3 },
+      {
+        predecessorId: "A",
+        successorId: "B",
+        path: "M 30 20 H 38 V 60 H 60",
+        violated,
+        lagDays: 3,
+        fromX: 30,
+        toX: 60,
+      },
     ]);
   }
 });
@@ -102,7 +130,9 @@ test("extracting relations and building arrows for 2000 tasks takes less than 50
   const issues = Array.from({ length: 2000 }, (_, i) => ({
     id: String(i),
     issue_relation: [
-      ...[i - 1, i - 2].filter((id) => id >= 0).map((id) => ({ id: String(id), project_id: "project", relation_type: "blocked_by" })),
+      ...[i - 1, i - 2]
+        .filter((id) => id >= 0)
+        .map((id) => ({ id: String(id), project_id: "project", relation_type: "blocked_by" })),
       ...(i % 100 === 0 ? [{ id: `external-${i}`, project_id: "other", relation_type: "blocked_by" }] : []),
     ],
   }));

@@ -13,6 +13,7 @@ import {
   getDependencyDraftStates,
   getDependencyPath,
   isDependencyViolated,
+  isTypedDependencyViolated,
 } from "./dependency-utils.ts";
 
 test("extracts only unique same-project blocked_by predecessors", () => {
@@ -170,4 +171,26 @@ test("draft traversal handles 10,000 candidates and existing cycles", () => {
   assert.equal(states["0"], "self");
   assert.equal(states["2"], "duplicate");
   assert.equal(states["9999"], "cycle");
+});
+
+test("typed paths use the matching edges and keep FS unchanged", () => {
+  const from = { x: 50, y: 20 };
+  const to = { x: 80, y: 60 };
+  assert.equal(getDependencyPath(from, to, 40), getDependencyPath(from, to, 40, 0, "FS"));
+  assert.equal(getDependencyPath(from, to, 40, 0, "SS"), "M 50 20 H 42 V 60 H 80");
+  assert.equal(getDependencyPath(from, to, 40, 1, "SS"), "M 50 20 H 39 V 60 H 80");
+  assert.equal(getDependencyPath(from, to, 40, 0, "FF"), "M 50 20 H 88 V 60 H 80");
+  assert.equal(getDependencyPath(from, to, 40, 0, "SF"), "M 50 20 H 42 V 40 H 88 V 60 H 80");
+});
+
+test("typed violation checks compare the matching dates only", () => {
+  const p = { start: "2026-11-05", end: "2026-11-08" };
+  assert.equal(isTypedDependencyViolated("FS", p, { start: "2026-11-08", end: "2026-11-10" }), true);
+  assert.equal(isTypedDependencyViolated(undefined, p, { start: "2026-11-09" }), false);
+  assert.equal(isTypedDependencyViolated("SS", p, { start: "2026-11-04" }), true);
+  assert.equal(isTypedDependencyViolated("SS", p, { start: "2026-11-05" }), false);
+  assert.equal(isTypedDependencyViolated("FF", p, { end: "2026-11-07" }), true);
+  assert.equal(isTypedDependencyViolated("FF", p, { end: "2026-11-08" }), false);
+  assert.equal(isTypedDependencyViolated("SF", p, { end: "2026-11-04" }), true);
+  assert.equal(isTypedDependencyViolated("SF", p, { end: null }), false);
 });

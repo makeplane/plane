@@ -276,7 +276,10 @@ test("weekends, holidays, durations and partial dates match the server", () => {
 test("a holiday on a weekend moves a day off to the next working day, like the server", () => {
   for (const [holidays, extra] of [
     [["2026-11-07"], ["2026-11-09"]],
-    [["2026-11-07", "2026-11-08"], ["2026-11-09", "2026-11-10"]],
+    [
+      ["2026-11-07", "2026-11-08"],
+      ["2026-11-09", "2026-11-10"],
+    ],
     [["2026-11-07", "2026-11-09"], ["2026-11-10"]],
     [["2026-11-06"], []],
   ]) {
@@ -396,4 +399,59 @@ test("date math preserves years 1 through 99 and Python date bounds", () => {
   assert.throws(() => addDays("0001-01-01", -1), /Invalid date range/);
   assert.throws(() => addDays("9999-12-31", 1), /Invalid date range/);
   assert.throws(() => buildCalendar([1], ["0000-01-01"]));
+});
+
+const typed = (type, a, b, lag = 0, calendar) =>
+  scheduleSuccessors([a, b], [{ predecessorId: "A", successorId: "B", lagDays: lag, depType: type }], a, calendar);
+const upd = (id, oldStart, oldEnd, newStart, newEnd) => ({ id, oldStart, oldEnd, newStart, newEnd });
+const dep = task("B", "2026-11-04", "2026-11-06");
+
+test("SS follows the predecessor start, with lag", () => {
+  assert.deepEqual(typed("SS", task("A", "2026-11-06", "2026-11-08"), dep).updates, [
+    upd("B", "2026-11-04", "2026-11-06", "2026-11-06", "2026-11-08"),
+  ]);
+  assert.equal(typed("SS", task("A", "2026-11-06", "2026-11-08"), dep, 2).updates[0].newStart, "2026-11-08");
+  assert.deepEqual(typed("SS", task("A", "2026-11-01", "2026-11-09"), dep).updates, []);
+});
+
+test("FF follows the predecessor end and keeps duration", () => {
+  assert.deepEqual(typed("FF", task("A", "2026-11-01", "2026-11-08"), dep).updates, [
+    upd("B", "2026-11-04", "2026-11-06", "2026-11-06", "2026-11-08"),
+  ]);
+  assert.deepEqual(typed("FF", task("A", "2026-11-01", "2026-11-05"), dep).updates, []);
+});
+
+test("SF ends the successor no earlier than the predecessor start", () => {
+  assert.deepEqual(typed("SF", task("A", "2026-11-10", "2026-11-12"), dep).updates, [
+    upd("B", "2026-11-04", "2026-11-06", "2026-11-08", "2026-11-10"),
+  ]);
+});
+
+test("explicit FS equals the default", () => {
+  const a = task("A", "2026-11-01", "2026-11-05");
+  assert.deepEqual(typed("FS", a, dep), scheduleSuccessors([a, dep], [edge("A", "B")], a));
+});
+
+test("typed dependencies warn about missing dates instead of moving", () => {
+  assert.deepEqual(typed("SS", task("A", null, "2026-11-08"), dep).warnings, [
+    { id: "B", reason: "missing_predecessor_start" },
+  ]);
+  const result = typed("FF", task("A", "2026-11-01", "2026-11-08"), task("B", "2026-11-04", null));
+  assert.deepEqual(result.updates, []);
+  assert.deepEqual(result.warnings, [{ id: "B", reason: "missing_dates" }]);
+});
+
+test("FF in a working calendar counts working days for the end constraint", () => {
+  const calendar = buildCalendar([1, 2, 3, 4, 5], []);
+  assert.deepEqual(
+    typed("FF", task("A", "2026-11-02", "2026-11-09"), task("B", "2026-11-04", "2026-11-05"), 0, calendar).updates,
+    [upd("B", "2026-11-04", "2026-11-05", "2026-11-06", "2026-11-09")]
+  );
+});
+
+test("a satisfied FF/SF end constraint never measures the successor duration", () => {
+  const calendar = buildCalendar([1, 2, 3, 4, 5], []);
+  const huge = task("B", "2027-01-01", "2038-01-01");
+  for (const type of ["FF", "SF"])
+    assert.deepEqual(typed(type, task("A", "2026-11-02", "2026-11-03"), huge, 0, calendar).updates, []);
 });

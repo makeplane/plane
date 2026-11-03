@@ -1251,8 +1251,8 @@ class IssueScheduleEndpoint(BaseAPIView):
             if not project_issues.filter(id=change["id"]).exists():
                 return Response({"message": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
             dependencies = [
-                (str(predecessor), str(successor), lag)
-                for predecessor, successor, lag in IssueRelation.objects.filter(
+                (str(predecessor), str(successor), lag, dep_type)
+                for predecessor, successor, lag, dep_type in IssueRelation.objects.filter(
                     workspace__slug=slug,
                     project_id=project_id,
                     relation_type="blocked_by",
@@ -1261,10 +1261,10 @@ class IssueScheduleEndpoint(BaseAPIView):
                     related_issue__project_id=project_id,
                     issue__deleted_at__isnull=True,
                     related_issue__deleted_at__isnull=True,
-                ).order_by("id").values_list("related_issue_id", "issue_id", "lag_days")
+                ).order_by("id").values_list("related_issue_id", "issue_id", "lag_days", "dep_type")
             ]
             outgoing = {}
-            for predecessor, successor, _ in dependencies:
+            for predecessor, successor, *_ in dependencies:
                 outgoing.setdefault(predecessor, set()).add(successor)
             downstream = {change["id"]}
             pending = [change["id"]]
@@ -1290,7 +1290,7 @@ class IssueScheduleEndpoint(BaseAPIView):
                 {"id": issue_id, "start": issue.start_date, "end": issue.target_date}
                 for issue_id, issue in locked.items()
             ]
-            predecessors = {pred for pred, successor, _ in dependencies if successor in downstream} - downstream
+            predecessors = {pred for pred, successor, *_ in dependencies if successor in downstream} - downstream
             tasks.extend(
                 {"id": str(issue_id), "start": task_start, "end": task_end}
                 for issue_id, task_start, task_end in project_issues.filter(id__in=predecessors).values_list(
