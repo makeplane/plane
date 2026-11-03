@@ -90,17 +90,29 @@ Engine Python thuần chạy được không cần Django: `python -m unittest d
 
 ## Giới hạn đã biết
 
-- Đợt 7 còn lại: `issue_relation` expand của các endpoint khác (`issues/list/`) vẫn lộ `name`/`sequence_id` việc project không thuộc (có sẵn từ Plane gốc, ngày thì đã chặn). Hoàn tác xoá phụ thuộc khác project vẫn gửi request nếu mất quyền project hiện tại giữa chừng (backend trả 403). Cảm ứng chưa thử trên thiết bị thật (chỉ giả lập 375px). Đã sửa: `remove-relation` giờ chỉ xoá đúng `relation_type` được gửi (backend gốc bỏ qua); tạo `blocked_by`/`blocking` trên cặp đã có quan hệ khác (liên quan/trùng lặp/…) trả **409** thay vì 201 giả; hộp × của mũi tên cụt phía phải không còn sát mép.
+- Đợt 8 còn lại: lịch sử hoạt động của việc (`history/`) chỉ được ẩn mã việc relation khi việc bên kia không đọc được (khuyết điểm cũ của Plane gốc cho tên trong comment/activity khác chưa rà hết). Hoàn tác xoá phụ thuộc khác project giờ kiểm quyền cả hai project trước khi gửi.
 
-- Chỉ Finish-to-Start. Lịch làm việc + ngày lễ sửa trong hộp "Cài đặt lập lịch" trên thanh Gantt (không có trang riêng ở cài đặt workspace). Ngày lễ trùng cuối tuần không tự bù; preset VN không có Tết/Giỗ Tổ và ngày liền kề Quốc khánh chỉ ước lượng (1/9) — admin chỉnh tay. Lag/ngày lễ chỉ có ở Gantt và màn chi tiết việc, chưa có ở list.
+- Chỉ Finish-to-Start. Lịch làm việc + ngày lễ sửa trong hộp "Cài đặt lập lịch" trên thanh Gantt (không có trang riêng ở cài đặt workspace). Ngày lễ trùng ngày không làm việc tự nghỉ bù sang ngày làm việc kế (đợt 8). Preset VN có Tết (giao thừa + mùng 1–4) và Giỗ Tổ cho 2026–2030; ngày nghỉ thật do nhà nước công bố từng năm nên admin vẫn phải đối chiếu và sửa tay.
 - Phần sửa lịch workspace (quyền ADMIN) mới được test bằng test backend, chưa bấm thử trên trình duyệt.
-- Khác project (đợt 6): lùi lịch và mũi tên cụt có kiểm quyền như trên, nhưng tạo/xoá phụ thuộc khác project đã làm ở đợt 7 (xem Backend đợt 7). Lag của relation khác project luôn 0 (endpoint `issue-lags` chỉ trong project). Việc ở project người dùng không thuộc vô hình, nên việc sau nó không được dời và không có cảnh báo. `expected` bị bỏ qua khi `include_successors=false` (giống endpoint project). Khi tải 100 việc đầu, việc ngoài hàng đang hiển thị không có mũi tên cụt.
+- Khác project (đợt 6): lùi lịch và mũi tên cụt có kiểm quyền như trên, nhưng tạo/xoá phụ thuộc khác project đã làm ở đợt 7 (xem Backend đợt 7). Lag của relation khác project: đã có endpoint `POST/GET workspaces/<slug>/issue-lags/` (đợt 8) nhưng chưa có ô nhập trên mũi tên cụt (endpoint `issue-lags` chỉ trong project). Việc ở project người dùng không thuộc vô hình, nên việc sau nó không được dời và không có cảnh báo. `expected` bị bỏ qua khi `include_successors=false` (giống endpoint project). Khi tải 100 việc đầu, việc ngoài hàng đang hiển thị không có mũi tên cụt.
 - Đã đo local với 606 việc + 300 phụ thuộc (Chrome): cuộn ~11 ms/bước, đổi zoom <1,6 s, heap ~75 MB; mọi thanh đều nằm trong DOM (Plane gốc không ảo hoá hàng). Gantt việc không có nhóm thu gọn. Tải tối đa 10.000 việc để vẽ mũi tên.
 - Màn hẹp (375px): thanh công cụ cuộn ngang để thấy nút "Phụ thuộc"/"Tự lùi lịch".
 - Nếu tạo relation ở màn chi tiết việc với backend gốc, vẫn có thể tạo vòng; lõi lịch phát hiện và dừng.
-- `issueOperations.update` của Plane tự nuốt lỗi: ở đường quay về `issue-dates`, việc sau có thể được lưu dù lưu việc đang sửa thất bại.
+- Đường quay về `issue-dates` (backend cũ không có `issue-schedule`) giờ dùng `updateIssue` của store (ném lỗi) nên việc sau không được lưu nếu lưu việc đang sửa thất bại.
 - Tạo/xoá phụ thuộc khoá workspace trong thời gian ngắn.
 - Test tự động (đợt 7): logic thả/dựng mũi tên + hiệu năng 2000 việc ở `dependencies/drag-logic.test.mjs` (Node thuần, không dựng DOM; không có test trình duyệt tự động vì không thêm dependency); quyền khác project ở `test_gantt_cross_project.py`; sửa đồng thời 2 người dùng ở `test_gantt_concurrency.py` (PostgreSQL thật, nhiều luồng). Đã thử tay local (2 project member + 1 guest + 1 không thành viên): xem trước, lưu, cảnh báo guest, rollback backend cũ; chưa thử chế độ sáng.
+
+## Đợt 8 (không migration)
+
+- **Bảo mật**: related issue mà người dùng không đọc được (không là thành viên project còn sống, hoặc Guest bị hạn chế và không phải người tạo) chỉ trả `id`/`project_id`/`relation_type` ở mọi `expand=issue_relation,issue_related` (`serializers/bih_relation_visibility.py`, dùng trong `DynamicBaseSerializer` và `IssueListDetailSerializer`); `GET …/issue-relation/` bỏ hẳn các việc đó; lịch sử relation (`history/?activity_type=issue-property`) xoá mã việc. Review Codex tìm ra 3 lỗ này.
+- `expected` kèm `include_successors=false` ⇒ 400. Nghỉ bù ngày lễ (Python + TS, cùng ca test, tuyến tính). Preset lễ VN có Tết + Giỗ Tổ 2026–2030 (bảng âm lịch `LUNAR_HOLIDAYS` trong `bih_schedule.py`).
+- **Mới** `GET/POST workspaces/<slug>/issue-lags/` (`WorkspaceIssueLagsEndpoint`): lag relation khác project; đọc/ghi cần đọc được cả hai đầu, ghi cần Member/Admin ở project của **việc sau** (lấy từ `relation.issue.project_id`, không tin `relation.project`).
+- Web: hoàn tác sau khi nối (cùng/khác project); mũi tên cụt có mã việc cho phụ thuộc tới hàng chưa tải/đang lọc (chỉ đọc); test render thật `dependency-layer.render.test.mjs` (bundle `.tsx` bằng esbuild có sẵn trong cây pnpm + `react-dom/server`, không thêm dependency; chưa test tương tác con trỏ).
+- Chưa làm: hướng đi riêng khi thanh chồng nhau, ô nhập lag cho mũi tên cụt khác project, SS/FF/SF, test 2 trình duyệt. Một `PATCH` lạ trước `POST issue-schedule` ở sidebar chưa tìm ra nguồn (cần bắt mạng trên trình duyệt).
+
+## Rollback đợt 8
+
+Web `bih.11`/backend `bih.4` (hoặc xoá hai dòng `PLANE_*_IMAGE`). Không migration. Web mới + backend cũ: không hoàn tác được gì mới ngoài các toast, mũi tên cụt vẫn chạy.
 
 ## Rollback đợt 7
 
