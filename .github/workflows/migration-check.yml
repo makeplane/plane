@@ -66,11 +66,20 @@ jobs:
 
       # Fails on two leaf nodes in one app (the PR and the base branch both
       # numbered a migration off the same parent), on a dependency pointing at
-      # a migration that does not exist, and on models whose changes were never
-      # written to a migration at all.
+      # a migration that does not exist, on models whose changes were never
+      # written to a migration at all, and (exit 2, from the makemigrations
+      # override in plane/db) on a migrations_lockfile.txt that does not match
+      # the migration graph. The lockfile fails only PRs that touch migrations
+      # or the lockfile; on any other PR a stale lockfile is a warning, so one
+      # bad merge into the base branch does not turn every PR red.
       - name: Migration graph and model/migration drift
         working-directory: apps/api
-        run: uv run --no-sync python manage.py makemigrations --check --dry-run
+        run: |
+          if git diff --quiet HEAD^1 HEAD -- 'plane/*/migrations/*.py' migrations_lockfile.txt; then
+            uv run --no-sync python manage.py makemigrations --check --dry-run --lockfile-warn-only
+          else
+            uv run --no-sync python manage.py makemigrations --check --dry-run
+          fi
 
       # HEAD^1 is the base branch tip, HEAD^2 the PR head, so this is exactly
       # what the PR does to files that already exist on the base branch.
@@ -86,4 +95,26 @@ jobs:
             echo "Add a new migration instead. If the rewrite is deliberate and no"
             echo "environment has applied the old file, label the PR 'migration-history-override'."
             exit 1
+          fi
+
+  # Adds the migrations label. Its own job so the token that can edit PRs never
+  # sits next to the PR code the job above runs: this one has no checkout and
+  # only reads the file list. Fork PRs get a read-only token, so they skip it.
+  label:
+    name: label migration PRs
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Add the migrations label
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          FILES=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/files" --paginate --jq '.[].filename')
+          if grep -q '^apps/api/plane/[^/]*/migrations/0[^/]*\.py$' <<< "$FILES"; then
+            gh pr edit "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --add-label "🔄migrations"
           fi

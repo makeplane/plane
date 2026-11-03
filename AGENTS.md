@@ -32,6 +32,12 @@
 - Add/upgrade a dependency: `uv add <pkg>==<version>` (or `--group test`/`--group dev`), or edit `pyproject.toml` and run `uv lock`
 - Run tools: `uv run python manage.py ...`, `uv run ruff check .`
 
+## Migrations
+
+- Generate migrations with `uv run python manage.py makemigrations <app> -n <name>`. The command also rewrites `apps/api/migrations_lockfile.txt`; commit it with the migration and never edit it by hand
+- A merge conflict in the lockfile means another PR added a migration to the same app first: merge `preview`, delete your migration, and run `makemigrations` again
+- `migration-check.yml` fails a PR that touches migrations when the lockfile does not match the migration graph
+
 ## Backend tests (Docker)
 
 The Django/pytest suite for `apps/api` runs in an isolated stack defined by `docker-compose-test.yml` at the repo root.
