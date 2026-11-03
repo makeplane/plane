@@ -52,7 +52,8 @@ export const CycleDetailsSidebar = observer(function CycleDetailsSidebar(props: 
           />
         </DrawerHeaderActions>
       </DrawerHeader>
-      <DrawerBody render={<div className="vertical-scrollbar scrollbar-sm" />}>
+      {/* -mt-1 trims the drawer's 24px header gap to 20px so the cycle title sits closer to the close button. */}
+      <DrawerBody render={<div className="vertical-scrollbar -mt-1 scrollbar-sm" />}>
         {cycleDetails ? (
           <div className="pb-2">
             <div className="flex w-full flex-col gap-6 pb-6">
