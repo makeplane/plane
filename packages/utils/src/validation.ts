@@ -19,11 +19,12 @@
 
 /**
  * Person Name Pattern (for first_name, last_name)
- * Allows: Unicode letters (\p{L}), spaces, hyphens, apostrophes
- * Use case: Accommodates international names like "José", "李明", "محمد", "Müller"
+ * Allows: Unicode letters (\p{L}), spaces, hyphens, apostrophes, periods
+ * Use case: Accommodates international names like "José", "李明", "محمد", "Müller" and
+ * names with initials like "J. R. R. Tolkien" or GitLab-style usernames ("john.doe")
  * Blocks: Injection-risk characters and special symbols
  */
-export const PERSON_NAME_REGEX = /^[\p{L}\s'-]+$/u;
+export const PERSON_NAME_REGEX = /^[\p{L}\s'.-]+$/u;
 
 /**
  * Display Name Pattern (for display_name, usernames)
@@ -67,6 +68,7 @@ export const SLUG_REGEX = /^[\p{L}\p{N}_-]+$/u;
  * validatePersonName("John") // returns true
  * validatePersonName("O'Brien") // returns true
  * validatePersonName("Jean-Paul") // returns true
+ * validatePersonName("J. R. R. Tolkien") // returns true
  * validatePersonName("John<script>") // returns error message
  */
 export const validatePersonName = (name: string): boolean | string => {
@@ -83,7 +85,7 @@ export const validatePersonName = (name: string): boolean | string => {
   }
 
   if (!PERSON_NAME_REGEX.test(name)) {
-    return "Names can only contain letters, spaces, hyphens, and apostrophes";
+    return "Names can only contain letters, spaces, hyphens, apostrophes, and periods";
   }
 
   return true;
