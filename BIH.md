@@ -128,7 +128,7 @@ Engine Python thuần chạy được không cần Django: `python -m unittest d
 - **Ngày lễ**: đối chiếu `LUNAR_HOLIDAYS` với báo chí: 2026 (Tết 17/2, Giỗ Tổ 26/4) và 2027 (Tết 6/2, Giỗ Tổ 16/4) khớp. 2028–2030 chưa có thông báo chính thức, chưa xác minh. Không sửa.
 - **Test 409**: `test_retry_with_conflict_preview_applies_after_409` (project + workspace): sau 409, gửi lại với `expected` lấy từ thân 409 thì lưu được. Pytest Gantt 169 pass.
 - **Loại phụ thuộc cho mũi tên cụt**: menu có ô "Loại" (chỉ mục sửa được), lưu qua `POST workspaces/<slug>/issue-lags/` kèm `dep_type`; đổi lag giữ nguyên loại. Hook có `setExternalDepType`. Đã thử local (web `bih.15`): đổi SS ⇒ DB `SS`, đổi lag ⇒ vẫn `SS`.
-- **`PATCH` lạ ở sidebar**: nguyên nhân nghi vấn (chưa tái hiện): `useDetailAutoSchedule` lưu thẳng ngày khi `deps` chưa tải xong. Chỉ thêm toast cảnh báo, không chặn lưu; chưa thử toast trong trình duyệt.
+- **`PATCH` lạ ở sidebar**: nguyên nhân nghi vấn (chưa tái hiện): `useDetailAutoSchedule` lưu thẳng ngày khi `deps` chưa tải xong. Chỉ thêm toast cảnh báo, không chặn lưu. Đã thử local (web `bih.15`, chặn request `expand=issue_relation` cho treo): ở trang chi tiết đầy đủ `/browse/<mã>/` đổi ngày ⇒ toast hiện, PATCH đi thẳng. Peek view (khung bên phải) không dùng hook này nên không có toast và không tự lùi lịch.
 
 ## Rollback đợt 10
 
