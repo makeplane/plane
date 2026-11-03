@@ -235,6 +235,19 @@ class TestGanttSchedule:
         assert response.status_code == status.HTTP_200_OK
         assert _dates(gantt_issues)["C"] == (date(2026, 11, 9), date(2026, 11, 11))
 
+    def test_expected_without_successors_is_400(self, session_client, gantt_project, gantt_issues):
+        _chain(gantt_issues)
+        before = _dates(gantt_issues)
+
+        response = session_client.post(
+            _project_url(gantt_project, "issue-schedule"),
+            {"change": _change(gantt_issues["A"]), "include_successors": False, "expected": []},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert _dates(gantt_issues) == before
+
     def test_multiple_predecessors(self, session_client, gantt_project, gantt_issues):
         _chain(gantt_issues)
         predecessor = Issue.objects.create(

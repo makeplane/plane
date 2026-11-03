@@ -50,6 +50,7 @@ export function useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issue
   const {
     issue: { getIssueById },
     rootIssueStore,
+    updateIssue,
   } = useIssueDetail();
   const { getProjectIdentifierById } = useProject();
   const [schedulePreview, setSchedulePreview] = useState<{
@@ -154,7 +155,8 @@ export function useDetailAutoSchedule({ workspaceSlug, projectId, issueId, issue
                       throw error;
                     }
                   }
-                  await saveDate();
+                  // issueOperations.update swallows errors; here a failure must stop the successor update.
+                  await updateIssue(workspaceSlug, projectId, issueId, { [field]: value });
                   await issueService.updateIssueDates(
                     workspaceSlug,
                     projectId,

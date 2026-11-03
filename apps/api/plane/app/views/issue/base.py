@@ -1234,6 +1234,8 @@ class IssueScheduleEndpoint(BaseAPIView):
                 if not all(field in parsed for field in ("start_date", "target_date")) or parsed["id"] in expected:
                     raise ValueError("Invalid expected updates")
                 expected[parsed["id"]] = (parsed["start_date"], parsed["target_date"])
+            if not include_successors:
+                raise ValueError("expected requires include_successors")
         return change, include_successors, dry_run, mode, pull_earlier, expected
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])

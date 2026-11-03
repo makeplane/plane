@@ -221,7 +221,13 @@ export function useGanttDependencies(
   ) => {
     if (!enabled || !workspaceSlug || !projectId || !relationsRef.current || !projectIssueIds.current.has(localId))
       return;
-    if (externalProjectId === projectId || (getProjectById(externalProjectId)?.member_role ?? 0) < 15) return;
+    // Undo can run long after the click: both projects must still be writable by the user.
+    if (
+      externalProjectId === projectId ||
+      (getProjectById(externalProjectId)?.member_role ?? 0) < 15 ||
+      (getProjectById(projectId)?.member_role ?? 0) < 15
+    )
+      return;
     if (saving.current) {
       setToast({ type: TOAST_TYPE.WARNING, title: "Đang lưu phụ thuộc" });
       return;
