@@ -230,32 +230,6 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
             </div>
           </div>
         </IssueLayoutHOC>
-
-        {/* mobile view */}
-        <div className="md:hidden">
-          <p className="p-4 text-h5-semibold">
-            {`${selectedDate.getDate()} ${
-              MONTHS_LIST[selectedDate.getMonth() + 1].title
-            }, ${selectedDate.getFullYear()}`}
-          </p>
-          <CalendarIssueBlocks
-            date={selectedDate}
-            issueIdList={issueIdList}
-            quickActions={quickActions}
-            loadMoreIssues={loadMoreIssues}
-            getPaginationData={getPaginationData}
-            getGroupIssueCount={getGroupIssueCount}
-            enableQuickIssueCreate={enableQuickAdd}
-            disableIssueCreation={!enableIssueCreation}
-            quickAddCallback={quickAddCallback}
-            addIssuesToView={addIssuesToView}
-            readOnly={readOnly}
-            canEditProperties={canEditProperties}
-            isDragDisabled
-            isMobileView
-            isEpic={isEpic}
-          />
-        </div>
       </div>
     </>
   );
