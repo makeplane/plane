@@ -133,6 +133,7 @@ from .issue.bih_schedule import (
     WorkspaceScheduleSettingsEndpoint,
     WorkspaceScheduleHolidaysEndpoint,
     ProjectIssueLagsEndpoint,
+    WorkspaceIssueLagsEndpoint,
     WorkspaceIssueScheduleEndpoint,
 )
 

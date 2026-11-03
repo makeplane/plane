@@ -16,6 +16,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from plane.app.permissions import ROLE, allow_permission
+from plane.app.serializers.bih_relation_visibility import current_visibility, readable_issues_q
 from plane.app.views.base import BaseAPIView
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
@@ -183,6 +184,55 @@ class ProjectIssueLagsEndpoint(BaseAPIView):
             relation = get_object_or_404(
                 self.relations(slug, project_id), issue_id=successor, related_issue_id=predecessor
             )
+            relation.lag_days = lag
+            relation.save(update_fields=["lag_days", "updated_at"])
+        return Response({"predecessor": predecessor, "successor": successor, "lag_days": lag})
+
+
+class WorkspaceIssueLagsEndpoint(BaseAPIView):
+    """Cross-project twin of ProjectIssueLagsEndpoint: lags of dependencies whose two issues the user may read."""
+
+    @staticmethod
+    def relations(slug):
+        access, user_id = current_visibility()
+        readable = Issue.objects.filter(workspace__slug=slug).filter(readable_issues_q(access, user_id))
+        return IssueRelation.objects.filter(
+            workspace__slug=slug,
+            relation_type="blocked_by",
+            issue__in=readable,
+            related_issue__in=readable,
+        ), access
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug):
+        relations, _ = self.relations(slug)
+        return Response([
+            {"predecessor": str(pred), "successor": str(succ), "lag_days": lag}
+            for pred, succ, lag in relations.exclude(lag_days=0)
+            .order_by("related_issue_id", "issue_id").values_list("related_issue_id", "issue_id", "lag_days")
+        ])
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def post(self, request, slug):
+        try:
+            body = request.data
+            if not isinstance(body, dict):
+                raise ValueError("Invalid lag")
+            lag = body.get("lag_days")
+            if type(lag) is not int or not -365 <= lag <= 365:
+                raise ValueError("Invalid lag_days")
+            predecessor = str(UUID(body.get("predecessor", "")))
+            successor = str(UUID(body.get("successor", "")))
+        except (AttributeError, TypeError, ValueError):
+            raise ValidationError({"message": "Invalid lag or issue IDs"})
+        with transaction.atomic():
+            get_object_or_404(Workspace.objects.select_for_update(), slug=slug)
+            relations, access = self.relations(slug)
+            relation = get_object_or_404(relations, issue_id=successor, related_issue_id=predecessor)
+            # Same rule as moving the successor: only a Member or Admin of the successor's project may change it.
+            role = access.get(str(relation.project_id), (0, False))[0]
+            if role < ROLE.MEMBER.value:
+                return Response({"message": "No permission"}, status=status.HTTP_403_FORBIDDEN)
             relation.lag_days = lag
             relation.save(update_fields=["lag_days", "updated_at"])
         return Response({"predecessor": predecessor, "successor": successor, "lag_days": lag})

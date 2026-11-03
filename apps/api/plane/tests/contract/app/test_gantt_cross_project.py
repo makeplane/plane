@@ -330,3 +330,62 @@ class TestRelationKinds:
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert IssueRelation.objects.filter(relation_type="relates_to").exists()
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestWorkspaceLags:
+    def _url(self, workspace):
+        return f"/api/workspaces/{workspace.slug}/issue-lags/"
+
+    def _body(self, predecessor, successor, lag):
+        return {"predecessor": str(predecessor.id), "successor": str(successor.id), "lag_days": lag}
+
+    def test_set_and_list_cross_project_lag_and_schedule_uses_it(self, session_client, workspace, create_user):
+        a, b = _project(workspace, create_user, "AAA", 15), _project(workspace, create_user, "BBB", 15)
+        first, second = _issue(a, 1, 3), _issue(b, 4, 6)
+        _link(first, second)
+
+        response = session_client.post(self._url(workspace), self._body(first, second, 2), format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert session_client.get(self._url(workspace)).json() == [
+            {"predecessor": str(first.id), "successor": str(second.id), "lag_days": 2}
+        ]
+        preview = session_client.post(
+            _url(workspace),
+            {"change": _change(first), "include_successors": True, "dry_run": True},
+            format="json",
+        )
+        assert preview.json()["updates"][0]["new_start"] == "2026-11-08"
+
+    def test_guest_on_successor_project_cannot_change_lag(self, session_client, workspace, create_user):
+        a, b = _project(workspace, create_user, "AAA", 15), _project(workspace, create_user, "BBB", 5)
+        first, second = _issue(a, 1, 3), _issue(b, 4, 6)
+        _link(first, second)
+
+        response = session_client.post(self._url(workspace), self._body(first, second, 2), format="json")
+
+        # A Guest who cannot even read the successor gets 404; one who can read it gets 403.
+        assert response.status_code in (status.HTTP_403_FORBIDDEN, status.HTTP_404_NOT_FOUND)
+        assert IssueRelation.objects.get().lag_days == 0
+
+    def test_unreadable_pair_is_404_and_not_listed(self, session_client, workspace, create_user):
+        a, hidden = _project(workspace, create_user, "AAA", 15), _project(workspace, create_user, "HID", None)
+        first, second = _issue(a, 1, 3), _issue(hidden, 4, 6)
+        relation = _link(first, second)
+        IssueRelation.objects.filter(id=relation.id).update(lag_days=3)
+
+        assert session_client.post(self._url(workspace), self._body(first, second, 2), format="json").status_code == 404
+        assert session_client.get(self._url(workspace)).json() == []
+        assert IssueRelation.objects.get().lag_days == 3
+
+    @pytest.mark.parametrize("lag", [366, -366, True, "1", None])
+    def test_invalid_lag_is_400(self, session_client, workspace, create_user, lag):
+        a = _project(workspace, create_user, "AAA", 15)
+        first, second = _issue(a, 1, 3), _issue(a, 4, 6)
+        _link(first, second)
+
+        response = session_client.post(self._url(workspace), self._body(first, second, lag), format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
