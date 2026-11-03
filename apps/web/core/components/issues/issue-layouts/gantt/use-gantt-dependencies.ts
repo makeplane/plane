@@ -208,7 +208,9 @@ export function useGanttDependencies(
       ? "Không đủ quyền ở project bên kia"
       : message === "Circular dependency"
         ? "Nối như vậy sẽ tạo vòng lặp phụ thuộc"
-        : "Không lưu được phụ thuộc";
+        : status === 409
+          ? "Hai việc đã có quan hệ khác (liên quan/trùng lặp) — xoá quan hệ đó trước"
+          : "Không lưu được phụ thuộc";
   };
 
   const createExternal = async (

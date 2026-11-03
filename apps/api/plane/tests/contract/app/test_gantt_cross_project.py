@@ -289,3 +289,42 @@ def test_issues_detail_hides_dates_of_non_member_project(session_client, workspa
     row = next(item for item in response.json()["results"] if item["id"] == str(first.id))
     assert row["issue_relation"][0]["id"] == str(second.id)
     assert "start_date" not in row["issue_relation"][0]
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestRelationKinds:
+    def _relates(self, a, b):
+        IssueRelation.objects.create(
+            issue=b, related_issue=a, relation_type="relates_to", project=b.project, workspace=b.workspace
+        )
+
+    def test_create_dependency_over_other_relation_is_409(
+        self, session_client, workspace, create_user, relation_activity
+    ):
+        a = _project(workspace, create_user, "AAA", 15)
+        first, second = _issue(a, 1, 3), _issue(a, 4, 6)
+        self._relates(first, second)
+
+        response = session_client.post(
+            _rel_url(a, second), {"relation_type": "blocked_by", "issues": [str(first.id)]}, format="json"
+        )
+
+        assert response.status_code == status.HTTP_409_CONFLICT
+        assert IssueRelation.objects.get().relation_type == "relates_to"
+
+    def test_remove_dependency_keeps_other_relation_kind(
+        self, session_client, workspace, create_user, relation_activity
+    ):
+        a = _project(workspace, create_user, "AAA", 15)
+        first, second = _issue(a, 1, 3), _issue(a, 4, 6)
+        self._relates(first, second)
+
+        response = session_client.post(
+            _rel_url(a, second, "remove-relation"),
+            {"related_issue": str(first.id), "relation_type": "blocked_by"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert IssueRelation.objects.filter(relation_type="relates_to").exists()

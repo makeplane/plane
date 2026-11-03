@@ -288,6 +288,21 @@ class IssueRelationViewSet(BaseViewSet):
                 predecessor, successor = (
                     (str(issue_id), str(issue)) if relation_type == "blocking" else (str(issue), str(issue_id))
                 )
+                # The pair can hold only one relation: ignore_conflicts would otherwise answer 201 and store nothing.
+                clash = (
+                    IssueRelation.objects.filter(workspace_id=project.workspace_id)
+                    .filter(
+                        Q(issue_id=successor, related_issue_id=predecessor)
+                        | Q(issue_id=predecessor, related_issue_id=successor)
+                    )
+                    .exclude(relation_type="blocked_by")
+                    .exists()
+                )
+                if clash:
+                    return Response(
+                        {"message": "The issues already have another relation"},
+                        status=status.HTTP_409_CONFLICT,
+                    )
                 cycle = find_cycle_through(dependencies, predecessor, successor)
                 if cycle:
                     return Response(
@@ -353,6 +368,10 @@ class IssueRelationViewSet(BaseViewSet):
         ).filter(
             Q(issue_id=related_issue, related_issue_id=issue_id) | Q(issue_id=issue_id, related_issue_id=related_issue)
         )
+        relation_type = request.data.get("relation_type")
+        if relation_type:
+            # BIH: delete only the relation of the requested kind (two issues can hold both blocked_by and relates_to).
+            issue_relations = issue_relations.filter(relation_type=get_actual_relation(relation_type))
         issue_relations = issue_relations.first()
         if issue_relations is None:
             return Response({"message": "Relation not found"}, status=status.HTTP_404_NOT_FOUND)

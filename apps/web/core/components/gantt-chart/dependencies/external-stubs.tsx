@@ -164,7 +164,7 @@ export const ExternalStubs = observer(function ExternalStubs({
               ref={menuRef}
               data-gantt-dependency-control
               className="pointer-events-auto absolute z-[8] w-fit rounded border border-subtle bg-layer-1 p-1 text-11 text-primary"
-              style={{ left: Math.max(0, successor ? to : from - 120), top: row.y + 4 }}
+              style={{ left: Math.max(0, successor ? from - 44 : from - 120), top: row.y + 4 }}
             >
               {group.map((item) => (
                 <div
