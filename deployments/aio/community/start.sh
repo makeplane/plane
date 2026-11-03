@@ -221,7 +221,7 @@ main(){
         esac
     done < plane.env
 
-    /usr/local/bin/supervisord -c /etc/supervisor/conf.d/supervisor.conf
+    exec /usr/local/bin/supervisord -c /etc/supervisor/conf.d/supervisor.conf
 }
 
 main "$@"
