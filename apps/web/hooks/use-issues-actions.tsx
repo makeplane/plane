@@ -103,45 +103,45 @@ const useProjectIssueActions = () => {
   );
 
   const createIssue = useCallback(
-    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.createIssue(workspaceSlug, projectId, data);
+    async (targetProjectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.createIssue(workspaceSlug, targetProjectId, data);
     },
     [issues.createIssue, workspaceSlug]
   );
   const quickAddIssue = useCallback(
-    async (projectId: string | undefined | null, data: TIssue) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.quickAddIssue(workspaceSlug, projectId, data);
+    async (targetProjectId: string | undefined | null, data: TIssue) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.quickAddIssue(workspaceSlug, targetProjectId, data);
     },
     [issues.quickAddIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
+    async (targetProjectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.updateIssue(workspaceSlug, targetProjectId, issueId, data);
     },
     [issues.updateIssue, workspaceSlug]
   );
   const removeIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.removeIssue(workspaceSlug, projectId, issueId);
+    async (targetProjectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.removeIssue(workspaceSlug, targetProjectId, issueId);
     },
     [issues.removeIssue, workspaceSlug]
   );
   const archiveIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.archiveIssue(workspaceSlug, projectId, issueId);
+    async (targetProjectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.archiveIssue(workspaceSlug, targetProjectId, issueId);
     },
     [issues.archiveIssue, workspaceSlug]
   );
 
   const updateFilters = useCallback(
-    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+    async (targetProjectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!workspaceSlug) return;
-      return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters);
+      return await issuesFilter.updateFilters(workspaceSlug, targetProjectId, filterType, filters);
     },
     [issuesFilter.updateFilters, workspaceSlug]
   );
@@ -185,45 +185,45 @@ const useProjectEpicsActions = () => {
   );
 
   const createIssue = useCallback(
-    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.createIssue(workspaceSlug, projectId, data);
+    async (targetProjectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.createIssue(workspaceSlug, targetProjectId, data);
     },
     [issues.createIssue, workspaceSlug]
   );
   const quickAddIssue = useCallback(
-    async (projectId: string | undefined | null, data: TIssue) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.quickAddIssue(workspaceSlug, projectId, data);
+    async (targetProjectId: string | undefined | null, data: TIssue) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.quickAddIssue(workspaceSlug, targetProjectId, data);
     },
     [issues.quickAddIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
+    async (targetProjectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.updateIssue(workspaceSlug, targetProjectId, issueId, data);
     },
     [issues.updateIssue, workspaceSlug]
   );
   const removeIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.removeIssue(workspaceSlug, projectId, issueId);
+    async (targetProjectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.removeIssue(workspaceSlug, targetProjectId, issueId);
     },
     [issues.removeIssue, workspaceSlug]
   );
   const archiveIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.archiveIssue(workspaceSlug, projectId, issueId);
+    async (targetProjectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.archiveIssue(workspaceSlug, targetProjectId, issueId);
     },
     [issues.archiveIssue, workspaceSlug]
   );
 
   const updateFilters = useCallback(
-    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+    async (targetProjectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!workspaceSlug) return;
-      return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters);
+      return await issuesFilter.updateFilters(workspaceSlug, targetProjectId, filterType, filters);
     },
     [issuesFilter.updateFilters, workspaceSlug]
   );
@@ -253,9 +253,15 @@ const useCycleIssueActions = () => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
 
   const fetchIssues = useCallback(
-    async (loadType: TLoader, options: IssuePaginationOptions, cycleId?: string) => {
-      if (!workspaceSlug || !projectId || !cycleId) return;
-      return issues.fetchIssues(workspaceSlug.toString(), projectId.toString(), loadType, options, cycleId.toString());
+    async (loadType: TLoader, options: IssuePaginationOptions, targetCycleId?: string) => {
+      if (!workspaceSlug || !projectId || !targetCycleId) return;
+      return issues.fetchIssues(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        loadType,
+        options,
+        targetCycleId.toString()
+      );
     },
     [issues.fetchIssues, workspaceSlug, projectId]
   );
@@ -274,52 +280,52 @@ const useCycleIssueActions = () => {
   );
 
   const createIssue = useCallback(
-    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
-      if (!cycleId || !workspaceSlug || !projectId) return;
-      return await issues.createIssue(workspaceSlug, projectId, data, cycleId);
+    async (targetProjectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!cycleId || !workspaceSlug || !targetProjectId) return;
+      return await issues.createIssue(workspaceSlug, targetProjectId, data, cycleId);
     },
     [issues.createIssue, cycleId, workspaceSlug]
   );
   const quickAddIssue = useCallback(
-    async (projectId: string | undefined | null, data: TIssue) => {
-      if (!cycleId || !workspaceSlug || !projectId) return;
-      return await issues.quickAddIssue(workspaceSlug, projectId, data, cycleId);
+    async (targetProjectId: string | undefined | null, data: TIssue) => {
+      if (!cycleId || !workspaceSlug || !targetProjectId) return;
+      return await issues.quickAddIssue(workspaceSlug, targetProjectId, data, cycleId);
     },
     [issues.quickAddIssue, workspaceSlug, cycleId]
   );
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
+    async (targetProjectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.updateIssue(workspaceSlug, targetProjectId, issueId, data);
     },
     [issues.updateIssue, workspaceSlug]
   );
   const removeIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.removeIssue(workspaceSlug, projectId, issueId);
+    async (targetProjectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.removeIssue(workspaceSlug, targetProjectId, issueId);
     },
     [issues.removeIssue, workspaceSlug]
   );
   const removeIssueFromView = useCallback(
-    async (projectId: string | undefined | null, issueId: string) => {
-      if (!cycleId || !workspaceSlug || !projectId) return;
-      return await issues.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+    async (targetProjectId: string | undefined | null, issueId: string) => {
+      if (!cycleId || !workspaceSlug || !targetProjectId) return;
+      return await issues.removeIssueFromCycle(workspaceSlug, targetProjectId, cycleId, issueId);
     },
     [issues.removeIssueFromCycle, cycleId, workspaceSlug]
   );
   const archiveIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.archiveIssue(workspaceSlug, projectId, issueId);
+    async (targetProjectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.archiveIssue(workspaceSlug, targetProjectId, issueId);
     },
     [issues.archiveIssue, workspaceSlug]
   );
 
   const updateFilters = useCallback(
-    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+    async (targetProjectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!cycleId || !workspaceSlug) return;
-      return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, cycleId);
+      return await issuesFilter.updateFilters(workspaceSlug, targetProjectId, filterType, filters, cycleId);
     },
     [issuesFilter.updateFilters, cycleId, workspaceSlug]
   );
@@ -360,9 +366,15 @@ const useModuleIssueActions = () => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
 
   const fetchIssues = useCallback(
-    async (loadType: TLoader, options: IssuePaginationOptions, moduleId?: string) => {
-      if (!workspaceSlug || !projectId || !moduleId) return;
-      return issues.fetchIssues(workspaceSlug.toString(), projectId.toString(), loadType, options, moduleId.toString());
+    async (loadType: TLoader, options: IssuePaginationOptions, targetModuleId?: string) => {
+      if (!workspaceSlug || !projectId || !targetModuleId) return;
+      return issues.fetchIssues(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        loadType,
+        options,
+        targetModuleId.toString()
+      );
     },
     [issues.fetchIssues, workspaceSlug, projectId]
   );
@@ -381,52 +393,52 @@ const useModuleIssueActions = () => {
   );
 
   const createIssue = useCallback(
-    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
-      if (!moduleId || !workspaceSlug || !projectId) return;
-      return await issues.createIssue(workspaceSlug, projectId, data, moduleId);
+    async (targetProjectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!moduleId || !workspaceSlug || !targetProjectId) return;
+      return await issues.createIssue(workspaceSlug, targetProjectId, data, moduleId);
     },
     [issues.createIssue, moduleId, workspaceSlug]
   );
   const quickAddIssue = useCallback(
-    async (projectId: string | undefined | null, data: TIssue) => {
-      if (!moduleId || !workspaceSlug || !projectId) return;
-      return await issues.quickAddIssue(workspaceSlug, projectId, data, moduleId);
+    async (targetProjectId: string | undefined | null, data: TIssue) => {
+      if (!moduleId || !workspaceSlug || !targetProjectId) return;
+      return await issues.quickAddIssue(workspaceSlug, targetProjectId, data, moduleId);
     },
     [issues.quickAddIssue, workspaceSlug, moduleId]
   );
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
+    async (targetProjectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.updateIssue(workspaceSlug, targetProjectId, issueId, data);
     },
     [issues.updateIssue, workspaceSlug]
   );
   const removeIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.removeIssue(workspaceSlug, projectId, issueId);
+    async (targetProjectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.removeIssue(workspaceSlug, targetProjectId, issueId);
     },
     [issues.removeIssue, workspaceSlug]
   );
   const removeIssueFromView = useCallback(
-    async (projectId: string | undefined | null, issueId: string) => {
-      if (!moduleId || !workspaceSlug || !projectId) return;
-      return await issues.removeIssuesFromModule(workspaceSlug, projectId, moduleId, [issueId]);
+    async (targetProjectId: string | undefined | null, issueId: string) => {
+      if (!moduleId || !workspaceSlug || !targetProjectId) return;
+      return await issues.removeIssuesFromModule(workspaceSlug, targetProjectId, moduleId, [issueId]);
     },
     [issues.removeIssuesFromModule, moduleId, workspaceSlug]
   );
   const archiveIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.archiveIssue(workspaceSlug, projectId, issueId);
+    async (targetProjectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.archiveIssue(workspaceSlug, targetProjectId, issueId);
     },
     [issues.archiveIssue, moduleId, workspaceSlug]
   );
 
   const updateFilters = useCallback(
-    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+    async (targetProjectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!moduleId || !workspaceSlug) return;
-      return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, moduleId);
+      return await issuesFilter.updateFilters(workspaceSlug, targetProjectId, filterType, filters, moduleId);
     },
     [issuesFilter.updateFilters, moduleId]
   );
@@ -537,9 +549,9 @@ const useProjectViewIssueActions = () => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
 
   const fetchIssues = useCallback(
-    async (loadType: TLoader, options: IssuePaginationOptions, viewId?: string) => {
-      if (!workspaceSlug || !projectId || !viewId) return;
-      return issues.fetchIssues(workspaceSlug.toString(), projectId.toString(), viewId, loadType, options);
+    async (loadType: TLoader, options: IssuePaginationOptions, targetViewId?: string) => {
+      if (!workspaceSlug || !projectId || !targetViewId) return;
+      return issues.fetchIssues(workspaceSlug.toString(), projectId.toString(), targetViewId, loadType, options);
     },
     [issues.fetchIssues, workspaceSlug, projectId]
   );
@@ -552,45 +564,45 @@ const useProjectViewIssueActions = () => {
   );
 
   const createIssue = useCallback(
-    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.createIssue(workspaceSlug, projectId, data);
+    async (targetProjectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.createIssue(workspaceSlug, targetProjectId, data);
     },
     [issues.createIssue, workspaceSlug]
   );
   const quickAddIssue = useCallback(
-    async (projectId: string | undefined | null, data: TIssue) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.quickAddIssue(workspaceSlug, projectId, data);
+    async (targetProjectId: string | undefined | null, data: TIssue) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.quickAddIssue(workspaceSlug, targetProjectId, data);
     },
     [issues.quickAddIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
+    async (targetProjectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.updateIssue(workspaceSlug, targetProjectId, issueId, data);
     },
     [issues.updateIssue, workspaceSlug]
   );
   const removeIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.removeIssue(workspaceSlug, projectId, issueId);
+    async (targetProjectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.removeIssue(workspaceSlug, targetProjectId, issueId);
     },
     [issues.removeIssue, workspaceSlug]
   );
   const archiveIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.archiveIssue(workspaceSlug, projectId, issueId);
+    async (targetProjectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.archiveIssue(workspaceSlug, targetProjectId, issueId);
     },
     [issues.archiveIssue, workspaceSlug]
   );
 
   const updateFilters = useCallback(
-    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+    async (targetProjectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!viewId || !workspaceSlug) return;
-      return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, viewId);
+      return await issuesFilter.updateFilters(workspaceSlug, targetProjectId, filterType, filters, viewId);
     },
     [issuesFilter.updateFilters, viewId, workspaceSlug]
   );
@@ -634,24 +646,24 @@ const useArchivedIssueActions = () => {
   );
 
   const removeIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.removeIssue(workspaceSlug, projectId, issueId);
+    async (targetProjectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.removeIssue(workspaceSlug, targetProjectId, issueId);
     },
     [issues.removeIssue]
   );
   const restoreIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.restoreIssue(workspaceSlug, projectId, issueId);
+    async (targetProjectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !targetProjectId) return;
+      return await issues.restoreIssue(workspaceSlug, targetProjectId, issueId);
     },
     [issues.restoreIssue]
   );
 
   const updateFilters = useCallback(
-    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+    async (targetProjectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!workspaceSlug) return;
-      return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters);
+      return await issuesFilter.updateFilters(workspaceSlug, targetProjectId, filterType, filters);
     },
     [issuesFilter.updateFilters]
   );
