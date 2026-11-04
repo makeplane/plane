@@ -53,6 +53,7 @@ export const ProjectLayoutRoot = observer(function ProjectLayoutRoot() {
   const workItemFilters = projectId ? issuesFilter?.getIssueFilters(projectId) : undefined;
   const activeLayout = workItemFilters?.displayFilters?.layout;
 
+  // keep this key equal to the preload in layouts/auth-layout/project-wrapper.tsx
   useSWR(
     workspaceSlug && projectId ? `PROJECT_ISSUES_${workspaceSlug}_${projectId}` : null,
     async () => {
