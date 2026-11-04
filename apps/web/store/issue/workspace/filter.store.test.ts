@@ -22,10 +22,10 @@ const PAGINATION: IssuePaginationOptions = { canGroup: true, perPageCount: 100 }
 // production reaches the same call through a loosely typed hook (workspace-board-root.tsx)
 const BOARD_VIEW_ID = WORKSPACE_BOARD_VIEW_ID as TStaticViewTypes;
 
-const createFilterStore = () => {
+const createFilterStore = (globalViewId: string | undefined = BOARD_VIEW_ID) => {
   const fetchIssuesWithExistingPagination = vi.fn();
   const rootIssueStore = {
-    globalViewId: BOARD_VIEW_ID,
+    globalViewId,
     currentUserId: USER_ID,
     workspaceIssues: { fetchIssuesWithExistingPagination },
   } as unknown as IIssueRootStore;
@@ -80,6 +80,23 @@ describe("WorkspaceIssuesFilter board view (89bfd0a2 regression guard)", () => {
       displayProperties: EXPECTED_DISPLAY_PROPERTIES,
       kanbanFilters: { group_by: [], sub_group_by: [] },
     });
+  });
+
+  it("exposes board filters without a route view id", async () => {
+    const { store } = createFilterStore();
+    store.rootIssueStore.globalViewId = undefined;
+    await store.fetchFilters(WORKSPACE_SLUG, BOARD_VIEW_ID);
+
+    expect(store.issueFilters?.displayFilters).toEqual(EXPECTED_BOARD_DISPLAY_FILTERS);
+  });
+
+  it("prefers the route view id over the active board view", async () => {
+    const { store } = createFilterStore("all-issues");
+    await store.fetchFilters(WORKSPACE_SLUG, "all-issues");
+    await store.fetchFilters(WORKSPACE_SLUG, BOARD_VIEW_ID);
+
+    expect(store.issueFilters).toEqual(store.getIssueFilters("all-issues"));
+    expect(store.issueFilters?.displayFilters?.layout).toBe(EIssueLayoutTypes.SPREADSHEET);
   });
 
   it("builds kanban params for the board even when a stored layout says otherwise", async () => {

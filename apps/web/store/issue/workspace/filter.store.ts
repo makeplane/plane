@@ -60,6 +60,7 @@ export interface IWorkspaceIssuesFilter extends TBaseFilterStore {
 export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWorkspaceIssuesFilter {
   // observables
   filters: { [viewId: string]: IIssueFilters } = {};
+  activeViewId: string | undefined;
   // root store
   rootIssueStore;
   // services
@@ -70,6 +71,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     makeObservable(this, {
       // observables
       filters: observable,
+      activeViewId: observable,
       // computed
       issueFilters: computed,
       appliedFilters: computed,
@@ -117,7 +119,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
   };
 
   get issueFilters() {
-    const viewId = this.rootIssueStore.globalViewId;
+    const viewId = this.rootIssueStore.globalViewId ?? this.activeViewId;
     return this.getIssueFilters(viewId);
   }
 
@@ -154,6 +156,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
   );
 
   fetchFilters = async (workspaceSlug: string, viewId: TWorkspaceFilters) => {
+    this.activeViewId = viewId;
     if (viewId === WORKSPACE_BOARD_VIEW_ID) {
       runInAction(() => {
         set(this.filters, [viewId, "richFilters"], undefined);
@@ -199,13 +202,13 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
     // Get the view details if the view is not a static view
     if (STATIC_VIEW_TYPES.includes(viewId) === false) {
-      const _filters = await this.issueFilterService.getViewDetails(workspaceSlug, viewId);
-      richFilters = _filters?.rich_filters;
-      displayFilters = this.computedDisplayFilters(_filters?.display_filters, {
+      const viewFilters = await this.issueFilterService.getViewDetails(workspaceSlug, viewId);
+      richFilters = viewFilters?.rich_filters;
+      displayFilters = this.computedDisplayFilters(viewFilters?.display_filters, {
         layout: EIssueLayoutTypes.SPREADSHEET,
         order_by: "-created_at",
       });
-      displayProperties = this.computedDisplayProperties(_filters?.display_properties);
+      displayProperties = this.computedDisplayProperties(viewFilters?.display_properties);
     }
 
     // override existing order by if ordered by manual sort_order
