@@ -81,6 +81,42 @@ pnpm dev
 
 That’s it! You’re all set to begin coding. Remember to refresh your browser if changes don’t auto-reload. Happy contributing! 🎉
 
+### Windows: translations show raw keys
+
+If the UI displays raw translation keys such as `common.submit` instead of `Submit`, the
+`packages/i18n/locales` symlink is broken. That path is tracked in git as a symlink to
+`src/locales`, and Windows checks it out as a plain text file containing the target path
+whenever git is configured with `core.symlinks=false` (the default when the filesystem
+cannot create symlinks without Developer Mode or admin rights). The i18n bundle resolves
+translations relative to `packages/i18n/dist`, so it needs `packages/i18n/locales` to be a
+directory — when it is a file, every namespace fails to load.
+
+Confirm the state with:
+
+```bash
+ls -la packages/i18n/locales   # a regular file here is the problem
+```
+
+`setup.sh` runs the repair automatically, so this normally only appears if the link is
+damaged later. To fix it:
+
+```bash
+pnpm fix:i18n-locales
+```
+
+That recreates the link as a directory junction on Windows (no admin required) and as a
+normal symlink elsewhere. If it reports that it cannot repair the link, do it manually:
+
+```powershell
+Remove-Item packages\i18n\locales
+cmd /c mklink /J packages\i18n\locales src\locales
+```
+
+Once repaired, mark the path with `git update-index --skip-worktree packages/i18n/locales`
+so git stops reporting the link as deleted — otherwise a routine `git commit -a` would
+delete it for everyone and break Linux and macOS builds. The `fix:i18n-locales` script
+sets this for you.
+
 ## Missing a Feature?
 
 If a feature is missing, you can directly _request_ a new one [here](https://github.com/makeplane/plane/issues/new?assignees=&labels=feature&template=feature_request.yml&title=%F0%9F%9A%80+Feature%3A+). You also can do the same by choosing "🚀 Feature" when raising a [New Issue](https://github.com/makeplane/plane/issues/new/choose) on our GitHub Repository.
@@ -239,6 +275,10 @@ Before submitting your contribution, please ensure the following:
 - Verify pluralization works with different numbers.
 - Ensure dynamic values (e.g., `{name}`) are correctly interpolated.
 - Double-check that nested key access paths are accurate.
+- `pnpm --filter @plane/i18n check:sync` reads `src/locales` directly, so it passes even
+  when the `packages/i18n/locales` symlink is broken and nothing loads at runtime. If the
+  UI shows raw keys while the sync check is green, see
+  [Windows: translations show raw keys](#windows-translations-show-raw-keys).
 
 Happy translating! 🌍✨
 
