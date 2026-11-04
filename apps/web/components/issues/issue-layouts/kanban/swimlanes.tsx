@@ -54,8 +54,6 @@ interface ISubGroupSwimlaneHeader {
   sub_group_by: TIssueGroupByOptions | undefined;
   /** Suppresses the column header create button, e.g. when the band's project provides quick add. */
   hideGroupHeaderAddButton?: boolean;
-  /** Renders a separator under each band, Jira style. */
-  jiraStyleBands?: boolean;
 }
 
 const visibilitySubGroupByGroupCount = (subGroupIssueCount: number, showEmptyGroup: boolean): boolean => {
@@ -153,6 +151,8 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   disableIssueCreation?: boolean;
   displayProperties: IIssueDisplayProperties | undefined;
   enableQuickIssueCreate: boolean;
+  /** Renders a separator under each band, Jira style. */
+  jiraStyleBands?: boolean;
   getGroupIssueCount: (
     groupId: string | undefined,
     subGroupId: string | undefined,
@@ -438,7 +438,6 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
           showEmptyGroup={showEmptyGroup}
           isEpic={isEpic}
           hideGroupHeaderAddButton={hideGroupHeaderAddButton}
-          jiraStyleBands={jiraStyleBands}
         />
       </Row>
 

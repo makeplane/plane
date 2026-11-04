@@ -25,7 +25,6 @@ import { cn } from "@plane/utils";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { KanbanColumnLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
 // hooks
-import { useKanbanView } from "@/hooks/store/use-kanban-view";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 // parent components
@@ -115,10 +114,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
   // i18n
   // store hooks
   const storeType = useIssueStoreType();
-  const issueKanBanView = useKanbanView();
   // derived values
-  const isDragDisabled = !issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by);
-
   const { getIsWorkflowWorkItemCreationDisabled } = useWorkFlowFDragNDrop(group_by, sub_group_by);
 
   const list = getGroupByColumns({
@@ -263,7 +259,6 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
                     orderBy={orderBy}
                     sub_group_id={sub_group_id}
                     projectId={projectId}
-                    isDragDisabled={isDragDisabled}
                     isDropDisabled={!!subList.isDropDisabled || !!isDropDisabled}
                     dropErrorMessage={subList.dropErrorMessage ?? dropErrorMessage}
                     updateIssue={updateIssue}
