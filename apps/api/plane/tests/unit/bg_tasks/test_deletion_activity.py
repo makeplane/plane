@@ -193,3 +193,27 @@ def test_bulk_purge_batches_activity_cleanup(issue, delete_issue):
 
     assert statement_counts[0] > 0
     assert statement_counts[1] == statement_counts[0], statement_counts
+
+
+def test_hard_delete_batches_activity_cleanup(issue, settings):
+    """The retention task must batch history cleanup as expired work items grow."""
+    statement_counts = []
+    for batch_size in (1, 25):
+        parent_ids = []
+        for index in range(batch_size):
+            parent = Issue.objects.create(
+                project=issue.project, workspace=issue.workspace, name=f"Expired work item {index}"
+            )
+            make_activity(parent)
+            expire(parent, settings)
+            parent_ids.append(parent.pk)
+
+        with CaptureQueriesContext(connection) as queries:
+            hard_delete()
+
+        history_sql = [query["sql"] for query in queries.captured_queries if '"issue_activities"' in query["sql"]]
+        statement_counts.append(len(history_sql))
+        assert not Issue.all_objects.filter(pk__in=parent_ids).exists()
+
+    assert statement_counts[0] > 0
+    assert statement_counts[1] == statement_counts[0], statement_counts
