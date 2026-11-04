@@ -16,8 +16,11 @@ from celery import shared_task
 
 @shared_task
 def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
-    """
-    Soft delete related objects for a given model instance
+    """Soft delete a parent and its related objects while preserving history.
+
+    Related models can retain selected links during soft deletion by naming their
+    foreign keys in SOFT_DELETE_PRESERVED_FIELDS. Permanent deletion still uses
+    the fields' normal on_delete behavior and Django's batched collector.
     """
     # Get the model class using app registry
     model_class = apps.get_model(app_label, model_name)
@@ -39,6 +42,9 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
 
         # Skip if the relation doesn't exist
         if not hasattr(instance, related_name):
+            continue
+
+        if relation.field.name in getattr(relation.related_model, "SOFT_DELETE_PRESERVED_FIELDS", ()):
             continue
 
         # Get the on_delete behavior name
