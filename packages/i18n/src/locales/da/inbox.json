@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Afventer",
+        "description": "Afventer"
+      },
+      "declined": {
+        "title": "Afvist",
+        "description": "Afvist"
+      },
+      "snoozed": {
+        "title": "Udsat",
+        "description": "{days, plural, one{# dag} other{# dage}} tilbage"
+      },
+      "accepted": {
+        "title": "Accepteret",
+        "description": "Accepteret"
+      },
+      "duplicate": {
+        "title": "Duplikeret",
+        "description": "Duplikeret"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "Afvis opgave",
+        "content": "Er du sikker på, at du vil afvise opgaven {value}?"
+      },
+      "delete": {
+        "title": "Slet opgave",
+        "content": "Er du sikker på, at du vil slette opgaven {value}?",
+        "success": "Opgave slettet med succes"
+      }
+    },
+    "errors": {
+      "snooze_permission": "Kun projektadministratorer kan udsætte/annullere udsættelse af opgaver",
+      "accept_permission": "Kun projektadministratorer kan acceptere opgaver",
+      "decline_permission": "Kun projektadministratorer kan afvise opgaver"
+    },
+    "actions": {
+      "accept": "Accepter",
+      "decline": "Afvis",
+      "snooze": "Udsæt",
+      "unsnooze": "Fjern udsættelse",
+      "copy": "Kopiér opgavelink",
+      "delete": "Slet",
+      "open": "Åbn opgave",
+      "mark_as_duplicate": "Marker som duplikeret",
+      "move": "Flyt {value} til projektopgaver"
+    },
+    "source": {
+      "in-app": "i appen"
+    },
+    "order_by": {
+      "created_at": "Oprettet den",
+      "updated_at": "Opdateret den",
+      "id": "ID"
+    },
+    "label": "Indbakke",
+    "page_label": "{workspace} - Indbakke",
+    "modal": {
+      "title": "Opret indbakkeopgave"
+    },
+    "tabs": {
+      "open": "Åben",
+      "closed": "Lukket"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "Ingen åbne opgaver",
+        "description": "Find åbne opgaver her. Opret ny opgave."
+      },
+      "sidebar_closed_tab": {
+        "title": "Ingen lukkede opgaver",
+        "description": "Alle opgaver uanset om de er accepteret eller afvist kan findes her."
+      },
+      "sidebar_filter": {
+        "title": "Ingen matchende opgaver",
+        "description": "Ingen opgaver matcher det anvendte filter i indbakken. Opret en ny opgave."
+      },
+      "detail": {
+        "title": "Vælg en opgave for at se dens detaljer."
+      }
+    }
+  }
+}
