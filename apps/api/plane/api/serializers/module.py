@@ -134,6 +134,7 @@ class ModuleUpdateSerializer(ModuleCreateSerializer):
         model = Module
         fields = ModuleCreateSerializer.Meta.fields + [
             "members",
+            "sort_order",
         ]
         read_only_fields = ModuleCreateSerializer.Meta.read_only_fields
 
