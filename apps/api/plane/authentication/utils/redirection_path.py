@@ -3,11 +3,12 @@
 # See the LICENSE file for details.
 
 from plane.db.models import Profile, Workspace, WorkspaceMemberInvite
+from plane.license.utils.instance_value import get_default_language
 
 
 def get_redirection_path(user):
     # Handle redirections
-    profile, _ = Profile.objects.get_or_create(user=user)
+    profile, _ = Profile.objects.get_or_create(user=user, defaults={"language": get_default_language})
 
     # Redirect to onboarding if the user is not onboarded yet
     if not profile.is_onboarded:
