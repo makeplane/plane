@@ -9,6 +9,10 @@ from plane.api.views import StickyViewSet
 
 
 router = DefaultRouter()
+# DRF appends ".<format>" variants of every route, which pass a `format` kwarg
+# the viewset handlers do not accept, so those URLs raised TypeError (HTTP 500).
+# Plane does not document format suffixes, so the routes are dropped entirely.
+router.include_format_suffixes = False
 router.register(r"stickies", StickyViewSet, basename="workspace-stickies")
 
 urlpatterns = [
