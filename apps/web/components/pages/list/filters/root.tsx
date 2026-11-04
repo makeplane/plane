@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { MenuCheckboxItem, MenuSeparator } from "@makeplane/propel/components/menu";
 import type { TPageFilterProps, TPageFilters } from "@plane/types";
@@ -17,9 +18,16 @@ type Props = {
   memberIds?: string[] | undefined;
 };
 
+/**
+ * Render localized page filters for favorites, creation dates, and creators using the parent filter state.
+ */
 export const PageFiltersSelection = observer(function PageFiltersSelection(props: Props) {
+  const { t } = useTranslation();
   const { filters, handleFiltersUpdate, memberIds } = props;
 
+  /**
+   * Toggle one or more array filter values and notify the parent; boolean favorites are handled separately.
+   */
   const handleFilters = (key: keyof TPageFilterProps, value: boolean | string | string[]) => {
     const newValues = filters.filters?.[key] ?? [];
 
@@ -46,7 +54,7 @@ export const PageFiltersSelection = observer(function PageFiltersSelection(props
   return (
     <>
       <MenuCheckboxItem
-        label="Favorites"
+        label={t("favorites")}
         checked={!!filters.filters?.favorites}
         onCheckedChange={(checked) =>
           handleFiltersUpdate("filters", {

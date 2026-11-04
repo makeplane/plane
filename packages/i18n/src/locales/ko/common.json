@@ -533,7 +533,9 @@
       "asc": "오름차순",
       "desc": "내림차순",
       "created_on": "생성일",
-      "updated_on": "업데이트일"
+      "updated_on": "업데이트일",
+      "date_created": "Date created",
+      "date_modified": "Date modified"
     },
     "comments": "댓글",
     "updates": "업데이트",
@@ -728,6 +730,12 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
+    "date_filter": {
+      "created_date": "Created date",
+      "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
+      "custom": "Custom"
+    },
     "status": "상태",
     "tooltip": {
       "copy_to_clipboard": "클립보드에 복사",

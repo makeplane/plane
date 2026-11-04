@@ -533,7 +533,9 @@
       "asc": "Ascendente",
       "desc": "Descendente",
       "created_on": "Criado em",
-      "updated_on": "Atualizado em"
+      "updated_on": "Atualizado em",
+      "date_created": "Date created",
+      "date_modified": "Date modified"
     },
     "comments": "Comentários",
     "updates": "Atualizações",
@@ -728,6 +730,12 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
+    "date_filter": {
+      "created_date": "Created date",
+      "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
+      "custom": "Custom"
+    },
     "status": "Status",
     "tooltip": {
       "copy_to_clipboard": "Copiar para a área de transferência",

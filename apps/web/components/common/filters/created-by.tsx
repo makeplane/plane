@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // local imports
 import { MemberFilterSubmenu } from "./member-filter-submenu";
@@ -14,12 +15,16 @@ type Props = {
   memberIds: string[] | undefined;
 };
 
+/**
+ * Render a searchable creator filter with a localized heading, prioritizing selected members and the current user.
+ */
 export const FilterCreatedBy = observer(function FilterCreatedBy(props: Props) {
+  const { t } = useTranslation();
   const { appliedFilters, handleUpdate, memberIds } = props;
 
   return (
     <MemberFilterSubmenu
-      label="Created by"
+      label={t("common.created_by")}
       memberIds={memberIds}
       appliedFilters={appliedFilters}
       onToggle={handleUpdate}
