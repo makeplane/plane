@@ -144,6 +144,11 @@
       "description": "Tambahkan item kerja ke proyek Anda dan gunakan tampilan untuk memfilter, mengurutkan, dan memantau kemajuan dengan mudah.",
       "cta_primary": "Tambahkan item kerja"
     },
+    "board_load_error": {
+      "title": "Papan tidak dapat dimuat",
+      "description": "Kami tidak dapat memuat filter papan ini. Periksa koneksi Anda dan coba lagi.",
+      "cta_primary": "Coba lagi"
+    },
     "drafts": {
       "title": "Item kerja setengah jadi",
       "description": "Untuk mencoba ini, mulai menambahkan item kerja dan tinggalkan di tengah jalan atau buat draf pertama Anda di bawah ini. 😉",

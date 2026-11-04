@@ -144,6 +144,11 @@
       "description": "Voeg werkitems toe aan je project en gebruik weergaven om moeiteloos te filteren, sorteren en de voortgang te bewaken.",
       "cta_primary": "Werkitem toevoegen"
     },
+    "board_load_error": {
+      "title": "Bord kon niet worden geladen",
+      "description": "We konden de filters voor dit bord niet laden. Controleer je verbinding en probeer het opnieuw.",
+      "cta_primary": "Opnieuw proberen"
+    },
     "drafts": {
       "title": "Half geschreven werkitems",
       "description": "Om dit uit te proberen, begin je met het toevoegen van een werkitem en laat je het halverwege staan, of maak je hieronder je eerste concept aan. 😉",

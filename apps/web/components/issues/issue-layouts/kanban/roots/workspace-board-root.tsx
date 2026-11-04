@@ -4,12 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { WORKSPACE_BOARD_VIEW_ID, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EmptyStateDetailed } from "@plane/blocks/empty-state";
+import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType } from "@plane/types";
 // components
 import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
@@ -36,19 +37,33 @@ export const WorkspaceBoardRoot = observer(function WorkspaceBoardRoot() {
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { loader, joinedProjectIds, fetchProjects } = useProject();
   const { allowPermissions } = useUserPermissions();
+  // i18n
+  const { t } = useTranslation();
   // state
   const [ready, setReady] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   // derived values
   const workspaceSlugPath = workspaceSlug?.toString();
   // custom hooks
   useWorkspaceIssueProperties(workspaceSlug);
 
   // Fetch board filters once; the kanban root fetches issues itself once filters are ready.
-  useEffect(() => {
+  // A rejection must leave the loader, otherwise the board stays on it forever.
+  const loadFilters = useCallback(() => {
     if (!workspaceSlugPath) return;
+    setLoadError(false);
     clear();
-    void fetchFilters(workspaceSlugPath, WORKSPACE_BOARD_VIEW_ID).then(() => setReady(true));
+    fetchFilters(workspaceSlugPath, WORKSPACE_BOARD_VIEW_ID)
+      .then(() => setReady(true))
+      .catch((err: unknown) => {
+        console.error("Failed to fetch workspace board filters", err);
+        setLoadError(true);
+      });
   }, [workspaceSlugPath, clear, fetchFilters]);
+
+  useEffect(() => {
+    loadFilters();
+  }, [loadFilters]);
 
   // Projects are normally preloaded by the workspace wrapper; fetch once if they are not.
   useEffect(() => {
@@ -56,6 +71,23 @@ export const WorkspaceBoardRoot = observer(function WorkspaceBoardRoot() {
   }, [workspaceSlugPath, loader, fetchProjects]);
 
   const filters = getIssueFilters(WORKSPACE_BOARD_VIEW_ID);
+
+  if (loadError) {
+    return (
+      <EmptyStateDetailed
+        assetKey="server-error"
+        title={t("empty-state.workspace_empty_state.board_load_error.title")}
+        description={t("empty-state.workspace_empty_state.board_load_error.description")}
+        actions={[
+          {
+            label: t("empty-state.workspace_empty_state.board_load_error.cta_primary"),
+            onClick: loadFilters,
+            variant: "primary",
+          },
+        ]}
+      />
+    );
+  }
 
   if (!ready || !filters?.displayFilters?.group_by) return <KanbanLayoutLoader />;
 

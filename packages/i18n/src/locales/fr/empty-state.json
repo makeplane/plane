@@ -144,6 +144,11 @@
       "description": "Ajoutez des éléments de travail à votre projet et utilisez les vues pour filtrer, trier et suivre les progrès sans effort.",
       "cta_primary": "Ajouter un élément de travail"
     },
+    "board_load_error": {
+      "title": "Impossible de charger le tableau",
+      "description": "Nous n'avons pas pu charger les filtres de ce tableau. Vérifiez votre connexion et réessayez.",
+      "cta_primary": "Réessayer"
+    },
     "drafts": {
       "title": "Éléments de travail à moitié écrits",
       "description": "Pour l’essayer, commencez à ajouter un élément de travail et laissez-le à mi-chemin ou créez votre premier brouillon ci-dessous. 😉",

@@ -144,6 +144,11 @@
       "description": "將工作項新增至專案中並使用檢視輕鬆篩選、排序和監控進度。",
       "cta_primary": "新增工作項"
     },
+    "board_load_error": {
+      "title": "無法載入看板",
+      "description": "我們無法載入此看板的篩選條件。請檢查網路連線後重試。",
+      "cta_primary": "重試"
+    },
     "drafts": {
       "title": "半成品工作項",
       "description": "要試用此功能,請開始新增工作項並在中途離開,或在下方建立您的第一個草稿。😉",

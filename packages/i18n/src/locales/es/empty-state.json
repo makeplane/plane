@@ -144,6 +144,11 @@
       "description": "Agrega elementos de trabajo a tu proyecto y usa vistas para filtrar, ordenar y monitorear el progreso sin esfuerzo.",
       "cta_primary": "Agregar elemento de trabajo"
     },
+    "board_load_error": {
+      "title": "No se pudo cargar el tablero",
+      "description": "No pudimos cargar los filtros de este tablero. Comprueba tu conexión y vuelve a intentarlo.",
+      "cta_primary": "Volver a intentar"
+    },
     "drafts": {
       "title": "Elementos de trabajo a medio escribir",
       "description": "Para probarlo, comienza a agregar un elemento de trabajo y déjalo a medias o crea tu primer borrador a continuación. 😉",
