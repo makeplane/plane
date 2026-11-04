@@ -43,6 +43,15 @@ export const getEditorAssetDownloadSrc = (args: TEditorSrcArgs): string | undefi
   return url;
 };
 
+/**
+ * @description check if the source is an absolute URL of a v2 asset (e.g. an image copied from a
+ * rendered editor keeps its resolved `/api/assets/v2/.../<assetId>/` URL as src). Such sources must
+ * be handled like asset ids, not like old editor assets.
+ * @param {string} src
+ */
+export const isEditorV2AssetUrl = (src: string | undefined): boolean =>
+  !!src?.startsWith("http") && src.includes("/assets/v2/");
+
 export const getTextContent = (jsx: React.ReactNode | null | undefined): string => {
   if (!jsx) return "";
 
