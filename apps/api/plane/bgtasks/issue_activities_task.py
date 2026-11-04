@@ -17,6 +17,7 @@ from django.utils import timezone
 # Module imports
 from plane.app.serializers import IssueActivitySerializer
 from plane.bgtasks.notification_task import notifications
+from plane.bgtasks.telegram_task import send_telegram_issue_event
 from plane.db.models import (
     CommentReaction,
     Cycle,
@@ -29,6 +30,7 @@ from plane.db.models import (
     Module,
     Project,
     State,
+    TelegramProjectChat,
     User,
     EstimatePoint,
 )
@@ -1629,17 +1631,37 @@ def issue_activity(
         # Save all the values to database
         issue_activities_created = IssueActivity.objects.bulk_create(issue_activities)
 
+        serialized_activities = None
+
+        if type in ("issue.activity.created", "issue.activity.updated", "comment.activity.created"):
+            try:
+                if TelegramProjectChat.objects.filter(project_id=project_id).exists():
+                    serialized_activities = json.dumps(
+                        IssueActivitySerializer(issue_activities_created, many=True).data, cls=DjangoJSONEncoder
+                    )
+                    send_telegram_issue_event.delay(
+                        event_type=type,
+                        issue_id=issue_id,
+                        project_id=project_id,
+                        activities_json=serialized_activities,
+                        requested_data=requested_data,
+                        current_instance=current_instance,
+                    )
+            except Exception as exc:
+                log_exception(exc, warning=True)
+
         if notification:
+            if serialized_activities is None:
+                serialized_activities = json.dumps(
+                    IssueActivitySerializer(issue_activities_created, many=True).data, cls=DjangoJSONEncoder
+                )
             notifications.delay(
                 type=type,
                 issue_id=issue_id,
                 actor_id=actor_id,
                 project_id=project_id,
                 subscriber=subscriber,
-                issue_activities_created=json.dumps(
-                    IssueActivitySerializer(issue_activities_created, many=True).data,
-                    cls=DjangoJSONEncoder,
-                ),
+                issue_activities_created=serialized_activities,
                 requested_data=requested_data,
                 current_instance=current_instance,
             )
