@@ -11,6 +11,10 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname),
+      // Next.js compatibility shims used within web (mirrors vite.config.ts)
+      "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
+      "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
+      "next/script": path.resolve(__dirname, "app/compat/next/script.tsx"),
     },
   },
   test: {
