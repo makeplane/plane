@@ -84,69 +84,139 @@ def stack_email_notification():
     EmailNotificationLog.objects.filter(pk__in=processed_notifications).update(processed_at=timezone.now())
 
 
+# Values that must never appear as email field/comment content.
+# notification_task uses str(None) → "None" for deleted comments and empty fields.
+_EMPTY_ACTIVITY_VALUES = frozenset({"", "None", "null", "none", "NULL", "NoneType"})
+
+
+def is_meaningful_activity_value(value):
+    """Return True if value is real user-facing content (not None / "None" / blank)."""
+    if value is None:
+        return False
+    if not isinstance(value, str):
+        value = str(value)
+    return value.strip() not in _EMPTY_ACTIVITY_VALUES
+
+
+def absolute_avatar_url(base_api, avatar_url):
+    """
+    Build an absolute avatar URL for email HTML, or "" for the initials fallback.
+
+    Upstream bug: f\"{base_api}{actor.avatar_url}\" when avatar_url is None becomes
+    \"https://hostNone\", which is truthy in the template so clients show a broken
+    image icon instead of the letter avatar.
+    """
+    if not avatar_url or not is_meaningful_activity_value(str(avatar_url)):
+        return ""
+    url = str(avatar_url).strip()
+    if url.startswith("http://") or url.startswith("https://"):
+        return url
+    if not base_api:
+        return url
+    base = str(base_api).rstrip("/")
+    if not url.startswith("/"):
+        url = f"/{url}"
+    return f"{base}{url}"
+
+
 def create_payload(notification_data):
     # return format {"actor_id":  { "key": { "old_value": [], "new_value": [] } }}
     data = {}
     for actor_id, changes in notification_data.items():
         for change in changes:
             issue_activity = change.get("issue_activity")
-            if issue_activity:  # Ensure issue_activity is not None
-                field = issue_activity.get("field")
-                old_value = str(issue_activity.get("old_value"))
-                new_value = str(issue_activity.get("new_value"))
+            if not issue_activity:
+                continue
 
-                # Append old_value if it's not empty and not already in the list
-                if old_value:
-                    (
-                        data.setdefault(actor_id, {})
-                        .setdefault(field, {})
-                        .setdefault("old_value", [])
-                        .append(old_value)
-                        if old_value not in data.setdefault(actor_id, {}).setdefault(field, {}).get("old_value", [])
-                        else None
-                    )
+            field = issue_activity.get("field")
+            verb = issue_activity.get("verb")
 
-                # Append new_value if it's not empty and not already in the list
-                if new_value:
-                    (
-                        data.setdefault(actor_id, {})
-                        .setdefault(field, {})
-                        .setdefault("new_value", [])
-                        .append(new_value)
-                        if new_value not in data.setdefault(actor_id, {}).setdefault(field, {}).get("new_value", [])
-                        else None
-                    )
+            # Deleted comments leave new_value/old_value as None → str → "None".
+            # Including them produces unprofessional "None" boxes in the Comments section.
+            if verb == "deleted" and field in ("comment", "mention"):
+                continue
 
-                if not data.get("actor_id", {}).get("activity_time", False):
-                    data[actor_id]["activity_time"] = str(
-                        datetime.fromisoformat(issue_activity.get("activity_time").rstrip("Z")).strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        )
-                    )
+            old_value = issue_activity.get("old_value")
+            new_value = issue_activity.get("new_value")
+            if old_value is not None:
+                old_value = str(old_value)
+            if new_value is not None:
+                new_value = str(new_value)
+
+            # Append old_value if meaningful and not already in the list
+            if is_meaningful_activity_value(old_value):
+                old_list = data.setdefault(actor_id, {}).setdefault(field, {}).setdefault("old_value", [])
+                if old_value not in old_list:
+                    old_list.append(old_value)
+
+            # Append new_value if meaningful and not already in the list
+            if is_meaningful_activity_value(new_value):
+                new_list = data.setdefault(actor_id, {}).setdefault(field, {}).setdefault("new_value", [])
+                if new_value not in new_list:
+                    new_list.append(new_value)
+
+            # activity_time: only set when we have (or will have) payload for this actor
+            activity_time = issue_activity.get("activity_time")
+            if activity_time and actor_id in data and "activity_time" not in data[actor_id]:
+                data[actor_id]["activity_time"] = str(
+                    datetime.fromisoformat(str(activity_time).rstrip("Z")).strftime("%Y-%m-%d %H:%M:%S")
+                )
 
     return data
 
 
+def process_email_html(html_content):
+    """
+    Convert TipTap/editor HTML into email-safe HTML.
+
+    - mention-component → @display_name
+    - image-component → [Image] placeholder (asset UUIDs are not public URLs)
+    - issue-embed-component → [Work item] placeholder
+    """
+    if not is_meaningful_activity_value(html_content):
+        return None
+
+    soup = BeautifulSoup(html_content, "html.parser")
+
+    for mention in soup.find_all("mention-component"):
+        user_id = mention.get("entity_identifier")
+        try:
+            user = User.objects.get(pk=user_id)
+            mention.replace_with(f"@{user.display_name}")
+        except Exception:
+            mention.replace_with("@user")
+
+    for image in soup.find_all("image-component"):
+        image.replace_with("[Image]")
+
+    for embed in soup.find_all("issue-embed-component"):
+        label = embed.get("entity_name") or "Work item"
+        embed.replace_with(f"[{label}]")
+
+    # Drop empty paragraphs left after stripping custom nodes
+    text = str(soup).strip()
+    if not text or not BeautifulSoup(text, "html.parser").get_text(strip=True):
+        # Still allow content that is only images/embeds converted to placeholders
+        if "[Image]" not in text and "[" not in text:
+            return None
+    return text
+
+
 def process_mention(mention_component):
-    soup = BeautifulSoup(mention_component, "html.parser")
-    mentions = soup.find_all("mention-component")
-    for mention in mentions:
-        user_id = mention["entity_identifier"]
-        user = User.objects.get(pk=user_id)
-        user_name = user.display_name
-        highlighted_name = f"@{user_name}"
-        mention.replace_with(highlighted_name)
-    return str(soup)
+    """Backward-compatible alias used by existing call sites / tests."""
+    return process_email_html(mention_component) or ""
 
 
 def process_html_content(content):
+    """Process a list of HTML fragments for email. Drops empty / None / 'None' entries."""
     if content is None:
         return None
     processed_content_list = []
     for html_content in content:
-        processed_content = process_mention(html_content)
-        processed_content_list.append(processed_content)
-    return processed_content_list
+        processed_content = process_email_html(html_content)
+        if is_meaningful_activity_value(processed_content):
+            processed_content_list.append(processed_content)
+    return processed_content_list or None
 
 
 @shared_task
@@ -191,40 +261,49 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                 total_changes = total_changes + len(changes)
                 comment = changes.pop("comment", False)
                 mention = changes.pop("mention", False)
+                activity_time = changes.pop("activity_time", None)
                 actors_involved.append(actor_id)
+
+                # Comments and mentions both need TipTap HTML converted for email clients.
+                # Previously only mentions were processed, so raw mention-component /
+                # image-component tags and str(None)→"None" deleted-comment residue
+                # rendered as broken form-like boxes (see issue-updates Comments section).
                 if comment:
-                    comments.append(
-                        {
-                            "actor_comments": comment,
-                            "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
-                                "first_name": actor.first_name,
-                                "last_name": actor.last_name,
-                            },
-                        }
-                    )
+                    comment["new_value"] = process_html_content(comment.get("new_value"))
+                    comment["old_value"] = process_html_content(comment.get("old_value"))
+                    if comment.get("new_value"):
+                        comments.append(
+                            {
+                                "actor_comments": comment,
+                                "actor_detail": {
+                                    "avatar_url": absolute_avatar_url(base_api, actor.avatar_url),
+                                    "first_name": actor.first_name,
+                                    "last_name": actor.last_name,
+                                },
+                            }
+                        )
                 if mention:
                     mention["new_value"] = process_html_content(mention.get("new_value"))
                     mention["old_value"] = process_html_content(mention.get("old_value"))
-                    comments.append(
-                        {
-                            "actor_comments": mention,
-                            "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
-                                "first_name": actor.first_name,
-                                "last_name": actor.last_name,
-                            },
-                        }
-                    )
-                activity_time = changes.pop("activity_time")
-                # Parse the input string into a datetime object
-                formatted_time = datetime.strptime(activity_time, "%Y-%m-%d %H:%M:%S").strftime("%H:%M %p")
+                    if mention.get("new_value"):
+                        comments.append(
+                            {
+                                "actor_comments": mention,
+                                "actor_detail": {
+                                    "avatar_url": absolute_avatar_url(base_api, actor.avatar_url),
+                                    "first_name": actor.first_name,
+                                    "last_name": actor.last_name,
+                                },
+                            }
+                        )
 
-                if changes:
+                # Skip property-update block if no real field changes remain
+                if changes and activity_time:
+                    formatted_time = datetime.strptime(activity_time, "%Y-%m-%d %H:%M:%S").strftime("%H:%M %p")
                     template_data.append(
                         {
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": absolute_avatar_url(base_api, actor.avatar_url),
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -236,6 +315,16 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                             "activity_time": str(formatted_time),
                         }
                     )
+
+            # Nothing meaningful to email (e.g. only deleted comments / empty "None" values)
+            if not template_data and not comments:
+                logging.getLogger("plane.worker").info(
+                    "Skipping empty issue-update email for issue %s receiver %s",
+                    issue_id,
+                    receiver_id,
+                )
+                release_lock(lock_id=lock_id)
+                return
 
             summary = "Updates were made to the issue by"
 
