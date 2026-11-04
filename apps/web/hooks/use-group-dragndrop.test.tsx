@@ -30,7 +30,9 @@ vi.mock("@plane/i18n", () => ({ useTranslation: () => ({ t: (key: string) => key
 
 // The drag-drop orchestrator itself is covered by utils.test.ts; here it only acts as the seam
 // through which the hook's state resolver is captured and exercised against project fixtures.
-vi.mock("@/components/issues/issue-layouts/utils", () => ({
+// Everything else, including the shared state-group resolver, is the real implementation.
+vi.mock(import("@/components/issues/issue-layouts/utils"), async (importOriginal) => ({
+  ...(await importOriginal()),
   handleGroupDragDrop: h.handleGroupDragDropMock,
 }));
 

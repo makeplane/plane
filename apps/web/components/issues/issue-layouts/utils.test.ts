@@ -5,9 +5,9 @@
  */
 
 import { describe, expect, it, vi } from "vitest";
-import type { TIssue, TIssueGroupByOptions } from "@plane/types";
+import type { IState, TIssue, TIssueGroupByOptions } from "@plane/types";
 import type { GroupDropLocation, IssueUpdates } from "./utils";
-import { handleGroupDragDrop } from "./utils";
+import { getDefaultStateForGroup, handleGroupDragDrop } from "./utils";
 
 const SOURCE_ISSUE_ID = "issue-1";
 const PROJECT_ID = "project-1";
@@ -193,5 +193,56 @@ describe("handleGroupDragDrop sub-group handling", () => {
     expect(getIssueById).not.toHaveBeenCalled();
     expect(getIssueIds).not.toHaveBeenCalled();
     expect(updateIssueOnDrop).not.toHaveBeenCalled();
+  });
+});
+
+describe("getDefaultStateForGroup", () => {
+  const buildState = (overrides: Partial<IState>): IState =>
+    ({
+      id: "state-1",
+      name: "State 1",
+      color: "#000000",
+      group: "started",
+      default: false,
+      description: "",
+      project_id: PROJECT_ID,
+      sequence: 1,
+      created_at: "2024-01-01T00:00:00Z",
+      updated_at: "2024-01-01T00:00:00Z",
+      ...overrides,
+    }) as IState;
+
+  it("prefers the default state of the group over the other states", () => {
+    const states = [
+      buildState({ id: "s-started-1", group: "started" }),
+      buildState({ id: "s-started-default", group: "started", default: true }),
+      buildState({ id: "s-backlog", group: "backlog", default: true }),
+    ];
+
+    expect(getDefaultStateForGroup(states, "started")?.id).toBe("s-started-default");
+  });
+
+  it("falls back to the first state of the group when none is default", () => {
+    const states = [
+      buildState({ id: "s-started-1", group: "started" }),
+      buildState({ id: "s-started-2", group: "started" }),
+      buildState({ id: "s-backlog", group: "backlog" }),
+    ];
+
+    expect(getDefaultStateForGroup(states, "started")?.id).toBe("s-started-1");
+  });
+
+  it("returns undefined when the project has no state in the group", () => {
+    const states = [buildState({ id: "s-backlog", group: "backlog", default: true })];
+
+    expect(getDefaultStateForGroup(states, "started")).toBeUndefined();
+  });
+
+  it("returns undefined when the project has no states at all", () => {
+    expect(getDefaultStateForGroup([], "started")).toBeUndefined();
+  });
+
+  it("returns undefined when the project is not in the cache", () => {
+    expect(getDefaultStateForGroup(undefined, "started")).toBeUndefined();
   });
 });

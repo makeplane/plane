@@ -10,7 +10,7 @@ import type { SetToastProps } from "@plane/blocks/toast";
 import { useTranslation } from "@plane/i18n";
 import type { EIssuesStoreType, TIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
 import type { GroupDropLocation } from "@/components/issues/issue-layouts/utils";
-import { handleGroupDragDrop } from "@/components/issues/issue-layouts/utils";
+import { getDefaultStateForGroup, handleGroupDragDrop } from "@/components/issues/issue-layouts/utils";
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
 import { useIssueDetail } from "./store/use-issue-detail";
 import { useProjectState } from "./store/use-project-state";
@@ -55,12 +55,8 @@ export const useGroupIssuesDragNDrop = (
    * @param projectId
    * @param stateGroup
    */
-  const getStateIdForStateGroup = (projectId: string, stateGroup: string): string | undefined => {
-    const projectStates = getProjectStates(projectId);
-    if (!projectStates) return undefined;
-    const statesInGroup = projectStates.filter((state) => state.group === stateGroup);
-    return (statesInGroup.find((state) => state.default) ?? statesInGroup[0])?.id;
-  };
+  const getStateIdForStateGroup = (projectId: string, stateGroup: string): string | undefined =>
+    getDefaultStateForGroup(getProjectStates(projectId), stateGroup)?.id;
 
   /**
    * update Issue on Drop, checks if modules or cycles are changed and then calls appropriate functions
@@ -133,7 +129,7 @@ export const useGroupIssuesDragNDrop = (
       setToast({
         type: "warning",
         title: t("common.warning"),
-        message: "Work items cannot be moved across projects",
+        message: t("kanban.cross_project_move_disabled"),
       });
       return;
     }
@@ -152,7 +148,7 @@ export const useGroupIssuesDragNDrop = (
       setToast({
         title: "Error!",
         type: "error",
-        message: err?.detail ?? "Failed to perform this action",
+        message: err instanceof Error ? err.message : (err?.detail ?? "Failed to perform this action"),
       });
     });
   };

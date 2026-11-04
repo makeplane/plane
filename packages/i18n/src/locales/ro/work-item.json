@@ -287,6 +287,9 @@
       "no_downvotes": "Încă nu există voturi negative"
     }
   },
+  "kanban": {
+    "cross_project_move_disabled": "Activitățile nu pot fi mutate între proiecte."
+  },
   "sub_work_item": {
     "update": {
       "success": "Sub-activitatea a fost actualizată cu succes",

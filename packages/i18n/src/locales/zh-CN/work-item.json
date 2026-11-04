@@ -287,6 +287,9 @@
       "no_downvotes": "暂无反对票"
     }
   },
+  "kanban": {
+    "cross_project_move_disabled": "工作项无法跨项目移动。"
+  },
   "sub_work_item": {
     "update": {
       "success": "子工作项更新成功",
