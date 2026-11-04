@@ -45,6 +45,7 @@ import type {
   IIssueDisplayFilterOptions,
   TGetColumns,
   TSpreadsheetColumn,
+  TStateGroups,
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // plane ui
@@ -558,7 +559,8 @@ export const handleGroupDragDrop = async (
   updateIssueOnDrop: (projectId: string, issueId: string, data: Partial<TIssue>, issueUpdates: IssueUpdates) => void,
   groupBy: TIssueGroupByOptions | undefined,
   subGroupBy: TIssueGroupByOptions | undefined,
-  shouldAddIssueAtTop = false
+  shouldAddIssueAtTop = false,
+  getStateIdForStateGroup?: (projectId: string, stateGroup: string) => string | undefined
 ) => {
   if (!source.id || (subGroupBy && (!source.subGroupId || !destination.subGroupId))) return;
 
@@ -603,7 +605,17 @@ export const handleGroupDragDrop = async (
 
     // keep track of updates on what was added and what was removed
     issueUpdates[groupKey] = { ADD: getGroupId(destination.groupId), REMOVE: getGroupId(source.groupId) };
-    updatedIssue = { ...updatedIssue, [groupKey]: groupValue };
+
+    // for state group columns, resolve a concrete state of the issue's project in the destination group
+    if (groupBy === "state_detail.group") {
+      const issueProjectId = sourceIssue.project_id;
+      const stateId = issueProjectId ? getStateIdForStateGroup?.(issueProjectId, destination.groupId) : undefined;
+      // abort the drop if no state can be resolved for the destination group
+      if (!stateId) throw new Error("Could not find a state in the destination state group");
+      updatedIssue = { ...updatedIssue, state_id: stateId, state__group: destination.groupId as TStateGroups };
+    } else {
+      updatedIssue = { ...updatedIssue, [groupKey]: groupValue };
+    }
   }
 
   // do the same for subgroup
