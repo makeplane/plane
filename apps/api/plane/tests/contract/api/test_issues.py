@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 import pytest
+from unittest import mock
 from rest_framework import status
 
 from plane.db.models import Issue, Project, ProjectMember, State
@@ -125,3 +126,35 @@ class TestIssueByIdentifier:
 
         assert response.status_code == status.HTTP_200_OK
         assert str(response.data["id"]) == str(issue.id)
+
+
+@pytest.mark.contract
+class TestIssueDeleteWebhook:
+    @pytest.mark.django_db(transaction=True)
+    def test_public_api_delete_dispatches_webhook(self, api_key_client, workspace, project, issue):
+        url = f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/issues/{issue.id}/"
+        with mock.patch("plane.api.views.issue.webhook_activity") as mocked_webhook:
+            response = api_key_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        mocked_webhook.delay.assert_called_once()
+        assert mocked_webhook.delay.call_args.kwargs["verb"] == "deleted"
+        assert mocked_webhook.delay.call_args.kwargs["event_id"] == issue.id
+
+    @pytest.mark.django_db(transaction=True)
+    def test_public_api_delete_succeeds_when_broker_dispatch_fails(self, api_key_client, workspace, project, issue):
+        """If the webhook dispatch raises after the delete has committed
+        (broker down), the response must stay 204 and the issue must remain
+        deleted: the failure is absorbed by transaction.on_commit(robust=True)
+        instead of surfacing as a 500."""
+        url = f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/issues/{issue.id}/"
+        with (
+            mock.patch("plane.api.views.issue.webhook_activity") as mocked_webhook,
+            mock.patch("plane.api.views.issue.issue_activity"),
+        ):
+            mocked_webhook.delay.side_effect = RuntimeError("broker unavailable")
+            response = api_key_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Issue.objects.filter(id=issue.id).exists()
+        mocked_webhook.delay.assert_called_once()
