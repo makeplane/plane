@@ -94,6 +94,23 @@ class TestProjectsLite:
         assert str(archived_project.id) in ids
 
     @pytest.mark.django_db
+    @pytest.mark.parametrize("order_by", ["sort_order", "-sort_order"])
+    def test_sort_order_falls_back_to_default(self, api_key_client, workspace, project, create_user, order_by):
+        """sort_order exists only on the full list's queryset, so it used to 500 here."""
+        newer = Project.objects.create(name="Newer", identifier="NEW", workspace=workspace, created_by=create_user)
+        ProjectMember.objects.create(workspace=workspace, project=newer, member=create_user, role=20, is_active=True)
+        response = api_key_client.get(_url(workspace.slug), {"order_by": order_by})
+        assert response.status_code == status.HTTP_200_OK
+        assert [str(item["id"]) for item in response.data["results"]] == [str(newer.id), str(project.id)]
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("order_by", ["created_at", "updated_at", "name", "network"])
+    @pytest.mark.parametrize("descending", [False, True])
+    def test_supported_order_by_is_accepted(self, api_key_client, workspace, project, order_by, descending):
+        response = api_key_client.get(_url(workspace.slug), {"order_by": f"-{order_by}" if descending else order_by})
+        assert response.status_code == status.HTTP_200_OK
+
+    @pytest.mark.django_db
     def test_unknown_workspace_is_rejected(self, api_key_client, project):
         response = api_key_client.get(_url("does-not-exist"))
         assert response.status_code in (
