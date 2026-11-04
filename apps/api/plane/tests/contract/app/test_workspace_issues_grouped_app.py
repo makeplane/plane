@@ -19,6 +19,7 @@ These tests pin that response contract and the guest ``created_by`` scoping so a
 regression in either branch is caught.
 """
 
+from unittest import mock
 from uuid import uuid4
 
 import pytest
@@ -35,6 +36,7 @@ from plane.db.models import (
 )
 
 ISSUES_URL = "/api/workspaces/{slug}/issues/"
+PROJECT_ISSUES_URL = "/api/workspaces/{slug}/projects/{project_id}/issues/"
 STATE_GROUPS = {"backlog", "unstarted", "started", "completed", "cancelled"}
 
 
@@ -259,3 +261,96 @@ class TestWorkspaceIssuesGroupedContract:
         expected_ids = {str(issue.id) for issue in pagination_board["a_issues"]}
         assert seen_ids == expected_ids
         assert str(pagination_board["b_issue"].id) not in seen_ids
+
+    @pytest.mark.django_db
+    def test_group_by_equal_to_sub_group_by_is_rejected(self, session_client, workspace):
+        response = session_client.get(
+            ISSUES_URL.format(slug=workspace.slug),
+            {"group_by": "state__group", "sub_group_by": "state__group"},
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data == {"error": "Group by and sub group by cannot have same parameters"}
+
+    @pytest.mark.django_db
+    def test_group_by_without_sub_group_by_uses_grouped_paginator_shape(self, session_client, workspace, board):
+        """``group_by`` alone paginates with ``GroupedOffsetPaginator``: a flat map of group
+        cells whose ``results`` hold issue dicts directly — no per-project nesting."""
+        response = session_client.get(
+            ISSUES_URL.format(slug=workspace.slug),
+            {"group_by": "state__group"},
+        )
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        body = response.data
+        assert body["grouped_by"] == "state__group"
+        assert body["sub_grouped_by"] is None
+
+        results = body["results"]
+        assert isinstance(results, dict)
+        assert set(results.keys()) == STATE_GROUPS
+
+        issues = board["issues"]
+        assert {str(item["id"]) for item in results["started"]["results"]} == {
+            str(issues["a_started"].id),
+            str(issues["b_started"].id),
+        }
+        assert results["started"]["total_results"] == 2
+        assert {str(item["id"]) for item in results["completed"]["results"]} == {str(issues["a_completed"].id)}
+        assert results["completed"]["total_results"] == 1
+        for group in ("backlog", "unstarted", "cancelled"):
+            assert results[group]["results"] == []
+            assert results[group]["total_results"] == 0
+
+        # issues sit directly in the group cell, keyed by their own fields
+        sample = results["started"]["results"][0]
+        assert "results" not in sample
+        assert "project_id" in sample
+
+    @pytest.mark.django_db
+    def test_guest_grouped_payload_only_exposes_own_created_by(
+        self, guest_client, guest, workspace, guest_project, guest_own_issue, guest_foreign_issue
+    ):
+        response = guest_client.get(
+            ISSUES_URL.format(slug=workspace.slug),
+            {"group_by": "state__group", "sub_group_by": "project_id"},
+        )
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        results = response.data["results"]
+
+        returned = [
+            item for group in results.values() for cell in group["results"].values() for item in cell["results"]
+        ]
+        assert {str(item["id"]) for item in returned} == {str(guest_own_issue.id)}
+        assert all(str(item["created_by"]) == str(guest.id) for item in returned), (
+            f"Guest payload leaked a foreign created_by: {results!r}"
+        )
+
+
+@pytest.mark.contract
+class TestIssueCreateContract:
+    """``IssueViewSet.create`` reports the issue's state group in its 201 payload."""
+
+    @pytest.mark.django_db
+    def test_create_response_contains_state_group(self, session_client, workspace, create_user):
+        project = Project.objects.create(
+            name="Create Project", identifier="CRT", workspace=workspace, created_by=create_user
+        )
+        ProjectMember.objects.create(project=project, member=create_user, workspace=workspace, role=20, is_active=True)
+        state = _make_state("Create In Progress", "started", project, workspace)
+
+        url = PROJECT_ISSUES_URL.format(slug=workspace.slug, project_id=project.id)
+        with (
+            mock.patch("plane.app.views.issue.base.issue_activity"),
+            mock.patch("plane.app.views.issue.base.model_activity"),
+            mock.patch("plane.app.views.issue.base.issue_description_version_task"),
+        ):
+            response = session_client.post(url, {"name": "Contract issue", "state_id": str(state.id)}, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert str(response.data["state_id"]) == str(state.id)
+        assert response.data["state__group"] == "started"
