@@ -120,6 +120,14 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
     return sort_data(grouped_data, temp_axis)
 
 
+def _estimate_to_float(value):
+    # Point estimates are free text; skip values like "M = 2" instead of crashing the chart
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return 0.0
+
+
 def burndown_plot(queryset, slug, project_id, plot_type, cycle_id=None, module_id=None):
     # Total Issues in Cycle or Module
     total_issues = queryset.total_issues
@@ -139,7 +147,7 @@ def burndown_plot(queryset, slug, project_id, plot_type, cycle_id=None, module_i
             estimate_point__isnull=False,
         ).values_list("estimate_point__value", flat=True)
 
-        issue_estimates = [float(value) for value in issue_estimates]
+        issue_estimates = [_estimate_to_float(value) for value in issue_estimates]
         total_estimate_points = sum(issue_estimates)
 
     if estimate_type and plot_type == "points" and module_id:
@@ -151,7 +159,7 @@ def burndown_plot(queryset, slug, project_id, plot_type, cycle_id=None, module_i
             estimate_point__isnull=False,
         ).values_list("estimate_point__value", flat=True)
 
-        issue_estimates = [float(value) for value in issue_estimates]
+        issue_estimates = [_estimate_to_float(value) for value in issue_estimates]
         total_estimate_points = sum(issue_estimates)
 
     if cycle_id:
@@ -238,7 +246,7 @@ def burndown_plot(queryset, slug, project_id, plot_type, cycle_id=None, module_i
             cumulative_pending_issues = total_estimate_points
             total_completed = 0
             total_completed = sum(
-                float(item["estimate_point__value"])
+                _estimate_to_float(item["estimate_point__value"])
                 for item in completed_issues_estimate_point_distribution
                 if item["date"] is not None and item["date"] <= date
             )
