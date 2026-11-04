@@ -9,7 +9,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane imports
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
-import { EIssueFilterType } from "@plane/constants";
+import { EIssueFilterType, WORKSPACE_BOARD_VIEW_ID } from "@plane/constants";
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -100,7 +100,10 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     const userFilters = this.getIssueFilters(viewId);
     if (!userFilters) return undefined;
 
-    const filteredParams = handleIssueQueryParamsByLayout(EIssueLayoutTypes.SPREADSHEET, "my_issues");
+    const isBoard = viewId === WORKSPACE_BOARD_VIEW_ID;
+    const layout =
+      userFilters.displayFilters?.layout ?? (isBoard ? EIssueLayoutTypes.KANBAN : EIssueLayoutTypes.SPREADSHEET);
+    const filteredParams = handleIssueQueryParamsByLayout(layout, isBoard ? "global_board" : "my_issues");
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
@@ -150,6 +153,30 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
   );
 
   fetchFilters = async (workspaceSlug: string, viewId: TWorkspaceFilters) => {
+    if (viewId === WORKSPACE_BOARD_VIEW_ID) {
+      runInAction(() => {
+        set(this.filters, [viewId, "richFilters"], undefined);
+        set(
+          this.filters,
+          [viewId, "displayFilters"],
+          this.computedDisplayFilters(
+            {},
+            {
+              layout: EIssueLayoutTypes.KANBAN,
+              order_by: "-created_at",
+              group_by: "state_detail.group",
+              sub_group_by: "project",
+              sub_issue: false,
+              show_empty_groups: true,
+            }
+          )
+        );
+        set(this.filters, [viewId, "displayProperties"], this.computedDisplayProperties({}));
+        set(this.filters, [viewId, "kanbanFilters"], { group_by: [], sub_group_by: [] });
+      });
+      return;
+    }
+
     let richFilters: TWorkItemFilterExpression;
     let displayFilters: IIssueDisplayFilterOptions;
     let displayProperties: IIssueDisplayProperties;
@@ -226,6 +253,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
       switch (type) {
         case EIssueFilterType.DISPLAY_FILTERS: {
+          if (viewId === WORKSPACE_BOARD_VIEW_ID) return;
           const updatedDisplayFilters = filters as IIssueDisplayFilterOptions;
           _filters.displayFilters = { ..._filters.displayFilters, ...updatedDisplayFilters };
 
@@ -291,7 +319,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
           _filters.kanbanFilters = { ..._filters.kanbanFilters, ...updatedKanbanFilters };
 
           const currentUserId = this.rootIssueStore.currentUserId;
-          if (currentUserId)
+          if (currentUserId && viewId !== WORKSPACE_BOARD_VIEW_ID)
             this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
               kanban_filters: _filters.kanbanFilters,
             });

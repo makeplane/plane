@@ -51,7 +51,7 @@ export interface IWorkspaceIssues extends IBaseIssuesStore {
   archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
   bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 
-  quickAddIssue: undefined;
+  quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue>;
   clear(): void;
 }
 
@@ -182,6 +182,5 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
   updateIssue = this.issueUpdate;
   archiveIssue = this.issueArchive;
 
-  // Setting them as undefined as they can not performed on workspace issues
-  quickAddIssue = undefined;
+  quickAddIssue = this.issueQuickAdd;
 }

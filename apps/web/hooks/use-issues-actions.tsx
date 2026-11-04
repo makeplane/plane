@@ -44,13 +44,13 @@ export interface IssueActions {
   ) => Promise<void>;
 }
 
-export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
+export const useIssuesActions = (storeType: EIssuesStoreType, viewId?: string): IssueActions => {
   const projectIssueActions = useProjectIssueActions();
   const projectEpicsActions = useProjectEpicsActions();
   const cycleIssueActions = useCycleIssueActions();
   const moduleIssueActions = useModuleIssueActions();
   const projectViewIssueActions = useProjectViewIssueActions();
-  const globalIssueActions = useGlobalIssueActions();
+  const globalIssueActions = useGlobalIssueActions(viewId);
   const profileIssueActions = useProfileIssueActions();
   const archivedIssueActions = useArchivedIssueActions();
   const workspaceDraftIssueActions = useWorkspaceDraftIssueActions();
@@ -668,27 +668,28 @@ const useArchivedIssueActions = () => {
   );
 };
 
-const useGlobalIssueActions = () => {
+const useGlobalIssueActions = (viewIdOverride?: string) => {
   // router
   const { workspaceSlug: routerWorkspaceSlug, globalViewId: routerGlobalViewId } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
   const globalViewId = routerGlobalViewId?.toString();
+  const resolvedViewId = globalViewId ?? viewIdOverride;
   // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.GLOBAL);
 
   const fetchIssues = useCallback(
     async (loadType: TLoader, options: IssuePaginationOptions) => {
-      if (!workspaceSlug || !globalViewId) return;
-      return issues.fetchIssues(workspaceSlug.toString(), globalViewId.toString(), loadType, options);
+      if (!workspaceSlug || !resolvedViewId) return;
+      return issues.fetchIssues(workspaceSlug.toString(), resolvedViewId, loadType, options);
     },
-    [issues.fetchIssues, workspaceSlug, globalViewId]
+    [issues.fetchIssues, workspaceSlug, resolvedViewId]
   );
   const fetchNextIssues = useCallback(
     async (groupId?: string, subGroupId?: string) => {
-      if (!workspaceSlug || !globalViewId) return;
-      return issues.fetchNextIssues(workspaceSlug.toString(), globalViewId.toString(), groupId, subGroupId);
+      if (!workspaceSlug || !resolvedViewId) return;
+      return issues.fetchNextIssues(workspaceSlug.toString(), resolvedViewId, groupId, subGroupId);
     },
-    [issues.fetchIssues, workspaceSlug, globalViewId]
+    [issues.fetchNextIssues, workspaceSlug, resolvedViewId]
   );
 
   const createIssue = useCallback(
@@ -697,6 +698,20 @@ const useGlobalIssueActions = () => {
       return await issues.createIssue(workspaceSlug, projectId, data);
     },
     [issues.createIssue, workspaceSlug]
+  );
+  const quickAddIssue = useCallback(
+    async (projectId: string | undefined | null, data: TIssue) => {
+      if (!workspaceSlug || !projectId) return;
+      return await issues.quickAddIssue(workspaceSlug, projectId, data);
+    },
+    [issues.quickAddIssue, workspaceSlug]
+  );
+  const archiveIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return await issues.archiveIssue(workspaceSlug, projectId, issueId);
+    },
+    [issues.archiveIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
     async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
@@ -715,10 +730,10 @@ const useGlobalIssueActions = () => {
 
   const updateFilters = useCallback(
     async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
-      if (!globalViewId || !workspaceSlug) return;
-      return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, globalViewId);
+      if (!resolvedViewId || !workspaceSlug) return;
+      return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, resolvedViewId);
     },
-    [issuesFilter.updateFilters, globalViewId, workspaceSlug]
+    [issuesFilter.updateFilters, resolvedViewId, workspaceSlug]
   );
 
   return useMemo(
@@ -726,11 +741,13 @@ const useGlobalIssueActions = () => {
       fetchIssues,
       fetchNextIssues,
       createIssue,
+      quickAddIssue,
+      archiveIssue,
       updateIssue,
       removeIssue,
       updateFilters,
     }),
-    [createIssue, updateIssue, removeIssue, updateFilters]
+    [fetchIssues, fetchNextIssues, createIssue, quickAddIssue, archiveIssue, updateIssue, removeIssue, updateFilters]
   );
 };
 
