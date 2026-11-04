@@ -101,9 +101,10 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     if (!userFilters) return undefined;
 
     const isBoard = viewId === WORKSPACE_BOARD_VIEW_ID;
-    const layout =
-      userFilters.displayFilters?.layout ?? (isBoard ? EIssueLayoutTypes.KANBAN : EIssueLayoutTypes.SPREADSHEET);
-    const filteredParams = handleIssueQueryParamsByLayout(layout, isBoard ? "global_board" : "my_issues");
+    const filteredParams = handleIssueQueryParamsByLayout(
+      isBoard ? EIssueLayoutTypes.KANBAN : EIssueLayoutTypes.SPREADSHEET,
+      isBoard ? "global_board" : "my_issues"
+    );
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
