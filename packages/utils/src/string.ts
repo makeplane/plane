@@ -278,21 +278,45 @@ export const isStringCommentEmpty = (comment: string | undefined): boolean => {
     isEmptyHtmlString(comment ?? "", ["img", "mention-component", "image-component", "embed-component"])
   );
 };
+// Keep in sync with apps/api/plane/utils/url.py :: ALLOWED_CUSTOM_URL_SCHEMES
+export const ALLOWED_CUSTOM_URL_SCHEMES = [
+  "obsidian",
+  "vscode",
+  "vscode-insiders",
+  "cursor",
+  "slack",
+  "linear",
+  "figma",
+  "notion",
+] as const;
+
+const isCustomProtocolUrl = (url: string): boolean => {
+  if (!url) return false;
+  const lowerUrl = url.toLowerCase();
+  return ALLOWED_CUSTOM_URL_SCHEMES.some(
+    (scheme) => lowerUrl.startsWith(`${scheme}://`) && url.length > scheme.length + 3
+  );
+};
 
 /**
  * @description
  * This function test whether a URL is valid or not.
  *
- * It accepts URLs with or without the protocol.
+ * It accepts URLs with or without the protocol, as well as supported application protocol URIs.
  * @param {string} url
  * @returns {boolean}
  * @example
  * checkURLValidity("https://example.com") => true
  * checkURLValidity("example.com") => true
+ * checkURLValidity("obsidian://open?vault=docs") => true
  * checkURLValidity("example") => false
  */
 export const checkURLValidity = (url: string): boolean => {
   if (!url) return false;
+
+  if (isCustomProtocolUrl(url)) {
+    return true;
+  }
 
   // regex to support complex query parameters and fragments
   const urlPattern =
@@ -300,7 +324,6 @@ export const checkURLValidity = (url: string): boolean => {
 
   return urlPattern.test(url);
 };
-
 /**
  * Combines array elements with a separator and adds a conjunction before the last element
  * @param array Array of strings to combine
@@ -326,7 +349,14 @@ export const joinWithConjunction = (array: string[], separator: string = ", ", c
  * @example
  * ensureUrlHasProtocol("example.com") => "http://example.com"
  */
-export const ensureUrlHasProtocol = (url: string): string => (url.startsWith("http") ? url : `http://${url}`);
+export const ensureUrlHasProtocol = (url: string): string => {
+  if (!url) return "";
+  const lowerUrl = url.toLowerCase();
+  if (lowerUrl.startsWith("http://") || lowerUrl.startsWith("https://") || isCustomProtocolUrl(url)) {
+    return url;
+  }
+  return `http://${url}`;
+};
 
 /**
  * @returns {boolean} true if searchQuery is substring of text in the same order, false otherwise
