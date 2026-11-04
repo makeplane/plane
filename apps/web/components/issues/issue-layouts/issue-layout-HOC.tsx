@@ -41,10 +41,12 @@ function ActiveLoader(props: { layout: EIssueLayoutTypes }) {
 interface Props {
   children: string | React.ReactNode | React.ReactNode[];
   layout: EIssueLayoutTypes;
+  /** Renders the layout even when there are no issues, skipping the empty state. */
+  skipEmptyState?: boolean;
 }
 
 export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
-  const { layout } = props;
+  const { layout, skipEmptyState = false } = props;
 
   const storeType = useIssueStoreType();
   const { issues } = useIssues(storeType);
@@ -55,7 +57,11 @@ export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
     return <ActiveLoader layout={layout} />;
   }
 
-  if (issues.getGroupIssueCount(undefined, undefined, false) === 0 && layout !== EIssueLayoutTypes.CALENDAR) {
+  if (
+    !skipEmptyState &&
+    issues.getGroupIssueCount(undefined, undefined, false) === 0 &&
+    layout !== EIssueLayoutTypes.CALENDAR
+  ) {
     return <IssueLayoutEmptyState storeType={storeType} />;
   }
 

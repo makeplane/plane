@@ -70,6 +70,8 @@ interface IKanbanGroup {
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   orderBy: TIssueOrderByOptions | undefined;
   isEpic?: boolean;
+  /** Project the column's cards belong to, when it is not the route's project. Used by cross-project boards. */
+  projectId?: string;
 }
 
 export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
@@ -94,11 +96,23 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     scrollableContainerRef,
     handleOnDrop,
     isEpic = false,
+    projectId,
   } = props;
   // i18n
   const { t } = useTranslation();
   // hooks
   const projectState = useProjectState();
+
+  // On a cross-project board the column's cards belong to the swimlane's project, not to the route's project.
+  const effectiveProjectId = sub_group_by === "project" && sub_group_id !== "null" ? sub_group_id : projectId;
+
+  // Resolves the concrete state a quick-added work item should start in, for a state group column.
+  const getQuickAddStateForGroup = (groupValue: string) => {
+    const statesInGroup = (projectState.getProjectStates(effectiveProjectId) ?? []).filter(
+      (state) => state.group === groupValue
+    );
+    return statesInGroup.find((state) => state.default) ?? statesInGroup[0];
+  };
 
   const {
     issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
@@ -202,12 +216,17 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     groupValue: string,
     subGroupValue: string
   ) => {
-    const defaultState = projectState.projectStates?.find((state) => state.default);
-    let preloadedData: object = { state_id: defaultState?.id };
+    const defaultStateId = effectiveProjectId
+      ? projectState.getProjectDefaultStateId(effectiveProjectId)
+      : projectState.projectStates?.find((state) => state.default)?.id;
+    let preloadedData: object = { state_id: defaultStateId };
 
     if (groupByKey) {
       if (groupByKey === "state") {
         preloadedData = { ...preloadedData, state_id: groupValue };
+      } else if (groupByKey === "state_detail.group") {
+        const stateInGroup = getQuickAddStateForGroup(groupValue);
+        if (stateInGroup) preloadedData = { ...preloadedData, state_id: stateInGroup.id, state__group: groupValue };
       } else if (groupByKey === "priority") {
         preloadedData = { ...preloadedData, priority: groupValue };
       } else if (groupByKey === "cycle") {
@@ -240,6 +259,8 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
         preloadedData = { ...preloadedData, assignee_ids: [subGroupValue] };
       } else if (subGroupByKey === "created_by") {
         preloadedData = { ...preloadedData };
+      } else if (subGroupByKey === "project") {
+        preloadedData = { ...preloadedData, project_id: subGroupValue };
       } else {
         preloadedData = { ...preloadedData, [subGroupByKey]: subGroupValue };
       }
@@ -277,6 +298,14 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     !!group_by &&
     DRAG_ALLOWED_GROUPS.includes(group_by) &&
     (sub_group_by ? DRAG_ALLOWED_GROUPS.includes(sub_group_by) : true);
+
+  // A state group column without a resolvable state in the column's project can't hold a quick-added work item.
+  const isQuickAddStateUnavailable = group_by === "state_detail.group" && !getQuickAddStateForGroup(groupId);
+  const canQuickAddIssue =
+    enableQuickIssueCreate &&
+    !disableIssueCreation &&
+    !isQuickAddStateUnavailable &&
+    !getIsWorkflowWorkItemCreationDisabled(groupId, sub_group_id);
 
   return (
     <div
@@ -327,21 +356,20 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
           </div>
         ))}
 
-      {enableQuickIssueCreate &&
-        !disableIssueCreation &&
-        !getIsWorkflowWorkItemCreationDisabled(groupId, sub_group_id) && (
-          <div className="sticky bottom-0 w-full bg-layer-1 pt-1">
-            <QuickAddIssueRoot
-              layout={EIssueLayoutTypes.KANBAN}
-              QuickAddButton={KanbanQuickAddIssueButton}
-              prePopulatedData={{
-                ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
-              }}
-              quickAddCallback={quickAddCallback}
-              isEpic={isEpic}
-            />
-          </div>
-        )}
+      {canQuickAddIssue && (
+        <div className="sticky bottom-0 w-full bg-layer-1 pt-1">
+          <QuickAddIssueRoot
+            layout={EIssueLayoutTypes.KANBAN}
+            QuickAddButton={KanbanQuickAddIssueButton}
+            projectId={effectiveProjectId}
+            prePopulatedData={{
+              ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
+            }}
+            quickAddCallback={quickAddCallback}
+            isEpic={isEpic}
+          />
+        </div>
+      )}
     </div>
   );
 });

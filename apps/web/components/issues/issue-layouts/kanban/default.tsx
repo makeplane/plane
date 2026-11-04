@@ -75,6 +75,10 @@ export interface IKanBan {
   /** In swimlanes, the last visible band closes the column panels with rounded bottom corners. */
   isLastSubGroup?: boolean;
   isEpic?: boolean;
+  /** Project the columns belong to, when it is not the route's project. Used by cross-project boards. */
+  projectId?: string;
+  /** Suppresses the column header create button, e.g. when the band's project provides quick add. */
+  hideGroupHeaderAddButton?: boolean;
 }
 
 export const KanBan = observer(function KanBan(props: IKanBan) {
@@ -105,6 +109,8 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     subGroupIndex = 0,
     isLastSubGroup = false,
     isEpic = false,
+    projectId,
+    hideGroupHeaderAddButton = false,
   } = props;
   // i18n
   // store hooks
@@ -186,6 +192,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
               collapsedGroups={collapsedGroups}
               handleCollapsedGroups={handleCollapsedGroups}
               isEpic={isEpic}
+              hideAddButton={hideGroupHeaderAddButton}
             />
           );
 
@@ -255,6 +262,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
                     group_by={group_by}
                     orderBy={orderBy}
                     sub_group_id={sub_group_id}
+                    projectId={projectId}
                     isDragDisabled={isDragDisabled}
                     isDropDisabled={!!subList.isDropDisabled || !!isDropDisabled}
                     dropErrorMessage={subList.dropErrorMessage ?? dropErrorMessage}

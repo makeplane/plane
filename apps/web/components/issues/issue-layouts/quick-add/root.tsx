@@ -45,6 +45,8 @@ type TQuickAddIssueRoot = {
   setIsQuickAddOpen?: (isOpen: boolean) => void;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   isEpic?: boolean;
+  /** Project the work item is created in, overriding the route project. Used by cross-project boards. */
+  projectId?: string | null;
 };
 
 const defaultValues: Partial<TIssue> = {
@@ -62,11 +64,14 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
     setIsQuickAddOpen,
     quickAddCallback,
     isEpic = false,
+    projectId,
   } = props;
   // i18n
   const { t } = useTranslation();
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId: routeProjectId } = useParams();
+  // the route project stays the fallback for project-scoped boards
+  const effectiveProjectId = projectId ?? routeProjectId;
   // propel: toast actions cross the boundary as data, never as JSX
   const buildCreateIssueToastActions = useCreateIssueToastActions();
   // states
@@ -100,18 +105,18 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
   };
 
   const onSubmitHandler = async (formData: TIssue) => {
-    if (isSubmitting || !workspaceSlug || !projectId) return;
+    if (isSubmitting || !workspaceSlug || !effectiveProjectId) return;
 
     reset({ ...defaultValues });
 
-    const payload = createIssuePayload(projectId.toString(), {
+    const payload = createIssuePayload(effectiveProjectId.toString(), {
       // oxlint-disable-next-line unicorn/no-useless-fallback-in-spread
       ...(prePopulatedData ?? {}),
       ...formData,
     });
 
     if (quickAddCallback) {
-      const quickAddPromise = quickAddCallback(projectId.toString(), { ...payload });
+      const quickAddPromise = quickAddCallback(effectiveProjectId.toString(), { ...payload });
       setPromiseToast<any>(quickAddPromise, {
         loading: isEpic ? t("epic.adding") : t("issue.adding"),
         success: {
@@ -130,7 +135,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
     }
   };
 
-  if (!projectId) return null;
+  if (!effectiveProjectId) return null;
 
   return (
     <div
@@ -144,7 +149,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
           isOpen={isOpen}
           layout={layout}
           prePopulatedData={prePopulatedData}
-          projectId={projectId?.toString()}
+          projectId={effectiveProjectId.toString()}
           // oxlint-disable-next-line no-unneeded-ternary
           hasError={errors && errors?.name && errors?.name?.message ? true : false}
           setFocus={setFocus}

@@ -11,8 +11,7 @@ import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-sc
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import type { EIssuesStoreType } from "@plane/types";
-import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
+import { EIssueServiceType, EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
 //hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -21,6 +20,7 @@ import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // store
+import type { IWorkspaceIssuesFilter } from "@/store/issue/workspace/filter.store";
 // ui
 // types
 import { DeleteIssueModal } from "../../delete-issue-modal";
@@ -39,7 +39,8 @@ export type KanbanStoreType =
   | EIssuesStoreType.PROFILE
   | EIssuesStoreType.TEAM
   | EIssuesStoreType.TEAM_VIEW
-  | EIssuesStoreType.EPIC;
+  | EIssuesStoreType.EPIC
+  | EIssuesStoreType.GLOBAL;
 
 export interface IBaseKanBanLayout {
   QuickActions: FC<IQuickActionProps>;
@@ -48,6 +49,14 @@ export interface IBaseKanBanLayout {
   isCompletedCycle?: boolean;
   viewId?: string | undefined;
   isEpic?: boolean;
+  /** Board spans multiple projects, so permissions are checked at the workspace level. */
+  workspaceLevelEditing?: boolean;
+  /** Renders the board even when there are no work items, e.g. a fresh cross-project board. */
+  skipEmptyState?: boolean;
+  /** Suppresses the column header create button, e.g. when the band's project provides quick add. */
+  hideGroupHeaderAddButton?: boolean;
+  /** Renders a separator under each band, Jira style. */
+  jiraStyleBands?: boolean;
 }
 
 // Stable identity so an empty kanban-filter value doesn't churn the per-column cache's sharedDeps.
@@ -61,6 +70,10 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
     isCompletedCycle = false,
     viewId,
     isEpic = false,
+    workspaceLevelEditing = false,
+    skipEmptyState = false,
+    hideGroupHeaderAddButton = false,
+    jiraStyleBands = false,
   } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -81,10 +94,17 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
     archiveIssue,
     restoreIssue,
     updateFilters,
-  } = useIssuesActions(storeType);
+  } = useIssuesActions(storeType, viewId);
 
-  const displayFilters = issuesFilter?.issueFilters?.displayFilters;
-  const displayProperties = issuesFilter?.issueFilters?.displayProperties;
+  // A workspace board keeps its filters per view, unlike the project-scoped stores.
+  const isWorkspaceBoard = storeType === EIssuesStoreType.GLOBAL;
+  const resolvedIssueFilters =
+    isWorkspaceBoard && viewId
+      ? (issuesFilter as IWorkspaceIssuesFilter).getIssueFilters(viewId)
+      : issuesFilter?.issueFilters;
+
+  const displayFilters = resolvedIssueFilters?.displayFilters;
+  const displayProperties = resolvedIssueFilters?.displayProperties;
 
   const sub_group_by = displayFilters?.sub_group_by;
   const group_by = displayFilters?.group_by;
@@ -118,10 +138,9 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
   const [draggedIssueId, setDraggedIssueId] = useState<string | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
+  const isEditingAllowed = workspaceLevelEditing
+    ? allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.WORKSPACE)
+    : allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
 
   const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by, sub_group_by);
 
@@ -191,7 +210,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
   const handleCollapsedGroups = useCallback(
     (toggle: "group_by" | "sub_group_by", value: string) => {
       if (workspaceSlug) {
-        let collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
+        let collapsedGroups = resolvedIssueFilters?.kanbanFilters?.[toggle] || [];
         if (collapsedGroups.includes(value)) {
           collapsedGroups = collapsedGroups.filter((_value) => _value != value);
         } else {
@@ -202,10 +221,35 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
         });
       }
     },
-    [workspaceSlug, issuesFilter, projectId, updateFilters]
+    [workspaceSlug, resolvedIssueFilters, projectId, updateFilters]
   );
 
-  const collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || EMPTY_KANBAN_FILTERS;
+  const collapsedGroups = resolvedIssueFilters?.kanbanFilters || EMPTY_KANBAN_FILTERS;
+
+  // Props both the flat board and the swimlane board share.
+  const kanBanViewProps = {
+    issuesMap: issueMap,
+    groupedIssueIds: groupedIssueIds ?? {},
+    getGroupIssueCount: issues.getGroupIssueCount,
+    displayProperties: displayProperties,
+    sub_group_by: sub_group_by,
+    group_by: group_by,
+    orderBy: orderBy,
+    updateIssue: updateIssue,
+    quickActions: renderQuickActions,
+    handleCollapsedGroups: handleCollapsedGroups,
+    collapsedGroups: collapsedGroups,
+    enableQuickIssueCreate: enableQuickAdd,
+    showEmptyGroup: userDisplayFilters?.show_empty_groups ?? true,
+    quickAddCallback: quickAddIssue,
+    disableIssueCreation: !enableIssueCreation || !isEditingAllowed || isCompletedCycle,
+    canEditProperties: canEditProperties,
+    addIssuesToView: addIssuesToView,
+    scrollableContainerRef: scrollableContainerRef,
+    handleOnDrop: handleOnDrop,
+    loadMoreIssues: fetchMoreIssues,
+    isEpic: isEpic,
+  };
 
   return (
     <>
@@ -217,36 +261,27 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
         isEpic={isEpic}
       />
       <KanbanDeleteDropZone onRequestDelete={handleRequestDelete} />
-      <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>
+      <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN} skipEmptyState={skipEmptyState}>
         <div
           className={`horizontal-scrollbar relative scrollbar-sm flex h-full w-full ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
           ref={scrollableContainerRef}
         >
           <div className="relative h-full w-max min-w-full">
             <div className="h-full w-max">
-              <KanBanView
-                issuesMap={issueMap}
-                groupedIssueIds={groupedIssueIds ?? {}}
-                getGroupIssueCount={issues.getGroupIssueCount}
-                displayProperties={displayProperties}
-                sub_group_by={sub_group_by}
-                group_by={group_by}
-                orderBy={orderBy}
-                updateIssue={updateIssue}
-                quickActions={renderQuickActions}
-                handleCollapsedGroups={handleCollapsedGroups}
-                collapsedGroups={collapsedGroups}
-                enableQuickIssueCreate={enableQuickAdd}
-                showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
-                quickAddCallback={quickAddIssue}
-                disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
-                canEditProperties={canEditProperties}
-                addIssuesToView={addIssuesToView}
-                scrollableContainerRef={scrollableContainerRef}
-                handleOnDrop={handleOnDrop}
-                loadMoreIssues={fetchMoreIssues}
-                isEpic={isEpic}
-              />
+              {/* Swimlanes take the band's project from the sub-group; the flat board uses the route's project. */}
+              {KanBanView === KanBanSwimLanes ? (
+                <KanBanSwimLanes
+                  {...kanBanViewProps}
+                  hideGroupHeaderAddButton={hideGroupHeaderAddButton}
+                  jiraStyleBands={jiraStyleBands}
+                />
+              ) : (
+                <KanBan
+                  {...kanBanViewProps}
+                  projectId={projectId?.toString()}
+                  hideGroupHeaderAddButton={hideGroupHeaderAddButton}
+                />
+              )}
             </div>
           </div>
         </div>

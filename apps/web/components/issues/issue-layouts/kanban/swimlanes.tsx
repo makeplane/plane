@@ -52,6 +52,10 @@ interface ISubGroupSwimlaneHeader {
   list: IGroupByColumn[];
   showEmptyGroup: boolean;
   sub_group_by: TIssueGroupByOptions | undefined;
+  /** Suppresses the column header create button, e.g. when the band's project provides quick add. */
+  hideGroupHeaderAddButton?: boolean;
+  /** Renders a separator under each band, Jira style. */
+  jiraStyleBands?: boolean;
 }
 
 const visibilitySubGroupByGroupCount = (subGroupIssueCount: number, showEmptyGroup: boolean): boolean => {
@@ -75,6 +79,7 @@ const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
   list,
   showEmptyGroup,
   sub_group_by,
+  hideGroupHeaderAddButton = false,
 }: ISubGroupSwimlaneHeader) {
   const { getIsWorkflowWorkItemCreationDisabled } = useWorkFlowFDragNDrop(group_by, sub_group_by);
 
@@ -103,6 +108,7 @@ const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
               issuePayload={_list.payload}
               disableIssueCreation={getIsWorkflowWorkItemCreationDisabled(_list.id)}
               isEpic={isEpic}
+              hideAddButton={hideGroupHeaderAddButton}
             />
           );
 
@@ -221,6 +227,8 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
     handleOnDrop,
     isEpic = false,
     issuesMap,
+    jiraStyleBands = false,
+    hideGroupHeaderAddButton = false,
     list,
     loadMoreIssues,
     orderBy,
@@ -265,7 +273,14 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
           if (subGroupByVisibilityToggle.showGroup === false) return <></>;
           const isLastSubGroup = _list.id === lastVisibleSubGroupId;
           return (
-            <div key={_list.id} className="flex flex-shrink-0 flex-col">
+            <div
+              key={_list.id}
+              className={cn(
+                "flex flex-shrink-0 flex-col",
+                // Jira style bands separate every project with a full-width horizontal rule.
+                jiraStyleBands && "border-b border-subtle pb-3"
+              )}
+            >
               <Row className="sticky top-[52px] z-[3] flex w-full items-center">
                 <div className="relative flex w-full items-center bg-layer-1">
                   <div className="absolute inset-y-0 right-1 left-1 rounded-lg border border-subtle bg-surface-1" />
@@ -312,6 +327,8 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
                     dropErrorMessage={_list.dropErrorMessage}
                     isLastSubGroup={isLastSubGroup}
                     isEpic={isEpic}
+                    projectId={sub_group_by === "project" ? _list.id : undefined}
+                    hideGroupHeaderAddButton={hideGroupHeaderAddButton}
                   />
                 </div>
               )}
@@ -350,6 +367,10 @@ export interface IKanBanSwimLanes {
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   isEpic?: boolean;
   issuesMap: IIssueMap;
+  /** Suppresses the column header create button, e.g. when the band's project provides quick add. */
+  hideGroupHeaderAddButton?: boolean;
+  /** Renders a separator under each band, Jira style. */
+  jiraStyleBands?: boolean;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   orderBy: TIssueOrderByOptions | undefined;
   quickActions: TRenderQuickActions;
@@ -383,6 +404,8 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
     quickAddCallback,
     scrollableContainerRef,
     isEpic = false,
+    hideGroupHeaderAddButton = false,
+    jiraStyleBands = false,
   } = props;
   // store hooks
   const storeType = useIssueStoreType();
@@ -414,6 +437,8 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
           list={groupByList}
           showEmptyGroup={showEmptyGroup}
           isEpic={isEpic}
+          hideGroupHeaderAddButton={hideGroupHeaderAddButton}
+          jiraStyleBands={jiraStyleBands}
         />
       </Row>
 
@@ -442,6 +467,8 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
           quickAddCallback={quickAddCallback}
           scrollableContainerRef={scrollableContainerRef}
           isEpic={isEpic}
+          hideGroupHeaderAddButton={hideGroupHeaderAddButton}
+          jiraStyleBands={jiraStyleBands}
         />
       )}
     </div>
