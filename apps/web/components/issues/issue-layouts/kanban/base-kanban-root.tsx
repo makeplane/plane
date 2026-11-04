@@ -98,6 +98,10 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
 
   // A workspace board keeps its filters per view, unlike the project-scoped stores.
   const isWorkspaceBoard = storeType === EIssuesStoreType.GLOBAL;
+  // The board has no route project, so its kanban filters are keyed by the board view id rather
+  // than by a project id. The workspace filter store deliberately skips local-storage persistence
+  // for the board view, so collapse state stays in memory only.
+  const kanbanFiltersProjectId = isWorkspaceBoard ? (viewId ?? "") : (projectId?.toString() ?? "");
   const resolvedIssueFilters =
     isWorkspaceBoard && viewId
       ? (issuesFilter as IWorkspaceIssuesFilter).getIssueFilters(viewId)
@@ -216,12 +220,12 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
         } else {
           collapsedGroups.push(value);
         }
-        updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
+        updateFilters(kanbanFiltersProjectId, EIssueFilterType.KANBAN_FILTERS, {
           [toggle]: collapsedGroups,
         });
       }
     },
-    [workspaceSlug, resolvedIssueFilters, projectId, updateFilters]
+    [workspaceSlug, resolvedIssueFilters, kanbanFiltersProjectId, updateFilters]
   );
 
   const collapsedGroups = resolvedIssueFilters?.kanbanFilters || EMPTY_KANBAN_FILTERS;
