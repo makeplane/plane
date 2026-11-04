@@ -114,6 +114,11 @@ export const coreRoutes: RouteConfigEntry[] = [
           ),
         ]),
 
+        // Workspace Board
+        layout("./(all)/[workspaceSlug]/(projects)/board/layout.tsx", [
+          route(":workspaceSlug/board", "./(all)/[workspaceSlug]/(projects)/board/page.tsx"),
+        ]),
+
         // Archived Projects
         layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/archives/layout.tsx", [
           route(
