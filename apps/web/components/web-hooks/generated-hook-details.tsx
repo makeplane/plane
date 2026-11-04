@@ -4,12 +4,20 @@
  * See the LICENSE file for details.
  */
 
-// components
-// ui
-import { useTranslation } from "@plane/i18n";
+// plane imports
 import { Button } from "@makeplane/propel/components/button";
+import {
+  DialogActions,
+  DialogBody,
+  DialogDescription,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
+import { useTranslation } from "@plane/i18n";
 import type { IWebhook } from "@plane/types";
-// types
+// local imports
 import { WebhookSecretKey } from "./form";
 
 type Props = {
@@ -23,16 +31,20 @@ export function GeneratedHookDetails(props: Props) {
 
   return (
     <>
-      <div className="space-y-5 p-5">
-        <div className="space-y-3">
-          <h3 className="text-18 font-medium text-secondary">{t("workspace_settings.key_created")}</h3>
-          <p className="text-13 text-placeholder">{t("workspace_settings.copy_key")}</p>
-        </div>
-        <WebhookSecretKey data={webhookDetails} />
-      </div>
-      <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-        <Button variant="secondary" size="md" stretch="auto" label="Close" onClick={handleClose} />
-      </div>
+      <DialogMain>
+        <DialogHeader>
+          <DialogHeading>
+            <DialogTitle>{t("workspace_settings.key_created")}</DialogTitle>
+            <DialogDescription>{t("workspace_settings.copy_key")}</DialogDescription>
+          </DialogHeading>
+        </DialogHeader>
+        <DialogBody>
+          <WebhookSecretKey data={webhookDetails} />
+        </DialogBody>
+      </DialogMain>
+      <DialogActions>
+        <Button variant="secondary" size="md" stretch="auto" label={t("close")} onClick={handleClose} />
+      </DialogActions>
     </>
   );
 }

@@ -6,6 +6,7 @@
 
 import { useEffect, useRef } from "react";
 // plane imports
+import { PillGroup } from "@makeplane/propel/components/pill";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { SingleOrArray, TFilterValue } from "@plane/types";
 import { hasValidValue, cn } from "@plane/utils";
@@ -16,10 +17,12 @@ interface FilterItemContainerProps {
   showTransition: boolean;
   variant?: "default" | "error";
   tooltipContent?: string;
+  /** The filtered property, naming the group for assistive tech. */
+  label?: string;
 }
 
 export function FilterItemContainer(props: FilterItemContainerProps) {
-  const { children, conditionValue, showTransition, variant = "default", tooltipContent } = props;
+  const { children, conditionValue, showTransition, variant = "default", tooltipContent, label } = props;
   // refs
   const itemRef = useRef<HTMLDivElement>(null);
 
@@ -55,15 +58,22 @@ export function FilterItemContainer(props: FilterItemContainerProps) {
 
   return (
     <Tooltip label={tooltipContent ?? ""} layout="stacked" side="bottom" disabled={!tooltipContent}>
-      <div
-        ref={itemRef}
-        className={cn("flex h-7 items-stretch overflow-hidden rounded-sm border transition-all duration-200", {
-          "border-subtle bg-surface-1": variant === "default",
-          "border-danger-strong bg-surface-2": variant === "error",
-        })}
+      {/* One condition reads as one control: property, operator, value and remove are joined pill segments. */}
+      <PillGroup
+        size="md"
+        aria-label={label}
+        render={
+          <div
+            ref={itemRef}
+            // an invalid condition outlines every segment in danger
+            className={cn("max-w-full transition-all duration-200", {
+              "*:border-danger-strong!": variant === "error",
+            })}
+          />
+        }
       >
         {children}
-      </div>
+      </PillGroup>
     </Tooltip>
   );
 }

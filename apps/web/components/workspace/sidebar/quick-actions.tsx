@@ -82,7 +82,7 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
           label={
             <>
               <AddWorkItemOutline className="size-4" />
-              <span className="max-w-[145px] truncate text-13 font-medium">{t("sidebar.new_work_item")}</span>
+              <span className="max-w-[145px] truncate text-body-sm-medium">{t("sidebar.new_work_item")}</span>
             </>
           }
           onClick={() => toggleCreateIssueModal(true)}

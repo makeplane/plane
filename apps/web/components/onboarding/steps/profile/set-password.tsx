@@ -80,7 +80,7 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
       <button
         type="button"
         className={cn(
-          "flex w-full items-center justify-between px-3 py-2 text-left text-13 transition-colors duration-200",
+          "flex w-full items-center justify-between px-3 py-2 text-left text-body-xs-regular transition-colors duration-200",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
           isExpanded && "pb-1"
         )}
@@ -123,8 +123,10 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
               placeholder="Confirm password"
               className="transition-all duration-200"
             />
-            {hasPasswordMismatch && <p className="mt-1 text-11 text-danger-primary">Passwords do not match</p>}
-            {isPasswordValid && <p className="mt-1 text-11 text-success-primary">✓ Passwords match</p>}
+            {hasPasswordMismatch && (
+              <p className="mt-1 text-caption-sm-regular text-danger-primary">Passwords do not match</p>
+            )}
+            {isPasswordValid && <p className="mt-1 text-caption-sm-regular text-success-primary">✓ Passwords match</p>}
           </div>
         </div>
       </div>

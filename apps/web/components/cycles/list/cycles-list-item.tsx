@@ -8,12 +8,11 @@ import type { MouseEvent } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { CircularProgress } from "@makeplane/propel/components/circular-progress";
-import { TickOutline } from "@makeplane/propel/icons";
 // plane imports
+import { CycleGroupIcon } from "@plane/blocks/icons";
 import type { TCycleGroups } from "@plane/types";
 // components
-import { generateQueryParams, calculateCycleProgress } from "@plane/utils";
+import { generateQueryParams } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -77,33 +76,13 @@ export const CyclesListItem = observer(function CyclesListItem(props: TCyclesLis
 
   const handleItemClick = cycleDetails.archived_at ? handleArchivedCycleClick : undefined;
 
-  const progress = calculateCycleProgress(cycleDetails);
-
   return (
     <ListItem
       title={cycleDetails?.name ?? ""}
       itemLink={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}
       onItemClick={handleItemClick}
       className={className}
-      prependTitleElement={
-        <div className="relative size-[30px]">
-          <div className="absolute inset-0 flex scale-150 items-center justify-center">
-            <CircularProgress
-              value={progress}
-              size="md"
-              variant={progress === 100 ? "success" : "brand"}
-              aria-label="Cycle progress"
-            />
-          </div>
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            {progress === 100 ? (
-              <TickOutline className="h-3 w-3" />
-            ) : (
-              <span className="text-9 text-primary">{`${progress}%`}</span>
-            )}
-          </div>
-        </div>
-      }
+      prependTitleElement={<CycleGroupIcon cycleGroup={cycleStatus} height="16px" width="16px" />}
       actionableItems={
         <CycleListItemAction
           workspaceSlug={workspaceSlug}
@@ -121,6 +100,7 @@ export const CyclesListItem = observer(function CyclesListItem(props: TCyclesLis
             cycleId={cycleId}
             projectId={projectId}
             workspaceSlug={workspaceSlug}
+            size="sm"
           />
         </div>
       }

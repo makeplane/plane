@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useEffectEvent } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 
 export const useOutsideClickDetector = (
   ref: { readonly current: Element | null },
@@ -13,7 +13,13 @@ export const useOutsideClickDetector = (
   enabled = true
 ) => {
   // Reads the latest callback without re-attaching the document listener on every render.
-  const onOutsideClick = useEffectEvent(callback);
+  // A ref rather than `useEffectEvent`: React 19.2 never refreshes an effect event declared in a
+  // memo component (every MobX `observer`), so the listener kept calling the first render's
+  // callback and closures over state such as `isOpen` went stale.
+  const callbackRef = useRef(callback);
+  useLayoutEffect(() => {
+    callbackRef.current = callback;
+  });
 
   useEffect(() => {
     if (!enabled) return undefined;
@@ -41,7 +47,7 @@ export const useOutsideClickDetector = (
         if (path.some((el) => el.hasAttribute("data-base-ui-portal") && !el.contains(node))) {
           return;
         }
-        onOutsideClick();
+        callbackRef.current();
       }
     };
 

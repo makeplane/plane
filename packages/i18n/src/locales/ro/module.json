@@ -2,6 +2,13 @@
   "module": {
     "label": "{count, plural, one {Modul} other {Module}}",
     "no_module": "Niciun modul",
-    "select": "Adaugă module"
+    "select": "Adaugă module",
+    "details_drawer": {
+      "progress": {
+        "done": "{completed} din {scope, plural, one {# activitate} few {# activități} other {# de activități}} finalizate",
+        "points_done": "{completed} din {scope, plural, one {# punct} few {# puncte} other {# de puncte}} finalizate",
+        "empty": "Adăugați activități în modul pentru a urmări progresul."
+      }
+    }
   }
 }

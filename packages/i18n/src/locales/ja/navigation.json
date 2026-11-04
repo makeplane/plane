@@ -7,6 +7,8 @@
     }
   },
   "sidebar": {
+    "more": "その他",
+    "hide": "非表示",
     "stickies": "付箋",
     "your_work": "あなたの作業",
     "projects": "プロジェクト",

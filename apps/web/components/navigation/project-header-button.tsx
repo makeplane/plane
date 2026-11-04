@@ -23,7 +23,7 @@ export function ProjectHeaderButton({ project }: TProjectHeaderButtonProps) {
         {/* No chevron here: the enclosing `Select.Trigger` (`select-ghost-*`) already draws one, and two on
             the same trigger read as a duplicate. */}
         <div className="relative min-w-0 flex-1 hover:rounded">
-          <p className="truncate px-2 text-14 font-medium text-secondary">{project.name}</p>
+          <p className="truncate px-2 text-body-sm-medium text-primary">{project.name}</p>
         </div>
       </div>
     </Tooltip>

@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Sélectionnez pour voir les détails."
+        "title": "Aucune notification sélectionnée",
+        "description": "Sélectionnez une notification pour en voir les détails."
       },
       "all": {
         "title": "Aucun élément de travail assigné",
@@ -52,7 +53,15 @@
       "5_days": "5 jours",
       "1_week": "1 semaine",
       "2_weeks": "2 semaines",
-      "custom": "Personnalisé"
+      "custom": "Personnalisé",
+      "modal": {
+        "title": "Personnaliser l'heure du report",
+        "pick_a_date": "Choisissez une date",
+        "pick_a_time": "Choisissez une heure",
+        "select_date": "Sélectionner une date",
+        "select_time": "Sélectionner une heure",
+        "no_available_time": "Aucune heure disponible pour cette date"
+      }
     }
   }
 }

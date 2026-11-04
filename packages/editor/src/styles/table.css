@@ -59,6 +59,10 @@
         & > button {
           opacity: 0;
         }
+
+        &:focus-within > button {
+          opacity: 1;
+        }
       }
 
       &:hover {

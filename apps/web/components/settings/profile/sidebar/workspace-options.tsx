@@ -7,10 +7,13 @@
 import { MailOutline, PlusCircleOutline } from "@makeplane/propel/icons";
 import { observer } from "mobx-react";
 // plane imports
+import { List } from "@makeplane/propel/components/list";
+import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
 import { useTranslation } from "@plane/i18n";
+import { getFileURL } from "@plane/utils";
 // components
 import { SettingsSidebarItem } from "@/components/settings/sidebar/item";
-import { WorkspaceLogo } from "@/components/workspace/logo";
+import { SettingsSidebarSectionHeading } from "@/components/settings/sidebar/section-heading";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 
@@ -22,14 +25,14 @@ export const ProfileSettingsSidebarWorkspaceOptions = observer(function ProfileS
 
   return (
     <div className="shrink-0">
-      <div className="p-2 text-caption-md-medium text-tertiary capitalize">{t("common.workspace")}</div>
-      <div className="flex flex-col">
+      <SettingsSidebarSectionHeading>{t("common.workspace")}</SettingsSidebarSectionHeading>
+      <List gap="px" role="toolbar" aria-label={t("common.workspace")}>
         {Object.values(workspaces).map((workspace) => (
           <SettingsSidebarItem
             key={workspace.id}
             as="link"
             href={`/${workspace.slug}/`}
-            iconNode={<WorkspaceLogo logo={workspace.logo_url} name={workspace.name} classNames="shrink-0" />}
+            iconNode={<WorkspaceAvatar size="sm" src={getFileURL(workspace.logo_url ?? "")} alt={workspace.name} />}
             label={workspace.name}
             isActive={false}
           />
@@ -50,7 +53,7 @@ export const ProfileSettingsSidebarWorkspaceOptions = observer(function ProfileS
             isActive={false}
           />
         </div>
-      </div>
+      </List>
     </div>
   );
 });

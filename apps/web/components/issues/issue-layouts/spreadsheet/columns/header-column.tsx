@@ -66,14 +66,14 @@ export function HeaderColumn(props: Props) {
       <MenuTrigger
         render={
           <button type="button" tabIndex={-1} className="clickable w-full">
-            <Row className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary">
+            <Row className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-body-xs-regular text-secondary hover:text-primary">
               <div className="flex items-center gap-1.5">
                 {<SpreadSheetPropertyIcon iconKey={propertyDetails.icon} className="h-4 w-4 text-placeholder" />}
                 {property === "sub_issue_count" && isEpic
                   ? t("issue.label", { count: 2 })
                   : t(propertyDetails.i18n_title)}
               </div>
-              <div className="ml-3 flex">
+              <div className="ml-3 flex items-center">
                 {activeSortingProperty === property && (
                   <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full">
                     {propertyDetails.ascendingOrderKey === displayFilters.order_by ? (

@@ -223,6 +223,11 @@
       "search": {
         "description": "Geen projecten gevonden die aan de criteria voldoen.\nMaak in plaats daarvan een nieuw project aan"
       }
+    },
+    "card": {
+      "joined": "Lid",
+      "archived": "Gearchiveerd",
+      "no_lead": "Geen lead"
     }
   },
   "workspace_views": {
@@ -373,6 +378,12 @@
           "message": "Er ging iets mis."
         }
       }
+    }
+  },
+  "instance_workspaces": {
+    "empty_state": {
+      "title": "Nog geen werkruimtes",
+      "description": "Werkruimtes die op deze instantie zijn gemaakt, worden hier weergegeven."
     }
   }
 }

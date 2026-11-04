@@ -59,7 +59,7 @@ export function DownloadActivityButton() {
 
   return (
     <Button
-      variant="primary"
+      variant="secondary"
       size="sm"
       stretch="auto"
       label={

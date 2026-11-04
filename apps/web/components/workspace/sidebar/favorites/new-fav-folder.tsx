@@ -139,17 +139,20 @@ export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TPro
     setCreateNewFolder(false);
   });
   return (
-    <div className="flex items-center gap-1.5 px-2 py-[1px]" ref={ref}>
-      <FavoriteFolderIcon className="size-4" />
-      <form onSubmit={handleSubmit(actionType === "create" ? handleAddNewFolder : handleRenameFolder)}>
+    <div className="flex items-center gap-2 px-2 py-[1px]" ref={ref}>
+      <FavoriteFolderIcon className="size-4 text-secondary" />
+      <form
+        className="min-w-0 flex-1"
+        onSubmit={handleSubmit(actionType === "create" ? handleAddNewFolder : handleRenameFolder)}
+      >
         <Controller
           name="name"
           control={control}
           rules={{ required: true }}
           render={({ field }) => (
-            <InputGroup size="2xl">
+            <InputGroup size="lg">
               <Input
-                size="2xl"
+                size="lg"
                 placeholder={t("new_folder")}
                 aria-label={t("aria_labels.projects_sidebar.enter_folder_name")}
                 {...field}

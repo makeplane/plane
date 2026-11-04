@@ -108,7 +108,7 @@ export const UserAvatar = observer(function UserAvatar() {
         <div className="flex-shrink-0">
           <Button
             variant="secondary"
-            size="sm"
+            size="md"
             stretch="auto"
             nativeButton={false}
             render={<Link to={`/?next_path=${pathName}?${queryParam}`} />}

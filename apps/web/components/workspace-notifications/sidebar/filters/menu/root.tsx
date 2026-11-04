@@ -38,7 +38,7 @@ export const NotificationFilter = observer(function NotificationFilter() {
           render={
             <IconButton
               size="sm"
-              variant="ghost"
+              variant="secondary"
               icon={<Icon icon={FilterOutline} />}
               aria-label={t("notification.options.filters")}
             />

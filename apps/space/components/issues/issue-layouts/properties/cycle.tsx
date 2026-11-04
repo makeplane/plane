@@ -5,37 +5,58 @@
  */
 
 import { observer } from "mobx-react";
-// plane ui
-import { CyclesOutline } from "@makeplane/propel/icons";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
-// plane utils
+// plane imports
+import { CycleSelect } from "@plane/blocks/property-select";
+import type { CycleOption } from "@plane/blocks/property-select";
+import type { SelectVariant } from "@plane/blocks/select";
+import { useTranslation } from "@plane/i18n";
+import type { TCycleGroups } from "@plane/types";
 import { cn } from "@plane/utils";
-//hooks
+// helpers
+import { READ_ONLY_SELECT_CLASSNAME, toSinglePage } from "@/helpers/select.helper";
+// hooks
 import { useCycle } from "@/hooks/store/use-cycle";
+// types
+import type { TPublicCycle } from "@/types/cycle";
+
+const CYCLE_GROUPS: TCycleGroups[] = ["current", "upcoming", "completed", "draft"];
 
 type Props = {
   cycleId: string | undefined;
-  shouldShowBorder?: boolean;
+  variant?: SelectVariant;
+  className?: string;
 };
 
-export const IssueBlockCycle = observer(function IssueBlockCycle({ cycleId, shouldShowBorder = true }: Props) {
-  const { getCycleById } = useCycle();
+const toCycleOption = (cycle: TPublicCycle): CycleOption => {
+  const status = cycle.status?.toLowerCase();
+  return {
+    id: cycle.id,
+    name: cycle.name,
+    status: CYCLE_GROUPS.find((group) => group === status),
+  };
+};
 
+/** The work item cycle as a read-only `CycleSelect` chip. */
+export const IssueBlockCycle = observer(function IssueBlockCycle(props: Props) {
+  const { cycleId, variant = "pill-md", className } = props;
+  // i18n
+  const { t } = useTranslation();
+  // store hooks
+  const { cycles, getCycleById } = useCycle();
+  // derived values
   const cycle = getCycleById(cycleId);
 
   return (
-    <Tooltip label={`Cycle: ${cycle?.name ?? "No Cycle"}`}>
-      <div
-        className={cn(
-          "flex h-full w-full items-center justify-between gap-1 rounded-sm px-2.5 py-1 text-11 duration-300 focus:outline-none",
-          { "border-[0.5px] border-strong": shouldShowBorder }
-        )}
-      >
-        <div className="flex w-full items-center gap-1.5 text-11">
-          <CyclesOutline className="h-3 w-3 flex-shrink-0" />
-          <div className="max-w-40 truncate">{cycle?.name ?? "No Cycle"}</div>
-        </div>
-      </div>
-    </Tooltip>
+    <CycleSelect
+      getValues={() => toSinglePage(cycles?.map(toCycleOption))}
+      value={cycle ? toCycleOption(cycle) : null}
+      onChange={() => {}}
+      variant={variant}
+      placeholder={t("common.cycle")}
+      className={cn(READ_ONLY_SELECT_CLASSNAME, className)}
+      tooltip={{ heading: t("common.cycle"), emptyContent: t("common.none") }}
+      clearable={false}
+      disabled
+    />
   );
 });

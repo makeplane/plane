@@ -5,10 +5,11 @@
  */
 
 import { observer } from "mobx-react";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { RightSidePaneOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // components
 import { PageToolbar } from "@/components/pages/editor/toolbar";
@@ -33,7 +34,7 @@ export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(pro
     editor: { editorRef },
   } = page;
   // page filters
-  const { isFullWidth, isStickyToolbarEnabled } = usePageFilters();
+  const { isStickyToolbarEnabled } = usePageFilters();
   // derived values
   const shouldHideToolbar = !isStickyToolbarEnabled || !isContentEditable;
 
@@ -41,47 +42,41 @@ export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(pro
     <>
       <div
         id="page-toolbar-container"
-        className={cn("max-h-[52px] overflow-auto transition-all duration-300 ease-linear", {
-          "max-h-0 overflow-hidden": shouldHideToolbar,
+        className={cn("max-h-[52px] overflow-hidden transition-all duration-300 ease-linear", {
+          "border-b border-subtle": !shouldHideToolbar,
+          "max-h-0": shouldHideToolbar,
         })}
       >
-        <div
-          className={cn(
-            "page-toolbar-content relative hidden min-h-[52px] items-center px-page-x transition-all duration-200 ease-in-out md:flex",
-            {
-              "wide-layout": isFullWidth,
-            }
-          )}
-        >
+        <div className="relative hidden min-h-[52px] items-center px-page-x transition-opacity duration-200 ease-in-out md:flex">
           <div className="flex w-full max-w-full items-center justify-between">
             <div className="flex-1">{editorRef && <PageToolbar editorRef={editorRef} />}</div>
-            <div className="flex items-center gap-2">
+            <div className="flex -translate-y-px items-center gap-2">
               {!isNavigationPaneOpen && (
-                <button
+                <IconButton
                   type="button"
-                  className="grid size-6 shrink-0 place-items-center rounded-sm text-secondary transition-colors hover:bg-layer-transparent-hover hover:text-primary"
+                  variant="ghost"
+                  size="sm"
+                  showTooltip={false}
                   onClick={handleOpenNavigationPane}
-                >
-                  <RightSidePaneOutline className="size-3.5" />
-                </button>
+                  aria-label={t("page_navigation_pane.open_button")}
+                  icon={<Icon icon={RightSidePaneOutline} />}
+                />
               )}
             </div>
           </div>
         </div>
       </div>
       {shouldHideToolbar && (
-        <div className="absolute top-0 right-0 z-10 flex h-[52px] items-center px-page-x">
+        <div className="absolute top-3 right-0 z-10 flex h-6 items-center px-page-x">
           {!isNavigationPaneOpen && (
-            <Tooltip label={t("page_navigation_pane.open_button")}>
-              <button
-                type="button"
-                className="grid size-6 shrink-0 place-items-center rounded-sm text-secondary transition-colors hover:bg-layer-transparent-hover hover:text-primary"
-                onClick={handleOpenNavigationPane}
-                aria-label={t("page_navigation_pane.open_button")}
-              >
-                <RightSidePaneOutline className="size-3.5" />
-              </button>
-            </Tooltip>
+            <IconButton
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleOpenNavigationPane}
+              aria-label={t("page_navigation_pane.open_button")}
+              icon={<Icon icon={RightSidePaneOutline} />}
+            />
           )}
         </div>
       )}

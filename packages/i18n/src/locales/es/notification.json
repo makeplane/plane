@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Selecciona para ver detalles."
+        "title": "No hay ninguna notificación seleccionada",
+        "description": "Selecciona una notificación para ver sus detalles."
       },
       "all": {
         "title": "No hay elementos de trabajo asignados",
@@ -52,7 +53,15 @@
       "5_days": "5 días",
       "1_week": "1 semana",
       "2_weeks": "2 semanas",
-      "custom": "Personalizado"
+      "custom": "Personalizado",
+      "modal": {
+        "title": "Personalizar la hora de posposición",
+        "pick_a_date": "Elija una fecha",
+        "pick_a_time": "Elija una hora",
+        "select_date": "Seleccionar fecha",
+        "select_time": "Seleccionar hora",
+        "no_available_time": "No hay horas disponibles para esta fecha"
+      }
     }
   }
 }

@@ -26,6 +26,16 @@
           "highlight_changes": "Destacar alterações"
         }
       },
+      "version_history": {
+        "view_only": "Somente visualização",
+        "loading_details": "Carregando detalhes da versão",
+        "load_error_description": "Não foi possível carregar a versão. Por favor, tente novamente.",
+        "list_error_description": "Não foi possível carregar o histórico de versões.",
+        "try_again": "Tentar novamente",
+        "restoring": "Restaurando",
+        "restore_success": "Versão da página restaurada.",
+        "restore_failed": "Falha ao restaurar a versão da página."
+      },
       "assets": {
         "label": "Recursos",
         "download_button": "Baixar",

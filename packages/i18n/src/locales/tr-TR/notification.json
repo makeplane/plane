@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Detayları görüntülemek için seçin."
+        "title": "Seçili bildirim yok",
+        "description": "Ayrıntılarını görüntülemek için bir bildirim seçin."
       },
       "all": {
         "title": "Atanan iş öğesi yok",
@@ -52,7 +53,15 @@
       "5_days": "5 gün",
       "1_week": "1 hafta",
       "2_weeks": "2 hafta",
-      "custom": "Özel"
+      "custom": "Özel",
+      "modal": {
+        "title": "Erteleme zamanını özelleştir",
+        "pick_a_date": "Bir tarih seçin",
+        "pick_a_time": "Bir saat seçin",
+        "select_date": "Tarih seçin",
+        "select_time": "Saat seçin",
+        "no_available_time": "Bu tarih için uygun saat yok"
+      }
     }
   }
 }

@@ -4,9 +4,11 @@
  * See the LICENSE file for details.
  */
 
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, SETTINGS_DOCS_URLS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@makeplane/propel/components/button";
 import { cn } from "@plane/utils";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
@@ -21,6 +23,8 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { ExportsWorkspaceSettingsHeader } from "./header";
 
 function ExportsPage() {
+  // states
+  const [isExportFormOpen, setIsExportFormOpen] = useState(false);
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
@@ -51,8 +55,18 @@ function ExportsPage() {
         <SettingsHeading
           title={t("workspace_settings.settings.exports.heading")}
           description={t("workspace_settings.settings.exports.description")}
+          docHref={SETTINGS_DOCS_URLS.exports}
+          control={
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              label={t("export")}
+              onClick={() => setIsExportFormOpen(true)}
+            />
+          }
         />
-        <ExportGuide />
+        <ExportGuide isExportFormOpen={isExportFormOpen} onExportFormClose={() => setIsExportFormOpen(false)} />
       </div>
     </SettingsContentWrapper>
   );

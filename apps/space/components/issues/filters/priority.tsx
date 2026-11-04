@@ -52,7 +52,7 @@ export const FilterPriority = observer(function FilterPriority(props: Props) {
               />
             ))
           ) : (
-            <p className="text-11 text-placeholder italic">{t("common.search.no_matches_found")}</p>
+            <p className="text-caption-sm-regular text-placeholder italic">{t("common.search.no_matches_found")}</p>
           )}
         </div>
       )}

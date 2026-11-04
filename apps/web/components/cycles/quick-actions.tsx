@@ -11,6 +11,7 @@ import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@makeplane/propel/components/icon-button";
+import type { IconButtonSize } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { setToast } from "@plane/blocks/toast";
@@ -33,10 +34,11 @@ type Props = {
   projectId: string;
   workspaceSlug: string;
   customClassName?: string;
+  size?: IconButtonSize;
 };
 
 export const CycleQuickActions = observer(function CycleQuickActions(props: Props) {
-  const { parentRef, cycleId, projectId, workspaceSlug, customClassName } = props;
+  const { parentRef, cycleId, projectId, workspaceSlug, customClassName, size = "md" } = props;
   // router
   const router = useAppRouter();
   // states
@@ -147,8 +149,8 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
           <MenuTrigger
             render={
               <IconButton
-                variant="tertiary"
-                size="md"
+                variant="ghost"
+                size={size}
                 icon={<Icon icon={MoreHorizontalOutline} />}
                 aria-label={t("common.options")}
                 // the legacy menu root swallowed clicks so list rows / links around it never navigated

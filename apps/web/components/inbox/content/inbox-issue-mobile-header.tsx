@@ -136,7 +136,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
           />
         </div>
         <div className="flex items-center gap-4">
-          <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />
+          <InboxIssueStatus inboxIssue={inboxIssue} />
           <div className="flex w-full items-center justify-end">
             <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
           </div>

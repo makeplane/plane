@@ -39,7 +39,7 @@ export function RecentsEmptyState({ type }: { type: string }) {
   const { assetKey, text } = getDisplayContent(type);
 
   return (
-    <div className="flex w-full items-center justify-center rounded-lg bg-layer-1 py-10">
+    <div className="flex w-full items-center justify-center rounded-lg border border-subtle-1 bg-surface-1 py-10">
       <EmptyStateCompact assetKey={assetKey} assetClassName="size-20" title={t(text)} />
     </div>
   );

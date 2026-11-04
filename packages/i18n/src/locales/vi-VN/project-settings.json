@@ -11,11 +11,17 @@
       "delete_project": {
         "title": "Xóa dự án",
         "description": "Khi xóa dự án, tất cả dữ liệu và tài nguyên trong dự án đó sẽ bị xóa vĩnh viễn và không thể khôi phục.",
-        "button": "Xóa dự án của tôi"
+        "button": "Xóa dự án của tôi",
+        "confirm_description": "Bạn có chắc chắn muốn xóa dự án {projectName} không? Toàn bộ dữ liệu trong dự án này sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.",
+        "success_message": "Đã xóa dự án thành công."
       },
       "toast": {
         "success": "Dự án đã được cập nhật thành công",
         "error": "Không thể cập nhật dự án. Vui lòng thử lại."
+      },
+      "confirm_project_name_label": "Nhập tên dự án để tiếp tục.",
+      "leave_project": {
+        "confirm_description": "Bạn có chắc chắn muốn rời dự án {projectName} không? Các mục công việc liên quan đến bạn sẽ không thể truy cập được nữa."
       }
     },
     "members": {

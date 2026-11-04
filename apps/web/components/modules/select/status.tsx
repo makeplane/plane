@@ -47,18 +47,15 @@ export function ModuleStatusSelect({ control, error, tabIndex }: Props) {
             pinSelected={false}
           >
             <Select.Trigger
-              variant="pill-md"
-              className={cn(error && "text-danger-primary")}
+              variant="pill-sm"
+              className={cn("min-h-0", error && "text-danger-primary")}
               tabIndex={tabIndex}
               appendIcon={null}
               prependIcon={
                 value ? (
                   <ModuleStatusIcon status={value} />
                 ) : (
-                  <StateOutline
-                    aria-hidden="true"
-                    className={cn("h-3 w-3", error ? "text-danger-primary" : "text-secondary")}
-                  />
+                  <StateOutline aria-hidden="true" className={error ? "text-danger-primary" : "text-secondary"} />
                 )
               }
             >

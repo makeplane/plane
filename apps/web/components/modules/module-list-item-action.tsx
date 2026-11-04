@@ -7,7 +7,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { CalendarOutline, UserAltOutline } from "@makeplane/propel/icons";
+import { CalendarOutline, LeadOutline } from "@makeplane/propel/icons";
 // Plane imports
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
@@ -132,10 +132,8 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
   return (
     <>
       <DateRangeSelect
-        variant="select-ghost-md"
-        className={`h-6 w-full gap-1.5 rounded-sm border-[0.5px] border-strong text-11 text-tertiary ${
-          isDisabled ? "cursor-not-allowed" : "cursor-pointer"
-        }`}
+        variant="pill-sm"
+        className="max-w-none"
         value={{
           from: getDate(moduleDetails.start_date) ?? null,
           to: getDate(moduleDetails.target_date) ?? null,
@@ -161,15 +159,16 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
         />
       )}
 
-      {moduleLeadDetails ? (
-        <span className="cursor-default">
+      {/* sized like the sm icon buttons beside it so the lead, star and menu sit on one even rhythm */}
+      <span className="grid size-6 shrink-0 cursor-default place-items-center">
+        {moduleLeadDetails ? (
           <ButtonAvatars showTooltip={false} userIds={moduleLeadDetails?.id} />
-        </span>
-      ) : (
-        <Tooltip label="No lead">
-          <UserAltOutline className="h-4 w-4 text-tertiary" />
-        </Tooltip>
-      )}
+        ) : (
+          <Tooltip label="No lead">
+            <LeadOutline className="size-4 shrink-0 text-tertiary" />
+          </Tooltip>
+        )}
+      </span>
 
       {isEditingAllowed && !moduleDetails.archived_at && (
         <FavoriteStar
@@ -181,12 +180,13 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
         />
       )}
       {workspaceSlug && projectId && (
-        <div className="hidden md:block">
+        <div className="hidden md:flex">
           <ModuleQuickActions
             parentRef={parentRef}
             moduleId={moduleId}
             projectId={projectId.toString()}
             workspaceSlug={workspaceSlug.toString()}
+            size="sm"
           />
         </div>
       )}

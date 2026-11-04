@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // lib
 import { stringToEmoji } from "@plane/blocks/emoji-icon-picker";
-import { EmojiReactionGroup, EmojiReactionPicker } from "@plane/blocks/emoji-reaction";
+import { EmojiReactionButton, EmojiReactionGroup, EmojiReactionPicker } from "@plane/blocks/emoji-reaction";
 import type { EmojiReactionType } from "@plane/blocks/emoji-reaction";
 // helpers
 import { groupReactions } from "@/helpers/emoji.helper";
@@ -109,19 +109,19 @@ export const IssueEmojiReactions = observer(function IssueEmojiReactions(props: 
   };
 
   return (
-    <EmojiReactionPicker
-      isOpen={isPickerOpen}
-      handleToggle={setIsPickerOpen}
-      onChange={handleEmojiSelect}
-      label={
-        <EmojiReactionGroup
-          reactions={propelReactions}
-          onReactionClick={handleEmojiClick}
-          showAddButton
-          onAddReaction={() => setIsPickerOpen(true)}
+    <EmojiReactionGroup
+      reactions={propelReactions}
+      onReactionClick={handleEmojiClick}
+      showAddButton
+      addReactionButton={
+        <EmojiReactionPicker
+          isOpen={isPickerOpen}
+          handleToggle={setIsPickerOpen}
+          onChange={handleEmojiSelect}
+          render={<EmojiReactionButton />}
+          placement="bottom-start"
         />
       }
-      placement="bottom-start"
     />
   );
 });

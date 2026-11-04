@@ -230,14 +230,15 @@ export function ExportPageModal(props: Props) {
             </DialogHeading>
           </DialogHeader>
           <DialogBody>
-            <div className="space-y-3">
+            <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between gap-2">
-                <h6 className="flex-shrink-0 text-13 text-secondary">Export format</h6>
+                <span className="shrink-0 text-body-sm-medium text-primary">Export format</span>
                 <Controller
                   control={control}
                   name="export_format"
                   render={({ field: { onChange, value } }) => (
                     <ExportOptionSelect
+                      label="Export format"
                       options={EXPORT_FORMATS}
                       value={value}
                       onChange={(val) => onChange(val as TExportFormats)}
@@ -246,12 +247,13 @@ export function ExportPageModal(props: Props) {
                 />
               </div>
               <div className="flex items-center justify-between gap-2">
-                <h6 className="flex-shrink-0 text-13 text-secondary">Include content</h6>
+                <span className="shrink-0 text-body-sm-medium text-primary">Include content</span>
                 <Controller
                   control={control}
                   name="content_variety"
                   render={({ field: { onChange, value } }) => (
                     <ExportOptionSelect
+                      label="Include content"
                       options={CONTENT_VARIETY}
                       value={value}
                       onChange={(val) => onChange(val as TContentVariety)}
@@ -261,12 +263,13 @@ export function ExportPageModal(props: Props) {
               </div>
               {isPDFSelected && (
                 <div className="flex items-center justify-between gap-2">
-                  <h6 className="flex-shrink-0 text-13 text-secondary">Page format</h6>
+                  <span className="shrink-0 text-body-sm-medium text-primary">Page format</span>
                   <Controller
                     control={control}
                     name="page_format"
                     render={({ field: { onChange, value } }) => (
                       <ExportOptionSelect
+                        label="Page format"
                         options={PAGE_FORMATS}
                         value={value}
                         onChange={(val) => onChange(val as TPageFormats)}
@@ -297,8 +300,13 @@ export function ExportPageModal(props: Props) {
 type TExportOption<T> = { key: T; label: string };
 
 /** Borderless single-select for one export setting (legacy `CustomSelect` with `buttonClassName="border-none"`). */
-function ExportOptionSelect<T>(props: { options: TExportOption<T>[]; value: T; onChange: (value: string) => void }) {
-  const { options, value, onChange } = props;
+function ExportOptionSelect<T>(props: {
+  label: string;
+  options: TExportOption<T>[];
+  value: T;
+  onChange: (value: string) => void;
+}) {
+  const { label, options, value, onChange } = props;
   // derive the selection from the stored key, so an unknown key still renders instead of blanking
   const selected = options.find((option) => option.key === value) ?? { key: value, label: String(value) };
 
@@ -313,9 +321,12 @@ function ExportOptionSelect<T>(props: { options: TExportOption<T>[]; value: T; o
           getOptionLabel={(option) => option.label}
           showSearch={false}
           pinSelected={false}
+          // never shown (a value is always selected); it names the trigger, e.g. "Export format, PDF"
+          placeholder={label}
         >
-          <Select.Trigger variant="select-ghost-md">
-            <span className="grow truncate">{selected.label}</span>
+          {/* Ghost triggers hide their chevron until hover; this row keeps it visible. */}
+          <Select.Trigger variant="select-ghost-md" className="w-auto text-secondary [&_svg]:visible">
+            <span className="truncate">{selected.label}</span>
           </Select.Trigger>
         </Select>
       </SelectDropdownPlacementContext.Provider>

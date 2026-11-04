@@ -19,7 +19,8 @@ import type {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
 } from "@plane/types";
-import { Row } from "@plane/blocks/layout";
+import { ERowVariant, Row } from "@plane/blocks/layout";
+import { cn } from "@plane/utils";
 // hooks
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // plane web imports
@@ -28,6 +29,12 @@ import { useWorkFlowFDragNDrop } from "@/components/workflow";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import type { GroupDropLocation } from "../utils";
 import { getGroupByColumns, isWorkspaceLevel } from "../utils";
+import {
+  KANBAN_SWIMLANE_COLLAPSED_COLUMN_WIDTH,
+  KANBAN_SWIMLANES_ATTRIBUTE,
+  KanbanCollapsedColumnHoverStyle,
+  KanbanCollapsedColumnTrigger,
+} from "./collapsed-column-trigger";
 import { KanBan } from "./default";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
@@ -82,21 +89,48 @@ const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
 
           if (subGroupByVisibilityToggle === false) return <></>;
 
+          const isCollapsed = !!collapsedGroups?.group_by.includes(_list.id);
+          const headerCard = (
+            <HeaderGroupByCard
+              sub_group_by={sub_group_by}
+              group_by={group_by}
+              column_id={_list.id}
+              icon={_list.icon}
+              title={_list.name}
+              count={groupCount}
+              collapsedGroups={collapsedGroups}
+              handleCollapsedGroups={handleCollapsedGroups}
+              issuePayload={_list.payload}
+              disableIssueCreation={getIsWorkflowWorkItemCreationDisabled(_list.id)}
+              isEpic={isEpic}
+            />
+          );
+
           return (
-            <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
-              <HeaderGroupByCard
-                sub_group_by={sub_group_by}
-                group_by={group_by}
-                column_id={_list.id}
-                icon={_list.icon}
-                title={_list.name}
-                count={groupCount}
-                collapsedGroups={collapsedGroups}
-                handleCollapsedGroups={handleCollapsedGroups}
-                issuePayload={_list.payload}
-                disableIssueCreation={getIsWorkflowWorkItemCreationDisabled(_list.id)}
-                isEpic={isEpic}
-              />
+            <div
+              key={`${sub_group_by}_${_list.id}`}
+              className={cn(
+                "flex flex-shrink-0 flex-col rounded-t-lg bg-layer-1",
+                // Collapsed: the cell stretches to the row so all of it is the expand target.
+                isCollapsed ? `${KANBAN_SWIMLANE_COLLAPSED_COLUMN_WIDTH} self-stretch` : "w-[336px] p-3"
+              )}
+            >
+              {isCollapsed ? (
+                <>
+                  <KanbanCollapsedColumnHoverStyle columnId={_list.id} />
+                  <KanbanCollapsedColumnTrigger
+                    columnId={_list.id}
+                    title={_list.name}
+                    count={groupCount}
+                    onExpand={() => handleCollapsedGroups("group_by", _list.id)}
+                    className="flex flex-1 items-center justify-center rounded-t-lg py-3"
+                  >
+                    {headerCard}
+                  </KanbanCollapsedColumnTrigger>
+                </>
+              ) : (
+                headerCard
+              )}
             </div>
           );
         })}
@@ -105,6 +139,8 @@ const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
 });
 
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
+  /** Group-by columns, used to cap the column panels below a collapsed last sub-group. */
+  groupByColumns: IGroupByColumn[];
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   collapsedGroups: TIssueKanbanFilters;
@@ -130,6 +166,45 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
 }
 
+// Closes the column panels with rounded caps when the last sub-group is collapsed and renders no cards.
+const SubGroupSwimlaneColumnFooter = observer(function SubGroupSwimlaneColumnFooter({
+  collapsedGroups,
+  getGroupIssueCount,
+  handleCollapsedGroups,
+  list,
+  showEmptyGroup,
+  sub_group_by,
+}: Pick<
+  ISubGroupSwimlaneHeader,
+  "collapsedGroups" | "getGroupIssueCount" | "handleCollapsedGroups" | "list" | "showEmptyGroup" | "sub_group_by"
+>) {
+  return (
+    <Row className="flex w-full items-center gap-4">
+      {list.map((_list: IGroupByColumn) => {
+        const groupCount = getGroupIssueCount(_list.id, undefined, false) ?? 0;
+        if (!visibilitySubGroupByGroupCount(groupCount, showEmptyGroup)) return null;
+        // A collapsed column's cap is one more target for the same expand action as its header and band cells.
+        return collapsedGroups?.group_by.includes(_list.id) ? (
+          <KanbanCollapsedColumnTrigger
+            key={`kanban_footer_${sub_group_by}_${_list.id}`}
+            columnId={_list.id}
+            title={_list.name}
+            count={groupCount}
+            onExpand={() => handleCollapsedGroups("group_by", _list.id)}
+            focusable={false}
+            className={`h-2 ${KANBAN_SWIMLANE_COLLAPSED_COLUMN_WIDTH} flex-shrink-0 rounded-b-lg bg-layer-1`}
+          />
+        ) : (
+          <div
+            key={`kanban_footer_${sub_group_by}_${_list.id}`}
+            className="h-2 w-[336px] flex-shrink-0 rounded-b-lg bg-layer-1"
+          />
+        );
+      })}
+    </Row>
+  );
+});
+
 const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwimlane) {
   const {
     addIssuesToView,
@@ -140,6 +215,7 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
     enableQuickIssueCreate,
     getGroupIssueCount,
     group_by,
+    groupByColumns,
     groupedIssueIds,
     handleCollapsedGroups,
     handleOnDrop,
@@ -173,6 +249,12 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
     return subGroupVisibility;
   };
 
+  let lastVisibleSubGroupId: string | undefined;
+  for (const _list of list) {
+    if (visibilitySubGroupBy(_list, getGroupIssueCount(undefined, _list.id, true) ?? 0).showGroup)
+      lastVisibleSubGroupId = _list.id;
+  }
+
   return (
     <div className="relative h-max min-h-full w-full">
       {list &&
@@ -181,21 +263,25 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
           const issueCount = getGroupIssueCount(undefined, _list.id, true) ?? 0;
           const subGroupByVisibilityToggle = visibilitySubGroupBy(_list, issueCount);
           if (subGroupByVisibilityToggle.showGroup === false) return <></>;
+          const isLastSubGroup = _list.id === lastVisibleSubGroupId;
           return (
             <div key={_list.id} className="flex flex-shrink-0 flex-col">
-              <div className="sticky top-[50px] z-[3] flex w-full items-center border-y-[0.5px] border-subtle bg-layer-1 py-1">
-                <Row className="sticky left-0 flex-shrink-0">
-                  <HeaderSubGroupByCard
-                    column_id={_list.id}
-                    icon={_list.icon}
-                    title={_list.name}
-                    count={issueCount}
-                    collapsedGroups={collapsedGroups}
-                    handleCollapsedGroups={handleCollapsedGroups}
-                    sub_group_by={sub_group_by}
-                  />
-                </Row>
-              </div>
+              <Row className="sticky top-[52px] z-[3] flex w-full items-center">
+                <div className="relative flex w-full items-center bg-layer-1">
+                  <div className="absolute inset-y-0 right-1 left-1 rounded-lg border border-subtle bg-surface-1" />
+                  <Row variant={ERowVariant.HUGGING} className="sticky left-0 flex-shrink-0 px-3">
+                    <HeaderSubGroupByCard
+                      column_id={_list.id}
+                      icon={_list.icon}
+                      title={_list.name}
+                      count={issueCount}
+                      collapsedGroups={collapsedGroups}
+                      handleCollapsedGroups={handleCollapsedGroups}
+                      sub_group_by={sub_group_by}
+                    />
+                  </Row>
+                </div>
+              </Row>
 
               {subGroupByVisibilityToggle.showIssues && (
                 <div className="relative">
@@ -224,9 +310,20 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
                     orderBy={orderBy}
                     isDropDisabled={_list.isDropDisabled}
                     dropErrorMessage={_list.dropErrorMessage}
+                    isLastSubGroup={isLastSubGroup}
                     isEpic={isEpic}
                   />
                 </div>
+              )}
+              {isLastSubGroup && !subGroupByVisibilityToggle.showIssues && (
+                <SubGroupSwimlaneColumnFooter
+                  collapsedGroups={collapsedGroups}
+                  handleCollapsedGroups={handleCollapsedGroups}
+                  getGroupIssueCount={getGroupIssueCount}
+                  list={groupByColumns}
+                  showEmptyGroup={showEmptyGroup}
+                  sub_group_by={sub_group_by}
+                />
               )}
             </div>
           );
@@ -306,8 +403,8 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
   if (!groupByList || !subGroupByList) return null;
 
   return (
-    <div className="relative">
-      <Row className="sticky top-0 z-[4] h-[50px] bg-surface-2">
+    <div className="relative" {...{ [KANBAN_SWIMLANES_ATTRIBUTE]: "" }}>
+      <Row className="sticky top-0 z-[4] bg-surface-1 pt-2">
         <SubGroupSwimlaneHeader
           getGroupIssueCount={getGroupIssueCount}
           group_by={group_by}
@@ -324,6 +421,7 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
         <SubGroupSwimlane
           issuesMap={issuesMap}
           list={subGroupByList}
+          groupByColumns={groupByList}
           groupedIssueIds={groupedIssueIds}
           getGroupIssueCount={getGroupIssueCount}
           displayProperties={displayProperties}

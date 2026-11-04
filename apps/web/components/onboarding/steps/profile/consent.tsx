@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { TickOutline } from "@makeplane/propel/icons";
+import { Checkbox } from "@makeplane/propel/components/checkbox";
 
 type Props = {
   isChecked: boolean;
@@ -13,17 +13,18 @@ type Props = {
 
 export function MarketingConsent({ isChecked, handleChange }: Props) {
   return (
-    <div className="flex items-center justify-center gap-1.5">
-      <button
-        type="button"
-        onClick={() => handleChange(!isChecked)}
-        className={`flex size-4 items-center justify-center rounded-sm border-2 ${
-          isChecked ? "border-accent-strong bg-accent-primary" : "border-strong"
-        }`}
-      >
-        {isChecked && <TickOutline className="h-3 w-3 text-on-color" />}
-      </button>
-      <span className="text-13 text-tertiary">I agree to Plane marketing communications</span>
+    <div className="flex w-full justify-center">
+      <Checkbox
+        label="I agree to Plane marketing communications"
+        checked={isChecked}
+        onCheckedChange={(checked) => handleChange(checked)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            handleChange(!isChecked);
+          }
+        }}
+      />
     </div>
   );
 }

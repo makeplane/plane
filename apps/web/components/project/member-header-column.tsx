@@ -54,12 +54,12 @@ export const MemberHeaderColumn = observer(function MemberHeaderColumn(props: Pr
         render={
           <button
             type="button"
-            className="clickable flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary"
+            className="clickable flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-body-xs-regular text-secondary hover:text-primary"
           />
         }
       >
         <span>{t(propertyDetails.i18n_title)}</span>
-        <div className="ml-3 flex">
+        <div className="ml-3 flex items-center">
           {(activeSortingProperty === propertyDetails.ascendingOrderKey ||
             activeSortingProperty === propertyDetails.descendingOrderKey) && (
             <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full">

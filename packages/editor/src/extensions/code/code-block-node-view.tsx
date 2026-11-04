@@ -11,9 +11,7 @@ import { common, createLowlight } from "lowlight";
 import { CopyOutline, TickOutline } from "@makeplane/propel/icons";
 import { useState } from "react";
 // ui
-import { Tooltip } from "@makeplane/propel/components/tooltip";
-// plane utils
-import { cn } from "@plane/utils";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 // types
 import type { TCodeBlockAttributes } from "./types";
 import { ECodeBlockAttributeNames } from "./types";
@@ -45,24 +43,15 @@ export function CodeBlockComponent({ node }: Props) {
 
   return (
     <NodeViewWrapper key={attrs[ECodeBlockAttributeNames.ID]} className="code-block group/code relative">
-      <Tooltip label="Copy code">
-        <button
-          type="button"
-          className={cn(
-            "group/button absolute top-2 right-2 z-10 hidden size-8 items-center justify-center rounded-md border border-subtle bg-layer-1 backdrop-blur-sm transition duration-150 ease-in-out group-hover/code:flex",
-            {
-              "bg-success-subtle hover:bg-success-subtle-1 active:bg-success-subtle-1": copied,
-            }
-          )}
+      <div className="pointer-events-none absolute top-2 right-2 z-10 opacity-0 transition-opacity group-focus-within/code:pointer-events-auto group-focus-within/code:opacity-100 group-hover/code:pointer-events-auto group-hover/code:opacity-100">
+        <IconButton
+          aria-label={copied ? "Copied code" : "Copy code"}
+          variant="secondary"
+          size="lg"
+          icon={copied ? <TickOutline className="text-success-primary" /> : <CopyOutline />}
           onClick={(e) => void copyToClipboard(e)}
-        >
-          {copied ? (
-            <TickOutline className="h-3 w-3 text-success-primary" />
-          ) : (
-            <CopyOutline className="h-3 w-3 text-tertiary group-hover/button:text-primary" />
-          )}
-        </button>
-      </Tooltip>
+        />
+      </div>
 
       <pre className="my-2 rounded-lg bg-layer-3 p-4 text-primary">
         <NodeViewContent<"code"> as="code" className="whitespace-pre-wrap" />

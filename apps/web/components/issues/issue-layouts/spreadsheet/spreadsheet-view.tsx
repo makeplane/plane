@@ -26,6 +26,7 @@ type Props = {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
+  handleDisplayPropertiesUpdate?: (data: Partial<IIssueDisplayProperties>) => void;
   issueIds: string[] | undefined;
   quickActions: TRenderQuickActions;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -45,6 +46,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
     displayProperties,
     displayFilters,
     handleDisplayFilterUpdate,
+    handleDisplayPropertiesUpdate,
     issueIds,
     quickActions,
     updateIssue,
@@ -93,6 +95,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
                 displayProperties={displayProperties}
                 displayFilters={displayFilters}
                 handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+                handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
                 issueIds={issueIds}
                 isEstimateEnabled={isEstimateEnabled}
                 portalElement={portalRef}

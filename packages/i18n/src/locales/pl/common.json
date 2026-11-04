@@ -6,6 +6,7 @@
     "status_page": "stronę statusu"
   },
   "submit": "Wyślij",
+  "submitting": "Wysyłanie",
   "cancel": "Anuluj",
   "loading": "Ładowanie",
   "searching": "Wyszukiwanie...",
@@ -153,6 +154,7 @@
   "no_favorites_yet": "Brak ulubionych",
   "create_folder": "Utwórz folder",
   "new_folder": "Nowy folder",
+  "rename_folder": "Zmień nazwę folderu",
   "favorite_updated_successfully": "Ulubione zaktualizowano pomyślnie",
   "favorite_created_successfully": "Ulubione utworzono pomyślnie",
   "folder_already_exists": "Folder już istnieje",
@@ -368,6 +370,7 @@
   "member": "{count, plural, one{# członek} few{# członkowie} other{# członków}}",
   "new_password_must_be_different_from_old_password": "Nowe hasło musi być innym niż stare hasło",
   "edited": "Edytowano",
+  "entity_detail_toolbar": "Akcje",
   "bot": "Bot",
   "settings_description": "Zarządzaj preferencjami konta, przestrzeni roboczej i projektu w jednym miejscu. Przełączaj się między zakładkami, aby łatwo je skonfigurować.",
   "back_to_workspace": "Wróć do przestrzeni roboczej",
@@ -540,6 +543,7 @@
     "link_copied": "Link skopiowano!",
     "link_copied_to_clipboard": "Link skopiowano do schowka",
     "copied_to_clipboard": "Link do elementu pracy skopiowano do schowka",
+    "clipboard_copy_failed": "Nie udało się skopiować do schowka",
     "branch_name_copied_to_clipboard": "Nazwa gałęzi skopiowana do schowka",
     "is_copied_to_clipboard": "Element pracy skopiowany do schowka",
     "no_links_added_yet": "Nie dodano jeszcze żadnych linków",
@@ -723,7 +727,14 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "status": "Status",
+    "tooltip": {
+      "copy_to_clipboard": "Kopiuj do schowka",
+      "created_on_date": "Utworzono dnia {date}",
+      "priority": "Priorytet: {value}"
+    },
+    "locked": "Zablokowane"
   },
   "chart": {
     "x_axis": "Oś X",
@@ -874,5 +885,13 @@
       "short_description": "Eksportuj jako JSON"
     }
   },
-  "labels_count": "{count, plural, one {# etykieta} few {# etykiety} many {# etykiet} other {# etykiety}}"
+  "labels_count": "{count, plural, one {# etykieta} few {# etykiety} many {# etykiet} other {# etykiety}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Opcje zapisu widoku",
+      "update_view": "Zaktualizuj widok",
+      "save_as": "Zapisz jako",
+      "hide_filters": "Ukryj filtry"
+    }
+  }
 }

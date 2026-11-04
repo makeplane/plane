@@ -5,49 +5,43 @@
  */
 
 import { observer } from "mobx-react";
-// plane ui
-import { ModuleOutline } from "@makeplane/propel/icons";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
-// plane utils
+// plane imports
+import { ModuleSelect } from "@plane/blocks/property-select";
+import type { SelectVariant } from "@plane/blocks/select";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
+// helpers
+import { READ_ONLY_SELECT_CLASSNAME, toSinglePage } from "@/helpers/select.helper";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 
 type Props = {
   moduleIds: string[] | undefined;
-  shouldShowBorder?: boolean;
+  variant?: Exclude<SelectVariant, "breadcrumb">;
+  className?: string;
 };
 
-export const IssueBlockModules = observer(function IssueBlockModules({ moduleIds, shouldShowBorder = true }: Props) {
-  const { getModulesByIds } = useModule();
-
-  const modules = getModulesByIds(moduleIds ?? []);
-
-  const modulesString = modules.map((module) => module.name).join(", ");
+/** The work item modules as a read-only `ModuleSelect` chip. */
+export const IssueBlockModules = observer(function IssueBlockModules(props: Props) {
+  const { moduleIds, variant = "pill-md", className } = props;
+  // i18n
+  const { t } = useTranslation();
+  // store hooks
+  const { modules, getModulesByIds } = useModule();
+  // derived values
+  const selectedModules = getModulesByIds(moduleIds ?? []).map(({ id, name }) => ({ id, name }));
 
   return (
-    <div className="relative flex h-full flex-wrap items-center gap-1">
-      <Tooltip label={`Modules: ${modulesString || "None"}`}>
-        {modules.length <= 1 ? (
-          <div
-            key={modules?.[0]?.id}
-            className={cn("flex h-full flex-shrink-0 cursor-default items-center rounded-md px-2.5 py-1 text-11", {
-              "border-[0.5px] border-strong": shouldShowBorder,
-            })}
-          >
-            <div className="flex items-center gap-1.5 text-secondary">
-              <ModuleOutline className="h-3 w-3 flex-shrink-0" />
-              <div className="text-11">{modules?.[0]?.name ?? "No Modules"}</div>
-            </div>
-          </div>
-        ) : (
-          <div className="flex h-full flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11">
-            <div className="flex items-center gap-1.5 text-secondary">
-              <div className="text-11">{modules.length} Modules</div>
-            </div>
-          </div>
-        )}
-      </Tooltip>
-    </div>
+    <ModuleSelect
+      multiple
+      getValues={() => toSinglePage(modules?.map(({ id, name }) => ({ id, name })))}
+      value={selectedModules}
+      onChange={() => {}}
+      variant={variant}
+      placeholder={t("common.modules")}
+      className={cn(READ_ONLY_SELECT_CLASSNAME, className)}
+      tooltip={{ heading: t("common.modules"), emptyContent: t("common.none") }}
+      disabled
+    />
   );
 });

@@ -5,6 +5,7 @@
  */
 
 import * as React from "react";
+import { Icon } from "@makeplane/propel/components/icon";
 import { ChevronDownOutline } from "@makeplane/propel/icons";
 import type { IconElement } from "../types/icon";
 import { cn } from "@plane/utils";
@@ -37,26 +38,26 @@ export function SelectContent(props: SelectContentProps) {
   const ctx = React.useContext(SelectContext);
   const isEmpty = props.isEmpty ?? (ctx ? ctx.selected.length === 0 : false);
   const isGhost = variant === "select-ghost";
-  // Glyphs follow propel's control scale: 16px up to `xl`, 20px at `2xl` (`--control-glyph-*`).
-  const iconClassName = cn("shrink-0", size === "2xl" ? "size-5" : "size-4");
 
   return (
     // `contents` keeps prepend/children/append as direct flex items of the trigger button (so a
     // `grow` label span still works) while still letting `text-placeholder` cascade to them.
     <span className={cn("contents", isEmpty && "text-placeholder group-disabled:text-disabled")}>
-      {prependIcon &&
-        React.cloneElement(prependIcon, {
-          className: cn(iconClassName, isEmpty && "text-placeholder group-disabled:text-disabled"),
-        })}
+      {prependIcon && <Icon icon={prependIcon} size={size} />}
       {children}
-      {appendIcon &&
-        React.cloneElement(appendIcon, {
-          className: cn(
-            iconClassName,
-            isEmpty && "text-placeholder group-disabled:text-disabled",
+      {appendIcon && (
+        // A flex box, not an inline span: an inline wrapper sets the glyph on the text baseline and
+        // leaves the descender gap under it, lifting the chevron above the trigger's centre. `ms-auto`
+        // keeps it at the far end of a trigger wider than its value.
+        <span
+          className={cn(
+            "ms-auto flex shrink-0 items-center",
             isGhost && "invisible group-hover:visible group-focus-visible:visible group-active:visible"
-          ),
-        })}
+          )}
+        >
+          <Icon icon={appendIcon} size={size} />
+        </span>
+      )}
     </span>
   );
 }

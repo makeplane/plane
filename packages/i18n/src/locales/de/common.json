@@ -6,6 +6,7 @@
     "status_page": "Statusseite"
   },
   "submit": "Senden",
+  "submitting": "Wird gesendet",
   "cancel": "Abbrechen",
   "loading": "Wird geladen",
   "searching": "Wird gesucht...",
@@ -153,6 +154,7 @@
   "no_favorites_yet": "Noch keine Favoriten",
   "create_folder": "Ordner erstellen",
   "new_folder": "Neuer Ordner",
+  "rename_folder": "Ordner umbenennen",
   "favorite_updated_successfully": "Favorit erfolgreich aktualisiert",
   "favorite_created_successfully": "Favorit erfolgreich erstellt",
   "folder_already_exists": "Ordner existiert bereits",
@@ -368,6 +370,7 @@
   "member": "{count, plural, one{# Mitglied} few{# Mitglieder} other{# Mitglieder}}",
   "new_password_must_be_different_from_old_password": "Das neue Passwort muss von dem alten Passwort abweichen",
   "edited": "Bearbeitet",
+  "entity_detail_toolbar": "Aktionen",
   "bot": "Bot",
   "settings_description": "Verwalten Sie Ihre Konto-, Arbeitsbereichs- und Projekteinstellungen an einem Ort. Wechseln Sie zwischen den Tabs, um sie einfach zu konfigurieren.",
   "back_to_workspace": "Zurück zum Arbeitsbereich",
@@ -540,6 +543,7 @@
     "link_copied": "Link kopiert!",
     "link_copied_to_clipboard": "Link in die Zwischenablage kopiert",
     "copied_to_clipboard": "Link zum Arbeitselement in die Zwischenablage kopiert",
+    "clipboard_copy_failed": "Kopieren in die Zwischenablage fehlgeschlagen",
     "branch_name_copied_to_clipboard": "Branch-Name in die Zwischenablage kopiert",
     "is_copied_to_clipboard": "Arbeitselement in die Zwischenablage kopiert",
     "no_links_added_yet": "Noch keine Links hinzugefügt",
@@ -723,7 +727,14 @@
     "developer": "Entwickler",
     "work_structure": "Arbeitsstruktur",
     "execution": "Ausführung",
-    "administration": "Verwaltung"
+    "administration": "Verwaltung",
+    "status": "Status",
+    "tooltip": {
+      "copy_to_clipboard": "In die Zwischenablage kopieren",
+      "created_on_date": "Erstellt am {date}",
+      "priority": "Priorität: {value}"
+    },
+    "locked": "Gesperrt"
   },
   "chart": {
     "x_axis": "X-Achse",
@@ -874,5 +885,13 @@
       "short_description": "Als JSON exportieren"
     }
   },
-  "labels_count": "{count, plural, one {# Label} other {# Labels}}"
+  "labels_count": "{count, plural, one {# Label} other {# Labels}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Optionen zum Speichern der Ansicht",
+      "update_view": "Ansicht aktualisieren",
+      "save_as": "Speichern unter",
+      "hide_filters": "Filter ausblenden"
+    }
+  }
 }

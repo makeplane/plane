@@ -6,6 +6,7 @@
     "status_page": "pagina noastră de stare"
   },
   "submit": "Trimite",
+  "submitting": "Se trimite",
   "cancel": "Anulează",
   "loading": "Se încarcă",
   "searching": "Se caută...",
@@ -153,6 +154,7 @@
   "no_favorites_yet": "Nicio favorită încă",
   "create_folder": "Creează dosar",
   "new_folder": "Dosar nou",
+  "rename_folder": "Redenumiți dosarul",
   "favorite_updated_successfully": "Favorita a fost actualizată cu succes",
   "favorite_created_successfully": "Favorita a fost creată cu succes",
   "folder_already_exists": "Dosarul există deja",
@@ -368,6 +370,7 @@
   "member": "{count, plural, one{# membru} other{# membri}}",
   "new_password_must_be_different_from_old_password": "Parola nouă trebuie să fie diferită de parola veche",
   "edited": "editat",
+  "entity_detail_toolbar": "Acțiuni",
   "bot": "Bot",
   "settings_description": "Gestionează preferințele contului, spațiului de lucru și proiectelor tale într-un singur loc. Comută între file pentru a configura cu ușurință.",
   "back_to_workspace": "Înapoi la spațiul de lucru",
@@ -540,6 +543,7 @@
     "link_copied": "Link copiat!",
     "link_copied_to_clipboard": "Link-ul a fost copiat în memoria temporară",
     "copied_to_clipboard": "Link-ul activității copiat în memoria temporară",
+    "clipboard_copy_failed": "Nu s-a putut copia în clipboard",
     "branch_name_copied_to_clipboard": "Nume de ramură copiat în memoria temporară",
     "is_copied_to_clipboard": "Activitatea a fost copiată în memoria temporară",
     "no_links_added_yet": "Niciun link adăugat încă",
@@ -723,7 +727,14 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "status": "Stare",
+    "tooltip": {
+      "copy_to_clipboard": "Copiază în clipboard",
+      "created_on_date": "Creat la {date}",
+      "priority": "Prioritate: {value}"
+    },
+    "locked": "Blocat"
   },
   "chart": {
     "x_axis": "axa-X",
@@ -874,5 +885,13 @@
       "short_description": "Exportă ca JSON"
     }
   },
-  "labels_count": "{count, plural, one {# etichetă} few {# etichete} other {# de etichete}}"
+  "labels_count": "{count, plural, one {# etichetă} few {# etichete} other {# de etichete}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Opțiuni de salvare a perspectivei",
+      "update_view": "Actualizează perspectiva",
+      "save_as": "Salvează ca",
+      "hide_filters": "Ascunde filtrele"
+    }
+  }
 }

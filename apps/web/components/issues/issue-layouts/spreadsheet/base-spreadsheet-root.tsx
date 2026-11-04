@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { ALL_ISSUES, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import type { EIssuesStoreType, IIssueDisplayFilterOptions } from "@plane/types";
+import type { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
@@ -92,6 +92,13 @@ export const BaseSpreadsheetRoot = observer(function BaseSpreadsheetRoot(props: 
     [projectId, updateFilters]
   );
 
+  const handleDisplayPropertiesUpdate = useCallback(
+    (updatedDisplayProperties: Partial<IIssueDisplayProperties>) => {
+      updateFilters(projectId?.toString() ?? "", EIssueFilterType.DISPLAY_PROPERTIES, updatedDisplayProperties);
+    },
+    [projectId, updateFilters]
+  );
+
   const renderQuickActions: TRenderQuickActions = useCallback(
     ({ issue, parentRef, customActionButton, placement, portalElement }) => (
       <QuickActions
@@ -119,6 +126,7 @@ export const BaseSpreadsheetRoot = observer(function BaseSpreadsheetRoot(props: 
         displayProperties={issuesFilter.issueFilters?.displayProperties ?? {}}
         displayFilters={issuesFilter.issueFilters?.displayFilters ?? {}}
         handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
+        handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
         issueIds={issueIds}
         quickActions={renderQuickActions}
         updateIssue={updateIssue}

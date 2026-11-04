@@ -108,7 +108,12 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   @apply border! border-strong!;
   outline: none;
   border-radius: 2px;
-  transform: scale(1.05);
+}
+
+/* Tiptap owns the native input markup; keep its keyboard focus visible. */
+.ProseMirror[contenteditable="true"] input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--border-color-accent-strong);
+  outline-offset: 2px;
 }
 
 .ProseMirror[contenteditable="true"] input[type="checkbox"]:hover {
@@ -122,7 +127,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
 ul[data-type="taskList"] li > label input[type="checkbox"]:checked {
   background-color: var(--background-color-accent-primary) !important;
   border-color: var(--border-color-accent-strong) !important;
-  color: white !important;
+  color: var(--text-color-on-color) !important;
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"]:checked:hover {
@@ -148,8 +153,8 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   background-color: transparent;
   margin: 0;
   cursor: pointer;
-  width: 0.8rem;
-  height: 0.8rem;
+  width: 1rem;
+  height: 1rem;
   position: relative;
   @apply border-md border-subtle-1;
   margin-right: 0.2rem;

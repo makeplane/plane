@@ -56,7 +56,7 @@ export function GeneratedTokenDetails(props: Props) {
           <button
             type="button"
             onClick={() => copyApiToken(tokenDetails.token ?? "")}
-            className="flex w-full items-center justify-between truncate rounded-md border-[0.5px] border-subtle px-3 py-2 text-13 font-medium outline-none"
+            className="flex w-full items-center justify-between truncate rounded-md border-[0.5px] border-subtle px-3 py-2 text-body-xs-medium outline-none"
           >
             <span className="truncate pr-2">{tokenDetails.token}</span>
             <Tooltip label="Copy secret key" disabled={isMobile}>

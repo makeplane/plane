@@ -7,6 +7,8 @@
     }
   },
   "sidebar": {
+    "more": "More",
+    "hide": "Hide",
     "stickies": "Stickies",
     "your_work": "Your work",
     "projects": "Projects",

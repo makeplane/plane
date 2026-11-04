@@ -35,6 +35,9 @@ export type EmojiReactionGroupProps = React.ComponentPropsWithRef<"div"> & {
   onReactionClick?: (emoji: string) => void;
   onAddReaction?: () => void;
   showAddButton?: boolean;
+  /** Compose the add action separately so reaction buttons remain independent of its popover. */
+  addReactionButton?: React.ReactElement<{ disabled?: boolean }>;
+  disabled?: boolean;
   maxDisplayUsers?: number;
 };
 
@@ -55,6 +58,8 @@ const EmojiReaction = React.forwardRef(function EmojiReaction(
   }: EmojiReactionProps,
   ref: React.ForwardedRef<HTMLButtonElement>
 ) {
+  const { t } = useTranslation();
+
   const handleClick = () => {
     onReactionClick?.(emoji);
   };
@@ -77,6 +82,8 @@ const EmojiReaction = React.forwardRef(function EmojiReaction(
       ref={ref}
       type="button"
       onClick={handleClick}
+      aria-label={`${t("common.actions.add_reaction")}: ${emoji}${showCount && count > 0 ? ` (${count})` : ""}`}
+      aria-pressed={reacted}
       className={cn(
         "inline-flex items-center gap-0.5 rounded-full border px-1.5 text-caption-sm-regular transition-all duration-200",
         reacted
@@ -137,6 +144,8 @@ const EmojiReactionGroup = React.forwardRef(function EmojiReactionGroup(
     onAddReaction,
     className,
     showAddButton = true,
+    addReactionButton,
+    disabled = false,
     maxDisplayUsers = 5,
     ...props
   }: EmojiReactionGroupProps,
@@ -152,9 +161,15 @@ const EmojiReactionGroup = React.forwardRef(function EmojiReactionGroup(
           reacted={reaction.reacted}
           users={reaction.users?.slice(0, maxDisplayUsers)}
           onReactionClick={onReactionClick}
+          disabled={disabled}
         />
       ))}
-      {showAddButton && <EmojiReactionButton onAddReaction={onAddReaction} />}
+      {showAddButton &&
+        (addReactionButton ? (
+          React.cloneElement(addReactionButton, { disabled: disabled || addReactionButton.props.disabled })
+        ) : (
+          <EmojiReactionButton onAddReaction={onAddReaction} disabled={disabled} />
+        ))}
     </div>
   );
 });

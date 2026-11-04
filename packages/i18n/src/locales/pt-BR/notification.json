@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Selecione para ver os detalhes."
+        "title": "Nenhuma notificação selecionada",
+        "description": "Selecione uma notificação para ver os detalhes."
       },
       "all": {
         "title": "Nenhum item de trabalho atribuído",
@@ -52,7 +53,15 @@
       "5_days": "5 dias",
       "1_week": "1 semana",
       "2_weeks": "2 semanas",
-      "custom": "Personalizado"
+      "custom": "Personalizado",
+      "modal": {
+        "title": "Personalizar horário de adiamento",
+        "pick_a_date": "Escolha uma data",
+        "pick_a_time": "Escolha um horário",
+        "select_date": "Selecionar data",
+        "select_time": "Selecionar horário",
+        "no_available_time": "Nenhum horário disponível para esta data"
+      }
     }
   }
 }

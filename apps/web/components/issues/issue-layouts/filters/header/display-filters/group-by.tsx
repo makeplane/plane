@@ -4,14 +4,20 @@
  * See the LICENSE file for details.
  */
 
-import React, { useState } from "react";
 import { observer } from "mobx-react";
+import {
+  MenuRadioGroup,
+  MenuRadioItem,
+  MenuSubmenu,
+  MenuSubmenuContent,
+  MenuSubmenuTrigger,
+} from "@makeplane/propel/components/menu";
 import { useTranslation } from "@plane/i18n";
 import type { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
 // helpers
 import { useGroupByOptions } from "../../../utils";
-// components
-import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
+// local imports
+import { DisplayFilterCurrentValue } from "./current-value";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions | undefined;
@@ -24,43 +30,35 @@ export const FilterGroupBy = observer(function FilterGroupBy(props: Props) {
   const { displayFilters, groupByOptions, handleUpdate, ignoreGroupedFilters } = props;
   // hooks
   const { t } = useTranslation();
-  const [previewEnabled, setPreviewEnabled] = useState(true);
 
   const selectedGroupBy = displayFilters?.group_by ?? null;
   const selectedSubGroupBy = displayFilters?.sub_group_by ?? null;
 
-  const options = useGroupByOptions(groupByOptions);
+  const options = useGroupByOptions(groupByOptions).filter((groupBy) => {
+    // a board can't group and sub-group by the same property
+    if (displayFilters?.layout === "kanban" && selectedSubGroupBy !== null && groupBy.key === selectedSubGroupBy)
+      return false;
+    return !ignoreGroupedFilters.includes(groupBy?.key);
+  });
+  const selectedOption = options.find((option) => option.key === selectedGroupBy);
 
   return (
-    <>
-      <FilterHeader
-        title={t("common.group_by")}
-        isPreviewEnabled={previewEnabled}
-        handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
+    <MenuSubmenu>
+      <MenuSubmenuTrigger
+        label={t("common.group_by")}
+        trailing={
+          selectedOption && (
+            <DisplayFilterCurrentValue>{t(selectedOption.titleTranslationKey)}</DisplayFilterCurrentValue>
+          )
+        }
       />
-      {previewEnabled && (
-        <div>
-          {options.map((groupBy) => {
-            if (
-              displayFilters?.layout === "kanban" &&
-              selectedSubGroupBy !== null &&
-              groupBy.key === selectedSubGroupBy
-            )
-              return null;
-            if (ignoreGroupedFilters.includes(groupBy?.key)) return null;
-
-            return (
-              <FilterOption
-                key={groupBy?.key}
-                isChecked={selectedGroupBy === groupBy?.key}
-                onClick={() => handleUpdate(groupBy.key)}
-                title={t(groupBy.titleTranslationKey)}
-                multiple={false}
-              />
-            );
-          })}
-        </div>
-      )}
-    </>
+      <MenuSubmenuContent>
+        <MenuRadioGroup value={selectedGroupBy} onValueChange={(value: TIssueGroupByOptions) => handleUpdate(value)}>
+          {options.map((groupBy) => (
+            <MenuRadioItem key={groupBy.key ?? "none"} value={groupBy.key} label={t(groupBy.titleTranslationKey)} />
+          ))}
+        </MenuRadioGroup>
+      </MenuSubmenuContent>
+    </MenuSubmenu>
   );
 });

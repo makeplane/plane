@@ -26,7 +26,8 @@
           "success_title": "Arbeitsbereich gelöscht.",
           "success_message": "Sie werden auf Ihr Profil umgeleitet.",
           "error_title": "Fehlgeschlagen.",
-          "error_message": "Bitte versuchen Sie es erneut."
+          "error_message": "Bitte versuchen Sie es erneut.",
+          "confirm_description": "Sie sind dabei, den Arbeitsbereich {workspaceName} zu löschen. Sie verlieren den Zugriff auf alle Arbeitsdaten in diesem Arbeitsbereich, und sie können nicht wiederhergestellt werden."
         },
         "errors": {
           "name": {
@@ -63,7 +64,10 @@
             "required": "Eine E-Mail-Adresse ist erforderlich.",
             "invalid": "E-Mail ist ungültig"
           }
-        }
+        },
+        "leave_input_label": "Geben Sie zum Fortfahren den Namen dieses Arbeitsbereichs ein.",
+        "description": "Verwalten Sie den Zugriff auf diesen Arbeitsbereich.",
+        "leave_title": "Arbeitsbereich verlassen?"
       },
       "billing_and_plans": {
         "heading": "Abrechnung und Pläne",
@@ -170,7 +174,13 @@
             "title": "Fehler!",
             "message": "Löschen des Tokens fehlgeschlagen"
           }
-        }
+        },
+        "columns": {
+          "expires": "Läuft ab",
+          "last_used": "Zuletzt verwendet"
+        },
+        "expired": "Abgelaufen",
+        "not_used_yet": "Noch nicht verwendet"
       },
       "integrations": {
         "title": "Integrationen",

@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
@@ -125,14 +125,15 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
       />
     );
 
+  // one box per state, so the list's spacing falls between states and not around the drop indicators
   return (
-    <Fragment>
+    <div>
       {/* draggable drop top indicator */}
       <DropIndicator isVisible={isDraggedOver && closestEdge === "top"} />
       <div
         ref={draggableElementRef}
         className={cn(
-          "group relative rounded-sm border border-subtle bg-surface-1 px-3.5 py-3",
+          "group relative rounded-lg border border-subtle bg-layer-2 px-3.5 py-2 transition-opacity",
           isDragging ? `opacity-50` : `opacity-100`,
           totalStates === 1 ? `cursor-auto` : `cursor-grab`,
           stateItemClassName
@@ -153,6 +154,6 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
       </div>
       {/* draggable drop bottom indicator */}
       <DropIndicator isVisible={isDraggedOver && closestEdge === "bottom"} />
-    </Fragment>
+    </div>
   );
 });

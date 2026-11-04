@@ -186,6 +186,20 @@ export const shouldHighlightIssueDueDate = (
   return targetDateDistance <= 0;
 };
 
+/**
+ * @description text colour class for a due date: crimson once it has passed, yellow when it is today,
+ * and none for completed or cancelled work items
+ * @param date
+ * @param stateGroup
+ * @returns tailwind class name, or an empty string
+ */
+export const getIssueDueDateClassName = (date: string | Date | null, stateGroup: TStateGroups | undefined): string => {
+  if (!shouldHighlightIssueDueDate(date, stateGroup)) return "";
+  const parsedDate = getDate(date);
+  if (!parsedDate) return "";
+  return differenceInCalendarDays(parsedDate, new Date()) < 0 ? "text-label-crimson-text" : "text-label-yellow-text";
+};
+
 export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => ({
   data: block,
   id: block?.id,

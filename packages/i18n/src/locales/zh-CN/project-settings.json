@@ -11,11 +11,17 @@
       "delete_project": {
         "title": "删除项目",
         "description": "删除项目时，该项目内的所有数据和资源将被永久删除且无法恢复。",
-        "button": "删除我的项目"
+        "button": "删除我的项目",
+        "confirm_description": "您确定要删除项目 {projectName} 吗？此项目中的所有数据都将被永久删除。此操作无法撤消。",
+        "success_message": "项目已成功删除。"
       },
       "toast": {
         "success": "项目更新成功",
         "error": "项目无法更新。请重试。"
+      },
+      "confirm_project_name_label": "输入项目名称以继续。",
+      "leave_project": {
+        "confirm_description": "您确定要离开项目 {projectName} 吗？与您关联的工作项将无法再访问。"
       }
     },
     "members": {

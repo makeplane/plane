@@ -23,7 +23,13 @@ import type { TExternalFilter, TFilterProperty, TSupportedOperators } from "@pla
 import { cn, getOperatorForPayload } from "@plane/utils";
 
 export type TAddFilterDropdownProps<P extends TFilterProperty, E extends TExternalFilter> = {
-  customButton: React.ReactNode;
+  customButton?: React.ReactNode;
+  /**
+   * Makes this element the trigger itself instead of wrapping `customButton` in one, for a trigger
+   * that is already a button — a filter chip's property segment, which its pill group styles as a
+   * direct child.
+   */
+  triggerRender?: React.ReactElement;
   /** Names the trigger when `customButton` has no visible text (the icon-only add-filter button). */
   triggerAriaLabel?: string;
   buttonConfig?: {
@@ -39,7 +45,7 @@ export const AddFilterDropdown = observer(function AddFilterDropdown<
   P extends TFilterProperty,
   E extends TExternalFilter,
 >(props: TAddFilterDropdownProps<P, E>) {
-  const { filter, customButton, triggerAriaLabel, buttonConfig } = props;
+  const { filter, customButton, triggerRender, triggerAriaLabel, buttonConfig } = props;
   const { className, defaultOpen = false, isDisabled = false } = buttonConfig || {};
   // states
   const [searchQuery, setSearchQuery] = useState("");
@@ -68,57 +74,70 @@ export const AddFilterDropdown = observer(function AddFilterDropdown<
     }
   };
 
+  const content = (
+    <ComboboxContent
+      sizing="auto"
+      aria-label={t("common.filters")}
+      search={
+        <ComboboxSearch
+          placeholder={t("search")}
+          aria-label={t("search")}
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
+        />
+      }
+    >
+      <ComboboxList aria-label={t("common.filters")}>
+        {visibleConfigs.map((config) => (
+          <ComboboxItem
+            key={config.id}
+            value={config.id}
+            label={config.label}
+            icon={config.icon ? <config.icon className="size-4 text-tertiary" /> : undefined}
+            trailing={config.rightContent ? <>{config.rightContent}</> : undefined}
+          />
+        ))}
+        {/* Stays mounted, children conditional: a polite live region announces unreliably when swapped in and out. */}
+        <ComboboxEmpty>{visibleConfigs.length === 0 ? emptyLabel : null}</ComboboxEmpty>
+      </ComboboxList>
+    </ComboboxContent>
+  );
+
+  const combobox = (trigger: React.ReactNode) => (
+    <Combobox
+      value=""
+      onValueChange={(value) => {
+        if (typeof value === "string" && value) handleFilterSelect(value as P);
+      }}
+      defaultOpen={defaultOpen}
+      disabled={isDisabled}
+      onOpenChange={(open) => {
+        if (!open) setSearchQuery("");
+      }}
+    >
+      {trigger}
+      {content}
+    </Combobox>
+  );
+
+  // The caller's element is the trigger: no wrapper, so it stays a direct child of its layout.
+  if (triggerRender) return combobox(<BaseCombobox.Trigger aria-label={triggerAriaLabel} render={triggerRender} />);
+
   return (
     <div className="relative flex-shrink-0 text-left transition-all duration-200 ease-in-out">
-      <Combobox
-        value=""
-        onValueChange={(value) => {
-          if (typeof value === "string" && value) handleFilterSelect(value as P);
-        }}
-        defaultOpen={defaultOpen}
-        disabled={isDisabled}
-        onOpenChange={(open) => {
-          if (!open) setSearchQuery("");
-        }}
-      >
-        {/* The caller's button is content, not a button: the trigger stays the one interactive element. */}
+      {combobox(
+        // The caller's button is content, not a button: the trigger stays the one interactive element.
         <BaseCombobox.Trigger
           aria-label={triggerAriaLabel}
           className={cn(
-            "flex w-full items-center justify-between gap-1 text-11 outline-none",
+            "flex w-full items-center justify-between gap-1 text-caption-sm-regular outline-none",
             isDisabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover",
             className
           )}
         >
           {customButton}
         </BaseCombobox.Trigger>
-        <ComboboxContent
-          sizing="auto"
-          aria-label={t("common.filters")}
-          search={
-            <ComboboxSearch
-              placeholder={t("search")}
-              aria-label={t("search")}
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-            />
-          }
-        >
-          <ComboboxList aria-label={t("common.filters")}>
-            {visibleConfigs.map((config) => (
-              <ComboboxItem
-                key={config.id}
-                value={config.id}
-                label={config.label}
-                icon={config.icon ? <config.icon className="size-4 text-tertiary" /> : undefined}
-                trailing={config.rightContent ? <>{config.rightContent}</> : undefined}
-              />
-            ))}
-            {/* Stays mounted, children conditional: a polite live region announces unreliably when swapped in and out. */}
-            <ComboboxEmpty>{visibleConfigs.length === 0 ? emptyLabel : null}</ComboboxEmpty>
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
+      )}
     </div>
   );
 });

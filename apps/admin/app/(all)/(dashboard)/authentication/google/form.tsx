@@ -4,27 +4,18 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
 import { isEmpty } from "lodash-es";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { MonitorOutline } from "@makeplane/propel/icons";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
-import { Button } from "@makeplane/propel/components/button";
-import { setToast } from "@plane/blocks/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGoogleAuthenticationConfigurationKeys } from "@plane/types";
 // components
 import { CodeBlock } from "@/components/common/code-block";
-import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
 import type { TControllerInputFormField } from "@/components/common/controller-input";
 import type { TControllerSwitchFormField } from "@/components/common/controller-switch";
-import { ControllerSwitch } from "@/components/common/controller-switch";
-import { ControllerInput } from "@/components/common/controller-input";
 import type { TCopyField } from "@/components/common/copy-field";
-import { CopyField } from "@/components/common/copy-field";
+import { OAuthProviderForm } from "@/components/authentication/oauth-provider-form";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useOAuthProviderConfigForm } from "@/hooks/use-oauth-provider-config-form";
 
 type Props = {
   config: IFormattedInstanceConfiguration;
@@ -39,22 +30,15 @@ const GOOGLE_FORM_SWITCH_FIELD: TControllerSwitchFormField<GoogleConfigFormValue
 
 export function InstanceGoogleConfigForm(props: Props) {
   const { config } = props;
-  // states
-  const [isDiscardChangesModalOpen, setIsDiscardChangesModalOpen] = useState(false);
-  // store hooks
-  const { updateInstanceConfigurations } = useInstance();
   // form data
   const {
-    handleSubmit,
     control,
-    reset,
-    formState: { errors, isDirty, isSubmitting },
-  } = useForm<GoogleConfigFormValues>({
-    defaultValues: {
-      GOOGLE_CLIENT_ID: config["GOOGLE_CLIENT_ID"],
-      GOOGLE_CLIENT_SECRET: config["GOOGLE_CLIENT_SECRET"],
-      ENABLE_GOOGLE_SYNC: config["ENABLE_GOOGLE_SYNC"] || "0",
-    },
+    formState: { errors },
+    onSave,
+  } = useOAuthProviderConfigForm<GoogleConfigFormValues>("Google", {
+    GOOGLE_CLIENT_ID: config["GOOGLE_CLIENT_ID"],
+    GOOGLE_CLIENT_SECRET: config["GOOGLE_CLIENT_SECRET"],
+    ENABLE_GOOGLE_SYNC: config["ENABLE_GOOGLE_SYNC"] || "0",
   });
 
   const originURL = !isEmpty(API_BASE_URL) ? API_BASE_URL : typeof window !== "undefined" ? window.location.origin : "";
@@ -152,107 +136,15 @@ export function InstanceGoogleConfigForm(props: Props) {
     },
   ];
 
-  const onSubmit = async (formData: GoogleConfigFormValues) => {
-    const payload: Partial<GoogleConfigFormValues> = { ...formData };
-
-    try {
-      const response = await updateInstanceConfigurations(payload);
-      setToast({
-        type: "success",
-        title: "Done!",
-        message: "Your Google authentication is configured. You should test it now.",
-      });
-      reset({
-        GOOGLE_CLIENT_ID: response.find((item) => item.key === "GOOGLE_CLIENT_ID")?.value,
-        GOOGLE_CLIENT_SECRET: response.find((item) => item.key === "GOOGLE_CLIENT_SECRET")?.value,
-        ENABLE_GOOGLE_SYNC: response.find((item) => item.key === "ENABLE_GOOGLE_SYNC")?.value,
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleGoBack = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    if (isDirty) {
-      e.preventDefault();
-      setIsDiscardChangesModalOpen(true);
-    }
-  };
-
   return (
-    <>
-      <ConfirmDiscardModal
-        isOpen={isDiscardChangesModalOpen}
-        onDiscardHref="/authentication"
-        handleClose={() => setIsDiscardChangesModalOpen(false)}
-      />
-      <div className="flex flex-col gap-8">
-        <div className="grid w-full grid-cols-2 gap-x-12 gap-y-8">
-          <div className="col-span-2 flex flex-col gap-y-4 pt-1 md:col-span-1">
-            <div className="pt-2.5 text-18 font-medium">Google-provided details for Plane</div>
-            {GOOGLE_FORM_FIELDS.map((field) => (
-              <ControllerInput
-                key={field.key}
-                control={control}
-                type={field.type}
-                name={field.key}
-                label={field.label}
-                description={field.description}
-                placeholder={field.placeholder}
-                error={field.error}
-                required={field.required}
-              />
-            ))}
-            <ControllerSwitch control={control} field={GOOGLE_FORM_SWITCH_FIELD} />
-            <div className="flex flex-col gap-1 pt-4">
-              <div className="flex items-center gap-4">
-                <Button
-                  variant="primary"
-                  size="md"
-                  stretch="auto"
-                  onClick={(e) => void handleSubmit(onSubmit)(e)}
-                  loading={isSubmitting}
-                  disabled={!isDirty}
-                  label={isSubmitting ? "Saving" : "Save changes"}
-                />
-                <Button
-                  variant="secondary"
-                  size="md"
-                  stretch="auto"
-                  nativeButton={false}
-                  render={<Link href="/authentication" onClick={handleGoBack} />}
-                  label="Go back"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="col-span-2 flex flex-col gap-y-6 md:col-span-1">
-            <div className="pt-2 text-18 font-medium">Plane-provided details for Google</div>
-
-            <div className="flex flex-col gap-y-4">
-              {/* common service details */}
-              <div className="flex flex-col gap-y-4 rounded-lg bg-layer-1 px-6 py-4">
-                {GOOGLE_COMMON_SERVICE_DETAILS.map((field) => (
-                  <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
-                ))}
-              </div>
-
-              {/* web service details */}
-              <div className="flex flex-col overflow-hidden rounded-lg">
-                <div className="flex items-center gap-x-3 bg-layer-3 px-6 py-3 text-11 font-medium text-secondary uppercase">
-                  <MonitorOutline className="h-3 w-3" />
-                  Web
-                </div>
-                <div className="flex flex-col gap-y-4 bg-layer-1 px-6 py-4">
-                  {GOOGLE_SERVICE_DETAILS.map((field) => (
-                    <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+    <OAuthProviderForm
+      providerName="Google"
+      control={control}
+      formFields={GOOGLE_FORM_FIELDS}
+      switchField={GOOGLE_FORM_SWITCH_FIELD}
+      onSave={onSave}
+      serviceDetails={GOOGLE_COMMON_SERVICE_DETAILS}
+      webServiceDetails={GOOGLE_SERVICE_DETAILS}
+    />
   );
 }

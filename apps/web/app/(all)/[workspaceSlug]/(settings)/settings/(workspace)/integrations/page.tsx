@@ -44,7 +44,7 @@ function WorkspaceIntegrationsPage() {
       <PageHead title={pageTitle} />
       <section className="w-full overflow-y-auto">
         <div className="flex items-start gap-3 border-b border-subtle py-3.5">
-          <h3 className="text-18 font-medium">{t("integrations.integrations")}</h3>
+          <h3 className="text-h5-medium">{t("integrations.integrations")}</h3>
         </div>
         <div>
           {appIntegrations ? (

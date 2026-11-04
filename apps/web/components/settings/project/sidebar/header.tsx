@@ -41,22 +41,22 @@ export const ProjectSettingsSidebarHeader = observer(function ProjectSettingsSid
   if (!currentProjectRole) return null;
 
   return (
-    <div className="shrink-0">
-      <div className="flex items-center gap-1 py-3 pr-5 pl-4 text-body-md-medium">
+    <div className="sticky top-0 z-[1] shrink-0 bg-surface-1 pb-1.5">
+      <div className="flex items-center gap-2 py-3 pr-5 pl-4 text-body-md-medium">
         <IconButton
-          variant="ghost"
+          variant="tertiary"
           size="sm"
-          icon={<Icon icon={ArrowNarrowLeftOutline} />}
+          icon={<Icon icon={ArrowNarrowLeftOutline} size="sm" />}
           aria-label="Back to project"
           onClick={() => router.push(`/${currentWorkspace?.slug}/projects/${projectId}/issues/`)}
         />
-        <p>Project settings</p>
+        <p className="truncate">Project settings</p>
       </div>
       <div className="mt-1.5 flex items-center gap-2 truncate px-5 py-0.5">
-        <div className="grid size-8 shrink-0 place-items-center rounded bg-layer-2">
+        <div className="grid size-8 shrink-0 place-items-center rounded-md bg-layer-2">
           <Logo logo={projectDetails?.logo_props} size={20} />
         </div>
-        <div className="truncate">
+        <div className="min-w-0 truncate">
           <p className="truncate text-body-sm-medium">{projectDetails?.name}</p>
           <p className="truncate text-caption-md-regular">{t(ROLE_DETAILS[currentProjectRole].i18n_title)}</p>
         </div>

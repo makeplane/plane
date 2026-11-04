@@ -86,7 +86,7 @@ export function StickyInput(props: TProps) {
               return "Click to type here";
             }}
             containerClassName={cn(
-              "vertical-scrollbar scrollbar-sm max-h-[540px] min-h-[256px] w-full overflow-y-scroll p-4 text-14",
+              "vertical-scrollbar scrollbar-sm max-h-[540px] min-h-[256px] w-full overflow-y-scroll p-4 text-body-sm-regular",
               {
                 "max-h-[588px]": isStickiesPage,
               }

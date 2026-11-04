@@ -18,10 +18,10 @@ export function ProjectSettingsSidebarRoot(props: Props) {
   const { projectId } = props;
 
   return (
-    <div className="flex h-full w-[250px] shrink-0 animate-fade-in flex-col overflow-hidden border-r border-r-subtle bg-surface-1">
-      <ScrollArea orientation="vertical">
+    <div className="flex h-full min-h-0 w-[250px] shrink-0 animate-fade-in flex-col overflow-hidden border-r border-r-subtle bg-surface-1">
+      <ProjectSettingsSidebarHeader projectId={projectId} />
+      <ScrollArea orientation="vertical" size="sm">
         <div className="pb-5">
-          <ProjectSettingsSidebarHeader projectId={projectId} />
           <ProjectSettingsSidebarItemCategories projectId={projectId} />
         </div>
       </ScrollArea>

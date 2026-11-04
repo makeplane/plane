@@ -26,6 +26,16 @@
           "highlight_changes": "Highlight changes"
         }
       },
+      "version_history": {
+        "view_only": "მხოლოდ ნახვა",
+        "loading_details": "ვერსიის დეტალები იტვირთება",
+        "load_error_description": "ვერსიის ჩატვირთვა ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა.",
+        "list_error_description": "ვერსიის ისტორიის ჩატვირთვა ვერ მოხერხდა.",
+        "try_again": "ხელახლა ცდა",
+        "restoring": "მიმდინარეობს აღდგენა",
+        "restore_success": "გვერდის ვერსია აღდგენილია.",
+        "restore_failed": "გვერდის ვერსიის აღდგენა ვერ მოხერხდა."
+      },
       "assets": {
         "label": "აქტივები",
         "download_button": "ჩამოტვირთვა",

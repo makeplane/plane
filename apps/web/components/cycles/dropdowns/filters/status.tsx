@@ -4,54 +4,32 @@
  * See the LICENSE file for details.
  */
 
-import React, { useState } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { CYCLE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TCycleGroups } from "@plane/types";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
-// types
-// constants
+import { FilterSubmenu } from "@/components/common/filters/filter-submenu";
 
 type Props = {
   appliedFilters: TCycleGroups[] | null;
   handleUpdate: (val: string) => void;
-  searchQuery: string;
 };
 
 export const FilterStatus = observer(function FilterStatus(props: Props) {
-  const { appliedFilters, handleUpdate, searchQuery } = props;
-  // states
-  const [previewEnabled, setPreviewEnabled] = useState(true);
-  //hooks
+  const { appliedFilters, handleUpdate } = props;
+  // plane hooks
   const { t } = useTranslation();
-  const appliedFiltersCount = appliedFilters?.length ?? 0;
-  const filteredOptions = CYCLE_STATUS.filter((p) => p.value.includes(searchQuery.toLowerCase()));
+  // derived values
+  const options = CYCLE_STATUS.map((status) => ({ value: status.value, label: t(status.i18n_title) }));
 
   return (
-    <>
-      <FilterHeader
-        title={`Status of the cycle${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
-        isPreviewEnabled={previewEnabled}
-        handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
-      />
-      {previewEnabled && (
-        <div>
-          {filteredOptions.length > 0 ? (
-            filteredOptions.map((status) => (
-              <FilterOption
-                key={status.value}
-                isChecked={appliedFilters?.includes(status.value) ? true : false}
-                onClick={() => handleUpdate(status.value)}
-                title={t(status.i18n_title)}
-              />
-            ))
-          ) : (
-            <p className="text-11 text-placeholder italic">No matches found</p>
-          )}
-        </div>
-      )}
-    </>
+    <FilterSubmenu
+      label="Status of the cycle"
+      options={options}
+      appliedFilters={appliedFilters}
+      onToggle={handleUpdate}
+    />
   );
 });

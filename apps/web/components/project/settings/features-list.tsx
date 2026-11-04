@@ -106,42 +106,40 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
   };
 
   return (
-    <>
-      <div>
-        <SettingsHeading title={t("projects_and_issues")} description={t("projects_and_issues_description")} />
-        <div className="mt-6 flex flex-col gap-y-4">
-          {Object.entries(PROJECT_FEATURES_LIST).map(([featureItemKey, featureItem]) => (
-            <div key={featureItemKey}>
-              <SettingsBoxedControlItem
-                title={
-                  <span className="flex items-center gap-2">
-                    {t(featureItem.key)}
-                    {featureItem.isPro && (
-                      <Tooltip label="Pro feature">
-                        <UpgradeBadge className="rounded-sm" />
-                      </Tooltip>
-                    )}
-                  </span>
-                }
-                description={t(`${featureItem.key}_description`)}
-                control={
-                  <ProjectFeatureToggle
-                    workspaceSlug={workspaceSlug}
-                    projectId={projectId}
-                    featureItem={featureItem}
-                    value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
-                    handleSubmit={handleSubmit}
-                    disabled={!isAdmin}
-                  />
-                }
-              />
-              {/* {currentProjectDetails?.[featureItem.property as keyof IProject] && (
-                <div className="pl-14">{featureItem.renderChildren?.(currentProjectDetails, workspaceSlug)}</div>
-              )} */}
-            </div>
-          ))}
-        </div>
-      </div>
-    </>
+    <section className="flex flex-col gap-y-4">
+      <SettingsHeading
+        title={t("projects_and_issues")}
+        description={t("projects_and_issues_description")}
+        variant="h5"
+      />
+      {Object.entries(PROJECT_FEATURES_LIST).map(([featureItemKey, featureItem]) => (
+        <SettingsBoxedControlItem
+          key={featureItemKey}
+          title={
+            <span>
+              {t("common.actions.enable")} <span className="lowercase">{t(featureItem.key)}</span>
+            </span>
+          }
+          titleAccessory={
+            featureItem.isPro ? (
+              <Tooltip label="Pro feature">
+                <UpgradeBadge className="rounded-sm" />
+              </Tooltip>
+            ) : undefined
+          }
+          description={t(`${featureItem.key}_description`)}
+          control={
+            <ProjectFeatureToggle
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              featureItem={featureItem}
+              value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
+              handleSubmit={handleSubmit}
+              disabled={!isAdmin}
+            />
+          }
+        />
+      ))}
+    </section>
   );
 });

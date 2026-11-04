@@ -5,10 +5,11 @@
  */
 
 import { observer } from "mobx-react";
-import { FilterOutline } from "@makeplane/propel/icons";
+import { FilterOutline, SelectedFilterOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { TActivityFilters, TActivityFilterOption } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { Menu, MenuCheckboxItem, MenuContent, MenuTrigger } from "@makeplane/propel/components/menu";
@@ -23,17 +24,37 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
 
   // hooks
   const { t } = useTranslation();
+  // derived values
+  const isFiltersApplied = selectedFilters.length < filterOptions.length;
+  const FilterIcon = isFiltersApplied ? SelectedFilterOutline : FilterOutline;
 
   return (
-    <div className="relative">
+    <div className="flex items-center">
       <Menu>
         <MenuTrigger
           render={
             <IconButton
               variant="tertiary"
-              size="sm"
-              icon={<Icon icon={FilterOutline} />}
+              size="md"
+              icon={
+                <Icon
+                  icon={
+                    <FilterIcon className={cn({ "text-accent-primary [&_path]:fill-current": isFiltersApplied })} />
+                  }
+                />
+              }
               aria-label={t("common.filters")}
+              // Accent tint while any activity type is filtered out (Propel has no tinted variant).
+              render={(buttonProps) => (
+                <button
+                  type="button"
+                  {...buttonProps}
+                  className={cn(buttonProps.className, {
+                    "bg-accent-subtle text-accent-primary hover:bg-accent-subtle-hover active:bg-accent-subtle-active":
+                      isFiltersApplied,
+                  })}
+                />
+              )}
             />
           }
         />
@@ -48,9 +69,6 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
           ))}
         </MenuContent>
       </Menu>
-      {selectedFilters.length < filterOptions.length && (
-        <span className="pointer-events-none absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-accent-primary" />
-      )}
     </div>
   );
 });
