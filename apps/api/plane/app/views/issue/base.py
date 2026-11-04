@@ -442,6 +442,7 @@ class IssueViewSet(BaseViewSet):
                     "id",
                     "name",
                     "state_id",
+                    "state__group",
                     "sort_order",
                     "completed_at",
                     "estimate_point",
