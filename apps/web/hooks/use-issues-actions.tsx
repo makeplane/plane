@@ -99,7 +99,7 @@ const useProjectIssueActions = () => {
       if (!workspaceSlug || !projectId) return;
       return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), groupId, subGroupId);
     },
-    [issues.fetchIssues, workspaceSlug, projectId]
+    [issues.fetchNextIssues, workspaceSlug, projectId]
   );
 
   const createIssue = useCallback(
@@ -181,7 +181,7 @@ const useProjectEpicsActions = () => {
       if (!workspaceSlug || !projectId) return;
       return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), groupId, subGroupId);
     },
-    [issues.fetchIssues, workspaceSlug, projectId]
+    [issues.fetchNextIssues, workspaceSlug, projectId]
   );
 
   const createIssue = useCallback(
@@ -276,7 +276,7 @@ const useCycleIssueActions = () => {
         subGroupId
       );
     },
-    [issues.fetchIssues, workspaceSlug, projectId, cycleId]
+    [issues.fetchNextIssues, workspaceSlug, projectId, cycleId]
   );
 
   const createIssue = useCallback(
@@ -389,7 +389,7 @@ const useModuleIssueActions = () => {
         subGroupId
       );
     },
-    [issues.fetchIssues, workspaceSlug, projectId, moduleId]
+    [issues.fetchNextIssues, workspaceSlug, projectId, moduleId]
   );
 
   const createIssue = useCallback(
@@ -485,7 +485,7 @@ const useProfileIssueActions = () => {
       if (!workspaceSlug || !userId) return;
       return issues.fetchNextIssues(workspaceSlug.toString(), userId.toString(), groupId, subGroupId);
     },
-    [issues.fetchIssues, workspaceSlug, userId]
+    [issues.fetchNextIssues, workspaceSlug, userId]
   );
 
   const createIssue = useCallback(
@@ -560,7 +560,7 @@ const useProjectViewIssueActions = () => {
       if (!workspaceSlug || !projectId || !viewId) return;
       return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), viewId, groupId, subGroupId);
     },
-    [issues.fetchIssues, workspaceSlug, projectId]
+    [issues.fetchNextIssues, workspaceSlug, projectId]
   );
 
   const createIssue = useCallback(
@@ -642,7 +642,7 @@ const useArchivedIssueActions = () => {
       if (!workspaceSlug || !projectId) return;
       return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), groupId, subGroupId);
     },
-    [issues.fetchIssues, workspaceSlug, projectId]
+    [issues.fetchNextIssues, workspaceSlug, projectId]
   );
 
   const removeIssue = useCallback(
