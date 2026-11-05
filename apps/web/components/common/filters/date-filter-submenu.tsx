@@ -43,7 +43,7 @@ export const isCustomDateFilterValue = (value: string) => isInDateFormat(value.s
 export const DateFilterSubmenu = observer(function DateFilterSubmenu(props: Props) {
   const {
     label,
-    customLabel = "Custom",
+    customLabel: customLabelProp,
     options,
     appliedFilters,
     onToggleOption,
@@ -54,6 +54,7 @@ export const DateFilterSubmenu = observer(function DateFilterSubmenu(props: Prop
   const { t } = useTranslation();
   const dateFilterModal = useDateFilterModal();
   // derived values
+  const customLabel = customLabelProp ?? t("common.date_filter.custom");
   const appliedValues = new Set(appliedFilters ?? []);
   const isCustomRangeApplied = (appliedFilters ?? []).some(isCustomDateFilterValue);
 
