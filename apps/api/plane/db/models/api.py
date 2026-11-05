@@ -12,6 +12,10 @@ from django.conf import settings
 from .base import BaseModel
 
 
+# Label of the short-lived, workspace-scoped tokens minted for in-app agent sessions.
+AGENT_SESSION_TOKEN_LABEL = "agent-session"
+
+
 def generate_label_token():
     return uuid4().hex
 

@@ -98,6 +98,10 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.exporter_expired_task.delete_old_s3_link",
         "schedule": crontab(hour=3, minute=45),  # UTC 03:45
     },
+    "check-every-hour-to-delete-expired-agent-session-tokens": {
+        "task": "plane.bgtasks.cleanup_task.delete_expired_agent_session_tokens",
+        "schedule": crontab(minute=20),  # Every hour at :20
+    },
 }
 
 

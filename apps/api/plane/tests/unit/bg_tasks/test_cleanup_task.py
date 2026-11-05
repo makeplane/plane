@@ -20,10 +20,12 @@ from uuid import uuid4
 from plane.bgtasks.cleanup_task import (
     delete_api_logs,
     delete_email_notification_logs,
+    delete_expired_agent_session_tokens,
     delete_webhook_logs,
     process_cleanup_task,
 )
-from plane.db.models import APIActivityLog, EmailNotificationLog, WebhookLog
+from plane.db.models import APIActivityLog, APIToken, EmailNotificationLog, WebhookLog
+from plane.db.models.api import AGENT_SESSION_TOKEN_LABEL
 from plane.tests.factories import UserFactory, WorkspaceFactory
 
 
@@ -141,3 +143,35 @@ class TestProcessCleanupTaskErrorHandling:
 
         # Should not raise even though the delete blows up.
         process_cleanup_task(lambda: iter([1, 2, 3]), _BoomModel, "Boom")
+
+
+@pytest.mark.unit
+@pytest.mark.django_db
+class TestDeleteExpiredAgentSessionTokens:
+    def test_only_expired_agent_session_tokens_are_deleted(self):
+        user = UserFactory()
+        workspace = WorkspaceFactory(owner=user)
+        past = timezone.now() - timedelta(minutes=1)
+        future = timezone.now() + timedelta(hours=1)
+
+        expired_session = APIToken.objects.create(
+            user=user, workspace=workspace, label=AGENT_SESSION_TOKEN_LABEL, expired_at=past
+        )
+        live_session = APIToken.objects.create(
+            user=user, workspace=workspace, label=AGENT_SESSION_TOKEN_LABEL, expired_at=future
+        )
+        expired_personal = APIToken.objects.create(user=user, label="personal", expired_at=past)
+        forever_personal = APIToken.objects.create(user=user, label="forever")
+
+        delete_expired_agent_session_tokens()
+
+        assert not APIToken.all_objects.filter(pk=expired_session.pk).exists()
+        assert APIToken.objects.filter(pk=live_session.pk).exists()
+        assert APIToken.objects.filter(pk=expired_personal.pk).exists()
+        assert APIToken.objects.filter(pk=forever_personal.pk).exists()
+
+    def test_task_is_scheduled(self):
+        from plane.celery import app
+
+        tasks = {entry["task"] for entry in app.conf.beat_schedule.values()}
+        assert "plane.bgtasks.cleanup_task.delete_expired_agent_session_tokens" in tasks

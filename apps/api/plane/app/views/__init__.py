@@ -66,6 +66,7 @@ from .workspace.invite import (
     UserWorkspaceInvitationsViewSet,
 )
 from .workspace.label import WorkspaceLabelsEndpoint
+from .workspace.agent import WorkspaceAgentsEndpoint
 from .workspace.state import WorkspaceStatesEndpoint
 from .workspace.user import (
     UserLastProjectWithWorkspaceEndpoint,
@@ -238,3 +239,5 @@ from .notification.base import MarkAllReadNotificationViewSet
 from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
 
 from .timezone.base import TimezoneEndpoint
+
+from .internal.agent_session import AgentSessionEndpoint
