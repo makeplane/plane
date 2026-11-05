@@ -28,6 +28,8 @@ from .issue import (
     IssueRelationCreateSerializer,
     IssueRelationResponseSerializer,
     IssueRelationSerializer,
+    IssueSubscriberSerializer,
+    IssueSubscriberCreateSerializer,
     RelatedIssueSerializer,
 )
 from .state import StateLiteSerializer, StateSerializer
