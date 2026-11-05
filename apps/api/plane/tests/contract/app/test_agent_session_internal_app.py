@@ -343,3 +343,47 @@ class TestAgentSessionTokenScope:
         assert api_key_client.get(f"/api/v1/workspaces/{workspace.slug}/members-lite/").status_code == 200
         assert api_key_client.get(f"/api/v1/workspaces/{other_workspace.slug}/members-lite/").status_code == 200
         assert api_key_client.get("/api/v1/users/me/").status_code == 200
+
+
+@pytest.mark.contract
+class TestAgentSessionTokensHiddenFromUserSettings:
+    """The user's own token settings neither show nor manage agent-session tokens."""
+
+    @pytest.mark.django_db
+    def test_list_hides_agent_session_tokens(
+        self, bridge_client, session_client, create_user, workspace, agent, api_token
+    ):
+        _mint(bridge_client, create_user, workspace, agent)
+
+        response = session_client.get("/api/users/api-tokens/")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert [item["id"] for item in response.json()] == [str(api_token.id)]
+
+    @pytest.mark.django_db
+    def test_retrieve_patch_delete_cannot_reach_agent_session_token(
+        self, bridge_client, session_client, create_user, workspace, agent
+    ):
+        minted = _mint(bridge_client, create_user, workspace, agent)
+        url = f"/api/users/api-tokens/{minted['token_id']}/"
+
+        assert session_client.get(url).status_code == status.HTTP_404_NOT_FOUND
+        assert session_client.patch(url, {"label": "mine now"}, format="json").status_code == 404
+        assert session_client.delete(url).status_code == status.HTTP_404_NOT_FOUND
+
+        token = APIToken.all_objects.get(pk=minted["token_id"])
+        assert token.label == AGENT_SESSION_TOKEN_LABEL
+        assert token.deleted_at is None
+
+    @pytest.mark.django_db
+    def test_reserved_label_cannot_be_used_for_personal_tokens(self, session_client, api_token):
+        created = session_client.post("/api/users/api-tokens/", {"label": AGENT_SESSION_TOKEN_LABEL}, format="json")
+        relabelled = session_client.patch(
+            f"/api/users/api-tokens/{api_token.id}/", {"label": AGENT_SESSION_TOKEN_LABEL}, format="json"
+        )
+
+        assert created.status_code == status.HTTP_400_BAD_REQUEST
+        assert relabelled.status_code == status.HTTP_400_BAD_REQUEST
+        assert not APIToken.objects.filter(label=AGENT_SESSION_TOKEN_LABEL).exists()
+        api_token.refresh_from_db()
+        assert api_token.label == "Test API Token"
