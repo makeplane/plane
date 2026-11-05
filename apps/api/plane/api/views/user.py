@@ -18,6 +18,8 @@ from plane.utils.openapi import USER_EXAMPLE
 class UserEndpoint(BaseAPIView):
     serializer_class = UserLiteSerializer
     model = User
+    # Workspace-scoped tokens (agent sessions) may read their own user.
+    allow_workspace_scoped_token = True
 
     @user_docs(
         operation_id="get_current_user",
