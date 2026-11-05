@@ -274,6 +274,108 @@ MODULE_ISSUE_NOT_FOUND_RESPONSE = OpenApiResponse(
     ],
 )
 
+# Page-specific Responses
+PAGE_NOT_FOUND_RESPONSE = OpenApiResponse(
+    description="Page not found, or not visible to the requesting user",
+    examples=[
+        OpenApiExample(
+            # Page lookups resolve through the visibility queryset and raise
+            # Page.DoesNotExist, which BaseAPIView renders with this body. A
+            # private page owned by someone else is reported the same way, so
+            # its existence stays hidden.
+            name="Page Not Found",
+            value={"error": "The requested resource does not exist."},
+        )
+    ],
+)
+
+PAGE_NOT_EDITABLE_RESPONSE = OpenApiResponse(
+    description="Page cannot be edited as requested",
+    examples=[
+        OpenApiExample(
+            name="Page Locked",
+            value={"error": "Page is locked"},
+        ),
+        OpenApiExample(
+            name="Page Archived",
+            value={"error": "Archived page cannot be edited"},
+        ),
+        OpenApiExample(
+            name="Parent Not Found",
+            value={"error": "The parent page does not exist in this project"},
+        ),
+        OpenApiExample(
+            name="Parent Cycle",
+            value={"error": "A page cannot be its own parent or descendant"},
+        ),
+        OpenApiExample(
+            # Field errors are keyed by field name rather than by the "error"
+            # key the view's own rejections use, so both shapes are documented.
+            name="Incomplete External Identity",
+            value={"external_source": ["external_id and external_source must be set together"]},
+        ),
+    ],
+)
+
+PAGE_ACCESS_DENIED_RESPONSE = OpenApiResponse(
+    description="Action not permitted for the requesting user",
+    examples=[
+        OpenApiExample(
+            name="Access Update Denied",
+            value={"error": "Access cannot be updated since this page is owned by someone else"},
+        ),
+        OpenApiExample(
+            name="Owner Only Action",
+            value={"error": "Only the page owner can lock the page"},
+        ),
+    ],
+)
+
+# Delete has its own 400/403 payloads, distinct from the edit-time ones above.
+PAGE_NOT_ARCHIVED_RESPONSE = OpenApiResponse(
+    description="Page must be archived before it can be deleted",
+    examples=[
+        OpenApiExample(
+            name="Page Not Archived",
+            value={"error": "The page should be archived before deleting"},
+        )
+    ],
+)
+
+PAGE_DELETE_FORBIDDEN_RESPONSE = OpenApiResponse(
+    description="Only the page owner or a project admin can delete the page",
+    examples=[
+        OpenApiExample(
+            name="Delete Forbidden",
+            value={"error": "Only admin or owner can delete the page"},
+        )
+    ],
+)
+
+PAGE_WRITE_REJECTED_RESPONSE = OpenApiResponse(
+    description="The page cannot be created as requested",
+    examples=[
+        OpenApiExample(
+            name="Parent Not Found",
+            value={"error": "The parent page does not exist in this project"},
+        ),
+        OpenApiExample(
+            name="Parent Cycle",
+            value={"error": "A page cannot be its own parent or descendant"},
+        ),
+        OpenApiExample(
+            name="Project Archived",
+            value={"error": "Pages cannot be added to an archived project"},
+        ),
+        OpenApiExample(
+            # Field errors are keyed by field name rather than by the "error"
+            # key the view's own rejections use, so both shapes are documented.
+            name="Incomplete External Identity",
+            value={"external_source": ["external_id and external_source must be set together"]},
+        ),
+    ],
+)
+
 # Cycle-specific Responses
 CYCLE_CANNOT_ARCHIVE_RESPONSE = OpenApiResponse(
     description="Cycle cannot be archived",
