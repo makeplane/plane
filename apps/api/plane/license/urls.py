@@ -18,6 +18,7 @@ from plane.license.api.views import (
     InstanceAdminUserSessionEndpoint,
     InstanceWorkSpaceAvailabilityCheckEndpoint,
     InstanceWorkSpaceEndpoint,
+    InstanceAgentEndpoint,
 )
 
 urlpatterns = [
@@ -71,4 +72,6 @@ urlpatterns = [
         name="instance-workspace-availability",
     ),
     path("workspaces/", InstanceWorkSpaceEndpoint.as_view(), name="instance-workspace"),
+    path("agents/", InstanceAgentEndpoint.as_view(), name="instance-agents"),
+    path("agents/<uuid:pk>/", InstanceAgentEndpoint.as_view(), name="instance-agent-detail"),
 ]

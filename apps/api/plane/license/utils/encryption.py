@@ -42,3 +42,33 @@ def decrypt_data(encrypted_data):
     except Exception as e:
         log_exception(e)
         return ""
+
+
+class EncryptionError(Exception):
+    """Raised when a secret cannot be encrypted or decrypted.
+
+    ``encrypt_data`` / ``decrypt_data`` swallow failures and return ``""``.
+    That is acceptable for optional instance configuration, but for credentials
+    it would silently turn a stored secret into an empty one (for example after
+    ``SECRET_KEY`` rotation). The strict variants below surface that instead.
+    """
+
+
+def encrypt_data_strict(data: str) -> str:
+    """Encrypt ``data``; raise ``EncryptionError`` instead of returning ``""`` on failure."""
+    if not data:
+        return ""
+    encrypted = encrypt_data(data)
+    if not encrypted:
+        raise EncryptionError("Failed to encrypt secret")
+    return encrypted
+
+
+def decrypt_data_strict(encrypted_data: str) -> str:
+    """Decrypt ``encrypted_data``; a non-empty ciphertext that decrypts to ``""`` raises ``EncryptionError``."""
+    if not encrypted_data:
+        return ""
+    decrypted = decrypt_data(encrypted_data)
+    if not decrypted:
+        raise EncryptionError("Failed to decrypt secret; was SECRET_KEY changed?")
+    return decrypted
