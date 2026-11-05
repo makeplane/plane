@@ -731,6 +731,10 @@
     "execution": "実行",
     "administration": "管理",
     "date_filter": {
+      "one_week_from_now": "1週間後",
+      "two_weeks_from_now": "2週間後",
+      "one_month_from_now": "1か月後",
+      "two_months_from_now": "2か月後",
       "created_date": "Created date",
       "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
       "months_ago": "{count, plural, one {# month ago} other {# months ago}}",

@@ -731,6 +731,10 @@
     "execution": "Execution",
     "administration": "Administration",
     "date_filter": {
+      "one_week_from_now": "1주 후",
+      "two_weeks_from_now": "2주 후",
+      "one_month_from_now": "1개월 후",
+      "two_months_from_now": "2개월 후",
       "created_date": "Created date",
       "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
       "months_ago": "{count, plural, one {# month ago} other {# months ago}}",

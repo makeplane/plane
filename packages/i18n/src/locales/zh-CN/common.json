@@ -731,6 +731,10 @@
     "execution": "Execution",
     "administration": "Administration",
     "date_filter": {
+      "one_week_from_now": "一周后",
+      "two_weeks_from_now": "两周后",
+      "one_month_from_now": "一个月后",
+      "two_months_from_now": "两个月后",
       "created_date": "创建日期",
       "weeks_ago": "{count} 周前",
       "months_ago": "{count} 个月前",

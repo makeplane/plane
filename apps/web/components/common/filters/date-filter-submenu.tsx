@@ -12,6 +12,7 @@ import {
   MenuSubmenuContent,
   MenuSubmenuTrigger,
 } from "@makeplane/propel/components/menu";
+import { useTranslation } from "@plane/i18n";
 import { isInDateFormat } from "@plane/utils";
 // local imports
 import { useDateFilterModal } from "./date-filter-modal-context";
@@ -22,7 +23,7 @@ type Props = {
   label: string;
   customLabel?: string;
   /** Relative presets, e.g. `DATE_AFTER_FILTER_OPTIONS`. */
-  options: { name: string; value: string }[];
+  options: { name: string; i18n_name?: string; value: string }[];
   appliedFilters: string[] | null | undefined;
   /** Toggles one preset. */
   onToggleOption: (value: string) => void;
@@ -50,6 +51,7 @@ export const DateFilterSubmenu = observer(function DateFilterSubmenu(props: Prop
     onClearCustomRange,
   } = props;
   // context hooks
+  const { t } = useTranslation();
   const dateFilterModal = useDateFilterModal();
   // derived values
   const appliedValues = new Set(appliedFilters ?? []);
@@ -62,7 +64,7 @@ export const DateFilterSubmenu = observer(function DateFilterSubmenu(props: Prop
         {options.map((option) => (
           <MenuCheckboxItem
             key={option.value}
-            label={option.name}
+            label={option.i18n_name ? t(option.i18n_name) : option.name}
             checked={appliedValues.has(option.value)}
             onCheckedChange={() => onToggleOption(option.value)}
           />

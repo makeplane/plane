@@ -731,6 +731,10 @@
     "execution": "Execution",
     "administration": "Administration",
     "date_filter": {
+      "one_week_from_now": "Daqui a 1 semana",
+      "two_weeks_from_now": "Daqui a 2 semanas",
+      "one_month_from_now": "Daqui a 1 mês",
+      "two_months_from_now": "Daqui a 2 meses",
       "created_date": "Created date",
       "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
       "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
