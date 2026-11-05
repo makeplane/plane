@@ -533,7 +533,9 @@
       "asc": "Crescător",
       "desc": "Descrescător",
       "created_on": "Creată la",
-      "updated_on": "Actualizată la"
+      "updated_on": "Actualizată la",
+      "date_created": "Date created",
+      "date_modified": "Date modified"
     },
     "comments": "Comentarii",
     "updates": "Actualizări",
@@ -728,6 +730,16 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
+    "date_filter": {
+      "one_week_from_now": "Peste 1 săptămână",
+      "two_weeks_from_now": "Peste 2 săptămâni",
+      "one_month_from_now": "Peste 1 lună",
+      "two_months_from_now": "Peste 2 luni",
+      "created_date": "Created date",
+      "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
+      "custom": "Custom"
+    },
     "status": "Stare",
     "tooltip": {
       "copy_to_clipboard": "Copiază în clipboard",

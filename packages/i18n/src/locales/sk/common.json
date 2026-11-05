@@ -533,7 +533,9 @@
       "asc": "Vzostupne",
       "desc": "Zostupne",
       "created_on": "Vytvorené dňa",
-      "updated_on": "Aktualizované dňa"
+      "updated_on": "Aktualizované dňa",
+      "date_created": "Date created",
+      "date_modified": "Date modified"
     },
     "comments": "Komentáre",
     "updates": "Aktualizácie",
@@ -728,6 +730,16 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
+    "date_filter": {
+      "one_week_from_now": "O 1 týždeň",
+      "two_weeks_from_now": "O 2 týždne",
+      "one_month_from_now": "O 1 mesiac",
+      "two_months_from_now": "O 2 mesiace",
+      "created_date": "Created date",
+      "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
+      "custom": "Custom"
+    },
     "status": "Stav",
     "tooltip": {
       "copy_to_clipboard": "Kopírovať do schránky",

@@ -533,7 +533,9 @@
       "asc": "Artan",
       "desc": "Azalan",
       "created_on": "Oluşturulma tarihi",
-      "updated_on": "Güncellenme tarihi"
+      "updated_on": "Güncellenme tarihi",
+      "date_created": "Date created",
+      "date_modified": "Date modified"
     },
     "comments": "Yorumlar",
     "updates": "Güncellemeler",
@@ -728,6 +730,16 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
+    "date_filter": {
+      "one_week_from_now": "1 hafta sonra",
+      "two_weeks_from_now": "2 hafta sonra",
+      "one_month_from_now": "1 ay sonra",
+      "two_months_from_now": "2 ay sonra",
+      "created_date": "Created date",
+      "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
+      "custom": "Custom"
+    },
     "status": "Durum",
     "tooltip": {
       "copy_to_clipboard": "Panoya kopyala",

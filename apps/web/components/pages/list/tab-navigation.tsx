@@ -20,22 +20,28 @@ type TPageTabNavigation = {
 const pageTabs: { key: TPageNavigationTabs; label: string }[] = [
   {
     key: "public",
-    label: "Public",
+    label: "public",
   },
   {
     key: "private",
-    label: "Private",
+    label: "private",
   },
   {
     key: "archived",
-    label: "Archived",
+    label: "wiki_collections.predefined.archived",
   },
 ];
 
+/**
+ * Render localized public, private, and archived page tabs while retaining stable route query values.
+ */
 export function PageTabNavigation(props: TPageTabNavigation) {
   const { workspaceSlug, projectId, pageType } = props;
   const { t } = useTranslation();
 
+  /**
+   * Prevent redundant navigation when the user clicks the currently active page tab.
+   */
   const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, tabKey: TPageNavigationTabs) => {
     if (tabKey === pageType) e.preventDefault();
   };
@@ -48,7 +54,7 @@ export function PageTabNavigation(props: TPageTabNavigation) {
             <Tab
               key={tab.key}
               value={tab.key}
-              label={tab.label}
+              label={t(tab.label)}
               nativeButton={false}
               render={
                 <Link

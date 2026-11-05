@@ -533,7 +533,9 @@
       "asc": "За зростанням",
       "desc": "За спаданням",
       "created_on": "Створено",
-      "updated_on": "Оновлено"
+      "updated_on": "Оновлено",
+      "date_created": "Date created",
+      "date_modified": "Date modified"
     },
     "comments": "Коментарі",
     "updates": "Оновлення",
@@ -728,6 +730,16 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
+    "date_filter": {
+      "one_week_from_now": "Через 1 тиждень",
+      "two_weeks_from_now": "Через 2 тижні",
+      "one_month_from_now": "Через 1 місяць",
+      "two_months_from_now": "Через 2 місяці",
+      "created_date": "Created date",
+      "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
+      "custom": "Custom"
+    },
     "status": "Статус",
     "tooltip": {
       "copy_to_clipboard": "Скопіювати в буфер обміну",

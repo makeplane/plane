@@ -533,7 +533,9 @@
       "asc": "აღმავალი",
       "desc": "დაღმავალი",
       "created_on": "შექმნილია",
-      "updated_on": "განახლებულია"
+      "updated_on": "განახლებულია",
+      "date_created": "Date created",
+      "date_modified": "Date modified"
     },
     "comments": "კომენტარები",
     "updates": "განახლებები",
@@ -728,6 +730,16 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
+    "date_filter": {
+      "one_week_from_now": "1 კვირის შემდეგ",
+      "two_weeks_from_now": "2 კვირის შემდეგ",
+      "one_month_from_now": "1 თვის შემდეგ",
+      "two_months_from_now": "2 თვის შემდეგ",
+      "created_date": "Created date",
+      "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
+      "custom": "Custom"
+    },
     "status": "სტატუსი",
     "tooltip": {
       "copy_to_clipboard": "ბუფერში კოპირება",

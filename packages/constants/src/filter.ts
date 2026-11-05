@@ -11,18 +11,22 @@ export enum E_SORT_ORDER {
 export const DATE_AFTER_FILTER_OPTIONS = [
   {
     name: "1 week from now",
+    i18n_name: "common.date_filter.one_week_from_now",
     value: "1_weeks;after;fromnow",
   },
   {
     name: "2 weeks from now",
+    i18n_name: "common.date_filter.two_weeks_from_now",
     value: "2_weeks;after;fromnow",
   },
   {
     name: "1 month from now",
+    i18n_name: "common.date_filter.one_month_from_now",
     value: "1_months;after;fromnow",
   },
   {
     name: "2 months from now",
+    i18n_name: "common.date_filter.two_months_from_now",
     value: "2_months;after;fromnow",
   },
 ];

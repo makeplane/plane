@@ -533,7 +533,9 @@
       "asc": "Menaik",
       "desc": "Menurun",
       "created_on": "Dibuat pada",
-      "updated_on": "Diperbarui pada"
+      "updated_on": "Diperbarui pada",
+      "date_created": "Date created",
+      "date_modified": "Date modified"
     },
     "comments": "Komentar",
     "updates": "Pembaruan",
@@ -728,6 +730,16 @@
     "work_structure": "Work structure",
     "execution": "Execution",
     "administration": "Administration",
+    "date_filter": {
+      "one_week_from_now": "1 minggu dari sekarang",
+      "two_weeks_from_now": "2 minggu dari sekarang",
+      "one_month_from_now": "1 bulan dari sekarang",
+      "two_months_from_now": "2 bulan dari sekarang",
+      "created_date": "Created date",
+      "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
+      "custom": "Custom"
+    },
     "status": "Status",
     "tooltip": {
       "copy_to_clipboard": "Salin ke clipboard",

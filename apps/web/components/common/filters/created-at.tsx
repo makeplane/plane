@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // plane imports
 import { DATE_BEFORE_FILTER_OPTIONS } from "@plane/constants";
@@ -15,13 +16,25 @@ type Props = {
   handleUpdate: (val: string | string[]) => void;
 };
 
+/**
+ * Render localized creation-date presets and a custom-date picker while preserving filter values.
+ */
 export const FilterCreatedDate = observer(function FilterCreatedDate(props: Props) {
+  const { t } = useTranslation();
   const { appliedFilters, handleUpdate } = props;
+  const options = DATE_BEFORE_FILTER_OPTIONS.map((option) => {
+    const [amount, unit] = option.value.split(";")[0].split("_");
+    return {
+      value: option.value,
+      name: t(`common.date_filter.${unit}_ago`, { count: Number(amount) }),
+    };
+  });
 
   return (
     <DateFilterSubmenu
-      label="Created date"
-      options={DATE_BEFORE_FILTER_OPTIONS}
+      label={t("common.date_filter.created_date")}
+      customLabel={t("common.date_filter.custom")}
+      options={options}
       appliedFilters={appliedFilters}
       onToggleOption={handleUpdate}
       onSelectCustomRange={handleUpdate}

@@ -533,7 +533,9 @@
       "asc": "Aufsteigend",
       "desc": "Absteigend",
       "created_on": "Erstellt am",
-      "updated_on": "Aktualisiert am"
+      "updated_on": "Aktualisiert am",
+      "date_created": "Date created",
+      "date_modified": "Date modified"
     },
     "comments": "Kommentare",
     "updates": "Aktualisierungen",
@@ -728,6 +730,16 @@
     "work_structure": "Arbeitsstruktur",
     "execution": "Ausführung",
     "administration": "Verwaltung",
+    "date_filter": {
+      "one_week_from_now": "In 1 Woche",
+      "two_weeks_from_now": "In 2 Wochen",
+      "one_month_from_now": "In 1 Monat",
+      "two_months_from_now": "In 2 Monaten",
+      "created_date": "Created date",
+      "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
+      "custom": "Custom"
+    },
     "status": "Status",
     "tooltip": {
       "copy_to_clipboard": "In die Zwischenablage kopieren",

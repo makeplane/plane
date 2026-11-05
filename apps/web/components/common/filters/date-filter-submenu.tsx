@@ -12,6 +12,7 @@ import {
   MenuSubmenuContent,
   MenuSubmenuTrigger,
 } from "@makeplane/propel/components/menu";
+import { useTranslation } from "@plane/i18n";
 import { isInDateFormat } from "@plane/utils";
 // local imports
 import { useDateFilterModal } from "./date-filter-modal-context";
@@ -20,8 +21,9 @@ import { FilterSubmenuCount } from "./filter-submenu";
 type Props = {
   /** The date property, shown on the row that opens the submenu and as the custom-range modal title. */
   label: string;
+  customLabel?: string;
   /** Relative presets, e.g. `DATE_AFTER_FILTER_OPTIONS`. */
-  options: { name: string; value: string }[];
+  options: { name: string; i18n_name?: string; value: string }[];
   appliedFilters: string[] | null | undefined;
   /** Toggles one preset. */
   onToggleOption: (value: string) => void;
@@ -39,10 +41,20 @@ export const isCustomDateFilterValue = (value: string) => isInDateFormat(value.s
  * that opens the custom-range modal through the surrounding `DateFilterModalHost`.
  */
 export const DateFilterSubmenu = observer(function DateFilterSubmenu(props: Props) {
-  const { label, options, appliedFilters, onToggleOption, onSelectCustomRange, onClearCustomRange } = props;
+  const {
+    label,
+    customLabel: customLabelProp,
+    options,
+    appliedFilters,
+    onToggleOption,
+    onSelectCustomRange,
+    onClearCustomRange,
+  } = props;
   // context hooks
+  const { t } = useTranslation();
   const dateFilterModal = useDateFilterModal();
   // derived values
+  const customLabel = customLabelProp ?? t("common.date_filter.custom");
   const appliedValues = new Set(appliedFilters ?? []);
   const isCustomRangeApplied = (appliedFilters ?? []).some(isCustomDateFilterValue);
 
@@ -53,14 +65,14 @@ export const DateFilterSubmenu = observer(function DateFilterSubmenu(props: Prop
         {options.map((option) => (
           <MenuCheckboxItem
             key={option.value}
-            label={option.name}
+            label={option.i18n_name ? t(option.i18n_name) : option.name}
             checked={appliedValues.has(option.value)}
             onCheckedChange={() => onToggleOption(option.value)}
           />
         ))}
         {dateFilterModal && (
           <MenuCheckboxItem
-            label="Custom"
+            label={customLabel}
             checked={isCustomRangeApplied}
             // picking a range opens a modal, so the menu steps aside; clearing one keeps it open
             closeOnClick={!isCustomRangeApplied}

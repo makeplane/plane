@@ -533,7 +533,9 @@
       "asc": "Възходящо",
       "desc": "Низходящо",
       "created_on": "Създадено на",
-      "updated_on": "Обновено на"
+      "updated_on": "Обновено на",
+      "date_created": "Date created",
+      "date_modified": "Date modified"
     },
     "comments": "Коментари",
     "updates": "Актуализации",
@@ -728,6 +730,16 @@
     "work_structure": "Структура на работата",
     "execution": "Изпълнение",
     "administration": "Администриране",
+    "date_filter": {
+      "one_week_from_now": "След 1 седмица",
+      "two_weeks_from_now": "След 2 седмици",
+      "one_month_from_now": "След 1 месец",
+      "two_months_from_now": "След 2 месеца",
+      "created_date": "Created date",
+      "weeks_ago": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
+      "custom": "Custom"
+    },
     "status": "Статус",
     "tooltip": {
       "copy_to_clipboard": "Копиране в клипборда",
