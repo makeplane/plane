@@ -144,7 +144,7 @@ class TestIssueCommentExternalIdUpdate:
     @pytest.mark.django_db
     def test_update_to_pair_used_on_same_work_item_conflicts(self, api_key_client, workspace, project, issue_a):
         url = _comments_url(workspace, project, issue_a)
-        api_key_client.post(url, _payload("scope-1"), format="json")
+        existing = api_key_client.post(url, _payload("scope-1"), format="json")
         other = api_key_client.post(url, _payload("scope-2"), format="json")
 
         response = api_key_client.patch(
@@ -154,4 +154,37 @@ class TestIssueCommentExternalIdUpdate:
         )
 
         assert response.status_code == status.HTTP_409_CONFLICT
+        # Like create, the 409 points at the comment that already holds the pair.
+        assert response.data["id"] == str(existing.data["id"])
         assert IssueComment.objects.get(pk=other.data["id"]).external_id == "scope-2"
+
+    @pytest.mark.django_db
+    def test_update_only_source_to_pair_used_on_same_work_item_conflicts(
+        self, api_key_client, workspace, project, issue_a
+    ):
+        url = _comments_url(workspace, project, issue_a)
+        existing = api_key_client.post(url, _payload("scope-1", external_source="github"), format="json")
+        other = api_key_client.post(url, _payload("scope-1", external_source="gitlab"), format="json")
+
+        response = api_key_client.patch(
+            _comment_url(workspace, project, issue_a, other.data["id"]),
+            {"external_source": "github"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_409_CONFLICT
+        assert response.data["id"] == str(existing.data["id"])
+        assert IssueComment.objects.get(pk=other.data["id"]).external_source == "gitlab"
+
+    @pytest.mark.django_db
+    def test_update_resending_own_pair_is_allowed(self, api_key_client, workspace, project, issue_a):
+        created = api_key_client.post(_comments_url(workspace, project, issue_a), _payload("scope-1"), format="json")
+
+        response = api_key_client.patch(
+            _comment_url(workspace, project, issue_a, created.data["id"]),
+            {"comment_html": "<p>edited</p>", "external_source": "probe", "external_id": "scope-1"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["comment_html"] == "<p>edited</p>"
