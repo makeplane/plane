@@ -40,6 +40,10 @@ describe("shouldFilterView", () => {
     expect(shouldFilterView(view, { owned_by: ["alice"], view_type: [0] })).toBe(false);
   });
 
+  it("includes a private view matching the private access filter", () => {
+    expect(shouldFilterView({ ...view, access: 0 }, { view_type: [0] })).toBe(true);
+  });
+
   it("preserves the favorites restriction", () => {
     expect(shouldFilterView({ ...view, is_favorite: false }, { view_type: [1], favorites: true })).toBe(false);
   });

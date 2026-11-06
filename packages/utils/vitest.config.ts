@@ -15,6 +15,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@plane/constants": path.resolve(import.meta.dirname, "../constants/src/index.ts"),
+      "@plane/types": path.resolve(import.meta.dirname, "../types/src/index.ts"),
     },
   },
 });
