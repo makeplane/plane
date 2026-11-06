@@ -1558,13 +1558,14 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
         if guest_cannot_view_issue(request.user.id, issue, slug):
             raise Issue.DoesNotExist()
 
-        # Validation check if the issue already exists
+        # Validation check if the comment already exists on this work item
         if (
             request.data.get("external_id")
             and request.data.get("external_source")
             and IssueComment.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
+                issue_id=issue_id,
                 external_source=request.data.get("external_source"),
                 external_id=request.data.get("external_id"),
             ).exists()
@@ -1572,6 +1573,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
             issue_comment = IssueComment.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
+                issue_id=issue_id,
                 external_id=request.data.get("external_id"),
                 external_source=request.data.get("external_source"),
             ).first()
@@ -1728,13 +1730,14 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
 
-        # Validation check if the issue already exists
+        # Validation check if the comment already exists on this work item
         if (
             request.data.get("external_id")
             and (issue_comment.external_id != str(request.data.get("external_id")))
             and IssueComment.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
+                issue_id=issue_id,
                 external_source=request.data.get("external_source", issue_comment.external_source),
                 external_id=request.data.get("external_id"),
             ).exists()
