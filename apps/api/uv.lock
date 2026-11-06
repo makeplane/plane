@@ -1104,6 +1104,7 @@ test = [
     { name = "factory-boy" },
     { name = "freezegun" },
     { name = "httpx" },
+    { name = "plane-sdk" },
     { name = "psycopg-binary" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -1171,12 +1172,27 @@ test = [
     { name = "factory-boy", specifier = "==3.3.0" },
     { name = "freezegun", specifier = "==1.2.2" },
     { name = "httpx", specifier = "==0.28.1" },
+    { name = "plane-sdk", specifier = "==0.3.1" },
     { name = "psycopg-binary", specifier = "==3.3.4" },
     { name = "pytest", specifier = "==9.0.3" },
     { name = "pytest-cov", specifier = "==4.1.0" },
     { name = "pytest-django", specifier = "==4.12.0" },
     { name = "pytest-mock", specifier = "==3.11.1" },
     { name = "pytest-xdist", specifier = "==3.3.1" },
+]
+
+[[package]]
+name = "plane-sdk"
+version = "0.3.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pydantic" },
+    { name = "requests" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/04/dd/d8c276025ba66cc37c719b141f24edeb6bb9319298bd5656c62c980d0dd7/plane_sdk-0.3.1.tar.gz", hash = "sha256:e093f0d6cc83a155cc9e1670d26da14e8f57f4dc33fed9672aa785f70662ec64", size = 232255, upload-time = "2026-09-22T11:33:48.391Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1c/e4/0065760d5bfe2444f7912324f9fb85ed817872ba4f98c4b5572a4039f06a/plane_sdk-0.3.1-py3-none-any.whl", hash = "sha256:c7794876403af6b790fc1d9d594357a02163b353d38eb8c3eb6fcc157256e827", size = 355304, upload-time = "2026-09-22T11:33:46.581Z" },
 ]
 
 [[package]]

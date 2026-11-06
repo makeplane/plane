@@ -7,6 +7,7 @@ import json
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import IntegrityError, transaction
 from django.utils import timezone
 from django.db.models import Q, Value, UUIDField
 from django.db.models.functions import Coalesce
@@ -52,6 +53,20 @@ from plane.utils.openapi import (
     INVALID_REQUEST_RESPONSE,
     DELETED_RESPONSE,
 )
+
+
+def ensure_default_intake(project):
+    """The project's intake, creating the default one the way the web app does when
+    intake is turned on. Intake can be turned on without it (e.g. through the public
+    API); two first submissions at once share one row instead of failing."""
+    intake = Intake.objects.filter(project=project).first()
+    if intake is not None:
+        return intake
+    try:
+        with transaction.atomic():
+            return Intake.objects.create(name=f"{project.name} Intake", project=project, is_default=True)
+    except IntegrityError:
+        return Intake.objects.filter(project=project).first()
 
 
 class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
@@ -165,6 +180,10 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
                 {"error": "Intake is not enabled for this project enable it through the project's api"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Intake turned on without its default intake (e.g. through the public API).
+        if intake is None:
+            intake = ensure_default_intake(project)
 
         # Check for valid priority
         if request.data.get("issue", {}).get("priority", "none") not in [
@@ -332,6 +351,10 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Intake turned on but never used: there is no intake, so no intake work item either.
+        if intake is None:
+            return Response({"error": "Intake work item not found"}, status=status.HTTP_404_NOT_FOUND)
+
         # Get the intake issue
         intake_issue = IntakeIssue.objects.get(
             issue_id=issue_id,
@@ -482,6 +505,10 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
                 {"error": "Intake is not enabled for this project enable it through the project's api"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Intake turned on but never used: there is no intake, so no intake work item either.
+        if intake is None:
+            return Response({"error": "Intake work item not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Get the intake issue
         intake_issue = IntakeIssue.objects.get(

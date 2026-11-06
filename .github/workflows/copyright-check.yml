@@ -34,7 +34,8 @@ jobs:
               run: |
                   set -e
                   echo "Running copyright check..."
-                  addlicense -check -f COPYRIGHT.txt -ignore "**/migrations/**" $(git ls-files '*.py')
+                  # apps/mcp is the MIT-licensed Plane MCP server, vendored with its own LICENSE.
+                  addlicense -check -f COPYRIGHT.txt -ignore "**/migrations/**" -ignore "apps/mcp/**" $(git ls-files '*.py')
                   echo "Copyright check passed."
 
             - name: Check Copyright For TypeScript Files

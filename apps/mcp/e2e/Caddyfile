@@ -1,0 +1,9 @@
+:80 {
+	@uploads path /uploads /uploads/*
+	handle @uploads {
+		reverse_proxy test-minio:9000
+	}
+	handle {
+		reverse_proxy e2e-api:8000
+	}
+}

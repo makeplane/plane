@@ -20,6 +20,8 @@ urlpatterns = [
     path("api/public/", include("plane.space.urls")),
     path("api/instances/", include("plane.license.urls")),
     path("api/v1/", include("plane.api.urls")),
+    # Nexus additions: endpoints the paid plans serve. Mounted after Plane's own so they never shadow one.
+    path("api/v1/", include("plane.nexus.urls")),
     path("auth/", include("plane.authentication.urls")),
     path("", include("plane.web.urls")),
 ]

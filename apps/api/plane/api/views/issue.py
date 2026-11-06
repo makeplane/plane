@@ -42,6 +42,7 @@ from drf_spectacular.utils import (
 )
 
 # Module imports
+from plane.nexus.pql import PQLError, apply_pql
 from plane.api.serializers import (
     IssueAttachmentSerializer,
     IssueActivitySerializer,
@@ -389,16 +390,12 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         Supports filtering, ordering, and field selection through query parameters.
         """
 
-        unsupported_filters = [param for param in ("pql", "filters") if request.GET.get(param)]
-        if unsupported_filters:
+        # Structured filters are not implemented; PQL (`pql`) is, by plane.nexus.pql.
+        if request.GET.get("filters"):
             return Response(
                 {
-                    "pql": (
-                        "PQL and structured filters are not supported on this Plane edition. "
-                        "Remove the pql/filters parameter and filter results client-side, or use "
-                        "a Plane edition that supports work item query filtering."
-                    ),
-                    "unsupported_parameters": unsupported_filters,
+                    "filters": "Structured filters are not supported. Use the pql parameter instead.",
+                    "unsupported_parameters": ["filters"],
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -466,6 +463,13 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         if restricted_guest:
             issue_queryset = issue_queryset.filter(created_by=request.user)
             total_issue_queryset = total_issue_queryset.filter(created_by=request.user)
+
+        try:
+            pql = request.GET.get("pql")
+            issue_queryset = apply_pql(issue_queryset, pql, user=request.user, workspace_slug=slug)
+            total_issue_queryset = apply_pql(total_issue_queryset, pql, user=request.user, workspace_slug=slug)
+        except PQLError as exc:
+            return Response({"error": str(exc), "pql": [str(exc)]}, status=status.HTTP_400_BAD_REQUEST)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -2727,18 +2731,24 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
         issues = serializer.validated_data["issues"]
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         # The URL issue is one side of every relation; bind it to the URL project too.
-        Issue.issue_objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+        url_issue = Issue.issue_objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+        if guest_cannot_view_issue(request.user.id, url_issue, slug):
+            raise Issue.DoesNotExist()
 
         actual_relation = get_actual_relation(relation_type)
         is_reverse = relation_type in ["blocking", "start_after", "finish_after"]
 
-        # Scope to workspace to prevent cross-tenant IDOR
-        # Relations can cross projects so only workspace scope is enforced
+        # Scope to workspace to prevent cross-tenant IDOR. Relations can cross
+        # projects, so also require that the caller may view each target: the
+        # response describes them, and GET already hides the ones they cannot see.
         issues = list(
             Issue.issue_objects.filter(
+                visible_issue_q(request.user),
                 workspace__slug=slug,
                 pk__in=issues,
-            ).values_list("id", flat=True)
+            )
+            .values_list("id", flat=True)
+            .distinct()
         )
 
         IssueRelation.objects.bulk_create(

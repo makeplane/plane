@@ -1,0 +1,64 @@
+[project]
+name = "plane-mcp-server"
+version = "0.3.5"
+description = "A Model Context Protocol server for Plane integration"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name= "Surya Prashanth", email = "surya.prashanth@plane.so"},
+    {name = "Plane Engineering", email = "support@plane.so"}
+]
+keywords = ["mcp", "plane", "fastmcp", "ai", "automation"]
+
+dependencies = [
+    "fastmcp==3.2.0",
+    "plane-sdk==0.3.1",
+    "py-key-value-aio[redis]>=0.4.4,<0.5.0",
+    "mcp==1.28.1",
+    "PyJWT>=2.13.0",
+    "authlib>=1.6.9",
+    "boto3>=1.34.0",
+    # pydocket 0.16.6 (pinned by fastmcp 2.14.4) imports `FakeConnection` from
+    # `fakeredis.aioredis`, which was removed in fakeredis 2.35.0.
+    "fakeredis[lua]>=2.32.1,<2.35.0",
+    # 2026.10.19 removes the emSign ECC Root CA - G3 (eMudhra CA incident, 2026-10-20).
+    "certifi>=2026.10.19",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "ruff>=0.1.0",
+]
+
+[project.scripts]
+plane-mcp-server = "plane_mcp.__main__:main"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["plane_mcp*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+# Model-facing reference prose, including a markdown table that reflowing would break.
+"plane_mcp/pql_reference.py" = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]

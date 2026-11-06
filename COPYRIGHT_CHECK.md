@@ -3,7 +3,7 @@
 To verify that all tracked Python files contain the correct copyright header for **Plane Software Inc.** for the year **2023**, run this command from the repository root:
 
 ```bash
-addlicense --check -f COPYRIGHT.txt -ignore "**/migrations/**" $(git ls-files '*.py')
+addlicense --check -f COPYRIGHT.txt -ignore "**/migrations/**" -ignore "apps/mcp/**" $(git ls-files '*.py')
 ```
 
 #### To Apply Changes
@@ -11,7 +11,7 @@ addlicense --check -f COPYRIGHT.txt -ignore "**/migrations/**" $(git ls-files '*
 python files
 
 ```bash
-addlicense -v -f COPYRIGHT.txt -ignore "**/migrations/**" $(git ls-files '*.py')
+addlicense -v -f COPYRIGHT.txt -ignore "**/migrations/**" -ignore "apps/mcp/**" $(git ls-files '*.py')
 ```
 
 ts and tsx files in a specific app
@@ -24,6 +24,8 @@ addlicense -v -f COPYRIGHT.txt \
 ```
 
 Note: Please make sure ts command is running on specific folder, running it for the whole mono repo is crashing os processes.
+
+`apps/mcp` is the MIT-licensed Plane MCP server, kept under its own `LICENSE`, so it is excluded.
 
 #### Other Options
 

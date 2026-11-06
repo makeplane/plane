@@ -151,6 +151,16 @@ class IssueSerializer(BaseSerializer):
                 raise serializers.ValidationError(f"Labels {list(invalid_label_ids)} do not belong to this project")
             data["labels"] = list(valid_label_ids)
 
+        # A type must be one imported into this project. The field's queryset is
+        # unscoped, so without this a type from another workspace was accepted.
+        if data.get("type") is not None:
+            from plane.db.models.issue_type import ProjectIssueType
+
+            if not ProjectIssueType.objects.filter(
+                issue_type_id=data["type"].pk, project_id=self.context.get("project_id")
+            ).exists():
+                raise serializers.ValidationError({"type_id": "This work item type is not enabled in this project."})
+
         # Check state is from the project only else raise validation error
         if (
             data.get("state")

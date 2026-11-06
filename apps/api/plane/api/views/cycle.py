@@ -24,6 +24,7 @@ from rest_framework.response import Response
 from drf_spectacular.utils import OpenApiRequest, OpenApiResponse
 
 # Module imports
+from plane.nexus.pql import PQLError, apply_pql
 from plane.api.serializers import (
     CycleIssueSerializer,
     CycleSerializer,
@@ -936,6 +937,11 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
         # only see work items they created -- mirrors IssueDetailEndpoint.get.
         if is_restricted_guest(request.user.id, project_id, slug):
             issues = issues.filter(created_by=request.user)
+
+        try:
+            issues = apply_pql(issues, request.GET.get("pql"), user=request.user, workspace_slug=slug)
+        except PQLError as exc:
+            return Response({"error": str(exc), "pql": [str(exc)]}, status=status.HTTP_400_BAD_REQUEST)
 
         return self.paginate(
             request=request,

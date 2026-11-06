@@ -100,3 +100,18 @@ def test_issue_in_url_project_is_created(api_key_client, workspace, own_project,
 
     assert response.status_code == status.HTTP_201_CREATED, response.content
     assert _rows(endpoint, own_issue) == 1
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_relation_to_a_work_item_the_caller_cannot_see_is_not_created(
+    api_key_client, workspace, own_project, own_issue, sibling_issue
+):
+    """Targets were only scoped to the workspace, so a member of one project could
+    link to an item in a project they are not in and read it back in the response."""
+    response = _post(api_key_client, "relation", workspace, own_project, own_issue, sibling_issue)
+
+    assert response.status_code == status.HTTP_201_CREATED, response.content
+    assert response.data == []
+    assert "Sibling" not in str(response.content)
+    assert _rows("relation", sibling_issue) == 0

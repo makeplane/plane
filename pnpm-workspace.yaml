@@ -3,6 +3,7 @@ packages:
   - packages/*
   - "!apps/api"
   - "!apps/proxy"
+  - "!apps/mcp"
 
 catalog:
   "@atlaskit/pragmatic-drag-and-drop": "1.7.4"

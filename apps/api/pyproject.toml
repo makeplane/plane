@@ -111,6 +111,7 @@ test = [
     "freezegun==1.2.2",
     "coverage==7.2.7",
     "httpx==0.28.1",
+    "plane-sdk==0.3.1",
 ]
 
 [tool.uv]

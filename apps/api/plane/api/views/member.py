@@ -36,6 +36,71 @@ from plane.utils.openapi import (
 )
 
 
+# Workspace roles by the slug `member list_workspace role_slug=` and the roles
+# endpoint use. CE has fixed integer roles.
+_ROLE_SLUGS = {"admin": 20, "member": 15, "guest": 5}
+_MEMBER_TEXT_FILTERS = ("first_name", "last_name", "email", "display_name")
+_MEMBER_ORDER_FIELDS = {
+    "created_at": "created_at",
+    "role": "role",
+    "first_name": "member__first_name",
+    "last_name": "member__last_name",
+    "email": "member__email",
+    "display_name": "member__display_name",
+}
+
+
+class _BadMemberFilter(ValueError):
+    pass
+
+
+def _bool_param(params, name):
+    raw = params.get(name)
+    if raw is None or raw == "":
+        return None
+    if raw.lower() in ("true", "1"):
+        return True
+    if raw.lower() in ("false", "0"):
+        return False
+    raise _BadMemberFilter(f"{name} must be true or false.")
+
+
+def _filter_members(queryset, params):
+    """Apply the member filters plane-sdk sends (MemberQueryParams).
+
+    Text filters match case-insensitively on a substring and combine with AND,
+    role_slug matches exactly, is_active filters the membership and is_bot the
+    account. Without this the endpoints ignored every filter and returned the
+    whole workspace, so a lookup by email silently came back with everyone.
+    """
+    for name in _MEMBER_TEXT_FILTERS:
+        value = params.get(name)
+        if value:
+            queryset = queryset.filter(**{f"member__{name}__icontains": value})
+    role_slug = params.get("role_slug")
+    if role_slug:
+        if role_slug not in _ROLE_SLUGS:
+            raise _BadMemberFilter(f"role_slug must be one of: {', '.join(_ROLE_SLUGS)}.")
+        queryset = queryset.filter(role=_ROLE_SLUGS[role_slug])
+    is_active = _bool_param(params, "is_active")
+    if is_active is not None:
+        queryset = queryset.filter(is_active=is_active)
+    is_bot = _bool_param(params, "is_bot")
+    if is_bot is not None:
+        queryset = queryset.filter(member__is_bot=is_bot)
+    order_by = params.get("order_by")
+    if order_by:
+        field = _MEMBER_ORDER_FIELDS.get(order_by.lstrip("-"))
+        if field is None:
+            raise _BadMemberFilter(f"order_by must be one of: {', '.join(_MEMBER_ORDER_FIELDS)}, optionally with -.")
+        queryset = queryset.order_by(("-" if order_by.startswith("-") else "") + field, "-created_at", "id")
+    return queryset
+
+
+def _bad_filter(exc):
+    return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class WorkspaceMemberAPIEndpoint(BaseAPIView):
     permission_classes = [WorkSpaceAdminPermission]
     use_read_replica = True
@@ -87,7 +152,12 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        workspace_members = WorkspaceMember.objects.filter(workspace__slug=slug).select_related("member")
+        try:
+            workspace_members = _filter_members(
+                WorkspaceMember.objects.filter(workspace__slug=slug).select_related("member"), request.GET
+            )
+        except _BadMemberFilter as exc:
+            return _bad_filter(exc)
 
         # Get all the users with their roles
         users_with_roles = []
@@ -272,9 +342,13 @@ class WorkspaceMemberLiteAPIEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        workspace_members = (
-            WorkspaceMember.objects.filter(workspace__slug=slug).select_related("member").order_by("-created_at")
-        )
+        try:
+            workspace_members = _filter_members(
+                WorkspaceMember.objects.filter(workspace__slug=slug).select_related("member").order_by("-created_at"),
+                request.GET,
+            )
+        except _BadMemberFilter as exc:
+            return _bad_filter(exc)
         return self.paginate(
             request=request,
             queryset=workspace_members,
@@ -325,11 +399,15 @@ class ProjectMemberLiteAPIEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        project_members = (
-            ProjectMember.objects.filter(project_id=project_id, workspace__slug=slug)
-            .select_related("member")
-            .order_by("-created_at")
-        )
+        try:
+            project_members = _filter_members(
+                ProjectMember.objects.filter(project_id=project_id, workspace__slug=slug)
+                .select_related("member")
+                .order_by("-created_at"),
+                request.GET,
+            )
+        except _BadMemberFilter as exc:
+            return _bad_filter(exc)
         return self.paginate(
             request=request,
             queryset=project_members,
