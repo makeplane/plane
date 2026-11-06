@@ -53,6 +53,13 @@
 		}
 	}
 
+	# The agent bridge calls the API's internal endpoints directly (api:8000). They also
+	# check a shared secret, but nothing outside the VPS has a reason to reach them.
+	@internal path /api/internal /api/internal/*
+	handle @internal {
+		respond 404
+	}
+
 	@api path /api/* /auth/* /static/*
 	handle @api {
 		reverse_proxy api:8000 {
@@ -69,6 +76,17 @@
 		reverse_proxy mcp:8211 {
 			flush_interval -1
 			header_up -X-Plane-Client-IP
+		}
+	}
+
+	# Agent chat bridge: the ACP WebSocket (/agents/acp) and /agents/health. Only the
+	# root /agents path: the chat page itself is /<workspace-slug>/agents, served by web.
+	# The bridge authenticates the session cookie and checks Origin against the public
+	# origin, so it must stay on the same site as the app.
+	@agents path /agents /agents/*
+	handle @agents {
+		reverse_proxy agent-bridge:3400 {
+			import public_request
 		}
 	}
 

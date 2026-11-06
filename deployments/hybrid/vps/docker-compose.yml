@@ -3,8 +3,12 @@
 # gateway's, on loopback: `tailscale serve` exposes it to the tailnet, and nothing
 # is reachable from the public internet.
 #
-#   app   gateway <-> application services (has outbound internet for email, webhooks, OAuth)
-#   data  application services <-> datastores (no outbound internet)
+#   app     gateway <-> application services (has outbound internet for email, webhooks, OAuth)
+#   data    application services <-> datastores (no outbound internet)
+#   agents  agent-runner <-> agent-bridge and mcp, plus outbound internet. Agents run shell
+#           commands, so the runner is on this network only: it has no route to api,
+#           Postgres, Valkey, RabbitMQ or MinIO. bootstrap.sh also firewalls it off the
+#           tailnet and private address ranges (see agents-firewall.sh).
 
 name: nexus-ops
 
@@ -47,6 +51,11 @@ x-app-env: &app-env
   NUM_PROXIES: 1
   WEBHOOK_ALLOWED_IPS: ${WEBHOOK_ALLOWED_IPS:-}
   WEBHOOK_ALLOWED_HOSTS: ${WEBHOOK_ALLOWED_HOSTS:-}
+  # In-app agent chat. The bridge calls the API's internal agent-session endpoint with
+  # this secret, and the API hands agents this MCP address, which the runner can reach.
+  AGENT_BRIDGE_SECRET: ${AGENT_BRIDGE_SECRET:?run generate-env.sh}
+  PLANE_MCP_URL: http://mcp:8211/mcp
+  AGENT_SESSION_TOKEN_TTL_MINUTES: ${AGENT_SESSION_TOKEN_TTL_MINUTES:-120}
 
 services:
   gateway:
@@ -68,6 +77,7 @@ services:
       - admin
       - plane-minio
       - mcp
+      - agent-bridge
 
   api:
     image: ${IMAGE_REGISTRY:?set IMAGE_REGISTRY}/plane-backend:${APP_RELEASE:?set APP_RELEASE}
@@ -164,9 +174,62 @@ services:
       PLANE_BASE_URL: https://${APP_DOMAIN:?set APP_DOMAIN}
       PLANE_INTERNAL_BASE_URL: http://gateway
       LOG_PAYLOADS: "false"
-    networks: [app]
+    # agents: the agent runner reaches it as http://mcp:8211/mcp.
+    networks: [app, agents]
     depends_on:
       - api
+
+  # ACP policy proxy for the in-app agent chat (apps/agent-bridge). The browser opens
+  # wss://$APP_DOMAIN/agents/acp with its session cookie; the bridge checks the cookie
+  # with the API, mints a short-lived workspace-scoped token, and relays to the runner.
+  # It runs no agents itself.
+  agent-bridge:
+    image: ${IMAGE_REGISTRY}/plane-agent-bridge:${APP_RELEASE}
+    restart: always
+    stop_grace_period: 30s
+    environment:
+      APP_VERSION: ${APP_RELEASE}
+      API_BASE_URL: http://api:8000
+      AGENT_BRIDGE_SECRET: ${AGENT_BRIDGE_SECRET:?run generate-env.sh}
+      AGENT_RUNNER_URL: ws://agent-runner:3410/acp
+      AGENT_RUNNER_SECRET: ${AGENT_RUNNER_SECRET:?run generate-env.sh}
+      # Must equal the runner's: both compute the per-user cwd from it.
+      AGENT_WORKSPACES_ROOT: /workspaces
+      PLANE_MCP_URL: http://mcp:8211/mcp
+      # The socket is authenticated by cookie, so only the app's own origin may open it.
+      CORS_ALLOWED_ORIGINS: https://${APP_DOMAIN:?set APP_DOMAIN}
+    networks: [app, agents]
+    depends_on:
+      - api
+      - agent-runner
+
+  # Runs the agents (apps/agent-runner): plane-acp-claude, -codex and -deepseek, each as
+  # its workspace dir's own unprivileged uid, so this container is the sandbox. It needs
+  # root to switch uids; it gets only the capabilities that takes, and agents get none.
+  agent-runner:
+    image: ${IMAGE_REGISTRY}/plane-agent-runner:${APP_RELEASE}
+    restart: always
+    stop_grace_period: 30s
+    environment:
+      APP_VERSION: ${APP_RELEASE}
+      AGENT_RUNNER_SECRET: ${AGENT_RUNNER_SECRET:?run generate-env.sh}
+      AGENT_WORKSPACES_ROOT: /workspaces
+      AGENT_RUNNER_ISOLATION: uid
+      AGENT_RUNNER_ENABLE_ECHO: "false"
+    volumes:
+      - agent_workspaces:/workspaces
+    user: "0:0"
+    cap_drop: [ALL]
+    # CHOWN/FOWNER/DAC_OVERRIDE: create and hand over per-user dirs; SETUID/SETGID:
+    # start agents as those uids; KILL: stop them.
+    cap_add: [CHOWN, DAC_OVERRIDE, FOWNER, KILL, SETGID, SETUID]
+    security_opt:
+      - no-new-privileges:true
+    cpus: ${AGENT_RUNNER_CPUS:-2}
+    mem_limit: ${AGENT_RUNNER_MEMORY:-3g}
+    memswap_limit: ${AGENT_RUNNER_MEMORY:-3g}
+    pids_limit: ${AGENT_RUNNER_PIDS:-1024}
+    networks: [agents]
 
   plane-db:
     # The datastore and gateway images match the production VPS; change them there
@@ -238,6 +301,10 @@ networks:
   app:
   data:
     internal: true
+  agents:
+    # A fixed interface name, so agents-firewall.sh can match this network's traffic.
+    driver_opts:
+      com.docker.network.bridge.name: ${AGENTS_BRIDGE_NAME:-br-nexus-agents}
 
 volumes:
   pgdata:
@@ -248,3 +315,6 @@ volumes:
   logs_worker:
   logs_beat-worker:
   logs_migrator:
+  # Agents' persistent working dirs, HOMEs and uid map (/workspaces in agent-runner).
+  # backup.sh includes it.
+  agent_workspaces:

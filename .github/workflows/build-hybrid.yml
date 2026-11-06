@@ -76,6 +76,13 @@ jobs:
           - image: plane-backend
             context: ./apps/api
             dockerfile: ./apps/api/Dockerfile.api
+          # In-app agent chat: the ACP policy proxy and the runner that executes agents.
+          - image: plane-agent-bridge
+            context: .
+            dockerfile: ./apps/agent-bridge/Dockerfile.agent-bridge
+          - image: plane-agent-runner
+            context: .
+            dockerfile: ./apps/agent-runner/Dockerfile.agent-runner
     steps:
       - uses: actions/checkout@v6
         with:
