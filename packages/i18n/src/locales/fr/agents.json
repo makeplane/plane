@@ -234,6 +234,19 @@
         "confirm": "Supprimer",
         "deleting": "Suppression en cours"
       }
+    },
+    "khaia": {
+      "open": "Ouvrir {name}",
+      "unread": "Ouvrir {name} (nouvelle activité)",
+      "minimize": "Réduire",
+      "open_page": "Ouvrir en pleine page",
+      "agent_menu_label": "Changer d’agent, actuellement {agent}",
+      "greeting": "Bonjour, je suis {name}",
+      "suggestions": {
+        "assigned_to_me": "Qu’est-ce qui m’est assigné ?",
+        "due_this_week": "Quels éléments de travail arrivent à échéance cette semaine ?",
+        "recent_activity": "Résumer l’activité récente de mes projets"
+      }
     }
   }
 }

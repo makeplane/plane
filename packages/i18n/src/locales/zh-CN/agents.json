@@ -234,6 +234,19 @@
         "confirm": "删除",
         "deleting": "删除中"
       }
+    },
+    "khaia": {
+      "open": "打开 {name}",
+      "unread": "打开 {name}（有新动态）",
+      "minimize": "最小化",
+      "open_page": "在完整页面中打开",
+      "agent_menu_label": "切换代理（当前：{agent}）",
+      "greeting": "您好，我是 {name}",
+      "suggestions": {
+        "assigned_to_me": "分配给我的有哪些？",
+        "due_this_week": "哪些工作项本周到期？",
+        "recent_activity": "总结我的项目中的最近动态"
+      }
     }
   }
 }

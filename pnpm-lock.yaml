@@ -1136,6 +1136,9 @@ importers:
       axios:
         specifier: 1.20.0
         version: 1.20.0
+      class-variance-authority:
+        specifier: 'catalog:'
+        version: 0.7.1
       clsx:
         specifier: 'catalog:'
         version: 2.1.1

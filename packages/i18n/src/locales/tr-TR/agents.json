@@ -234,6 +234,19 @@
         "confirm": "Sil",
         "deleting": "Siliniyor"
       }
+    },
+    "khaia": {
+      "open": "{name} sohbetini aç",
+      "unread": "{name} sohbetini aç (yeni etkinlik)",
+      "minimize": "Küçült",
+      "open_page": "Tam sayfada aç",
+      "agent_menu_label": "Ajanı değiştir, şu anki: {agent}",
+      "greeting": "Merhaba, ben {name}",
+      "suggestions": {
+        "assigned_to_me": "Bana neler atandı?",
+        "due_this_week": "Bu hafta hangi iş öğelerinin son tarihi var?",
+        "recent_activity": "Projelerimdeki son etkinliklerin özeti"
+      }
     }
   }
 }

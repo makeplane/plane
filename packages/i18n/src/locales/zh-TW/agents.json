@@ -234,6 +234,19 @@
         "confirm": "刪除",
         "deleting": "刪除中"
       }
+    },
+    "khaia": {
+      "open": "開啟 {name}",
+      "unread": "開啟 {name}（有新動態）",
+      "minimize": "最小化",
+      "open_page": "在完整頁面中開啟",
+      "agent_menu_label": "切換代理（目前：{agent}）",
+      "greeting": "您好，我是 {name}",
+      "suggestions": {
+        "assigned_to_me": "指派給我的有哪些？",
+        "due_this_week": "哪些工作事項本週到期？",
+        "recent_activity": "摘要我的專案中的近期動態"
+      }
     }
   }
 }

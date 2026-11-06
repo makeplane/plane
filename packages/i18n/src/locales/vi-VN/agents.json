@@ -234,6 +234,19 @@
         "confirm": "Xóa",
         "deleting": "Đang xóa"
       }
+    },
+    "khaia": {
+      "open": "Mở {name}",
+      "unread": "Mở {name} (hoạt động mới)",
+      "minimize": "Thu nhỏ",
+      "open_page": "Mở toàn trang",
+      "agent_menu_label": "Đổi tác nhân, hiện tại: {agent}",
+      "greeting": "Xin chào, tôi là {name}",
+      "suggestions": {
+        "assigned_to_me": "Những gì được giao cho tôi?",
+        "due_this_week": "Những mục công việc nào đến hạn trong tuần này?",
+        "recent_activity": "Tóm tắt hoạt động gần đây trong các dự án của tôi"
+      }
     }
   }
 }

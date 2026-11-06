@@ -234,6 +234,19 @@
         "confirm": "Ștergeți",
         "deleting": "Se șterge"
       }
+    },
+    "khaia": {
+      "open": "Deschideți {name}",
+      "unread": "Deschideți {name} (activitate nouă)",
+      "minimize": "Minimizați",
+      "open_page": "Deschideți pe toată pagina",
+      "agent_menu_label": "Schimbați agentul, acum {agent}",
+      "greeting": "Bună ziua, sunt {name}",
+      "suggestions": {
+        "assigned_to_me": "Ce îmi este atribuit?",
+        "due_this_week": "Ce activități sunt scadente săptămâna aceasta?",
+        "recent_activity": "Rezumatul activității recente din proiectele mele"
+      }
     }
   }
 }

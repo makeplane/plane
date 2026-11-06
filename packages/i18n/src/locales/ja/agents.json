@@ -234,6 +234,19 @@
         "confirm": "削除",
         "deleting": "削除中"
       }
+    },
+    "khaia": {
+      "open": "{name}を開く",
+      "unread": "{name}を開く（新しいアクティビティ）",
+      "minimize": "最小化",
+      "open_page": "全画面ページで開く",
+      "agent_menu_label": "エージェントを切り替え（現在: {agent}）",
+      "greeting": "こんにちは、{name}です",
+      "suggestions": {
+        "assigned_to_me": "自分に割り当てられているものは何ですか？",
+        "due_this_week": "今週期限の作業項目はどれですか？",
+        "recent_activity": "自分のプロジェクトの最近のアクティビティを要約してください"
+      }
     }
   }
 }

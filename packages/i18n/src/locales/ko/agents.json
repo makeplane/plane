@@ -234,6 +234,19 @@
         "confirm": "삭제",
         "deleting": "삭제 중"
       }
+    },
+    "khaia": {
+      "open": "{name} 열기",
+      "unread": "{name} 열기(새 활동)",
+      "minimize": "최소화",
+      "open_page": "전체 페이지로 열기",
+      "agent_menu_label": "에이전트 전환(현재: {agent})",
+      "greeting": "안녕하세요, {name}입니다",
+      "suggestions": {
+        "assigned_to_me": "나에게 할당된 항목은 무엇인가요?",
+        "due_this_week": "이번 주에 마감인 작업 항목은 무엇인가요?",
+        "recent_activity": "내 프로젝트의 최근 활동을 요약해 주세요"
+      }
     }
   }
 }

@@ -234,6 +234,19 @@
         "confirm": "Smazat",
         "deleting": "Mazání"
       }
+    },
+    "khaia": {
+      "open": "Otevřít {name}",
+      "unread": "Otevřít {name} (nová aktivita)",
+      "minimize": "Minimalizovat",
+      "open_page": "Otevřít na celé stránce",
+      "agent_menu_label": "Změnit agenta, nyní {agent}",
+      "greeting": "Dobrý den, jsem {name}",
+      "suggestions": {
+        "assigned_to_me": "Co je mi přiřazeno?",
+        "due_this_week": "Které pracovní položky mají termín tento týden?",
+        "recent_activity": "Shrnutí nedávné aktivity v mých projektech"
+      }
     }
   }
 }

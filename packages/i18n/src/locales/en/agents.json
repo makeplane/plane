@@ -234,6 +234,19 @@
         "confirm": "Delete",
         "deleting": "Deleting"
       }
+    },
+    "khaia": {
+      "open": "Open {name}",
+      "unread": "Open {name} (new activity)",
+      "minimize": "Minimize",
+      "open_page": "Open full page",
+      "agent_menu_label": "Switch agent, now {agent}",
+      "greeting": "Hi, I'm {name}",
+      "suggestions": {
+        "assigned_to_me": "What's assigned to me?",
+        "due_this_week": "Which work items are due this week?",
+        "recent_activity": "Summarize recent activity in my projects"
+      }
     }
   }
 }

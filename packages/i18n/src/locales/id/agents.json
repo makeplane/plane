@@ -234,6 +234,19 @@
         "confirm": "Hapus",
         "deleting": "Menghapus"
       }
+    },
+    "khaia": {
+      "open": "Buka {name}",
+      "unread": "Buka {name} (aktivitas baru)",
+      "minimize": "Perkecil",
+      "open_page": "Buka dalam satu halaman penuh",
+      "agent_menu_label": "Ganti agen, saat ini {agent}",
+      "greeting": "Halo, saya {name}",
+      "suggestions": {
+        "assigned_to_me": "Apa yang ditugaskan kepada saya?",
+        "due_this_week": "Item kerja mana yang jatuh tempo minggu ini?",
+        "recent_activity": "Ringkas aktivitas terbaru di proyek saya"
+      }
     }
   }
 }

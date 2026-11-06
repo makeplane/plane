@@ -234,6 +234,19 @@
         "confirm": "Verwijderen",
         "deleting": "Verwijderen"
       }
+    },
+    "khaia": {
+      "open": "{name} openen",
+      "unread": "{name} openen (nieuwe activiteit)",
+      "minimize": "Minimaliseren",
+      "open_page": "Openen op volledige pagina",
+      "agent_menu_label": "Agent wisselen, nu {agent}",
+      "greeting": "Hallo, ik ben {name}",
+      "suggestions": {
+        "assigned_to_me": "Wat is aan mij toegewezen?",
+        "due_this_week": "Welke werkitems moeten deze week af zijn?",
+        "recent_activity": "Recente activiteit in mijn projecten samenvatten"
+      }
     }
   }
 }

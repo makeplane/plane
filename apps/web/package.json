@@ -41,6 +41,7 @@
     "@react-router/node": "catalog:",
     "@tanstack/react-table": "catalog:",
     "axios": "catalog:",
+    "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "cmdk": "catalog:",
     "comlink": "catalog:",
