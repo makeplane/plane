@@ -324,6 +324,25 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Email settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
+
+def _email_timeout(default=30):
+    """
+    Read the SMTP connection timeout (in seconds) from EMAIL_TIMEOUT, falling back
+    to the default when the variable is unset, unparseable, or not positive.
+    Without a timeout, an SMTP server that never answers blocks the request or
+    task sending the email indefinitely.
+    """
+    raw = os.environ.get("EMAIL_TIMEOUT")
+    try:
+        seconds = int(raw)
+    except (TypeError, ValueError):
+        return default
+    return seconds if seconds > 0 else default
+
+
+# Used by every SMTP connection that does not pass its own timeout.
+EMAIL_TIMEOUT = _email_timeout()
+
 # Storage Settings
 # Use Minio settings
 USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
