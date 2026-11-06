@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { sortBy } from "lodash-es";
+import { orderBy, sortBy } from "lodash-es";
 // plane imports
 import type { IModule, TModuleDisplayFilters, TModuleFilters, TModuleOrderByOptions } from "@plane/types";
 // local imports
@@ -41,11 +41,12 @@ export const orderModules = (modules: IModule[], orderByKey: TModuleOrderByOptio
       },
     ]);
   if (["issues_length", "-issues_length"].includes(orderByKey))
-    orderedModules = sortBy(modules, [(m) => (orderByKey === "issues_length" ? m.total_issues : !m.total_issues)]);
+    orderedModules = sortBy(modules, [(m) => (orderByKey === "issues_length" ? m.total_issues : -m.total_issues)]);
   if (orderByKey === "target_date") orderedModules = sortBy(modules, [(m) => m.target_date]);
-  if (orderByKey === "-target_date") orderedModules = sortBy(modules, [(m) => !m.target_date]);
+  if (orderByKey === "-target_date")
+    orderedModules = orderBy(modules, [(m) => !m.target_date, (m) => m.target_date], ["asc", "desc"]);
   if (orderByKey === "created_at") orderedModules = sortBy(modules, [(m) => m.created_at]);
-  if (orderByKey === "-created_at") orderedModules = sortBy(modules, [(m) => !m.created_at]);
+  if (orderByKey === "-created_at") orderedModules = orderBy(modules, [(m) => m.created_at], ["desc"]);
 
   if (orderByKey === "sort_order") orderedModules = sortBy(modules, [(m) => m.sort_order]);
   return orderedModules;
