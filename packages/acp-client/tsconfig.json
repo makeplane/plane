@@ -1,0 +1,11 @@
+{
+  "extends": "@plane/typescript-config/base.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "lib": ["es2023", "DOM", "DOM.Iterable"],
+    "types": []
+  },
+  "include": ["src/**/*", "tests/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
