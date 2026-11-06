@@ -83,6 +83,9 @@ jobs:
           - image: plane-agent-runner
             context: .
             dockerfile: ./apps/agent-runner/Dockerfile.agent-runner
+          - image: plane-mcp
+            context: ./apps/mcp
+            dockerfile: ./apps/mcp/Dockerfile
     steps:
       - uses: actions/checkout@v6
         with:

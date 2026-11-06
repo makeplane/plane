@@ -71,6 +71,17 @@ def opt(value: Any) -> Any:
     return value if value not in ("", 0) else None
 
 
+def membership(added: Sequence[Any] | None = None, removed: Sequence[Any] | None = None) -> dict[str, list[Any]]:
+    """The answer every membership mutation gives: the ids it added and removed.
+
+    The endpoints behind these return no body, or one the SDK discards, so a bare
+    None was the only answer and read as "did anything happen?". This echoes the
+    ids the server accepted. It is not a read-back: the matching list action shows
+    the full membership.
+    """
+    return {"added": list(added or []), "removed": list(removed or [])}
+
+
 def rich_text(html: str, plain: str) -> str | None:
     """The HTML for a rich-text field, promoting plain text when no HTML was given."""
     if html:

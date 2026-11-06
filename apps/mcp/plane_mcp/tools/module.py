@@ -22,6 +22,7 @@ from plane_mcp.toolkit import (
     build_annotations,
     build_description,
     coerce_list,
+    membership,
     missing,
     one_of,
     opt,
@@ -68,7 +69,10 @@ ACTIONS = (
         "manage_workitems",
         ("project_id", "module_id"),
         ("add_ids", "remove_ids"),
-        note="pass at least one of add_ids or remove_ids; returns nothing, read back with list_workitems",
+        note=(
+            "pass at least one of add_ids or remove_ids; "
+            "returns the ids added and removed; list_workitems shows the full set"
+        ),
     ),
     Action("archive", ("project_id", "module_id")),
     Action("unarchive", ("project_id", "module_id")),
@@ -230,7 +234,7 @@ def register(mcp: FastMCP) -> None:
                     module_id=module_id,
                     work_item_id=workitem_id,
                 )
-            return None
+            return membership(add, remove)
 
         if action == "archive":
             client.modules.archive(workspace_slug=workspace_slug, project_id=project_id, module_id=module_id)

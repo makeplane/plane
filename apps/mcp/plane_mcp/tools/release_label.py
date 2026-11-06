@@ -24,6 +24,7 @@ from plane_mcp.toolkit import (
     build_annotations,
     build_description,
     coerce_list,
+    membership,
     missing,
     needs,
     opt,
@@ -44,8 +45,17 @@ ACTIONS = (
     Action("create", ("name",), ("color", "sort_order"), note="adds to the workspace palette"),
     Action("update", ("label_id",), ("name", "color", "sort_order")),
     Action("delete", ("label_id",), note="removes it from the palette entirely", destructive=True),
-    Action("attach", ("release_id", "label_ids"), note="returns nothing, read back with list"),
-    Action("detach", ("release_id", "label_ids"), note="returns nothing, read back with list", destructive=True),
+    Action(
+        "attach",
+        ("release_id", "label_ids"),
+        note="returns the label ids attached or detached; list shows the full set",
+    ),
+    Action(
+        "detach",
+        ("release_id", "label_ids"),
+        note="returns the label ids attached or detached; list shows the full set",
+        destructive=True,
+    ),
 )
 
 FOOTER = (
@@ -83,7 +93,7 @@ def register(mcp: FastMCP) -> None:
         sort_order: int | None = None,
         cursor: str = "",
         per_page: int = 0,
-    ) -> ReleaseLabel | PaginatedReleaseLabelResponse | str | None:
+    ) -> ReleaseLabel | PaginatedReleaseLabelResponse | dict[str, list[str]] | str | None:
         client, workspace_slug = get_plane_client_context()
         labels = client.releases.labels
         item_labels = client.releases.item_labels
@@ -130,4 +140,4 @@ def register(mcp: FastMCP) -> None:
                 release_id=release_id,
                 data=RemoveReleaseItemLabel(label_ids=ids),
             )
-        return None
+        return membership(added=ids) if action == "attach" else membership(removed=ids)

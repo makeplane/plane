@@ -1,15 +1,15 @@
 # toolkit
 
-Shared building blocks for the tool surface, split by *when* they act. All re-exported from `__init__.py`, so a resource module needs one import.
+Shared building blocks for the tool surface, split by _when_ they act. All re-exported from `__init__.py`, so a resource module needs one import.
 
-| Module | Acts at | Provides |
-|---|---|---|
-| `spec.py` | declaration | `Action`, `build_description`, `build_annotations` |
-| `runtime.py` | call | `missing`, `needs`, `require`, `one_of`, `opt`, `coerce_list`, `page_params`, `as_params`, `ids_of` |
-| `mentions.py` | call | `render_mentions`, `tokenize_mentions`, `mention_user_ids`, `project_mention_error` |
-| `paging.py` | response | `envelope`, `dump_results`, `pql_failure`, `workitem_page` |
-| `governance.py` | policy | `workspace_owns_resource`, `workspace_owns`, `scoped`, `plan_gated` |
-| `transforms.py` | listing | `StripOutputSchemas` |
+| Module          | Acts at     | Provides                                                                                                          |
+| --------------- | ----------- | ----------------------------------------------------------------------------------------------------------------- |
+| `spec.py`       | declaration | `Action`, `build_description`, `build_annotations`                                                                |
+| `runtime.py`    | call        | `missing`, `needs`, `require`, `one_of`, `opt`, `coerce_list`, `page_params`, `as_params`, `ids_of`, `membership` |
+| `mentions.py`   | call        | `render_mentions`, `tokenize_mentions`, `mention_user_ids`, `project_mention_error`                               |
+| `paging.py`     | response    | `envelope`, `dump_results`, `pql_failure`, `workitem_page`                                                        |
+| `governance.py` | policy      | `workspace_owns_resource`, `workspace_owns`, `scoped`, `plan_gated`                                               |
+| `transforms.py` | listing     | `StripOutputSchemas`                                                                                              |
 
 Nothing here knows which catalogue is calling it. Anything encoding this server's own history — the `RESOURCES` tuple, retired names — lives under `tools/`.
 
@@ -17,26 +17,26 @@ Nothing here knows which catalogue is calling it. Anything encoding this server'
 
 Plane can move a resource's catalogue from the project to the workspace. Which scope owns it decides where writes go, and the wrong scope is refused in **both** directions:
 
-| Write | Refused with | Means |
-|---|---|---|
-| project-scoped, workspace owns it | `workspace_managed` | omit `project_id` |
-| catalogue, project still owns it | `workspace_not_managed` | pass `project_id` |
+| Write                             | Refused with            | Means             |
+| --------------------------------- | ----------------------- | ----------------- |
+| project-scoped, workspace owns it | `workspace_managed`     | omit `project_id` |
+| catalogue, project still owns it  | `workspace_not_managed` | pass `project_id` |
 
 **There is no single flag.** `GOVERNED_BY` maps each resource to the one that governs it:
 
-| Resource | Flag |
-|---|---|
-| work item types, epics, properties | `work_item_types` |
+| Resource                                          | Flag                        |
+| ------------------------------------------------- | --------------------------- |
+| work item types, epics, properties                | `work_item_types`           |
 | states, labels, workflows, templates, automations | `states_owned_by_workspace` |
 
 A workspace can own one and not the other, so never read one flag for the other resource.
 
 **Two ways to ask, both needed:**
 
-| Call | Reads | Use |
-|---|---|---|
-| `workspace_owns_resource(client, slug, resource)` | the flag | pick a scope *before* writing |
-| `workspace_owns(exc, *fields)` | the refusal | after — the flag is cached and the lockout outlives it being toggled off |
+| Call                                              | Reads       | Use                                                                      |
+| ------------------------------------------------- | ----------- | ------------------------------------------------------------------------ |
+| `workspace_owns_resource(client, slug, resource)` | the flag    | pick a scope _before_ writing                                            |
+| `workspace_owns(exc, *fields)`                    | the refusal | after — the flag is cached and the lockout outlives it being toggled off |
 
 ### Adding a newly governed resource
 

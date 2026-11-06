@@ -21,6 +21,7 @@ from plane_mcp.toolkit import (
     build_annotations,
     build_description,
     coerce_list,
+    membership,
     missing,
     needs,
     opt,
@@ -53,7 +54,11 @@ ACTIONS = (
         note="only the fields you pass are changed",
     ),
     Action("delete", ("workitem_type_id",), ("project_id",), destructive=True),
-    Action("import_to_project", ("project_id", "workitem_type_ids"), note="links workspace types to a project"),
+    Action(
+        "import_to_project",
+        ("project_id", "workitem_type_ids"),
+        note="links workspace types to a project; returns the ids added",
+    ),
 )
 
 FOOTER = (
@@ -101,7 +106,11 @@ def _adopt_from_workspace(client, workspace_slug: str, project_id: str, name: st
     client.work_item_types.import_to_project(
         workspace_slug=workspace_slug, project_id=project_id, work_item_type_ids=[at_workspace.id]
     )
-    return at_workspace
+    # The catalogue copy predates the import, so its project_ids leave this project out.
+    # Read it back through the project, which also proves the import took.
+    return client.work_item_types.retrieve(
+        workspace_slug=workspace_slug, project_id=project_id, work_item_type_id=at_workspace.id
+    )
 
 
 def _resolve(client, workspace_slug: str, project_id: str, name: str) -> WorkItemType:
@@ -153,7 +162,7 @@ def register(mcp: FastMCP) -> None:
         is_active: bool | None = None,
         external_source: str = "",
         external_id: str = "",
-    ) -> WorkItemType | list[WorkItemType] | str | None:
+    ) -> WorkItemType | list[WorkItemType] | dict[str, list[str]] | str | None:
         client, workspace_slug = get_plane_client_context()
         types, scope, id_kwarg = _scope_of(client, project_id)
 
@@ -173,7 +182,7 @@ def register(mcp: FastMCP) -> None:
             client.work_item_types.import_to_project(
                 workspace_slug=workspace_slug, project_id=project_id, work_item_type_ids=ids
             )
-            return None
+            return membership(added=ids)
 
         if action == "create":
             if not name:

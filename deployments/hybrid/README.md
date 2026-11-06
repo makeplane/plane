@@ -44,7 +44,7 @@ Steps 2 to 4, Upgrades and Backups assume a server that runs `vps/`. Do not foll
 - **The router runs Tailscale in userspace mode.** Railway containers have no tunnel device, so `tailscaled` runs alongside Caddy and Caddy reaches the VPS through its local SOCKS5 proxy. If either process stops, the container exits so Railway restarts it.
 - **The gateway sets `Host`.** Plane signs upload URLs, builds OAuth callbacks and checks origins from the request's host, and MinIO verifies signatures against it. `vps/Caddyfile` always sends the public hostname to Django and MinIO.
 - **The client IP travels in its own header.** Otherwise every user would appear to come from the tailnet proxy and share one rate-limit bucket, which allows 10 sign-in attempts per minute. The router copies Railway's `X-Real-IP` to `X-Plane-Client-IP`, and the gateway turns that into `X-Forwarded-For`.
-- **The MCP server is built from upstream's repository at a pinned commit,** not from this one. `vps/mcp/serve_header.py` replaces its entrypoint so it serves only the header-auth endpoint at `/mcp`. It calls Plane through `http://gateway`, so the gateway listens on port 80 inside the compose network.
+- **The MCP server is built from `apps/mcp`,** the vendored Plane MCP server, under the same tag as the other images. Its entrypoint serves only the header-auth endpoint at `/mcp`. It calls Plane through `http://gateway`, so the gateway listens on port 80 inside the compose network.
 - **The gateway trusts whatever reaches it,** so the tailnet policy is the access control. Step 3 limits the router to this one port, and the router's tag stops a compromised Railway container from reaching your other devices.
 - **The agent runner is the sandbox.** The in-app agent chat runs agents that execute shell commands. See [Agent chat](#agent-chat) below.
 
@@ -119,8 +119,7 @@ Then, under Settings → OAuth clients, create a client with the `auth_keys` wri
 ## 4. Start the VPS stack
 
 ```bash
-docker compose pull --ignore-buildable
-docker compose build mcp
+docker compose pull
 docker compose up -d
 docker compose ps
 ```
@@ -203,7 +202,7 @@ Back up first, because migrations run automatically and do not roll back.
 1. Compare `apps/proxy/Caddyfile.ce` in the new release with the path lists here.
 2. Check out the commit you are about to deploy and run the local test, which builds its images: `deployments/hybrid/test/run.sh`.
 3. Build the images (step 1).
-4. On the VPS, run `git pull` and `./generate-env.sh --add-missing`, which adds any secret the new release needs and never changes an existing one. Set `APP_RELEASE` in `.env`, then run `docker compose pull --ignore-buildable && docker compose up -d`. If `bootstrap.sh` changed, run it again.
+4. On the VPS, run `git pull` and `./generate-env.sh --add-missing`, which adds any secret the new release needs and never changes an existing one. Set `APP_RELEASE` in `.env`, then run `docker compose pull && docker compose up -d`. If `bootstrap.sh` changed, run it again.
 5. In Railway, change the source image of `web` to the new tag. If `railway/router/` changed, redeploy the router with `railway up` (step 5).
 
 Between steps 4 and 5 the frontend is one version behind the backend, so do them together and at a quiet time.

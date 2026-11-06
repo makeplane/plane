@@ -31,7 +31,8 @@ else
     "plane-live . apps/live/Dockerfile.live" \
     "plane-backend apps/api apps/api/Dockerfile.api" \
     "plane-agent-bridge . apps/agent-bridge/Dockerfile.agent-bridge" \
-    "plane-agent-runner . apps/agent-runner/Dockerfile.agent-runner"; do
+    "plane-agent-runner . apps/agent-runner/Dockerfile.agent-runner" \
+    "plane-mcp apps/mcp apps/mcp/Dockerfile"; do
     read -r image context dockerfile <<<"$spec"
     echo "Building $registry/$image:$release..."
     docker build -q -t "$registry/$image:$release" -f "$repo/$dockerfile" "$repo/$context" >/dev/null

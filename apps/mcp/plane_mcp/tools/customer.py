@@ -15,7 +15,16 @@ from plane.models.customers import (
 )
 
 from plane_mcp.client import get_plane_client_context
-from plane_mcp.toolkit import Action, build_annotations, build_description, coerce_list, missing, opt, page_params
+from plane_mcp.toolkit import (
+    Action,
+    build_annotations,
+    build_description,
+    coerce_list,
+    membership,
+    missing,
+    opt,
+    page_params,
+)
 
 NAME = "customer"
 TITLE = "Customers"
@@ -73,7 +82,10 @@ ACTIONS = (
         "manage_workitems",
         ("customer_id",),
         ("link_ids", "unlink_ids", "customer_request_id"),
-        note="pass at least one of link_ids or unlink_ids; returns nothing, read back with list_workitems",
+        note=(
+            "pass at least one of link_ids or unlink_ids; "
+            "returns the ids added and removed; list_workitems shows the full set"
+        ),
     ),
 )
 
@@ -135,7 +147,7 @@ def register(mcp: FastMCP) -> None:
         external_id: str = "",
         cursor: str = "",
         per_page: int = 0,
-    ) -> Customer | PaginatedCustomerResponse | list[CustomerWorkItem] | str | None:
+    ) -> Customer | PaginatedCustomerResponse | list[CustomerWorkItem] | dict[str, list[str]] | str | None:
         client, workspace_slug = get_plane_client_context()
         customers = client.customers
 
@@ -228,4 +240,4 @@ def register(mcp: FastMCP) -> None:
                 work_item_id=workitem_id,
                 customer_request_id=opt(customer_request_id),
             )
-        return None
+        return membership(link, unlink)

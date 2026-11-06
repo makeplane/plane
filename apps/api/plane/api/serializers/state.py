@@ -24,6 +24,12 @@ class StateSerializer(BaseSerializer):
             raise serializers.ValidationError("Cannot create triage state")
         return data
 
+    def create(self, validated_data):
+        # State.save() places a new state after the last one; a sequence sent with the request wins.
+        state = State(**validated_data)
+        state.save(keep_sequence="sequence" in validated_data)
+        return state
+
     def save(self, **kwargs):
         # Clear the old default only once the new one is saved, so a failed save keeps it
         with transaction.atomic():

@@ -114,9 +114,10 @@ class State(ProjectBaseModel):
         db_table = "states"
         ordering = ("sequence",)
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, keep_sequence=False, **kwargs):
+        """A new state goes after the last one, unless keep_sequence says the caller chose its place."""
         self.slug = slugify(self.name)
-        if self._state.adding:
+        if self._state.adding and not keep_sequence:
             # Get the maximum sequence value from the database
             last_id = State.objects.filter(project=self.project).aggregate(largest=models.Max("sequence"))["largest"]
             # if last_id is not None
