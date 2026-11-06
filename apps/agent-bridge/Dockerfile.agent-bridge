@@ -1,0 +1,72 @@
+# syntax=docker/dockerfile:1.7
+# The agent bridge: an ACP policy proxy. It never runs agents, so this image has no agent CLIs,
+# no adapter bins and no provider SDKs (turbo prune keeps @plane/acp-adapters out of its graph).
+FROM node:24-alpine AS base
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PNPM_HOME/bin:$PATH"
+RUN corepack enable
+
+# *****************************************************************************
+# STAGE 1: Prune the monorepo down to agent-bridge and its workspace dependencies
+# *****************************************************************************
+FROM base AS builder
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+ARG TURBO_VERSION=2.10.11
+RUN corepack enable pnpm && pnpm add -g turbo@${TURBO_VERSION}
+COPY . .
+RUN turbo prune --scope=agent-bridge --docker
+
+# *****************************************************************************
+# STAGE 2: Install dependencies and build
+# *****************************************************************************
+FROM base AS installer
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+COPY .gitignore .gitignore
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+RUN corepack enable pnpm
+
+COPY --from=builder /app/out/full/ .
+COPY turbo.json turbo.json
+
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm fetch --store-dir=/pnpm/store
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store CI=true pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store
+
+ENV TURBO_TELEMETRY_DISABLED=1
+RUN pnpm turbo run build --filter=agent-bridge
+
+# *****************************************************************************
+# STAGE 3: Runtime
+# *****************************************************************************
+FROM base AS runner
+WORKDIR /app
+
+ARG APK_SECURITY_PATCH=2026-10-26
+RUN echo "apk-security-patch ${APK_SECURITY_PATCH}" && apk update && apk upgrade --no-cache --available
+RUN apk del go 2>/dev/null || true
+# npm is not used at runtime (CMD is plain node).
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
+
+COPY --from=installer /app/packages ./packages
+COPY --from=installer /app/apps/agent-bridge/dist ./apps/agent-bridge/dist
+COPY --from=installer /app/apps/agent-bridge/node_modules ./apps/agent-bridge/node_modules
+COPY --from=installer /app/apps/agent-bridge/package.json ./apps/agent-bridge/package.json
+COPY --from=installer /app/node_modules ./node_modules
+
+# Build-only Go binaries.
+RUN find /app/node_modules \( -name 'esbuild' -o -name 'tsgolint' \) -type f -delete 2>/dev/null || true
+
+ENV NODE_ENV=production
+ENV TURBO_TELEMETRY_DISABLED=1
+ENV PORT=3400
+
+USER node
+EXPOSE 3400
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
+  CMD wget -qO- "http://127.0.0.1:${PORT}${AGENT_BRIDGE_BASE_PATH:-/agents}/health" >/dev/null || exit 1
+
+CMD ["node", "apps/agent-bridge/dist/start.mjs"]
