@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 # Python imports
+import math
 from datetime import timedelta
 from itertools import groupby
 
@@ -123,9 +124,11 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
 def _estimate_to_float(value):
     # Point estimates are free text; skip values like "M = 2" instead of crashing the chart
     try:
-        return float(value)
+        number = float(value)
     except (TypeError, ValueError):
         return 0.0
+    # "nan"/"inf"/"1e309" parse but would poison the sum and break JSON
+    return number if math.isfinite(number) else 0.0
 
 
 def burndown_plot(queryset, slug, project_id, plot_type, cycle_id=None, module_id=None):

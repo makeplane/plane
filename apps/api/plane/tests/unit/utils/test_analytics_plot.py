@@ -13,7 +13,17 @@ from plane.utils.analytics_plot import _estimate_to_float
 @pytest.mark.unit
 @pytest.mark.parametrize(
     "value, expected",
-    [("3", 3.0), ("2.5", 2.5), (5, 5.0), ("M = 2", 0.0), ("", 0.0), (None, 0.0)],
+    [
+        ("3", 3.0),
+        ("2.5", 2.5),
+        (5, 5.0),
+        ("M = 2", 0.0),
+        ("", 0.0),
+        (None, 0.0),
+        ("NaN", 0.0),
+        ("inf", 0.0),
+        ("1e309", 0.0),
+    ],
 )
 def test_estimate_to_float(value, expected):
     assert _estimate_to_float(value) == expected
