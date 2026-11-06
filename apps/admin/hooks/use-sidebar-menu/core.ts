@@ -7,6 +7,7 @@
 // plane imports
 import {
   AiStarFourOutline,
+  ChatOutline,
   ImageOutline,
   LockOutline,
   MailOutline,
@@ -16,7 +17,7 @@ import {
 // types
 import type { TSidebarMenuItem } from "./types";
 
-export type TCoreSidebarMenuKey = "general" | "email" | "workspace" | "authentication" | "ai" | "image";
+export type TCoreSidebarMenuKey = "general" | "email" | "workspace" | "authentication" | "ai" | "agents" | "image";
 
 export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem> = {
   general: {
@@ -48,6 +49,12 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     name: "Artificial intelligence",
     description: "Configure your OpenAI creds.",
     href: `/ai/`,
+  },
+  agents: {
+    Icon: ChatOutline,
+    name: "Agents",
+    description: "Configure the agents members can chat with.",
+    href: `/agents/`,
   },
   image: {
     Icon: ImageOutline,
