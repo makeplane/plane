@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 /* oxlint-disable no-await-in-loop -- the SSE body is written chunk by chunk */
 import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";

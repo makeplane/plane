@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 /* oxlint-disable no-await-in-loop -- a stream is read one chunk after another */
 /**
  * Parse an OpenAI-style `text/event-stream` body into JSON events, ending at `[DONE]`. Ported from

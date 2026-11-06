@@ -1,4 +1,10 @@
 /**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+/**
  * Variable names that look like credentials. The agent's env carries the admin's provider keys;
  * tools the user can drive (a shell, a stdio MCP server) must never see them, or a prompt like
  * "print your environment" would leak them.

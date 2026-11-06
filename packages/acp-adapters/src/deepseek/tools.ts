@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 /* oxlint-disable no-await-in-loop -- grep reads files one at a time to bound memory and stop early */
 import { spawn } from "node:child_process";
 import { glob, mkdir, readFile, stat, writeFile } from "node:fs/promises";
