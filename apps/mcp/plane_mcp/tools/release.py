@@ -24,6 +24,7 @@ from plane_mcp.toolkit import (
     build_annotations,
     build_description,
     coerce_list,
+    membership,
     missing,
     one_of,
     opt,
@@ -76,7 +77,10 @@ ACTIONS = (
         "manage_workitems",
         ("release_id",),
         ("add_ids", "remove_ids"),
-        note="pass at least one of add_ids or remove_ids; returns nothing, read back with list_workitems",
+        note=(
+            "pass at least one of add_ids or remove_ids; "
+            "returns the ids added and removed; list_workitems shows the full set"
+        ),
     ),
 )
 
@@ -151,7 +155,15 @@ def register(mcp: FastMCP) -> None:
         external_id: str = "",
         cursor: str = "",
         per_page: int = 0,
-    ) -> Release | PaginatedReleaseResponse | PaginatedReleaseWorkItemResponse | ReleaseChangelog | str | None:
+    ) -> (
+        Release
+        | PaginatedReleaseResponse
+        | PaginatedReleaseWorkItemResponse
+        | ReleaseChangelog
+        | dict[str, list[str]]
+        | str
+        | None
+    ):
         client, workspace_slug = get_plane_client_context()
 
         if error := one_of("status", status, STATUSES):
@@ -248,4 +260,4 @@ def register(mcp: FastMCP) -> None:
                 release_id=release_id,
                 data=RemoveReleaseWorkItems(work_item_ids=remove),
             )
-        return None
+        return membership(add, remove)

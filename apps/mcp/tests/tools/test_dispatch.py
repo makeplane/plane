@@ -190,26 +190,47 @@ MEMBERSHIP_MUTATIONS = {
     ("release", "manage_workitems"),
     ("release_label", "attach"),
     ("release_label", "detach"),
+    ("workitem_type", "import_to_project"),
 }
 
 
 @pytest.mark.parametrize(("tool_name", "action_name"), sorted(MEMBERSHIP_MUTATIONS))
-def test_a_membership_mutation_returns_nothing(tool_name, action_name, resource_modules, registered, spy):
-    """Same verb, same answer -- and the note has to admit it."""
+def test_a_membership_mutation_confirms_what_it_changed(tool_name, action_name, resource_modules, registered, spy):
+    """Same verb, same answer: the ids added and removed, never a bare None.
+
+    A None on success reads as "did anything happen?", so a caller spends a list
+    call to find out. One shape across the surface keeps the verb predictable.
+    """
     mod = next(m for m in resource_modules if m.NAME == tool_name)
     action = next(a for a in mod.ACTIONS if a.name == action_name)
     tool = registered[tool_name]
 
     result = tool.fn(**_call_args(mod, action, tool))
 
-    assert result is None, (
-        f"{tool_name}.{action_name} returned {type(result).__name__}; a membership mutation answers "
-        "None so that one verb does not have three different shapes across the surface"
+    assert isinstance(result, dict) and set(result) == {"added", "removed"}, (
+        f"{tool_name}.{action_name} returned {result!r}; a membership mutation answers "
+        "{'added': [...], 'removed': [...]} so that one verb has one shape across the surface"
     )
-    assert "returns nothing" in action.note, (
-        f"{tool_name}.{action_name} returns None but its note does not say so, which is the model's "
-        "only warning that it must call the list action to see the result"
+    assert result["added"] or result["removed"], f"{tool_name}.{action_name} confirmed no change at all"
+    assert "returns the" in action.note, (
+        f"{tool_name}.{action_name} does not say what it returns, so a caller cannot tell the "
+        "confirmation from a read-back of the full set"
     )
+
+
+@pytest.mark.parametrize(
+    ("tool_name", "args", "added", "removed"),
+    [
+        ("module", {"project_id": "p", "module_id": "m", "add_ids": "a,b", "remove_ids": "c"}, ["a", "b"], ["c"]),
+        ("milestone", {"project_id": "p", "milestone_id": "m", "remove_ids": "c"}, [], ["c"]),
+        ("initiative", {"initiative_id": "i", "add_ids": '["a"]'}, ["a"], []),
+        ("customer", {"customer_id": "c", "unlink_ids": "w"}, [], ["w"]),
+    ],
+)
+def test_the_confirmation_echoes_the_ids_sent(tool_name, args, added, removed, registered, spy):
+    result = registered[tool_name].fn(action="manage_workitems", **args)
+
+    assert result == {"added": added, "removed": removed}
 
 
 def test_action_literal_covers_every_declared_action(mod, action, registered):

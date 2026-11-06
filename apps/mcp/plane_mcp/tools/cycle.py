@@ -27,6 +27,7 @@ from plane_mcp.toolkit import (
     build_annotations,
     build_description,
     coerce_list,
+    membership,
     missing,
     needs,
     one_of,
@@ -64,7 +65,10 @@ ACTIONS = (
         "manage_workitems",
         ("project_id", "cycle_id"),
         ("add_ids", "remove_ids"),
-        note="pass at least one of add_ids or remove_ids; returns nothing, read back with list_workitems",
+        note=(
+            "pass at least one of add_ids or remove_ids; "
+            "returns the ids added and removed; list_workitems shows the full set"
+        ),
     ),
     Action(
         "transfer_workitems",
@@ -282,7 +286,7 @@ def register(mcp: FastMCP) -> None:
                     cycle_id=cycle_id,
                     work_item_id=workitem_id,
                 )
-            return None
+            return membership(add, remove)
 
         if action == "transfer_workitems":
             if not new_cycle_id:

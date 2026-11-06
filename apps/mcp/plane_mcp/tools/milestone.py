@@ -20,6 +20,7 @@ from plane_mcp.toolkit import (
     build_description,
     coerce_list,
     envelope,
+    membership,
     missing,
     opt,
     page_params,
@@ -44,7 +45,10 @@ ACTIONS = (
         "manage_workitems",
         ("project_id", "milestone_id"),
         ("add_ids", "remove_ids"),
-        note="pass at least one of add_ids or remove_ids; returns nothing, read back with list_workitems",
+        note=(
+            "pass at least one of add_ids or remove_ids; "
+            "returns the ids added and removed; list_workitems shows the full set"
+        ),
     ),
 )
 
@@ -167,4 +171,4 @@ def register(mcp: FastMCP) -> None:
                 milestone_id=milestone_id,
                 issue_ids=remove,
             )
-        return None
+        return membership(add, remove)

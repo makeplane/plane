@@ -144,6 +144,7 @@ def test_resolve_adopts_from_the_workspace_when_the_workspace_owns_types(registe
     spy.returns["workspaces.get_features"] = _Features(work_item_types=True)
     spy.returns["workspace_work_item_types.list"] = []
     spy.returns["workspace_work_item_types.create"] = _typed("Epic")
+    spy.returns["work_item_types.retrieve"] = _typed("Epic")
 
     result = registered["workitem_type"].fn(action="resolve", project_id=PROJECT, name="Epic")
 
@@ -151,6 +152,28 @@ def test_resolve_adopts_from_the_workspace_when_the_workspace_owns_types(registe
     assert "work_item_types.import_to_project" in spy.recorder.methods
     assert "projects.update_features" not in spy.recorder.methods, "provoked a refusal it already knew was coming"
     assert "projects.get_features" not in spy.recorder.methods
+
+
+def test_resolve_returns_the_type_as_the_project_sees_it_after_importing(registered, spy):
+    """The reported quirk: resolve answered with the catalogue copy from before the import.
+
+    That copy's project_ids left the project out, so the caller was told the type was
+    not linked when it was. The answer is the project-scoped read taken afterwards.
+    """
+    before = SimpleNamespace(id="epic-id", name="Epic", project_ids=[])
+    after = SimpleNamespace(id="epic-id", name="Epic", project_ids=[PROJECT])
+    spy.returns["work_item_types.list"] = []
+    spy.returns["workspaces.get_features"] = _Features(work_item_types=True)
+    spy.returns["workspace_work_item_types.list"] = []
+    spy.returns["workspace_work_item_types.create"] = before
+    spy.returns["work_item_types.retrieve"] = after
+
+    result = registered["workitem_type"].fn(action="resolve", project_id=PROJECT, name="Epic")
+
+    assert result is after
+    assert spy.recorder.methods[-2:] == ["work_item_types.import_to_project", "work_item_types.retrieve"]
+    reread = spy.recorder.calls[-1].kwargs
+    assert (reread["project_id"], reread["work_item_type_id"]) == (PROJECT, "epic-id")
 
 
 def test_resolve_reads_the_flag_that_governs_types_not_the_states_one(registered, spy):
@@ -184,6 +207,7 @@ def test_resolve_adopts_from_the_workspace_when_the_project_is_refused(registere
     spy.returns["projects.update_features"] = _refusal()
     spy.returns["workspace_work_item_types.list"] = []
     spy.returns["workspace_work_item_types.create"] = _typed("Bug")
+    spy.returns["work_item_types.retrieve"] = _typed("Bug")
 
     result = registered["workitem_type"].fn(action="resolve", project_id=PROJECT, name="Bug")
 
@@ -198,6 +222,7 @@ def test_resolve_reuses_an_existing_workspace_type_rather_than_duplicating(regis
     spy.returns["projects.get_features"] = _Features(work_item_types=False)
     spy.returns["projects.update_features"] = _refusal()
     spy.returns["workspace_work_item_types.list"] = [_typed("Bug")]
+    spy.returns["work_item_types.retrieve"] = _typed("Bug")
 
     result = registered["workitem_type"].fn(action="resolve", project_id=PROJECT, name="Bug")
 

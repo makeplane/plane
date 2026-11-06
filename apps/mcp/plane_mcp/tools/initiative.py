@@ -28,6 +28,7 @@ from plane_mcp.toolkit import (
     build_description,
     coerce_list,
     envelope,
+    membership,
     missing,
     one_of,
     opt,
@@ -67,11 +68,15 @@ ACTIONS = (
     ),
     Action("delete", ("initiative_id",), destructive=True),
     Action("list_projects", ("initiative_id",), ("cursor", "per_page"), read=True),
-    Action("add_projects", ("initiative_id", "project_ids"), note="returns nothing, read back with list_projects"),
+    Action(
+        "add_projects",
+        ("initiative_id", "project_ids"),
+        note="returns the ids added or removed; list_projects shows the full set",
+    ),
     Action(
         "remove_projects",
         ("initiative_id", "project_ids"),
-        note="returns nothing, read back with list_projects",
+        note="returns the ids added or removed; list_projects shows the full set",
         destructive=True,
     ),
     Action("list_workitems", ("initiative_id",), ("cursor", "per_page"), read=True),
@@ -80,7 +85,7 @@ ACTIONS = (
         ("initiative_id",),
         ("add_ids", "remove_ids"),
         note="pass at least one of add_ids or remove_ids; each takes one id or several, "
-        "and removals apply first; returns nothing, read back with list_workitems",
+        "and removals apply first; returns the ids added and removed; list_workitems shows the full set",
     ),
 )
 
@@ -223,7 +228,7 @@ def register(mcp: FastMCP) -> None:
                 work_items.remove(workspace_slug=workspace_slug, initiative_id=initiative_id, work_item_ids=remove)
             if add:
                 work_items.add(workspace_slug=workspace_slug, initiative_id=initiative_id, work_item_ids=add)
-            return None
+            return membership(add, remove)
 
         projects = client.initiatives.projects
 
@@ -238,4 +243,4 @@ def register(mcp: FastMCP) -> None:
         ids = coerce_list(project_ids)
         mutate = projects.add if action == "add_projects" else projects.remove
         mutate(workspace_slug=workspace_slug, initiative_id=initiative_id, project_ids=ids)
-        return None
+        return membership(added=ids) if action == "add_projects" else membership(removed=ids)
