@@ -68,4 +68,12 @@ RESTRICTED_WORKSPACE_SLUGS = [
     "licenses",
     "instances",
     "instance",
+    # Root paths the hybrid deployment's gateway routes away from the web app
+    # (deployments/hybrid/vps/Caddyfile). A workspace with one of these slugs
+    # would be unreachable at /<slug>/.
+    "agents",
+    "mcp",
+    "uploads",
+    "static",
+    "auth",
 ]
