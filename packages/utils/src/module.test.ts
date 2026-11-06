@@ -100,6 +100,45 @@ describe("orderModules", () => {
     expect(ids(orderModules(modules, "-name"))).toEqual(["Module 10", "Module 2", "Module 1"]);
   });
 
+  it.each(["created_at", "-created_at"] as const)(
+    "orders creation timestamps across a daylight-saving rollback with %s",
+    (orderBy) => {
+      const modules = [
+        createModule("earlier", { created_at: "2026-11-01T01:59:00-04:00" }),
+        createModule("later", { created_at: "2026-11-01T01:01:00-05:00" }),
+      ];
+      expect(ids(orderModules(modules, orderBy))).toEqual(
+        orderBy === "created_at" ? ["earlier", "later"] : ["later", "earlier"]
+      );
+    }
+  );
+
+  it.each(["created_at", "-created_at"] as const)(
+    "preserves the input order for equal instants written with different offsets with %s",
+    (orderBy) => {
+      const modules = [
+        createModule("first", { created_at: "2026-11-01T06:01:00.123456Z" }),
+        createModule("second", { created_at: "2026-11-01T01:01:00.123456-05:00" }),
+        createModule("third", { created_at: "2026-11-01T11:31:00.123456+05:30" }),
+      ];
+      expect(ids(orderModules(modules, orderBy))).toEqual(["first", "second", "third"]);
+    }
+  );
+
+  it.each(["created_at", "-created_at"] as const)(
+    "retains API microsecond precision and handles missing fractional seconds with %s",
+    (orderBy) => {
+      const modules = [
+        createModule("later", { created_at: "2026-11-01T06:01:00.000002Z" }),
+        createModule("whole-second", { created_at: "2026-11-01T01:01:00-05:00" }),
+        createModule("earlier", { created_at: "2026-11-01T01:01:00.000001-05:00" }),
+      ];
+      expect(ids(orderModules(modules, orderBy))).toEqual(
+        orderBy === "created_at" ? ["whole-second", "earlier", "later"] : ["later", "earlier", "whole-second"]
+      );
+    }
+  );
+
   it("preserves manual ordering", () => {
     const modules = [createModule("second", { sort_order: 2 }), createModule("first", { sort_order: 1 })];
     expect(ids(orderModules(modules, "sort_order"))).toEqual(["first", "second"]);
