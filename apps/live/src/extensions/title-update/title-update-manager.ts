@@ -16,16 +16,14 @@ import { DebounceManager } from "./debounce";
  */
 export class TitleUpdateManager {
   private documentName: string;
-  private context: HocusPocusServerContext;
   private debounceManager: DebounceManager;
   private lastTitle: string | null = null;
 
   /**
    * Create a new TitleUpdateManager instance
    */
-  constructor(documentName: string, context: HocusPocusServerContext, wait: number = 5000) {
+  constructor(documentName: string, wait: number = 5000) {
     this.documentName = documentName;
-    this.context = context;
 
     // Set up debounce manager with logging
     this.debounceManager = new DebounceManager({
@@ -35,21 +33,21 @@ export class TitleUpdateManager {
   }
 
   /**
-   * Schedule a debounced title update
+   * Schedule a debounced title update, saved with the context of the connection that made the change
    */
-  scheduleUpdate(title: string): void {
+  scheduleUpdate(title: string, context: HocusPocusServerContext): void {
     // Store the latest title
     this.lastTitle = title;
 
     // Schedule the update with the debounce manager
-    this.debounceManager.schedule(this.updateTitle.bind(this), title);
+    this.debounceManager.schedule(this.updateTitle.bind(this), title, context);
   }
 
   /**
    * Update the title - will be called by the debounce manager
    */
-  private async updateTitle(title: string, signal?: AbortSignal): Promise<void> {
-    const service = getPageService(this.context.documentType, this.context);
+  private async updateTitle(title: string, context: HocusPocusServerContext, signal?: AbortSignal): Promise<void> {
+    const service = getPageService(context.documentType, context);
     if (!service.updatePageProperties) {
       logger.warn(`No updateTitle method found for document ${this.documentName}`);
       return;
