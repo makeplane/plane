@@ -1731,7 +1731,8 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
 
         # Validation check if another comment on this work item already has the
-        # resulting external source/id pair (either field may change on its own)
+        # resulting external source/id pair (either field may change on its own).
+        # Like create, only a complete pair is checked.
         if "external_id" in request.data or "external_source" in request.data:
             external_id = request.data.get("external_id", issue_comment.external_id)
             external_source = request.data.get("external_source", issue_comment.external_source)
@@ -1745,7 +1746,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
                 )
                 .exclude(pk=issue_comment.pk)
                 .first()
-                if external_id
+                if external_id and external_source
                 else None
             )
             if existing_comment:

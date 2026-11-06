@@ -188,3 +188,22 @@ class TestIssueCommentExternalIdUpdate:
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["comment_html"] == "<p>edited</p>"
+
+    @pytest.mark.django_db
+    def test_update_with_incomplete_pair_skips_the_check(self, api_key_client, workspace, project, issue_a):
+        """Like create, only a complete external_source/external_id pair is checked."""
+        url = _comments_url(workspace, project, issue_a)
+        id_only = {"comment_html": "<p>probe</p>", "external_id": "scope-1"}
+        first = api_key_client.post(url, id_only, format="json")
+        second = api_key_client.post(url, id_only, format="json")
+
+        response = api_key_client.patch(
+            _comment_url(workspace, project, issue_a, second.data["id"]),
+            {"comment_html": "<p>edited</p>", "external_id": "scope-1"},
+            format="json",
+        )
+
+        assert first.status_code == status.HTTP_201_CREATED
+        assert second.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["comment_html"] == "<p>edited</p>"
