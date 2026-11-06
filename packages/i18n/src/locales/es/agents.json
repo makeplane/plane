@@ -1,0 +1,239 @@
+{
+  "agents": {
+    "title": "Agentes",
+    "picker": {
+      "label": "Agente",
+      "placeholder": "Elija un agente"
+    },
+    "model": {
+      "label": "Modelo"
+    },
+    "permission": {
+      "label": "Nivel de permisos",
+      "levels": {
+        "ask_all": {
+          "name": "Preguntar siempre",
+          "description": "Preguntar antes de cada llamada a una herramienta, incluidas las lecturas."
+        },
+        "ask_writes": {
+          "name": "Preguntar antes de hacer cambios",
+          "description": "Las lecturas, búsquedas y consultas web se ejecutan libremente. Los comandos de shell, los cambios en archivos y los cambios en Plane piden confirmación primero."
+        },
+        "yolo": {
+          "name": "No preguntar nunca",
+          "description": "Ejecutar todas las herramientas sin preguntar."
+        }
+      }
+    },
+    "empty": {
+      "no_agents_title": "Aún no hay agentes",
+      "no_agents_description": "Un administrador de la instancia puede agregar agentes en el modo dios.",
+      "load_failed_title": "No se pudieron cargar los agentes",
+      "load_failed_description": "Compruebe su conexión e inténtelo de nuevo.",
+      "start_title": "Chatear con {name}",
+      "start_description": "Pregunte sobre sus elementos de trabajo, proyectos y páginas. El agente actúa con sus permisos de Plane."
+    },
+    "composer": {
+      "label": "Mensaje",
+      "placeholder": "Enviar un mensaje a {name}…",
+      "send": "Enviar",
+      "stop": "Detener",
+      "hint": "Enter para enviar, Shift+Enter para una nueva línea"
+    },
+    "sessions": {
+      "title": "Conversaciones",
+      "new": "Nueva conversación",
+      "untitled": "Conversación sin título",
+      "empty": "No hay conversaciones anteriores",
+      "refresh": "Actualizar conversaciones"
+    },
+    "transcript": {
+      "label": "Conversación",
+      "you": "Usted",
+      "thinking": "Pensando",
+      "thought": "Razonamiento",
+      "attachment": "Archivo adjunto",
+      "turn_end": {
+        "cancelled": "Detenido.",
+        "max_tokens": "El agente alcanzó su límite de salida.",
+        "max_turn_requests": "El agente alcanzó su límite de pasos para este mensaje.",
+        "refusal": "El agente se negó a continuar.",
+        "failed": "El agente encontró un error.",
+        "disconnected": "La conexión se cerró antes de que el agente terminara."
+      },
+      "new_session_notice": "Se volvió a conectar en una nueva conversación. El agente no recuerda los mensajes anteriores.",
+      "compaction": {
+        "in_progress": "Resumiendo los mensajes anteriores…",
+        "completed": "Se resumieron los mensajes anteriores.",
+        "failed": "No se pudieron resumir los mensajes anteriores."
+      }
+    },
+    "tool_call": {
+      "status": {
+        "pending": "Pendiente",
+        "in_progress": "En ejecución",
+        "completed": "Completado",
+        "failed": "Con errores"
+      },
+      "untitled": "Llamada a herramienta",
+      "input": "Entrada",
+      "output": "Salida",
+      "changes": "Cambios en {path}",
+      "terminal": "Salida del terminal"
+    },
+    "plan": {
+      "title": "Plan de trabajo",
+      "progress": "{done} de {total} completadas"
+    },
+    "usage": {
+      "context": "Contexto: {used} de {size} tokens",
+      "cost": "Costo: {amount} {currency}"
+    },
+    "permission_prompt": {
+      "title": "¿Permitir esta acción?",
+      "allow_once": "Permitir una vez",
+      "allow_always": "Permitir siempre en esta conversación",
+      "reject_once": "Denegar",
+      "reject_always": "Denegar siempre"
+    },
+    "status": {
+      "connecting": "Conectando…",
+      "reconnecting": "Reconectando…"
+    },
+    "close": {
+      "reconnect": "Reconectar",
+      "title": "Conversación desconectada",
+      "reasons": {
+        "closed": "La conversación se cerró.",
+        "server_shutdown": "El servidor de chat se está reiniciando. Vuelva a conectarse en un momento.",
+        "network": "No se pudo acceder al servidor de chat. Compruebe su conexión o pregunte a su administrador si el puente de agentes está en ejecución.",
+        "message_too_big": "Ese mensaje era demasiado grande para enviarlo.",
+        "server_error": "Se produjo un error en el servidor. Inténtelo de nuevo en breve.",
+        "bad_request": "Este enlace de conversación no es válido.",
+        "unauthenticated": "Se cerró su sesión. Vuelva a iniciar sesión para chatear.",
+        "forbidden": "Usted no es miembro de este espacio de trabajo.",
+        "agent_not_found": "Este agente se eliminó o se deshabilitó.",
+        "idle_timeout": "La conversación se cerró tras un período de inactividad.",
+        "session_expired": "La sesión de conversación expiró.",
+        "too_many_chats": "Tiene demasiadas conversaciones abiertas. Cierre una en otra pestaña e inténtelo de nuevo.",
+        "agent_unavailable": "El agente no está disponible en este momento. Inténtelo de nuevo en breve.",
+        "unknown": "La conexión de la conversación se cerró inesperadamente."
+      }
+    },
+    "errors": {
+      "dismiss": "Descartar",
+      "mode_not_allowed": "Su administrador no permite el nivel «{mode}» para este agente.",
+      "actions": {
+        "connect": "No se pudo iniciar la conversación.",
+        "new_session": "No se pudo iniciar una nueva conversación.",
+        "load_session": "No se pudo abrir esa conversación.",
+        "list_sessions": "No se pudieron cargar las conversaciones anteriores.",
+        "prompt": "El agente no pudo responder a ese mensaje.",
+        "set_mode": "No se pudo cambiar el nivel de permisos.",
+        "set_model": "No se pudo cambiar el modelo.",
+        "reconnect": "No se pudo volver a conectar."
+      },
+      "retry": "Intentar de nuevo"
+    },
+    "admin": {
+      "title": "Agentes",
+      "description": "Agentes con los que pueden chatear los miembros del espacio de trabajo. Cada uno ejecuta un adaptador ACP con las credenciales que usted configure aquí.",
+      "add": "Agregar agente",
+      "edit_named": "Editar {name}",
+      "delete": "Eliminar agente",
+      "list": {
+        "empty_title": "Aún no hay agentes",
+        "empty_description": "Agregue un agente para que los miembros del espacio de trabajo puedan chatear con él.",
+        "load_failed": "No se pudieron cargar los agentes.",
+        "enabled": "Habilitado",
+        "disabled": "Deshabilitado",
+        "plane_mcp": "Herramientas de Plane",
+        "max_level": "Hasta: {level}",
+        "env_unreadable": "Credenciales ilegibles"
+      },
+      "form": {
+        "name": "Nombre",
+        "name_placeholder": "Claude",
+        "slug": "Identificador (slug)",
+        "slug_help": "Letras minúsculas, números y guiones.",
+        "description": "Descripción",
+        "description_placeholder": "Para qué pueden usar los miembros este agente",
+        "adapter": "Adaptador",
+        "adapters": {
+          "claude": "Claude",
+          "codex": "Codex",
+          "deepseek": "DeepSeek"
+        },
+        "credentials": "Credenciales y configuración",
+        "credentials_help": "Los valores son de solo escritura. Los valores guardados permanecen ocultos; reemplace uno para cambiarlo.",
+        "env": {
+          "ANTHROPIC_API_KEY": {
+            "label": "Clave de API de Anthropic",
+            "help": "O utilice un token OAuth de Claude Code en su lugar."
+          },
+          "CLAUDE_CODE_OAUTH_TOKEN": {
+            "label": "Token OAuth de Claude Code",
+            "help": "Un token de suscripción de Claude, que se usa cuando no hay ninguna clave de API configurada."
+          },
+          "OPENAI_API_KEY": {
+            "label": "Clave de API de OpenAI",
+            "help": "Inicia sesión en Codex cuando su directorio de inicio aún no tiene una sesión iniciada."
+          },
+          "DEEPSEEK_API_KEY": {
+            "label": "Clave de API de DeepSeek",
+            "help": "Obligatorio."
+          },
+          "DEEPSEEK_BASE_URL": {
+            "label": "URL base de la API de DeepSeek",
+            "help": "Opcional. Valor predeterminado: https://api.deepseek.com."
+          },
+          "PLANE_AGENT_MODEL": {
+            "label": "Modelo predeterminado",
+            "help": "ID de modelo opcional, por ejemplo, claude-opus-5-5. Los miembros pueden cambiar de modelo en la conversación."
+          }
+        },
+        "saved": "Guardado",
+        "keep": "Conservar el valor guardado",
+        "remove": "Quitar",
+        "removed": "Se quitará",
+        "undo_remove": "Deshacer",
+        "other_env": "Otras variables",
+        "other_env_help": "Se configuran a través de la API. Se conservan a menos que usted las quite.",
+        "env_unreadable": "Las credenciales guardadas no se pueden descifrar (es posible que la clave secreta de la instancia haya cambiado). Vuelva a introducirlas.",
+        "default_level": "Nivel de permisos predeterminado",
+        "default_level_help": "El nivel con el que comienza una nueva conversación.",
+        "max_level": "Nivel de permisos máximo",
+        "max_level_help": "Los miembros no pueden cambiar a un nivel superior a este.",
+        "attach_plane_mcp": "Herramientas de Plane",
+        "attach_plane_mcp_help": "Proporciona al agente el servidor MCP de Plane, que actúa en nombre del miembro que chatea.",
+        "is_enabled": "Habilitado",
+        "is_enabled_help": "Los agentes deshabilitados no se muestran a los miembros.",
+        "validation": {
+          "required": "Este campo es obligatorio.",
+          "slug": "Use letras minúsculas, números y guiones.",
+          "default_above_max": "El nivel predeterminado no puede ser superior al máximo.",
+          "claude_auth": "Introduzca una clave de API de Anthropic o un token OAuth de Claude Code.",
+          "deepseek_auth": "Introduzca una clave de API de DeepSeek."
+        },
+        "cancel": "Cancelar",
+        "save": "Guardar cambios",
+        "create": "Agregar agente",
+        "saving": "Guardando"
+      },
+      "toasts": {
+        "created": "Agente agregado.",
+        "updated": "Agente guardado.",
+        "deleted": "Agente eliminado.",
+        "error_title": "Se produjo un error",
+        "save_failed": "No se pudo guardar el agente.",
+        "delete_failed": "No se pudo eliminar el agente."
+      },
+      "delete_dialog": {
+        "title": "Eliminar agente",
+        "description": "¿Eliminar {name}? Los miembros ya no podrán chatear con él y se eliminarán sus credenciales guardadas.",
+        "confirm": "Eliminar",
+        "deleting": "Eliminando"
+      }
+    }
+  }
+}

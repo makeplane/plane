@@ -1,0 +1,239 @@
+{
+  "agents": {
+    "title": "代理",
+    "picker": {
+      "label": "代理",
+      "placeholder": "選擇代理"
+    },
+    "model": {
+      "label": "模型"
+    },
+    "permission": {
+      "label": "權限等級",
+      "levels": {
+        "ask_all": {
+          "name": "每次都詢問",
+          "description": "每次呼叫工具前都會詢問，包括讀取操作。"
+        },
+        "ask_writes": {
+          "name": "變更前詢問",
+          "description": "讀取、搜尋和網頁擷取可直接執行。Shell 指令、檔案變更和 Plane 變更會先詢問。"
+        },
+        "yolo": {
+          "name": "一律不詢問",
+          "description": "不經詢問即執行所有工具。"
+        }
+      }
+    },
+    "empty": {
+      "no_agents_title": "尚無代理",
+      "no_agents_description": "實例管理員可以在管理員模式中新增代理。",
+      "load_failed_title": "無法載入代理",
+      "load_failed_description": "請檢查您的網路連線，然後再試一次。",
+      "start_title": "與 {name} 聊天",
+      "start_description": "詢問有關您的工作事項、專案和頁面的問題。代理會以您的 Plane 權限執行操作。"
+    },
+    "composer": {
+      "label": "訊息",
+      "placeholder": "傳送訊息給 {name}…",
+      "send": "傳送",
+      "stop": "停止",
+      "hint": "按 Enter 傳送，按 Shift+Enter 換行"
+    },
+    "sessions": {
+      "title": "聊天",
+      "new": "新增聊天",
+      "untitled": "未命名的聊天",
+      "empty": "沒有先前的聊天",
+      "refresh": "重新整理聊天"
+    },
+    "transcript": {
+      "label": "對話",
+      "you": "您",
+      "thinking": "思考中",
+      "thought": "思考過程",
+      "attachment": "附件",
+      "turn_end": {
+        "cancelled": "已停止。",
+        "max_tokens": "代理已達到輸出上限。",
+        "max_turn_requests": "代理已達到此訊息的步驟上限。",
+        "refusal": "代理拒絕繼續。",
+        "failed": "代理發生錯誤。",
+        "disconnected": "代理完成前連線已關閉。"
+      },
+      "new_session_notice": "已在新的聊天中重新連線。代理不會記得先前的訊息。",
+      "compaction": {
+        "in_progress": "正在摘要先前的訊息…",
+        "completed": "先前的訊息已摘要。",
+        "failed": "摘要先前的訊息失敗。"
+      }
+    },
+    "tool_call": {
+      "status": {
+        "pending": "待處理",
+        "in_progress": "執行中",
+        "completed": "完成",
+        "failed": "失敗"
+      },
+      "untitled": "工具呼叫",
+      "input": "輸入",
+      "output": "輸出",
+      "changes": "對 {path} 的變更",
+      "terminal": "終端機輸出"
+    },
+    "plan": {
+      "title": "計畫",
+      "progress": "已完成 {done} / {total}"
+    },
+    "usage": {
+      "context": "上下文：{used} / {size} token",
+      "cost": "費用：{amount} {currency}"
+    },
+    "permission_prompt": {
+      "title": "要允許此動作嗎？",
+      "allow_once": "允許一次",
+      "allow_always": "在此聊天中一律允許",
+      "reject_once": "拒絕",
+      "reject_always": "一律拒絕"
+    },
+    "status": {
+      "connecting": "正在連線…",
+      "reconnecting": "正在重新連線…"
+    },
+    "close": {
+      "reconnect": "重新連線",
+      "title": "聊天已中斷連線",
+      "reasons": {
+        "closed": "聊天已關閉。",
+        "server_shutdown": "聊天伺服器正在重新啟動，請稍後重新連線。",
+        "network": "無法連線到聊天伺服器。請檢查您的網路連線，或詢問管理員代理橋接服務是否正在執行。",
+        "message_too_big": "此訊息過大，無法傳送。",
+        "server_error": "伺服器發生問題，請稍後再試。",
+        "bad_request": "此聊天連結無效。",
+        "unauthenticated": "您已登出。請重新登入以繼續聊天。",
+        "forbidden": "您不是此工作空間的成員。",
+        "agent_not_found": "此代理已被移除或停用。",
+        "idle_timeout": "由於長時間沒有活動，聊天已關閉。",
+        "session_expired": "聊天工作階段已過期。",
+        "too_many_chats": "您開啟的聊天過多。請在其他分頁中關閉一個聊天，然後再試一次。",
+        "agent_unavailable": "代理目前無法使用，請稍後再試。",
+        "unknown": "聊天連線意外關閉。"
+      }
+    },
+    "errors": {
+      "dismiss": "關閉",
+      "mode_not_allowed": "您的管理員不允許此代理使用「{mode}」等級。",
+      "actions": {
+        "connect": "無法開始聊天。",
+        "new_session": "無法開始新的聊天。",
+        "load_session": "無法開啟該聊天。",
+        "list_sessions": "無法載入先前的聊天。",
+        "prompt": "代理無法回覆該訊息。",
+        "set_mode": "無法變更權限等級。",
+        "set_model": "無法變更模型。",
+        "reconnect": "無法重新連線。"
+      },
+      "retry": "再試一次"
+    },
+    "admin": {
+      "title": "代理",
+      "description": "工作空間成員可以與之聊天的代理。每個代理都會使用您在此處設定的憑證執行 ACP 配接器。",
+      "add": "新增代理",
+      "edit_named": "編輯 {name}",
+      "delete": "刪除代理",
+      "list": {
+        "empty_title": "尚無代理",
+        "empty_description": "新增代理，讓工作空間成員可以與其聊天。",
+        "load_failed": "無法載入代理。",
+        "enabled": "已啟用",
+        "disabled": "已停用",
+        "plane_mcp": "Plane 工具",
+        "max_level": "上限：{level}",
+        "env_unreadable": "無法讀取憑證"
+      },
+      "form": {
+        "name": "名稱",
+        "name_placeholder": "Claude",
+        "slug": "識別碼",
+        "slug_help": "僅限小寫英文字母、數字和連字號。",
+        "description": "描述",
+        "description_placeholder": "成員可以使用此代理做什麼",
+        "adapter": "配接器",
+        "adapters": {
+          "claude": "Claude",
+          "codex": "Codex",
+          "deepseek": "DeepSeek"
+        },
+        "credentials": "憑證與設定",
+        "credentials_help": "這些值僅能寫入。已儲存的值會保持隱藏；如需變更，請替換該值。",
+        "env": {
+          "ANTHROPIC_API_KEY": {
+            "label": "Anthropic API 金鑰",
+            "help": "或改用 Claude Code OAuth 權杖。"
+          },
+          "CLAUDE_CODE_OAUTH_TOKEN": {
+            "label": "Claude Code OAuth 權杖",
+            "help": "Claude 訂閱權杖，在未設定 API 金鑰時使用。"
+          },
+          "OPENAI_API_KEY": {
+            "label": "OpenAI API 金鑰",
+            "help": "當 Codex 的主目錄尚未登入時，用來讓 Codex 登入。"
+          },
+          "DEEPSEEK_API_KEY": {
+            "label": "DeepSeek API 金鑰",
+            "help": "必填。"
+          },
+          "DEEPSEEK_BASE_URL": {
+            "label": "DeepSeek API 基礎 URL",
+            "help": "選填。預設為 https://api.deepseek.com。"
+          },
+          "PLANE_AGENT_MODEL": {
+            "label": "預設模型",
+            "help": "選填的模型 ID，例如 claude-opus-5-5。成員可以在聊天中切換模型。"
+          }
+        },
+        "saved": "已儲存",
+        "keep": "保留已儲存的值",
+        "remove": "移除",
+        "removed": "將被移除",
+        "undo_remove": "復原",
+        "other_env": "其他變數",
+        "other_env_help": "透過 API 設定。除非您將其移除，否則會一直保留。",
+        "env_unreadable": "無法解密已儲存的憑證（實例金鑰可能已變更）。請重新輸入。",
+        "default_level": "預設權限等級",
+        "default_level_help": "新聊天開始時使用的等級。",
+        "max_level": "最高權限等級",
+        "max_level_help": "成員無法切換到高於此等級的權限。",
+        "attach_plane_mcp": "Plane 工具",
+        "attach_plane_mcp_help": "為代理提供 Plane MCP 伺服器，並以發起聊天的成員身分執行操作。",
+        "is_enabled": "已啟用",
+        "is_enabled_help": "已停用的代理不會向成員顯示。",
+        "validation": {
+          "required": "此欄位為必填。",
+          "slug": "請使用小寫英文字母、數字和連字號。",
+          "default_above_max": "預設等級不能高於最高等級。",
+          "claude_auth": "請輸入 Anthropic API 金鑰或 Claude Code OAuth 權杖。",
+          "deepseek_auth": "請輸入 DeepSeek API 金鑰。"
+        },
+        "cancel": "取消",
+        "save": "儲存變更",
+        "create": "新增代理",
+        "saving": "儲存中"
+      },
+      "toasts": {
+        "created": "已新增代理。",
+        "updated": "已儲存代理。",
+        "deleted": "已刪除代理。",
+        "error_title": "錯誤",
+        "save_failed": "無法儲存代理。",
+        "delete_failed": "無法刪除代理。"
+      },
+      "delete_dialog": {
+        "title": "刪除代理",
+        "description": "要刪除 {name} 嗎？成員將無法再與其聊天，其已儲存的憑證也會被移除。",
+        "confirm": "刪除",
+        "deleting": "刪除中"
+      }
+    }
+  }
+}

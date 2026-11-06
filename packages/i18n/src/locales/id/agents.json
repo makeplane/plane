@@ -1,0 +1,239 @@
+{
+  "agents": {
+    "title": "Agen",
+    "picker": {
+      "label": "Agen",
+      "placeholder": "Pilih agen"
+    },
+    "model": {
+      "label": "Model"
+    },
+    "permission": {
+      "label": "Tingkat izin",
+      "levels": {
+        "ask_all": {
+          "name": "Selalu tanya",
+          "description": "Tanyakan sebelum setiap pemanggilan alat, termasuk operasi baca."
+        },
+        "ask_writes": {
+          "name": "Tanya sebelum perubahan",
+          "description": "Operasi baca, pencarian, dan pengambilan web berjalan bebas. Perintah shell, perubahan file, dan perubahan Plane meminta persetujuan terlebih dahulu."
+        },
+        "yolo": {
+          "name": "Jangan pernah tanya",
+          "description": "Jalankan semua alat tanpa bertanya."
+        }
+      }
+    },
+    "empty": {
+      "no_agents_title": "Belum ada agen",
+      "no_agents_description": "Admin instansi dapat menambahkan agen di mode dewa.",
+      "load_failed_title": "Agen tidak dapat dimuat",
+      "load_failed_description": "Periksa koneksi Anda dan coba lagi.",
+      "start_title": "Mengobrol dengan {name}",
+      "start_description": "Tanyakan tentang item kerja, proyek, dan halaman Anda. Agen bertindak dengan izin Plane Anda."
+    },
+    "composer": {
+      "label": "Pesan",
+      "placeholder": "Kirim pesan ke {name}…",
+      "send": "Kirim",
+      "stop": "Hentikan",
+      "hint": "Enter untuk mengirim, Shift+Enter untuk baris baru"
+    },
+    "sessions": {
+      "title": "Obrolan",
+      "new": "Obrolan baru",
+      "untitled": "Obrolan tanpa judul",
+      "empty": "Belum ada obrolan sebelumnya",
+      "refresh": "Segarkan obrolan"
+    },
+    "transcript": {
+      "label": "Percakapan",
+      "you": "Anda",
+      "thinking": "Sedang berpikir",
+      "thought": "Pemikiran",
+      "attachment": "Lampiran",
+      "turn_end": {
+        "cancelled": "Dihentikan.",
+        "max_tokens": "Agen telah mencapai batas output.",
+        "max_turn_requests": "Agen telah mencapai batas langkah untuk pesan ini.",
+        "refusal": "Agen menolak untuk melanjutkan.",
+        "failed": "Agen mengalami kesalahan.",
+        "disconnected": "Koneksi ditutup sebelum agen selesai."
+      },
+      "new_session_notice": "Tersambung kembali di obrolan baru. Agen tidak mengingat pesan sebelumnya.",
+      "compaction": {
+        "in_progress": "Merangkum pesan sebelumnya…",
+        "completed": "Pesan sebelumnya telah dirangkum.",
+        "failed": "Gagal merangkum pesan sebelumnya."
+      }
+    },
+    "tool_call": {
+      "status": {
+        "pending": "Tertunda",
+        "in_progress": "Berjalan",
+        "completed": "Selesai",
+        "failed": "Gagal"
+      },
+      "untitled": "Pemanggilan alat",
+      "input": "Masukan",
+      "output": "Keluaran",
+      "changes": "Perubahan pada {path}",
+      "terminal": "Keluaran terminal"
+    },
+    "plan": {
+      "title": "Rencana",
+      "progress": "{done} dari {total} selesai"
+    },
+    "usage": {
+      "context": "Konteks: {used} dari {size} token",
+      "cost": "Biaya: {amount} {currency}"
+    },
+    "permission_prompt": {
+      "title": "Izinkan tindakan ini?",
+      "allow_once": "Izinkan sekali",
+      "allow_always": "Selalu izinkan di obrolan ini",
+      "reject_once": "Tolak",
+      "reject_always": "Selalu tolak"
+    },
+    "status": {
+      "connecting": "Menyambungkan…",
+      "reconnecting": "Menyambungkan kembali…"
+    },
+    "close": {
+      "reconnect": "Sambungkan kembali",
+      "title": "Obrolan terputus",
+      "reasons": {
+        "closed": "Obrolan telah ditutup.",
+        "server_shutdown": "Server obrolan sedang dimulai ulang. Sambungkan kembali sebentar lagi.",
+        "network": "Tidak dapat menjangkau server obrolan. Periksa koneksi Anda, atau tanyakan kepada admin Anda apakah jembatan agen sedang berjalan.",
+        "message_too_big": "Pesan tersebut terlalu besar untuk dikirim.",
+        "server_error": "Terjadi kesalahan di server. Coba lagi sebentar lagi.",
+        "bad_request": "Tautan obrolan ini tidak valid.",
+        "unauthenticated": "Anda telah keluar. Masuk kembali untuk mengobrol.",
+        "forbidden": "Anda bukan anggota ruang kerja ini.",
+        "agent_not_found": "Agen ini telah dihapus atau dinonaktifkan.",
+        "idle_timeout": "Obrolan ditutup karena tidak ada aktivitas selama beberapa waktu.",
+        "session_expired": "Sesi obrolan telah kedaluwarsa.",
+        "too_many_chats": "Anda membuka terlalu banyak obrolan. Tutup salah satunya di tab lain, lalu coba lagi.",
+        "agent_unavailable": "Agen sedang tidak tersedia. Coba lagi sebentar lagi.",
+        "unknown": "Koneksi obrolan terputus secara tidak terduga."
+      }
+    },
+    "errors": {
+      "dismiss": "Tutup",
+      "mode_not_allowed": "Admin Anda tidak mengizinkan tingkat \"{mode}\" untuk agen ini.",
+      "actions": {
+        "connect": "Tidak dapat memulai obrolan.",
+        "new_session": "Tidak dapat memulai obrolan baru.",
+        "load_session": "Tidak dapat membuka obrolan tersebut.",
+        "list_sessions": "Tidak dapat memuat obrolan sebelumnya.",
+        "prompt": "Agen tidak dapat menjawab pesan tersebut.",
+        "set_mode": "Tidak dapat mengubah tingkat izin.",
+        "set_model": "Tidak dapat mengubah model.",
+        "reconnect": "Tidak dapat menyambungkan kembali."
+      },
+      "retry": "Coba lagi"
+    },
+    "admin": {
+      "title": "Agen",
+      "description": "Agen yang dapat diajak mengobrol oleh anggota ruang kerja. Setiap agen menjalankan adaptor ACP dengan kredensial yang Anda atur di sini.",
+      "add": "Tambah agen",
+      "edit_named": "Ubah {name}",
+      "delete": "Hapus agen",
+      "list": {
+        "empty_title": "Belum ada agen",
+        "empty_description": "Tambahkan agen agar anggota ruang kerja dapat mengobrol dengannya.",
+        "load_failed": "Agen tidak dapat dimuat.",
+        "enabled": "Diaktifkan",
+        "disabled": "Dinonaktifkan",
+        "plane_mcp": "Alat Plane",
+        "max_level": "Hingga: {level}",
+        "env_unreadable": "Kredensial tidak dapat dibaca"
+      },
+      "form": {
+        "name": "Nama",
+        "name_placeholder": "Claude",
+        "slug": "Pengenal (slug)",
+        "slug_help": "Huruf kecil, angka, dan tanda hubung.",
+        "description": "Deskripsi",
+        "description_placeholder": "Untuk apa anggota dapat menggunakan agen ini",
+        "adapter": "Adaptor",
+        "adapters": {
+          "claude": "Claude",
+          "codex": "Codex",
+          "deepseek": "DeepSeek"
+        },
+        "credentials": "Kredensial dan pengaturan",
+        "credentials_help": "Nilai hanya dapat ditulis. Nilai yang tersimpan tetap tersembunyi; ganti nilai untuk mengubahnya.",
+        "env": {
+          "ANTHROPIC_API_KEY": {
+            "label": "Kunci API Anthropic",
+            "help": "Atau gunakan token OAuth Claude Code sebagai gantinya."
+          },
+          "CLAUDE_CODE_OAUTH_TOKEN": {
+            "label": "Token OAuth Claude Code",
+            "help": "Token langganan Claude, digunakan jika kunci API tidak diatur."
+          },
+          "OPENAI_API_KEY": {
+            "label": "Kunci API OpenAI",
+            "help": "Memasukkan Codex ke akunnya jika direktori home Codex belum masuk."
+          },
+          "DEEPSEEK_API_KEY": {
+            "label": "Kunci API DeepSeek",
+            "help": "Wajib."
+          },
+          "DEEPSEEK_BASE_URL": {
+            "label": "URL dasar API DeepSeek",
+            "help": "Opsional. Bawaannya https://api.deepseek.com."
+          },
+          "PLANE_AGENT_MODEL": {
+            "label": "Model bawaan",
+            "help": "ID model opsional, misalnya claude-opus-5-5. Anggota dapat mengganti model di obrolan."
+          }
+        },
+        "saved": "Tersimpan",
+        "keep": "Pertahankan nilai tersimpan",
+        "remove": "Hapus",
+        "removed": "Akan dihapus",
+        "undo_remove": "Urungkan",
+        "other_env": "Variabel lain",
+        "other_env_help": "Diatur melalui API. Variabel ini dipertahankan kecuali Anda menghapusnya.",
+        "env_unreadable": "Kredensial yang tersimpan tidak dapat didekripsi (kunci rahasia instansi mungkin telah berubah). Masukkan kembali.",
+        "default_level": "Tingkat izin bawaan",
+        "default_level_help": "Tingkat awal saat obrolan baru dimulai.",
+        "max_level": "Tingkat izin maksimum",
+        "max_level_help": "Anggota tidak dapat beralih ke tingkat yang lebih tinggi dari ini.",
+        "attach_plane_mcp": "Alat Plane",
+        "attach_plane_mcp_help": "Berikan server MCP Plane kepada agen, yang bertindak sebagai anggota yang mengobrol.",
+        "is_enabled": "Diaktifkan",
+        "is_enabled_help": "Agen yang dinonaktifkan disembunyikan dari anggota.",
+        "validation": {
+          "required": "Kolom ini wajib diisi.",
+          "slug": "Gunakan huruf kecil, angka, dan tanda hubung.",
+          "default_above_max": "Tingkat bawaan tidak boleh lebih tinggi dari maksimum.",
+          "claude_auth": "Masukkan kunci API Anthropic atau token OAuth Claude Code.",
+          "deepseek_auth": "Masukkan kunci API DeepSeek."
+        },
+        "cancel": "Batal",
+        "save": "Simpan perubahan",
+        "create": "Tambah agen",
+        "saving": "Menyimpan"
+      },
+      "toasts": {
+        "created": "Agen ditambahkan.",
+        "updated": "Agen disimpan.",
+        "deleted": "Agen dihapus.",
+        "error_title": "Kesalahan",
+        "save_failed": "Agen tidak dapat disimpan.",
+        "delete_failed": "Agen tidak dapat dihapus."
+      },
+      "delete_dialog": {
+        "title": "Hapus agen",
+        "description": "Hapus {name}? Anggota tidak dapat lagi mengobrol dengannya, dan kredensial yang tersimpan akan dihapus.",
+        "confirm": "Hapus",
+        "deleting": "Menghapus"
+      }
+    }
+  }
+}

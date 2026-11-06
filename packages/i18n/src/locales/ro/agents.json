@@ -1,0 +1,239 @@
+{
+  "agents": {
+    "title": "Agenți",
+    "picker": {
+      "label": "Agent",
+      "placeholder": "Alegeți un agent"
+    },
+    "model": {
+      "label": "Model"
+    },
+    "permission": {
+      "label": "Nivel de permisiuni",
+      "levels": {
+        "ask_all": {
+          "name": "Confirmare de fiecare dată",
+          "description": "Se cere confirmarea înaintea fiecărui apel de instrument, inclusiv pentru citiri."
+        },
+        "ask_writes": {
+          "name": "Confirmare înainte de modificări",
+          "description": "Citirile, căutările și preluările de pe web rulează liber. Comenzile shell, modificările de fișiere și modificările din Plane cer mai întâi confirmarea."
+        },
+        "yolo": {
+          "name": "Fără confirmare",
+          "description": "Toate instrumentele rulează fără confirmare."
+        }
+      }
+    },
+    "empty": {
+      "no_agents_title": "Încă nu există agenți",
+      "no_agents_description": "Un administrator al instanței poate adăuga agenți în modul Dumnezeu.",
+      "load_failed_title": "Agenții nu au putut fi încărcați",
+      "load_failed_description": "Verificați conexiunea și încercați din nou.",
+      "start_title": "Chat cu {name}",
+      "start_description": "Întrebați despre activitățile, proiectele și paginile dvs. Agentul acționează cu permisiunile dvs. din Plane."
+    },
+    "composer": {
+      "label": "Mesaj",
+      "placeholder": "Mesaj pentru {name}…",
+      "send": "Trimiteți",
+      "stop": "Opriți",
+      "hint": "Enter pentru a trimite, Shift+Enter pentru un rând nou"
+    },
+    "sessions": {
+      "title": "Chaturi",
+      "new": "Chat nou",
+      "untitled": "Chat fără titlu",
+      "empty": "Nu există chaturi anterioare",
+      "refresh": "Reîncărcați chaturile"
+    },
+    "transcript": {
+      "label": "Conversație",
+      "you": "Dumneavoastră",
+      "thinking": "Se gândește",
+      "thought": "Raționament",
+      "attachment": "Atașament",
+      "turn_end": {
+        "cancelled": "Oprit.",
+        "max_tokens": "Agentul a atins limita de ieșire.",
+        "max_turn_requests": "Agentul a atins limita de pași pentru acest mesaj.",
+        "refusal": "Agentul a refuzat să continue.",
+        "failed": "Agentul a întâmpinat o eroare.",
+        "disconnected": "Conexiunea s-a închis înainte ca agentul să termine."
+      },
+      "new_session_notice": "V-ați reconectat într-un chat nou. Agentul nu își amintește mesajele anterioare.",
+      "compaction": {
+        "in_progress": "Se rezumă mesajele anterioare…",
+        "completed": "Mesajele anterioare au fost rezumate.",
+        "failed": "Rezumarea mesajelor anterioare a eșuat."
+      }
+    },
+    "tool_call": {
+      "status": {
+        "pending": "În așteptare",
+        "in_progress": "În curs",
+        "completed": "Finalizat",
+        "failed": "Eșuat"
+      },
+      "untitled": "Apel de instrument",
+      "input": "Intrare",
+      "output": "Ieșire",
+      "changes": "Modificări în {path}",
+      "terminal": "Ieșire terminal"
+    },
+    "plan": {
+      "title": "Plan de lucru",
+      "progress": "{done} din {total} finalizate"
+    },
+    "usage": {
+      "context": "Context: {used} din {size} tokenuri",
+      "cost": "Costuri: {amount} {currency}"
+    },
+    "permission_prompt": {
+      "title": "Permiteți această acțiune?",
+      "allow_once": "Permiteți o dată",
+      "allow_always": "Permiteți mereu în acest chat",
+      "reject_once": "Refuzați",
+      "reject_always": "Refuzați mereu"
+    },
+    "status": {
+      "connecting": "Se conectează…",
+      "reconnecting": "Se reconectează…"
+    },
+    "close": {
+      "reconnect": "Reconectați-vă",
+      "title": "Chat deconectat",
+      "reasons": {
+        "closed": "Chatul a fost închis.",
+        "server_shutdown": "Serverul de chat repornește. Reconectați-vă în câteva momente.",
+        "network": "Serverul de chat nu a putut fi accesat. Verificați conexiunea sau întrebați administratorul dacă puntea agenților rulează.",
+        "message_too_big": "Mesajul era prea mare pentru a fi trimis.",
+        "server_error": "A apărut o problemă pe server. Încercați din nou în scurt timp.",
+        "bad_request": "Acest link de chat nu este valid.",
+        "unauthenticated": "Sunteți deconectat. Conectați-vă din nou pentru a folosi chatul.",
+        "forbidden": "Nu sunteți membru al acestui spațiu de lucru.",
+        "agent_not_found": "Acest agent a fost eliminat sau dezactivat.",
+        "idle_timeout": "Chatul a fost închis după o perioadă de inactivitate.",
+        "session_expired": "Sesiunea de chat a expirat.",
+        "too_many_chats": "Aveți prea multe chaturi deschise. Închideți unul într-o altă filă și încercați din nou.",
+        "agent_unavailable": "Agentul nu este disponibil momentan. Încercați din nou în scurt timp.",
+        "unknown": "Conexiunea chatului s-a închis în mod neașteptat."
+      }
+    },
+    "errors": {
+      "dismiss": "Închideți",
+      "mode_not_allowed": "Administratorul nu permite nivelul „{mode}” pentru acest agent.",
+      "actions": {
+        "connect": "Chatul nu a putut fi pornit.",
+        "new_session": "Nu s-a putut porni un chat nou.",
+        "load_session": "Chatul nu a putut fi deschis.",
+        "list_sessions": "Chaturile anterioare nu au putut fi încărcate.",
+        "prompt": "Agentul nu a putut răspunde la acest mesaj.",
+        "set_mode": "Nivelul de permisiuni nu a putut fi schimbat.",
+        "set_model": "Modelul nu a putut fi schimbat.",
+        "reconnect": "Reconectarea a eșuat."
+      },
+      "retry": "Încercați din nou"
+    },
+    "admin": {
+      "title": "Agenți",
+      "description": "Agenți cu care membrii spațiului de lucru pot discuta. Fiecare rulează un adaptor ACP cu credențialele setate aici.",
+      "add": "Adăugați agent",
+      "edit_named": "Editați {name}",
+      "delete": "Ștergeți agentul",
+      "list": {
+        "empty_title": "Încă nu există agenți",
+        "empty_description": "Adăugați un agent pentru ca membrii spațiului de lucru să poată discuta cu el.",
+        "load_failed": "Agenții nu au putut fi încărcați.",
+        "enabled": "Activat",
+        "disabled": "Dezactivat",
+        "plane_mcp": "Instrumente Plane",
+        "max_level": "Până la: {level}",
+        "env_unreadable": "Credențiale ilizibile"
+      },
+      "form": {
+        "name": "Nume",
+        "name_placeholder": "Claude",
+        "slug": "Identificator (slug)",
+        "slug_help": "Litere mici, cifre și cratime.",
+        "description": "Descriere",
+        "description_placeholder": "Pentru ce pot folosi membrii acest agent",
+        "adapter": "Adaptor",
+        "adapters": {
+          "claude": "Claude",
+          "codex": "Codex",
+          "deepseek": "DeepSeek"
+        },
+        "credentials": "Credențiale și setări",
+        "credentials_help": "Valorile pot fi doar scrise. Valorile salvate rămân ascunse; înlocuiți una pentru a o modifica.",
+        "env": {
+          "ANTHROPIC_API_KEY": {
+            "label": "Cheie API Anthropic",
+            "help": "Sau folosiți în schimb un token OAuth Claude Code."
+          },
+          "CLAUDE_CODE_OAUTH_TOKEN": {
+            "label": "Token OAuth Claude Code",
+            "help": "Un token de abonament Claude, folosit când nu este setată nicio cheie API."
+          },
+          "OPENAI_API_KEY": {
+            "label": "Cheie API OpenAI",
+            "help": "Conectează Codex atunci când directorul său home nu este deja conectat."
+          },
+          "DEEPSEEK_API_KEY": {
+            "label": "Cheie API DeepSeek",
+            "help": "Obligatoriu."
+          },
+          "DEEPSEEK_BASE_URL": {
+            "label": "URL de bază pentru API-ul DeepSeek",
+            "help": "Opțional. Valoarea implicită este https://api.deepseek.com."
+          },
+          "PLANE_AGENT_MODEL": {
+            "label": "Model implicit",
+            "help": "ID de model opțional, de ex. claude-opus-5-5. Membrii pot schimba modelul în chat."
+          }
+        },
+        "saved": "Salvat",
+        "keep": "Păstrați valoarea salvată",
+        "remove": "Eliminați",
+        "removed": "Va fi eliminat",
+        "undo_remove": "Anulați",
+        "other_env": "Alte variabile",
+        "other_env_help": "Setate prin API. Sunt păstrate dacă nu le eliminați.",
+        "env_unreadable": "Credențialele salvate nu pot fi decriptate (este posibil ca cheia secretă a instanței să se fi schimbat). Introduceți-le din nou.",
+        "default_level": "Nivel de permisiuni implicit",
+        "default_level_help": "Nivelul cu care începe un chat nou.",
+        "max_level": "Nivel maxim de permisiuni",
+        "max_level_help": "Membrii nu pot trece la un nivel superior acestuia.",
+        "attach_plane_mcp": "Instrumente Plane",
+        "attach_plane_mcp_help": "Oferă agentului serverul MCP Plane, acționând în numele membrului care folosește chatul.",
+        "is_enabled": "Activat",
+        "is_enabled_help": "Agenții dezactivați sunt ascunși pentru membri.",
+        "validation": {
+          "required": "Acest câmp este obligatoriu.",
+          "slug": "Folosiți litere mici, cifre și cratime.",
+          "default_above_max": "Nivelul implicit nu poate depăși nivelul maxim.",
+          "claude_auth": "Introduceți o cheie API Anthropic sau un token OAuth Claude Code.",
+          "deepseek_auth": "Introduceți o cheie API DeepSeek."
+        },
+        "cancel": "Anulați",
+        "save": "Salvați modificările",
+        "create": "Adăugați agentul",
+        "saving": "Se salvează"
+      },
+      "toasts": {
+        "created": "Agent adăugat.",
+        "updated": "Agent salvat.",
+        "deleted": "Agent șters.",
+        "error_title": "Eroare",
+        "save_failed": "Agentul nu a putut fi salvat.",
+        "delete_failed": "Agentul nu a putut fi șters."
+      },
+      "delete_dialog": {
+        "title": "Ștergeți agentul",
+        "description": "Ștergeți {name}? Membrii nu vor mai putea discuta cu el, iar credențialele salvate vor fi eliminate.",
+        "confirm": "Ștergeți",
+        "deleting": "Se șterge"
+      }
+    }
+  }
+}

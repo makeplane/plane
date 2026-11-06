@@ -1,0 +1,239 @@
+{
+  "agents": {
+    "title": "Agenten",
+    "picker": {
+      "label": "Agent",
+      "placeholder": "Kies een agent"
+    },
+    "model": {
+      "label": "Model"
+    },
+    "permission": {
+      "label": "Machtigingsniveau",
+      "levels": {
+        "ask_all": {
+          "name": "Elke keer vragen",
+          "description": "Vóór elke toolaanroep om toestemming vragen, ook bij leesacties."
+        },
+        "ask_writes": {
+          "name": "Vragen vóór wijzigingen",
+          "description": "Lezen, zoeken en webpagina's ophalen gebeurt zonder te vragen. Voor shellopdrachten, bestandswijzigingen en wijzigingen in Plane wordt eerst toestemming gevraagd."
+        },
+        "yolo": {
+          "name": "Nooit vragen",
+          "description": "Elke tool uitvoeren zonder te vragen."
+        }
+      }
+    },
+    "empty": {
+      "no_agents_title": "Nog geen agenten",
+      "no_agents_description": "Een instantiebeheerder kan agenten toevoegen in God-modus.",
+      "load_failed_title": "Agenten konden niet worden geladen",
+      "load_failed_description": "Controleer uw verbinding en probeer het opnieuw.",
+      "start_title": "Chatten met {name}",
+      "start_description": "Stel vragen over uw werkitems, projecten en pagina's. De agent handelt met uw Plane-rechten."
+    },
+    "composer": {
+      "label": "Bericht",
+      "placeholder": "Bericht aan {name}…",
+      "send": "Verzenden",
+      "stop": "Stoppen",
+      "hint": "Enter om te verzenden, Shift+Enter voor een nieuwe regel"
+    },
+    "sessions": {
+      "title": "Chats",
+      "new": "Nieuwe chat",
+      "untitled": "Naamloze chat",
+      "empty": "Geen eerdere chats",
+      "refresh": "Chats vernieuwen"
+    },
+    "transcript": {
+      "label": "Gesprek",
+      "you": "U",
+      "thinking": "Denkt na",
+      "thought": "Gedachte",
+      "attachment": "Bijlage",
+      "turn_end": {
+        "cancelled": "Gestopt.",
+        "max_tokens": "De agent heeft zijn uitvoerlimiet bereikt.",
+        "max_turn_requests": "De agent heeft zijn stappenlimiet voor dit bericht bereikt.",
+        "refusal": "De agent weigerde verder te gaan.",
+        "failed": "De agent is op een fout gestuit.",
+        "disconnected": "De verbinding werd verbroken voordat de agent klaar was."
+      },
+      "new_session_notice": "Opnieuw verbonden in een nieuwe chat. De agent herinnert zich de eerdere berichten niet.",
+      "compaction": {
+        "in_progress": "Eerdere berichten worden samengevat…",
+        "completed": "Eerdere berichten zijn samengevat.",
+        "failed": "Het samenvatten van eerdere berichten is mislukt."
+      }
+    },
+    "tool_call": {
+      "status": {
+        "pending": "In behandeling",
+        "in_progress": "Bezig",
+        "completed": "Klaar",
+        "failed": "Mislukt"
+      },
+      "untitled": "Toolaanroep",
+      "input": "Invoer",
+      "output": "Uitvoer",
+      "changes": "Wijzigingen in {path}",
+      "terminal": "Terminaluitvoer"
+    },
+    "plan": {
+      "title": "Planning",
+      "progress": "{done} van {total} klaar"
+    },
+    "usage": {
+      "context": "Context: {used} van {size} tokens",
+      "cost": "Kosten: {amount} {currency}"
+    },
+    "permission_prompt": {
+      "title": "Deze actie toestaan?",
+      "allow_once": "Eenmalig toestaan",
+      "allow_always": "Altijd toestaan in deze chat",
+      "reject_once": "Weigeren",
+      "reject_always": "Altijd weigeren"
+    },
+    "status": {
+      "connecting": "Verbinden…",
+      "reconnecting": "Opnieuw verbinden…"
+    },
+    "close": {
+      "reconnect": "Opnieuw verbinden",
+      "title": "Chatverbinding verbroken",
+      "reasons": {
+        "closed": "De chat is gesloten.",
+        "server_shutdown": "De chatserver wordt opnieuw opgestart. Maak zo dadelijk opnieuw verbinding.",
+        "network": "De chatserver is niet bereikbaar. Controleer uw verbinding of vraag uw beheerder of de agent-bridge actief is.",
+        "message_too_big": "Dit bericht was te groot om te verzenden.",
+        "server_error": "Er is iets misgegaan op de server. Probeer het zo dadelijk opnieuw.",
+        "bad_request": "Deze chatlink is ongeldig.",
+        "unauthenticated": "U bent uitgelogd. Log opnieuw in om te chatten.",
+        "forbidden": "U bent geen lid van deze werkruimte.",
+        "agent_not_found": "Deze agent is verwijderd of uitgeschakeld.",
+        "idle_timeout": "De chat is gesloten na een periode van inactiviteit.",
+        "session_expired": "De chatsessie is verlopen.",
+        "too_many_chats": "U hebt te veel chats geopend. Sluit er een in een ander tabblad en probeer het opnieuw.",
+        "agent_unavailable": "De agent is momenteel niet beschikbaar. Probeer het zo dadelijk opnieuw.",
+        "unknown": "De chatverbinding is onverwacht verbroken."
+      }
+    },
+    "errors": {
+      "dismiss": "Sluiten",
+      "mode_not_allowed": "Uw beheerder staat het niveau \"{mode}\" niet toe voor deze agent.",
+      "actions": {
+        "connect": "Kan de chat niet starten.",
+        "new_session": "Kan geen nieuwe chat starten.",
+        "load_session": "Kan die chat niet openen.",
+        "list_sessions": "Kan eerdere chats niet laden.",
+        "prompt": "De agent kon dat bericht niet beantwoorden.",
+        "set_mode": "Kan het machtigingsniveau niet wijzigen.",
+        "set_model": "Kan het model niet wijzigen.",
+        "reconnect": "Kan niet opnieuw verbinden."
+      },
+      "retry": "Opnieuw proberen"
+    },
+    "admin": {
+      "title": "Agenten",
+      "description": "Agenten waarmee werkruimteleden kunnen chatten. Elke agent draait een ACP-adapter met de inloggegevens die u hier instelt.",
+      "add": "Agent toevoegen",
+      "edit_named": "{name} bewerken",
+      "delete": "Agent verwijderen",
+      "list": {
+        "empty_title": "Nog geen agenten",
+        "empty_description": "Voeg een agent toe zodat werkruimteleden ermee kunnen chatten.",
+        "load_failed": "Agenten konden niet worden geladen.",
+        "enabled": "Ingeschakeld",
+        "disabled": "Uitgeschakeld",
+        "plane_mcp": "Plane-tools",
+        "max_level": "Maximaal: {level}",
+        "env_unreadable": "Inloggegevens onleesbaar"
+      },
+      "form": {
+        "name": "Naam",
+        "name_placeholder": "Claude",
+        "slug": "Slug",
+        "slug_help": "Kleine letters, cijfers en koppeltekens.",
+        "description": "Omschrijving",
+        "description_placeholder": "Waarvoor leden deze agent kunnen gebruiken",
+        "adapter": "ACP-adapter",
+        "adapters": {
+          "claude": "Claude",
+          "codex": "Codex",
+          "deepseek": "DeepSeek"
+        },
+        "credentials": "Inloggegevens en instellingen",
+        "credentials_help": "Waarden kunnen alleen worden geschreven. Opgeslagen waarden blijven verborgen; vervang een waarde om deze te wijzigen.",
+        "env": {
+          "ANTHROPIC_API_KEY": {
+            "label": "Anthropic API-sleutel",
+            "help": "Of gebruik in plaats daarvan een Claude Code OAuth-token."
+          },
+          "CLAUDE_CODE_OAUTH_TOKEN": {
+            "label": "Claude Code OAuth-token",
+            "help": "Een token van een Claude-abonnement, gebruikt als er geen API-sleutel is ingesteld."
+          },
+          "OPENAI_API_KEY": {
+            "label": "OpenAI API-sleutel",
+            "help": "Meldt Codex aan als de thuismap nog niet is aangemeld."
+          },
+          "DEEPSEEK_API_KEY": {
+            "label": "DeepSeek API-sleutel",
+            "help": "Verplicht."
+          },
+          "DEEPSEEK_BASE_URL": {
+            "label": "Basis-URL van de DeepSeek API",
+            "help": "Optioneel. Standaard https://api.deepseek.com."
+          },
+          "PLANE_AGENT_MODEL": {
+            "label": "Standaardmodel",
+            "help": "Optionele model-ID, bijv. claude-opus-5-5. Leden kunnen in de chat van model wisselen."
+          }
+        },
+        "saved": "Opgeslagen",
+        "keep": "Opgeslagen waarde behouden",
+        "remove": "Verwijderen",
+        "removed": "Wordt verwijderd",
+        "undo_remove": "Ongedaan maken",
+        "other_env": "Overige variabelen",
+        "other_env_help": "Ingesteld via de API. Ze blijven behouden tenzij u ze verwijdert.",
+        "env_unreadable": "De opgeslagen inloggegevens kunnen niet worden ontsleuteld (de geheime sleutel van de instantie is mogelijk gewijzigd). Voer ze opnieuw in.",
+        "default_level": "Standaardmachtigingsniveau",
+        "default_level_help": "Het niveau waarmee een nieuwe chat begint.",
+        "max_level": "Maximaal machtigingsniveau",
+        "max_level_help": "Leden kunnen niet naar een hoger niveau overschakelen.",
+        "attach_plane_mcp": "Plane-tools",
+        "attach_plane_mcp_help": "Geef de agent de Plane MCP-server, die handelt namens het lid dat chat.",
+        "is_enabled": "Ingeschakeld",
+        "is_enabled_help": "Uitgeschakelde agenten zijn verborgen voor leden.",
+        "validation": {
+          "required": "Dit veld is verplicht.",
+          "slug": "Gebruik kleine letters, cijfers en koppeltekens.",
+          "default_above_max": "Het standaardniveau kan niet hoger zijn dan het maximum.",
+          "claude_auth": "Voer een Anthropic API-sleutel of een Claude Code OAuth-token in.",
+          "deepseek_auth": "Voer een DeepSeek API-sleutel in."
+        },
+        "cancel": "Annuleren",
+        "save": "Wijzigingen opslaan",
+        "create": "Agent toevoegen",
+        "saving": "Opslaan"
+      },
+      "toasts": {
+        "created": "Agent toegevoegd.",
+        "updated": "Agent opgeslagen.",
+        "deleted": "Agent verwijderd.",
+        "error_title": "Fout",
+        "save_failed": "De agent kon niet worden opgeslagen.",
+        "delete_failed": "De agent kon niet worden verwijderd."
+      },
+      "delete_dialog": {
+        "title": "Agent verwijderen",
+        "description": "{name} verwijderen? Leden kunnen er dan niet meer mee chatten en de opgeslagen inloggegevens worden verwijderd.",
+        "confirm": "Verwijderen",
+        "deleting": "Verwijderen"
+      }
+    }
+  }
+}

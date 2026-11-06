@@ -1,0 +1,239 @@
+{
+  "agents": {
+    "title": "Agenti",
+    "picker": {
+      "label": "Agent",
+      "placeholder": "Vyberte agenta"
+    },
+    "model": {
+      "label": "Jazykový model"
+    },
+    "permission": {
+      "label": "Úroveň oprávnení",
+      "levels": {
+        "ask_all": {
+          "name": "Pýtať sa zakaždým",
+          "description": "Pýtať sa pred každým volaním nástroja vrátane čítania."
+        },
+        "ask_writes": {
+          "name": "Pýtať sa pred zmenami",
+          "description": "Čítanie, vyhľadávanie a načítanie webu prebieha bez pýtania. Príkazy shellu, zmeny súborov a zmeny v Plane vyžadujú predchádzajúce potvrdenie."
+        },
+        "yolo": {
+          "name": "Nikdy sa nepýtať",
+          "description": "Spúšťať všetky nástroje bez pýtania."
+        }
+      }
+    },
+    "empty": {
+      "no_agents_title": "Zatiaľ žiadni agenti",
+      "no_agents_description": "Správca inštancie môže pridať agentov v božskom režime.",
+      "load_failed_title": "Agentov sa nepodarilo načítať",
+      "load_failed_description": "Skontrolujte pripojenie a skúste to znova.",
+      "start_title": "Chat s agentom {name}",
+      "start_description": "Pýtajte sa na svoje pracovné položky, projekty a stránky. Agent koná s vašimi oprávneniami v Plane."
+    },
+    "composer": {
+      "label": "Správa",
+      "placeholder": "Správa pre {name}…",
+      "send": "Odoslať",
+      "stop": "Zastaviť",
+      "hint": "Enter na odoslanie, Shift+Enter na nový riadok"
+    },
+    "sessions": {
+      "title": "Chaty",
+      "new": "Nový chat",
+      "untitled": "Chat bez názvu",
+      "empty": "Žiadne staršie chaty",
+      "refresh": "Obnoviť chaty"
+    },
+    "transcript": {
+      "label": "Konverzácia",
+      "you": "Vy",
+      "thinking": "Premýšľa",
+      "thought": "Úvaha",
+      "attachment": "Príloha",
+      "turn_end": {
+        "cancelled": "Zastavené.",
+        "max_tokens": "Agent dosiahol limit výstupu.",
+        "max_turn_requests": "Agent dosiahol limit krokov pre túto správu.",
+        "refusal": "Agent odmietol pokračovať.",
+        "failed": "Agent narazil na chybu.",
+        "disconnected": "Pripojenie sa ukončilo skôr, ako agent skončil."
+      },
+      "new_session_notice": "Znova pripojené v novom chate. Agent si nepamätá predchádzajúce správy.",
+      "compaction": {
+        "in_progress": "Zhŕňajú sa predchádzajúce správy…",
+        "completed": "Predchádzajúce správy boli zhrnuté.",
+        "failed": "Zhrnutie predchádzajúcich správ zlyhalo."
+      }
+    },
+    "tool_call": {
+      "status": {
+        "pending": "Čakajúce",
+        "in_progress": "Prebieha",
+        "completed": "Hotovo",
+        "failed": "Zlyhalo"
+      },
+      "untitled": "Volanie nástroja",
+      "input": "Vstup",
+      "output": "Výstup",
+      "changes": "Zmeny v {path}",
+      "terminal": "Výstup terminálu"
+    },
+    "plan": {
+      "title": "Plán",
+      "progress": "Hotovo {done} z {total}"
+    },
+    "usage": {
+      "context": "Kontext: {used} z {size} tokenov",
+      "cost": "Náklady: {amount} {currency}"
+    },
+    "permission_prompt": {
+      "title": "Povoliť túto akciu?",
+      "allow_once": "Povoliť raz",
+      "allow_always": "V tomto chate vždy povoliť",
+      "reject_once": "Zamietnuť",
+      "reject_always": "Vždy zamietnuť"
+    },
+    "status": {
+      "connecting": "Pripája sa…",
+      "reconnecting": "Znova sa pripája…"
+    },
+    "close": {
+      "reconnect": "Znova pripojiť",
+      "title": "Chat odpojený",
+      "reasons": {
+        "closed": "Chat bol zatvorený.",
+        "server_shutdown": "Chatovací server sa reštartuje. O chvíľu sa znova pripojte.",
+        "network": "Chatovací server je nedostupný. Skontrolujte pripojenie alebo sa opýtajte správcu, či beží most agentov.",
+        "message_too_big": "Táto správa bola príliš veľká na odoslanie.",
+        "server_error": "Na serveri sa vyskytla chyba. Skúste to o chvíľu znova.",
+        "bad_request": "Tento odkaz na chat nie je platný.",
+        "unauthenticated": "Ste odhlásení. Ak chcete chatovať, znova sa prihláste.",
+        "forbidden": "Nie ste členom tohto pracovného priestoru.",
+        "agent_not_found": "Tento agent bol odstránený alebo zakázaný.",
+        "idle_timeout": "Chat bol zatvorený po určitom čase nečinnosti.",
+        "session_expired": "Platnosť relácie chatu vypršala.",
+        "too_many_chats": "Máte otvorených príliš veľa chatov. Jeden z nich zatvorte na inej karte a skúste to znova.",
+        "agent_unavailable": "Agent je momentálne nedostupný. Skúste to o chvíľu znova.",
+        "unknown": "Pripojenie k chatu bolo neočakávane ukončené."
+      }
+    },
+    "errors": {
+      "dismiss": "Zatvoriť",
+      "mode_not_allowed": "Váš správca pre tohto agenta nepovoľuje úroveň „{mode}“.",
+      "actions": {
+        "connect": "Chat sa nepodarilo spustiť.",
+        "new_session": "Nový chat sa nepodarilo spustiť.",
+        "load_session": "Tento chat sa nepodarilo otvoriť.",
+        "list_sessions": "Staršie chaty sa nepodarilo načítať.",
+        "prompt": "Agent nedokázal odpovedať na túto správu.",
+        "set_mode": "Úroveň oprávnení sa nepodarilo zmeniť.",
+        "set_model": "Model sa nepodarilo zmeniť.",
+        "reconnect": "Opätovné pripojenie zlyhalo."
+      },
+      "retry": "Skúsiť znova"
+    },
+    "admin": {
+      "title": "Agenti",
+      "description": "Agenti, s ktorými môžu členovia pracovného priestoru chatovať. Každý z nich spúšťa adaptér ACP s prihlasovacími údajmi, ktoré tu nastavíte.",
+      "add": "Pridať agenta",
+      "edit_named": "Upraviť {name}",
+      "delete": "Zmazať agenta",
+      "list": {
+        "empty_title": "Zatiaľ žiadni agenti",
+        "empty_description": "Pridajte agenta, aby s ním členovia pracovného priestoru mohli chatovať.",
+        "load_failed": "Agentov sa nepodarilo načítať.",
+        "enabled": "Povolené",
+        "disabled": "Zakázané",
+        "plane_mcp": "Nástroje Plane",
+        "max_level": "Najviac: {level}",
+        "env_unreadable": "Prihlasovacie údaje sa nedajú prečítať"
+      },
+      "form": {
+        "name": "Názov",
+        "name_placeholder": "Claude",
+        "slug": "Slug",
+        "slug_help": "Malé písmená, číslice a spojovníky.",
+        "description": "Popis",
+        "description_placeholder": "Na čo môžu členovia tohto agenta používať",
+        "adapter": "Adaptér",
+        "adapters": {
+          "claude": "Claude",
+          "codex": "Codex",
+          "deepseek": "DeepSeek"
+        },
+        "credentials": "Prihlasovacie údaje a nastavenia",
+        "credentials_help": "Hodnoty sú iba na zápis. Uložené hodnoty zostávajú skryté; ak chcete hodnotu zmeniť, nahraďte ju.",
+        "env": {
+          "ANTHROPIC_API_KEY": {
+            "label": "API kľúč Anthropic",
+            "help": "Alebo namiesto neho použite OAuth token Claude Code."
+          },
+          "CLAUDE_CODE_OAUTH_TOKEN": {
+            "label": "OAuth token Claude Code",
+            "help": "Token predplatného Claude, ktorý sa použije, keď nie je nastavený API kľúč."
+          },
+          "OPENAI_API_KEY": {
+            "label": "API kľúč OpenAI",
+            "help": "Prihlási Codex, ak jeho domovský adresár ešte nie je prihlásený."
+          },
+          "DEEPSEEK_API_KEY": {
+            "label": "API kľúč DeepSeek",
+            "help": "Povinné."
+          },
+          "DEEPSEEK_BASE_URL": {
+            "label": "Základná URL API DeepSeek",
+            "help": "Voliteľné. Predvolená hodnota je https://api.deepseek.com."
+          },
+          "PLANE_AGENT_MODEL": {
+            "label": "Predvolený model",
+            "help": "Voliteľné ID modelu, napr. claude-opus-5-5. Členovia môžu prepínať modely v chate."
+          }
+        },
+        "saved": "Uložené",
+        "keep": "Ponechať uloženú hodnotu",
+        "remove": "Odstrániť",
+        "removed": "Bude odstránené",
+        "undo_remove": "Späť",
+        "other_env": "Ďalšie premenné",
+        "other_env_help": "Nastavené cez API. Zostanú zachované, kým ich neodstránite.",
+        "env_unreadable": "Uložené prihlasovacie údaje sa nedajú dešifrovať (tajný kľúč inštancie sa mohol zmeniť). Zadajte ich znova.",
+        "default_level": "Predvolená úroveň oprávnení",
+        "default_level_help": "Úroveň, na ktorej začína nový chat.",
+        "max_level": "Maximálna úroveň oprávnení",
+        "max_level_help": "Členovia nemôžu prepnúť nad túto úroveň.",
+        "attach_plane_mcp": "Nástroje Plane",
+        "attach_plane_mcp_help": "Poskytnúť agentovi MCP server Plane, ktorý koná v mene chatujúceho člena.",
+        "is_enabled": "Povolené",
+        "is_enabled_help": "Zakázaní agenti sú pred členmi skrytí.",
+        "validation": {
+          "required": "Toto pole je povinné.",
+          "slug": "Použite malé písmená, číslice a spojovníky.",
+          "default_above_max": "Predvolená úroveň nemôže byť vyššia ako maximálna.",
+          "claude_auth": "Zadajte API kľúč Anthropic alebo OAuth token Claude Code.",
+          "deepseek_auth": "Zadajte API kľúč DeepSeek."
+        },
+        "cancel": "Zrušiť",
+        "save": "Uložiť zmeny",
+        "create": "Pridať agenta",
+        "saving": "Ukladanie"
+      },
+      "toasts": {
+        "created": "Agent bol pridaný.",
+        "updated": "Agent bol uložený.",
+        "deleted": "Agent bol zmazaný.",
+        "error_title": "Chyba",
+        "save_failed": "Agenta sa nepodarilo uložiť.",
+        "delete_failed": "Agenta sa nepodarilo zmazať."
+      },
+      "delete_dialog": {
+        "title": "Zmazať agenta",
+        "description": "Zmazať {name}? Členovia s ním už nebudú môcť chatovať a jeho uložené prihlasovacie údaje budú odstránené.",
+        "confirm": "Zmazať",
+        "deleting": "Mazanie"
+      }
+    }
+  }
+}

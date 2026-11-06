@@ -1,0 +1,239 @@
+{
+  "agents": {
+    "title": "代理",
+    "picker": {
+      "label": "代理",
+      "placeholder": "选择代理"
+    },
+    "model": {
+      "label": "模型"
+    },
+    "permission": {
+      "label": "权限级别",
+      "levels": {
+        "ask_all": {
+          "name": "每次都询问",
+          "description": "每次调用工具前都会询问，包括读取操作。"
+        },
+        "ask_writes": {
+          "name": "更改前询问",
+          "description": "读取、搜索和网页抓取可直接运行。Shell 命令、文件更改和 Plane 更改会先询问。"
+        },
+        "yolo": {
+          "name": "从不询问",
+          "description": "无需询问，直接运行所有工具。"
+        }
+      }
+    },
+    "empty": {
+      "no_agents_title": "暂无代理",
+      "no_agents_description": "实例管理员可以在管理员模式中添加代理。",
+      "load_failed_title": "无法加载代理",
+      "load_failed_description": "请检查您的网络连接，然后重试。",
+      "start_title": "与 {name} 聊天",
+      "start_description": "询问有关您的工作项、项目和页面的问题。代理将以您的 Plane 权限执行操作。"
+    },
+    "composer": {
+      "label": "消息",
+      "placeholder": "给 {name} 发送消息…",
+      "send": "发送",
+      "stop": "停止",
+      "hint": "按 Enter 发送，按 Shift+Enter 换行"
+    },
+    "sessions": {
+      "title": "聊天",
+      "new": "新建聊天",
+      "untitled": "未命名聊天",
+      "empty": "暂无历史聊天",
+      "refresh": "刷新聊天"
+    },
+    "transcript": {
+      "label": "对话",
+      "you": "您",
+      "thinking": "正在思考",
+      "thought": "思考过程",
+      "attachment": "附件",
+      "turn_end": {
+        "cancelled": "已停止。",
+        "max_tokens": "代理已达到输出上限。",
+        "max_turn_requests": "代理已达到此消息的步骤上限。",
+        "refusal": "代理拒绝继续。",
+        "failed": "代理遇到错误。",
+        "disconnected": "代理完成前连接已关闭。"
+      },
+      "new_session_notice": "已在新聊天中重新连接。代理不会记得之前的消息。",
+      "compaction": {
+        "in_progress": "正在总结之前的消息…",
+        "completed": "之前的消息已总结。",
+        "failed": "总结之前的消息失败。"
+      }
+    },
+    "tool_call": {
+      "status": {
+        "pending": "待处理",
+        "in_progress": "运行中",
+        "completed": "完成",
+        "failed": "失败"
+      },
+      "untitled": "工具调用",
+      "input": "输入",
+      "output": "输出",
+      "changes": "对 {path} 的更改",
+      "terminal": "终端输出"
+    },
+    "plan": {
+      "title": "计划",
+      "progress": "已完成 {done} / {total}"
+    },
+    "usage": {
+      "context": "上下文：{used} / {size} token",
+      "cost": "费用：{amount} {currency}"
+    },
+    "permission_prompt": {
+      "title": "是否允许此操作？",
+      "allow_once": "允许一次",
+      "allow_always": "在此聊天中始终允许",
+      "reject_once": "拒绝",
+      "reject_always": "始终拒绝"
+    },
+    "status": {
+      "connecting": "正在连接…",
+      "reconnecting": "正在重新连接…"
+    },
+    "close": {
+      "reconnect": "重新连接",
+      "title": "聊天已断开",
+      "reasons": {
+        "closed": "聊天已关闭。",
+        "server_shutdown": "聊天服务器正在重启，请稍后重新连接。",
+        "network": "无法连接到聊天服务器。请检查您的网络连接，或询问管理员代理桥接服务是否正在运行。",
+        "message_too_big": "该消息过大，无法发送。",
+        "server_error": "服务器出现问题，请稍后重试。",
+        "bad_request": "此聊天链接无效。",
+        "unauthenticated": "您已退出登录。请重新登录以继续聊天。",
+        "forbidden": "您不是此工作空间的成员。",
+        "agent_not_found": "此代理已被移除或禁用。",
+        "idle_timeout": "由于长时间未活动，聊天已关闭。",
+        "session_expired": "聊天会话已过期。",
+        "too_many_chats": "您打开的聊天过多。请在其他标签页中关闭一个聊天，然后重试。",
+        "agent_unavailable": "代理暂时不可用，请稍后重试。",
+        "unknown": "聊天连接意外关闭。"
+      }
+    },
+    "errors": {
+      "dismiss": "关闭",
+      "mode_not_allowed": "您的管理员不允许此代理使用“{mode}”级别。",
+      "actions": {
+        "connect": "无法开始聊天。",
+        "new_session": "无法开始新聊天。",
+        "load_session": "无法打开该聊天。",
+        "list_sessions": "无法加载历史聊天。",
+        "prompt": "代理无法回复该消息。",
+        "set_mode": "无法更改权限级别。",
+        "set_model": "无法更改模型。",
+        "reconnect": "无法重新连接。"
+      },
+      "retry": "重试"
+    },
+    "admin": {
+      "title": "代理",
+      "description": "工作空间成员可以与之聊天的代理。每个代理都会使用您在此处设置的凭据运行一个 ACP 适配器。",
+      "add": "添加代理",
+      "edit_named": "编辑 {name}",
+      "delete": "删除代理",
+      "list": {
+        "empty_title": "暂无代理",
+        "empty_description": "添加代理，以便工作空间成员与其聊天。",
+        "load_failed": "无法加载代理。",
+        "enabled": "已启用",
+        "disabled": "已禁用",
+        "plane_mcp": "Plane 工具",
+        "max_level": "最高：{level}",
+        "env_unreadable": "凭据无法读取"
+      },
+      "form": {
+        "name": "名称",
+        "name_placeholder": "Claude",
+        "slug": "标识符",
+        "slug_help": "仅限小写字母、数字和连字符。",
+        "description": "描述",
+        "description_placeholder": "成员可以使用此代理做什么",
+        "adapter": "适配器",
+        "adapters": {
+          "claude": "Claude",
+          "codex": "Codex",
+          "deepseek": "DeepSeek"
+        },
+        "credentials": "凭据和设置",
+        "credentials_help": "这些值为只写。已保存的值会保持隐藏；如需更改，请替换该值。",
+        "env": {
+          "ANTHROPIC_API_KEY": {
+            "label": "Anthropic API 密钥",
+            "help": "或改用 Claude Code OAuth 令牌。"
+          },
+          "CLAUDE_CODE_OAUTH_TOKEN": {
+            "label": "Claude Code OAuth 令牌",
+            "help": "Claude 订阅令牌，在未设置 API 密钥时使用。"
+          },
+          "OPENAI_API_KEY": {
+            "label": "OpenAI API 密钥",
+            "help": "当 Codex 的主目录尚未登录时，用于让 Codex 登录。"
+          },
+          "DEEPSEEK_API_KEY": {
+            "label": "DeepSeek API 密钥",
+            "help": "必填。"
+          },
+          "DEEPSEEK_BASE_URL": {
+            "label": "DeepSeek API 基础 URL",
+            "help": "可选。默认为 https://api.deepseek.com。"
+          },
+          "PLANE_AGENT_MODEL": {
+            "label": "默认模型",
+            "help": "可选的模型 ID，例如 claude-opus-5-5。成员可以在聊天中切换模型。"
+          }
+        },
+        "saved": "已保存",
+        "keep": "保留已保存的值",
+        "remove": "移除",
+        "removed": "将被移除",
+        "undo_remove": "撤销",
+        "other_env": "其他变量",
+        "other_env_help": "通过 API 设置。除非您将其移除，否则会一直保留。",
+        "env_unreadable": "无法解密已保存的凭据（实例密钥可能已更改）。请重新输入。",
+        "default_level": "默认权限级别",
+        "default_level_help": "新聊天开始时使用的级别。",
+        "max_level": "最高权限级别",
+        "max_level_help": "成员无法切换到高于此级别的权限。",
+        "attach_plane_mcp": "Plane 工具",
+        "attach_plane_mcp_help": "为代理提供 Plane MCP 服务器，并以发起聊天的成员身份执行操作。",
+        "is_enabled": "已启用",
+        "is_enabled_help": "已禁用的代理对成员隐藏。",
+        "validation": {
+          "required": "此字段为必填项。",
+          "slug": "请使用小写字母、数字和连字符。",
+          "default_above_max": "默认级别不能高于最高级别。",
+          "claude_auth": "请输入 Anthropic API 密钥或 Claude Code OAuth 令牌。",
+          "deepseek_auth": "请输入 DeepSeek API 密钥。"
+        },
+        "cancel": "取消",
+        "save": "保存更改",
+        "create": "添加代理",
+        "saving": "保存中"
+      },
+      "toasts": {
+        "created": "已添加代理。",
+        "updated": "已保存代理。",
+        "deleted": "已删除代理。",
+        "error_title": "错误",
+        "save_failed": "无法保存代理。",
+        "delete_failed": "无法删除代理。"
+      },
+      "delete_dialog": {
+        "title": "删除代理",
+        "description": "要删除 {name} 吗？成员将无法再与其聊天，其已保存的凭据也将被移除。",
+        "confirm": "删除",
+        "deleting": "删除中"
+      }
+    }
+  }
+}

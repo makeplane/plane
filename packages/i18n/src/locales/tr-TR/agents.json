@@ -1,0 +1,239 @@
+{
+  "agents": {
+    "title": "Ajanlar",
+    "picker": {
+      "label": "Ajan",
+      "placeholder": "Bir ajan seçin"
+    },
+    "model": {
+      "label": "Dil modeli"
+    },
+    "permission": {
+      "label": "İzin düzeyi",
+      "levels": {
+        "ask_all": {
+          "name": "Her seferinde sor",
+          "description": "Okumalar dahil her araç çağrısından önce onay istenir."
+        },
+        "ask_writes": {
+          "name": "Değişikliklerden önce sor",
+          "description": "Okuma, arama ve web getirme işlemleri onay beklemeden çalışır. Kabuk komutları, dosya değişiklikleri ve Plane değişiklikleri için önce onay istenir."
+        },
+        "yolo": {
+          "name": "Asla sorma",
+          "description": "Tüm araçlar onay istenmeden çalıştırılır."
+        }
+      }
+    },
+    "empty": {
+      "no_agents_title": "Henüz ajan yok",
+      "no_agents_description": "Bir örnek yöneticisi, Yönetici Modu'nda ajan ekleyebilir.",
+      "load_failed_title": "Ajanlar yüklenemedi",
+      "load_failed_description": "Bağlantınızı kontrol edip tekrar deneyin.",
+      "start_title": "{name} ile sohbet",
+      "start_description": "İş öğeleriniz, projeleriniz ve sayfalarınız hakkında soru sorun. Ajan, Plane izinlerinizle hareket eder."
+    },
+    "composer": {
+      "label": "Mesaj",
+      "placeholder": "{name} için mesaj…",
+      "send": "Gönder",
+      "stop": "Durdur",
+      "hint": "Göndermek için Enter, yeni satır için Shift+Enter"
+    },
+    "sessions": {
+      "title": "Sohbetler",
+      "new": "Yeni sohbet",
+      "untitled": "Adsız sohbet",
+      "empty": "Önceki sohbet yok",
+      "refresh": "Sohbetleri yenile"
+    },
+    "transcript": {
+      "label": "Konuşma",
+      "you": "Siz",
+      "thinking": "Düşünüyor",
+      "thought": "Düşünce",
+      "attachment": "Ek",
+      "turn_end": {
+        "cancelled": "Durduruldu.",
+        "max_tokens": "Ajan çıktı sınırına ulaştı.",
+        "max_turn_requests": "Ajan bu mesaj için adım sınırına ulaştı.",
+        "refusal": "Ajan devam etmeyi reddetti.",
+        "failed": "Ajan bir hatayla karşılaştı.",
+        "disconnected": "Bağlantı, ajan işini bitirmeden kapandı."
+      },
+      "new_session_notice": "Yeni bir sohbette yeniden bağlanıldı. Ajan önceki mesajları hatırlamıyor.",
+      "compaction": {
+        "in_progress": "Önceki mesajlar özetleniyor…",
+        "completed": "Önceki mesajlar özetlendi.",
+        "failed": "Önceki mesajlar özetlenemedi."
+      }
+    },
+    "tool_call": {
+      "status": {
+        "pending": "Beklemede",
+        "in_progress": "Çalışıyor",
+        "completed": "Tamamlandı",
+        "failed": "Başarısız"
+      },
+      "untitled": "Araç çağrısı",
+      "input": "Girdi",
+      "output": "Çıktı",
+      "changes": "{path} dosyasındaki değişiklikler",
+      "terminal": "Terminal çıktısı"
+    },
+    "plan": {
+      "title": "Eylem planı",
+      "progress": "{total} adımdan {done} tanesi tamamlandı"
+    },
+    "usage": {
+      "context": "Bağlam: {used} / {size} token",
+      "cost": "Maliyet: {amount} {currency}"
+    },
+    "permission_prompt": {
+      "title": "Bu işleme izin verilsin mi?",
+      "allow_once": "Bir kez izin ver",
+      "allow_always": "Bu sohbette her zaman izin ver",
+      "reject_once": "Reddet",
+      "reject_always": "Her zaman reddet"
+    },
+    "status": {
+      "connecting": "Bağlanıyor…",
+      "reconnecting": "Yeniden bağlanıyor…"
+    },
+    "close": {
+      "reconnect": "Yeniden bağlan",
+      "title": "Sohbet bağlantısı kesildi",
+      "reasons": {
+        "closed": "Sohbet kapatıldı.",
+        "server_shutdown": "Sohbet sunucusu yeniden başlatılıyor. Birazdan yeniden bağlanın.",
+        "network": "Sohbet sunucusuna ulaşılamadı. Bağlantınızı kontrol edin veya yöneticinize ajan köprüsünün çalışıp çalışmadığını sorun.",
+        "message_too_big": "Bu mesaj gönderilemeyecek kadar büyüktü.",
+        "server_error": "Sunucuda bir sorun oluştu. Kısa süre sonra tekrar deneyin.",
+        "bad_request": "Bu sohbet bağlantısı geçerli değil.",
+        "unauthenticated": "Oturumunuz kapatıldı. Sohbet etmek için tekrar giriş yapın.",
+        "forbidden": "Bu çalışma alanının üyesi değilsiniz.",
+        "agent_not_found": "Bu ajan kaldırıldı veya devre dışı bırakıldı.",
+        "idle_timeout": "Sohbet, bir süre işlem yapılmadığı için kapatıldı.",
+        "session_expired": "Sohbet oturumunun süresi doldu.",
+        "too_many_chats": "Çok fazla açık sohbetiniz var. Başka bir sekmedeki sohbetlerden birini kapatıp tekrar deneyin.",
+        "agent_unavailable": "Ajan şu anda kullanılamıyor. Kısa süre sonra tekrar deneyin.",
+        "unknown": "Sohbet bağlantısı beklenmedik şekilde kapandı."
+      }
+    },
+    "errors": {
+      "dismiss": "Kapat",
+      "mode_not_allowed": "Yöneticiniz bu ajan için \"{mode}\" düzeyine izin vermiyor.",
+      "actions": {
+        "connect": "Sohbet başlatılamadı.",
+        "new_session": "Yeni sohbet başlatılamadı.",
+        "load_session": "Bu sohbet açılamadı.",
+        "list_sessions": "Önceki sohbetler yüklenemedi.",
+        "prompt": "Ajan bu mesajı yanıtlayamadı.",
+        "set_mode": "İzin düzeyi değiştirilemedi.",
+        "set_model": "Model değiştirilemedi.",
+        "reconnect": "Yeniden bağlanılamadı."
+      },
+      "retry": "Tekrar dene"
+    },
+    "admin": {
+      "title": "Ajanlar",
+      "description": "Çalışma alanı üyelerinin sohbet edebileceği ajanlar. Her biri, burada belirlediğiniz kimlik bilgileriyle bir ACP adaptörü çalıştırır.",
+      "add": "Ajan ekle",
+      "edit_named": "Düzenle: {name}",
+      "delete": "Ajanı sil",
+      "list": {
+        "empty_title": "Henüz ajan yok",
+        "empty_description": "Çalışma alanı üyelerinin sohbet edebilmesi için bir ajan ekleyin.",
+        "load_failed": "Ajanlar yüklenemedi.",
+        "enabled": "Etkin",
+        "disabled": "Devre dışı",
+        "plane_mcp": "Plane araçları",
+        "max_level": "En fazla: {level}",
+        "env_unreadable": "Kimlik bilgileri okunamıyor"
+      },
+      "form": {
+        "name": "Ad",
+        "name_placeholder": "Claude",
+        "slug": "Kısa ad (slug)",
+        "slug_help": "Küçük harfler, rakamlar ve kısa çizgiler.",
+        "description": "Açıklama",
+        "description_placeholder": "Üyelerin bu ajanı ne için kullanabileceği",
+        "adapter": "Adaptör",
+        "adapters": {
+          "claude": "Claude",
+          "codex": "Codex",
+          "deepseek": "DeepSeek"
+        },
+        "credentials": "Kimlik bilgileri ve ayarlar",
+        "credentials_help": "Değerler yalnızca yazılabilir. Kaydedilen değerler gizli kalır; bir değeri değiştirmek için yenisini girin.",
+        "env": {
+          "ANTHROPIC_API_KEY": {
+            "label": "Anthropic API anahtarı",
+            "help": "Veya bunun yerine bir Claude Code OAuth token'ı kullanın."
+          },
+          "CLAUDE_CODE_OAUTH_TOKEN": {
+            "label": "Claude Code OAuth token'ı",
+            "help": "API anahtarı ayarlanmadığında kullanılan bir Claude abonelik token'ı."
+          },
+          "OPENAI_API_KEY": {
+            "label": "OpenAI API anahtarı",
+            "help": "Ana dizininde henüz oturum açılmamışsa Codex'te oturum açar."
+          },
+          "DEEPSEEK_API_KEY": {
+            "label": "DeepSeek API anahtarı",
+            "help": "Zorunlu."
+          },
+          "DEEPSEEK_BASE_URL": {
+            "label": "DeepSeek API temel URL'si",
+            "help": "İsteğe bağlı. Varsayılan: https://api.deepseek.com."
+          },
+          "PLANE_AGENT_MODEL": {
+            "label": "Varsayılan model",
+            "help": "İsteğe bağlı model kimliği, örn. claude-opus-5-5. Üyeler sohbette model değiştirebilir."
+          }
+        },
+        "saved": "Kaydedildi",
+        "keep": "Kaydedilen değeri koru",
+        "remove": "Kaldır",
+        "removed": "Kaldırılacak",
+        "undo_remove": "Geri al",
+        "other_env": "Diğer değişkenler",
+        "other_env_help": "API üzerinden ayarlanır. Siz kaldırmadığınız sürece korunurlar.",
+        "env_unreadable": "Kaydedilen kimlik bilgilerinin şifresi çözülemiyor (sunucunun gizli anahtarı değişmiş olabilir). Bilgileri tekrar girin.",
+        "default_level": "Varsayılan izin düzeyi",
+        "default_level_help": "Yeni bir sohbetin başladığı düzey.",
+        "max_level": "Maksimum izin düzeyi",
+        "max_level_help": "Üyeler bu düzeyin üzerine geçemez.",
+        "attach_plane_mcp": "Plane araçları",
+        "attach_plane_mcp_help": "Ajana, sohbet eden üye adına hareket eden Plane MCP sunucusunu sağlar.",
+        "is_enabled": "Etkin",
+        "is_enabled_help": "Devre dışı bırakılan ajanlar üyelerden gizlenir.",
+        "validation": {
+          "required": "Bu alan zorunludur.",
+          "slug": "Küçük harf, rakam ve kısa çizgi kullanın.",
+          "default_above_max": "Varsayılan düzey maksimum düzeyden yüksek olamaz.",
+          "claude_auth": "Bir Anthropic API anahtarı veya Claude Code OAuth token'ı girin.",
+          "deepseek_auth": "Bir DeepSeek API anahtarı girin."
+        },
+        "cancel": "İptal",
+        "save": "Değişiklikleri kaydet",
+        "create": "Ajan ekle",
+        "saving": "Kaydediliyor"
+      },
+      "toasts": {
+        "created": "Ajan eklendi.",
+        "updated": "Ajan kaydedildi.",
+        "deleted": "Ajan silindi.",
+        "error_title": "Hata",
+        "save_failed": "Ajan kaydedilemedi.",
+        "delete_failed": "Ajan silinemedi."
+      },
+      "delete_dialog": {
+        "title": "Ajanı sil",
+        "description": "{name} silinsin mi? Üyeler artık bu ajanla sohbet edemez ve kaydedilen kimlik bilgileri kaldırılır.",
+        "confirm": "Sil",
+        "deleting": "Siliniyor"
+      }
+    }
+  }
+}

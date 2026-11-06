@@ -1,0 +1,239 @@
+{
+  "agents": {
+    "title": "Agents",
+    "picker": {
+      "label": "Agent",
+      "placeholder": "Choose an agent"
+    },
+    "model": {
+      "label": "Model"
+    },
+    "permission": {
+      "label": "Permission level",
+      "levels": {
+        "ask_all": {
+          "name": "Ask every time",
+          "description": "Ask before every tool call, including reads."
+        },
+        "ask_writes": {
+          "name": "Ask before changes",
+          "description": "Reads, searches and web fetches run freely. Shell commands, file changes and Plane changes ask first."
+        },
+        "yolo": {
+          "name": "Never ask",
+          "description": "Run every tool without asking."
+        }
+      }
+    },
+    "empty": {
+      "no_agents_title": "No agents yet",
+      "no_agents_description": "An instance admin can add agents in God mode.",
+      "load_failed_title": "Agents could not be loaded",
+      "load_failed_description": "Check your connection and try again.",
+      "start_title": "Chat with {name}",
+      "start_description": "Ask about your work items, projects and pages. The agent acts with your Plane permissions."
+    },
+    "composer": {
+      "label": "Message",
+      "placeholder": "Message {name}…",
+      "send": "Send",
+      "stop": "Stop",
+      "hint": "Enter to send, Shift+Enter for a new line"
+    },
+    "sessions": {
+      "title": "Chats",
+      "new": "New chat",
+      "untitled": "Untitled chat",
+      "empty": "No earlier chats",
+      "refresh": "Refresh chats"
+    },
+    "transcript": {
+      "label": "Conversation",
+      "you": "You",
+      "thinking": "Thinking",
+      "thought": "Thought",
+      "attachment": "Attachment",
+      "turn_end": {
+        "cancelled": "Stopped.",
+        "max_tokens": "The agent reached its output limit.",
+        "max_turn_requests": "The agent reached its step limit for this message.",
+        "refusal": "The agent declined to continue.",
+        "failed": "The agent ran into an error.",
+        "disconnected": "The connection closed before the agent finished."
+      },
+      "new_session_notice": "Reconnected in a new chat. The agent does not remember the earlier messages.",
+      "compaction": {
+        "in_progress": "Summarizing earlier messages…",
+        "completed": "Earlier messages were summarized.",
+        "failed": "Summarizing earlier messages failed."
+      }
+    },
+    "tool_call": {
+      "status": {
+        "pending": "Pending",
+        "in_progress": "Running",
+        "completed": "Done",
+        "failed": "Failed"
+      },
+      "untitled": "Tool call",
+      "input": "Input",
+      "output": "Output",
+      "changes": "Changes to {path}",
+      "terminal": "Terminal output"
+    },
+    "plan": {
+      "title": "Plan",
+      "progress": "{done} of {total} done"
+    },
+    "usage": {
+      "context": "Context: {used} of {size} tokens",
+      "cost": "Cost: {amount} {currency}"
+    },
+    "permission_prompt": {
+      "title": "Allow this action?",
+      "allow_once": "Allow once",
+      "allow_always": "Always allow in this chat",
+      "reject_once": "Deny",
+      "reject_always": "Always deny"
+    },
+    "status": {
+      "connecting": "Connecting…",
+      "reconnecting": "Reconnecting…"
+    },
+    "close": {
+      "reconnect": "Reconnect",
+      "title": "Chat disconnected",
+      "reasons": {
+        "closed": "The chat was closed.",
+        "server_shutdown": "The chat server is restarting. Reconnect in a moment.",
+        "network": "Could not reach the chat server. Check your connection, or ask your admin whether the agent bridge is running.",
+        "message_too_big": "That message was too large to send.",
+        "server_error": "Something went wrong on the server. Try again shortly.",
+        "bad_request": "This chat link is not valid.",
+        "unauthenticated": "You are signed out. Sign in again to chat.",
+        "forbidden": "You are not a member of this workspace.",
+        "agent_not_found": "This agent was removed or disabled.",
+        "idle_timeout": "The chat was closed after a period of inactivity.",
+        "session_expired": "The chat session expired.",
+        "too_many_chats": "You have too many chats open. Close one in another tab and try again.",
+        "agent_unavailable": "The agent is unavailable right now. Try again shortly.",
+        "unknown": "The chat connection closed unexpectedly."
+      }
+    },
+    "errors": {
+      "dismiss": "Dismiss",
+      "mode_not_allowed": "Your admin does not allow the \"{mode}\" level for this agent.",
+      "actions": {
+        "connect": "Could not start the chat.",
+        "new_session": "Could not start a new chat.",
+        "load_session": "Could not open that chat.",
+        "list_sessions": "Could not load earlier chats.",
+        "prompt": "The agent could not answer that message.",
+        "set_mode": "Could not change the permission level.",
+        "set_model": "Could not change the model.",
+        "reconnect": "Could not reconnect."
+      },
+      "retry": "Try again"
+    },
+    "admin": {
+      "title": "Agents",
+      "description": "Agents that workspace members can chat with. Each one runs an ACP adapter with the credentials you set here.",
+      "add": "Add agent",
+      "edit_named": "Edit {name}",
+      "delete": "Delete agent",
+      "list": {
+        "empty_title": "No agents yet",
+        "empty_description": "Add an agent so workspace members can chat with it.",
+        "load_failed": "Agents could not be loaded.",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "plane_mcp": "Plane tools",
+        "max_level": "Up to: {level}",
+        "env_unreadable": "Credentials unreadable"
+      },
+      "form": {
+        "name": "Name",
+        "name_placeholder": "Claude",
+        "slug": "Slug",
+        "slug_help": "Lowercase letters, numbers and hyphens.",
+        "description": "Description",
+        "description_placeholder": "What members can use this agent for",
+        "adapter": "Adapter",
+        "adapters": {
+          "claude": "Claude",
+          "codex": "Codex",
+          "deepseek": "DeepSeek"
+        },
+        "credentials": "Credentials and settings",
+        "credentials_help": "Values are write-only. Saved values stay hidden; replace one to change it.",
+        "env": {
+          "ANTHROPIC_API_KEY": {
+            "label": "Anthropic API key",
+            "help": "Or use a Claude Code OAuth token instead."
+          },
+          "CLAUDE_CODE_OAUTH_TOKEN": {
+            "label": "Claude Code OAuth token",
+            "help": "A Claude subscription token, used when no API key is set."
+          },
+          "OPENAI_API_KEY": {
+            "label": "OpenAI API key",
+            "help": "Signs Codex in when its home is not already signed in."
+          },
+          "DEEPSEEK_API_KEY": {
+            "label": "DeepSeek API key",
+            "help": "Required."
+          },
+          "DEEPSEEK_BASE_URL": {
+            "label": "DeepSeek API base URL",
+            "help": "Optional. Defaults to https://api.deepseek.com."
+          },
+          "PLANE_AGENT_MODEL": {
+            "label": "Default model",
+            "help": "Optional model id, e.g. claude-opus-5-5. Members can switch models in the chat."
+          }
+        },
+        "saved": "Saved",
+        "keep": "Keep saved value",
+        "remove": "Remove",
+        "removed": "Will be removed",
+        "undo_remove": "Undo",
+        "other_env": "Other variables",
+        "other_env_help": "Set through the API. They are kept unless you remove them.",
+        "env_unreadable": "The saved credentials cannot be decrypted (the instance secret key may have changed). Enter them again.",
+        "default_level": "Default permission level",
+        "default_level_help": "The level a new chat starts at.",
+        "max_level": "Maximum permission level",
+        "max_level_help": "Members cannot switch above this level.",
+        "attach_plane_mcp": "Plane tools",
+        "attach_plane_mcp_help": "Give the agent the Plane MCP server, acting as the member who chats.",
+        "is_enabled": "Enabled",
+        "is_enabled_help": "Disabled agents are hidden from members.",
+        "validation": {
+          "required": "This field is required.",
+          "slug": "Use lowercase letters, numbers and hyphens.",
+          "default_above_max": "The default level cannot be above the maximum.",
+          "claude_auth": "Enter an Anthropic API key or a Claude Code OAuth token.",
+          "deepseek_auth": "Enter a DeepSeek API key."
+        },
+        "cancel": "Cancel",
+        "save": "Save changes",
+        "create": "Add agent",
+        "saving": "Saving"
+      },
+      "toasts": {
+        "created": "Agent added.",
+        "updated": "Agent saved.",
+        "deleted": "Agent deleted.",
+        "error_title": "Error",
+        "save_failed": "The agent could not be saved.",
+        "delete_failed": "The agent could not be deleted."
+      },
+      "delete_dialog": {
+        "title": "Delete agent",
+        "description": "Delete {name}? Members can no longer chat with it, and its saved credentials are removed.",
+        "confirm": "Delete",
+        "deleting": "Deleting"
+      }
+    }
+  }
+}
