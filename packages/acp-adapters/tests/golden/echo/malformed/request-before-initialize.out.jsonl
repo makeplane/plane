@@ -1,0 +1,1 @@
+{"jsonrpc":"2.0","id":1,"error":{"code":-32600,"message":"Invalid request: ACP connection must be initialized before 'session/new'"}}

@@ -6,6 +6,10 @@ packages:
   - "!apps/mcp"
 
 catalog:
+  # EXACT pins for the ACP adapters (packages/acp-adapters); the ACP schema version they
+  # implement is locked in packages/acp-adapters/acp-version.lock.json, bump both together.
+  "@agentclientprotocol/sdk": "2.4.0"
+  "@anthropic-ai/claude-agent-sdk": "0.3.318"
   "@atlaskit/pragmatic-drag-and-drop": "1.7.4"
   "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "1.4.0"
   "@atlaskit/pragmatic-drag-and-drop-hitbox": "1.1.0"
@@ -27,6 +31,7 @@ catalog:
   "@hocuspocus/server": "3.4.4"
   "@hypermod/utils": "^0.7.1"
   "@makeplane/propel": "0.9.7"
+  "@modelcontextprotocol/sdk": "1.32.2"
   "@radix-ui/react-scroll-area": "^1.2.3"
   "@react-pdf/renderer": "^4.8.1"
   "@react-pdf/types": "^2.13.1"
@@ -88,6 +93,8 @@ catalog:
   "@types/sanitize-html": "2.16.0"
   "@types/ws": "^8.18.1"
   "@vitest/coverage-v8": "^4.1.11"
+  # Dev only: packages/acp-adapters validates recorded frames against the ACP JSON schema.
+  ajv: "8.18.0"
   "ast-types": "0.14.2"
   "autoprefixer": "^10.4.19"
   "axios": "1.20.0"

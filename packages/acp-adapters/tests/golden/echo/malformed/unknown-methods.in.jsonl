@@ -1,0 +1,7 @@
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":1,"clientCapabilities":{"fs":{"readTextFile":false,"writeTextFile":false},"terminal":false},"clientInfo":{"name":"Plane fixture client","version":"1.0.0"}}}
+{"jsonrpc":"2.0","id":2,"method":"plane/unknown","params":{"secret":"never-log-this"}}
+{"jsonrpc":"2.0","id":3,"method":"_plane/unknown","params":{"secret":"never-log-this"}}
+{"jsonrpc":"2.0","id":4,"method":"terminal/create","params":{"secret":"never-log-this"}}
+{"jsonrpc":"2.0","id":5,"method":"fs/read_text_file","params":{"secret":"never-log-this"}}
+{"jsonrpc":"2.0","id":6,"method":"new_session","params":{"secret":"never-log-this"}}
+{"jsonrpc":"2.0","id":7,"method":"session/cancel","params":{"secret":"never-log-this"}}

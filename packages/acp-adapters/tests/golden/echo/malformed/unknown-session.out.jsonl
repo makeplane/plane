@@ -1,0 +1,3 @@
+{"jsonrpc":"2.0","id":1,"result":{"protocolVersion":1,"agentCapabilities":{"loadSession":false,"promptCapabilities":{"image":false,"audio":false,"embeddedContext":true},"mcpCapabilities":{"http":true,"sse":false},"sessionCapabilities":{}},"authMethods":[],"agentInfo":{"name":"plane-acp-echo","title":"Echo (test agent)","version":"1.5.0"}}}
+{"jsonrpc":"2.0","id":2,"error":{"code":-32002,"message":"Resource not found","data":{"sessionId":"missing"}}}
+{"jsonrpc":"2.0","id":3,"error":{"code":-32002,"message":"Resource not found","data":{"sessionId":"missing"}}}

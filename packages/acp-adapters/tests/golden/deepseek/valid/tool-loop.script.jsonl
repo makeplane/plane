@@ -1,0 +1,7 @@
+{"answers":["allow_once","reject_once"]}
+{"send":{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":1,"clientCapabilities":{"fs":{"readTextFile":false,"writeTextFile":false},"terminal":false}}}}
+{"send":{"jsonrpc":"2.0","id":2,"method":"session/new","params":{"cwd":"$CWD","mcpServers":[{"type":"http","name":"plane","url":"$MCP_URL","headers":[{"name":"Authorization","value":"Bearer plane_api_token"},{"name":"X-Workspace-slug","value":"acme"}]}]}}}
+{"send":{"jsonrpc":"2.0","id":3,"method":"session/prompt","params":{"sessionId":"$SESSION_ID","prompt":[{"type":"text","text":"hello"}]}}}
+{"send":{"jsonrpc":"2.0","id":4,"method":"session/prompt","params":{"sessionId":"$SESSION_ID","prompt":[{"type":"text","text":"write"}]}}}
+{"send":{"jsonrpc":"2.0","id":5,"method":"session/prompt","params":{"sessionId":"$SESSION_ID","prompt":[{"type":"text","text":"plane create"}]}}}
+{"send":{"jsonrpc":"2.0","id":6,"method":"session/prompt","params":{"sessionId":"$SESSION_ID","prompt":[{"type":"text","text":"plane list"}]}}}

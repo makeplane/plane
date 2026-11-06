@@ -1,0 +1,35 @@
+{
+  "format_version": 1,
+  "wire_protocol": 1,
+  "transport": "stdio-jsonrpc-lines",
+  "sdk": {
+    "package": "@agentclientprotocol/sdk",
+    "version": "2.4.0",
+    "entrypoint": "@agentclientprotocol/sdk",
+    "entrypoint_feature_set": "stable-v1",
+    "integrity": "sha512-7qJ8nnyj7WesC5ve185ioTpB2/svQoeGV4HA4nLEhgDUrcmBe54/08VcXc/oL4p14tDbxxECZzdYmUYQ+4l+Wg==",
+    "git_head": "8d953276e54f8fd60108d6ffca3aefc4c83644a4",
+    "repository": "https://github.com/agentclientprotocol/typescript-sdk"
+  },
+  "schema": {
+    "hash_algorithm": "sha256",
+    "assets": {
+      "schema_json": {
+        "path": "schema/v1/schema.json",
+        "sha256": "0d0b1ca83c4872e5473f68926a894c7a8203b59b118e2a79bfe43dd76fbcbc1a"
+      }
+    }
+  },
+  "providers": {
+    "@anthropic-ai/claude-agent-sdk": "0.3.318",
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "codex-cli": "0.166.0",
+    "deepseek_models": ["deepseek-v4-pro", "deepseek-flash"]
+  },
+  "corpus": {
+    "id": "plane-acp-adapters-golden",
+    "manifest_path": "tests/golden/manifest.json",
+    "hash_algorithm": "sha256",
+    "sha256": "7f3eeaa7d79b69eb5d0d40054565ea1222f8292d7a5b895a727d890568e09c25"
+  }
+}

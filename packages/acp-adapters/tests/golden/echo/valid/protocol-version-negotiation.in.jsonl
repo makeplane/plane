@@ -1,0 +1,2 @@
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":2}}
+{"jsonrpc":"2.0","id":2,"method":"unknown","params":{}}
