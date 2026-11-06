@@ -146,20 +146,14 @@ services:
     depends_on:
       - api
 
-  # Upstream Plane MCP server at a pinned commit, started through serve_header.py
-  # (see that file for why upstream's own entrypoint cannot be used). It calls Plane
-  # through the gateway, not api:8000, because Plane builds attachment upload URLs
-  # from the request's host and only the gateway sends the public one.
+  # Plane MCP server, built from apps/mcp under the same tag as the other images.
+  # Its entrypoint (apps/mcp/nexus_serve.py) serves only the header-auth endpoint
+  # at /mcp, as nobody. It calls Plane through the gateway, not api:8000, because
+  # Plane builds attachment upload URLs from the request's host and only the
+  # gateway sends the public one.
   mcp:
-    build:
-      context: https://github.com/makeplane/plane-mcp-server.git#5c3467adb36fe15a2ef8f9df6fb9f5dc24b6d881
-    image: nexus/plane-mcp-server:5c3467a
+    image: ${IMAGE_REGISTRY}/plane-mcp:${APP_RELEASE}
     restart: always
-    user: "65534:65534"
-    entrypoint: [python, /srv/nexus/serve_header.py]
-    command: []
-    volumes:
-      - ./mcp:/srv/nexus:ro
     environment:
       PLANE_BASE_URL: https://${APP_DOMAIN:?set APP_DOMAIN}
       PLANE_INTERNAL_BASE_URL: http://gateway

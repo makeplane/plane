@@ -76,6 +76,9 @@ jobs:
           - image: plane-backend
             context: ./apps/api
             dockerfile: ./apps/api/Dockerfile.api
+          - image: plane-mcp
+            context: ./apps/mcp
+            dockerfile: ./apps/mcp/Dockerfile
     steps:
       - uses: actions/checkout@v6
         with:

@@ -29,7 +29,8 @@ else
     "plane-admin . apps/admin/Dockerfile.admin" \
     "plane-space . apps/space/Dockerfile.space" \
     "plane-live . apps/live/Dockerfile.live" \
-    "plane-backend apps/api apps/api/Dockerfile.api"; do
+    "plane-backend apps/api apps/api/Dockerfile.api" \
+    "plane-mcp apps/mcp apps/mcp/Dockerfile"; do
     read -r image context dockerfile <<<"$spec"
     echo "Building $registry/$image:$release..."
     docker build -q -t "$registry/$image:$release" -f "$repo/$dockerfile" "$repo/$context" >/dev/null
