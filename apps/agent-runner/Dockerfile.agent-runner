@@ -1,0 +1,89 @@
+# syntax=docker/dockerfile:1.7
+# The agent runner: runs the ACP stdio adapters (plane-acp-claude, -codex, -deepseek) and serves
+# them over ACP-on-WebSocket to the bridge. Agents get a full workstation (shell, git, ripgrep,
+# python, compilers), so this image is Debian (glibc: the Claude Agent SDK's native binary and the
+# codex CLI target it) and runs on an isolated network with only internet egress and Plane MCP.
+#
+# The runner runs as root so it can start each agent as its workspace dir's own unprivileged uid
+# (AGENT_RUNNER_ISOLATION=uid). Give the container cpu/memory/pids limits.
+FROM node:24-bookworm-slim AS base
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PNPM_HOME/bin:$PATH"
+RUN corepack enable
+
+# *****************************************************************************
+# STAGE 1: Prune the monorepo down to agent-runner and its workspace dependencies
+# *****************************************************************************
+FROM base AS builder
+WORKDIR /app
+ARG TURBO_VERSION=2.10.11
+RUN corepack enable pnpm && pnpm add -g turbo@${TURBO_VERSION}
+COPY . .
+RUN turbo prune --scope=agent-runner --docker
+
+# *****************************************************************************
+# STAGE 2: Install dependencies and build (adapters included)
+# *****************************************************************************
+FROM base AS installer
+WORKDIR /app
+
+COPY .gitignore .gitignore
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+RUN corepack enable pnpm
+
+COPY --from=builder /app/out/full/ .
+COPY turbo.json turbo.json
+
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm fetch --store-dir=/pnpm/store
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store CI=true pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store
+
+ENV TURBO_TELEMETRY_DISABLED=1
+RUN pnpm turbo run build --filter=agent-runner
+
+# *****************************************************************************
+# STAGE 3: Runtime
+# *****************************************************************************
+FROM base AS runner
+
+# The agents' toolbox. tini is PID 1 so orphaned agent processes are reaped, not left as zombies.
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    tini ca-certificates curl wget git openssh-client ripgrep fd-find jq less procps unzip zip xz-utils file \
+    bash python3 python3-pip python3-venv build-essential pkg-config \
+  && rm -rf /var/lib/apt/lists/*
+
+# Codex CLI for plane-acp-codex (it spawns `codex app-server`). Pinned with the adapters: see
+# packages/acp-adapters/acp-version.lock.json ("codex-cli").
+ARG CODEX_CLI_VERSION=0.166.0
+RUN npm install -g "@openai/codex@${CODEX_CLI_VERSION}" && npm cache clean --force
+
+WORKDIR /app
+COPY --from=installer /app/packages ./packages
+COPY --from=installer /app/apps/agent-runner/dist ./apps/agent-runner/dist
+COPY --from=installer /app/apps/agent-runner/node_modules ./apps/agent-runner/node_modules
+COPY --from=installer /app/apps/agent-runner/package.json ./apps/agent-runner/package.json
+COPY --from=installer /app/node_modules ./node_modules
+RUN find /app/node_modules \( -name 'esbuild' -o -name 'tsgolint' \) -type f -delete 2>/dev/null || true \
+  # Agents run as other uids and must be able to read (never write) the adapter code.
+  && chmod -R a+rX,go-w /app \
+  # Put the adapter bins on PATH for operators; the runner itself always uses absolute paths.
+  && for bin in claude codex deepseek echo; do \
+       printf '#!/bin/sh\nexec node /app/packages/acp-adapters/dist/bin/%s.mjs "$@"\n' "$bin" > "/usr/local/bin/plane-acp-$bin"; \
+       chmod 0755 "/usr/local/bin/plane-acp-$bin"; \
+     done
+
+ENV NODE_ENV=production
+ENV TURBO_TELEMETRY_DISABLED=1
+ENV PORT=3410
+ENV AGENT_WORKSPACES_ROOT=/workspaces
+ENV AGENT_RUNNER_ISOLATION=uid
+
+VOLUME ["/workspaces"]
+EXPOSE 3410
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
+  CMD wget -qO- "http://127.0.0.1:${PORT}/health" >/dev/null || exit 1
+
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["node", "apps/agent-runner/dist/start.mjs"]

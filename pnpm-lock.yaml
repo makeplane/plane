@@ -714,6 +714,55 @@ importers:
         specifier: 'catalog:'
         version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@22.12.0)(@vitest/coverage-v8@4.1.11)(happy-dom@21.0.4)(jsdom@23.2.0)(vite@8.2.4(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
 
+  apps/agent-runner:
+    dependencies:
+      '@agentclientprotocol/sdk':
+        specifier: 'catalog:'
+        version: 2.4.0(zod@4.6.7)
+      '@plane/acp-adapters':
+        specifier: workspace:*
+        version: link:../../packages/acp-adapters
+      '@plane/agent-runner-protocol':
+        specifier: workspace:*
+        version: link:../../packages/agent-runner-protocol
+      '@plane/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
+      express:
+        specifier: 4.22.0
+        version: 4.22.0
+      ws:
+        specifier: 'catalog:'
+        version: 8.21.0
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
+    devDependencies:
+      '@plane/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      '@types/express':
+        specifier: 4.17.23
+        version: 4.17.23
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.12.0
+      '@types/ws':
+        specifier: 'catalog:'
+        version: 8.18.1
+      agent-bridge:
+        specifier: workspace:*
+        version: link:../agent-bridge
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.16.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.11.3)(oxc-resolver@11.20.0)(typescript@5.8.3)
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@22.12.0)(@vitest/coverage-v8@4.1.11)(happy-dom@21.0.4)(jsdom@23.2.0)(vite@8.2.4(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
+
   apps/live:
     dependencies:
       '@effect/platform':
