@@ -1,0 +1,250 @@
+# Backend and data stack for the hybrid deployment. The web frontend runs on
+# Railway, so there is no `web` service here. The only published port is the
+# gateway's, on loopback: `tailscale serve` exposes it to the tailnet, and nothing
+# is reachable from the public internet.
+#
+#   app   gateway <-> application services (has outbound internet for email, webhooks, OAuth)
+#   data  application services <-> datastores (no outbound internet)
+
+name: nexus-ops
+
+x-db-env: &db-env
+  PGHOST: plane-db
+  PGDATABASE: ${POSTGRES_DB:-plane}
+  POSTGRES_USER: ${POSTGRES_USER:-plane}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?run generate-env.sh}
+  POSTGRES_DB: ${POSTGRES_DB:-plane}
+  POSTGRES_PORT: 5432
+
+x-redis-env: &redis-env
+  REDIS_HOST: plane-redis
+  REDIS_PORT: 6379
+  REDIS_URL: redis://plane-redis:6379/
+
+x-aws-s3-env: &aws-s3-env
+  AWS_REGION: ${AWS_REGION:-}
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:?run generate-env.sh}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:?run generate-env.sh}
+  AWS_S3_ENDPOINT_URL: http://plane-minio:9000
+  AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+  FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+  USE_MINIO: 1
+  # TLS ends at Railway, but browsers fetch signed URLs over https.
+  MINIO_ENDPOINT_SSL: 1
+
+x-app-env: &app-env
+  <<: [*db-env, *redis-env, *aws-s3-env]
+  WEB_URL: https://${APP_DOMAIN:?set APP_DOMAIN}
+  CORS_ALLOWED_ORIGINS: https://${APP_DOMAIN:?set APP_DOMAIN}
+  DEBUG: 0
+  GUNICORN_WORKERS: ${GUNICORN_WORKERS:-2}
+  DATABASE_URL: postgresql://${POSTGRES_USER:-plane}:${POSTGRES_PASSWORD:?run generate-env.sh}@plane-db/${POSTGRES_DB:-plane}
+  AMQP_URL: amqp://${RABBITMQ_USER:-plane}:${RABBITMQ_PASSWORD:?run generate-env.sh}@plane-mq:5672/${RABBITMQ_VHOST:-plane}
+  SECRET_KEY: ${SECRET_KEY:?run generate-env.sh}
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:?run generate-env.sh}
+  API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
+  # The gateway reduces X-Forwarded-For to the one verified client address.
+  NUM_PROXIES: 1
+  WEBHOOK_ALLOWED_IPS: ${WEBHOOK_ALLOWED_IPS:-}
+  WEBHOOK_ALLOWED_HOSTS: ${WEBHOOK_ALLOWED_HOSTS:-}
+
+services:
+  gateway:
+    image: caddy:2.11.8-alpine
+    restart: always
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?set APP_DOMAIN}
+      BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+      FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+    ports:
+      - 127.0.0.1:${GATEWAY_PORT:-8080}:80
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    networks: [app, data]
+    depends_on:
+      - api
+      - live
+      - space
+      - admin
+      - plane-minio
+      - mcp
+
+  api:
+    image: ${IMAGE_REGISTRY:?set IMAGE_REGISTRY}/plane-backend:${APP_RELEASE:?set APP_RELEASE}
+    command: ./bin/docker-entrypoint-api.sh
+    restart: always
+    environment:
+      <<: *app-env
+    volumes:
+      - logs_api:/code/plane/logs
+    networks: [app, data]
+    depends_on:
+      plane-db: { condition: service_healthy }
+      plane-redis: { condition: service_healthy }
+      plane-mq: { condition: service_healthy }
+
+  worker:
+    image: ${IMAGE_REGISTRY}/plane-backend:${APP_RELEASE}
+    command: ./bin/docker-entrypoint-worker.sh
+    restart: always
+    environment:
+      <<: *app-env
+    volumes:
+      - logs_worker:/code/plane/logs
+    networks: [app, data]
+    depends_on:
+      - api
+
+  beat-worker:
+    image: ${IMAGE_REGISTRY}/plane-backend:${APP_RELEASE}
+    command: ./bin/docker-entrypoint-beat.sh
+    restart: always
+    environment:
+      <<: *app-env
+    volumes:
+      - logs_beat-worker:/code/plane/logs
+    networks: [app, data]
+    depends_on:
+      - api
+
+  migrator:
+    image: ${IMAGE_REGISTRY}/plane-backend:${APP_RELEASE}
+    command: ./bin/docker-entrypoint-migrator.sh
+    restart: on-failure
+    environment:
+      <<: *app-env
+    volumes:
+      - logs_migrator:/code/plane/logs
+    networks: [app, data]
+    depends_on:
+      plane-db: { condition: service_healthy }
+      plane-redis: { condition: service_healthy }
+
+  live:
+    image: ${IMAGE_REGISTRY}/plane-live:${APP_RELEASE}
+    restart: always
+    stop_grace_period: 30s
+    environment:
+      <<: *redis-env
+      API_BASE_URL: http://api:8000
+      LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:?run generate-env.sh}
+    networks: [app, data]
+    depends_on:
+      - api
+
+  space:
+    image: ${IMAGE_REGISTRY}/plane-space:${APP_RELEASE}
+    restart: always
+    networks: [app]
+    depends_on:
+      - api
+
+  admin:
+    image: ${IMAGE_REGISTRY}/plane-admin:${APP_RELEASE}
+    restart: always
+    networks: [app]
+    depends_on:
+      - api
+
+  # Upstream Plane MCP server at a pinned commit, started through serve_header.py
+  # (see that file for why upstream's own entrypoint cannot be used). It calls Plane
+  # through the gateway, not api:8000, because Plane builds attachment upload URLs
+  # from the request's host and only the gateway sends the public one.
+  mcp:
+    build:
+      context: https://github.com/makeplane/plane-mcp-server.git#5c3467adb36fe15a2ef8f9df6fb9f5dc24b6d881
+    image: nexus/plane-mcp-server:5c3467a
+    restart: always
+    user: "65534:65534"
+    entrypoint: [python, /srv/nexus/serve_header.py]
+    command: []
+    volumes:
+      - ./mcp:/srv/nexus:ro
+    environment:
+      PLANE_BASE_URL: https://${APP_DOMAIN:?set APP_DOMAIN}
+      PLANE_INTERNAL_BASE_URL: http://gateway
+      LOG_PAYLOADS: "false"
+    networks: [app]
+    depends_on:
+      - api
+
+  plane-db:
+    # The datastore and gateway images match the production VPS; change them there
+    # and here together. Valkey and RabbitMQ cannot be downgraded over existing data,
+    # and pg_restore cannot read a dump made by a newer Postgres major version.
+    # restore.sh verify reads this image from here.
+    image: postgres:18.6-alpine
+    command: postgres -c 'max_connections=1000'
+    restart: always
+    environment:
+      # Not *db-env: its PGHOST would send backup.sh's pg_dump over TCP, which needs
+      # a password, instead of the trusted local socket.
+      POSTGRES_USER: ${POSTGRES_USER:-plane}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?run generate-env.sh}
+      POSTGRES_DB: ${POSTGRES_DB:-plane}
+      PGDATA: /var/lib/postgresql/data
+    healthcheck:
+      # Over TCP: on first start the image runs a temporary socket-only server to
+      # initialise the database, and a socket check would pass against that.
+      test: [CMD-SHELL, pg_isready -h 127.0.0.1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [data]
+
+  plane-redis:
+    image: valkey/valkey:9.1.3-alpine
+    restart: always
+    healthcheck:
+      test: [CMD, valkey-cli, ping]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - redisdata:/data
+    networks: [data]
+
+  plane-mq:
+    image: rabbitmq:4.4.0-management-alpine
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-plane}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?run generate-env.sh}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-plane}
+    healthcheck:
+      test: [CMD, rabbitmq-diagnostics, -q, ping]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbitmq-nexus.conf:/etc/rabbitmq/conf.d/90-nexus.conf:ro
+    networks: [data]
+
+  plane-minio:
+    image: docker.io/pgsty/silo:RELEASE.2026-10-26T00-00-00Z
+    command: server /export --console-address ":9090"
+    restart: always
+    environment:
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:?run generate-env.sh}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:?run generate-env.sh}
+    volumes:
+      - uploads:/export
+    networks: [data]
+
+networks:
+  app:
+  data:
+    internal: true
+
+volumes:
+  pgdata:
+  redisdata:
+  uploads:
+  rabbitmq_data:
+  logs_api:
+  logs_worker:
+  logs_beat-worker:
+  logs_migrator:

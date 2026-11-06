@@ -1,0 +1,122 @@
+name: Build Hybrid Deployment Images
+
+# Publishes every image for the Railway + VPS deployment under one tag, so the
+# frontend and backend versions cannot drift apart. Railway rejects cache mounts
+# unless their id contains a literal service id, so it cannot build Plane's
+# Dockerfiles itself. It pulls these images instead.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch, tag or commit of this repository to build (defaults to the branch the workflow runs from)"
+        required: false
+        type: string
+      tag:
+        description: "Image tag to publish (defaults to the first 9 characters of the commit SHA)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io/nexus-link-automated
+
+jobs:
+  # Resolves the ref to one commit first, so every image is built from the same code
+  # even if the branch moves while the jobs run, and checks the tag is valid.
+  resolve:
+    name: resolve ref
+    runs-on: ubuntu-24.04
+    outputs:
+      sha: ${{ steps.resolve.outputs.sha }}
+      tag: ${{ steps.resolve.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
+      - id: resolve
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          sha="$(git rev-parse HEAD)"
+          tag="${INPUT_TAG:-${sha:0:9}}"
+          # Docker tag grammar. A branch name such as feat/x is not a valid tag.
+          if ! [[ "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
+            echo "::error::'$tag' is not a valid image tag: use letters, digits, '_', '.' and '-', starting with a letter, digit or '_'."
+            exit 1
+          fi
+          echo "sha=$sha" >>"$GITHUB_OUTPUT"
+          echo "tag=$tag" >>"$GITHUB_OUTPUT"
+          echo "Building $sha as tag $tag" >>"$GITHUB_STEP_SUMMARY"
+
+  plane:
+    name: ${{ matrix.image }}
+    needs: resolve
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - image: plane-frontend
+            context: .
+            dockerfile: ./apps/web/Dockerfile.web
+          - image: plane-admin
+            context: .
+            dockerfile: ./apps/admin/Dockerfile.admin
+          - image: plane-space
+            context: .
+            dockerfile: ./apps/space/Dockerfile.space
+          - image: plane-live
+            context: .
+            dockerfile: ./apps/live/Dockerfile.live
+          - image: plane-backend
+            context: ./apps/api
+            dockerfile: ./apps/api/Dockerfile.api
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.resolve.outputs.sha }}
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ matrix.image }}:${{ needs.resolve.outputs.tag }}
+          labels: org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+
+  router:
+    name: plane-hybrid-router
+    needs: resolve
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.resolve.outputs.sha }}
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./deployments/hybrid/railway/router
+          platforms: linux/amd64
+          push: true
+          tags: ${{ env.REGISTRY }}/plane-hybrid-router:${{ needs.resolve.outputs.tag }}
+          labels: org.opencontainers.image.source=https://github.com/${{ github.repository }}

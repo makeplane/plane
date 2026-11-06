@@ -1,0 +1,46 @@
+# Runs the hybrid topology on one machine, without Railway or Tailscale:
+#
+#   client -> router -> socks (stands in for the tailnet) -> gateway -> backend
+#              \-> web
+#
+# The router is not on the gateway's network, so the only way it can reach the
+# backend is through the SOCKS5 proxy, as on Railway. It starts Caddy directly
+# because joining a real tailnet needs a key. See run.sh.
+#
+# Relative paths here resolve from vps/, the first compose file on the command line.
+
+services:
+  gateway:
+    ports: !override
+      - 127.0.0.1:${TEST_GATEWAY_PORT:-18081}:80
+
+  socks:
+    image: serjs/go-socks5-proxy:v0.0.4
+    environment:
+      REQUIRE_AUTH: "false"
+    networks: [edge, app]
+    depends_on:
+      - gateway
+
+  web:
+    image: ${IMAGE_REGISTRY}/plane-frontend:${APP_RELEASE}
+    networks: [edge]
+
+  router:
+    build: ../railway/router
+    entrypoint: [caddy, run, --config, /etc/caddy/Caddyfile, --adapter, caddyfile]
+    environment:
+      PORT: 8080
+      ORIGIN_ADDR: gateway:80
+      ORIGIN_PROXY: socks5://socks:1080
+      WEB_UPSTREAM: web:3000
+      BUCKET_NAME: uploads
+    ports:
+      - 127.0.0.1:${TEST_ROUTER_PORT:-18080}:8080
+    networks: [edge]
+    depends_on:
+      - socks
+      - web
+
+networks:
+  edge:

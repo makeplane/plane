@@ -1,0 +1,52 @@
+# Public entry point, running on Railway. Railway terminates TLS at its edge and
+# forwards plain HTTP here. Everything except the web bundle goes to the VPS over
+# Tailscale, which encrypts the traffic.
+#
+# The path list below must stay in step with deployments/hybrid/vps/Caddyfile and
+# with Plane's own apps/proxy/Caddyfile.ce when upgrading to a new release.
+
+{
+	admin off
+	auto_https off
+	persist_config off
+}
+
+:{$PORT:8080} {
+	@health path /__router/health
+	handle @health {
+		respond "ok" 200
+	}
+
+	# HSTS belongs at the TLS terminator, and Railway's edge cannot set it. Deferred
+	# so it replaces the copy some upstream images send instead of duplicating it.
+	header >Strict-Transport-Security "max-age=31536000"
+
+	@origin path /api/* /auth/* /static/* /live/* /mcp /mcp/* /god-mode /god-mode/* /spaces /spaces/* /{$BUCKET_NAME:uploads} /{$BUCKET_NAME:uploads}/*
+	handle @origin {
+		reverse_proxy http://{$ORIGIN_ADDR} {
+			# The VPS gateway sees the proxy as its client, and every user would
+			# otherwise share one rate-limit bucket. Railway's edge sets X-Real-IP to
+			# the visitor's address.
+			header_up X-Plane-Client-IP {http.request.header.X-Real-IP}
+
+			# Railway containers have no tunnel device, so tailscaled runs in userspace
+			# mode and tailnet traffic has to go through its local SOCKS5 proxy.
+			transport http {
+				network_proxy url {$ORIGIN_PROXY:socks5://127.0.0.1:1055}
+				dial_timeout 10s
+			}
+		}
+	}
+
+	handle {
+		encode zstd gzip
+		reverse_proxy {$WEB_UPSTREAM} {
+			header_up X-Forwarded-For {http.request.header.X-Real-IP}
+		}
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}

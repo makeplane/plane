@@ -1,0 +1,91 @@
+# Origin gateway, running on the VPS. It listens on port 80 inside the compose
+# network, so other services reach it as http://gateway. Compose publishes it on
+# loopback only, and `tailscale serve` forwards tailnet traffic to that port.
+#
+# Django and MinIO must see the public hostname, because Plane builds and verifies
+# signed upload URLs, OAuth callbacks and same-origin checks from it. A signed URL
+# issued for one host fails signature verification on another. Setting it here means
+# the result does not depend on what the router sent.
+
+{
+	admin off
+	auto_https off
+	persist_config off
+}
+
+(public_request) {
+	header_up Host {$APP_DOMAIN}
+	header_up X-Forwarded-Host {$APP_DOMAIN}
+	header_up X-Forwarded-Proto https
+	header_up X-Forwarded-For {http.request.header.X-Plane-Client-IP}
+	header_up -X-Plane-Client-IP
+}
+
+:80 {
+	request_body {
+		max_size {$FILE_SIZE_LIMIT:5242880}
+	}
+
+	redir /spaces /spaces/ permanent
+	redir /god-mode /god-mode/ permanent
+
+	# handle blocks, because Caddy would otherwise run a bare `respond` before any
+	# `reverse_proxy`, whatever their order in this file.
+	handle /__gateway/health {
+		respond "ok" 200
+	}
+
+	handle /spaces/* {
+		reverse_proxy space:3000 {
+			import public_request
+		}
+	}
+
+	handle /god-mode/* {
+		reverse_proxy admin:3000 {
+			import public_request
+		}
+	}
+
+	handle /live/* {
+		reverse_proxy live:3000 {
+			import public_request
+		}
+	}
+
+	@api path /api/* /auth/* /static/*
+	handle @api {
+		reverse_proxy api:8000 {
+			import public_request
+		}
+	}
+
+	# Plane MCP server, header-auth endpoint only: each client sends its own Plane
+	# personal access token and X-Workspace-slug, and no OAuth or SSE routes exist.
+	# flush_interval -1 stops Caddy buffering streamed MCP responses.
+	@mcp path /mcp /mcp/
+	handle @mcp {
+		rewrite * /mcp
+		reverse_proxy mcp:8211 {
+			flush_interval -1
+			header_up -X-Plane-Client-IP
+		}
+	}
+
+	@uploads path /{$BUCKET_NAME:uploads} /{$BUCKET_NAME:uploads}/*
+	handle @uploads {
+		reverse_proxy plane-minio:9000 {
+			import public_request
+		}
+	}
+
+	# The web bundle lives on Railway, so anything else is a routing mistake.
+	handle {
+		respond 404
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}
