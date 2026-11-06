@@ -26,6 +26,12 @@ services:
     image: ${IMAGE_REGISTRY}/plane-frontend:${APP_RELEASE}
     networks: [edge]
 
+  agent-runner:
+    environment:
+      # Test stacks only: the deterministic echo agent the smoke test chats with.
+      # Production keeps it off (vps/docker-compose.yml).
+      AGENT_RUNNER_ENABLE_ECHO: "true"
+
   router:
     build: ../railway/router
     entrypoint: [caddy, run, --config, /etc/caddy/Caddyfile, --adapter, caddyfile]
