@@ -15,7 +15,7 @@ import { EIssueServiceType } from "@plane/types";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
-import { convertBytesToSize, getFileExtension, getFileName, getFileURL, renderFormattedDate } from "@plane/utils";
+import { convertBytesToSize, getFileExtension, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 //
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
@@ -44,7 +44,7 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
   } = useIssueDetail(issueServiceType);
   // derived values
   const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;
-  const fileName = getFileName(attachment?.attributes.name ?? "");
+  const fileName = attachment?.attributes.name ?? "";
   const fileExtension = getFileExtension(attachment?.attributes.name ?? "");
   const fileIcon = getFileIcon(fileExtension, 18);
   const fileURL = getFileURL(attachment?.asset_url ?? "");
@@ -66,8 +66,8 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
         <div className="group flex h-11 items-center justify-between gap-3 pr-2 pl-3 hover:bg-surface-2">
           <div className="flex items-center gap-3 truncate text-body-xs-regular">
             <div className="flex items-center gap-3">{fileIcon}</div>
-            <Tooltip label={`${fileName}.${fileExtension}`} layout="stacked" disabled={isMobile}>
-              <p className="truncate font-medium text-secondary">{`${fileName}.${fileExtension}`}</p>
+            <Tooltip label={fileName} layout="stacked" disabled={isMobile}>
+              <p className="truncate font-medium text-secondary">{fileName}</p>
             </Tooltip>
             <span className="flex size-1.5 rounded-full bg-layer-1" />
             <span className="shrink-0 text-placeholder">{convertBytesToSize(attachment.attributes.size)}</span>
