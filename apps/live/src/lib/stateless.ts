@@ -12,9 +12,10 @@ import type { TDocumentEventsServer } from "@plane/editor/lib";
  * Broadcast the client event to all the clients so that they can update their state
  * @param param0
  */
-export const onStateless = async ({ payload, document }: onStatelessPayload) => {
+export const onStateless = async ({ payload, document, connection }: onStatelessPayload) => {
   const response = DocumentCollaborativeEvents[payload as TDocumentEventsServer]?.client;
-  if (response) {
+  // A read-only connection may not announce page events to the other clients.
+  if (response && !connection.readOnly) {
     document.broadcastStateless(response);
   }
 };
