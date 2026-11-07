@@ -11,3 +11,6 @@ class ChatConfig(AppConfig):
     name = "plane.chat"
     label = "chat"
     default_auto_field = "django.db.models.BigAutoField"
+
+    def ready(self):
+        from plane.chat import signals  # noqa: F401  (connects the receivers)

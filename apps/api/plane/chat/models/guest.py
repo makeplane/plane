@@ -8,7 +8,8 @@ Workspace members and admins can always open DMs. A guest can only once a worksp
 admin has granted it here; without the grant they can still read and reply in DMs
 that others open with them. Revoking sets the flag back to False rather than
 deleting the row, so `created_by` (who first granted it) and `updated_by` (who last
-changed it) are kept.
+changed it) are kept. A grant also ends when its guest stops being an active guest
+(see `plane.chat.signals`).
 """
 
 from django.db import models
