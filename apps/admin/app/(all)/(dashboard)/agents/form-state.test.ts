@@ -160,6 +160,11 @@ describe("agent form: validation", () => {
     expect(validateForm({ ...valid(), adapter: "gemini" })).toEqual({});
   });
 
+  it("replaces an env that could not be decrypted, even when only the name changes", () => {
+    const agent = { ...AGENT, env: {}, env_decryption_failed: true };
+    expect(buildPayload({ ...createFormState(agent), name: "Renamed" }, agent)).toEqual({ name: "Renamed", env: {} });
+  });
+
   it("requires re-entering credentials that could not be decrypted", () => {
     const state = createFormState({ ...AGENT, adapter: "deepseek", env: {}, env_decryption_failed: true });
     expect(validateForm(state)).toEqual({ DEEPSEEK_API_KEY: "deepseek_auth" });

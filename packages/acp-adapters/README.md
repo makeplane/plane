@@ -57,7 +57,7 @@ shell and stdio MCP servers drop the same names.
 | `PLANE_AGENT_DEFAULT_MODE`     | all           | Starting mode when the bridge sends none                                     |
 | `PLANE_AGENT_AUTH`             | codex, gemini | `api_key`, `chatgpt` (codex) or `google_account` (gemini); see [Auth](#auth) |
 | `ANTHROPIC_API_KEY`            | claude        | API key, or…                                                                 |
-| `CLAUDE_CODE_OAUTH_TOKEN`      | claude        | …a Claude subscription token (one of the two is required)                    |
+| `CLAUDE_CODE_OAUTH_TOKEN`      | claude        | …a Claude subscription token (if no member or workspace key applies)         |
 | `OPENAI_API_KEY`               | codex         | API key; the app-server logs in with it on every start (separate home)       |
 | `CODEX_HOME`                   | codex         | Overrides the Codex home of the mode (`~/.codex` or `~/.codex-api-key`)      |
 | `GEMINI_API_KEY`               | gemini        | API key, handed to Gemini CLI in `authenticate`                              |

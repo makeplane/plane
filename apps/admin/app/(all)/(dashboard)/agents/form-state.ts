@@ -175,6 +175,8 @@ export function buildPayload(state: TAgentFormState, agent?: TInstanceAgent): TI
   }
   const savedKeys = Object.keys(agent.env);
   const envChanged =
+    // An env the API cannot decrypt is always replaced, or it would stay and fail every chat.
+    agent.env_decryption_failed ||
     Object.values(env).some((value) => value !== AGENT_ENV_MASK) ||
     savedKeys.length !== Object.keys(env).length ||
     savedKeys.some((key) => !(key in env));
