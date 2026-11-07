@@ -1224,8 +1224,30 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       for (const issueUpdate of issueUpdates) {
         //if update is add, add it at a particular path
         if (issueUpdate.action === EIssueGroupedAction.ADD) {
-          const isSubIssue = issue?.parent_id;
-          if (isSubIssue && !isShowWorkItemsEnabled) continue;
+          // 1. If the item was already present in the view and its parent did not change,
+          // this is an intra-board move (e.g. kanban column drag/drop). Never drop the ADD action.
+          const isParentUnchanged = Boolean(issueBeforeUpdate && issueBeforeUpdate.parent_id === issue?.parent_id);
+
+          // 2. Check if parent is an Epic (work items belonging to an Epic are primary items, not sub-issues).
+          const parentIssue = issue?.parent_id ? this.rootIssueStore?.issues?.getIssueById(issue.parent_id) : undefined;
+          const isParentEpic = Boolean(parentIssue?.is_epic);
+
+          // 3. Check if the view is explicitly scoped to this parent/epic.
+          const isScopedToParent = Boolean(
+            issue?.parent_id &&
+            (this.rootIssueStore?.rootStore?.router?.epicId === issue.parent_id ||
+              (this.issueFilterStore as any)?.filters?.[
+                this.rootIssueStore?.projectId ?? ""
+              ]?.filters?.parent?.includes(issue.parent_id))
+          );
+
+          // An issue is a genuine sub-issue only if it has a non-epic, non-scoped parent.
+          const isSubIssue = Boolean(issue?.parent_id && !isParentEpic && !isScopedToParent);
+
+          // Do not add genuine sub-issues to the top-level list if 'Show sub-issues' is disabled,
+          // unless this is an intra-board property move of an existing card.
+          if (isSubIssue && !isShowWorkItemsEnabled && !isParentUnchanged) continue;
+
           // add issue Id at the path
           update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) =>
             this.issuesSortWithOrderBy(uniq(concat(issueIds, issueId)), this.orderBy)
