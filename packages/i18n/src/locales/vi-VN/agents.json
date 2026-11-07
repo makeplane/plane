@@ -3,10 +3,27 @@
     "title": "Tác nhân",
     "picker": {
       "label": "Tác nhân",
-      "placeholder": "Chọn tác nhân"
+      "trigger_label": "Tác nhân và mô hình: {selection}",
+      "switch_hint": "Đổi tác nhân sẽ bắt đầu cuộc trò chuyện mới.",
+      "unavailable": "Chưa có khóa API",
+      "manage_providers": "Quản lý nhà cung cấp AI"
     },
     "model": {
       "label": "Mô hình"
+    },
+    "effort": {
+      "label": "Mức suy luận",
+      "trigger_label": "Mức suy luận: {level}",
+      "hint": "Áp dụng từ tin nhắn tiếp theo của bạn.",
+      "levels": {
+        "none": "Không",
+        "minimal": "Tối thiểu",
+        "low": "Thấp",
+        "medium": "Trung bình",
+        "high": "Cao",
+        "xhigh": "Rất cao",
+        "max": "Tối đa"
+      }
     },
     "permission": {
       "label": "Mức quyền",
@@ -131,6 +148,7 @@
         "prompt": "Tác nhân không thể trả lời tin nhắn đó.",
         "set_mode": "Không thể thay đổi mức quyền.",
         "set_model": "Không thể thay đổi mô hình.",
+        "set_effort": "Không thể thay đổi mức suy luận.",
         "reconnect": "Không thể kết nối lại."
       },
       "retry": "Thử lại"
@@ -192,6 +210,10 @@
             "label": "Mô hình mặc định",
             "help": "ID mô hình (không bắt buộc), ví dụ claude-opus-5-5. Thành viên có thể chuyển đổi mô hình trong cuộc trò chuyện."
           },
+          "PLANE_AGENT_EFFORT": {
+            "label": "Mức suy luận mặc định",
+            "help": "Không bắt buộc, ví dụ high. Được dùng khi mô hình hỗ trợ mức đó. Thành viên có thể chuyển đổi mức này trong cuộc trò chuyện."
+          },
           "GEMINI_API_KEY": {
             "label": "Khóa API Gemini",
             "help": "Được dùng khi thành viên không có khóa riêng và chưa đăng nhập bằng Google."
@@ -248,7 +270,6 @@
       "unread": "Mở {name} (hoạt động mới)",
       "minimize": "Thu nhỏ",
       "open_page": "Mở toàn trang",
-      "agent_menu_label": "Đổi tác nhân, hiện tại: {agent}",
       "greeting": "Xin chào, tôi là {name}",
       "suggestions": {
         "assigned_to_me": "Những gì được giao cho tôi?",
@@ -363,7 +384,8 @@
         "connected": "Đã đăng nhập bằng {email}.",
         "connected_unknown": "Đã đăng nhập.",
         "disconnected": "Đã ngắt kết nối tài khoản.",
-        "disconnect_failed": "Không thể ngắt kết nối tài khoản."
+        "disconnect_failed": "Không thể ngắt kết nối tài khoản.",
+        "sign_in_lost": "Phiên đăng nhập {vendor} của bạn không còn hợp lệ. Hãy đăng nhập lại."
       }
     }
   }

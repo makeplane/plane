@@ -74,7 +74,7 @@ export function KhaiaComposer({ canPrompt, prompting, onSend, onStop, toolbar, i
           </Button>
         )}
       </div>
-      {toolbar && <div className="flex min-w-0 items-center">{toolbar}</div>}
+      {toolbar && <div className="flex min-w-0 flex-wrap items-center gap-0.5">{toolbar}</div>}
     </form>
   );
 }

@@ -16,6 +16,7 @@ from plane.db.models import AgentCredentialMethod, AgentProviderCredential
 from plane.db.models.agent_provider import (
     AGENT_ADAPTER_PROVIDER,
     AGENT_AUTH_ENV,
+    AGENT_PROVIDER_ACCOUNT_METHOD,
     AGENT_PROVIDER_INSTANCE_ENV,
     AGENT_PROVIDER_KEY_ENV,
     AGENT_PROVIDER_ORDER,
@@ -53,6 +54,62 @@ def resolve_agent_credential(workspace, user, adapter):
     if shared is not None:
         return shared, CREDENTIAL_SOURCE_WORKSPACE
     return None, CREDENTIAL_SOURCE_INSTANCE
+
+
+# Admin env vars that sign in an adapter with no member or workspace credentials.
+ADAPTER_INSTANCE_ENV = {"deepseek": ("DEEPSEEK_API_KEY",)}
+
+
+def agent_credential_sources(workspace, user, agents):
+    """Map each agent's id to where its chats would get a credential.
+
+    ``"personal"`` or ``"workspace"`` for a provider credential (as ``resolve_agent_credential``
+    picks it), ``"instance"`` when the agent's own admin env signs it in, ``None`` when a chat
+    would fail to start. Mirrors chat start: the admin env is decrypted first, so an unreadable
+    one fails every chat. Adapters this module does not know count as ``"instance"``.
+    """
+    providers = {AGENT_ADAPTER_PROVIDER.get(agent.adapter) for agent in agents} - {None}
+    personal = set()
+    shared = set()
+    if providers:
+        rows = AgentProviderCredential.objects.filter(
+            Q(user__isnull=True) | Q(user=user), workspace=workspace, provider__in=list(providers)
+        ).values_list("provider", "user_id")
+        for provider, user_id in rows:
+            (shared if user_id is None else personal).add(provider)
+
+    sources = {}
+    for agent in agents:
+        try:
+            env = agent.get_env()
+        except EncryptionError as e:
+            log_exception(e)
+            sources[agent.id] = None
+            continue
+        provider = AGENT_ADAPTER_PROVIDER.get(agent.adapter)
+        if provider in personal:
+            sources[agent.id] = CREDENTIAL_SOURCE_PERSONAL
+        elif provider in shared:
+            sources[agent.id] = CREDENTIAL_SOURCE_WORKSPACE
+        else:
+            sources[agent.id] = CREDENTIAL_SOURCE_INSTANCE if _admin_env_signs_in(agent.adapter, env) else None
+    return sources
+
+
+def _admin_env_signs_in(adapter, env):
+    """Whether the admin env alone would let the adapter start, as far as the API can tell."""
+    provider = AGENT_ADAPTER_PROVIDER.get(adapter)
+    account_method = AGENT_PROVIDER_ACCOUNT_METHOD.get(provider)
+    if account_method:
+        mode = (env.get(AGENT_AUTH_ENV) or "").strip()
+        if mode and mode != AgentCredentialMethod.API_KEY.value:
+            # An account sign-in cached on the runner: the API cannot see it, so trust the admin.
+            # Any other mode makes the adapter refuse to start.
+            return mode == account_method
+    keys = AGENT_PROVIDER_INSTANCE_ENV[provider] if provider else ADAPTER_INSTANCE_ENV.get(adapter)
+    if keys is None:
+        return True
+    return any(str(env.get(key) or "").strip() for key in keys)
 
 
 def build_agent_env(admin_env, credential):

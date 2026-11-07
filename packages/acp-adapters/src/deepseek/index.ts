@@ -8,7 +8,14 @@
 import { RequestError, type StopReason } from "@agentclientprotocol/sdk";
 
 import { abortable } from "../core/abort.ts";
-import type { AdapterSession, AgentAdapter, SessionHost, SessionInit, TurnContext } from "../core/agent.ts";
+import type {
+  AdapterSession,
+  AgentAdapter,
+  ModelChoice,
+  SessionHost,
+  SessionInit,
+  TurnContext,
+} from "../core/agent.ts";
 import { scrubSecrets } from "../core/env.ts";
 import { agentInfo } from "../core/info.ts";
 import {
@@ -21,7 +28,7 @@ import {
   type JsonObject,
 } from "../core/json.ts";
 import { classifyMcpCall, toolKindForCategory, type ToolCategory } from "../core/modes.ts";
-import { modelCatalog } from "../core/models.ts";
+import { effortChoices, modelCatalog } from "../core/models.ts";
 import { promptToText } from "../core/turn.ts";
 import { McpHub, type McpToolBinding } from "./mcp-hub.ts";
 import { chatSseEvents } from "./sse.ts";
@@ -36,10 +43,30 @@ export const DEEPSEEK_ENV = {
 } as const;
 
 export const DEEPSEEK_DEFAULT_BASE_URL = "https://api.deepseek.com";
-export const DEEPSEEK_MODELS = [
-  { value: "deepseek-v4-pro", name: "DeepSeek V4 Pro" },
-  { value: "deepseek-flash", name: "DeepSeek Flash" },
+/** `reasoning_effort` levels, lowest first. */
+export const DEEPSEEK_EFFORTS = ["low", "high", "max"] as const;
+const DEEPSEEK_EFFORT_CHOICES = effortChoices(DEEPSEEK_EFFORTS);
+const DEEPSEEK_DEFAULT_EFFORT = "high";
+const DEEPSEEK_MODEL_NAMES = [
+  ["deepseek-v4-pro", "DeepSeek V4 Pro"],
+  ["deepseek-flash", "DeepSeek Flash"],
 ] as const;
+
+/** The models, starting on `DEEPSEEK_REASONING_EFFORT` when it is a level they take. */
+export function deepseekModels(env: NodeJS.ProcessEnv): readonly ModelChoice[] {
+  const configured = env[DEEPSEEK_ENV.reasoningEffort]?.trim() ?? "";
+  const defaultEffort = DEEPSEEK_EFFORT_CHOICES.some((choice) => choice.value === configured)
+    ? configured
+    : DEEPSEEK_DEFAULT_EFFORT;
+  return DEEPSEEK_MODEL_NAMES.map(([value, name]) => ({
+    value,
+    name,
+    efforts: DEEPSEEK_EFFORT_CHOICES,
+    defaultEffort,
+  }));
+}
+
+export const DEEPSEEK_MODELS = deepseekModels({});
 const DEFAULT_MAX_ITERATIONS = 50;
 /** Both current DeepSeek models have a 1M-token context window. */
 const CONTEXT_WINDOW = 1_000_000;
@@ -73,7 +100,13 @@ export function createDeepSeekAdapter(options: DeepSeekAdapterOptions = {}): Age
   const fetchImpl = options.fetch ?? fetch;
   return {
     info: agentInfo("plane-acp-deepseek", "DeepSeek"),
-    models: (env) => modelCatalog(DEEPSEEK_MODELS, env),
+    models: (env) => {
+      const known = deepseekModels(env);
+      return modelCatalog(known, env, {
+        efforts: DEEPSEEK_EFFORT_CHOICES,
+        defaultEffort: known[0]?.defaultEffort ?? DEEPSEEK_DEFAULT_EFFORT,
+      });
+    },
     async startSession(init) {
       const apiKey = init.host.env[DEEPSEEK_ENV.apiKey]?.trim();
       if (!apiKey) throw RequestError.authRequired(undefined, `${DEEPSEEK_ENV.apiKey} is not set for this agent`);
@@ -159,7 +192,7 @@ class DeepSeekSession implements AdapterSession {
   /** One streamed completion. The assistant message, reasoning included, is appended to history. */
   async #complete(turn: TurnContext): Promise<{ toolCalls: ChatToolCall[]; finish: string; cancelled: boolean }> {
     const env = this.#host.env;
-    const effort = env[DEEPSEEK_ENV.reasoningEffort]?.trim();
+    const effort = this.#host.effort();
     const body = {
       model: this.#host.model(),
       messages: this.#messages,

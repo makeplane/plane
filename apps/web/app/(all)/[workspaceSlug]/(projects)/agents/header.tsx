@@ -5,7 +5,6 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { Button } from "@makeplane/propel/components/button";
 import { AiStarFourOutline, PlusCircleOutline } from "@makeplane/propel/icons";
@@ -13,17 +12,13 @@ import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
 import { useTranslation } from "@plane/i18n";
 // components
-import { AgentPicker } from "@/components/agents/agent-picker";
-import { AgentModelSelect } from "@/components/agents/model-select";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useAgentChat } from "@/hooks/store/use-agent-chat";
 
 export const WorkspaceAgentsHeader = observer(function WorkspaceAgentsHeader() {
-  const { workspaceSlug } = useParams();
   const { t } = useTranslation();
   const { snapshot, startNewSession } = useAgentChat();
-  const slug = workspaceSlug?.toString();
   const canStartNew = snapshot?.status === "ready" && !snapshot.prompting;
 
   return (
@@ -54,8 +49,6 @@ export const WorkspaceAgentsHeader = observer(function WorkspaceAgentsHeader() {
             onClick={() => void startNewSession()}
           />
         )}
-        <AgentModelSelect />
-        {slug && <AgentPicker workspaceSlug={slug} />}
       </Header.RightItem>
     </Header>
   );

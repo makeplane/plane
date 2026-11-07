@@ -7,7 +7,7 @@
 // Test fixture: stands in for `plane-agent-login <codex|gemini> <start|logout|status>`, speaking the
 // same newline-delimited JSON protocol (events on stdout, `{"code"}` lines on stdin, logs on stderr).
 // Options before the two positional arguments pick a scenario:
-//   --scenario=ok|fail|crash|silent|stubborn|logout-fail   (default ok)
+//   --scenario=ok|fail|crash|silent|stubborn|logout-fail|status-fail   (default ok)
 //   --connect-after=<ms>   codex start: report `connected` after this long (default: never)
 import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -48,6 +48,7 @@ if (action === "logout") {
 }
 
 if (action === "status") {
+  if (scenario === "status-fail") process.exit(2);
   const connected = existsSync(adapter === "codex" ? codexAuth : geminiCreds);
   emit({ event: "status", connected, ...(connected ? { account: { email: "ada@example.com" } } : {}) });
   process.exit(0);

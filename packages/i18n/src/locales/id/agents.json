@@ -3,10 +3,27 @@
     "title": "Agen",
     "picker": {
       "label": "Agen",
-      "placeholder": "Pilih agen"
+      "trigger_label": "Agen dan model: {selection}",
+      "switch_hint": "Mengganti agen akan memulai obrolan baru.",
+      "unavailable": "Belum ada kunci API",
+      "manage_providers": "Kelola penyedia AI"
     },
     "model": {
       "label": "Model"
+    },
+    "effort": {
+      "label": "Tingkat penalaran",
+      "trigger_label": "Tingkat penalaran: {level}",
+      "hint": "Berlaku mulai pesan Anda berikutnya.",
+      "levels": {
+        "none": "Tidak ada",
+        "minimal": "Minimal",
+        "low": "Rendah",
+        "medium": "Sedang",
+        "high": "Tinggi",
+        "xhigh": "Sangat tinggi",
+        "max": "Maksimal"
+      }
     },
     "permission": {
       "label": "Tingkat izin",
@@ -131,6 +148,7 @@
         "prompt": "Agen tidak dapat menjawab pesan tersebut.",
         "set_mode": "Tidak dapat mengubah tingkat izin.",
         "set_model": "Tidak dapat mengubah model.",
+        "set_effort": "Tidak dapat mengubah tingkat penalaran.",
         "reconnect": "Tidak dapat menyambungkan kembali."
       },
       "retry": "Coba lagi"
@@ -192,6 +210,10 @@
             "label": "Model bawaan",
             "help": "ID model opsional, misalnya claude-opus-5-5. Anggota dapat mengganti model di obrolan."
           },
+          "PLANE_AGENT_EFFORT": {
+            "label": "Tingkat penalaran bawaan",
+            "help": "Opsional, misalnya high. Digunakan jika model mendukung tingkat tersebut. Anggota dapat menggantinya di obrolan."
+          },
           "GEMINI_API_KEY": {
             "label": "Kunci API Gemini",
             "help": "Digunakan jika anggota tidak memiliki kunci sendiri dan belum masuk dengan Google."
@@ -248,7 +270,6 @@
       "unread": "Buka {name} (aktivitas baru)",
       "minimize": "Perkecil",
       "open_page": "Buka dalam satu halaman penuh",
-      "agent_menu_label": "Ganti agen, saat ini {agent}",
       "greeting": "Halo, saya {name}",
       "suggestions": {
         "assigned_to_me": "Apa yang ditugaskan kepada saya?",
@@ -363,7 +384,8 @@
         "connected": "Masuk sebagai {email}.",
         "connected_unknown": "Berhasil masuk.",
         "disconnected": "Akun diputuskan.",
-        "disconnect_failed": "Akun tidak dapat diputuskan."
+        "disconnect_failed": "Akun tidak dapat diputuskan.",
+        "sign_in_lost": "Login {vendor} Anda tidak lagi valid. Masuk lagi."
       }
     }
   }

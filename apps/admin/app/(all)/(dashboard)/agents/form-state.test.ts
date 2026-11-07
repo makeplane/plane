@@ -113,6 +113,7 @@ describe("agent form: Gemini", () => {
       "GEMINI_API_KEY",
       "PLANE_AGENT_AUTH",
       "PLANE_AGENT_MODEL",
+      "PLANE_AGENT_EFFORT",
     ]);
     expect(envFieldsFor("gemini").find((field) => field.key === "GEMINI_API_KEY")?.secret).toBe(true);
   });

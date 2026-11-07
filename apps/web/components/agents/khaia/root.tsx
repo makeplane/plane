@@ -16,7 +16,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 // hooks
 import { useAgentChat } from "@/hooks/store/use-agent-chat";
 // local imports
-import { recallAgent } from "../helpers";
+import { pickInitialAgent, recallAgent } from "../helpers";
 import { KHAIA_NAME } from "./constants";
 import { KhaiaPanel } from "./panel";
 
@@ -60,9 +60,8 @@ export const KhaiaWidget = observer(function KhaiaWidget({ workspaceSlug }: Prop
   // Open a chat the first time the window opens, or again after the full page closed it.
   useEffect(() => {
     if (!open || hidden || hasChat || !agents?.length) return;
-    const remembered = recallAgent(workspaceSlug);
-    const initial = agents.find((agent) => agent.id === remembered)?.id ?? agents[0].id;
-    void openChat(workspaceSlug, initial);
+    const initial = pickInitialAgent(agents, recallAgent(workspaceSlug));
+    if (initial) void openChat(workspaceSlug, initial);
   }, [open, hidden, hasChat, agents, workspaceSlug, openChat]);
 
   useEffect(() => {

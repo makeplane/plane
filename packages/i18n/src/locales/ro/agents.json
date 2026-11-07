@@ -3,10 +3,27 @@
     "title": "Agenți",
     "picker": {
       "label": "Agent",
-      "placeholder": "Alegeți un agent"
+      "trigger_label": "Agent și model: {selection}",
+      "switch_hint": "Schimbarea agentului începe un chat nou.",
+      "unavailable": "Nicio cheie API încă",
+      "manage_providers": "Gestionați furnizorii AI"
     },
     "model": {
       "label": "Model"
+    },
+    "effort": {
+      "label": "Nivel de raționament",
+      "trigger_label": "Nivel de raționament: {level}",
+      "hint": "Se aplică de la următorul mesaj.",
+      "levels": {
+        "none": "Niciunul",
+        "minimal": "Minim",
+        "low": "Scăzut",
+        "medium": "Mediu",
+        "high": "Ridicat",
+        "xhigh": "Foarte ridicat",
+        "max": "Maxim"
+      }
     },
     "permission": {
       "label": "Nivel de permisiuni",
@@ -131,6 +148,7 @@
         "prompt": "Agentul nu a putut răspunde la acest mesaj.",
         "set_mode": "Nivelul de permisiuni nu a putut fi schimbat.",
         "set_model": "Modelul nu a putut fi schimbat.",
+        "set_effort": "Nivelul de raționament nu a putut fi schimbat.",
         "reconnect": "Reconectarea a eșuat."
       },
       "retry": "Încercați din nou"
@@ -192,6 +210,10 @@
             "label": "Model implicit",
             "help": "ID de model opțional, de ex. claude-opus-5-5. Membrii pot schimba modelul în chat."
           },
+          "PLANE_AGENT_EFFORT": {
+            "label": "Nivel de raționament implicit",
+            "help": "Opțional, de ex. high. Se folosește atunci când modelul acceptă acest nivel. Membrii îl pot schimba în chat."
+          },
           "GEMINI_API_KEY": {
             "label": "Cheie API Gemini",
             "help": "Folosită când un membru nu are propria cheie și nu este autentificat cu Google."
@@ -248,7 +270,6 @@
       "unread": "Deschideți {name} (activitate nouă)",
       "minimize": "Minimizați",
       "open_page": "Deschideți pe toată pagina",
-      "agent_menu_label": "Schimbați agentul, acum {agent}",
       "greeting": "Bună ziua, sunt {name}",
       "suggestions": {
         "assigned_to_me": "Ce îmi este atribuit?",
@@ -363,7 +384,8 @@
         "connected": "Autentificat ca {email}.",
         "connected_unknown": "Autentificat.",
         "disconnected": "Cont deconectat.",
-        "disconnect_failed": "Contul nu a putut fi deconectat."
+        "disconnect_failed": "Contul nu a putut fi deconectat.",
+        "sign_in_lost": "Autentificarea dvs. la {vendor} nu mai este validă. Autentificați-vă din nou."
       }
     }
   }

@@ -8,7 +8,17 @@ import { describe, expect, it } from "vitest";
 import { AgentCloseCode } from "@plane/acp-client";
 // The English catalog is the source of truth; check:sync keeps the other locales in step.
 import en from "../../../../packages/i18n/src/locales/en/agents.json";
-import { chatErrorMessage, closeReasonKey, formatJson, modeName, permissionOptionLabel } from "./helpers";
+import type { TWorkspaceAgent } from "@plane/types";
+import {
+  AGENT_EFFORT_LEVELS,
+  chatErrorMessage,
+  closeReasonKey,
+  effortName,
+  formatJson,
+  modeName,
+  permissionOptionLabel,
+  pickInitialAgent,
+} from "./helpers";
 
 function lookup(key: string): unknown {
   return key.split(".").reduce<unknown>((node, part) => (node as Record<string, unknown> | undefined)?.[part], en);
@@ -64,5 +74,30 @@ describe("agent chat helpers", () => {
     expect(formatJson({ a: 1 })).toBe('{\n  "a": 1\n}');
     expect(formatJson("x".repeat(10), 4)).toBe("xxxx…");
     expect(formatJson(undefined)).toBe("");
+  });
+});
+
+describe("effortName", () => {
+  it("translates every known level and keeps the agent's name for others", () => {
+    for (const level of AGENT_EFFORT_LEVELS) expect(effortName(t, { value: level, name: "x" })).not.toBe("x");
+    expect(effortName(t, { value: "xhigh", name: "XHIGH" })).toBe("Extra high");
+    expect(effortName(t, { value: "turbo", name: "Turbo" })).toBe("Turbo");
+  });
+});
+
+describe("pickInitialAgent", () => {
+  const agent = (id: string, credential_source: TWorkspaceAgent["credential_source"]) =>
+    ({ id, credential_source }) as TWorkspaceAgent;
+  const agents = [agent("a", null), agent("b", "workspace"), agent("c", "personal")];
+
+  it("prefers the remembered agent while it can sign in, else the first one that can", () => {
+    expect(pickInitialAgent(agents, "c")).toBe("c");
+    expect(pickInitialAgent(agents, "a")).toBe("b");
+    expect(pickInitialAgent(agents, null)).toBe("b");
+  });
+
+  it("falls back to the first agent when none can sign in", () => {
+    expect(pickInitialAgent([agent("a", null), agent("b", null)], "b")).toBe("a");
+    expect(pickInitialAgent([], null)).toBeUndefined();
   });
 });

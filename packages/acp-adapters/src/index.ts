@@ -4,11 +4,12 @@
  * See the LICENSE file for details.
  */
 
-export { createAgent, MODEL_CONFIG_ID } from "./core/agent.ts";
+export { createAgent, EFFORT_CONFIG_ID, MODEL_CONFIG_ID } from "./core/agent.ts";
 export type {
   AdapterSession,
   AgentAdapter,
   AgentRuntime,
+  EffortChoice,
   ModelCatalog,
   ModelChoice,
   SessionHost,
@@ -29,7 +30,7 @@ export {
 export type { PermissionModeId, ToolCategory } from "./core/modes.ts";
 export { PERMISSION_OPTIONS, PermissionGate } from "./core/permission.ts";
 export { toClaudeMcpServers, toCodexMcpServers } from "./core/mcp.ts";
-export { MODEL_ENV } from "./core/models.ts";
+export { EFFORT_ENV, INITIAL_EFFORT_META_KEY, INITIAL_MODEL_META_KEY, MODEL_ENV } from "./core/models.ts";
 export { createClaudeAdapter, CLAUDE_ENV, CLAUDE_MODELS } from "./claude/index.ts";
 export { AGENT_AUTH_ENV, AGENT_AUTH_MODES, AI_PROVIDERS_SETTINGS } from "./core/auth.ts";
 export {

@@ -442,10 +442,49 @@ export class LoginManager {
 
     let disconnected = false;
     let failure: string | undefined;
-    const launched = await this.#launch(ticket, "logout", log, (event) => {
+    const ran = await this.#runToExit(ticket, "logout", log, (event) => {
       if (event.event === "disconnected") disconnected = true;
       if (event.event === "failed") failure = event.error;
     });
+    if (!ran.ok) return ran;
+    if (disconnected) return { ok: true };
+    log.warn("agent-runner: login helper could not sign out", { stderr: ran.stderrTail });
+    return { ok: false, status: 502, error: failure ?? "Could not remove the sign-in", reason: "helper_failed" };
+  }
+
+  /**
+   * Whether the user's stored sign-in is still there (the helper's `status`), and as whom. A
+   * sign-in can disappear from the agent home (revoked, expired, a new volume) while the API
+   * still records it.
+   */
+  async account(
+    ticket: SpawnTicket,
+    log: Logger
+  ): Promise<{ ok: true; connected: boolean; account?: LoginAccount } | LoginFailure> {
+    let reported: { connected: boolean; account?: LoginAccount } | undefined;
+    let failure: string | undefined;
+    const ran = await this.#runToExit(ticket, "status", log, (event) => {
+      if (event.event === "status") {
+        reported = event.account
+          ? { connected: event.connected, account: event.account }
+          : { connected: event.connected };
+      }
+      if (event.event === "failed") failure = event.error;
+    });
+    if (!ran.ok) return ran;
+    if (reported) return { ok: true, ...reported };
+    log.warn("agent-runner: login helper could not read the sign-in", { stderr: ran.stderrTail });
+    return { ok: false, status: 502, error: failure ?? "Could not read the sign-in", reason: "helper_failed" };
+  }
+
+  /** Run a one-shot helper action (`logout`, `status`) and wait for it to exit. */
+  async #runToExit(
+    ticket: SpawnTicket,
+    action: "logout" | "status",
+    log: Logger,
+    onEvent: (event: HelperEvent) => void
+  ): Promise<{ ok: true; stderrTail: string } | LoginFailure> {
+    const launched = await this.#launch(ticket, action, log, onEvent);
     if (!launched.ok) return launched;
     let timer: ReturnType<typeof setTimeout> | undefined;
     const exited = await Promise.race([
@@ -456,12 +495,10 @@ export class LoginManager {
     ]);
     clearTimeout(timer);
     if (!exited) {
-      launched.helper.terminate("logout timeout");
+      launched.helper.terminate(`${action} timeout`);
       return { ok: false, status: 504, error: "The sign-in helper did not answer in time", reason: "timeout" };
     }
-    if (disconnected) return { ok: true };
-    log.warn("agent-runner: login helper could not sign out", { stderr: launched.helper.stderrTail });
-    return { ok: false, status: 502, error: failure ?? "Could not remove the sign-in", reason: "helper_failed" };
+    return { ok: true, stderrTail: launched.helper.stderrTail };
   }
 
   /** Stop every helper; resolves once they are gone. */

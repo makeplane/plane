@@ -3,10 +3,27 @@
     "title": "Agenten",
     "picker": {
       "label": "Agent",
-      "placeholder": "Agenten auswählen"
+      "trigger_label": "Agent und Modell: {selection}",
+      "switch_hint": "Beim Wechseln des Agenten wird ein neuer Chat gestartet.",
+      "unavailable": "Noch kein API-Schlüssel",
+      "manage_providers": "KI-Anbieter verwalten"
     },
     "model": {
       "label": "Modell"
+    },
+    "effort": {
+      "label": "Denkaufwand",
+      "trigger_label": "Denkaufwand: {level}",
+      "hint": "Gilt ab Ihrer nächsten Nachricht.",
+      "levels": {
+        "none": "Keiner",
+        "minimal": "Minimal",
+        "low": "Niedrig",
+        "medium": "Mittel",
+        "high": "Hoch",
+        "xhigh": "Sehr hoch",
+        "max": "Maximal"
+      }
     },
     "permission": {
       "label": "Berechtigungsstufe",
@@ -131,6 +148,7 @@
         "prompt": "Der Agent konnte diese Nachricht nicht beantworten.",
         "set_mode": "Die Berechtigungsstufe konnte nicht geändert werden.",
         "set_model": "Das Modell konnte nicht geändert werden.",
+        "set_effort": "Der Denkaufwand konnte nicht geändert werden.",
         "reconnect": "Die Verbindung konnte nicht wiederhergestellt werden."
       },
       "retry": "Erneut versuchen"
@@ -192,6 +210,10 @@
             "label": "Standardmodell",
             "help": "Optionale Modell-ID, z. B. claude-opus-5-5. Mitglieder können im Chat das Modell wechseln."
           },
+          "PLANE_AGENT_EFFORT": {
+            "label": "Standard-Denkaufwand",
+            "help": "Optional, z. B. high. Wird verwendet, wenn das Modell diese Stufe unterstützt. Mitglieder können ihn im Chat wechseln."
+          },
           "GEMINI_API_KEY": {
             "label": "Gemini-API-Schlüssel",
             "help": "Wird verwendet, wenn ein Mitglied keinen eigenen Schlüssel hat und nicht mit Google angemeldet ist."
@@ -248,7 +270,6 @@
       "unread": "{name} öffnen (neue Aktivität)",
       "minimize": "Minimieren",
       "open_page": "Als ganze Seite öffnen",
-      "agent_menu_label": "Agent wechseln, aktuell {agent}",
       "greeting": "Hallo, ich bin {name}",
       "suggestions": {
         "assigned_to_me": "Was ist mir zugewiesen?",
@@ -363,7 +384,8 @@
         "connected": "Angemeldet als {email}.",
         "connected_unknown": "Angemeldet.",
         "disconnected": "Konto getrennt.",
-        "disconnect_failed": "Das Konto konnte nicht getrennt werden."
+        "disconnect_failed": "Das Konto konnte nicht getrennt werden.",
+        "sign_in_lost": "Ihre Anmeldung bei {vendor} ist nicht mehr gültig. Melden Sie sich erneut an."
       }
     }
   }

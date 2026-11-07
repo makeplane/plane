@@ -85,7 +85,10 @@ class HttpError extends Error {
   }
 }
 
-type Action = "start" | "status" | "complete" | "disconnect";
+type Action = "start" | "status" | "complete" | "disconnect" | "account";
+
+/** Sign-in checks allowed per user per minute (each runs the helper once on the runner). */
+const ACCOUNT_CHECKS_PER_MINUTE = 30;
 
 interface Caller {
   readonly provider: ConnectionProvider;
@@ -129,6 +132,7 @@ const badJsonHandler: ErrorRequestHandler = (error: { status?: number }, _req, r
 export function connectionsRouter(options: ConnectionsRouterOptions): Router {
   const { api, runner, allowedOrigins } = options;
   const limiter = new RateLimiter(options.startLimit.max, options.startLimit.windowMs);
+  const accountLimiter = new RateLimiter(ACCOUNT_CHECKS_PER_MINUTE, 60_000);
   const router = express.Router();
 
   // CORS (the web app may be on another origin in development) and the Origin check: the
@@ -168,6 +172,7 @@ export function connectionsRouter(options: ConnectionsRouterOptions): Router {
   route("get", "status");
   route("post", "complete");
   route("post", "disconnect");
+  route("get", "account");
   router.use((_req: Request, res: Response) => {
     res.status(404).json({ error: "Not Found" });
   });
@@ -185,6 +190,8 @@ export function connectionsRouter(options: ConnectionsRouterOptions): Router {
           return await complete(caller, req, res);
         case "disconnect":
           return await disconnect(caller, res);
+        case "account":
+          return await account(caller, res);
       }
     } catch (error) {
       if (res.headersSent) return;
@@ -283,6 +290,41 @@ export function connectionsRouter(options: ConnectionsRouterOptions): Router {
     }
     caller.log.info("agent-bridge: provider account disconnected");
     res.status(204).end();
+  }
+
+  /**
+   * Whether the member's stored sign-in is still on the runner. A sign-in can vanish there (revoked,
+   * expired, a fresh volume) while the API still records it, which would show the agent as usable
+   * and fail every chat; such a record is removed. The API only ever removes the account sign-in,
+   * never a personal API key.
+   */
+  async function account(caller: Caller, res: Response): Promise<void> {
+    const allowed = accountLimiter.take(caller.grant.user.id);
+    if (!allowed.ok) {
+      throw new HttpError(429, "Too many sign-in checks; try again later", {
+        "Retry-After": String(Math.max(1, Math.ceil(allowed.retryAfterMs / 1000))),
+      });
+    }
+    const reply = runnerOk(await callRunner(caller, () => runner.account(caller.target)), caller.log);
+    if (typeof reply.body.connected !== "boolean") {
+      caller.log.error("agent-bridge: unexpected sign-in check answer from the runner");
+      throw new HttpError(502, "The sign-in service is unavailable");
+    }
+    if (!reply.body.connected) {
+      try {
+        await api.deleteAgentConnection({
+          userId: caller.grant.user.id,
+          workspaceSlug: caller.grant.workspace.slug,
+          provider: caller.provider,
+        });
+      } catch (error) {
+        throw apiFailure(error, caller.log, "could not remove the stale connection");
+      }
+      caller.log.info("agent-bridge: provider account no longer signed in on the runner");
+      return void res.json({ connected: false });
+    }
+    const found = accountOf(reply.body.account);
+    res.json({ connected: true, ...(found && Object.keys(found).length > 0 ? { account: found } : {}) });
   }
 
   /** The runner's login state; on `connected`, record the credential with the API first. */

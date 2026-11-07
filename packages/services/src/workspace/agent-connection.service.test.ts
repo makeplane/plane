@@ -29,6 +29,16 @@ describe("agentBridgeHttpUrl", () => {
 });
 
 describe("AgentConnectionService", () => {
+  it("checks a stored sign-in with a GET that carries the workspace and the cookie", async () => {
+    const fetch = vi.fn(async () => json(200, { connected: false }));
+    const service = new AgentConnectionService({ baseUrl: "", basePath: "/agents", fetch });
+    await expect(service.account("google", "acme")).resolves.toEqual({ connected: false });
+    expect(fetch).toHaveBeenCalledWith(
+      "/agents/connections/google/account?workspace=acme",
+      expect.objectContaining({ method: "GET", credentials: "include" })
+    );
+  });
+
   it("starts a sign-in with a JSON POST that carries the session cookie", async () => {
     const fetch = vi.fn(async () =>
       json(200, {

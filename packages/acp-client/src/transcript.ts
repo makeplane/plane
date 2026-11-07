@@ -396,3 +396,11 @@ export function modelOption(state: TranscriptState): SessionConfigOption | undef
     state.configOptions.find((option) => option.category === "model")
   );
 }
+
+/** The reasoning effort select (`id: "effort"`, or the first option in the `thought_level` category). */
+export function effortOption(state: TranscriptState): SessionConfigOption | undefined {
+  return (
+    state.configOptions.find((option) => option.id === "effort") ??
+    state.configOptions.find((option) => option.category === "thought_level")
+  );
+}

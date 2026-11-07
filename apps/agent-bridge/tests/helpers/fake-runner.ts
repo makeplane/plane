@@ -37,6 +37,8 @@ export class FakeLoginRunner {
   readonly logins = new Map<string, FakeLogin>();
   /** The next `/auth/<route>` call answers this instead. */
   readonly scripted = new Map<string, Reply>();
+  /** What `GET account` reports: the stored sign-in, or `undefined` when there is none. */
+  storedAccount: Record<string, string> | undefined = { email: "ada@example.com" };
   /** Codes `complete` accepts. */
   goodCode = "good-code";
   #server: Server | undefined;
@@ -144,6 +146,11 @@ export class FakeLoginRunner {
       }
       case "POST logout":
         return { status: 200, body: { status: "disconnected" } };
+      case "GET account":
+        return {
+          status: 200,
+          body: this.storedAccount ? { connected: true, account: this.storedAccount } : { connected: false },
+        };
       default:
         return { status: 404, body: { error: "Not Found" } };
     }

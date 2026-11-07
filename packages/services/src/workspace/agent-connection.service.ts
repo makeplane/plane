@@ -5,7 +5,12 @@
  */
 
 import { AGENT_BRIDGE_BASE_PATH, AGENT_BRIDGE_BASE_URL } from "@plane/constants";
-import type { TAgentAccountProvider, TAgentConnectionStart, TAgentConnectionStatus } from "@plane/types";
+import type {
+  TAgentAccountProvider,
+  TAgentConnectionAccountCheck,
+  TAgentConnectionStart,
+  TAgentConnectionStatus,
+} from "@plane/types";
 
 /** A bridge `connections` request failed. `status` is the HTTP status, or 0 when the bridge was unreachable. */
 /** `value` without trailing slashes (a loop, not a regex, so long inputs stay linear). */
@@ -90,6 +95,22 @@ export class AgentConnectionService {
     return this.request<TAgentConnectionStatus>(provider, "complete", {
       method: "POST",
       body: { workspace: workspaceSlug, loginId, code },
+    });
+  }
+
+  /**
+   * Checks that the member's stored sign-in is still on the runner. If it is gone (revoked,
+   * expired), the bridge removes the stale credential and this reports `connected: false`.
+   */
+  async account(
+    provider: TAgentAccountProvider,
+    workspaceSlug: string,
+    signal?: AbortSignal
+  ): Promise<TAgentConnectionAccountCheck> {
+    const query = new URLSearchParams({ workspace: workspaceSlug });
+    return this.request<TAgentConnectionAccountCheck>(provider, `account?${query.toString()}`, {
+      method: "GET",
+      signal,
     });
   }
 

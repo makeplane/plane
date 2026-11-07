@@ -3,10 +3,27 @@
     "title": "Agenci",
     "picker": {
       "label": "Agent",
-      "placeholder": "Wybór agenta"
+      "trigger_label": "Agent i model: {selection}",
+      "switch_hint": "Zmiana agenta rozpoczyna nowy czat.",
+      "unavailable": "Brak jeszcze klucza API",
+      "manage_providers": "Zarządzaj dostawcami AI"
     },
     "model": {
       "label": "Model językowy"
+    },
+    "effort": {
+      "label": "Poziom rozumowania",
+      "trigger_label": "Poziom rozumowania: {level}",
+      "hint": "Obowiązuje od następnej wiadomości.",
+      "levels": {
+        "none": "Brak",
+        "minimal": "Minimalny",
+        "low": "Niski",
+        "medium": "Średni",
+        "high": "Wysoki",
+        "xhigh": "Bardzo wysoki",
+        "max": "Maksymalny"
+      }
     },
     "permission": {
       "label": "Poziom uprawnień",
@@ -131,6 +148,7 @@
         "prompt": "Agent nie mógł odpowiedzieć na tę wiadomość.",
         "set_mode": "Nie udało się zmienić poziomu uprawnień.",
         "set_model": "Nie udało się zmienić modelu.",
+        "set_effort": "Nie udało się zmienić poziomu rozumowania.",
         "reconnect": "Nie udało się połączyć ponownie."
       },
       "retry": "Spróbuj ponownie"
@@ -192,6 +210,10 @@
             "label": "Model domyślny",
             "help": "Opcjonalny identyfikator modelu, np. claude-opus-5-5. Członkowie mogą zmieniać modele w czacie."
           },
+          "PLANE_AGENT_EFFORT": {
+            "label": "Domyślny poziom rozumowania",
+            "help": "Opcjonalny, np. high. Używany, gdy model obsługuje ten poziom. Członkowie mogą go zmienić w czacie."
+          },
           "GEMINI_API_KEY": {
             "label": "Klucz API Gemini",
             "help": "Używany, gdy członek nie ma własnego klucza i nie jest zalogowany przez Google."
@@ -248,7 +270,6 @@
       "unread": "Otwórz {name} (nowa aktywność)",
       "minimize": "Minimalizuj",
       "open_page": "Otwórz na całej stronie",
-      "agent_menu_label": "Zmień agenta, obecnie {agent}",
       "greeting": "Dzień dobry, jestem {name}",
       "suggestions": {
         "assigned_to_me": "Co jest do mnie przypisane?",
@@ -363,7 +384,8 @@
         "connected": "Zalogowano jako {email}.",
         "connected_unknown": "Zalogowano.",
         "disconnected": "Odłączono konto.",
-        "disconnect_failed": "Nie udało się odłączyć konta."
+        "disconnect_failed": "Nie udało się odłączyć konta.",
+        "sign_in_lost": "Logowanie do {vendor} nie jest już ważne. Zaloguj się ponownie."
       }
     }
   }

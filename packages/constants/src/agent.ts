@@ -61,7 +61,10 @@ export const AGENT_ADAPTER_ENV_FIELDS: Record<TAgentAdapter, readonly TAgentEnvF
 };
 
 /** Env every adapter reads. */
-export const AGENT_COMMON_ENV_FIELDS: readonly TAgentEnvField[] = [{ key: "PLANE_AGENT_MODEL", secret: false }];
+export const AGENT_COMMON_ENV_FIELDS: readonly TAgentEnvField[] = [
+  { key: "PLANE_AGENT_MODEL", secret: false },
+  { key: "PLANE_AGENT_EFFORT", secret: false },
+];
 
 /** AI providers members can add credentials for, in the order the settings page shows them. */
 export const AGENT_PROVIDERS: readonly TAgentProvider[] = ["anthropic", "openai", "google"];

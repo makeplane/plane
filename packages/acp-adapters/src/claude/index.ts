@@ -14,6 +14,7 @@ import {
   listSessions as sdkListSessions,
   query as sdkQuery,
   type CanUseTool,
+  type EffortLevel,
   type HookCallback,
   type HookJSONOutput,
   type Options,
@@ -22,24 +23,39 @@ import {
   type SDKMessage,
 } from "@anthropic-ai/claude-agent-sdk";
 
-import type { AdapterSession, AgentAdapter, SessionHost, SessionInit, TurnContext } from "../core/agent.ts";
+import type {
+  AdapterSession,
+  AgentAdapter,
+  ModelChoice,
+  SessionHost,
+  SessionInit,
+  TurnContext,
+} from "../core/agent.ts";
 import { AI_PROVIDERS_SETTINGS } from "../core/auth.ts";
 import { agentInfo, PACKAGE_VERSION } from "../core/info.ts";
 import { arrayValue, numberValue, objectValue, stringValue, type JsonObject } from "../core/json.ts";
 import { toClaudeMcpServers } from "../core/mcp.ts";
-import { modelCatalog } from "../core/models.ts";
+import { effortChoices, modelCatalog } from "../core/models.ts";
 import { classifyMcpCall, toolKindForCategory, type PermissionModeId, type ToolCategory } from "../core/modes.ts";
 import type { PermissionDecision } from "../core/permission.ts";
 import { promptToText } from "../core/turn.ts";
 
 export const CLAUDE_ENV = { apiKey: "ANTHROPIC_API_KEY", oauthToken: "CLAUDE_CODE_OAUTH_TOKEN" } as const;
 
-export const CLAUDE_MODELS = [
-  { value: "claude-opus-5-5", name: "Claude Opus 5.5" },
-  { value: "claude-sonnet-5-5", name: "Claude Sonnet 5.5" },
-  { value: "claude-haiku-5-5", name: "Claude Haiku 5.5" },
-  { value: "claude-fable-5-1", name: "Claude Fable 5.1" },
-] as const;
+/** Effort levels every current Claude model takes, lowest first. */
+export const CLAUDE_EFFORTS: readonly EffortLevel[] = ["low", "medium", "high", "xhigh", "max"];
+const CLAUDE_EFFORT_CHOICES = effortChoices(CLAUDE_EFFORTS);
+
+/** The defaults are the API's own: `medium` on Opus 5.5 and Haiku 5.5, `high` on the others. */
+export const CLAUDE_MODELS: readonly ModelChoice[] = [
+  { value: "claude-opus-5-5", name: "Claude Opus 5.5", efforts: CLAUDE_EFFORT_CHOICES, defaultEffort: "medium" },
+  { value: "claude-sonnet-5-5", name: "Claude Sonnet 5.5", efforts: CLAUDE_EFFORT_CHOICES, defaultEffort: "high" },
+  { value: "claude-haiku-5-5", name: "Claude Haiku 5.5", efforts: CLAUDE_EFFORT_CHOICES, defaultEffort: "medium" },
+  { value: "claude-fable-5-1", name: "Claude Fable 5.1", efforts: CLAUDE_EFFORT_CHOICES, defaultEffort: "high" },
+];
+
+const isClaudeEffort = (value: string | undefined): value is EffortLevel =>
+  (CLAUDE_EFFORTS as readonly (string | undefined)[]).includes(value);
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -75,7 +91,7 @@ export function createClaudeAdapter(options: ClaudeAdapterOptions = {}): AgentAd
   return {
     info: agentInfo("plane-acp-claude", "Claude"),
     promptCapabilities: { image: false, audio: false, embeddedContext: true },
-    models: (env) => modelCatalog(CLAUDE_MODELS, env),
+    models: (env) => modelCatalog(CLAUDE_MODELS, env, { efforts: CLAUDE_EFFORT_CHOICES, defaultEffort: "high" }),
     async startSession(init) {
       requireAuth(init.host.env);
       return new ClaudeSession(init, deps, false);
@@ -253,9 +269,12 @@ class ClaudeSession implements AdapterSession {
         : { behavior: "deny", message: denyMessage(decision), interrupt: decision === "cancelled" };
     };
 
+    const effort = host.effort();
     const options: Options = {
       cwd: host.cwd,
       model: host.model(),
+      // Each turn is its own query, so a changed effort applies from the next turn on.
+      ...(isClaudeEffort(effort) ? { effort } : {}),
       abortController,
       includePartialMessages: true,
       mcpServers: this.#mcpServers,

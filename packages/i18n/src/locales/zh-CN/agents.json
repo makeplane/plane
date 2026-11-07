@@ -3,10 +3,27 @@
     "title": "代理",
     "picker": {
       "label": "代理",
-      "placeholder": "选择代理"
+      "trigger_label": "代理和模型：{selection}",
+      "switch_hint": "切换代理会开始新的聊天。",
+      "unavailable": "尚无 API 密钥",
+      "manage_providers": "管理 AI 提供商"
     },
     "model": {
       "label": "模型"
+    },
+    "effort": {
+      "label": "推理强度",
+      "trigger_label": "推理强度：{level}",
+      "hint": "从您的下一条消息开始生效。",
+      "levels": {
+        "none": "无",
+        "minimal": "最低",
+        "low": "低",
+        "medium": "中",
+        "high": "高",
+        "xhigh": "超高",
+        "max": "最高"
+      }
     },
     "permission": {
       "label": "权限级别",
@@ -131,6 +148,7 @@
         "prompt": "代理无法回复该消息。",
         "set_mode": "无法更改权限级别。",
         "set_model": "无法更改模型。",
+        "set_effort": "无法更改推理强度。",
         "reconnect": "无法重新连接。"
       },
       "retry": "重试"
@@ -192,6 +210,10 @@
             "label": "默认模型",
             "help": "可选的模型 ID，例如 claude-opus-5-5。成员可以在聊天中切换模型。"
           },
+          "PLANE_AGENT_EFFORT": {
+            "label": "默认推理强度",
+            "help": "可选，例如 high。在模型支持该级别时使用。成员可以在聊天中切换。"
+          },
           "GEMINI_API_KEY": {
             "label": "Gemini API 密钥",
             "help": "当成员没有自己的密钥且未使用 Google 登录时使用。"
@@ -248,7 +270,6 @@
       "unread": "打开 {name}（有新动态）",
       "minimize": "最小化",
       "open_page": "在完整页面中打开",
-      "agent_menu_label": "切换代理（当前：{agent}）",
       "greeting": "您好，我是 {name}",
       "suggestions": {
         "assigned_to_me": "分配给我的有哪些？",
@@ -363,7 +384,8 @@
         "connected": "已以 {email} 登录。",
         "connected_unknown": "已登录。",
         "disconnected": "账号已断开连接。",
-        "disconnect_failed": "无法断开账号连接。"
+        "disconnect_failed": "无法断开账号连接。",
+        "sign_in_lost": "您的 {vendor} 登录已失效，请重新登录。"
       }
     }
   }

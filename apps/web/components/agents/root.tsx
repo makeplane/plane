@@ -15,7 +15,9 @@ import { useAgentChat } from "@/hooks/store/use-agent-chat";
 // local imports
 import { AgentChatComposer } from "./composer";
 import { AgentChatStatusBanner } from "./connection-banner";
-import { recallAgent } from "./helpers";
+import { AgentEffortMenu } from "./effort-menu";
+import { pickInitialAgent, recallAgent } from "./helpers";
+import { AgentModelPicker } from "./model-picker";
 import { AgentPermissionLevelSelect } from "./permission-level-select";
 import { PlanChecklist } from "./plan-checklist";
 import { AgentSessionsList } from "./sessions-list";
@@ -70,7 +72,13 @@ const AgentChatLayout = observer(function AgentChatLayout() {
             prompting={!!snapshot?.prompting}
             onSend={(text) => void sendPrompt(text)}
             onStop={() => void cancelTurn()}
-            toolbar={<AgentPermissionLevelSelect />}
+            toolbar={
+              <>
+                <AgentModelPicker />
+                <AgentEffortMenu />
+                <AgentPermissionLevelSelect />
+              </>
+            }
           />
         </div>
       </div>
@@ -101,12 +109,11 @@ export const AgentChatRoot = observer(function AgentChatRoot({ workspaceSlug }: 
   const chatAgentId = store.workspaceSlug === workspaceSlug ? store.agentId : null;
   const firstAgentId = agents?.[0]?.id;
 
-  // Open a chat with the member's last agent (or the first one) once the agents are known.
+  // Open a chat with the member's last agent (or the first usable one) once the agents are known.
   useEffect(() => {
     if (!agents || !firstAgentId) return;
     if (chatAgentId && agents.some((agent) => agent.id === chatAgentId)) return;
-    const remembered = recallAgent(workspaceSlug);
-    const initial = agents.find((agent) => agent.id === remembered)?.id ?? firstAgentId;
+    const initial = pickInitialAgent(agents, recallAgent(workspaceSlug)) ?? firstAgentId;
     void openChat(workspaceSlug, initial);
   }, [agents, firstAgentId, chatAgentId, workspaceSlug, openChat]);
 

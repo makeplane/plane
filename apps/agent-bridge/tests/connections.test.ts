@@ -207,6 +207,37 @@ describe("disconnect", () => {
   });
 });
 
+describe("sign-in check", () => {
+  it("reports a stored sign-in and leaves the credential alone", async () => {
+    harness = await startHarness();
+    const response = await harness.http(`${base}/openai/account?workspace=${workspace}`);
+    expect(response).toMatchObject({ status: 200, body: { connected: true, account: { email: "ada@example.com" } } });
+    expect(harness.runner.calls.map((call) => [call.route, call.ticket.adapter])).toEqual([["account", "codex"]]);
+    expect(harness.api.connections).toEqual([]);
+  });
+
+  it("removes the credential of a sign-in the runner no longer has", async () => {
+    harness = await startHarness();
+    harness.runner.storedAccount = undefined;
+    const response = await harness.http(`${base}/google/account?workspace=${workspace}`);
+    expect(response).toMatchObject({ status: 200, body: { connected: false } });
+    expect(harness.api.connections).toEqual([
+      { method: "DELETE", body: { user_id: USER_ID, workspace_slug: WORKSPACE_SLUG, provider: "google" } },
+    ]);
+  });
+
+  it("keeps the credential when the runner cannot check", async () => {
+    harness = await startHarness();
+    harness.runner.scripted.set("account", {
+      status: 502,
+      body: { error: "Could not read the sign-in", reason: "helper_failed" },
+    });
+    const response = await harness.http(`${base}/openai/account?workspace=${workspace}`);
+    expect(response).toMatchObject({ status: 502, body: { error: "Could not read the sign-in" } });
+    expect(harness.api.connections).toEqual([]);
+  });
+});
+
 describe("refusals", () => {
   it("checks the origin before anything else", async () => {
     harness = await startHarness();

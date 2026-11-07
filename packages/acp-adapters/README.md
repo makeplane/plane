@@ -54,6 +54,7 @@ shell and stdio MCP servers drop the same names.
 | Variable                       | Adapter       | Meaning                                                                      |
 | ------------------------------ | ------------- | ---------------------------------------------------------------------------- |
 | `PLANE_AGENT_MODEL`            | all           | Default model id (added to the model list if it is not already in it)        |
+| `PLANE_AGENT_EFFORT`           | all           | Default reasoning effort, when the model takes that level                    |
 | `PLANE_AGENT_DEFAULT_MODE`     | all           | Starting mode when the bridge sends none                                     |
 | `PLANE_AGENT_AUTH`             | codex, gemini | `api_key`, `chatgpt` (codex) or `google_account` (gemini); see [Auth](#auth) |
 | `ANTHROPIC_API_KEY`            | claude        | API key, or…                                                                 |
@@ -66,13 +67,21 @@ shell and stdio MCP servers drop the same names.
 | `PLANE_CODEX_TURN_TIMEOUT_MS`  | codex         | Hard turn limit (default 1800000)                                            |
 | `DEEPSEEK_API_KEY`             | deepseek      | Required                                                                     |
 | `DEEPSEEK_BASE_URL`            | deepseek      | API base (default `https://api.deepseek.com`)                                |
-| `DEEPSEEK_REASONING_EFFORT`    | deepseek      | Optional `reasoning_effort` (`low`/`high`/`max`)                             |
+| `DEEPSEEK_REASONING_EFFORT`    | deepseek      | Default `reasoning_effort` (`low`/`high`/`max`, else `high`)                 |
 | `PLANE_AGENT_MAX_ITERATIONS`   | deepseek      | Model calls per prompt before stopping with `max_turn_requests` (default 50) |
 | `PLANE_ACP_MAX_MESSAGE_BYTES`  | all           | Inbound frame limit (default 8 MiB)                                          |
 
 Models: Claude defaults to `claude-opus-5-5` (also `claude-sonnet-5-5`, `claude-haiku-5-5` and
 `claude-fable-5-1`). DeepSeek defaults to `deepseek-v4-pro` (also `deepseek-flash`). Codex lists whatever
 the app-server's `model/list` returns.
+
+Reasoning effort: a second `select` config option (`id: "effort"`, category `thought_level`), offered while the
+session's model takes one. Claude offers `low` to `max` on every model (default `medium` on Opus 5.5 and Haiku
+5.5, `high` otherwise, including an unlisted `PLANE_AGENT_MODEL`), Codex whatever `model/list` reports per model,
+DeepSeek `low`/`high`/`max`. A session starts on, and a model switch falls back through: the remembered or current
+effort, then `PLANE_AGENT_EFFORT`, then the model's default (`DEEPSEEK_REASONING_EFFORT` sets DeepSeek's), each
+only if the model takes it. `session/new|load` accept the browser's
+last choice in `_meta` (`plane/initialModel`, `plane/initialEffort`); levels a model does not take are ignored.
 
 ## Auth
 

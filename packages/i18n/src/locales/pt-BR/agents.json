@@ -3,10 +3,27 @@
     "title": "Agentes",
     "picker": {
       "label": "Agente",
-      "placeholder": "Escolha um agente"
+      "trigger_label": "Agente e modelo: {selection}",
+      "switch_hint": "Trocar de agente inicia uma nova conversa.",
+      "unavailable": "Ainda sem chave de API",
+      "manage_providers": "Gerenciar provedores de IA"
     },
     "model": {
       "label": "Modelo"
+    },
+    "effort": {
+      "label": "Nível de raciocínio",
+      "trigger_label": "Nível de raciocínio: {level}",
+      "hint": "Aplica-se a partir da sua próxima mensagem.",
+      "levels": {
+        "none": "Nenhum",
+        "minimal": "Mínimo",
+        "low": "Baixo",
+        "medium": "Médio",
+        "high": "Alto",
+        "xhigh": "Muito alto",
+        "max": "Máximo"
+      }
     },
     "permission": {
       "label": "Nível de permissão",
@@ -131,6 +148,7 @@
         "prompt": "O agente não conseguiu responder a essa mensagem.",
         "set_mode": "Não foi possível alterar o nível de permissão.",
         "set_model": "Não foi possível alterar o modelo.",
+        "set_effort": "Não foi possível alterar o nível de raciocínio.",
         "reconnect": "Não foi possível reconectar."
       },
       "retry": "Tentar novamente"
@@ -192,6 +210,10 @@
             "label": "Modelo padrão",
             "help": "ID de modelo opcional, por exemplo, claude-opus-5-5. Os membros podem trocar de modelo na conversa."
           },
+          "PLANE_AGENT_EFFORT": {
+            "label": "Nível de raciocínio padrão",
+            "help": "Opcional, por exemplo, high. Usado quando o modelo aceita esse nível. Os membros podem trocá-lo na conversa."
+          },
           "GEMINI_API_KEY": {
             "label": "Chave de API do Gemini",
             "help": "Usada quando um membro não tem uma chave própria e não entrou com o Google."
@@ -248,7 +270,6 @@
       "unread": "Abrir {name} (nova atividade)",
       "minimize": "Minimizar",
       "open_page": "Abrir em página inteira",
-      "agent_menu_label": "Trocar de agente, atual: {agent}",
       "greeting": "Olá, eu sou {name}",
       "suggestions": {
         "assigned_to_me": "O que está atribuído a mim?",
@@ -363,7 +384,8 @@
         "connected": "Conectado como {email}.",
         "connected_unknown": "Conectado.",
         "disconnected": "Conta desconectada.",
-        "disconnect_failed": "Não foi possível desconectar a conta."
+        "disconnect_failed": "Não foi possível desconectar a conta.",
+        "sign_in_lost": "Seu login no {vendor} não é mais válido. Entre novamente."
       }
     }
   }

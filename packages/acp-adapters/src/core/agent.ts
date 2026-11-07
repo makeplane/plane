@@ -23,17 +23,30 @@ import {
   type StopReason,
 } from "@agentclientprotocol/sdk";
 
-import { errorMessage } from "./json.ts";
+import { errorMessage, objectValue, stringValue } from "./json.ts";
+import { EFFORT_ENV, INITIAL_EFFORT_META_KEY, INITIAL_MODEL_META_KEY, findModel, resolveEffort } from "./models.ts";
 import { initialModeId, isPermissionModeId, sessionModeState, type PermissionModeId } from "./modes.ts";
 import { PermissionGate } from "./permission.ts";
 import { MessageWriter, ToolCallTracker, type Emit } from "./turn.ts";
 
 export const MODEL_CONFIG_ID = "model";
+/** The reasoning effort select, offered while the session's model takes one (ACP `thought_level`). */
+export const EFFORT_CONFIG_ID = "effort";
+
+export interface EffortChoice {
+  readonly value: string;
+  readonly name: string;
+  readonly description?: string;
+}
 
 export interface ModelChoice {
   readonly value: string;
   readonly name: string;
   readonly description?: string;
+  /** Reasoning effort levels the model takes, lowest first. Absent or empty: no effort select. */
+  readonly efforts?: readonly EffortChoice[];
+  /** The level a session starts on when nothing else is asked for; one of `efforts`. */
+  readonly defaultEffort?: string;
 }
 
 export interface ModelCatalog {
@@ -52,6 +65,8 @@ export interface SessionHost {
   readonly env: NodeJS.ProcessEnv;
   mode(): PermissionModeId;
   model(): string;
+  /** The reasoning effort for the next turn; `undefined` when the model takes none. */
+  effort(): string | undefined;
 }
 
 export interface SessionInit {
@@ -119,6 +134,7 @@ interface SessionState {
   readonly adapterSession: AdapterSession;
   mode: PermissionModeId;
   model: string;
+  effort: string | undefined;
   catalog: ModelCatalog;
   turns: number;
   active: AbortController | undefined;
@@ -136,8 +152,16 @@ export interface AgentRuntime {
 
 /**
  * Build the spec ACP agent around an adapter: `initialize`, `session/new|load`, `session/set_mode`,
- * `session/set_config_option` (model), `session/prompt` and `session/cancel`.
+ * `session/set_config_option` (model and effort), `session/prompt` and `session/cancel`.
  */
+function selectOptions(choices: readonly (ModelChoice | EffortChoice)[]) {
+  return choices.map((choice) =>
+    choice.description
+      ? { value: choice.value, name: choice.name, description: choice.description }
+      : { value: choice.value, name: choice.name }
+  );
+}
+
 export function createAgent(adapter: AgentAdapter, options: CreateAgentOptions = {}): AgentRuntime {
   const env = options.env ?? process.env;
   const newSessionId = options.newSessionId ?? randomUUID;
@@ -166,18 +190,31 @@ export function createAgent(adapter: AgentAdapter, options: CreateAgentOptions =
     return session;
   };
 
-  const modelOption = (state: Pick<SessionState, "catalog" | "model">): SessionConfigOption => ({
-    id: MODEL_CONFIG_ID,
-    name: "Model",
-    category: "model",
-    type: "select",
-    currentValue: state.model,
-    options: state.catalog.options.map((choice) => ({
-      value: choice.value,
-      name: choice.name,
-      ...(choice.description ? { description: choice.description } : {}),
-    })),
-  });
+  /** The model select, then the effort select while the model takes one. */
+  const sessionConfigOptions = (state: Pick<SessionState, "catalog" | "model" | "effort">): SessionConfigOption[] => {
+    const result: SessionConfigOption[] = [
+      {
+        id: MODEL_CONFIG_ID,
+        name: "Model",
+        category: "model",
+        type: "select",
+        currentValue: state.model,
+        options: selectOptions(state.catalog.options),
+      },
+    ];
+    const efforts = findModel(state.catalog, state.model)?.efforts ?? [];
+    if (state.effort && efforts.length > 0) {
+      result.push({
+        id: EFFORT_CONFIG_ID,
+        name: "Reasoning",
+        category: "thought_level",
+        type: "select",
+        currentValue: state.effort,
+        options: selectOptions(efforts),
+      });
+    }
+    return result;
+  };
 
   const openSession = async (
     client: AgentContext,
@@ -189,7 +226,20 @@ export function createAgent(adapter: AgentAdapter, options: CreateAgentOptions =
     const sessionId = params.sessionId ?? newSessionId();
     if (sessions.has(sessionId)) throw RequestError.invalidParams({ sessionId }, "session is already open");
     const configured = adapter.models ? await adapter.models(env) : undefined;
-    const mutable = { mode: initialModeId(params._meta, env), model: configured?.current ?? "" };
+    // The model and effort the browser last used with this agent, when the catalog has them.
+    const meta = objectValue(params._meta);
+    const requestedModel = stringValue(meta[INITIAL_MODEL_META_KEY]);
+    const requestedEffort = stringValue(meta[INITIAL_EFFORT_META_KEY]);
+    const startModel = (catalog: ModelCatalog) =>
+      requestedModel && findModel(catalog, requestedModel) ? requestedModel : catalog.current;
+    const startEffort = (catalog: ModelCatalog, model: string) =>
+      resolveEffort(findModel(catalog, model), requestedEffort, env[EFFORT_ENV]?.trim());
+    const mutable = {
+      mode: initialModeId(params._meta, env),
+      model: configured ? startModel(configured) : "",
+      effort: undefined as string | undefined,
+    };
+    if (configured) mutable.effort = startEffort(configured, mutable.model);
     const emit: Emit = (update) => client.notify("session/update", { sessionId, update });
     const host: SessionHost = {
       sessionId,
@@ -201,6 +251,7 @@ export function createAgent(adapter: AgentAdapter, options: CreateAgentOptions =
       toolCalls: new ToolCallTracker(emit),
       mode: () => mutable.mode,
       model: () => mutable.model,
+      effort: () => mutable.effort,
     };
     const init: SessionInit = { host, mcpServers: params.mcpServers ?? [] };
     let adapterSession: AdapterSession;
@@ -212,7 +263,20 @@ export function createAgent(adapter: AgentAdapter, options: CreateAgentOptions =
     }
     const catalog = adapterSession.catalog ?? configured;
     if (!catalog) throw RequestError.internalError({ message: "adapter offered no models" });
-    if (adapterSession.catalog) mutable.model = adapterSession.catalog.current;
+    if (adapterSession.catalog) {
+      // The provider listed the models itself: start on the requested one if it offers it.
+      mutable.model = adapterSession.catalog.current;
+      const wanted = startModel(adapterSession.catalog);
+      if (wanted !== mutable.model) {
+        try {
+          await adapterSession.setModel?.(wanted);
+          mutable.model = wanted;
+        } catch {
+          // Keep the provider's own choice; the member can still switch in the chat.
+        }
+      }
+      mutable.effort = startEffort(adapterSession.catalog, mutable.model);
+    }
     const state: SessionState = {
       id: sessionId,
       host,
@@ -232,9 +296,15 @@ export function createAgent(adapter: AgentAdapter, options: CreateAgentOptions =
       set model(value: string) {
         mutable.model = value;
       },
+      get effort() {
+        return mutable.effort;
+      },
+      set effort(value: string | undefined) {
+        mutable.effort = value;
+      },
     };
     sessions.set(sessionId, state);
-    return { sessionId, modes: sessionModeState(state.mode), configOptions: [modelOption(state)] };
+    return { sessionId, modes: sessionModeState(state.mode), configOptions: sessionConfigOptions(state) };
   };
 
   const app = agent({ name: adapter.info.name })
@@ -271,16 +341,24 @@ export function createAgent(adapter: AgentAdapter, options: CreateAgentOptions =
     .onRequest("session/set_config_option", ({ params }) =>
       track(async () => {
         const session = getSession(params.sessionId);
-        if (params.configId !== MODEL_CONFIG_ID) {
+        const value = params.value;
+        if (params.configId === MODEL_CONFIG_ID) {
+          const model = typeof value === "string" ? findModel(session.catalog, value) : undefined;
+          if (!model) throw RequestError.invalidParams({ value }, "unknown model");
+          await session.adapterSession.setModel?.(model.value);
+          session.model = model.value;
+          // Keep the effort when the new model takes it, else fall back to its default.
+          session.effort = resolveEffort(model, session.effort, env[EFFORT_ENV]?.trim());
+        } else if (params.configId === EFFORT_CONFIG_ID) {
+          const efforts = findModel(session.catalog, session.model)?.efforts ?? [];
+          if (typeof value !== "string" || !efforts.some((choice) => choice.value === value)) {
+            throw RequestError.invalidParams({ value }, "unknown effort for this model");
+          }
+          session.effort = value;
+        } else {
           throw RequestError.invalidParams({ configId: params.configId }, "unknown config option");
         }
-        const value = params.value;
-        if (typeof value !== "string" || !session.catalog.options.some((choice) => choice.value === value)) {
-          throw RequestError.invalidParams({ value }, "unknown model");
-        }
-        session.model = value;
-        await session.adapterSession.setModel?.(value);
-        return { configOptions: [modelOption(session)] };
+        return { configOptions: sessionConfigOptions(session) };
       })
     )
     .onRequest("session/prompt", ({ params, signal }) =>

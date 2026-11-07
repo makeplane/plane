@@ -3,10 +3,27 @@
     "title": "Ajanlar",
     "picker": {
       "label": "Ajan",
-      "placeholder": "Bir ajan seçin"
+      "trigger_label": "Ajan ve model: {selection}",
+      "switch_hint": "Ajan değiştirmek yeni bir sohbet başlatır.",
+      "unavailable": "Henüz API anahtarı yok",
+      "manage_providers": "Yapay zeka sağlayıcılarını yönet"
     },
     "model": {
       "label": "Dil modeli"
+    },
+    "effort": {
+      "label": "Akıl yürütme düzeyi",
+      "trigger_label": "Akıl yürütme düzeyi: {level}",
+      "hint": "Bir sonraki mesajınızdan itibaren geçerli olur.",
+      "levels": {
+        "none": "Yok",
+        "minimal": "Minimum",
+        "low": "Düşük",
+        "medium": "Orta",
+        "high": "Yüksek",
+        "xhigh": "Çok yüksek",
+        "max": "Maksimum"
+      }
     },
     "permission": {
       "label": "İzin düzeyi",
@@ -131,6 +148,7 @@
         "prompt": "Ajan bu mesajı yanıtlayamadı.",
         "set_mode": "İzin düzeyi değiştirilemedi.",
         "set_model": "Model değiştirilemedi.",
+        "set_effort": "Akıl yürütme düzeyi değiştirilemedi.",
         "reconnect": "Yeniden bağlanılamadı."
       },
       "retry": "Tekrar dene"
@@ -192,6 +210,10 @@
             "label": "Varsayılan model",
             "help": "İsteğe bağlı model kimliği, örn. claude-opus-5-5. Üyeler sohbette model değiştirebilir."
           },
+          "PLANE_AGENT_EFFORT": {
+            "label": "Varsayılan akıl yürütme düzeyi",
+            "help": "İsteğe bağlı, örn. high. Model bu düzeyi destekliyorsa kullanılır. Üyeler bunu sohbette değiştirebilir."
+          },
           "GEMINI_API_KEY": {
             "label": "Gemini API anahtarı",
             "help": "Bir üyenin kendi anahtarı olmadığında ve Google ile oturum açmadığında kullanılır."
@@ -248,7 +270,6 @@
       "unread": "{name} sohbetini aç (yeni etkinlik)",
       "minimize": "Küçült",
       "open_page": "Tam sayfada aç",
-      "agent_menu_label": "Ajanı değiştir, şu anki: {agent}",
       "greeting": "Merhaba, ben {name}",
       "suggestions": {
         "assigned_to_me": "Bana neler atandı?",
@@ -363,7 +384,8 @@
         "connected": "{email} olarak oturum açıldı.",
         "connected_unknown": "Oturum açıldı.",
         "disconnected": "Hesabın bağlantısı kesildi.",
-        "disconnect_failed": "Hesabın bağlantısı kesilemedi."
+        "disconnect_failed": "Hesabın bağlantısı kesilemedi.",
+        "sign_in_lost": "{vendor} oturumunuz artık geçerli değil. Yeniden oturum açın."
       }
     }
   }

@@ -58,6 +58,38 @@ describe("DeepSeek tool loop (fetch-stubbed SSE)", () => {
     expect(api.requests[0]!.headers.get("authorization")).toBe("Bearer sk-deepseek");
   });
 
+  it("sends the session's reasoning effort, starting on DEEPSEEK_REASONING_EFFORT", async () => {
+    const { api, sessionId, prompt } = await open({ DEEPSEEK_REASONING_EFFORT: "max" });
+    await prompt("hello");
+    expect(api.requests[0]!.body.reasoning_effort).toBe("max");
+    const result = await client!.agent.request("session/set_config_option", {
+      sessionId,
+      configId: "effort",
+      value: "low",
+    });
+    expect(result.configOptions.find((option) => option.id === "effort")).toMatchObject({
+      currentValue: "low",
+      options: [
+        { value: "low", name: "Low" },
+        { value: "high", name: "High" },
+        { value: "max", name: "Max" },
+      ],
+    });
+    await prompt("hello");
+    expect(api.requests[1]!.body.reasoning_effort).toBe("low");
+  });
+
+  it("offers efforts on an unlisted model and falls back to high for an unknown level", async () => {
+    const unlisted = await open({ PLANE_AGENT_MODEL: "deepseek-v5-preview", DEEPSEEK_REASONING_EFFORT: "max" });
+    await unlisted.prompt("hello");
+    expect(unlisted.api.requests[0]!.body).toMatchObject({ model: "deepseek-v5-preview", reasoning_effort: "max" });
+    await client!.close();
+
+    const invalid = await open({ DEEPSEEK_REASONING_EFFORT: "MAX" });
+    await invalid.prompt("hello");
+    expect(invalid.api.requests[0]!.body.reasoning_effort).toBe("high");
+  });
+
   it("maps finish reasons and stops at the iteration limit", async () => {
     expect(finishToStopReason("stop")).toBe("end_turn");
     expect(finishToStopReason("length")).toBe("max_tokens");

@@ -57,6 +57,77 @@ describe("plane-acp-claude over ndjson (mocked query())", () => {
     });
   });
 
+  it("offers a reasoning effort per model, starts on the browser's last choice and sends it each turn", async () => {
+    const fake = fakeQuery();
+    client = inProcessClient(createClaudeAdapter({ query: fake.query as never }), env);
+    await client.agent.request("initialize", { protocolVersion: 1 });
+    const created = await client.agent.request("session/new", {
+      cwd: tempDir(),
+      mcpServers: [],
+      _meta: { "plane/initialModel": "claude-sonnet-5-5", "plane/initialEffort": "xhigh" },
+    });
+    const { sessionId } = created;
+    expect(created.configOptions?.map((option) => [option.id, option.category, option.currentValue])).toEqual([
+      ["model", "model", "claude-sonnet-5-5"],
+      ["effort", "thought_level", "xhigh"],
+    ]);
+    const prompt = () =>
+      client!.agent.request("session/prompt", { sessionId, prompt: [{ type: "text", text: "hello" }] });
+    await prompt();
+    expect(fake.calls[0]?.options).toMatchObject({ model: "claude-sonnet-5-5", effort: "xhigh" });
+
+    const lowered = await client.agent.request("session/set_config_option", {
+      sessionId,
+      configId: "effort",
+      value: "low",
+    });
+    expect(lowered.configOptions.find((option) => option.id === "effort")?.currentValue).toBe("low");
+    // Every Claude model takes `low`, so switching models keeps it.
+    const switched = await client.agent.request("session/set_config_option", {
+      sessionId,
+      configId: "model",
+      value: "claude-haiku-5-5",
+    });
+    expect(switched.configOptions.map((option) => option.currentValue)).toEqual(["claude-haiku-5-5", "low"]);
+    await prompt();
+    expect(fake.calls[1]?.options).toMatchObject({ model: "claude-haiku-5-5", effort: "low" });
+
+    await expect(
+      client.agent.request("session/set_config_option", { sessionId, configId: "effort", value: "ultra" })
+    ).rejects.toMatchObject({ code: -32602 });
+  });
+
+  it("gives an unlisted PLANE_AGENT_MODEL the usual efforts", async () => {
+    const fake = fakeQuery();
+    client = inProcessClient(createClaudeAdapter({ query: fake.query as never }), {
+      ...env,
+      PLANE_AGENT_MODEL: "claude-opus-6",
+    });
+    await client.agent.request("initialize", { protocolVersion: 1 });
+    const created = await client.agent.request("session/new", { cwd: tempDir(), mcpServers: [] });
+    expect(created.configOptions?.map((option) => option.currentValue)).toEqual(["claude-opus-6", "high"]);
+    await client.agent.request("session/prompt", {
+      sessionId: created.sessionId,
+      prompt: [{ type: "text", text: "hello" }],
+    });
+    expect(fake.calls[0]?.options).toMatchObject({ model: "claude-opus-6", effort: "high" });
+  });
+
+  it("ignores a remembered model it does not offer and starts on the configured effort", async () => {
+    const fake = fakeQuery();
+    client = inProcessClient(createClaudeAdapter({ query: fake.query as never }), {
+      ...env,
+      PLANE_AGENT_EFFORT: "high",
+    });
+    await client.agent.request("initialize", { protocolVersion: 1 });
+    const created = await client.agent.request("session/new", {
+      cwd: tempDir(),
+      mcpServers: [],
+      _meta: { "plane/initialModel": "claude-retired-1", "plane/initialEffort": "ultra" },
+    });
+    expect(created.configOptions?.map((option) => option.currentValue)).toEqual(["claude-opus-5-5", "high"]);
+  });
+
   it("maps TodoWrite to a plan and max_tokens to its stop reason, and requires credentials", async () => {
     const fake = fakeQuery();
     client = inProcessClient(createClaudeAdapter({ query: fake.query as never }), env);

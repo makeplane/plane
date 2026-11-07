@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 import base64
+import functools
 import hashlib
 from django.conf import settings
 from cryptography.fernet import Fernet
@@ -10,8 +11,10 @@ from cryptography.fernet import Fernet
 from plane.utils.exception_logger import log_exception
 
 
+@functools.lru_cache(maxsize=4)
 def derive_key(secret_key):
-    # Use a key derivation function to get a suitable encryption key
+    # Use a key derivation function to get a suitable encryption key. PBKDF2 is deliberately slow
+    # and the result depends only on the secret, so it is computed once per secret per process.
     dk = hashlib.pbkdf2_hmac("sha256", secret_key.encode(), b"salt", 100000)
     return base64.urlsafe_b64encode(dk)
 

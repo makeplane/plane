@@ -7,12 +7,15 @@
 import { observer } from "mobx-react";
 import { Banner } from "@makeplane/propel/components/banner";
 import { Button } from "@makeplane/propel/components/button";
-import { describeClose } from "@plane/acp-client";
+import { AUTH_REQUIRED, describeClose } from "@plane/acp-client";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { CloseInfo } from "@plane/acp-client";
 import { Spinner } from "@plane/blocks/spinner";
 import { useTranslation } from "@plane/i18n";
 // hooks
 import { useAgentChat } from "@/hooks/store/use-agent-chat";
+import { useUserPermissions } from "@/hooks/store/user";
+import { useAppRouter } from "@/hooks/use-app-router";
 import type { TAgentChatAction, TAgentChatError } from "@/store/agent-chat.store";
 // local imports
 import { chatErrorDetail, chatErrorMessage, closeReasonKey, modeName } from "./helpers";
@@ -50,15 +53,28 @@ type ErrorBannerProps = {
   /** Display name of the refused permission level, for `mode_not_allowed`. */
   modeLabel?: string;
   onRetry?: () => void;
+  /** The agent could not sign in: link to where keys and sign-ins are added. */
+  onManageProviders?: () => void;
   onDismiss: () => void;
 };
 
-function ErrorBanner({ error, modeLabel, onRetry, onDismiss }: ErrorBannerProps) {
+function ErrorBanner({ error, modeLabel, onRetry, onManageProviders, onDismiss }: ErrorBannerProps) {
   const { t } = useTranslation();
   const detail = chatErrorDetail(error);
-  const action = onRetry ? (
-    <Button variant="secondary" size="sm" stretch="auto" label={t("agents.errors.retry")} onClick={onRetry} />
-  ) : undefined;
+  let action;
+  if (onManageProviders) {
+    action = (
+      <Button
+        variant="secondary"
+        size="sm"
+        stretch="auto"
+        label={t("agents.picker.manage_providers")}
+        onClick={onManageProviders}
+      />
+    );
+  } else if (onRetry) {
+    action = <Button variant="secondary" size="sm" stretch="auto" label={t("agents.errors.retry")} onClick={onRetry} />;
+  }
   return (
     <Banner
       placement="inline"
@@ -76,6 +92,8 @@ function ErrorBanner({ error, modeLabel, onRetry, onDismiss }: ErrorBannerProps)
 /** Connection progress, why the chat closed (bridge close codes), and failed actions. */
 export const AgentChatStatusBanner = observer(function AgentChatStatusBanner() {
   const { t } = useTranslation();
+  const router = useAppRouter();
+  const { allowPermissions } = useUserPermissions();
   const { snapshot, error, isConnecting, reconnect, startNewSession, clearError, openChat, workspaceSlug, agentId } =
     useAgentChat();
 
@@ -107,5 +125,21 @@ export const AgentChatStatusBanner = observer(function AgentChatStatusBanner() {
     reconnect: handleReconnect,
   };
   const onRetry = retry[error.action];
-  return <ErrorBanner error={error} onDismiss={clearError} {...(onRetry ? { onRetry } : {})} />;
+  // Retrying cannot fix a missing credential; admins and members can add one (guests cannot).
+  const needsCredential = error.kind === "request" && error.code === AUTH_REQUIRED;
+  const canManageProviders = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
+  const onManageProviders =
+    needsCredential && canManageProviders && workspaceSlug
+      ? () => router.push(`/${workspaceSlug}/settings/ai-providers/`)
+      : undefined;
+  return (
+    <ErrorBanner
+      error={error}
+      onDismiss={clearError}
+      {...(onManageProviders ? { onManageProviders } : onRetry ? { onRetry } : {})}
+    />
+  );
 });

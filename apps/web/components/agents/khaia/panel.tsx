@@ -19,9 +19,10 @@ import { useAgentChat } from "@/hooks/store/use-agent-chat";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
 import { AgentChatStatusBanner } from "../connection-banner";
+import { AgentEffortMenu } from "../effort-menu";
+import { AgentModelPicker } from "../model-picker";
 import { AgentPermissionLevelSelect } from "../permission-level-select";
 import { TranscriptView } from "../transcript/transcript-view";
-import { KhaiaAgentMenu } from "./agent-menu";
 import { KhaiaAvatar } from "./avatar";
 import { KhaiaComposer } from "./composer";
 import { KHAIA_NAME, KHAIA_SUGGESTIONS } from "./constants";
@@ -78,7 +79,8 @@ export const KhaiaPanel = observer(function KhaiaPanel({ workspaceSlug, onMinimi
   const { t } = useTranslation();
   const router = useAppRouter();
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const { snapshot, canPrompt, sendPrompt, cancelTurn, startNewSession, respondToPermission } = useAgentChat();
+  const { snapshot, activeAgent, canPrompt, sendPrompt, cancelTurn, startNewSession, respondToPermission } =
+    useAgentChat();
   const transcript = snapshot?.transcript;
   const prompting = !!snapshot?.prompting;
 
@@ -104,7 +106,9 @@ export const KhaiaPanel = observer(function KhaiaPanel({ workspaceSlug, onMinimi
         <KhaiaAvatar />
         <div className="flex min-w-0 flex-col items-start">
           <CardTitle>{KHAIA_NAME}</CardTitle>
-          <KhaiaAgentMenu workspaceSlug={workspaceSlug} />
+          {activeAgent && (
+            <span className="max-w-full truncate text-caption-md-regular text-tertiary">{activeAgent.name}</span>
+          )}
         </div>
         <CardAction>
           <HeaderButton label={t("agents.sessions.new")} onClick={() => void startNewSession()}>
@@ -142,7 +146,13 @@ export const KhaiaPanel = observer(function KhaiaPanel({ workspaceSlug, onMinimi
           prompting={prompting}
           onSend={(text) => void sendPrompt(text)}
           onStop={() => void cancelTurn()}
-          toolbar={<AgentPermissionLevelSelect />}
+          toolbar={
+            <>
+              <AgentModelPicker />
+              <AgentEffortMenu />
+              <AgentPermissionLevelSelect />
+            </>
+          }
         />
       </CardFooter>
     </Card>

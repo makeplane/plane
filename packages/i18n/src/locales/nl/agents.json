@@ -3,10 +3,27 @@
     "title": "Agenten",
     "picker": {
       "label": "Agent",
-      "placeholder": "Kies een agent"
+      "trigger_label": "Agent en model: {selection}",
+      "switch_hint": "Als u van agent wisselt, begint er een nieuwe chat.",
+      "unavailable": "Nog geen API-sleutel",
+      "manage_providers": "AI-providers beheren"
     },
     "model": {
       "label": "Model"
+    },
+    "effort": {
+      "label": "Redeneerniveau",
+      "trigger_label": "Redeneerniveau: {level}",
+      "hint": "Geldt vanaf uw volgende bericht.",
+      "levels": {
+        "none": "Geen",
+        "minimal": "Minimaal",
+        "low": "Laag",
+        "medium": "Gemiddeld",
+        "high": "Hoog",
+        "xhigh": "Zeer hoog",
+        "max": "Maximaal"
+      }
     },
     "permission": {
       "label": "Machtigingsniveau",
@@ -131,6 +148,7 @@
         "prompt": "De agent kon dat bericht niet beantwoorden.",
         "set_mode": "Kan het machtigingsniveau niet wijzigen.",
         "set_model": "Kan het model niet wijzigen.",
+        "set_effort": "Kan het redeneerniveau niet wijzigen.",
         "reconnect": "Kan niet opnieuw verbinden."
       },
       "retry": "Opnieuw proberen"
@@ -192,6 +210,10 @@
             "label": "Standaardmodel",
             "help": "Optionele model-ID, bijv. claude-opus-5-5. Leden kunnen in de chat van model wisselen."
           },
+          "PLANE_AGENT_EFFORT": {
+            "label": "Standaardredeneerniveau",
+            "help": "Optioneel, bijv. high. Wordt gebruikt als het model dat niveau ondersteunt. Leden kunnen het in de chat wijzigen."
+          },
           "GEMINI_API_KEY": {
             "label": "Gemini API-sleutel",
             "help": "Gebruikt wanneer een lid geen eigen sleutel heeft en niet met Google is ingelogd."
@@ -248,7 +270,6 @@
       "unread": "{name} openen (nieuwe activiteit)",
       "minimize": "Minimaliseren",
       "open_page": "Openen op volledige pagina",
-      "agent_menu_label": "Agent wisselen, nu {agent}",
       "greeting": "Hallo, ik ben {name}",
       "suggestions": {
         "assigned_to_me": "Wat is aan mij toegewezen?",
@@ -363,7 +384,8 @@
         "connected": "Ingelogd als {email}.",
         "connected_unknown": "Ingelogd.",
         "disconnected": "Account ontkoppeld.",
-        "disconnect_failed": "Het account kon niet worden ontkoppeld."
+        "disconnect_failed": "Het account kon niet worden ontkoppeld.",
+        "sign_in_lost": "Uw aanmelding bij {vendor} is niet meer geldig. Log opnieuw in."
       }
     }
   }

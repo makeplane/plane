@@ -240,6 +240,26 @@ describe("ChatGPT sign-in (codex)", () => {
     expect(record.args.slice(-2)).toEqual(["codex", "logout"]);
   });
 
+  it("reports whether the stored sign-in is still there", async () => {
+    await start();
+    expect(await authCall(url, "account")).toEqual({ status: 200, body: { connected: false } });
+    mkdirSync(path.join(home(), ".codex"), { recursive: true });
+    writeFileSync(path.join(home(), ".codex", "auth.json"), "{}");
+    expect(await authCall(url, "account")).toEqual({
+      status: 200,
+      body: { connected: true, account: { email: "ada@example.com" } },
+    });
+    // Another user's home is a different sign-in.
+    expect((await authCall(url, "account", { claims: { userId: OTHER_USER_ID } })).body).toEqual({ connected: false });
+  });
+
+  it("reports a sign-in check the helper could not answer", async () => {
+    await start(["--scenario=status-fail"]);
+    const result = await authCall(url, "account");
+    expect(result.status).toBe(502);
+    expect(result.body).toMatchObject({ reason: "helper_failed" });
+  });
+
   it("reports a failed sign-out", async () => {
     await start(["--scenario=logout-fail"]);
     expect(await authCall(url, "logout", { method: "POST" })).toEqual({

@@ -3,10 +3,27 @@
     "title": "Agenti",
     "picker": {
       "label": "Agent",
-      "placeholder": "Vyberte agenta"
+      "trigger_label": "Agent a model: {selection}",
+      "switch_hint": "Přepnutím agenta zahájíte nový chat.",
+      "unavailable": "Zatím žádný API klíč",
+      "manage_providers": "Spravovat poskytovatele AI"
     },
     "model": {
       "label": "Jazykový model"
+    },
+    "effort": {
+      "label": "Úroveň uvažování",
+      "trigger_label": "Úroveň uvažování: {level}",
+      "hint": "Platí od vaší příští zprávy.",
+      "levels": {
+        "none": "Žádná",
+        "minimal": "Minimální",
+        "low": "Nízká",
+        "medium": "Střední",
+        "high": "Vysoká",
+        "xhigh": "Velmi vysoká",
+        "max": "Maximální"
+      }
     },
     "permission": {
       "label": "Úroveň oprávnění",
@@ -131,6 +148,7 @@
         "prompt": "Agent na tuto zprávu nedokázal odpovědět.",
         "set_mode": "Úroveň oprávnění se nepodařilo změnit.",
         "set_model": "Model se nepodařilo změnit.",
+        "set_effort": "Úroveň uvažování se nepodařilo změnit.",
         "reconnect": "Opětovné připojení se nezdařilo."
       },
       "retry": "Zkusit znovu"
@@ -192,6 +210,10 @@
             "label": "Výchozí model",
             "help": "Volitelné ID modelu, např. claude-opus-5-5. Členové mohou modely přepínat v chatu."
           },
+          "PLANE_AGENT_EFFORT": {
+            "label": "Výchozí úroveň uvažování",
+            "help": "Volitelné, např. high. Použije se, pokud model tuto úroveň podporuje. Členové ji mohou přepnout v chatu."
+          },
           "GEMINI_API_KEY": {
             "label": "API klíč Gemini",
             "help": "Použije se, když člen nemá vlastní klíč a není přihlášen přes Google."
@@ -248,7 +270,6 @@
       "unread": "Otevřít {name} (nová aktivita)",
       "minimize": "Minimalizovat",
       "open_page": "Otevřít na celé stránce",
-      "agent_menu_label": "Změnit agenta, nyní {agent}",
       "greeting": "Dobrý den, jsem {name}",
       "suggestions": {
         "assigned_to_me": "Co je mi přiřazeno?",
@@ -363,7 +384,8 @@
         "connected": "Přihlášeno jako {email}.",
         "connected_unknown": "Přihlášeno.",
         "disconnected": "Účet byl odpojen.",
-        "disconnect_failed": "Účet se nepodařilo odpojit."
+        "disconnect_failed": "Účet se nepodařilo odpojit.",
+        "sign_in_lost": "Vaše přihlášení k {vendor} už není platné. Přihlaste se znovu."
       }
     }
   }

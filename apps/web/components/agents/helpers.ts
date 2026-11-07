@@ -7,7 +7,7 @@
 import { describeClose } from "@plane/acp-client";
 import type { AgentCloseReason, CloseInfo, PermissionOption, SessionMode } from "@plane/acp-client";
 import { AGENT_PERMISSION_LEVELS } from "@plane/constants";
-import type { TAgentPermissionLevel } from "@plane/types";
+import type { TAgentPermissionLevel, TWorkspaceAgent } from "@plane/types";
 import type { TAgentChatError } from "@/store/agent-chat.store";
 
 type TTranslate = (key: string, params?: Record<string, unknown>) => string;
@@ -81,6 +81,28 @@ export function recallAgent(workspaceSlug: string): string | null {
   } catch {
     return null;
   }
+}
+
+/** Effort levels with our own labels; any other level keeps the name the agent sent. */
+export const AGENT_EFFORT_LEVELS = ["none", "minimal", "low", "medium", "high", "xhigh", "max"] as const;
+
+export function effortName(t: TTranslate, choice: { value: string; name: string }): string {
+  return (AGENT_EFFORT_LEVELS as readonly string[]).includes(choice.value)
+    ? t(`agents.effort.levels.${choice.value}`)
+    : choice.name;
+}
+
+/** Whether a chat with the agent could sign in: the member, the workspace or the admin has a credential. */
+export const isAgentAvailable = (agent: Pick<TWorkspaceAgent, "credential_source">): boolean =>
+  agent.credential_source !== null;
+
+/**
+ * The agent a chat opens with: the remembered one while it is still usable, else the first usable
+ * one, else the first (its chat then explains what is missing).
+ */
+export function pickInitialAgent(agents: readonly TWorkspaceAgent[], remembered: string | null): string | undefined {
+  const usable = agents.filter(isAgentAvailable);
+  return (usable.find((agent) => agent.id === remembered) ?? usable[0] ?? agents[0])?.id;
 }
 
 export function rememberAgent(workspaceSlug: string, agentId: string): void {

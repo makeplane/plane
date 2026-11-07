@@ -25,7 +25,7 @@
       "expected": "claude/valid/turn.out.jsonl",
       "exitCode": 0,
       "inputSha256": "dd80dd56474653f44571ee6ef4781a9310295142c47e0485b61595ad807494c1",
-      "expectedSha256": "6f31566b9af1c1feb74338250e196cccd4a2d1720facc69fcb68b28555e1a83d"
+      "expectedSha256": "4d21cef452ce9ab020f133a265953baaa0149d408921a1373f1136e00f8a5d99"
     },
     {
       "id": "codex/valid/initialize",
@@ -47,7 +47,7 @@
       "expected": "codex/valid/turn.out.jsonl",
       "exitCode": 0,
       "inputSha256": "47a825f0b3405bbfc28ae4e6611f3de263e6391edfee2d3297332f13541d5e11",
-      "expectedSha256": "80cbfb475ebc2df9d9ca4b5e50f761a1842dbeb6263109d347353ce446464594"
+      "expectedSha256": "ec6c481d44c0b4930ae8e100cf4c716aebe5cede138ca41b2372076309f7fa48"
     },
     {
       "id": "gemini/valid/initialize",
@@ -91,7 +91,7 @@
       "expected": "deepseek/valid/tool-loop.out.jsonl",
       "exitCode": 0,
       "inputSha256": "278cc83b1be823a3521323a996a68cf063e32caf8dd953480e597656e1884efa",
-      "expectedSha256": "bdb773292b2667b6bc3a3f68f366ed5facfd96d0c5c766c8375a3b35cb5a3e56"
+      "expectedSha256": "7ed283915e9f44bab45725f5f9cd7c186c893518aea6e17ba240c854e2bac8c0"
     },
     {
       "id": "echo/malformed/batch",

@@ -3,10 +3,27 @@
     "title": "Agents",
     "picker": {
       "label": "Agent",
-      "placeholder": "Choisir un agent"
+      "trigger_label": "Agent et modèle : {selection}",
+      "switch_hint": "Changer d’agent démarre une nouvelle conversation.",
+      "unavailable": "Aucune clé API pour l’instant",
+      "manage_providers": "Gérer les fournisseurs d’IA"
     },
     "model": {
       "label": "Modèle"
+    },
+    "effort": {
+      "label": "Niveau de raisonnement",
+      "trigger_label": "Niveau de raisonnement : {level}",
+      "hint": "S’applique à partir de votre prochain message.",
+      "levels": {
+        "none": "Aucun",
+        "minimal": "Minimal",
+        "low": "Faible",
+        "medium": "Moyen",
+        "high": "Élevé",
+        "xhigh": "Très élevé",
+        "max": "Maximal"
+      }
     },
     "permission": {
       "label": "Niveau d’autorisation",
@@ -131,6 +148,7 @@
         "prompt": "L’agent n’a pas pu répondre à ce message.",
         "set_mode": "Impossible de modifier le niveau d’autorisation.",
         "set_model": "Impossible de changer de modèle.",
+        "set_effort": "Impossible de modifier le niveau de raisonnement.",
         "reconnect": "Impossible de se reconnecter."
       },
       "retry": "Réessayer"
@@ -192,6 +210,10 @@
             "label": "Modèle par défaut",
             "help": "Identifiant de modèle facultatif, par exemple claude-opus-5-5. Les membres peuvent changer de modèle dans la conversation."
           },
+          "PLANE_AGENT_EFFORT": {
+            "label": "Niveau de raisonnement par défaut",
+            "help": "Facultatif, par exemple high. Utilisé lorsque le modèle prend en charge ce niveau. Les membres peuvent le changer dans la conversation."
+          },
           "GEMINI_API_KEY": {
             "label": "Clé API Gemini",
             "help": "Utilisée lorsqu’un membre n’a pas sa propre clé et n’est pas connecté avec Google."
@@ -248,7 +270,6 @@
       "unread": "Ouvrir {name} (nouvelle activité)",
       "minimize": "Réduire",
       "open_page": "Ouvrir en pleine page",
-      "agent_menu_label": "Changer d’agent, actuellement {agent}",
       "greeting": "Bonjour, je suis {name}",
       "suggestions": {
         "assigned_to_me": "Qu’est-ce qui m’est assigné ?",
@@ -363,7 +384,8 @@
         "connected": "Connecté en tant que {email}.",
         "connected_unknown": "Connecté.",
         "disconnected": "Compte déconnecté.",
-        "disconnect_failed": "Impossible de déconnecter le compte."
+        "disconnect_failed": "Impossible de déconnecter le compte.",
+        "sign_in_lost": "Votre connexion à {vendor} n’est plus valide. Reconnectez-vous."
       }
     }
   }

@@ -35,6 +35,8 @@ export interface LoginRunner {
   status(target: LoginTarget, loginId: string, signal?: AbortSignal): Promise<RunnerReply>;
   complete(target: LoginTarget, loginId: string, code: string, signal?: AbortSignal): Promise<RunnerReply>;
   logout(target: LoginTarget, signal?: AbortSignal): Promise<RunnerReply>;
+  /** Whether the stored sign-in is still in the user's agent home: `{connected, account?}`. */
+  account(target: LoginTarget, signal?: AbortSignal): Promise<RunnerReply>;
 }
 
 export interface RunnerLoginClientOptions {
@@ -75,6 +77,10 @@ export class RunnerLoginClient implements LoginRunner {
 
   logout(target: LoginTarget, signal?: AbortSignal): Promise<RunnerReply> {
     return this.#call(target, "POST", "/auth/logout", undefined, signal);
+  }
+
+  account(target: LoginTarget, signal?: AbortSignal): Promise<RunnerReply> {
+    return this.#call(target, "GET", "/auth/account", undefined, signal);
   }
 
   async #call(

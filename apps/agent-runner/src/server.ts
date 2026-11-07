@@ -348,6 +348,15 @@ export class AgentRunner {
         res.json(result.state);
       });
     });
+    auth.get("/account", (req, res) => {
+      void this.#withLoginTicket(req, res, async (ticket, log) => {
+        const result = await this.#logins.account(ticket, log);
+        if (!result.ok) return sendFailure(res, result);
+        res.json(
+          result.account ? { connected: result.connected, account: result.account } : { connected: result.connected }
+        );
+      });
+    });
     auth.post("/logout", (req, res) => {
       void this.#withLoginTicket(req, res, async (ticket, log) => {
         const result = await this.#logins.logout(ticket, log);

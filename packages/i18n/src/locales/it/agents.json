@@ -3,10 +3,27 @@
     "title": "Agenti",
     "picker": {
       "label": "Agente",
-      "placeholder": "Selezionare un agente"
+      "trigger_label": "Agente e modello: {selection}",
+      "switch_hint": "Cambiando agente si avvia una nuova chat.",
+      "unavailable": "Ancora nessuna chiave API",
+      "manage_providers": "Gestisci i fornitori di IA"
     },
     "model": {
       "label": "Modello"
+    },
+    "effort": {
+      "label": "Livello di ragionamento",
+      "trigger_label": "Livello di ragionamento: {level}",
+      "hint": "Si applica dal prossimo messaggio.",
+      "levels": {
+        "none": "Nessuno",
+        "minimal": "Minimo",
+        "low": "Basso",
+        "medium": "Medio",
+        "high": "Alto",
+        "xhigh": "Molto alto",
+        "max": "Massimo"
+      }
     },
     "permission": {
       "label": "Livello di autorizzazione",
@@ -131,6 +148,7 @@
         "prompt": "L'agente non è riuscito a rispondere a quel messaggio.",
         "set_mode": "Impossibile modificare il livello di autorizzazione.",
         "set_model": "Impossibile modificare il modello.",
+        "set_effort": "Impossibile modificare il livello di ragionamento.",
         "reconnect": "Impossibile riconnettersi."
       },
       "retry": "Riprova"
@@ -192,6 +210,10 @@
             "label": "Modello predefinito",
             "help": "ID del modello facoltativo, ad esempio claude-opus-5-5. I membri possono cambiare modello nella chat."
           },
+          "PLANE_AGENT_EFFORT": {
+            "label": "Livello di ragionamento predefinito",
+            "help": "Facoltativo, ad esempio high. Usato quando il modello supporta quel livello. I membri possono cambiarlo nella chat."
+          },
           "GEMINI_API_KEY": {
             "label": "Chiave API Gemini",
             "help": "Usata quando un membro non ha una propria chiave e non ha effettuato l'accesso con Google."
@@ -248,7 +270,6 @@
       "unread": "Apri {name} (nuova attività)",
       "minimize": "Riduci a icona",
       "open_page": "Apri a pagina intera",
-      "agent_menu_label": "Cambia agente, attuale: {agent}",
       "greeting": "Buongiorno, sono {name}",
       "suggestions": {
         "assigned_to_me": "Cosa mi è stato assegnato?",
@@ -363,7 +384,8 @@
         "connected": "Accesso effettuato come {email}.",
         "connected_unknown": "Accesso effettuato.",
         "disconnected": "Account disconnesso.",
-        "disconnect_failed": "Impossibile disconnettere l'account."
+        "disconnect_failed": "Impossibile disconnettere l'account.",
+        "sign_in_lost": "L'accesso a {vendor} non è più valido. Accedere di nuovo."
       }
     }
   }

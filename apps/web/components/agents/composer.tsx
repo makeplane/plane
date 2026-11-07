@@ -63,7 +63,7 @@ export function AgentChatComposer({ agentName, canPrompt, prompting, onSend, onS
         aria-describedby="agent-composer-hint"
       />
       <div className="flex items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">{toolbar}</div>
+        <div className="flex min-w-0 flex-wrap items-center gap-1">{toolbar}</div>
         <div className="flex flex-shrink-0 items-center gap-3">
           <span id="agent-composer-hint" className="hidden text-caption-sm-regular text-placeholder sm:inline">
             {t("agents.composer.hint")}

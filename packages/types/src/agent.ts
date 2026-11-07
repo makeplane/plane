@@ -10,8 +10,8 @@ export type TAgentAdapter = "claude" | "codex" | "deepseek" | "gemini";
 /** ACP session modes used as permission levels, least to most permissive. */
 export type TAgentPermissionLevel = "ask_all" | "ask_writes" | "yolo";
 
-/** An agent a workspace member can chat with (`GET /api/workspaces/<slug>/agents/`). */
-export type TWorkspaceAgent = {
+/** The fields of an agent definition every API returns. */
+export type TAgentDefinitionBase = {
   id: string;
   name: string;
   slug: string;
@@ -22,10 +22,21 @@ export type TWorkspaceAgent = {
 };
 
 /**
+ * Where a member's chats with an agent get their credential: their own, the workspace's key, the
+ * agent's admin env, or `null` when nothing would sign the chat in.
+ */
+export type TAgentCredentialSource = "personal" | "workspace" | "instance";
+
+/** An agent a workspace member can chat with (`GET /api/workspaces/<slug>/agents/`). */
+export type TWorkspaceAgent = TAgentDefinitionBase & {
+  credential_source: TAgentCredentialSource | null;
+};
+
+/**
  * An agent definition as the instance admin API returns it. `env` values are always the mask
  * (`AGENT_ENV_MASK`); the secrets themselves are write-only.
  */
-export type TInstanceAgent = TWorkspaceAgent & {
+export type TInstanceAgent = TAgentDefinitionBase & {
   env: Record<string, string>;
   /** The stored env could not be decrypted (e.g. the secret key changed); every value must be re-entered. */
   env_decryption_failed: boolean;
@@ -114,4 +125,13 @@ export type TAgentConnectionStatus = {
   status: "pending" | "connected" | "failed";
   account?: TAgentConnectionAccount;
   error?: string;
+};
+
+/**
+ * Whether a member's stored account sign-in is still on the agent runner. When it is not, the
+ * bridge has already removed the stale credential.
+ */
+export type TAgentConnectionAccountCheck = {
+  connected: boolean;
+  account?: TAgentConnectionAccount;
 };

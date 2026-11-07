@@ -3,10 +3,27 @@
     "title": "에이전트",
     "picker": {
       "label": "에이전트",
-      "placeholder": "에이전트 선택"
+      "trigger_label": "에이전트 및 모델: {selection}",
+      "switch_hint": "에이전트를 전환하면 새 채팅이 시작됩니다.",
+      "unavailable": "아직 API 키 없음",
+      "manage_providers": "AI 공급자 관리"
     },
     "model": {
       "label": "모델"
+    },
+    "effort": {
+      "label": "추론 수준",
+      "trigger_label": "추론 수준: {level}",
+      "hint": "다음 메시지부터 적용됩니다.",
+      "levels": {
+        "none": "없음",
+        "minimal": "최소",
+        "low": "낮음",
+        "medium": "중간",
+        "high": "높음",
+        "xhigh": "매우 높음",
+        "max": "최대"
+      }
     },
     "permission": {
       "label": "권한 수준",
@@ -131,6 +148,7 @@
         "prompt": "에이전트가 해당 메시지에 답변할 수 없습니다.",
         "set_mode": "권한 수준을 변경할 수 없습니다.",
         "set_model": "모델을 변경할 수 없습니다.",
+        "set_effort": "추론 수준을 변경할 수 없습니다.",
         "reconnect": "다시 연결할 수 없습니다."
       },
       "retry": "다시 시도"
@@ -192,6 +210,10 @@
             "label": "기본 모델",
             "help": "선택 사항인 모델 ID입니다(예: claude-opus-5-5). 멤버는 채팅에서 모델을 전환할 수 있습니다."
           },
+          "PLANE_AGENT_EFFORT": {
+            "label": "기본 추론 수준",
+            "help": "선택 사항입니다(예: high). 모델이 해당 수준을 지원할 때 사용됩니다. 멤버는 채팅에서 전환할 수 있습니다."
+          },
           "GEMINI_API_KEY": {
             "label": "Gemini API 키",
             "help": "멤버에게 자신의 키가 없고 Google로 로그인하지 않은 경우에 사용됩니다."
@@ -248,7 +270,6 @@
       "unread": "{name} 열기(새 활동)",
       "minimize": "최소화",
       "open_page": "전체 페이지로 열기",
-      "agent_menu_label": "에이전트 전환(현재: {agent})",
       "greeting": "안녕하세요, {name}입니다",
       "suggestions": {
         "assigned_to_me": "나에게 할당된 항목은 무엇인가요?",
@@ -363,7 +384,8 @@
         "connected": "{email}(으)로 로그인했습니다.",
         "connected_unknown": "로그인했습니다.",
         "disconnected": "계정 연결이 해제되었습니다.",
-        "disconnect_failed": "계정 연결을 해제할 수 없습니다."
+        "disconnect_failed": "계정 연결을 해제할 수 없습니다.",
+        "sign_in_lost": "{vendor} 로그인이 더 이상 유효하지 않습니다. 다시 로그인하세요."
       }
     }
   }

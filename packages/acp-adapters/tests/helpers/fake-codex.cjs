@@ -227,7 +227,19 @@ function handle(msg) {
         id: msg.id,
         result: {
           data: [
-            { id: "gpt-test", model: "gpt-test", displayName: "GPT Test", description: "Test model", hidden: false },
+            {
+              id: "gpt-test",
+              model: "gpt-test",
+              displayName: "GPT Test",
+              description: "Test model",
+              hidden: false,
+              supportedReasoningEfforts: [
+                { reasoningEffort: "low", description: "Fast" },
+                { reasoningEffort: "medium", description: "" },
+                { reasoningEffort: "high", description: "Thorough" },
+              ],
+              defaultReasoningEffort: "medium",
+            },
             { id: "gpt-mini", model: "gpt-mini", displayName: "GPT Mini", description: "", hidden: false },
             { id: "gpt-hidden", model: "gpt-hidden", displayName: "Hidden", description: "", hidden: true },
           ],
@@ -236,7 +248,14 @@ function handle(msg) {
       });
       return;
     case "thread/start":
-      send({ id: msg.id, result: { thread: { id: "thread-1" }, model: "gpt-test" } });
+      send({
+        id: msg.id,
+        result: {
+          thread: { id: "thread-1" },
+          model: "gpt-test",
+          reasoningEffort: process.env.FAKE_CODEX_REASONING_EFFORT || null,
+        },
+      });
       notify("mcpServer/startupStatus/updated", {
         name: "broken",
         status: process.env.FAKE_CODEX_BROKEN_MCP ? "failed" : "ready",

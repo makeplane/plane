@@ -11,6 +11,7 @@ import {
   RequestError,
   type AgentApp,
   type InitializeRequest,
+  type LoadSessionRequest,
   type NewSessionRequest,
   type SessionConfigOption,
   type SessionModeState,
@@ -24,12 +25,18 @@ export interface FakeAgentOptions {
   readonly listSessions?: boolean;
   /** Emulates the bridge's admin maximum: `set_mode` above it is answered -32602. */
   readonly maxMode?: (typeof MODES)[number];
+  /** `false`: sessions offer no config options at all (no model to choose). */
+  readonly models?: boolean;
+  /** `session/new` fails as an agent with no usable credential does (ACP -32000). */
+  readonly authRequired?: boolean;
 }
 
 interface FakeSession {
   readonly id: string;
   mode: string;
   model: string;
+  /** Empty for a model with no effort levels. */
+  effort: string;
   readonly history: SessionUpdate[];
   cancel?: () => void;
 }
@@ -39,6 +46,7 @@ export interface FakeAgentLog {
   readonly initialize: InitializeRequest[];
   readonly newSession: NewSessionRequest[];
   readonly loaded: string[];
+  readonly loadRequests: LoadSessionRequest[];
   readonly cancelled: string[];
 }
 
@@ -47,18 +55,41 @@ function modeState(current: string, max: string): SessionModeState {
   return { currentModeId: current, availableModes: allowed.map((id) => ({ id, name: id })) };
 }
 
-function modelOption(current: string): SessionConfigOption {
-  return {
-    id: "model",
-    name: "Model",
-    category: "model",
-    type: "select",
-    currentValue: current,
-    options: [
-      { value: "fast", name: "Fast" },
-      { value: "smart", name: "Smart" },
-    ],
-  };
+/** `fast` takes no effort; `smart` takes low/medium/high and starts on medium. */
+const MODEL_EFFORTS: Record<string, readonly string[]> = { fast: [], smart: ["low", "medium", "high"] };
+
+function effortFor(model: string, wanted: unknown): string {
+  const levels = MODEL_EFFORTS[model] ?? [];
+  if (typeof wanted === "string" && levels.includes(wanted)) return wanted;
+  return levels.includes("medium") ? "medium" : "";
+}
+
+function configOptions(session: Pick<FakeSession, "model" | "effort">): SessionConfigOption[] {
+  const options: SessionConfigOption[] = [
+    {
+      id: "model",
+      name: "Model",
+      category: "model",
+      type: "select",
+      currentValue: session.model,
+      options: [
+        { value: "fast", name: "Fast" },
+        { value: "smart", name: "Smart" },
+      ],
+    },
+  ];
+  const levels = MODEL_EFFORTS[session.model] ?? [];
+  if (session.effort && levels.length > 0) {
+    options.push({
+      id: "effort",
+      name: "Reasoning",
+      category: "thought_level",
+      type: "select",
+      currentValue: session.effort,
+      options: levels.map((value) => ({ value, name: value })),
+    });
+  }
+  return options;
 }
 
 /**
@@ -71,7 +102,7 @@ function modelOption(current: string): SessionConfigOption {
  */
 export function createFakeAgent(options: FakeAgentOptions = {}) {
   const sessions = new Map<string, FakeSession>();
-  const log: FakeAgentLog = { initialize: [], newSession: [], loaded: [], cancelled: [] };
+  const log: FakeAgentLog = { initialize: [], newSession: [], loaded: [], loadRequests: [], cancelled: [] };
   const maxMode = options.maxMode ?? "yolo";
   let counter = 0;
 
@@ -91,11 +122,19 @@ export function createFakeAgent(options: FakeAgentOptions = {}) {
       })
       .onRequest("session/new", ({ params }) => {
         log.newSession.push(params);
+        if (options.authRequired) throw RequestError.authRequired(undefined, "there is no API key");
         const requested = params._meta?.["plane/initialModeId"];
         const mode = typeof requested === "string" ? requested : "ask_writes";
-        const session: FakeSession = { id: `session-${++counter}`, mode, model: "fast", history: [] };
+        const wantedModel = params._meta?.["plane/initialModel"];
+        const model = typeof wantedModel === "string" && wantedModel in MODEL_EFFORTS ? wantedModel : "fast";
+        const effort = effortFor(model, params._meta?.["plane/initialEffort"]);
+        const session: FakeSession = { id: `session-${++counter}`, mode, model, effort, history: [] };
         sessions.set(session.id, session);
-        return { sessionId: session.id, modes: modeState(mode, maxMode), configOptions: [modelOption(session.model)] };
+        return {
+          sessionId: session.id,
+          modes: modeState(mode, maxMode),
+          configOptions: options.models === false ? [] : configOptions(session),
+        };
       })
       .onRequest("session/list", () => ({
         sessions: [...sessions.values()].map((session) => ({ sessionId: session.id, cwd: "/w", title: session.id })),
@@ -111,9 +150,16 @@ export function createFakeAgent(options: FakeAgentOptions = {}) {
       })
       .onRequest("session/set_config_option", ({ params }) => {
         const session = sessions.get(params.sessionId);
-        if (!session || params.configId !== "model") throw RequestError.invalidParams({}, "unknown option");
-        session.model = String(params.value);
-        return { configOptions: [modelOption(session.model)] };
+        const value = String(params.value);
+        if (session && params.configId === "model" && value in MODEL_EFFORTS) {
+          session.model = value;
+          session.effort = effortFor(value, session.effort);
+        } else if (session && params.configId === "effort" && (MODEL_EFFORTS[session.model] ?? []).includes(value)) {
+          session.effort = value;
+        } else {
+          throw RequestError.invalidParams({}, "unknown option");
+        }
+        return { configOptions: options.models === false ? [] : configOptions(session) };
       })
       .onRequest("session/prompt", async ({ params, client }) => {
         const session = sessions.get(params.sessionId);
@@ -192,8 +238,16 @@ export function createFakeAgent(options: FakeAgentOptions = {}) {
         const session = sessions.get(params.sessionId);
         if (!session) throw RequestError.resourceNotFound(params.sessionId);
         log.loaded.push(params.sessionId);
+        log.loadRequests.push(params);
+        // Like the real agents, a loaded session starts on the requested model and effort, else the defaults.
+        const wantedModel = params._meta?.["plane/initialModel"];
+        session.model = typeof wantedModel === "string" && wantedModel in MODEL_EFFORTS ? wantedModel : "fast";
+        session.effort = effortFor(session.model, params._meta?.["plane/initialEffort"]);
         for (const update of session.history) await client.notify("session/update", { sessionId: session.id, update });
-        return { modes: modeState(session.mode, maxMode), configOptions: [modelOption(session.model)] };
+        return {
+          modes: modeState(session.mode, maxMode),
+          configOptions: options.models === false ? [] : configOptions(session),
+        };
       });
     }
     return built;

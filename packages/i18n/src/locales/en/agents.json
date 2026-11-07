@@ -3,10 +3,27 @@
     "title": "Agents",
     "picker": {
       "label": "Agent",
-      "placeholder": "Choose an agent"
+      "trigger_label": "Agent and model: {selection}",
+      "switch_hint": "Switching agents starts a new chat.",
+      "unavailable": "No API key yet",
+      "manage_providers": "Manage AI providers"
     },
     "model": {
       "label": "Model"
+    },
+    "effort": {
+      "label": "Reasoning effort",
+      "trigger_label": "Reasoning effort: {level}",
+      "hint": "Applies from your next message.",
+      "levels": {
+        "none": "None",
+        "minimal": "Minimal",
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "xhigh": "Extra high",
+        "max": "Max"
+      }
     },
     "permission": {
       "label": "Permission level",
@@ -131,6 +148,7 @@
         "prompt": "The agent could not answer that message.",
         "set_mode": "Could not change the permission level.",
         "set_model": "Could not change the model.",
+        "set_effort": "Could not change the reasoning effort.",
         "reconnect": "Could not reconnect."
       },
       "retry": "Try again"
@@ -192,6 +210,10 @@
             "label": "Default model",
             "help": "Optional model id, e.g. claude-opus-5-5. Members can switch models in the chat."
           },
+          "PLANE_AGENT_EFFORT": {
+            "label": "Default reasoning effort",
+            "help": "Optional, e.g. high. Used when the model takes that level. Members can switch it in the chat."
+          },
           "GEMINI_API_KEY": {
             "label": "Gemini API key",
             "help": "Used when a member has no key of their own and isn't signed in with Google."
@@ -248,7 +270,6 @@
       "unread": "Open {name} (new activity)",
       "minimize": "Minimize",
       "open_page": "Open full page",
-      "agent_menu_label": "Switch agent, now {agent}",
       "greeting": "Hi, I'm {name}",
       "suggestions": {
         "assigned_to_me": "What's assigned to me?",
@@ -363,7 +384,8 @@
         "connected": "Signed in as {email}.",
         "connected_unknown": "Signed in.",
         "disconnected": "Account disconnected.",
-        "disconnect_failed": "The account could not be disconnected."
+        "disconnect_failed": "The account could not be disconnected.",
+        "sign_in_lost": "Your {vendor} sign-in is no longer valid. Sign in again."
       }
     }
   }
