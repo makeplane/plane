@@ -7,6 +7,8 @@
 import { PERMISSION_LEVELS, type PermissionLevel } from "@plane/agent-runner-protocol";
 import { z } from "zod";
 
+import { trimTrailingSlashes } from "./origin.ts";
+
 /** Header the API's `AgentBridgeSecretPermission` checks. */
 export const BRIDGE_SECRET_HEADER = "X-Agent-Bridge-Secret";
 
@@ -129,7 +131,7 @@ export interface PlaneApiOptions {
 }
 
 export function createPlaneApi(options: PlaneApiOptions): PlaneApi {
-  const base = options.baseUrl.replace(/\/+$/, "");
+  const base = trimTrailingSlashes(options.baseUrl);
   const doFetch = options.fetch ?? fetch;
   const timeoutMs = options.timeoutMs ?? 15_000;
 

@@ -7,6 +7,8 @@
 import { MIN_SECRET_LENGTH } from "@plane/agent-runner-protocol";
 import { z } from "zod";
 
+import { trimTrailingSlashes } from "./origin.ts";
+
 const MiB = 1024 * 1024;
 
 const positiveInt = (fallback: number) => z.coerce.number().int().positive().default(fallback);
@@ -53,7 +55,7 @@ const schema = z.object({
  * `ws://agent-runner:3410/acp` → `http://agent-runner:3410`.
  */
 export function runnerHttpUrl(runnerUrl: string, override = ""): string {
-  if (override) return override.replace(/\/+$/, "");
+  if (override) return trimTrailingSlashes(override);
   const url = new URL(runnerUrl);
   url.protocol = url.protocol === "wss:" ? "https:" : "http:";
   url.pathname = url.pathname.replace(/\/acp\/?$/, "");

@@ -8,6 +8,13 @@ import { AGENT_BRIDGE_BASE_PATH, AGENT_BRIDGE_BASE_URL } from "@plane/constants"
 import type { TAgentAccountProvider, TAgentConnectionStart, TAgentConnectionStatus } from "@plane/types";
 
 /** A bridge `connections` request failed. `status` is the HTTP status, or 0 when the bridge was unreachable. */
+/** `value` without trailing slashes (a loop, not a regex, so long inputs stay linear). */
+function trimTrailingSlashes(value: string): string {
+  let end = value.length;
+  while (end > 0 && value.charCodeAt(end - 1) === 47) end--;
+  return value.slice(0, end);
+}
+
 export class AgentConnectionError extends Error {
   readonly status: number;
 
@@ -33,7 +40,7 @@ export type TAgentConnectionServiceOptions = {
  * the URL is relative to the page's origin.
  */
 export function agentBridgeHttpUrl(baseUrl: string | undefined, basePath: string | undefined, path: string): string {
-  const mount = (basePath?.trim() || "/agents").replace(/\/+$/, "");
+  const mount = trimTrailingSlashes(basePath?.trim() || "/agents");
   const pathname = `${mount.startsWith("/") ? mount : `/${mount}`}${path}`;
   const origin = baseUrl?.trim() ? new URL(baseUrl.trim()).origin : "";
   return `${origin}${pathname}`;

@@ -6,6 +6,8 @@
 
 import { signSpawnTicket } from "@plane/agent-runner-protocol";
 
+import { trimTrailingSlashes } from "./origin.ts";
+
 /** Whose sign-in, for which adapter: what a `login` ticket claims. */
 export interface LoginTarget {
   readonly adapter: string;
@@ -53,7 +55,7 @@ export class RunnerLoginClient implements LoginRunner {
   readonly #fetch: typeof fetch;
 
   constructor(options: RunnerLoginClientOptions) {
-    this.#base = options.baseUrl.replace(/\/+$/, "");
+    this.#base = trimTrailingSlashes(options.baseUrl);
     this.#secret = options.secret;
     this.#timeoutMs = options.timeoutMs ?? 40_000;
     this.#fetch = options.fetch ?? fetch;

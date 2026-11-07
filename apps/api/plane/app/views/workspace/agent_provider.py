@@ -14,6 +14,7 @@ from plane.app.permissions import WorkspaceViewerPermission
 from plane.app.permissions.workspace import Admin
 from plane.app.views.base import BaseAPIView
 from plane.db.models import AgentProvider, AgentProviderCredential, Workspace, WorkspaceMember
+from plane.db.models.agent_provider import validate_agent_api_key
 from plane.license.utils.encryption import EncryptionError
 from plane.utils.agent_credentials import provider_entries
 from plane.utils.exception_logger import log_exception
@@ -67,11 +68,12 @@ class WorkspaceAgentProviderCredentialEndpoint(BaseAPIView):
         api_key = data.get("api_key")
         workspace = Workspace.objects.get(slug=slug)
         user = request.user if scope == SCOPE_PERSONAL else None
+        invalid = validate_agent_api_key(api_key)
+        if invalid:
+            return Response({"error": invalid}, status=status.HTTP_400_BAD_REQUEST)
         credential = AgentProviderCredential(workspace=workspace, user=user, provider=provider)
         try:
             credential.set_api_key(api_key)
-        except ValueError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except EncryptionError as e:
             log_exception(e)
             return Response(

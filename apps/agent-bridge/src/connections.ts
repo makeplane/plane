@@ -15,7 +15,7 @@ import express, {
 import { withMeta, type Logger } from "./logger.ts";
 import { PlaneApiError, type AccountMethod, type ConnectionGrant, type PlaneApi } from "./plane-api.ts";
 import { RunnerUnavailableError, type LoginRunner, type LoginTarget, type RunnerReply } from "./runner-login.ts";
-import { originAllowed } from "./origin.ts";
+import { originAllowed, trimTrailingSlashes } from "./origin.ts";
 
 /**
  * Provider account sign-in for Workspace settings → AI providers: `<base>/connections/<provider>/…`.
@@ -143,8 +143,9 @@ export function connectionsRouter(options: ConnectionsRouterOptions): Router {
       options.log.warn("agent-bridge: refused cross-origin connections request", { origin });
       return void res.status(403).json({ error: "Origin not allowed" });
     }
-    if (origin) {
-      res.setHeader("Access-Control-Allow-Origin", origin);
+    const corsOrigin = origin ? trimTrailingSlashes(origin) : undefined;
+    if (corsOrigin && allowedOrigins.includes(corsOrigin)) {
+      res.setHeader("Access-Control-Allow-Origin", corsOrigin);
       res.setHeader("Access-Control-Allow-Credentials", "true");
       res.vary("Origin");
     }
