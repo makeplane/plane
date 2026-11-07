@@ -12,8 +12,10 @@ import { getDate } from "./datetime";
 import { satisfiesDateFilter } from "./filter";
 
 // The API supplies ISO strings, while TProject also permits Date instances.
-const projectCreatedAt = (value: Date | string | undefined): string =>
-  value instanceof Date ? (Number.isNaN(value.getTime()) ? "" : value.toISOString()) : (value ?? "");
+const projectCreatedAt = (value: Date | string | undefined): string => {
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? "" : value.toISOString();
+  return value && !Number.isNaN(Date.parse(value)) ? value : "";
+};
 
 /**
  * Updates the sort order of the project.
@@ -110,8 +112,8 @@ export const orderProjects = (projects: TProject[], orderByKey: TProjectOrderByO
     orderedProjects = orderBy(
       projects,
       [
-        (p) => !p.created_at,
-        (p) => Date.parse(projectCreatedAt(p.created_at)),
+        (p) => !projectCreatedAt(p.created_at),
+        (p) => Date.parse(projectCreatedAt(p.created_at)) || 0,
         // API timestamps can include microseconds, which Date.parse truncates.
         (p) =>
           projectCreatedAt(p.created_at)

@@ -67,6 +67,28 @@ describe("orderProjects creation dates", () => {
     ]);
   });
 
+  it.each(["created_at", "-created_at"] as const)(
+    "keeps invalid and missing dates last and stable for %s",
+    (direction) => {
+      const values = [
+        project("invalid-date", "", { created_at: new Date(NaN) }),
+        project("newer", "2026-11-02T00:00:00Z"),
+        project("missing", "", { created_at: undefined }),
+        project("invalid-string", "not-a-date"),
+        project("older", "2026-11-01T00:00:00Z"),
+        project("empty", ""),
+      ];
+      const dated = direction === "created_at" ? ["older", "newer"] : ["newer", "older"];
+      expect(ids(orderProjects(values, direction))).toEqual([
+        ...dated,
+        "invalid-date",
+        "missing",
+        "invalid-string",
+        "empty",
+      ]);
+    }
+  );
+
   it("supports Date instances as well as API strings", () => {
     const values = [
       project("earlier", "", { created_at: new Date("2026-11-01T00:00:00.123Z") }),
