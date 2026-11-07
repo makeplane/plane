@@ -90,46 +90,32 @@ class BaseSerializer(serializers.ModelSerializer):
 
 class DynamicBaseSerializer(BaseSerializer):
     def __init__(self, *args, **kwargs):
-        # If 'fields' is provided in the arguments, remove it and store it separately.
-        # This is done so as not to pass this custom argument up to the superclass.
-        fields = kwargs.pop("fields", [])
+        # 'fields' and 'expand' are custom arguments; pop them so they are not passed to the superclass.
+        fields = kwargs.pop("fields", None)
         self.expand = kwargs.pop("expand", []) or []
-        fields = self.expand
 
-        # Call the initialization of the superclass.
         super().__init__(*args, **kwargs)
-        # If 'fields' was provided, filter the fields of the serializer accordingly.
-        if fields is not None:
-            self.fields = self._filter_fields(fields)
+        # 'fields' restricts the OUTPUT only (see to_representation) so validation and saving
+        # still see every writable field; 'expand' adds relations and keeps them with 'fields'.
+        self._output_fields = None
+        if fields is not None or self.expand:
+            self.fields = self._filter_fields(fields, self.expand)
 
-    def _filter_fields(self, fields):
+    def _filter_fields(self, fields, expand=()):
         """
-        Adjust the serializer's fields based on the provided 'fields' list.
+        Adjust the serializer's fields.
 
-        :param fields: List or dictionary specifying which fields to include in the serializer.
+        :param fields: Names to output (a dict item keeps its key; nested filtering is not supported),
+            or None to output every field. Fields are not removed from the serializer itself.
+        :param expand: Relation names to add via the expansion mapper (always output).
         :return: The updated fields for the serializer.
         """
-        # Check each field_name in the provided fields.
-        for field_name in fields:
-            # If the field is a dictionary (indicating nested fields),
-            # loop through its keys and values.
-            if isinstance(field_name, dict):
-                for key, value in field_name.items():
-                    # If the value of this nested field is a list,
-                    # perform a recursive filter on it.
-                    if isinstance(value, list):
-                        self._filter_fields(self.fields[key], value)
-
-        # Create a list to store allowed fields.
-        allowed = []
-        for item in fields:
-            # If the item is a string, it directly represents a field's name.
+        allowed = set(expand)
+        for item in fields or []:
             if isinstance(item, str):
-                allowed.append(item)
-            # If the item is a dictionary, it represents a nested field.
-            # Add the key of this dictionary to the allowed list.
+                allowed.add(item)
             elif isinstance(item, dict):
-                allowed.append(list(item.keys())[0])
+                allowed.update(item.keys())
 
         missing = [field for field in allowed if field not in self.fields]
         if missing:
@@ -138,7 +124,18 @@ class DynamicBaseSerializer(BaseSerializer):
                 if field in expansion:
                     self.fields[field] = expansion[field](many=field in MANY_EXPANSION_FIELDS)
 
+        if fields is not None:
+            self._output_fields = allowed
+
         return self.fields
+
+    @property
+    def _readable_fields(self):
+        # DRF's output-only field iterator (writes use self.fields), so fields= skips
+        # computing and emitting everything else without touching validation or saving.
+        for field in super()._readable_fields:
+            if self._output_fields is None or field.field_name in self._output_fields:
+                yield field
 
     def to_representation(self, instance):
         response = super().to_representation(instance)
