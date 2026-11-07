@@ -183,7 +183,14 @@
           "deepseek": "DeepSeek",
           "gemini": "Gemini"
         },
-        "credentials": "자격 증명 및 설정",
+        "model_help": "멤버는 채팅에서 모델을 전환할 수 있습니다.",
+        "model_default": "공급자 기본값",
+        "model_custom": "사용자 지정 모델 ID",
+        "model_custom_id": "모델 ID",
+        "model_custom_id_help": "공급자가 지정한 그대로의 모델 ID입니다.",
+        "fallback_credentials": "대체 자격 증명",
+        "fallback_credentials_summary": "멤버와 워크스페이스 모두 AI 공급자 설정에 키를 추가하지 않은 경우에만 사용됩니다.",
+        "fallback_saved": "{count, plural, one{#개 저장됨} other{#개 저장됨}}",
         "credentials_help": "값은 쓰기 전용입니다. 저장된 값은 표시되지 않으며, 변경하려면 값을 새로 입력하세요.",
         "env": {
           "ANTHROPIC_API_KEY": {
@@ -207,8 +214,7 @@
             "help": "선택 사항입니다. 기본값은 https://api.deepseek.com입니다."
           },
           "PLANE_AGENT_MODEL": {
-            "label": "기본 모델",
-            "help": "선택 사항인 모델 ID입니다(예: claude-opus-5-5). 멤버는 채팅에서 모델을 전환할 수 있습니다."
+            "label": "기본 모델"
           },
           "PLANE_AGENT_EFFORT": {
             "label": "기본 추론 수준",

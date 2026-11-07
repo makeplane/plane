@@ -123,6 +123,26 @@ class TestAgentAdminCrud:
         assert agent.is_enabled is True
 
     @pytest.mark.django_db
+    def test_model_and_effort_are_returned_in_plain(self, admin_client):
+        agent = _make_agent(
+            env={
+                "ANTHROPIC_API_KEY": "sk-ant-secret",
+                "PLANE_AGENT_MODEL": "claude-opus-5-5",
+                "PLANE_AGENT_EFFORT": "high",
+            }
+        )
+
+        response = admin_client.get(_agent_url(agent.id))
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["env"] == {
+            "ANTHROPIC_API_KEY": AGENT_ENV_MASK,
+            "PLANE_AGENT_EFFORT": "high",
+            "PLANE_AGENT_MODEL": "claude-opus-5-5",
+        }
+        assert b"sk-ant-secret" not in response.content
+
+    @pytest.mark.django_db
     def test_list_and_retrieve_mask_secrets(self, admin_client):
         agent = _make_agent()
 

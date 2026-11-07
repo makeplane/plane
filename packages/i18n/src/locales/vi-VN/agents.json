@@ -183,7 +183,14 @@
           "deepseek": "DeepSeek",
           "gemini": "Gemini"
         },
-        "credentials": "Thông tin xác thực và cài đặt",
+        "model_help": "Thành viên có thể chuyển đổi mô hình trong cuộc trò chuyện.",
+        "model_default": "Mặc định của nhà cung cấp",
+        "model_custom": "ID mô hình tùy chỉnh",
+        "model_custom_id": "ID mô hình",
+        "model_custom_id_help": "ID mô hình đúng như tên mà nhà cung cấp đặt.",
+        "fallback_credentials": "Thông tin xác thực dự phòng",
+        "fallback_credentials_summary": "Chỉ được dùng khi cả thành viên và không gian làm việc đều chưa thêm khóa trong cài đặt nhà cung cấp AI.",
+        "fallback_saved": "{count, plural, one{Đã lưu #} other{Đã lưu #}}",
         "credentials_help": "Các giá trị chỉ có thể ghi. Giá trị đã lưu sẽ được ẩn; hãy thay thế một giá trị để thay đổi nó.",
         "env": {
           "ANTHROPIC_API_KEY": {
@@ -207,8 +214,7 @@
             "help": "Không bắt buộc. Mặc định là https://api.deepseek.com."
           },
           "PLANE_AGENT_MODEL": {
-            "label": "Mô hình mặc định",
-            "help": "ID mô hình (không bắt buộc), ví dụ claude-opus-5-5. Thành viên có thể chuyển đổi mô hình trong cuộc trò chuyện."
+            "label": "Mô hình mặc định"
           },
           "PLANE_AGENT_EFFORT": {
             "label": "Mức suy luận mặc định",

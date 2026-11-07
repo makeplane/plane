@@ -183,7 +183,14 @@
           "deepseek": "DeepSeek",
           "gemini": "Gemini"
         },
-        "credentials": "Inloggegevens en instellingen",
+        "model_help": "Leden kunnen in de chat van model wisselen.",
+        "model_default": "Standaard van de provider",
+        "model_custom": "Aangepaste model-ID",
+        "model_custom_id": "Model-ID",
+        "model_custom_id_help": "De model-ID precies zoals de provider die noemt.",
+        "fallback_credentials": "Reserve-inloggegevens",
+        "fallback_credentials_summary": "Alleen gebruikt wanneer noch het lid noch de werkruimte een sleutel heeft toegevoegd in de instellingen voor AI-providers.",
+        "fallback_saved": "{count, plural, one{# opgeslagen} other{# opgeslagen}}",
         "credentials_help": "Waarden kunnen alleen worden geschreven. Opgeslagen waarden blijven verborgen; vervang een waarde om deze te wijzigen.",
         "env": {
           "ANTHROPIC_API_KEY": {
@@ -207,8 +214,7 @@
             "help": "Optioneel. Standaard https://api.deepseek.com."
           },
           "PLANE_AGENT_MODEL": {
-            "label": "Standaardmodel",
-            "help": "Optionele model-ID, bijv. claude-opus-5-5. Leden kunnen in de chat van model wisselen."
+            "label": "Standaardmodel"
           },
           "PLANE_AGENT_EFFORT": {
             "label": "Standaardredeneerniveau",

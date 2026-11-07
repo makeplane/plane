@@ -183,7 +183,14 @@
           "deepseek": "DeepSeek",
           "gemini": "Gemini"
         },
-        "credentials": "Kimlik bilgileri ve ayarlar",
+        "model_help": "Üyeler sohbette model değiştirebilir.",
+        "model_default": "Sağlayıcı varsayılanı",
+        "model_custom": "Özel model kimliği",
+        "model_custom_id": "Model kimliği",
+        "model_custom_id_help": "Sağlayıcının verdiği şekliyle model kimliği.",
+        "fallback_credentials": "Yedek kimlik bilgileri",
+        "fallback_credentials_summary": "Yalnızca ne üye ne de çalışma alanı yapay zeka sağlayıcıları ayarlarında bir anahtar eklemediğinde kullanılır.",
+        "fallback_saved": "{count, plural, one{# kayıtlı} other{# kayıtlı}}",
         "credentials_help": "Değerler yalnızca yazılabilir. Kaydedilen değerler gizli kalır; bir değeri değiştirmek için yenisini girin.",
         "env": {
           "ANTHROPIC_API_KEY": {
@@ -207,8 +214,7 @@
             "help": "İsteğe bağlı. Varsayılan: https://api.deepseek.com."
           },
           "PLANE_AGENT_MODEL": {
-            "label": "Varsayılan model",
-            "help": "İsteğe bağlı model kimliği, örn. claude-opus-5-5. Üyeler sohbette model değiştirebilir."
+            "label": "Varsayılan model"
           },
           "PLANE_AGENT_EFFORT": {
             "label": "Varsayılan akıl yürütme düzeyi",

@@ -183,7 +183,14 @@
           "deepseek": "DeepSeek",
           "gemini": "Gemini"
         },
-        "credentials": "凭据和设置",
+        "model_help": "成员可以在聊天中切换模型。",
+        "model_default": "提供商默认",
+        "model_custom": "自定义模型 ID",
+        "model_custom_id": "模型 ID",
+        "model_custom_id_help": "与提供商命名完全一致的模型 ID。",
+        "fallback_credentials": "备用凭据",
+        "fallback_credentials_summary": "仅当成员和工作空间都未在 AI 提供商设置中添加密钥时使用。",
+        "fallback_saved": "{count, plural, one{已保存 # 个} other{已保存 # 个}}",
         "credentials_help": "这些值为只写。已保存的值会保持隐藏；如需更改，请替换该值。",
         "env": {
           "ANTHROPIC_API_KEY": {
@@ -207,8 +214,7 @@
             "help": "可选。默认为 https://api.deepseek.com。"
           },
           "PLANE_AGENT_MODEL": {
-            "label": "默认模型",
-            "help": "可选的模型 ID，例如 claude-opus-5-5。成员可以在聊天中切换模型。"
+            "label": "默认模型"
           },
           "PLANE_AGENT_EFFORT": {
             "label": "默认推理强度",

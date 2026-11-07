@@ -183,7 +183,14 @@
           "deepseek": "DeepSeek",
           "gemini": "Gemini"
         },
-        "credentials": "Credenciales y configuración",
+        "model_help": "Los miembros pueden cambiar de modelo en la conversación.",
+        "model_default": "Predeterminado del proveedor",
+        "model_custom": "ID de modelo personalizado",
+        "model_custom_id": "ID de modelo",
+        "model_custom_id_help": "El ID del modelo tal como lo nombra el proveedor.",
+        "fallback_credentials": "Credenciales de respaldo",
+        "fallback_credentials_summary": "Solo se usan cuando ni el miembro ni el espacio de trabajo han agregado una clave en la configuración de proveedores de IA.",
+        "fallback_saved": "{count, plural, one{# guardada} other{# guardadas}}",
         "credentials_help": "Los valores son de solo escritura. Los valores guardados permanecen ocultos; reemplace uno para cambiarlo.",
         "env": {
           "ANTHROPIC_API_KEY": {
@@ -207,8 +214,7 @@
             "help": "Opcional. Valor predeterminado: https://api.deepseek.com."
           },
           "PLANE_AGENT_MODEL": {
-            "label": "Modelo predeterminado",
-            "help": "ID de modelo opcional, por ejemplo, claude-opus-5-5. Los miembros pueden cambiar de modelo en la conversación."
+            "label": "Modelo predeterminado"
           },
           "PLANE_AGENT_EFFORT": {
             "label": "Nivel de razonamiento predeterminado",

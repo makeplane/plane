@@ -54,7 +54,8 @@ describe("AgentFormDialog", () => {
     expect(key.type).toBe("password");
     expect(key.placeholder).toBe("Keep saved value");
 
-    await userEvent.type(await screen.findByLabelText("Default model"), "claude-sonnet-5-5");
+    await userEvent.click(screen.getByRole("combobox", { name: "Default model" }));
+    await userEvent.click(await screen.findByRole("option", { name: "Claude Sonnet 5.5" }));
     await userEvent.click(screen.getByRole("button", { name: "Save changes" }));
 
     await waitFor(() => expect(onSaved).toHaveBeenCalled());
@@ -78,12 +79,28 @@ describe("AgentFormDialog", () => {
     const onSaved = vi.fn();
     render(<AgentFormDialog isOpen onClose={vi.fn()} onSaved={onSaved} />);
     await userEvent.type(await screen.findByLabelText(/^Name/), "My Claude");
-    await userEvent.type(screen.getByLabelText("Claude Code OAuth token"), "oauth-token");
+    // The fallback credentials start collapsed on a new agent.
+    expect(screen.queryByLabelText("Claude Code OAuth token")).toBeNull();
+    await userEvent.click(screen.getByRole("button", { name: /Fallback credentials/ }));
+    await userEvent.type(await screen.findByLabelText("Claude Code OAuth token"), "oauth-token");
     await userEvent.click(screen.getByRole("button", { name: "Add agent" }));
     await waitFor(() => expect(onSaved).toHaveBeenCalled());
     expect(service.create).toHaveBeenCalledWith(
       expect.objectContaining({ name: "My Claude", slug: "my-claude", env: { CLAUDE_CODE_OAUTH_TOKEN: "oauth-token" } })
     );
+  });
+
+  it("takes a custom model id", async () => {
+    service.create.mockResolvedValue(AGENT);
+    const onSaved = vi.fn();
+    render(<AgentFormDialog isOpen onClose={vi.fn()} onSaved={onSaved} />);
+    await userEvent.type(await screen.findByLabelText(/^Name/), "Claude");
+    await userEvent.click(screen.getByRole("combobox", { name: "Default model" }));
+    await userEvent.click(await screen.findByRole("option", { name: "Custom model ID" }));
+    await userEvent.type(await screen.findByLabelText("Model ID"), "claude-next");
+    await userEvent.click(screen.getByRole("button", { name: "Add agent" }));
+    await waitFor(() => expect(onSaved).toHaveBeenCalled());
+    expect(service.create).toHaveBeenCalledWith(expect.objectContaining({ env: { PLANE_AGENT_MODEL: "claude-next" } }));
   });
 
   it("shows the API's field errors", async () => {

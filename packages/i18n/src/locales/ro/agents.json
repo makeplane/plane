@@ -183,7 +183,14 @@
           "deepseek": "DeepSeek",
           "gemini": "Gemini"
         },
-        "credentials": "Credențiale și setări",
+        "model_help": "Membrii pot schimba modelul în chat.",
+        "model_default": "Implicit al furnizorului",
+        "model_custom": "ID de model personalizat",
+        "model_custom_id": "ID-ul modelului",
+        "model_custom_id_help": "ID-ul modelului exact așa cum îl denumește furnizorul.",
+        "fallback_credentials": "Credențiale de rezervă",
+        "fallback_credentials_summary": "Folosite doar când nici membrul, nici spațiul de lucru nu au adăugat o cheie în setările furnizorilor AI.",
+        "fallback_saved": "{count, plural, one{salvate: #} few{salvate: #} other{salvate: #}}",
         "credentials_help": "Valorile pot fi doar scrise. Valorile salvate rămân ascunse; înlocuiți una pentru a o modifica.",
         "env": {
           "ANTHROPIC_API_KEY": {
@@ -207,8 +214,7 @@
             "help": "Opțional. Valoarea implicită este https://api.deepseek.com."
           },
           "PLANE_AGENT_MODEL": {
-            "label": "Model implicit",
-            "help": "ID de model opțional, de ex. claude-opus-5-5. Membrii pot schimba modelul în chat."
+            "label": "Model implicit"
           },
           "PLANE_AGENT_EFFORT": {
             "label": "Nivel de raționament implicit",

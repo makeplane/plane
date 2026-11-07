@@ -183,7 +183,14 @@
           "deepseek": "DeepSeek",
           "gemini": "Gemini"
         },
-        "credentials": "Anmeldedaten und Einstellungen",
+        "model_help": "Mitglieder können im Chat das Modell wechseln.",
+        "model_default": "Standard des Anbieters",
+        "model_custom": "Benutzerdefinierte Modell-ID",
+        "model_custom_id": "Modell-ID",
+        "model_custom_id_help": "Die Modell-ID genau so, wie der Anbieter sie angibt.",
+        "fallback_credentials": "Ersatz-Anmeldedaten",
+        "fallback_credentials_summary": "Nur verwendet, wenn weder das Mitglied noch der Arbeitsbereich in den Einstellungen der KI-Anbieter einen Schlüssel hinterlegt hat.",
+        "fallback_saved": "{count, plural, one{# gespeichert} other{# gespeichert}}",
         "credentials_help": "Werte können nur geschrieben werden. Gespeicherte Werte bleiben verborgen; ersetzen Sie einen Wert, um ihn zu ändern.",
         "env": {
           "ANTHROPIC_API_KEY": {
@@ -207,8 +214,7 @@
             "help": "Optional. Standardwert: https://api.deepseek.com."
           },
           "PLANE_AGENT_MODEL": {
-            "label": "Standardmodell",
-            "help": "Optionale Modell-ID, z. B. claude-opus-5-5. Mitglieder können im Chat das Modell wechseln."
+            "label": "Standardmodell"
           },
           "PLANE_AGENT_EFFORT": {
             "label": "Standard-Denkaufwand",

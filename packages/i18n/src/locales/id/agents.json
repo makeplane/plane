@@ -183,7 +183,14 @@
           "deepseek": "DeepSeek",
           "gemini": "Gemini"
         },
-        "credentials": "Kredensial dan pengaturan",
+        "model_help": "Anggota dapat mengganti model di obrolan.",
+        "model_default": "Default penyedia",
+        "model_custom": "ID model kustom",
+        "model_custom_id": "ID model",
+        "model_custom_id_help": "ID model persis seperti yang dinamai oleh penyedia.",
+        "fallback_credentials": "Kredensial cadangan",
+        "fallback_credentials_summary": "Hanya digunakan jika baik anggota maupun ruang kerja belum menambahkan kunci di pengaturan penyedia AI.",
+        "fallback_saved": "{count, plural, one{# tersimpan} other{# tersimpan}}",
         "credentials_help": "Nilai hanya dapat ditulis. Nilai yang tersimpan tetap tersembunyi; ganti nilai untuk mengubahnya.",
         "env": {
           "ANTHROPIC_API_KEY": {
@@ -207,8 +214,7 @@
             "help": "Opsional. Bawaannya https://api.deepseek.com."
           },
           "PLANE_AGENT_MODEL": {
-            "label": "Model bawaan",
-            "help": "ID model opsional, misalnya claude-opus-5-5. Anggota dapat mengganti model di obrolan."
+            "label": "Model bawaan"
           },
           "PLANE_AGENT_EFFORT": {
             "label": "Tingkat penalaran bawaan",
