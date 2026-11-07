@@ -170,7 +170,7 @@
         "env": {
           "ANTHROPIC_API_KEY": {
             "label": "Anthropic API გასაღები",
-            "help": "ან ამის ნაცვლად გამოიყენეთ Claude Code-ის OAuth ტოკენი."
+            "help": "გამოიყენება, როცა არც წევრს და არც სამუშაო სივრცეს არ აქვს Anthropic-ის გასაღები. ან ამის ნაცვლად გამოიყენეთ Claude Code-ის OAuth ტოკენი."
           },
           "CLAUDE_CODE_OAUTH_TOKEN": {
             "label": "Claude Code-ის OAuth ტოკენი",
@@ -221,7 +221,6 @@
           "required": "ეს ველი სავალდებულოა.",
           "slug": "გამოიყენეთ პატარა ასოები, ციფრები და დეფისები.",
           "default_above_max": "ნაგულისხმევი დონე არ შეიძლება იყოს მაქსიმალურზე მაღალი.",
-          "claude_auth": "შეიყვანეთ Anthropic API გასაღები ან Claude Code-ის OAuth ტოკენი.",
           "deepseek_auth": "შეიყვანეთ DeepSeek API გასაღები."
         },
         "cancel": "გაუქმება",

@@ -170,7 +170,7 @@
         "env": {
           "ANTHROPIC_API_KEY": {
             "label": "Cheie API Anthropic",
-            "help": "Sau folosiți în schimb un token OAuth Claude Code."
+            "help": "Folosită când nici membrul, nici spațiul de lucru nu au o cheie Anthropic. Sau folosiți în schimb un token OAuth Claude Code."
           },
           "CLAUDE_CODE_OAUTH_TOKEN": {
             "label": "Token OAuth Claude Code",
@@ -221,7 +221,6 @@
           "required": "Acest câmp este obligatoriu.",
           "slug": "Folosiți litere mici, cifre și cratime.",
           "default_above_max": "Nivelul implicit nu poate depăși nivelul maxim.",
-          "claude_auth": "Introduceți o cheie API Anthropic sau un token OAuth Claude Code.",
           "deepseek_auth": "Introduceți o cheie API DeepSeek."
         },
         "cancel": "Anulați",

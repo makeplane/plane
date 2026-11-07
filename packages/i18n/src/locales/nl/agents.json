@@ -170,7 +170,7 @@
         "env": {
           "ANTHROPIC_API_KEY": {
             "label": "Anthropic API-sleutel",
-            "help": "Of gebruik in plaats daarvan een Claude Code OAuth-token."
+            "help": "Gebruikt wanneer noch het lid noch de werkruimte een Anthropic-sleutel heeft. Of gebruik in plaats daarvan een Claude Code OAuth-token."
           },
           "CLAUDE_CODE_OAUTH_TOKEN": {
             "label": "Claude Code OAuth-token",
@@ -221,7 +221,6 @@
           "required": "Dit veld is verplicht.",
           "slug": "Gebruik kleine letters, cijfers en koppeltekens.",
           "default_above_max": "Het standaardniveau kan niet hoger zijn dan het maximum.",
-          "claude_auth": "Voer een Anthropic API-sleutel of een Claude Code OAuth-token in.",
           "deepseek_auth": "Voer een DeepSeek API-sleutel in."
         },
         "cancel": "Annuleren",

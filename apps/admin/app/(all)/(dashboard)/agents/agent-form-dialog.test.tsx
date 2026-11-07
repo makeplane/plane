@@ -63,12 +63,14 @@ describe("AgentFormDialog", () => {
     });
   });
 
-  it("blocks saving a new Claude agent without a credential", async () => {
-    render(<AgentFormDialog isOpen onClose={vi.fn()} onSaved={vi.fn()} />);
+  it("saves a new Claude agent without a credential, since members' and workspace keys come first", async () => {
+    service.create.mockResolvedValue(AGENT);
+    const onSaved = vi.fn();
+    render(<AgentFormDialog isOpen onClose={vi.fn()} onSaved={onSaved} />);
     await userEvent.type(await screen.findByLabelText(/^Name/), "Claude");
     await userEvent.click(screen.getByRole("button", { name: "Add agent" }));
-    expect(await screen.findByText("Enter an Anthropic API key or a Claude Code OAuth token.")).toBeTruthy();
-    expect(service.create).not.toHaveBeenCalled();
+    await waitFor(() => expect(onSaved).toHaveBeenCalled());
+    expect(service.create).toHaveBeenCalledWith(expect.objectContaining({ adapter: "claude", env: {} }));
   });
 
   it("creates an agent with the slug derived from the name", async () => {

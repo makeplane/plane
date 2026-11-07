@@ -170,7 +170,7 @@
         "env": {
           "ANTHROPIC_API_KEY": {
             "label": "Klucz API Anthropic",
-            "help": "Można też zamiast niego użyć tokenu OAuth Claude Code."
+            "help": "Używany, gdy ani członek, ani przestrzeń robocza nie ma klucza Anthropic. Można też zamiast niego użyć tokenu OAuth Claude Code."
           },
           "CLAUDE_CODE_OAUTH_TOKEN": {
             "label": "Token OAuth Claude Code",
@@ -221,7 +221,6 @@
           "required": "To pole jest wymagane.",
           "slug": "Należy użyć małych liter, cyfr i łączników.",
           "default_above_max": "Poziom domyślny nie może być wyższy niż maksymalny.",
-          "claude_auth": "Należy wprowadzić klucz API Anthropic lub token OAuth Claude Code.",
           "deepseek_auth": "Należy wprowadzić klucz API DeepSeek."
         },
         "cancel": "Anuluj",

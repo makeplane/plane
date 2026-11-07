@@ -35,11 +35,16 @@ export type TAgentEnvField = {
   requiredGroup?: string;
 };
 
-/** Credentials and settings each adapter reads from its env (see `packages/acp-adapters/README.md`). */
+/**
+ * Credentials and settings each adapter reads from its env (see `packages/acp-adapters/README.md`).
+ * A provider's credential here is only the fallback: a member's own credential, then the
+ * workspace's key, come first (see `apps/api/plane/utils/agent_credentials.py`). DeepSeek has no
+ * member or workspace credentials, so its key is required.
+ */
 export const AGENT_ADAPTER_ENV_FIELDS: Record<TAgentAdapter, readonly TAgentEnvField[]> = {
   claude: [
-    { key: "ANTHROPIC_API_KEY", secret: true, requiredGroup: "claude_auth" },
-    { key: "CLAUDE_CODE_OAUTH_TOKEN", secret: true, requiredGroup: "claude_auth" },
+    { key: "ANTHROPIC_API_KEY", secret: true },
+    { key: "CLAUDE_CODE_OAUTH_TOKEN", secret: true },
   ],
   codex: [
     { key: "OPENAI_API_KEY", secret: true },

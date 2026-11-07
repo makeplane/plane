@@ -170,7 +170,7 @@
         "env": {
           "ANTHROPIC_API_KEY": {
             "label": "Clé API Anthropic",
-            "help": "Ou utilisez plutôt un jeton OAuth Claude Code."
+            "help": "Utilisée lorsque ni le membre ni l’espace de travail n’ont de clé Anthropic. Ou utilisez plutôt un jeton OAuth Claude Code."
           },
           "CLAUDE_CODE_OAUTH_TOKEN": {
             "label": "Jeton OAuth Claude Code",
@@ -221,7 +221,6 @@
           "required": "Ce champ est obligatoire.",
           "slug": "Utilisez des lettres minuscules, des chiffres et des traits d’union.",
           "default_above_max": "Le niveau par défaut ne peut pas dépasser le niveau maximal.",
-          "claude_auth": "Saisissez une clé API Anthropic ou un jeton OAuth Claude Code.",
           "deepseek_auth": "Saisissez une clé API DeepSeek."
         },
         "cancel": "Annuler",

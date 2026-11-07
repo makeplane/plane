@@ -170,7 +170,7 @@
         "env": {
           "ANTHROPIC_API_KEY": {
             "label": "Kunci API Anthropic",
-            "help": "Atau gunakan token OAuth Claude Code sebagai gantinya."
+            "help": "Digunakan jika baik anggota maupun ruang kerja tidak memiliki kunci Anthropic. Atau gunakan token OAuth Claude Code sebagai gantinya."
           },
           "CLAUDE_CODE_OAUTH_TOKEN": {
             "label": "Token OAuth Claude Code",
@@ -221,7 +221,6 @@
           "required": "Kolom ini wajib diisi.",
           "slug": "Gunakan huruf kecil, angka, dan tanda hubung.",
           "default_above_max": "Tingkat bawaan tidak boleh lebih tinggi dari maksimum.",
-          "claude_auth": "Masukkan kunci API Anthropic atau token OAuth Claude Code.",
           "deepseek_auth": "Masukkan kunci API DeepSeek."
         },
         "cancel": "Batal",

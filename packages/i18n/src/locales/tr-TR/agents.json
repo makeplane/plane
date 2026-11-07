@@ -170,7 +170,7 @@
         "env": {
           "ANTHROPIC_API_KEY": {
             "label": "Anthropic API anahtarı",
-            "help": "Veya bunun yerine bir Claude Code OAuth token'ı kullanın."
+            "help": "Ne üyenin ne de çalışma alanının bir Anthropic anahtarı olmadığında kullanılır. Veya bunun yerine bir Claude Code OAuth token'ı kullanın."
           },
           "CLAUDE_CODE_OAUTH_TOKEN": {
             "label": "Claude Code OAuth token'ı",
@@ -221,7 +221,6 @@
           "required": "Bu alan zorunludur.",
           "slug": "Küçük harf, rakam ve kısa çizgi kullanın.",
           "default_above_max": "Varsayılan düzey maksimum düzeyden yüksek olamaz.",
-          "claude_auth": "Bir Anthropic API anahtarı veya Claude Code OAuth token'ı girin.",
           "deepseek_auth": "Bir DeepSeek API anahtarı girin."
         },
         "cancel": "İptal",
