@@ -7,6 +7,8 @@ from django.urls import path
 
 from plane.app.views import (
     WorkspaceAgentsEndpoint,
+    WorkspaceAgentProvidersEndpoint,
+    WorkspaceAgentProviderCredentialEndpoint,
     UserWorkspaceInvitationsViewSet,
     WorkSpaceViewSet,
     WorkspaceJoinEndpoint,
@@ -164,6 +166,23 @@ urlpatterns = [
         "workspaces/<str:slug>/agents/",
         WorkspaceAgentsEndpoint.as_view(),
         name="workspace-agents",
+    ),
+    path(
+        "workspaces/<str:slug>/agent-providers/",
+        WorkspaceAgentProvidersEndpoint.as_view(),
+        name="workspace-agent-providers",
+    ),
+    path(
+        "workspaces/<str:slug>/agent-providers/<str:provider>/personal/",
+        WorkspaceAgentProviderCredentialEndpoint.as_view(),
+        {"scope": "personal"},
+        name="workspace-agent-provider-personal",
+    ),
+    path(
+        "workspaces/<str:slug>/agent-providers/<str:provider>/workspace/",
+        WorkspaceAgentProviderCredentialEndpoint.as_view(),
+        {"scope": "workspace"},
+        name="workspace-agent-provider-workspace",
     ),
     path(
         "workspaces/<str:slug>/user-properties/",

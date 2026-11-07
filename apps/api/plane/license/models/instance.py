@@ -110,6 +110,7 @@ class AgentAdapter(models.TextChoices):
     CLAUDE = "claude", "Claude"
     CODEX = "codex", "Codex"
     DEEPSEEK = "deepseek", "DeepSeek"
+    GEMINI = "gemini", "Gemini"
 
 
 class AgentPermissionLevel(models.TextChoices):

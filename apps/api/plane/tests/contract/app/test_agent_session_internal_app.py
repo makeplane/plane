@@ -18,7 +18,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from plane.db.models import APIToken, User, Workspace, WorkspaceMember
+from plane.db.models import AgentProviderCredential, APIToken, User, Workspace, WorkspaceMember
 from plane.db.models.api import AGENT_SESSION_TOKEN_LABEL
 from plane.license.models import AgentDefinition
 
@@ -163,6 +163,7 @@ class TestAgentSessionMint:
             "default_permission_level": "ask_writes",
             "max_permission_level": "yolo",
             "attach_plane_mcp": True,
+            "credential_source": "instance",
         }
         assert body["mcp"] == {"url": MCP_URL, "workspace_slug": workspace.slug}
 
@@ -237,6 +238,128 @@ class TestAgentSessionMint:
         response = bridge_client.post(SESSIONS_URL, _body(create_user, workspace, agent), format="json")
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
         assert "sk-ant-secret" not in str(response.content)
+        assert not APIToken.objects.filter(label=AGENT_SESSION_TOKEN_LABEL).exists()
+
+
+def _api_key(workspace, user, provider, key):
+    row = AgentProviderCredential(workspace=workspace, user=user, provider=provider)
+    row.set_api_key(key)
+    row.save()
+    return row
+
+
+@pytest.mark.contract
+class TestAgentSessionCredentials:
+    """Personal -> workspace -> instance resolution of the provider credential."""
+
+    @pytest.mark.django_db
+    def test_workspace_key_replaces_admin_key(self, bridge_client, create_user, workspace, agent):
+        _api_key(workspace, None, "anthropic", "sk-ant-workspace")
+
+        body = _mint(bridge_client, create_user, workspace, agent)
+
+        assert body["agent"]["credential_source"] == "workspace"
+        assert body["agent"]["env"] == {
+            "ANTHROPIC_API_KEY": "sk-ant-workspace",
+            "PLANE_AGENT_AUTH": "api_key",
+            "MODEL": "claude-opus-5-5",
+        }
+
+    @pytest.mark.django_db
+    def test_personal_key_wins_over_workspace_key(self, bridge_client, create_user, workspace, agent):
+        _api_key(workspace, None, "anthropic", "sk-ant-workspace")
+        _api_key(workspace, create_user, "anthropic", "sk-ant-personal")
+
+        body = _mint(bridge_client, create_user, workspace, agent)
+
+        assert body["agent"]["credential_source"] == "personal"
+        assert body["agent"]["env"]["ANTHROPIC_API_KEY"] == "sk-ant-personal"
+        assert body["agent"]["env"]["PLANE_AGENT_AUTH"] == "api_key"
+
+    @pytest.mark.django_db
+    def test_admin_credential_vars_are_removed(self, bridge_client, create_user, workspace):
+        agent = AgentDefinition(name="Claude OAuth", slug="claude-oauth", adapter="claude")
+        agent.set_env(
+            {
+                "ANTHROPIC_AUTH_TOKEN": "admin-auth-token",
+                "CLAUDE_CODE_OAUTH_TOKEN": "admin-oauth-token",
+                "PLANE_AGENT_AUTH": "something-else",
+                "MODEL": "claude-opus-5-5",
+            }
+        )
+        agent.save()
+        _api_key(workspace, create_user, "anthropic", "sk-ant-personal")
+
+        body = _mint(bridge_client, create_user, workspace, agent)
+
+        assert body["agent"]["env"] == {
+            "ANTHROPIC_API_KEY": "sk-ant-personal",
+            "PLANE_AGENT_AUTH": "api_key",
+            "MODEL": "claude-opus-5-5",
+        }
+
+    @pytest.mark.django_db
+    def test_account_sign_in_sets_auth_method_only(self, bridge_client, create_user, workspace):
+        agent = AgentDefinition(name="Codex", slug="codex", adapter="codex")
+        agent.set_env({"OPENAI_API_KEY": "sk-admin", "CODEX_HOME": "/srv/codex", "CODEX_MODEL": "gpt"})
+        agent.save()
+        _api_key(workspace, None, "openai", "sk-openai-workspace")
+        AgentProviderCredential.objects.create(
+            workspace=workspace, user=create_user, provider="openai", method="chatgpt", account_label="me@x.com"
+        )
+
+        body = _mint(bridge_client, create_user, workspace, agent)
+
+        assert body["agent"]["credential_source"] == "personal"
+        assert body["agent"]["env"] == {"PLANE_AGENT_AUTH": "chatgpt", "CODEX_MODEL": "gpt"}
+
+    @pytest.mark.django_db
+    def test_gemini_agent_uses_google_credential(self, bridge_client, create_user, workspace):
+        agent = AgentDefinition(name="Gemini", slug="gemini", adapter="gemini")
+        agent.set_env({"GOOGLE_API_KEY": "admin", "GOOGLE_GENAI_USE_VERTEXAI": "true"})
+        agent.save()
+        _api_key(workspace, None, "google", "gemini-workspace-key")
+
+        body = _mint(bridge_client, create_user, workspace, agent)
+
+        assert body["agent"]["adapter"] == "gemini"
+        assert body["agent"]["credential_source"] == "workspace"
+        assert body["agent"]["env"] == {"GEMINI_API_KEY": "gemini-workspace-key", "PLANE_AGENT_AUTH": "api_key"}
+
+    @pytest.mark.django_db
+    def test_unrelated_credentials_are_ignored(self, bridge_client, create_user, workspace, other_workspace, agent):
+        other = User.objects.create(email="session-other@plane.so", username="session-other")
+        WorkspaceMember.objects.create(workspace=workspace, member=other, role=15)
+        _api_key(workspace, other, "anthropic", "sk-ant-someone-else")
+        _api_key(other_workspace, create_user, "anthropic", "sk-ant-other-workspace")
+        _api_key(workspace, create_user, "openai", "sk-openai-personal")
+
+        body = _mint(bridge_client, create_user, workspace, agent)
+
+        assert body["agent"]["credential_source"] == "instance"
+        assert body["agent"]["env"] == {"ANTHROPIC_API_KEY": "sk-ant-secret", "MODEL": "claude-opus-5-5"}
+
+    @pytest.mark.django_db
+    def test_deepseek_keeps_admin_env(self, bridge_client, create_user, workspace):
+        agent = AgentDefinition(name="DeepSeek", slug="deepseek", adapter="deepseek")
+        agent.set_env({"DEEPSEEK_API_KEY": "sk-deepseek"})
+        agent.save()
+        _api_key(workspace, create_user, "anthropic", "sk-ant-personal")
+
+        body = _mint(bridge_client, create_user, workspace, agent)
+
+        assert body["agent"]["credential_source"] == "instance"
+        assert body["agent"]["env"] == {"DEEPSEEK_API_KEY": "sk-deepseek"}
+
+    @pytest.mark.django_db
+    def test_undecryptable_credential_does_not_mint(self, bridge_client, create_user, workspace, agent):
+        row = _api_key(workspace, create_user, "anthropic", "sk-ant-personal")
+        AgentProviderCredential.objects.filter(pk=row.pk).update(secret="not-a-valid-fernet-token")
+
+        response = bridge_client.post(SESSIONS_URL, _body(create_user, workspace, agent), format="json")
+
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        assert b"sk-ant" not in response.content
         assert not APIToken.objects.filter(label=AGENT_SESSION_TOKEN_LABEL).exists()
 
 

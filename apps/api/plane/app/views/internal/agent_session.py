@@ -21,6 +21,7 @@ from plane.db.models import APIToken, User, Workspace, WorkspaceMember
 from plane.db.models.api import AGENT_SESSION_TOKEN_LABEL
 from plane.license.models import AgentDefinition
 from plane.license.utils.encryption import EncryptionError
+from plane.utils.agent_credentials import build_agent_env, resolve_agent_credential
 from plane.utils.exception_logger import log_exception
 
 
@@ -77,11 +78,22 @@ class AgentSessionEndpoint(BaseAPIView):
 
         # Decrypt before minting so a broken config never leaves a live token behind.
         try:
-            env = agent.get_env()
+            admin_env = agent.get_env()
         except EncryptionError as e:
             log_exception(e)
             return Response(
                 {"error": "Agent configuration could not be decrypted."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        # The member's own credential, else the workspace's, else the admin env as is.
+        credential, credential_source = resolve_agent_credential(workspace, user, agent.adapter)
+        try:
+            env = build_agent_env(admin_env, credential)
+        except EncryptionError as e:
+            log_exception(e)
+            return Response(
+                {"error": "Agent provider credential could not be decrypted."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -108,6 +120,7 @@ class AgentSessionEndpoint(BaseAPIView):
                     "default_permission_level": agent.default_permission_level,
                     "max_permission_level": agent.max_permission_level,
                     "attach_plane_mcp": agent.attach_plane_mcp,
+                    "credential_source": credential_source,
                 },
                 "mcp": {"url": settings.PLANE_MCP_URL, "workspace_slug": workspace.slug},
             },

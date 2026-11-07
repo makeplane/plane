@@ -4,7 +4,11 @@
 
 from django.urls import path
 
-from plane.app.views import AgentSessionEndpoint
+from plane.app.views import (
+    AgentConnectionAuthorizeEndpoint,
+    AgentConnectionEndpoint,
+    AgentSessionEndpoint,
+)
 
 # Service-to-service endpoints. Not for browsers: guarded by a shared secret.
 urlpatterns = [
@@ -17,5 +21,15 @@ urlpatterns = [
         "internal/agent-sessions/<uuid:token_id>/",
         AgentSessionEndpoint.as_view(),
         name="internal-agent-session-detail",
+    ),
+    path(
+        "internal/agent-connections/authorize/",
+        AgentConnectionAuthorizeEndpoint.as_view(),
+        name="internal-agent-connections-authorize",
+    ),
+    path(
+        "internal/agent-connections/",
+        AgentConnectionEndpoint.as_view(),
+        name="internal-agent-connections",
     ),
 ]

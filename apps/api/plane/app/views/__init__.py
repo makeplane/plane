@@ -67,6 +67,10 @@ from .workspace.invite import (
 )
 from .workspace.label import WorkspaceLabelsEndpoint
 from .workspace.agent import WorkspaceAgentsEndpoint
+from .workspace.agent_provider import (
+    WorkspaceAgentProviderCredentialEndpoint,
+    WorkspaceAgentProvidersEndpoint,
+)
 from .workspace.state import WorkspaceStatesEndpoint
 from .workspace.user import (
     UserLastProjectWithWorkspaceEndpoint,
@@ -241,3 +245,4 @@ from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
 from .timezone.base import TimezoneEndpoint
 
 from .internal.agent_session import AgentSessionEndpoint
+from .internal.agent_connection import AgentConnectionAuthorizeEndpoint, AgentConnectionEndpoint
