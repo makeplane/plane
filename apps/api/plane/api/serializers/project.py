@@ -134,6 +134,7 @@ class ProjectCreateSerializer(BaseSerializer):
             if not WorkspaceMember.objects.filter(
                 workspace_id=self.context["workspace_id"],
                 member_id=data.get("default_assignee"),
+                is_active=True,
             ).exists():
                 raise serializers.ValidationError("Default assignee should be a user in the workspace")
 
