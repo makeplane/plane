@@ -55,7 +55,7 @@ class IssueViewListCreateAPIEndpoint(BaseAPIView):
             .filter(Q(owned_by=self.request.user) | Q(access=1))
             .select_related("project", "workspace")
             .annotate(is_favorite=Exists(subquery))
-            .order_by("-is_favorite", "name")
+            .order_by("-is_favorite", "name", "id")
             .distinct()
         )
 
@@ -221,7 +221,12 @@ class IssueViewDetailAPIEndpoint(BaseAPIView):
     )
     def patch(self, request, slug, project_id, pk):
         """Partially update a project saved view."""
-        issue_view = IssueView.objects.filter(pk=pk, project_id=project_id, workspace__slug=slug).first()
+        issue_view = IssueView.objects.filter(
+            pk=pk,
+            project_id=project_id,
+            workspace__slug=slug,
+            project__archived_at__isnull=True,
+        ).first()
         if not issue_view:
             return Response({"error": "The requested resource does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -252,7 +257,12 @@ class IssueViewDetailAPIEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, project_id, pk):
         """Delete a project saved view."""
-        issue_view = IssueView.objects.filter(pk=pk, project_id=project_id, workspace__slug=slug).first()
+        issue_view = IssueView.objects.filter(
+            pk=pk,
+            project_id=project_id,
+            workspace__slug=slug,
+            project__archived_at__isnull=True,
+        ).first()
         if not issue_view:
             return Response({"error": "The requested resource does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -261,13 +271,13 @@ class IssueViewDetailAPIEndpoint(BaseAPIView):
         ).exists()
 
         if is_admin or issue_view.owned_by_id == request.user.id:
-            issue_view.delete()
             UserFavorite.objects.filter(
                 project_id=project_id, workspace__slug=slug, entity_identifier=pk, entity_type="view"
             ).delete()
             UserRecentVisit.objects.filter(
                 project_id=project_id, workspace__slug=slug, entity_identifier=pk, entity_name="view"
             ).delete(soft=False)
+            issue_view.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         return Response(
@@ -285,14 +295,31 @@ class WorkspaceViewListCreateAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
-        """Return accessible workspace views."""
-        return (
-            IssueView.objects.filter(workspace__slug=self.kwargs.get("slug"))
+        """Return accessible workspace views with favorite state and guest scoping."""
+        workspace_slug = self.kwargs.get("slug")
+        favorite_subquery = UserFavorite.objects.filter(
+            user=self.request.user,
+            entity_identifier=OuterRef("pk"),
+            entity_type="view",
+            workspace__slug=workspace_slug,
+            project__isnull=True,
+        )
+        queryset = (
+            IssueView.objects.filter(workspace__slug=workspace_slug)
             .filter(project__isnull=True)
             .filter(Q(owned_by=self.request.user) | Q(access=1))
-            .order_by("-created_at")
+            .annotate(is_favorite=Exists(favorite_subquery))
+            .order_by("-created_at", "id")
             .distinct()
         )
+        if WorkspaceMember.objects.filter(
+            workspace__slug=workspace_slug,
+            member=self.request.user,
+            role=5,
+            is_active=True,
+        ).exists():
+            queryset = queryset.filter(owned_by=self.request.user)
+        return queryset
 
     @workspace_view_docs(
         operation_id="list_workspace_views",
@@ -355,13 +382,30 @@ class WorkspaceViewDetailAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
-        """Return accessible workspace views."""
-        return (
-            IssueView.objects.filter(workspace__slug=self.kwargs.get("slug"))
+        """Return accessible workspace views with favorite state and guest scoping."""
+        workspace_slug = self.kwargs.get("slug")
+        favorite_subquery = UserFavorite.objects.filter(
+            user=self.request.user,
+            entity_identifier=OuterRef("pk"),
+            entity_type="view",
+            workspace__slug=workspace_slug,
+            project__isnull=True,
+        )
+        queryset = (
+            IssueView.objects.filter(workspace__slug=workspace_slug)
             .filter(project__isnull=True)
             .filter(Q(owned_by=self.request.user) | Q(access=1))
+            .annotate(is_favorite=Exists(favorite_subquery))
             .distinct()
         )
+        if WorkspaceMember.objects.filter(
+            workspace__slug=workspace_slug,
+            member=self.request.user,
+            role=5,
+            is_active=True,
+        ).exists():
+            queryset = queryset.filter(owned_by=self.request.user)
+        return queryset
 
     @workspace_view_docs(
         operation_id="retrieve_workspace_view",
@@ -435,10 +479,16 @@ class WorkspaceViewDetailAPIEndpoint(BaseAPIView):
         ).exists()
 
         if is_admin or issue_view.owned_by_id == request.user.id:
-            issue_view.delete()
             UserFavorite.objects.filter(
                 workspace__slug=slug, entity_identifier=pk, project__isnull=True, entity_type="view"
             ).delete()
+            UserRecentVisit.objects.filter(
+                workspace__slug=slug,
+                entity_identifier=pk,
+                project__isnull=True,
+                entity_name="view",
+            ).delete(soft=False)
+            issue_view.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         return Response(
