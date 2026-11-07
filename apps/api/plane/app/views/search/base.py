@@ -338,6 +338,18 @@ class SearchEndpoint(BaseAPIView):
 
         response_data = {}
 
+        # Project-scoped search requires the caller to be an active member of the project
+        if (
+            project_id
+            and not ProjectMember.objects.filter(
+                member=request.user,
+                project_id=project_id,
+                workspace__slug=slug,
+                is_active=True,
+            ).exists()
+        ):
+            return Response({query_type: [] for query_type in query_types}, status=status.HTTP_200_OK)
+
         if project_id:
             for query_type in query_types:
                 if query_type == "user_mention":
