@@ -8,6 +8,7 @@ import { useState } from "react";
 // plane imports
 import { Banner } from "@makeplane/propel/components/banner";
 import { Button } from "@makeplane/propel/components/button";
+import { Collapsible } from "@makeplane/propel/components/collapsible";
 import {
   Dialog,
   DialogActions,
@@ -23,7 +24,7 @@ import { SelectField } from "@makeplane/propel/components/select-field";
 import { SwitchField } from "@makeplane/propel/components/switch-field";
 import { TextAreaField } from "@makeplane/propel/components/text-area-field";
 import { setToast } from "@plane/blocks/toast";
-import { AGENT_ADAPTERS, AGENT_PERMISSION_LEVELS } from "@plane/constants";
+import { AGENT_ADAPTER_MODELS, AGENT_ADAPTERS, AGENT_MODEL_ENV_KEY, AGENT_PERMISSION_LEVELS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { InstanceAgentService } from "@plane/services";
 import type { TAgentAdapter, TAgentPermissionLevel, TInstanceAgent } from "@plane/types";
@@ -33,15 +34,22 @@ import {
   allowedDefaultLevels,
   buildPayload,
   createFormState,
-  envFieldsFor,
   envValue,
+  fallbackEnvFieldsFor,
+  MODEL_CUSTOM,
+  MODEL_DEFAULT,
+  modelSelection,
   otherEnvKeys,
   serverFieldErrors,
+  settingEnvFieldsFor,
   slugify,
   validateForm,
+  withAdapter,
   withMaxLevel,
+  withModelSelection,
 } from "./form-state";
 import type { TAgentFormErrors, TAgentFormState } from "./form-state";
+import type { TAgentEnvField } from "@plane/constants";
 
 const agentService = new InstanceAgentService();
 
@@ -60,6 +68,12 @@ export function AgentFormDialog({ isOpen, agent, onClose, onSaved }: Props) {
   const [errors, setErrors] = useState<TAgentFormErrors>({});
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Fallback credentials start collapsed unless one is saved or the saved env must be re-entered.
+  const [isFallbackOpen, setIsFallbackOpen] = useState(
+    () =>
+      !!agent?.env_decryption_failed ||
+      fallbackEnvFieldsFor(agent?.adapter ?? "claude").some((field) => field.key in (agent?.env ?? {}))
+  );
 
   const levelLabel = (level: TAgentPermissionLevel) => t(`agents.permission.levels.${level}.name`);
   const fieldError = (key: string) => {
@@ -94,6 +108,27 @@ export function AgentFormDialog({ isOpen, agent, onClose, onSaved }: Props) {
   };
 
   const others = otherEnvKeys(form);
+  const settingFields = settingEnvFieldsFor(form.adapter);
+  const fallbackFields = fallbackEnvFieldsFor(form.adapter);
+  const savedFallbackCount = fallbackFields.filter((field) => {
+    const entry = envValue(form, field.key);
+    return entry.saved && !entry.remove;
+  }).length;
+  const selectedModel = modelSelection(form);
+  const modelError = fieldError(AGENT_MODEL_ENV_KEY);
+
+  const renderEnvField = (field: TAgentEnvField) => {
+    const error = fieldError(field.key);
+    return (
+      <AgentEnvField
+        key={field.key}
+        field={field}
+        entry={envValue(form, field.key)}
+        {...(error ? { error } : {})}
+        onChange={(entry) => update({ env: { ...form.env, [field.key]: entry } })}
+      />
+    );
+  };
 
   return (
     <Dialog
@@ -176,63 +211,124 @@ export function AgentFormDialog({ isOpen, agent, onClose, onSaved }: Props) {
                 }))}
                 {...(fieldError("adapter") ? { error: fieldError("adapter") } : {})}
                 onValueChange={(adapter) => {
-                  if (adapter) update({ adapter });
+                  if (adapter) setForm((current) => withAdapter(current, adapter));
                 }}
               />
 
-              <fieldset className="flex flex-col gap-3">
-                <legend className="mb-1 flex flex-col gap-0.5">
-                  <span className="text-body-sm-medium text-primary">{t("agents.admin.form.credentials")}</span>
-                  <span className="text-caption-md-regular text-tertiary">
-                    {t("agents.admin.form.credentials_help")}
-                  </span>
-                </legend>
-                {envFieldsFor(form.adapter).map((field) => {
-                  const error = fieldError(field.key);
-                  return (
-                    <AgentEnvField
-                      key={field.key}
-                      field={field}
-                      entry={envValue(form, field.key)}
-                      {...(error ? { error } : {})}
-                      onChange={(entry) => update({ env: { ...form.env, [field.key]: entry } })}
-                    />
-                  );
-                })}
-                {serverErrors.env && <p className="text-caption-md-regular text-danger-primary">{serverErrors.env}</p>}
-                {others.length > 0 && (
-                  <div className="flex flex-col gap-2">
-                    <div className="flex flex-col">
-                      <span className="text-body-xs-medium text-primary">{t("agents.admin.form.other_env")}</span>
-                      <span className="text-caption-md-regular text-tertiary">
-                        {t("agents.admin.form.other_env_help")}
-                      </span>
-                    </div>
-                    <ul className="flex flex-col gap-1">
-                      {others.map((key) => {
-                        const entry = envValue(form, key);
-                        return (
-                          <li key={key} className="flex items-center justify-between gap-2">
-                            <code className={entry.remove ? "text-tertiary line-through" : "text-secondary"}>
-                              {key}
-                            </code>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              stretch="auto"
-                              label={t(entry.remove ? "agents.admin.form.undo_remove" : "agents.admin.form.remove")}
-                              aria-label={`${t(entry.remove ? "agents.admin.form.undo_remove" : "agents.admin.form.remove")}: ${key}`}
-                              onClick={() =>
-                                update({ env: { ...form.env, [key]: { ...entry, remove: !entry.remove } } })
-                              }
-                            />
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
+              <div className="flex flex-col gap-3">
+                <SelectField<string>
+                  name="default_model"
+                  size="lg"
+                  label={t("agents.admin.form.env.PLANE_AGENT_MODEL.label")}
+                  description={t("agents.admin.form.model_help")}
+                  value={selectedModel}
+                  options={[
+                    { value: MODEL_DEFAULT, label: t("agents.admin.form.model_default") },
+                    "separator",
+                    ...(AGENT_ADAPTER_MODELS[form.adapter] ?? []).map((model) => ({
+                      value: model.value,
+                      label: model.name,
+                    })),
+                    "separator",
+                    { value: MODEL_CUSTOM, label: t("agents.admin.form.model_custom") },
+                  ]}
+                  {...(modelError && selectedModel !== MODEL_CUSTOM ? { error: modelError } : {})}
+                  onValueChange={(selection) => {
+                    if (selection) setForm((current) => withModelSelection(current, selection));
+                  }}
+                />
+                {selectedModel === MODEL_CUSTOM && (
+                  <InputField
+                    id="agent-model-custom"
+                    name={AGENT_MODEL_ENV_KEY}
+                    size="lg"
+                    orientation="vertical"
+                    label={t("agents.admin.form.model_custom_id")}
+                    description={t("agents.admin.form.model_custom_id_help")}
+                    value={envValue(form, AGENT_MODEL_ENV_KEY).value}
+                    {...(modelError ? { error: modelError } : {})}
+                    autoComplete="off"
+                    spellCheck={false}
+                    onChange={(event) =>
+                      update({
+                        env: {
+                          ...form.env,
+                          [AGENT_MODEL_ENV_KEY]: { ...envValue(form, AGENT_MODEL_ENV_KEY), value: event.target.value },
+                        },
+                      })
+                    }
+                  />
                 )}
-              </fieldset>
+                {settingFields.map(renderEnvField)}
+              </div>
+
+              {fallbackFields.length > 0 && (
+                <div className="rounded-md border border-subtle">
+                  <Collapsible
+                    open={isFallbackOpen || fallbackFields.some((field) => !!fieldError(field.key))}
+                    onOpenChange={setIsFallbackOpen}
+                    trigger={
+                      <span className="flex flex-col items-start gap-0.5 text-left">
+                        <span className="text-body-sm-medium text-primary">
+                          {t("agents.admin.form.fallback_credentials")}
+                          {savedFallbackCount > 0 &&
+                            ` · ${t("agents.admin.form.fallback_saved", { count: savedFallbackCount })}`}
+                        </span>
+                        <span className="text-caption-md-regular text-tertiary">
+                          {t("agents.admin.form.fallback_credentials_summary")}
+                        </span>
+                      </span>
+                    }
+                  >
+                    <div className="flex flex-col gap-3">
+                      <span className="text-caption-md-regular text-tertiary">
+                        {t("agents.admin.form.credentials_help")}
+                      </span>
+                      {fallbackFields.map(renderEnvField)}
+                    </div>
+                  </Collapsible>
+                </div>
+              )}
+
+              {(serverErrors.env || others.length > 0) && (
+                <div className="flex flex-col gap-3">
+                  {serverErrors.env && (
+                    <p className="text-caption-md-regular text-danger-primary">{serverErrors.env}</p>
+                  )}
+                  {others.length > 0 && (
+                    <div className="flex flex-col gap-2">
+                      <div className="flex flex-col">
+                        <span className="text-body-xs-medium text-primary">{t("agents.admin.form.other_env")}</span>
+                        <span className="text-caption-md-regular text-tertiary">
+                          {t("agents.admin.form.other_env_help")}
+                        </span>
+                      </div>
+                      <ul className="flex flex-col gap-1">
+                        {others.map((key) => {
+                          const entry = envValue(form, key);
+                          return (
+                            <li key={key} className="flex items-center justify-between gap-2">
+                              <code className={entry.remove ? "text-tertiary line-through" : "text-secondary"}>
+                                {key}
+                              </code>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                stretch="auto"
+                                label={t(entry.remove ? "agents.admin.form.undo_remove" : "agents.admin.form.remove")}
+                                aria-label={`${t(entry.remove ? "agents.admin.form.undo_remove" : "agents.admin.form.remove")}: ${key}`}
+                                onClick={() =>
+                                  update({ env: { ...form.env, [key]: { ...entry, remove: !entry.remove } } })
+                                }
+                              />
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <SelectField<TAgentPermissionLevel>

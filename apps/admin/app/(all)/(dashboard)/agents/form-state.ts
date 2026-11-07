@@ -6,8 +6,10 @@
 
 import {
   AGENT_ADAPTER_ENV_FIELDS,
+  AGENT_ADAPTER_MODELS,
   AGENT_COMMON_ENV_FIELDS,
   AGENT_ENV_MASK,
+  AGENT_MODEL_ENV_KEY,
   AGENT_PERMISSION_LEVELS,
   getAgentPermissionRank,
 } from "@plane/constants";
@@ -15,13 +17,16 @@ import type { TAgentEnvField } from "@plane/constants";
 import type { TAgentAdapter, TAgentPermissionLevel, TInstanceAgent, TInstanceAgentPayload } from "@plane/types";
 
 /**
- * One env variable in the form. Saved values are never sent to the browser, so a saved variable
- * starts empty: leaving it empty keeps it, typing replaces it, `remove` drops it.
+ * One env variable in the form. Saved secrets are never sent to the browser, so a saved secret
+ * starts empty: leaving it empty keeps it, typing replaces it, `remove` drops it. A `plain`
+ * variable (a setting the API returns as stored, like the default model) starts with its saved
+ * value instead, and clearing it removes it.
  */
 export type TEnvValueState = {
   saved: boolean;
   value: string;
   remove: boolean;
+  plain?: boolean;
 };
 
 export type TAgentFormState = {
@@ -36,7 +41,13 @@ export type TAgentFormState = {
   attach_plane_mcp: boolean;
   is_enabled: boolean;
   env: Record<string, TEnvValueState>;
+  /** The admin picked "Custom model id" (the model may still be empty or match a listed one). */
+  modelCustom: boolean;
 };
+
+/** The default-model dropdown's choice: no override, a listed model, or a custom id. */
+export const MODEL_DEFAULT = "__default__";
+export const MODEL_CUSTOM = "__custom__";
 
 export type TAgentFormErrorKey = "required" | "slug" | "default_above_max" | "deepseek_auth";
 
@@ -64,6 +75,48 @@ export function envFieldsFor(adapter: TAgentAdapter): readonly TAgentEnvField[] 
   return [...(AGENT_ADAPTER_ENV_FIELDS[adapter] ?? []), ...AGENT_COMMON_ENV_FIELDS];
 }
 
+/** The adapter's fallback credentials, shown in their own collapsed section. */
+export function fallbackEnvFieldsFor(adapter: TAgentAdapter): readonly TAgentEnvField[] {
+  return envFieldsFor(adapter).filter((field) => field.fallback);
+}
+
+/** The adapter's other fields except the model, which has its own dropdown. */
+export function settingEnvFieldsFor(adapter: TAgentAdapter): readonly TAgentEnvField[] {
+  return envFieldsFor(adapter).filter((field) => !field.fallback && field.key !== AGENT_MODEL_ENV_KEY);
+}
+
+const isListedModel = (adapter: TAgentAdapter, model: string) =>
+  (AGENT_ADAPTER_MODELS[adapter] ?? []).some((option) => option.value === model);
+
+/** The dropdown choice for the current model: default, a listed model id, or custom. */
+export function modelSelection(state: TAgentFormState): string {
+  const model = envValue(state, AGENT_MODEL_ENV_KEY).value.trim();
+  if (state.modelCustom || (model && !isListedModel(state.adapter, model))) return MODEL_CUSTOM;
+  return model || MODEL_DEFAULT;
+}
+
+/** Apply a dropdown choice. Custom keeps the current id so the admin can edit it. */
+export function withModelSelection(state: TAgentFormState, selection: string): TAgentFormState {
+  const entry = envValue(state, AGENT_MODEL_ENV_KEY);
+  if (selection === MODEL_CUSTOM) return { ...state, modelCustom: true };
+  const value = selection === MODEL_DEFAULT ? "" : selection;
+  return { ...state, modelCustom: false, env: { ...state.env, [AGENT_MODEL_ENV_KEY]: { ...entry, value } } };
+}
+
+/** Switching adapters clears a default model that belongs to the previous adapter's list. */
+export function withAdapter(state: TAgentFormState, adapter: TAgentAdapter): TAgentFormState {
+  const entry = envValue(state, AGENT_MODEL_ENV_KEY);
+  const model = entry.value.trim();
+  const stale = !!model && isListedModel(state.adapter, model) && !isListedModel(adapter, model);
+  if (!stale) return { ...state, adapter };
+  return {
+    ...state,
+    adapter,
+    modelCustom: false,
+    env: { ...state.env, [AGENT_MODEL_ENV_KEY]: { ...entry, value: "" } },
+  };
+}
+
 /** Saved variables no adapter form knows (set through the API); kept unless removed. In API order (sorted). */
 export function otherEnvKeys(state: TAgentFormState): string[] {
   return Object.keys(state.env).filter((key) => state.env[key]?.saved && !KNOWN_ENV_KEYS.has(key));
@@ -71,7 +124,12 @@ export function otherEnvKeys(state: TAgentFormState): string[] {
 
 export function createFormState(agent?: TInstanceAgent): TAgentFormState {
   const env: Record<string, TEnvValueState> = {};
-  for (const key of Object.keys(agent?.env ?? {})) env[key] = { saved: true, value: "", remove: false };
+  for (const [key, saved] of Object.entries(agent?.env ?? {})) {
+    env[key] =
+      saved === AGENT_ENV_MASK
+        ? { saved: true, value: "", remove: false }
+        : { saved: true, value: saved, remove: false, plain: true };
+  }
   return {
     name: agent?.name ?? "",
     slug: agent?.slug ?? "",
@@ -83,6 +141,7 @@ export function createFormState(agent?: TInstanceAgent): TAgentFormState {
     attach_plane_mcp: agent?.attach_plane_mcp ?? true,
     is_enabled: agent?.is_enabled ?? true,
     env,
+    modelCustom: false,
   };
 }
 
@@ -93,7 +152,7 @@ export function envValue(state: TAgentFormState, key: string): TEnvValueState {
 /** The variable will hold a value after saving. */
 function willBeSet(state: TAgentFormState, key: string): boolean {
   const entry = envValue(state, key);
-  return entry.value.trim() !== "" || (entry.saved && !entry.remove);
+  return entry.value.trim() !== "" || (entry.saved && !entry.remove && !entry.plain);
 }
 
 /** Keys sent on save: the adapter's and the common fields, plus saved variables no form knows. */
@@ -111,7 +170,7 @@ export function desiredEnv(state: TAgentFormState): Record<string, string> {
     const entry = envValue(state, key);
     const value = entry.value.trim();
     if (value) env[key] = value;
-    else if (entry.saved && !entry.remove) env[key] = AGENT_ENV_MASK;
+    else if (entry.saved && !entry.remove && !entry.plain) env[key] = AGENT_ENV_MASK;
   }
   return env;
 }
@@ -138,6 +197,7 @@ export function validateForm(state: TAgentFormState): TAgentFormErrors {
   if (getAgentPermissionRank(state.default_permission_level) > getAgentPermissionRank(state.max_permission_level)) {
     errors.default_permission_level = "default_above_max";
   }
+  if (state.modelCustom && !envValue(state, AGENT_MODEL_ENV_KEY).value.trim()) errors[AGENT_MODEL_ENV_KEY] = "required";
   // Each group of alternative credentials needs one value; the error sits on the group's first field.
   const groups = new Map<string, string[]>();
   for (const field of envFieldsFor(state.adapter)) {
@@ -177,7 +237,8 @@ export function buildPayload(state: TAgentFormState, agent?: TInstanceAgent): TI
   const envChanged =
     // An env the API cannot decrypt is always replaced, or it would stay and fail every chat.
     agent.env_decryption_failed ||
-    Object.values(env).some((value) => value !== AGENT_ENV_MASK) ||
+    // A typed secret, or a plain setting (returned as stored) that changed.
+    Object.entries(env).some(([key, value]) => value !== AGENT_ENV_MASK && value !== agent.env[key]) ||
     savedKeys.length !== Object.keys(env).length ||
     savedKeys.some((key) => !(key in env));
   if (envChanged) payload.env = env;

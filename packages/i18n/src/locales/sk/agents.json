@@ -183,7 +183,14 @@
           "deepseek": "DeepSeek",
           "gemini": "Gemini"
         },
-        "credentials": "Prihlasovacie údaje a nastavenia",
+        "model_help": "Členovia môžu prepínať modely v chate.",
+        "model_default": "Predvolený model poskytovateľa",
+        "model_custom": "Vlastné ID modelu",
+        "model_custom_id": "ID modelu",
+        "model_custom_id_help": "ID modelu presne tak, ako ho uvádza poskytovateľ.",
+        "fallback_credentials": "Záložné prihlasovacie údaje",
+        "fallback_credentials_summary": "Použijú sa len vtedy, keď ani člen, ani pracovný priestor nepridal kľúč v nastaveniach poskytovateľov AI.",
+        "fallback_saved": "{count, plural, one{uložené: #} few{uložené: #} many{uložené: #} other{uložené: #}}",
         "credentials_help": "Hodnoty sú iba na zápis. Uložené hodnoty zostávajú skryté; ak chcete hodnotu zmeniť, nahraďte ju.",
         "env": {
           "ANTHROPIC_API_KEY": {
@@ -207,8 +214,7 @@
             "help": "Voliteľné. Predvolená hodnota je https://api.deepseek.com."
           },
           "PLANE_AGENT_MODEL": {
-            "label": "Predvolený model",
-            "help": "Voliteľné ID modelu, napr. claude-opus-5-5. Členovia môžu prepínať modely v chate."
+            "label": "Predvolený model"
           },
           "PLANE_AGENT_EFFORT": {
             "label": "Predvolená úroveň uvažovania",

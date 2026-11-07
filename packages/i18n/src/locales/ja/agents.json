@@ -183,7 +183,14 @@
           "deepseek": "DeepSeek",
           "gemini": "Gemini"
         },
-        "credentials": "認証情報と設定",
+        "model_help": "メンバーはチャット内でモデルを切り替えられます。",
+        "model_default": "プロバイダーのデフォルト",
+        "model_custom": "カスタムモデルID",
+        "model_custom_id": "モデルID",
+        "model_custom_id_help": "プロバイダーが定めるとおりのモデルIDです。",
+        "fallback_credentials": "フォールバック用の認証情報",
+        "fallback_credentials_summary": "メンバーもワークスペースもAIプロバイダー設定でキーを追加していない場合にのみ使用されます。",
+        "fallback_saved": "{count, plural, one{#件保存済み} other{#件保存済み}}",
         "credentials_help": "値は書き込み専用です。保存済みの値は表示されません。変更するには値を置き換えてください。",
         "env": {
           "ANTHROPIC_API_KEY": {
@@ -207,8 +214,7 @@
             "help": "任意です。デフォルトはhttps://api.deepseek.comです。"
           },
           "PLANE_AGENT_MODEL": {
-            "label": "デフォルトのモデル",
-            "help": "任意です。モデルID（例：claude-opus-5-5）を指定します。メンバーはチャット内でモデルを切り替えられます。"
+            "label": "デフォルトのモデル"
           },
           "PLANE_AGENT_EFFORT": {
             "label": "デフォルトの推論レベル",

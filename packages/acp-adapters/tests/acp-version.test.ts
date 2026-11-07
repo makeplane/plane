@@ -65,6 +65,18 @@ describe("acp-version.lock.json", () => {
     expect(lock.providers["gemini-cli"]).toBe(GEMINI_CLI_VERSION);
   });
 
+  it("offers the admin form the same Claude and DeepSeek models (AGENT_ADAPTER_MODELS)", () => {
+    // Read as text: @plane/constants is not a dependency of this package.
+    const source = readFileSync(path.join(repoRoot, "packages/constants/src/agent.ts"), "utf8");
+    const table = source.slice(source.indexOf("AGENT_ADAPTER_MODELS"));
+    const listed = (adapter: string) => {
+      const block = table.slice(table.indexOf(`${adapter}: [`), table.indexOf("],", table.indexOf(`${adapter}: [`)));
+      return [...block.matchAll(/value: "([^"]+)", name: "([^"]+)"/g)].map(([, value, name]) => [value, name]);
+    };
+    expect(listed("claude")).toEqual(CLAUDE_MODELS.map((model) => [model.value, model.name]));
+    expect(listed("deepseek")).toEqual(DEEPSEEK_MODELS.map((model) => [model.value, model.name]));
+  });
+
   it("lists the models the adapters default to", () => {
     expect(DEEPSEEK_MODELS.map((model) => model.value)).toEqual(lock.providers.deepseek_models);
     expect(CLAUDE_MODELS[0].value).toBe("claude-opus-5-5");

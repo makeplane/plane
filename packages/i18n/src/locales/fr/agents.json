@@ -183,7 +183,14 @@
           "deepseek": "DeepSeek",
           "gemini": "Gemini"
         },
-        "credentials": "Identifiants et paramètres",
+        "model_help": "Les membres peuvent changer de modèle dans la conversation.",
+        "model_default": "Modèle par défaut du fournisseur",
+        "model_custom": "Identifiant de modèle personnalisé",
+        "model_custom_id": "Identifiant du modèle",
+        "model_custom_id_help": "L’identifiant du modèle exactement tel que le fournisseur le nomme.",
+        "fallback_credentials": "Identifiants de secours",
+        "fallback_credentials_summary": "Utilisés uniquement lorsque ni le membre ni l’espace de travail n’ont ajouté de clé dans les paramètres des fournisseurs d’IA.",
+        "fallback_saved": "{count, plural, one{# enregistré} many{# enregistrés} other{# enregistrés}}",
         "credentials_help": "Les valeurs sont en écriture seule. Les valeurs enregistrées restent masquées ; remplacez-en une pour la modifier.",
         "env": {
           "ANTHROPIC_API_KEY": {
@@ -207,8 +214,7 @@
             "help": "Facultatif. Valeur par défaut : https://api.deepseek.com."
           },
           "PLANE_AGENT_MODEL": {
-            "label": "Modèle par défaut",
-            "help": "Identifiant de modèle facultatif, par exemple claude-opus-5-5. Les membres peuvent changer de modèle dans la conversation."
+            "label": "Modèle par défaut"
           },
           "PLANE_AGENT_EFFORT": {
             "label": "Niveau de raisonnement par défaut",

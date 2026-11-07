@@ -183,7 +183,14 @@
           "deepseek": "DeepSeek",
           "gemini": "Gemini"
         },
-        "credentials": "Credentials and settings",
+        "model_help": "Members can switch models in the chat.",
+        "model_default": "Provider default",
+        "model_custom": "Custom model ID",
+        "model_custom_id": "Model ID",
+        "model_custom_id_help": "The model ID exactly as the provider names it.",
+        "fallback_credentials": "Fallback credentials",
+        "fallback_credentials_summary": "Only used when neither the member nor the workspace has added a key in AI providers settings.",
+        "fallback_saved": "{count, plural, one{# saved} other{# saved}}",
         "credentials_help": "Values are write-only. Saved values stay hidden; replace one to change it.",
         "env": {
           "ANTHROPIC_API_KEY": {
@@ -207,8 +214,7 @@
             "help": "Optional. Defaults to https://api.deepseek.com."
           },
           "PLANE_AGENT_MODEL": {
-            "label": "Default model",
-            "help": "Optional model id, e.g. claude-opus-5-5. Members can switch models in the chat."
+            "label": "Default model"
           },
           "PLANE_AGENT_EFFORT": {
             "label": "Default reasoning effort",

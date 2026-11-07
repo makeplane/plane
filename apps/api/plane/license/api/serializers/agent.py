@@ -13,6 +13,10 @@ from .base import BaseSerializer
 # Placeholder returned in place of every env value. Secrets are write-only.
 AGENT_ENV_MASK = "********"
 
+# Settings that are not secrets, returned as stored so the admin form can show them
+# (e.g. the default model in a dropdown). Every other key is masked.
+AGENT_PLAIN_ENV_KEYS = frozenset({"PLANE_AGENT_MODEL", "PLANE_AGENT_EFFORT"})
+
 
 def _field_default(name):
     return AgentDefinition._meta.get_field(name).default
@@ -21,7 +25,8 @@ def _field_default(name):
 class AgentDefinitionSerializer(BaseSerializer):
     """Admin serializer for ``AgentDefinition``.
 
-    Reads return ``env`` as ``{KEY: "********"}``; values are never sent back.
+    Reads return ``env`` as ``{KEY: "********"}``; values are never sent back,
+    except the non-secret settings in ``AGENT_PLAIN_ENV_KEYS``, returned as stored.
 
     Writes take ``env`` as the complete desired set of variables:
 
@@ -118,7 +123,8 @@ class AgentDefinitionSerializer(BaseSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         try:
-            data["env"] = {key: AGENT_ENV_MASK for key in sorted(instance.get_env())}
+            env = instance.get_env()
+            data["env"] = {key: (env[key] if key in AGENT_PLAIN_ENV_KEYS else AGENT_ENV_MASK) for key in sorted(env)}
             data["env_decryption_failed"] = False
         except EncryptionError:
             data["env"] = {}

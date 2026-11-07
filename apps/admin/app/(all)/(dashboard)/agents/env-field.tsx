@@ -19,15 +19,19 @@ type Props = {
 };
 
 /**
- * A write-only env variable. A saved value is never shown: the field stays empty (placeholder
- * "Keep saved value") and only a typed value replaces it. Remove drops it on save.
+ * An env variable. A saved secret is never shown: the field stays empty (placeholder "Keep saved
+ * value") and only a typed value replaces it. Remove drops it on save. A plain setting shows its
+ * saved value and is edited in place.
  */
 export function AgentEnvField({ field, entry, error, onChange }: Props) {
   const { t } = useTranslation();
   const label = t(`agents.admin.form.env.${field.key}.label`);
   const help = t(`agents.admin.form.env.${field.key}.help`);
 
-  if (entry.saved && entry.remove) {
+  // A plain setting shows its saved value; clearing it removes it, so it needs no keep/remove UI.
+  const masked = entry.saved && !entry.plain;
+
+  if (masked && entry.remove) {
     return (
       <div className="flex items-center justify-between gap-3 rounded-md border border-subtle px-3 py-2">
         <div className="flex flex-col">
@@ -55,16 +59,16 @@ export function AgentEnvField({ field, entry, error, onChange }: Props) {
           size="lg"
           orientation="vertical"
           label={label}
-          description={entry.saved ? `${t("agents.admin.form.saved")} · ${help}` : help}
+          description={masked ? `${t("agents.admin.form.saved")} · ${help}` : help}
           {...(error ? { error } : {})}
           value={entry.value}
-          placeholder={entry.saved ? t("agents.admin.form.keep") : ""}
+          placeholder={masked ? t("agents.admin.form.keep") : ""}
           autoComplete="off"
           spellCheck={false}
           onChange={(event) => onChange({ ...entry, value: event.target.value })}
         />
       </div>
-      {entry.saved && (
+      {masked && (
         <Button
           variant="ghost"
           size="md"

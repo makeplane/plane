@@ -183,7 +183,14 @@
           "deepseek": "DeepSeek",
           "gemini": "Gemini"
         },
-        "credentials": "Dane uwierzytelniające i ustawienia",
+        "model_help": "Członkowie mogą zmieniać modele w czacie.",
+        "model_default": "Domyślny model dostawcy",
+        "model_custom": "Niestandardowy identyfikator modelu",
+        "model_custom_id": "Identyfikator modelu",
+        "model_custom_id_help": "Identyfikator modelu dokładnie w takiej postaci, jakiej używa dostawca.",
+        "fallback_credentials": "Zapasowe dane uwierzytelniające",
+        "fallback_credentials_summary": "Używane tylko wtedy, gdy ani członek, ani przestrzeń robocza nie dodali klucza w ustawieniach dostawców AI.",
+        "fallback_saved": "{count, plural, one{zapisano: #} few{zapisano: #} many{zapisano: #} other{zapisano: #}}",
         "credentials_help": "Wartości są tylko do zapisu. Zapisane wartości pozostają ukryte; aby zmienić wartość, należy ją zastąpić.",
         "env": {
           "ANTHROPIC_API_KEY": {
@@ -207,8 +214,7 @@
             "help": "Opcjonalne. Domyślnie https://api.deepseek.com."
           },
           "PLANE_AGENT_MODEL": {
-            "label": "Model domyślny",
-            "help": "Opcjonalny identyfikator modelu, np. claude-opus-5-5. Członkowie mogą zmieniać modele w czacie."
+            "label": "Model domyślny"
           },
           "PLANE_AGENT_EFFORT": {
             "label": "Domyślny poziom rozumowania",

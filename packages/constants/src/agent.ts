@@ -33,6 +33,11 @@ export type TAgentEnvField = {
   secret: boolean;
   /** Fields sharing a group are alternatives: at least one of them must be set. */
   requiredGroup?: string;
+  /**
+   * The instance-wide fallback for a provider credential members and workspaces set themselves.
+   * The form tucks these away, since most agents don't need them.
+   */
+  fallback?: boolean;
 };
 
 /**
@@ -43,16 +48,16 @@ export type TAgentEnvField = {
  */
 export const AGENT_ADAPTER_ENV_FIELDS: Record<TAgentAdapter, readonly TAgentEnvField[]> = {
   claude: [
-    { key: "ANTHROPIC_API_KEY", secret: true },
-    { key: "CLAUDE_CODE_OAUTH_TOKEN", secret: true },
+    { key: "ANTHROPIC_API_KEY", secret: true, fallback: true },
+    { key: "CLAUDE_CODE_OAUTH_TOKEN", secret: true, fallback: true },
   ],
   codex: [
-    { key: "OPENAI_API_KEY", secret: true },
-    { key: "PLANE_AGENT_AUTH", secret: false },
+    { key: "OPENAI_API_KEY", secret: true, fallback: true },
+    { key: "PLANE_AGENT_AUTH", secret: false, fallback: true },
   ],
   gemini: [
-    { key: "GEMINI_API_KEY", secret: true },
-    { key: "PLANE_AGENT_AUTH", secret: false },
+    { key: "GEMINI_API_KEY", secret: true, fallback: true },
+    { key: "PLANE_AGENT_AUTH", secret: false, fallback: true },
   ],
   deepseek: [
     { key: "DEEPSEEK_API_KEY", secret: true, requiredGroup: "deepseek_auth" },
@@ -60,11 +65,36 @@ export const AGENT_ADAPTER_ENV_FIELDS: Record<TAgentAdapter, readonly TAgentEnvF
   ],
 };
 
+/** The env key holding an agent's default model id. */
+export const AGENT_MODEL_ENV_KEY = "PLANE_AGENT_MODEL";
+
 /** Env every adapter reads. */
 export const AGENT_COMMON_ENV_FIELDS: readonly TAgentEnvField[] = [
-  { key: "PLANE_AGENT_MODEL", secret: false },
+  { key: AGENT_MODEL_ENV_KEY, secret: false },
   { key: "PLANE_AGENT_EFFORT", secret: false },
 ];
+
+export type TAgentModelOption = { value: string; name: string };
+
+/**
+ * The models the admin form offers as an agent's default, mirroring the adapters' built-in lists
+ * (`CLAUDE_MODELS`, `DEEPSEEK_MODELS` in `packages/acp-adapters`). Codex and Gemini list their
+ * models at run time from the provider's CLI, so the form takes a custom id for them.
+ */
+export const AGENT_ADAPTER_MODELS: Record<TAgentAdapter, readonly TAgentModelOption[]> = {
+  claude: [
+    { value: "claude-opus-5-5", name: "Claude Opus 5.5" },
+    { value: "claude-sonnet-5-5", name: "Claude Sonnet 5.5" },
+    { value: "claude-haiku-5-5", name: "Claude Haiku 5.5" },
+    { value: "claude-fable-5-1", name: "Claude Fable 5.1" },
+  ],
+  codex: [],
+  gemini: [],
+  deepseek: [
+    { value: "deepseek-v4-pro", name: "DeepSeek V4 Pro" },
+    { value: "deepseek-flash", name: "DeepSeek Flash" },
+  ],
+};
 
 /** AI providers members can add credentials for, in the order the settings page shows them. */
 export const AGENT_PROVIDERS: readonly TAgentProvider[] = ["anthropic", "openai", "google"];
