@@ -22,6 +22,8 @@ urlpatterns = [
     path("api/v1/", include("plane.api.urls")),
     # Nexus additions: endpoints the paid plans serve. Mounted after Plane's own so they never shadow one.
     path("api/v1/", include("plane.nexus.urls")),
+    # Nexus Messages: the web app's chat, scoped to a workspace like plane.app's routes.
+    path("api/workspaces/<str:slug>/chat/", include("plane.chat.urls")),
     path("auth/", include("plane.authentication.urls")),
     path("", include("plane.web.urls")),
 ]
