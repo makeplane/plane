@@ -27,6 +27,11 @@ urlpatterns = [
         name="project-views-alias",
     ),
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/project-views/<uuid:pk>/",
+        IssueViewDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        name="project-views-alias-detail",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:pk>/",
         IssueViewDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="project-views-detail",
