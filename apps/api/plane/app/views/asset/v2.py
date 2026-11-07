@@ -311,7 +311,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
 
         # Project Cover
         elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
-            project = Project.objects.filter(id=asset.project_id).first()
+            project = Project.objects.filter(id=asset.project_id, workspace_id=asset.workspace_id).first()
             if project is None:
                 return
             # Delete the previous cover image
@@ -344,7 +344,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             return
         # Project Cover
         elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
-            project = Project.objects.filter(id=asset.project_id).first()
+            project = Project.objects.filter(id=asset.project_id, workspace_id=asset.workspace_id).first()
             if project is None:
                 return
             project.cover_image_asset_id = None
@@ -406,7 +406,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
 
         # Create a File Asset
-        asset = FileAsset.objects.create(
+        asset = FileAsset(
             attributes={"name": name, "type": type, "size": size_limit},
             asset=asset_key,
             size=size_limit,
@@ -415,6 +415,14 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             entity_type=entity_type,
             **self.get_entity_id_field(entity_type=entity_type, entity_id=entity_identifier),
         )
+
+        # A cover bound to a project at upload time needs a project of this workspace that the caller administers
+        if asset.project_id and not can_modify_asset(request.user, asset):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        asset.save()
 
         # Get the presigned URL
         storage = S3Storage(request=request)

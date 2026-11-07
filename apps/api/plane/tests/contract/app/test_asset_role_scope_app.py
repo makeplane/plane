@@ -12,13 +12,15 @@ active member of the asset's project. The legacy routes keyed by asset path foll
 the same rules.
 """
 
+from unittest.mock import patch
 from uuid import uuid4
 
 import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from plane.db.models import FileAsset, ProjectMember
+from plane.app.views.asset.v2 import WorkspaceFileAssetEndpoint
+from plane.db.models import FileAsset, ProjectMember, Workspace
 from plane.tests.factories import ProjectFactory, ProjectMemberFactory, UserFactory, WorkspaceMemberFactory
 
 ADMIN, MEMBER, GUEST = 20, 15, 5
@@ -254,3 +256,57 @@ class TestBrandingAssetRoleScope:
         cover = _asset(workspace, user, FileAsset.EntityTypeContext.PROJECT_COVER, is_uploaded=False)
         response = _client(user).patch(_workspace_url(workspace, cover))
         assert response.status_code == status.HTTP_204_NO_CONTENT
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestProjectCoverBinding:
+    """A cover bound to a project at upload time needs a project of the URL workspace the caller administers."""
+
+    def _upload(self, client, workspace, project_id):
+        payload = {
+            "name": "c.png",
+            "type": "image/png",
+            "size": 100,
+            "entity_type": FileAsset.EntityTypeContext.PROJECT_COVER,
+            "entity_identifier": str(project_id),
+        }
+        with patch("plane.app.views.asset.v2.S3Storage") as storage:
+            storage.return_value.generate_presigned_post.return_value = {}
+            return client.post(f"/api/assets/v2/workspaces/{workspace.slug}/", payload, format="json")
+
+    def test_admin_can_bind_cover_to_own_project(self, session_client, workspace, project):
+        response = self._upload(session_client, workspace, project.id)
+        assert response.status_code == status.HTTP_200_OK
+        assert FileAsset.objects.get(id=response.data["asset_id"]).project_id == project.id
+
+    def test_cannot_bind_cover_to_project_of_another_workspace(self, workspace, project, create_user):
+        other_ws = Workspace.objects.create(name="Other", slug="other-ws", owner=create_user)
+        foreign = ProjectFactory(workspace=other_ws, identifier="FO")
+        user = _user(workspace, project, workspace_role=ADMIN)
+        before = FileAsset.objects.count()
+
+        response = self._upload(_client(user), workspace, foreign.id)
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert FileAsset.objects.count() == before
+
+    @pytest.mark.parametrize("role", [GUEST, MEMBER])
+    def test_non_admin_cannot_bind_cover_to_project(self, workspace, project, role):
+        user = _user(workspace, project, workspace_role=role)
+        before = FileAsset.objects.count()
+
+        response = self._upload(_client(user), workspace, project.id)
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert FileAsset.objects.count() == before
+
+    def test_save_ignores_project_of_another_workspace(self, workspace, project, create_user):
+        """Defence in depth: a stray cross-workspace asset never touches the foreign project."""
+        other_ws = Workspace.objects.create(name="Other", slug="other-ws", owner=create_user)
+        foreign = ProjectFactory(workspace=other_ws, identifier="FO")
+        user = _user(workspace, project, workspace_role=ADMIN)
+        asset = _asset(workspace, user, FileAsset.EntityTypeContext.PROJECT_COVER, foreign)
+        WorkspaceFileAssetEndpoint().entity_asset_save(asset.id, asset.entity_type, asset, None)
+        foreign.refresh_from_db()
+        assert foreign.cover_image_asset_id is None
