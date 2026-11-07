@@ -1,0 +1,36 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+#
+# Gemini CLI admin policy for plane-acp-gemini, loaded with `--admin-policy` (Admin tier, above every
+# user, workspace, extension and default rule). Every tool call must reach the adapter as an ACP
+# `session/request_permission`, where the Plane permission level (ask_all / ask_writes / yolo)
+# decides whether to run it, ask the user or deny it.
+
+# Tools with no ACP equivalent, or that would change Gemini's own approval mode, are removed from
+# the model's tool list (a global deny hides the tool).
+[[rule]]
+toolName = [
+  "ask_user",
+  "enter_plan_mode",
+  "exit_plan_mode",
+  "get_internal_docs",
+  "invoke_agent",
+  "codebase_investigator",
+  "cli_help",
+]
+decision = "deny"
+priority = 999
+
+# Every other call asks. `argsPattern` keeps Gemini's shell heuristics from turning "known safe"
+# commands (ls, cat, git status…) into silent allows; the second rule covers calls without args.
+[[rule]]
+toolName = "*"
+argsPattern = ".*"
+decision = "ask_user"
+priority = 998
+
+[[rule]]
+toolName = "*"
+decision = "ask_user"
+priority = 997

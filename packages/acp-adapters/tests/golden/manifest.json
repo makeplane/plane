@@ -1,7 +1,7 @@
 {
   "format_version": 1,
   "corpus_id": "plane-acp-adapters-golden",
-  "corpus_version": 1,
+  "corpus_version": 2,
   "protocol_version": 1,
   "notes": "Ported from employai_v2 tests/fixtures/acp/v1 (corpus employai-acp-golden-v1). Regenerate expected output with UPDATE_GOLDEN=1, review the diff, then bump corpus_version and the corpus hash in acp-version.lock.json.",
   "cases": [
@@ -48,6 +48,28 @@
       "exitCode": 0,
       "inputSha256": "47a825f0b3405bbfc28ae4e6611f3de263e6391edfee2d3297332f13541d5e11",
       "expectedSha256": "80cbfb475ebc2df9d9ca4b5e50f761a1842dbeb6263109d347353ce446464594"
+    },
+    {
+      "id": "gemini/valid/initialize",
+      "adapter": "gemini",
+      "kind": "pipe",
+      "family": "valid",
+      "input": "gemini/valid/initialize.in.jsonl",
+      "expected": "gemini/valid/initialize.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "858fb828ca5d8ec7a2e4178ae6066bb6569cea6a6e24012d640a0ccad07627f2",
+      "expectedSha256": "ebdafc968968d8f2471e7529e541ca4777634cb817122f723d0a544d820c3950"
+    },
+    {
+      "id": "gemini/valid/turn",
+      "adapter": "gemini",
+      "kind": "script",
+      "family": "valid",
+      "input": "gemini/valid/turn.script.jsonl",
+      "expected": "gemini/valid/turn.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "341c5fac0293dc5a3e3cae94fcbb325f0f4695d62fa578aada0c6ca92f434c84",
+      "expectedSha256": "a3c3dd3dfcc818e4b6cb87dad894101b1d6c4dffc6960a1fd12e7454f219790c"
     },
     {
       "id": "deepseek/valid/initialize",

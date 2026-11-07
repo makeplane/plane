@@ -7,8 +7,9 @@
 import { spawn } from "node:child_process";
 import type { Readable, Writable } from "node:stream";
 
-import { objectValue, stringValue, type JsonObject } from "../core/json.ts";
+import { AI_PROVIDERS_SETTINGS } from "../core/auth.ts";
 import { PACKAGE_VERSION } from "../core/info.ts";
+import { objectValue, stringValue, type JsonObject } from "../core/json.ts";
 
 /** The slice of a child process the client needs; tests pass a fake. Ported from employ_ai. */
 export interface CodexAppServerProcess {
@@ -235,11 +236,13 @@ export class CodexAppServerClient {
   }
 }
 
+export const CODEX_SIGNED_OUT = `Codex is not signed in: add an OpenAI API key or sign in with ChatGPT in ${AI_PROVIDERS_SETTINGS} (or set OPENAI_API_KEY in the agent's env)`;
+
 /** Map an auth-looking failure to an actionable message (ported from employ_ai). */
 export function classifyCodexFailure(message: string, stderr: readonly string[]): string {
   const text = `${message}\n${stderr.join("\n")}`.toLowerCase();
   if (/(unauthorized|401|not logged in|login required|invalid api key|expired token|refresh token)/.test(text)) {
-    return "Codex is not signed in: set OPENAI_API_KEY in the agent's env or provide a signed-in CODEX_HOME";
+    return CODEX_SIGNED_OUT;
   }
   return message;
 }

@@ -2,14 +2,20 @@
   "name": "@plane/acp-adapters",
   "version": "1.5.0",
   "private": true,
-  "description": "Agent Client Protocol (ACP) stdio adapters for the in-app agent chat: Claude, Codex, DeepSeek and an echo test agent",
+  "description": "Agent Client Protocol (ACP) stdio adapters for the in-app agent chat: Claude, Codex, Gemini, DeepSeek and an echo test agent, plus the provider sign-in helper",
   "license": "AGPL-3.0",
   "bin": {
     "plane-acp-claude": "./dist/bin/claude.mjs",
     "plane-acp-codex": "./dist/bin/codex.mjs",
     "plane-acp-deepseek": "./dist/bin/deepseek.mjs",
-    "plane-acp-echo": "./dist/bin/echo.mjs"
+    "plane-acp-echo": "./dist/bin/echo.mjs",
+    "plane-acp-gemini": "./dist/bin/gemini.mjs",
+    "plane-agent-login": "./dist/bin/login.mjs"
   },
+  "files": [
+    "dist",
+    "gemini"
+  ],
   "type": "module",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",

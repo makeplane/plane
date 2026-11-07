@@ -15,6 +15,7 @@ import { PACKAGE_ROOT, tempDir } from "./helpers/client.ts";
 import { fakeQuery } from "./helpers/claude.ts";
 import { fakeCodexEnv } from "./helpers/codex.ts";
 import { deepSeekServer } from "./helpers/deepseek.ts";
+import { fakeGeminiEnv } from "./helpers/gemini.ts";
 import { protocolViolations, runPipe, runScript, type GoldenCase, type RawRun } from "./helpers/golden.ts";
 import { planeMcpServer } from "./helpers/mcp-server.ts";
 
@@ -81,6 +82,7 @@ describe("golden transcripts", () => {
     }
     const env: Record<string, string> = { ...entry.env };
     if (entry.adapter === "codex") Object.assign(env, fakeCodexEnv().env);
+    if (entry.adapter === "gemini") Object.assign(env, fakeGeminiEnv({ GEMINI_API_KEY: "AIza-golden" }).env);
     if (entry.adapter === "deepseek")
       Object.assign(env, { DEEPSEEK_API_KEY: "sk-deepseek", DEEPSEEK_BASE_URL: api.url });
     if (entry.kind === "script") return runScript({ bin: entry.adapter, env }, input.toString(), vars);

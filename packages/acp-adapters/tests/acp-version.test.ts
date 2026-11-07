@@ -14,6 +14,7 @@ import { describe, expect, it } from "vitest";
 
 import { CLAUDE_MODELS } from "../src/claude/index.ts";
 import { DEEPSEEK_MODELS } from "../src/deepseek/index.ts";
+import { GEMINI_CLI_VERSION } from "../src/gemini/index.ts";
 import { PACKAGE_ROOT } from "./helpers/client.ts";
 
 /**
@@ -58,6 +59,10 @@ describe("acp-version.lock.json", () => {
     expect(sha256(manifest), "the golden corpus changed: review it, then update corpus.sha256").toBe(
       lock.corpus.sha256
     );
+  });
+
+  it("pins the Gemini CLI release the adapter speaks to", () => {
+    expect(lock.providers["gemini-cli"]).toBe(GEMINI_CLI_VERSION);
   });
 
   it("lists the models the adapters default to", () => {

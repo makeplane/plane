@@ -23,6 +23,7 @@ import {
 } from "@anthropic-ai/claude-agent-sdk";
 
 import type { AdapterSession, AgentAdapter, SessionHost, SessionInit, TurnContext } from "../core/agent.ts";
+import { AI_PROVIDERS_SETTINGS } from "../core/auth.ts";
 import { agentInfo, PACKAGE_VERSION } from "../core/info.ts";
 import { arrayValue, numberValue, objectValue, stringValue, type JsonObject } from "../core/json.ts";
 import { toClaudeMcpServers } from "../core/mcp.ts";
@@ -65,7 +66,10 @@ export function createClaudeAdapter(options: ClaudeAdapterOptions = {}): AgentAd
   };
   const requireAuth = (env: NodeJS.ProcessEnv) => {
     if (!env[CLAUDE_ENV.apiKey]?.trim() && !env[CLAUDE_ENV.oauthToken]?.trim()) {
-      throw RequestError.authRequired(undefined, `set ${CLAUDE_ENV.apiKey} or ${CLAUDE_ENV.oauthToken} for this agent`);
+      throw RequestError.authRequired(
+        undefined,
+        `Claude has no Anthropic API key: add one in ${AI_PROVIDERS_SETTINGS} (or set ${CLAUDE_ENV.apiKey} or ${CLAUDE_ENV.oauthToken} in the agent's env)`
+      );
     }
   };
   return {

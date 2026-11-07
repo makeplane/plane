@@ -22,7 +22,15 @@ export function fakeCodexEnv(extra: NodeJS.ProcessEnv = {}): {
   chmodSync(shim, 0o755);
   const logFile = path.join(dir, "log.jsonl");
   return {
-    env: { PATH: `${dir}${path.delimiter}${process.env.PATH ?? ""}`, FAKE_CODEX_LOG: logFile, ...extra },
+    env: {
+      PATH: `${dir}${path.delimiter}${process.env.PATH ?? ""}`,
+      HOME: tempDir("codex-home-"),
+      FAKE_CODEX_LOG: logFile,
+      PLANE_AGENT_AUTH: "",
+      CODEX_HOME: "",
+      OPENAI_API_KEY: "",
+      ...extra,
+    },
     log: () =>
       existsSync(logFile)
         ? readFileSync(logFile, "utf8")

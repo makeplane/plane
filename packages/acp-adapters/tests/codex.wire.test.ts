@@ -4,6 +4,9 @@
  * See the LICENSE file for details.
  */
 
+import { statSync } from "node:fs";
+import path from "node:path";
+
 import type { McpServer } from "@agentclientprotocol/sdk";
 import { afterEach, describe, expect, it } from "vitest";
 
@@ -113,7 +116,7 @@ describe("plane-acp-codex over stdio (fake app-server)", () => {
     await client.agent.request("initialize", { protocolVersion: 1 });
     await expect(client.agent.request("session/new", { cwd: tempDir(), mcpServers: [] })).rejects.toMatchObject({
       code: -32000,
-      message: expect.stringContaining("OPENAI_API_KEY"),
+      message: expect.stringMatching(/Workspace settings → AI providers.*OPENAI_API_KEY/),
     });
     await client.close();
 
@@ -124,6 +127,56 @@ describe("plane-acp-codex over stdio (fake app-server)", () => {
     expect(withKey.log().find((message) => message.method === "account/login/start")?.params).toEqual({
       type: "apiKey",
       apiKey: "sk-test",
+    });
+  });
+
+  it("uses the ChatGPT sign-in in ~/.codex with PLANE_AGENT_AUTH=chatgpt and never logs in with a key", async () => {
+    const fake = fakeCodexEnv({ PLANE_AGENT_AUTH: "chatgpt", FAKE_CODEX_ACCOUNT: "chatgpt", OPENAI_API_KEY: "sk-x" });
+    client = spawnClient("codex", fake.env);
+    await client.agent.request("initialize", { protocolVersion: 1 });
+    await client.agent.request("session/new", { cwd: tempDir(), mcpServers: [] });
+    const log = fake.log();
+    expect(log[0]?.start).toEqual({ codexHome: path.join(fake.env.HOME!, ".codex"), apiKeyInEnv: false });
+    expect(log.some((message) => message.method === "account/login/start")).toBe(false);
+    await client.close();
+
+    // Signed in with a key only: ChatGPT is not connected.
+    const keyOnly = fakeCodexEnv({ PLANE_AGENT_AUTH: "chatgpt" });
+    client = spawnClient("codex", keyOnly.env);
+    await client.agent.request("initialize", { protocolVersion: 1 });
+    await expect(client.agent.request("session/new", { cwd: tempDir(), mcpServers: [] })).rejects.toMatchObject({
+      code: -32000,
+      message: expect.stringContaining(
+        "ChatGPT is not connected. Sign in with ChatGPT in Workspace settings → AI providers."
+      ),
+    });
+    expect(keyOnly.log().some((message) => message.method === "account/login/start")).toBe(false);
+  });
+
+  it("logs in with the current key in a separate CODEX_HOME, even when already signed in", async () => {
+    for (const mode of ["api_key", ""]) {
+      /* oxlint-disable no-await-in-loop -- one app-server per mode, in turn */
+      const fake = fakeCodexEnv({ PLANE_AGENT_AUTH: mode, FAKE_CODEX_ACCOUNT: "chatgpt", OPENAI_API_KEY: "sk-new" });
+      client = spawnClient("codex", fake.env);
+      await client.agent.request("initialize", { protocolVersion: 1 });
+      await client.agent.request("session/new", { cwd: tempDir(), mcpServers: [] });
+      const codexHome = path.join(fake.env.HOME!, ".codex-api-key");
+      const log = fake.log();
+      expect(log[0]?.start).toEqual({ codexHome, apiKeyInEnv: true });
+      expect(statSync(codexHome).mode & 0o777).toBe(0o700);
+      expect(log.find((message) => message.method === "account/login/start")?.params).toEqual({
+        type: "apiKey",
+        apiKey: "sk-new",
+      });
+      await client.close();
+      /* oxlint-enable no-await-in-loop */
+    }
+
+    const noKey = fakeCodexEnv({ PLANE_AGENT_AUTH: "api_key" });
+    client = spawnClient("codex", noKey.env);
+    await client.agent.request("initialize", { protocolVersion: 1 });
+    await expect(client.agent.request("session/new", { cwd: tempDir(), mcpServers: [] })).rejects.toMatchObject({
+      message: expect.stringContaining("Workspace settings → AI providers"),
     });
   });
 

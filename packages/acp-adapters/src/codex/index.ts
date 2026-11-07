@@ -5,6 +5,8 @@
  */
 
 /* oxlint-disable no-await-in-loop -- session updates and tool calls must reach the client in order */
+import path from "node:path";
+
 import { RequestError, type PlanEntry, type StopReason, type ToolCallContent } from "@agentclientprotocol/sdk";
 
 import { deferred } from "../core/abort.ts";
@@ -17,6 +19,7 @@ import type {
   SessionInit,
   TurnContext,
 } from "../core/agent.ts";
+import { AI_PROVIDERS_SETTINGS, agentAuthMode, agentHome, ensurePrivateDir } from "../core/auth.ts";
 import { SECRET_ENV_GLOBS } from "../core/env.ts";
 import { agentInfo } from "../core/info.ts";
 import { arrayValue, errorMessage, numberValue, objectValue, stringValue, type JsonObject } from "../core/json.ts";
@@ -26,6 +29,7 @@ import { classifyMcpCall, toolKindForCategory, type PermissionModeId, type ToolC
 import type { PermissionDecision } from "../core/permission.ts";
 import { promptToText } from "../core/turn.ts";
 import {
+  CODEX_SIGNED_OUT,
   CodexAppServerClient,
   classifyCodexFailure,
   type CodexNotification,
@@ -35,6 +39,7 @@ import {
 
 export const CODEX_ENV = {
   apiKey: "OPENAI_API_KEY",
+  home: "CODEX_HOME",
   stallTimeoutMs: "PLANE_CODEX_STALL_TIMEOUT_MS",
   turnTimeoutMs: "PLANE_CODEX_TURN_TIMEOUT_MS",
 } as const;
@@ -58,6 +63,48 @@ const INTERRUPT_GRACE_MS = 5_000;
  */
 export function approvalPolicyFor(mode: PermissionModeId): "untrusted" | "on-request" {
   return mode === "yolo" ? "on-request" : "untrusted";
+}
+
+export const CHATGPT_NOT_CONNECTED = `ChatGPT is not connected. Sign in with ChatGPT in ${AI_PROVIDERS_SETTINGS}.`;
+
+/**
+ * How the app-server signs in, from `PLANE_AGENT_AUTH` and the env:
+ *
+ * - `chatgpt`: the user's ChatGPT sign-in in `CODEX_HOME` (default `~/.codex`, written by the
+ *   `plane-agent-login` helper). Never logs in with a key.
+ * - `api_key` (or unset with `OPENAI_API_KEY`): a separate `CODEX_HOME` (default
+ *   `~/.codex-api-key`) logged in with the current key on every start, so a changed key takes
+ *   effect and a ChatGPT sign-in in `~/.codex` is never overwritten.
+ * - `ambient`: neither; whatever `CODEX_HOME` the admin configured must already be signed in.
+ */
+export type CodexAuth =
+  | { readonly kind: "chatgpt"; readonly env: NodeJS.ProcessEnv; readonly codexHome: string }
+  | { readonly kind: "api_key"; readonly env: NodeJS.ProcessEnv; readonly codexHome: string; readonly apiKey: string }
+  | { readonly kind: "ambient"; readonly env: NodeJS.ProcessEnv };
+
+export function resolveCodexAuth(env: NodeJS.ProcessEnv): CodexAuth {
+  const mode = agentAuthMode(env);
+  const configuredHome = env[CODEX_ENV.home]?.trim();
+  if (mode === "chatgpt") {
+    const codexHome = ensurePrivateDir(configuredHome || path.join(agentHome(env), ".codex"));
+    const { [CODEX_ENV.apiKey]: _apiKey, ...rest } = env;
+    return { kind: "chatgpt", codexHome, env: { ...rest, [CODEX_ENV.home]: codexHome } };
+  }
+  if (mode !== undefined && mode !== "api_key") {
+    throw RequestError.authRequired(
+      undefined,
+      `PLANE_AGENT_AUTH=${mode} is not supported by Codex (use api_key or chatgpt)`
+    );
+  }
+  const apiKey = env[CODEX_ENV.apiKey]?.trim();
+  if (apiKey) {
+    const codexHome = ensurePrivateDir(configuredHome || path.join(agentHome(env), ".codex-api-key"));
+    return { kind: "api_key", codexHome, apiKey, env: { ...env, [CODEX_ENV.home]: codexHome } };
+  }
+  if (mode === "api_key") {
+    throw RequestError.authRequired(undefined, `there is no OpenAI API key: add one in ${AI_PROVIDERS_SETTINGS}`);
+  }
+  return { kind: "ambient", env };
 }
 
 export interface CodexAdapterOptions {
@@ -118,9 +165,10 @@ class CodexSession implements AdapterSession {
 
   async start(): Promise<void> {
     const host = this.#host;
+    const auth = resolveCodexAuth(host.env);
     const client = new CodexAppServerClient({
       cwd: host.cwd,
-      env: host.env,
+      env: auth.env,
       ...(this.#options.spawnAppServer ? { spawnAppServer: this.#options.spawnAppServer } : {}),
       onNotification: (notification) => this.#enqueue(() => this.#onNotification(notification)),
       onServerRequest: (request) => this.#enqueue(() => this.#onServerRequest(request)),
@@ -128,7 +176,7 @@ class CodexSession implements AdapterSession {
     });
     this.#client = client;
     await client.initialize();
-    await this.#ensureSignedIn(client);
+    await this.#signIn(client, auth);
 
     const listed = await client.request("model/list", { includeHidden: false }).catch(() => ({}) as JsonObject);
     const override = host.env[MODEL_ENV]?.trim();
@@ -249,17 +297,20 @@ class CodexSession implements AdapterSession {
     this.#client?.close();
   }
 
-  async #ensureSignedIn(client: CodexAppServerClient): Promise<void> {
-    const account = await client.request("account/read", { refreshToken: false });
-    if (account.account || account.requiresOpenaiAuth === false) return;
-    const apiKey = this.#host.env[CODEX_ENV.apiKey]?.trim();
-    if (!apiKey) {
-      throw RequestError.authRequired(
-        undefined,
-        `Codex is not signed in: set ${CODEX_ENV.apiKey} in the agent's env or provide a signed-in CODEX_HOME`
-      );
+  async #signIn(client: CodexAppServerClient, auth: CodexAuth): Promise<void> {
+    if (auth.kind === "api_key") {
+      await client.request("account/login/start", { type: "apiKey", apiKey: auth.apiKey });
+      return;
     }
-    await client.request("account/login/start", { type: "apiKey", apiKey });
+    const account = await client.request("account/read", { refreshToken: false });
+    if (auth.kind === "chatgpt") {
+      if (stringValue(objectValue(account.account).type) !== "chatgpt") {
+        throw RequestError.authRequired(undefined, CHATGPT_NOT_CONNECTED);
+      }
+      return;
+    }
+    if (account.account || account.requiresOpenaiAuth === false) return;
+    throw RequestError.authRequired(undefined, CODEX_SIGNED_OUT);
   }
 
   #enqueue(work: () => Promise<void>): void {
@@ -483,7 +534,11 @@ function describeItem(
       const paths = arrayValue(item.changes)
         .map((change) => stringValue(objectValue(change).path))
         .filter(Boolean);
-      return { title: `Edit ${paths.join(", ") || "files"}`, kind: "edit", locations: paths.map((path) => ({ path })) };
+      return {
+        title: `Edit ${paths.join(", ") || "files"}`,
+        kind: "edit",
+        locations: paths.map((file) => ({ path: file })),
+      };
     }
     case "mcpToolCall": {
       const args = objectValue(item.arguments);

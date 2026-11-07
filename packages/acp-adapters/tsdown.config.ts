@@ -7,6 +7,8 @@ export default defineConfig({
     "bin/codex": "src/bin/codex.ts",
     "bin/deepseek": "src/bin/deepseek.ts",
     "bin/echo": "src/bin/echo.ts",
+    "bin/gemini": "src/bin/gemini.ts",
+    "bin/login": "src/bin/login.ts",
   },
   format: ["esm"],
   platform: "node",

@@ -6,13 +6,20 @@
 //   command; "plane" asks to call a Plane MCP tool; "wait" streams one delta then waits for
 //   turn/interrupt; anything else answers "ok".
 // Every message it receives is appended to $FAKE_CODEX_LOG (JSONL) so tests can assert on
-// thread/start params, approval replies and approval policies.
+// thread/start params, approval replies and approval policies; the first line of each run is
+// `{ start: { codexHome, apiKeyInEnv } }`.
+// Accounts: signed in with an API key unless FAKE_CODEX_SIGNED_IN=0; FAKE_CODEX_ACCOUNT=chatgpt
+// signs in with ChatGPT instead. `account/login/start {type: "chatgptDeviceCode"}` completes after
+// a moment (FAKE_CODEX_LOGIN=fail fails it, =hang never completes) and writes $CODEX_HOME/auth.json.
 "use strict";
 
 const fs = require("node:fs");
+const path = require("node:path");
 
 const log = process.env.FAKE_CODEX_LOG;
+const chatgpt = { type: "chatgpt", email: "dev@example.com", planType: "plus", workspaceName: null };
 let signedIn = process.env.FAKE_CODEX_SIGNED_IN !== "0";
+let account = process.env.FAKE_CODEX_ACCOUNT === "chatgpt" ? chatgpt : { type: "apiKey" };
 let buffer = "";
 let nextServerRequest = 1;
 const pendingReplies = new Map();
@@ -180,11 +187,40 @@ function handle(msg) {
       send({ id: msg.id, result: { userAgent: "fake-codex/0.166.0" } });
       return;
     case "account/read":
-      send({ id: msg.id, result: { account: signedIn ? { type: "apiKey" } : null, requiresOpenaiAuth: true } });
+      send({ id: msg.id, result: { account: signedIn ? account : null, requiresOpenaiAuth: true } });
       return;
     case "account/login/start":
+      if (msg.params && msg.params.type === "chatgptDeviceCode") {
+        send({
+          id: msg.id,
+          result: {
+            type: "chatgptDeviceCode",
+            loginId: "login-1",
+            verificationUrl: "https://auth.openai.com/codex/device",
+            userCode: "ABCD-1234",
+          },
+        });
+        if (process.env.FAKE_CODEX_LOGIN === "hang") return;
+        setTimeout(() => {
+          const success = process.env.FAKE_CODEX_LOGIN !== "fail";
+          if (success) {
+            signedIn = true;
+            account = chatgpt;
+            fs.writeFileSync(path.join(process.env.CODEX_HOME, "auth.json"), "{}");
+          }
+          send({
+            method: "account/login/completed",
+            params: { loginId: "login-1", success, error: success ? null : "device code expired" },
+          });
+        }, 50);
+        return;
+      }
       signedIn = msg.params && msg.params.type === "apiKey" && Boolean(msg.params.apiKey);
+      account = { type: "apiKey" };
       send({ id: msg.id, result: { type: "apiKey" } });
+      return;
+    case "account/login/cancel":
+      send({ id: msg.id, result: { status: "canceled" } });
       return;
     case "model/list":
       send({
@@ -223,6 +259,13 @@ function handle(msg) {
       if (msg.id !== undefined && msg.method)
         send({ id: msg.id, error: { code: -32601, message: `unknown method ${msg.method}` } });
   }
+}
+
+if (log) {
+  fs.appendFileSync(
+    log,
+    `${JSON.stringify({ start: { codexHome: process.env.CODEX_HOME, apiKeyInEnv: "OPENAI_API_KEY" in process.env } })}\n`
+  );
 }
 
 process.stdin.on("data", (chunk) => {

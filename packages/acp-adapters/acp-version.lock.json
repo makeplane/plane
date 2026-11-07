@@ -24,12 +24,13 @@
     "@anthropic-ai/claude-agent-sdk": "0.3.318",
     "@modelcontextprotocol/sdk": "1.32.2",
     "codex-cli": "0.166.0",
+    "gemini-cli": "0.65.0",
     "deepseek_models": ["deepseek-v4-pro", "deepseek-flash"]
   },
   "corpus": {
     "id": "plane-acp-adapters-golden",
     "manifest_path": "tests/golden/manifest.json",
     "hash_algorithm": "sha256",
-    "sha256": "7f3eeaa7d79b69eb5d0d40054565ea1222f8292d7a5b895a727d890568e09c25"
+    "sha256": "796233eff6ed870db76cea00163f010543858b9d5f2dbee590e64815428523e9"
   }
 }

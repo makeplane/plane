@@ -76,6 +76,7 @@ describe("plane-acp-claude over ndjson (mocked query())", () => {
     await client.agent.request("initialize", { protocolVersion: 1 });
     await expect(client.agent.request("session/new", { cwd: tempDir(), mcpServers: [] })).rejects.toMatchObject({
       code: -32000,
+      message: expect.stringContaining("add one in Workspace settings → AI providers"),
     });
   });
 

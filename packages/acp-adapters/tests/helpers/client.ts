@@ -27,7 +27,7 @@ import { sequencedStream } from "../../src/core/stdio.ts";
 
 export const PACKAGE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
-export type BinName = "echo" | "codex" | "deepseek" | "claude";
+export type BinName = "echo" | "codex" | "deepseek" | "claude" | "gemini" | "login";
 
 export function binPath(bin: BinName): string {
   return path.join(PACKAGE_ROOT, "src/bin", `${bin}.ts`);
@@ -37,7 +37,8 @@ export function tempDir(prefix = "acp-"): string {
   return mkdtempSync(path.join(tmpdir(), prefix));
 }
 
-export type PermissionAnswer = "allow_once" | "allow_always" | "reject_once" | "cancelled";
+/** `hold`: leave the prompt open until the agent withdraws it (`$/cancel_request`). */
+export type PermissionAnswer = "allow_once" | "allow_always" | "reject_once" | "cancelled" | "hold";
 
 /** An SDK `client()` connected to an agent, recording everything the agent sends. */
 export interface TestClient {
@@ -58,9 +59,16 @@ function connectClient(stream: Stream, onClose: () => Promise<void>): TestClient
     .onNotification("session/update", ({ params }) => {
       updates.push(params);
     })
-    .onRequest("session/request_permission", async ({ params }): Promise<RequestPermissionResponse> => {
+    .onRequest("session/request_permission", async ({ params, signal }): Promise<RequestPermissionResponse> => {
       permissionRequests.push(params);
       const answer = answers.shift() ?? "allow_once";
+      if (answer === "hold") {
+        await new Promise<void>((resolve) => {
+          if (signal.aborted) resolve();
+          else signal.addEventListener("abort", () => resolve(), { once: true });
+        });
+        return { outcome: { outcome: "cancelled" } };
+      }
       return answer === "cancelled"
         ? { outcome: { outcome: "cancelled" } }
         : { outcome: { outcome: "selected", optionId: answer } };
