@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "Přihlašovací údaje a nastavení",
         "credentials_help": "Hodnoty jsou pouze pro zápis. Uložené hodnoty zůstávají skryté; chcete-li hodnotu změnit, nahraďte ji.",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "Výchozí model",
             "help": "Volitelné ID modelu, např. claude-opus-5-5. Členové mohou modely přepínat v chatu."
+          },
+          "GEMINI_API_KEY": {
+            "label": "API klíč Gemini",
+            "help": "Použije se, když člen nemá vlastní klíč a není přihlášen přes Google."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Způsob přihlášení",
+            "help": "Volitelné: api_key, chatgpt (Codex) nebo google_account (Gemini). Vlastní přihlašovací údaje členů jej nastavují pro jejich chaty."
           }
         },
         "saved": "Uloženo",
@@ -246,6 +255,116 @@
         "assigned_to_me": "Co je mi přiřazeno?",
         "due_this_week": "Které pracovní položky mají termín tento týden?",
         "recent_activity": "Shrnutí nedávné aktivity v mých projektech"
+      }
+    },
+    "providers": {
+      "load_failed_title": "Poskytovatele AI se nepodařilo načíst",
+      "load_failed_description": "Zkontrolujte připojení a zkuste to znovu.",
+      "claude_note": "Claude používá API klíč Anthropic. Přihlášení pomocí předplatného Claude se u aplikací postavených na Claude Agent SDK nenabízí.",
+      "personal": {
+        "title": "Vaše přihlašovací údaje"
+      },
+      "workspace": {
+        "title": "Klíč pracovního prostoru",
+        "admins_only": "Toto mohou změnit pouze správci pracovního prostoru."
+      },
+      "state": {
+        "none": "Nenastaveno",
+        "api_key": "API klíč ••••{hint}",
+        "signed_in": "Přihlášeno jako {email}",
+        "signed_in_unknown": "Přihlášeno"
+      },
+      "fallback": {
+        "instance": "Používá výchozí údaje instance.",
+        "missing": "Zatím žádný klíč – chaty s agenty tohoto poskytovatele budou selhávat, dokud nějaký nepřidáte."
+      },
+      "actions": {
+        "add_api_key": "Přidat API klíč",
+        "add_workspace_key": "Přidat klíč pracovního prostoru",
+        "replace": "Nahradit",
+        "remove": "Odebrat",
+        "disconnect": "Odpojit",
+        "sign_in_openai": "Přihlásit se přes ChatGPT",
+        "sign_in_google": "Přihlásit se přes Google"
+      },
+      "cancel": "Zrušit",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Přidat váš API klíč pro {provider}",
+          "title_replace": "Nahradit váš API klíč pro {provider}",
+          "description": "Tento klíč používají pouze vaše chaty. Ukládá se zašifrovaný a nelze jej znovu zobrazit."
+        },
+        "workspace": {
+          "title_add": "Přidat klíč pracovního prostoru pro {provider}",
+          "title_replace": "Nahradit klíč pracovního prostoru pro {provider}",
+          "description": "Tento klíč používají členové bez vlastních přihlašovacích údajů. Ukládá se zašifrovaný a nelze jej znovu zobrazit."
+        },
+        "label": "API klíč pro {provider}",
+        "invalid": "Zadejte klíč o délce 8 až 512 znaků bez mezer.",
+        "save": "Uložit klíč",
+        "saving": "Ukládání"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "Odebrat váš API klíč?",
+          "content": "Vaše chaty s agenty {provider} budou místo něj používat klíč pracovního prostoru nebo výchozí údaje instance."
+        },
+        "workspace": {
+          "title": "Odebrat klíč pracovního prostoru?",
+          "content": "Členové bez vlastních přihlašovacích údajů pro {provider} budou místo něj používat výchozí údaje instance."
+        },
+        "confirm": "Odebrat",
+        "removing": "Odebírání"
+      },
+      "disconnect_dialog": {
+        "title": "Odpojit účet?",
+        "content": "Vaše chaty přestanou používat {email}. Kdykoli se můžete znovu přihlásit.",
+        "content_unknown": "Vaše chaty přestanou používat tento účet. Kdykoli se můžete znovu přihlásit.",
+        "confirm": "Odpojit",
+        "disconnecting": "Odpojování"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Přihlásit se přes ChatGPT",
+          "description": "Chaty s Codex budou používat váš tarif ChatGPT.",
+          "open_link": "Otevřít přihlášení k ChatGPT",
+          "step_open": "Otevřete přihlašovací stránku ChatGPT."
+        },
+        "google": {
+          "title": "Přihlásit se přes Google",
+          "description": "Chaty s Gemini budou používat váš účet Google.",
+          "open_link": "Otevřít přihlášení Google",
+          "step_open": "Otevřete přihlašovací stránku Google a povolte přístup.",
+          "step_paste": "Vložte kód, který vám zobrazí Google."
+        },
+        "starting": "Spouštění přihlášení…",
+        "step_enter_code": "Zadejte tam tento kód:",
+        "code_label": "Kód",
+        "copy_code": "Kopírovat kód",
+        "code_copied": "Kód byl zkopírován.",
+        "waiting": "Čeká se na dokončení vašeho přihlášení…",
+        "code_required": "Vložte kód ze služby Google.",
+        "submit": "Připojit",
+        "submitting": "Připojování",
+        "retry": "Zkusit znovu",
+        "errors": {
+          "failed": "Přihlášení se nezdařilo.",
+          "expired": "Platnost tohoto přihlášení vypršela. Zkuste to znovu.",
+          "unreachable": "Most agentů je nedostupný. Zeptejte se správce, zda běží.",
+          "rate_limited": "Příliš mnoho pokusů o přihlášení. Počkejte minutu a zkuste to znovu.",
+          "signed_out": "Jste odhlášeni z Plane. Přihlaste se znovu a akci opakujte."
+        }
+      },
+      "toasts": {
+        "error_title": "Chyba",
+        "key_saved": "API klíč byl uložen.",
+        "key_removed": "API klíč byl odebrán.",
+        "key_save_failed": "API klíč se nepodařilo uložit.",
+        "key_remove_failed": "API klíč se nepodařilo odebrat.",
+        "connected": "Přihlášeno jako {email}.",
+        "connected_unknown": "Přihlášeno.",
+        "disconnected": "Účet byl odpojen.",
+        "disconnect_failed": "Účet se nepodařilo odpojit."
       }
     }
   }

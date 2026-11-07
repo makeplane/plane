@@ -494,6 +494,10 @@
         "heading": "指令碼",
         "new_script": "新指令碼",
         "description": "使用自訂指令碼和自動化規則，自動化您的工作流程。"
+      },
+      "ai_providers": {
+        "title": "AI 供應商",
+        "description": "代理聊天使用的憑證。聊天會優先使用您自己的憑證，其次是工作區金鑰，最後是實例預設憑證。"
       }
     },
     "empty_state": {

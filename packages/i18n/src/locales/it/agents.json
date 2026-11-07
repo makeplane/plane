@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "Credenziali e impostazioni",
         "credentials_help": "I valori sono di sola scrittura. I valori salvati restano nascosti; per modificarne uno, sostituirlo.",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "Modello predefinito",
             "help": "ID del modello facoltativo, ad esempio claude-opus-5-5. I membri possono cambiare modello nella chat."
+          },
+          "GEMINI_API_KEY": {
+            "label": "Chiave API Gemini",
+            "help": "Usata quando un membro non ha una propria chiave e non ha effettuato l'accesso con Google."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Metodo di accesso",
+            "help": "Facoltativo: api_key, chatgpt (Codex) o google_account (Gemini). Le credenziali personali dei membri lo impostano per le loro chat."
           }
         },
         "saved": "Salvato",
@@ -246,6 +255,116 @@
         "assigned_to_me": "Cosa mi è stato assegnato?",
         "due_this_week": "Quali elementi di lavoro scadono questa settimana?",
         "recent_activity": "Riassumere l'attività recente dei miei progetti"
+      }
+    },
+    "providers": {
+      "load_failed_title": "Impossibile caricare i fornitori di IA",
+      "load_failed_description": "Verificare la connessione e riprovare.",
+      "claude_note": "Claude usa una chiave API Anthropic. L'accesso con un abbonamento Claude non è disponibile per le app create con Claude Agent SDK.",
+      "personal": {
+        "title": "La sua credenziale"
+      },
+      "workspace": {
+        "title": "Chiave dello spazio di lavoro",
+        "admins_only": "Solo gli amministratori dello spazio di lavoro possono modificare questa impostazione."
+      },
+      "state": {
+        "none": "Non impostata",
+        "api_key": "Chiave API ••••{hint}",
+        "signed_in": "Accesso effettuato come {email}",
+        "signed_in_unknown": "Accesso effettuato"
+      },
+      "fallback": {
+        "instance": "Usa la credenziale predefinita dell'istanza.",
+        "missing": "Nessuna chiave: le chat con gli agenti di questo fornitore non riusciranno finché non ne verrà aggiunta una."
+      },
+      "actions": {
+        "add_api_key": "Aggiungi chiave API",
+        "add_workspace_key": "Aggiungi chiave dello spazio di lavoro",
+        "replace": "Sostituisci",
+        "remove": "Rimuovi",
+        "disconnect": "Disconnetti",
+        "sign_in_openai": "Accedi con ChatGPT",
+        "sign_in_google": "Accedi con Google"
+      },
+      "cancel": "Annulla",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Aggiungi la chiave API personale di {provider}",
+          "title_replace": "Sostituisci la chiave API personale di {provider}",
+          "description": "Questa chiave viene usata solo dalle sue chat. Viene archiviata in forma crittografata e non può più essere visualizzata."
+        },
+        "workspace": {
+          "title_add": "Aggiungi una chiave {provider} per lo spazio di lavoro",
+          "title_replace": "Sostituisci la chiave {provider} dello spazio di lavoro",
+          "description": "Questa chiave viene usata dai membri senza una propria credenziale. Viene archiviata in forma crittografata e non può più essere visualizzata."
+        },
+        "label": "Chiave API {provider}",
+        "invalid": "Inserire una chiave da 8 a 512 caratteri, senza spazi.",
+        "save": "Salva chiave",
+        "saving": "Salvataggio in corso"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "Rimuovere la sua chiave API?",
+          "content": "Le sue chat con gli agenti {provider} useranno invece la chiave dello spazio di lavoro o la credenziale predefinita dell'istanza."
+        },
+        "workspace": {
+          "title": "Rimuovere la chiave dello spazio di lavoro?",
+          "content": "I membri senza una propria credenziale {provider} useranno invece la credenziale predefinita dell'istanza."
+        },
+        "confirm": "Rimuovi",
+        "removing": "Rimozione in corso"
+      },
+      "disconnect_dialog": {
+        "title": "Disconnettere l'account?",
+        "content": "Le sue chat smetteranno di usare {email}. Può accedere di nuovo in qualsiasi momento.",
+        "content_unknown": "Le sue chat smetteranno di usare questo account. Può accedere di nuovo in qualsiasi momento.",
+        "confirm": "Disconnetti",
+        "disconnecting": "Disconnessione in corso"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Accedi con ChatGPT",
+          "description": "Le chat Codex useranno il suo piano ChatGPT.",
+          "open_link": "Apri l'accesso a ChatGPT",
+          "step_open": "Aprire la pagina di accesso di ChatGPT."
+        },
+        "google": {
+          "title": "Accedi con Google",
+          "description": "Le chat Gemini useranno il suo account Google.",
+          "open_link": "Apri l'accesso a Google",
+          "step_open": "Aprire la pagina di accesso di Google e concedere l'autorizzazione.",
+          "step_paste": "Incollare il codice mostrato da Google."
+        },
+        "starting": "Avvio dell'accesso…",
+        "step_enter_code": "Inserire lì questo codice:",
+        "code_label": "Codice",
+        "copy_code": "Copia codice",
+        "code_copied": "Codice copiato.",
+        "waiting": "In attesa del completamento dell'accesso…",
+        "code_required": "Incollare il codice fornito da Google.",
+        "submit": "Connetti",
+        "submitting": "Connessione in corso",
+        "retry": "Riprova",
+        "errors": {
+          "failed": "Accesso non riuscito.",
+          "expired": "Questo accesso è scaduto. Riprovare.",
+          "unreachable": "Impossibile raggiungere il bridge degli agenti. Chiedere all'amministratore se è in esecuzione.",
+          "rate_limited": "Troppi tentativi di accesso. Attendere un minuto e riprovare.",
+          "signed_out": "La sessione di Plane è terminata. Accedere di nuovo e riprovare."
+        }
+      },
+      "toasts": {
+        "error_title": "Errore",
+        "key_saved": "Chiave API salvata.",
+        "key_removed": "Chiave API rimossa.",
+        "key_save_failed": "Impossibile salvare la chiave API.",
+        "key_remove_failed": "Impossibile rimuovere la chiave API.",
+        "connected": "Accesso effettuato come {email}.",
+        "connected_unknown": "Accesso effettuato.",
+        "disconnected": "Account disconnesso.",
+        "disconnect_failed": "Impossibile disconnettere l'account."
       }
     }
   }

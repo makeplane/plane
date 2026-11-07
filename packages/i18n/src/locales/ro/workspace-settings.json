@@ -494,6 +494,10 @@
         "heading": "Script-uri",
         "new_script": "Script nou",
         "description": "Automatizează fluxurile tale de lucru cu scripturi personalizate și reguli de automatizare."
+      },
+      "ai_providers": {
+        "title": "Furnizori AI",
+        "description": "Credențiale pentru chatul cu agenți. Chaturile folosesc mai întâi credențialul dvs., apoi cheia spațiului de lucru și, în final, valoarea implicită a instanței."
       }
     },
     "empty_state": {

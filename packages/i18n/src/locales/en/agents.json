@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "Credentials and settings",
         "credentials_help": "Values are write-only. Saved values stay hidden; replace one to change it.",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "Default model",
             "help": "Optional model id, e.g. claude-opus-5-5. Members can switch models in the chat."
+          },
+          "GEMINI_API_KEY": {
+            "label": "Gemini API key",
+            "help": "Used when a member has no key of their own and isn't signed in with Google."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Sign-in method",
+            "help": "Optional: api_key, chatgpt (Codex) or google_account (Gemini). Members' own credentials set it for their chats."
           }
         },
         "saved": "Saved",
@@ -246,6 +255,116 @@
         "assigned_to_me": "What's assigned to me?",
         "due_this_week": "Which work items are due this week?",
         "recent_activity": "Summarize recent activity in my projects"
+      }
+    },
+    "providers": {
+      "load_failed_title": "AI providers could not be loaded",
+      "load_failed_description": "Check your connection and try again.",
+      "claude_note": "Claude uses an Anthropic API key. Signing in with a Claude subscription isn't offered for apps built on the Claude Agent SDK.",
+      "personal": {
+        "title": "Your credential"
+      },
+      "workspace": {
+        "title": "Workspace key",
+        "admins_only": "Only workspace admins can change this."
+      },
+      "state": {
+        "none": "Not set",
+        "api_key": "API key ••••{hint}",
+        "signed_in": "Signed in as {email}",
+        "signed_in_unknown": "Signed in"
+      },
+      "fallback": {
+        "instance": "Uses the instance default.",
+        "missing": "No key yet — chats with this provider's agents will fail until one is added."
+      },
+      "actions": {
+        "add_api_key": "Add API key",
+        "add_workspace_key": "Add workspace key",
+        "replace": "Replace",
+        "remove": "Remove",
+        "disconnect": "Disconnect",
+        "sign_in_openai": "Sign in with ChatGPT",
+        "sign_in_google": "Sign in with Google"
+      },
+      "cancel": "Cancel",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Add your {provider} API key",
+          "title_replace": "Replace your {provider} API key",
+          "description": "Only your chats use this key. It's stored encrypted and can't be viewed again."
+        },
+        "workspace": {
+          "title_add": "Add a {provider} workspace key",
+          "title_replace": "Replace the {provider} workspace key",
+          "description": "Members without their own credential use this key. It's stored encrypted and can't be viewed again."
+        },
+        "label": "{provider} API key",
+        "invalid": "Enter a key of 8 to 512 characters, with no spaces.",
+        "save": "Save key",
+        "saving": "Saving"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "Remove your API key?",
+          "content": "Your chats with {provider} agents will use the workspace key or the instance default instead."
+        },
+        "workspace": {
+          "title": "Remove the workspace key?",
+          "content": "Members without their own {provider} credential will use the instance default instead."
+        },
+        "confirm": "Remove",
+        "removing": "Removing"
+      },
+      "disconnect_dialog": {
+        "title": "Disconnect account?",
+        "content": "Your chats will stop using {email}. You can sign in again at any time.",
+        "content_unknown": "Your chats will stop using this account. You can sign in again at any time.",
+        "confirm": "Disconnect",
+        "disconnecting": "Disconnecting"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Sign in with ChatGPT",
+          "description": "Codex chats will use your ChatGPT plan.",
+          "open_link": "Open ChatGPT sign-in",
+          "step_open": "Open the ChatGPT sign-in page."
+        },
+        "google": {
+          "title": "Sign in with Google",
+          "description": "Gemini chats will use your Google account.",
+          "open_link": "Open Google sign-in",
+          "step_open": "Open the Google sign-in page and allow access.",
+          "step_paste": "Paste the code Google shows you."
+        },
+        "starting": "Starting sign-in…",
+        "step_enter_code": "Enter this code there:",
+        "code_label": "Code",
+        "copy_code": "Copy code",
+        "code_copied": "Code copied.",
+        "waiting": "Waiting for you to finish signing in…",
+        "code_required": "Paste the code from Google.",
+        "submit": "Connect",
+        "submitting": "Connecting",
+        "retry": "Try again",
+        "errors": {
+          "failed": "Sign-in failed.",
+          "expired": "This sign-in expired. Try again.",
+          "unreachable": "Could not reach the agent bridge. Ask your admin whether it's running.",
+          "rate_limited": "Too many sign-in attempts. Wait a minute and try again.",
+          "signed_out": "You are signed out of Plane. Sign in again and retry."
+        }
+      },
+      "toasts": {
+        "error_title": "Error",
+        "key_saved": "API key saved.",
+        "key_removed": "API key removed.",
+        "key_save_failed": "The API key could not be saved.",
+        "key_remove_failed": "The API key could not be removed.",
+        "connected": "Signed in as {email}.",
+        "connected_unknown": "Signed in.",
+        "disconnected": "Account disconnected.",
+        "disconnect_failed": "The account could not be disconnected."
       }
     }
   }

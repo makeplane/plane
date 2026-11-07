@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "Anmeldedaten und Einstellungen",
         "credentials_help": "Werte können nur geschrieben werden. Gespeicherte Werte bleiben verborgen; ersetzen Sie einen Wert, um ihn zu ändern.",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "Standardmodell",
             "help": "Optionale Modell-ID, z. B. claude-opus-5-5. Mitglieder können im Chat das Modell wechseln."
+          },
+          "GEMINI_API_KEY": {
+            "label": "Gemini-API-Schlüssel",
+            "help": "Wird verwendet, wenn ein Mitglied keinen eigenen Schlüssel hat und nicht mit Google angemeldet ist."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Anmeldemethode",
+            "help": "Optional: api_key, chatgpt (Codex) oder google_account (Gemini). Eigene Anmeldedaten von Mitgliedern legen den Wert für ihre Chats fest."
           }
         },
         "saved": "Gespeichert",
@@ -246,6 +255,116 @@
         "assigned_to_me": "Was ist mir zugewiesen?",
         "due_this_week": "Welche Arbeitselemente sind diese Woche fällig?",
         "recent_activity": "Letzte Aktivitäten in meinen Projekten zusammenfassen"
+      }
+    },
+    "providers": {
+      "load_failed_title": "KI-Anbieter konnten nicht geladen werden",
+      "load_failed_description": "Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+      "claude_note": "Claude verwendet einen Anthropic-API-Schlüssel. Die Anmeldung mit einem Claude-Abonnement wird für Apps, die auf dem Claude Agent SDK basieren, nicht angeboten.",
+      "personal": {
+        "title": "Ihre Anmeldedaten"
+      },
+      "workspace": {
+        "title": "Arbeitsbereichsschlüssel",
+        "admins_only": "Nur Administratoren des Arbeitsbereichs können dies ändern."
+      },
+      "state": {
+        "none": "Nicht festgelegt",
+        "api_key": "API-Schlüssel ••••{hint}",
+        "signed_in": "Angemeldet als {email}",
+        "signed_in_unknown": "Angemeldet"
+      },
+      "fallback": {
+        "instance": "Verwendet den Standard der Instanz.",
+        "missing": "Noch kein Schlüssel – Chats mit den Agenten dieses Anbieters schlagen fehl, bis einer hinzugefügt wird."
+      },
+      "actions": {
+        "add_api_key": "API-Schlüssel hinzufügen",
+        "add_workspace_key": "Arbeitsbereichsschlüssel hinzufügen",
+        "replace": "Ersetzen",
+        "remove": "Entfernen",
+        "disconnect": "Trennen",
+        "sign_in_openai": "Mit ChatGPT anmelden",
+        "sign_in_google": "Mit Google anmelden"
+      },
+      "cancel": "Abbrechen",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Eigenen {provider}-API-Schlüssel hinzufügen",
+          "title_replace": "Eigenen {provider}-API-Schlüssel ersetzen",
+          "description": "Nur Ihre Chats verwenden diesen Schlüssel. Er wird verschlüsselt gespeichert und kann nicht erneut angezeigt werden."
+        },
+        "workspace": {
+          "title_add": "{provider}-Arbeitsbereichsschlüssel hinzufügen",
+          "title_replace": "{provider}-Arbeitsbereichsschlüssel ersetzen",
+          "description": "Mitglieder ohne eigene Anmeldedaten verwenden diesen Schlüssel. Er wird verschlüsselt gespeichert und kann nicht erneut angezeigt werden."
+        },
+        "label": "{provider}-API-Schlüssel",
+        "invalid": "Geben Sie einen Schlüssel mit 8 bis 512 Zeichen ohne Leerzeichen ein.",
+        "save": "Schlüssel speichern",
+        "saving": "Wird gespeichert"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "Ihren API-Schlüssel entfernen?",
+          "content": "Ihre Chats mit {provider}-Agenten verwenden stattdessen den Arbeitsbereichsschlüssel oder den Standard der Instanz."
+        },
+        "workspace": {
+          "title": "Arbeitsbereichsschlüssel entfernen?",
+          "content": "Mitglieder ohne eigene {provider}-Anmeldedaten verwenden stattdessen den Standard der Instanz."
+        },
+        "confirm": "Entfernen",
+        "removing": "Wird entfernt"
+      },
+      "disconnect_dialog": {
+        "title": "Konto trennen?",
+        "content": "Ihre Chats verwenden {email} nicht mehr. Sie können sich jederzeit erneut anmelden.",
+        "content_unknown": "Ihre Chats verwenden dieses Konto nicht mehr. Sie können sich jederzeit erneut anmelden.",
+        "confirm": "Trennen",
+        "disconnecting": "Wird getrennt"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Mit ChatGPT anmelden",
+          "description": "Codex-Chats verwenden Ihren ChatGPT-Tarif.",
+          "open_link": "ChatGPT-Anmeldung öffnen",
+          "step_open": "Öffnen Sie die ChatGPT-Anmeldeseite."
+        },
+        "google": {
+          "title": "Mit Google anmelden",
+          "description": "Gemini-Chats verwenden Ihr Google-Konto.",
+          "open_link": "Google-Anmeldung öffnen",
+          "step_open": "Öffnen Sie die Google-Anmeldeseite und erlauben Sie den Zugriff.",
+          "step_paste": "Fügen Sie den Code ein, den Google Ihnen anzeigt."
+        },
+        "starting": "Anmeldung wird gestartet…",
+        "step_enter_code": "Geben Sie dort diesen Code ein:",
+        "code_label": "Anmeldecode",
+        "copy_code": "Code kopieren",
+        "code_copied": "Code kopiert.",
+        "waiting": "Es wird gewartet, bis Sie die Anmeldung abschließen…",
+        "code_required": "Fügen Sie den Code von Google ein.",
+        "submit": "Verbinden",
+        "submitting": "Verbindung wird hergestellt",
+        "retry": "Erneut versuchen",
+        "errors": {
+          "failed": "Die Anmeldung ist fehlgeschlagen.",
+          "expired": "Diese Anmeldung ist abgelaufen. Versuchen Sie es erneut.",
+          "unreachable": "Die Agent-Bridge ist nicht erreichbar. Fragen Sie Ihren Administrator, ob sie läuft.",
+          "rate_limited": "Zu viele Anmeldeversuche. Warten Sie eine Minute und versuchen Sie es erneut.",
+          "signed_out": "Sie sind von Plane abgemeldet. Melden Sie sich erneut an und versuchen Sie es noch einmal."
+        }
+      },
+      "toasts": {
+        "error_title": "Fehler",
+        "key_saved": "API-Schlüssel gespeichert.",
+        "key_removed": "API-Schlüssel entfernt.",
+        "key_save_failed": "Der API-Schlüssel konnte nicht gespeichert werden.",
+        "key_remove_failed": "Der API-Schlüssel konnte nicht entfernt werden.",
+        "connected": "Angemeldet als {email}.",
+        "connected_unknown": "Angemeldet.",
+        "disconnected": "Konto getrennt.",
+        "disconnect_failed": "Das Konto konnte nicht getrennt werden."
       }
     }
   }

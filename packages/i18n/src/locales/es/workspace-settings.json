@@ -494,6 +494,10 @@
         "heading": "Scripts",
         "new_script": "Nuevo script",
         "description": "Automatiza tus flujos de trabajo con scripts personalizados y reglas de automatización."
+      },
+      "ai_providers": {
+        "title": "Proveedores de IA",
+        "description": "Credenciales para el chat con agentes. Las conversaciones usan primero su propia credencial, luego la clave del espacio de trabajo y, por último, la credencial predeterminada de la instancia."
       }
     },
     "empty_state": {

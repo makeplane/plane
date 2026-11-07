@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "자격 증명 및 설정",
         "credentials_help": "값은 쓰기 전용입니다. 저장된 값은 표시되지 않으며, 변경하려면 값을 새로 입력하세요.",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "기본 모델",
             "help": "선택 사항인 모델 ID입니다(예: claude-opus-5-5). 멤버는 채팅에서 모델을 전환할 수 있습니다."
+          },
+          "GEMINI_API_KEY": {
+            "label": "Gemini API 키",
+            "help": "멤버에게 자신의 키가 없고 Google로 로그인하지 않은 경우에 사용됩니다."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "로그인 방법",
+            "help": "선택 사항입니다. api_key, chatgpt(Codex) 또는 google_account(Gemini) 중 하나입니다. 멤버 본인의 자격 증명이 있으면 해당 멤버의 채팅에서는 그에 맞게 설정됩니다."
           }
         },
         "saved": "저장됨",
@@ -246,6 +255,116 @@
         "assigned_to_me": "나에게 할당된 항목은 무엇인가요?",
         "due_this_week": "이번 주에 마감인 작업 항목은 무엇인가요?",
         "recent_activity": "내 프로젝트의 최근 활동을 요약해 주세요"
+      }
+    },
+    "providers": {
+      "load_failed_title": "AI 공급자를 불러올 수 없습니다",
+      "load_failed_description": "연결을 확인한 후 다시 시도해 주세요.",
+      "claude_note": "Claude는 Anthropic API 키를 사용합니다. Claude Agent SDK로 구축된 앱에서는 Claude 구독으로 로그인하는 기능이 제공되지 않습니다.",
+      "personal": {
+        "title": "내 자격 증명"
+      },
+      "workspace": {
+        "title": "워크스페이스 키",
+        "admins_only": "워크스페이스 관리자만 변경할 수 있습니다."
+      },
+      "state": {
+        "none": "설정되지 않음",
+        "api_key": "API 키 ••••{hint}",
+        "signed_in": "{email}(으)로 로그인됨",
+        "signed_in_unknown": "로그인됨"
+      },
+      "fallback": {
+        "instance": "인스턴스 기본값을 사용합니다.",
+        "missing": "아직 키가 없습니다. 키를 추가하기 전까지 이 공급자의 에이전트와의 채팅은 실패합니다."
+      },
+      "actions": {
+        "add_api_key": "API 키 추가",
+        "add_workspace_key": "워크스페이스 키 추가",
+        "replace": "교체",
+        "remove": "제거",
+        "disconnect": "연결 해제",
+        "sign_in_openai": "ChatGPT로 로그인",
+        "sign_in_google": "Google로 로그인"
+      },
+      "cancel": "취소",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "내 {provider} API 키 추가",
+          "title_replace": "내 {provider} API 키 교체",
+          "description": "이 키는 내 채팅에서만 사용됩니다. 암호화되어 저장되며 다시 볼 수 없습니다."
+        },
+        "workspace": {
+          "title_add": "{provider} 워크스페이스 키 추가",
+          "title_replace": "{provider} 워크스페이스 키 교체",
+          "description": "자신의 자격 증명이 없는 멤버는 이 키를 사용합니다. 암호화되어 저장되며 다시 볼 수 없습니다."
+        },
+        "label": "{provider} API 키",
+        "invalid": "공백 없이 8~512자의 키를 입력해 주세요.",
+        "save": "키 저장",
+        "saving": "저장 중"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "API 키를 제거하시겠습니까?",
+          "content": "{provider} 에이전트와의 채팅에서는 대신 워크스페이스 키 또는 인스턴스 기본값이 사용됩니다."
+        },
+        "workspace": {
+          "title": "워크스페이스 키를 제거하시겠습니까?",
+          "content": "자신의 {provider} 자격 증명이 없는 멤버는 대신 인스턴스 기본값을 사용합니다."
+        },
+        "confirm": "제거",
+        "removing": "제거 중"
+      },
+      "disconnect_dialog": {
+        "title": "계정 연결을 해제하시겠습니까?",
+        "content": "채팅에서 더 이상 {email}을(를) 사용하지 않습니다. 언제든지 다시 로그인할 수 있습니다.",
+        "content_unknown": "채팅에서 더 이상 이 계정을 사용하지 않습니다. 언제든지 다시 로그인할 수 있습니다.",
+        "confirm": "연결 해제",
+        "disconnecting": "연결 해제 중"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "ChatGPT로 로그인",
+          "description": "Codex 채팅에서 내 ChatGPT 요금제를 사용합니다.",
+          "open_link": "ChatGPT 로그인 열기",
+          "step_open": "ChatGPT 로그인 페이지를 엽니다."
+        },
+        "google": {
+          "title": "Google로 로그인",
+          "description": "Gemini 채팅에서 내 Google 계정을 사용합니다.",
+          "open_link": "Google 로그인 열기",
+          "step_open": "Google 로그인 페이지를 열고 액세스를 허용합니다.",
+          "step_paste": "Google에 표시된 코드를 붙여 넣습니다."
+        },
+        "starting": "로그인을 시작하는 중…",
+        "step_enter_code": "해당 페이지에 이 코드를 입력하세요:",
+        "code_label": "코드",
+        "copy_code": "코드 복사",
+        "code_copied": "코드가 복사되었습니다.",
+        "waiting": "로그인이 완료되기를 기다리는 중…",
+        "code_required": "Google에서 받은 코드를 붙여 넣어 주세요.",
+        "submit": "연결",
+        "submitting": "연결 중",
+        "retry": "다시 시도",
+        "errors": {
+          "failed": "로그인에 실패했습니다.",
+          "expired": "로그인이 만료되었습니다. 다시 시도해 주세요.",
+          "unreachable": "에이전트 브리지에 연결할 수 없습니다. 실행 중인지 관리자에게 문의해 주세요.",
+          "rate_limited": "로그인 시도 횟수가 너무 많습니다. 1분 정도 기다린 후 다시 시도해 주세요.",
+          "signed_out": "Plane에서 로그아웃되었습니다. 다시 로그인한 후 다시 시도해 주세요."
+        }
+      },
+      "toasts": {
+        "error_title": "오류",
+        "key_saved": "API 키가 저장되었습니다.",
+        "key_removed": "API 키가 제거되었습니다.",
+        "key_save_failed": "API 키를 저장할 수 없습니다.",
+        "key_remove_failed": "API 키를 제거할 수 없습니다.",
+        "connected": "{email}(으)로 로그인했습니다.",
+        "connected_unknown": "로그인했습니다.",
+        "disconnected": "계정 연결이 해제되었습니다.",
+        "disconnect_failed": "계정 연결을 해제할 수 없습니다."
       }
     }
   }

@@ -494,6 +494,10 @@
         "heading": "脚本",
         "new_script": "新建脚本",
         "description": "使用自定义脚本和自动化规则自动化您的工作流程。"
+      },
+      "ai_providers": {
+        "title": "AI 提供商",
+        "description": "代理聊天使用的凭据。聊天会优先使用您自己的凭据，其次是工作区密钥，最后是实例默认凭据。"
       }
     },
     "empty_state": {

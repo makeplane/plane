@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "Identifiants et paramètres",
         "credentials_help": "Les valeurs sont en écriture seule. Les valeurs enregistrées restent masquées ; remplacez-en une pour la modifier.",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "Modèle par défaut",
             "help": "Identifiant de modèle facultatif, par exemple claude-opus-5-5. Les membres peuvent changer de modèle dans la conversation."
+          },
+          "GEMINI_API_KEY": {
+            "label": "Clé API Gemini",
+            "help": "Utilisée lorsqu’un membre n’a pas sa propre clé et n’est pas connecté avec Google."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Méthode de connexion",
+            "help": "Facultatif : api_key, chatgpt (Codex) ou google_account (Gemini). Les identifiants propres des membres la définissent pour leurs conversations."
           }
         },
         "saved": "Enregistré",
@@ -246,6 +255,116 @@
         "assigned_to_me": "Qu’est-ce qui m’est assigné ?",
         "due_this_week": "Quels éléments de travail arrivent à échéance cette semaine ?",
         "recent_activity": "Résumer l’activité récente de mes projets"
+      }
+    },
+    "providers": {
+      "load_failed_title": "Impossible de charger les fournisseurs d’IA",
+      "load_failed_description": "Vérifiez votre connexion et réessayez.",
+      "claude_note": "Claude utilise une clé API Anthropic. La connexion avec un abonnement Claude n’est pas proposée pour les applications conçues avec Claude Agent SDK.",
+      "personal": {
+        "title": "Vos identifiants"
+      },
+      "workspace": {
+        "title": "Clé de l’espace de travail",
+        "admins_only": "Seuls les administrateurs de l’espace de travail peuvent modifier ce paramètre."
+      },
+      "state": {
+        "none": "Non défini",
+        "api_key": "Clé API ••••{hint}",
+        "signed_in": "Connecté en tant que {email}",
+        "signed_in_unknown": "Connecté"
+      },
+      "fallback": {
+        "instance": "Utilise les identifiants par défaut de l’instance.",
+        "missing": "Aucune clé pour l’instant : les conversations avec les agents de ce fournisseur échoueront tant qu’aucune clé n’aura été ajoutée."
+      },
+      "actions": {
+        "add_api_key": "Ajouter une clé API",
+        "add_workspace_key": "Ajouter une clé d’espace de travail",
+        "replace": "Remplacer",
+        "remove": "Supprimer",
+        "disconnect": "Déconnecter",
+        "sign_in_openai": "Se connecter avec ChatGPT",
+        "sign_in_google": "Se connecter avec Google"
+      },
+      "cancel": "Annuler",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Ajouter votre clé API {provider}",
+          "title_replace": "Remplacer votre clé API {provider}",
+          "description": "Seules vos conversations utilisent cette clé. Elle est stockée de façon chiffrée et ne peut plus être affichée."
+        },
+        "workspace": {
+          "title_add": "Ajouter une clé d’espace de travail {provider}",
+          "title_replace": "Remplacer la clé d’espace de travail {provider}",
+          "description": "Les membres sans identifiants propres utilisent cette clé. Elle est stockée de façon chiffrée et ne peut plus être affichée."
+        },
+        "label": "Clé API {provider}",
+        "invalid": "Saisissez une clé de 8 à 512 caractères, sans espaces.",
+        "save": "Enregistrer la clé",
+        "saving": "Enregistrement en cours"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "Supprimer votre clé API ?",
+          "content": "Vos conversations avec les agents {provider} utiliseront à la place la clé de l’espace de travail ou les identifiants par défaut de l’instance."
+        },
+        "workspace": {
+          "title": "Supprimer la clé de l’espace de travail ?",
+          "content": "Les membres sans identifiants {provider} propres utiliseront à la place les identifiants par défaut de l’instance."
+        },
+        "confirm": "Supprimer",
+        "removing": "Suppression en cours"
+      },
+      "disconnect_dialog": {
+        "title": "Déconnecter le compte ?",
+        "content": "Vos conversations n’utiliseront plus {email}. Vous pouvez vous reconnecter à tout moment.",
+        "content_unknown": "Vos conversations n’utiliseront plus ce compte. Vous pouvez vous reconnecter à tout moment.",
+        "confirm": "Déconnecter",
+        "disconnecting": "Déconnexion en cours"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Se connecter avec ChatGPT",
+          "description": "Les conversations Codex utiliseront votre forfait ChatGPT.",
+          "open_link": "Ouvrir la connexion ChatGPT",
+          "step_open": "Ouvrez la page de connexion ChatGPT."
+        },
+        "google": {
+          "title": "Se connecter avec Google",
+          "description": "Les conversations Gemini utiliseront votre compte Google.",
+          "open_link": "Ouvrir la connexion Google",
+          "step_open": "Ouvrez la page de connexion Google et autorisez l’accès.",
+          "step_paste": "Collez le code affiché par Google."
+        },
+        "starting": "Démarrage de la connexion…",
+        "step_enter_code": "Saisissez-y ce code :",
+        "code_label": "Code de connexion",
+        "copy_code": "Copier le code",
+        "code_copied": "Code copié.",
+        "waiting": "En attente de la fin de votre connexion…",
+        "code_required": "Collez le code fourni par Google.",
+        "submit": "Connecter",
+        "submitting": "Connexion en cours",
+        "retry": "Réessayer",
+        "errors": {
+          "failed": "Échec de la connexion.",
+          "expired": "Cette connexion a expiré. Réessayez.",
+          "unreachable": "Impossible de joindre la passerelle des agents. Demandez à votre administrateur si elle est en cours d’exécution.",
+          "rate_limited": "Trop de tentatives de connexion. Patientez une minute et réessayez.",
+          "signed_out": "Vous êtes déconnecté de Plane. Reconnectez-vous et réessayez."
+        }
+      },
+      "toasts": {
+        "error_title": "Erreur",
+        "key_saved": "Clé API enregistrée.",
+        "key_removed": "Clé API supprimée.",
+        "key_save_failed": "Impossible d’enregistrer la clé API.",
+        "key_remove_failed": "Impossible de supprimer la clé API.",
+        "connected": "Connecté en tant que {email}.",
+        "connected_unknown": "Connecté.",
+        "disconnected": "Compte déconnecté.",
+        "disconnect_failed": "Impossible de déconnecter le compte."
       }
     }
   }

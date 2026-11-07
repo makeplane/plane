@@ -494,6 +494,10 @@
         "heading": "Skripty",
         "new_script": "Nový skript",
         "description": "Automatizujte své pracovní postupy pomocí vlastních skriptů a pravidel automatizace."
+      },
+      "ai_providers": {
+        "title": "Poskytovatelé AI",
+        "description": "Přihlašovací údaje pro chat s agenty. Chaty používají nejprve vaše vlastní přihlašovací údaje, poté klíč pracovního prostoru a nakonec výchozí údaje instance."
       }
     },
     "empty_state": {

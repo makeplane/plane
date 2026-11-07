@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "Credențiale și setări",
         "credentials_help": "Valorile pot fi doar scrise. Valorile salvate rămân ascunse; înlocuiți una pentru a o modifica.",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "Model implicit",
             "help": "ID de model opțional, de ex. claude-opus-5-5. Membrii pot schimba modelul în chat."
+          },
+          "GEMINI_API_KEY": {
+            "label": "Cheie API Gemini",
+            "help": "Folosită când un membru nu are propria cheie și nu este autentificat cu Google."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Metodă de autentificare",
+            "help": "Opțional: api_key, chatgpt (Codex) sau google_account (Gemini). Credențialele proprii ale membrilor o setează pentru chaturile lor."
           }
         },
         "saved": "Salvat",
@@ -246,6 +255,116 @@
         "assigned_to_me": "Ce îmi este atribuit?",
         "due_this_week": "Ce activități sunt scadente săptămâna aceasta?",
         "recent_activity": "Rezumatul activității recente din proiectele mele"
+      }
+    },
+    "providers": {
+      "load_failed_title": "Furnizorii AI nu au putut fi încărcați",
+      "load_failed_description": "Verificați conexiunea și încercați din nou.",
+      "claude_note": "Claude folosește o cheie API Anthropic. Autentificarea cu un abonament Claude nu este disponibilă pentru aplicațiile create cu Claude Agent SDK.",
+      "personal": {
+        "title": "Credențialul dvs."
+      },
+      "workspace": {
+        "title": "Cheia spațiului de lucru",
+        "admins_only": "Doar administratorii spațiului de lucru pot modifica acest lucru."
+      },
+      "state": {
+        "none": "Nesetat",
+        "api_key": "Cheie API ••••{hint}",
+        "signed_in": "Autentificat ca {email}",
+        "signed_in_unknown": "Autentificat"
+      },
+      "fallback": {
+        "instance": "Folosește valoarea implicită a instanței.",
+        "missing": "Nu există încă o cheie. Chaturile cu agenții acestui furnizor vor eșua până când este adăugată una."
+      },
+      "actions": {
+        "add_api_key": "Adăugați cheie API",
+        "add_workspace_key": "Adăugați cheia spațiului de lucru",
+        "replace": "Înlocuiți",
+        "remove": "Eliminați",
+        "disconnect": "Deconectați",
+        "sign_in_openai": "Autentificați-vă cu ChatGPT",
+        "sign_in_google": "Autentificați-vă cu Google"
+      },
+      "cancel": "Anulați",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Adăugați cheia dvs. API {provider}",
+          "title_replace": "Înlocuiți cheia dvs. API {provider}",
+          "description": "Doar chaturile dvs. folosesc această cheie. Este stocată criptat și nu mai poate fi vizualizată."
+        },
+        "workspace": {
+          "title_add": "Adăugați o cheie {provider} pentru spațiul de lucru",
+          "title_replace": "Înlocuiți cheia {provider} a spațiului de lucru",
+          "description": "Membrii fără propriul credențial folosesc această cheie. Este stocată criptat și nu mai poate fi vizualizată."
+        },
+        "label": "Cheie API {provider}",
+        "invalid": "Introduceți o cheie de 8 până la 512 caractere, fără spații.",
+        "save": "Salvați cheia",
+        "saving": "Se salvează"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "Eliminați cheia dvs. API?",
+          "content": "Chaturile dvs. cu agenții {provider} vor folosi în schimb cheia spațiului de lucru sau valoarea implicită a instanței."
+        },
+        "workspace": {
+          "title": "Eliminați cheia spațiului de lucru?",
+          "content": "Membrii fără propriul credențial {provider} vor folosi în schimb valoarea implicită a instanței."
+        },
+        "confirm": "Eliminați",
+        "removing": "Se elimină"
+      },
+      "disconnect_dialog": {
+        "title": "Deconectați contul?",
+        "content": "Chaturile dvs. nu vor mai folosi {email}. Vă puteți autentifica din nou oricând.",
+        "content_unknown": "Chaturile dvs. nu vor mai folosi acest cont. Vă puteți autentifica din nou oricând.",
+        "confirm": "Deconectați",
+        "disconnecting": "Se deconectează"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Autentificați-vă cu ChatGPT",
+          "description": "Chaturile Codex vor folosi planul dvs. ChatGPT.",
+          "open_link": "Deschideți autentificarea ChatGPT",
+          "step_open": "Deschideți pagina de autentificare ChatGPT."
+        },
+        "google": {
+          "title": "Autentificați-vă cu Google",
+          "description": "Chaturile Gemini vor folosi contul dvs. Google.",
+          "open_link": "Deschideți autentificarea Google",
+          "step_open": "Deschideți pagina de autentificare Google și permiteți accesul.",
+          "step_paste": "Lipiți codul afișat de Google."
+        },
+        "starting": "Se pornește autentificarea…",
+        "step_enter_code": "Introduceți acolo acest cod:",
+        "code_label": "Cod",
+        "copy_code": "Copiați codul",
+        "code_copied": "Cod copiat.",
+        "waiting": "Se așteaptă finalizarea autentificării…",
+        "code_required": "Lipiți codul primit de la Google.",
+        "submit": "Conectați",
+        "submitting": "Se conectează",
+        "retry": "Încercați din nou",
+        "errors": {
+          "failed": "Autentificarea a eșuat.",
+          "expired": "Această autentificare a expirat. Încercați din nou.",
+          "unreachable": "Puntea agenților nu a putut fi accesată. Întrebați administratorul dacă rulează.",
+          "rate_limited": "Prea multe încercări de autentificare. Așteptați un minut și încercați din nou.",
+          "signed_out": "Sunteți deconectat de la Plane. Autentificați-vă din nou și reîncercați."
+        }
+      },
+      "toasts": {
+        "error_title": "Eroare",
+        "key_saved": "Cheie API salvată.",
+        "key_removed": "Cheie API eliminată.",
+        "key_save_failed": "Cheia API nu a putut fi salvată.",
+        "key_remove_failed": "Cheia API nu a putut fi eliminată.",
+        "connected": "Autentificat ca {email}.",
+        "connected_unknown": "Autentificat.",
+        "disconnected": "Cont deconectat.",
+        "disconnect_failed": "Contul nu a putut fi deconectat."
       }
     }
   }

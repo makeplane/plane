@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "Prihlasovacie údaje a nastavenia",
         "credentials_help": "Hodnoty sú iba na zápis. Uložené hodnoty zostávajú skryté; ak chcete hodnotu zmeniť, nahraďte ju.",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "Predvolený model",
             "help": "Voliteľné ID modelu, napr. claude-opus-5-5. Členovia môžu prepínať modely v chate."
+          },
+          "GEMINI_API_KEY": {
+            "label": "API kľúč Gemini",
+            "help": "Použije sa, keď člen nemá vlastný kľúč a nie je prihlásený cez Google."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Spôsob prihlásenia",
+            "help": "Voliteľné: api_key, chatgpt (Codex) alebo google_account (Gemini). Vlastné prihlasovacie údaje členov ho nastavujú pre ich chaty."
           }
         },
         "saved": "Uložené",
@@ -246,6 +255,116 @@
         "assigned_to_me": "Čo mám priradené?",
         "due_this_week": "Ktoré pracovné položky majú termín tento týždeň?",
         "recent_activity": "Zhrnutie nedávnej aktivity v mojich projektoch"
+      }
+    },
+    "providers": {
+      "load_failed_title": "Poskytovateľov AI sa nepodarilo načítať",
+      "load_failed_description": "Skontrolujte pripojenie a skúste to znova.",
+      "claude_note": "Claude používa API kľúč Anthropic. Prihlásenie pomocou predplatného Claude nie je k dispozícii pre aplikácie postavené na Claude Agent SDK.",
+      "personal": {
+        "title": "Vaše prihlasovacie údaje"
+      },
+      "workspace": {
+        "title": "Kľúč pracovného priestoru",
+        "admins_only": "Toto môžu zmeniť iba správcovia pracovného priestoru."
+      },
+      "state": {
+        "none": "Nenastavené",
+        "api_key": "API kľúč ••••{hint}",
+        "signed_in": "Prihlásené ako {email}",
+        "signed_in_unknown": "Prihlásené"
+      },
+      "fallback": {
+        "instance": "Používa sa predvolená hodnota inštancie.",
+        "missing": "Zatiaľ žiadny kľúč — chaty s agentmi tohto poskytovateľa nebudú fungovať, kým sa nejaký nepridá."
+      },
+      "actions": {
+        "add_api_key": "Pridať API kľúč",
+        "add_workspace_key": "Pridať kľúč pracovného priestoru",
+        "replace": "Nahradiť",
+        "remove": "Odstrániť",
+        "disconnect": "Odpojiť",
+        "sign_in_openai": "Prihlásiť sa cez ChatGPT",
+        "sign_in_google": "Prihlásiť sa cez Google"
+      },
+      "cancel": "Zrušiť",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Pridať vlastný API kľúč {provider}",
+          "title_replace": "Nahradiť vlastný API kľúč {provider}",
+          "description": "Tento kľúč používajú iba Vaše chaty. Ukladá sa zašifrovaný a nedá sa znova zobraziť."
+        },
+        "workspace": {
+          "title_add": "Pridať kľúč pracovného priestoru {provider}",
+          "title_replace": "Nahradiť kľúč pracovného priestoru {provider}",
+          "description": "Tento kľúč používajú členovia bez vlastných prihlasovacích údajov. Ukladá sa zašifrovaný a nedá sa znova zobraziť."
+        },
+        "label": "API kľúč {provider}",
+        "invalid": "Zadajte kľúč s dĺžkou 8 až 512 znakov bez medzier.",
+        "save": "Uložiť kľúč",
+        "saving": "Ukladanie"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "Odstrániť Váš API kľúč?",
+          "content": "Vaše chaty s agentmi {provider} budú namiesto neho používať kľúč pracovného priestoru alebo predvolenú hodnotu inštancie."
+        },
+        "workspace": {
+          "title": "Odstrániť kľúč pracovného priestoru?",
+          "content": "Členovia bez vlastných prihlasovacích údajov {provider} budú namiesto neho používať predvolenú hodnotu inštancie."
+        },
+        "confirm": "Odstrániť",
+        "removing": "Odstraňovanie"
+      },
+      "disconnect_dialog": {
+        "title": "Odpojiť účet?",
+        "content": "Vaše chaty prestanú používať {email}. Kedykoľvek sa môžete znova prihlásiť.",
+        "content_unknown": "Vaše chaty prestanú používať tento účet. Kedykoľvek sa môžete znova prihlásiť.",
+        "confirm": "Odpojiť",
+        "disconnecting": "Odpájanie"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Prihlásenie cez ChatGPT",
+          "description": "Chaty Codex budú používať Váš plán ChatGPT.",
+          "open_link": "Otvoriť prihlásenie do ChatGPT",
+          "step_open": "Otvorte prihlasovaciu stránku ChatGPT."
+        },
+        "google": {
+          "title": "Prihlásenie cez Google",
+          "description": "Chaty Gemini budú používať Váš účet Google.",
+          "open_link": "Otvoriť prihlásenie do Google",
+          "step_open": "Otvorte prihlasovaciu stránku Google a povoľte prístup.",
+          "step_paste": "Vložte kód, ktorý Vám Google zobrazí."
+        },
+        "starting": "Spúšťa sa prihlásenie…",
+        "step_enter_code": "Zadajte tam tento kód:",
+        "code_label": "Kód",
+        "copy_code": "Kopírovať kód",
+        "code_copied": "Kód bol skopírovaný.",
+        "waiting": "Čaká sa, kým dokončíte prihlásenie…",
+        "code_required": "Vložte kód od Google.",
+        "submit": "Pripojiť",
+        "submitting": "Pripájanie",
+        "retry": "Skúsiť znova",
+        "errors": {
+          "failed": "Prihlásenie zlyhalo.",
+          "expired": "Platnosť tohto prihlásenia vypršala. Skúste to znova.",
+          "unreachable": "Most agentov je nedostupný. Opýtajte sa správcu, či beží.",
+          "rate_limited": "Príliš veľa pokusov o prihlásenie. Počkajte minútu a skúste to znova.",
+          "signed_out": "Ste odhlásení z Plane. Znova sa prihláste a zopakujte akciu."
+        }
+      },
+      "toasts": {
+        "error_title": "Chyba",
+        "key_saved": "API kľúč bol uložený.",
+        "key_removed": "API kľúč bol odstránený.",
+        "key_save_failed": "API kľúč sa nepodarilo uložiť.",
+        "key_remove_failed": "API kľúč sa nepodarilo odstrániť.",
+        "connected": "Prihlásené ako {email}.",
+        "connected_unknown": "Prihlásené.",
+        "disconnected": "Účet bol odpojený.",
+        "disconnect_failed": "Účet sa nepodarilo odpojiť."
       }
     }
   }

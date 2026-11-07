@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "憑證與設定",
         "credentials_help": "這些值僅能寫入。已儲存的值會保持隱藏；如需變更，請替換該值。",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "預設模型",
             "help": "選填的模型 ID，例如 claude-opus-5-5。成員可以在聊天中切換模型。"
+          },
+          "GEMINI_API_KEY": {
+            "label": "Gemini API 金鑰",
+            "help": "當成員沒有自己的金鑰且未使用 Google 登入時使用。"
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "登入方式",
+            "help": "選填：api_key、chatgpt（Codex）或 google_account（Gemini）。成員自己的憑證會為其聊天設定此項。"
           }
         },
         "saved": "已儲存",
@@ -246,6 +255,116 @@
         "assigned_to_me": "指派給我的有哪些？",
         "due_this_week": "哪些工作事項本週到期？",
         "recent_activity": "摘要我的專案中的近期動態"
+      }
+    },
+    "providers": {
+      "load_failed_title": "無法載入 AI 供應商",
+      "load_failed_description": "請檢查您的網路連線，然後再試一次。",
+      "claude_note": "Claude 使用 Anthropic API 金鑰。以 Claude Agent SDK 建置的應用程式不支援使用 Claude 訂閱登入。",
+      "personal": {
+        "title": "您的憑證"
+      },
+      "workspace": {
+        "title": "工作空間金鑰",
+        "admins_only": "只有工作空間管理員可以變更此項。"
+      },
+      "state": {
+        "none": "未設定",
+        "api_key": "API 金鑰 ••••{hint}",
+        "signed_in": "已以 {email} 登入",
+        "signed_in_unknown": "已登入"
+      },
+      "fallback": {
+        "instance": "使用實例預設憑證。",
+        "missing": "尚無金鑰。在新增金鑰之前，與此供應商的代理進行的聊天將會失敗。"
+      },
+      "actions": {
+        "add_api_key": "新增 API 金鑰",
+        "add_workspace_key": "新增工作空間金鑰",
+        "replace": "取代",
+        "remove": "移除",
+        "disconnect": "中斷連線",
+        "sign_in_openai": "使用 ChatGPT 登入",
+        "sign_in_google": "使用 Google 登入"
+      },
+      "cancel": "取消",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "新增您的 {provider} API 金鑰",
+          "title_replace": "取代您的 {provider} API 金鑰",
+          "description": "只有您的聊天會使用此金鑰。金鑰會加密儲存，且無法再次檢視。"
+        },
+        "workspace": {
+          "title_add": "新增 {provider} 工作空間金鑰",
+          "title_replace": "取代 {provider} 工作空間金鑰",
+          "description": "沒有自己憑證的成員會使用此金鑰。金鑰會加密儲存，且無法再次檢視。"
+        },
+        "label": "{provider} API 金鑰",
+        "invalid": "請輸入 8 到 512 個字元且不含空格的金鑰。",
+        "save": "儲存金鑰",
+        "saving": "儲存中"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "要移除您的 API 金鑰嗎？",
+          "content": "您與 {provider} 代理的聊天將改用工作空間金鑰或實例預設憑證。"
+        },
+        "workspace": {
+          "title": "要移除工作空間金鑰嗎？",
+          "content": "沒有自己 {provider} 憑證的成員將改用實例預設憑證。"
+        },
+        "confirm": "移除",
+        "removing": "移除中"
+      },
+      "disconnect_dialog": {
+        "title": "要中斷帳號連線嗎？",
+        "content": "您的聊天將不再使用 {email}。您可以隨時重新登入。",
+        "content_unknown": "您的聊天將不再使用此帳號。您可以隨時重新登入。",
+        "confirm": "中斷連線",
+        "disconnecting": "正在中斷連線"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "使用 ChatGPT 登入",
+          "description": "Codex 聊天將使用您的 ChatGPT 方案。",
+          "open_link": "開啟 ChatGPT 登入頁面",
+          "step_open": "請開啟 ChatGPT 登入頁面。"
+        },
+        "google": {
+          "title": "使用 Google 登入",
+          "description": "Gemini 聊天將使用您的 Google 帳號。",
+          "open_link": "開啟 Google 登入頁面",
+          "step_open": "請開啟 Google 登入頁面並允許存取。",
+          "step_paste": "貼上 Google 向您顯示的代碼。"
+        },
+        "starting": "正在開始登入…",
+        "step_enter_code": "請在該頁面輸入此代碼：",
+        "code_label": "代碼",
+        "copy_code": "複製代碼",
+        "code_copied": "已複製代碼。",
+        "waiting": "正在等待您完成登入…",
+        "code_required": "請貼上 Google 提供的代碼。",
+        "submit": "連線",
+        "submitting": "連線中",
+        "retry": "再試一次",
+        "errors": {
+          "failed": "登入失敗。",
+          "expired": "此次登入已過期。請再試一次。",
+          "unreachable": "無法連線到代理橋接服務。請詢問管理員該服務是否正在執行。",
+          "rate_limited": "登入嘗試次數過多。請等候一分鐘後再試一次。",
+          "signed_out": "您已登出 Plane。請重新登入後再試一次。"
+        }
+      },
+      "toasts": {
+        "error_title": "錯誤",
+        "key_saved": "已儲存 API 金鑰。",
+        "key_removed": "已移除 API 金鑰。",
+        "key_save_failed": "無法儲存 API 金鑰。",
+        "key_remove_failed": "無法移除 API 金鑰。",
+        "connected": "已以 {email} 登入。",
+        "connected_unknown": "已登入。",
+        "disconnected": "已中斷帳號連線。",
+        "disconnect_failed": "無法中斷帳號連線。"
       }
     }
   }

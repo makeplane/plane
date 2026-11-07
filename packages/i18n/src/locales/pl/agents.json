@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "Dane uwierzytelniające i ustawienia",
         "credentials_help": "Wartości są tylko do zapisu. Zapisane wartości pozostają ukryte; aby zmienić wartość, należy ją zastąpić.",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "Model domyślny",
             "help": "Opcjonalny identyfikator modelu, np. claude-opus-5-5. Członkowie mogą zmieniać modele w czacie."
+          },
+          "GEMINI_API_KEY": {
+            "label": "Klucz API Gemini",
+            "help": "Używany, gdy członek nie ma własnego klucza i nie jest zalogowany przez Google."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Metoda logowania",
+            "help": "Opcjonalne: api_key, chatgpt (Codex) lub google_account (Gemini). Własne dane uwierzytelniające członków ustawiają tę wartość dla ich czatów."
           }
         },
         "saved": "Zapisano",
@@ -246,6 +255,116 @@
         "assigned_to_me": "Co jest do mnie przypisane?",
         "due_this_week": "Które elementy pracy mają termin w tym tygodniu?",
         "recent_activity": "Podsumowanie ostatniej aktywności w moich projektach"
+      }
+    },
+    "providers": {
+      "load_failed_title": "Nie udało się wczytać dostawców AI",
+      "load_failed_description": "Proszę sprawdzić połączenie i spróbować ponownie.",
+      "claude_note": "Claude używa klucza API Anthropic. Logowanie za pomocą subskrypcji Claude nie jest dostępne w aplikacjach zbudowanych na Claude Agent SDK.",
+      "personal": {
+        "title": "Własne dane uwierzytelniające"
+      },
+      "workspace": {
+        "title": "Klucz przestrzeni roboczej",
+        "admins_only": "Tylko administratorzy przestrzeni roboczej mogą to zmienić."
+      },
+      "state": {
+        "none": "Nie ustawiono",
+        "api_key": "Klucz API ••••{hint}",
+        "signed_in": "Zalogowano jako {email}",
+        "signed_in_unknown": "Zalogowano"
+      },
+      "fallback": {
+        "instance": "Używane jest ustawienie domyślne instancji.",
+        "missing": "Brak klucza. Czaty z agentami tego dostawcy będą kończyć się błędem, dopóki klucz nie zostanie dodany."
+      },
+      "actions": {
+        "add_api_key": "Dodaj klucz API",
+        "add_workspace_key": "Dodaj klucz przestrzeni roboczej",
+        "replace": "Zastąp",
+        "remove": "Usuń",
+        "disconnect": "Odłącz",
+        "sign_in_openai": "Zaloguj się przez ChatGPT",
+        "sign_in_google": "Zaloguj się przez Google"
+      },
+      "cancel": "Anuluj",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Dodaj własny klucz API {provider}",
+          "title_replace": "Zastąp własny klucz API {provider}",
+          "description": "Ten klucz jest używany wyłącznie we własnych czatach. Jest przechowywany w postaci zaszyfrowanej i nie można go ponownie wyświetlić."
+        },
+        "workspace": {
+          "title_add": "Dodaj klucz przestrzeni roboczej {provider}",
+          "title_replace": "Zastąp klucz przestrzeni roboczej {provider}",
+          "description": "Członkowie bez własnych danych uwierzytelniających używają tego klucza. Jest przechowywany w postaci zaszyfrowanej i nie można go ponownie wyświetlić."
+        },
+        "label": "Klucz API {provider}",
+        "invalid": "Proszę wprowadzić klucz o długości od 8 do 512 znaków, bez spacji.",
+        "save": "Zapisz klucz",
+        "saving": "Zapisywanie"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "Usunąć własny klucz API?",
+          "content": "Czaty z agentami {provider} będą zamiast tego używać klucza przestrzeni roboczej lub ustawienia domyślnego instancji."
+        },
+        "workspace": {
+          "title": "Usunąć klucz przestrzeni roboczej?",
+          "content": "Członkowie bez własnych danych uwierzytelniających {provider} będą zamiast tego używać ustawienia domyślnego instancji."
+        },
+        "confirm": "Usuń",
+        "removing": "Usuwanie"
+      },
+      "disconnect_dialog": {
+        "title": "Odłączyć konto?",
+        "content": "Czaty przestaną używać konta {email}. Można zalogować się ponownie w dowolnym momencie.",
+        "content_unknown": "Czaty przestaną używać tego konta. Można zalogować się ponownie w dowolnym momencie.",
+        "confirm": "Odłącz",
+        "disconnecting": "Odłączanie"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Zaloguj się przez ChatGPT",
+          "description": "Czaty Codex będą korzystać z planu ChatGPT użytkownika.",
+          "open_link": "Otwórz logowanie ChatGPT",
+          "step_open": "Proszę otworzyć stronę logowania ChatGPT."
+        },
+        "google": {
+          "title": "Zaloguj się przez Google",
+          "description": "Czaty Gemini będą korzystać z konta Google użytkownika.",
+          "open_link": "Otwórz logowanie Google",
+          "step_open": "Proszę otworzyć stronę logowania Google i zezwolić na dostęp.",
+          "step_paste": "Proszę wkleić kod wyświetlony przez Google."
+        },
+        "starting": "Rozpoczynanie logowania…",
+        "step_enter_code": "Proszę wprowadzić tam ten kod:",
+        "code_label": "Kod",
+        "copy_code": "Kopiuj kod",
+        "code_copied": "Skopiowano kod.",
+        "waiting": "Oczekiwanie na zakończenie logowania…",
+        "code_required": "Proszę wkleić kod z Google.",
+        "submit": "Połącz",
+        "submitting": "Łączenie",
+        "retry": "Spróbuj ponownie",
+        "errors": {
+          "failed": "Logowanie nie powiodło się.",
+          "expired": "To logowanie wygasło. Proszę spróbować ponownie.",
+          "unreachable": "Nie można połączyć się z mostkiem agentów. Proszę zapytać administratora, czy działa.",
+          "rate_limited": "Zbyt wiele prób logowania. Proszę odczekać minutę i spróbować ponownie.",
+          "signed_out": "Nastąpiło wylogowanie z Plane. Proszę zalogować się ponownie i spróbować jeszcze raz."
+        }
+      },
+      "toasts": {
+        "error_title": "Błąd",
+        "key_saved": "Zapisano klucz API.",
+        "key_removed": "Usunięto klucz API.",
+        "key_save_failed": "Nie udało się zapisać klucza API.",
+        "key_remove_failed": "Nie udało się usunąć klucza API.",
+        "connected": "Zalogowano jako {email}.",
+        "connected_unknown": "Zalogowano.",
+        "disconnected": "Odłączono konto.",
+        "disconnect_failed": "Nie udało się odłączyć konta."
       }
     }
   }

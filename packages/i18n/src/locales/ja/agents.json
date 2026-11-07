@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "認証情報と設定",
         "credentials_help": "値は書き込み専用です。保存済みの値は表示されません。変更するには値を置き換えてください。",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "デフォルトのモデル",
             "help": "任意です。モデルID（例：claude-opus-5-5）を指定します。メンバーはチャット内でモデルを切り替えられます。"
+          },
+          "GEMINI_API_KEY": {
+            "label": "Gemini APIキー",
+            "help": "メンバーが自分のキーを持っておらず、Googleでサインインしていない場合に使用されます。"
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "サインイン方法",
+            "help": "任意です。api_key、chatgpt（Codex）、またはgoogle_account（Gemini）を指定します。メンバー自身の認証情報がある場合は、そのメンバーのチャットではそれに応じて設定されます。"
           }
         },
         "saved": "保存済み",
@@ -246,6 +255,116 @@
         "assigned_to_me": "自分に割り当てられているものは何ですか？",
         "due_this_week": "今週期限の作業項目はどれですか？",
         "recent_activity": "自分のプロジェクトの最近のアクティビティを要約してください"
+      }
+    },
+    "providers": {
+      "load_failed_title": "AIプロバイダーを読み込めませんでした",
+      "load_failed_description": "接続を確認して、もう一度お試しください。",
+      "claude_note": "ClaudeはAnthropic APIキーを使用します。Claude Agent SDKで構築されたアプリでは、Claudeサブスクリプションでのサインインは提供されていません。",
+      "personal": {
+        "title": "あなたの認証情報"
+      },
+      "workspace": {
+        "title": "ワークスペースのキー",
+        "admins_only": "これを変更できるのはワークスペース管理者のみです。"
+      },
+      "state": {
+        "none": "未設定",
+        "api_key": "APIキー ••••{hint}",
+        "signed_in": "{email}としてサインイン中",
+        "signed_in_unknown": "サインイン済み"
+      },
+      "fallback": {
+        "instance": "インスタンスのデフォルトを使用します。",
+        "missing": "キーがまだありません。キーを追加するまで、このプロバイダーのエージェントとのチャットは失敗します。"
+      },
+      "actions": {
+        "add_api_key": "APIキーを追加",
+        "add_workspace_key": "ワークスペースのキーを追加",
+        "replace": "置き換え",
+        "remove": "削除",
+        "disconnect": "接続を解除",
+        "sign_in_openai": "ChatGPTでサインイン",
+        "sign_in_google": "Googleでサインイン"
+      },
+      "cancel": "キャンセル",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "個人の{provider} APIキーを追加",
+          "title_replace": "個人の{provider} APIキーを置き換え",
+          "description": "このキーはあなたのチャットでのみ使用されます。暗号化して保存され、再度表示することはできません。"
+        },
+        "workspace": {
+          "title_add": "{provider}のワークスペースキーを追加",
+          "title_replace": "{provider}のワークスペースキーを置き換え",
+          "description": "自分の認証情報を持たないメンバーは、このキーを使用します。暗号化して保存され、再度表示することはできません。"
+        },
+        "label": "{provider} APIキー",
+        "invalid": "空白を含まない8～512文字のキーを入力してください。",
+        "save": "キーを保存",
+        "saving": "保存中"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "APIキーを削除しますか？",
+          "content": "{provider}エージェントとのチャットでは、代わりにワークスペースのキーまたはインスタンスのデフォルトが使用されます。"
+        },
+        "workspace": {
+          "title": "ワークスペースのキーを削除しますか？",
+          "content": "自分の{provider}認証情報を持たないメンバーは、代わりにインスタンスのデフォルトを使用します。"
+        },
+        "confirm": "削除",
+        "removing": "削除中"
+      },
+      "disconnect_dialog": {
+        "title": "アカウントの接続を解除しますか？",
+        "content": "チャットで{email}が使用されなくなります。いつでも再度サインインできます。",
+        "content_unknown": "チャットでこのアカウントが使用されなくなります。いつでも再度サインインできます。",
+        "confirm": "接続を解除",
+        "disconnecting": "接続を解除中"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "ChatGPTでサインイン",
+          "description": "CodexのチャットではあなたのChatGPTプランが使用されます。",
+          "open_link": "ChatGPTのサインインを開く",
+          "step_open": "ChatGPTのサインインページを開きます。"
+        },
+        "google": {
+          "title": "Googleでサインイン",
+          "description": "GeminiのチャットではあなたのGoogleアカウントが使用されます。",
+          "open_link": "Googleのサインインを開く",
+          "step_open": "Googleのサインインページを開き、アクセスを許可します。",
+          "step_paste": "Googleに表示されたコードを貼り付けます。"
+        },
+        "starting": "サインインを開始しています…",
+        "step_enter_code": "そのページで次のコードを入力してください：",
+        "code_label": "コード",
+        "copy_code": "コードをコピー",
+        "code_copied": "コードをコピーしました。",
+        "waiting": "サインインの完了を待っています…",
+        "code_required": "Googleのコードを貼り付けてください。",
+        "submit": "接続",
+        "submitting": "接続中",
+        "retry": "もう一度試す",
+        "errors": {
+          "failed": "サインインに失敗しました。",
+          "expired": "このサインインの有効期限が切れました。もう一度お試しください。",
+          "unreachable": "エージェントブリッジに接続できませんでした。稼働しているかどうかを管理者に確認してください。",
+          "rate_limited": "サインインの試行回数が多すぎます。1分ほど待ってから、もう一度お試しください。",
+          "signed_out": "Planeからサインアウトしています。再度サインインしてから、もう一度お試しください。"
+        }
+      },
+      "toasts": {
+        "error_title": "エラー",
+        "key_saved": "APIキーを保存しました。",
+        "key_removed": "APIキーを削除しました。",
+        "key_save_failed": "APIキーを保存できませんでした。",
+        "key_remove_failed": "APIキーを削除できませんでした。",
+        "connected": "{email}としてサインインしました。",
+        "connected_unknown": "サインインしました。",
+        "disconnected": "アカウントの接続を解除しました。",
+        "disconnect_failed": "アカウントの接続を解除できませんでした。"
       }
     }
   }

@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "Kredensial dan pengaturan",
         "credentials_help": "Nilai hanya dapat ditulis. Nilai yang tersimpan tetap tersembunyi; ganti nilai untuk mengubahnya.",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "Model bawaan",
             "help": "ID model opsional, misalnya claude-opus-5-5. Anggota dapat mengganti model di obrolan."
+          },
+          "GEMINI_API_KEY": {
+            "label": "Kunci API Gemini",
+            "help": "Digunakan jika anggota tidak memiliki kunci sendiri dan belum masuk dengan Google."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Metode masuk",
+            "help": "Opsional: api_key, chatgpt (Codex), atau google_account (Gemini). Kredensial milik anggota sendiri mengaturnya untuk obrolan mereka."
           }
         },
         "saved": "Tersimpan",
@@ -246,6 +255,116 @@
         "assigned_to_me": "Apa yang ditugaskan kepada saya?",
         "due_this_week": "Item kerja mana yang jatuh tempo minggu ini?",
         "recent_activity": "Ringkas aktivitas terbaru di proyek saya"
+      }
+    },
+    "providers": {
+      "load_failed_title": "Penyedia AI tidak dapat dimuat",
+      "load_failed_description": "Periksa koneksi Anda dan coba lagi.",
+      "claude_note": "Claude menggunakan kunci API Anthropic. Masuk dengan langganan Claude tidak tersedia untuk aplikasi yang dibangun dengan Claude Agent SDK.",
+      "personal": {
+        "title": "Kredensial Anda"
+      },
+      "workspace": {
+        "title": "Kunci ruang kerja",
+        "admins_only": "Hanya admin ruang kerja yang dapat mengubah ini."
+      },
+      "state": {
+        "none": "Belum diatur",
+        "api_key": "Kunci API ••••{hint}",
+        "signed_in": "Masuk sebagai {email}",
+        "signed_in_unknown": "Sudah masuk"
+      },
+      "fallback": {
+        "instance": "Menggunakan kredensial bawaan instansi.",
+        "missing": "Belum ada kunci — obrolan dengan agen penyedia ini akan gagal sampai kunci ditambahkan."
+      },
+      "actions": {
+        "add_api_key": "Tambahkan kunci API",
+        "add_workspace_key": "Tambahkan kunci ruang kerja",
+        "replace": "Ganti",
+        "remove": "Hapus",
+        "disconnect": "Putuskan",
+        "sign_in_openai": "Masuk dengan ChatGPT",
+        "sign_in_google": "Masuk dengan Google"
+      },
+      "cancel": "Batal",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Tambahkan kunci API {provider} Anda",
+          "title_replace": "Ganti kunci API {provider} Anda",
+          "description": "Hanya obrolan Anda yang menggunakan kunci ini. Kunci disimpan dalam bentuk terenkripsi dan tidak dapat dilihat lagi."
+        },
+        "workspace": {
+          "title_add": "Tambahkan kunci ruang kerja {provider}",
+          "title_replace": "Ganti kunci ruang kerja {provider}",
+          "description": "Anggota yang tidak memiliki kredensial sendiri menggunakan kunci ini. Kunci disimpan dalam bentuk terenkripsi dan tidak dapat dilihat lagi."
+        },
+        "label": "Kunci API {provider}",
+        "invalid": "Masukkan kunci sepanjang 8 hingga 512 karakter, tanpa spasi.",
+        "save": "Simpan kunci",
+        "saving": "Menyimpan"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "Hapus kunci API Anda?",
+          "content": "Obrolan Anda dengan agen {provider} akan menggunakan kunci ruang kerja atau kredensial bawaan instansi sebagai gantinya."
+        },
+        "workspace": {
+          "title": "Hapus kunci ruang kerja?",
+          "content": "Anggota yang tidak memiliki kredensial {provider} sendiri akan menggunakan kredensial bawaan instansi sebagai gantinya."
+        },
+        "confirm": "Hapus",
+        "removing": "Menghapus"
+      },
+      "disconnect_dialog": {
+        "title": "Putuskan akun?",
+        "content": "Obrolan Anda tidak akan menggunakan {email} lagi. Anda dapat masuk kembali kapan saja.",
+        "content_unknown": "Obrolan Anda tidak akan menggunakan akun ini lagi. Anda dapat masuk kembali kapan saja.",
+        "confirm": "Putuskan",
+        "disconnecting": "Memutuskan"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Masuk dengan ChatGPT",
+          "description": "Obrolan Codex akan menggunakan paket ChatGPT Anda.",
+          "open_link": "Buka halaman masuk ChatGPT",
+          "step_open": "Buka halaman masuk ChatGPT."
+        },
+        "google": {
+          "title": "Masuk dengan Google",
+          "description": "Obrolan Gemini akan menggunakan akun Google Anda.",
+          "open_link": "Buka halaman masuk Google",
+          "step_open": "Buka halaman masuk Google dan izinkan akses.",
+          "step_paste": "Tempelkan kode yang ditampilkan Google kepada Anda."
+        },
+        "starting": "Memulai proses masuk…",
+        "step_enter_code": "Masukkan kode ini di sana:",
+        "code_label": "Kode",
+        "copy_code": "Salin kode",
+        "code_copied": "Kode disalin.",
+        "waiting": "Menunggu Anda menyelesaikan proses masuk…",
+        "code_required": "Tempelkan kode dari Google.",
+        "submit": "Sambungkan",
+        "submitting": "Menyambungkan",
+        "retry": "Coba lagi",
+        "errors": {
+          "failed": "Gagal masuk.",
+          "expired": "Proses masuk ini sudah kedaluwarsa. Coba lagi.",
+          "unreachable": "Tidak dapat menjangkau jembatan agen. Tanyakan kepada admin Anda apakah jembatan agen sedang berjalan.",
+          "rate_limited": "Terlalu banyak percobaan masuk. Tunggu satu menit, lalu coba lagi.",
+          "signed_out": "Anda telah keluar dari Plane. Masuk kembali, lalu coba lagi."
+        }
+      },
+      "toasts": {
+        "error_title": "Kesalahan",
+        "key_saved": "Kunci API disimpan.",
+        "key_removed": "Kunci API dihapus.",
+        "key_save_failed": "Kunci API tidak dapat disimpan.",
+        "key_remove_failed": "Kunci API tidak dapat dihapus.",
+        "connected": "Masuk sebagai {email}.",
+        "connected_unknown": "Berhasil masuk.",
+        "disconnected": "Akun diputuskan.",
+        "disconnect_failed": "Akun tidak dapat diputuskan."
       }
     }
   }

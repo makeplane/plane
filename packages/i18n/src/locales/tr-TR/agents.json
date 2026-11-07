@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "Kimlik bilgileri ve ayarlar",
         "credentials_help": "Değerler yalnızca yazılabilir. Kaydedilen değerler gizli kalır; bir değeri değiştirmek için yenisini girin.",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "Varsayılan model",
             "help": "İsteğe bağlı model kimliği, örn. claude-opus-5-5. Üyeler sohbette model değiştirebilir."
+          },
+          "GEMINI_API_KEY": {
+            "label": "Gemini API anahtarı",
+            "help": "Bir üyenin kendi anahtarı olmadığında ve Google ile oturum açmadığında kullanılır."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Oturum açma yöntemi",
+            "help": "İsteğe bağlı: api_key, chatgpt (Codex) veya google_account (Gemini). Üyelerin kendi kimlik bilgileri, kendi sohbetleri için bunu belirler."
           }
         },
         "saved": "Kaydedildi",
@@ -246,6 +255,116 @@
         "assigned_to_me": "Bana neler atandı?",
         "due_this_week": "Bu hafta hangi iş öğelerinin son tarihi var?",
         "recent_activity": "Projelerimdeki son etkinliklerin özeti"
+      }
+    },
+    "providers": {
+      "load_failed_title": "Yapay zeka sağlayıcıları yüklenemedi",
+      "load_failed_description": "Bağlantınızı kontrol edip tekrar deneyin.",
+      "claude_note": "Claude, bir Anthropic API anahtarı kullanır. Claude Agent SDK ile oluşturulan uygulamalarda Claude aboneliğiyle oturum açma seçeneği sunulmaz.",
+      "personal": {
+        "title": "Kimlik bilginiz"
+      },
+      "workspace": {
+        "title": "Çalışma alanı anahtarı",
+        "admins_only": "Bunu yalnızca çalışma alanı yöneticileri değiştirebilir."
+      },
+      "state": {
+        "none": "Ayarlanmadı",
+        "api_key": "API anahtarı ••••{hint}",
+        "signed_in": "{email} olarak oturum açıldı",
+        "signed_in_unknown": "Oturum açıldı"
+      },
+      "fallback": {
+        "instance": "Sunucu varsayılanı kullanılır.",
+        "missing": "Henüz anahtar yok — bir anahtar eklenene kadar bu sağlayıcının ajanlarıyla yapılan sohbetler başarısız olur."
+      },
+      "actions": {
+        "add_api_key": "API anahtarı ekle",
+        "add_workspace_key": "Çalışma alanı anahtarı ekle",
+        "replace": "Değiştir",
+        "remove": "Kaldır",
+        "disconnect": "Bağlantıyı kes",
+        "sign_in_openai": "ChatGPT ile oturum aç",
+        "sign_in_google": "Google ile oturum aç"
+      },
+      "cancel": "İptal",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "{provider} API anahtarınızı ekleyin",
+          "title_replace": "{provider} API anahtarınızı değiştirin",
+          "description": "Bu anahtarı yalnızca sizin sohbetleriniz kullanır. Şifrelenmiş olarak saklanır ve tekrar görüntülenemez."
+        },
+        "workspace": {
+          "title_add": "{provider} çalışma alanı anahtarı ekleyin",
+          "title_replace": "{provider} çalışma alanı anahtarını değiştirin",
+          "description": "Kendi kimlik bilgisi olmayan üyeler bu anahtarı kullanır. Şifrelenmiş olarak saklanır ve tekrar görüntülenemez."
+        },
+        "label": "{provider} API anahtarı",
+        "invalid": "Boşluk içermeyen, 8 ile 512 karakter arasında bir anahtar girin.",
+        "save": "Anahtarı kaydet",
+        "saving": "Kaydediliyor"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "API anahtarınız kaldırılsın mı?",
+          "content": "{provider} ajanlarıyla yaptığınız sohbetler bunun yerine çalışma alanı anahtarını veya sunucu varsayılanını kullanır."
+        },
+        "workspace": {
+          "title": "Çalışma alanı anahtarı kaldırılsın mı?",
+          "content": "Kendi {provider} kimlik bilgisi olmayan üyeler bunun yerine sunucu varsayılanını kullanır."
+        },
+        "confirm": "Kaldır",
+        "removing": "Kaldırılıyor"
+      },
+      "disconnect_dialog": {
+        "title": "Hesabın bağlantısı kesilsin mi?",
+        "content": "Sohbetleriniz artık {email} hesabını kullanmayacak. İstediğiniz zaman tekrar oturum açabilirsiniz.",
+        "content_unknown": "Sohbetleriniz artık bu hesabı kullanmayacak. İstediğiniz zaman tekrar oturum açabilirsiniz.",
+        "confirm": "Bağlantıyı kes",
+        "disconnecting": "Bağlantı kesiliyor"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "ChatGPT ile oturum açın",
+          "description": "Codex sohbetleri ChatGPT planınızı kullanacak.",
+          "open_link": "ChatGPT oturum açma sayfasını aç",
+          "step_open": "ChatGPT oturum açma sayfasını açın."
+        },
+        "google": {
+          "title": "Google ile oturum açın",
+          "description": "Gemini sohbetleri Google hesabınızı kullanacak.",
+          "open_link": "Google oturum açma sayfasını aç",
+          "step_open": "Google oturum açma sayfasını açın ve erişime izin verin.",
+          "step_paste": "Google'ın size gösterdiği kodu yapıştırın."
+        },
+        "starting": "Oturum açma başlatılıyor…",
+        "step_enter_code": "Bu kodu orada girin:",
+        "code_label": "Kod",
+        "copy_code": "Kodu kopyala",
+        "code_copied": "Kod kopyalandı.",
+        "waiting": "Oturum açmayı tamamlamanız bekleniyor…",
+        "code_required": "Google'dan aldığınız kodu yapıştırın.",
+        "submit": "Bağlan",
+        "submitting": "Bağlanıyor",
+        "retry": "Tekrar dene",
+        "errors": {
+          "failed": "Oturum açılamadı.",
+          "expired": "Bu oturum açma işleminin süresi doldu. Tekrar deneyin.",
+          "unreachable": "Ajan köprüsüne ulaşılamadı. Çalışıp çalışmadığını yöneticinize sorun.",
+          "rate_limited": "Çok fazla oturum açma denemesi yapıldı. Bir dakika bekleyip tekrar deneyin.",
+          "signed_out": "Plane oturumunuz kapatıldı. Tekrar oturum açıp yeniden deneyin."
+        }
+      },
+      "toasts": {
+        "error_title": "Hata",
+        "key_saved": "API anahtarı kaydedildi.",
+        "key_removed": "API anahtarı kaldırıldı.",
+        "key_save_failed": "API anahtarı kaydedilemedi.",
+        "key_remove_failed": "API anahtarı kaldırılamadı.",
+        "connected": "{email} olarak oturum açıldı.",
+        "connected_unknown": "Oturum açıldı.",
+        "disconnected": "Hesabın bağlantısı kesildi.",
+        "disconnect_failed": "Hesabın bağlantısı kesilemedi."
       }
     }
   }

@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "Credenciales y configuración",
         "credentials_help": "Los valores son de solo escritura. Los valores guardados permanecen ocultos; reemplace uno para cambiarlo.",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "Modelo predeterminado",
             "help": "ID de modelo opcional, por ejemplo, claude-opus-5-5. Los miembros pueden cambiar de modelo en la conversación."
+          },
+          "GEMINI_API_KEY": {
+            "label": "Clave de API de Gemini",
+            "help": "Se usa cuando un miembro no tiene su propia clave y no ha iniciado sesión con Google."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Método de inicio de sesión",
+            "help": "Opcional: api_key, chatgpt (Codex) o google_account (Gemini). Las credenciales propias de los miembros lo definen para sus conversaciones."
           }
         },
         "saved": "Guardado",
@@ -246,6 +255,116 @@
         "assigned_to_me": "¿Qué tengo asignado?",
         "due_this_week": "¿Qué elementos de trabajo vencen esta semana?",
         "recent_activity": "Resumir la actividad reciente de mis proyectos"
+      }
+    },
+    "providers": {
+      "load_failed_title": "No se pudieron cargar los proveedores de IA",
+      "load_failed_description": "Compruebe su conexión e inténtelo de nuevo.",
+      "claude_note": "Claude usa una clave de API de Anthropic. El inicio de sesión con una suscripción de Claude no está disponible para las aplicaciones creadas con Claude Agent SDK.",
+      "personal": {
+        "title": "Su credencial"
+      },
+      "workspace": {
+        "title": "Clave del espacio de trabajo",
+        "admins_only": "Solo los administradores del espacio de trabajo pueden cambiar esto."
+      },
+      "state": {
+        "none": "Sin configurar",
+        "api_key": "Clave de API ••••{hint}",
+        "signed_in": "Sesión iniciada como {email}",
+        "signed_in_unknown": "Sesión iniciada"
+      },
+      "fallback": {
+        "instance": "Usa la credencial predeterminada de la instancia.",
+        "missing": "Aún no hay ninguna clave: las conversaciones con los agentes de este proveedor fallarán hasta que se agregue una."
+      },
+      "actions": {
+        "add_api_key": "Agregar clave de API",
+        "add_workspace_key": "Agregar clave del espacio de trabajo",
+        "replace": "Reemplazar",
+        "remove": "Quitar",
+        "disconnect": "Desconectar",
+        "sign_in_openai": "Iniciar sesión con ChatGPT",
+        "sign_in_google": "Iniciar sesión con Google"
+      },
+      "cancel": "Cancelar",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Agregar su clave de API de {provider}",
+          "title_replace": "Reemplazar su clave de API de {provider}",
+          "description": "Solo sus conversaciones usan esta clave. Se almacena cifrada y no se puede volver a ver."
+        },
+        "workspace": {
+          "title_add": "Agregar una clave de {provider} para el espacio de trabajo",
+          "title_replace": "Reemplazar la clave de {provider} del espacio de trabajo",
+          "description": "Los miembros sin credencial propia usan esta clave. Se almacena cifrada y no se puede volver a ver."
+        },
+        "label": "Clave de API de {provider}",
+        "invalid": "Introduzca una clave de 8 a 512 caracteres, sin espacios.",
+        "save": "Guardar clave",
+        "saving": "Guardando"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "¿Quitar su clave de API?",
+          "content": "Sus conversaciones con los agentes de {provider} usarán en su lugar la clave del espacio de trabajo o la credencial predeterminada de la instancia."
+        },
+        "workspace": {
+          "title": "¿Quitar la clave del espacio de trabajo?",
+          "content": "Los miembros sin credencial propia de {provider} usarán en su lugar la credencial predeterminada de la instancia."
+        },
+        "confirm": "Quitar",
+        "removing": "Quitando"
+      },
+      "disconnect_dialog": {
+        "title": "¿Desconectar la cuenta?",
+        "content": "Sus conversaciones dejarán de usar {email}. Puede volver a iniciar sesión en cualquier momento.",
+        "content_unknown": "Sus conversaciones dejarán de usar esta cuenta. Puede volver a iniciar sesión en cualquier momento.",
+        "confirm": "Desconectar",
+        "disconnecting": "Desconectando"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Iniciar sesión con ChatGPT",
+          "description": "Las conversaciones con Codex usarán su plan de ChatGPT.",
+          "open_link": "Abrir el inicio de sesión de ChatGPT",
+          "step_open": "Abra la página de inicio de sesión de ChatGPT."
+        },
+        "google": {
+          "title": "Iniciar sesión con Google",
+          "description": "Las conversaciones con Gemini usarán su cuenta de Google.",
+          "open_link": "Abrir el inicio de sesión de Google",
+          "step_open": "Abra la página de inicio de sesión de Google y permita el acceso.",
+          "step_paste": "Pegue el código que le muestra Google."
+        },
+        "starting": "Preparando el inicio de sesión…",
+        "step_enter_code": "Introduzca allí este código:",
+        "code_label": "Código",
+        "copy_code": "Copiar código",
+        "code_copied": "Código copiado.",
+        "waiting": "Esperando a que termine de iniciar sesión…",
+        "code_required": "Pegue el código de Google.",
+        "submit": "Conectar",
+        "submitting": "Conectando",
+        "retry": "Intentar de nuevo",
+        "errors": {
+          "failed": "No se pudo iniciar sesión.",
+          "expired": "Este inicio de sesión caducó. Inténtelo de nuevo.",
+          "unreachable": "No se pudo acceder al puente de agentes. Pregunte a su administrador si está en ejecución.",
+          "rate_limited": "Demasiados intentos de inicio de sesión. Espere un minuto e inténtelo de nuevo.",
+          "signed_out": "Se cerró su sesión de Plane. Vuelva a iniciar sesión e inténtelo de nuevo."
+        }
+      },
+      "toasts": {
+        "error_title": "Se produjo un error",
+        "key_saved": "Clave de API guardada.",
+        "key_removed": "Clave de API quitada.",
+        "key_save_failed": "No se pudo guardar la clave de API.",
+        "key_remove_failed": "No se pudo quitar la clave de API.",
+        "connected": "Sesión iniciada como {email}.",
+        "connected_unknown": "Sesión iniciada.",
+        "disconnected": "Cuenta desconectada.",
+        "disconnect_failed": "No se pudo desconectar la cuenta."
       }
     }
   }

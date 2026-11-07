@@ -494,6 +494,10 @@
         "heading": "Scripts",
         "new_script": "New Script",
         "description": "Automate your workflows with custom scripts and automation rules."
+      },
+      "ai_providers": {
+        "title": "AI providers",
+        "description": "Credentials for the agent chat. Chats use your own credential first, then the workspace key, then the instance default."
       }
     },
     "empty_state": {

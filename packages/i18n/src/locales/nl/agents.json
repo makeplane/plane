@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "Inloggegevens en instellingen",
         "credentials_help": "Waarden kunnen alleen worden geschreven. Opgeslagen waarden blijven verborgen; vervang een waarde om deze te wijzigen.",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "Standaardmodel",
             "help": "Optionele model-ID, bijv. claude-opus-5-5. Leden kunnen in de chat van model wisselen."
+          },
+          "GEMINI_API_KEY": {
+            "label": "Gemini API-sleutel",
+            "help": "Gebruikt wanneer een lid geen eigen sleutel heeft en niet met Google is ingelogd."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Inlogmethode",
+            "help": "Optioneel: api_key, chatgpt (Codex) of google_account (Gemini). De eigen inloggegevens van leden stellen dit in voor hun chats."
           }
         },
         "saved": "Opgeslagen",
@@ -246,6 +255,116 @@
         "assigned_to_me": "Wat is aan mij toegewezen?",
         "due_this_week": "Welke werkitems moeten deze week af zijn?",
         "recent_activity": "Recente activiteit in mijn projecten samenvatten"
+      }
+    },
+    "providers": {
+      "load_failed_title": "AI-providers konden niet worden geladen",
+      "load_failed_description": "Controleer uw verbinding en probeer het opnieuw.",
+      "claude_note": "Claude gebruikt een Anthropic API-sleutel. Inloggen met een Claude-abonnement wordt niet aangeboden voor apps die zijn gebouwd met de Claude Agent SDK.",
+      "personal": {
+        "title": "Uw inloggegevens"
+      },
+      "workspace": {
+        "title": "Werkruimtesleutel",
+        "admins_only": "Alleen werkruimtebeheerders kunnen dit wijzigen."
+      },
+      "state": {
+        "none": "Niet ingesteld",
+        "api_key": "API-sleutel ••••{hint}",
+        "signed_in": "Ingelogd als {email}",
+        "signed_in_unknown": "Ingelogd"
+      },
+      "fallback": {
+        "instance": "Gebruikt de standaardinstelling van de instantie.",
+        "missing": "Nog geen sleutel. Chats met de agenten van deze provider mislukken totdat er een is toegevoegd."
+      },
+      "actions": {
+        "add_api_key": "API-sleutel toevoegen",
+        "add_workspace_key": "Werkruimtesleutel toevoegen",
+        "replace": "Vervangen",
+        "remove": "Verwijderen",
+        "disconnect": "Ontkoppelen",
+        "sign_in_openai": "Inloggen met ChatGPT",
+        "sign_in_google": "Inloggen met Google"
+      },
+      "cancel": "Annuleren",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Uw {provider} API-sleutel toevoegen",
+          "title_replace": "Uw {provider} API-sleutel vervangen",
+          "description": "Alleen uw chats gebruiken deze sleutel. De sleutel wordt versleuteld opgeslagen en kan niet opnieuw worden bekeken."
+        },
+        "workspace": {
+          "title_add": "Een {provider}-werkruimtesleutel toevoegen",
+          "title_replace": "De {provider}-werkruimtesleutel vervangen",
+          "description": "Leden zonder eigen inloggegevens gebruiken deze sleutel. De sleutel wordt versleuteld opgeslagen en kan niet opnieuw worden bekeken."
+        },
+        "label": "{provider} API-sleutel",
+        "invalid": "Voer een sleutel in van 8 tot 512 tekens, zonder spaties.",
+        "save": "Sleutel opslaan",
+        "saving": "Opslaan"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "Uw API-sleutel verwijderen?",
+          "content": "Uw chats met {provider}-agenten gebruiken in plaats daarvan de werkruimtesleutel of de standaardinstelling van de instantie."
+        },
+        "workspace": {
+          "title": "De werkruimtesleutel verwijderen?",
+          "content": "Leden zonder eigen {provider}-inloggegevens gebruiken in plaats daarvan de standaardinstelling van de instantie."
+        },
+        "confirm": "Verwijderen",
+        "removing": "Verwijderen"
+      },
+      "disconnect_dialog": {
+        "title": "Account ontkoppelen?",
+        "content": "Uw chats gebruiken {email} dan niet meer. U kunt op elk moment opnieuw inloggen.",
+        "content_unknown": "Uw chats gebruiken dit account dan niet meer. U kunt op elk moment opnieuw inloggen.",
+        "confirm": "Ontkoppelen",
+        "disconnecting": "Ontkoppelen"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Inloggen met ChatGPT",
+          "description": "Codex-chats gebruiken uw ChatGPT-abonnement.",
+          "open_link": "ChatGPT-inlogpagina openen",
+          "step_open": "Open de inlogpagina van ChatGPT."
+        },
+        "google": {
+          "title": "Inloggen met Google",
+          "description": "Gemini-chats gebruiken uw Google-account.",
+          "open_link": "Google-inlogpagina openen",
+          "step_open": "Open de inlogpagina van Google en sta toegang toe.",
+          "step_paste": "Plak de code die Google u toont."
+        },
+        "starting": "Inloggen wordt gestart…",
+        "step_enter_code": "Voer daar deze code in:",
+        "code_label": "Verificatiecode",
+        "copy_code": "Code kopiëren",
+        "code_copied": "Code gekopieerd.",
+        "waiting": "Wachten tot u klaar bent met inloggen…",
+        "code_required": "Plak de code van Google.",
+        "submit": "Verbinden",
+        "submitting": "Verbinden",
+        "retry": "Opnieuw proberen",
+        "errors": {
+          "failed": "Inloggen mislukt.",
+          "expired": "Deze inlogpoging is verlopen. Probeer het opnieuw.",
+          "unreachable": "De agent-bridge is niet bereikbaar. Vraag uw beheerder of deze actief is.",
+          "rate_limited": "Te veel inlogpogingen. Wacht een minuut en probeer het opnieuw.",
+          "signed_out": "U bent uitgelogd bij Plane. Log opnieuw in en probeer het nogmaals."
+        }
+      },
+      "toasts": {
+        "error_title": "Fout",
+        "key_saved": "API-sleutel opgeslagen.",
+        "key_removed": "API-sleutel verwijderd.",
+        "key_save_failed": "De API-sleutel kon niet worden opgeslagen.",
+        "key_remove_failed": "De API-sleutel kon niet worden verwijderd.",
+        "connected": "Ingelogd als {email}.",
+        "connected_unknown": "Ingelogd.",
+        "disconnected": "Account ontkoppeld.",
+        "disconnect_failed": "Het account kon niet worden ontkoppeld."
       }
     }
   }

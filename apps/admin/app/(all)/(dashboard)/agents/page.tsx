@@ -10,7 +10,15 @@ import useSWR from "swr";
 import { Badge } from "@makeplane/propel/components/badge";
 import { Button } from "@makeplane/propel/components/button";
 import { IconButton } from "@makeplane/propel/components/icon-button";
-import { Claude, Codex, Deepseek, DeleteOutline, EditOutline, PlusCircleOutline } from "@makeplane/propel/icons";
+import {
+  AiStarFourOutline,
+  Claude,
+  Codex,
+  Deepseek,
+  DeleteOutline,
+  EditOutline,
+  PlusCircleOutline,
+} from "@makeplane/propel/icons";
 import { ConfirmDialog } from "@plane/blocks/dialog";
 import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import { Skeleton } from "@plane/blocks/skeleton";
@@ -29,7 +37,13 @@ import { AgentFormDialog } from "./agent-form-dialog";
 const agentService = new InstanceAgentService();
 const AGENTS_KEY = "INSTANCE_AGENTS";
 
-const ADAPTER_ICONS: Record<TAgentAdapter, typeof Claude> = { claude: Claude, codex: Codex, deepseek: Deepseek };
+// No Gemini mark ships with propel yet; the four-point star stands in for it.
+const ADAPTER_ICONS: Record<TAgentAdapter, typeof Claude> = {
+  claude: Claude,
+  codex: Codex,
+  gemini: AiStarFourOutline,
+  deepseek: Deepseek,
+};
 
 /** The dialog state: closed, adding, or editing an agent. `key` remounts the form on every open. */
 type TDialogState = { open: false } | { open: true; key: number; agent?: TInstanceAgent };

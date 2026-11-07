@@ -162,7 +162,8 @@
         "adapters": {
           "claude": "Claude",
           "codex": "Codex",
-          "deepseek": "DeepSeek"
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
         },
         "credentials": "Thông tin xác thực và cài đặt",
         "credentials_help": "Các giá trị chỉ có thể ghi. Giá trị đã lưu sẽ được ẩn; hãy thay thế một giá trị để thay đổi nó.",
@@ -190,6 +191,14 @@
           "PLANE_AGENT_MODEL": {
             "label": "Mô hình mặc định",
             "help": "ID mô hình (không bắt buộc), ví dụ claude-opus-5-5. Thành viên có thể chuyển đổi mô hình trong cuộc trò chuyện."
+          },
+          "GEMINI_API_KEY": {
+            "label": "Khóa API Gemini",
+            "help": "Được dùng khi thành viên không có khóa riêng và chưa đăng nhập bằng Google."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Phương thức đăng nhập",
+            "help": "Không bắt buộc: api_key, chatgpt (Codex) hoặc google_account (Gemini). Thông tin xác thực riêng của thành viên sẽ đặt giá trị này cho các cuộc trò chuyện của họ."
           }
         },
         "saved": "Đã lưu",
@@ -246,6 +255,116 @@
         "assigned_to_me": "Những gì được giao cho tôi?",
         "due_this_week": "Những mục công việc nào đến hạn trong tuần này?",
         "recent_activity": "Tóm tắt hoạt động gần đây trong các dự án của tôi"
+      }
+    },
+    "providers": {
+      "load_failed_title": "Không thể tải nhà cung cấp AI",
+      "load_failed_description": "Hãy kiểm tra kết nối của bạn rồi thử lại.",
+      "claude_note": "Claude dùng khóa API Anthropic. Tính năng đăng nhập bằng gói đăng ký Claude không được cung cấp cho các ứng dụng xây dựng trên Claude Agent SDK.",
+      "personal": {
+        "title": "Thông tin xác thực của bạn"
+      },
+      "workspace": {
+        "title": "Khóa của không gian làm việc",
+        "admins_only": "Chỉ quản trị viên không gian làm việc mới có thể thay đổi mục này."
+      },
+      "state": {
+        "none": "Chưa thiết lập",
+        "api_key": "Khóa API ••••{hint}",
+        "signed_in": "Đã đăng nhập bằng {email}",
+        "signed_in_unknown": "Đã đăng nhập"
+      },
+      "fallback": {
+        "instance": "Dùng thông tin mặc định của hệ thống.",
+        "missing": "Chưa có khóa — các cuộc trò chuyện với tác nhân của nhà cung cấp này sẽ thất bại cho đến khi có khóa được thêm."
+      },
+      "actions": {
+        "add_api_key": "Thêm khóa API",
+        "add_workspace_key": "Thêm khóa không gian làm việc",
+        "replace": "Thay thế",
+        "remove": "Xóa",
+        "disconnect": "Ngắt kết nối",
+        "sign_in_openai": "Đăng nhập bằng ChatGPT",
+        "sign_in_google": "Đăng nhập bằng Google"
+      },
+      "cancel": "Hủy",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Thêm khóa API {provider} của bạn",
+          "title_replace": "Thay thế khóa API {provider} của bạn",
+          "description": "Chỉ các cuộc trò chuyện của bạn dùng khóa này. Khóa được lưu ở dạng mã hóa và không thể xem lại."
+        },
+        "workspace": {
+          "title_add": "Thêm khóa không gian làm việc cho {provider}",
+          "title_replace": "Thay thế khóa không gian làm việc của {provider}",
+          "description": "Thành viên không có thông tin xác thực riêng sẽ dùng khóa này. Khóa được lưu ở dạng mã hóa và không thể xem lại."
+        },
+        "label": "Khóa API {provider}",
+        "invalid": "Nhập khóa dài từ 8 đến 512 ký tự, không có khoảng trắng.",
+        "save": "Lưu khóa",
+        "saving": "Đang lưu"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "Xóa khóa API của bạn?",
+          "content": "Thay vào đó, các cuộc trò chuyện của bạn với tác nhân {provider} sẽ dùng khóa của không gian làm việc hoặc thông tin mặc định của hệ thống."
+        },
+        "workspace": {
+          "title": "Xóa khóa của không gian làm việc?",
+          "content": "Thay vào đó, thành viên không có thông tin xác thực {provider} riêng sẽ dùng thông tin mặc định của hệ thống."
+        },
+        "confirm": "Xóa",
+        "removing": "Đang xóa"
+      },
+      "disconnect_dialog": {
+        "title": "Ngắt kết nối tài khoản?",
+        "content": "Các cuộc trò chuyện của bạn sẽ ngừng dùng {email}. Bạn có thể đăng nhập lại bất cứ lúc nào.",
+        "content_unknown": "Các cuộc trò chuyện của bạn sẽ ngừng dùng tài khoản này. Bạn có thể đăng nhập lại bất cứ lúc nào.",
+        "confirm": "Ngắt kết nối",
+        "disconnecting": "Đang ngắt kết nối"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Đăng nhập bằng ChatGPT",
+          "description": "Các cuộc trò chuyện Codex sẽ dùng gói ChatGPT của bạn.",
+          "open_link": "Mở trang đăng nhập ChatGPT",
+          "step_open": "Hãy mở trang đăng nhập ChatGPT."
+        },
+        "google": {
+          "title": "Đăng nhập bằng Google",
+          "description": "Các cuộc trò chuyện Gemini sẽ dùng tài khoản Google của bạn.",
+          "open_link": "Mở trang đăng nhập Google",
+          "step_open": "Hãy mở trang đăng nhập Google và cho phép truy cập.",
+          "step_paste": "Dán mã mà Google hiển thị cho bạn."
+        },
+        "starting": "Đang bắt đầu đăng nhập…",
+        "step_enter_code": "Nhập mã này tại đó:",
+        "code_label": "Mã",
+        "copy_code": "Sao chép mã",
+        "code_copied": "Đã sao chép mã.",
+        "waiting": "Đang chờ bạn hoàn tất đăng nhập…",
+        "code_required": "Hãy dán mã từ Google.",
+        "submit": "Kết nối",
+        "submitting": "Đang kết nối",
+        "retry": "Thử lại",
+        "errors": {
+          "failed": "Đăng nhập không thành công.",
+          "expired": "Phiên đăng nhập này đã hết hạn. Hãy thử lại.",
+          "unreachable": "Không thể kết nối tới cầu nối tác nhân. Hãy hỏi quản trị viên xem cầu nối có đang chạy không.",
+          "rate_limited": "Có quá nhiều lần thử đăng nhập. Hãy đợi một phút rồi thử lại.",
+          "signed_out": "Bạn đã đăng xuất khỏi Plane. Hãy đăng nhập lại rồi thử lại."
+        }
+      },
+      "toasts": {
+        "error_title": "Lỗi",
+        "key_saved": "Đã lưu khóa API.",
+        "key_removed": "Đã xóa khóa API.",
+        "key_save_failed": "Không thể lưu khóa API.",
+        "key_remove_failed": "Không thể xóa khóa API.",
+        "connected": "Đã đăng nhập bằng {email}.",
+        "connected_unknown": "Đã đăng nhập.",
+        "disconnected": "Đã ngắt kết nối tài khoản.",
+        "disconnect_failed": "Không thể ngắt kết nối tài khoản."
       }
     }
   }

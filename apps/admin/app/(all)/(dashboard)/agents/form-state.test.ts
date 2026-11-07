@@ -12,6 +12,7 @@ import {
   buildPayload,
   createFormState,
   desiredEnv,
+  envFieldsFor,
   otherEnvKeys,
   serverFieldErrors,
   slugify,
@@ -106,6 +107,37 @@ describe("agent form: update keeps secrets write-only", () => {
   });
 });
 
+describe("agent form: Gemini", () => {
+  it("shows the Gemini key, the sign-in method and the common fields", () => {
+    expect(envFieldsFor("gemini").map((field) => field.key)).toEqual([
+      "GEMINI_API_KEY",
+      "PLANE_AGENT_AUTH",
+      "PLANE_AGENT_MODEL",
+    ]);
+    expect(envFieldsFor("gemini").find((field) => field.key === "GEMINI_API_KEY")?.secret).toBe(true);
+  });
+
+  it("sends the Gemini key and sign-in method, and drops Claude's key when switching", () => {
+    let state: TAgentFormState = { ...createFormState(AGENT), adapter: "gemini" };
+    state = setEnv(state, "GEMINI_API_KEY", { value: " gm-key " });
+    state = setEnv(state, "PLANE_AGENT_AUTH", { value: "api_key" });
+    expect(buildPayload(state, AGENT)).toEqual({
+      adapter: "gemini",
+      env: {
+        GEMINI_API_KEY: "gm-key",
+        PLANE_AGENT_AUTH: "api_key",
+        PLANE_AGENT_MODEL: AGENT_ENV_MASK,
+        CUSTOM_FLAG: AGENT_ENV_MASK,
+      },
+    });
+  });
+
+  it("does not list PLANE_AGENT_AUTH under other variables", () => {
+    const state = createFormState({ ...AGENT, adapter: "gemini", env: { PLANE_AGENT_AUTH: AGENT_ENV_MASK } });
+    expect(otherEnvKeys(state)).toEqual([]);
+  });
+});
+
 describe("agent form: validation", () => {
   const valid = () => createFormState(AGENT);
 
@@ -124,9 +156,10 @@ describe("agent form: validation", () => {
     expect(validateForm(setEnv(state, "CLAUDE_CODE_OAUTH_TOKEN", { value: "oauth" }))).toEqual({});
   });
 
-  it("requires a DeepSeek key, and nothing for Codex", () => {
+  it("requires a DeepSeek key, and nothing for Codex or Gemini (members can sign in themselves)", () => {
     expect(validateForm({ ...valid(), adapter: "deepseek" })).toEqual({ DEEPSEEK_API_KEY: "deepseek_auth" });
     expect(validateForm({ ...valid(), adapter: "codex" })).toEqual({});
+    expect(validateForm({ ...valid(), adapter: "gemini" })).toEqual({});
   });
 
   it("requires re-entering credentials that could not be decrypted", () => {

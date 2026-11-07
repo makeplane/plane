@@ -494,6 +494,10 @@
         "heading": "Skripte",
         "new_script": "Neues Skript",
         "description": "Automatisieren Sie Ihre Workflows mit benutzerdefinierten Skripten und Automatisierungsregeln."
+      },
+      "ai_providers": {
+        "title": "KI-Anbieter",
+        "description": "Anmeldedaten für den Agenten-Chat. Chats verwenden zuerst Ihre eigenen Anmeldedaten, dann den Arbeitsbereichsschlüssel und zuletzt den Standard der Instanz."
       }
     },
     "empty_state": {
