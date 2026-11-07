@@ -170,7 +170,7 @@
         "env": {
           "ANTHROPIC_API_KEY": {
             "label": "API-ключ Anthropic",
-            "help": "Або використовуйте натомість OAuth-токен Claude Code."
+            "help": "Використовується, якщо ні учасник, ні робочий простір не мають ключа Anthropic. Або використовуйте натомість OAuth-токен Claude Code."
           },
           "CLAUDE_CODE_OAUTH_TOKEN": {
             "label": "OAuth-токен Claude Code",
@@ -221,7 +221,6 @@
           "required": "Це поле обов’язкове.",
           "slug": "Використовуйте малі літери, цифри та дефіси.",
           "default_above_max": "Рівень за замовчуванням не може бути вищим за максимальний.",
-          "claude_auth": "Введіть API-ключ Anthropic або OAuth-токен Claude Code.",
           "deepseek_auth": "Введіть API-ключ DeepSeek."
         },
         "cancel": "Скасувати",

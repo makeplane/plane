@@ -170,7 +170,7 @@
         "env": {
           "ANTHROPIC_API_KEY": {
             "label": "Anthropic APIキー",
-            "help": "代わりにClaude CodeのOAuthトークンを使用することもできます。"
+            "help": "メンバーにもワークスペースにもAnthropicのキーがない場合に使用されます。代わりにClaude CodeのOAuthトークンを使用することもできます。"
           },
           "CLAUDE_CODE_OAUTH_TOKEN": {
             "label": "Claude Code OAuthトークン",
@@ -221,7 +221,6 @@
           "required": "この項目は必須です。",
           "slug": "英小文字、数字、ハイフンを使用してください。",
           "default_above_max": "デフォルトのレベルを最大レベルより上にすることはできません。",
-          "claude_auth": "Anthropic APIキーまたはClaude Code OAuthトークンを入力してください。",
           "deepseek_auth": "DeepSeek APIキーを入力してください。"
         },
         "cancel": "キャンセル",

@@ -170,7 +170,7 @@
         "env": {
           "ANTHROPIC_API_KEY": {
             "label": "Anthropic API 金鑰",
-            "help": "或改用 Claude Code OAuth 權杖。"
+            "help": "當成員和工作空間都沒有 Anthropic 金鑰時使用。或改用 Claude Code OAuth 權杖。"
           },
           "CLAUDE_CODE_OAUTH_TOKEN": {
             "label": "Claude Code OAuth 權杖",
@@ -221,7 +221,6 @@
           "required": "此欄位為必填。",
           "slug": "請使用小寫英文字母、數字和連字號。",
           "default_above_max": "預設等級不能高於最高等級。",
-          "claude_auth": "請輸入 Anthropic API 金鑰或 Claude Code OAuth 權杖。",
           "deepseek_auth": "請輸入 DeepSeek API 金鑰。"
         },
         "cancel": "取消",

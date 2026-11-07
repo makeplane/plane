@@ -170,7 +170,7 @@
         "env": {
           "ANTHROPIC_API_KEY": {
             "label": "API klíč Anthropic",
-            "help": "Nebo místo něj použijte OAuth token Claude Code."
+            "help": "Použije se, když ani člen, ani pracovní prostor nemá klíč Anthropic. Nebo místo něj použijte OAuth token Claude Code."
           },
           "CLAUDE_CODE_OAUTH_TOKEN": {
             "label": "OAuth token Claude Code",
@@ -221,7 +221,6 @@
           "required": "Toto pole je povinné.",
           "slug": "Použijte malá písmena, číslice a pomlčky.",
           "default_above_max": "Výchozí úroveň nemůže být vyšší než maximální.",
-          "claude_auth": "Zadejte API klíč Anthropic nebo OAuth token Claude Code.",
           "deepseek_auth": "Zadejte API klíč DeepSeek."
         },
         "cancel": "Zrušit",

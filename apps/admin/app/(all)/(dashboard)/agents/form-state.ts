@@ -38,7 +38,7 @@ export type TAgentFormState = {
   env: Record<string, TEnvValueState>;
 };
 
-export type TAgentFormErrorKey = "required" | "slug" | "default_above_max" | "claude_auth" | "deepseek_auth";
+export type TAgentFormErrorKey = "required" | "slug" | "default_above_max" | "deepseek_auth";
 
 export type TAgentFormErrors = Partial<Record<string, TAgentFormErrorKey>>;
 

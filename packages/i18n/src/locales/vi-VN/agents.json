@@ -170,7 +170,7 @@
         "env": {
           "ANTHROPIC_API_KEY": {
             "label": "Khóa API Anthropic",
-            "help": "Hoặc dùng token OAuth của Claude Code thay thế."
+            "help": "Được dùng khi cả thành viên và không gian làm việc đều không có khóa Anthropic. Hoặc dùng token OAuth của Claude Code thay thế."
           },
           "CLAUDE_CODE_OAUTH_TOKEN": {
             "label": "Token OAuth của Claude Code",
@@ -221,7 +221,6 @@
           "required": "Trường này là bắt buộc.",
           "slug": "Sử dụng chữ cái thường, chữ số và dấu gạch nối.",
           "default_above_max": "Mức mặc định không thể cao hơn mức tối đa.",
-          "claude_auth": "Nhập khóa API Anthropic hoặc token OAuth của Claude Code.",
           "deepseek_auth": "Nhập khóa API DeepSeek."
         },
         "cancel": "Hủy",

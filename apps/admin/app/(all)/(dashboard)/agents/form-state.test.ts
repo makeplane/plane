@@ -150,10 +150,8 @@ describe("agent form: validation", () => {
     expect(validateForm({ ...valid(), slug: "Has Spaces" })).toMatchObject({ slug: "slug" });
   });
 
-  it("requires one Claude credential", () => {
-    const state = setEnv(valid(), "ANTHROPIC_API_KEY", { remove: true });
-    expect(validateForm(state)).toEqual({ ANTHROPIC_API_KEY: "claude_auth" });
-    expect(validateForm(setEnv(state, "CLAUDE_CODE_OAUTH_TOKEN", { value: "oauth" }))).toEqual({});
+  it("needs no Claude credential (members' and workspace keys come first)", () => {
+    expect(validateForm(setEnv(valid(), "ANTHROPIC_API_KEY", { remove: true }))).toEqual({});
   });
 
   it("requires a DeepSeek key, and nothing for Codex or Gemini (members can sign in themselves)", () => {
@@ -163,8 +161,8 @@ describe("agent form: validation", () => {
   });
 
   it("requires re-entering credentials that could not be decrypted", () => {
-    const state = createFormState({ ...AGENT, env: {}, env_decryption_failed: true });
-    expect(validateForm(state)).toEqual({ ANTHROPIC_API_KEY: "claude_auth" });
+    const state = createFormState({ ...AGENT, adapter: "deepseek", env: {}, env_decryption_failed: true });
+    expect(validateForm(state)).toEqual({ DEEPSEEK_API_KEY: "deepseek_auth" });
   });
 
   it("keeps the default level at or below the maximum", () => {
