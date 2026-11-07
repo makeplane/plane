@@ -9,8 +9,21 @@
 :3000 {
 	root * /usr/share/caddy/html
 
-	# Per-client-IP rate limiting for static asset requests
-	rate_limit {
+	# Vite gives every file under /assets a content hash in its name, so a URL
+	# never changes content: browsers may keep it for a year without asking again.
+	# The `file` matcher keeps the header off the index.html that try_files serves
+	# for a missing chunk, which would otherwise be cached as that chunk forever.
+	@hashed_asset {
+		path /assets/*
+		file
+	}
+	header @hashed_asset Cache-Control "public, max-age=31536000, immutable"
+
+	# Per-client-IP rate limit, not applied to the hashed bundle: one cold page load
+	# fetches several hundred chunks at once, which tripped a per-minute limit and
+	# answered real users with 429s. Those files are fixed and cheap to serve.
+	@rate_limited not path /assets/*
+	rate_limit @rate_limited {
 		zone static {
 			key {client_ip}
 			events 300
