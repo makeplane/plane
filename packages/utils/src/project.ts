@@ -4,12 +4,16 @@
  * See the LICENSE file for details.
  */
 
-import { sortBy } from "lodash-es";
+import { orderBy, sortBy } from "lodash-es";
 // plane imports
 import type { TProject, TProjectDisplayFilters, TProjectFilters, TProjectOrderByOptions } from "@plane/types";
 // local imports
 import { getDate } from "./datetime";
 import { satisfiesDateFilter } from "./filter";
+
+// The API supplies ISO strings, while TProject also permits Date instances.
+const projectCreatedAt = (value: Date | string | undefined): string =>
+  value instanceof Date ? (Number.isNaN(value.getTime()) ? "" : value.toISOString()) : (value ?? "");
 
 /**
  * Updates the sort order of the project.
@@ -101,8 +105,22 @@ export const orderProjects = (projects: TProject[], orderByKey: TProjectOrderByO
   if (orderByKey === "sort_order") orderedProjects = sortBy(projects, [(p) => p.sort_order]);
   if (orderByKey === "name") orderedProjects = sortBy(projects, [(p) => p.name.toLowerCase()]);
   if (orderByKey === "-name") orderedProjects = sortBy(projects, [(p) => p.name.toLowerCase()]).reverse();
-  if (orderByKey === "created_at") orderedProjects = sortBy(projects, [(p) => p.created_at]);
-  if (orderByKey === "-created_at") orderedProjects = sortBy(projects, [(p) => !p.created_at]);
+  if (orderByKey === "created_at" || orderByKey === "-created_at") {
+    const direction = orderByKey === "created_at" ? "asc" : "desc";
+    orderedProjects = orderBy(
+      projects,
+      [
+        (p) => !p.created_at,
+        (p) => Date.parse(projectCreatedAt(p.created_at)),
+        // API timestamps can include microseconds, which Date.parse truncates.
+        (p) =>
+          projectCreatedAt(p.created_at)
+            .match(/\.(\d+)/)?.[1]
+            .padEnd(6, "0") ?? "000000",
+      ],
+      ["asc", direction, direction]
+    );
+  }
   if (orderByKey === "members_length") orderedProjects = sortBy(projects, [(p) => p.members?.length]);
   if (orderByKey === "-members_length") orderedProjects = sortBy(projects, [(p) => p.members?.length]).reverse();
 
