@@ -4,3 +4,4 @@
 
 from .channel import *  # noqa: F401,F403
 from .message import *  # noqa: F401,F403
+from .guest import *  # noqa: F401,F403
