@@ -60,6 +60,12 @@ class IssueViewSerializer(BaseSerializer):
             "updated_at",
         ]
 
+    def validate_filters(self, value):
+        """Require filters to be a JSON object before computing query criteria."""
+        if not isinstance(value, dict):
+            raise serializers.ValidationError("filters must be a JSON object.")
+        return value
+
     def create(self, validated_data):
         """Create an IssueView with computed query criteria from filters."""
         query_params = validated_data.get("filters", {})
