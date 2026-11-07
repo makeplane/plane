@@ -100,6 +100,12 @@ describe("BaseIssuesStore - updateIssueList (Issue #9049)", () => {
     };
 
     // Populate mock root store
+    mockIssuesMap[EPIC_PARENT_ID] = {
+      id: EPIC_PARENT_ID,
+      name: "Parent Epic",
+      is_epic: true,
+      project_id: "project-001",
+    } as TIssue;
     mockIssuesMap[ISSUE_ID] = issueAfterUpdate;
 
     // Execute optimistic update (as performed during Kanban card drop)
@@ -218,5 +224,31 @@ describe("BaseIssuesStore - updateIssueList (Issue #9049)", () => {
     store.updateIssueList(newScopedItem, undefined, EIssueGroupedAction.ADD);
 
     expect(store.groupedIssueIds?.[SOURCE_STATE]).toContain("new-scoped-item");
+  });
+
+  it("should NOT add existing sub-issue to board when its state is updated and sub_issue is false", () => {
+    store.groupedIssueIds = {
+      [SOURCE_STATE]: [],
+      [DEST_STATE]: [],
+    };
+
+    const subIssueBefore: TIssue = {
+      id: "existing-sub-task",
+      name: "Existing sub task",
+      parent_id: "regular-parent-task",
+      state_id: SOURCE_STATE,
+      project_id: "project-001",
+    } as TIssue;
+
+    const subIssueAfter: TIssue = {
+      ...subIssueBefore,
+      state_id: DEST_STATE,
+    };
+
+    mockIssuesMap[subIssueAfter.id] = subIssueAfter;
+
+    store.updateIssueList(subIssueAfter, subIssueBefore);
+
+    expect(store.groupedIssueIds?.[DEST_STATE]).not.toContain("existing-sub-task");
   });
 });
