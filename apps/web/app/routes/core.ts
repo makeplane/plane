@@ -100,6 +100,11 @@ export const coreRoutes: RouteConfigEntry[] = [
           ),
         ]),
 
+        // Agents (in-app agent chat)
+        layout("./(all)/[workspaceSlug]/(projects)/agents/layout.tsx", [
+          route(":workspaceSlug/agents", "./(all)/[workspaceSlug]/(projects)/agents/page.tsx"),
+        ]),
+
         // Stickies
         layout("./(all)/[workspaceSlug]/(projects)/stickies/layout.tsx", [
           route(":workspaceSlug/stickies", "./(all)/[workspaceSlug]/(projects)/stickies/page.tsx"),
@@ -281,6 +286,10 @@ export const coreRoutes: RouteConfigEntry[] = [
           route(
             ":workspaceSlug/settings/webhooks/:webhookId",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/webhooks/[webhookId]/page.tsx"
+          ),
+          route(
+            ":workspaceSlug/settings/ai-providers",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/ai-providers/page.tsx"
           ),
         ]),
 

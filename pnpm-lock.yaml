@@ -6,6 +6,12 @@ settings:
 
 catalogs:
   default:
+    '@agentclientprotocol/sdk':
+      specifier: 2.4.0
+      version: 2.4.0
+    '@anthropic-ai/claude-agent-sdk':
+      specifier: 0.3.318
+      version: 0.3.318
     '@atlaskit/pragmatic-drag-and-drop':
       specifier: 1.7.4
       version: 1.7.4
@@ -63,6 +69,9 @@ catalogs:
     '@makeplane/propel':
       specifier: 0.9.7
       version: 0.9.7
+    '@modelcontextprotocol/sdk':
+      specifier: 1.32.2
+      version: 1.32.2
     '@react-pdf/renderer':
       specifier: ^4.8.1
       version: 4.8.1
@@ -204,6 +213,9 @@ catalogs:
     '@vitest/coverage-v8':
       specifier: ^4.1.11
       version: 4.1.11
+    ajv:
+      specifier: 8.18.0
+      version: 8.18.0
     ast-types:
       specifier: 0.14.2
       version: 0.14.2
@@ -634,6 +646,12 @@ importers:
       '@tailwindcss/postcss':
         specifier: 'catalog:'
         version: 4.2.4
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.2)
       '@types/lodash-es':
         specifier: 'catalog:'
         version: 4.17.12
@@ -649,6 +667,9 @@ importers:
       dotenv:
         specifier: 'catalog:'
         version: 16.4.7
+      jsdom:
+        specifier: 'catalog:'
+        version: 23.2.0
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -658,6 +679,101 @@ importers:
       vite-tsconfig-paths:
         specifier: 'catalog:'
         version: 5.1.4(typescript@5.8.3)(vite@8.2.4(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@22.12.0)(@vitest/coverage-v8@4.1.11)(happy-dom@21.0.4)(jsdom@23.2.0)(vite@8.2.4(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
+
+  apps/agent-bridge:
+    dependencies:
+      '@agentclientprotocol/sdk':
+        specifier: 'catalog:'
+        version: 2.4.0(zod@4.6.7)
+      '@plane/agent-runner-protocol':
+        specifier: workspace:*
+        version: link:../../packages/agent-runner-protocol
+      '@plane/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
+      express:
+        specifier: 4.22.0
+        version: 4.22.0
+      ws:
+        specifier: 'catalog:'
+        version: 8.21.0
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
+    devDependencies:
+      '@plane/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      '@types/express':
+        specifier: 4.17.23
+        version: 4.17.23
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.12.0
+      '@types/ws':
+        specifier: 'catalog:'
+        version: 8.18.1
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.16.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.11.3)(oxc-resolver@11.20.0)(typescript@5.8.3)
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@22.12.0)(@vitest/coverage-v8@4.1.11)(happy-dom@21.0.4)(jsdom@23.2.0)(vite@8.2.4(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
+
+  apps/agent-runner:
+    dependencies:
+      '@agentclientprotocol/sdk':
+        specifier: 'catalog:'
+        version: 2.4.0(zod@4.6.7)
+      '@plane/acp-adapters':
+        specifier: workspace:*
+        version: link:../../packages/acp-adapters
+      '@plane/agent-runner-protocol':
+        specifier: workspace:*
+        version: link:../../packages/agent-runner-protocol
+      '@plane/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
+      express:
+        specifier: 4.22.0
+        version: 4.22.0
+      ws:
+        specifier: 'catalog:'
+        version: 8.21.0
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
+    devDependencies:
+      '@plane/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      '@types/express':
+        specifier: 4.17.23
+        version: 4.17.23
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.12.0
+      '@types/ws':
+        specifier: 'catalog:'
+        version: 8.18.1
+      agent-bridge:
+        specifier: workspace:*
+        version: link:../agent-bridge
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.16.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.11.3)(oxc-resolver@11.20.0)(typescript@5.8.3)
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@22.12.0)(@vitest/coverage-v8@4.1.11)(happy-dom@21.0.4)(jsdom@23.2.0)(vite@8.2.4(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
 
   apps/live:
     dependencies:
@@ -978,6 +1094,9 @@ importers:
       '@makeplane/propel':
         specifier: 'catalog:'
         version: 0.9.7(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.2.4)
+      '@plane/acp-client':
+        specifier: workspace:*
+        version: link:../../packages/acp-client
       '@plane/blocks':
         specifier: workspace:*
         version: link:../../packages/blocks
@@ -1017,6 +1136,9 @@ importers:
       axios:
         specifier: 1.20.0
         version: 1.20.0
+      class-variance-authority:
+        specifier: 'catalog:'
+        version: 0.7.1
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -1117,6 +1239,12 @@ importers:
       '@tailwindcss/typography':
         specifier: 'catalog:'
         version: 0.5.19
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.2)
       '@types/lodash-es':
         specifier: 'catalog:'
         version: 4.17.12
@@ -1132,6 +1260,9 @@ importers:
       dotenv:
         specifier: 'catalog:'
         version: 16.4.7
+      jsdom:
+        specifier: 'catalog:'
+        version: 23.2.0
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -1141,6 +1272,83 @@ importers:
       vite-tsconfig-paths:
         specifier: 'catalog:'
         version: 5.1.4(typescript@5.8.3)(vite@8.2.4(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@22.12.0)(@vitest/coverage-v8@4.1.11)(happy-dom@21.0.4)(jsdom@23.2.0)(vite@8.2.4(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
+
+  packages/acp-adapters:
+    dependencies:
+      '@agentclientprotocol/sdk':
+        specifier: 'catalog:'
+        version: 2.4.0(zod@4.6.7)
+      '@anthropic-ai/claude-agent-sdk':
+        specifier: 'catalog:'
+        version: 0.3.318(@anthropic-ai/sdk@1.5.0(zod@4.6.7))(@modelcontextprotocol/sdk@1.32.2(zod@4.6.7))(zod@4.6.7)
+      '@modelcontextprotocol/sdk':
+        specifier: 'catalog:'
+        version: 1.32.2(zod@4.6.7)
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
+    devDependencies:
+      '@plane/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.12.0
+      ajv:
+        specifier: 'catalog:'
+        version: 8.18.0
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.16.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.11.3)(oxc-resolver@11.20.0)(typescript@5.8.3)
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@22.12.0)(@vitest/coverage-v8@4.1.11)(happy-dom@21.0.4)(jsdom@23.2.0)(vite@8.2.4(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
+
+  packages/acp-client:
+    dependencies:
+      '@agentclientprotocol/sdk':
+        specifier: 'catalog:'
+        version: 2.4.0(zod@4.6.7)
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
+    devDependencies:
+      '@plane/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.16.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.11.3)(oxc-resolver@11.20.0)(typescript@5.8.3)
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@22.12.0)(@vitest/coverage-v8@4.1.11)(happy-dom@21.0.4)(jsdom@23.2.0)(vite@8.2.4(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
+
+  packages/agent-runner-protocol:
+    devDependencies:
+      '@plane/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.12.0
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.16.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.11.3)(oxc-resolver@11.20.0)(typescript@5.8.3)
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@22.12.0)(@vitest/coverage-v8@4.1.11)(happy-dom@21.0.4)(jsdom@23.2.0)(vite@8.2.4(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
 
   packages/blocks:
     dependencies:
@@ -1778,9 +1986,79 @@ importers:
 
 packages:
 
+  '@agentclientprotocol/sdk@2.4.0':
+    resolution: {integrity: sha512-7qJ8nnyj7WesC5ve185ioTpB2/svQoeGV4HA4nLEhgDUrcmBe54/08VcXc/oL4p14tDbxxECZzdYmUYQ+4l+Wg==}
+    peerDependencies:
+      '@modelcontextprotocol/server': ^2.4.0
+      zod: ^4.6.7
+    peerDependenciesMeta:
+      '@modelcontextprotocol/server':
+        optional: true
+
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
+
+  '@anthropic-ai/claude-agent-sdk-darwin-arm64@0.3.318':
+    resolution: {integrity: sha512-AWoXeDXzAMD3RaA21lWuHvCrKd8xmbTTmKjovninn4j07jheoVSMzFbCFjpp4kk5TdhT36JtWPkAxvjNMbcO8w==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@anthropic-ai/claude-agent-sdk-darwin-x64@0.3.318':
+    resolution: {integrity: sha512-6CkZ5PCdebSY/LePp16sf/HYRtM6zVuxtn8qYICFS5KUZFsjccJJ9swVsOdHXNHi4SWZcSmIFTwoUbfFCzisRw==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@anthropic-ai/claude-agent-sdk-linux-arm64-musl@0.3.318':
+    resolution: {integrity: sha512-l4LSYFOrvlYCrUImGfxMTQ0wg+T3s9CBhrBvPF/0oJGKZg+QnxHHU8jUVm9e9/xYmDRTtqFIrr4id/5AfH4XGw==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@anthropic-ai/claude-agent-sdk-linux-arm64@0.3.318':
+    resolution: {integrity: sha512-mBm4su17aMitLBBCQj3bHdejyUDY6z/ormGih+HG24N689RSbdKECjGjkT87tDBIR/4jyoqmuSeHqM1DI8TJlg==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@anthropic-ai/claude-agent-sdk-linux-x64-musl@0.3.318':
+    resolution: {integrity: sha512-SAF3lj/2OzTU84p+OOA13QEKA9+5fYAw0M9E7AJjdnRmVFGqQfbV7Do1i1f9Sj0mIubB3rLTRphGRw8O4HZjgA==}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@anthropic-ai/claude-agent-sdk-linux-x64@0.3.318':
+    resolution: {integrity: sha512-+mE+ueBD3oRFdaG16rd0h+LMjdeivGxL0pr/+FZK7JeLWVu+yPSw/f/X02b9oK36/DWykiFTu2G6HnJ9/+YO6w==}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@anthropic-ai/claude-agent-sdk-win32-arm64@0.3.318':
+    resolution: {integrity: sha512-19iVSZ4379QbZU1XnGUtfFvhKS1WzS8H1sbU/DbrzqbJ5Kq1eB1drj+obB1fCxTh6m26tRPj0zMJmdeu/jk3Gw==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@anthropic-ai/claude-agent-sdk-win32-x64@0.3.318':
+    resolution: {integrity: sha512-ZdKVWpyVNVt0cXrOf8sUBaxcxLEAP+oGMdQDLBWr/BqOxTWLy7TBWOj1kzw+wVg/9WIkjkgQWeJzGXPWulR1sA==}
+    cpu: [x64]
+    os: [win32]
+
+  '@anthropic-ai/claude-agent-sdk@0.3.318':
+    resolution: {integrity: sha512-z5WHCUeW52SKQ3rnvI3zt8X5h2QQ5o3Cgg5xarO5Rimfe67f3pOJt2aOh00S8t/nRzqfs+8nCb9o1EoXe+yccA==}
+    engines: {node: '>=18.14.0'}
+    peerDependencies:
+      '@anthropic-ai/sdk': '>=0.93.0'
+      '@modelcontextprotocol/sdk': ^1.29.0
+      zod: ^4.6.7
+
+  '@anthropic-ai/sdk@1.5.0':
+    resolution: {integrity: sha512-AqB4Irlv4TLzTqsBCSpVyk5BLaPPfsTt5wUEju6X5a273nBsL143EM+4hxj67F9e0HpBlzdwUhVIPYM9OxD2oQ==}
+    hasBin: true
+    peerDependencies:
+      zod: ^4.6.7
+    peerDependenciesMeta:
+      zod:
+        optional: true
 
   '@asamuzakjp/css-color@3.2.0':
     resolution: {integrity: sha512-K1A6z8tS3XsmCMM86xoWdn7Fkdn9m6RSVtocUrJYIwZnFVkng/PvkEoWtOWmP+Scc6saYWHWZYbndEEXxl24jw==}
@@ -2400,6 +2678,12 @@ packages:
       y-protocols: ^1.0.6
       yjs: ^13.6.8
 
+  '@hono/node-server@2.1.6':
+    resolution: {integrity: sha512-p/KH9MnfNcsm3sR6x4lNgm5j+QN4Et8srKredl9DZfXiyZ1UQ3aQ2YVpFLbqktYN5JI+DB+VZFKM2PqE5hLKjQ==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      hono: ^4 || ^5.0.0-0
+
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
     engines: {node: '>=18.18.0'}
@@ -2621,6 +2905,16 @@ packages:
       react: 19.2.8
       react-dom: 19.2.8
       tailwindcss: ^4.0.0
+
+  '@modelcontextprotocol/sdk@1.32.2':
+    resolution: {integrity: sha512-SWsVtH/0vULSQStoZ6xxH2K09Li8fXYTMC64ZeogCdpZ3XSi1eCPOByV1OpuJxuI3OcmHhosDWYyii07tpPsLw==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@cfworker/json-schema': ^4.1.1
+      zod: ^4.6.7
+    peerDependenciesMeta:
+      '@cfworker/json-schema':
+        optional: true
 
   '@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.4':
     resolution: {integrity: sha512-LCkGo6JDfaBhgST7UpPWgNgLINpcpabaHfyz5OBx75nUYxBsaEPxjnyNjWpeb/xBup/682QnBfRBy2/LvPutZQ==}
@@ -3991,6 +4285,9 @@ packages:
     engines: {node: '>=16'}
     peerDependencies:
       ioredis: '>=5'
+
+  '@stablelib/base64@1.0.1':
+    resolution: {integrity: sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ==}
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -5522,6 +5819,14 @@ packages:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
     engines: {node: '>=0.8.x'}
 
+  eventsource-parser@3.1.1:
+    resolution: {integrity: sha512-EKN1vKAMcZ8MlYMpaNuxN6R9yakzH6uajHcHVTqWJzvu5pWw9DyhbP35HH8MVBQ+dZjAfDxk+A8NiR9KWaXiyQ==}
+    engines: {node: '>=18.0.0'}
+
+  eventsource@3.0.7:
+    resolution: {integrity: sha512-CRT1WTyuQoD771GW56XEZFQ/ZoSfWid1alKGDYMmkt2yl8UXrVR4pspqWNEcqKvVIzg6PAltWjxcSSPrboA4iA==}
+    engines: {node: '>=18.0.0'}
+
   execa@5.1.1:
     resolution: {integrity: sha512-8uSpZZocAZRBAPIEINJj3Lo9HyGitllczc27Eh5YYojjMFMn8yHMDMaUHE2Jqfq05D/wucwI4JGURyXt1vchyg==}
     engines: {node: '>=10'}
@@ -5537,6 +5842,12 @@ packages:
   export-to-csv@1.4.0:
     resolution: {integrity: sha512-6CX17Cu+rC2Fi2CyZ4CkgVG3hLl6BFsdAxfXiZkmDFIDY4mRx2y2spdeH6dqPHI9rP+AsHEfGeKz84Uuw7+Pmg==}
     engines: {node: ^v12.20.0 || >=v14.13.0}
+
+  express-rate-limit@8.7.3:
+    resolution: {integrity: sha512-zPLqDI2f0gV2WmGnacLf9XSSqn4VldRyP5LCzOwx0BKH40mO6+2PCFkoSsRO2jePx87/Kf6NUF6P2QOTKXHbQA==}
+    engines: {node: '>= 16'}
+    peerDependencies:
+      express: 4.22.0
 
   express-winston@4.2.0:
     resolution: {integrity: sha512-EMD74g63nVHi7pFleQw7KHCxiA1pjF5uCwbCfzGqmFxs9KvlDPIVS3cMGpULm6MshExMT9TjC3SqmRGB9kb7yw==}
@@ -5592,6 +5903,9 @@ packages:
 
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
+
+  fast-sha256@1.3.0:
+    resolution: {integrity: sha512-n11RGP/lrWEFI/bWdygLxhI+pVeo1ZYIVwvvPkW7azl/rOy+F3HYRZ2K5zeE9mmkhQppyv9sQFx0JM9UabnpPQ==}
 
   fast-uri@3.1.8:
     resolution: {integrity: sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==}
@@ -5860,6 +6174,10 @@ packages:
     resolution: {integrity: sha512-Xwwo44whKBVCYoliBQwaPvtd/2tYFkRQtXDWj1nackaV2JPXx3L0+Jvd8/qCJ2p+ML0/XVkJ2q+Mr+UVdpJK5w==}
     engines: {node: '>=12.0.0'}
 
+  hono@4.13.16:
+    resolution: {integrity: sha512-AOLOEhvrV+iH92xXCnFr/5+3KjPKcI3xP63XJtX5spAnkznPdHijlIsUTpi7/9EhWqrTCekw5c5zh1K+YsVw7A==}
+    engines: {node: '>=16.9.0'}
+
   hookable@5.5.3:
     resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
 
@@ -5948,6 +6266,10 @@ packages:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
     engines: {node: '>=0.10.0'}
 
+  iconv-lite@0.7.3:
+    resolution: {integrity: sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ==}
+    engines: {node: '>=0.10.0'}
+
   ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
 
@@ -5989,6 +6311,10 @@ packages:
   ioredis@5.7.0:
     resolution: {integrity: sha512-NUcA93i1lukyXU+riqEyPtSEkyFq8tX90uL659J+qpCZ3rEdViB/APC58oAhIh3+bJln2hzdlZbBZsGNrlsR8g==}
     engines: {node: '>=12.22.0'}
+
+  ip-address@10.7.6:
+    resolution: {integrity: sha512-00LYkM6byILa9eQIx6qoaXCM40xTLd56AZ4vyaPW3YTyb49VZYPo5xsiAq4tuQ54GH4R7gVdYScJ1B7B77PuTg==}
+    engines: {node: '>= 12'}
 
   ipaddr.js@1.9.1:
     resolution: {integrity: sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g==}
@@ -6107,6 +6433,9 @@ packages:
     resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
     hasBin: true
 
+  jose@6.2.15:
+    resolution: {integrity: sha512-qdF6ewcZARtef63fJ9AKKZPgxw+t7USH6HLXYcD4CrdmSvDp79rpJSPFEKc90QBeGS63u1KQtN2MZQHC0yDIzA==}
+
   js-tokens@10.0.0:
     resolution: {integrity: sha512-lM/UBzQmfJRo9ABXbPWemivdCW8V2G8FHaHdypQaIy523snUjog0W71ayWXTjiR+ixeMyVHN2XcpnTd/liPg/Q==}
 
@@ -6139,6 +6468,10 @@ packages:
 
   json-buffer@3.0.1:
     resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}
+
+  json-schema-to-ts@3.1.1:
+    resolution: {integrity: sha512-+DWg8jCJG2TEnpy7kOm/7/AxaYoaRbjVB4LFZLySZlWn8exGs3A4OLJR966cVvU26N7X9TWxl+Jsw7dzAqKT6g==}
+    engines: {node: '>=16'}
 
   json-schema-traverse@0.4.1:
     resolution: {integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==}
@@ -6978,6 +7311,10 @@ packages:
     resolution: {integrity: sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==}
     engines: {node: '>= 6'}
 
+  pkce-challenge@5.0.1:
+    resolution: {integrity: sha512-wQ0b/W4Fr01qtpHlqSqspcj3EhBvimsdh0KlHhH8HRZnMsEa0ea2fTULOXOS9ccQr3om+GcGRk4e+isrZWV8qQ==}
+    engines: {node: '>=16.20.0'}
+
   pkg-dir@3.0.0:
     resolution: {integrity: sha512-/E57AYkoeQ25qkxMj5PBOVgF8Kiu/h7cYS30Z5+R7WaiCCBfLq58ZI/dSeaEKb9WVJV5n/03QwrN3IeWIFllvw==}
     engines: {node: '>=6'}
@@ -7130,6 +7467,10 @@ packages:
   raw-body@2.5.3:
     resolution: {integrity: sha512-s4VSOf6yN0rvbRZGxs8Om5CWj6seneMwK3oDb4lWDH0UPhWcxwOWw5+qk24bxq87szX1ydrwylIOp2uG1ojUpA==}
     engines: {node: '>= 0.8'}
+
+  raw-body@3.0.2:
+    resolution: {integrity: sha512-K5zQjDllxWkf7Z5xJdV0/B0WTNqx6vxG70zJE4N0kBs4LovmEYWJzQGxC9bS9RAKu3bgM40lrd5zoLJ12MQ5BA==}
+    engines: {node: '>= 0.10'}
 
   rc@1.2.8:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
@@ -7558,6 +7899,9 @@ packages:
   standard-as-callback@2.1.0:
     resolution: {integrity: sha512-qoRRSyROncaz1z0mvYqIE4lCd9p2R90i6GxW3uZv5ucSu8tU7B5HXUP1gG8pVZsYNVaXjk8ClXHPttLyxAL48A==}
 
+  standardwebhooks@1.1.1:
+    resolution: {integrity: sha512-bCbX9ZEyFkWPsRz7Bl3NuQUJohmwGSev/yhr7vhaGPlc4AfIrspIRa6cPTBuI1ItmrTDJ4d/S2hCsfe4+vQGnQ==}
+
   statuses@2.0.1:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
     engines: {node: '>= 0.8'}
@@ -7745,6 +8089,9 @@ packages:
 
   trough@2.2.0:
     resolution: {integrity: sha512-tmMpK00BjZiUyVyvrBK7knerNgmgvcV/KLVyuma/SC+TQN167GrMRciANTz09+k3zW8L8t60jWO1GpfkZdjTaw==}
+
+  ts-algebra@2.0.0:
+    resolution: {integrity: sha512-FPAhNPFMrkwz76P7cdjdmiShwMynZYN6SgOujD1urY4oNm80Ou9oMdmbR45LotcKOXoy7wSmHkRFE6Mxbrhefw==}
 
   tsconfck@3.1.6:
     resolution: {integrity: sha512-ks6Vjr/jEw0P1gmOVwutM3B7fWxoWBL2KRDb1JfqGVawBmO5UsvmWOQFGHBPl5yxYz4eERr19E6L7NMv+Fej4w==}
@@ -8210,6 +8557,11 @@ packages:
   yoga-layout@3.2.1:
     resolution: {integrity: sha512-0LPOt3AxKqMdFBZA3HBAt/t/8vIKq7VaQYbuA8WxCgung+p9TVyKRYdpvCb80HcdTN2NkbIKbhNwKUfm3tQywQ==}
 
+  zod-to-json-schema@3.25.2:
+    resolution: {integrity: sha512-O/PgfnpT1xKSDeQYSCfRI5Gy3hPf91mKVDuYLUHZJMiDFptvP41MSnWofm8dnCm0256ZNfZIM7DSzuSMAFnjHA==}
+    peerDependencies:
+      zod: ^4.6.7
+
   zod-validation-error@4.0.2:
     resolution: {integrity: sha512-Q6/nZLe6jxuU80qb/4uJ4t5v2VEZ44lzQjPDhYJNztRQ4wyWc6VF3D3Kb/fAuPetZQnhS3hnajCf9CsWesghLQ==}
     engines: {node: '>=18.0.0'}
@@ -8224,7 +8576,58 @@ packages:
 
 snapshots:
 
+  '@agentclientprotocol/sdk@2.4.0(zod@4.6.7)':
+    dependencies:
+      zod: 4.6.7
+
   '@alloc/quick-lru@5.2.0': {}
+
+  '@anthropic-ai/claude-agent-sdk-darwin-arm64@0.3.318':
+    optional: true
+
+  '@anthropic-ai/claude-agent-sdk-darwin-x64@0.3.318':
+    optional: true
+
+  '@anthropic-ai/claude-agent-sdk-linux-arm64-musl@0.3.318':
+    optional: true
+
+  '@anthropic-ai/claude-agent-sdk-linux-arm64@0.3.318':
+    optional: true
+
+  '@anthropic-ai/claude-agent-sdk-linux-x64-musl@0.3.318':
+    optional: true
+
+  '@anthropic-ai/claude-agent-sdk-linux-x64@0.3.318':
+    optional: true
+
+  '@anthropic-ai/claude-agent-sdk-win32-arm64@0.3.318':
+    optional: true
+
+  '@anthropic-ai/claude-agent-sdk-win32-x64@0.3.318':
+    optional: true
+
+  '@anthropic-ai/claude-agent-sdk@0.3.318(@anthropic-ai/sdk@1.5.0(zod@4.6.7))(@modelcontextprotocol/sdk@1.32.2(zod@4.6.7))(zod@4.6.7)':
+    dependencies:
+      '@anthropic-ai/sdk': 1.5.0(zod@4.6.7)
+      '@modelcontextprotocol/sdk': 1.32.2(zod@4.6.7)
+      zod: 4.6.7
+    optionalDependencies:
+      '@anthropic-ai/claude-agent-sdk-darwin-arm64': 0.3.318
+      '@anthropic-ai/claude-agent-sdk-darwin-x64': 0.3.318
+      '@anthropic-ai/claude-agent-sdk-linux-arm64': 0.3.318
+      '@anthropic-ai/claude-agent-sdk-linux-arm64-musl': 0.3.318
+      '@anthropic-ai/claude-agent-sdk-linux-x64': 0.3.318
+      '@anthropic-ai/claude-agent-sdk-linux-x64-musl': 0.3.318
+      '@anthropic-ai/claude-agent-sdk-win32-arm64': 0.3.318
+      '@anthropic-ai/claude-agent-sdk-win32-x64': 0.3.318
+
+  '@anthropic-ai/sdk@1.5.0(zod@4.6.7)':
+    dependencies:
+      '@opentelemetry/api': 1.9.1
+      json-schema-to-ts: 3.1.1
+      standardwebhooks: 1.1.1
+    optionalDependencies:
+      zod: 4.6.7
 
   '@asamuzakjp/css-color@3.2.0':
     dependencies:
@@ -8893,6 +9296,10 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
+  '@hono/node-server@2.1.6(hono@4.13.16)':
+    dependencies:
+      hono: 4.13.16
+
   '@humanfs/core@0.19.2':
     dependencies:
       '@humanfs/types': 0.15.0
@@ -9066,6 +9473,28 @@ snapshots:
       - '@date-fns/tz'
       - '@types/react'
       - date-fns
+
+  '@modelcontextprotocol/sdk@1.32.2(zod@4.6.7)':
+    dependencies:
+      '@hono/node-server': 2.1.6(hono@4.13.16)
+      ajv: 8.18.0
+      ajv-formats: 3.0.1(ajv@8.18.0)
+      content-type: 1.0.5
+      cors: 2.8.5
+      cross-spawn: 7.0.6
+      eventsource: 3.0.7
+      eventsource-parser: 3.1.1
+      express: 4.22.0
+      express-rate-limit: 8.7.3(express@4.22.0)
+      hono: 4.13.16
+      jose: 6.2.15
+      json-schema-typed: 8.0.2
+      pkce-challenge: 5.0.1
+      raw-body: 3.0.2
+      zod: 4.6.7
+      zod-to-json-schema: 3.25.2(zod@4.6.7)
+    transitivePeerDependencies:
+      - supports-color
 
   '@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.4':
     optional: true
@@ -10009,6 +10438,8 @@ snapshots:
   '@sesamecare-oss/redlock@1.4.0(ioredis@5.7.0)':
     dependencies:
       ioredis: 5.7.0
+
+  '@stablelib/base64@1.0.1': {}
 
   '@standard-schema/spec@1.1.0': {}
 
@@ -11552,6 +11983,12 @@ snapshots:
 
   events@3.3.0: {}
 
+  eventsource-parser@3.1.1: {}
+
+  eventsource@3.0.7:
+    dependencies:
+      eventsource-parser: 3.1.1
+
   execa@5.1.1:
     dependencies:
       cross-spawn: 7.0.6
@@ -11569,6 +12006,14 @@ snapshots:
   expect-type@1.3.0: {}
 
   export-to-csv@1.4.0: {}
+
+  express-rate-limit@8.7.3(express@4.22.0):
+    dependencies:
+      debug: 4.4.3
+      express: 4.22.0
+      ip-address: 10.7.6
+    transitivePeerDependencies:
+      - supports-color
 
   express-winston@4.2.0(winston@3.17.0):
     dependencies:
@@ -11682,6 +12127,8 @@ snapshots:
   fast-json-stable-stringify@2.1.0: {}
 
   fast-levenshtein@2.0.6: {}
+
+  fast-sha256@1.3.0: {}
 
   fast-uri@3.1.8: {}
 
@@ -12030,6 +12477,8 @@ snapshots:
 
   highlight.js@11.11.1: {}
 
+  hono@4.13.16: {}
+
   hookable@5.5.3: {}
 
   hsl-to-hex@1.0.0:
@@ -12131,6 +12580,10 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
+  iconv-lite@0.7.3:
+    dependencies:
+      safer-buffer: 2.1.2
+
   ieee754@1.2.1: {}
 
   ignore@5.3.2: {}
@@ -12178,6 +12631,8 @@ snapshots:
       standard-as-callback: 2.1.0
     transitivePeerDependencies:
       - supports-color
+
+  ip-address@10.7.6: {}
 
   ipaddr.js@1.9.1: {}
 
@@ -12265,6 +12720,8 @@ snapshots:
 
   jiti@2.7.0: {}
 
+  jose@6.2.15: {}
+
   js-tokens@10.0.0: {}
 
   js-tokens@4.0.0: {}
@@ -12323,6 +12780,11 @@ snapshots:
   jsesc@3.1.0: {}
 
   json-buffer@3.0.1: {}
+
+  json-schema-to-ts@3.1.1:
+    dependencies:
+      '@babel/runtime': 7.29.7
+      ts-algebra: 2.0.0
 
   json-schema-traverse@0.4.1: {}
 
@@ -13361,6 +13823,8 @@ snapshots:
 
   pirates@4.0.7: {}
 
+  pkce-challenge@5.0.1: {}
+
   pkg-dir@3.0.0:
     dependencies:
       find-up: 3.0.0
@@ -13549,6 +14013,13 @@ snapshots:
       bytes: 3.1.2
       http-errors: 2.0.1
       iconv-lite: 0.4.24
+      unpipe: 1.0.0
+
+  raw-body@3.0.2:
+    dependencies:
+      bytes: 3.1.2
+      http-errors: 2.0.1
+      iconv-lite: 0.7.3
       unpipe: 1.0.0
 
   rc@1.2.8:
@@ -14151,6 +14622,11 @@ snapshots:
 
   standard-as-callback@2.1.0: {}
 
+  standardwebhooks@1.1.1:
+    dependencies:
+      '@stablelib/base64': 1.0.1
+      fast-sha256: 1.3.0
+
   statuses@2.0.1: {}
 
   statuses@2.0.2: {}
@@ -14320,6 +14796,8 @@ snapshots:
   triple-beam@1.4.1: {}
 
   trough@2.2.0: {}
+
+  ts-algebra@2.0.0: {}
 
   tsconfck@3.1.6(typescript@5.8.3):
     optionalDependencies:
@@ -14739,6 +15217,10 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yoga-layout@3.2.1: {}
+
+  zod-to-json-schema@3.25.2(zod@4.6.7):
+    dependencies:
+      zod: 4.6.7
 
   zod-validation-error@4.0.2(zod@4.6.7):
     dependencies:

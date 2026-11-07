@@ -494,6 +494,10 @@
         "heading": "Scripts",
         "new_script": "Nieuw script",
         "description": "Automatiseer je workflows met aangepaste scripts en automatiseringsregels."
+      },
+      "ai_providers": {
+        "title": "AI-providers",
+        "description": "Inloggegevens voor de agentchat. Chats gebruiken eerst uw eigen inloggegevens, daarna de werkruimtesleutel en ten slotte de standaardinstelling van de instantie."
       }
     },
     "empty_state": {

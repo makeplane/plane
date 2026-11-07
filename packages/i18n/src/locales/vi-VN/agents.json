@@ -1,0 +1,371 @@
+{
+  "agents": {
+    "title": "Tác nhân",
+    "picker": {
+      "label": "Tác nhân",
+      "placeholder": "Chọn tác nhân"
+    },
+    "model": {
+      "label": "Mô hình"
+    },
+    "permission": {
+      "label": "Mức quyền",
+      "levels": {
+        "ask_all": {
+          "name": "Luôn hỏi",
+          "description": "Hỏi trước mỗi lần gọi công cụ, kể cả thao tác đọc."
+        },
+        "ask_writes": {
+          "name": "Hỏi trước khi thay đổi",
+          "description": "Các thao tác đọc, tìm kiếm và tải nội dung web được chạy tự do. Lệnh shell, thay đổi tệp và thay đổi trong Plane sẽ hỏi trước."
+        },
+        "yolo": {
+          "name": "Không bao giờ hỏi",
+          "description": "Chạy mọi công cụ mà không hỏi."
+        }
+      }
+    },
+    "empty": {
+      "no_agents_title": "Chưa có tác nhân nào",
+      "no_agents_description": "Quản trị viên hệ thống có thể thêm tác nhân trong chế độ quản trị viên.",
+      "load_failed_title": "Không thể tải tác nhân",
+      "load_failed_description": "Kiểm tra kết nối của bạn và thử lại.",
+      "start_title": "Trò chuyện với {name}",
+      "start_description": "Hỏi về các mục công việc, dự án và trang của bạn. Tác nhân hoạt động với quyền Plane của bạn."
+    },
+    "composer": {
+      "label": "Tin nhắn",
+      "placeholder": "Nhắn tin cho {name}…",
+      "send": "Gửi",
+      "stop": "Dừng",
+      "hint": "Enter để gửi, Shift+Enter để xuống dòng"
+    },
+    "sessions": {
+      "title": "Cuộc trò chuyện",
+      "new": "Cuộc trò chuyện mới",
+      "untitled": "Cuộc trò chuyện chưa có tiêu đề",
+      "empty": "Chưa có cuộc trò chuyện nào trước đó",
+      "refresh": "Làm mới cuộc trò chuyện"
+    },
+    "transcript": {
+      "label": "Hội thoại",
+      "you": "Bạn",
+      "thinking": "Đang suy nghĩ",
+      "thought": "Suy nghĩ",
+      "attachment": "Tệp đính kèm",
+      "turn_end": {
+        "cancelled": "Đã dừng.",
+        "max_tokens": "Tác nhân đã đạt giới hạn đầu ra.",
+        "max_turn_requests": "Tác nhân đã đạt giới hạn số bước cho tin nhắn này.",
+        "refusal": "Tác nhân đã từ chối tiếp tục.",
+        "failed": "Tác nhân đã gặp lỗi.",
+        "disconnected": "Kết nối đã đóng trước khi tác nhân hoàn tất."
+      },
+      "new_session_notice": "Đã kết nối lại trong một cuộc trò chuyện mới. Tác nhân không nhớ các tin nhắn trước đó.",
+      "compaction": {
+        "in_progress": "Đang tóm tắt các tin nhắn trước đó…",
+        "completed": "Các tin nhắn trước đó đã được tóm tắt.",
+        "failed": "Không thể tóm tắt các tin nhắn trước đó."
+      }
+    },
+    "tool_call": {
+      "status": {
+        "pending": "Đang chờ",
+        "in_progress": "Đang chạy",
+        "completed": "Hoàn thành",
+        "failed": "Thất bại"
+      },
+      "untitled": "Lệnh gọi công cụ",
+      "input": "Đầu vào",
+      "output": "Đầu ra",
+      "changes": "Thay đổi đối với {path}",
+      "terminal": "Đầu ra terminal"
+    },
+    "plan": {
+      "title": "Kế hoạch",
+      "progress": "Đã hoàn thành {done}/{total}"
+    },
+    "usage": {
+      "context": "Ngữ cảnh: {used}/{size} token",
+      "cost": "Chi phí: {amount} {currency}"
+    },
+    "permission_prompt": {
+      "title": "Cho phép thao tác này?",
+      "allow_once": "Cho phép một lần",
+      "allow_always": "Luôn cho phép trong cuộc trò chuyện này",
+      "reject_once": "Từ chối",
+      "reject_always": "Luôn từ chối"
+    },
+    "status": {
+      "connecting": "Đang kết nối…",
+      "reconnecting": "Đang kết nối lại…"
+    },
+    "close": {
+      "reconnect": "Kết nối lại",
+      "title": "Cuộc trò chuyện đã ngắt kết nối",
+      "reasons": {
+        "closed": "Cuộc trò chuyện đã bị đóng.",
+        "server_shutdown": "Máy chủ trò chuyện đang khởi động lại. Vui lòng kết nối lại sau giây lát.",
+        "network": "Không thể kết nối tới máy chủ trò chuyện. Hãy kiểm tra kết nối của bạn hoặc hỏi quản trị viên xem cầu nối tác nhân có đang chạy không.",
+        "message_too_big": "Tin nhắn quá lớn để gửi.",
+        "server_error": "Đã xảy ra lỗi trên máy chủ. Vui lòng thử lại sau ít phút.",
+        "bad_request": "Liên kết trò chuyện này không hợp lệ.",
+        "unauthenticated": "Bạn đã đăng xuất. Hãy đăng nhập lại để trò chuyện.",
+        "forbidden": "Bạn không phải là thành viên của không gian làm việc này.",
+        "agent_not_found": "Tác nhân này đã bị xóa hoặc bị vô hiệu hóa.",
+        "idle_timeout": "Cuộc trò chuyện đã bị đóng do không hoạt động trong một khoảng thời gian.",
+        "session_expired": "Phiên trò chuyện đã hết hạn.",
+        "too_many_chats": "Bạn đang mở quá nhiều cuộc trò chuyện. Hãy đóng một cuộc trò chuyện ở tab khác rồi thử lại.",
+        "agent_unavailable": "Tác nhân hiện không khả dụng. Vui lòng thử lại sau ít phút.",
+        "unknown": "Kết nối trò chuyện bị đóng bất ngờ."
+      }
+    },
+    "errors": {
+      "dismiss": "Đóng",
+      "mode_not_allowed": "Quản trị viên của bạn không cho phép mức \"{mode}\" cho tác nhân này.",
+      "actions": {
+        "connect": "Không thể bắt đầu cuộc trò chuyện.",
+        "new_session": "Không thể bắt đầu cuộc trò chuyện mới.",
+        "load_session": "Không thể mở cuộc trò chuyện đó.",
+        "list_sessions": "Không thể tải các cuộc trò chuyện trước đó.",
+        "prompt": "Tác nhân không thể trả lời tin nhắn đó.",
+        "set_mode": "Không thể thay đổi mức quyền.",
+        "set_model": "Không thể thay đổi mô hình.",
+        "reconnect": "Không thể kết nối lại."
+      },
+      "retry": "Thử lại"
+    },
+    "admin": {
+      "title": "Tác nhân",
+      "description": "Các tác nhân mà thành viên không gian làm việc có thể trò chuyện cùng. Mỗi tác nhân chạy một bộ điều hợp ACP với thông tin xác thực bạn thiết lập tại đây.",
+      "add": "Thêm tác nhân",
+      "edit_named": "Chỉnh sửa {name}",
+      "delete": "Xóa tác nhân",
+      "list": {
+        "empty_title": "Chưa có tác nhân nào",
+        "empty_description": "Thêm một tác nhân để thành viên không gian làm việc có thể trò chuyện với tác nhân đó.",
+        "load_failed": "Không thể tải tác nhân.",
+        "enabled": "Đã bật",
+        "disabled": "Đã tắt",
+        "plane_mcp": "Công cụ Plane",
+        "max_level": "Tối đa: {level}",
+        "env_unreadable": "Không đọc được thông tin xác thực"
+      },
+      "form": {
+        "name": "Tên",
+        "name_placeholder": "Claude",
+        "slug": "Mã định danh (slug)",
+        "slug_help": "Chữ cái thường, chữ số và dấu gạch nối.",
+        "description": "Mô tả",
+        "description_placeholder": "Thành viên có thể dùng tác nhân này để làm gì",
+        "adapter": "Bộ điều hợp",
+        "adapters": {
+          "claude": "Claude",
+          "codex": "Codex",
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
+        },
+        "credentials": "Thông tin xác thực và cài đặt",
+        "credentials_help": "Các giá trị chỉ có thể ghi. Giá trị đã lưu sẽ được ẩn; hãy thay thế một giá trị để thay đổi nó.",
+        "env": {
+          "ANTHROPIC_API_KEY": {
+            "label": "Khóa API Anthropic",
+            "help": "Hoặc dùng token OAuth của Claude Code thay thế."
+          },
+          "CLAUDE_CODE_OAUTH_TOKEN": {
+            "label": "Token OAuth của Claude Code",
+            "help": "Token gói đăng ký Claude, được dùng khi chưa đặt khóa API."
+          },
+          "OPENAI_API_KEY": {
+            "label": "Khóa API OpenAI",
+            "help": "Đăng nhập Codex khi thư mục home của Codex chưa được đăng nhập."
+          },
+          "DEEPSEEK_API_KEY": {
+            "label": "Khóa API DeepSeek",
+            "help": "Bắt buộc."
+          },
+          "DEEPSEEK_BASE_URL": {
+            "label": "URL cơ sở API DeepSeek",
+            "help": "Không bắt buộc. Mặc định là https://api.deepseek.com."
+          },
+          "PLANE_AGENT_MODEL": {
+            "label": "Mô hình mặc định",
+            "help": "ID mô hình (không bắt buộc), ví dụ claude-opus-5-5. Thành viên có thể chuyển đổi mô hình trong cuộc trò chuyện."
+          },
+          "GEMINI_API_KEY": {
+            "label": "Khóa API Gemini",
+            "help": "Được dùng khi thành viên không có khóa riêng và chưa đăng nhập bằng Google."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Phương thức đăng nhập",
+            "help": "Không bắt buộc: api_key, chatgpt (Codex) hoặc google_account (Gemini). Thông tin xác thực riêng của thành viên sẽ đặt giá trị này cho các cuộc trò chuyện của họ."
+          }
+        },
+        "saved": "Đã lưu",
+        "keep": "Giữ giá trị đã lưu",
+        "remove": "Xóa",
+        "removed": "Sẽ bị xóa",
+        "undo_remove": "Hoàn tác",
+        "other_env": "Biến khác",
+        "other_env_help": "Được thiết lập qua API. Các biến này được giữ lại trừ khi bạn xóa chúng.",
+        "env_unreadable": "Không thể giải mã thông tin xác thực đã lưu (khóa bí mật của hệ thống có thể đã thay đổi). Hãy nhập lại.",
+        "default_level": "Mức quyền mặc định",
+        "default_level_help": "Mức được dùng khi bắt đầu cuộc trò chuyện mới.",
+        "max_level": "Mức quyền tối đa",
+        "max_level_help": "Thành viên không thể chuyển lên mức cao hơn mức này.",
+        "attach_plane_mcp": "Công cụ Plane",
+        "attach_plane_mcp_help": "Cung cấp cho tác nhân máy chủ MCP của Plane, hoạt động với tư cách thành viên đang trò chuyện.",
+        "is_enabled": "Đã bật",
+        "is_enabled_help": "Các tác nhân bị tắt sẽ bị ẩn khỏi thành viên.",
+        "validation": {
+          "required": "Trường này là bắt buộc.",
+          "slug": "Sử dụng chữ cái thường, chữ số và dấu gạch nối.",
+          "default_above_max": "Mức mặc định không thể cao hơn mức tối đa.",
+          "claude_auth": "Nhập khóa API Anthropic hoặc token OAuth của Claude Code.",
+          "deepseek_auth": "Nhập khóa API DeepSeek."
+        },
+        "cancel": "Hủy",
+        "save": "Lưu thay đổi",
+        "create": "Thêm tác nhân",
+        "saving": "Đang lưu"
+      },
+      "toasts": {
+        "created": "Đã thêm tác nhân.",
+        "updated": "Đã lưu tác nhân.",
+        "deleted": "Đã xóa tác nhân.",
+        "error_title": "Lỗi",
+        "save_failed": "Không thể lưu tác nhân.",
+        "delete_failed": "Không thể xóa tác nhân."
+      },
+      "delete_dialog": {
+        "title": "Xóa tác nhân",
+        "description": "Xóa {name}? Thành viên sẽ không thể trò chuyện với tác nhân này nữa và thông tin xác thực đã lưu của tác nhân sẽ bị xóa.",
+        "confirm": "Xóa",
+        "deleting": "Đang xóa"
+      }
+    },
+    "khaia": {
+      "open": "Mở {name}",
+      "unread": "Mở {name} (hoạt động mới)",
+      "minimize": "Thu nhỏ",
+      "open_page": "Mở toàn trang",
+      "agent_menu_label": "Đổi tác nhân, hiện tại: {agent}",
+      "greeting": "Xin chào, tôi là {name}",
+      "suggestions": {
+        "assigned_to_me": "Những gì được giao cho tôi?",
+        "due_this_week": "Những mục công việc nào đến hạn trong tuần này?",
+        "recent_activity": "Tóm tắt hoạt động gần đây trong các dự án của tôi"
+      }
+    },
+    "providers": {
+      "load_failed_title": "Không thể tải nhà cung cấp AI",
+      "load_failed_description": "Hãy kiểm tra kết nối của bạn rồi thử lại.",
+      "claude_note": "Claude dùng khóa API Anthropic. Tính năng đăng nhập bằng gói đăng ký Claude không được cung cấp cho các ứng dụng xây dựng trên Claude Agent SDK.",
+      "personal": {
+        "title": "Thông tin xác thực của bạn"
+      },
+      "workspace": {
+        "title": "Khóa của không gian làm việc",
+        "admins_only": "Chỉ quản trị viên không gian làm việc mới có thể thay đổi mục này."
+      },
+      "state": {
+        "none": "Chưa thiết lập",
+        "api_key": "Khóa API ••••{hint}",
+        "signed_in": "Đã đăng nhập bằng {email}",
+        "signed_in_unknown": "Đã đăng nhập"
+      },
+      "fallback": {
+        "instance": "Dùng thông tin mặc định của hệ thống.",
+        "missing": "Chưa có khóa — các cuộc trò chuyện với tác nhân của nhà cung cấp này sẽ thất bại cho đến khi có khóa được thêm."
+      },
+      "actions": {
+        "add_api_key": "Thêm khóa API",
+        "add_workspace_key": "Thêm khóa không gian làm việc",
+        "replace": "Thay thế",
+        "remove": "Xóa",
+        "disconnect": "Ngắt kết nối",
+        "sign_in_openai": "Đăng nhập bằng ChatGPT",
+        "sign_in_google": "Đăng nhập bằng Google"
+      },
+      "cancel": "Hủy",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Thêm khóa API {provider} của bạn",
+          "title_replace": "Thay thế khóa API {provider} của bạn",
+          "description": "Chỉ các cuộc trò chuyện của bạn dùng khóa này. Khóa được lưu ở dạng mã hóa và không thể xem lại."
+        },
+        "workspace": {
+          "title_add": "Thêm khóa không gian làm việc cho {provider}",
+          "title_replace": "Thay thế khóa không gian làm việc của {provider}",
+          "description": "Thành viên không có thông tin xác thực riêng sẽ dùng khóa này. Khóa được lưu ở dạng mã hóa và không thể xem lại."
+        },
+        "label": "Khóa API {provider}",
+        "invalid": "Nhập khóa dài từ 8 đến 512 ký tự, không có khoảng trắng.",
+        "save": "Lưu khóa",
+        "saving": "Đang lưu"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "Xóa khóa API của bạn?",
+          "content": "Thay vào đó, các cuộc trò chuyện của bạn với tác nhân {provider} sẽ dùng khóa của không gian làm việc hoặc thông tin mặc định của hệ thống."
+        },
+        "workspace": {
+          "title": "Xóa khóa của không gian làm việc?",
+          "content": "Thay vào đó, thành viên không có thông tin xác thực {provider} riêng sẽ dùng thông tin mặc định của hệ thống."
+        },
+        "confirm": "Xóa",
+        "removing": "Đang xóa"
+      },
+      "disconnect_dialog": {
+        "title": "Ngắt kết nối tài khoản?",
+        "content": "Các cuộc trò chuyện của bạn sẽ ngừng dùng {email}. Bạn có thể đăng nhập lại bất cứ lúc nào.",
+        "content_unknown": "Các cuộc trò chuyện của bạn sẽ ngừng dùng tài khoản này. Bạn có thể đăng nhập lại bất cứ lúc nào.",
+        "confirm": "Ngắt kết nối",
+        "disconnecting": "Đang ngắt kết nối"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Đăng nhập bằng ChatGPT",
+          "description": "Các cuộc trò chuyện Codex sẽ dùng gói ChatGPT của bạn.",
+          "open_link": "Mở trang đăng nhập ChatGPT",
+          "step_open": "Hãy mở trang đăng nhập ChatGPT."
+        },
+        "google": {
+          "title": "Đăng nhập bằng Google",
+          "description": "Các cuộc trò chuyện Gemini sẽ dùng tài khoản Google của bạn.",
+          "open_link": "Mở trang đăng nhập Google",
+          "step_open": "Hãy mở trang đăng nhập Google và cho phép truy cập.",
+          "step_paste": "Dán mã mà Google hiển thị cho bạn."
+        },
+        "starting": "Đang bắt đầu đăng nhập…",
+        "step_enter_code": "Nhập mã này tại đó:",
+        "code_label": "Mã",
+        "copy_code": "Sao chép mã",
+        "code_copied": "Đã sao chép mã.",
+        "waiting": "Đang chờ bạn hoàn tất đăng nhập…",
+        "code_required": "Hãy dán mã từ Google.",
+        "submit": "Kết nối",
+        "submitting": "Đang kết nối",
+        "retry": "Thử lại",
+        "errors": {
+          "failed": "Đăng nhập không thành công.",
+          "expired": "Phiên đăng nhập này đã hết hạn. Hãy thử lại.",
+          "unreachable": "Không thể kết nối tới cầu nối tác nhân. Hãy hỏi quản trị viên xem cầu nối có đang chạy không.",
+          "rate_limited": "Có quá nhiều lần thử đăng nhập. Hãy đợi một phút rồi thử lại.",
+          "signed_out": "Bạn đã đăng xuất khỏi Plane. Hãy đăng nhập lại rồi thử lại."
+        }
+      },
+      "toasts": {
+        "error_title": "Lỗi",
+        "key_saved": "Đã lưu khóa API.",
+        "key_removed": "Đã xóa khóa API.",
+        "key_save_failed": "Không thể lưu khóa API.",
+        "key_remove_failed": "Không thể xóa khóa API.",
+        "connected": "Đã đăng nhập bằng {email}.",
+        "connected_unknown": "Đã đăng nhập.",
+        "disconnected": "Đã ngắt kết nối tài khoản.",
+        "disconnect_failed": "Không thể ngắt kết nối tài khoản."
+      }
+    }
+  }
+}

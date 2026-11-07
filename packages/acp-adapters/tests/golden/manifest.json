@@ -1,0 +1,323 @@
+{
+  "format_version": 1,
+  "corpus_id": "plane-acp-adapters-golden",
+  "corpus_version": 2,
+  "protocol_version": 1,
+  "notes": "Ported from employai_v2 tests/fixtures/acp/v1 (corpus employai-acp-golden-v1). Regenerate expected output with UPDATE_GOLDEN=1, review the diff, then bump corpus_version and the corpus hash in acp-version.lock.json.",
+  "cases": [
+    {
+      "id": "claude/valid/initialize",
+      "adapter": "claude",
+      "kind": "pipe",
+      "family": "valid",
+      "input": "claude/valid/initialize.in.jsonl",
+      "expected": "claude/valid/initialize.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "858fb828ca5d8ec7a2e4178ae6066bb6569cea6a6e24012d640a0ccad07627f2",
+      "expectedSha256": "a44fd7eaa6ed6f72dd3009de04d9de929c18ade8d0a4b33e24b10a9d350eded0"
+    },
+    {
+      "id": "claude/valid/turn",
+      "adapter": "claude",
+      "kind": "script",
+      "family": "valid",
+      "input": "claude/valid/turn.script.jsonl",
+      "expected": "claude/valid/turn.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "dd80dd56474653f44571ee6ef4781a9310295142c47e0485b61595ad807494c1",
+      "expectedSha256": "6f31566b9af1c1feb74338250e196cccd4a2d1720facc69fcb68b28555e1a83d"
+    },
+    {
+      "id": "codex/valid/initialize",
+      "adapter": "codex",
+      "kind": "pipe",
+      "family": "valid",
+      "input": "codex/valid/initialize.in.jsonl",
+      "expected": "codex/valid/initialize.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "858fb828ca5d8ec7a2e4178ae6066bb6569cea6a6e24012d640a0ccad07627f2",
+      "expectedSha256": "0b50e54f162615cd976287eda9e3c2c218393c207812b1b1083f10266d19aa16"
+    },
+    {
+      "id": "codex/valid/turn",
+      "adapter": "codex",
+      "kind": "script",
+      "family": "valid",
+      "input": "codex/valid/turn.script.jsonl",
+      "expected": "codex/valid/turn.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "47a825f0b3405bbfc28ae4e6611f3de263e6391edfee2d3297332f13541d5e11",
+      "expectedSha256": "80cbfb475ebc2df9d9ca4b5e50f761a1842dbeb6263109d347353ce446464594"
+    },
+    {
+      "id": "gemini/valid/initialize",
+      "adapter": "gemini",
+      "kind": "pipe",
+      "family": "valid",
+      "input": "gemini/valid/initialize.in.jsonl",
+      "expected": "gemini/valid/initialize.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "858fb828ca5d8ec7a2e4178ae6066bb6569cea6a6e24012d640a0ccad07627f2",
+      "expectedSha256": "ebdafc968968d8f2471e7529e541ca4777634cb817122f723d0a544d820c3950"
+    },
+    {
+      "id": "gemini/valid/turn",
+      "adapter": "gemini",
+      "kind": "script",
+      "family": "valid",
+      "input": "gemini/valid/turn.script.jsonl",
+      "expected": "gemini/valid/turn.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "341c5fac0293dc5a3e3cae94fcbb325f0f4695d62fa578aada0c6ca92f434c84",
+      "expectedSha256": "a3c3dd3dfcc818e4b6cb87dad894101b1d6c4dffc6960a1fd12e7454f219790c"
+    },
+    {
+      "id": "deepseek/valid/initialize",
+      "adapter": "deepseek",
+      "kind": "pipe",
+      "family": "valid",
+      "input": "deepseek/valid/initialize.in.jsonl",
+      "expected": "deepseek/valid/initialize.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "858fb828ca5d8ec7a2e4178ae6066bb6569cea6a6e24012d640a0ccad07627f2",
+      "expectedSha256": "56845e53abf369dafe29346fd594be0697431c925b12650b5269e830c215b1eb"
+    },
+    {
+      "id": "deepseek/valid/tool-loop",
+      "adapter": "deepseek",
+      "kind": "script",
+      "family": "valid",
+      "input": "deepseek/valid/tool-loop.script.jsonl",
+      "expected": "deepseek/valid/tool-loop.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "278cc83b1be823a3521323a996a68cf063e32caf8dd953480e597656e1884efa",
+      "expectedSha256": "bdb773292b2667b6bc3a3f68f366ed5facfd96d0c5c766c8375a3b35cb5a3e56"
+    },
+    {
+      "id": "echo/malformed/batch",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "malformed",
+      "input": "echo/malformed/batch.in.jsonl",
+      "expected": "echo/malformed/batch.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "179378e508405105f61f49616955ddf02a0ffc4e750d17faa07e888ef2a11153",
+      "expectedSha256": "39f6454e38bf602a03e20df96db25dcb00dda852b2046091c3346030f2816d8b"
+    },
+    {
+      "id": "echo/malformed/frame-over-limit",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "malformed",
+      "input": "echo/malformed/frame-over-limit.in.jsonl",
+      "expected": "echo/malformed/frame-over-limit.out.jsonl",
+      "exitCode": 1,
+      "env": {
+        "PLANE_ACP_MAX_MESSAGE_BYTES": "512"
+      },
+      "inputSha256": "4016a12813492063ccd377e12cf5e84f91a0710a78c057ac568c7b5f32a25272",
+      "expectedSha256": "3d621a00c5ecfe4738bbf0dd137d858435ce5964d0d3da0f17ff5417721a83e4"
+    },
+    {
+      "id": "echo/malformed/invalid-params",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "malformed",
+      "input": "echo/malformed/invalid-params.in.jsonl",
+      "expected": "echo/malformed/invalid-params.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "8f6263bc4e2b7d1c4fd68937c86d34e87b936df2e27b7aa305b9e48dd3810bb2",
+      "expectedSha256": "55ea9bc8fdea7e26e0860c0f88fc7331ac1dfcc6bba36265ef1e042e6218bf9d"
+    },
+    {
+      "id": "echo/malformed/invalid-request-id",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "malformed",
+      "input": "echo/malformed/invalid-request-id.in.jsonl",
+      "expected": "echo/malformed/invalid-request-id.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "1cd2dbf06992a0915975770e7f4112cf6ee56c8d88b3f9f1c35ad1de4eed2c5c",
+      "expectedSha256": "0989d022f42bfd4c11fb1e2313a27e7d1dbc03c83c68b09851cf0e8bf4dffd16"
+    },
+    {
+      "id": "echo/malformed/invalid-utf8",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "malformed",
+      "input": "echo/malformed/invalid-utf8.in.jsonl",
+      "expected": "echo/malformed/invalid-utf8.out.jsonl",
+      "exitCode": 1,
+      "inputSha256": "4f992719b43c377cc74b23680a39cd61db8fa82596ca37b7496a204ecff8d703",
+      "expectedSha256": "fa64d0271ae36d7d73ee1544081366582751522cc2b939af4427ff3ff53f5d8c"
+    },
+    {
+      "id": "echo/malformed/malformed-json",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "malformed",
+      "input": "echo/malformed/malformed-json.in.jsonl",
+      "expected": "echo/malformed/malformed-json.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "11c4ccbbc5ec6ba54ff7f00b8417d2216e108dc992a11e821e61edd41df2cec6",
+      "expectedSha256": "905933ead1a05b9f6c53b1b0c2cabb7cfd55cf88e010223c16e6ba8d479d016d"
+    },
+    {
+      "id": "echo/malformed/notifications",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "malformed",
+      "input": "echo/malformed/notifications.in.jsonl",
+      "expected": "echo/malformed/notifications.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "2082afdd3127b6619f2e19cbb36aa02202b0541f121bcffed167e2590ea16e88",
+      "expectedSha256": "91c36ffed5da1a381adc7f92b29684c87cd56ee665ff184f956680c4dc9da9bd"
+    },
+    {
+      "id": "echo/malformed/request-before-initialize",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "malformed",
+      "input": "echo/malformed/request-before-initialize.in.jsonl",
+      "expected": "echo/malformed/request-before-initialize.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "471452cbc04e4084b9bc0af7503c65863e25cab5cc4360d009876447481b8a0b",
+      "expectedSha256": "2dd2c1f2aedcea78eb2e8c2566ee30701a805d8736253383ff0f57ec98ef9c4c"
+    },
+    {
+      "id": "echo/malformed/unknown-methods",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "malformed",
+      "input": "echo/malformed/unknown-methods.in.jsonl",
+      "expected": "echo/malformed/unknown-methods.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "d125da2f77c8a5c4f496b8121add4cc98a4cf1f37d1b0b0ed4672d086e8c0779",
+      "expectedSha256": "34a9ec13652889c8bfdb7ee17397b712fa480f319e1b7f460cdddb8ada7aa81c"
+    },
+    {
+      "id": "echo/malformed/unknown-session",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "malformed",
+      "input": "echo/malformed/unknown-session.in.jsonl",
+      "expected": "echo/malformed/unknown-session.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "887228595e7a88a8cbe2a7315f12643dd0e68b0dda8e3278a2c55ea88066b8c8",
+      "expectedSha256": "ff885018d84c2bf9e56cec55fe9af43a5a7a9805c26a8f27379d510f9e87b662"
+    },
+    {
+      "id": "echo/transport/crlf",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "transport",
+      "input": "echo/transport/crlf.in.jsonl",
+      "expected": "echo/transport/crlf.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "eabfa3c62f5b929e40d9617cbab30cd30bc4d164f42cd53cafebffc023960aa5",
+      "expectedSha256": "91c36ffed5da1a381adc7f92b29684c87cd56ee665ff184f956680c4dc9da9bd"
+    },
+    {
+      "id": "echo/transport/eof-drains",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "transport",
+      "input": "echo/transport/eof-drains.in.jsonl",
+      "expected": "echo/transport/eof-drains.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "6784fb3043e7683955d175bfbbb667aae72d236dd17a88b00d013f1c1fbbf8b9",
+      "expectedSha256": "4086839d4acb490da0fc1819a3bb390f43382709bcd797d88c80562cda88be78"
+    },
+    {
+      "id": "echo/transport/no-trailing-newline",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "transport",
+      "input": "echo/transport/no-trailing-newline.in.jsonl",
+      "expected": "echo/transport/no-trailing-newline.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "05fa1f80aa8323ddea1a59bebebf38c439abec3d8bc4de6119e93458389a0242",
+      "expectedSha256": "c55b370585034aa779213e5d13d9255d49fac31f5adca638bd75281ef1e95157"
+    },
+    {
+      "id": "echo/transport/partial-line",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "transport",
+      "input": "echo/transport/partial-line.in.jsonl",
+      "expected": "echo/transport/partial-line.out.jsonl",
+      "exitCode": 0,
+      "splitAt": [
+        30
+      ],
+      "inputSha256": "b286bda5f9015e178c6cf8b32748d88a3ced08b8068adcbc39beee7594741a43",
+      "expectedSha256": "e7fd7e956a72729ca71ad3f76aaf90cdc073e0b9fd6816afd90c77e796d4ce7d"
+    },
+    {
+      "id": "echo/valid/initialize",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "valid",
+      "input": "echo/valid/initialize.in.jsonl",
+      "expected": "echo/valid/initialize.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "858fb828ca5d8ec7a2e4178ae6066bb6569cea6a6e24012d640a0ccad07627f2",
+      "expectedSha256": "c55b370585034aa779213e5d13d9255d49fac31f5adca638bd75281ef1e95157"
+    },
+    {
+      "id": "echo/valid/permission-and-cancel",
+      "adapter": "echo",
+      "kind": "script",
+      "family": "valid",
+      "input": "echo/valid/permission-and-cancel.script.jsonl",
+      "expected": "echo/valid/permission-and-cancel.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "57fe33f16b61e16f168b62f1133104bd948785c39c6be60bd28e2844187642f1",
+      "expectedSha256": "f1a8ad0e3bcfa96637b57272e751563c5e78a0627c7ccfbf08655c963378e874"
+    },
+    {
+      "id": "echo/valid/pipelined-prompt",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "valid",
+      "input": "echo/valid/pipelined-prompt.in.jsonl",
+      "expected": "echo/valid/pipelined-prompt.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "b40df974f4028a3d842508bd82a4fdfa1def3f73f0735ed92f9a2cab0cece6eb",
+      "expectedSha256": "6e31bb712a8af35db45bca02074dfebd6abe45591642260aad31fba8e7c54cc7"
+    },
+    {
+      "id": "echo/valid/plan-and-usage",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "valid",
+      "input": "echo/valid/plan-and-usage.in.jsonl",
+      "expected": "echo/valid/plan-and-usage.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "7dc120063555b2a7497ace44956c3a2656960b562668ea63b2c4f596e213fdea",
+      "expectedSha256": "48a1944d9b4620d681c2232bbc19df066d3efcb63b72d515ca81ff16c2919674"
+    },
+    {
+      "id": "echo/valid/protocol-version-negotiation",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "valid",
+      "input": "echo/valid/protocol-version-negotiation.in.jsonl",
+      "expected": "echo/valid/protocol-version-negotiation.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "fd02565c1c0b3db4651cbbe98b521b467c26b12d1b24121645a7b80823129e41",
+      "expectedSha256": "a15437898420febb9a160162edeff5694192e85226a0b0ac06130ee2b911464f"
+    },
+    {
+      "id": "echo/valid/request-id-variants",
+      "adapter": "echo",
+      "kind": "pipe",
+      "family": "valid",
+      "input": "echo/valid/request-id-variants.in.jsonl",
+      "expected": "echo/valid/request-id-variants.out.jsonl",
+      "exitCode": 0,
+      "inputSha256": "f46da80399712677d2224295b5288ee6e8c7605ea3c284895fd3cb611577c00c",
+      "expectedSha256": "a308ee1df17219854bb71afd4c509d3e4ae499e991398c60438eb8e552cd4dc1"
+    }
+  ]
+}

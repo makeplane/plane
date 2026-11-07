@@ -1,0 +1,371 @@
+{
+  "agents": {
+    "title": "Agents",
+    "picker": {
+      "label": "Agent",
+      "placeholder": "Choisir un agent"
+    },
+    "model": {
+      "label": "Modèle"
+    },
+    "permission": {
+      "label": "Niveau d’autorisation",
+      "levels": {
+        "ask_all": {
+          "name": "Toujours demander",
+          "description": "Demander avant chaque appel d’outil, y compris les lectures."
+        },
+        "ask_writes": {
+          "name": "Demander avant les modifications",
+          "description": "Les lectures, recherches et récupérations web s’exécutent librement. Les commandes shell, les modifications de fichiers et les modifications dans Plane demandent d’abord une confirmation."
+        },
+        "yolo": {
+          "name": "Ne jamais demander",
+          "description": "Exécuter tous les outils sans demander."
+        }
+      }
+    },
+    "empty": {
+      "no_agents_title": "Aucun agent pour le moment",
+      "no_agents_description": "Un administrateur de l’instance peut ajouter des agents en mode dieu.",
+      "load_failed_title": "Impossible de charger les agents",
+      "load_failed_description": "Vérifiez votre connexion et réessayez.",
+      "start_title": "Discuter avec {name}",
+      "start_description": "Posez vos questions sur vos éléments de travail, projets et pages. L’agent agit avec vos autorisations Plane."
+    },
+    "composer": {
+      "label": "Votre message",
+      "placeholder": "Écrire à {name}…",
+      "send": "Envoyer",
+      "stop": "Arrêter",
+      "hint": "Enter pour envoyer, Shift+Enter pour un saut de ligne"
+    },
+    "sessions": {
+      "title": "Conversations",
+      "new": "Nouvelle conversation",
+      "untitled": "Conversation sans titre",
+      "empty": "Aucune conversation précédente",
+      "refresh": "Actualiser les conversations"
+    },
+    "transcript": {
+      "label": "Fil de la conversation",
+      "you": "Vous",
+      "thinking": "Réflexion en cours",
+      "thought": "Réflexion",
+      "attachment": "Pièce jointe",
+      "turn_end": {
+        "cancelled": "Arrêté.",
+        "max_tokens": "L’agent a atteint sa limite de sortie.",
+        "max_turn_requests": "L’agent a atteint sa limite d’étapes pour ce message.",
+        "refusal": "L’agent a refusé de continuer.",
+        "failed": "L’agent a rencontré une erreur.",
+        "disconnected": "La connexion s’est fermée avant que l’agent ait terminé."
+      },
+      "new_session_notice": "Reconnecté dans une nouvelle conversation. L’agent ne se souvient pas des messages précédents.",
+      "compaction": {
+        "in_progress": "Résumé des messages précédents…",
+        "completed": "Les messages précédents ont été résumés.",
+        "failed": "Échec du résumé des messages précédents."
+      }
+    },
+    "tool_call": {
+      "status": {
+        "pending": "En attente",
+        "in_progress": "En cours",
+        "completed": "Terminé",
+        "failed": "Échec"
+      },
+      "untitled": "Appel d’outil",
+      "input": "Entrée",
+      "output": "Sortie",
+      "changes": "Modifications de {path}",
+      "terminal": "Sortie du terminal"
+    },
+    "plan": {
+      "title": "Plan d’action",
+      "progress": "{done} sur {total} terminées"
+    },
+    "usage": {
+      "context": "Contexte : {used} sur {size} jetons",
+      "cost": "Coût : {amount} {currency}"
+    },
+    "permission_prompt": {
+      "title": "Autoriser cette action ?",
+      "allow_once": "Autoriser une fois",
+      "allow_always": "Toujours autoriser dans cette conversation",
+      "reject_once": "Refuser",
+      "reject_always": "Toujours refuser"
+    },
+    "status": {
+      "connecting": "Connexion…",
+      "reconnecting": "Reconnexion…"
+    },
+    "close": {
+      "reconnect": "Se reconnecter",
+      "title": "Conversation déconnectée",
+      "reasons": {
+        "closed": "La conversation a été fermée.",
+        "server_shutdown": "Le serveur de chat redémarre. Reconnectez-vous dans un instant.",
+        "network": "Impossible de joindre le serveur de chat. Vérifiez votre connexion ou demandez à votre administrateur si la passerelle des agents est en cours d’exécution.",
+        "message_too_big": "Ce message était trop volumineux pour être envoyé.",
+        "server_error": "Un problème est survenu sur le serveur. Réessayez dans quelques instants.",
+        "bad_request": "Ce lien de conversation n’est pas valide.",
+        "unauthenticated": "Vous êtes déconnecté. Reconnectez-vous pour discuter.",
+        "forbidden": "Vous n’êtes pas membre de cet espace de travail.",
+        "agent_not_found": "Cet agent a été supprimé ou désactivé.",
+        "idle_timeout": "La conversation a été fermée après une période d’inactivité.",
+        "session_expired": "La session de conversation a expiré.",
+        "too_many_chats": "Vous avez trop de conversations ouvertes. Fermez-en une dans un autre onglet et réessayez.",
+        "agent_unavailable": "L’agent est indisponible pour le moment. Réessayez dans quelques instants.",
+        "unknown": "La connexion de la conversation s’est fermée de manière inattendue."
+      }
+    },
+    "errors": {
+      "dismiss": "Ignorer",
+      "mode_not_allowed": "Votre administrateur n’autorise pas le niveau « {mode} » pour cet agent.",
+      "actions": {
+        "connect": "Impossible de démarrer la conversation.",
+        "new_session": "Impossible de démarrer une nouvelle conversation.",
+        "load_session": "Impossible d’ouvrir cette conversation.",
+        "list_sessions": "Impossible de charger les conversations précédentes.",
+        "prompt": "L’agent n’a pas pu répondre à ce message.",
+        "set_mode": "Impossible de modifier le niveau d’autorisation.",
+        "set_model": "Impossible de changer de modèle.",
+        "reconnect": "Impossible de se reconnecter."
+      },
+      "retry": "Réessayer"
+    },
+    "admin": {
+      "title": "Agents",
+      "description": "Agents avec lesquels les membres de l’espace de travail peuvent discuter. Chacun exécute un adaptateur ACP avec les identifiants que vous définissez ici.",
+      "add": "Ajouter un agent",
+      "edit_named": "Modifier {name}",
+      "delete": "Supprimer l’agent",
+      "list": {
+        "empty_title": "Aucun agent pour le moment",
+        "empty_description": "Ajoutez un agent pour que les membres de l’espace de travail puissent discuter avec lui.",
+        "load_failed": "Impossible de charger les agents.",
+        "enabled": "Activé",
+        "disabled": "Désactivé",
+        "plane_mcp": "Outils Plane",
+        "max_level": "Jusqu’à : {level}",
+        "env_unreadable": "Identifiants illisibles"
+      },
+      "form": {
+        "name": "Nom",
+        "name_placeholder": "Claude",
+        "slug": "Identifiant (slug)",
+        "slug_help": "Lettres minuscules, chiffres et traits d’union.",
+        "description": "Description",
+        "description_placeholder": "Ce pour quoi les membres peuvent utiliser cet agent",
+        "adapter": "Adaptateur",
+        "adapters": {
+          "claude": "Claude",
+          "codex": "Codex",
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
+        },
+        "credentials": "Identifiants et paramètres",
+        "credentials_help": "Les valeurs sont en écriture seule. Les valeurs enregistrées restent masquées ; remplacez-en une pour la modifier.",
+        "env": {
+          "ANTHROPIC_API_KEY": {
+            "label": "Clé API Anthropic",
+            "help": "Ou utilisez plutôt un jeton OAuth Claude Code."
+          },
+          "CLAUDE_CODE_OAUTH_TOKEN": {
+            "label": "Jeton OAuth Claude Code",
+            "help": "Un jeton d’abonnement Claude, utilisé lorsqu’aucune clé API n’est définie."
+          },
+          "OPENAI_API_KEY": {
+            "label": "Clé API OpenAI",
+            "help": "Connecte Codex lorsque son répertoire personnel n’est pas déjà connecté."
+          },
+          "DEEPSEEK_API_KEY": {
+            "label": "Clé API DeepSeek",
+            "help": "Obligatoire."
+          },
+          "DEEPSEEK_BASE_URL": {
+            "label": "URL de base de l’API DeepSeek",
+            "help": "Facultatif. Valeur par défaut : https://api.deepseek.com."
+          },
+          "PLANE_AGENT_MODEL": {
+            "label": "Modèle par défaut",
+            "help": "Identifiant de modèle facultatif, par exemple claude-opus-5-5. Les membres peuvent changer de modèle dans la conversation."
+          },
+          "GEMINI_API_KEY": {
+            "label": "Clé API Gemini",
+            "help": "Utilisée lorsqu’un membre n’a pas sa propre clé et n’est pas connecté avec Google."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Méthode de connexion",
+            "help": "Facultatif : api_key, chatgpt (Codex) ou google_account (Gemini). Les identifiants propres des membres la définissent pour leurs conversations."
+          }
+        },
+        "saved": "Enregistré",
+        "keep": "Conserver la valeur enregistrée",
+        "remove": "Supprimer",
+        "removed": "Sera supprimé",
+        "undo_remove": "Annuler",
+        "other_env": "Autres variables",
+        "other_env_help": "Définies via l’API. Elles sont conservées, sauf si vous les supprimez.",
+        "env_unreadable": "Les identifiants enregistrés ne peuvent pas être déchiffrés (la clé secrète de l’instance a peut-être changé). Saisissez-les de nouveau.",
+        "default_level": "Niveau d’autorisation par défaut",
+        "default_level_help": "Le niveau auquel démarre une nouvelle conversation.",
+        "max_level": "Niveau d’autorisation maximal",
+        "max_level_help": "Les membres ne peuvent pas passer à un niveau supérieur.",
+        "attach_plane_mcp": "Outils Plane",
+        "attach_plane_mcp_help": "Donner à l’agent le serveur MCP de Plane, en agissant en tant que membre qui discute.",
+        "is_enabled": "Activé",
+        "is_enabled_help": "Les agents désactivés sont masqués pour les membres.",
+        "validation": {
+          "required": "Ce champ est obligatoire.",
+          "slug": "Utilisez des lettres minuscules, des chiffres et des traits d’union.",
+          "default_above_max": "Le niveau par défaut ne peut pas dépasser le niveau maximal.",
+          "claude_auth": "Saisissez une clé API Anthropic ou un jeton OAuth Claude Code.",
+          "deepseek_auth": "Saisissez une clé API DeepSeek."
+        },
+        "cancel": "Annuler",
+        "save": "Enregistrer les modifications",
+        "create": "Ajouter l’agent",
+        "saving": "Enregistrement en cours"
+      },
+      "toasts": {
+        "created": "Agent ajouté.",
+        "updated": "Agent enregistré.",
+        "deleted": "Agent supprimé.",
+        "error_title": "Erreur",
+        "save_failed": "Impossible d’enregistrer l’agent.",
+        "delete_failed": "Impossible de supprimer l’agent."
+      },
+      "delete_dialog": {
+        "title": "Supprimer l’agent",
+        "description": "Supprimer {name} ? Les membres ne pourront plus discuter avec cet agent et ses identifiants enregistrés seront supprimés.",
+        "confirm": "Supprimer",
+        "deleting": "Suppression en cours"
+      }
+    },
+    "khaia": {
+      "open": "Ouvrir {name}",
+      "unread": "Ouvrir {name} (nouvelle activité)",
+      "minimize": "Réduire",
+      "open_page": "Ouvrir en pleine page",
+      "agent_menu_label": "Changer d’agent, actuellement {agent}",
+      "greeting": "Bonjour, je suis {name}",
+      "suggestions": {
+        "assigned_to_me": "Qu’est-ce qui m’est assigné ?",
+        "due_this_week": "Quels éléments de travail arrivent à échéance cette semaine ?",
+        "recent_activity": "Résumer l’activité récente de mes projets"
+      }
+    },
+    "providers": {
+      "load_failed_title": "Impossible de charger les fournisseurs d’IA",
+      "load_failed_description": "Vérifiez votre connexion et réessayez.",
+      "claude_note": "Claude utilise une clé API Anthropic. La connexion avec un abonnement Claude n’est pas proposée pour les applications conçues avec Claude Agent SDK.",
+      "personal": {
+        "title": "Vos identifiants"
+      },
+      "workspace": {
+        "title": "Clé de l’espace de travail",
+        "admins_only": "Seuls les administrateurs de l’espace de travail peuvent modifier ce paramètre."
+      },
+      "state": {
+        "none": "Non défini",
+        "api_key": "Clé API ••••{hint}",
+        "signed_in": "Connecté en tant que {email}",
+        "signed_in_unknown": "Connecté"
+      },
+      "fallback": {
+        "instance": "Utilise les identifiants par défaut de l’instance.",
+        "missing": "Aucune clé pour l’instant : les conversations avec les agents de ce fournisseur échoueront tant qu’aucune clé n’aura été ajoutée."
+      },
+      "actions": {
+        "add_api_key": "Ajouter une clé API",
+        "add_workspace_key": "Ajouter une clé d’espace de travail",
+        "replace": "Remplacer",
+        "remove": "Supprimer",
+        "disconnect": "Déconnecter",
+        "sign_in_openai": "Se connecter avec ChatGPT",
+        "sign_in_google": "Se connecter avec Google"
+      },
+      "cancel": "Annuler",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Ajouter votre clé API {provider}",
+          "title_replace": "Remplacer votre clé API {provider}",
+          "description": "Seules vos conversations utilisent cette clé. Elle est stockée de façon chiffrée et ne peut plus être affichée."
+        },
+        "workspace": {
+          "title_add": "Ajouter une clé d’espace de travail {provider}",
+          "title_replace": "Remplacer la clé d’espace de travail {provider}",
+          "description": "Les membres sans identifiants propres utilisent cette clé. Elle est stockée de façon chiffrée et ne peut plus être affichée."
+        },
+        "label": "Clé API {provider}",
+        "invalid": "Saisissez une clé de 8 à 512 caractères, sans espaces.",
+        "save": "Enregistrer la clé",
+        "saving": "Enregistrement en cours"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "Supprimer votre clé API ?",
+          "content": "Vos conversations avec les agents {provider} utiliseront à la place la clé de l’espace de travail ou les identifiants par défaut de l’instance."
+        },
+        "workspace": {
+          "title": "Supprimer la clé de l’espace de travail ?",
+          "content": "Les membres sans identifiants {provider} propres utiliseront à la place les identifiants par défaut de l’instance."
+        },
+        "confirm": "Supprimer",
+        "removing": "Suppression en cours"
+      },
+      "disconnect_dialog": {
+        "title": "Déconnecter le compte ?",
+        "content": "Vos conversations n’utiliseront plus {email}. Vous pouvez vous reconnecter à tout moment.",
+        "content_unknown": "Vos conversations n’utiliseront plus ce compte. Vous pouvez vous reconnecter à tout moment.",
+        "confirm": "Déconnecter",
+        "disconnecting": "Déconnexion en cours"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Se connecter avec ChatGPT",
+          "description": "Les conversations Codex utiliseront votre forfait ChatGPT.",
+          "open_link": "Ouvrir la connexion ChatGPT",
+          "step_open": "Ouvrez la page de connexion ChatGPT."
+        },
+        "google": {
+          "title": "Se connecter avec Google",
+          "description": "Les conversations Gemini utiliseront votre compte Google.",
+          "open_link": "Ouvrir la connexion Google",
+          "step_open": "Ouvrez la page de connexion Google et autorisez l’accès.",
+          "step_paste": "Collez le code affiché par Google."
+        },
+        "starting": "Démarrage de la connexion…",
+        "step_enter_code": "Saisissez-y ce code :",
+        "code_label": "Code de connexion",
+        "copy_code": "Copier le code",
+        "code_copied": "Code copié.",
+        "waiting": "En attente de la fin de votre connexion…",
+        "code_required": "Collez le code fourni par Google.",
+        "submit": "Connecter",
+        "submitting": "Connexion en cours",
+        "retry": "Réessayer",
+        "errors": {
+          "failed": "Échec de la connexion.",
+          "expired": "Cette connexion a expiré. Réessayez.",
+          "unreachable": "Impossible de joindre la passerelle des agents. Demandez à votre administrateur si elle est en cours d’exécution.",
+          "rate_limited": "Trop de tentatives de connexion. Patientez une minute et réessayez.",
+          "signed_out": "Vous êtes déconnecté de Plane. Reconnectez-vous et réessayez."
+        }
+      },
+      "toasts": {
+        "error_title": "Erreur",
+        "key_saved": "Clé API enregistrée.",
+        "key_removed": "Clé API supprimée.",
+        "key_save_failed": "Impossible d’enregistrer la clé API.",
+        "key_remove_failed": "Impossible de supprimer la clé API.",
+        "connected": "Connecté en tant que {email}.",
+        "connected_unknown": "Connecté.",
+        "disconnected": "Compte déconnecté.",
+        "disconnect_failed": "Impossible de déconnecter le compte."
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Prepares a fresh Ubuntu LTS VPS: Docker, firewall, automatic security updates,
-# swap, and the daily backup timer. Safe to run again. Run as root.
+# swap, the daily backup timer and the agent network firewall. Safe to run again.
+# Run as root.
 set -euo pipefail
 
 [ "$(id -u)" -eq 0 ] || { echo "Run as root." >&2; exit 1; }
@@ -64,7 +65,26 @@ Persistent=true
 WantedBy=timers.target
 EOF
 
+# Agents run shell commands in agent-runner; keep them off the tailnet, private
+# networks and this host. Re-applied whenever Docker starts (see agents-firewall.sh).
+cat >/etc/systemd/system/nexus-ops-agents-firewall.service <<EOF
+[Unit]
+Description=Nexus Operations agent network firewall
+After=docker.service
+Requires=docker.service
+PartOf=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=$install_dir/agents-firewall.sh
+
+[Install]
+WantedBy=docker.service
+EOF
+
 systemctl daemon-reload
 systemctl enable --now nexus-ops-backup.timer
+systemctl enable --now nexus-ops-agents-firewall.service
 
 echo "Bootstrap complete. Next: generate-env.sh, then set up the backup remote (README.md)."

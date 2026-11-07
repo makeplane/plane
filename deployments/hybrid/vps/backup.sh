@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Sends an encrypted backup off the server: the Postgres dump, the uploads volume,
-# and .env. The .env copy matters because Plane encrypts stored instance settings
+# the agents' working dirs (agent_workspaces) and .env. The .env copy matters because Plane encrypts stored instance settings
 # with SECRET_KEY, so a database restored without it loses those settings.
 #
 # Environment overrides, used by the local test stack:
@@ -53,11 +53,20 @@ compose exec -T plane-db sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" -F
 minio_container="$(compose ps -q plane-minio)"
 [ -n "$minio_container" ] || { echo "plane-minio is not running." >&2; exit 1; }
 docker run --rm --volumes-from "$minio_container:ro" alpine:3.22 tar czf - -C /export . >"$stage/uploads.tar.gz"
+
+# Every working dir belongs to its own uid, so the archive keeps numeric owners and
+# modes (GNU tar from the runner image). Agents may be writing meanwhile: a file that
+# changes while it is read is not an error (tar exit status 1). .tmp is scratch space.
+[ -n "$(compose ps -q agent-runner)" ] || { echo "agent-runner is not running." >&2; exit 1; }
+compose exec -T agent-runner sh -c \
+  'tar --numeric-owner --warning=no-file-changed --exclude=./.tmp -czf - -C "$AGENT_WORKSPACES_ROOT" . || [ $? -eq 1 ]' \
+  >"$stage/agent_workspaces.tar.gz"
 cp "$env_file" "$stage/env"
 
 # A failed or empty dump must not replace good history through the retention step.
 [ -s "$stage/postgres.dump" ] || { echo "Postgres dump is empty." >&2; exit 1; }
-sha256sum "$stage"/postgres.dump "$stage"/uploads.tar.gz "$stage"/env | sed "s#$stage/##" >"$stage/SHA256SUMS"
+tar tzf "$stage/agent_workspaces.tar.gz" >/dev/null
+sha256sum "$stage"/postgres.dump "$stage"/uploads.tar.gz "$stage"/agent_workspaces.tar.gz "$stage"/env | sed "s#$stage/##" >"$stage/SHA256SUMS"
 
 RCLONE_DATA_MOUNT="$stage:/stage:ro,z" rclone copy /stage "${BACKUP_REMOTE}${stamp}"
 rclone delete "${BACKUP_REMOTE}" --min-age "${retention_days}d"

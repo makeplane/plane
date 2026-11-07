@@ -1,0 +1,3 @@
+{"jsonrpc":"2.0","id":"init-1","method":"initialize","params":{"protocolVersion":1}}
+{"jsonrpc":"2.0","id":"new-1","method":"session/new","params":{"cwd":"/workspace","mcpServers":[]}}
+{"jsonrpc":"2.0","id":9007199254740991,"method":"session/new","params":{"cwd":"/workspace","mcpServers":[]}}

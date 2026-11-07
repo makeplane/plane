@@ -1,0 +1,371 @@
+{
+  "agents": {
+    "title": "エージェント",
+    "picker": {
+      "label": "エージェント",
+      "placeholder": "エージェントを選択"
+    },
+    "model": {
+      "label": "モデル"
+    },
+    "permission": {
+      "label": "権限レベル",
+      "levels": {
+        "ask_all": {
+          "name": "毎回確認する",
+          "description": "読み取りを含め、すべてのツール呼び出しの前に確認します。"
+        },
+        "ask_writes": {
+          "name": "変更前に確認する",
+          "description": "読み取り、検索、Webからの取得は確認なしで実行されます。シェルコマンド、ファイルの変更、Planeでの変更は事前に確認します。"
+        },
+        "yolo": {
+          "name": "確認しない",
+          "description": "確認せずにすべてのツールを実行します。"
+        }
+      }
+    },
+    "empty": {
+      "no_agents_title": "エージェントはまだありません",
+      "no_agents_description": "インスタンス管理者はゴッドモードでエージェントを追加できます。",
+      "load_failed_title": "エージェントを読み込めませんでした",
+      "load_failed_description": "接続を確認して、もう一度お試しください。",
+      "start_title": "{name}とチャット",
+      "start_description": "作業項目、プロジェクト、ページについて質問できます。エージェントはあなたのPlaneの権限で動作します。"
+    },
+    "composer": {
+      "label": "メッセージ",
+      "placeholder": "{name}にメッセージを送信…",
+      "send": "送信",
+      "stop": "停止",
+      "hint": "Enterで送信、Shift+Enterで改行"
+    },
+    "sessions": {
+      "title": "チャット",
+      "new": "新しいチャット",
+      "untitled": "無題のチャット",
+      "empty": "以前のチャットはありません",
+      "refresh": "チャットを更新"
+    },
+    "transcript": {
+      "label": "会話",
+      "you": "あなた",
+      "thinking": "思考中",
+      "thought": "思考",
+      "attachment": "添付ファイル",
+      "turn_end": {
+        "cancelled": "停止しました。",
+        "max_tokens": "エージェントが出力の上限に達しました。",
+        "max_turn_requests": "エージェントがこのメッセージのステップ数の上限に達しました。",
+        "refusal": "エージェントが続行を拒否しました。",
+        "failed": "エージェントでエラーが発生しました。",
+        "disconnected": "エージェントの処理が完了する前に接続が切断されました。"
+      },
+      "new_session_notice": "新しいチャットで再接続しました。エージェントは以前のメッセージを覚えていません。",
+      "compaction": {
+        "in_progress": "以前のメッセージを要約しています…",
+        "completed": "以前のメッセージを要約しました。",
+        "failed": "以前のメッセージの要約に失敗しました。"
+      }
+    },
+    "tool_call": {
+      "status": {
+        "pending": "保留中",
+        "in_progress": "実行中",
+        "completed": "完了",
+        "failed": "失敗"
+      },
+      "untitled": "ツール呼び出し",
+      "input": "入力",
+      "output": "出力",
+      "changes": "{path}への変更",
+      "terminal": "ターミナル出力"
+    },
+    "plan": {
+      "title": "計画",
+      "progress": "{total}件中{done}件完了"
+    },
+    "usage": {
+      "context": "コンテキスト：{used} / {size}トークン",
+      "cost": "コスト：{amount} {currency}"
+    },
+    "permission_prompt": {
+      "title": "この操作を許可しますか？",
+      "allow_once": "今回のみ許可",
+      "allow_always": "このチャットでは常に許可",
+      "reject_once": "拒否",
+      "reject_always": "常に拒否"
+    },
+    "status": {
+      "connecting": "接続中…",
+      "reconnecting": "再接続中…"
+    },
+    "close": {
+      "reconnect": "再接続",
+      "title": "チャットが切断されました",
+      "reasons": {
+        "closed": "チャットが閉じられました。",
+        "server_shutdown": "チャットサーバーを再起動しています。しばらくしてから再接続してください。",
+        "network": "チャットサーバーに接続できませんでした。接続を確認するか、エージェントブリッジが稼働しているかどうかを管理者に確認してください。",
+        "message_too_big": "メッセージが大きすぎるため送信できませんでした。",
+        "server_error": "サーバーで問題が発生しました。しばらくしてからもう一度お試しください。",
+        "bad_request": "このチャットリンクは無効です。",
+        "unauthenticated": "サインアウトしています。チャットするには再度サインインしてください。",
+        "forbidden": "このワークスペースのメンバーではありません。",
+        "agent_not_found": "このエージェントは削除されたか、無効になっています。",
+        "idle_timeout": "一定時間操作がなかったため、チャットが閉じられました。",
+        "session_expired": "チャットセッションの有効期限が切れました。",
+        "too_many_chats": "開いているチャットが多すぎます。別のタブでチャットを1つ閉じてから、もう一度お試しください。",
+        "agent_unavailable": "エージェントは現在利用できません。しばらくしてからもう一度お試しください。",
+        "unknown": "チャットの接続が予期せず切断されました。"
+      }
+    },
+    "errors": {
+      "dismiss": "閉じる",
+      "mode_not_allowed": "管理者はこのエージェントで「{mode}」レベルを許可していません。",
+      "actions": {
+        "connect": "チャットを開始できませんでした。",
+        "new_session": "新しいチャットを開始できませんでした。",
+        "load_session": "そのチャットを開けませんでした。",
+        "list_sessions": "以前のチャットを読み込めませんでした。",
+        "prompt": "エージェントはそのメッセージに回答できませんでした。",
+        "set_mode": "権限レベルを変更できませんでした。",
+        "set_model": "モデルを変更できませんでした。",
+        "reconnect": "再接続できませんでした。"
+      },
+      "retry": "もう一度試す"
+    },
+    "admin": {
+      "title": "エージェント",
+      "description": "ワークスペースのメンバーがチャットできるエージェントです。各エージェントは、ここで設定した認証情報を使用してACPアダプターを実行します。",
+      "add": "エージェントを追加",
+      "edit_named": "{name}を編集",
+      "delete": "エージェントを削除",
+      "list": {
+        "empty_title": "エージェントはまだありません",
+        "empty_description": "ワークスペースのメンバーがチャットできるように、エージェントを追加してください。",
+        "load_failed": "エージェントを読み込めませんでした。",
+        "enabled": "有効",
+        "disabled": "無効",
+        "plane_mcp": "Planeツール",
+        "max_level": "上限：{level}",
+        "env_unreadable": "認証情報を読み取れません"
+      },
+      "form": {
+        "name": "名前",
+        "name_placeholder": "Claude",
+        "slug": "スラッグ",
+        "slug_help": "英小文字、数字、ハイフンを使用できます。",
+        "description": "説明",
+        "description_placeholder": "メンバーがこのエージェントを何に使えるか",
+        "adapter": "アダプター",
+        "adapters": {
+          "claude": "Claude",
+          "codex": "Codex",
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
+        },
+        "credentials": "認証情報と設定",
+        "credentials_help": "値は書き込み専用です。保存済みの値は表示されません。変更するには値を置き換えてください。",
+        "env": {
+          "ANTHROPIC_API_KEY": {
+            "label": "Anthropic APIキー",
+            "help": "代わりにClaude CodeのOAuthトークンを使用することもできます。"
+          },
+          "CLAUDE_CODE_OAUTH_TOKEN": {
+            "label": "Claude Code OAuthトークン",
+            "help": "Claudeサブスクリプションのトークンです。APIキーが設定されていない場合に使用されます。"
+          },
+          "OPENAI_API_KEY": {
+            "label": "OpenAI APIキー",
+            "help": "Codexのホームディレクトリがまだサインインしていない場合に、Codexをサインインさせます。"
+          },
+          "DEEPSEEK_API_KEY": {
+            "label": "DeepSeek APIキー",
+            "help": "必須です。"
+          },
+          "DEEPSEEK_BASE_URL": {
+            "label": "DeepSeek APIベースURL",
+            "help": "任意です。デフォルトはhttps://api.deepseek.comです。"
+          },
+          "PLANE_AGENT_MODEL": {
+            "label": "デフォルトのモデル",
+            "help": "任意です。モデルID（例：claude-opus-5-5）を指定します。メンバーはチャット内でモデルを切り替えられます。"
+          },
+          "GEMINI_API_KEY": {
+            "label": "Gemini APIキー",
+            "help": "メンバーが自分のキーを持っておらず、Googleでサインインしていない場合に使用されます。"
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "サインイン方法",
+            "help": "任意です。api_key、chatgpt（Codex）、またはgoogle_account（Gemini）を指定します。メンバー自身の認証情報がある場合は、そのメンバーのチャットではそれに応じて設定されます。"
+          }
+        },
+        "saved": "保存済み",
+        "keep": "保存済みの値を保持",
+        "remove": "削除",
+        "removed": "削除予定",
+        "undo_remove": "元に戻す",
+        "other_env": "その他の変数",
+        "other_env_help": "APIで設定された変数です。削除しない限り保持されます。",
+        "env_unreadable": "保存された認証情報を復号できません（インスタンスのシークレットキーが変更された可能性があります）。もう一度入力してください。",
+        "default_level": "デフォルトの権限レベル",
+        "default_level_help": "新しいチャットを開始するときのレベルです。",
+        "max_level": "最大権限レベル",
+        "max_level_help": "メンバーはこのレベルより上に切り替えることはできません。",
+        "attach_plane_mcp": "Planeツール",
+        "attach_plane_mcp_help": "チャットしているメンバーとして動作するPlane MCPサーバーをエージェントに提供します。",
+        "is_enabled": "有効",
+        "is_enabled_help": "無効なエージェントはメンバーに表示されません。",
+        "validation": {
+          "required": "この項目は必須です。",
+          "slug": "英小文字、数字、ハイフンを使用してください。",
+          "default_above_max": "デフォルトのレベルを最大レベルより上にすることはできません。",
+          "claude_auth": "Anthropic APIキーまたはClaude Code OAuthトークンを入力してください。",
+          "deepseek_auth": "DeepSeek APIキーを入力してください。"
+        },
+        "cancel": "キャンセル",
+        "save": "変更を保存",
+        "create": "エージェントを追加",
+        "saving": "保存中"
+      },
+      "toasts": {
+        "created": "エージェントを追加しました。",
+        "updated": "エージェントを保存しました。",
+        "deleted": "エージェントを削除しました。",
+        "error_title": "エラー",
+        "save_failed": "エージェントを保存できませんでした。",
+        "delete_failed": "エージェントを削除できませんでした。"
+      },
+      "delete_dialog": {
+        "title": "エージェントを削除",
+        "description": "{name}を削除しますか？メンバーはこのエージェントとチャットできなくなり、保存された認証情報も削除されます。",
+        "confirm": "削除",
+        "deleting": "削除中"
+      }
+    },
+    "khaia": {
+      "open": "{name}を開く",
+      "unread": "{name}を開く（新しいアクティビティ）",
+      "minimize": "最小化",
+      "open_page": "全画面ページで開く",
+      "agent_menu_label": "エージェントを切り替え（現在: {agent}）",
+      "greeting": "こんにちは、{name}です",
+      "suggestions": {
+        "assigned_to_me": "自分に割り当てられているものは何ですか？",
+        "due_this_week": "今週期限の作業項目はどれですか？",
+        "recent_activity": "自分のプロジェクトの最近のアクティビティを要約してください"
+      }
+    },
+    "providers": {
+      "load_failed_title": "AIプロバイダーを読み込めませんでした",
+      "load_failed_description": "接続を確認して、もう一度お試しください。",
+      "claude_note": "ClaudeはAnthropic APIキーを使用します。Claude Agent SDKで構築されたアプリでは、Claudeサブスクリプションでのサインインは提供されていません。",
+      "personal": {
+        "title": "あなたの認証情報"
+      },
+      "workspace": {
+        "title": "ワークスペースのキー",
+        "admins_only": "これを変更できるのはワークスペース管理者のみです。"
+      },
+      "state": {
+        "none": "未設定",
+        "api_key": "APIキー ••••{hint}",
+        "signed_in": "{email}としてサインイン中",
+        "signed_in_unknown": "サインイン済み"
+      },
+      "fallback": {
+        "instance": "インスタンスのデフォルトを使用します。",
+        "missing": "キーがまだありません。キーを追加するまで、このプロバイダーのエージェントとのチャットは失敗します。"
+      },
+      "actions": {
+        "add_api_key": "APIキーを追加",
+        "add_workspace_key": "ワークスペースのキーを追加",
+        "replace": "置き換え",
+        "remove": "削除",
+        "disconnect": "接続を解除",
+        "sign_in_openai": "ChatGPTでサインイン",
+        "sign_in_google": "Googleでサインイン"
+      },
+      "cancel": "キャンセル",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "個人の{provider} APIキーを追加",
+          "title_replace": "個人の{provider} APIキーを置き換え",
+          "description": "このキーはあなたのチャットでのみ使用されます。暗号化して保存され、再度表示することはできません。"
+        },
+        "workspace": {
+          "title_add": "{provider}のワークスペースキーを追加",
+          "title_replace": "{provider}のワークスペースキーを置き換え",
+          "description": "自分の認証情報を持たないメンバーは、このキーを使用します。暗号化して保存され、再度表示することはできません。"
+        },
+        "label": "{provider} APIキー",
+        "invalid": "空白を含まない8～512文字のキーを入力してください。",
+        "save": "キーを保存",
+        "saving": "保存中"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "APIキーを削除しますか？",
+          "content": "{provider}エージェントとのチャットでは、代わりにワークスペースのキーまたはインスタンスのデフォルトが使用されます。"
+        },
+        "workspace": {
+          "title": "ワークスペースのキーを削除しますか？",
+          "content": "自分の{provider}認証情報を持たないメンバーは、代わりにインスタンスのデフォルトを使用します。"
+        },
+        "confirm": "削除",
+        "removing": "削除中"
+      },
+      "disconnect_dialog": {
+        "title": "アカウントの接続を解除しますか？",
+        "content": "チャットで{email}が使用されなくなります。いつでも再度サインインできます。",
+        "content_unknown": "チャットでこのアカウントが使用されなくなります。いつでも再度サインインできます。",
+        "confirm": "接続を解除",
+        "disconnecting": "接続を解除中"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "ChatGPTでサインイン",
+          "description": "CodexのチャットではあなたのChatGPTプランが使用されます。",
+          "open_link": "ChatGPTのサインインを開く",
+          "step_open": "ChatGPTのサインインページを開きます。"
+        },
+        "google": {
+          "title": "Googleでサインイン",
+          "description": "GeminiのチャットではあなたのGoogleアカウントが使用されます。",
+          "open_link": "Googleのサインインを開く",
+          "step_open": "Googleのサインインページを開き、アクセスを許可します。",
+          "step_paste": "Googleに表示されたコードを貼り付けます。"
+        },
+        "starting": "サインインを開始しています…",
+        "step_enter_code": "そのページで次のコードを入力してください：",
+        "code_label": "コード",
+        "copy_code": "コードをコピー",
+        "code_copied": "コードをコピーしました。",
+        "waiting": "サインインの完了を待っています…",
+        "code_required": "Googleのコードを貼り付けてください。",
+        "submit": "接続",
+        "submitting": "接続中",
+        "retry": "もう一度試す",
+        "errors": {
+          "failed": "サインインに失敗しました。",
+          "expired": "このサインインの有効期限が切れました。もう一度お試しください。",
+          "unreachable": "エージェントブリッジに接続できませんでした。稼働しているかどうかを管理者に確認してください。",
+          "rate_limited": "サインインの試行回数が多すぎます。1分ほど待ってから、もう一度お試しください。",
+          "signed_out": "Planeからサインアウトしています。再度サインインしてから、もう一度お試しください。"
+        }
+      },
+      "toasts": {
+        "error_title": "エラー",
+        "key_saved": "APIキーを保存しました。",
+        "key_removed": "APIキーを削除しました。",
+        "key_save_failed": "APIキーを保存できませんでした。",
+        "key_remove_failed": "APIキーを削除できませんでした。",
+        "connected": "{email}としてサインインしました。",
+        "connected_unknown": "サインインしました。",
+        "disconnected": "アカウントの接続を解除しました。",
+        "disconnect_failed": "アカウントの接続を解除できませんでした。"
+      }
+    }
+  }
+}

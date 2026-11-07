@@ -21,9 +21,11 @@ from plane.db.models import (
     EmailNotificationLog,
     PageVersion,
     APIActivityLog,
+    APIToken,
     IssueDescriptionVersion,
     WebhookLog,
 )
+from plane.db.models.api import AGENT_SESSION_TOKEN_LABEL
 from plane.utils.exception_logger import log_exception
 
 
@@ -158,6 +160,15 @@ def get_webhook_logs_queryset():
     )
 
 
+def get_expired_agent_session_tokens_queryset():
+    """Get agent session tokens past their expiry. Personal tokens are never touched."""
+    return (
+        APIToken.all_objects.filter(label=AGENT_SESSION_TOKEN_LABEL, expired_at__lte=timezone.now())
+        .values_list("id", flat=True)
+        .iterator(chunk_size=BATCH_SIZE)
+    )
+
+
 @shared_task
 def delete_api_logs():
     """Delete old API activity logs."""
@@ -205,4 +216,14 @@ def delete_webhook_logs():
         queryset_func=get_webhook_logs_queryset,
         model=WebhookLog,
         task_name="Webhook Log",
+    )
+
+
+@shared_task
+def delete_expired_agent_session_tokens():
+    """Delete expired agent session tokens."""
+    process_cleanup_task(
+        queryset_func=get_expired_agent_session_tokens_queryset,
+        model=APIToken,
+        task_name="Agent Session Token",
     )

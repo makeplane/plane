@@ -494,6 +494,10 @@
         "heading": "Script",
         "new_script": "Script mới",
         "description": "Tự động hóa quy trình làm việc của bạn với các script và quy tắc tự động hóa tùy chỉnh."
+      },
+      "ai_providers": {
+        "title": "Nhà cung cấp AI",
+        "description": "Thông tin xác thực cho tính năng trò chuyện với tác nhân. Các cuộc trò chuyện dùng thông tin xác thực của riêng bạn trước, sau đó đến khóa của không gian làm việc, rồi đến thông tin mặc định của hệ thống."
       }
     },
     "empty_state": {

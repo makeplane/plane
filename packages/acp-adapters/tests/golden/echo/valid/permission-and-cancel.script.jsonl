@@ -1,0 +1,9 @@
+{"answers":["allow_once","reject_once"]}
+{"send":{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":1}}}
+{"send":{"jsonrpc":"2.0","id":2,"method":"session/new","params":{"cwd":"$CWD","mcpServers":[]}}}
+{"send":{"jsonrpc":"2.0","id":3,"method":"session/prompt","params":{"sessionId":"$SESSION_ID","prompt":[{"type":"text","text":"/tool execute Run tests"}]}}}
+{"send":{"jsonrpc":"2.0","id":4,"method":"session/prompt","params":{"sessionId":"$SESSION_ID","prompt":[{"type":"text","text":"/tool edit Edit file"}]}}}
+{"send":{"jsonrpc":"2.0","id":5,"method":"session/prompt","params":{"sessionId":"$SESSION_ID","prompt":[{"type":"text","text":"/sleep 10000"}]}},"await":false}
+{"waitFor":"agent_message_chunk"}
+{"send":{"jsonrpc":"2.0","method":"session/cancel","params":{"sessionId":"$SESSION_ID"}}}
+{"awaitResponse":5}

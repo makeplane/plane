@@ -1,0 +1,4 @@
+{"jsonrpc":"2.0","id":1,"error":{"code":-32602,"message":"Invalid params","data":{"_errors":[],"protocolVersion":{"_errors":["Invalid input: expected number, received string"]}}}}
+{"jsonrpc":"2.0","id":2,"result":{"protocolVersion":1,"agentCapabilities":{"loadSession":false,"promptCapabilities":{"image":false,"audio":false,"embeddedContext":true},"mcpCapabilities":{"http":true,"sse":false},"sessionCapabilities":{}},"authMethods":[],"agentInfo":{"name":"plane-acp-echo","title":"Echo (test agent)","version":"1.5.0"}}}
+{"jsonrpc":"2.0","id":3,"error":{"code":-32602,"message":"Invalid params: cwd must be an absolute path","data":{"cwd":"relative/dir"}}}
+{"jsonrpc":"2.0","id":4,"error":{"code":-32602,"message":"Invalid params","data":{"_errors":[],"cwd":{"_errors":["Invalid input: expected string, received undefined"]}}}}

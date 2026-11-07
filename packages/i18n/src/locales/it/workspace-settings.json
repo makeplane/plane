@@ -494,6 +494,10 @@
         "heading": "Script",
         "new_script": "Nuovo script",
         "description": "Automatizza i tuoi flussi di lavoro con script personalizzati e regole di automazione."
+      },
+      "ai_providers": {
+        "title": "Fornitori di IA",
+        "description": "Credenziali per la chat con gli agenti. Le chat usano prima la sua credenziale personale, poi la chiave dello spazio di lavoro e infine la credenziale predefinita dell'istanza."
       }
     },
     "empty_state": {

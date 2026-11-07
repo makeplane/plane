@@ -8,8 +8,13 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { PiChatLogo } from "@plane/blocks/icons";
-import { DashboardsOutline, DraftsOutline, HomeOutline, YourWorkOutline } from "@makeplane/propel/icons";
+import {
+  AiStarFourOutline,
+  DashboardsOutline,
+  DraftsOutline,
+  HomeOutline,
+  YourWorkOutline,
+} from "@makeplane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useUserPermissions, useUser } from "@/hooks/store/user";
@@ -53,11 +58,11 @@ export const SidebarUserMenu = observer(function SidebarUserMenu() {
       Icon: DraftsOutline,
     },
     {
-      key: "pi-chat",
-      labelTranslationKey: "sidebar.pi_chat",
-      href: `/${workspaceSlug.toString()}/pi-chat/`,
+      key: "agents",
+      labelTranslationKey: "agents.title",
+      href: `/${workspaceSlug.toString()}/agents/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: PiChatLogo,
+      Icon: AiStarFourOutline,
     },
   ];
 

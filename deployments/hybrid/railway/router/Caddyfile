@@ -21,7 +21,7 @@
 	# so it replaces the copy some upstream images send instead of duplicating it.
 	header >Strict-Transport-Security "max-age=31536000"
 
-	@origin path /api/* /auth/* /static/* /live/* /mcp /mcp/* /god-mode /god-mode/* /spaces /spaces/* /{$BUCKET_NAME:uploads} /{$BUCKET_NAME:uploads}/*
+	@origin path /api/* /auth/* /static/* /live/* /mcp /mcp/* /agents /agents/* /god-mode /god-mode/* /spaces /spaces/* /{$BUCKET_NAME:uploads} /{$BUCKET_NAME:uploads}/*
 	handle @origin {
 		reverse_proxy http://{$ORIGIN_ADDR} {
 			# The VPS gateway sees the proxy as its client, and every user would

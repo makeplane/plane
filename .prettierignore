@@ -8,3 +8,6 @@ node_modules/
 out/
 pnpm-lock.yaml
 storybook-static/
+
+# ACP golden fixtures are compared byte for byte and pinned by hash (packages/acp-adapters).
+packages/acp-adapters/tests/golden/

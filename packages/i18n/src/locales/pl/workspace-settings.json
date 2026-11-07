@@ -494,6 +494,10 @@
         "heading": "Skrypty",
         "new_script": "Nowy skrypt",
         "description": "Automatyzuj swoje przepływy pracy za pomocą niestandardowych skryptów i reguł automatyzacji."
+      },
+      "ai_providers": {
+        "title": "Dostawcy AI",
+        "description": "Dane uwierzytelniające dla czatu z agentami. Czaty używają najpierw własnych danych uwierzytelniających użytkownika, następnie klucza przestrzeni roboczej, a na końcu ustawienia domyślnego instancji."
       }
     },
     "empty_state": {

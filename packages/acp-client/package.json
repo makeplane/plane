@@ -1,0 +1,37 @@
+{
+  "name": "@plane/acp-client",
+  "version": "1.5.0",
+  "private": true,
+  "description": "Browser Agent Client Protocol (ACP) client for the in-app agent chat: WebSocket transport, chat session and transcript reducer",
+  "license": "AGPL-3.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./testing": "./dist/testing.js",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch --no-clean",
+    "check:lint": "oxlint --max-warnings=0 .",
+    "check:types": "tsc --noEmit",
+    "check:format": "oxfmt --check .",
+    "fix:lint": "oxlint --fix .",
+    "fix:format": "oxfmt .",
+    "test": "vitest run",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+  },
+  "dependencies": {
+    "@agentclientprotocol/sdk": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@plane/typescript-config": "workspace:*",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

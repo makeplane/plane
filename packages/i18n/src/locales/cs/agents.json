@@ -1,0 +1,371 @@
+{
+  "agents": {
+    "title": "Agenti",
+    "picker": {
+      "label": "Agent",
+      "placeholder": "Vyberte agenta"
+    },
+    "model": {
+      "label": "Jazykový model"
+    },
+    "permission": {
+      "label": "Úroveň oprávnění",
+      "levels": {
+        "ask_all": {
+          "name": "Ptát se pokaždé",
+          "description": "Ptát se před každým voláním nástroje, včetně čtení."
+        },
+        "ask_writes": {
+          "name": "Ptát se před změnami",
+          "description": "Čtení, vyhledávání a načítání webu probíhá bez dotazu. Příkazy shellu, změny souborů a změny v Plane vyžadují předchozí potvrzení."
+        },
+        "yolo": {
+          "name": "Nikdy se neptat",
+          "description": "Spouštět všechny nástroje bez dotazu."
+        }
+      }
+    },
+    "empty": {
+      "no_agents_title": "Zatím žádní agenti",
+      "no_agents_description": "Správce instance může přidat agenty v režimu boha.",
+      "load_failed_title": "Agenty se nepodařilo načíst",
+      "load_failed_description": "Zkontrolujte připojení a zkuste to znovu.",
+      "start_title": "Chat s agentem {name}",
+      "start_description": "Ptejte se na své pracovní položky, projekty a stránky. Agent jedná s vašimi oprávněními v Plane."
+    },
+    "composer": {
+      "label": "Zpráva",
+      "placeholder": "Zpráva pro {name}…",
+      "send": "Odeslat",
+      "stop": "Zastavit",
+      "hint": "Enter pro odeslání, Shift+Enter pro nový řádek"
+    },
+    "sessions": {
+      "title": "Chaty",
+      "new": "Nový chat",
+      "untitled": "Chat bez názvu",
+      "empty": "Žádné dřívější chaty",
+      "refresh": "Obnovit chaty"
+    },
+    "transcript": {
+      "label": "Konverzace",
+      "you": "Vy",
+      "thinking": "Přemýšlí",
+      "thought": "Úvaha",
+      "attachment": "Příloha",
+      "turn_end": {
+        "cancelled": "Zastaveno.",
+        "max_tokens": "Agent dosáhl limitu výstupu.",
+        "max_turn_requests": "Agent dosáhl limitu kroků pro tuto zprávu.",
+        "refusal": "Agent odmítl pokračovat.",
+        "failed": "Agent narazil na chybu.",
+        "disconnected": "Připojení bylo ukončeno dříve, než agent skončil."
+      },
+      "new_session_notice": "Znovu připojeno v novém chatu. Agent si nepamatuje dřívější zprávy.",
+      "compaction": {
+        "in_progress": "Shrnování dřívějších zpráv…",
+        "completed": "Dřívější zprávy byly shrnuty.",
+        "failed": "Shrnutí dřívějších zpráv se nezdařilo."
+      }
+    },
+    "tool_call": {
+      "status": {
+        "pending": "Čekající",
+        "in_progress": "Probíhá",
+        "completed": "Hotovo",
+        "failed": "Selhalo"
+      },
+      "untitled": "Volání nástroje",
+      "input": "Vstup",
+      "output": "Výstup",
+      "changes": "Změny v {path}",
+      "terminal": "Výstup terminálu"
+    },
+    "plan": {
+      "title": "Plán",
+      "progress": "Hotovo {done} z {total}"
+    },
+    "usage": {
+      "context": "Kontext: {used} z {size} tokenů",
+      "cost": "Náklady: {amount} {currency}"
+    },
+    "permission_prompt": {
+      "title": "Povolit tuto akci?",
+      "allow_once": "Povolit jednou",
+      "allow_always": "V tomto chatu vždy povolit",
+      "reject_once": "Zamítnout",
+      "reject_always": "Vždy zamítnout"
+    },
+    "status": {
+      "connecting": "Připojování…",
+      "reconnecting": "Opětovné připojování…"
+    },
+    "close": {
+      "reconnect": "Znovu připojit",
+      "title": "Chat odpojen",
+      "reasons": {
+        "closed": "Chat byl zavřen.",
+        "server_shutdown": "Chatovací server se restartuje. Za chvíli se znovu připojte.",
+        "network": "Chatovací server je nedostupný. Zkontrolujte připojení nebo se zeptejte správce, zda běží most agentů.",
+        "message_too_big": "Tato zpráva byla příliš velká na odeslání.",
+        "server_error": "Na serveru došlo k chybě. Zkuste to za chvíli znovu.",
+        "bad_request": "Tento odkaz na chat není platný.",
+        "unauthenticated": "Jste odhlášeni. Pro pokračování v chatu se znovu přihlaste.",
+        "forbidden": "Nejste členem tohoto pracovního prostoru.",
+        "agent_not_found": "Tento agent byl odebrán nebo zakázán.",
+        "idle_timeout": "Chat byl zavřen po určité době nečinnosti.",
+        "session_expired": "Platnost relace chatu vypršela.",
+        "too_many_chats": "Máte otevřeno příliš mnoho chatů. Jeden z nich zavřete v jiné kartě a zkuste to znovu.",
+        "agent_unavailable": "Agent je momentálně nedostupný. Zkuste to za chvíli znovu.",
+        "unknown": "Připojení k chatu bylo neočekávaně ukončeno."
+      }
+    },
+    "errors": {
+      "dismiss": "Zavřít",
+      "mode_not_allowed": "Váš správce pro tohoto agenta nepovoluje úroveň „{mode}“.",
+      "actions": {
+        "connect": "Chat se nepodařilo spustit.",
+        "new_session": "Nový chat se nepodařilo spustit.",
+        "load_session": "Tento chat se nepodařilo otevřít.",
+        "list_sessions": "Dřívější chaty se nepodařilo načíst.",
+        "prompt": "Agent na tuto zprávu nedokázal odpovědět.",
+        "set_mode": "Úroveň oprávnění se nepodařilo změnit.",
+        "set_model": "Model se nepodařilo změnit.",
+        "reconnect": "Opětovné připojení se nezdařilo."
+      },
+      "retry": "Zkusit znovu"
+    },
+    "admin": {
+      "title": "Agenti",
+      "description": "Agenti, se kterými mohou členové pracovního prostoru chatovat. Každý z nich spouští adaptér ACP s přihlašovacími údaji, které zde nastavíte.",
+      "add": "Přidat agenta",
+      "edit_named": "Upravit {name}",
+      "delete": "Smazat agenta",
+      "list": {
+        "empty_title": "Zatím žádní agenti",
+        "empty_description": "Přidejte agenta, aby s ním členové pracovního prostoru mohli chatovat.",
+        "load_failed": "Agenty se nepodařilo načíst.",
+        "enabled": "Povoleno",
+        "disabled": "Zakázáno",
+        "plane_mcp": "Nástroje Plane",
+        "max_level": "Nejvýše: {level}",
+        "env_unreadable": "Přihlašovací údaje nelze přečíst"
+      },
+      "form": {
+        "name": "Název",
+        "name_placeholder": "Claude",
+        "slug": "Slug",
+        "slug_help": "Malá písmena, číslice a pomlčky.",
+        "description": "Popis",
+        "description_placeholder": "K čemu mohou členové tohoto agenta používat",
+        "adapter": "Adaptér",
+        "adapters": {
+          "claude": "Claude",
+          "codex": "Codex",
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
+        },
+        "credentials": "Přihlašovací údaje a nastavení",
+        "credentials_help": "Hodnoty jsou pouze pro zápis. Uložené hodnoty zůstávají skryté; chcete-li hodnotu změnit, nahraďte ji.",
+        "env": {
+          "ANTHROPIC_API_KEY": {
+            "label": "API klíč Anthropic",
+            "help": "Nebo místo něj použijte OAuth token Claude Code."
+          },
+          "CLAUDE_CODE_OAUTH_TOKEN": {
+            "label": "OAuth token Claude Code",
+            "help": "Token předplatného Claude, který se použije, když není nastaven API klíč."
+          },
+          "OPENAI_API_KEY": {
+            "label": "API klíč OpenAI",
+            "help": "Přihlásí Codex, pokud jeho domovský adresář ještě není přihlášen."
+          },
+          "DEEPSEEK_API_KEY": {
+            "label": "API klíč DeepSeek",
+            "help": "Povinné."
+          },
+          "DEEPSEEK_BASE_URL": {
+            "label": "Základní URL API DeepSeek",
+            "help": "Volitelné. Výchozí hodnota je https://api.deepseek.com."
+          },
+          "PLANE_AGENT_MODEL": {
+            "label": "Výchozí model",
+            "help": "Volitelné ID modelu, např. claude-opus-5-5. Členové mohou modely přepínat v chatu."
+          },
+          "GEMINI_API_KEY": {
+            "label": "API klíč Gemini",
+            "help": "Použije se, když člen nemá vlastní klíč a není přihlášen přes Google."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Způsob přihlášení",
+            "help": "Volitelné: api_key, chatgpt (Codex) nebo google_account (Gemini). Vlastní přihlašovací údaje členů jej nastavují pro jejich chaty."
+          }
+        },
+        "saved": "Uloženo",
+        "keep": "Ponechat uloženou hodnotu",
+        "remove": "Odebrat",
+        "removed": "Bude odebráno",
+        "undo_remove": "Zpět",
+        "other_env": "Další proměnné",
+        "other_env_help": "Nastaveno přes API. Zůstanou zachovány, dokud je neodeberete.",
+        "env_unreadable": "Uložené přihlašovací údaje nelze dešifrovat (tajný klíč instance se mohl změnit). Zadejte je znovu.",
+        "default_level": "Výchozí úroveň oprávnění",
+        "default_level_help": "Úroveň, na které začíná nový chat.",
+        "max_level": "Maximální úroveň oprávnění",
+        "max_level_help": "Členové nemohou přepnout nad tuto úroveň.",
+        "attach_plane_mcp": "Nástroje Plane",
+        "attach_plane_mcp_help": "Poskytnout agentovi MCP server Plane, který jedná jménem chatujícího člena.",
+        "is_enabled": "Povoleno",
+        "is_enabled_help": "Zakázaní agenti jsou před členy skryti.",
+        "validation": {
+          "required": "Toto pole je povinné.",
+          "slug": "Použijte malá písmena, číslice a pomlčky.",
+          "default_above_max": "Výchozí úroveň nemůže být vyšší než maximální.",
+          "claude_auth": "Zadejte API klíč Anthropic nebo OAuth token Claude Code.",
+          "deepseek_auth": "Zadejte API klíč DeepSeek."
+        },
+        "cancel": "Zrušit",
+        "save": "Uložit změny",
+        "create": "Přidat agenta",
+        "saving": "Ukládání"
+      },
+      "toasts": {
+        "created": "Agent byl přidán.",
+        "updated": "Agent byl uložen.",
+        "deleted": "Agent byl smazán.",
+        "error_title": "Chyba",
+        "save_failed": "Agenta se nepodařilo uložit.",
+        "delete_failed": "Agenta se nepodařilo smazat."
+      },
+      "delete_dialog": {
+        "title": "Smazat agenta",
+        "description": "Smazat {name}? Členové s ním už nebudou moci chatovat a jeho uložené přihlašovací údaje budou odstraněny.",
+        "confirm": "Smazat",
+        "deleting": "Mazání"
+      }
+    },
+    "khaia": {
+      "open": "Otevřít {name}",
+      "unread": "Otevřít {name} (nová aktivita)",
+      "minimize": "Minimalizovat",
+      "open_page": "Otevřít na celé stránce",
+      "agent_menu_label": "Změnit agenta, nyní {agent}",
+      "greeting": "Dobrý den, jsem {name}",
+      "suggestions": {
+        "assigned_to_me": "Co je mi přiřazeno?",
+        "due_this_week": "Které pracovní položky mají termín tento týden?",
+        "recent_activity": "Shrnutí nedávné aktivity v mých projektech"
+      }
+    },
+    "providers": {
+      "load_failed_title": "Poskytovatele AI se nepodařilo načíst",
+      "load_failed_description": "Zkontrolujte připojení a zkuste to znovu.",
+      "claude_note": "Claude používá API klíč Anthropic. Přihlášení pomocí předplatného Claude se u aplikací postavených na Claude Agent SDK nenabízí.",
+      "personal": {
+        "title": "Vaše přihlašovací údaje"
+      },
+      "workspace": {
+        "title": "Klíč pracovního prostoru",
+        "admins_only": "Toto mohou změnit pouze správci pracovního prostoru."
+      },
+      "state": {
+        "none": "Nenastaveno",
+        "api_key": "API klíč ••••{hint}",
+        "signed_in": "Přihlášeno jako {email}",
+        "signed_in_unknown": "Přihlášeno"
+      },
+      "fallback": {
+        "instance": "Používá výchozí údaje instance.",
+        "missing": "Zatím žádný klíč – chaty s agenty tohoto poskytovatele budou selhávat, dokud nějaký nepřidáte."
+      },
+      "actions": {
+        "add_api_key": "Přidat API klíč",
+        "add_workspace_key": "Přidat klíč pracovního prostoru",
+        "replace": "Nahradit",
+        "remove": "Odebrat",
+        "disconnect": "Odpojit",
+        "sign_in_openai": "Přihlásit se přes ChatGPT",
+        "sign_in_google": "Přihlásit se přes Google"
+      },
+      "cancel": "Zrušit",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Přidat váš API klíč pro {provider}",
+          "title_replace": "Nahradit váš API klíč pro {provider}",
+          "description": "Tento klíč používají pouze vaše chaty. Ukládá se zašifrovaný a nelze jej znovu zobrazit."
+        },
+        "workspace": {
+          "title_add": "Přidat klíč pracovního prostoru pro {provider}",
+          "title_replace": "Nahradit klíč pracovního prostoru pro {provider}",
+          "description": "Tento klíč používají členové bez vlastních přihlašovacích údajů. Ukládá se zašifrovaný a nelze jej znovu zobrazit."
+        },
+        "label": "API klíč pro {provider}",
+        "invalid": "Zadejte klíč o délce 8 až 512 znaků bez mezer.",
+        "save": "Uložit klíč",
+        "saving": "Ukládání"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "Odebrat váš API klíč?",
+          "content": "Vaše chaty s agenty {provider} budou místo něj používat klíč pracovního prostoru nebo výchozí údaje instance."
+        },
+        "workspace": {
+          "title": "Odebrat klíč pracovního prostoru?",
+          "content": "Členové bez vlastních přihlašovacích údajů pro {provider} budou místo něj používat výchozí údaje instance."
+        },
+        "confirm": "Odebrat",
+        "removing": "Odebírání"
+      },
+      "disconnect_dialog": {
+        "title": "Odpojit účet?",
+        "content": "Vaše chaty přestanou používat {email}. Kdykoli se můžete znovu přihlásit.",
+        "content_unknown": "Vaše chaty přestanou používat tento účet. Kdykoli se můžete znovu přihlásit.",
+        "confirm": "Odpojit",
+        "disconnecting": "Odpojování"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Přihlásit se přes ChatGPT",
+          "description": "Chaty s Codex budou používat váš tarif ChatGPT.",
+          "open_link": "Otevřít přihlášení k ChatGPT",
+          "step_open": "Otevřete přihlašovací stránku ChatGPT."
+        },
+        "google": {
+          "title": "Přihlásit se přes Google",
+          "description": "Chaty s Gemini budou používat váš účet Google.",
+          "open_link": "Otevřít přihlášení Google",
+          "step_open": "Otevřete přihlašovací stránku Google a povolte přístup.",
+          "step_paste": "Vložte kód, který vám zobrazí Google."
+        },
+        "starting": "Spouštění přihlášení…",
+        "step_enter_code": "Zadejte tam tento kód:",
+        "code_label": "Kód",
+        "copy_code": "Kopírovat kód",
+        "code_copied": "Kód byl zkopírován.",
+        "waiting": "Čeká se na dokončení vašeho přihlášení…",
+        "code_required": "Vložte kód ze služby Google.",
+        "submit": "Připojit",
+        "submitting": "Připojování",
+        "retry": "Zkusit znovu",
+        "errors": {
+          "failed": "Přihlášení se nezdařilo.",
+          "expired": "Platnost tohoto přihlášení vypršela. Zkuste to znovu.",
+          "unreachable": "Most agentů je nedostupný. Zeptejte se správce, zda běží.",
+          "rate_limited": "Příliš mnoho pokusů o přihlášení. Počkejte minutu a zkuste to znovu.",
+          "signed_out": "Jste odhlášeni z Plane. Přihlaste se znovu a akci opakujte."
+        }
+      },
+      "toasts": {
+        "error_title": "Chyba",
+        "key_saved": "API klíč byl uložen.",
+        "key_removed": "API klíč byl odebrán.",
+        "key_save_failed": "API klíč se nepodařilo uložit.",
+        "key_remove_failed": "API klíč se nepodařilo odebrat.",
+        "connected": "Přihlášeno jako {email}.",
+        "connected_unknown": "Přihlášeno.",
+        "disconnected": "Účet byl odpojen.",
+        "disconnect_failed": "Účet se nepodařilo odpojit."
+      }
+    }
+  }
+}

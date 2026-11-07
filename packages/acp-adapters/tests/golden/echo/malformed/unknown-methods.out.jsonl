@@ -1,0 +1,7 @@
+{"jsonrpc":"2.0","id":1,"result":{"protocolVersion":1,"agentCapabilities":{"loadSession":false,"promptCapabilities":{"image":false,"audio":false,"embeddedContext":true},"mcpCapabilities":{"http":true,"sse":false},"sessionCapabilities":{}},"authMethods":[],"agentInfo":{"name":"plane-acp-echo","title":"Echo (test agent)","version":"1.5.0"}}}
+{"jsonrpc":"2.0","id":2,"error":{"code":-32601,"message":"\"Method not found\": plane/unknown","data":{"method":"plane/unknown"}}}
+{"jsonrpc":"2.0","id":3,"error":{"code":-32601,"message":"\"Method not found\": _plane/unknown","data":{"method":"_plane/unknown"}}}
+{"jsonrpc":"2.0","id":4,"error":{"code":-32601,"message":"\"Method not found\": terminal/create","data":{"method":"terminal/create"}}}
+{"jsonrpc":"2.0","id":5,"error":{"code":-32601,"message":"\"Method not found\": fs/read_text_file","data":{"method":"fs/read_text_file"}}}
+{"jsonrpc":"2.0","id":6,"error":{"code":-32601,"message":"\"Method not found\": new_session","data":{"method":"new_session"}}}
+{"jsonrpc":"2.0","id":7,"error":{"code":-32601,"message":"\"Method not found\": session/cancel","data":{"method":"session/cancel"}}}

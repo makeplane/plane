@@ -21,3 +21,4 @@ from .project import (
 )
 from .base import allow_permission, issue_hidden_from_guest, ROLE
 from .page import ProjectPagePermission
+from .agent_bridge import AgentBridgeSecretPermission

@@ -163,6 +163,19 @@ elif _num_proxies_raw:
 # API key throttle rate (DRF SimpleRateThrottle format, e.g. "60/minute")
 API_KEY_RATE_LIMIT = os.environ.get("API_KEY_RATE_LIMIT", "60/minute")
 
+# In-app agent chat. The agent bridge calls the internal agent-session endpoints
+# with this shared secret in the X-Agent-Bridge-Secret header. Empty disables them.
+AGENT_BRIDGE_SECRET = os.environ.get("AGENT_BRIDGE_SECRET", "")
+# Plane MCP server URL handed to agents (reachable from the agent runner).
+PLANE_MCP_URL = os.environ.get("PLANE_MCP_URL", "")
+# Lifetime of the workspace-scoped API token minted for each agent session.
+_agent_ttl_raw = os.environ.get("AGENT_SESSION_TOKEN_TTL_MINUTES", "").strip()
+AGENT_SESSION_TOKEN_TTL_MINUTES = 120
+if _agent_ttl_raw.isdecimal() and 0 < int(_agent_ttl_raw) <= 7 * 24 * 60:
+    AGENT_SESSION_TOKEN_TTL_MINUTES = int(_agent_ttl_raw)
+elif _agent_ttl_raw:
+    _logger.warning("AGENT_SESSION_TOKEN_TTL_MINUTES: ignoring invalid value %r", _agent_ttl_raw)
+
 # Django Auth Backend
 AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)  # default
 

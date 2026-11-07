@@ -17,7 +17,7 @@ set -a; . "$env_file"; set +a
 rclone_config_dir="${RCLONE_CONFIG_DIR:-$here/rclone}"
 rclone_image="rclone/rclone:1.75.2"
 read -r -a compose_files <<<"${COMPOSE_FILES:--f docker-compose.yml}"
-app_services=(gateway mcp api worker beat-worker live space admin)
+app_services=(gateway agent-bridge agent-runner mcp api worker beat-worker live space admin)
 
 compose() {
   docker compose ${COMPOSE_PROJECT:+-p "$COMPOSE_PROJECT"} --env-file "$env_file" "${compose_files[@]}" "$@"
@@ -72,7 +72,13 @@ trap cleanup EXIT
 RCLONE_DATA_MOUNT="$stage:/stage:z" rclone copy "${BACKUP_REMOTE}${backup}" /stage
 (cd "$stage" && sha256sum -c SHA256SUMS)
 tar tzf "$stage/uploads.tar.gz" >/dev/null
-echo "Checksums and the uploads archive are good."
+# Backups made before the agent chat have no agent_workspaces archive.
+has_agent_workspaces=0
+if [ -e "$stage/agent_workspaces.tar.gz" ]; then
+  tar tzf "$stage/agent_workspaces.tar.gz" >/dev/null
+  has_agent_workspaces=1
+fi
+echo "Checksums and the archives are good."
 
 if [ "$action" = "verify" ]; then
   # The same image as the live database, because pg_restore cannot read a dump
@@ -91,6 +97,11 @@ if [ "$action" = "verify" ]; then
   migrations="$(docker exec "$scratch_container" psql -U plane -d plane -Atc 'select count(*) from django_migrations')"
   objects="$(tar tzf "$stage/uploads.tar.gz" | grep -c . || true)"
   echo "Restored into a scratch database: $tables tables, $migrations migrations, $users users; uploads archive has $objects entries."
+  if [ "$has_agent_workspaces" -eq 1 ]; then
+    echo "Agent workspaces archive has $(tar tzf "$stage/agent_workspaces.tar.gz" | grep -c . || true) entries."
+  else
+    echo "This backup has no agent workspaces archive (made before the agent chat)."
+  fi
   [ "$tables" -gt 0 ] && [ "$migrations" -gt 0 ] || { echo "The restored database looks empty." >&2; exit 1; }
   echo "Verified: $backup"
   exit 0
@@ -114,6 +125,16 @@ minio_container="$(compose ps -q plane-minio)"
 docker run --rm -i --volumes-from "$minio_container" alpine:3.22 \
   sh -c 'find /export -mindepth 1 -delete && tar xzf - -C /export' <"$stage/uploads.tar.gz"
 compose restart plane-minio
+
+if [ "$has_agent_workspaces" -eq 1 ]; then
+  # In a one-off runner container (the runner itself is stopped), so GNU tar restores
+  # each dir's numeric owner and mode.
+  compose run --rm -T --no-deps --entrypoint sh agent-runner -c \
+    'find "$AGENT_WORKSPACES_ROOT" -mindepth 1 -delete && tar --numeric-owner -xpzf - -C "$AGENT_WORKSPACES_ROOT"' \
+    <"$stage/agent_workspaces.tar.gz"
+else
+  echo "This backup has no agent workspaces archive; agent_workspaces is left as it is."
+fi
 
 compose up -d
 echo "Restored $backup. The .env from that backup is not applied automatically:"

@@ -1,0 +1,371 @@
+{
+  "agents": {
+    "title": "Agenci",
+    "picker": {
+      "label": "Agent",
+      "placeholder": "Wybór agenta"
+    },
+    "model": {
+      "label": "Model językowy"
+    },
+    "permission": {
+      "label": "Poziom uprawnień",
+      "levels": {
+        "ask_all": {
+          "name": "Pytanie za każdym razem",
+          "description": "Pytanie przed każdym wywołaniem narzędzia, także przy odczytach."
+        },
+        "ask_writes": {
+          "name": "Pytanie przed zmianami",
+          "description": "Odczyty, wyszukiwania i pobieranie stron internetowych działają bez pytania. Polecenia powłoki, zmiany w plikach i zmiany w Plane wymagają wcześniejszego potwierdzenia."
+        },
+        "yolo": {
+          "name": "Bez pytania",
+          "description": "Uruchamianie każdego narzędzia bez pytania."
+        }
+      }
+    },
+    "empty": {
+      "no_agents_title": "Brak agentów",
+      "no_agents_description": "Administrator instancji może dodać agentów w trybie boga.",
+      "load_failed_title": "Nie udało się wczytać agentów",
+      "load_failed_description": "Proszę sprawdzić połączenie i spróbować ponownie.",
+      "start_title": "Czat z agentem {name}",
+      "start_description": "Można pytać o elementy pracy, projekty i strony. Agent działa z uprawnieniami użytkownika w Plane."
+    },
+    "composer": {
+      "label": "Wiadomość",
+      "placeholder": "Wiadomość do {name}…",
+      "send": "Wyślij",
+      "stop": "Zatrzymaj",
+      "hint": "Enter – wysłanie, Shift+Enter – nowy wiersz"
+    },
+    "sessions": {
+      "title": "Czaty",
+      "new": "Nowy czat",
+      "untitled": "Czat bez tytułu",
+      "empty": "Brak wcześniejszych czatów",
+      "refresh": "Odśwież czaty"
+    },
+    "transcript": {
+      "label": "Rozmowa",
+      "you": "Użytkownik",
+      "thinking": "Myślenie",
+      "thought": "Przemyślenia",
+      "attachment": "Załącznik",
+      "turn_end": {
+        "cancelled": "Zatrzymano.",
+        "max_tokens": "Agent osiągnął limit danych wyjściowych.",
+        "max_turn_requests": "Agent osiągnął limit kroków dla tej wiadomości.",
+        "refusal": "Agent odmówił kontynuowania.",
+        "failed": "Agent napotkał błąd.",
+        "disconnected": "Połączenie zostało zamknięte, zanim agent skończył."
+      },
+      "new_session_notice": "Ponownie połączono w nowym czacie. Agent nie pamięta wcześniejszych wiadomości.",
+      "compaction": {
+        "in_progress": "Podsumowywanie wcześniejszych wiadomości…",
+        "completed": "Wcześniejsze wiadomości zostały podsumowane.",
+        "failed": "Nie udało się podsumować wcześniejszych wiadomości."
+      }
+    },
+    "tool_call": {
+      "status": {
+        "pending": "Oczekujące",
+        "in_progress": "W toku",
+        "completed": "Gotowe",
+        "failed": "Nieudane"
+      },
+      "untitled": "Wywołanie narzędzia",
+      "input": "Dane wejściowe",
+      "output": "Dane wyjściowe",
+      "changes": "Zmiany w {path}",
+      "terminal": "Dane wyjściowe terminala"
+    },
+    "plan": {
+      "title": "Plan działania",
+      "progress": "Ukończono {done} z {total}"
+    },
+    "usage": {
+      "context": "Kontekst: {used} z {size} tokenów",
+      "cost": "Koszt: {amount} {currency}"
+    },
+    "permission_prompt": {
+      "title": "Zezwolić na tę akcję?",
+      "allow_once": "Zezwól jednorazowo",
+      "allow_always": "Zawsze zezwalaj w tym czacie",
+      "reject_once": "Odmów",
+      "reject_always": "Zawsze odmawiaj"
+    },
+    "status": {
+      "connecting": "Łączenie…",
+      "reconnecting": "Ponowne łączenie…"
+    },
+    "close": {
+      "reconnect": "Połącz ponownie",
+      "title": "Czat rozłączony",
+      "reasons": {
+        "closed": "Czat został zamknięty.",
+        "server_shutdown": "Serwer czatu jest uruchamiany ponownie. Proszę połączyć się ponownie za chwilę.",
+        "network": "Nie można połączyć się z serwerem czatu. Proszę sprawdzić połączenie lub zapytać administratora, czy działa mostek agentów.",
+        "message_too_big": "Ta wiadomość była zbyt duża, aby ją wysłać.",
+        "server_error": "Wystąpił błąd po stronie serwera. Proszę spróbować ponownie za chwilę.",
+        "bad_request": "Ten link do czatu jest nieprawidłowy.",
+        "unauthenticated": "Nastąpiło wylogowanie. Proszę zalogować się ponownie, aby korzystać z czatu.",
+        "forbidden": "Brak członkostwa w tej przestrzeni roboczej.",
+        "agent_not_found": "Ten agent został usunięty lub wyłączony.",
+        "idle_timeout": "Czat został zamknięty z powodu braku aktywności.",
+        "session_expired": "Sesja czatu wygasła.",
+        "too_many_chats": "Otwartych jest zbyt wiele czatów. Proszę zamknąć jeden z nich w innej karcie i spróbować ponownie.",
+        "agent_unavailable": "Agent jest obecnie niedostępny. Proszę spróbować ponownie za chwilę.",
+        "unknown": "Połączenie z czatem zostało nieoczekiwanie zamknięte."
+      }
+    },
+    "errors": {
+      "dismiss": "Zamknij",
+      "mode_not_allowed": "Administrator nie zezwala na poziom „{mode}” dla tego agenta.",
+      "actions": {
+        "connect": "Nie udało się uruchomić czatu.",
+        "new_session": "Nie udało się rozpocząć nowego czatu.",
+        "load_session": "Nie udało się otworzyć tego czatu.",
+        "list_sessions": "Nie udało się wczytać wcześniejszych czatów.",
+        "prompt": "Agent nie mógł odpowiedzieć na tę wiadomość.",
+        "set_mode": "Nie udało się zmienić poziomu uprawnień.",
+        "set_model": "Nie udało się zmienić modelu.",
+        "reconnect": "Nie udało się połączyć ponownie."
+      },
+      "retry": "Spróbuj ponownie"
+    },
+    "admin": {
+      "title": "Agenci",
+      "description": "Agenci, z którymi członkowie przestrzeni roboczej mogą czatować. Każdy z nich uruchamia adapter ACP z ustawionymi tutaj danymi uwierzytelniającymi.",
+      "add": "Dodaj agenta",
+      "edit_named": "Edytuj {name}",
+      "delete": "Usuń agenta",
+      "list": {
+        "empty_title": "Brak agentów",
+        "empty_description": "Po dodaniu agenta członkowie przestrzeni roboczej będą mogli z nim czatować.",
+        "load_failed": "Nie udało się wczytać agentów.",
+        "enabled": "Włączony",
+        "disabled": "Wyłączony",
+        "plane_mcp": "Narzędzia Plane",
+        "max_level": "Maksymalnie: {level}",
+        "env_unreadable": "Nieczytelne dane uwierzytelniające"
+      },
+      "form": {
+        "name": "Nazwa",
+        "name_placeholder": "Claude",
+        "slug": "Slug",
+        "slug_help": "Małe litery, cyfry i łączniki.",
+        "description": "Opis",
+        "description_placeholder": "Do czego członkowie mogą używać tego agenta",
+        "adapter": "Adapter ACP",
+        "adapters": {
+          "claude": "Claude",
+          "codex": "Codex",
+          "deepseek": "DeepSeek",
+          "gemini": "Gemini"
+        },
+        "credentials": "Dane uwierzytelniające i ustawienia",
+        "credentials_help": "Wartości są tylko do zapisu. Zapisane wartości pozostają ukryte; aby zmienić wartość, należy ją zastąpić.",
+        "env": {
+          "ANTHROPIC_API_KEY": {
+            "label": "Klucz API Anthropic",
+            "help": "Można też zamiast niego użyć tokenu OAuth Claude Code."
+          },
+          "CLAUDE_CODE_OAUTH_TOKEN": {
+            "label": "Token OAuth Claude Code",
+            "help": "Token subskrypcji Claude, używany, gdy nie ustawiono klucza API."
+          },
+          "OPENAI_API_KEY": {
+            "label": "Klucz API OpenAI",
+            "help": "Loguje Codex, jeśli jego katalog domowy nie jest jeszcze zalogowany."
+          },
+          "DEEPSEEK_API_KEY": {
+            "label": "Klucz API DeepSeek",
+            "help": "Wymagane."
+          },
+          "DEEPSEEK_BASE_URL": {
+            "label": "Bazowy URL API DeepSeek",
+            "help": "Opcjonalne. Domyślnie https://api.deepseek.com."
+          },
+          "PLANE_AGENT_MODEL": {
+            "label": "Model domyślny",
+            "help": "Opcjonalny identyfikator modelu, np. claude-opus-5-5. Członkowie mogą zmieniać modele w czacie."
+          },
+          "GEMINI_API_KEY": {
+            "label": "Klucz API Gemini",
+            "help": "Używany, gdy członek nie ma własnego klucza i nie jest zalogowany przez Google."
+          },
+          "PLANE_AGENT_AUTH": {
+            "label": "Metoda logowania",
+            "help": "Opcjonalne: api_key, chatgpt (Codex) lub google_account (Gemini). Własne dane uwierzytelniające członków ustawiają tę wartość dla ich czatów."
+          }
+        },
+        "saved": "Zapisano",
+        "keep": "Zachowaj zapisaną wartość",
+        "remove": "Usuń",
+        "removed": "Zostanie usunięte",
+        "undo_remove": "Cofnij",
+        "other_env": "Inne zmienne",
+        "other_env_help": "Ustawione przez API. Są zachowywane, dopóki nie zostaną usunięte.",
+        "env_unreadable": "Nie można odszyfrować zapisanych danych uwierzytelniających (klucz tajny instancji mógł się zmienić). Należy wprowadzić je ponownie.",
+        "default_level": "Domyślny poziom uprawnień",
+        "default_level_help": "Poziom, od którego zaczyna się nowy czat.",
+        "max_level": "Maksymalny poziom uprawnień",
+        "max_level_help": "Członkowie nie mogą przełączyć się na wyższy poziom.",
+        "attach_plane_mcp": "Narzędzia Plane",
+        "attach_plane_mcp_help": "Udostępnia agentowi serwer MCP Plane, działający w imieniu członka prowadzącego czat.",
+        "is_enabled": "Włączony",
+        "is_enabled_help": "Wyłączeni agenci są ukryci przed członkami.",
+        "validation": {
+          "required": "To pole jest wymagane.",
+          "slug": "Należy użyć małych liter, cyfr i łączników.",
+          "default_above_max": "Poziom domyślny nie może być wyższy niż maksymalny.",
+          "claude_auth": "Należy wprowadzić klucz API Anthropic lub token OAuth Claude Code.",
+          "deepseek_auth": "Należy wprowadzić klucz API DeepSeek."
+        },
+        "cancel": "Anuluj",
+        "save": "Zapisz zmiany",
+        "create": "Dodaj agenta",
+        "saving": "Zapisywanie"
+      },
+      "toasts": {
+        "created": "Dodano agenta.",
+        "updated": "Zapisano agenta.",
+        "deleted": "Usunięto agenta.",
+        "error_title": "Błąd",
+        "save_failed": "Nie udało się zapisać agenta.",
+        "delete_failed": "Nie udało się usunąć agenta."
+      },
+      "delete_dialog": {
+        "title": "Usuń agenta",
+        "description": "Usunąć {name}? Członkowie nie będą już mogli z nim czatować, a jego zapisane dane uwierzytelniające zostaną usunięte.",
+        "confirm": "Usuń",
+        "deleting": "Usuwanie"
+      }
+    },
+    "khaia": {
+      "open": "Otwórz {name}",
+      "unread": "Otwórz {name} (nowa aktywność)",
+      "minimize": "Minimalizuj",
+      "open_page": "Otwórz na całej stronie",
+      "agent_menu_label": "Zmień agenta, obecnie {agent}",
+      "greeting": "Dzień dobry, jestem {name}",
+      "suggestions": {
+        "assigned_to_me": "Co jest do mnie przypisane?",
+        "due_this_week": "Które elementy pracy mają termin w tym tygodniu?",
+        "recent_activity": "Podsumowanie ostatniej aktywności w moich projektach"
+      }
+    },
+    "providers": {
+      "load_failed_title": "Nie udało się wczytać dostawców AI",
+      "load_failed_description": "Proszę sprawdzić połączenie i spróbować ponownie.",
+      "claude_note": "Claude używa klucza API Anthropic. Logowanie za pomocą subskrypcji Claude nie jest dostępne w aplikacjach zbudowanych na Claude Agent SDK.",
+      "personal": {
+        "title": "Własne dane uwierzytelniające"
+      },
+      "workspace": {
+        "title": "Klucz przestrzeni roboczej",
+        "admins_only": "Tylko administratorzy przestrzeni roboczej mogą to zmienić."
+      },
+      "state": {
+        "none": "Nie ustawiono",
+        "api_key": "Klucz API ••••{hint}",
+        "signed_in": "Zalogowano jako {email}",
+        "signed_in_unknown": "Zalogowano"
+      },
+      "fallback": {
+        "instance": "Używane jest ustawienie domyślne instancji.",
+        "missing": "Brak klucza. Czaty z agentami tego dostawcy będą kończyć się błędem, dopóki klucz nie zostanie dodany."
+      },
+      "actions": {
+        "add_api_key": "Dodaj klucz API",
+        "add_workspace_key": "Dodaj klucz przestrzeni roboczej",
+        "replace": "Zastąp",
+        "remove": "Usuń",
+        "disconnect": "Odłącz",
+        "sign_in_openai": "Zaloguj się przez ChatGPT",
+        "sign_in_google": "Zaloguj się przez Google"
+      },
+      "cancel": "Anuluj",
+      "api_key_dialog": {
+        "personal": {
+          "title_add": "Dodaj własny klucz API {provider}",
+          "title_replace": "Zastąp własny klucz API {provider}",
+          "description": "Ten klucz jest używany wyłącznie we własnych czatach. Jest przechowywany w postaci zaszyfrowanej i nie można go ponownie wyświetlić."
+        },
+        "workspace": {
+          "title_add": "Dodaj klucz przestrzeni roboczej {provider}",
+          "title_replace": "Zastąp klucz przestrzeni roboczej {provider}",
+          "description": "Członkowie bez własnych danych uwierzytelniających używają tego klucza. Jest przechowywany w postaci zaszyfrowanej i nie można go ponownie wyświetlić."
+        },
+        "label": "Klucz API {provider}",
+        "invalid": "Proszę wprowadzić klucz o długości od 8 do 512 znaków, bez spacji.",
+        "save": "Zapisz klucz",
+        "saving": "Zapisywanie"
+      },
+      "remove_dialog": {
+        "personal": {
+          "title": "Usunąć własny klucz API?",
+          "content": "Czaty z agentami {provider} będą zamiast tego używać klucza przestrzeni roboczej lub ustawienia domyślnego instancji."
+        },
+        "workspace": {
+          "title": "Usunąć klucz przestrzeni roboczej?",
+          "content": "Członkowie bez własnych danych uwierzytelniających {provider} będą zamiast tego używać ustawienia domyślnego instancji."
+        },
+        "confirm": "Usuń",
+        "removing": "Usuwanie"
+      },
+      "disconnect_dialog": {
+        "title": "Odłączyć konto?",
+        "content": "Czaty przestaną używać konta {email}. Można zalogować się ponownie w dowolnym momencie.",
+        "content_unknown": "Czaty przestaną używać tego konta. Można zalogować się ponownie w dowolnym momencie.",
+        "confirm": "Odłącz",
+        "disconnecting": "Odłączanie"
+      },
+      "sign_in": {
+        "openai": {
+          "title": "Zaloguj się przez ChatGPT",
+          "description": "Czaty Codex będą korzystać z planu ChatGPT użytkownika.",
+          "open_link": "Otwórz logowanie ChatGPT",
+          "step_open": "Proszę otworzyć stronę logowania ChatGPT."
+        },
+        "google": {
+          "title": "Zaloguj się przez Google",
+          "description": "Czaty Gemini będą korzystać z konta Google użytkownika.",
+          "open_link": "Otwórz logowanie Google",
+          "step_open": "Proszę otworzyć stronę logowania Google i zezwolić na dostęp.",
+          "step_paste": "Proszę wkleić kod wyświetlony przez Google."
+        },
+        "starting": "Rozpoczynanie logowania…",
+        "step_enter_code": "Proszę wprowadzić tam ten kod:",
+        "code_label": "Kod",
+        "copy_code": "Kopiuj kod",
+        "code_copied": "Skopiowano kod.",
+        "waiting": "Oczekiwanie na zakończenie logowania…",
+        "code_required": "Proszę wkleić kod z Google.",
+        "submit": "Połącz",
+        "submitting": "Łączenie",
+        "retry": "Spróbuj ponownie",
+        "errors": {
+          "failed": "Logowanie nie powiodło się.",
+          "expired": "To logowanie wygasło. Proszę spróbować ponownie.",
+          "unreachable": "Nie można połączyć się z mostkiem agentów. Proszę zapytać administratora, czy działa.",
+          "rate_limited": "Zbyt wiele prób logowania. Proszę odczekać minutę i spróbować ponownie.",
+          "signed_out": "Nastąpiło wylogowanie z Plane. Proszę zalogować się ponownie i spróbować jeszcze raz."
+        }
+      },
+      "toasts": {
+        "error_title": "Błąd",
+        "key_saved": "Zapisano klucz API.",
+        "key_removed": "Usunięto klucz API.",
+        "key_save_failed": "Nie udało się zapisać klucza API.",
+        "key_remove_failed": "Nie udało się usunąć klucza API.",
+        "connected": "Zalogowano jako {email}.",
+        "connected_unknown": "Zalogowano.",
+        "disconnected": "Odłączono konto.",
+        "disconnect_failed": "Nie udało się odłączyć konta."
+      }
+    }
+  }
+}

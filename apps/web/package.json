@@ -14,7 +14,8 @@
     "check:types": "react-router typegen && tsc --noEmit",
     "check:format": "oxfmt --check .",
     "fix:lint": "oxlint --fix .",
-    "fix:format": "oxfmt ."
+    "fix:format": "oxfmt .",
+    "test": "vitest run"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
@@ -26,6 +27,7 @@
     "@fontsource/ibm-plex-mono": "catalog:",
     "@fontsource/material-symbols-rounded": "catalog:",
     "@makeplane/propel": "catalog:",
+    "@plane/acp-client": "workspace:*",
     "@plane/blocks": "workspace:*",
     "@plane/constants": "workspace:*",
     "@plane/editor": "workspace:*",
@@ -39,6 +41,7 @@
     "@react-router/node": "catalog:",
     "@tanstack/react-table": "catalog:",
     "axios": "catalog:",
+    "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "cmdk": "catalog:",
     "comlink": "catalog:",
@@ -74,13 +77,17 @@
     "@react-router/dev": "catalog:",
     "@tailwindcss/postcss": "catalog:",
     "@tailwindcss/typography": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "dotenv": "catalog:",
+    "jsdom": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-tsconfig-paths": "catalog:"
+    "vite-tsconfig-paths": "catalog:",
+    "vitest": "catalog:"
   }
 }

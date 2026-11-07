@@ -1,0 +1,13 @@
+.next/
+.react-router/
+.turbo/
+.vite/
+build/
+dist/
+node_modules/
+out/
+pnpm-lock.yaml
+storybook-static/
+
+# Golden fixtures are compared byte for byte and pinned by hash.
+tests/golden/

@@ -494,6 +494,10 @@
         "heading": "Skrip",
         "new_script": "Skrip Baru",
         "description": "Otomatisasi alur kerja Anda dengan skrip kustom dan aturan otomatisasi."
+      },
+      "ai_providers": {
+        "title": "Penyedia AI",
+        "description": "Kredensial untuk obrolan agen. Obrolan menggunakan kredensial Anda sendiri terlebih dahulu, lalu kunci ruang kerja, lalu kredensial bawaan instansi."
       }
     },
     "empty_state": {

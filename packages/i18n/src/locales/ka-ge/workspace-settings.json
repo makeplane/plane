@@ -494,6 +494,10 @@
         "heading": "Scripts",
         "new_script": "New Script",
         "description": "Automate your workflows with custom scripts and automation rules."
+      },
+      "ai_providers": {
+        "title": "AI პროვაიდერები",
+        "description": "ავტორიზაციის მონაცემები აგენტის ჩატისთვის. ჩატები ჯერ თქვენს საკუთარ ავტორიზაციის მონაცემებს იყენებს, შემდეგ სამუშაო სივრცის გასაღებს, ბოლოს კი ინსტანსის ნაგულისხმევ მნიშვნელობას."
       }
     },
     "empty_state": {

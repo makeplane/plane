@@ -494,6 +494,10 @@
         "heading": "Komut Dosyaları",
         "new_script": "Yeni Komut Dosyası",
         "description": "İş akışlarınızı özel komut dosyaları ve otomasyon kurallarıyla otomatikleştirin."
+      },
+      "ai_providers": {
+        "title": "Yapay zeka sağlayıcıları",
+        "description": "Ajan sohbeti için kimlik bilgileri. Sohbetler önce kendi kimlik bilgilerinizi, ardından çalışma alanı anahtarını, sonra da sunucu varsayılanını kullanır."
       }
     },
     "empty_state": {

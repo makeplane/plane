@@ -494,6 +494,10 @@
         "heading": "Scripts",
         "new_script": "Nouveau script",
         "description": "Automatisez vos flux de travail avec des scripts personnalisés et des règles d’automatisation."
+      },
+      "ai_providers": {
+        "title": "Fournisseurs d’IA",
+        "description": "Identifiants pour le chat avec les agents. Les conversations utilisent d’abord vos propres identifiants, puis la clé de l’espace de travail, et enfin les identifiants par défaut de l’instance."
       }
     },
     "empty_state": {

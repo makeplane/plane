@@ -1,0 +1,22 @@
+{
+  "general": {
+    "enableAutoUpdate": false,
+    "enableAutoUpdateNotification": false,
+    "enableNotifications": false,
+    "defaultApprovalMode": "default",
+    "checkpointing": { "enabled": false },
+    "plan": { "enabled": false }
+  },
+  "privacy": { "usageStatisticsEnabled": false },
+  "telemetry": { "enabled": false, "logPrompts": false },
+  "ide": { "enabled": false },
+  "security": {
+    "folderTrust": { "enabled": false },
+    "disableYoloMode": true,
+    "disableAlwaysAllow": true,
+    "enablePermanentToolApproval": false,
+    "auth": { "selectedType": "gemini-api-key" }
+  },
+  "hooksConfig": { "enabled": false },
+  "advanced": { "ignoreLocalEnv": true, "autoConfigureMemory": false }
+}
