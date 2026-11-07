@@ -6,7 +6,9 @@ policy but never translates, and it never runs agents itself (no agent CLIs or a
 
 ```
 browser ──WS /agents/acp (cookie)──▶ agent-bridge ──WS /acp (spawn ticket)──▶ agent-runner ──stdio──▶ plane-acp-*
-                                       └─▶ API: /api/users/me/ (cookie), /api/internal/agent-sessions/ (shared secret)
+browser ──HTTP /agents/connections/* ─▶     │      ──HTTP /auth/* (login ticket)─▶      └──stdio──▶ plane-agent-login
+                                            └─▶ API: /api/users/me/ (cookie), /api/internal/agent-sessions/,
+                                                     /api/internal/agent-connections/ (shared secret)
 ```
 
 ## Endpoints
@@ -18,6 +20,7 @@ browser ──WS /agents/acp (cookie)──▶ agent-bridge ──WS /acp (spawn
   4. `POST /api/internal/agent-sessions/` mints a short-lived, workspace-scoped token.
   5. Opens the runner connection.
 - `GET /agents/health`: liveness and the open connection count.
+- `<base>/connections/<provider>/…`: provider account sign-in (below).
 
 When the browser disconnects (or the session ends any other way), the runner connection is closed
 (the runner kills the agent) and the token is revoked with `DELETE /api/internal/agent-sessions/<id>/`.
@@ -53,6 +56,52 @@ When the browser disconnects (or the session ends any other way), the runner con
   - An idle timeout, which only applies when no request is in flight.
   - The connection closes when the token expires.
 
+## Provider sign-in (`<base>/connections/<provider>/…`)
+
+Workspace settings → AI providers uses these to connect a member's own ChatGPT or Google account.
+`provider` is `openai` (adapter `codex`, API method `chatgpt`) or `google` (adapter `gemini`, method
+`google_account`). Every request, in order:
+
+1. The Origin check of the WebSocket (and a GET without `Origin` whose `Sec-Fetch-Site` is
+   `cross-site`/`same-site` is refused). Allowed origins get CORS headers with credentials, and
+   `OPTIONS` preflights are answered (`GET, POST`, header `Content-Type`).
+2. `POST` requires `Content-Type: application/json`.
+3. Cookie → `/api/users/me/`.
+4. `POST /api/internal/agent-connections/authorize/` `{user_id, workspace_slug}`: an active member.
+5. A single-use `purpose: "login"` spawn ticket (`env: {}`, `initialMode: "ask_all"`) for the runner's
+   `/auth/*` (see the runner README).
+
+| Endpoint                                     | Body / query                 | Success                                                |
+| -------------------------------------------- | ---------------------------- | ------------------------------------------------------ |
+| `POST …/start`                               | `{workspace}`                | 200 `{loginId, verificationUrl, userCode?, needsCode}` |
+| `GET …/status?workspace=<slug>&loginId=<id>` |                              | 200 `{status, account?, error?}`                       |
+| `POST …/complete`                            | `{workspace, loginId, code}` | 200 `{status, account?, error?}`                       |
+| `POST …/disconnect`                          | `{workspace}`                | 204                                                    |
+
+- `status` is `pending`, `connected` or `failed`; `account` is `{email?, plan?}` on `connected`; `error`
+  is set on `failed`.
+- ChatGPT (`openai`): `needsCode: false`; show `userCode` and `verificationUrl` and poll `status`.
+- Google (`google`): `needsCode: true`, no `userCode`; open `verificationUrl`, then send the code the
+  user pastes to `complete`.
+- When `status` or `complete` reports `connected`, the bridge records the credential first:
+  `PUT /api/internal/agent-connections/` `{user_id, workspace_slug, provider, method, account_label}`
+  (the email). If that fails the answer is 502 and the next `status` poll retries it.
+- `disconnect` signs out on the runner, then `DELETE /api/internal/agent-connections/`
+  `{user_id, workspace_slug, provider}`. If the runner cannot sign out, nothing is deleted (502).
+- Errors are JSON `{error}`:
+
+| Status | Meaning                                                                                                      |
+| ------ | ------------------------------------------------------------------------------------------------------------ |
+| 400    | Unknown provider, missing/invalid `workspace`/`loginId`/`code`, not JSON, a code for a sign-in without one   |
+| 401    | Not signed in                                                                                                |
+| 403    | Not an active member of the workspace, or a disallowed origin                                                |
+| 404    | Unknown sign-in (expired, or not this user's/workspace's/provider's), or an unknown route                    |
+| 429    | Too many `start`s for this user (`Retry-After` is set)                                                       |
+| 502    | The runner or the API is unavailable or misconfigured; or the sign-in helper failed (its message is `error`) |
+
+- Every answer is `Cache-Control: no-store`. Cookies, tickets, verification URLs, device codes and pasted
+  codes are never logged.
+
 ## Close codes
 
 | Code | Meaning                                                       |
@@ -71,24 +120,27 @@ A cross-origin upgrade is refused with HTTP 403 before any API call.
 
 ## Environment
 
-| Variable                                | Default          | Meaning                                                                            |
-| --------------------------------------- | ---------------- | ---------------------------------------------------------------------------------- |
-| `PORT` / `HOST`                         | `3400`/`0.0.0.0` | Listen address                                                                     |
-| `API_BASE_URL`                          | (required)       | Plane API origin                                                                   |
-| `AGENT_BRIDGE_SECRET`                   | (required)       | Same value as the API's `AGENT_BRIDGE_SECRET`                                      |
-| `AGENT_RUNNER_URL`                      | (required)       | Runner endpoint, e.g. `ws://agent-runner:3410/acp`                                 |
-| `AGENT_RUNNER_SECRET`                   | (required)       | Signs spawn tickets (32+ chars); same value on the runner                          |
-| `AGENT_BRIDGE_BASE_PATH`                | `/agents`        | Mount point                                                                        |
-| `AGENT_WORKSPACES_ROOT`                 | `/workspaces`    | Must equal the runner's value (the cwd is computed on both sides)                  |
-| `PLANE_MCP_URL`                         | (API's value)    | Overrides the MCP URL the API returns (use the address the runner can reach)       |
-| `CORS_ALLOWED_ORIGINS`                  | (empty)          | Browser origins allowed to connect; empty: the bridge's own host only              |
-| `AGENT_BRIDGE_MAX_MESSAGE_BYTES`        | 4 MiB            | Largest frame from the browser                                                     |
-| `AGENT_BRIDGE_MAX_AGENT_MESSAGE_BYTES`  | 32 MiB           | Largest frame from the runner                                                      |
-| `AGENT_BRIDGE_MAX_CONNECTIONS_PER_USER` | `4`              |                                                                                    |
-| `AGENT_BRIDGE_MAX_CONNECTIONS`          | `500`            |                                                                                    |
-| `AGENT_BRIDGE_IDLE_TIMEOUT_MS`          | 15 min           |                                                                                    |
-| `AGENT_BRIDGE_PING_INTERVAL_MS`         | 30 s             | WebSocket keepalive                                                                |
-| `LOG_LEVEL`, `APP_VERSION`              |                  | Structured JSON logs via `@plane/logger`. Tokens, env and cookies are never logged |
+| Variable                                | Default          | Meaning                                                                               |
+| --------------------------------------- | ---------------- | ------------------------------------------------------------------------------------- |
+| `PORT` / `HOST`                         | `3400`/`0.0.0.0` | Listen address                                                                        |
+| `API_BASE_URL`                          | (required)       | Plane API origin                                                                      |
+| `AGENT_BRIDGE_SECRET`                   | (required)       | Same value as the API's `AGENT_BRIDGE_SECRET`                                         |
+| `AGENT_RUNNER_URL`                      | (required)       | Runner endpoint, e.g. `ws://agent-runner:3410/acp`                                    |
+| `AGENT_RUNNER_SECRET`                   | (required)       | Signs spawn tickets (32+ chars); same value on the runner                             |
+| `AGENT_RUNNER_HTTP_URL`                 | (from the above) | Runner HTTP origin for `/auth/*`; default `AGENT_RUNNER_URL` as http(s), minus `/acp` |
+| `AGENT_BRIDGE_BASE_PATH`                | `/agents`        | Mount point                                                                           |
+| `AGENT_WORKSPACES_ROOT`                 | `/workspaces`    | Must equal the runner's value (the cwd is computed on both sides)                     |
+| `PLANE_MCP_URL`                         | (API's value)    | Overrides the MCP URL the API returns (use the address the runner can reach)          |
+| `CORS_ALLOWED_ORIGINS`                  | (empty)          | Browser origins allowed to connect (and to call `/connections`); empty: own host only |
+| `AGENT_BRIDGE_MAX_MESSAGE_BYTES`        | 4 MiB            | Largest frame from the browser                                                        |
+| `AGENT_BRIDGE_MAX_AGENT_MESSAGE_BYTES`  | 32 MiB           | Largest frame from the runner                                                         |
+| `AGENT_BRIDGE_MAX_CONNECTIONS_PER_USER` | `4`              |                                                                                       |
+| `AGENT_BRIDGE_MAX_CONNECTIONS`          | `500`            |                                                                                       |
+| `AGENT_BRIDGE_IDLE_TIMEOUT_MS`          | 15 min           |                                                                                       |
+| `AGENT_BRIDGE_PING_INTERVAL_MS`         | 30 s             | WebSocket keepalive                                                                   |
+| `AGENT_BRIDGE_LOGIN_START_LIMIT`        | `10`             | Sign-in `start`s per user per window                                                  |
+| `AGENT_BRIDGE_LOGIN_START_WINDOW_MS`    | 10 min           |                                                                                       |
+| `LOG_LEVEL`, `APP_VERSION`              |                  | Structured JSON logs via `@plane/logger`. Tokens, env and cookies are never logged    |
 
 ## Transports
 

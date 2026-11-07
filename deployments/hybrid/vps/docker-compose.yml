@@ -197,7 +197,7 @@ services:
       - api
       - agent-runner
 
-  # Runs the agents (apps/agent-runner): plane-acp-claude, -codex and -deepseek, each as
+  # Runs the agents (apps/agent-runner): plane-acp-claude, -codex, -gemini and -deepseek, each as
   # its workspace dir's own unprivileged uid, so this container is the sandbox. It needs
   # root to switch uids; it gets only the capabilities that takes, and agents get none.
   agent-runner:

@@ -253,22 +253,22 @@ Workspace members chat with agents at `/<workspace-slug>/agents`. The browser sp
 Like the rest of this file, this describes a server that runs `vps/`. The production VPS runs its own stack (see [Production today](#production-today)), so the services, network, volume, secrets, firewall and `/agents` route below have to be added there too.
 
 ```
-browser ──▶ router ──▶ gateway ──▶ agent-bridge ──▶ agent-runner ──▶ plane-acp-claude | -codex | -deepseek
+browser ──▶ router ──▶ gateway ──▶ agent-bridge ──▶ agent-runner ──▶ plane-acp-claude | -codex | -deepseek | -gemini
                                         │                                   │
                                         └─▶ api (cookie check, token)       └─▶ mcp (Plane data, as the user)
 ```
 
 ### Services, networks, volume
 
-| Service        | Networks        | What it does                                                                                                                                                                                          |
-| -------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `agent-bridge` | `app`, `agents` | Policy proxy. It checks the session cookie with the API and the `Origin` header, mints a short-lived token scoped to the workspace for each chat, and relays ACP to the runner. It never runs agents. |
-| `agent-runner` | `agents` only   | Runs each agent as its own unprivileged uid, with a persistent working dir in the `agent_workspaces` volume.                                                                                          |
-| `mcp`          | `app`, `agents` | Joins `agents` so that agents reach Plane at `http://mcp:8211/mcp`, with their session token.                                                                                                         |
+| Service        | Networks        | What it does                                                                                                                                                                                                                                                                                                                                                             |
+| -------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `agent-bridge` | `app`, `agents` | Policy proxy. It checks the session cookie with the API and the `Origin` header, mints a short-lived token scoped to the workspace for each chat, and relays ACP to the runner. It never runs agents. It also serves `/agents/connections/*`, the ChatGPT and Google account sign-ins of Workspace settings → AI providers, which the runner performs as the user's uid. |
+| `agent-runner` | `agents` only   | Runs each agent as its own unprivileged uid, with a persistent working dir in the `agent_workspaces` volume.                                                                                                                                                                                                                                                             |
+| `mcp`          | `app`, `agents` | Joins `agents` so that agents reach Plane at `http://mcp:8211/mcp`, with their session token.                                                                                                                                                                                                                                                                            |
 
 The `agents` network has outbound internet but no route to `api`, `gateway`, Postgres, Valkey, RabbitMQ or MinIO. Its bridge interface has a fixed name, `br-nexus-agents` (`AGENTS_BRIDGE_NAME` in `.env`). `agents-firewall.sh` uses that name to also block the tailnet, private and link-local addresses (cloud metadata included) and the host itself. Without it, agents could reach your other tailnet devices as this VPS.
 
-The volume `agent_workspaces` is mounted at `/workspaces`. It holds `<workspace_id>/<user_id>/`, the agent's working dir, which persists across sessions. It also holds each agent's `HOME` under `.homes/`, where agent CLIs keep their session history, and the uid map in `.runner/uids.json`. `backup.sh` includes all of it except `.tmp/`.
+The volume `agent_workspaces` is mounted at `/workspaces`. It holds `<workspace_id>/<user_id>/`, the agent's working dir, which persists across sessions. It also holds each agent's `HOME` under `.homes/`, where agent CLIs keep their session history and members' ChatGPT and Google sign-ins (`.codex/`, `.gemini/`), and the uid map in `.runner/uids.json`. `backup.sh` includes all of it except `.tmp/`.
 
 ### Secrets and settings
 
@@ -320,8 +320,8 @@ sudo iptables -S NEXUS-AGENTS-FWD                                        # the r
 Agents are configured for the whole instance, by an instance admin:
 
 1. Open `/god-mode/agents` and choose to add an agent.
-2. Pick the adapter: Claude, Codex or DeepSeek. Each maps to a fixed program in the runner, so an admin cannot enter an arbitrary command.
-3. Fill in the credentials: `ANTHROPIC_API_KEY` for Claude, `OPENAI_API_KEY` for Codex, or `DEEPSEEK_API_KEY` for DeepSeek. Then fill in the model, the default and maximum permission levels (ask for everything, ask for writes, or never ask), and whether to attach Plane MCP.
+2. Pick the adapter: Claude, Codex, Gemini or DeepSeek. Each maps to a fixed program in the runner, so an admin cannot enter an arbitrary command.
+3. Fill in the credentials: `ANTHROPIC_API_KEY` for Claude, `OPENAI_API_KEY` for Codex, `GEMINI_API_KEY` for Gemini, or `DEEPSEEK_API_KEY` for DeepSeek (members and workspace admins can override the first three in Workspace settings → AI providers). Then fill in the model, the default and maximum permission levels (ask for everything, ask for writes, or never ask), and whether to attach Plane MCP.
 4. Enable it. Every member of every workspace now sees it at `/<workspace-slug>/agents`.
 
 Credentials are encrypted in the database with `SECRET_KEY`, never shown again, and passed only to that agent's process.

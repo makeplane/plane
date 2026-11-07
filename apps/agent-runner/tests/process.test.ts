@@ -76,7 +76,7 @@ describe("AgentProcess cleanup", () => {
   it("closes the connection when the agent exits on its own", async () => {
     const root = tempRoot();
     const agent = new AgentProcess({
-      command: { adapter: "echo", command: process.execPath, args: [adapterBinPaths().echo] },
+      command: { adapter: "echo", command: process.execPath, args: [adapterBinPaths().echo!] },
       layout: { cwd: root, home: root, tmp: root },
       env: { PATH: process.env.PATH ?? "/usr/bin:/bin" },
       killGraceMs: 200,

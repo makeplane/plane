@@ -61,6 +61,15 @@ export interface AgentSessionGrant {
   readonly mcp: { readonly url: string; readonly workspaceSlug: string };
 }
 
+/** What `POST /api/internal/agent-connections/authorize/` confirms: an active member, and ids. */
+export interface ConnectionGrant {
+  readonly user: { readonly id: string };
+  readonly workspace: { readonly id: string; readonly slug: string };
+}
+
+/** Account sign-in methods (personal only), as the API names them. */
+export type AccountMethod = "chatgpt" | "google_account";
+
 export interface PlaneApi {
   /** The signed-in user behind a browser cookie (`GET /api/users/me/`). */
   currentUser(cookie: string, signal?: AbortSignal): Promise<{ id: string }>;
@@ -69,6 +78,21 @@ export interface PlaneApi {
     signal?: AbortSignal
   ): Promise<AgentSessionGrant>;
   revokeAgentSession(tokenId: string): Promise<void>;
+  /** The user may connect a provider account in the workspace (active member, not a bot). */
+  authorizeAgentConnection(
+    input: { userId: string; workspaceSlug: string },
+    signal?: AbortSignal
+  ): Promise<ConnectionGrant>;
+  /** Record (or update) the user's personal account sign-in for `provider`. */
+  upsertAgentConnection(
+    input: { userId: string; workspaceSlug: string; provider: string; method: AccountMethod; accountLabel: string },
+    signal?: AbortSignal
+  ): Promise<void>;
+  /** Remove the user's personal account sign-in for `provider` (a no-op for API keys). */
+  deleteAgentConnection(
+    input: { userId: string; workspaceSlug: string; provider: string },
+    signal?: AbortSignal
+  ): Promise<void>;
 }
 
 const level = z.enum(PERMISSION_LEVELS);
@@ -91,6 +115,11 @@ const grantSchema = z.object({
 });
 
 const userSchema = z.object({ id: z.string().min(1) });
+
+const connectionGrantSchema = z.object({
+  user: z.object({ id: z.string().min(1) }),
+  workspace: z.object({ id: z.string().min(1), slug: z.string().min(1) }),
+});
 
 export interface PlaneApiOptions {
   readonly baseUrl: string;
@@ -124,6 +153,17 @@ export function createPlaneApi(options: PlaneApiOptions): PlaneApi {
       throw new PlaneApiError(`${what}: response is not JSON`, response.status);
     }
   };
+
+  /** An internal (shared-secret) JSON request. */
+  const internal = (method: string, body: unknown): RequestInit => ({
+    method,
+    headers: {
+      [BRIDGE_SECRET_HEADER]: options.bridgeSecret,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(body),
+  });
 
   return {
     async currentUser(cookie, signal) {
@@ -199,6 +239,42 @@ export function createPlaneApi(options: PlaneApiOptions): PlaneApi {
         if (response.status < 500) break;
       }
       throw lastError ?? new PlaneApiError("revoke failed", 0);
+    },
+
+    async authorizeAgentConnection(input, signal) {
+      const response = await call(
+        "/api/internal/agent-connections/authorize/",
+        internal("POST", { user_id: input.userId, workspace_slug: input.workspaceSlug }),
+        signal
+      );
+      if (!response.ok) throw await errorFor(response, "agent-connections/authorize");
+      const parsed = connectionGrantSchema.safeParse(await json(response, "agent-connections/authorize"));
+      if (!parsed.success) throw new PlaneApiError("agent-connections/authorize: unexpected response", 502);
+      return parsed.data;
+    },
+
+    async upsertAgentConnection(input, signal) {
+      const response = await call(
+        "/api/internal/agent-connections/",
+        internal("PUT", {
+          user_id: input.userId,
+          workspace_slug: input.workspaceSlug,
+          provider: input.provider,
+          method: input.method,
+          account_label: input.accountLabel,
+        }),
+        signal
+      );
+      if (!response.ok) throw await errorFor(response, "agent-connections upsert");
+    },
+
+    async deleteAgentConnection(input, signal) {
+      const response = await call(
+        "/api/internal/agent-connections/",
+        internal("DELETE", { user_id: input.userId, workspace_slug: input.workspaceSlug, provider: input.provider }),
+        signal
+      );
+      if (!response.ok) throw await errorFor(response, "agent-connections delete");
     },
   };
 }

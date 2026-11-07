@@ -16,14 +16,18 @@ export {
   DEFAULT_TICKET_TTL_MS,
   MAX_TICKET_TTL_MS,
   MIN_SECRET_LENGTH,
+  SPAWN_PURPOSES,
   TicketReplayGuard,
   assertTicketSecret,
+  isSpawnPurpose,
   signSpawnTicket,
+  ticketPurpose,
   verifySpawnTicket,
 } from "./ticket.ts";
 export type {
   SignOptions,
   SpawnClaims,
+  SpawnPurpose,
   SpawnTicket,
   TicketFailure,
   TicketVerification,

@@ -1,8 +1,9 @@
 # syntax=docker/dockerfile:1.7
-# The agent runner: runs the ACP stdio adapters (plane-acp-claude, -codex, -deepseek) and serves
-# them over ACP-on-WebSocket to the bridge. Agents get a full workstation (shell, git, ripgrep,
-# python, compilers), so this image is Debian (glibc: the Claude Agent SDK's native binary and the
-# codex CLI target it) and runs on an isolated network with only internet egress and Plane MCP.
+# The agent runner: runs the ACP stdio adapters (plane-acp-claude, -codex, -deepseek, -gemini) and
+# serves them over ACP-on-WebSocket to the bridge, plus the provider sign-in helper
+# (plane-agent-login) behind /auth/*. Agents get a full workstation (shell, git, ripgrep, python,
+# compilers), so this image is Debian (glibc: the Claude Agent SDK's native binary and the codex CLI
+# target it) and runs on an isolated network with only internet egress and Plane MCP.
 #
 # The runner runs as root so it can start each agent as its workspace dir's own unprivileged uid
 # (AGENT_RUNNER_ISOLATION=uid). Give the container cpu/memory/pids limits.
@@ -59,6 +60,14 @@ RUN apt-get update \
 ARG CODEX_CLI_VERSION=0.166.0
 RUN npm install -g "@openai/codex@${CODEX_CLI_VERSION}" && npm cache clean --force
 
+# Gemini CLI for plane-acp-gemini (it spawns `gemini --acp`). Pinned with the adapters: see
+# packages/acp-adapters/acp-version.lock.json ("gemini-cli").
+ARG GEMINI_CLI_VERSION=0.65.0
+# --ignore-scripts: its only install script is @github/keytar's native prebuild download, which can
+# hang the build. Without keytar Gemini keeps credentials in ~/.gemini files, which is what we use.
+RUN npm install -g --ignore-scripts "@google/gemini-cli@${GEMINI_CLI_VERSION}" && npm cache clean --force \
+  && gemini --version
+
 WORKDIR /app
 COPY --from=installer /app/packages ./packages
 COPY --from=installer /app/apps/agent-runner/dist ./apps/agent-runner/dist
@@ -69,10 +78,17 @@ RUN find /app/node_modules \( -name 'esbuild' -o -name 'tsgolint' \) -type f -de
   # Agents run as other uids and must be able to read (never write) the adapter code.
   && chmod -R a+rX,go-w /app \
   # Put the adapter bins on PATH for operators; the runner itself always uses absolute paths.
-  && for bin in claude codex deepseek echo; do \
+  && for bin in claude codex deepseek echo gemini; do \
        printf '#!/bin/sh\nexec node /app/packages/acp-adapters/dist/bin/%s.mjs "$@"\n' "$bin" > "/usr/local/bin/plane-acp-$bin"; \
        chmod 0755 "/usr/local/bin/plane-acp-$bin"; \
-     done
+     done \
+  && printf '#!/bin/sh\nexec node /app/packages/acp-adapters/dist/bin/login.mjs "$@"\n' > /usr/local/bin/plane-agent-login \
+  && chmod 0755 /usr/local/bin/plane-agent-login
+
+# plane-acp-gemini passes its policy with --admin-policy and its settings with
+# GEMINI_CLI_SYSTEM_SETTINGS_PATH, both from /app/packages/acp-adapters/gemini/ (root-owned, read-only
+# above). Gemini ignores --admin-policy when /etc/gemini-cli/policies holds any .toml, so keep it empty.
+RUN rm -rf /etc/gemini-cli/policies
 
 ENV NODE_ENV=production
 ENV TURBO_TELEMETRY_DISABLED=1

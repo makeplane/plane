@@ -9,7 +9,14 @@ import { existsSync } from "node:fs";
 import { ADAPTER_BINS } from "@plane/acp-adapters";
 import { describe, expect, it } from "vitest";
 
-import { ADAPTER_BIN_NAMES, adapterBinPaths, createAdapterResolver } from "../src/bins.ts";
+import {
+  ADAPTER_BIN_NAMES,
+  LOGIN_ADAPTERS,
+  adapterBinPaths,
+  createAdapterResolver,
+  defaultHelperCommand,
+  loginBinPath,
+} from "../src/bins.ts";
 
 describe("adapter bins", () => {
   it("mirrors ADAPTER_BINS from @plane/acp-adapters", () => {
@@ -18,7 +25,7 @@ describe("adapter bins", () => {
 
   it("resolves every adapter to an installed bin run with node", () => {
     const paths = adapterBinPaths();
-    for (const file of Object.values(paths)) expect(existsSync(file), file).toBe(true);
+    for (const [adapter, file] of Object.entries(paths)) expect(file && existsSync(file), adapter).toBe(true);
     const { resolve, missing } = createAdapterResolver({ enableEcho: true });
     expect(missing).toEqual([]);
     expect(resolve("codex")).toEqual({ adapter: "codex", command: process.execPath, args: [paths.codex] });
@@ -30,5 +37,22 @@ describe("adapter bins", () => {
       expect(resolve(adapter), adapter).toBeUndefined();
     }
     expect(resolve("claude")?.adapter).toBe("claude");
+  });
+
+  it("refuses an adapter the installed package does not declare", () => {
+    const { resolve, missing } = createAdapterResolver({
+      enableEcho: true,
+      binPaths: { ...adapterBinPaths(), gemini: undefined },
+    });
+    expect(resolve("gemini")).toBeUndefined();
+    expect(missing).toContain("gemini");
+  });
+
+  it("finds the sign-in helper, for adapters that have a bin", () => {
+    const file = loginBinPath();
+    expect(file && existsSync(file), String(file)).toBe(true);
+    expect(defaultHelperCommand()).toEqual({ command: process.execPath, args: [file] });
+    expect(defaultHelperCommand("/nonexistent/login.mjs")).toBeUndefined();
+    for (const adapter of LOGIN_ADAPTERS) expect(Object.keys(ADAPTER_BIN_NAMES)).toContain(adapter);
   });
 });

@@ -79,7 +79,8 @@
 		}
 	}
 
-	# Agent chat bridge: the ACP WebSocket (/agents/acp) and /agents/health. Only the
+	# Agent chat bridge: the ACP WebSocket (/agents/acp), provider sign-in
+	# (/agents/connections/*) and /agents/health. Only the
 	# root /agents path: the chat page itself is /<workspace-slug>/agents, served by web.
 	# The bridge authenticates the session cookie and checks Origin against the public
 	# origin, so it must stay on the same site as the app.

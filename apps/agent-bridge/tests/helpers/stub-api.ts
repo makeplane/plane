@@ -39,6 +39,10 @@ export class StubPlaneApi {
   ]);
   readonly members = new Set([USER_ID]);
   readonly agents = new Map<string, StubAgent>();
+  /** `PUT|DELETE /api/internal/agent-connections/` bodies, in order. */
+  readonly connections: { method: string; body: Record<string, string> }[] = [];
+  /** Answer the agent-connections endpoints with this status instead (e.g. 500). */
+  connectionsStatus: number | undefined;
   mcpUrl = MCP_URL;
   expiresInMs = 2 * 60 * 60_000;
   #server: Server | undefined;
@@ -86,6 +90,36 @@ export class StubPlaneApi {
     if (req.method === "GET" && url.pathname === "/api/users/me/") {
       const userId = this.users.get(String(req.headers.cookie ?? ""));
       return userId ? { status: 200, body: { id: userId, display_name: "Ada" } } : { status: 401, body: {} };
+    }
+    if (url.pathname.startsWith("/api/internal/agent-connections/")) {
+      if (req.headers["x-agent-bridge-secret"] !== BRIDGE_SECRET) {
+        return { status: 403, body: { detail: "Invalid agent bridge credentials." } };
+      }
+      if (this.connectionsStatus) return { status: this.connectionsStatus, body: {} };
+      const body = JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}") as Record<string, string>;
+      if (!body.user_id || !body.workspace_slug) return { status: 400, body: {} };
+      const member = this.members.has(body.user_id) && body.workspace_slug === WORKSPACE_SLUG;
+      if (!member) return { status: 403, body: { error: "User is not an active member of this workspace." } };
+      if (req.method === "POST" && url.pathname === "/api/internal/agent-connections/authorize/") {
+        return {
+          status: 200,
+          body: { user: { id: body.user_id }, workspace: { id: WORKSPACE_ID, slug: WORKSPACE_SLUG } },
+        };
+      }
+      if (url.pathname !== "/api/internal/agent-connections/") return { status: 404, body: {} };
+      if (req.method === "PUT") {
+        const valid =
+          (body.provider === "openai" && body.method === "chatgpt") ||
+          (body.provider === "google" && body.method === "google_account");
+        if (!valid) return { status: 400, body: {} };
+        this.connections.push({ method: "PUT", body });
+        return { status: 200, body: {} };
+      }
+      if (req.method === "DELETE") {
+        this.connections.push({ method: "DELETE", body });
+        return { status: 204 };
+      }
+      return { status: 405, body: {} };
     }
     if (url.pathname.startsWith("/api/internal/agent-sessions/")) {
       if (req.headers["x-agent-bridge-secret"] !== BRIDGE_SECRET) {

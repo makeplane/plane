@@ -9,6 +9,7 @@ import type { Logger } from "../../src/logger.ts";
 import { createPlaneApi } from "../../src/plane-api.ts";
 import { AgentBridge } from "../../src/server.ts";
 import { FakeTransport } from "./fake-agent.ts";
+import { FakeLoginRunner, RUNNER_SECRET } from "./fake-runner.ts";
 import { AGENT_ID, BRIDGE_SECRET, StubPlaneApi, USER_COOKIE, WORKSPACE_SLUG, type StubAgent } from "./stub-api.ts";
 import { RawClient } from "./ws-client.ts";
 
@@ -34,7 +35,8 @@ export function testConfig(overrides: Partial<BridgeConfig> = {}): BridgeConfig 
     apiBaseUrl: "http://127.0.0.1:1",
     bridgeSecret: BRIDGE_SECRET,
     runnerUrl: "ws://127.0.0.1:1/acp",
-    runnerSecret: "r".repeat(40),
+    runnerSecret: RUNNER_SECRET,
+    runnerHttpUrl: "http://127.0.0.1:1",
     basePath: "/agents",
     workspacesRoot: "/workspaces",
     planeMcpUrl: "",
@@ -45,6 +47,8 @@ export function testConfig(overrides: Partial<BridgeConfig> = {}): BridgeConfig 
     maxConnections: 100,
     idleTimeoutMs: 60_000,
     pingIntervalMs: 30_000,
+    loginStartLimit: 10,
+    loginStartWindowMs: 60_000,
     ...overrides,
   };
 }
@@ -52,12 +56,27 @@ export function testConfig(overrides: Partial<BridgeConfig> = {}): BridgeConfig 
 export interface Harness {
   readonly api: StubPlaneApi;
   readonly transport: FakeTransport;
+  /** The runner's sign-in endpoints, reached over real HTTP with real tickets. */
+  readonly runner: FakeLoginRunner;
   readonly bridge: AgentBridge;
   readonly log: RecordingLogger;
   readonly baseUrl: string;
   connect(options?: { cookie?: string | null; origin?: string | null; agent?: string; workspace?: string }): RawClient;
   /** Connect and wait for the socket to open. */
   open(options?: Parameters<Harness["connect"]>[0]): Promise<RawClient>;
+  /** An HTTP request to the bridge, as the signed-in browser (override or drop the cookie and origin with `null`). */
+  http(
+    path: string,
+    options?: {
+      method?: string;
+      body?: unknown;
+      rawBody?: string;
+      cookie?: string | null;
+      origin?: string | null;
+      contentType?: string | null;
+      headers?: Record<string, string>;
+    }
+  ): Promise<{ status: number; headers: Headers; body: Record<string, unknown> }>;
   stop(): Promise<void>;
 }
 
@@ -70,9 +89,10 @@ export async function startHarness(
   } = {}
 ): Promise<Harness> {
   const api = await new StubPlaneApi(options.agent).start();
+  const runner = await new FakeLoginRunner().start();
   const transport = new FakeTransport({ http: options.http ?? true });
   const log = new RecordingLogger();
-  const config = testConfig({ apiBaseUrl: api.url, ...options.config });
+  const config = testConfig({ apiBaseUrl: api.url, runnerHttpUrl: runner.url, ...options.config });
   const bridge = new AgentBridge({
     config,
     api: createPlaneApi({ baseUrl: api.url, bridgeSecret: BRIDGE_SECRET }),
@@ -94,10 +114,34 @@ export async function startHarness(
     clients.push(client);
     return client;
   };
+  const httpBase = baseUrl.replace(/^ws:/, "http:");
+  const http: Harness["http"] = async (path, opts = {}) => {
+    const headers: Record<string, string> = { ...opts.headers };
+    const cookie = opts.cookie === undefined ? USER_COOKIE : opts.cookie;
+    const origin = opts.origin === undefined ? ORIGIN : opts.origin;
+    const hasBody = opts.body !== undefined || opts.rawBody !== undefined;
+    const contentType = opts.contentType === undefined ? (hasBody ? "application/json" : null) : opts.contentType;
+    if (cookie) headers.Cookie = cookie;
+    if (origin) headers.Origin = origin;
+    if (contentType) headers["Content-Type"] = contentType;
+    const response = await fetch(`${httpBase}${path}`, {
+      method: opts.method ?? (hasBody ? "POST" : "GET"),
+      headers,
+      ...(hasBody ? { body: opts.rawBody ?? JSON.stringify(opts.body) } : {}),
+    });
+    const text = await response.text();
+    return {
+      status: response.status,
+      headers: response.headers,
+      body: text ? (JSON.parse(text) as Record<string, unknown>) : {},
+    };
+  };
   return {
     api,
     transport,
+    runner,
     bridge,
+    http,
     log,
     baseUrl,
     connect,
@@ -110,6 +154,7 @@ export async function startHarness(
       for (const client of clients) client.socket.terminate();
       await bridge.close();
       await api.stop();
+      await runner.stop();
     },
   };
 }

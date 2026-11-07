@@ -1,9 +1,11 @@
 # agent-runner
 
-Runs the ACP stdio adapters from `@plane/acp-adapters` (`plane-acp-claude`, `-codex`, `-deepseek`)
-and serves each one over ACP-on-WebSocket (the SDK's experimental `AcpServer`) to the agent bridge.
+Runs the ACP stdio adapters from `@plane/acp-adapters` (`plane-acp-claude`, `-codex`, `-deepseek`,
+`-gemini`) and serves each one over ACP-on-WebSocket (the SDK's experimental `AcpServer`) to the agent
+bridge. It also runs the provider sign-in helper (`plane-agent-login`) for ChatGPT and Google account
+sign-ins, behind `/auth/*`.
 It is a separate service from the bridge because agents need a full toolbox (shell, git, compilers,
-the codex CLI, the Claude Agent SDK runtime), root to switch uids, and a network with only internet
+the codex and Gemini CLIs, the Claude Agent SDK runtime), root to switch uids, and a network with only internet
 egress and Plane MCP, none of which belongs next to the API.
 
 ## Protocol
@@ -11,10 +13,46 @@ egress and Plane MCP, none of which belongs next to the API.
 - `GET /acp` (WebSocket upgrade) with `Authorization: Bearer <spawn ticket>`.
   - The ticket is `v1.<claims>.<HMAC-SHA256>`, signed with `AGENT_RUNNER_SECRET`, valid for 60 s
     and single-use. See `@plane/agent-runner-protocol`.
-  - The claims are `{adapter, env, userId, workspaceId, initialMode, sessionRef}`.
+  - The claims are `{adapter, env, userId, workspaceId, initialMode, sessionRef, purpose}`.
+    `purpose` is `acp` (or absent) for a chat; a `login` ticket is refused here with 401.
   - A missing, malformed, expired, tampered or replayed ticket gets HTTP 401. An unknown adapter
     (or `echo` when not enabled) gets 400.
-- `GET /health`.
+- `GET /health`: `{status, version, agents, logins, isolation}`.
+
+### Sign-in (`/auth/*`)
+
+Provider account sign-in for Workspace settings → AI providers (ChatGPT for `codex`, Google for
+`gemini`). The bridge calls these after checking the user's cookie and membership; the browser never
+reaches the runner.
+
+- Every request carries `Authorization: Bearer <ticket>` with `purpose: "login"`, `adapter` `codex`
+  or `gemini`, and `env: {}`. Tickets are single-use (the same replay guard as `/acp`), so the bridge
+  signs one per request. A missing, bad, replayed or `acp` ticket gets 401; another adapter gets 400.
+- The helper is `node <@plane/acp-adapters>/dist/bin/login.mjs <adapter> <start|logout>`, run exactly
+  like an agent: the dir's uid and dirs (prepared as for `/acp`), its own process group, `HOME` the
+  user's agent home (so the adapter finds the sign-in the helper stores there), cwd the workspace dir,
+  and the fixed base env only (no provider keys, nothing from the runner). It holds the uid like a
+  connection does and counts against `AGENT_RUNNER_MAX_CONNECTIONS`. Its stdout carries device codes
+  and is never logged.
+
+| Endpoint                        | Body / query      | Answer                                                             |
+| ------------------------------- | ----------------- | ------------------------------------------------------------------ |
+| `POST /auth/start`              |                   | `{loginId, verificationUrl, userCode?, needsCode}`                 |
+| `GET /auth/status?loginId=<id>` |                   | `{status: "pending" \| "connected" \| "failed", account?, error?}` |
+| `POST /auth/complete`           | `{loginId, code}` | the same state, after waiting up to 30 s for the helper            |
+| `POST /auth/logout`             |                   | `{status: "disconnected"}`                                         |
+
+- `start` waits up to 30 s for the helper's first event. One sign-in per (workspace, user, adapter):
+  a new `start` stops the previous one (its status becomes `failed`). A sign-in still pending after
+  15 min is killed. Finished results stay readable for 5 min.
+- `status` and `complete` only see sign-ins started for the ticket's workspace, user and adapter
+  (404 otherwise). `complete` is for sign-ins with `needsCode` (Google); others get 400.
+- `logout` stops a sign-in in progress and runs `login.mjs <adapter> logout`.
+- `account` is `{email?, plan?}`.
+- Errors are `{error, reason?}`: 400 bad input, 401 ticket, 404 unknown sign-in, 409 already signed
+  in, 502 the helper failed or stopped (`reason: "helper_failed"`, `error` is the helper's message),
+  503 at capacity / shutting down / helper not installed, 504 the helper did not answer in time
+  (`reason: "timeout"`).
 
 The runner makes no access decisions: the bridge has already authenticated the user and checked
 membership, and the ticket carries its word. The runner only maps the adapter to a fixed bin
@@ -44,6 +82,8 @@ Every dir the runner chowns sits in a root-owned parent, so an agent cannot swap
   - Plus the agent's env from the ticket, minus reserved names: loader and interpreter hooks
     (`LD_*`, `NODE_OPTIONS`, `BASH_ENV`, …) and the runner's own variables.
   - The adapters scrub credential-looking names again before anything the user drives sees them.
+
+The sign-in helper follows the same rules.
 
 ### Stopping
 

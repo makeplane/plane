@@ -33,6 +33,18 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ADAPTER = /^[a-z][a-z0-9_-]{0,31}$/;
 const ENV_KEY = /^[A-Z][A-Z0-9_]{0,63}$/;
 
+/**
+ * What a ticket is good for. `acp` (the default when absent) opens one agent over `/acp`; `login`
+ * drives the provider sign-in helper over the runner's `/auth/*` endpoints. Each endpoint refuses
+ * the other kind, so a sign-in ticket can never start an agent and vice versa.
+ */
+export const SPAWN_PURPOSES = ["acp", "login"] as const;
+export type SpawnPurpose = (typeof SPAWN_PURPOSES)[number];
+
+export function isSpawnPurpose(value: unknown): value is SpawnPurpose {
+  return typeof value === "string" && (SPAWN_PURPOSES as readonly string[]).includes(value);
+}
+
 export interface SpawnClaims {
   /** Adapter id; the runner maps it to a fixed bin and never runs anything else. */
   readonly adapter: string;
@@ -44,6 +56,8 @@ export interface SpawnClaims {
   readonly initialMode: PermissionLevel;
   /** Correlation id for logs (the agent-session token id). Not a secret. */
   readonly sessionRef?: string;
+  /** `acp` when absent. */
+  readonly purpose?: SpawnPurpose;
 }
 
 export interface SpawnTicket extends SpawnClaims {
@@ -53,6 +67,11 @@ export interface SpawnTicket extends SpawnClaims {
   readonly exp: number;
   /** Unique id, for single-use enforcement. */
   readonly jti: string;
+}
+
+/** The ticket's purpose, `acp` when the claim is absent. */
+export function ticketPurpose(claims: Pick<SpawnClaims, "purpose">): SpawnPurpose {
+  return claims.purpose ?? "acp";
 }
 
 export type TicketFailure = "malformed" | "bad_signature" | "expired" | "not_yet_valid" | "invalid_claims";
@@ -97,12 +116,13 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function parseClaims(value: unknown): SpawnTicket | undefined {
   if (!isRecord(value)) return undefined;
-  const { adapter, env, userId, workspaceId, initialMode, sessionRef, iat, exp, jti } = value;
+  const { adapter, env, userId, workspaceId, initialMode, sessionRef, purpose, iat, exp, jti } = value;
   if (typeof adapter !== "string" || !ADAPTER.test(adapter)) return undefined;
   if (typeof userId !== "string" || !UUID.test(userId)) return undefined;
   if (typeof workspaceId !== "string" || !UUID.test(workspaceId)) return undefined;
   if (!isPermissionLevel(initialMode)) return undefined;
   if (sessionRef !== undefined && typeof sessionRef !== "string") return undefined;
+  if (purpose !== undefined && !isSpawnPurpose(purpose)) return undefined;
   if (!Number.isSafeInteger(iat) || !Number.isSafeInteger(exp)) return undefined;
   if (typeof jti !== "string" || jti.length === 0 || jti.length > 128) return undefined;
   if (!isRecord(env)) return undefined;
@@ -118,6 +138,7 @@ function parseClaims(value: unknown): SpawnTicket | undefined {
     workspaceId: workspaceId.toLowerCase(),
     initialMode,
     ...(typeof sessionRef === "string" ? { sessionRef } : {}),
+    ...(purpose !== undefined ? { purpose } : {}),
     iat: iat as number,
     exp: exp as number,
     jti,

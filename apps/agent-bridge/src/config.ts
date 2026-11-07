@@ -21,6 +21,12 @@ const schema = z.object({
     message: "AGENT_RUNNER_URL must be a ws:// or wss:// URL",
   }),
   AGENT_RUNNER_SECRET: z.string().min(MIN_SECRET_LENGTH, `AGENT_RUNNER_SECRET needs ${MIN_SECRET_LENGTH}+ characters`),
+  AGENT_RUNNER_HTTP_URL: z
+    .string()
+    .default("")
+    .refine((url) => url === "" || /^https?:\/\/[^/]/.test(url), {
+      message: "AGENT_RUNNER_HTTP_URL must be an http:// or https:// URL",
+    }),
   AGENT_BRIDGE_BASE_PATH: z
     .string()
     .default("/agents")
@@ -38,7 +44,23 @@ const schema = z.object({
   AGENT_BRIDGE_MAX_CONNECTIONS: positiveInt(500),
   AGENT_BRIDGE_IDLE_TIMEOUT_MS: positiveInt(15 * 60_000),
   AGENT_BRIDGE_PING_INTERVAL_MS: positiveInt(30_000),
+  AGENT_BRIDGE_LOGIN_START_LIMIT: positiveInt(10),
+  AGENT_BRIDGE_LOGIN_START_WINDOW_MS: positiveInt(10 * 60_000),
 });
+
+/**
+ * The runner's HTTP origin (for the sign-in endpoints), from `AGENT_RUNNER_URL` unless set:
+ * `ws://agent-runner:3410/acp` → `http://agent-runner:3410`.
+ */
+export function runnerHttpUrl(runnerUrl: string, override = ""): string {
+  if (override) return override.replace(/\/+$/, "");
+  const url = new URL(runnerUrl);
+  url.protocol = url.protocol === "wss:" ? "https:" : "http:";
+  url.pathname = url.pathname.replace(/\/acp\/?$/, "");
+  url.search = "";
+  url.hash = "";
+  return url.toString().replace(/\/+$/, "");
+}
 
 export interface BridgeConfig {
   readonly version: string;
@@ -52,6 +74,8 @@ export interface BridgeConfig {
   readonly runnerUrl: string;
   /** Signs spawn tickets for the runner. */
   readonly runnerSecret: string;
+  /** Runner HTTP origin for the sign-in endpoints (`/auth/*`), e.g. `http://agent-runner:3410`. */
+  readonly runnerHttpUrl: string;
   /** Mount point; the chat socket is `<basePath>/acp`, health is `<basePath>/health`. */
   readonly basePath: string;
   /** Root of the per-user working dirs on the runner; the ACP `cwd` is `<root>/<workspace_id>/<user_id>`. */
@@ -69,6 +93,9 @@ export interface BridgeConfig {
   /** Close a connection after this long without traffic while no request is in flight. */
   readonly idleTimeoutMs: number;
   readonly pingIntervalMs: number;
+  /** Sign-in starts allowed per user per window (`<base>/connections/<provider>/start`). */
+  readonly loginStartLimit: number;
+  readonly loginStartWindowMs: number;
 }
 
 export function loadBridgeConfig(env: NodeJS.ProcessEnv = process.env): BridgeConfig {
@@ -86,6 +113,7 @@ export function loadBridgeConfig(env: NodeJS.ProcessEnv = process.env): BridgeCo
     bridgeSecret: e.AGENT_BRIDGE_SECRET,
     runnerUrl: e.AGENT_RUNNER_URL,
     runnerSecret: e.AGENT_RUNNER_SECRET,
+    runnerHttpUrl: runnerHttpUrl(e.AGENT_RUNNER_URL, e.AGENT_RUNNER_HTTP_URL.trim()),
     basePath: e.AGENT_BRIDGE_BASE_PATH,
     workspacesRoot: e.AGENT_WORKSPACES_ROOT,
     planeMcpUrl: e.PLANE_MCP_URL.trim(),
@@ -98,5 +126,7 @@ export function loadBridgeConfig(env: NodeJS.ProcessEnv = process.env): BridgeCo
     maxConnections: e.AGENT_BRIDGE_MAX_CONNECTIONS,
     idleTimeoutMs: e.AGENT_BRIDGE_IDLE_TIMEOUT_MS,
     pingIntervalMs: e.AGENT_BRIDGE_PING_INTERVAL_MS,
+    loginStartLimit: e.AGENT_BRIDGE_LOGIN_START_LIMIT,
+    loginStartWindowMs: e.AGENT_BRIDGE_LOGIN_START_WINDOW_MS,
   };
 }

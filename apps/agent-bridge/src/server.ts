@@ -13,10 +13,13 @@ import express, { type Express } from "express";
 import { WebSocketServer, type WebSocket } from "ws";
 
 import type { BridgeConfig } from "./config.ts";
+import { connectionsRouter } from "./connections.ts";
 import { createLogger, withMeta, type Logger } from "./logger.ts";
+import { originAllowed } from "./origin.ts";
 import { createPlaneApi, PlaneApiError, type AgentSessionGrant, type PlaneApi } from "./plane-api.ts";
 import { SessionPolicy } from "./policy.ts";
 import { CloseCode, PolicyProxy } from "./proxy.ts";
+import { RunnerLoginClient, type LoginRunner } from "./runner-login.ts";
 import { RunnerTransport, type AgentChannel, type AgentTransport } from "./transport.ts";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -28,6 +31,8 @@ export interface AgentBridgeOptions {
   readonly config: BridgeConfig;
   readonly api?: PlaneApi;
   readonly transport?: AgentTransport;
+  /** The runner's sign-in endpoints; defaults to HTTP at `config.runnerHttpUrl`. */
+  readonly loginRunner?: LoginRunner;
   readonly log?: Logger;
   /** How long a new connection has to send `initialize` (default 30 s). */
   readonly initializeTimeoutMs?: number;
@@ -50,7 +55,8 @@ interface LiveSession {
 /**
  * The agent bridge: `GET <base>/acp?agent=<id>&workspace=<slug>` upgrades to an ACP WebSocket for
  * one chat, after authenticating the browser's cookie with the API and minting an agent-session
- * token; `GET <base>/health` reports liveness.
+ * token; `<base>/connections/<provider>/…` drives provider account sign-in; `GET <base>/health`
+ * reports liveness.
  */
 export class AgentBridge {
   readonly app: Express;
@@ -100,6 +106,17 @@ export class AgentBridge {
         timestamp: new Date().toISOString(),
       });
     });
+    this.app.use(
+      `${config.basePath}/connections`,
+      connectionsRouter({
+        api: this.#api,
+        runner:
+          options.loginRunner ?? new RunnerLoginClient({ baseUrl: config.runnerHttpUrl, secret: config.runnerSecret }),
+        log: this.#log,
+        allowedOrigins: config.allowedOrigins,
+        startLimit: { max: config.loginStartLimit, windowMs: config.loginStartWindowMs },
+      })
+    );
     this.app.use((_req, res) => {
       res.status(404).json({ message: "Not Found" });
     });
@@ -350,25 +367,6 @@ export class AgentBridge {
         error: (error as Error).message,
       });
     }
-  }
-}
-
-/**
- * Cross-site WebSocket hijacking guard. The socket is authenticated by cookie, so a browser
- * page on another origin must not be able to open it. Requests without an `Origin` header are
- * not from a browser and cannot carry a victim's cookies.
- */
-export function originAllowed(req: IncomingMessage, allowed: readonly string[]): boolean {
-  const origin = req.headers.origin;
-  if (!origin) return true;
-  const normalized = origin.replace(/\/+$/, "");
-  if (allowed.length > 0) return allowed.includes(normalized);
-  const forwarded = req.headers["x-forwarded-host"];
-  const host = (Array.isArray(forwarded) ? forwarded[0] : forwarded)?.split(",")[0]?.trim() || req.headers.host;
-  try {
-    return Boolean(host) && new URL(normalized).host === host;
-  } catch {
-    return false;
   }
 }
 

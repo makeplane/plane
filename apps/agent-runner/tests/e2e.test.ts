@@ -132,6 +132,7 @@ describe("browser → bridge → runner → plane-acp-echo", () => {
       bridgeSecret: BRIDGE_SECRET,
       runnerUrl,
       runnerSecret: SECRET,
+      runnerHttpUrl: runnerUrl.replace(/^ws:/, "http:").replace(/\/acp$/, ""),
       basePath: "/agents",
       workspacesRoot: root,
       planeMcpUrl: "",
@@ -142,6 +143,8 @@ describe("browser → bridge → runner → plane-acp-echo", () => {
       maxConnections: 10,
       idleTimeoutMs: 60_000,
       pingIntervalMs: 30_000,
+      loginStartLimit: 10,
+      loginStartWindowMs: 60_000,
     };
     const transport = new RecordingTransport(
       new RunnerTransport({ url: runnerUrl, secret: SECRET, maxMessageBytes: config.maxAgentMessageBytes })

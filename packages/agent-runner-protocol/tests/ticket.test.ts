@@ -11,6 +11,7 @@ import {
   TicketReplayGuard,
   clampPermissionLevel,
   signSpawnTicket,
+  ticketPurpose,
   verifySpawnTicket,
   type SpawnClaims,
 } from "../src/index.ts";
@@ -39,6 +40,18 @@ describe("spawn tickets", () => {
     expect(result).toEqual({ ok: true, ticket: { ...CLAIMS, iat: now, exp: now + 60_000, jti: "j1" } });
   });
 
+  it("carries an optional purpose, acp when absent", () => {
+    const plain = verifySpawnTicket(signSpawnTicket(CLAIMS, SECRET), SECRET);
+    if (!plain.ok) throw new Error("expected a valid ticket");
+    expect("purpose" in plain.ticket).toBe(false);
+    expect(ticketPurpose(plain.ticket)).toBe("acp");
+
+    const login = verifySpawnTicket(signSpawnTicket({ ...CLAIMS, env: {}, purpose: "login" }, SECRET), SECRET);
+    if (!login.ok) throw new Error("expected a valid ticket");
+    expect(login.ticket.purpose).toBe("login");
+    expect(ticketPurpose(login.ticket)).toBe("login");
+  });
+
   it("rejects an expired ticket", () => {
     const token = signSpawnTicket(CLAIMS, SECRET, { now: 1_000, ttlMs: 1_000 });
     expect(verifySpawnTicket(token, SECRET, { now: 2_000 })).toEqual({ ok: false, reason: "expired" });
@@ -59,6 +72,7 @@ describe("spawn tickets", () => {
     for (const mutate of [
       (claims: Record<string, unknown>) => (claims.adapter = "codex"),
       (claims: Record<string, unknown>) => (claims.initialMode = "yolo"),
+      (claims: Record<string, unknown>) => (claims.purpose = "login"),
       (claims: Record<string, unknown>) => (claims.exp = (claims.exp as number) + 1),
       (claims: Record<string, unknown>) => (claims.env = { ...(claims.env as object), LD_PRELOAD: "/x.so" }),
     ]) {
@@ -85,6 +99,8 @@ describe("spawn tickets", () => {
       { ...CLAIMS, userId: "../etc" },
       { ...CLAIMS, workspaceId: "not-a-uuid" },
       { ...CLAIMS, initialMode: "root" },
+      { ...CLAIMS, purpose: "shell" },
+      { ...CLAIMS, purpose: null },
       { ...CLAIMS, env: { lower_case: "x" } },
       { ...CLAIMS, env: { NUMBER: 1 } },
     ]) {

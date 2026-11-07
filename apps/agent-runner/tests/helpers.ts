@@ -149,3 +149,28 @@ export function textOf(updates: readonly SessionNotification[]): string {
     .map((u) => (u.sessionUpdate === "agent_message_chunk" && u.content.type === "text" ? u.content.text : ""))
     .join("");
 }
+
+/** A `login` ticket (sign-in endpoints) for `adapter`, codex by default. */
+export function loginTicket(overrides: Partial<SpawnClaims> = {}, options: SignOptions = {}): string {
+  return ticket({ adapter: "codex", env: {}, initialMode: "ask_all", purpose: "login", ...overrides }, options);
+}
+
+/** Call one of the runner's `/auth/*` endpoints with a fresh ticket (or `token`, or none with `null`). */
+export async function authCall(
+  wsUrl: string,
+  route: string,
+  init: { method?: "GET" | "POST"; body?: unknown; token?: string | null; claims?: Partial<SpawnClaims> } = {}
+): Promise<{ status: number; body: Record<string, unknown> }> {
+  const base = wsUrl.replace(/^ws:/, "http:").replace(/\/acp$/, "");
+  const token = init.token === undefined ? loginTicket(init.claims) : init.token;
+  const headers: Record<string, string> = {};
+  if (token !== null) headers.Authorization = `Bearer ${token}`;
+  if (init.body !== undefined) headers["Content-Type"] = "application/json";
+  const response = await fetch(`${base}/auth/${route}`, {
+    method: init.method ?? (init.body === undefined ? "GET" : "POST"),
+    headers,
+    ...(init.body === undefined ? {} : { body: JSON.stringify(init.body) }),
+  });
+  const text = await response.text();
+  return { status: response.status, body: text ? (JSON.parse(text) as Record<string, unknown>) : {} };
+}
