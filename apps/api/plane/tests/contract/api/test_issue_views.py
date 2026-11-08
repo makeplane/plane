@@ -707,7 +707,7 @@ class TestIssueViewPublicAPI:
         assert not IssueView.objects.filter(pk=view_id).exists()
 
     @pytest.mark.django_db
-    def test_project_guest_without_active_workspace_membership_cannot_mutate_saved_views(
+    def test_project_guest_without_active_workspace_membership_cannot_access_or_mutate_saved_views(
         self, workspace, project
     ):
         """A stale active project membership is insufficient after workspace removal."""
@@ -743,17 +743,22 @@ class TestIssueViewPublicAPI:
         project_membership.refresh_from_db()
         assert project_membership.is_active is True
 
+        list_url = self.get_list_url(workspace.slug, project.id)
+        detail_url = self.get_detail_url(workspace.slug, project.id, existing_view.id)
+        list_response = guest_client.get(list_url)
+        detail_response = guest_client.get(detail_url)
         create_response = guest_client.post(
-            self.get_list_url(workspace.slug, project.id),
+            list_url,
             {"name": "Must not be created", "filters": {}},
             format="json",
         )
-        detail_url = self.get_detail_url(workspace.slug, project.id, existing_view.id)
         update_response = guest_client.patch(
             detail_url, {"description": "Must not be updated"}, format="json"
         )
         delete_response = guest_client.delete(detail_url)
 
+        assert list_response.status_code == status.HTTP_403_FORBIDDEN
+        assert detail_response.status_code == status.HTTP_403_FORBIDDEN
         assert create_response.status_code == status.HTTP_403_FORBIDDEN
         assert update_response.status_code == status.HTTP_403_FORBIDDEN
         assert delete_response.status_code == status.HTTP_403_FORBIDDEN

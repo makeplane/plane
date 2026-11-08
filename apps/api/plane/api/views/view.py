@@ -42,8 +42,6 @@ class SavedViewProjectEntityPermission(ProjectEntityPermission):
     """Allow active project guests through to saved-view ownership checks."""
 
     def has_permission(self, request, view):
-        if super().has_permission(request, view):
-            return True
         if request.user.is_anonymous:
             return False
         has_active_workspace_membership = WorkspaceMember.objects.filter(
@@ -53,6 +51,8 @@ class SavedViewProjectEntityPermission(ProjectEntityPermission):
         ).exists()
         if not has_active_workspace_membership:
             return False
+        if super().has_permission(request, view):
+            return True
 
         return ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
