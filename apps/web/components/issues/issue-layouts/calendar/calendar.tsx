@@ -114,10 +114,18 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
   const { activeMonthDate, activeWeekDate } = issueCalendarView.calendarFilters;
   const visibleWeeks =
     layout === "week" ? [issueCalendarView.allDaysOfActiveWeek] : Object.values(allWeeksOfActiveMonth ?? {});
-  const pickedDatePayload = renderFormattedPayloadDate(pickedDate) ?? "";
-  const isPickedDateVisible = visibleWeeks.some((week) => !!week?.[pickedDatePayload]);
-  const fallbackDate = layout === "week" ? activeWeekDate : activeMonthDate;
-  const selectedDate = isPickedDateVisible ? pickedDate : fallbackDate;
+  const isInView = (date: Date) => {
+    const payload = renderFormattedPayloadDate(date) ?? "";
+    return visibleWeeks.some((week) => !!week?.[payload]);
+  };
+  // With weekends hidden, a fallback on a Saturday or Sunday has no tile, so use the nearest weekday in view.
+  const isShownDay = (date: Date) => isInView(date) && (showWeekends || (date.getDay() !== 0 && date.getDay() !== 6));
+  const activeDate = layout === "week" ? activeWeekDate : activeMonthDate;
+  const fallbackDate =
+    [0, 1, 2, -1, -2]
+      .map((days) => new Date(activeDate.getFullYear(), activeDate.getMonth(), activeDate.getDate() + days))
+      .find(isShownDay) ?? activeDate;
+  const selectedDate = isInView(pickedDate) ? pickedDate : fallbackDate;
 
   const formattedDatePayload = renderFormattedPayloadDate(selectedDate) ?? undefined;
 
