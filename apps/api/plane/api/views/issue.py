@@ -164,6 +164,22 @@ from plane.utils.openapi import (
 )
 from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 
+# Query parameters accepted by the work item list endpoint. Anything else is
+# rejected with a 400 instead of being silently ignored. "format" is DRF's
+# built-in content-negotiation override.
+ISSUE_LIST_ALLOWED_QUERY_PARAMS = frozenset(
+    {
+        "cursor",
+        "per_page",
+        "order_by",
+        "fields",
+        "expand",
+        "external_id",
+        "external_source",
+        "format",
+    }
+)
+
 
 def user_has_issue_permission(user_id, project_id, issue=None, allowed_roles=None, allow_creator=True):
     if allow_creator and issue is not None and user_id == issue.created_by_id:
@@ -399,6 +415,18 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
                         "a Plane edition that supports work item query filtering."
                     ),
                     "unsupported_parameters": unsupported_filters,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Fail loudly on query parameters this endpoint does not read, instead of
+        # silently ignoring them and returning unfiltered results.
+        unknown_params = sorted(set(request.GET.keys()) - ISSUE_LIST_ALLOWED_QUERY_PARAMS)
+        if unknown_params:
+            return Response(
+                {
+                    "error": "Unsupported query parameters",
+                    "unsupported_parameters": unknown_params,
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
