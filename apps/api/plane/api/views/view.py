@@ -375,7 +375,7 @@ class WorkspaceViewDetailAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
-        """Return accessible workspace views with favorite state and guest scoping."""
+        """Return accessible workspace views with favorite state."""
         workspace_slug = self.kwargs.get("slug")
         favorite_subquery = UserFavorite.objects.filter(
             user=self.request.user,
