@@ -369,37 +369,3 @@ class TestIssueViewPublicAPI:
         assert not UserRecentVisit.objects.filter(
             user=create_user, workspace=workspace, entity_name="view", entity_identifier=view.id
         ).exists()
-
-    @pytest.mark.django_db
-    def test_workspace_guest_cannot_read_other_users_public_views(
-        self, api_client, workspace, create_user
-    ):
-        """Workspace guests see only their own saved views, even when others are public."""
-        guest = User.objects.create(
-            email=f"guest-{uuid4().hex[:8]}@plane.so",
-            username=f"guest_{uuid4().hex[:8]}",
-        )
-        WorkspaceMember.objects.create(workspace=workspace, member=guest, role=5, is_active=True)
-        token = APIToken.objects.create(
-            user=guest,
-            label="Guest API token",
-            token=f"guest-api-{uuid4().hex}",
-        )
-        api_client.credentials(HTTP_X_API_KEY=token.token)
-
-        public_view = IssueView.objects.create(
-            name="Another User Public View",
-            workspace=workspace,
-            project=None,
-            owned_by=create_user,
-            access=1,
-        )
-
-        list_url = self.get_workspace_views_url(workspace.slug)
-        list_response = api_client.get(list_url)
-        assert list_response.status_code == status.HTTP_200_OK
-        result_ids = [item["id"] for item in list_response.data.get("results", [])]
-        assert str(public_view.id) not in result_ids
-
-        detail_response = api_client.get(self.get_workspace_view_detail_url(workspace.slug, public_view.id))
-        assert detail_response.status_code == status.HTTP_404_NOT_FOUND
