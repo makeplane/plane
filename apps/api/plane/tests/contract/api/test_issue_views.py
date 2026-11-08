@@ -443,6 +443,39 @@ class TestIssueViewPublicAPI:
         )
         assert create_response.status_code == status.HTTP_404_NOT_FOUND
 
+    @pytest.mark.parametrize("view_scope", ["project", "workspace"])
+    @pytest.mark.django_db
+    def test_locked_view_rejects_combined_unlock_and_edit_requests(
+        self, api_key_client, workspace, project, create_user, view_scope
+    ):
+        """Unlocking must be a standalone update and cannot smuggle in other edits."""
+        view = IssueView.objects.create(
+            name=f"Locked {view_scope} view",
+            description="Original description",
+            workspace=workspace,
+            project=project if view_scope == "project" else None,
+            owned_by=create_user,
+            access=1,
+            is_locked=True,
+        )
+        detail_url = (
+            self.get_detail_url(workspace.slug, project.id, view.id)
+            if view_scope == "project"
+            else self.get_workspace_view_detail_url(workspace.slug, view.id)
+        )
+
+        response = api_key_client.patch(
+            detail_url,
+            {"is_locked": False, "description": "Must not be updated"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "locked" in response.data.get("error", "").lower()
+        view.refresh_from_db()
+        assert view.is_locked is True
+        assert view.description == "Original description"
+
     @pytest.mark.django_db
     def test_update_locked_view_rejected(self, api_key_client, workspace, project, test_view):
         """Updating a locked view returns HTTP 400 Bad Request."""
