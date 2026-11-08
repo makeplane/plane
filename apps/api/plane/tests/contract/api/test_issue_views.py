@@ -389,7 +389,6 @@ class TestIssueViewPublicAPI:
             user=other_user, workspace=workspace, entity_name="view", entity_identifier=view.id
         ).exists()
 
-
     @pytest.mark.django_db
     def test_workspace_guest_can_only_list_and_retrieve_own_views(self, workspace, create_user):
         """Workspace guests can access their own views but not public views owned by others."""
