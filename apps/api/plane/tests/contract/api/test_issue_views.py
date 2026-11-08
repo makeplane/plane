@@ -14,7 +14,7 @@ from unittest.mock import patch
 from uuid import uuid4
 
 import pytest
-from django.db import DatabaseError, close_old_connections, connection, connections
+from django.db import DatabaseError, close_old_connections, connection, connections, transaction
 from django.db.models.query import QuerySet
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -157,6 +157,31 @@ class TestIssueViewPublicAPI:
         assert response.data.get("name") == "Alias Created View"
         assert IssueView.objects.filter(name="Alias Created View", project=project).exists()
 
+    @pytest.mark.parametrize("view_scope", ["project", "workspace"])
+    @pytest.mark.django_db
+    def test_create_view_honors_explicit_sort_order_and_keeps_auto_order_when_omitted(
+        self, api_key_client, workspace, project, view_scope
+    ):
+        """Explicit sort_order is honored; omitted values still use model ordering."""
+        list_url = (
+            self.get_list_url(workspace.slug, project.id)
+            if view_scope == "project"
+            else self.get_workspace_views_url(workspace.slug)
+        )
+        first = api_key_client.post(list_url, {"name": "Explicit first", "sort_order": 100}, format="json")
+        assert first.status_code == status.HTTP_201_CREATED
+        assert first.data["sort_order"] == 100
+
+        second = api_key_client.post(list_url, {"name": "Explicit second", "sort_order": 250}, format="json")
+        assert second.status_code == status.HTTP_201_CREATED
+        assert second.data["sort_order"] == 250
+        second_view = IssueView.objects.get(pk=second.data["id"])
+        assert second_view.sort_order == 250
+
+        automatic = api_key_client.post(list_url, {"name": "Automatic order"}, format="json")
+        assert automatic.status_code == status.HTTP_201_CREATED
+        assert automatic.data["sort_order"] == 10250
+
     @pytest.mark.django_db
     def test_create_project_view_rejects_non_object_filters(self, api_key_client, workspace, project):
         """A non-object filters payload is rejected with HTTP 400, not a server error."""
@@ -173,6 +198,47 @@ class TestIssueViewPublicAPI:
         )
         assert invalid_nested_value.status_code == status.HTTP_400_BAD_REQUEST
         assert "state" in invalid_nested_value.data.get("filters", {})
+
+    @pytest.mark.parametrize("view_scope", ["project", "workspace"])
+    @pytest.mark.django_db
+    def test_legacy_filters_populate_rich_filters_unless_explicitly_supplied(
+        self, api_key_client, workspace, project, view_scope
+    ):
+        """Legacy filters are converted for web clients without overwriting explicit rich filters."""
+        list_url = (
+            self.get_list_url(workspace.slug, project.id)
+            if view_scope == "project"
+            else self.get_workspace_views_url(workspace.slug)
+        )
+        created = api_key_client.post(
+            list_url, {"name": "Legacy filters", "filters": {"priority": ["urgent"]}}, format="json"
+        )
+        assert created.status_code == status.HTTP_201_CREATED
+        view = IssueView.objects.get(pk=created.data["id"])
+        assert view.rich_filters == {"priority__in": "urgent"}
+
+        detail_url = (
+            self.get_detail_url(workspace.slug, project.id, view.id)
+            if view_scope == "project"
+            else self.get_workspace_view_detail_url(workspace.slug, view.id)
+        )
+        updated = api_key_client.patch(detail_url, {"filters": {"priority": ["high"]}}, format="json")
+        assert updated.status_code == status.HTTP_200_OK
+        view.refresh_from_db()
+        assert view.rich_filters == {"priority__in": "high"}
+
+        explicit = {"and": [{"priority__in": "low"}]}
+        explicit_update = api_key_client.patch(
+            detail_url, {"filters": {"priority": ["urgent"]}, "rich_filters": explicit}, format="json"
+        )
+        assert explicit_update.status_code == status.HTTP_200_OK
+        view.refresh_from_db()
+        assert view.rich_filters == explicit
+
+        cleared = api_key_client.patch(detail_url, {"filters": {}}, format="json")
+        assert cleared.status_code == status.HTTP_200_OK
+        view.refresh_from_db()
+        assert view.rich_filters == {}
 
     @pytest.mark.django_db
     def test_retrieve_project_view_via_alias_detail_route(self, api_key_client, workspace, project, test_view):
@@ -637,7 +703,7 @@ class TestIssueViewPublicAPI:
     @pytest.mark.parametrize("view_scope", ["project", "workspace"])
     @pytest.mark.django_db
     def test_active_guest_can_create_update_and_delete_own_saved_views(
-        self, workspace, project, view_scope
+        self, workspace, project, create_user, view_scope
     ):
         """Active guests can manage their own saved views at both API scopes."""
         suffix = uuid4().hex
@@ -869,6 +935,35 @@ class TestIssueViewPublicAPI:
             user=create_user, entity_name="view", entity_identifier=view.id
         ).exists()
 
+    @pytest.mark.django_db(transaction=True)
+    def test_soft_delete_cleanup_is_dispatched_only_after_transaction_commit(
+        self, workspace, project, create_user
+    ):
+        """A rolled-back soft delete must not leave a cleanup task queued."""
+        view = IssueView.objects.create(
+            name="Transactional soft delete",
+            workspace=workspace,
+            project=project,
+            owned_by=create_user,
+        )
+        with patch("plane.db.mixins.soft_delete_related_objects.delay") as dispatch:
+            with pytest.raises(RuntimeError):
+                with transaction.atomic():
+                    view.delete()
+                    dispatch.assert_not_called()
+                    raise RuntimeError("force transaction rollback")
+
+            dispatch.assert_not_called()
+            view.refresh_from_db()
+            assert view.deleted_at is None
+
+            with transaction.atomic():
+                view.delete()
+                dispatch.assert_not_called()
+
+            dispatch.assert_called_once()
+            assert IssueView.all_objects.get(pk=view.pk).deleted_at is not None
+
     @pytest.mark.django_db
     def test_queued_workspace_view_visit_does_not_recreate_after_delete(
         self, api_key_client, workspace, create_user
@@ -1045,27 +1140,40 @@ class TestIssueViewPublicAPI:
         ).exists()
         assert not IssueView.objects.filter(pk=view.id).exists()
 
+    @pytest.mark.parametrize(
+        "relative_filter",
+        [
+            "2_weeks;after",
+            "2_weeks;after;fromnwo",
+            "2_weeks;sideways;fromnow",
+            "2_weeks;after;past",
+            "2_days;after;fromnow",
+            "0_weeks;before;fromnow",
+        ],
+    )
     @pytest.mark.django_db
-    def test_create_project_view_rejects_incomplete_relative_date_but_accepts_absolute_date(
-        self, api_key_client, workspace, project
+    def test_create_project_view_rejects_incomplete_or_unsupported_relative_date_tokens(
+        self, api_key_client, workspace, project, relative_filter
     ):
-        """Reject incomplete relative date expressions but retain absolute date filters."""
-        url = self.get_list_url(workspace.slug, project.id)
-        invalid_response = api_key_client.post(
-            url,
-            {"name": "Incomplete relative date", "filters": {"created_at": ["2_weeks;after"]}},
+        """Incomplete and unsupported relative date tokens return HTTP 400."""
+        response = api_key_client.post(
+            self.get_list_url(workspace.slug, project.id),
+            {"name": "Invalid relative date", "filters": {"created_at": [relative_filter]}},
             format="json",
         )
-        assert invalid_response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "created_at" in invalid_response.data.get("filters", {})
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "created_at" in response.data.get("filters", {})
 
-        valid_response = api_key_client.post(
-            url,
+    @pytest.mark.django_db
+    def test_create_project_view_still_accepts_absolute_date_filters(self, api_key_client, workspace, project):
+        """Absolute date filters retain their existing accepted format."""
+        response = api_key_client.post(
+            self.get_list_url(workspace.slug, project.id),
             {"name": "Absolute date filter", "filters": {"created_at": ["2030-01-01;after"]}},
             format="json",
         )
-        assert valid_response.status_code == status.HTTP_201_CREATED
-        assert valid_response.data["query"]["created_at__date__gte"] == "2030-01-01"
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.data["query"]["created_at__date__gte"] == "2030-01-01"
 
     @pytest.mark.django_db
     def test_create_project_view_serializes_relative_date_query_values(self, api_key_client, workspace, project):
@@ -1074,15 +1182,31 @@ class TestIssueViewPublicAPI:
         with patch("plane.utils.issue_filters.timezone.now", return_value=fixed_now):
             response = api_key_client.post(
                 self.get_list_url(workspace.slug, project.id),
-                {"name": "Relative date filter", "filters": {"created_at": ["2_weeks;after;past"]}},
+                {"name": "Relative date filter", "filters": {"created_at": ["2_weeks;after;fromnow"]}},
                 format="json",
             )
         assert response.status_code == status.HTTP_201_CREATED
         view = IssueView.objects.get(pk=response.data["id"])
         query_date = view.query["created_at__date__gte"]
-        expected_date = (fixed_now.date() - timedelta(weeks=2)).isoformat()
+        expected_date = (fixed_now.date() + timedelta(weeks=2)).isoformat()
         assert query_date == expected_date
         assert response.data["query"]["created_at__date__gte"] == query_date
+
+    @pytest.mark.django_db
+    def test_create_project_view_calculates_before_fromnow_date_in_the_past(
+        self, api_key_client, workspace, project
+    ):
+        """The frontend's 'before/from now' option resolves to a past date boundary."""
+        fixed_now = datetime(2025, 1, 15, 12, 0, tzinfo=dt_timezone.utc)
+        with patch("plane.utils.issue_filters.timezone.now", return_value=fixed_now):
+            response = api_key_client.post(
+                self.get_list_url(workspace.slug, project.id),
+                {"name": "Past relative date", "filters": {"created_at": ["2_weeks;before;fromnow"]}},
+                format="json",
+            )
+        assert response.status_code == status.HTTP_201_CREATED
+        expected_date = (fixed_now.date() - timedelta(weeks=2)).isoformat()
+        assert response.data["query"]["created_at__date__lte"] == expected_date
 
     @pytest.mark.parametrize(
         "relative_filter",

@@ -620,7 +620,7 @@ class WorkspaceViewDetailAPIEndpoint(BaseAPIView):
     def delete(self, request, slug, pk):
         """Delete a workspace saved view and its metadata atomically."""
         with transaction.atomic():
-            issue_view = IssueView.objects.select_for_update().filter(
+            issue_view = IssueView.objects.select_for_update(of=("self",)).filter(
                 pk=pk,
                 workspace__slug=slug,
                 project__isnull=True,

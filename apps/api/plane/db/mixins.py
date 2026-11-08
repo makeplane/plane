@@ -3,10 +3,11 @@
 # See the LICENSE file for details.
 
 # Type imports
+from functools import partial
 from typing import Any
 
 # Django imports
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 
 # Module imports
@@ -75,7 +76,16 @@ class SoftDeleteModel(models.Model):
             self.deleted_at = timezone.now()
             self.save(using=using)
 
-            soft_delete_related_objects.delay(self._meta.app_label, self._meta.model_name, self.pk, using=using)
+            transaction.on_commit(
+                partial(
+                    soft_delete_related_objects.delay,
+                    self._meta.app_label,
+                    self._meta.model_name,
+                    self.pk,
+                    using=using,
+                ),
+                using=using,
+            )
 
         else:
             # Perform hard delete if soft deletion is not enabled

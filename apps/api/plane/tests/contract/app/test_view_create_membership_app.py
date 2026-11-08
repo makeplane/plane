@@ -5,9 +5,11 @@
 """Creating a view requires membership: workspace views need an active workspace
 member, project views an active project member."""
 
+from unittest.mock import patch
 from uuid import uuid4
 
 import pytest
+from django.utils import timezone
 from rest_framework import status
 
 from plane.db.models import IssueView, Project, ProjectMember, User, Workspace
@@ -69,3 +71,106 @@ class TestViewCreateMembership:
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
         assert not IssueView.objects.filter(project=project).exists()
+
+    @pytest.mark.parametrize("view_scope", ["workspace", "project"])
+    @pytest.mark.django_db
+    def test_owner_can_unlock_locked_view_through_legacy_app_api(
+        self, session_client, workspace, create_user, view_scope
+    ):
+        """The owner can unlock a public-API-locked view from the existing web app."""
+        project = _project(workspace, "UNL", create_user) if view_scope == "project" else None
+        list_url = (
+            f"/api/workspaces/{workspace.slug}/projects/{project.id}/views/"
+            if project
+            else f"/api/workspaces/{workspace.slug}/views/"
+        )
+        created = session_client.post(list_url, {"name": "Locked view"}, format="json")
+        assert created.status_code == status.HTTP_201_CREATED
+        view = IssueView.objects.get(pk=created.data["id"])
+        IssueView.objects.filter(pk=view.id).update(is_locked=True)
+        detail_url = (
+            f"/api/workspaces/{workspace.slug}/projects/{project.id}/views/{view.id}/"
+            if project
+            else f"/api/workspaces/{workspace.slug}/views/{view.id}/"
+        )
+
+        mixed_update = session_client.patch(
+            detail_url, {"is_locked": False, "name": "Must remain locked"}, format="json"
+        )
+        assert mixed_update.status_code == status.HTTP_400_BAD_REQUEST
+        view.refresh_from_db()
+        assert view.is_locked is True
+        assert view.name == "Locked view"
+
+        unlock = session_client.patch(detail_url, {"is_locked": False}, format="json")
+        assert unlock.status_code == status.HTTP_200_OK
+        assert unlock.data["is_locked"] is False
+        view.refresh_from_db()
+        assert view.is_locked is False
+
+    @pytest.mark.django_db
+    def test_archived_project_rejects_legacy_view_create_update_and_delete(
+        self, session_client, workspace, create_user
+    ):
+        """Legacy app saved-view mutations cannot proceed after the project is archived."""
+        project = _project(workspace, "ARC", create_user)
+        list_url = f"/api/workspaces/{workspace.slug}/projects/{project.id}/views/"
+        created = session_client.post(list_url, {"name": "Existing view"}, format="json")
+        assert created.status_code == status.HTTP_201_CREATED
+        view = IssueView.objects.get(pk=created.data["id"])
+        detail_url = f"{list_url}{view.id}/"
+
+        Project.objects.filter(pk=project.id).update(archived_at=timezone.now())
+        create_after_archive = session_client.post(list_url, {"name": "Must not exist"}, format="json")
+        update_after_archive = session_client.patch(detail_url, {"name": "Must not update"}, format="json")
+        delete_after_archive = session_client.delete(detail_url)
+
+        assert create_after_archive.status_code == status.HTTP_404_NOT_FOUND
+        assert update_after_archive.status_code == status.HTTP_404_NOT_FOUND
+        assert delete_after_archive.status_code == status.HTTP_404_NOT_FOUND
+        surviving_view = IssueView.all_objects.get(pk=view.id)
+        assert surviving_view.name == "Existing view"
+        assert surviving_view.deleted_at is None
+        assert not IssueView.objects.filter(project=project, name="Must not exist").exists()
+
+    @pytest.mark.parametrize("view_scope", ["workspace", "project"])
+    @pytest.mark.django_db
+    def test_legacy_view_retrieve_is_best_effort_when_visit_dispatch_fails(
+        self, session_client, workspace, create_user, view_scope
+    ):
+        """A broker failure while recording a visit must not fail the view GET."""
+        project = _project(workspace, "VIS", create_user) if view_scope == "project" else None
+        list_url = (
+            f"/api/workspaces/{workspace.slug}/projects/{project.id}/views/"
+            if project
+            else f"/api/workspaces/{workspace.slug}/views/"
+        )
+        created = session_client.post(list_url, {"name": "Visit failure view"}, format="json")
+        assert created.status_code == status.HTTP_201_CREATED
+        view = IssueView.objects.get(pk=created.data["id"])
+        detail_url = (
+            f"/api/workspaces/{workspace.slug}/projects/{project.id}/views/{view.id}/"
+            if project
+            else f"/api/workspaces/{workspace.slug}/views/{view.id}/"
+        )
+
+        with patch(
+            "plane.app.views.view.base.recent_visited_task.delay",
+            side_effect=RuntimeError("broker unavailable"),
+        ) as dispatch, patch("plane.app.views.view.base.log_exception") as log_error:
+            response = session_client.get(detail_url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["id"] == str(view.id)
+        dispatch.assert_called_once()
+        log_error.assert_called_once()
+        assert isinstance(log_error.call_args.args[0], RuntimeError)
+
+    @pytest.mark.django_db
+    def test_project_view_retrieve_returns_404_for_missing_view(self, session_client, workspace, create_user):
+        """A missing project view must produce 404 rather than serializing None."""
+        project = _project(workspace, "MIS", create_user)
+        response = session_client.get(
+            f"/api/workspaces/{workspace.slug}/projects/{project.id}/views/{uuid4()}/"
+        )
+        assert response.status_code == status.HTTP_404_NOT_FOUND
