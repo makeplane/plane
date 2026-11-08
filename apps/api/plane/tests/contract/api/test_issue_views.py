@@ -744,9 +744,13 @@ class TestIssueViewPublicAPI:
         assert project_membership.is_active is True
 
         list_url = self.get_list_url(workspace.slug, project.id)
+        alias_list_url = self.get_alias_url(workspace.slug, project.id)
         detail_url = self.get_detail_url(workspace.slug, project.id, existing_view.id)
+        alias_detail_url = self.get_alias_detail_url(workspace.slug, project.id, existing_view.id)
         list_response = guest_client.get(list_url)
         detail_response = guest_client.get(detail_url)
+        alias_list_response = guest_client.get(alias_list_url)
+        alias_detail_response = guest_client.get(alias_detail_url)
         create_response = guest_client.post(
             list_url,
             {"name": "Must not be created", "filters": {}},
@@ -759,6 +763,8 @@ class TestIssueViewPublicAPI:
 
         assert list_response.status_code == status.HTTP_403_FORBIDDEN
         assert detail_response.status_code == status.HTTP_403_FORBIDDEN
+        assert alias_list_response.status_code == status.HTTP_403_FORBIDDEN
+        assert alias_detail_response.status_code == status.HTTP_403_FORBIDDEN
         assert create_response.status_code == status.HTTP_403_FORBIDDEN
         assert update_response.status_code == status.HTTP_403_FORBIDDEN
         assert delete_response.status_code == status.HTTP_403_FORBIDDEN
