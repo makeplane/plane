@@ -458,7 +458,14 @@ class WorkspaceViewDetailAPIEndpoint(BaseAPIView):
             return Response({"error": "The requested resource does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
         if issue_view.is_locked:
-            return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
+            is_owner_unlock_request = (
+                issue_view.owned_by_id == request.user.id
+                and isinstance(request.data, dict)
+                and set(request.data.keys()) == {"is_locked"}
+                and request.data.get("is_locked") is False
+            )
+            if not is_owner_unlock_request:
+                return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
         if issue_view.owned_by_id != request.user.id:
             return Response(
