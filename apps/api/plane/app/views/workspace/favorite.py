@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Python imports
+from collections.abc import Mapping
+
 # Third party modules
 from rest_framework import status
 from rest_framework.response import Response
@@ -19,10 +22,13 @@ from plane.app.permissions import allow_permission, ROLE
 
 
 class WorkspaceFavoriteEndpoint(BaseAPIView):
+    """Manage favorites belonging to a workspace."""
+
     use_read_replica = True
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
+        """List the current user's top-level workspace favorites."""
         # the second filter is to check if the user is a member of the project
         favorites = UserFavorite.objects.filter(user=request.user, workspace__slug=slug, parent__isnull=True).filter(
             Q(project__isnull=True) & ~Q(entity_type="page")
@@ -37,6 +43,7 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug):
+        """Create a workspace favorite after validating its target entity."""
         try:
             workspace = Workspace.objects.get(slug=slug)
 
@@ -83,6 +90,13 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def patch(self, request, slug, favorite_id):
+        """Update favorite metadata without racing saved-view deletion."""
+        if not isinstance(request.data, Mapping):
+            return Response(
+                {"error": "Request body must be an object."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         with transaction.atomic():
             favorite_filter = UserFavorite.objects.filter(
                 user=request.user, workspace__slug=slug, pk=favorite_id
@@ -133,14 +147,18 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def delete(self, request, slug, favorite_id):
+        """Remove a favorite owned by the requesting user."""
         favorite = UserFavorite.objects.get(user=request.user, workspace__slug=slug, pk=favorite_id)
         favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class WorkspaceFavoriteGroupEndpoint(BaseAPIView):
+    """List and manage favorites inside workspace folders."""
+
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug, favorite_id):
+        """List the requesting user's favorites in a folder."""
         favorites = UserFavorite.objects.filter(user=request.user, workspace__slug=slug, parent_id=favorite_id).filter(
             Q(project__isnull=True)
             | (

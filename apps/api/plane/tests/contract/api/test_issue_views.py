@@ -7,7 +7,7 @@ Contract tests for IssueView public REST API endpoints (/api/v1/.../views/ and p
 """
 
 from concurrent.futures import ThreadPoolExecutor
-from threading import Event
+from threading import Event, get_ident
 from time import monotonic, sleep
 from unittest.mock import patch
 from uuid import uuid4
@@ -510,6 +510,39 @@ class TestIssueViewPublicAPI:
         favorite.refresh_from_db()
         assert favorite.name == "Do not restore"
 
+    @pytest.mark.parametrize("payload", [["name"], "name", 17, None])
+    @pytest.mark.django_db
+    def test_workspace_favorite_patch_rejects_non_object_request_bodies(
+        self, session_client, workspace, create_user, payload
+    ):
+        """Non-object favorite update bodies return HTTP 400 without saving changes."""
+        view = IssueView.objects.create(
+            name="Favorite Body Validation View",
+            workspace=workspace,
+            project=None,
+            owned_by=create_user,
+            access=1,
+        )
+        favorite = UserFavorite.objects.create(
+            user=create_user,
+            workspace=workspace,
+            project=None,
+            entity_type="view",
+            entity_identifier=view.id,
+            name="Original favorite name",
+        )
+
+        response = session_client.patch(
+            f"/api/workspaces/{workspace.slug}/user-favorites/{favorite.id}/",
+            payload,
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data["error"] == "Request body must be an object."
+        favorite.refresh_from_db()
+        assert favorite.name == "Original favorite name"
+
     @pytest.mark.django_db
     def test_workspace_guest_can_only_list_and_retrieve_own_views(self, workspace, create_user):
         """Workspace guests can access their own views but not public views owned by others."""
@@ -685,20 +718,27 @@ class TestIssueViewPublicAPI:
             user=create_user, workspace=workspace, entity_name="view", entity_identifier=view.id
         ).exists()
 
+    @pytest.mark.parametrize("view_scope", ["project", "workspace"])
     @pytest.mark.django_db(transaction=True)
-    def test_workspace_view_delete_waits_for_in_flight_recent_visit_task(
-        self, workspace, create_user, monkeypatch
+    def test_public_view_delete_waits_for_in_flight_recent_visit_task(
+        self, workspace, project, create_user, api_token, view_scope, monkeypatch
     ):
-        """DELETE waits for a task holding the view lock, then removes its committed visit."""
+        """Both public DELETE routes wait for a locked task and then remove its visit."""
         if connection.vendor != "postgresql" or not connection.features.has_select_for_update:
             pytest.skip("This lock-order regression requires PostgreSQL row-level locks.")
 
+        project_id = project.id if view_scope == "project" else None
         view = IssueView.objects.create(
-            name="Concurrent Visit View",
+            name=f"Concurrent {view_scope} Visit View",
             workspace=workspace,
-            project=None,
+            project=project if view_scope == "project" else None,
             owned_by=create_user,
             access=1,
+        )
+        detail_url = (
+            self.get_detail_url(workspace.slug, project.id, view.id)
+            if view_scope == "project"
+            else self.get_workspace_view_detail_url(workspace.slug, view.id)
         )
         task_at_insert = Event()
         allow_task_to_commit = Event()
@@ -707,17 +747,19 @@ class TestIssueViewPublicAPI:
         delete_finished = Event()
         delete_pid_ready = Event()
         delete_pid = {}
+        delete_worker = {}
         queued_task_kwargs = {
             "slug": workspace.slug,
-            "project_id": None,
+            "project_id": project_id,
             "entity_name": "view",
             "entity_identifier": view.id,
             "user_id": create_user.id,
         }
         original_create = QuerySet.create
-        original_get = QuerySet.get
+        original_first = QuerySet.first
 
         def pause_recent_visit_insert(queryset, *args, **kwargs):
+            """Pause visit insertion while the task holds the saved-view row lock."""
             is_target_visit = (
                 queryset.model is UserRecentVisit
                 and kwargs.get("entity_name") == "view"
@@ -733,19 +775,17 @@ class TestIssueViewPublicAPI:
             return original_create(queryset, *args, **kwargs)
 
         def observe_delete_lock_request(queryset, *args, **kwargs):
-            is_target_view_lock = (
-                queryset.model is IssueView
-                and queryset.query.select_for_update
-                and kwargs.get("pk") == view.id
-            )
-            if is_target_view_lock:
+            """Signal when the public DELETE worker evaluates its saved-view lock query."""
+            is_delete_worker = get_ident() == delete_worker.get("thread_id")
+            if is_delete_worker and queryset.model is IssueView and queryset.query.select_for_update:
                 delete_lock_requested.set()
-            return original_get(queryset, *args, **kwargs)
+            return original_first(queryset, *args, **kwargs)
 
         monkeypatch.setattr(QuerySet, "create", pause_recent_visit_insert)
-        monkeypatch.setattr(QuerySet, "get", observe_delete_lock_request)
+        monkeypatch.setattr(QuerySet, "first", observe_delete_lock_request)
 
         def run_recent_visit_task():
+            """Run the recent-visit task on an independent database connection."""
             close_old_connections()
             try:
                 return recent_visited_task.run(**queued_task_kwargs)
@@ -753,7 +793,9 @@ class TestIssueViewPublicAPI:
                 close_old_connections()
 
         def run_view_delete():
+            """Call the public DELETE route on its own database connection."""
             close_old_connections()
+            delete_worker["thread_id"] = get_ident()
             try:
                 with connections["default"].cursor() as cursor:
                     cursor.execute("SELECT pg_backend_pid()")
@@ -761,8 +803,8 @@ class TestIssueViewPublicAPI:
                 delete_pid_ready.set()
 
                 client = APIClient()
-                client.force_authenticate(user=create_user)
-                response = client.delete(f"/api/workspaces/{workspace.slug}/views/{view.id}/")
+                client.credentials(HTTP_X_API_KEY=api_token.token)
+                response = client.delete(detail_url)
                 return response.status_code
             finally:
                 delete_finished.set()
@@ -777,10 +819,9 @@ class TestIssueViewPublicAPI:
 
             delete_future = executor.submit(run_view_delete)
             assert delete_pid_ready.wait(timeout=5), "The delete worker did not open its own database connection."
-            assert delete_lock_requested.wait(timeout=5), "The delete worker did not request the view row lock."
+            assert delete_lock_requested.wait(timeout=5), "The public DELETE handler did not request the view row lock."
 
-            # Confirm that PostgreSQL reports the DELETE connection waiting on a lock,
-            # rather than treating a merely-started request as proof of serialization.
+            # Confirm PostgreSQL reports the DELETE connection waiting on the task's row lock.
             deadline = monotonic() + 5
             waiting_for_lock = False
             while monotonic() < deadline:
@@ -795,7 +836,7 @@ class TestIssueViewPublicAPI:
                     break
                 sleep(0.01)
 
-            assert waiting_for_lock, "DELETE did not block on the row lock held by recent_visited_task."
+            assert waiting_for_lock, "The public DELETE handler did not block on the task's saved-view lock."
             assert not delete_finished.is_set()
         finally:
             allow_task_to_commit.set()
@@ -809,7 +850,7 @@ class TestIssueViewPublicAPI:
         assert not UserRecentVisit.objects.filter(
             user=create_user,
             workspace=workspace,
-            project__isnull=True,
+            project_id=project_id,
             entity_name="view",
             entity_identifier=view.id,
         ).exists()

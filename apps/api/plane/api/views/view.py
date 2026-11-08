@@ -246,7 +246,7 @@ class IssueViewDetailAPIEndpoint(BaseAPIView):
                 is_active=True,
             )
             issue_view = (
-                IssueView.objects.select_for_update()
+                IssueView.objects.select_for_update(of=("self",))
                 .filter(
                     pk=pk,
                     workspace__slug=slug,
@@ -494,7 +494,7 @@ class WorkspaceViewDetailAPIEndpoint(BaseAPIView):
                 project__isnull=True,
             )
             queryset = (
-                IssueView.objects.select_for_update()
+                IssueView.objects.select_for_update(of=("self",))
                 .filter(pk=pk, workspace__slug=slug, project__isnull=True)
                 .annotate(is_favorite=Exists(favorite_subquery))
             )

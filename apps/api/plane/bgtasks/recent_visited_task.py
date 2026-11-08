@@ -16,6 +16,7 @@ from plane.utils.exception_logger import log_exception
 
 @shared_task
 def recent_visited_task(entity_name, entity_identifier, user_id, project_id, slug):
+    """Record recent activity while coordinating saved-view visits with deletion."""
     try:
         with transaction.atomic():
             workspace = Workspace.objects.get(slug=slug)

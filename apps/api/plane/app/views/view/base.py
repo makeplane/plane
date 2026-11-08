@@ -51,20 +51,25 @@ from plane.utils.filters import IssueFilterSet
 
 
 class WorkspaceViewViewSet(BaseViewSet):
+    """Manage workspace-level saved views."""
+
     serializer_class = IssueViewSerializer
     model = IssueView
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def create(self, request, slug):
+        """Create a workspace-level saved view."""
         # Creating a workspace view requires active workspace membership, with
         # the same roles as list(). perform_create is a save hook, not a check.
         return super().create(request, slug=slug)
 
     def perform_create(self, serializer):
+        """Assign the workspace and owner to a new saved view."""
         workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
         serializer.save(workspace_id=workspace.id, owned_by=self.request.user)
 
     def get_queryset(self):
+        """Return the current user's saved-view records in this workspace."""
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -83,6 +88,7 @@ class WorkspaceViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
+        """List the saved views visible to the requesting workspace member."""
         queryset = self.get_queryset()
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         if WorkspaceMember.objects.filter(workspace__slug=slug, member=request.user, role=5, is_active=True).exists():
@@ -92,6 +98,7 @@ class WorkspaceViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[], level="WORKSPACE", creator=True, model=IssueView)
     def partial_update(self, request, slug, pk):
+        """Update an unlocked workspace view owned by the requester."""
         with transaction.atomic():
             workspace_view = IssueView.objects.select_for_update().get(pk=pk, workspace__slug=slug)
 
@@ -114,6 +121,7 @@ class WorkspaceViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def retrieve(self, request, slug, pk):
+        """Retrieve a workspace view and record the recent visit."""
         # Requires workspace membership, matching list() above.
         issue_view = self.get_queryset().filter(pk=pk).first()
 
@@ -148,6 +156,7 @@ class WorkspaceViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE", creator=True, model=IssueView)
     def destroy(self, request, slug, pk):
+        """Delete a workspace view and its metadata atomically."""
         with transaction.atomic():
             workspace_view = IssueView.objects.select_for_update().get(
                 pk=pk, workspace__slug=slug, project__isnull=True
@@ -182,6 +191,8 @@ class WorkspaceViewViewSet(BaseViewSet):
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
+    """List issues using a workspace saved view's filter configuration."""
+
     filter_backends = (ComplexFilterBackend,)
     filterset_class = IssueFilterSet
 
@@ -208,6 +219,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         )
 
     def apply_annotations(self, issues):
+        """Add issue counts and prefetched relations to the queryset."""
         return (
             issues.annotate(
                 cycle_id=Subquery(
@@ -256,11 +268,13 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
+        """Return issues scoped to the requested workspace."""
         return Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug"))
 
     @method_decorator(gzip_page)
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
+        """List issues visible through the saved workspace view."""
         issue_queryset = self.get_queryset()
 
         # Apply filtering from filterset
@@ -300,20 +314,25 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
 
 class IssueViewViewSet(BaseViewSet):
+    """Manage project-level saved views."""
+
     serializer_class = IssueViewSerializer
     model = IssueView
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id):
+        """Create a project-level saved view."""
         # Creating a project view requires active project membership, with the
         # same roles as list()/retrieve(). perform_create is a save hook, not a
         # check.
         return super().create(request, slug=slug, project_id=project_id)
 
     def perform_create(self, serializer):
+        """Assign the project and owner to a new saved view."""
         serializer.save(project_id=self.kwargs.get("project_id"), owned_by=self.request.user)
 
     def get_queryset(self):
+        """Return saved views accessible in the requested project."""
         subquery = UserFavorite.objects.filter(
             user=self.request.user,
             entity_identifier=OuterRef("pk"),
@@ -341,6 +360,7 @@ class IssueViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
+        """List the saved views available in the project."""
         queryset = self.get_queryset()
         project = Project.objects.get(id=project_id)
         if (
@@ -360,12 +380,9 @@ class IssueViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def retrieve(self, request, slug, project_id, pk):
+        """Retrieve a project view and record the recent visit."""
         issue_view = self.get_queryset().filter(pk=pk, project_id=project_id).first()
         project = Project.objects.get(id=project_id)
-        """
-        if the role is guest and guest_view_all_features is false and owned by is not 
-        the requesting user then dont show the view
-        """
 
         if (
             ProjectMember.objects.filter(
@@ -395,6 +412,7 @@ class IssueViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[], creator=True, model=IssueView)
     def partial_update(self, request, slug, project_id, pk):
+        """Update an unlocked project view owned by the requester."""
         with transaction.atomic():
             issue_view = IssueView.objects.select_for_update().get(pk=pk, workspace__slug=slug, project_id=project_id)
 
@@ -417,6 +435,7 @@ class IssueViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView)
     def destroy(self, request, slug, project_id, pk):
+        """Delete a project view and its metadata atomically."""
         with transaction.atomic():
             project_view = IssueView.objects.select_for_update().get(
                 pk=pk, project_id=project_id, workspace__slug=slug
@@ -455,9 +474,12 @@ class IssueViewViewSet(BaseViewSet):
 
 
 class IssueViewFavoriteViewSet(BaseViewSet):
+    """Create and remove favorites for project saved views."""
+
     model = UserFavorite
 
     def get_queryset(self):
+        """Return the current user's saved-view records in this workspace."""
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -468,6 +490,7 @@ class IssueViewFavoriteViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
+        """Create a saved-view favorite while synchronizing with view deletion."""
         # Serialize favorite creation with view deletion, which locks the same row.
         with transaction.atomic():
             get_favorite_entities("view", request.user.id, project_id).select_for_update().get(
@@ -483,6 +506,7 @@ class IssueViewFavoriteViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, view_id):
+        """Remove the current user's favorite for a project saved view."""
         view_favorite = UserFavorite.objects.get(
             project=project_id,
             user=request.user,
