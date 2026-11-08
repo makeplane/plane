@@ -201,6 +201,8 @@ export function SelectRoot<T>(props: SelectProps<T>) {
   // would find no element to click — scrolling the highlighted index back into view keeps the row
   // mounted (and registered) before the next keystroke lands.
   const virtualizerRef = useRef<SelectVirtualizer | null>(null);
+  // The listbox, focused on open when there is no search field (see `focusListWithoutSearch`).
+  const listRef = useRef<HTMLDivElement | null>(null);
   // Which row Enter would select, for `onSearchSubmit`. Base UI highlights nothing until the user
   // arrows (it takes no `autoHighlight`), and reports `-1` when it clears the highlight again.
   const highlightedIndexRef = useRef(-1);
@@ -477,6 +479,15 @@ export function SelectRoot<T>(props: SelectProps<T>) {
       </>
     ) : undefined;
 
+  // base-ui drives the list's arrow keys from its input. Without the search field there is none, so
+  // focus lands on the panel and the arrow keys and Enter do nothing. The list handles them itself
+  // once it has focus. A field in the trigger (`variant="search-input"`) keeps focus, as it does
+  // by default. With no list (a failed load) base-ui's default focus stays.
+  const focusListWithoutSearch = useCallback(
+    () => (document.activeElement instanceof HTMLInputElement ? false : (listRef.current ?? true)),
+    []
+  );
+
   const content = (
     <>
       {children}
@@ -489,6 +500,7 @@ export function SelectRoot<T>(props: SelectProps<T>) {
         data-prevent-outside-click
         search={searchSlot}
         footer={footer}
+        initialFocus={showSearch ? undefined : focusListWithoutSearch}
       >
         {positionerZIndex === undefined ? null : <span hidden ref={applyPositionerZIndex} />}
         {/* Both regions stay mounted (base-ui announces their content politely); their chrome
@@ -528,6 +540,7 @@ export function SelectRoot<T>(props: SelectProps<T>) {
             loader={<SelectOptionsSkeleton rows={1} />}
             listLabel={popupLabel}
             virtualizerRef={virtualizerRef}
+            listRef={listRef}
             getOptionValue={getOptionValue}
             getOptionDisabled={getOptionDisabled}
             getOptionHref={getOptionHref}

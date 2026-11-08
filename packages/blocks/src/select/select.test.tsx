@@ -135,6 +135,22 @@ describe("Select on Propel combobox", () => {
     expect(onChange).toHaveBeenCalledWith("id-199");
   });
 
+  it("walks and picks rows with the keyboard when the search field is off", async () => {
+    const user = userEvent.setup();
+    const { onChange } = renderSelect({ showSearch: false });
+
+    trigger().focus();
+    await user.keyboard("{Enter}");
+    await waitFor(() => expect(popup().getAllByRole("option").length).toBeGreaterThan(0));
+    // With no search field there is no input to carry the arrow keys, so the list itself takes focus.
+    await waitFor(() => expect(document.activeElement).toBe(popup().getByRole("listbox")));
+    await user.keyboard("{ArrowDown}");
+    await user.keyboard("{ArrowDown}");
+    await user.keyboard("{Enter}");
+
+    expect(onChange).toHaveBeenCalledWith("id-1");
+  });
+
   it("closes on Escape", async () => {
     const user = userEvent.setup();
     renderSelect();

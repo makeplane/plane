@@ -161,6 +161,8 @@ type VirtualListBodyProps<T> = {
    * window — see `onItemHighlighted` in `root.tsx`.
    */
   virtualizerRef?: Ref<SelectVirtualizer | null>;
+  /** The `role="listbox"` element, so the root can focus it when the panel has no search field. */
+  listRef?: Ref<HTMLDivElement | null>;
 };
 
 /**
@@ -191,6 +193,7 @@ export function VirtualListBody<T>(props: VirtualListBodyProps<T>) {
     getOptionDescription,
     renderOption,
     virtualizerRef,
+    listRef,
   } = props;
   // Flatten options and (when grouped) their section headings into the one list the virtualizer
   // measures, keeping each option's own index — base-ui addresses rows by that, not by row position.
@@ -284,8 +287,14 @@ export function VirtualListBody<T>(props: VirtualListBodyProps<T>) {
   return (
     // Bounded below the panel's own `max-h-72` cap so this scroller — not the panel's ScrollArea —
     // is the one the virtualizer measures.
-    <div ref={scrollRef} role="presentation" className="vertical-scrollbar scrollbar-sm max-h-60 overflow-y-auto">
-      <ComboboxList aria-label={listLabel}>
+    // The list takes focus when there is no search field. Like the panel around it, it shows no
+    // ring of its own: the highlighted row is the keyboard indicator.
+    <div
+      ref={scrollRef}
+      role="presentation"
+      className="vertical-scrollbar scrollbar-sm max-h-60 overflow-y-auto [&>[role=listbox]]:outline-none"
+    >
+      <ComboboxList ref={listRef} aria-label={listLabel}>
         <div role="presentation" className="relative w-full" style={{ height: virtualizer.getTotalSize() }}>
           {virtualizer.getVirtualItems().map((virtualRow) => {
             const row = rows[virtualRow.index];
