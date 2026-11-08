@@ -228,14 +228,25 @@ export class ProjectViewStore implements IProjectViewStore {
     data: Partial<IProjectView>
   ): Promise<IProjectView> {
     const currentView = this.getViewById(viewId);
+    const previousView = currentView ? { ...currentView } : undefined;
 
     runInAction(() => {
       set(this.viewMap, [viewId], { ...currentView, ...data });
     });
 
-    const response = await this.viewService.patchView(workspaceSlug, projectId, viewId, data);
-
-    return response;
+    try {
+      const response = await this.viewService.patchView(workspaceSlug, projectId, viewId, data);
+      runInAction(() => {
+        set(this.viewMap, [viewId], response);
+      });
+      return response;
+    } catch (error) {
+      runInAction(() => {
+        if (previousView) set(this.viewMap, [viewId], previousView);
+        else delete this.viewMap[viewId];
+      });
+      throw error;
+    }
   }
 
   /**

@@ -11,6 +11,7 @@ import {
   LinkOutline,
   NewTabOutline,
   RestoreOutline,
+  UnlockedOutline,
 } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import type { TContextMenuItem } from "@plane/blocks/context-menu";
@@ -27,6 +28,14 @@ export const useQuickActionsFactory = () => {
       key: "edit",
       title: t("edit"),
       icon: EditOutline,
+      action: handler,
+      shouldRender,
+    }),
+
+    createUnlockMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
+      key: "unlock",
+      title: t("unlock"),
+      icon: UnlockedOutline,
       action: handler,
       shouldRender,
     }),
