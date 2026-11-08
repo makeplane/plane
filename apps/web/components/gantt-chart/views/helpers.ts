@@ -109,8 +109,7 @@ export const getItemPositionWidth = (chartData: ChartDataType, itemData: IGanttB
 
   if (itemStartDate && itemTargetDate) {
     // get width of block
-    const widthTimeDifference: number = itemStartDate.getTime() - itemTargetDate.getTime();
-    const widthDaysDifference: number = Math.abs(Math.floor(widthTimeDifference / (1000 * 60 * 60 * 24)));
+    const widthDaysDifference = Math.abs(findTotalDaysInRange(itemStartDate, itemTargetDate, false) ?? 0);
     scrollWidth = (widthDaysDifference + 1) * chartData.data.dayWidth;
   }
 
