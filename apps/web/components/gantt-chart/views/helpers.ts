@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { differenceInCalendarDays, isValid } from "date-fns";
+import { isValid } from "date-fns";
 import type { ChartDataType, IGanttBlock } from "@plane/types";
 import { addDaysToDate, findTotalDaysInRange, getDate } from "@plane/utils";
 import { DEFAULT_BLOCK_WIDTH } from "../constants";
@@ -111,8 +111,10 @@ export const getItemPositionWidth = (chartData: ChartDataType, itemData: IGanttB
     : getPositionFromDate(chartData, itemTargetDate!, -1 * DEFAULT_BLOCK_WIDTH + chartData.data.dayWidth);
 
   if (itemStartDate && itemTargetDate) {
-    // get width of block
-    const widthDaysDifference = Math.abs(differenceInCalendarDays(itemTargetDate, itemStartDate));
+    // Round midnight-to-midnight elapsed days to absorb DST shifts without counting skipped dates.
+    const widthDaysDifference = Math.round(
+      Math.abs(itemTargetDate.getTime() - itemStartDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
     scrollWidth = (widthDaysDifference + 1) * chartData.data.dayWidth;
   }
 

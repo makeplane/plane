@@ -82,3 +82,47 @@ describe("Gantt block widths when DST skips midnight", () => {
     expect(position(start, end)?.width).toBe(days * 24);
   });
 });
+
+describe("Gantt block widths across a skipped calendar date", () => {
+  const originalTimezone = process.env.TZ;
+
+  beforeAll(() => {
+    process.env.TZ = "Pacific/Apia";
+  });
+
+  afterAll(() => {
+    process.env.TZ = originalTimezone;
+  });
+
+  it("matches the displayed columns when December 30, 2011 is skipped", () => {
+    const currentDate = new Date(2011, 11, 29);
+    const endDate = new Date(2011, 11, 31);
+    const displayedDates: number[] = [];
+
+    while (currentDate.getTime() <= endDate.getTime()) {
+      displayedDates.push(currentDate.getDate());
+      currentDate.setHours(0, 0, 0, 0);
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    expect(displayedDates).toEqual([29, 31]);
+    expect(position("2011-12-29", "2011-12-31")?.width).toBe(displayedDates.length * 24);
+    expect(position("2011-12-31", "2011-12-29")?.width).toBe(displayedDates.length * 24);
+  });
+
+  it("matches the displayed columns for a longer range in both directions", () => {
+    const currentDate = new Date(2011, 0, 1);
+    const endDate = new Date(2013, 0, 1);
+    let columnCount = 0;
+
+    while (currentDate.getTime() <= endDate.getTime()) {
+      columnCount++;
+      currentDate.setHours(0, 0, 0, 0);
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    expect(columnCount).toBe(731);
+    expect(position("2011-01-01", "2013-01-01")?.width).toBe(columnCount * 24);
+    expect(position("2013-01-01", "2011-01-01")?.width).toBe(columnCount * 24);
+  });
+});
