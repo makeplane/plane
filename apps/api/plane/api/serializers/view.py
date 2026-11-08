@@ -9,6 +9,7 @@ Serializers for saved views in the public API.
 from datetime import timedelta
 
 from django.db import transaction
+from django.utils import timezone
 from rest_framework import serializers
 
 from .base import BaseSerializer
@@ -101,10 +102,17 @@ class IssueViewSerializer(BaseSerializer):
             duration = int(date_query[0].split("_", 1)[0])
             if duration <= 0:
                 return False
-            if match.group(1) == "weeks":
+            delta = (
                 timedelta(weeks=duration)
+                if match.group(1) == "weeks"
+                else timedelta(days=duration * 30)
+            )
+            today = timezone.now().date()
+            # Check the same calendar arithmetic used to construct the issue query.
+            if date_query[1] == "after":
+                today + delta
             else:
-                timedelta(days=duration * 30)
+                today - delta
             return True
         except (OverflowError, ValueError):
             return False
@@ -113,6 +121,12 @@ class IssueViewSerializer(BaseSerializer):
     def _legacy_filters_to_rich_filters(filters):
         """Convert supported legacy filters using the same mapping as the data migration."""
         return LegacyToRichFiltersConverter().convert(filters, strict=False) if filters else {}
+
+    def validate_rich_filters(self, value):
+        """Rich filters must be an object accepted by the issue filter backend."""
+        if not isinstance(value, dict):
+            raise serializers.ValidationError("rich_filters must be a JSON object.")
+        return value
 
     def validate_filters(self, value):
         """Validate filter values before passing them to issue_filters()."""

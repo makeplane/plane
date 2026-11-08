@@ -20,6 +20,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from plane.db.models import (
+    Issue,
     IssueView,
     Project,
     ProjectMember,
@@ -32,6 +33,7 @@ from plane.db.models import (
 )
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.db.models.api import APIToken
+from plane.utils.filters import IssueFilterSet
 
 
 @pytest.fixture
@@ -199,6 +201,14 @@ class TestIssueViewPublicAPI:
         assert invalid_nested_value.status_code == status.HTTP_400_BAD_REQUEST
         assert "state" in invalid_nested_value.data.get("filters", {})
 
+        invalid_rich_filter = api_key_client.post(
+            url,
+            {"name": "Invalid rich filters", "rich_filters": "subscriber_id__in"},
+            format="json",
+        )
+        assert invalid_rich_filter.status_code == status.HTTP_400_BAD_REQUEST
+        assert "rich_filters" in invalid_rich_filter.data
+
     @pytest.mark.parametrize("view_scope", ["project", "workspace"])
     @pytest.mark.django_db
     def test_legacy_filters_populate_rich_filters_unless_explicitly_supplied(
@@ -239,6 +249,64 @@ class TestIssueViewPublicAPI:
         assert cleared.status_code == status.HTTP_200_OK
         view.refresh_from_db()
         assert view.rich_filters == {}
+
+    @pytest.mark.django_db
+    def test_legacy_subscriber_and_relative_created_at_filters_survive_rich_conversion(
+        self, api_key_client, workspace, project
+    ):
+        """Legacy subscriber and relative creation-date filters remain usable by the web FilterSet."""
+        subscriber_id = uuid4()
+        fixed_now = datetime(2025, 1, 15, 12, 0, tzinfo=dt_timezone.utc)
+        with (
+            patch("plane.utils.filters.converters.timezone.now", return_value=fixed_now),
+            patch("plane.utils.issue_filters.timezone.now", return_value=fixed_now),
+        ):
+            response = api_key_client.post(
+                self.get_list_url(workspace.slug, project.id),
+                {
+                    "name": "Subscriber and creation-date filters",
+                    "filters": {
+                        "subscriber": [str(subscriber_id)],
+                        "created_at": ["2_weeks;after;fromnow"],
+                    },
+                },
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_201_CREATED
+        view = IssueView.objects.get(pk=response.data["id"])
+        expected_date = (fixed_now.date() + timedelta(weeks=2)).isoformat()
+        assert view.rich_filters == {
+            "and": [
+                {"subscriber_id__in": str(subscriber_id)},
+                {"created_at__gte": expected_date},
+            ]
+        }
+        filterset = IssueFilterSet(
+            data={
+                "subscriber_id__in": str(subscriber_id),
+                "created_at__gte": expected_date,
+            },
+            queryset=Issue.objects.none(),
+        )
+        assert filterset.is_valid(), filterset.errors
+
+    @pytest.mark.parametrize(
+        "relative_filter",
+        ["1000000_weeks;after;fromnow", "1000000_weeks;before;fromnow"],
+    )
+    @pytest.mark.django_db
+    def test_create_project_view_rejects_relative_dates_that_overflow_calendar_arithmetic(
+        self, api_key_client, workspace, project, relative_filter
+    ):
+        """Date offsets must be rejected before Python date arithmetic can overflow."""
+        response = api_key_client.post(
+            self.get_list_url(workspace.slug, project.id),
+            {"name": "Out of range date", "filters": {"created_at": [relative_filter]}},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "created_at" in response.data.get("filters", {})
 
     @pytest.mark.django_db
     def test_retrieve_project_view_via_alias_detail_route(self, api_key_client, workspace, project, test_view):
