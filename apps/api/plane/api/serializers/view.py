@@ -13,6 +13,28 @@ from plane.db.models import IssueView
 from plane.utils.issue_filters import issue_filters
 
 
+_LIST_FILTER_FIELDS = {
+    "state",
+    "state_group",
+    "estimate_point",
+    "priority",
+    "parent",
+    "labels",
+    "assignees",
+    "mentions",
+    "created_by",
+    "logged_by",
+    "project",
+    "cycle",
+    "module",
+    "intake_status",
+    "inbox_status",
+    "subscriber",
+}
+_DATE_FILTER_FIELDS = {"created_at", "updated_at", "completed_at"}
+_STRING_FILTER_FIELDS = {"name", "start_date", "target_date", "type", "sub_issue", "start_target_date"}
+
+
 class IssueViewSerializer(BaseSerializer):
     """
     Serializer for IssueView in the public API.
@@ -61,9 +83,28 @@ class IssueViewSerializer(BaseSerializer):
         ]
 
     def validate_filters(self, value):
-        """Require filters to be a JSON object before computing query criteria."""
+        """Validate filter values before passing them to issue_filters()."""
         if not isinstance(value, dict):
             raise serializers.ValidationError("filters must be a JSON object.")
+
+        errors = {}
+        for field, field_value in value.items():
+            if field in _LIST_FILTER_FIELDS or field in _DATE_FILTER_FIELDS:
+                if field_value is not None and (
+                    not isinstance(field_value, list)
+                    or any(not isinstance(item, str) for item in field_value)
+                ):
+                    errors[field] = "must be a list of strings or null."
+            elif field in _STRING_FILTER_FIELDS:
+                if field == "name":
+                    if not isinstance(field_value, str):
+                        errors[field] = "must be a string."
+                elif field_value is not None and not isinstance(field_value, str):
+                    errors[field] = "must be a string or null."
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
         return value
 
     def create(self, validated_data):

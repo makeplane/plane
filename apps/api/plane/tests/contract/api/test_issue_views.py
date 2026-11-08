@@ -6,8 +6,11 @@
 Contract tests for IssueView public REST API endpoints (/api/v1/.../views/ and project-views/).
 """
 
+from unittest.mock import patch
 from uuid import uuid4
+
 import pytest
+from django.db import DatabaseError
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -22,6 +25,7 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
 )
+from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.db.models.api import APIToken
 
 
@@ -157,6 +161,14 @@ class TestIssueViewPublicAPI:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "filters" in response.data
 
+        invalid_nested_value = api_key_client.post(
+            url,
+            {"name": "Invalid nested filters", "filters": {"state": 42}},
+            format="json",
+        )
+        assert invalid_nested_value.status_code == status.HTTP_400_BAD_REQUEST
+        assert "state" in invalid_nested_value.data.get("filters", {})
+
     @pytest.mark.django_db
     def test_retrieve_project_view_via_alias_detail_route(self, api_key_client, workspace, project, test_view):
         """The legacy /project-views/ alias supports its detail operations."""
@@ -185,9 +197,16 @@ class TestIssueViewPublicAPI:
         assert response.data.get("description") == test_view.description
 
     @pytest.mark.django_db
-    def test_update_project_view(self, api_key_client, workspace, project, test_view):
+    def test_update_project_view(self, api_key_client, workspace, project, test_view, create_user):
         """Owner can partially update an existing view and recalculate query criteria."""
         url = self.get_detail_url(workspace.slug, project.id, test_view.id)
+        UserFavorite.objects.create(
+            user=create_user,
+            workspace=workspace,
+            project=project,
+            entity_type="view",
+            entity_identifier=test_view.id,
+        )
         payload = {
             "name": "Updated Sprint View",
             "filters": {"priority": ["urgent"]},
@@ -196,6 +215,7 @@ class TestIssueViewPublicAPI:
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data.get("name") == "Updated Sprint View"
+        assert response.data.get("is_favorite") is True
 
         test_view.refresh_from_db()
         assert test_view.name == "Updated Sprint View"
@@ -230,6 +250,11 @@ class TestIssueViewPublicAPI:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "locked" in response.data.get("error", "").lower()
+
+        unlock_response = api_key_client.patch(url, {"is_locked": False}, format="json")
+        assert unlock_response.status_code == status.HTTP_200_OK
+        test_view.refresh_from_db()
+        assert test_view.is_locked is False
 
     @pytest.mark.django_db
     def test_delete_project_view(self, api_key_client, workspace, project, test_view, create_user):
@@ -375,6 +400,17 @@ class TestIssueViewPublicAPI:
         update_response = api_key_client.patch(detail_url, {"name": "Updated Workspace View"}, format="json")
         assert update_response.status_code == status.HTTP_200_OK
         assert update_response.data.get("name") == "Updated Workspace View"
+        assert update_response.data.get("is_favorite") is True
+
+        lock_response = api_key_client.patch(detail_url, {"is_locked": True}, format="json")
+        assert lock_response.status_code == status.HTTP_200_OK
+        locked_edit_response = api_key_client.patch(
+            detail_url, {"name": "Must stay locked"}, format="json"
+        )
+        assert locked_edit_response.status_code == status.HTTP_400_BAD_REQUEST
+        unlock_response = api_key_client.patch(detail_url, {"is_locked": False}, format="json")
+        assert unlock_response.status_code == status.HTTP_200_OK
+        assert unlock_response.data.get("is_locked") is False
 
         delete_response = api_key_client.delete(detail_url)
         assert delete_response.status_code == status.HTTP_204_NO_CONTENT
@@ -438,3 +474,184 @@ class TestIssueViewPublicAPI:
             self.get_workspace_view_detail_url(workspace.slug, another_members_public_view.id)
         )
         assert another_members_detail_response.status_code == status.HTTP_404_NOT_FOUND
+
+    @pytest.mark.django_db
+    def test_non_owner_cannot_unlock_locked_project_or_workspace_views(
+        self, workspace, project, create_user
+    ):
+        """A member cannot unlock another user's locked project or workspace view."""
+        suffix = uuid4().hex
+        other_user = User.objects.create(email=f"member-{suffix}@plane.so", username=f"member_{suffix}")
+        WorkspaceMember.objects.create(workspace=workspace, member=other_user, role=15, is_active=True)
+        ProjectMember.objects.create(project=project, member=other_user, role=15, is_active=True)
+        token = APIToken.objects.create(
+            user=other_user, label="Member API Token", token=f"member-api-token-{suffix}"
+        )
+        member_client = APIClient()
+        member_client.credentials(HTTP_X_API_KEY=token.token)
+
+        project_view = IssueView.objects.create(
+            name="Owner Locked Project View",
+            workspace=workspace,
+            project=project,
+            owned_by=create_user,
+            is_locked=True,
+        )
+        workspace_view = IssueView.objects.create(
+            name="Owner Locked Workspace View",
+            workspace=workspace,
+            project=None,
+            owned_by=create_user,
+            is_locked=True,
+        )
+
+        project_response = member_client.patch(
+            self.get_detail_url(workspace.slug, project.id, project_view.id),
+            {"is_locked": False},
+            format="json",
+        )
+        workspace_response = member_client.patch(
+            self.get_workspace_view_detail_url(workspace.slug, workspace_view.id),
+            {"is_locked": False},
+            format="json",
+        )
+
+        assert project_response.status_code == status.HTTP_400_BAD_REQUEST
+        assert workspace_response.status_code == status.HTTP_400_BAD_REQUEST
+        project_view.refresh_from_db()
+        workspace_view.refresh_from_db()
+        assert project_view.is_locked is True
+        assert workspace_view.is_locked is True
+
+    @pytest.mark.parametrize("view_scope", ["project", "workspace"])
+    @pytest.mark.django_db
+    def test_delete_rolls_back_view_metadata_when_view_deletion_fails(
+        self, api_key_client, workspace, project, create_user, view_scope
+    ):
+        """A failed view delete must roll back favorite and recent-visit cleanup."""
+        if view_scope == "project":
+            view = IssueView.objects.create(
+                name="Project View Delete Rollback",
+                workspace=workspace,
+                project=project,
+                owned_by=create_user,
+            )
+            detail_url = self.get_detail_url(workspace.slug, project.id, view.id)
+        else:
+            view = IssueView.objects.create(
+                name="Workspace View Delete Rollback",
+                workspace=workspace,
+                project=None,
+                owned_by=create_user,
+            )
+            detail_url = self.get_workspace_view_detail_url(workspace.slug, view.id)
+
+        UserFavorite.objects.create(
+            user=create_user, workspace=workspace,
+            project=project if view_scope == "project" else None,
+            entity_type="view", entity_identifier=view.id,
+        )
+        UserRecentVisit.objects.create(
+            user=create_user, workspace=workspace,
+            project=project if view_scope == "project" else None,
+            entity_name="view", entity_identifier=view.id,
+        )
+
+        with patch.object(IssueView, "delete", side_effect=DatabaseError("simulated delete failure")):
+            response = api_key_client.delete(detail_url)
+
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        assert IssueView.objects.filter(pk=view.id).exists()
+        assert UserFavorite.objects.filter(
+            user=create_user, entity_type="view", entity_identifier=view.id
+        ).exists()
+        assert UserRecentVisit.objects.filter(
+            user=create_user, entity_name="view", entity_identifier=view.id
+        ).exists()
+
+    @pytest.mark.django_db
+    def test_queued_workspace_view_visit_does_not_recreate_after_delete(
+        self, api_key_client, workspace, create_user
+    ):
+        """A delayed GET task must not recreate recent-visit metadata after view deletion."""
+        view = IssueView.objects.create(
+            name="Queued Visit View",
+            workspace=workspace,
+            project=None,
+            owned_by=create_user,
+            access=1,
+        )
+        detail_url = self.get_workspace_view_detail_url(workspace.slug, view.id)
+
+        with patch("plane.api.views.view.recent_visited_task.delay") as enqueue_visit:
+            retrieve_response = api_key_client.get(detail_url)
+            assert retrieve_response.status_code == status.HTTP_200_OK
+            enqueue_visit.assert_called_once()
+            queued_task_kwargs = enqueue_visit.call_args.kwargs
+
+            delete_response = api_key_client.delete(detail_url)
+            assert delete_response.status_code == status.HTTP_204_NO_CONTENT
+
+        recent_visited_task.run(**queued_task_kwargs)
+        assert not UserRecentVisit.objects.filter(
+            user=create_user, workspace=workspace, entity_name="view", entity_identifier=view.id
+        ).exists()
+
+    @pytest.mark.parametrize("guest_view_all_features", [False, True])
+    @pytest.mark.django_db
+    def test_project_guest_visibility_respects_guest_view_all_features(
+        self, workspace, project, create_user, guest_view_all_features
+    ):
+        """Project guests see own views always and other public views only when enabled."""
+        project.guest_view_all_features = guest_view_all_features
+        project.save(update_fields=["guest_view_all_features"])
+
+        suffix = uuid4().hex
+        guest = User.objects.create(
+            email=f"project-guest-{suffix}@plane.so",
+            username=f"project_guest_{suffix}",
+        )
+        WorkspaceMember.objects.create(workspace=workspace, member=guest, role=5, is_active=True)
+        ProjectMember.objects.create(project=project, member=guest, role=5, is_active=True)
+        token = APIToken.objects.create(
+            user=guest,
+            label="Project Guest API Token",
+            token=f"project-guest-api-token-{suffix}",
+        )
+        guest_client = APIClient()
+        guest_client.credentials(HTTP_X_API_KEY=token.token)
+
+        own_view = IssueView.objects.create(
+            name="Guest Private Project View",
+            workspace=workspace,
+            project=project,
+            owned_by=guest,
+            access=0,
+        )
+        another_members_public_view = IssueView.objects.create(
+            name="Member Public Project View",
+            workspace=workspace,
+            project=project,
+            owned_by=create_user,
+            access=1,
+        )
+
+        list_response = guest_client.get(self.get_list_url(workspace.slug, project.id))
+        assert list_response.status_code == status.HTTP_200_OK
+        listed_ids = {item["id"] for item in list_response.data.get("results", [])}
+        assert str(own_view.id) in listed_ids
+        assert (str(another_members_public_view.id) in listed_ids) is guest_view_all_features
+
+        own_detail_response = guest_client.get(
+            self.get_detail_url(workspace.slug, project.id, own_view.id)
+        )
+        assert own_detail_response.status_code == status.HTTP_200_OK
+
+        public_detail_response = guest_client.get(
+            self.get_detail_url(workspace.slug, project.id, another_members_public_view.id)
+        )
+        expected_public_status = (
+            status.HTTP_200_OK if guest_view_all_features else status.HTTP_403_FORBIDDEN
+        )
+        assert public_detail_response.status_code == expected_public_status
+

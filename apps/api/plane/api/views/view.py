@@ -6,6 +6,7 @@
 API endpoints for managing saved views (IssueView) in the public REST API.
 """
 
+from django.db import transaction
 from django.db.models import Exists, OuterRef, Q
 from drf_spectacular.utils import OpenApiRequest, OpenApiResponse
 from rest_framework import status
@@ -221,17 +222,19 @@ class IssueViewDetailAPIEndpoint(BaseAPIView):
     )
     def patch(self, request, slug, project_id, pk):
         """Partially update a project saved view."""
-        issue_view = IssueView.objects.filter(
-            pk=pk,
-            project_id=project_id,
-            workspace__slug=slug,
-            project__archived_at__isnull=True,
-        ).first()
+        issue_view = self.get_queryset().filter(pk=pk, project_id=project_id).first()
         if not issue_view:
             return Response({"error": "The requested resource does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
         if issue_view.is_locked:
-            return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
+            is_owner_unlock_request = (
+                issue_view.owned_by_id == request.user.id
+                and isinstance(request.data, dict)
+                and set(request.data.keys()) == {"is_locked"}
+                and request.data.get("is_locked") is False
+            )
+            if not is_owner_unlock_request:
+                return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
         if issue_view.owned_by_id != request.user.id:
             return Response(
@@ -256,34 +259,49 @@ class IssueViewDetailAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, project_id, pk):
-        """Delete a project saved view."""
-        issue_view = IssueView.objects.filter(
-            pk=pk,
-            project_id=project_id,
-            workspace__slug=slug,
-            project__archived_at__isnull=True,
-        ).first()
-        if not issue_view:
-            return Response({"error": "The requested resource does not exist."}, status=status.HTTP_404_NOT_FOUND)
+        """Delete a project saved view and its metadata atomically."""
+        with transaction.atomic():
+            issue_view = IssueView.objects.select_for_update().filter(
+                pk=pk,
+                project_id=project_id,
+                workspace__slug=slug,
+                project__archived_at__isnull=True,
+            ).first()
+            if not issue_view:
+                return Response(
+                    {"error": "The requested resource does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
-        is_admin = ProjectMember.objects.filter(
-            workspace__slug=slug, project_id=project_id, member=request.user, role=20, is_active=True
-        ).exists()
+            is_admin = ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=20,
+                is_active=True,
+            ).exists()
 
-        if is_admin or issue_view.owned_by_id == request.user.id:
+            if not (is_admin or issue_view.owned_by_id == request.user.id):
+                return Response(
+                    {"error": "Only admin or owner can delete the view"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             UserFavorite.objects.filter(
-                project_id=project_id, workspace__slug=slug, entity_identifier=pk, entity_type="view"
+                project_id=project_id,
+                workspace__slug=slug,
+                entity_identifier=pk,
+                entity_type="view",
             ).delete()
             UserRecentVisit.objects.filter(
-                project_id=project_id, workspace__slug=slug, entity_identifier=pk, entity_name="view"
+                project_id=project_id,
+                workspace__slug=slug,
+                entity_identifier=pk,
+                entity_name="view",
             ).delete(soft=False)
             issue_view.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
 
-        return Response(
-            {"error": "Only admin or owner can delete the view"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class WorkspaceViewListCreateAPIEndpoint(BaseAPIView):
@@ -435,7 +453,7 @@ class WorkspaceViewDetailAPIEndpoint(BaseAPIView):
     )
     def patch(self, request, slug, pk):
         """Partially update a workspace saved view."""
-        issue_view = IssueView.objects.filter(pk=pk, workspace__slug=slug, project__isnull=True).first()
+        issue_view = self.get_queryset().filter(pk=pk).first()
         if not issue_view:
             return Response({"error": "The requested resource does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -465,18 +483,37 @@ class WorkspaceViewDetailAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, pk):
-        """Delete a workspace saved view."""
-        issue_view = IssueView.objects.filter(pk=pk, workspace__slug=slug, project__isnull=True).first()
-        if not issue_view:
-            return Response({"error": "The requested resource does not exist."}, status=status.HTTP_404_NOT_FOUND)
+        """Delete a workspace saved view and its metadata atomically."""
+        with transaction.atomic():
+            issue_view = IssueView.objects.select_for_update().filter(
+                pk=pk,
+                workspace__slug=slug,
+                project__isnull=True,
+            ).first()
+            if not issue_view:
+                return Response(
+                    {"error": "The requested resource does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
-        is_admin = WorkspaceMember.objects.filter(
-            workspace__slug=slug, member=request.user, role=20, is_active=True
-        ).exists()
+            is_admin = WorkspaceMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                is_active=True,
+            ).exists()
 
-        if is_admin or issue_view.owned_by_id == request.user.id:
+            if not (is_admin or issue_view.owned_by_id == request.user.id):
+                return Response(
+                    {"error": "Only admin or owner can delete the view"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             UserFavorite.objects.filter(
-                workspace__slug=slug, entity_identifier=pk, project__isnull=True, entity_type="view"
+                workspace__slug=slug,
+                entity_identifier=pk,
+                project__isnull=True,
+                entity_type="view",
             ).delete()
             UserRecentVisit.objects.filter(
                 workspace__slug=slug,
@@ -485,9 +522,5 @@ class WorkspaceViewDetailAPIEndpoint(BaseAPIView):
                 entity_name="view",
             ).delete(soft=False)
             issue_view.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
 
-        return Response(
-            {"error": "Only admin or owner can delete the view"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
