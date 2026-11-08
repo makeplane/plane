@@ -4,7 +4,9 @@ Bugs found in a code review of the Plane base code at commit `618d0eb746`. A sec
 
 Line numbers refer to that commit, so they may have moved. Critical and High bugs are not listed here because they have their own pull requests, and some findings are tracked separately.
 
-**253 bugs:** 88 Medium, 165 Low.
+**253 bugs in the Plane base code:** 88 Medium, 165 Low.
+
+**81 bugs in the code Nexus adds on top of Plane:** 19 Medium, 62 Low, in the sections named "Nexus:" at the end of this file. These were reviewed separately, and each was re-checked by reading the code at `preview` `74111238e`. The Critical and High bugs in that code have their own pull requests, #30 to #39.
 
 ## App API
 
@@ -323,3 +325,111 @@ Line numbers refer to that commit, so they may have moved. Critical and High bug
 | Low | `deployments/swarm/community/swarm.sh:279` | After a Swarm deploy the script reports migrations and the server as successful without actually waiting for them, even if the migration later fails. | Poll `docker service ps --format '{{.CurrentState}}'` for the migrator and API and report from those results. |
 | Low | `deployments/swarm/community/swarm.sh:587` | Choosing Exit from the Swarm script's menu is rejected as an invalid option. | Change the check to `^[1-7]$`. |
 | Low | `setup.sh:31` | Running the development setup script a second time silently resets local env files and changes the secret key, so encrypted settings already in the development database stop working. | Skip existing `.env` files and generate keys only for newly created ones unless `--force` is passed. |
+
+## Nexus: agent runtime and permissions
+
+| Severity | Where | Problem | Suggested fix |
+|---|---|---|---|
+| Medium | `packages/acp-adapters/src/core/modes.ts:104` | An MCP action that can write is treated as read-only. `workitem_type resolve` can create a work item type and enable a project feature, but it runs without approval in the default mode. | Remove `resolve` from the read-action pattern. |
+| Medium | `packages/acp-adapters/src/codex/index.ts:64,303` | Codex does not fully honour stricter permission levels. "Ask every time" does not ask about commands on Codex's built-in safe list, and tightening the level during a turn has no effect until the next turn. | Implement `setMode` so tightening applies at once, and make the `ask_all` wording accurate. |
+| Medium | `packages/acp-client/src/session.ts:114,463,470`, `apps/agent-bridge/src/policy.ts:132-134` | Reconnecting resets the chosen permission level. `session/load` sends no level, so the chat restarts at the admin default, which can silently loosen what the user chose. | Pass the current mode on load, as the new-session path does. |
+| Medium | `apps/web/components/agents/transcript/tool-call-card.tsx:98,106,138`, `apps/web/components/agents/helpers.ts:61-72` | The approval prompt can hide what is being approved. The title is cut to one line, details are collapsed, and the input is cut at 4000 characters. | Expand the details and wrap the title while approval is pending, with no cap on the input. |
+| Medium | `apps/api/plane/app/views/workspace/member.py:174,216`, `apps/agent-bridge/src/server.ts:210-280`, `apps/agent-runner/src/workspace.ts:80-105` | Ending a workspace membership leaves agent state behind. Running sessions continue until idle close or token expiry, and stored keys, sign-ins and files on the runner are not removed. | On membership end, delete the credentials, close that user's sessions and clear their runner directories. |
+| Medium | `apps/agent-runner/src/agent-process.ts:127-134`, `apps/agent-runner/src/workspace.ts:21` | Agents of different users share loopback, `/tmp` and `/var/tmp`. They run under separate uids, but only `TMPDIR` is private. | Give each agent its own network and mount namespace, or at minimum private temp directories. |
+| Medium | `apps/agent-bridge/src/server.ts:195-207` | A failed WebSocket handshake leaks a session slot. After admission, a handshake that fails never reaches the callback, so the token is not revoked and the runner connection and per-user slot are held until the bridge restarts. | Validate the handshake first, or discard the admission when the socket closes before the session starts. |
+| Medium | `apps/mcp/plane_mcp/tools/workitem_attachment.py:232`, same pattern across tools | MCP ids reach URL paths without validation. A malformed id can send a request to a different route than the one the user approved. | Validate or percent-encode every id in one place before URLs are built. |
+| Low | `apps/api/plane/utils/agent_credentials.py:125-130`, `apps/agent-runner/src/env.ts:20-53` | Admin endpoint and proxy variables also apply to personal keys. Only credential variables are removed from the admin env. | Drop those variables when a personal credential is used, or state the behaviour in the UI. |
+| Low | `apps/api/plane/utils/agent_credentials.py:84-96,150-191`, `apps/api/plane/license/utils/encryption.py:72-79` | Provider keys become unusable after a `SECRET_KEY` change, and the UI still shows them as valid. Chats fail with a generic error and there is no rotation tool. | Report undecryptable credentials, and add a re-encrypt command. |
+| Low | `packages/acp-adapters/src/core/turn.ts:102,125` | Replayed tool calls can be marked failed. Calls replayed as completed are tracked as open, so the next cancel or error marks them failed. | Do not track calls in a terminal status. |
+| Low | `packages/acp-adapters/src/deepseek/index.ts:144,198,223-226` | DeepSeek history has no limit and API errors are not retried. A chat past the context limit fails every later prompt. | Trim or summarise near the limit and retry transient errors. |
+| Low | `packages/acp-adapters/src/deepseek/sse.ts:18-20,30-32`, `deepseek/index.ts:293-294` | Truncated DeepSeek streams count as success. A stream that ends without its end marker looks complete, and truncated tool arguments reach the tool as empty input. | Treat a missing end marker as an error, and reject unparseable arguments. |
+| Low | `apps/agent-bridge/src/proxy.ts:132-136` | Long turns are cut off at token expiry. The expiry timer closes the connection even during a running turn, and tokens are not renewed. | Renew while a request is in flight, or defer the close until the turn ends. |
+| Low | `apps/api/plane/license/models/instance.py:140-155`, `apps/agent-runner/src/env.ts:89-96` | Reserved env names are accepted and then ignored. The API saves names the runner later drops with only a server log. | Share the reserved list and reject those names at save. |
+| Low | `packages/acp-adapters/src/deepseek/tools.ts:161,201`, `apps/agent-runner/src/agent-process.ts:167-171`, `apps/agent-bridge/src/config.ts:44` | Large DeepSeek diffs can end the chat. Diff cards carry whole file contents, and a frame over the runner's 8 MiB limit stops the agent. The bridge's 32 MiB allowance can never be reached. | Cap diff content and align the limits. |
+| Low | `packages/acp-adapters/src/codex/client.ts:243-244`, `packages/acp-adapters/src/gemini/index.ts:344-350` | Unrelated failures can be reported as sign-in problems. Failure classifiers search recent stderr, and Codex matches a bare `401`. | Classify structured errors only. |
+| Low | `packages/acp-adapters/src/codex/client.ts:90`, `packages/acp-adapters/src/gemini/client.ts:72` | Multi-byte characters can be corrupted. Each stdout chunk is converted separately, so a character split across chunks is garbled. | Use a `StringDecoder`. |
+| Low | `packages/acp-adapters/src/codex/index.ts:249`, `packages/acp-adapters/src/gemini/index.ts:472` | A dead vendor CLI leaves the session failing. The session keeps its dead client and every later prompt fails. | Restart on the next prompt, or end the session clearly. |
+| Low | `packages/acp-adapters/src/gemini/index.ts:486-491` | Gemini turns have no stall watchdog. A hung CLI blocks the turn until the user cancels. | Add a watchdog like the Codex one. |
+| Low | `packages/acp-adapters/src/deepseek/tools.ts:288` | `web_fetch` reads the whole response into memory. The timeout limits time but not size. | Stream the body and stop at a byte cap. |
+| Low | `apps/agent-bridge/src/transport.ts:82-86`, `deployments/hybrid/vps/docker-compose.yml` | The bridge has no backpressure from the runner. Frames queue without limit when the browser reads slowly, and the compose file sets no bridge memory limit. | Pause the runner socket when the queue is full, and set a memory limit. |
+| Low | `apps/agent-runner/src/env.ts:75`, `apps/agent-runner/Dockerfile.agent-runner:54` | SSH does not work for agents. Agent uids have no passwd entry, and OpenSSH refuses to run for an unknown uid. | Add passwd entries for the uid range, or use `nss_wrapper`. |
+
+## Nexus: agent chat
+
+| Severity | Where | Problem | Suggested fix |
+|---|---|---|---|
+| Medium | `packages/acp-client/src/session.ts:279,329,482-488,553`, `apps/web/components/agents/connection-banner.tsx:107` | A failed session reload empties the chat. The transcript is cleared before the load is confirmed, and on automatic reconnect the error is swallowed, so no banner appears and there is no visible way forward. | Clear the transcript only after a successful load, and show a retry or new-chat action. |
+| Medium | `apps/web/components/agents/root.tsx:121` | Leaving `/agents` ends the widget's chat. The page closes the chat on unmount, even though the floating widget outlives it, which aborts a running turn. | Let the widget own the lifecycle and close only on workspace change or sign-out. |
+| Medium | `packages/acp-adapters/src/deepseek/tools.ts:94-111` | DeepSeek shell commands outlive their timeout. Timeout and cancel signal only the direct shell, and a surviving child holding the output pipe keeps the tool, and the turn, from finishing. | Spawn in a process group, kill the group, and resolve without waiting on pipes. |
+| Low | `packages/services/src/workspace/agent.service.ts:22`, `agent-provider.service.ts:28`, `packages/services/src/instance/agent.service.ts:26` | Load failures look like an empty state. With no response or an empty error body, the services throw a falsy value, so the screens show "no agents" or render blank. | `throw error?.response?.data \|\| error`. |
+| Low | `apps/web/store/agent-chat.store.ts:329-451` | Late errors land on the wrong chat. Only `openChat` checks that the failing session is still current. | Skip `setError` unless the session is still current. |
+| Low | `apps/web/components/agents/khaia/root.tsx:94` | The minimized widget blocks taps on phones. Its fixed wrapper spans the screen width. | `pointer-events-none` on the wrapper and `auto` on its child. |
+| Low | `apps/web/components/agents/khaia/root.tsx:95`, `khaia/composer.tsx:33` | Minimizing discards the unsent draft. | Keep the draft in the chat store or widget root. |
+| Low | `apps/web/components/agents/transcript/transcript-view.tsx:54-55` | The transcript may flood screen readers. It is a polite live region rewritten on every streamed update, with no `aria-busy`. | Set `aria-busy` while streaming, or announce only completed messages. |
+| Low | `apps/web/components/agent-providers/root.tsx:51-75` | The provider account check can be aborted and never retried. The provider is marked checked before the request finishes, so a re-render cancels it. | Use an unmount-only abort, or mark it checked after the request settles. |
+| Low | `apps/web/caddy/Caddyfile:16-20,42`, `apps/admin/caddy/Caddyfile:16-20,42` | Old HTML can outlive a deploy. Only hashed assets get a `Cache-Control` header. The web app reloads when a chunk is missing, but the admin app has no such recovery. | Send `no-cache` outside the hashed asset paths. |
+
+## Nexus: API and MCP
+
+| Severity | Where | Problem | Suggested fix |
+|---|---|---|---|
+| Medium | `apps/api/plane/api/views/issue.py:469`, `cycle.py:942`, `module.py:694` | Some PQL conditions return nothing on project lists. Project, cycle and module lists exclude archived, draft and triage items before PQL runs, so `isArchived`, `isDraft` and `isIntake` return empty, while the workspace list and count return results for the same query. | Widen the scope as the workspace list does, or return a 400 explaining the limit. |
+| Medium | `apps/mcp/plane_mcp/tools/workitem.py:284-302`, `apps/api/plane/api/views/issue.py:403-418` | `workitem list` by external id fails or returns everything. With a project and both external fields, the API returns a single object the SDK cannot parse. With only one field, the endpoint ignores it and returns the unfiltered list. | Route these lookups through the workspace endpoint, or parse the single-object response. |
+| Medium | `apps/mcp/plane_mcp/auth/plane_header_auth_provider.py:64-66,78-79,89-91` | MCP reports outages as invalid tokens. Network errors, API 5xx responses and a missing workspace-slug header all become 401. | Return 503 for upstream failures and a 400-style error for a missing slug. |
+| Medium | `apps/mcp/plane_mcp/tools/cycle.py:126-140,302-322`, `apps/api/plane/api/views/cycle.py:572-574` | `cycle complete` and `archive` can misfire across timezones. A bare `end_date` is read in the token owner's timezone rather than the project's, so the end date can land in the future. The cycle then keeps running, and archiving is refused for up to several hours. | Send an explicit past UTC instant. |
+| Low | `apps/api/plane/nexus/views/work_item_type.py:891-895`, `nexus/views/page.py:607-622` | Restricted guests can see some data on work items they cannot view. Custom property values and page links skip the guest visibility check, and a contract test currently asserts this. | Apply `guest_cannot_view_issue` in both views, and the guest page rule to links. |
+| Low | `apps/api/plane/nexus/views/work_item_type.py:104,829` | Hand-written numeric checks accept non-finite numbers. The value is stored, and the response then fails with a 500. | Reject them with `math.isfinite`. |
+| Low | `apps/api/plane/nexus/views/customer.py:127-142` | The customer list has no stable order. The `Count` annotation makes Django drop `Meta.ordering`, so pages can skip or repeat rows. | Add an explicit `order_by`. |
+| Low | `apps/api/plane/nexus/views/page.py:972-976` | Deleting an estimate can pick the wrong one. This happens when the active estimate is neither `last_used` nor the newest. | Delete the object already resolved. |
+| Low | `apps/api/plane/nexus/views/work_item_type.py:934-935` | Multi-value property writes can return 500. An object or nested list fails before validation. | Validate before de-duplicating. |
+| Low | `apps/api/plane/nexus/views/page.py:828-833`, `nexus/serializers/page.py:56-59,80-81` | Collection page lists return null collection fields. They also run one extra query per row. | Fetch through `annotate_pages` with a `Prefetch`. |
+| Low | `apps/api/plane/nexus/views/work_item_type.py:894,925-966` | Property type and `is_required` are not enforced for work items. | Check the type link, and refuse to clear a required value. |
+| Low | `apps/api/plane/nexus/pql.py:117-128,1026-1029`, `nexus/views/work_item_type.py:85-95`, `nexus/views/customer.py:134-141`, `apps/api/plane/chat/serializers/message.py:71` | NUL characters cause 500s. They reach Postgres from PQL strings, customer search, hand-validated text fields and chat `body_json`. | Reject NUL at those inputs. |
+| Low | `apps/api/plane/nexus/views/work_item_type.py:840-853` | Release-relation property values are not validated. Any well-formed id can be stored. | Add a workspace-scoped existence check. |
+| Low | `apps/api/plane/nexus/views/work_item_type.py:602-615,898-900,951-960` | Turning off `is_multi` can lose values. Reads then show only the first value, and the next write deletes the rest. | Refuse the change while multiple values exist, as customers do. |
+| Low | `apps/api/plane/bgtasks/deletion_task.py:114` | Soft-deleted Nexus rows are never purged. Deleted customer data outlives the retention that applies to other content. | Add the Nexus models to `hard_delete`. |
+| Low | `apps/api/plane/nexus/pql.py:739,745-746` | `startOfWeek()` and `endOfWeek()` ignore the user's setting. They always use Monday. | Use the profile's `start_of_the_week`. |
+| Low | `apps/api/plane/nexus/views/customer.py:564-603` | Writes to inactive customer properties appear to succeed. The values are then hidden from reads. | Refuse inactive properties. |
+| Low | `apps/api/plane/nexus/views/page.py:667,724-726` | Admins cannot delete private collections they are not in. The lookup returns 404 before the admin rule applies. | Use an unfiltered workspace lookup for admins. |
+| Low | `apps/api/plane/nexus/serializers/customer.py:176-179` | Non-Latin customer property names fail. The name slugifies to empty, and the error is misleading. | Use a Unicode-aware slug or a generated key. |
+| Low | `apps/api/plane/api/views/estimate.py:111,269` | Estimate PATCH returns 500 on a list body. | Return a 400 when the body is not an object. |
+| Low | `apps/mcp/plane_mcp/tools/workitem.py:333-347,364-370` | Sparse `fields` on single reads shows false empties. Fields not requested appear as `[]` or null. | Trim the response on both retrieve paths. |
+| Low | `apps/api/plane/api/views/member.py:213` | `member list_project` includes removed members. | Filter on `is_active`. |
+| Low | `apps/mcp/plane_mcp/tools/workitem_attachment.py:174-184` | `upload_from_url` reports `is_uploaded: false` after success. | Set the flag on the returned record. |
+| Low | `apps/mcp/plane_mcp/tools/`, `apps/api/plane/nexus/views/release.py:519` | Some MCP lists are still unbounded or expensive. Label, state, page, intake, customer and initiative lists send no default page size, and the release work item list still runs per-row queries. | Apply the default page size and bulk loading used for work item lists. |
+| Low | `apps/api/plane/app/views/workspace/agent_provider.py` | Guests can still reach the AI provider endpoints. The endpoint allows viewers, so a guest can store a personal key through the API even though the page is hidden from them. | Require the Member role, as the agent endpoints do. |
+
+## Nexus: Messages
+
+Checked against the open Messages PR stack at `a47352601`, because most of this code is not on `preview` yet.
+
+| Severity | Where | Problem | Suggested fix |
+|---|---|---|---|
+| Medium | `apps/web/store/chat.store.ts:782` | Reading older messages marks new ones read. "Viewing" means only that the channel is open and the tab is visible, with no check of scroll position. | Have the list report whether it is at the bottom, and mark read only then. |
+| Medium | `packages/services/src/workspace/chat.service.ts:117`, `apps/web/components/messages/create-channel-dialog.tsx`, `channel-view.tsx` | Private channels and guest DMs cannot be managed in the web app. Nothing calls the add-members method or the guest DM grant, so a private channel only ever contains its creator. | Add member management to the channel header and a guest DM access control. |
+| Medium | `apps/web/components/messages/message-list.tsx` | A failed history load retries in a tight loop. The failure recreates the observer, which fires again at once, with no backoff or error UI. | Add a backoff and a retry row. |
+| Low | `apps/web/store/chat.store.ts:639` | An event during first load can be missed. A new message arriving while the first page loads can stay missing until reconnect. | Buffer events during the load and fetch them after. |
+| Low | `apps/web/store/chat.store.ts:677` | Retrying can duplicate a message, and sends have no timeout. | Add a client-generated id with a unique constraint, and a request timeout. |
+| Low | `apps/web/components/messages/browse-channels-dialog.tsx:38`, `apps/chat-gateway/src/connection.ts:189` | New public channels are not pushed to people who have not joined. They appear in Browse only after a refetch. | Refetch when the dialog opens. |
+| Low | `apps/api/plane/chat/events.py:103`, `apps/web/store/chat.store.ts:780` | The DM list can sort wrongly. Event times are UTC, REST times use the user's timezone, and the store compares strings. | Compare parsed timestamps. |
+| Low | `apps/web/components/messages/connection-banner.tsx:25`, `packages/services/src/workspace/chat-socket.ts:323` | A refused first connection is silent. It stays in "connecting" and no banner appears. | Show a banner after repeated failures. |
+| Low | `apps/web/components/messages/channel-sidebar.tsx:40`, `root.tsx:28` | The layout does not fit phones. The sidebar is a fixed 256px. | Show either the list or the conversation at narrow widths. |
+| Low | `apps/web/components/messages/message-item.tsx:43`, `apps/web/hooks/editor/use-editor-config.ts:75` | Read-only bodies can load remote images. Images are disabled in the composer only. | Disable them on read-only bodies, or strip them on the server. |
+| Low | `apps/web/components/messages/message-item.tsx:86`, `composer.tsx:56` | Keyboard and screen-reader gaps. Message actions cannot be reached by keyboard, and the composer has no accessible name. | Hide actions by opacity and add an `aria-label`. |
+| Low | `apps/web/components/messages/channel-view.tsx:50,68`, `channel-sidebar.tsx:65,92` | Some failures leave blank panes. | Add error states with retry. |
+| Low | `apps/web/store/chat.store.ts:475,476,578` | Closing an unjoined channel mid-load leaves stale state. | Check the channel is still active after each await. |
+| Low | `apps/api/plane/chat/views/message.py:59`, `apps/api/plane/settings/common.py:143` | Chat writes have no rate limit for signed-in users. | Add a per-user throttle. |
+| Low | `apps/chat-gateway/src/server.ts:158,226` | Pending gateway upgrades are unbounded. They count toward capacity, so they can cause real users to be refused. | Cap pending admissions. |
+| Low | `apps/api/plane/chat/events.py:114`, `apps/api/plane/settings/redis.py:15` | A hung Redis stalls chat writes. The publish client has no socket timeouts. | Set connect and socket timeouts. |
+| Low | `apps/api/plane/chat/permissions.py:86`, `apps/api/plane/chat/views/message.py:126` | Workspace admins can remove the other person's messages in a DM. | Nobody moderates direct conversations. |
+| Low | `apps/api/plane/chat/permissions.py:119`, `apps/api/plane/chat/serializers/channel.py:68` | A private channel can be orphaned. Once its last member leaves, nobody can see it and its name stays reserved. | Archive it when the last member leaves. |
+| Low | `apps/web/store/chat.store.ts:896` | Reconnect repairs only the newest 50 messages. Edits and removals to older loaded messages stay stale until reload. | Re-read every loaded page, or add an "updated since" query. |
+
+## Nexus: upgrades and deployment
+
+| Severity | Where | Problem | Suggested fix |
+|---|---|---|---|
+| Medium | `apps/api/plane/db/migrations/0126_agentprovidercredential.py`, `apps/api/plane/license/migrations/` | The next upstream migration will stop `migrate`. Our migrations occupy upstream's next numbers (`db` 0126, `license` 0007 and 0008), so the next upstream migration in either app creates two leaf nodes and `migrate` aborts. | Move these models to a Nexus-owned app, or add a merge-migration step to the upgrade procedure. |
+| Low | `deployments/hybrid/vps/agents-firewall.sh:39-41` | The agents firewall's DNS exemption comes before its private-range rejects. | Allow only the actual resolvers. |
+| Low | `deployments/hybrid/vps/docker-compose.yml` | `agent-bridge` and `chat-gateway` run without capability limits. They have no `cap_drop` or `no-new-privileges`. | Add both. |
+| Low | `.github/workflows/build-hybrid.yml:37,90-126` | The image build workflow uses mutable action tags with `packages: write`. | Pin actions to commit SHAs. |
