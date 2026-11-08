@@ -589,7 +589,7 @@ class TestIssueViewPublicAPI:
     def test_queued_workspace_view_visit_does_not_recreate_after_delete(
         self, api_key_client, workspace, create_user
     ):
-        """A delayed GET task must not recreate recent-visit metadata after view deletion."""
+        """An already-queued task must not recreate recent-visit metadata after view deletion."""
         view = IssueView.objects.create(
             name="Queued Visit View",
             workspace=workspace,
@@ -599,14 +599,168 @@ class TestIssueViewPublicAPI:
         )
         detail_url = self.get_workspace_view_detail_url(workspace.slug, view.id)
 
-        with patch("plane.api.views.view.recent_visited_task.delay") as enqueue_visit:
-            retrieve_response = api_key_client.get(detail_url)
-            assert retrieve_response.status_code == status.HTTP_200_OK
-            enqueue_visit.assert_called_once()
-            queued_task_kwargs = enqueue_visit.call_args.kwargs
+        # The public v1 workspace-view GET does not enqueue this task. Build the
+        # already-queued task payload explicitly to exercise the stale-task case.
+        queued_task_kwargs = {
+            "slug": workspace.slug,
+            "project_id": None,
+            "entity_name": "view",
+            "entity_identifier": view.id,
+            "user_id": create_user.id,
+        }
+        delete_response = api_key_client.delete(detail_url)
+        assert delete_response.status_code == status.HTTP_204_NO_CONTENT
 
-            delete_response = api_key_client.delete(detail_url)
-            assert delete_response.status_code == status.HTTP_204_NO_CONTENT
+        recent_visited_task.run(**queued_task_kwargs)
+        assert not UserRecentVisit.objects.filter(
+            user=create_user, workspace=workspace, entity_name="view", entity_identifier=view.id
+        ).exists()
+
+    @pytest.mark.parametrize(
+        "relative_filter",
+        [
+            "999999999_weeks;after;fromnow",
+            "999999999_months;before;fromnow",
+        ],
+    )
+    @pytest.mark.django_db
+    def test_create_project_view_rejects_out_of_range_relative_date_filters(
+        self, api_key_client, workspace, project, relative_filter
+    ):
+        """Unrepresentable relative date filters return HTTP 400 instead of HTTP 500."""
+        response = api_key_client.post(
+            self.get_list_url(workspace.slug, project.id),
+            {"name": "Out of range date filter", "filters": {"created_at": [relative_filter]}},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "created_at" in response.data.get("filters", {})
+
+    @pytest.mark.parametrize("view_scope", ["project", "workspace"])
+    @pytest.mark.parametrize("payload_format", ["json", "multipart"])
+    @pytest.mark.django_db
+    def test_owner_can_unlock_locked_view_using_validated_boolean_false(
+        self, api_key_client, workspace, project, create_user, view_scope, payload_format
+    ):
+        """Owner unlock accepts serializer-normalized false for JSON and form data."""
+        view = IssueView.objects.create(
+            name=f"Locked {view_scope} view",
+            workspace=workspace,
+            project=project if view_scope == "project" else None,
+            owned_by=create_user,
+            is_locked=True,
+        )
+        detail_url = (
+            self.get_detail_url(workspace.slug, project.id, view.id)
+            if view_scope == "project"
+            else self.get_workspace_view_detail_url(workspace.slug, view.id)
+        )
+
+        response = api_key_client.patch(
+            detail_url, {"is_locked": "false"}, format=payload_format
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        view.refresh_from_db()
+        assert view.is_locked is False
+
+    @pytest.mark.django_db
+    def test_legacy_project_view_delete_cleans_recent_visits_and_blocks_stale_task(
+        self, session_client, workspace, project, create_user
+    ):
+        """Legacy project view deletion shares the visit-task lock and clears metadata."""
+        view = IssueView.objects.create(
+            name="Legacy Project View",
+            workspace=workspace,
+            project=project,
+            owned_by=create_user,
+            access=1,
+        )
+        UserFavorite.objects.create(
+            user=create_user,
+            workspace=workspace,
+            project=project,
+            entity_type="view",
+            entity_identifier=view.id,
+        )
+        UserRecentVisit.objects.create(
+            user=create_user,
+            workspace=workspace,
+            project=project,
+            entity_name="view",
+            entity_identifier=view.id,
+        )
+        queued_task_kwargs = {
+            "slug": workspace.slug,
+            "project_id": project.id,
+            "entity_name": "view",
+            "entity_identifier": view.id,
+            "user_id": create_user.id,
+        }
+
+        delete_response = session_client.delete(
+            f"/api/workspaces/{workspace.slug}/projects/{project.id}/views/{view.id}/"
+        )
+
+        assert delete_response.status_code == status.HTTP_204_NO_CONTENT
+        assert not IssueView.objects.filter(pk=view.id).exists()
+        assert not UserFavorite.objects.filter(
+            user=create_user, project=project, entity_type="view", entity_identifier=view.id
+        ).exists()
+        assert not UserRecentVisit.objects.filter(
+            user=create_user, project=project, entity_name="view", entity_identifier=view.id
+        ).exists()
+
+        recent_visited_task.run(**queued_task_kwargs)
+        assert not UserRecentVisit.objects.filter(
+            user=create_user, project=project, entity_name="view", entity_identifier=view.id
+        ).exists()
+
+    @pytest.mark.django_db
+    def test_legacy_workspace_view_delete_cleans_recent_visits_and_blocks_stale_task(
+        self, session_client, workspace, create_user
+    ):
+        """Legacy workspace view deletion shares the visit-task lock and removes visit metadata."""
+        view = IssueView.objects.create(
+            name="Legacy Workspace View",
+            workspace=workspace,
+            project=None,
+            owned_by=create_user,
+            access=1,
+        )
+        UserFavorite.objects.create(
+            user=create_user,
+            workspace=workspace,
+            project=None,
+            entity_type="view",
+            entity_identifier=view.id,
+        )
+        UserRecentVisit.objects.create(
+            user=create_user,
+            workspace=workspace,
+            project=None,
+            entity_name="view",
+            entity_identifier=view.id,
+        )
+        queued_task_kwargs = {
+            "slug": workspace.slug,
+            "project_id": None,
+            "entity_name": "view",
+            "entity_identifier": view.id,
+            "user_id": create_user.id,
+        }
+
+        delete_response = session_client.delete(f"/api/workspaces/{workspace.slug}/views/{view.id}/")
+
+        assert delete_response.status_code == status.HTTP_204_NO_CONTENT
+        assert not IssueView.objects.filter(pk=view.id).exists()
+        assert not UserFavorite.objects.filter(
+            user=create_user, workspace=workspace, entity_type="view", entity_identifier=view.id
+        ).exists()
+        assert not UserRecentVisit.objects.filter(
+            user=create_user, workspace=workspace, entity_name="view", entity_identifier=view.id
+        ).exists()
 
         recent_visited_task.run(**queued_task_kwargs)
         assert not UserRecentVisit.objects.filter(

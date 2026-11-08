@@ -148,25 +148,36 @@ class WorkspaceViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE", creator=True, model=IssueView)
     def destroy(self, request, slug, pk):
-        workspace_view = IssueView.objects.get(pk=pk, workspace__slug=slug)
+        with transaction.atomic():
+            workspace_view = IssueView.objects.select_for_update().get(
+                pk=pk, workspace__slug=slug, project__isnull=True
+            )
 
-        workspace_member = WorkspaceMember.objects.filter(
-            workspace__slug=slug, member=request.user, role=20, is_active=True
-        )
-        if workspace_member.exists() or workspace_view.owned_by == request.user:
-            workspace_view.delete()
-            # Delete the user favorite view
+            workspace_member = WorkspaceMember.objects.filter(
+                workspace__slug=slug, member=request.user, role=20, is_active=True
+            )
+            if not (workspace_member.exists() or workspace_view.owned_by_id == request.user.id):
+                return Response(
+                    {"error": "Only admin or owner can delete the view"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Keep deletion and metadata cleanup in the same transaction and use
+            # the lock shared with recent_visited_task.
             UserFavorite.objects.filter(
                 workspace__slug=slug,
                 entity_identifier=pk,
                 project__isnull=True,
                 entity_type="view",
             ).delete()
-        else:
-            return Response(
-                {"error": "Only admin or owner can delete the view"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            UserRecentVisit.objects.filter(
+                workspace__slug=slug,
+                entity_identifier=pk,
+                project__isnull=True,
+                entity_name="view",
+            ).delete(soft=False)
+            workspace_view.delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -406,37 +417,40 @@ class IssueViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView)
     def destroy(self, request, slug, project_id, pk):
-        project_view = IssueView.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
-        if (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                member=request.user,
-                role=20,
-                is_active=True,
-            ).exists()
-            or project_view.owned_by_id == request.user.id
-        ):
-            project_view.delete()
-            # Delete the user favorite view
-            UserFavorite.objects.filter(
-                project_id=project_id,
-                workspace__slug=slug,
-                entity_identifier=pk,
-                entity_type="view",
-            ).delete()
-            # Delete the page from recent visit
-            UserRecentVisit.objects.filter(
-                project_id=project_id,
-                workspace__slug=slug,
-                entity_identifier=pk,
-                entity_name="view",
-            ).delete(soft=False)
-        else:
-            return Response(
-                {"error": "Only admin or owner can delete the view"},
-                status=status.HTTP_400_BAD_REQUEST,
+        with transaction.atomic():
+            project_view = IssueView.objects.select_for_update().get(
+                pk=pk, project_id=project_id, workspace__slug=slug
             )
+            if (
+                ProjectMember.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    member=request.user,
+                    role=20,
+                    is_active=True,
+                ).exists()
+                or project_view.owned_by_id == request.user.id
+            ):
+                # Keep deletion and metadata cleanup in the same transaction and
+                # share the row lock with saved-view favorite and visit writers.
+                UserFavorite.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    entity_identifier=pk,
+                    entity_type="view",
+                ).delete()
+                UserRecentVisit.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    entity_identifier=pk,
+                    entity_name="view",
+                ).delete(soft=False)
+                project_view.delete()
+            else:
+                return Response(
+                    {"error": "Only admin or owner can delete the view"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -454,16 +468,17 @@ class IssueViewFavoriteViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
-        # 404 unless the view is in this project and visible to the user
-        get_favorite_entities("view", request.user.id, project_id).get(
-            pk=request.data.get("view"), workspace__slug=slug
-        )
-        _ = UserFavorite.objects.create(
-            user=request.user,
-            entity_identifier=request.data.get("view"),
-            entity_type="view",
-            project_id=project_id,
-        )
+        # Serialize favorite creation with view deletion, which locks the same row.
+        with transaction.atomic():
+            get_favorite_entities("view", request.user.id, project_id).select_for_update().get(
+                pk=request.data.get("view"), workspace__slug=slug
+            )
+            UserFavorite.objects.create(
+                user=request.user,
+                entity_identifier=request.data.get("view"),
+                entity_type="view",
+                project_id=project_id,
+            )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])

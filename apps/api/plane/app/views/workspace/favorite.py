@@ -7,8 +7,8 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Django modules
+from django.db import IntegrityError, transaction
 from django.db.models import Q
-from django.db import IntegrityError
 
 # Module imports
 from plane.app.views.base import BaseAPIView
@@ -40,38 +40,44 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
         try:
             workspace = Workspace.objects.get(slug=slug)
 
-            # If the favorite exists return
-            if request.data.get("entity_identifier"):
-                user_favorites = UserFavorite.objects.filter(
-                    workspace=workspace,
-                    user_id=request.user.id,
-                    entity_type=request.data.get("entity_type"),
-                    entity_identifier=request.data.get("entity_identifier"),
-                ).first()
-
+            with transaction.atomic():
                 # If the favorite exists return
-                if user_favorites:
-                    serializer = UserFavoriteSerializer(user_favorites)
-                    return Response(serializer.data, status=status.HTTP_200_OK)
+                if request.data.get("entity_identifier"):
+                    user_favorites = UserFavorite.objects.filter(
+                        workspace=workspace,
+                        user_id=request.user.id,
+                        entity_type=request.data.get("entity_type"),
+                        entity_identifier=request.data.get("entity_identifier"),
+                    ).first()
 
-            # else create a new favorite
-            serializer = UserFavoriteSerializer(data=request.data)
-            if serializer.is_valid():
+                    if user_favorites:
+                        serializer = UserFavoriteSerializer(user_favorites)
+                        return Response(serializer.data, status=status.HTTP_200_OK)
+
+                serializer = UserFavoriteSerializer(data=request.data)
+                if not serializer.is_valid():
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
                 project_id = request.data.get("project_id", None)
                 entity_type = serializer.validated_data.get("entity_type")
                 entity_model, _ = get_entity_model_and_serializer(entity_type)
-                # An entity favorite must point at an entity in this workspace that the user can see
+
+                # A view favorite must share the view lock with deletion so it cannot
+                # be inserted after deletion has already removed its favorites.
                 if entity_model:
-                    get_favorite_entities(entity_type, request.user.id, project_id).get(
+                    favorite_entities = get_favorite_entities(entity_type, request.user.id, project_id)
+                    if entity_type == "view":
+                        favorite_entities = favorite_entities.select_for_update()
+                    favorite_entities.get(
                         pk=serializer.validated_data.get("entity_identifier"), workspace=workspace
                     )
+
                 serializer.save(
                     user_id=request.user.id,
                     workspace=workspace,
                     project_id=project_id,
                 )
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError:
             return Response({"error": "Favorite already exists"}, status=status.HTTP_400_BAD_REQUEST)
 

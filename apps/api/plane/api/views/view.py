@@ -28,6 +28,15 @@ from plane.utils.openapi import (
 )
 
 
+def _is_owner_unlock_request(issue_view, user, serializer):
+    """Allow only the owner to submit a standalone, validated unlock."""
+    return (
+        issue_view.owned_by_id == user.id
+        and set(serializer.initial_data.keys()) == {"is_locked"}
+        and serializer.validated_data.get("is_locked") is False
+    )
+
+
 class IssueViewListCreateAPIEndpoint(BaseAPIView):
     """Project-level saved view list and create API endpoint."""
 
@@ -226,15 +235,12 @@ class IssueViewDetailAPIEndpoint(BaseAPIView):
         if not issue_view:
             return Response({"error": "The requested resource does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
-        if issue_view.is_locked:
-            is_owner_unlock_request = (
-                issue_view.owned_by_id == request.user.id
-                and isinstance(request.data, dict)
-                and set(request.data.keys()) == {"is_locked"}
-                and request.data.get("is_locked") is False
-            )
-            if not is_owner_unlock_request:
-                return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.serializer_class(issue_view, data=request.data, partial=True)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        if issue_view.is_locked and not _is_owner_unlock_request(issue_view, request.user, serializer):
+            return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
         if issue_view.owned_by_id != request.user.id:
             return Response(
@@ -242,11 +248,8 @@ class IssueViewDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = self.serializer_class(issue_view, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @view_docs(
         operation_id="delete_project_view",
@@ -457,15 +460,12 @@ class WorkspaceViewDetailAPIEndpoint(BaseAPIView):
         if not issue_view:
             return Response({"error": "The requested resource does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
-        if issue_view.is_locked:
-            is_owner_unlock_request = (
-                issue_view.owned_by_id == request.user.id
-                and isinstance(request.data, dict)
-                and set(request.data.keys()) == {"is_locked"}
-                and request.data.get("is_locked") is False
-            )
-            if not is_owner_unlock_request:
-                return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.serializer_class(issue_view, data=request.data, partial=True)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        if issue_view.is_locked and not _is_owner_unlock_request(issue_view, request.user, serializer):
+            return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
         if issue_view.owned_by_id != request.user.id:
             return Response(
@@ -473,11 +473,8 @@ class WorkspaceViewDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = self.serializer_class(issue_view, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @workspace_view_docs(
         operation_id="delete_workspace_view",

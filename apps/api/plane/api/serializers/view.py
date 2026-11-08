@@ -6,11 +6,14 @@
 Serializers for saved views in the public API.
 """
 
+from datetime import timedelta
+
+from django.utils import timezone
 from rest_framework import serializers
 
 from .base import BaseSerializer
 from plane.db.models import IssueView
-from plane.utils.issue_filters import issue_filters
+from plane.utils.issue_filters import issue_filters, pattern as DATE_FILTER_PATTERN
 
 
 _LIST_FILTER_FIELDS = {
@@ -82,6 +85,31 @@ class IssueViewSerializer(BaseSerializer):
             "updated_at",
         ]
 
+    @staticmethod
+    def _is_valid_relative_date_filter(value):
+        """Return False when a relative date filter cannot be evaluated safely."""
+        date_query = value.split(";")
+        if len(date_query) != 3:
+            return True
+
+        match = DATE_FILTER_PATTERN.fullmatch(date_query[0])
+        if not match:
+            return True
+
+        try:
+            duration = int(date_query[0].split("_", 1)[0])
+            delta = (
+                timedelta(weeks=duration)
+                if match.group(1) == "weeks"
+                else timedelta(days=duration * 30)
+            )
+            today = timezone.now().date()
+            if date_query[2] == "fromnow":
+                return today + delta >= today
+            return today - delta <= today
+        except (OverflowError, ValueError):
+            return False
+
     def validate_filters(self, value):
         """Validate filter values before passing them to issue_filters()."""
         if not isinstance(value, dict):
@@ -95,6 +123,9 @@ class IssueViewSerializer(BaseSerializer):
                     or any(not isinstance(item, str) for item in field_value)
                 ):
                     errors[field] = "must be a list of strings or null."
+                elif field in _DATE_FILTER_FIELDS and field_value is not None:
+                    if any(not self._is_valid_relative_date_filter(item) for item in field_value):
+                        errors[field] = "contains a relative date duration outside the supported range."
             elif field in _STRING_FILTER_FIELDS:
                 if field == "name":
                     if not isinstance(field_value, str):
