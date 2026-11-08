@@ -219,7 +219,23 @@ class TestIssueViewPublicAPI:
 
         test_view.refresh_from_db()
         assert test_view.name == "Updated Sprint View"
+        assert test_view.filters == {"priority": ["urgent"]}
         assert test_view.query.get("priority__in") == ["urgent"]
+
+        query_after_filter_update = test_view.query.copy()
+        omitted_filters_response = api_key_client.patch(
+            url, {"description": "Filters omitted from this update"}, format="json"
+        )
+        assert omitted_filters_response.status_code == status.HTTP_200_OK
+        test_view.refresh_from_db()
+        assert test_view.filters == {"priority": ["urgent"]}
+        assert test_view.query == query_after_filter_update
+
+        empty_filters_response = api_key_client.patch(url, {"filters": {}}, format="json")
+        assert empty_filters_response.status_code == status.HTTP_200_OK
+        test_view.refresh_from_db()
+        assert test_view.filters == {}
+        assert test_view.query == {}
 
     @pytest.mark.django_db
     def test_archived_project_views_cannot_be_updated_or_deleted(
