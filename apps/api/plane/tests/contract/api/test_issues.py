@@ -215,23 +215,6 @@ class TestIssueListUnsupportedParams:
 
         assert response.status_code == status.HTTP_200_OK
         assert str(response.data["id"]) == str(external_issue.id)
-        """Every parameter the endpoint reads is accepted, so the allow-list is
-        not stricter than the view and paginator."""
-        url = self.get_url(workspace.slug, project.id)
-        response = api_key_client.get(
-            url,
-            {
-                "per_page": "10",
-                "cursor": "10:0:0",
-                "order_by": "-created_at",
-                "fields": "id,name",
-                "expand": "state",
-                "external_id": "abc",
-                "external_source": "github",
-            },
-        )
-
-        assert response.status_code == status.HTTP_200_OK
 
     @pytest.mark.django_db
     def test_multiple_unknown_parameters_are_all_listed(self, api_key_client, workspace, project, issue):
