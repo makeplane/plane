@@ -4,7 +4,7 @@ Bugs found in a code review of the Plane base code at commit `618d0eb746`. A sec
 
 Line numbers refer to that commit, so they may have moved. Critical and High bugs are not listed here because they have their own pull requests, and some findings are tracked separately.
 
-**253 bugs in the Plane base code:** 88 Medium, 165 Low.
+**255 bugs in the Plane base code:** 89 Medium, 166 Low.
 
 **81 bugs in the code Nexus adds on top of Plane:** 19 Medium, 62 Low, in the sections named "Nexus:" at the end of this file. These were reviewed separately, and each was re-checked by reading the code at `preview` `74111238e`. The Critical and High bugs in that code have their own pull requests, #30 to #39.
 
@@ -21,6 +21,7 @@ Line numbers refer to that commit, so they may have moved. Critical and High bug
 | Medium | `apps/api/plane/app/views/notification/base.py:81-86` (+1 more) | Snoozed notifications never return to the inbox or unread count when the snooze time passes. | Treat a notification as snoozed only while `snoozed_till` is in the future, and use the same rule for lists and unread counts. |
 | Medium | `apps/api/plane/app/views/project/base.py:259-296` | Reusing a project's old identifier can fail while still leaving behind a broken project with no members or states. | Wrap project creation in `transaction.atomic`, validate against `ProjectIdentifier`, and update that row when the identifier changes. |
 | Medium | `apps/api/plane/app/views/project/base.py:568-593 (client payload apps/web/components/project/publish-project/modal.tsx:161-170)` | The first publish of a project ignores the chosen layouts, so a board limited to List or Kanban shows both. | Read `view_props` in the create endpoint and keep `views` as a fallback. |
+| Medium | `apps/api/plane/app/views/project/invite.py:121` | Inviting people to a project by email creates the invitation and then returns a server error, and no email is sent. | Call the `project_invitation` task for each invitation instead of calling `.delay` on the invitation list. |
 | Medium | `apps/api/plane/app/views/user/base.py:292-332` | The only admin of a project or workspace can deactivate their account and leave it with no admin. | For each membership, check with `Exists` for another active admin on that project or workspace. |
 | Low | `apps/api/plane/app/views/analytic/project_analytics.py:197-199` | The analytics chart fails for a module that has a start date but no end date. | Require both dates before charting and return an empty chart otherwise. |
 | Low | `apps/api/plane/app/views/asset/v2.py:938-940` | When copying a file in storage fails, the duplicate is still marked uploaded and shows as a broken file. | Check the `copy_object` result, and remove or skip the new row when it fails. |
@@ -225,6 +226,7 @@ Line numbers refer to that commit, so they may have moved. Critical and High bug
 | Low | `apps/web/app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/pages/(list)/page.tsx:68` (+4 more) | The Enable button shown on a disabled project feature leads to a not found page. | Push each feature's own route, such as `.../features/cycles`. |
 | Low | `apps/web/app/(all)/[workspaceSlug]/(settings)/settings/(workspace)/members/page.tsx:66-76` | When an invitation is rejected for a specific reason, such as the email already being a member, the admin sees only "Something went wrong". | Read `(error as { error?: string } \| undefined)?.error` directly. |
 | Low | `apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/layout.tsx:26` (+1 more) | Opening the project settings index traps the Back button, and an unknown profile settings tab shows a spinner forever. | Use `router.replace` in the layout and redirect invalid tabs to `/settings/profile/general`. |
+| Low | `apps/web/app/(all)/workspace-invitations/page.tsx` | An emailed invitation link opened while signed out loses its place at sign-in, so the person has to open the link again. | Carry the invitation details through the sign-in redirect. |
 | Low | `apps/web/components/core/filters/date-filter-modal.tsx:113 (typo at :62)` | In the date filter's Before and After modes, dates later than a hidden default (one month after page load) cannot be selected. | Apply the upper bound only when `filterType === "range"` and read `date2` at line 62. |
 | Low | `apps/web/components/core/modals/user-image-upload-modal.tsx:80-82` | A failed avatar upload shows "[object Object]" as its error message. | Read `error?.error` with a fallback string, as the workspace modal does, and remove the rethrow. |
 | Low | `apps/web/components/core/theme/import-config-button.tsx:71-77` | Importing a theme whose save fails shows an error and an "imported successfully" message together. | Rethrow from `handleUpdateTheme` or have it return a success boolean that the importer checks. |
