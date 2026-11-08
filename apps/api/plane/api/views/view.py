@@ -231,25 +231,54 @@ class IssueViewDetailAPIEndpoint(BaseAPIView):
     )
     def patch(self, request, slug, project_id, pk):
         """Partially update a project saved view."""
-        issue_view = self.get_queryset().filter(pk=pk, project_id=project_id).first()
-        if not issue_view:
-            return Response({"error": "The requested resource does not exist."}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = self.serializer_class(issue_view, data=request.data, partial=True)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        if issue_view.is_locked and not _is_owner_unlock_request(issue_view, request.user, serializer):
-            return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
-
-        if issue_view.owned_by_id != request.user.id:
-            return Response(
-                {"error": "Only the owner of the view can update the view"},
-                status=status.HTTP_400_BAD_REQUEST,
+        with transaction.atomic():
+            favorite_subquery = UserFavorite.objects.filter(
+                user=request.user,
+                entity_identifier=OuterRef("pk"),
+                entity_type="view",
+                project_id=project_id,
+                workspace__slug=slug,
             )
+            active_membership = ProjectMember.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                member=request.user,
+                is_active=True,
+            )
+            issue_view = (
+                IssueView.objects.select_for_update()
+                .filter(
+                    pk=pk,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    project__archived_at__isnull=True,
+                )
+                .filter(Exists(active_membership))
+                .filter(Q(owned_by=request.user) | Q(access=1))
+                .annotate(is_favorite=Exists(favorite_subquery))
+                .first()
+            )
+            if not issue_view:
+                return Response(
+                    {"error": "The requested resource does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            serializer = self.serializer_class(issue_view, data=request.data, partial=True)
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            if issue_view.is_locked and not _is_owner_unlock_request(issue_view, request.user, serializer):
+                return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
+
+            if issue_view.owned_by_id != request.user.id:
+                return Response(
+                    {"error": "Only the owner of the view can update the view"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     @view_docs(
         operation_id="delete_project_view",
@@ -456,25 +485,52 @@ class WorkspaceViewDetailAPIEndpoint(BaseAPIView):
     )
     def patch(self, request, slug, pk):
         """Partially update a workspace saved view."""
-        issue_view = self.get_queryset().filter(pk=pk).first()
-        if not issue_view:
-            return Response({"error": "The requested resource does not exist."}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = self.serializer_class(issue_view, data=request.data, partial=True)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        if issue_view.is_locked and not _is_owner_unlock_request(issue_view, request.user, serializer):
-            return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
-
-        if issue_view.owned_by_id != request.user.id:
-            return Response(
-                {"error": "Only the owner of the view can update the view"},
-                status=status.HTTP_400_BAD_REQUEST,
+        with transaction.atomic():
+            favorite_subquery = UserFavorite.objects.filter(
+                user=request.user,
+                entity_identifier=OuterRef("pk"),
+                entity_type="view",
+                workspace__slug=slug,
+                project__isnull=True,
             )
+            queryset = (
+                IssueView.objects.select_for_update()
+                .filter(pk=pk, workspace__slug=slug, project__isnull=True)
+                .annotate(is_favorite=Exists(favorite_subquery))
+            )
+            is_guest = WorkspaceMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            if is_guest:
+                queryset = queryset.filter(owned_by=request.user)
+            else:
+                queryset = queryset.filter(Q(owned_by=request.user) | Q(access=1))
 
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            issue_view = queryset.first()
+            if not issue_view:
+                return Response(
+                    {"error": "The requested resource does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            serializer = self.serializer_class(issue_view, data=request.data, partial=True)
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            if issue_view.is_locked and not _is_owner_unlock_request(issue_view, request.user, serializer):
+                return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
+
+            if issue_view.owned_by_id != request.user.id:
+                return Response(
+                    {"error": "Only the owner of the view can update the view"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     @workspace_view_docs(
         operation_id="delete_workspace_view",

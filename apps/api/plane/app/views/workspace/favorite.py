@@ -12,7 +12,7 @@ from django.db.models import Q
 
 # Module imports
 from plane.app.views.base import BaseAPIView
-from plane.db.models import UserFavorite, Workspace
+from plane.db.models import IssueView, UserFavorite, Workspace
 from plane.app.serializers import UserFavoriteSerializer
 from plane.app.serializers.favorite import get_entity_model_and_serializer, get_favorite_entities
 from plane.app.permissions import allow_permission, ROLE
@@ -83,14 +83,53 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def patch(self, request, slug, favorite_id):
-        favorite = UserFavorite.objects.get(user=request.user, workspace__slug=slug, pk=favorite_id)
-        # Only the name, position and folder can change; the favorited entity stays fixed
-        data = {key: request.data[key] for key in ("name", "sequence", "parent") if key in request.data}
-        serializer = UserFavoriteSerializer(favorite, data=data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        with transaction.atomic():
+            favorite_filter = UserFavorite.objects.filter(
+                user=request.user, workspace__slug=slug, pk=favorite_id
+            )
+            favorite = favorite_filter.first()
+            if favorite is None:
+                return Response(
+                    {"error": "The requested resource does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            if favorite.entity_type == "view":
+                # Deletion locks the view before removing favorites. Take that same
+                # lock first, then re-read the favorite so a stale pre-delete
+                # instance can never be saved back after cleanup commits.
+                issue_view = IssueView.objects.select_for_update().filter(
+                    pk=favorite.entity_identifier,
+                    workspace_id=favorite.workspace_id,
+                    project_id=favorite.project_id,
+                ).first()
+                if issue_view is None:
+                    return Response(
+                        {"error": "The requested resource does not exist."},
+                        status=status.HTTP_404_NOT_FOUND,
+                    )
+
+                favorite = favorite_filter.select_for_update().first()
+                if favorite is None:
+                    return Response(
+                        {"error": "The requested resource does not exist."},
+                        status=status.HTTP_404_NOT_FOUND,
+                    )
+            else:
+                favorite = favorite_filter.select_for_update().first()
+                if favorite is None:
+                    return Response(
+                        {"error": "The requested resource does not exist."},
+                        status=status.HTTP_404_NOT_FOUND,
+                    )
+
+            # Only the name, position and folder can change; the favorited entity stays fixed.
+            data = {key: request.data[key] for key in ("name", "sequence", "parent") if key in request.data}
+            serializer = UserFavoriteSerializer(favorite, data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def delete(self, request, slug, favorite_id):

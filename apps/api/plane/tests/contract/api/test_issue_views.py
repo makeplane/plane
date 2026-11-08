@@ -6,11 +6,15 @@
 Contract tests for IssueView public REST API endpoints (/api/v1/.../views/ and project-views/).
 """
 
+from concurrent.futures import ThreadPoolExecutor
+from threading import Event
+from time import monotonic, sleep
 from unittest.mock import patch
 from uuid import uuid4
 
 import pytest
-from django.db import DatabaseError
+from django.db import DatabaseError, close_old_connections, connection, connections
+from django.db.models.query import QuerySet
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -442,6 +446,71 @@ class TestIssueViewPublicAPI:
         ).exists()
 
     @pytest.mark.django_db
+    def test_workspace_favorite_patch_updates_view_favorite_metadata(
+        self, session_client, workspace, create_user
+    ):
+        """A workspace favorite for an active saved view can still be renamed."""
+        view = IssueView.objects.create(
+            name="Favorite Patch View",
+            workspace=workspace,
+            project=None,
+            owned_by=create_user,
+            access=1,
+        )
+        favorite = UserFavorite.objects.create(
+            user=create_user,
+            workspace=workspace,
+            project=None,
+            entity_type="view",
+            entity_identifier=view.id,
+            name="Old favorite name",
+        )
+
+        response = session_client.patch(
+            f"/api/workspaces/{workspace.slug}/user-favorites/{favorite.id}/",
+            {"name": "Updated favorite name"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        favorite.refresh_from_db()
+        assert favorite.name == "Updated favorite name"
+        assert response.data["entity_data"]["id"] == str(view.id)
+
+    @pytest.mark.django_db
+    def test_workspace_favorite_patch_rejects_a_soft_deleted_view(
+        self, session_client, workspace, create_user
+    ):
+        """Favorite metadata cannot be saved when its referenced view is no longer active."""
+        view = IssueView.objects.create(
+            name="Deleted Favorite View",
+            workspace=workspace,
+            project=None,
+            owned_by=create_user,
+            access=1,
+        )
+        favorite = UserFavorite.objects.create(
+            user=create_user,
+            workspace=workspace,
+            project=None,
+            entity_type="view",
+            entity_identifier=view.id,
+            name="Do not restore",
+        )
+        with patch("plane.db.mixins.soft_delete_related_objects.delay"):
+            view.delete()
+
+        response = session_client.patch(
+            f"/api/workspaces/{workspace.slug}/user-favorites/{favorite.id}/",
+            {"name": "Stale update"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        favorite.refresh_from_db()
+        assert favorite.name == "Do not restore"
+
+    @pytest.mark.django_db
     def test_workspace_guest_can_only_list_and_retrieve_own_views(self, workspace, create_user):
         """Workspace guests can access their own views but not public views owned by others."""
         guest_suffix = uuid4().hex
@@ -615,6 +684,136 @@ class TestIssueViewPublicAPI:
         assert not UserRecentVisit.objects.filter(
             user=create_user, workspace=workspace, entity_name="view", entity_identifier=view.id
         ).exists()
+
+    @pytest.mark.django_db(transaction=True)
+    def test_workspace_view_delete_waits_for_in_flight_recent_visit_task(
+        self, workspace, create_user, monkeypatch
+    ):
+        """DELETE waits for a task holding the view lock, then removes its committed visit."""
+        if connection.vendor != "postgresql" or not connection.features.has_select_for_update:
+            pytest.skip("This lock-order regression requires PostgreSQL row-level locks.")
+
+        view = IssueView.objects.create(
+            name="Concurrent Visit View",
+            workspace=workspace,
+            project=None,
+            owned_by=create_user,
+            access=1,
+        )
+        task_at_insert = Event()
+        allow_task_to_commit = Event()
+        visit_inserted = Event()
+        delete_lock_requested = Event()
+        delete_finished = Event()
+        delete_pid_ready = Event()
+        delete_pid = {}
+        queued_task_kwargs = {
+            "slug": workspace.slug,
+            "project_id": None,
+            "entity_name": "view",
+            "entity_identifier": view.id,
+            "user_id": create_user.id,
+        }
+        original_create = QuerySet.create
+        original_get = QuerySet.get
+
+        def pause_recent_visit_insert(queryset, *args, **kwargs):
+            is_target_visit = (
+                queryset.model is UserRecentVisit
+                and kwargs.get("entity_name") == "view"
+                and kwargs.get("entity_identifier") == view.id
+            )
+            if is_target_visit:
+                task_at_insert.set()
+                if not allow_task_to_commit.wait(timeout=10):
+                    raise TimeoutError("The test did not release the recent-visit task.")
+                result = original_create(queryset, *args, **kwargs)
+                visit_inserted.set()
+                return result
+            return original_create(queryset, *args, **kwargs)
+
+        def observe_delete_lock_request(queryset, *args, **kwargs):
+            is_target_view_lock = (
+                queryset.model is IssueView
+                and queryset.query.select_for_update
+                and kwargs.get("pk") == view.id
+            )
+            if is_target_view_lock:
+                delete_lock_requested.set()
+            return original_get(queryset, *args, **kwargs)
+
+        monkeypatch.setattr(QuerySet, "create", pause_recent_visit_insert)
+        monkeypatch.setattr(QuerySet, "get", observe_delete_lock_request)
+
+        def run_recent_visit_task():
+            close_old_connections()
+            try:
+                return recent_visited_task.run(**queued_task_kwargs)
+            finally:
+                close_old_connections()
+
+        def run_view_delete():
+            close_old_connections()
+            try:
+                with connections["default"].cursor() as cursor:
+                    cursor.execute("SELECT pg_backend_pid()")
+                    delete_pid["value"] = cursor.fetchone()[0]
+                delete_pid_ready.set()
+
+                client = APIClient()
+                client.force_authenticate(user=create_user)
+                response = client.delete(f"/api/workspaces/{workspace.slug}/views/{view.id}/")
+                return response.status_code
+            finally:
+                delete_finished.set()
+                close_old_connections()
+
+        executor = ThreadPoolExecutor(max_workers=2)
+        task_future = None
+        delete_future = None
+        try:
+            task_future = executor.submit(run_recent_visit_task)
+            assert task_at_insert.wait(timeout=5), "The task did not reach the insert while holding the view lock."
+
+            delete_future = executor.submit(run_view_delete)
+            assert delete_pid_ready.wait(timeout=5), "The delete worker did not open its own database connection."
+            assert delete_lock_requested.wait(timeout=5), "The delete worker did not request the view row lock."
+
+            # Confirm that PostgreSQL reports the DELETE connection waiting on a lock,
+            # rather than treating a merely-started request as proof of serialization.
+            deadline = monotonic() + 5
+            waiting_for_lock = False
+            while monotonic() < deadline:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT wait_event_type FROM pg_stat_activity WHERE pid = %s",
+                        [delete_pid["value"]],
+                    )
+                    row = cursor.fetchone()
+                if row and row[0] == "Lock":
+                    waiting_for_lock = True
+                    break
+                sleep(0.01)
+
+            assert waiting_for_lock, "DELETE did not block on the row lock held by recent_visited_task."
+            assert not delete_finished.is_set()
+        finally:
+            allow_task_to_commit.set()
+            executor.shutdown(wait=True, cancel_futures=True)
+
+        assert visit_inserted.is_set()
+        assert task_future is not None
+        task_future.result(timeout=5)
+        assert delete_future is not None
+        assert delete_future.result(timeout=5) == status.HTTP_204_NO_CONTENT
+        assert not UserRecentVisit.objects.filter(
+            user=create_user,
+            workspace=workspace,
+            project__isnull=True,
+            entity_name="view",
+            entity_identifier=view.id,
+        ).exists()
+        assert not IssueView.objects.filter(pk=view.id).exists()
 
     @pytest.mark.parametrize(
         "relative_filter",
