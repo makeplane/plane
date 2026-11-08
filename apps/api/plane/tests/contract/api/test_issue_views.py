@@ -201,6 +201,23 @@ class TestIssueViewPublicAPI:
         assert response.data.get("description") == test_view.description
 
     @pytest.mark.django_db
+    def test_project_view_retrieve_logs_recent_visit_dispatch_failure(
+        self, api_key_client, workspace, project, test_view
+    ):
+        """Task broker failures are logged without failing the saved-view GET."""
+        detail_url = self.get_detail_url(workspace.slug, project.id, test_view.id)
+        with patch(
+            "plane.api.views.view.recent_visited_task.delay",
+            side_effect=RuntimeError("broker unavailable"),
+        ) as dispatch, patch("plane.api.views.view.log_exception") as log_error:
+            response = api_key_client.get(detail_url)
+
+        assert response.status_code == status.HTTP_200_OK
+        dispatch.assert_called_once()
+        log_error.assert_called_once()
+        assert isinstance(log_error.call_args.args[0], RuntimeError)
+
+    @pytest.mark.django_db
     def test_update_project_view(self, api_key_client, workspace, project, test_view, create_user):
         """Owner can partially update an existing view and recalculate query criteria."""
         url = self.get_detail_url(workspace.slug, project.id, test_view.id)
@@ -258,6 +275,13 @@ class TestIssueViewPublicAPI:
         assert update_response.status_code == status.HTTP_404_NOT_FOUND
         assert delete_response.status_code == status.HTTP_404_NOT_FOUND
         assert IssueView.objects.filter(pk=test_view.id).exists()
+
+        create_response = api_key_client.post(
+            self.get_list_url(workspace.slug, project.id),
+            {"name": "Must not create in archived project", "filters": {}},
+            format="json",
+        )
+        assert create_response.status_code == status.HTTP_404_NOT_FOUND
 
     @pytest.mark.django_db
     def test_update_locked_view_rejected(self, api_key_client, workspace, project, test_view):
@@ -446,6 +470,18 @@ class TestIssueViewPublicAPI:
         ).exists()
 
     @pytest.mark.django_db
+    def test_workspace_favorite_post_rejects_non_object_request_bodies(self, session_client, workspace):
+        """Non-object favorite creation bodies return HTTP 400."""
+        response = session_client.post(
+            f"/api/workspaces/{workspace.slug}/user-favorites/",
+            ["entity_identifier"],
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data["error"] == "Request body must be an object."
+
+    @pytest.mark.django_db
     def test_workspace_favorite_patch_updates_view_favorite_metadata(
         self, session_client, workspace, create_user
     ):
@@ -596,6 +632,57 @@ class TestIssueViewPublicAPI:
             self.get_workspace_view_detail_url(workspace.slug, another_members_public_view.id)
         )
         assert another_members_detail_response.status_code == status.HTTP_404_NOT_FOUND
+
+    @pytest.mark.parametrize("view_scope", ["project", "workspace"])
+    @pytest.mark.django_db
+    def test_active_guest_can_create_update_and_delete_own_saved_views(
+        self, workspace, project, view_scope
+    ):
+        """Active guests can manage their own saved views at both API scopes."""
+        suffix = uuid4().hex
+        guest = User.objects.create(
+            email=f"saved-view-guest-{suffix}@plane.so",
+            username=f"saved_view_guest_{suffix}",
+        )
+        WorkspaceMember.objects.create(workspace=workspace, member=guest, role=5, is_active=True)
+        if view_scope == "project":
+            ProjectMember.objects.create(project=project, member=guest, role=5, is_active=True)
+
+        token = APIToken.objects.create(
+            user=guest,
+            label="Saved View Guest API Token",
+            token=f"saved-view-guest-token-{suffix}",
+        )
+        guest_client = APIClient()
+        guest_client.credentials(HTTP_X_API_KEY=token.token)
+
+        list_url = (
+            self.get_list_url(workspace.slug, project.id)
+            if view_scope == "project"
+            else self.get_workspace_views_url(workspace.slug)
+        )
+        create_response = guest_client.post(
+            list_url,
+            {"name": f"Guest {view_scope} view", "access": 0, "filters": {}},
+            format="json",
+        )
+        assert create_response.status_code == status.HTTP_201_CREATED
+        view_id = create_response.data["id"]
+
+        detail_url = (
+            self.get_detail_url(workspace.slug, project.id, view_id)
+            if view_scope == "project"
+            else self.get_workspace_view_detail_url(workspace.slug, view_id)
+        )
+        update_response = guest_client.patch(
+            detail_url, {"description": "Updated by the owning guest"}, format="json"
+        )
+        assert update_response.status_code == status.HTTP_200_OK
+        assert update_response.data["description"] == "Updated by the owning guest"
+
+        delete_response = guest_client.delete(detail_url)
+        assert delete_response.status_code == status.HTTP_204_NO_CONTENT
+        assert not IssueView.objects.filter(pk=view_id).exists()
 
     @pytest.mark.django_db
     def test_non_owner_cannot_unlock_locked_project_or_workspace_views(
@@ -752,6 +839,7 @@ class TestIssueViewPublicAPI:
         delete_pid_ready = Event()
         delete_pid = {}
         delete_worker = {}
+        delete_lock_order = []
         queued_task_kwargs = {
             "slug": workspace.slug,
             "project_id": project_id,
@@ -779,10 +867,14 @@ class TestIssueViewPublicAPI:
             return original_create(queryset, *args, **kwargs)
 
         def observe_delete_lock_request(queryset, *args, **kwargs):
-            """Signal when the public DELETE worker evaluates its saved-view lock query."""
+            """Record the public DELETE worker's project-before-view lock order."""
             is_delete_worker = get_ident() == delete_worker.get("thread_id")
-            if is_delete_worker and queryset.model is IssueView and queryset.query.select_for_update:
-                delete_lock_requested.set()
+            if is_delete_worker and queryset.query.select_for_update:
+                if queryset.model is Project:
+                    delete_lock_order.append("project")
+                elif queryset.model is IssueView:
+                    delete_lock_order.append("view")
+                    delete_lock_requested.set()
             return original_first(queryset, *args, **kwargs)
 
         monkeypatch.setattr(QuerySet, "create", pause_recent_visit_insert)
@@ -851,6 +943,8 @@ class TestIssueViewPublicAPI:
         task_future.result(timeout=5)
         assert delete_future is not None
         assert delete_future.result(timeout=5) == status.HTTP_204_NO_CONTENT
+        expected_lock_order = ["project", "view"] if view_scope == "project" else ["view"]
+        assert delete_lock_order == expected_lock_order
         assert not UserRecentVisit.objects.filter(
             user=create_user,
             workspace=workspace,
@@ -859,6 +953,42 @@ class TestIssueViewPublicAPI:
             entity_identifier=view.id,
         ).exists()
         assert not IssueView.objects.filter(pk=view.id).exists()
+
+    @pytest.mark.django_db
+    def test_create_project_view_rejects_incomplete_relative_date_but_accepts_absolute_date(
+        self, api_key_client, workspace, project
+    ):
+        """Reject incomplete relative date expressions but retain absolute date filters."""
+        url = self.get_list_url(workspace.slug, project.id)
+        invalid_response = api_key_client.post(
+            url,
+            {"name": "Incomplete relative date", "filters": {"created_at": ["2_weeks;after"]}},
+            format="json",
+        )
+        assert invalid_response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "created_at" in invalid_response.data.get("filters", {})
+
+        valid_response = api_key_client.post(
+            url,
+            {"name": "Absolute date filter", "filters": {"created_at": ["2030-01-01;after"]}},
+            format="json",
+        )
+        assert valid_response.status_code == status.HTTP_201_CREATED
+        assert valid_response.data["query"]["created_at__date__gte"] == "2030-01-01"
+
+    @pytest.mark.django_db
+    def test_create_project_view_serializes_relative_date_query_values(self, api_key_client, workspace, project):
+        """The model serializes relative-date query values before saving its JSONField."""
+        response = api_key_client.post(
+            self.get_list_url(workspace.slug, project.id),
+            {"name": "Relative date filter", "filters": {"created_at": ["2_weeks;after;past"]}},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_201_CREATED
+        view = IssueView.objects.get(pk=response.data["id"])
+        query_date = view.query["created_at__date__gte"]
+        assert isinstance(query_date, str)
+        assert response.data["query"]["created_at__date__gte"] == query_date
 
     @pytest.mark.parametrize(
         "relative_filter",

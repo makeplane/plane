@@ -14,9 +14,10 @@ from rest_framework.response import Response
 
 from plane.api.serializers import IssueViewSerializer
 from plane.api.views.base import BaseAPIView
-from plane.app.permissions import ProjectEntityPermission, WorkspaceEntityPermission
+from plane.app.permissions import ProjectEntityPermission, WorkspaceEntityPermission, ROLE
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.db.models import IssueView, Project, ProjectMember, UserFavorite, UserRecentVisit, Workspace, WorkspaceMember
+from plane.utils.exception_logger import log_exception
 from plane.utils.openapi import (
     CURSOR_PARAMETER,
     EXPAND_PARAMETER,
@@ -37,12 +38,45 @@ def _is_owner_unlock_request(issue_view, user, serializer):
     )
 
 
+class SavedViewProjectEntityPermission(ProjectEntityPermission):
+    """Allow active project guests through to saved-view ownership checks."""
+
+    def has_permission(self, request, view):
+        if super().has_permission(request, view):
+            return True
+        if request.user.is_anonymous:
+            return False
+        return ProjectMember.objects.filter(
+            workspace__slug=view.workspace_slug,
+            project_id=view.project_id,
+            member=request.user,
+            role=ROLE.GUEST.value,
+            is_active=True,
+        ).exists()
+
+
+class SavedViewWorkspaceEntityPermission(WorkspaceEntityPermission):
+    """Allow active workspace guests through to saved-view ownership checks."""
+
+    def has_permission(self, request, view):
+        if super().has_permission(request, view):
+            return True
+        if request.user.is_anonymous:
+            return False
+        return WorkspaceMember.objects.filter(
+            workspace__slug=view.workspace_slug,
+            member=request.user,
+            role=ROLE.GUEST.value,
+            is_active=True,
+        ).exists()
+
+
 class IssueViewListCreateAPIEndpoint(BaseAPIView):
     """Project-level saved view list and create API endpoint."""
 
     model = IssueView
     serializer_class = IssueViewSerializer
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [SavedViewProjectEntityPermission]
     use_read_replica = True
 
     def get_queryset(self):
@@ -123,19 +157,27 @@ class IssueViewListCreateAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id):
         """Create a new project saved view."""
-        project = Project.objects.filter(id=project_id, workspace__slug=slug, archived_at__isnull=True).first()
-        if not project:
-            return Response({"error": "The requested resource does not exist."}, status=status.HTTP_404_NOT_FOUND)
+        with transaction.atomic():
+            # Keep archiving from racing with creation of a saved view.
+            project = Project.objects.select_for_update(no_key=True, of=("self",)).filter(
+                id=project_id,
+                workspace__slug=slug,
+            ).first()
+            if project is None or project.archived_at is not None:
+                return Response(
+                    {"error": "The requested resource does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            serializer.save(
-                project_id=project.id,
-                workspace_id=project.workspace_id,
-                owned_by=request.user,
-            )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer = self.serializer_class(data=request.data)
+            if serializer.is_valid():
+                serializer.save(
+                    project_id=project.id,
+                    workspace_id=project.workspace_id,
+                    owned_by=request.user,
+                )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class IssueViewDetailAPIEndpoint(BaseAPIView):
@@ -143,7 +185,7 @@ class IssueViewDetailAPIEndpoint(BaseAPIView):
 
     model = IssueView
     serializer_class = IssueViewSerializer
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [SavedViewProjectEntityPermission]
     use_read_replica = True
 
     def get_queryset(self):
@@ -212,8 +254,9 @@ class IssueViewDetailAPIEndpoint(BaseAPIView):
                 entity_identifier=pk,
                 user_id=request.user.id,
             )
-        except Exception:
-            pass
+        except Exception as exc:
+            # Visit history is best-effort; keep GET successful, but log dispatch failures.
+            log_exception(exc)
 
         serializer = self.serializer_class(issue_view, fields=self.fields, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -234,7 +277,7 @@ class IssueViewDetailAPIEndpoint(BaseAPIView):
         with transaction.atomic():
             # Project archiving updates this row. Lock it before the view so an
             # archive cannot commit between the active-project check and save.
-            project = Project.objects.select_for_update(of=("self",)).filter(
+            project = Project.objects.select_for_update(no_key=True, of=("self",)).filter(
                 pk=project_id,
                 workspace__slug=slug,
             ).first()
@@ -305,7 +348,19 @@ class IssueViewDetailAPIEndpoint(BaseAPIView):
     def delete(self, request, slug, project_id, pk):
         """Delete a project saved view and its metadata atomically."""
         with transaction.atomic():
-            issue_view = IssueView.objects.select_for_update().filter(
+            # PATCH and DELETE acquire project then view locks in the same order.
+            # FOR NO KEY UPDATE blocks archiving but permits foreign-key checks.
+            project = Project.objects.select_for_update(no_key=True, of=("self",)).filter(
+                pk=project_id,
+                workspace__slug=slug,
+            ).first()
+            if project is None or project.archived_at is not None:
+                return Response(
+                    {"error": "The requested resource does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            issue_view = IssueView.objects.select_for_update(of=("self",)).filter(
                 pk=pk,
                 project_id=project_id,
                 workspace__slug=slug,
@@ -353,7 +408,7 @@ class WorkspaceViewListCreateAPIEndpoint(BaseAPIView):
 
     model = IssueView
     serializer_class = IssueViewSerializer
-    permission_classes = [WorkspaceEntityPermission]
+    permission_classes = [SavedViewWorkspaceEntityPermission]
     use_read_replica = True
 
     def get_queryset(self):
@@ -438,7 +493,7 @@ class WorkspaceViewDetailAPIEndpoint(BaseAPIView):
 
     model = IssueView
     serializer_class = IssueViewSerializer
-    permission_classes = [WorkspaceEntityPermission]
+    permission_classes = [SavedViewWorkspaceEntityPermission]
     use_read_replica = True
 
     def get_queryset(self):

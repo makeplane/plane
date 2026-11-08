@@ -2,8 +2,12 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Python imports
+import json
+
 # Django imports
 from django.conf import settings
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 
 # Module import
@@ -78,7 +82,8 @@ class IssueView(WorkspaceBaseModel):
 
     def save(self, *args, **kwargs):
         query_params = self.filters
-        self.query = issue_filters(query_params, "POST") if query_params else {}
+        query = issue_filters(query_params, "POST") if query_params else {}
+        self.query = json.loads(json.dumps(query, cls=DjangoJSONEncoder))
 
         if self._state.adding:
             if self.project:

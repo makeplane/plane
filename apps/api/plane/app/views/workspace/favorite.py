@@ -44,6 +44,12 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug):
         """Create a workspace favorite after validating its target entity."""
+        if not isinstance(request.data, Mapping):
+            return Response(
+                {"error": "Request body must be an object."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         try:
             workspace = Workspace.objects.get(slug=slug)
 

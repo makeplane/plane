@@ -89,12 +89,12 @@ class IssueViewSerializer(BaseSerializer):
     def _is_valid_relative_date_filter(value):
         """Return False when a relative date filter cannot be evaluated safely."""
         date_query = value.split(";")
-        if len(date_query) != 3:
-            return True
-
         match = DATE_FILTER_PATTERN.fullmatch(date_query[0])
         if not match:
+            # Two-part absolute date expressions do not use the relative form.
             return True
+        if len(date_query) != 3:
+            return False
 
         try:
             duration = int(date_query[0].split("_", 1)[0])
@@ -125,7 +125,7 @@ class IssueViewSerializer(BaseSerializer):
                     errors[field] = "must be a list of strings or null."
                 elif field in _DATE_FILTER_FIELDS and field_value is not None:
                     if any(not self._is_valid_relative_date_filter(item) for item in field_value):
-                        errors[field] = "contains a relative date duration outside the supported range."
+                        errors[field] = "contains an incomplete or unsupported relative date expression."
             elif field in _STRING_FILTER_FIELDS:
                 if field == "name":
                     if not isinstance(field_value, str):
