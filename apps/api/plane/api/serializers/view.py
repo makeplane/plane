@@ -8,6 +8,7 @@ Serializers for saved views in the public API.
 
 from datetime import timedelta
 
+from django.db import transaction
 from rest_framework import serializers
 
 from .base import BaseSerializer
@@ -155,11 +156,14 @@ class IssueViewSerializer(BaseSerializer):
         if "sort_order" not in self.initial_data:
             sort_order = serializers.empty
 
-        issue_view = IssueView.objects.create(**validated_data)
-        if sort_order is not serializers.empty:
-            IssueView.objects.filter(pk=issue_view.pk).update(sort_order=sort_order)
-            issue_view.sort_order = sort_order
-        return issue_view
+        # Keep the model's automatic ordering and any explicit override in one
+        # transaction so concurrent creates never observe a temporary sort_order.
+        with transaction.atomic():
+            issue_view = IssueView.objects.create(**validated_data)
+            if sort_order is not serializers.empty:
+                IssueView.objects.filter(pk=issue_view.pk).update(sort_order=sort_order)
+                issue_view.sort_order = sort_order
+            return issue_view
 
     def update(self, instance, validated_data):
         """Update an IssueView and keep legacy and rich filters in sync when needed."""
