@@ -7,6 +7,7 @@ Contract tests for IssueView public REST API endpoints (/api/v1/.../views/ and p
 """
 
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta, timezone as dt_timezone
 from threading import Event, get_ident
 from time import monotonic, sleep
 from unittest.mock import patch
@@ -680,9 +681,88 @@ class TestIssueViewPublicAPI:
         assert update_response.status_code == status.HTTP_200_OK
         assert update_response.data["description"] == "Updated by the owning guest"
 
+        if view_scope == "project":
+            another_members_view = IssueView.objects.create(
+                name="Another Member Public Project View",
+                workspace=workspace,
+                project=project,
+                owned_by=create_user,
+                access=1,
+                description="Original owner description",
+            )
+            another_members_detail_url = self.get_detail_url(
+                workspace.slug, project.id, another_members_view.id
+            )
+            non_owner_update = guest_client.patch(
+                another_members_detail_url,
+                {"description": "Guest must not change this"},
+                format="json",
+            )
+            assert non_owner_update.status_code == status.HTTP_400_BAD_REQUEST
+            another_members_view.refresh_from_db()
+            assert another_members_view.description == "Original owner description"
+
         delete_response = guest_client.delete(detail_url)
         assert delete_response.status_code == status.HTTP_204_NO_CONTENT
         assert not IssueView.objects.filter(pk=view_id).exists()
+
+    @pytest.mark.django_db
+    def test_project_guest_without_active_workspace_membership_cannot_mutate_saved_views(
+        self, workspace, project
+    ):
+        """A stale active project membership is insufficient after workspace removal."""
+        suffix = uuid4().hex
+        guest = User.objects.create(
+            email=f"removed-workspace-guest-{suffix}@plane.so",
+            username=f"removed_workspace_guest_{suffix}",
+        )
+        workspace_membership = WorkspaceMember.objects.create(
+            workspace=workspace, member=guest, role=5, is_active=True
+        )
+        project_membership = ProjectMember.objects.create(
+            project=project, member=guest, role=5, is_active=True
+        )
+        existing_view = IssueView.objects.create(
+            name="Guest View After Workspace Removal",
+            workspace=workspace,
+            project=project,
+            owned_by=guest,
+            access=0,
+            description="Original description",
+        )
+        token = APIToken.objects.create(
+            user=guest,
+            label="Removed Workspace Guest API Token",
+            token=f"removed-workspace-guest-token-{suffix}",
+        )
+        guest_client = APIClient()
+        guest_client.credentials(HTTP_X_API_KEY=token.token)
+
+        workspace_membership.is_active = False
+        workspace_membership.save(update_fields=["is_active"])
+        project_membership.refresh_from_db()
+        assert project_membership.is_active is True
+
+        create_response = guest_client.post(
+            self.get_list_url(workspace.slug, project.id),
+            {"name": "Must not be created", "filters": {}},
+            format="json",
+        )
+        detail_url = self.get_detail_url(workspace.slug, project.id, existing_view.id)
+        update_response = guest_client.patch(
+            detail_url, {"description": "Must not be updated"}, format="json"
+        )
+        delete_response = guest_client.delete(detail_url)
+
+        assert create_response.status_code == status.HTTP_403_FORBIDDEN
+        assert update_response.status_code == status.HTTP_403_FORBIDDEN
+        assert delete_response.status_code == status.HTTP_403_FORBIDDEN
+        assert not IssueView.objects.filter(
+            workspace=workspace, project=project, name="Must not be created"
+        ).exists()
+        existing_view.refresh_from_db()
+        assert existing_view.description == "Original description"
+        assert IssueView.objects.filter(pk=existing_view.id).exists()
 
     @pytest.mark.django_db
     def test_non_owner_cannot_unlock_locked_project_or_workspace_views(
@@ -979,15 +1059,18 @@ class TestIssueViewPublicAPI:
     @pytest.mark.django_db
     def test_create_project_view_serializes_relative_date_query_values(self, api_key_client, workspace, project):
         """The model serializes relative-date query values before saving its JSONField."""
-        response = api_key_client.post(
-            self.get_list_url(workspace.slug, project.id),
-            {"name": "Relative date filter", "filters": {"created_at": ["2_weeks;after;past"]}},
-            format="json",
-        )
+        fixed_now = datetime(2025, 1, 15, 12, 0, tzinfo=dt_timezone.utc)
+        with patch("plane.utils.issue_filters.timezone.now", return_value=fixed_now):
+            response = api_key_client.post(
+                self.get_list_url(workspace.slug, project.id),
+                {"name": "Relative date filter", "filters": {"created_at": ["2_weeks;after;past"]}},
+                format="json",
+            )
         assert response.status_code == status.HTTP_201_CREATED
         view = IssueView.objects.get(pk=response.data["id"])
         query_date = view.query["created_at__date__gte"]
-        assert isinstance(query_date, str)
+        expected_date = (fixed_now.date() - timedelta(weeks=2)).isoformat()
+        assert query_date == expected_date
         assert response.data["query"]["created_at__date__gte"] == query_date
 
     @pytest.mark.parametrize(
