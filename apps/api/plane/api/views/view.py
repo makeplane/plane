@@ -312,6 +312,11 @@ class WorkspaceViewListCreateAPIEndpoint(BaseAPIView):
             .order_by("-created_at", "id")
             .distinct()
         )
+        if WorkspaceMember.objects.filter(
+            workspace__slug=workspace_slug, member=self.request.user, role=5, is_active=True
+        ).exists():
+            queryset = queryset.filter(owned_by=self.request.user)
+
         return queryset
 
     @workspace_view_docs(
@@ -391,6 +396,11 @@ class WorkspaceViewDetailAPIEndpoint(BaseAPIView):
             .annotate(is_favorite=Exists(favorite_subquery))
             .distinct()
         )
+        if WorkspaceMember.objects.filter(
+            workspace__slug=workspace_slug, member=self.request.user, role=5, is_active=True
+        ).exists():
+            queryset = queryset.filter(owned_by=self.request.user)
+
         return queryset
 
     @workspace_view_docs(

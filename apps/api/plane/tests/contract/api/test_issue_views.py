@@ -9,6 +9,7 @@ Contract tests for IssueView public REST API endpoints (/api/v1/.../views/ and p
 from uuid import uuid4
 import pytest
 from rest_framework import status
+from rest_framework.test import APIClient
 
 from plane.db.models import (
     IssueView,
@@ -19,6 +20,7 @@ from plane.db.models import (
     UserFavorite,
     UserRecentVisit,
     Workspace,
+    WorkspaceMember,
 )
 from plane.db.models.api import APIToken
 
@@ -346,6 +348,21 @@ class TestIssueViewPublicAPI:
             entity_name="view",
             entity_identifier=view.id,
         )
+        other_user_suffix = uuid4().hex
+        other_user = User.objects.create(
+            email=f"visit-{other_user_suffix}@plane.so",
+            username=f"visit_{other_user_suffix}",
+        )
+        WorkspaceMember.objects.create(
+            workspace=workspace, member=other_user, role=15, is_active=True
+        )
+        UserRecentVisit.objects.create(
+            user=other_user,
+            workspace=workspace,
+            project=None,
+            entity_name="view",
+            entity_identifier=view.id,
+        )
 
         favorited_detail = api_key_client.get(detail_url)
         assert favorited_detail.status_code == status.HTTP_200_OK
@@ -368,3 +385,57 @@ class TestIssueViewPublicAPI:
         assert not UserRecentVisit.objects.filter(
             user=create_user, workspace=workspace, entity_name="view", entity_identifier=view.id
         ).exists()
+        assert not UserRecentVisit.objects.filter(
+            user=other_user, workspace=workspace, entity_name="view", entity_identifier=view.id
+        ).exists()
+
+
+    @pytest.mark.django_db
+    def test_workspace_guest_can_only_list_and_retrieve_own_views(self, workspace, create_user):
+        """Workspace guests can access their own views but not public views owned by others."""
+        guest_suffix = uuid4().hex
+        guest = User.objects.create(
+            email=f"guest-{guest_suffix}@plane.so",
+            username=f"guest_{guest_suffix}",
+        )
+        WorkspaceMember.objects.create(
+            workspace=workspace, member=guest, role=5, is_active=True
+        )
+        guest_token = APIToken.objects.create(
+            user=guest,
+            label="Guest API Token",
+            token=f"guest-api-token-{guest_suffix}",
+        )
+        guest_client = APIClient()
+        guest_client.credentials(HTTP_X_API_KEY=guest_token.token)
+
+        own_view = IssueView.objects.create(
+            name="Guest Private View",
+            workspace=workspace,
+            project=None,
+            owned_by=guest,
+            access=0,
+        )
+        another_members_public_view = IssueView.objects.create(
+            name="Another Member Public View",
+            workspace=workspace,
+            project=None,
+            owned_by=create_user,
+            access=1,
+        )
+
+        list_response = guest_client.get(self.get_workspace_views_url(workspace.slug))
+        assert list_response.status_code == status.HTTP_200_OK
+        listed_ids = {item["id"] for item in list_response.data.get("results", [])}
+        assert str(own_view.id) in listed_ids
+        assert str(another_members_public_view.id) not in listed_ids
+
+        own_detail_response = guest_client.get(
+            self.get_workspace_view_detail_url(workspace.slug, own_view.id)
+        )
+        assert own_detail_response.status_code == status.HTTP_200_OK
+
+        another_members_detail_response = guest_client.get(
+            self.get_workspace_view_detail_url(workspace.slug, another_members_public_view.id)
+        )
+        assert another_members_detail_response.status_code == status.HTTP_404_NOT_FOUND
