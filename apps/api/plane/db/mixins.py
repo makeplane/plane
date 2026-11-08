@@ -75,6 +75,8 @@ class SoftDeleteModel(models.Model):
             # Soft delete the current instance
             self.deleted_at = timezone.now()
             self.save(using=using)
+            # Use the database selected by the model save when no alias was passed.
+            db_alias = using or self._state.db
 
             transaction.on_commit(
                 partial(
@@ -82,9 +84,9 @@ class SoftDeleteModel(models.Model):
                     self._meta.app_label,
                     self._meta.model_name,
                     self.pk,
-                    using=using,
+                    using=db_alias,
                 ),
-                using=using,
+                using=db_alias,
             )
 
         else:

@@ -55,6 +55,7 @@ def _is_owner_unlock_request(issue_view, request):
     """Allow only the owner to submit a standalone boolean unlock."""
     return (
         issue_view.owned_by_id == request.user.id
+        and hasattr(request.data, "keys")
         and set(request.data.keys()) == {"is_locked"}
         and request.data.get("is_locked") is False
     )
@@ -128,7 +129,7 @@ class WorkspaceViewViewSet(BaseViewSet):
                 if not _is_owner_unlock_request(workspace_view, request):
                     return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
                 workspace_view.is_locked = False
-                workspace_view.save(update_fields=["is_locked", "updated_at"])
+                workspace_view.save(update_fields=["is_locked", "updated_at", "updated_by"])
                 return Response(IssueViewSerializer(workspace_view).data, status=status.HTTP_200_OK)
 
             # Only update the view if owner is updating
@@ -486,7 +487,7 @@ class IssueViewViewSet(BaseViewSet):
                 if not _is_owner_unlock_request(issue_view, request):
                     return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
                 issue_view.is_locked = False
-                issue_view.save(update_fields=["is_locked", "updated_at"])
+                issue_view.save(update_fields=["is_locked", "updated_at", "updated_by"])
                 return Response(IssueViewSerializer(issue_view).data, status=status.HTTP_200_OK)
 
             if issue_view.owned_by_id != request.user.id:

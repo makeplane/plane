@@ -107,6 +107,7 @@ class TestViewCreateMembership:
         assert unlock.data["is_locked"] is False
         view.refresh_from_db()
         assert view.is_locked is False
+        assert view.updated_by_id == create_user.id
 
     @pytest.mark.django_db
     def test_archived_project_rejects_legacy_view_create_update_and_delete(
