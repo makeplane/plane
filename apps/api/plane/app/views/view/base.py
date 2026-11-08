@@ -184,7 +184,12 @@ class WorkspaceViewViewSet(BaseViewSet):
             log_exception(exc)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE", creator=True, model=IssueView)
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
+        level="WORKSPACE",
+        creator=True,
+        model=IssueView,
+    )
     def destroy(self, request, slug, pk):
         """Delete a workspace view and its metadata atomically."""
         with transaction.atomic():
@@ -502,7 +507,11 @@ class IssueViewViewSet(BaseViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView)
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
+        creator=True,
+        model=IssueView,
+    )
     def destroy(self, request, slug, project_id, pk):
         """Delete a project view only while its parent project is active."""
         with transaction.atomic():

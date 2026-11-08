@@ -12,7 +12,7 @@ import pytest
 from django.utils import timezone
 from rest_framework import status
 
-from plane.db.models import IssueView, Project, ProjectMember, User, Workspace
+from plane.db.models import IssueView, Project, ProjectMember, User, Workspace, WorkspaceMember
 
 
 def _user(prefix):
@@ -71,6 +71,54 @@ class TestViewCreateMembership:
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
         assert not IssueView.objects.filter(project=project).exists()
+
+    @pytest.mark.parametrize("view_scope", ["workspace", "project"])
+    @pytest.mark.django_db
+    def test_owner_can_delete_legacy_view_when_created_by_is_missing(
+        self, session_client, workspace, view_scope
+    ):
+        """A view owner can reach the explicit owner check even when created_by is null."""
+        owner = _user("view_owner_without_creator")
+        WorkspaceMember.objects.create(
+            workspace=workspace, member=owner, role=15, is_active=True
+        )
+
+        project = None
+        if view_scope == "project":
+            project = Project.objects.create(
+                name="Member-owned view project",
+                identifier=f"DEL{uuid4().hex[:4].upper()}",
+                workspace=workspace,
+            )
+            ProjectMember.objects.create(
+                workspace=workspace,
+                project=project,
+                member=owner,
+                role=15,
+                is_active=True,
+            )
+
+        view = IssueView.objects.create(
+            name="Owner view with missing creator",
+            workspace=workspace,
+            project=project,
+            owned_by=owner,
+            access=0,
+        )
+        IssueView.objects.filter(pk=view.id).update(created_by=None)
+        view.refresh_from_db()
+        assert view.created_by_id is None
+
+        session_client.force_authenticate(user=owner)
+        detail_url = (
+            f"/api/workspaces/{workspace.slug}/projects/{project.id}/views/{view.id}/"
+            if project
+            else f"/api/workspaces/{workspace.slug}/views/{view.id}/"
+        )
+        response = session_client.delete(detail_url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not IssueView.objects.filter(pk=view.id).exists()
 
     @pytest.mark.parametrize("view_scope", ["workspace", "project"])
     @pytest.mark.django_db

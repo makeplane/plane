@@ -87,6 +87,7 @@ class SoftDeleteModel(models.Model):
                     using=db_alias,
                 ),
                 using=db_alias,
+                robust=True,
             )
 
         else:

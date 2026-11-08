@@ -335,6 +335,31 @@ class TestIssueViewPublicAPI:
         assert response.data.get("name") == test_view.name
         assert response.data.get("description") == test_view.description
 
+    @pytest.mark.django_db(transaction=True)
+    def test_workspace_view_delete_still_returns_204_when_cleanup_dispatch_fails(
+        self, api_key_client, workspace, create_user
+    ):
+        """A post-commit cleanup broker failure must not turn a successful delete into HTTP 500."""
+        view = IssueView.objects.create(
+            name="Cleanup dispatch failure view",
+            workspace=workspace,
+            project=None,
+            owned_by=create_user,
+            access=1,
+        )
+        with patch(
+            "plane.db.mixins.soft_delete_related_objects.delay",
+            side_effect=RuntimeError("broker unavailable"),
+        ):
+            response = api_key_client.delete(
+                self.get_workspace_view_detail_url(workspace.slug, view.id)
+            )
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not IssueView.objects.filter(pk=view.id).exists()
+        deleted_view = IssueView.all_objects.get(pk=view.id)
+        assert deleted_view.deleted_at is not None
+
     @pytest.mark.django_db
     def test_project_view_retrieve_logs_recent_visit_dispatch_failure(
         self, api_key_client, workspace, project, test_view
