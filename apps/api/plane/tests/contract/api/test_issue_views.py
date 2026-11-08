@@ -19,7 +19,6 @@ from plane.db.models import (
     UserFavorite,
     UserRecentVisit,
     Workspace,
-    WorkspaceMember,
 )
 from plane.db.models.api import APIToken
 
