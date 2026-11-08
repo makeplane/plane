@@ -232,6 +232,18 @@ class IssueViewDetailAPIEndpoint(BaseAPIView):
     def patch(self, request, slug, project_id, pk):
         """Partially update a project saved view."""
         with transaction.atomic():
+            # Project archiving updates this row. Lock it before the view so an
+            # archive cannot commit between the active-project check and save.
+            project = Project.objects.select_for_update(of=("self",)).filter(
+                pk=project_id,
+                workspace__slug=slug,
+            ).first()
+            if project is None or project.archived_at is not None:
+                return Response(
+                    {"error": "The requested resource does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
             favorite_subquery = UserFavorite.objects.filter(
                 user=request.user,
                 entity_identifier=OuterRef("pk"),

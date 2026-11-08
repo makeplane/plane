@@ -532,11 +532,15 @@ class TestIssueViewPublicAPI:
             name="Original favorite name",
         )
 
-        response = session_client.patch(
-            f"/api/workspaces/{workspace.slug}/user-favorites/{favorite.id}/",
-            payload,
-            format="json",
-        )
+        favorite_url = f"/api/workspaces/{workspace.slug}/user-favorites/{favorite.id}/"
+        if payload is None:
+            # Passing Python None with format="json" can create an empty body.
+            # Send the literal JSON token so the parser returns None explicitly.
+            response = session_client.patch(
+                favorite_url, data="null", content_type="application/json"
+            )
+        else:
+            response = session_client.patch(favorite_url, payload, format="json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert response.data["error"] == "Request body must be an object."
