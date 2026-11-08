@@ -118,14 +118,17 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
     const payload = renderFormattedPayloadDate(date) ?? "";
     return visibleWeeks.some((week) => !!week?.[payload]);
   };
-  // With weekends hidden, a fallback on a Saturday or Sunday has no tile, so use the nearest weekday in view.
+  // With weekends hidden a Saturday or Sunday has no tile, so use the next weekday in view or the one before.
+  // A picked day can be hidden too: today on a weekend, or a Saturday tapped before weekends were hidden.
+  // It moves to a weekday next to it. A picked day out of view moves to one next to the active date.
   const isShownDay = (date: Date) => isInView(date) && (showWeekends || (date.getDay() !== 0 && date.getDay() !== 6));
   const activeDate = layout === "week" ? activeWeekDate : activeMonthDate;
+  const baseDate = isInView(pickedDate) ? pickedDate : activeDate;
   const fallbackDate =
     [0, 1, 2, -1, -2]
-      .map((days) => new Date(activeDate.getFullYear(), activeDate.getMonth(), activeDate.getDate() + days))
-      .find(isShownDay) ?? activeDate;
-  const selectedDate = isInView(pickedDate) ? pickedDate : fallbackDate;
+      .map((days) => new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate() + days))
+      .find(isShownDay) ?? baseDate;
+  const selectedDate = isShownDay(pickedDate) ? pickedDate : fallbackDate;
 
   const formattedDatePayload = renderFormattedPayloadDate(selectedDate) ?? undefined;
 
