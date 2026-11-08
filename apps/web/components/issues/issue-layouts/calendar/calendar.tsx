@@ -93,7 +93,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
     isEpic = false,
   } = props;
   // states
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [pickedDate, setPickedDate] = useState<Date>(new Date());
   //refs
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
   // store hooks
@@ -108,6 +108,16 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
   const calendarPayload = issueCalendarView.calendarPayload;
 
   const allWeeksOfActiveMonth = issueCalendarView.allWeeksOfActiveMonth;
+
+  // Prev/Next, the month picker and the layout switch move the calendar without moving the picked date.
+  // When the picked date is out of view, fall back to the active date so the mobile list matches the calendar.
+  const { activeMonthDate, activeWeekDate } = issueCalendarView.calendarFilters;
+  const visibleWeeks =
+    layout === "week" ? [issueCalendarView.allDaysOfActiveWeek] : Object.values(allWeeksOfActiveMonth ?? {});
+  const pickedDatePayload = renderFormattedPayloadDate(pickedDate) ?? "";
+  const isPickedDateVisible = visibleWeeks.some((week) => !!week?.[pickedDatePayload]);
+  const fallbackDate = layout === "week" ? activeWeekDate : activeMonthDate;
+  const selectedDate = isPickedDateVisible ? pickedDate : fallbackDate;
 
   const formattedDatePayload = renderFormattedPayloadDate(selectedDate) ?? undefined;
 
@@ -137,7 +147,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
     <>
       <div className="flex h-full w-full flex-col overflow-hidden">
         <CalendarHeader
-          setSelectedDate={setSelectedDate}
+          setSelectedDate={setPickedDate}
           issuesFilterStore={issuesFilterStore}
           updateFilters={updateFilters}
         />
@@ -157,7 +167,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                     Object.entries(allWeeksOfActiveMonth).map(([weekNumber, week]: [string, ICalendarWeek]) => (
                       <CalendarWeekDays
                         selectedDate={selectedDate}
-                        setSelectedDate={setSelectedDate}
+                        setSelectedDate={setPickedDate}
                         handleDragAndDrop={handleDragAndDrop}
                         issuesFilterStore={issuesFilterStore}
                         key={weekNumber}
@@ -182,7 +192,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
               {layout === "week" && (
                 <CalendarWeekDays
                   selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
+                  setSelectedDate={setPickedDate}
                   handleDragAndDrop={handleDragAndDrop}
                   issuesFilterStore={issuesFilterStore}
                   week={issueCalendarView.allDaysOfActiveWeek}
