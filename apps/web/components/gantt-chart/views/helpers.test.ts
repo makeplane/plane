@@ -26,9 +26,20 @@ describe("Gantt block calendar-day widths", () => {
     expect(position(undefined, undefined)).toBeUndefined();
   });
 
-  it("preserves the one-day fallback for invalid dates", () => {
-    expect(position("invalid", "2026-11-02")?.width).toBe(24);
-    expect(position("2026-11-01", "invalid")?.width).toBe(24);
+  it("treats an invalid start date as absent", () => {
+    expect(position("invalid", "2026-11-02")).toEqual(position(undefined, "2026-11-02"));
+    expect(position("invalid", "2026-11-02")).toEqual({ marginLeft: 7284, width: 60 });
+  });
+
+  it("treats an invalid target date as absent", () => {
+    expect(position("2026-11-01", "invalid")).toEqual(position("2026-11-01", undefined));
+    expect(position("2026-11-01", "invalid")).toEqual({ marginLeft: 7296, width: 60 });
+  });
+
+  it("omits blocks with no valid endpoints", () => {
+    expect(position("invalid", "invalid")).toBeUndefined();
+    expect(position("invalid", undefined)).toBeUndefined();
+    expect(position(undefined, "invalid")).toBeUndefined();
   });
 
   it.each([

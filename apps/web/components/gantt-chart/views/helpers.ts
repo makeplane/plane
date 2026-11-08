@@ -94,8 +94,10 @@ export const getItemPositionWidth = (chartData: ChartDataType, itemData: IGanttB
   const { startDate: chartStartDate } = chartData.data;
   const { start_date, target_date } = itemData;
 
-  const itemStartDate = getDate(start_date);
-  const itemTargetDate = getDate(target_date);
+  const parsedStartDate = getDate(start_date);
+  const parsedTargetDate = getDate(target_date);
+  const itemStartDate = isValid(parsedStartDate) ? parsedStartDate : undefined;
+  const itemTargetDate = isValid(parsedTargetDate) ? parsedTargetDate : undefined;
 
   chartStartDate.setHours(0, 0, 0, 0);
   itemStartDate?.setHours(0, 0, 0, 0);
@@ -110,10 +112,7 @@ export const getItemPositionWidth = (chartData: ChartDataType, itemData: IGanttB
 
   if (itemStartDate && itemTargetDate) {
     // get width of block
-    const widthDaysDifference =
-      isValid(itemStartDate) && isValid(itemTargetDate)
-        ? Math.abs(differenceInCalendarDays(itemTargetDate, itemStartDate))
-        : 0;
+    const widthDaysDifference = Math.abs(differenceInCalendarDays(itemTargetDate, itemStartDate));
     scrollWidth = (widthDaysDifference + 1) * chartData.data.dayWidth;
   }
 
