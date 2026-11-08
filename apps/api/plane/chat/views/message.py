@@ -10,6 +10,7 @@ are always sent as the caller. Removing a message calls `Message.remove()`, whic
 leaves a tombstone so replies and read cursors keep working; it is never deleted.
 """
 
+from django.db import transaction
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
@@ -65,8 +66,9 @@ class MessageEndpoint(ChatBaseEndpoint):
 
 
 class MessageDetailEndpoint(ChatBaseEndpoint):
-    def _message(self, channel, message_id):
-        message = Message.objects.filter(channel=channel, pk=message_id).first()
+    def _message(self, channel, message_id, lock=False):
+        messages = Message.objects.select_for_update() if lock else Message.objects
+        message = messages.filter(channel=channel, pk=message_id).first()
         if message is None:
             raise NotFound("Message not found.")
         return message
@@ -78,21 +80,25 @@ class MessageDetailEndpoint(ChatBaseEndpoint):
     def patch(self, request, slug, channel_id, message_id):
         """Edit your own message in a channel you're in. Removed messages and archived channels can't be edited."""
         channel = self.get_channel(channel_id)
-        message = self._message(channel, message_id)
-        require_channel_member(channel)
-        if message.sender_id != request.user.id:
-            raise Forbidden("Only the sender can edit a message.")
-        if message.removed_at is not None:
-            raise Conflict("The message was removed.")
-        require_not_archived(channel)
-        serializer = MessageEditSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        data = serializer.validated_data
+        # Locked until the write, so a removal that lands meanwhile can't have its body written back.
+        with transaction.atomic():
+            message = self._message(channel, message_id, lock=True)
+            require_channel_member(channel)
+            if message.sender_id != request.user.id:
+                raise Forbidden("Only the sender can edit a message.")
+            if message.removed_at is not None:
+                raise Conflict("The message was removed.")
+            require_not_archived(channel)
+            serializer = MessageEditSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            data = serializer.validated_data
 
-        message.body_html = data["body_html"]
-        message.body_json = data["body_json"]
-        message.edited_at = timezone.now()
-        message.save(update_fields=["body_html", "body_json", "body_stripped", "edited_at", "updated_at", "updated_by"])
+            message.body_html = data["body_html"]
+            message.body_json = data["body_json"]
+            message.edited_at = timezone.now()
+            message.save(
+                update_fields=["body_html", "body_json", "body_stripped", "edited_at", "updated_at", "updated_by"]
+            )
         return Response(_payload(message.id))
 
     def delete(self, request, slug, channel_id, message_id):

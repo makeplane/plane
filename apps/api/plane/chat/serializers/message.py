@@ -16,7 +16,25 @@ MAX_BODY_HTML_LENGTH = 40_000
 MAX_BODY_JSON_BYTES = 200_000
 
 # Markup that renders as nothing: empty paragraphs, line breaks, non-breaking spaces, whitespace.
-_BLANK_MARKUP = re.compile(r"</?p\s*>|<br\s*/?>|&nbsp;|\s", re.IGNORECASE)
+# Attributes count too: packages/editor's empty paragraph is `<p class="editor-paragraph-block"></p>`.
+_BLANK_MARKUP = re.compile(r"</?p\b[^>]*>|<br\b[^>]*>|&nbsp;|\s", re.IGNORECASE)
+
+# JSON can carry these in a string, but Postgres's jsonb refuses them.
+_NOT_STORABLE_IN_JSONB = re.compile("[\x00\ud800-\udfff]")
+
+
+def _storable_in_jsonb(value):
+    pending = [value]
+    while pending:
+        item = pending.pop()
+        if isinstance(item, dict):
+            pending.extend(item.keys())
+            pending.extend(item.values())
+        elif isinstance(item, list):
+            pending.extend(item)
+        elif isinstance(item, str) and _NOT_STORABLE_IN_JSONB.search(item):
+            return False
+    return True
 
 
 class MessageSerializer(BaseSerializer):
@@ -71,6 +89,8 @@ class MessageWriteSerializer(serializers.Serializer):
             raise serializers.ValidationError("body_json must be an object.")
         if len(json.dumps(value)) > MAX_BODY_JSON_BYTES:
             raise serializers.ValidationError("body_json is too large.")
+        if not _storable_in_jsonb(value):
+            raise serializers.ValidationError("body_json contains characters that can't be stored.")
         return value
 
 

@@ -69,7 +69,9 @@ class Message(BaseModel):
             self.body_html = ""
             self.body_json = {}
             self.removed_at = timezone.now()
-            self.save(update_fields=["body_html", "body_json", "body_stripped", "removed_at", "updated_at"])
+            self.save(
+                update_fields=["body_html", "body_json", "body_stripped", "removed_at", "updated_at", "updated_by"]
+            )
             self.references.all().delete()
 
 

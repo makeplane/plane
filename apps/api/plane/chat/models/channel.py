@@ -83,23 +83,28 @@ class ChannelManager(SoftDeletionManager):
 
         dm_key = ":".join(user_ids)
         channel = self.filter(workspace=workspace, dm_key=dm_key).first()
-        created = False
         if channel is None:
             try:
+                # One transaction, so nobody can find the channel before its members are in it.
                 with transaction.atomic():
                     channel = self.create(workspace=workspace, kind=kind, dm_key=dm_key)
-                    created = True
+                    for user_id in user_ids:
+                        ChannelMember.objects.create(channel=channel, user_id=user_id)
+                return channel, True
             except IntegrityError:
                 # Someone created the same DM concurrently; use theirs.
                 channel = self.get(workspace=workspace, dm_key=dm_key)
 
-        # On create this adds every member; afterwards it restores any whose row was soft deleted.
+        # Restore any member whose row was soft deleted.
         existing = {str(user_id) for user_id in channel.members.values_list("user_id", flat=True)}
-        with transaction.atomic():
-            for user_id in user_ids:
-                if user_id not in existing:
-                    ChannelMember.objects.create(channel=channel, user_id=user_id)
-        return channel, created
+        for user_id in user_ids:
+            if user_id not in existing:
+                try:
+                    with transaction.atomic():
+                        ChannelMember.objects.create(channel=channel, user_id=user_id)
+                except IntegrityError:
+                    pass  # Someone restored them concurrently.
+        return channel, False
 
 
 class Channel(BaseModel):

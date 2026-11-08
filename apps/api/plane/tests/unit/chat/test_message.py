@@ -5,6 +5,7 @@
 """Message senders, threads, removal, and work item references."""
 
 import pytest
+from crum import impersonate
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
@@ -94,3 +95,15 @@ class TestMessageReference:
         message = Message.objects.create(channel=channel, sender=alice)
         with pytest.raises(ValidationError):
             MessageReference.objects.create(message=message, issue=make_issue(in_workspace=WorkspaceFactory()))
+
+
+@pytest.mark.unit
+@pytest.mark.django_db
+class TestRemovalAudit:
+    def test_remove_records_who_removed_it(self, channel, alice, make_member):
+        moderator = make_member()
+        message = Message.objects.create(channel=channel, sender=alice, body_html="<p>hi</p>")
+        with impersonate(moderator):
+            message.remove()
+        message.refresh_from_db()
+        assert message.updated_by_id == moderator.id

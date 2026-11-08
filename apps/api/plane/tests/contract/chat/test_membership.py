@@ -7,6 +7,7 @@
 import pytest
 
 from plane.chat.models import Channel, ChannelKind, ChannelMember
+from plane.db.models import WorkspaceMember
 
 
 def _member_ids(response):
@@ -246,3 +247,29 @@ class TestLastPrivateChannelAdmin:
     def test_public_channels_are_not_affected(self, member, member2, make_channel, url):
         channel = make_channel(admins=[member.user], members=[member2.user])
         assert member.client.post(url(f"channels/{channel.id}/leave/")).status_code == 204
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestLeavingTheWorkspace:
+    def _remove_from_workspace(self, workspace, user):
+        membership = WorkspaceMember.objects.get(workspace=workspace, member=user)
+        membership.is_active = False
+        membership.save()
+
+    def test_invited_back_they_do_not_regain_a_private_channel(self, member, member2, workspace, make_channel, url):
+        channel = make_channel(ChannelKind.PRIVATE, admins=[member2.user], members=[member.user])
+        self._remove_from_workspace(workspace, member.user)
+        # Accepting a new invite reactivates the row with `.update()`, as plane.app does.
+        WorkspaceMember.objects.filter(workspace=workspace, member=member.user).update(is_active=True)
+
+        assert member.client.get(url(f"channels/{channel.id}/")).status_code == 404
+
+    def test_someone_gone_from_the_workspace_does_not_count_as_another_admin(
+        self, member, member2, make_actor, workspace, make_channel, url
+    ):
+        stays = make_actor()
+        channel = make_channel(ChannelKind.PRIVATE, admins=[member.user, member2.user], members=[stays.user])
+        self._remove_from_workspace(workspace, member2.user)
+
+        assert member.client.post(url(f"channels/{channel.id}/leave/")).status_code == 409

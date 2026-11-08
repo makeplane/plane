@@ -4,11 +4,16 @@
 
 """messages/, messages/<id>/ and messages/<id>/replies/: reading, paging, sending, editing and removing."""
 
+import json
+import threading
+from unittest import mock
 from uuid import uuid4
 
 import pytest
+from django.db import connection
 
 from plane.chat.models import Channel, ChannelKind, Message
+from plane.chat.serializers import MessageEditSerializer
 
 
 def _texts(response):
@@ -169,12 +174,40 @@ class TestSend:
         res = member.client.post(url(f"channels/{channel.id}/messages/"), {"body_html": body}, format="json")
         assert res.status_code == 201
 
-    @pytest.mark.parametrize("body", ["", "<p></p>", "<p> &nbsp; <br></p>", "<script>x()</script>"])
+    @pytest.mark.parametrize(
+        "body",
+        [
+            "",
+            "<p></p>",
+            "<p> &nbsp; <br></p>",
+            "<script>x()</script>",
+            # What packages/editor produces for an empty composer.
+            '<p class="editor-paragraph-block"></p>',
+            '<p class="editor-paragraph-block"><br class="ProseMirror-trailingBreak"></p>',
+        ],
+    )
     def test_empty_message_is_400(self, member, channel, url, body):
         assert (
             member.client.post(url(f"channels/{channel.id}/messages/"), {"body_html": body}, format="json").status_code
             == 400
         )
+
+    @pytest.mark.parametrize(
+        "body_json",
+        [{"text": "nul \u0000 byte"}, {"nul \u0000 key": 1}, {"content": [{"text": "lone \ud800 surrogate"}]}],
+    )
+    def test_json_postgres_cannot_store_is_400(self, member, channel, url, body_json):
+        # Encoded by hand: the test client's renderer refuses a lone surrogate before it is sent.
+        payload = json.dumps({"body_html": "<p>hi</p>", "body_json": body_json})
+        res = member.client.post(url(f"channels/{channel.id}/messages/"), payload, content_type="application/json")
+        assert res.status_code == 400
+
+    def test_text_that_only_looks_like_an_escape_is_fine(self, member, channel, url):
+        body_json = {"text": "a literal \\u0000 in a code sample"}
+        res = member.client.post(
+            url(f"channels/{channel.id}/messages/"), {"body_html": "<p>hi</p>", "body_json": body_json}, format="json"
+        )
+        assert res.status_code == 201
 
     def test_too_long_is_400(self, member, channel, url):
         body = "<p>" + "a" * 40_000 + "</p>"
@@ -326,3 +359,38 @@ class TestRemove:
         assert admin.client.delete(url(f"channels/{channel.id}/messages/{foreign.id}/")).status_code == 404
         assert outsider.client.delete(url(f"channels/{channel.id}/messages/{five[0].id}/")).status_code == 403
         assert not Message.objects.filter(removed_at__isnull=False).exists()
+
+
+@pytest.mark.contract
+@pytest.mark.django_db(transaction=True)
+class TestEditDuringRemoval:
+    def test_a_removal_during_an_edit_is_not_undone(self, member, channel, five, url):
+        """Two connections: the removal lands while the edit is validating, and must still win."""
+        target = five[0]
+        validating, removal_finished = threading.Event(), threading.Event()
+        real_is_valid = MessageEditSerializer.is_valid
+
+        def pause_while_validating(serializer, *args, **kwargs):
+            validating.set()
+            removal_finished.wait(timeout=1)  # Long enough for an unguarded removal to land first.
+            return real_is_valid(serializer, *args, **kwargs)
+
+        def remove():
+            try:
+                validating.wait(timeout=10)
+                Message.objects.get(pk=target.pk).remove()
+            finally:
+                removal_finished.set()
+                connection.close()
+
+        remover = threading.Thread(target=remove)
+        remover.start()
+        with mock.patch.object(MessageEditSerializer, "is_valid", pause_while_validating):
+            member.client.patch(
+                url(f"channels/{channel.id}/messages/{target.id}/"), {"body_html": "<p>edited</p>"}, format="json"
+            )
+        remover.join(timeout=10)
+
+        target.refresh_from_db()
+        assert target.removed_at is not None
+        assert (target.body_html, target.body_stripped, target.body_json) == ("", "", {})

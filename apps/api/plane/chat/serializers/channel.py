@@ -8,6 +8,9 @@ from plane.app.serializers.base import BaseSerializer
 from plane.chat.models import GROUP_DM_MAX_MEMBERS, Channel, ChannelKind
 from plane.db.models import Project, ProjectMember
 
+# The description is sent with every channel in every list, so it has to stay small.
+MAX_DESCRIPTION_LENGTH = 2_000
+
 
 class ChannelSerializer(BaseSerializer):
     """A channel as one caller sees it. Read the instance through `views.base.annotate_channels`."""
@@ -58,6 +61,7 @@ class ChannelUpdateSerializer(BaseSerializer):
     class Meta:
         model = Channel
         fields = ["name", "description"]
+        extra_kwargs = {"description": {"max_length": MAX_DESCRIPTION_LENGTH}}
 
     def validate_name(self, value):
         name = value.strip()
@@ -93,7 +97,7 @@ class ChannelCreateSerializer(ChannelUpdateSerializer):
 
     class Meta(ChannelUpdateSerializer.Meta):
         fields = ["name", "description", "kind", "project"]
-        extra_kwargs = {"name": {"required": True}}
+        extra_kwargs = {**ChannelUpdateSerializer.Meta.extra_kwargs, "name": {"required": True}}
 
     def validate_project(self, project):
         if project is None:

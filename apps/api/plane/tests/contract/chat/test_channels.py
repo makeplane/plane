@@ -232,3 +232,20 @@ class TestChannelArchive:
         assert outsider.client.post(url(f"channels/{plain.id}/archive/")).status_code == 403
         plain.refresh_from_db()
         assert plain.archived_at is None
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestDescriptionLimit:
+    def test_create_and_edit_are_capped(self, member, make_channel, url):
+        too_long = "d" * 2_001
+        res = member.client.post(url("channels/"), {"name": "capped", "description": too_long}, format="json")
+        assert res.status_code == 400 and "description" in res.data
+
+        channel = make_channel(admins=[member.user])
+        res = member.client.patch(url(f"channels/{channel.id}/"), {"description": too_long}, format="json")
+        assert res.status_code == 400 and "description" in res.data
+
+    def test_a_description_at_the_limit_is_fine(self, member, url):
+        res = member.client.post(url("channels/"), {"name": "full", "description": "d" * 2_000}, format="json")
+        assert res.status_code == 201
