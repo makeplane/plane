@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import type { RefObject } from "react";
 import { createContext, useContext } from "react";
 
 /**
@@ -32,6 +33,11 @@ export type SelectEngineContextValue = {
    * trigger, so the trigger reads it from here.
    */
   disabled: boolean;
+  /**
+   * `variant="search-input"`'s own field, so the root can tell it apart from any other input when
+   * it decides where focus goes on open. Optional for the same reason as `mount`.
+   */
+  fieldRef?: RefObject<HTMLInputElement | null>;
 };
 
 // Mirrors select/context.ts: context + hook only (no Provider component) so

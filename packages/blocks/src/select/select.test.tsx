@@ -151,6 +151,86 @@ describe("Select on Propel combobox", () => {
     expect(onChange).toHaveBeenCalledWith("id-1");
   });
 
+  it("moves focus to the list on open even when another field had it", async () => {
+    const user = userEvent.setup();
+
+    // A form field that opens the select from the keyboard, so focus is on an unrelated input
+    // when the panel opens.
+    function WithField() {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <input aria-label="Name" onKeyDown={(event) => event.key === "Enter" && setOpen(true)} />
+          <Select<Option>
+            open={open}
+            onOpenChange={setOpen}
+            showSearch={false}
+            getValues={() => options}
+            value={null}
+            onChange={vi.fn()}
+            getOptionValue={(o) => o.id}
+            getOptionLabel={(o) => o.name}
+            placeholder={TRIGGER_NAME}
+          >
+            <Select.Trigger variant="select-md">
+              <Select.Value />
+            </Select.Trigger>
+          </Select>
+        </>
+      );
+    }
+    render(<WithField />);
+
+    await user.click(screen.getByRole("textbox", { name: "Name" }));
+    await user.keyboard("{Enter}");
+    await waitFor(() => expect(popup().getAllByRole("option").length).toBeGreaterThan(0));
+    const list = popup().getByRole("listbox");
+    await waitFor(() => expect(document.activeElement).toBe(list));
+    await user.keyboard("{ArrowDown}");
+    // The focused list is what names the highlighted row for assistive tech.
+    expect(list.getAttribute("aria-activedescendant")).toBeTruthy();
+  });
+
+  it("leaves focus where it is when a search-input select opens, as base-ui does", async () => {
+    const user = userEvent.setup();
+
+    function OpenedFromOutside() {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <button type="button" onClick={() => setOpen(true)}>
+            Open it
+          </button>
+          <Select<Option>
+            multiple
+            open={open}
+            onOpenChange={setOpen}
+            showSearch={false}
+            lazyMount={false}
+            getValues={() => options}
+            value={[]}
+            onChange={vi.fn()}
+            getOptionValue={(o) => o.id}
+            getOptionLabel={(o) => o.name}
+            placeholder={TRIGGER_NAME}
+            searchPlaceholder="Add options"
+          >
+            <Select.Trigger<Option> variant="search-input" />
+          </Select>
+        </>
+      );
+    }
+    render(<OpenedFromOutside />);
+
+    const opener = screen.getByRole("button", { name: "Open it" });
+    await user.click(opener);
+    await waitFor(() => expect(popup().getAllByRole("option").length).toBeGreaterThan(0));
+    // The field in the trigger carries the highlighted row for this variant, not the list, so the
+    // list must not take focus away from wherever it was.
+    expect(document.activeElement).not.toBe(popup().getByRole("listbox"));
+    expect(document.activeElement).toBe(opener);
+  });
+
   it("closes on Escape", async () => {
     const user = userEvent.setup();
     renderSelect();

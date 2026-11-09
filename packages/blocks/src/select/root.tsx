@@ -203,6 +203,8 @@ export function SelectRoot<T>(props: SelectProps<T>) {
   const virtualizerRef = useRef<SelectVirtualizer | null>(null);
   // The listbox, focused on open when there is no search field (see `focusListWithoutSearch`).
   const listRef = useRef<HTMLDivElement | null>(null);
+  // `variant="search-input"`'s field in the trigger, which keeps focus instead (same place).
+  const fieldRef = useRef<HTMLInputElement | null>(null);
   // Which row Enter would select, for `onSearchSubmit`. Base UI highlights nothing until the user
   // arrows (it takes no `autoHighlight`), and reports `-1` when it clears the highlight again.
   const highlightedIndexRef = useRef(-1);
@@ -415,7 +417,7 @@ export function SelectRoot<T>(props: SelectProps<T>) {
   const mount = useCallback(() => setIsEngineMounted(true), []);
 
   const engineValue = useMemo<SelectEngineContextValue>(
-    () => ({ mounted: isEngineMounted, activate, mount, disabled }),
+    () => ({ mounted: isEngineMounted, activate, mount, disabled, fieldRef }),
     [isEngineMounted, activate, mount, disabled]
   );
 
@@ -481,12 +483,11 @@ export function SelectRoot<T>(props: SelectProps<T>) {
 
   // base-ui drives the list's arrow keys from its input. Without the search field there is none, so
   // focus lands on the panel and the arrow keys and Enter do nothing. The list handles them itself
-  // once it has focus. A field in the trigger (`variant="search-input"`) keeps focus, as it does
-  // by default. With no list (a failed load) base-ui's default focus stays.
-  const focusListWithoutSearch = useCallback(
-    () => (document.activeElement instanceof HTMLInputElement ? false : (listRef.current ?? true)),
-    []
-  );
+  // once it has focus. `variant="search-input"` has its own field in the trigger, which carries the
+  // arrow keys and the highlighted row, so it gets base-ui's default for a field outside the popup:
+  // focus stays where it is. Only that field counts. Another input that happened to have focus
+  // does not keep it. With no list (a failed load) base-ui's default focus stays.
+  const focusListWithoutSearch = useCallback(() => (fieldRef.current ? false : (listRef.current ?? true)), []);
 
   const content = (
     <>
