@@ -12,6 +12,7 @@ import { setToast } from "@plane/blocks/toast";
 import type { IProject } from "@plane/types";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "@/components/automation";
+import { CycleAutomation } from "@/components/automation/cycle-automation/root";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
@@ -66,6 +67,11 @@ function AutomationSettingsPage({ params }: Route.ComponentProps) {
         <div className="mt-6 flex flex-col gap-4">
           <AutoArchiveAutomation handleChange={handleChange} />
           <AutoCloseAutomation handleChange={handleChange} />
+          <CycleAutomation
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            isAdmin={canPerformProjectAdminActions}
+          />
         </div>
       </section>
     </SettingsContentWrapper>
