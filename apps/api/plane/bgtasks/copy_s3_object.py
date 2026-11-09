@@ -70,7 +70,7 @@ def sync_with_external_service(entity_name, description_html):
     try:
         data = {
             "description_html": description_html,
-            "variant": "rich" if entity_name == "PAGE" else "document",
+            "variant": "document" if entity_name == "PAGE" else "rich",
         }
 
         live_url = settings.LIVE_URL
