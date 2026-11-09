@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "Tùy chọn",
-      "description": "Tùy chỉnh trải nghiệm ứng dụng theo cách bạn làm việc"
+      "description": "Tùy chỉnh trải nghiệm ứng dụng theo cách bạn làm việc",
+      "boards_heading": "Bảng",
+      "global_board_title": "Dùng cùng cài đặt bảng cho mọi dự án",
+      "global_board_description": "Bố cục, cách nhóm, thuộc tính hiển thị và bộ lọc dùng chung được áp dụng cho bảng mục công việc của mọi dự án. Tắt tùy chọn này sẽ khôi phục cài đặt riêng của từng dự án.",
+      "global_board_active": "Cùng cài đặt bảng cho mọi dự án",
+      "global_board_active_hint": "Thay đổi tại đây áp dụng cho bảng mục công việc của mọi dự án.",
+      "auto_collapse_title": "Thu gọn trạng thái trống trên bảng",
+      "auto_collapse_description": "Nhóm không có mục công việc được thu gọn trên mọi bảng và mở ra ngay khi có mục công việc được thêm vào."
     },
     "notifications": {
       "heading": "Thông báo qua email",

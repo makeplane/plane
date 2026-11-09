@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "Preferensi",
-      "description": "Sesuaikan pengalaman aplikasi Anda dengan cara kerja Anda"
+      "description": "Sesuaikan pengalaman aplikasi Anda dengan cara kerja Anda",
+      "boards_heading": "Papan",
+      "global_board_title": "Gunakan pengaturan papan yang sama di setiap proyek",
+      "global_board_description": "Tata letak, pengelompokan, properti yang ditampilkan, dan filter yang dapat dibawa dipakai bersama oleh papan item kerja setiap proyek. Menonaktifkannya mengembalikan pengaturan masing-masing proyek.",
+      "global_board_active": "Pengaturan papan yang sama di setiap proyek",
+      "global_board_active_hint": "Perubahan di sini berlaku untuk papan item kerja setiap proyek.",
+      "auto_collapse_title": "Ciutkan status kosong di papan",
+      "auto_collapse_description": "Grup tanpa item kerja diciutkan di setiap papan dan terbuka begitu ada item kerja yang masuk."
     },
     "notifications": {
       "heading": "Notifikasi email",

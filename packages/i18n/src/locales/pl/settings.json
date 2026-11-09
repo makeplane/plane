@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "Preferencje",
-      "description": "Dostosuj sposób korzystania z aplikacji do swojego stylu pracy"
+      "description": "Dostosuj sposób korzystania z aplikacji do swojego stylu pracy",
+      "boards_heading": "Tablice",
+      "global_board_title": "Używaj tych samych ustawień tablicy we wszystkich projektach",
+      "global_board_description": "Układ, grupowanie, wyświetlane właściwości i przenośne filtry są wspólne dla tablicy elementów pracy każdego projektu. Wyłączenie przywraca własne ustawienia każdego projektu.",
+      "global_board_active": "Te same ustawienia tablicy we wszystkich projektach",
+      "global_board_active_hint": "Zmiany wprowadzone tutaj dotyczą tablicy elementów pracy każdego projektu.",
+      "auto_collapse_title": "Zwijaj puste stany na tablicach",
+      "auto_collapse_description": "Grupy bez elementów pracy są zwinięte na każdej tablicy i rozwijają się, gdy tylko trafi do nich element pracy."
     },
     "notifications": {
       "heading": "Powiadomienia e-mail",

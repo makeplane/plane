@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "Tercihler",
-      "description": "Uygulama deneyiminizi çalışma şeklinize göre özelleştirin"
+      "description": "Uygulama deneyiminizi çalışma şeklinize göre özelleştirin",
+      "boards_heading": "Panolar",
+      "global_board_title": "Her projede aynı pano ayarlarını kullanın",
+      "global_board_description": "Düzen, gruplama, görünen özellikler ve taşınabilir filtreler her projenin iş öğeleri panosunda ortaktır. Bunu kapatmak her projenin kendi ayarlarını geri getirir.",
+      "global_board_active": "Her projede aynı pano ayarları",
+      "global_board_active_hint": "Buradaki değişiklikler her projenin iş öğeleri panosuna uygulanır.",
+      "auto_collapse_title": "Panolarda boş durumları daralt",
+      "auto_collapse_description": "İş öğesi olmayan gruplar her panoda daraltılır ve içine bir iş öğesi gelir gelmez genişler."
     },
     "notifications": {
       "heading": "E-posta bildirimleri",

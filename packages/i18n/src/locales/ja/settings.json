@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "環境設定",
-      "description": "あなたの働き方に合わせてアプリの体験をカスタマイズします"
+      "description": "あなたの働き方に合わせてアプリの体験をカスタマイズします",
+      "boards_heading": "ボード",
+      "global_board_title": "すべてのプロジェクトで同じボード設定を使用する",
+      "global_board_description": "レイアウト、グループ化、表示プロパティ、持ち運べるフィルターは、すべてのプロジェクトの作業項目ボードで共有されます。オフにすると、各プロジェクト独自の設定に戻ります。",
+      "global_board_active": "すべてのプロジェクトで同じボード設定",
+      "global_board_active_hint": "ここでの変更は、すべてのプロジェクトの作業項目ボードに適用されます。",
+      "auto_collapse_title": "ボードで空の状態を折りたたむ",
+      "auto_collapse_description": "作業項目のないグループはすべてのボードで折りたたまれ、作業項目が入るとすぐに展開されます。"
     },
     "notifications": {
       "heading": "メール通知",

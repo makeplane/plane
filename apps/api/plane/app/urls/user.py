@@ -21,6 +21,9 @@ from plane.app.views import (
     UserWorkSpacesEndpoint,
 )
 
+# per-user board preferences
+from plane.app.views.user.board_preferences import UserBoardPreferencesEndpoint
+
 urlpatterns = [
     # User Profile
     path(
@@ -44,6 +47,8 @@ urlpatterns = [
         UserEndpoint.as_view({"patch": "update_email"}),
         name="user-email-update",
     ),
+    # per-user board preferences
+    path("users/me/board-preferences/", UserBoardPreferencesEndpoint.as_view(), name="user-board-preferences"),
     # Profile
     path("users/me/profile/", ProfileEndpoint.as_view(), name="accounts"),
     # End profile

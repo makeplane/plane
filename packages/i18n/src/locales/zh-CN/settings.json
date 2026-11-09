@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "偏好设置",
-      "description": "按照您的工作方式自定义您的应用体验"
+      "description": "按照您的工作方式自定义您的应用体验",
+      "boards_heading": "看板",
+      "global_board_title": "在所有项目中使用相同的看板设置",
+      "global_board_description": "布局、分组、显示属性和可迁移的筛选在每个项目的工作项看板中共享。关闭后将恢复各项目自己的设置。",
+      "global_board_active": "所有项目使用相同的看板设置",
+      "global_board_active_hint": "此处的更改将应用于每个项目的工作项看板。",
+      "auto_collapse_title": "在看板上折叠空状态",
+      "auto_collapse_description": "没有工作项的分组会在每个看板上折叠，一旦有工作项进入就会立即展开。"
     },
     "notifications": {
       "heading": "邮件通知",

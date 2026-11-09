@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "Preferințe",
-      "description": "Personalizează experiența aplicației așa cum lucrezi"
+      "description": "Personalizează experiența aplicației așa cum lucrezi",
+      "boards_heading": "Table",
+      "global_board_title": "Folosiți aceleași setări de tablă în toate proiectele",
+      "global_board_description": "Aspectul, gruparea, proprietățile afișate și filtrele transferabile sunt comune pentru tabla de activități a fiecărui proiect. Dezactivarea readuce setările proprii ale fiecărui proiect.",
+      "global_board_active": "Aceleași setări de tablă în toate proiectele",
+      "global_board_active_hint": "Modificările de aici se aplică tablei de activități a fiecărui proiect.",
+      "auto_collapse_title": "Restrângeți stările goale pe table",
+      "auto_collapse_description": "Grupurile fără activități sunt restrânse pe fiecare tablă și se extind imediat ce ajunge o activitate în ele."
     },
     "notifications": {
       "heading": "Notificări prin e-mail",

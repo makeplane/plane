@@ -28,6 +28,8 @@ import {
   LayoutSelection,
   MobileLayoutSelection,
 } from "./issue-layouts/filters";
+// global board indicator
+import { GlobalBoardIndicator } from "@/components/board-preferences/global-board-indicator";
 
 type Props = {
   currentProjectDetails: TProject | undefined;
@@ -116,6 +118,7 @@ export const HeaderFilters = observer(function HeaderFilters(props: Props) {
         title={t("common.display")}
         placement="bottom-end"
       >
+        {storeType === EIssuesStoreType.PROJECT && <GlobalBoardIndicator />}
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={layoutDisplayFiltersOptions}
           displayFilters={issueFilters?.displayFilters ?? {}}
