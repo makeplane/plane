@@ -4,7 +4,7 @@
 
 import pytest
 
-from plane.utils.issue_filters import filter_updated_at
+from plane.utils.issue_filters import filter_intake_status, filter_updated_at, issue_filters
 
 
 @pytest.mark.unit
@@ -51,3 +51,39 @@ class TestFilterUpdatedAt:
         params = {"updated_at": ""}
         filter_updated_at(params, issue_filter, method="GET")
         assert issue_filter == {}
+
+
+@pytest.mark.unit
+class TestFilterIntakeStatus:
+    """Regression test for the "intake_status" filter on non-GET requests — the
+    POST/PATCH branch read the legacy `inbox_status` key instead of
+    `intake_status`, so saved views and analytics persisted
+    `issue_intake__status__in = None` and dropped the selected statuses."""
+
+    def test_get_method_with_csv_filters_by_status(self):
+        issue_filter = {}
+        params = {"intake_status": "-2,0"}
+        filter_intake_status(params, issue_filter, method="GET")
+        assert issue_filter == {"issue_intake__status__in": ["-2", "0"]}
+
+    def test_post_method_reads_intake_status_key(self):
+        issue_filter = {}
+        params = {"intake_status": [-2, 0]}
+        filter_intake_status(params, issue_filter, method="POST")
+        assert issue_filter == {"issue_intake__status__in": [-2, 0]}
+
+    def test_post_method_with_prefix_reads_intake_status_key(self):
+        issue_filter = {}
+        params = {"intake_status": [1]}
+        filter_intake_status(params, issue_filter, method="POST", prefix="issue__")
+        assert issue_filter == {"issue__issue_intake__status__in": [1]}
+
+    def test_post_method_with_null_is_noop(self):
+        issue_filter = {}
+        params = {"intake_status": "null"}
+        filter_intake_status(params, issue_filter, method="POST")
+        assert issue_filter == {}
+
+    @pytest.mark.parametrize("method", ["POST", "PATCH"])
+    def test_issue_filters_persists_intake_status(self, method):
+        assert issue_filters({"intake_status": [1, 2]}, method) == {"issue_intake__status__in": [1, 2]}
