@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Python imports
+import logging
+
 # Django imports
 from django.utils import timezone
 from django.apps import apps
@@ -13,8 +16,7 @@ from django.db.models.fields.related import OneToOneRel
 # Third party imports
 from celery import shared_task
 
-# Module imports
-from plane.utils.exception_logger import log_exception
+logger = logging.getLogger("plane.worker")
 
 
 @shared_task
@@ -98,8 +100,8 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
                                     using,
                                 )
             except Exception as e:
-                # Log the error and continue with the remaining relations
-                log_exception(e)
+                # Log the error (with traceback) and continue with the remaining relations
+                logger.exception("Error handling relation %s: %s", related_name, e)
                 continue
 
     # Finally, soft delete the instance itself if it hasn't been deleted yet
