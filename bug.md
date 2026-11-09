@@ -4,7 +4,7 @@ Bugs found in a code review of the Plane base code at commit `618d0eb746`. A sec
 
 Line numbers refer to that commit, so they may have moved. Critical and High bugs are not listed here because they have their own pull requests, and some findings are tracked separately.
 
-**255 bugs in the Plane base code:** 89 Medium, 166 Low.
+**256 bugs in the Plane base code:** 90 Medium, 166 Low.
 
 **81 bugs in the code Nexus adds on top of Plane:** 19 Medium, 62 Low, in the sections named "Nexus:" at the end of this file. These were reviewed separately, and each was re-checked by reading the code at `preview` `74111238e`. The Critical and High bugs in that code have their own pull requests, #30 to #39.
 
@@ -299,6 +299,7 @@ Line numbers refer to that commit, so they may have moved. Critical and High bug
 | Medium | `packages/utils/src/datetime.ts:289` | Dates on comments, spreadsheet columns and token expiries can be a day off near midnight, and a date shown beside a time can contradict it. | In `getDate`, use the substring only for date-only strings and parse full timestamps with `parseISO`, reviewing the `getDate(*_at)` filter callers at the same time. |
 | Medium | `packages/utils/src/project.ts:105` (+1 more) | Choosing Descending for created date on projects, or for due date or work item count on modules, does not produce a descending list. | Use `orderBy(items, key, "desc")` for these options. |
 | Medium | `packages/utils/src/validation.ts:26` | People with names containing an apostrophe or written in scripts such as Hindi or Tamil cannot enter their real names, and the same scripts are rejected in company and workspace names. | Allow straight and curly apostrophes in person names and add `\p{M}` to the name and company patterns. |
+| Medium | `packages/i18n/src/constants/language.ts:31` | Georgian never loads, so anyone who picks it sees the whole app in English. i18next canonicalises `ka-ge` to `ka-GE`, which is not in `supportedLngs`, so only `en` resolves. | Rename the value and locale directory to `ka-GE` and migrate saved `ka-ge` preferences. |
 | Low | `packages/services/src/file/sites-file.service.ts:88-97` (+1 more) | When storage rejects an upload the real reason is lost, and a failed workspace logo upload shows no error message at all. | Rethrow values that are not axios errors unchanged, and guard `error.error` in the logo upload modal. |
 | Low | `packages/utils/src/attachment.ts:20-25` (+1 more) | A file with no extension, such as a PNG saved without one, is listed as "." and has a blank name in the delete confirmation. | Return the full name from `getFileName` when there is no dot and do not render the dot when the extension is empty. |
 | Low | `packages/utils/src/editor/markdown-parser/marks-handler.ts:35` | Text that is both italic and struck through is lost when copied as Markdown. | Build a proper mdast `emphasis` node from the children, or recurse to their text. |
@@ -403,29 +404,29 @@ Line numbers refer to that commit, so they may have moved. Critical and High bug
 
 ## Nexus: Messages
 
-Checked against the open Messages PR stack at `a47352601`, because most of this code is not on `preview` yet.
+Checked against the open Messages PR stack at `a47352601`, because most of this code is not on `preview` yet. Updated after #15 and #16 merged: rows citing current line numbers were checked at `preview` `23ac9e76d`, and the store bugs #16 fixed were removed.
 
 | Severity | Where | Problem | Suggested fix |
 |---|---|---|---|
 | Medium | `apps/web/store/chat.store.ts:782` | Reading older messages marks new ones read. "Viewing" means only that the channel is open and the tab is visible, with no check of scroll position. | Have the list report whether it is at the bottom, and mark read only then. |
 | Medium | `packages/services/src/workspace/chat.service.ts:117`, `apps/web/components/messages/create-channel-dialog.tsx`, `channel-view.tsx` | Private channels and guest DMs cannot be managed in the web app. Nothing calls the add-members method or the guest DM grant, so a private channel only ever contains its creator. | Add member management to the channel header and a guest DM access control. |
 | Medium | `apps/web/components/messages/message-list.tsx` | A failed history load retries in a tight loop. The failure recreates the observer, which fires again at once, with no backoff or error UI. | Add a backoff and a retry row. |
-| Low | `apps/web/store/chat.store.ts:639` | An event during first load can be missed. A new message arriving while the first page loads can stay missing until reconnect. | Buffer events during the load and fetch them after. |
 | Low | `apps/web/store/chat.store.ts:677` | Retrying can duplicate a message, and sends have no timeout. | Add a client-generated id with a unique constraint, and a request timeout. |
 | Low | `apps/web/components/messages/browse-channels-dialog.tsx:38`, `apps/chat-gateway/src/connection.ts:189` | New public channels are not pushed to people who have not joined. They appear in Browse only after a refetch. | Refetch when the dialog opens. |
-| Low | `apps/api/plane/chat/events.py:103`, `apps/web/store/chat.store.ts:780` | The DM list can sort wrongly. Event times are UTC, REST times use the user's timezone, and the store compares strings. | Compare parsed timestamps. |
 | Low | `apps/web/components/messages/connection-banner.tsx:25`, `packages/services/src/workspace/chat-socket.ts:323` | A refused first connection is silent. It stays in "connecting" and no banner appears. | Show a banner after repeated failures. |
 | Low | `apps/web/components/messages/channel-sidebar.tsx:40`, `root.tsx:28` | The layout does not fit phones. The sidebar is a fixed 256px. | Show either the list or the conversation at narrow widths. |
 | Low | `apps/web/components/messages/message-item.tsx:43`, `apps/web/hooks/editor/use-editor-config.ts:75` | Read-only bodies can load remote images. Images are disabled in the composer only. | Disable them on read-only bodies, or strip them on the server. |
 | Low | `apps/web/components/messages/message-item.tsx:86`, `composer.tsx:56` | Keyboard and screen-reader gaps. Message actions cannot be reached by keyboard, and the composer has no accessible name. | Hide actions by opacity and add an `aria-label`. |
 | Low | `apps/web/components/messages/channel-view.tsx:50,68`, `channel-sidebar.tsx:65,92` | Some failures leave blank panes. | Add error states with retry. |
-| Low | `apps/web/store/chat.store.ts:475,476,578` | Closing an unjoined channel mid-load leaves stale state. | Check the channel is still active after each await. |
 | Low | `apps/api/plane/chat/views/message.py:59`, `apps/api/plane/settings/common.py:143` | Chat writes have no rate limit for signed-in users. | Add a per-user throttle. |
 | Low | `apps/chat-gateway/src/server.ts:158,226` | Pending gateway upgrades are unbounded. They count toward capacity, so they can cause real users to be refused. | Cap pending admissions. |
 | Low | `apps/api/plane/chat/events.py:114`, `apps/api/plane/settings/redis.py:15` | A hung Redis stalls chat writes. The publish client has no socket timeouts. | Set connect and socket timeouts. |
 | Low | `apps/api/plane/chat/permissions.py:86`, `apps/api/plane/chat/views/message.py:126` | Workspace admins can remove the other person's messages in a DM. | Nobody moderates direct conversations. |
 | Low | `apps/api/plane/chat/permissions.py:119`, `apps/api/plane/chat/serializers/channel.py:68` | A private channel can be orphaned. Once its last member leaves, nobody can see it and its name stays reserved. | Archive it when the last member leaves. |
 | Low | `apps/web/store/chat.store.ts:896` | Reconnect repairs only the newest 50 messages. Edits and removals to older loaded messages stay stale until reload. | Re-read every loaded page, or add an "updated since" query. |
+| Low | `apps/web/store/chat.store.ts:784` (`handleEvent`) | Unread counts can be briefly wrong. The `+1` for a new message is not reconciled with a channel refetch, so an answer that already includes the message counts it twice and an older answer erases the increment. The next read or resync puts it right. | Refetch the channel, coalesced, instead of adding one. |
+| Low | `packages/services/src/workspace/chat-socket.ts:193` (`reconnectNow`) | Reconnecting restarts a socket that is still being admitted, so repeated clicks or `online` events keep restarting admission, and it skips the longer wait after a 4429. | Return early while a socket is open or opening, and keep the slow backoff after 4429. |
+| Low | `apps/web/components/agents/khaia/root.tsx:57` | The Khaia chat bubble hides only on the Agents page, so on Messages it can cover the composer in the same corner. | Hide it on the Messages path too, or move it clear of the composer. |
 
 ## Nexus: upgrades and deployment
 
