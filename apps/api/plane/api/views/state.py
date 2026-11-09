@@ -35,6 +35,7 @@ from plane.utils.openapi import (
     STATE_CANNOT_DELETE_RESPONSE,
     EXTERNAL_ID_EXISTS_RESPONSE,
 )
+from plane.utils.live_events import publish_metadata_event
 
 
 class StateListCreateAPIEndpoint(BaseAPIView):
@@ -117,6 +118,7 @@ class StateListCreateAPIEndpoint(BaseAPIView):
                     )
 
                 serializer.save(project_id=project_id)
+                publish_metadata_event(project_id, "state", "created", request.user.id)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError:
@@ -257,6 +259,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
             )
 
         state.delete()
+        publish_metadata_event(project_id, "state", "deleted", request.user.id, settle=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @state_docs(
@@ -307,5 +310,6 @@ class StateDetailAPIEndpoint(BaseAPIView):
                     status=status.HTTP_409_CONFLICT,
                 )
             serializer.save()
+            publish_metadata_event(project_id, "state", "updated", request.user.id)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

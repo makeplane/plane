@@ -232,6 +232,9 @@ class SubIssuesEndpoint(BaseAPIView):
             id__in=sub_issue_ids, workspace__slug=slug, project_id=project_id
         )
 
+        # Capture the old parents before the update so the activity (and the live event) can see them
+        old_parent_ids = {str(i.id): (str(i.parent_id) if i.parent_id else None) for i in sub_issues}
+
         for sub_issue in sub_issues:
             sub_issue.parent = parent_issue
 
@@ -255,7 +258,7 @@ class SubIssuesEndpoint(BaseAPIView):
                 actor_id=str(request.user.id),
                 issue_id=sub_issue_id,
                 project_id=str(project_id),
-                current_instance=json.dumps({"parent": sub_issue_id}),
+                current_instance=json.dumps({"parent": old_parent_ids.get(sub_issue_id)}),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
                 origin=base_host(request=request, is_app=True),

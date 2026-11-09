@@ -18,6 +18,7 @@ from plane.app.serializers import LabelSerializer
 from plane.app.permissions import allow_permission, ProjectBasePermission, ROLE
 from plane.db.models import Project, Label
 from plane.utils.cache import invalidate_cache
+from plane.utils.live_events import publish_metadata_event
 
 
 class LabelViewSet(BaseViewSet):
@@ -46,6 +47,7 @@ class LabelViewSet(BaseViewSet):
             serializer = LabelSerializer(data=request.data, context={"project_id": project_id})
             if serializer.is_valid():
                 serializer.save(project_id=project_id)
+                publish_metadata_event(project_id, "label", "created", request.user.id)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError:
@@ -78,13 +80,17 @@ class LabelViewSet(BaseViewSet):
 
         if serializer.is_valid():
             serializer.save()
+            publish_metadata_event(kwargs["project_id"], "label", "updated", request.user.id)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
+        response = super().destroy(request, *args, **kwargs)
+        if response.status_code < 300:
+            publish_metadata_event(kwargs["project_id"], "label", "deleted", request.user.id, settle=True)
+        return response
 
 
 class BulkCreateIssueLabelsEndpoint(BaseAPIView):

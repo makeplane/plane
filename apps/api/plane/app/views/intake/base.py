@@ -52,6 +52,7 @@ from plane.utils.timezone_converter import user_timezone_converter
 from plane.utils.global_paginator import paginate
 from plane.utils.host import base_host
 from plane.utils.serializers import writable_data
+from plane.utils.live_events import publish_work_item_event
 from plane.db.models.intake import SourceType
 
 
@@ -562,12 +563,18 @@ class IntakeIssueViewSet(BaseViewSet):
         )
 
         # Check the issue status
+        issue_deleted = False
         if intake_issue.status in [-2, -1, 0, 2]:
             # Delete the issue also
             issue = Issue.objects.filter(workspace__slug=slug, project_id=project_id, pk=pk).first()
             issue.delete()
+            issue_deleted = True
 
         intake_issue.delete()
+        # the intake list drops the item; a deleted work item leaves the boards too
+        publish_work_item_event(project_id, [pk], "intake", "deleted", request.user.id)
+        if issue_deleted:
+            publish_work_item_event(project_id, [pk], "issue", "deleted", request.user.id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

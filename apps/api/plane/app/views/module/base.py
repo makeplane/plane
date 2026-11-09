@@ -66,6 +66,7 @@ from plane.utils.timezone_converter import user_timezone_converter
 from plane.bgtasks.webhook_task import model_activity
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.utils.live_events import publish_metadata_event
 from plane.utils.host import base_host
 
 
@@ -348,6 +349,7 @@ class ModuleViewSet(BaseViewSet):
             )
             datetime_fields = ["created_at", "updated_at"]
             module = user_timezone_converter(module, datetime_fields, request.user.user_timezone)
+            publish_metadata_event(project_id, "module_definition", "created", request.user.id)
             return Response(module, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -718,6 +720,7 @@ class ModuleViewSet(BaseViewSet):
 
             datetime_fields = ["created_at", "updated_at"]
             module = user_timezone_converter(module, datetime_fields, request.user.user_timezone)
+            publish_metadata_event(project_id, "module_definition", "updated", request.user.id)
             return Response(module, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -757,6 +760,7 @@ class ModuleViewSet(BaseViewSet):
             entity_identifier=pk,
             entity_name="module",
         ).delete(soft=False)
+        publish_metadata_event(project_id, "module_definition", "deleted", request.user.id, settle=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

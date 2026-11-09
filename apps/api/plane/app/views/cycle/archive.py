@@ -31,6 +31,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import Cycle, UserFavorite, Issue, Label, User, Project
+from plane.utils.live_events import publish_metadata_event
 from plane.utils.analytics_plot import burndown_plot
 
 # Module imports
@@ -601,6 +602,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
         ).delete()
+        publish_metadata_event(project_id, "cycle_definition", "archived", request.user.id)
         return Response({"archived_at": str(cycle.archived_at)}, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -608,4 +610,5 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
         cycle = Cycle.objects.get(pk=cycle_id, project_id=project_id, workspace__slug=slug)
         cycle.archived_at = None
         cycle.save()
+        publish_metadata_event(project_id, "cycle_definition", "unarchived", request.user.id)
         return Response(status=status.HTTP_204_NO_CONTENT)
