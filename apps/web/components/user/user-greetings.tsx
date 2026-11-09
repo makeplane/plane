@@ -30,7 +30,7 @@ export const UserGreetingsView = observer(function UserGreetingsView(props: IUse
 
   const hour = new Intl.DateTimeFormat("en-US", {
     timeZone,
-    hour12: false,
+    hourCycle: "h23",
     hour: "numeric",
   }).format(currentTime);
 
