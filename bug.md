@@ -6,7 +6,7 @@ Line numbers refer to that commit, so they may have moved. Critical and High bug
 
 **256 bugs in the Plane base code:** 90 Medium, 166 Low.
 
-**86 bugs in the code Nexus adds on top of Plane:** 19 Medium, 67 Low, in the sections named "Nexus:" at the end of this file. These were reviewed separately, and each was re-checked by reading the code at `preview` `74111238e`. The Critical and High bugs in that code have their own pull requests, #30 to #39.
+**89 bugs in the code Nexus adds on top of Plane:** 18 Medium, 71 Low, in the sections named "Nexus:" at the end of this file. These were reviewed separately, and each was re-checked by reading the code at `preview` `74111238e`. The Critical and High bugs in that code have their own pull requests, #30 to #39.
 
 ## App API
 
@@ -404,13 +404,12 @@ Line numbers refer to that commit, so they may have moved. Critical and High bug
 
 ## Nexus: Messages
 
-Checked against the open Messages PR stack at `a47352601`, because most of this code is not on `preview` yet. Updated after #15, #16, #17 and #18 merged: the bugs they fixed were removed, and rows added since were checked against those merges.
+Checked against the open Messages PR stack at `a47352601`, because most of this code is not on `preview` yet. Updated after #15 to #19 and #72 merged: the bugs they fixed were removed, and rows added since were checked against those merges.
 
 | Severity | Where | Problem | Suggested fix |
 |---|---|---|---|
 | Medium | `apps/web/store/chat.store.ts:782` | Reading older messages marks new ones read. "Viewing" means only that the channel is open and the tab is visible, with no check of scroll position. | Have the list report whether it is at the bottom, and mark read only then. |
 | Medium | `packages/services/src/workspace/chat.service.ts:117`, `apps/web/components/messages/create-channel-dialog.tsx`, `channel-view.tsx` | Private channels and guest DMs cannot be managed in the web app. Nothing calls the add-members method or the guest DM grant, so a private channel only ever contains its creator. | Add member management to the channel header and a guest DM access control. |
-| Medium | `packages/services/src/workspace/chat-socket.ts:406` (`pause`), `apps/web/components/messages/connection-banner.tsx:22` | A window left open with no input for 30 minutes stops updating without saying so. New messages and the unread badge freeze until the next mouse or keyboard use, and no banner appears, so Messages left open on a second monitor looks live when it is not. | Keep the socket open while the tab is visible, or show a quiet note that live updates are paused. |
 | Low | `apps/web/store/chat.store.ts:677` | Retrying can duplicate a message, and sends have no timeout. | Add a client-generated id with a unique constraint, and a request timeout. |
 | Low | `apps/web/components/messages/browse-channels-dialog.tsx:38`, `apps/chat-gateway/src/connection.ts:189` | New public channels are not pushed to people who have not joined. They appear in Browse only after a refetch. | Refetch when the dialog opens. |
 | Low | `apps/web/components/messages/connection-banner.tsx:25`, `packages/services/src/workspace/chat-socket.ts:323` | A refused first connection is silent. It stays in "connecting" and no banner appears. | Show a banner after repeated failures. |
@@ -426,6 +425,10 @@ Checked against the open Messages PR stack at `a47352601`, because most of this 
 | Low | `apps/web/store/chat.store.ts:896` | Reconnect repairs only the newest 50 messages. Edits and removals to older loaded messages stay stale until reload. | Re-read every loaded page, or add an "updated since" query. |
 | Low | `apps/web/store/chat.store.ts:784` (`handleEvent`) | Unread counts can be briefly wrong. The `+1` for a new message is not reconciled with a channel refetch, so an answer that already includes the message counts it twice and an older answer erases the increment. The next read or resync puts it right. | Refetch the channel, coalesced, instead of adding one. |
 | Low | `packages/services/src/workspace/chat-socket.ts:193` (`reconnectNow`) | Reconnecting restarts a socket that is still being admitted, so repeated clicks or `online` events keep restarting admission, and it skips the longer wait after a 4429. | Return early while a socket is open or opening, and keep the slow backoff after 4429. |
+| Low | `apps/api/plane/app/views/notification/base.py:174` (`mark_read`, also `mark_unread`, `archive`, `unarchive`, `partial_update`) | Marking an inbox entry can put back old preview text. These read the row and save every field, so an edit or removal landing in between is overwritten. | Save only the field being changed. |
+| Low | `apps/api/plane/chat/views/message.py:68` | A message edited or removed immediately after sending can keep its original text in the inbox preview, because the send publishes its event before writing the entry. | Write the send and its entries in one transaction, publishing on commit. |
+| Low | `apps/api/plane/chat/notifications.py:82` | A renamed channel keeps its old name on existing inbox entries until that message is next edited. | Read the name when listing, or update entries on rename. |
+| Low | `apps/web/components/workspace-notifications/sidebar/notification-card/chat-mention-item.tsx:91` | A snoozed chat mention shows how long ago it arrived instead of when the snooze ends, unlike work item entries. | Show the snooze end as the work item card does. |
 | Low | `apps/web/components/agents/khaia/root.tsx:57` | The Khaia chat bubble hides only on the Agents page, so on Messages it can cover the composer in the same corner. | Hide it on the Messages path too, or move it clear of the composer. |
 | Low | `apps/web/components/messages/channel-view.tsx:47` | A user re-added to a channel while still on its page sees a spinner that never ends. Removal drops the message state, and nothing runs `openChannel` again when the channel comes back. | Reopen the channel when it returns after being lost. |
 | Low | `apps/web/components/messages/composer.tsx`, `root.tsx:37` | A half-written message is lost when switching channels, because the view is keyed by channel and drafts are not kept. | Keep a draft per channel in the store. |
