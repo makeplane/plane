@@ -36,6 +36,8 @@ interface IHeaderGroupByCard {
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   isEpic?: boolean;
+  /** Suppresses the column header create button, e.g. when the board adds items from the band's project. */
+  hideAddButton?: boolean;
 }
 
 export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHeaderGroupByCard) {
@@ -51,6 +53,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     disableIssueCreation,
     addIssuesToView,
     isEpic = false,
+    hideAddButton = false,
   } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -151,6 +154,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
         />
 
         {!disableIssueCreation &&
+          !hideAddButton &&
           (renderExistingIssueModal ? (
             <Menu>
               <MenuTrigger

@@ -287,6 +287,9 @@
       "no_downvotes": "Zatiaľ žiadne hlasy dole"
     }
   },
+  "kanban": {
+    "cross_project_move_disabled": "Pracovné položky nie je možné presúvať medzi projektmi."
+  },
   "sub_work_item": {
     "update": {
       "success": "Podriadená pracovná položka bola úspešne aktualizovaná",

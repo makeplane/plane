@@ -167,6 +167,31 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       },
     },
   },
+  global_board: {
+    filters: [
+      "priority",
+      "state_group",
+      "label_id",
+      "assignee_id",
+      "created_by_id",
+      "subscriber_id",
+      "project_id",
+      "start_date",
+      "target_date",
+    ],
+    layoutOptions: {
+      kanban: {
+        display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+        display_filters: {
+          group_by: ["state_detail.group"],
+          sub_group_by: ["project"],
+          order_by: ["-created_at", "-updated_at", "-priority"],
+          type: ["active", "backlog"],
+        },
+        extra_options: { access: true, values: ["show_empty_groups"] },
+      },
+    },
+  },
   my_issues: {
     filters: [
       "priority",

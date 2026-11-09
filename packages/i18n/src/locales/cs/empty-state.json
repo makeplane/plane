@@ -144,6 +144,11 @@
       "description": "Přidejte pracovní položky do svého projektu a používejte pohledy pro snadné filtrování, třídění a sledování pokroku.",
       "cta_primary": "Přidat pracovní položku"
     },
+    "board_load_error": {
+      "title": "Desku se nepodařilo načíst",
+      "description": "Nepodařilo se nám načíst filtry této desky. Zkontrolujte připojení a zkuste to znovu.",
+      "cta_primary": "Zkusit znovu"
+    },
     "drafts": {
       "title": "Napůl napsané pracovní položky",
       "description": "Chcete-li to vyzkoušet, začněte přidávat pracovní položku a nechte ji nedokončenou nebo vytvořte svůj první koncept níže. 😉",

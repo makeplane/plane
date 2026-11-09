@@ -144,6 +144,11 @@
       "description": "Aggiungi elementi di lavoro al tuo progetto e usa le viste per filtrare, ordinare e monitorare i progressi senza sforzo.",
       "cta_primary": "Aggiungi elemento di lavoro"
     },
+    "board_load_error": {
+      "title": "Impossibile caricare la bacheca",
+      "description": "Non è stato possibile caricare i filtri di questa bacheca. Controlla la connessione e riprova.",
+      "cta_primary": "Riprova"
+    },
     "drafts": {
       "title": "Elementi di lavoro semi-scritti",
       "description": "Per provare questo, inizia ad aggiungere un elemento di lavoro e lascialo a metà o crea la tua prima bozza qui sotto. 😉",

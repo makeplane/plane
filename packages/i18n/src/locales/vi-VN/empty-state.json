@@ -144,6 +144,11 @@
       "description": "Thêm các mục công việc vào dự án của bạn và sử dụng chế độ xem để lọc, sắp xếp và giám sát tiến độ dễ dàng.",
       "cta_primary": "Thêm mục công việc"
     },
+    "board_load_error": {
+      "title": "Không thể tải bảng",
+      "description": "Chúng tôi không thể tải bộ lọc của bảng này. Hãy kiểm tra kết nối và thử lại.",
+      "cta_primary": "Thử lại"
+    },
     "drafts": {
       "title": "Các mục công việc viết dở",
       "description": "Để thử điều này, hãy bắt đầu thêm một mục công việc và để nó ở giữa chừng hoặc tạo bản nháp đầu tiên của bạn bên dưới. 😉",

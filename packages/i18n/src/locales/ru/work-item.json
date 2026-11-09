@@ -287,6 +287,9 @@
       "no_downvotes": "Пока нет голосов против"
     }
   },
+  "kanban": {
+    "cross_project_move_disabled": "Рабочие элементы нельзя перемещать между проектами."
+  },
   "sub_work_item": {
     "update": {
       "success": "Подэлемент успешно обновлен",

@@ -287,6 +287,9 @@
       "no_downvotes": "Belum ada suara turun"
     }
   },
+  "kanban": {
+    "cross_project_move_disabled": "Item Kerja tidak dapat dipindahkan antar proyek."
+  },
   "sub_work_item": {
     "update": {
       "success": "Sub-item kerja berhasil diperbarui",

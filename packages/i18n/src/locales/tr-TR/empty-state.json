@@ -144,6 +144,11 @@
       "description": "Projenize iş öğeleri ekleyin ve zahmetsizce filtrelemek, sıralamak ve ilerlemeyi izlemek için görünümleri kullanın.",
       "cta_primary": "İş öğesi ekle"
     },
+    "board_load_error": {
+      "title": "Pano yüklenemedi",
+      "description": "Bu panonun filtreleri yüklenemedi. Bağlantınızı kontrol edin ve tekrar deneyin.",
+      "cta_primary": "Tekrar dene"
+    },
     "drafts": {
       "title": "Yarım yazılmış iş öğeleri",
       "description": "Bunu denemek için bir iş öğesi eklemeye başlayın ve yarıda bırakın veya aşağıda ilk taslağınızı oluşturun. 😉",

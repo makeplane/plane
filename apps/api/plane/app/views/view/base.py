@@ -41,8 +41,10 @@ from plane.db.models import (
     IssueLabel,
     ModuleIssue,
 )
+from plane.utils.grouper import issue_group_values, issue_on_results, issue_queryset_grouper
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import VIEW_ORDER_BY_ALLOWLIST, order_issue_queryset, sanitize_order_by
+from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from .. import BaseViewSet
 from plane.db.models import UserFavorite
@@ -270,6 +272,10 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         total_issue_count_queryset = copy.deepcopy(issue_queryset)
         total_issue_count_queryset = total_issue_count_queryset.only("id")
 
+        # Total count queryset before annotations, used by the grouped branches
+        # below (as WorkspaceUserProfileIssuesEndpoint does)
+        total_issue_queryset = copy.deepcopy(issue_queryset)
+
         # Apply annotations to the issue queryset
         issue_queryset = self.apply_annotations(issue_queryset)
 
@@ -278,14 +284,93 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             issue_queryset=issue_queryset, order_by_param=order_by_param
         )
 
-        # List Paginate
-        return self.paginate(
-            order_by=order_by_param,
-            request=request,
-            queryset=issue_queryset,
-            on_results=lambda issues: ViewIssueListSerializer(issues, many=True).data,
-            total_count_queryset=total_issue_count_queryset,
-        )
+        # Group by
+        group_by = request.GET.get("group_by", False)
+        sub_group_by = request.GET.get("sub_group_by", False)
+
+        # issue queryset
+        issue_queryset = issue_queryset_grouper(queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by)
+
+        if group_by:
+            if sub_group_by:
+                if group_by == sub_group_by:
+                    return Response(
+                        {"error": "Group by and sub group by cannot have same parameters"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                else:
+                    # Sub-grouped paginate
+                    return self.paginate(
+                        request=request,
+                        order_by=order_by_param,
+                        queryset=issue_queryset,
+                        total_count_queryset=total_issue_queryset,
+                        on_results=lambda issues: issue_on_results(
+                            group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                        ),
+                        paginator_cls=SubGroupedOffsetPaginator,
+                        group_by_fields=issue_group_values(
+                            field=group_by,
+                            slug=slug,
+                            filters=filters,
+                            queryset=total_issue_queryset,
+                            user=request.user,
+                        ),
+                        sub_group_by_fields=issue_group_values(
+                            field=sub_group_by,
+                            slug=slug,
+                            filters=filters,
+                            queryset=total_issue_queryset,
+                            user=request.user,
+                        ),
+                        group_by_field_name=group_by,
+                        sub_group_by_field_name=sub_group_by,
+                        count_filter=Q(
+                            Q(issue_intake__status=1)
+                            | Q(issue_intake__status=-1)
+                            | Q(issue_intake__status=2)
+                            | Q(issue_intake__isnull=True),
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+            else:
+                # Group paginate
+                return self.paginate(
+                    request=request,
+                    order_by=order_by_param,
+                    queryset=issue_queryset,
+                    total_count_queryset=total_issue_queryset,
+                    on_results=lambda issues: issue_on_results(
+                        group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                    ),
+                    paginator_cls=GroupedOffsetPaginator,
+                    group_by_fields=issue_group_values(
+                        field=group_by,
+                        slug=slug,
+                        filters=filters,
+                        queryset=total_issue_queryset,
+                        user=request.user,
+                    ),
+                    group_by_field_name=group_by,
+                    count_filter=Q(
+                        Q(issue_intake__status=1)
+                        | Q(issue_intake__status=-1)
+                        | Q(issue_intake__status=2)
+                        | Q(issue_intake__isnull=True),
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                )
+        else:
+            # List Paginate — unchanged flat behavior
+            return self.paginate(
+                order_by=order_by_param,
+                request=request,
+                queryset=issue_queryset,
+                on_results=lambda issues: ViewIssueListSerializer(issues, many=True).data,
+                total_count_queryset=total_issue_count_queryset,
+            )
 
 
 class IssueViewViewSet(BaseViewSet):

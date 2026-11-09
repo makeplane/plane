@@ -287,6 +287,9 @@
       "no_downvotes": "まだ反対票はありません"
     }
   },
+  "kanban": {
+    "cross_project_move_disabled": "作業項目をプロジェクト間で移動することはできません。"
+  },
   "sub_work_item": {
     "update": {
       "success": "サブ作業項目を更新しました",

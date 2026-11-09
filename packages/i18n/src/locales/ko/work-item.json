@@ -287,6 +287,9 @@
       "no_downvotes": "아직 비추천이 없습니다"
     }
   },
+  "kanban": {
+    "cross_project_move_disabled": "작업 항목은 프로젝트 간에 이동할 수 없습니다."
+  },
   "sub_work_item": {
     "update": {
       "success": "하위 작업 항목이 성공적으로 업데이트되었습니다",

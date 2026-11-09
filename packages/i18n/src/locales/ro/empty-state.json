@@ -144,6 +144,11 @@
       "description": "Adăugați elemente de lucru la proiectul dvs. și utilizați vizualizări pentru a filtra, sorta și monitoriza progresul fără efort.",
       "cta_primary": "Adăugați element de lucru"
     },
+    "board_load_error": {
+      "title": "Tablă nu a putut fi încărcată",
+      "description": "Nu am putut încărca filtrele acestei table. Verificați conexiunea și încercați din nou.",
+      "cta_primary": "Încercați din nou"
+    },
     "drafts": {
       "title": "Elemente de lucru semi-scrise",
       "description": "Pentru a încerca acest lucru, începeți să adăugați un element de lucru și lăsați-l nefinalizat sau creați prima dvs. schiță mai jos. 😉",

@@ -25,7 +25,6 @@ import { cn } from "@plane/utils";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { KanbanColumnLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
 // hooks
-import { useKanbanView } from "@/hooks/store/use-kanban-view";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 // parent components
@@ -75,6 +74,10 @@ export interface IKanBan {
   /** In swimlanes, the last visible band closes the column panels with rounded bottom corners. */
   isLastSubGroup?: boolean;
   isEpic?: boolean;
+  /** Project the columns belong to, when it is not the route's project. Used by cross-project boards. */
+  projectId?: string;
+  /** Suppresses the column header create button, e.g. when the band's project provides quick add. */
+  hideGroupHeaderAddButton?: boolean;
 }
 
 export const KanBan = observer(function KanBan(props: IKanBan) {
@@ -105,14 +108,13 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     subGroupIndex = 0,
     isLastSubGroup = false,
     isEpic = false,
+    projectId,
+    hideGroupHeaderAddButton = false,
   } = props;
   // i18n
   // store hooks
   const storeType = useIssueStoreType();
-  const issueKanBanView = useKanbanView();
   // derived values
-  const isDragDisabled = !issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by);
-
   const { getIsWorkflowWorkItemCreationDisabled } = useWorkFlowFDragNDrop(group_by, sub_group_by);
 
   const list = getGroupByColumns({
@@ -186,6 +188,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
               collapsedGroups={collapsedGroups}
               handleCollapsedGroups={handleCollapsedGroups}
               isEpic={isEpic}
+              hideAddButton={hideGroupHeaderAddButton}
             />
           );
 
@@ -255,7 +258,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
                     group_by={group_by}
                     orderBy={orderBy}
                     sub_group_id={sub_group_id}
-                    isDragDisabled={isDragDisabled}
+                    projectId={projectId}
                     isDropDisabled={!!subList.isDropDisabled || !!isDropDisabled}
                     dropErrorMessage={subList.dropErrorMessage ?? dropErrorMessage}
                     updateIssue={updateIssue}

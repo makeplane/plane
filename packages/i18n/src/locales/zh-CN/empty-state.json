@@ -144,6 +144,11 @@
       "description": "将工作项添加到项目中并使用视图轻松过滤、排序和监控进度。",
       "cta_primary": "添加工作项"
     },
+    "board_load_error": {
+      "title": "无法加载看板",
+      "description": "我们无法加载此看板的筛选条件。请检查网络连接后重试。",
+      "cta_primary": "重试"
+    },
     "drafts": {
       "title": "半成品工作项",
       "description": "要试用此功能,请开始添加工作项并在中途离开,或在下方创建您的第一个草稿。😉",

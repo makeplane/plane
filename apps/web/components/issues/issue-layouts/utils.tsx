@@ -45,6 +45,8 @@ import type {
   IIssueDisplayFilterOptions,
   TGetColumns,
   TSpreadsheetColumn,
+  TStateGroups,
+  IState,
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // plane ui
@@ -376,6 +378,10 @@ export const getDisplayPropertiesCount = (
 
 /**
  * This Method finds the DOM element with elementId, scrolls to it and highlights the issue block
+ *
+ * The destination column is virtually rendered, so the block may not exist yet when the drop
+ * resolves. The lookup is retried a few times before giving up, and every step is a no-op when the
+ * element never shows up.
  * @param elementId
  * @param shouldScrollIntoView
  */
@@ -384,13 +390,29 @@ export const highlightIssueOnDrop = (
   shouldScrollIntoView = true,
   shouldHighLightWithLine = false
 ) => {
-  setTimeout(async () => {
-    const sourceElementId = elementId ?? "";
-    const sourceElement = document.getElementById(sourceElementId);
-    sourceElement?.classList?.add(shouldHighLightWithLine ? HIGHLIGHT_WITH_LINE : HIGHLIGHT_CLASS);
-    if (shouldScrollIntoView && sourceElement)
+  if (!elementId) return;
+
+  const retryDelays = [200, 400, 800, 1600];
+  let attempt = 0;
+
+  const highlight = async () => {
+    const sourceElement = document.getElementById(elementId);
+
+    if (!sourceElement) {
+      // Give a virtually rendered destination column a few chances to mount the block, then stop.
+      if (attempt >= retryDelays.length) return;
+      const delay = retryDelays[attempt];
+      attempt += 1;
+      setTimeout(highlight, delay);
+      return;
+    }
+
+    sourceElement.classList.add(shouldHighLightWithLine ? HIGHLIGHT_WITH_LINE : HIGHLIGHT_CLASS);
+    if (shouldScrollIntoView)
       await scrollIntoView(sourceElement, { behavior: "smooth", block: "center", duration: 1500 });
-  }, 200);
+  };
+
+  setTimeout(highlight, retryDelays[0]);
 };
 
 /**
@@ -541,6 +563,17 @@ export const getIssueBlockId = (issueId: string | undefined, groupId: string | u
   `issue_${issueId}_${groupId}_${subGroupId}`;
 
 /**
+ * Resolves the concrete state a work item should land on inside a state-group column,
+ * preferring the project's default state in that group and falling back to the first one.
+ * @param states all states of the project, may be undefined when the project is not cached
+ * @param stateGroup the state group of the column
+ */
+export const getDefaultStateForGroup = (states: IState[] | undefined, stateGroup: string): IState | undefined => {
+  const statesInGroup = states?.filter((state) => state.group === stateGroup) ?? [];
+  return statesInGroup.find((state) => state.default) ?? statesInGroup[0];
+};
+
+/**
  * returns empty Array if groupId is None
  * @param groupId
  * @returns
@@ -558,7 +591,8 @@ export const handleGroupDragDrop = async (
   updateIssueOnDrop: (projectId: string, issueId: string, data: Partial<TIssue>, issueUpdates: IssueUpdates) => void,
   groupBy: TIssueGroupByOptions | undefined,
   subGroupBy: TIssueGroupByOptions | undefined,
-  shouldAddIssueAtTop = false
+  shouldAddIssueAtTop = false,
+  getStateIdForStateGroup?: (projectId: string, stateGroup: string) => string | undefined
 ) => {
   if (!source.id || (subGroupBy && (!source.subGroupId || !destination.subGroupId))) return;
 
@@ -603,7 +637,17 @@ export const handleGroupDragDrop = async (
 
     // keep track of updates on what was added and what was removed
     issueUpdates[groupKey] = { ADD: getGroupId(destination.groupId), REMOVE: getGroupId(source.groupId) };
-    updatedIssue = { ...updatedIssue, [groupKey]: groupValue };
+
+    // for state group columns, resolve a concrete state of the issue's project in the destination group
+    if (groupBy === "state_detail.group") {
+      const issueProjectId = sourceIssue.project_id;
+      const stateId = issueProjectId ? getStateIdForStateGroup?.(issueProjectId, destination.groupId) : undefined;
+      // abort the drop if no state can be resolved for the destination group
+      if (!stateId) throw new Error("Could not find a state in the destination state group");
+      updatedIssue = { ...updatedIssue, state_id: stateId, state__group: destination.groupId as TStateGroups };
+    } else {
+      updatedIssue = { ...updatedIssue, [groupKey]: groupValue };
+    }
   }
 
   // do the same for subgroup
