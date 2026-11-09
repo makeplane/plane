@@ -4,6 +4,12 @@
 
 from django.urls import path
 
+from plane.app.views.cycle.automation import (
+    CycleAutomationRuleDetailEndpoint,
+    CycleAutomationRuleEndpoint,
+    CycleBulkMoveStateEndpoint,
+)
+
 
 from plane.app.views import (
     CycleViewSet,
@@ -19,6 +25,21 @@ from plane.app.views import (
 
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycle-automation-rules/",
+        CycleAutomationRuleEndpoint.as_view(),
+        name="project-cycle-automation-rules",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycle-automation-rules/<uuid:rule_id>/",
+        CycleAutomationRuleDetailEndpoint.as_view(),
+        name="project-cycle-automation-rule",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/bulk-move-state/",
+        CycleBulkMoveStateEndpoint.as_view(),
+        name="project-cycle-bulk-move-state",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/",
         CycleViewSet.as_view({"get": "list", "post": "create"}),
