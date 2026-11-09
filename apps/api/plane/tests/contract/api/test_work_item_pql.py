@@ -205,6 +205,32 @@ class TestScalarFields:
         assert names(query('createdAt < "2025-03-11"')) == ["early"]
         assert names(query('createdAt BETWEEN "2025-03-10" AND "2025-03-11"')) == ["early", "late"]
 
+    def test_updated_at_accepts_iso_datetimes(self, query, make_issue, create_user):
+        create_user.user_timezone = "Asia/Tokyo"
+        create_user.save(update_fields=["user_timezone"])
+        for name, hour, minute in (("before", 9, 59), ("at", 10, 0), ("after", 10, 1)):
+            issue = make_issue(name)
+            Issue.objects.filter(pk=issue.pk).update(
+                updated_at=datetime.datetime(2025, 3, 10, hour, minute, tzinfo=datetime.timezone.utc)
+            )
+        assert names(query('updatedAt >= "2025-03-10T10:00:00Z"')) == ["after", "at"]
+        assert names(query('updatedAt > "2025-03-10T10:00:00Z"')) == ["after"]
+        assert names(query('updatedAt < "2025-03-10T10:00:00+00:00"')) == ["before"]
+        assert names(query('updatedAt = "2025-03-10T10:00:00Z"')) == ["at"]
+        assert names(query('updatedAt != "2025-03-10T10:00:00Z"')) == ["after", "before"]
+        assert names(query('updatedAt IN ("2025-03-10T10:00:00Z", "2025-03-10T10:01:00Z")')) == ["after", "at"]
+        assert names(query('updatedAt BETWEEN "2025-03-10T10:00:00Z" AND "2025-03-10T10:01:00.000Z"')) == [
+            "after",
+            "at",
+        ]
+        # Without an offset the datetime is read in the user's timezone (Tokyo is UTC+9).
+        assert names(query('updatedAt >= "2025-03-10T19:00:00"')) == ["after", "at"]
+
+    def test_datetime_literals_are_validated(self, query):
+        assert_pql_error(query('updatedAt >= "2025-03-10T25:00:00Z"'), "updatedAt")
+        assert_pql_error(query('createdAt >= "2025-03-10 10:00"'), "createdAt")
+        assert_pql_error(query('dueDate >= "2025-03-10T10:00:00Z"'), "dueDate")
+
     @freeze_time("2025-03-12 12:00:00")
     def test_updated_at_functions(self, query, make_issue):
         old = make_issue("old")

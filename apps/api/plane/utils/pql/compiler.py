@@ -53,6 +53,7 @@ STATE_GROUP_FUNCTION_VALUES: dict[str, list[str]] = {
 }
 
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+_DATETIME_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,6})?)?(Z|[+-]\d{2}:\d{2})?$")
 
 _FK_UUID_FIELDS: dict[str, str] = {
     "state": "state_id",
@@ -118,6 +119,23 @@ def _parse_date_string(raw: Any, field_name: str, pos: int) -> datetime.date:
         return datetime.date.fromisoformat(raw)
     except ValueError as exc:
         raise PqlError(f"Invalid calendar date {raw!r} for field {field_name!r}", position=pos) from exc
+
+
+def _parse_datetime_string(
+    raw: Any, field_name: str, pos: int, tz: datetime.tzinfo
+) -> datetime.date | datetime.datetime:
+    if type(raw) is str and _DATETIME_RE.match(raw):
+        try:
+            parsed = datetime.datetime.fromisoformat(raw)
+        except ValueError as exc:
+            raise PqlError(f"Invalid datetime {raw!r} for field {field_name!r}", position=pos) from exc
+        return parsed if parsed.tzinfo else parsed.replace(tzinfo=tz)
+    if type(raw) is str and _DATE_RE.match(raw):
+        return _parse_date_string(raw, field_name, pos)
+    raise PqlError(
+        f"Field {field_name!r} requires a 'YYYY-MM-DD' date, an ISO 8601 datetime or a date function",
+        position=pos,
+    )
 
 
 class _Compiler:
@@ -535,7 +553,7 @@ class _Compiler:
 
     def _eval_datetime_or_date(self, val: ValueNode, fname: str) -> datetime.date | datetime.datetime:
         if isinstance(val, LiteralValue):
-            return _parse_date_string(val.value, fname, val.pos)
+            return _parse_datetime_string(val.value, fname, val.pos, self.user_tz)
         if isinstance(val, FunctionCall):
             if val.name not in DATE_FUNCTIONS:
                 raise PqlError(
@@ -586,6 +604,8 @@ class _Compiler:
         raise PqlError(f"Invalid date value for field {fname!r}", position=val.pos)
 
     def _eval_date_value(self, val: ValueNode, fname: str) -> datetime.date:
+        if isinstance(val, LiteralValue):
+            return _parse_date_string(val.value, fname, val.pos)
         res = self._eval_datetime_or_date(val, fname)
         if isinstance(res, datetime.datetime):
             return res.date()
@@ -609,6 +629,10 @@ class _Compiler:
 
     def _compile_datetime_comparison(self, fname: str, col: str, op: str, val: ValueNode, pos: int) -> Q:
         evaluated = self._eval_datetime_or_date(val, fname)
+        # A datetime literal is an exact instant; a function such as now() keeps day semantics for = and !=.
+        if isinstance(evaluated, datetime.datetime) and isinstance(val, LiteralValue) and op in ("=", "!="):
+            q = Q(**{col: evaluated})
+            return ~q if op == "!=" else q
         if isinstance(evaluated, datetime.datetime):
             d = evaluated.date()
             if op == "=":
