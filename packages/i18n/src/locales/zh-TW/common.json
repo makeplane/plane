@@ -893,5 +893,23 @@
       "save_as": "另存為",
       "hide_filters": "隱藏篩選器"
     }
+  },
+  "live_updates": {
+    "status": {
+      "connected": "即時",
+      "connected_tooltip": "即時更新已開啟：其他人的變更無需重新整理即可顯示。",
+      "connecting": "正在連線",
+      "connecting_tooltip": "正在連線至即時更新。",
+      "reconnecting": "正在重新連線",
+      "reconnecting_tooltip": "即時更新連線已中斷。正在重新連線，連線恢復後看板將重新整理。",
+      "offline": "離線",
+      "offline_network_tooltip": "您已離線。網路恢復後即時更新將繼續。",
+      "offline_unauthenticated_tooltip": "即時更新已暫停：無法驗證工作階段。請點擊頁面重試，或重新登入。",
+      "offline_stopped_tooltip": "此分頁的即時更新已關閉。請重新載入頁面以重新開啟。"
+    },
+    "work_item_unavailable": {
+      "title": "工作事項無法使用",
+      "message": "此工作事項已被刪除，或您已無權存取。"
+    }
   }
 }

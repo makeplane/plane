@@ -893,5 +893,23 @@
       "save_as": "Save as",
       "hide_filters": "Hide filters"
     }
+  },
+  "live_updates": {
+    "status": {
+      "connected": "Live",
+      "connected_tooltip": "Live updates are on: changes by others appear without a refresh.",
+      "connecting": "Connecting",
+      "connecting_tooltip": "Connecting to live updates.",
+      "reconnecting": "Reconnecting",
+      "reconnecting_tooltip": "The live updates connection was lost. Reconnecting; the board refreshes when it is back.",
+      "offline": "Offline",
+      "offline_network_tooltip": "You are offline. Live updates resume when the network is back.",
+      "offline_unauthenticated_tooltip": "Live updates paused: the session could not be verified. Click the page to retry, or sign in again.",
+      "offline_stopped_tooltip": "Live updates are off for this tab. Reload the page to turn them back on."
+    },
+    "work_item_unavailable": {
+      "title": "Work item unavailable",
+      "message": "This work item was deleted or you no longer have access to it."
+    }
   }
 }

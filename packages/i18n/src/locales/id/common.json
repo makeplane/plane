@@ -893,5 +893,23 @@
       "save_as": "Simpan sebagai",
       "hide_filters": "Sembunyikan filter"
     }
+  },
+  "live_updates": {
+    "status": {
+      "connected": "Langsung",
+      "connected_tooltip": "Pembaruan langsung aktif: perubahan dari orang lain muncul tanpa memuat ulang.",
+      "connecting": "Menghubungkan",
+      "connecting_tooltip": "Menghubungkan ke pembaruan langsung.",
+      "reconnecting": "Menghubungkan ulang",
+      "reconnecting_tooltip": "Koneksi pembaruan langsung terputus. Menghubungkan ulang; papan akan diperbarui saat koneksi kembali.",
+      "offline": "Offline",
+      "offline_network_tooltip": "Anda sedang offline. Pembaruan langsung akan berlanjut saat jaringan kembali.",
+      "offline_unauthenticated_tooltip": "Pembaruan langsung dijeda: sesi tidak dapat diverifikasi. Klik halaman untuk mencoba lagi, atau masuk kembali.",
+      "offline_stopped_tooltip": "Pembaruan langsung dinonaktifkan untuk tab ini. Muat ulang halaman untuk mengaktifkannya kembali."
+    },
+    "work_item_unavailable": {
+      "title": "Item kerja tidak tersedia",
+      "message": "Item kerja ini telah dihapus atau Anda tidak lagi memiliki akses ke item tersebut."
+    }
   }
 }

@@ -893,5 +893,23 @@
       "save_as": "Lưu thành",
       "hide_filters": "Ẩn bộ lọc"
     }
+  },
+  "live_updates": {
+    "status": {
+      "connected": "Trực tiếp",
+      "connected_tooltip": "Cập nhật trực tiếp đang bật: thay đổi của người khác hiển thị mà không cần tải lại.",
+      "connecting": "Đang kết nối",
+      "connecting_tooltip": "Đang kết nối với cập nhật trực tiếp.",
+      "reconnecting": "Đang kết nối lại",
+      "reconnecting_tooltip": "Kết nối cập nhật trực tiếp đã bị mất. Đang kết nối lại; bảng sẽ được làm mới khi kết nối trở lại.",
+      "offline": "Ngoại tuyến",
+      "offline_network_tooltip": "Bạn đang ngoại tuyến. Cập nhật trực tiếp sẽ tiếp tục khi có mạng trở lại.",
+      "offline_unauthenticated_tooltip": "Cập nhật trực tiếp tạm dừng: không thể xác minh phiên. Nhấp vào trang để thử lại hoặc đăng nhập lại.",
+      "offline_stopped_tooltip": "Cập nhật trực tiếp đã tắt cho tab này. Tải lại trang để bật lại."
+    },
+    "work_item_unavailable": {
+      "title": "Mục công việc không khả dụng",
+      "message": "Mục công việc này đã bị xóa hoặc bạn không còn quyền truy cập."
+    }
   }
 }

@@ -893,5 +893,23 @@
       "save_as": "Zapisz jako",
       "hide_filters": "Ukryj filtry"
     }
+  },
+  "live_updates": {
+    "status": {
+      "connected": "Na żywo",
+      "connected_tooltip": "Aktualizacje na żywo są włączone: zmiany innych osób pojawiają się bez odświeżania.",
+      "connecting": "Łączenie",
+      "connecting_tooltip": "Trwa łączenie z aktualizacjami na żywo.",
+      "reconnecting": "Ponowne łączenie",
+      "reconnecting_tooltip": "Utracono połączenie aktualizacji na żywo. Trwa ponowne łączenie; tablica odświeży się po jego przywróceniu.",
+      "offline": "Offline",
+      "offline_network_tooltip": "Brak połączenia z siecią. Aktualizacje na żywo zostaną wznowione po przywróceniu sieci.",
+      "offline_unauthenticated_tooltip": "Aktualizacje na żywo wstrzymane: nie udało się zweryfikować sesji. Kliknij stronę, aby spróbować ponownie, lub zaloguj się ponownie.",
+      "offline_stopped_tooltip": "Aktualizacje na żywo są wyłączone w tej karcie. Odśwież stronę, aby je ponownie włączyć."
+    },
+    "work_item_unavailable": {
+      "title": "Element pracy niedostępny",
+      "message": "Ten element pracy został usunięty lub dostęp do niego nie jest już możliwy."
+    }
   }
 }

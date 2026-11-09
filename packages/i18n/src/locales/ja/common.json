@@ -893,5 +893,23 @@
       "save_as": "名前を付けて保存",
       "hide_filters": "フィルターを非表示"
     }
+  },
+  "live_updates": {
+    "status": {
+      "connected": "ライブ",
+      "connected_tooltip": "ライブ更新が有効です。他のユーザーの変更が再読み込みなしで表示されます。",
+      "connecting": "接続中",
+      "connecting_tooltip": "ライブ更新に接続しています。",
+      "reconnecting": "再接続中",
+      "reconnecting_tooltip": "ライブ更新の接続が切れました。再接続しています。接続が戻るとボードが更新されます。",
+      "offline": "オフライン",
+      "offline_network_tooltip": "オフラインです。ネットワークが戻るとライブ更新が再開されます。",
+      "offline_unauthenticated_tooltip": "ライブ更新を一時停止しました。セッションを確認できませんでした。ページをクリックして再試行するか、もう一度サインインしてください。",
+      "offline_stopped_tooltip": "このタブではライブ更新がオフになっています。再びオンにするにはページを再読み込みしてください。"
+    },
+    "work_item_unavailable": {
+      "title": "作業項目を利用できません",
+      "message": "この作業項目は削除されたか、アクセス権がなくなりました。"
+    }
   }
 }
