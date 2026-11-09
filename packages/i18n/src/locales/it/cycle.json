@@ -37,5 +37,40 @@
         "title": "Aggiungi etichette agli elementi di lavoro per vedere la\n distribuzione del lavoro per etichette."
       }
     }
+  },
+  "cycle_automation": {
+    "title": "Automazione dei cicli",
+    "description": "Sposta gli elementi di lavoro di un ciclo da alcuni stati a un altro quando il ciclo inizia o si completa. Ogni regola viene eseguita una volta per ciclo. L'attivazione di una regola non sposta gli elementi di lavoro dei cicli già iniziati o completati; per questo, usi \"Sposta elementi di lavoro\" su un ciclo.",
+    "trigger": {
+      "cycle_started": "Quando un ciclo inizia",
+      "cycle_completed": "Quando un ciclo si completa"
+    },
+    "from": "Sposta da",
+    "to": "a",
+    "select_states": "Seleziona stati",
+    "select_state": "Seleziona stato",
+    "add_rule": "Aggiungi regola",
+    "empty": "Ancora nessuna regola.",
+    "presets": {
+      "start": "Aggiungi: all'inizio, Backlog a Todo",
+      "complete": "Aggiungi: al completamento, Testing Complete a Done",
+      "missing": "Questo progetto non ha uno stato per questo modello."
+    },
+    "move_up": "Sposta su",
+    "move_down": "Sposta giù",
+    "delete": "Elimina regola",
+    "errors": {
+      "load": "Impossibile caricare le regole di automazione dei cicli.",
+      "save": "Impossibile salvare la regola. Riprovi."
+    },
+    "move": {
+      "menu": "Sposta elementi di lavoro",
+      "title": "Sposta elementi di lavoro in {cycle}",
+      "description": "Sposta in un'unica operazione ogni elemento di lavoro di questo ciclo che si trova in uno degli stati selezionati nello stato di destinazione.",
+      "count": "{count, plural, one{Verrà spostato # elemento di lavoro.} many{Verranno spostati # elementi di lavoro.} other{Verranno spostati # elementi di lavoro.}}",
+      "submit": "Sposta",
+      "success": "{count, plural, one{# elemento di lavoro spostato.} many{# elementi di lavoro spostati.} other{# elementi di lavoro spostati.}}",
+      "error": "Impossibile spostare gli elementi di lavoro. Riprovi."
+    }
   }
 }

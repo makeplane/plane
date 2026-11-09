@@ -37,5 +37,40 @@
         "title": "Tambahkan label ke item kerja untuk melihat\n pembagian pekerjaan berdasarkan label."
       }
     }
+  },
+  "cycle_automation": {
+    "title": "Otomatisasi siklus",
+    "description": "Memindahkan item kerja sebuah siklus dari beberapa status ke status lain saat siklus dimulai atau selesai. Setiap aturan berjalan sekali per siklus. Mengaktifkan aturan tidak memindahkan item kerja dari siklus yang sudah dimulai atau selesai; untuk itu, gunakan \"Pindahkan item kerja\" pada siklus.",
+    "trigger": {
+      "cycle_started": "Saat siklus dimulai",
+      "cycle_completed": "Saat siklus selesai"
+    },
+    "from": "Pindahkan dari",
+    "to": "ke",
+    "select_states": "Pilih status",
+    "select_state": "Pilih status",
+    "add_rule": "Tambah aturan",
+    "empty": "Belum ada aturan.",
+    "presets": {
+      "start": "Tambah: saat dimulai, Backlog ke Todo",
+      "complete": "Tambah: saat selesai, Testing Complete ke Done",
+      "missing": "Proyek ini tidak memiliki status untuk templat ini."
+    },
+    "move_up": "Pindahkan ke atas",
+    "move_down": "Pindahkan ke bawah",
+    "delete": "Hapus aturan",
+    "errors": {
+      "load": "Tidak dapat memuat aturan otomatisasi siklus.",
+      "save": "Tidak dapat menyimpan aturan. Silakan coba lagi."
+    },
+    "move": {
+      "menu": "Pindahkan item kerja",
+      "title": "Pindahkan item kerja di {cycle}",
+      "description": "Memindahkan sekaligus setiap item kerja siklus ini yang berada di salah satu status terpilih ke status tujuan.",
+      "count": "{count, plural, one{# item kerja akan dipindahkan.} other{# item kerja akan dipindahkan.}}",
+      "submit": "Pindahkan",
+      "success": "{count, plural, one{# item kerja dipindahkan.} other{# item kerja dipindahkan.}}",
+      "error": "Tidak dapat memindahkan item kerja. Silakan coba lagi."
+    }
   }
 }

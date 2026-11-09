@@ -37,5 +37,40 @@
         "title": "Thêm nhãn vào mục công việc để xem\n phân tích công việc theo nhãn."
       }
     }
+  },
+  "cycle_automation": {
+    "title": "Tự động hóa chu kỳ",
+    "description": "Di chuyển các mục công việc của một chu kỳ từ một số trạng thái sang trạng thái khác khi chu kỳ bắt đầu hoặc hoàn thành. Mỗi quy tắc chạy một lần cho mỗi chu kỳ. Bật một quy tắc không di chuyển các mục công việc của những chu kỳ đã bắt đầu hoặc đã hoàn thành; để làm điều đó, hãy dùng \"Di chuyển mục công việc\" trên một chu kỳ.",
+    "trigger": {
+      "cycle_started": "Khi một chu kỳ bắt đầu",
+      "cycle_completed": "Khi một chu kỳ hoàn thành"
+    },
+    "from": "Di chuyển từ",
+    "to": "sang",
+    "select_states": "Chọn trạng thái",
+    "select_state": "Chọn trạng thái",
+    "add_rule": "Thêm quy tắc",
+    "empty": "Chưa có quy tắc nào.",
+    "presets": {
+      "start": "Thêm: khi bắt đầu, Backlog sang Todo",
+      "complete": "Thêm: khi hoàn thành, Testing Complete sang Done",
+      "missing": "Dự án này không có trạng thái cho mẫu này."
+    },
+    "move_up": "Di chuyển lên",
+    "move_down": "Di chuyển xuống",
+    "delete": "Xóa quy tắc",
+    "errors": {
+      "load": "Không thể tải các quy tắc tự động hóa chu kỳ.",
+      "save": "Không thể lưu quy tắc. Vui lòng thử lại."
+    },
+    "move": {
+      "menu": "Di chuyển mục công việc",
+      "title": "Di chuyển mục công việc trong {cycle}",
+      "description": "Di chuyển cùng lúc mọi mục công việc của chu kỳ này đang ở một trong các trạng thái đã chọn sang trạng thái đích.",
+      "count": "{count, plural, one{Sẽ di chuyển # mục công việc.} other{Sẽ di chuyển # mục công việc.}}",
+      "submit": "Di chuyển",
+      "success": "{count, plural, one{Đã di chuyển # mục công việc.} other{Đã di chuyển # mục công việc.}}",
+      "error": "Không thể di chuyển các mục công việc. Vui lòng thử lại."
+    }
   }
 }

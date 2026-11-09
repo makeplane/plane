@@ -37,5 +37,40 @@
         "title": "Voeg labels toe aan werkitems om het werk per\nlabel uitgesplitst te zien."
       }
     }
+  },
+  "cycle_automation": {
+    "title": "Cyclusautomatisering",
+    "description": "Verplaatst de werkitems van een cyclus van bepaalde statussen naar een andere status wanneer de cyclus start of wordt voltooid. Elke regel wordt één keer per cyclus uitgevoerd. Een regel inschakelen verplaatst geen werkitems van cycli die al zijn gestart of voltooid; gebruik daarvoor \"Werkitems verplaatsen\" bij een cyclus.",
+    "trigger": {
+      "cycle_started": "Wanneer een cyclus start",
+      "cycle_completed": "Wanneer een cyclus wordt voltooid"
+    },
+    "from": "Verplaatsen van",
+    "to": "naar",
+    "select_states": "Statussen selecteren",
+    "select_state": "Status selecteren",
+    "add_rule": "Regel toevoegen",
+    "empty": "Nog geen regels.",
+    "presets": {
+      "start": "Toevoegen: bij start, Backlog naar Todo",
+      "complete": "Toevoegen: bij voltooiing, Testing Complete naar Done",
+      "missing": "Dit project heeft geen status voor deze sjabloon."
+    },
+    "move_up": "Omhoog",
+    "move_down": "Omlaag",
+    "delete": "Regel verwijderen",
+    "errors": {
+      "load": "Kan de regels voor cyclusautomatisering niet laden.",
+      "save": "Kan de regel niet opslaan. Probeer het opnieuw."
+    },
+    "move": {
+      "menu": "Werkitems verplaatsen",
+      "title": "Werkitems verplaatsen in {cycle}",
+      "description": "Verplaatst in één keer elk werkitem van deze cyclus dat in een van de geselecteerde statussen staat naar de doelstatus.",
+      "count": "{count, plural, one{# werkitem wordt verplaatst.} other{# werkitems worden verplaatst.}}",
+      "submit": "Verplaatsen",
+      "success": "{count, plural, one{# werkitem verplaatst.} other{# werkitems verplaatst.}}",
+      "error": "Kan de werkitems niet verplaatsen. Probeer het opnieuw."
+    }
   }
 }
