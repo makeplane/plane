@@ -221,7 +221,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   // while user does not have access to view that workspace
   if (currentWorkspaceInfo === undefined) {
     return (
-      <div className={`h-screen w-full overflow-hidden bg-surface-1`}>
+      <div className={`h-dvh w-full overflow-hidden bg-surface-1`}>
         <div className="grid h-full place-items-center p-4">
           <div className="space-y-8 text-center">
             <div className="space-y-2">
