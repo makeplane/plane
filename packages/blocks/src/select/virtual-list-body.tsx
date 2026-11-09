@@ -18,6 +18,15 @@ import {
   ComboboxItemTrailing,
 } from "@makeplane/propel/elements/combobox";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { cn } from "@plane/utils";
+
+/**
+ * Propel's keyboard focus ring, drawn inside the scroller while the list itself has keyboard focus
+ * and no row is highlighted yet. That is the moment right after a select without a search field
+ * opens from the keyboard.
+ */
+const LIST_FOCUS_RING =
+  "has-[>[role=listbox]:focus-visible]:not-has-[[data-highlighted]]:ring-2 has-[>[role=listbox]:focus-visible]:not-has-[[data-highlighted]]:ring-inset has-[>[role=listbox]:focus-visible]:not-has-[[data-highlighted]]:ring-accent-strong";
 
 /**
  * The slice of the virtualizer the root drives from `onItemHighlighted`. `scrollToIndex` takes an
@@ -287,12 +296,17 @@ export function VirtualListBody<T>(props: VirtualListBodyProps<T>) {
   return (
     // Bounded below the panel's own `max-h-72` cap so this scroller — not the panel's ScrollArea —
     // is the one the virtualizer measures.
-    // The list takes focus when there is no search field. Like the panel around it, it shows no
-    // ring of its own: the highlighted row is the keyboard indicator.
+    // The list takes focus when there is no search field. Once a row is highlighted, that row is the
+    // keyboard indicator. Until then a keyboard user gets a ring around the list, so it is clear
+    // where focus landed. The ring sits on this scroller so it stays in view on a long list, with the
+    // rows' corners so it lines up with the highlight that replaces it.
     <div
       ref={scrollRef}
       role="presentation"
-      className="vertical-scrollbar scrollbar-sm max-h-60 overflow-y-auto [&>[role=listbox]]:outline-none"
+      className={cn(
+        "vertical-scrollbar scrollbar-sm max-h-60 overflow-y-auto rounded-md [&>[role=listbox]]:outline-none",
+        LIST_FOCUS_RING
+      )}
     >
       <ComboboxList ref={listRef} aria-label={listLabel}>
         <div role="presentation" className="relative w-full" style={{ height: virtualizer.getTotalSize() }}>
