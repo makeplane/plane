@@ -6,7 +6,7 @@ Line numbers refer to that commit, so they may have moved. Critical and High bug
 
 **256 bugs in the Plane base code:** 90 Medium, 166 Low.
 
-**85 bugs in the code Nexus adds on top of Plane:** 18 Medium, 67 Low, in the sections named "Nexus:" at the end of this file. These were reviewed separately, and each was re-checked by reading the code at `preview` `74111238e`. The Critical and High bugs in that code have their own pull requests, #30 to #39.
+**86 bugs in the code Nexus adds on top of Plane:** 19 Medium, 67 Low, in the sections named "Nexus:" at the end of this file. These were reviewed separately, and each was re-checked by reading the code at `preview` `74111238e`. The Critical and High bugs in that code have their own pull requests, #30 to #39.
 
 ## App API
 
@@ -404,12 +404,13 @@ Line numbers refer to that commit, so they may have moved. Critical and High bug
 
 ## Nexus: Messages
 
-Checked against the open Messages PR stack at `a47352601`, because most of this code is not on `preview` yet. Updated after #15, #16 and #17 merged: the bugs they fixed were removed, and rows added since were checked against those merges.
+Checked against the open Messages PR stack at `a47352601`, because most of this code is not on `preview` yet. Updated after #15, #16, #17 and #18 merged: the bugs they fixed were removed, and rows added since were checked against those merges.
 
 | Severity | Where | Problem | Suggested fix |
 |---|---|---|---|
 | Medium | `apps/web/store/chat.store.ts:782` | Reading older messages marks new ones read. "Viewing" means only that the channel is open and the tab is visible, with no check of scroll position. | Have the list report whether it is at the bottom, and mark read only then. |
 | Medium | `packages/services/src/workspace/chat.service.ts:117`, `apps/web/components/messages/create-channel-dialog.tsx`, `channel-view.tsx` | Private channels and guest DMs cannot be managed in the web app. Nothing calls the add-members method or the guest DM grant, so a private channel only ever contains its creator. | Add member management to the channel header and a guest DM access control. |
+| Medium | `packages/services/src/workspace/chat-socket.ts:406` (`pause`), `apps/web/components/messages/connection-banner.tsx:22` | A window left open with no input for 30 minutes stops updating without saying so. New messages and the unread badge freeze until the next mouse or keyboard use, and no banner appears, so Messages left open on a second monitor looks live when it is not. | Keep the socket open while the tab is visible, or show a quiet note that live updates are paused. |
 | Low | `apps/web/store/chat.store.ts:677` | Retrying can duplicate a message, and sends have no timeout. | Add a client-generated id with a unique constraint, and a request timeout. |
 | Low | `apps/web/components/messages/browse-channels-dialog.tsx:38`, `apps/chat-gateway/src/connection.ts:189` | New public channels are not pushed to people who have not joined. They appear in Browse only after a refetch. | Refetch when the dialog opens. |
 | Low | `apps/web/components/messages/connection-banner.tsx:25`, `packages/services/src/workspace/chat-socket.ts:323` | A refused first connection is silent. It stays in "connecting" and no banner appears. | Show a banner after repeated failures. |
