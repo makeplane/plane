@@ -13,13 +13,17 @@ import { PageHead } from "@/components/core/page-title";
 import { AllIssueLayoutRoot } from "@/components/issues/issue-layouts/roots/all-issue-layout-root";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
+// live updates for workspace views
+import { useLiveWorkspaceView } from "@/lib/live-events/use-live-workspace-view";
 import type { Route } from "./+types/page";
 
 function GlobalViewIssuesPage({ params }: Route.ComponentProps) {
   // router
-  const { globalViewId } = params;
+  const { globalViewId, workspaceSlug } = params;
   // store hooks
   const { currentWorkspace } = useWorkspace();
+  // this route is outside the project layout that mounts the live applier
+  useLiveWorkspaceView(workspaceSlug, globalViewId);
   // states
   const [isLoading, setIsLoading] = useState(false);
 
