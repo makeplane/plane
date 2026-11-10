@@ -32,7 +32,7 @@ export function LiteToolbar({ onSubmit, isSubmitting, isEmpty, executeCommand }:
         variant="ghost"
         size="xs"
         icon={<Icon icon={AttachOutline} />}
-        aria-label={t("attach")}
+        aria-label={t("common.attach")}
         onClick={() => executeCommand(IMAGE_ITEM)}
       />
       <IconButton
