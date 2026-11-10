@@ -117,7 +117,9 @@ class DynamicBaseSerializer(BaseSerializer):
             elif isinstance(item, dict):
                 allowed.update(item.keys())
 
-        missing = [field for field in allowed if field not in self.fields]
+        # Only expand= may inject an expansion serializer; a bare fields= name never does, so
+        # fields=["user"] cannot pull in a nested object the caller did not ask to expand.
+        missing = [field for field in expand if field not in self.fields]
         if missing:
             expansion = get_expansion_mapper()
             for field in missing:

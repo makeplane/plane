@@ -15,7 +15,9 @@ import pytest
 
 from plane.app.serializers import WorkSpaceMemberSerializer
 from plane.app.serializers.project import ProjectListSerializer
+from plane.app.serializers.base import DynamicBaseSerializer
 from plane.app.serializers.webhook import WebhookSerializer
+from plane.space.serializer.base import DynamicBaseSerializer as SpaceDynamicBaseSerializer
 from plane.db.models import Project, User, Webhook, Workspace, WorkspaceMember
 
 
@@ -23,6 +25,12 @@ def build_member():
     workspace = Workspace(id=uuid4(), name="WS", slug="ws")
     user = User(id=uuid4(), email="ada@plane.so", first_name="Ada", display_name="ada")
     return WorkspaceMember(id=uuid4(), workspace=workspace, member=user, role=5, view_props={"a": 1})
+
+
+class ProjectNameSerializer(DynamicBaseSerializer):
+    class Meta:
+        model = Project
+        fields = ["id", "name"]  # deliberately no `workspace` field
 
 
 @pytest.mark.unit
@@ -56,6 +64,17 @@ class TestDynamicFields:
         assert isinstance(data["created_by"], dict)
         assert data["created_by"]["first_name"] == "Ada"
 
+    def test_fields_alone_never_injects_expansion(self):
+        # ProjectNameSerializer has no `workspace` field; only expand= may add the mapper's
+        # WorkspaceLiteSerializer, a bare fields= name must not.
+        project = Project(id=uuid4(), name="P", identifier="P", workspace=Workspace(id=uuid4(), name="WS", slug="ws"))
+
+        serializer = ProjectNameSerializer(project, fields=["id", "workspace"])
+
+        assert "workspace" not in serializer.fields
+        assert set(serializer.data) == {"id"}
+        assert isinstance(ProjectNameSerializer(project, fields=["id"], expand=["workspace"]).data["workspace"], dict)
+
     def test_expand_alone_does_not_restrict(self):
         data = WorkSpaceMemberSerializer(build_member(), expand=["workspace"]).data
 
@@ -77,3 +96,39 @@ def test_fields_restricts_output_not_input(create_user, workspace):
     webhook.refresh_from_db()
     assert webhook.url == "https://example.com/new"
     assert set(serializer.data) == {"id"}
+
+
+class SpaceWebhookSerializer(SpaceDynamicBaseSerializer):
+    class Meta:
+        model = Webhook
+        fields = "__all__"
+
+
+@pytest.mark.unit
+class TestSpaceDynamicFields:
+    def test_fields_restricts_output(self):
+        webhook = Webhook(id=uuid4(), url="https://example.com/x")
+
+        assert set(SpaceWebhookSerializer(webhook, fields=["id", "url"]).data) == {"id", "url"}
+        assert "secret_key" in SpaceWebhookSerializer(webhook).data
+
+    def test_dict_item_keeps_key_and_unknown_names_ignored(self):
+        webhook = Webhook(id=uuid4(), url="https://example.com/x")
+
+        data = SpaceWebhookSerializer(webhook, fields=["id", {"url": ["a"]}, "nope"]).data
+
+        assert set(data) == {"id", "url"}
+
+    @pytest.mark.django_db
+    def test_fields_restricts_output_not_input(self, workspace):
+        webhook = Webhook.objects.create(workspace=workspace, url="https://example.com/old")
+        serializer = SpaceWebhookSerializer(
+            webhook, data={"url": "https://example.com/new"}, partial=True, fields=("id",)
+        )
+
+        assert serializer.is_valid(), serializer.errors
+        serializer.save()
+
+        webhook.refresh_from_db()
+        assert webhook.url == "https://example.com/new"
+        assert set(serializer.data) == {"id"}
