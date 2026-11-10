@@ -65,11 +65,11 @@ class TestLegacyFileAssetPostReadOnly:
         assert fa.workspace_id == workspace.id
         assert fa.project_id is None
         assert fa.issue_id is None and fa.user_id is None
-        assert fa.is_uploaded is False
+        assert fa.is_uploaded is True  # server-set after the file is saved, not client-controlled
         assert fa.entity_type is None and fa.entity_identifier is None
         assert fa.is_deleted is False and fa.is_archived is False
         assert fa.external_id is None and fa.external_source is None
-        assert fa.size == 0
+        assert fa.size == 1  # byte length of the uploaded file, not the forged 999999
         assert fa.storage_metadata == {}
 
     def test_normal_upload_works(self, session_client, workspace):
@@ -82,3 +82,4 @@ class TestLegacyFileAssetPostReadOnly:
         fa = FileAsset.objects.get(id=resp.data["id"])
         assert fa.workspace_id == workspace.id
         assert fa.attributes["name"] == "ok.png"
+        assert fa.size == 1 and fa.is_uploaded is True
