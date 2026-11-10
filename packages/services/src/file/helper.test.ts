@@ -13,6 +13,7 @@ describe("getAssetIdFromUrl", () => {
     ["https://cdn.plane.so/ws-id/image.png?id=5614&token=xyz", "image.png"],
     ["https://cdn.plane.so/ws-id/10315?size=medium", "10315"],
     ["https://cdn.plane.so/ws-id/thumb.png#frag", "thumb.png"],
+    ["https://cdn.plane.so/ws-id/image.png/?id=5614", "image.png"],
     ["asset-uuid", "asset-uuid"],
   ])("extracts asset id from %j", (input, expected) => {
     expect(getAssetIdFromUrl(input)).toBe(expected);

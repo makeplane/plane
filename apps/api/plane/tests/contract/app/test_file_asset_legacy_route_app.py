@@ -16,3 +16,9 @@ from rest_framework import status
 def test_post_on_workspace_id_route_is_405(session_client, workspace):
     response = session_client.post(f"/api/workspaces/file-assets/{workspace.id}/image.png/")
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+
+
+@pytest.mark.contract
+def test_options_on_workspace_id_route_is_not_405(session_client, workspace):
+    response = session_client.options(f"/api/workspaces/file-assets/{workspace.id}/image.png/")
+    assert response.status_code != status.HTTP_405_METHOD_NOT_ALLOWED
