@@ -197,6 +197,14 @@
     "updated_time_ago": "Bijgewerkt {time}",
     "description_load_failed": "Kan de omschrijving niet laden.",
     "assignee_count": "{count, plural, one {# toegewezene} other {# toegewezenen}}",
+    "attachment_count": "{count, plural, one {# attachment} other {# attachments}}",
+    "link_count": "{count, plural, one {# link} other {# links}}",
+    "sub_work_item_count": "{count, plural, one {# sub-work item} other {# sub-work items}}",
+    "property_placeholders": {
+      "cycle": "Select cycle",
+      "modules": "Select modules",
+      "labels": "Select labels"
+    },
     "relation": {
       "relates_to": "Gerelateerd aan",
       "duplicate": "Duplicaat van",

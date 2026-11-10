@@ -197,6 +197,14 @@
     "updated_time_ago": "更新於 {time}",
     "description_load_failed": "無法載入描述。",
     "assignee_count": "{count, plural, one {# 位指派對象} other {# 位指派對象}}",
+    "attachment_count": "{count, plural, one {# attachment} other {# attachments}}",
+    "link_count": "{count, plural, one {# link} other {# links}}",
+    "sub_work_item_count": "{count, plural, one {# sub-work item} other {# sub-work items}}",
+    "property_placeholders": {
+      "cycle": "Select cycle",
+      "modules": "Select modules",
+      "labels": "Select labels"
+    },
     "relation": {
       "relates_to": "與此相關",
       "duplicate": "此項重複",

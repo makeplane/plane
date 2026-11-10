@@ -9,6 +9,7 @@ import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 // components
 import { ModuleSelect } from "@/components/dropdowns/module/module-select";
@@ -23,6 +24,8 @@ type Props = {
 
 export const SpreadsheetModuleColumn = observer(function SpreadsheetModuleColumn(props: Props) {
   const { issue, disabled, onClose } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // router
   const { workspaceSlug } = useParams();
   // hooks
@@ -54,7 +57,7 @@ export const SpreadsheetModuleColumn = observer(function SpreadsheetModuleColumn
         value={issue?.module_ids ?? []}
         onChange={handleModule}
         disabled={disabled}
-        placeholder="Select modules"
+        placeholder={t("issue.property_placeholders.modules")}
         // `.clickable` is what the table's keyboard navigation clicks on Enter / Space in a focused cell.
         className="clickable"
         variant="table-cell"

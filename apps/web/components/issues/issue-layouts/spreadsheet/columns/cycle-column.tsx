@@ -8,6 +8,7 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 // components
 import { CycleSelect } from "@/components/dropdowns/cycle/cycle-select";
@@ -22,6 +23,8 @@ type Props = {
 
 export const SpreadsheetCycleColumn = observer(function SpreadsheetCycleColumn(props: Props) {
   const { issue, disabled, onClose } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // router
   const { workspaceSlug } = useParams();
   // hooks
@@ -45,7 +48,7 @@ export const SpreadsheetCycleColumn = observer(function SpreadsheetCycleColumn(p
         value={issue.cycle_id}
         onChange={handleCycle}
         disabled={disabled}
-        placeholder="Select cycle"
+        placeholder={t("issue.property_placeholders.cycle")}
         // `.clickable` is what the table's keyboard navigation clicks on Enter / Space in a focused cell.
         className="clickable"
         variant="table-cell"

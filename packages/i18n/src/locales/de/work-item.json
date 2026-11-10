@@ -197,6 +197,14 @@
     "updated_time_ago": "Aktualisiert {time}",
     "description_load_failed": "Die Beschreibung konnte nicht geladen werden.",
     "assignee_count": "{count, plural, one {# zugewiesene Person} other {# zugewiesene Personen}}",
+    "attachment_count": "{count, plural, one {# Anhang} other {# Anhänge}}",
+    "link_count": "{count, plural, one {# Link} other {# Links}}",
+    "sub_work_item_count": "{count, plural, one {# untergeordnetes Arbeitselement} other {# untergeordnete Arbeitselemente}}",
+    "property_placeholders": {
+      "cycle": "Zyklus auswählen",
+      "modules": "Module auswählen",
+      "labels": "Labels auswählen"
+    },
     "relation": {
       "relates_to": "Steht in Beziehung zu",
       "duplicate": "Duplikat",

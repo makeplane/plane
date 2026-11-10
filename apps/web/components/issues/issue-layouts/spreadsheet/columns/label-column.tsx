@@ -7,6 +7,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // types
+import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
@@ -22,6 +23,8 @@ type Props = {
 
 export const SpreadsheetLabelColumn = observer(function SpreadsheetLabelColumn(props: Props) {
   const { issue, onChange, disabled, onClose } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // hooks
   const { labelMap } = useLabel();
 
@@ -43,7 +46,7 @@ export const SpreadsheetLabelColumn = observer(function SpreadsheetLabelColumn(p
         hideDropdownArrow
         maxRender={1}
         disabled={disabled}
-        placeholderText="Select labels"
+        placeholderText={t("issue.property_placeholders.labels")}
         onClose={onClose}
         noLabelBorder
         fullWidth
