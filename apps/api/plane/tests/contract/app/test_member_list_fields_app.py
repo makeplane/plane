@@ -54,4 +54,4 @@ class TestGuestMemberFields:
         assert response.status_code == 200
         assert response.data
         for row in response.data:
-            assert set(row) <= ALLOWED
+            assert set(row) == ALLOWED
