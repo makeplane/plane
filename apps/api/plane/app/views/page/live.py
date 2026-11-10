@@ -37,10 +37,13 @@ class PageLiveAccessEndpoint(BaseAPIView):
             workspace__slug=slug,
             deleted_at__isnull=True,
             page__deleted_at__isnull=True,
+            project__deleted_at__isnull=True,
             project__project_projectmember__member=request.user,
             project__project_projectmember__is_active=True,
+            project__project_projectmember__deleted_at__isnull=True,
         ).values_list("project_id", "project__project_projectmember__role", "page__owned_by_id", "page__access")
 
+        read_only_link = None
         for project_id, role, owner_id, access in links:
             is_owner = owner_id == request.user.id
             if not is_owner:
@@ -57,6 +60,12 @@ class PageLiveAccessEndpoint(BaseAPIView):
                 if read_only:
                     continue
                 return Response({"project_id": str(project_id)})
-            return Response({"project_id": str(project_id), "read_only": read_only})
+            if read_only:
+                # a page linked to several projects: keep looking for a link that allows editing
+                read_only_link = read_only_link or project_id
+                continue
+            return Response({"project_id": str(project_id), "read_only": False})
 
+        if read_only_link:
+            return Response({"project_id": str(read_only_link), "read_only": True})
         return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)

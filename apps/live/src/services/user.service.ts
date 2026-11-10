@@ -12,8 +12,6 @@ import { AppError } from "@/lib/errors";
 import { APIService } from "@/services/api.service";
 
 export class UserService extends APIService {
-  
-
   currentUserConfig() {
     return {
       url: `${this.baseURL}/api/users/me/`,

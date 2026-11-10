@@ -7,6 +7,7 @@
 import uuid
 
 import pytest
+from django.utils import timezone
 from rest_framework import status
 
 from plane.db.models import Page, Project, ProjectMember, ProjectPage, User, Workspace, WorkspaceMember
@@ -74,6 +75,34 @@ class TestPageLiveAccess:
         page = _page(workspace, project, _other_user())
 
         assert session_client.get(_url(workspace.slug, page.id)).status_code == status.HTTP_404_NOT_FOUND
+
+    def test_soft_deleted_project_denied(self, session_client, workspace, create_user):
+        project = _project(workspace, "LVQ")
+        _join(workspace, project, create_user, 20)
+        page = _page(workspace, project, _other_user())
+        Project.objects.filter(pk=project.pk).update(deleted_at=timezone.now())
+
+        assert session_client.get(_url(workspace.slug, page.id)).status_code == status.HTTP_404_NOT_FOUND
+
+    def test_soft_deleted_membership_denied(self, session_client, workspace, create_user):
+        project = _project(workspace, "LVR")
+        _join(workspace, project, create_user, 20)
+        page = _page(workspace, project, _other_user())
+        ProjectMember.objects.filter(project=project, member=create_user).update(deleted_at=timezone.now())
+
+        assert session_client.get(_url(workspace.slug, page.id)).status_code == status.HTTP_404_NOT_FOUND
+
+    def test_view_prefers_the_writable_link_of_a_multi_project_page(self, session_client, workspace, create_user):
+        guest_project = _project(workspace, "LVS", guest_view_all_features=True)
+        admin_project = _project(workspace, "LVT")
+        _join(workspace, guest_project, create_user, 5)
+        _join(workspace, admin_project, create_user, 20)
+        page = _page(workspace, guest_project, _other_user())
+        ProjectPage.objects.create(workspace=workspace, project=admin_project, page=page)
+
+        response = session_client.get(_url(workspace.slug, page.id))
+
+        assert response.json() == {"project_id": str(admin_project.id), "read_only": False}
 
     def test_other_workspace_slug_denied(self, session_client, workspace, create_user):
         project = _project(workspace, "LVF")

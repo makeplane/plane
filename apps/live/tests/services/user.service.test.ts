@@ -21,9 +21,7 @@ import { UserService } from "@/services/user.service";
 
 const service = () => {
   const s = new UserService();
-  const get = vi
-    .spyOn(s as never, "get" as never)
-    .mockResolvedValue({ data: { project_id: "p", read_only: false } } as never);
+  const get = vi.spyOn(s, "get").mockResolvedValue({ data: { project_id: "p", read_only: false } } as never);
   return { s, get: get as unknown as ReturnType<typeof vi.fn> };
 };
 
