@@ -80,6 +80,9 @@ class ProjectSerializer(BaseSerializer):
         # project_lead / default_assignee must be active members of the workspace
         for field in ("project_lead", "default_assignee"):
             user = data.get(field)
+            # an unchanged assignment may be resent after the user left the workspace
+            if user is not None and self.instance and getattr(self.instance, f"{field}_id") == user.pk:
+                continue
             if user is not None and not WorkspaceMember.objects.filter(
                 workspace_id=self.context["workspace_id"], member=user, is_active=True
             ).exists():

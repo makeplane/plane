@@ -74,3 +74,17 @@ class TestProjectLeadMembership:
         )
         assert resp.status_code == status.HTTP_201_CREATED
         assert ProjectMember.objects.filter(project_id=resp.data["id"], member=lead, role=20).exists()
+
+    @pytest.mark.django_db
+    def test_update_allows_unchanged_inactive_assignment(self, session_client, workspace, project, inactive_member):
+        project.project_lead = inactive_member
+        project.save()
+        resp = session_client.patch(
+            f"/api/workspaces/{workspace.slug}/projects/{project.id}/",
+            {"project_lead": str(inactive_member.id), "name": "Renamed"},
+            format="json",
+        )
+        assert resp.status_code == status.HTTP_200_OK
+        project.refresh_from_db()
+        assert project.name == "Renamed"
+        assert project.project_lead_id == inactive_member.id

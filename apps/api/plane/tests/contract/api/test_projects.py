@@ -371,3 +371,17 @@ class TestProjectV1LeadAssigneeMembership:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         project.refresh_from_db()
         assert project.project_lead_id is None
+
+    @pytest.mark.django_db
+    def test_update_rejects_inactive_lead(self, api_key_client, workspace, create_user, outsider_user):
+        WorkspaceMember.objects.create(workspace=workspace, member=outsider_user, role=15, is_active=False)
+        project = Project.objects.create(name="P", identifier="PP", workspace=workspace)
+        ProjectMember.objects.create(project=project, member=create_user, role=20)
+        response = api_key_client.patch(
+            f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/",
+            {"project_lead": str(outsider_user.id)},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        project.refresh_from_db()
+        assert project.project_lead_id is None
