@@ -458,7 +458,7 @@ export const parseDateFilter = (filterValue: string): { type: "after" | "before"
     date = processRelativeDate(dateStr);
   } else {
     // Handle absolute dates (e.g., "2024-12-01;after")
-    date = new Date(dateStr);
+    date = parseISO(dateStr);
   }
 
   return { type, date };
@@ -471,10 +471,14 @@ export const parseDateFilter = (filterValue: string): { type: "after" | "before"
  * @param type The type of comparison ('after' or 'before')
  * @returns boolean indicating if the date meets the criteria
  */
-export const checkDateCriteria = (dateToCheck: Date | null, filterDate: Date, type: "after" | "before"): boolean => {
+export const checkDateCriteria = (
+  dateToCheck: Date | string | null,
+  filterDate: Date,
+  type: "after" | "before"
+): boolean => {
   if (!dateToCheck) return false;
 
-  const checkDate = new Date(dateToCheck);
+  const checkDate = typeof dateToCheck === "string" ? parseISO(dateToCheck) : new Date(dateToCheck);
   const normalizedCheck = new Date(checkDate.setHours(0, 0, 0, 0));
   const normalizedFilter = new Date(filterDate.getTime());
   normalizedFilter.setHours(0, 0, 0, 0);
