@@ -1218,19 +1218,18 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // get issueUpdates from another method by passing down the three arguments
     // issueUpdates is nothing but an array of objects that contain the path of the issueId list that need updating and also the action that needs to be performed at the path
     const issueUpdates = this.getUpdateDetails(issue, issueBeforeUpdate, action);
+    // 1. Check if the card is already present on this board before updates mutate groupedIssueIds
+    const isCardOnBoard = issueUpdates.some(
+      (updateDetails) =>
+        updateDetails.action === EIssueGroupedAction.DELETE &&
+        Boolean(get(this.groupedIssueIds, updateDetails.path)?.includes(issueId))
+    );
     const accumulatedUpdatesForCount = {};
     runInAction(() => {
       // The issueUpdates
       for (const issueUpdate of issueUpdates) {
         //if update is add, add it at a particular path
         if (issueUpdate.action === EIssueGroupedAction.ADD) {
-          // 1. Check if the card is already present on this board being moved between groups.
-          const isCardOnBoard = issueUpdates.some(
-            (updateDetails) =>
-              updateDetails.action === EIssueGroupedAction.DELETE &&
-              Boolean(get(this.groupedIssueIds, updateDetails.path)?.includes(issueId))
-          );
-
           // 2. Check if parent is an Epic or if the view is scoped to the parent Epic.
           const parentIssue = issue?.parent_id ? this.rootIssueStore?.issues?.getIssueById(issue.parent_id) : undefined;
           const isParentEpic = Boolean(parentIssue?.is_epic);
