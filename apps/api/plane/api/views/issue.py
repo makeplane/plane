@@ -82,6 +82,7 @@ from plane.db.models import (
     WorkspaceMember,
 )
 from plane.settings.storage import S3Storage
+from plane.utils.mime_type import infer_mime_type
 from plane.utils.path_validator import sanitize_filename
 from plane.utils.order_queryset import (
     ACTIVITY_ORDER_BY_ALLOWLIST,
@@ -2065,6 +2066,12 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
             )
 
         size_limit = min(size, settings.FILE_SIZE_LIMIT)
+
+        # Some browsers do not report a MIME type for files with less common
+        # extensions (e.g. Markdown). Fall back to inferring it from the
+        # filename so allowed uploads are not rejected outright.
+        if not type:
+            type = infer_mime_type(name)
 
         if not type or type not in settings.ATTACHMENT_MIME_TYPES:
             return Response(
