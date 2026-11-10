@@ -43,6 +43,10 @@ def is_sole_admin_of_any_project(slug, user_id):
     )
 
 
+# Guests only get id/member/role; the web app also reads is_active (suspended state) and created_at (join date).
+NON_GUEST_FIELDS = ("id", "member", "role", "is_active", "created_at")
+
+
 class WorkSpaceMemberViewSet(BaseViewSet):
     serializer_class = WorkspaceMemberAdminSerializer
     model = WorkspaceMember
@@ -65,7 +69,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # Get all active workspace members
         workspace_members = self.get_queryset()
         if workspace_member.role > 5:
-            serializer = WorkspaceMemberAdminSerializer(workspace_members, fields=("id", "member", "role"), many=True)
+            serializer = WorkspaceMemberAdminSerializer(workspace_members, fields=NON_GUEST_FIELDS, many=True)
         else:
             serializer = WorkSpaceMemberSerializer(workspace_members, fields=("id", "member", "role"), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -84,7 +88,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             )
 
         if workspace_member.role > ROLE.GUEST.value:
-            serializer = WorkspaceMemberAdminSerializer(member, fields=("id", "member", "role"))
+            serializer = WorkspaceMemberAdminSerializer(member, fields=NON_GUEST_FIELDS)
         else:
             serializer = WorkSpaceMemberSerializer(member, fields=("id", "member", "role"))
         return Response(serializer.data, status=status.HTTP_200_OK)

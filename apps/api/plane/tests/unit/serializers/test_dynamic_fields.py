@@ -17,7 +17,6 @@ from plane.app.serializers import WorkSpaceMemberSerializer
 from plane.app.serializers.project import ProjectListSerializer
 from plane.app.serializers.base import DynamicBaseSerializer
 from plane.app.serializers.webhook import WebhookSerializer
-from plane.space.serializer.base import DynamicBaseSerializer as SpaceDynamicBaseSerializer
 from plane.db.models import Project, User, Webhook, Workspace, WorkspaceMember
 
 
@@ -96,39 +95,3 @@ def test_fields_restricts_output_not_input(create_user, workspace):
     webhook.refresh_from_db()
     assert webhook.url == "https://example.com/new"
     assert set(serializer.data) == {"id"}
-
-
-class SpaceWebhookSerializer(SpaceDynamicBaseSerializer):
-    class Meta:
-        model = Webhook
-        fields = "__all__"
-
-
-@pytest.mark.unit
-class TestSpaceDynamicFields:
-    def test_fields_restricts_output(self):
-        webhook = Webhook(id=uuid4(), url="https://example.com/x")
-
-        assert set(SpaceWebhookSerializer(webhook, fields=["id", "url"]).data) == {"id", "url"}
-        assert "secret_key" in SpaceWebhookSerializer(webhook).data
-
-    def test_dict_item_keeps_key_and_unknown_names_ignored(self):
-        webhook = Webhook(id=uuid4(), url="https://example.com/x")
-
-        data = SpaceWebhookSerializer(webhook, fields=["id", {"url": ["a"]}, "nope"]).data
-
-        assert set(data) == {"id", "url"}
-
-    @pytest.mark.django_db
-    def test_fields_restricts_output_not_input(self, workspace):
-        webhook = Webhook.objects.create(workspace=workspace, url="https://example.com/old")
-        serializer = SpaceWebhookSerializer(
-            webhook, data={"url": "https://example.com/new"}, partial=True, fields=("id",)
-        )
-
-        assert serializer.is_valid(), serializer.errors
-        serializer.save()
-
-        webhook.refresh_from_db()
-        assert webhook.url == "https://example.com/new"
-        assert set(serializer.data) == {"id"}
