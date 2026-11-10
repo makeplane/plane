@@ -48,6 +48,12 @@
     },
     "project_board": {
       "collapse_group": "Thu gọn nhóm"
+    },
+    "pagination": {
+      "root": "Phân trang",
+      "previous_page": "Đi đến trang trước",
+      "next_page": "Đi đến trang tiếp theo",
+      "go_to_page": "Đi đến trang {page}"
     }
   }
 }

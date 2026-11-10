@@ -48,6 +48,12 @@
     },
     "project_board": {
       "collapse_group": "Groep samenvouwen"
+    },
+    "pagination": {
+      "root": "Paginering",
+      "previous_page": "Ga naar de vorige pagina",
+      "next_page": "Ga naar de volgende pagina",
+      "go_to_page": "Ga naar pagina {page}"
     }
   }
 }

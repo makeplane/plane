@@ -113,7 +113,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
         })}
       >
         <SettingsHeading
-          className="pb-3"
+          className="pb-4"
           title={
             <span className="flex items-center gap-2.5">
               {t("workspace_settings.settings.members.title")}
@@ -123,31 +123,33 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
             </span>
           }
           description={t("workspace_settings.settings.members.description")}
+          control={
+            <div className="flex flex-wrap items-center gap-3">
+              <ExpandableSearch
+                size="md"
+                aria-label={t("common.search.label")}
+                clearLabel={t("common.clear")}
+                placeholder={`${t("search")}...`}
+                value={searchQuery}
+                onValueChange={(value) => setSearchQuery(value)}
+              />
+              <MemberListFiltersDropdown
+                appliedFilters={appliedRoleFilters}
+                handleUpdate={handleRoleFilterUpdate}
+                memberType="workspace"
+              />
+              {canPerformWorkspaceAdminActions && (
+                <Button
+                  variant="primary"
+                  size="md"
+                  stretch="auto"
+                  label={t("workspace_settings.settings.members.add_member")}
+                  onClick={() => setInviteModal(true)}
+                />
+              )}
+            </div>
+          }
         />
-        <div className="mb-4 flex flex-wrap items-center justify-end gap-3 border-b border-subtle py-3">
-          <ExpandableSearch
-            size="md"
-            aria-label={t("common.search.label")}
-            clearLabel={t("common.clear")}
-            placeholder={`${t("search")}...`}
-            value={searchQuery}
-            onValueChange={(value) => setSearchQuery(value)}
-          />
-          <MemberListFiltersDropdown
-            appliedFilters={appliedRoleFilters}
-            handleUpdate={handleRoleFilterUpdate}
-            memberType="workspace"
-          />
-          {canPerformWorkspaceAdminActions && (
-            <Button
-              variant="primary"
-              size="md"
-              stretch="auto"
-              label={t("workspace_settings.settings.members.add_member")}
-              onClick={() => setInviteModal(true)}
-            />
-          )}
-        </div>
         <WorkspaceMembersList searchQuery={searchQuery} isAdmin={canPerformWorkspaceAdminActions} />
       </section>
     </SettingsContentWrapper>

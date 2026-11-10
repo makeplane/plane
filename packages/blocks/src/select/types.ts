@@ -358,6 +358,11 @@ export type SelectTriggerProps<T> = {
   variant: SelectVariant;
   /** Applies the active/open chrome. Defaults to the dropdown's own open state; pass to override (e.g. a focused table cell). */
   isActive?: boolean;
+  /**
+   * Whether the trigger wears the placeholder treatment. Defaults to "nothing is selected"; pass
+   * `false` where an empty selection is itself a value (e.g. an export's "All projects").
+   */
+  isEmpty?: boolean;
   /** Escape hatch merged onto the trigger button after the variant classes. */
   className?: string;
   /** Leading icon, rendered in Propel's decorative icon slot. Element or a render-prop of the selection. */

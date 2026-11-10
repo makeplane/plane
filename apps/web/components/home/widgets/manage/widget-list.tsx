@@ -55,7 +55,7 @@ export const WidgetList = observer(function WidgetList({ workspaceSlug }: { work
   };
 
   return (
-    <div className="my-4">
+    <div>
       {orderedWidgets.map((widget, index) => (
         <WidgetItem
           key={widget}

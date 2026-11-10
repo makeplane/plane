@@ -17,14 +17,12 @@ import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { PasswordStrengthIndicator } from "@plane/blocks/auth";
 import { Banner } from "@makeplane/propel/components/banner";
-import { AuthService } from "@plane/services";
 import { getPasswordStrength, validatePersonName, validateCompanyName } from "@plane/utils";
 // components
 import { AuthHeader } from "@/app/(all)/(home)/auth-header";
 import { FormHeader } from "./form-header";
-
-// service initialization
-const authService = new AuthService();
+// hooks
+import { useCsrfToken } from "@/hooks/use-csrf-token";
 
 // error codes
 enum EErrorCodes {
@@ -68,7 +66,9 @@ export function InstanceSetupForm() {
   const lastNameParam = searchParams?.get("last_name") || undefined;
   const companyParam = searchParams?.get("company") || undefined;
   const emailParam = searchParams?.get("email") || undefined;
-  const isTelemetryEnabledParam = (searchParams?.get("is_telemetry_enabled") === "True" ? true : false) || true;
+  // only set when the API redirects back after a failed setup; otherwise the default (enabled) applies
+  const telemetryParam = searchParams?.get("is_telemetry_enabled");
+  const isTelemetryEnabledParam = telemetryParam ? telemetryParam === "True" : undefined;
   const errorCode = searchParams?.get("error_code") || undefined;
   const errorMessage = searchParams?.get("error_message") || undefined;
   // state
@@ -76,7 +76,7 @@ export function InstanceSetupForm() {
     password: false,
     retypePassword: false,
   });
-  const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
+  const csrfToken = useCsrfToken();
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -89,16 +89,12 @@ export function InstanceSetupForm() {
     setFormData((prev) => ({ ...prev, [key]: value }));
 
   useEffect(() => {
-    if (csrfToken === undefined)
-      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
-  }, [csrfToken]);
-
-  useEffect(() => {
     if (firstNameParam) setFormData((prev) => ({ ...prev, first_name: firstNameParam }));
     if (lastNameParam) setFormData((prev) => ({ ...prev, last_name: lastNameParam }));
     if (companyParam) setFormData((prev) => ({ ...prev, company_name: companyParam }));
     if (emailParam) setFormData((prev) => ({ ...prev, email: emailParam }));
-    if (isTelemetryEnabledParam) setFormData((prev) => ({ ...prev, is_telemetry_enabled: isTelemetryEnabledParam }));
+    if (isTelemetryEnabledParam !== undefined)
+      setFormData((prev) => ({ ...prev, is_telemetry_enabled: isTelemetryEnabledParam }));
   }, [firstNameParam, lastNameParam, companyParam, emailParam, isTelemetryEnabledParam]);
 
   // derived values
@@ -125,15 +121,14 @@ export function InstanceSetupForm() {
 
   const isButtonDisabled = useMemo(
     () =>
-      !isSubmitting &&
-      formData.first_name &&
-      formData.email &&
-      formData.password &&
-      getPasswordStrength(formData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
-      formData.password === formData.confirm_password
-        ? false
-        : true,
-    [formData.confirm_password, formData.email, formData.first_name, formData.password, isSubmitting]
+      isSubmitting ||
+      !csrfToken ||
+      !formData.first_name ||
+      !formData.email ||
+      !formData.password ||
+      getPasswordStrength(formData.password) !== E_PASSWORD_STRENGTH.STRENGTH_VALID ||
+      formData.password !== formData.confirm_password,
+    [csrfToken, formData.confirm_password, formData.email, formData.first_name, formData.password, isSubmitting]
   );
 
   const password = formData?.password ?? "";
@@ -180,6 +175,7 @@ export function InstanceSetupForm() {
                     }
                   }}
                   autoComplete="off"
+                  // oxlint-disable-next-line jsx-a11y/no-autofocus -- first field of the one-time instance setup page
                   autoFocus
                   maxLength={50}
                   orientation="vertical"
@@ -218,7 +214,7 @@ export function InstanceSetupForm() {
               placeholder="name@company.com"
               value={formData.email}
               onChange={(e) => handleFormChange("email", e.target.value)}
-              aria-invalid={errorData.type && errorData.type === EErrorCodes.INVALID_EMAIL ? true : false}
+              aria-invalid={errorData.type === EErrorCodes.INVALID_EMAIL}
               autoComplete="off"
               orientation="vertical"
               label="Email"
@@ -254,7 +250,7 @@ export function InstanceSetupForm() {
                 placeholder="New password"
                 value={formData.password}
                 onChange={(e) => handleFormChange("password", e.target.value)}
-                aria-invalid={errorData.type && errorData.type === EErrorCodes.INVALID_PASSWORD ? true : false}
+                aria-invalid={errorData.type === EErrorCodes.INVALID_PASSWORD}
                 onFocus={() => setIsPasswordInputFocused(true)}
                 onBlur={() => setIsPasswordInputFocused(false)}
                 autoComplete="new-password"

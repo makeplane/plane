@@ -7,7 +7,7 @@
 import { useId, useState } from "react";
 import type { ReactNode } from "react";
 // plane imports
-import { DropdownOutline } from "@makeplane/propel/icons";
+import { TriangleFilled } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -35,10 +35,12 @@ export function IssueDetailSidebarGroup(props: Props) {
       >
         <span>{label}</span>
         <span className="flex size-4 items-center justify-center">
-          <DropdownOutline
-            className={cn("size-3 text-primary transition-transform duration-200", {
-              "-rotate-90": !isOpen,
-            })}
+          {/* A small solid caret: points down while open, right while collapsed. */}
+          <TriangleFilled
+            className={cn(
+              "size-1.5 text-primary transition-transform duration-200",
+              isOpen ? "rotate-180" : "rotate-90"
+            )}
           />
         </span>
       </button>

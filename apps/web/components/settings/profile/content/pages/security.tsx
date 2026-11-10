@@ -141,7 +141,7 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
         <div className="flex flex-col gap-y-7">
           {oldPasswordRequired && (
             <div className="flex flex-col gap-y-2">
-              <FieldLabel size="2xl" inset={false} htmlFor="old_password">
+              <FieldLabel size="lg" inset={false} htmlFor="old_password">
                 {t("auth.common.password.current_password.label")}
               </FieldLabel>
               <Controller
@@ -152,9 +152,9 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
                 }}
                 render={({ field: { value, onChange } }) => (
                   <Field name="old_password" invalid={Boolean(errors.old_password)}>
-                    <InputGroup size="2xl">
+                    <InputGroup size="lg">
                       <Input
-                        size="2xl"
+                        size="lg"
                         id="old_password"
                         aria-describedby={errors.old_password ? "security-old-password-error" : undefined}
                         type={showPassword?.oldPassword ? "text" : "password"}
@@ -195,7 +195,7 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
           )}
           <div className="grid gap-x-4 gap-y-7 sm:grid-cols-2">
             <div className="flex flex-col gap-y-2">
-              <FieldLabel size="2xl" inset={false} htmlFor="new_password">
+              <FieldLabel size="lg" inset={false} htmlFor="new_password">
                 {t("auth.common.password.new_password.label")}
               </FieldLabel>
               <Controller
@@ -206,9 +206,9 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
                 }}
                 render={({ field: { value, onChange } }) => (
                   <Field name="new_password" invalid={Boolean(errors.new_password)}>
-                    <InputGroup size="2xl">
+                    <InputGroup size="lg">
                       <Input
-                        size="2xl"
+                        size="lg"
                         id="new_password"
                         aria-invalid={
                           Boolean(errors.new_password) ||
@@ -270,7 +270,7 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
               )}
             </div>
             <div className="flex flex-col gap-y-2">
-              <FieldLabel size="2xl" inset={false} htmlFor="confirm_password">
+              <FieldLabel size="lg" inset={false} htmlFor="confirm_password">
                 {t("auth.common.password.confirm_password.label")}
               </FieldLabel>
               <Controller
@@ -281,9 +281,9 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
                 }}
                 render={({ field: { value, onChange } }) => (
                   <Field name="confirm_password" invalid={Boolean(errors.confirm_password)}>
-                    <InputGroup size="2xl">
+                    <InputGroup size="lg">
                       <Input
-                        size="2xl"
+                        size="lg"
                         id="confirm_password"
                         aria-invalid={
                           Boolean(errors.confirm_password) ||

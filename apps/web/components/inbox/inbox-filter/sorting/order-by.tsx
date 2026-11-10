@@ -32,12 +32,7 @@ export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDrop
   // The trigger is the native button itself, so the styled element grafts straight onto it.
   const triggerButton =
     windowSize[0] > 1280 ? (
-      <ButtonElement
-        variant="secondary"
-        size="sm"
-        stretch="auto"
-        render={<button type="button" className="px-2 text-tertiary" />}
-      >
+      <ButtonElement variant="secondary" size="sm" stretch="auto" render={<button type="button" className="px-2" />}>
         {sortIcon}
         {orderByLabel}
         <ChevronDownOutline className="size-3" />

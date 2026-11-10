@@ -34,6 +34,7 @@ export function SelectTrigger<T>(props: SelectTriggerProps<T>) {
     disabled,
     variant,
     isActive,
+    isEmpty,
     className,
     prependIcon,
     appendIcon,
@@ -62,6 +63,7 @@ export function SelectTrigger<T>(props: SelectTriggerProps<T>) {
   const selected = ctx.selected as T[];
   // Caller-supplied `isActive` (e.g. a focused table cell) wins; otherwise reflect the dropdown's own open state.
   const active = isActive ?? ctx.isOpen;
+  const empty = isEmpty ?? selected.length === 0;
   // The root's `disabled` reaches a mounted trigger through base-ui, but not the resting button.
   const isDisabled = disabled || engine?.disabled || false;
 
@@ -162,7 +164,7 @@ export function SelectTrigger<T>(props: SelectTriggerProps<T>) {
       prependIcon={prepend}
       appendIcon={append}
       label={resolvedLabel}
-      isEmpty={selected.length === 0}
+      isEmpty={empty}
       tabIndex={tabIndex}
       id={id}
       aria-label={accessibleName}
@@ -186,7 +188,7 @@ export function SelectTrigger<T>(props: SelectTriggerProps<T>) {
         prependIcon={prepend}
         appendIcon={append}
         label={resolvedLabel}
-        isEmpty={selected.length === 0}
+        isEmpty={empty}
         disabled={isDisabled}
         data-disabled={isDisabled ? "" : undefined}
         tabIndex={tabIndex}

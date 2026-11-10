@@ -159,15 +159,16 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
         />
       )}
 
-      {moduleLeadDetails ? (
-        <span className="cursor-default">
+      {/* sized like the sm icon buttons beside it so the lead, star and menu sit on one even rhythm */}
+      <span className="grid size-6 shrink-0 cursor-default place-items-center">
+        {moduleLeadDetails ? (
           <ButtonAvatars showTooltip={false} userIds={moduleLeadDetails?.id} />
-        </span>
-      ) : (
-        <Tooltip label="No lead">
-          <LeadOutline className="size-4 shrink-0 text-tertiary" />
-        </Tooltip>
-      )}
+        ) : (
+          <Tooltip label="No lead">
+            <LeadOutline className="size-4 shrink-0 text-tertiary" />
+          </Tooltip>
+        )}
+      </span>
 
       {isEditingAllowed && !moduleDetails.archived_at && (
         <FavoriteStar
@@ -179,7 +180,7 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
         />
       )}
       {workspaceSlug && projectId && (
-        <div className="hidden md:block">
+        <div className="hidden md:flex">
           <ModuleQuickActions
             parentRef={parentRef}
             moduleId={moduleId}

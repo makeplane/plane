@@ -48,6 +48,12 @@
     },
     "project_board": {
       "collapse_group": "Свиване на групата"
+    },
+    "pagination": {
+      "root": "Страниране",
+      "previous_page": "Към предишната страница",
+      "next_page": "Към следващата страница",
+      "go_to_page": "Към страница {page}"
     }
   }
 }
