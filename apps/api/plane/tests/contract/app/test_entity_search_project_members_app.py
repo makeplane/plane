@@ -22,12 +22,12 @@ def _user(workspace, role=15):
     return user
 
 
-def _search(user, workspace, project):
+def _search(user, workspace, project, query_type="user_mention"):
     client = APIClient()
     client.force_authenticate(user=user)
     return client.get(
         URL.format(slug=workspace.slug),
-        {"query_type": "user_mention", "project_id": str(project.id)},
+        {"query_type": query_type, "project_id": str(project.id)},
     )
 
 
@@ -55,10 +55,25 @@ class TestEntitySearchProjectMembers:
         assert response.status_code == status.HTTP_200_OK
         assert response.data == {"user_mention": []}
 
+    def test_non_member_gets_empty_for_every_query_type(self, workspace, secret_project):
+        outsider = _user(workspace)
+        response = _search(outsider, workspace, secret_project, "user_mention,project,issue")
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data == {"user_mention": [], "project": [], "issue": []}
+
+    def test_member_of_other_project_gets_nothing(self, workspace, secret_project):
+        user = _user(workspace)
+        other = Project.objects.create(name="Other", identifier="OTH", workspace=workspace, created_by=user, network=2)
+        ProjectMember.objects.create(project=other, member=user, workspace=workspace, role=15, is_active=True)
+        response = _search(user, workspace, secret_project, "user_mention,project")
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data == {"user_mention": [], "project": []}
+
     def test_inactive_member_gets_nothing(self, workspace, secret_project):
         former = _user(workspace)
         ProjectMember.objects.create(
             project=secret_project, member=former, workspace=workspace, role=15, is_active=False
         )
-        response = _search(former, workspace, secret_project)
-        assert response.data == {"user_mention": []}
+        response = _search(former, workspace, secret_project, "user_mention,project")
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data == {"user_mention": [], "project": []}
