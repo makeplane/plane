@@ -30,6 +30,8 @@ type Props = {
 
 const initialValues: Partial<IProject> = { archive_in: 1 };
 
+const CUSTOMIZE_TIME_RANGE = "customize-time-range";
+
 type TAutomationMonthOption = {
   id: string;
   label: string;
@@ -41,7 +43,6 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
   const { workspaceSlug } = useParams();
   // states
   const [monthModal, setmonthModal] = useState(false);
-  const [isSelectOpen, setIsSelectOpen] = useState(false);
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();
@@ -68,10 +69,14 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
     const months = PROJECT_AUTOMATION_MONTHS.map((month) => month.value);
     if (archiveIn !== undefined && !months.includes(archiveIn)) months.push(archiveIn);
     months.sort((a, b) => a - b);
-    return months.map((month) => ({
-      id: String(month),
-      label: t("workspace_projects.common.months_count", { months: month }),
-    }));
+    return [
+      ...months.map((month) => ({
+        id: String(month),
+        label: t("workspace_projects.common.months_count", { months: month }),
+      })),
+      // The last row opens the custom range modal instead of setting a value.
+      { id: CUSTOMIZE_TIME_RANGE, label: t("common.customize_time_range") },
+    ];
   }, [t, archiveIn]);
   const selectedMonthOption = monthOptions.find((option) => option.id === String(archiveIn)) ?? null;
 
@@ -113,26 +118,18 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
               <Select<TAutomationMonthOption>
                 getValues={() => monthOptions}
                 value={selectedMonthOption}
-                onChange={(id) => void handleChange({ archive_in: Number(id) })}
+                onChange={(id) => {
+                  if (id === CUSTOMIZE_TIME_RANGE) {
+                    setmonthModal(true);
+                    return;
+                  }
+                  void handleChange({ archive_in: Number(id) });
+                }}
                 getOptionValue={(option) => option.id}
                 getOptionLabel={(option) => option.label}
                 showSearch={false}
                 pinSelected={false}
                 disabled={!isAdmin}
-                open={isSelectOpen}
-                onOpenChange={setIsSelectOpen}
-                footer={
-                  <button
-                    type="button"
-                    className="flex w-full items-center rounded-sm px-1 py-1.5 text-body-xs-regular text-secondary select-none hover:bg-layer-1"
-                    onClick={() => {
-                      setIsSelectOpen(false);
-                      setmonthModal(true);
-                    }}
-                  >
-                    {t("common.customize_time_range")}
-                  </button>
-                }
               >
                 <Select.Trigger variant="select-md" disabled={!isAdmin}>
                   <Select.Value />

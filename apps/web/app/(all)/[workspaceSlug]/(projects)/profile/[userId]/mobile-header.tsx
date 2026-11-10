@@ -119,7 +119,7 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
           title={t("common.display")}
           placement="bottom-end"
           menuButton={
-            <div className="flex-center flex text-body-xs-regular text-secondary">
+            <div className="flex items-center text-body-xs-regular text-secondary">
               {t("common.display")}
               <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" />
             </div>

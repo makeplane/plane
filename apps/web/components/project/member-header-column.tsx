@@ -59,7 +59,7 @@ export const MemberHeaderColumn = observer(function MemberHeaderColumn(props: Pr
         }
       >
         <span>{t(propertyDetails.i18n_title)}</span>
-        <div className="ml-3 flex">
+        <div className="ml-3 flex items-center">
           {(activeSortingProperty === propertyDetails.ascendingOrderKey ||
             activeSortingProperty === propertyDetails.descendingOrderKey) && (
             <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full">

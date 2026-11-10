@@ -5,7 +5,6 @@
  */
 
 import { useState } from "react";
-import { range } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
@@ -15,6 +14,7 @@ import { Button } from "@makeplane/propel/components/button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { setToast } from "@plane/blocks/toast";
 import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import type { IWebhook } from "@plane/types";
 // ui
 import { csvDownload, copyTextToClipboard } from "@plane/utils";
@@ -108,22 +108,20 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
           <div className="text-caption-sm-regular text-placeholder">
             {t("workspace_settings.settings.webhooks.secret_key.message")}
           </div>
-          <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            <div className="flex h-8 max-w-lg flex-grow items-center justify-between self-stretch rounded-sm border border-subtle px-2">
-              <div className="overflow-hidden font-medium select-none">
-                {shouldShowKey ? (
-                  <p className="text-caption-sm-medium">{webhookSecretKey}</p>
-                ) : (
-                  <div className="mr-2 flex items-center gap-1.5 overflow-hidden">
-                    {range(30).map((index) => (
-                      <div key={index} className="h-1 w-1 flex-shrink-0 rounded-full bg-(--text-color-disabled)" />
-                    ))}
-                  </div>
-                )}
-              </div>
-              {webhookSecretKey && (
-                <div className="flex items-center gap-2">
-                  {SECRET_KEY_OPTIONS.map((option) => (
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <div className="min-w-0 flex-1 md:max-w-lg">
+              <InputGroup size="md">
+                <Input
+                  size="md"
+                  readOnly
+                  type={shouldShowKey ? "text" : "password"}
+                  value={webhookSecretKey ?? ""}
+                  // without a key in hand (an existing webhook) only the mask is shown
+                  placeholder={webhookSecretKey ? undefined : "•".repeat(30)}
+                  aria-label={t("workspace_settings.settings.webhooks.secret_key.title")}
+                />
+                {webhookSecretKey &&
+                  SECRET_KEY_OPTIONS.map((option) => (
                     <IconButton
                       key={option.key}
                       type="button"
@@ -136,8 +134,7 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
                       icon={<Icon icon={option.Icon} />}
                     />
                   ))}
-                </div>
-              )}
+              </InputGroup>
             </div>
             {data && (
               <div>

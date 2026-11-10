@@ -115,47 +115,54 @@ export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelLi
         )}
       </div>
       <div className="w-full">
-        {showLabelForm && (
-          <div className="my-2 w-full rounded-sm border border-subtle px-3.5 py-2">
-            <CreateUpdateLabelInline
-              labelForm={showLabelForm}
-              setLabelForm={setLabelForm}
-              isUpdating={isUpdating}
-              labelOperationsCallbacks={labelOperationsCallbacks}
-              ref={scrollToRef}
-              onClose={() => {
-                setLabelForm(false);
-                setIsUpdating(false);
-              }}
-            />
-          </div>
-        )}
-        {projectLabels ? (
-          projectLabels.length === 0 && !showLabelForm ? (
-            <EmptyStateCompact
-              assetKey="label"
-              assetClassName="size-20"
-              title={t("settings_empty_state.labels.title")}
-              description={t("settings_empty_state.labels.description")}
-              actions={[
-                {
-                  label: t("settings_empty_state.labels.cta_primary"),
-                  onClick: () => {
-                    newLabel();
-                  },
+        {!projectLabels && !showLabelForm ? (
+          <Loader className="space-y-5">
+            <Loader.Item height="42px" />
+            <Loader.Item height="42px" />
+            <Loader.Item height="42px" />
+            <Loader.Item height="42px" />
+          </Loader>
+        ) : projectLabels?.length === 0 && !showLabelForm ? (
+          <EmptyStateCompact
+            assetKey="label"
+            assetClassName="size-20"
+            title={t("settings_empty_state.labels.title")}
+            description={t("settings_empty_state.labels.description")}
+            actions={[
+              {
+                label: t("settings_empty_state.labels.cta_primary"),
+                onClick: () => {
+                  newLabel();
                 },
-              ]}
-              align="start"
-              rootClassName="py-20"
-            />
-          ) : trimmedQuery ? (
-            searchedLabels.length === 0 ? (
-              <p className="py-10 text-center text-body-sm-regular text-tertiary">
-                {t("common.search.no_matches_found")}
-              </p>
-            ) : (
-              <>
-                {searchedLabels.map((label, index) => (
+              },
+            ]}
+            align="start"
+            rootClassName="py-20"
+          />
+        ) : (
+          <section className="flex flex-col gap-3 rounded-md border border-subtle-1 bg-layer-1 p-3">
+            {showLabelForm && (
+              <div className="w-full rounded-md border border-subtle-1 bg-layer-2 px-3 py-2.5">
+                <CreateUpdateLabelInline
+                  labelForm={showLabelForm}
+                  setLabelForm={setLabelForm}
+                  isUpdating={isUpdating}
+                  labelOperationsCallbacks={labelOperationsCallbacks}
+                  ref={scrollToRef}
+                  onClose={() => {
+                    setLabelForm(false);
+                    setIsUpdating(false);
+                  }}
+                />
+              </div>
+            )}
+            {trimmedQuery ? (
+              searchedLabels.length === 0 ? (
+                <p className="py-10 text-center text-body-sm-regular text-tertiary">
+                  {t("common.search.no_matches_found")}
+                </p>
+              ) : (
+                searchedLabels.map((label, index) => (
                   <ProjectSettingLabelItem
                     label={label}
                     key={label.id}
@@ -168,51 +175,42 @@ export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelLi
                     isEditable={isEditable}
                     labelOperationsCallbacks={labelOperationsCallbacks}
                   />
-                ))}
-              </>
-            )
-          ) : (
-            projectLabelsTree?.map((label, index) => {
-              if (label.children && label.children.length) {
+                ))
+              )
+            ) : (
+              projectLabelsTree?.map((label, index) => {
+                if (label.children && label.children.length) {
+                  return (
+                    <ProjectSettingLabelGroup
+                      key={label.id}
+                      label={label}
+                      labelChildren={label.children || []}
+                      handleLabelDelete={(label: IIssueLabel) => setSelectDeleteLabel(label)}
+                      isUpdating={isUpdating}
+                      setIsUpdating={setIsUpdating}
+                      isLastChild={index === projectLabelsTree.length - 1}
+                      onDrop={onDrop}
+                      isEditable={isEditable}
+                      labelOperationsCallbacks={labelOperationsCallbacks}
+                    />
+                  );
+                }
                 return (
-                  <ProjectSettingLabelGroup
-                    key={label.id}
+                  <ProjectSettingLabelItem
                     label={label}
-                    labelChildren={label.children || []}
-                    handleLabelDelete={(label: IIssueLabel) => setSelectDeleteLabel(label)}
-                    isUpdating={isUpdating}
+                    key={label.id}
                     setIsUpdating={setIsUpdating}
+                    handleLabelDelete={(label) => setSelectDeleteLabel(label)}
+                    isChild={false}
                     isLastChild={index === projectLabelsTree.length - 1}
                     onDrop={onDrop}
                     isEditable={isEditable}
                     labelOperationsCallbacks={labelOperationsCallbacks}
                   />
                 );
-              }
-              return (
-                <ProjectSettingLabelItem
-                  label={label}
-                  key={label.id}
-                  setIsUpdating={setIsUpdating}
-                  handleLabelDelete={(label) => setSelectDeleteLabel(label)}
-                  isChild={false}
-                  isLastChild={index === projectLabelsTree.length - 1}
-                  onDrop={onDrop}
-                  isEditable={isEditable}
-                  labelOperationsCallbacks={labelOperationsCallbacks}
-                />
-              );
-            })
-          )
-        ) : (
-          !showLabelForm && (
-            <Loader className="space-y-5">
-              <Loader.Item height="42px" />
-              <Loader.Item height="42px" />
-              <Loader.Item height="42px" />
-              <Loader.Item height="42px" />
-            </Loader>
-          )
+              })
+            )}
+          </section>
         )}
       </div>
     </>

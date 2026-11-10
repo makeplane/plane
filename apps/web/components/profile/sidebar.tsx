@@ -96,7 +96,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
       )}
       style={profileSidebarCollapsed ? { marginLeft: "100vw" } : {}}
     >
-      <ScrollArea orientation="vertical" variant="inset" size="md">
+      <ScrollArea orientation="vertical" size="md">
         {userProjectsData ? (
           <>
             <div className="relative h-[110px]">
@@ -194,34 +194,21 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                         <div className="mt-5 px-2">
                           {totalIssues > 0 && (
                             <div className="flex items-center gap-0.5">
-                              <div
-                                className="h-1 rounded-sm"
-                                style={{
-                                  backgroundColor: "#203b80",
-                                  width: `${(project.created_issues / totalIssues) * 100}%`,
-                                }}
-                              />
-                              <div
-                                className="h-1 rounded-sm"
-                                style={{
-                                  backgroundColor: "#3f76ff",
-                                  width: `${(project.assigned_issues / totalIssues) * 100}%`,
-                                }}
-                              />
-                              <div
-                                className="h-1 rounded-sm"
-                                style={{
-                                  backgroundColor: "#f59e0b",
-                                  width: `${(project.pending_issues / totalIssues) * 100}%`,
-                                }}
-                              />
-                              <div
-                                className="h-1 rounded-sm"
-                                style={{
-                                  backgroundColor: "#16a34a",
-                                  width: `${(project.completed_issues / totalIssues) * 100}%`,
-                                }}
-                              />
+                              {/* Only non-empty segments render, so an empty one never takes up a gap. */}
+                              {[
+                                { key: "created", count: project.created_issues, color: "#203b80" },
+                                { key: "assigned", count: project.assigned_issues, color: "#3f76ff" },
+                                { key: "pending", count: project.pending_issues, color: "#f59e0b" },
+                                { key: "completed", count: project.completed_issues, color: "#16a34a" },
+                              ]
+                                .filter((segment) => segment.count > 0)
+                                .map((segment) => (
+                                  <div
+                                    key={segment.key}
+                                    className="h-1 min-w-0 rounded-sm"
+                                    style={{ backgroundColor: segment.color, flexGrow: segment.count, flexBasis: 0 }}
+                                  />
+                                ))}
                             </div>
                           )}
                           <div className="mt-7 space-y-5 text-body-xs-regular text-secondary">

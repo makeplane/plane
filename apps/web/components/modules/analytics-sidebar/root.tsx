@@ -17,7 +17,6 @@ import {
   StateOutline,
   WorkItemsOutline,
 } from "@makeplane/propel/icons";
-import { Collapsible } from "@makeplane/propel/components/collapsible";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, EEstimateSystem } from "@plane/constants";
@@ -43,6 +42,7 @@ import { useModule } from "@/hooks/store/use-module";
 import { useUserPermissions, useUserProfile } from "@/hooks/store/user";
 // local imports
 import { ModuleSidebarDescription } from "./description";
+import { ModuleSidebarGroup } from "./sidebar-group";
 
 const defaultValues: Partial<IModule> = {
   lead_id: "",
@@ -82,10 +82,10 @@ const ModuleLinksCollapsible = observer(function ModuleLinksCollapsible(props: T
   const canAddLink = isEditingAllowed && !isArchived;
 
   return (
-    <Collapsible
+    <ModuleSidebarGroup
       open={isOpen}
       onOpenChange={setIsOpen}
-      trigger={<span className="text-caption-md-semibold text-primary">{t("common.links")}</span>}
+      label={t("common.links")}
       trailing={
         <div className="flex items-center gap-2">
           {linkCount > 0 && <span className="text-caption-md-regular text-placeholder">{linkCount}</span>}
@@ -101,7 +101,7 @@ const ModuleLinksCollapsible = observer(function ModuleLinksCollapsible(props: T
         </div>
       }
     >
-      <div className="mt-4 flex w-full flex-col gap-2">
+      <div className="flex w-full flex-col gap-2">
         {isEditingAllowed && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
           moduleId && (
             <div className="-mx-2 flex flex-col gap-0.5">
@@ -117,7 +117,7 @@ const ModuleLinksCollapsible = observer(function ModuleLinksCollapsible(props: T
           <p className="text-body-xs-regular text-tertiary">{t("common.no_links_added_yet")}</p>
         )}
       </div>
-    </Collapsible>
+    </ModuleSidebarGroup>
   );
 });
 
@@ -302,11 +302,8 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           </>
         )}
 
-        <Collapsible
-          defaultOpen
-          trigger={<span className="text-caption-md-semibold text-primary">{t("common.properties")}</span>}
-        >
-          <div className="mt-4 flex flex-col gap-2">
+        <ModuleSidebarGroup defaultOpen label={t("common.properties")}>
+          <div className="flex flex-col gap-2">
             <SidebarPropertyListItem icon={StateOutline} label={t("state")}>
               <Controller
                 control={control}
@@ -406,7 +403,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
               </SidebarPropertyListItem>
             )}
           </div>
-        </Collapsible>
+        </ModuleSidebarGroup>
 
         <div className="w-full border-t border-subtle" />
         {workspaceSlug && projectId && moduleDetails?.id && (

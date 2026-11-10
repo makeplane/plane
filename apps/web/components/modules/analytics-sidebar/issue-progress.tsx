@@ -7,7 +7,6 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
-import { Collapsible } from "@makeplane/propel/components/collapsible";
 import { WarningCircleOutline } from "@makeplane/propel/icons";
 import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -19,7 +18,6 @@ import { Spinner } from "@plane/blocks/spinner";
 // constants
 // helpers
 import { getDate, toFilterArray } from "@plane/utils";
-import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { createFilterUpdateHandler } from "@/components/core/sidebar/progress-stats/shared";
 import { ModuleProgressStats } from "@/components/modules";
 // hooks
@@ -28,6 +26,7 @@ import { useModule } from "@/hooks/store/use-module";
 import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
 // local imports
 import { ModuleProgressSummary } from "./progress-summary";
+import { ModuleSidebarGroup } from "./sidebar-group";
 
 type TModuleAnalyticsProgress = {
   workspaceSlug: string;
@@ -72,7 +71,6 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
   const totalEstimatePoints = moduleDetails?.total_estimate_points || 0;
   const chartDistributionData =
     plotType === "points" ? moduleDetails?.estimate_distribution : moduleDetails?.distribution || undefined;
-  const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
   const groupedIssues: Record<TStateGroups, number> = useMemo(
     () => ({
       backlog: plotType === "points" ? moduleDetails?.backlog_estimate_points || 0 : moduleDetails?.backlog_issues || 0,
@@ -135,7 +133,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
   );
 
   const progressBody = (
-    <div className="mt-4 flex flex-col gap-5">
+    <div className="flex flex-col gap-5">
       <ModuleProgressSummary
         plotType={plotType}
         stateGroupCounts={groupedIssues}
@@ -149,31 +147,20 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
       />
 
       {isModuleDateValid ? (
-        <>
-          {/* progress burndown chart */}
-          {moduleStartDate && moduleEndDate && completionChartDistributionData && (
-            <ProgressChart
-              distribution={completionChartDistributionData}
-              totalIssues={progressTotal}
-              plotTitle={plotType === "points" ? "points" : "work items"}
-            />
-          )}
-
-          {/* assignee and label breakdown */}
-          {chartDistributionData && (
-            <ModuleProgressStats
-              distribution={chartDistributionData}
-              handleFiltersUpdate={handleFiltersUpdate}
-              isEditable={isFilterable}
-              moduleId={moduleId}
-              plotType={plotType}
-              selectedFilters={{
-                assignees: selectedAssignees,
-                labels: selectedLabels,
-              }}
-            />
-          )}
-        </>
+        // assignee and label breakdown
+        chartDistributionData && (
+          <ModuleProgressStats
+            distribution={chartDistributionData}
+            handleFiltersUpdate={handleFiltersUpdate}
+            isEditable={isFilterable}
+            moduleId={moduleId}
+            plotType={plotType}
+            selectedFilters={{
+              assignees: selectedAssignees,
+              labels: selectedLabels,
+            }}
+          />
+        )
       ) : (
         <div className="flex items-center gap-1">
           <WarningCircleOutline height={14} width={14} className="shrink-0 text-secondary" />
@@ -188,10 +175,10 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
   );
 
   return (
-    <Collapsible
+    <ModuleSidebarGroup
       open={isOpen}
       onOpenChange={setIsOpen}
-      trigger={<span className="text-caption-md-semibold text-primary">{t("common.progress")}</span>}
+      label={t("common.progress")}
       trailing={
         <div className="flex items-center gap-2">
           {isCurrentEstimateTypeIsPoints && (
@@ -217,6 +204,6 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
       }
     >
       {progressBody}
-    </Collapsible>
+    </ModuleSidebarGroup>
   );
 });

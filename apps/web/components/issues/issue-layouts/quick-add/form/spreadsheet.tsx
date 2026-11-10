@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { Input } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import type { TQuickAddIssueForm } from "../root";
 
@@ -22,20 +22,18 @@ export const SpreadsheetQuickAddIssueForm = observer(function SpreadsheetQuickAd
         <h4 className="w-20 text-caption-sm-regular leading-5 text-placeholder">
           {projectDetail?.identifier ?? "..."}
         </h4>
-        <InputGroup size="lg">
-          <Input
-            size="lg"
-            aria-label={isEpic ? t("epic.title.label") : t("issue.title.label")}
-            aria-invalid={hasError}
-            data-invalid={hasError || undefined}
-            type="text"
-            autoComplete="off"
-            placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
-            {...register("name", {
-              required: isEpic ? t("epic.title.required") : t("issue.title.required"),
-            })}
-          />
-        </InputGroup>
+        <Input
+          size="lg"
+          aria-label={isEpic ? t("epic.title.label") : t("issue.title.label")}
+          aria-invalid={hasError}
+          data-invalid={hasError || undefined}
+          type="text"
+          autoComplete="off"
+          placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
+          {...register("name", {
+            required: isEpic ? t("epic.title.required") : t("issue.title.required"),
+          })}
+        />
       </form>
       <p className="px-4 pt-2 text-caption-sm-regular text-secondary italic">
         {isEpic ? t("epic.add.press_enter") : t("issue.add.press_enter")}

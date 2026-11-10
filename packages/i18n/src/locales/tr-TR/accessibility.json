@@ -48,6 +48,12 @@
     },
     "project_board": {
       "collapse_group": "Grubu daralt"
+    },
+    "pagination": {
+      "root": "Sayfalama",
+      "previous_page": "Önceki sayfaya git",
+      "next_page": "Sonraki sayfaya git",
+      "go_to_page": "{page}. sayfaya git"
     }
   }
 }

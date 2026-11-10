@@ -5,12 +5,13 @@
  */
 
 import { observer } from "mobx-react";
+import { useNavigate } from "react-router";
 // plane imports
 import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
-import { MarkAllReadOutline, RefreshOutline } from "@makeplane/propel/icons";
+import { ArrowLeftOutline, MarkAllReadOutline, RefreshOutline } from "@makeplane/propel/icons";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -26,6 +27,7 @@ export const NotificationSidebarHeader = observer(function NotificationSidebarHe
   // hooks
   const { t } = useTranslation();
   const { isMobile } = usePlatformOS();
+  const navigate = useNavigate();
   const { loader, getNotifications, markAllNotificationsAsRead } = useWorkspaceNotifications();
 
   const refreshNotifications = async () => {
@@ -47,10 +49,29 @@ export const NotificationSidebarHeader = observer(function NotificationSidebarHe
     }
   };
 
+  // Return to the page the inbox was opened from. React Router stores its history index in
+  // `history.state.idx`; at 0 there is no earlier in-app entry (direct visit, reload, or a redirect that
+  // replaced the first entry), so fall back to the workspace home instead of leaving Plane.
+  const handleBack = () => {
+    const historyIndex = (window.history.state as { idx?: number } | null)?.idx ?? 0;
+    if (historyIndex > 0) void navigate(-1);
+    else void navigate(`/${workspaceSlug}/`);
+  };
+
   if (!workspaceSlug) return <></>;
   return (
     <div className="flex items-center justify-between px-5 py-3">
-      <h2 className="text-h5-semibold text-primary">{t("notification.label")}</h2>
+      <div className="flex items-center gap-1">
+        <IconButton
+          size="sm"
+          variant="ghost"
+          icon={<Icon icon={ArrowLeftOutline} />}
+          aria-label={t("common.go_back")}
+          showTooltip={!isMobile}
+          onClick={handleBack}
+        />
+        <h2 className="text-h5-semibold text-primary">{t("notification.label")}</h2>
+      </div>
       <div className="flex items-center gap-1">
         {/* mark all notifications as read*/}
         <IconButton

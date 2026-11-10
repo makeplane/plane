@@ -121,7 +121,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
       {/* Rendered outside the collapsible panel (as in legacy) so the create form, and whatever the user typed
           into it, survives collapsing the group — the panel unmounts its children when closed. */}
       {isEditable && createState && (
-        <div className="my-2">
+        <div className="px-3 pb-3">
           <StateCreate
             groupKey={groupKey}
             handleClose={() => setCreateState(false)}

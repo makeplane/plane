@@ -21,7 +21,7 @@ import {
 import type { EUserProjectRoles } from "@plane/types";
 // plane ui
 // components
-import { ListItem, ListItemLabel, ListItemCounter } from "@makeplane/propel/components/list";
+import { ListItem, ListItemLabel } from "@makeplane/propel/components/list";
 import { ListItemLink } from "@makeplane/propel/elements/list";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
@@ -189,8 +189,6 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         const hasAccess = allowPermissions(item.access, EUserPermissionsLevel.PROJECT, workspaceSlug, project.id);
         if (!hasAccess) return null;
 
-        const shouldShowCount = item.key === "intake" && (project.intake_count ?? 0) > 0;
-
         return (
           <ListItem key={item.key} density="compact">
             <ListItemLink
@@ -201,7 +199,6 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
             >
               <item.icon className={`size-4 flex-shrink-0 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`} />
               <ListItemLabel>{t(item.i18n_key)}</ListItemLabel>
-              {shouldShowCount && <ListItemCounter>{project.intake_count}</ListItemCounter>}
             </ListItemLink>
           </ListItem>
         );

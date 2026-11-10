@@ -48,6 +48,8 @@ type ProjectSelectWebCommonProps = {
   resolveProject?: (projectId: string) => ProjectOption | null | undefined;
   /** Tab order of the trigger, for forms that sequence focus explicitly (`ETabIndices`). */
   tabIndex?: number;
+  /** Shows the placeholder in the value's colour, where an empty selection is itself a choice. */
+  emptyIsValue?: boolean;
 };
 
 export type ProjectSelectWebProps = ProjectSelectWebCommonProps &
@@ -86,6 +88,7 @@ export const ProjectSelect = observer(function ProjectSelect(props: ProjectSelec
     excludeProjectId,
     resolveProject,
     tabIndex,
+    emptyIsValue,
   } = props;
   const { t } = useTranslation();
   const { joinedProjectIds, workspaceProjectIds, getProjectById } = useProject();
@@ -171,6 +174,7 @@ export const ProjectSelect = observer(function ProjectSelect(props: ProjectSelec
         className={className}
         tooltip={resolvedTooltip}
         tabIndex={tabIndex}
+        emptyIsValue={emptyIsValue}
       />
     );
   }
@@ -189,6 +193,7 @@ export const ProjectSelect = observer(function ProjectSelect(props: ProjectSelec
       tooltip={resolvedTooltip}
       selectedDescription={selectedDescription}
       tabIndex={tabIndex}
+      emptyIsValue={emptyIsValue}
     />
   );
 });
