@@ -251,4 +251,34 @@ describe("BaseIssuesStore - updateIssueList (Issue #9049)", () => {
 
     expect(store.groupedIssueIds?.[DEST_STATE]).not.toContain("existing-sub-task");
   });
+
+  it("should move an issue with parent_id during drag and drop even if parent epic is not pre-loaded in store", () => {
+    // Initial board state: issue is present in the source column
+    store.groupedIssueIds = {
+      [SOURCE_STATE]: [ISSUE_ID],
+      [DEST_STATE]: [],
+    };
+
+    const issueBeforeUpdate: TIssue = {
+      id: ISSUE_ID,
+      name: "Epic child work item without preloaded parent",
+      parent_id: "unloaded-parent-epic-id",
+      state_id: SOURCE_STATE,
+      project_id: "project-001",
+    } as TIssue;
+
+    const issueAfterUpdate: TIssue = {
+      ...issueBeforeUpdate,
+      state_id: DEST_STATE,
+    };
+
+    // Notice: mockIssuesMap does NOT have 'unloaded-parent-epic-id' loaded!
+    mockIssuesMap[ISSUE_ID] = issueAfterUpdate;
+
+    store.updateIssueList(issueAfterUpdate, issueBeforeUpdate);
+
+    // Issue MUST still be removed from source and added to destination column
+    expect(store.groupedIssueIds?.[SOURCE_STATE]).not.toContain(ISSUE_ID);
+    expect(store.groupedIssueIds?.[DEST_STATE]).toContain(ISSUE_ID);
+  });
 });

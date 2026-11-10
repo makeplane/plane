@@ -1224,21 +1224,22 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       for (const issueUpdate of issueUpdates) {
         //if update is add, add it at a particular path
         if (issueUpdate.action === EIssueGroupedAction.ADD) {
-          // 1. Check if parent is an Epic (work items belonging to an Epic are primary items, not sub-issues).
-          const parentIssue = issue?.parent_id ? this.rootIssueStore?.issues?.getIssueById(issue.parent_id) : undefined;
-          const isParentEpic = Boolean(parentIssue?.is_epic);
-
-          // 2. Check if the view is explicitly scoped to this parent/epic.
-          const isScopedToParent = Boolean(
-            issue?.parent_id &&
-            (this.rootIssueStore?.rootStore?.router?.epicId === issue.parent_id ||
-              (this.issueFilterStore as any)?.filters?.[
-                this.rootIssueStore?.projectId ?? ""
-              ]?.filters?.parent?.includes(issue.parent_id))
+          // 1. Check if the card is already present on this board being moved between groups.
+          const isCardOnBoard = issueUpdates.some(
+            (updateDetails) =>
+              updateDetails.action === EIssueGroupedAction.DELETE &&
+              Boolean(get(this.groupedIssueIds, updateDetails.path)?.includes(issueId))
           );
 
-          // An issue is a genuine sub-issue only if it has a non-epic, non-scoped parent.
-          const isSubIssue = Boolean(issue?.parent_id && !isParentEpic && !isScopedToParent);
+          // 2. Check if parent is an Epic or if the view is scoped to the parent Epic.
+          const parentIssue = issue?.parent_id ? this.rootIssueStore?.issues?.getIssueById(issue.parent_id) : undefined;
+          const isParentEpic = Boolean(parentIssue?.is_epic);
+          const isScopedToParent = Boolean(
+            issue?.parent_id && this.rootIssueStore?.rootStore?.router?.epicId === issue.parent_id
+          );
+
+          // An issue is a genuine sub-issue only if it is not already on the board, not an epic work item, and not scoped to the parent.
+          const isSubIssue = Boolean(issue?.parent_id && !isParentEpic && !isScopedToParent && !isCardOnBoard);
 
           // Do not add genuine sub-issues to the top-level list if 'Show sub-issues' is disabled.
           if (isSubIssue && !isShowWorkItemsEnabled) continue;
