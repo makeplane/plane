@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Imported pytest fixtures are requested by parameter name, which F811 misreads as redefinition.
+# ruff: noqa: F811
+
 """A restricted guest (``guest_view_all_features=False``) must not reach issue
 links or subscribers of issues they did not create. Own issues, members and
 unrestricted guests are unaffected.
@@ -33,7 +36,9 @@ def _url(tpl, workspace, project, issue):
 
 @pytest.fixture
 def foreign_link(workspace, project, foreign_issue):
-    return IssueLink.objects.create(issue=foreign_issue, project=project, workspace=workspace, url="https://example.com")
+    return IssueLink.objects.create(
+        issue=foreign_issue, project=project, workspace=workspace, url="https://example.com"
+    )
 
 
 @pytest.mark.contract
