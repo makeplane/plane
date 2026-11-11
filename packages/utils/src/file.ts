@@ -25,6 +25,8 @@ export const getFileURL = (path: string): string | undefined => {
  * @returns {string} assetId
  */
 export const getAssetIdFromUrl = (src: string): string => {
+  // drop query string / hash so they don't leak into the asset key
+  src = src.split(/[?#]/, 1)[0];
   // remove the last char if it is a slash
   if (src.charAt(src.length - 1) === "/") src = src.slice(0, -1);
   const sourcePaths = src.split("/");
