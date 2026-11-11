@@ -53,6 +53,8 @@ export class ProjectViewStore implements IProjectViewStore {
   // observables
   loader: boolean = false;
   viewMap: Record<string, IProjectView> = {};
+  // Serialize mutations per view to prevent stale optimistic rollbacks.
+  private viewUpdateQueues: Map<string, Promise<unknown>> = new Map();
   //loaders
   fetchedMap: Record<string, boolean> = {};
   filters: TViewFilters = { searchQuery: "", sortBy: "desc", sortKey: "updated_at" };
@@ -227,15 +229,43 @@ export class ProjectViewStore implements IProjectViewStore {
     viewId: string,
     data: Partial<IProjectView>
   ): Promise<IProjectView> {
-    const currentView = this.getViewById(viewId);
+    const previousUpdate = this.viewUpdateQueues.get(viewId) ?? Promise.resolve();
+    const updatePromise = previousUpdate.catch(() => undefined).then(async () => {
+      const currentView = this.getViewById(viewId);
+      const previousView = currentView ? { ...currentView } : undefined;
 
-    runInAction(() => {
-      set(this.viewMap, [viewId], { ...currentView, ...data });
+      runInAction(() => {
+        set(this.viewMap, [viewId], { ...currentView, ...data });
+      });
+
+      try {
+        const response = await this.viewService.patchView(workspaceSlug, projectId, viewId, data);
+        const favoriteState = currentView?.is_favorite ?? response.is_favorite;
+        const updatedView = {
+          ...response,
+          ...(favoriteState === undefined ? {} : { is_favorite: favoriteState }),
+        };
+        runInAction(() => {
+          set(this.viewMap, [viewId], updatedView);
+        });
+        return updatedView;
+      } catch (error) {
+        runInAction(() => {
+          if (previousView) set(this.viewMap, [viewId], previousView);
+          else delete this.viewMap[viewId];
+        });
+        throw error;
+      }
     });
 
-    const response = await this.viewService.patchView(workspaceSlug, projectId, viewId, data);
-
-    return response;
+    this.viewUpdateQueues.set(viewId, updatePromise);
+    try {
+      return await updatePromise;
+    } finally {
+      if (this.viewUpdateQueues.get(viewId) === updatePromise) {
+        this.viewUpdateQueues.delete(viewId);
+      }
+    }
   }
 
   /**

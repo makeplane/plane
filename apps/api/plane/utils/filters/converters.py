@@ -4,7 +4,9 @@
 
 import re
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
+
+from django.utils import timezone
 from typing import Any, Dict, List, Union
 
 from dateutil.parser import parse as dateutil_parse
@@ -25,6 +27,8 @@ class LegacyToRichFiltersConverter:
         "project": "project_id",
         "start_date": "start_date",
         "target_date": "target_date",
+        "subscriber": "subscriber_id",
+        "created_at": "created_at",
     }
 
     # Default fields that expect UUID values
@@ -37,6 +41,7 @@ class LegacyToRichFiltersConverter:
         "mention_id",
         "created_by_id",
         "project_id",
+        "subscriber_id",
     }
 
     # Default valid choices for choice fields
@@ -46,7 +51,7 @@ class LegacyToRichFiltersConverter:
     }
 
     # Default date fields
-    DEFAULT_DATE_FIELDS = {"start_date", "target_date"}
+    DEFAULT_DATE_FIELDS = {"start_date", "target_date", "created_at"}
 
     # Pattern for relative date strings like "2_weeks" or "3_months"
     DATE_PATTERN = re.compile(r"(\d+)_(weeks|months)$")
@@ -255,65 +260,112 @@ class LegacyToRichFiltersConverter:
         Raises:
             ValueError: For malformed date patterns (strict mode)
         """
-        # Check for relative dates and skip the entire field if found
+        # created_at is a DateTimeField in IssueFilterSet. Preserve exact,
+        # directional and relative-date restrictions using its date-aware operators.
+        if field_name == "created_at":
+            exact_dates = []
+            after_dates = []
+            before_dates = []
+
+            for value in values:
+                parts = value.split(";")
+                if len(parts) == 1:
+                    if not self._validate_date(value):
+                        if strict:
+                            raise ValueError(f"Invalid date format: {value}")
+                        continue
+                    exact_dates.append(value)
+                    continue
+
+                if len(parts) == 2:
+                    date_part, direction = parts
+                    if direction not in {"after", "before"} or not self._validate_date(date_part):
+                        if strict:
+                            raise ValueError(f"Invalid date filter: {value}")
+                        continue
+                    (after_dates if direction == "after" else before_dates).append(date_part)
+                    continue
+
+                if len(parts) == 3:
+                    match = self.DATE_PATTERN.fullmatch(parts[0])
+                    direction, offset = parts[1], parts[2]
+                    if not match or direction not in {"after", "before"} or offset != "fromnow":
+                        if strict:
+                            raise ValueError(f"Invalid relative date filter: {value}")
+                        continue
+                    duration = int(match.group(1))
+                    delta = (
+                        timedelta(weeks=duration)
+                        if match.group(2) == "weeks"
+                        else timedelta(days=duration * 30)
+                    )
+                    try:
+                        today = timezone.now().date()
+                        cutoff = today + delta if direction == "after" else today - delta
+                    except OverflowError as exc:
+                        raise ValueError(f"Relative date is out of range: {value}") from exc
+                    (after_dates if direction == "after" else before_dates).append(cutoff.isoformat())
+                    continue
+
+                if strict:
+                    raise ValueError(f"Invalid date filter: {value}")
+
+            result = {}
+            if exact_dates:
+                if len(exact_dates) != 1:
+                    if strict:
+                        raise ValueError("Only one exact creation date can be represented.")
+                    return {}
+                self._add_rich_filter(result, field_name, "exact", exact_dates[0])
+            if after_dates:
+                self._add_rich_filter(result, field_name, "gte", max(after_dates))
+            if before_dates:
+                self._add_rich_filter(result, field_name, "lte", min(before_dates))
+            return result
+
+        # Preserve existing start_date and target_date conversion semantics.
         for value in values:
             if ";" in value:
                 parts = value.split(";")
                 if len(parts) > 0 and self.DATE_PATTERN.match(parts[0]):
-                    # Skip relative date patterns entirely
                     return {}
 
-        # Skip complex conditions (more than 2 values)
         if len(values) > 2:
             return {}
 
-        # Process each date value
         exact_dates = []
         after_dates = []
         before_dates = []
-
         for value in values:
             if ";" not in value:
-                # Simple date string
                 if not self._validate_date(value):
                     if strict:
                         raise ValueError(f"Invalid date format: {value}")
                     continue
                 exact_dates.append(value)
             else:
-                # Directional date - only handle basic after/before
                 parts = value.split(";")
                 if len(parts) < 2:
                     if strict:
                         raise ValueError(f"Invalid date format: {value}")
                     continue
-
-                date_part = parts[0]
-                direction = parts[1]
-
+                date_part, direction = parts[0], parts[1]
                 if not self._validate_date(date_part):
                     if strict:
                         raise ValueError(f"Invalid date format: {date_part}")
                     continue
-
                 if direction == "after":
                     after_dates.append(date_part)
                 elif direction == "before":
                     before_dates.append(date_part)
-                # Skip unsupported directions
 
-        # Determine return format
         result = {}
         if len(after_dates) == 1 and len(before_dates) == 1 and len(exact_dates) == 0:
-            # Simple range: one after and one before
             start_date = min(after_dates[0], before_dates[0])
             end_date = max(after_dates[0], before_dates[0])
             self._add_rich_filter(result, field_name, "range", [start_date, end_date])
         elif len(exact_dates) == 1 and len(after_dates) == 0 and len(before_dates) == 0:
-            # Single exact date
             self._add_rich_filter(result, field_name, "exact", exact_dates[0])
-        # Skip all other combinations
-
         return result
 
     def convert(self, legacy_filters: dict, strict: bool = False) -> Dict[str, Any]:

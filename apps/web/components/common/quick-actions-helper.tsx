@@ -48,6 +48,7 @@ interface UseViewMenuItemsProps {
   projectId?: string;
   view: IProjectView | IWorkspaceView;
   handleEdit: () => void;
+  handleUnlock: () => void;
   handleDelete: () => void;
   handleCopyLink: () => void;
   handleOpenInNewTab: () => void;
@@ -123,7 +124,8 @@ export const useViewMenuItems = (props: UseViewMenuItemsProps): MenuResult => {
 
   // Assemble final menu items - order defined here
   const items = [
-    factory.createEditMenuItem(handlers.handleEdit, isOwner),
+    factory.createEditMenuItem(handlers.handleEdit, isOwner && !view.is_locked),
+    factory.createUnlockMenuItem(handlers.handleUnlock, isOwner && view.is_locked),
     factory.createOpenInNewTabMenuItem(handlers.handleOpenInNewTab),
     factory.createCopyLinkMenuItem(handlers.handleCopyLink),
     factory.createDeleteMenuItem(handlers.handleDelete, isOwner || isAdmin),

@@ -21,6 +21,7 @@ import { copyUrlToClipboard } from "@plane/utils";
 import { useViewMenuItems } from "@/components/common/quick-actions-helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useGlobalView } from "@/hooks/store/use-global-view";
 // local imports
 import { DeleteGlobalViewModal } from "./delete-view-modal";
 import { CreateUpdateWorkspaceViewModal } from "./modal";
@@ -40,6 +41,7 @@ export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickAct
   // store hooks
   const { data } = useUser();
   const { allowPermissions } = useUserPermissions();
+  const { updateGlobalView } = useGlobalView();
   // auth
   const isOwner = view?.owned_by === data?.id;
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
@@ -61,6 +63,14 @@ export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickAct
     isAdmin,
     handleDelete: () => setDeleteViewModal(true),
     handleEdit: () => setUpdateViewModal(true),
+    handleUnlock: async () => {
+      const unlockedView = await updateGlobalView(workspaceSlug, view.id, { is_locked: false });
+      setToast({
+        type: unlockedView ? "success" : "error",
+        title: unlockedView ? "Success!" : "Error!",
+        message: unlockedView ? "View unlocked." : "Could not unlock this view. Please try again.",
+      });
+    },
     handleOpenInNewTab,
     handleCopyLink: handleCopyText,
     workspaceSlug,
