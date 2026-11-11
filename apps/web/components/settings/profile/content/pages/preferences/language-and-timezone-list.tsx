@@ -74,7 +74,7 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
               label={t("timezone")}
               size="md"
               width="fit"
-              className="max-w-64"
+              className="max-w-72 [&_button]:max-w-full"
             />
           }
         />
