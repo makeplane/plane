@@ -281,4 +281,35 @@ describe("BaseIssuesStore - updateIssueList (Issue #9049)", () => {
     expect(store.groupedIssueIds?.[SOURCE_STATE]).not.toContain(ISSUE_ID);
     expect(store.groupedIssueIds?.[DEST_STATE]).toContain(ISSUE_ID);
   });
+
+  it("should NOT keep card on board when root issue is converted to a sub-issue and sub_issue is false", () => {
+    // Initial board state: root issue is present on the board
+    store.groupedIssueIds = {
+      [SOURCE_STATE]: [ISSUE_ID],
+      [DEST_STATE]: [],
+    };
+
+    const rootIssueBefore: TIssue = {
+      id: ISSUE_ID,
+      name: "Root issue converted to sub-issue",
+      parent_id: undefined,
+      state_id: SOURCE_STATE,
+      project_id: "project-001",
+    } as unknown as TIssue;
+
+    // Issue becomes a child of a regular non-epic issue and changes state
+    const subIssueAfter: TIssue = {
+      ...rootIssueBefore,
+      parent_id: "regular-parent-task",
+      state_id: DEST_STATE,
+    };
+
+    mockIssuesMap[subIssueAfter.id] = subIssueAfter;
+
+    store.updateIssueList(subIssueAfter, rootIssueBefore);
+
+    // Card MUST be removed from source column and NOT added to destination column
+    expect(store.groupedIssueIds?.[SOURCE_STATE]).not.toContain(ISSUE_ID);
+    expect(store.groupedIssueIds?.[DEST_STATE]).not.toContain(ISSUE_ID);
+  });
 });

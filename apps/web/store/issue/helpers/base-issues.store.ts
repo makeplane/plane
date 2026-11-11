@@ -1218,12 +1218,15 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // get issueUpdates from another method by passing down the three arguments
     // issueUpdates is nothing but an array of objects that contain the path of the issueId list that need updating and also the action that needs to be performed at the path
     const issueUpdates = this.getUpdateDetails(issue, issueBeforeUpdate, action);
-    // 1. Check if the card is already present on this board before updates mutate groupedIssueIds
-    const isCardOnBoard = issueUpdates.some(
-      (updateDetails) =>
-        updateDetails.action === EIssueGroupedAction.DELETE &&
-        Boolean(get(this.groupedIssueIds, updateDetails.path)?.includes(issueId))
-    );
+    // 1. Check if the card is already present on this board being moved between groups without changing parent hierarchy
+    const isParentUnchanged = !issueBeforeUpdate || issueBeforeUpdate.parent_id === issue?.parent_id;
+    const isCardOnBoard =
+      isParentUnchanged &&
+      issueUpdates.some(
+        (updateDetails) =>
+          updateDetails.action === EIssueGroupedAction.DELETE &&
+          Boolean(get(this.groupedIssueIds, updateDetails.path)?.includes(issueId))
+      );
     const accumulatedUpdatesForCount = {};
     runInAction(() => {
       // The issueUpdates
