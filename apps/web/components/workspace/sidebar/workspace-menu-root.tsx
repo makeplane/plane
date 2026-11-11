@@ -143,7 +143,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
             }
           />
         )}
-        <MenuContent side="bottom" align="start">
+        <MenuContent side="bottom" align="start" data-workspace-switcher-menu>
           {workspacesList ? (
             <ScrollArea orientation="vertical" size="sm" visibility="always">
               <div className="flex w-[312px] max-w-full flex-col items-start justify-start">
