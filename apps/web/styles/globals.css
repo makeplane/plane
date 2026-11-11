@@ -94,3 +94,11 @@
     0 0 4px --alpha(var(--background-color-accent-primary) / 40%) !important;
   will-change: transform, opacity;
 }
+
+/* Keep the action rows fixed while the workspace ScrollArea shrinks and scrolls. */
+[data-workspace-switcher-menu] {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(min(var(--available-height), 24rem) - 2px);
+  overflow: hidden;
+}
