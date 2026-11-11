@@ -25,6 +25,7 @@ EXPECTED_COUNTS = {f"{group}_issues": count for group, count in ISSUES_PER_GROUP
 
 @pytest.fixture
 def module(db, workspace, create_user):
+    """A module holding ISSUES_PER_GROUP issues in each state group."""
     project = Project.objects.create(
         name="Module Counts Project",
         identifier="MCP",
@@ -55,14 +56,17 @@ def module(db, workspace, create_user):
 
 
 def _project_url(module):
+    """Base URL of the public API for the module's project."""
     return f"/api/v1/workspaces/{module.workspace.slug}/projects/{module.project_id}"
 
 
 def _counts(data):
+    """The five state-group counts from one serialized module."""
     return {key: data[key] for key in EXPECTED_COUNTS}
 
 
 def _find(results, module):
+    """The single entry for ``module`` in a list response."""
     matches = [item for item in results if str(item["id"]) == str(module.id)]
     assert len(matches) == 1
     return matches[0]
