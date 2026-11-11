@@ -6,13 +6,14 @@ The Plane Community All-In-One Docker image packages all Plane services into a s
 
 The AIO image contains the following services:
 
-- **Web App** (Port 3001): Main Plane web interface
-- **Space** (Port 3002): Public project spaces
-- **Admin** (Port 3003): Administrative interface
-- **API Server** (Port 3004): Backend API
-- **Live Server** (Port 3005): Real-time collaboration
-- **Proxy** (Port 80, 443): Caddy reverse proxy
+- **Proxy** (Port 80, 443): Caddy reverse proxy, the only exposed entry point
+- **Web App**: Main Plane web interface, static files served by the proxy at `/`
+- **Admin**: Instance admin (God mode), static files served by the proxy at `/god-mode`
+- **Space** (internal port 3002): Public project spaces at `/spaces`
+- **API Server** (internal port 3004): Backend API at `/api` and `/auth`
+- **Live Server** (internal port 3005): Real-time collaboration at `/live`
 - **Worker & Beat**: Background task processing
+- **Migrator**: Runs database migrations at startup
 
 ## Prerequisites
 
@@ -35,6 +36,8 @@ You must provide these environment variables:
 - `DATABASE_URL`: PostgreSQL connection string
 - `REDIS_URL`: Redis connection string
 - `AMQP_URL`: RabbitMQ connection string
+- `SECRET_KEY`: Django secret key (see [Security & Secrets](#security--secrets))
+- `LIVE_SERVER_SECRET_KEY`: Live server secret (see [Security & Secrets](#security--secrets))
 
 #### Storage Configuration
 
@@ -42,7 +45,7 @@ You must provide these environment variables:
 - `AWS_ACCESS_KEY_ID`: S3 access key
 - `AWS_SECRET_ACCESS_KEY`: S3 secret key
 - `AWS_S3_BUCKET_NAME`: S3 bucket name
-- `AWS_S3_ENDPOINT_URL`: S3 endpoint (optional, defaults to AWS)
+- `AWS_S3_ENDPOINT_URL`: S3 endpoint (optional, defaults to `https://s3.${AWS_REGION}.amazonaws.com`)
 
 ## Quick Start
 
@@ -80,6 +83,8 @@ docker run --name myaio --rm -it \
     -e AWS_S3_BUCKET_NAME=plane-app \
     -e AWS_S3_ENDPOINT_URL=http://${MYIP}:19000 \
     -e FILE_SIZE_LIMIT=10485760 \
+    -e SECRET_KEY=$(openssl rand -hex 32) \
+    -e LIVE_SERVER_SECRET_KEY=$(openssl rand -hex 32) \
     makeplane/plane-aio-community:latest
 ```
 
@@ -89,7 +94,8 @@ docker run --name myaio --rm -it \
 
 #### Network & Protocol
 
-- `SITE_ADDRESS`: Server bind address (default: `:80`)
+- `SITE_ADDRESS`: Server bind address (default: `:80`). Set it to your domain (e.g. `plane.example.com`) to have Caddy serve HTTPS on 443 with an automatic certificate.
+- `APP_PROTOCOL`: `http` or `https` (default: `http`). Used to build `WEB_URL` and `CORS_ALLOWED_ORIGINS` from `DOMAIN_NAME`.
 
 #### Security & Secrets
 
@@ -116,16 +122,17 @@ In v1.4.0 to v1.4.2 a container started without `SECRET_KEY` received a generate
 The following ports are exposed:
 
 - `80`: Main web interface (HTTP)
-- `443`: HTTPS (if SSL configured)
+- `443`: HTTPS (only when `SITE_ADDRESS` is set to a domain)
 
 ## Volume Mounts
 
 ### Recommended Persistent Volumes
 
 ```bash
--v /path/to/logs:/app/logs \
--v /path/to/data:/app/data
+-v /path/to/logs:/app/logs
 ```
+
+The image also declares `/app/data` as a volume, but no service writes to it today. Store `SECRET_KEY` and `LIVE_SERVER_SECRET_KEY` outside the container, and pass the same values every time you recreate it.
 
 ## Building the Image
 
@@ -133,13 +140,15 @@ To build the AIO image yourself:
 
 ```bash
 cd deployments/aio/community
-IMAGE_NAME=myplane-aio ./build.sh --release=v0.27.1 [--platform=linux/amd64]
+IMAGE_NAME=myplane-aio ./build.sh --release=v1.5.0
 ```
+
+`build.sh` does not build the image itself. It prepares `dist/plane.env` and `dist/Caddyfile`, then prints the `docker build ... --build-arg PLANE_VERSION=<release>` command to run next.
 
 Available build options:
 
 - `--release`: Plane version to build (required)
-- `--image-name`: Custom image name (default: `plane-aio-community`)
+- `--image-name`: Custom image name (default: `makeplane/plane-aio-community`, or the `IMAGE_NAME` env var)
 
 ## Troubleshooting
 
@@ -168,6 +177,10 @@ docker exec -it <container-name> supervisorctl status
 
 The container will validate required environment variables on startup and display helpful error messages if any are missing.
 
+### Environment variable precedence
+
+At startup the container writes the variables above into `/app/plane.env` and then exports every line of that file. Variables that the start script does not manage (`CERT_EMAIL`, `CERT_ACME_CA`, `CERT_ACME_DNS`, `DEBUG`, `GUNICORN_WORKERS`, `AUTHENTICATION_RATE_LIMIT`, `MINIO_ENDPOINT_SSL`, `WEBHOOK_ALLOWED_IPS`, `WEBHOOK_ALLOWED_HOSTS`, `API_BASE_URL`) keep the value from `/app/plane.env`, even if you pass them with `-e`. To change them, mount your own copy of the file: `-v /path/to/plane.env:/app/plane.env`.
+
 ## Production Considerations
 
 - Use proper SSL certificates for HTTPS
@@ -179,4 +192,4 @@ The container will validate required environment variables on startup and displa
 
 ## Support
 
-For issues and support, please refer to the official Plane documentation.
+For issues and support, see the [AIO self-hosting docs](https://developers.plane.so/self-hosting/methods/docker-aio), ask on the [Forum](https://forum.plane.so), or open a [GitHub issue](https://github.com/makeplane/plane/issues).

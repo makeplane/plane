@@ -12,11 +12,12 @@ We divide tests into three categories:
 
 ## Writing Unit Tests
 
-Unit tests should be placed in the appropriate directory under `tests/unit/` depending on what you're testing:
+Unit tests should be placed in the appropriate directory under `plane/tests/unit/` depending on what you're testing:
 
-- `tests/unit/models/` - For model tests
-- `tests/unit/serializers/` - For serializer tests
-- `tests/unit/utils/` - For utility function tests
+- `plane/tests/unit/models/` - For model tests
+- `plane/tests/unit/serializers/` - For serializer tests
+- `plane/tests/unit/utils/` - For utility function tests
+- `plane/tests/unit/views/`, `middleware/`, `bg_tasks/`, `db/`, `settings/`, `observability/` - For views, middleware, background tasks, database helpers, settings and observability
 
 ### Example Unit Test:
 
@@ -29,13 +30,13 @@ class TestMySerializer:
     def test_serializer_valid_data(self):
         # Create input data
         data = {"field1": "value1", "field2": 42}
-        
+
         # Initialize the serializer
         serializer = MySerializer(data=data)
-        
+
         # Validate
         assert serializer.is_valid()
-        
+
         # Check validated data
         assert serializer.validated_data["field1"] == "value1"
         assert serializer.validated_data["field2"] == 42
@@ -43,7 +44,7 @@ class TestMySerializer:
 
 ## Writing Contract Tests
 
-Contract tests should be placed in `tests/contract/api/` or `tests/contract/app/` directories and should test the API endpoints.
+Contract tests should be placed in `plane/tests/contract/api/` (external API, `api_key_client`) or `plane/tests/contract/app/` (web app API, `session_client`) directories and should test the API endpoints.
 
 ### Example Contract Test:
 
@@ -55,13 +56,13 @@ from rest_framework import status
 @pytest.mark.contract
 class TestMyEndpoint:
     @pytest.mark.django_db
-    def test_my_endpoint_get(self, auth_client):
+    def test_my_endpoint_get(self, session_client):
         # Get the URL
         url = reverse("my-endpoint")
-        
+
         # Make request
-        response = auth_client.get(url)
-        
+        response = session_client.get(url)
+
         # Check response
         assert response.status_code == status.HTTP_200_OK
         assert "data" in response.data
@@ -69,34 +70,30 @@ class TestMyEndpoint:
 
 ## Writing Smoke Tests
 
-Smoke tests should be placed in `tests/smoke/` directory and use the `plane_server` fixture to test against a real HTTP server.
+Smoke tests should be placed in `plane/tests/smoke/` directory and use the `plane_server` fixture to test against a real HTTP server.
 
 ### Example Smoke Test:
 
 ```python
 import pytest
 import requests
+from django.urls import reverse
 
 @pytest.mark.smoke
 class TestCriticalFlow:
     @pytest.mark.django_db
     def test_login_flow(self, plane_server, create_user, user_data):
-        # Get login URL
-        url = f"{plane_server.url}/api/auth/signin/"
-        
-        # Test login
+        # Sign-in is a form POST that answers with a redirect, not a token
+        url = f"{plane_server.url}{reverse('sign-in')}"
+
         response = requests.post(
-            url, 
-            json={
-                "email": user_data["email"],
-                "password": user_data["password"]
-            }
+            url,
+            data={"email": user_data["email"], "password": user_data["password"]},
+            allow_redirects=False,
         )
-        
+
         # Verify
-        assert response.status_code == 200
-        data = response.json()
-        assert "access_token" in data
+        assert response.status_code not in range(400, 600)
 ```
 
 ## Useful Fixtures
@@ -106,10 +103,14 @@ Our test setup provides several useful fixtures:
 1. `api_client`: An unauthenticated DRF APIClient
 2. `api_key_client`: API client with API key authentication (for external API tests)
 3. `session_client`: API client with session authentication (for web app API tests)
-4. `create_user`: Creates and returns a test user
-5. `mock_redis`: Mocks Redis interactions
-6. `mock_elasticsearch`: Mocks Elasticsearch interactions
-7. `mock_celery`: Mocks Celery task execution
+4. `create_user`: Creates and returns a test user (credentials in `user_data`)
+5. `api_token`: API token for the test user
+6. `plane_server`: Live Django test server for smoke tests
+7. `workspace`: A workspace owned by the test user
+8. `mock_redis`: Patches `plane.settings.redis.redis_instance` to return a `MagicMock` client
+9. `mock_celery`: Patches Celery's `Task.delay` so tasks are not executed
+
+For other external services, use pytest-mock's `mocker` fixture.
 
 ## Using Factory Boy
 
@@ -130,21 +131,28 @@ users = UserFactory.create_batch(5)
 
 ## Running Tests
 
-Use pytest to run tests:
+The recommended way is the isolated Docker stack described in [`apps/api/tests/RUNNING_TESTS.md`](../../tests/RUNNING_TESTS.md):
+
+```bash
+# From the repo root
+docker compose -f docker-compose-test.yml run --rm --build api-tests pytest -m unit
+```
+
+With a local env (`uv sync` in `apps/api` plus running Postgres, Redis, RabbitMQ and MinIO):
 
 ```bash
 # Run all tests
-python -m pytest
+uv run pytest
 
 # Run only unit tests with coverage
-python -m pytest -m unit --cov=plane
+uv run pytest -m unit --cov=plane
 ```
 
 ## Best Practices
 
 1. **Keep tests small and focused** - Each test should verify one specific behavior.
 2. **Use markers** - Always add appropriate markers (`@pytest.mark.unit`, etc.).
-3. **Mock external dependencies** - Use the provided mock fixtures.
+3. **Mock external dependencies** - Use `mock_redis` / `mock_celery`, or `mocker.patch(...)` from pytest-mock.
 4. **Use factories** - For complex data setup, use factories.
 5. **Don't test the framework** - Focus on testing your business logic, not Django/DRF itself.
 6. **Write readable assertions** - Use plain `assert` statements with clear messaging.

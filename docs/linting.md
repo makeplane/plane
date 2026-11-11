@@ -28,7 +28,7 @@ pnpm turbo run check:lint --filter=@plane/blocks
 
 ## VS Code Integration
 
-Install the [OxLint extension](https://marketplace.visualstudio.com/items?itemName=nicolo-ribaudo.vscode-oxlint) for inline errors/warnings as you type.
+Install the [Oxc extension](https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode) for inline errors/warnings as you type.
 
 ## What Gets Linted
 
@@ -39,24 +39,28 @@ The config applies to all TypeScript and JavaScript files across:
 
 **Ignored paths:**
 
-- `node_modules/`, `dist/`, `build/`, `.next/`, `.turbo/`
+- `node_modules/`, `dist/`, `build/`, `coverage/`, `storybook-static/`
+- `.cache/`, `.next/`, `.react-router/`, `.storybook/`, `.turbo/`, `.vite/`
 - Config files (`*.config.{js,mjs,cjs,ts}`)
-- Public folders, coverage, storybook-static
+- Public folders
 
 ## Rules Overview
 
 OxLint uses category-based configuration:
 
-| Category        | Level | What It Catches                                    |
-| --------------- | ----- | -------------------------------------------------- |
-| **correctness** | error | Real bugs that will cause runtime errors            |
-| **suspicious**  | warn  | Code patterns that are likely mistakes              |
-| **perf**        | warn  | Performance anti-patterns                           |
+| Category        | Level | What It Catches                          |
+| --------------- | ----- | ---------------------------------------- |
+| **correctness** | warn  | Real bugs that will cause runtime errors |
+| **suspicious**  | warn  | Code patterns that are likely mistakes   |
+| **perf**        | warn  | Performance anti-patterns                |
+
+Every category reports warnings, so the gate is the warning budget: each package's `check:lint` script runs `oxlint --max-warnings=<n> .`, and the job fails if the count goes above `n`. Do not add new warnings; lower `n` when you fix existing ones.
 
 Additional rule overrides:
-- `react/prop-types` off (TypeScript handles prop validation)
+
+- `react/react-in-jsx-scope` and `react/prop-types` off (TypeScript handles prop validation)
 - `no-unused-vars` warns with `_` prefix pattern ignored
-- Several noisy unicorn rules disabled
+- Several noisy unicorn rules disabled (`filename-case`, `no-null`, `prevent-abbreviations`)
 
 ## Backward Compatibility
 
@@ -86,7 +90,16 @@ Lint-staged runs automatically on commit via Husky:
 
 If the commit fails due to lint errors, fix them before committing.
 
+## Formatting
+
+[oxfmt](https://oxc.rs/docs/guide/usage/formatter) formats the repo using [.oxfmtrc.json](../.oxfmtrc.json) (print width 120, Tailwind class sorting). Run `pnpm check:format` to check and `pnpm fix:format` to apply. CI runs `check:format` on every pull request.
+
+## Python (apps/api)
+
+The backend is linted with [Ruff](https://docs.astral.sh/ruff/) using [apps/api/ruff.toml](../apps/api/ruff.toml). Run `uv run ruff check .` from `apps/api`; CI runs the same command on pull requests that touch `apps/api`.
+
 ## Reference Files
 
 - [.oxlintrc.json](../.oxlintrc.json) - OxLint configuration
+- [.oxfmtrc.json](../.oxfmtrc.json) - oxfmt configuration
 - [package.json](../package.json) - Available scripts

@@ -136,11 +136,11 @@ Also preserve: OAuth, OIDC, SAML, SSO, LDAP, API, REST, GraphQL, URL, URI, ID, U
 
 ## Per-Script Rules
 
-Apply by target-language script, not by locale list. Adding a new Latin-script locale? It follows the Latin-script rules below. Adding a new Cyrillic locale? It follows the Cyrillic section. Scripts not yet shown here (Arabic, Hebrew, Thai, Greek, Hindi/Devanagari, etc.) — see **Adding a locale not documented here**.
+Apply by target-language script, not by locale list. Adding a new Latin-script locale? It follows the Latin-script rules below. Adding a new Cyrillic locale? It follows the Cyrillic section. Scripts not yet shown here (Arabic, Hebrew, Thai, Greek, Hindi/Devanagari, etc.) — see **Adding a locale not documented here**. This includes `ka-ge` (Georgian, Mkhedruli script), which is already in the repo but has no section yet.
 
 ### Latin-script locales
 
-Currently includes fr, es, it, de, pt-BR, pl, cs, sk, ro, tr-TR, vi-VN, id — and any future locale that uses the Latin alphabet (hu, nl, sv, da, nb, fi, hr, bg-using-Latin variants, etc.).
+Currently includes fr, es, it, de, nl, pt-BR, pl, cs, sk, ro, tr-TR, vi-VN, id — and any future locale that uses the Latin alphabet (hu, sv, da, nb, fi, hr, bg-using-Latin variants, etc.). `nl` is not yet in the glossary tables above; follow the Latin-script rules and add its column when you next touch it.
 
 **Translate Plane feature nouns** (Cycle, Cycles, Module, Modules, Epic, Epics, Page, Pages) using the per-locale form from the glossary above. **Keep Latin** for Plane brand marks (Plane, Plane AI, Power K, PQL, Active Cycles, Sticky, Stickies, Intake), plan tier names (Pro, Business, Enterprise), and third-party brands (GitHub, Slack, etc.).
 
@@ -187,7 +187,7 @@ For new terms not on the glossary: prefer the native Korean word where one exist
 
 Register:
 
-- **System and error messages** → 합니다체 (high-formal: 합니다, 됩니다, 입니다). Existing files in this register today: `ko/auth.json`, `ko/error/*.json`.
+- **System and error messages** → 합니다체 (high-formal: 합니다, 됩니다, 입니다). Existing files in this register today: `ko/auth.json`.
 - **Empty states, onboarding microcopy, tooltips** → 해요체 acceptable (softer: 해요, 돼요, 이에요) if the existing file uses it. Existing files in this register today: `ko/empty-state.json`, `ko/tour.json`. Always match the surrounding file rather than introducing a new register mid-namespace.
 - Never casual 반말.
 
@@ -255,19 +255,19 @@ Every `{count, plural, …}` string must contain **every** keyword the target la
 
 Below are the required keywords for locales currently in the repo. When adding a new locale, look up its categories in CLDR and add the row here.
 
-| Locale                                                 | Required keywords                                                                     | Example mapping                                                               |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| en, es, de, bg, tr-TR, vi-VN, id, ja, ko, zh-CN, zh-TW | `one, other` (single-form locales may use `other` alone, but **always emit `other`**) | 1 → one; 2+ → other                                                           |
-| fr                                                     | `one, many, other`                                                                    | 0, 1 → one; 1 000 000 → many; else other                                      |
-| it                                                     | `one, many, other`                                                                    | 1 → one; 1 000 000 → many; else other                                         |
-| pt-BR                                                  | `one, many, other`                                                                    | 0, 1 → one; 1 000 000 → many; else other                                      |
-| ro                                                     | `one, few, other`                                                                     | 1 → one; 0, 2–19 → few; 20+ → other                                           |
-| pl                                                     | `one, few, many, other`                                                               | 1 → one; 2–4 (not 12–14) → few; 0, 5–20, many-digit → many; decimals → other  |
-| cs                                                     | `one, few, many, other`                                                               | 1 → one; 2–4 → few; decimals → many; 0, 5+ → other                            |
-| sk                                                     | `one, few, many, other`                                                               | same pattern as cs                                                            |
-| ru                                                     | `one, few, many, other`                                                               | 1, 21, 31… → one; 2–4, 22–24… → few; 0, 5–20, 25–30… → many; decimals → other |
-| ua                                                     | `one, few, many, other`                                                               | same pattern as ru                                                            |
-| ar (when added)                                        | `zero, one, two, few, many, other`                                                    | Six categories — the maximum any language uses                                |
+| Locale                                                            | Required keywords                                                                     | Example mapping                                                               |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| en, es, de, nl, bg, ka-ge, tr-TR, vi-VN, id, ja, ko, zh-CN, zh-TW | `one, other` (single-form locales may use `other` alone, but **always emit `other`**) | 1 → one; 2+ → other                                                           |
+| fr                                                                | `one, many, other`                                                                    | 0, 1 → one; 1 000 000 → many; else other                                      |
+| it                                                                | `one, many, other`                                                                    | 1 → one; 1 000 000 → many; else other                                         |
+| pt-BR                                                             | `one, many, other`                                                                    | 0, 1 → one; 1 000 000 → many; else other                                      |
+| ro                                                                | `one, few, other`                                                                     | 1 → one; 0, 2–19 → few; 20+ → other                                           |
+| pl                                                                | `one, few, many, other`                                                               | 1 → one; 2–4 (not 12–14) → few; 0, 5–20, many-digit → many; decimals → other  |
+| cs                                                                | `one, few, many, other`                                                               | 1 → one; 2–4 → few; decimals → many; 0, 5+ → other                            |
+| sk                                                                | `one, few, many, other`                                                               | same pattern as cs                                                            |
+| ru                                                                | `one, few, many, other`                                                               | 1, 21, 31… → one; 2–4, 22–24… → few; 0, 5–20, 25–30… → many; decimals → other |
+| ua                                                                | `one, few, many, other`                                                               | same pattern as ru                                                            |
+| ar (when added)                                                   | `zero, one, two, few, many, other`                                                    | Six categories — the maximum any language uses                                |
 
 > **Note on the consolidated row.** CLDR itself only requires `other` for `tr-TR`, `vi-VN`, `id`, `ja`, `ko`, `zh-CN`, `zh-TW` (single-form locales). Emitting both `one` and `other` with identical content is a **project convention** — it keeps tooling and linters consistent across the codebase. It is not a CLDR requirement, and `Intl.PluralRules` will return only `"other"` for these locales at runtime.
 
@@ -469,7 +469,7 @@ When reviewing a translation — yours or an AI's — score against these catego
 A "namespace" is a top-level JSON file (e.g. `common.json`, `auth.json`, `epic.json`). The set of valid namespace names is a hard-coded const array — adding a JSON file alone is not enough; the runtime will not load it.
 
 1. Add the new namespace name to the `NAMESPACES` array in `packages/i18n/src/constants/namespaces.ts`. Keep alphabetical order with the existing entries.
-2. Create `<namespace>.json` in **every** locale directory under `packages/i18n/src/locales/` — start with `en/<namespace>.json` (the source of truth), then create the file in all 18 target locales. An empty `{}` is fine for the targets at this step; `sync-check` will report missing keys as you add them in step 4.
+2. Create `<namespace>.json` in **every** locale directory under `packages/i18n/src/locales/` — start with `en/<namespace>.json` (the source of truth), then create the file in every target locale (21 today; `ls packages/i18n/src/locales`). An empty `{}` is fine for the targets at this step; `sync-check` will report missing keys as you add them in step 4.
 3. Add at least one key in `en/<namespace>.json` so the namespace has content.
 4. Translate every key from `en/<namespace>.json` into each target locale — apply every rule in this skill.
 5. Run `pnpm --filter @plane/i18n run generate:types` to regenerate the `TTranslationKeys` union so component-level `t()` calls type-check.
