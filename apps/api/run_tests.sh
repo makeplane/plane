@@ -1,4 +1,6 @@
 #!/bin/bash
 
-# This is a simple wrapper script that calls the main test runner in the tests directory
-exec tests/run_tests.sh "$@" 
+# Thin wrapper around run_tests.py; run from apps/api so pytest.ini and test paths resolve,
+# and through uv so `python` is the project venv (uv run syncs inexactly, safe in the dev/test images)
+cd "$(dirname "$0")" || exit 1
+exec uv run python run_tests.py "$@"
