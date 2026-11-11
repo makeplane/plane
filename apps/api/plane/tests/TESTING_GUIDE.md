@@ -107,8 +107,10 @@ Our test setup provides several useful fixtures:
 5. `api_token`: API token for the test user
 6. `plane_server`: Live Django test server for smoke tests
 7. `workspace`: A workspace owned by the test user
+8. `mock_redis`: Patches `plane.settings.redis.redis_instance` to return a `MagicMock` client
+9. `mock_celery`: Patches Celery's `Task.delay` so tasks are not executed
 
-Use pytest-mock's `mocker` fixture to mock Redis, Celery and other external services. The `mock_redis`, `mock_elasticsearch` and `mock_celery` fixtures in `conftest_external.py` are not registered with pytest, so they are not available.
+For other external services, use pytest-mock's `mocker` fixture.
 
 ## Using Factory Boy
 
@@ -150,7 +152,7 @@ uv run pytest -m unit --cov=plane
 
 1. **Keep tests small and focused** - Each test should verify one specific behavior.
 2. **Use markers** - Always add appropriate markers (`@pytest.mark.unit`, etc.).
-3. **Mock external dependencies** - Use `mocker.patch(...)` from pytest-mock.
+3. **Mock external dependencies** - Use `mock_redis` / `mock_celery`, or `mocker.patch(...)` from pytest-mock.
 4. **Use factories** - For complex data setup, use factories.
 5. **Don't test the framework** - Focus on testing your business logic, not Django/DRF itself.
 6. **Write readable assertions** - Use plain `assert` statements with clear messaging.

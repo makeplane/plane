@@ -101,7 +101,7 @@ When writing tests, follow these guidelines:
 Common fixtures are defined in:
 
 - `conftest.py`: General fixtures for authentication, database access, etc.
-- `conftest_external.py`: Mock fixtures for Redis, Elasticsearch and Celery. It is **not** loaded by pytest today (no `pytest_plugins` entry), so these fixtures are not available unless you register it.
+- `conftest_external.py`: `mock_redis` and `mock_celery` fixtures for external services. They are imported into `conftest.py`, which is what makes pytest pick them up; import any new fixture you add there the same way.
 - `factories.py`: Test factories for easy model instance creation
 
 ## Best Practices
@@ -117,7 +117,7 @@ When writing tests, follow these guidelines:
    @pytest.mark.slow  # slow tests that can be skipped with -m "not slow"
    ```
 3. **Use fixtures instead of setUp/tearDown methods** for cleaner, more reusable test code.
-4. **Mock external dependencies** with pytest-mock's `mocker` fixture (or `unittest.mock`) to avoid external service dependencies.
+4. **Mock external dependencies** with the `mock_redis` / `mock_celery` fixtures, or pytest-mock's `mocker` fixture for anything else, to avoid external service dependencies.
 5. **Write focused tests** that verify one specific behavior or edge case.
 6. **Keep test files small and organized** by logical components or endpoints.
 7. **Target 90% code coverage** for models, serializers, and business logic.
@@ -126,7 +126,7 @@ When writing tests, follow these guidelines:
 
 Tests for components that interact with external services should:
 
-1. Mock the service with `mocker.patch(...)` for unit and most contract tests (for example, patch a Celery task's `.delay`).
+1. Use the `mock_redis` and `mock_celery` fixtures for unit and most contract tests, and `mocker.patch(...)` for other services.
 2. For more comprehensive tests, use the Docker test stack in [`RUNNING_TESTS.md`](../../tests/RUNNING_TESTS.md), which runs real Postgres, Redis, RabbitMQ and MinIO.
 
 ## Coverage Reports
