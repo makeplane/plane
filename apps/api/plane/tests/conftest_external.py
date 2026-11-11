@@ -29,29 +29,6 @@ def mock_redis():
 
 
 @pytest.fixture
-def mock_elasticsearch():
-    """
-    Mock Elasticsearch for testing without actual ES connection.
-
-    This fixture patches Elasticsearch to return a MagicMock
-    that behaves like an Elasticsearch client.
-    """
-    mock_es_client = MagicMock()
-
-    # Configure the mock to handle common ES operations
-    mock_es_client.indices.exists.return_value = True
-    mock_es_client.indices.create.return_value = {"acknowledged": True}
-    mock_es_client.search.return_value = {"hits": {"total": {"value": 0}, "hits": []}}
-    mock_es_client.index.return_value = {"_id": "test_id", "result": "created"}
-    mock_es_client.update.return_value = {"_id": "test_id", "result": "updated"}
-    mock_es_client.delete.return_value = {"_id": "test_id", "result": "deleted"}
-
-    # Start the patch
-    with patch("elasticsearch.Elasticsearch", return_value=mock_es_client):
-        yield mock_es_client
-
-
-@pytest.fixture
 def mock_celery():
     """
     Mock Celery for testing without actual task execution.
