@@ -269,8 +269,8 @@ overrides:
   # only uses parser()/selector(); 7.0.0's sole break is safe insertion during iteration.
   postcss-selector-parser: 7.1.6
   axios: "catalog:"
-  # EXACT pin, bump the number. CVE-2026-111755 / CVE-2026-111756 fixed in 1.16.1.
-  follow-redirects: 1.16.1
+  # EXACT pin, bump the number. CVE-2026-116689 fixed in 1.16.2.
+  follow-redirects: 1.16.2
   uuid: "catalog:"
   # EXACT pin: bump the number, never widen -- 4.x breaks ajv's ^3.0.1 (the only
   # consumer here). Floor is 3.1.8, not 3.1.7: it also fixes GHSA-hrr3-gc8f-f4qj,
