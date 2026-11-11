@@ -25,7 +25,10 @@ class TestInferMimeType:
             ("notes.MD", "text/markdown"),
             ("report.pdf", "application/pdf"),
             ("photo.png", "image/png"),
+            ("photo.webp", "image/webp"),
             ("archive.tar.gz", "application/x-tar"),
+            # gzip is reported as an encoding rather than a media type
+            ("archive.gz", "application/gzip"),
             ("no-extension", None),
             ("", None),
             (None, None),

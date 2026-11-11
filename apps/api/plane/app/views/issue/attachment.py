@@ -120,6 +120,12 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, issue_id):
+        """Create a work item attachment
+
+        Generate a presigned URL for uploading a file attachment to a work
+        item. Validates file type and size before creating the attachment
+        record.
+        """
         # A restricted guest may only add attachments to issues they created,
         # mirroring the issue-detail visibility rule.
         if issue_hidden_from_guest(request, slug, project_id, issue_id):
