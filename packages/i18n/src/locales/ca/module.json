@@ -1,0 +1,14 @@
+{
+  "module": {
+    "label": "{count, plural, one {Mòdul} other {Mòduls}}",
+    "no_module": "Cap mòdul",
+    "select": "Afegeix mòduls",
+    "details_drawer": {
+      "progress": {
+        "done": "{completed} de {scope, plural, one {# element de treball} other {# elements de treball}} completats",
+        "points_done": "{completed} de {scope, plural, one {# punt} other {# punts}} completats",
+        "empty": "Afegeix elements de treball al mòdul per fer-ne el seguiment."
+      }
+    }
+  }
+}

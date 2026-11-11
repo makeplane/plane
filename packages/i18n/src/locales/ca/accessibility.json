@@ -1,0 +1,59 @@
+{
+  "aria_labels": {
+    "projects_sidebar": {
+      "main_sidebar": "Barra lateral principal",
+      "resize_sidebar": "Redimensiona la barra lateral",
+      "sidebar_peek_view": "Vista prèvia de la barra lateral",
+      "workspace_logo": "Logotip de l’espai de treball",
+      "open_workspace_switcher": "Obre el selector d’espais de treball",
+      "open_user_menu": "Obre el menú d’usuari",
+      "open_command_palette": "Obre la paleta d’ordres",
+      "open_extended_sidebar": "Obre la barra lateral ampliada",
+      "close_extended_sidebar": "Tanca la barra lateral ampliada",
+      "create_favorites_folder": "Crea una carpeta de preferits",
+      "open_folder": "Obre la carpeta",
+      "close_folder": "Tanca la carpeta",
+      "open_favorites_menu": "Obre el menú de preferits",
+      "close_favorites_menu": "Tanca el menú de preferits",
+      "enter_folder_name": "Introdueix el nom de la carpeta",
+      "create_new_project": "Crea un projecte nou",
+      "open_projects_menu": "Obre el menú de projectes",
+      "close_projects_menu": "Tanca el menú de projectes",
+      "toggle_quick_actions_menu": "Mostra o amaga el menú d’accions ràpides",
+      "open_project_menu": "Obre el menú del projecte",
+      "close_project_menu": "Tanca el menú del projecte",
+      "collapse_sidebar": "Redueix la barra lateral",
+      "expand_sidebar": "Amplia la barra lateral",
+      "edition_badge": "Obre la finestra modal dels plans de pagament"
+    },
+    "auth_forms": {
+      "clear_email": "Esborra el correu electrònic",
+      "show_password": "Mostra la contrasenya",
+      "hide_password": "Amaga la contrasenya",
+      "close_alert": "Tanca l’alerta",
+      "close_popover": "Tanca el popover"
+    },
+    "breadcrumb": {
+      "trail": "Fil d’Ariadna",
+      "show_more": "Mostra més elements del fil d’Ariadna"
+    },
+    "common": {
+      "more_actions": "Més accions",
+      "remove": "Elimina"
+    },
+    "color_picker": {
+      "open": "Obre el selector de colors",
+      "swatches": "Colors predefinits",
+      "hex_input": "Color hexadecimal"
+    },
+    "project_board": {
+      "collapse_group": "Redueix el grup"
+    },
+    "pagination": {
+      "root": "Paginació",
+      "previous_page": "Vés a la pàgina anterior",
+      "next_page": "Vés a la pàgina següent",
+      "go_to_page": "Vés a la pàgina {page}"
+    }
+  }
+}

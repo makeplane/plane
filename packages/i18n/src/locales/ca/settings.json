@@ -1,0 +1,156 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "Canvia el correu electrònic",
+        "description": "Introdueix una adreça electrònica nova per rebre un enllaç de verificació.",
+        "toasts": {
+          "success_title": "Correcte!",
+          "success_message": "Correu electrònic actualitzat correctament. Torna a iniciar la sessió."
+        },
+        "form": {
+          "email": {
+            "label": "Correu electrònic nou",
+            "placeholder": "Introdueix el teu correu electrònic",
+            "errors": {
+              "required": "El correu electrònic és obligatori",
+              "invalid": "El correu electrònic no és vàlid",
+              "exists": "Aquest correu electrònic ja existeix. Fes servir-ne un de diferent.",
+              "validation_failed": "La validació del correu electrònic ha fallat. Torna-ho a provar."
+            }
+          },
+          "code": {
+            "label": "Codi únic",
+            "placeholder": "123456",
+            "helper_text": "S’ha enviat el codi de verificació a la teva adreça electrònica nova.",
+            "errors": {
+              "required": "El codi únic és obligatori",
+              "invalid": "Codi de verificació no vàlid. Torna-ho a provar."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Continua",
+          "confirm": "Confirma",
+          "cancel": "Cancel·la"
+        },
+        "states": {
+          "sending": "S’està enviant"
+        }
+      }
+    },
+    "preferences": {
+      "heading": "Preferències",
+      "description": "Personalitza l’experiència de l’aplicació segons la teva manera de treballar"
+    },
+    "notifications": {
+      "heading": "Notificacions per correu electrònic",
+      "description": "Mantén-te al dia dels elements de treball als quals estàs subscrit. Activa-ho per rebre notificacions.",
+      "select_default_view": "Selecciona la vista per defecte",
+      "compact": "Compacte",
+      "full": "Pantalla completa"
+    },
+    "security": {
+      "heading": "Seguretat"
+    },
+    "api_tokens": {
+      "title": "Tokens d’accés personals",
+      "description": "Genera tokens d’API segurs per integrar les teves dades amb sistemes i aplicacions externs."
+    },
+    "activity": {
+      "heading": "Activitat",
+      "description": "Fes un seguiment de les teves accions i canvis recents a tots els projectes i elements de treball."
+    },
+    "connections": {
+      "title": "Connexions",
+      "heading": "Connexions",
+      "description": "Gestiona la configuració de les connexions del teu espai de treball."
+    }
+  },
+  "profile": {
+    "label": "Perfil",
+    "page_label": "El teu treball",
+    "work": "Feina",
+    "details": {
+      "joined_on": "Membre des del",
+      "time_zone": "Zona horària"
+    },
+    "stats": {
+      "workload": "Càrrega de treball",
+      "overview": "Resum",
+      "created": "Elements de treball creats",
+      "assigned": "Elements de treball assignats",
+      "subscribed": "Elements de treball subscrits",
+      "state_distribution": {
+        "title": "Elements de treball per estat",
+        "empty": "Crea elements de treball per veure’ls per estats al gràfic i analitzar-los millor."
+      },
+      "priority_distribution": {
+        "title": "Elements de treball per prioritat",
+        "empty": "Crea elements de treball per veure’ls per prioritat al gràfic i analitzar-los millor."
+      },
+      "recent_activity": {
+        "title": "Activitat recent",
+        "empty": "No hem trobat dades. Consulta les teves aportacions",
+        "button": "Baixa l’activitat d’avui",
+        "button_loading": "S’està baixant"
+      }
+    },
+    "actions": {
+      "profile": "Perfil",
+      "security": "Seguretat",
+      "activity": "Activitat",
+      "preferences": "Preferències",
+      "notifications": "Notificacions",
+      "api-tokens": "Tokens d’accés personals",
+      "connections": "Connexions"
+    },
+    "tabs": {
+      "summary": "Resum",
+      "assigned": "Assignat",
+      "created": "Creat",
+      "subscribed": "Subscrit",
+      "activity": "Activitat"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "Encara no hi ha activitats",
+        "description": "Comença creant un element de treball nou. Afegeix-hi detalls i propietats. Explora Plane per veure la teva activitat."
+      },
+      "assigned": {
+        "title": "No tens cap element de treball assignat",
+        "description": "Des d’aquí pots fer un seguiment dels elements de treball que tens assignats."
+      },
+      "created": {
+        "title": "Encara no hi ha elements de treball",
+        "description": "Tots els elements de treball que has creat apareixen aquí; fes-ne el seguiment directament des d’aquí."
+      },
+      "subscribed": {
+        "title": "Encara no hi ha elements de treball",
+        "description": "Subscriu-te als elements de treball que t’interessin i fes-ne el seguiment de tots des d’aquí."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Preferència del sistema"
+      },
+      "light": {
+        "label": "Clar"
+      },
+      "dark": {
+        "label": "Fosc"
+      },
+      "light_contrast": {
+        "label": "Clar amb contrast alt"
+      },
+      "dark_contrast": {
+        "label": "Fosc amb contrast alt"
+      },
+      "custom": {
+        "label": "Tema personalitzat"
+      }
+    }
+  }
+}

@@ -1,0 +1,477 @@
+{
+  "work_item_types": {
+    "label": "Tipus d’elements de treball",
+    "label_lowercase": "tipus d’element de treball",
+    "settings": {
+      "description": "Personalitza i afegeix les teves pròpies propietats per adaptar-lo a les necessitats del teu equip.",
+      "cant_delete_default_message": "Aquest tipus d’element de treball no es pot suprimir perquè està establert com a predeterminat per a aquest projecte",
+      "set_as_default": "Estableix com a predeterminat",
+      "cant_set_default_inactive_message": "Activa aquest tipus abans d’establir-lo com a predeterminat",
+      "set_default_confirmation": {
+        "title": "Estableix com a tipus d’element de treball per defecte",
+        "description": "Si establèixes {name} com a tipus per defecte, s’importarà a tots els projectes d’aquest espai de treball. Tots els nous elements de treball utilitzaran aquest tipus per defecte.",
+        "confirm_button": "Estableix com a predeterminat"
+      },
+      "properties": {
+        "title": "Propietats",
+        "description": "Crea i personalitza propietats.",
+        "tooltip": "Cada tipus d’element de treball inclou un conjunt de propietats per defecte, com ara títol, descripció, assignat, estat, prioritat, data d’inici, data de venciment, mòdul, cicle, etc. També pots personalitzar i afegir les teves pròpies propietats per adaptar-lo a les necessitats del teu equip.",
+        "add_button": "Afegeix una propietat nova",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Importa de l’espai de treball"
+          }
+        },
+        "dropdown": {
+          "label": "Tipus de propietat",
+          "placeholder": "Selecciona un tipus"
+        },
+        "property_type": {
+          "text": {
+            "label": "Text"
+          },
+          "number": {
+            "label": "Número"
+          },
+          "dropdown": {
+            "label": "Desplegable"
+          },
+          "boolean": {
+            "label": "Booleà"
+          },
+          "date": {
+            "label": "Data"
+          },
+          "member_picker": {
+            "label": "Selector de membres"
+          },
+          "formula": {
+            "label": "Fórmula"
+          }
+        },
+        "attributes": {
+          "label": "Atributs",
+          "text": {
+            "single_line": {
+              "label": "Una línia"
+            },
+            "multi_line": {
+              "label": "Paràgraf"
+            },
+            "readonly": {
+              "label": "Només lectura",
+              "header": "Dades de només lectura"
+            },
+            "invalid_text_format": {
+              "label": "Format de text no vàlid"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Afegeix un número"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Selecció única"
+            },
+            "multi_select": {
+              "label": "Selecció múltiple"
+            },
+            "no_default_value": {
+              "label": "Sense valor predeterminat"
+            }
+          },
+          "boolean": {
+            "label": "Cert | Fals",
+            "no_default": "Sense valor predeterminat"
+          },
+          "option": {
+            "create_update": {
+              "label": "Opcions",
+              "form": {
+                "placeholder": "Afegeix una opció",
+                "errors": {
+                  "name": {
+                    "required": "El nom de l’opció és obligatori.",
+                    "integrity": "Ja existeix una opció amb el mateix nom."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Selecciona una opció",
+                "multi": {
+                  "default": "Selecciona opcions",
+                  "variable": "{count} opcions seleccionades"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "Correcte!",
+              "message": "La propietat {name} s’ha creat correctament."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "No s’ha pogut crear la propietat. Torna-ho a provar!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "Correcte!",
+              "message": "La propietat {name} s’ha actualitzat correctament."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "No s’ha pogut actualitzar la propietat. Torna-ho a provar!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "Correcte!",
+              "message": "La propietat {name} s’ha suprimit correctament."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "No s’ha pogut suprimir la propietat. Torna-ho a provar!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} la propietat {name}",
+            "success": {
+              "title": "Correcte!",
+              "message": "La propietat {name} s’ha {action} correctament."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "No s’ha pogut {action} la propietat. Torna-ho a provar!"
+            }
+          }
+        },
+        "create_update": {
+          "title": {
+            "create": "Crea una propietat personalitzada nova",
+            "update": "Actualitza la propietat personalitzada"
+          },
+          "form": {
+            "display_name": {
+              "placeholder": "Títol"
+            },
+            "description": {
+              "placeholder": "Descripció"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Has de posar un nom a la propietat.",
+              "max_length": "El nom de la propietat no pot superar els 255 caràcters."
+            },
+            "property_type": {
+              "required": "Has de seleccionar un tipus de propietat."
+            },
+            "options": {
+              "required": "Has d’afegir almenys una opció."
+            },
+            "formula": {
+              "required": "L’expressió de la fórmula és obligatòria.",
+              "invalid": "Fórmula no vàlida: {error}",
+              "circular_reference": "S’ha detectat una referència circular. Una fórmula no pot referenciar-se a si mateixa directa ni indirectament.",
+              "invalid_reference": "La fórmula fa referència a una propietat inexistent."
+            }
+          }
+        },
+        "formula": {
+          "field_label": "Camp de fórmula",
+          "tooltip": "Introdueix una fórmula amb la sintaxi '{'Field Name'}'. Admet els operadors +, -, *, / i &.",
+          "placeholder": "Escriu la fórmula",
+          "test_button": "Prova",
+          "validating": "S’està validant",
+          "validation_success": "La fórmula és vàlida! Retorna {resultType}",
+          "validation_success_with_refs": "La fórmula és vàlida! Retorna {resultType} ({count} camp(s) referenciat(s))",
+          "error": {
+            "empty": "Introdueix una fórmula",
+            "missing_context": "Falta el context de l’espai de treball, del projecte o del tipus d’element de treball",
+            "validation_failed": "La validació ha fallat"
+          },
+          "picker": {
+            "no_match": "No hi ha propietats coincidents",
+            "no_available": "No hi ha propietats disponibles"
+          }
+        },
+        "enable_disable": {
+          "label": "Actiu",
+          "tooltip": {
+            "disabled": "Fes clic per desactivar",
+            "enabled": "Fes clic per activar"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Suprimeix aquesta propietat",
+          "description": "La supressió de propietats pot provocar la pèrdua de dades existents.",
+          "secondary_description": "Vols desactivar la propietat en lloc de suprimir-la?",
+          "primary_button": "{action}, suprimeix-la",
+          "secondary_button": "Sí, desactiva-la"
+        },
+        "mandate_confirmation": {
+          "label": "Propietat obligatòria",
+          "content": "Sembla que aquesta propietat té una opció per defecte. Si la fas obligatòria, s’eliminarà el valor per defecte i els usuaris hauran d’afegir-ne un de la seva elecció.",
+          "tooltip": {
+            "disabled": "Aquest tipus de propietat no es pot fer obligatori",
+            "enabled": "Desmarca per marcar el camp com a opcional",
+            "checked": "Marca per fer el camp obligatori"
+          }
+        },
+        "empty_state": {
+          "title": "Afegeix propietats personalitzades",
+          "description": "Les noves propietats que afegeixis per a aquest tipus d’element de treball es mostraran aquí."
+        }
+      },
+      "types": {
+        "title": "Tipus",
+        "description": "Crea i personalitza tipus d’element de treball amb propietats.",
+        "sort_options": {
+          "project_count": "Nombre de projectes als quals pertany"
+        },
+        "filter_options": {
+          "show_active": "Mostra els actius",
+          "show_inactive": "Mostra els inactius"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Crea’n un de nou",
+            "import_from_workspace": "Importa de l’espai de treball"
+          },
+          "banner": {
+            "with_access": "Activa els tipus d’element de treball per importar tipus des del nivell de l’espai de treball",
+            "without_access": "Els tipus d’element de treball estan desactivats. Contacta amb l’administrador de l’espai de treball per activar-los a la configuració de l’espai de treball."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Propietats personalitzades",
+        "add_button": "Afegeix propietats",
+        "modal": {
+          "title": "Afegeix propietats",
+          "empty": {
+            "title": "No hi ha propietats disponibles",
+            "description": "Totes les propietats ja estan enllaçades a aquest tipus."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Desenllaça la propietat",
+          "description": "Si desvincules aquesta propietat, se suprimiran permanentment tots els seus valors a tots els elements de treball que utilitzin aquest tipus. Aquesta acció no es pot desfer.",
+          "input_label": "Escriu",
+          "input_label_suffix": "per continuar:",
+          "confirm": "Desenllaça la propietat",
+          "loading": "S’està desenllaçant"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Suprimeix aquest tipus",
+        "description": "La supressió de tipus pot provocar la pèrdua de dades existents.",
+        "can_disable_warning": "Vols desactivar el tipus en lloc de suprimir-lo?",
+        "primary_button": "Sí, suprimeix-lo",
+        "toast": {
+          "success": {
+            "title": "Correcte!",
+            "message": "El tipus d’element de treball s’ha suprimit correctament."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "No s’ha pogut suprimir el tipus d’element de treball. Torna-ho a provar!"
+          }
+        },
+        "errors": {
+          "cannot_delete_default_work_item_type": "No es pot suprimir el tipus d’element de treball per defecte",
+          "cannot_delete_work_item_type_with_associated_work_items": "No es pot suprimir un tipus d’element de treball amb elements de treball associats"
+        }
+      }
+    },
+    "create": {
+      "title": "Crea un tipus d’element de treball",
+      "button": "Afegeix un tipus d’element de treball",
+      "toast": {
+        "success": {
+          "title": "Correcte!",
+          "message": "El tipus d’element de treball s’ha creat correctament."
+        },
+        "error": {
+          "title": "Error!",
+          "message": {
+            "default": "No s’ha pogut crear el tipus d’element de treball. Torna-ho a provar!",
+            "conflict": "El tipus {name} ja existeix. Tria un nom diferent."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "Actualitza el tipus d’element de treball",
+      "button": "Actualitza el tipus d’element de treball",
+      "toast": {
+        "success": {
+          "title": "Correcte!",
+          "message": "S’ha actualitzat correctament el tipus d’element de treball {name}."
+        },
+        "error": {
+          "title": "Error!",
+          "message": {
+            "default": "No s’ha pogut actualitzar el tipus d’element de treball. Torna-ho a provar!",
+            "conflict": "El tipus {name} ja existeix. Tria un nom diferent."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Dona un nom únic a aquest tipus d’element de treball"
+        },
+        "description": {
+          "placeholder": "Descriu per a què serveix aquest tipus d’element de treball i quan s’ha d’utilitzar."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} el tipus d’element de treball {name}",
+        "success": {
+          "title": "Correcte!",
+          "message": "El tipus d’element de treball {name} s’ha {action} correctament."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "No s’ha pogut {action} el tipus d’element de treball. Torna-ho a provar!"
+        }
+      },
+      "tooltip": "Fes clic per {action}"
+    },
+    "change_confirmation": {
+      "title": "Vols canviar el tipus d’element de treball?",
+      "description": "Canviar el tipus d’element de treball pot provocar la pèrdua dels valors de propietats personalitzades específics del tipus actual. Aquesta acció no es pot desfer.",
+      "button": {
+        "loading": "S’està canviant",
+        "default": "Canvia el tipus"
+      }
+    },
+    "empty_state": {
+      "enable": {
+        "title": "Activa els tipus d’element de treball",
+        "description": "Adapta els elements de treball al teu treball amb els tipus d’element de treball. Personalitza’ls amb icones, fons i propietats, i configura’ls per a aquest projecte.",
+        "primary_button": {
+          "text": "Activa"
+        },
+        "confirmation": {
+          "title": "Un cop activats, els tipus d’element de treball no es poden desactivar.",
+          "description": "L’element de treball de Plane esdevindrà el tipus d’element de treball per defecte d’aquest projecte i es mostrarà amb la seva icona i el seu fons en aquest projecte.",
+          "button": {
+            "default": "Activa",
+            "loading": "S’està configurant"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "Obtén Pro per activar els tipus d’element de treball.",
+        "description": "Adapta els elements de treball al teu treball amb els tipus d’element de treball. Personalitza’ls amb icones, fons i propietats, i configura’ls per a aquest projecte.",
+        "primary_button": {
+          "text": "Obtén Pro"
+        }
+      },
+      "upgrade": {
+        "title": "Actualitza per activar els tipus d’element de treball.",
+        "description": "Adapta els elements de treball al teu treball amb els tipus d’element de treball. Personalitza’ls amb icones, fons i propietats, i configura’ls per a aquest projecte.",
+        "primary_button": {
+          "text": "Millora"
+        }
+      }
+    }
+  },
+  "work_item_type_hierarchy": {
+    "settings": {
+      "title": "Jerarquia",
+      "tab_label": "Jerarquia",
+      "description": "Configura nivells de jerarquia per organitzar el teu treball. Cada nivell defineix una relació de pare amb l’element immediatament superior i una relació de fill amb l’element immediatament inferior.",
+      "sidebar_label": "Jerarquia",
+      "enable_control": {
+        "title": "Activa la jerarquia",
+        "description": "Crea relacions de pare-fill entre diferents tipus d’element de treball.",
+        "tooltip": "No pots desactivar la jerarquia un cop activada."
+      },
+      "workspace_work_item_types_disabled_banner": {
+        "content": "Defineix primer els tipus d’element de treball per crear una nova jerarquia.",
+        "cta": "Configuració dels tipus d’element de treball"
+      }
+    },
+    "levels": {
+      "max_level_placeholder": "Arrossega i deixa anar un tipus per afegir un nou nivell de jerarquia",
+      "empty_level_placeholder": "Arrossega i deixa anar un tipus d’element de treball al nivell {level}",
+      "drag_tooltip": "Arrossega per canviar el nivell",
+      "quick_actions": {
+        "set_as_default": {
+          "label": "Estableix com a predeterminat",
+          "toast": {
+            "loading": "S’està establint com a predeterminat...",
+            "success": {
+              "title": "Correcte!",
+              "message": "El nivell de jerarquia {level} s’ha establert com a predeterminat correctament."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "No s’ha pogut establir el nivell de jerarquia {level} com a predeterminat. Torna-ho a provar."
+            }
+          }
+        }
+      },
+      "update_level_toast": {
+        "loading": "S’està movent {workItemTypeName} al nivell {level}...",
+        "success": {
+          "title": "Correcte!",
+          "message": "{workItemTypeName} s’ha mogut al nivell {level} correctament."
+        }
+      }
+    },
+    "break_hierarchy_modal": {
+      "title": "Error de validació!",
+      "content": {
+        "intro": "El tipus d’element de treball {workItemTypeName} té:",
+        "parent_items": "{count, plural, one {element de treball pare} other {elements de treball pares}}",
+        "child_items": "{count, plural, one {subelement de treball} other {subelements de treball}}",
+        "parent_line_suffix_when_also_children": ", i ",
+        "footer": "Aquest canvi eliminarà les relacions de pare i fill dels elements de treball existents del tipus d’element de treball {workItemTypeName}."
+      },
+      "confirm_input": {
+        "label": "Escriu «Confirma» per continuar.",
+        "placeholder": "Confirma"
+      },
+      "error_toast": {
+        "title": "Error!",
+        "message": "No s’ha pogut trencar la jerarquia. Torna-ho a provar."
+      },
+      "confirm_button": {
+        "loading": "S’està aplicant",
+        "default": "Aplica i desenllaça"
+      }
+    },
+    "work_item_modal": {
+      "invalid_work_item_type_create_toast": {
+        "title": "Error!",
+        "message": "El tipus d’element de treball seleccionat no es pot utilitzar per crear un element de treball nou perquè incompleix les regles de jerarquia."
+      },
+      "invalid_work_item_type_update_toast": {
+        "title": "Error!",
+        "message": "No es pot actualitzar el tipus d’element de treball perquè incompleix les regles de jerarquia."
+      }
+    },
+    "work_item_type_modal": {
+      "level": "Nivell de jerarquia",
+      "invalid_level_toast": {
+        "title": "Error!",
+        "message": "No es pot actualitzar el tipus d’element de treball perquè incompleix les regles de jerarquia."
+      }
+    }
+  }
+}

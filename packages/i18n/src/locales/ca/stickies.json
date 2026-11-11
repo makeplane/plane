@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "Els teus Stickies",
+    "placeholder": "fes clic per escriure aquí",
+    "all": "Tots els Stickies",
+    "no-data": "Anota una idea, captura una intuïció o apunta una inspiració. Afegeix una nota adhesiva per començar.",
+    "add": "Afegeix un Sticky",
+    "search_placeholder": "Cerca per títol",
+    "delete": "Suprimeix la nota adhesiva",
+    "delete_confirmation": "Segur que vols suprimir aquesta nota adhesiva?",
+    "empty_state": {
+      "simple": "Anota una idea, captura una intuïció o apunta una inspiració. Afegeix una nota adhesiva per començar.",
+      "general": {
+        "title": "Els Stickies són notes ràpides i tasques pendents que apuntes sobre la marxa.",
+        "description": "Captura els teus pensaments i idees fàcilment creant Stickies que podràs consultar en qualsevol moment i des de qualsevol lloc.",
+        "primary_button": {
+          "text": "Afegeix un Sticky"
+        }
+      },
+      "search": {
+        "title": "Això no coincideix amb cap dels teus Stickies.",
+        "description": "Prova un altre terme o fes-nos-ho saber\nsi estàs segur que la cerca és correcta.",
+        "primary_button": {
+          "text": "Afegeix un Sticky"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "El nom de la nota adhesiva no pot superar els 100 caràcters.",
+        "already_exists": "Ja existeix una nota adhesiva sense descripció"
+      },
+      "created": {
+        "title": "Sticky creat",
+        "message": "La nota adhesiva s’ha creat correctament"
+      },
+      "not_created": {
+        "title": "No s’ha pogut crear el Sticky",
+        "message": "No s’ha pogut crear la nota adhesiva"
+      },
+      "updated": {
+        "title": "Sticky actualitzat",
+        "message": "La nota adhesiva s’ha actualitzat correctament"
+      },
+      "not_updated": {
+        "title": "No s’ha pogut actualitzar el Sticky",
+        "message": "No s’ha pogut actualitzar la nota adhesiva"
+      },
+      "removed": {
+        "title": "Sticky eliminat",
+        "message": "La nota adhesiva s’ha eliminat correctament"
+      },
+      "not_removed": {
+        "title": "No s’ha pogut eliminar el Sticky",
+        "message": "No s’ha pogut eliminar la nota adhesiva"
+      }
+    }
+  }
+}
