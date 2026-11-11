@@ -27,8 +27,6 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@effect/platform": "catalog:",
-    "@effect/platform-node": "catalog:",
     "@fontsource/inter": "catalog:",
     "@hocuspocus/extension-database": "catalog:",
     "@hocuspocus/extension-logger": "catalog:",

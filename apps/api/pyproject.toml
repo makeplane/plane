@@ -70,11 +70,11 @@ dependencies = [
     # jwt
     "PyJWT==2.15.1",
     # OpenTelemetry
-    "opentelemetry-api==1.28.1",
-    "opentelemetry-sdk==1.28.1",
-    "opentelemetry-instrumentation-django==0.49b1",
-    "opentelemetry-exporter-otlp==1.28.1",
-    "opentelemetry-exporter-otlp-proto-grpc==1.28.1",
+    "opentelemetry-api==1.45.2",
+    "opentelemetry-sdk==1.45.2",
+    "opentelemetry-instrumentation-django==0.66b2",
+    "opentelemetry-exporter-otlp==1.45.2",
+    "opentelemetry-exporter-otlp-proto-grpc==1.45.2",
     # OpenAPI Specification
     "drf-spectacular==0.29.0",
     # html sanitizer
