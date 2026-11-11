@@ -2,61 +2,55 @@
 
 ## Description
 
-The `@plane/editor` package serves as the foundation for our editor system. It provides the base functionality for our other editor packages, but it will not be used directly in any of the projects but only for extending other editors.
+The `@plane/editor` package is Plane's rich text editor, built on [Tiptap](https://tiptap.dev/). It ships ready-to-use React editors that the apps import directly (for example `apps/web` and `apps/space`), plus helpers, constants and types for building on top of them.
 
-## Utilities
+## Entry points
 
-We provide a wide range of utilities for extending the core itself.
-
-1. Merging classes and custom styling
-2. Adding new extensions
-3. Adding custom props
-4. Base menu items, and their commands
-
-This allows for extensive customization and flexibility in the Editors created using our `editor-core` package.
+| Import                 | What it contains                                                                                     |
+| ---------------------- | ---------------------------------------------------------------------------------------------------- |
+| `@plane/editor`        | React editors, helpers, constants, extension lists and types                                         |
+| `@plane/editor/lib`    | Framework-free pieces: core extensions without props, document collaboration events, Yjs utilities   |
+| `@plane/editor/server` | Node entry (used by `apps/live`): everything in `lib` plus HTML/JSON/Yjs document conversion helpers |
+| `@plane/editor/styles` | Editor CSS (also available as `@plane/editor/styles.css`)                                            |
 
 ### Here's a detailed overview of what's exported
 
-1. useEditor - A hook that you can use to extend the Plane editor.
+1. Editors - React components with a forwarded ref (`EditorRefApi`) to control the editor from outside:
+   - `RichTextEditorWithRef` (`IRichTextEditorProps`)
+   - `LiteTextEditorWithRef` (`ILiteTextEditorProps`), used for comments
+   - `DocumentEditorWithRef` (`IDocumentEditorProps`)
+   - `CollaborativeDocumentEditorWithRef` (`ICollaborativeDocumentEditorProps`), real-time editing through `apps/live`
 
-   | Prop                      | Type                                                             | Description                                                                                                                                                             |
-   | ------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-   | `extensions`              | `Extension[]`                                                    | An array of custom extensions you want to add into the editor to extend it's core features                                                                              |
-   | `editorProps`             | `EditorProps`                                                    | Extend the editor props by passing in a custom props object                                                                                                             |
-   | `uploadFile`              | `(file: File) => Promise<string>`                                | A function that handles file upload. It takes a file as input and handles the process of uploading that file.                                                           |
-   | `deleteFile`              | `(assetUrlWithWorkspaceId: string) => Promise<any>`              | A function that handles deleting an image. It takes the asset url from your bucket and handles the process of deleting that image.                                      |
-   | `value`                   | `html string`                                                    | The initial content of the editor.                                                                                                                                      |
-   | `debouncedUpdatesEnabled` | `boolean`                                                        | If set to true, the `onChange` event handler is debounced, meaning it will only be invoked after the specified delay (default 1500ms) once the user has stopped typing. |
-   | `onChange`                | `(json: any, html: string) => void`                              | This function is invoked whenever the content of the editor changes. It is passed the new content in both JSON and HTML formats.                                        |
-   | `setIsSubmitting`         | `(isSubmitting: "submitting" \| "submitted" \| "saved") => void` | This function is called to update the submission status.                                                                                                                |
-   | `setShouldShowAlert`      | `(showAlert: boolean) => void`                                   | This function is used to show or hide an alert in case of content not being "saved".                                                                                    |
-   | `forwardedRef`            | `any`                                                            | Pass this in whenever you want to control the editor's state from an external component                                                                                 |
+2. Common props (`IEditorProps` in `src/types/editor.ts`). The most important ones:
 
-2. useReadOnlyEditor - A hook that can be used to extend a Read Only instance of the core editor.
+   | Prop                                       | Type                                                                              | Description                                                      |
+   | ------------------------------------------ | --------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+   | `id`                                       | `string`                                                                          | Unique id of the editor instance                                 |
+   | `initialValue` / `value`                   | `string`                                                                          | Initial and controlled HTML content                              |
+   | `editable`                                 | `boolean`                                                                         | Whether the content can be edited                                |
+   | `onChange`                                 | `(json: object, html: string, options?: { isMigrationUpdate?: boolean }) => void` | Called whenever the content changes, with JSON and HTML          |
+   | `fileHandler`                              | `TFileHandler`                                                                    | Upload, delete, restore and resolve assets (images, attachments) |
+   | `mentionHandler`                           | `TMentionHandler`                                                                 | Search and render `@` mentions                                   |
+   | `disabledExtensions` / `flaggedExtensions` | `TExtensions[]`                                                                   | Turn extensions off, or mark them as behind a feature flag       |
+   | `extensions`                               | `Extensions`                                                                      | Extra Tiptap extensions to add                                   |
+   | `editorProps`                              | `EditorProps`                                                                     | Extra ProseMirror editor props                                   |
+   | `forwardedRef`                             | `React.MutableRefObject<EditorRefApi \| null>`                                    | Ref used to control the editor from an external component        |
+   | `containerClassName` / `editorClassName`   | `string`                                                                          | Extra classes for the container and the editable area            |
+   | `placeholder`                              | `string \| ((isFocused: boolean, value: string) => string)`                       | Placeholder text                                                 |
 
-   | Prop           | Type          | Description                                                                                |
-   | -------------- | ------------- | ------------------------------------------------------------------------------------------ |
-   | `value`        | `string`      | The initial content of the editor.                                                         |
-   | `forwardedRef` | `any`         | Pass this in whenever you want to control the editor's state from an external component    |
-   | `extensions`   | `Extension[]` | An array of custom extensions you want to add into the editor to extend it's core features |
-   | `editorProps`  | `EditorProps` | Extend the editor props by passing in a custom props object                                |
+3. Extension lists - `CORE_EXTENSIONS`, `ADDITIONAL_EXTENSIONS` and the `TrailingNode` extension.
 
-3. Items and Commands - H1, H2, H3, task list, quote, code block, etc's methods.
-
-4. UI Wrappers
-
-- `EditorContainer` - Wrap your Editor Container with this to apply base classes and styles.
-- `EditorContentWrapper` - Use this to get Editor's Content and base menus.
-
-5. Extending with Custom Styles
+4. Extending with Custom Styles
 
 ```ts
 const customEditorClassNames = getEditorClassNames({
   noBorder,
   borderOnFocus,
-  customClassName,
+  containerClassName,
 });
 ```
+
+The internal `EditorContainer` and `EditorContentWrapper` components (in `src/components/editors`) apply these classes; they are not exported from the package.
 
 ## Core features
 

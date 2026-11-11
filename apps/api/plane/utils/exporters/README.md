@@ -2,6 +2,8 @@
 
 A flexible and extensible data export utility for exporting Django model data in multiple formats (CSV, JSON, XLSX).
 
+> **Note:** the work item export background task (`plane/bgtasks/export_task.py`) uses `plane.utils.porters` (`DataExporter` with `IssueExportSerializer`), not this module. Change `plane.utils.porters` to change what users get from **Export**.
+
 ## 🎯 Overview
 
 The exporters module provides a schema-based approach to exporting data with support for:
@@ -41,9 +43,10 @@ from plane.utils.exporters import Exporter, IssueExportSchema
 
 # Get issues with prefetched relations
 issues = Issue.objects.filter(project_id=project_id).prefetch_related(
-    'assignee_details',
-    'label_details',
-    'issue_module',
+    'assignees',
+    'labels',
+    'issue_module__module',
+    'issue_link',
     # ... other relations
 )
 
@@ -122,7 +125,7 @@ assignees = ListField(label="Assignees")  # Custom preparer can populate this
 
 #### 🗂️ JSONField
 
-Handles complex JSON-serializable objects (dicts, lists of dicts). In CSV/XLSX, they're serialized as JSON strings. In JSON, they remain as objects.
+Handles complex JSON-serializable objects (dicts, lists of dicts). In CSV/XLSX, a dict is serialized as a JSON string, while a list is joined item by item with `str()` (so a list of dicts comes out as Python reprs). In JSON, they remain as objects.
 
 ```python
 metadata = JSONField(source="metadata", label="Metadata")
@@ -155,7 +158,7 @@ class MySchema(ExportSchema):
     assignees = ListField(label="Assignees")
 
     def prepare_assignees(self, obj):
-        return [f"{u.first_name} {u.last_name}" for u in obj.assignee_details]
+        return [f"{u.first_name} {u.last_name}" for u in obj.assignees.all()]
 ```
 
 Preparers take precedence over field definitions.
@@ -205,7 +208,8 @@ exporter = Exporter(
 ```python
 exporter = Exporter(format_type="json", schema_class=MySchema)
 filename, content = exporter.export("data", records)
-# content is a JSON string: '[{"field": "value"}, ...]'
+# content is a JSON string keyed by field label: '[{"Field Label": "value"}, ...]'
+# (a field without a label falls back to its title-cased name, e.g. "state_name" -> "State Name")
 ```
 
 ### 📗 XLSX Format
@@ -215,6 +219,7 @@ filename, content = exporter.export("data", records)
 - JSON objects are serialized as JSON strings
 - File extension: `.xlsx`
 - Returns binary content (bytes)
+- CSV and XLSX cells are passed through `sanitize_csv_row` to block spreadsheet formula injection
 
 ```python
 exporter = Exporter(format_type="xlsx", schema_class=MySchema)
@@ -239,7 +244,7 @@ class MySchema(ExportSchema):
     @classmethod
     def get_context_data(cls, queryset):
         """Pre-fetch all attachments in one query."""
-        attachments_dict = get_attachments_dict(queryset)
+        attachments_dict = get_issue_attachments_dict(queryset)  # from plane.utils.exporters.schemas.issue
         return {"attachments_dict": attachments_dict}
 
 # The Exporter automatically uses get_context_data() when serializing
@@ -366,8 +371,8 @@ Key features:
    @classmethod
    def get_context_data(cls, queryset):
        return {
-           "attachments": get_attachments_dict(queryset),
-           "comments": get_comments_dict(queryset),
+           "attachments_dict": get_issue_attachments_dict(queryset),
+           "last_cycles_dict": get_issue_last_cycles_dict(queryset),
        }
    ```
 
@@ -387,7 +392,7 @@ Key features:
 
    ```python
    def prepare_assignees(self, obj):
-       return [f"{u.first_name} {u.last_name}" for u in obj.assignee_details]
+       return [f"{u.first_name} {u.last_name}" for u in obj.assignees.all()]
    ```
 
 5. **⚡ Pass QuerySets Directly**: Let the Exporter handle serialization:
@@ -488,7 +493,8 @@ assert isinstance(content, str)
 # Test with field filtering
 filename, content = exporter.export("test", queryset, fields=["id", "name"])
 data = json.loads(content)
-assert all(set(item.keys()) == {"id", "name"} for item in data)
+# JSON keys are the field labels, e.g. {"ID", "Name"} for fields labelled "ID" and "Name"
+assert all(set(item.keys()) == {"ID", "Name"} for item in data)
 
 # Test manual serialization
 data = MySchema.serialize_queryset(queryset)

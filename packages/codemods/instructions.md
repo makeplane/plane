@@ -1,17 +1,31 @@
 # jscodeshift Instructions
 
+This package (`@plane/codemods`) holds the repo's [jscodeshift](https://github.com/facebook/jscodeshift) codemods:
+
+- `function-declaration.ts` - run with `pnpm --filter=@plane/codemods function-declaration`
+- `remove-directives.ts` - run with `pnpm --filter=@plane/codemods remove-directives`
+
+Both scripts run over `apps/*` and `packages/*/src` (see `package.json`). Tests live in `tests/` and run with `pnpm --filter=@plane/codemods test` (vitest).
+
+The rest of this file is a jscodeshift API cheat sheet. In the examples, `j` is the jscodeshift API (`api.jscodeshift` inside a transform) and `root` is the collection returned by `j(source)`.
+
 ## API Reference
 
 ### Core API
 
 #### `jscodeshift`
 
-The main function that returns the jscodeshift instance.
+Parses the source and returns a Collection of its AST, which the traversal and transformation APIs below work on.
 
 - **Parameters**: `source` (String)
 - **Example**:
   ```javascript
-  const j = jscodeshift(sourceCode);
+  export default function transformer(file, api) {
+    const j = api.jscodeshift;
+    const root = j(file.source);
+    // ...
+    return root.toSource();
+  }
   ```
 
 ### Node Traversal APIs
@@ -23,7 +37,7 @@ Finds nodes that match the provided type.
 - **Parameters**: `type` (String or Function)
 - **Example**:
   ```javascript
-  const variableDeclarations = j.find(j.VariableDeclaration);
+  const variableDeclarations = root.find(j.VariableDeclaration);
   ```
 
 #### `findImportDeclarations`
@@ -33,7 +47,7 @@ Finds all ImportDeclarations optionally filtered by name.
 - **Parameters**: `sourcePath` (String)
 - **Example**:
   ```javascript
-  const routerImports = j.findImportDeclarations("react-router-dom");
+  const routerImports = root.findImportDeclarations("react-router-dom");
   ```
 
 #### `closestScope`
@@ -42,7 +56,7 @@ Finds the closest enclosing scope of a node.
 
 - **Example**:
   ```javascript
-  const closestScopes = j.find(j.Identifier).closestScope();
+  const closestScopes = root.find(j.Identifier).closestScope();
   ```
 
 #### `closest`
@@ -52,7 +66,9 @@ Finds the nearest parent node that matches the specified type.
 - **Parameters**: `type` (String or Function)
 - **Example**:
   ```javascript
-  const closestFunction = j.find(j.Identifier).closest(j.FunctionDeclaration);
+  const closestFunction = root
+    .find(j.Identifier)
+    .closest(j.FunctionDeclaration);
   ```
 
 #### `getVariableDeclarators`
@@ -74,7 +90,7 @@ Finds variable declarators by name.
 - **Parameters**: `name` (String)
 - **Example**:
   ```javascript
-  const variableDeclarators = j.findVariableDeclarators("a");
+  const variableDeclarators = root.findVariableDeclarators("a");
   ```
 
 #### `filter`
@@ -96,7 +112,7 @@ Iterates over each node in the collection.
 - **Parameters**: `callback` (Function)
 - **Example**:
   ```javascript
-  j.find(j.VariableDeclaration).forEach((path) => {
+  root.find(j.VariableDeclaration).forEach((path) => {
     console.log(path.node);
   });
   ```
@@ -143,7 +159,7 @@ Returns the number of nodes in the collection.
 
 - **Example**:
   ```javascript
-  const numberOfNodes = j.find(j.VariableDeclaration).size();
+  const numberOfNodes = root.find(j.VariableDeclaration).size();
   ```
 
 #### `length`
@@ -161,7 +177,7 @@ Returns the AST nodes in the collection.
 
 - **Example**:
   ```javascript
-  const nodes = j.find(j.VariableDeclaration).nodes();
+  const nodes = root.find(j.VariableDeclaration).nodes();
   ```
 
 #### `paths`
@@ -170,7 +186,7 @@ Returns the paths of the found nodes.
 
 - **Example**:
   ```javascript
-  const paths = j.find(j.VariableDeclaration).paths();
+  const paths = root.find(j.VariableDeclaration).paths();
   ```
 
 #### `getAST`
@@ -188,7 +204,7 @@ Gets the first node in the collection.
 
 - **Example**:
   ```javascript
-  const firstVariableDeclaration = j.find(j.VariableDeclaration).get();
+  const firstVariableDeclaration = root.find(j.VariableDeclaration).get();
   ```
 
 #### `at`
@@ -198,7 +214,7 @@ Navigates to a specific path in the AST.
 - **Parameters**: `index` (Number)
 - **Example**:
   ```javascript
-  const secondVariableDeclaration = j.find(j.VariableDeclaration).at(1);
+  const secondVariableDeclaration = root.find(j.VariableDeclaration).at(1);
   ```
 
 #### `getTypes`
@@ -214,13 +230,13 @@ Returns the set of node types present in the collection.
 
 Checks if the node in the collection is of a specific type.
 
-- **Parameters**: `type` (String)
+- **Parameters**: `type` (a type from `j`, e.g. `j.VariableDeclarator`)
 - **Example**:
   ```javascript
   const isVariableDeclarator = root
     .find(j.VariableDeclarator)
     .at(0)
-    .isOfType("VariableDeclarator");
+    .isOfType(j.VariableDeclarator);
   ```
 
 ### Node Transformation APIs
@@ -232,9 +248,9 @@ Replaces the current node(s) with a new node.
 - **Parameters**: `newNode` (Node or Function)
 - **Example**:
   ```javascript
-  j.find(j.Identifier).replaceWith((path) =>
-    j.identifier(path.node.name.toUpperCase())
-  );
+  root
+    .find(j.Identifier)
+    .replaceWith((path) => j.identifier(path.node.name.toUpperCase()));
   ```
 
 #### `insertBefore`
@@ -244,9 +260,9 @@ Inserts a node before the current node.
 - **Parameters**: `newNode` (Node)
 - **Example**:
   ```javascript
-  j.find(j.FunctionDeclaration).insertBefore(
-    j.expressionStatement(j.stringLiteral("Inserted before"))
-  );
+  root
+    .find(j.FunctionDeclaration)
+    .insertBefore(j.expressionStatement(j.stringLiteral("Inserted before")));
   ```
 
 #### `insertAfter`
@@ -256,9 +272,9 @@ Inserts a node after the current node.
 - **Parameters**: `newNode` (Node)
 - **Example**:
   ```javascript
-  j.find(j.FunctionDeclaration).insertAfter(
-    j.expressionStatement(j.stringLiteral("Inserted after"))
-  );
+  root
+    .find(j.FunctionDeclaration)
+    .insertAfter(j.expressionStatement(j.stringLiteral("Inserted after")));
   ```
 
 #### `remove`
@@ -267,7 +283,7 @@ Removes the current node(s).
 
 - **Example**:
   ```javascript
-  j.find(j.VariableDeclaration).remove();
+  root.find(j.VariableDeclaration).remove();
   ```
 
 #### `renameTo`
@@ -287,7 +303,7 @@ Converts the transformed AST back to source code.
 - **Parameters**: `options` (Object)
 - **Example**:
   ```javascript
-  const transformedSource = j.toSource({ quote: "single" });
+  const transformedSource = root.toSource({ quote: "single" });
   ```
 
 ## AST Grammar

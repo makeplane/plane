@@ -6,9 +6,9 @@ A lightweight TypeScript decorator library for building Express.js controllers w
 
 - TypeScript-first design
 - Decorators for HTTP methods (GET, POST, PUT, PATCH, DELETE)
-- WebSocket support
+- WebSocket support (with `express-ws`)
 - Middleware support
-- No build step required - works directly with TypeScript files
+- Built with tsdown to `dist/` (`pnpm --filter=@plane/decorators build`)
 
 ## Installation
 
@@ -22,16 +22,18 @@ This package is part of the Plane workspace and can be used by adding it to your
 }
 ```
 
+The decorators use legacy TypeScript decorators and `reflect-metadata`, so the consuming project needs `"experimentalDecorators": true` and `"emitDecoratorMetadata": true` in its `tsconfig.json`.
+
 ## Usage
 
 ### Basic REST Controller
 
 ```typescript
-import { Controller, Get, Post, BaseController } from "@plane/decorators";
-import { Router, Request, Response } from "express";
+import { Controller, Get, Post, registerController } from "@plane/decorators";
+import { Router, type Request, type Response } from "express";
 
 @Controller("/api/users")
-class UserController extends BaseController {
+class UserController {
   @Get("/")
   async getUsers(req: Request, res: Response) {
     return res.json({ users: [] });
@@ -45,19 +47,21 @@ class UserController extends BaseController {
 
 // Register routes
 const router = Router();
-const userController = new UserController();
-userController.registerRoutes(router);
+registerController(router, UserController);
 ```
 
 ### WebSocket Controller
 
 ```typescript
-import { Controller, WebSocket, BaseWebSocketController } from "@plane/decorators";
-import { Request } from "express";
-import { WebSocket as WS } from "ws";
+import express, { Router, type Request } from "express";
+import expressWs from "express-ws";
+import type { WebSocket as WS } from "ws";
+import { Controller, WebSocket, registerController } from "@plane/decorators";
 
 @Controller("/ws/chat")
-class ChatController extends BaseWebSocketController {
+class ChatController {
+  constructor(private readonly chatService: ChatService) {}
+
   @WebSocket("/")
   handleConnection(ws: WS, req: Request) {
     ws.on("message", (message) => {
@@ -66,11 +70,17 @@ class ChatController extends BaseWebSocketController {
   }
 }
 
-// Register WebSocket routes
-const router = require("express-ws")(app).router;
-const chatController = new ChatController();
-chatController.registerWebSocketRoutes(router);
+// express-ws must patch the app before the router is created
+const app = express();
+expressWs(app);
+const router = Router();
+
+// Constructor arguments are passed as the third parameter
+registerController(router, ChatController, [chatService]);
+app.use(router);
 ```
+
+`registerController` detects whether a class has `@WebSocket` methods and registers it as a WebSocket or REST controller. See `apps/live/src/server.ts` for real usage.
 
 ## API Reference
 
@@ -85,11 +95,10 @@ chatController.registerWebSocketRoutes(router);
 - `@WebSocket(route: string)` - Method decorator for WebSocket endpoints
 - `@Middleware(middleware: RequestHandler)` - Method decorator for applying middleware
 
-### Classes
+### Functions
 
-- `BaseController` - Base class for REST controllers
-- `BaseWebSocketController` - Base class for WebSocket controllers
+- `registerController(router: Router, Controller, dependencies: unknown[] = [])` - Instantiates the controller with `dependencies` and registers its routes on `router`
 
 ## License
 
-This project is licensed under the [GNU Affero General Public License v3.0](https://github.com/makeplane/plane/blob/master/LICENSE.txt).
+This project is licensed under the [GNU Affero General Public License v3.0](../../LICENSE.txt).
