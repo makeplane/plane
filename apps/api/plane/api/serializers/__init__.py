@@ -3,7 +3,7 @@
 # See the LICENSE file for details.
 
 from .user import UserLiteSerializer
-from .workspace import WorkspaceLiteSerializer
+from .workspace import WorkspaceLiteSerializer, WorkspaceSerializer
 from .project import (
     ProjectSerializer,
     ProjectLiteSerializer,
