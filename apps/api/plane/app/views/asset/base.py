@@ -43,7 +43,12 @@ class FileAssetEndpoint(BaseAPIView):
         workspace = Workspace.objects.get(slug=slug)
         serializer = FileAssetSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(workspace_id=workspace.id)
+            # size/is_uploaded are server-derived: the file is stored by this save, so it is complete.
+            serializer.save(
+                workspace_id=workspace.id,
+                size=serializer.validated_data["asset"].size,
+                is_uploaded=True,
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
