@@ -6,8 +6,10 @@
     "status_page": "Status page"
   },
   "submit": "Submit",
+  "submitting": "Submitting",
   "cancel": "Cancel",
   "loading": "Loading",
+  "searching": "Searching...",
   "error": "Error",
   "success": "Success",
   "warning": "Warning",
@@ -152,6 +154,7 @@
   "no_favorites_yet": "No favorites yet",
   "create_folder": "Create folder",
   "new_folder": "New folder",
+  "rename_folder": "Rename Folder",
   "favorite_updated_successfully": "Favorite updated successfully",
   "favorite_created_successfully": "Favorite created successfully",
   "folder_already_exists": "Folder already exists",
@@ -303,6 +306,9 @@
   "create_new_label": "Create new label",
   "label_name": "Label name",
   "failed_to_create_label": "Failed to create label. Please try again.",
+  "no_matching_labels": "No matching labels",
+  "adding_label": "Adding \"{name}\"",
+  "add_label_to_labels": "Add \"{name}\" to labels",
   "start_date": "Start date",
   "end_date": "End date",
   "due_date": "Due date",
@@ -364,6 +370,7 @@
   "member": "{count, plural, one{# member} other{# members}}",
   "new_password_must_be_different_from_old_password": "New password must be different from old password",
   "edited": "edited",
+  "entity_detail_toolbar": "Actions",
   "bot": "Bot",
   "settings_description": "Manage your account, workspace, and project preferences all in one place. Switch between tabs to easily configure.",
   "back_to_workspace": "Back to workspace",
@@ -522,6 +529,7 @@
       "updated_on": "Updated on"
     },
     "sort": {
+      "label": "Sort",
       "asc": "Ascending",
       "desc": "Descending",
       "created_on": "Created on",
@@ -535,6 +543,7 @@
     "link_copied": "Link copied!",
     "link_copied_to_clipboard": "Link copied to clipboard",
     "copied_to_clipboard": "Work item link copied to clipboard",
+    "clipboard_copy_failed": "Couldn't copy to your clipboard",
     "branch_name_copied_to_clipboard": "Branch name copied to clipboard",
     "is_copied_to_clipboard": "Work item is copied to clipboard",
     "no_links_added_yet": "No links added yet",
@@ -619,7 +628,8 @@
       "enable": "Enable",
       "disable": "Disable",
       "copy_markdown": "Copy markdown",
-      "reply": "Reply"
+      "reply": "Reply",
+      "add_reaction": "Add reaction"
     },
     "name": "Name",
     "discard": "Discard",
@@ -717,7 +727,14 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "status": "Status",
+    "tooltip": {
+      "copy_to_clipboard": "Copy to clipboard",
+      "created_on_date": "Created on {date}",
+      "priority": "Priority: {value}"
+    },
+    "locked": "Locked"
   },
   "chart": {
     "x_axis": "X-axis",
@@ -866,6 +883,15 @@
       "title": "JSON",
       "description": "Export work items to a JSON file.",
       "short_description": "Export as json"
+    }
+  },
+  "labels_count": "{count, plural, one {# label} other {# labels}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Save view options",
+      "update_view": "Update view",
+      "save_as": "Save as",
+      "hide_filters": "Hide filters"
     }
   }
 }

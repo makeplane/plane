@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { Header, Row } from "@plane/ui";
+import { Header, Row } from "@plane/blocks/layout";
 import { cn } from "@plane/utils";
 // components
 import { AppHeader } from "@/components/core/app-header";

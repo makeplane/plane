@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { ProjectIcon } from "@plane/propel/icons";
+import { ProjectsOutline } from "@makeplane/propel/icons";
 // components
 import { ProjectLogo } from "@/components/common/project-logo";
 // store
@@ -28,14 +28,14 @@ export const IssuesNavbarRoot = observer(function IssuesNavbarRoot(props: Props)
       <div className="flex shrink-0 items-center gap-2">
         {project_details ? (
           <span className="grid size-7 shrink-0 place-items-center">
-            <ProjectLogo logo={project_details.logo_props} className="text-16" />
+            <ProjectLogo logo={project_details.logo_props} className="text-body-md-regular" />
           </span>
         ) : (
           <span className="grid size-7 shrink-0 place-items-center rounded-sm uppercase">
-            <ProjectIcon className="size-4" />
+            <ProjectsOutline className="size-4" />
           </span>
         )}
-        <div className="line-clamp-1 max-w-[300px] overflow-hidden text-16 font-medium">
+        <div className="line-clamp-1 max-w-[300px] overflow-hidden text-body-md-medium">
           {project_details?.name || `...`}
         </div>
       </div>

@@ -7,7 +7,7 @@ import json
 
 # Django imports
 from django.utils import timezone
-from django.db.models import OuterRef, Func, F, Q, Value, UUIDField, Subquery, Count, IntegerField
+from django.db.models import OuterRef, F, Value, UUIDField, Subquery, Count, IntegerField
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.contrib.postgres.aggregates import ArrayAgg

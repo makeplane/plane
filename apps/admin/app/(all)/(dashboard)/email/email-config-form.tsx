@@ -4,17 +4,16 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 // types
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { Select, SelectContent, SelectItem, SelectList, SelectTrigger } from "@makeplane/propel/components/select";
 import type { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@plane/types";
-// ui
-import { CustomSelect } from "@plane/ui";
 // components
 import type { TControllerInputFormField } from "@/components/common/controller-input";
 import { ControllerInput } from "@/components/common/controller-input";
+import { setToast } from "@plane/blocks/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 // local components
@@ -36,6 +35,7 @@ const EMAIL_SECURITY_OPTIONS: { [key in TEmailSecurityKeys]: string } = {
 
 export function InstanceEmailForm(props: IInstanceEmailForm) {
   const { config } = props;
+  const emailSecurityLabelId = useId();
   // states
   const [isSendTestEmailModalOpen, setIsSendTestEmailModalOpen] = useState(false);
   // store hooks
@@ -46,6 +46,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
     watch,
     setValue,
     control,
+    reset,
     formState: { errors, isValid, isDirty, isSubmitting },
   } = useForm<EmailFormValues>({
     defaultValues: {
@@ -59,7 +60,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
       ENABLE_SMTP: config["ENABLE_SMTP"],
     },
   });
-  const emailFormFields: TControllerInputFormField[] = [
+  const emailFormFields: TControllerInputFormField<EmailFormValues>[] = [
     {
       key: "EMAIL_HOST",
       type: "text",
@@ -88,7 +89,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
     },
   ];
 
-  const OptionalEmailFormFields: TControllerInputFormField[] = [
+  const OptionalEmailFormFields: TControllerInputFormField<EmailFormValues>[] = [
     {
       key: "EMAIL_HOST_USER",
       type: "text",
@@ -110,15 +111,18 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
   const onSubmit = async (formData: EmailFormValues) => {
     const payload: Partial<EmailFormValues> = { ...formData, ENABLE_SMTP: "1" };
 
-    await updateInstanceConfigurations(payload)
-      .then(() =>
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success",
-          message: "Email Settings updated successfully",
-        })
-      )
-      .catch((err) => console.error(err));
+    try {
+      await updateInstanceConfigurations(payload);
+      // the saved values become the new baseline, so Save disables again until the next edit
+      reset(payload);
+      setToast({
+        type: "success",
+        title: "Success",
+        message: "Email Settings updated successfully",
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const useTLSValue = watch("EMAIL_USE_TLS");
@@ -131,16 +135,16 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
 
   const handleEmailSecurityChange = (key: TEmailSecurityKeys) => {
     if (key === "EMAIL_USE_SSL") {
-      setValue("EMAIL_USE_TLS", "0");
-      setValue("EMAIL_USE_SSL", "1");
+      setValue("EMAIL_USE_TLS", "0", { shouldDirty: true });
+      setValue("EMAIL_USE_SSL", "1", { shouldDirty: true });
     }
     if (key === "EMAIL_USE_TLS") {
-      setValue("EMAIL_USE_TLS", "1");
-      setValue("EMAIL_USE_SSL", "0");
+      setValue("EMAIL_USE_TLS", "1", { shouldDirty: true });
+      setValue("EMAIL_USE_SSL", "0", { shouldDirty: true });
     }
     if (key === "NONE") {
-      setValue("EMAIL_USE_TLS", "0");
-      setValue("EMAIL_USE_SSL", "0");
+      setValue("EMAIL_USE_TLS", "0", { shouldDirty: true });
+      setValue("EMAIL_USE_SSL", "0", { shouldDirty: true });
     }
   };
 
@@ -163,28 +167,36 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
             />
           ))}
           <div className="flex flex-col gap-1">
-            <h4 className="text-13 text-tertiary">Email security</h4>
-            <CustomSelect
+            <span id={emailSecurityLabelId} className="text-body-xs-medium text-primary">
+              Email security
+            </span>
+            <Select
+              items={EMAIL_SECURITY_OPTIONS}
               value={emailSecurityKey}
-              label={EMAIL_SECURITY_OPTIONS[emailSecurityKey]}
-              onChange={handleEmailSecurityChange}
-              buttonClassName="rounded-md border-subtle"
-              input
+              onValueChange={(value) => handleEmailSecurityChange(value as TEmailSecurityKeys)}
             >
-              {Object.entries(EMAIL_SECURITY_OPTIONS).map(([key, value]) => (
-                <CustomSelect.Option key={key} value={key} className="w-full">
-                  {value}
-                </CustomSelect.Option>
-              ))}
-            </CustomSelect>
+              <SelectTrigger
+                variant="secondary"
+                size="lg"
+                placeholder="Select email security"
+                aria-labelledby={emailSecurityLabelId}
+              />
+              <SelectContent>
+                <SelectList>
+                  {Object.entries(EMAIL_SECURITY_OPTIONS).map(([key, value]) => (
+                    <SelectItem key={key} value={key} label={value} size="lg" />
+                  ))}
+                </SelectList>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <div className="my-6 flex flex-col gap-6 border-t border-subtle pt-4">
           <div className="flex w-full max-w-xl flex-col gap-y-10 px-1">
             <div className="mr-8 flex items-center gap-10 pt-4">
               <div className="grow">
-                <div className="text-13 font-medium text-primary">Authentication</div>
-                <div className="text-11 font-regular text-tertiary">
+                <div className="text-body-xs-medium text-primary">Authentication</div>
+                <div className="text-caption-sm-regular text-tertiary">
                   This is optional, but we recommend setting up a username and a password for your SMTP server.
                 </div>
               </div>
@@ -210,22 +222,22 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
       <div className="flex max-w-4xl items-center gap-4 py-1">
         <Button
           variant="primary"
-          size="lg"
+          size="md"
+          stretch="auto"
           onClick={handleSubmit(onSubmit)}
           loading={isSubmitting}
           disabled={!isValid || !isDirty}
-        >
-          {isSubmitting ? "Saving" : "Save changes"}
-        </Button>
+          label={isSubmitting ? "Saving" : "Save changes"}
+        />
         <Button
           variant="secondary"
-          size="lg"
+          size="md"
+          stretch="auto"
           onClick={() => setIsSendTestEmailModalOpen(true)}
           loading={isSubmitting}
           disabled={!isValid}
-        >
-          Send test email
-        </Button>
+          label="Send test email"
+        />
       </div>
     </div>
   );

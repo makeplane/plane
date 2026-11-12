@@ -26,6 +26,16 @@
           "highlight_changes": "高亮显示更改"
         }
       },
+      "version_history": {
+        "view_only": "仅查看",
+        "loading_details": "正在加载版本详情",
+        "load_error_description": "无法加载该版本。请重试。",
+        "list_error_description": "无法加载版本历史。",
+        "try_again": "重试",
+        "restoring": "正在恢复",
+        "restore_success": "页面版本已恢复。",
+        "restore_failed": "无法恢复页面版本。"
+      },
       "assets": {
         "label": "资源",
         "download_button": "下载",
@@ -111,5 +121,8 @@
       "success_message": "页面已从集合中移除。",
       "error_message": "无法将页面从集合中移除。请重试。"
     }
+  },
+  "page_content_limit_banner": {
+    "message": "已达到内容上限，实时同步已关闭。请创建新页面或使用嵌套页面以继续同步。"
   }
 }

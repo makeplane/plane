@@ -10,12 +10,19 @@
  */
 
 /**
- * Alpha mapping for 14-shade palette system
+ * Alpha mapping for 14-shade palette system.
+ *
+ * Must mirror the --alpha-white-* / --alpha-black-* ladder in
+ * @makeplane/propel (styles/variables.css), which is the source of truth for
+ * the default themes. These values are only applied for custom themes, so any
+ * drift shows up as custom themes rendering differently from the default one —
+ * silently, with no build error. Rungs 100-300 are deliberately much lighter
+ * than the linear 0.05 step the rest of the scale follows.
  */
 export const ALPHA_MAPPING = {
-  100: 0.05,
-  200: 0.1,
-  300: 0.15,
+  100: 0.04,
+  200: 0.06,
+  300: 0.08,
   400: 0.2,
   500: 0.3,
   600: 0.4,

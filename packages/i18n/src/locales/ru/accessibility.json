@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Основная боковая панель",
+      "resize_sidebar": "Изменить размер боковой панели",
+      "sidebar_peek_view": "Предпросмотр боковой панели",
       "workspace_logo": "Логотип рабочей области",
       "open_workspace_switcher": "Открыть переключатель рабочей области",
       "open_user_menu": "Открыть пользовательское меню",
@@ -29,6 +32,28 @@
       "hide_password": "Скрыть пароль",
       "close_alert": "Закрыть уведомление",
       "close_popover": "Закрыть всплывающее окно"
+    },
+    "breadcrumb": {
+      "trail": "Навигационная цепочка",
+      "show_more": "Показать больше элементов навигационной цепочки"
+    },
+    "common": {
+      "more_actions": "Другие действия",
+      "remove": "Удалить"
+    },
+    "color_picker": {
+      "open": "Открыть выбор цвета",
+      "swatches": "Готовые цвета",
+      "hex_input": "Цвет в HEX"
+    },
+    "project_board": {
+      "collapse_group": "Свернуть группу"
+    },
+    "pagination": {
+      "root": "Постраничная навигация",
+      "previous_page": "Перейти на предыдущую страницу",
+      "next_page": "Перейти на следующую страницу",
+      "go_to_page": "Перейти на страницу {page}"
     }
   }
 }

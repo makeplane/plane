@@ -223,6 +223,11 @@
       "search": {
         "description": "No se detectaron proyectos con los criterios coincidentes.\nCrea un nuevo proyecto en su lugar"
       }
+    },
+    "card": {
+      "joined": "Unido",
+      "archived": "Archivado",
+      "no_lead": "Sin líder"
     }
   },
   "workspace_views": {
@@ -373,6 +378,12 @@
           "message": "Algo salió mal."
         }
       }
+    }
+  },
+  "instance_workspaces": {
+    "empty_state": {
+      "title": "Aún no hay espacios de trabajo",
+      "description": "Los espacios de trabajo creados en esta instancia aparecen aquí."
     }
   }
 }

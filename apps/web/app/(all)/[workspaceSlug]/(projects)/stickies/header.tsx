@@ -7,9 +7,10 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { Button } from "@plane/propel/button";
-import { RecentStickyIcon } from "@plane/propel/icons";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { MultipleStickyOutline } from "@makeplane/propel/icons";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { StickySearch } from "@/components/stickies/modal/search";
@@ -31,10 +32,7 @@ export const WorkspaceStickyHeader = observer(function WorkspaceStickyHeader() {
             <Breadcrumbs>
               <Breadcrumbs.Item
                 component={
-                  <BreadcrumbLink
-                    label={`Stickies`}
-                    icon={<RecentStickyIcon className="size-5 rotate-90 text-secondary" />}
-                  />
+                  <BreadcrumbLink label="Stickies" icon={<MultipleStickyOutline className="size-4 text-tertiary" />} />
                 }
               />
             </Breadcrumbs>
@@ -45,15 +43,15 @@ export const WorkspaceStickyHeader = observer(function WorkspaceStickyHeader() {
           <StickySearch />
           <Button
             variant="primary"
-            size="lg"
+            size="md"
+            stretch="auto"
+            label="Add sticky"
             onClick={() => {
               toggleShowNewSticky(true);
               stickyOperations.create();
             }}
             loading={creatingSticky}
-          >
-            Add sticky
-          </Button>
+          />
         </Header.RightItem>
       </Header>
     </>

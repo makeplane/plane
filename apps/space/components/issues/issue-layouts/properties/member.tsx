@@ -5,80 +5,52 @@
  */
 
 import { observer } from "mobx-react";
-// icons
-import type { LucideIcon } from "lucide-react";
-import { MembersPropertyIcon } from "@plane/propel/icons";
-// plane ui
-import { Avatar, AvatarGroup } from "@plane/ui";
-// plane utils
-import { cn } from "@plane/utils";
+// plane imports
+import { MemberSelect } from "@plane/blocks/property-select";
+import type { MemberOption, MemberSelectVariant } from "@plane/blocks/property-select";
+import { useTranslation } from "@plane/i18n";
+import { cn, getFileURL } from "@plane/utils";
+// helpers
+import { READ_ONLY_SELECT_CLASSNAME, toSinglePage } from "@/helpers/select.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-//
+// types
 import type { TPublicMember } from "@/types/member";
 
 type Props = {
   memberIds: string[];
-  shouldShowBorder?: boolean;
+  variant?: MemberSelectVariant;
+  placeholder?: string;
+  className?: string;
 };
 
-type AvatarProps = {
-  showTooltip: boolean;
-  members: TPublicMember[];
-  icon?: LucideIcon;
-};
-
-export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps) {
-  const { showTooltip, members, icon: Icon } = props;
-
-  if (Array.isArray(members)) {
-    if (members.length > 1) {
-      return (
-        <AvatarGroup size="md" showTooltip={!showTooltip}>
-          {members.map((member) => {
-            if (!member) return;
-            return <Avatar key={member.id} src={member.member__avatar} name={member.member__display_name} />;
-          })}
-        </AvatarGroup>
-      );
-    } else if (members.length === 1) {
-      return (
-        <Avatar
-          src={members[0].member__avatar}
-          name={members[0].member__display_name}
-          size="md"
-          showTooltip={!showTooltip}
-        />
-      );
-    }
-  }
-
-  return Icon ? (
-    <Icon className="h-3 w-3 flex-shrink-0" />
-  ) : (
-    <MembersPropertyIcon className="mx-[4px] h-3 w-3 flex-shrink-0" />
-  );
+const toMemberOption = (member: TPublicMember): MemberOption => ({
+  id: member.member,
+  display_name: member.member__display_name,
+  avatar_url: member.member__avatar ? getFileURL(member.member__avatar) : undefined,
 });
 
-export const IssueBlockMembers = observer(function IssueBlockMembers({ memberIds, shouldShowBorder = true }: Props) {
-  const { getMembersByIds } = useMember();
-
-  const members = getMembersByIds(memberIds);
+/** The work item assignees as a read-only `MemberSelect` chip: faces when assigned, an icon when not. */
+export const IssueBlockMembers = observer(function IssueBlockMembers(props: Props) {
+  const { memberIds, variant, placeholder, className } = props;
+  // i18n
+  const { t } = useTranslation();
+  // store hooks
+  const { members, getMembersByIds } = useMember();
+  // derived values
+  const selectedMembers = getMembersByIds(memberIds ?? []).map(toMemberOption);
 
   return (
-    <div className="relative flex h-full flex-wrap items-center gap-1">
-      <div
-        className={cn("flex flex-shrink-0 cursor-default items-center rounded-md text-11", {
-          "border-[0.5px] border-strong px-2.5 py-1": shouldShowBorder && !members?.length,
-        })}
-      >
-        <div className="flex items-center gap-1.5 text-secondary">
-          <ButtonAvatars members={members} showTooltip={false} />
-          {!shouldShowBorder && members.length <= 1 && (
-            <span>{members?.[0]?.member__display_name ?? "No Assignees"}</span>
-          )}
-        </div>
-      </div>
-    </div>
+    <MemberSelect
+      multiple
+      getValues={() => toSinglePage(members?.map(toMemberOption))}
+      value={selectedMembers}
+      onChange={() => {}}
+      variant={variant ?? (selectedMembers.length > 0 ? "avatar-group-md" : "pill-md")}
+      placeholder={placeholder}
+      className={cn(READ_ONLY_SELECT_CLASSNAME, className)}
+      tooltip={{ heading: t("common.assignees"), emptyContent: t("common.none") }}
+      disabled
+    />
   );
 });

@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IProject } from "@plane/types";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "@/components/automation";
@@ -41,7 +41,7 @@ function AutomationSettingsPage({ params }: Route.ComponentProps) {
       await updateProject(workspaceSlug, projectId, formData);
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Something went wrong. Please try again.",
       });
@@ -63,7 +63,7 @@ function AutomationSettingsPage({ params }: Route.ComponentProps) {
           title={t("project_settings.automations.heading")}
           description={t("project_settings.automations.description")}
         />
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col gap-4">
           <AutoArchiveAutomation handleChange={handleChange} />
           <AutoCloseAutomation handleChange={handleChange} />
         </div>

@@ -1,0 +1,40 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { observer } from "mobx-react";
+// constants
+import { NETWORK_CHOICES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { RemovableChip } from "@/components/common/removable-chip";
+
+type Props = {
+  handleRemove: (val: string) => void;
+  values: string[];
+  editable: boolean | undefined;
+};
+
+export const AppliedAccessFilters = observer(function AppliedAccessFilters(props: Props) {
+  const { handleRemove, values, editable } = props;
+  const { t } = useTranslation();
+
+  return (
+    <>
+      {values.map((status) => {
+        const accessDetails = NETWORK_CHOICES.find((s) => `${s.key}` === status);
+        const accessLabel = accessDetails ? t(accessDetails.i18n_label) : "";
+        return (
+          <RemovableChip
+            key={status}
+            variant="soft"
+            label={accessLabel}
+            ariaLabel={accessLabel}
+            onRemove={editable ? () => handleRemove(status) : undefined}
+          />
+        );
+      })}
+    </>
+  );
+});

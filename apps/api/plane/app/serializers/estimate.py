@@ -29,7 +29,8 @@ class EstimatePointSerializer(BaseSerializer):
     class Meta:
         model = EstimatePoint
         fields = "__all__"
-        read_only_fields = ["estimate", "workspace", "project"]
+        # Audit fields are set server-side by BaseModel.save().
+        read_only_fields = ["estimate", "workspace", "project", "created_by", "updated_by"]
 
 
 class EstimateReadSerializer(BaseSerializer):

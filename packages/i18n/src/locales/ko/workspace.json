@@ -223,6 +223,11 @@
       "search": {
         "description": "일치하는 프로젝트가 없습니다. 대신 새 프로젝트를 생성하세요"
       }
+    },
+    "card": {
+      "joined": "참여함",
+      "archived": "보관됨",
+      "no_lead": "리드 없음"
     }
   },
   "workspace_views": {
@@ -373,6 +378,12 @@
           "message": "문제가 발생했습니다."
         }
       }
+    }
+  },
+  "instance_workspaces": {
+    "empty_state": {
+      "title": "아직 작업 공간이 없습니다",
+      "description": "이 인스턴스에서 생성된 작업 공간이 여기에 표시됩니다."
     }
   }
 }

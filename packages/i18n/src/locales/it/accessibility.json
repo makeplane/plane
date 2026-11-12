@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Barra laterale principale",
+      "resize_sidebar": "Ridimensiona barra laterale",
+      "sidebar_peek_view": "Anteprima barra laterale",
       "workspace_logo": "Logo dell'area di lavoro",
       "open_workspace_switcher": "Apri selettore area di lavoro",
       "open_user_menu": "Apri menu utente",
@@ -29,6 +32,28 @@
       "hide_password": "Nascondi password",
       "close_alert": "Chiudi avviso",
       "close_popover": "Chiudi popover"
+    },
+    "breadcrumb": {
+      "trail": "Percorso di navigazione",
+      "show_more": "Mostra altri elementi del percorso di navigazione"
+    },
+    "common": {
+      "more_actions": "Altre azioni",
+      "remove": "Rimuovi"
+    },
+    "color_picker": {
+      "open": "Apri il selettore colore",
+      "swatches": "Colori predefiniti",
+      "hex_input": "Colore esadecimale"
+    },
+    "project_board": {
+      "collapse_group": "Comprimi gruppo"
+    },
+    "pagination": {
+      "root": "Paginazione",
+      "previous_page": "Vai alla pagina precedente",
+      "next_page": "Vai alla pagina successiva",
+      "go_to_page": "Vai alla pagina {page}"
     }
   }
 }

@@ -10,14 +10,15 @@ from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import IssueLinkSerializer
-from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import IssueLink
+from plane.app.permissions import ProjectEntityPermission, issue_hidden_from_guest
+from plane.db.models import Issue, IssueLink
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 from plane.utils.host import base_host
@@ -28,6 +29,12 @@ class IssueLinkViewSet(BaseViewSet):
 
     model = IssueLink
     serializer_class = IssueLinkSerializer
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        # A restricted guest may only reach sub-resources of issues they created.
+        if issue_hidden_from_guest(request, kwargs["slug"], kwargs["project_id"], kwargs["issue_id"]):
+            raise PermissionDenied("You are not allowed to view this issue")
 
     def get_queryset(self):
         return (
@@ -46,6 +53,8 @@ class IssueLinkViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id, issue_id):
+        # The URL issue must belong to the URL workspace + project (404 otherwise).
+        Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)

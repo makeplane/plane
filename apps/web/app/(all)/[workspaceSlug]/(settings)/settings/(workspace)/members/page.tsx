@@ -9,9 +9,9 @@ import { observer } from "mobx-react";
 // types
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { SearchIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { ExpandableSearch } from "@makeplane/propel/components/expandable-search";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspaceBulkInviteFormData } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -21,6 +21,7 @@ import { PageHead } from "@/components/core/page-title";
 import { MemberListFiltersDropdown } from "@/components/project/dropdowns/filters/member-list";
 import { WorkspaceMembersList } from "@/components/workspace/settings/members-list";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
 import { SendWorkspaceInvitationModal } from "@/components/workspace/members";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -58,7 +59,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
       setInviteModal(false);
 
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: t("workspace_settings.settings.members.invitations_sent_successfully"),
       });
@@ -69,7 +70,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
         message = err.error;
       }
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: `${message ?? t("something_went_wrong_please_try_again")}`,
       });
@@ -111,37 +112,44 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >
-        <div className="flex items-center justify-between gap-4 pb-3.5">
-          <h4 className="flex items-center gap-2.5 text-h3-medium">
-            {t("workspace_settings.settings.members.title")}
-            {workspaceMemberIds && workspaceMemberIds.length > 0 && (
-              <CountChip count={workspaceMemberIds.length} className="m-auto h-5" />
-            )}
-          </h4>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1.5">
-              <SearchIcon className="h-3.5 w-3.5 text-placeholder" />
-              <input
-                className="w-full max-w-[234px] border-none bg-transparent text-body-xs-regular outline-none placeholder:text-placeholder"
+        <SettingsHeading
+          className="pb-4"
+          title={
+            <span className="flex items-center gap-2.5">
+              {t("workspace_settings.settings.members.title")}
+              {workspaceMemberIds && workspaceMemberIds.length > 0 && (
+                <CountChip count={workspaceMemberIds.length} className="m-auto h-5" />
+              )}
+            </span>
+          }
+          description={t("workspace_settings.settings.members.description")}
+          control={
+            <div className="flex flex-wrap items-center gap-3">
+              <ExpandableSearch
+                size="md"
+                aria-label={t("common.search.label")}
+                clearLabel={t("common.clear")}
                 placeholder={`${t("search")}...`}
                 value={searchQuery}
-                // eslint-disable-next-line jsx-a11y/no-autofocus
-                autoFocus
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onValueChange={(value) => setSearchQuery(value)}
               />
+              <MemberListFiltersDropdown
+                appliedFilters={appliedRoleFilters}
+                handleUpdate={handleRoleFilterUpdate}
+                memberType="workspace"
+              />
+              {canPerformWorkspaceAdminActions && (
+                <Button
+                  variant="primary"
+                  size="md"
+                  stretch="auto"
+                  label={t("workspace_settings.settings.members.add_member")}
+                  onClick={() => setInviteModal(true)}
+                />
+              )}
             </div>
-            <MemberListFiltersDropdown
-              appliedFilters={appliedRoleFilters}
-              handleUpdate={handleRoleFilterUpdate}
-              memberType="workspace"
-            />
-            {canPerformWorkspaceAdminActions && (
-              <Button variant="primary" size="lg" onClick={() => setInviteModal(true)}>
-                {t("workspace_settings.settings.members.add_member")}
-              </Button>
-            )}
-          </div>
-        </div>
+          }
+        />
         <WorkspaceMembersList searchQuery={searchQuery} isAdmin={canPerformWorkspaceAdminActions} />
       </section>
     </SettingsContentWrapper>

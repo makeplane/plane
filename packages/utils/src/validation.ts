@@ -90,6 +90,24 @@ export const validatePersonName = (name: string): boolean | string => {
 };
 
 /**
+ * @description Validates optional person names (e.g. optional last name). Returns true if empty or omitted, otherwise validates name constraints.
+ * @param {string} [name] - Name to validate
+ * @returns {boolean | string} true if valid or empty, error message if invalid
+ * @example
+ * validateOptionalPersonName("") // returns true
+ * validateOptionalPersonName(undefined) // returns true
+ * validateOptionalPersonName("John") // returns true
+ * validateOptionalPersonName("John<script>") // returns error message
+ */
+export const validateOptionalPersonName = (name?: string): boolean | string => {
+  if (!name || name.trim() === "") {
+    return true;
+  }
+
+  return validatePersonName(name);
+};
+
+/**
  * @description Validates display names and usernames
  * @param {string} displayName - Display name to validate
  * @returns {boolean | string} true if valid, error message if invalid

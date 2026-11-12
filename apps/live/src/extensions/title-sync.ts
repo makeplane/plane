@@ -5,9 +5,11 @@
  */
 
 // hocuspocus
+import { Connection } from "@hocuspocus/server";
 import type { Extension, Hocuspocus, Document } from "@hocuspocus/server";
-import { TiptapTransformer } from "@hocuspocus/transformer";
-import type { AnyExtension, JSONContent } from "@tiptap/core";
+import { getSchema } from "@tiptap/core";
+import type { JSONContent } from "@tiptap/core";
+import { prosemirrorJSONToYDoc } from "@tiptap/y-tiptap";
 import type * as Y from "yjs";
 // editor extensions
 import {
@@ -15,14 +17,17 @@ import {
   createRealtimeEvent,
   extractTextFromHTML,
   generateTitleProsemirrorJson,
-} from "@plane/editor";
+} from "@plane/editor/server";
 import { logger } from "@plane/logger";
 import { AppError } from "@/lib/errors";
+import { REDIS_TRANSACTION_ORIGIN } from "@/lib/yjs/redis-origin";
 // helpers
 import { getPageService } from "@/services/page/handler";
 import type { HocusPocusServerContext, OnLoadDocumentPayloadWithContext } from "@/types";
 import { broadcastMessageToPage } from "@/utils/broadcast-message";
 import { TitleUpdateManager } from "./title-update/title-update-manager";
+
+const titleSchema = getSchema(TITLE_EDITOR_EXTENSIONS);
 
 /**
  * Hocuspocus extension for synchronizing document titles
@@ -55,7 +60,7 @@ export class TitleSyncExtension implements Extension {
         const title = pageDetails.name;
         if (title == null) return;
         const titleJson = (generateTitleProsemirrorJson as (text: string) => JSONContent)(title);
-        const titleField = TiptapTransformer.toYdoc(titleJson, "title", TITLE_EDITOR_EXTENSIONS as AnyExtension[]);
+        const titleField = prosemirrorJSONToYDoc(titleSchema, titleJson, "title");
         document.merge(titleField);
       }
     } catch (error) {
@@ -80,7 +85,7 @@ export class TitleSyncExtension implements Extension {
     instance: Hocuspocus;
   }) {
     // Create a title update manager for this document
-    const updateManager = new TitleUpdateManager(documentName, context);
+    const updateManager = new TitleUpdateManager(documentName);
 
     // Store the manager
     this.titleUpdateManagers.set(documentName, updateManager);
@@ -131,9 +136,14 @@ export class TitleSyncExtension implements Extension {
       broadcastMessageToPage(data.instance, data.parentId, event);
     }
 
-    // Schedule the title update
-    if (manager) {
-      manager.scheduleUpdate(title);
+    // Save with the credential of whoever made this change, never one captured at load time. A client
+    // Connection's context holds that user's own cookie. Changes relayed from another replica (the Redis origin) are
+    // saved by the replica the editing client is connected to; any other origin has no credential and is not saved.
+    const origin: unknown = events[0]?.transaction.origin;
+    if (origin instanceof Connection) {
+      manager?.scheduleUpdate(title, origin.context as HocusPocusServerContext);
+    } else if (origin !== REDIS_TRANSACTION_ORIGIN) {
+      logger.warn(`TitleSync: not saving title for ${documentName}; unrecognised transaction origin`);
     }
   }
 

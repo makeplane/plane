@@ -26,12 +26,10 @@ from plane.app.serializers import (
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.bgtasks.event_tracking_task import track_event
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
 from plane.utils.host import base_host
-from plane.utils.analytics_events import USER_JOINED_WORKSPACE, USER_INVITED_TO_WORKSPACE
 from .. import BaseViewSet
 
 
@@ -126,21 +124,31 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                 current_site,
                 request.user.email,
             )
-            track_event.delay(
-                user_id=request.user.id,
-                event_name=USER_INVITED_TO_WORKSPACE,
-                slug=slug,
-                event_properties={
-                    "user_id": request.user.id,
-                    "workspace_id": workspace.id,
-                    "workspace_slug": workspace.slug,
-                    "invitee_role": invitation.role,
-                    "invited_at": str(timezone.now()),
-                    "invitee_email": invitation.email,
-                },
-            )
 
         return Response({"message": "Emails sent successfully"}, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, slug, pk):
+        # SECURITY: only ``role`` is writable, capped at the requester's own role as in create().
+        if not isinstance(request.data, dict) or set(request.data) != {"role"}:
+            return Response(
+                {"error": "Only the role of an invitation can be updated"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        workspace_member_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
+        serializer = WorkSpaceMemberInviteSerializer(workspace_member_invite, data=request.data, partial=True)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        requesting_user = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user, is_active=True)
+        if serializer.validated_data["role"] > requesting_user.role:
+            return Response(
+                {"error": "You cannot invite a user with higher role"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, pk):
         workspace_member_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
@@ -219,18 +227,6 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     # Set the user last_workspace_id to the accepted workspace
                     user.last_workspace_id = workspace_invite.workspace.id
                     user.save()
-                    track_event.delay(
-                        user_id=user.id,
-                        event_name=USER_JOINED_WORKSPACE,
-                        slug=slug,
-                        event_properties={
-                            "user_id": user.id,
-                            "workspace_id": workspace_invite.workspace.id,
-                            "workspace_slug": workspace_invite.workspace.slug,
-                            "role": workspace_invite.role,
-                            "joined_at": str(timezone.now()),
-                        },
-                    )
 
                     # Delete the invitation
                     workspace_invite.delete()
@@ -269,6 +265,13 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             super().get_queryset().filter(email=self.request.user.email).select_related("workspace")
         )
 
+    def list(self, request):
+        # Self-service route with no `slug`, so the role decorators do not
+        # apply. Authorization is the `email=request.user.email` filter in
+        # get_queryset() above, as for create() below: callers see only
+        # invitations addressed to their own email.
+        return super().list(request)
+
     @invalidate_cache(path="/api/workspaces/", user=False)
     @invalidate_cache(path="/api/users/me/workspaces/", multiple=True)
     def create(self, request):
@@ -288,20 +291,6 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             # Update the WorkspaceMember for this specific invitation
             WorkspaceMember.objects.filter(workspace_id=invitation.workspace_id, member=request.user).update(
                 is_active=True, role=invitation.role
-            )
-
-            # Track event
-            track_event.delay(
-                user_id=request.user.id,
-                event_name=USER_JOINED_WORKSPACE,
-                slug=invitation.workspace.slug,
-                event_properties={
-                    "user_id": request.user.id,
-                    "workspace_id": invitation.workspace.id,
-                    "workspace_slug": invitation.workspace.slug,
-                    "role": invitation.role,
-                    "joined_at": str(timezone.now()),
-                },
             )
 
         # Bulk create the user for all the workspaces

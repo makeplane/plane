@@ -6,12 +6,15 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Eye, EyeOff, XCircle } from "lucide-react";
+import { CloseCircleOutline, HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // plane imports
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Input } from "@makeplane/propel/components/input";
 import { AuthService } from "@plane/services";
-import { Input, Spinner, PasswordStrengthIndicator } from "@plane/ui";
+import { PasswordStrengthIndicator } from "@plane/blocks/auth";
 import { getPasswordStrength } from "@plane/utils";
 // types
 import { EAuthModes, EAuthSteps } from "@/types/auth";
@@ -122,124 +125,139 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
       <input type="hidden" value={passwordFormData.email} name="email" />
       <input type="hidden" value={nextPath} name="next_path" />
       <div className="space-y-1">
-        <label className="text-13 font-medium text-tertiary" htmlFor="email">
+        <label className="text-body-xs-medium text-tertiary" htmlFor="email">
           Email
         </label>
-        <div className={`relative flex items-center rounded-md border border-subtle bg-surface-1`}>
+        <div className="relative flex h-10 items-center rounded-md border border-subtle bg-surface-1 px-3 [&_input]:disable-autofill-style">
           <Input
             id="email"
             name="email"
             type="email"
+            size="xl"
             value={passwordFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder="name@company.com"
-            className={`h-10 w-full border-0 disable-autofill-style placeholder:text-placeholder`}
             disabled
           />
           {passwordFormData.email.length > 0 && (
-            <XCircle
-              className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
+            <button
+              type="button"
+              aria-label="Clear email"
+              className="absolute right-3 hover:cursor-pointer"
               onClick={handleEmailClear}
-            />
+              tabIndex={-1}
+            >
+              <CloseCircleOutline className="h-5 w-5 text-placeholder" />
+            </button>
           )}
         </div>
       </div>
 
       <div className="space-y-1">
-        <label className="text-13 font-medium text-tertiary" htmlFor="password">
+        <label className="text-body-xs-medium text-tertiary" htmlFor="password">
           {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"}
         </label>
-        <div className="relative flex items-center rounded-md bg-surface-1">
+        <div className="relative flex h-10 items-center rounded-md border border-subtle bg-surface-1 pr-12 pl-3 [&_input]:disable-autofill-style">
           <Input
+            id="password"
             type={showPassword?.password ? "text" : "password"}
             name="password"
+            size="xl"
             value={passwordFormData.password}
             onChange={(e) => handleFormChange("password", e.target.value)}
             placeholder="Enter password"
-            className="h-10 w-full border border-subtle !bg-surface-1 pr-12 disable-autofill-style placeholder:text-placeholder"
             onFocus={() => setIsPasswordInputFocused(true)}
             onBlur={() => setIsPasswordInputFocused(false)}
             autoComplete="off"
+            // oxlint-disable-next-line jsx-a11y/no-autofocus -- sole primary field of a dedicated auth step; matches standard sign-in flows
             autoFocus
           />
-          {showPassword?.password ? (
-            <EyeOff
-              className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
+          <span className="absolute right-2">
+            <IconButton
+              type="button"
+              variant="ghost"
+              size="sm"
+              aria-label={showPassword.password ? "Hide password" : "Show password"}
+              aria-pressed={showPassword.password}
               onClick={() => handleShowPassword("password")}
+              icon={<Icon icon={showPassword.password ? HideOutline : ShowOutline} />}
             />
-          ) : (
-            <Eye
-              className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
-              onClick={() => handleShowPassword("password")}
-            />
-          )}
+          </span>
         </div>
         {passwordSupport}
       </div>
 
       {mode === EAuthModes.SIGN_UP && (
         <div className="space-y-1">
-          <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
+          <label className="text-body-xs-medium text-tertiary" htmlFor="confirm_password">
             Confirm password
           </label>
-          <div className="relative flex items-center rounded-md bg-surface-1">
+          <div className="relative flex h-10 items-center rounded-md border border-subtle bg-surface-1 pr-12 pl-3 [&_input]:disable-autofill-style">
             <Input
+              id="confirm_password"
               type={showPassword?.retypePassword ? "text" : "password"}
               name="confirm_password"
+              size="xl"
               value={passwordFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder="Confirm password"
-              className="h-10 w-full border border-subtle !bg-surface-1 pr-12 disable-autofill-style placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
               autoComplete="off"
             />
-            {showPassword?.retypePassword ? (
-              <EyeOff
-                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
+            <span className="absolute right-2">
+              <IconButton
+                type="button"
+                variant="ghost"
+                size="sm"
+                aria-label={showPassword.retypePassword ? "Hide password" : "Show password"}
+                aria-pressed={showPassword.retypePassword}
                 onClick={() => handleShowPassword("retypePassword")}
+                icon={<Icon icon={showPassword.retypePassword ? HideOutline : ShowOutline} />}
               />
-            ) : (
-              <Eye
-                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
-                onClick={() => handleShowPassword("retypePassword")}
-              />
-            )}
+            </span>
           </div>
           {!!passwordFormData.confirm_password &&
             passwordFormData.password !== passwordFormData.confirm_password &&
-            renderPasswordMatchError && <span className="text-13 text-danger-primary">Passwords don{"'"}t match</span>}
+            renderPasswordMatchError && (
+              <span className="text-body-xs-regular text-danger-primary">Passwords don{"'"}t match</span>
+            )}
         </div>
       )}
 
       <div className="space-y-2.5">
         {mode === EAuthModes.SIGN_IN ? (
           <>
-            <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-              {isSubmitting ? (
-                <Spinner height="20px" width="20px" />
-              ) : isSMTPConfigured ? (
-                "Continue"
-              ) : (
-                "Go to workspace"
-              )}
-            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              stretch="full"
+              disabled={isButtonDisabled}
+              loading={isSubmitting}
+              label={isSMTPConfigured ? "Continue" : "Go to workspace"}
+            />
             {isSMTPConfigured && (
               <Button
                 type="button"
-                onClick={redirectToUniqueCodeSignIn}
                 variant="secondary"
-                className="w-full"
-                size="xl"
-              >
-                Sign in with unique code
-              </Button>
+                size="lg"
+                stretch="full"
+                label="Sign in with unique code"
+                onClick={redirectToUniqueCodeSignIn}
+              />
             )}
           </>
         ) : (
-          <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-            {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
-          </Button>
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            stretch="full"
+            disabled={isButtonDisabled}
+            loading={isSubmitting}
+            label="Create account"
+          />
         )}
       </div>
     </form>

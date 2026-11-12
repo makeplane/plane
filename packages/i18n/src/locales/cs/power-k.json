@@ -176,6 +176,11 @@
     "footer": {
       "workspace_level": "Úroveň pracovního prostoru"
     },
+    "shortcuts_modal": {
+      "search_placeholder": "Hledat klávesové zkratky",
+      "no_results": "Nenalezeny žádné klávesové zkratky pro „{query}“",
+      "sequence_separator": "pak"
+    },
     "group_titles": {
       "actions": "Akce",
       "contextual": "Kontextové",

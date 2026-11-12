@@ -1,0 +1,41 @@
+{
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "Voeg werkitems toe aan de cyclus om de voortgang te bekijken"
+      },
+      "chart": {
+        "title": "Voeg werkitems toe aan de cyclus om de burndown-grafiek te bekijken."
+      },
+      "priority_issue": {
+        "title": "Bekijk in een oogopslag welke werkitems met hoge prioriteit in de cyclus worden opgepakt."
+      },
+      "assignee": {
+        "title": "Wijs werkitems toe aan toegewezenen om het werk per toegewezene uitgesplitst te zien."
+      },
+      "label": {
+        "title": "Voeg labels toe aan werkitems om het werk per label uitgesplitst te zien."
+      }
+    }
+  },
+  "cycle": {
+    "label": "{count, plural, one {Cyclus} other {Cycli}}",
+    "no_cycle": "Geen cyclus"
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Voeg werkitems toe aan de cyclus om de\nvoortgang te bekijken"
+      },
+      "priority": {
+        "title": "Bekijk in een oogopslag welke werkitems met hoge prioriteit in\nde cyclus worden opgepakt."
+      },
+      "assignee": {
+        "title": "Wijs werkitems toe aan toegewezenen om het werk per\ntoegewezene uitgesplitst te zien."
+      },
+      "label": {
+        "title": "Voeg labels toe aan werkitems om het werk per\nlabel uitgesplitst te zien."
+      }
+    }
+  }
+}

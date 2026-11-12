@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+export * from "./docs";
 export * from "./profile";
 export * from "./project";
 export * from "./workspace";

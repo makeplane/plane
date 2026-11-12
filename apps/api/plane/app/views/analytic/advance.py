@@ -69,10 +69,12 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
         )
 
         if self.request.GET.get("project_ids", None):
-            project_ids = self.request.GET.get("project_ids", None)
-            project_ids = [str(project_id) for project_id in project_ids.split(",")]
+            # project_filters limits the ids to the workspace and the caller's projects
+            projects = Project.objects.filter(
+                **self.filters["project_filters"], project_projectmember__deleted_at__isnull=True
+            )
             members_query = ProjectMember.objects.filter(
-                project_id__in=project_ids, is_active=True, member__is_bot=False
+                project_id__in=projects.values("id"), is_active=True, member__is_bot=False
             )
 
         return {

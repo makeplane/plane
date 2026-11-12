@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "詳細を表示するには選択してください。"
+        "title": "通知が選択されていません",
+        "description": "通知を選択すると詳細が表示されます。"
       },
       "all": {
         "title": "割り当てられた作業項目がありません",
@@ -52,7 +53,15 @@
       "5_days": "5日",
       "1_week": "1週間",
       "2_weeks": "2週間",
-      "custom": "カスタム"
+      "custom": "カスタム",
+      "modal": {
+        "title": "スヌーズ時間をカスタマイズ",
+        "pick_a_date": "日付を選択",
+        "pick_a_time": "時間を選択",
+        "select_date": "日付を選択",
+        "select_time": "時間を選択",
+        "no_available_time": "この日付に選択できる時間はありません"
+      }
     }
   }
 }

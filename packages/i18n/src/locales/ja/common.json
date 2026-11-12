@@ -6,8 +6,10 @@
     "status_page": "ステータスページ"
   },
   "submit": "送信",
+  "submitting": "送信中",
   "cancel": "キャンセル",
   "loading": "読み込み中",
+  "searching": "検索中…",
   "error": "エラー",
   "success": "成功",
   "warning": "警告",
@@ -152,6 +154,7 @@
   "no_favorites_yet": "まだお気に入りがありません",
   "create_folder": "フォルダを作成",
   "new_folder": "新規フォルダ",
+  "rename_folder": "フォルダー名を変更",
   "favorite_updated_successfully": "お気に入りが正常に更新されました",
   "favorite_created_successfully": "お気に入りが正常に作成されました",
   "folder_already_exists": "フォルダは既に存在します",
@@ -212,8 +215,8 @@
   "congrats": "おめでとうございます！",
   "open_project": "プロジェクトを開く",
   "issues": "作業項目",
-  "cycles": "Cycles",
-  "modules": "Modules",
+  "cycles": "サイクル",
+  "modules": "モジュール",
   "pages": "ページ",
   "intake": "Intake",
   "renew": "更新",
@@ -232,7 +235,7 @@
   "documentation": "ドキュメント",
   "message_support": "サポートにメッセージ",
   "contact_sales": "営業に問い合わせ",
-  "hyper_mode": "Hyper Mode",
+  "hyper_mode": "ハイパーモード",
   "keyboard_shortcuts": "キーボードショートカット",
   "whats_new": "新機能",
   "version": "バージョン",
@@ -243,8 +246,8 @@
   "docs": "ドキュメント",
   "full_changelog": "完全な変更履歴",
   "support": "サポート",
-  "forum": "Forum",
-  "powered_by_plane_pages": "Powered by Plane Pages",
+  "forum": "フォーラム",
+  "powered_by_plane_pages": "Planeページを利用",
   "please_select_at_least_one_invitation": "少なくとも1つの招待を選択してください。",
   "please_select_at_least_one_invitation_description": "ワークスペースに参加するには少なくとも1つの招待を選択してください。",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "誰かがあなたをワークスペースに招待しています",
@@ -303,6 +306,9 @@
   "create_new_label": "新規ラベルを作成",
   "label_name": "ラベル名",
   "failed_to_create_label": "ラベルの作成に失敗しました。もう一度お試しください。",
+  "no_matching_labels": "一致するラベルがありません",
+  "adding_label": "「{name}」を追加中",
+  "add_label_to_labels": "「{name}」をラベルに追加",
   "start_date": "開始日",
   "end_date": "終了日",
   "due_date": "期限",
@@ -364,6 +370,7 @@
   "member": "{count, plural, other{# メンバー}}",
   "new_password_must_be_different_from_old_password": "新しいパスワードは古いパスワードと異なる必要があります",
   "edited": "編集済み",
+  "entity_detail_toolbar": "アクション",
   "bot": "ボット",
   "settings_description": "アカウント、ワークスペース、プロジェクトの環境設定を一か所で管理できます。タブを切り替えて簡単に設定してください。",
   "back_to_workspace": "ワークスペースに戻る",
@@ -486,7 +493,7 @@
     "project_timezone": "プロジェクトのタイムゾーン",
     "created_on": "作成日",
     "updated_on": "更新日",
-    "completed_on": "Completed on",
+    "completed_on": "完了日",
     "update_project": "プロジェクトを更新",
     "identifier_already_exists": "識別子は既に存在します",
     "add_more": "さらに追加",
@@ -522,6 +529,7 @@
       "updated_on": "更新日"
     },
     "sort": {
+      "label": "並べ替え",
       "asc": "昇順",
       "desc": "降順",
       "created_on": "作成日",
@@ -535,6 +543,7 @@
     "link_copied": "リンクをコピーしました！",
     "link_copied_to_clipboard": "リンクをクリップボードにコピーしました",
     "copied_to_clipboard": "作業項目のリンクをクリップボードにコピーしました",
+    "clipboard_copy_failed": "クリップボードにコピーできませんでした",
     "branch_name_copied_to_clipboard": "ブランチ名をクリップボードにコピーしました",
     "is_copied_to_clipboard": "作業項目をクリップボードにコピーしました",
     "no_links_added_yet": "リンクはまだ追加されていません",
@@ -619,7 +628,8 @@
       "enable": "有効化",
       "disable": "無効化",
       "copy_markdown": "マークダウンをコピー",
-      "reply": "返信"
+      "reply": "返信",
+      "add_reaction": "リアクションを追加"
     },
     "name": "名前",
     "discard": "破棄",
@@ -713,11 +723,18 @@
     "details": "詳細",
     "project_structure": "プロジェクト構造",
     "custom_properties": "カスタムプロパティ",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "プロフィール",
+    "developer": "開発者",
+    "work_structure": "作業構造",
+    "execution": "実行",
+    "administration": "管理",
+    "status": "ステータス",
+    "tooltip": {
+      "copy_to_clipboard": "クリップボードにコピー",
+      "created_on_date": "作成日：{date}",
+      "priority": "優先度：{value}"
+    },
+    "locked": "ロック中"
   },
   "chart": {
     "x_axis": "エックス アクシス",
@@ -821,7 +838,7 @@
   },
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Planeが起動しませんでした。これは1つまたは複数のPlaneサービスの起動に失敗したことが原因である可能性があります。",
-    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "setup.shとDockerログからView Logsを選択して確認してください。"
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "setup.shとDockerのログで「View Logs」を選択し、状況を確認してください。"
   },
   "customize_navigation": "ナビゲーションをカスタマイズ",
   "personal": "個人",
@@ -866,6 +883,15 @@
       "title": "JSON",
       "description": "作業項目をJSONファイルにエクスポートします。",
       "short_description": "JSONとしてエクスポート"
+    }
+  },
+  "labels_count": "{count, plural, one {#件のラベル} other {#件のラベル}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "ビューの保存オプション",
+      "update_view": "ビューを更新",
+      "save_as": "名前を付けて保存",
+      "hide_filters": "フィルターを非表示"
     }
   }
 }

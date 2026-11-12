@@ -1,0 +1,69 @@
+{
+  "updates": {
+    "progress": {
+      "title": "Voortgang",
+      "since_last_update": "Sinds de laatste update",
+      "comments": "{count, plural, one{# Reactie} other{# Reacties}}"
+    },
+    "add_update": "Update toevoegen",
+    "add_update_placeholder": "Voeg hier je update toe",
+    "empty": {
+      "title": "Nog geen updates",
+      "description": "Je kunt de updates hier bekijken."
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reactie aangemaakt",
+          "message": "De reactie is succesvol aangemaakt"
+        },
+        "error": {
+          "title": "Reactie niet aangemaakt",
+          "message": "De reactie kon niet worden aangemaakt"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reactie verwijderd",
+          "message": "De reactie is succesvol verwijderd"
+        },
+        "error": {
+          "title": "Reactie niet verwijderd",
+          "message": "De reactie kon niet worden verwijderd"
+        }
+      }
+    },
+    "create": {
+      "success": {
+        "title": "Update aangemaakt",
+        "message": "De update is succesvol aangemaakt"
+      },
+      "error": {
+        "title": "Update niet aangemaakt",
+        "message": "De update kon niet worden aangemaakt"
+      }
+    },
+    "delete": {
+      "title": "Update verwijderen",
+      "confirmation": "Weet je zeker dat je deze update wilt verwijderen? Dit is een onomkeerbare actie.",
+      "success": {
+        "title": "Update verwijderd",
+        "message": "De update is succesvol verwijderd"
+      },
+      "error": {
+        "title": "Update niet verwijderd",
+        "message": "De update kon niet worden verwijderd"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Bijgewerkt",
+        "message": "De update is succesvol bijgewerkt"
+      },
+      "error": {
+        "title": "Update niet bijgewerkt",
+        "message": "De update kon niet worden bijgewerkt"
+      }
+    }
+  }
+}

@@ -176,6 +176,11 @@
     "footer": {
       "workspace_level": "Workspace level"
     },
+    "shortcuts_modal": {
+      "search_placeholder": "Search for shortcuts",
+      "no_results": "No shortcuts found for \"{query}\"",
+      "sequence_separator": "then"
+    },
     "group_titles": {
       "actions": "Actions",
       "contextual": "Contextual",

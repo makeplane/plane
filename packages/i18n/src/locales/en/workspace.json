@@ -223,6 +223,11 @@
       "search": {
         "description": "No projects detected with the matching criteria.\nCreate a new project instead"
       }
+    },
+    "card": {
+      "joined": "Joined",
+      "archived": "Archived",
+      "no_lead": "No lead"
     }
   },
   "workspace_views": {
@@ -373,6 +378,12 @@
           "message": "Something went wrong."
         }
       }
+    }
+  },
+  "instance_workspaces": {
+    "empty_state": {
+      "title": "No workspaces yet",
+      "description": "Workspaces created on this instance show up here."
     }
   }
 }

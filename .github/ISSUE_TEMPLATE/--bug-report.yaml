@@ -1,6 +1,7 @@
 name: Bug report
 description: Create a bug report to help us improve Plane
 title: "[bug]: "
+type: Bug
 labels: [🐛bug, plane]
 assignees: [vihar, pushya22]
 body:
@@ -55,19 +56,21 @@ body:
       - Safari
       - Other
 - type: dropdown
-  id: variant
+  id: edition
   attributes:
-    label: Variant
+    label: Edition
+    description: Which edition of Plane are you using?
     options:
+      - Community
+      - Commercial
       - Cloud
-      - Self-hosted
-      - Local
   validations:
     required: true
 - type: input
   id: version
   attributes:
     label: Version
+    description: Which version of Plane are you using? If Cloud, mention it as latest
     placeholder: v0.17.0-dev
   validations:
     required: true

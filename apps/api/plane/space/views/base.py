@@ -7,6 +7,7 @@ import zoneinfo
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
+from django.db.models import F
 
 # Django imports
 from django.urls import resolve
@@ -15,7 +16,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 # Third part imports
 from rest_framework import status
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, NotFound
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -23,6 +24,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 # Module imports
+from plane.db.models import DeployBoard
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 from plane.authentication.session import BaseSessionAuthentication
@@ -42,7 +44,22 @@ class TimezoneMixin:
             timezone.deactivate()
 
 
-class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
+class DeployBoardAnchorMixin:
+    """A project board only serves the project it belongs to."""
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        anchor = kwargs.get("anchor")
+        if (
+            anchor
+            and DeployBoard.objects.filter(anchor=anchor, entity_name="project")
+            .exclude(entity_identifier=F("project_id"))
+            .exists()
+        ):
+            raise NotFound()
+
+
+class BaseViewSet(DeployBoardAnchorMixin, TimezoneMixin, ModelViewSet, BasePaginator):
     model = None
 
     permission_classes = [IsAuthenticated]
@@ -130,7 +147,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             return self.kwargs.get("pk", None)
 
 
-class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
+class BaseAPIView(DeployBoardAnchorMixin, TimezoneMixin, APIView, BasePaginator):
     permission_classes = [IsAuthenticated]
 
     filter_backends = (DjangoFilterBackend, SearchFilter)

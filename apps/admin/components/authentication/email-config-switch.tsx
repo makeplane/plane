@@ -7,8 +7,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 // hooks
+import { Switch } from "@makeplane/propel/components/switch";
 import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 import { useInstance } from "@/hooks/store";
 // ui
 // types
@@ -26,13 +26,14 @@ export const EmailCodesConfiguration = observer(function EmailCodesConfiguration
   const enableMagicLogin = formattedConfig?.ENABLE_MAGIC_LINK_LOGIN ?? "";
 
   return (
-    <ToggleSwitch
-      value={Boolean(parseInt(enableMagicLogin))}
-      onChange={() => {
+    <Switch
+      checked={Boolean(parseInt(enableMagicLogin))}
+      onCheckedChange={() => {
         const newEnableMagicLogin = Boolean(parseInt(enableMagicLogin)) === true ? "0" : "1";
         updateConfig("ENABLE_MAGIC_LINK_LOGIN", newEnableMagicLogin);
       }}
       size="sm"
+      aria-label="Enable login with email codes"
       disabled={disabled}
     />
   );

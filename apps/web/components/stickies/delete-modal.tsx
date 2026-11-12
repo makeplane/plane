@@ -1,0 +1,52 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useState } from "react";
+import { observer } from "mobx-react";
+// ui
+import { useTranslation } from "@plane/i18n";
+import { setToast } from "@plane/blocks/toast";
+import { ConfirmDialog } from "@plane/blocks/dialog";
+
+interface IStickyDelete {
+  isOpen: boolean;
+  handleSubmit: () => Promise<void>;
+  handleClose: () => void;
+}
+
+export const StickyDeleteModal = observer(function StickyDeleteModal(props: IStickyDelete) {
+  const { isOpen, handleClose, handleSubmit } = props;
+  // states
+  const [loader, setLoader] = useState(false);
+  // hooks
+  const { t } = useTranslation();
+
+  const formSubmit = async () => {
+    try {
+      setLoader(true);
+      await handleSubmit();
+    } catch {
+      setToast({
+        type: "error",
+        title: t("stickies.toasts.not_removed.title"),
+        message: t("stickies.toasts.not_removed.message"),
+      });
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  return (
+    <ConfirmDialog
+      handleClose={handleClose}
+      handleSubmit={formSubmit}
+      isSubmitting={loader}
+      isOpen={isOpen}
+      title={t("stickies.delete")}
+      content={t("stickies.delete_confirmation")}
+    />
+  );
+});

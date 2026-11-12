@@ -223,6 +223,11 @@
       "search": {
         "description": "Nenalezeny projekty odpovídající kritériím.\nVytvořte nový."
       }
+    },
+    "card": {
+      "joined": "Připojeno",
+      "archived": "Archivováno",
+      "no_lead": "Bez vedoucího"
     }
   },
   "workspace_views": {
@@ -373,6 +378,12 @@
           "message": "Něco se pokazilo."
         }
       }
+    }
+  },
+  "instance_workspaces": {
+    "empty_state": {
+      "title": "Zatím žádné pracovní prostory",
+      "description": "Zde se zobrazí pracovní prostory vytvořené v této instanci."
     }
   }
 }

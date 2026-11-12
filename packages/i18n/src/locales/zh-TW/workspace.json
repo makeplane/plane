@@ -223,6 +223,11 @@
       "search": {
         "description": "找不到符合篩選條件的專案。\n改為建立新專案"
       }
+    },
+    "card": {
+      "joined": "已加入",
+      "archived": "已封存",
+      "no_lead": "無負責人"
     }
   },
   "workspace_views": {
@@ -373,6 +378,12 @@
           "message": "發生錯誤。"
         }
       }
+    }
+  },
+  "instance_workspaces": {
+    "empty_state": {
+      "title": "尚無工作區",
+      "description": "在此執行個體上建立的工作區會顯示在這裡。"
     }
   }
 }

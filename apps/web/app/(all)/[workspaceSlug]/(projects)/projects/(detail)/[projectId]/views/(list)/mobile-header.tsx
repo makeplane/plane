@@ -6,10 +6,9 @@
 
 import { observer } from "mobx-react";
 // icons
-import { ListFilter } from "lucide-react";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, FilterOutline } from "@makeplane/propel/icons";
 // components
-import { Row } from "@plane/ui";
+import { Row } from "@plane/blocks/layout";
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { ViewFiltersSelection } from "@/components/views/filters/filter-selection";
 import { ViewOrderByDropdown } from "@/components/views/filters/order-by";
@@ -27,7 +26,7 @@ export const ViewMobileHeader = observer(function ViewMobileHeader() {
   return (
     <>
       <div className="z-[13] flex justify-evenly border-b border-subtle bg-surface-1 py-2 md:hidden">
-        <Row className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
+        <Row className="flex flex-grow items-center justify-center border-l border-subtle text-body-xs-regular text-secondary">
           <ViewOrderByDropdown
             sortBy={filters.sortBy}
             sortKey={filters.sortKey}
@@ -38,16 +37,16 @@ export const ViewMobileHeader = observer(function ViewMobileHeader() {
             isMobile
           />
         </Row>
-        <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
+        <div className="flex flex-grow items-center justify-center border-l border-subtle text-body-xs-regular text-secondary">
           <FiltersDropdown
-            icon={<ListFilter className="h-3 w-3" />}
+            icon={<FilterOutline className="h-3 w-3" />}
             title="Filters"
             placement="bottom-end"
             isFiltersApplied={false}
             menuButton={
-              <Row className="flex items-center text-13 text-secondary">
+              <Row className="flex items-center text-body-xs-regular text-secondary">
                 Filters
-                <ChevronDownIcon className="ml-2 h-4 w-4 text-secondary" strokeWidth={2} />
+                <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" />
               </Row>
             }
           >

@@ -61,5 +61,8 @@
       "use_this": "Gunakan ini",
       "refine": "Perbaiki"
     }
+  },
+  "formatting_toolbar": {
+    "label": "Pemformatan"
   }
 }

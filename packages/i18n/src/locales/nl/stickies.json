@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "Jouw stickies",
+    "placeholder": "klik om hier te typen",
+    "all": "Alle stickies",
+    "no-data": "Noteer een idee, leg een aha-moment vast of bewaar een ingeving. Voeg een sticky toe om te beginnen.",
+    "add": "Sticky toevoegen",
+    "search_placeholder": "Zoeken op titel",
+    "delete": "Sticky verwijderen",
+    "delete_confirmation": "Weet je zeker dat je deze sticky wilt verwijderen?",
+    "empty_state": {
+      "simple": "Noteer een idee, leg een aha-moment vast of bewaar een ingeving. Voeg een sticky toe om te beginnen.",
+      "general": {
+        "title": "Stickies zijn snelle notities en to-do's die je onderweg vastlegt.",
+        "description": "Leg je gedachten en ideeën moeiteloos vast met stickies die je altijd en overal kunt raadplegen.",
+        "primary_button": {
+          "text": "Sticky toevoegen"
+        }
+      },
+      "search": {
+        "title": "Dat komt niet overeen met een van je stickies.",
+        "description": "Probeer een andere zoekterm of laat het ons weten\nals je zeker weet dat je zoekopdracht klopt. ",
+        "primary_button": {
+          "text": "Sticky toevoegen"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "De naam van de sticky mag niet langer zijn dan 100 tekens.",
+        "already_exists": "Er bestaat al een sticky zonder omschrijving"
+      },
+      "created": {
+        "title": "Sticky aangemaakt",
+        "message": "De sticky is aangemaakt"
+      },
+      "not_created": {
+        "title": "Sticky niet aangemaakt",
+        "message": "De sticky kon niet worden aangemaakt"
+      },
+      "updated": {
+        "title": "Sticky bijgewerkt",
+        "message": "De sticky is bijgewerkt"
+      },
+      "not_updated": {
+        "title": "Sticky niet bijgewerkt",
+        "message": "De sticky kon niet worden bijgewerkt"
+      },
+      "removed": {
+        "title": "Sticky verwijderd",
+        "message": "De sticky is verwijderd"
+      },
+      "not_removed": {
+        "title": "Sticky niet verwijderd",
+        "message": "De sticky kon niet worden verwijderd"
+      }
+    }
+  }
+}

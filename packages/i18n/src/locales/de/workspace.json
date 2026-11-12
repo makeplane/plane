@@ -223,6 +223,11 @@
       "search": {
         "description": "Keine Projekte entsprechen Ihren Suchkriterien.\nErstellen Sie ein neues."
       }
+    },
+    "card": {
+      "joined": "Beigetreten",
+      "archived": "Archiviert",
+      "no_lead": "Keine Leitung"
     }
   },
   "workspace_views": {
@@ -373,6 +378,12 @@
           "message": "Etwas ist schief gelaufen."
         }
       }
+    }
+  },
+  "instance_workspaces": {
+    "empty_state": {
+      "title": "Noch keine Arbeitsbereiche",
+      "description": "Auf dieser Instanz erstellte Arbeitsbereiche werden hier angezeigt."
     }
   }
 }

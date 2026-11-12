@@ -233,8 +233,9 @@ class GroupedOffsetPaginator(OffsetPaginator):
         queryset = self.queryset
 
         page = cursor.offset
-        offset = cursor.offset * cursor.value
-        stop = offset + (cursor.value or limit) + 1
+        # Use limit (the validated per_page) as the per-group page size, as OffsetPaginator does
+        offset = cursor.offset * limit
+        stop = offset + limit + 1
 
         # Check if the offset is greater than the max offset
         if self.max_offset is not None and offset >= self.max_offset:
@@ -437,11 +438,9 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
         # the current page
         page = cursor.offset
 
-        # the offset
-        offset = cursor.offset * cursor.value
-
-        # the stop
-        stop = offset + (cursor.value or limit) + 1
+        # Use limit (the validated per_page) as the page size, as OffsetPaginator does
+        offset = cursor.offset * limit
+        stop = offset + limit + 1
 
         if self.max_offset is not None and offset >= self.max_offset:
             raise BadPaginationError("Pagination offset too large")
@@ -646,11 +645,18 @@ class BasePaginator:
         except ValueError:
             raise ParseError(detail="Invalid per_page parameter.")
 
-        max_per_page = max(max_per_page, default_per_page)
+        max_per_page = self._effective_max_per_page(max_per_page, default_per_page)
+        # per_page is a slice bound and a divisor, so it must be positive.
+        if per_page <= 0:
+            raise ParseError(detail="Invalid per_page value. Must be greater than zero.")
         if per_page > max_per_page:
             raise ParseError(detail=f"Invalid per_page value. Cannot exceed {max_per_page}.")
 
         return per_page
+
+    @staticmethod
+    def _effective_max_per_page(max_per_page, default_per_page):
+        return max(max_per_page, default_per_page)
 
     def paginate(
         self,
@@ -678,6 +684,12 @@ class BasePaginator:
         try:
             input_cursor = cursor_cls.from_string(request.GET.get(self.cursor_name, f"{per_page}:0:0"))
         except ValueError:
+            raise ParseError(detail="Invalid cursor parameter.")
+
+        # cursor is "value:offset:is_prev": value is a page size from 0 to the effective
+        # maximum page size, offset is a non-negative page index.
+        effective_max_per_page = self._effective_max_per_page(max_per_page, default_per_page)
+        if not (0 <= input_cursor.value <= effective_max_per_page) or input_cursor.offset < 0:
             raise ParseError(detail="Invalid cursor parameter.")
 
         if not paginator:

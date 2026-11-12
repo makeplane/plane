@@ -7,6 +7,8 @@
     }
   },
   "sidebar": {
+    "more": "Plus",
+    "hide": "Masquer",
     "stickies": "Stickies",
     "your_work": "Votre travail",
     "projects": "Projets",

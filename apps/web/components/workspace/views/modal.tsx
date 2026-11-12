@@ -1,0 +1,128 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
+// plane imports
+import { Dialog, DialogContent } from "@makeplane/propel/components/dialog";
+import { setToast } from "@plane/blocks/toast";
+import { useTranslation } from "@plane/i18n";
+import type { IWorkspaceView } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
+// hooks
+import { useGlobalView } from "@/hooks/store/use-global-view";
+import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
+import { useAppRouter } from "@/hooks/use-app-router";
+// local imports
+import { WorkspaceViewForm } from "./form";
+
+type Props = {
+  data?: IWorkspaceView;
+  isOpen: boolean;
+  onClose: () => void;
+  preLoadedData?: Partial<IWorkspaceView>;
+};
+
+export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWorkspaceViewModal(props: Props) {
+  const { isOpen, onClose, data, preLoadedData } = props;
+  // router
+  const router = useAppRouter();
+  const { workspaceSlug: routerWorkspaceSlug } = useParams();
+  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
+  const { createGlobalView, updateGlobalView } = useGlobalView();
+  const { resetExpression } = useWorkItemFilters();
+
+  const handleClose = () => {
+    onClose();
+  };
+
+  const handleCreateView = async (payload: Partial<IWorkspaceView>) => {
+    if (!workspaceSlug) return;
+
+    try {
+      const payloadData: Partial<IWorkspaceView> = {
+        ...payload,
+        rich_filters: {
+          ...payload?.rich_filters,
+        },
+      };
+      const res = await createGlobalView(workspaceSlug, payloadData);
+      setToast({
+        type: "success",
+        title: "Success!",
+        message: "View created successfully.",
+      });
+      router.push(`/${workspaceSlug}/workspace-views/${res.id}`);
+      handleClose();
+    } catch (_error) {
+      setToast({
+        type: "error",
+        title: "Error!",
+        message: "View could not be created. Please try again.",
+      });
+    }
+  };
+
+  const handleUpdateView = async (payload: Partial<IWorkspaceView>) => {
+    if (!workspaceSlug || !data) return;
+
+    try {
+      const payloadData: Partial<IWorkspaceView> = {
+        ...payload,
+        query: {
+          ...payload?.rich_filters,
+        },
+      };
+      const res = await updateGlobalView(workspaceSlug, data.id, payloadData);
+      if (res) {
+        resetExpression(EIssuesStoreType.GLOBAL, data.id, res.rich_filters);
+        setToast({
+          type: "success",
+          title: "Success!",
+          message: "View updated successfully.",
+        });
+        handleClose();
+      }
+    } catch (_error) {
+      setToast({
+        type: "error",
+        title: "Error!",
+        message: "View could not be updated. Please try again.",
+      });
+    }
+  };
+
+  const handleFormSubmit = async (formData: Partial<IWorkspaceView>) => {
+    if (!workspaceSlug) return;
+
+    if (!data) await handleCreateView(formData);
+    else await handleUpdateView(formData);
+  };
+
+  if (!workspaceSlug) return null;
+  return (
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      {/* The form draws its own heading, so the dialog takes its accessible name from the same copy. */}
+      <DialogContent size="md" aria-label={data ? t("view.update.label") : t("view.create.label")}>
+        <WorkspaceViewForm
+          handleFormSubmit={handleFormSubmit}
+          handleClose={handleClose}
+          data={data}
+          preLoadedData={preLoadedData}
+          workspaceSlug={workspaceSlug}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+});

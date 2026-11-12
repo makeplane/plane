@@ -7,10 +7,11 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
+import { Skeleton } from "@plane/blocks/skeleton";
+import { setToast } from "@plane/blocks/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 // types
@@ -36,13 +37,13 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
         setToast({
           title: "Email feature disabled",
           message: "Email feature has been disabled",
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
         });
       } catch (_error) {
         setToast({
           title: "Error disabling email",
           message: "Failed to disable email feature. Please try again.",
-          type: TOAST_TYPE.ERROR,
+          type: "error",
         });
       } finally {
         setIsSubmitting(false);
@@ -64,18 +65,24 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
         description: (
           <>
             Plane can send useful emails to you and your users from your own instance without talking to the Internet.
-            <div className="text-13 font-regular text-tertiary">
+            <div className="text-body-xs-regular text-tertiary">
               Set it up below and please test your settings before you save them.&nbsp;
               <span className="text-danger-primary">Misconfigs can lead to email bounces and errors.</span>
             </div>
           </>
         ),
         actions: isLoading ? (
-          <Loader>
-            <Loader.Item width="24px" height="16px" className="rounded-full" />
-          </Loader>
+          <Skeleton>
+            <Skeleton.Item width="24px" height="16px" className="rounded-full" />
+          </Skeleton>
         ) : (
-          <ToggleSwitch value={isSMTPEnabled} onChange={handleToggle} size="sm" disabled={isSubmitting} />
+          <Switch
+            aria-label="Enable SMTP email"
+            checked={isSMTPEnabled}
+            onCheckedChange={handleToggle}
+            size="sm"
+            disabled={isSubmitting}
+          />
         ),
       }}
     >
@@ -84,13 +91,13 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
           {formattedConfig ? (
             <InstanceEmailForm config={formattedConfig} />
           ) : (
-            <Loader className="space-y-10">
-              <Loader.Item height="50px" width="75%" />
-              <Loader.Item height="50px" width="75%" />
-              <Loader.Item height="50px" width="40%" />
-              <Loader.Item height="50px" width="40%" />
-              <Loader.Item height="50px" width="20%" />
-            </Loader>
+            <Skeleton className="space-y-10">
+              <Skeleton.Item height="50px" width="75%" />
+              <Skeleton.Item height="50px" width="75%" />
+              <Skeleton.Item height="50px" width="40%" />
+              <Skeleton.Item height="50px" width="40%" />
+              <Skeleton.Item height="50px" width="20%" />
+            </Skeleton>
           )}
         </>
       )}

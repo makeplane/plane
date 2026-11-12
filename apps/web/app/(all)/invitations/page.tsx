@@ -9,21 +9,19 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 
 import useSWR, { mutate } from "swr";
-import { CheckCircle2 } from "lucide-react";
+import { TickCircleOutline } from "@makeplane/propel/icons";
 // plane imports
 import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import { Button } from "@plane/propel/button";
-import { PlaneLogo } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
+import { PlaneLogo } from "@plane/blocks/icons";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
-import { truncateText } from "@plane/utils";
-// assets
-import emptyInvitation from "@/app/assets/empty-state/invitation.svg?url";
+import { getFileURL, truncateText } from "@plane/utils";
 // components
-import { EmptyState } from "@/components/common/empty-state";
-import { WorkspaceLogo } from "@/components/workspace/logo";
 import { USER_WORKSPACES_LIST } from "@plane/constants";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -67,7 +65,7 @@ function UserInvitationsPage() {
   const submitInvitations = () => {
     if (invitationsRespond.length === 0) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("error"),
         message: t("please_select_at_least_one_invitation"),
       });
@@ -91,7 +89,7 @@ function UserInvitationsPage() {
           })
           .catch(() => {
             setToast({
-              type: TOAST_TYPE.ERROR,
+              type: "error",
               title: t("error"),
               message: t("something_went_wrong_please_try_again"),
             });
@@ -100,7 +98,7 @@ function UserInvitationsPage() {
       })
       .catch((_err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("error"),
           message: t("something_went_wrong_please_try_again"),
         });
@@ -119,7 +117,7 @@ function UserInvitationsPage() {
           >
             <PlaneLogo className="h-9 w-auto text-primary" />
           </Link>
-          <div className="absolute top-1/4 right-4 -translate-y-1/2 text-13 text-primary sm:fixed sm:top-12 sm:right-16 sm:translate-y-0 sm:py-5">
+          <div className="absolute top-1/4 right-4 -translate-y-1/2 text-body-xs-regular text-primary sm:fixed sm:top-12 sm:right-16 sm:translate-y-0 sm:py-5">
             {currentUser?.email}
           </div>
         </div>
@@ -127,35 +125,42 @@ function UserInvitationsPage() {
           invitations.length > 0 ? (
             <div className="relative flex h-full justify-center px-8 pb-8 sm:w-10/12 sm:items-center sm:justify-start sm:p-0 sm:pr-[8.33%] md:w-9/12 lg:w-4/5">
               <div className="w-full space-y-10">
-                <h5 className="text-16">{t("we_see_that_someone_has_invited_you_to_join_a_workspace")}</h5>
-                <h4 className="text-20 font-semibold">{t("join_a_workspace")}</h4>
+                <h5 className="text-h6-regular">{t("we_see_that_someone_has_invited_you_to_join_a_workspace")}</h5>
+                <h4 className="text-h4-semibold">{t("join_a_workspace")}</h4>
                 <div className="max-h-[37vh] space-y-4 overflow-y-auto md:w-3/5">
                   {invitations.map((invitation) => {
                     const isSelected = invitationsRespond.includes(invitation.id);
 
                     return (
-                      <div
+                      <button
                         key={invitation.id}
-                        className={`flex cursor-pointer items-center gap-2 rounded-sm border px-3.5 py-5 ${
+                        type="button"
+                        className={`flex w-full cursor-pointer items-center gap-2 rounded-sm border px-3.5 py-5 text-left ${
                           isSelected ? "border-accent-strong" : "border-subtle hover:bg-layer-1"
                         }`}
+                        aria-pressed={isSelected}
                         onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                       >
-                        <div className="flex-shrink-0">
-                          <WorkspaceLogo
-                            logo={invitation.workspace.logo_url}
-                            name={invitation.workspace.name}
-                            classNames="size-9 flex-shrink-0"
+                        <span className="flex-shrink-0">
+                          <WorkspaceAvatar
+                            size="xl"
+                            src={getFileURL(invitation.workspace.logo_url ?? "")}
+                            alt={invitation.workspace.name}
+                            aria-hidden
                           />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="text-13 font-medium">{truncateText(invitation.workspace.name, 30)}</div>
-                          <p className="text-11 text-secondary">{ROLE[invitation.role]}</p>
-                        </div>
-                        <span className={`flex-shrink-0 ${isSelected ? "text-accent-primary" : "text-secondary"}`}>
-                          <CheckCircle2 className="h-5 w-5" />
                         </span>
-                      </div>
+                        <span className="block min-w-0 flex-1">
+                          <span className="block text-body-xs-medium">
+                            {truncateText(invitation.workspace.name, 30)}
+                          </span>
+                          <span className="block text-caption-sm-regular text-secondary capitalize">
+                            {ROLE[invitation.role]}
+                          </span>
+                        </span>
+                        <span className={`flex-shrink-0 ${isSelected ? "text-accent-primary" : "text-secondary"}`}>
+                          <TickCircleOutline className="h-5 w-5" />
+                        </span>
+                      </button>
                     );
                   })}
                 </div>
@@ -163,33 +168,33 @@ function UserInvitationsPage() {
                   <Button
                     variant="primary"
                     type="submit"
-                    size="lg"
+                    size="md"
+                    stretch="auto"
+                    label={t("accept_and_join")}
                     onClick={submitInvitations}
                     disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
                     loading={isJoiningWorkspaces}
-                  >
-                    {t("accept_and_join")}
-                  </Button>
-                  <Link href={`/${redirectWorkspaceSlug}`}>
-                    <span>
-                      <Button variant="secondary" size="lg">
-                        {t("go_home")}
-                      </Button>
-                    </span>
-                  </Link>
+                  />
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    stretch="auto"
+                    nativeButton={false}
+                    render={<Link href={`/${redirectWorkspaceSlug}`} />}
+                    label={t("go_home")}
+                  />
                 </div>
               </div>
             </div>
           ) : (
             <div className="fixed top-0 left-0 grid h-full w-full place-items-center">
-              <EmptyState
+              <EmptyStateDetailed
+                align="center"
+                assetKey="inbox"
+                assetClassName="size-40"
                 title={t("no_pending_invites")}
                 description={t("you_can_see_here_if_someone_invites_you_to_a_workspace")}
-                image={emptyInvitation}
-                primaryButton={{
-                  text: t("back_to_home"),
-                  onClick: () => router.push("/"),
-                }}
+                actions={[{ label: t("back_to_home"), variant: "primary", onClick: () => router.push("/") }]}
               />
             </div>
           )

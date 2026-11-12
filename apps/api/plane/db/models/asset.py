@@ -14,6 +14,7 @@ from django.db import models
 from plane.utils.path_validator import sanitize_filename
 
 from .base import BaseModel
+from .project import ROLE, ProjectMember
 
 
 def get_upload_path(instance, filename):
@@ -101,3 +102,45 @@ class FileAsset(BaseModel):
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/{self.id}/"
 
         return None
+
+    def is_project_accessible_to(self, user):
+        """Return whether ``user`` may read this asset within its project.
+
+        The user must be an active member of the asset's project. A restricted guest
+        (a GUEST of a project with ``guest_view_all_features`` off) also only reaches
+        the assets of issues they created, together with those issues' comments: the
+        rule ``issue_hidden_from_guest`` applies to the issue sub-resource endpoints.
+
+        Callers still check workspace access (the endpoint's permission class or
+        ``allow_permission(..., level="WORKSPACE")``). Lives on the model so the app and
+        external-API asset views share one rule.
+
+        Assets with no project (workspace logos, user avatars and covers) are
+        workspace-level, so this returns True for them.
+        """
+        if self.project_id is None:
+            return True
+        # Scope the membership to the asset's workspace as well as its project.
+        membership = (
+            ProjectMember.objects.filter(
+                member=user,
+                workspace_id=self.workspace_id,
+                project_id=self.project_id,
+                is_active=True,
+            )
+            .values("role", "project__guest_view_all_features")
+            .first()
+        )
+        if membership is None:
+            return False
+        if membership["role"] != ROLE.GUEST.value or membership["project__guest_view_all_features"]:
+            return True
+
+        issue_id = self.issue_id or (self.comment.issue_id if self.comment_id else None)
+        if issue_id is None:
+            return True
+
+        from .issue import Issue
+
+        # Issue.objects, as issue detail uses, so the guest's own archived and draft issues stay visible.
+        return Issue.objects.filter(pk=issue_id, project_id=self.project_id, created_by=user).exists()
