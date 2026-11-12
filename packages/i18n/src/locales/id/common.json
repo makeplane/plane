@@ -892,6 +892,11 @@
       "update_view": "Perbarui tampilan",
       "save_as": "Simpan sebagai",
       "hide_filters": "Sembunyikan filter"
+    },
+    "filter_item": {
+      "remove": "Hapus filter",
+      "invalid": "Filter tidak valid",
+      "invalid_tooltip": "Kondisi filter ini sudah tidak valid. Properti mungkin telah dihapus atau akses Anda ke properti tersebut mungkin telah berubah."
     }
   }
 }

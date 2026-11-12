@@ -892,6 +892,11 @@
       "update_view": "Mettre à jour la vue",
       "save_as": "Enregistrer sous",
       "hide_filters": "Masquer les filtres"
+    },
+    "filter_item": {
+      "remove": "Supprimer le filtre",
+      "invalid": "Filtre invalide",
+      "invalid_tooltip": "Cette condition de filtre n’est plus valide. La propriété a peut-être été supprimée ou votre accès à celle-ci a peut-être changé."
     }
   }
 }

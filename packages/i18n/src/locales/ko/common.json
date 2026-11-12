@@ -892,6 +892,11 @@
       "update_view": "뷰 업데이트",
       "save_as": "다른 이름으로 저장",
       "hide_filters": "필터 숨기기"
+    },
+    "filter_item": {
+      "remove": "필터 제거",
+      "invalid": "잘못된 필터",
+      "invalid_tooltip": "이 필터 조건은 더 이상 유효하지 않습니다. 속성이 삭제되었거나 속성에 대한 액세스 권한이 변경되었을 수 있습니다."
     }
   }
 }

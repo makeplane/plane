@@ -171,7 +171,8 @@
     "search_menu": {
       "no_results": "Няма намерени резултати",
       "clear_search": "Изчисти търсенето",
-      "go_to_advanced_search": "Към разширеното търсене"
+      "go_to_advanced_search": "Към разширеното търсене",
+      "search_commands": "Търсете команди..."
     },
     "footer": {
       "workspace_level": "Ниво работно пространство"

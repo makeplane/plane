@@ -171,7 +171,8 @@
     "search_menu": {
       "no_results": "Không tìm thấy kết quả",
       "clear_search": "Xóa tìm kiếm",
-      "go_to_advanced_search": "Đi đến tìm kiếm nâng cao"
+      "go_to_advanced_search": "Đi đến tìm kiếm nâng cao",
+      "search_commands": "Tìm kiếm lệnh..."
     },
     "footer": {
       "workspace_level": "Cấp không gian làm việc"

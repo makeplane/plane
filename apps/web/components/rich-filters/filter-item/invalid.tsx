@@ -8,6 +8,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { WarningCircleOutline } from "@makeplane/propel/icons";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import type { TExternalFilter, TFilterProperty } from "@plane/types";
 // local imports
 import { FilterItemCloseButton } from "./close-button";
@@ -20,20 +21,24 @@ export const InvalidFilterItem = observer(function InvalidFilterItem<
   E extends TExternalFilter,
 >(props: IFilterItemProps<P, E>) {
   const { condition, filter, isDisabled = false, showTransition = true } = props;
+  // plane hooks
+  const { t } = useTranslation();
+  // derived values
+  const invalidFilterLabel = t("rich_filters.filter_item.invalid");
 
   return (
     <FilterItemContainer
       conditionValue={condition.value}
       showTransition={showTransition}
       variant="error"
-      label="Invalid filter"
-      tooltipContent="This filter condition is no longer valid. The property may have been deleted or your access to it may have changed."
+      label={invalidFilterLabel}
+      tooltipContent={t("rich_filters.filter_item.invalid_tooltip")}
     >
       {/* Property section */}
       <FilterItemProperty
         conditionId={condition.id}
         icon={WarningCircleOutline}
-        label="Invalid filter"
+        label={invalidFilterLabel}
         filter={filter}
         isDisabled={isDisabled}
       />
