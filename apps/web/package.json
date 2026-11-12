@@ -14,7 +14,8 @@
     "check:types": "react-router typegen && tsc --noEmit",
     "check:format": "oxfmt --check .",
     "fix:lint": "oxlint --fix .",
-    "fix:format": "oxfmt ."
+    "fix:format": "oxfmt .",
+    "test:gantt": "vitest run --config vitest.gantt.config.ts"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
@@ -81,6 +82,7 @@
     "dotenv": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-tsconfig-paths": "catalog:"
+    "vite-tsconfig-paths": "catalog:",
+    "vitest": "catalog:"
   }
 }
