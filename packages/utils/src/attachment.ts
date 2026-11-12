@@ -20,7 +20,7 @@ export const getFileExtension = (filename: string) => filename.slice(((filename.
 export const getFileName = (fileName: string) => {
   const dotIndex = fileName.lastIndexOf(".");
 
-  const nameWithoutExtension = fileName.substring(0, dotIndex);
+  const nameWithoutExtension = dotIndex > 0 ? fileName.substring(0, dotIndex) : fileName;
 
   return nameWithoutExtension;
 };
