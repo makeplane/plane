@@ -104,9 +104,10 @@ export const useEditor = (props: TEditorHookProps) => {
     // value is null when intentionally passed where syncing is not yet
     // supported and value is undefined when the data from swr is not populated
     if (value == null) return;
-    if (editor) {
-      const { uploadInProgress: isUploadInProgress } = editor.storage.utility;
-      if (!editor.isDestroyed && !isUploadInProgress) {
+    // A destroyed editor (e.g. being recreated after `editable` flips) has its storage reset to {}
+    if (editor && !editor.isDestroyed) {
+      const isUploadInProgress = editor.storage.utility?.uploadInProgress;
+      if (!isUploadInProgress) {
         try {
           editor.commands.setContent(value, { emitUpdate: false, parseOptions: { preserveWhitespace: true } });
           if (editor.state.selection) {
@@ -123,7 +124,7 @@ export const useEditor = (props: TEditorHookProps) => {
 
   // update assets upload status
   useEffect(() => {
-    if (!editor) return;
+    if (!editor || editor.isDestroyed) return;
     const assetsUploadStatus = fileHandler.assetsUploadStatus;
     editor.commands.updateAssetsUploadStatus?.(assetsUploadStatus);
   }, [editor, fileHandler.assetsUploadStatus]);
