@@ -1,0 +1,21 @@
+save "Work item assign test" as "workItem"
+Log stored value "adminUser" to website
+Log stored value "adminUser" to website
+add user stored value "invitedUser" to project stored value "projectName"
+create work item saved value "workItem" on project stored value "projectName"
+click saved value "workItem"
+click "Add assignees"
+click stored value "invitedUser"
+click "E2E Testing playground" below "Projects" within the context of "sidebar"
+log out
+Log stored value "invitedUser" to website
+click stored value "projectName" below "Projects" within the context of "sidebar"
+click "Work items"
+check that page contains saved value "workItem"
+click saved value "workItem"
+check that page contains saved value "invitedUser" to the right of "Assignees"
+log out
+//cleanup
+Log stored value "adminUser" to website
+delete work item stored value "workItem" from project stored value "projectName"
+remove user stored value "invitedUser" from project stored value "projectName"

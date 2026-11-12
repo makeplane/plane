@@ -1,0 +1,5 @@
+click "Add work item"
+enter stored value "workItem" into "Title"
+click "Backlog"
+click stored value "status"
+click "save"
