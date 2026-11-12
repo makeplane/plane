@@ -8,6 +8,10 @@ from .project import (
     ProjectDetailAPIEndpoint,
     ProjectArchiveUnarchiveAPIEndpoint,
     ProjectSummaryAPIEndpoint,
+    ProjectFeatureAPIEndpoint,
+    WorkspaceFeatureAPIEndpoint,
+    WorkItemTypeListCreateAPIEndpoint,
+    WorkItemTypeDetailAPIEndpoint,
 )
 
 from .state import (
@@ -58,11 +62,14 @@ from .member import (
     ProjectMemberLiteAPIEndpoint,
     WorkspaceMemberAPIEndpoint,
     WorkspaceMemberLiteAPIEndpoint,
+    WorkspaceRoleListAPIEndpoint,
+    WorkspaceRoleDetailAPIEndpoint,
 )
 
 from .intake import (
     IntakeIssueListCreateAPIEndpoint,
     IntakeIssueDetailAPIEndpoint,
+    IntakeIssueStatusAPIEndpoint,
 )
 
 from .asset import UserAssetEndpoint, UserServerAssetEndpoint, GenericAssetEndpoint
