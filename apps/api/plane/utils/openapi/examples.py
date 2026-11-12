@@ -307,6 +307,35 @@ MODULE_ISSUE_REQUEST_EXAMPLE = OpenApiExample(
     description="Example request for adding module issues",
 )
 
+# Page Examples
+PAGE_CREATE_EXAMPLE = OpenApiExample(
+    "PageCreateSerializer",
+    value={
+        "name": "Getting Started",
+        "description_html": "<p>Welcome to the project wiki</p>",
+        "access": 0,
+        "color": "#FF9900",
+        "labels": [
+            "0ec6cfa4-e906-4aad-9390-2df0303a41cd",
+        ],
+        "external_id": "1234567890",
+        "external_source": "github",
+    },
+    description="Example request for creating a page",
+)
+
+PAGE_UPDATE_EXAMPLE = OpenApiExample(
+    "PageUpdateSerializer",
+    value={
+        "name": "Getting Started (Updated)",
+        "description_html": "<p>Updated project wiki content</p>",
+        "is_locked": True,
+        "external_id": "1234567890",
+        "external_source": "github",
+    },
+    description="Example request for updating a page",
+)
+
 # Project Examples
 PROJECT_CREATE_EXAMPLE = OpenApiExample(
     "ProjectCreateSerializer",
@@ -448,6 +477,27 @@ MODULE_EXAMPLE = OpenApiExample(
         "started_issues": 4,
         "unstarted_issues": 3,
         "backlog_issues": 0,
+        "created_at": "2024-01-01T10:30:00Z",
+        "updated_at": "2024-01-10T15:45:00Z",
+    },
+)
+
+# Page Response Examples
+PAGE_EXAMPLE = OpenApiExample(
+    name="Page",
+    value={
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "Getting Started",
+        "description_html": "<p>Welcome to the project wiki</p>",
+        "description_stripped": "Welcome to the project wiki",
+        "owned_by": "0ec6cfa4-e906-4aad-9390-2df0303a41cd",
+        "access": 0,
+        "color": "#FF9900",
+        "parent": None,
+        "is_locked": False,
+        "archived_at": None,
+        "label_ids": ["0ec6cfa4-e906-4aad-9390-2df0303a41cd"],
+        "project_ids": ["0ec6cfa4-e906-4aad-9390-2df0303a41ce"],
         "created_at": "2024-01-01T10:30:00Z",
         "updated_at": "2024-01-10T15:45:00Z",
     },
