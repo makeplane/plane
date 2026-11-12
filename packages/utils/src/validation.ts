@@ -19,11 +19,13 @@
 
 /**
  * Person Name Pattern (for first_name, last_name)
- * Allows: Unicode letters (\p{L}), spaces, hyphens, apostrophes
- * Use case: Accommodates international names like "José", "李明", "محمد", "Müller"
+ * Allows: Unicode letters (\p{L}), spaces, hyphens, apostrophes, periods
+ * Use case: Accommodates international names like "José", "李明", "محمد", "Müller",
+ * initials and suffixes like "J. R. R. Tolkien" or "Martin Luther King Jr.", and
+ * OAuth-provided names such as "john.doe"
  * Blocks: Injection-risk characters and special symbols
  */
-export const PERSON_NAME_REGEX = /^[\p{L}\s'-]+$/u;
+export const PERSON_NAME_REGEX = /^[\p{L}\s'.-]+$/u;
 
 /**
  * Display Name Pattern (for display_name, usernames)
@@ -83,7 +85,13 @@ export const validatePersonName = (name: string): boolean | string => {
   }
 
   if (!PERSON_NAME_REGEX.test(name)) {
-    return "Names can only contain letters, spaces, hyphens, and apostrophes";
+    return "Names can only contain letters, spaces, periods, hyphens, and apostrophes";
+  }
+
+  // The regex alone accepts punctuation-only input like "." or "-"; digits are already rejected above,
+  // so requiring an alphanumeric character here means requiring a letter.
+  if (!HAS_ALPHANUMERIC_REGEX.test(name)) {
+    return "Name must contain at least one letter";
   }
 
   return true;
