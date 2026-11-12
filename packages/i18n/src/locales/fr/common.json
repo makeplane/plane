@@ -897,6 +897,14 @@
       "remove": "Supprimer le filtre",
       "invalid": "Filtre invalide",
       "invalid_tooltip": "Cette condition de filtre n’est plus valide. La propriété a peut-être été supprimée ou votre accès à celle-ci a peut-être changé."
+    },
+    "operators": {
+      "is": "est",
+      "is_any_of": "est l’un de",
+      "between": "entre"
+    },
+    "properties": {
+      "subscriber": "Abonné"
     }
   }
 }

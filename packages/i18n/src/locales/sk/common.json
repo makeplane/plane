@@ -897,6 +897,14 @@
       "remove": "Odstrániť filter",
       "invalid": "Neplatný filter",
       "invalid_tooltip": "Táto podmienka filtra už nie je platná. Vlastnosť mohla byť odstránená alebo sa mohol zmeniť váš prístup k nej."
+    },
+    "operators": {
+      "is": "je",
+      "is_any_of": "je ktorýkoľvek z",
+      "between": "medzi"
+    },
+    "properties": {
+      "subscriber": "Odberateľ"
     }
   }
 }

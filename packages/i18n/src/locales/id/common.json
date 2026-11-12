@@ -897,6 +897,14 @@
       "remove": "Hapus filter",
       "invalid": "Filter tidak valid",
       "invalid_tooltip": "Kondisi filter ini sudah tidak valid. Properti mungkin telah dihapus atau akses Anda ke properti tersebut mungkin telah berubah."
+    },
+    "operators": {
+      "is": "adalah",
+      "is_any_of": "adalah salah satu dari",
+      "between": "antara"
+    },
+    "properties": {
+      "subscriber": "Pelanggan"
     }
   }
 }

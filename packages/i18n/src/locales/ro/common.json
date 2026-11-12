@@ -897,6 +897,14 @@
       "remove": "Elimină filtrul",
       "invalid": "Filtru invalid",
       "invalid_tooltip": "Această condiție de filtrare nu mai este validă. Este posibil ca proprietatea să fi fost ștearsă sau ca accesul dvs. la ea să se fi modificat."
+    },
+    "operators": {
+      "is": "este",
+      "is_any_of": "este oricare dintre",
+      "between": "între"
+    },
+    "properties": {
+      "subscriber": "Abonat"
     }
   }
 }

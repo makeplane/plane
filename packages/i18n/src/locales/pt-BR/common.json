@@ -897,6 +897,14 @@
       "remove": "Remover filtro",
       "invalid": "Filtro inválido",
       "invalid_tooltip": "Esta condição de filtro não é mais válida. A propriedade pode ter sido excluída ou seu acesso a ela pode ter mudado."
+    },
+    "operators": {
+      "is": "é",
+      "is_any_of": "é qualquer um de",
+      "between": "entre"
+    },
+    "properties": {
+      "subscriber": "Inscrito"
     }
   }
 }

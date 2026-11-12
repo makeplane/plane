@@ -897,6 +897,14 @@
       "remove": "Filter verwijderen",
       "invalid": "Ongeldig filter",
       "invalid_tooltip": "Deze filtervoorwaarde is niet meer geldig. De eigenschap is mogelijk verwijderd of je toegang ertoe is gewijzigd."
+    },
+    "operators": {
+      "is": "is",
+      "is_any_of": "is een van",
+      "between": "tussen"
+    },
+    "properties": {
+      "subscriber": "Abonnee"
     }
   }
 }

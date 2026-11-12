@@ -897,6 +897,14 @@
       "remove": "Usuń filtr",
       "invalid": "Nieprawidłowy filtr",
       "invalid_tooltip": "Ten warunek filtra nie jest już prawidłowy. Właściwość mogła zostać usunięta lub dostęp do niej mógł zostać zmieniony."
+    },
+    "operators": {
+      "is": "jest",
+      "is_any_of": "jest jednym z",
+      "between": "między"
+    },
+    "properties": {
+      "subscriber": "Subskrybent"
     }
   }
 }

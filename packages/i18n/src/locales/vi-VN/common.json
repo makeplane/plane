@@ -897,6 +897,14 @@
       "remove": "Xóa bộ lọc",
       "invalid": "Bộ lọc không hợp lệ",
       "invalid_tooltip": "Điều kiện lọc này không còn hợp lệ. Thuộc tính có thể đã bị xóa hoặc quyền truy cập của bạn vào thuộc tính đó đã thay đổi."
+    },
+    "operators": {
+      "is": "là",
+      "is_any_of": "là một trong",
+      "between": "trong khoảng"
+    },
+    "properties": {
+      "subscriber": "Người đăng ký"
     }
   }
 }
