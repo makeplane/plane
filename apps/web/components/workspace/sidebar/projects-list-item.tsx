@@ -88,7 +88,8 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   const { allowPermissions } = useUserPermissions();
   const { getIsProjectListOpen, toggleProjectListOpen } = useCommandPalette();
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
-  const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar, toggleAnySidebarDropdown } = useAppTheme();
+  const { toggleSidebar, isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar, toggleAnySidebarDropdown } =
+    useAppTheme();
 
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
@@ -286,6 +287,8 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
       setIsProjectListOpen(!isProjectListOpen);
     } else {
       router.push(defaultTabUrl);
+      // the sidebar overlays the page on mobile, so collapse it once a project is opened
+      if (window.innerWidth < 768) toggleSidebar(true);
     }
     // close the extended sidebar if it is open
     if (isExtendedProjectSidebarOpened && !isAccordionMode) {
