@@ -5,18 +5,37 @@
  */
 
 import type { ReactNode } from "react";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { TCommentsOperations } from "@plane/types";
 import { CommentCreate } from "./comment-create";
+import { IssueActivity } from "@/components/issues/issue-detail/issue-activity/root";
 
-const { clearEditor, updateProjectAssets, updateWorkspaceAssets } = vi.hoisted(() => ({
+const { operationsByIssue, clearEditor, updateProjectAssets, updateWorkspaceAssets } = vi.hoisted(() => ({
+  operationsByIssue: new Map<string, TCommentsOperations>(),
   clearEditor: vi.fn(),
   updateProjectAssets: vi.fn(),
   updateWorkspaceAssets: vi.fn(),
 }));
 
+vi.mock("@plane/hooks", () => ({
+  useLocalStorage: (_key: string, initial: unknown) => ({ storedValue: initial, setValue: vi.fn() }),
+}));
+vi.mock("@/hooks/store/use-project", () => ({ useProject: () => ({ getProjectById: () => ({ anchor: false }) }) }));
+vi.mock("@/components/issues/issue-detail/issue-activity/helper", () => ({
+  useWorkItemCommentOperations: (_w: string, _p: string, issue: string) => operationsByIssue.get(issue),
+}));
+vi.mock("@/components/issues/issue-detail/issue-activity/activity-comment-root", () => ({
+  IssueActivityCommentRoot: () => null,
+}));
+vi.mock("@/components/issues/issue-detail/issue-activity/activity-tabs", () => ({
+  ActivityTabs: () => null,
+  getActivityTabId: () => "tab",
+  getActivityTabPanelId: () => "panel",
+}));
+vi.mock("@/components/issues/issue-detail/issue-activity/sort-root", () => ({ ActivitySortRoot: () => null }));
+vi.mock("@/components/issues/issue-detail/issue-activity/filter-root", () => ({ ActivityFilterRoot: () => null }));
 vi.mock("@plane/blocks/comment-box", () => ({
   CommentBox: ({
     editor,
@@ -52,6 +71,8 @@ vi.mock("@/components/editor/lite-text", async () => {
   const { forwardRef, useEffect, useImperativeHandle, useState } = await import("react");
   type EditorProps = {
     initialValue: string;
+    id: string;
+    value: string;
     onChange: (json: object, html: string) => void;
     handleEditorReady: (ready: boolean) => void;
     uploadFile: (blockId: string, file: File) => Promise<string>;
@@ -60,6 +81,10 @@ vi.mock("@/components/editor/lite-text", async () => {
     LiteTextEditor: forwardRef(function TestEditor(props: EditorProps, ref) {
       const { initialValue, onChange, handleEditorReady, uploadFile } = props;
       const [value, setValue] = useState(initialValue);
+      // Mirrors production use-editor id/value sync without emitting a form update.
+      useEffect(() => {
+        setValue(props.value);
+      }, [props.id, props.value]);
       useEffect(() => {
         handleEditorReady(true);
       }, [handleEditorReady]);
@@ -100,7 +125,7 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-function setup({ projectId }: { projectId?: string } = { projectId: "project-id" }) {
+function setup({ projectId }: { projectId?: string } = { projectId: "project-id" }, parent = false) {
   const createComment = vi.fn<TCommentsOperations["createComment"]>();
   const uploadCommentAsset = vi.fn<TCommentsOperations["uploadCommentAsset"]>().mockResolvedValue({
     asset_id: "asset-id",
@@ -133,16 +158,21 @@ function setup({ projectId }: { projectId?: string } = { projectId: "project-id"
     userReactions: vi.fn(),
     getReactionUsers: vi.fn().mockReturnValue(""),
   };
-  render(
-    <CommentCreate
-      workspaceSlug="workspace"
-      entityId="issue-id"
-      projectId={projectId}
-      activityOperations={activityOperations}
-      onSubmitCallback={onSubmitCallback}
-    />
+  operationsByIssue.set("issue-id", activityOperations);
+  const view = render(
+    parent ? (
+      <IssueActivity workspaceSlug="workspace" projectId="project-id" issueId="issue-id" />
+    ) : (
+      <CommentCreate
+        workspaceSlug="workspace"
+        entityId="issue-id"
+        projectId={projectId}
+        activityOperations={activityOperations}
+        onSubmitCallback={onSubmitCallback}
+      />
+    )
   );
-  return { createComment, uploadCommentAsset, onSubmitCallback, user: userEvent.setup() };
+  return { view, activityOperations, createComment, uploadCommentAsset, onSubmitCallback, user: userEvent.setup() };
 }
 
 async function enterDraft(user: ReturnType<typeof userEvent.setup>) {
@@ -236,4 +266,50 @@ describe("CommentCreate", () => {
     expect(draft.value).toBe("<p></p>");
     expect(screen.getByRole<HTMLButtonElement>("button", { name: "Comment" }).disabled).toBe(true);
   });
+});
+
+describe("actual IssueActivity parent identity", () => {
+  it("does not submit a failed item's retained form or assets to a different cached item", async () => {
+    const { user, view, createComment, activityOperations } = setup(undefined, true);
+    createComment.mockResolvedValue(undefined);
+    await enterDraft(user);
+    await user.click(screen.getByRole("button", { name: "Upload image" }));
+    await user.click(screen.getByRole("button", { name: "Comment" }));
+    await waitFor(() => expect(createComment).toHaveBeenCalledOnce());
+    const nextCreate = vi.fn().mockResolvedValue({ id: "next-comment" });
+    operationsByIssue.set("next-issue", { ...activityOperations, createComment: nextCreate });
+    view.rerender(<IssueActivity workspaceSlug="workspace" projectId="project-id" issueId="next-issue" />);
+    expect(screen.getByRole<HTMLTextAreaElement>("textbox", { name: "Comment draft" }).value).toBe("<p></p>");
+    const submit = screen.getByRole<HTMLButtonElement>("button", { name: "Comment" });
+    await user.click(submit);
+    expect(nextCreate).not.toHaveBeenCalled();
+    expect(submit.disabled).toBe(true);
+    await enterDraft(user);
+    await user.click(submit);
+    await waitFor(() => expect(nextCreate).toHaveBeenCalledOnce());
+    expect(updateProjectAssets).not.toHaveBeenCalled();
+  });
+});
+
+it("does not let an old pending creation clear the new item's draft", async () => {
+  const { user, view, createComment, activityOperations } = setup(undefined, true);
+  let finish!: (value: { id: string }) => void;
+  createComment.mockReturnValue(
+    new Promise((resolve) => {
+      finish = resolve;
+    })
+  );
+  await enterDraft(user);
+  await user.click(screen.getByRole("button", { name: "Comment" }));
+  await waitFor(() => expect(createComment).toHaveBeenCalledOnce());
+  operationsByIssue.set("next-issue", { ...activityOperations, createComment: vi.fn() });
+  view.rerender(<IssueActivity workspaceSlug="workspace" projectId="project-id" issueId="next-issue" />);
+  const nextDraft = await enterDraft(user);
+  await user.type(nextDraft, " for next item");
+  await act(async () => {
+    finish({ id: "old-comment" });
+  });
+  await waitFor(() => expect(screen.getByRole<HTMLButtonElement>("button", { name: "Comment" }).disabled).toBe(false));
+  expect(nextDraft.value).toBe("My unsaved comment for next item");
+  expect(clearEditor).not.toHaveBeenCalled();
 });
