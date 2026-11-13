@@ -90,3 +90,6 @@ from .device import Device, DeviceSession
 from .sticky import Sticky
 
 from .description import Description, DescriptionVersion
+
+# per-user board preferences
+from .user_board_preference import UserBoardPreference

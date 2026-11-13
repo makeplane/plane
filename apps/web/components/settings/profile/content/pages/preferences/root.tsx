@@ -14,6 +14,8 @@ import { useUserProfile } from "@/hooks/store/user";
 // local imports
 import { ProfileSettingsDefaultPreferencesList } from "./default-list";
 import { ProfileSettingsLanguageAndTimezonePreferencesList } from "./language-and-timezone-list";
+// board preferences
+import { BoardPreferencesList } from "@/components/board-preferences/board-preferences-list";
 
 export const PreferencesProfileSettings = observer(function PreferencesProfileSettings() {
   const { t } = useTranslation();
@@ -35,6 +37,10 @@ export const PreferencesProfileSettings = observer(function PreferencesProfileSe
         <section className="flex flex-col gap-y-3">
           <div className="text-h6-medium text-primary">{t("language_and_time")}</div>
           <ProfileSettingsLanguageAndTimezonePreferencesList />
+        </section>
+        <section className="flex flex-col gap-y-3">
+          <div className="text-h6-medium text-primary">{t("account_settings.preferences.boards_heading")}</div>
+          <BoardPreferencesList />
         </section>
       </div>
     </div>

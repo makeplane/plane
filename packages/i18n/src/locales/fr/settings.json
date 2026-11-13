@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "Préférences",
-      "description": "Personnalisez votre expérience de l’application selon votre façon de travailler"
+      "description": "Personnalisez votre expérience de l’application selon votre façon de travailler",
+      "boards_heading": "Tableaux",
+      "global_board_title": "Utiliser les mêmes paramètres de tableau dans tous les projets",
+      "global_board_description": "La disposition, le regroupement, les propriétés d'affichage et les filtres transférables sont partagés par le tableau des éléments de travail de chaque projet. Désactiver cette option rétablit les paramètres propres à chaque projet.",
+      "global_board_active": "Mêmes paramètres de tableau dans tous les projets",
+      "global_board_active_hint": "Les modifications faites ici s'appliquent au tableau des éléments de travail de chaque projet.",
+      "auto_collapse_title": "Réduire les états vides sur les tableaux",
+      "auto_collapse_description": "Les groupes sans élément de travail sont réduits sur chaque tableau et se déploient dès qu'un élément de travail y arrive."
     },
     "notifications": {
       "heading": "Notifications par e-mail",

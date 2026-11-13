@@ -26,6 +26,8 @@ import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { List } from "./default";
 // types
 import type { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
+// auto-collapse empty groups
+import { getBoardGroupIds, useAutoCollapseGroups } from "@/lib/board-preferences/auto-collapse";
 
 type ListStoreType =
   | EIssuesStoreType.PROJECT
@@ -83,7 +85,7 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
 
   const { workspaceSlug, projectId } = useParams();
   const { updateFilters } = useIssuesActions(storeType);
-  const collapsedGroups =
+  const storedCollapsedGroups =
     issuesFilter?.issueFilters?.kanbanFilters || ({ group_by: [], sub_group_by: [] } as TIssueKanbanFilters);
 
   useEffect(() => {
@@ -99,9 +101,11 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
 
   const canEditProperties = useCallback(
-    (projectId: string | undefined) => {
+    (itemProjectId: string | undefined) => {
       const isEditingAllowedBasedOnProject =
-        canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
+        canEditPropertiesBasedOnProject && itemProjectId
+          ? canEditPropertiesBasedOnProject(itemProjectId)
+          : isEditingAllowed;
 
       return !!enableInlineEditing && isEditingAllowedBasedOnProject;
     },
@@ -152,6 +156,28 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
     [workspaceSlug, issuesFilter, projectId, updateFilters]
   );
 
+  // with auto-collapse on, a group is collapsed iff its count is 0 (clicks are session overrides)
+  const {
+    collapsedGroups,
+    handleToggle: handleCollapsedGroupsToggle,
+    expandGroup,
+  } = useAutoCollapseGroups({
+    storeType,
+    groupBy: group_by,
+    subGroupBy: null,
+    groupIds: group_by ? getBoardGroupIds(group_by, storeType, isEpic) : [],
+    subGroupIds: [],
+    getGroupIssueCount: issues.getGroupIssueCount,
+    loaded: issues.groupedIssueIds !== undefined && issues.getIssueLoader() !== "init-loader",
+    stored: storedCollapsedGroups,
+    onStoredToggle: (_toggle, groupId) => handleCollapsedGroups(groupId),
+  });
+  const handleListCollapsedGroups = useCallback(
+    (groupId: string) => handleCollapsedGroupsToggle("group_by", groupId),
+    [handleCollapsedGroupsToggle]
+  );
+  const handleListExpandGroup = useCallback((groupId: string) => expandGroup("group_by", groupId), [expandGroup]);
+
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
       <div className={`relative size-full bg-surface-2`}>
@@ -172,7 +198,8 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
           addIssuesToView={addIssuesToView}
           isCompletedCycle={isCompletedCycle}
           handleOnDrop={handleOnDrop}
-          handleCollapsedGroups={handleCollapsedGroups}
+          handleCollapsedGroups={handleListCollapsedGroups}
+          handleExpandGroup={handleListExpandGroup}
           collapsedGroups={collapsedGroups}
           isEpic={isEpic}
         />

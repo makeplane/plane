@@ -54,6 +54,8 @@ export interface IList {
   isCompletedCycle?: boolean;
   loadMoreIssues: (groupId?: string) => void;
   handleCollapsedGroups: (value: string) => void;
+  /** opens a collapsed group after a drop onto it (never a toggle) */
+  handleExpandGroup?: (value: string) => void;
   collapsedGroups: TIssueKanbanFilters;
   isEpic?: boolean;
 }
@@ -77,6 +79,7 @@ export const List = observer(function List(props: IList) {
     isCompletedCycle = false,
     loadMoreIssues,
     handleCollapsedGroups,
+    handleExpandGroup,
     collapsedGroups,
     isEpic = false,
   } = props;
@@ -111,7 +114,7 @@ export const List = observer(function List(props: IList) {
 
   const getGroupIndex = (groupId: string | undefined) => groups.findIndex(({ id }) => id === groupId);
 
-  const is_list = group_by === null ? true : false;
+  const is_list = group_by === null;
 
   // create groupIds array and entities object for bulk ops
   const groupIds = groups.map((g) => g.id);
@@ -166,6 +169,7 @@ export const List = observer(function List(props: IList) {
                     containerRef={containerRef}
                     selectionHelpers={helpers}
                     handleCollapsedGroups={handleCollapsedGroups}
+                    handleExpandGroup={handleExpandGroup}
                     collapsedGroups={collapsedGroups}
                     isEpic={isEpic}
                   />
