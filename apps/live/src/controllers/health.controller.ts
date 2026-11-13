@@ -5,8 +5,9 @@
  */
 
 import type { Request, Response } from "express";
-import { Controller, Get } from "@plane/decorators";
+import { Controller, Get, Middleware } from "@plane/decorators";
 import { env } from "@/env";
+import { collectStats, requireStatsAccess } from "@/events/stats";
 
 @Controller("/health")
 export class HealthController {
@@ -17,5 +18,12 @@ export class HealthController {
       timestamp: new Date().toISOString(),
       version: env.APP_VERSION,
     });
+  }
+
+  // Operational counters since start. Kept off the public /health: it needs the live shared secret header.
+  @Get("/stats")
+  @Middleware(requireStatsAccess)
+  async stats(_req: Request, res: Response) {
+    res.status(200).json(collectStats());
   }
 }

@@ -893,5 +893,23 @@
       "save_as": "另存为",
       "hide_filters": "隐藏筛选"
     }
+  },
+  "live_updates": {
+    "status": {
+      "connected": "实时",
+      "connected_tooltip": "实时更新已开启：其他人的更改无需刷新即可显示。",
+      "connecting": "正在连接",
+      "connecting_tooltip": "正在连接实时更新。",
+      "reconnecting": "正在重新连接",
+      "reconnecting_tooltip": "实时更新连接已断开。正在重新连接，连接恢复后看板将刷新。",
+      "offline": "离线",
+      "offline_network_tooltip": "您已离线。网络恢复后实时更新将继续。",
+      "offline_unauthenticated_tooltip": "实时更新已暂停：无法验证会话。请点击页面重试，或重新登录。",
+      "offline_stopped_tooltip": "此标签页的实时更新已关闭。请重新加载页面以重新开启。"
+    },
+    "work_item_unavailable": {
+      "title": "工作项不可用",
+      "message": "此工作项已被删除，或您已无权访问。"
+    }
   }
 }

@@ -893,5 +893,23 @@
       "save_as": "Opslaan als",
       "hide_filters": "Filters verbergen"
     }
+  },
+  "live_updates": {
+    "status": {
+      "connected": "Live",
+      "connected_tooltip": "Live-updates staan aan: wijzigingen van anderen verschijnen zonder te vernieuwen.",
+      "connecting": "Verbinden",
+      "connecting_tooltip": "Verbinden met live-updates.",
+      "reconnecting": "Opnieuw verbinden",
+      "reconnecting_tooltip": "De verbinding voor live-updates is verbroken. Opnieuw verbinden; het bord wordt vernieuwd zodra de verbinding terug is.",
+      "offline": "Offline",
+      "offline_network_tooltip": "Je bent offline. Live-updates gaan verder zodra het netwerk terug is.",
+      "offline_unauthenticated_tooltip": "Live-updates gepauzeerd: de sessie kon niet worden geverifieerd. Klik op de pagina om het opnieuw te proberen, of meld je opnieuw aan.",
+      "offline_stopped_tooltip": "Live-updates staan uit voor dit tabblad. Laad de pagina opnieuw om ze weer aan te zetten."
+    },
+    "work_item_unavailable": {
+      "title": "Werkitem niet beschikbaar",
+      "message": "Dit werkitem is verwijderd of je hebt er geen toegang meer toe."
+    }
   }
 }

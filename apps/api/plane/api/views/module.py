@@ -74,6 +74,7 @@ from plane.utils.openapi import (
     MODULE_ISSUE_NOT_FOUND_RESPONSE,
     CANNOT_ARCHIVE_RESPONSE,
 )
+from plane.utils.live_events import publish_metadata_event
 
 
 class ModuleListCreateAPIEndpoint(BaseAPIView):
@@ -240,6 +241,7 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
             )
             module = Module.objects.get(pk=serializer.instance.id)
             serializer = ModuleSerializer(module)
+            publish_metadata_event(project_id, "module_definition", "created", request.user.id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -497,6 +499,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
                 origin=base_host(request=request, is_app=True),
             )
 
+            publish_metadata_event(project_id, "module_definition", "updated", request.user.id)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -581,6 +584,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
         ModuleIssue.objects.filter(module=pk, project_id=project_id).delete()
         # Delete the user favorite module
         UserFavorite.objects.filter(entity_type="module", entity_identifier=pk, project_id=project_id).delete()
+        publish_metadata_event(project_id, "module_definition", "deleted", request.user.id, settle=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -1112,6 +1116,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
         ).delete()
+        publish_metadata_event(project_id, "module_definition", "archived", request.user.id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @module_docs(
@@ -1135,4 +1140,5 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         module = Module.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
         module.archived_at = None
         module.save()
+        publish_metadata_event(project_id, "module_definition", "unarchived", request.user.id)
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -59,6 +59,7 @@ from plane.utils.host import base_host
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
+from plane.utils.live_events import publish_metadata_event
 from plane.utils.timezone_converter import convert_to_utc, user_timezone_converter
 
 
@@ -325,6 +326,7 @@ class CycleViewSet(BaseViewSet):
                     slug=slug,
                     origin=base_host(request=request, is_app=True),
                 )
+                publish_metadata_event(project_id, "cycle_definition", "created", request.user.id)
                 return Response(cycle, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -405,6 +407,7 @@ class CycleViewSet(BaseViewSet):
                 origin=base_host(request=request, is_app=True),
             )
 
+            publish_metadata_event(project_id, "cycle_definition", "updated", request.user.id)
             return Response(cycle, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -515,6 +518,7 @@ class CycleViewSet(BaseViewSet):
             entity_identifier=pk,
             entity_name="cycle",
         ).delete(soft=False)
+        publish_metadata_event(project_id, "cycle_definition", "deleted", request.user.id, settle=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

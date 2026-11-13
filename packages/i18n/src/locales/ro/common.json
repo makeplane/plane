@@ -893,5 +893,23 @@
       "save_as": "Salvează ca",
       "hide_filters": "Ascunde filtrele"
     }
+  },
+  "live_updates": {
+    "status": {
+      "connected": "În direct",
+      "connected_tooltip": "Actualizările în direct sunt active: modificările altora apar fără reîmprospătare.",
+      "connecting": "Se conectează",
+      "connecting_tooltip": "Se realizează conexiunea la actualizările în direct.",
+      "reconnecting": "Se reconectează",
+      "reconnecting_tooltip": "Conexiunea actualizărilor în direct s-a pierdut. Se reconectează; tabla se va reîmprospăta la revenire.",
+      "offline": "Offline",
+      "offline_network_tooltip": "Sunteți offline. Actualizările în direct vor fi reluate când rețeaua revine.",
+      "offline_unauthenticated_tooltip": "Actualizări în direct întrerupte: sesiunea nu a putut fi verificată. Faceți clic pe pagină pentru a reîncerca sau autentificați-vă din nou.",
+      "offline_stopped_tooltip": "Actualizările în direct sunt dezactivate pentru această filă. Reîncărcați pagina pentru a le reactiva."
+    },
+    "work_item_unavailable": {
+      "title": "Activitate indisponibilă",
+      "message": "Această activitate a fost ștearsă sau nu mai aveți acces la ea."
+    }
   }
 }

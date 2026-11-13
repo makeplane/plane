@@ -893,5 +893,23 @@
       "save_as": "Enregistrer sous",
       "hide_filters": "Masquer les filtres"
     }
+  },
+  "live_updates": {
+    "status": {
+      "connected": "En direct",
+      "connected_tooltip": "Les mises à jour en direct sont actives. Les modifications des autres apparaissent sans actualisation.",
+      "connecting": "Connexion",
+      "connecting_tooltip": "Connexion aux mises à jour en direct en cours.",
+      "reconnecting": "Reconnexion",
+      "reconnecting_tooltip": "La connexion des mises à jour en direct a été perdue. Reconnexion en cours, le tableau sera actualisé une fois la connexion rétablie.",
+      "offline": "Hors ligne",
+      "offline_network_tooltip": "Vous êtes hors ligne. Les mises à jour en direct reprendront dès le retour du réseau.",
+      "offline_unauthenticated_tooltip": "Mises à jour en direct en pause, car la session n'a pas pu être vérifiée. Cliquez sur la page pour réessayer, ou reconnectez-vous.",
+      "offline_stopped_tooltip": "Les mises à jour en direct sont désactivées pour cet onglet. Rechargez la page pour les réactiver."
+    },
+    "work_item_unavailable": {
+      "title": "Élément de travail indisponible",
+      "message": "Cet élément de travail a été supprimé ou vous n'y avez plus accès."
+    }
   }
 }

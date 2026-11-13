@@ -893,5 +893,23 @@
       "save_as": "Salvar como",
       "hide_filters": "Ocultar filtros"
     }
+  },
+  "live_updates": {
+    "status": {
+      "connected": "Ao vivo",
+      "connected_tooltip": "As atualizações ao vivo estão ativas: as alterações de outras pessoas aparecem sem recarregar.",
+      "connecting": "Conectando",
+      "connecting_tooltip": "Conectando às atualizações ao vivo.",
+      "reconnecting": "Reconectando",
+      "reconnecting_tooltip": "A conexão das atualizações ao vivo foi perdida. Reconectando; o quadro será atualizado quando ela voltar.",
+      "offline": "Offline",
+      "offline_network_tooltip": "Você está offline. As atualizações ao vivo voltam quando a rede retornar.",
+      "offline_unauthenticated_tooltip": "Atualizações ao vivo pausadas: não foi possível verificar a sessão. Clique na página para tentar novamente ou entre de novo.",
+      "offline_stopped_tooltip": "As atualizações ao vivo estão desativadas nesta aba. Recarregue a página para ativá-las novamente."
+    },
+    "work_item_unavailable": {
+      "title": "Item de trabalho indisponível",
+      "message": "Este item de trabalho foi excluído ou você não tem mais acesso a ele."
+    }
   }
 }

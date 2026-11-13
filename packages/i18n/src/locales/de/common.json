@@ -893,5 +893,23 @@
       "save_as": "Speichern unter",
       "hide_filters": "Filter ausblenden"
     }
+  },
+  "live_updates": {
+    "status": {
+      "connected": "Live",
+      "connected_tooltip": "Live-Updates sind aktiv. Änderungen anderer erscheinen ohne Neuladen.",
+      "connecting": "Verbinden",
+      "connecting_tooltip": "Verbindung zu Live-Updates wird hergestellt.",
+      "reconnecting": "Neu verbinden",
+      "reconnecting_tooltip": "Die Verbindung für Live-Updates wurde unterbrochen. Sie wird wiederhergestellt; das Board wird danach aktualisiert.",
+      "offline": "Offline",
+      "offline_network_tooltip": "Sie sind offline. Live-Updates werden fortgesetzt, sobald das Netzwerk wieder verfügbar ist.",
+      "offline_unauthenticated_tooltip": "Live-Updates pausiert. Die Sitzung konnte nicht überprüft werden. Klicken Sie auf die Seite, um es erneut zu versuchen, oder melden Sie sich erneut an.",
+      "offline_stopped_tooltip": "Live-Updates sind für diesen Tab deaktiviert. Laden Sie die Seite neu, um sie wieder zu aktivieren."
+    },
+    "work_item_unavailable": {
+      "title": "Arbeitselement nicht verfügbar",
+      "message": "Dieses Arbeitselement wurde gelöscht oder Sie haben keinen Zugriff mehr darauf."
+    }
   }
 }

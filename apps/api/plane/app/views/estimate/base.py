@@ -24,6 +24,7 @@ from plane.app.serializers import (
 )
 from plane.utils.cache import invalidate_cache
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.utils.live_events import publish_metadata_event
 
 
 def generate_random_name(length=10):
@@ -98,6 +99,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         )
 
         serializer = EstimateReadSerializer(estimate)
+        publish_metadata_event(project_id, "estimate", "created", request.user.id)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, estimate_id):
@@ -141,12 +143,14 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         EstimatePoint.objects.bulk_update(updated_estimate_points, ["key", "value"], batch_size=10)
 
         estimate_serializer = EstimateReadSerializer(estimate)
+        publish_metadata_event(project_id, "estimate", "updated", request.user.id)
         return Response(estimate_serializer.data, status=status.HTTP_200_OK)
 
     @invalidate_cache(path="/api/workspaces/:slug/estimates/", url_params=True, user=False)
     def destroy(self, request, slug, project_id, estimate_id):
         estimate = Estimate.objects.get(pk=estimate_id, workspace__slug=slug, project_id=project_id)
         estimate.delete()
+        publish_metadata_event(project_id, "estimate", "deleted", request.user.id, settle=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -176,6 +180,7 @@ class EstimatePointEndpoint(BaseViewSet):
             estimate_id=estimate_id, project_id=project_id, key=key, value=value
         )
         serializer = EstimatePointSerializer(estimate_point).data
+        publish_metadata_event(project_id, "estimate", "created", request.user.id)
         return Response(serializer, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -191,6 +196,7 @@ class EstimatePointEndpoint(BaseViewSet):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
+        publish_metadata_event(project_id, "estimate", "updated", request.user.id)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -262,6 +268,7 @@ class EstimatePointEndpoint(BaseViewSet):
 
         old_estimate_point.delete()
 
+        publish_metadata_event(project_id, "estimate", "deleted", request.user.id, settle=True)
         return Response(
             EstimatePointSerializer(updated_estimate_points, many=True).data,
             status=status.HTTP_200_OK,

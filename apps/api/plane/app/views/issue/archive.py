@@ -43,6 +43,7 @@ from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPagina
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.error_codes import ERROR_CODES
 from plane.utils.host import base_host
+from plane.utils.live_events import publish_work_item_event
 
 # Module imports
 from .. import BaseViewSet, BaseAPIView
@@ -339,5 +340,9 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
             issue.archived_at = timezone.now().date()
             bulk_archive_issues.append(issue)
         Issue.objects.bulk_update(bulk_archive_issues, ["archived_at"])
+
+        publish_work_item_event(
+            project_id, [str(i.id) for i in bulk_archive_issues], "issue", "updated", request.user.id
+        )
 
         return Response({"archived_at": str(timezone.now().date())}, status=status.HTTP_200_OK)

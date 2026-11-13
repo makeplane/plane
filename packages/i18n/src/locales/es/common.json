@@ -893,5 +893,23 @@
       "save_as": "Guardar como",
       "hide_filters": "Ocultar filtros"
     }
+  },
+  "live_updates": {
+    "status": {
+      "connected": "En vivo",
+      "connected_tooltip": "Las actualizaciones en vivo están activas: los cambios de otros aparecen sin recargar.",
+      "connecting": "Conectando",
+      "connecting_tooltip": "Conectando con las actualizaciones en vivo.",
+      "reconnecting": "Reconectando",
+      "reconnecting_tooltip": "Se perdió la conexión de las actualizaciones en vivo. Reconectando; el tablero se actualizará cuando vuelva.",
+      "offline": "Sin conexión",
+      "offline_network_tooltip": "Usted está sin conexión. Las actualizaciones en vivo se reanudarán cuando vuelva la red.",
+      "offline_unauthenticated_tooltip": "Actualizaciones en vivo en pausa: no se pudo verificar la sesión. Haga clic en la página para reintentar o vuelva a iniciar sesión.",
+      "offline_stopped_tooltip": "Las actualizaciones en vivo están desactivadas en esta pestaña. Recargue la página para volver a activarlas."
+    },
+    "work_item_unavailable": {
+      "title": "Elemento de trabajo no disponible",
+      "message": "Este elemento de trabajo se eliminó o ya no tiene acceso a él."
+    }
   }
 }

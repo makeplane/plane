@@ -893,5 +893,23 @@
       "save_as": "Salva come",
       "hide_filters": "Nascondi filtri"
     }
+  },
+  "live_updates": {
+    "status": {
+      "connected": "Live",
+      "connected_tooltip": "Gli aggiornamenti in tempo reale sono attivi: le modifiche degli altri compaiono senza ricaricare.",
+      "connecting": "Connessione",
+      "connecting_tooltip": "Connessione agli aggiornamenti in tempo reale in corso.",
+      "reconnecting": "Riconnessione",
+      "reconnecting_tooltip": "La connessione degli aggiornamenti in tempo reale è stata persa. Riconnessione in corso; le schede si aggiorneranno al ripristino.",
+      "offline": "Offline",
+      "offline_network_tooltip": "Lei è offline. Gli aggiornamenti in tempo reale riprenderanno al ritorno della rete.",
+      "offline_unauthenticated_tooltip": "Aggiornamenti in tempo reale in pausa: non è stato possibile verificare la sessione. Faccia clic sulla pagina per riprovare o acceda di nuovo.",
+      "offline_stopped_tooltip": "Gli aggiornamenti in tempo reale sono disattivati per questa scheda del browser. Ricarichi la pagina per riattivarli."
+    },
+    "work_item_unavailable": {
+      "title": "Elemento di lavoro non disponibile",
+      "message": "Questo elemento di lavoro è stato eliminato o non è più accessibile."
+    }
   }
 }

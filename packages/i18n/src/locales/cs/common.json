@@ -893,5 +893,23 @@
       "save_as": "Uložit jako",
       "hide_filters": "Skrýt filtry"
     }
+  },
+  "live_updates": {
+    "status": {
+      "connected": "Živě",
+      "connected_tooltip": "Živé aktualizace jsou zapnuté: změny ostatních se zobrazí bez obnovení stránky.",
+      "connecting": "Připojování",
+      "connecting_tooltip": "Probíhá připojování k živým aktualizacím.",
+      "reconnecting": "Opětovné připojování",
+      "reconnecting_tooltip": "Připojení živých aktualizací bylo ztraceno. Probíhá opětovné připojení; nástěnka se po obnovení aktualizuje.",
+      "offline": "Offline",
+      "offline_network_tooltip": "Jste offline. Živé aktualizace budou pokračovat po obnovení sítě.",
+      "offline_unauthenticated_tooltip": "Živé aktualizace jsou pozastaveny: relaci se nepodařilo ověřit. Klikněte na stránku a zkuste to znovu, nebo se znovu přihlaste.",
+      "offline_stopped_tooltip": "Živé aktualizace jsou pro tuto kartu vypnuté. Obnovte stránku, abyste je znovu zapnuli."
+    },
+    "work_item_unavailable": {
+      "title": "Pracovní položka není dostupná",
+      "message": "Tato pracovní položka byla smazána nebo k ní již nemáte přístup."
+    }
   }
 }

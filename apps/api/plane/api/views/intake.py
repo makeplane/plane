@@ -30,6 +30,7 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State, StateGroup, WorkspaceMember
 from plane.utils.host import base_host
 from plane.utils.serializers import writable_data
+from plane.utils.live_events import publish_work_item_event
 from plane.utils.content_validator import validate_html_content
 from .base import BaseAPIView
 from .issue import is_restricted_guest
@@ -515,9 +516,15 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
             )
 
         # Check the issue status
+        issue_deleted = False
         if intake_issue.status in [-2, -1, 0, 2]:
             # Delete the issue also
             issue.delete()
+            issue_deleted = True
 
         intake_issue.delete()
+        # the intake list drops the item; a deleted work item leaves the boards too
+        publish_work_item_event(project_id, [issue_id], "intake", "deleted", request.user.id)
+        if issue_deleted:
+            publish_work_item_event(project_id, [issue_id], "issue", "deleted", request.user.id)
         return Response(status=status.HTTP_204_NO_CONTENT)
