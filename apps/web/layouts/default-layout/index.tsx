@@ -15,7 +15,7 @@ type Props = {
 
 function DefaultLayout({ children, gradient = false, className }: Props) {
   return (
-    <div className={cn(`h-screen w-full overflow-hidden ${gradient ? "" : "bg-surface-1"}`, className)}>{children}</div>
+    <div className={cn(`h-dvh w-full overflow-hidden ${gradient ? "" : "bg-surface-1"}`, className)}>{children}</div>
   );
 }
 

@@ -19,7 +19,7 @@ function SetPasswordPage() {
   return (
     <DefaultLayout>
       <AuthenticationWrapper pageType={EPageTypes.SET_PASSWORD}>
-        <div className="relative z-10 flex h-screen w-screen flex-col items-center overflow-hidden overflow-y-auto px-8 pt-6 pb-10">
+        <div className="relative z-10 flex h-dvh w-screen flex-col items-center overflow-hidden overflow-y-auto px-8 pt-6 pb-10">
           <AuthHeader type={EAuthModes.SIGN_IN} />
           <ResetPasswordForm />
         </div>
