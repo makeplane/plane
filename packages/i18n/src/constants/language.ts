@@ -11,6 +11,7 @@ export const FALLBACK_LANGUAGE: TLanguage = "en";
 export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
   { label: "English", value: "en" },
   { label: "Français", value: "fr" },
+  { label: "Dansk", value: "da" },
   { label: "Español", value: "es" },
   { label: "日本語", value: "ja" },
   { label: "简体中文", value: "zh-CN" },

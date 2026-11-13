@@ -1,0 +1,273 @@
+{
+  "automations": {
+    "settings": {
+      "title": "Tilpassede automatiseringer",
+      "create_automation": "Opret automatisering"
+    },
+    "scope": {
+      "label": "Omfang",
+      "run_on": "Kør på"
+    },
+    "trigger": {
+      "label": "Udløser",
+      "add_trigger": "Tilføj udløser",
+      "sidebar_header": "Konfiguration af udløser",
+      "input_label": "Hvad er udløseren for denne automatisering?",
+      "input_placeholder": "Vælg en mulighed",
+      "section_plane_events": "Plane-hændelser",
+      "section_time_based": "Tidsbaseret",
+      "fixed_schedule": "Fast tidsplan",
+      "schedule": {
+        "frequency": "Frekvens",
+        "select_day": "Vælg dag",
+        "day_of_month": "Dag i måneden",
+        "monthly_every": "Hver",
+        "monthly_day_aria": "Dag {day}",
+        "time": "Tidspunkt",
+        "hour": "Time",
+        "minute": "Minut",
+        "hour_suffix": "t",
+        "minute_suffix": "min",
+        "am": "AM",
+        "pm": "PM",
+        "timezone": "Tidszone",
+        "timezone_placeholder": "Vælg en tidszone",
+        "frequency_daily": "Dagligt",
+        "frequency_weekly": "Ugentligt",
+        "frequency_monthly": "Månedligt",
+        "on": "På",
+        "validation_weekly_day_required": "Vælg mindst én dag i ugen.",
+        "validation_monthly_date_required": "Vælg en dag i måneden.",
+        "main_content_schedule_summary_daily": "Hver dag kl. {time} ({timezone}).",
+        "main_content_schedule_summary_weekly": "Hver uge på {days} kl. {time} ({timezone}).",
+        "main_content_schedule_summary_monthly": "Hver måned den {day}. dag kl. {time} ({timezone}).",
+        "schedule_mode": "Tidsplantilstand",
+        "schedule_mode_fixed": "Fast",
+        "schedule_mode_cron": "Cron",
+        "cron_expression_label": "Indtast Cron-udtryk",
+        "cron_expression_placeholder": "0 9 * * 1-5",
+        "cron_invalid": "Ugyldigt cron-udtryk.",
+        "cron_preview": "Dette Cron-udtryk kører \"{description}\".",
+        "main_content_cron_summary": "{description} ({timezone})."
+      },
+      "button": {
+        "previous": "Tilbage",
+        "next": "Tilføj handling"
+      },
+      "warning": {
+        "disabled_trigger_switching": "Du kan ikke ændre udløsertype, når den først er oprettet"
+      }
+    },
+    "condition": {
+      "label": "Forudsat",
+      "add_condition": "Tilføj betingelse",
+      "adding_condition": "Tilføjer betingelse"
+    },
+    "action": {
+      "label": "Handling",
+      "add_action": "Tilføj handling",
+      "sidebar_header": "Handlinger",
+      "input_label": "Hvad gør automatiseringen?",
+      "input_placeholder": "Vælg en mulighed",
+      "handler_name": {
+        "add_comment": "Tilføj kommentar",
+        "change_property": "Skift egenskab",
+        "run_script": "Kør script"
+      },
+      "configuration": {
+        "label": "Konfiguration",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Vælg en egenskab",
+            "change_type": "Vælg",
+            "property_value_select": "{count, plural, one{Vælg værdi} other{Vælg værdier}}",
+            "property_value_select_date": "Vælg dato"
+          },
+          "validation": {
+            "property_name_required": "Egenskabsnavn er påkrævet",
+            "change_type_required": "Ændringstype er påkrævet",
+            "property_value_required": "Egenskabsværdi er påkrævet"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Tilføj kommentar"
+      },
+      "run_script_block": {
+        "title": "Kør script"
+      },
+      "change_property_block": {
+        "title": "Skift egenskab"
+      },
+      "validation": {
+        "delete_only_action": "Deaktiver automatiseringen, før du sletter dens eneste handling."
+      }
+    },
+    "conjunctions": {
+      "and": "Og",
+      "or": "Eller",
+      "if": "Hvis",
+      "then": "Så"
+    },
+    "enable": {
+      "alert": "Tryk på 'Aktivér', når din automatisering er færdig. Når den er aktiveret, vil automatiseringen være klar til at køre.",
+      "validation": {
+        "required": "Automatiseringen skal have en udløser og mindst én handling for at kunne aktiveres."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "Automatiseringen skal deaktiveres, før den kan slettes."
+      }
+    },
+    "table": {
+      "title": "Automatiseringstitel",
+      "scope": "Omfang",
+      "projects": "Projekter",
+      "last_run_on": "Sidst kørt den",
+      "created_on": "Oprettet den",
+      "last_updated_on": "Sidst opdateret den",
+      "last_run_status": "Status for sidste kørsel",
+      "average_duration": "Gennemsnitlig varighed",
+      "owner": "Ejer",
+      "executions": "Kørsler"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Opret automatisering",
+        "update": "Opdater automatisering"
+      },
+      "title": {
+        "placeholder": "Giv din automatisering et navn.",
+        "required_error": "Titel er påkrævet"
+      },
+      "description": {
+        "placeholder": "Beskriv din automatisering."
+      },
+      "submit_button": {
+        "create": "Opret automatisering",
+        "update": "Opdater automatisering"
+      }
+    },
+    "delete_modal": {
+      "heading": "Slet automatisering"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Vis fejlede",
+        "all": "Alle",
+        "only_activity": "Kun aktivitet",
+        "only_run_history": "Kun kørselshistorik"
+      },
+      "run_history": {
+        "initiator": "Initiativtager"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Succes!",
+          "message": "Automatisering oprettet med succes."
+        },
+        "error": {
+          "title": "Fejl!",
+          "message": "Oprettelse af automatisering mislykkedes."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Succes!",
+          "message": "Automatisering opdateret med succes."
+        },
+        "error": {
+          "title": "Fejl!",
+          "message": "Opdatering af automatisering mislykkedes."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "Succes!",
+          "message": "Automatisering aktiveret med succes."
+        },
+        "error": {
+          "title": "Fejl!",
+          "message": "Aktivering af automatisering mislykkedes."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "Succes!",
+          "message": "Automatisering deaktiveret med succes."
+        },
+        "error": {
+          "title": "Fejl!",
+          "message": "Deaktivering af automatisering mislykkedes."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Automatisering slettet",
+          "message": "{name}, automatiseringen, er nu blevet slettet fra dit projekt."
+        },
+        "error": {
+          "title": "Vi kunne ikke slette denne automatisering denne gang.",
+          "message": "Prøv at slette den igen eller vend tilbage til den senere. Hvis du stadig ikke kan slette den, bedes du kontakte os."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "Fejl!",
+            "message": "Kunne ikke oprette handling. Prøv venligst igen!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "Fejl!",
+            "message": "Kunne ikke opdatere handling. Prøv venligst igen!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "Der er ingen automatiseringer at vise endnu.",
+        "description": "Automatiseringer hjælper dig med at fjerne gentagne opgaver ved at indstille udløsere, betingelser og handlinger. Opret en for at spare tid og holde arbejdet i gang uden besvær."
+      },
+      "upgrade": {
+        "title": "Automatiseringer",
+        "description": "Automatiseringer er en måde at automatisere opgaver i dit projekt på.",
+        "sub_description": "Få 80 % af din administrative tid tilbage, når du bruger automatiseringer."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "Vælg projekter, som denne automatisering skal køre på",
+        "all_projects": {
+          "label": "Alle projekter",
+          "description": "Automatiseringen vil køre for alle projekter i arbejdsområdet."
+        },
+        "select_projects": {
+          "label": "Vælg projekter",
+          "description": "Automatiseringen vil køre for udvalgte projekter i arbejdsområdet.",
+          "placeholder": "Vælg projekter"
+        }
+      },
+      "settings": {
+        "sidebar_label": "Automatiseringer",
+        "title": "Automatiseringer",
+        "description": "Standardiser processer på tværs af dit arbejdsområde med globale automatiseringer."
+      },
+      "table": {
+        "scope": {
+          "global": "Global",
+          "project": {
+            "label": "Projekt",
+            "multiple": "Flere",
+            "all": "Alle"
+          }
+        }
+      }
+    }
+  }
+}

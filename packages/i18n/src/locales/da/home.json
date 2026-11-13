@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "Din hurtigstartguide",
+      "not_right_now": "Ikke lige nu",
+      "create_project": {
+        "title": "Opret et projekt",
+        "description": "De fleste ting starter med et projekt i Plane.",
+        "cta": "Kom i gang"
+      },
+      "invite_team": {
+        "title": "Inviter dit team",
+        "description": "Byg, lever og administrer sammen med kolleger.",
+        "cta": "Byd dem indenfor"
+      },
+      "configure_workspace": {
+        "title": "Opsæt dit arbejdsområde.",
+        "description": "Slå funktioner til eller fra, eller gå endnu videre.",
+        "cta": "Konfigurer dette arbejdsområde"
+      },
+      "personalize_account": {
+        "title": "Gør Plane til dit eget.",
+        "description": "Vælg dit billede, farver og meget mere.",
+        "cta": "Personliggør nu"
+      },
+      "widgets": {
+        "title": "Det er stille uden widgets, slå dem til",
+        "description": "Det ser ud til, at alle dine widgets er slået fra. Aktivér dem\nnu for at forbedre din oplevelse!",
+        "primary_button": {
+          "text": "Administrer widgets"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "Gem links til arbejdsrelevante ting, som du gerne vil have ved hånden.",
+      "add": "Tilføj hurtiglink",
+      "title": "Hurtiglink",
+      "title_plural": "Hurtiglinks"
+    },
+    "recents": {
+      "title": "Seneste",
+      "empty": {
+        "project": "Dine seneste projekter vises her, når du har besøgt et.",
+        "page": "Dine seneste sider vises her, når du har besøgt en.",
+        "issue": "Dine seneste opgaver vises her, når du har besøgt en.",
+        "default": "Du har ingen seneste elementer endnu."
+      },
+      "filters": {
+        "all": "Alle",
+        "projects": "Projekter",
+        "pages": "Sider",
+        "issues": "Opgaver"
+      }
+    },
+    "new_at_plane": {
+      "title": "Nyt hos Plane"
+    },
+    "quick_tutorial": {
+      "title": "Hurtig vejledning"
+    },
+    "widget": {
+      "reordered_successfully": "Widget omorganiseret med succes.",
+      "reordering_failed": "Der opstod en fejl under omorganisering af widget."
+    },
+    "manage_widgets": "Administrer widgets",
+    "title": "Hjem",
+    "star_us_on_github": "Giv os en stjerne på GitHub",
+    "business_trial_banner": {
+      "title": "Din 14-dages prøveperiode på Business-abonnementet er aktiv!",
+      "description": "Udforsk alle Business-funktioner. Når du er klar, kan du vælge at abonnere. Du bliver ikke faktureret automatisk.",
+      "trial_ends_today": "Prøveperioden slutter i dag",
+      "trial_ends_in_days": "Prøveperioden slutter om {days, plural, one {# dag} other {# dage}}",
+      "start_subscription": "Start abonnement",
+      "explore_business_features": "Udforsk Business-funktioner"
+    }
+  }
+}

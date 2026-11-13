@@ -1,0 +1,526 @@
+{
+  "project_settings": {
+    "general": {
+      "enter_project_id": "Indtast projekt-ID",
+      "please_select_a_timezone": "Vælg venligst en tidszone",
+      "archive_project": {
+        "title": "Arkiver projekt",
+        "description": "Arkivering af et projekt vil fjerne det fra din side-navigation, men du vil stadig kunne tilgå det fra din projektside. Du kan genskabe projektet eller slette det, når du vil.",
+        "button": "Arkiver projekt"
+      },
+      "delete_project": {
+        "title": "Slet projekt",
+        "description": "Når et projekt slettes, vil alle data og ressourcer i projektet blive permanent fjernet og kan ikke genskabes.",
+        "button": "Slet mit projekt"
+      },
+      "toast": {
+        "success": "Projekt opdateret med succes",
+        "error": "Projektet kunne ikke opdateres. Prøv venligst igen."
+      }
+    },
+    "members": {
+      "label": "Medlemmer",
+      "project_lead": "Projektleder",
+      "project_lead_description": "Vælg projektlederen for projektet.",
+      "default_assignee": "Standardtildelt",
+      "default_assignee_description": "Vælg den standardtildelte person for projektet.",
+      "project_subscribers": "Projektabonnenter",
+      "project_subscribers_description": "Vælg medlemmer, der skal modtage notifikationer for dette projekt.",
+      "guest_super_permissions": {
+        "title": "Giv visningsadgang til alle opgaver for gæstebrugere:",
+        "sub_heading": "Dette vil give gæster adgang til at se alle projektopgaver."
+      },
+      "invite_members": {
+        "title": "Inviter medlemmer",
+        "sub_heading": "Inviter medlemmer til at arbejde på dit projekt.",
+        "select_co_worker": "Vælg kollega"
+      }
+    },
+    "states": {
+      "heading": "Statusser",
+      "description": "Definer og tilpas arbejdsflow-statusser for at spore fremdriften af dine opgaver.",
+      "describe_this_state_for_your_members": "Beskriv denne status for dine medlemmer.",
+      "empty_state": {
+        "title": "Ingen statusser tilgængelige for gruppen {groupKey}",
+        "description": "Opret venligst en ny status"
+      }
+    },
+    "labels": {
+      "heading": "Etiketter",
+      "description": "Opret tilpassede etiketter for at kategorisere og organisere dine opgaver",
+      "label_title": "Etikettitel",
+      "label_title_is_required": "Etikettitel er påkrævet",
+      "label_max_char": "Etiketnavnet må ikke overskride 255 tegn",
+      "toast": {
+        "error": "Fejl under opdatering af etiketten"
+      }
+    },
+    "estimates": {
+      "heading": "Estimater",
+      "description": "Opsæt estimeringssystemer til at spore og kommunikere den krævede indsats for hver opgave.",
+      "label": "Estimater",
+      "title": "Aktivér estimater for mit projekt",
+      "enable_description": "De hjælper dig med at kommunikere kompleksitet og arbejdsbyrde i teamet.",
+      "no_estimate": "Intet estimat",
+      "new": "Nyt estimeringssystem",
+      "create": {
+        "custom": "Tilpasset",
+        "start_from_scratch": "Start fra bunden",
+        "choose_template": "Vælg en skabelon",
+        "choose_estimate_system": "Vælg et estimeringssystem",
+        "enter_estimate_point": "Indtast estimat",
+        "step": "Trin {step} af {total}",
+        "label": "Opret estimat"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Estimat oprettet",
+            "message": "Estimatet er blevet oprettet med succes"
+          },
+          "error": {
+            "title": "Oprettelse af estimat mislykkedes",
+            "message": "Vi kunne ikke oprette det nye estimat. Prøv venligst igen."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimat ændret",
+            "message": "Estimatet er blevet opdateret i dit projekt."
+          },
+          "error": {
+            "title": "Ændring af estimat mislykkedes",
+            "message": "Vi kunne ikke ændre estimatet. Prøv venligst igen."
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Succes!",
+            "message": "Estimater er blevet aktiveret."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Succes!",
+            "message": "Estimater er blevet deaktiveret."
+          },
+          "error": {
+            "title": "Fejl!",
+            "message": "Estimatet kunne ikke deaktiveres. Prøv venligst igen."
+          }
+        },
+        "reorder": {
+          "success": {
+            "title": "Estimater omorganiseret",
+            "message": "Estimater er blevet omorganiseret i dit projekt."
+          },
+          "error": {
+            "title": "Omorganisering af estimat mislykkedes",
+            "message": "Vi kunne ikke omorganisere estimaterne. Prøv venligst igen."
+          }
+        },
+        "switch": {
+          "success": {
+            "title": "Estimeringssystem oprettet",
+            "message": "Oprettet og aktiveret med succes"
+          },
+          "error": {
+            "title": "Fejl",
+            "message": "Noget gik galt"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Estimat skal være større end 0.",
+        "unable_to_process": "Vi kan ikke behandle din anmodning. Prøv venligst igen.",
+        "numeric": "Estimat skal være en numerisk værdi.",
+        "character": "Estimat skal være en tegnværdi.",
+        "empty": "Estimatværdi kan ikke være tom.",
+        "already_exists": "Estimatværdi findes allerede.",
+        "unsaved_changes": "Du har nogle ugemte ændringer. Gem dem venligst før du klikker på færdig.",
+        "remove_empty": "Estimat kan ikke være tomt. Indtast en værdi i hvert felt eller fjern dem du ikke har værdier for.",
+        "fill": "Udfyld venligst dette estimatfelt",
+        "repeat": "Estimatværdi kan ikke gentages"
+      },
+      "systems": {
+        "points": {
+          "label": "Point",
+          "fibonacci": "Fibonacci",
+          "linear": "Lineær",
+          "squares": "Kvadratisk",
+          "custom": "Tilpasset"
+        },
+        "categories": {
+          "label": "Kategorier",
+          "t_shirt_sizes": "T-shirt-størrelser",
+          "easy_to_hard": "Let til svær",
+          "custom": "Tilpasset"
+        },
+        "time": {
+          "label": "Tid",
+          "hours": "Timer"
+        }
+      },
+      "edit": {
+        "title": "Rediger estimeringssystem",
+        "add_or_update": {
+          "title": "Tilføj, opdater eller fjern estimater",
+          "description": "Administrer det nuværende system ved enten at tilføje, opdatere eller fjerne point eller kategorier."
+        },
+        "switch": {
+          "title": "Skift estimat-type",
+          "description": "Konverter dit point-system til et kategori-system og omvendt."
+        }
+      },
+      "switch": "Skift estimeringssystem",
+      "current": "Nuværende estimeringssystem",
+      "select": "Vælg et estimeringssystem"
+    },
+    "automations": {
+      "label": "Automatiseringer",
+      "heading": "Automatiseringer",
+      "description": "Konfigurer automatiserede handlinger for at strømline dit projektstyrings-arbejdsflow og reducere manuelle opgaver.",
+      "auto-archive": {
+        "title": "Auto-arkiver lukkede opgaver",
+        "description": "Plane vil automatisk arkivere opgaver, der er blevet afsluttede eller annullerede.",
+        "duration": "Auto-arkiver opgaver, der har været lukkede i"
+      },
+      "auto-close": {
+        "title": "Auto-luk opgaver",
+        "description": "Plane vil automatisk lukke opgaver, der ikke er blevet afsluttede eller annullerede.",
+        "duration": "Auto-luk opgaver, der er inaktive i",
+        "auto_close_status": "Auto-luk-status"
+      },
+      "auto-remind": {
+        "title": "Auto-påmindelser",
+        "description": "Plane vil automatisk sende påmindelser via e-mail og i-app notifikationer for at holde dit team på sporet med deadliner.",
+        "duration": "Send påmindelse før"
+      }
+    },
+    "empty_state": {
+      "labels": {
+        "title": "Ingen etiketter endnu",
+        "description": "Opret etiketter for at hjælpe med at organisere og filtrere opgaver i dit projekt."
+      },
+      "estimates": {
+        "title": "Ingen estimeringssystemer endnu",
+        "description": "Opret et sæt estimater for at kommunikere mængden af arbejde pr. opgave.",
+        "primary_button": "Tilføj estimeringssystem"
+      },
+      "integrations": {
+        "title": "Ingen integrationer konfigureret",
+        "description": "Konfigurer GitHub og andre integrationer for at synkronisere dine projektopgaver."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "Aktivér arbejdsflows",
+        "description": "Indstil arbejdsflows for at styre opgavers bevægelse",
+        "no_states_tooltip": "Ingen statusser er tilføjet til arbejdsflowet.",
+        "no_work_item_types_tooltip": "Ingen opgavetyper er tilføjet til arbejdsflowet.",
+        "no_states_or_work_item_types_tooltip": "Ingen statusser eller opgavetyper er tilføjet til arbejdsflowet.",
+        "toast": {
+          "loading": {
+            "enabling": "Aktiverer arbejdsflows",
+            "disabling": "Deaktiverer arbejdsflows"
+          },
+          "success": {
+            "title": "Succes!",
+            "message": "Arbejdsflows aktiveret med succes."
+          },
+          "error": {
+            "title": "Fejl!",
+            "message": "Kunne ikke aktivere arbejdsflows. Prøv venligst igen."
+          }
+        }
+      },
+      "heading": "Arbejdsflows",
+      "description": "Automatisér opgaveovergange og opsæt regler til at styre, hvordan opgaver bevæger sig gennem din projektpipeline.",
+      "add_button": "Tilføj nyt arbejdsflow",
+      "search": "Søg i arbejdsflows",
+      "detail": {
+        "define": "Definer arbejdsflow",
+        "add_states": "Tilføj statusser",
+        "unmapped_states": {
+          "title": "Ikke-kortlagte statusser opdaget",
+          "description": "Nogle opgaver for de valgte typer er i øjeblikket i statusser, der ikke findes i dette arbejdsflow.",
+          "note": "Hvis du aktiverer dette arbejdsflow, vil disse opgaver automatisk flytte til den indledende status for arbejdsflowet.",
+          "label": "Manglende statusser",
+          "tooltip": "Nogle opgaver er i statusser, der ikke er kortlagt til dette arbejdsflow. Åbn arbejdsflowet for at gennemgå."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Alle statusser er i brug",
+          "description": "Alle definerede statusser for dette projekt er allerede til stede i dit nuværende arbejdsflow."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Dette arbejdsflow gælder for enhver opgavetype, der ikke er tildelt et arbejdsflow."
+      },
+      "create": {
+        "heading": "Opret nyt arbejdsflow",
+        "name": {
+          "placeholder": "Tilføj et unikt navn",
+          "validation": {
+            "max_length": "Navnet skal være kortere end 255 tegn",
+            "required": "Navn er påkrævet",
+            "invalid": "Navnet må kun indeholde bogstaver, tal, mellemrum, bindestreger og apostroffer"
+          }
+        },
+        "description": {
+          "placeholder": "Tilføj en kort beskrivelse",
+          "validation": {
+            "invalid": "Beskrivelsen må kun indeholde bogstaver, tal, mellemrum, bindestreger og apostroffer"
+          }
+        },
+        "work_item_type": {
+          "label": "Opgavetype"
+        },
+        "success": {
+          "title": "Succes!",
+          "message": "Arbejdsflow oprettet med succes."
+        },
+        "error": {
+          "title": "Fejl!",
+          "message": "Kunne ikke oprette arbejdsflow. Prøv venligst igen."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Succes!",
+          "message": "Arbejdsflow opdateret med succes."
+        },
+        "error": {
+          "title": "Fejl!",
+          "message": "Kunne ikke opdatere arbejdsflow. Prøv venligst igen."
+        }
+      },
+      "delete": {
+        "loading": "Sletter arbejdsflow",
+        "success": {
+          "title": "Succes!",
+          "message": "Arbejdsflow slettet med succes."
+        },
+        "error": {
+          "title": "Fejl!",
+          "message": "Kunne ikke slette arbejdsflow. Prøv venligst igen."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Succes!",
+          "message": "Statusser tilføjet med succes."
+        },
+        "error": {
+          "title": "Fejl!",
+          "message": "Kunne ikke tilføje statusser. Prøv venligst igen."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Opgavetyper",
+      "description": "Opret og tilpas forskellige typer af opgaver med unikke egenskaber"
+    },
+    "features": {
+      "cycles": {
+        "title": "Cyklusser",
+        "short_title": "Cyklusser",
+        "description": "Planlæg arbejde i fleksible perioder, der tilpasser sig dette projekts unikke rytme og tempo.",
+        "toggle_title": "Aktivér cyklusser",
+        "toggle_description": "Planlæg arbejde i fokuserede tidsrammer."
+      },
+      "modules": {
+        "title": "Moduler",
+        "short_title": "Moduler",
+        "description": "Organiser arbejde i underprojekter med dedikerede ledere og tildelte personer.",
+        "toggle_title": "Aktivér moduler",
+        "toggle_description": "Projektmedlemmer vil kunne oprette og redigere moduler."
+      },
+      "views": {
+        "title": "Visninger",
+        "short_title": "Visninger",
+        "description": "Gem tilpassede sorteringer, filtre og visningsindstillinger eller del dem med dit team.",
+        "toggle_title": "Aktivér visninger",
+        "toggle_description": "Projektmedlemmer vil kunne oprette og redigere visninger."
+      },
+      "pages": {
+        "title": "Sider",
+        "short_title": "Sider",
+        "description": "Opret og rediger frit tekstindhold; noter, dokumenter og alt andet.",
+        "toggle_title": "Aktivér sider",
+        "toggle_description": "Projektmedlemmer vil kunne oprette og redigere sider."
+      },
+      "intake": {
+        "intake_responsibility": "Ansvar for indbakke",
+        "intake_sources": "Indbakke-kilder",
+        "title": "Indbakke",
+        "short_title": "Indbakke",
+        "description": "Lad ikke-medlemmer dele fejl, feedback og forslag uden at forstyrre dit arbejdsflow.",
+        "toggle_title": "Aktivér indbakke",
+        "toggle_description": "Lad projektmedlemmer oprette i-app indbakkeanmodninger.",
+        "toggle_tooltip_on": "Bed din projektadministrator om at slå dette til.",
+        "toggle_tooltip_off": "Bed din projektadministrator om at slå dette fra.",
+        "notify_assignee": {
+          "title": "Underret tildelte personer",
+          "description": "For en ny anmodning til indbakke vil standardtildelte personer få besked via notifikationer"
+        },
+        "in_app": {
+          "title": "I appen",
+          "description": "Modtag nye opgaver fra medlemmer og gæster i dit arbejdsområde uden at forstyrre dine eksisterende opgaver."
+        },
+        "email": {
+          "title": "E-mail",
+          "description": "Saml nye opgaver fra enhver, der sender en e-mail til en Plane e-mailadresse.",
+          "fieldName": "E-mail-ID"
+        },
+        "form": {
+          "title": "Formularer",
+          "description": "Lad folk uden for dit arbejdsområde oprette potentielle nye opgaver for dig via en dedikeret og sikker formular.",
+          "fieldName": "Standard formular-URL",
+          "create_forms": "Opret formularer ved hjælp af opgavetyper",
+          "manage_forms": "Administrer formularer",
+          "manage_forms_tooltip": "Bed din arbejdsområdeadministrator om at administrere dette.",
+          "create_form": "Opret formular",
+          "edit_form": "Rediger formulardetaljer",
+          "form_title": "Formulartitel",
+          "form_title_required": "Formulartitel er påkrævet",
+          "work_item_type": "Opgavetype",
+          "remove_property": "Fjern egenskab",
+          "select_properties": "Vælg egenskaber",
+          "search_placeholder": "Søg efter egenskaber",
+          "toasts": {
+            "success_create": "Indbakkeformular oprettet med succes",
+            "success_update": "Indbakkeformular opdateret med succes",
+            "error_create": "Kunne ikke oprette indbakkeformular",
+            "error_update": "Kunne ikke opdatere indbakkeformular"
+          }
+        },
+        "toasts": {
+          "set": {
+            "loading": "Angiver tildelte personer...",
+            "success": {
+              "title": "Succes!",
+              "message": "Tildelte personer blev angivet med succes."
+            },
+            "error": {
+              "title": "Fejl!",
+              "message": "Noget gik galt under angivelse af tildelte personer. Prøv venligst igen."
+            }
+          }
+        }
+      },
+      "time_tracking": {
+        "title": "Tidsregistrering",
+        "short_title": "Tidsregistrering",
+        "description": "Registrer tid brugt på opgaver og projekter.",
+        "toggle_title": "Aktivér tidsregistrering",
+        "toggle_description": "Projektmedlemmer vil kunne registrere arbejdstid."
+      },
+      "milestones": {
+        "title": "Milepæle",
+        "short_title": "Milepæle",
+        "description": "Milepæle giver et lag til at samkøre opgaver mod fælles færdiggørelsesdatoer.",
+        "toggle_title": "Aktivér milepæle",
+        "toggle_description": "Organiser opgaver efter milepæl-deadliner."
+      },
+      "toasts": {
+        "loading": "Opdaterer projektfunktion...",
+        "success": "Projektfunktion opdateret med succes.",
+        "error": "Noget gik galt under opdatering af projektfunktion. Prøv venligst igen."
+      }
+    },
+    "project_updates": {
+      "heading": "Projektopdateringer",
+      "description": "Samlet sporing og overvågning af projektets fremdrift"
+    },
+    "templates": {
+      "heading": "Skabeloner",
+      "description": "Spar 80 % af tiden brugt på at oprette projekter, opgaver og sider, når du bruger skabeloner."
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "Auto-planlæg cyklusser",
+        "description": "Hold cyklusser i gang uden manuel opsætning.",
+        "tooltip": "Opret automatisk nye cyklusser baseret på din valgte tidsplan.",
+        "edit_button": "Rediger",
+        "form": {
+          "cycle_title": {
+            "label": "Cyklustitel",
+            "placeholder": "Titel",
+            "tooltip": "Titlen vil blive tilføjet numre for efterfølgende cyklusser. F.eks.: Design - 1/2/3",
+            "validation": {
+              "required": "Cyklustitel er påkrævet",
+              "max_length": "Titlen må ikke overskride 255 tegn"
+            }
+          },
+          "cycle_duration": {
+            "label": "Cyklusvarighed",
+            "unit": "Uger",
+            "validation": {
+              "required": "Cyklusvarighed er påkrævet",
+              "min": "Cyklusvarighed skal være på mindst 1 uge",
+              "max": "Cyklusvarighed må ikke overskride 30 uger",
+              "positive": "Cyklusvarighed skal være positiv"
+            }
+          },
+          "cooldown_period": {
+            "label": "Afkølingsperiode",
+            "unit": "dage",
+            "tooltip": "Pause mellem cyklusser, før den næste begynder.",
+            "validation": {
+              "required": "Afkølingsperiode er påkrævet",
+              "negative": "Afkølingsperiode kan ikke være negativ"
+            }
+          },
+          "start_date": {
+            "label": "Cyklus starter dag",
+            "validation": {
+              "required": "Startdato er påkrævet",
+              "past": "Startdato kan ikke være i fortiden"
+            }
+          },
+          "number_of_cycles": {
+            "label": "Antal fremtidige cyklusser",
+            "validation": {
+              "required": "Antal cyklusser er påkrævet",
+              "min": "Mindst 1 cyklus er påkrævet",
+              "max": "Kan ikke planlægge mere end 3 cyklusser"
+            }
+          },
+          "auto_rollover": {
+            "label": "Auto-overfør opgaver",
+            "tooltip": "På dagen en cyklus afsluttes, flyttes alle uafsluttede opgaver til den næste cyklus."
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "Aktiverer auto-planlægning af cyklusser",
+            "loading_disable": "Deaktiverer auto-planlægning af cyklusser",
+            "success": {
+              "title": "Succes!",
+              "message": "Auto-planlægning af cyklusser blev slået til/fra med succes."
+            },
+            "error": {
+              "title": "Fejl!",
+              "message": "Kunne ikke slå auto-planlægning af cyklusser til/fra."
+            }
+          },
+          "save": {
+            "loading": "Gemmer konfiguration for auto-planlægning af cyklusser",
+            "success": {
+              "title": "Succes!",
+              "message_create": "Konfiguration for auto-planlægning af cyklusser gemt med succes.",
+              "message_update": "Konfiguration for auto-planlægning af cyklusser opdateret med succes."
+            },
+            "error": {
+              "title": "Fejl!",
+              "message_create": "Kunne ikke gemme konfiguration for auto-planlægning af cyklusser.",
+              "message_update": "Kunne ikke opdatere konfiguration for auto-planlægning af cyklusser."
+            }
+          }
+        }
+      }
+    }
+  }
+}

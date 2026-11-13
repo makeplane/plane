@@ -1,0 +1,195 @@
+{
+  "product_tour": {
+    "workitems": {
+      "step_zero": {
+        "title": "Velkommen til dit arbejdsområde",
+        "description": "For at hjælpe dig godt i gang har vi oprettet et demoprojekt til dig. Lad os tilføje din første opgave."
+      },
+      "step_one": {
+        "title": "Klik på “+ Tilføj opgave”",
+        "description": "Start ved at klikke på knappen “+ Ny opgave”. Du kan oprette opgaver, fejl eller tilpassede typer, der passer til dine behov."
+      },
+      "step_two": {
+        "title": "Filtrer dine opgaver",
+        "description": "Brug filtre til hurtigt at indsnævre din liste. Du kan filtrere efter status, prioritet eller teammedlemmer."
+      },
+      "step_three": {
+        "title": "Vis, grupper og sorter opgaver efter behov.",
+        "description": "Se påkrævede egenskaber, og grupper eller sorter opgaver efter dine behov."
+      },
+      "step_four": {
+        "title": "Visualiser lige som du vil",
+        "description": "Vælg hvilke egenskaber du vil se på listen. Du kan også gruppere og sortere opgaver på din måde."
+      }
+    },
+    "cycle": {
+      "step_zero": {
+        "title": "Gør fremskridt med cyklusser",
+        "description": "Tryk på Q for at oprette en cyklus. Giv den et navn og angiv datoer — kun én aktiv cyklus pr. projekt."
+      },
+      "step_one": {
+        "title": "Opret en ny cyklus",
+        "description": "Tryk på Q for at oprette en cyklus. Giv den et navn og angiv datoer — kun én aktiv cyklus pr. projekt."
+      },
+      "step_two": {
+        "title": "Klik på “+ ”",
+        "description": "Start ved at klikke på “+”-knappen. Tilføj nye eller eksisterende opgaver direkte fra cyklussiden."
+      },
+      "step_three": {
+        "title": "Cyklusoversigt",
+        "description": "Spor cyklusfremdrift, teamproduktivitet og prioriteter — og undersøg om tingene sakker bagud."
+      },
+      "step_four": {
+        "title": "Overfør opgaver",
+        "description": "Efter forfaldsdatoen afsluttes en cyklus automatisk. Flyt uafsluttede opgaver til en anden cyklus."
+      }
+    },
+    "module": {
+      "step_zero": {
+        "title": "Opdel dit projekt i moduler",
+        "description": "Moduler er mindre, fokuserede projekter, der hjælper brugere med at gruppere og organisere opgaver inden for specifikke tidsrammer."
+      },
+      "step_one": {
+        "title": "Opret modul",
+        "description": "Moduler er mindre, fokuserede projekter, der hjælper brugere med at gruppere og organisere opgaver inden for specifikke tidsrammer."
+      },
+      "step_two": {
+        "title": "Klik på “+ ”",
+        "description": "Start ved at klikke på “+”-knappen. Tilføj nye eller eksisterende opgaver direkte fra modulsiden."
+      },
+      "step_three": {
+        "title": "Modulstatusser",
+        "description": "Moduler bruger disse statusser til at hjælpe brugere med at planlægge og tydeligt spore fremdrift og fase."
+      },
+      "step_four": {
+        "title": "Modulfremdrift",
+        "description": "Modulfremdrift spores via afsluttede opgaver med analyser til at overvåge ydeevne."
+      }
+    },
+    "page": {
+      "step_zero": {
+        "title": "Dokumenter med AI-drevne sider",
+        "description": "Sider i Plane lader dig fange, organisere og samarbejde om projektinfo — ingen eksterne værktøjer er nødvendige."
+      },
+      "step_one": {
+        "title": "Gør side offentlig eller privat",
+        "description": "Sider kan indstilles som offentlige (synlige for alle i dit arbejdsområde) eller private (kun tilgængelige for dig)."
+      },
+      "step_two": {
+        "title": "Brug /-kommandoen",
+        "description": "Brug / på en side for at tilføje indhold fra 16 bloktyper, inklusiv lister, billeder, tabeller og indlejringer."
+      },
+      "step_three": {
+        "title": "Sidehandlinger",
+        "description": "Når din side er oprettet, kan du klikke på •••-menuen i øverste højre hjørne for at udføre følgende handlinger."
+      },
+      "step_four": {
+        "title": "Indholdsfortegnelse",
+        "description": "Få et fugleperspektiv over din side ved at klikke på panelikonet for at se alle overskrifter."
+      },
+      "step_five": {
+        "title": "Versionshistorik",
+        "description": "Sider sporer alle redigeringer med versionshistorik, så du kan genskabe tidligere versioner efter behov."
+      }
+    },
+    "intake": {
+      "step_zero": {
+        "title": "Strømlin anmodninger med indbakke",
+        "description": "En funktion kun i Plane, der lader gæster oprette opgaver for fejl, anmodninger eller billetter."
+      },
+      "step_one": {
+        "title": "Åbne/lukkede indbakkeanmodninger",
+        "description": "Afventende anmodninger forbliver på fanen Åben, og når de er håndteret af en admin eller et medlem, flyttes de til Lukket."
+      },
+      "step_two": {
+        "title": "Accepter/afvis en afventende anmodning",
+        "description": "Accepter for at redigere og flytte opgaven til dit projekt, eller afvis den for at markere den som Annulleret."
+      },
+      "step_three": {
+        "title": "Udsæt til senere",
+        "description": "En opgave kan udsættes for at gennemgå den på et senere tidspunkt. Den vil blive flyttet til bunden af din åbne anmodningsliste."
+      }
+    },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "Stop fane-skift. Forbind din verden.",
+        "description": "Knyt GitHub og Slack til for at spore PRs og opsummere chats direkte i Plane AI."
+      }
+    },
+    "navigation": {
+      "modal": {
+        "title": "Navigation, gennytænkt",
+        "sub_title": "Dit arbejdsområde er nu nemmere at udforske med en smartere, forenklet navigation.",
+        "highlight_1": "Strømlinet venstrepanel-struktur for hurtigere opdagelse",
+        "highlight_2": "Forbedret global søgning til at hoppe til alt med det samme",
+        "highlight_3": "Smartere kategorigruppering for klarhed og fokus",
+        "footer": "Vil du have en hurtig gennemgang?"
+      },
+      "step_zero": {
+        "title": "Find alt med det samme",
+        "description": "Brug universal søgning til at hoppe til opgaver, projekter, sider og personer — uden at forlade dit flow."
+      },
+      "step_one": {
+        "title": "Behold kontrollen over opdateringer",
+        "description": "Din indbakke samler alle omtaler, godkendelser og aktiviteter ét sted, så du aldrig går glip af vigtigt arbejde."
+      },
+      "step_two": {
+        "title": "Personliggør din navigation",
+        "description": "Tilpas hvad du ser og hvordan du navigerer i Præferencer."
+      }
+    },
+    "actions": {
+      "close": "Luk",
+      "next": "Næste",
+      "back": "Tilbage",
+      "done": "Færdig",
+      "take_a_tour": "Tag en tur",
+      "get_started": "Kom i gang",
+      "got_it": "Forstået"
+    },
+    "seed_data": {
+      "title": "Her er dit demoprojekt",
+      "description": "Projekter lader dig administrere dine teams, opgaver og alt hvad du har brug for til at få tingene gjort i dit arbejdsområde."
+    }
+  },
+  "get_started": {
+    "title": "Hej {name}, velkommen ombord!",
+    "description": "Her er alt hvad du har brug for til at kickstarte din rejse med Plane.",
+    "checklist_section": {
+      "title": "Kom i gang",
+      "description": "Begynd din opsætning og se dine idéer komme til live hurtigere.",
+      "checklist_items": {
+        "item_1": {
+          "title": "Opret et projekt"
+        },
+        "item_2": {
+          "title": "Opret en opgave"
+        },
+        "item_3": {
+          "title": "Inviter teammedlemmer"
+        },
+        "item_4": {
+          "title": "Opret en side"
+        },
+        "item_5": {
+          "title": "Prøv Plane AI-chat"
+        },
+        "item_6": {
+          "title": "Knyt integrationer"
+        }
+      }
+    },
+    "team_section": {
+      "title": "Inviter dit team",
+      "description": "Inviter holdkammerater og begynd at bygge sammen."
+    },
+    "integrations_section": {
+      "title": "Gør dit arbejdsområde stærkere",
+      "more_integrations": "Gennemse flere integrationer"
+    },
+    "switch_to_plane_section": {
+      "title": "Opdag hvorfor teams skifter til Plane",
+      "description": "Sammenlign Plane med de værktøjer du bruger i dag og se forskellen."
+    }
+  }
+}
