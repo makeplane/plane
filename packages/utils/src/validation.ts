@@ -78,8 +78,9 @@ export const validatePersonName = (name: string): boolean | string => {
     return "Name must be 50 characters or less";
   }
 
-  if (hasInjectionRiskChars(name)) {
-    return "Names cannot contain special characters like < > ' \" { } [ ] * ^ ! # %";
+  // Apostrophes are allowed in person names; keep the shared guard unchanged for other fields.
+  if (hasInjectionRiskChars(name.replaceAll("'", ""))) {
+    return 'Names cannot contain special characters like < > " { } [ ] * ^ ! # %';
   }
 
   if (!PERSON_NAME_REGEX.test(name)) {
