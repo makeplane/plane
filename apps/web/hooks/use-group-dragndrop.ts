@@ -7,15 +7,18 @@
 import { useParams } from "next/navigation";
 import { setToast } from "@plane/blocks/toast";
 import type { SetToastProps } from "@plane/blocks/toast";
+import { useTranslation } from "@plane/i18n";
 import type { EIssuesStoreType, TIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
 import type { GroupDropLocation } from "@/components/issues/issue-layouts/utils";
-import { handleGroupDragDrop } from "@/components/issues/issue-layouts/utils";
+import { getDefaultStateForGroup, handleGroupDragDrop } from "@/components/issues/issue-layouts/utils";
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
 import { useIssueDetail } from "./store/use-issue-detail";
+import { useProjectState } from "./store/use-project-state";
 import { useIssues } from "./store/use-issues";
 import { useIssuesActions } from "./use-issues-actions";
 
 type DNDStoreType =
+  | EIssuesStoreType.GLOBAL
   | EIssuesStoreType.PROJECT
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
@@ -35,6 +38,7 @@ export const useGroupIssuesDragNDrop = (
   subGroupBy?: TIssueGroupByOptions
 ) => {
   const { workspaceSlug } = useParams();
+  const { t } = useTranslation();
 
   const {
     issue: { getIssueById },
@@ -43,6 +47,16 @@ export const useGroupIssuesDragNDrop = (
   const {
     issues: { getIssueIds, addCycleToIssue, removeCycleFromIssue, changeModulesInIssue },
   } = useIssues(storeType);
+  const { getProjectStates } = useProjectState();
+
+  /**
+   * Resolves a concrete state id in the given state group for the given project,
+   * preferring the project's default state in that group
+   * @param projectId
+   * @param stateGroup
+   */
+  const getStateIdForStateGroup = (projectId: string, stateGroup: string): string | undefined =>
+    getDefaultStateForGroup(getProjectStates(projectId), stateGroup)?.id;
 
   /**
    * update Issue on Drop, checks if modules or cycles are changed and then calls appropriate functions
@@ -95,7 +109,7 @@ export const useGroupIssuesDragNDrop = (
       delete data[moduleKey];
     }
 
-    updateIssue && updateIssue(projectId, issueId, data).catch(() => setToast(errorToastProps));
+    updateIssue?.(projectId, issueId, data)?.catch(() => setToast(errorToastProps));
   };
 
   const handleOnDrop = async (source: GroupDropLocation, destination: GroupDropLocation) => {
@@ -107,6 +121,19 @@ export const useGroupIssuesDragNDrop = (
     )
       return;
 
+    // work items cannot be moved across projects from a board
+    const changesProject =
+      (groupBy === "project" && source.groupId !== destination.groupId) ||
+      (subGroupBy === "project" && source.subGroupId !== destination.subGroupId);
+    if (changesProject) {
+      setToast({
+        type: "warning",
+        title: t("common.warning"),
+        message: t("kanban.cross_project_move_disabled"),
+      });
+      return;
+    }
+
     await handleGroupDragDrop(
       source,
       destination,
@@ -115,12 +142,13 @@ export const useGroupIssuesDragNDrop = (
       updateIssueOnDrop,
       groupBy,
       subGroupBy,
-      orderBy !== "sort_order"
+      orderBy !== "sort_order",
+      groupBy === "state_detail.group" ? getStateIdForStateGroup : undefined
     ).catch((err) => {
       setToast({
         title: "Error!",
         type: "error",
-        message: err?.detail ?? "Failed to perform this action",
+        message: err instanceof Error ? err.message : (err?.detail ?? "Failed to perform this action"),
       });
     });
   };

@@ -1,0 +1,46 @@
+%% View C — Code ownership map (audience: new engineers)
+%% Skill: architecture-communicator · evidence: docs/architecture/onboarding/diagram-reading-notes.md
+%% "Where do I open a PR?" — apps run, packages are shared libraries.
+
+flowchart TB
+    subgraph apps["apps/ — what runs"]
+        web["apps/web<br/>main app UI<br/>React Router + Vite · MobX · :3000"]
+        admin["apps/admin<br/>instance admin · :3001 · /god-mode"]
+        space["apps/space<br/>public sites (SSR) · :3002"]
+        live["apps/live<br/>realtime editor server<br/>Node · Express · Hocuspocus"]
+        api["apps/api<br/>Django backend<br/>single plane/ package"]
+        proxy["apps/proxy<br/>Caddyfile edge routing"]
+    end
+
+    subgraph pkgs["packages/ — what you import (workspace:*)"]
+        blocks["@plane/blocks<br/>composite UI (dialogs, comments, auth…)"]
+        editor["@plane/editor<br/>Tiptap rich text editor"]
+        services["@plane/services<br/>API client layer"]
+        sharedstate["@plane/shared-state<br/>shared MobX stores"]
+        foundation["@plane/constants · types · utils<br/>hooks · i18n · logger"]
+    end
+
+    propel["@makeplane/propel<br/>published npm UI primitives"]
+
+    web -->|"imports"| blocks
+    web -->|"imports"| editor
+    web -->|"imports"| services
+    web -->|"imports"| sharedstate
+    admin -->|"imports"| services
+    admin -->|"imports"| foundation
+    space -->|"imports"| blocks
+    space -->|"imports"| editor
+    space -->|"imports"| services
+    live -->|"imports"| services
+    live -->|"imports"| foundation
+
+    blocks -->|"built on"| propel
+    editor -->|"imports"| blocks
+    services -->|"imports"| foundation
+    sharedstate -->|"imports"| foundation
+
+    proxy -.->|"routes to"| web
+    proxy -.->|"routes to"| admin
+    proxy -.->|"routes to"| space
+    proxy -.->|"routes to"| live
+    proxy -.->|"routes to"| api

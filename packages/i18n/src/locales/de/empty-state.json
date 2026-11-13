@@ -144,6 +144,11 @@
       "description": "Fügen Sie Arbeitselemente zu Ihrem Projekt hinzu und verwenden Sie Ansichten, um mühelos zu filtern, zu sortieren und den Fortschritt zu überwachen.",
       "cta_primary": "Arbeitselement hinzufügen"
     },
+    "board_load_error": {
+      "title": "Board konnte nicht geladen werden",
+      "description": "Die Filter für dieses Board konnten nicht geladen werden. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+      "cta_primary": "Erneut versuchen"
+    },
     "drafts": {
       "title": "Halb geschriebene Arbeitselemente",
       "description": "Um dies auszuprobieren, beginnen Sie, ein Arbeitselement hinzuzufügen, und lassen Sie es auf halbem Weg liegen oder erstellen Sie unten Ihren ersten Entwurf. 😉",

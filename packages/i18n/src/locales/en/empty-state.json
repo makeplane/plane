@@ -144,6 +144,11 @@
       "description": "Add work items to your project and use views to filter, sort, and monitor progress effortlessly.",
       "cta_primary": "Add work item"
     },
+    "board_load_error": {
+      "title": "Couldn't load the board",
+      "description": "We couldn't load this board's filters. Check your connection and try again.",
+      "cta_primary": "Try again"
+    },
     "drafts": {
       "title": "Half-written work items",
       "description": "To try this out, start adding a work item and leave it mid-way or create your first draft below. 😉",

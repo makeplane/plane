@@ -144,6 +144,11 @@
       "description": "Dodaj elementy robocze do swojego projektu i używaj widoków do filtrowania, sortowania i monitorowania postępów bez wysiłku.",
       "cta_primary": "Dodaj element roboczy"
     },
+    "board_load_error": {
+      "title": "Nie udało się załadować tablicy",
+      "description": "Nie udało się załadować filtrów tej tablicy. Sprawdź połączenie i spróbuj ponownie.",
+      "cta_primary": "Spróbuj ponownie"
+    },
     "drafts": {
       "title": "Półnapisane elementy robocze",
       "description": "Aby to wypróbować, zacznij dodawać element roboczy i zostaw go w połowie lub utwórz swój pierwszy szkic poniżej. 😉",

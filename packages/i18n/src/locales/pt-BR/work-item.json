@@ -287,6 +287,9 @@
       "no_downvotes": "Ainda não há votos contra"
     }
   },
+  "kanban": {
+    "cross_project_move_disabled": "Os itens de trabalho não podem ser movidos entre projetos."
+  },
   "sub_work_item": {
     "update": {
       "success": "Sub-item de trabalho atualizado com sucesso",

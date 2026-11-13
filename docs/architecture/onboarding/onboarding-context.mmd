@@ -1,0 +1,31 @@
+%% View A — L1 System context (audience: new engineers)
+%% Skill: architecture-communicator · evidence: docs/architecture/onboarding/diagram-reading-notes.md
+%% Confidence labels in reading notes; no invented happy paths.
+
+flowchart TB
+    member(["Team member"])
+    visitor(["Public visitor"])
+    instanceAdmin(["Instance admin"])
+    integrator(["External integration<br/>(API key client)"])
+
+    subgraph plane["Plane — self-hosted instance"]
+        web["Web app<br/>(main product UI)"]
+        space["Space<br/>(public published sites)"]
+        admin["Admin / god-mode<br/>(instance settings)"]
+        api["API backend<br/>(REST + auth + background tasks)"]
+    end
+
+    oauth["OAuth providers<br/>Google · GitHub · GitLab · Gitea"]
+    email["Email recipients<br/>(notification emails)"]
+
+    member -->|"works on issues, pages, cycles"| web
+    visitor -->|"views published projects"| space
+    instanceAdmin -->|"configures instance"| admin
+    integrator -->|"X-API-Key on /api/v1/"| api
+
+    web -->|"sign-in"| api
+    space -->|"public API /api/public/"| api
+    admin -->|"instance API /api/instances/"| api
+
+    api -->|"OAuth sign-in callbacks"| oauth
+    api -->|"Celery bgtasks send mail"| email

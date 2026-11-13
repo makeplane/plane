@@ -144,6 +144,11 @@
       "description": "Adicione itens de trabalho ao seu projeto e use visualizações para filtrar, classificar e monitorar o progresso sem esforço.",
       "cta_primary": "Adicionar item de trabalho"
     },
+    "board_load_error": {
+      "title": "Não foi possível carregar o quadro",
+      "description": "Não foi possível carregar os filtros deste quadro. Verifique sua conexão e tente novamente.",
+      "cta_primary": "Tentar novamente"
+    },
     "drafts": {
       "title": "Itens de trabalho semi-escritos",
       "description": "Para experimentar isso, comece a adicionar um item de trabalho e deixe-o no meio do caminho ou crie seu primeiro rascunho abaixo. 😉",

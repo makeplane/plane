@@ -287,6 +287,9 @@
       "no_downvotes": "Henüz olumsuz oy yok"
     }
   },
+  "kanban": {
+    "cross_project_move_disabled": "İş öğeleri projeler arasında taşınamaz."
+  },
   "sub_work_item": {
     "update": {
       "success": "Alt iş öğesi başarıyla güncellendi",

@@ -30,6 +30,7 @@ import { cn } from "@plane/utils";
 import type { GroupDropLocation } from "@/components/issues/issue-layouts/utils";
 // components
 import {
+  getDefaultStateForGroup,
   highlightIssueOnDrop,
   getSourceFromDropPayload,
   getDestinationFromDropPayload,
@@ -55,7 +56,6 @@ interface IKanbanGroup {
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
   sub_group_id: string;
-  isDragDisabled: boolean;
   isDropDisabled: boolean;
   dropErrorMessage: string | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -70,6 +70,8 @@ interface IKanbanGroup {
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   orderBy: TIssueOrderByOptions | undefined;
   isEpic?: boolean;
+  /** Project the column's cards belong to, when it is not the route's project. Used by cross-project boards. */
+  projectId?: string;
 }
 
 export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
@@ -94,11 +96,19 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     scrollableContainerRef,
     handleOnDrop,
     isEpic = false,
+    projectId,
   } = props;
   // i18n
   const { t } = useTranslation();
   // hooks
   const projectState = useProjectState();
+
+  // On a cross-project board the column's cards belong to the swimlane's project, not to the route's project.
+  const effectiveProjectId = sub_group_by === "project" && sub_group_id !== "null" ? sub_group_id : projectId;
+
+  // Resolves the concrete state a quick-added work item should start in, for a state group column.
+  const getQuickAddStateForGroup = (groupValue: string) =>
+    getDefaultStateForGroup(projectState.getProjectStates(effectiveProjectId), groupValue);
 
   const {
     issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
@@ -132,62 +142,64 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
 
     if (!element) return;
 
-    return combine(
-      dropTargetForElements({
-        element,
-        getData: () => ({ groupId, subGroupId: sub_group_id, columnId: `${groupId}__${sub_group_id}`, type: "COLUMN" }),
-        onDragEnter: (payload) => {
-          const source = getSourceFromDropPayload(payload);
-          setIsDraggingOverColumn(true);
-          // handle if dragging a workflowState
-          if (source) {
-            handleWorkFlowState(source?.groupId, groupId, source?.subGroupId, sub_group_id);
-          }
-        },
-        onDragLeave: () => {
-          setIsDraggingOverColumn(false);
-        },
-        onDragStart: (payload) => {
-          const source = getSourceFromDropPayload(payload);
-          setIsDraggingOverColumn(true);
-          // handle if dragging a workflowState
-          if (source) {
-            handleWorkFlowState(source?.groupId, groupId, source?.subGroupId, sub_group_id);
-          }
-        },
-        onDrop: (payload) => {
-          setIsDraggingOverColumn(false);
-          const source = getSourceFromDropPayload(payload);
-          const destination = getDestinationFromDropPayload(payload);
+    const columnDropTarget = dropTargetForElements({
+      element,
+      getData: () => ({ groupId, subGroupId: sub_group_id, columnId: `${groupId}__${sub_group_id}`, type: "COLUMN" }),
+      onDragEnter: (payload) => {
+        const source = getSourceFromDropPayload(payload);
+        setIsDraggingOverColumn(true);
+        // handle if dragging a workflowState
+        if (source) {
+          handleWorkFlowState(source?.groupId, groupId, source?.subGroupId, sub_group_id);
+        }
+      },
+      onDragLeave: () => {
+        setIsDraggingOverColumn(false);
+      },
+      onDragStart: (payload) => {
+        const source = getSourceFromDropPayload(payload);
+        setIsDraggingOverColumn(true);
+        // handle if dragging a workflowState
+        if (source) {
+          handleWorkFlowState(source?.groupId, groupId, source?.subGroupId, sub_group_id);
+        }
+      },
+      onDrop: (payload) => {
+        setIsDraggingOverColumn(false);
+        const source = getSourceFromDropPayload(payload);
+        const destination = getDestinationFromDropPayload(payload);
 
-          if (!source || !destination) return;
+        if (!source || !destination) return;
 
-          if ((isWorkflowDropDisabled || isDropDisabled) && dropErrorMessage) {
-            setToast({
-              type: "warning",
-              title: t("common.warning"),
-              message: dropErrorMessage,
-            });
-            return;
-          }
+        if ((isWorkflowDropDisabled || isDropDisabled) && dropErrorMessage) {
+          setToast({
+            type: "warning",
+            title: t("common.warning"),
+            message: dropErrorMessage,
+          });
+          return;
+        }
 
-          handleOnDrop(source, destination);
+        handleOnDrop(source, destination);
 
-          highlightIssueOnDrop(
-            getIssueBlockId(source.id, destination?.groupId, destination?.subGroupId),
-            orderBy !== "sort_order"
-          );
-        },
-      }),
-      autoScrollForElements({
-        element,
-      })
-    );
+        highlightIssueOnDrop(
+          getIssueBlockId(source.id, destination?.groupId, destination?.subGroupId),
+          orderBy !== "sort_order"
+        );
+      },
+    });
+
+    // In swimlanes the shared scroll container is the scroll element, so a per-column auto-scroll
+    // would register a second, unusable scroller on every column.
+    const cleanups = sub_group_by ? [columnDropTarget] : [columnDropTarget, autoScrollForElements({ element })];
+
+    return combine(...cleanups);
     // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
   }, [
     columnRef,
     groupId,
     sub_group_id,
+    sub_group_by,
     setIsDraggingOverColumn,
     orderBy,
     isDropDisabled,
@@ -202,12 +214,17 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     groupValue: string,
     subGroupValue: string
   ) => {
-    const defaultState = projectState.projectStates?.find((state) => state.default);
-    let preloadedData: object = { state_id: defaultState?.id };
+    const defaultStateId = effectiveProjectId
+      ? projectState.getProjectDefaultStateId(effectiveProjectId)
+      : projectState.projectStates?.find((state) => state.default)?.id;
+    let preloadedData: object = { state_id: defaultStateId };
 
     if (groupByKey) {
       if (groupByKey === "state") {
         preloadedData = { ...preloadedData, state_id: groupValue };
+      } else if (groupByKey === "state_detail.group") {
+        const stateInGroup = getQuickAddStateForGroup(groupValue);
+        if (stateInGroup) preloadedData = { ...preloadedData, state_id: stateInGroup.id, state__group: groupValue };
       } else if (groupByKey === "priority") {
         preloadedData = { ...preloadedData, priority: groupValue };
       } else if (groupByKey === "cycle") {
@@ -240,6 +257,8 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
         preloadedData = { ...preloadedData, assignee_ids: [subGroupValue] };
       } else if (subGroupByKey === "created_by") {
         preloadedData = { ...preloadedData };
+      } else if (subGroupByKey === "project") {
+        preloadedData = { ...preloadedData, project_id: subGroupValue };
       } else {
         preloadedData = { ...preloadedData, [subGroupByKey]: subGroupValue };
       }
@@ -277,6 +296,14 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     !!group_by &&
     DRAG_ALLOWED_GROUPS.includes(group_by) &&
     (sub_group_by ? DRAG_ALLOWED_GROUPS.includes(sub_group_by) : true);
+
+  // A state group column without a resolvable state in the column's project can't hold a quick-added work item.
+  const isQuickAddStateUnavailable = group_by === "state_detail.group" && !getQuickAddStateForGroup(groupId);
+  const canQuickAddIssue =
+    enableQuickIssueCreate &&
+    !disableIssueCreation &&
+    !isQuickAddStateUnavailable &&
+    !getIsWorkflowWorkItemCreationDisabled(groupId, sub_group_id);
 
   return (
     <div
@@ -327,21 +354,20 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
           </div>
         ))}
 
-      {enableQuickIssueCreate &&
-        !disableIssueCreation &&
-        !getIsWorkflowWorkItemCreationDisabled(groupId, sub_group_id) && (
-          <div className="sticky bottom-0 w-full bg-layer-1 pt-1">
-            <QuickAddIssueRoot
-              layout={EIssueLayoutTypes.KANBAN}
-              QuickAddButton={KanbanQuickAddIssueButton}
-              prePopulatedData={{
-                ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
-              }}
-              quickAddCallback={quickAddCallback}
-              isEpic={isEpic}
-            />
-          </div>
-        )}
+      {canQuickAddIssue && (
+        <div className="sticky bottom-0 w-full bg-layer-1 pt-1">
+          <QuickAddIssueRoot
+            layout={EIssueLayoutTypes.KANBAN}
+            QuickAddButton={KanbanQuickAddIssueButton}
+            projectId={effectiveProjectId}
+            prePopulatedData={{
+              ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
+            }}
+            quickAddCallback={quickAddCallback}
+            isEpic={isEpic}
+          />
+        </div>
+      )}
     </div>
   );
 });

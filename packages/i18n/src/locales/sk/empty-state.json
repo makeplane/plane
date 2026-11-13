@@ -144,6 +144,11 @@
       "description": "Pridajte pracovné položky do svojho projektu a používajte pohľady na jednoduché filtrovanie, triedenie a sledovanie pokroku.",
       "cta_primary": "Pridať pracovnú položku"
     },
+    "board_load_error": {
+      "title": "Nástenku sa nepodarilo načítať",
+      "description": "Nepodarilo sa nám načítať filtre tejto nástenky. Skontrolujte pripojenie a skúste to znova.",
+      "cta_primary": "Skúsiť znova"
+    },
     "drafts": {
       "title": "Napoly napísané pracovné položky",
       "description": "Ak to chcete vyskúšať, začnite pridávať pracovnú položku a nechajte ju nedokončenú alebo vytvorte svoj prvý koncept nižšie. 😉",

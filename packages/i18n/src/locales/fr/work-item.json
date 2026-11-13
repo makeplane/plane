@@ -287,6 +287,9 @@
       "no_downvotes": "Pas encore de vote contre"
     }
   },
+  "kanban": {
+    "cross_project_move_disabled": "Les éléments de travail ne peuvent pas être déplacés d'un projet à un autre."
+  },
   "sub_work_item": {
     "update": {
       "success": "Sous-élément de travail mis à jour avec succès",

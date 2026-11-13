@@ -1,0 +1,55 @@
+%% View B — L2 Containers + runtime topology (audience: new engineers)
+%% Skill: architecture-communicator · evidence: docs/architecture/onboarding/diagram-reading-notes.md
+%% Production paths per docker-compose.yml + apps/proxy/Caddyfile.ce;
+%% dev ports per each app's package.json.
+
+flowchart TB
+    browser(["Browser"])
+
+    subgraph edge["Edge"]
+        caddy["Caddy proxy<br/>(only exposed ports :80/:443)"]
+    end
+
+    subgraph frontend["Frontend apps"]
+        web["web :3000<br/>(main app UI)"]
+        admin["admin :3000<br/>base path /god-mode"]
+        space["space :3002<br/>base path /spaces (SSR)"]
+    end
+
+    subgraph backend["Backend services"]
+        api["api :8000<br/>Django ASGI<br/>(gunicorn + uvicorn workers)"]
+        live["live :3000<br/>Hocuspocus — Yjs realtime<br/>(WebSocket)"]
+        worker["worker<br/>Celery tasks"]
+        beat["beat-worker<br/>Celery scheduler"]
+        migrator["migrator<br/>one-shot migrate"]
+    end
+
+    subgraph data["Data services"]
+        db[("PostgreSQL 15")]
+        redis[("Valkey / Redis<br/>cache · live pub/sub")]
+        mq[["RabbitMQ<br/>Celery broker"]]
+        minio[("MinIO<br/>S3-compatible assets")]
+    end
+
+    browser -->|"/ (everything)"| caddy
+    caddy -->|"fallback /"| web
+    caddy -->|"/god-mode/*"| admin
+    caddy -->|"/spaces/*"| space
+    caddy -->|"/api/* · /auth/* · /static/*"| api
+    caddy -->|"/live/*"| live
+    caddy -->|"/uploads/*"| minio
+
+    web -->|"VITE_API_BASE_URL<br/>+ session cookie"| api
+    admin -->|"VITE_API_BASE_URL"| api
+    space -->|"VITE_API_BASE_URL"| api
+    web -->|"WS /live/collaboration<br/>(page editor)"| live
+
+    api -->|"ORM · psycopg"| db
+    api -->|"django-redis"| redis
+    api -->|"enqueue tasks"| mq
+    worker -->|"consume"| mq
+    worker -->|"reads · writes"| db
+    worker -->|"uploads"| minio
+    beat -->|"schedules via broker"| mq
+    live -->|"pub/sub · redlock"| redis
+    migrator -->|"manage.py migrate"| db
