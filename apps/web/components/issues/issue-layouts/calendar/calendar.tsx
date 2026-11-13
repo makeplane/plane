@@ -109,8 +109,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
   const allWeeksOfActiveMonth = issueCalendarView.allWeeksOfActiveMonth;
 
-  // Prev/Next, the month picker and the layout switch move the calendar without moving the picked date.
-  // When the picked date is out of view, fall back to the active date so the mobile list matches the calendar.
+  // Paging the calendar keeps the picked date, so a date out of view falls back to the active one.
   const { activeMonthDate, activeWeekDate } = issueCalendarView.calendarFilters;
   const visibleWeeks =
     layout === "week" ? [issueCalendarView.allDaysOfActiveWeek] : Object.values(allWeeksOfActiveMonth ?? {});
@@ -118,9 +117,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
     const payload = renderFormattedPayloadDate(date) ?? "";
     return visibleWeeks.some((week) => !!week?.[payload]);
   };
-  // With weekends hidden a Saturday or Sunday has no tile, so use the next weekday in view or the one before.
-  // A picked day can be hidden too: today on a weekend, or a Saturday tapped before weekends were hidden.
-  // It moves to a weekday next to it. A picked day out of view moves to one next to the active date.
+  // A day with no tile (out of view, or a weekend while weekends are hidden) moves to the nearest shown day.
   const isShownDay = (date: Date) => isInView(date) && (showWeekends || (date.getDay() !== 0 && date.getDay() !== 6));
   const activeDate = layout === "week" ? activeWeekDate : activeMonthDate;
   const baseDate = isInView(pickedDate) ? pickedDate : activeDate;
