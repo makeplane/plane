@@ -20,8 +20,10 @@ import type {
 import { FILTER_FIELD_TYPE } from "@plane/types";
 import {
   getOperatorLabel,
+  getOperatorLabelI18nKey,
   isDateFilterType,
   getDateOperatorLabel,
+  getDateOperatorLabelI18nKey,
   isDateFilterOperator,
   getOperatorForPayload,
 } from "@plane/utils";
@@ -29,6 +31,8 @@ import {
 type TOperatorOptionForDisplay = {
   value: TAllAvailableOperatorsForDisplay;
   label: string;
+  // translation key for `label`; undefined when the label has no translation (e.g. a custom operatorLabel)
+  labelI18nKey?: string;
 };
 
 export interface IFilterConfig<P extends TFilterProperty> extends TFilterConfig<P> {
@@ -40,6 +44,7 @@ export interface IFilterConfig<P extends TFilterProperty> extends TFilterConfig<
     operator: TAllAvailableOperatorsForDisplay
   ) => TOperatorSpecificConfigs[keyof TOperatorSpecificConfigs] | undefined;
   getLabelForOperator: (operator: TAllAvailableOperatorsForDisplay | undefined) => string;
+  getLabelI18nKeyForOperator: (operator: TAllAvailableOperatorsForDisplay | undefined) => string | undefined;
   getDisplayOperatorByValue: <T extends TSupportedOperators>(operator: T, value: TFilterValue) => T;
   getAllDisplayOperatorOptionsByValue: (value: TFilterValue) => TOperatorOptionForDisplay[];
   // actions
@@ -135,6 +140,27 @@ export class FilterConfig<P extends TFilterProperty> implements IFilterConfig<P>
   });
 
   /**
+   * Returns the translation key for an operator's label, mirroring `getLabelForOperator`.
+   * @param operator - The operator.
+   * @returns The translation key, or undefined when the label is custom (`operatorLabel`) or has no key.
+   */
+  getLabelI18nKeyForOperator: IFilterConfig<P>["getLabelI18nKeyForOperator"] = computedFn((operator) => {
+    if (!operator) return undefined;
+
+    const operatorConfig = this.getOperatorConfig(operator);
+
+    if (operatorConfig?.operatorLabel) {
+      return undefined;
+    }
+
+    if (operatorConfig?.type && isDateFilterType(operatorConfig.type) && isDateFilterOperator(operator)) {
+      return getDateOperatorLabelI18nKey(operator);
+    }
+
+    return getOperatorLabelI18nKey(operator);
+  });
+
+  /**
    * Returns the operator for a value.
    * @param value - The value.
    * @returns The operator for the value.
@@ -165,6 +191,7 @@ export class FilterConfig<P extends TFilterProperty> implements IFilterConfig<P>
       operatorOptions.push({
         value: operator,
         label: displayOperatorLabel,
+        labelI18nKey: this.getLabelI18nKeyForOperator(displayOperator),
       });
 
       const additionalOperatorOption = this._getAdditionalOperatorOptions(operator, value);

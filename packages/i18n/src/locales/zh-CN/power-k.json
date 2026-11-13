@@ -171,7 +171,8 @@
     "search_menu": {
       "no_results": "未找到结果",
       "clear_search": "清除搜索",
-      "go_to_advanced_search": "转到高级搜索"
+      "go_to_advanced_search": "转到高级搜索",
+      "search_commands": "搜索命令…"
     },
     "footer": {
       "workspace_level": "工作区级别"

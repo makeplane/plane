@@ -892,6 +892,19 @@
       "update_view": "更新檢視",
       "save_as": "另存為",
       "hide_filters": "隱藏篩選器"
+    },
+    "filter_item": {
+      "remove": "移除篩選條件",
+      "invalid": "無效的篩選條件",
+      "invalid_tooltip": "此篩選條件已失效。該屬性可能已被刪除，或您對它的存取權限可能已變更。"
+    },
+    "operators": {
+      "is": "是",
+      "is_any_of": "是下列任一",
+      "between": "介於"
+    },
+    "properties": {
+      "subscriber": "訂閱者"
     }
   }
 }

@@ -892,6 +892,19 @@
       "update_view": "Aggiorna visualizzazione",
       "save_as": "Salva come",
       "hide_filters": "Nascondi filtri"
+    },
+    "filter_item": {
+      "remove": "Rimuovi filtro",
+      "invalid": "Filtro non valido",
+      "invalid_tooltip": "Questa condizione di filtro non è più valida. La proprietà potrebbe essere stata eliminata o il Suo accesso potrebbe essere cambiato."
+    },
+    "operators": {
+      "is": "è",
+      "is_any_of": "è uno tra",
+      "between": "tra"
+    },
+    "properties": {
+      "subscriber": "Iscritto"
     }
   }
 }

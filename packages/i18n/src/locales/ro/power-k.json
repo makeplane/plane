@@ -171,7 +171,8 @@
     "search_menu": {
       "no_results": "Niciun rezultat găsit",
       "clear_search": "Șterge căutarea",
-      "go_to_advanced_search": "Mergi la căutarea avansată"
+      "go_to_advanced_search": "Mergi la căutarea avansată",
+      "search_commands": "Căutați comenzi..."
     },
     "footer": {
       "workspace_level": "La nivel de spațiu de lucru"

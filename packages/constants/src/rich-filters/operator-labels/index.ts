@@ -5,7 +5,12 @@
  */
 
 import type { TAllAvailableOperatorsForDisplay, TAllAvailableDateFilterOperatorsForDisplay } from "@plane/types";
-import { CORE_OPERATOR_LABELS_MAP, CORE_DATE_OPERATOR_LABELS_MAP } from "./core";
+import {
+  CORE_OPERATOR_LABELS_MAP,
+  CORE_DATE_OPERATOR_LABELS_MAP,
+  CORE_OPERATOR_LABEL_I18N_KEYS_MAP,
+  CORE_DATE_OPERATOR_LABEL_I18N_KEYS_MAP,
+} from "./core";
 import {
   EXTENDED_OPERATOR_LABELS_MAP,
   EXTENDED_DATE_OPERATOR_LABELS_MAP,
@@ -34,6 +39,20 @@ export const DATE_OPERATOR_LABELS_MAP: Record<TAllAvailableDateFilterOperatorsFo
   ...CORE_DATE_OPERATOR_LABELS_MAP,
   ...EXTENDED_DATE_OPERATOR_LABELS_MAP,
   ...NEGATED_DATE_OPERATOR_LABELS_MAP,
+} as const;
+
+/**
+ * Translation keys for operator labels. Operators without a key fall back to their English label.
+ */
+export const OPERATOR_LABEL_I18N_KEYS_MAP: Partial<Record<TAllAvailableOperatorsForDisplay, string>> = {
+  ...CORE_OPERATOR_LABEL_I18N_KEYS_MAP,
+} as const;
+
+/**
+ * Translation keys for date operator labels. Operators without a key fall back to their English label.
+ */
+export const DATE_OPERATOR_LABEL_I18N_KEYS_MAP: Partial<Record<TAllAvailableDateFilterOperatorsForDisplay, string>> = {
+  ...CORE_DATE_OPERATOR_LABEL_I18N_KEYS_MAP,
 } as const;
 
 // -------- RE-EXPORTS --------

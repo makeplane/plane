@@ -892,6 +892,19 @@
       "update_view": "更新视图",
       "save_as": "另存为",
       "hide_filters": "隐藏筛选"
+    },
+    "filter_item": {
+      "remove": "移除筛选条件",
+      "invalid": "无效的筛选条件",
+      "invalid_tooltip": "此筛选条件已失效。该属性可能已被删除，或您对它的访问权限可能已更改。"
+    },
+    "operators": {
+      "is": "是",
+      "is_any_of": "是以下任一",
+      "between": "介于"
+    },
+    "properties": {
+      "subscriber": "订阅者"
     }
   }
 }

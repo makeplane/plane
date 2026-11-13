@@ -171,7 +171,8 @@
     "search_menu": {
       "no_results": "No results found",
       "clear_search": "Clear search",
-      "go_to_advanced_search": "Go to advanced search"
+      "go_to_advanced_search": "Go to advanced search",
+      "search_commands": "ბრძანებების ძიება..."
     },
     "footer": {
       "workspace_level": "Workspace level"
