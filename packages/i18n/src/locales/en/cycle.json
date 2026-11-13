@@ -37,5 +37,40 @@
         "title": "Add labels to work items to see the\n breakdown of work by labels."
       }
     }
+  },
+  "cycle_automation": {
+    "title": "Cycle automation",
+    "description": "Move the work items of a cycle from some states to another when the cycle starts or completes. Each rule runs once per cycle. Turning a rule on does not move work items of cycles that already started or completed; use \"Move work items\" on a cycle for that.",
+    "trigger": {
+      "cycle_started": "When a cycle starts",
+      "cycle_completed": "When a cycle completes"
+    },
+    "from": "Move from",
+    "to": "to",
+    "select_states": "Select states",
+    "select_state": "Select state",
+    "add_rule": "Add rule",
+    "empty": "No rules yet.",
+    "presets": {
+      "start": "Add: on start, Backlog to Todo",
+      "complete": "Add: on completion, Testing Complete to Done",
+      "missing": "This project has no state for this preset."
+    },
+    "move_up": "Move up",
+    "move_down": "Move down",
+    "delete": "Delete rule",
+    "errors": {
+      "load": "Could not load the cycle automation rules.",
+      "save": "Could not save the rule. Please try again."
+    },
+    "move": {
+      "menu": "Move work items",
+      "title": "Move work items in {cycle}",
+      "description": "Moves every work item of this cycle that is in one of the selected states to the target state, in one batch.",
+      "count": "{count, plural, one{# work item will move.} other{# work items will move.}}",
+      "submit": "Move",
+      "success": "{count, plural, one{# work item moved.} other{# work items moved.}}",
+      "error": "Could not move the work items. Please try again."
+    }
   }
 }

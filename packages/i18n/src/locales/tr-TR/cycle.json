@@ -37,5 +37,40 @@
         "title": "Etiketlere göre iş dağılımını görmek için iş öğelerine etiketler ekleyin."
       }
     }
+  },
+  "cycle_automation": {
+    "title": "Döngü otomasyonu",
+    "description": "Bir döngü başladığında veya tamamlandığında döngünün iş öğelerini bazı durumlardan başka bir duruma taşır. Her kural döngü başına bir kez çalışır. Bir kuralı açmak, zaten başlamış veya tamamlanmış döngülerin iş öğelerini taşımaz; bunun için döngüde \"İş öğelerini taşı\" seçeneğini kullanın.",
+    "trigger": {
+      "cycle_started": "Bir döngü başladığında",
+      "cycle_completed": "Bir döngü tamamlandığında"
+    },
+    "from": "Şuradan taşı",
+    "to": "şuraya",
+    "select_states": "Durumları seçin",
+    "select_state": "Durum seçin",
+    "add_rule": "Kural ekle",
+    "empty": "Henüz kural yok.",
+    "presets": {
+      "start": "Ekle: başlangıçta, Backlog'dan Todo'ya",
+      "complete": "Ekle: tamamlandığında, Testing Complete'ten Done'a",
+      "missing": "Bu projede bu şablon için bir durum yok."
+    },
+    "move_up": "Yukarı taşı",
+    "move_down": "Aşağı taşı",
+    "delete": "Kuralı sil",
+    "errors": {
+      "load": "Döngü otomasyonu kuralları yüklenemedi.",
+      "save": "Kural kaydedilemedi. Lütfen tekrar deneyin."
+    },
+    "move": {
+      "menu": "İş öğelerini taşı",
+      "title": "{cycle} içindeki iş öğelerini taşı",
+      "description": "Bu döngünün seçili durumlardan birindeki her iş öğesini tek seferde hedef duruma taşır.",
+      "count": "{count, plural, one{# iş öğesi taşınacak.} other{# iş öğesi taşınacak.}}",
+      "submit": "Taşı",
+      "success": "{count, plural, one{# iş öğesi taşındı.} other{# iş öğesi taşındı.}}",
+      "error": "İş öğeleri taşınamadı. Lütfen tekrar deneyin."
+    }
   }
 }

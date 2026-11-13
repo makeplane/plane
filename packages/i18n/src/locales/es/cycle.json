@@ -37,5 +37,40 @@
         "title": "Agrega etiquetas a los elementos de trabajo para ver el\n desglose del trabajo por etiquetas."
       }
     }
+  },
+  "cycle_automation": {
+    "title": "Automatización de ciclos",
+    "description": "Mueve los elementos de trabajo de un ciclo de algunos estados a otro cuando el ciclo comienza o se completa. Cada regla se ejecuta una vez por ciclo. Activar una regla no mueve los elementos de trabajo de los ciclos que ya comenzaron o se completaron; para eso, use \"Mover elementos de trabajo\" en un ciclo.",
+    "trigger": {
+      "cycle_started": "Cuando un ciclo comienza",
+      "cycle_completed": "Cuando un ciclo se completa"
+    },
+    "from": "Mover desde",
+    "to": "a",
+    "select_states": "Seleccionar estados",
+    "select_state": "Seleccionar estado",
+    "add_rule": "Agregar regla",
+    "empty": "Aún no hay reglas.",
+    "presets": {
+      "start": "Agregar: al comenzar, Backlog a Todo",
+      "complete": "Agregar: al completar, Testing Complete a Done",
+      "missing": "Este proyecto no tiene un estado para esta plantilla."
+    },
+    "move_up": "Subir",
+    "move_down": "Bajar",
+    "delete": "Eliminar regla",
+    "errors": {
+      "load": "No se pudieron cargar las reglas de automatización de ciclos.",
+      "save": "No se pudo guardar la regla. Inténtelo de nuevo."
+    },
+    "move": {
+      "menu": "Mover elementos de trabajo",
+      "title": "Mover elementos de trabajo en {cycle}",
+      "description": "Mueve en un solo lote cada elemento de trabajo de este ciclo que esté en uno de los estados seleccionados al estado de destino.",
+      "count": "{count, plural, one{Se moverá # elemento de trabajo.} other{Se moverán # elementos de trabajo.}}",
+      "submit": "Mover",
+      "success": "{count, plural, one{Se movió # elemento de trabajo.} other{Se movieron # elementos de trabajo.}}",
+      "error": "No se pudieron mover los elementos de trabajo. Inténtelo de nuevo."
+    }
   }
 }
