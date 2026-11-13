@@ -122,6 +122,10 @@ def save_webhook_log(
         logger.error(f"Failed to save webhook log: {e}")
 
 
+def get_issue_detail(issue: Issue) -> Dict[str, Any]:
+    return {"name": issue.name, "sequence_id": issue.sequence_id}
+
+
 def get_model_data(event: str, event_id: Union[str, List[str]], many: bool = False) -> Dict[str, Any]:
     """
     Retrieve and serialize model data based on the event type.
@@ -143,10 +147,15 @@ def get_model_data(event: str, event_id: Union[str, List[str]], many: bool = Fal
         raise ValueError(f"Model not found for event: {event}")
 
     try:
+        manager = model.objects
+        if event == "issue_comment":
+            # Comments expose their parent work item's name and sequence id.
+            manager = manager.select_related("issue")
+
         if many:
-            queryset = model.objects.filter(pk__in=event_id)
+            queryset = manager.filter(pk__in=event_id)
         else:
-            queryset = model.objects.get(pk=event_id)
+            queryset = manager.get(pk=event_id)
 
         serializer = SERIALIZER_MAPPER.get(event)
 
@@ -162,6 +171,16 @@ def get_model_data(event: str, event_id: Union[str, List[str]], many: bool = Fal
                 queryset = model.objects.filter(pk=issue_id).prefetch_related(*issue_prefetches).first()
 
             return serializer(queryset, many=many, context={"expand": ["labels", "assignees"]}).data
+        elif event == "issue_comment":
+            data = serializer(queryset, many=many).data
+            # The comment serializer only carries the parent work item's id, so
+            # webhook consumers would otherwise need a follow-up API call.
+            if many:
+                for comment, instance in zip(data, queryset):
+                    comment["issue_detail"] = get_issue_detail(instance.issue)
+            else:
+                data["issue_detail"] = get_issue_detail(queryset.issue)
+            return data
         else:
             return serializer(queryset, many=many).data
     except ObjectDoesNotExist:
