@@ -225,8 +225,7 @@ describe("Select on Propel combobox", () => {
     const opener = screen.getByRole("button", { name: "Open it" });
     await user.click(opener);
     await waitFor(() => expect(popup().getAllByRole("option").length).toBeGreaterThan(0));
-    // The field in the trigger carries the highlighted row for this variant, not the list, so the
-    // list must not take focus away from wherever it was.
+    // This variant's field carries the highlight, so the list must not take focus.
     expect(document.activeElement).not.toBe(popup().getByRole("listbox"));
     expect(document.activeElement).toBe(opener);
   });

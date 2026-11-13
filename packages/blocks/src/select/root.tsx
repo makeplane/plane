@@ -481,12 +481,8 @@ export function SelectRoot<T>(props: SelectProps<T>) {
       </>
     ) : undefined;
 
-  // base-ui drives the list's arrow keys from its input. Without the search field there is none, so
-  // focus lands on the panel and the arrow keys and Enter do nothing. The list handles them itself
-  // once it has focus. `variant="search-input"` has its own field in the trigger, which carries the
-  // arrow keys and the highlighted row, so it gets base-ui's default for a field outside the popup:
-  // focus stays where it is. Only that field counts. Another input that happened to have focus
-  // does not keep it. With no list (a failed load) base-ui's default focus stays.
+  // Without a search field base-ui has no input to drive the arrow keys, so focus the list instead.
+  // `variant="search-input"` keeps its field in the trigger, so focus stays there.
   const focusListWithoutSearch = useCallback(() => (fieldRef.current ? false : (listRef.current ?? true)), []);
 
   const content = (

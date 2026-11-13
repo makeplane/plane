@@ -33,10 +33,7 @@ export type SelectEngineContextValue = {
    * trigger, so the trigger reads it from here.
    */
   disabled: boolean;
-  /**
-   * `variant="search-input"`'s own field, so the root can tell it apart from any other input when
-   * it decides where focus goes on open. Optional for the same reason as `mount`.
-   */
+  /** `variant="search-input"`'s own field, which keeps focus on open. */
   fieldRef?: RefObject<HTMLInputElement | null>;
 };
 
