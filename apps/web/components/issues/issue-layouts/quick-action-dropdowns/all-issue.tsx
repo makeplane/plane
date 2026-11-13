@@ -9,7 +9,7 @@ import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
+import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { useTranslation } from "@plane/i18n";
@@ -30,6 +30,7 @@ import { ContextMenu, getRenderableItems, resolveItemVariant } from "@plane/bloc
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // helper
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
@@ -65,6 +66,8 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
   const { t } = useTranslation();
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
+  const { allowPermissions } = useUserPermissions();
+  const { data: currentUser } = useUser();
   // derived values
   const stateDetails = getStateById(issue.state_id);
   const isEditingAllowed = !readOnly;
@@ -72,6 +75,13 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
   // auth
   const isArchivingAllowed = handleArchive && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
+  const isIssueCreator = issue.created_by === currentUser?.id;
+  const isProjectAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug?.toString(),
+    issue.project_id ?? undefined
+  );
 
   const duplicateIssuePayload = omit(
     {
@@ -90,7 +100,7 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
     activeLayout: "Global issues",
     isEditingAllowed,
     isArchivingAllowed,
-    isDeletingAllowed: isEditingAllowed,
+    isDeletingAllowed: isEditingAllowed && (isProjectAdmin || isIssueCreator),
     isInArchivableGroup,
     setIssueToEdit,
     setCreateUpdateIssueModal,
