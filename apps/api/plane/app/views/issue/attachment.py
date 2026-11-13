@@ -24,6 +24,7 @@ from plane.db.models import FileAsset, Issue, Workspace
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.app.permissions import allow_permission, issue_hidden_from_guest, ROLE
 from plane.settings.storage import S3Storage
+from plane.utils.mime_type import infer_mime_type
 from plane.utils.path_validator import sanitize_filename
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.utils.host import base_host
@@ -119,6 +120,12 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, issue_id):
+        """Create a work item attachment
+
+        Generate a presigned URL for uploading a file attachment to a work
+        item. Validates file type and size before creating the attachment
+        record.
+        """
         # A restricted guest may only add attachments to issues they created,
         # mirroring the issue-detail visibility rule.
         if issue_hidden_from_guest(request, slug, project_id, issue_id):
@@ -129,6 +136,12 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", False)
         size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+
+        # Some browsers do not report a MIME type for files with less common
+        # extensions (e.g. Markdown). Fall back to inferring it from the
+        # filename so allowed uploads are not rejected outright.
+        if not type:
+            type = infer_mime_type(name)
 
         if not type or type not in settings.ATTACHMENT_MIME_TYPES:
             return Response(
