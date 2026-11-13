@@ -52,6 +52,10 @@ class TimezoneEndpoint(APIView):
             ),  # UTC-06:00 (DST: UTC-05:00)
             ("Tegucigalpa, Honduras", "America/Tegucigalpa"),  # UTC-06:00
             ("Costa Rica", "America/Costa_Rica"),  # UTC-06:00
+            ("Guatemala", "America/Guatemala"),  # UTC-06:00
+            ("San Salvador, El Salvador", "America/El_Salvador"),  # UTC-06:00
+            ("Managua, Nicaragua", "America/Managua"),  # UTC-06:00
+            ("Belize", "America/Belize"),  # UTC-06:00
             (
                 "Eastern Time (US and Canada)",
                 "America/New_York",
@@ -59,6 +63,7 @@ class TimezoneEndpoint(APIView):
             ("Lima", "America/Lima"),  # UTC-05:00
             ("Bogota", "America/Bogota"),  # UTC-05:00
             ("Quito", "America/Guayaquil"),  # UTC-05:00
+            ("Panama", "America/Panama"),  # UTC-05:00
             ("Chetumal", "America/Cancun"),  # UTC-05:00 (DST: UTC-04:00)
             ("Caracas (Old Venezuela Time)", "America/Caracas"),  # UTC-04:30
             ("Atlantic Time (Canada)", "America/Halifax"),  # UTC-04:00 (DST: UTC-03:00)
