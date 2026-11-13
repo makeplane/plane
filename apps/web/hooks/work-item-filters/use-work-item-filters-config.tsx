@@ -21,6 +21,7 @@ import {
 } from "@makeplane/propel/icons";
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
+import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { CycleGroupIcon, PriorityIcon, StateGroupIcon } from "@plane/blocks/icons";
 import type {
@@ -62,6 +63,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
 import { useFiltersOperatorConfigs } from "@/hooks/rich-filters/use-filters-operator-configs";
+import { localizeWorkItemFilterConfigs } from "@/helpers/work-item-filter-labels";
 
 export type TWorkItemFiltersEntityProps = {
   workspaceSlug: string;
@@ -89,6 +91,7 @@ export type TWorkItemFiltersConfig = {
 };
 
 export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps): TWorkItemFiltersConfig => {
+  const { t } = useTranslation();
   const { allowedFilters, cycleIds, labelIds, memberIds, moduleIds, projectId, projectIds, stateIds, workspaceSlug } =
     props;
   // store hooks
@@ -132,9 +135,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   );
   const projects = useMemo(
     () =>
-      projectIds
-        ? (projectIds.map((projectId) => getProjectById(projectId)).filter((project) => project) as IProject[])
-        : [],
+      projectIds ? (projectIds.map((id) => getProjectById(id)).filter((candidate) => candidate) as IProject[]) : [],
     [projectIds, getProjectById]
   );
   const areAllConfigsInitialized = useMemo(() => isLoaderReady(projectLoader), [projectLoader]);
@@ -356,15 +357,14 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         isEnabled: isFilterEnabled("project_id") && projects !== undefined,
         filterIcon: ProjectsOutline,
         projects: projects,
-        getOptionIcon: (project) => <Logo logo={project.logo_props} size={12} />,
+        getOptionIcon: (option) => <Logo logo={option.logo_props} size={12} />,
         ...operatorConfigs,
       }),
     [isFilterEnabled, projects, operatorConfigs]
   );
 
-  return {
-    areAllConfigsInitialized,
-    configs: [
+  const configs = localizeWorkItemFilterConfigs(
+    [
       stateFilterConfig,
       stateGroupFilterConfig,
       assigneeFilterConfig,
@@ -381,23 +381,13 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       createdByFilterConfig,
       subscriberFilterConfig,
     ],
-    configMap: {
-      project_id: projectFilterConfig,
-      state_group: stateGroupFilterConfig,
-      state_id: stateFilterConfig,
-      label_id: labelFilterConfig,
-      cycle_id: cycleFilterConfig,
-      module_id: moduleFilterConfig,
-      assignee_id: assigneeFilterConfig,
-      mention_id: mentionFilterConfig,
-      created_by_id: createdByFilterConfig,
-      subscriber_id: subscriberFilterConfig,
-      priority: priorityFilterConfig,
-      start_date: startDateFilterConfig,
-      target_date: targetDateFilterConfig,
-      created_at: createdAtFilterConfig,
-      updated_at: updatedAtFilterConfig,
-    },
+    t
+  );
+
+  return {
+    areAllConfigsInitialized,
+    configs,
+    configMap: Object.fromEntries(configs.map((config) => [config.id, config])),
     isFilterEnabled,
     members: members ?? [],
   };
