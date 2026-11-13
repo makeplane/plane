@@ -201,6 +201,10 @@ export function SelectRoot<T>(props: SelectProps<T>) {
   // would find no element to click — scrolling the highlighted index back into view keeps the row
   // mounted (and registered) before the next keystroke lands.
   const virtualizerRef = useRef<SelectVirtualizer | null>(null);
+  // The listbox, focused on open when there is no search field (see `focusListWithoutSearch`).
+  const listRef = useRef<HTMLDivElement | null>(null);
+  // `variant="search-input"`'s field in the trigger, which keeps focus instead (same place).
+  const fieldRef = useRef<HTMLInputElement | null>(null);
   // Which row Enter would select, for `onSearchSubmit`. Base UI highlights nothing until the user
   // arrows (it takes no `autoHighlight`), and reports `-1` when it clears the highlight again.
   const highlightedIndexRef = useRef(-1);
@@ -413,7 +417,7 @@ export function SelectRoot<T>(props: SelectProps<T>) {
   const mount = useCallback(() => setIsEngineMounted(true), []);
 
   const engineValue = useMemo<SelectEngineContextValue>(
-    () => ({ mounted: isEngineMounted, activate, mount, disabled }),
+    () => ({ mounted: isEngineMounted, activate, mount, disabled, fieldRef }),
     [isEngineMounted, activate, mount, disabled]
   );
 
@@ -477,6 +481,10 @@ export function SelectRoot<T>(props: SelectProps<T>) {
       </>
     ) : undefined;
 
+  // Without a search field base-ui has no input to drive the arrow keys, so focus the list instead.
+  // `variant="search-input"` keeps its field in the trigger, so focus stays there.
+  const focusListWithoutSearch = useCallback(() => (fieldRef.current ? false : (listRef.current ?? true)), []);
+
   const content = (
     <>
       {children}
@@ -489,6 +497,7 @@ export function SelectRoot<T>(props: SelectProps<T>) {
         data-prevent-outside-click
         search={searchSlot}
         footer={footer}
+        initialFocus={showSearch ? undefined : focusListWithoutSearch}
       >
         {positionerZIndex === undefined ? null : <span hidden ref={applyPositionerZIndex} />}
         {/* Both regions stay mounted (base-ui announces their content politely); their chrome
@@ -528,6 +537,7 @@ export function SelectRoot<T>(props: SelectProps<T>) {
             loader={<SelectOptionsSkeleton rows={1} />}
             listLabel={popupLabel}
             virtualizerRef={virtualizerRef}
+            listRef={listRef}
             getOptionValue={getOptionValue}
             getOptionDisabled={getOptionDisabled}
             getOptionHref={getOptionHref}
