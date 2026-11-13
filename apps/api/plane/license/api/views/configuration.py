@@ -13,6 +13,7 @@ from smtplib import (
 
 # Django imports
 from django.core.mail import BadHeaderError, EmailMultiAlternatives, get_connection
+from django.conf import settings
 from django.db.models import Q, Case, When, Value
 
 # Third party imports
@@ -27,6 +28,7 @@ from plane.license.api.serializers import InstanceConfigurationSerializer
 from plane.license.utils.encryption import encrypt_data
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.language import SUPPORTED_LANGUAGES
 
 
 class InstanceConfigurationEndpoint(BaseAPIView):
@@ -41,6 +43,18 @@ class InstanceConfigurationEndpoint(BaseAPIView):
     @invalidate_cache(path="/api/instances/configurations/", user=False)
     @invalidate_cache(path="/api/instances/", user=False)
     def patch(self, request):
+        if "DEFAULT_LANGUAGE" in request.data:
+            if not settings.SKIP_ENV_VAR:
+                return Response(
+                    {"error": "Default language is managed by the DEFAULT_LANGUAGE environment variable."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            language = request.data["DEFAULT_LANGUAGE"]
+            if not isinstance(language, str) or language.strip() not in SUPPORTED_LANGUAGES:
+                return Response(
+                    {"error": "Select a supported default language."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
         configurations = InstanceConfiguration.objects.filter(key__in=request.data.keys())
 
         bulk_configurations = []
