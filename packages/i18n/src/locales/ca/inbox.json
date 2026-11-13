@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Pendent",
+        "description": "Pendent"
+      },
+      "declined": {
+        "title": "Rebutjat",
+        "description": "Rebutjat"
+      },
+      "snoozed": {
+        "title": "Posposada",
+        "description": "Falten {days, plural, one{# dia} other{# dies}}"
+      },
+      "accepted": {
+        "title": "Acceptada",
+        "description": "Acceptada"
+      },
+      "duplicate": {
+        "title": "Duplicada",
+        "description": "Duplicada"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "Rebutja l’element de treball",
+        "content": "Segur que vols rebutjar l’element de treball {value}?"
+      },
+      "delete": {
+        "title": "Elimina l’element de treball",
+        "content": "Segur que vols eliminar l’element de treball {value}?",
+        "success": "Element de treball suprimit correctament"
+      }
+    },
+    "errors": {
+      "snooze_permission": "Només els administradors del projecte poden posposar o treure del posposament els elements de treball",
+      "accept_permission": "Només els administradors del projecte poden acceptar elements de treball",
+      "decline_permission": "Només els administradors del projecte poden rebutjar elements de treball"
+    },
+    "actions": {
+      "accept": "Accepta",
+      "decline": "Rebutja",
+      "snooze": "Posposa",
+      "unsnooze": "Deixa de posposar",
+      "copy": "Copia l’enllaç de l’element de treball",
+      "delete": "Suprimeix",
+      "open": "Obre l’element de treball",
+      "mark_as_duplicate": "Marca com a duplicada",
+      "move": "Mou {value} als elements de treball del projecte"
+    },
+    "source": {
+      "in-app": "a l’aplicació"
+    },
+    "order_by": {
+      "created_at": "Data de creació",
+      "updated_at": "Data d’actualització",
+      "id": "ID"
+    },
+    "label": "Intake",
+    "page_label": "{workspace} - Intake",
+    "modal": {
+      "title": "Crea un element de treball d’Intake"
+    },
+    "tabs": {
+      "open": "Obertes",
+      "closed": "Tancades"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "No hi ha elements de treball oberts",
+        "description": "Aquí trobaràs els elements de treball oberts. Crea un element de treball nou."
+      },
+      "sidebar_closed_tab": {
+        "title": "No hi ha elements de treball tancats",
+        "description": "Aquí trobaràs tots els elements de treball, tant els acceptats com els rebutjats."
+      },
+      "sidebar_filter": {
+        "title": "No hi ha elements de treball coincidents",
+        "description": "Cap element de treball coincideix amb el filtre aplicat a Intake. Crea un element de treball nou."
+      },
+      "detail": {
+        "title": "Selecciona un element de treball per veure’n els detalls."
+      }
+    }
+  }
+}

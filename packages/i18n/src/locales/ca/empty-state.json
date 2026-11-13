@@ -1,0 +1,270 @@
+{
+  "common_empty_state": {
+    "progress": {
+      "title": "Encara no hi ha mètriques de progrés per mostrar.",
+      "description": "Comença a definir valors de propietats als elements de treball per veure aquí les mètriques de progrés."
+    },
+    "updates": {
+      "title": "Encara no hi ha actualitzacions.",
+      "description": "Quan els membres del projecte afegeixin actualitzacions, apareixeran aquí"
+    },
+    "search": {
+      "title": "No hi ha resultats coincidents.",
+      "description": "No s’han trobat resultats. Prova d’ajustar els termes de cerca."
+    },
+    "not_found": {
+      "title": "Vaja! Sembla que alguna cosa no va bé",
+      "description": "Ara mateix no podem obtenir el teu compte de Plane. Pot ser un error de xarxa.",
+      "cta_primary": "Prova de recarregar"
+    },
+    "server_error": {
+      "title": "Error del servidor",
+      "description": "No podem connectar-nos ni obtenir dades del nostre servidor. No et preocupis, hi estem treballant.",
+      "cta_primary": "Prova de recarregar"
+    }
+  },
+  "project_empty_state": {
+    "no_access": {
+      "title": "Sembla que no tens accés a aquest projecte",
+      "restricted_description": "Contacta l’administrador per demanar accés i podràs continuar aquí.",
+      "join_description": "Fes clic al botó de sota per unir-t’hi.",
+      "cta_primary": "Uneix-te al projecte",
+      "cta_loading": "S’està unint al projecte"
+    },
+    "invalid_project": {
+      "title": "No s’ha trobat el projecte",
+      "description": "El projecte que busques no existeix."
+    },
+    "work_items": {
+      "title": "Comença amb el teu primer element de treball.",
+      "description": "Els elements de treball són els blocs de construcció del teu projecte: assigna responsables, defineix prioritats i fes seguiment del progrés fàcilment.",
+      "cta_primary": "Crea el teu primer element de treball"
+    },
+    "cycles": {
+      "title": "Agrupa i limita temporalment el teu treball en cicles.",
+      "description": "Divideix el treball en blocs de temps delimitats, estableix dates partint de la data límit del projecte i fes progressos tangibles en equip.",
+      "cta_primary": "Estableix el teu primer cicle"
+    },
+    "cycle_work_items": {
+      "title": "No hi ha elements de treball per mostrar en aquest cicle",
+      "description": "Crea elements de treball per començar a fer seguiment del progrés del teu equip en aquest cicle i assolir els objectius a temps.",
+      "cta_primary": "Crea un element de treball",
+      "cta_secondary": "Afegeix un element de treball existent"
+    },
+    "modules": {
+      "title": "Mapeja els objectius del projecte en mòduls i fes-ne el seguiment fàcilment.",
+      "description": "Els mòduls estan formats per elements de treball interconnectats. T’ajuden a fer seguiment del progrés a través de les fases del projecte, cadascuna amb dates límit específiques i analítiques que indiquin a quina distància estàs d’assolir-les.",
+      "cta_primary": "Estableix el teu primer mòdul"
+    },
+    "module_work_items": {
+      "title": "No hi ha elements de treball per mostrar en aquest mòdul",
+      "description": "Crea elements de treball per començar a fer-ne seguiment en aquest mòdul.",
+      "cta_primary": "Crea un element de treball",
+      "cta_secondary": "Afegeix un element de treball existent"
+    },
+    "views": {
+      "title": "Desa vistes personalitzades per al teu projecte",
+      "description": "Les vistes són filtres desats que t’ajuden a accedir ràpidament a la informació que més utilitzes. Col·labora sense esforç mentre els membres de l’equip comparteixen i adapten les vistes a les seves necessitats.",
+      "cta_primary": "Crea una vista"
+    },
+    "no_work_items_in_project": {
+      "title": "Encara no hi ha elements de treball al projecte",
+      "description": "Afegeix elements de treball al teu projecte i divideix el treball en parts que es poden seguir amb les vistes.",
+      "cta_primary": "Afegeix un element de treball"
+    },
+    "work_item_filter": {
+      "title": "No s’han trobat elements de treball",
+      "description": "El filtre actual no ha retornat cap resultat. Prova de canviar els filtres.",
+      "cta_primary": "Afegeix un element de treball"
+    },
+    "pages": {
+      "title": "Documenta-ho tot: des de notes fins a PRD",
+      "description": "Les pàgines et permeten capturar i organitzar informació en un sol lloc. Escriu notes de reunions, documentació de projectes i PRD, incorpora elements de treball i estructura’ls amb components llestos per utilitzar.",
+      "cta_primary": "Crea la teva primera pàgina"
+    },
+    "archive_pages": {
+      "title": "Encara no hi ha pàgines arxivades",
+      "description": "Arxiva les pàgines que no tens presents. Accedeix-hi aquí quan les necessitis."
+    },
+    "intake_sidebar": {
+      "title": "Registra sol·licituds d’Intake",
+      "description": "Envia noves sol·licituds perquè siguin revisades, prioritzades i seguides dins del flux de treball del teu projecte.",
+      "cta_primary": "Crea una sol·licitud d’Intake"
+    },
+    "intake_main": {
+      "title": "Selecciona un element de treball d’Intake per veure’n els detalls"
+    },
+    "epics": {
+      "title": "Converteix projectes complexos en èpics estructurats.",
+      "description": "Un èpic t’ajuda a organitzar objectius grans en tasques més petites i que es poden fer el seguiment.",
+      "cta_primary": "Crea un èpic",
+      "cta_secondary": "Documentació"
+    },
+    "epic_work_items": {
+      "title": "Encara no has afegit elements de treball a aquest èpic.",
+      "description": "Comença afegint alguns elements de treball a aquest èpic i fes-ne seguiment aquí.",
+      "cta_secondary": "Afegeix elements de treball"
+    }
+  },
+  "workspace_empty_state": {
+    "archive_epics": {
+      "title": "Encara no hi ha èpics arxivats",
+      "description": "Pots arxivar els èpics completats o cancel·lats. Els trobaràs aquí un cop arxivats."
+    },
+    "archive_work_items": {
+      "title": "Encara no hi ha elements de treball arxivats",
+      "description": "Manualment o mitjançant una automatització, pots arxivar els elements de treball completats o cancel·lats. Els trobaràs aquí un cop arxivats.",
+      "cta_primary": "Estableix una automatització"
+    },
+    "archive_cycles": {
+      "title": "Encara no hi ha cicles arxivats",
+      "description": "Per mantenir el projecte ordenat, arxiva els cicles completats. Els trobaràs aquí un cop arxivats."
+    },
+    "archive_modules": {
+      "title": "Encara no hi ha mòduls arxivats",
+      "description": "Per mantenir el projecte ordenat, arxiva els mòduls completats o cancel·lats. Els trobaràs aquí un cop arxivats."
+    },
+    "home_widget_quick_links": {
+      "title": "Tingues a mà referències, recursos o documents importants per al teu treball"
+    },
+    "inbox_sidebar_all": {
+      "title": "Aquí apareixeran les actualitzacions dels elements de treball als quals estàs subscrit"
+    },
+    "inbox_sidebar_mentions": {
+      "title": "Aquí apareixeran les mencions dels teus elements de treball"
+    },
+    "your_work_by_priority": {
+      "title": "Encara no tens cap element de treball assignat"
+    },
+    "your_work_by_state": {
+      "title": "Encara no tens cap element de treball assignat"
+    },
+    "views": {
+      "title": "Encara no hi ha vistes",
+      "description": "Afegeix elements de treball al teu projecte i fes servir vistes per filtrar, ordenar i fer seguiment del progrés sense esforç.",
+      "cta_primary": "Afegeix un element de treball"
+    },
+    "drafts": {
+      "title": "Elements de treball a mig escriure",
+      "description": "Per provar-ho, comença a afegir un element de treball i deixa’l a mig fer, o crea el teu primer esborrany a sota. 😉",
+      "cta_primary": "Crea un esborrany d’element de treball"
+    },
+    "projects_archived": {
+      "title": "No hi ha projectes arxivats",
+      "description": "Sembla que tots els teus projectes encara estan actius; bona feina!"
+    },
+    "analytics_projects": {
+      "title": "Crea projectes per visualitzar aquí les mètriques del projecte."
+    },
+    "analytics_work_items": {
+      "title": "Crea projectes amb elements de treball i responsables per començar a fer seguiment del rendiment, el progrés i l’impacte de l’equip aquí."
+    },
+    "analytics_no_cycle": {
+      "title": "Crea cicles per organitzar el treball en fases amb un límit de temps i fer-ne el seguiment al llarg dels sprints."
+    },
+    "analytics_no_module": {
+      "title": "Crea mòduls per organitzar el teu treball i fer-ne el seguiment en diferents etapes."
+    },
+    "analytics_no_intake": {
+      "title": "Configura l’Intake per gestionar les sol·licituds entrants i fer-ne el seguiment de les acceptades i rebutjades"
+    },
+    "home_widget_stickies": {
+      "title": "Anota una idea, captura una intuïció o apunta una inspiració. Afegeix una nota adhesiva per començar."
+    },
+    "stickies": {
+      "title": "Captura idees a l’instant",
+      "description": "Crea Stickies per a notes ràpides i tasques pendents, i mantén-les amb tu allà on vagis.",
+      "cta_primary": "Crea el primer Sticky",
+      "cta_secondary": "Documentació"
+    },
+    "active_cycles": {
+      "title": "No hi ha cicles actius",
+      "description": "Ara mateix no tens cap cicle en curs. Els cicles actius apareixeran aquí quan incloguin la data d’avui."
+    },
+    "dashboard": {
+      "title": "Visualitza el teu progrés amb taulers",
+      "description": "Crea taulers personalitzables per fer el seguiment de mètriques, mesurar resultats i presentar informació útil de manera eficaç.",
+      "cta_primary": "Crea un tauler nou"
+    },
+    "wiki": {
+      "title": "Escriu una nota, un document o una base de coneixements completa.",
+      "description": "Les pàgines són un espai per capturar idees a Plane. Pren notes de reunions, formata-les fàcilment, incrusta elements de treball, organitza-les amb una biblioteca de components i mantén-les totes en el context del teu projecte.",
+      "cta_primary": "Crea la teva pàgina"
+    },
+    "project_overview_state_sidebar": {
+      "title": "Activa els estats del projecte",
+      "description": "Activa els estats del projecte per veure i gestionar propietats com l’estat, la prioritat, les dates de venciment i més."
+    }
+  },
+  "settings_empty_state": {
+    "estimates": {
+      "title": "Encara no hi ha estimacions",
+      "description": "Defineix com mesura l’esforç el teu equip i fes-ne seguiment de manera coherent a tots els elements de treball.",
+      "cta_primary": "Afegeix un sistema d’estimacions"
+    },
+    "labels": {
+      "title": "Encara no hi ha etiquetes",
+      "description": "Crea etiquetes personalitzades per categoritzar i gestionar els teus elements de treball de manera efectiva.",
+      "cta_primary": "Crea la teva primera etiqueta"
+    },
+    "exports": {
+      "title": "Encara no hi ha exportacions",
+      "description": "Ara mateix no tens cap registre d’exportació. Un cop exportis dades, tots els registres apareixeran aquí."
+    },
+    "tokens": {
+      "title": "Encara no tens cap token personal",
+      "description": "Genera testimonis d’API segurs per connectar el teu espai de treball amb sistemes i aplicacions externs.",
+      "cta_primary": "Afegeix un token"
+    },
+    "workspace_tokens": {
+      "title": "Encara no hi ha tokens",
+      "description": "Genera testimonis d’API segurs per connectar el teu espai de treball amb sistemes i aplicacions externs.",
+      "cta_primary": "Afegeix un token"
+    },
+    "webhooks": {
+      "title": "Encara no has afegit cap webhook",
+      "description": "Automatitza les notificacions a serveis externs quan es produeixen esdeveniments del projecte.",
+      "cta_primary": "Afegeix un webhook"
+    },
+    "work_item_types": {
+      "title": "Crea i personalitza tipus d’element de treball",
+      "description": "Defineix tipus d’element de treball únics per al teu projecte. Cada tipus pot tenir les seves pròpies propietats, fluxos de treball i camps, adaptats a les necessitats del teu projecte i del teu equip.",
+      "cta_primary": "Activa"
+    },
+    "work_item_type_properties": {
+      "title": "Defineix la propietat i els detalls que vols capturar per a aquest tipus d’element de treball. Personalitza’l per adaptar-lo al flux de treball del teu projecte.",
+      "cta_secondary": "Afegeix una propietat"
+    },
+    "templates": {
+      "title": "Encara no hi ha plantilles",
+      "description": "Redueix el temps de configuració creant plantilles per a elements de treball i pàgines, i comença nous treballs en segons.",
+      "cta_primary": "Crea la teva primera plantilla"
+    },
+    "recurring_work_items": {
+      "title": "Encara no hi ha cap element de treball recurrent",
+      "description": "Configura elements de treball recurrents per automatitzar les tasques repetitives i mantenir-te al dia sense esforç.",
+      "cta_primary": "Crea un element de treball recurrent"
+    },
+    "worklogs": {
+      "title": "Fes seguiment dels registres d’hores de tots els membres",
+      "description": "Registra el temps en elements de treball per veure fulls d’hores detallats de qualsevol membre de l’equip en diversos projectes."
+    },
+    "group_syncing": {
+      "title": "Encara no hi ha assignacions de grups"
+    },
+    "template_setting": {
+      "title": "Encara no hi ha plantilles",
+      "description": "Redueix el temps de configuració creant plantilles per a projectes, elements de treball i pàgines, i comença un treball nou en segons.",
+      "cta_primary": "Crea una plantilla"
+    },
+    "workflows": {
+      "title": "Encara no hi ha fluxos de treball",
+      "description": "Crea fluxos de treball per gestionar el progrés dels teus elements de treball.",
+      "cta_primary": "Afegeix un flux de treball nou",
+      "states": {
+        "title": "Afegeix estats",
+        "description": "Selecciona els estats pels quals progressa l’element de treball."
+      }
+    }
+  }
+}

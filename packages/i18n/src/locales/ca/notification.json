@@ -1,0 +1,67 @@
+{
+  "notification": {
+    "label": "Safata d’entrada",
+    "page_label": "{workspace} - Safata d’entrada",
+    "options": {
+      "mark_all_as_read": "Marca-ho tot com a llegit",
+      "mark_read": "Marca com a llegit",
+      "mark_unread": "Marca com a no llegit",
+      "refresh": "Actualitza",
+      "filters": "Filtres de la safata d’entrada",
+      "show_unread": "Mostra els no llegits",
+      "show_snoozed": "Mostra els posposats",
+      "show_archived": "Mostra els arxivats",
+      "mark_archive": "Arxiva",
+      "mark_unarchive": "Desarxiva",
+      "mark_snooze": "Posposa",
+      "mark_unsnooze": "Deixa de posposar"
+    },
+    "toasts": {
+      "read": "Notificació marcada com a llegida",
+      "unread": "Notificació marcada com a no llegida",
+      "archived": "Notificació marcada com a arxivada",
+      "unarchived": "Notificació marcada com a no arxivada",
+      "snoozed": "Notificació posposada",
+      "unsnoozed": "S’ha deixat de posposar la notificació"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Cap notificació seleccionada",
+        "description": "Selecciona una notificació per veure’n els detalls."
+      },
+      "all": {
+        "title": "No tens cap element de treball assignat",
+        "description": "Aquí veuràs les actualitzacions dels elements de treball que tens assignats"
+      },
+      "mentions": {
+        "title": "No tens cap element de treball assignat",
+        "description": "Aquí veuràs les actualitzacions dels elements de treball que tens assignats"
+      }
+    },
+    "tabs": {
+      "all": "Tots",
+      "mentions": "Mencions"
+    },
+    "filter": {
+      "assigned": "Assignat a mi",
+      "created": "Creat per mi",
+      "subscribed": "Subscrit per mi"
+    },
+    "snooze": {
+      "1_day": "1 dia",
+      "3_days": "3 dies",
+      "5_days": "5 dies",
+      "1_week": "1 setmana",
+      "2_weeks": "2 setmanes",
+      "custom": "Personalitzat",
+      "modal": {
+        "title": "Personalitza el temps de posposició",
+        "pick_a_date": "Tria una data",
+        "pick_a_time": "Tria una hora",
+        "select_date": "Selecciona una data",
+        "select_time": "Selecciona l’hora",
+        "no_available_time": "No hi ha cap hora disponible per a aquesta data"
+      }
+    }
+  }
+}

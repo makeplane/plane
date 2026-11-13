@@ -1,0 +1,195 @@
+{
+  "product_tour": {
+    "workitems": {
+      "step_zero": {
+        "title": "Benvingut al teu espai de treball",
+        "description": "Per ajudar-te a començar, hem creat un projecte de demostració per a tu. Afegim el teu primer element de treball."
+      },
+      "step_one": {
+        "title": "Fes clic a «+ Afegeix element de treball»",
+        "description": "Comença fent clic al botó «+ Element de treball nou». Pots crear tasques, errors o un tipus personalitzat que s’adapti a les teves necessitats."
+      },
+      "step_two": {
+        "title": "Filtra els teus elements de treball",
+        "description": "Fes servir filtres per reduir ràpidament la llista. Pots filtrar per estat, prioritat o membres de l’equip."
+      },
+      "step_three": {
+        "title": "Visualitza, agrupa i ordena els elements de treball segons calgui.",
+        "description": "Consulta les propietats obligatòries i agrupa o ordena els elements de treball segons les teves necessitats."
+      },
+      "step_four": {
+        "title": "Visualitza-ho com vulguis",
+        "description": "Selecciona quines propietats vols veure a la llista. També pots agrupar i ordenar els elements de treball al teu gust."
+      }
+    },
+    "cycle": {
+      "step_zero": {
+        "title": "Progressa amb els cicles",
+        "description": "Prem Q per crear un cicle. Posa-li un nom i estableix les dates; només hi pot haver un cicle per projecte."
+      },
+      "step_one": {
+        "title": "Crea un cicle nou",
+        "description": "Prem Q per crear un cicle. Posa-li un nom i estableix les dates; només hi pot haver un cicle per projecte."
+      },
+      "step_two": {
+        "title": "Fes clic a «+ »",
+        "description": "Comença fent clic al botó «+». Afegeix elements de treball nous o existents directament des de la pàgina del cicle."
+      },
+      "step_three": {
+        "title": "Resum del cicle",
+        "description": "Fes seguiment del progrés del cicle, de la productivitat de l’equip i de les prioritats, i investiga si alguna cosa es queda endarrerida."
+      },
+      "step_four": {
+        "title": "Transfereix elements de treball",
+        "description": "Després de la data de venciment, un cicle es completa automàticament. Mou el treball no finalitzat a un altre cicle."
+      }
+    },
+    "module": {
+      "step_zero": {
+        "title": "Divideix el teu projecte en mòduls",
+        "description": "Els mòduls són projectes més petits i centrats que ajuden els usuaris a agrupar i organitzar elements de treball dins de períodes de temps concrets."
+      },
+      "step_one": {
+        "title": "Crea un mòdul",
+        "description": "Els mòduls són projectes més petits i centrats que ajuden els usuaris a agrupar i organitzar elements de treball dins de períodes de temps concrets."
+      },
+      "step_two": {
+        "title": "Fes clic a «+ »",
+        "description": "Comença fent clic al botó «+». Afegeix elements de treball nous o existents directament des de la pàgina del mòdul."
+      },
+      "step_three": {
+        "title": "Estats del mòdul",
+        "description": "Els mòduls utilitzen aquests estats per ajudar els usuaris a planificar i fer un seguiment clar del progrés i l’etapa."
+      },
+      "step_four": {
+        "title": "Progrés del mòdul",
+        "description": "El progrés del mòdul es fa seguiment mitjançant els elements completats, amb analítica per supervisar el rendiment."
+      }
+    },
+    "page": {
+      "step_zero": {
+        "title": "Documenta amb pàgines amb IA",
+        "description": "Les pàgines de Plane et permeten capturar, organitzar i col·laborar en la informació del projecte, sense necessitat d’eines externes."
+      },
+      "step_one": {
+        "title": "Fes la pàgina pública o privada",
+        "description": "Les pàgines es poden establir com a públiques, visibles per a tothom del teu espai de treball, o privades, accessibles només per a tu."
+      },
+      "step_two": {
+        "title": "Utilitza l’ordre /",
+        "description": "Utilitza / en una pàgina per afegir contingut de 16 tipus de bloc, incloent-hi llistes, imatges, taules i incrustacions."
+      },
+      "step_three": {
+        "title": "Accions de la pàgina",
+        "description": "Un cop creada la pàgina, pots fer clic al menú ••• de la cantonada superior dreta per realitzar les accions següents."
+      },
+      "step_four": {
+        "title": "Taula de continguts",
+        "description": "Obtén una visió general de la teva pàgina fent clic a la icona del panell per veure tots els encapçalaments."
+      },
+      "step_five": {
+        "title": "Historial de versions",
+        "description": "Les pàgines fan seguiment de totes les edicions amb l’historial de versions, cosa que et permet restaurar versions anteriors si cal."
+      }
+    },
+    "intake": {
+      "step_zero": {
+        "title": "Racionalitza les sol·licituds amb Intake",
+        "description": "Una funcionalitat exclusiva de Plane que permet als convidats crear elements de treball per a errors, sol·licituds o incidències."
+      },
+      "step_one": {
+        "title": "Sol·licituds d’Intake obertes/tancades",
+        "description": "Les sol·licituds pendents es queden a la pestanya Obertes i, un cop gestionades per un administrador o un membre, passen a Tancades."
+      },
+      "step_two": {
+        "title": "Accepta o rebutja una sol·licitud pendent",
+        "description": "Accepta per editar i moure l’element de treball al teu projecte, o rebutja’l per marcar-lo com a Cancel·lat."
+      },
+      "step_three": {
+        "title": "Posposa per ara",
+        "description": "Un element de treball es pot posposar per revisar-lo més endavant. Es mourà a la part inferior de la teva llista de sol·licituds obertes."
+      }
+    },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "Deixa de canviar de pestanya. Connecta el teu món.",
+        "description": "Enllaça GitHub i Slack per fer seguiment de les PR i resumir les converses directament a Plane AI."
+      }
+    },
+    "navigation": {
+      "modal": {
+        "title": "Navegació reinventada",
+        "sub_title": "El teu espai de treball ara és més fàcil d’explorar gràcies a una navegació més intel·ligent i simplificada.",
+        "highlight_1": "Estructura del panell esquerre simplificada per descobrir coses més ràpidament",
+        "highlight_2": "Cerca global millorada per accedir instantàniament a qualsevol element",
+        "highlight_3": "Agrupació de categories més intel·ligent per a més claredat i concentració",
+        "footer": "Vols fer un recorregut ràpid?"
+      },
+      "step_zero": {
+        "title": "Troba qualsevol cosa instantàniament",
+        "description": "Utilitza la cerca universal per anar a tasques, projectes, pàgines i persones sense sortir del teu flux de treball."
+      },
+      "step_one": {
+        "title": "Mantén el control de les actualitzacions",
+        "description": "La teva safata d’entrada manté totes les mencions, aprovacions i activitats en un sol lloc, de manera que no et perdis cap treball important."
+      },
+      "step_two": {
+        "title": "Personalitza la navegació",
+        "description": "Personalitza el que veus i com navegues a Preferències."
+      }
+    },
+    "actions": {
+      "close": "Tanca",
+      "next": "Següent",
+      "back": "Enrere",
+      "done": "Fet",
+      "take_a_tour": "Fes una visita guiada",
+      "get_started": "Comença",
+      "got_it": "D’acord"
+    },
+    "seed_data": {
+      "title": "Aquest és el teu projecte de demostració",
+      "description": "Els projectes et permeten gestionar els teus equips, tasques i tot el que necessites per fer les coses dins del teu espai de treball."
+    }
+  },
+  "get_started": {
+    "title": "Hola, {name}, benvingut!",
+    "description": "Aquí tens tot el que necessites per començar el teu viatge amb Plane.",
+    "checklist_section": {
+      "title": "Comença",
+      "description": "Comença la configuració i fes que les teves idees prenguin vida més ràpid.",
+      "checklist_items": {
+        "item_1": {
+          "title": "Crea un projecte"
+        },
+        "item_2": {
+          "title": "Crea un element de treball"
+        },
+        "item_3": {
+          "title": "Convida membres de l’equip"
+        },
+        "item_4": {
+          "title": "Crea una pàgina"
+        },
+        "item_5": {
+          "title": "Prova el xat de Plane AI"
+        },
+        "item_6": {
+          "title": "Enllaça integracions"
+        }
+      }
+    },
+    "team_section": {
+      "title": "Convida el teu equip",
+      "description": "Convida companys d’equip i comenceu a construir plegats."
+    },
+    "integrations_section": {
+      "title": "Potencia el teu espai de treball",
+      "more_integrations": "Explora més integracions"
+    },
+    "switch_to_plane_section": {
+      "title": "Descobreix per què els equips canvien a Plane",
+      "description": "Compara Plane amb les eines que fas servir avui i veu la diferència."
+    }
+  }
+}

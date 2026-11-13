@@ -1,0 +1,197 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "Elimina elements de treball en bloc"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "Accions de l’element de treball",
+        "indicator": "Element de treball",
+        "change_state": "Canvia l’estat",
+        "change_priority": "Canvia la prioritat",
+        "change_assignees": "Assigna a",
+        "assign_to_me": "Assigna-m’ho",
+        "unassign_from_me": "Desassigna-m’ho",
+        "change_estimate": "Canvia l’estimació",
+        "add_to_cycle": "Afegeix al cicle",
+        "add_to_modules": "Afegeix als mòduls",
+        "add_labels": "Afegeix etiquetes",
+        "subscribe": "Subscriu-te a les notificacions",
+        "unsubscribe": "Cancel·la la subscripció a les notificacions",
+        "delete": "Suprimeix",
+        "copy_id": "Copia l’ID",
+        "copy_id_toast_success": "ID de l’element de treball copiat al porta-retalls.",
+        "copy_id_toast_error": "S’ha produït un error en copiar l’ID de l’element de treball al porta-retalls.",
+        "copy_title": "Copia el títol",
+        "copy_title_toast_success": "Títol de l’element de treball copiat al porta-retalls.",
+        "copy_title_toast_error": "S’ha produït un error en copiar el títol de l’element de treball al porta-retalls.",
+        "copy_url": "Copia la URL",
+        "copy_url_toast_success": "URL de l’element de treball copiada al porta-retalls.",
+        "copy_url_toast_error": "S’ha produït un error en copiar la URL de l’element de treball al porta-retalls."
+      },
+      "cycle": {
+        "title": "Accions del cicle",
+        "indicator": "Cicle",
+        "add_to_favorites": "Afegeix als preferits",
+        "remove_from_favorites": "Elimina dels preferits",
+        "copy_url": "Copia la URL",
+        "copy_url_toast_success": "L’URL del cicle s’ha copiat al porta-retalls.",
+        "copy_url_toast_error": "S’ha produït un error en copiar la URL del cicle al porta-retalls."
+      },
+      "module": {
+        "title": "Accions del mòdul",
+        "indicator": "Mòdul",
+        "add_remove_members": "Afegeix o elimina membres",
+        "change_status": "Canvia l’estat",
+        "add_to_favorites": "Afegeix als preferits",
+        "remove_from_favorites": "Elimina dels preferits",
+        "copy_url": "Copia la URL",
+        "copy_url_toast_success": "L’URL del mòdul s’ha copiat al porta-retalls.",
+        "copy_url_toast_error": "S’ha produït un error en copiar la URL del mòdul al porta-retalls."
+      },
+      "page": {
+        "title": "Accions de la pàgina",
+        "indicator": "Pàgina",
+        "lock": "Bloqueja",
+        "unlock": "Desbloqueja",
+        "make_private": "Fes-la privada",
+        "make_public": "Fes-la pública",
+        "archive": "Arxiva",
+        "restore": "Restaura",
+        "add_to_favorites": "Afegeix als preferits",
+        "remove_from_favorites": "Elimina dels preferits",
+        "copy_url": "Copia la URL",
+        "copy_url_toast_success": "L’URL de la pàgina s’ha copiat al porta-retalls.",
+        "copy_url_toast_error": "S’ha produït un error en copiar la URL de la pàgina al porta-retalls."
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "Element de treball nou",
+      "create_page": "Nova pàgina",
+      "create_view": "Nova vista",
+      "create_cycle": "Nou cicle",
+      "create_module": "Nou mòdul",
+      "create_project": "Nou projecte",
+      "create_workspace": "Nou espai de treball",
+      "create_project_automation": "Nova automatització"
+    },
+    "navigation_actions": {
+      "open_workspace": "Obre un espai de treball",
+      "nav_home": "Vés a l’inici",
+      "nav_inbox": "Vés a la safata d’entrada",
+      "nav_your_work": "Vés al teu treball",
+      "nav_account_settings": "Vés a la configuració del compte",
+      "open_project": "Obre un projecte",
+      "nav_projects_list": "Vés a la llista de projectes",
+      "nav_all_workspace_work_items": "Vés a tots els elements de treball",
+      "nav_assigned_workspace_work_items": "Vés als elements de treball assignats",
+      "nav_created_workspace_work_items": "Vés als elements de treball creats",
+      "nav_subscribed_workspace_work_items": "Vés als elements de treball subscrits",
+      "nav_workspace_analytics": "Vés a l’analítica de l’espai de treball",
+      "nav_workspace_drafts": "Vés als esborranys de l’espai de treball",
+      "nav_workspace_archives": "Vés als arxius de l’espai de treball",
+      "open_workspace_setting": "Obre un paràmetre de l’espai de treball",
+      "nav_workspace_settings": "Vés a la configuració de l’espai de treball",
+      "nav_project_work_items": "Vés als elements de treball",
+      "open_project_cycle": "Obre un cicle",
+      "nav_project_cycles": "Vés als cicles",
+      "open_project_module": "Obre un mòdul",
+      "nav_project_modules": "Vés als mòduls",
+      "open_project_view": "Obre una vista de projecte",
+      "nav_project_views": "Vés a les vistes de projecte",
+      "nav_project_pages": "Vés a les pàgines",
+      "nav_project_intake": "Vés a l’Intake",
+      "nav_project_archives": "Vés als arxius del projecte",
+      "open_project_setting": "Obre una configuració del projecte",
+      "nav_project_settings": "Vés a la configuració del projecte",
+      "nav_workspace_active_cycle": "Vés a tots els cicles actius",
+      "nav_project_overview": "Vés a la visió general del projecte"
+    },
+    "account_actions": {
+      "sign_out": "Tanca la sessió",
+      "workspace_invites": "Invitacions a l’espai de treball"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "Mostra o amaga la barra lateral de l’aplicació",
+      "copy_current_page_url": "Copia la URL de la pàgina actual",
+      "copy_current_page_url_toast_success": "L’URL de la pàgina actual s’ha copiat al porta-retalls.",
+      "copy_current_page_url_toast_error": "S’ha produït un error en copiar la URL de la pàgina actual al porta-retalls.",
+      "focus_top_nav_search": "Activa el camp de cerca"
+    },
+    "preferences_actions": {
+      "update_theme": "Canvia el tema de la interfície",
+      "update_timezone": "Canvia la zona horària",
+      "update_start_of_week": "Canvia el primer dia de la setmana",
+      "update_language": "Canvia la llengua de la interfície",
+      "toast": {
+        "theme": {
+          "success": "El tema s’ha actualitzat correctament.",
+          "error": "No s’ha pogut actualitzar el tema. Torna-ho a provar."
+        },
+        "timezone": {
+          "success": "La zona horària s’ha actualitzat correctament.",
+          "error": "No s’ha pogut actualitzar la zona horària. Torna-ho a provar."
+        },
+        "generic": {
+          "success": "Les preferències s’han actualitzat correctament.",
+          "error": "No s’han pogut actualitzar les preferències. Torna-ho a provar."
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "Obre les dreceres de teclat",
+      "open_plane_documentation": "Obre la documentació de Plane",
+      "join_forum": "Uneix-te al nostre fòrum",
+      "report_bug": "Informa d’un error",
+      "chat_with_us": "Xateja amb nosaltres"
+    },
+    "page_placeholders": {
+      "default": "Escriu una ordre o fes una cerca",
+      "open_workspace": "Obre un espai de treball",
+      "open_project": "Obre un projecte",
+      "open_workspace_setting": "Obre un paràmetre de l’espai de treball",
+      "open_project_cycle": "Obre un cicle",
+      "open_project_module": "Obre un mòdul",
+      "open_project_view": "Obre una vista de projecte",
+      "open_project_setting": "Obre una configuració del projecte",
+      "update_work_item_state": "Canvia l’estat",
+      "update_work_item_priority": "Canvia la prioritat",
+      "update_work_item_assignee": "Assigna a",
+      "update_work_item_estimate": "Canvia l’estimació",
+      "update_work_item_cycle": "Afegeix al cicle",
+      "update_work_item_module": "Afegeix als mòduls",
+      "update_work_item_labels": "Afegeix etiquetes",
+      "update_module_member": "Canvia els membres",
+      "update_module_status": "Canvia l’estat",
+      "update_theme": "Canvia el tema",
+      "update_timezone": "Canvia la zona horària",
+      "update_start_of_week": "Canvia el primer dia de la setmana",
+      "update_language": "Canvia l’idioma"
+    },
+    "search_menu": {
+      "no_results": "No s’han trobat resultats",
+      "clear_search": "Esborra la cerca",
+      "go_to_advanced_search": "Vés a la cerca avançada"
+    },
+    "footer": {
+      "workspace_level": "Nivell de l’espai de treball"
+    },
+    "shortcuts_modal": {
+      "search_placeholder": "Cerca dreceres",
+      "no_results": "No s’han trobat dreceres per a \"{query}\"",
+      "sequence_separator": "després"
+    },
+    "group_titles": {
+      "actions": "Accions",
+      "contextual": "Contextual",
+      "navigation": "Navega",
+      "create": "Crea",
+      "general": "General",
+      "settings": "Configuració",
+      "account": "Compte",
+      "miscellaneous": "Diversos",
+      "preferences": "Preferències",
+      "help": "Ajuda"
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "Afegeix elements de treball al cicle per veure’n el progrés"
+      },
+      "chart": {
+        "title": "Afegeix elements de treball al cicle per veure el gràfic de burndown."
+      },
+      "priority_issue": {
+        "title": "Observa de cop d’ull els elements de treball de prioritat alta abordats al cicle."
+      },
+      "assignee": {
+        "title": "Afegeix responsables als elements de treball per veure la distribució del treball per responsables."
+      },
+      "label": {
+        "title": "Afegeix etiquetes als elements de treball per veure la distribució del treball per etiquetes."
+      }
+    }
+  },
+  "cycle": {
+    "label": "{count, plural, one {Cicle} other {Cicles}}",
+    "no_cycle": "Cap cicle"
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Afegeix elements de treball al cicle per veure el seu progrés"
+      },
+      "priority": {
+        "title": "Observa de cop d’ull els elements de treball de prioritat alta abordats al cicle."
+      },
+      "assignee": {
+        "title": "Afegeix responsables als elements de treball per veure la distribució del treball per responsables."
+      },
+      "label": {
+        "title": "Afegeix etiquetes als elements de treball per veure la distribució del treball per etiquetes."
+      }
+    }
+  }
+}
