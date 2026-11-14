@@ -9,7 +9,7 @@ import { useSearchParams } from "next/navigation";
 // icons
 import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // plane internal packages
-import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
+import { API_BASE_URL, E_PASSWORD_STRENGTH, EAuthErrorCodes } from "@plane/constants";
 import { Button } from "@makeplane/propel/components/button";
 import { Checkbox } from "@makeplane/propel/components/checkbox";
 import { InputField } from "@makeplane/propel/components/input-field";
@@ -24,18 +24,23 @@ import { FormHeader } from "./form-header";
 // hooks
 import { useCsrfToken } from "@/hooks/use-csrf-token";
 
-// error codes
-enum EErrorCodes {
-  INSTANCE_NOT_CONFIGURED = "INSTANCE_NOT_CONFIGURED",
-  ADMIN_ALREADY_EXIST = "ADMIN_ALREADY_EXIST",
-  REQUIRED_EMAIL_PASSWORD_FIRST_NAME = "REQUIRED_EMAIL_PASSWORD_FIRST_NAME",
-  INVALID_EMAIL = "INVALID_EMAIL",
-  INVALID_PASSWORD = "INVALID_PASSWORD",
-  USER_ALREADY_EXISTS = "USER_ALREADY_EXISTS",
-}
+// user-facing messages for the error codes returned by the setup API
+const EErrorMessages: Partial<Record<EAuthErrorCodes, string>> = {
+  [EAuthErrorCodes.INSTANCE_NOT_CONFIGURED]: "This Plane instance is not configured yet.",
+  [EAuthErrorCodes.ADMIN_ALREADY_EXIST]: "An instance admin already exists for this Plane instance.",
+  [EAuthErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME]: "Email, password and first name are required.",
+  [EAuthErrorCodes.INVALID_ADMIN_EMAIL]: "Please enter a valid email address.",
+  [EAuthErrorCodes.ADMIN_USER_ALREADY_EXIST]: "A user with this email already exists. Try signing in instead.",
+  [EAuthErrorCodes.PASSWORD_TOO_WEAK]: "The password is too weak. Please choose a stronger password.",
+};
+
+// error codes that should be rendered against a specific field instead of the banner
+const INLINE_EMAIL_ERROR_CODES = [EAuthErrorCodes.INVALID_ADMIN_EMAIL];
+const INLINE_PASSWORD_ERROR_CODES = [EAuthErrorCodes.INVALID_ADMIN_PASSWORD, EAuthErrorCodes.PASSWORD_TOO_WEAK];
+const INLINE_ERROR_CODES = new Set([...INLINE_EMAIL_ERROR_CODES, ...INLINE_PASSWORD_ERROR_CODES]);
 
 type TError = {
-  type: EErrorCodes | undefined;
+  type: EAuthErrorCodes | undefined;
   message: string | undefined;
 };
 
@@ -99,24 +104,16 @@ export function InstanceSetupForm() {
 
   // derived values
   const errorData: TError = useMemo(() => {
-    if (errorCode && errorMessage) {
-      switch (errorCode) {
-        case EErrorCodes.INSTANCE_NOT_CONFIGURED:
-          return { type: EErrorCodes.INSTANCE_NOT_CONFIGURED, message: errorMessage };
-        case EErrorCodes.ADMIN_ALREADY_EXIST:
-          return { type: EErrorCodes.ADMIN_ALREADY_EXIST, message: errorMessage };
-        case EErrorCodes.REQUIRED_EMAIL_PASSWORD_FIRST_NAME:
-          return { type: EErrorCodes.REQUIRED_EMAIL_PASSWORD_FIRST_NAME, message: errorMessage };
-        case EErrorCodes.INVALID_EMAIL:
-          return { type: EErrorCodes.INVALID_EMAIL, message: errorMessage };
-        case EErrorCodes.INVALID_PASSWORD:
-          return { type: EErrorCodes.INVALID_PASSWORD, message: errorMessage };
-        case EErrorCodes.USER_ALREADY_EXISTS:
-          return { type: EErrorCodes.USER_ALREADY_EXISTS, message: errorMessage };
-        default:
-          return { type: undefined, message: undefined };
-      }
-    } else return { type: undefined, message: undefined };
+    if (!errorCode && !errorMessage) return { type: undefined, message: undefined };
+
+    // the API redirects back with the numeric `error_code` and a machine-readable `error_message`
+    const code = errorCode as EAuthErrorCodes;
+    const isKnownErrorCode = (Object.values(EAuthErrorCodes) as string[]).includes(code);
+
+    return {
+      type: isKnownErrorCode ? code : undefined,
+      message: (isKnownErrorCode && EErrorMessages[code]) || errorMessage,
+    };
   }, [errorCode, errorMessage]);
 
   const isButtonDisabled = useMemo(
@@ -144,11 +141,9 @@ export function InstanceSetupForm() {
             heading="Setup your Plane Instance"
             subHeading="Post setup you will be able to manage this Plane instance."
           />
-          {errorData.type &&
-            errorData?.message &&
-            ![EErrorCodes.INVALID_EMAIL, EErrorCodes.INVALID_PASSWORD].includes(errorData.type) && (
-              <Banner placement="inline" variant="danger" description={errorData?.message} />
-            )}
+          {errorData.message && (!errorData.type || !INLINE_ERROR_CODES.has(errorData.type)) && (
+            <Banner placement="inline" variant="danger" description={errorData.message} />
+          )}
           <form
             className="space-y-4"
             method="POST"
@@ -214,12 +209,12 @@ export function InstanceSetupForm() {
               placeholder="name@company.com"
               value={formData.email}
               onChange={(e) => handleFormChange("email", e.target.value)}
-              aria-invalid={errorData.type === EErrorCodes.INVALID_EMAIL}
+              aria-invalid={errorData.type === EAuthErrorCodes.INVALID_ADMIN_EMAIL}
               autoComplete="off"
               orientation="vertical"
               label="Email"
               required
-              error={errorData.type === EErrorCodes.INVALID_EMAIL && errorData.message ? errorData.message : undefined}
+              error={errorData.type === EAuthErrorCodes.INVALID_ADMIN_EMAIL ? errorData.message : undefined}
             />
 
             <InputField
@@ -250,7 +245,7 @@ export function InstanceSetupForm() {
                 placeholder="New password"
                 value={formData.password}
                 onChange={(e) => handleFormChange("password", e.target.value)}
-                aria-invalid={errorData.type === EErrorCodes.INVALID_PASSWORD}
+                aria-invalid={!!errorData.type && INLINE_PASSWORD_ERROR_CODES.includes(errorData.type)}
                 onFocus={() => setIsPasswordInputFocused(true)}
                 onBlur={() => setIsPasswordInputFocused(false)}
                 autoComplete="new-password"
@@ -258,7 +253,7 @@ export function InstanceSetupForm() {
                 label="Set a password"
                 required
                 error={
-                  errorData.type === EErrorCodes.INVALID_PASSWORD && errorData.message ? errorData.message : undefined
+                  errorData.type && INLINE_PASSWORD_ERROR_CODES.includes(errorData.type) ? errorData.message : undefined
                 }
                 endIcon={
                   <IconButton
