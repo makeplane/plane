@@ -381,6 +381,12 @@ INTAKE_ISSUE_UPDATE_EXAMPLE = OpenApiExample(
     description="Example request for updating an intake issue",
 )
 
+INTAKE_ISSUE_STATUS_UPDATE_EXAMPLE = OpenApiExample(
+    "IntakeIssueStatusUpdateSerializer",
+    value={"status": 1},
+    description="Example request for updating the triage status of an intake issue",
+)
+
 
 # ============================================================================
 # RESPONSE EXAMPLES - Centralized examples for API responses

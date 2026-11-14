@@ -10,9 +10,18 @@ from plane.api.views import (
     ProjectDetailAPIEndpoint,
     ProjectArchiveUnarchiveAPIEndpoint,
     ProjectSummaryAPIEndpoint,
+    ProjectFeatureAPIEndpoint,
+    WorkspaceFeatureAPIEndpoint,
+    WorkItemTypeListCreateAPIEndpoint,
+    WorkItemTypeDetailAPIEndpoint,
 )
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/features/",
+        WorkspaceFeatureAPIEndpoint.as_view(http_method_names=["get"]),
+        name="workspace-features",
+    ),
     path(
         "workspaces/<str:slug>/projects/",
         ProjectListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
@@ -27,6 +36,21 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:pk>/",
         ProjectDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="project",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/features/",
+        ProjectFeatureAPIEndpoint.as_view(http_method_names=["get", "patch"]),
+        name="project-features",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-item-types/",
+        WorkItemTypeListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="project-work-item-types",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-item-types/<uuid:pk>/",
+        WorkItemTypeDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        name="project-work-item-type-detail",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/archive/",
