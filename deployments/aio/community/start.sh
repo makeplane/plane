@@ -226,7 +226,7 @@ main(){
     # if stdout_logfile's parent path is missing.
     mkdir -p /app/logs/access /app/logs/error
 
-    /usr/local/bin/supervisord -c /etc/supervisor/conf.d/supervisor.conf
+    exec /usr/local/bin/supervisord -c /etc/supervisor/conf.d/supervisor.conf
 }
 
 main "$@"
