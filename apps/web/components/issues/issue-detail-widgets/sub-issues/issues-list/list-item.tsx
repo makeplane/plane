@@ -158,7 +158,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
               )}
             </div>
 
-            <div className="flex w-full cursor-pointer items-center gap-3 truncate">
+            <div className="flex w-full min-w-28 cursor-pointer items-center gap-3 truncate">
               <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
                 <div className="flex-shrink-0">
                   {projectDetail && (
