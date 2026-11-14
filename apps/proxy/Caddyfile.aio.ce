@@ -3,6 +3,7 @@
 		max_size {$FILE_SIZE_LIMIT}
 	}
 
+    redir /spaces /spaces/ permanent
     handle /spaces/* {
         reverse_proxy localhost:3002
     }
@@ -18,6 +19,7 @@
         reverse_proxy localhost:3004
     }
 
+	redir /god-mode /god-mode/ permanent
 	handle_path /god-mode* {
         root * /app/admin
         try_files {path} {path}/ /index.html
