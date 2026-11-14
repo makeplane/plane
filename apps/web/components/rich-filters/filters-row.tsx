@@ -118,11 +118,12 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   );
 
   const mainContent = (
-    <div className="flex w-full items-start gap-2 rounded-lg bg-layer-1 px-4 py-2">
+    <div className="flex w-full flex-col items-start gap-2 rounded-lg bg-layer-1 px-4 py-2 md:flex-row">
       <div className="flex w-full flex-wrap items-center gap-2">{leftContent}</div>
+      {/* below md the controls sit under the filters, side by side they are pushed off the screen and clipped */}
       <div
-        className={cn("flex items-center gap-2 border-l border-subtle pl-4", {
-          "border-l-transparent pl-0": !hasAvailableOperations,
+        className={cn("flex items-center gap-2 border-t border-subtle pt-2 md:border-t-0 md:border-l md:pt-0 md:pl-4", {
+          "border-transparent pt-0 md:pl-0": !hasAvailableOperations,
         })}
       >
         {rightContent}
