@@ -49,6 +49,8 @@ function LeftItem(props: HeaderProps) {
     <div
       className={cn(
         "flex max-w-[80%] flex-grow flex-wrap items-center gap-2 overflow-ellipsis whitespace-nowrap",
+        // on a phone the actions on the right must stay on screen, so the left side gives way
+        "max-md:min-w-0 max-md:flex-nowrap max-md:overflow-hidden",
         props.className
       )}
     >
@@ -63,7 +65,7 @@ function RightItem(props: HeaderProps) {
   return (
     <div
       className={cn(
-        "flex w-auto items-center justify-end gap-2",
+        "flex w-auto items-center justify-end gap-2 max-md:shrink-0",
         {
           "items-baseline": variant === EHeaderVariant.TERNARY,
         },
