@@ -28,11 +28,22 @@ import { useCsrfToken } from "@/hooks/use-csrf-token";
 enum EErrorCodes {
   INSTANCE_NOT_CONFIGURED = "INSTANCE_NOT_CONFIGURED",
   ADMIN_ALREADY_EXIST = "ADMIN_ALREADY_EXIST",
-  REQUIRED_EMAIL_PASSWORD_FIRST_NAME = "REQUIRED_EMAIL_PASSWORD_FIRST_NAME",
-  INVALID_EMAIL = "INVALID_EMAIL",
-  INVALID_PASSWORD = "INVALID_PASSWORD",
-  USER_ALREADY_EXISTS = "USER_ALREADY_EXISTS",
+  REQUIRED_EMAIL_PASSWORD_FIRST_NAME = "REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME",
+  INVALID_EMAIL = "INVALID_ADMIN_EMAIL",
+  INVALID_PASSWORD = "PASSWORD_TOO_WEAK",
+  USER_ALREADY_EXISTS = "ADMIN_USER_ALREADY_EXIST",
+  COMPANY_NAME_REQUIRED = "COMPANY_NAME_REQUIRED",
 }
+
+const ERROR_MESSAGES: Record<EErrorCodes, string> = {
+  [EErrorCodes.INSTANCE_NOT_CONFIGURED]: "Instance is not configured. Please try again.",
+  [EErrorCodes.ADMIN_ALREADY_EXIST]: "Admin already exists. Please sign in instead.",
+  [EErrorCodes.REQUIRED_EMAIL_PASSWORD_FIRST_NAME]: "Email, password, and first name are required.",
+  [EErrorCodes.INVALID_EMAIL]: "Please enter a valid email address.",
+  [EErrorCodes.INVALID_PASSWORD]: "Password is too weak. Please choose a stronger password.",
+  [EErrorCodes.USER_ALREADY_EXISTS]: "An admin user with this email already exists.",
+  [EErrorCodes.COMPANY_NAME_REQUIRED]: "Company name is required.",
+};
 
 type TError = {
   type: EErrorCodes | undefined;
@@ -99,24 +110,11 @@ export function InstanceSetupForm() {
 
   // derived values
   const errorData: TError = useMemo(() => {
-    if (errorCode && errorMessage) {
-      switch (errorCode) {
-        case EErrorCodes.INSTANCE_NOT_CONFIGURED:
-          return { type: EErrorCodes.INSTANCE_NOT_CONFIGURED, message: errorMessage };
-        case EErrorCodes.ADMIN_ALREADY_EXIST:
-          return { type: EErrorCodes.ADMIN_ALREADY_EXIST, message: errorMessage };
-        case EErrorCodes.REQUIRED_EMAIL_PASSWORD_FIRST_NAME:
-          return { type: EErrorCodes.REQUIRED_EMAIL_PASSWORD_FIRST_NAME, message: errorMessage };
-        case EErrorCodes.INVALID_EMAIL:
-          return { type: EErrorCodes.INVALID_EMAIL, message: errorMessage };
-        case EErrorCodes.INVALID_PASSWORD:
-          return { type: EErrorCodes.INVALID_PASSWORD, message: errorMessage };
-        case EErrorCodes.USER_ALREADY_EXISTS:
-          return { type: EErrorCodes.USER_ALREADY_EXISTS, message: errorMessage };
-        default:
-          return { type: undefined, message: undefined };
-      }
-    } else return { type: undefined, message: undefined };
+    if (errorCode && errorMessage && errorMessage in ERROR_MESSAGES) {
+      const type = errorMessage as EErrorCodes;
+      return { type, message: ERROR_MESSAGES[type] };
+    }
+    return { type: undefined, message: undefined };
   }, [errorCode, errorMessage]);
 
   const isButtonDisabled = useMemo(
@@ -125,10 +123,19 @@ export function InstanceSetupForm() {
       !csrfToken ||
       !formData.first_name ||
       !formData.email ||
+      !formData.company_name ||
       !formData.password ||
       getPasswordStrength(formData.password) !== E_PASSWORD_STRENGTH.STRENGTH_VALID ||
       formData.password !== formData.confirm_password,
-    [csrfToken, formData.confirm_password, formData.email, formData.first_name, formData.password, isSubmitting]
+    [
+      csrfToken,
+      formData.company_name,
+      formData.confirm_password,
+      formData.email,
+      formData.first_name,
+      formData.password,
+      isSubmitting,
+    ]
   );
 
   const password = formData?.password ?? "";
@@ -239,6 +246,11 @@ export function InstanceSetupForm() {
               orientation="vertical"
               label="Company name"
               required
+              error={
+                errorData.type === EErrorCodes.COMPANY_NAME_REQUIRED && errorData.message
+                  ? errorData.message
+                  : undefined
+              }
             />
 
             <div className="w-full space-y-1">
