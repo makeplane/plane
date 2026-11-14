@@ -305,8 +305,9 @@ function Breadcrumbs(props: BreadcrumbsProps) {
     return child;
   };
 
+  // on a phone every part of the trail may shrink, so a long crumb truncates with an ellipsis instead of being cut off
   return (
-    <div className={cn("flex min-w-0 flex-grow items-center overflow-hidden", className)}>
+    <div className={cn("flex min-w-0 flex-grow items-center overflow-hidden max-md:[&_*]:min-w-0", className)}>
       <Breadcrumb aria-label={trailLabel}>
         <BreadcrumbList>
           {!isCollapsed &&
