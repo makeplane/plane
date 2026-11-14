@@ -207,6 +207,22 @@ describe("Breadcrumbs collapsed overflow rows", () => {
     expect(within(trail).getByText("Work items")).toBeTruthy();
   });
 
+  it("renders no overflow trigger or separator when `showOverflowMenu` is off", () => {
+    render(
+      <Breadcrumbs ariaLabel={TRAIL_LABEL} collapseBreakpoint={ALWAYS_COLLAPSED} showOverflowMenu={false}>
+        <Breadcrumbs.Item component={plainCrumb("Views")} />
+        <Breadcrumbs.Item component={plainCrumb("Work items", true)} />
+      </Breadcrumbs>
+    );
+
+    const trail = screen.getByRole("navigation", { name: TRAIL_LABEL });
+    // The collapsed crumb is not reachable, and the current crumb is the only item left, with no separator before it.
+    expect(within(trail).queryByRole("button")).toBeNull();
+    expect(within(trail).getAllByRole("listitem")).toHaveLength(1);
+    expect(within(trail).getByText("Work items")).toBeTruthy();
+    expect(within(trail).queryByText("Views")).toBeNull();
+  });
+
   it("names and routes a `BreadcrumbNavigationSelect` crumb from its selected row", async () => {
     const user = userEvent.setup();
     const handleOnClick = vi.fn();
