@@ -113,6 +113,15 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         str: JSON string containing title and base64-encoded favicon
     """
     try:
+        parsed = urlparse(url)
+        if parsed.scheme.lower() not in ("http", "https"):
+            return {
+                "title": None,
+                "favicon": f"data:image/svg+xml;base64,{DEFAULT_FAVICON}",
+                "url": url,
+                "favicon_url": None,
+            }
+
         # Set up headers to mimic a real browser
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"  # noqa: E501
