@@ -41,6 +41,7 @@ from plane.db.models import (
     WorkspaceMember,
 )
 from plane.db.models.intake import IntakeIssueStatus
+from plane.utils.cache import invalidate_cache_directly
 from plane.utils.host import base_host
 from plane.utils.order_queryset import PROJECT_ORDER_BY_ALLOWLIST, sanitize_order_by
 
@@ -356,6 +357,15 @@ class ProjectViewSet(BaseViewSet):
 
         if serializer.is_valid():
             serializer.save()
+            # The workspace estimates list only includes estimates enabled on a project
+            if "estimate" in request.data:
+                invalidate_cache_directly(
+                    path="/api/workspaces/:slug/estimates/",
+                    url_params=True,
+                    user=False,
+                    request=request,
+                    multiple=True,
+                )
             if intake_view:
                 intake = Intake.objects.filter(project=project, is_default=True).first()
                 if not intake:

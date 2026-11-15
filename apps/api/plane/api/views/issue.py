@@ -90,6 +90,7 @@ from plane.utils.order_queryset import (
 )
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
+from plane.utils.cache import invalidate_cache
 from plane.utils.host import base_host
 from plane.utils.serializers import writable_data
 from plane.utils.issue_relation_mapper import get_actual_relation
@@ -992,6 +993,9 @@ class LabelListCreateAPIEndpoint(BaseAPIView):
             409: LABEL_NAME_EXISTS_RESPONSE,
         },
     )
+    @invalidate_cache(
+        path="/api/workspaces/:slug/labels/", url_params=True, user=False, multiple=True, after_write=True
+    )
     def post(self, request, slug, project_id):
         """Create label
 
@@ -1130,6 +1134,9 @@ class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
             409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
+    @invalidate_cache(
+        path="/api/workspaces/:slug/labels/", url_params=True, user=False, multiple=True, after_write=True
+    )
     def patch(self, request, slug, project_id, pk):
         """Update label
 
@@ -1174,6 +1181,9 @@ class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
             204: DELETED_RESPONSE,
             404: LABEL_NOT_FOUND_RESPONSE,
         },
+    )
+    @invalidate_cache(
+        path="/api/workspaces/:slug/labels/", url_params=True, user=False, multiple=True, after_write=True
     )
     def delete(self, request, slug, project_id, pk):
         """Delete label
