@@ -235,7 +235,7 @@ llm_config_variables = [
     # Deprecated, use LLM_MODEL
     {
         "key": "GPT_ENGINE",
-        "value": os.environ.get("GPT_ENGINE", "gpt-4o-mini"),
+        "value": os.environ.get("GPT_ENGINE"),
         "category": "AI",
         "is_encrypted": False,
     },
