@@ -52,7 +52,7 @@ from plane.db.models import (
 from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
-from plane.utils.url_security import pinned_fetch
+from plane.utils.url_security import pinned_fetch, read_capped_body
 
 
 SERIALIZER_MAPPER = {
@@ -81,6 +81,10 @@ MODEL_MAPPER = {
 
 
 logger = logging.getLogger("plane.worker")
+
+# Limits on how much of a webhook response is read and stored in the webhook log
+MAX_WEBHOOK_RESPONSE_BYTES = 10 * 1024
+MAX_WEBHOOK_RESPONSE_SECONDS = 30
 
 
 def get_issue_prefetches():
@@ -322,7 +326,11 @@ def webhook_send_task(
             headers=headers,
             json=payload,
             timeout=30,
+            stream=True,
         )
+        # Only the start of the response body is kept for the webhook log
+        body, truncated = read_capped_body(response, MAX_WEBHOOK_RESPONSE_BYTES, MAX_WEBHOOK_RESPONSE_SECONDS)
+        response_body = body.decode("utf-8", errors="replace") + ("... [truncated]" if truncated else "")
 
         # Log the webhook request
         save_webhook_log(
@@ -332,7 +340,7 @@ def webhook_send_task(
             request_body=payload,
             response_status=response.status_code,
             response_headers=response.headers,
-            response_body=response.text,
+            response_body=response_body,
             retry_count=self.request.retries,
             event_type=event,
         )
