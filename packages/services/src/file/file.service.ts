@@ -49,6 +49,7 @@ export class FileService extends APIService {
    */
   async deleteOldEditorAsset(workspaceId: string, src: string): Promise<any> {
     const assetKey = getAssetIdFromUrl(src);
+    if (!assetKey) return;
     return this.delete(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/`)
       .then((response) => response?.status)
       .catch((error) => {
@@ -65,6 +66,7 @@ export class FileService extends APIService {
    */
   async restoreOldEditorAsset(workspaceId: string, src: string): Promise<void> {
     const assetKey = getAssetIdFromUrl(src);
+    if (!assetKey) return;
     return this.post(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/restore/`)
       .then((response) => response?.data)
       .catch((error) => {

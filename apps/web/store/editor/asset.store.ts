@@ -10,6 +10,7 @@ import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // plane types
 import type { EFileAssetType, TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
+import { isValidAssetId } from "@plane/utils";
 // services
 import { FileService } from "@/services/file.service";
 import type { TAttachmentUploadStatus } from "../issue/issue-details/attachment.store";
@@ -138,6 +139,8 @@ export class EditorAssetStore implements IEditorAssetStore {
   };
   duplicateEditorAsset: IEditorAssetStore["duplicateEditorAsset"] = async (args) => {
     const { assetId, entityId, entityType, projectId, workspaceSlug } = args;
+    // the asset id is read from an editor node, which is stored document content
+    if (!isValidAssetId(assetId)) throw new Error("Invalid asset id");
     const { asset_id } = await this.fileService.duplicateAsset(workspaceSlug, assetId, {
       entity_id: entityId,
       entity_type: entityType,
