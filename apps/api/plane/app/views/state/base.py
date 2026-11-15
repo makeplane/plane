@@ -53,8 +53,8 @@ class StateViewSet(BaseViewSet):
         # gets a real implementation rather than being left to fail closed.
         return super().retrieve(request, slug=slug, project_id=project_id, pk=pk)
 
-    @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
+    @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     def create(self, request, slug, project_id):
         try:
             serializer = StateSerializer(data=request.data)
@@ -114,8 +114,8 @@ class StateViewSet(BaseViewSet):
 
         return Response(states, status=status.HTTP_200_OK)
 
-    @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
+    @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     def mark_as_default(self, request, slug, project_id, pk):
         state = self.get_queryset().get(pk=pk)
         # One UPDATE, so concurrent calls can't leave the project with zero or two defaults
@@ -124,8 +124,8 @@ class StateViewSet(BaseViewSet):
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
+    @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     def destroy(self, request, slug, project_id, pk):
         state = State.objects.get(is_triage=False, pk=pk, project_id=project_id, workspace__slug=slug)
 
