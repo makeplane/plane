@@ -167,9 +167,9 @@ There are many other settings you can play with. We suggest you also set up emai
 
 Some endpoints are rate-limited per client IP. Two settings in `plane.env` control how that IP is determined:
 
-- **Plane directly on the internet behind the bundled proxy:** set `TRUSTED_PROXIES=private_ranges` (or your load balancer's ranges) and `NUM_PROXIES=1`.
-- **Behind an additional load balancer or CDN:** add its ranges to `TRUSTED_PROXIES` (space-separated, e.g. `TRUSTED_PROXIES=private_ranges 203.0.113.0/24`) and raise `NUM_PROXIES` by one per extra hop (e.g. `NUM_PROXIES=2`).
-- **Leaving `NUM_PROXIES` empty and `TRUSTED_PROXIES` at its default (`0.0.0.0/0`)** keeps the current behaviour.
+- **Plane directly on the internet behind the bundled proxy:** the default `TRUSTED_PROXIES=private_ranges` is correct. The proxy replaces any `X-Forwarded-For` a client sends with the client's real IP. Optionally set `NUM_PROXIES=1`.
+- **Behind an additional load balancer or CDN:** if it connects from a public address, add its ranges to `TRUSTED_PROXIES` (space-separated, e.g. `TRUSTED_PROXIES=private_ranges 203.0.113.0/24`), otherwise every user is seen as the load balancer and shares one rate-limit bucket. Raise `NUM_PROXIES` by one per extra hop (e.g. `NUM_PROXIES=2`).
+- **Do not set `TRUSTED_PROXIES=0.0.0.0/0`.** The proxy would then pass on whatever `X-Forwarded-For` a client sends, and anyone could forge their IP to bypass the sign-in rate limit.
 
 Restart the services after changing these values.
 
