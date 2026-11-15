@@ -205,6 +205,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
   },
   issues: {
     filters: [
+      "name",
       "priority",
       "state_group",
       "state_id",
