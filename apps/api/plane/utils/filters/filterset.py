@@ -183,6 +183,8 @@ class IssueFilterSet(BaseFilterSet):
     created_at = filters.DateFilter(field_name="created_at", lookup_expr="date")
     created_at__exact = filters.DateFilter(field_name="created_at", lookup_expr="date")
     created_at__range = DateCSVRangeFilter(field_name="created_at", lookup_expr="date__range")
+    created_at__gte = filters.DateFilter(field_name="created_at", lookup_expr="date__gte")
+    created_at__lte = filters.DateFilter(field_name="created_at", lookup_expr="date__lte")
 
     updated_at = filters.DateFilter(field_name="updated_at", lookup_expr="date")
     updated_at__exact = filters.DateFilter(field_name="updated_at", lookup_expr="date")

@@ -44,27 +44,43 @@ from plane.db.models import (
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import VIEW_ORDER_BY_ALLOWLIST, order_issue_queryset, sanitize_order_by
 from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.utils.exception_logger import log_exception
 from .. import BaseViewSet
 from plane.db.models import UserFavorite
 from plane.utils.filters import ComplexFilterBackend
 from plane.utils.filters import IssueFilterSet
 
 
+def _is_owner_unlock_request(issue_view, request):
+    """Allow only the owner to submit a standalone boolean unlock."""
+    return (
+        issue_view.owned_by_id == request.user.id
+        and hasattr(request.data, "keys")
+        and set(request.data.keys()) == {"is_locked"}
+        and request.data.get("is_locked") is False
+    )
+
+
 class WorkspaceViewViewSet(BaseViewSet):
+    """Manage workspace-level saved views."""
+
     serializer_class = IssueViewSerializer
     model = IssueView
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def create(self, request, slug):
+        """Create a workspace-level saved view."""
         # Creating a workspace view requires active workspace membership, with
         # the same roles as list(). perform_create is a save hook, not a check.
         return super().create(request, slug=slug)
 
     def perform_create(self, serializer):
+        """Assign the workspace and owner to a new saved view."""
         workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
         serializer.save(workspace_id=workspace.id, owned_by=self.request.user)
 
     def get_queryset(self):
+        """Return the current user's saved-view records in this workspace."""
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -83,6 +99,7 @@ class WorkspaceViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
+        """List the saved views visible to the requesting workspace member."""
         queryset = self.get_queryset()
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         if WorkspaceMember.objects.filter(workspace__slug=slug, member=request.user, role=5, is_active=True).exists():
@@ -90,13 +107,30 @@ class WorkspaceViewViewSet(BaseViewSet):
         views = IssueViewSerializer(queryset, many=True, fields=fields if fields else None).data
         return Response(views, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[], level="WORKSPACE", creator=True, model=IssueView)
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
+        level="WORKSPACE",
+        creator=True,
+        model=IssueView,
+    )
     def partial_update(self, request, slug, pk):
+        """Update a workspace view owned by the requester."""
         with transaction.atomic():
-            workspace_view = IssueView.objects.select_for_update().get(pk=pk, workspace__slug=slug)
+            workspace_view = IssueView.objects.select_for_update(of=("self",)).filter(
+                pk=pk, workspace__slug=slug, project__isnull=True
+            ).first()
+            if workspace_view is None:
+                return Response(
+                    {"error": "The required object does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
             if workspace_view.is_locked:
-                return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
+                if not _is_owner_unlock_request(workspace_view, request):
+                    return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
+                workspace_view.is_locked = False
+                workspace_view.save(update_fields=["is_locked", "updated_at", "updated_by"])
+                return Response(IssueViewSerializer(workspace_view).data, status=status.HTTP_200_OK)
 
             # Only update the view if owner is updating
             if workspace_view.owned_by_id != request.user.id:
@@ -114,6 +148,7 @@ class WorkspaceViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def retrieve(self, request, slug, pk):
+        """Retrieve a workspace view and record the recent visit."""
         # Requires workspace membership, matching list() above.
         issue_view = self.get_queryset().filter(pk=pk).first()
 
@@ -137,40 +172,62 @@ class WorkspaceViewViewSet(BaseViewSet):
             )
 
         serializer = IssueViewSerializer(issue_view)
-        recent_visited_task.delay(
-            slug=slug,
-            project_id=None,
-            entity_name="view",
-            entity_identifier=pk,
-            user_id=request.user.id,
-        )
+        try:
+            recent_visited_task.delay(
+                slug=slug,
+                project_id=None,
+                entity_name="view",
+                entity_identifier=pk,
+                user_id=request.user.id,
+            )
+        except Exception as exc:
+            log_exception(exc)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE", creator=True, model=IssueView)
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
+        level="WORKSPACE",
+        creator=True,
+        model=IssueView,
+    )
     def destroy(self, request, slug, pk):
-        workspace_view = IssueView.objects.get(pk=pk, workspace__slug=slug)
+        """Delete a workspace view and its metadata atomically."""
+        with transaction.atomic():
+            workspace_view = IssueView.objects.select_for_update(of=("self",)).get(
+                pk=pk, workspace__slug=slug, project__isnull=True
+            )
 
-        workspace_member = WorkspaceMember.objects.filter(
-            workspace__slug=slug, member=request.user, role=20, is_active=True
-        )
-        if workspace_member.exists() or workspace_view.owned_by == request.user:
-            workspace_view.delete()
-            # Delete the user favorite view
+            workspace_member = WorkspaceMember.objects.filter(
+                workspace__slug=slug, member=request.user, role=20, is_active=True
+            )
+            if not (workspace_member.exists() or workspace_view.owned_by_id == request.user.id):
+                return Response(
+                    {"error": "Only admin or owner can delete the view"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Keep deletion and metadata cleanup in the same transaction and use
+            # the lock shared with recent_visited_task.
             UserFavorite.objects.filter(
                 workspace__slug=slug,
                 entity_identifier=pk,
                 project__isnull=True,
                 entity_type="view",
             ).delete()
-        else:
-            return Response(
-                {"error": "Only admin or owner can delete the view"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            UserRecentVisit.objects.filter(
+                workspace__slug=slug,
+                entity_identifier=pk,
+                project__isnull=True,
+                entity_name="view",
+            ).delete(soft=False)
+            workspace_view.delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
+    """List issues using a workspace saved view's filter configuration."""
+
     filter_backends = (ComplexFilterBackend,)
     filterset_class = IssueFilterSet
 
@@ -197,6 +254,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         )
 
     def apply_annotations(self, issues):
+        """Add issue counts and prefetched relations to the queryset."""
         return (
             issues.annotate(
                 cycle_id=Subquery(
@@ -245,11 +303,13 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
+        """Return issues scoped to the requested workspace."""
         return Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug"))
 
     @method_decorator(gzip_page)
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
+        """List issues visible through the saved workspace view."""
         issue_queryset = self.get_queryset()
 
         # Apply filtering from filterset
@@ -289,20 +349,31 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
 
 class IssueViewViewSet(BaseViewSet):
+    """Manage project-level saved views."""
+
     serializer_class = IssueViewSerializer
     model = IssueView
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id):
-        # Creating a project view requires active project membership, with the
-        # same roles as list()/retrieve(). perform_create is a save hook, not a
-        # check.
-        return super().create(request, slug=slug, project_id=project_id)
+        """Create a project-level saved view only while the parent project is active."""
+        with transaction.atomic():
+            project = Project.objects.select_for_update(no_key=True, of=("self",)).filter(
+                pk=project_id, workspace__slug=slug
+            ).first()
+            if project is None or project.archived_at is not None:
+                return Response(
+                    {"error": "The required object does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            return super().create(request, slug=slug, project_id=project_id)
 
     def perform_create(self, serializer):
+        """Assign the project and owner to a new saved view."""
         serializer.save(project_id=self.kwargs.get("project_id"), owned_by=self.request.user)
 
     def get_queryset(self):
+        """Return saved views accessible in the requested project."""
         subquery = UserFavorite.objects.filter(
             user=self.request.user,
             entity_identifier=OuterRef("pk"),
@@ -330,6 +401,7 @@ class IssueViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
+        """List the saved views available in the project."""
         queryset = self.get_queryset()
         project = Project.objects.get(id=project_id)
         if (
@@ -349,12 +421,14 @@ class IssueViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def retrieve(self, request, slug, project_id, pk):
+        """Retrieve a project view and record the recent visit."""
         issue_view = self.get_queryset().filter(pk=pk, project_id=project_id).first()
+        if issue_view is None:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         project = Project.objects.get(id=project_id)
-        """
-        if the role is guest and guest_view_all_features is false and owned by is not 
-        the requesting user then dont show the view
-        """
 
         if (
             ProjectMember.objects.filter(
@@ -373,24 +447,54 @@ class IssueViewViewSet(BaseViewSet):
             )
 
         serializer = IssueViewSerializer(issue_view)
-        recent_visited_task.delay(
-            slug=slug,
-            project_id=project_id,
-            entity_name="view",
-            entity_identifier=pk,
-            user_id=request.user.id,
-        )
+        try:
+            recent_visited_task.delay(
+                slug=slug,
+                project_id=project_id,
+                entity_name="view",
+                entity_identifier=pk,
+                user_id=request.user.id,
+            )
+        except Exception as exc:
+            log_exception(exc)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[], creator=True, model=IssueView)
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
+        creator=True,
+        model=IssueView,
+    )
     def partial_update(self, request, slug, project_id, pk):
+        """Update an active-project view owned by the requester."""
         with transaction.atomic():
-            issue_view = IssueView.objects.select_for_update().get(pk=pk, workspace__slug=slug, project_id=project_id)
+            project = Project.objects.select_for_update(no_key=True, of=("self",)).filter(
+                pk=project_id, workspace__slug=slug
+            ).first()
+            if project is None or project.archived_at is not None:
+                return Response(
+                    {"error": "The required object does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            issue_view = IssueView.objects.select_for_update(of=("self",)).filter(
+                pk=pk,
+                workspace__slug=slug,
+                project_id=project_id,
+                project__archived_at__isnull=True,
+            ).first()
+            if issue_view is None:
+                return Response(
+                    {"error": "The required object does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
             if issue_view.is_locked:
-                return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
+                if not _is_owner_unlock_request(issue_view, request):
+                    return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
+                issue_view.is_locked = False
+                issue_view.save(update_fields=["is_locked", "updated_at", "updated_by"])
+                return Response(IssueViewSerializer(issue_view).data, status=status.HTTP_200_OK)
 
-            # Only update the view if owner is updating
             if issue_view.owned_by_id != request.user.id:
                 return Response(
                     {"error": "Only the owner of the view can update the view"},
@@ -398,52 +502,77 @@ class IssueViewViewSet(BaseViewSet):
                 )
 
             serializer = IssueViewSerializer(issue_view, data=request.data, partial=True)
-
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView)
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
+        creator=True,
+        model=IssueView,
+    )
     def destroy(self, request, slug, project_id, pk):
-        project_view = IssueView.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
-        if (
-            ProjectMember.objects.filter(
+        """Delete a project view only while its parent project is active."""
+        with transaction.atomic():
+            project = Project.objects.select_for_update(no_key=True, of=("self",)).filter(
+                pk=project_id, workspace__slug=slug
+            ).first()
+            if project is None or project.archived_at is not None:
+                return Response(
+                    {"error": "The required object does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            project_view = IssueView.objects.select_for_update(of=("self",)).filter(
+                pk=pk,
+                project_id=project_id,
+                workspace__slug=slug,
+                project__archived_at__isnull=True,
+            ).first()
+            if project_view is None:
+                return Response(
+                    {"error": "The required object does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            is_admin = ProjectMember.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 member=request.user,
-                role=20,
+                role=ROLE.ADMIN.value,
                 is_active=True,
             ).exists()
-            or project_view.owned_by_id == request.user.id
-        ):
-            project_view.delete()
-            # Delete the user favorite view
+            if not (is_admin or project_view.owned_by_id == request.user.id):
+                return Response(
+                    {"error": "Only admin or owner can delete the view"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             UserFavorite.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
                 entity_identifier=pk,
                 entity_type="view",
             ).delete()
-            # Delete the page from recent visit
             UserRecentVisit.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
                 entity_identifier=pk,
                 entity_name="view",
             ).delete(soft=False)
-        else:
-            return Response(
-                {"error": "Only admin or owner can delete the view"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            project_view.delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IssueViewFavoriteViewSet(BaseViewSet):
+    """Create and remove favorites for project saved views."""
+
     model = UserFavorite
 
     def get_queryset(self):
+        """Return the current user's saved-view records in this workspace."""
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -454,20 +583,23 @@ class IssueViewFavoriteViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
-        # 404 unless the view is in this project and visible to the user
-        get_favorite_entities("view", request.user.id, project_id).get(
-            pk=request.data.get("view"), workspace__slug=slug
-        )
-        _ = UserFavorite.objects.create(
-            user=request.user,
-            entity_identifier=request.data.get("view"),
-            entity_type="view",
-            project_id=project_id,
-        )
+        """Create a saved-view favorite while synchronizing with view deletion."""
+        # Serialize favorite creation with view deletion, which locks the same row.
+        with transaction.atomic():
+            get_favorite_entities("view", request.user.id, project_id).select_for_update().get(
+                pk=request.data.get("view"), workspace__slug=slug
+            )
+            UserFavorite.objects.create(
+                user=request.user,
+                entity_identifier=request.data.get("view"),
+                entity_type="view",
+                project_id=project_id,
+            )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, view_id):
+        """Remove the current user's favorite for a project saved view."""
         view_favorite = UserFavorite.objects.get(
             project=project_id,
             user=request.user,

@@ -175,6 +175,8 @@ from .decorators import (
     state_docs,
     estimate_docs,
     estimate_point_docs,
+    view_docs,
+    workspace_view_docs,
 )
 
 # Schema processing hooks
@@ -335,6 +337,8 @@ __all__ = [
     "state_docs",
     "estimate_docs",
     "estimate_point_docs",
+    "view_docs",
+    "workspace_view_docs",
     # Hooks
     "preprocess_filter_api_v1_paths",
     "generate_operation_summary",

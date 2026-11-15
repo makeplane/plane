@@ -23,6 +23,7 @@ import { copyUrlToClipboard } from "@plane/utils";
 import { useViewMenuItems } from "@/components/common/quick-actions-helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useProjectView } from "@/hooks/store/use-project-view";
 import { useViewPublish } from "@/components/views/publish";
 // local imports
 import { DeleteProjectViewModal } from "./delete-view-modal";
@@ -51,6 +52,7 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
   // store hooks
   const { data } = useUser();
   const { allowPermissions } = useUserPermissions();
+  const { updateView } = useProjectView();
   // auth
   const isOwner = view?.owned_by === data?.id;
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
@@ -76,6 +78,22 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
     projectId,
     view,
     handleEdit: () => setCreateUpdateViewModal(true),
+    handleUnlock: async () => {
+      try {
+        await updateView(workspaceSlug, projectId, view.id, { is_locked: false });
+        setToast({
+          type: "success",
+          title: "Success!",
+          message: "View unlocked.",
+        });
+      } catch (_error) {
+        setToast({
+          type: "error",
+          title: "Error!",
+          message: "Could not unlock this view. Please try again.",
+        });
+      }
+    },
     handleDelete: () => setDeleteViewModal(true),
     handleCopyLink: handleCopyText,
     handleOpenInNewTab,
