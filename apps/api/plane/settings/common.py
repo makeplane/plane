@@ -186,15 +186,36 @@ TEMPLATES = [
 ]
 
 
+def _cors_settings(cors_allowed_origins, base_urls):
+    """
+    Returns (CORS_ALLOWED_ORIGINS, CORS_ALLOW_ALL_ORIGINS, CORS_ALLOW_CREDENTIALS).
+
+    The configured CORS origins are used as they are. Without any, the allowed
+    origins are those of the instance's own base URLs that are set and valid.
+    Only when there are none of those either is every origin allowed, and then
+    without credentials.
+    """
+    origins = list(cors_allowed_origins)
+    if not origins:
+        for base_url in base_urls:
+            try:
+                parsed_url = urlparse((base_url or "").strip())
+            except ValueError:
+                continue
+            origin = f"{parsed_url.scheme}://{parsed_url.netloc}".lower()
+            if parsed_url.scheme and parsed_url.netloc and origin not in origins:
+                origins.append(origin)
+    return origins, not origins, bool(origins)
+
+
 # CORS Settings
-CORS_ALLOW_CREDENTIALS = True
 cors_origins_raw = os.environ.get("CORS_ALLOWED_ORIGINS", "")
 # filter out empty strings
 cors_allowed_origins = [origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()]
-if cors_allowed_origins:
-    CORS_ALLOWED_ORIGINS = cors_allowed_origins
-else:
-    CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS, CORS_ALLOW_ALL_ORIGINS, CORS_ALLOW_CREDENTIALS = _cors_settings(
+    cors_allowed_origins,
+    [os.environ.get(name) for name in ("WEB_URL", "APP_BASE_URL", "ADMIN_BASE_URL", "SPACE_BASE_URL", "LIVE_BASE_URL")],
+)
 
 CORS_ALLOW_HEADERS = [*default_headers, "X-API-Key"]
 
