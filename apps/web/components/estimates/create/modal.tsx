@@ -137,7 +137,12 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
             delete newError[currentKey];
           } else {
             newError[currentKey].message =
-              newError[currentKey].message || t("project_settings.estimates.validation.remove_empty");
+              newError[currentKey].message ||
+              t(
+                newError[currentKey].newValue
+                  ? "project_settings.estimates.validation.unsaved_changes"
+                  : "project_settings.estimates.validation.remove_empty"
+              );
           }
         });
         return newError;
