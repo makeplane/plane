@@ -56,7 +56,17 @@ class PageSerializer(BaseSerializer):
             "label_ids",
             "project_ids",
         ]
-        read_only_fields = ["workspace", "owned_by"]
+        # is_locked and archived_at only change through the lock and archive endpoints
+        read_only_fields = [
+            "workspace",
+            "owned_by",
+            "is_locked",
+            "archived_at",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
 
     def create(self, validated_data):
         labels = validated_data.pop("labels", None)
