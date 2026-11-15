@@ -4,15 +4,16 @@
  * See the LICENSE file for details.
  */
 
-import { getAttributes } from "@tiptap/core";
 import type { MarkType } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
+// local imports
+import { isDangerousHref } from "../extension";
 
 type ClickHandlerOptions = {
   type: MarkType;
 };
 
-export function clickHandler(options: ClickHandlerOptions): Plugin {
+export function clickHandler(_options: ClickHandlerOptions): Plugin {
   return new Plugin({
     key: new PluginKey("handleClickLink"),
     props: {
@@ -21,36 +22,29 @@ export function clickHandler(options: ClickHandlerOptions): Plugin {
           return false;
         }
 
-        let a = event.target as HTMLElement;
-        const els: HTMLElement[] = [];
+        // the click can land on an element inside the anchor, so resolve the anchor itself
+        const link = (event.target as Element | null)?.closest("a");
 
-        while (a?.nodeName !== "DIV") {
-          els.push(a);
-          a = a?.parentNode as HTMLElement;
-        }
-
-        if (!els.find((value) => value.nodeName === "A")) {
+        if (!link || !view.dom.contains(link)) {
           return false;
         }
 
-        const attrs = getAttributes(view.state, options.type.name);
-        const link = event.target as HTMLLinkElement;
+        // only the clicked anchor's browser-resolved URL is opened, never the mark attribute from the editor state
+        const href = link.href;
 
-        const href = link?.href ?? attrs.href;
-        const target = link?.target ?? attrs.target;
-
-        if (link && href) {
+        if (href) {
           // Defence-in-depth: link.href is the browser-resolved URL (whitespace
           // already stripped by the browser's WHATWG URL parser), so a protocol
           // check here is sufficient to catch any dangerous URI that slipped past
           // the editor's parse/render-time guards. Matches the blocked-scheme list
           // in isValidHttpUrl (javascript:, data:, vbscript:, file:, about:)
           // to keep the policy consistent (GHSA-v2vv-7wq3-8w2j).
-          if (/^(javascript|data|vbscript|file|about):/i.test(href)) {
+          if (isDangerousHref(href) || /^(file|about):/i.test(href)) {
             return false;
           }
 
-          window.open(href, target);
+          // the target attribute is stored content: only _self is honoured, anything else opens a new tab
+          window.open(href, link.target === "_self" ? "_self" : "_blank", "noopener,noreferrer");
 
           return true;
         }
