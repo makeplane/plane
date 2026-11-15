@@ -85,8 +85,10 @@ def convert_to_utc(date, project_id, is_start_date=False):
 
         return utc_datetime
     else:
-        # the cycle end date is the last minute of the day
-        localized_datetime += timedelta(hours=23, minutes=59, seconds=0)
+        # the cycle end date is the last minute of the day. Localize 23:59 itself:
+        # adding 23h59m to midnight lands on another wall-clock time on the 23 and
+        # 25 hour days of a daylight saving transition
+        localized_datetime = local_tz.localize(datetime.combine(start_date, time(23, 59)))
 
         # Convert the localized datetime to UTC
         utc_datetime = localized_datetime.astimezone(pytz.utc)
