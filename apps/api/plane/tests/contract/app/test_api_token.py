@@ -332,6 +332,21 @@ class TestApiTokenEndpoint:
         assert create_api_token_for_user.token == original_token
 
     @pytest.mark.django_db
+    def test_patch_response_excludes_token(self, session_client, create_user, create_api_token_for_user):
+        """The token value is only returned at creation, never on update"""
+        # Arrange
+        session_client.force_authenticate(user=create_user)
+        url = reverse("api-tokens-details", kwargs={"pk": create_api_token_for_user.pk})
+
+        # Act
+        response = session_client.patch(url, {"label": "Renamed"}, format="json")
+
+        # Assert
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["label"] == "Renamed"
+        assert "token" not in response.data
+
+    @pytest.mark.django_db
     def test_patch_cannot_modify_user_type(self, session_client, create_user, create_api_token_for_user):
         """Test that user_type cannot be modified via PATCH"""
         # Arrange
