@@ -8,7 +8,7 @@
 import { MAX_FILE_SIZE } from "@plane/constants";
 import type { TFileHandler } from "@plane/editor";
 import { SitesFileService } from "@plane/services";
-import { getFileURL } from "@plane/utils";
+import { getFileURL, isEditorV2AssetUrl } from "@plane/utils";
 // services
 const sitesFileService = new SitesFileService();
 
@@ -58,7 +58,7 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
     },
     cancel: sitesFileService.cancelUpload,
     restore: async (src: string) => {
-      if (src?.startsWith("http")) {
+      if (src?.startsWith("http") && !isEditorV2AssetUrl(src)) {
         await sitesFileService.restoreOldEditorAsset(workspaceId, src);
       } else {
         await sitesFileService.restoreNewAsset(anchor, src);
