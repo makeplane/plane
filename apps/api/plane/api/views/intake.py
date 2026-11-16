@@ -355,6 +355,19 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Only the work item's creator, a project admin or a workspace admin can update it
+        if not (
+            project_member.role == 20
+            or Issue.objects.filter(pk=issue_id, project_id=project_id, created_by=request.user).exists()
+            or WorkspaceMember.objects.filter(
+                workspace__slug=slug, member=request.user, role=20, is_active=True
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or creator can update the work item"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         # Get issue data
         issue_data = request.data.pop("issue", False)
         issue_serializer = None
