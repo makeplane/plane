@@ -64,7 +64,6 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     env:
-      BUILD_TYPE: full
       AIO_BASE_TAG: ${{ needs.branch_build_setup.outputs.aio_base_tag }}
       AIO_IMAGE_TAGS: makeplane/plane-aio-feature:${{ needs.branch_build_setup.outputs.flat_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
@@ -88,17 +87,23 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v6
 
+      # The community Dockerfile COPYs dist/Caddyfile and dist/plane.env, which
+      # build.sh generates. AIO_BASE_TAG comes from a workflow input, so read it
+      # from the job env rather than interpolating it into the script.
+      - name: Prepare AIO Assets
+        working-directory: ./deployments/aio/community
+        run: bash ./build.sh --release "$AIO_BASE_TAG"
+
       - name: Build and Push to Docker Hub
         uses: docker/build-push-action@v7.0.0
         with:
-          context: .
-          file: ./aio/Dockerfile-app
+          context: ./deployments/aio/community
+          file: ./deployments/aio/community/Dockerfile
           platforms: ${{ env.BUILDX_PLATFORMS }}
           tags: ${{ env.AIO_IMAGE_TAGS }}
           push: true
-          build-args: 
-            BUILD_TAG=${{ env.AIO_BASE_TAG }}
-            BUILD_TYPE=${{env.BUILD_TYPE}}
+          build-args: |
+            PLANE_VERSION=${{ env.AIO_BASE_TAG }}
           # cache-from: type=gha
           # cache-to: type=gha,mode=max
         env:
