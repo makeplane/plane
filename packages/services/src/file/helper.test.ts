@@ -18,4 +18,18 @@ describe("getAssetIdFromUrl", () => {
   ])("extracts asset id from %j", (input, expected) => {
     expect(getAssetIdFromUrl(input)).toBe(expected);
   });
+
+  // the key is placed in an API path, so it must always be a single, plain path segment
+  it.each([
+    ["https://cdn.plane.so/ws-id/..", ""],
+    ["https://cdn.plane.so/ws-id/%2e%2e/", ""],
+    ["https://cdn.plane.so/ws-id/a%2Fb", ""],
+    ["https://cdn.plane.so/ws-id/a%5cb", ""],
+    ["https://cdn.plane.so/ws-id/a\\b", "b"],
+    ["https://cdn.plane.so/ws-id/a\tb.png", "ab.png"],
+    ["custom://cdn.plane.so/ws-id/a\\b", ""],
+    ["https://", ""],
+  ])("keeps the key of %j to a single path segment", (input, expected) => {
+    expect(getAssetIdFromUrl(input)).toBe(expected);
+  });
 });

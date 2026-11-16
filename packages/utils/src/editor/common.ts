@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { validate as uuidValidate } from "uuid";
 // local imports
 import { getFileURL } from "../file";
 
@@ -14,16 +15,26 @@ type TEditorSrcArgs = {
 };
 
 /**
+ * @description an editor file node's `src` is stored document content, so it may be used
+ * in an API path only when it is a plain asset id
+ * @param {string} assetId
+ */
+export const isValidAssetId = (assetId: string): boolean => uuidValidate(assetId);
+
+/**
  * @description generate the file source using assetId
  * @param {TEditorSrcArgs} args
  */
 export const getEditorAssetSrc = (args: TEditorSrcArgs): string | undefined => {
   const { assetId, projectId, workspaceSlug } = args;
+  if (!isValidAssetId(assetId)) return undefined;
   let url: string | undefined = "";
   if (projectId) {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${assetId}/`);
+    url = getFileURL(
+      `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${encodeURIComponent(assetId)}/`
+    );
   } else {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/`);
+    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/${encodeURIComponent(assetId)}/`);
   }
   return url;
 };
@@ -34,11 +45,14 @@ export const getEditorAssetSrc = (args: TEditorSrcArgs): string | undefined => {
  */
 export const getEditorAssetDownloadSrc = (args: TEditorSrcArgs): string | undefined => {
   const { assetId, projectId, workspaceSlug } = args;
+  if (!isValidAssetId(assetId)) return undefined;
   let url: string | undefined = "";
   if (projectId) {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/download/${assetId}/`);
+    url = getFileURL(
+      `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/download/${encodeURIComponent(assetId)}/`
+    );
   } else {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/download/${assetId}/`);
+    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/download/${encodeURIComponent(assetId)}/`);
   }
   return url;
 };
