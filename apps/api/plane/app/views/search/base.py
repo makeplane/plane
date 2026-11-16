@@ -8,6 +8,7 @@ import re
 # Django imports
 from django.db import models
 from django.db.models import (
+    Exists,
     Q,
     OuterRef,
     Subquery,
@@ -338,6 +339,17 @@ class SearchEndpoint(BaseAPIView):
 
         response_data = {}
 
+        # Projects the caller may find: the ones they are an active member of plus, unless
+        # they are a workspace guest (as in the project list), the public ones
+        accessible_projects = Q(project_projectmember__member=request.user, project_projectmember__is_active=True) | (
+            Q(network=2)
+            & Exists(
+                WorkspaceMember.objects.filter(
+                    workspace__slug=slug, member=request.user, is_active=True, role__gt=ROLE.GUEST.value
+                )
+            )
+        )
+
         # Project-scoped search requires the caller to be an active member of the project
         if (
             project_id
@@ -411,7 +423,7 @@ class SearchEndpoint(BaseAPIView):
                     projects = (
                         Project.objects.filter(
                             q,
-                            Q(project_projectmember__member=self.request.user) | Q(network=2),
+                            accessible_projects,
                             workspace__slug=slug,
                         )
                         .order_by("-created_at")
@@ -624,7 +636,7 @@ class SearchEndpoint(BaseAPIView):
                     projects = (
                         Project.objects.filter(
                             q,
-                            Q(project_projectmember__member=self.request.user) | Q(network=2),
+                            accessible_projects,
                             workspace__slug=slug,
                         )
                         .order_by("-created_at")
