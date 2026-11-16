@@ -8,6 +8,8 @@ import { Mark, mergeAttributes } from "@tiptap/core";
 // constants
 import { COLORS_LIST } from "@/constants/common";
 import { CORE_EXTENSIONS } from "@/constants/extension";
+// helpers
+import { isValidCssColor } from "@/helpers/common";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -64,7 +66,7 @@ export const CustomColorExtension = Mark.create({
             "data-text-color": color,
           };
 
-          if (!COLORS_LIST.find((c) => c.key === color)) {
+          if (!COLORS_LIST.find((c) => c.key === color) && isValidCssColor(color)) {
             elementAttributes = {
               ...elementAttributes,
               style: `color: ${color}`,
@@ -87,7 +89,7 @@ export const CustomColorExtension = Mark.create({
             "data-background-color": backgroundColor,
           };
 
-          if (!COLORS_LIST.find((c) => c.key === backgroundColor)) {
+          if (!COLORS_LIST.find((c) => c.key === backgroundColor) && isValidCssColor(backgroundColor)) {
             elementAttributes = {
               ...elementAttributes,
               style: `background-color: ${backgroundColor}`,
