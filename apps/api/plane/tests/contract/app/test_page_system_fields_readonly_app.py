@@ -86,18 +86,22 @@ class TestPageSystemFieldsReadOnly:
         lock_url = _page_url(workspace.slug, project.id, page.id, "lock/")
         archive_url = _page_url(workspace.slug, project.id, page.id, "archive/")
 
-        assert session_client.post(lock_url).status_code == status.HTTP_204_NO_CONTENT
+        response = session_client.post(lock_url)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
         page.refresh_from_db()
         assert page.is_locked is True
 
-        assert session_client.delete(lock_url).status_code == status.HTTP_204_NO_CONTENT
+        response = session_client.delete(lock_url)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
         page.refresh_from_db()
         assert page.is_locked is False
 
-        assert session_client.post(archive_url).status_code == status.HTTP_200_OK
+        response = session_client.post(archive_url)
+        assert response.status_code == status.HTTP_200_OK
         page.refresh_from_db()
         assert page.archived_at is not None
 
-        assert session_client.delete(archive_url).status_code == status.HTTP_204_NO_CONTENT
+        response = session_client.delete(archive_url)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
         page.refresh_from_db()
         assert page.archived_at is None
