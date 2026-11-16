@@ -128,13 +128,25 @@ class ProjectAdminPermission(BasePermission):
         if request.user.is_anonymous:
             return False
 
-        return ProjectMember.objects.filter(
+        project_member_qs = ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
             member=request.user,
-            role=ROLE.ADMIN.value,
             project_id=view.project_id,
             is_active=True,
-        ).exists()
+        )
+        if project_member_qs.filter(role=ROLE.ADMIN.value).exists():
+            return True
+
+        # Same as allow_permission: a workspace admin who is a project member at any role counts as admin.
+        return (
+            project_member_qs.exists()
+            and WorkspaceMember.objects.filter(
+                member=request.user,
+                workspace__slug=view.workspace_slug,
+                role=ROLE.ADMIN.value,
+                is_active=True,
+            ).exists()
+        )
 
 
 class ProjectLitePermission(BasePermission):

@@ -6,8 +6,10 @@
     "status_page": "halaman status kami"
   },
   "submit": "Kirim",
+  "submitting": "Mengirim",
   "cancel": "Batal",
   "loading": "Memuat",
+  "searching": "Mencari...",
   "error": "Kesalahan",
   "success": "Sukses",
   "warning": "Peringatan",
@@ -152,6 +154,7 @@
   "no_favorites_yet": "Belum ada favorit",
   "create_folder": "Buat folder",
   "new_folder": "Folder baru",
+  "rename_folder": "Ubah nama folder",
   "favorite_updated_successfully": "Favorit berhasil diperbarui",
   "favorite_created_successfully": "Favorit berhasil dibuat",
   "folder_already_exists": "Folder sudah ada",
@@ -303,6 +306,9 @@
   "create_new_label": "Buat label baru",
   "label_name": "Nama label",
   "failed_to_create_label": "Gagal membuat label. Silakan coba lagi.",
+  "no_matching_labels": "Tidak ada label yang cocok",
+  "adding_label": "Menambahkan \"{name}\"",
+  "add_label_to_labels": "Tambahkan \"{name}\" ke label",
   "start_date": "Tanggal mulai",
   "end_date": "Tanggal akhir",
   "due_date": "Tanggal jatuh tempo",
@@ -364,6 +370,7 @@
   "member": "{count, plural, one{# anggota} other{# anggota}}",
   "new_password_must_be_different_from_old_password": "Kata sandi baru harus berbeda dari kata sandi lama",
   "edited": "disunting",
+  "entity_detail_toolbar": "Tindakan",
   "bot": "Bot",
   "settings_description": "Kelola akun, ruang kerja, dan preferensi proyek Anda di satu tempat. Beralih antar tab untuk mengonfigurasi dengan mudah.",
   "back_to_workspace": "Kembali ke ruang kerja",
@@ -522,6 +529,7 @@
       "updated_on": "Diperbarui pada"
     },
     "sort": {
+      "label": "Urutkan",
       "asc": "Menaik",
       "desc": "Menurun",
       "created_on": "Dibuat pada",
@@ -535,6 +543,7 @@
     "link_copied": "Tautan disalin!",
     "link_copied_to_clipboard": "Tautan disalin ke clipboard",
     "copied_to_clipboard": "Tautan item kerja disalin ke clipboard",
+    "clipboard_copy_failed": "Gagal menyalin ke clipboard",
     "branch_name_copied_to_clipboard": "Nama cabang disalin ke clipboard",
     "is_copied_to_clipboard": "Item kerja disalin ke clipboard",
     "no_links_added_yet": "Belum ada tautan yang ditambahkan",
@@ -619,7 +628,8 @@
       "enable": "Aktifkan",
       "disable": "Nonaktifkan",
       "copy_markdown": "Salin markdown",
-      "reply": "Balas"
+      "reply": "Balas",
+      "add_reaction": "Tambah reaksi"
     },
     "name": "Nama",
     "discard": "Buang",
@@ -717,7 +727,14 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "status": "Status",
+    "tooltip": {
+      "copy_to_clipboard": "Salin ke clipboard",
+      "created_on_date": "Dibuat pada {date}",
+      "priority": "Prioritas: {value}"
+    },
+    "locked": "Terkunci"
   },
   "chart": {
     "x_axis": "Sumbu-X",
@@ -866,6 +883,15 @@
       "title": "JSON",
       "description": "Ekspor item kerja ke file JSON.",
       "short_description": "Ekspor sebagai json"
+    }
+  },
+  "labels_count": "{count, plural, one {# label} other {# label}}",
+  "rich_filters": {
+    "view_controls": {
+      "save_options": "Opsi simpan tampilan",
+      "update_view": "Perbarui tampilan",
+      "save_as": "Simpan sebagai",
+      "hide_filters": "Sembunyikan filter"
     }
   }
 }

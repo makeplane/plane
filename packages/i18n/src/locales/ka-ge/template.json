@@ -1,0 +1,333 @@
+{
+  "templates": {
+    "settings": {
+      "title": "Templates",
+      "description": "Save 80% time spent on creating projects, work items, and pages when you use templates.",
+      "new_project_template": "New project template",
+      "new_work_item_template": "New work item template",
+      "new_page_template": "New page template",
+      "options": {
+        "project": {
+          "label": "Project templates"
+        },
+        "work_item": {
+          "label": "Work item templates"
+        },
+        "page": {
+          "label": "Page templates"
+        }
+      },
+      "create_template": {
+        "label": "Create template",
+        "no_permission": {
+          "project": "Contact your project admin to create templates",
+          "workspace": "Contact your workspace admin to create templates"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "Use template",
+          "loading": "Applying"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Derived from workspace"
+        },
+        "project": {
+          "info": "Derived from project"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Name your project template.",
+              "validation": {
+                "required": "Template name is required",
+                "maxLength": "Template name should be less than 255 characters"
+              }
+            },
+            "description": {
+              "placeholder": "Describe when and how to use this template."
+            }
+          },
+          "name": {
+            "placeholder": "Name your project.",
+            "validation": {
+              "required": "Project title is required",
+              "maxLength": "Project title should be less than 255 characters"
+            }
+          },
+          "description": {
+            "placeholder": "Describe the purpose and goals of this project."
+          },
+          "button": {
+            "create": "Create project template",
+            "update": "Update project template"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Name your work-item template.",
+              "validation": {
+                "required": "Template name is required",
+                "maxLength": "Template name should be less than 255 characters"
+              }
+            },
+            "description": {
+              "placeholder": "Describe when and how to use this template."
+            }
+          },
+          "name": {
+            "placeholder": "Give this work item a title.",
+            "validation": {
+              "required": "Work item title is required",
+              "maxLength": "Work item title should be less than 255 characters"
+            }
+          },
+          "description": {
+            "placeholder": "Describe this work item so its clear what you will accomplish when you complete this."
+          },
+          "button": {
+            "create": "Create work-item template",
+            "update": "Update work-item template"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Name your page template.",
+              "validation": {
+                "required": "Template name is required",
+                "maxLength": "Template name should be less than 255 characters"
+              }
+            },
+            "description": {
+              "placeholder": "Describe when and how to use this template."
+            }
+          },
+          "name": {
+            "placeholder": "Untitled page",
+            "validation": {
+              "maxLength": "Page name should be less than 255 characters"
+            }
+          },
+          "button": {
+            "create": "Create page template",
+            "update": "Update page template"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Publish settings} other {Publish to Marketplace}}",
+          "unpublish_action": "Unpublish from Marketplace",
+          "title": "Make your template discoverable and recognizable.",
+          "name": {
+            "label": "Name of template",
+            "placeholder": "Name your template",
+            "validation": {
+              "required": "Template name is required",
+              "maxLength": "Template name should be less than 255 characters"
+            }
+          },
+          "short_description": {
+            "label": "Short description",
+            "placeholder": "This template is great for Project Managers who manage several projects at the same time.",
+            "validation": {
+              "required": "Short description is required"
+            }
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Enhance productivity and streamline communication with our Speech-To-Text integration.\n• Real-time transcription: Convert spoken words into accurate text instantly.\n• Task and comment creation: Add tasks, descriptions, and comments through voice commands.",
+            "validation": {
+              "required": "Description is required"
+            }
+          },
+          "category": {
+            "label": "Category",
+            "placeholder": "Choose where you think this fits best. You can choose more than one.",
+            "validation": {
+              "required": "At least one category is required"
+            }
+          },
+          "keywords": {
+            "label": "Keywords",
+            "placeholder": "Use terms that you think your users will search for when looking for this template.",
+            "helperText": "Enter comma-separated keywords that are likely to help people find this from search.",
+            "validation": {
+              "required": "At least one keyword is required"
+            }
+          },
+          "website": {
+            "label": "Website URL",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "Invalid URL",
+              "maxLength": "URL should be less than 800 characters"
+            }
+          },
+          "company_name": {
+            "label": "Company name",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Company name is required",
+              "maxLength": "Company name should be less than 255 characters"
+            }
+          },
+          "contact_email": {
+            "label": "Contact email",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Invalid email address",
+              "maxLength": "Contact email should be less than 255 characters"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Link to your privacy policy",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "Invalid URL",
+              "maxLength": "URL should be less than 800 characters"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Link to your terms of use",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "Invalid URL",
+              "maxLength": "URL should be less than 800 characters"
+            }
+          },
+          "cover_image": {
+            "label": "Add a cover image that will be displayed in the marketplace",
+            "upload_title": "Upload cover image",
+            "upload_placeholder": "Click to upload or drag and drop to upload a cover image",
+            "drop_here": "Drop here",
+            "click_to_upload": "Click to upload",
+            "invalid_file_or_exceeds_size_limit": "Invalid file or exceeds size limit. Please try again.",
+            "upload_and_save": "Upload and save",
+            "uploading": "Uploading",
+            "remove": "Remove",
+            "removing": "Removing",
+            "validation": {
+              "required": "Cover image is required"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Include pictures you think will make viewers of this template.",
+            "validation": {
+              "required": "At least one screenshot is required"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Templates",
+        "description": "With project, work-item, and page templates in Plane, you don't have to create a project from scratch or set work item props manually.",
+        "sub_description": "Get 80% of your admin time back when you use Templates."
+      },
+      "no_templates": {
+        "button": "Create your first template"
+      },
+      "no_labels": {
+        "description": "No labels yet. Create labels to help organize and filter work items in you project."
+      },
+      "no_modules": {
+        "description": "No modules yet. Organize work into sub-projects with dedicated leads and assignees."
+      },
+      "no_work_items": {
+        "description": "No work items yet. Add one to structure your work better."
+      },
+      "no_sub_work_items": {
+        "description": "No sub-work items yet. Add one to structure your work better."
+      },
+      "page": {
+        "no_templates": {
+          "title": "There are no templates you have access to.",
+          "description": "Please create a template"
+        },
+        "no_results": {
+          "title": "That didn't match a template.",
+          "description": "Try searching by other terms."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Template created",
+          "message": "{templateName}, the {templateType} template, is now available for your workspace."
+        },
+        "error": {
+          "title": "We couldn't create that template this time.",
+          "message": "Try saving your details again or copy them over to a new template, preferably in another tab."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Template changed",
+          "message": "{templateName}, the {templateType} template, was changed."
+        },
+        "error": {
+          "title": "We couldn't save changes to this template.",
+          "message": "Try saving your details again or come back to this template later. If there's trouble still, reach out to us."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Template deleted",
+          "message": "{templateName}, the {templateType} template, has now been deleted from your workspace."
+        },
+        "error": {
+          "title": "We couldn't delete that template this.",
+          "message": "Try deleting it again or come back to it later. If you can't delete it then, reach out to us."
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Template unpublished",
+          "message": "{templateName}, the {templateType} template, has now been unpublished."
+        },
+        "error": {
+          "title": "We couldn't unpublish that template this.",
+          "message": "Try unpublishing it again or come back to it later. If you can't unpublish it then, reach out to us."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Delete template",
+      "description": {
+        "prefix": "Are you sure you want to delete template-",
+        "suffix": "? All of the data related to the template will be permanently removed. This action cannot be undone."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Unpublish template",
+      "description": {
+        "prefix": "Are you sure you want to unpublish template-",
+        "suffix": "? This template will no longer be available to users on the marketplace."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Add new template",
+        "project": "Add new template"
+      },
+      "label": {
+        "project": "Pick a project template",
+        "page": "Choose from template"
+      },
+      "tooltip": {
+        "work_item": "Pick a work item template"
+      },
+      "no_results": {
+        "work_item": "No templates found.",
+        "project": "No templates found."
+      }
+    }
+  }
+}

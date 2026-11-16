@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "თქვენი Stickies",
+    "placeholder": "დააწკაპუნეთ აქ ჩასაწერად",
+    "all": "ყველა Sticky",
+    "no-data": "ჩაწერეთ იდეა, დაიჭირეთ ა-ჰა, ან ჩაიწერეთ ტვინის ტალღა. დაამატეთ Sticky დასაწყებად.",
+    "add": "Sticky-ის დამატება",
+    "search_placeholder": "ძიება სათაურით",
+    "delete": "Sticky-ის წაშლა",
+    "delete_confirmation": "დარწმუნებული ხართ, რომ გსურთ ამ Sticky-ის წაშლა?",
+    "empty_state": {
+      "simple": "ჩაწერეთ იდეა, დაიჭირეთ ა-ჰა, ან ჩაიწერეთ ტვინის ტალღა. დაამატეთ Sticky დასაწყებად.",
+      "general": {
+        "title": "Stickies არის სწრაფი ჩანაწერები და დავალებები, რომლებსაც სწრაფად იწერთ.",
+        "description": "დაიჭირეთ თქვენი აზრები და იდეები მარტივად Stickies-ის შექმნით, რომლებსაც შეგიძლიათ წვდომა ნებისმიერ დროს და ნებისმიერი ადგილიდან.",
+        "primary_button": {
+          "text": "Sticky-ის დამატება"
+        }
+      },
+      "search": {
+        "title": "ეს არ შეესაბამება თქვენს არცერთ Sticky-ს.",
+        "description": "სცადეთ სხვა ტერმინი ან შეგვატყობინეთ\nთუ დარწმუნებული ხართ, რომ თქვენი ძიება სწორია. ",
+        "primary_button": {
+          "text": "Sticky-ის დამატება"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Sticky-ის სახელი არ შეიძლება იყოს 100 სიმბოლოზე გრძელი.",
+        "already_exists": "უკვე არსებობს Sticky აღწერის გარეშე"
+      },
+      "created": {
+        "title": "Sticky შეიქმნა",
+        "message": "Sticky წარმატებით შეიქმნა"
+      },
+      "not_created": {
+        "title": "Sticky არ შეიქმნა",
+        "message": "Sticky-ის შექმნა ვერ მოხერხდა"
+      },
+      "updated": {
+        "title": "Sticky განახლდა",
+        "message": "Sticky წარმატებით განახლდა"
+      },
+      "not_updated": {
+        "title": "Sticky არ განახლდა",
+        "message": "Sticky-ის განახლება ვერ მოხერხდა"
+      },
+      "removed": {
+        "title": "Sticky ამოიღეს",
+        "message": "Sticky წარმატებით ამოიღეს"
+      },
+      "not_removed": {
+        "title": "Sticky არ ამოიღეს",
+        "message": "Sticky-ის ამოღება ვერ მოხერხდა"
+      }
+    }
+  }
+}

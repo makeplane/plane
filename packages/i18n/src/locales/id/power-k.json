@@ -176,6 +176,11 @@
     "footer": {
       "workspace_level": "Tingkat ruang kerja"
     },
+    "shortcuts_modal": {
+      "search_placeholder": "Cari pintasan keyboard",
+      "no_results": "Tidak ada pintasan keyboard yang ditemukan untuk \"{query}\"",
+      "sequence_separator": "lalu"
+    },
     "group_titles": {
       "actions": "Aksi",
       "contextual": "Kontekstual",

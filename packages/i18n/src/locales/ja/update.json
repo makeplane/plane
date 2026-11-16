@@ -2,67 +2,67 @@
   "updates": {
     "progress": {
       "title": "進捗",
-      "since_last_update": "最後の更新以来",
+      "since_last_update": "前回の更新以降",
       "comments": "{count, plural, one{# コメント} other{# コメント}}"
     },
-    "add_update": "更新を追加",
-    "add_update_placeholder": "ここに更新を入力してください",
+    "add_update": "更新情報を追加",
+    "add_update_placeholder": "更新内容を入力してください",
     "empty": {
-      "title": "まだ更新がありません",
-      "description": "ここで更新を確認できます。"
+      "title": "更新情報はまだありません",
+      "description": "追加された更新情報がここに表示されます。"
     },
     "reaction": {
       "create": {
         "success": {
-          "title": "反応が作成されました",
-          "message": "反応が正常に作成されました。"
+          "title": "リアクションを追加しました",
+          "message": "リアクションを追加しました。"
         },
         "error": {
-          "title": "反応が作成されませんでした",
-          "message": "反応を作成できませんでした。"
+          "title": "リアクションを追加できませんでした",
+          "message": "リアクションを追加できませんでした。"
         }
       },
       "remove": {
         "success": {
-          "title": "反応が削除されました",
-          "message": "反応が正常に削除されました。"
+          "title": "リアクションを削除しました",
+          "message": "リアクションを削除しました。"
         },
         "error": {
-          "title": "反応が削除されませんでした",
-          "message": "反応を削除できませんでした。"
+          "title": "リアクションを削除できませんでした",
+          "message": "リアクションを削除できませんでした。"
         }
       }
     },
     "create": {
       "success": {
-        "title": "更新が作成されました",
-        "message": "更新が正常に作成されました。"
+        "title": "更新情報を作成しました",
+        "message": "更新情報を作成しました。"
       },
       "error": {
-        "title": "更新が作成されませんでした",
-        "message": "更新を作成できませんでした。"
+        "title": "更新情報を作成できませんでした",
+        "message": "更新情報を作成できませんでした。"
       }
     },
     "delete": {
-      "title": "更新を削除",
-      "confirmation": "この更新を削除してもよろしいですか？この操作は元に戻すことができません。",
+      "title": "更新情報を削除",
+      "confirmation": "この更新情報を削除してもよろしいですか？この操作は元に戻せません。",
       "success": {
-        "title": "更新が削除されました",
-        "message": "更新が正常に削除されました。"
+        "title": "更新情報を削除しました",
+        "message": "更新情報を削除しました。"
       },
       "error": {
-        "title": "更新が削除されませんでした",
-        "message": "更新を削除できませんでした。"
+        "title": "更新情報を削除できませんでした",
+        "message": "更新情報を削除できませんでした。"
       }
     },
     "update": {
       "success": {
-        "title": "更新が更新されました",
-        "message": "更新が正常に更新されました。"
+        "title": "更新情報を編集しました",
+        "message": "更新情報を編集しました。"
       },
       "error": {
-        "title": "更新が更新されませんでした",
-        "message": "更新を更新できませんでした。"
+        "title": "更新情報を編集できませんでした",
+        "message": "更新情報を編集できませんでした。"
       }
     }
   }

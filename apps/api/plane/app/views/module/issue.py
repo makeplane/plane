@@ -24,6 +24,7 @@ from plane.db.models import (
     Issue,
     FileAsset,
     IssueLink,
+    Module,
     ModuleIssue,
     Project,
     CycleIssue,
@@ -213,6 +214,8 @@ class ModuleIssueViewSet(BaseViewSet):
         if not issues:
             return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
         project = Project.objects.get(pk=project_id)
+        # The URL module must belong to the URL workspace + project (404 otherwise).
+        Module.objects.get(pk=module_id, project_id=project_id, workspace__slug=slug)
         # Scope to workspace+project to prevent cross-tenant IDOR
         issues = list(
             Issue.issue_objects.filter(
@@ -259,6 +262,15 @@ class ModuleIssueViewSet(BaseViewSet):
         modules = request.data.get("modules", [])
         removed_modules = request.data.get("removed_modules", [])
         project = Project.objects.get(pk=project_id)
+        # The URL issue must belong to the URL workspace + project (404 otherwise).
+        Issue.objects.get(pk=issue_id, project_id=project_id, workspace__slug=slug)
+        # Only link body modules that belong to the URL workspace + project.
+        modules = [
+            str(module_id)
+            for module_id in Module.objects.filter(
+                pk__in=modules, project_id=project_id, workspace__slug=slug
+            ).values_list("id", flat=True)
+        ]
 
         if modules:
             _ = ModuleIssue.objects.bulk_create(
@@ -330,13 +342,17 @@ class ModuleIssueViewSet(BaseViewSet):
             module_id=module_id,
             issue_id=issue_id,
         )
+        existing = module_issue.select_related("module").first()
+        # Already removed (e.g. a repeated delete): nothing to do
+        if existing is None:
+            return Response(status=status.HTTP_204_NO_CONTENT)
         issue_activity.delay(
             type="module.activity.deleted",
             requested_data=json.dumps({"module_id": str(module_id)}),
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),
-            current_instance=json.dumps({"module_name": module_issue.first().module.name}),
+            current_instance=json.dumps({"module_name": existing.module.name}),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=base_host(request=request, is_app=True),

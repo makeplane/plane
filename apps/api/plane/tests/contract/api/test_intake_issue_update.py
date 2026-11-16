@@ -6,7 +6,7 @@ import pytest
 from rest_framework import status
 
 from plane.celery import app as celery_app
-from plane.db.models import Intake, IntakeIssue, Issue, Label, Project, ProjectMember, State
+from plane.db.models import Intake, IntakeIssue, Issue, IssueActivity, Label, Project, ProjectMember, State
 
 
 @pytest.fixture(autouse=True)
@@ -85,3 +85,19 @@ class TestIntakeIssueUpdateContract:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert list(intake_issue.labels.all()) == []
+
+    @pytest.mark.django_db
+    def test_update_ignores_archived_at_and_records_no_archive_activity(
+        self, api_key_client, workspace, project, intake_issue
+    ):
+        url = self.get_detail_url(workspace.slug, project.id, intake_issue.id)
+
+        response = api_key_client.patch(url, {"issue": {"name": "Renamed", "archived_at": "2020-01-01"}}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK, response.data
+        issue = Issue.all_objects.get(pk=intake_issue.id)
+        assert issue.archived_at is None
+        assert issue.name == "Renamed"
+        activities = IssueActivity.objects.filter(issue_id=intake_issue.id)
+        assert activities.filter(field="name").exists()
+        assert not activities.filter(field="archived_at").exists()

@@ -176,6 +176,11 @@
     "footer": {
       "workspace_level": "Úroveň pracovného priestoru"
     },
+    "shortcuts_modal": {
+      "search_placeholder": "Hľadať klávesové skratky",
+      "no_results": "Nenašli sa žiadne klávesové skratky pre „{query}“",
+      "sequence_separator": "potom"
+    },
     "group_titles": {
       "actions": "Akcie",
       "contextual": "Kontextové",

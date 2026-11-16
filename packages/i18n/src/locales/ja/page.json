@@ -26,6 +26,16 @@
           "highlight_changes": "変更を強調表示"
         }
       },
+      "version_history": {
+        "view_only": "閲覧のみ",
+        "loading_details": "バージョンの詳細を読み込んでいます",
+        "load_error_description": "バージョンを読み込めませんでした。もう一度お試しください。",
+        "list_error_description": "バージョン履歴を読み込めませんでした。",
+        "try_again": "再試行",
+        "restoring": "復元中",
+        "restore_success": "ページのバージョンを復元しました。",
+        "restore_failed": "ページのバージョンを復元できませんでした。"
+      },
       "assets": {
         "label": "アセット",
         "download_button": "ダウンロード",
@@ -111,5 +121,8 @@
       "success_message": "ページをコレクションから削除しました。",
       "error_message": "ページをコレクションから削除できませんでした。もう一度お試しください。"
     }
+  },
+  "page_content_limit_banner": {
+    "message": "コンテンツの上限に達したため、リアルタイム同期がオフになっています。新しいページを作成するか、ネストされたページを使用して同期を続けてください。"
   }
 }

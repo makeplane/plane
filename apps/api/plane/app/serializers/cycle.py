@@ -40,7 +40,15 @@ class CycleWriteSerializer(BaseSerializer):
     class Meta:
         model = Cycle
         fields = "__all__"
-        read_only_fields = ["workspace", "project", "owned_by", "archived_at"]
+        # Audit fields are set server-side by BaseModel.save().
+        read_only_fields = [
+            "workspace",
+            "project",
+            "owned_by",
+            "archived_at",
+            "created_by",
+            "updated_by",
+        ]
 
 
 class CycleSerializer(BaseSerializer):
