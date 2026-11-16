@@ -21,8 +21,17 @@ from rest_framework import status
 # Module imports
 from .. import BaseAPIView
 from plane.app.serializers import IssueSerializer
-from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import Issue, IssueLink, FileAsset, CycleIssue, IssueLabel, IssueAssignee, ModuleIssue
+from plane.app.permissions import ProjectEntityPermission, issue_hidden_from_guest, ROLE
+from plane.db.models import (
+    Issue,
+    IssueLink,
+    FileAsset,
+    CycleIssue,
+    IssueLabel,
+    IssueAssignee,
+    ModuleIssue,
+    ProjectMember,
+)
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.timezone_converter import user_timezone_converter
 from collections import defaultdict
@@ -35,6 +44,13 @@ class SubIssuesEndpoint(BaseAPIView):
 
     @method_decorator(gzip_page)
     def get(self, request, slug, project_id, issue_id):
+        # A restricted guest may only see the sub-issues of issues they created,
+        # mirroring the issue-detail visibility rule.
+        if issue_hidden_from_guest(request, slug, project_id, issue_id):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # SECURITY: scope the parent lookup to the URL project. ProjectEntityPermission
         # only checks that the caller belongs to `project_id`, not that `issue_id` lives
         # in it, so an unscoped filter leaks sub-issue metadata across projects in the
@@ -135,6 +151,18 @@ class SubIssuesEndpoint(BaseAPIView):
             )
             .annotate(state_group=F("state__group"))
         )
+
+        # Restrict guests without full feature access to sub-issues they created,
+        # mirroring IssueViewSet.list.
+        if ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            member=request.user,
+            role=ROLE.GUEST.value,
+            is_active=True,
+            project__guest_view_all_features=False,
+        ).exists():
+            sub_issues = sub_issues.filter(created_by=request.user)
 
         # Ordering
         order_by_param = request.GET.get("order_by", "-created_at")
