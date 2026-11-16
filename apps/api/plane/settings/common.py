@@ -55,7 +55,7 @@ def _check_secret_keys(secret_key, live_server_secret_key):
                 "This makes your installation vulnerable to session forgery, CSRF bypass, and "
                 f"password-reset token forging. Set a unique {name} before starting Plane. "
                 "Generate one with: "
-                "python3 -c \"from django.utils.crypto import get_random_secret_key; print(get_random_secret_key())\""
+                "python3 -c \"from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())\""
             )
 
 
