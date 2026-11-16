@@ -222,5 +222,6 @@ class ProfileSerializer(BaseSerializer):
 class AccountSerializer(BaseSerializer):
     class Meta:
         model = Account
-        fields = "__all__"
+        # Provider tokens stay server side
+        exclude = ("access_token", "refresh_token", "id_token")
         read_only_fields = ["user"]
