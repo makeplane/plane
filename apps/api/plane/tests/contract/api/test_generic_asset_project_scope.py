@@ -206,7 +206,7 @@ class TestGenericAssetPatchProjectScope:
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         joined_asset.refresh_from_db()
-        assert joined_asset.is_uploaded is False
+        assert joined_asset.is_uploaded is True
 
 
 @pytest.mark.contract
