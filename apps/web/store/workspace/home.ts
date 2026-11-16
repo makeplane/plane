@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { orderBy, clone, set } from "lodash-es";
+import { orderBy, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import type { THomeWidgetKeys, TWidgetEntityData } from "@plane/types";
@@ -47,6 +47,11 @@ export class HomeStore implements IHomeStore {
   quickLinks: IWorkspaceLinkStore;
   // services
   workspaceService: WorkspaceService;
+  // in-flight reorder bookkeeping per widget (not observable)
+  private widgetReorderState: Record<
+    string,
+    { latestRequestId: number; pendingRequests: number; savedRequestId: number; savedSortOrder: number | undefined }
+  > = {};
 
   constructor() {
     makeObservable(this, {
@@ -116,7 +121,16 @@ export class HomeStore implements IHomeStore {
   };
 
   reorderWidget = async (workspaceSlug: string, widgetKey: string, destinationId: string, edge: string | undefined) => {
-    const sortOrderBeforeUpdate = clone(this.widgetsMap[widgetKey]?.sort_order);
+    // moves of the same widget can overlap, so track which request is the newest and what the server last accepted
+    const reorderState = (this.widgetReorderState[widgetKey] ??= {
+      latestRequestId: 0,
+      pendingRequests: 0,
+      savedRequestId: 0,
+      savedSortOrder: undefined,
+    });
+    if (reorderState.pendingRequests === 0) reorderState.savedSortOrder = this.widgetsMap[widgetKey]?.sort_order;
+    const requestId = ++reorderState.latestRequestId;
+    reorderState.pendingRequests++;
     try {
       let resultSequence = 10000;
       if (edge) {
@@ -142,12 +156,21 @@ export class HomeStore implements IHomeStore {
       await this.workspaceService.updateWorkspaceWidget(workspaceSlug, widgetKey, {
         sort_order: resultSequence,
       });
+      if (requestId > reorderState.savedRequestId) {
+        reorderState.savedRequestId = requestId;
+        reorderState.savedSortOrder = resultSequence;
+      }
     } catch (error) {
       console.error("Failed to move widget");
-      runInAction(() => {
-        set(this.widgetsMap, [widgetKey, "sort_order"], sortOrderBeforeUpdate);
-      });
+      // only the newest move may roll back, and it rolls back to the last saved order rather than a stale snapshot
+      if (requestId === reorderState.latestRequestId) {
+        runInAction(() => {
+          set(this.widgetsMap, [widgetKey, "sort_order"], reorderState.savedSortOrder);
+        });
+      }
       throw error;
+    } finally {
+      reorderState.pendingRequests--;
     }
   };
 }
