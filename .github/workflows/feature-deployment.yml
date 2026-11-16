@@ -137,23 +137,25 @@ jobs:
           chmod 600 ~/.kube/config
       - name: HELM Setup
         run: |
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          # Installer pinned to the v3.22.1 commit instead of the moving main branch;
+          # it verifies the release checksum before installing.
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/d6c1a0e4027caa6abc7892e7ea9f0cda7447baa3/scripts/get-helm-3
           chmod 700 get_helm.sh
-          ./get_helm.sh
+          DESIRED_VERSION=v3.22.1 ./get_helm.sh
       - name: App Deploy
         run: |
-          helm --kube-insecure-skip-tls-verify repo add feature-preview ${{ vars.FEATURE_PREVIEW_HELM_CHART_URL }} 
+          helm repo add feature-preview ${{ vars.FEATURE_PREVIEW_HELM_CHART_URL }} 
 
           APP_NAMESPACE="${{ vars.FEATURE_PREVIEW_NAMESPACE }}"
 
-          helm --kube-insecure-skip-tls-verify  uninstall \
+          helm uninstall \
             ${{ env.DEPLOYMENT_NAME }} \
             --namespace $APP_NAMESPACE \
             --timeout 10m0s \
             --wait \
             --ignore-not-found
 
-          METADATA=$(helm --kube-insecure-skip-tls-verify upgrade \
+          METADATA=$(helm upgrade \
               --install=true \
               --namespace $APP_NAMESPACE \
               --set dockerhub.loginid=${{ secrets.DOCKERHUB_USERNAME }} \
@@ -168,7 +170,7 @@ jobs:
 
           APP_NAME=$(echo $METADATA | jq -r '.name')
 
-          INGRESS_HOSTNAME=$(kubectl get ingress -n $APP_NAMESPACE --insecure-skip-tls-verify \
+          INGRESS_HOSTNAME=$(kubectl get ingress -n $APP_NAMESPACE \
               -o jsonpath='{.items[?(@.metadata.annotations.meta\.helm\.sh\/release-name=="'$APP_NAME'")]}' | \
               jq -r '.spec.rules[0].host')
 
