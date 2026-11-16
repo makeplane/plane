@@ -64,9 +64,10 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     env:
-      # Application layers come from images built from this checkout, tagged with
-      # the branch. The dispatch base tag is not the source of those layers.
-      BRANCH_IMAGE_TAG: ${{ needs.branch_build_setup.outputs.flat_branch_name }}
+      # Application layers come from images built from this checkout. The tag is
+      # unique to this run so a second dispatch cannot overwrite one layer mid-build.
+      # The final all-in-one image keeps the branch name.
+      BRANCH_IMAGE_TAG: run-${{ github.run_id }}-${{ github.run_attempt }}
       AIO_IMAGE_TAGS: makeplane/plane-aio-feature:${{ needs.branch_build_setup.outputs.flat_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
