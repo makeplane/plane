@@ -892,6 +892,19 @@
       "update_view": "Update view",
       "save_as": "Save as",
       "hide_filters": "Hide filters"
+    },
+    "filter_item": {
+      "remove": "Remove filter",
+      "invalid": "Invalid filter",
+      "invalid_tooltip": "This filter condition is no longer valid. The property may have been deleted or your access to it may have changed."
+    },
+    "operators": {
+      "is": "is",
+      "is_any_of": "is any of",
+      "between": "between"
+    },
+    "properties": {
+      "subscriber": "Subscriber"
     }
   }
 }

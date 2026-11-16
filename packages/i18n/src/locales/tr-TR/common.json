@@ -892,6 +892,19 @@
       "update_view": "Görünümü güncelle",
       "save_as": "Farklı kaydet",
       "hide_filters": "Filtreleri gizle"
+    },
+    "filter_item": {
+      "remove": "Filtreyi kaldır",
+      "invalid": "Geçersiz filtre",
+      "invalid_tooltip": "Bu filtre koşulu artık geçerli değil. Özellik silinmiş veya bu özelliğe erişiminiz değişmiş olabilir."
+    },
+    "operators": {
+      "is": "eşittir",
+      "is_any_of": "şunlardan biri",
+      "between": "arasında"
+    },
+    "properties": {
+      "subscriber": "Abone"
     }
   }
 }
