@@ -26,6 +26,7 @@ re-validating and re-pinning every hop.
 
 # Python imports
 import ipaddress
+import time
 from urllib.parse import unquote, urljoin, urlsplit
 
 # Third party imports
@@ -270,3 +271,26 @@ def pinned_fetch_following_redirects(
         # Resolve the redirect target against the current URL; the next loop
         # iteration re-validates and re-pins it.
         current_url = urljoin(current_url, location)
+
+
+def read_capped_body(response, max_bytes, max_seconds):
+    """
+    Read the body of a response fetched with ``stream=True`` and close it,
+    stopping early once the body exceeds ``max_bytes`` or ``max_seconds`` have
+    passed, so the size of what is held in memory does not depend on the remote
+    server.
+
+    Returns ``(content, truncated)``; ``content`` is at most ``max_bytes`` long.
+    """
+    deadline = time.monotonic() + max_seconds
+    content = bytearray()
+    try:
+        # The time limit is checked between chunks, so it is approximate; a hard
+        # limit on the whole fetch needs a Celery task time limit.
+        for chunk in response.iter_content(chunk_size=8192):
+            content += chunk
+            if len(content) > max_bytes or time.monotonic() > deadline:
+                return bytes(content[:max_bytes]), True
+        return bytes(content), False
+    finally:
+        response.close()
