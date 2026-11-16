@@ -8,8 +8,8 @@ import { assetDuplicationHandlers } from "@/helpers/asset-duplication";
 
 // Utility function to process HTML content with all registered handlers
 export const processAssetDuplication = (htmlContent: string): { processedHtml: string } => {
-  const tempDiv = document.createElement("div");
-  tempDiv.innerHTML = htmlContent;
+  // parse in an inert document so nothing in the clipboard markup can load or run while it is processed
+  const tempDiv = new DOMParser().parseFromString(htmlContent, "text/html").body;
 
   let processedHtml = htmlContent;
 
