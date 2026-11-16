@@ -16,9 +16,11 @@ Fixed by rejecting any next_path starting with "//" outright, after the
 existing "must start with /" check.
 """
 
+from urllib.parse import parse_qs, urlparse
+
 import pytest
 
-from plane.utils.path_validator import validate_next_path
+from plane.utils.path_validator import get_safe_redirect_url, validate_next_path
 
 pytestmark = pytest.mark.unit
 
@@ -90,3 +92,62 @@ class TestValidateNextPathAuthorityRelative:
             f"{obfuscated_next_path!r} must be rejected — browsers strip tab/CR/LF before parsing, "
             "so this collapses to an authority-relative '///evil.com' navigation"
         )
+
+
+class TestValidateNextPathPercentEncoded:
+    """A next_path is accepted only if its fully percent-decoded form passes the same checks."""
+
+    @pytest.mark.parametrize(
+        "encoded_next_path",
+        [
+            "/%2Fexample.com/",
+            "/%2fexample.com/",
+            "/%5Cexample.com/",
+            "/%09/example.com/",
+            "/%0A/example.com/",
+            "/%0d/example.com/",
+            "/a/%2E./b",
+            # Encoded more than once
+            "/%252Fexample.com/",
+            "/%25252Fexample.com/",
+            # Still changing after the decode bound
+            "/%2525252525252Fexample.com/",
+        ],
+    )
+    def test_rejects_paths_whose_decoded_form_is_rejected(self, encoded_next_path):
+        assert validate_next_path(encoded_next_path) == ""
+
+    @pytest.mark.parametrize(
+        "safe_next_path",
+        [
+            "/workspace/projects/?tab=x",
+            "/workspace/pages/My%20Page",
+            "/workspace/search?q=a%26b",
+            "/workspace/search?q=a&b=c#section",
+        ],
+    )
+    def test_accepts_legitimate_paths_unchanged(self, safe_next_path):
+        assert validate_next_path(safe_next_path) == safe_next_path
+
+
+class TestGetSafeRedirectUrlNextPathEncoding:
+    """next_path is emitted as one encoded query value that decodes back to the validated path."""
+
+    @pytest.mark.parametrize(
+        "next_path",
+        [
+            "/workspace/abc",
+            "/workspace/projects/?tab=x",
+            "/workspace/pages/My%20Page",
+            "/workspace/search?q=a&b=c#section",
+        ],
+    )
+    def test_next_path_round_trips_as_a_single_query_value(self, settings, next_path):
+        settings.WEB_URL = "http://localhost"
+
+        url = get_safe_redirect_url(base_url="http://localhost", next_path=next_path, params={"error_code": "5000"})
+
+        parsed = urlparse(url)
+        assert parsed.netloc == "localhost"
+        assert parsed.fragment == ""
+        assert parse_qs(parsed.query) == {"next_path": [next_path], "error_code": ["5000"]}
