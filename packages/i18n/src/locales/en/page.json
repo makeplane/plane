@@ -26,6 +26,16 @@
           "highlight_changes": "Highlight changes"
         }
       },
+      "version_history": {
+        "view_only": "View only",
+        "loading_details": "Loading version details",
+        "load_error_description": "The version could not be loaded. Please try again.",
+        "list_error_description": "The version history could not be loaded.",
+        "try_again": "Try again",
+        "restoring": "Restoring",
+        "restore_success": "Page version restored.",
+        "restore_failed": "Failed to restore page version."
+      },
       "assets": {
         "label": "Assets",
         "download_button": "Download",

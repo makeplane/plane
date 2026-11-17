@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 // types
 import { Button } from "@makeplane/propel/components/button";
@@ -35,6 +35,7 @@ const EMAIL_SECURITY_OPTIONS: { [key in TEmailSecurityKeys]: string } = {
 
 export function InstanceEmailForm(props: IInstanceEmailForm) {
   const { config } = props;
+  const emailSecurityLabelId = useId();
   // states
   const [isSendTestEmailModalOpen, setIsSendTestEmailModalOpen] = useState(false);
   // store hooks
@@ -45,6 +46,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
     watch,
     setValue,
     control,
+    reset,
     formState: { errors, isValid, isDirty, isSubmitting },
   } = useForm<EmailFormValues>({
     defaultValues: {
@@ -109,15 +111,18 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
   const onSubmit = async (formData: EmailFormValues) => {
     const payload: Partial<EmailFormValues> = { ...formData, ENABLE_SMTP: "1" };
 
-    await updateInstanceConfigurations(payload)
-      .then(() =>
-        setToast({
-          type: "success",
-          title: "Success",
-          message: "Email Settings updated successfully",
-        })
-      )
-      .catch((err) => console.error(err));
+    try {
+      await updateInstanceConfigurations(payload);
+      // the saved values become the new baseline, so Save disables again until the next edit
+      reset(payload);
+      setToast({
+        type: "success",
+        title: "Success",
+        message: "Email Settings updated successfully",
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const useTLSValue = watch("EMAIL_USE_TLS");
@@ -130,16 +135,16 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
 
   const handleEmailSecurityChange = (key: TEmailSecurityKeys) => {
     if (key === "EMAIL_USE_SSL") {
-      setValue("EMAIL_USE_TLS", "0");
-      setValue("EMAIL_USE_SSL", "1");
+      setValue("EMAIL_USE_TLS", "0", { shouldDirty: true });
+      setValue("EMAIL_USE_SSL", "1", { shouldDirty: true });
     }
     if (key === "EMAIL_USE_TLS") {
-      setValue("EMAIL_USE_TLS", "1");
-      setValue("EMAIL_USE_SSL", "0");
+      setValue("EMAIL_USE_TLS", "1", { shouldDirty: true });
+      setValue("EMAIL_USE_SSL", "0", { shouldDirty: true });
     }
     if (key === "NONE") {
-      setValue("EMAIL_USE_TLS", "0");
-      setValue("EMAIL_USE_SSL", "0");
+      setValue("EMAIL_USE_TLS", "0", { shouldDirty: true });
+      setValue("EMAIL_USE_SSL", "0", { shouldDirty: true });
     }
   };
 
@@ -162,13 +167,20 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
             />
           ))}
           <div className="flex flex-col gap-1">
-            <h4 className="text-13 text-tertiary">Email security</h4>
+            <span id={emailSecurityLabelId} className="text-body-xs-medium text-primary">
+              Email security
+            </span>
             <Select
               items={EMAIL_SECURITY_OPTIONS}
               value={emailSecurityKey}
               onValueChange={(value) => handleEmailSecurityChange(value as TEmailSecurityKeys)}
             >
-              <SelectTrigger size="lg" placeholder="Select email security" />
+              <SelectTrigger
+                variant="secondary"
+                size="lg"
+                placeholder="Select email security"
+                aria-labelledby={emailSecurityLabelId}
+              />
               <SelectContent>
                 <SelectList>
                   {Object.entries(EMAIL_SECURITY_OPTIONS).map(([key, value]) => (
@@ -183,8 +195,8 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
           <div className="flex w-full max-w-xl flex-col gap-y-10 px-1">
             <div className="mr-8 flex items-center gap-10 pt-4">
               <div className="grow">
-                <div className="text-13 font-medium text-primary">Authentication</div>
-                <div className="text-11 font-regular text-tertiary">
+                <div className="text-body-xs-medium text-primary">Authentication</div>
+                <div className="text-caption-sm-regular text-tertiary">
                   This is optional, but we recommend setting up a username and a password for your SMTP server.
                 </div>
               </div>

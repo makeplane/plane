@@ -223,6 +223,11 @@
       "search": {
         "description": "条件に一致するプロジェクトが見つかりません。\n代わりに新しいプロジェクトを作成してください。"
       }
+    },
+    "card": {
+      "joined": "参加済み",
+      "archived": "アーカイブ済み",
+      "no_lead": "リードなし"
     }
   },
   "workspace_views": {
@@ -373,6 +378,12 @@
           "message": "問題が発生しました。"
         }
       }
+    }
+  },
+  "instance_workspaces": {
+    "empty_state": {
+      "title": "ワークスペースはまだありません",
+      "description": "このインスタンスで作成されたワークスペースがここに表示されます。"
     }
   }
 }

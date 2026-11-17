@@ -26,6 +26,16 @@
           "highlight_changes": "Đánh dấu thay đổi"
         }
       },
+      "version_history": {
+        "view_only": "Chỉ xem",
+        "loading_details": "Đang tải chi tiết phiên bản",
+        "load_error_description": "Không thể tải phiên bản. Vui lòng thử lại.",
+        "list_error_description": "Không thể tải lịch sử phiên bản.",
+        "try_again": "Thử lại",
+        "restoring": "Đang khôi phục",
+        "restore_success": "Đã khôi phục phiên bản trang.",
+        "restore_failed": "Không thể khôi phục phiên bản trang."
+      },
       "assets": {
         "label": "Tài sản",
         "download_button": "Tải xuống",

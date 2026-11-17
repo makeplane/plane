@@ -32,10 +32,7 @@ export const WorkspaceStickyHeader = observer(function WorkspaceStickyHeader() {
             <Breadcrumbs>
               <Breadcrumbs.Item
                 component={
-                  <BreadcrumbLink
-                    label={`Stickies`}
-                    icon={<MultipleStickyOutline className="size-5 rotate-90 text-secondary" />}
-                  />
+                  <BreadcrumbLink label="Stickies" icon={<MultipleStickyOutline className="size-4 text-tertiary" />} />
                 }
               />
             </Breadcrumbs>

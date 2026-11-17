@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import StarterKit from "@tiptap/starter-kit";
+import { StarterKit } from "@tiptap/starter-kit";
 
 type TArgs = {
   enableHistory: boolean;
@@ -47,6 +47,11 @@ export const CustomStarterKitExtension = (args: TArgs) => {
       class:
         "text-tertiary transition-all motion-reduce:transition-none motion-reduce:hover:transform-none duration-200 ease-[cubic-bezier(0.165, 0.84, 0.44, 1)]",
     },
-    ...(enableHistory ? {} : { history: false }),
+    // v3 bundles these; Plane registers its own versions
+    link: false,
+    underline: false,
+    listKeymap: false,
+    trailingNode: false,
+    ...(enableHistory ? {} : { undoRedo: false }),
   });
 };

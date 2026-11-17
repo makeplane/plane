@@ -7,7 +7,7 @@
 import type { ReactElement, Ref, ReactNode } from "react";
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { Combobox as BaseCombobox } from "@base-ui/react/combobox";
-import { Check } from "lucide-react";
+import { TickOutline } from "@makeplane/propel/icons";
 import { ComboboxItem, ComboboxItemIndicator, ComboboxList } from "@makeplane/propel/components/combobox";
 import {
   ComboboxCheckboxItemIndicator,
@@ -115,7 +115,7 @@ function SelectOptionRow(props: SelectOptionRowProps) {
       {multiple ? (
         <ComboboxItemControl>
           <BaseCombobox.ItemIndicator keepMounted render={<ComboboxCheckboxItemIndicator />}>
-            <Check aria-hidden />
+            <TickOutline aria-hidden />
           </BaseCombobox.ItemIndicator>
         </ComboboxItemControl>
       ) : null}

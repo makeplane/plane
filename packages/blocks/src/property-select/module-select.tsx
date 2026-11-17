@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { Badge, BadgeLabel } from "@makeplane/propel/elements/badge";
 import { ModuleOutline } from "@makeplane/propel/icons";
 import type { TPaginatedResponse } from "@plane/types";
 import { Select } from "../select/select";
@@ -168,14 +169,18 @@ export function ModuleSelect(props: ModuleSelectProps) {
           const showPills = !showCountOnMultiple && modules.length > 0;
           return showPills ? (
             <div className="flex min-w-0 grow flex-wrap items-center gap-1">
+              {/* 24px neutral badges, the same height as the label pills in the sidebar row above. */}
               {modules.map((module) => (
-                <span
+                <Badge
                   key={module.id}
-                  className="flex h-5 max-w-full items-center gap-1 rounded-sm bg-layer-3 px-1.5 text-caption-md-medium text-secondary"
+                  size="sm"
+                  variant="neutral"
+                  data-slot="module-pill"
+                  render={<span className="max-w-full" />}
                 >
                   <ModuleOutline className="size-3.5 shrink-0" />
-                  <span className="truncate">{module.name}</span>
-                </span>
+                  <BadgeLabel render={<span className="truncate" />}>{module.name}</BadgeLabel>
+                </Badge>
               ))}
             </div>
           ) : (

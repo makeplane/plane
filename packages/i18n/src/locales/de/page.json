@@ -26,6 +26,16 @@
           "highlight_changes": "Änderungen hervorheben"
         }
       },
+      "version_history": {
+        "view_only": "Nur ansehen",
+        "loading_details": "Versionsdetails werden geladen",
+        "load_error_description": "Die Version konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
+        "list_error_description": "Der Versionsverlauf konnte nicht geladen werden.",
+        "try_again": "Erneut versuchen",
+        "restoring": "Wird wiederhergestellt",
+        "restore_success": "Seitenversion wiederhergestellt.",
+        "restore_failed": "Seitenversion konnte nicht wiederhergestellt werden."
+      },
       "assets": {
         "label": "Assets",
         "download_button": "Herunterladen",

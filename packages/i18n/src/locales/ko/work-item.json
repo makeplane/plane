@@ -3,6 +3,10 @@
     "label": "{count, plural, one {작업 항목} other {작업 항목}}",
     "all": "모든 작업 항목",
     "edit": "작업 항목 편집",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {속성 #개 더 보기} other {속성 #개 더 보기}}",
+      "label_overflow_indicator": "{count, plural, one {레이블 +#개} other {레이블 +#개}}"
+    },
     "title": {
       "label": "작업 항목 제목",
       "required": "작업 항목 제목이 필요합니다."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "다른 작업 항목 보기"
         }
+      },
+      "no_access": {
+        "title": "이 작업 항목에 접근할 수 없습니다",
+        "description": "접근 권한을 요청하려면 프로젝트 관리자에게 문의하세요."
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "작업 항목을 복원할 수 없습니다. 다시 시도해주세요."
       }
     },
+    "archived_banner": "이 작업 항목은 보관되었습니다. 변경하려면 복원하세요.",
+    "updated_time_ago": "{time} 업데이트됨",
+    "description_load_failed": "설명을 불러올 수 없습니다.",
+    "assignee_count": "{count, plural, one {담당자 #명} other {담당자 #명}}",
     "relation": {
       "relates_to": "관련 있음",
       "duplicate": "중복",
@@ -267,7 +279,12 @@
       "click_to_upvote": "클릭하여 추천",
       "click_to_downvote": "클릭하여 비추천",
       "click_to_view_upvotes": "클릭하여 추천 목록 보기",
-      "click_to_view_downvotes": "클릭하여 비추천 목록 보기"
+      "click_to_view_downvotes": "클릭하여 비추천 목록 보기",
+      "title": "투표",
+      "upvotes_count": "{count, plural, one {추천 #개} other {추천 #개}}",
+      "downvotes_count": "{count, plural, one {비추천 #개} other {비추천 #개}}",
+      "no_upvotes": "아직 추천이 없습니다",
+      "no_downvotes": "아직 비추천이 없습니다"
     }
   },
   "sub_work_item": {

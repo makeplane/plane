@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
@@ -47,7 +47,6 @@
     "export-to-csv": "catalog:",
     "isbot": "catalog:",
     "lodash-es": "catalog:",
-    "lucide-react": "catalog:",
     "mobx": "catalog:",
     "mobx-react": "catalog:",
     "mobx-utils": "catalog:",

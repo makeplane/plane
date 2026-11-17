@@ -7,10 +7,11 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { SettingsOutline } from "@makeplane/propel/icons";
+import { PreferencesOutline } from "@makeplane/propel/icons";
 // plane internal packages
 import { AnchorButton } from "@makeplane/propel/components/anchor-button";
 import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
 import { Switch } from "@makeplane/propel/components/switch";
 import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
 // hooks
@@ -54,7 +55,7 @@ export const GiteaConfiguration = observer(function GiteaConfiguration(props: Pr
           stretch="auto"
           nativeButton={false}
           render={<Link href="/authentication/gitea" />}
-          icon={<SettingsOutline className="h-4 w-4 p-0.5 text-tertiary" />}
+          icon={<Icon icon={PreferencesOutline} tint="tertiary" />}
           label="Configure"
         />
       )}

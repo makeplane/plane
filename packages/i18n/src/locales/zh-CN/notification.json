@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "选择以查看详情。"
+        "title": "未选择通知",
+        "description": "选择一条通知以查看详情。"
       },
       "all": {
         "title": "没有分配的工作项",
@@ -52,7 +53,15 @@
       "5_days": "5 天",
       "1_week": "1 周",
       "2_weeks": "2 周",
-      "custom": "自定义"
+      "custom": "自定义",
+      "modal": {
+        "title": "自定义暂停时间",
+        "pick_a_date": "选择日期",
+        "pick_a_time": "选择时间",
+        "select_date": "选择日期",
+        "select_time": "选择时间",
+        "no_available_time": "此日期没有可用时间"
+      }
     }
   }
 }

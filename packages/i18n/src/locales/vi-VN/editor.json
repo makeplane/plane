@@ -61,5 +61,8 @@
       "use_this": "Sử dụng cái này",
       "refine": "Tinh chỉnh"
     }
+  },
+  "formatting_toolbar": {
+    "label": "Định dạng"
   }
 }

@@ -5,6 +5,9 @@
  */
 
 import type { Node } from "@tiptap/pm/model";
+import { InputField } from "@makeplane/propel/components/input-field";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Button } from "@makeplane/propel/elements/button";
 import { UnlinkOutline } from "@makeplane/propel/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 // components
@@ -22,12 +25,14 @@ type InputViewProps = {
 
 function InputView({ label, value, placeholder, onChange, autoFocus }: InputViewProps) {
   return (
-    <div className="flex flex-col gap-1">
-      <label className="inline-block text-11 font-semibold text-placeholder">{label}</label>
-      <input
+    <div className="w-[280px]">
+      <InputField
+        size="md"
+        orientation="vertical"
+        label={label}
+        type="text"
         placeholder={placeholder}
         onClick={(e) => e.stopPropagation()}
-        className="w-[280px] rounded-md border border-strong bg-layer-1 p-2 text-13 text-primary outline-none"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         autoFocus={autoFocus}
@@ -147,12 +152,19 @@ export function LinkEditView({ viewProps }: LinkEditViewProps) {
       <InputView label="URL" placeholder="Enter or paste URL" value={localUrl} onChange={setLocalUrl} autoFocus />
       <InputView label="Text" placeholder="Enter Text to display" value={localText} onChange={handleTextChange} />
       <div className="bg-strong mb-1 h-[1px] w-full gap-2" />
-      <div className="flex items-center gap-2 text-13 text-secondary">
-        <UnlinkOutline width={14} height={14} className="inline-block" />
-        <button onClick={removeLink} className="cursor-pointer transition-colors hover:text-placeholder">
-          Remove Link
-        </button>
-      </div>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        stretch="auto"
+        onClick={removeLink}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.stopPropagation();
+        }}
+      >
+        <Icon icon={UnlinkOutline} />
+        Remove Link
+      </Button>
     </div>
   );
 }

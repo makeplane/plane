@@ -17,6 +17,8 @@ import {
 import type { Editor } from "@tiptap/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CopyOutline, DeleteOutline } from "@makeplane/propel/icons";
+import { Icon } from "@makeplane/propel/components/icon";
+import { MenuItemContent, MenuItemTitle, MenuPopup } from "@makeplane/propel/elements/menu";
 import type { ISvgIcons } from "@plane/blocks/icons";
 import { cn } from "@plane/utils";
 // constants
@@ -25,6 +27,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 import type { IEditorProps } from "@/types";
 // components
 import { getNodeOptions } from "./block-menu-options";
+import { FloatingMenuItem } from "./floating-menu/root";
 
 type Props = {
   disabledExtensions?: IEditorProps["disabledExtensions"];
@@ -221,33 +224,35 @@ export function BlockMenu(props: Props) {
           zIndex: 100,
         }}
         className={cn(
-          "max-h-60 min-w-[7rem] overflow-y-scroll rounded-lg border border-subtle bg-surface-1 p-1.5 shadow-raised-200",
           "origin-top-right transform transition-all duration-300",
           isAnimatedIn ? "scale-100 opacity-100" : "scale-75 opacity-0"
         )}
         {...getFloatingProps()}
       >
-        {MENU_ITEMS.map((item) => {
-          if (item.isDisabled) return null;
+        <MenuPopup elevation="raised" render={<div className="max-h-60 overflow-y-scroll" />}>
+          {MENU_ITEMS.map((item) => {
+            if (item.isDisabled) return null;
 
-          return (
-            <button
-              key={item.key}
-              type="button"
-              className="flex w-full items-center gap-1.5 truncate rounded-sm px-1 py-1.5 text-11 text-secondary hover:bg-layer-1"
-              onClick={(e) => {
-                item.onClick(e);
-                e.preventDefault();
-                e.stopPropagation();
-                closeBlockMenu();
-              }}
-              disabled={item.isDisabled}
-            >
-              <item.icon className="h-3 w-3" />
-              {item.label}
-            </button>
-          );
-        })}
+            return (
+              <FloatingMenuItem
+                key={item.key}
+                type="button"
+                onClick={(e) => {
+                  item.onClick(e);
+                  e.preventDefault();
+                  e.stopPropagation();
+                  closeBlockMenu();
+                }}
+                disabled={item.isDisabled}
+              >
+                <Icon icon={item.icon} tint="secondary" />
+                <MenuItemContent>
+                  <MenuItemTitle>{item.label}</MenuItemTitle>
+                </MenuItemContent>
+              </FloatingMenuItem>
+            );
+          })}
+        </MenuPopup>
       </div>
     </FloatingPortal>
   );

@@ -223,6 +223,11 @@
       "search": {
         "description": "Không phát hiện dự án nào phù hợp với điều kiện tìm kiếm.\nTạo dự án mới"
       }
+    },
+    "card": {
+      "joined": "Đã tham gia",
+      "archived": "Đã lưu trữ",
+      "no_lead": "Không có người phụ trách"
     }
   },
   "workspace_views": {
@@ -373,6 +378,12 @@
           "message": "Đã xảy ra lỗi."
         }
       }
+    }
+  },
+  "instance_workspaces": {
+    "empty_state": {
+      "title": "Chưa có không gian làm việc nào",
+      "description": "Các không gian làm việc được tạo trên phiên bản này sẽ hiển thị tại đây."
     }
   }
 }

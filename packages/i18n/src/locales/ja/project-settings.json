@@ -11,11 +11,17 @@
       "delete_project": {
         "title": "プロジェクトを削除",
         "description": "プロジェクトを削除すると、そのプロジェクト内のすべてのデータとリソースが永久に削除され、復元できなくなります。",
-        "button": "プロジェクトを削除"
+        "button": "プロジェクトを削除",
+        "confirm_description": "プロジェクト {projectName} を削除してもよろしいですか？このプロジェクトのすべてのデータは完全に削除されます。この操作は取り消せません。",
+        "success_message": "プロジェクトを削除しました。"
       },
       "toast": {
         "success": "プロジェクトが正常に更新されました",
         "error": "プロジェクトを更新できませんでした。もう一度お試しください。"
+      },
+      "confirm_project_name_label": "続行するには、プロジェクト名を入力してください。",
+      "leave_project": {
+        "confirm_description": "プロジェクト {projectName} から退出してもよろしいですか？あなたに関連付けられた作業項目にはアクセスできなくなります。"
       }
     },
     "members": {

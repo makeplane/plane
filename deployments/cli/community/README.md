@@ -25,7 +25,7 @@ Let's get started!
 #### For Mac
 
   <ol>
-    <li> Download Docker Desktop for Mac from the <a href="https://hub.docker.com/editions/community/docker-ce-desktop-mac/" target="_blank">Docker Hub</a>. </li>
+    <li> Download Docker Desktop for Mac from the <a href="https://docs.docker.com/desktop/setup/install/mac-install/" target="_blank">Docker docs</a>. </li>
     <li> Double-click the downloaded `.dmg` file and drag the Docker app icon to the Applications folder. </li>
     <li>Open Docker Desktop from the Applications folder. You might be asked to provide your system password to install additional software.</li>
   </ol>
@@ -33,7 +33,7 @@ Let's get started!
 #### For Windows:
 
   <ol>
-    <li>Download Docker Desktop for Windows from the <a href="https://hub.docker.com/editions/community/docker-ce-desktop-windows/" target="_blank">Docker Hub</a>.</li>
+    <li>Download Docker Desktop for Windows from the <a href="https://docs.docker.com/desktop/setup/install/windows-install/" target="_blank">Docker docs</a>.</li>
     <li>Run the installer and follow the instructions. You might be asked to enable Hyper-V and "Containers" Windows features.</li>
     <li>Open Docker Desktop. You might be asked to log out and log back in, or restart your machine, for changes to take effect.</li>
   </ol>
@@ -63,7 +63,7 @@ mkdir plane-selfhost
 cd plane-selfhost
 ```
 
-#### For *Docker Compose* based setup
+#### For _Docker Compose_ based setup
 
 ```
 curl -fsSL -o setup.sh https://github.com/makeplane/plane/releases/latest/download/setup.sh
@@ -71,7 +71,7 @@ curl -fsSL -o setup.sh https://github.com/makeplane/plane/releases/latest/downlo
 chmod +x setup.sh
 ```
 
-#### For *Docker Swarm* based setup
+#### For _Docker Swarm_ based setup
 
 ```
 curl -fsSL -o setup.sh https://github.com/makeplane/plane/releases/latest/download/swarm.sh
@@ -89,10 +89,11 @@ Lets get started by running the `./setup.sh` command.
 
 This will prompt you with the below options.
 
-#### Docker Compose 
+#### Docker Compose
+
 ```bash
 Select an Action you want to perform:
-   1) Install (x86_64)
+   1) Install
    2) Start
    3) Stop
    4) Restart
@@ -111,7 +112,9 @@ This will create a folder `plane-app` and will download 2 files inside that
 - `docker-compose.yaml`
 - `plane.env`
 
-Again the `options [1-8]` will be popped up, and this time hit `8` to exit.
+The script exits when the install is done. Review `plane-app/plane.env` (see below), then start the services.
+
+The script also accepts the action as an argument, so you can skip the menu: `./setup.sh install|start|stop|restart|upgrade|logs|backup`.
 
 #### Docker Swarm
 
@@ -128,29 +131,47 @@ Select an Action you want to perform:
 Action [3]: 1
 ```
 
-For the 1st time setup, type "1" as action input.
+Run `docker swarm init` on the manager node first if the node is not part of a swarm yet.
 
-This will create a create a folder `plane-app` and will download 2 files inside that
+For the 1st time setup, type "1" as action input. The script asks for a stack name (default `plane`), creates a folder `plane-app`, downloads 2 files inside that
 
-- `docker-compose.yaml`
+- `docker-compose.yml`
 - `plane.env`
 
-Again the `options [1-7]` will be popped up, and this time hit `7` to exit.
+and deploys the stack with `docker stack deploy` right away. Review `plane-app/plane.env` and use `Redeploy Stack` to apply changes.
 
 ---
 
 ### Continue with setup - Environment Settings
 
-Before proceeding, we suggest used to review `.env` file and set the values.
+Before proceeding, we suggest you review the `plane-app/plane.env` file and set the values.
 Below are the most import keys you must refer to. _<span style="color: #fcba03">You can use any text editor to edit this file</span>_.
 
 > `LISTEN_HTTP_PORT` - This is default set to `80`. Make sure the port you choose to use is not preoccupied. (e.g `LISTEN_HTTP_PORT=8080`)
 
-> `WEB_URL` - This is default set to `http://localhost`. Change this to the FQDN you plan to use along with LISTEN_HTTP_PORT (eg. `https://plane.example.com:8080` or `http://[IP-ADDRESS]:8080`)
+> `APP_DOMAIN` - This is default set to `localhost`. Set it to the domain or IP address you will use (eg. `plane.example.com`).
 
-> `CORS_ALLOWED_ORIGINS` - This is default set to `http://localhost`. Change this to the FQDN you plan to use along with LISTEN_HTTP_PORT (eg. `https://plane.example.com:8080` or `http://[IP-ADDRESS]:8080`)
+> `WEB_URL` - This is default set to `http://${APP_DOMAIN}`. Change this to the FQDN you plan to use along with LISTEN_HTTP_PORT (eg. `https://plane.example.com:8080` or `http://[IP-ADDRESS]:8080`)
 
-There are many other settings you can play with, but we suggest you configure `EMAIL SETTINGS` as it will enable you to invite your teammates onto the platform.
+> `CORS_ALLOWED_ORIGINS` - This is default set to `http://${APP_DOMAIN}`. Change this to the FQDN you plan to use along with LISTEN_HTTP_PORT (eg. `https://plane.example.com:8080` or `http://[IP-ADDRESS]:8080`)
+
+> `SECRET_KEY` and `LIVE_SERVER_SECRET_KEY` - Both ship as `change-this-key-on-deployment`. Set each to its own random value (eg. `openssl rand -hex 32`) before the first start.
+
+> HTTPS - The bundled Caddy proxy can issue certificates. Set `SITE_ADDRESS` to your domain (default `:80`, plain HTTP), `CERT_EMAIL` for the ACME account, optionally `CERT_ACME_DNS` for a DNS challenge, and keep `LISTEN_HTTPS_PORT` (default `443`) free.
+
+> External services - To use your own Postgres, Redis, RabbitMQ or S3 instead of the bundled containers, set `DATABASE_URL`, `REDIS_URL`, `AMQP_URL`, and `USE_MINIO=0` with the `AWS_*` values in `plane.env`.
+
+There are many other settings you can play with. We suggest you also set up email (SMTP) so you can invite your teammates onto the platform. SMTP is not set in `plane.env`: configure it in the instance admin at `/god-mode` → Email after you start the services.
+
+#### Client IP and rate limiting behind proxies
+
+Some endpoints are rate-limited per client IP. Two settings in `plane.env` control how that IP is determined:
+
+- **Plane directly on the internet behind the bundled proxy:** set `TRUSTED_PROXIES=private_ranges` (or your load balancer's ranges) and `NUM_PROXIES=1`.
+- **Behind an additional load balancer or CDN:** add its ranges to `TRUSTED_PROXIES` (space-separated, e.g. `TRUSTED_PROXIES=private_ranges 203.0.113.0/24`) and raise `NUM_PROXIES` by one per extra hop (e.g. `NUM_PROXIES=2`).
+- **Leaving `NUM_PROXIES` empty and `TRUSTED_PROXIES` at its default (`0.0.0.0/0`)** keeps the current behaviour.
+
+Restart the services after changing these values.
 
 ---
 
@@ -160,7 +181,7 @@ Lets again run the `./setup.sh` command. You will again be prompted with the bel
 
 ```bash
 Select a Action you want to perform:
-   1) Install (x86_64)
+   1) Install
    2) Start
    3) Stop
    4) Restart
@@ -189,13 +210,13 @@ You have successfully self hosted `Plane` instance. Access the application by go
 
 In case you want to make changes to `plane.env` variables, we suggest you to stop the services before doing that.
 
-#### Docker Compose 
+#### Docker Compose
 
 Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `3` to stop the services
 
 ```bash
 Select a Action you want to perform:
-   1) Install (x86_64)
+   1) Install
    2) Start
    3) Stop
    4) Restart
@@ -239,9 +260,10 @@ In case you want to make changes to `plane.env` variables, without stopping the 
 Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `4` to restart the services
 
 #### Docker Compose
+
 ```bash
 Select a Action you want to perform:
-   1) Install (x86_64)
+   1) Install
    2) Start
    3) Stop
    4) Restart
@@ -275,9 +297,11 @@ If all goes well, you will see the confirmation from docker cli
 
 ---
 
-### Upgrading Plane Version 
+### Upgrading Plane Version
 
 It is always advised to keep Plane up to date with the latest release.
+
+> Download the latest `setup.sh` (see [Downloading Latest Release](#downloading-latest-release)) before upgrading. The upgrade runs your local copy of the script, and newer versions generate or rotate the object-storage (MinIO) credentials in `plane.env`.
 
 Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `5` to upgrade the release.
 
@@ -285,7 +309,7 @@ Lets again run the `./setup.sh` command. You will again be prompted with the bel
 
 ```bash
 Select a Action you want to perform:
-   1) Install (x86_64)
+   1) Install
    2) Start
    3) Stop
    4) Restart
@@ -303,7 +327,7 @@ You must expect the below message
 
 ![Alt text](images/upgrade.png)
 
-Once done, choose `8` to exit from prompt.
+The script exits when the upgrade is done.
 
 > It is very important for you to validate the `plane.env` for the new changes.
 
@@ -325,21 +349,17 @@ Lets again run the `./setup.sh` command. You will again be prompted with the bel
 Action [3]: 5
 ```
 
-By choosing this, it will stop the services and then will download the latest `docker-compose.yaml` and `plane.env`.
+By choosing this, it asks for confirmation, downloads the latest `docker-compose.yml` and `plane.env` (your previous `plane.env` is kept as `plane.env.bak`), and redeploys the stack automatically.
 
-Once done, choose `7` to exit from prompt.
-
-> It is very important for you to validate the `plane.env` for the new changes.
-
-Once done with making changes in `plane.env` file, jump on to `Redeploy Stack`
+> It is very important for you to validate the `plane.env` for the new changes. If you change it, run `Redeploy Stack` again.
 
 ---
 
 ### View Logs
 
-There would a time when you might want to check what is happening inside the API, Worker or any other container.  
+There would a time when you might want to check what is happening inside the API, Worker or any other container.
 
-Lets again run the `./setup.sh` command. You will again be prompted with the below options. 
+Lets again run the `./setup.sh` command. You will again be prompted with the below options.
 
 This time select `6` to view logs.
 
@@ -347,7 +367,7 @@ This time select `6` to view logs.
 
 ```bash
 Select a Action you want to perform:
-   1) Install (x86_64)
+   1) Install
    2) Start
    3) Stop
    4) Restart
@@ -360,7 +380,6 @@ Action [2]: 6
 ```
 
 #### Docker Swarm
-
 
 ```bash
    1) Deploy Stack
@@ -375,7 +394,9 @@ Action [3]: 6
 ```
 
 #### Service Menu Options for Logs
+
 This will further open sub-menu with list of services
+
 ```bash
 Select a Service you want to view the logs for:
    1) Web
@@ -394,7 +415,9 @@ Select a Service you want to view the logs for:
 Service: 3
 ```
 
+The Docker Swarm sub-menu lists services 1-9 (no Minio or RabbitMQ). The `admin` and `live` services have no menu entry; view them with `docker compose -f plane-app/docker-compose.yaml logs -f admin` (or `live`).
 Select any of the service to view the logs e.g. `3`. Expect something similar to this
+
 ```bash
 api-1  | Waiting for database...
 api-1  | Database available!
@@ -420,7 +443,7 @@ api-1  | EMAIL_PORT loaded with value from environment variable.
 api-1  | EMAIL_FROM loaded with value from environment variable.
 api-1  | EMAIL_USE_TLS loaded with value from environment variable.
 api-1  | EMAIL_USE_SSL loaded with value from environment variable.
-api-1  | OPENAI_API_KEY loaded with value from environment variable.
+api-1  | LLM_API_KEY loaded with value from environment variable.
 api-1  | GPT_ENGINE loaded with value from environment variable.
 api-1  | UNSPLASH_ACCESS_KEY loaded with value from environment variable.
 api-1  | Checking bucket...
@@ -439,9 +462,9 @@ api-1  | [2024-05-02 03:56:03 +0000] [25] [INFO] Application startup complete.
 
 ```
 
-To exit this, use `CTRL+C` and then you will land on to the main-menu with the list of actions. 
+To exit this, use `CTRL+C` and then you will land on to the main-menu with the list of actions.
 
-Similarly, you can view the logs of other services. 
+Similarly, you can view the logs of other services.
 
 ---
 
@@ -449,11 +472,13 @@ Similarly, you can view the logs of other services.
 
 There would a time when you might want to backup your data from docker volumes to external storage like S3 or drives.
 
+The services must be **running**: the backup copies data out of the running `plane-db`, `plane-minio`, `plane-mq` and `plane-redis` containers.
+
 Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `7` to Backup the data.
 
 ```bash
 Select a Action you want to perform:
-   1) Install (x86_64)
+   1) Install
    2) Start
    3) Stop
    4) Restart
@@ -465,12 +490,13 @@ Select a Action you want to perform:
 Action [2]: 7
 ```
 
-In response, you can find the backup folder
+In response, you can find the backup folder. It holds `pgdata.tar.gz`, `uploads.tar.gz`, `rabbitmq_data.tar.gz` and `redisdata.tar.gz`.
 
 ```bash
-Backing Up plane-app_pgdata
-Backing Up plane-app_redisdata
-Backing Up plane-app_uploads
+Backing up plane-db data...
+Backing up plane-minio data...
+Backing up plane-mq data...
+Backing up plane-redis data...
 
 Backup completed successfully. Backup files are stored in /....../plane-app/backup/20240502-1120
 ```
@@ -481,7 +507,7 @@ Backup completed successfully. Backup files are stored in /....../plane-app/back
 
 When you want to restore the previously backed-up data, follow the instructions below.
 
-1. Make sure that Plane-CE is installed, started, and then stopped. This ensures that the Docker volumes are created.
+1. Make sure that Plane-CE is installed, started, and then stopped. This ensures that the Docker volumes are created. The restore script needs `jq` installed to check that Plane is stopped.
 
 1. Download the restore script using the command below. We suggest downloading it in the same folder as `setup.sh`.
 
@@ -500,12 +526,12 @@ When you want to restore the previously backed-up data, follow the instructions 
 
    ```bash
    --------------------------------------------
-    ____  _                          ///////// 
-   |  _ \| | __ _ _ __   ___         ///////// 
-   | |_) | |/ _` | '_ \ / _ \   /////    ///// 
-   |  __/| | (_| | | | |  __/   /////    ///// 
-   |_|   |_|\__,_|_| |_|\___|        ////      
-                                    ////      
+    ____  _                          /////////
+   |  _ \| | __ _ _ __   ___         /////////
+   | |_) | |/ _` | '_ \ / _ \   /////    /////
+   |  __/| | (_| | | | |  __/   /////    /////
+   |_|   |_|\__,_|_| |_|\___|        ////
+                                    ////
    --------------------------------------------
    Project management tool from the future
    --------------------------------------------
@@ -520,6 +546,10 @@ When you want to restore the previously backed-up data, follow the instructions 
    Found /opt/plane-selfhost/plane-app/backup/20240722-0914/uploads.tar.gz
    .....Restoring plane-app_uploads
    .....Successfully restored volume plane-app_uploads from uploads.tar.gz
+
+   Found /opt/plane-selfhost/plane-app/backup/20240722-0914/rabbitmq_data.tar.gz
+   .....Restoring plane-app_rabbitmq_data
+   .....Successfully restored volume plane-app_rabbitmq_data from rabbitmq_data.tar.gz
 
 
    Restore completed successfully.
@@ -550,7 +580,9 @@ When you want to restore the previously backed-up data on Plane Commercial Air-G
    ./restore-airgapped.sh <path to backup folder containing *.tar.gz files>
    ```
 
-1. After restoration, you are ready to start Plane Commercial (Airgapped) will all your previously saved data. 
+   The script asks for the install path of the Air-Gapped edition (default `$HOME/planeairgapped`); that folder must contain its `docker-compose.yml`.
+
+1. After restoration, you are ready to start Plane Commercial (Airgapped) will all your previously saved data.
 
 ---
 
@@ -567,7 +599,7 @@ Begin with downloading the migration script using below command
 
 ```
 
-curl -fsSL -o migrate.sh https://raw.githubusercontent.com/makeplane/plane/master/deploy/selfhost/migration-0.13-0.14.sh
+curl -fsSL -o migrate.sh https://raw.githubusercontent.com/makeplane/plane/master/deployments/cli/community/migration-0.13-0.14.sh
 
 chmod +x migrate.sh
 
@@ -627,4 +659,5 @@ In case the suffixes are wrong or the mentioned volumes are not found, you will 
 In case of successful migration, it will be a silent exit without error.
 
 Now its time to restart v0.14.0 setup.
+
 </details>

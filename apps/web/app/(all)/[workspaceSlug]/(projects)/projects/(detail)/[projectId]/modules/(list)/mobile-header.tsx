@@ -22,12 +22,12 @@ export const ModulesListMobileHeader = observer(function ModulesListMobileHeader
   return (
     <div className="flex justify-start md:hidden">
       <Menu>
-        <div className="flex flex-grow justify-start border-b border-subtle bg-surface-1 py-2 text-13 text-secondary">
+        <div className="flex flex-grow justify-start border-b border-subtle bg-surface-1 py-2 text-body-xs-regular text-secondary">
           <MenuTrigger
             render={
               <button
                 type="button"
-                className="flex flex-grow items-center justify-center gap-2 px-page-x text-13 text-secondary"
+                className="flex flex-grow items-center justify-center gap-2 px-page-x text-body-xs-regular text-secondary"
               />
             }
           >

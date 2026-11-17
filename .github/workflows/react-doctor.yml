@@ -58,7 +58,7 @@ jobs:
           # it needs, and it talks to the API through its own credentials.
           persist-credentials: false
 
-      - uses: millionco/react-doctor@v2
+      - uses: millionco/react-doctor@695e46eee203a5d1855020191aa7e9c010a1250e # v2.4.0
         # Common configuration knobs — uncomment any to override the default.
         # Full reference: https://www.react.doctor/ci
         # with:
