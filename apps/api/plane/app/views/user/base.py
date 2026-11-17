@@ -33,6 +33,7 @@ from plane.app.serializers import (
     UserSerializer,
 )
 from plane.app.views.base import BaseAPIView, BaseViewSet
+from plane.app.views.workspace.user import _visible_issues_q
 from plane.db.models import (
     Account,
     IssueActivity,
@@ -406,9 +407,10 @@ class UpdateUserTourCompletedEndpoint(BaseAPIView):
 
 class UserActivityEndpoint(BaseAPIView, BasePaginator):
     def get(self, request):
-        queryset = IssueActivity.objects.filter(actor=request.user).select_related(
-            "actor", "workspace", "issue", "project"
-        )
+        # The serializer embeds the live issue, so only issues the user can still see
+        queryset = IssueActivity.objects.filter(
+            _visible_issues_q(request.user, prefix="issue__"), actor=request.user
+        ).select_related("actor", "workspace", "issue", "project")
 
         return self.paginate(
             order_by=sanitize_order_by(

@@ -127,9 +127,19 @@ export const getFileMetaDataForUpload = async (file: File): Promise<TFileMetaDat
  * @returns {string} assetId
  */
 export const getAssetIdFromUrl = (src: string): string => {
-  // drop query string / hash so they don't leak into the asset key
-  // also drop a trailing slash (legacy URLs end in /<key>/)
-  const sourcePaths = src.split(/[?#]/, 1)[0].replace(/\/$/, "").split("/");
-  const assetUrl = sourcePaths[sourcePaths.length - 1];
-  return assetUrl ?? "";
+  let url: URL;
+  try {
+    // read the key from a path normalised the way the browser normalises a request URL: query string
+    // and hash dropped, dot segments and backslashes resolved (the base lets a relative source parse)
+    url = new URL(src, "http://localhost");
+  } catch {
+    return "";
+  }
+  // paths of other schemes are not normalised that way
+  if (!/^https?:$/.test(url.protocol)) return "";
+  // drop a trailing slash (legacy URLs end in /<key>/) and keep the last path segment
+  const assetUrl = url.pathname.replace(/\/$/, "").split("/").pop() ?? "";
+  // the key is placed in an API path, so it must not carry an encoded path separator
+  if (/%2f|%5c/i.test(assetUrl)) return "";
+  return assetUrl;
 };

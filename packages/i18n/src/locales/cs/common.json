@@ -892,6 +892,19 @@
       "update_view": "Aktualizovat pohled",
       "save_as": "Uložit jako",
       "hide_filters": "Skrýt filtry"
+    },
+    "filter_item": {
+      "remove": "Odebrat filtr",
+      "invalid": "Neplatný filtr",
+      "invalid_tooltip": "Tato podmínka filtru již není platná. Vlastnost mohla být smazána nebo se mohl změnit váš přístup k ní."
+    },
+    "operators": {
+      "is": "je",
+      "is_any_of": "je některý z",
+      "between": "mezi"
+    },
+    "properties": {
+      "subscriber": "Odběratel"
     }
   }
 }

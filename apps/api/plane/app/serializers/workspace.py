@@ -8,6 +8,7 @@ from rest_framework import serializers
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
 from .user import UserLiteSerializer, UserAdminLiteSerializer
+from .favorite import get_favorite_entities
 
 
 from plane.db.models import (
@@ -35,6 +36,7 @@ from plane.utils.content_validator import (
 )
 
 # Django imports
+from django.db.models import Exists, Q
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 import re
@@ -328,7 +330,19 @@ class WorkspaceRecentVisitSerializer(BaseSerializer):
 
         if entity_model and entity_serializer:
             try:
-                entity = entity_model.objects.get(pk=entity_identifier)
+                # Resolve like favorites do: only entities the visitor can still access
+                entities = get_favorite_entities(entity_name, obj.user_id, obj.project_id)
+                if entity_name == "issue":
+                    # Guests without guest_view_all_features only see the issues they created
+                    restricted_guest = ProjectMember.objects.filter(
+                        project_id=obj.project_id,
+                        member_id=obj.user_id,
+                        is_active=True,
+                        role=5,
+                        project__guest_view_all_features=False,
+                    )
+                    entities = entities.filter(Q(created_by_id=obj.user_id) | ~Exists(restricted_guest))
+                entity = entities.get(pk=entity_identifier, workspace_id=obj.workspace_id)
 
                 return entity_serializer(entity).data
             except entity_model.DoesNotExist:

@@ -9,7 +9,7 @@ import { TableMap } from "@tiptap/pm/tables";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
-import { findParentNodeOfType } from "@/helpers/common";
+import { findParentNodeOfType, isValidCssColor } from "@/helpers/common";
 // local imports
 import { TableCellSelectionOutlinePlugin } from "./plugins/selection-outline/plugin";
 import { DEFAULT_COLUMN_WIDTH } from "./table";
@@ -110,12 +110,14 @@ export const TableCell = Node.create<TableCellOptions>({
   },
 
   renderHTML({ node, HTMLAttributes }) {
-    return [
-      "td",
-      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        style: `background-color: ${node.attrs.background}; color: ${node.attrs.textColor};`,
-      }),
-      0,
-    ];
+    const { background, textColor } = node.attrs;
+    const style = [
+      isValidCssColor(background) && `background-color: ${background};`,
+      isValidCssColor(textColor) && `color: ${textColor};`,
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    return ["td", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, style ? { style } : {}), 0];
   },
 });

@@ -41,6 +41,12 @@ class IntakeIssueSerializer(BaseSerializer):
         ]
         read_only_fields = ["project", "workspace"]
 
+    def validate_duplicate_to(self, value):
+        # A duplicate can only be a work item of the intake's own project
+        if value and value.project_id != self.instance.project_id:
+            raise serializers.ValidationError("Work item must belong to the same project")
+        return value
+
     def validate(self, attrs):
         """
         Validate that if status is being changed to accepted (1),

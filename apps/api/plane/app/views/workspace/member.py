@@ -179,6 +179,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     @invalidate_cache(
         path="/api/workspaces/:slug/members/",
         url_params=True,
@@ -187,7 +188,6 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     )
     @invalidate_cache(path="/api/users/me/settings/")
     @invalidate_cache(path="api/users/me/workspaces/", user=False, multiple=True)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def leave(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user, is_active=True)
 

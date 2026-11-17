@@ -108,7 +108,7 @@ const BLOCKED_LINK_PROTOCOLS = ["javascript:", "data:", "vbscript:"];
  * therefore bypassable with a whitespace prefix (e.g. `"\tjavascript:alert(1)"`).
  * We replicate that normalization before our protocol check (GHSA-v2vv-7wq3-8w2j).
  */
-function isDangerousHref(rawHref: string): boolean {
+export function isDangerousHref(rawHref: string): boolean {
   const normalized = rawHref
     .replace(/[\t\n\r]/g, "") // strip Tab/LF/CR (stripped anywhere by WHATWG parser)
     // oxlint-disable-next-line no-control-regex -- intentional: mirrors WHATWG C0-control stripping before the URL scheme

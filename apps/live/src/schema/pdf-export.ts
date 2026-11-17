@@ -7,9 +7,11 @@
 import { Schema } from "effect";
 
 export const PdfExportRequestBody = Schema.Struct({
-  pageId: Schema.NonEmptyTrimmedString,
-  workspaceSlug: Schema.NonEmptyTrimmedString,
-  projectId: Schema.optional(Schema.NonEmptyTrimmedString),
+  // the ids and the slug are placed in API request paths
+  pageId: Schema.UUID,
+  // same rule as UserService.getPageAccess: older slugs predate [\w-], so refuse only what could change the path
+  workspaceSlug: Schema.NonEmptyTrimmedString.pipe(Schema.pattern(/^(?!\.{1,2}$)[^/\\?#%\p{Cc}]+$/u)),
+  projectId: Schema.optional(Schema.UUID),
   title: Schema.optional(Schema.String),
   author: Schema.optional(Schema.String),
   subject: Schema.optional(Schema.String),
