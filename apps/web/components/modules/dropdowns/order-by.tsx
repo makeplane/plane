@@ -42,7 +42,7 @@ export function ModuleOrderByDropdown(props: Props) {
             label={t(option.i18n_label)}
             selected={value?.includes(option.key) ?? false}
             onClick={() => {
-              if (isDescending && !isManual) onChange(`-${option.key}` as TModuleOrderByOptions);
+              if (isDescending && option.key !== "sort_order") onChange(`-${option.key}` as TModuleOrderByOptions);
               else onChange(option.key);
             }}
           />
