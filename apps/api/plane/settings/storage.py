@@ -20,6 +20,10 @@ from storages.backends.s3boto3 import S3Boto3Storage
 
 
 class S3Storage(S3Boto3Storage):
+    # FileField uploads send no canned ACL: an object keeps the bucket's default access
+    # and is read through presigned URLs. Takes precedence over AWS_DEFAULT_ACL.
+    default_acl = None
+
     def url(self, name, parameters=None, expire=None, http_method=None):
         return name
 

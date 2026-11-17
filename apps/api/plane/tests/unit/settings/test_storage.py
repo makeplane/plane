@@ -5,6 +5,7 @@
 import os
 from unittest.mock import Mock, patch
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
 from plane.settings.storage import S3Storage
 
 
@@ -223,6 +224,17 @@ class TestS3StorageDefaultStorage:
 
         assert storage.location == ""
         assert storage._normalize_name("ws/file.png") == "ws/file.png"
+
+    @patch("plane.settings.storage.boto3")
+    def test_filefield_uploads_carry_no_acl(self, mock_boto3, settings):
+        """No ACL is sent, even when the AWS_DEFAULT_ACL setting names one."""
+        settings.AWS_DEFAULT_ACL = "public-read"
+
+        storage = S3Storage()
+        upload = SimpleUploadedFile("a.png", b"x", content_type="image/png")
+
+        assert storage.default_acl is None
+        assert "ACL" not in storage._get_write_parameters("ws/a.png", upload)
 
 
 @pytest.mark.unit
