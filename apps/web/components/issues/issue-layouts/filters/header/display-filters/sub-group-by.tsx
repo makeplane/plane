@@ -44,7 +44,7 @@ export const FilterSubGroupBy = observer(function FilterSubGroupBy(props: Props)
   return (
     <MenuSubmenu>
       <MenuSubmenuTrigger
-        label="Sub-group by"
+        label={t("common.sub_group_by")}
         trailing={
           selectedOption && (
             <DisplayFilterCurrentValue>{t(selectedOption.titleTranslationKey)}</DisplayFilterCurrentValue>
