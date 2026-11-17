@@ -3,25 +3,24 @@
 # See the LICENSE file for details.
 
 # Python imports
-import math
 from datetime import timedelta
 from itertools import groupby
 
 # Django import
 from django.db import models
-from django.db.models import Case, CharField, Count, F, Sum, Value, When, FloatField
+from django.db.models import Case, CharField, Count, F, Sum, Value, When
 from django.db.models.functions import (
     Coalesce,
     Concat,
     ExtractMonth,
     ExtractYear,
     TruncDate,
-    Cast,
 )
 from django.utils import timezone
 
 # Module imports
 from plane.db.models import Issue, Project
+from plane.utils.estimate import estimate_to_float as _estimate_to_float, estimate_value_as_float
 
 VALID_ANALYTICS_FIELDS = [
     "state_id",
@@ -109,7 +108,7 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
 
     # Estimate
     else:
-        queryset = queryset.annotate(estimate=Sum(Cast("estimate_point__value", FloatField()))).order_by(x_axis)
+        queryset = queryset.annotate(estimate=Sum(estimate_value_as_float())).order_by(x_axis)
         queryset = queryset.annotate(segment=F(segment)) if segment else queryset
         queryset = (
             queryset.values("dimension", "segment", "estimate") if segment else queryset.values("dimension", "estimate")
@@ -119,16 +118,6 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
     grouped_data = {str(key): list(items) for key, items in groupby(result_values, key=lambda x: x[str("dimension")])}
 
     return sort_data(grouped_data, temp_axis)
-
-
-def _estimate_to_float(value):
-    # Point estimates are free text; skip values like "M = 2" instead of crashing the chart
-    try:
-        number = float(value)
-    except (TypeError, ValueError):
-        return 0.0
-    # "nan"/"inf"/"1e309" parse but would poison the sum and break JSON
-    return number if math.isfinite(number) else 0.0
 
 
 def burndown_plot(queryset, slug, project_id, plot_type, cycle_id=None, module_id=None):
