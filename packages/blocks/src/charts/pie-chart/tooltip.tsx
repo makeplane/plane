@@ -7,7 +7,7 @@
 import React from "react";
 import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 // plane imports
-import { Card } from "../../card/card";
+import { TooltipPopup } from "@makeplane/propel/elements/tooltip";
 
 type Props = {
   dotColor?: string;
@@ -19,13 +19,17 @@ export const CustomPieChartTooltip = React.memo(function CustomPieChartTooltip(p
   const { dotColor, label, payload } = props;
 
   return (
-    <Card
-      className="vertical-scrollbar scrollbar-sm flex max-h-[40vh] w-[12rem] flex-col overflow-y-scroll"
-      spacing="sm"
+    <TooltipPopup
+      layout="stacked"
+      render={
+        <div className="vertical-scrollbar scrollbar-sm flex max-h-[40vh] w-[12rem] flex-col overflow-y-scroll" />
+      }
     >
-      <p className="flex-shrink-0 truncate border-b border-subtle pb-2 text-11 font-medium text-primary">{label}</p>
+      <p className="w-full flex-shrink-0 truncate border-b border-subtle pb-2 text-caption-sm-medium text-primary">
+        {label}
+      </p>
       {payload?.map((item) => (
-        <div key={item?.dataKey} className="flex items-center gap-2 text-11 capitalize">
+        <div key={item?.dataKey} className="flex w-full items-center gap-2 text-caption-sm-regular capitalize">
           <div className="flex items-center gap-2 truncate">
             <div
               className="size-2 flex-shrink-0 rounded-xs"
@@ -35,10 +39,10 @@ export const CustomPieChartTooltip = React.memo(function CustomPieChartTooltip(p
             />
             <span className="truncate text-tertiary">{item?.name}:</span>
           </div>
-          <span className="flex-shrink-0 font-medium text-secondary">{item?.value}</span>
+          <span className="flex-shrink-0 text-caption-sm-medium text-secondary">{item?.value}</span>
         </div>
       ))}
-    </Card>
+    </TooltipPopup>
   );
 });
 CustomPieChartTooltip.displayName = "CustomPieChartTooltip";

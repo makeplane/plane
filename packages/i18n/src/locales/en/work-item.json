@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Work item} other {Work items}}",
     "all": "All Work items",
     "edit": "Edit work item",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# more property} other {# more properties}}",
+      "label_overflow_indicator": "{count, plural, one {+# label} other {+# labels}}"
+    },
     "title": {
       "label": "Work item title",
       "required": "Work item title is required."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "View other work items"
         }
+      },
+      "no_access": {
+        "title": "You don't have access to this work item",
+        "description": "Contact a project admin to request access."
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "Work item could not be restored. Please try again."
       }
     },
+    "archived_banner": "This work item is archived. Restore it to make changes.",
+    "updated_time_ago": "Updated {time}",
+    "description_load_failed": "Couldn't load the description.",
+    "assignee_count": "{count, plural, one {# assignee} other {# assignees}}",
     "relation": {
       "relates_to": "Relates to",
       "duplicate": "Duplicate of",
@@ -267,7 +279,12 @@
       "click_to_upvote": "Click to upvote",
       "click_to_downvote": "Click to downvote",
       "click_to_view_upvotes": "Click to view upvotes",
-      "click_to_view_downvotes": "Click to view downvotes"
+      "click_to_view_downvotes": "Click to view downvotes",
+      "title": "Votes",
+      "upvotes_count": "{count, plural, one {# upvote} other {# upvotes}}",
+      "downvotes_count": "{count, plural, one {# downvote} other {# downvotes}}",
+      "no_upvotes": "No upvotes yet",
+      "no_downvotes": "No downvotes yet"
     }
   },
   "sub_work_item": {

@@ -171,7 +171,8 @@
     "search_menu": {
       "no_results": "Sonuç bulunamadı",
       "clear_search": "Aramayı temizle",
-      "go_to_advanced_search": "Gelişmiş aramaya git"
+      "go_to_advanced_search": "Gelişmiş aramaya git",
+      "search_commands": "Komut ara..."
     },
     "footer": {
       "workspace_level": "Çalışma alanı seviyesi"

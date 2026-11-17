@@ -26,6 +26,16 @@
           "highlight_changes": "Zvýraznit změny"
         }
       },
+      "version_history": {
+        "view_only": "Pouze pro čtení",
+        "loading_details": "Načítání podrobností verze",
+        "load_error_description": "Verzi se nepodařilo načíst. Zkuste to prosím znovu.",
+        "list_error_description": "Historii verzí se nepodařilo načíst.",
+        "try_again": "Zkusit znovu",
+        "restoring": "Obnovování",
+        "restore_success": "Verze stránky byla obnovena.",
+        "restore_failed": "Verzi stránky se nepodařilo obnovit."
+      },
       "assets": {
         "label": "Přílohy",
         "download_button": "Stáhnout",

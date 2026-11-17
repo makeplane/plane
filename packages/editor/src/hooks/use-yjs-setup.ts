@@ -121,20 +121,25 @@ export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseY
     const permanentlyStopProvider = () => {
       isDisposedRef.current = true;
 
-      const wsProvider = provider.configuration.websocketProvider;
-      if (wsProvider) {
-        try {
-          wsProvider.shouldConnect = false;
-          wsProvider.disconnect();
-          wsProvider.destroy();
-        } catch (error) {
-          console.error(`Error tearing down websocketProvider:`, error);
-        }
-      }
+      // v3's provider.destroy() also tears down the websocket it created
       try {
         provider.destroy();
       } catch (error) {
         console.error(`Error destroying provider:`, error);
+      }
+    };
+
+    const handleStateless = ({ payload }: { payload: string }) => {
+      if (isDisposedRef.current) return;
+
+      try {
+        const message: unknown = JSON.parse(payload);
+        if (typeof message === "object" && message !== null && "type" in message && message.type === "force_close") {
+          // v3 reports document closes as code 1000; preserve the server's forced-close intent.
+          forcedCloseSignalRef.current = true;
+        }
+      } catch {
+        // Legacy stateless action names are not JSON.
       }
     };
 
@@ -191,6 +196,7 @@ export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseY
       }
     };
 
+    provider.on("stateless", handleStateless);
     provider.on("close", handleClose);
 
     setYjsSession({ provider, ydoc: provider.document });
@@ -254,6 +260,7 @@ export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseY
 
     return () => {
       try {
+        provider.off("stateless", handleStateless);
         provider.off("close", handleClose);
       } catch (error) {
         console.error(`Error unregistering close handler:`, error);

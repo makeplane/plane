@@ -6,3 +6,5 @@
 
 export { ConfirmDialog } from "./confirm-dialog";
 export type { ConfirmDialogProps, TConfirmDialogVariant } from "./confirm-dialog";
+export { TypeToConfirmDialog } from "./type-to-confirm-dialog";
+export type { TTypeToConfirmField, TypeToConfirmDialogProps } from "./type-to-confirm-dialog";

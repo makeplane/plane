@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "Barre latérale principale",
+      "resize_sidebar": "Redimensionner la barre latérale",
+      "sidebar_peek_view": "Aperçu de la barre latérale",
       "workspace_logo": "Logo de l’espace de travail",
       "open_workspace_switcher": "Ouvrir le sélecteur d’espace de travail",
       "open_user_menu": "Ouvrir le menu utilisateur",
@@ -42,6 +45,15 @@
       "open": "Ouvrir le sélecteur de couleur",
       "swatches": "Couleurs prédéfinies",
       "hex_input": "Couleur hexadécimale"
+    },
+    "project_board": {
+      "collapse_group": "Réduire le groupe"
+    },
+    "pagination": {
+      "root": "Pagination",
+      "previous_page": "Aller à la page précédente",
+      "next_page": "Aller à la page suivante",
+      "go_to_page": "Aller à la page {page}"
     }
   }
 }

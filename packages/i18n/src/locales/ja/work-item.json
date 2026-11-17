@@ -3,6 +3,10 @@
     "label": "{count, plural, one {作業項目} other {作業項目}}",
     "all": "すべての作業項目",
     "edit": "作業項目を編集",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {他 # 件のプロパティ} other {他 # 件のプロパティ}}",
+      "label_overflow_indicator": "{count, plural, one {+#件のラベル} other {+#件のラベル}}"
+    },
     "title": {
       "label": "作業項目のタイトル",
       "required": "作業項目のタイトルは必須です。"
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "他の作業項目を表示"
         }
+      },
+      "no_access": {
+        "title": "この作業項目へのアクセス権がありません",
+        "description": "アクセス権をリクエストするには、プロジェクト管理者に連絡してください。"
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "作業項目を復元できませんでした。もう一度お試しください。"
       }
     },
+    "archived_banner": "この作業項目はアーカイブされています。変更するには復元してください。",
+    "updated_time_ago": "{time}に更新",
+    "description_load_failed": "説明を読み込めませんでした。",
+    "assignee_count": "{count, plural, one {担当者 #人} other {担当者 #人}}",
     "relation": {
       "relates_to": "関連する",
       "duplicate": "重複する",
@@ -267,7 +279,12 @@
       "click_to_upvote": "クリックして賛成票を投じる",
       "click_to_downvote": "クリックして反対票を投じる",
       "click_to_view_upvotes": "クリックして賛成票を表示",
-      "click_to_view_downvotes": "クリックして反対票を表示"
+      "click_to_view_downvotes": "クリックして反対票を表示",
+      "title": "投票",
+      "upvotes_count": "{count, plural, one {賛成票 #件} other {賛成票 #件}}",
+      "downvotes_count": "{count, plural, one {反対票 #件} other {反対票 #件}}",
+      "no_upvotes": "まだ賛成票はありません",
+      "no_downvotes": "まだ反対票はありません"
     }
   },
   "sub_work_item": {

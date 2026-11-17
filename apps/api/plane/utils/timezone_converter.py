@@ -9,6 +9,7 @@ from datetime import timedelta
 
 # Django imports
 from django.utils import timezone
+from django.utils.dateparse import parse_date
 
 # Module imports
 from plane.db.models import Project
@@ -92,6 +93,23 @@ def convert_to_utc(date, project_id, is_start_date=False):
 
         # Return the UTC datetime for storage
         return utc_datetime
+
+
+def project_day_start(day, tz):
+    """Midnight of ``day`` (a date) in ``tz`` (a pytz timezone)."""
+    return tz.localize(datetime.combine(day, time.min))
+
+
+def snooze_day_start(value, project_id):
+    """Midnight in the project's timezone for a bare "YYYY-MM-DD" snooze value, else None.
+
+    Parsed as-is, a bare date is UTC midnight, which IntakeIssue.save() would floor
+    to the previous day in a timezone behind UTC.
+    """
+    day = parse_date(value) if isinstance(value, str) else None
+    if day is None:
+        return None
+    return project_day_start(day, pytz.timezone(Project.objects.values_list("timezone", flat=True).get(id=project_id)))
 
 
 def convert_utc_to_project_timezone(utc_datetime, project_id):

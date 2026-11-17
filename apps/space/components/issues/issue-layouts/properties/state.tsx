@@ -5,49 +5,45 @@
  */
 
 import { observer } from "mobx-react";
-// plane ui
-import { StateGroupIcon } from "@plane/blocks/icons";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { TStateGroups } from "@plane/types";
-// plane utils
+// plane imports
+import { StateSelect } from "@plane/blocks/property-select";
+import type { StateOption } from "@plane/blocks/property-select";
+import type { SelectVariant } from "@plane/blocks/select";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
-//hooks
+// helpers
+import { READ_ONLY_SELECT_CLASSNAME, toSinglePage } from "@/helpers/select.helper";
+// hooks
 import { useStates } from "@/hooks/store/use-state";
 
 type Props = {
-  shouldShowBorder?: boolean;
-} & (
-  | {
-      stateDetails: {
-        name: string;
-        group: TStateGroups;
-      };
-    }
-  | {
-      stateId: string;
-    }
-);
+  stateId: string | undefined;
+  variant?: SelectVariant;
+  className?: string;
+};
 
+/** The work item state as a read-only `StateSelect` chip. */
 export const IssueBlockState = observer(function IssueBlockState(props: Props) {
-  const { shouldShowBorder = true } = props;
+  const { stateId, variant = "pill-md", className } = props;
+  // i18n
+  const { t } = useTranslation();
   // store hooks
-  const { getStateById } = useStates();
+  const { sortedStates, getStateById } = useStates();
   // derived values
-  const state = "stateId" in props ? getStateById(props.stateId) : props.stateDetails;
+  const state = getStateById(stateId);
   if (!state) return null;
 
+  const value: StateOption = { id: state.id, name: state.name, color: state.color, group: state.group };
+
   return (
-    <Tooltip label={`State: ${state.name}`}>
-      <div
-        className={cn("flex h-full w-full items-center justify-between gap-1 rounded-sm px-2.5 py-1 text-11", {
-          "border-[0.5px] border-strong": shouldShowBorder,
-        })}
-      >
-        <div className="flex w-full items-center gap-1.5">
-          <StateGroupIcon stateGroup={state.group} />
-          <div className="text-11">{state.name}</div>
-        </div>
-      </div>
-    </Tooltip>
+    <StateSelect
+      getValues={() => toSinglePage(sortedStates)}
+      value={value}
+      onChange={() => {}}
+      variant={variant}
+      className={cn(READ_ONLY_SELECT_CLASSNAME, className)}
+      tooltip={{ heading: t("common.state") }}
+      disabled
+    />
   );
 });

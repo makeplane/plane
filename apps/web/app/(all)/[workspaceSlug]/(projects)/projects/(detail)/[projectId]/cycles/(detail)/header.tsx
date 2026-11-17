@@ -19,6 +19,7 @@ import {
 } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { Badge } from "@makeplane/propel/components/badge";
 import { Button } from "@makeplane/propel/components/button";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
@@ -169,9 +170,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                 side="bottom"
                 disabled={isMobile}
               >
-                <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2 text-center text-11 font-semibold text-accent-primary">
-                  {workItemsCount}
-                </span>
+                <Badge variant="brand" size="xs" label={String(workItemsCount)} />
               </Tooltip>
             ) : null}
           </div>

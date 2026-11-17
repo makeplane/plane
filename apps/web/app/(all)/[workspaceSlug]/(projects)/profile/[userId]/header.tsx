@@ -79,11 +79,13 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
               render={
                 <button
                   type="button"
-                  className="flex grow items-center justify-center gap-2 rounded-md border border-subtle px-2 py-1.5 text-13 text-secondary"
+                  className="flex grow items-center justify-center gap-2 rounded-md border border-subtle px-2 py-1.5 text-body-xs-regular text-secondary"
                 />
               }
             >
-              <span className="flex grow justify-center text-13 text-secondary">{type ? t(type) : null}</span>
+              <span className="flex grow justify-center text-body-xs-regular text-secondary">
+                {type ? t(type) : null}
+              </span>
               <ChevronDownOutline className="h-4 w-4 text-placeholder" />
             </MenuTrigger>
             <MenuContent side="bottom" align="start">

@@ -7,6 +7,8 @@
     }
   },
   "sidebar": {
+    "more": "더 보기",
+    "hide": "숨기기",
     "stickies": "스티키",
     "your_work": "나의 작업",
     "projects": "프로젝트",

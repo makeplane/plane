@@ -13,7 +13,7 @@ RUN corepack enable pnpm
 
 FROM base AS builder
 
-RUN pnpm add -g turbo@2.9.18
+RUN pnpm add -g turbo@2.10.11
 
 COPY . .
 
@@ -83,7 +83,7 @@ ENV NODE_ENV=production
 # OS security updates. --available forces reinstall from the current repos;
 # bump APK_SECURITY_PATCH to bust buildx's cached layer (keyed on this command
 # string), otherwise a rebuild silently re-ships the old packages.
-ARG APK_SECURITY_PATCH=2026-09-07
+ARG APK_SECURITY_PATCH=2026-10-26
 RUN echo "apk-security-patch ${APK_SECURITY_PATCH}" && apk update && apk upgrade --no-cache --available
 
 # Remove go from Alpine APK database; not needed at runtime and carries stdlib CVEs

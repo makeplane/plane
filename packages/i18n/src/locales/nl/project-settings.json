@@ -11,11 +11,17 @@
       "delete_project": {
         "title": "Project verwijderen",
         "description": "Als je een project verwijdert, worden alle gegevens en bronnen binnen dat project permanent verwijderd en kunnen ze niet worden hersteld.",
-        "button": "Mijn project verwijderen"
+        "button": "Mijn project verwijderen",
+        "confirm_description": "Weet je zeker dat je het project {projectName} wilt verwijderen? Alle gegevens in dit project worden permanent verwijderd. Deze actie kan niet ongedaan worden gemaakt.",
+        "success_message": "Project verwijderd."
       },
       "toast": {
         "success": "Project succesvol bijgewerkt",
         "error": "Project kon niet worden bijgewerkt. Probeer het opnieuw."
+      },
+      "confirm_project_name_label": "Typ de projectnaam om door te gaan.",
+      "leave_project": {
+        "confirm_description": "Weet je zeker dat je het project {projectName} wilt verlaten? Werkitems die aan jou zijn gekoppeld, worden ontoegankelijk."
       }
     },
     "members": {

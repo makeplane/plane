@@ -4,8 +4,13 @@
  * See the LICENSE file for details.
  */
 
-// plane utils
-import { cn } from "@plane/utils";
+// propel imports
+import {
+  SuggestionMenuItem,
+  SuggestionMenuItemIcon,
+  SuggestionMenuItemTitle,
+  SuggestionMenuItemTrailing,
+} from "@makeplane/propel/elements/suggestion-menu";
 // types
 import type { ISlashCommandItem } from "@/types";
 
@@ -50,23 +55,30 @@ export function CommandMenuItem(props: Props) {
   const { isSelected, item, itemIndex, onClick, onMouseEnter, sectionIndex, query } = props;
 
   return (
-    <button
-      type="button"
-      id={`item-${sectionIndex}-${itemIndex}`}
-      className={cn(
-        "flex w-full items-center gap-2 truncate rounded-sm px-1 py-1.5 text-left text-13 text-secondary hover:bg-layer-1-hover",
-        {
-          "bg-layer-1-hover": isSelected,
-        }
-      )}
-      onClick={onClick}
-      onMouseEnter={onMouseEnter}
+    <SuggestionMenuItem
+      data-highlighted={isSelected ? "" : undefined}
+      render={
+        <button
+          type="button"
+          id={`item-${sectionIndex}-${itemIndex}`}
+          className="focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-inset"
+          style={{ textAlign: "start" }}
+          onClick={onClick}
+          onMouseEnter={onMouseEnter}
+        />
+      }
     >
-      <span className="grid size-5 flex-shrink-0 place-items-center" style={item.iconContainerStyle}>
-        {item.icon}
-      </span>
-      <p className="flex-grow truncate text-12">{query ? highlightMatch(item.title, query) : item.title}</p>
-      {item.badge}
-    </button>
+      <SuggestionMenuItemIcon>
+        {item.iconContainerStyle ? (
+          <span className="grid size-4 place-items-center" style={item.iconContainerStyle}>
+            {item.icon}
+          </span>
+        ) : (
+          item.icon
+        )}
+      </SuggestionMenuItemIcon>
+      <SuggestionMenuItemTitle>{query ? highlightMatch(item.title, query) : item.title}</SuggestionMenuItemTitle>
+      {item.badge && <SuggestionMenuItemTrailing>{item.badge}</SuggestionMenuItemTrailing>}
+    </SuggestionMenuItem>
   );
 }

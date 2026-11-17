@@ -1,0 +1,70 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useCallback } from "react";
+import { observer } from "mobx-react";
+import useSWR from "swr";
+
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@makeplane/propel/components/button";
+import { AddOutline } from "@makeplane/propel/icons";
+import type { THomeWidgetProps } from "@plane/types";
+import { useHome } from "@/hooks/store/use-home";
+import { LinkCreateUpdateModal } from "./create-update-link-modal";
+import { ProjectLinkList } from "./links";
+import { useLinks } from "./use-links";
+
+export const DashboardQuickLinks = observer(function DashboardQuickLinks(props: THomeWidgetProps) {
+  const { workspaceSlug } = props;
+  const { linkOperations } = useLinks(workspaceSlug);
+  const {
+    quickLinks: { isLinkModalOpen, toggleLinkModal, linkData, setLinkData, fetchLinks },
+  } = useHome();
+  const { t } = useTranslation();
+
+  const handleCreateLinkModal = useCallback(() => {
+    toggleLinkModal(true);
+    setLinkData(undefined);
+  }, [toggleLinkModal, setLinkData]);
+
+  useSWR(
+    workspaceSlug ? `HOME_LINKS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchLinks(workspaceSlug.toString()) : null,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+  return (
+    <>
+      <LinkCreateUpdateModal
+        isModalOpen={isLinkModalOpen}
+        handleOnClose={() => toggleLinkModal(false)}
+        linkOperations={linkOperations}
+        preloadedData={linkData}
+      />
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="text-body-sm-semibold text-tertiary">{t("home.quick_links.title_plural")}</div>
+          <Button
+            variant="secondary"
+            size="sm"
+            stretch="auto"
+            type="button"
+            icon={<AddOutline />}
+            label={t("home.quick_links.add")}
+            onClick={handleCreateLinkModal}
+          />
+        </div>
+        <div className="w-full">
+          {/* rendering links */}
+          <ProjectLinkList workspaceSlug={workspaceSlug} linkOperations={linkOperations} />
+        </div>
+      </div>
+    </>
+  );
+});

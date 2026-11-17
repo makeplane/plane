@@ -171,7 +171,8 @@
     "search_menu": {
       "no_results": "找不到結果",
       "clear_search": "清除搜尋",
-      "go_to_advanced_search": "前往進階搜尋"
+      "go_to_advanced_search": "前往進階搜尋",
+      "search_commands": "搜尋指令…"
     },
     "footer": {
       "workspace_level": "工作區層級"

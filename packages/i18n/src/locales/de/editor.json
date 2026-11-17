@@ -61,5 +61,8 @@
       "use_this": "Übernehmen",
       "refine": "Verfeinern"
     }
+  },
+  "formatting_toolbar": {
+    "label": "Formatierung"
   }
 }

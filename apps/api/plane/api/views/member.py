@@ -20,7 +20,7 @@ from plane.api.serializers import (
     ProjectMemberLiteAPISerializer,
 )
 from plane.db.models import User, Workspace, WorkspaceMember, Project, ProjectMember
-from plane.utils.permissions import ProjectMemberPermission, WorkSpaceAdminPermission, ProjectAdminPermission
+from plane.utils.permissions import ProjectMemberPermission, WorkSpaceAdminPermission, ProjectAdminPermission, ROLE
 from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
     PROJECT_ID_PARAMETER,
@@ -34,6 +34,17 @@ from plane.utils.openapi import (
     PROJECT_MEMBER_EXAMPLE,
     create_paginated_response,
 )
+
+
+def member_fields(request, slug, serializer_class):
+    """Fields of a member serializer the caller may see: workspace guests do not get
+    email addresses, as in the web app's workspace member list."""
+    fields = list(serializer_class.Meta.fields)
+    if not WorkspaceMember.objects.filter(
+        workspace__slug=slug, member=request.user, is_active=True, role__gt=ROLE.GUEST.value
+    ).exists():
+        fields = [field for field in fields if field != "email"]
+    return fields
 
 
 class WorkspaceMemberAPIEndpoint(BaseAPIView):
@@ -140,12 +151,16 @@ class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
             )
 
         # Get the workspace members that are present inside the workspace
-        project_members = ProjectMember.objects.filter(project_id=project_id, workspace__slug=slug).values_list(
-            "member_id", flat=True
-        )
+        project_members = ProjectMember.objects.filter(
+            project_id=project_id, workspace__slug=slug, is_active=True
+        ).values_list("member_id", flat=True)
 
         # Get all the users that are present inside the workspace
-        users = UserLiteSerializer(User.objects.filter(id__in=project_members), many=True).data
+        users = UserLiteSerializer(
+            User.objects.filter(id__in=project_members),
+            many=True,
+            fields=member_fields(request, slug, UserLiteSerializer),
+        ).data
         return Response(users, status=status.HTTP_200_OK)
 
     @extend_schema(
@@ -196,7 +211,7 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
         # Get the workspace members that are present inside the workspace
         project_members = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
         user = User.objects.get(id=project_members.member_id)
-        user = UserLiteSerializer(user).data
+        user = UserLiteSerializer(user, fields=member_fields(request, slug, UserLiteSerializer)).data
         return Response(user, status=status.HTTP_200_OK)
 
     @extend_schema(
@@ -210,6 +225,11 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
     )
     def patch(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
+        # A partial update may omit `member`, so check the existing target's workspace membership here.
+        if not WorkspaceMember.objects.filter(
+            workspace__slug=slug, member_id=project_member.member_id, is_active=True
+        ).exists():
+            return Response({"member": ["Member not found in workspace"]}, status=status.HTTP_400_BAD_REQUEST)
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True, context={"slug": slug})
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -328,5 +348,9 @@ class ProjectMemberLiteAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=project_members,
-            on_results=lambda members: ProjectMemberLiteAPISerializer(members, many=True).data,
+            on_results=lambda members: (
+                ProjectMemberLiteAPISerializer(
+                    members, many=True, fields=member_fields(request, slug, ProjectMemberLiteAPISerializer)
+                ).data
+            ),
         )

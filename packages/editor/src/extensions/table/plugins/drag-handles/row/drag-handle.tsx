@@ -17,6 +17,7 @@ import {
   useRole,
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/core";
+import { MenuPopup } from "@makeplane/propel/elements/menu";
 import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 // plane imports
@@ -229,10 +230,14 @@ export function RowDragHandle(props: RowDragHandleProps) {
           {...getReferenceProps()}
           type="button"
           onMouseDown={handleMouseDown}
-          className={cn("rounded-sm border border-strong-1 bg-layer-1 py-1 transition-all duration-200 outline-none", {
-            "border-accent-strong bg-accent-primary !opacity-100": isDropdownOpen,
-            "hover:bg-layer-1-hover": !isDropdownOpen,
-          })}
+          aria-label="Row options"
+          className={cn(
+            "rounded-sm border border-strong-1 bg-layer-1 py-1 transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-inset",
+            {
+              "border-accent-strong bg-accent-primary !opacity-100": isDropdownOpen,
+              "hover:bg-layer-1-hover": !isDropdownOpen,
+            }
+          )}
         >
           <MoreHorizontalOutline className="size-4 rotate-90 text-primary" />
         </button>
@@ -247,7 +252,6 @@ export function RowDragHandle(props: RowDragHandleProps) {
             lockScroll
           />
           <div
-            className="max-h-[90vh] w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 shadow-raised-200"
             ref={refs.setFloating}
             {...getFloatingProps()}
             style={{
@@ -255,7 +259,12 @@ export function RowDragHandle(props: RowDragHandleProps) {
               zIndex: 100,
             }}
           >
-            <RowOptionsDropdown editor={editor} onClose={() => context.onOpenChange(false)} />
+            <MenuPopup
+              elevation="raised"
+              render={<div className="max-h-[90vh] w-(--popup-width-min) overflow-y-auto" />}
+            >
+              <RowOptionsDropdown editor={editor} onClose={() => context.onOpenChange(false)} />
+            </MenuPopup>
           </div>
         </FloatingPortal>
       )}

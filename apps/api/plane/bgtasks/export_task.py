@@ -16,9 +16,10 @@ from celery import shared_task
 # Django imports
 from django.conf import settings
 from django.utils import timezone
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 
 # Module imports
+from plane.app.permissions import ROLE
 from plane.db.models import ExporterHistory, Issue, IssueComment, IssueRelation, IssueSubscriber
 from plane.utils.exception_logger import log_exception
 from plane.utils.porters.exporter import DataExporter
@@ -43,7 +44,7 @@ def upload_to_s3(zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: 
     """
     Upload a ZIP file to S3 and generate a presigned URL.
     """
-    file_name = f"{workspace_id}/export-{slug}-{token_id[:6]}-{str(timezone.now().date())}.zip"
+    file_name = f"{workspace_id}/export-{slug}-{token_id}-{str(timezone.now().date())}.zip"
     expires_in = 7 * 24 * 60 * 60
 
     if settings.USE_MINIO:
@@ -58,7 +59,7 @@ def upload_to_s3(zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: 
             zip_file,
             settings.AWS_STORAGE_BUCKET_NAME,
             file_name,
-            ExtraArgs={"ACL": "public-read", "ContentType": "application/zip"},
+            ExtraArgs={"ContentType": "application/zip"},
         )
 
         # Generate presigned url for the uploaded file with different base
@@ -144,13 +145,18 @@ def issue_export_task(
         exporter_instance.status = "processing"
         exporter_instance.save(update_fields=["status"])
 
-        # Build base queryset for issues
+        # Build base queryset for issues; guests on projects without
+        # guest_view_all_features only get the issues they created.
         workspace_issues = (
             Issue.objects.filter(
+                Q(project__project_projectmember__role__gt=ROLE.GUEST.value)
+                | Q(project__guest_view_all_features=True)
+                | Q(created_by_id=exporter_instance.initiated_by_id),
                 workspace__id=workspace_id,
                 project_id__in=project_ids,
                 project__project_projectmember__member=exporter_instance.initiated_by_id,
                 project__project_projectmember__is_active=True,
+                project__project_projectmember__deleted_at__isnull=True,
                 project__archived_at__isnull=True,
             )
             .select_related(

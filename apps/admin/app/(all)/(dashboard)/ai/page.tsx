@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
-import { Skeleton } from "@/components/common/skeleton";
+import { Skeleton } from "@plane/blocks/skeleton";
 // hooks
 import { useInstance } from "@/hooks/store";
 // types

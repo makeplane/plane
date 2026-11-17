@@ -18,7 +18,7 @@ from typing import Optional
 from plane.db.models import IssueLink
 from plane.utils.exception_logger import log_exception
 from plane.utils.ip_address import is_blocked_ip
-from plane.utils.url_security import pinned_fetch, pinned_fetch_following_redirects
+from plane.utils.url_security import pinned_fetch, pinned_fetch_following_redirects, read_capped_body
 
 logger = logging.getLogger("plane.worker")
 
@@ -70,6 +70,11 @@ def validate_url_ip(url: str) -> None:
 
 MAX_REDIRECTS = 5
 
+# Limits on what is read from a crawled page and its favicon
+MAX_TITLE_HTML_BYTES = 1024 * 1024
+MAX_FAVICON_BYTES = 100 * 1024
+MAX_BODY_READ_SECONDS = 10
+
 
 def safe_get(
     url: str,
@@ -87,7 +92,9 @@ def safe_get(
         timeout: Request timeout in seconds
 
     Returns:
-        A tuple of (final Response object, final URL after redirects)
+        A tuple of (final Response object, final URL after redirects). The
+        response is streamed: read its body with read_capped_body, which also
+        closes it.
 
     Raises:
         ValueError: If any URL in the redirect chain points to a private IP
@@ -99,6 +106,7 @@ def safe_get(
         headers=headers,
         timeout=timeout,
         max_redirects=MAX_REDIRECTS,
+        stream=True,
     )
 
 
@@ -125,7 +133,9 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         try:
             response, final_url = safe_get(url, headers=headers)
 
-            soup = BeautifulSoup(response.content, "html.parser")
+            # A page larger than the cap is parsed up to the cap
+            content, _ = read_capped_body(response, MAX_TITLE_HTML_BYTES, MAX_BODY_READ_SECONDS)
+            soup = BeautifulSoup(content, "html.parser")
             title_tag = soup.find("title")
             title = title_tag.get_text().strip() if title_tag else None
 
@@ -228,8 +238,12 @@ def fetch_and_encode_favicon(
         # Get content type
         content_type = response.headers.get("content-type", "image/x-icon")
 
+        content, truncated = read_capped_body(response, MAX_FAVICON_BYTES, MAX_BODY_READ_SECONDS)
+        if truncated:
+            raise ValueError("Favicon is too large or took too long to download")
+
         # Convert to base64
-        favicon_base64 = base64.b64encode(response.content).decode("utf-8")
+        favicon_base64 = base64.b64encode(content).decode("utf-8")
 
         # Return as data URI
         return {

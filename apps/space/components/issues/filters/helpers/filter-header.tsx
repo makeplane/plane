@@ -5,6 +5,8 @@
  */
 
 import React from "react";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 // icons
 import { ChevronDownOutline, ChevronUpOutline } from "@makeplane/propel/icons";
 
@@ -16,15 +18,17 @@ interface IFilterHeader {
 
 export function FilterHeader({ title, isPreviewEnabled, handleIsPreviewEnabled }: IFilterHeader) {
   return (
-    <div className="sticky top-0 flex items-center justify-between gap-2">
-      <div className="grow truncate text-11 font-medium text-tertiary">{title}</div>
-      <button
-        type="button"
-        className="grid h-5 w-5 shrink-0 place-items-center rounded-sm hover:bg-layer-transparent-hover"
+    <div className="sticky top-0 flex items-center justify-between gap-2 bg-layer-2">
+      <div className="grow truncate text-caption-sm-medium text-placeholder">{title}</div>
+      <IconButton
+        variant="ghost"
+        size="xs"
+        aria-label={title}
+        aria-expanded={isPreviewEnabled}
+        showTooltip={false}
         onClick={handleIsPreviewEnabled}
-      >
-        {isPreviewEnabled ? <ChevronUpOutline height={14} width={14} /> : <ChevronDownOutline height={14} width={14} />}
-      </button>
+        icon={<Icon icon={isPreviewEnabled ? ChevronUpOutline : ChevronDownOutline} />}
+      />
     </div>
   );
 }

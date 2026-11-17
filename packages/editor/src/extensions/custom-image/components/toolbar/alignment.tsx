@@ -4,8 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 // plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { Toolbar, ToolbarButton, ToolbarMenuTriggerButton } from "@makeplane/propel/elements/toolbar";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { ChevronDownOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
@@ -26,6 +28,7 @@ export function ImageAlignmentAction(props: Props) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownId = useId();
   // derived values
   const activeAlignmentDetails = IMAGE_ALIGNMENT_OPTIONS.find((option) => option.value === activeAlignment);
 
@@ -38,31 +41,41 @@ export function ImageAlignmentAction(props: Props) {
   return (
     <div ref={dropdownRef} className="relative h-full">
       <Tooltip disabled={isTouchDevice} label="Align">
-        <button
+        <ToolbarMenuTriggerButton
           type="button"
-          className="flex h-full items-center gap-1 text-white/60 transition-colors hover:text-white"
+          size="sm"
+          aria-label="Align image"
+          aria-expanded={isDropdownOpen}
+          aria-controls={isDropdownOpen ? dropdownId : undefined}
+          data-popup-open={isDropdownOpen ? "" : undefined}
           onClick={() => setIsDropdownOpen((prev) => !prev)}
         >
-          {activeAlignmentDetails && <activeAlignmentDetails.icon className="size-3 flex-shrink-0" />}
-          <ChevronDownOutline className="size-2 flex-shrink-0" />
-        </button>
+          {activeAlignmentDetails && <Icon icon={activeAlignmentDetails.icon} />}
+          <Icon icon={ChevronDownOutline} tint="secondary" />
+        </ToolbarMenuTriggerButton>
       </Tooltip>
       {isDropdownOpen && (
-        <div className="absolute top-full left-1/2 mt-0.5 flex h-7 -translate-x-1/2 items-center gap-2 rounded-sm bg-black/80 px-2">
-          {IMAGE_ALIGNMENT_OPTIONS.map((option) => (
-            <Tooltip disabled={isTouchDevice} key={option.value} label={option.label}>
-              <button
-                type="button"
-                className="grid h-full flex-shrink-0 place-items-center text-white/60 transition-colors hover:text-white"
-                onClick={() => {
-                  handleChange(option.value);
-                  setIsDropdownOpen(false);
-                }}
-              >
-                <option.icon className="size-3" />
-              </button>
-            </Tooltip>
-          ))}
+        <div className="absolute top-full left-1/2 mt-2.5 -translate-x-1/2">
+          <Toolbar id={dropdownId} size="sm" elevation="raised" role="group" aria-label="Image alignment">
+            {IMAGE_ALIGNMENT_OPTIONS.map((option) => (
+              <Tooltip disabled={isTouchDevice} key={option.value} label={option.label}>
+                <ToolbarButton
+                  type="button"
+                  size="sm"
+                  labeled={false}
+                  aria-label={`Align image ${option.value}`}
+                  aria-pressed={option.value === activeAlignment}
+                  data-pressed={option.value === activeAlignment ? "" : undefined}
+                  onClick={() => {
+                    handleChange(option.value);
+                    setIsDropdownOpen(false);
+                  }}
+                >
+                  <Icon icon={option.icon} />
+                </ToolbarButton>
+              </Tooltip>
+            ))}
+          </Toolbar>
         </div>
       )}
     </div>

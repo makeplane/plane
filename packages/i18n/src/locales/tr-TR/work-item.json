@@ -3,6 +3,10 @@
     "label": "{count, plural, one {İş öğesi} other {İş öğeleri}}",
     "all": "Tüm İş Öğeleri",
     "edit": "İş öğesini düzenle",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# özellik daha} other {# özellik daha}}",
+      "label_overflow_indicator": "{count, plural, one {+# etiket} other {+# etiket}}"
+    },
     "title": {
       "label": "İş öğesi başlığı",
       "required": "İş öğesi başlığı gereklidir."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "Diğer iş öğelerini görüntüle"
         }
+      },
+      "no_access": {
+        "title": "Bu iş öğesine erişiminiz yok",
+        "description": "Erişim istemek için bir proje yöneticisiyle iletişime geçin."
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "İş öğesi geri yüklenemedi. Lütfen tekrar deneyin."
       }
     },
+    "archived_banner": "Bu iş öğesi arşivlendi. Değişiklik yapmak için geri yükleyin.",
+    "updated_time_ago": "{time} güncellendi",
+    "description_load_failed": "Açıklama yüklenemedi.",
+    "assignee_count": "{count, plural, one {# atanan} other {# atanan}}",
     "relation": {
       "relates_to": "İlişkili",
       "duplicate": "Kopyası",
@@ -267,7 +279,12 @@
       "click_to_upvote": "Olumlu oy vermek için tıklayın",
       "click_to_downvote": "Olumsuz oy vermek için tıklayın",
       "click_to_view_upvotes": "Olumlu oyları görüntülemek için tıklayın",
-      "click_to_view_downvotes": "Olumsuz oyları görüntülemek için tıklayın"
+      "click_to_view_downvotes": "Olumsuz oyları görüntülemek için tıklayın",
+      "title": "Oylar",
+      "upvotes_count": "{count, plural, one {# olumlu oy} other {# olumlu oy}}",
+      "downvotes_count": "{count, plural, one {# olumsuz oy} other {# olumsuz oy}}",
+      "no_upvotes": "Henüz olumlu oy yok",
+      "no_downvotes": "Henüz olumsuz oy yok"
     }
   },
   "sub_work_item": {

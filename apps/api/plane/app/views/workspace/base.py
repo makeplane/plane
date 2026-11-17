@@ -34,6 +34,7 @@ from plane.app.permissions import (
 # Module imports
 from plane.app.serializers import WorkSpaceSerializer, WorkspaceThemeSerializer
 from plane.app.views.base import BaseAPIView, BaseViewSet
+from plane.app.views.workspace.user import _visible_issues_q
 from plane.db.models import (
     Issue,
     IssueActivity,
@@ -289,6 +290,7 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
 
         overdue_issues = Issue.issue_objects.filter(
             ~Q(state__group__in=["completed", "cancelled"]),
+            _visible_issues_q(request.user),
             workspace__slug=slug,
             assignees__in=[request.user],
             target_date__lt=timezone.now(),
@@ -297,6 +299,7 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
 
         upcoming_issues = Issue.issue_objects.filter(
             ~Q(state__group__in=["completed", "cancelled"]),
+            _visible_issues_q(request.user),
             start_date__gte=timezone.now(),
             workspace__slug=slug,
             assignees__in=[request.user],
@@ -353,10 +356,9 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
 
         user_activities = IssueActivity.objects.filter(
             ~Q(field__in=["comment", "vote", "reaction", "draft"]),
+            _visible_issues_q(request.user, prefix="issue__"),
             workspace__slug=slug,
             created_at__date=request.data.get("date"),
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
             actor_id=user_id,
         ).select_related("actor", "workspace", "issue", "project")[:10000]
 

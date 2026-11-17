@@ -63,7 +63,7 @@ function AutomationSettingsPage({ params }: Route.ComponentProps) {
           title={t("project_settings.automations.heading")}
           description={t("project_settings.automations.description")}
         />
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col gap-4">
           <AutoArchiveAutomation handleChange={handleChange} />
           <AutoCloseAutomation handleChange={handleChange} />
         </div>

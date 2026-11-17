@@ -2,6 +2,13 @@
   "module": {
     "label": "{count, plural, one {მოდული} other {მოდულები}}",
     "no_module": "მოდული არ არის",
-    "select": "Add modules"
+    "select": "Add modules",
+    "details_drawer": {
+      "progress": {
+        "done": "{scope, plural, one {# სამუშაო ელემენტიდან} other {# სამუშაო ელემენტიდან}} დასრულებულია {completed}",
+        "points_done": "{scope, plural, one {# ქულიდან} other {# ქულიდან}} დასრულებულია {completed}",
+        "empty": "პროგრესის თვალყურის სადევნებლად დაამატეთ სამუშაო ელემენტები მოდულს."
+      }
+    }
   }
 }

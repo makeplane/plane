@@ -26,6 +26,16 @@
           "highlight_changes": "標示變更"
         }
       },
+      "version_history": {
+        "view_only": "僅檢視",
+        "loading_details": "正在載入版本詳細資料",
+        "load_error_description": "無法載入此版本。請再試一次。",
+        "list_error_description": "無法載入版本歷史。",
+        "try_again": "重試",
+        "restoring": "正在還原",
+        "restore_success": "頁面版本已還原。",
+        "restore_failed": "無法還原頁面版本。"
+      },
       "assets": {
         "label": "資源",
         "download_button": "下載",

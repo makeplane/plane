@@ -42,6 +42,7 @@ Getting started with Plane is simple. Choose the setup that works best for you:
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Docker               | [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://developers.plane.so/self-hosting/methods/docker-compose)         |
 | Kubernetes           | [![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://developers.plane.so/self-hosting/methods/kubernetes) |
+| All-in-one Docker    | [deployments/aio/community](./deployments/aio/community/README.md) · [docs](https://developers.plane.so/self-hosting/methods/docker-aio)                                                |
 
 `Instance admins` can configure instance settings with [God mode](https://developers.plane.so/self-hosting/govern/instance-admin).
 
@@ -129,26 +130,27 @@ Explore Plane's [product documentation](https://docs.plane.so/) and [developer d
 
 ## ❤️ Community
 
-Join the Plane community on [GitHub Discussions](https://github.com/orgs/makeplane/discussions) and our [Forum](https://forum.plane.so). We follow a [Code of conduct](https://github.com/makeplane/plane/blob/master/CODE_OF_CONDUCT.md) in all our community channels.
+Join the Plane community on our [Forum](https://forum.plane.so), and use [GitHub issues](https://github.com/makeplane/plane/issues) for bug reports and feature requests. We follow a [Code of conduct](./CODE_OF_CONDUCT.md) in all our community channels.
 
 Feel free to ask questions, report bugs, participate in discussions, share ideas, request features, or showcase your projects. We’d love to hear from you!
 
 ## 🛡️ Security
 
-If you discover a security vulnerability in Plane, please report it responsibly instead of opening a public issue. We take all legitimate reports seriously and will investigate them promptly. See [Security policy](https://github.com/makeplane/plane/blob/master/SECURITY.md) for more info.
+If you discover a security vulnerability in Plane, please report it responsibly instead of opening a public issue. We take all legitimate reports seriously and will investigate them promptly. See [Security policy](./SECURITY.md) for more info.
 
-To disclose any security issues, please email us at security@plane.so.
+To disclose any security issues, please [report them privately on GitHub](https://github.com/makeplane/plane/security/advisories/new) or email us at security@plane.so.
 
 ## 🤝 Contributing
 
 There are many ways you can contribute to Plane:
 
-- Report [bugs](https://github.com/makeplane/plane/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%F0%9F%90%9Bbug&projects=&template=--bug-report.yaml&title=%5Bbug%5D%3A+) or submit [feature requests](https://github.com/makeplane/plane/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%E2%9C%A8feature&projects=&template=--feature-request.yaml&title=%5Bfeature%5D%3A+).
-- Review the [documentation](https://docs.plane.so/) and submit [pull requests](https://github.com/makeplane/docs) to improve it—whether it's fixing typos or adding new content.
+- Report [bugs](https://github.com/makeplane/plane/issues/new?template=--bug-report.yaml) or submit [feature requests](https://github.com/makeplane/plane/issues/new?template=--feature-request.yaml).
+- Review the [documentation](https://docs.plane.so/) and tell us on the [Forum](https://forum.plane.so) or in a GitHub issue where it is wrong or incomplete.
+- Add or update [translations](./CONTRIBUTING.md#contributing-to-language-support).
 - Talk or write about Plane or any other ecosystem integration and [let us know](https://forum.plane.so)!
 - Show your support by upvoting [popular feature requests](https://github.com/makeplane/plane/issues).
 
-Please read [CONTRIBUTING.md](https://github.com/makeplane/plane/blob/master/CONTRIBUTING.md) for details on the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on the process for submitting pull requests to us.
 
 ### Repo activity
 
@@ -162,4 +164,4 @@ Please read [CONTRIBUTING.md](https://github.com/makeplane/plane/blob/master/CON
 
 ## License
 
-This project is licensed under the [GNU Affero General Public License v3.0](https://github.com/makeplane/plane/blob/master/LICENSE.txt).
+This project is licensed under the [GNU Affero General Public License v3.0](./LICENSE.txt).

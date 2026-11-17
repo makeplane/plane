@@ -22,6 +22,10 @@ from plane.bgtasks.logger_task import process_logs
 
 api_logger = logging.getLogger("plane.api.request")
 
+# Longest request or response body, in characters, kept in an API activity log
+MAX_LOGGED_BODY_LENGTH = 10 * 1024
+TRUNCATION_MARKER = "... [truncated]"
+
 
 class RequestLoggerMiddleware:
     def __init__(self, get_response):
@@ -109,9 +113,13 @@ class APITokenLogMiddleware:
             return "[Binary Content]"
 
         try:
-            return content.decode("utf-8")
+            decoded = content.decode("utf-8")
         except UnicodeDecodeError:
             return "[Could not decode content]"
+
+        if len(decoded) > MAX_LOGGED_BODY_LENGTH:
+            return decoded[:MAX_LOGGED_BODY_LENGTH] + TRUNCATION_MARKER
+        return decoded
 
     # Headers whose values must never be persisted in plaintext logs
     SENSITIVE_HEADERS = frozenset({"x-api-key", "authorization", "cookie"})
@@ -131,8 +139,8 @@ class APITokenLogMiddleware:
         api_key_header = "X-Api-Key"
         api_key = request.headers.get(api_key_header)
 
-        # If the API key is not present, return
-        if not api_key:
+        # Only log requests that authenticated with an API key (marked by APIKeyAuthentication)
+        if not api_key or not getattr(request, "api_key_authenticated", False):
             return
 
         try:

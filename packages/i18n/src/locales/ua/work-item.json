@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Робоча одиниця} few {Робочі одиниці} other {Робочих одиниць}}",
     "all": "Усі робочі одиниці",
     "edit": "Редагувати робочу одиницю",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {ще # властивість} few {ще # властивості} many {ще # властивостей} other {ще # властивості}}",
+      "label_overflow_indicator": "{count, plural, one {+# мітка} few {+# мітки} many {+# міток} other {+# мітки}}"
+    },
     "title": {
       "label": "Назва робочої одиниці",
       "required": "Назва робочої одиниці є обов'язковою."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "Переглянути інші робочі одиниці"
         }
+      },
+      "no_access": {
+        "title": "У вас немає доступу до цієї робочої одиниці",
+        "description": "Зверніться до адміністратора проєкту, щоб запросити доступ."
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "Не вдалося відновити робочу одиницю. Спробуйте ще раз."
       }
     },
+    "archived_banner": "Цю робочу одиницю заархівовано. Відновіть її, щоб унести зміни.",
+    "updated_time_ago": "Оновлено {time}",
+    "description_load_failed": "Не вдалося завантажити опис.",
+    "assignee_count": "{count, plural, one {# призначений} few {# призначені} many {# призначених} other {# призначеного}}",
     "relation": {
       "relates_to": "Пов'язана з",
       "duplicate": "Дублікат",
@@ -267,7 +279,12 @@
       "click_to_upvote": "Натисніть, щоб проголосувати за",
       "click_to_downvote": "Натисніть, щоб проголосувати проти",
       "click_to_view_upvotes": "Натисніть, щоб переглянути голоси за",
-      "click_to_view_downvotes": "Натисніть, щоб переглянути голоси проти"
+      "click_to_view_downvotes": "Натисніть, щоб переглянути голоси проти",
+      "title": "Голоси",
+      "upvotes_count": "{count, plural, one {# голос за} few {# голоси за} many {# голосів за} other {# голосу за}}",
+      "downvotes_count": "{count, plural, one {# голос проти} few {# голоси проти} many {# голосів проти} other {# голосу проти}}",
+      "no_upvotes": "Поки немає голосів за",
+      "no_downvotes": "Поки немає голосів проти"
     }
   },
   "sub_work_item": {
