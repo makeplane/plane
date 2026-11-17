@@ -6,14 +6,16 @@
 
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
-import { Signal, TicketCheck, Triangle } from "lucide-react";
 import {
+  CopyOutline,
   CyclesOutline,
   DeleteOutline,
+  EstimateOutline,
   LabelsOutline,
   LinkOutline,
   MembersOutline,
   ModuleOutline,
+  PriorityOutline,
   StateOutline,
   SubscribeOutline,
   TextOutline,
@@ -221,7 +223,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     {
       id: "change_work_item_priority",
       i18n_title: "power_k.contextual_actions.work_item.change_priority",
-      icon: Signal,
+      icon: PriorityOutline,
       group: "contextual",
       contextType: "work-item",
       type: "change-page",
@@ -276,7 +278,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     {
       id: "change_work_item_estimate",
       i18n_title: "power_k.contextual_actions.work_item.change_estimate",
-      icon: Triangle,
+      icon: EstimateOutline,
       group: "contextual",
       contextType: "work-item",
       type: "change-page",
@@ -419,7 +421,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     {
       id: "copy_work_item_id",
       i18n_title: "power_k.contextual_actions.work_item.copy_id",
-      icon: TicketCheck,
+      icon: CopyOutline,
       group: "contextual",
       contextType: "work-item",
       type: "action",

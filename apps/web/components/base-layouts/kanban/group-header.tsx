@@ -9,14 +9,19 @@ import type { IGroupHeaderProps } from "@plane/types";
 export function GroupHeader({ group, itemCount, onToggleGroup }: IGroupHeaderProps) {
   return (
     <button
+      type="button"
       onClick={() => onToggleGroup(group.id)}
-      className="flex w-full items-center gap-2 text-13 font-medium text-secondary"
+      className="relative flex w-full flex-shrink-0 flex-row items-center gap-1 py-1.5 text-left text-body-xs-medium text-secondary"
     >
-      <div className="flex items-center gap-2">
-        {group.icon}
-        <span>{group.name}</span>
-      </div>
-      <span className="text-11 text-tertiary">{itemCount}</span>
+      {group.icon ? (
+        <span className="flex size-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-xs">
+          {group.icon}
+        </span>
+      ) : null}
+      <span className="relative flex w-full flex-row items-baseline gap-1 overflow-hidden">
+        <span className="line-clamp-1 inline-block truncate overflow-hidden text-primary">{group.name}</span>
+        <span className="flex-shrink-0 pl-2 text-body-xs-medium text-tertiary">{itemCount}</span>
+      </span>
     </button>
   );
 }

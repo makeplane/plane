@@ -23,7 +23,7 @@ export function ViewIssueLabel({ labelDetails, maxRender = 1 }: Props) {
             {labelDetails.map((label) => (
               <div
                 key={label.id}
-                className="shadow-sm flex flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11"
+                className="shadow-sm flex flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-caption-sm-regular"
               >
                 <Tooltip label={`Label: ${label.name}`} layout="stacked" disabled={isMobile}>
                   <div className="flex items-center gap-1.5 text-secondary">
@@ -40,7 +40,7 @@ export function ViewIssueLabel({ labelDetails, maxRender = 1 }: Props) {
             ))}
           </>
         ) : (
-          <div className="shadow-sm flex flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11">
+          <div className="shadow-sm flex flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-caption-sm-regular">
             <Tooltip
               label={`Labels: ${labelDetails.map((l) => l.name).join(", ")}`}
               layout="stacked"

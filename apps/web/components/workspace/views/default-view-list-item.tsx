@@ -26,7 +26,7 @@ export const GlobalDefaultViewListItem = observer(function GlobalDefaultViewList
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex flex-col">
-                <p className="truncate text-13 leading-4 font-medium">{truncateText(t(view.i18n_label), 75)}</p>
+                <p className="truncate text-body-xs-medium leading-4">{truncateText(t(view.i18n_label), 75)}</p>
               </div>
             </div>
           </div>

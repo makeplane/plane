@@ -7,8 +7,8 @@
 import { observer } from "mobx-react";
 
 // icons
-import { CloseOutline } from "@makeplane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
+import { RemovableChip } from "@/components/common/removable-chip";
 // types
 
 type Props = {
@@ -29,24 +29,14 @@ export const AppliedLabelsFilters = observer(function AppliedLabelsFilters(props
         if (!labelDetails) return null;
 
         return (
-          <div key={labelId} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
-            <span
-              className="h-1.5 w-1.5 rounded-full"
-              style={{
-                backgroundColor: labelDetails.color,
-              }}
-            />
-            <span className="normal-case">{labelDetails.name}</span>
-            {editable && (
-              <button
-                type="button"
-                className="grid place-items-center text-tertiary hover:text-secondary"
-                onClick={() => handleRemove(labelId)}
-              >
-                <CloseOutline height={10} width={10} />
-              </button>
-            )}
-          </div>
+          <RemovableChip
+            key={labelId}
+            variant="soft"
+            icon={<span className="size-1.5 shrink-0 rounded-full" style={{ backgroundColor: labelDetails.color }} />}
+            label={labelDetails.name}
+            ariaLabel={labelDetails.name}
+            onRemove={editable ? () => handleRemove(labelId) : undefined}
+          />
         );
       })}
     </>

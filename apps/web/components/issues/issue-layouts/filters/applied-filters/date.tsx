@@ -7,9 +7,9 @@
 import { observer } from "mobx-react";
 // icons
 import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
-import { CloseOutline } from "@makeplane/propel/icons";
 // helpers
 import { renderFormattedDate, capitalizeFirstLetter } from "@plane/utils";
+import { RemovableChip } from "@/components/common/removable-chip";
 // constants
 
 type Props = {
@@ -42,16 +42,13 @@ export const AppliedDateFilters = observer(function AppliedDateFilters(props: Pr
   return (
     <>
       {values.map((date) => (
-        <div key={date} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
-          <span className="normal-case">{getDateLabel(date)}</span>
-          <button
-            type="button"
-            className="grid place-items-center text-tertiary hover:text-secondary"
-            onClick={() => handleRemove(date)}
-          >
-            <CloseOutline height={10} width={10} />
-          </button>
-        </div>
+        <RemovableChip
+          key={date}
+          variant="soft"
+          label={getDateLabel(date)}
+          ariaLabel={getDateLabel(date)}
+          onRemove={() => handleRemove(date)}
+        />
       ))}
     </>
   );

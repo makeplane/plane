@@ -6,7 +6,7 @@
 
 import type { MutableRefObject } from "react";
 import { useRef, useState } from "react";
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 // plane helpers
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
@@ -25,7 +25,7 @@ import { cn } from "@plane/utils";
 import { LabelName } from "./label-name";
 
 export interface ICustomMenuItem {
-  CustomIcon: LucideIcon | React.FC<ISvgIcons>;
+  CustomIcon: IconGlyph | React.FC<ISvgIcons>;
   onClick: (label: IIssueLabel) => void;
   isVisible: boolean;
   text: string;
@@ -64,27 +64,27 @@ export function LabelItemBlock(props: ILabelItemBlock) {
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
   return (
-    <div className="group flex items-center">
-      <div className="flex items-center">
-        {!disabled && draggable && (
-          <DragHandle
-            className={cn("opacity-0 group-hover:opacity-100", {
-              "opacity-100": isDragging,
-            })}
-            ref={dragHandleRef}
-          />
-        )}
+    <div className="group flex min-w-0 flex-1 items-center justify-between gap-2">
+      <div className="flex min-w-0 flex-1 items-center">
+        <DragHandle
+          disabled={disabled || !draggable}
+          className={cn("opacity-0 group-hover:opacity-100", {
+            "opacity-100": isDragging,
+          })}
+          ref={dragHandleRef}
+        />
         <LabelName color={label.color} name={label.name} isGroup={isLabelGroup ?? false} />
       </div>
 
       {!disabled && (
         <div
           ref={actionSectionRef}
-          className={`absolute right-2.5 flex items-center gap-2 px-4 ${
+          className={cn(
+            "flex shrink-0 items-center gap-2",
             isMenuActive || isLabelGroup
               ? "opacity-100"
-              : "opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
-          } ${isLabelGroup && "-top-0.5"}`}
+              : "opacity-0 group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100"
+          )}
         >
           <Menu onOpenChange={(open) => setIsMenuActive(open)}>
             <MenuTrigger
@@ -97,7 +97,7 @@ export function LabelItemBlock(props: ILabelItemBlock) {
                 />
               }
             />
-            <MenuContent>
+            <MenuContent align="end">
               {customMenuItems.map(
                 ({ isVisible, onClick, CustomIcon, text, key }) =>
                   isVisible && (
@@ -113,18 +113,15 @@ export function LabelItemBlock(props: ILabelItemBlock) {
             </MenuContent>
           </Menu>
           {!isLabelGroup && (
-            <div className="py-0.5">
-              <button
-                type="button"
-                aria-label={t("delete")}
-                className="flex size-5 items-center justify-center rounded-sm hover:bg-layer-1"
-                onClick={() => {
-                  handleLabelDelete(label);
-                }}
-              >
-                <CloseOutline className="size-3.5 flex-shrink-0 text-tertiary" />
-              </button>
-            </div>
+            <IconButton
+              variant="ghost"
+              size="sm"
+              aria-label={t("delete")}
+              icon={<Icon icon={CloseOutline} />}
+              onClick={() => {
+                handleLabelDelete(label);
+              }}
+            />
           )}
         </div>
       )}

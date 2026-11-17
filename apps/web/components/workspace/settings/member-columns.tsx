@@ -11,6 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { DeactivatedUserOutline, DeleteOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { Badge } from "@makeplane/propel/components/badge";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
@@ -62,29 +63,17 @@ export function NameColumn(props: NameProps) {
   return (
     <div className="group relative">
       <div className="flex w-72 items-center justify-between gap-x-4 gap-y-2">
-        <div className="flex flex-1 items-center gap-x-2 gap-y-2">
+        <div className="flex min-w-0 flex-1 items-center gap-x-2 gap-y-2 overflow-hidden">
           {isSuspended ? (
-            <div className="rounded-full bg-layer-1">
+            <span className="flex shrink-0 rounded-full bg-layer-1">
               <DeactivatedUserOutline className="size-6 text-placeholder" />
-            </div>
-          ) : avatar_url && avatar_url.trim() !== "" ? (
-            <Link href={`/${workspaceSlug}/profile/${id}`}>
-              <span className="relative flex size-6 items-center justify-center rounded-full text-on-color capitalize">
-                <img
-                  src={getFileURL(avatar_url)}
-                  className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
-                  alt={display_name || email}
-                />
-              </span>
-            </Link>
+            </span>
           ) : (
-            <Link href={`/${workspaceSlug}/profile/${id}`}>
-              <span className="relative flex size-6 items-center justify-center rounded-full bg-layer-3 text-11 text-tertiary capitalize">
-                {(email ?? display_name ?? "?")[0]}
-              </span>
+            <Link href={`/${workspaceSlug}/profile/${id}`} className="flex shrink-0">
+              <Avatar size="sm" src={getFileURL(avatar_url ?? "")} alt={display_name || email} />
             </Link>
           )}
-          <span className={isSuspended ? "text-placeholder" : ""}>
+          <span className="truncate">
             {first_name} {last_name}
           </span>
         </div>

@@ -2,11 +2,12 @@
 
 This package provides a logger and a request logger utility built using [Winston](https://github.com/winstonjs/winston). It offers customizable log levels using env and supports structured logging for general application logs and HTTP requests.
 
-## Features.
+## Features
 
 - Dynamic log level configuration using env.
 - Pre-configured winston logger for general usage (`logger`).
-- Request logger middleware that logs incoming request
+- Request logger middleware (`loggerMiddleware`, built on express-winston) that logs incoming requests
+- Shared Winston options (`loggerConfig`) if you need to build another logger
 
 ## Usage
 
@@ -14,18 +15,18 @@ This package provides a logger and a request logger utility built using [Winston
 
 Add this package as a dependency in package.json
 
-```typescript
-dependency: {
-    ...
-    @plane/logger":"*",
-    ...
+```json
+{
+  "dependencies": {
+    "@plane/logger": "workspace:*"
+  }
 }
 ```
 
 ### Importing the Logger
 
 ```typescript
-import { logger, requestLogger } from "@plane/logger";
+import { logger, loggerMiddleware } from "@plane/logger";
 ```
 
 ### Usage
@@ -40,13 +41,13 @@ logger.warn("This is a warning");
 logger.error("This is an error");
 ```
 
-### `requestLogger`: Request Logger Middleware
+### `loggerMiddleware`: Request Logger Middleware
 
 Use this as a middleware for incoming requests
 
 ```typescript
 const app = express();
-app.use(requestLogger);
+app.use(loggerMiddleware);
 ```
 
 ## Available Log Levels
@@ -59,10 +60,9 @@ app.use(requestLogger);
 - `debug`
 - `silly`
 
-## Log file
+## Output
 
-- Log files are stored in logs folder of current working directory. Error logs are stored in files with format `error-%DATE%.log` and combined logs are stored with format `combined-%DATE%.log`.
-- Log files have a 7 day rotation period defined.
+- Logs are written as JSON (with a timestamp) to the console (stdout). No log files are written; collect logs from the process or container output.
 
 ## Configuration
 

@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { StarOutline } from "@makeplane/propel/icons";
+import { StarFilled, StarOutline } from "@makeplane/propel/icons";
 // ui
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
@@ -32,19 +32,11 @@ export const PageFavoriteControl = observer(function PageFavoriteControl({ page 
     <IconButton
       variant="ghost"
       size="md"
-      icon={<Icon icon={StarOutline} />}
+      icon={<Icon icon={is_favorite ? <StarFilled className="text-label-yellow-icon-strong" /> : <StarOutline />} />}
       onClick={() => {
         pageOperations.toggleFavorite();
       }}
       aria-label={is_favorite ? "Remove favorite" : "Add to favorites"}
-      render={
-        <button
-          type="button"
-          className={
-            is_favorite ? "[&_svg]:fill-(--color-label-yellow-icon) [&_svg]:stroke-(--color-label-yellow-icon)" : ""
-          }
-        />
-      }
     />
   );
 });

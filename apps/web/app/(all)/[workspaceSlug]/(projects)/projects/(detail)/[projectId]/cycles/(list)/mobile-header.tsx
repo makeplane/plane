@@ -46,15 +46,18 @@ export const CyclesListMobileHeader = observer(function CyclesListMobileHeader()
   return (
     <div className="flex justify-center sm:hidden">
       <Menu>
-        <div className="flex flex-grow justify-center border-b border-subtle bg-surface-1 py-2 text-13 text-secondary">
+        <div className="flex flex-grow justify-center border-b border-subtle bg-surface-1 py-2 text-body-xs-regular text-secondary">
           <MenuTrigger
             render={
-              <button type="button" className="flex flex-grow items-center justify-center text-13 text-secondary" />
+              <button
+                type="button"
+                className="flex flex-grow items-center justify-center text-body-xs-regular text-secondary"
+              />
             }
           >
             <span className="flex items-center gap-2">
               <ListOutline className="h-4 w-4" />
-              <span className="flex flex-grow justify-center text-13 text-secondary">Layout</span>
+              <span className="flex flex-grow justify-center text-body-xs-regular text-secondary">Layout</span>
             </span>
           </MenuTrigger>
         </div>

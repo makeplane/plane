@@ -5,15 +5,19 @@
  */
 
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { Children, Fragment, isValidElement } from "react";
+import { Icon } from "@makeplane/propel/components/icon";
 import { BreadcrumbTrigger, BreadcrumbTriggerIndicator } from "@makeplane/propel/elements/breadcrumb";
+import { ComboboxTrigger } from "@makeplane/propel/elements/combobox";
+import { IconPill, Pill, PillLabel } from "@makeplane/propel/elements/pill";
 import { useBreadcrumbCurrent } from "../breadcrumb/breadcrumb-context";
 import { BreadcrumbIcon, BreadcrumbLabel } from "../breadcrumb/breadcrumbs";
 import { ChevronDownOutline } from "@makeplane/propel/icons";
-import { PillButtonContent } from "../pill-button/pill-button";
+import { PROPEL_PILL_SIZE } from "../pill-button/helper";
 import type { IconElement } from "../types/icon";
 import { cn } from "@plane/utils";
 import { SelectContent } from "./select-content";
-import type { SelectVariant } from "./types";
+import type { SelectTriggerSize, SelectVariant } from "./types";
 import { getTriggerChromeClassName, splitSelectVariant } from "./utils";
 import type { SplitSelectVariantResult } from "./utils";
 
@@ -29,8 +33,9 @@ type TriggerInnerProps = {
 
 /**
  * The trigger's contents, identical across every host: the `select` kinds get `SelectContent`
- * (prepend + children + chevron), `pill` / `table-cell` the propel `PillButtonContent` row,
+ * (prepend + children + chevron), `table-cell` an icon/label row,
  * `icon` just its prepend, and `breadcrumb` its own icon + truncated label + chevron.
+ * Pill content is composed by the public Pill elements below.
  */
 export function TriggerInner({ split, prepend, append, label, isEmpty, children }: TriggerInnerProps) {
   if (!split.isSelectKind && split.variant === "icon") {
@@ -50,13 +55,13 @@ export function TriggerInner({ split, prepend, append, label, isEmpty, children 
       </SelectContent>
     );
   }
-  if (split.variant === "pill" || split.variant === "table-cell") {
+  if (split.variant === "table-cell") {
     return (
-      // propel's `PillButtonContent` renders nothing for a missing append, so an explicit `null`
-      // (suppress) and `undefined` (nothing to show) collapse to the same thing here.
-      <PillButtonContent size={split.size} prependIcon={prepend} appendIcon={append ?? undefined}>
+      <>
+        {prepend && <Icon icon={prepend} size="sm" />}
         {children}
-      </PillButtonContent>
+        {append && <Icon icon={append} size="sm" />}
+      </>
     );
   }
   return (
@@ -88,22 +93,90 @@ export type SelectTriggerChromeProps = {
   children?: ReactNode;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children" | "className">;
 
+/** Fragments and conditional children must not turn an empty property into a padded text pill. */
+function hasTriggerContent(children: ReactNode): boolean {
+  return Children.toArray(children).some((child) => {
+    if (isValidElement<{ children?: ReactNode }>(child) && child.type === Fragment) {
+      return hasTriggerContent(child.props.children);
+    }
+    return typeof child !== "string" || child.length > 0;
+  });
+}
+
+type PillTriggerChromeProps = Omit<SelectTriggerChromeProps, "variant" | "label"> & { size: SelectTriggerSize };
+
+function PillTriggerChrome({
+  size,
+  isActive,
+  className,
+  style,
+  prependIcon,
+  appendIcon,
+  isEmpty,
+  children,
+  ...buttonProps
+}: PillTriggerChromeProps) {
+  const content = hasTriggerContent(children);
+  const sharedProps = {
+    size: PROPEL_PILL_SIZE[size],
+    "data-popup-open": isActive ? "" : undefined,
+    ...buttonProps,
+  };
+  const iconsAndLabel = (
+    <>
+      {prependIcon && <Icon icon={prependIcon} />}
+      {content &&
+        (typeof children === "string" || typeof children === "number" ? <PillLabel>{children}</PillLabel> : children)}
+      {appendIcon && <Icon icon={appendIcon} />}
+    </>
+  );
+  return content ? (
+    <Pill
+      {...sharedProps}
+      variant="outline"
+      placeholder={isEmpty}
+      render={(props) => (
+        <button
+          type="button"
+          {...props}
+          className={cn(props.className, className)}
+          style={{ ...props.style, ...style }}
+        />
+      )}
+    >
+      {iconsAndLabel}
+    </Pill>
+  ) : (
+    <IconPill
+      {...sharedProps}
+      render={(props) => (
+        <button
+          type="button"
+          {...props}
+          className={cn(props.className, className)}
+          style={{ ...props.style, ...style }}
+        />
+      )}
+    >
+      {iconsAndLabel}
+    </IconPill>
+  );
+}
+
 /**
  * The closed-field button for every `SelectVariant`, with no dropdown of its own — the piece
  * `Select.Trigger` and the date blocks share. It renders a real `<button>`, so any base-ui popup
  * part can graft its behavior onto it via `render={<SelectTriggerChrome … />}`.
  *
- * Breadcrumb triggers use Propel breadcrumb chrome; other variants use Plane chrome, including `select` /
- * `select-ghost`, which mirror propel's `comboboxTriggerVariants` look and size scale
- * (`md`/`lg`/`xl`/`2xl`), so a step means the same thing on both. Propel's `elements/combobox`
- * `ComboboxTrigger` itself is still NOT rendered: it hard-codes `min-w-72` (288px) with no width
- * axis, which would floor every `select-*` call site — the work-item sidebar's `select-ghost-md`
- * pickers sit in far narrower columns. Swap it in once propel exposes a width axis (Ruling 28).
+ * Propel owns field, pill and breadcrumb styling. `width="fit"` removes the field's default
+ * 288px floor; CE's full-width layout can then fit narrow property columns. Table cells and bare
+ * icons keep their Plane-specific geometry. Existing CE size names and className stay supported.
  */
 export function SelectTriggerChrome({
   variant,
   isActive = false,
   className,
+  style,
   prependIcon,
   appendIcon,
   label,
@@ -114,6 +187,49 @@ export function SelectTriggerChrome({
   const split = splitSelectVariant(variant);
   const isCurrent = useBreadcrumbCurrent();
 
+  if (split.isSelectKind) {
+    return (
+      <ComboboxTrigger
+        variant={split.variant === "select" ? "secondary" : "ghost"}
+        size={split.size}
+        width="fit"
+        render={(props) => (
+          <button
+            type="button"
+            {...props}
+            className={cn(props.className, "group w-full", className)}
+            style={{ ...props.style, ...style }}
+          />
+        )}
+        data-popup-open={isActive ? "" : undefined}
+        data-placeholder={isEmpty ? "" : undefined}
+        data-disabled={buttonProps.disabled ? "" : undefined}
+        {...buttonProps}
+      >
+        <TriggerInner split={split} prepend={prependIcon} append={appendIcon} isEmpty={isEmpty}>
+          {children}
+        </TriggerInner>
+      </ComboboxTrigger>
+    );
+  }
+
+  if (split.variant === "pill") {
+    return (
+      <PillTriggerChrome
+        size={split.size}
+        isActive={isActive}
+        className={className}
+        style={style}
+        prependIcon={prependIcon}
+        appendIcon={appendIcon}
+        isEmpty={isEmpty}
+        {...buttonProps}
+      >
+        {children}
+      </PillTriggerChrome>
+    );
+  }
+
   if (variant === "breadcrumb") {
     return (
       <BreadcrumbTrigger
@@ -123,6 +239,7 @@ export function SelectTriggerChrome({
         render={
           <button
             type="button"
+            style={style}
             className={cn(
               "outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent-strong focus-visible:outline-solid",
               className
@@ -141,12 +258,8 @@ export function SelectTriggerChrome({
   return (
     <button
       type="button"
-      className={cn(
-        getTriggerChromeClassName(split, isActive),
-        // Select pills share chrome with other pickers; width clamp stays on the Select trigger only.
-        !split.isSelectKind && split.variant === "pill" && "max-w-40",
-        className
-      )}
+      className={cn(getTriggerChromeClassName(split, isActive), className)}
+      style={style}
       {...buttonProps}
     >
       <TriggerInner split={split} prepend={prependIcon} append={appendIcon} label={label} isEmpty={isEmpty}>

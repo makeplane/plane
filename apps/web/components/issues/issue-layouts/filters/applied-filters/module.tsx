@@ -6,8 +6,9 @@
 
 import { observer } from "mobx-react";
 // hooks
-import { CloseOutline, ModuleOutline } from "@makeplane/propel/icons";
+import { ModuleOutline } from "@makeplane/propel/icons";
 import { useModule } from "@/hooks/store/use-module";
+import { RemovableChip } from "@/components/common/removable-chip";
 // ui
 
 type Props = {
@@ -29,19 +30,14 @@ export const AppliedModuleFilters = observer(function AppliedModuleFilters(props
         if (!moduleDetails) return null;
 
         return (
-          <div key={moduleId} className="flex items-center gap-1 truncate rounded-sm bg-layer-1 p-1 text-11">
-            <ModuleOutline className="h-3 w-3 flex-shrink-0" />
-            <span className="truncate normal-case">{moduleDetails.name}</span>
-            {editable && (
-              <button
-                type="button"
-                className="grid place-items-center text-tertiary hover:text-secondary"
-                onClick={() => handleRemove(moduleId)}
-              >
-                <CloseOutline height={10} width={10} />
-              </button>
-            )}
-          </div>
+          <RemovableChip
+            key={moduleId}
+            variant="soft"
+            icon={<ModuleOutline className="h-3 w-3 flex-shrink-0" />}
+            label={moduleDetails.name}
+            ariaLabel={moduleDetails.name}
+            onRemove={editable ? () => handleRemove(moduleId) : undefined}
+          />
         );
       })}
     </>

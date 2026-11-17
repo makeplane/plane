@@ -26,6 +26,16 @@
           "highlight_changes": "Выделить изменения"
         }
       },
+      "version_history": {
+        "view_only": "Только просмотр",
+        "loading_details": "Загрузка сведений о версии",
+        "load_error_description": "Не удалось загрузить версию. Попробуйте ещё раз.",
+        "list_error_description": "Не удалось загрузить историю версий.",
+        "try_again": "Повторить попытку",
+        "restoring": "Восстановление",
+        "restore_success": "Версия страницы восстановлена.",
+        "restore_failed": "Не удалось восстановить версию страницы."
+      },
       "assets": {
         "label": "Ресурсы",
         "download_button": "Скачать",

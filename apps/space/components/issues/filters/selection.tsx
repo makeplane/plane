@@ -6,6 +6,10 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 // types
 import type { IIssueFilterOptions, TIssueFilterKeys } from "@/types/issue";
@@ -22,31 +26,38 @@ type Props = {
 export const FilterSelection = observer(function FilterSelection(props: Props) {
   const { filters, handleFilters, layoutDisplayFiltersOptions } = props;
 
+  const { t } = useTranslation();
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
   const isFilterEnabled = (filter: keyof IIssueFilterOptions) => layoutDisplayFiltersOptions.includes(filter);
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
-      <div className="p-2.5 pb-0">
-        <div className="flex items-center gap-1.5 rounded-sm border-[0.5px] border-subtle bg-surface-2 px-1.5 py-1 text-11">
-          <SearchOutline className="text-placeholder" width={12} height={12} />
-          <input
+      <div className="pb-2">
+        <InputGroup size="md">
+          <Icon icon={SearchOutline} size="md" tint="placeholder" />
+          <Input
             type="text"
-            className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
-            placeholder="Search"
+            size="md"
+            aria-label={t("search")}
+            placeholder={t("search")}
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
             autoFocus
           />
           {filtersSearchQuery !== "" && (
-            <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
-              <CloseOutline className="text-tertiary" height={12} width={12} />
-            </button>
+            <IconButton
+              variant="ghost"
+              size="xs"
+              aria-label={t("common.clear")}
+              showTooltip={false}
+              icon={<Icon icon={CloseOutline} />}
+              onClick={() => setFiltersSearchQuery("")}
+            />
           )}
-        </div>
+        </InputGroup>
       </div>
-      <div className="h-full w-full divide-y divide-subtle-1 overflow-y-auto px-2.5">
+      <div className="h-full w-full divide-y divide-subtle-1 overflow-y-auto [&>*:last-child]:pb-0">
         {/* priority */}
         {isFilterEnabled("priority") && (
           <div className="py-2">
@@ -68,18 +79,6 @@ export const FilterSelection = observer(function FilterSelection(props: Props) {
             />
           </div>
         )}
-
-        {/* labels */}
-        {/* {isFilterEnabled("labels") && (
-          <div className="py-2">
-            <FilterLabels
-              appliedFilters={filters.labels ?? null}
-              handleUpdate={(val) => handleFilters("labels", val)}
-              labels={labels}
-              searchQuery={filtersSearchQuery}
-            />
-          </div>
-        )} */}
       </div>
     </div>
   );

@@ -133,6 +133,21 @@ class TestMagicLinkGenerate:
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.magic_link_code_task.magic_link.delay")
+    def test_generated_code_is_eight_digits(self, mock_magic_link, api_client, setup_user, setup_instance):
+        """The emailed sign-in code is an 8-digit number"""
+        ri = redis_instance()
+        ri.delete("magic_user@plane.so")
+        ri.delete("magic_user@plane.so:issued")
+
+        response = api_client.post(reverse("magic-generate"), {"email": "user@plane.so"}, format="json")
+        assert response.status_code == status.HTTP_200_OK
+
+        code = mock_magic_link.call_args[0][2]
+        assert len(code) == 8
+        assert code.isdigit()
+
+    @pytest.mark.django_db
+    @patch("plane.bgtasks.magic_link_code_task.magic_link.delay")
     def test_max_generate_attempt(self, mock_magic_link, api_client, setup_user, setup_instance):
         """Test exceeding maximum magic link generation attempts"""
         url = reverse("magic-generate")

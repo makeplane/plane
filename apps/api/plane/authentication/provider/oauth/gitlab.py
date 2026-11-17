@@ -23,7 +23,7 @@ class GitLabOAuthProvider(OauthAdapter):
     scope = "read_user"
 
     def __init__(self, request, code=None, state=None, callback=None):
-        GITLAB_CLIENT_ID, GITLAB_CLIENT_SECRET, GITLAB_HOST = get_configuration_value(
+        GITLAB_CLIENT_ID, GITLAB_CLIENT_SECRET, GITLAB_HOST, IS_GITLAB_ENABLED = get_configuration_value(
             [
                 {
                     "key": "GITLAB_CLIENT_ID",
@@ -37,6 +37,10 @@ class GitLabOAuthProvider(OauthAdapter):
                     "key": "GITLAB_HOST",
                     "default": os.environ.get("GITLAB_HOST", "https://gitlab.com"),
                 },
+                {
+                    "key": "IS_GITLAB_ENABLED",
+                    "default": os.environ.get("IS_GITLAB_ENABLED", "0"),
+                },
             ]
         )
 
@@ -44,7 +48,7 @@ class GitLabOAuthProvider(OauthAdapter):
         self.token_url = f"{self.host}/oauth/token"
         self.userinfo_url = f"{self.host}/api/v4/user"
 
-        if not (GITLAB_CLIENT_ID and GITLAB_CLIENT_SECRET and GITLAB_HOST):
+        if not (IS_GITLAB_ENABLED == "1" and GITLAB_CLIENT_ID and GITLAB_CLIENT_SECRET and GITLAB_HOST):
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GITLAB_NOT_CONFIGURED"],
                 error_message="GITLAB_NOT_CONFIGURED",

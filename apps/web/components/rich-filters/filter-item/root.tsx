@@ -7,6 +7,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import type { IFilterInstance } from "@plane/shared-state";
 import type {
   SingleOrArray,
@@ -17,10 +18,9 @@ import type {
   TAllAvailableOperatorsForDisplay,
 } from "@plane/types";
 import { Select } from "@plane/blocks/select";
-import { cn, getOperatorForPayload } from "@plane/utils";
+import { getOperatorForPayload } from "@plane/utils";
 // local imports
 import { FilterValueInput } from "../filter-value-input/root";
-import { COMMON_FILTER_ITEM_BORDER_CLASSNAME } from "../shared";
 import { FilterItemCloseButton } from "./close-button";
 import { FilterItemContainer } from "./container";
 import { InvalidFilterItem } from "./invalid";
@@ -38,18 +38,21 @@ export const FilterItem = observer(function FilterItem<P extends TFilterProperty
   props: IFilterItemProps<P, E>
 ) {
   const { condition, filter, isDisabled = false, showTransition = true } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // derived values
   const filterConfig = condition?.property ? filter.configManager.getConfigByProperty(condition.property) : undefined;
   const operatorOptions =
     filterConfig?.getAllDisplayOperatorOptionsByValue(condition.value as TFilterValue)?.map((option) => ({
       value: option.value,
-      label: option.label,
+      label: option.labelI18nKey ? t(option.labelI18nKey) : option.label,
     })) ?? [];
   const selectedOperatorFieldConfig = filterConfig?.getOperatorConfig(condition.operator);
   const selectedOperatorOption = filterConfig?.getDisplayOperatorByValue(
     condition.operator,
     condition.value as TFilterValue
   );
+  const selectedOperatorLabelI18nKey = filterConfig?.getLabelI18nKeyForOperator(selectedOperatorOption);
   // Disable operator selection when filter is disabled or only one operator option is available and selected
   const isOperatorSelectionDisabled =
     isDisabled ||
@@ -82,7 +85,7 @@ export const FilterItem = observer(function FilterItem<P extends TFilterProperty
   }
 
   return (
-    <FilterItemContainer conditionValue={condition.value} showTransition={showTransition}>
+    <FilterItemContainer conditionValue={condition.value} showTransition={showTransition} label={filterConfig.label}>
       {/* Property section */}
       <FilterItemProperty
         conditionId={condition.id}
@@ -94,24 +97,23 @@ export const FilterItem = observer(function FilterItem<P extends TFilterProperty
       />
 
       {/* Operator section */}
-      <div className={cn("flex", COMMON_FILTER_ITEM_BORDER_CLASSNAME)}>
-        <Select<(typeof operatorOptions)[number]>
-          getValues={() => operatorOptions}
-          value={operatorOptions.find((option) => option.value === condition.operator) ?? null}
-          onChange={(operator) => handleOperatorChange(operator as TAllAvailableOperatorsForDisplay)}
-          disabled={isOperatorSelectionDisabled}
-          getOptionValue={(option) => option.value}
-          getOptionLabel={(option) => option.label}
-          pinSelected={false}
-          placeholder={filterConfig.label}
-        >
-          {/* A flat segment of the filter chip: no chevron and no own radius, so it sits flush between
-              the property and value segments like the legacy custom button did. */}
-          <Select.Trigger variant="select-ghost-md" appendIcon={null} className="h-full min-h-0 rounded-none">
-            {filterConfig.getLabelForOperator(selectedOperatorOption)}
-          </Select.Trigger>
-        </Select>
-      </div>
+      <Select<(typeof operatorOptions)[number]>
+        getValues={() => operatorOptions}
+        value={operatorOptions.find((option) => option.value === condition.operator) ?? null}
+        onChange={(operator) => handleOperatorChange(operator as TAllAvailableOperatorsForDisplay)}
+        disabled={isOperatorSelectionDisabled}
+        getOptionValue={(option) => option.value}
+        getOptionLabel={(option) => option.label}
+        pinSelected={false}
+        placeholder={filterConfig.label}
+      >
+        {/* A pill segment of the condition, chevron-less like the segments either side of it. */}
+        <Select.Trigger variant="pill-lg" appendIcon={null} className="max-w-none text-body-xs-regular">
+          {selectedOperatorLabelI18nKey
+            ? t(selectedOperatorLabelI18nKey)
+            : filterConfig.getLabelForOperator(selectedOperatorOption)}
+        </Select.Trigger>
+      </Select>
 
       {/* Value section */}
       {selectedOperatorFieldConfig && (

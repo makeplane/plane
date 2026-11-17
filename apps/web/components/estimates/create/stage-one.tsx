@@ -64,8 +64,8 @@ export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
             .filter((option) => option !== null)}
           name="estimate-radio-input"
           label={t("project_settings.estimates.create.choose_estimate_system")}
-          labelClassName="text-13 font-medium text-secondary mb-1.5"
-          wrapperClassName="relative flex flex-wrap gap-14"
+          labelClassName="text-body-xs-medium text-secondary mb-1.5"
+          wrapperClassName="relative flex flex-wrap gap-8"
           fieldClassName="relative flex items-center gap-1.5"
           buttonClassName="size-4"
           selected={estimateSystem}
@@ -75,15 +75,15 @@ export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
       {ESTIMATE_SYSTEMS[estimateSystem]?.is_available && !ESTIMATE_SYSTEMS[estimateSystem]?.is_ee && (
         <>
           <div className="space-y-1.5">
-            <div className="text-13 font-medium text-secondary">
+            <div className="text-body-xs-medium text-secondary">
               {t("project_settings.estimates.create.start_from_scratch")}
             </div>
             <button
-              className="block w-full space-y-1 rounded-md border border-subtle p-3 py-2.5 text-left hover:bg-layer-transparent-hover"
+              className="block w-full space-y-1 rounded-md border border-subtle bg-layer-2 p-3 py-2.5 text-left hover:bg-layer-2-hover"
               onClick={() => handleEstimatePoints("custom")}
             >
-              <p className="text-14 font-medium">{t("project_settings.estimates.create.custom")}</p>
-              <p className="text-11 text-tertiary">
+              <p className="text-body-sm-medium">{t("project_settings.estimates.create.custom")}</p>
+              <p className="text-caption-sm-regular text-tertiary">
                 {/* TODO: Translate here */}
                 Add your own <span className="lowercase">{currentEstimateSystem.name}</span> from scratch.
               </p>
@@ -91,7 +91,7 @@ export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
           </div>
 
           <div className="space-y-1.5">
-            <div className="text-13 font-medium text-secondary">
+            <div className="text-body-xs-medium text-secondary">
               {t("project_settings.estimates.create.choose_template")}
             </div>
             <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
@@ -99,11 +99,11 @@ export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
                 currentEstimateSystem.templates[name]?.hide ? null : (
                   <button
                     key={name}
-                    className="space-y-1 rounded-md border border-subtle p-3 py-2.5 text-left hover:bg-surface-2"
+                    className="space-y-1 rounded-md border border-subtle bg-layer-2 p-3 py-2.5 text-left hover:bg-layer-2-hover"
                     onClick={() => handleEstimatePoints(name)}
                   >
-                    <p className="text-14 font-medium">{currentEstimateSystem.templates[name]?.title}</p>
-                    <p className="text-11 text-tertiary">
+                    <p className="text-body-sm-medium">{currentEstimateSystem.templates[name]?.title}</p>
+                    <p className="text-caption-sm-regular text-tertiary">
                       {currentEstimateSystem.templates[name]?.values
                         ?.map((template) =>
                           estimateSystem === (EEstimateSystem.TIME as TEstimateSystemKeys)

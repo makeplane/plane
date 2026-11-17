@@ -308,11 +308,11 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
             </button>
           )}
           {issue?.project_id && issue.sequence_id && (
-            <h3 className="flex-shrink-0 text-14 font-medium text-tertiary">
+            <h3 className="flex-shrink-0 text-body-sm-medium text-tertiary">
               {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
             </h3>
           )}
-          <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />
+          <InboxIssueStatus inboxIssue={inboxIssue} />
           <div className="flex w-full items-center justify-end">
             <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
           </div>

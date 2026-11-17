@@ -5,6 +5,9 @@
  */
 
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
@@ -16,6 +19,7 @@ import { AppliedAccessFilters } from "./access";
 import { AppliedDateFilters } from "./date";
 import { AppliedMembersFilters } from "./members";
 import { AppliedProjectDisplayFilters } from "./project-display-filters";
+import { APPLIED_FILTER_GROUP_CLASSNAME } from "@/components/common/removable-chip";
 
 type Props = {
   appliedFilters: TProjectFilters;
@@ -27,11 +31,6 @@ type Props = {
   filteredProjects: number;
   totalProjects: number;
 };
-
-/** The retired `Tag` chrome: a bordered container for one filter's label, its chips and its
- *  remove button. Not a `Pill`: that takes a label string and cannot hold nested interactive children. */
-const FILTER_GROUP_CLASSNAME =
-  "my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary";
 
 const MEMBERS_FILTERS = new Set(["lead", "members"]);
 const DATE_FILTERS = new Set(["created_at"]);
@@ -64,63 +63,74 @@ export function ProjectAppliedFiltersList(props: Props) {
           if (!value) return;
           if (Array.isArray(value) && value.length === 0) return;
 
+          const filterLabel = replaceUnderscoreIfSnakeCase(filterKey);
+
           return (
-            <div key={filterKey} className={FILTER_GROUP_CLASSNAME}>
-              <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
-              {filterKey === "access" && (
-                <AppliedAccessFilters
-                  editable={isEditingAllowed}
-                  handleRemove={(val) => handleRemoveFilter("access", val)}
-                  values={value}
-                />
-              )}
-              {DATE_FILTERS.has(filterKey) && (
-                <AppliedDateFilters
-                  editable={isEditingAllowed}
-                  handleRemove={(val) => handleRemoveFilter(filterKey, val)}
-                  values={value}
-                />
-              )}
-              {MEMBERS_FILTERS.has(filterKey) && (
-                <AppliedMembersFilters
-                  editable={isEditingAllowed}
-                  handleRemove={(val) => handleRemoveFilter(filterKey, val)}
-                  values={value}
-                />
-              )}
-              {isEditingAllowed && (
-                <button
-                  type="button"
-                  className="grid place-items-center text-tertiary hover:text-secondary"
-                  onClick={() => handleRemoveFilter(filterKey, null)}
-                >
-                  <CloseOutline height={12} width={12} />
-                </button>
-              )}
+            <div key={filterKey} className={APPLIED_FILTER_GROUP_CLASSNAME}>
+              <span className="text-caption-sm-regular text-tertiary capitalize">{filterLabel}</span>
+              <div className="flex flex-wrap items-center gap-1">
+                {filterKey === "access" && (
+                  <AppliedAccessFilters
+                    editable={isEditingAllowed}
+                    handleRemove={(val) => handleRemoveFilter("access", val)}
+                    values={value}
+                  />
+                )}
+                {DATE_FILTERS.has(filterKey) && (
+                  <AppliedDateFilters
+                    editable={isEditingAllowed}
+                    handleRemove={(val) => handleRemoveFilter(filterKey, val)}
+                    values={value}
+                  />
+                )}
+                {MEMBERS_FILTERS.has(filterKey) && (
+                  <AppliedMembersFilters
+                    editable={isEditingAllowed}
+                    handleRemove={(val) => handleRemoveFilter(filterKey, val)}
+                    values={value}
+                  />
+                )}
+                {isEditingAllowed && (
+                  <IconButton
+                    type="button"
+                    variant="ghost"
+                    size="xs"
+                    aria-label={`${t("aria_labels.common.remove")}: ${filterLabel}`}
+                    onClick={() => handleRemoveFilter(filterKey, null)}
+                    icon={<Icon icon={CloseOutline} />}
+                  />
+                )}
+              </div>
             </div>
           );
         })}
         {/* Applied display filters */}
         {appliedDisplayFilters.length > 0 && (
-          <div key="project_display_filters" className={FILTER_GROUP_CLASSNAME}>
-            <span className="text-11 text-tertiary">{t("common.projects")}</span>
-            <AppliedProjectDisplayFilters
-              editable={isEditingAllowed}
-              values={appliedDisplayFilters}
-              handleRemove={(key) => handleRemoveDisplayFilter(key)}
-            />
+          <div key="project_display_filters" className={APPLIED_FILTER_GROUP_CLASSNAME}>
+            <span className="text-caption-sm-regular text-tertiary">{t("common.projects")}</span>
+            <div className="flex flex-wrap items-center gap-1">
+              <AppliedProjectDisplayFilters
+                editable={isEditingAllowed}
+                values={appliedDisplayFilters}
+                handleRemove={(key) => handleRemoveDisplayFilter(key)}
+              />
+            </div>
           </div>
         )}
         {isEditingAllowed && (
-          <button type="button" className={FILTER_GROUP_CLASSNAME} onClick={handleClearAllFilters}>
-            {t("common.clear_all")}
-            <CloseOutline height={12} width={12} />
-          </button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            stretch="auto"
+            label={t("common.clear_all")}
+            onClick={handleClearAllFilters}
+          />
         )}
       </Header.LeftItem>
       <Header.RightItem>
         <Tooltip label={`${filteredProjects} of ${totalProjects} projects match the applied filters.`} layout="stacked">
-          <span className="rounded-full bg-layer-1 px-2.5 py-1 text-13 font-medium">
+          <span className="rounded-full bg-layer-1 px-2.5 py-1 text-body-xs-medium">
             {filteredProjects}/{totalProjects}
           </span>
         </Tooltip>

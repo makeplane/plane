@@ -30,15 +30,15 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
   // store hooks
   const { data: userProfile, updateUserTheme } = useUserProfile();
   // theme
-  const { setTheme } = useTheme();
+  const { theme: activeTheme, setTheme } = useTheme();
   // translation
   const { t } = useTranslation();
   // derived values
+  // The saved profile theme wins; without one, show the theme the app is already using (e.g. "system").
   const currentTheme = useMemo(() => {
-    // oxlint-disable-next-line no-shadow
-    const userThemeOption = THEME_OPTIONS.find((t) => t.value === userProfile?.theme?.theme);
-    return userThemeOption || null;
-  }, [userProfile?.theme?.theme]);
+    const themeValue = userProfile?.theme?.theme || activeTheme;
+    return THEME_OPTIONS.find((option) => option.value === themeValue) ?? null;
+  }, [userProfile?.theme?.theme, activeTheme]);
 
   const handleThemeChange = useCallback(
     async (themeOption: I_THEME_OPTION) => {

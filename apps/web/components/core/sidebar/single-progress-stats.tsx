@@ -17,18 +17,26 @@ type TSingleProgressStatsProps = {
 export function SingleProgressStats({ title, completed, total, onClick, selected = false }: TSingleProgressStatsProps) {
   return (
     <div
-      className={`flex w-full items-center justify-between gap-4 rounded-xs p-1 text-11 ${
+      className={`flex w-full items-center justify-between gap-4 rounded-xs p-1 text-body-xs-regular ${
         onClick ? "cursor-pointer hover:bg-surface-2" : ""
       } ${selected ? "bg-layer-1" : ""}`}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
       onClick={onClick}
+      onKeyDown={
+        onClick
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onClick();
+              }
+            }
+          : undefined
+      }
     >
-      <div className="w-4/6">{title}</div>
-      <div className="flex w-2/6 items-center justify-end gap-1 px-2">
-        <div className="flex h-5 items-center justify-center gap-1">
-          <span className="w-8 text-right">
-            {isNaN(Math.round((completed / total) * 100)) ? "0" : Math.round((completed / total) * 100)}%
-          </span>
-        </div>
+      <div className="min-w-0 flex-1">{title}</div>
+      <div className="flex shrink-0 items-center justify-end gap-1 px-2 whitespace-nowrap tabular-nums">
+        <span>{isNaN(Math.round((completed / total) * 100)) ? "0" : Math.round((completed / total) * 100)}%</span>
         <span>of {total}</span>
       </div>
     </div>

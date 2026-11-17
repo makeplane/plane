@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Elemento di lavoro} other {Elementi di lavoro}}",
     "all": "Tutti gli elementi di lavoro",
     "edit": "Modifica elemento di lavoro",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# altra proprietà} many {altre # proprietà} other {altre # proprietà}}",
+      "label_overflow_indicator": "{count, plural, one {+# etichetta} many {+# etichette} other {+# etichette}}"
+    },
     "title": {
       "label": "Titolo dell'elemento di lavoro",
       "required": "Il titolo dell'elemento di lavoro è obbligatorio."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "Visualizza altri elementi di lavoro"
         }
+      },
+      "no_access": {
+        "title": "Non hai accesso a questo elemento di lavoro",
+        "description": "Contatta un amministratore del progetto per richiedere l'accesso."
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "Impossibile ripristinare l'elemento di lavoro. Per favore, riprova."
       }
     },
+    "archived_banner": "Questo elemento di lavoro è archiviato. Lo ripristini per apportare modifiche.",
+    "updated_time_ago": "Aggiornato {time}",
+    "description_load_failed": "Impossibile caricare la descrizione.",
+    "assignee_count": "{count, plural, one {# assegnatario} many {# assegnatari} other {# assegnatari}}",
     "relation": {
       "relates_to": "Collegato a",
       "duplicate": "Duplicato di",
@@ -267,7 +279,12 @@
       "click_to_upvote": "Clicca per votare a favore",
       "click_to_downvote": "Clicca per votare contro",
       "click_to_view_upvotes": "Clicca per vedere i voti a favore",
-      "click_to_view_downvotes": "Clicca per vedere i voti contro"
+      "click_to_view_downvotes": "Clicca per vedere i voti contro",
+      "title": "Voti",
+      "upvotes_count": "{count, plural, one {# voto a favore} many {# voti a favore} other {# voti a favore}}",
+      "downvotes_count": "{count, plural, one {# voto contro} many {# voti contro} other {# voti contro}}",
+      "no_upvotes": "Ancora nessun voto a favore",
+      "no_downvotes": "Ancora nessun voto contro"
     }
   },
   "sub_work_item": {

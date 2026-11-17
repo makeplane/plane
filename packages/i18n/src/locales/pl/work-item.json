@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Element pracy} few {Elementy pracy} other {Elementów pracy}}",
     "all": "Wszystkie elementy pracy",
     "edit": "Edytuj element pracy",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# dodatkowa właściwość} few {# dodatkowe właściwości} many {# dodatkowych właściwości} other {# dodatkowej właściwości}}",
+      "label_overflow_indicator": "{count, plural, one {+# etykieta} few {+# etykiety} many {+# etykiet} other {+# etykiety}}"
+    },
     "title": {
       "label": "Tytuł elementu pracy",
       "required": "Tytuł elementu pracy jest wymagany."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "Pokaż inne elementy pracy"
         }
+      },
+      "no_access": {
+        "title": "Nie masz dostępu do tego elementu pracy",
+        "description": "Skontaktuj się z administratorem projektu, aby poprosić o dostęp."
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "Nie udało się przywrócić elementu pracy. Spróbuj ponownie."
       }
     },
+    "archived_banner": "Ten element pracy jest zarchiwizowany. Aby wprowadzić zmiany, należy go przywrócić.",
+    "updated_time_ago": "Zaktualizowano {time}",
+    "description_load_failed": "Nie udało się wczytać opisu.",
+    "assignee_count": "{count, plural, one {# przypisana osoba} few {# przypisane osoby} many {# przypisanych osób} other {# przypisanej osoby}}",
     "relation": {
       "relates_to": "Powiązany z",
       "duplicate": "Duplikat",
@@ -267,7 +279,12 @@
       "click_to_upvote": "Kliknij, aby zagłosować za",
       "click_to_downvote": "Kliknij, aby zagłosować przeciw",
       "click_to_view_upvotes": "Kliknij, aby zobaczyć głosy za",
-      "click_to_view_downvotes": "Kliknij, aby zobaczyć głosy przeciw"
+      "click_to_view_downvotes": "Kliknij, aby zobaczyć głosy przeciw",
+      "title": "Głosy",
+      "upvotes_count": "{count, plural, one {# głos za} few {# głosy za} many {# głosów za} other {# głosu za}}",
+      "downvotes_count": "{count, plural, one {# głos przeciw} few {# głosy przeciw} many {# głosów przeciw} other {# głosu przeciw}}",
+      "no_upvotes": "Brak głosów za",
+      "no_downvotes": "Brak głosów przeciw"
     }
   },
   "sub_work_item": {

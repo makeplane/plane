@@ -11,6 +11,7 @@ import useSWR from "swr";
 // components
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { ProfileSidebar } from "@/components/profile/sidebar";
@@ -80,9 +81,12 @@ function UseProfileLayout({ params }: Route.ComponentProps) {
                     <Outlet />
                   </div>
                 ) : (
-                  <div className="grid h-full w-full place-items-center text-secondary">
-                    {t("you_do_not_have_the_permission_to_access_this_page")}
-                  </div>
+                  <EmptyStateDetailed
+                    align="center"
+                    assetKey="no-access"
+                    assetClassName="size-40"
+                    title={t("you_do_not_have_the_permission_to_access_this_page")}
+                  />
                 )}
               </div>
               {!isSmallerScreen && <ProfileSidebar userProjectsData={userProjectsData} />}

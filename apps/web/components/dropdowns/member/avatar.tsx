@@ -19,12 +19,14 @@ type AvatarProps = {
   userIds: string | string[] | null;
   icon?: ComponentType<SVGProps<SVGSVGElement>>;
   size?: AvatarGroupSize;
+  /** Most faces shown before the group collapses the rest into a "+N" count. */
+  max?: number;
 };
 
 const MAX_GROUP_AVATARS = 2;
 
 export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps) {
-  const { showTooltip, userIds, icon: Icon, size = "xs" } = props;
+  const { showTooltip, userIds, icon: Icon, size = "xs", max = MAX_GROUP_AVATARS } = props;
   // store hooks
   const { getUserDetails } = useMember();
 
@@ -39,8 +41,8 @@ export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps)
       // Render at most `max + 1` avatars: `AvatarGroup` shows the extra face only when it replaces a "+1" and
       // counts the rest from `total`. The parent's own tooltip replaces the per-avatar name tooltips.
       return (
-        <AvatarGroup size={size} max={MAX_GROUP_AVATARS} total={members.length}>
-          {members.slice(0, MAX_GROUP_AVATARS + 1).map(({ userId, userDetails }) => (
+        <AvatarGroup size={size} max={max} total={members.length}>
+          {members.slice(0, max + 1).map(({ userId, userDetails }) => (
             <Avatar
               key={userId}
               src={getFileURL(userDetails.avatar_url)}

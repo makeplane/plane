@@ -6,8 +6,14 @@
 
 import { useEffect, useRef } from "react";
 import { EmojiPicker } from "frimousse";
+import { Icon } from "@makeplane/propel/components/icon";
+import { InputGroup } from "@makeplane/propel/components/input";
+import { Input } from "@makeplane/propel/elements/input";
+import { SearchOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { cn } from "@plane/utils";
+
+/** Emoji cells per row; rows are a fixed grid of 32px cells so every column fits the picker. */
+const EMOJI_COLUMNS = 9;
 
 type EmojiRootProps = {
   onChange: (value: string) => void;
@@ -39,43 +45,68 @@ export function EmojiRoot(props: EmojiRootProps) {
   return (
     <EmojiPicker.Root
       data-slot="emoji-picker"
-      className="isolate flex h-full w-full flex-col rounded-md border-none"
+      columns={EMOJI_COLUMNS}
+      className="isolate flex h-full w-full flex-col"
       onEmojiSelect={(val) => onChange(val.emoji)}
     >
-      <div className="sticky top-0 z-10 flex items-center justify-between gap-2 px-1.5 py-2 [&>[data-slot='emoji-picker-search-wrapper']]:flex-grow [&>[data-slot='emoji-picker-search-wrapper']]:p-0">
-        <div ref={searchWrapperRef} data-slot="emoji-picker-search-wrapper" className="">
-          <EmojiPicker.Search
-            placeholder={searchLabel}
-            aria-label={searchLabel}
-            disabled={searchDisabled}
-            value={searchQuery ?? ""}
-            onChange={(e) => onSearchQueryChange?.(e.target.value)}
-            className="block h-full w-full flex-grow-0 rounded-md border-[0.5px] border-subtle bg-transparent p-0 px-3 py-2 text-body-md-regular placeholder-(--text-color-placeholder) focus:border-accent-strong focus:outline-none"
-          />
+      <div className="flex items-center gap-2 pb-1">
+        <div ref={searchWrapperRef} data-slot="emoji-picker-search-wrapper" className="min-w-0 flex-1">
+          <InputGroup size="md">
+            <Icon icon={SearchOutline} tint="placeholder" />
+            <Input
+              size="md"
+              render={
+                <EmojiPicker.Search
+                  placeholder={searchLabel}
+                  aria-label={searchLabel}
+                  disabled={searchDisabled}
+                  value={searchQuery ?? ""}
+                  onChange={(e) => onSearchQueryChange?.(e.target.value)}
+                />
+              }
+            />
+          </InputGroup>
         </div>
         <EmojiPicker.SkinToneSelector
           data-slot="emoji-picker-skin-tone-selector"
-          className="hover:bg-accent mx-2 mb-1.5 size-8 flex-shrink-0 rounded-md text-body-md-regular"
+          className="grid size-7 flex-shrink-0 place-items-center rounded-md bg-layer-3 text-body-md-regular hover:bg-layer-3-hover"
         />
       </div>
-      <EmojiPicker.Viewport data-slot="emoji-picker-content" className={cn("relative flex-1 outline-none")}>
+      {/* frimousse reserves a stable scrollbar gutter by default, which narrows the rows below nine 32px
+          cells wherever scrollbars are always shown; don't reserve one. */}
+      <EmojiPicker.Viewport
+        data-slot="emoji-picker-content"
+        className="relative flex-1 outline-none"
+        style={{ scrollbarGutter: "auto" }}
+      >
         <EmojiPicker.List
           data-slot="emoji-picker-list"
-          className={cn("pb-2 select-none")}
+          className="pb-2 select-none"
           components={{
             CategoryHeader: ({ category, ...props }) => (
               // frimousse renders headers sticky inside the scrolling viewport, so they need an
               // opaque background or rows scroll visibly underneath the label text.
               <div
                 data-slot="emoji-picker-list-category-header"
-                className="bg-layer-2 px-3 pb-1.5 text-caption-sm-medium text-tertiary"
+                className="bg-layer-2 pt-2 pb-1.5 text-caption-sm-medium text-tertiary"
                 {...props}
               >
                 {category.label}
               </div>
             ),
-            Row: ({ children, ...props }) => (
-              <div data-slot="emoji-picker-list-row" className="scroll-my-1.5 px-1.5" {...props}>
+            Row: ({ children, style, ...props }) => (
+              <div
+                data-slot="emoji-picker-list-row"
+                className="scroll-my-1.5 justify-between"
+                {...props}
+                // A grid of cells up to 32px spread across the row, so the columns line up row to row and
+                // still all fit when an always-visible scrollbar takes some of the width.
+                style={{
+                  ...style,
+                  display: "grid",
+                  gridTemplateColumns: "repeat(var(--frimousse-list-columns), minmax(0, 2rem))",
+                }}
+              >
                 {children}
               </div>
             ),
@@ -84,7 +115,7 @@ export function EmojiRoot(props: EmojiRootProps) {
                 type="button"
                 aria-label={emoji?.label ?? emoji?.emoji}
                 data-slot="emoji-picker-list-emoji"
-                className="data-active:bg-accent flex size-8 items-center justify-center rounded-md text-body-md-regular"
+                className="data-active:bg-accent flex h-8 w-full max-w-8 items-center justify-center rounded-md text-body-md-regular"
                 {...props}
               >
                 {emoji.emoji}

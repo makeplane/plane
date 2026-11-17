@@ -53,7 +53,7 @@ class GiteaOauthInitiateSpaceEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 

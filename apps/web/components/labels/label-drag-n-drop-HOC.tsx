@@ -164,10 +164,14 @@ export const LabelDndHOC = observer(function LabelDndHOC(props: Props) {
   const isMakeChild = instruction == "make-child";
 
   return (
-    <div ref={labelRef}>
-      <DropIndicator classNames="my-1" isVisible={instruction === "reorder-above"} />
+    <div ref={labelRef} className="relative">
+      {/* indicators sit in the gap between rows instead of taking space, so the list's own gap spaces the
+          rows and the row height (which the drop hitboxes are measured from) never changes mid-drag */}
+      <DropIndicator classNames="absolute inset-x-0 -top-1.5" isVisible={instruction === "reorder-above"} />
       {children(isDragging, isMakeChild, dragHandleRef)}
-      {isLastChild && <DropIndicator classNames="my-1" isVisible={instruction === "reorder-below"} />}
+      {isLastChild && (
+        <DropIndicator classNames="absolute inset-x-0 -bottom-1.5" isVisible={instruction === "reorder-below"} />
+      )}
     </div>
   );
 });

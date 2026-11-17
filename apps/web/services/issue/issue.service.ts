@@ -453,7 +453,10 @@ export class IssueService extends APIService {
         return response?.data;
       })
       .catch((error) => {
-        throw error?.response?.data;
+        const data = error?.response?.data;
+        // keep the HTTP status alongside the payload so callers can tell "no access" from "not found"
+        if (data && typeof data === "object") throw { ...data, status: error?.response?.status };
+        throw data;
       });
   }
 }

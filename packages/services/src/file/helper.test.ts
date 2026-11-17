@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { getFileMetaDataForUpload } from "./helper";
+import { getAssetIdFromUrl, getFileMetaDataForUpload } from "./helper";
 
 const PNG_SIGNATURE = new Uint8Array([
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0x0d, 0x49, 0x48, 0x44, 0x52,
@@ -35,5 +35,32 @@ describe("getFileMetaDataForUpload", () => {
   it("prefers the file signature over the extension", async () => {
     const file = new File([PNG_SIGNATURE], "image.txt", { type: "text/plain" });
     expect((await getFileMetaDataForUpload(file)).type).toBe("image/png");
+  });
+});
+
+describe("getAssetIdFromUrl", () => {
+  it.each([
+    ["https://cdn.plane.so/ws-id/abc-image.png", "abc-image.png"],
+    ["https://cdn.plane.so/ws-id/image.png?id=5614&token=xyz", "image.png"],
+    ["https://cdn.plane.so/ws-id/10315?size=medium", "10315"],
+    ["https://cdn.plane.so/ws-id/thumb.png#frag", "thumb.png"],
+    ["https://cdn.plane.so/ws-id/image.png/?id=5614", "image.png"],
+    ["asset-uuid", "asset-uuid"],
+  ])("extracts asset id from %j", (input, expected) => {
+    expect(getAssetIdFromUrl(input)).toBe(expected);
+  });
+
+  // the key is placed in an API path, so it must always be a single, plain path segment
+  it.each([
+    ["https://cdn.plane.so/ws-id/..", ""],
+    ["https://cdn.plane.so/ws-id/%2e%2e/", ""],
+    ["https://cdn.plane.so/ws-id/a%2Fb", ""],
+    ["https://cdn.plane.so/ws-id/a%5cb", ""],
+    ["https://cdn.plane.so/ws-id/a\\b", "b"],
+    ["https://cdn.plane.so/ws-id/a\tb.png", "ab.png"],
+    ["custom://cdn.plane.so/ws-id/a\\b", ""],
+    ["https://", ""],
+  ])("keeps the key of %j to a single path segment", (input, expected) => {
+    expect(getAssetIdFromUrl(input)).toBe(expected);
   });
 });

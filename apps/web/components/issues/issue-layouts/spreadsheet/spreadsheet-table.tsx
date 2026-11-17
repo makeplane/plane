@@ -26,6 +26,7 @@ type Props = {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
+  handleDisplayPropertiesUpdate?: (data: Partial<IIssueDisplayProperties>) => void;
   issueIds: string[];
   isEstimateEnabled: boolean;
   quickActions: TRenderQuickActions;
@@ -45,6 +46,7 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
     displayProperties,
     displayFilters,
     handleDisplayFilterUpdate,
+    handleDisplayPropertiesUpdate,
     issueIds,
     isEstimateEnabled,
     portalElement,
@@ -111,11 +113,15 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
   const displayPropertiesCount = getDisplayPropertiesCount(displayProperties, ignoreFieldsForCounting);
 
   return (
-    <table className="w-full overflow-y-auto bg-surface-1" onKeyDown={handleKeyBoardNavigation}>
+    <table
+      className="w-full border-separate border-spacing-0 overflow-y-auto bg-surface-1"
+      onKeyDown={handleKeyBoardNavigation}
+    >
       <SpreadsheetHeader
         displayProperties={displayProperties}
         displayFilters={displayFilters}
         handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
         canEditProperties={canEditProperties}
         isEstimateEnabled={isEstimateEnabled}
         spreadsheetColumnsList={spreadsheetColumnsList}
@@ -145,7 +151,7 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
       {canLoadMoreIssues && (
         <tfoot ref={setIntersectionElement}>
           {Array.from({ length: 3 }).map((_, index) => (
-            <SpreadsheetIssueRowLoader key={index} columnCount={displayPropertiesCount} />
+            <SpreadsheetIssueRowLoader key={index} columnCount={displayPropertiesCount} withConfigColumn />
           ))}
         </tfoot>
       )}

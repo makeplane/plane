@@ -22,7 +22,7 @@ export const ActivitySortRoot = memo(function ActivitySortRoot(props: TActivityS
   return (
     <IconButton
       variant="tertiary"
-      size="sm"
+      size="md"
       icon={<Icon icon={SortIcon} />}
       aria-label={t("common.sort.label")}
       onClick={props.toggleSort}

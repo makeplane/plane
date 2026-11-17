@@ -8,7 +8,7 @@ from django.conf import settings
 
 # Python imports
 import os
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 
 def sanitize_filename(filename):
@@ -151,6 +151,17 @@ def validate_next_path(next_path: str) -> str:
     if _contains_suspicious_patterns(next_path):
         return ""
 
+    # Whoever reads this value back percent-decodes it, so its fully decoded
+    # form has to pass the same checks unchanged. Three rounds cover any
+    # legitimate nesting; a value still changing after that is rejected.
+    decoded = next_path
+    for _ in range(3):
+        decoded = unquote(decoded)
+    if unquote(decoded) != decoded:
+        return ""
+    if decoded != next_path and validate_next_path(decoded) != decoded:
+        return ""
+
     return next_path
 
 
@@ -179,7 +190,7 @@ def get_safe_redirect_url(base_url: str, next_path: str = "", params: dict = {})
 
     # Add the next path to the parameters
     if validated_path:
-        query_parts.append(f"next_path={validated_path}")
+        query_parts.append(urlencode({"next_path": validated_path}))
 
     # Add additional parameters
     if params:

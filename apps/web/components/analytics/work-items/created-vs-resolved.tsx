@@ -13,13 +13,14 @@ import { useTranslation } from "@plane/i18n";
 import { AreaChart } from "@plane/blocks/charts/area-chart";
 import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import type { IChartResponse, TChartData } from "@plane/types";
-import { renderFormattedDate } from "@plane/utils";
+import { cn, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 // services
 import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
+import { ANALYTICS_CHART_HEIGHT_CLASSNAME } from "../constants";
 import { ChartLoader } from "../loaders";
 
 const analyticsService = new AnalyticsService();
@@ -99,7 +100,7 @@ const CreatedVsResolved = observer(function CreatedVsResolved() {
         <ChartLoader />
       ) : parsedData && parsedData.length > 0 ? (
         <AreaChart
-          className="h-[350px] w-full"
+          className={cn(ANALYTICS_CHART_HEIGHT_CLASSNAME, "w-full")}
           data={parsedData}
           areas={areas}
           xAxis={{

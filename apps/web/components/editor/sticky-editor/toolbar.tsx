@@ -4,19 +4,19 @@
  * See the LICENSE file for details.
  */
 
-import React, { useEffect, useState, useCallback } from "react";
+import type React from "react";
+import { useEffect, useState, useCallback } from "react";
+// plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
+import { Toolbar, ToolbarButton, ToolbarGroup, ToolbarToggle } from "@makeplane/propel/components/toolbar";
+import { Tooltip, TooltipProvider } from "@makeplane/propel/components/tooltip";
 import { DeleteOutline, PaletteOutline } from "@makeplane/propel/icons";
-// editor
-import type { EditorRefApi } from "@plane/editor";
-// ui
-import { useOutsideClickDetector } from "@plane/hooks";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { TSticky } from "@plane/types";
-// constants
-import { cn } from "@plane/utils";
-import type { ToolbarMenuItem } from "@plane/editor";
+import type { EditorRefApi, ToolbarMenuItem } from "@plane/editor";
 import { TOOLBAR_ITEMS } from "@plane/editor";
-// helpers
+import type { TSticky } from "@plane/types";
+// local imports
 import { ColorPalette } from "./color-palette";
 
 type Props = {
@@ -28,13 +28,16 @@ type Props = {
 
 const toolbarItems = TOOLBAR_ITEMS.sticky;
 
+// keep focus (and the current selection) inside the editor when a toolbar control is pressed, so
+// formatting commands don't run against a lost selection
+const preserveEditorFocus = (e: React.MouseEvent) => e.preventDefault();
+
 export function StickyEditorToolbar(props: Props) {
   const { executeCommand, editorRef, handleColorChange, handleDelete } = props;
 
   // State to manage active states of toolbar items
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
   const [showColorPalette, setShowColorPalette] = useState(false);
-  const colorPaletteRef = React.useRef<HTMLDivElement>(null);
   // Function to update active states
   const updateActiveStates = useCallback(() => {
     if (!editorRef) return;
@@ -60,54 +63,57 @@ export function StickyEditorToolbar(props: Props) {
     return () => unsubscribe();
   }, [editorRef, updateActiveStates]);
 
-  useOutsideClickDetector(colorPaletteRef, () => setShowColorPalette(false));
-
   return (
-    <div className="flex h-full w-full justify-between">
-      <div className="my-auto flex gap-4" ref={colorPaletteRef}>
-        {/* color palette */}
-        {showColorPalette && <ColorPalette handleUpdate={handleColorChange} />}
-        <Tooltip label="Background color">
-          <button type="button" onClick={() => setShowColorPalette(!showColorPalette)} className="flex text-primary/50">
-            <PaletteOutline className="my-auto size-4" />
-          </button>
-        </Tooltip>
-
-        <div className="my-auto flex w-fit items-stretch justify-between gap-4 rounded-sm p-1">
-          <div className="my-auto flex items-stretch gap-4">
+    <TooltipProvider>
+      <div className="flex h-full w-full items-center justify-between">
+        <div className="-ml-2.5 flex items-center">
+          <Toolbar size="sm" elevation="flat" aria-label="Formatting toolbar">
+            {/* color palette */}
+            <Popover open={showColorPalette} onOpenChange={setShowColorPalette}>
+              <Tooltip label="Background color">
+                <PopoverTrigger
+                  render={
+                    <ToolbarButton
+                      aria-label="Background color"
+                      icon={<Icon icon={PaletteOutline} />}
+                      onMouseDown={preserveEditorFocus}
+                    />
+                  }
+                />
+              </Tooltip>
+              <PopoverContent variant="rich" side="top" align="start">
+                <ColorPalette handleUpdate={handleColorChange} />
+              </PopoverContent>
+            </Popover>
             {Object.keys(toolbarItems).map((key) => (
-              <div key={key} className={cn("flex items-stretch gap-4", {})}>
-                {toolbarItems[key].map((item) => {
-                  const isItemActive = activeStates[item.renderKey];
-
-                  return (
-                    <Tooltip key={item.renderKey} label={item.name} shortcut={item.shortcut?.join(" + ")}>
-                      <button
-                        type="button"
-                        onClick={() => executeCommand(item)}
-                        className={cn("grid aspect-square place-items-center rounded-xs p-0.5 text-primary/50", {})}
-                      >
-                        <item.icon
-                          className={cn("h-3.5 w-3.5", {
-                            "font-heavy": isItemActive,
-                          })}
-                          strokeWidth={2.5}
-                        />
-                      </button>
-                    </Tooltip>
-                  );
-                })}
-              </div>
+              <ToolbarGroup key={key}>
+                {toolbarItems[key].map((item) => (
+                  <Tooltip key={item.renderKey} label={item.name} shortcut={item.shortcut?.join(" + ")}>
+                    <ToolbarToggle
+                      aria-label={item.name}
+                      render={<button className="data-pressed:text-icon-secondary!" />}
+                      icon={<Icon icon={item.icon} />}
+                      pressed={!!activeStates[item.renderKey]}
+                      onMouseDown={preserveEditorFocus}
+                      onPressedChange={() => executeCommand(item)}
+                    />
+                  </Tooltip>
+                ))}
+              </ToolbarGroup>
             ))}
-          </div>
+          </Toolbar>
+        </div>
+        {/* delete action */}
+        <div className="-mr-1.5 flex items-center">
+          <IconButton
+            variant="ghost"
+            size="sm"
+            aria-label="Delete"
+            icon={<Icon icon={DeleteOutline} />}
+            onClick={handleDelete}
+          />
         </div>
       </div>
-      {/* delete action */}
-      <Tooltip label="Delete">
-        <button type="button" onClick={handleDelete} className="my-auto text-primary/50">
-          <DeleteOutline className="size-4" />
-        </button>
-      </Tooltip>
-    </div>
+    </TooltipProvider>
   );
 }

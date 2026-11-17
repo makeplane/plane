@@ -33,7 +33,7 @@ export const IssueAttachmentsUploadItem = observer(function IssueAttachmentsUplo
 
   return (
     <div className="pointer-events-none flex h-11 items-center justify-between gap-3 bg-surface-2 pr-2 pl-9">
-      <div className="flex items-center gap-3 truncate text-13">
+      <div className="flex items-center gap-3 truncate text-body-xs-regular">
         <div className="flex-shrink-0">{fileIcon}</div>
         <Tooltip label={fileName} layout="stacked" disabled={isMobile}>
           <p className="truncate font-medium text-secondary">{fileName}</p>
@@ -43,7 +43,7 @@ export const IssueAttachmentsUploadItem = observer(function IssueAttachmentsUplo
         <span className="flex-shrink-0">
           <CircularProgress value={uploadStatus.progress} size="md" variant="brand" aria-label="Upload progress" />
         </span>
-        <div className="flex-shrink-0 text-13 font-medium">{uploadStatus.progress}% done</div>
+        <div className="flex-shrink-0 text-body-xs-medium">{uploadStatus.progress}% done</div>
       </div>
     </div>
   );

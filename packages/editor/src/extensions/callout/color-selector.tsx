@@ -4,8 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import { Ban } from "lucide-react";
-import { ChevronDownOutline } from "@makeplane/propel/icons";
+import { ChevronDownOutline, DeactivatedOutline } from "@makeplane/propel/icons";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Button } from "@makeplane/propel/elements/button";
+import { IconButton } from "@makeplane/propel/elements/icon-button";
+import { PopoverPopup } from "@makeplane/propel/elements/popover";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
@@ -29,51 +32,55 @@ export function CalloutBlockColorSelector(props: Props) {
   return (
     <div
       className={cn("pointer-events-none absolute top-2 right-2 z-10 opacity-0 transition-opacity", {
-        "group-hover/callout-node:pointer-events-auto group-hover/callout-node:opacity-100": !disabled,
+        "group-hover/callout-node:pointer-events-auto group-hover/callout-node:opacity-100 focus-within:pointer-events-auto focus-within:opacity-100":
+          !disabled,
         "pointer-events-auto opacity-100": isOpen,
       })}
       contentEditable={false}
     >
       <div className="relative">
-        <button
+        <Button
           type="button"
+          variant="tertiary"
+          size="sm"
+          stretch="auto"
+          aria-expanded={isOpen}
           onClick={(e) => {
             toggleDropdown();
             e.stopPropagation();
           }}
-          className={cn(
-            "flex h-full items-center gap-1 rounded-sm px-2.5 py-1 text-13 font-medium whitespace-nowrap text-tertiary transition-colors hover:bg-layer-1-hover active:bg-layer-1-active",
-            {
-              "bg-layer-1": isOpen,
-            }
-          )}
           disabled={disabled}
         >
-          <span className="text-12">Color</span>
-          <ChevronDownOutline className="size-3 flex-shrink-0" />
-        </button>
+          <span>Color</span>
+          <Icon icon={ChevronDownOutline} />
+        </Button>
         {isOpen && (
-          <section className="animate-in fade-in slide-in-from-top-1 absolute top-full right-0 z-10 mt-1 rounded-md border-[0.5px] border-strong bg-surface-1 p-2 shadow-raised-200">
-            <div className="flex items-center gap-2">
-              {COLORS_LIST.map((color) => (
-                <button
-                  key={color.key}
+          <section className="animate-in fade-in slide-in-from-top-1 absolute top-full right-0 z-10 mt-1">
+            <PopoverPopup variant="rich">
+              <div role="group" aria-label="Background colors" className="flex items-center gap-2">
+                {COLORS_LIST.map((color) => (
+                  <button
+                    key={color.key}
+                    type="button"
+                    aria-label={`${color.label} background color`}
+                    className="size-6 shrink-0 cursor-pointer rounded-sm border-xs border-subtle transition-opacity outline-none hover:opacity-60 focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-offset-1"
+                    style={{
+                      backgroundColor: color.backgroundColor,
+                    }}
+                    onClick={() => handleColorSelect(color.key)}
+                  />
+                ))}
+                <IconButton
                   type="button"
-                  className="size-6 flex-shrink-0 rounded-sm border-[0.5px] border-strong-1 transition-opacity hover:opacity-60"
-                  style={{
-                    backgroundColor: color.backgroundColor,
-                  }}
-                  onClick={() => handleColorSelect(color.key)}
-                />
-              ))}
-              <button
-                type="button"
-                className="grid size-6 flex-shrink-0 place-items-center rounded-sm border-[0.5px] border-strong-1 text-tertiary transition-colors hover:bg-layer-1-hover"
-                onClick={() => handleColorSelect(null)}
-              >
-                <Ban className="size-4" />
-              </button>
-            </div>
+                  variant="secondary"
+                  size="sm"
+                  aria-label="Clear background color"
+                  onClick={() => handleColorSelect(null)}
+                >
+                  <Icon icon={DeactivatedOutline} />
+                </IconButton>
+              </div>
+            </PopoverPopup>
           </section>
         )}
       </div>

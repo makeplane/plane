@@ -6,8 +6,7 @@
 
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
-import { StarOff } from "lucide-react";
-import { LinkOutline, MembersOutline, StarOutline } from "@makeplane/propel/icons";
+import { LinkOutline, MembersOutline, StarOffOutline, StarOutline } from "@makeplane/propel/icons";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -140,7 +139,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
       i18n_title: isFavorite
         ? "power_k.contextual_actions.module.remove_from_favorites"
         : "power_k.contextual_actions.module.add_to_favorites",
-      icon: isFavorite ? StarOff : StarOutline,
+      icon: isFavorite ? StarOffOutline : StarOutline,
       group: "contextual",
       contextType: "module",
       type: "action",

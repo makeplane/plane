@@ -5,6 +5,7 @@
  */
 
 // hocuspocus
+import { Connection } from "@hocuspocus/server";
 import type { Extension, Hocuspocus, Document } from "@hocuspocus/server";
 import { getSchema } from "@tiptap/core";
 import type { JSONContent } from "@tiptap/core";
@@ -19,6 +20,7 @@ import {
 } from "@plane/editor/server";
 import { logger } from "@plane/logger";
 import { AppError } from "@/lib/errors";
+import { REDIS_TRANSACTION_ORIGIN } from "@/lib/yjs/redis-origin";
 // helpers
 import { getPageService } from "@/services/page/handler";
 import type { HocusPocusServerContext, OnLoadDocumentPayloadWithContext } from "@/types";
@@ -83,7 +85,7 @@ export class TitleSyncExtension implements Extension {
     instance: Hocuspocus;
   }) {
     // Create a title update manager for this document
-    const updateManager = new TitleUpdateManager(documentName, context);
+    const updateManager = new TitleUpdateManager(documentName);
 
     // Store the manager
     this.titleUpdateManagers.set(documentName, updateManager);
@@ -134,9 +136,14 @@ export class TitleSyncExtension implements Extension {
       broadcastMessageToPage(data.instance, data.parentId, event);
     }
 
-    // Schedule the title update
-    if (manager) {
-      manager.scheduleUpdate(title);
+    // Save with the credential of whoever made this change, never one captured at load time. A client
+    // Connection's context holds that user's own cookie. Changes relayed from another replica (the Redis origin) are
+    // saved by the replica the editing client is connected to; any other origin has no credential and is not saved.
+    const origin: unknown = events[0]?.transaction.origin;
+    if (origin instanceof Connection) {
+      manager?.scheduleUpdate(title, origin.context as HocusPocusServerContext);
+    } else if (origin !== REDIS_TRANSACTION_ORIGIN) {
+      logger.warn(`TitleSync: not saving title for ${documentName}; unrecognised transaction origin`);
     }
   }
 

@@ -39,8 +39,8 @@ class LabelViewSet(BaseViewSet):
             .order_by("sort_order")
         )
 
-    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False, multiple=True)
     @allow_permission([ROLE.ADMIN])
+    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False, multiple=True)
     def create(self, request, slug, project_id):
         try:
             serializer = LabelSerializer(data=request.data, context={"project_id": project_id})
@@ -54,8 +54,8 @@ class LabelViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
+    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     def partial_update(self, request, *args, **kwargs):
         # Check if the label name is unique within the project
         if (
@@ -81,8 +81,8 @@ class LabelViewSet(BaseViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
+    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
 

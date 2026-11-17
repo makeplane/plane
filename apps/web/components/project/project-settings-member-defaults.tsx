@@ -37,12 +37,12 @@ type TDefaultSettingItemProps = {
 
 function DefaultSettingItem({ title, description, children }: TDefaultSettingItemProps) {
   return (
-    <div className="flex items-center justify-between gap-x-2">
+    <div className="flex items-center justify-between gap-x-2 px-4 py-3">
       <div className="flex flex-col gap-0.5">
-        <h4 className="text-13 font-medium">{title}</h4>
-        <p className="text-11 text-tertiary">{description}</p>
+        <h4 className="text-body-sm-medium">{title}</h4>
+        <p className="text-body-2xs-regular text-tertiary">{description}</p>
       </div>
-      <div className="w-full max-w-48 sm:max-w-64">{children}</div>
+      <div className="w-full max-w-48 sm:max-w-72">{children}</div>
     </div>
   );
 }
@@ -139,7 +139,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
   };
 
   return (
-    <div className="my-6 flex flex-col gap-y-6">
+    <div className="mt-6 mb-10 flex flex-col divide-y divide-subtle overflow-hidden rounded-lg border border-subtle bg-layer-2">
       <DefaultSettingItem title="Project Lead" description="Select the project lead for the project.">
         {currentProjectDetails ? (
           <Controller

@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { useParams } from "react-router";
 // plane imports
+import { List } from "@makeplane/propel/components/list";
 import {
   EUserPermissionsLevel,
   GROUPED_PROJECT_SETTINGS,
@@ -17,6 +18,7 @@ import {
 import { useTranslation } from "@plane/i18n";
 // components
 import { SettingsSidebarItem } from "@/components/settings/sidebar/item";
+import { SettingsSidebarSectionHeading } from "@/components/settings/sidebar/section-heading";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // local imports
@@ -39,7 +41,7 @@ export const ProjectSettingsSidebarItemCategories = observer(function ProjectSet
   const { t } = useTranslation();
 
   return (
-    <div className="mt-3 flex flex-col divide-y divide-subtle px-3">
+    <div className="mt-1.5 flex flex-col divide-y divide-subtle px-3 pb-2">
       {PROJECT_SETTINGS_CATEGORIES.map((category) => {
         const categoryItems = GROUPED_PROJECT_SETTINGS[category];
         const accessibleItems = categoryItems.filter((item) =>
@@ -50,10 +52,10 @@ export const ProjectSettingsSidebarItemCategories = observer(function ProjectSet
 
         return (
           <div key={category} className="shrink-0 py-3 first:pt-0 last:pb-0">
-            <div className="p-2 text-caption-md-medium text-tertiary capitalize">
+            <SettingsSidebarSectionHeading>
               {t(PROJECT_SETTINGS_CATEGORY_LABELS[category])}
-            </div>
-            <div className="flex flex-col">
+            </SettingsSidebarSectionHeading>
+            <List gap="px" role="toolbar" aria-label={t(PROJECT_SETTINGS_CATEGORY_LABELS[category])}>
               {accessibleItems.map((item) => {
                 const isItemActive =
                   item.href === ""
@@ -71,7 +73,7 @@ export const ProjectSettingsSidebarItemCategories = observer(function ProjectSet
                   />
                 );
               })}
-            </div>
+            </List>
           </div>
         );
       })}

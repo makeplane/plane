@@ -8,13 +8,12 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { ScrollArea } from "@makeplane/propel/components/scroll-area";
+import { Tab, Tabs, TabsList, TabsPanel } from "@makeplane/propel/components/tabs";
 import type { TNotificationTab } from "@plane/constants";
 import { NOTIFICATION_TABS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ContentWrapper, Header, EHeaderVariant, Row, ERowVariant } from "@plane/blocks/layout";
 import { cn, getNumberCount } from "@plane/utils";
-// components
-import { CountChip } from "@/components/common/count-chip";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -22,6 +21,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { NotificationEmptyState } from "./empty-state";
 import { AppliedFilters } from "./filters/applied-filter";
 import { NotificationSidebarHeader } from "./header";
+import { NotificationSidebarHeaderOptions } from "./header/options";
 import { NotificationsLoader } from "./loader";
 import { NotificationCardListRoot } from "../notification-card/root";
 
@@ -44,8 +44,12 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
   const notificationIds = workspace ? notificationIdsByWorkspaceId(workspace.id) : undefined;
 
   const handleTabClick = useCallback(
-    (tabValue: TNotificationTab) => {
-      if (currentNotificationTab !== tabValue) {
+    (tabValue: TNotificationTab | null) => {
+      if (
+        tabValue !== null &&
+        NOTIFICATION_TABS.some((tab) => tab.value === tabValue) &&
+        currentNotificationTab !== tabValue
+      ) {
         setCurrentNotificationTab(tabValue);
       }
     },
@@ -57,65 +61,68 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
   return (
     <div
       className={cn(
-        "relative z-[10] h-full flex-shrink-0 border-0 border-subtle bg-surface-1 transition-all max-md:overflow-hidden md:border-r",
-        currentSelectedNotificationId ? "w-0 md:w-3/12" : "w-full md:w-3/12"
+        "relative h-full shrink-0 border-subtle bg-surface-1 transition-all md:border-r",
+        currentSelectedNotificationId ? "w-0 md:w-3/12 md:min-w-80" : "w-full md:w-3/12 md:min-w-80"
       )}
     >
-      <div className="relative flex h-full w-full flex-col">
-        <Row className="flex h-header flex-shrink-0 border-b border-subtle">
-          <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
-        </Row>
+      <div className="flex h-full flex-col overflow-hidden">
+        <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
 
-        <Header variant={EHeaderVariant.SECONDARY} className="justify-start">
-          {NOTIFICATION_TABS.map((tab) => (
-            // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
-            <div
-              key={tab.value}
-              className="relative h-full cursor-pointer px-3"
-              onClick={() => handleTabClick(tab.value)}
-            >
-              <div
-                className={cn(
-                  "relative flex h-full items-center justify-center gap-1 text-body-xs-medium transition-all",
-                  {
-                    "text-accent-primary": currentNotificationTab === tab.value,
-                    "text-primary hover:text-secondary": currentNotificationTab !== tab.value,
-                  }
-                )}
-              >
-                <div className="font-medium">{t(tab.i18n_label)}</div>
-                {tab.count(unreadNotificationsCount) > 0 && (
-                  <CountChip count={getNumberCount(tab.count(unreadNotificationsCount))} />
-                )}
-              </div>
-              {currentNotificationTab === tab.value && (
-                <div className="absolute right-0 bottom-0 left-0 rounded-t-md border border-accent-strong" />
-              )}
+        <Tabs variant="contained" layout="fill" value={currentNotificationTab} onValueChange={handleTabClick}>
+          <div className="flex items-center justify-between gap-2 self-stretch border-b border-subtle px-5 pt-1.5 pb-2">
+            <div className="w-fit">
+              <TabsList aria-label={t("notification.label")}>
+                {NOTIFICATION_TABS.map((tab) => {
+                  const label = t(tab.i18n_label);
+                  const count = tab.count(unreadNotificationsCount);
+                  const formattedCount = getNumberCount(count);
+                  return (
+                    <Tab
+                      key={tab.value}
+                      value={tab.value}
+                      label=""
+                      aria-label={count > 0 ? `${label} ${formattedCount}` : label}
+                      icon={
+                        <span className="flex items-center gap-2">
+                          <span>{label}</span>
+                          {count > 0 && <span>{formattedCount}</span>}
+                        </span>
+                      }
+                    />
+                  );
+                })}
+              </TabsList>
             </div>
-          ))}
-        </Header>
 
-        {/* applied filters */}
-        <AppliedFilters workspaceSlug={workspaceSlug.toString()} />
-
-        {/* rendering notifications */}
-        {loader === "init-loader" ? (
-          <div className="relative h-full w-full overflow-hidden">
-            <NotificationsLoader />
+            <NotificationSidebarHeaderOptions />
           </div>
-        ) : (
-          <>
-            {notificationIds && notificationIds.length > 0 ? (
-              <ContentWrapper variant={ERowVariant.HUGGING}>
-                <NotificationCardListRoot workspaceSlug={workspaceSlug.toString()} workspaceId={workspace?.id} />
-              </ContentWrapper>
-            ) : (
-              <div className="relative flex h-full w-full items-center justify-center">
-                <NotificationEmptyState currentNotificationTab={currentNotificationTab} />
-              </div>
-            )}
-          </>
-        )}
+
+          {/* applied filters */}
+          <AppliedFilters workspaceSlug={workspaceSlug.toString()} />
+
+          <div className="flex min-h-0 w-full flex-1 flex-col overflow-hidden">
+            <TabsPanel value={currentNotificationTab}>
+              {/* rendering notifications */}
+              {loader === "init-loader" ? (
+                <div className="relative h-full w-full overflow-hidden">
+                  <NotificationsLoader />
+                </div>
+              ) : notificationIds && notificationIds.length > 0 ? (
+                <div className="flex h-full min-h-0 flex-col">
+                  <ScrollArea orientation="vertical" size="sm">
+                    <div className="flex flex-col gap-px">
+                      <NotificationCardListRoot workspaceSlug={workspaceSlug.toString()} workspaceId={workspace.id} />
+                    </div>
+                  </ScrollArea>
+                </div>
+              ) : (
+                <div className="relative flex h-full w-full items-center justify-center">
+                  <NotificationEmptyState currentNotificationTab={currentNotificationTab} />
+                </div>
+              )}
+            </TabsPanel>
+          </div>
+        </Tabs>
       </div>
     </div>
   );

@@ -40,8 +40,8 @@ function AnalyticsEmptyState({ title, description, assetPath, className }: Props
           </div>
         )}
         <div className="flex flex-shrink flex-col items-center gap-1.5 text-center">
-          <h3 className={cn("text-18 font-semibold")}>{title}</h3>
-          {description && <p className="max-w-[350px] text-13 text-tertiary">{description}</p>}
+          <h3 className={cn("text-h5-semibold")}>{title}</h3>
+          {description && <p className="max-w-[350px] text-body-xs-regular text-tertiary">{description}</p>}
         </div>
       </div>
     </div>

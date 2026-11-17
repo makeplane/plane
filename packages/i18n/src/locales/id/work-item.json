@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Item Kerja} other {Item Kerja}}",
     "all": "Semua Item Kerja",
     "edit": "Edit item kerja",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# properti lainnya} other {# properti lainnya}}",
+      "label_overflow_indicator": "{count, plural, one {+# label} other {+# label}}"
+    },
     "title": {
       "label": "Judul item kerja",
       "required": "Judul item kerja diperlukan."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "Lihat item kerja lainnya"
         }
+      },
+      "no_access": {
+        "title": "Anda tidak memiliki akses ke item kerja ini",
+        "description": "Hubungi admin proyek untuk meminta akses."
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "Item kerja tidak dapat dipulihkan. Silakan coba lagi."
       }
     },
+    "archived_banner": "Item kerja ini diarsipkan. Pulihkan untuk melakukan perubahan.",
+    "updated_time_ago": "Diperbarui {time}",
+    "description_load_failed": "Tidak dapat memuat deskripsi.",
+    "assignee_count": "{count, plural, one {# penugas} other {# penugas}}",
     "relation": {
       "relates_to": "Berhubungan dengan",
       "duplicate": "Duplikat dari",
@@ -267,7 +279,12 @@
       "click_to_upvote": "Klik untuk memberi suara naik",
       "click_to_downvote": "Klik untuk memberi suara turun",
       "click_to_view_upvotes": "Klik untuk melihat suara naik",
-      "click_to_view_downvotes": "Klik untuk melihat suara turun"
+      "click_to_view_downvotes": "Klik untuk melihat suara turun",
+      "title": "Suara",
+      "upvotes_count": "{count, plural, one {# suara naik} other {# suara naik}}",
+      "downvotes_count": "{count, plural, one {# suara turun} other {# suara turun}}",
+      "no_upvotes": "Belum ada suara naik",
+      "no_downvotes": "Belum ada suara turun"
     }
   },
   "sub_work_item": {

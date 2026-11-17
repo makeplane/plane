@@ -9,8 +9,8 @@ import { observer } from "mobx-react";
 // types
 import { PROJECT_DISPLAY_FILTER_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CloseOutline } from "@makeplane/propel/icons";
 import type { TProjectAppliedDisplayFilterKeys } from "@plane/types";
+import { RemovableChip } from "@/components/common/removable-chip";
 // constants
 
 type Props = {
@@ -27,19 +27,15 @@ export const AppliedProjectDisplayFilters = observer(function AppliedProjectDisp
     <>
       {values.map((key) => {
         const filterLabel = PROJECT_DISPLAY_FILTER_OPTIONS.find((s) => s.key === key)?.i18n_label;
+        const displayLabel = filterLabel ? t(filterLabel) : "";
         return (
-          <div key={key} className="flex items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-11">
-            {filterLabel && t(filterLabel)}
-            {editable && (
-              <button
-                type="button"
-                className="grid place-items-center text-tertiary hover:text-secondary"
-                onClick={() => handleRemove(key)}
-              >
-                <CloseOutline height={10} width={10} />
-              </button>
-            )}
-          </div>
+          <RemovableChip
+            key={key}
+            variant="soft"
+            label={displayLabel}
+            ariaLabel={displayLabel}
+            onRemove={editable ? () => handleRemove(key) : undefined}
+          />
         );
       })}
     </>

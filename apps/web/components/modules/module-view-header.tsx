@@ -4,37 +4,33 @@
  * See the LICENSE file for details.
  */
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { CloseOutline, FilterOutline, SearchOutline } from "@makeplane/propel/icons";
+import { Tab, Tabs, TabsList } from "@makeplane/propel/components/tabs";
+import { ExpandableSearch } from "@makeplane/propel/components/expandable-search";
 // plane helpers
 import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
-import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TModuleFilters } from "@plane/types";
 // ui
-import { cn, calculateTotalFilters } from "@plane/utils";
+import { calculateTotalFilters } from "@plane/utils";
 // plane utils
 // components
-import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
-import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules/dropdowns";
+import { ModuleOrderByDropdown } from "@/components/modules/dropdowns";
 // constants
 // helpers
+import { ModuleFiltersDropdown } from "@/components/modules/dropdowns/filters/dropdown";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { ModuleLayoutIcon } from "./module-layout-icon";
-import { IconButton } from "@makeplane/propel/components/icon-button";
-import { Icon } from "@makeplane/propel/components/icon";
 // i18n
 
 export const ModuleViewHeader = observer(function ModuleViewHeader() {
-  // refs
-  const inputRef = useRef<HTMLInputElement>(null);
   // router
   const { projectId } = useParams();
   // hooks
@@ -52,9 +48,6 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
     updateSearchQuery,
   } = useModuleFilter();
   const { t } = useTranslation();
-
-  // states
-  const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "" ? true : false);
 
   // handlers
   const handleFilters = useCallback(
@@ -77,74 +70,50 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
     [filters, projectId, updateFilters]
   );
 
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Escape") {
-      if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
-      else {
-        setIsSearchOpen(false);
-        inputRef.current?.blur();
-      }
-    }
-  };
-
-  // outside click detector hook
-  useOutsideClickDetector(inputRef, () => {
-    if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
-  });
-
-  useEffect(() => {
-    if (searchQuery.trim() !== "") setIsSearchOpen(true);
-  }, [searchQuery]);
-
   const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0 || displayFilters?.favorites;
 
   return (
     <div className="hidden h-full items-center gap-2 self-end sm:flex">
-      <div className="flex items-center">
-        {!isSearchOpen && (
-          <IconButton
-            variant="ghost"
-            size="md"
-            render={<button type="button" className="-mr-1" />}
-            onClick={() => {
-              setIsSearchOpen(true);
-              inputRef.current?.focus();
-            }}
-            icon={<Icon icon={SearchOutline} />}
-            aria-label={t("common.search.label")}
-          />
-        )}
-        <div
-          className={cn(
-            "ml-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent bg-surface-1 text-placeholder opacity-0 transition-[width] ease-linear",
-            {
-              "w-64 border-subtle px-2.5 py-1.5 opacity-100": isSearchOpen,
-            }
-          )}
-        >
-          <SearchOutline className="h-3.5 w-3.5" />
-          <input
-            ref={inputRef}
-            className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
-            placeholder="Search"
-            value={searchQuery}
-            onChange={(e) => updateSearchQuery(e.target.value)}
-            onKeyDown={handleInputKeyDown}
-          />
-          {isSearchOpen && (
-            <button
-              type="button"
-              className="grid place-items-center"
-              onClick={() => {
-                // updateSearchQuery("");
-                setIsSearchOpen(false);
-              }}
-            >
-              <CloseOutline className="h-3 w-3" />
-            </button>
-          )}
-        </div>
+      <ExpandableSearch
+        size="md"
+        aria-label={t("common.search.label")}
+        clearLabel={t("common.clear")}
+        placeholder={t("common.search.label")}
+        value={searchQuery}
+        onValueChange={(value) => updateSearchQuery(value)}
+      />
+      <div className="hidden md:block">
+        <Tabs value={displayFilters?.layout ?? null} variant="contained" stretch="auto">
+          <TabsList aria-label={t("common.layout")}>
+            {MODULE_VIEW_LAYOUTS.map((layout) => (
+              <Tooltip key={layout.key} label={t(layout.i18n_title)} disabled={isMobile}>
+                <Tab
+                  value={layout.key}
+                  label=""
+                  aria-label={t(layout.i18n_title)}
+                  icon={<ModuleLayoutIcon layoutType={layout.key} size={16} />}
+                  onClick={() => {
+                    if (!projectId) return;
+                    updateDisplayFilters(projectId.toString(), { layout: layout.key });
+                  }}
+                />
+              </Tooltip>
+            ))}
+          </TabsList>
+        </Tabs>
       </div>
+      <ModuleFiltersDropdown
+        iconOnly
+        isFiltersApplied={isFiltersApplied}
+        displayFilters={displayFilters ?? {}}
+        filters={filters ?? {}}
+        handleDisplayFiltersUpdate={(val) => {
+          if (!projectId) return;
+          updateDisplayFilters(projectId.toString(), val);
+        }}
+        handleFiltersUpdate={handleFilters}
+        memberIds={workspaceMemberIds ?? undefined}
+      />
       <ModuleOrderByDropdown
         value={displayFilters?.order_by}
         onChange={(val) => {
@@ -154,45 +123,6 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
           });
         }}
       />
-      <FiltersDropdown
-        icon={<FilterOutline className="h-3 w-3" />}
-        title="Filters"
-        placement="bottom-end"
-        isFiltersApplied={isFiltersApplied}
-      >
-        <ModuleFiltersSelection
-          displayFilters={displayFilters ?? {}}
-          filters={filters ?? {}}
-          handleDisplayFiltersUpdate={(val) => {
-            if (!projectId) return;
-            updateDisplayFilters(projectId.toString(), val);
-          }}
-          handleFiltersUpdate={handleFilters}
-          memberIds={workspaceMemberIds ?? undefined}
-        />
-      </FiltersDropdown>
-      <div className="hidden items-center gap-1 rounded-sm bg-layer-3 p-1 md:flex">
-        {MODULE_VIEW_LAYOUTS.map((layout) => (
-          <Tooltip key={layout.key} label={t(layout.i18n_title)} disabled={isMobile}>
-            <button
-              type="button"
-              className={cn(
-                "group grid h-5.5 w-7 place-items-center overflow-hidden rounded-sm transition-all hover:bg-layer-transparent-hover",
-                {
-                  "bg-layer-transparent-active hover:bg-layer-transparent-active":
-                    displayFilters?.layout === layout.key,
-                }
-              )}
-              onClick={() => {
-                if (!projectId) return;
-                updateDisplayFilters(projectId.toString(), { layout: layout.key });
-              }}
-            >
-              <ModuleLayoutIcon layoutType={layout.key} />
-            </button>
-          </Tooltip>
-        ))}
-      </div>
     </div>
   );
 });
