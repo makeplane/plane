@@ -45,7 +45,7 @@ export function ViewOrderByDropdown(props: Props) {
         <MenuTrigger
           render={
             isMobile ? (
-              <button type="button" className="flex w-full items-center gap-2 text-13 text-secondary" />
+              <button type="button" className="flex w-full items-center gap-2 text-body-xs-regular text-secondary" />
             ) : (
               <ButtonElement variant="secondary" size="md" stretch="auto" />
             )

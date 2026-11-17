@@ -67,14 +67,14 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
-      <div className="space-y-5">
-        <div className="text-18 font-medium text-secondary">
+      <div className="flex flex-col gap-5">
+        <h2 className="text-h5-medium text-secondary">
           {data
             ? t("workspace_settings.settings.webhooks.modal.details")
             : t("workspace_settings.settings.webhooks.modal.title")}
-        </div>
-        <div className="space-y-3">
-          <div className="space-y-1">
+        </h2>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <Controller
               control={control}
               name="url"
@@ -82,32 +82,36 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
                 required: t("workspace_settings.settings.webhooks.modal.error"),
               }}
               render={({ field: { onChange, value } }) => (
-                <WebhookInput value={value} onChange={onChange} hasError={Boolean(errors.url)} />
+                <WebhookInput
+                  value={value}
+                  onChange={onChange}
+                  hasError={Boolean(errors.url)}
+                  errorMessage={errors.url?.message}
+                />
               )}
             />
-            {errors.url && <div className="text-11 text-danger-primary">{errors.url.message}</div>}
           </div>
           {data && <WebhookToggle control={control} />}
           <WebhookOptions value={webhookEventType} onChange={(val) => setWebhookEventType(val)} />
         </div>
-        <div className="mt-4">
-          {webhookEventType === "individual" && <WebhookIndividualEventOptions control={control} />}
-        </div>
+        {webhookEventType === "individual" && <WebhookIndividualEventOptions control={control} />}
       </div>
       {data ? (
-        <div className="space-y-5 pt-0">
+        <div className="mt-7 flex flex-col gap-7">
           <WebhookSecretKey data={data} />
-          <Button
-            variant="primary"
-            size="md"
-            stretch="auto"
-            type="submit"
-            label={isSubmitting ? t("updating") : t("update")}
-            loading={isSubmitting}
-          />
+          <div>
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              type="submit"
+              label={isSubmitting ? t("updating") : t("update")}
+              loading={isSubmitting}
+            />
+          </div>
         </div>
       ) : (
-        <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
+        <div className="mt-4 flex items-center justify-end gap-3 border-t-[0.5px] border-subtle px-5 py-4">
           <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={handleClose} />
           {!webhookSecretKey && (
             <Button

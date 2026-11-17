@@ -38,7 +38,7 @@ export const LeftResizable = observer(function LeftResizable(props: LeftResizabl
   return (
     <>
       {(isHovering || isLeftResizing) && dateString && (
-        <div className="absolute -left-36 flex h-full w-32 items-center justify-end text-11 font-regular text-tertiary">
+        <div className="absolute -left-36 flex h-full w-32 items-center justify-end text-caption-sm-regular text-tertiary">
           <div className="rounded-sm bg-accent-subtle px-2 py-1">{dateString}</div>
         </div>
       )}

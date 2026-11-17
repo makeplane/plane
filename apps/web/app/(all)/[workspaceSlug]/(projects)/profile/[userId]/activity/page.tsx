@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
+import { ScrollArea } from "@makeplane/propel/components/scroll-area";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { DownloadActivityButton } from "@/components/profile/activity/download-button";
@@ -42,6 +43,7 @@ function ProfileActivityPage() {
         key={i}
         cursor={`${PER_PAGE}:${i}:0`}
         perPage={PER_PAGE}
+        isFirstPage={i === 0}
         updateResultsCount={updateResultsCount}
         updateTotalPages={updateTotalPages}
       />
@@ -55,24 +57,28 @@ function ProfileActivityPage() {
   return (
     <>
       <PageHead title="Profile - Activity" />
-      <div className="flex h-full w-full flex-col overflow-hidden py-5">
+      <div className="flex h-full w-full flex-col overflow-hidden pt-5">
         <div className="flex items-center justify-between gap-2 px-5 md:px-9">
-          <h3 className="text-16 font-medium">{t("profile.stats.recent_activity.title")}</h3>
+          <h3 className="text-h6-medium">{t("profile.stats.recent_activity.title")}</h3>
           {canDownloadActivity && <DownloadActivityButton />}
         </div>
-        <div className="vertical-scrollbar scrollbar-md flex h-full flex-col overflow-y-auto px-5 md:px-9">
-          {activityPages}
-          {pageCount < totalPages && resultsCount !== 0 && (
-            <div className="flex w-full items-center justify-center text-11">
-              <Button
-                variant="secondary"
-                size="sm"
-                stretch="auto"
-                label={t("common.load_more")}
-                onClick={handleLoadMore}
-              />
+        <div className="min-h-0 flex-1">
+          <ScrollArea orientation="vertical" variant="inset" size="md">
+            <div className="px-5 pb-5 md:px-9">
+              {activityPages}
+              {pageCount < totalPages && resultsCount !== 0 && (
+                <div className="flex w-full items-center justify-center text-caption-sm-regular">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    stretch="auto"
+                    label={t("common.load_more")}
+                    onClick={handleLoadMore}
+                  />
+                </div>
+              )}
             </div>
-          )}
+          </ScrollArea>
         </div>
       </div>
     </>

@@ -14,11 +14,14 @@ ENV UV_PROJECT_ENVIRONMENT=/usr/local
 ENV UV_PYTHON_DOWNLOADS=never
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_NO_CACHE=1
+# grpcio ships its own roots.pem, which still trusts emSign ECC Root CA - G3 (eMudhra incident);
+# point it at the system bundle, which the OS update below keeps current.
+ENV GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/certs/ca-certificates.crt
 
 # OS security updates. --available forces reinstall from the current repos;
 # bump APK_SECURITY_PATCH to bust buildx's cached layer (keyed on this command
 # string), otherwise a rebuild silently re-ships the old packages.
-ARG APK_SECURITY_PATCH=2026-09-07
+ARG APK_SECURITY_PATCH=2026-10-26
 RUN echo "apk-security-patch ${APK_SECURITY_PATCH}" && apk update && apk upgrade --available
 
 WORKDIR /code
@@ -51,6 +54,14 @@ RUN --mount=from=uv,source=/uv,target=/bin/uv \
     apk del .build-deps \
     && \
     rm -rf /var/cache/apk/*
+
+# pip is build tooling only; uv installed everything above and nothing installs
+# at runtime. The base image's pip (25.0.1) vendors a certifi that still trusts
+# the compromised emSign G3 root (GHSA-6q48-6c7w-9gw2). `python -m ensurepip`
+# restores it if ever needed.
+RUN rm -rf /usr/local/lib/python3.12/site-packages/pip \
+           /usr/local/lib/python3.12/site-packages/pip-*.dist-info \
+           /usr/local/bin/pip /usr/local/bin/pip3 /usr/local/bin/pip3.12
 
 
 # Add in Django deps and generate Django's static files

@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane package imports
-import { DownloadOutline } from "@makeplane/propel/icons";
+import { ExportOutline } from "@makeplane/propel/icons";
 import type { ChartXAxisDateGrouping } from "@plane/constants";
 import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES, CHART_COLOR_PALETTES, EChartModels } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -229,10 +229,10 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
             actions={(table: Table<TChartDatum>) => (
               <Button
                 variant="secondary"
-                size="sm"
+                size="md"
                 stretch="auto"
                 label={t("exporter.csv.short_description")}
-                icon={<Icon icon={DownloadOutline} />}
+                icon={<Icon icon={ExportOutline} />}
                 iconPosition="start"
                 onClick={() => exportCSV(table.getRowModel().rows, [...defaultColumns, ...columns], workspaceSlug)}
               />

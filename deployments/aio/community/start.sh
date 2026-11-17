@@ -183,6 +183,8 @@ update_env_file(){
     # update database url
     update_env_value "DATABASE_URL" "$DATABASE_URL"
     update_env_value "REDIS_URL" "$REDIS_URL"
+    update_env_value "REDIS_SSL_CERT_REQS" "$REDIS_SSL_CERT_REQS"
+    update_env_value "REDIS_SSL_CA_CERTS" "$REDIS_SSL_CA_CERTS"
     update_env_value "AMQP_URL" "$AMQP_URL"
     
     # update aws credentials
@@ -218,6 +220,11 @@ main(){
             *=*) export "${line%%=*}=${line#*=}" ;;
         esac
     done < plane.env
+
+    # Recreate log dirs at boot. A host bind of /app/logs replaces the
+    # directories baked into the image, and supervisord refuses to start
+    # if stdout_logfile's parent path is missing.
+    mkdir -p /app/logs/access /app/logs/error
 
     /usr/local/bin/supervisord -c /etc/supervisor/conf.d/supervisor.conf
 }

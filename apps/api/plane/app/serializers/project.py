@@ -21,6 +21,7 @@ from plane.db.models import (
     DeployBoard,
     ProjectPublicMember,
     IssueSequence,
+    WorkspaceMember,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -34,7 +35,8 @@ class ProjectSerializer(BaseSerializer):
     class Meta:
         model = Project
         fields = "__all__"
-        read_only_fields = ["workspace", "deleted_at"]
+        # Audit fields are set server-side by BaseModel.save().
+        read_only_fields = ["workspace", "deleted_at", "created_by", "updated_by"]
 
     def validate_name(self, name):
         project_id = self.instance.id if self.instance else None
@@ -75,6 +77,17 @@ class ProjectSerializer(BaseSerializer):
         return identifier
 
     def validate(self, data):
+        # project_lead / default_assignee must be active members of the workspace
+        for field in ("project_lead", "default_assignee"):
+            user = data.get(field)
+            # an unchanged assignment may be resent after the user left the workspace
+            if user is not None and self.instance and getattr(self.instance, f"{field}_id") == user.pk:
+                continue
+            if user is not None and not WorkspaceMember.objects.filter(
+                workspace_id=self.context["workspace_id"], member=user, is_active=True
+            ).exists():
+                raise serializers.ValidationError({field: "The provided user is not a member of this workspace."})
+
         # Validate description content for security
         if "description_html" in data and data["description_html"]:
             is_valid, error_msg, sanitized_html = validate_html_content(str(data["description_html"]))

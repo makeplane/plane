@@ -6,7 +6,7 @@
 
 import type { FormEvent } from "react";
 import { useState } from "react";
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 
 // plane imports
 import { ETabIndices, EPageAccess } from "@plane/constants";
@@ -43,7 +43,7 @@ type Props = {
 const PAGE_ACCESS_SPECIFIERS: {
   key: EPageAccess;
   i18n_label: string;
-  icon: LucideIcon | React.FC<ISvgIcons>;
+  icon: IconGlyph | React.FC<ISvgIcons>;
 }[] = [
   { key: EPageAccess.PUBLIC, i18n_label: "common.access.public", icon: GlobeOutline },
   { key: EPageAccess.PRIVATE, i18n_label: "common.access.private", icon: LockOutline },
@@ -128,7 +128,7 @@ export function PageForm(props: Props) {
               <InputField
                 id="name"
                 type="text"
-                size="2xl"
+                size="xl"
                 orientation="vertical"
                 value={formData.name}
                 onChange={(e) => handleFormData("name", e.target.value)}
@@ -157,7 +157,7 @@ export function PageForm(props: Props) {
               accessSpecifiers={PAGE_ACCESS_SPECIFIERS}
               isMobile={isMobile}
             />
-            <h6 className="text-11 font-medium">{t(i18n_access_label || "")}</h6>
+            <h6 className="text-caption-sm-medium">{t(i18n_access_label || "")}</h6>
           </div>
         </DialogInfo>
         <Button

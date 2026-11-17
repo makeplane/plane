@@ -82,7 +82,7 @@ export const BaseListGroup = observer(function BaseListGroup<T extends IBaseLayo
       )}
 
       {isDraggingOver && enableDragDrop && (
-        <div className="absolute top-0 left-0 z-[2] flex h-full w-full items-center justify-center rounded-sm border-[1px] border-strong bg-layer-1/85 text-13 font-medium text-tertiary">
+        <div className="absolute top-0 left-0 z-[2] flex h-full w-full items-center justify-center rounded-sm border-[1px] border-strong bg-layer-1/85 text-body-xs-medium text-tertiary">
           <div className="my-8 flex flex-col items-center rounded-sm p-3 text-secondary">
             {t("common.drop_here_to_move")}
           </div>

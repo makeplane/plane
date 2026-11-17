@@ -5,16 +5,9 @@
  */
 
 import { useEffect, useState, useRef } from "react";
-import { Combobox, ComboboxItem, ComboboxList, ComboboxSearch } from "@makeplane/propel/components/combobox";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogInfo,
-  DialogMain,
-  DialogTitle,
-} from "@makeplane/propel/components/dialog";
-import { CloseOutline, RocketOutline } from "@makeplane/propel/icons";
+import { Combobox, ComboboxItem, ComboboxList } from "@makeplane/propel/components/combobox";
+import { Dialog, DialogContent, DialogTitle } from "@makeplane/propel/components/dialog";
+import { CloseOutline, NewTabOutline } from "@makeplane/propel/icons";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
@@ -34,6 +27,12 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { ProjectService } from "@/services/project";
 // components
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
+import {
+  SelectionDialogFooter,
+  SelectionDialogList,
+  SelectionDialogSearch,
+  SelectionDialogSelected,
+} from "@/components/common/selection-dialog-layout";
 import { IssueSearchModalEmptyState } from "./issue-search-modal-empty-state";
 
 type Props = {
@@ -179,52 +178,18 @@ export function ExistingIssuesListModal(props: Props) {
             setSearchTerm(next);
           }}
         >
-          <ComboboxSearch
+          <SelectionDialogSearch
             placeholder={t("common.search.placeholder")}
-            aria-label={t("issue.add.existing")}
+            ariaLabel={t("issue.add.existing")}
             tabIndex={baseTabIndex}
-          />
-          <DialogMain>
-            <div className="flex flex-shrink-0 flex-col-reverse gap-4 text-13 text-secondary sm:flex-row sm:items-center sm:justify-between">
-              {selectedIssues.length > 0 ? (
-                <div className="mt-1 flex flex-wrap items-center gap-2">
-                  {selectedIssues.map((issue) => (
-                    <div
-                      key={issue.id}
-                      className="flex items-center gap-1 rounded-md border border-subtle bg-layer-1 py-1 pl-2 text-11 whitespace-nowrap text-primary"
-                    >
-                      <IssueIdentifier
-                        projectId={issue.project_id}
-                        issueTypeId={issue.type_id}
-                        projectIdentifier={issue.project__identifier}
-                        issueSequenceId={issue.sequence_id}
-                        size="xs"
-                        variant="secondary"
-                      />
-                      <button
-                        type="button"
-                        className="group p-1"
-                        onClick={() => setSelectedIssues((prevData) => prevData.filter((i) => i.id !== issue.id))}
-                      >
-                        <CloseOutline className="h-3 w-3 text-secondary group-hover:text-primary" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="w-min rounded-md border border-subtle bg-layer-1 p-2 text-11 whitespace-nowrap">
-                  {t("issue.select.empty")}
-                </div>
-              )}
-              {workspaceLevelToggle && (
+          >
+            {workspaceLevelToggle && (
+              <>
+                <span className="h-5 border-s border-subtle" aria-hidden />
                 <Tooltip label="Toggle workspace level search" disabled={isMobile}>
-                  <div
-                    className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-11 ${
-                      isWorkspaceLevel ? "text-primary" : "text-secondary"
-                    }`}
-                  >
+                  <div className="flex flex-shrink-0 items-center gap-2 text-body-xs-regular text-secondary">
                     <Switch
-                      size="sm"
+                      size="md"
                       checked={isWorkspaceLevel}
                       onCheckedChange={setIsWorkspaceLevel}
                       aria-label={t("common.workspace_level")}
@@ -238,107 +203,133 @@ export function ExistingIssuesListModal(props: Props) {
                     </button>
                   </div>
                 </Tooltip>
-              )}
-            </div>
-
-            <div className="vertical-scrollbar scrollbar-md max-h-80 min-h-0 scroll-py-2 overflow-x-hidden overflow-y-auto overscroll-contain">
-              {/* TODO: Translate here */}
-              {searchTerm !== "" && (
-                <h5 className="text-13 text-secondary">
-                  Search results for{" "}
-                  <span className="text-primary">
-                    {'"'}
-                    {searchTerm}
-                    {'"'}
-                  </span>{" "}
-                  in project:
-                </h5>
-              )}
-
-              {isSearching || isLoading ? (
-                <Loader className="space-y-3 p-3">
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                </Loader>
-              ) : (
-                <>
-                  {filteredIssues.length === 0 ? (
-                    <IssueSearchModalEmptyState
-                      debouncedSearchTerm={debouncedSearchTerm}
-                      isSearching={isSearching}
-                      issues={filteredIssues}
-                      searchTerm={searchTerm}
+              </>
+            )}
+          </SelectionDialogSearch>
+          {selectedIssues.length > 0 && (
+            <SelectionDialogSelected>
+              <div className="flex flex-wrap items-center gap-2">
+                {selectedIssues.map((issue) => (
+                  <div
+                    key={issue.id}
+                    className="flex items-center gap-1 rounded-md border border-subtle bg-layer-1 py-1 pl-2 text-caption-sm-regular whitespace-nowrap text-primary"
+                  >
+                    <IssueIdentifier
+                      projectId={issue.project_id}
+                      issueTypeId={issue.type_id}
+                      projectIdentifier={issue.project__identifier}
+                      issueSequenceId={issue.sequence_id}
+                      size="xs"
+                      variant="secondary"
                     />
-                  ) : (
-                    <ComboboxList aria-label={t("issue.add.existing")}>
-                      {filteredIssues.map((issue) => (
-                        // `selection="checkbox"` replaces the hand-placed checkbox and the
-                        // `as="label"` wrapper the old row needed to make it clickable.
-                        <ComboboxItem
-                          key={issue.id}
-                          value={issue}
-                          selection="checkbox"
-                          label={issue.name}
-                          icon={
-                            <span className="flex flex-shrink-0 items-center gap-2">
-                              <span
-                                className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                style={{
-                                  backgroundColor: issue.state__color,
-                                }}
-                              />
-                              <IssueIdentifier
-                                projectId={issue.project_id}
-                                issueTypeId={issue.type_id}
-                                projectIdentifier={issue.project__identifier}
-                                issueSequenceId={issue.sequence_id}
-                                size="xs"
-                                variant="secondary"
-                              />
-                            </span>
-                          }
-                          trailing={
-                            <a
-                              href={generateWorkItemLink({
-                                workspaceSlug,
-                                projectId: issue?.project_id,
-                                issueId: issue?.id,
-                                projectIdentifier: issue.project__identifier,
-                                sequenceId: issue?.sequence_id,
-                              })}
-                              target="_blank"
-                              className="relative z-1 hidden flex-shrink-0 text-secondary group-hover/item:block hover:text-primary"
-                              rel="noopener noreferrer"
-                              aria-label={t("common.actions.open_in_new_tab")}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <RocketOutline className="h-4 w-4" />
-                            </a>
-                          }
-                        />
-                      ))}
-                    </ComboboxList>
-                  )}
-                </>
-              )}
-            </div>
-          </DialogMain>
+                    <button
+                      type="button"
+                      className="group p-1"
+                      aria-label={t("aria_labels.common.remove")}
+                      onClick={() => setSelectedIssues((prevData) => prevData.filter((i) => i.id !== issue.id))}
+                    >
+                      <CloseOutline className="h-3 w-3 text-secondary group-hover:text-primary" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </SelectionDialogSelected>
+          )}
+          <SelectionDialogList>
+            {/* TODO: Translate here */}
+            {searchTerm !== "" && (
+              <h5 className="px-3 py-1 text-body-xs-regular text-secondary">
+                Search results for{" "}
+                <span className="text-primary">
+                  {'"'}
+                  {searchTerm}
+                  {'"'}
+                </span>{" "}
+                in project:
+              </h5>
+            )}
+
+            {isSearching || isLoading ? (
+              <Loader className="space-y-3 p-3">
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+              </Loader>
+            ) : (
+              <>
+                {filteredIssues.length === 0 ? (
+                  <IssueSearchModalEmptyState
+                    debouncedSearchTerm={debouncedSearchTerm}
+                    isSearching={isSearching}
+                    issues={filteredIssues}
+                    searchTerm={searchTerm}
+                  />
+                ) : (
+                  <ComboboxList aria-label={t("issue.add.existing")}>
+                    {filteredIssues.map((issue) => (
+                      // `selection="checkbox"` replaces the hand-placed checkbox and the
+                      // `as="label"` wrapper the old row needed to make it clickable.
+                      <ComboboxItem
+                        key={issue.id}
+                        value={issue}
+                        selection="checkbox"
+                        label={issue.name}
+                        icon={
+                          <span className="flex flex-shrink-0 items-center gap-2">
+                            <span
+                              className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                              style={{
+                                backgroundColor: issue.state__color,
+                              }}
+                            />
+                            <IssueIdentifier
+                              projectId={issue.project_id}
+                              issueTypeId={issue.type_id}
+                              projectIdentifier={issue.project__identifier}
+                              issueSequenceId={issue.sequence_id}
+                              size="xs"
+                              variant="secondary"
+                            />
+                          </span>
+                        }
+                        trailing={
+                          <a
+                            href={generateWorkItemLink({
+                              workspaceSlug,
+                              projectId: issue?.project_id,
+                              issueId: issue?.id,
+                              projectIdentifier: issue.project__identifier,
+                              sequenceId: issue?.sequence_id,
+                            })}
+                            target="_blank"
+                            className="relative z-1 hidden flex-shrink-0 text-secondary group-hover/item:block hover:text-primary"
+                            rel="noopener noreferrer"
+                            aria-label={t("common.actions.open_in_new_tab")}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <NewTabOutline className="h-4 w-4" />
+                          </a>
+                        }
+                      />
+                    ))}
+                  </ComboboxList>
+                )}
+              </>
+            )}
+          </SelectionDialogList>
         </Combobox>
-        <DialogActions>
-          <DialogInfo>
-            <Button
-              variant="ghost"
-              size="sm"
-              stretch="auto"
-              label={
-                selectedIssues.length === issues.length ? t("issue.select.deselect_all") : t("issue.select.select_all")
-              }
-              onClick={handleSelectIssues}
-              disabled={filteredIssues.length === 0}
-            />
-          </DialogInfo>
+        <SelectionDialogFooter status={selectedIssues.length === 0 ? t("issue.select.empty") : undefined}>
+          <Button
+            variant="ghost"
+            size="md"
+            stretch="auto"
+            label={
+              selectedIssues.length === issues.length ? t("issue.select.deselect_all") : t("issue.select.select_all")
+            }
+            onClick={handleSelectIssues}
+            disabled={filteredIssues.length === 0}
+          />
           <Button variant="secondary" size="md" stretch="auto" label={t("common.cancel")} onClick={handleClose} />
           <Button
             variant="primary"
@@ -349,7 +340,7 @@ export function ExistingIssuesListModal(props: Props) {
             loading={isSubmitting}
             disabled={isSubmitting || selectedIssues.length === 0}
           />
-        </DialogActions>
+        </SelectionDialogFooter>
       </DialogContent>
     </Dialog>
   );

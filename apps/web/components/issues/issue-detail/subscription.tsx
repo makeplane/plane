@@ -7,13 +7,11 @@
 import { useState } from "react";
 import { isNil } from "lodash-es";
 import { observer } from "mobx-react";
-import { SubscribeOutline, UnsubscribeOutline } from "@makeplane/propel/icons";
 // plane-i18n
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // UI
-import { Button } from "@makeplane/propel/elements/button";
-import { Icon } from "@makeplane/propel/components/icon";
+import { Button } from "@makeplane/propel/components/button";
 import { setToast } from "@plane/blocks/toast";
 import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/blocks/skeleton";
@@ -81,26 +79,16 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
     );
 
   return (
-    <div>
-      <Button
-        variant="secondary"
-        size="md"
-        stretch="auto"
-        render={<button type="button" />}
-        onClick={handleSubscription}
-        disabled={!isEditable || loading}
-      >
-        <Icon icon={isSubscribed ? UnsubscribeOutline : SubscribeOutline} />
-        {loading ? (
-          <span>
-            <span className="hidden sm:block">{t("common.loading")}</span>
-          </span>
-        ) : isSubscribed ? (
-          <div className="hidden sm:block">{t("common.actions.unsubscribe")}</div>
-        ) : (
-          <div className="hidden sm:block">{t("common.actions.subscribe")}</div>
-        )}
-      </Button>
-    </div>
+    <Button
+      type="button"
+      variant="secondary"
+      size="md"
+      stretch="auto"
+      label={
+        loading ? t("common.loading") : isSubscribed ? t("common.actions.unsubscribe") : t("common.actions.subscribe")
+      }
+      onClick={handleSubscription}
+      disabled={!isEditable || loading}
+    />
   );
 });

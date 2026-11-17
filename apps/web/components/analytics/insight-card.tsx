@@ -8,6 +8,7 @@
 import React from "react";
 import type { IAnalyticsResponseFields } from "@plane/types";
 import { Loader } from "@plane/blocks/skeleton";
+import { cn } from "@plane/utils";
 
 export type InsightCardProps = {
   data?: IAnalyticsResponseFields;
@@ -21,14 +22,16 @@ function InsightCard(props: InsightCardProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="text-13 text-tertiary">{label}</div>
-      {!isLoading ? (
-        <div className="flex flex-col gap-1">
-          <div className="text-20 font-bold text-primary">{count}</div>
-        </div>
-      ) : (
-        <Loader.Item height="50px" width="100%" />
-      )}
+      <div className="text-body-xs-regular text-tertiary">{label}</div>
+      {/* The count stays mounted (hidden) while loading so the row keeps one height in both states. */}
+      <div className="relative">
+        <div className={cn("text-h4-bold text-primary", { invisible: isLoading })}>{count}</div>
+        {isLoading && (
+          <Loader className="absolute inset-x-0 inset-y-1">
+            <Loader.Item height="100%" width="100%" />
+          </Loader>
+        )}
+      </div>
     </div>
   );
 }

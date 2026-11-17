@@ -14,7 +14,13 @@ import { EXPORT_SERVICES_LIST } from "@plane/constants";
 import { ExportForm } from "./export-form";
 import { PrevExports } from "./prev-exports";
 
-export const ExportGuide = observer(function ExportGuide() {
+type Props = {
+  isExportFormOpen: boolean;
+  onExportFormClose: () => void;
+};
+
+export const ExportGuide = observer(function ExportGuide(props: Props) {
+  const { isExportFormOpen, onExportFormClose } = props;
   // router
   const { workspaceSlug } = useParams();
   const searchParams = useSearchParams();
@@ -27,6 +33,8 @@ export const ExportGuide = observer(function ExportGuide() {
     <>
       <div className="flex size-full flex-col gap-y-13">
         <ExportForm
+          isOpen={isExportFormOpen}
+          onClose={onExportFormClose}
           workspaceSlug={workspaceSlug}
           provider={provider}
           mutateServices={() => mutate(EXPORT_SERVICES_LIST(workspaceSlug, `${cursor}`, `${per_page}`))}

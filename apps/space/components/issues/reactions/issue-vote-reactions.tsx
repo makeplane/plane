@@ -5,29 +5,40 @@
  */
 
 import { useState } from "react";
-import { ArrowDownOutline, TopArrowOutline } from "@makeplane/propel/icons";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // plane imports
-import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { cn } from "@plane/utils";
+import { EntityDetailVotes, EntityDetailVotesModal } from "@plane/blocks/entity-detail";
+import type { TEntityDetailVoteType, TEntityDetailVoter } from "@plane/blocks/entity-detail";
+import { useTranslation } from "@plane/i18n";
+import { getFileURL } from "@plane/utils";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import { useUser } from "@/hooks/store/use-user";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
+// types
+import type { IVote } from "@/types/issue";
 
 type TIssueVotes = {
   anchor: string;
   issueIdFromProps?: string;
-  size?: "md" | "sm";
 };
 
+const toVoters = (votes: IVote[]): TEntityDetailVoter[] =>
+  votes.map((vote) => ({
+    id: vote.actor_details?.id ?? "",
+    displayName: vote.actor_details?.display_name ?? "",
+    avatarUrl: getFileURL(vote.actor_details?.avatar_url ?? ""),
+  }));
+
 export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
-  const { anchor, issueIdFromProps, size = "md" } = props;
+  const { anchor, issueIdFromProps } = props;
+  const { t } = useTranslation();
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [votersModalTab, setVotersModalTab] = useState<TEntityDetailVoteType | null>(null);
   // router
   const router = useRouter();
   const pathName = usePathname();
@@ -54,7 +65,15 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
   const isUpVotedByUser = allUpVotes.some((vote) => vote.actor_details?.id === user?.id);
   const isDownVotedByUser = allDownVotes.some((vote) => vote.actor_details?.id === user?.id);
 
-  const handleVote = async (e: any, voteValue: 1 | -1) => {
+  // derived values
+  const { queryParam } = queryParamGenerator({ peekId, board, state, priority, labels });
+
+  const handleVote = async (voteValue: 1 | -1) => {
+    if (isInIframe) return;
+    if (!user) {
+      router.push(`/?next_path=${pathName}?${queryParam}`);
+      return;
+    }
     if (!issueId) return;
 
     setIsSubmitting(true);
@@ -71,82 +90,38 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
     setIsSubmitting(false);
   };
 
-  const VOTES_LIMIT = 1000;
-
-  // derived values
-  const { queryParam } = queryParamGenerator({ peekId, board, state, priority, labels });
-  const votingDimensions = size === "sm" ? "px-1 h-6 min-w-9" : "px-2 h-7";
-
   return (
-    <div className="flex items-center gap-2">
-      {/* upvote button 👇 */}
-      <Tooltip
-        label={
-          allUpVotes.length > 0
-            ? allUpVotes
-                .map((r) => r.actor_details?.display_name)
-                .slice(0, VOTES_LIMIT)
-                .join(", ") + (allUpVotes.length > VOTES_LIMIT ? ` and ${allUpVotes.length - VOTES_LIMIT} more` : "")
-            : "No upvotes yet"
-        }
-      >
-        <button
-          type="button"
-          disabled={isSubmitting}
-          onClick={(e) => {
-            if (isInIframe) return;
-            if (user) handleVote(e, 1);
-            else router.push(`/?next_path=${pathName}?${queryParam}`);
-          }}
-          className={cn(
-            "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border hover:bg-layer-transparent-hover focus:outline-none",
-            votingDimensions,
-            {
-              "border-accent-strong-200 text-accent-secondary": isUpVotedByUser,
-              "border-strong": !isUpVotedByUser,
-              "cursor-default": isInIframe,
-            }
-          )}
-        >
-          <TopArrowOutline className="size-3.5 shrink-0" />
-          <span className="text-13 font-regular transition-opacity ease-in-out">{allUpVotes.length}</span>
-        </button>
-      </Tooltip>
-
-      {/* downvote button 👇 */}
-      <Tooltip
-        label={
-          allDownVotes.length > 0
-            ? allDownVotes
-                .map((r) => r.actor_details.display_name)
-                .slice(0, VOTES_LIMIT)
-                .join(", ") +
-              (allDownVotes.length > VOTES_LIMIT ? ` and ${allDownVotes.length - VOTES_LIMIT} more` : "")
-            : "No downvotes yet"
-        }
-      >
-        <button
-          type="button"
-          disabled={isSubmitting}
-          onClick={(e) => {
-            if (isInIframe) return;
-            if (user) handleVote(e, -1);
-            else router.push(`/?next_path=${pathName}?${queryParam}`);
-          }}
-          className={cn(
-            "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border hover:bg-layer-transparent-hover focus:outline-none",
-            votingDimensions,
-            {
-              "border-danger-strong text-danger-primary": isDownVotedByUser,
-              "border-strong": !isDownVotedByUser,
-              "cursor-default": isInIframe,
-            }
-          )}
-        >
-          <ArrowDownOutline className="size-3.5 shrink-0" />
-          <span className="text-13 font-regular transition-opacity ease-in-out">{allDownVotes.length}</span>
-        </button>
-      </Tooltip>
-    </div>
+    <>
+      <EntityDetailVotes
+        upVotesCount={allUpVotes.length}
+        downVotesCount={allDownVotes.length}
+        isUpVotedByUser={isUpVotedByUser}
+        isDownVotedByUser={isDownVotedByUser}
+        onUpVote={() => void handleVote(1)}
+        onDownVote={() => void handleVote(-1)}
+        onCountClick={setVotersModalTab}
+        disabled={isSubmitting}
+        upVoteLabel={t("issue.vote.click_to_upvote")}
+        downVoteLabel={t("issue.vote.click_to_downvote")}
+        viewUpVotesLabel={t("issue.vote.click_to_view_upvotes")}
+        viewDownVotesLabel={t("issue.vote.click_to_view_downvotes")}
+      />
+      {/* Mounted only while open, since every board card renders its own votes. */}
+      {votersModalTab !== null && (
+        <EntityDetailVotesModal
+          isOpen
+          onClose={() => setVotersModalTab(null)}
+          initialTab={votersModalTab}
+          upVoters={toVoters(allUpVotes)}
+          downVoters={toVoters(allDownVotes)}
+          title={t("issue.vote.title")}
+          upVotesTabLabel={t("issue.vote.upvotes_count", { count: allUpVotes.length })}
+          downVotesTabLabel={t("issue.vote.downvotes_count", { count: allDownVotes.length })}
+          emptyUpVotesMessage={t("issue.vote.no_upvotes")}
+          emptyDownVotesMessage={t("issue.vote.no_downvotes")}
+          closeLabel={t("close")}
+        />
+      )}
+    </>
   );
 });

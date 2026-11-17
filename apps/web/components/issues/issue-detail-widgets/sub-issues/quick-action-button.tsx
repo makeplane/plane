@@ -98,7 +98,7 @@ export const SubIssuesActionButton = observer(function SubIssuesActionButton(pro
           onClick={handleTriggerClick}
           onKeyDown={handleTriggerKeyDown}
         >
-          <AddOutline className="h-4 w-4" />
+          <AddOutline className="size-3.5" />
         </MenuTrigger>
       )}
       <MenuContent side="bottom" align="start">

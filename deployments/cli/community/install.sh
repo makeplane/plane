@@ -182,6 +182,34 @@ function syncEnvFile(){
     echo "Environment variables synced successfully" >&2
 }
 
+function generateStorageCredentials(){
+    # Only the bundled MinIO takes its root login from plane.env; external S3 settings stay untouched.
+    local use_minio=$(getEnvValue "USE_MINIO" "$DOCKER_ENV_PATH")
+    local endpoint=$(getEnvValue "AWS_S3_ENDPOINT_URL" "$DOCKER_ENV_PATH")
+    if [ "${use_minio:-1}" != "1" ] || [ "${endpoint:-http://plane-minio:9000}" != "http://plane-minio:9000" ]; then
+        return 0
+    fi
+
+    # Empty values fall back to the access-key/secret-key placeholders in docker-compose.yml.
+    # Older templates quoted the values, so quotes are ignored when comparing.
+    local access_key=$(getEnvValue "AWS_ACCESS_KEY_ID" "$DOCKER_ENV_PATH")
+    local secret_key=$(getEnvValue "AWS_SECRET_ACCESS_KEY" "$DOCKER_ENV_PATH")
+    access_key=${access_key//[\"\']/}
+    secret_key=${secret_key//[\"\']/}
+    # The secret is what protects MinIO, so keep the pair only when the secret is not the template one.
+    if [ "${secret_key:-secret-key}" != "secret-key" ]; then
+        return 0
+    fi
+
+    updateEnvFile "AWS_ACCESS_KEY_ID" "$(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 20)" "$DOCKER_ENV_PATH"
+    updateEnvFile "AWS_SECRET_ACCESS_KEY" "$(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 40)" "$DOCKER_ENV_PATH"
+    if [ -n "$access_key$secret_key" ]; then
+        echo "NOTICE: Default object-storage credentials were rotated; the new AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY are in plane.env" >&2
+    else
+        echo "Generated object-storage credentials (AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY) in plane.env" >&2
+    fi
+}
+
 function buildYourOwnImage(){
     echo "Building images locally..."
 
@@ -303,6 +331,7 @@ function download() {
     mv $PLANE_INSTALL_DIR/variables-upgrade.env $DOCKER_ENV_PATH
 
     syncEnvFile
+    generateStorageCredentials
 
     if [ "$LOCAL_BUILD" == "true" ]; then
         export DOCKERHUB_USER="myplane"

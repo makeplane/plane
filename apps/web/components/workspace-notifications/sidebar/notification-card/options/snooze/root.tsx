@@ -13,6 +13,7 @@ import { NOTIFICATION_SNOOZE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // store
@@ -94,12 +95,14 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
         >
           <MenuTrigger
             render={
-              <button
-                type="button"
+              <IconButton
+                showTooltip={false}
+                variant="ghost"
+                size="xs"
                 aria-label={
                   data.snoozed_till ? t("notification.options.mark_unsnooze") : t("notification.options.mark_snooze")
                 }
-                className="relative flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-xs bg-layer-1 outline-none hover:bg-surface-2"
+                icon={<ClockOutline className="size-4 text-icon-secondary" />}
                 // The notification row opens the peek view on click; keep the trigger's press to itself.
                 onClick={(e) => {
                   e.preventDefault();
@@ -108,9 +111,7 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") e.stopPropagation();
                 }}
-              >
-                <ClockOutline className="h-3 w-3 text-tertiary" />
-              </button>
+              />
             }
           />
         </Tooltip>

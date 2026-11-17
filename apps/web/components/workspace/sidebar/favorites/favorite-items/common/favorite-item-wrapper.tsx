@@ -5,6 +5,7 @@
  */
 
 import React from "react";
+import { ListItem } from "@makeplane/propel/components/list";
 // helpers
 import { cn } from "@plane/utils";
 
@@ -17,18 +18,18 @@ type Props = {
 export function FavoriteItemWrapper(props: Props) {
   const { children, elementRef, isMenuActive = false } = props;
   return (
-    <>
-      <div
-        ref={elementRef}
-        className={cn(
-          "group/project-item relative flex w-full items-center rounded-md px-2 py-1.5 text-primary hover:bg-layer-transparent-hover",
-          {
+    <ListItem
+      density="comfortable"
+      render={
+        <div
+          ref={elementRef}
+          className={cn("group/project-item", {
             "bg-surface-2": isMenuActive,
-          }
-        )}
-      >
-        {children}
-      </div>
-    </>
+          })}
+        />
+      }
+    >
+      {children}
+    </ListItem>
   );
 }

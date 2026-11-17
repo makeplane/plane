@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import {
   ArchiveOutline,
@@ -17,6 +17,7 @@ import {
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 
 type Props = {
@@ -44,8 +45,6 @@ export function ProjectActionsMenu({
   const [isMenuActive, setIsMenuActive] = useState(false);
   // translation
   const { t } = useTranslation();
-  // refs
-  const actionSectionRef = useRef<HTMLButtonElement | null>(null);
   // router
   const navigate = useNavigate();
 
@@ -54,14 +53,12 @@ export function ProjectActionsMenu({
       <Menu open={isMenuActive} onOpenChange={setIsMenuActive}>
         <MenuTrigger
           render={
-            <button
-              type="button"
-              ref={actionSectionRef}
-              className="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
+            <IconButton
+              variant="ghost"
+              size="xs"
               aria-label={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
-            >
-              <MoreHorizontalOutline className="size-4" />
-            </button>
+              icon={<Icon icon={MoreHorizontalOutline} />}
+            />
           }
         />
         <MenuContent side="bottom" align="start">

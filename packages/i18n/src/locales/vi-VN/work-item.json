@@ -3,6 +3,10 @@
     "label": "{count, plural, one {mục công việc} other {mục công việc}}",
     "all": "Tất cả mục công việc",
     "edit": "Chỉnh sửa mục công việc",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {thêm # thuộc tính} other {thêm # thuộc tính}}",
+      "label_overflow_indicator": "{count, plural, one {+# nhãn} other {+# nhãn}}"
+    },
     "title": {
       "label": "Tiêu đề mục công việc",
       "required": "Tiêu đề mục công việc là bắt buộc"
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "Xem các mục công việc khác"
         }
+      },
+      "no_access": {
+        "title": "Bạn không có quyền truy cập vào mục công việc này",
+        "description": "Liên hệ với quản trị viên dự án để yêu cầu quyền truy cập."
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "Không thể khôi phục mục công việc. Vui lòng thử lại."
       }
     },
+    "archived_banner": "Mục công việc này đã được lưu trữ. Hãy khôi phục để thực hiện thay đổi.",
+    "updated_time_ago": "Đã cập nhật {time}",
+    "description_load_failed": "Không thể tải mô tả.",
+    "assignee_count": "{count, plural, one {# người phụ trách} other {# người phụ trách}}",
     "relation": {
       "relates_to": "Liên quan đến",
       "duplicate": "Trùng lặp với",
@@ -267,7 +279,12 @@
       "click_to_upvote": "Nhấp để bỏ phiếu thuận",
       "click_to_downvote": "Nhấp để bỏ phiếu chống",
       "click_to_view_upvotes": "Nhấp để xem phiếu thuận",
-      "click_to_view_downvotes": "Nhấp để xem phiếu chống"
+      "click_to_view_downvotes": "Nhấp để xem phiếu chống",
+      "title": "Phiếu bầu",
+      "upvotes_count": "{count, plural, one {# phiếu thuận} other {# phiếu thuận}}",
+      "downvotes_count": "{count, plural, one {# phiếu chống} other {# phiếu chống}}",
+      "no_upvotes": "Chưa có phiếu thuận nào",
+      "no_downvotes": "Chưa có phiếu chống nào"
     }
   },
   "sub_work_item": {

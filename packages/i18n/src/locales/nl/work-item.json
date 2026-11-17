@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Werkitem} other {Werkitems}}",
     "all": "Alle werkitems",
     "edit": "Werkitem bewerken",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# extra eigenschap} other {# extra eigenschappen}}",
+      "label_overflow_indicator": "{count, plural, one {+# label} other {+# labels}}"
+    },
     "title": {
       "label": "Titel van het werkitem",
       "required": "Titel van het werkitem is verplicht."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "Andere werkitems bekijken"
         }
+      },
+      "no_access": {
+        "title": "Je hebt geen toegang tot dit werkitem",
+        "description": "Neem contact op met een projectbeheerder om toegang aan te vragen."
       }
     },
     "sibling": {
@@ -185,6 +193,10 @@
         "message": "Werkitem kon niet worden hersteld. Probeer het opnieuw."
       }
     },
+    "archived_banner": "Dit werkitem is gearchiveerd. Herstel het om wijzigingen aan te brengen.",
+    "updated_time_ago": "Bijgewerkt {time}",
+    "description_load_failed": "Kan de omschrijving niet laden.",
+    "assignee_count": "{count, plural, one {# toegewezene} other {# toegewezenen}}",
     "relation": {
       "relates_to": "Gerelateerd aan",
       "duplicate": "Duplicaat van",
@@ -267,7 +279,12 @@
       "click_to_upvote": "Klik om omhoog te stemmen",
       "click_to_downvote": "Klik om omlaag te stemmen",
       "click_to_view_upvotes": "Klik om positieve stemmen te bekijken",
-      "click_to_view_downvotes": "Klik om negatieve stemmen te bekijken"
+      "click_to_view_downvotes": "Klik om negatieve stemmen te bekijken",
+      "title": "Stemmen",
+      "upvotes_count": "{count, plural, one {# positieve stem} other {# positieve stemmen}}",
+      "downvotes_count": "{count, plural, one {# negatieve stem} other {# negatieve stemmen}}",
+      "no_upvotes": "Nog geen positieve stemmen",
+      "no_downvotes": "Nog geen negatieve stemmen"
     }
   },
   "sub_work_item": {

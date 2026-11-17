@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
   DropTargetRecord,
@@ -17,6 +17,7 @@ import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/el
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
 import { createRoot } from "react-dom/client";
+import { flushSync } from "react-dom";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import type { IFavorite, InstructionType } from "@plane/types";
@@ -49,6 +50,11 @@ export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
   //ref
   const elementRef = useRef<HTMLDivElement>(null);
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  const previewRef = useRef({ itemIcon, itemTitle });
+
+  useLayoutEffect(() => {
+    previewRef.current = { itemIcon, itemTitle };
+  }, [itemIcon, itemTitle]);
 
   const handleQuickAction = (value: boolean) => setIsMenuActive(value);
 
@@ -74,11 +80,17 @@ export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
             getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
             render: ({ container }) => {
               const root = createRoot(container);
-              root.render(
-                <div className="rounded-sm bg-surface-1 p-1 pr-2 text-13">
-                  <FavoriteItemTitle href={itemLink} icon={itemIcon} title={itemTitle} />
-                </div>
-              );
+              const preview = previewRef.current;
+              flushSync(() => {
+                root.render(
+                  <div className="flex items-center gap-1.5 rounded-sm bg-surface-1 p-1 pr-2 text-body-xs-regular">
+                    <span className="flex size-5 flex-shrink-0 items-center justify-center" aria-hidden="true">
+                      {preview.itemIcon}
+                    </span>
+                    <p className="truncate text-body-xs-medium text-secondary">{preview.itemTitle}</p>
+                  </div>
+                );
+              });
               return () => root.unmount();
             },
             nativeSetDragImage,

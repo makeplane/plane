@@ -36,6 +36,8 @@ type LabelSelectWebProps = {
   tooltip?: SelectTooltip;
   /** Tab order of the trigger, for forms that sequence focus explicitly (`ETabIndices`). */
   tabIndex?: number;
+  /** Shows the label icon in an empty trigger. @default true */
+  showEmptyIcon?: boolean;
 };
 
 const toOption = (label: IIssueLabel): LabelOption => ({ id: label.id, name: label.name, color: label.color });
@@ -49,8 +51,20 @@ const toOption = (label: IIssueLabel): LabelOption => ({ id: label.id, name: lab
  * label catalog; CE only has project work-item labels, so the binding takes a `projectId` instead.
  */
 export const LabelSelect = observer(function LabelSelect(props: LabelSelectWebProps) {
-  const { projectId, value, onChange, variant, disabled, placeholder, onClose, className, tooltip, testId, tabIndex } =
-    props;
+  const {
+    projectId,
+    value,
+    onChange,
+    variant,
+    disabled,
+    placeholder,
+    onClose,
+    className,
+    tooltip,
+    testId,
+    tabIndex,
+    showEmptyIcon,
+  } = props;
   // router params
   const { workspaceSlug } = useParams();
   // store hooks
@@ -118,6 +132,7 @@ export const LabelSelect = observer(function LabelSelect(props: LabelSelectWebPr
       className={className}
       tooltip={resolvedTooltip}
       tabIndex={tabIndex}
+      showEmptyIcon={showEmptyIcon}
     />
   );
 });

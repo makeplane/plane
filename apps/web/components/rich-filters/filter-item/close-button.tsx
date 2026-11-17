@@ -4,10 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconPill } from "@makeplane/propel/components/pill";
 import { CloseOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty } from "@plane/types";
 
@@ -21,19 +23,18 @@ export const FilterItemCloseButton = observer(function FilterItemCloseButton<
   E extends TExternalFilter,
 >(props: FilterItemCloseButtonProps<P, E>) {
   const { conditionId, filter } = props;
+  // plane hooks
+  const { t } = useTranslation();
 
   const handleRemoveFilter = () => {
     filter.removeCondition(conditionId);
   };
 
   return (
-    <button
+    <IconPill
       onClick={handleRemoveFilter}
-      className="bg-layer-transparent px-1.5 text-placeholder hover:bg-layer-transparent-hover hover:text-tertiary focus:outline-none"
-      type="button"
-      aria-label="Remove filter"
-    >
-      <CloseOutline className="size-3.5" />
-    </button>
+      aria-label={t("rich_filters.filter_item.remove")}
+      icon={<Icon icon={CloseOutline} />}
+    />
   );
 });

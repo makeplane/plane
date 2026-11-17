@@ -111,7 +111,7 @@ export function ArchiveRestoreProjectModal(props: Props) {
             </DialogHeading>
           </DialogHeader>
           <DialogBody>
-            <p className="text-13 text-secondary">
+            <p className="text-body-xs-regular text-secondary">
               {archive
                 ? "This project and its work items, cycles, modules, and pages will be archived. Its work items won't appear in search. Only project admins can restore the project."
                 : "Restoring a project will activate it and make it visible to all members of the project. Are you sure you want to continue?"}

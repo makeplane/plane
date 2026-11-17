@@ -11,11 +11,17 @@
       "delete_project": {
         "title": "Usuń projekt",
         "description": "Usunięcie projektu spowoduje trwałe wymazanie wszystkich danych. Ta akcja jest nieodwracalna.",
-        "button": "Usuń projekt"
+        "button": "Usuń projekt",
+        "confirm_description": "Czy na pewno chcesz usunąć projekt {projectName}? Wszystkie dane w tym projekcie zostaną trwale usunięte. Tej akcji nie można cofnąć.",
+        "success_message": "Projekt został usunięty."
       },
       "toast": {
         "success": "Projekt zaktualizowano",
         "error": "Aktualizacja nie powiodła się. Spróbuj ponownie."
+      },
+      "confirm_project_name_label": "Wpisz nazwę projektu, aby kontynuować.",
+      "leave_project": {
+        "confirm_description": "Czy na pewno chcesz opuścić projekt {projectName}? Elementy pracy powiązane z Tobą staną się niedostępne."
       }
     },
     "members": {

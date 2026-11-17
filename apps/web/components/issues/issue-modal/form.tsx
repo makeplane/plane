@@ -383,14 +383,17 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                   setSelectedParentIssue={setSelectedParentIssue}
                 />
               )}
-              <IssueTitleInput
-                control={control}
-                issueTitleRef={issueTitleRef}
-                formState={formState}
-                handleFormChange={handleFormChange}
-              />
             </DialogHeader>
-            <DialogBody tabIndex={0} render={<div className="vertical-scrollbar scrollbar-sm" />}>
+            {/* Full-width field: outside the header, so it clears the header's close-button end padding and
+                lines up with the description below. */}
+            <IssueTitleInput
+              control={control}
+              issueTitleRef={issueTitleRef}
+              formState={formState}
+              handleFormChange={handleFormChange}
+            />
+            {/* `-mr-1.5` lets the body reach the title's end edge: the scrollport's x-clip otherwise leaves it a few px short. */}
+            <DialogBody tabIndex={0} render={<div className="vertical-scrollbar -mr-1.5 scrollbar-sm" />}>
               <IssueDescriptionEditor
                 control={control}
                 isDraft={isDraft}

@@ -171,7 +171,8 @@
     "search_menu": {
       "no_results": "Не знайдено результатів",
       "clear_search": "Очистити пошук",
-      "go_to_advanced_search": "Перейти до розширеного пошуку"
+      "go_to_advanced_search": "Перейти до розширеного пошуку",
+      "search_commands": "Пошук команд..."
     },
     "footer": {
       "workspace_level": "Рівень робочого простору"

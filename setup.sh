@@ -77,6 +77,22 @@ else
     success=false
 fi
 
+# Generate object-storage (MinIO) credentials; the root and API env files must share them
+echo -e "\n${YELLOW}Generating object-storage credentials...${NC}"
+storage_access_key=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c20)
+storage_secret_key=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c40)
+for env_file in ./.env ./apps/api/.env; do
+    if [ -f "$env_file" ] && sed -i.bak \
+        -e "s/^AWS_ACCESS_KEY_ID=.*/AWS_ACCESS_KEY_ID=\"$storage_access_key\"/" \
+        -e "s/^AWS_SECRET_ACCESS_KEY=.*/AWS_SECRET_ACCESS_KEY=\"$storage_secret_key\"/" "$env_file"; then
+        rm -f "$env_file.bak"
+        echo -e "${GREEN}✓${NC} Added AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY to $env_file"
+    else
+        echo -e "${RED}✗${NC} Failed to set object-storage credentials in $env_file"
+        success=false
+    fi
+done
+
 # Activate pnpm (version set in package.json)
 corepack enable pnpm || success=false
 # Install Node dependencies

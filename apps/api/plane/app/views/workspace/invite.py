@@ -265,6 +265,13 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             super().get_queryset().filter(email=self.request.user.email).select_related("workspace")
         )
 
+    def list(self, request):
+        # Self-service route with no `slug`, so the role decorators do not
+        # apply. Authorization is the `email=request.user.email` filter in
+        # get_queryset() above, as for create() below: callers see only
+        # invitations addressed to their own email.
+        return super().list(request)
+
     @invalidate_cache(path="/api/workspaces/", user=False)
     @invalidate_cache(path="/api/users/me/workspaces/", multiple=True)
     def create(self, request):

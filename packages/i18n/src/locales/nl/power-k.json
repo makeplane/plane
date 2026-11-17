@@ -171,7 +171,8 @@
     "search_menu": {
       "no_results": "Geen resultaten gevonden",
       "clear_search": "Zoekopdracht wissen",
-      "go_to_advanced_search": "Ga naar geavanceerd zoeken"
+      "go_to_advanced_search": "Ga naar geavanceerd zoeken",
+      "search_commands": "Opdrachten zoeken..."
     },
     "footer": {
       "workspace_level": "Werkruimteniveau"

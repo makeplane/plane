@@ -45,7 +45,9 @@ export const InboxIssueTitle = observer(function InboxIssueTitle(props: TInboxIs
         />
       </InputGroup>
       {isTitleLengthMoreThan255Character && (
-        <span className="text-11 text-danger-primary">{t("title_should_be_less_than_255_characters")}</span>
+        <span className="text-caption-sm-regular text-danger-primary">
+          {t("title_should_be_less_than_255_characters")}
+        </span>
       )}
     </div>
   );

@@ -4,6 +4,10 @@
  * See the LICENSE file for details.
  */
 
+import { Avatar } from "@makeplane/propel/components/avatar";
+import { Badge } from "@makeplane/propel/components/badge";
+import { AnchorButton } from "@makeplane/propel/components/anchor-button";
+import { Icon } from "@makeplane/propel/components/icon";
 import { DownloadOutline } from "@makeplane/propel/icons";
 import type { IExportData } from "@plane/types";
 import { getDate, getFileURL, renderFormattedDate } from "@plane/utils";
@@ -25,21 +29,12 @@ export const useExportColumns = () => {
         const { avatar_url, display_name, email } = rowData.initiated_by_detail;
         return (
           <div className="flex items-center gap-x-2">
-            <div>
-              {avatar_url && avatar_url.trim() !== "" ? (
-                <span className="relative flex h-4 w-4 items-center justify-center rounded-full text-on-color capitalize">
-                  <img
-                    src={getFileURL(avatar_url)}
-                    className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
-                    alt={display_name || email}
-                  />
-                </span>
-              ) : (
-                <span className="bg-gray-700 relative flex h-4 w-4 items-center justify-center rounded-full text-11 text-on-color capitalize">
-                  {(email ?? display_name ?? "?")[0]}
-                </span>
-              )}
-            </div>
+            <Avatar
+              size="2xs"
+              src={avatar_url && avatar_url.trim() !== "" ? getFileURL(avatar_url) : undefined}
+              alt={display_name || email}
+              fallback={<span className="capitalize">{(email ?? display_name ?? "?")[0]}</span>}
+            />
             <div>{display_name}</div>
           </div>
         );
@@ -54,13 +49,13 @@ export const useExportColumns = () => {
     {
       key: "Exported projects",
       content: "Exported projects",
-      tdRender: (rowData: RowData) => <div className="text-13">{rowData.project.length} project(s)</div>,
+      tdRender: (rowData: RowData) => <div className="text-body-xs-regular">{rowData.project.length} project(s)</div>,
     },
     {
       key: "Format",
       content: "Format",
       tdRender: (rowData: RowData) => (
-        <span className="text-13">
+        <span className="text-body-xs-regular">
           {rowData.provider === "csv"
             ? "CSV"
             : rowData.provider === "xlsx"
@@ -75,21 +70,22 @@ export const useExportColumns = () => {
       key: "Status",
       content: "Status",
       tdRender: (rowData: RowData) => (
-        <span
-          className={`rounded-sm px-2 py-1 text-11 capitalize ${
+        <Badge
+          size="sm"
+          variant={
             rowData.status === "completed"
-              ? "bg-success-subtle text-success-primary"
+              ? "success"
               : rowData.status === "processing"
-                ? "bg-yellow-500/20 text-yellow-500"
+                ? "warning"
                 : rowData.status === "failed"
-                  ? "bg-danger-subtle text-danger-primary"
+                  ? "danger"
                   : rowData.status === "expired"
-                    ? "bg-orange-500/20 text-orange-500"
-                    : "bg-gray-500/20 text-gray-500"
-          }`}
-        >
-          {rowData.status}
-        </span>
+                    ? "orange"
+                    : "neutral"
+          }
+          render={<span className="capitalize" />}
+          label={rowData.status}
+        />
       ),
     },
     {
@@ -99,18 +95,23 @@ export const useExportColumns = () => {
         checkExpiry(rowData.created_at) ? (
           <>
             {rowData.status == "completed" ? (
-              <a target="_blank" href={rowData?.url} rel="noopener noreferrer">
-                <button className="flex w-full items-center gap-1 font-medium text-accent-primary">
-                  <DownloadOutline className="h-4 w-4" />
-                  <div>Download</div>
-                </button>
-              </a>
+              <div className="flex flex-col">
+                <AnchorButton
+                  variant="primary"
+                  size="md"
+                  target="_blank"
+                  href={rowData?.url}
+                  rel="noopener noreferrer"
+                  icon={<Icon icon={DownloadOutline} />}
+                  label="Download"
+                />
+              </div>
             ) : (
               "-"
             )}
           </>
         ) : (
-          <div className="text-11 text-danger-primary">Expired</div>
+          <div className="text-caption-sm-regular text-danger-primary">Expired</div>
         ),
     },
   ];

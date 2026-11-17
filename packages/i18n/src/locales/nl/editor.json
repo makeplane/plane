@@ -61,5 +61,8 @@
       "use_this": "Deze gebruiken",
       "refine": "Verfijnen"
     }
+  },
+  "formatting_toolbar": {
+    "label": "Opmaak"
   }
 }

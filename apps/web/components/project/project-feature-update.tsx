@@ -42,7 +42,7 @@ export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props
       </DialogMain>
       <DialogActions>
         <DialogInfo>
-          <div className="flex gap-1 text-13 font-medium text-tertiary">
+          <div className="flex gap-1 text-body-xs-medium text-tertiary">
             {t("congrats")}
             <Logo logo={currentProjectDetails.logo_props} /> <p className="break-all">{currentProjectDetails.name}</p>{" "}
             {t("created").toLowerCase()}.

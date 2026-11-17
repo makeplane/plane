@@ -67,9 +67,10 @@ class ExportIssuesEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
-        exporter_history = ExporterHistory.objects.filter(workspace__slug=slug, type="issue_exports").select_related(
-            "workspace", "initiated_by"
-        )
+        # Users see only the exports they initiated.
+        exporter_history = ExporterHistory.objects.filter(
+            workspace__slug=slug, type="issue_exports", initiated_by=request.user
+        ).select_related("workspace", "initiated_by")
 
         if request.GET.get("per_page", False) and request.GET.get("cursor", False):
             return self.paginate(

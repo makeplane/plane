@@ -541,6 +541,17 @@ class DeployBoardViewSet(BaseViewSet):
     serializer_class = DeployBoardSerializer
     model = DeployBoard
 
+    def get_queryset(self):
+        # retrieve/partial_update/destroy come from ModelViewSet and resolve the
+        # board through get_object() -> get_queryset(), so limit it to the URL
+        # workspace + project; a board outside that scope returns 404.
+        return DeployBoard.objects.filter(
+            workspace__slug=self.kwargs.get("slug"),
+            entity_name="project",
+            entity_identifier=self.kwargs.get("project_id"),
+            project_id=self.kwargs.get("project_id"),
+        )
+
     def list(self, request, slug, project_id):
         project_deploy_board = DeployBoard.objects.filter(
             entity_name="project", entity_identifier=project_id, workspace__slug=slug
@@ -549,6 +560,9 @@ class DeployBoardViewSet(BaseViewSet):
         serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    # Publishing makes the project's work items public, so publish, update and
+    # unpublish are project-admin actions; reads stay with ProjectMemberPermission.
+    @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
         comments = request.data.get("is_comments_enabled", False)
         reactions = request.data.get("is_reactions_enabled", False)
@@ -588,3 +602,11 @@ class DeployBoardViewSet(BaseViewSet):
 
         serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN])
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @allow_permission([ROLE.ADMIN])
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)

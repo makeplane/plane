@@ -11,11 +11,17 @@
       "delete_project": {
         "title": "Smazat projekt",
         "description": "Smazáním projektu odstraníte všechna data. Akce je nevratná.",
-        "button": "Smazat projekt"
+        "button": "Smazat projekt",
+        "confirm_description": "Opravdu chcete smazat projekt {projectName}? Všechna data v tomto projektu budou trvale odstraněna. Tuto akci nelze vrátit zpět.",
+        "success_message": "Projekt byl úspěšně smazán."
       },
       "toast": {
         "success": "Projekt aktualizován",
         "error": "Aktualizace se nezdařila. Zkuste to znovu."
+      },
+      "confirm_project_name_label": "Pro pokračování zadejte název projektu.",
+      "leave_project": {
+        "confirm_description": "Opravdu chcete opustit projekt {projectName}? Pracovní položky, které jsou s vámi spojené, přestanou být dostupné."
       }
     },
     "members": {

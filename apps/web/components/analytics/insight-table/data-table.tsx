@@ -24,12 +24,12 @@ import {
 
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/blocks/empty-state";
-import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
+import { SearchOutline } from "@makeplane/propel/icons";
 // plane package imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { Table, TableBody, TableHeader, TableRow } from "@makeplane/propel/components/table";
 import { TableCell, TableHead } from "@makeplane/propel/elements/table";
-import { cn } from "@plane/utils";
-// plane web components
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -44,8 +44,6 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [sorting, _setSorting] = React.useState<SortingState>([]);
   const { t } = useTranslation();
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
 
   const table = useReactTable({
     data,
@@ -65,72 +63,37 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  // the search filters the first column
+  const searchColumnId = table.getHeaderGroups()?.[0]?.headers?.[0]?.id;
+  const searchColumn = searchColumnId ? table.getColumn(searchColumnId) : undefined;
+  const searchValue = (searchColumn?.getFilterValue() as string | undefined) ?? "";
+
   return (
     <div className="space-y-4">
-      <div className="flex w-full items-center justify-between">
-        <div className="relative flex max-w-[300px] items-center gap-4">
-          {table.getHeaderGroups()?.[0]?.headers?.[0]?.id && (
-            <div className="flex items-center gap-2 text-13 whitespace-nowrap text-placeholder">
-              {searchPlaceholder}
-            </div>
-          )}
-          {!isSearchOpen && (
-            <button
-              type="button"
-              className="-mr-5 grid place-items-center rounded-sm p-2 text-placeholder hover:bg-layer-1"
-              onClick={() => {
-                setIsSearchOpen(true);
-                inputRef.current?.focus();
-              }}
-            >
-              <SearchOutline className="h-3.5 w-3.5" />
-            </button>
-          )}
-          <div
-            className={cn(
-              "mr-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent bg-surface-1 text-placeholder opacity-0 transition-[width] ease-linear",
-              {
-                "w-64 border-subtle px-2.5 py-1.5 opacity-100": isSearchOpen,
-              }
-            )}
-          >
-            <SearchOutline className="h-3.5 w-3.5" />
-            <input
-              ref={inputRef}
-              className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
-              placeholder="Search"
-              value={table.getColumn(table.getHeaderGroups()?.[0]?.headers?.[0]?.id)?.getFilterValue() as string}
-              onChange={(e) => {
-                const columnId = table.getHeaderGroups()?.[0]?.headers?.[0]?.id;
-                if (columnId) table.getColumn(columnId)?.setFilterValue(e.target.value);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  setIsSearchOpen(true);
-                }
-              }}
-            />
-            {isSearchOpen && (
-              <button
-                type="button"
-                className="grid place-items-center"
-                onClick={() => {
-                  const columnId = table.getHeaderGroups()?.[0]?.headers?.[0]?.id;
-                  if (columnId) {
-                    table.getColumn(columnId)?.setFilterValue("");
-                  }
-                  setIsSearchOpen(false);
-                }}
-              >
-                <CloseOutline className="h-3 w-3" />
-              </button>
-            )}
+      <div className="flex w-full items-center justify-between gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <div className="max-w-xs flex-1">
+            <InputGroup size="lg">
+              <Icon icon={SearchOutline} tint="tertiary" />
+              <Input
+                size="lg"
+                aria-label={t("search")}
+                placeholder={t("search")}
+                value={searchValue}
+                onChange={(e) => searchColumn?.setFilterValue(e.target.value)}
+              />
+            </InputGroup>
           </div>
+          {searchColumnId && (
+            <span className="truncate text-body-xs-regular text-placeholder">{searchPlaceholder}</span>
+          )}
         </div>
-        {actions && <div>{actions(table)}</div>}
+        {actions && <div className="shrink-0">{actions(table)}</div>}
       </div>
 
-      <div className="rounded-md">
+      {/* a bounded flex column: the table frame shrinks to it, so the table's own viewport scrolls
+          under its sticky header */}
+      <div className="flex max-h-150 flex-col">
         <Table variant="table">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -165,12 +128,21 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} variant="table" pinned="none" padding="trigger">
-                  <EmptyStateCompact
-                    assetKey="unknown"
-                    assetClassName="size-20"
-                    rootClassName="border border-subtle px-5 py-10 md:py-20 md:px-20"
-                    title={t("workspace_empty_state.analytics_work_items.title")}
-                  />
+                  {searchValue.trim() !== "" ? (
+                    <EmptyStateCompact
+                      assetKey="search-compact"
+                      rootClassName="px-5 py-10 md:px-20 md:py-20"
+                      title={t("common_empty_state.search.title")}
+                      description={t("common_empty_state.search.description")}
+                    />
+                  ) : (
+                    <EmptyStateCompact
+                      assetKey="unknown"
+                      assetClassName="size-20"
+                      rootClassName="px-5 py-10 md:px-20 md:py-20"
+                      title={t("workspace_empty_state.analytics_work_items.title")}
+                    />
+                  )}
                 </TableCell>
               </TableRow>
             )}

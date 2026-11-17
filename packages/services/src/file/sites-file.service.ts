@@ -107,7 +107,7 @@ export class SitesFileService extends FileService {
   async restoreNewAsset(anchor: string, src: string): Promise<void> {
     // remove the last slash and get the asset id
     const assetId = getAssetIdFromUrl(src);
-    return this.post(`/api/public/assets/v2/anchor/${anchor}/restore/${assetId}/`)
+    return this.post(`/api/public/assets/v2/anchor/${anchor}/restore/${encodeURIComponent(assetId)}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

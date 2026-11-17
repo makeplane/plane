@@ -5,10 +5,10 @@
  */
 
 // plane imports
+import { SelectField } from "@makeplane/propel/components/select-field";
 import type { I_THEME_OPTION } from "@plane/constants";
 import { THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Select } from "@plane/blocks/select";
 
 type Props = {
   value: I_THEME_OPTION | null;
@@ -18,6 +18,7 @@ type Props = {
 function ThemeOptionIcon({ option }: { option: I_THEME_OPTION }) {
   return (
     <div
+      aria-hidden
       className="relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full border"
       style={{
         borderColor: option.icon.border,
@@ -46,33 +47,22 @@ export function ThemeSwitch(props: Props) {
   const { t } = useTranslation();
 
   return (
-    <Select<I_THEME_OPTION>
-      getValues={() => THEME_OPTIONS}
-      value={value}
-      onChange={(themeValue) => {
+    <SelectField<string>
+      aria-label={t("theme")}
+      size="md"
+      width="fit"
+      value={value?.value ?? null}
+      onValueChange={(themeValue) => {
         const themeOption = THEME_OPTIONS.find((option) => option.value === themeValue);
         if (themeOption) onChange(themeOption);
       }}
-      getOptionValue={(option) => option.value}
-      getOptionLabel={(option) => t(option.key)}
-      getOptionIcon={(option) => <ThemeOptionIcon option={option} />}
-      contentSizing="anchor"
-      showSearch={false}
-      pinSelected={false}
+      icon={value ? <ThemeOptionIcon option={value} /> : undefined}
+      options={THEME_OPTIONS.map((option) => ({
+        value: option.value,
+        label: t(option.key),
+        icon: <ThemeOptionIcon option={option} />,
+      }))}
       placeholder={t("select_your_theme")}
-    >
-      <Select.Trigger variant="select-md" className="w-42 max-w-full border-subtle-1">
-        <div className="min-w-0 grow">
-          {value ? (
-            <div className="flex w-full items-center gap-2">
-              <ThemeOptionIcon option={value} />
-              {t(value.key)}
-            </div>
-          ) : (
-            t("select_your_theme")
-          )}
-        </div>
-      </Select.Trigger>
-    </Select>
+    />
   );
 }

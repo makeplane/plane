@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Selecteer om details te bekijken."
+        "title": "Geen melding geselecteerd",
+        "description": "Selecteer een melding om de details te bekijken."
       },
       "all": {
         "title": "Geen meldingen",
@@ -52,7 +53,15 @@
       "5_days": "5 dagen",
       "1_week": "1 week",
       "2_weeks": "2 weken",
-      "custom": "Aangepast"
+      "custom": "Aangepast",
+      "modal": {
+        "title": "Uitsteltijd aanpassen",
+        "pick_a_date": "Kies een datum",
+        "pick_a_time": "Kies een tijd",
+        "select_date": "Selecteer datum",
+        "select_time": "Selecteer tijd",
+        "no_available_time": "Geen beschikbare tijd voor deze datum"
+      }
     }
   }
 }

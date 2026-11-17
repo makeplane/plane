@@ -4,22 +4,30 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
+import React, { cloneElement } from "react";
 import { observer } from "mobx-react";
 import { AddOutline } from "@makeplane/propel/icons";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { useTranslation } from "@plane/i18n";
 // plane imports
 import type { TIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type Props = {
-  customButton?: React.ReactNode;
+  /** Rendered as the button itself; receives the click handler and `disabled`. */
+  customButton?: React.ReactElement<React.ComponentPropsWithoutRef<"button">>;
+  /** Hover label for `customButton`. */
+  tooltip?: string;
   disabled?: boolean;
   issueServiceType: TIssueServiceType;
 };
 
 export const IssueLinksActionButton = observer(function IssueLinksActionButton(props: Props) {
-  const { customButton, disabled = false, issueServiceType } = props;
+  const { t } = useTranslation();
+  const { customButton, tooltip, disabled = false, issueServiceType } = props;
   // store hooks
   const { toggleIssueLinkModal } = useIssueDetail(issueServiceType);
 
@@ -30,9 +38,20 @@ export const IssueLinksActionButton = observer(function IssueLinksActionButton(p
     toggleIssueLinkModal(true);
   };
 
+  if (customButton) {
+    const button = cloneElement(customButton, { onClick: handleOnClick, disabled });
+    return tooltip ? <Tooltip label={tooltip}>{button}</Tooltip> : button;
+  }
+
   return (
-    <button type="button" onClick={handleOnClick} disabled={disabled}>
-      {customButton ? customButton : <AddOutline className="h-4 w-4" />}
-    </button>
+    <IconButton
+      type="button"
+      variant="ghost"
+      size="sm"
+      aria-label={t("common.add_link")}
+      onClick={handleOnClick}
+      disabled={disabled}
+      icon={<Icon icon={AddOutline} />}
+    />
   );
 });

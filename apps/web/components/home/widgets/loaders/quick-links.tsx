@@ -10,9 +10,9 @@ import { Loader } from "@plane/blocks/skeleton";
 
 export function QuickLinksWidgetLoader() {
   return (
-    <Loader className="flex flex-wrap gap-2 rounded-xl bg-surface-1">
-      {range(4).map((index) => (
-        <Loader.Item key={index} height="56px" width="230px" />
+    <Loader className="grid w-full grid-cols-1 gap-3 rounded-lg bg-layer-1 sm:grid-cols-2 lg:grid-cols-3">
+      {range(3).map((index) => (
+        <Loader.Item key={index} height="51px" width="100%" />
       ))}
     </Loader>
   );

@@ -17,6 +17,8 @@ export { IntakeStateSelect } from "./intake-state-select";
 export type { IntakeStateOption, IntakeStateSelectProps } from "./intake-state-select";
 export { LabelSelect } from "./label-select/label-select";
 export type { LabelOption, LabelSelectProps } from "./label-select/label-select";
+export { LabelPill, LABEL_PILL_MAX_WIDTH_PX } from "./label-select/label-pill";
+export type { LabelPillProps, LabelPillVariant } from "./label-select/label-pill";
 export { MemberSelect, MAX_TRIGGER_AVATARS } from "./member-select";
 export type { MemberOption, MemberSelectProps, MemberSelectVariant } from "./member-select";
 export { ModuleSelect } from "./module-select";

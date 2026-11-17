@@ -308,6 +308,8 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
             workspace__slug=slug, member_id=user_id, is_active=True
         )
         user_data = target_workspace_member.member
+        # Guests do not get another member's email address, as in the workspace member list
+        hide_email = requesting_workspace_member.role <= ROLE.GUEST.value and user_data.id != request.user.id
         projects = []
         if requesting_workspace_member.role >= 15:
             # Per project, the caller sees the counts of the issues they can view (the _visible_issues_q rule):
@@ -392,7 +394,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
             {
                 "project_data": projects,
                 "user_data": {
-                    "email": user_data.email,
+                    **({} if hide_email else {"email": user_data.email}),
                     "first_name": user_data.first_name,
                     "last_name": user_data.last_name,
                     "avatar_url": user_data.avatar_url,

@@ -5,15 +5,23 @@
  */
 
 import type React from "react";
-// ui
-import { Button } from "@makeplane/propel/components/button";
-import { IconButton } from "@makeplane/propel/components/icon-button";
-import { Popover, PopoverBody, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
+// plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { Menu, MenuContent, MenuTrigger } from "@makeplane/propel/components/menu";
+// Element tier on purpose: the menu trigger is the one interactive element, so the chrome inside it
+// must not render buttons of its own.
+import { Button as ButtonElement, ButtonLabel } from "@makeplane/propel/elements/button";
+import { IconButton as IconButtonElement } from "@makeplane/propel/elements/icon-button";
+import { FilterOutline, SelectedFilterOutline } from "@makeplane/propel/icons";
 import type { TPopoverMenuPlacement } from "@plane/blocks/common";
 import { toSideAndAlign } from "@plane/blocks/common";
 import type { IconElement } from "@plane/blocks/types";
+import { cn } from "@plane/utils";
+// components
+import { DateFilterModalHost } from "@/components/common/filters/date-filter-modal-host";
 
 type Props = {
+  /** Menu rows: `MenuGroup`s, `MenuSubmenu`s, `MenuCheckboxItem`s, `MenuSeparator`s… */
   children: React.ReactNode;
   icon?: IconElement;
   miniIcon?: React.ReactNode;
@@ -23,8 +31,17 @@ type Props = {
   tabIndex?: number;
   menuButton?: React.ReactNode;
   isFiltersApplied?: boolean;
+  /** Renders the trigger as the icon-only Filters button, accent-tinted while filters are applied. */
+  iconOnly?: boolean;
 };
 
+const APPLIED_DOT = <span className="absolute -top-0.5 -right-0.5 size-2 rounded-full bg-accent-primary" />;
+
+/**
+ * The shell shared by the header Filters and Display menus: a Propel `Menu` opened from the header
+ * button (or a caller-supplied `menuButton`). It also hosts the custom date-range modal, which has to
+ * outlive the menu popup that asks for it.
+ */
 export function FiltersDropdown(props: Props) {
   const {
     children,
@@ -36,79 +53,81 @@ export function FiltersDropdown(props: Props) {
     tabIndex,
     menuButton,
     isFiltersApplied = false,
+    iconOnly = false,
   } = props;
 
+  const renderTriggerContent = () => {
+    if (menuButton) return menuButton;
+
+    if (iconOnly) {
+      const FilterIcon = isFiltersApplied ? SelectedFilterOutline : FilterOutline;
+      return (
+        <IconButtonElement
+          variant="secondary"
+          size="md"
+          render={(renderProps) => (
+            <span
+              {...renderProps}
+              className={cn(renderProps.className, {
+                "border-accent-strong bg-accent-subtle text-accent-primary hover:bg-accent-subtle-hover active:bg-accent-subtle-active":
+                  isFiltersApplied,
+              })}
+            />
+          )}
+        >
+          <Icon
+            icon={<FilterIcon className={cn({ "text-accent-primary [&_path]:fill-current": isFiltersApplied })} />}
+          />
+          <span className="sr-only">{title}</span>
+        </IconButtonElement>
+      );
+    }
+
+    return (
+      <>
+        <span className="relative hidden @4xl:flex">
+          <ButtonElement variant="secondary" size="md" stretch="auto" render={<span />}>
+            {icon}
+            <ButtonLabel>{title}</ButtonLabel>
+          </ButtonElement>
+          {isFiltersApplied && APPLIED_DOT}
+        </span>
+        {/* Below @4xl the trigger collapses to the mini icon when there is one. */}
+        <span className="relative flex @4xl:hidden">
+          {miniIcon ? (
+            <IconButtonElement variant="secondary" size="md" render={<span />}>
+              {miniIcon}
+              <span className="sr-only">{title}</span>
+            </IconButtonElement>
+          ) : (
+            <ButtonElement variant="secondary" size="md" stretch="auto" render={<span />}>
+              <ButtonLabel>{title}</ButtonLabel>
+            </ButtonElement>
+          )}
+          {isFiltersApplied && APPLIED_DOT}
+        </span>
+      </>
+    );
+  };
+
   return (
-    <div>
-      <Popover>
-        {menuButton ? (
-          <PopoverTrigger render={<button type="button" />}>{menuButton}</PopoverTrigger>
-        ) : (
-          <>
-            {/* Base UI anchors the panel to whichever trigger opened it, so each breakpoint gets its own trigger. */}
-            <div className="hidden @4xl:flex">
-              <PopoverTrigger
-                disabled={disabled}
-                render={
-                  <Button
-                    disabled={disabled}
-                    variant="secondary"
-                    icon={icon}
-                    tabIndex={tabIndex}
-                    size="md"
-                    stretch="auto"
-                    label={title}
-                    render={(renderProps) => (
-                      // propel: the applied-filters dot needs a positioned host, so it rides the render target.
-                      <button {...renderProps} type="button" className={`${renderProps.className ?? ""} relative`}>
-                        {renderProps.children}
-                        {isFiltersApplied && (
-                          <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-accent-primary" />
-                        )}
-                      </button>
-                    )}
-                  />
-                }
-              />
-            </div>
-            {/* Below @4xl the compact trigger is the mini icon alone — Propel's `Button` always renders its
-                `label`, so an icon-only trigger has to be an `IconButton`. */}
-            <div className="flex @4xl:hidden">
-              <PopoverTrigger
-                disabled={disabled}
-                render={
-                  miniIcon ? (
-                    <IconButton
-                      disabled={disabled}
-                      variant="secondary"
-                      tabIndex={tabIndex}
-                      size="md"
-                      icon={miniIcon}
-                      aria-label={title}
-                    />
-                  ) : (
-                    <Button
-                      disabled={disabled}
-                      variant="secondary"
-                      tabIndex={tabIndex}
-                      size="md"
-                      stretch="auto"
-                      label={title}
-                    />
-                  )
-                }
-              />
-            </div>
-          </>
-        )}
-        <PopoverContent variant="rich" {...toSideAndAlign(placement ?? "auto")}>
-          <PopoverBody tabIndex={0} render={<div className="flex flex-col" />}>
-            <div className="flex max-h-[30rem] min-h-0 w-[18.75rem] flex-col overflow-hidden lg:max-h-[37.5rem]">
-              {children}
-            </div>
-          </PopoverBody>
-        </PopoverContent>
-      </Popover>
-    </div>
+    <DateFilterModalHost>
+      <Menu>
+        <MenuTrigger
+          disabled={disabled}
+          tabIndex={tabIndex}
+          aria-label={props.title || undefined}
+          render={
+            <button
+              type="button"
+              className="flex rounded-md outline-none focus-visible:ring-2 focus-visible:ring-accent-strong disabled:cursor-not-allowed disabled:opacity-60"
+            />
+          }
+        >
+          {renderTriggerContent()}
+        </MenuTrigger>
+        <MenuContent {...toSideAndAlign(placement ?? "auto")}>{children}</MenuContent>
+      </Menu>
+    </DateFilterModalHost>
   );
 }

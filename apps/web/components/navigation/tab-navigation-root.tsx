@@ -231,7 +231,7 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
           </Tabs>
 
           {hasOverflow && (
-            <div className="pointer-events-none absolute -z-10 opacity-0">
+            <div className="pointer-events-none absolute -z-10 opacity-0" inert aria-hidden>
               <Tabs variant="underline" value={activeItem?.key ?? null}>
                 <div className="-mb-3">
                   <TabsList>

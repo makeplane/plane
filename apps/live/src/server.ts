@@ -21,8 +21,12 @@ import { CONTROLLERS } from "@/controllers";
 import { env } from "@/env";
 // hocuspocus server
 import { HocusPocusServerManager } from "@/hocuspocus";
+import { drainCollaborationServer, withinShutdownDeadline } from "@/lib/drain-server";
 // redis
 import { redisManager } from "@/redis";
+
+// Below the 30s container stop grace period, so Redis still disconnects cleanly before a SIGKILL.
+const SHUTDOWN_TIMEOUT_MS = 25_000;
 
 export class Server {
   private app: Express;
@@ -104,25 +108,27 @@ export class Server {
   }
 
   public async destroy() {
-    if (this.hocuspocusServer) {
-      this.hocuspocusServer.closeConnections();
-      logger.info("SERVER: HocusPocus connections closed gracefully.");
-    }
+    // Stop accepting HTTP/WebSocket connections before draining collaboration.
+    // Resolve with the close error instead of rejecting: an HTTP close failure must not cut the drain short.
+    const httpClosed = this.httpServer
+      ? new Promise<Error | undefined>((resolve) => {
+          this.httpServer!.close(resolve);
+        })
+      : Promise.resolve(undefined);
 
-    await redisManager.disconnect();
-    logger.info("SERVER: Redis connection closed gracefully.");
-
-    if (this.httpServer) {
-      await new Promise<void>((resolve, reject) => {
-        this.httpServer!.close((err) => {
-          if (err) {
-            reject(err);
-          } else {
-            logger.info("SERVER: Express server closed gracefully.");
-            resolve();
-          }
-        });
-      });
+    if (this.hocuspocusServer) this.hocuspocusServer.closeConnections();
+    try {
+      // Redis stays up until pending saves finish: the Redis extension takes a lock for every store.
+      await withinShutdownDeadline(async (remainingMs) => {
+        const [httpError] = await Promise.all([
+          httpClosed,
+          this.hocuspocusServer ? drainCollaborationServer(this.hocuspocusServer, remainingMs()) : Promise.resolve(),
+        ]);
+        if (httpError) logger.error("SERVER: HTTP server close failed during shutdown:", httpError);
+      }, SHUTDOWN_TIMEOUT_MS);
+    } finally {
+      await redisManager.disconnect();
     }
+    logger.info("SERVER: HTTP, collaboration, and Redis stopped after document persistence completed.");
   }
 }

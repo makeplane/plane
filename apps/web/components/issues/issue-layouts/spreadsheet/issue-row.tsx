@@ -98,7 +98,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
             style={{ height: "calc(2.75rem - 1px)" }}
           />
         }
-        classNames={cn("bg-surface-1 transition-[background-color]", {
+        classNames={cn("group/spreadsheet-row bg-surface-1 transition-[background-color]", {
           "group selected-issue-row": isIssueSelected,
           "border-[0.5px] border-strong-1": isIssueActive,
         })}
@@ -217,12 +217,13 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
     <button
       type="button"
       ref={menuActionRef}
-      className={`flex h-full w-full cursor-pointer items-center rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
-        isMenuActive ? "bg-layer-1 text-primary" : "text-secondary"
-      }`}
+      className={cn(
+        "grid size-7 cursor-pointer place-items-center rounded-md text-secondary outline-none hover:bg-layer-transparent-hover focus-visible:ring-1 focus-visible:ring-accent-strong",
+        { "bg-layer-transparent-active text-primary": isMenuActive }
+      )}
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
-      <MoreHorizontalOutline className="h-3.5 w-3.5" />
+      <MoreHorizontalOutline className="size-4" />
     </button>
   );
   if (!issueDetail) return null;
@@ -264,7 +265,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
         id={`issue-${issueId}`}
         ref={cellRef}
         tabIndex={0}
-        className="group/list-block relative left-0 z-10 max-w-lg bg-surface-1 md:sticky"
+        className="group/list-block relative left-0 z-10 max-w-lg overflow-y-clip bg-surface-1 md:sticky nth-last-2:[&_.clickable]:border-r-0"
       >
         <ControlLink
           href={workItemLink}
@@ -274,7 +275,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
         >
           <Row
             className={cn(
-              "group clickable z-10 flex h-11 w-full cursor-pointer items-center border-r-[0.5px] border-subtle-1 bg-transparent text-13 group-[.selected-issue-row]:bg-accent-primary/5 after:absolute group-[.selected-issue-row]:hover:bg-accent-primary/10",
+              "group clickable z-10 flex h-11 w-full cursor-pointer items-center border-r-[0.5px] border-subtle bg-transparent text-body-xs-regular group-[.selected-issue-row]:bg-accent-primary/5 after:absolute group-[.selected-issue-row]:hover:bg-accent-primary/10",
               {
                 "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
                 "border border-accent-strong hover:border-accent-strong":
@@ -286,7 +287,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
             {/* Identifier section - conditionally rendered */}
             {displayProperties?.key && (
               <div className="flex h-full min-w-24 flex-shrink-0 items-center">
-                <div className="relative flex cursor-pointer items-center text-11 hover:text-primary">
+                <div className="relative flex cursor-pointer items-center text-caption-sm-regular hover:text-primary">
                   {issueDetail.project_id && (
                     <IssueIdentifier
                       issueId={issueDetail.id}
@@ -314,7 +315,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
                   layout="stacked"
                   disabled={issueDetail.project_id === projectId}
                 >
-                  <div className="absolute left-1 mr-1 grid w-3.5 flex-shrink-0 place-items-center">
+                  <div className="absolute left-0.5 mr-1 grid w-4 flex-shrink-0 place-items-center">
                     <MultipleSelectEntityAction
                       className={cn(
                         "pointer-events-none opacity-0 transition-opacity group-hover/list-block:pointer-events-auto group-hover/list-block:opacity-100",
@@ -352,28 +353,17 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
               </div>
 
               <div className="my-auto flex h-full w-full items-center justify-between gap-2 truncate">
-                <div className="line-clamp-1 w-full text-14 text-primary">
+                <div className="line-clamp-1 w-full text-body-sm-regular text-primary">
                   <div className="w-full overflow-hidden">
                     <Tooltip label={issueDetail.name} layout="stacked" disabled={isMobile}>
                       <div
-                        className="h-full w-full cursor-pointer truncate pr-4 text-left text-13 text-primary focus:outline-none"
+                        className="h-full w-full cursor-pointer truncate pr-4 text-left text-body-xs-medium text-primary focus:outline-none"
                         tabIndex={-1}
                       >
                         {issueDetail.name}
                       </div>
                     </Tooltip>
                   </div>
-                </div>
-                <div
-                  className={`opacity-0 transition-opacity group-hover:opacity-100 ${isMenuActive ? "!opacity-100" : ""}`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {quickActions({
-                    issue: issueDetail,
-                    parentRef: cellRef,
-                    customActionButton,
-                    portalElement: portalElement.current,
-                  })}
                 </div>
               </div>
             </div>
@@ -392,6 +382,26 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
           isEstimateEnabled={isEstimateEnabled}
         />
       ))}
+      {/* Config column cell, pinned to the right edge: holds the row's quick actions */}
+      <td className="right-0 z-10 w-12 min-w-12 border-b-[0.5px] border-l-[0.5px] border-subtle bg-surface-1 shadow-direction-left md:sticky">
+        <div className="flex items-center justify-center">
+          {/* Revealed on row hover, while focused from the keyboard, and while its menu is open. */}
+          <div
+            className={cn(
+              "opacity-0 transition-opacity group-hover/spreadsheet-row:opacity-100 focus-within:opacity-100 has-[[aria-expanded=true]]:opacity-100",
+              { "opacity-100": isMenuActive }
+            )}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {quickActions({
+              issue: issueDetail,
+              parentRef: cellRef,
+              customActionButton,
+              portalElement: portalElement.current,
+            })}
+          </div>
+        </div>
+      </td>
     </>
   );
 });

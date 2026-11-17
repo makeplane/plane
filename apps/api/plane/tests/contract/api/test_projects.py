@@ -344,3 +344,44 @@ class TestProjectListExpand:
         assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
         payload = self.get_project(response, "RAW")
         assert payload["updated_by"] == str(create_user.id)
+
+
+@pytest.mark.contract
+class TestProjectV1LeadAssigneeMembership:
+    @pytest.mark.django_db
+    def test_create_rejects_inactive_default_assignee(self, api_key_client, workspace, outsider_user):
+        WorkspaceMember.objects.create(workspace=workspace, member=outsider_user, role=15, is_active=False)
+        response = api_key_client.post(
+            f"/api/v1/workspaces/{workspace.slug}/projects/",
+            {"name": "Inactive DA", "identifier": "IDA", "default_assignee": str(outsider_user.id)},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert Project.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_update_rejects_outsider_lead(self, api_key_client, workspace, create_user, outsider_user):
+        project = Project.objects.create(name="P", identifier="PP", workspace=workspace)
+        ProjectMember.objects.create(project=project, member=create_user, role=20)
+        response = api_key_client.patch(
+            f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/",
+            {"project_lead": str(outsider_user.id)},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        project.refresh_from_db()
+        assert project.project_lead_id is None
+
+    @pytest.mark.django_db
+    def test_update_rejects_inactive_lead(self, api_key_client, workspace, create_user, outsider_user):
+        WorkspaceMember.objects.create(workspace=workspace, member=outsider_user, role=15, is_active=False)
+        project = Project.objects.create(name="P", identifier="PP", workspace=workspace)
+        ProjectMember.objects.create(project=project, member=create_user, role=20)
+        response = api_key_client.patch(
+            f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/",
+            {"project_lead": str(outsider_user.id)},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        project.refresh_from_db()
+        assert project.project_lead_id is None

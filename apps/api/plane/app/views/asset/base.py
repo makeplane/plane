@@ -26,8 +26,9 @@ class FileAssetEndpoint(BaseAPIView):
 
     def get(self, request, workspace_id, asset_key):
         asset_key = str(workspace_id) + "/" + asset_key
-        files = FileAsset.objects.filter(asset=asset_key)
-        if files.exists():
+        # A project-bound asset requires active membership of its project.
+        files = [f for f in FileAsset.objects.filter(asset=asset_key) if f.is_project_accessible_to(request.user)]
+        if files:
             serializer = FileAssetSerializer(files, context={"request": request}, many=True)
             return Response({"data": serializer.data, "status": True}, status=status.HTTP_200_OK)
         else:
@@ -42,7 +43,12 @@ class FileAssetEndpoint(BaseAPIView):
         workspace = Workspace.objects.get(slug=slug)
         serializer = FileAssetSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(workspace_id=workspace.id)
+            # size/is_uploaded are server-derived: the file is stored by this save, so it is complete.
+            serializer.save(
+                workspace_id=workspace.id,
+                size=serializer.validated_data["asset"].size,
+                is_uploaded=True,
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -63,6 +63,16 @@ export const getTrimmedHTML = (html: string) =>
     .replace(/^(?:<p><\/p>)+/g, "") // Remove from beginning
     .replace(/(?:<p><\/p>)+$/g, ""); // Remove from end
 
+// hex, rgb()/hsl() with numeric arguments, or a var() reference to a custom property
+const CSS_COLOR_REGEX = /^(?:#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})|(?:rgb|hsl)a?\([\d\s.,%/]+\)|var\(--[\w-]+\))$/i;
+
+/**
+ * Color attributes are stored document content, so a value may be written into an inline
+ * style only when it is a plain CSS color and nothing else.
+ */
+export const isValidCssColor = (color: unknown): color is string =>
+  typeof color === "string" && CSS_COLOR_REGEX.test(color);
+
 export const isValidHttpUrl = (string: string): { isValid: boolean; url: string } => {
   // List of potentially dangerous protocols to block
   const blockedProtocols = ["javascript:", "data:", "vbscript:", "file:", "about:"];

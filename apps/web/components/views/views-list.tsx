@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/blocks/empty-state";
+import { EmptyStateCompact, EmptyStateDetailed } from "@plane/blocks/empty-state";
 import { EUserProjectRoles } from "@plane/types";
 // components
 import { ListLayout } from "@/components/core/list";
@@ -41,8 +41,8 @@ export const ProjectViewsList = observer(function ProjectViewsList() {
 
   if (filteredProjectViews.length === 0 && projectViews.length > 0) {
     return (
-      <EmptyStateDetailed
-        assetKey="search"
+      <EmptyStateCompact
+        assetKey="search-compact"
         title={t("common_empty_state.search.title")}
         description={t("common_empty_state.search.description")}
       />
@@ -54,11 +54,9 @@ export const ProjectViewsList = observer(function ProjectViewsList() {
       {filteredProjectViews.length > 0 ? (
         <div className="flex h-full w-full flex-col">
           <ListLayout>
-            {filteredProjectViews.length > 0 ? (
-              filteredProjectViews.map((view) => <ProjectViewListItem key={view.id} view={view} />)
-            ) : (
-              <p className="mt-10 text-center text-13 text-tertiary">No results found</p>
-            )}
+            {filteredProjectViews.map((view) => (
+              <ProjectViewListItem key={view.id} view={view} />
+            ))}
           </ListLayout>
         </div>
       ) : (

@@ -8,8 +8,11 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // Plane Imports
-import { Field } from "@makeplane/propel/components/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { FieldLabel } from "@makeplane/propel/elements/field";
+import { Icon } from "@makeplane/propel/components/icon";
+import { InputField } from "@makeplane/propel/components/input-field";
+import { TextButton } from "@makeplane/propel/components/text-button";
+import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
 import { ORGANIZATION_SIZE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
@@ -149,50 +152,48 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
       />
       <div className={cn("flex w-full flex-col gap-y-7", { "opacity-60": !isAdmin })}>
         <div className="flex items-center gap-5">
-          <div className="flex shrink-0 flex-col gap-1">
-            <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
-              {workspaceLogo && workspaceLogo !== "" ? (
-                <div className="relative flex size-14">
-                  <img
-                    src={getFileURL(workspaceLogo)}
-                    className="absolute top-0 left-0 size-full rounded-md object-cover"
-                    alt="Workspace Logo"
-                  />
-                </div>
-              ) : (
-                <div className="relative grid size-14 place-items-center rounded-md bg-accent-primary text-24 text-on-color uppercase">
-                  {currentWorkspace?.name?.charAt(0) ?? "N"}
-                </div>
-              )}
-            </button>
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="mb:-my-5 text-h5-semibold leading-6">{watch("name")}</div>
-            <button type="button" onClick={handleCopyUrl} className="text-left text-body-xs-regular tracking-tight">{`${
-              typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
-            }/${currentWorkspace.slug}`}</button>
+          <button
+            type="button"
+            className="flex size-14 shrink-0 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-accent-strong focus-visible:ring-offset-1 disabled:cursor-not-allowed"
+            onClick={() => setIsImageUploadModalOpen(true)}
+            disabled={!isAdmin}
+            aria-label={
+              workspaceLogo
+                ? t("workspace_settings.settings.general.edit_logo")
+                : t("workspace_settings.settings.general.upload_logo")
+            }
+          >
+            <WorkspaceAvatar size="2xl" src={getFileURL(workspaceLogo ?? "")} alt={currentWorkspace?.name} />
+          </button>
+          <div className="flex flex-col items-start gap-0.5">
+            <div className="text-h6-medium">{watch("name")}</div>
+            <TextButton
+              variant="secondary"
+              size="md"
+              onClick={handleCopyUrl}
+              label={`${
+                typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
+              }/${currentWorkspace.slug}`}
+            />
             {isAdmin && (
-              <button
-                type="button"
-                className="flex items-center gap-1.5 text-left text-caption-sm-medium text-accent-primary"
+              <TextButton
+                variant="primary"
+                size="md"
                 onClick={() => setIsImageUploadModalOpen(true)}
-              >
-                {workspaceLogo && workspaceLogo !== "" ? (
-                  <>
-                    <EditOutline className="h-3 w-3" />
-                    {t("workspace_settings.settings.general.edit_logo")}
-                  </>
-                ) : (
-                  t("workspace_settings.settings.general.upload_logo")
-                )}
-              </button>
+                icon={workspaceLogo ? <Icon icon={EditOutline} /> : undefined}
+                iconPosition="start"
+                label={
+                  workspaceLogo
+                    ? t("workspace_settings.settings.general.edit_logo")
+                    : t("workspace_settings.settings.general.upload_logo")
+                }
+              />
             )}
           </div>
         </div>
         <div className="flex flex-col gap-7">
-          <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">
-            <div className="flex flex-col gap-2">
-              <h4 className="text-body-sm-medium text-tertiary">{t("workspace_settings.settings.general.name")}</h4>
+          <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-8 xl:grid-cols-2">
+            <div className="col-span-1 flex flex-col gap-1.5">
               <Controller
                 control={control}
                 name="name"
@@ -200,29 +201,27 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                   validate: (value) => validateWorkspaceName(value, true),
                 }}
                 render={({ field: { value, onChange, ref } }) => (
-                  <Field name="name" invalid={Boolean(errors.name)}>
-                    <InputGroup size="2xl">
-                      <Input
-                        size="2xl"
-                        id="name"
-                        name="name"
-                        type="text"
-                        value={value}
-                        onChange={onChange}
-                        ref={ref}
-                        placeholder={t("workspace_settings.settings.general.name")}
-                        disabled={!isAdmin}
-                      />
-                    </InputGroup>
-                  </Field>
+                  <InputField
+                    size="lg"
+                    orientation="vertical"
+                    id="name"
+                    name="name"
+                    type="text"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    label={t("workspace_settings.settings.general.name")}
+                    placeholder={t("workspace_settings.settings.general.name")}
+                    disabled={!isAdmin}
+                    error={errors.name?.message}
+                  />
                 )}
               />
-              {errors.name && <p className="text-caption-sm-regular text-danger-primary">{errors.name.message}</p>}
             </div>
-            <div className="flex flex-col gap-2">
-              <h4 className="text-body-sm-medium text-tertiary">
+            <div className="col-span-1 flex flex-col gap-1.5">
+              <FieldLabel size="lg" inset={false} htmlFor="workspace-company-size">
                 {t("workspace_settings.settings.general.company_size")}
-              </h4>
+              </FieldLabel>
               <Controller
                 name="organization_size"
                 control={control}
@@ -233,7 +232,8 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                     disabled={!isAdmin}
                   >
                     <SelectTrigger
-                      size="2xl"
+                      id="workspace-company-size"
+                      size="lg"
                       placeholder={t("workspace_settings.settings.general.errors.company_size.select_a_range")}
                     />
                     <SelectContent side="bottom" align="end">
@@ -247,42 +247,42 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                 )}
               />
             </div>
-            <div className="flex flex-col gap-2">
-              <h4 className="text-body-sm-medium text-tertiary">{t("workspace_settings.settings.general.url")}</h4>
+            <div className="col-span-1 flex flex-col gap-1.5">
               <Controller
                 control={control}
                 name="url"
                 render={({ field: { onChange, ref } }) => (
-                  <Field name="url" invalid={Boolean(errors.url)}>
-                    <InputGroup size="2xl">
-                      <Input
-                        size="2xl"
-                        id="url"
-                        name="url"
-                        type="url"
-                        value={`${
-                          typeof window !== "undefined" &&
-                          window.location.origin.replace("http://", "").replace("https://", "")
-                        }/${currentWorkspace.slug}`}
-                        onChange={onChange}
-                        ref={ref}
-                        disabled
-                      />
-                    </InputGroup>
-                  </Field>
+                  <InputField
+                    size="lg"
+                    orientation="vertical"
+                    id="url"
+                    name="url"
+                    type="url"
+                    value={`${
+                      typeof window !== "undefined" &&
+                      window.location.origin.replace("http://", "").replace("https://", "")
+                    }/${currentWorkspace.slug}`}
+                    onChange={onChange}
+                    ref={ref}
+                    label={t("workspace_settings.settings.general.url")}
+                    disabled
+                  />
                 )}
               />
             </div>
-            <div className="flex flex-col gap-2">
-              <h4 className="text-body-sm-medium text-tertiary">
-                {t("workspace_settings.settings.general.workspace_timezone")}
-              </h4>
+            <div className="col-span-1 flex flex-col gap-1.5">
               <Controller
                 name="timezone"
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <>
-                    <TimezoneSelect value={value} onChange={onChange} disabled={!isAdmin} />
+                    <TimezoneSelect
+                      fieldLabel={t("workspace_settings.settings.general.workspace_timezone")}
+                      value={value}
+                      onChange={onChange}
+                      disabled={!isAdmin}
+                      label={t("workspace_settings.settings.general.workspace_timezone")}
+                    />
                   </>
                 )}
               />

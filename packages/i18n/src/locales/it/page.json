@@ -26,6 +26,16 @@
           "highlight_changes": "Evidenzia modifiche"
         }
       },
+      "version_history": {
+        "view_only": "Sola lettura",
+        "loading_details": "Caricamento dei dettagli della versione",
+        "load_error_description": "Impossibile caricare la versione. Per favore, riprova.",
+        "list_error_description": "Impossibile caricare la cronologia versioni.",
+        "try_again": "Riprova",
+        "restoring": "Ripristino in corso",
+        "restore_success": "Versione della pagina ripristinata.",
+        "restore_failed": "Impossibile ripristinare la versione della pagina."
+      },
       "assets": {
         "label": "Risorse",
         "download_button": "Scarica",

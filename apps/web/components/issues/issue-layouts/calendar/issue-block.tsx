@@ -8,6 +8,7 @@ import { useState, useRef, forwardRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { MoreHorizontalOutline } from "@makeplane/propel/icons";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
@@ -23,8 +24,6 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// components
-import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // local components
 import { WorkItemPreviewCard } from "../../preview-card";
 import type { TRenderQuickActions } from "../list/list-view-types";
@@ -58,6 +57,8 @@ export const CalendarIssueBlock = observer(
 
     const stateColor = getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)?.color || "";
     const projectIdentifier = getProjectIdentifierById(issue?.project_id);
+    const showWorkItemKey = issuesFilter?.issueFilters?.displayProperties?.key ?? true;
+    const workItemId = `${projectIdentifier}-${issue.sequence_id}`;
 
     // handlers
     const handleIssuePeekOverview = (peekIssue: TIssue) =>
@@ -68,17 +69,15 @@ export const CalendarIssueBlock = observer(
     const customActionButton = (
       // The quick-action menu grafts its trigger behaviour onto this element (MenuTrigger render),
       // so it has to be a real button.
-      <button
-        type="button"
+      <IconButton
         ref={menuActionRef}
-        className={`w-full cursor-pointer rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
-          isMenuActive ? "bg-layer-1-active text-primary" : "text-secondary"
-        }`}
+        variant="ghost"
+        size="xs"
         aria-label={t("aria_labels.common.more_actions")}
+        showTooltip={false}
+        icon={<MoreHorizontalOutline className="size-3.5" />}
         onClick={() => setIsMenuActive(!isMenuActive)}
-      >
-        <MoreHorizontalOutline className="h-3.5 w-3.5" />
-      </button>
+      />
     );
 
     const isMenuActionRefAboveScreenBottom =
@@ -108,7 +107,7 @@ export const CalendarIssueBlock = observer(
               id={`issue-${issue.id}`}
               href={workItemLink}
               onClick={() => handleIssuePeekOverview(issue)}
-              className="block w-full rounded-sm border-b border-subtle text-13 text-primary hover:border-subtle-1 md:border-[1px]"
+              className="block w-full rounded-lg border-b border-subtle text-body-xs-regular text-primary hover:border-subtle-1 md:border-[1px]"
               disabled={!!issue?.tempId || isMobile}
               ref={ref}
             >
@@ -120,39 +119,48 @@ export const CalendarIssueBlock = observer(
                 <div
                   ref={blockRef}
                   className={cn(
-                    "group/calendar-block flex h-10 w-full items-center justify-between gap-1.5 rounded-sm px-4 py-1.5 md:h-8 md:px-1",
+                    "group/calendar-block flex h-10 w-full min-w-0 items-center justify-between gap-1.5 overflow-hidden rounded-lg bg-layer-2 px-4 py-1.5 md:h-8 md:px-1",
                     {
-                      "border-accent-strong bg-surface-2 shadow-raised-200": isDragging,
-                      "bg-surface-1 hover:bg-surface-2": !isDragging,
+                      "border border-accent-strong bg-layer-2-hover shadow-raised-200": isDragging,
+                      "hover:bg-layer-2-hover": !isDragging,
                       "border border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id),
                     }
                   )}
                 >
-                  <div className="flex h-full items-center gap-1.5 truncate">
+                  <div className="flex h-full min-w-0 flex-1 items-center gap-1.5 overflow-hidden">
                     <span
                       className="h-full w-0.5 flex-shrink-0 rounded-sm"
                       style={{
                         backgroundColor: stateColor,
                       }}
                     />
-                    {issue.project_id && (
-                      <IssueIdentifier
-                        issueId={issue.id}
-                        projectId={issue.project_id}
-                        size="xs"
-                        variant="tertiary"
-                        displayProperties={issuesFilter?.issueFilters?.displayProperties}
-                      />
+                    {showWorkItemKey && projectIdentifier && (
+                      // In a narrow day cell the project key truncates before the sequence number does.
+                      <span
+                        className="flex min-w-0 items-center overflow-hidden text-caption-md-medium whitespace-nowrap text-tertiary"
+                        title={workItemId}
+                      >
+                        <span aria-hidden="true" className="min-w-0 truncate">
+                          {projectIdentifier}-
+                        </span>
+                        <span aria-hidden="true" className="shrink-0 tabular-nums">
+                          {issue.sequence_id}
+                        </span>
+                        <span className="sr-only">{workItemId}</span>
+                      </span>
                     )}
-                    <div className="truncate text-13 font-medium md:text-11 md:font-regular">{issue.name}</div>
+                    <div className="min-w-0 flex-1 truncate text-caption-md-medium lg:text-body-xs-regular">
+                      {issue.name}
+                    </div>
                   </div>
                   {/* Wrapper exists only to stop clicks reaching the ControlLink; the
                       quick-action menu inside carries its own interactive semantics. */}
                   <div
                     role="presentation"
-                    className={cn("size-5 flex-shrink-0", {
-                      "hidden group-hover/calendar-block:block": !isMobile,
-                      block: isMenuActive,
+                    className={cn("flex h-5 w-5 flex-shrink-0 justify-end", {
+                      // Collapse rather than unmount, so the open menu keeps its anchor.
+                      "invisible w-0 group-hover/calendar-block:visible group-hover/calendar-block:w-5 has-[[data-popup-open]]:visible has-[[data-popup-open]]:w-5":
+                        !isMobile && !isMenuActive,
                     })}
                     onClick={(e) => {
                       e.preventDefault();
@@ -171,7 +179,7 @@ export const CalendarIssueBlock = observer(
             </ControlLink>
           }
         />
-        <PopoverContent side="bottom" align="start" sideOffset={8}>
+        <PopoverContent variant="rich" side="bottom" align="start" sideOffset={8}>
           {issue.project_id && (
             <WorkItemPreviewCard
               projectId={issue.project_id}

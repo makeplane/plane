@@ -4,9 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
+// plane imports
+import { Drawer, DrawerPanel } from "@makeplane/propel/components/drawer";
+import { useTranslation } from "@plane/i18n";
 // hooks
 import { generateQueryParams } from "@plane/utils";
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -27,8 +30,10 @@ export const CyclePeekOverview = observer(function CyclePeekOverview(props: Prop
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const peekCycle = searchParams.get("peekCycle");
-  // refs
-  const ref = React.useRef(null);
+  // plane hooks
+  const { t } = useTranslation();
+  // states
+  const [drawerContainer, setDrawerContainer] = useState<HTMLDivElement | null>(null);
   // store hooks
   const { getCycleById, fetchCycleDetails, fetchArchivedCycleDetails } = useCycle();
   // derived values
@@ -49,21 +54,39 @@ export const CyclePeekOverview = observer(function CyclePeekOverview(props: Prop
   return (
     <>
       {peekCycle && projectId && (
+        // The drawer portals into this column so the peek still pushes the list instead of covering it.
         <div
-          ref={ref}
-          className="fixed right-0 z-[9] flex h-full w-full max-w-[21.5rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-subtle bg-surface-1 px-4 duration-300 md:relative"
-          style={{
-            boxShadow:
-              "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
-          }}
+          ref={setDrawerContainer}
+          className="fixed right-0 z-[9] h-full w-full max-w-[358px] flex-shrink-0 md:relative"
         >
-          <CycleDetailsSidebar
-            handleClose={handleClose}
-            isArchived={isArchived}
-            projectId={projectId}
-            workspaceSlug={workspaceSlug}
-            cycleId={peekCycle}
-          />
+          {drawerContainer && (
+            <Drawer
+              open
+              swipeDirection="right"
+              onOpenChange={(open, eventDetails) => {
+                if (open) return;
+                // keep the peek open while the list and the sidebar's own dropdowns are used
+                if (["escape-key", "close-press", "swipe"].includes(eventDetails.reason)) handleClose();
+                else eventDetails.cancel();
+              }}
+            >
+              <DrawerPanel
+                variant="inline"
+                side="end"
+                size="sm"
+                container={drawerContainer}
+                aria-label={cycleDetails?.name ?? t("cycle.label", { count: 1 })}
+              >
+                <CycleDetailsSidebar
+                  handleClose={handleClose}
+                  isArchived={isArchived}
+                  projectId={projectId}
+                  workspaceSlug={workspaceSlug}
+                  cycleId={peekCycle}
+                />
+              </DrawerPanel>
+            </Drawer>
+          )}
         </div>
       )}
     </>

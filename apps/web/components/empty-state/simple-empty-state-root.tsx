@@ -30,8 +30,8 @@ const sizeConfig = {
 
 const getTitleClassName = (hasDescription: boolean) =>
   cn("font-medium whitespace-pre-line", {
-    "text-13 text-placeholder": !hasDescription,
-    "text-16 text-tertiary": hasDescription,
+    "text-body-xs-regular text-placeholder": !hasDescription,
+    "text-body-md-regular text-tertiary": hasDescription,
   });
 
 export const SimpleEmptyState = observer(function SimpleEmptyState(props: Props) {
@@ -47,7 +47,7 @@ export const SimpleEmptyState = observer(function SimpleEmptyState(props: Props)
 
       <h3 className={getTitleClassName(!!description)}>{title}</h3>
 
-      {description && <p className="text-14 font-medium whitespace-pre-line text-placeholder">{description}</p>}
+      {description && <p className="text-body-sm-medium whitespace-pre-line text-placeholder">{description}</p>}
     </div>
   );
 });

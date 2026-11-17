@@ -105,7 +105,7 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
               side="bottom"
               disabled={isMobile}
             >
-              <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2.5 py-0.5 text-center text-11 font-semibold text-accent-primary">
+              <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2.5 py-0.5 text-center text-caption-sm-semibold text-accent-primary">
                 {issueCount}
               </span>
             </Tooltip>

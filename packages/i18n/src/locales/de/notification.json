@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Wählen Sie ein Element, um Details anzuzeigen."
+        "title": "Keine Benachrichtigung ausgewählt",
+        "description": "Wählen Sie eine Benachrichtigung aus, um die Details anzuzeigen."
       },
       "all": {
         "title": "Keine zugewiesenen Elemente",
@@ -52,7 +53,15 @@
       "5_days": "5 Tage",
       "1_week": "1 Woche",
       "2_weeks": "2 Wochen",
-      "custom": "Benutzerdefiniert"
+      "custom": "Benutzerdefiniert",
+      "modal": {
+        "title": "Verschiebezeit anpassen",
+        "pick_a_date": "Datum auswählen",
+        "pick_a_time": "Uhrzeit auswählen",
+        "select_date": "Datum auswählen",
+        "select_time": "Uhrzeit auswählen",
+        "no_available_time": "Für dieses Datum ist keine Uhrzeit verfügbar"
+      }
     }
   }
 }

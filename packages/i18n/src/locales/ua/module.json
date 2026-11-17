@@ -2,6 +2,13 @@
   "module": {
     "label": "{count, plural, one {Модуль} few {Модулі} other {Модулів}}",
     "no_module": "Немає модуля",
-    "select": "Додати модулі"
+    "select": "Додати модулі",
+    "details_drawer": {
+      "progress": {
+        "done": "Виконано {completed} з {scope, plural, one {# робочої одиниці} few {# робочих одиниць} many {# робочих одиниць} other {# робочої одиниці}}",
+        "points_done": "Виконано {completed} з {scope, plural, one {# бала} few {# балів} many {# балів} other {# бала}}",
+        "empty": "Додайте робочі одиниці до модуля, щоб відстежувати прогрес."
+      }
+    }
   }
 }

@@ -5,7 +5,9 @@
  */
 
 import { ArrowNarrowRightOutline } from "@makeplane/propel/icons";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/blocks/skeleton";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -16,6 +18,7 @@ type TIssuePeekOverviewLoader = {
 
 export function IssuePeekOverviewLoader(props: TIssuePeekOverviewLoader) {
   const { removeRoutePeekId } = props;
+  const { t } = useTranslation();
   // hooks
   const { isMobile } = usePlatformOS();
 
@@ -23,11 +26,15 @@ export function IssuePeekOverviewLoader(props: TIssuePeekOverviewLoader) {
     <Loader className="h-screen w-full space-y-6 overflow-hidden p-5">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Tooltip label="Close the peek view" disabled={isMobile}>
-            <button onClick={removeRoutePeekId}>
-              <ArrowNarrowRightOutline className="h-4 w-4 text-tertiary hover:text-secondary" />
-            </button>
-          </Tooltip>
+          <IconButton
+            type="button"
+            variant="ghost"
+            size="sm"
+            aria-label={t("common.close_peek_view")}
+            showTooltip={!isMobile}
+            onClick={removeRoutePeekId}
+            icon={<Icon icon={ArrowNarrowRightOutline} />}
+          />
           <Loader.Item width="30px" height="30px" />
         </div>
         <div className="flex items-center gap-2">
