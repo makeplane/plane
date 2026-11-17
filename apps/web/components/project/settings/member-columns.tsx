@@ -168,7 +168,6 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
                       rowData.member.id,
                       Number(value) as EUserProjectRoles
                     ).catch((err) => {
-                      console.log(err, "err");
                       const error = err.error;
                       const errorString = Array.isArray(error) ? error[0] : error;
 
