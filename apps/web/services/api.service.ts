@@ -47,8 +47,12 @@ export abstract class APIService {
           // "/" to "/?next_path=/" reloads the page in an endless loop instead of
           // letting the sign-in screen render. Only bounce away from private
           // routes.
+          // The query string goes along too: an invite link keeps its
+          // invitation id and token there, and they have to survive sign-in.
           if (currentPath !== "/") {
-            window.location.replace(`/${currentPath ? `?next_path=${encodeURIComponent(currentPath)}` : ``}`);
+            window.location.replace(
+              `/${currentPath ? `?next_path=${encodeURIComponent(currentPath + window.location.search)}` : ``}`
+            );
           }
         }
         return Promise.reject(error);

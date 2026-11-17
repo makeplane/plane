@@ -105,7 +105,10 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
         router.push(currentRedirectRoute);
         return <></>;
       } else {
-        router.push("/onboarding");
+        // A new account still follows next_path: an invite link is a public
+        // page, and accepting the invite there is what gives the user a
+        // workspace before onboarding. Private pages send them on to /onboarding.
+        router.push(nextPath && isValidURL(nextPath) ? nextPath : "/onboarding");
         return <></>;
       }
     }
