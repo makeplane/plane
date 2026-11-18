@@ -27,6 +27,8 @@ import { DeleteIssueModal } from "../../delete-issue-modal";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import type { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 //components
+// auto-collapse empty groups
+import { getBoardGroupIds, useAutoCollapseGroups } from "@/lib/board-preferences/auto-collapse";
 import { KanBan } from "./default";
 import { KanbanDeleteDropZone } from "./kanban-delete-drop-zone";
 import { KanBanSwimLanes } from "./swimlanes";
@@ -205,7 +207,23 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
     [workspaceSlug, issuesFilter, projectId, updateFilters]
   );
 
-  const collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || EMPTY_KANBAN_FILTERS;
+  const storedCollapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || EMPTY_KANBAN_FILTERS;
+  // with auto-collapse on, a group is collapsed iff its count is 0 (clicks are session overrides)
+  const {
+    collapsedGroups,
+    handleToggle: handleCollapsedGroupsToggle,
+    expandGroup,
+  } = useAutoCollapseGroups({
+    storeType,
+    groupBy: group_by,
+    subGroupBy: sub_group_by,
+    groupIds: getBoardGroupIds(group_by, storeType, isEpic),
+    subGroupIds: sub_group_by ? getBoardGroupIds(sub_group_by, storeType, isEpic) : [],
+    getGroupIssueCount: issues.getGroupIssueCount,
+    loaded: issues.groupedIssueIds !== undefined && issues.getIssueLoader() !== "init-loader",
+    stored: storedCollapsedGroups,
+    onStoredToggle: handleCollapsedGroups,
+  });
 
   return (
     <>
@@ -234,7 +252,8 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
                 orderBy={orderBy}
                 updateIssue={updateIssue}
                 quickActions={renderQuickActions}
-                handleCollapsedGroups={handleCollapsedGroups}
+                handleCollapsedGroups={handleCollapsedGroupsToggle}
+                handleExpandGroup={expandGroup}
                 collapsedGroups={collapsedGroups}
                 enableQuickIssueCreate={enableQuickAdd}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}

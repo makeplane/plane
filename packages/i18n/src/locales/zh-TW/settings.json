@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "偏好設定",
-      "description": "以您工作的方式自訂您的應用程式體驗"
+      "description": "以您工作的方式自訂您的應用程式體驗",
+      "boards_heading": "看板",
+      "global_board_title": "在所有專案中使用相同的看板設定",
+      "global_board_description": "版面配置、分組、顯示屬性和可轉移的篩選器在每個專案的工作事項看板中共用。關閉後將恢復各專案自己的設定。",
+      "global_board_active": "所有專案使用相同的看板設定",
+      "global_board_active_hint": "此處的變更將套用至每個專案的工作事項看板。",
+      "auto_collapse_title": "在看板上收合空狀態",
+      "auto_collapse_description": "沒有工作事項的群組會在每個看板上收合，一旦有工作事項進入就會立即展開。"
     },
     "notifications": {
       "heading": "電子郵件通知",

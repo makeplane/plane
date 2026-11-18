@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "Preferências",
-      "description": "Personalize sua experiência no aplicativo do jeito que você trabalha"
+      "description": "Personalize sua experiência no aplicativo do jeito que você trabalha",
+      "boards_heading": "Quadros",
+      "global_board_title": "Usar as mesmas configurações de quadro em todos os projetos",
+      "global_board_description": "Layout, agrupamento, propriedades exibidas e filtros transferíveis são compartilhados pelo quadro de itens de trabalho de cada projeto. Desativar isso restaura as configurações próprias de cada projeto.",
+      "global_board_active": "Mesmas configurações de quadro em todos os projetos",
+      "global_board_active_hint": "As alterações feitas aqui valem para o quadro de itens de trabalho de cada projeto.",
+      "auto_collapse_title": "Recolher estados vazios nos quadros",
+      "auto_collapse_description": "Grupos sem itens de trabalho ficam recolhidos em cada quadro e se expandem assim que um item de trabalho chega a eles."
     },
     "notifications": {
       "heading": "Notificações por e-mail",

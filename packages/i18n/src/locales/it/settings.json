@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "Preferenze",
-      "description": "Personalizza la tua esperienza dell'app al modo in cui lavori"
+      "description": "Personalizza la tua esperienza dell'app al modo in cui lavori",
+      "boards_heading": "Schede",
+      "global_board_title": "Usare le stesse impostazioni delle schede in ogni progetto",
+      "global_board_description": "Layout, raggruppamento, proprietà visualizzate e filtri trasferibili sono condivisi dalla vista a schede degli elementi di lavoro di ogni progetto. Disattivandolo, ogni progetto ritrova le proprie impostazioni.",
+      "global_board_active": "Stesse impostazioni delle schede in ogni progetto",
+      "global_board_active_hint": "Le modifiche fatte qui valgono per la vista a schede degli elementi di lavoro di ogni progetto.",
+      "auto_collapse_title": "Comprimere gli stati vuoti nelle schede",
+      "auto_collapse_description": "I gruppi senza elementi di lavoro sono compressi in ogni vista a schede e si espandono appena vi arriva un elemento di lavoro."
     },
     "notifications": {
       "heading": "Notifiche via email",

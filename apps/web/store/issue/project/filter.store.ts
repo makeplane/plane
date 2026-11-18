@@ -28,10 +28,14 @@ import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // types
 import type { IIssueRootStore } from "../root.store";
 import { ProjectService } from "@/services/project";
+// global board template
+import { GlobalBoardSettings } from "@/lib/board-preferences/global-board";
 // constants
 // services
 
 export interface IProjectIssuesFilter extends IBaseIssueFilterStore {
+  // global board template
+  globalBoard: GlobalBoardSettings;
   //helper actions
   getFilterParams: (
     options: IssuePaginationOptions,
@@ -63,6 +67,8 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
   rootIssueStore: IIssueRootStore;
   // services
   projectService;
+  // global board template
+  globalBoard: GlobalBoardSettings;
 
   constructor(_rootStore: IIssueRootStore) {
     super();
@@ -81,6 +87,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
     this.rootIssueStore = _rootStore;
     // services
     this.projectService = new ProjectService();
+    this.globalBoard = new GlobalBoardSettings(this);
   }
 
   get issueFilters() {
@@ -137,9 +144,12 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
   fetchFilters = async (workspaceSlug: string, projectId: string) => {
     const _filters = await this.projectService.getProjectUserProperties(workspaceSlug, projectId);
 
-    const richFilters = _filters?.rich_filters;
-    const displayFilters = this.computedDisplayFilters(_filters?.display_filters);
-    const displayProperties = this.computedDisplayProperties(_filters?.display_properties);
+    // with the global board template on, the board shows the template, not the project row
+    const { richFilters, displayFilters, displayProperties } = await this.globalBoard.resolveFetched(projectId, {
+      richFilters: _filters?.rich_filters,
+      displayFilters: this.computedDisplayFilters(_filters?.display_filters),
+      displayProperties: this.computedDisplayProperties(_filters?.display_properties),
+    });
 
     // fetching the kanban toggle helpers in the local storage
     const kanbanFilters = {
@@ -177,11 +187,18 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
     filters
   ) => {
     try {
+      // a template change pushed into the filter instance is already applied
+      if (this.globalBoard.isApplyingRemote) return;
       runInAction(() => {
         set(this.filters, [projectId, "richFilters"], filters);
       });
 
       this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
+      // with the global board template on, the change goes to the template
+      if (this.globalBoard.isActive()) {
+        await this.globalBoard.saveRichFilters(projectId, filters);
+        return;
+      }
       await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, {
         rich_filters: filters,
       });
@@ -244,6 +261,11 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
           }
 
+          // with the global board template on, the change goes to the template
+          if (this.globalBoard.isActive()) {
+            await this.globalBoard.saveDisplayFilters(projectId, _filters.displayFilters);
+            break;
+          }
           await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, {
             display_filters: _filters.displayFilters,
           });
@@ -264,6 +286,11 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             });
           });
 
+          // with the global board template on, the change goes to the template
+          if (this.globalBoard.isActive()) {
+            await this.globalBoard.saveDisplayProperties(projectId, _filters.displayProperties);
+            break;
+          }
           await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, {
             display_properties: _filters.displayProperties,
           });

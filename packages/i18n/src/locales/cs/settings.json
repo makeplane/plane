@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "Předvolby",
-      "description": "Přizpůsobte si prostředí aplikace podle toho, jak pracujete"
+      "description": "Přizpůsobte si prostředí aplikace podle toho, jak pracujete",
+      "boards_heading": "Nástěnky",
+      "global_board_title": "Používat stejná nastavení nástěnky ve všech projektech",
+      "global_board_description": "Rozložení, seskupení, zobrazované vlastnosti a přenositelné filtry sdílí nástěnka pracovních položek každého projektu. Vypnutím se vrátí vlastní nastavení každého projektu.",
+      "global_board_active": "Stejná nastavení nástěnky ve všech projektech",
+      "global_board_active_hint": "Změny zde platí pro nástěnku pracovních položek každého projektu.",
+      "auto_collapse_title": "Sbalit prázdné stavy na nástěnkách",
+      "auto_collapse_description": "Skupiny bez pracovních položek jsou na každé nástěnce sbalené a rozbalí se, jakmile do nich přibude pracovní položka."
     },
     "notifications": {
       "heading": "E-mailová oznámení",
