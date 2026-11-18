@@ -481,6 +481,76 @@ def webhook_activity(
         return
 
 
+# Bidirectional relation field mappings between request-side keys and instance-side keys
+RELATION_FIELD_ALIASES = {
+    "state": "state_id",
+    "state_id": "state",
+    "assignees": "assignee_ids",
+    "assignee_ids": "assignees",
+    "labels": "label_ids",
+    "label_ids": "labels",
+    "parent": "parent_id",
+    "parent_id": "parent",
+}
+
+# Canonical API-side field names for webhook activity payloads
+CANONICAL_API_FIELD_NAMES = {
+    "state_id": "state",
+    "assignee_ids": "assignees",
+    "label_ids": "labels",
+    "parent_id": "parent",
+}
+
+LIST_RELATION_FIELDS = {
+    "assignees",
+    "assignee_ids",
+    "labels",
+    "label_ids",
+}
+
+SCALAR_RELATION_FIELDS = {
+    "state",
+    "state_id",
+    "parent",
+    "parent_id",
+}
+
+
+def _normalize_id(val: Any) -> Optional[str]:
+    """Normalize a relation identifier to a lowercase string, handling UUIDs, dicts, and None."""
+    if val is None or val == "":
+        return None
+    if isinstance(val, dict) and "id" in val:
+        return str(val["id"]).lower()
+    return str(val).lower()
+
+
+def _normalize_id_set(val: Any) -> set:
+    """Normalize a list/collection of relation identifiers to a set of lowercase strings."""
+    if not val:
+        return set()
+    if isinstance(val, (list, tuple, set)):
+        normalized = set()
+        for item in val:
+            if item is None or item == "":
+                continue
+            if isinstance(item, dict) and "id" in item:
+                normalized.add(str(item["id"]).lower())
+            else:
+                normalized.add(str(item).lower())
+        return normalized
+    return {str(val).lower()}
+
+
+def _to_serializable(val: Any) -> Any:
+    """Ensure task arguments containing UUID objects are converted to strings."""
+    if isinstance(val, (list, tuple, set)):
+        return [str(x) if isinstance(x, uuid.UUID) else x for x in val]
+    if isinstance(val, uuid.UUID):
+        return str(val)
+    return val
+
+
 @shared_task
 def model_activity(model_name, model_id, requested_data, current_instance, actor_id, slug, origin=None):
     """Function takes in two json and computes differences between keys of both the json"""
@@ -502,20 +572,80 @@ def model_activity(model_name, model_id, requested_data, current_instance, actor
 
     # Load the current instance
     current_instance = json.loads(current_instance) if current_instance is not None else None
+    if not current_instance or not requested_data:
+        return
+
+    processed_fields = set()
 
     # Loop through all keys in requested data and check the current value and requested value
     for key in requested_data:
-        # Check if key is present in current instance or not
+        if key in processed_fields:
+            continue
+
+        alias_key = RELATION_FIELD_ALIASES.get(key)
+        # Check if key or its alias is present in current instance
+        instance_key = None
         if key in current_instance:
-            current_value = current_instance.get(key, None)
-            requested_value = requested_data.get(key, None)
+            instance_key = key
+        elif alias_key and alias_key in current_instance:
+            instance_key = alias_key
+
+        if instance_key is None:
+            continue
+
+        # Prevent duplicate events if requested_data contains both representations
+        processed_fields.add(key)
+        if alias_key:
+            processed_fields.add(alias_key)
+
+        current_value = current_instance.get(instance_key, None)
+        requested_value = requested_data.get(key, None)
+
+        # Canonical API field name for webhook activity payload
+        field_name = CANONICAL_API_FIELD_NAMES.get(key, key)
+
+        if key in LIST_RELATION_FIELDS:
+            current_set = _normalize_id_set(current_value)
+            requested_set = _normalize_id_set(requested_value)
+            if current_set != requested_set:
+                webhook_activity.delay(
+                    event=model_name,
+                    verb="updated",
+                    field=field_name,
+                    old_value=_to_serializable(current_value),
+                    new_value=_to_serializable(requested_value),
+                    actor_id=actor_id,
+                    slug=slug,
+                    current_site=origin,
+                    event_id=model_id,
+                    old_identifier=None,
+                    new_identifier=None,
+                )
+        elif key in SCALAR_RELATION_FIELDS:
+            current_id = _normalize_id(current_value)
+            requested_id = _normalize_id(requested_value)
+            if current_id != requested_id:
+                webhook_activity.delay(
+                    event=model_name,
+                    verb="updated",
+                    field=field_name,
+                    old_value=_to_serializable(current_value),
+                    new_value=_to_serializable(requested_value),
+                    actor_id=actor_id,
+                    slug=slug,
+                    current_site=origin,
+                    event_id=model_id,
+                    old_identifier=None,
+                    new_identifier=None,
+                )
+        else:
             if current_value != requested_value:
                 webhook_activity.delay(
                     event=model_name,
                     verb="updated",
-                    field=key,
-                    old_value=current_value,
-                    new_value=requested_value,
+                    field=field_name,
+                    old_value=_to_serializable(current_value),
+                    new_value=_to_serializable(requested_value),
                     actor_id=actor_id,
                     slug=slug,
                     current_site=origin,
