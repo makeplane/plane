@@ -15,6 +15,8 @@ Verifies that model_activity correctly detects changes across:
 5. Non-relation scalar fields ('name', 'priority', 'description').
 6. Duplicate representations in the same request payload.
 7. Initial creation events (current_instance is None).
+8. Canonical UUID formats (32-character compact hex vs hyphenated canonical strings).
+9. Conflicting relation aliases with deterministic serializer persistence precedence.
 """
 
 import json
@@ -734,6 +736,414 @@ class TestModelActivityNormalizationAndDeduplication:
         assert mock_webhook_delay.call_count == 1
         call_kwargs = mock_webhook_delay.call_args.kwargs
         assert call_kwargs["field"] == "state"
+
+    def test_compact_hex_uuid_vs_hyphenated_uuid_equality(self, mock_webhook_delay):
+        """Compact 32-character hex UUID and hyphenated canonical UUID must compare equal without webhook."""
+        uid = uuid.uuid4()
+        compact_hex = uid.hex
+        hyphenated = str(uid)
+
+        # Instance has compact hex, request has hyphenated
+        current_instance = json.dumps({"state_id": compact_hex})
+        requested_data = {"state": hyphenated}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=requested_data,
+            current_instance=current_instance,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+
+        mock_webhook_delay.assert_not_called()
+
+        # Vice versa: instance has hyphenated, request has uppercase compact hex
+        current_instance_rev = json.dumps({"state_id": hyphenated})
+        requested_data_rev = {"state": compact_hex.upper()}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=requested_data_rev,
+            current_instance=current_instance_rev,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+
+        mock_webhook_delay.assert_not_called()
+
+    def test_uppercase_compact_uuid_in_list_equality(self, mock_webhook_delay):
+        """Compact uppercase hex UUIDs in list relations must match canonical hyphenated strings."""
+        u1 = uuid.uuid4()
+        u2 = uuid.uuid4()
+
+        current_instance = json.dumps({"assignee_ids": [str(u1), str(u2)]})
+        # Request passes uppercase compact hex for u1, and hyphenated for u2
+        requested_data = {"assignees": [u1.hex.upper(), str(u2)]}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=requested_data,
+            current_instance=current_instance,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+
+        mock_webhook_delay.assert_not_called()
+
+    def test_uuid_object_vs_compact_hex_string_equality(self, mock_webhook_delay):
+        """uuid.UUID objects, compact hex strings, and hyphenated strings compare equal."""
+        u1 = uuid.uuid4()
+
+        current_instance = json.dumps({"parent_id": u1.hex})
+        requested_data = {"parent": u1}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=requested_data,
+            current_instance=current_instance,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+
+        mock_webhook_delay.assert_not_called()
+
+    def test_dict_with_compact_hex_uuid_normalization(self, mock_webhook_delay):
+        """Dict identifiers with compact hex UUIDs normalize and match canonical hyphenated strings."""
+        u1 = uuid.uuid4()
+
+        current_instance = json.dumps({"label_ids": [str(u1)]})
+        requested_data = {"labels": [{"id": u1.hex.upper()}]}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=requested_data,
+            current_instance=current_instance,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+
+        mock_webhook_delay.assert_not_called()
+
+    def test_non_uuid_string_fallback(self, mock_webhook_delay):
+        """Non-UUID strings gracefully fallback to lowercased string comparison without exception."""
+        # Same non-UUID value: no webhook
+        current_instance = json.dumps({"state_id": "CUSTOM_STATUS_TODO"})
+        requested_data = {"state": "custom_status_todo"}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=requested_data,
+            current_instance=current_instance,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+
+        mock_webhook_delay.assert_not_called()
+
+        # Changed non-UUID value: triggers webhook
+        requested_data_changed = {"state": "custom_status_done"}
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=requested_data_changed,
+            current_instance=current_instance,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+
+        mock_webhook_delay.assert_called_once_with(
+            event=MODEL_NAME,
+            verb="updated",
+            field="state",
+            old_value="CUSTOM_STATUS_TODO",
+            new_value="custom_status_done",
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            current_site=ORIGIN,
+            event_id=MODEL_ID,
+            old_identifier=None,
+            new_identifier=None,
+        )
+
+
+class TestModelActivityConflictingRelationAliases:
+    """Verifies serializer persistence precedence when both alias keys are present in requested_data."""
+
+    def test_conflicting_aliases_assignees_external_instance_prefers_assignees_order1(self, mock_webhook_delay):
+        """External instance (assignees key): assignees is the persisted field and takes precedence."""
+        u1 = str(uuid.uuid4())
+        u2 = str(uuid.uuid4())
+
+        current_instance = json.dumps({"assignees": [u1]})
+        # assignees matches current instance, assignee_ids differs; order 1: assignees first
+        requested_data = {"assignees": [u1], "assignee_ids": [u2]}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=requested_data,
+            current_instance=current_instance,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+
+        # Since persisted key 'assignees' matches current instance, no webhook should fire
+        mock_webhook_delay.assert_not_called()
+
+    def test_conflicting_aliases_assignees_external_instance_prefers_assignees_order2(self, mock_webhook_delay):
+        """External instance (assignees key): reverse dict insertion order yields identical precedence."""
+        u1 = str(uuid.uuid4())
+        u2 = str(uuid.uuid4())
+
+        current_instance = json.dumps({"assignees": [u1]})
+        # assignees matches current instance, assignee_ids differs; order 2: assignee_ids first
+        requested_data = {"assignee_ids": [u2], "assignees": [u1]}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=requested_data,
+            current_instance=current_instance,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+
+        mock_webhook_delay.assert_not_called()
+
+    def test_conflicting_aliases_assignees_internal_instance_prefers_assignee_ids_order1(self, mock_webhook_delay):
+        """Internal instance (assignee_ids key): assignee_ids is the persisted field and takes precedence."""
+        u1 = str(uuid.uuid4())
+        u2 = str(uuid.uuid4())
+
+        current_instance = json.dumps({"assignee_ids": [u1]})
+        # assignee_ids matches current instance, assignees differs; order 1: assignees first
+        requested_data = {"assignees": [u2], "assignee_ids": [u1]}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=requested_data,
+            current_instance=current_instance,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+
+        # Since persisted key 'assignee_ids' matches current instance, no webhook should fire
+        mock_webhook_delay.assert_not_called()
+
+    def test_conflicting_aliases_assignees_internal_instance_prefers_assignee_ids_order2(self, mock_webhook_delay):
+        """Internal instance (assignee_ids key): reverse dict insertion order yields identical precedence."""
+        u1 = str(uuid.uuid4())
+        u2 = str(uuid.uuid4())
+
+        current_instance = json.dumps({"assignee_ids": [u1]})
+        # assignee_ids matches current instance, assignees differs; order 2: assignee_ids first
+        requested_data = {"assignee_ids": [u1], "assignees": [u2]}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=requested_data,
+            current_instance=current_instance,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+
+        mock_webhook_delay.assert_not_called()
+
+    def test_conflicting_aliases_labels_both_orders(self, mock_webhook_delay):
+        """Labels alias conflict resolves to instance key regardless of dictionary key order."""
+        l1 = str(uuid.uuid4())
+        l2 = str(uuid.uuid4())
+
+        # Internal instance: label_ids takes precedence
+        current_instance_internal = json.dumps({"label_ids": [l1]})
+        req_order1 = {"labels": [l2], "label_ids": [l1]}
+        req_order2 = {"label_ids": [l1], "labels": [l2]}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=req_order1,
+            current_instance=current_instance_internal,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+        mock_webhook_delay.assert_not_called()
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=req_order2,
+            current_instance=current_instance_internal,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+        mock_webhook_delay.assert_not_called()
+
+        # External instance: labels takes precedence
+        current_instance_external = json.dumps({"labels": [l1]})
+        req_ext_order1 = {"labels": [l1], "label_ids": [l2]}
+        req_ext_order2 = {"label_ids": [l2], "labels": [l1]}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=req_ext_order1,
+            current_instance=current_instance_external,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+        mock_webhook_delay.assert_not_called()
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=req_ext_order2,
+            current_instance=current_instance_external,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+        mock_webhook_delay.assert_not_called()
+
+    def test_conflicting_aliases_state_both_orders(self, mock_webhook_delay):
+        """State alias conflict resolves to instance key regardless of dictionary key order."""
+        s1 = str(uuid.uuid4())
+        s2 = str(uuid.uuid4())
+
+        # Internal instance: state_id takes precedence
+        current_instance_internal = json.dumps({"state_id": s1})
+        req_order1 = {"state": s2, "state_id": s1}
+        req_order2 = {"state_id": s1, "state": s2}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=req_order1,
+            current_instance=current_instance_internal,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+        mock_webhook_delay.assert_not_called()
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=req_order2,
+            current_instance=current_instance_internal,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+        mock_webhook_delay.assert_not_called()
+
+        # External instance: state takes precedence
+        current_instance_external = json.dumps({"state": s1})
+        req_ext_order1 = {"state": s1, "state_id": s2}
+        req_ext_order2 = {"state_id": s2, "state": s1}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=req_ext_order1,
+            current_instance=current_instance_external,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+        mock_webhook_delay.assert_not_called()
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=req_ext_order2,
+            current_instance=current_instance_external,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+        mock_webhook_delay.assert_not_called()
+
+    def test_conflicting_aliases_parent_both_orders(self, mock_webhook_delay):
+        """Parent alias conflict resolves to instance key regardless of dictionary key order."""
+        p1 = str(uuid.uuid4())
+        p2 = str(uuid.uuid4())
+
+        # Internal instance: parent_id takes precedence
+        current_instance_internal = json.dumps({"parent_id": p1})
+        req_order1 = {"parent": p2, "parent_id": p1}
+        req_order2 = {"parent_id": p1, "parent": p2}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=req_order1,
+            current_instance=current_instance_internal,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+        mock_webhook_delay.assert_not_called()
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=req_order2,
+            current_instance=current_instance_internal,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+        mock_webhook_delay.assert_not_called()
+
+        # External instance: parent takes precedence
+        current_instance_external = json.dumps({"parent": p1})
+        req_ext_order1 = {"parent": p1, "parent_id": p2}
+        req_ext_order2 = {"parent_id": p2, "parent": p1}
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=req_ext_order1,
+            current_instance=current_instance_external,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+        mock_webhook_delay.assert_not_called()
+
+        model_activity(
+            model_name=MODEL_NAME,
+            model_id=MODEL_ID,
+            requested_data=req_ext_order2,
+            current_instance=current_instance_external,
+            actor_id=ACTOR_ID,
+            slug=SLUG,
+            origin=ORIGIN,
+        )
+        mock_webhook_delay.assert_not_called()
 
 
 class TestModelActivityScalarFields:

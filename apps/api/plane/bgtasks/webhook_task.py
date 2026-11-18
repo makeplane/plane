@@ -517,29 +517,34 @@ SCALAR_RELATION_FIELDS = {
 
 
 def _normalize_id(val: Any) -> Optional[str]:
-    """Normalize a relation identifier to a lowercase string, handling UUIDs, dicts, and None."""
+    """Normalize a relation identifier to a canonical lowercase UUID string, or fallback string."""
     if val is None or val == "":
         return None
     if isinstance(val, dict) and "id" in val:
-        return str(val["id"]).lower()
-    return str(val).lower()
+        val = val["id"]
+    if val is None or val == "":
+        return None
+    if isinstance(val, uuid.UUID):
+        return str(val).lower()
+    try:
+        return str(uuid.UUID(str(val))).lower()
+    except (ValueError, TypeError, AttributeError):
+        return str(val).lower()
 
 
 def _normalize_id_set(val: Any) -> set:
-    """Normalize a list/collection of relation identifiers to a set of lowercase strings."""
+    """Normalize a collection of relation identifiers to a set of canonical lowercase UUID strings."""
     if not val:
         return set()
     if isinstance(val, (list, tuple, set)):
         normalized = set()
         for item in val:
-            if item is None or item == "":
-                continue
-            if isinstance(item, dict) and "id" in item:
-                normalized.add(str(item["id"]).lower())
-            else:
-                normalized.add(str(item).lower())
+            norm_item = _normalize_id(item)
+            if norm_item is not None:
+                normalized.add(norm_item)
         return normalized
-    return {str(val).lower()}
+    norm = _normalize_id(val)
+    return {norm} if norm is not None else set()
 
 
 def _to_serializable(val: Any) -> Any:
@@ -599,12 +604,22 @@ def model_activity(model_name, model_id, requested_data, current_instance, actor
             processed_fields.add(alias_key)
 
         current_value = current_instance.get(instance_key, None)
-        requested_value = requested_data.get(key, None)
+
+        # Determine effective requested key:
+        # If requested_data contains both representations (e.g. 'assignees' and 'assignee_ids'),
+        # prefer instance_key, because that is the native representation recognized and
+        # persisted by the active serializer for this endpoint.
+        effective_key = key
+        if alias_key and alias_key in requested_data:
+            if instance_key in requested_data:
+                effective_key = instance_key
+
+        requested_value = requested_data.get(effective_key, None)
 
         # Canonical API field name for webhook activity payload
-        field_name = CANONICAL_API_FIELD_NAMES.get(key, key)
+        field_name = CANONICAL_API_FIELD_NAMES.get(effective_key, effective_key)
 
-        if key in LIST_RELATION_FIELDS:
+        if effective_key in LIST_RELATION_FIELDS:
             current_set = _normalize_id_set(current_value)
             requested_set = _normalize_id_set(requested_value)
             if current_set != requested_set:
@@ -621,7 +636,7 @@ def model_activity(model_name, model_id, requested_data, current_instance, actor
                     old_identifier=None,
                     new_identifier=None,
                 )
-        elif key in SCALAR_RELATION_FIELDS:
+        elif effective_key in SCALAR_RELATION_FIELDS:
             current_id = _normalize_id(current_value)
             requested_id = _normalize_id(requested_value)
             if current_id != requested_id:
