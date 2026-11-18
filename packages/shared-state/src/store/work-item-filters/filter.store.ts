@@ -90,10 +90,10 @@ export class WorkItemFilterStore implements IWorkItemFilterStore {
       if (params.onExpressionChange) {
         existingFilter.onExpressionChange = params.onExpressionChange;
       }
-      // Update visibility if provided
-      if (params.showOnMount !== undefined) {
-        existingFilter.toggleVisibility(params.showOnMount);
-      }
+      // Do not re-apply `showOnMount` to an existing filter. It describes the
+      // state the bar should open in, so it only applies when the instance is
+      // created. Re-applying it on every render would override the visibility
+      // the user chose in the bar.
       return existingFilter;
     }
 

@@ -70,7 +70,7 @@
       "extra": {
         "show_sub_issues": "Pokaż elementy podrzędne",
         "show_empty_groups": "Pokaż puste grupy",
-        "collapse_filters_on_open": "Zwin filtry przy otwarciu"
+        "collapse_filters_on_open": "Zwiń filtry przy otwarciu"
       }
     },
     "layouts": {

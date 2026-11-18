@@ -58,7 +58,12 @@ export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
   // A saved view can opt into opening with the filter bar collapsed. The flag
   // lives in the view's persisted `display_filters`, so it survives a reload
   // and applies every time the view is opened.
-  const filtersCollapsedByDefault = projectView?.display_filters?.filters_collapsed_by_default === true;
+  //
+  // A locked view opens collapsed regardless of the stored value: its filters
+  // and display settings can no longer be changed, so the bar only takes up
+  // space above the board.
+  const filtersCollapsedByDefault =
+    projectView?.is_locked === true || projectView?.display_filters?.filters_collapsed_by_default === true;
   const initialWorkItemFilters = projectView
     ? {
         displayFilters: workItemFilters?.displayFilters,
