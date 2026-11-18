@@ -22,6 +22,7 @@ import {
   DialogTitle,
 } from "@makeplane/propel/components/dialog";
 import { EmojiPicker, Logo } from "@plane/blocks/emoji-icon-picker";
+import { Switch } from "@makeplane/propel/components/switch";
 import { ViewsOutline } from "@makeplane/propel/icons";
 import type {
   IIssueDisplayFilterOptions,
@@ -263,6 +264,31 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                       )}
                     />
                   </>
+                )}
+              />
+            </div>
+            <div>
+              {/* collapse filters on open */}
+              <Controller
+                control={control}
+                name="display_filters"
+                render={({ field: { onChange: onDisplayFiltersChange, value: displayFilters } }) => (
+                  <div className="flex items-center justify-between gap-4 py-2">
+                    <span className="text-body-sm-medium text-primary">
+                      {t("issue.display.extra.collapse_filters_on_open")}
+                    </span>
+                    <Switch
+                      size="sm"
+                      checked={displayFilters?.filters_collapsed_by_default ?? false}
+                      onCheckedChange={(checked) =>
+                        onDisplayFiltersChange({
+                          ...displayFilters,
+                          filters_collapsed_by_default: checked,
+                        })
+                      }
+                      aria-label={t("issue.display.extra.collapse_filters_on_open")}
+                    />
+                  </div>
                 )}
               />
             </div>

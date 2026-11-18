@@ -69,7 +69,8 @@
       },
       "extra": {
         "show_sub_issues": "Subwerkitems tonen",
-        "show_empty_groups": "Lege groepen tonen"
+        "show_empty_groups": "Lege groepen tonen",
+        "collapse_filters_on_open": "Filters samenvouwen bij openen"
       }
     },
     "layouts": {

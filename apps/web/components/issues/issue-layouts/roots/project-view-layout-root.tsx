@@ -55,6 +55,10 @@ export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
   const projectView = viewId ? getViewById(viewId) : undefined;
   const workItemFilters = viewId ? issuesFilter?.getIssueFilters(viewId) : undefined;
   const activeLayout = workItemFilters?.displayFilters?.layout;
+  // A saved view can opt into opening with the filter bar collapsed. The flag
+  // lives in the view's persisted `display_filters`, so it survives a reload
+  // and applies every time the view is opened.
+  const filtersCollapsedByDefault = projectView?.display_filters?.filters_collapsed_by_default === true;
   const initialWorkItemFilters = projectView
     ? {
         displayFilters: workItemFilters?.displayFilters,
@@ -92,6 +96,7 @@ export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
         entityType={EIssuesStoreType.PROJECT_VIEW}
         filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.filters}
         initialWorkItemFilters={initialWorkItemFilters}
+        showOnMount={!filtersCollapsedByDefault}
         updateFilters={issuesFilter?.updateFilterExpression.bind(issuesFilter, workspaceSlug, projectId, viewId)}
         projectId={projectId}
         workspaceSlug={workspaceSlug}

@@ -218,9 +218,14 @@ export class WorkItemFilterStore implements IWorkItemFilterStore {
       onExpressionChange: params.onExpressionChange,
       options: {
         expression: params.expressionOptions,
-        visibility: params.showOnMount
-          ? { autoSetVisibility: false, isVisibleOnMount: true }
-          : { autoSetVisibility: true },
+        // An explicit `showOnMount` wins over the automatic behaviour, so the
+        // filter bar opens exactly in the state the caller asked for. This
+        // keeps the create path consistent with the existing-instance path
+        // above, which applies `showOnMount` through `toggleVisibility`.
+        visibility:
+          params.showOnMount !== undefined
+            ? { autoSetVisibility: false, isVisibleOnMount: params.showOnMount }
+            : { autoSetVisibility: true },
       },
     });
 }

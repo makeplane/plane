@@ -69,7 +69,8 @@
       },
       "extra": {
         "show_sub_issues": "Zobraziť podriadené položky",
-        "show_empty_groups": "Zobraziť prázdne skupiny"
+        "show_empty_groups": "Zobraziť prázdne skupiny",
+        "collapse_filters_on_open": "Zbalit filtre pri otvoreni"
       }
     },
     "layouts": {

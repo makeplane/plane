@@ -69,7 +69,8 @@
       },
       "extra": {
         "show_sub_issues": "ქვე-სამუშაო ელემენტების ჩვენება",
-        "show_empty_groups": "ცარიელი ჯგუფების ჩვენება"
+        "show_empty_groups": "ცარიელი ჯგუფების ჩვენება",
+        "collapse_filters_on_open": "ფილტრების დაკეცვა გახსნისას"
       }
     },
     "layouts": {

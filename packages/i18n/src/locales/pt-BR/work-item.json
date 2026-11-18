@@ -69,7 +69,8 @@
       },
       "extra": {
         "show_sub_issues": "Mostrar sub-itens de trabalho",
-        "show_empty_groups": "Mostrar grupos vazios"
+        "show_empty_groups": "Mostrar grupos vazios",
+        "collapse_filters_on_open": "Recolher filtros ao abrir"
       }
     },
     "layouts": {

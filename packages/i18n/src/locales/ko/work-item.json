@@ -69,7 +69,8 @@
       },
       "extra": {
         "show_sub_issues": "하위 작업 항목 표시",
-        "show_empty_groups": "빈 그룹 표시"
+        "show_empty_groups": "빈 그룹 표시",
+        "collapse_filters_on_open": "열 때 필터 접기"
       }
     },
     "layouts": {
