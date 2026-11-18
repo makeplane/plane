@@ -118,10 +118,19 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
   const getViewFilterPayload: (filterExpression: TWorkItemFilterExpression) => Partial<IProjectView> = useCallback(
     (filterExpression: TWorkItemFilterExpression) => ({
       rich_filters: cloneDeep(filterExpression),
-      display_filters: cloneDeep(initialWorkItemFilters?.displayFilters),
+      display_filters: {
+        ...cloneDeep(initialWorkItemFilters?.displayFilters),
+        // `displayFilters` is built from the computed display filters, which
+        // only carry the known display keys. Carry the stored value over so a
+        // layout or sort change does not clear the setting.
+        filters_collapsed_by_default:
+          viewDetails?.display_filters?.filters_collapsed_by_default ??
+          initialWorkItemFilters?.displayFilters?.filters_collapsed_by_default ??
+          false,
+      },
       display_properties: cloneDeep(initialWorkItemFilters?.displayProperties),
     }),
-    [initialWorkItemFilters]
+    [initialWorkItemFilters, viewDetails]
   );
 
   const handleViewSave = useCallback(
