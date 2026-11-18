@@ -3,7 +3,6 @@
 # See the LICENSE file for details.
 
 # Python import
-from uuid import uuid4
 from typing import Optional
 
 # Third party
@@ -14,25 +13,23 @@ from rest_framework import status
 # Module import
 from .base import BaseAPIView
 from plane.db.models import APIToken
-from plane.app.serializers import APITokenSerializer, APITokenReadSerializer
+from plane.app.serializers import (
+    APITokenSerializer,
+    APITokenReadSerializer,
+    APITokenCreateSerializer,
+)
 
 
 class ApiTokenEndpoint(BaseAPIView):
     def post(self, request: Request) -> Response:
-        label = request.data.get("label", str(uuid4().hex))
-        description = request.data.get("description", "")
-        expired_at = request.data.get("expired_at", None)
+        create_serializer = APITokenCreateSerializer(data=request.data)
+        if not create_serializer.is_valid():
+            return Response(create_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # Check the user type
         user_type = 1 if request.user.is_bot else 0
 
-        api_token = APIToken.objects.create(
-            label=label,
-            description=description,
-            user=request.user,
-            user_type=user_type,
-            expired_at=expired_at,
-        )
+        api_token = create_serializer.save(user=request.user, user_type=user_type)
 
         serializer = APITokenSerializer(api_token)
         # Token will be only visible while creating
