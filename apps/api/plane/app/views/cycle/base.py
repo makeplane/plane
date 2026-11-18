@@ -56,6 +56,7 @@ from plane.db.models import (
 from plane.utils.analytics_plot import burndown_plot
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.host import base_host
+from plane.bgtasks.cycle_automation_task import queue_cycle_automation
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
@@ -325,6 +326,7 @@ class CycleViewSet(BaseViewSet):
                     slug=slug,
                     origin=base_host(request=request, is_app=True),
                 )
+                queue_cycle_automation(cycle["id"], dates_changed=True)
                 return Response(cycle, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -405,6 +407,7 @@ class CycleViewSet(BaseViewSet):
                 origin=base_host(request=request, is_app=True),
             )
 
+            queue_cycle_automation(pk, dates_changed="start_date" in request.data or "end_date" in request.data)
             return Response(cycle, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

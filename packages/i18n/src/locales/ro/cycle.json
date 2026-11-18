@@ -37,5 +37,40 @@
         "title": "Adaugă etichete la elementele de lucru pentru a vedea\n defalcarea muncii după etichete."
       }
     }
+  },
+  "cycle_automation": {
+    "title": "Automatizarea ciclurilor",
+    "description": "Mută activitățile unui ciclu din anumite stări în alta când ciclul începe sau se încheie. Fiecare regulă rulează o singură dată pe ciclu. Activarea unei reguli nu mută activitățile ciclurilor deja începute sau încheiate; pentru aceasta, folosiți „Mută activitățile” pe un ciclu.",
+    "trigger": {
+      "cycle_started": "Când un ciclu începe",
+      "cycle_completed": "Când un ciclu se încheie"
+    },
+    "from": "Mută din",
+    "to": "în",
+    "select_states": "Selectați stările",
+    "select_state": "Selectați starea",
+    "add_rule": "Adăugați o regulă",
+    "empty": "Încă nu există reguli.",
+    "presets": {
+      "start": "Adăugați: la început, Backlog în Todo",
+      "complete": "Adăugați: la încheiere, Testing Complete în Done",
+      "missing": "Acest proiect nu are o stare pentru acest șablon."
+    },
+    "move_up": "Mută în sus",
+    "move_down": "Mută în jos",
+    "delete": "Ștergeți regula",
+    "errors": {
+      "load": "Regulile de automatizare a ciclurilor nu au putut fi încărcate.",
+      "save": "Regula nu a putut fi salvată. Încercați din nou."
+    },
+    "move": {
+      "menu": "Mută activitățile",
+      "title": "Mută activitățile din {cycle}",
+      "description": "Mută dintr-o dată în starea țintă fiecare activitate a acestui ciclu care se află într-una dintre stările selectate.",
+      "count": "{count, plural, one{# activitate va fi mutată.} few{# activități vor fi mutate.} other{# de activități vor fi mutate.}}",
+      "submit": "Mută",
+      "success": "{count, plural, one{# activitate mutată.} few{# activități mutate.} other{# de activități mutate.}}",
+      "error": "Activitățile nu au putut fi mutate. Încercați din nou."
+    }
   }
 }

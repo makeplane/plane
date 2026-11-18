@@ -37,5 +37,40 @@
         "title": "為工作項目添加標籤，以查看按標籤\n劃分的工作明細。"
       }
     }
+  },
+  "cycle_automation": {
+    "title": "週期自動化",
+    "description": "在週期開始或完成時，將週期中的工作事項從某些狀態移動到另一個狀態。每條規則在每個週期中只會執行一次。開啟規則不會移動已開始或已完成之週期中的工作事項；如需移動，請在週期上使用「移動工作事項」。",
+    "trigger": {
+      "cycle_started": "週期開始時",
+      "cycle_completed": "週期完成時"
+    },
+    "from": "從",
+    "to": "移動到",
+    "select_states": "選擇狀態",
+    "select_state": "選擇狀態",
+    "add_rule": "新增規則",
+    "empty": "尚無規則。",
+    "presets": {
+      "start": "新增：開始時 Backlog 移到 Todo",
+      "complete": "新增：完成時 Testing Complete 移到 Done",
+      "missing": "此專案沒有適用於此範本的狀態。"
+    },
+    "move_up": "上移",
+    "move_down": "下移",
+    "delete": "刪除規則",
+    "errors": {
+      "load": "無法載入週期自動化規則。",
+      "save": "無法儲存規則。請再試一次。"
+    },
+    "move": {
+      "menu": "移動工作事項",
+      "title": "移動 {cycle} 中的工作事項",
+      "description": "將此週期中處於所選狀態之一的所有工作事項一次移動到目標狀態。",
+      "count": "{count, plural, one{將移動 # 個工作事項。} other{將移動 # 個工作事項。}}",
+      "submit": "移動",
+      "success": "{count, plural, one{已移動 # 個工作事項。} other{已移動 # 個工作事項。}}",
+      "error": "無法移動工作事項。請再試一次。"
+    }
   }
 }

@@ -37,5 +37,40 @@
         "title": "Pridajte štítky k pracovným položkám, aby ste videli\n rozdelenie práce podľa štítkov."
       }
     }
+  },
+  "cycle_automation": {
+    "title": "Automatizácia cyklov",
+    "description": "Presunie pracovné položky cyklu z vybraných stavov do iného stavu, keď cyklus začne alebo skončí. Každé pravidlo sa spustí raz za cyklus. Zapnutie pravidla nepresunie pracovné položky cyklov, ktoré už začali alebo skončili; na to použite „Presunúť pracovné položky“ pri cykle.",
+    "trigger": {
+      "cycle_started": "Keď cyklus začne",
+      "cycle_completed": "Keď cyklus skončí"
+    },
+    "from": "Presunúť z",
+    "to": "do",
+    "select_states": "Vyberte stavy",
+    "select_state": "Vyberte stav",
+    "add_rule": "Pridať pravidlo",
+    "empty": "Zatiaľ žiadne pravidlá.",
+    "presets": {
+      "start": "Pridať: pri začatí, Backlog do Todo",
+      "complete": "Pridať: pri dokončení, Testing Complete do Done",
+      "missing": "Tento projekt nemá stav pre túto šablónu."
+    },
+    "move_up": "Posunúť nahor",
+    "move_down": "Posunúť nadol",
+    "delete": "Odstrániť pravidlo",
+    "errors": {
+      "load": "Pravidlá automatizácie cyklov sa nepodarilo načítať.",
+      "save": "Pravidlo sa nepodarilo uložiť. Skúste to znova."
+    },
+    "move": {
+      "menu": "Presunúť pracovné položky",
+      "title": "Presunúť pracovné položky v {cycle}",
+      "description": "Presunie naraz do cieľového stavu každú pracovnú položku tohto cyklu, ktorá je v jednom z vybraných stavov.",
+      "count": "{count, plural, one{Presunie sa # pracovná položka.} few{Presunú sa # pracovné položky.} many{Presunie sa # pracovnej položky.} other{Presunie sa # pracovných položiek.}}",
+      "submit": "Presunúť",
+      "success": "{count, plural, one{Presunutá # pracovná položka.} few{Presunuté # pracovné položky.} many{Presunutých # pracovnej položky.} other{Presunutých # pracovných položiek.}}",
+      "error": "Pracovné položky sa nepodarilo presunúť. Skúste to znova."
+    }
   }
 }

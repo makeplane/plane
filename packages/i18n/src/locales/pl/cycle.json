@@ -37,5 +37,40 @@
         "title": "Dodaj etykiety do elementów pracy, aby zobaczyć\n podział pracy według etykiet."
       }
     }
+  },
+  "cycle_automation": {
+    "title": "Automatyzacja cykli",
+    "description": "Przenosi elementy pracy cyklu z wybranych stanów do innego, gdy cykl się rozpoczyna lub kończy. Każda reguła działa raz na cykl. Włączenie reguły nie przenosi elementów pracy cykli, które już się rozpoczęły lub zakończyły; do tego służy „Przenieś elementy pracy” w cyklu.",
+    "trigger": {
+      "cycle_started": "Gdy cykl się rozpoczyna",
+      "cycle_completed": "Gdy cykl się kończy"
+    },
+    "from": "Przenieś z",
+    "to": "do",
+    "select_states": "Wybierz stany",
+    "select_state": "Wybierz stan",
+    "add_rule": "Dodaj regułę",
+    "empty": "Brak reguł.",
+    "presets": {
+      "start": "Dodaj: przy rozpoczęciu, Backlog do Todo",
+      "complete": "Dodaj: przy zakończeniu, Testing Complete do Done",
+      "missing": "Ten projekt nie ma stanu dla tego szablonu."
+    },
+    "move_up": "Przenieś w górę",
+    "move_down": "Przenieś w dół",
+    "delete": "Usuń regułę",
+    "errors": {
+      "load": "Nie udało się wczytać reguł automatyzacji cykli.",
+      "save": "Nie udało się zapisać reguły. Prosimy spróbować ponownie."
+    },
+    "move": {
+      "menu": "Przenieś elementy pracy",
+      "title": "Przenieś elementy pracy w {cycle}",
+      "description": "Przenosi jednorazowo do stanu docelowego każdy element pracy tego cyklu, który jest w jednym z wybranych stanów.",
+      "count": "{count, plural, one{Zostanie przeniesiony # element pracy.} few{Zostaną przeniesione # elementy pracy.} many{Zostanie przeniesionych # elementów pracy.} other{Zostanie przeniesione # elementu pracy.}}",
+      "submit": "Przenieś",
+      "success": "{count, plural, one{Przeniesiono # element pracy.} few{Przeniesiono # elementy pracy.} many{Przeniesiono # elementów pracy.} other{Przeniesiono # elementu pracy.}}",
+      "error": "Nie udało się przenieść elementów pracy. Prosimy spróbować ponownie."
+    }
   }
 }

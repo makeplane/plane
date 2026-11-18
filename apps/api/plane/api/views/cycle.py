@@ -48,6 +48,7 @@ from plane.db.models import (
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
 from plane.utils.order_queryset import CYCLE_ORDER_BY_ALLOWLIST, ISSUE_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.utils.host import base_host
+from plane.bgtasks.cycle_automation_task import queue_cycle_automation
 from .base import BaseAPIView
 from .issue import guest_cannot_view_issue, is_restricted_guest
 from plane.bgtasks.webhook_task import model_activity
@@ -348,6 +349,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
 
                 cycle = Cycle.objects.get(pk=serializer.instance.id)
                 serializer = CycleSerializer(cycle)
+                queue_cycle_automation(cycle.id, dates_changed=True)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -603,6 +605,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
             )
             cycle = Cycle.objects.get(pk=serializer.instance.id)
             serializer = CycleSerializer(cycle)
+            queue_cycle_automation(pk, dates_changed="start_date" in request.data or "end_date" in request.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

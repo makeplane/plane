@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { MoreHorizontalOutline } from "@makeplane/propel/icons";
+import { MoreHorizontalOutline, TransferWorkItemOutline } from "@makeplane/propel/icons";
 // ui
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -27,6 +27,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { ArchiveCycleModal } from "./archived-cycles/modal";
 import { CycleDeleteModal } from "./delete-modal";
 import { CycleCreateUpdateModal } from "./modal";
+import { MoveCycleWorkItemsModal } from "./move-work-items-modal";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement | null>;
@@ -45,6 +46,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
   const [updateModal, setUpdateModal] = useState(false);
   const [archiveCycleModal, setArchiveCycleModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [moveModal, setMoveModal] = useState(false);
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { getCycleById, restoreCycle } = useCycle();
@@ -67,6 +69,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
         title: t("common.link_copied"),
         message: t("common.link_copied_to_clipboard"),
       });
+      return;
     });
   const handleOpenInNewTab = () => window.open(`/${cycleLink}`, "_blank");
 
@@ -79,6 +82,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
           message: t("project_cycles.action.restore.success.description"),
         });
         router.push(`/${workspaceSlug}/projects/${projectId}/archives/cycles`);
+        return;
       })
       .catch(() => {
         setToast({
@@ -102,7 +106,15 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
     handleOpenInNewTab,
   });
 
-  const MENU_ITEMS: TContextMenuItem[] = Array.isArray(menuResult) ? menuResult : menuResult.items;
+  const MENU_ITEMS: TContextMenuItem[] = [...(Array.isArray(menuResult) ? menuResult : menuResult.items)];
+  // "Move work items": every work item of the cycle in some states to one state, in one batch
+  if (isEditingAllowed && cycleDetails && !cycleDetails.archived_at)
+    MENU_ITEMS.splice(1, 0, {
+      key: "move-work-items",
+      title: t("cycle_automation.move.menu"),
+      icon: TransferWorkItemOutline,
+      action: () => setMoveModal(true),
+    });
   const additionalModals = Array.isArray(menuResult) ? null : menuResult.modals;
 
   const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
@@ -138,6 +150,13 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
             handleClose={() => setDeleteModal(false)}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
+          />
+          <MoveCycleWorkItemsModal
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            cycleId={cycleId}
+            isOpen={moveModal}
+            handleClose={() => setMoveModal(false)}
           />
           {additionalModals}
         </div>
