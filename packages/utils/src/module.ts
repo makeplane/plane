@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { sortBy } from "lodash-es";
+import { orderBy, sortBy } from "lodash-es";
 // plane imports
 import type { IModule, TModuleDisplayFilters, TModuleFilters, TModuleOrderByOptions } from "@plane/types";
 // local imports
@@ -41,11 +41,22 @@ export const orderModules = (modules: IModule[], orderByKey: TModuleOrderByOptio
       },
     ]);
   if (["issues_length", "-issues_length"].includes(orderByKey))
-    orderedModules = sortBy(modules, [(m) => (orderByKey === "issues_length" ? m.total_issues : !m.total_issues)]);
+    orderedModules = sortBy(modules, [(m) => (orderByKey === "issues_length" ? m.total_issues : -m.total_issues)]);
   if (orderByKey === "target_date") orderedModules = sortBy(modules, [(m) => m.target_date]);
-  if (orderByKey === "-target_date") orderedModules = sortBy(modules, [(m) => !m.target_date]);
-  if (orderByKey === "created_at") orderedModules = sortBy(modules, [(m) => m.created_at]);
-  if (orderByKey === "-created_at") orderedModules = sortBy(modules, [(m) => !m.created_at]);
+  if (orderByKey === "-target_date")
+    orderedModules = orderBy(modules, [(m) => !m.target_date, (m) => m.target_date], ["asc", "desc"]);
+  if (["created_at", "-created_at"].includes(orderByKey)) {
+    const direction = orderByKey === "created_at" ? "asc" : "desc";
+    orderedModules = orderBy(
+      modules,
+      [
+        (m) => Date.parse(m.created_at),
+        // API timestamps can include microseconds, which Date.parse truncates.
+        (m) => m.created_at.match(/\.(\d+)/)?.[1].padEnd(6, "0") ?? "000000",
+      ],
+      [direction, direction]
+    );
+  }
 
   if (orderByKey === "sort_order") orderedModules = sortBy(modules, [(m) => m.sort_order]);
   return orderedModules;
