@@ -269,6 +269,7 @@ if os.environ.get("ENABLE_READ_REPLICA", "0") == "1":
 # Redis Config
 REDIS_URL = os.environ.get("REDIS_URL")
 REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
+REDIS_KEY_PREFIX = os.environ.get("REDIS_KEY_PREFIX", "plane")
 
 
 def _redis_ssl_kwargs(url=None):
@@ -296,6 +297,7 @@ if REDIS_SSL:
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": REDIS_URL,
+            "KEY_PREFIX": REDIS_KEY_PREFIX,
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
                 "CONNECTION_POOL_KWARGS": REDIS_SSL_KWARGS,
@@ -307,6 +309,7 @@ else:
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": REDIS_URL,
+            "KEY_PREFIX": REDIS_KEY_PREFIX,
             "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
         }
     }
