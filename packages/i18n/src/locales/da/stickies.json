@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "Dine sticky notes",
+    "placeholder": "klik for at skrive her",
+    "all": "Alle sticky notes",
+    "no-data": "Skriv en idé ned, fang en aha-oplevelse eller optag en tanke. Tilføj en sticky note for at komme i gang.",
+    "add": "Tilføj sticky note",
+    "search_placeholder": "Søg efter titel",
+    "delete": "Slet sticky note",
+    "delete_confirmation": "Er du sikker på, at du vil slette denne sticky note?",
+    "empty_state": {
+      "simple": "Skriv en idé ned, fang en aha-oplevelse eller optag en tanke. Tilføj en sticky note for at komme i gang.",
+      "general": {
+        "title": "Sticky notes er hurtige noter og huskelister, du tager i farten.",
+        "description": "Fang dine tanker og idéer uden besvær ved at oprette sticky notes, som du kan tilgå når som helst og hvor som helst.",
+        "primary_button": {
+          "text": "Tilføj sticky note"
+        }
+      },
+      "search": {
+        "title": "Det matcher ikke nogen af dine sticky notes.",
+        "description": "Prøv et andet ord eller giv os besked,\nhvis du er sikker på din søgning er rigtig. ",
+        "primary_button": {
+          "text": "Tilføj sticky note"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Sticky-navnet må ikke være længere end 100 tegn.",
+        "already_exists": "Der findes allerede en sticky note uden beskrivelse"
+      },
+      "created": {
+        "title": "Sticky oprettet",
+        "message": "Sticky note blev oprettet med succes"
+      },
+      "not_created": {
+        "title": "Sticky ikke oprettet",
+        "message": "Sticky note kunne ikke oprettes"
+      },
+      "updated": {
+        "title": "Sticky opdateret",
+        "message": "Sticky note blev opdateret med succes"
+      },
+      "not_updated": {
+        "title": "Sticky ikke opdateret",
+        "message": "Sticky note kunne ikke opdateres"
+      },
+      "removed": {
+        "title": "Sticky fjernet",
+        "message": "Sticky note blev fjernet med succes"
+      },
+      "not_removed": {
+        "title": "Sticky ikke fjernet",
+        "message": "Sticky note kunne ikke fjernes"
+      }
+    }
+  }
+}

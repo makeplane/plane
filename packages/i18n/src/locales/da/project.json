@@ -1,0 +1,419 @@
+{
+  "project_view": {
+    "sort_by": {
+      "created_at": "Oprettet den",
+      "updated_at": "Opdateret den",
+      "name": "Navn"
+    }
+  },
+  "project_cycles": {
+    "add_cycle": "Tilføj cyklus",
+    "more_details": "Flere detaljer",
+    "cycle": "Cyklus",
+    "update_cycle": "Opdater cyklus",
+    "create_cycle": "Opret cyklus",
+    "no_matching_cycles": "Ingen matchende cyklusser",
+    "remove_filters_to_see_all_cycles": "Fjern filtrene for at se alle cyklusser",
+    "remove_search_criteria_to_see_all_cycles": "Fjern søgekriterierne for at se alle cyklusser",
+    "only_completed_cycles_can_be_archived": "Kun afsluttede cyklusser kan arkiveres",
+    "start_date": "Startdato",
+    "end_date": "Slutdato",
+    "in_your_timezone": "I din tidszone",
+    "transfer_work_items": "Overfør {count} opgaver",
+    "transfer": {
+      "no_cycles_available": "Ingen andre cyklusser tilgængelige at overføre opgaver til."
+    },
+    "date_range": "Datointerval",
+    "add_date": "Tilføj dato",
+    "active_cycle": {
+      "label": "Aktiv cyklus",
+      "progress": "Fremdrift",
+      "chart": "Burndown-diagram",
+      "priority_issue": "Prioriterede opgaver",
+      "assignees": "Tildelte",
+      "issue_burndown": "Opgave-burndown",
+      "ideal": "Ideel",
+      "current": "Nuværende",
+      "labels": "Etiketter",
+      "trailing": "Bagud",
+      "leading": "Foran"
+    },
+    "upcoming_cycle": {
+      "label": "Kommende cyklus"
+    },
+    "completed_cycle": {
+      "label": "Afsluttet cyklus"
+    },
+    "status": {
+      "days_left": "Dage tilbage",
+      "completed": "Afsluttet",
+      "yet_to_start": "Endnu ikke startet",
+      "in_progress": "I gang",
+      "draft": "Kladde"
+    },
+    "action": {
+      "restore": {
+        "title": "Genskab cyklus",
+        "success": {
+          "title": "Cyklus genskabt",
+          "description": "Cyklussen er blevet genskabt."
+        },
+        "failed": {
+          "title": "Genskabelse af cyklus mislykkedes",
+          "description": "Cyklussen kunne ikke genskabes. Prøv venligst igen."
+        }
+      },
+      "favorite": {
+        "loading": "Tilføjer cyklus til favoritter",
+        "success": {
+          "description": "Cyklus tilføjet til favoritter.",
+          "title": "Succes!"
+        },
+        "failed": {
+          "description": "Kunne ikke tilføje cyklussen til favoritter. Prøv venligst igen.",
+          "title": "Fejl!"
+        }
+      },
+      "unfavorite": {
+        "loading": "Fjerner cyklus fra favoritter",
+        "success": {
+          "description": "Cyklus fjernet fra favoritter.",
+          "title": "Succes!"
+        },
+        "failed": {
+          "description": "Kunne ikke fjerne cyklussen fra favoritter. Prøv venligst igen.",
+          "title": "Fejl!"
+        }
+      },
+      "update": {
+        "loading": "Opdaterer cyklus",
+        "success": {
+          "description": "Cyklus opdateret med succes.",
+          "title": "Succes!"
+        },
+        "failed": {
+          "description": "Fejl ved opdatering af cyklussen. Prøv venligst igen.",
+          "title": "Fejl!"
+        },
+        "error": {
+          "already_exists": "Du har allerede en cyklus på de angivne datoer. Hvis du vil oprette en kladdecyklus, kan du gøre det ved at fjerne begge datoer."
+        }
+      }
+    },
+    "empty_state": {
+      "general": {
+        "title": "Grupper og tidsafgræns dit arbejde i cyklusser.",
+        "description": "Opdel arbejdet i tidsafgrænsede bidder, arbejd baglæns fra din projektdeadline for at sætte datoer, og skab håndgribelige fremskridt som et team.",
+        "primary_button": {
+          "text": "Opret din første cyklus",
+          "comic": {
+            "title": "Cyklusser er gentagne tidsafgrænsninger.",
+            "description": "Et sprint, en iteration eller enhver anden betegnelse du bruger for ugentlig eller fjortendaglig opgavestyring er en cyklus."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Ingen opgaver tilføjet til cyklussen",
+        "description": "Tilføj eller opret opgaver du ønsker at tidsafgrænse og levere i denne cyklus",
+        "primary_button": {
+          "text": "Opret ny opgave"
+        },
+        "secondary_button": {
+          "text": "Tilføj eksisterende opgave"
+        }
+      },
+      "completed_no_issues": {
+        "title": "Ingen opgaver i cyklussen",
+        "description": "Ingen opgaver i cyklussen. Opgaver er enten overført eller skjult. For at se skjulte opgaver (hvis der er nogen), skal du opdatere dine visningsindstillinger tilsvarende."
+      },
+      "active": {
+        "title": "Ingen aktiv cyklus",
+        "description": "En aktiv cyklus inkluderer enhver periode, der indeholder dags dato i sit interval. Find fremdrift og detaljer om den aktive cyklus her."
+      },
+      "archived": {
+        "title": "Ingen arkiverede cyklusser endnu",
+        "description": "For at rydde op i dit projekt kan du arkivere afsluttede cyklusser. Find dem her, når de er arkiveret."
+      }
+    }
+  },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "Gem filtrerede visninger for dit projekt. Opret så mange du har brug for",
+        "description": "Visninger er et sæt gemte filtre, du bruger hyppigt eller ønsker nem adgang til. Alle dine kolleger i et projekt kan se alles visninger og vælge den, der passer bedst til deres behov.",
+        "primary_button": {
+          "text": "Opret din første visning",
+          "comic": {
+            "title": "Visninger fungerer ovenpå opgaveegenskaber.",
+            "description": "Du kan oprette en visning herfra med så mange egenskaber som filtre, du finder passende."
+          }
+        },
+        "filter": {
+          "title": "Ingen matchende visninger",
+          "description": "Ingen visninger matcher søgekriterierne.\n Opret en ny visning i stedet."
+        }
+      },
+      "no_archived_issues": {
+        "title": "Ingen arkiverede opgaver endnu",
+        "description": "Manuelt eller via automatisering kan du arkivere opgaver, der er afsluttede eller annullerede. Find dem her, når de er arkiveret.",
+        "primary_button": {
+          "text": "Indstil automatisering"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Ingen opgaver fundet, der matcher de anvendte filtre",
+        "secondary_button": {
+          "text": "Ryd alle filtre"
+        }
+      },
+      "public": {
+        "title": "Ingen offentlige sider endnu",
+        "description": "Se sider delt med alle i dit projekt lige her.",
+        "primary_button": {
+          "text": "Opret din første side"
+        }
+      },
+      "archived": {
+        "title": "Ingen arkiverede sider endnu",
+        "description": "Arkiver sider, der ikke er i dit fokus i øjeblikket. Få adgang til dem her efter behov."
+      },
+      "shared": {
+        "title": "Ingen delte sider endnu",
+        "description": "Sider som andre har delt med dig, vil blive vist her."
+      }
+    },
+    "delete_view": {
+      "title": "Er du sikker på, at du vil slette denne visning?",
+      "content": "Hvis du bekræfter, vil alle sorterings-, filtrerings- og visningsindstillinger + det layout du har valgt for denne visning, blive permanent slettet uden mulighed for genoprettelse."
+    }
+  },
+  "project_issues": {
+    "empty_state": {
+      "no_issues": {
+        "title": "Opret en opgave og tildel den til nogen, endda dig selv",
+        "description": "Tænk på opgaver som jobs, aktiviteter eller to-dos. En opgave og dens underopgaver er i reglen tidsbaserede handlinger tildelt medlemmer af dit team. Dit team opretter, tildeler og færdiggør opgaver for at bevæge projektet mod sit mål.",
+        "primary_button": {
+          "text": "Opret din første opgave",
+          "comic": {
+            "title": "Opgaver er byggeklodser i Plane.",
+            "description": "Omdesign af Plane UI, Rebranding af virksomheden eller Lancering af det nye brændstofindsprøjtningssystem er eksempler på opgaver, der sandsynligvis har underopgaver."
+          }
+        }
+      },
+      "no_archived_issues": {
+        "title": "Ingen arkiverede opgaver endnu",
+        "description": "Manuelt eller via automatisering kan du arkivere opgaver, der er afsluttede eller annullerede. Find dem her, når de er arkiveret.",
+        "primary_button": {
+          "text": "Indstil automatisering"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Ingen opgaver fundet, der matcher de anvendte filtre",
+        "secondary_button": {
+          "text": "Ryd alle filtre"
+        }
+      }
+    }
+  },
+  "project_module": {
+    "add_module": "Tilføj modul",
+    "update_module": "Opdater modul",
+    "create_module": "Opret modul",
+    "archive_module": "Arkiver modul",
+    "restore_module": "Genskab modul",
+    "delete_module": "Slet modul",
+    "empty_state": {
+      "general": {
+        "title": "Kortlæg dine projektmilepæle til moduler, og spor samlet arbejde nemt.",
+        "description": "En gruppe af opgaver, der hører til et logisk, hierarkisk overordnet element, udgør et modul. Tænk på dem som en måde at spore arbejde ud fra projektmilepæle. De har deres egne perioder og deadliner samt analyser til at hjælpe dig med at se, hvor tæt på eller langt fra du er en milepæl.",
+        "primary_button": {
+          "text": "Byg dit første modul",
+          "comic": {
+            "title": "Moduler hjælper med at gruppere arbejde hierarkisk.",
+            "description": "Et indkøbskurvsmodul, et chassismodul og et lagermodul er alle gode eksempler på denne gruppering."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Ingen opgaver i modulet",
+        "description": "Opret eller tilføj opgaver, som du ønsker at udføre som en del af dette modul",
+        "primary_button": {
+          "text": "Opret nye opgaver"
+        },
+        "secondary_button": {
+          "text": "Tilføj en eksisterende opgave"
+        }
+      },
+      "archived": {
+        "title": "Ingen arkiverede moduler endnu",
+        "description": "For at rydde op i dit projekt kan du arkivere afsluttede eller annullerede moduler. Find dem her, når de er arkiveret."
+      },
+      "sidebar": {
+        "in_active": "Dette modul er ikke aktivt endnu.",
+        "invalid_date": "Ugyldig dato. Indtast venligst en gyldig dato."
+      }
+    },
+    "quick_actions": {
+      "archive_module": "Arkiver modul",
+      "archive_module_description": "Kun afsluttede eller annullerede\nmoduler kan arkiveres.",
+      "delete_module": "Slet modul"
+    },
+    "toast": {
+      "copy": {
+        "success": "Modullink kopieret til udklipsholder"
+      },
+      "delete": {
+        "success": "Modul slettet med succes",
+        "error": "Fejl ved sletning af modul"
+      }
+    }
+  },
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "Skriv en note, et dokument eller en hel videnbase. Få Galileo, Planes AI-assistent, til at hjælpe dig i gang",
+        "description": "Sider er et ide- og tankerum i Plane. tag mødenoter, formater dem nemt, indlejr opgaver, placer dem ved hjælp af et bibliotek af komponenter, og hold dem alle i dit projekts kontekst. For hurtigt at udarbejde et dokument kan du tilkalde Galileo, Planes AI, med en genvej eller et klik på en knap.",
+        "primary_button": {
+          "text": "Opret din første side"
+        }
+      },
+      "private": {
+        "title": "Ingen private sider endnu",
+        "description": "Gem dine private tanker her. Når du er klar til at dele dem, er teamet blot et klik væk.",
+        "primary_button": {
+          "text": "Opret din første side"
+        }
+      },
+      "public": {
+        "title": "Ingen offentlige sider endnu",
+        "description": "Se sider delt med alle i dit projekt lige her.",
+        "primary_button": {
+          "text": "Opret din første side"
+        }
+      },
+      "archived": {
+        "title": "Ingen arkiverede sider endnu",
+        "description": "Arkiver sider, der ikke er i dit fokus i øjeblikket. Få adgang til dem her efter behov."
+      }
+    }
+  },
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "Indbakke er ikke aktiveret for projektet.",
+        "description": "Indbakke hjælper dig med at håndtere indkommende anmodninger til dit projekt og tilføje dem som opgaver i dit arbejdsflow. Aktivér indbakke fra projektindstillinger for at administrere anmodninger.",
+        "primary_button": {
+          "text": "Administrer funktioner"
+        }
+      },
+      "cycle": {
+        "title": "Cyklusser er ikke aktiveret for dette projekt.",
+        "description": "Opdel arbejdet i tidsafgrænsede bidder, arbejd baglæns fra din projektdeadline for at sætte datoer, og skab håndgribelige fremskridt som et team. Aktivér cyklusfunktionen for dit projekt for at begynde at bruge dem.",
+        "primary_button": {
+          "text": "Administrer funktioner"
+        }
+      },
+      "module": {
+        "title": "Moduler er ikke aktiveret for projektet.",
+        "description": "Moduler er byggeklodserne i dit projekt. Aktivér moduler fra projektindstillinger for at begynde at bruge dem.",
+        "primary_button": {
+          "text": "Administrer funktioner"
+        }
+      },
+      "page": {
+        "title": "Sider er ikke aktiveret for projektet.",
+        "description": "Sider er byggeklodserne i dit projekt. Aktivér sider fra projektindstillinger for at begynde at bruge dem.",
+        "primary_button": {
+          "text": "Administrer funktioner"
+        }
+      },
+      "view": {
+        "title": "Visninger er ikke aktiveret for projektet.",
+        "description": "Visninger er byggeklodserne i dit projekt. Aktivér visninger fra projektindstillinger for at begynde at bruge dem.",
+        "primary_button": {
+          "text": "Administrer funktioner"
+        }
+      }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "Opgaverum (Backlog)",
+      "planned": "Planlagt",
+      "in_progress": "I gang",
+      "paused": "På pause",
+      "completed": "Afsluttet",
+      "cancelled": "Annulleret"
+    },
+    "layout": {
+      "list": "Listelayout",
+      "board": "Gallerilayout",
+      "timeline": "Tidslinjelayout"
+    },
+    "order_by": {
+      "name": "Navn",
+      "progress": "Fremdrift",
+      "issues": "Antal opgaver",
+      "due_date": "Forfaldsdato",
+      "created_at": "Oprettelsesdato",
+      "manual": "Manuel"
+    }
+  },
+  "project_members": {
+    "full_name": "Fulde navn",
+    "display_name": "Visningsnavn",
+    "email": "E-mail",
+    "joining_date": "Tilmeldingsdato",
+    "role": "Rolle"
+  },
+  "project": {
+    "members_import": {
+      "title": "Importer medlemmer fra CSV",
+      "description": "Upload en CSV med kolonnerne: Email og Role (5=Gæst, 15=Medlem, 20=Admin). Brugere skal allerede være medlemmer af arbejdsområdet.",
+      "download_sample": "Download eksempel-CSV",
+      "dropzone": {
+        "active": "Slip CSV-fil her",
+        "inactive": "Træk og slip eller klik for at uploade",
+        "file_type": "Kun .csv-filer er understøttet"
+      },
+      "buttons": {
+        "cancel": "Annuller",
+        "import": "Importer",
+        "try_again": "Prøv igen",
+        "close": "Luk",
+        "done": "Færdig"
+      },
+      "progress": {
+        "uploading": "Uploader...",
+        "importing": "Importerer..."
+      },
+      "summary": {
+        "title": {
+          "complete": "Import fuldført"
+        },
+        "message": {
+          "success": "{count} medlem{plural} blev importeret til projektet.",
+          "no_imports": "Ingen nye medlemmer blev importeret fra CSV-filen."
+        },
+        "stats": {
+          "added": "Tilføjet",
+          "reactivated": "Genaktiveret",
+          "already_members": "Allerede medlemmer",
+          "skipped": "Sprunget over", 
+          "download_errors": "Download oplysninger om medlemmer, der blev sprunget over"
+        },
+        "download_errors": "Download detaljer om sprunget over"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Ugyldig fil",
+          "message": "Kun CSV-filer er understøttet."
+        },
+        "import_failed": {
+          "title": "Import mislykkedes",
+          "message": "Noget gik galt."
+        }
+      }
+    }
+  }
+}

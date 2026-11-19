@@ -1,0 +1,65 @@
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "Slip filer her eller klik for at uploade"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "Filen er for stor.",
+        "description": "Maksimal størrelse pr. fil er {maxFileSize} MB"
+      },
+      "unsupported_file_type": {
+        "title": "Ikke-understøttet filtype.",
+        "description": "Se understøttede formater"
+      },
+      "default": {
+        "title": "Upload mislykkedes.",
+        "description": "Noget gik galt. Prøv venligst igen."
+      }
+    },
+    "upgrade": {
+      "description": "Opgrader dit abonnement for at se denne vedhæftning."
+    },
+    "aria": {
+      "click_to_upload": "Klik for at uploade vedhæftning"
+    }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "Konverter til indlejring",
+      "convert_to_link": "Konverter til link",
+      "convert_to_richcard": "Konverter til fremhævet kort"
+    },
+    "placeholder": {
+      "insert_embed": "Indsæt dit foretrukne indlejringslink her, såsom YouTube-video, Figma-design osv.",
+      "link": "Indtast eller indsæt et link"
+    },
+    "input_modal": {
+      "embed": "Indlejring",
+      "works_with_links": "Fungerer med YouTube, Figma, Google Docs med flere"
+    },
+    "error": {
+      "not_valid_link": "Indtast venligst en gyldig URL."
+    }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "Beskriv indholdet af denne blok",
+      "generated_here": "Dit AI-indhold vil blive genereret her"
+    },
+    "block_types": {
+      "placeholder": "Vælg bloktype",
+      "summarize_page": "Opsummer side",
+      "custom_prompt": "Tilpasset instruktion"
+    },
+    "actions": {
+      "discard": "Kasser",
+      "generate": "Generer",
+      "generating": "Genererer",
+      "rewriting": "Omskriver",
+      "rewrite": "Omskriv",
+      "use_this": "Brug dette",
+      "refine": "Tilpas"
+    }
+  }
+}
