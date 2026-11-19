@@ -433,7 +433,8 @@ export const processRelativeDate = (value: string): Date => {
       date.setDate(date.getDate() + amount * 7);
       break;
     case "months":
-      date.setMonth(date.getMonth() + amount);
+      // Match the API and other date filters, where one month is 30 days.
+      date.setDate(date.getDate() + amount * 30);
       break;
     default:
       throw new Error(`Unsupported time unit: ${unit}`);
