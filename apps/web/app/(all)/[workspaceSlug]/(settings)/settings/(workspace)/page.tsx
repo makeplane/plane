@@ -11,6 +11,7 @@ import { useTranslation } from "@plane/i18n";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { WorkspaceDetails } from "@/components/workspace/settings/workspace-details";
+import { TelegramAccountLink } from "@/components/integration/telegram/account-link";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // local imports
@@ -29,6 +30,7 @@ function GeneralWorkspaceSettingsPage() {
     <SettingsContentWrapper header={<GeneralWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
       <WorkspaceDetails />
+      {currentWorkspace?.slug && <TelegramAccountLink workspaceSlug={currentWorkspace.slug} />}
     </SettingsContentWrapper>
   );
 }

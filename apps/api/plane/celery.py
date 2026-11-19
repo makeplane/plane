@@ -94,6 +94,10 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.cleanup_task.delete_webhook_logs",
         "schedule": crontab(hour=3, minute=30),  # UTC 03:30
     },
+    "check-every-day-to-delete-expired-telegram-records": {
+        "task": "plane.bgtasks.cleanup_task.delete_expired_telegram_records",
+        "schedule": crontab(hour=3, minute=40),  # UTC 03:40
+    },
     "check-every-day-to-delete-exporter-history": {
         "task": "plane.bgtasks.exporter_expired_task.delete_old_s3_link",
         "schedule": crontab(hour=3, minute=45),  # UTC 03:45

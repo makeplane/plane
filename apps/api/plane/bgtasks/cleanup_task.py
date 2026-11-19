@@ -23,6 +23,8 @@ from plane.db.models import (
     APIActivityLog,
     IssueDescriptionVersion,
     WebhookLog,
+    TelegramLinkToken,
+    TelegramProcessedUpdate,
 )
 from plane.utils.exception_logger import log_exception
 
@@ -158,6 +160,25 @@ def get_webhook_logs_queryset():
     )
 
 
+def get_expired_telegram_link_tokens_queryset():
+    return (
+        TelegramLinkToken.all_objects.filter(expires_at__lte=timezone.now())
+        .values_list("id", flat=True)
+        .iterator(chunk_size=BATCH_SIZE)
+    )
+
+
+def get_old_telegram_updates_queryset():
+    # Telegram retries webhook updates for a limited time; retain IDs for a week
+    # to make repeated deliveries idempotent without growing this table forever.
+    cutoff_time = timezone.now() - timedelta(days=7)
+    return (
+        TelegramProcessedUpdate.all_objects.filter(created_at__lte=cutoff_time)
+        .values_list("id", flat=True)
+        .iterator(chunk_size=BATCH_SIZE)
+    )
+
+
 @shared_task
 def delete_api_logs():
     """Delete old API activity logs."""
@@ -205,4 +226,18 @@ def delete_webhook_logs():
         queryset_func=get_webhook_logs_queryset,
         model=WebhookLog,
         task_name="Webhook Log",
+    )
+
+
+@shared_task
+def delete_expired_telegram_records():
+    process_cleanup_task(
+        queryset_func=get_expired_telegram_link_tokens_queryset,
+        model=TelegramLinkToken,
+        task_name="Telegram Link Token",
+    )
+    process_cleanup_task(
+        queryset_func=get_old_telegram_updates_queryset,
+        model=TelegramProcessedUpdate,
+        task_name="Telegram Processed Update",
     )

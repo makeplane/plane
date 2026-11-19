@@ -10,3 +10,10 @@ from .github import (
     GithubCommentSync,
 )
 from .slack import SlackProjectSync
+from .telegram import (
+    TelegramIntegration,
+    TelegramProjectChat,
+    TelegramUserLink,
+    TelegramLinkToken,
+    TelegramProcessedUpdate,
+)
