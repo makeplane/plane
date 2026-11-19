@@ -37,7 +37,6 @@ export function UserGreetingsView(props: IUserGreetingsView) {
   }).format(currentTime);
 
   const timeString = new Intl.DateTimeFormat("en-US", {
-    timeZone: user?.user_timezone,
     hour12: false, // Use 24-hour format
     hour: "2-digit",
     minute: "2-digit",
