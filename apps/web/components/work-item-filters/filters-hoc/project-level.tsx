@@ -95,15 +95,12 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
   );
   const createViewLabel = useMemo(() => props.saveViewOptions?.label, [props.saveViewOptions?.label]);
   const updateViewLabel = useMemo(() => props.updateViewOptions?.label, [props.updateViewOptions?.label]);
-  const hasAdditionalChanges = useMemo(
-    () =>
-      !isEqual(initialWorkItemFilters?.displayFilters, viewDetails?.display_filters) ||
-      !isEqual(
-        removeNillKeys(initialWorkItemFilters?.displayProperties),
-        removeNillKeys(viewDetails?.display_properties)
-      ),
-    [initialWorkItemFilters, viewDetails]
-  );
+  const hasAdditionalChanges =
+    !isEqual(initialWorkItemFilters?.displayFilters, viewDetails?.display_filters) ||
+    !isEqual(
+      removeNillKeys(initialWorkItemFilters?.displayProperties),
+      removeNillKeys(viewDetails?.display_properties)
+    );
 
   const getDefaultViewDetailPayload: () => Partial<IProjectView> = useCallback(
     () => ({
@@ -156,6 +153,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
             title: "Success!",
             message: "Your view has been updated successfully.",
           });
+          return;
         })
         .catch(() => {
           setToast({
