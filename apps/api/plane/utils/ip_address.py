@@ -199,7 +199,10 @@ def validate_url(url, allowed_ips=None, allowed_hosts=None):
 def get_client_ip(request):
     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:
-        ip = x_forwarded_for.split(",")[0]
-    else:
-        ip = request.META.get("REMOTE_ADDR")
-    return ip
+        raw_ip = x_forwarded_for.split(",")[0].strip()
+        try:
+            ipaddress.ip_address(raw_ip)
+            return raw_ip
+        except ValueError:
+            pass
+    return request.META.get("REMOTE_ADDR")
