@@ -65,6 +65,7 @@ from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
     ProjectMemberPermission,
+    visible_issue_q,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
@@ -217,32 +218,6 @@ def guest_cannot_view_issue(user_id, issue, slug):
     Callers deny the whole request with 404, the same response as a missing
     issue."""
     return issue is not None and issue.created_by_id != user_id and is_restricted_guest(user_id, issue.project_id, slug)
-
-
-def visible_issue_q(user):
-    """Issue filter for work items `user` may view, across projects: every
-    issue in a project where they are an active member above GUEST or a GUEST
-    with `guest_view_all_features`, otherwise only the issues they created."""
-    return (
-        Q(
-            project__project_projectmember__member=user,
-            project__project_projectmember__is_active=True,
-            project__project_projectmember__role__gt=ROLE.GUEST.value,
-        )
-        | Q(
-            project__project_projectmember__member=user,
-            project__project_projectmember__is_active=True,
-            project__project_projectmember__role=ROLE.GUEST.value,
-            project__guest_view_all_features=True,
-        )
-        | Q(
-            project__project_projectmember__member=user,
-            project__project_projectmember__is_active=True,
-            project__project_projectmember__role=ROLE.GUEST.value,
-            project__guest_view_all_features=False,
-            created_by=user,
-        )
-    )
 
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
