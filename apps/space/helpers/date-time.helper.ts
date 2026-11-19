@@ -46,6 +46,11 @@ export const getDate = (date: string | Date | undefined | null): Date | undefine
   }
 };
 
+export const isInDateFormat = (date: string) => {
+  const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+  return datePattern.test(date);
+};
+
 /**
  * @returns {string | null} formatted date in the format of MMM dd, yyyy
  * @description Returns date in the formatted format
@@ -53,8 +58,11 @@ export const getDate = (date: string | Date | undefined | null): Date | undefine
  * @example renderFormattedDate("2024-01-01") // Jan 01, 2024
  */
 export const renderFormattedDate = (date: string | Date | undefined | null): string | null => {
+  if (!date || date === "") return null;
   // Parse the date to check if it is valid
-  const parsedDate = getDate(date);
+  // Date-only strings (yyyy-mm-dd) use getDate() to avoid timezone offsets.
+  // Full timestamps (e.g. ISO strings with time) are parsed with new Date() so the date matches the user's local timezone.
+  const parsedDate = typeof date === "string" && !isInDateFormat(date) ? new Date(date) : getDate(date);
   // return if undefined
   if (!parsedDate) return null;
   // Check if the parsed date is valid before formatting
