@@ -276,9 +276,11 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
     @invalidate_cache(path="/api/users/me/workspaces/", multiple=True)
     def create(self, request):
         invitations = request.data.get("invitations", [])
-        workspace_invitations = WorkspaceMemberInvite.objects.filter(
-            pk__in=invitations, email=request.user.email
-        ).order_by("-created_at")
+        workspace_invitations = (
+            WorkspaceMemberInvite.objects.filter(pk__in=invitations, email=request.user.email)
+            .select_related("workspace")
+            .order_by("-created_at")
+        )
 
         # If the user is already a member of workspace and was deactivated then activate the user
         for invitation in workspace_invitations:
