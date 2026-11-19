@@ -24,11 +24,13 @@ describe("sub-work-item date filters", () => {
     vi.setSystemTime(new Date(2026, 10, 11, 12));
     expect(new Date().getTimezoneOffset()).toBe(300);
 
-    const issues = [
-      { id: "before", [key]: "2026-11-17" },
-      { id: "boundary", [key]: "2026-11-18" },
-      { id: "after", [key]: "2026-11-19" },
-    ] as TIssue[];
+    // The date filter only reads the selected date; the ID identifies the matching fixtures.
+    const fixtures: Pick<TIssue, "id" | "start_date" | "target_date">[] = [
+      { id: "before", start_date: null, target_date: null, [key]: "2026-11-17" },
+      { id: "boundary", start_date: null, target_date: null, [key]: "2026-11-18" },
+      { id: "after", start_date: null, target_date: null, [key]: "2026-11-19" },
+    ];
+    const issues = fixtures as TIssue[];
 
     expect(getFilteredWorkItems(issues, { [key]: ["1_weeks;after;fromnow"] }).map((issue) => issue.id)).toEqual([
       "boundary",
