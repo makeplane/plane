@@ -98,7 +98,7 @@ catalog:
   "cors": "^2.8.5"
   "date-fns": "^4.1.0"
   "dotenv": "16.4.7"
-  "effect": "3.20.0"
+  "effect": "3.22.4"
   "emoji-picker-react": "^4.5.16"
   "emoji-regex": "^10.3.0"
   "export-to-csv": "^1.4.0"
