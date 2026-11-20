@@ -51,6 +51,14 @@ type BreadcrumbsProps = {
    * @default 640
    */
   collapseBreakpoint?: number;
+  /**
+   * Whether the overflow menu (the ellipsis and the separator after it) is rendered when the leading crumbs
+   * collapse. Turn it off on a page whose header is too tight for it; the collapsed crumbs are then not
+   * reachable from the trail, so only do that where another route to them exists.
+   *
+   * @default true
+   */
+  showOverflowMenu?: boolean;
 };
 
 /** The pulsing stand-in shown per crumb while the trail's data is loading. */
@@ -259,6 +267,7 @@ function Breadcrumbs(props: BreadcrumbsProps) {
     ariaLabel,
     showMoreLabel,
     collapseBreakpoint = COLLAPSE_BREAKPOINT,
+    showOverflowMenu = true,
   } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -317,7 +326,7 @@ function Breadcrumbs(props: BreadcrumbsProps) {
             ))}
           {isCollapsed && (
             <>
-              {collapsedCrumbs.length > 0 && (
+              {showOverflowMenu && collapsedCrumbs.length > 0 && (
                 <>
                   <PropelBreadcrumbItem>
                     <Menu>
