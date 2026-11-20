@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams, usePathname } from "next/navigation";
@@ -39,9 +40,21 @@ type TAuthenticationWrapper = {
 // to use.
 const isValidURL = isValidNextPath;
 
+// Navigates after render, once per target: navigating during render restarted the navigation on every re-render.
+function Redirect(props: { to: string; replace?: boolean }) {
+  const { to, replace = false } = props;
+  const router = useAppRouter();
+
+  useEffect(() => {
+    if (replace) router.replace(to);
+    else router.push(to);
+  }, [router, to, replace]);
+
+  return null;
+}
+
 export const AuthenticationWrapper = observer(function AuthenticationWrapper(props: TAuthenticationWrapper) {
   const pathname = usePathname();
-  const router = useAppRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next_path");
   // props
@@ -102,37 +115,31 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
     else {
       if (currentUserProfile?.id && isUserOnboard) {
         const currentRedirectRoute = getWorkspaceRedirectionUrl();
-        router.push(currentRedirectRoute);
-        return <></>;
+        return <Redirect to={currentRedirectRoute} />;
       } else {
-        router.push("/onboarding");
-        return <></>;
+        return <Redirect to="/onboarding" />;
       }
     }
   }
 
   if (pageType === EPageTypes.ONBOARDING) {
     if (!currentUser?.id) {
-      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
-      return <></>;
+      return <Redirect to={`/${pathname ? `?next_path=${pathname}` : ``}`} />;
     } else {
       if (currentUser && currentUserProfile?.id && isUserOnboard) {
         const currentRedirectRoute = getWorkspaceRedirectionUrl();
-        router.replace(currentRedirectRoute);
-        return <></>;
+        return <Redirect to={currentRedirectRoute} replace />;
       } else return <>{children}</>;
     }
   }
 
   if (pageType === EPageTypes.SET_PASSWORD) {
     if (!currentUser?.id) {
-      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
-      return <></>;
+      return <Redirect to={`/${pathname ? `?next_path=${pathname}` : ``}`} />;
     } else {
       if (currentUser && !currentUser?.is_password_autoset && currentUserProfile?.id && isUserOnboard) {
         const currentRedirectRoute = getWorkspaceRedirectionUrl();
-        router.push(currentRedirectRoute);
-        return <></>;
+        return <Redirect to={currentRedirectRoute} />;
       } else return <>{children}</>;
     }
   }
@@ -141,12 +148,10 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
     if (currentUser?.id) {
       if (currentUserProfile && currentUserProfile?.id && isUserOnboard) return <>{children}</>;
       else {
-        router.push(`/onboarding`);
-        return <></>;
+        return <Redirect to={`/onboarding`} />;
       }
     } else {
-      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
-      return <></>;
+      return <Redirect to={`/${pathname ? `?next_path=${pathname}` : ``}`} />;
     }
   }
 
