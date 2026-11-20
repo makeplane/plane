@@ -12,6 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import type { GroupByColumnTypes, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
+import { cn } from "@plane/utils";
 // hooks
 import { SectionEmptyState } from "@/components/empty-state/section-empty-state-root";
 import { getGroupByColumns, isWorkspaceLevel } from "@/components/issues/issue-layouts/utils";
@@ -85,8 +86,9 @@ export const SubIssuesListRoot = observer(function SubIssuesListRoot(props: Prop
 
   const isSubWorkItems = issueServiceType === EIssueServiceType.ISSUES;
 
+  // the rows' properties are wider than a phone screen, so the top-level list scrolls sideways on its own
   return (
-    <div className="relative">
+    <div className={cn("relative", isRootLevel && "overflow-x-auto")}>
       {isRootLevel && filteredSubWorkItemsCount === 0 ? (
         <SectionEmptyState
           title={
