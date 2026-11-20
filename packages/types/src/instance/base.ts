@@ -79,6 +79,7 @@ export interface IInstanceAdmin {
 }
 
 export type TInstanceConfigurationKeys =
+  | "DEFAULT_LANGUAGE"
   | TInstanceAIConfigurationKeys
   | TInstanceEmailConfigurationKeys
   | TInstanceImageConfigurationKeys
@@ -91,6 +92,7 @@ export interface IInstanceConfiguration {
   updated_at: string;
   key: TInstanceConfigurationKeys;
   value: string;
+  is_read_only?: boolean;
   created_by: string | null;
   updated_by: string | null;
 }

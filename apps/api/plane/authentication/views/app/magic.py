@@ -20,6 +20,7 @@ from plane.authentication.utils.redirection_path import get_redirection_path
 from plane.authentication.utils.user_auth_workflow import post_user_auth_workflow
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
+from plane.license.utils.instance_value import get_default_language
 from plane.authentication.utils.host import base_host
 from plane.db.models import User, Profile
 from plane.authentication.adapter.error import (
@@ -106,7 +107,7 @@ class MagicSignInEndpoint(View):
                 callback=post_user_auth_workflow,
             )
             user = provider.authenticate()
-            profile, _ = Profile.objects.get_or_create(user=user)
+            profile, _ = Profile.objects.get_or_create(user=user, defaults={"language": get_default_language})
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)
             if user.is_password_autoset and profile.is_onboarded:

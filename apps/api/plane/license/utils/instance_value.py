@@ -11,6 +11,7 @@ from django.conf import settings
 # Module imports
 from plane.license.models import InstanceConfiguration
 from plane.license.utils.encryption import decrypt_data
+from plane.utils.language import normalize_default_language
 
 
 # Helper function to return value from the passed key
@@ -37,6 +38,13 @@ def get_configuration_value(keys):
             environment_list.append(os.environ.get(key.get("key"), key.get("default")))
 
     return tuple(environment_list)
+
+
+def get_default_language():
+    (language,) = get_configuration_value(
+        [{"key": "DEFAULT_LANGUAGE", "default": os.environ.get("DEFAULT_LANGUAGE", "en")}]
+    )
+    return normalize_default_language(language)
 
 
 def get_email_configuration():
