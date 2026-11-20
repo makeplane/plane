@@ -115,7 +115,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
 
   return (
     <ActivityCommentCard
-      id={comment.id}
+      id={commentBlockId}
       showConnector={showConnector}
       highlighted={isHighlighted}
       avatar={
