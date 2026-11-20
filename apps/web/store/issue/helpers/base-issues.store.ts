@@ -45,6 +45,9 @@ import {
   getSubGroupIssueKeyActions,
 } from "./base-issues-utils";
 import type { IBaseIssueFilterStore } from "./issue-filter-helper.store";
+// the user's own in-flight edits, so live refetches never overwrite them
+import { LOCAL_QUIET_MS, localEdits } from "@/lib/live-events/local-edits";
+import { issueSyncQueue } from "@/lib/live-events/issue-sync-queue";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -64,6 +67,8 @@ export interface IBaseIssuesStore {
   //actions
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   clear(shouldClearPaginationOptions?: boolean): void;
+  /** runs a live refetch in place; see BaseIssuesStore.liveRefetch */
+  liveRefetch: (run: () => Promise<unknown>) => Promise<"applied" | "stale" | "busy">;
   // helper methods
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>): string[];
@@ -88,6 +93,11 @@ export interface IBaseIssuesStore {
 
   addIssueToList: (issueId: string) => void;
   removeIssueFromList: (issueId: string) => void;
+  updateIssueList: (
+    issue?: TIssue,
+    issueBeforeUpdate?: TIssue,
+    action?: EIssueGroupedAction.ADD | EIssueGroupedAction.DELETE
+  ) => void;
   addIssuesToModule: (
     workspaceSlug: string,
     projectId: string,
@@ -194,6 +204,9 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   issueFilterStore;
   // API Abort controller
   controller: AbortController;
+  // the live refetch armed for the next clear(), and the one whose response is awaited
+  private liveArmed: { startSeq: number; stale: boolean } | undefined = undefined;
+  private liveActive: { startSeq: number; stale: boolean } | undefined = undefined;
 
   constructor(
     _rootStore: IIssueRootStore,
@@ -465,6 +478,21 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     id?: string,
     shouldClearPaginationOptions = true
   ) {
+    // a live refetch's response is a snapshot from when the request was sent. If the user
+    // edited the board since, or an edit is still waiting for the server, applying it would move cards back:
+    // drop it (the applier retries once the edits have settled).
+    const live = this.liveActive;
+    if (live) {
+      this.liveActive = undefined;
+      if (live.startSeq !== localEdits.seq() || localEdits.anyInFlight()) {
+        live.stale = true;
+        runInAction(() => {
+          this.loader[getGroupKey()] = undefined;
+        });
+        return;
+      }
+    }
+
     // Process the Issue Response to get the following data from it
     const { issueList, groupedIssues, groupedIssueCount } = this.processIssueResponse(issuesResponse);
 
@@ -561,10 +589,19 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   ) {
     // Store Before state of the issue
     const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
+    // the edit is in flight until the PATCH settles (live reads of it are stale until then)
+    const endLocalEdit = localEdits.begin(issueId);
     try {
-      // Update the Respective Stores
-      this.rootIssueStore.issues.updateIssue(issueId, data);
-      this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
+      try {
+        // Update the Respective Stores
+        this.rootIssueStore.issues.updateIssue(issueId, data);
+        this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
+      } catch (error) {
+        // If errored out update store again to revert the change
+        this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
+        this.updateIssueList(issueBeforeUpdate, { ...issueBeforeUpdate, ...data } as TIssue);
+        throw error;
+      }
 
       // Check if should Sync
       if (!shouldSync) return;
@@ -575,16 +612,21 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         ...data,
       } as TIssue);
 
-      // call API to update the issue
-      await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
+      // one PATCH at a time per work item; edits made meanwhile are merged and sent next.
+      // On a failure the queue rolls the work item back to its last confirmed server state (once, for all
+      // the edits involved), so this caller does not revert to its own, possibly unconfirmed, before state.
+      await issueSyncQueue.enqueue({
+        issueId,
+        data,
+        confirmedBase: issueBeforeUpdate,
+        send: (payload) => this.issueService.patchIssue(workspaceSlug, projectId, issueId, payload),
+        rollback: (revert) => this.rollbackIssue(issueId, revert),
+      });
 
       // call fetch Parent Stats
       this.fetchParentStats(workspaceSlug, projectId);
-    } catch (error) {
-      // If errored out update store again to revert the change
-      this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
-      this.updateIssueList(issueBeforeUpdate, { ...issueBeforeUpdate, ...data } as TIssue);
-      throw error;
+    } finally {
+      endLocalEdit();
     }
   }
 
@@ -883,6 +925,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     if (issueCycleId === cycleId) return;
 
     const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
+    // in flight until the cycle request settles
+    const endLocalEdit = localEdits.begin(issueId);
 
     try {
       // Update issueIds from current store
@@ -918,6 +962,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       });
 
       throw error;
+    } finally {
+      endLocalEdit();
     }
   };
 
@@ -1088,6 +1134,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // keep a copy of the original module ids
     const issueBeforeChanges = clone(this.rootIssueStore.issues.getIssueById(issueId));
     const originalModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
+    // in flight until the module request settles
+    const endLocalEdit = localEdits.begin(issueId);
     try {
       runInAction(() => {
         // get current Module Ids of the issue
@@ -1137,6 +1185,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       });
 
       throw error;
+    } finally {
+      endLocalEdit();
     }
   }
 
@@ -1155,9 +1205,56 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   }
 
   /**
+   * puts the given fields of a work item back (the last confirmed server state after a
+   * failed PATCH) and regroups it on the board.
+   */
+  rollbackIssue(issueId: string, revert: Partial<TIssue>) {
+    const current = clone(this.rootIssueStore.issues.getIssueById(issueId));
+    if (!current) return;
+    runInAction(() => {
+      this.rootIssueStore.issues.updateIssue(issueId, revert);
+      this.updateIssueList({ ...current, ...revert } as TIssue, current);
+    });
+  }
+
+  /**
+   * a live refetch (full refresh after an overflow, a "*" event or a resync).
+   *
+   * `run` is the store's fetchIssuesWithExistingPagination. Unlike a plain call, the board stays on screen
+   * while the request runs (the first clear() only aborts older requests), and the response is dropped when
+   * the user edited the board meanwhile or an edit is still in flight. It does not start at all while an edit
+   * is in flight or within LOCAL_QUIET_MS of the last one ("busy"): the caller retries later.
+   */
+  async liveRefetch(run: () => Promise<unknown>): Promise<"applied" | "stale" | "busy"> {
+    if (localEdits.anyInFlight() || localEdits.msSinceLastEdit() < LOCAL_QUIET_MS) return "busy";
+    const token = { startSeq: localEdits.seq(), stale: false };
+    this.liveArmed = token;
+    const pending = run();
+    // fetchIssues calls clear() synchronously; if it did not (no pagination options yet), disarm
+    if (this.liveArmed === token) this.liveArmed = undefined;
+    try {
+      await pending;
+    } finally {
+      if (this.liveActive === token) this.liveActive = undefined;
+    }
+    return token.stale ? "stale" : "applied";
+  }
+
+  /**
    * Method called to clear out the current store
    */
   clear(shouldClearPaginationOptions = true) {
+    // the clear at the start of a live refetch keeps the board on screen (no loader, no
+    // empty board while the request runs); it only cancels older requests. onfetchIssues swaps the data.
+    const armed = this.liveArmed;
+    if (armed) {
+      this.liveArmed = undefined;
+      this.liveActive = armed;
+      this.controller.abort();
+      this.controller = new AbortController();
+      return;
+    }
+    this.liveActive = undefined; // any other fetch supersedes a live refetch (its request was aborted)
     runInAction(() => {
       this.groupedIssueIds = undefined;
       this.issuePaginationData = {};
@@ -1211,6 +1308,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // get Issue ID from one of the issue objects
     const issueId = issue?.id ?? issueBeforeUpdate?.id;
     if (!issueId) return;
+    // a local list change (ignored for the live applier's own applies)
+    localEdits.touch(issueId);
 
     // Get display filters to check if 'Show sub Work items' is enabled - Do not add Work item to main list if disabled.
     const isShowWorkItemsEnabled = this.issueFilterStore.issueFilters?.displayFilters?.sub_issue ?? false;

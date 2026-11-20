@@ -25,6 +25,7 @@ from plane.utils.openapi import (
     PROJECT_ID_PARAMETER,
     ESTIMATE_ID_PARAMETER,
 )
+from plane.utils.live_events import publish_metadata_event
 
 
 class ProjectEstimateAPIEndpoint(BaseAPIView):
@@ -66,6 +67,7 @@ class ProjectEstimateAPIEndpoint(BaseAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save()
+        publish_metadata_event(project_id, "estimate", "created", request.user.id)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @estimate_docs(
@@ -116,6 +118,7 @@ class ProjectEstimateAPIEndpoint(BaseAPIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
+        publish_metadata_event(project_id, "estimate", "updated", request.user.id)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @estimate_docs(
@@ -131,6 +134,7 @@ class ProjectEstimateAPIEndpoint(BaseAPIView):
         if not estimate:
             return Response(status=status.HTTP_404_NOT_FOUND, data={"error": "Estimate not found"})
         estimate.delete()
+        publish_metadata_event(project_id, "estimate", "deleted", request.user.id, settle=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -225,6 +229,7 @@ class EstimatePointListCreateAPIEndpoint(BaseAPIView):
             for item in serializer.validated_data
         ]
         created = EstimatePoint.objects.bulk_create(estimate_points)
+        publish_metadata_event(project_id, "estimate", "created", request.user.id)
         return Response(
             self.serializer_class(created, many=True).data,
             status=status.HTTP_201_CREATED,
@@ -273,6 +278,7 @@ class EstimatePointDetailAPIEndpoint(BaseAPIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
+        publish_metadata_event(project_id, "estimate", "updated", request.user.id)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @estimate_point_docs(
@@ -288,4 +294,5 @@ class EstimatePointDetailAPIEndpoint(BaseAPIView):
         if not estimate_point:
             return Response(status=status.HTTP_404_NOT_FOUND, data={"error": "Estimate point not found"})
         estimate_point.delete()
+        publish_metadata_event(project_id, "estimate", "deleted", request.user.id, settle=True)
         return Response(status=status.HTTP_204_NO_CONTENT)

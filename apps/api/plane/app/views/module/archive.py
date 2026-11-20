@@ -32,6 +32,7 @@ from plane.app.permissions import ProjectEntityPermission
 from plane.app.serializers import ModuleDetailSerializer
 from plane.db.models import Issue, Module, ModuleLink, UserFavorite, Project
 from plane.utils.analytics_plot import burndown_plot
+from plane.utils.live_events import publish_metadata_event
 from plane.utils.timezone_converter import user_timezone_converter
 
 
@@ -556,10 +557,12 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
         ).delete()
+        publish_metadata_event(project_id, "module_definition", "archived", request.user.id)
         return Response({"archived_at": str(module.archived_at)}, status=status.HTTP_200_OK)
 
     def delete(self, request, slug, project_id, module_id):
         module = Module.objects.get(pk=module_id, project_id=project_id, workspace__slug=slug)
         module.archived_at = None
         module.save()
+        publish_metadata_event(project_id, "module_definition", "unarchived", request.user.id)
         return Response(status=status.HTTP_204_NO_CONTENT)

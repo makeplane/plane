@@ -20,6 +20,7 @@ from plane.app.serializers import StateSerializer
 from plane.app.permissions import ROLE, allow_permission
 from plane.db.models import State, Issue
 from plane.utils.cache import invalidate_cache
+from plane.utils.live_events import publish_metadata_event
 
 
 class StateViewSet(BaseViewSet):
@@ -60,6 +61,7 @@ class StateViewSet(BaseViewSet):
             serializer = StateSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(project_id=project_id)
+                publish_metadata_event(project_id, "state", "created", request.user.id)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
@@ -77,6 +79,7 @@ class StateViewSet(BaseViewSet):
             serializer = StateSerializer(state, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
+                publish_metadata_event(project_id, "state", "updated", request.user.id)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
@@ -145,6 +148,7 @@ class StateViewSet(BaseViewSet):
             )
 
         state.delete()
+        publish_metadata_event(project_id, "state", "deleted", request.user.id, settle=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

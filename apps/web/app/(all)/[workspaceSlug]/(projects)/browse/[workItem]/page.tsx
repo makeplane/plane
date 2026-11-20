@@ -25,6 +25,8 @@ import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // plane web imports
 import { useWorkItemProperties } from "@/hooks/use-issue-properties";
 import { WorkItemDetailRoot } from "@/components/browse/workItem-detail";
+// live details, comments and activity on the full-page work item detail
+import { useLiveWorkItems } from "@/lib/live-events/use-live-work-items";
 
 import type { Route } from "./+types/page";
 
@@ -57,6 +59,9 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
   const project = (issue?.project_id && getProjectById(issue?.project_id)) || undefined;
   const issueLoader = !issue || isLoading;
   const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
+
+  // this route is outside the project layout that mounts the live applier
+  useLiveWorkItems(workspaceSlug?.toString(), data?.project_id ?? undefined, { pageIssueId: issueId });
 
   useWorkItemProperties(
     projectId,

@@ -15,6 +15,7 @@ import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-butt
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
+import { useLiveWorkItems } from "@/lib/live-events/use-live-work-items";
 // layouts
 import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // local imports
@@ -27,6 +28,8 @@ function ProjectLayout({ params }: Route.ComponentProps) {
   const { sidebarCollapsed } = useAppTheme();
   // preferences
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
+  // live work item updates for this project
+  useLiveWorkItems(workspaceSlug, projectId);
 
   return (
     <>

@@ -4,6 +4,7 @@
 
 # Python imports
 import json
+import logging
 
 
 # Third Party imports
@@ -34,6 +35,7 @@ from plane.db.models import (
 )
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
+from plane.utils.live_events import extract_issue_ids, publish_work_item_event
 from plane.utils.issue_relation_mapper import get_inverse_relation
 from plane.utils.uuid import is_valid_uuid
 
@@ -1545,6 +1547,46 @@ def create_intake_activity(
         )
 
 
+logger = logging.getLogger("plane.worker")
+
+LIVE_EVENT_KINDS = {
+    "issue",
+    "comment",
+    "cycle",
+    "module",
+    "link",
+    "attachment",
+    "issue_relation",
+    "issue_reaction",
+    "comment_reaction",
+    "intake",
+}
+LIVE_EVENT_SETTLE_TYPES = {
+    "cycle.activity.deleted",
+    "module.activity.deleted",
+    "link.activity.deleted",
+}
+
+
+def _publish_live_event(type, requested_data, current_instance, issue_id, actor_id, project_id, issue_activities):
+    """Publish an ids-only live event for an activity type. Never raises."""
+    try:
+        kind, _, verb = type.split(".")
+        if kind not in LIVE_EVENT_KINDS:
+            return
+        issue_ids = extract_issue_ids(type, issue_id, requested_data, current_instance, issue_activities)
+        publish_work_item_event(
+            project_id,
+            issue_ids,
+            kind,
+            verb,
+            actor_id,
+            settle=type in LIVE_EVENT_SETTLE_TYPES,
+        )
+    except Exception as e:
+        logger.warning("live event publish skipped: %s", e.__class__.__name__)
+
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1560,9 +1602,9 @@ def issue_activity(
     origin=None,
     intake=None,
 ):
+    issue_activities = []
+    workspace_id = None
     try:
-        issue_activities = []
-
         # check if project_id is valid
         if not is_valid_uuid(str(project_id)):
             return
@@ -1648,3 +1690,14 @@ def issue_activity(
     except Exception as e:
         log_exception(e)
         return
+    finally:
+        if workspace_id is not None:
+            _publish_live_event(
+                type=type,
+                requested_data=requested_data,
+                current_instance=current_instance,
+                issue_id=issue_id,
+                actor_id=actor_id,
+                project_id=project_id,
+                issue_activities=issue_activities,
+            )
