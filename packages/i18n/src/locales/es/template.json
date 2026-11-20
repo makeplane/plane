@@ -122,7 +122,7 @@
         "publish": {
           "action": "{isPublished, select, true {Configuración de publicación} other {Publicar en el Marketplace}}",
           "unpublish_action": "Retirar del Marketplace",
-          "title": "Haga que su plantilla sea descubrible y reconocible.",
+          "title": "Haz que tu plantilla sea fácil de encontrar y reconocer.",
           "name": {
             "label": "Nombre de la plantilla",
             "placeholder": "Nombra tu plantilla",
