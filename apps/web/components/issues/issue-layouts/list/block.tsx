@@ -32,6 +32,7 @@ import { useListRowPropertiesBudget } from "@/hooks/use-list-row-properties-budg
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { calculateIdentifierWidth } from "../utils";
+import { persistIssueExpandedState } from "./expanded-issues-storage";
 import type { TRenderQuickActions } from "./list-view-types";
 
 interface IssueBlockProps {
@@ -151,11 +152,11 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     if (nestingLevel >= 3) {
       handleIssuePeekOverview(issue);
     } else {
-      setExpanded((prevState) => {
-        if (!prevState && workspaceSlug && issue && issue.project_id)
-          subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issue.project_id, issue.id);
-        return !prevState;
-      });
+      const nextState = !isExpanded;
+      if (nextState && workspaceSlug && issue && issue.project_id)
+        subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issue.project_id, issue.id);
+      persistIssueExpandedState(issue.id, nextState);
+      setExpanded(nextState);
     }
   };
 
