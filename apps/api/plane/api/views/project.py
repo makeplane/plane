@@ -284,6 +284,14 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                         ]
                     )
 
+                    # Same as PATCH: intake work items need the project's default intake to exist.
+                    if serializer.instance.intake_view:
+                        Intake.objects.create(
+                            name=f"{serializer.instance.name} Intake",
+                            project=serializer.instance,
+                            is_default=True,
+                        )
+
                     project = self.get_queryset().filter(pk=serializer.instance.id).first()
 
                     # Defer the activity-log task until the surrounding
