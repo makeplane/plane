@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Liên kết đến chính sách bảo mật của bạn",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://plane.so/privacy-policy",
             "validation": {
               "invalid": "URL không hợp lệ",
               "maxLength": "URL không nên vượt quá 800 ký tự"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Liên kết đến điều khoản sử dụng của bạn",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://plane.so/terms-of-use",
             "validation": {
               "invalid": "URL không hợp lệ",
               "maxLength": "URL không nên vượt quá 800 ký tự"
