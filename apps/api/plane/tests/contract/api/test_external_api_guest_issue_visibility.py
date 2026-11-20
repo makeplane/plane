@@ -1599,3 +1599,64 @@ class TestIntakeIssueDeleteScope:
         response = api_key_client.delete(_intake_issue_detail_url(workspace, project, foreign_issue))
         assert response.status_code == status.HTTP_204_NO_CONTENT, f"Got {response.status_code}: {response.data!r}"
         assert not IntakeIssue.objects.filter(pk=foreign_intake_issue.pk).exists()
+
+
+# ---------------------------------------------------------------------------
+# 6. Work item search -- opt-in ``fields`` (description / comments)
+# ---------------------------------------------------------------------------
+
+
+def _search_fields_url(workspace, query, fields):
+    return f"/api/v1/workspaces/{workspace.slug}/work-items/search/?search={query}&fields={fields}"
+
+
+def _comment(issue, user, text, access):
+    comment = IssueComment(
+        issue=issue,
+        project=issue.project,
+        workspace=issue.workspace,
+        actor=user,
+        comment_html=f"<p>{text}</p>",
+        access=access,
+    )
+    comment.save()
+    return comment
+
+
+@pytest.mark.contract
+class TestWorkItemSearchExtraFields:
+    @pytest.mark.django_db
+    def test_description_not_searched_by_default(self, api_key_client, workspace, foreign_issue):
+        Issue.objects.filter(pk=foreign_issue.pk).update(description_stripped="quokkaterm in the description")
+        response = api_key_client.get(_search_fields_url(workspace, "quokkaterm", ""))
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["issues"] == []
+
+    @pytest.mark.django_db
+    def test_fields_description_matches_description(self, api_key_client, workspace, foreign_issue):
+        Issue.objects.filter(pk=foreign_issue.pk).update(description_stripped="quokkaterm in the description")
+        response = api_key_client.get(_search_fields_url(workspace, "quokkaterm", "description"))
+        assert response.status_code == status.HTTP_200_OK
+        assert [str(row["id"]) for row in response.data["issues"]] == [str(foreign_issue.id)]
+
+    @pytest.mark.django_db
+    def test_fields_comments_matches_comment(self, api_key_client, workspace, foreign_issue, create_user):
+        _comment(foreign_issue, create_user, "quokkaterm in a comment", "INTERNAL")
+        default = api_key_client.get(_search_fields_url(workspace, "quokkaterm", ""))
+        assert default.data["issues"] == []
+        response = api_key_client.get(_search_fields_url(workspace, "quokkaterm", "comments"))
+        assert response.status_code == status.HTTP_200_OK
+        assert [str(row["id"]) for row in response.data["issues"]] == [str(foreign_issue.id)]
+
+    @pytest.mark.django_db
+    def test_guest_cannot_match_internal_comment(self, guest_client, workspace, own_issue, create_user):
+        _comment(own_issue, create_user, "quokkaterm internal", "INTERNAL")
+        response = guest_client.get(_search_fields_url(workspace, "quokkaterm", "comments"))
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["issues"] == []
+
+    @pytest.mark.django_db
+    def test_guest_can_match_external_comment_on_visible_issue(self, guest_client, workspace, own_issue, create_user):
+        _comment(own_issue, create_user, "quokkaterm external", "EXTERNAL")
+        response = guest_client.get(_search_fields_url(workspace, "quokkaterm", "comments"))
+        assert [str(row["id"]) for row in response.data["issues"]] == [str(own_issue.id)]

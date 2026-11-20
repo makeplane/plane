@@ -34,8 +34,10 @@ from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 
 # drf-spectacular imports
+from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import (
     extend_schema,
+    OpenApiParameter,
     OpenApiResponse,
     OpenApiExample,
     OpenApiRequest,
@@ -2425,13 +2427,26 @@ class IssueSearchEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="search_work_items",
         tags=["Work Items"],
-        description="Perform semantic search across issue names, sequence IDs, and project identifiers.",
+        description=(
+            "Perform semantic search across issue names, sequence IDs, and project identifiers. "
+            "Use `fields` to also search descriptions and comments."
+        ),
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             SEARCH_PARAMETER_REQUIRED,
             LIMIT_PARAMETER,
             WORKSPACE_SEARCH_PARAMETER,
             PROJECT_ID_QUERY_PARAMETER,
+            OpenApiParameter(
+                name="fields",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description=(
+                    "Comma-separated extra fields to search in. Supported values: `description`, `comments`. "
+                    "Work item names, sequence IDs and project identifiers are always searched."
+                ),
+                required=False,
+            ),
         ],
         responses={
             200: OpenApiResponse(
@@ -2470,6 +2485,28 @@ class IssueSearchEndpoint(BaseAPIView):
                     q |= Q(**{"sequence_id": sequence_id})
             else:
                 q |= Q(**{f"{field}__icontains": query})
+
+        # Opt-in extra search fields (`?fields=description,comments`); the default is unchanged.
+        extra_fields = {f.strip() for f in request.query_params.get("fields", "").split(",") if f.strip()}
+        if "description" in extra_fields:
+            q |= Q(description_stripped__icontains=query)
+        if "comments" in extra_fields:
+            # Internal comments are only searchable by members above GUEST, so they
+            # cannot be used to probe content a guest is not allowed to read.
+            can_read_internal_comments = ProjectMember.objects.filter(
+                project_id=OuterRef("project_id"),
+                member=request.user,
+                is_active=True,
+                role__gt=ROLE.GUEST.value,
+            )
+            q |= Q(
+                Exists(
+                    IssueComment.objects.filter(
+                        issue_id=OuterRef("pk"),
+                        comment_stripped__icontains=query,
+                    ).filter(Q(access="EXTERNAL") | Q(Exists(can_read_internal_comments)))
+                )
+            )
 
         # Restricted guests may only search work items they created. Search
         # can span several projects, so this is a per-row EXISTS check
