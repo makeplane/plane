@@ -184,9 +184,9 @@ class TimezoneEndpoint(APIView):
                 # converting and formatting UTC offset to GMT offset
                 current_utc_offset = now.astimezone(tz).utcoffset()
                 total_seconds = int(current_utc_offset.total_seconds())
-                hours_offset = total_seconds // 3600
-                minutes_offset = abs(total_seconds % 3600) // 60
-                offset = f"{'+' if hours_offset >= 0 else '-'}{abs(hours_offset):02}:{minutes_offset:02}"
+                sign = "+" if total_seconds >= 0 else "-"
+                hours_offset, minutes_offset = divmod(abs(total_seconds) // 60, 60)
+                offset = f"{sign}{hours_offset:02}:{minutes_offset:02}"
 
                 timezone_value = {
                     "offset": int(current_offset),
