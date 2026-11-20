@@ -8,19 +8,19 @@ from itertools import groupby
 
 # Django import
 from django.db import models
-from django.db.models import Case, CharField, Count, F, Sum, Value, When, FloatField
+from django.db.models import Case, CharField, Count, F, Sum, Value, When
 from django.db.models.functions import (
     Coalesce,
     Concat,
     ExtractMonth,
     ExtractYear,
     TruncDate,
-    Cast,
 )
 from django.utils import timezone
 
 # Module imports
 from plane.db.models import Issue, Project
+from plane.utils.estimate import estimate_to_float as _estimate_to_float, estimate_value_as_float
 
 VALID_ANALYTICS_FIELDS = [
     "state_id",
@@ -108,7 +108,7 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
 
     # Estimate
     else:
-        queryset = queryset.annotate(estimate=Sum(Cast("estimate_point__value", FloatField()))).order_by(x_axis)
+        queryset = queryset.annotate(estimate=Sum(estimate_value_as_float())).order_by(x_axis)
         queryset = queryset.annotate(segment=F(segment)) if segment else queryset
         queryset = (
             queryset.values("dimension", "segment", "estimate") if segment else queryset.values("dimension", "estimate")
@@ -139,7 +139,7 @@ def burndown_plot(queryset, slug, project_id, plot_type, cycle_id=None, module_i
             estimate_point__isnull=False,
         ).values_list("estimate_point__value", flat=True)
 
-        issue_estimates = [float(value) for value in issue_estimates]
+        issue_estimates = [_estimate_to_float(value) for value in issue_estimates]
         total_estimate_points = sum(issue_estimates)
 
     if estimate_type and plot_type == "points" and module_id:
@@ -151,7 +151,7 @@ def burndown_plot(queryset, slug, project_id, plot_type, cycle_id=None, module_i
             estimate_point__isnull=False,
         ).values_list("estimate_point__value", flat=True)
 
-        issue_estimates = [float(value) for value in issue_estimates]
+        issue_estimates = [_estimate_to_float(value) for value in issue_estimates]
         total_estimate_points = sum(issue_estimates)
 
     if cycle_id:
@@ -238,7 +238,7 @@ def burndown_plot(queryset, slug, project_id, plot_type, cycle_id=None, module_i
             cumulative_pending_issues = total_estimate_points
             total_completed = 0
             total_completed = sum(
-                float(item["estimate_point__value"])
+                _estimate_to_float(item["estimate_point__value"])
                 for item in completed_issues_estimate_point_distribution
                 if item["date"] is not None and item["date"] <= date
             )
