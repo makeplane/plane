@@ -1,58 +1,58 @@
 {
   "stickies": {
-    "title": "Tus notas adhesivas",
+    "title": "Tus stickies",
     "placeholder": "haz clic para escribir aquí",
-    "all": "Todas las notas adhesivas",
-    "no-data": "Anota una idea, captura un momento eureka o registra una inspiración. Agrega una nota adhesiva para comenzar.",
-    "add": "Agregar nota adhesiva",
+    "all": "Todos los stickies",
+    "no-data": "Anota una idea, captura un momento eureka o registra una inspiración. Agrega un sticky para comenzar.",
+    "add": "Agregar sticky",
     "search_placeholder": "Buscar por título",
-    "delete": "Eliminar nota adhesiva",
-    "delete_confirmation": "¿Estás seguro de que quieres eliminar esta nota adhesiva?",
+    "delete": "Eliminar sticky",
+    "delete_confirmation": "¿Estás seguro de que quieres eliminar este sticky?",
     "empty_state": {
-      "simple": "Anota una idea, captura un momento eureka o registra una inspiración. Agrega una nota adhesiva para comenzar.",
+      "simple": "Anota una idea, captura un momento eureka o registra una inspiración. Agrega un sticky para comenzar.",
       "general": {
-        "title": "Las notas adhesivas son notas rápidas y tareas pendientes que anotas al vuelo.",
-        "description": "Captura tus pensamientos e ideas sin esfuerzo creando notas adhesivas a las que puedes acceder en cualquier momento y desde cualquier lugar.",
+        "title": "Los stickies son notas rápidas y tareas pendientes que anotas al vuelo.",
+        "description": "Captura tus pensamientos e ideas sin esfuerzo creando stickies a los que puedes acceder en cualquier momento y desde cualquier lugar.",
         "primary_button": {
-          "text": "Agregar nota adhesiva"
+          "text": "Agregar sticky"
         }
       },
       "search": {
-        "title": "Eso no coincide con ninguna de tus notas adhesivas.",
+        "title": "Eso no coincide con ninguno de tus stickies.",
         "description": "Prueba un término diferente o háznoslo saber\nsi estás seguro de que tu búsqueda es correcta.",
         "primary_button": {
-          "text": "Agregar nota adhesiva"
+          "text": "Agregar sticky"
         }
       }
     },
     "toasts": {
       "errors": {
-        "wrong_name": "El nombre de la nota adhesiva no puede tener más de 100 caracteres.",
-        "already_exists": "Ya existe una nota adhesiva sin descripción"
+        "wrong_name": "El nombre del sticky no puede tener más de 100 caracteres.",
+        "already_exists": "Ya existe un sticky sin descripción"
       },
       "created": {
-        "title": "Nota adhesiva creada",
-        "message": "La nota adhesiva se ha creado exitosamente"
+        "title": "Sticky creado",
+        "message": "El sticky se ha creado exitosamente"
       },
       "not_created": {
-        "title": "Nota adhesiva no creada",
-        "message": "No se pudo crear la nota adhesiva"
+        "title": "Sticky no creado",
+        "message": "No se pudo crear el sticky"
       },
       "updated": {
-        "title": "Nota adhesiva actualizada",
-        "message": "La nota adhesiva se ha actualizado exitosamente"
+        "title": "Sticky actualizado",
+        "message": "El sticky se ha actualizado exitosamente"
       },
       "not_updated": {
-        "title": "Nota adhesiva no actualizada",
-        "message": "No se pudo actualizar la nota adhesiva"
+        "title": "Sticky no actualizado",
+        "message": "No se pudo actualizar el sticky"
       },
       "removed": {
-        "title": "Nota adhesiva eliminada",
-        "message": "La nota adhesiva se ha eliminado exitosamente"
+        "title": "Sticky eliminado",
+        "message": "El sticky se ha eliminado exitosamente"
       },
       "not_removed": {
-        "title": "Nota adhesiva no eliminada",
-        "message": "No se pudo eliminar la nota adhesiva"
+        "title": "Sticky no eliminado",
+        "message": "No se pudo eliminar el sticky"
       }
     }
   }
