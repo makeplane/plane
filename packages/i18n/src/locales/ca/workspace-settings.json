@@ -1,0 +1,518 @@
+{
+  "workspace_settings": {
+    "label": "Configuració de l’espai de treball",
+    "page_label": "{workspace} - Configuració general",
+    "key_created": "Clau creada",
+    "copy_key": "Copia i desa aquesta clau secreta a Plane Pages. No podràs veure aquesta clau després de fer clic a Tanca. S’ha descarregat un fitxer CSV que conté la clau.",
+    "token_copied": "Token copiat al porta-retalls.",
+    "settings": {
+      "general": {
+        "title": "General",
+        "upload_logo": "Puja un logotip",
+        "edit_logo": "Edita el logotip",
+        "name": "Nom de l’espai de treball",
+        "company_size": "Mida de l’empresa",
+        "url": "URL de l’espai de treball",
+        "workspace_timezone": "Zona horària de l’espai de treball",
+        "update_workspace": "Actualitza l’espai de treball",
+        "delete_workspace": "Suprimeix aquest espai de treball",
+        "delete_workspace_description": "En suprimir un espai de treball, totes les dades i els recursos d’aquest espai de treball s’eliminaran permanentment i no es podran recuperar.",
+        "delete_btn": "Suprimeix aquest espai de treball",
+        "delete_modal": {
+          "title": "Segur que vols suprimir aquest espai de treball?",
+          "description": "Tens una prova activa d’un dels nostres plans de pagament. Cancel·la-la primer per continuar.",
+          "dismiss": "Descarta",
+          "cancel": "Cancel·la la prova",
+          "success_title": "Espai de treball eliminat.",
+          "success_message": "Aviat aniràs a la teva pàgina de perfil.",
+          "error_title": "No ha funcionat.",
+          "error_message": "Torna-ho a provar, si us plau.",
+          "confirm_description": "Estàs a punt de suprimir l’espai de treball {workspaceName}. Perdràs l’accés a totes les dades de treball d’aquest espai de treball i no es podrà restaurar."
+        },
+        "errors": {
+          "name": {
+            "required": "El nom és obligatori",
+            "max_length": "El nom de l’espai de treball no pot superar els 80 caràcters"
+          },
+          "company_size": {
+            "required": "La mida de l’empresa és obligatòria",
+            "select_a_range": "Selecciona la mida de l’organització"
+          }
+        }
+      },
+      "members": {
+        "title": "Membres",
+        "add_member": "Afegeix un membre",
+        "pending_invites": "Invitacions pendents",
+        "invitations_sent_successfully": "Invitacions enviades correctament",
+        "leave_confirmation": "Segur que vols abandonar l’espai de treball? Ja no tindràs accés a aquest espai de treball. Aquesta acció no es pot desfer.",
+        "details": {
+          "full_name": "Nom complet",
+          "display_name": "Nom visible",
+          "email_address": "Adreça electrònica",
+          "account_type": "Tipus de compte",
+          "authentication": "Autenticació",
+          "joining_date": "Data d’incorporació"
+        },
+        "modal": {
+          "title": "Convida persones a col·laborar",
+          "description": "Convida persones a col·laborar al teu espai de treball.",
+          "button": "Envia invitacions",
+          "button_loading": "S’estan enviant les invitacions",
+          "placeholder": "nom@empresa.com",
+          "errors": {
+            "required": "Necessitem una adreça electrònica per convidar-les.",
+            "invalid": "El correu electrònic no és vàlid"
+          }
+        },
+        "leave_input_label": "Escriu el nom d’aquest espai de treball per continuar.",
+        "description": "Gestiona l’accés a aquest espai de treball.",
+        "leave_title": "Vols sortir de l’espai de treball?"
+      },
+      "billing_and_plans": {
+        "heading": "Facturació i plans",
+        "description": "Tria el teu pla, gestiona les subscripcions i millora-lo fàcilment a mesura que creixin les teves necessitats.",
+        "title": "Facturació i plans",
+        "current_plan": "Pla actual",
+        "free_plan": "Actualment estàs utilitzant el pla gratuït",
+        "view_plans": "Consulta els plans"
+      },
+      "exports": {
+        "heading": "Exportacions",
+        "description": "Exporta les dades del teu projecte en diversos formats i accedeix al teu historial d’exportacions amb enllaços de baixada.",
+        "title": "Exportacions",
+        "exporting": "S’està exportant",
+        "previous_exports": "Exportacions anteriors",
+        "export_separate_files": "Exporta les dades en fitxers separats",
+        "exporting_projects": "S’està exportant el projecte",
+        "format": "Format",
+        "filters_info": "Aplica filtres per exportar elements de treball concrets segons els teus criteris.",
+        "modal": {
+          "title": "Exporta a",
+          "toasts": {
+            "success": {
+              "title": "Exportació correcta",
+              "message": "Podràs descarregar l’{entity} exportat des de l’exportació anterior."
+            },
+            "error": {
+              "title": "L’exportació ha fallat",
+              "message": "L’exportació no s’ha pogut fer. Torna-ho a provar."
+            }
+          }
+        }
+      },
+      "webhooks": {
+        "heading": "Webhooks",
+        "description": "Automatitza les notificacions a serveis externs quan es produeixen esdeveniments del projecte.",
+        "title": "Webhooks",
+        "add_webhook": "Afegeix un webhook",
+        "modal": {
+          "title": "Crea un webhook",
+          "details": "Detalls del webhook",
+          "payload": "URL de la càrrega útil",
+          "question": "Quins esdeveniments vols que activin aquest webhook?",
+          "error": "Cal una URL"
+        },
+        "secret_key": {
+          "title": "Clau secreta",
+          "message": "Genera un token per iniciar sessió a la càrrega útil del webhook"
+        },
+        "options": {
+          "all": "Envia-m’ho tot",
+          "individual": "Selecciona esdeveniments individuals"
+        },
+        "toasts": {
+          "created": {
+            "title": "Webhook creat",
+            "message": "El webhook s’ha creat correctament"
+          },
+          "not_created": {
+            "title": "No s’ha creat el webhook",
+            "message": "No s’ha pogut crear el webhook"
+          },
+          "updated": {
+            "title": "Webhook actualitzat",
+            "message": "El webhook s’ha actualitzat correctament"
+          },
+          "not_updated": {
+            "title": "No s’ha actualitzat el webhook",
+            "message": "No s’ha pogut actualitzar el webhook"
+          },
+          "removed": {
+            "title": "Webhook eliminat",
+            "message": "El webhook s’ha eliminat correctament"
+          },
+          "not_removed": {
+            "title": "No s’ha eliminat el webhook",
+            "message": "No s’ha pogut eliminar el webhook"
+          },
+          "secret_key_copied": {
+            "message": "Clau secreta copiada al porta-retalls."
+          },
+          "secret_key_not_copied": {
+            "message": "S’ha produït un error en copiar la clau secreta."
+          }
+        }
+      },
+      "api_tokens": {
+        "heading": "Tokens d’accés",
+        "description": "Genera tokens d’API segurs per integrar les teves dades amb sistemes i aplicacions externs.",
+        "title": "Tokens d’accés",
+        "add_token": "Afegeix un token",
+        "create_token": "Crea un token",
+        "never_expires": "No caduca mai",
+        "generate_token": "Genera un token",
+        "generating": "S’està generant",
+        "delete": {
+          "title": "Suprimeix el token",
+          "description": "Qualsevol aplicació que utilitzi aquest token ja no tindrà accés a les dades de Plane. Aquesta acció no es pot desfer.",
+          "success": {
+            "title": "Correcte!",
+            "message": "El token s’ha eliminat correctament"
+          },
+          "error": {
+            "title": "Error!",
+            "message": "No s’ha pogut eliminar el token"
+          }
+        },
+        "columns": {
+          "expires": "Caduca",
+          "last_used": "Últim ús"
+        },
+        "expired": "Caducat",
+        "not_used_yet": "Encara no s’ha utilitzat"
+      },
+      "integrations": {
+        "title": "Integracions",
+        "heading": "Integracions",
+        "description": "Connecta’t amb eines i serveis populars per sincronitzar el teu treball a tot l’ecosistema de fluxos de treball.",
+        "page_title": "Treballa amb les dades de Plane en aplicacions disponibles o en les teves.",
+        "page_description": "Consulta totes les integracions que utilitza aquest espai de treball o tu."
+      },
+      "imports": {
+        "title": "Importacions",
+        "heading": "Importacions",
+        "description": "Connecta’t i importa dades de les teves eines de gestió de projectes existents per simplificar la integració del teu flux de treball."
+      },
+      "worklogs": {
+        "title": "Registres de treball",
+        "heading": "Registres de treball",
+        "description": "Baixa registres de treball, també coneguts com a fulls d’hores, de qualsevol persona en qualsevol projecte."
+      },
+      "group_syncing": {
+        "title": "Sincronització de grups",
+        "heading": "Sincronització de grups",
+        "description": "Enllaça grups del proveïdor d’identitat amb projectes i rols. L’accés dels usuaris s’actualitza automàticament quan canvia la pertinença al grup del teu IdP, cosa que simplifica la incorporació i la baixa.",
+        "enable": {
+          "title": "Activa la sincronització de grups",
+          "description": "Afegeix usuaris automàticament als projectes segons els grups del proveïdor d’identitat."
+        },
+        "config": {
+          "title": "Configura la sincronització de grups",
+          "description": "Configura com s’assignen els grups del proveïdor d’identitat a projectes i rols.",
+          "sync_on_login": {
+            "title": "Sincronitza en iniciar la sessió",
+            "description": "Actualitza la pertinença als grups i l’accés als projectes quan un usuari inicia sessió."
+          },
+          "sync_offline": {
+            "title": "Sincronització fora de línia",
+            "description": "Executa la sincronització automàticament cada sis hores, sense esperar que els usuaris iniciïn sessió."
+          },
+          "auto_remove": {
+            "title": "Eliminació automàtica",
+            "description": "Elimina automàticament els usuaris dels projectes quan ja no coincideixen amb el grup."
+          },
+          "group_attribute_key": {
+            "title": "Clau de l’atribut de grup",
+            "description": "L’atribut del proveïdor d’identitat utilitzat per identificar i sincronitzar els grups d’usuaris.",
+            "placeholder": "Grups"
+          }
+        },
+        "group_mapping": {
+          "title": "Assignació de grups",
+          "description": "Enllaça els grups del proveïdor d’identitat amb projectes i rols.",
+          "button_text": "Afegeix una nova sincronització de grups"
+        },
+        "toast": {
+          "updating": "S’està actualitzant la funcionalitat de sincronització de grups",
+          "success": "La funcionalitat de sincronització de grups s’ha actualitzat correctament.",
+          "error": "No s’ha pogut actualitzar la funcionalitat de sincronització de grups!"
+        },
+        "delete_modal": {
+          "title": "Suprimeix la sincronització de grups",
+          "content": "Els usuaris nous d’aquest grup d’identitat ja no s’afegiran al projecte. Els usuaris que ja hi han estat afegits conservaran el rol actual."
+        },
+        "modal": {
+          "idp_group_name": {
+            "text": "Grup d’usuaris",
+            "required": "El grup d’usuaris és obligatori",
+            "placeholder": "Introdueix els noms dels grups del proveïdor d’identitat"
+          },
+          "project": {
+            "text": "Projecte",
+            "required": "El projecte és obligatori",
+            "placeholder": "Selecciona un projecte"
+          },
+          "default_role": {
+            "text": "Rol del projecte",
+            "required": "El rol del projecte és obligatori",
+            "placeholder": "Selecciona un rol de projecte"
+          }
+        }
+      },
+      "identity": {
+        "title": "Identitat",
+        "heading": "Identitat",
+        "description": "Configura el teu domini i activa l’inici de sessió únic"
+      },
+      "project_states": {
+        "title": "Estats del projecte",
+        "heading": "Consulta una visió general del progrés de tots els projectes.",
+        "description": "Estats del projecte és una funcionalitat exclusiva de Plane per fer el seguiment del progrés de tots els teus projectes mitjançant qualsevol propietat del projecte.",
+        "go_to_settings": "Vés a la configuració"
+      },
+      "projects": {
+        "title": "Projectes",
+        "description": "Gestiona els estats dels projectes i activa les etiquetes de projecte i altres opcions de configuració.",
+        "tabs": {
+          "states": "Estats del projecte",
+          "labels": "Etiquetes de projecte"
+        }
+      },
+      "templates": {
+        "title": "Plantilles",
+        "heading": "Plantilles",
+        "description": "Estalvia el 80% del temps dedicat a crear projectes, elements de treball i pàgines quan utilitzis plantilles."
+      },
+      "relations": {
+        "title": "Relacions",
+        "heading": "Relacions",
+        "description": "Crea i gestiona tipus de relació que connectin elements de treball de tot l’espai de treball."
+      },
+      "cancel_trial": {
+        "title": "Cancel·la primer la teva prova.",
+        "description": "Tens una prova activa d’un dels nostres plans de pagament. Cancel·la-la primer per continuar.",
+        "dismiss": "Descarta",
+        "cancel": "Cancel·la la prova",
+        "cancel_success_title": "Prova cancel·lada.",
+        "cancel_success_message": "Ja pots suprimir l’espai de treball.",
+        "cancel_error_title": "No ha funcionat.",
+        "cancel_error_message": "Torna-ho a provar, si us plau."
+      },
+      "applications": {
+        "internal": "Intern",
+        "title": "Aplicacions",
+        "applicationId_copied": "ID de l’aplicació copiat al porta-retalls",
+        "clientId_copied": "ID de client copiat al porta-retalls",
+        "clientSecret_copied": "Secret de client copiat al porta-retalls",
+        "third_party_apps": "Aplicacions de tercers",
+        "your_apps": "Les teves aplicacions",
+        "connect": "Connecta",
+        "connected": "Connectat",
+        "disconnect": "Desconnecta",
+        "install": "Instal·la",
+        "installed": "Instal·lades",
+        "configure": "Configura",
+        "app_available": "Has fet que aquesta aplicació estigui disponible per utilitzar-la amb un espai de treball de Plane",
+        "app_credentials_regenrated": {
+          "title": "Credencials de l’aplicació regenerades correctament",
+          "description": "Substitueix el secret del client a tots els llocs on s’utilitzi. El secret anterior ja no és vàlid."
+        },
+        "app_created": {
+          "title": "Aplicació creada correctament",
+          "description": "Utilitza les credencials per instal·lar l’aplicació en un espai de treball de Plane"
+        },
+        "installed_apps": "Aplicacions instal·lades",
+        "all_apps": "Totes les aplicacions",
+        "internal_apps": "Aplicacions internes",
+        "app_name_title": "Nom de l’aplicació",
+        "app_description_title": {
+          "label": "Descripció llarga",
+          "placeholder": "Escriu una descripció llarga per al marketplace. Prem «/» per veure les ordres."
+        },
+        "authorization_grant_type": {
+          "title": "Tipus de connexió",
+          "description": "Tria si l’aplicació s’ha d’instal·lar una sola vegada per a l’espai de treball o si cada usuari pot connectar el seu propi compte"
+        },
+        "website": {
+          "title": "Lloc web",
+          "description": "Enllaç al lloc web de la teva aplicació.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Creador de l’aplicació",
+          "description": "La persona o organització que crea l’aplicació."
+        },
+        "app_maker_error": "El nom del creador és obligatori",
+        "setup_url": {
+          "label": "URL de configuració",
+          "description": "Els usuaris seran redirigits a aquesta URL quan instal·lin l’aplicació.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL del webhook",
+          "description": "Aquí s’enviaran els esdeveniments i les actualitzacions de webhook dels espais de treball on estigui instal·lada la teva aplicació.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Secret del webhook",
+          "description": "Clau secreta utilitzada per verificar les sol·licituds de webhook entrants.",
+          "placeholder": "Introdueix una clau secreta aleatòria"
+        },
+        "redirect_uris": {
+          "label": "URI de redirecció (separades per espais)",
+          "description": "Els usuaris seran redirigits a aquesta ruta després d’autenticar-se amb Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_available_description": "Connecta un espai de treball de Plane per començar a utilitzar-lo",
+        "client_id_and_secret": "ID de client i secret",
+        "client_id_and_secret_description": "Copia i desa aquesta clau secreta a Pages. No podràs veure aquesta clau de nou després de fer clic a Tanca.",
+        "client_id_and_secret_download": "Pots descarregar un CSV amb la clau des d’aquí.",
+        "application_id": "ID de l’aplicació",
+        "client_id": "ID de client",
+        "client_secret": "Secret del client",
+        "export_as_csv": "Exporta com a CSV",
+        "slug_already_exists": "L’àlies ja existeix",
+        "failed_to_create_application": "No s’ha pogut crear l’aplicació",
+        "upload_logo": "Puja el logotip",
+        "app_name_error": "El nom de l’aplicació és obligatori",
+        "app_short_description_title": "Descripció breu",
+        "app_short_description_error": "Cal una descripció breu de l’aplicació",
+        "app_description_error": "Cal una descripció de l’aplicació",
+        "app_slug_title": "Àlies de l’aplicació",
+        "app_slug_error": "L’àlies de l’aplicació és obligatori",
+        "invalid_website_error": "Lloc web no vàlid",
+        "webhook_url_title": "URL del webhook",
+        "webhook_url_error": "La URL del webhook és obligatòria",
+        "invalid_webhook_url_error": "URL de webhook no vàlida",
+        "redirect_uris_title": "URI de redirecció",
+        "redirect_uris_error": "Calen les URI de redirecció",
+        "invalid_redirect_uris_error": "URI de redirecció no vàlides",
+        "redirect_uris_description": "Introdueix les URI separades per espais a les quals l’aplicació redirigirà l’usuari, p. ex. https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Orígens de JavaScript autoritzats",
+        "authorized_javascript_origins_error": "Calen els orígens de JavaScript autoritzats",
+        "invalid_authorized_javascript_origins_error": "Orígens de JavaScript autoritzats no vàlids",
+        "authorized_javascript_origins_description": "Introdueix els orígens separats per espais des dels quals l’aplicació podrà fer sol·licituds, p. ex. app.com example.com",
+        "create_app": "Crea l’aplicació",
+        "update_app": "Actualitza l’aplicació",
+        "build_your_own_app": "Crea la teva pròpia aplicació",
+        "edit_app_details": "Edita els detalls de l’aplicació",
+        "regenerate_client_secret_description": "Regenera el secret del client. Si el regeneres, podràs copiar la clau o descarregar-la en un fitxer CSV just després.",
+        "regenerate_client_secret": "Regenera el secret del client",
+        "regenerate_client_secret_confirm_title": "Segur que vols regenerar el secret del client?",
+        "regenerate_client_secret_confirm_description": "Les aplicacions que utilitzin aquest secret deixaran de funcionar. Hauràs d’actualitzar el secret a l’aplicació.",
+        "regenerate_client_secret_confirm_cancel": "Cancel·la",
+        "regenerate_client_secret_confirm_regenerate": "Regenera",
+        "read_only_access_to_workspace": "Accés de només lectura al teu espai de treball",
+        "write_access_to_workspace": "Accés d’escriptura al teu espai de treball",
+        "read_only_access_to_user_profile": "Accés de només lectura al teu perfil d’usuari",
+        "write_access_to_user_profile": "Accés d’escriptura al teu perfil d’usuari",
+        "connect_app_to_workspace": "Connecta {app} al teu espai de treball {workspace}",
+        "user_permissions": "Permisos d’usuari",
+        "user_permissions_description": "Els permisos d’usuari s’utilitzen per concedir accés al perfil de l’usuari.",
+        "workspace_permissions": "Permisos de l’espai de treball",
+        "workspace_permissions_description": "Els permisos d’espai de treball s’utilitzen per concedir accés a l’espai de treball.",
+        "with_the_permissions": "amb els permisos",
+        "app_consent_title": "{app} sol·licita accés al teu espai de treball i perfil de Plane.",
+        "choose_workspace_to_connect_app_with": "Tria un espai de treball per connectar-hi l’aplicació",
+        "app_consent_workspace_permissions_title": "{app} voldria",
+        "app_consent_user_permissions_title": "{app} també pot sol·licitar el permís d’un usuari per accedir als recursos següents. Aquests permisos només els sol·licitarà i els autoritzarà un usuari.",
+        "app_consent_accept_title": "En acceptar, acceptaràs:",
+        "app_consent_accept_1": "Concedeix a l’aplicació accés a les teves dades de Plane allà on puguis utilitzar-la, dins o fora de Plane",
+        "app_consent_accept_2": "Accepta la política de privadesa i les condicions d’ús de {app}",
+        "accepting": "S’està acceptant...",
+        "accept": "Accepta",
+        "categories": "Categories",
+        "select_app_categories": "Selecciona les categories de l’aplicació",
+        "categories_title": "Categories",
+        "categories_error": "Les categories són obligatòries",
+        "invalid_categories_error": "Categories no vàlides",
+        "categories_description": "Selecciona les categories que descriuen millor l’aplicació",
+        "supported_plans": "Plans compatibles",
+        "supported_plans_description": "Selecciona els plans d’espai de treball que poden instal·lar aquesta aplicació. Deixa-ho buit per permetre tots els plans.",
+        "select_plans": "Selecciona els plans",
+        "privacy_policy_url_title": "URL de la política de privadesa",
+        "privacy_policy_url_error": "Cal la URL de la política de privadesa",
+        "invalid_privacy_policy_url_error": "URL de la política de privadesa no vàlida",
+        "terms_of_service_url_title": "URL de les condicions del servei",
+        "terms_of_service_url_error": "Cal la URL dels termes del servei",
+        "invalid_terms_of_service_url_error": "URL dels termes del servei no vàlida",
+        "support_url_title": "URL de suport",
+        "support_url_error": "La URL de suport és obligatòria",
+        "invalid_support_url_error": "URL de suport no vàlida",
+        "video_url_title": "URL del vídeo",
+        "video_url_error": "La URL del vídeo és obligatòria",
+        "invalid_video_url_error": "URL de vídeo no vàlida",
+        "setup_url_error": "La URL de configuració és obligatòria",
+        "invalid_setup_url_error": "URL de configuració no vàlida",
+        "configuration_url_title": "URL de configuració",
+        "configuration_url_error": "Cal la URL de configuració",
+        "invalid_configuration_url_error": "URL de configuració no vàlida",
+        "contact_email_title": "Correu electrònic de contacte",
+        "contact_email_error": "Cal el correu electrònic de contacte",
+        "invalid_contact_email_error": "Correu electrònic de contacte no vàlid",
+        "upload_attachments": "Puja fitxers adjunts",
+        "uploading_images": "S’estan pujant {count} imatge{count, plural, one {} other {s}}",
+        "drop_images_here": "Deixa anar imatges aquí",
+        "click_to_upload_images": "Fes clic per pujar imatges",
+        "invalid_file_or_exceeds_size_limit": "Fitxer no vàlid o que supera el límit de mida ({size} MB)",
+        "uploading": "S’està pujant...",
+        "upload_and_save": "Puja i desa",
+        "app_consent_no_access_title": "Sol·licitud d’instal·lació",
+        "app_consent_no_access_description": "Aquesta aplicació només es pot instal·lar després que un administrador de l’espai de treball la instal·li. Contacta amb l’administrador del teu espai de treball per continuar.",
+        "app_consent_unapproved_title": "Aquesta aplicació encara no ha estat revisada ni aprovada per Plane.",
+        "app_consent_unapproved_description": "Assegura’t que confies en aquesta aplicació abans de connectar-la al teu espai de treball.",
+        "go_to_app": "Vés a l’aplicació",
+        "enable_app_mentions": "Activa les mencions de l’aplicació",
+        "enable_app_mentions_tooltip": "Quan aquesta opció està activada, els usuaris poden esmentar o assignar elements de treball a aquesta aplicació.",
+        "scopes": "Àmbits",
+        "select_scopes": "Selecciona els àmbits",
+        "read_access_to": "Accés de només lectura a",
+        "write_access_to": "Accés d’escriptura a",
+        "global_permission_expiration": "Els àmbits globals caducaran aviat. Utilitza àmbits granulars en el seu lloc. Per exemple, utilitza project:read en lloc d’una lectura global.",
+        "selected_scopes": "{count} seleccionats",
+        "scopes_and_permissions": "Àmbits i permisos",
+        "read": "Lectura",
+        "write": "Escriptura",
+        "scope_description": {
+          "projects": "Accés als projectes i a totes les entitats relacionades amb els projectes",
+          "wiki": "Accés a la wiki i a totes les entitats relacionades amb la wiki",
+          "workspaces": "Accés als espais de treball i a totes les entitats relacionades amb els espais de treball",
+          "stickies": "Accés als Stickies i a totes les entitats relacionades amb els Stickies",
+          "profile": "Accés a la informació del perfil d’usuari",
+          "agents": "Accés als agents i a totes les entitats relacionades amb els agents",
+          "assets": "Accés als recursos i a totes les entitats relacionades amb els recursos"
+        }
+      },
+      "plane-intelligence": {
+        "title": "Plane AI",
+        "heading": "Plane AI",
+        "description": "Fes que el teu treball sigui més intel·ligent i ràpid amb una IA connectada de manera nativa al teu treball i a la teva base de coneixement."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Scripts",
+        "new_script": "Script nou",
+        "description": "Automatitza els teus fluxos de treball amb scripts personalitzats i regles d’automatització."
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "No s’ha creat cap token d’accés",
+        "description": "Les API de Plane es poden utilitzar per integrar les teves dades de Plane amb qualsevol sistema extern. Crea un token per començar."
+      },
+      "webhooks": {
+        "title": "No s’ha afegit cap webhook",
+        "description": "Crea webhooks per rebre actualitzacions en temps real i automatitzar accions."
+      },
+      "exports": {
+        "title": "Encara no hi ha exportacions",
+        "description": "Cada vegada que exportis, també tindràs una còpia aquí per consultar-la."
+      },
+      "imports": {
+        "title": "Encara no hi ha importacions",
+        "description": "Troba aquí totes les importacions anteriors i descarrega-les."
+      }
+    }
+  }
+}

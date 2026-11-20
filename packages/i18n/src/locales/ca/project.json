@@ -1,0 +1,418 @@
+{
+  "project_view": {
+    "sort_by": {
+      "created_at": "Data de creació",
+      "updated_at": "Data d’actualització",
+      "name": "Nom"
+    }
+  },
+  "project_cycles": {
+    "add_cycle": "Afegeix un cicle",
+    "more_details": "Més detalls",
+    "cycle": "Cicle",
+    "update_cycle": "Actualitza el cicle",
+    "create_cycle": "Crea un cicle",
+    "no_matching_cycles": "Cap cicle coincident",
+    "remove_filters_to_see_all_cycles": "Elimina els filtres per veure tots els cicles",
+    "remove_search_criteria_to_see_all_cycles": "Elimina els criteris de cerca per veure tots els cicles",
+    "only_completed_cycles_can_be_archived": "Només es poden arxivar els cicles completats",
+    "start_date": "Data d’inici",
+    "end_date": "Data de finalització",
+    "in_your_timezone": "A la teva zona horària",
+    "transfer_work_items": "Transfereix {count} elements de treball",
+    "transfer": {
+      "no_cycles_available": "No hi ha altres cicles disponibles per traslladar-hi elements de treball."
+    },
+    "date_range": "Interval de dates",
+    "add_date": "Afegeix una data",
+    "active_cycle": {
+      "label": "Cicle actiu",
+      "progress": "Progrés",
+      "chart": "Gràfic de burndown",
+      "priority_issue": "Elements de treball prioritaris",
+      "assignees": "Assignats",
+      "issue_burndown": "Burndown d’elements de treball",
+      "ideal": "Ideal",
+      "current": "Actual",
+      "labels": "Etiquetes",
+      "trailing": "Retardat",
+      "leading": "Avançat"
+    },
+    "upcoming_cycle": {
+      "label": "Cicle proper"
+    },
+    "completed_cycle": {
+      "label": "Cicle completat"
+    },
+    "status": {
+      "days_left": "Dies restants",
+      "completed": "Completat",
+      "yet_to_start": "Pendent d’iniciar",
+      "in_progress": "En curs",
+      "draft": "Esborrany"
+    },
+    "action": {
+      "restore": {
+        "title": "Restaura el cicle",
+        "success": {
+          "title": "Cicle restaurat",
+          "description": "El cicle s’ha restaurat."
+        },
+        "failed": {
+          "title": "No s’ha pogut restaurar el cicle",
+          "description": "No s’ha pogut restaurar el cicle. Torna-ho a provar."
+        }
+      },
+      "favorite": {
+        "loading": "S’està afegint el cicle als preferits",
+        "success": {
+          "description": "El cicle s’ha afegit als preferits.",
+          "title": "Correcte!"
+        },
+        "failed": {
+          "description": "No s’ha pogut afegir el cicle als preferits. Torna-ho a provar.",
+          "title": "Error!"
+        }
+      },
+      "unfavorite": {
+        "loading": "S’està eliminant el cicle dels preferits",
+        "success": {
+          "description": "El cicle s’ha eliminat dels preferits.",
+          "title": "Correcte!"
+        },
+        "failed": {
+          "description": "No s’ha pogut eliminar el cicle dels preferits. Torna-ho a provar.",
+          "title": "Error!"
+        }
+      },
+      "update": {
+        "loading": "S’està actualitzant el cicle",
+        "success": {
+          "description": "El cicle s’ha actualitzat correctament.",
+          "title": "Correcte!"
+        },
+        "failed": {
+          "description": "S’ha produït un error en actualitzar el cicle. Torna-ho a provar.",
+          "title": "Error!"
+        },
+        "error": {
+          "already_exists": "Ja tens un cicle en les dates indicades. Si vols crear un cicle esborrany, pots fer-ho suprimint les dues dates."
+        }
+      }
+    },
+    "empty_state": {
+      "general": {
+        "title": "Agrupa i limita temporalment el teu treball en cicles.",
+        "description": "Divideix el treball en blocs de temps delimitats, estableix dates partint de la data límit del projecte i fes progressos tangibles en equip.",
+        "primary_button": {
+          "text": "Estableix el teu primer cicle",
+          "comic": {
+            "title": "Els cicles són períodes de temps repetitius.",
+            "description": "Un sprint, una iteració o qualsevol altre terme que utilitzis per fer un seguiment setmanal o quinzenal del treball és un cicle."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "No s’han afegit elements de treball al cicle",
+        "description": "Afegeix o crea elements de treball que vulguis delimitar en el temps i lliurar dins d’aquest cicle",
+        "primary_button": {
+          "text": "Crea un element de treball nou"
+        },
+        "secondary_button": {
+          "text": "Afegeix un element de treball existent"
+        }
+      },
+      "completed_no_issues": {
+        "title": "No hi ha elements de treball al cicle",
+        "description": "No hi ha elements de treball al cicle. Els elements de treball s’han traslladat o s’han ocultat. Per veure’n els ocults, si n’hi ha, actualitza les propietats de visualització en conseqüència."
+      },
+      "active": {
+        "title": "Cap cicle actiu",
+        "description": "Un cicle actiu inclou qualsevol període que abasti la data d’avui dins del seu interval. Aquí trobaràs el progrés i els detalls del cicle actiu."
+      },
+      "archived": {
+        "title": "Encara no hi ha cicles arxivats",
+        "description": "Per mantenir el projecte ordenat, arxiva els cicles completats. Els trobaràs aquí un cop arxivats."
+      }
+    }
+  },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "Desa vistes filtrades per al teu projecte. En crea tantes com necessitis",
+        "description": "Les vistes són conjunts de filtres desats que uses sovint o als quals vols accedir fàcilment. Tots els teus companys d’un projecte poden veure les vistes de tothom i triar la que millor s’adapti a les seves necessitats.",
+        "primary_button": {
+          "text": "Crea la teva primera vista",
+          "comic": {
+            "title": "Les vistes funcionen sobre les propietats dels elements de treball.",
+            "description": "Des d’aquí pots crear una vista amb tantes propietats i filtres com consideris necessaris."
+          }
+        },
+        "filter": {
+          "title": "Cap vista coincident",
+          "description": "Cap vista no coincideix amb els criteris de cerca.\n Crea una vista nova en lloc d’això."
+        }
+      },
+      "no_archived_issues": {
+        "title": "Encara no hi ha elements de treball arxivats",
+        "description": "Manualment o mitjançant una automatització, pots arxivar els elements de treball completats o cancel·lats. Els trobaràs aquí un cop arxivats.",
+        "primary_button": {
+          "text": "Estableix una automatització"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "No s’ha trobat cap element de treball que coincideixi amb els filtres aplicats",
+        "secondary_button": {
+          "text": "Esborra tots els filtres"
+        }
+      },
+      "public": {
+        "title": "Encara no hi ha pàgines públiques",
+        "description": "Consulta aquí les pàgines compartides amb tothom del teu projecte.",
+        "primary_button": {
+          "text": "Crea la teva primera pàgina"
+        }
+      },
+      "archived": {
+        "title": "Encara no hi ha pàgines arxivades",
+        "description": "Arxiva les pàgines que no tens presents. Accedeix-hi aquí quan les necessitis."
+      },
+      "shared": {
+        "title": "Encara no hi ha pàgines compartides",
+        "description": "Aquí apareixeran les pàgines que altres persones han compartit amb tu."
+      }
+    },
+    "delete_view": {
+      "title": "Segur que vols suprimir aquesta vista?",
+      "content": "Si ho confirmes, totes les opcions d’ordenació, filtratge i visualització, a més de la disposició que has triat per a aquesta vista, se suprimiran permanentment i no es podran restaurar."
+    }
+  },
+  "project_issues": {
+    "empty_state": {
+      "no_issues": {
+        "title": "Crea un element de treball i assigna’l a algú, fins i tot a tu mateix",
+        "description": "Considera els elements de treball com a feines, tasques, treballs o JTBD, tal com ens agrada a nosaltres. Un element de treball i els seus subelements de treball solen ser accions amb un termini assignades a membres del teu equip. El teu equip crea, assigna i completa elements de treball per fer avançar el projecte cap al seu objectiu.",
+        "primary_button": {
+          "text": "Crea el teu primer element de treball",
+          "comic": {
+            "title": "Els elements de treball són els blocs de construcció de Plane.",
+            "description": "Redissenyar la interfície de Plane, renovar la imatge de l’empresa o llançar el nou sistema d’injecció de combustible són exemples d’elements de treball que probablement tinguin subelements de treball."
+          }
+        }
+      },
+      "no_archived_issues": {
+        "title": "Encara no hi ha elements de treball arxivats",
+        "description": "Manualment o mitjançant una automatització, pots arxivar els elements de treball completats o cancel·lats. Els trobaràs aquí un cop arxivats.",
+        "primary_button": {
+          "text": "Estableix una automatització"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "No s’ha trobat cap element de treball que coincideixi amb els filtres aplicats",
+        "secondary_button": {
+          "text": "Esborra tots els filtres"
+        }
+      }
+    }
+  },
+  "project_module": {
+    "add_module": "Afegeix un mòdul",
+    "update_module": "Actualitza el mòdul",
+    "create_module": "Crea un mòdul",
+    "archive_module": "Arxiva el mòdul",
+    "restore_module": "Restaura el mòdul",
+    "delete_module": "Suprimeix el mòdul",
+    "empty_state": {
+      "general": {
+        "title": "Assigna les fites del teu projecte a mòduls i fes un seguiment fàcil del treball agregat.",
+        "description": "Un grup d’elements de treball que pertanyen a un pare lògic i jeràrquic forma un mòdul. Pensa-hi com una manera de fer el seguiment del treball per fites del projecte. Tenen els seus propis períodes i terminis, així com analítiques per ajudar-te a veure a quina distància et trobes d’una fita.",
+        "primary_button": {
+          "text": "Crea el teu primer mòdul",
+          "comic": {
+            "title": "Els mòduls ajuden a agrupar el treball per jerarquia.",
+            "description": "Un mòdul de carrosseria, un mòdul de xassís i un mòdul de magatzem són bons exemples d’aquesta agrupació."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "No hi ha elements de treball en el mòdul",
+        "description": "Crea o afegeix els elements de treball que vulguis completar com a part d’aquest mòdul",
+        "primary_button": {
+          "text": "Crea elements de treball nous"
+        },
+        "secondary_button": {
+          "text": "Afegeix un element de treball existent"
+        }
+      },
+      "archived": {
+        "title": "Encara no hi ha mòduls arxivats",
+        "description": "Per mantenir el projecte ordenat, arxiva els mòduls completats o cancel·lats. Els trobaràs aquí un cop arxivats."
+      },
+      "sidebar": {
+        "in_active": "Aquest mòdul encara no està actiu.",
+        "invalid_date": "Data no vàlida. Introdueix una data vàlida."
+      }
+    },
+    "quick_actions": {
+      "archive_module": "Arxiva el mòdul",
+      "archive_module_description": "Només es pot arxivar un mòdul completat o cancel·lat.",
+      "delete_module": "Suprimeix el mòdul"
+    },
+    "toast": {
+      "copy": {
+        "success": "L’enllaç del mòdul s’ha copiat al porta-retalls"
+      },
+      "delete": {
+        "success": "El mòdul s’ha suprimit correctament",
+        "error": "No s’ha pogut suprimir el mòdul"
+      }
+    }
+  },
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "Escriu una nota, un document o una base de coneixement completa. Demana ajuda a Galileo, l’assistent d’IA de Plane, per començar",
+        "description": "Les pàgines són un espai per plasmar idees a Plane. Pren notes de reunions, formata-les fàcilment, incrusta elements de treball, organitza-les amb una biblioteca de components i mantén-les en el context del teu projecte. Per resoldre qualsevol document ràpidament, invoca Galileo, la IA de Plane, amb una drecera o fent clic a un botó.",
+        "primary_button": {
+          "text": "Crea la teva primera pàgina"
+        }
+      },
+      "private": {
+        "title": "Encara no hi ha pàgines privades",
+        "description": "Conserva aquí els teus pensaments privats. Quan estiguis a punt per compartir-los, l’equip és a un clic de distància.",
+        "primary_button": {
+          "text": "Crea la teva primera pàgina"
+        }
+      },
+      "public": {
+        "title": "Encara no hi ha pàgines públiques",
+        "description": "Consulta aquí les pàgines compartides amb tothom del teu projecte.",
+        "primary_button": {
+          "text": "Crea la teva primera pàgina"
+        }
+      },
+      "archived": {
+        "title": "Encara no hi ha pàgines arxivades",
+        "description": "Arxiva les pàgines que no tens presents. Accedeix-hi aquí quan les necessitis."
+      }
+    }
+  },
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "Intake no està activat per al projecte.",
+        "description": "Intake t’ajuda a gestionar les sol·licituds que arriben al teu projecte i afegir-les com a elements de treball al teu flux de treball. Activa Intake des de la configuració del projecte per gestionar les sol·licituds.",
+        "primary_button": {
+          "text": "Gestiona les funcionalitats"
+        }
+      },
+      "cycle": {
+        "title": "Els cicles no estan activats per a aquest projecte.",
+        "description": "Divideix el treball en blocs amb un temps limitat, calcula les dates cap enrere des de la data límit del projecte i fes progressos tangibles com a equip. Activa la funcionalitat de cicles per al teu projecte per començar a usar-los.",
+        "primary_button": {
+          "text": "Gestiona les funcionalitats"
+        }
+      },
+      "module": {
+        "title": "Els mòduls no estan activats per al projecte.",
+        "description": "Els mòduls són els elements bàsics del teu projecte. Activa els mòduls des de la configuració del projecte per començar a usar-los.",
+        "primary_button": {
+          "text": "Gestiona les funcionalitats"
+        }
+      },
+      "page": {
+        "title": "Les pàgines no estan activades per al projecte.",
+        "description": "Les pàgines són els elements bàsics del teu projecte. Activa les pàgines des de la configuració del projecte per començar a usar-les.",
+        "primary_button": {
+          "text": "Gestiona les funcionalitats"
+        }
+      },
+      "view": {
+        "title": "Les vistes no estan activades per al projecte.",
+        "description": "Les vistes són els elements bàsics del teu projecte. Activa les vistes des de la configuració del projecte per començar a usar-les.",
+        "primary_button": {
+          "text": "Gestiona les funcionalitats"
+        }
+      }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "Llista de pendents",
+      "planned": "Planificat",
+      "in_progress": "En curs",
+      "paused": "En pausa",
+      "completed": "Completat",
+      "cancelled": "Cancel·lat"
+    },
+    "layout": {
+      "list": "Disposició de llista",
+      "board": "Disposició en galeria",
+      "timeline": "Disposició de cronologia"
+    },
+    "order_by": {
+      "name": "Nom",
+      "progress": "Progrés",
+      "issues": "Nombre d’elements de treball",
+      "due_date": "Data de venciment",
+      "created_at": "Data de creació",
+      "manual": "Manual"
+    }
+  },
+  "project_members": {
+    "full_name": "Nom complet",
+    "display_name": "Nom visible",
+    "email": "Correu electrònic",
+    "joining_date": "Data d’incorporació",
+    "role": "Rol"
+  },
+  "project": {
+    "members_import": {
+      "title": "Importa membres des d’un CSV",
+      "description": "Puja un CSV amb les columnes: Correu electrònic i Rol (5=Convidat, 15=Membre, 20=Administrador). Els usuaris ja han de ser membres de l’espai de treball.",
+      "download_sample": "Baixa un CSV d’exemple",
+      "dropzone": {
+        "active": "Deixa anar aquí el fitxer CSV",
+        "inactive": "Arrossega i deixa anar o fes clic per pujar",
+        "file_type": "Només s’admeten fitxers .csv"
+      },
+      "buttons": {
+        "cancel": "Cancel·la",
+        "import": "Importa",
+        "try_again": "Torna-ho a provar",
+        "close": "Tanca",
+        "done": "Fet"
+      },
+      "progress": {
+        "uploading": "S’està pujant...",
+        "importing": "S’està important..."
+      },
+      "summary": {
+        "title": {
+          "complete": "Importació completada"
+        },
+        "message": {
+          "success": "S’han importat correctament {count} membre{plural} al projecte.",
+          "no_imports": "No s’ha importat cap membre nou des del fitxer CSV."
+        },
+        "stats": {
+          "added": "Afegits",
+          "reactivated": "Reactivats",
+          "already_members": "Ja són membres",
+          "skipped": "Omesos"
+        },
+        "download_errors": "Baixa els detalls omesos"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Fitxer no vàlid",
+          "message": "Només s’admeten fitxers CSV."
+        },
+        "import_failed": {
+          "title": "La importació ha fallat",
+          "message": "Alguna cosa ha fallat."
+        }
+      }
+    }
+  }
+}

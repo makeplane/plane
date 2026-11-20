@@ -1,0 +1,100 @@
+{
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Permet elements de treball nous",
+      "work_item_creation_disable_tooltip": "La creació d’elements de treball està desactivada per a aquest estat",
+      "default_state": "L’estat per defecte permet a tots els membres crear nous elements de treball. Això no es pot canviar",
+      "state_change_count": "{count, plural, one {1 canvi d’estat permès} other {{count} canvis d’estat permesos}}",
+      "movers_count": "{count, plural, one {1 revisor llistat} other {{count} revisors llistats}}",
+      "state_changes": {
+        "label": {
+          "default": "Afegeix un canvi d’estat permès",
+          "loading": "S’està afegint un canvi d’estat permès"
+        },
+        "move_to": "Canvia l’estat a",
+        "movers": {
+          "label": "Quan ho revisin",
+          "tooltip": "Els revisors són persones autoritzades a moure elements de treball d’un estat a un altre.",
+          "add": "Afegeix revisors"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "No pots moure aquest element de treball aquí."
+    },
+    "workflow_enabled": {
+      "label": "Canvi d’estat"
+    },
+    "workflow_tree": {
+      "label": "Per als elements de treball en",
+      "state_change_label": "el pot moure a"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Controla el caos dels canvis i les revisions amb fluxos de treball.",
+        "description": "Estableix regles sobre on es mou el teu treball, qui el mou i quan amb els fluxos de treball de Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Consulta l’historial de canvis",
+      "reset_workflow": "Restableix el flux de treball"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Segur que vols restableixer aquest flux de treball?",
+        "description": "Si restableixes aquest flux de treball, se suprimiran totes les regles de canvi d’estat i hauràs de crear-les de nou per executar-les en aquest projecte."
+      },
+      "delete_state_change": {
+        "title": "Segur que vols suprimir aquesta regla de canvi d’estat?",
+        "description": "Un cop suprimida, no podràs desfer aquest canvi i hauràs de tornar a establir la regla si vols que funcioni per a aquest projecte."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} el flux de treball",
+        "success": {
+          "title": "Correcte",
+          "message": "El flux de treball s’ha {action} correctament"
+        },
+        "error": {
+          "title": "Error",
+          "message": "No s’ha pogut {action} el flux de treball. Torna-ho a provar."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Correcte",
+          "message": "El flux de treball s’ha restablegut correctament"
+        },
+        "error": {
+          "title": "Error en restablir el flux de treball",
+          "message": "No s’ha pogut restableixer el flux de treball. Torna-ho a provar."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Error en afegir la regla de canvi d’estat",
+          "message": "No s’ha pogut afegir la regla de canvi d’estat. Torna-ho a provar."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Error en modificar la regla de canvi d’estat",
+          "message": "No s’ha pogut modificar la regla de canvi d’estat. Torna-ho a provar."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Error en eliminar la regla de canvi d’estat",
+          "message": "No s’ha pogut eliminar la regla de canvi d’estat. Torna-ho a provar."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Error en modificar els revisors de la regla de canvi d’estat",
+          "message": "No s’han pogut modificar els revisors de la regla de canvi d’estat. Torna-ho a provar."
+        }
+      }
+    }
+  }
+}

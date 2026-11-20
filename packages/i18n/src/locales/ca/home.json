@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "La teva guia d’inici ràpid",
+      "not_right_now": "Ara no",
+      "create_project": {
+        "title": "Crea un projecte",
+        "description": "La majoria de coses comencen amb un projecte a Plane.",
+        "cta": "Comença"
+      },
+      "invite_team": {
+        "title": "Convida el teu equip",
+        "description": "Construeix, llança i gestiona amb els teus companys.",
+        "cta": "Convida’ls"
+      },
+      "configure_workspace": {
+        "title": "Configura el teu espai de treball.",
+        "description": "Activa o desactiva funcions, o fes-hi molt més.",
+        "cta": "Configura aquest espai de treball"
+      },
+      "personalize_account": {
+        "title": "Fes que Plane sigui teu.",
+        "description": "Tria la teva imatge, els colors i molt més.",
+        "cta": "Personalitza’l ara"
+      },
+      "widgets": {
+        "title": "Sense widgets, està massa tranquil. Activa’ls",
+        "description": "Sembla que tots els teus widgets estan desactivats. Activa’ls\nara per millorar la teva experiència!",
+        "primary_button": {
+          "text": "Gestiona els ginys"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "Desa enllaços a coses de treball que vulguis tenir a mà.",
+      "add": "Afegeix un enllaç ràpid",
+      "title": "Enllaç ràpid",
+      "title_plural": "Enllaços ràpids"
+    },
+    "recents": {
+      "title": "Recents",
+      "empty": {
+        "project": "Els teus projectes recents apareixeran aquí quan en visitis un.",
+        "page": "Les teves pàgines recents apareixeran aquí quan en visitis una.",
+        "issue": "Els teus elements de treball recents apareixeran aquí quan en visitis un.",
+        "default": "Encara no tens cap element recent."
+      },
+      "filters": {
+        "all": "Tots",
+        "projects": "Projectes",
+        "pages": "Pàgines",
+        "issues": "Elements de treball"
+      }
+    },
+    "new_at_plane": {
+      "title": "Novetats a Plane"
+    },
+    "quick_tutorial": {
+      "title": "Tutorial ràpid"
+    },
+    "widget": {
+      "reordered_successfully": "El widget s’ha reordenat correctament.",
+      "reordering_failed": "S’ha produït un error en reordenar el widget."
+    },
+    "manage_widgets": "Gestiona els ginys",
+    "title": "Inici",
+    "star_us_on_github": "Dona’ns una estrella a GitHub",
+    "business_trial_banner": {
+      "title": "La teva prova de 14 dies del pla Business ja és activa!",
+      "description": "Explora totes les funcionalitats de Business. Quan estiguis a punt, tria subscriure’t. No se’t facturarà automàticament.",
+      "trial_ends_today": "La prova acaba avui",
+      "trial_ends_in_days": "La prova acaba en {days, plural, one {# dia} other {# dies}}",
+      "start_subscription": "Inicia la subscripció",
+      "explore_business_features": "Explora les funcions de Business"
+    }
+  }
+}

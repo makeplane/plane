@@ -1,0 +1,36 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "No s’han trobat resultats"
+      }
+    }
+  },
+  "sidebar": {
+    "more": "Més",
+    "hide": "Amaga",
+    "stickies": "Stickies",
+    "your_work": "El teu treball",
+    "projects": "Projectes",
+    "pages": "Pàgines",
+    "new_work_item": "Element de treball nou",
+    "home": "Inici",
+    "inbox": "Safata d’entrada",
+    "workspace": "Espai de treball",
+    "views": "Vistes",
+    "analytics": "Analítica",
+    "work_items": "Elements de treball",
+    "cycles": "Cicles",
+    "modules": "Mòduls",
+    "intake": "Intake",
+    "drafts": "Esborranys",
+    "favorites": "Preferits",
+    "pro": "Pro",
+    "upgrade": "Millora",
+    "pi_chat": "Plane AI",
+    "epics": "Èpics",
+    "upgrade_plan": "Millora el pla",
+    "plane_pro": "Plane Pro",
+    "business": "Business"
+  }
+}

@@ -1,0 +1,333 @@
+{
+  "templates": {
+    "settings": {
+      "title": "Plantilles",
+      "description": "Estalvia el 80% del temps dedicat a crear projectes, elements de treball i pàgines quan utilitzis plantilles.",
+      "new_project_template": "Nova plantilla de projecte",
+      "new_work_item_template": "Nova plantilla d’element de treball",
+      "new_page_template": "Nova plantilla de pàgina",
+      "options": {
+        "project": {
+          "label": "Plantilles de projecte"
+        },
+        "work_item": {
+          "label": "Plantilles d’element de treball"
+        },
+        "page": {
+          "label": "Plantilles de pàgina"
+        }
+      },
+      "create_template": {
+        "label": "Crea una plantilla",
+        "no_permission": {
+          "project": "Contacta l’administrador del projecte per crear plantilles",
+          "workspace": "Contacta l’administrador de l’espai de treball per crear plantilles"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "Utilitza la plantilla",
+          "loading": "S’està aplicant"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Derivada de l’espai de treball"
+        },
+        "project": {
+          "info": "Derivada del projecte"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Posa un nom a la teva plantilla de projecte.",
+              "validation": {
+                "required": "El nom de la plantilla és obligatori",
+                "maxLength": "El nom de la plantilla ha de tenir menys de 255 caràcters"
+              }
+            },
+            "description": {
+              "placeholder": "Descriu quan i com s’ha d’utilitzar aquesta plantilla."
+            }
+          },
+          "name": {
+            "placeholder": "Posa un nom al teu projecte.",
+            "validation": {
+              "required": "El títol del projecte és obligatori",
+              "maxLength": "El títol del projecte ha de tenir menys de 255 caràcters"
+            }
+          },
+          "description": {
+            "placeholder": "Descriu la finalitat i els objectius d’aquest projecte."
+          },
+          "button": {
+            "create": "Crea una plantilla de projecte",
+            "update": "Actualitza la plantilla de projecte"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Posa un nom a la plantilla d’element de treball.",
+              "validation": {
+                "required": "El nom de la plantilla és obligatori",
+                "maxLength": "El nom de la plantilla ha de tenir menys de 255 caràcters"
+              }
+            },
+            "description": {
+              "placeholder": "Descriu quan i com s’ha d’utilitzar aquesta plantilla."
+            }
+          },
+          "name": {
+            "placeholder": "Posa un títol a aquest element de treball.",
+            "validation": {
+              "required": "El títol de l’element de treball és obligatori",
+              "maxLength": "El títol de l’element de treball ha de tenir menys de 255 caràcters"
+            }
+          },
+          "description": {
+            "placeholder": "Descriu aquest element de treball perquè quedi clar què aconseguiràs en completar-lo."
+          },
+          "button": {
+            "create": "Crea una plantilla d’element de treball",
+            "update": "Actualitza la plantilla d’element de treball"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Posa un nom a la teva plantilla de pàgina.",
+              "validation": {
+                "required": "El nom de la plantilla és obligatori",
+                "maxLength": "El nom de la plantilla ha de tenir menys de 255 caràcters"
+              }
+            },
+            "description": {
+              "placeholder": "Descriu quan i com s’ha d’utilitzar aquesta plantilla."
+            }
+          },
+          "name": {
+            "placeholder": "Pàgina sense títol",
+            "validation": {
+              "maxLength": "El nom de la pàgina ha de tenir menys de 255 caràcters"
+            }
+          },
+          "button": {
+            "create": "Crea una plantilla de pàgina",
+            "update": "Actualitza la plantilla de pàgina"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Configuració de publicació} other {Publica al Marketplace}}",
+          "unpublish_action": "Despublica del Marketplace",
+          "title": "Fes que la teva plantilla sigui fàcil de trobar i reconèixer.",
+          "name": {
+            "label": "Nom de la plantilla",
+            "placeholder": "Posa un nom a la plantilla",
+            "validation": {
+              "required": "El nom de la plantilla és obligatori",
+              "maxLength": "El nom de la plantilla ha de tenir menys de 255 caràcters"
+            }
+          },
+          "short_description": {
+            "label": "Descripció breu",
+            "placeholder": "Aquesta plantilla és ideal per a responsables de projecte que gestionen diversos projectes alhora.",
+            "validation": {
+              "required": "La descripció breu és obligatòria"
+            }
+          },
+          "description": {
+            "label": "Descripció",
+            "placeholder": "Millora la productivitat i agilitza la comunicació amb la nostra integració de veu a text.\n• Transcripció en temps real: converteix les paraules parlades en text precís a l’instant.\n• Creació de tasques i comentaris: afegeix tasques, descripcions i comentaris mitjançant ordres de veu.",
+            "validation": {
+              "required": "La descripció és obligatòria"
+            }
+          },
+          "category": {
+            "label": "Categoria",
+            "placeholder": "Tria on creus que encaixa millor. En pots triar més d’una.",
+            "validation": {
+              "required": "Cal seleccionar almenys una categoria"
+            }
+          },
+          "keywords": {
+            "label": "Paraules clau",
+            "placeholder": "Fes servir termes que creguis que els usuaris cercaran en buscar aquesta plantilla.",
+            "helperText": "Introdueix paraules clau separades per comes que puguin ajudar la gent a trobar-la amb el cercador.",
+            "validation": {
+              "required": "Cal introduir almenys una paraula clau"
+            }
+          },
+          "website": {
+            "label": "URL del lloc web",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "URL no vàlida",
+              "maxLength": "La URL ha de tenir menys de 800 caràcters"
+            }
+          },
+          "company_name": {
+            "label": "Nom de l’empresa",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "El nom de l’empresa és obligatori",
+              "maxLength": "El nom de l’empresa ha de tenir menys de 255 caràcters"
+            }
+          },
+          "contact_email": {
+            "label": "Correu electrònic de contacte",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Adreça electrònica no vàlida",
+              "maxLength": "El correu electrònic de contacte ha de tenir menys de 255 caràcters"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Enllaç a la teva política de privadesa",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "URL no vàlida",
+              "maxLength": "La URL ha de tenir menys de 800 caràcters"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Enllaç a les teves condicions d’ús",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "URL no vàlida",
+              "maxLength": "La URL ha de tenir menys de 800 caràcters"
+            }
+          },
+          "cover_image": {
+            "label": "Afegeix una imatge de portada que es mostrarà al Marketplace",
+            "upload_title": "Puja una imatge de portada",
+            "upload_placeholder": "Fes clic per pujar-la o arrossega i deixa anar una imatge de portada",
+            "drop_here": "Deixa-ho aquí",
+            "click_to_upload": "Fes clic per pujar-la",
+            "invalid_file_or_exceeds_size_limit": "Fitxer no vàlid o que supera el límit de mida. Torna-ho a provar.",
+            "upload_and_save": "Puja i desa",
+            "uploading": "S’està pujant",
+            "remove": "Elimina",
+            "removing": "S’està eliminant",
+            "validation": {
+              "required": "La imatge de portada és obligatòria"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Inclou imatges que creguis que faran més atractiva aquesta plantilla per als visitants.",
+            "validation": {
+              "required": "Cal afegir almenys una captura de pantalla"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Plantilles",
+        "description": "Amb les plantilles de projecte, d’element de treball i de pàgina de Plane, no has de crear un projecte des de zero ni configurar les propietats de l’element de treball manualment.",
+        "sub_description": "Recupera el 80% del temps que dediques a tasques administratives quan facis servir plantilles."
+      },
+      "no_templates": {
+        "button": "Crea la teva primera plantilla"
+      },
+      "no_labels": {
+        "description": "Encara no hi ha etiquetes. Crea etiquetes per ajudar a organitzar i filtrar els elements de treball del teu projecte."
+      },
+      "no_modules": {
+        "description": "Encara no hi ha mòduls. Organitza el treball en subprojectes amb responsables i assignataris específics."
+      },
+      "no_work_items": {
+        "description": "Encara no hi ha elements de treball. Afegeix-ne un per estructurar millor el teu treball."
+      },
+      "no_sub_work_items": {
+        "description": "Encara no hi ha subelements de treball. Afegeix-ne un per estructurar millor el teu treball."
+      },
+      "page": {
+        "no_templates": {
+          "title": "No hi ha cap plantilla a la qual tinguis accés.",
+          "description": "Crea una plantilla"
+        },
+        "no_results": {
+          "title": "No s’ha trobat cap plantilla.",
+          "description": "Prova de cercar amb altres termes."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Plantilla creada",
+          "message": "{templateName}, la plantilla {templateType}, ja està disponible per al teu espai de treball."
+        },
+        "error": {
+          "title": "Aquesta vegada no hem pogut crear la plantilla.",
+          "message": "Torna a provar de desar les teves dades o copia-les a una plantilla nova, preferiblement en una altra pestanya."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Plantilla modificada",
+          "message": "{templateName}, la plantilla {templateType}, s’ha modificat."
+        },
+        "error": {
+          "title": "No hem pogut desar els canvis d’aquesta plantilla.",
+          "message": "Torna a desar les teves dades o torna a aquesta plantilla més tard. Si el problema persisteix, contacta amb nosaltres."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Plantilla suprimida",
+          "message": "{templateName}, la plantilla {templateType}, s’ha suprimit del teu espai de treball."
+        },
+        "error": {
+          "title": "No hem pogut suprimir aquesta plantilla.",
+          "message": "Prova de suprimir-la de nou o torna-hi més tard. Si llavors tampoc no la pots suprimir, contacta amb nosaltres."
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Plantilla despublicada",
+          "message": "{templateName}, la plantilla {templateType}, s’ha despublicat."
+        },
+        "error": {
+          "title": "No hem pogut despublicar aquesta plantilla.",
+          "message": "Torna a provar de despublicar-la o torna-hi més tard. Si llavors no pots despublicar-la, contacta amb nosaltres."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Suprimeix la plantilla",
+      "description": {
+        "prefix": "Segur que vols suprimir la plantilla-",
+        "suffix": "? Totes les dades relacionades amb la plantilla s’eliminaran permanentment. Aquesta acció no es pot desfer."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Despublica la plantilla",
+      "description": {
+        "prefix": "Segur que vols despublicar la plantilla-",
+        "suffix": "? Aquesta plantilla ja no estarà disponible per als usuaris del marketplace."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Afegeix una plantilla nova",
+        "project": "Afegeix una plantilla nova"
+      },
+      "label": {
+        "project": "Tria una plantilla de projecte",
+        "page": "Tria entre les plantilles"
+      },
+      "tooltip": {
+        "work_item": "Tria una plantilla d’element de treball"
+      },
+      "no_results": {
+        "work_item": "No s’han trobat plantilles.",
+        "project": "No s’han trobat plantilles."
+      }
+    }
+  }
+}

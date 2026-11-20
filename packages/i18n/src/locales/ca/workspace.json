@@ -1,0 +1,389 @@
+{
+  "workspace_creation": {
+    "heading": "Crea el teu espai de treball",
+    "subheading": "Per començar a utilitzar Plane, has de crear o unir-te a un espai de treball.",
+    "form": {
+      "name": {
+        "label": "Posa nom al teu espai de treball",
+        "placeholder": "És sempre millor triar un nom familiar i fàcil de reconèixer."
+      },
+      "url": {
+        "label": "Estableix la URL del teu espai de treball",
+        "placeholder": "Escriu o enganxa un URL",
+        "edit_slug": "Només pots editar l’àlies de la URL"
+      },
+      "organization_size": {
+        "label": "Quantes persones utilitzaran aquest espai de treball?",
+        "placeholder": "Selecciona un rang"
+      }
+    },
+    "errors": {
+      "creation_disabled": {
+        "title": "Només l’administrador de la teva instància pot crear espais de treball",
+        "description": "Si coneixes l’adreça electrònica de l’administrador de la teva instància, fes clic al botó de sota per posar-te en contacte amb l’administrador.",
+        "request_button": "Sol·licita l’administrador de la instància"
+      },
+      "validation": {
+        "name_alphanumeric": "Els noms dels espais de treball només poden contenir espais (’ ’), guions (’-’), guions baixos (’_’) i caràcters alfanumèrics.",
+        "name_length": "Limita el nom a 80 caràcters.",
+        "url_alphanumeric": "Les URL només poden contenir guions (’-’) i caràcters alfanumèrics.",
+        "url_length": "Limita la URL a 48 caràcters.",
+        "url_already_taken": "La URL de l’espai de treball ja està en ús!"
+      }
+    },
+    "request_email": {
+      "subject": "Sol·licitud d’un espai de treball nou",
+      "body": "Hola, administrador(es) de la instància:\n\nCrea un espai de treball nou amb la URL [/workspace-name] per a [motiu de creació de l’espai de treball].\n\nGràcies,\n{firstName} {lastName}\n{email}"
+    },
+    "button": {
+      "default": "Crea un espai de treball",
+      "loading": "S’està creant l’espai de treball"
+    },
+    "toast": {
+      "success": {
+        "title": "Correcte",
+        "message": "Espai de treball creat correctament"
+      },
+      "error": {
+        "title": "Error",
+        "message": "No s’ha pogut crear l’espai de treball. Torna-ho a provar."
+      }
+    }
+  },
+  "workspace_dashboard": {
+    "empty_state": {
+      "general": {
+        "title": "Resum dels teus projectes, l’activitat i les mètriques",
+        "description": "Benvingut a Plane; estem encantats de tenir-te aquí. Crea el teu primer projecte i fes un seguiment dels teus elements de treball, i aquesta pàgina es convertirà en un espai que t’ajudarà a progressar. Els administradors també veuran elements que ajuden el seu equip a progressar.",
+        "primary_button": {
+          "text": "Crea el teu primer projecte",
+          "comic": {
+            "title": "Tot comença amb un projecte a Plane",
+            "description": "Un projecte pot ser la fulla de ruta d’un producte, una campanya de màrqueting o el llançament d’un cotxe nou."
+          }
+        }
+      }
+    }
+  },
+  "workspace_analytics": {
+    "label": "Analítica",
+    "page_label": "{workspace} - Analítica",
+    "open_tasks": "Total de tasques obertes",
+    "error": "S’ha produït un error en obtenir les dades.",
+    "work_items_closed_in": "Elements de treball tancats en",
+    "selected_projects": "Projectes seleccionats",
+    "total_members": "Total de membres",
+    "total_cycles": "Total de cicles",
+    "total_modules": "Total de mòduls",
+    "pending_work_items": {
+      "title": "Elements de treball pendents",
+      "empty_state": "Aquí es mostra l’anàlisi dels elements de treball pendents dels companys."
+    },
+    "work_items_closed_in_a_year": {
+      "title": "Elements de treball tancats en un any",
+      "empty_state": "Tanca elements de treball per veure’n l’anàlisi en forma de gràfic."
+    },
+    "most_work_items_created": {
+      "title": "Elements de treball creats més sovint",
+      "empty_state": "Aquí es mostren els companys i el nombre d’elements de treball que han creat."
+    },
+    "most_work_items_closed": {
+      "title": "Elements de treball tancats més sovint",
+      "empty_state": "Aquí es mostren els companys i el nombre d’elements de treball que han tancat."
+    },
+    "tabs": {
+      "scope_and_demand": "Abast i demanda",
+      "custom": "Analítica personalitzada"
+    },
+    "total": "Total de {entity}",
+    "started_work_items": "{entity} iniciats",
+    "backlog_work_items": "{entity} a la llista de pendents",
+    "un_started_work_items": "{entity} no iniciats",
+    "completed_work_items": "{entity} completats",
+    "project_insights": "Informació dels projectes",
+    "summary_of_projects": "Resum dels projectes",
+    "all_projects": "Tots els projectes",
+    "trend_on_charts": "Tendència als gràfics",
+    "active_projects": "Projectes actius",
+    "customized_insights": "Informació personalitzada",
+    "created_vs_resolved": "Creats enfront de resolts",
+    "empty_state": {
+      "project_insights": {
+        "title": "Encara no hi ha dades",
+        "description": "Aquí es mostraran els elements de treball que tens assignats, desglossats per estat."
+      },
+      "created_vs_resolved": {
+        "title": "Encara no hi ha dades",
+        "description": "Aquí es mostraran els elements de treball creats i resolts al llarg del temps."
+      },
+      "customized_insights": {
+        "title": "Encara no hi ha dades",
+        "description": "Aquí es mostraran els elements de treball que tens assignats, desglossats per estat."
+      },
+      "general": {
+        "title": "Fes un seguiment del progrés, la càrrega de treball i les assignacions. Detecta tendències, elimina bloquejos i avança més ràpidament",
+        "description": "Consulta l’abast enfront de la demanda, les estimacions i l’expansió de l’abast. Obtén el rendiment per membres i equips, i assegura’t que el teu projecte es manté dins del termini.",
+        "primary_button": {
+          "text": "Comença el teu primer projecte",
+          "comic": {
+            "title": "L’analítica funciona millor amb cicles i mòduls",
+            "description": "Primer, assigna un període de temps als teus elements de treball dins de cicles i, si pots, agrupa els que abasten més d’un cicle en mòduls. Consulta’ls tots dos a la navegació de l’esquerra."
+          }
+        }
+      },
+      "cycle_progress": {
+        "title": "Encara no hi ha dades",
+        "description": "Aquí es mostrarà l’analítica del progrés dels cicles. Afegeix elements de treball als cicles per començar a fer-ne el seguiment."
+      },
+      "module_progress": {
+        "title": "Encara no hi ha dades",
+        "description": "Aquí es mostrarà l’analítica del progrés dels mòduls. Afegeix elements de treball als mòduls per començar a fer-ne el seguiment."
+      },
+      "intake_trends": {
+        "title": "Encara no hi ha dades",
+        "description": "Aquí apareixerà l’analítica de tendències d’Intake. Afegeix elements de treball a Intake per començar a fer-ne el seguiment."
+      }
+    },
+    "upgrade_to_plan": "Actualitza al pla {plan} per desbloquejar {tab}",
+    "workitem_resolved_vs_pending": "Elements de treball resolts i pendents",
+    "projects_by_status": "Projectes per estat",
+    "active_users": "Usuaris actius",
+    "intake_trends": "Tendències d’Intake"
+  },
+  "workspace_projects": {
+    "label": "{count, plural, one {Projecte} other {Projectes}}",
+    "create": {
+      "label": "Afegeix un projecte"
+    },
+    "network": {
+      "label": "Xarxa",
+      "private": {
+        "title": "Privat",
+        "description": "Accessible només per invitació"
+      },
+      "public": {
+        "title": "Públic",
+        "description": "Qualsevol persona de l’espai de treball, excepte els convidats, es pot unir"
+      }
+    },
+    "error": {
+      "permission": "No tens permís per realitzar aquesta acció.",
+      "cycle_delete": "No s’ha pogut suprimir el cicle",
+      "module_delete": "No s’ha pogut suprimir el mòdul",
+      "issue_delete": "No s’ha pogut suprimir l’element de treball"
+    },
+    "state": {
+      "backlog": "Llista de pendents",
+      "unstarted": "No iniciat",
+      "started": "Iniciat",
+      "completed": "Completat",
+      "cancelled": "Cancel·lat"
+    },
+    "sort": {
+      "manual": "Manual",
+      "name": "Nom",
+      "created_at": "Data de creació",
+      "members_length": "Nombre de membres"
+    },
+    "scope": {
+      "my_projects": "Els meus projectes",
+      "archived_projects": "Arxivada"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# mes} other{# mesos}}",
+      "days_count": "{days, plural, one{# dia} other{# dies}}"
+    },
+    "empty_state": {
+      "general": {
+        "title": "No hi ha projectes actius",
+        "description": "Considera cada projecte com l’element pare del treball orientat a objectius. Els projectes són on viuen les feines, els cicles i els mòduls i, juntament amb els teus companys, t’ajuden a assolir aquest objectiu. Crea un projecte nou o filtra els projectes arxivats.",
+        "primary_button": {
+          "text": "Comença el teu primer projecte",
+          "comic": {
+            "title": "Tot comença amb un projecte a Plane",
+            "description": "Un projecte pot ser la fulla de ruta d’un producte, una campanya de màrqueting o el llançament d’un cotxe nou."
+          }
+        }
+      },
+      "no_projects": {
+        "title": "No hi ha cap projecte",
+        "description": "Per crear elements de treball o gestionar el teu treball, has de crear un projecte o formar-ne part.",
+        "primary_button": {
+          "text": "Comença el teu primer projecte",
+          "comic": {
+            "title": "Tot comença amb un projecte a Plane",
+            "description": "Un projecte pot ser la fulla de ruta d’un producte, una campanya de màrqueting o el llançament d’un cotxe nou."
+          }
+        }
+      },
+      "filter": {
+        "title": "Cap projecte coincident",
+        "description": "No s’han detectat projectes que coincideixin amb els criteris.\n Crea un projecte nou."
+      },
+      "search": {
+        "description": "No s’han detectat projectes que coincideixin amb els criteris.\nCrea un projecte nou"
+      }
+    },
+    "card": {
+      "joined": "Incorporat",
+      "archived": "Arxivada",
+      "no_lead": "Sense responsable"
+    }
+  },
+  "workspace_views": {
+    "add_view": "Afegeix una vista",
+    "empty_state": {
+      "all-issues": {
+        "title": "No hi ha elements de treball al projecte",
+        "description": "Primer projecte acabat! Ara, divideix el teu treball en parts que puguis seguir amb elements de treball. Endavant!",
+        "primary_button": {
+          "text": "Crea un element de treball nou"
+        }
+      },
+      "assigned": {
+        "title": "Encara no hi ha elements de treball",
+        "description": "Des d’aquí pots fer un seguiment dels elements de treball que tens assignats.",
+        "primary_button": {
+          "text": "Crea un element de treball nou"
+        }
+      },
+      "created": {
+        "title": "Encara no hi ha elements de treball",
+        "description": "Tots els elements de treball que has creat apareixen aquí; fes-ne el seguiment directament des d’aquí.",
+        "primary_button": {
+          "text": "Crea un element de treball nou"
+        }
+      },
+      "subscribed": {
+        "title": "Encara no hi ha elements de treball",
+        "description": "Subscriu-te als elements de treball que t’interessin i fes-ne el seguiment de tots des d’aquí."
+      },
+      "custom-view": {
+        "title": "Encara no hi ha elements de treball",
+        "description": "Aquí pots fer el seguiment de tots els elements de treball que s’ajustin als filtres."
+      }
+    },
+    "delete_view": {
+      "title": "Segur que vols suprimir aquesta vista?",
+      "content": "Si ho confirmes, totes les opcions d’ordenació, filtratge i visualització, a més de la disposició que has triat per a aquesta vista, se suprimiran permanentment i no es podran restaurar."
+    }
+  },
+  "workspace_draft_issues": {
+    "draft_an_issue": "Fes un esborrany d’un element de treball",
+    "empty_state": {
+      "title": "Aquí es mostraran els elements de treball a mig escriure i, aviat, els comentaris.",
+      "description": "Per provar-ho, comença a afegir un element de treball i deixa’l a mig fer, o crea el teu primer esborrany a sota. 😉",
+      "primary_button": {
+        "text": "Crea el teu primer esborrany"
+      }
+    },
+    "delete_modal": {
+      "title": "Suprimeix l’esborrany",
+      "description": "Segur que vols suprimir aquest esborrany? Aquesta acció no es pot desfer."
+    },
+    "toasts": {
+      "created": {
+        "success": "Esborrany creat",
+        "error": "No s’ha pogut crear l’element de treball. Torna-ho a provar."
+      },
+      "deleted": {
+        "success": "Esborrany suprimit"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Escriu una nota, un document o una base de coneixement completa. Demana ajuda a Galileo, l’assistent d’IA de Plane, per començar",
+        "description": "Les pàgines són un espai per plasmar idees a Plane. Pren notes de reunions, formata-les fàcilment, incrusta elements de treball, organitza-les amb una biblioteca de components i mantén-les en el context del teu projecte. Per resoldre qualsevol document ràpidament, invoca Galileo, la IA de Plane, amb una drecera o fent clic a un botó.",
+        "primary_button": {
+          "text": "Crea la teva primera pàgina"
+        }
+      },
+      "private": {
+        "title": "Encara no hi ha pàgines privades",
+        "description": "Conserva aquí els teus pensaments privats. Quan estiguis a punt per compartir-los, l’equip és a un clic de distància.",
+        "primary_button": {
+          "text": "Crea la teva primera pàgina"
+        }
+      },
+      "public": {
+        "title": "Encara no hi ha pàgines de l’espai de treball",
+        "description": "Mira aquí les pàgines compartides amb tothom del teu espai de treball.",
+        "primary_button": {
+          "text": "Crea la teva primera pàgina"
+        }
+      },
+      "archived": {
+        "title": "Encara no hi ha pàgines arxivades",
+        "description": "Arxiva les pàgines que no tens presents. Accedeix-hi aquí quan les necessitis."
+      },
+      "shared": {
+        "title": "Encara no hi ha pàgines compartides",
+        "description": "Aquí apareixeran les pàgines que altres persones han compartit amb tu."
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "No hi ha cicles actius",
+        "description": "Els cicles dels teus projectes que inclouen qualsevol període que abasti la data d’avui dins del seu rang. Consulta aquí el progrés i els detalls de tots els teus cicles actius."
+      }
+    }
+  },
+  "workspace": {
+    "members_import": {
+      "title": "Importa membres des d’un CSV",
+      "description": "Puja un CSV amb les columnes: correu electrònic, nom visible, nom, cognom i rol (5, 15 o 20)",
+      "dropzone": {
+        "active": "Deixa anar aquí el fitxer CSV",
+        "inactive": "Arrossega i deixa anar o fes clic per pujar",
+        "file_type": "Només s’admeten fitxers .csv"
+      },
+      "buttons": {
+        "cancel": "Cancel·la",
+        "import": "Importa",
+        "try_again": "Torna-ho a provar",
+        "close": "Tanca",
+        "done": "Fet"
+      },
+      "progress": {
+        "uploading": "S’està pujant...",
+        "importing": "S’està important..."
+      },
+      "summary": {
+        "title": {
+          "failed": "La importació ha fallat",
+          "complete": "Importació completada"
+        },
+        "message": {
+          "seat_limit": "No es poden importar els membres a causa de les restriccions del límit de llicències.",
+          "success": "S’han afegit {count} membre{plural} correctament a l’espai de treball.",
+          "no_imports": "No s’ha importat cap membre del fitxer CSV."
+        },
+        "stats": {
+          "successful": "Correctes",
+          "failed": "Ha fallat"
+        },
+        "download_errors": "Baixa els errors"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Fitxer no vàlid",
+          "message": "Només s’admeten fitxers CSV."
+        },
+        "import_failed": {
+          "title": "La importació ha fallat",
+          "message": "Alguna cosa ha fallat."
+        }
+      }
+    }
+  },
+  "instance_workspaces": {
+    "empty_state": {
+      "title": "Encara no hi ha espais de treball",
+      "description": "Els espais de treball creats en aquesta instància apareixeran aquí."
+    }
+  }
+}

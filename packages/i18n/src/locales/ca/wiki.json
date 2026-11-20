@@ -1,0 +1,113 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "General",
+      "private": "Privat",
+      "shared": "Compartida",
+      "archived": "Arxivada"
+    },
+    "fallback_name": "Col·lecció",
+    "form": {
+      "name_required": "El títol de la col·lecció és obligatori",
+      "name_max_length": "El nom de la col·lecció ha de tenir menys de 255 caràcters",
+      "name_placeholder_create": "Dona un títol a la col·lecció",
+      "name_placeholder_edit": "Nom de la col·lecció"
+    },
+    "create_modal": {
+      "title": "Crea una col·lecció",
+      "submit": "Crea la col·lecció"
+    },
+    "edit_modal": {
+      "title": "Edita la col·lecció"
+    },
+    "delete_modal": {
+      "title": "Suprimeix la col·lecció",
+      "page_count": "Aquesta col·lecció té {pageCount} {pageCount, plural, one {pàgina} other {pàgines}}. Tria què en vols fer.",
+      "transfer_title": "Transfereix les pàgines i suprimeix la col·lecció",
+      "transfer_description": "Mou totes les pàgines a una altra col·lecció abans de suprimir-la. Les pàgines i els seus permisos es conserven.",
+      "transfer_warning": "Les pàgines mogudes heretaran els permisos de la col·lecció seleccionada.",
+      "transfer_target_label": "Mou les pàgines a",
+      "transfer_target_placeholder": "Selecciona una col·lecció",
+      "delete_with_pages_title": "Suprimeix la col·lecció amb les pàgines",
+      "delete_with_pages_description": "Suprimeix permanentment la col·lecció i totes les seves pàgines. Aquesta acció no es pot desfer.",
+      "submit": "Suprimeix la col·lecció"
+    },
+    "header": {
+      "add_page": "Afegeix una pàgina"
+    },
+    "menu": {
+      "create_new_page": "Crea una pàgina nova",
+      "add_existing_page": "Afegeix una pàgina existent",
+      "edit_collection": "Edita la col·lecció",
+      "collection_options": "Opcions de la col·lecció"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "Cerca pàgines",
+      "success_message": "{count} {count, plural, one {pàgina} other {pàgines}} afegides a la col·lecció.",
+      "error_message": "No s’han pogut moure les pàgines. Torna-ho a provar.",
+      "no_pages_found": "No s’han trobat pàgines que coincideixin amb la teva cerca",
+      "no_pages_available": "No hi ha pàgines disponibles per moure",
+      "submit": "Mou"
+    },
+    "list": {
+      "invite_only": "Només per invitació",
+      "remove_error": "No s’ha pogut eliminar la pàgina de la col·lecció.",
+      "no_matching_pages": "Cap pàgina coincident",
+      "remove_search_criteria": "Elimina els criteris de cerca per veure totes les pàgines",
+      "remove_filters": "Elimina els filtres per veure totes les pàgines",
+      "no_pages_title": "Encara no hi ha pàgines",
+      "no_pages_description": "Aquesta col·lecció no té cap pàgina ara mateix.",
+      "untitled": "Sense títol",
+      "restricted_access": "Accés restringit",
+      "collapse_page": "Redueix la pàgina",
+      "expand_page": "Desplega la pàgina",
+      "page_actions": "Accions de la pàgina",
+      "page_link_copied": "L’enllaç de la pàgina s’ha copiat al porta-retalls.",
+      "columns": {
+        "page_name": "Nom de la pàgina",
+        "owner": "Propietari",
+        "nested_pages": "Pàgines imbricades",
+        "last_activity": "Última activitat",
+        "actions": "Accions"
+      }
+    },
+    "toasts": {
+      "created": "La col·lecció s’ha creat correctament.",
+      "create_error": "No s’ha pogut crear la col·lecció. Torna-ho a provar.",
+      "renamed": "La col·lecció s’ha canviat de nom correctament.",
+      "rename_error": "No s’ha pogut actualitzar la col·lecció. Torna-ho a provar.",
+      "transferred_deleted": "Les pàgines s’han transferit i la col·lecció s’ha suprimit.",
+      "deleted_with_pages": "La col·lecció i les seves pàgines s’han suprimit.",
+      "delete_error": "No s’ha pogut suprimir la col·lecció. Torna-ho a provar.",
+      "target_required": "Selecciona una col·lecció a la qual moure les pàgines.",
+      "create_page_error": "No s’ha pogut crear la pàgina. Torna-ho a provar.",
+      "create_page_in_collection_error": "No s’ha pogut crear la pàgina ni afegir-la a la col·lecció. Torna-ho a provar.",
+      "collection_link_copied": "L’enllaç de la col·lecció s’ha copiat al porta-retalls."
+    }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "Fes una actualització per desbloquejar el wiki",
+      "description": "Desbloqueja pàgines públiques, historial de versions, pàgines compartides, col·laboració en temps real i pàgines d’espai de treball per a wikis, documentació corporativa i bases de coneixement amb Plane Pro.",
+      "upgrade_button": {
+        "text": "Millora"
+      },
+      "learn_more_button": {
+        "text": "Més informació"
+      },
+      "download_button": {
+        "text": "Baixa les dades",
+        "loading": "S’està baixant"
+      },
+      "tabs": {
+        "nested_pages": "Pàgines imbricades",
+        "add_embeds": "Afegeix elements incrustats",
+        "publish_pages": "Publica pàgines",
+        "comments": "Comentaris"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "Les pàgines imbricades requereixen un pla de pagament. Fes una actualització per desbloquejar-les."
+    }
+  }
+}

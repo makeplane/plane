@@ -1,0 +1,69 @@
+{
+  "updates": {
+    "progress": {
+      "title": "Progrés",
+      "since_last_update": "Des de l’última actualització",
+      "comments": "{count, plural, one{# comentari} other{# comentaris}}"
+    },
+    "add_update": "Afegeix una actualització",
+    "add_update_placeholder": "Afegeix aquí la teva actualització",
+    "empty": {
+      "title": "Encara no hi ha actualitzacions",
+      "description": "Pots veure les actualitzacions aquí."
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reacció creada",
+          "message": "La reacció s’ha creat correctament"
+        },
+        "error": {
+          "title": "No s’ha pogut crear la reacció",
+          "message": "No s’ha pogut crear la reacció"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reacció eliminada",
+          "message": "La reacció s’ha eliminat correctament"
+        },
+        "error": {
+          "title": "No s’ha pogut eliminar la reacció",
+          "message": "No s’ha pogut eliminar la reacció"
+        }
+      }
+    },
+    "create": {
+      "success": {
+        "title": "Actualització creada",
+        "message": "L’actualització s’ha creat correctament"
+      },
+      "error": {
+        "title": "No s’ha pogut crear l’actualització",
+        "message": "No s’ha pogut crear l’actualització"
+      }
+    },
+    "delete": {
+      "title": "Suprimeix l’actualització",
+      "confirmation": "Segur que vols suprimir aquesta actualització? Aquesta acció és irreversible.",
+      "success": {
+        "title": "Actualització suprimida",
+        "message": "L’actualització s’ha suprimit correctament"
+      },
+      "error": {
+        "title": "No s’ha pogut suprimir l’actualització",
+        "message": "No s’ha pogut suprimir l’actualització"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Actualitzat",
+        "message": "L’actualització s’ha actualitzat correctament"
+      },
+      "error": {
+        "title": "No s’ha pogut actualitzar l’actualització",
+        "message": "No s’ha pogut actualitzar l’actualització"
+      }
+    }
+  }
+}
