@@ -187,7 +187,7 @@
         },
         "formula": {
           "field_label": "Campo de fórmula",
-          "tooltip": "Ingrese una fórmula usando la sintaxis '{'Nombre del campo'}'. Admite operadores +, -, *, / y &.",
+          "tooltip": "Ingresa una fórmula usando la sintaxis '{'Nombre del campo'}'. Admite operadores +, -, *, / y &.",
           "placeholder": "Escribir la fórmula",
           "test_button": "Probar",
           "validating": "Validando",
@@ -274,7 +274,7 @@
       "item_delete_confirmation": {
         "title": "Eliminar este tipo",
         "description": "La eliminación de tipos puede provocar la pérdida de datos existentes.",
-        "can_disable_warning": "¿Desea desactivar el tipo en su lugar?",
+        "can_disable_warning": "¿Deseas desactivar el tipo en su lugar?",
         "primary_button": "Sí, eliminarlo",
         "toast": {
           "success": {

@@ -123,6 +123,6 @@
     }
   },
   "page_content_limit_banner": {
-    "message": "Se alcanzó el límite de contenido y la sincronización en vivo está desactivada. Cree una página nueva o utilice páginas anidadas para continuar sincronizando."
+    "message": "Se alcanzó el límite de contenido y la sincronización en vivo está desactivada. Crea una página nueva o utiliza páginas anidadas para continuar sincronizando."
   }
 }

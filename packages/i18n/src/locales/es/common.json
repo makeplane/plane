@@ -896,7 +896,7 @@
     "filter_item": {
       "remove": "Quitar filtro",
       "invalid": "Filtro inválido",
-      "invalid_tooltip": "Esta condición de filtro ya no es válida. Es posible que la propiedad se haya eliminado o que su acceso a ella haya cambiado."
+      "invalid_tooltip": "Esta condición de filtro ya no es válida. Es posible que la propiedad se haya eliminado o que tu acceso a ella haya cambiado."
     },
     "operators": {
       "is": "es",

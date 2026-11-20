@@ -193,7 +193,7 @@
         "message": "No se pudo restaurar el elemento de trabajo. Por favor, inténtalo de nuevo."
       }
     },
-    "archived_banner": "Este elemento de trabajo está archivado. Restáurelo para hacer cambios.",
+    "archived_banner": "Este elemento de trabajo está archivado. Restáuralo para hacer cambios.",
     "updated_time_ago": "Actualizado {time}",
     "description_load_failed": "No se pudo cargar la descripción.",
     "assignee_count": "{count, plural, one {# asignado} other {# asignados}}",
@@ -335,19 +335,19 @@
       },
       "invalid_issue_start_date": {
         "title": "No se pueden actualizar elementos de trabajo",
-        "message": "La fecha de inicio seleccionada es posterior a la fecha de vencimiento de algunos elementos de trabajo. Asegúrese de que la fecha de inicio sea anterior a la fecha de vencimiento."
+        "message": "La fecha de inicio seleccionada es posterior a la fecha de vencimiento de algunos elementos de trabajo. Asegúrate de que la fecha de inicio sea anterior a la fecha de vencimiento."
       },
       "invalid_issue_target_date": {
         "title": "No se pueden actualizar elementos de trabajo",
-        "message": "La fecha de vencimiento seleccionada es anterior a la fecha de inicio de algunos elementos de trabajo. Asegúrese de que la fecha de vencimiento sea posterior a la fecha de inicio."
+        "message": "La fecha de vencimiento seleccionada es anterior a la fecha de inicio de algunos elementos de trabajo. Asegúrate de que la fecha de vencimiento sea posterior a la fecha de inicio."
       },
       "invalid_state_transition": {
         "title": "No se pueden actualizar elementos de trabajo",
-        "message": "El cambio de estado no está permitido para algunos elementos de trabajo. Asegúrese de que el cambio de estado esté permitido."
+        "message": "El cambio de estado no está permitido para algunos elementos de trabajo. Asegúrate de que el cambio de estado esté permitido."
       }
     },
     "upgrade_banner": {
-      "message": "Cambie el estado, la prioridad y más para varios elementos de trabajo a la vez. Ahorre en promedio tres minutos por operación.",
+      "message": "Cambia el estado, la prioridad y más para varios elementos de trabajo a la vez. Ahorra en promedio tres minutos por operación.",
       "cta": "Actualizar a One"
     }
   },

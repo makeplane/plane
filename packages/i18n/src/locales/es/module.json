@@ -7,7 +7,7 @@
       "progress": {
         "done": "{completed} de {scope, plural, one {# elemento de trabajo} other {# elementos de trabajo}} completados",
         "points_done": "{completed} de {scope, plural, one {# punto} other {# puntos}} completados",
-        "empty": "Agregue elementos de trabajo al módulo para hacer seguimiento del progreso."
+        "empty": "Agrega elementos de trabajo al módulo para hacer seguimiento del progreso."
       }
     }
   }

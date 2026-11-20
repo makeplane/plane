@@ -18,10 +18,10 @@
       }
     },
     "upgrade": {
-      "description": "Actualice su plan para ver este archivo adjunto."
+      "description": "Actualiza tu plan para ver este archivo adjunto."
     },
     "aria": {
-      "click_to_upload": "Haga clic para subir archivo adjunto"
+      "click_to_upload": "Haz clic para subir archivo adjunto"
     }
   },
   "externalEmbedComponent": {
@@ -31,8 +31,8 @@
       "convert_to_richcard": "Convertir a tarjeta enriquecida"
     },
     "placeholder": {
-      "insert_embed": "Inserte aquí su enlace de incrustación preferido, como video de YouTube, diseño de Figma, etc.",
-      "link": "Ingrese o pegue un enlace"
+      "insert_embed": "Inserta aquí tu enlace de incrustación preferido, como video de YouTube, diseño de Figma, etc.",
+      "link": "Ingresa o pega un enlace"
     },
     "input_modal": {
       "embed": "Incrustar",
