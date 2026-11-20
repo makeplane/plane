@@ -48,6 +48,8 @@ from .parameters import (
     FIELDS_PARAMETER,
     EXPAND_PARAMETER,
     ESTIMATE_ID_PARAMETER,
+    PAGE_ID_PARAMETER,
+    WORK_ITEM_PAGE_ID_PARAMETER,
 )
 
 # Responses
@@ -175,6 +177,8 @@ from .decorators import (
     state_docs,
     estimate_docs,
     estimate_point_docs,
+    page_docs,
+    work_item_page_docs,
 )
 
 # Schema processing hooks
@@ -217,6 +221,8 @@ __all__ = [
     "FIELDS_PARAMETER",
     "EXPAND_PARAMETER",
     "ESTIMATE_ID_PARAMETER",
+    "PAGE_ID_PARAMETER",
+    "WORK_ITEM_PAGE_ID_PARAMETER",
     # Responses
     "UNAUTHORIZED_RESPONSE",
     "FORBIDDEN_RESPONSE",
@@ -335,6 +341,8 @@ __all__ = [
     "state_docs",
     "estimate_docs",
     "estimate_point_docs",
+    "page_docs",
+    "work_item_page_docs",
     # Hooks
     "preprocess_filter_api_v1_paths",
     "generate_operation_summary",

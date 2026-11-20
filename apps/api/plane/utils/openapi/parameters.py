@@ -518,3 +518,19 @@ ESTIMATE_ID_PARAMETER = OpenApiParameter(
     type=OpenApiTypes.UUID,
     location=OpenApiParameter.PATH,
 )
+
+PAGE_ID_PARAMETER = OpenApiParameter(
+    name="pk",
+    description="Page ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+)
+
+WORK_ITEM_PAGE_ID_PARAMETER = OpenApiParameter(
+    name="pk",
+    description="Work item page link ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+)
