@@ -7,6 +7,7 @@
 import React from "react";
 import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 import { TooltipPopup } from "@makeplane/propel/elements/tooltip";
+import type { TChartTooltipValueFormatter } from "@plane/types";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -17,10 +18,11 @@ type Props = {
   itemKeys: string[];
   itemLabels: Record<string, string>;
   itemDotColors: Record<string, string>;
+  valueFormatter?: TChartTooltipValueFormatter;
 };
 
 export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
-  const { active, activeKey, label, payload, itemKeys, itemLabels, itemDotColors } = props;
+  const { active, activeKey, label, payload, itemKeys, itemLabels, itemDotColors, valueFormatter } = props;
   // derived values
   const filteredPayload = payload?.filter((item) => item.dataKey && itemKeys.includes(`${item.dataKey}`));
 
@@ -57,7 +59,11 @@ export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
               )}
               <span className="truncate text-tertiary">{itemLabels[item?.dataKey]}:</span>
             </div>
-            <span className="flex-shrink-0 text-caption-sm-medium text-secondary">{item?.value}</span>
+            <span className="flex-shrink-0 text-caption-sm-medium text-secondary">
+              {typeof item.value === "number" && valueFormatter
+                ? valueFormatter(item.value, String(item.dataKey))
+                : item.value}
+            </span>
           </div>
         );
       })}
