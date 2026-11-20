@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Tautan ke kebijakan privasi Anda",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://plane.so/privacy-policy",
             "validation": {
               "invalid": "URL tidak valid",
               "maxLength": "URL harus kurang dari 800 karakter"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Tautan ke kebijakan penggunaan Anda",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://plane.so/terms-of-use",
             "validation": {
               "invalid": "URL tidak valid",
               "maxLength": "URL harus kurang dari 800 karakter"

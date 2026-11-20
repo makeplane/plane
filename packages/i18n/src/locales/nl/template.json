@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Koppeling naar je privacybeleid",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://plane.so/privacy-policy",
             "validation": {
               "invalid": "Ongeldige URL",
               "maxLength": "URL moet minder dan 800 tekens zijn"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Koppeling naar je gebruiksvoorwaarden",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://plane.so/terms-of-use",
             "validation": {
               "invalid": "Ongeldige URL",
               "maxLength": "URL moet minder dan 800 tekens zijn"
