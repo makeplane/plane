@@ -125,3 +125,121 @@ class TestIssueByIdentifier:
 
         assert response.status_code == status.HTTP_200_OK
         assert str(response.data["id"]) == str(issue.id)
+
+
+@pytest.mark.contract
+class TestIssueListUnsupportedParams:
+    """Regression tests for unsupported query parameters on the work-item list
+    endpoint: GET /api/v1/workspaces/{slug}/projects/{project_id}/issues/.
+
+    Previously, unknown parameters (like ?parent= or ?unknown=1) were silently
+    ignored, returning all work items. The endpoint now returns a 400 with
+    a list of the unsupported parameters.
+    """
+
+    def get_url(self, workspace_slug, project_id):
+        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/issues/"
+
+    @pytest.mark.django_db
+    def test_unknown_parameter_returns_400(self, api_key_client, workspace, project, issue):
+        """An unknown query parameter should result in a 400 Bad Request."""
+        url = self.get_url(workspace.slug, project.id)
+        response = api_key_client.get(url, {"any_unknown_param": "1"})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "unsupported_parameters" in response.data
+        assert "any_unknown_param" in response.data["unsupported_parameters"]
+
+    @pytest.mark.django_db
+    def test_parent_parameter_returns_400(self, api_key_client, workspace, project, issue):
+        """The ?parent= parameter is unsupported and should trigger a 400."""
+        url = self.get_url(workspace.slug, project.id)
+        response = api_key_client.get(url, {"parent": str(issue.id)})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "unsupported_parameters" in response.data
+        assert "parent" in response.data["unsupported_parameters"]
+
+    @pytest.mark.django_db
+    def test_supported_parameters_still_work(self, api_key_client, workspace, project, issue):
+        """Valid parameters like cursor or order_by should still return 200."""
+        url = self.get_url(workspace.slug, project.id)
+
+        # Test a few supported parameters to ensure the allowlist doesn't block them
+        response = api_key_client.get(url, {"order_by": "-created_at"})
+        assert response.status_code == status.HTTP_200_OK
+
+        response = api_key_client.get(url, {"per_page": "10"})
+        assert response.status_code == status.HTTP_200_OK
+
+    @pytest.mark.django_db
+    def test_format_parameter_still_works(self, api_key_client, workspace, project, issue):
+        """DRF's built-in ?format= override must not be rejected."""
+        url = self.get_url(workspace.slug, project.id)
+        response = api_key_client.get(url, {"format": "json"})
+
+        assert response.status_code == status.HTTP_200_OK
+
+    @pytest.mark.django_db
+    def test_list_parameters_together(self, api_key_client, workspace, project, issue):
+        """All list-mode parameters are accepted together, so the allow-list is
+        not stricter than the view, base class and paginator."""
+        url = self.get_url(workspace.slug, project.id)
+        response = api_key_client.get(
+            url,
+            {
+                "per_page": "10",
+                "cursor": "10:0:0",
+                "order_by": "-created_at",
+                "fields": "id,name",
+                "expand": "state",
+            },
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+
+    @pytest.mark.django_db
+    def test_external_id_parameters_accepted(self, api_key_client, workspace, project, state, create_user):
+        """external_id + external_source are allowed and resolve a single item."""
+        external_issue = Issue.objects.create(
+            name="External Issue",
+            workspace=workspace,
+            project=project,
+            state=state,
+            created_by=create_user,
+            external_id="abc",
+            external_source="github",
+        )
+        url = self.get_url(workspace.slug, project.id)
+        response = api_key_client.get(url, {"external_id": "abc", "external_source": "github"})
+
+        assert response.status_code == status.HTTP_200_OK
+        assert str(response.data["id"]) == str(external_issue.id)
+
+    @pytest.mark.django_db
+    def test_multiple_unknown_parameters_are_all_listed(self, api_key_client, workspace, project, issue):
+        """All unsupported names are reported, sorted, and valid ones are not."""
+        url = self.get_url(workspace.slug, project.id)
+        response = api_key_client.get(url, {"zeta": "1", "alpha": "1", "per_page": "10"})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data["unsupported_parameters"] == ["alpha", "zeta"]
+
+    @pytest.mark.django_db
+    def test_pql_still_returns_existing_400(self, api_key_client, workspace, project, issue):
+        """The pre-existing pql/filters branch keeps its own message and runs first."""
+        url = self.get_url(workspace.slug, project.id)
+        response = api_key_client.get(url, {"pql": "x"})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "pql" in response.data
+        assert response.data["unsupported_parameters"] == ["pql"]
+
+    @pytest.mark.django_db
+    def test_work_items_alias_rejects_unknown_parameter(self, api_key_client, workspace, project, issue):
+        """The /work-items/ route is served by the same view and gets the same check."""
+        url = f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/work-items/"
+        response = api_key_client.get(url, {"parent": str(issue.id)})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data["unsupported_parameters"] == ["parent"]
