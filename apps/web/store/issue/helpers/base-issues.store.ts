@@ -1218,14 +1218,34 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // get issueUpdates from another method by passing down the three arguments
     // issueUpdates is nothing but an array of objects that contain the path of the issueId list that need updating and also the action that needs to be performed at the path
     const issueUpdates = this.getUpdateDetails(issue, issueBeforeUpdate, action);
+    // 1. Check if the card is already present on this board being moved between groups without changing parent hierarchy
+    const isParentUnchanged = !issueBeforeUpdate || issueBeforeUpdate.parent_id === issue?.parent_id;
+    const isCardOnBoard =
+      isParentUnchanged &&
+      issueUpdates.some(
+        (updateDetails) =>
+          updateDetails.action === EIssueGroupedAction.DELETE &&
+          Boolean(get(this.groupedIssueIds, updateDetails.path)?.includes(issueId))
+      );
     const accumulatedUpdatesForCount = {};
     runInAction(() => {
       // The issueUpdates
       for (const issueUpdate of issueUpdates) {
         //if update is add, add it at a particular path
         if (issueUpdate.action === EIssueGroupedAction.ADD) {
-          const isSubIssue = issue?.parent_id;
+          // 2. Check if parent is an Epic or if the view is scoped to the parent Epic.
+          const parentIssue = issue?.parent_id ? this.rootIssueStore?.issues?.getIssueById(issue.parent_id) : undefined;
+          const isParentEpic = Boolean(parentIssue?.is_epic);
+          const isScopedToParent = Boolean(
+            issue?.parent_id && this.rootIssueStore?.rootStore?.router?.epicId === issue.parent_id
+          );
+
+          // An issue is a genuine sub-issue only if it is not already on the board, not an epic work item, and not scoped to the parent.
+          const isSubIssue = Boolean(issue?.parent_id && !isParentEpic && !isScopedToParent && !isCardOnBoard);
+
+          // Do not add genuine sub-issues to the top-level list if 'Show sub-issues' is disabled.
           if (isSubIssue && !isShowWorkItemsEnabled) continue;
+
           // add issue Id at the path
           update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) =>
             this.issuesSortWithOrderBy(uniq(concat(issueIds, issueId)), this.orderBy)
