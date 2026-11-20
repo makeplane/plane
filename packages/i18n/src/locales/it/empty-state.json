@@ -169,12 +169,12 @@
       "title": "Imposta intake per gestire le richieste in arrivo e tracciare come vengono accettate e rifiutate"
     },
     "home_widget_stickies": {
-      "title": "Annota un'idea, cattura un'illuminazione o registra un'intuizione. Aggiungi un adesivo per iniziare."
+      "title": "Annota un'idea, cattura un'illuminazione o registra un'intuizione. Aggiungi uno sticky per iniziare."
     },
     "stickies": {
       "title": "Cattura idee istantaneamente",
-      "description": "Crea adesivi per note rapide e promemoria, e portali con te ovunque tu vada.",
-      "cta_primary": "Crea primo adesivo",
+      "description": "Crea stickies per note rapide e promemoria, e portali con te ovunque tu vada.",
+      "cta_primary": "Crea il primo sticky",
       "cta_secondary": "Documentazione"
     },
     "active_cycles": {

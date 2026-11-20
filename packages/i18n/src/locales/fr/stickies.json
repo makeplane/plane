@@ -1,58 +1,58 @@
 {
   "stickies": {
-    "title": "Vos post-it",
+    "title": "Vos stickies",
     "placeholder": "cliquez pour écrire ici",
-    "all": "Toutes les post-it",
-    "no-data": "Notez une idée, saisissez une intuition ou captez une inspiration. Ajoutez un post-it pour commencer.",
-    "add": "Ajouter un post-it",
+    "all": "Tous les stickies",
+    "no-data": "Notez une idée, saisissez une intuition ou captez une inspiration. Ajoutez un sticky pour commencer.",
+    "add": "Ajouter un sticky",
     "search_placeholder": "Rechercher par titre",
-    "delete": "Supprimer le post-it",
-    "delete_confirmation": "Êtes-vous sûr de vouloir supprimer ce post-it ?",
+    "delete": "Supprimer le sticky",
+    "delete_confirmation": "Êtes-vous sûr de vouloir supprimer ce sticky ?",
     "empty_state": {
-      "simple": "Notez une idée, saisissez une intuition ou captez une inspiration. Ajoutez un post-it pour commencer.",
+      "simple": "Notez une idée, saisissez une intuition ou captez une inspiration. Ajoutez un sticky pour commencer.",
       "general": {
-        "title": "Les post-it sont des notes rapides et des tâches que vous prenez à la volée.",
-        "description": "Capturez vos pensées et idées facilement en créant des post-it que vous pouvez consulter à tout moment et de n’importe où.",
+        "title": "Les stickies sont des notes rapides et des tâches que vous prenez à la volée.",
+        "description": "Capturez vos pensées et idées facilement en créant des stickies que vous pouvez consulter à tout moment et de n’importe où.",
         "primary_button": {
-          "text": "Ajouter un post-it"
+          "text": "Ajouter un sticky"
         }
       },
       "search": {
-        "title": "Cela ne correspond à aucun de vos post-it.",
+        "title": "Cela ne correspond à aucun de vos stickies.",
         "description": "Essayez un terme différent ou faites-nous savoir\nsi vous êtes sûr que votre recherche est correcte.",
         "primary_button": {
-          "text": "Ajouter un post-it"
+          "text": "Ajouter un sticky"
         }
       }
     },
     "toasts": {
       "errors": {
-        "wrong_name": "Le nom du post-it ne peut pas dépasser 100 caractères.",
-        "already_exists": "Il existe déjà un post-it sans description"
+        "wrong_name": "Le nom du sticky ne peut pas dépasser 100 caractères.",
+        "already_exists": "Il existe déjà un sticky sans description"
       },
       "created": {
-        "title": "Post-it créé",
-        "message": "Le post-it a été créé avec succès"
+        "title": "Sticky créé",
+        "message": "Le sticky a été créé avec succès"
       },
       "not_created": {
-        "title": "Post-it non créé",
-        "message": "Le post-it n’a pas pu être créé"
+        "title": "Sticky non créé",
+        "message": "Le sticky n’a pas pu être créé"
       },
       "updated": {
-        "title": "Post-it mis à jour",
-        "message": "Le post-it a été mis à jour avec succès"
+        "title": "Sticky mis à jour",
+        "message": "Le sticky a été mis à jour avec succès"
       },
       "not_updated": {
-        "title": "Post-it non mis à jour",
-        "message": "Le post-it n’a pas pu être mis à jour"
+        "title": "Sticky non mis à jour",
+        "message": "Le sticky n’a pas pu être mis à jour"
       },
       "removed": {
-        "title": "Post-it supprimé",
-        "message": "Le post-it a été supprimé avec succès"
+        "title": "Sticky supprimé",
+        "message": "Le sticky a été supprimé avec succès"
       },
       "not_removed": {
-        "title": "Post-it non supprimé",
-        "message": "Le post-it n’a pas pu être supprimé"
+        "title": "Sticky non supprimé",
+        "message": "Le sticky n’a pas pu être supprimé"
       }
     }
   }
