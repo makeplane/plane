@@ -6,7 +6,6 @@
 import json
 
 # Django imports
-from django.core import serializers
 from django.db.models import Count, F, Func, OuterRef, Prefetch, Q
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
@@ -733,7 +732,6 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
 
         module_issues = list(ModuleIssue.objects.filter(issue_id__in=issues))
 
-        update_module_issue_activity = []
         records_to_update = []
         record_to_create = []
 
@@ -742,13 +740,6 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
 
             if len(module_issue):
                 if module_issue[0].module_id != module_id:
-                    update_module_issue_activity.append(
-                        {
-                            "old_module_id": str(module_issue[0].module_id),
-                            "new_module_id": str(module_id),
-                            "issue_id": str(module_issue[0].issue_id),
-                        }
-                    )
                     module_issue[0].module_id = module_id
                     records_to_update.append(module_issue[0])
             else:
@@ -767,22 +758,19 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
 
         ModuleIssue.objects.bulk_update(records_to_update, ["module"], batch_size=10)
 
-        # Capture Issue Activity
-        issue_activity.delay(
-            type="module.activity.created",
-            requested_data=json.dumps({"modules_list": str(issues)}),
-            actor_id=str(self.request.user.id),
-            issue_id=None,
-            project_id=str(self.kwargs.get("project_id", None)),
-            current_instance=json.dumps(
-                {
-                    "updated_module_issues": update_module_issue_activity,
-                    "created_module_issues": serializers.serialize("json", record_to_create),
-                }
-            ),
-            epoch=int(timezone.now().timestamp()),
-            origin=base_host(request=request, is_app=True),
-        )
+        # Capture Issue Activity: the task records one work item per call, as the web app sends it
+        for issue in issues:
+            issue_activity.delay(
+                type="module.activity.created",
+                requested_data=json.dumps({"module_id": str(module_id)}),
+                actor_id=str(self.request.user.id),
+                issue_id=str(issue),
+                project_id=str(project_id),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
+            )
 
         return Response(
             ModuleIssueSerializer(self.get_queryset(), many=True).data,
