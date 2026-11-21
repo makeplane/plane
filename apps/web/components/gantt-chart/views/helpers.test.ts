@@ -1,0 +1,128 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import type { ChartDataType, IGanttBlock } from "@plane/types";
+import { getItemPositionWidth } from "./helpers";
+
+const position = (start_date: string | undefined, target_date: string | undefined) => {
+  const chart = { data: { startDate: new Date(2026, 0, 1), dayWidth: 24 } } as ChartDataType;
+  const block = { start_date, target_date } as IGanttBlock;
+  return getItemPositionWidth(chart, block);
+};
+
+describe("Gantt block calendar-day widths", () => {
+  it("runs across the expected DST offset change", () => {
+    expect(new Date(2026, 10, 1).getTimezoneOffset()).toBe(240);
+    expect(new Date(2026, 10, 2).getTimezoneOffset()).toBe(300);
+  });
+
+  it("preserves default widths for incomplete dates", () => {
+    expect(position("2026-11-01", undefined)?.width).toBe(60);
+    expect(position(undefined, "2026-11-02")?.width).toBe(60);
+    expect(position(undefined, undefined)).toBeUndefined();
+  });
+
+  it("treats an invalid start date as absent", () => {
+    expect(position("invalid", "2026-11-02")).toEqual(position(undefined, "2026-11-02"));
+    expect(position("invalid", "2026-11-02")).toEqual({ marginLeft: 7284, width: 60 });
+  });
+
+  it("treats an invalid target date as absent", () => {
+    expect(position("2026-11-01", "invalid")).toEqual(position("2026-11-01", undefined));
+    expect(position("2026-11-01", "invalid")).toEqual({ marginLeft: 7296, width: 60 });
+  });
+
+  it("omits blocks with no valid endpoints", () => {
+    expect(position("invalid", "invalid")).toBeUndefined();
+    expect(position("invalid", undefined)).toBeUndefined();
+    expect(position(undefined, "invalid")).toBeUndefined();
+  });
+
+  it.each([
+    ["2026-11-01", "2026-11-02", 2],
+    ["2026-10-31", "2026-11-02", 3],
+    ["2026-03-08", "2026-03-09", 2],
+    ["2026-03-07", "2026-03-09", 3],
+    ["2026-03-09", "2026-03-08", 2],
+    ["2026-06-01", "2026-06-02", 2],
+    ["2026-11-01", "2026-11-01", 1],
+    ["2026-11-02", "2026-11-01", 2],
+  ])("renders %s through %s as %i inclusive days", (start, end, days) => {
+    expect(position(start, end)?.width).toBe(days * 24);
+  });
+});
+
+describe("Gantt block widths when DST skips midnight", () => {
+  const originalTimezone = process.env.TZ;
+
+  beforeAll(() => {
+    process.env.TZ = "America/Santiago";
+  });
+
+  afterAll(() => {
+    process.env.TZ = originalTimezone;
+  });
+
+  it("runs across a missing local midnight", () => {
+    expect(new Date(2026, 8, 6).getHours()).toBe(1);
+    expect(new Date(2026, 8, 7).getHours()).toBe(0);
+  });
+
+  it.each([
+    ["2026-09-06", "2026-09-07", 2],
+    ["2026-09-07", "2026-09-06", 2],
+    ["2026-09-05", "2026-09-07", 3],
+    ["2026-09-07", "2026-09-05", 3],
+    ["2026-09-06", "2026-09-06", 1],
+  ])("renders %s through %s as %i inclusive days", (start, end, days) => {
+    expect(position(start, end)?.width).toBe(days * 24);
+  });
+});
+
+describe("Gantt block widths across a skipped calendar date", () => {
+  const originalTimezone = process.env.TZ;
+
+  beforeAll(() => {
+    process.env.TZ = "Pacific/Apia";
+  });
+
+  afterAll(() => {
+    process.env.TZ = originalTimezone;
+  });
+
+  it("matches the displayed columns when December 30, 2011 is skipped", () => {
+    const currentDate = new Date(2011, 11, 29);
+    const endDate = new Date(2011, 11, 31);
+    const displayedDates: number[] = [];
+
+    while (currentDate.getTime() <= endDate.getTime()) {
+      displayedDates.push(currentDate.getDate());
+      currentDate.setHours(0, 0, 0, 0);
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    expect(displayedDates).toEqual([29, 31]);
+    expect(position("2011-12-29", "2011-12-31")?.width).toBe(displayedDates.length * 24);
+    expect(position("2011-12-31", "2011-12-29")?.width).toBe(displayedDates.length * 24);
+  });
+
+  it("matches the displayed columns for a longer range in both directions", () => {
+    const currentDate = new Date(2011, 0, 1);
+    const endDate = new Date(2013, 0, 1);
+    let columnCount = 0;
+
+    while (currentDate.getTime() <= endDate.getTime()) {
+      columnCount++;
+      currentDate.setHours(0, 0, 0, 0);
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    expect(columnCount).toBe(731);
+    expect(position("2011-01-01", "2013-01-01")?.width).toBe(columnCount * 24);
+    expect(position("2013-01-01", "2011-01-01")?.width).toBe(columnCount * 24);
+  });
+});

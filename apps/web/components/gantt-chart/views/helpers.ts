@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { isValid } from "date-fns";
 import type { ChartDataType, IGanttBlock } from "@plane/types";
 import { addDaysToDate, findTotalDaysInRange, getDate } from "@plane/utils";
 import { DEFAULT_BLOCK_WIDTH } from "../constants";
@@ -93,8 +94,10 @@ export const getItemPositionWidth = (chartData: ChartDataType, itemData: IGanttB
   const { startDate: chartStartDate } = chartData.data;
   const { start_date, target_date } = itemData;
 
-  const itemStartDate = getDate(start_date);
-  const itemTargetDate = getDate(target_date);
+  const parsedStartDate = getDate(start_date);
+  const parsedTargetDate = getDate(target_date);
+  const itemStartDate = isValid(parsedStartDate) ? parsedStartDate : undefined;
+  const itemTargetDate = isValid(parsedTargetDate) ? parsedTargetDate : undefined;
 
   chartStartDate.setHours(0, 0, 0, 0);
   itemStartDate?.setHours(0, 0, 0, 0);
@@ -108,9 +111,10 @@ export const getItemPositionWidth = (chartData: ChartDataType, itemData: IGanttB
     : getPositionFromDate(chartData, itemTargetDate!, -1 * DEFAULT_BLOCK_WIDTH + chartData.data.dayWidth);
 
   if (itemStartDate && itemTargetDate) {
-    // get width of block
-    const widthTimeDifference: number = itemStartDate.getTime() - itemTargetDate.getTime();
-    const widthDaysDifference: number = Math.abs(Math.floor(widthTimeDifference / (1000 * 60 * 60 * 24)));
+    // Round midnight-to-midnight elapsed days to absorb DST shifts without counting skipped dates.
+    const widthDaysDifference = Math.round(
+      Math.abs(itemTargetDate.getTime() - itemStartDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
     scrollWidth = (widthDaysDifference + 1) * chartData.data.dayWidth;
   }
 
